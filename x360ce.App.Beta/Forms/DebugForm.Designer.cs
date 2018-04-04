@@ -39,14 +39,14 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.performanceTestUserControl1.Location = new System.Drawing.Point(12, 12);
             this.performanceTestUserControl1.Name = "performanceTestUserControl1";
-            this.performanceTestUserControl1.Size = new System.Drawing.Size(234, 127);
+            this.performanceTestUserControl1.Size = new System.Drawing.Size(234, 147);
             this.performanceTestUserControl1.TabIndex = 0;
             // 
             // DebugForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(258, 151);
+            this.ClientSize = new System.Drawing.Size(258, 171);
             this.Controls.Add(this.performanceTestUserControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DebugForm";

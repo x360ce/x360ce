@@ -774,11 +774,13 @@ copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll" 
 if $(ConfigurationName) == Debug (
 if $(PlatformName) == x86 (
 echo copy xinput1_3.dll - 32-bit
+:: Make sure to build x360ce C++ project first.
 copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\xinput1_3.dll" "$(TargetDir)"
 copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\xinput1_3.pdb" "$(TargetDir)"
 )
 if $(PlatformName) == x64 (
 echo copy xinput1_3.dll - 64-bit
+:: Make sure to build x360ce C++ project first.
 copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\xinput1_3.dll" "$(TargetDir)"
 copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\xinput1_3.pdb" "$(TargetDir)"
 )

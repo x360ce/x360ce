@@ -111,13 +111,14 @@ namespace x360ce.App
 				// Enable button during its index.
 				state.Buttons[i] = currentLocation == i;
 			}
-			var busy = 4000;
-			var half = busy / 2;
-			var idle = 2000;
-			// Do action for 4 seconds, then stay for 2 seconds idle.
+            // Do action for 4 seconds [0-3999] ms.
+            var busy = 4000;
+            var half = busy / 2;
+            // then stay for 2 seconds idle [4000-5999] ms.
+            var idle = 2000;
 			// 6 = 4 + 2.
 			var time = tm % (busy + idle);
-			var invert = tm % ((busy + idle) * 2) > (busy + idle);
+            var invert = tm % ((busy + idle) * 2) > (busy + idle);
 			// Set POVs.
 			for (int i = 0; i < ud.CapPovCount; i++)
 			{
@@ -140,7 +141,6 @@ namespace x360ce.App
 				}
 				state.PointOfViewControllers[i] = degree;
 			}
-
 			// Set Axis.
 			var axis = CustomDiState.GetAxisFromState(state);
             // Get information about axis.
@@ -149,9 +149,7 @@ namespace x360ce.App
             for (int i = 0; i < axisObjects.Count(); i++)
 			{
                 var ao = axisObjects[i];
-                //var axisMask = CustomDiState.GetAxisMask();
-                //
-
+                // If axis index is even.
                 var isEven = i % 2 == 0;
 				var position = isEven
 					// Default position is in the center.
@@ -174,10 +172,10 @@ namespace x360ce.App
 					else
 					{
 						position = time < half
-							// Move up.
+							// Move up [0-1999].
 							? ConvertHelper.ConvertRange(0, half - 1, ushort.MinValue, ushort.MaxValue, time)
-							// Move down.
-							: ConvertHelper.ConvertRange(half, busy - 1, ushort.MaxValue, ushort.MinValue, time);
+                            // Move down  [2000-3999].
+                            : ConvertHelper.ConvertRange(half, busy - 1, ushort.MaxValue, ushort.MinValue, time);
 					}
 				}
 				axis[i] = position;

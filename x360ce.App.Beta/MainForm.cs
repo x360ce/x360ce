@@ -1087,7 +1087,6 @@ namespace x360ce.App
                     new ArchitectureIssue(),
                     new GdbFileIssue(),
                     new IniFileIssue(),
-                    new IniFileIssue(),
                     new DllFileIssue(),
                     new VirtualDeviceDriverIssue()
                 );

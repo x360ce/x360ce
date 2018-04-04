@@ -62,8 +62,10 @@ namespace JocysCom.ClassLibrary.Security
 			var salt = SaltFromPassword(password);
 			// Generate Secret Key from the password and salt.
 			// Note: Set number of iterations to 10 in order for JavaScript example to work faster.
+			// Rfc2898DeriveBytes generator based on HMACSHA1 by default.
+			// Ability to specify HMAC algorithm is available since .NET 4.7.2
 			var secretKey = new Rfc2898DeriveBytes(password, salt, 10);
-			// Create a encryptor from the existing SecretKey bytes by using
+			// Create a cryptor from the existing SecretKey bytes by using
 			// 32 bytes (256 bits) for the secret key and
 			// 16 bytes (128 bits) for the initialization vector (IV).
 			var key = secretKey.GetBytes(provider.KeySize / 8);

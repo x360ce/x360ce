@@ -6,6 +6,10 @@ using System.Runtime.InteropServices;
 using JocysCom.ClassLibrary;
 using System.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.IO;
+using System.Collections.Generic;
+using System.Linq;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App.Controls
 {
@@ -310,6 +314,80 @@ namespace x360ce.App.Controls
                 _TestTimer.Dispose();
             base.Dispose(disposing);
         }
+
+        #region Clean-up/Remove Devices
+
+        private void CleanupDevicesButton_Click(object sender, EventArgs e)
+        {
+            LogTextBox.Text = "Please Wait...";
+            var ts = new ThreadStart(CheckDevices);
+            var t = new Thread(ts);
+            t.IsBackground = false;
+            t.Start();
+        }
+
+        void GetDevices(out DeviceInfo[] offline, out DeviceInfo[] problem, out DeviceInfo[] unknown)
+        {
+            var devices = DeviceDetector.GetDevices();
+            offline = devices.Where(x => !x.IsPresent && x.IsRemovable && !x.Description.Contains("RAS Async Adapter")).ToArray();
+            problem = devices.Where(x => x.Status.HasFlag(DeviceNodeStatus.DN_HAS_PROBLEM)).Except(offline).ToArray();
+            unknown = devices.Where(x => x.Description.Contains("Unknown")).Except(offline).Except(problem).ToArray();
+        }
+
+        void CheckDevices()
+        {
+            DeviceInfo[] offline;
+            DeviceInfo[] problem;
+            DeviceInfo[] unknown;
+            GetDevices(out offline, out problem, out unknown);
+            var list = new List<string>();
+            list.Add(string.Format("{0,4} offline devices", offline.Length));
+            list.Add(string.Format("{0,4} problem devices", problem.Length));
+            list.Add(string.Format("{0,4} unknown devices", unknown.Length));
+            if (Disposing || IsDisposed)
+                return;
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                LogTextBox.Text = "";
+                var result = MessageBox.Show("Do you want to remove:\r\n\r\n" + string.Join("\r\n", list), "Remove Devices", MessageBoxButtons.YesNo);
+                if (result != DialogResult.Yes)
+                    return;
+                var ts = new ThreadStart(CleanupDevices);
+                var t = new Thread(ts);
+                t.IsBackground = false;
+                t.Start();
+            });
+        }
+
+        void CleanupDevices()
+        {
+            DeviceInfo[] offline;
+            DeviceInfo[] problem;
+            DeviceInfo[] unknown;
+            GetDevices(out offline, out problem, out unknown);
+            var list = new List<DeviceInfo>();
+            list.AddRange(offline);
+            list.AddRange(problem);
+            list.AddRange(unknown);
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (Disposing || IsDisposed)
+                    return;
+                var item = list[i];
+                BeginInvoke((MethodInvoker)delegate ()
+                {
+                    LogTextBox.Text = string.Format("{0}/{1} - {2}", i + 1, list.Count, item.Description);
+                });
+                DeviceDetector.RemoveDevice(item.DeviceId);
+            }
+            BeginInvoke((MethodInvoker)delegate ()
+            {
+                LogTextBox.Text = string.Format("{0} devices removed", list.Count);
+            });
+
+        }
+
+        #endregion
 
     }
 }

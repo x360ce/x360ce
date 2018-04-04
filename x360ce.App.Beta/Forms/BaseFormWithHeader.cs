@@ -14,7 +14,8 @@ namespace x360ce.App.Controls
         public BaseFormWithHeader()
         {
             InitializeComponent();
-            if (IsDesignMode) return;
+            if (IsDesignMode)
+                return;
             defaultBody = HelpBodyLabel.Text;
             InitLoadingCircle();
         }

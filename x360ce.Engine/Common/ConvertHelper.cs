@@ -96,12 +96,23 @@ namespace x360ce.Engine
 			var newRange = newMax - newMin;
 			var scale = newRange / oldRange;
 			var newValue = newMin + ((value - oldMin) * scale);
-			// Limit range.
-			if (newValue > newMax)
-				return newMax;
-			if (newValue < newMin)
-				return newMin;
-			return newValue;
+            if (newRange > 0)
+            {
+                // Limit range.
+                if (newValue > newMax)
+                    return newMax;
+                if (newValue < newMin)
+                    return newMin;
+            }
+            else
+            {
+                // Limit range.
+                if (newValue > newMin)
+                    return newMin;
+                if (newValue < newMax)
+                    return newMax;
+            }
+            return newValue;
 		}
 
 		public static int DeadZone(int val, int min, int max, int lowerDZ, int upperDZ)

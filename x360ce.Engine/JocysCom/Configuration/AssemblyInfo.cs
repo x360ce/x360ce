@@ -45,10 +45,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			_assembly = assembly;
 		}
 
-		#region Emtry assembly
+		#region Entry assembly
 
 		/// <summary>
-		/// Assembly.GetEntryAssembly() returns null in web apps. Mark assembly as the entry assembly
+		/// Assembly.GetEntryAssembly() returns null in web applications. Mark assembly as the entry assembly
 		/// by adding this attribute inside Properties\AssemblyInfo.cs file:
 		/// [assembly: JocysCom.ClassLibrary.Configuration.AssemblyInfo.EntryAssembly]
 		/// </summary>
@@ -149,7 +149,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 			var runMode = ConfigurationManager.AppSettings["RunMode"];
 			var haveRunMode = !string.IsNullOrEmpty(runMode);
-			// If runmode is not specified then assume live.
+			// If run mode is not specified then assume live.
 			var nonLive = haveRunMode && string.Compare(runMode, "LIVE", true) != 0;
 			if (showBuildDate || (showRunMode && nonLive))
 			{

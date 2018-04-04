@@ -206,13 +206,6 @@ namespace x360ce.App.DInput
                         //var min = short.MinValue; // -32768;
                         //var max = short.MaxValue; //  32767;
 
-                        // If value is inverted (I) then...
-                        if (map.IsInverted)
-                        {
-                            // Convert [0;65535] range to [65535;0] range.
-                            v = (ushort)(ushort.MaxValue - v);
-                        }
-
                         /// If half value (H) then...
                         //else if (!map.IsInverted && map.IsHalf)
                         //{
@@ -239,7 +232,12 @@ namespace x360ce.App.DInput
                         // --------------------------------------------------------
                         if (map.Target == TargetType.Button)
                         {
-
+							// If value is inverted (I) then...
+							if (map.IsInverted)
+							{
+								// Convert [0;65535] range to [65535;0] range.
+								v = (ushort)(ushort.MaxValue - v);
+							}
                             // If value is inverted (I) then...
                             if (map.IsHalf)
                             {

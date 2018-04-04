@@ -53,6 +53,9 @@ CALL:DEL "%SystemRoot%\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Fi
 :: Tools -> Options -> Projects and Solutions -> Build and Run
 :: Set "On Run, when build or deployment errors occur:" Prompt to Launch
 
+:: .EditorConfig file.
+:: "charset=utf-8" option can trigger "The source file is different from when the module was built." warning when debugging.
+
 GOTO:EOF
 
 :DEL
