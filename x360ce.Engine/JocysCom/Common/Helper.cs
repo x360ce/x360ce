@@ -65,14 +65,14 @@ namespace JocysCom.ClassLibrary
 			return default(T);
 		}
 
-        /// <summary>
-        /// Get resource from class *.resx file.
-        /// </summary>
-        public static T FindResource<T>(string name, object o)
-        {
-            var resources = new System.ComponentModel.ComponentResourceManager(o.GetType());
-            return (T)(resources.GetObject(name));
-        }
+		/// <summary>
+		/// Get resource from class *.resx file.
+		/// </summary>
+		public static T FindResource<T>(string name, object o)
+		{
+			var resources = new System.ComponentModel.ComponentResourceManager(o.GetType());
+			return (T)(resources.GetObject(name));
+		}
 
 		/// <summary>
 		/// Find resource in all loaded assemblies.
