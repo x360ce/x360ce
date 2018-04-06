@@ -102,7 +102,7 @@ namespace x360ce.App.DInput
         {
             lock (DiUpdatesLock)
             {
-                // If thread channged then...
+                // If thread changed then...
                 if (RefreshAllThreadId.HasValue && RefreshAllThreadId.Value != Thread.CurrentThread.ManagedThreadId)
                 {
                     UnInitDeviceDetector();
@@ -115,7 +115,7 @@ namespace x360ce.App.DInput
                     RefreshAllThreadId = Thread.CurrentThread.ManagedThreadId;
                     // DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
                     // separate windows form must be created on the same thread as the process which will access and update device.
-                    // detector.DetectorForm will be used to acquire devivces.
+                    // detector.DetectorForm will be used to acquire devices.
                     InitDeviceDetector();
                     Manager = new DirectInput();
                 }

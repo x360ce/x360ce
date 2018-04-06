@@ -19,23 +19,17 @@ namespace x360ce.App.DInput
 
 		public bool UpdateDevicesEnabled;
 
+		// Detector will be initialized on a separate thread.
 		public void InitDeviceDetector()
 		{
 			UpdateDevicesEnabled = true;
 			detector = new DeviceDetector(false);
-			detector.DeviceChanged += detector_DeviceChanged;
 		}
 
 		public void UnInitDeviceDetector()
 		{
-			detector.DeviceChanged -= detector_DeviceChanged;
 			// Can't dispose here due to cross-threading.
-            //detector.Dispose();
-		}
-
-		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
-		{
-			UpdateDevicesEnabled = true;
+			//detector.Dispose();
 		}
 
 		#endregion
@@ -107,7 +101,22 @@ namespace x360ce.App.DInput
 					}
 					ud.LoadHidDeviceInfo(hid);
 					ud.LoadDevDeviceInfo(dev);
-					insertDevices.Add(ud);
+					var isVirtual = false;
+					if (hid != null)
+					{
+						DeviceInfo p = hid;
+						do
+						{
+							p = DeviceDetector.GetParentDevice(Guid.Empty, JocysCom.ClassLibrary.Win32.DIGCF.DIGCF_ALLCLASSES, p.DeviceId);
+							if (p != null && string.Compare(p.HardwareId, VirtualDriverInstaller.ViGEmBusHardwareId, true) == 0)
+							{
+								isVirtual = true;
+								break;
+							}
+						} while (p != null);
+					}
+					if (!isVirtual)
+						insertDevices.Add(ud);
 				}
 			}
 			//if (insertDevices.Count > 0)
@@ -122,8 +131,6 @@ namespace x360ce.App.DInput
 			}
 			if (Program.IsClosing)
 				return;
-			//Invoke((MethodInvoker)delegate ()
-			//{
 			// Remove disconnected devices.
 			for (int i = 0; i < deleteDevices.Length; i++)
 			{
@@ -141,22 +148,16 @@ namespace x360ce.App.DInput
 			}
 			// Enable Test instances.
 			TestDeviceHelper.EnableTestInstances();
-
-
 			RefreshDevicesCount++;
 			var ev = DevicesUpdated;
 			if (ev != null)
 				ev(this, new DInputEventArgs());
-
 			//	var game = CurrentGame;
 			//	if (game != null)
 			//	{
 			//		// Auto-configure new devices.
 			//		AutoConfigure(game);
 			//	}
-			//	// Fill INI textBox.
-			//	GetINI();
-			//});
 		}
 
 		void RefreshDevice(UserDevice ud, DeviceInstance instance)

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -43,7 +37,6 @@ namespace JocysCom.ClassLibrary.IO
 		protected override void WndProc(ref Message m)
 		{
 			base.WndProc(ref m);
-
 			if (_Detector != null)
 			{
 				_Detector.WndProc(ref m);

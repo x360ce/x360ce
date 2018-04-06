@@ -75,6 +75,7 @@ namespace x360ce.App
 			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
 			this.VirtualButton = new System.Windows.Forms.ToolStripButton();
 			this.LibraryButton = new System.Windows.Forms.ToolStripButton();
+			this.FormUpdateFrequencyLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -355,6 +356,7 @@ namespace x360ce.App
             this.StatusTimerLabel,
             this.toolStripStatusLabel2,
             this.UpdateFrequencyLabel,
+            this.FormUpdateFrequencyLabel,
             this.UpdateDevicesStatusLabel,
             this.CloudMessagesLabel,
             this.StatusEventsLabel,
@@ -378,7 +380,7 @@ namespace x360ce.App
 			// toolStripStatusLabel2
 			// 
 			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			this.toolStripStatusLabel2.Size = new System.Drawing.Size(119, 19);
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(86, 19);
 			this.toolStripStatusLabel2.Spring = true;
 			// 
 			// UpdateFrequencyLabel
@@ -623,6 +625,12 @@ namespace x360ce.App
 			this.LibraryButton.Text = "Library";
 			this.LibraryButton.Click += new System.EventHandler(this.LibraryButton_Click);
 			// 
+			// FormUpdateFrequencyLabel
+			// 
+			this.FormUpdateFrequencyLabel.Name = "FormUpdateFrequencyLabel";
+			this.FormUpdateFrequencyLabel.Size = new System.Drawing.Size(33, 19);
+			this.FormUpdateFrequencyLabel.Text = "Hz: 0";
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -723,5 +731,6 @@ namespace x360ce.App
 		private TabPage IssuesTabPage;
 		private JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl IssuesPanel;
 		private ToolStripButton TestButton;
+		private ToolStripStatusLabel FormUpdateFrequencyLabel;
 	}
 }

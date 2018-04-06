@@ -273,7 +273,7 @@ namespace x360ce.App.Controls
 			}
 			// This must be done for the first time device is connected in order to retrieve 
 			// Force feedback information.
-			// XInput must be unloaded in case it tries to lock the device exclusivly.
+			// XInput must be unloaded in case it tries to lock the device exclusively.
 			if (DiEffectsTable.Rows.Count > 0)
 				DiEffectsTable.Rows.Clear();
 			var effects = ud.DeviceEffects;

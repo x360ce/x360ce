@@ -52,6 +52,9 @@ namespace JocysCom.ClassLibrary.IO
 		public string ParentDeviceId { get { return _ParentDeviceId; } }
 		private string _ParentDeviceId;
 
+		public string ParentHardwareId { get { return _ParentHardwareId; } }
+		private string _ParentHardwareId;
+
 		public Guid ClassGuid { get { return _ClassGuid; } }
 		private Guid _ClassGuid;
 

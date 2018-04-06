@@ -7,6 +7,8 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.IO;
+using Microsoft.Win32.SafeHandles;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -55,9 +57,24 @@ namespace JocysCom.ClassLibrary.IO
 		public DeviceDetector(bool showForm = false)
 		{
 			DetectorForm = new DeviceDetectorForm(this);
-			if (showForm) DetectorForm.Show();
+			if (showForm)
+				DetectorForm.Show();
 			_RecipientHandle = DetectorForm.Handle;
-			//RegisterDeviceNotification(_RecipientHandle, DEV_BROADCAST_DEVICEINTERFACE, 0)
+
+			//uint DEVICE_NOTIFY_WINDOW_HANDLE = 0;
+			//var notificationFilter = new DEV_BROADCAST_DEVICEINTERFACE();
+			//notificationFilter.Initialize();
+			//// Request to receive notifications about a class of devices.
+			//notificationFilter.dbch_devicetype = DBCH_DEVICETYPE.DBT_DEVTYP_DEVICEINTERFACE;
+			//// Specify the interface class to receive notifications about.
+			//notificationFilter.dbch_classguid = Guid.Empty;
+			//// Allocate memory for the buffer that holds the DEV_BROADCAST_DEVICEINTERFACE structure.
+			//IntPtr devBroadcastDeviceInterfaceBuffer;
+			//devBroadcastDeviceInterfaceBuffer = Marshal.AllocHGlobal(notificationFilter.dbch_size);
+			//// Copy the DEV_BROADCAST_DEVICEINTERFACE structure to the buffer.
+			//// Set fDeleteOld True to prevent memory leaks.
+			//Marshal.StructureToPtr(notificationFilter, devBroadcastDeviceInterfaceBuffer, true);
+			//NativeMethods.RegisterDeviceNotification(_RecipientHandle, devBroadcastDeviceInterfaceBuffer, DEVICE_NOTIFY_WINDOW_HANDLE);
 		}
 
 		/// <summary>
@@ -66,9 +83,11 @@ namespace JocysCom.ClassLibrary.IO
 		/// <param name="m"></param>
 		public void WndProc(ref Message m)
 		{
+			// Please note that only top-level window of the form will receive a set of default WM_DEVICECHANGE messages
+			// when new devices added, become available or removed.
+			// You do not need to register to receive these default messages.
 			if (m.Msg == WM_DEVICECHANGE)
 			{
-				var changeType = (DBT)m.WParam.ToInt32();
 				object deviceInfo = null;
 				DBCH_DEVICETYPE? deviceType = null;
 				if (m.LParam != IntPtr.Zero)
@@ -102,6 +121,7 @@ namespace JocysCom.ClassLibrary.IO
 							break;
 					}
 				}
+				var changeType = (DBT)m.WParam.ToInt32();
 				var e = new DeviceDetectorEventArgs(changeType, deviceType, deviceInfo);
 				RaiseDeviceChanged(this, e);
 				switch (changeType)
@@ -111,7 +131,8 @@ namespace JocysCom.ClassLibrary.IO
 						if (deviceType == DBCH_DEVICETYPE.DBT_DEVTYP_HANDLE)
 						{
 							// If the client wants to cancel, let Windows know.
-							if (e.Cancel) m.Result = (IntPtr)BROADCAST_QUERY_DENY;
+							if (e.Cancel)
+								m.Result = (IntPtr)BROADCAST_QUERY_DENY;
 						}
 						break;
 				}
@@ -289,8 +310,8 @@ namespace JocysCom.ClassLibrary.IO
 			int requiredSize3 = 0;
 			List<string> devicePathNames3 = new List<string>();
 			var interfaceData = new SP_DEVICE_INTERFACE_DATA();
-            interfaceData.Initialize();
-            List<string> serials = new List<string>();
+			interfaceData.Initialize();
+			List<string> serials = new List<string>();
 			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_DEVICEINTERFACE);
 			for (int i2 = 0; NativeMethods.SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, ref hidGuid, i2, ref interfaceData); i2++)
 			{
@@ -310,19 +331,21 @@ namespace JocysCom.ClassLibrary.IO
 				var deviceId = GetDeviceId(deviceHandle);
 				devicePathNames3.Add(devicePath);
 				Marshal.FreeHGlobal(ptrDetails);
-				var accessRights = WinNT.GENERIC_READ | WinNT.GENERIC_WRITE;
-				var shareModes = WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE;
 				// Open the device as a file so that we can query it with HID and read/write to it.
 				var devHandle = NativeMethods.CreateFile(
 					interfaceDetail.DevicePath,
-					accessRights,
-					shareModes,
+					0,
+					FileShare.ReadWrite,
 					IntPtr.Zero,
-					WinNT.OPEN_EXISTING,
-					WinNT.Overlapped,
+					FileMode.Open,
+					0, //WinNT.Overlapped
 					IntPtr.Zero
 				);
-				if (devHandle.IsInvalid) continue;
+
+				//fileHandle = NativeApi.CreateFile(FilePath, 0, FileShare.ReadWrite, IntPtr.Zero, FileMode.Open, 0, IntPtr.Zero);
+
+				if (devHandle.IsInvalid)
+					continue;
 				var ha = new HIDD_ATTRIBUTES();
 				ha.Size = Marshal.SizeOf(ha);
 				var success2 = NativeMethods.HidD_GetAttributes(devHandle, ref ha);
@@ -341,18 +364,20 @@ namespace JocysCom.ClassLibrary.IO
 					// Free the 'pre-parsed data'.
 					NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
 					// This could fail if the device was recently attached.
-					uint capacity = 126;
-					IntPtr buffer = Marshal.AllocHGlobal((int)capacity);
-					serial = NativeMethods.HidD_GetSerialNumberString(devHandle, buffer, capacity)
-						? Marshal.PtrToStringAuto(buffer) : "";
-					vendor = NativeMethods.HidD_GetManufacturerString(devHandle, buffer, capacity)
-						? Marshal.PtrToStringAuto(buffer) : "";
-					product = NativeMethods.HidD_GetProductString(devHandle, buffer, capacity)
-						? Marshal.PtrToStringAuto(buffer) : "";
-					phdesc = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, buffer, capacity)
-						? Marshal.PtrToStringAuto(buffer) : "";
-					// Free resources.
-					Marshal.FreeHGlobal(buffer);
+					// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
+					var sb = new StringBuilder(256);
+					vendor = NativeMethods.HidD_GetManufacturerString(devHandle, sb, sb.Capacity)
+						? sb.ToString() : "";
+					if (string.IsNullOrEmpty(vendor))
+						vendor = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
+					product = NativeMethods.HidD_GetProductString(devHandle, sb, sb.Capacity)
+						? sb.ToString() : "";
+					if (string.IsNullOrEmpty(product))
+						product = GetDeviceDescription(deviceInfoSet, deviceInfoData);
+					serial = NativeMethods.HidD_GetSerialNumberString(devHandle, sb, sb.Capacity)
+						? sb.ToString() : "";
+					phdesc = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, sb, sb.Capacity)
+						? sb.ToString() : "";
 				}
 				uint parentDeviceInstance = 0;
 				string parentDeviceId = null;
@@ -361,7 +386,7 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					parentDeviceId = GetDeviceId(parentDeviceInstance);
 				}
-                var di = new DeviceInfo(deviceId, deviceHandle, parentDeviceId, devicePath, "", vendor, product, hidGuid, "", DeviceNodeStatus.DN_MANUAL, ha.VendorID, ha.ProductID, ha.VersionNumber);
+				var di = new DeviceInfo(deviceId, deviceHandle, parentDeviceId, devicePath, "", vendor, product, hidGuid, "", DeviceNodeStatus.DN_MANUAL, ha.VendorID, ha.ProductID, ha.VersionNumber);
 				list.Add(di);
 				serials.Add(phdesc);
 				devHandle.Close();
@@ -449,8 +474,8 @@ namespace JocysCom.ClassLibrary.IO
 			var deviceManufacturer = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
 			var deviceClassGuid = deviceInfoData.ClassGuid;
 			var classDescription = GetClassDescription(deviceClassGuid);
-            var hardwareId = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
-            Win32.DeviceNodeStatus status;
+			var hardwareId = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
+			Win32.DeviceNodeStatus status;
 			var deviceHandle = deviceInfoData.DevInst;
 			NativeMethods.GetDeviceNodeStatus(deviceHandle, IntPtr.Zero, out status);
 			uint vid;
@@ -747,7 +772,7 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			if (disposing)
 			{
-				//UnregisterDeviceNotification(_RecipientHandle);
+				//NativeMethods.UnregisterDeviceNotification(_RecipientHandle);
 				DetectorForm.Dispose();
 				DetectorForm = null;
 			}

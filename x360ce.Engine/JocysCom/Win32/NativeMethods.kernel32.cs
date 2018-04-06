@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -15,10 +16,10 @@ namespace JocysCom.ClassLibrary.Win32
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern SafeFileHandle CreateFile(
 			string lpFileName,
-			uint dwDesiredAccess,
-			uint dwShareMode,
+			FileAccess dwDesiredAccess,
+			FileShare dwShareMode,
 			IntPtr lpSecurityAttributes,
-			uint dwCreationDisposition,
+			FileMode dwCreationDisposition,
 			uint dwFlagsAndAttributes,
 			IntPtr hTemplateFile
 		);

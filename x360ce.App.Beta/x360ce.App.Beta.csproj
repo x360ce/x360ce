@@ -452,6 +452,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DeveloperToolsForm.resx">
       <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
