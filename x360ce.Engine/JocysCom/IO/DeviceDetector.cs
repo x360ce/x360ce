@@ -365,15 +365,14 @@ namespace JocysCom.ClassLibrary.IO
 					NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
 					// This could fail if the device was recently attached.
 					// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
-					var sb = new StringBuilder(256);
+					ulong capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);
+					var sb = new StringBuilder((int)capacity, (int)capacity);
 					vendor = NativeMethods.HidD_GetManufacturerString(devHandle, sb, sb.Capacity)
-						? sb.ToString() : "";
-					if (string.IsNullOrEmpty(vendor))
-						vendor = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
+						? sb.ToString()
+						: GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
 					product = NativeMethods.HidD_GetProductString(devHandle, sb, sb.Capacity)
-						? sb.ToString() : "";
-					if (string.IsNullOrEmpty(product))
-						product = GetDeviceDescription(deviceInfoSet, deviceInfoData);
+						? sb.ToString()
+						: GetDeviceDescription(deviceInfoSet, deviceInfoData);
 					serial = NativeMethods.HidD_GetSerialNumberString(devHandle, sb, sb.Capacity)
 						? sb.ToString() : "";
 					phdesc = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, sb, sb.Capacity)

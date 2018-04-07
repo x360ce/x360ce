@@ -77,7 +77,6 @@ namespace x360ce.App
             var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x => x.ObjectId.InstanceNumber).ToArray();
             foreach (var o in objects)
 			{
-                var props = device.GetObjectPropertiesById(o.ObjectId);
                 var item = new DeviceObjectItem()
 				{
 					Name = o.Name,
