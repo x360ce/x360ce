@@ -117,8 +117,10 @@ namespace x360ce.App.Controls
 			MainPictureBox.BackColor = Enabled ? System.Drawing.Color.White : System.Drawing.SystemColors.Control;
 		}
 
+		// Half and Invert values are only in creating xinput path - red line.
 		bool _invert;
 		bool _half;
+
 		int _dInput;
 		int _xInput;
 
@@ -288,7 +290,6 @@ namespace x360ce.App.Controls
 			var max = thumb ? 32767f : 255f;
 			// Convert XInput to image position.
 			var xi = ConvertHelper.ConvertRangeF(min, max, 0f, h, _xInput);
-			if (_invert) di = w - di;
 			var g = e.Graphics;
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
