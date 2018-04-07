@@ -2,15 +2,20 @@
 
 Install:
 
-1.  Microsoft Visual Studio Community 2013 or 
-    Visual Studio Professional 2013
+1.  Microsoft Visual Studio Community 2017 or 
+    Visual Studio Professional 2017
 
     https://www.visualstudio.com/downloads/download-visual-studio-vs
 
-    Optional:
+    Please note that C++ projects are using "Visual C++ Build Tools v14.0".
+    This means that you have to include this feature on "Visual Studio 2017 Installer":
     
-       You can install and open project with "Microsoft Visual Studio Community 2015", but you still need old version to build C++ projects.
-       Important: VS2015 will offer upgrade C++ projects when you open solution for the first time. Don't upgrade. Uncheck all boxes and press [OK].
+        Desktop development with C++
+            [x] VC++ 2015.3 v140 toolset for desctop (x86,x64)
+	
+    Optional step when you open Solution:
+   
+    VS2017 will offer upgrade C++ projects when you open solution for the first time. Don't upgrade. Uncheck all boxes and press [OK].
 
 2.  Visual Leak Detector for Visual C++
 
@@ -20,17 +25,22 @@ Install:
 
     https://msdn.microsoft.com/en-us/microsoft-sdks-msdn.aspx
    
-4.  Microsoft SQL Server 2016 Data Tools (required by x360ce.Data project)
+4.  Microsoft SQL Server 2017 Data Tools (required by x360ce.Data project)
 
     http://msdn.microsoft.com/data/tools.aspx
 
-    Optional:
+    This feature is also availabe on "Visual Studio 2017 Installer":
+        
+	Data storage and processing
+            [x] SQL Server Data Tools
+
+   Optional:
 
         You can install "Microsoft SQL Server 2016 Developer Edition", which is free now:
 		
 		https://www.microsoft.com/en-us/server-cloud/products/sql-server-editions/sql-server-developer.aspx
 
-		and	"Microsoft SQL Server Management Studio 2016" (SSMS), which is free and separate download now:
+		and	"Microsoft SQL Server Management Studio" (SSMS), which is free and separate download now:
 		
 		https://msdn.microsoft.com/en-us/library/mt238290.aspx
 
