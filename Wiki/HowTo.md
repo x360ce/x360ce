@@ -11,7 +11,7 @@ Install:
     This means that you have to include this feature on "Visual Studio 2017 Installer":
     
         Desktop development with C++
-            [x] VC++ 2015.3 v140 toolset for desctop (x86,x64)
+            [x] VC++ 2015.3 v140 toolset for desktop (x86,x64)
 	
     Optional step when you open Solution:
    
@@ -30,9 +30,9 @@ Install:
     http://msdn.microsoft.com/data/tools.aspx
 
     This feature is also availabe on "Visual Studio 2017 Installer":
-        
-	Data storage and processing
-            [x] SQL Server Data Tools
+
+        Data storage and processing
+                [x] SQL Server Data Tools
 
    Optional:
 
