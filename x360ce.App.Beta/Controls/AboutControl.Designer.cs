@@ -78,9 +78,9 @@
 			this.AboutWikiLabel.AutoSize = true;
 			this.AboutWikiLabel.Location = new System.Drawing.Point(148, 109);
 			this.AboutWikiLabel.Name = "AboutWikiLabel";
-			this.AboutWikiLabel.Size = new System.Drawing.Size(48, 13);
+			this.AboutWikiLabel.Size = new System.Drawing.Size(39, 13);
 			this.AboutWikiLabel.TabIndex = 0;
-			this.AboutWikiLabel.Text = "shauleiz:";
+			this.AboutWikiLabel.Text = "ViGEm";
 			// 
 			// AboutTocaEditLinkLabel
 			// 
@@ -230,10 +230,10 @@
 			this.AboutWikiLinkLabel.AutoSize = true;
 			this.AboutWikiLinkLabel.Location = new System.Drawing.Point(219, 109);
 			this.AboutWikiLinkLabel.Name = "AboutWikiLinkLabel";
-			this.AboutWikiLinkLabel.Size = new System.Drawing.Size(215, 13);
+			this.AboutWikiLinkLabel.Size = new System.Drawing.Size(89, 13);
 			this.AboutWikiLinkLabel.TabIndex = 0;
 			this.AboutWikiLinkLabel.TabStop = true;
-			this.AboutWikiLinkLabel.Text = "https://github.com/shauleiz/vXboxInterface";
+			this.AboutWikiLinkLabel.Text = "https://vigem.org";
 			this.AboutWikiLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
 			// 
 			// AboutControl

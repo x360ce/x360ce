@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -12,31 +11,33 @@ namespace x360ce.App
 	{
 		public static PadSetting GetAutoPreset(DeviceObjectItem[] objects)
 		{
+
 			var ps = new PadSetting();
-			if (objects == null)
+			var list = objects.ToList();
+			if (list == null)
 				return ps;
 			// Get information about device.
-			var o = objects.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
+			var o = list.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
 			// If Right thumb triggers are missing then...
 			if (o == null)
 			{
 				// Logitech RumblePad 2 USB
-				ps.ButtonA = GetButtonValue(objects, 1);
-				ps.ButtonB = GetButtonValue(objects, 2);
-				ps.ButtonX = GetButtonValue(objects, 0);
-				ps.ButtonY = GetButtonValue(objects, 3);
-				ps.LeftShoulder = GetButtonValue(objects, 4);
-				ps.RightShoulder = GetButtonValue(objects, 5);
-				ps.ButtonBack = GetButtonValue(objects, 8);
-				ps.ButtonStart = GetButtonValue(objects, 9);
-				ps.LeftThumbButton = GetButtonValue(objects, 10);
-				ps.RightThumbButton = GetButtonValue(objects, 11);
+				ps.ButtonA = GetButtonValue(list, 1, true, "Cross");
+				ps.ButtonB = GetButtonValue(list, 2, true, "Circle");
+				ps.ButtonX = GetButtonValue(list, 0, true, "Square");
+				ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
+				ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
+				ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
+				ps.ButtonBack = GetButtonValue(list, 8, true, "Select", "Back");
+				ps.ButtonStart = GetButtonValue(list, 9, true, "Start");
+				ps.LeftThumbButton = GetButtonValue(list, 10, true, "Left Paddle");
+				ps.RightThumbButton = GetButtonValue(list, 11, true, "Right Paddle");
 				// Triggers.
-				ps.LeftTrigger = GetButtonValue(objects, 6);
-				ps.RightTrigger = GetButtonValue(objects, 7);
+				ps.LeftTrigger = GetButtonValue(list, 6, true, "L2");
+				ps.RightTrigger = GetButtonValue(list, 7, true, "R2");
 				// Right Thumb.
-				ps.RightThumbAxisX = GetAxisValue(objects, ObjectGuid.ZAxis);
-				ps.RightThumbAxisY = GetAxisValue(objects, ObjectGuid.RzAxis);
+				ps.RightThumbAxisX = GetAxisValue(list, false, ObjectGuid.ZAxis, true);
+				ps.RightThumbAxisY = GetAxisValue(list, true, ObjectGuid.RzAxis, true);
 			}
 			else
 			{
@@ -75,48 +76,81 @@ namespace x360ce.App
 				//     65      10         9  Button         Button 9                        PushButton           
 				//     66     133        10  Button         System Main Menu                PushButton           
 
-				ps.ButtonA = GetButtonValue(objects, 0);
-				ps.ButtonB = GetButtonValue(objects, 1);
-				ps.ButtonX = GetButtonValue(objects, 2);
-				ps.ButtonY = GetButtonValue(objects, 3);
-				ps.LeftShoulder = GetButtonValue(objects, 4);
-				ps.RightShoulder = GetButtonValue(objects, 5);
-				ps.ButtonBack = GetButtonValue(objects, 6);
-				ps.ButtonStart = GetButtonValue(objects, 7);
-				ps.LeftThumbButton = GetButtonValue(objects, 8);
-				ps.RightThumbButton = GetButtonValue(objects, 9);
+				ps.ButtonA = GetButtonValue(list, 0, true, "Cross");
+				ps.ButtonB = GetButtonValue(list, 1, true, "Circle");
+				ps.ButtonX = GetButtonValue(list, 2, true, "Square");
+				ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
+				ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
+				ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
+				ps.ButtonBack = GetButtonValue(list, 6, true, "Select", "Back");
+				ps.ButtonStart = GetButtonValue(list, 7, true, "Start");
+				ps.LeftThumbButton = GetButtonValue(list, 8, true, "Left Paddle");
+				ps.RightThumbButton = GetButtonValue(list, 9, true, "Right Paddle");
+				//Combined pedals
 				// Triggers.
-				ps.LeftTrigger = GetAxisValue(objects, ObjectGuid.ZAxis);
-				ps.RightTrigger = GetAxisValue(objects, ObjectGuid.RzAxis);
+				ps.LeftTrigger = GetAxisValue(list, false, ObjectGuid.ZAxis, true, "L2");
+				ps.RightTrigger = GetAxisValue(list, false, ObjectGuid.RzAxis, true, "R2");
 				// Right Thumb.
-				ps.RightThumbAxisX = GetAxisValue(objects, ObjectGuid.RxAxis);
-				ps.RightThumbAxisY = GetAxisValue(objects, ObjectGuid.RyAxis);
+				ps.RightThumbAxisX = GetAxisValue(list, false, ObjectGuid.RxAxis, true);
+				// Y is inverted by default.
+				ps.RightThumbAxisY = GetAxisValue(list, true, ObjectGuid.RyAxis, true);
 			}
 			// Right Thumb.
-			ps.LeftThumbAxisX = GetAxisValue(objects, ObjectGuid.XAxis);
-			ps.LeftThumbAxisY = GetAxisValue(objects, ObjectGuid.YAxis);
+			ps.LeftThumbAxisX = GetAxisValue(list, false, ObjectGuid.XAxis, true, "Wheel axis");
+			// Y is inverted by default.
+			ps.LeftThumbAxisY = GetAxisValue(list, true, ObjectGuid.YAxis, true);
 			// D-Pad
-			o = objects.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
+			o = list.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
 			ps.DPad = o == null ? "" : string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1);
 			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
 			return ps;
 		}
 
 		/// <summary>Return button setting value if button exists.</summary>
-		static string GetButtonValue(DeviceObjectItem[] objects, int instance)
+		static string GetButtonValue(List<DeviceObjectItem> objects, int instance, bool removeIfFound, params string[] names)
 		{
-			var o = objects.FirstOrDefault(x => x.Type == ObjectGuid.Button && x.Instance == instance);
+			DeviceObjectItem o = null;
+			// Try to find by name.
+			foreach (var name in names)
+			{
+				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.Button && x.Name.Contains(name));
+				if (o != null)
+				{
+					if (removeIfFound)
+						objects.Remove(o);
+					break;
+				}
+			}
+			// Try to find by instance.
+			if (o == null)
+				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.Button && x.Instance == instance);
+			// Use instance number which is same as X360CE button index.
 			return o == null ? "" : string.Format("{0}{1}", SettingName.SType.Button, o.Instance + 1);
 		}
 
 		/// <summary>Return axis setting value if axis exists.</summary>
-		static string GetAxisValue(DeviceObjectItem[] objects, Guid type)
+		static string GetAxisValue(List<DeviceObjectItem> objects, bool invert, Guid type, bool removeIfFound, params string[] names)
 		{
-			// If axis found then...
-			var o = objects.FirstOrDefault(x => x.Type == type);
-			return o == null ? "" : string.Format("{0}{1}", SettingName.SType.Axis, o.Instance + 1);
+			DeviceObjectItem o = null;
+			// Try to find by name.
+			foreach (var name in names)
+			{
+				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.Button && x.Name.Contains(name));
+				if (o != null)
+				{
+					if (removeIfFound)
+						objects.Remove(o);
+					break;
+				}
+			}
+			// Try to find by type.
+			if (o == null)
+				o = objects.FirstOrDefault(x => x.Type == type);
+			return o == null ? "" : string.Format("{0}{1}",
+				(invert ? "-" : "") + SettingName.SType.Axis
+				// Use X360CE axis index.
+				, o.DiIndex + 1);
 		}
-
 
 	}
 }

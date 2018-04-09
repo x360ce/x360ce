@@ -79,7 +79,7 @@ namespace x360ce.Engine
         }
 
         /// <summary>
-        /// Return bitmasked integer about present axis.
+        /// Return bit-masked integer about present axis.
         /// bit 1 = 1 - Axis 1 is present
         /// bit 2 = 0 - Axis 2 is missing
         /// bit 3 = 1 - Axis 3 is present
@@ -120,10 +120,17 @@ namespace x360ce.Engine
             {
                 try
                 {
-                    var item = device.GetObjectInfoByOffset((int)list[i]);
-                    if (item != null)
-                        mask |= (int)Math.Pow(2, i);
-                }
+					// This function accepts JoystickOffset enumeration values.
+					// These values are not the same as on DeviceObjectInstance.Offset.
+					var o = device.GetObjectInfoByOffset((int)list[i]);
+                    if (o != null)
+					{
+						// Find same object by raw offset.
+						var item = items.First(x => x.Offset == x.Offset);
+						item.DiIndex = i;
+						mask |= (int)Math.Pow(2, i);
+					}
+				}
                 catch { }
             }
             return mask;
@@ -192,9 +199,16 @@ namespace x360ce.Engine
             {
                 try
                 {
-                    var item = device.GetObjectInfoByOffset((int)list[i]);
-                    if (item != null)
-                        mask |= (int)Math.Pow(2, i);
+					// This function accepts JoystickOffset enumeration values.
+					// These values are not the same as on DeviceObjectInstance.Offset.
+					var o = device.GetObjectInfoByOffset((int)list[i]);
+					if (o != null)
+					{
+						// Find same object by raw offset.
+						var item = items.First(x => x.Offset == x.Offset);
+						item.DiIndex = i;
+						mask |= (int)Math.Pow(2, i);
+					}
                 }
                 catch { }
             }
