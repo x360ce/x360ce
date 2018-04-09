@@ -311,7 +311,7 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(DeviceVidTextBox, "0x{0:X4}", vid);
 			ControlsHelper.SetText(DevicePidTextBox, "0x{0:X4}", pid);
 			ControlsHelper.SetText(DeviceProductNameTextBox, ud.ProductName);
-			ControlsHelper.SetText(DeviceVendorNameTextBox, "{0}", ud.DevManufacturer);
+			ControlsHelper.SetText(DeviceVendorNameTextBox, "{0}", ud.HidManufacturer);
 			ControlsHelper.SetText(DeviceRevTextBox, "0x{0:X4}", ud.DevRevision);
 			ControlsHelper.SetText(DeviceProductGuidTextBox, ud.ProductGuid.ToString());
 			ControlsHelper.SetText(DeviceInstanceGuidTextBox, ud.InstanceGuid.ToString());
