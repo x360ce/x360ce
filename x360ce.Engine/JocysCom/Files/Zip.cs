@@ -100,7 +100,28 @@ namespace JocysCom.ClassLibrary.Files
 		}
 
 		/// <summary>
-		/// Extract file from the ZIP archive.
+		/// Compress files into the ZIP archive.
+		/// </summary>
+		/// <param name="sourceFolder">The name of the file to compress.</param>
+		/// <param name="zipFileName">A relative or absolute path of the ZIP file.</param>
+		public static void ZipFiles(string sourceFolder, string zipFileName)
+		{
+			// Create zip file for writing.
+			var zip = ZipStorer.Create(zipFileName, string.Empty);
+			var di = new DirectoryInfo(sourceFolder);
+			var files = di.GetFiles("*.*", SearchOption.AllDirectories);
+			foreach (var file in files)
+			{
+				var fileNameInZip = file.FullName.Substring(di.FullName.Length);
+				// Add file to the zip.
+				zip.AddFile(ZipStorer.Compression.Store, file.FullName, fileNameInZip, string.Empty);
+			}
+			zip.Close();
+		}
+
+
+		/// <summary>
+		/// Extract files from the ZIP archive.
 		/// </summary>
 		/// <param name="zipFileName">A relative or absolute path of the ZIP file.</param>
 		/// <param name="destinationFolder">Destination folder.</param>

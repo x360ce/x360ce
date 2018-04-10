@@ -130,8 +130,7 @@
     <Compile Include="Common\Enum\EffectDirection.cs" />
     <Compile Include="Common\Enum\EmulationType.cs" />
     <Compile Include="Common\Enum\EnabledState.cs" />
-    <Compile Include="Common\Enum\EffectType.cs" />
-    <Compile Include="Common\Enum\ForceFeedBackType.cs" />
+    <Compile Include="Common\Enum\ForceEffectType.cs" />
     <Compile Include="Common\Enum\GameRefreshStatus.cs" />
     <Compile Include="Common\Enum\HookMask.cs" />
     <Compile Include="Common\Enum\MapTo.cs" />

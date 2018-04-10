@@ -121,24 +121,18 @@ namespace x360ce.Engine
             if (device.CreatedEffects.Count > 1)
                 effectR = device.CreatedEffects[1];
 
-            // Effect type changed.
+			// Effect type changed.
             bool forceChanged = Changed(ref old_ForceType, ps.ForceType);
-
             if (forceChanged)
             {
                 // Update values.
-                var forceType = (ForceFeedBackType)TryParse(ps.ForceType);
-                // Forces for vibrating motors (Game pads).
-                // 0 - Constant. Good for vibrating motors.
-                // Forces for torque motors (Wheels).
-                // 1 - Periodic 'Sine Wave'. Good for car/plane engine vibration.
-                // 2 - Periodic 'Sawtooth Down Wave'. Good for gun recoil.
-                switch (forceType)
-                {
-                    case ForceFeedBackType.PeriodicSine: GUID_Force = EffectGuid.Sine; break;
-                    case ForceFeedBackType.PeriodicSawtooth: GUID_Force = EffectGuid.SawtoothDown; break;
-                    default: GUID_Force = EffectGuid.ConstantForce; break;
-                }
+                var forceType = (ForceEffectType)TryParse(ps.ForceType);
+				if (forceType.HasFlag(ForceEffectType.PeriodicSine))
+					GUID_Force = EffectGuid.Sine;
+				else if (forceType.HasFlag(ForceEffectType.PeriodicSawtooth))
+					GUID_Force = EffectGuid.SawtoothDown;
+				else
+					GUID_Force = EffectGuid.ConstantForce;
                 // Force change requires to dispose old effects.
                 // Stop old effects.
                 if (effectL != null)
@@ -360,7 +354,14 @@ namespace x360ce.Engine
             return i;
         }
 
-        bool Changed(ref string oldValue, string newValue)
+		bool Changed(ref ForceEffectType? oldValue, ForceEffectType newValue)
+		{
+			var changed = oldValue != newValue;
+			oldValue = newValue;
+			return changed;
+		}
+
+		bool Changed(ref string oldValue, string newValue)
         {
             var changed = oldValue != newValue;
             oldValue = newValue;

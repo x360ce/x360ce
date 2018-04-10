@@ -167,9 +167,9 @@ namespace x360ce.App.Controls
             // Add GamePad typed to ComboBox.
             var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
             foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
-            // Add force feedback typed to ComboBox.
-            var effectsTypes = (ForceEffectType[])Enum.GetValues(typeof(ForceEffectType));
-            foreach (var item in effectsTypes) ForceTypeComboBox.Items.Add(item);
+			// Add force feedback typed to ComboBox.
+			var effectsTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
+			foreach (var item in effectsTypes) ForceTypeComboBox.Items.Add(item);
 
             var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
             foreach (var item in effectDirections) LeftMotorDirectionComboBox.Items.Add(item);
