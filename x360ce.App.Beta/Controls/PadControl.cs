@@ -1566,5 +1566,19 @@ namespace x360ce.App.Controls
             RightTriggerLabel.Text = item.RightTrigger;
         }
 
-    }
+		private void ForceTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var type = (ForceEffectType)ForceTypeComboBox.SelectedItem;
+			var list = new List<string>();
+			if (type == ForceEffectType.Constant || type == ForceEffectType._Type2)
+				list.Add("Constant force type. Good for vibrating motors on game pads.");
+			if (type.HasFlag(ForceEffectType.PeriodicSine))
+				list.Add("Periodic 'Sine Wave' force type. Good for car/plane engine vibration. Good for torque motors on wheels.");
+			if (type.HasFlag(ForceEffectType.PeriodicSawtooth))
+				list.Add("Periodic 'Sawtooth Down Wave' force type. Good for gun recoil. Good for torque motors on wheels.");
+			if (type.HasFlag(ForceEffectType._Type2))
+				list.Add("Alternative implementation - two motors / actuators per effect.");
+			EffectDescriptionLabel.Text = string.Format("{0} ({1}) - {2}", type, (int)type, string.Join(" ", list));
+		}
+	}
 }

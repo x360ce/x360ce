@@ -835,10 +835,6 @@ namespace x360ce.App
 				if (ControlPages[i].ImageKey != bullet)
 					ControlPages[i].ImageKey = bullet;
 			}
-			// Update options panel.
-			var isVBusExists = Nefarius.ViGEm.Client.ViGEmClient.isVBusExists();
-			OptionsPanel.ViGEmBusInstallButton.Enabled = !isVBusExists;
-			OptionsPanel.ViGEmBusUninstallButton.Enabled = isVBusExists;
 		}
 
 		public void ReloadLibrary()

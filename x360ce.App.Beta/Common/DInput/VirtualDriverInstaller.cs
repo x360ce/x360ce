@@ -15,17 +15,21 @@ namespace x360ce.App.DInput
 
 		public static SP_DRVINFO_DATA GetViGemBusDriverInfo()
 		{
-			var devices = DeviceDetector.GetDevices();
+			var devices = DeviceDetector.GetDevices(DEVCLASS.SYSTEM, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_PROFILE);
 			var device = devices.FirstOrDefault(x => x.HardwareId == "Root\\ViGEmBus");
-			var driver = DeviceDetector.GetDrivers(device.DeviceId).FirstOrDefault();
+			var driver = default(SP_DRVINFO_DATA);
+			if (device != null)
+				driver = DeviceDetector.GetDrivers(device.DeviceId).FirstOrDefault();
 			return driver;
 		}
 
 		public static SP_DRVINFO_DATA GetHidGuardianDriverInfo()
 		{
-			var devices = DeviceDetector.GetDevices();
+			var devices = DeviceDetector.GetDevices(DEVCLASS.SYSTEM, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_PROFILE);
 			var device = devices.FirstOrDefault(x => x.HardwareId == "Root\\HidGuardian");
-			var driver = DeviceDetector.GetDrivers(device.DeviceId).FirstOrDefault();
+			var driver = default(SP_DRVINFO_DATA);
+			if (device != null)
+				driver = DeviceDetector.GetDrivers(device.DeviceId).FirstOrDefault();
 			return driver;
 		}
 
@@ -38,7 +42,7 @@ namespace x360ce.App.DInput
 		static void ExtractViGemBusFiles()
 		{
 			var target = GetViGEmBusPath();
-			ExtractViGemBusFiles("ViGEmBus", target);
+			ExtractViGemFiles("ViGEmBus", target);
 		}
 
 		public const string ViGEmBusHardwareId = "Root\\ViGEmBus";
@@ -88,8 +92,8 @@ namespace x360ce.App.DInput
 
 		static void ExtractHidGuardianFiles()
 		{
-			var target = GetViGEmBusPath();
-			ExtractViGemBusFiles("HidGuardian", target);
+			var target = GetHidGuardianPath();
+			ExtractViGemFiles("HidGuardian", target);
 		}
 
 		/// <summary>
@@ -136,7 +140,7 @@ namespace x360ce.App.DInput
 
 		#region Extract Helper
 
-		static void ExtractViGemBusFiles(string source, string target)
+		static void ExtractViGemFiles(string source, string target)
 		{
 			// There must be an easier way to check embedded non managed DLL version.
 			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";

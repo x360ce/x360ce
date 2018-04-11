@@ -123,10 +123,11 @@ namespace x360ce.Engine
 
 			// Effect type changed.
             bool forceChanged = Changed(ref old_ForceType, ps.ForceType);
-            if (forceChanged)
+			ForceEffectType forceType = 0;
+			if (forceChanged)
             {
                 // Update values.
-                var forceType = (ForceEffectType)TryParse(ps.ForceType);
+                forceType = (ForceEffectType)TryParse(ps.ForceType);
 				if (forceType.HasFlag(ForceEffectType.PeriodicSine))
 					GUID_Force = EffectGuid.Sine;
 				else if (forceType.HasFlag(ForceEffectType.PeriodicSawtooth))
@@ -165,21 +166,28 @@ namespace x360ce.Engine
                 // If 2 actuators available
                 if (actuatorR != null)
                 {
-                    // It would be logical to use one axis per Effect/Parameter. Logitech gamepad supports that.
-                    // Unfortunatelly SpeedLink gamepad needs both axis specified in order to operate motors separatelly.
-                    // Which is counter-intuitive.
-                    // Direction must be set to 'Positive' on both axis via force feedback settings interface.
-                    paramsL = GetParameters();
-                    // Note: Second axis direction will be set to zero i.e. motor will be not used by effect.
-                    paramsL.Axes = new int[2] { actuatorL.ObjectId, actuatorR.ObjectId };
-                    // There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
-                    //flagsL |= EffectParameterFlags.Axes;
-                    paramsR = GetParameters();
-                    // Note: Second axis direction will be set to zero i.e. motor will be not used by effect.
-                    paramsR.Axes = new int[2] { actuatorR.ObjectId, actuatorL.ObjectId };
-                    // There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
-                    //flagsR |= EffectParameterFlags.Axes;
-                }
+					paramsL = GetParameters();
+					paramsR = GetParameters();
+					// Unfortunately SpeedLink GamePad needs both axis specified in order to operate motors separately.
+					// Which is counter-intuitive.
+					if (forceType.HasFlag(ForceEffectType._Type2))
+					{
+						// Note: Second axis direction will be set to zero i.e. motor will be not used by effect.
+						// Directions must be set to 'Positive' on both first axis via force feedback settings interface.
+						paramsL.Axes = new int[2] { actuatorL.ObjectId, actuatorR.ObjectId };
+						paramsR.Axes = new int[2] { actuatorR.ObjectId, actuatorL.ObjectId };
+						// There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
+						//flagsR |= EffectParameterFlags.Axes;
+					}
+					// Used for normal devices like Logitech. Use one axis per Effect/Parameter.
+					else
+					{
+						paramsL.Axes = new int[1] { actuatorL.ObjectId };
+						paramsR.Axes = new int[1] { actuatorR.ObjectId };
+						// There is no need to set this flag or DIERR_ALREADYINITIALIZED error will be thrown.
+						//flagsR |= EffectParameterFlags.Axes;
+					}
+				}
                 // If one actuator available.
                 else if (actuatorL != null)
                 {
