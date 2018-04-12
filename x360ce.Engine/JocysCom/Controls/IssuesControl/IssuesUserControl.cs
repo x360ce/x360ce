@@ -179,7 +179,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
                 LastException = ii.LastException;
                 ExceptionInfoButton.Visible = true;
             }
-            TasksTimer.SleepTimerStart();
+			TasksTimer.DoActionNow();
+			TasksTimer.SleepTimerStart();
         }
         private void Item_Fixing(object sender, EventArgs e)
         {

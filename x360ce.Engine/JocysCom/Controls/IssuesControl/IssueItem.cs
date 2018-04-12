@@ -137,14 +137,15 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		}
 
-		public void SetSeverity(IssueSeverity severity, int fixType = 0, string description = "")
+		public void SetSeverity(IssueSeverity severity, int fixType = 0, string description = null)
 		{
 			var update = !Severity.HasValue || Severity.Value != severity || Description != description;
 			if (update)
 			{
 				FixType = fixType;
 				Severity = severity;
-				Description = description;
+				if (description != null)
+					Description = description;
 			}
 		}
 

@@ -12,40 +12,13 @@ namespace x360ce.Engine
     /// </summary>
     public class ForceFeedbackState
     {
-        System.Collections.Generic.List<DeviceObjectItem> actuators;
-
-        public ForceFeedbackState(UserDevice ud)
+        public ForceFeedbackState()
         {
             PeriodicForceL = new PeriodicForce();
             PeriodicForceR = new PeriodicForce();
             ConstantForceL = new ConstantForce();
             ConstantForceR = new ConstantForce();
             GUID_Force = EffectGuid.ConstantForce;
-            // Find and assign actuators.
-            actuators = ud.DeviceObjects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator)).ToList();
-
-            // If actuator available then...
-            if (actuators.Count > 0)
-            {
-                // Try to find left actuator.
-                actuatorL = actuators.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
-                //var actuator = actuators[0];
-                // If default actuator not found then take default.
-                if (actuatorL == null)
-                    actuatorL = actuators[0];
-                actuators.Remove(actuatorL);
-            }
-            // If actuator available then...
-            if (actuators.Count > 0)
-            {
-                // Try to find right actuator.
-                actuatorR = actuators.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
-                //var actuator = actuators[0];
-                // If default actuator not found then take default.
-                if (actuatorR == null)
-                    actuatorR = actuators[0];
-                actuators.Remove(actuatorR);
-            }
         }
 
         const uint INFINITE = 0xFFFFFFFF;
@@ -83,6 +56,7 @@ namespace x360ce.Engine
 
         // Force type changed by settings.
         string old_ForceType = "-1";
+		string old_ForceSwapMotor = "-1";
         // Force parameters changed by settings.
         string old_LeftPeriod;
         string old_RightPeriod;
@@ -107,10 +81,55 @@ namespace x360ce.Engine
             }
         }
 
-        public bool SetDeviceForces(Joystick device, PadSetting ps, Vibration v)
-        {
-            // Return if force feedback actuators not found.
-            if (actuatorL == null)
+        public bool SetDeviceForces(UserDevice ud, Joystick device, PadSetting ps, Vibration v)
+		{
+			var motorsChanged = Changed(ref old_ForceSwapMotor, ps.ForceSwapMotor);
+			bool swapMotor = false;
+
+			if (motorsChanged)
+			{
+				// Find and assign actuators.
+				var actuators = ud.DeviceObjects.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator)).ToList();
+				DeviceObjectItem xMotor = null;
+				// If actuator available then...
+				if (actuators.Count > 0)
+				{
+					// Try to find left actuator.
+					xMotor = actuators.FirstOrDefault(x => x.Type == ObjectGuid.XAxis);
+					//var actuator = actuators[0];
+					// If default actuator not found then take default.
+					if (xMotor == null)
+						xMotor = actuators[0];
+					actuators.Remove(xMotor);
+				}
+				DeviceObjectItem yMotor = null;
+				// If actuator available then...
+				if (actuators.Count > 0)
+				{
+					// Try to find right actuator.
+					yMotor = actuators.FirstOrDefault(x => x.Type == ObjectGuid.YAxis);
+					//var actuator = actuators[0];
+					// If default actuator not found then take default.
+					if (yMotor == null)
+						yMotor = actuators[0];
+					actuators.Remove(yMotor);
+				}
+				swapMotor = TryParse(ps.ForceSwapMotor) == 1;
+				// Allow to swap if both motors exist.
+				if (swapMotor && xMotor != null && yMotor != null)
+				{
+					actuatorL = yMotor;
+					actuatorR = xMotor;
+				}
+				else
+				{
+					actuatorL = xMotor;
+					actuatorR = yMotor;
+				}
+			}
+
+			// Return if force feedback actuators not found.
+			if (actuatorL == null)
                 return false;
             Effect effectL = null;
             Effect effectR = null;
@@ -122,9 +141,10 @@ namespace x360ce.Engine
                 effectR = device.CreatedEffects[1];
 
 			// Effect type changed.
-            bool forceChanged = Changed(ref old_ForceType, ps.ForceType);
+            bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
+
 			ForceEffectType forceType = 0;
-			if (forceChanged)
+			if (motorsChanged || forceChanged)
             {
                 // Update values.
                 forceType = (ForceEffectType)TryParse(ps.ForceType);
@@ -161,7 +181,7 @@ namespace x360ce.Engine
             var flagsL = EffectParameterFlags.None;
             var flagsR = EffectParameterFlags.None;
 
-            if (forceChanged)
+            if (motorsChanged || forceChanged)
             {
                 // If 2 actuators available
                 if (actuatorR != null)
@@ -206,7 +226,7 @@ namespace x360ce.Engine
             var directionRChanged = Changed(ref old_RightDirection, ps.RightMotorDirection);
 
             // Direction needs to be updated when force or direction change.
-            if (forceChanged || directionLChanged)
+            if (motorsChanged || forceChanged || directionLChanged)
             {
                 var directionL = TryParse(old_LeftDirection);
                 var dirL = new int[paramsL.Axes.Length];
@@ -216,7 +236,7 @@ namespace x360ce.Engine
             }
 
             // Direction needs to be updated when force or direction change.
-            if (actuatorR != null && (forceChanged || directionRChanged))
+            if (actuatorR != null && (motorsChanged || forceChanged || directionRChanged))
             {
                 var directionR = TryParse(old_RightDirection);
                 var dirR = new int[paramsR.Axes.Length];
@@ -229,7 +249,7 @@ namespace x360ce.Engine
             var strengthLChanged = Changed(ref old_LeftStrength, ps.LeftMotorStrength);
             var strengthRChanged = Changed(ref old_RightStrength, ps.RightMotorStrength);
 
-            if (forceChanged || strengthChanged || strengthLChanged)
+            if (motorsChanged || forceChanged || strengthChanged || strengthLChanged)
             {
                 int overalStrength = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
                 int leftGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetLeftMotorStrength());
@@ -237,7 +257,7 @@ namespace x360ce.Engine
                 flagsL |= EffectParameterFlags.Gain;
             }
 
-            if (actuatorR != null && (forceChanged || strengthChanged || strengthRChanged))
+            if (actuatorR != null && (motorsChanged || forceChanged || strengthChanged || strengthRChanged))
             {
                 int overalStrength = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
                 int rightGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetRightMotorStrength());
@@ -262,7 +282,7 @@ namespace x360ce.Engine
             var combine = actuatorR == null;
 
             // Get right values first for possible combine later.
-            if (forceChanged || periodRChanged || speedRChanged || combine)
+            if (motorsChanged || forceChanged || periodRChanged || speedRChanged || combine)
             {
                 rightMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_RightMotorSpeed);
                 rightPeriod = TryParse(old_RightPeriod) * 1000;
@@ -284,7 +304,7 @@ namespace x360ce.Engine
             }
 
             // Calculate left later for possible combine.
-            if (forceChanged || periodLChanged || speedLChanged || combine)
+            if (motorsChanged || forceChanged || periodLChanged || speedLChanged || combine)
             {
                 // Convert speed into magnitude/amplitude.
                 leftMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_LeftMotorSpeed);
@@ -321,7 +341,7 @@ namespace x360ce.Engine
                 flagsL |= EffectParameterFlags.TypeSpecificParameters;
             }
             // Recreate effects if force changed.
-            if (forceChanged)
+            if (motorsChanged || forceChanged)
             {
                 // Update Left force
                 paramsL.Parameters = GUID_Force == EffectGuid.ConstantForce

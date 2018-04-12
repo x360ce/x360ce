@@ -97,7 +97,7 @@ namespace x360ce.App.DInput
                                         if (ps.ForceEnable == "1")
                                         {
                                             if (ud.FFState == null)
-                                                ud.FFState = new Engine.ForceFeedbackState(ud);
+                                                ud.FFState = new Engine.ForceFeedbackState();
                                             // If force update supplied then...
                                             var force = feedbacks[userIndex - 1];
                                             if (force != null || ud.FFState.Changed(ps))
@@ -117,7 +117,7 @@ namespace x360ce.App.DInput
                                                 // var st = ud.Device.GetForceFeedbackState();
                                                 //st == SharpDX.DirectInput.ForceFeedbackState
                                                 // ud.Device.SendForceFeedbackCommand(ForceFeedbackCommand.SetActuatorsOn);
-                                                ud.FFState.SetDeviceForces(ud.Device, ps, v);
+                                                ud.FFState.SetDeviceForces(ud, ud.Device, ps, v);
                                             }
                                         }
                                         // If force state was created then...

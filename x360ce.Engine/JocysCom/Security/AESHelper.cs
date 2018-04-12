@@ -36,7 +36,8 @@ namespace JocysCom.ClassLibrary.Security
 			return salt;
 		}
 
-		static string _prefix = "AppEncryption_";
+		const string _prefix = "AppEncryption_";
+		public const string AesSaltAlgorithmKeyName = _prefix + "AesSaltAlgorithm";
 
 		static string _AesSaltAlgorithm;
 		public static string AesSaltAlgorithm
@@ -46,7 +47,7 @@ namespace JocysCom.ClassLibrary.Security
 				if (string.IsNullOrEmpty(_AesSaltAlgorithm))
 				{
 					_AesSaltAlgorithm =
-						ConfigurationManager.AppSettings[_prefix + "AesSaltAlgorithm"]
+						ConfigurationManager.AppSettings[AesSaltAlgorithmKeyName]
 						?? "HMACSHA256";
 				}
 				return _AesSaltAlgorithm;

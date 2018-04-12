@@ -1014,7 +1014,7 @@ namespace x360ce.App.Controls
         }
 
         /// <summary>Create menu item.</summary>
-        /// <param name="mask">Mask contains information if item is presend.</param>
+        /// <param name="mask">Mask contains information if item is present.</param>
         void CreateItems(ToolStripMenuItem parent, string text, string tag, int count, int? mask = null)
         {
             for (int i = 0; i < count; i++)
