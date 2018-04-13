@@ -67,8 +67,6 @@ namespace Nefarius.ViGEm.Client
             [DllImport("vigemclient.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
             static extern bool vigem_target_is_attached(PVIGEM_TARGET target);
 
-            #region x360
-
             [DllImport("vigemclient.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
             internal static extern VIGEM_ERROR vigem_target_x360_update(PVIGEM_CLIENT vigem, PVIGEM_TARGET target, XUSB_REPORT report);
 
@@ -82,8 +80,6 @@ namespace Nefarius.ViGEm.Client
             internal static extern PVIGEM_TARGET vigem_target_x360_alloc();
 
         }
-
-        #endregion
 
     }
 }

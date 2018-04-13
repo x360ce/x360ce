@@ -7,82 +7,66 @@ namespace JocysCom.ClassLibrary.IO
 	public partial class DeviceDetector
 	{
 
-		public static SP_DRVINFO_DATA[] GetDrivers(Guid classGuid, DIGCF flags)
+		public static SP_DRVINFO_DATA[] GetDrivers(Guid? classGuid = null, DIGCF flags = DIGCF.DIGCF_ALLCLASSES, SPDIT driverType = SPDIT.SPDIT_COMPATDRIVER, string deviceId = null, string hardwareId = null)
 		{
-			var info = new List<SP_DRVINFO_DATA>();
-			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, flags);
-			// Cycle through all devices.
-			for (int i = 0; ; i++)
+			var drvInfoList = new List<SP_DRVINFO_DATA>();
+			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid ?? Guid.Empty, IntPtr.Zero, IntPtr.Zero, flags);
+			if (deviceInfoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
+				return drvInfoList.ToArray();
+			// Loop through device info.
+			var deviceInfoData = new SP_DEVINFO_DATA();
+			deviceInfoData.Initialize();
+			for (int i = 0; NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, i, ref deviceInfoData); i++)
 			{
-				// Get the device info for this device
-				SP_DEVINFO_DATA devInfo = new SP_DEVINFO_DATA();
-				devInfo.Initialize();
-				// If no more devices found then...
-				if (!NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, i, ref devInfo))
-					break;
-				// Build a list of driver info items that we will retrieve below. Exit if failed.
-				if (!NativeMethods.SetupDiBuildDriverInfoList(deviceInfoSet, ref devInfo, SPDIT.SPDIT_COMPATDRIVER))
-					return null;
-				for (int j = 0; ; j++)
+				if (!string.IsNullOrEmpty(deviceId))
 				{
-					// Get all the info items for this driver 
-					SP_DRVINFO_DATA drvInfo = new SP_DRVINFO_DATA();
-					drvInfo.Initialize();
-					if (!NativeMethods.SetupDiEnumDriverInfo(deviceInfoSet, ref devInfo, SPDIT.SPDIT_COMPATDRIVER, j, ref drvInfo))
-						break;
-					info.Add(drvInfo);
-					//Console.WriteLine("{0} {1} - {2}", drvInfo.ProviderName, drvInfo.Description, drvInfo.GetVersion());
+					var currentDeviceId = GetDeviceId(deviceInfoData.DevInst);
+					if (string.Compare(deviceId, currentDeviceId, true) != 0)
+						continue;
 				}
-			}
-			return info.ToArray();
-		}
-
-		public static SP_DRVINFO_DATA[] GetDrivers(string deviceId)
-		{
-			var info = new SP_DRVINFO_DATA[0];
-			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(Guid.Empty, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES);
-			if (deviceInfoSet.ToInt64() != ERROR_INVALID_HANDLE_VALUE)
-			{
-				var deviceInfoData = GetDeviceInfo(deviceInfoSet, deviceId);
-				if (deviceInfoData.HasValue)
+				if (!string.IsNullOrEmpty(hardwareId))
 				{
-					var di = deviceInfoData.Value;
-					info = GetDrivers(deviceInfoSet, ref di);
+					var currentHardwareId = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
+					if (string.Compare(hardwareId, currentHardwareId, true) != 0)
+						continue;
 				}
+				var drivers = GetDrivers(deviceInfoSet, ref deviceInfoData, driverType);
+				drvInfoList.AddRange(drivers);
 			}
 			NativeMethods.SetupDiDestroyDeviceInfoList(deviceInfoSet);
-			return info;
+			return drvInfoList.ToArray();
 		}
 
-		public static SP_DRVINFO_DATA[] GetDrivers(IntPtr deviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData)
+		public static SP_DRVINFO_DATA[] GetDrivers(IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData, SPDIT driverType = SPDIT.SPDIT_COMPATDRIVER)
 		{
-			var info = new List<SP_DRVINFO_DATA>();
-			if (NativeMethods.SetupDiBuildDriverInfoList(deviceInfoSet, ref DeviceInfoData, SPDIT.SPDIT_COMPATDRIVER))
+			var list = new List<SP_DRVINFO_DATA>();
+			if (NativeMethods.SetupDiBuildDriverInfoList(deviceInfoSet, ref deviceInfoData, driverType))
 			{
-				SP_DRVINFO_DATA drvInfo = new SP_DRVINFO_DATA();
-				drvInfo.Initialize();
-				for (int j = 0; NativeMethods.SetupDiEnumDriverInfo(deviceInfoSet, ref DeviceInfoData, SPDIT.SPDIT_COMPATDRIVER, j, ref drvInfo); j++)
+				var item = new SP_DRVINFO_DATA();
+				item.Initialize();
+				for (int i = 0; NativeMethods.SetupDiEnumDriverInfo(deviceInfoSet, ref deviceInfoData, driverType, i, ref item); i++)
 				{
 					//Console.WriteLine("{0} {1} - {2}", drvInfo.ProviderName, drvInfo.Description, drvInfo.GetVersion());
-					info.Add(drvInfo);
+					list.Add(item);
 				}
 			}
-			return info.ToArray();
-			//SP_DEVINSTALL_PARAMS InstallParams = new SP_DEVINSTALL_PARAMS();
-			//InstallParams.Initialize();
-			//if (!NativeMethods.SetupDiGetDeviceInstallParams(DeviceInfoSet, ref DeviceInfoData, ref InstallParams))
-			//{
-			//	//Error
-			//}
-			//else
-			//{
-			//	InstallParams.FlagsEx |= DI_FLAGSEX_INSTALLEDDRIVER;
-			//	if (!NativeMethods.SetupDiSetDeviceInstallParams(DeviceInfoSet, ref DeviceInfoData, ref InstallParams))
-			//	{
-			//		//Errror
-			//	}
-			//}
-			//return info.ToArray();
+			return list.ToArray();
 		}
+
+		//public static SP_DEVINSTALL_PARAMS[] GetInstallParams(IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData)
+		//{
+		//	var installParams = new SP_DEVINSTALL_PARAMS();
+		//	installParams.Initialize();
+		//	if (NativeMethods.SetupDiGetDeviceInstallParams(deviceInfoSet, ref deviceInfoData, ref installParams))
+		//	{
+		//		//InstallParams.FlagsEx |= DI_FLAGSEX_INSTALLEDDRIVER;
+		//		//if (!NativeMethods.SetupDiSetDeviceInstallParams(DeviceInfoSet, ref DeviceInfoData, ref InstallParams))
+		//		//{
+		//		//	//Errror
+		//		//}
+		//	}
+		//	return info.ToArray();
+		//}
+
 	}
 }

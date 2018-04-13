@@ -648,7 +648,7 @@ namespace x360ce.App
 						var classGuid = j.Properties.ClassGuid;
 						var interfacePath = j.Properties.InterfacePath;
 						// Must find better way to find Device than by Vendor ID and Product ID.
-						var devs = DeviceDetector.GetDevices(classGuid, JocysCom.ClassLibrary.Win32.DIGCF.DIGCF_ALLCLASSES, null, j.Properties.VendorId, j.Properties.ProductId, 0);
+						var devs = DeviceDetector.GetDevices(classGuid, DIGCF.DIGCF_ALLCLASSES, null, j.Properties.VendorId, j.Properties.ProductId, 0);
 						diInfos[i] = devs.FirstOrDefault();
 					}
 				}

@@ -184,14 +184,16 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			var sb = new StringBuilder(MAX_DEVICE_ID_LEN);
 			var CRResult = NativeMethods.CM_Get_Device_ID(deviceInstance, sb, sb.Capacity, 0);
-			if (CRResult != CR.CR_SUCCESS) throw new Exception("Error calling CM_Get_Device_ID: " + CRResult.ToString());
+			if (CRResult != CR.CR_SUCCESS)
+				throw new Exception("Error calling CM_Get_Device_ID: " + CRResult.ToString());
 			return sb.ToString();
 		}
 
 		public static string GetDeviceDescription(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
 		{
 			var deviceDescription = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
-			if (!string.IsNullOrEmpty(deviceDescription)) return deviceDescription.Trim();
+			if (!string.IsNullOrEmpty(deviceDescription))
+				return deviceDescription.Trim();
 			var deviceFriendlyName = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_FRIENDLYNAME);
 			return (deviceFriendlyName ?? "").Trim();
 		}
@@ -395,16 +397,17 @@ namespace JocysCom.ClassLibrary.IO
 			return list.ToArray();
 		}
 
-		public static DeviceInfo[] GetDevices()
-		{
-			return GetDevices(Guid.Empty, DIGCF.DIGCF_ALLCLASSES);
-		}
-
 		static object GetDevicesLock = new object();
 
 		/// <summary>
 		/// Get list of devices.
 		/// </summary>
+		/// <param name="classGuid">Filter devices by class.</param>
+		/// <param name="flags">Filter devices by options.</param>
+		/// <param name="deviceId">Filter results by Device ID.</param>
+		/// <param name="vid">Filter results by Vendor ID.</param>
+		/// <param name="pid">Filter results by Product ID.</param>
+		/// <param name="rev">Filter results by Revision ID.</param>
 		/// <returns>List of devices</returns>
 		/// <remarks>
 		/// This is code I cobbled together from a number of newsgroup threads
@@ -417,18 +420,10 @@ namespace JocysCom.ClassLibrary.IO
 		///           Failed to enumerate device tree!
 		///           Invalid handle!
 		/// </remarks>		
-		public static DeviceInfo[] GetDevices(Guid classGuid, DIGCF flags)
+		public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF flags = DIGCF.DIGCF_ALLCLASSES, string deviceId = null, int vid = 0, int pid = 0, int rev = 0)
 		{
-			return GetDevices(classGuid, flags, null, 0, 0, 0);
-		}
-
-		public static DeviceInfo GetDevice(Guid classGuid, DIGCF flags, string deviceId)
-		{
-			return GetDevices(classGuid, flags, deviceId, 0, 0, 0).FirstOrDefault();
-		}
-
-		public static DeviceInfo[] GetDevices(Guid classGuid, DIGCF flags, string deviceId, int vid, int pid, int rev)
-		{
+			if (!classGuid.HasValue)
+				classGuid = Guid.Empty;
 			lock (GetDevicesLock)
 			{
 				// https://msdn.microsoft.com/en-us/library/windows/hardware/ff541247%28v=vs.85%29.aspx
@@ -442,24 +437,25 @@ namespace JocysCom.ClassLibrary.IO
 				//  │   └──[Device Interface], [Device Interface], ...
 				//
 				// Create a device information set composed of all devices associated with a specified device setup class or device interface class.
-				IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, flags); //  | DIGCF.DIGCF_PRESENT
+				IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid.Value, IntPtr.Zero, IntPtr.Zero, flags);
 				if (deviceInfoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
-				{
 					throw new Exception("Invalid Handle");
-				}
 				var list = new List<DeviceInfo>();
 				var deviceInfoData = new SP_DEVINFO_DATA();
 				deviceInfoData.Initialize();
-				int i;
 				// Enumerating Device Nodes.
-				for (i = 0; NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, i, ref deviceInfoData); i++)
+				for (var i = 0; NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, i, ref deviceInfoData); i++)
 				{
 					var currentDeviceId = GetDeviceId(deviceInfoData.DevInst);
-					if (!string.IsNullOrEmpty(deviceId) && deviceId != currentDeviceId) continue;
-					var device = GetDeviceInfo(deviceInfoSet, deviceInfoData, currentDeviceId);
-					if (vid > 0 && device.VendorId != vid) continue;
-					if (pid > 0 && device.ProductId != pid) continue;
-					if (rev > 0 && device.Revision != rev) continue;
+					if (!string.IsNullOrEmpty(deviceId) && deviceId != currentDeviceId)
+						continue;
+					var device = GetDeviceInfo(deviceInfoSet, deviceInfoData);
+					if (vid > 0 && device.VendorId != vid)
+						continue;
+					if (pid > 0 && device.ProductId != pid)
+						continue;
+					if (rev > 0 && device.Revision != rev)
+						continue;
 					list.Add(device);
 				}
 				NativeMethods.SetupDiDestroyDeviceInfoList(deviceInfoSet);
@@ -467,14 +463,21 @@ namespace JocysCom.ClassLibrary.IO
 			}
 		}
 
-		static DeviceInfo GetDeviceInfo(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, string deviceId)
+		//static SP_DEVINFO_DATA[] GetDeviceInfoData(IntPtr deviceInfoSet, )
+		//{
+
+		//}
+
+
+		static DeviceInfo GetDeviceInfo(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
 		{
+			var deviceId = GetDeviceId(deviceInfoData.DevInst);
 			var deviceName = GetDeviceDescription(deviceInfoSet, deviceInfoData);
 			var deviceManufacturer = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
 			var deviceClassGuid = deviceInfoData.ClassGuid;
 			var classDescription = GetClassDescription(deviceClassGuid);
 			var hardwareId = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
-			Win32.DeviceNodeStatus status;
+			DeviceNodeStatus status;
 			var deviceHandle = deviceInfoData.DevInst;
 			NativeMethods.GetDeviceNodeStatus(deviceHandle, IntPtr.Zero, out status);
 			uint vid;
@@ -492,11 +495,6 @@ namespace JocysCom.ClassLibrary.IO
 			var device = new DeviceInfo(deviceId, deviceHandle, parentDeviceId, "", hardwareId, deviceManufacturer, deviceName, deviceClassGuid, classDescription, status, vid, pid, rev);
 			return device;
 		}
-
-
-
-
-
 
 		public static string GetAllDeviceProperties(string deviceId)
 		{
@@ -554,7 +552,9 @@ namespace JocysCom.ClassLibrary.IO
 						if (CRResult == CR.CR_NO_SUCH_DEVNODE) break;
 						if (CRResult != CR.CR_SUCCESS) break;
 						var parentDeviceId = GetDeviceId(parentDeviceInstance);
-						device = GetDevice(classGuid, flags, parentDeviceId);
+						var devices = GetDevices(classGuid, flags, parentDeviceId);
+						if (devices.Length > 0)
+							device = devices[0];
 						break;
 					}
 				}

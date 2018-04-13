@@ -23,17 +23,17 @@ namespace x360ce.App.ViGEm
 
         static string HidWhitelistRegistryKeyBase => $"{HidGuardianRegistryKeyBase}\\Whitelist";
 
-        public static bool InsertToWhiteList(int id)
+        public static bool InsertToWhiteList(int processId)
         {
-            var key = Registry.LocalMachine.CreateSubKey($"{HidWhitelistRegistryKeyBase}\\{id}");
+            var key = Registry.LocalMachine.CreateSubKey($"{HidWhitelistRegistryKeyBase}\\{processId}");
             if (key != null)
                 key.Close();
             return true;
         }
 
-        public static bool RemoveFromWhiteList(int id)
+        public static bool RemoveFromWhiteList(int processId)
         {
-            Registry.LocalMachine.DeleteSubKey($"{HidWhitelistRegistryKeyBase}\\{id}");
+            Registry.LocalMachine.DeleteSubKey($"{HidWhitelistRegistryKeyBase}\\{processId}");
             return true;
         }
 

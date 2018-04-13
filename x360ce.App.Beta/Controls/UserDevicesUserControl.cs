@@ -9,6 +9,9 @@ using System.Windows.Forms;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using x360ce.App.Forms;
+using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.Win32;
+using x360ce.App.DInput;
 
 namespace x360ce.App.Controls
 {
@@ -129,36 +132,64 @@ namespace x360ce.App.Controls
 			MainForm.Current.DHelper.UpdateDevicesEnabled = true;
 		}
 
-        private void DevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            var grid = (DataGridView)sender;
-            // If user clicked on the CheckBox column then...
-            if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
-            {
-                var row = grid.Rows[e.RowIndex];
-                var item = (Engine.Data.UserDevice)row.DataBoundItem;
-                // Changed check (enabled state) of the current item.
-                item.IsEnabled = !item.IsEnabled;
-                var deviceId = item.HidDeviceId;
-                if (!string.IsNullOrEmpty(deviceId))
-                {
-                    if (item.IsEnabled)
-                    {
-                        ViGEm.HidGuardianHelper.RemoveFromAffected(deviceId);
-                    }
-                    else
-                    {
-                        ViGEm.HidGuardianHelper.InsertToAffected(deviceId);
-                    }
-                }
-            }
-        }
+		private void DevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
+		{
+			if (e.RowIndex < 0) return;
+			var grid = (DataGridView)sender;
+			// If user clicked on the CheckBox column then...
+			if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
+			{
+				var row = grid.Rows[e.RowIndex];
+				var item = (Engine.Data.UserDevice)row.DataBoundItem;
+				// Changed check (enabled state) of the current item.
+				item.IsEnabled = !item.IsEnabled;
+				var deviceId = item.HidDeviceId;
+				if (!string.IsNullOrEmpty(deviceId))
+				{
+					if (item.IsEnabled)
+					{
+						ViGEm.HidGuardianHelper.RemoveFromAffected(deviceId);
+					}
+					else
+					{
+						ViGEm.HidGuardianHelper.InsertToAffected(deviceId);
+					}
+				}
+			}
+		}
 
-        private void HiddenDevicesButton_Click(object sender, EventArgs e)
-        {
-            var devices = ViGEm.HidGuardianHelper.GetAffected();
-            MessageBox.Show("Affected Devices\r\n\r\n" + string.Join(", ",devices), "Affected Devices");
-        }
-    }
+		private void HiddenDevicesButton_Click(object sender, EventArgs e)
+		{
+			var devices = ViGEm.HidGuardianHelper.GetAffected();
+			MessageBox.Show("Affected Devices\r\n\r\n" + string.Join(", ", devices), "Affected Devices");
+		}
+
+		private void HideVirtualButton_Click(object sender, EventArgs e)
+		{
+			var list = new List<DeviceInfo>();
+			var devices = DeviceDetector.GetInterfaces();
+			for (int i = 0; i < devices.Length; i++)
+			{
+				var isVirtual = false;
+				var device = devices[i];
+				DeviceInfo p = device;
+				do
+				{
+					p = DeviceDetector.GetParentDevice(Guid.Empty, JocysCom.ClassLibrary.Win32.DIGCF.DIGCF_ALLCLASSES, p.DeviceId);
+					if (p != null && string.Compare(p.HardwareId, VirtualDriverInstaller.ViGEmBusHardwareId, true) == 0)
+					{
+						isVirtual = true;
+						break;
+					}
+				} while (p != null);
+				if (isVirtual)
+				{
+					ViGEm.HidGuardianHelper.InsertToAffected(device.DeviceId);
+					list.Add(device);
+				}
+			}
+			var ids = list.Select(x => x.DeviceId).ToArray();
+			MessageBox.Show("Affected Devices\r\n\r\n" + string.Join(", ", ids), "Affected Devices");
+		}
+	}
 }

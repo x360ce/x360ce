@@ -13,23 +13,17 @@ namespace x360ce.App.DInput
 
 		#region Install/Uninstall ViGEmBus
 
+		static Guid GUID_DEVINTERFACE_BUSENUM_VIGEM = new Guid("96E42B22-F5E9-42F8-B043-ED0F932F014F");
 		public static SP_DRVINFO_DATA GetViGemBusDriverInfo()
 		{
-			var devices = DeviceDetector.GetDevices(DEVCLASS.SYSTEM, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_PROFILE);
-			var device = devices.FirstOrDefault(x => x.HardwareId == "Root\\ViGEmBus");
-			var driver = default(SP_DRVINFO_DATA);
-			if (device != null)
-				driver = DeviceDetector.GetDrivers(device.DeviceId).FirstOrDefault();
+			var flags = DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_DEVICEINTERFACE;
+			var driver = DeviceDetector.GetDrivers(GUID_DEVINTERFACE_BUSENUM_VIGEM, flags).FirstOrDefault();
 			return driver;
 		}
 
 		public static SP_DRVINFO_DATA GetHidGuardianDriverInfo()
 		{
-			var devices = DeviceDetector.GetDevices(DEVCLASS.SYSTEM, DIGCF.DIGCF_PRESENT | DIGCF.DIGCF_PROFILE);
-			var device = devices.FirstOrDefault(x => x.HardwareId == "Root\\HidGuardian");
-			var driver = default(SP_DRVINFO_DATA);
-			if (device != null)
-				driver = DeviceDetector.GetDrivers(device.DeviceId).FirstOrDefault();
+			var driver = DeviceDetector.GetDrivers(DEVCLASS.SYSTEM, DIGCF.DIGCF_PRESENT, SPDIT.SPDIT_COMPATDRIVER, null, HidGuardianHardwareId).FirstOrDefault();
 			return driver;
 		}
 
