@@ -33,10 +33,10 @@ namespace x360ce.App.DInput
 			return System.IO.Path.Combine(baseDirectory, "Program Files", "ViGEm ViGEmBus");
 		}
 
-		static void ExtractViGemBusFiles()
+		static void ExtractViGemBusFiles(bool overwrite)
 		{
 			var target = GetViGEmBusPath();
-			ExtractViGemFiles("ViGEmBus", target);
+			ExtractViGemFiles("ViGEmBus", target, overwrite);
 		}
 
 		public const string ViGEmBusHardwareId = "Root\\ViGEmBus";
@@ -49,7 +49,7 @@ namespace x360ce.App.DInput
 		public static void InstallViGEmBus()
 		{
 			// Extract files first.
-			ExtractViGemBusFiles();
+			ExtractViGemBusFiles(true);
 			var folder = GetViGEmBusPath();
 			var fullPath = System.IO.Path.Combine(folder, "devcon.exe");
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
@@ -65,7 +65,7 @@ namespace x360ce.App.DInput
 		public static void UninstallViGEmBus()
 		{
 			// Extract files first.
-			ExtractViGemBusFiles();
+			ExtractViGemBusFiles(false);
 			var folder = GetViGEmBusPath();
 			var fullPath = System.IO.Path.Combine(folder, "devcon.exe");
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
@@ -84,10 +84,10 @@ namespace x360ce.App.DInput
 			return System.IO.Path.Combine(baseDirectory, "Program Files", "ViGEm HidGuardian");
 		}
 
-		static void ExtractHidGuardianFiles()
+		static void ExtractHidGuardianFiles(bool overwrite)
 		{
 			var target = GetHidGuardianPath();
-			ExtractViGemFiles("HidGuardian", target);
+			ExtractViGemFiles("HidGuardian", target, overwrite);
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace x360ce.App.DInput
 		public static void InstallHidGuardian()
 		{
 			// Extract files first.
-			ExtractHidGuardianFiles();
+			ExtractHidGuardianFiles(true);
 			var folder = GetHidGuardianPath();
 			var fullPath = System.IO.Path.Combine(folder, "devcon.exe");
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
@@ -117,7 +117,7 @@ namespace x360ce.App.DInput
 		public static void UninstallHidGuardian()
 		{
 			// Extract files first.
-			ExtractHidGuardianFiles();
+			ExtractHidGuardianFiles(false);
 			var folder = GetHidGuardianPath();
 			var fullPath = System.IO.Path.Combine(folder, "devcon.exe");
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
@@ -134,7 +134,7 @@ namespace x360ce.App.DInput
 
 		#region Extract Helper
 
-		static void ExtractViGemFiles(string source, string target)
+		static void ExtractViGemFiles(string source, string target, bool overwrite)
 		{
 			// There must be an easier way to check embedded non managed DLL version.
 			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
@@ -145,11 +145,23 @@ namespace x360ce.App.DInput
 			foreach (var resourceName in resourceNames)
 			{
 				var fileName = resourceName.Substring(resourceName.IndexOf(resourceFolder) + resourceFolder.Length);
-				SaveAs(assembly, resourceName, target, fileName);
+                var folderName = target;
+                // Optimize better later.
+                if (fileName.StartsWith("x64."))
+                {
+                    fileName = fileName.Substring("x64.".Length);
+                    folderName += "\\x64";
+                }
+                if (fileName.StartsWith("x86."))
+                {
+                    fileName = fileName.Substring("x86.".Length);
+                    folderName += "\\x86";
+                }
+                SaveAs(assembly, resourceName, folderName, fileName, overwrite);
 			}
 		}
 
-		static void SaveAs(Assembly assembly, string resource, string folderName, string fileName)
+		static void SaveAs(Assembly assembly, string resource, string folderName, string fileName, bool overwrite)
 		{
 			var dir = new DirectoryInfo(folderName);
 			if (!dir.Exists)
@@ -162,7 +174,12 @@ namespace x360ce.App.DInput
 			var name = System.IO.Path.GetFileName(resource);
 			var fullPath = System.IO.Path.Combine(dir.FullName, fileName);
 			var file = new FileInfo(fullPath);
-			if (!file.Exists)
+            if (file.Exists && overwrite)
+            {
+                file.Delete();
+                file.Refresh();
+            }
+            if (!file.Exists)
 			{
 				var writer = file.OpenWrite();
 				writer.Write(bytes, 0, bytes.Count());
