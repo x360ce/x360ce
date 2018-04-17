@@ -134,25 +134,30 @@ namespace x360ce.App.Controls
 
         private void DevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0) return;
+            if (e.RowIndex < 0)
+                return;
             var grid = (DataGridView)sender;
+            var row = grid.Rows[e.RowIndex];
+            var item = (Engine.Data.UserDevice)row.DataBoundItem;
             // If user clicked on the CheckBox column then...
             if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
             {
-                var row = grid.Rows[e.RowIndex];
-                var item = (Engine.Data.UserDevice)row.DataBoundItem;
                 // Changed check (enabled state) of the current item.
                 item.IsEnabled = !item.IsEnabled;
-                var deviceId = item.HidDeviceId;
-                if (!string.IsNullOrEmpty(deviceId))
+            }
+            else if (e.ColumnIndex == grid.Columns[IsHiddenColumn.Name].Index)
+            {
+                item.IsHidden = !item.IsHidden;
+                var guardianHardwareId = ViGEm.HidGuardianHelper.GetHardwareId(item.DevDevicePath);
+                if (!string.IsNullOrEmpty(guardianHardwareId))
                 {
-                    if (item.IsEnabled)
+                    if (item.IsHidden)
                     {
-                        ViGEm.HidGuardianHelper.RemoveFromAffected(deviceId);
+                        ViGEm.HidGuardianHelper.RemoveFromAffected(guardianHardwareId);
                     }
                     else
                     {
-                        ViGEm.HidGuardianHelper.InsertToAffected(deviceId);
+                        ViGEm.HidGuardianHelper.InsertToAffected(guardianHardwareId);
                     }
                 }
             }
@@ -170,6 +175,14 @@ namespace x360ce.App.Controls
             //ViGEm.HidGuardianHelper.InsertToAffected(device);
             //var ids = list.Select(x => x.DeviceId).ToArray();
             //MessageBox.Show("Affected Devices\r\n\r\n" + string.Join(", ", ids), "Affected Devices");
+        }
+
+        private void UnhideAllButton_Click(object sender, EventArgs e)
+        {
+            ViGEm.HidGuardianHelper.ClearAffected();
+            var devices = SettingsManager.UserDevices.Items.ToArray();
+            for (int i = 0; i < devices.Length; i++)
+                devices[i].IsHidden = false;
         }
     }
 }

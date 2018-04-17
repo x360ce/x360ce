@@ -15,9 +15,26 @@ namespace x360ce.App.ViGEm
         static readonly IEnumerable<object> ResponseOk = new[] { "OK" };
         static readonly string[] HardwareIdSplitters = { "\r\n", "\n" };
 
-        static readonly Regex HardwareIdRegex =
-            new Regex(
-                @"HID\\[{(]?[0-9A-Fa-z]{8}[-]?([0-9A-Fa-z]{4}[-]?){3}[0-9A-Fa-z]{12}[)}]?|HID\\VID_[a-zA-Z0-9]{4}&PID_[a-zA-Z0-9]{4}");
+        static readonly Regex HardwareIdRegex = new Regex(@"HID\\[{(]?[0-9A-Fa-z]{8}[-]?([0-9A-Fa-z]{4}[-]?){3}[0-9A-Fa-z]{12}[)}]?|HID\\VID_[a-zA-Z0-9]{4}&PID_[a-zA-Z0-9]{4}");
+        static readonly Regex UsbRegex = new Regex(@"\\{2}\?\\(hid)#(vid_[a-z0-9]{4}&pid_[a-z0-9]{4}[^#]*)");
+        static readonly Regex BluetoothRegex = new Regex(@"\\{2}\?\\(hid)#([{(]?[0-9A-Fa-z]{8}[-]?([0-9A-Fa-z]{4}[-]?){3}[0-9A-Fa-z]{12}[)}]?_vid&[a-z0-9]{8}_pid&[^#]*)");
+
+        public static string GetHardwareId(string devicePath)
+        {
+            var regexes = new[]
+            {
+                // USB notation
+                UsbRegex,
+                // Bluetooth service notation
+                BluetoothRegex
+            };
+            foreach (var regex in regexes)
+            {
+                if (regex.IsMatch(devicePath))
+                    return $"{regex.Match(devicePath).Groups[1].Value}\\{regex.Match(devicePath).Groups[2].Value}".ToUpper();
+            }
+            return string.Empty;
+        }
 
         #region WhiteList
 
@@ -148,7 +165,7 @@ namespace x360ce.App.ViGEm
 
         public static bool ClearAffected()
         {
-            var key = Registry.LocalMachine.OpenSubKey(HidGuardianRegistryKeyBase);
+            var key = Registry.LocalMachine.OpenSubKey(HidGuardianRegistryKeyBase, true);
             if (key == null)
                 return true;
             key.SetValue("AffectedDevices", new string[0], RegistryValueKind.MultiString);

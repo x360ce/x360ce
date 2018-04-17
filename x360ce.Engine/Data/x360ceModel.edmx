@@ -231,6 +231,8 @@
           <Property Name="CapIsHumanInterfaceDevice" Type="bit" Nullable="false" />
           <Property Name="CapSubtype" Type="int" Nullable="false" />
           <Property Name="CapType" Type="int" Nullable="false" />
+          <Property Name="DiAxeMask" Type="int" Nullable="false" />
+          <Property Name="DiSliderMask" Type="int" Nullable="false" />
           <Property Name="HidManufacturer" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="HidVendorId" Type="int" Nullable="false" />
           <Property Name="HidProductId" Type="int" Nullable="false" />
@@ -242,8 +244,6 @@
           <Property Name="HidClassGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="HidClassDescription" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="DevManufacturer" Type="nvarchar" MaxLength="256" Nullable="false" />
-          <Property Name="DiAxeMask" Type="int" Nullable="false" />
-          <Property Name="DiSliderMask" Type="int" Nullable="false" />
           <Property Name="DevVendorId" Type="int" Nullable="false" />
           <Property Name="DevProductId" Type="int" Nullable="false" />
           <Property Name="DevRevision" Type="int" Nullable="false" />
@@ -255,6 +255,7 @@
           <Property Name="DevClassDescription" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="DateUpdated" Type="datetime" Nullable="false" />
+          <Property Name="IsHidden" Type="bit" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
@@ -548,6 +549,7 @@
           <Property Name="Checksum" Type="Guid" Nullable="false" />
           <Property Name="DiAxeMask" Type="Int32" Nullable="false" />
           <Property Name="DiSliderMask" Type="Int32" Nullable="false" />
+          <Property Name="IsHidden" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="UserGame">
           <Key>
@@ -821,6 +823,7 @@
           <EntitySetMapping Name="UserDevices">
             <EntityTypeMapping TypeName="x360ceModel.UserDevice">
               <MappingFragment StoreEntitySet="x360ce_UserDevices">
+                <ScalarProperty Name="IsHidden" ColumnName="IsHidden" />
                 <ScalarProperty Name="DiSliderMask" ColumnName="DiSliderMask" />
                 <ScalarProperty Name="DiAxeMask" ColumnName="DiAxeMask" />
                 <ScalarProperty Name="Checksum" ColumnName="Checksum" />
@@ -985,7 +988,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="65" >
+			<Diagram Name="x360ceModel" ZoomLevel="43" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
