@@ -6,8 +6,6 @@
     [ProductGuid]                           UNIQUEIDENTIFIER NOT NULL,
     [ProductName]                           NVARCHAR (256)   NOT NULL,
     [CapAxeCount]                           INT              NOT NULL,
-    [CapAxeMask]                            INT              NOT NULL,
-    [CapSliderMask]                         INT              NOT NULL,
     [CapButtonCount]                        INT              NOT NULL,
     [CapDriverVersion]                      INT              NOT NULL,
     [CapFirmwareRevision]                   INT              NOT NULL,
@@ -19,6 +17,8 @@
     [CapIsHumanInterfaceDevice]             BIT              NOT NULL,
     [CapSubtype]                            INT              NOT NULL,
     [CapType]                               INT              NOT NULL,
+    [DiAxeMask]                             INT              CONSTRAINT [DF_x360ce_UserDevices_DiAxeMask] DEFAULT ((0)) NOT NULL,
+    [DiSliderMask]                          INT              CONSTRAINT [DF_x360ce_UserDevices_DiSliderMask] DEFAULT ((0)) NOT NULL,
     [HidManufacturer]                       NVARCHAR (256)   NOT NULL,
     [HidVendorId]                           INT              NOT NULL,
     [HidProductId]                          INT              NOT NULL,
@@ -41,10 +41,13 @@
     [DevClassDescription]                   NVARCHAR (256)   NOT NULL,
     [DateCreated]                           DATETIME         CONSTRAINT [DF_x360ce_UserDevices_DateCreated] DEFAULT (getdate()) NOT NULL,
     [DateUpdated]                           DATETIME         CONSTRAINT [DF_x360ce_UserDevices_DateUpdated] DEFAULT (getdate()) NOT NULL,
+    [IsHidden]                              BIT              CONSTRAINT [DF_x360ce_UserDevices_IsHidden] DEFAULT ((0)) NOT NULL,
     [IsEnabled]                             BIT              CONSTRAINT [DF_x360ce_UserDevices_IsEnabled] DEFAULT ((1)) NOT NULL,
     [Checksum]                              UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_Checksum] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     CONSTRAINT [PK_x360ce_UserDevices] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 
