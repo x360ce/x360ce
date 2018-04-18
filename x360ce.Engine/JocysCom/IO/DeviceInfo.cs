@@ -46,6 +46,7 @@ namespace JocysCom.ClassLibrary.IO
         public uint DeviceHandle { get { return _DeviceHandle; } }
 		private uint _DeviceHandle;
 
+        /// <summary>Device HID Interface Path.</summary>
 		public string DevicePath { get { return _DevicePath; } }
 		private string _DevicePath;
 

@@ -80,12 +80,14 @@ namespace x360ce.App.DInput
 
         public Exception LastException = null;
 
+        public bool SkipRefreshAll = false;
+
         private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
+            if (Suspended)
+                return;
             try
             {
-                if (Suspended)
-                    return;
                 RefreshAll();
             }
             catch (Exception ex)
