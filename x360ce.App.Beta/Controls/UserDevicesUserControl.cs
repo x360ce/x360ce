@@ -148,7 +148,7 @@ namespace x360ce.App.Controls
             else if (e.ColumnIndex == grid.Columns[IsHiddenColumn.Name].Index)
             {
                 item.IsHidden = !item.IsHidden;
-                var guardianHardwareId = ViGEm.HidGuardianHelper.GetHardwareId(item.DevDevicePath);
+                var guardianHardwareId = ViGEm.HidGuardianHelper.GetHardwareId(item.HidDevicePath);
                 if (!string.IsNullOrEmpty(guardianHardwareId))
                 {
                     if (item.IsHidden)
