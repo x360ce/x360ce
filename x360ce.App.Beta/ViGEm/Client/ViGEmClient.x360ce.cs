@@ -225,7 +225,7 @@ namespace Nefarius.ViGEm.Client
                 do
                 {
                     p = DeviceDetector.GetParentDevice(Guid.Empty, JocysCom.ClassLibrary.Win32.DIGCF.DIGCF_ALLCLASSES, p.DeviceId);
-                    if (p != null && string.Compare(p.HardwareId, VirtualDriverInstaller.ViGEmBusHardwareId, true) == 0)
+                    if (p != null && string.Compare(p.HardwareIds, VirtualDriverInstaller.ViGEmBusHardwareId, true) == 0)
                     {
                         isVirtual = true;
                         break;

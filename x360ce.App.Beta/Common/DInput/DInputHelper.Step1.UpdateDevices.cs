@@ -93,7 +93,7 @@ namespace x360ce.App.DInput
                     do
                     {
                         p = devInfos.FirstOrDefault(x=>x.DeviceId == p.ParentDeviceId);
-                        if (p != null && string.Compare(p.HardwareId, VirtualDriverInstaller.ViGEmBusHardwareId, true) == 0)
+                        if (p != null && string.Compare(p.HardwareIds, VirtualDriverInstaller.ViGEmBusHardwareId, true) == 0)
                         {
                             isVirtual = true;
                             break;

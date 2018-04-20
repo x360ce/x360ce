@@ -465,7 +465,7 @@ namespace JocysCom.ClassLibrary.IO
             di.Manufacturer = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
             di.ClassGuid = deviceInfoData.ClassGuid;
             di.ClassDescription = GetClassDescription(di.ClassGuid);
-            di.HardwareId = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
+            di.HardwareIds = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
             var deviceHandle = deviceInfoData.DevInst;
             // Get device status.
             DeviceNodeStatus status;

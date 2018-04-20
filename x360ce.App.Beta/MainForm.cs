@@ -106,7 +106,8 @@ namespace x360ce.App
 		{
 			if (IsDesignMode)
 				return;
-			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
+            ViGEm.HidGuardianHelper.AddCurrentProcessToWhiteList();
+            System.Threading.Thread.CurrentThread.Name = "MainFormThread";
 			// Make sure that all GridViews are updated on the same thread as MainForm when data changes.
 			// For example User devices will be removed and added on separate thread.
 			SettingsManager.Settings.Items.SynchronizingObject = this;
@@ -592,9 +593,10 @@ namespace x360ce.App
 				tmp.Delete();
 			}
 			SaveAll();
-		}
+            ViGEm.HidGuardianHelper.RemoveCurrentProcessFromWhiteList();
+        }
 
-		public void SaveAll()
+        public void SaveAll()
 		{
 			Settings.Default.Save();
 			SettingsManager.OptionsData.Save();

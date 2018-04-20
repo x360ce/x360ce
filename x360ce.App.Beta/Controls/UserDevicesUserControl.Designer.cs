@@ -45,7 +45,7 @@
             this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MyGameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsHiddenColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
             this.ControllersToolStrip.SuspendLayout();
@@ -73,7 +73,7 @@
             this.MySidColumn,
             this.MyDeviceColumn,
             this.MyFileColumn,
-            this.MyGameColumn,
+            this.DeviceIdColumn,
             this.IsHiddenColumn});
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
@@ -224,13 +224,13 @@
             this.MyFileColumn.Name = "MyFileColumn";
             this.MyFileColumn.ReadOnly = true;
             // 
-            // MyGameColumn
+            // DeviceIdColumn
             // 
-            this.MyGameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.MyGameColumn.DataPropertyName = "HidDeviceId";
-            this.MyGameColumn.HeaderText = "Device ID";
-            this.MyGameColumn.Name = "MyGameColumn";
-            this.MyGameColumn.ReadOnly = true;
+            this.DeviceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.DeviceIdColumn.DataPropertyName = "HidDeviceId";
+            this.DeviceIdColumn.HeaderText = "Device ID";
+            this.DeviceIdColumn.Name = "DeviceIdColumn";
+            this.DeviceIdColumn.ReadOnly = true;
             // 
             // IsHiddenColumn
             // 
@@ -272,7 +272,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn MyGameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIdColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsHiddenColumn;
     }
 }

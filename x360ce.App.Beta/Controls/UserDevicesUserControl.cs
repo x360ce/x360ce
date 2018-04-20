@@ -1,17 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using x360ce.App.Forms;
-using JocysCom.ClassLibrary.IO;
-using JocysCom.ClassLibrary.Win32;
-using x360ce.App.DInput;
 
 namespace x360ce.App.Controls
 {
@@ -48,6 +41,14 @@ namespace x360ce.App.Controls
                 e.Value = item.IsOnline
                     ? Properties.Resources.bullet_square_glass_green
                     : Properties.Resources.bullet_square_glass_grey;
+            }
+            else if (e.ColumnIndex == grid.Columns[DeviceIdColumn.Name].Index)
+            {
+                var d = item.Device;
+                if (d != null)
+                {
+                }
+                //e.Value = item.de
             }
         }
 

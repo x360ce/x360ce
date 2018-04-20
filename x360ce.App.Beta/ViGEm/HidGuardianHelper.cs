@@ -40,14 +40,46 @@ namespace x360ce.App.ViGEm
 
         static string HidWhitelistRegistryKeyBase => $"{HidGuardianRegistryKeyBase}\\Whitelist";
 
+        /// <summary>
+        /// Allows application to see all hidden controllers.
+        /// </summary>
+        public static bool AddCurrentProcessToWhiteList()
+        {
+            var id = System.Diagnostics.Process.GetCurrentProcess().Id;
+            return InsertToWhiteList(id);
+        }
+
+        /// <summary>
+        /// Denies application to see all hidden controllers.
+        /// </summary>
+        public static bool RemoveCurrentProcessFromWhiteList()
+        {
+            var id = System.Diagnostics.Process.GetCurrentProcess().Id;
+            return InsertToWhiteList(id);
+        }
+
+        /// <summary>
+        /// Insert process ID into white list. This will allow for application to see all controllers.
+        /// </summary>
+        /// <param name="processId">Application process Id</param>
         public static bool InsertToWhiteList(int processId)
         {
-            var key = Registry.LocalMachine.CreateSubKey($"{HidWhitelistRegistryKeyBase}\\{processId}");
+            // Make sure that 32/64-bit application opens correct registry.
+            var view = Environment.Is64BitOperatingSystem
+                ? RegistryView.Registry64
+                : RegistryView.Registry32;
+            var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view);
+            var key = baseKey.CreateSubKey($"{HidWhitelistRegistryKeyBase}\\{processId}");
             if (key != null)
                 key.Close();
+            baseKey.Close();
             return true;
         }
 
+        /// <summary>
+        /// Remove process ID from white list.
+        /// </summary>
+        /// <param name="processId"></param>
         public static bool RemoveFromWhiteList(int processId)
         {
             Registry.LocalMachine.DeleteSubKey($"{HidWhitelistRegistryKeyBase}\\{processId}");
@@ -71,13 +103,32 @@ namespace x360ce.App.ViGEm
             return list.ToArray();
         }
 
-        public static bool ClearWhiteList()
+        /// <summary>
+        /// Remove all process IDs from whitelist.
+        /// </summary>
+        public static bool ClearWhiteList(bool keepCurrentProcess, bool keepRunningProcesses)
         {
             var key = Registry.LocalMachine.OpenSubKey(HidWhitelistRegistryKeyBase);
             if (key == null)
                 return true;
+            var keepIds = new List<int>();
+            if (keepCurrentProcess)
+            {
+                var id = System.Diagnostics.Process.GetCurrentProcess().Id;
+                keepIds.Add(id);
+            }
+            if (keepRunningProcesses)
+            {
+                var ids = System.Diagnostics.Process.GetProcesses().Select(x => x.Id);
+                keepIds.AddRange(ids);
+            }
             foreach (var subKeyName in key.GetSubKeyNames())
+            {
+                int processId;
+                if (int.TryParse(subKeyName, out processId) && keepIds.Contains(processId))
+                    continue;
                 Registry.LocalMachine.DeleteSubKey($"{HidWhitelistRegistryKeyBase}\\{subKeyName}");
+            }
             key.Close();
             return true;
         }

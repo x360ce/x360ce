@@ -16,7 +16,7 @@ namespace JocysCom.ClassLibrary.IO
 
         public string DeviceId { get; set; }
 
-        public string HardwareId { get; set; }
+        public string HardwareIds { get; set; }
 
         public uint DeviceHandle { get; set; }
 
