@@ -148,17 +148,27 @@ namespace x360ce.App.Controls
             }
             else if (e.ColumnIndex == grid.Columns[IsHiddenColumn.Name].Index)
             {
-                item.IsHidden = !item.IsHidden;
-                var guardianHardwareId = ViGEm.HidGuardianHelper.GetHardwareId(item.HidDevicePath);
+                //var guardianHardwareId = ViGEm.HidGuardianHelper.GetHardwareId(item.HidDevicePath);
+                var guardianHardwareId = item.HidDeviceId;
                 if (!string.IsNullOrEmpty(guardianHardwareId))
                 {
-                    if (item.IsHidden)
+
+                    var canModify = ViGEm.HidGuardianHelper.CanModifyAffectedDevices(true);
+                    if (canModify)
                     {
-                        ViGEm.HidGuardianHelper.RemoveFromAffected(guardianHardwareId);
+                        item.IsHidden = !item.IsHidden;
+                        if (item.IsHidden)
+                        {
+                            ViGEm.HidGuardianHelper.InsertToAffected(guardianHardwareId);
+                        }
+                        else
+                        {
+                            ViGEm.HidGuardianHelper.RemoveFromAffected(guardianHardwareId);
+                        }
                     }
                     else
                     {
-                        ViGEm.HidGuardianHelper.InsertToAffected(guardianHardwareId);
+                        MessageBoxForm.Show("Can't modify registry. Please run as Aministrator.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                 }
             }

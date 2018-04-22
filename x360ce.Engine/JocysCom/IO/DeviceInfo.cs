@@ -3,6 +3,18 @@ namespace JocysCom.ClassLibrary.IO
 {
     public class DeviceInfo
     {
+        public DeviceInfo()
+        {
+            // Set all string values to empty for entities.
+            Manufacturer = "";
+            Description = "";
+            DeviceId = "";
+            HardwareIds = "";
+            DevicePath = "";
+            ParentDeviceId = "";
+            ParentHardwareId = "";
+            ClassDescription = "";
+        }
 
         public string Manufacturer { get; set; }
 

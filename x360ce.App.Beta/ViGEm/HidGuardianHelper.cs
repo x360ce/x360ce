@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Security.AccessControl;
+using System.Security.Principal;
 
 namespace x360ce.App.ViGEm
 {
@@ -16,25 +18,6 @@ namespace x360ce.App.ViGEm
         static readonly string[] HardwareIdSplitters = { "\r\n", "\n" };
 
         static readonly Regex HardwareIdRegex = new Regex(@"HID\\[{(]?[0-9A-Fa-z]{8}[-]?([0-9A-Fa-z]{4}[-]?){3}[0-9A-Fa-z]{12}[)}]?|HID\\VID_[a-zA-Z0-9]{4}&PID_[a-zA-Z0-9]{4}");
-        static readonly Regex UsbRegex = new Regex(@"\\{2}\?\\(hid)#(vid_[a-z0-9]{4}&pid_[a-z0-9]{4}[^#]*)");
-        static readonly Regex BluetoothRegex = new Regex(@"\\{2}\?\\(hid)#([{(]?[0-9A-Fa-z]{8}[-]?([0-9A-Fa-z]{4}[-]?){3}[0-9A-Fa-z]{12}[)}]?_vid&[a-z0-9]{8}_pid&[^#]*)");
-
-        public static string GetHardwareId(string devicePath)
-        {
-            var regexes = new[]
-            {
-                // USB notation
-                UsbRegex,
-                // Bluetooth service notation
-                BluetoothRegex
-            };
-            foreach (var regex in regexes)
-            {
-                if (regex.IsMatch(devicePath))
-                    return $"{regex.Match(devicePath).Groups[1].Value}\\{regex.Match(devicePath).Groups[2].Value}".ToUpper();
-            }
-            return string.Empty;
-        }
 
         #region WhiteList
 
@@ -64,15 +47,14 @@ namespace x360ce.App.ViGEm
         /// <param name="processId">Application process Id</param>
         public static bool InsertToWhiteList(int processId)
         {
-            // Make sure that 32/64-bit application opens correct registry.
-            var view = Environment.Is64BitOperatingSystem
-                ? RegistryView.Registry64
-                : RegistryView.Registry32;
-            var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view);
-            var key = baseKey.CreateSubKey($"{HidWhitelistRegistryKeyBase}\\{processId}");
-            if (key != null)
-                key.Close();
-            baseKey.Close();
+            var subKey = Registry.LocalMachine.OpenSubKey(HidWhitelistRegistryKeyBase, true);
+            if (subKey != null)
+            {
+                var key = subKey.CreateSubKey(processId.ToString());
+                if (key != null)
+                    key.Close();
+                subKey.Close();
+            }
             return true;
         }
 
@@ -226,7 +208,56 @@ namespace x360ce.App.ViGEm
 
         #endregion
 
-    };
+        #region Helper
+
+        /// <summary>
+        /// Check if Users have right to modify programs white list.
+        /// </summary>
+        public static bool CanModifyWhiteList(bool fix = false)
+        {
+            return CanModifyRegistry(HidWhitelistRegistryKeyBase, RegistryRights.FullControl, fix); // RegistryRights.CreateSubKey | RegistryRights.Delete
+        }
+
+
+        /// <summary>
+        /// Check if Users have right to modify hidden devices.
+        /// </summary>
+        public static bool CanModifyAffectedDevices(bool fix = false)
+        {
+            return CanModifyRegistry(HidGuardianRegistryKeyBase, RegistryRights.FullControl, fix); // RegistryRights.SetValue
+        }
+
+        static bool CanModifyRegistry(string registryName, RegistryRights rights, bool fix = false)
+        {
+            if (!JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
+                return false;
+            var subKey = Registry.LocalMachine.OpenSubKey(registryName);
+            var canModify = false;
+            var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+            if (subKey != null)
+            {
+                // Check if users have right to write.
+                canModify = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(subKey, users, rights);
+                subKey.Close();
+            }
+            if (fix && !canModify && JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
+            {
+                // Update registry permissions, which will allow to modify affected devices in non elevated mode.
+                FixPermissionsForAffectedDevices(registryName, rights);
+                canModify = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(subKey, users, rights);
+            }
+            return canModify;
+        }
+
+        static void FixPermissionsForAffectedDevices(string registryName, RegistryRights rights)
+        {
+            var users = new SecurityIdentifier("S-1-5-32-545"); // Users WellKnownSidType.BuiltinUsersSid
+            JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(Registry.LocalMachine, registryName, users, rights);
+        }
+
+        #endregion
+
+    }
 
 }
 
