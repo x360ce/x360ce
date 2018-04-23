@@ -45,8 +45,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public void WriteException(Exception ex)
 		{
-			var writeAsHtml = ErrorUseNewStackTrace;
-			WriteException(ex, 10, _LogFolder, writeAsHtml);
+			WriteException(ex, 10, _LogFolder, WriteAsHtml);
 		}
 
 		public void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
@@ -102,16 +101,31 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Application Settings
 
+		/// <summary>
+		/// If used then, can loose information about original line of exception, therefore option is 'false' by default.
+		/// </summary>
 		public static bool ErrorUseNewStackTrace
 		{
 			get
 			{
 				if (!_ErrorUseNewStackTrace.HasValue)
-					_ErrorUseNewStackTrace = ParseBool("LogHelper_UseNewStackTrace", true);
+					_ErrorUseNewStackTrace = ParseBool("LogHelper_UseNewStackTrace", false);
 				return _ErrorUseNewStackTrace.Value;
 			}
 		}
 		static bool? _ErrorUseNewStackTrace;
+
+
+		public static bool WriteAsHtml
+		{
+			get
+			{
+				if (!_WriteAsHtml.HasValue)
+					_WriteAsHtml = ParseBool("LogHelper_WriteAsHtml", true);
+				return _WriteAsHtml.Value;
+			}
+		}
+		static bool? _WriteAsHtml;
 
 		public static bool LogThreadExceptions
 		{
@@ -171,6 +185,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			StackTrace fullTrace = null;
 			int startFrameIndex = 0;
 			// If use unstable version.
+			// Can loose information about original line of exception.
 			if (ErrorUseNewStackTrace)
 			{
 				// Get full stack trace from root to the current line.

@@ -43,20 +43,31 @@ namespace JocysCom.ClassLibrary.Security
 
         public static bool HasRights(RegistryKey key, SecurityIdentifier sid, RegistryRights rights)
         {
+            var sidRights = GetRights(key, sid);
+            return sidRights.HasValue
+                ? (sidRights & rights) == rights
+                : false;
+        }
+
+        public static RegistryRights? GetRights(RegistryKey key, SecurityIdentifier sid)
+        {
             if (key == null)
-                return false;
+                return null;
             var security = key.GetAccessControl();
             var rules = security.GetAccessRules(true, true, typeof(SecurityIdentifier));
+            RegistryRights? rights = null;
             foreach (RegistryAccessRule rule in rules)
             {
                 if (rule.IdentityReference != sid)
                     continue;
                 if (rule.AccessControlType != AccessControlType.Allow)
                     continue;
-                if ((rule.RegistryRights & rights) == rights)
-                    return true;
+                if (!rights.HasValue)
+                    rights = default(RegistryRights);
+                //  Merge inherited permissions.
+                rights |= rule.RegistryRights;
             }
-            return false;
+            return rights;
         }
 
         public static bool SetRights(RegistryKey baseKey, string registryName, SecurityIdentifier sid, RegistryRights rights)
@@ -67,7 +78,8 @@ namespace JocysCom.ClassLibrary.Security
             var rs = new RegistrySecurity();
             var security = key.GetAccessControl();
             RegistryAccessRule sidRule = null;
-            var rules = security.GetAccessRules(true, true, typeof(SecurityIdentifier));
+            // Do not include inherited permissions, because.
+            var rules = security.GetAccessRules(true, false, typeof(SecurityIdentifier));
             foreach (RegistryAccessRule rule in rules)
             {
                 if (rule.IdentityReference != sid)
@@ -82,7 +94,7 @@ namespace JocysCom.ClassLibrary.Security
             {
                 sidRule = new RegistryAccessRule(sid,
                     rights,
-                    InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit,
+                    InheritanceFlags.ContainerInherit,
                     PropagationFlags.None,
                     AccessControlType.Allow);
                 security.AddAccessRule(sidRule);

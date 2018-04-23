@@ -229,11 +229,20 @@ namespace x360ce.App.ViGEm
 
         static bool CanModifyRegistry(string registryName, RegistryRights rights, bool fix = false)
         {
+            var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+            var subKey = Registry.LocalMachine.OpenSubKey(registryName);
+            //if (subKey != null)
+            //{
+            //    var usersRights = JocysCom.ClassLibrary.Security.PermissionHelper.GetRights(subKey, users);
+            //    if (usersRights.HasValue)
+            //    {
+            //        var values = (RegistryRights[])Enum.GetValues(typeof(RegistryRights));
+            //        var found = values.Where(x => usersRights.Value.HasFlag(x)).ToArray();
+            //    }
+            //}
             if (!JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
                 return false;
-            var subKey = Registry.LocalMachine.OpenSubKey(registryName);
             var canModify = false;
-            var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
             if (subKey != null)
             {
                 // Check if users have right to write.
