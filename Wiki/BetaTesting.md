@@ -1,4 +1,4 @@
-These are instructions for early Xbox 360 Controller Emulator 4.0 Alpha version testing, which includes virtual X360 controller.
+These are instructions for early Xbox 360 Controller Emulator 4.x Alpha version testing, which includes virtual X360 controller.
 
 IMPORTANT Note 1: This is ALPHA release. Some things will not work and this release is intended to test games with Virtual X360 controller only.
 
