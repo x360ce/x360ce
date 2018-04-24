@@ -9,7 +9,7 @@ IMPORTANT Note 3: Do not close "Xbox 360 Controller Emulator" during the game, j
 
 1. Download Xbox 360 Controller Emulator (32-bit will work on a 64-bit Windows too, because it contains all required 64-bit files):
 
-[32-bit 4.4.0.2 Alpha Download - x360ce.zip](https://github.com/x360ce/x360ce/releases/download/4.4.0.2/x360ce.zip)
+[32-bit 4.4.0.3 Alpha Download - x360ce.zip](https://github.com/x360ce/x360ce/releases/download/4.4.0.3/x360ce.zip)
 
 2. Extract ZIP file and launch x360ce.exe file.
 
