@@ -150,6 +150,7 @@ namespace x360ce.App.ViGEm
             // Return if invalid id found.
             if (hwIds.Any(i => !HardwareIdRegex.IsMatch(i)))
                 return false;
+            FixCasing(hwIds);
             // Get existing Hardware IDs.
             var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
             var current = (key.GetValue("AffectedDevices", new string[0]) as string[]).ToList();
@@ -172,6 +173,7 @@ namespace x360ce.App.ViGEm
             // Return if invalid id found.
             if (hwIds.Any(i => !HardwareIdRegex.IsMatch(i)))
                 return false;
+            FixCasing(hwIds);
             // Get existing Hardware IDs.
             var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
             var current = (key.GetValue("AffectedDevices", new string[0]) as string[]).ToList();
@@ -218,10 +220,32 @@ namespace x360ce.App.ViGEm
             var names = key.GetValueNames();
             foreach (var name in names)
             {
-                    list.Add(string.Format("{0} - {1}", name, key.GetValue(name)));
+                int id;
+                if (int.TryParse(name, out id))
+                {
+                    var hwid = key.GetValue(name) as string;
+                    if (!string.IsNullOrEmpty(hwid))
+                        list.Add(hwid);
+                }
             }
             key.Close();
             return list.ToArray();
+        }
+
+        /// <summary>
+        /// Make sure that supplied values have same casing as enumerated devices, just in case HidGuardian is case sensitive.
+        /// </summary>
+        /// <param name="hwid"></param>
+        static void FixCasing(string[] hwIds)
+        {
+            var list = GetEnumeratedDevices();
+            for (int i = 0; i < hwIds.Length; i++)
+            {
+                var hwid = hwIds[i];
+                var name = list.FirstOrDefault(x => string.Compare(x, hwid, true) == 0);
+                if (!string.IsNullOrEmpty(name))
+                    hwIds[i] = name;
+            }
         }
 
         #endregion
