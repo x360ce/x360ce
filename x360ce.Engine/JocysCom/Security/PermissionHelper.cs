@@ -243,7 +243,7 @@ namespace JocysCom.ClassLibrary.Security
                     sidRule.PropagationFlags,
                     AccessControlType.Allow
                 );
-                security.SetAccessRule(sidRule);
+                security.SetAccessRule(newRule);
             }
             key.SetAccessControl(security);
             key.Close();
