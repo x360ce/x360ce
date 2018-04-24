@@ -176,21 +176,29 @@ namespace x360ce.App.Controls
             }
         }
 
-        private void HiddenDevicesButton_Click(object sender, EventArgs e)
+        private void ShowHiddenDevicesMenuItem_Click(object sender, EventArgs e)
         {
             var devices = ViGEm.HidGuardianHelper.GetAffected();
-            MessageBox.Show("Affected Devices\r\n\r\n" + string.Join(", ", devices), "Affected Devices");
+            var form = new MessageBoxForm();
+            form.StartPosition = FormStartPosition.CenterParent;
+            var text = devices.Length == 0
+                ? "None"
+                : string.Join("\r\n", devices);
+            form.ShowForm(text, "Affected Devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void HideVirtualButton_Click(object sender, EventArgs e)
+        private void ShowEnumeratedDevicesMenuItem_Click(object sender, EventArgs e)
         {
-            //var list = Nefarius.ViGEm.Client.ViGEmClient.GetVirtualDevices();
-            //ViGEm.HidGuardianHelper.InsertToAffected(device);
-            //var ids = list.Select(x => x.DeviceId).ToArray();
-            //MessageBox.Show("Affected Devices\r\n\r\n" + string.Join(", ", ids), "Affected Devices");
+            var devices = ViGEm.HidGuardianHelper.GetEnumeratedDevices();
+            var form = new MessageBoxForm();
+            form.StartPosition = FormStartPosition.CenterParent;
+            var text = devices.Length == 0
+                ? "None"
+                : string.Join("\r\n", devices);
+            form.ShowForm(text, "Enumerated Devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void UnhideAllButton_Click(object sender, EventArgs e)
+        private void UnhideAllDevicesMenuItem_Click(object sender, EventArgs e)
         {
             ViGEm.HidGuardianHelper.ClearAffected();
             var devices = SettingsManager.UserDevices.Items.ToArray();

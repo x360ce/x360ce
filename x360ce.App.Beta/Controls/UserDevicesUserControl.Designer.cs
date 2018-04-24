@@ -28,18 +28,11 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserDevicesUserControl));
             this.DevicesDataGridView = new System.Windows.Forms.DataGridView();
-            this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
-            this.RefreshButton = new System.Windows.Forms.ToolStripButton();
-            this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
-            this.HardwareButton = new System.Windows.Forms.ToolStripButton();
-            this.AddDemoDevice = new System.Windows.Forms.ToolStripButton();
-            this.HiddenDevicesButton = new System.Windows.Forms.ToolStripButton();
-            this.UnhideAllButton = new System.Windows.Forms.ToolStripButton();
             this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -47,6 +40,15 @@
             this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IsHiddenColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
+            this.RefreshButton = new System.Windows.Forms.ToolStripButton();
+            this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
+            this.HardwareButton = new System.Windows.Forms.ToolStripButton();
+            this.AddDemoDevice = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.EnumeratedDevicesButton = new System.Windows.Forms.ToolStripMenuItem();
+            this.HiddenDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.UnhideAllDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
             this.ControllersToolStrip.SuspendLayout();
             this.SuspendLayout();
@@ -59,13 +61,13 @@
             this.DevicesDataGridView.BackgroundColor = System.Drawing.Color.White;
             this.DevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.DevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DevicesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DevicesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.DevicesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsOnlineColumn,
@@ -75,110 +77,33 @@
             this.MyFileColumn,
             this.DeviceIdColumn,
             this.IsHiddenColumn});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
             this.DevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.DevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
             this.DevicesDataGridView.Location = new System.Drawing.Point(0, 25);
             this.DevicesDataGridView.Name = "DevicesDataGridView";
             this.DevicesDataGridView.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.DevicesDataGridView.RowHeadersVisible = false;
             this.DevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.DevicesDataGridView.Size = new System.Drawing.Size(717, 411);
             this.DevicesDataGridView.TabIndex = 0;
             this.DevicesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DevicesDataGridView_CellClick);
             this.DevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ControllersDataGridView_CellFormatting);
-            // 
-            // ControllersToolStrip
-            // 
-            this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.RefreshButton,
-            this.ControllerDeleteButton,
-            this.HardwareButton,
-            this.AddDemoDevice,
-            this.HiddenDevicesButton,
-            this.UnhideAllButton});
-            this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
-            this.ControllersToolStrip.Name = "ControllersToolStrip";
-            this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.ControllersToolStrip.Size = new System.Drawing.Size(717, 25);
-            this.ControllersToolStrip.TabIndex = 1;
-            this.ControllersToolStrip.Text = "MySettingsToolStrip";
-            // 
-            // RefreshButton
-            // 
-            this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-            this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.RefreshButton.Name = "RefreshButton";
-            this.RefreshButton.Size = new System.Drawing.Size(66, 22);
-            this.RefreshButton.Text = "&Refresh";
-            this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
-            // 
-            // ControllerDeleteButton
-            // 
-            this.ControllerDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-            this.ControllerDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ControllerDeleteButton.Name = "ControllerDeleteButton";
-            this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
-            this.ControllerDeleteButton.Text = "&Delete";
-            this.ControllerDeleteButton.Click += new System.EventHandler(this.ControllerDeleteButton_Click);
-            // 
-            // HardwareButton
-            // 
-            this.HardwareButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.HardwareButton.Image = ((System.Drawing.Image)(resources.GetObject("HardwareButton.Image")));
-            this.HardwareButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.HardwareButton.Name = "HardwareButton";
-            this.HardwareButton.Size = new System.Drawing.Size(71, 22);
-            this.HardwareButton.Text = "Hardware...";
-            this.HardwareButton.Click += new System.EventHandler(this.HardwareButton_Click);
-            // 
-            // AddDemoDevice
-            // 
-            this.AddDemoDevice.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.AddDemoDevice.Image = ((System.Drawing.Image)(resources.GetObject("AddDemoDevice.Image")));
-            this.AddDemoDevice.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.AddDemoDevice.Name = "AddDemoDevice";
-            this.AddDemoDevice.Size = new System.Drawing.Size(106, 22);
-            this.AddDemoDevice.Text = "Add Demo Device";
-            this.AddDemoDevice.Click += new System.EventHandler(this.AddDemoDevice_Click);
-            // 
-            // HiddenDevicesButton
-            // 
-            this.HiddenDevicesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.HiddenDevicesButton.Image = ((System.Drawing.Image)(resources.GetObject("HiddenDevicesButton.Image")));
-            this.HiddenDevicesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.HiddenDevicesButton.Name = "HiddenDevicesButton";
-            this.HiddenDevicesButton.Size = new System.Drawing.Size(93, 22);
-            this.HiddenDevicesButton.Text = "Hidden Devices";
-            this.HiddenDevicesButton.Click += new System.EventHandler(this.HiddenDevicesButton_Click);
-            // 
-            // UnhideAllButton
-            // 
-            this.UnhideAllButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.UnhideAllButton.Image = ((System.Drawing.Image)(resources.GetObject("UnhideAllButton.Image")));
-            this.UnhideAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.UnhideAllButton.Name = "UnhideAllButton";
-            this.UnhideAllButton.Size = new System.Drawing.Size(66, 22);
-            this.UnhideAllButton.Text = "Unhide All";
-            this.UnhideAllButton.Click += new System.EventHandler(this.UnhideAllButton_Click);
             // 
             // IsOnlineColumn
             // 
@@ -241,6 +166,96 @@
             this.IsHiddenColumn.ReadOnly = true;
             this.IsHiddenColumn.Width = 35;
             // 
+            // ControllersToolStrip
+            // 
+            this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RefreshButton,
+            this.ControllerDeleteButton,
+            this.HardwareButton,
+            this.AddDemoDevice,
+            this.toolStripDropDownButton1});
+            this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.ControllersToolStrip.Name = "ControllersToolStrip";
+            this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.ControllersToolStrip.Size = new System.Drawing.Size(717, 25);
+            this.ControllersToolStrip.TabIndex = 1;
+            this.ControllersToolStrip.Text = "MySettingsToolStrip";
+            // 
+            // RefreshButton
+            // 
+            this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+            this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.RefreshButton.Name = "RefreshButton";
+            this.RefreshButton.Size = new System.Drawing.Size(66, 22);
+            this.RefreshButton.Text = "&Refresh";
+            this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+            // 
+            // ControllerDeleteButton
+            // 
+            this.ControllerDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+            this.ControllerDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ControllerDeleteButton.Name = "ControllerDeleteButton";
+            this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
+            this.ControllerDeleteButton.Text = "&Delete";
+            this.ControllerDeleteButton.Click += new System.EventHandler(this.ControllerDeleteButton_Click);
+            // 
+            // HardwareButton
+            // 
+            this.HardwareButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.HardwareButton.Image = ((System.Drawing.Image)(resources.GetObject("HardwareButton.Image")));
+            this.HardwareButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.HardwareButton.Name = "HardwareButton";
+            this.HardwareButton.Size = new System.Drawing.Size(71, 22);
+            this.HardwareButton.Text = "Hardware...";
+            this.HardwareButton.Click += new System.EventHandler(this.HardwareButton_Click);
+            // 
+            // AddDemoDevice
+            // 
+            this.AddDemoDevice.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.AddDemoDevice.Image = ((System.Drawing.Image)(resources.GetObject("AddDemoDevice.Image")));
+            this.AddDemoDevice.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.AddDemoDevice.Name = "AddDemoDevice";
+            this.AddDemoDevice.Size = new System.Drawing.Size(106, 22);
+            this.AddDemoDevice.Text = "Add Demo Device";
+            this.AddDemoDevice.Click += new System.EventHandler(this.AddDemoDevice_Click);
+            // 
+            // toolStripDropDownButton1
+            // 
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EnumeratedDevicesButton,
+            this.HiddenDevicesMenuItem,
+            this.UnhideAllDevicesMenuItem});
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(100, 22);
+            this.toolStripDropDownButton1.Text = "HID Guardian...";
+            // 
+            // EnumeratedDevicesButton
+            // 
+            this.EnumeratedDevicesButton.Name = "EnumeratedDevicesButton";
+            this.EnumeratedDevicesButton.Size = new System.Drawing.Size(213, 22);
+            this.EnumeratedDevicesButton.Text = "Show Enumerated Devices";
+            this.EnumeratedDevicesButton.Click += new System.EventHandler(this.ShowEnumeratedDevicesMenuItem_Click);
+            // 
+            // HiddenDevicesMenuItem
+            // 
+            this.HiddenDevicesMenuItem.Name = "HiddenDevicesMenuItem";
+            this.HiddenDevicesMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.HiddenDevicesMenuItem.Text = "Show Hidden Devices";
+            this.HiddenDevicesMenuItem.Click += new System.EventHandler(this.ShowHiddenDevicesMenuItem_Click);
+            // 
+            // UnhideAllDevicesMenuItem
+            // 
+            this.UnhideAllDevicesMenuItem.Name = "UnhideAllDevicesMenuItem";
+            this.UnhideAllDevicesMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.UnhideAllDevicesMenuItem.Text = "Unhide All Devices";
+            this.UnhideAllDevicesMenuItem.Click += new System.EventHandler(this.UnhideAllDevicesMenuItem_Click);
+            // 
             // UserDevicesUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -265,8 +280,6 @@
 		private System.Windows.Forms.ToolStripButton RefreshButton;
 		private System.Windows.Forms.ToolStripButton HardwareButton;
 		private System.Windows.Forms.ToolStripButton AddDemoDevice;
-        private System.Windows.Forms.ToolStripButton HiddenDevicesButton;
-		private System.Windows.Forms.ToolStripButton UnhideAllButton;
         private System.Windows.Forms.DataGridViewImageColumn IsOnlineColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
@@ -274,5 +287,9 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIdColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsHiddenColumn;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem EnumeratedDevicesButton;
+        private System.Windows.Forms.ToolStripMenuItem HiddenDevicesMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem UnhideAllDevicesMenuItem;
     }
 }

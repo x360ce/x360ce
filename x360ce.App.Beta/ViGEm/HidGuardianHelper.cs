@@ -12,7 +12,11 @@ namespace x360ce.App.ViGEm
 
     public class HidGuardianHelper
     {
-        static string HidGuardianRegistryKeyBase => @"SYSTEM\CurrentControlSet\Services\HidGuardian\Parameters";
+
+        static string HidGuardianRegistry = @"SYSTEM\CurrentControlSet\Services\HidGuardian";
+
+        static string ParametersRegistry => $"{HidGuardianRegistry}\\Parameters";
+        static string WhitelistRegistry => $"{ParametersRegistry}\\Whitelist";
 
         static readonly IEnumerable<object> ResponseOk = new[] { "OK" };
         static readonly string[] HardwareIdSplitters = { "\r\n", "\n" };
@@ -21,7 +25,6 @@ namespace x360ce.App.ViGEm
 
         #region WhiteList
 
-        static string HidWhitelistRegistryKeyBase => $"{HidGuardianRegistryKeyBase}\\Whitelist";
 
         /// <summary>
         /// Allows application to see all hidden controllers.
@@ -47,7 +50,7 @@ namespace x360ce.App.ViGEm
         /// <param name="processId">Application process Id</param>
         public static bool InsertToWhiteList(int processId)
         {
-            var subKey = Registry.LocalMachine.OpenSubKey(HidWhitelistRegistryKeyBase, true);
+            var subKey = Registry.LocalMachine.OpenSubKey(WhitelistRegistry, true);
             if (subKey != null)
             {
                 var key = subKey.CreateSubKey(processId.ToString());
@@ -64,14 +67,14 @@ namespace x360ce.App.ViGEm
         /// <param name="processId"></param>
         public static bool RemoveFromWhiteList(int processId)
         {
-            Registry.LocalMachine.DeleteSubKey($"{HidWhitelistRegistryKeyBase}\\{processId}");
+            Registry.LocalMachine.DeleteSubKey($"{WhitelistRegistry}\\{processId}");
             return true;
         }
 
         public static int[] SelectFromWhiteList()
         {
             var list = new List<int>();
-            var key = Registry.LocalMachine.OpenSubKey(HidWhitelistRegistryKeyBase);
+            var key = Registry.LocalMachine.OpenSubKey(WhitelistRegistry);
             if (key == null)
                 return list.ToArray();
             var names = key.GetSubKeyNames();
@@ -90,7 +93,7 @@ namespace x360ce.App.ViGEm
         /// </summary>
         public static bool ClearWhiteList(bool keepCurrentProcess, bool keepRunningProcesses)
         {
-            var key = Registry.LocalMachine.OpenSubKey(HidWhitelistRegistryKeyBase);
+            var key = Registry.LocalMachine.OpenSubKey(WhitelistRegistry);
             if (key == null)
                 return true;
             var keepIds = new List<int>();
@@ -109,7 +112,7 @@ namespace x360ce.App.ViGEm
                 int processId;
                 if (int.TryParse(subKeyName, out processId) && keepIds.Contains(processId))
                     continue;
-                Registry.LocalMachine.DeleteSubKey($"{HidWhitelistRegistryKeyBase}\\{subKeyName}");
+                Registry.LocalMachine.DeleteSubKey($"{WhitelistRegistry}\\{subKeyName}");
             }
             key.Close();
             return true;
@@ -121,7 +124,7 @@ namespace x360ce.App.ViGEm
 
         public static bool GetForce()
         {
-            var key = Registry.LocalMachine.OpenSubKey(HidGuardianRegistryKeyBase);
+            var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry);
             if (key == null)
                 return false;
             var force = (int)key.GetValue("Force", 0) == 1;
@@ -131,7 +134,7 @@ namespace x360ce.App.ViGEm
 
         public static void SetForce(bool enabled)
         {
-            var key = Registry.LocalMachine.OpenSubKey(HidGuardianRegistryKeyBase);
+            var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry);
             if (key == null)
                 return;
             key.SetValue("Force", enabled ? 1 : 0);
@@ -148,7 +151,7 @@ namespace x360ce.App.ViGEm
             if (hwIds.Any(i => !HardwareIdRegex.IsMatch(i)))
                 return false;
             // Get existing Hardware IDs.
-            var key = Registry.LocalMachine.CreateSubKey(HidGuardianRegistryKeyBase);
+            var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
             var current = (key.GetValue("AffectedDevices", new string[0]) as string[]).ToList();
             // Combine arrays.
             current.AddRange(hwIds);
@@ -170,7 +173,7 @@ namespace x360ce.App.ViGEm
             if (hwIds.Any(i => !HardwareIdRegex.IsMatch(i)))
                 return false;
             // Get existing Hardware IDs.
-            var key = Registry.LocalMachine.CreateSubKey(HidGuardianRegistryKeyBase);
+            var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
             var current = (key.GetValue("AffectedDevices", new string[0]) as string[]).ToList();
             // Remove values from array.
             current.RemoveAll(x => hwIds.Contains(x));
@@ -188,7 +191,7 @@ namespace x360ce.App.ViGEm
 
         public static string[] GetAffected()
         {
-            var key = Registry.LocalMachine.OpenSubKey(HidGuardianRegistryKeyBase, false);
+            var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry, false);
             if (key == null)
                 return new string[0];
             var current = key.GetValue("AffectedDevices", new string[0]) as string[];
@@ -198,12 +201,27 @@ namespace x360ce.App.ViGEm
 
         public static bool ClearAffected()
         {
-            var key = Registry.LocalMachine.OpenSubKey(HidGuardianRegistryKeyBase, true);
+            var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry, true);
             if (key == null)
                 return true;
             key.SetValue("AffectedDevices", new string[0], RegistryValueKind.MultiString);
             key.Close();
             return true;
+        }
+
+        public static string[] GetEnumeratedDevices()
+        {
+            var list = new List<string>();
+            var key = Registry.LocalMachine.OpenSubKey($"{HidGuardianRegistry}\\Enum");
+            if (key == null)
+                return list.ToArray();
+            var names = key.GetValueNames();
+            foreach (var name in names)
+            {
+                    list.Add(string.Format("{0} - {1}", name, key.GetValue(name)));
+            }
+            key.Close();
+            return list.ToArray();
         }
 
         #endregion
@@ -215,7 +233,7 @@ namespace x360ce.App.ViGEm
         /// </summary>
         public static bool CanModifyParameters(bool fix = false)
         {
-            return CanModifyRegistry(HidGuardianRegistryKeyBase, RegistryRights.FullControl, fix);
+            return CanModifyRegistry(ParametersRegistry, RegistryRights.FullControl, fix);
         }
 
         static bool CanModifyRegistry(string registryName, RegistryRights rights, bool fix = false)
