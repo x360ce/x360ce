@@ -106,12 +106,11 @@ namespace x360ce.App
         {
             if (IsDesignMode)
                 return;
-            if (ViGEm.HidGuardianHelper.CanModifyWhiteList(true))
+           if (ViGEm.HidGuardianHelper.CanModifyParameters(true))
             {
                 ViGEm.HidGuardianHelper.AddCurrentProcessToWhiteList();
                 ViGEm.HidGuardianHelper.ClearWhiteList(true, true);
             }
-            ViGEm.HidGuardianHelper.CanModifyAffectedDevices(true);
             System.Threading.Thread.CurrentThread.Name = "MainFormThread";
             // Make sure that all GridViews are updated on the same thread as MainForm when data changes.
             // For example User devices will be removed and added on separate thread.
@@ -598,7 +597,7 @@ namespace x360ce.App
                 tmp.Delete();
             }
             SaveAll();
-            if (ViGEm.HidGuardianHelper.CanModifyWhiteList())
+            if (ViGEm.HidGuardianHelper.CanModifyParameters())
                 ViGEm.HidGuardianHelper.RemoveCurrentProcessFromWhiteList();
         }
 

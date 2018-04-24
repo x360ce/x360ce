@@ -153,7 +153,7 @@ namespace x360ce.App.Controls
                 if (!string.IsNullOrEmpty(guardianHardwareId))
                 {
 
-                    var canModify = ViGEm.HidGuardianHelper.CanModifyAffectedDevices(true);
+                    var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
                     if (canModify)
                     {
                         item.IsHidden = !item.IsHidden;
@@ -168,7 +168,9 @@ namespace x360ce.App.Controls
                     }
                     else
                     {
-                        MessageBoxForm.Show("Can't modify registry. Please run as Aministrator.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBoxForm form = new MessageBoxForm();
+                        form.StartPosition = FormStartPosition.CenterParent;
+                        form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Aministrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                 }
             }

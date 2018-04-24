@@ -213,55 +213,30 @@ namespace x360ce.App.ViGEm
         /// <summary>
         /// Check if Users have right to modify programs white list.
         /// </summary>
-        public static bool CanModifyWhiteList(bool fix = false)
+        public static bool CanModifyParameters(bool fix = false)
         {
-            return CanModifyRegistry(HidWhitelistRegistryKeyBase, RegistryRights.FullControl, fix); // RegistryRights.CreateSubKey | RegistryRights.Delete
-        }
-
-
-        /// <summary>
-        /// Check if Users have right to modify hidden devices.
-        /// </summary>
-        public static bool CanModifyAffectedDevices(bool fix = false)
-        {
-            return CanModifyRegistry(HidGuardianRegistryKeyBase, RegistryRights.FullControl, fix); // RegistryRights.SetValue
+            return CanModifyRegistry(HidGuardianRegistryKeyBase, RegistryRights.FullControl, fix);
         }
 
         static bool CanModifyRegistry(string registryName, RegistryRights rights, bool fix = false)
         {
-            var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
             var subKey = Registry.LocalMachine.OpenSubKey(registryName);
-            //if (subKey != null)
-            //{
-            //    var usersRights = JocysCom.ClassLibrary.Security.PermissionHelper.GetRights(subKey, users);
-            //    if (usersRights.HasValue)
-            //    {
-            //        var values = (RegistryRights[])Enum.GetValues(typeof(RegistryRights));
-            //        var found = values.Where(x => usersRights.Value.HasFlag(x)).ToArray();
-            //    }
-            //}
-            if (!JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
-                return false;
             var canModify = false;
+            var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
             if (subKey != null)
             {
-                // Check if users have right to write.
-                canModify = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(subKey, users, rights);
-                subKey.Close();
+                // Check if users have right to write in non elevated mode.
+                canModify = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(subKey, users, rights, false);
             }
-            if (fix && !canModify && JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
+            // If can't modify, but must fix and program is running in elevated mode.
+            if (!canModify && fix && JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
             {
-                // Update registry permissions, which will allow to modify affected devices in non elevated mode.
-                FixPermissionsForAffectedDevices(registryName, rights);
+                // Update registry by adding required permissions, which will allow users to modify affected devices in non elevated mode.
+                JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(Registry.LocalMachine, registryName, users, RegistryRights.FullControl);
                 canModify = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(subKey, users, rights);
             }
+            subKey.Close();
             return canModify;
-        }
-
-        static void FixPermissionsForAffectedDevices(string registryName, RegistryRights rights)
-        {
-            var users = new SecurityIdentifier("S-1-5-32-545"); // Users WellKnownSidType.BuiltinUsersSid
-            JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(Registry.LocalMachine, registryName, users, rights);
         }
 
         #endregion
