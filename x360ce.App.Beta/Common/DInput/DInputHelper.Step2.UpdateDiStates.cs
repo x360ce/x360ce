@@ -134,6 +134,7 @@ namespace x360ce.App.DInput
                         }
                         catch (Exception ex)
                         {
+                            JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
                             ud.IsExclusiveMode = null;
                             var error = ex;
                         }

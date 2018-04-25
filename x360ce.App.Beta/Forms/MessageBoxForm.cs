@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
 
@@ -20,30 +16,32 @@ namespace x360ce.App.Controls
 		int h;
 		int w;
 
-		/// <summary>Displays a message box with the specified text, caption, buttons, icon, and default button.</summary>
-		/// <param name="text">The text to display in the message box.</param>
-		/// <param name="caption">The text to display in the title bar of the message box.</param>
-		/// <param name="buttons">One of the <see cref="T:System.Windows.Forms.MessageBoxButtons" /> values that specifies which buttons to display in the message box.</param>
-		/// <param name="icon">One of the <see cref="T:System.Windows.Forms.MessageBoxIcon" /> values that specifies which icon to display in the message box.</param>
-		/// <param name="defaultButton">One of the <see cref="T:System.Windows.Forms.MessageBoxDefaultButton" /> values that specifies the default button for the message box.</param>
-		/// <returns>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</returns>
-		public System.Windows.Forms.DialogResult ShowForm(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
-		{
-			return ShowForm(text, caption, buttons, icon, MessageBoxDefaultButton.Button1);
-		}
+        /// <summary>Displays a message box with the specified text, caption, buttons, icon, and default button.</summary>
+        /// <param name="text">The text to display in the message box.</param>
+        /// <param name="caption">The text to display in the title bar of the message box.</param>
+        /// <param name="buttons">One of the <see cref="T:System.Windows.Forms.MessageBoxButtons" /> values that specifies which buttons to display in the message box.</param>
+        /// <param name="icon">One of the <see cref="T:System.Windows.Forms.MessageBoxIcon" /> values that specifies which icon to display in the message box.</param>
+        /// <param name="defaultButton">One of the <see cref="T:System.Windows.Forms.MessageBoxDefaultButton" /> values that specifies the default button for the message box.</param>
+        /// <returns>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</returns>
+        public static DialogResult Show(string text, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Information, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1)
+        {
+            MessageBoxForm form = new MessageBoxForm();
+            form.StartPosition = FormStartPosition.CenterScreen;
+            return form.ShowForm(text, caption, buttons, icon, defaultButton);
+        }
 
-		/// <summary>Displays a message box with the specified text, caption, buttons, icon, and default button.</summary>
-		/// <param name="text">The text to display in the message box.</param>
-		/// <param name="caption">The text to display in the title bar of the message box.</param>
-		/// <param name="buttons">One of the <see cref="T:System.Windows.Forms.MessageBoxButtons" /> values that specifies which buttons to display in the message box.</param>
-		/// <param name="icon">One of the <see cref="T:System.Windows.Forms.MessageBoxIcon" /> values that specifies which icon to display in the message box.</param>
-		/// <param name="defaultButton">One of the <see cref="T:System.Windows.Forms.MessageBoxDefaultButton" /> values that specifies the default button for the message box.</param>
-		/// <returns>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</returns>
-		public System.Windows.Forms.DialogResult ShowForm(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton)
+        /// <summary>Displays a message box with the specified text, caption, buttons, icon, and default button.</summary>
+        /// <param name="text">The text to display in the message box.</param>
+        /// <param name="caption">The text to display in the title bar of the message box.</param>
+        /// <param name="buttons">One of the <see cref="T:System.Windows.Forms.MessageBoxButtons" /> values that specifies which buttons to display in the message box.</param>
+        /// <param name="icon">One of the <see cref="T:System.Windows.Forms.MessageBoxIcon" /> values that specifies which icon to display in the message box.</param>
+        /// <param name="defaultButton">One of the <see cref="T:System.Windows.Forms.MessageBoxDefaultButton" /> values that specifies the default button for the message box.</param>
+        /// <returns>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</returns>
+        public DialogResult ShowForm(string text, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Information, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1)
 		{
-			AddResizeEvents();
+            AddResizeEvents();
 			TextLabel.Text = text;
-			this.Text = caption;
+			Text = caption;
 			Button1.Visible = false;
 			Button2.Visible = false;
 			Button3.Visible = false;
@@ -107,40 +105,12 @@ namespace x360ce.App.Controls
 			return ShowDialog();
 		}
 
-		/// <summary>Displays a message box with the specified text, caption, buttons, icon, and default button.</summary>
-		/// <param name="text">The text to display in the message box.</param>
-		/// <param name="caption">The text to display in the title bar of the message box.</param>
-		/// <param name="buttons">One of the <see cref="T:System.Windows.Forms.MessageBoxButtons" /> values that specifies which buttons to display in the message box.</param>
-		/// <param name="icon">One of the <see cref="T:System.Windows.Forms.MessageBoxIcon" /> values that specifies which icon to display in the message box.</param>
-		/// <param name="defaultButton">One of the <see cref="T:System.Windows.Forms.MessageBoxDefaultButton" /> values that specifies the default button for the message box.</param>
-		/// <returns>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</returns>
-		public static System.Windows.Forms.DialogResult Show(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
-		{
-			MessageBoxForm form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterScreen;
-			return form.ShowForm(text, caption, buttons, icon);
-		}
-
-		/// <summary>Displays a message box with the specified text, caption, buttons, icon, and default button.</summary>
-		/// <param name="text">The text to display in the message box.</param>
-		/// <param name="caption">The text to display in the title bar of the message box.</param>
-		/// <param name="buttons">One of the <see cref="T:System.Windows.Forms.MessageBoxButtons" /> values that specifies which buttons to display in the message box.</param>
-		/// <param name="icon">One of the <see cref="T:System.Windows.Forms.MessageBoxIcon" /> values that specifies which icon to display in the message box.</param>
-		/// <param name="defaultButton">One of the <see cref="T:System.Windows.Forms.MessageBoxDefaultButton" /> values that specifies the default button for the message box.</param>
-		/// <returns>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</returns>
-		public static System.Windows.Forms.DialogResult Show(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon, MessageBoxDefaultButton defaultButton)
-		{
-			MessageBoxForm form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterScreen;
-			return form.ShowForm(text, caption, buttons, icon, defaultButton);
-		}
-
 		public void AddResizeEvents()
 		{
-			h = this.Height - TextLabel.Height;
-			w = this.Width - TextLabel.Width;
+			h = Height - TextLabel.Height;
+			w = Width - TextLabel.Width;
 			TextLabel.AutoSize = true;
-			this.TextLabel.Resize += Message_Resize;
+			TextLabel.Resize += Message_Resize;
 		}
 
 		public void EnableButton(ref Button button, DialogResult r1)
@@ -181,31 +151,31 @@ namespace x360ce.App.Controls
 		void Button_Click(object sender, EventArgs e)
 		{
 			Button button = (Button)sender;
-			this.DialogResult = button.DialogResult;
+			DialogResult = button.DialogResult;
 		}
 
-		void Form_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		void Form_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.Control & e.KeyCode == Keys.C)
 			{
-				Clipboard.SetDataObject(this.TextLabel.Text);
+				Clipboard.SetDataObject(TextLabel.Text);
 				e.Handled = true;
 				return;
 			}
 			else if (e.KeyCode == Keys.Escape)
 			{
-				this.DialogResult = this.CancelButton.DialogResult;
+				DialogResult = CancelButton.DialogResult;
 			}
 			else if (e.KeyCode == Keys.Enter)
 			{
-				this.DialogResult = this.AcceptButton.DialogResult;
+				DialogResult = AcceptButton.DialogResult;
 			}
 		}
 
-		void Message_Resize(System.Object sender, System.EventArgs e)
+		void Message_Resize(object sender, EventArgs e)
 		{
-			this.Height = Math.Max(h + TextLabel.Height, this.MinimumSize.Height);
-			this.Width = Math.Max(w + TextLabel.Width, this.MinimumSize.Width);
+			Height = Math.Max(h + TextLabel.Height, MinimumSize.Height);
+			Width = Math.Max(w + TextLabel.Width, MinimumSize.Width);
 			if (TextLabel.Width + 1 >= TextLabel.MaximumSize.Width && TextLabel.Height + 1 >= TextLabel.MaximumSize.Height)
 			{
 				textBox1.Text = TextLabel.Text;
@@ -220,7 +190,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void MessageBoxForm_Load(System.Object sender, System.EventArgs e)
+		void MessageBoxForm_Load(object sender, EventArgs e)
 		{
 			ActiveControl.Select();
 		}

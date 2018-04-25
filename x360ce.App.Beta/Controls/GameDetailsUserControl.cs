@@ -70,9 +70,9 @@ namespace x360ce.App.Controls
 					_CurrentItem = value;
 					// Update interface.
 					DisableEvents();
-					var isGame = _CurrentItem as UserGame != null;
+                    // Make sure item is not null.
 					var item = _CurrentItem ?? new x360ce.Engine.Data.Program();
-					// Set TextBoxes
+					// Set Item properties.
 					SetMask(DInputCheckBoxes, (DInputMask)item.DInputMask);
 					SetMask(XInputCheckBoxes, (XInputMask)item.XInputMask);
 					SetMask(HookCheckBoxes, (HookMask)item.HookMask);
@@ -80,10 +80,11 @@ namespace x360ce.App.Controls
 					HookModeFakeVidNumericUpDown.Value = item.FakeVID;
 					HookModeFakePidNumericUpDown.Value = item.FakePID;
 					TimeoutNumericUpDown.Value = item.Timeout;
-					ControlsHelper.SetSelectedItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)CurrentItem.ProcessorArchitecture);
-					ControlsHelper.SetSelectedItem(EmulationTypeComboBox, (EmulationType)CurrentItem.EmulationType);
-					var game = CurrentItem as UserGame;
-					if (game != null)
+					ControlsHelper.SetSelectedItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)item.ProcessorArchitecture);
+					ControlsHelper.SetSelectedItem(EmulationTypeComboBox, (EmulationType)item.EmulationType);
+                    var game = _CurrentItem as UserGame;
+                    var isGame = game != null;
+                    if (game != null)
 					{
 						var status = SettingsManager.Current.GetDllAndIniStatus(game, false);
 						ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);

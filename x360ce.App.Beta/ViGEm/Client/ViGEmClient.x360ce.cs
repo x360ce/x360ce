@@ -14,72 +14,25 @@ namespace Nefarius.ViGEm.Client
     partial class ViGEmClient
     {
 
-        public static ViGEmClient Client;
-        public static object ClientLock = new object();
-        public static Xbox360Controller[] Targets;
-        public static Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[] Feedbacks = new Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[4];
-        public static bool[] owned = new bool[4];
-
         public ViGEmClient(out VIGEM_ERROR error)
         {
-            Init_x360ce();
             NativeHandle = NativeMethods.vigem_alloc();
             error = NativeMethods.vigem_connect(NativeHandle);
         }
 
-        static VIGEM_ERROR? PendingError;
-        static DateTime PendingErrorTime;
 
-        public static VIGEM_ERROR UpdateClient()
-        {
-            lock (ClientLock)
-            {
-                // Keep error for 5 seconds.
-                if (DateTime.Now.Subtract(PendingErrorTime).TotalSeconds > 5)
-                    PendingError = null;
-                // Do not process until user dealt with the error.
-                if (PendingError.HasValue)
-                    return PendingError.Value;
-                if (Client != null)
-                    return VIGEM_ERROR.VIGEM_ERROR_NONE;
-                VIGEM_ERROR error;
-                var client = new ViGEmClient(out error);
-                if (error == VIGEM_ERROR.VIGEM_ERROR_NONE)
-                {
-                    PendingError = null;
-                    Client = client;
-                }
-                else
-                {
-                    PendingError = error;
-                    PendingErrorTime = DateTime.Now;
-                    client.Dispose();
-                    Client = null;
+        public Xbox360Controller[] Targets;
+        public Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[] Feedbacks = new Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[4];
+        public bool[] connected = new bool[4];
 
-                }
-                return error;
-            }
-        }
-
-        public static bool isVBusExists()
-        {
-            var error = UpdateClient();
-            return error == VIGEM_ERROR.VIGEM_ERROR_NONE;
-        }
-
-        public static bool isControllerExists(uint userIndex)
+        public bool isControllerExists(uint userIndex)
         {
             // Not properly implemented yet.
             var t = Targets;
             return (t != null && (userIndex - 1) < t.Length && t[userIndex - 1] != null);
         }
 
-        public static bool UnPlugForce(uint i)
-        {
-            return UnPlug(i);
-        }
-
-        public static bool UnPlug(uint i)
+        public bool UnPlug(uint i)
         {
             // Not properly implemented yet.
             var t = Targets;
@@ -87,14 +40,14 @@ namespace Nefarius.ViGEm.Client
                 return false;
             try
             {
-                Targets[i - 1].Disconnect();
-                owned[i - 1] = false;
+                t[i - 1].Disconnect();
+                connected[i - 1] = false;
             }
             catch (Exception) { }
             return true;
         }
 
-        public static bool PlugIn(uint userIndex)
+        public bool PlugIn(uint userIndex)
         {
             var t = Targets;
             if (t == null)
@@ -105,20 +58,20 @@ namespace Nefarius.ViGEm.Client
                 var tempDevices = new bool[4];
                 for (int i = 0; i < userIndex - 1; i++)
                 {
-                    if (!owned[i])
+                    if (!connected[i])
                     {
                         tempDevices[i] = true;
-                        Targets[i].Connect();
+                        t[i].Connect();
                     }
                 }
                 // Connect specified device.
-                Targets[userIndex - 1].Connect();
-                owned[userIndex - 1] = true;
+                t[userIndex - 1].Connect();
+                connected[userIndex - 1] = true;
                 // Disconnect temporary connected devices.
                 for (int i = 0; i < 4; i++)
                 {
                     if (tempDevices[i])
-                        Targets[i].Disconnect();
+                        t[i].Disconnect();
                 }
                 return true;
             }
@@ -128,75 +81,119 @@ namespace Nefarius.ViGEm.Client
             }
         }
 
-        public static void UnplugAllControllers()
+        public void UnplugAllControllers()
         {
-            // If targets are installed then...
-            if (Targets != null)
+            for (uint i = 1; i <= 4; i++)
             {
-                for (uint i = 1; i <= 4; i++)
-                {
-                    // Unplug device if owned.
-                    if (IsControllerOwned(i))
-                        UnPlug(i);
-                }
+                // Unplug device if connected.
+                if (IsControllerConnected(i))
+                    UnPlug(i);
             }
-            return;
         }
 
-        public static bool IsControllerOwned(uint i)
+        public bool IsControllerConnected(uint i)
         {
             // Not properly implemented yet.
-            return owned[i - 1];
+            return connected[i - 1];
         }
 
+        #region Static Members
 
-        void Init_x360ce()
+        public static ViGEmClient Current;
+        public static object ClientLock = new object();
+        static VIGEM_ERROR? PendingError;
+        static DateTime PendingErrorTime;
+
+        public static void DisposeCurrent()
         {
-            var name = "ViGEmClient.dll";
-            var chName = Program.GetResourceChecksumFile(name);
-            var fileName = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", chName);
-            var fi = new FileInfo(fileName);
-            if (!fi.Exists)
+            lock (ClientLock)
             {
-                if (!fi.Directory.Exists)
-                    fi.Directory.Create();
-                var sr = Program.GetResourceStream(name);
-                if (sr == null)
-                    return;
-                FileStream sw = null;
-                sw = new FileStream(fileName, FileMode.Create, FileAccess.Write);
-                var buffer = new byte[1024];
-                while (true)
-                {
-                    var count = sr.Read(buffer, 0, buffer.Length);
-                    if (count == 0) break;
-                    sw.Write(buffer, 0, count);
-                }
-                sr.Close();
-                sw.Close();
+                // If virtual client is initialized then...
+                if (Current != null)
+                    Current.Dispose();
+                return;
             }
-            _LibraryName = fileName;
-            LoadLibrary();
         }
 
-        private static Exception LastLoadException;
+        /// <summary>
+        /// Check ViGEm client. Create if not exists.
+        /// </summary>
+        /// <returns></returns>
+        public static bool isVBusExists(bool createIfMissing = false)
+        {
+            lock (ClientLock)
+            {
+                // Keep error for 5 seconds.
+                if (DateTime.Now.Subtract(PendingErrorTime).TotalSeconds > 5)
+                    PendingError = null;
+                // Do not process until user dealt with the error.
+                if (PendingError.HasValue)
+                    return PendingError.Value == VIGEM_ERROR.VIGEM_ERROR_NONE;
+                // If client exists and it was not disposed then...
+                if (Current != null && !Current.Disposing && !Current.IsDisposed)
+                    return true;
+                VIGEM_ERROR error;
+                if (!IsLoaded)
+                    LoadLibrary();
+                var client = new ViGEmClient(out error);
+                if (error == VIGEM_ERROR.VIGEM_ERROR_NONE)
+                {
+                    PendingError = null;
+                    Current = client;
+                }
+                else
+                {
+                    PendingError = error;
+                    PendingErrorTime = DateTime.Now;
+                    client.Dispose();
+                    FreeLibrary();
+                }
+                return error == VIGEM_ERROR.VIGEM_ERROR_NONE;
+            }
+        }
 
-        static string _LibraryName;
+        static Exception LastLoadException;
+
         public static string LibraryName { get { return _LibraryName; } }
+        static string _LibraryName;
 
-        internal static IntPtr libHandle;
+        static IntPtr libHandle;
         public static bool IsLoaded { get { return libHandle != IntPtr.Zero; } }
 
         static void LoadLibrary()
         {
             try
             {
+                // Extract ViGEm library from Embedded resource.
+                var name = "ViGEmClient.dll";
+                var chName = Program.GetResourceChecksumFile(name);
+                var fileName = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", chName);
+                var fi = new FileInfo(fileName);
+                if (!fi.Exists)
+                {
+                    if (!fi.Directory.Exists)
+                        fi.Directory.Create();
+                    var sr = Program.GetResourceStream(name);
+                    if (sr == null)
+                        return;
+                    FileStream sw = null;
+                    sw = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+                    var buffer = new byte[1024];
+                    while (true)
+                    {
+                        var count = sr.Read(buffer, 0, buffer.Length);
+                        if (count == 0) break;
+                        sw.Write(buffer, 0, count);
+                    }
+                    sr.Close();
+                    sw.Close();
+                }
+                _LibraryName = fileName;
+                // Load library into memory.
                 Exception loadException;
                 libHandle = JocysCom.ClassLibrary.Win32.NativeMethods.LoadLibrary(_LibraryName, out loadException);
                 if (libHandle == IntPtr.Zero)
-                {
                     LastLoadException = loadException;
-                }
             }
             catch (Exception ex)
             {
@@ -206,8 +203,8 @@ namespace Nefarius.ViGEm.Client
 
         public static void FreeLibrary()
         {
-            if (!IsLoaded) return;
-            UnplugAllControllers();
+            if (!IsLoaded)
+                return;
             Exception error;
             JocysCom.ClassLibrary.Win32.NativeMethods.FreeLibrary(libHandle, out error);
             libHandle = IntPtr.Zero;
@@ -238,6 +235,8 @@ namespace Nefarius.ViGEm.Client
             }
             return list.ToArray();
         }
+
+        #endregion
 
     }
 }

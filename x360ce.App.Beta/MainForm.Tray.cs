@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using x360ce.App.Controls;
 
 namespace x360ce.App
 {
@@ -114,10 +115,10 @@ namespace x360ce.App
 			}
 		}
 
-		/// <summary>
-		/// Restores the window.
-		/// </summary>
-		public void RestoreFromTray(bool activate = false)
+        /// <summary>
+        /// Restores the window.
+        /// </summary>
+        public void RestoreFromTray(bool activate = false)
 		{
 			if (activate)
 			{

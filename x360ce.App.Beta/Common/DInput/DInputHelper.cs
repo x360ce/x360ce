@@ -201,6 +201,7 @@ namespace x360ce.App.DInput
                     Manager.Dispose();
                     Manager = null;
                 }
+                Nefarius.ViGEm.Client.ViGEmClient.DisposeCurrent();
             }
         }
 

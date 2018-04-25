@@ -458,6 +458,10 @@ namespace JocysCom.ClassLibrary.Threading
 
         void ThreadAction(object state)
         {
+            if (string.IsNullOrEmpty(System.Threading.Thread.CurrentThread.Name))
+            {
+                System.Threading.Thread.CurrentThread.Name = "QueueTimerThread";
+            }
             _ThreadCount++;
             T item = null;
             var firstRun = true;

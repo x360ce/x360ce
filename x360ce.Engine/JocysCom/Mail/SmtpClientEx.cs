@@ -193,7 +193,7 @@ namespace JocysCom.ClassLibrary.Mail
 			SmtpFrom = LogHelper.ParseString("SmtpFrom", "");
 			SmtpSendCopyTo = LogHelper.ParseString("SmtpSendCopyTo", "");
 			ErrorRecipients = LogHelper.ParseString("ErrorRecipients", "");
-			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", true);
+			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", false);
 			ErrorCodeSuspended = LogHelper.ParseString("ErrorCodeSuspended", "");
 			SmtpDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
 			// Maximum 10 errors of same type per 5 minutes (2880 per day).
