@@ -80,7 +80,8 @@ namespace x360ce.App.Controls
 				var path = (string)paths[i];
 				// Don't allow to scan windows folder.
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-				if (path.StartsWith(winFolder)) continue;
+				if (path.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
+                    continue;
 				var di = new System.IO.DirectoryInfo(path);
 				// Skip folders if don't exists.
 				if (!di.Exists) continue;
@@ -237,7 +238,7 @@ namespace x360ce.App.Controls
 			{
 				// Don't allow to add windows folder.
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-				if (AddGameOpenFileDialog.FileName.StartsWith(winFolder))
+				if (AddGameOpenFileDialog.FileName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 				{
 					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}

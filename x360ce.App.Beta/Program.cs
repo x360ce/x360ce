@@ -32,9 +32,19 @@ namespace x360ce.App
 		[STAThread]
 		static void Main(string[] args)
 		{
-			// IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
-			// program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
-			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+            // First: Set working folder to the path of executable.
+            var fi = new FileInfo(Application.ExecutablePath);
+            Directory.SetCurrentDirectory(fi.Directory.FullName);
+            // Prevent brave users from running this app from Windows folder.
+            var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+            if (fi.FullName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
+            {
+                MessageBox.Show("Running from Windows folder is not allowed!\r\nPlease run this program from another folder.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            // IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
+            // program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 			if (IsDebug)
 			{
 				StartApp(args);

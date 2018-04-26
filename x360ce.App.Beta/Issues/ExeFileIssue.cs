@@ -18,8 +18,7 @@ namespace x360ce.App.Issues
 		{
 			var fi = new FileInfo(Application.ExecutablePath);
 			var winFolder = Environment.GetFolderPath(System.Environment.SpecialFolder.Windows);
-			var insideWindowsFolder = fi.FullName.StartsWith(winFolder, StringComparison.InvariantCultureIgnoreCase);
-			if (insideWindowsFolder)
+			if (fi.FullName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 			{
 				SetSeverity(
 					IssueSeverity.Critical, 1,

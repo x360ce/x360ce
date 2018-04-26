@@ -21,7 +21,7 @@ namespace x360ce.App.Issues
 		{
 			var fi = new FileInfo(Application.ExecutablePath);
 			var winFolder = Environment.GetFolderPath(System.Environment.SpecialFolder.Windows);
-			var insideWindowsFolder = fi.FullName.StartsWith(winFolder, StringComparison.InvariantCultureIgnoreCase);
+			var insideWindowsFolder = fi.FullName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase);
 			if (insideWindowsFolder)
 			{
 				Description = string.Format("Do not run X360CE Application from Windows folder.");

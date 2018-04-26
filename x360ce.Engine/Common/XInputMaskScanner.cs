@@ -92,7 +92,7 @@ namespace x360ce.Engine
             var dirs = paths
                 .Select(x => x)
                 // Except win folders.
-                .Where(x => !x.StartsWith(winFolder))
+                .Where(x => !x.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
                 .ToArray();
             // Create list to store file to scan.
             var exes = string.IsNullOrEmpty(fileName)

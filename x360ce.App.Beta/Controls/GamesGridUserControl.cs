@@ -271,7 +271,7 @@ namespace x360ce.App.Controls
 			{
 				// Don't allow to add windows folder.
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-				if (AddGameOpenFileDialog.FileName.StartsWith(winFolder))
+				if (AddGameOpenFileDialog.FileName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 				{
 					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}

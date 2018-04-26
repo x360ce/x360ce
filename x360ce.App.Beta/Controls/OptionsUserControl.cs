@@ -94,7 +94,7 @@ namespace x360ce.App.Controls
 			{
 				// Don't allow to add windows folder.
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-				if (LocationFolderBrowserDialog.SelectedPath.StartsWith(winFolder))
+				if (LocationFolderBrowserDialog.SelectedPath.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 				{
 					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
