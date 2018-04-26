@@ -43,7 +43,10 @@ namespace Nefarius.ViGEm.Client
                 t[i - 1].Disconnect();
                 connected[i - 1] = false;
             }
-            catch (Exception) { }
+            catch (Exception ex)
+            {
+                JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+            }
             return true;
         }
 
@@ -75,8 +78,9 @@ namespace Nefarius.ViGEm.Client
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
                 return false;
             }
         }
@@ -197,6 +201,7 @@ namespace Nefarius.ViGEm.Client
             }
             catch (Exception ex)
             {
+                JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
                 LastLoadException = ex;
             }
         }

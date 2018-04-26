@@ -92,6 +92,7 @@ namespace x360ce.App.DInput
             }
             catch (Exception ex)
             {
+                JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
                 LastException = ex;
             }
         }

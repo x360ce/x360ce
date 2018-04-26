@@ -118,9 +118,10 @@ namespace x360ce.App
 				{
 					effects = device.GetEffects(EffectType.All);
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
-				}
+                    JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+                }
 				foreach (var eff in effects)
 				{
 					items.Add(new DeviceEffectItem()

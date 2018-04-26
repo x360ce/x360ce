@@ -150,10 +150,15 @@ namespace x360ce.App.DInput
             hid = null;
             if (Program.IsClosing)
                 return;
+            // If device added then...
+            if (ud.Device == null)
+            {
+                var joystick = new Joystick(Manager, device.InstanceGuid);
+                ud.Device = joystick;
+                ud.IsExclusiveMode = null;
+                ud.LoadCapabilities(joystick.Capabilities);
+            }
             ud.LoadInstance(device);
-            var joystick = new Joystick(Manager, device.InstanceGuid);
-            ud.Device = joystick;
-            ud.LoadCapabilities(joystick.Capabilities);
             // If device is set as offline then make it online.
             if (!ud.IsOnline)
                 ud.IsOnline = true;
