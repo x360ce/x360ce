@@ -268,13 +268,13 @@ namespace x360ce.App.ViGEm
             if (subKey != null)
             {
                 // Check if users have right to write in non elevated mode.
-                canModify = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(subKey, users, rights, false);
+                canModify = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(subKey, rights, users, false);
                 // If can't modify, but must fix and program is running in elevated mode.
                 if (!canModify && fix && JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
                 {
                     // Update registry by adding required permissions, which will allow users to modify affected devices in non elevated mode.
-                    JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(Registry.LocalMachine, registryName, users, RegistryRights.FullControl);
-                    canModify = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(subKey, users, rights);
+                    JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(Registry.LocalMachine, registryName, RegistryRights.FullControl, users);
+                    canModify = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(subKey, rights, users);
                 }
                 subKey.Close();
             }

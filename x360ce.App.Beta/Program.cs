@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Security.Principal;
 
 namespace x360ce.App
 {
@@ -42,6 +43,22 @@ namespace x360ce.App
                 MessageBox.Show("Running from Windows folder is not allowed!\r\nPlease run this program from another folder.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+
+            //var x = @"c:\Program Files\X360CE\x360ce.ini";
+            //if (File.Exists(x))
+            //{
+            //    var rights = System.Security.AccessControl.FileSystemRights.Modify;
+            //    var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+            //    // Check if users in non elevated mode have rights to modify the file.
+            //    var hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(x, rights, users, false);
+            //    if (!hasRights)
+            //    {
+            //        // Allow users to modify file when in non elevated mode.
+            //        JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(x, rights, users);
+            //    }
+            //}
+
+
             // IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
             // program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
