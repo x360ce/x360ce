@@ -204,8 +204,8 @@ namespace JocysCom.ClassLibrary.Security
             RegistryRights rights,
             SecurityIdentifier sid,
             // Applies to keys and sub keys by default.
-            InheritanceFlags inheritance = InheritanceFlags.ContainerInherit,
-            PropagationFlags propagation = PropagationFlags.None
+            InheritanceFlags? inheritance = null,
+            PropagationFlags? propagation = null
         )
         {
             var key = baseKey.OpenSubKey(registryName, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions | RegistryRights.ReadKey);
@@ -233,8 +233,8 @@ namespace JocysCom.ClassLibrary.Security
                     sid,
                     // Set new permissions.
                     rights,
-                    inheritance,
-                    propagation,
+                    inheritance ?? InheritanceFlags.ContainerInherit,
+                    propagation ?? PropagationFlags.None,
                     AccessControlType.Allow
                 );
                 security.AddAccessRule(sidRule);
@@ -245,8 +245,8 @@ namespace JocysCom.ClassLibrary.Security
                     sid,
                     // Append missing permissions.
                     sidRule.RegistryRights | rights,
-                    sidRule.InheritanceFlags,
-                    sidRule.PropagationFlags,
+                    inheritance ?? sidRule.InheritanceFlags,
+                    propagation ?? sidRule.PropagationFlags,
                     AccessControlType.Allow
                 );
                 security.SetAccessRule(newRule);
@@ -379,16 +379,17 @@ namespace JocysCom.ClassLibrary.Security
             FileSystemRights rights,
             SecurityIdentifier sid,
             // Applies to directories and sub directories by default.
-            InheritanceFlags inheritance = InheritanceFlags.ContainerInherit,
-            PropagationFlags propagation = PropagationFlags.None)
+            InheritanceFlags? inheritance = null,
+            PropagationFlags? propagation = null)
         {
             if (string.IsNullOrEmpty(path))
                 return false;
             if (sid == null)
                 return false;
-            if (!File.Exists(path))
+            var fi = new FileInfo(path);
+            if (!fi.Exists)
                 return false;
-            var security = File.GetAccessControl(path);
+            var security = fi.GetAccessControl();
             FileSystemAccessRule sidRule = null;
             // Do not include inherited permissions, because.
             var rules = security.GetAccessRules(true, false, sid.GetType());
@@ -408,8 +409,13 @@ namespace JocysCom.ClassLibrary.Security
                     sid,
                     // Set new permissions.
                     rights,
-                    inheritance,
-                    propagation,
+                    inheritance.HasValue
+                        ? inheritance.Value
+                        // For directory default option is inherit permissions.
+                        : fi.Attributes == FileAttributes.Directory
+                            ? InheritanceFlags.ContainerInherit
+                            : InheritanceFlags.None,
+                    propagation ?? PropagationFlags.None,
                     AccessControlType.Allow
                 );
                 security.AddAccessRule(sidRule);
@@ -420,8 +426,8 @@ namespace JocysCom.ClassLibrary.Security
                     sid,
                     // Append missing permissions.
                     sidRule.FileSystemRights | rights,
-                    sidRule.InheritanceFlags,
-                    sidRule.PropagationFlags,
+                    inheritance ?? sidRule.InheritanceFlags,
+                    propagation ?? sidRule.PropagationFlags,
                     AccessControlType.Allow
                 );
                 security.SetAccessRule(newRule);

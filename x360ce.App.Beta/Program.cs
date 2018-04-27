@@ -51,13 +51,13 @@ namespace x360ce.App
             //    var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
             //    // Check if users in non elevated mode have rights to modify the file.
             //    var hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(x, rights, users, false);
-            //    if (!hasRights)
+            //    if (!hasRights && JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
             //    {
             //        // Allow users to modify file when in non elevated mode.
             //        JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(x, rights, users);
+            //        hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(x, rights, users, false);
             //    }
             //}
-
 
             // IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
             // program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
