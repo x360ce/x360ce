@@ -382,6 +382,8 @@
     </Compile>
     <Compile Include="Html2Rtf\Converter.cs" />
     <Compile Include="Issues\ArchitectureIssue.cs" />
+    <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
+    <Compile Include="Issues\CppX86RuntimeInstallIssue.cs" />
     <Compile Include="Issues\DllFileIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\GdbFileClass.cs" />

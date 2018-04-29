@@ -84,10 +84,13 @@ namespace x360ce.App.DInput
         {
             lock (FeedbackLock)
             {
-                var list = ViGEmClient.Current.Feedbacks.ToArray();
+                var client = ViGEmClient.Current;
+                if (client == null)
+                    return new Xbox360FeedbackReceivedEventArgs[4];
+                var list = client.Feedbacks.ToArray();
                 for (int i = 0; i < 4; i++)
                 {
-                    ViGEmClient.Current.Feedbacks[i] = null;
+                    client.Feedbacks[i] = null;
                 }
                 return list;
             }

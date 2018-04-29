@@ -1108,6 +1108,8 @@ namespace x360ce.App
                     new LeakDetectorIssue(),
                     new MdkIssue(),
                     new ArchitectureIssue(),
+                    new CppX86RuntimeInstallIssue(),
+                    new CppX64RuntimeInstallIssue(),
                     new GdbFileIssue(),
                     new IniFileIssue(),
                     new DllFileIssue(),

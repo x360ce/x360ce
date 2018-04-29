@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.IO;
+﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.IO;
 using Nefarius.ViGEm.Client.Targets;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Security;
 using x360ce.App;
 using x360ce.App.DInput;
+using x360ce.App.Issues;
 
 namespace Nefarius.ViGEm.Client
 {
@@ -119,6 +121,8 @@ namespace Nefarius.ViGEm.Client
             }
         }
 
+        static bool? RuntimeInstalled;
+
         /// <summary>
         /// Check ViGEm client. Create if not exists.
         /// </summary>
@@ -127,6 +131,17 @@ namespace Nefarius.ViGEm.Client
         {
             lock (ClientLock)
             {
+                // If Visual Studio C++ 2015 Redistributable installation unknown then...
+                if (!RuntimeInstalled.HasValue)
+                {
+                    var issue = Environment.Is64BitProcess
+                        ? (IssueItem)new CppX64RuntimeInstallIssue()
+                        : (IssueItem)new CppX86RuntimeInstallIssue();
+                    issue.Check();
+                    RuntimeInstalled = issue.Severity == IssueSeverity.None;
+                }
+                if (!RuntimeInstalled.Value)
+                    return false;
                 // Keep error for 5 seconds.
                 if (DateTime.Now.Subtract(PendingErrorTime).TotalSeconds > 5)
                     PendingError = null;
