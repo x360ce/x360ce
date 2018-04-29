@@ -18,6 +18,7 @@ using JocysCom.ClassLibrary.Win32;
 using x360ce.App.Issues;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.IO;
+using Nefarius.ViGEm.Client;
 
 namespace x360ce.App
 {
@@ -106,7 +107,7 @@ namespace x360ce.App
         {
             if (IsDesignMode)
                 return;
-           if (ViGEm.HidGuardianHelper.CanModifyParameters(true))
+            if (ViGEm.HidGuardianHelper.CanModifyParameters(true))
             {
                 ViGEm.HidGuardianHelper.AddCurrentProcessToWhiteList();
                 ViGEm.HidGuardianHelper.ClearWhiteList(true, true);
@@ -683,7 +684,8 @@ namespace x360ce.App
         private void IssueIconTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             var key = IssuesTabPage.ImageKey;
-            if (IssuesPanel.HasIssues)
+            var hasIssues = IssuesPanel.HasIssues;
+            if (hasIssues.HasValue && hasIssues.Value)
             {
                 key = key == "fix_16x16.png"
                     ? "fix_off_16x16.png"
@@ -812,7 +814,11 @@ namespace x360ce.App
                 // DInput instance is ON if active devices found.
                 var diOn = devices.Count(x => x.IsOnline) > 0;
                 // XInput instance is ON.
-                var xiOn = Nefarius.ViGEm.Client.ViGEmClient.Current.IsControllerConnected((uint)i + 1);
+                var xiOn = false;
+
+                var client = ViGEmClient.Current;
+                if (client != null)
+                    xiOn = client.IsControllerConnected((uint)i + 1);
                 //			State currentGamePad = emptyState;
                 //			lock (XInputLock)
                 //			{
@@ -1131,7 +1137,8 @@ namespace x360ce.App
         private void IssuesPanel_CheckCompleted(object sender, EventArgs e)
         {
             // If check completed without issued then...
-            if (!update2Enabled.HasValue && !IssuesPanel.HasIssues)
+            var hasIssues = IssuesPanel.HasIssues;
+            if (!update2Enabled.HasValue && hasIssues.HasValue && !hasIssues.Value)
             {
                 // Enabled update 2 step.
                 update2Enabled = true;

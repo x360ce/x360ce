@@ -10,11 +10,12 @@ namespace x360ce.App.Issues
 
 		public CppX64RuntimeInstallIssue() : base()
 		{
-			Name = program + " Installation";
+			Name = program1 + " Installation";
 			FixName = "Fix";
 		}
 
-        string program = "Visual C++ 2015 Redistributable (x64)";
+        string program1 = "Visual C++ 2015 Redistributable (x64)";
+        string program2 = "Visual C++ 2017 Redistributable (x64)";
 
         public override void CheckTask()
 		{
@@ -24,12 +25,13 @@ namespace x360ce.App.Issues
                 SetSeverity(IssueSeverity.None);
                 return;
             }
-			var installed = IssueHelper.IsInstalled(program, false);
-			if (!installed)
+			var installed1 = IssueHelper.IsInstalled(program1, false);
+            var installed = installed1 || IssueHelper.IsInstalled(program2, false);
+            if (!installed)
 			{
 				SetSeverity(
 					IssueSeverity.Critical, 1,
-					string.Format("Install "+ program)
+					string.Format("Install "+ program1)
 				);
 				return;
 			}

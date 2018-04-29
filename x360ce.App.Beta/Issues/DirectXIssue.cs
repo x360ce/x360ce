@@ -16,12 +16,6 @@ namespace x360ce.App.Issues
 
 		public override void CheckTask()
 		{
-			var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Library);
-			if (!required)
-			{
-				SetSeverity(IssueSeverity.None);
-				return;
-			}
 			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\DirectX"))
 			{
 				string versionString = key.GetValue("Version") as string;

@@ -122,7 +122,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
                     // Skip checking other issues.
                     break;
             }
-            HasIssues = IssueList.Any(x => x.IsEnabled && x.Severity.HasValue && x.Severity.Value > IssueSeverity.Critical);
+            HasIssues = IssueList.Any(x => x.IsEnabled && x.Severity.HasValue && x.Severity.Value >= IssueSeverity.Critical);
             var ev = CheckCompleted;
             if (ev != null)
                 CheckCompleted(this, new EventArgs());
@@ -150,7 +150,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             }
         }
 
-        public bool HasIssues;
+        public bool? HasIssues;
 
         public event EventHandler CheckCompleted;
 
