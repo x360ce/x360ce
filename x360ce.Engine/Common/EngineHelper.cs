@@ -59,21 +59,30 @@ namespace x360ce.Engine
 			// If custom XInput DLL was not found then...
 			if (defaultDll == null)
 			{
-
-				// If this is 32 bit process on 64-bit OS then
-				var sp = !IsApp64bit() && Environment.Is64BitOperatingSystem
-					? Environment.SpecialFolder.SystemX86
-					: Environment.SpecialFolder.System;
-				var sysFolder = System.Environment.GetFolderPath(sp);
-				var msx = System.IO.Path.Combine(sysFolder, "xinput1_3.dll");
-				var info = new FileInfo(msx);
-				var vi = FileVersionInfo.GetVersionInfo(info.FullName);
+                var info = GetMsXInputLocation();
+                var vi = FileVersionInfo.GetVersionInfo(info.FullName);
 				var ver = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 				defaultDll = info;
 			}
 			// Return newest file.
 			return defaultDll;
 		}
+
+        /// <summary>
+        /// Get path to Microsoft's XInput librarry.
+        /// </summary>
+        /// <returns></returns>
+        public static FileInfo GetMsXInputLocation()
+        {
+            // If this is 32 bit process on 64-bit OS then
+            var sp = !IsApp64bit() && Environment.Is64BitOperatingSystem
+                ? Environment.SpecialFolder.SystemX86
+                : Environment.SpecialFolder.System;
+            var sysFolder = System.Environment.GetFolderPath(sp);
+            var msx = System.IO.Path.Combine(sysFolder, "xinput1_3.dll");
+            var info = new FileInfo(msx);
+            return info;
+        }
 
 		public static Guid GetFileChecksum(string fileName)
 		{
@@ -626,7 +635,7 @@ namespace x360ce.Engine
 				result.Add(checksum);
 			}
 			if (list.Length > 0)
-			{   // Order to make sure that it won't influece total checksum.
+			{   // Order to make sure that it won't influence total checksum.
 				result = result.OrderBy(x => x).ToList();
 				int size = 16;
 				var total = new byte[list.Length * size];

@@ -685,7 +685,12 @@ namespace x360ce.App
         {
             var key = IssuesTabPage.ImageKey;
             var hasIssues = IssuesPanel.HasIssues;
-            if (hasIssues.HasValue && hasIssues.Value)
+            // If unknown then...
+            if (!hasIssues.HasValue)
+            {
+                key = "refresh_16x16.png";
+            }
+            else if (hasIssues.Value)
             {
                 key = key == "fix_16x16.png"
                     ? "fix_off_16x16.png"

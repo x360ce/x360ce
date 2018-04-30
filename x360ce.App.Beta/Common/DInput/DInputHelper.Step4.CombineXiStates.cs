@@ -1,9 +1,7 @@
-﻿using SharpDX.DirectInput;
-using SharpDX.XInput;
+﻿using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using x360ce.Engine;
 
 namespace x360ce.App.DInput
 {
@@ -31,11 +29,11 @@ namespace x360ce.App.DInput
 					{
 						gp.Buttons |= state.Buttons;
 					}
-					// Apply maximun on triggers.
+					// Apply maximum on triggers.
 					gp.LeftTrigger = states.Max(x => x.LeftTrigger);
 					gp.RightTrigger = states.Max(x => x.RightTrigger);
-					// Apply differenceto thumbs:
-					// 1) Players, pushing thumbs to oposite sides, will cancel each other.
+					// Apply difference to thumbs:
+					// 1) Players, pushing thumbs to opposite sides, will cancel each other.
 					// 2) Player have full range of the thumb axis if thumb of the other player sits idle in the middle.
 					gp.LeftThumbX = CombineAxis(states.Select(x => x.LeftThumbX));
 					gp.LeftThumbY = CombineAxis(states.Select(x => x.LeftThumbY));
@@ -63,7 +61,7 @@ namespace x360ce.App.DInput
 			// If both negative then return minimum.
 			if (min < 0 && max < 0)
 				return Math.Min(min, max);
-			// If on oposite sides then cancel each other.
+			// If on opposite sides then cancel each other.
 			return (short)(min + max);
 		}
 

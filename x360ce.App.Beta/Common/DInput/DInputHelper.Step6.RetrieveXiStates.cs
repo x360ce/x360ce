@@ -1,6 +1,5 @@
 ﻿using SharpDX.XInput;
 using System;
-using System.Diagnostics;
 
 namespace x360ce.App.DInput
 {
@@ -17,7 +16,7 @@ namespace x360ce.App.DInput
 			Exception error = null;
 			lock (Controller.XInputLock)
 			{
-				// Before states can be retrieved xinput configuration must be checked.
+				// Before states can be retrieved XInput configuration must be checked.
 				for (uint i = 0; i < 4; i++)
 				{
 					var gamePad = LiveXiControllers[i];
