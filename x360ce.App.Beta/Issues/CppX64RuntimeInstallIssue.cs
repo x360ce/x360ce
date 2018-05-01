@@ -11,7 +11,7 @@ namespace x360ce.App.Issues
 		public CppX64RuntimeInstallIssue() : base()
 		{
 			Name = program1 + " Installation";
-			FixName = "Fix";
+			FixName = "Download";
 		}
 
         string program1 = "Visual C++ 2015 Redistributable (x64)";
