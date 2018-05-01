@@ -14,7 +14,7 @@ namespace x360ce.App.Issues
             FixName = "Download";
         }
 
-        string program1 = "Xbox 360 Controller for Windows";
+        string program1 = "Microsoft Xbox 360 Accessories";
 
         public override void CheckTask()
         {
