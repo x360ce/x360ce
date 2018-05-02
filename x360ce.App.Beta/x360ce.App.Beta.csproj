@@ -387,6 +387,7 @@
     <Compile Include="Issues\DllFileIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\GdbFileClass.cs" />
+    <Compile Include="Issues\HotfixIssue.cs" />
     <Compile Include="Issues\LeakDetectorIssue.cs" />
     <Compile Include="Issues\MdkIssue.cs" />
     <Compile Include="Issues\IniFileIssue.cs" />

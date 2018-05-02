@@ -1121,6 +1121,7 @@ namespace x360ce.App
                     new ArchitectureIssue(),
                     new CppX86RuntimeInstallIssue(),
                     new CppX64RuntimeInstallIssue(),
+                    new HotfixIssue(),
                     new XboxDriversIssue(),
                     new GdbFileIssue(),
                     new IniFileIssue(),

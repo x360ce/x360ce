@@ -1,23 +1,23 @@
 ﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
-using System.IO;
 using x360ce.Engine;
 
 namespace x360ce.App.Issues
 {
+
     /// <summary>
     /// Required by ViGEm.
     /// </summary>
-    public class XboxDriversIssue : IssueItem
+    public class HotfixIssue : IssueItem
     {
-
-        public XboxDriversIssue() : base()
+        public HotfixIssue() : base()
         {
-            Name = "Drivers";
+            Name = "HotFix";
             FixName = "Download";
         }
 
-        string program1 = "Microsoft Xbox 360 Accessories";
+        // Availability of SHA-2 Code Signing Support for Windows 7 and Windows Server 2008 R2
+        string program = "Microsoft Security Advisory (KB3033929) Update";
 
         public override void CheckTask()
         {
@@ -40,30 +40,34 @@ namespace x360ce.App.Issues
             // | Windows 10         |  Win32NT       |  10   |   0   |
             // +-----------------------------------------------------+
             //
-            // There is no issue with Windows 10 or later, because 
-            // Windows 10 will install drivers and software automatically.
-            if (Environment.OSVersion.Version.Major >= 10)
+            //
+            // Issue applies to windows 7 only.
+            if (Environment.OSVersion.Version.Major != 6 || Environment.OSVersion.Version.Minor != 1)
             {
-                SetSeverity(IssueSeverity.None, 0, program1);
+                SetSeverity(IssueSeverity.None, 0, program);
                 return;
             }
-            var installed = IssueHelper.IsInstalled(program1, false);
+            var installed = IssueHelper.IsInstalledHotFix(3033929);
             if (!installed)
             {
+                var bits = Environment.Is64BitOperatingSystem
+                    ? "64-bit" : "32-bit";
                 SetSeverity(
                     IssueSeverity.Critical, 1,
-                    string.Format("Please install {0} ({1}) drivers and software.",
-                    program1, Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit")
+                    string.Format("Install {0} for Windows 7 {1}", program, bits)
                 );
                 return;
             }
-            SetSeverity(IssueSeverity.None, 0, program1);
+            SetSeverity(IssueSeverity.None);
         }
 
         public override void FixTask()
         {
-            // Xbox 360 Controller for Windows
-            EngineHelper.OpenUrl("https://www.microsoft.com/accessories/en-au/d/xbox-360-controller-for-windows");
+            var url = Environment.Is64BitOperatingSystem
+                ? "https://www.microsoft.com/en-us/download/details.aspx?id=46148"
+                : "https://www.microsoft.com/en-us/download/details.aspx?id=46078";
+            EngineHelper.OpenUrl(url);
         }
+
     }
 }

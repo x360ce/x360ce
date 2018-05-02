@@ -10,7 +10,7 @@ namespace x360ce.App.Issues
 
 		public CppX86RuntimeInstallIssue() : base()
 		{
-			Name = program1 + " Installation";
+			Name = "Software";
 			FixName = "Download";
 		}
 

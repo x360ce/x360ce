@@ -10,7 +10,7 @@ namespace x360ce.App.Issues
 
 		public CppX64RuntimeInstallIssue() : base()
 		{
-			Name = program1 + " Installation";
+			Name = "Software";
 			FixName = "Download";
 		}
 
@@ -19,7 +19,7 @@ namespace x360ce.App.Issues
 
         public override void CheckTask()
 		{
-            // This isse check applies only for 64-bit OS.
+            // This issue check applies only for 64-bit OS.
             if (!Environment.Is64BitOperatingSystem)
             {
                 SetSeverity(IssueSeverity.None);
