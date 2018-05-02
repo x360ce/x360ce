@@ -7,6 +7,8 @@ using System.IO;
 using System.Management;
 using System.Threading;
 using System.Windows.Forms;
+using System.Linq;
+using static System.Environment;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
@@ -71,6 +73,36 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             return false;
         }
 
+        /// <summary>
+        /// Get real version of windows because Environment.OSVersion.Version
+        /// returns older version unless allowed by application manifest.
+        /// </summary>
+        public static Version GetRealOSVersion()
+        {
+            if (OSVersion == null)
+            {
+                OSVersion = GetFileVersion(SpecialFolder.System, "kernel32.dll");
+            }
+            return OSVersion;
+        }
+
+        public static Version GetFileVersion(SpecialFolder folder, string name)
+        {
+            if (OSVersion == null)
+            {
+                var system = Environment.GetFolderPath(folder);
+                var file = Path.Combine(system, name);
+                var vi = FileVersionInfo.GetVersionInfo(file);
+                var version = new Version(vi.ProductMajorPart, vi.ProductMinorPart, vi.ProductBuildPart, vi.FilePrivatePart);
+                OSVersion = version;
+            }
+            return OSVersion;
+        }
+
+
+        static Version OSVersion;
+
+
         public static bool IsInstalled2(string name, bool uninstall = false)
         {
             var scope = new ManagementScope(@"\\.\root\cimv2");
@@ -123,12 +155,14 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
         public static bool IsInstalledHotFix(int id)
         {
-            string query = string.Format("SELECT HotFixID FROM Win32_QuickFixEngineering WHERE HotFixID = 'KB{0}'", id);
+            string query = string.Format("SELECT HotFixID FROM Win32_QuickFixEngineering", id);
             var searcher = new ManagementObjectSearcher(query);
             var collection = searcher.Get();
-            //foreach (ManagementObject quickFix in collection)
-            //    Console.WriteLine(quickFix["HotFixID"].ToString());
-            var installed = collection.Count > 0;
+            var list = new List<string>();
+            foreach (ManagementObject quickFix in collection)
+                list.Add(quickFix["HotFixID"].ToString());
+            var installed = list.Contains("KB"+id.ToString());
+            //MessageBox.Show(string.Join(", ", list.OrderBy(x => x)));
             searcher.Dispose();
             return installed;
         }

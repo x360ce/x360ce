@@ -19,6 +19,7 @@ using x360ce.App.Issues;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.IO;
 using Nefarius.ViGEm.Client;
+using System.Security.Principal;
 
 namespace x360ce.App
 {
@@ -26,8 +27,29 @@ namespace x360ce.App
     {
         public MainForm()
         {
-            LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
-            LogHelper.Current.WritingException += Current_WritingException;
+            // Disable some functionality in Visual Studio Interface design mode.
+            if (!IsDesignMode)
+            {
+                // Init exception handlers
+                LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
+                LogHelper.Current.WritingException += Current_WritingException;
+                // Fix access rights to configuration folder.
+                var di = new DirectoryInfo(EngineHelper.AppDataPath);
+                // Create configuration folder if not exists.
+                if (!di.Exists)
+                    di.Create();
+                var rights = FileSystemRights.Modify;
+                var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+                // Check if users in non elevated mode have rights to modify the file.
+                var hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(di.FullName, rights, users, false);
+                if (!hasRights && WinAPI.IsElevated())
+                {
+                    // Allow users to modify file when in non elevated mode.
+                    JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(di.FullName, rights, users, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit);
+                    hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(di.FullName, rights, users, false);
+                }
+            }
+            // Initialize interface.
             InitializeComponent();
             if (IsDesignMode)
                 return;
@@ -1634,6 +1656,12 @@ namespace x360ce.App
                 ChangeEmulationType(EmulationType.None);
             else
                 ChangeEmulationType(EmulationType.Virtual);
+        }
+
+        public void DisableVirtualEmulation()
+        {
+            if (VirtualButton.Checked)
+                ChangeEmulationType(EmulationType.None);
         }
 
         private void LibraryButton_Click(object sender, EventArgs e)

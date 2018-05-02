@@ -16,11 +16,16 @@ namespace x360ce.App.Issues
             FixName = "Download";
         }
 
+        // This will be used to stop check on success.
+        bool enableCheck = true;
+
         // Availability of SHA-2 Code Signing Support for Windows 7 and Windows Server 2008 R2
         string program = "Microsoft Security Advisory (KB3033929) Update";
 
         public override void CheckTask()
         {
+            if (!enableCheck)
+                return;
             // +-----------------------------------------------------+
             // |                    |  Platform      | Major | Minor |
             // +-----------------------------------------------------+
@@ -42,23 +47,28 @@ namespace x360ce.App.Issues
             //
             //
             // Issue applies to windows 7 only.
-            if (Environment.OSVersion.Version.Major != 6 || Environment.OSVersion.Version.Minor != 1)
+            var version = IssueHelper.GetRealOSVersion();
+            if (version.Major != 6 || version.Minor != 1)
             {
                 SetSeverity(IssueSeverity.None, 0, program);
+                enableCheck = false;
                 return;
             }
-            var installed = IssueHelper.IsInstalledHotFix(3033929);
+            // KB3033929 supplies wintrust.dll 6.1.7601.22948, we need this version or later.
+            var fileVersion = IssueHelper.GetFileVersion(Environment.SpecialFolder.System, "wintrust.dll");
+            var installed = fileVersion >= new Version(6, 1, 7601, 22948);
             if (!installed)
             {
                 var bits = Environment.Is64BitOperatingSystem
                     ? "64-bit" : "32-bit";
                 SetSeverity(
                     IssueSeverity.Critical, 1,
-                    string.Format("Install {0} for Windows 7 {1}", program, bits)
+                    string.Format("Old WinTrust {0}. Install {1} for Windows 7 {2}", fileVersion, program, bits)
                 );
                 return;
             }
             SetSeverity(IssueSeverity.None);
+            enableCheck = false;
         }
 
         public override void FixTask()

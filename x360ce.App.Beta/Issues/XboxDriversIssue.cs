@@ -19,6 +19,7 @@ namespace x360ce.App.Issues
 
         string program1 = "Microsoft Xbox 360 Accessories";
 
+
         public override void CheckTask()
         {
             // +-----------------------------------------------------+
@@ -42,7 +43,9 @@ namespace x360ce.App.Issues
             //
             // There is no issue with Windows 10 or later, because 
             // Windows 10 will install drivers and software automatically.
-            if (Environment.OSVersion.Version.Major >= 10)
+            // 
+            var version  = IssueHelper.GetRealOSVersion();
+            if (version.Major >= 10)
             {
                 SetSeverity(IssueSeverity.None, 0, program1);
                 return;

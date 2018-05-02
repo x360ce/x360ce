@@ -305,7 +305,7 @@ namespace JocysCom.ClassLibrary.Security
                 return false;
             if (sid == null)
                 return false;
-            if (!File.Exists(path))
+            if (!File.Exists(path) && !Directory.Exists(path))
                 return false;
             var allowRights = GetRights(path, sid, true, AccessControlType.Allow);
             var groups = GetUserGroups(sid);
@@ -349,9 +349,13 @@ namespace JocysCom.ClassLibrary.Security
                 return rights;
             if (sid == null)
                 return rights;
-            if (!File.Exists(path))
+            if (!File.Exists(path) && !Directory.Exists(path))
                 return rights;
-            var security = File.GetAccessControl(path);
+            var attributes = File.GetAttributes(path);
+            var isDirectory = attributes.HasFlag(FileAttributes.Directory);
+            var security = isDirectory
+                ? (FileSystemSecurity)Directory.GetAccessControl(path)
+                : (FileSystemSecurity)File.GetAccessControl(path);
             var rules = security.GetAccessRules(true, true, sid.GetType());
             foreach (FileSystemAccessRule rule in rules)
             {
@@ -386,10 +390,13 @@ namespace JocysCom.ClassLibrary.Security
                 return false;
             if (sid == null)
                 return false;
-            var fi = new FileInfo(path);
-            if (!fi.Exists)
+            if (!File.Exists(path) && !Directory.Exists(path))
                 return false;
-            var security = fi.GetAccessControl();
+            var attributes = File.GetAttributes(path);
+            var isDirectory = attributes.HasFlag(FileAttributes.Directory);
+            var security = isDirectory
+                ? (FileSystemSecurity)Directory.GetAccessControl(path)
+                : (FileSystemSecurity)File.GetAccessControl(path);
             FileSystemAccessRule sidRule = null;
             // Do not include inherited permissions, because.
             var rules = security.GetAccessRules(true, false, sid.GetType());
@@ -409,12 +416,11 @@ namespace JocysCom.ClassLibrary.Security
                     sid,
                     // Set new permissions.
                     rights,
-                    inheritance.HasValue
-                        ? inheritance.Value
-                        // For directory default option is inherit permissions.
-                        : fi.Attributes == FileAttributes.Directory
-                            ? InheritanceFlags.ContainerInherit
-                            : InheritanceFlags.None,
+                    inheritance ?? (
+                        isDirectory
+                            ? InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit
+                            : InheritanceFlags.None
+                    ),
                     propagation ?? PropagationFlags.None,
                     AccessControlType.Allow
                 );
@@ -432,7 +438,10 @@ namespace JocysCom.ClassLibrary.Security
                 );
                 security.SetAccessRule(newRule);
             }
-            File.SetAccessControl(path, security);
+            if (isDirectory)
+                Directory.SetAccessControl(path, (DirectorySecurity)security);
+            else
+                File.SetAccessControl(path, (FileSecurity)security);
             return true;
         }
 

@@ -183,7 +183,8 @@ namespace x360ce.App.Controls
             form.StartPosition = FormStartPosition.CenterParent;
             var text = devices.Length == 0
                 ? "None"
-                : string.Join("\r\n", devices);
+                // Join and make && visible.
+                : string.Join("\r\n", devices).Replace("&", "&&");
             form.ShowForm(text, "Affected Devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -194,7 +195,8 @@ namespace x360ce.App.Controls
             form.StartPosition = FormStartPosition.CenterParent;
             var text = devices.Length == 0
                 ? "None"
-                : string.Join("\r\n", devices);
+                // Join and make && visible.
+                : string.Join("\r\n", devices).Replace("&", "&&");
             form.ShowForm(text, "Enumerated Devices", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 

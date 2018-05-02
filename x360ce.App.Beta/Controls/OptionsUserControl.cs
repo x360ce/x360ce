@@ -347,7 +347,9 @@ namespace x360ce.App.Controls
 
 		private void ViGEmBusUninstallButton_Click(object sender, EventArgs e)
 		{
-			DInput.VirtualDriverInstaller.UninstallViGEmBus();
+            // Disable Virtual mode.
+            MainForm.Current.DisableVirtualEmulation();
+            DInput.VirtualDriverInstaller.UninstallViGEmBus();
 			RefreshViGEmStatus();
 		}
 

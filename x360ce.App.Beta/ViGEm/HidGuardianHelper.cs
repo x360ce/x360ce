@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using JocysCom.ClassLibrary.IO;
 
 namespace x360ce.App.ViGEm
 {
@@ -22,6 +23,8 @@ namespace x360ce.App.ViGEm
         static readonly string[] HardwareIdSplitters = { "\r\n", "\n" };
 
         static readonly Regex HardwareIdRegex = new Regex(@"HID\\[{(]?[0-9A-Fa-z]{8}[-]?([0-9A-Fa-z]{4}[-]?){3}[0-9A-Fa-z]{12}[)}]?|HID\\VID_[a-zA-Z0-9]{4}&PID_[a-zA-Z0-9]{4}");
+        static readonly Regex HardwareIdSimpleRegex = new Regex(@"^HID\\VID_[0-9A-F]{4}&PID_[0-9A-F]{4}", RegexOptions.IgnoreCase);
+
 
         #region WhiteList
 
@@ -145,12 +148,13 @@ namespace x360ce.App.ViGEm
 
         #region Affected
 
-        public static bool InsertToAffected(params string[] hwIds)
+        public static bool InsertToAffected(params string[] deviceIds)
         {
             // Return if invalid id found.
-            if (hwIds.Any(i => !HardwareIdRegex.IsMatch(i)))
+            if (deviceIds.Any(i => !HardwareIdRegex.IsMatch(i)))
                 return false;
-            FixCasing(hwIds);
+            FixCasing(deviceIds);
+            var hwIds = GetHardwareIds(deviceIds);
             // Get existing Hardware IDs.
             var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
             var current = (key.GetValue("AffectedDevices", new string[0]) as string[]).ToList();
@@ -165,15 +169,18 @@ namespace x360ce.App.ViGEm
             // Write back to registry.
             key.SetValue("AffectedDevices", newList, RegistryValueKind.MultiString);
             key.Close();
+            // Reset Devices.
+            ResetDevices(deviceIds);
             return true;
         }
 
-        public static bool RemoveFromAffected(params string[] hwIds)
+        public static bool RemoveFromAffected(params string[] deviceIds)
         {
             // Return if invalid id found.
-            if (hwIds.Any(i => !HardwareIdRegex.IsMatch(i)))
+            if (deviceIds.Any(i => !HardwareIdRegex.IsMatch(i)))
                 return false;
-            FixCasing(hwIds);
+            FixCasing(deviceIds);
+            var hwIds = GetHardwareIds(deviceIds);
             // Get existing Hardware IDs.
             var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
             var current = (key.GetValue("AffectedDevices", new string[0]) as string[]).ToList();
@@ -188,8 +195,43 @@ namespace x360ce.App.ViGEm
             // Write back to registry.
             key.SetValue("AffectedDevices", newList, RegistryValueKind.MultiString);
             key.Close();
+            // Reset Devices.
+            ResetDevices(deviceIds);
             return true;
         }
+
+        /// <summary>
+        /// Must remove and re-add devices for HidGuardian filters to take effect.
+        /// </summary>
+        static void ResetDevices(params string[] deviceIds)
+        {
+            foreach (var hwid in deviceIds)
+            {
+                DeviceDetector.RemoveDevice(hwid);
+            }
+            DeviceDetector.ScanForHardwareChanges();
+        }
+
+        /// <summary>
+        /// Convert device IDs into hardwre Ids.
+        /// </summary>
+        static string[] GetHardwareIds(params string[] deviceIds)
+        {
+            var list = new List<string>();
+            foreach (var did in deviceIds)
+            {
+                var matches = HardwareIdSimpleRegex.Matches(did);
+                if (matches.Count == 0)
+                    continue;
+                var item = matches[0].Value;
+                if (list.Contains(item))
+                    continue;
+                list.Add(item);
+            }
+            return list.ToArray();
+        }
+
+
 
         public static string[] GetAffected()
         {
