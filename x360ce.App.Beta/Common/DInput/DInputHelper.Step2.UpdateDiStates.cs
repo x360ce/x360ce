@@ -38,36 +38,45 @@ namespace x360ce.App.DInput
                     var device = ud.Device;
                     if (device != null)
                     {
+                        var exceptionData = new System.Text.StringBuilder();
                         try
                         {
                             var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
                             var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
                             // Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
                             var exclusiveRequired = hasForceFeedback && (isVirtual || ud.DeviceEffects == null);
-                            // If exclusive mode is required and mode is not exclusive then...
+                            // If exclusive mode is required and mode is unknown or not exclusive then...
                             if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
                             {
                                 var flags = CooperativeLevel.Background | CooperativeLevel.Exclusive;
                                 // Reacquire device in exclusive mode.
+                                exceptionData.AppendLine("Unacquire (Exclusive)...");
                                 device.Unacquire();
+                                exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
                                 device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
+                                exceptionData.AppendLine("Acquire (Exclusive)...");
                                 device.Acquire();
                                 ud.IsExclusiveMode = true;
                             }
-                            // If current mode must be non exclusive...
+                            // If current mode must be non exclusive and mode is unknown or exclusive then...
                             else if (!exclusiveRequired && (!ud.IsExclusiveMode.HasValue || ud.IsExclusiveMode.Value))
                             {
                                 var flags = CooperativeLevel.Background | CooperativeLevel.NonExclusive;
                                 // Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
+                                exceptionData.AppendLine("Unacquire (NonExclusive)...");
                                 device.Unacquire();
+                                exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
                                 device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
+                                exceptionData.AppendLine("Acquire (Acquire)...");
                                 device.Acquire();
                                 ud.IsExclusiveMode = false;
                             }
+                            exceptionData.AppendFormat("device.GetCurrentState() // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
                             state = device.GetCurrentState();
                             // Fill device objects.
                             if (ud.DeviceObjects == null)
                             {
+                                exceptionData.AppendFormat("AppHelper.GetDeviceObjects(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
                                 var dos = AppHelper.GetDeviceObjects(device);
                                 ud.DeviceObjects = dos;
                                 // Update masks.
@@ -75,13 +84,16 @@ namespace x360ce.App.DInput
                                 ud.DiSliderMask = CustomDiState.GetJoystickSlidersMask(dos, device);
                             }
                             if (ud.DeviceEffects == null)
+                            {
+                                exceptionData.AppendFormat("AppHelper.GetDeviceEffects(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
                                 ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
+                            }
                             // Get PAD index this device is mapped to.
                             var userIndex = SettingsManager.Settings.Items
                                 .Where(x => x.MapTo > (int)MapTo.None)
                                 .Where(x => x.InstanceGuid == ud.InstanceGuid)
                                 .Select(x => x.MapTo).First();
-
+                            // If device support force feedback then...
                             if (hasForceFeedback)
                             {
                                 // Get setting related to user device.
@@ -113,18 +125,20 @@ namespace x360ce.App.DInput
                                                     v.LeftMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.LargeMotor);
                                                     v.RightMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.SmallMotor);
                                                 }
-                                                // For teh future: Investigate device states if force feedback is not working. 
+                                                // For the future: Investigate device states if force feedback is not working. 
                                                 // var st = ud.Device.GetForceFeedbackState();
                                                 //st == SharpDX.DirectInput.ForceFeedbackState
                                                 // ud.Device.SendForceFeedbackCommand(ForceFeedbackCommand.SetActuatorsOn);
-                                                ud.FFState.SetDeviceForces(ud, ud.Device, ps, v);
+                                                exceptionData.AppendFormat("ud.FFState.SetDeviceForces(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
+                                                ud.FFState.SetDeviceForces(ud, device, ps, v);
                                             }
                                         }
                                         // If force state was created then...
                                         else if (ud.FFState != null)
                                         {
                                             // Stop device forces.
-                                            ud.FFState.StopDeviceForces(ud.Device);
+                                            exceptionData.AppendFormat("ud.FFState.StopDeviceForces(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
+                                            ud.FFState.StopDeviceForces(device);
                                             ud.FFState = null;
                                         }
                                     }
@@ -134,9 +148,9 @@ namespace x360ce.App.DInput
                         }
                         catch (Exception ex)
                         {
+                            ex.Data.Add("FFInfo", exceptionData.ToString());
                             JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
                             ud.IsExclusiveMode = null;
-                            var error = ex;
                         }
                     }
                     // If this is test device then...

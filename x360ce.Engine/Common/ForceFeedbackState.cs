@@ -81,6 +81,13 @@ namespace x360ce.Engine
             }
         }
 
+        // Xbox One gamepads are equipped with a total of four independent vibration motors:
+        // Two large motors located in the gamepad body:
+        //	- Left  motor provides rough, high-amplitude vibration.
+        //	- Right motor provides gentler, more subtle vibration.
+        // Two small motors located inside each trigger,
+        // that provide sharp bursts of vibration directly to the user's trigger fingers.
+
         public bool SetDeviceForces(UserDevice ud, Joystick device, PadSetting ps, Vibration v)
 		{
 			var motorsChanged = Changed(ref old_ForceSwapMotor, ps.ForceSwapMotor);

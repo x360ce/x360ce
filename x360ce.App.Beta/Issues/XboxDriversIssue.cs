@@ -44,19 +44,33 @@ namespace x360ce.App.Issues
             // There is no issue with Windows 10 or later, because 
             // Windows 10 will install drivers and software automatically.
             // 
-            var version  = IssueHelper.GetRealOSVersion();
+            var version = IssueHelper.GetRealOSVersion();
             if (version.Major >= 10)
             {
                 SetSeverity(IssueSeverity.None, 0, program1);
                 return;
+            }
+            var extra = "";
+            // If Windows 8 then...
+            if (version.Major == 6 && (version.Minor == 2 || version.Minor == 3))
+            {
+                extra = "\r\n\r\n"+
+                    "If you’re having trouble with the X360 controller, you can install Windows 7 controller software on a Windows 8.x PC. " +
+                    "Download Windows 7 program that matches the processor on your computer (32-bit or 64-bit). " +
+                    "In the downloads location on your PC, right-click the downloaded program and select Properties. " +
+                    "On the Compatibility tab, select the Run this program in compatibility mode for CheckBox. " +
+                    "Select Windows 7 from the DropDown list. " +
+                    "Select Apply, and then select OK. Double-click the program to run it. " +
+                    "The Xbox 360 Accessories Setup program installs the necessary files on the computer. " +
+                    "You might be prompted to restart when finished.";
             }
             var installed = IssueHelper.IsInstalled(program1, false);
             if (!installed)
             {
                 SetSeverity(
                     IssueSeverity.Critical, 1,
-                    string.Format("Please install {0} ({1}) drivers and software.",
-                    program1, Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit")
+                    string.Format("Please install {0} ({1}) drivers and software.{2}",
+                    program1, Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit", extra)
                 );
                 return;
             }

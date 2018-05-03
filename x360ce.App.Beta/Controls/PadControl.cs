@@ -941,7 +941,7 @@ namespace x360ce.App.Controls
 
         string cRecord = "[Record]";
         string cEmpty = "<empty>";
-
+        string cPOVs = "POVs";
 
         // Function is recreated as soon as new DirectInput Device is available.
         public void ResetDiMenuStrip(UserDevice ud)
@@ -988,7 +988,7 @@ namespace x360ce.App.Controls
             // Add D-Pads.
             if (ud.CapPovCount > 0)
             {
-                mi = new ToolStripMenuItem("POVs");
+                mi = new ToolStripMenuItem(cPOVs);
                 DiMenuStrip.Items.Add(mi);
                 // Add D-Pad Top, Right, Bottom, Left button.
                 var dPadNames = Enum.GetNames(typeof(DPadEnum));
@@ -1084,11 +1084,11 @@ namespace x360ce.App.Controls
             {
                 if (!item.Text.StartsWith(cRecord)
                     && !item.Text.StartsWith(cEmpty)
-                    && !item.Text.StartsWith("DPad"))
+                    && !item.Text.StartsWith(cPOVs))
                 {
                     item.Visible = !enable;
                 }
-                if (item.Text.StartsWith("DPad"))
+                if (item.Text.StartsWith(cPOVs))
                 {
                     if (item.HasDropDownItems)
                     {
