@@ -10,8 +10,6 @@ namespace x360ce.App.DInput
 
         public DInputHelper()
         {
-            _timer = new JocysCom.ClassLibrary.HiResTimer();
-            _timer.Elapsed += Timer_Elapsed;
             CombinedXiConencted = new bool[4];
             CombinedXiStates = new State[4];
             LiveXiControllers = new Controller[4];
@@ -65,16 +63,32 @@ namespace x360ce.App.DInput
         //ThreadStart _ThreadStart;
         //Thread _Thread;
 
+        object timerLock = new object();
+
         public void Start()
         {
-            watch.Restart();
-            _timer.Interval = (int)Frequency;
-            _timer.Start();
+            lock (timerLock)
+            {
+                if (_timer != null)
+                    return;
+                watch.Restart();
+                _timer = new JocysCom.ClassLibrary.HiResTimer();
+                _timer.Elapsed += Timer_Elapsed;
+                _timer.Interval = (int)Frequency;
+                _timer.Start();
+            }
         }
 
         public void Stop()
         {
-            _timer.Stop();
+            lock (timerLock)
+            {
+                if (_timer == null)
+                    return;
+                _timer.Stop();
+                _timer.Dispose();
+                _timer = null;
+            }
         }
 
 
