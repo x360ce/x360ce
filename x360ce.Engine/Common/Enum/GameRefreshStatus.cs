@@ -26,13 +26,15 @@ namespace x360ce.Engine
 		XmlDifferent = 0x80,
 		[Description("XInput files are missing.")]
 		XInputFilesNotExist = 0x100,
-		[Description("XInput files are for different processor arhitecture.")]
+		[Description("XInput files are for different processor architecture.")]
 		XInputFilesWrongPlatform = 0x200,
 		[Description("Older version of XInput files were found.")]
 		XInputFilesOlderVersion = 0x400,
 		[Description("Newer version of XInput files were found.")]
 		XInputFilesNewerVersion = 0x800,
-		[Description("Unecessary XInput files were found.")]
+		[Description("Not necessary XInput files were found.")]
 		XInputFilesUnnecessary = 0x1000,
-	}
+        [Description("Not necessary INI file found.")]
+        IniExist = 0x2000,
+    }
 }

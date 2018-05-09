@@ -249,20 +249,6 @@ namespace x360ce.App
 			return asm;
 		}
 
-		public static string GetResourceChecksumFile(string name)
-		{
-			var sr = GetResourceStream(name);
-			if (sr == null)
-				return null;
-			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-			byte[] hash = md5.ComputeHash(sr);
-			var intHash = BitConverter.ToUInt32(hash, 0);
-			sr.Close();
-			// Put file into sub folder because file name must match with LoadLibrary() argument. 
-			var newName = string.Format("{0}.{1:X8}\\{0}", name, intHash);
-			return newName;
-		}
-
 		/// <summary>
 		/// Get 32-bit or 64-bit resource depending on x360ce.exe platform.
 		/// </summary>

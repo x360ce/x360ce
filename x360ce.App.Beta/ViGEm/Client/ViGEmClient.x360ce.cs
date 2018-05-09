@@ -185,7 +185,7 @@ namespace Nefarius.ViGEm.Client
             {
                 // Extract ViGEm library from Embedded resource.
                 var name = "ViGEmClient.dll";
-                var chName = Program.GetResourceChecksumFile(name);
+                var chName = x360ce.Engine.EngineHelper.GetResourceChecksumFile(name);
                 var fileName = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", chName);
                 var fi = new FileInfo(fileName);
                 if (!fi.Exists)

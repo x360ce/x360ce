@@ -279,6 +279,7 @@
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
     <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
     <Compile Include="JocysCom\Security\Check.cs" />
+    <Compile Include="JocysCom\Security\CRC32.cs" />
     <Compile Include="JocysCom\Security\Data\Membership.cs" />
     <Compile Include="JocysCom\Security\Data\Role.cs" />
     <Compile Include="JocysCom\Security\Data\SecurityEntities.cs" />
