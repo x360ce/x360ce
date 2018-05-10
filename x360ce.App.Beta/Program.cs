@@ -9,7 +9,7 @@ using System.Security.Principal;
 
 namespace x360ce.App
 {
-	static class Program
+	static partial class Program
 	{
 
 		public static bool IsDebug
@@ -88,13 +88,6 @@ namespace x360ce.App
 			}
 		}
 
-		public const string InstallViGEmBusParam = "InstallViGEmBus";
-		public const string UninstallViGEmBusParam = "UninstallViGEmBus";
-
-        public const string InstallHidGuardianParam = "InstallHidGuardian";
-        public const string UninstallHidGuardianParam = "UninstallHidGuardian";
-
-
         static void StartApp(string[] args)
 		{
 			//var fi = new FileInfo(Application.ExecutablePath);
@@ -111,28 +104,12 @@ namespace x360ce.App
 			// Requires System.Configuration.Installl reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);
             // ------------------------------------------------
-            // Virtual Drivers
+            // Administrator commands.
             // ------------------------------------------------
-            if (ic.Parameters.ContainsKey(InstallViGEmBusParam))
-			{
-				DInput.VirtualDriverInstaller.InstallViGEmBus();
-				return;
-			}
-			if (ic.Parameters.ContainsKey(UninstallViGEmBusParam))
-			{
-				DInput.VirtualDriverInstaller.UninstallViGEmBus();
-				return;
-			}
-            if (ic.Parameters.ContainsKey(InstallHidGuardianParam))
-            {
-                DInput.VirtualDriverInstaller.InstallHidGuardian();
+            var executed = ProcessAdminCommands(args);
+            // If valid command was executed then...
+            if (executed)
                 return;
-            }
-            if (ic.Parameters.ContainsKey(UninstallHidGuardianParam))
-            {
-                DInput.VirtualDriverInstaller.UninstallHidGuardian();
-                return;
-            }
             // ------------------------------------------------
             if (ic.Parameters.ContainsKey("Settings"))
 			{

@@ -122,18 +122,23 @@ namespace x360ce.App.DInput
                 // If thread changed then...
                 if (RefreshAllThreadId.HasValue && RefreshAllThreadId.Value != Thread.CurrentThread.ManagedThreadId)
                 {
-                    UnInitDeviceDetector();
+                    // Can't dispose detector, because this is another thread
+                    // and it will throw error related to cross-threading.
+                    //detector.Dispose();
                     Manager.Dispose();
                     RefreshAllThreadId = null;
                 }
+                // If thread was just initialized then...
                 if (!RefreshAllThreadId.HasValue)
                 {
+                    // Set name of the thread.
                     Thread.CurrentThread.Name = "RefreshAllThread";
                     RefreshAllThreadId = Thread.CurrentThread.ManagedThreadId;
                     // DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
                     // separate windows form must be created on the same thread as the process which will access and update device.
                     // detector.DetectorForm will be used to acquire devices.
-                    InitDeviceDetector();
+                    detector = new JocysCom.ClassLibrary.IO.DeviceDetector(false);
+                    UpdateDevicesEnabled = true;
                     Manager = new DirectInput();
                 }
                 var game = MainForm.Current.CurrentGame;
@@ -210,7 +215,6 @@ namespace x360ce.App.DInput
             if (disposing)
             {
                 Stop();
-                UnInitDeviceDetector();
                 if (Manager != null)
                 {
                     Manager.Dispose();

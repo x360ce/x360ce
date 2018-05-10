@@ -30,7 +30,7 @@ namespace x360ce.App
             // Disable some functionality in Visual Studio Interface design mode.
             if (!IsDesignMode)
             {
-                // Init exception handlers
+                // Initialize exception handlers
                 LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
                 LogHelper.Current.WritingException += Current_WritingException;
                 // Fix access rights to configuration folder.
@@ -1163,10 +1163,23 @@ namespace x360ce.App
             return !allow;
         }
 
+        // Remember previous has issues status.
+        bool? PrevHasIssues;
+
         private void IssuesPanel_CheckCompleted(object sender, EventArgs e)
         {
             // If check completed without issued then...
             var hasIssues = IssuesPanel.HasIssues;
+            // If has issues and there were no issues before then...
+            if (hasIssues.HasValue && hasIssues.Value && (!PrevHasIssues.HasValue || !PrevHasIssues.Value))
+            {
+                BeginInvoke((MethodInvoker)delegate ()
+                {
+                    // Focus issues tab automatically.
+                    MainTabControl.SelectedTab = IssuesTabPage;
+                });
+            }
+            PrevHasIssues = hasIssues;
             if (!update2Enabled.HasValue && hasIssues.HasValue && !hasIssues.Value)
             {
                 // Enabled update 2 step.

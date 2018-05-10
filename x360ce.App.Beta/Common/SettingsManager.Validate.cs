@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using x360ce.Engine;
 
 namespace x360ce.App
@@ -209,6 +210,72 @@ namespace x360ce.App
                 }
             }
             return status;
+        }
+
+        Regex BackupFileRx = new Regex("(?<name>.*).(?<hash>[0-9A-F]{8})(?<ext>.[0-9A-Z]+)");
+
+        /// <summary>
+        /// Get backup file.
+        /// Backup file for "xinput3_1.dll" file name will be "xinput3_1.HHHHHHHH.dll", where HHHHHHHH is CRC32 checksum in hex.
+        /// </summary>
+        /// <param name="fileName">Non backup file name.</param>
+        FileInfo[] GetBackupFiles(string fileName)
+        {
+            var list = new List<FileInfo>();
+            // Create pattern.
+            var name = Path.GetFileNameWithoutExtension(fileName);
+            var ext = Path.GetExtension(fileName);
+            var pattern = string.Format("{0}.????????{1}", name, ext);
+            var di = new FileInfo(fileName).Directory;
+            // If directory do not exists then 
+            if (!di.Exists)
+                return list.ToArray();
+            var files = di.GetFiles(pattern);
+            foreach (var file in files)
+            {
+                var match = BackupFileRx.Match(file.Name);
+                // If pattern is incorrect then skip.
+                if (!match.Success)
+                    continue;
+                var hash = JocysCom.ClassLibrary.Security.CRC32Helper.GetHashFromFileAsString(file.FullName);
+                // If file is damaged then skip.
+                if (match.Groups["hash"].Value != hash)
+                    continue;
+                var orgIsCustom = EngineHelper.IsCustomLibrarry(file.FullName);
+                // If DLL file is made by X360CE then skip.
+                if (orgIsCustom.HasValue && orgIsCustom.Value)
+                    continue;
+                // Add backup file to the list.
+                list.Add(file);
+            }
+            return list.ToArray();
+        }
+
+        /// <summary>
+        /// Backup non X360CE file.
+        /// Backup file for "xinput3_1.dll" file name will be "xinput3_1.HHHHHHHH.dll", where HHHHHHHH is CRC32 checksum in hex.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        void BackupFile(string fileName, bool move = false)
+        {
+            // Create pattern.
+            var name = Path.GetFileNameWithoutExtension(fileName);
+            var ext = Path.GetExtension(fileName);
+            var fi = new FileInfo(fileName);
+            // If file do not exists then 
+            if (!fi.Exists)
+                return;
+            var hash = JocysCom.ClassLibrary.Security.CRC32Helper.GetHashFromFileAsString(fi.FullName);
+            var newName = string.Format("{0}.{1}{2}", name, hash, ext);
+            var fullName = System.IO.Path.Combine(fi.Directory.FullName, newName);
+            // If backup already exists then return.
+            if (File.Exists(fullName))
+                return;
+            if (move)
+                fi.MoveTo(fullName);
+            else
+                fi.CopyTo(fullName);
         }
 
     }

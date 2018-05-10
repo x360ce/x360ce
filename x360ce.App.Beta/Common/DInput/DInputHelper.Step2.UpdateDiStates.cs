@@ -2,6 +2,7 @@
 using SharpDX.XInput;
 using System;
 using System.Linq;
+using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -146,10 +147,11 @@ namespace x360ce.App.DInput
 
                             }
                         }
-                        catch (Exception ex)
+                        catch
                         {
-                            ex.Data.Add("FFInfo", exceptionData.ToString());
-                            JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+                            //var cx = new Exception("Custom Exception", ex);
+                            //cx.Data.Add("FFInfo", exceptionData.ToString());
+                            //JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
                             ud.IsExclusiveMode = null;
                         }
                     }
@@ -157,7 +159,8 @@ namespace x360ce.App.DInput
                     else if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
                     {
                         // Fill device objects.
-                        if (ud.DeviceObjects == null) {
+                        if (ud.DeviceObjects == null)
+                        {
                             var dos = TestDeviceHelper.GetDeviceObjects();
                             ud.DeviceObjects = dos;
                             // Update masks.
@@ -211,4 +214,6 @@ namespace x360ce.App.DInput
         }
 
     }
+
 }
+

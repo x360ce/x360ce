@@ -19,19 +19,6 @@ namespace x360ce.App.DInput
 
         public bool UpdateDevicesEnabled;
 
-        // Detector will be initialized on a separate thread.
-        public void InitDeviceDetector()
-        {
-            UpdateDevicesEnabled = true;
-            detector = new DeviceDetector(false);
-        }
-
-        public void UnInitDeviceDetector()
-        {
-            // Can't dispose here due to cross-threading.
-            //detector.Dispose();
-        }
-
         #endregion
 
         object UpdateDevicesLock = new object();

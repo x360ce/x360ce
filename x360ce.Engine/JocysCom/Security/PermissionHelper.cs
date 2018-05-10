@@ -18,6 +18,14 @@ namespace JocysCom.ClassLibrary.Security
     /// </summary>
     public class PermissionHelper
     {
+        public static bool IsElevated
+        {
+            get
+            {
+                return WindowsIdentity
+                .GetCurrent().Owner.IsWellKnown(WellKnownSidType.BuiltinAdministratorsSid);
+            }
+        }
 
         #region Users and Groups
 
@@ -115,7 +123,7 @@ namespace JocysCom.ClassLibrary.Security
                 identity = WindowsIdentity.GetCurrent();
             var isAdmin = isElevated.HasValue
                         ? isElevated.Value
-                        : identity.User != identity.Owner;
+                        : identity.Owner.IsWellKnown(WellKnownSidType.BuiltinAdministratorsSid);
             return HasRights(key, rights, identity.User, isAdmin);
         }
 
@@ -140,7 +148,7 @@ namespace JocysCom.ClassLibrary.Security
             for (int i = 0; i < groups.Count; i++)
             {
                 var group = groups[i].Sid;
-                // If simulate non elevated mode then remove admin.
+                // If simulate non elevated mode then remove administrators.
                 if (isElevated.HasValue && !isElevated.Value && group == admins)
                     continue;
                 var groupAllowRights = GetRights(key, group, true, AccessControlType.Allow);
@@ -287,7 +295,7 @@ namespace JocysCom.ClassLibrary.Security
                 identity = WindowsIdentity.GetCurrent();
             var isAdmin = isElevated.HasValue
                 ? isElevated.Value
-                : identity.User != identity.Owner;
+                : identity.Owner.IsWellKnown(WellKnownSidType.BuiltinAdministratorsSid);
             return HasRights(path, rights, identity.User, isAdmin);
         }
 
@@ -314,7 +322,7 @@ namespace JocysCom.ClassLibrary.Security
             for (int i = 0; i < groups.Count; i++)
             {
                 var group = groups[i].Sid;
-                // If simulate non elevated mode then remove admin.
+                // If simulate non elevated mode then remove administrators.
                 if (isElevated.HasValue && !isElevated.Value && group == admins)
                     continue;
                 var groupAllowRights = GetRights(path, group, true, AccessControlType.Allow);

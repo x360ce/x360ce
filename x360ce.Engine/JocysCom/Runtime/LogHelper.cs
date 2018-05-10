@@ -114,7 +114,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					{
 						try
 						{
-							v = pv.ToString();
+							v = string.Format("<pre>{0}</pre>", pv);
 							if (v.Contains("<?xml"))
 							{
 								v = "<pre>" + System.Web.HttpUtility.HtmlEncode(v) + "</pre>";

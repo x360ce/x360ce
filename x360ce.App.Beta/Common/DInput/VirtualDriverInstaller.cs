@@ -1,9 +1,11 @@
 ﻿using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Win32;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.Permissions;
 using System.Text;
 
 namespace x360ce.App.DInput
@@ -42,11 +44,11 @@ namespace x360ce.App.DInput
 		public const string ViGEmBusHardwareId = "Root\\ViGEmBus";
 		public const string HidGuardianHardwareId = "Root\\HidGuardian";
 
-		/// <summary>
-		/// Install Virtual driver.
-		/// </summary>
-		/// <remarks>Must be executed in administrative mode.</remarks>
-		public static void InstallViGEmBus()
+        /// <summary>
+        /// Install Virtual driver.
+        /// </summary>
+        /// <remarks>Must be executed in administrative mode.</remarks>
+        public static void InstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
 			ExtractViGemBusFiles(true);
@@ -55,14 +57,14 @@ namespace x360ce.App.DInput
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
 				fullPath,
 				"install ViGEmBus.inf " + ViGEmBusHardwareId,
-				System.Diagnostics.ProcessWindowStyle.Normal, true);
+				style, true);
 		}
 
 		/// <summary>
 		/// UnInstall Virtual driver here.
 		/// </summary>
 		/// <remarks>Must be executed in administrative mode.</remarks>
-		public static void UninstallViGEmBus()
+		public static void UninstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
 			ExtractViGemBusFiles(false);
@@ -71,7 +73,7 @@ namespace x360ce.App.DInput
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
 				fullPath,
 				"remove " + ViGEmBusHardwareId,
-				System.Diagnostics.ProcessWindowStyle.Normal, true);
+				style, true);
 		}
 
 		#endregion
@@ -94,7 +96,7 @@ namespace x360ce.App.DInput
 		/// Install HID Guardian
 		/// </summary>
 		/// <remarks>Must be executed in administrative mode.</remarks>
-		public static void InstallHidGuardian()
+		public static void InstallHidGuardian(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
 			ExtractHidGuardianFiles(true);
@@ -103,18 +105,18 @@ namespace x360ce.App.DInput
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
 				fullPath,
 				"install HidGuardian.inf " + HidGuardianHardwareId,
-				System.Diagnostics.ProcessWindowStyle.Normal, true);
+				style, true);
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
 				fullPath,
 				"classfilter HIDClass upper -HidGuardian",
-				System.Diagnostics.ProcessWindowStyle.Normal, true);
+				style, true);
 		}
 
 		/// <summary>
 		/// Uninstall HID Guardian.
 		/// </summary>
 		/// <remarks>Must be executed in administrative mode.</remarks>
-		public static void UninstallHidGuardian()
+		public static void UninstallHidGuardian(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
 			ExtractHidGuardianFiles(false);
@@ -123,11 +125,11 @@ namespace x360ce.App.DInput
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
 				fullPath,
 				"remove " + HidGuardianHardwareId,
-				System.Diagnostics.ProcessWindowStyle.Normal, true);
+				style, true);
 			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
 				fullPath,
 				"classfilter HIDClass upper !HidGuardian",
-				System.Diagnostics.ProcessWindowStyle.Normal, true);
+				style, true);
 		}
 
 		#endregion

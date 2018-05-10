@@ -632,7 +632,7 @@ namespace x360ce.Engine
             var bytes = GetResourceBytes(name);
             if (bytes == null)
                 return null;
-            var hash = JocysCom.ClassLibrary.Security.CRC32.GetHashAsString(bytes);
+            var hash = JocysCom.ClassLibrary.Security.CRC32Helper.GetHashAsString(bytes);
             // Put file into sub folder because file name must match with LoadLibrary() argument. 
             var newName = string.Format("{0}.{1:X8}\\{0}", name, hash);
             return newName;

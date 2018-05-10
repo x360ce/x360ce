@@ -190,7 +190,7 @@ namespace JocysCom.ClassLibrary.Win32
 				catch (Win32Exception)
 				{
 					// The user refused to allow privileges elevation
-					// or other error happend. Do nothing and return...
+					// or other error happened. Do nothing and return...
 					return exitCode;
 				}
 				process.WaitForExit();
