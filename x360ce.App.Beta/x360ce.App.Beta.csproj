@@ -83,7 +83,7 @@
     <OutputPath>bin\Debug_x64\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>embedded</DebugType>
+    <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <CodeAnalysisLogFile>bin\Debug_x64\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
@@ -145,15 +145,15 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="SharpDX">
       <HintPath>Resources\SharpDX\SharpDX.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SharpDX.DirectInput">
       <HintPath>Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SharpDX.RawInput">
       <HintPath>Resources\SharpDX\SharpDX.RawInput.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />

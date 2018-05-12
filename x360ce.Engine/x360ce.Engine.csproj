@@ -49,8 +49,9 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
-    <DebugType>embedded</DebugType>
+    <DebugType>full</DebugType>
     <WarningLevel>1</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
@@ -70,7 +71,7 @@
     <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
-    <DebugType>embedded</DebugType>
+    <DebugType>full</DebugType>
     <DocumentationFile>
     </DocumentationFile>
     <DebugSymbols>true</DebugSymbols>
