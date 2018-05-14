@@ -103,7 +103,8 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			if (encoding == null)
 				encoding = Encoding.UTF8;
-			var hash = ComputeHash(value);
+			var bytes = encoding.GetBytes(value);
+			var hash = ComputeHash(bytes);
 			return hash;
 		}
 
