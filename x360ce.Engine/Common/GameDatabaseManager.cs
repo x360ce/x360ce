@@ -105,6 +105,7 @@ namespace x360ce.Engine
 				string fakePid = null;
 				string dinputMask = null;
 				string dinputFile = null;
+				string xinputPath = null;
 				string timeout = null;
 				var program = programs.FirstOrDefault(x => x.FileName.ToLower() == name);
 				var game = games.FirstOrDefault(x => x.FileName.ToLower() == name);
@@ -114,7 +115,10 @@ namespace x360ce.Engine
 					productName = game.FileProductName;
 					hookMask = string.Format("0x{0:X8}", game.HookMask);
 					if (game.DInputMask > 0) dinputMask = string.Format("0x{0:X8}", game.DInputMask);
-					if (!string.IsNullOrEmpty(game.DInputFile)) dinputFile = game.DInputFile;
+					if (!string.IsNullOrEmpty(game.XInputPath))
+						xinputPath = game.XInputPath;
+					if (!string.IsNullOrEmpty(game.DInputFile))
+						dinputFile = game.DInputFile;
 					if (game.FakeVID > 0) fakeVid = string.Format("0x{0:X4}", game.FakeVID);
 					if (game.FakePID > 0) fakePid = string.Format("0x{0:X4}", game.FakePID);
 					if (game.Timeout >= 0) timeout = game.Timeout.ToString();
@@ -125,16 +129,24 @@ namespace x360ce.Engine
 					section = program.FileName;
 					productName = program.FileProductName;
 					hookMask = string.Format("0x{0:X8}", program.HookMask);
-					if (program.DInputMask > 0) dinputMask = string.Format("0x{0:X8}", program.DInputMask);
-					if (!string.IsNullOrEmpty(program.DInputFile)) dinputFile = program.DInputFile;
-					if (program.FakeVID > 0) fakeVid = string.Format("0x{0:X4}", program.FakeVID);
-					if (program.FakePID > 0) fakePid = string.Format("0x{0:X4}", program.FakePID);
-					if (program.Timeout >= 0) timeout = program.Timeout.ToString();
+					if (program.DInputMask > 0)
+						dinputMask = string.Format("0x{0:X8}", program.DInputMask);
+					if (!string.IsNullOrEmpty(program.XInputPath))
+						xinputPath = program.XInputPath;
+					if (!string.IsNullOrEmpty(program.DInputFile))
+						dinputFile = program.DInputFile;
+					if (program.FakeVID > 0)
+						fakeVid = string.Format("0x{0:X4}", program.FakeVID);
+					if (program.FakePID > 0)
+						fakePid = string.Format("0x{0:X4}", program.FakePID);
+					if (program.Timeout >= 0)
+						timeout = program.Timeout.ToString();
 				}
 				ini.SetValue(section, "Name", productName);
 				ini.SetValue(section, "HookMask", hookMask);
 				ini.SetValue(section, "DinputMask", dinputMask);
 				ini.SetValue(section, "DinputFile", dinputFile);
+				ini.SetValue(section, "XInputPath", xinputPath);
 				ini.SetValue(section, "FakeVID", fakeVid);
 				ini.SetValue(section, "FakePID", fakePid);
 				ini.SetValue(section, "Timeout", timeout);

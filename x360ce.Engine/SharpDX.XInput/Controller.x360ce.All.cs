@@ -230,7 +230,7 @@
 			IntPtr procAddress = JocysCom.ClassLibrary.Win32.NativeMethods.GetProcAddress(libHandle, methodName, out error);
 			if (error != null)
 			{
-				// Don't throw Win32Exception directly or it can terminate app unexcpectedly.
+				// Don't throw Win32Exception directly or it can terminate application unexpectedly.
 				throw error;
 			}
 			return (T)(object)Marshal.GetDelegateForFunctionPointer(procAddress, typeof(T));

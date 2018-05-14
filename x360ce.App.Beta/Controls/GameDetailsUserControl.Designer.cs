@@ -79,6 +79,8 @@
 			this.ActionGroupBox = new System.Windows.Forms.GroupBox();
 			this.ResetToDefaultButton = new System.Windows.Forms.Button();
 			this.SynchronizeSettingsButton = new System.Windows.Forms.Button();
+			this.XInputPathLabel = new System.Windows.Forms.Label();
+			this.XInputPathTextBox = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).BeginInit();
@@ -252,7 +254,7 @@
 			this.ProcessorArchitectureLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProcessorArchitectureLabel.AutoSize = true;
 			this.ProcessorArchitectureLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.ProcessorArchitectureLabel.Location = new System.Drawing.Point(418, 48);
+			this.ProcessorArchitectureLabel.Location = new System.Drawing.Point(420, 49);
 			this.ProcessorArchitectureLabel.Name = "ProcessorArchitectureLabel";
 			this.ProcessorArchitectureLabel.Size = new System.Drawing.Size(67, 13);
 			this.ProcessorArchitectureLabel.TabIndex = 29;
@@ -340,7 +342,7 @@
 			// HookModeFakePidLabel
 			// 
 			this.HookModeFakePidLabel.AutoSize = true;
-			this.HookModeFakePidLabel.Location = new System.Drawing.Point(8, 48);
+			this.HookModeFakePidLabel.Location = new System.Drawing.Point(218, 21);
 			this.HookModeFakePidLabel.Name = "HookModeFakePidLabel";
 			this.HookModeFakePidLabel.Size = new System.Drawing.Size(55, 13);
 			this.HookModeFakePidLabel.TabIndex = 32;
@@ -349,7 +351,7 @@
 			// HookModeFakeVidLabel
 			// 
 			this.HookModeFakeVidLabel.AutoSize = true;
-			this.HookModeFakeVidLabel.Location = new System.Drawing.Point(8, 22);
+			this.HookModeFakeVidLabel.Location = new System.Drawing.Point(6, 21);
 			this.HookModeFakeVidLabel.Name = "HookModeFakeVidLabel";
 			this.HookModeFakeVidLabel.Size = new System.Drawing.Size(55, 13);
 			this.HookModeFakeVidLabel.TabIndex = 33;
@@ -359,20 +361,20 @@
 			// 
 			this.HookModeFakePidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.HookModeFakePidTextBox.Location = new System.Drawing.Point(164, 45);
+			this.HookModeFakePidTextBox.Location = new System.Drawing.Point(349, 19);
 			this.HookModeFakePidTextBox.Name = "HookModeFakePidTextBox";
 			this.HookModeFakePidTextBox.ReadOnly = true;
-			this.HookModeFakePidTextBox.Size = new System.Drawing.Size(250, 20);
+			this.HookModeFakePidTextBox.Size = new System.Drawing.Size(64, 20);
 			this.HookModeFakePidTextBox.TabIndex = 34;
 			// 
 			// HookModeFakeVidTextBox
 			// 
 			this.HookModeFakeVidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.HookModeFakeVidTextBox.Location = new System.Drawing.Point(164, 18);
+			this.HookModeFakeVidTextBox.Location = new System.Drawing.Point(148, 19);
 			this.HookModeFakeVidTextBox.Name = "HookModeFakeVidTextBox";
 			this.HookModeFakeVidTextBox.ReadOnly = true;
-			this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(250, 20);
+			this.HookModeFakeVidTextBox.Size = new System.Drawing.Size(64, 20);
 			this.HookModeFakeVidTextBox.TabIndex = 35;
 			// 
 			// ProcessorArchitectureComboBox
@@ -381,16 +383,16 @@
 			this.ProcessorArchitectureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ProcessorArchitectureComboBox.Enabled = false;
 			this.ProcessorArchitectureComboBox.FormattingEnabled = true;
-			this.ProcessorArchitectureComboBox.Location = new System.Drawing.Point(489, 45);
+			this.ProcessorArchitectureComboBox.Location = new System.Drawing.Point(493, 46);
 			this.ProcessorArchitectureComboBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
 			this.ProcessorArchitectureComboBox.Name = "ProcessorArchitectureComboBox";
-			this.ProcessorArchitectureComboBox.Size = new System.Drawing.Size(68, 21);
+			this.ProcessorArchitectureComboBox.Size = new System.Drawing.Size(64, 21);
 			this.ProcessorArchitectureComboBox.TabIndex = 30;
 			// 
 			// TimeoutNumericUpDown
 			// 
 			this.TimeoutNumericUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.TimeoutNumericUpDown.Location = new System.Drawing.Point(489, 19);
+			this.TimeoutNumericUpDown.Location = new System.Drawing.Point(493, 19);
 			this.TimeoutNumericUpDown.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -402,7 +404,7 @@
             0,
             -2147483648});
 			this.TimeoutNumericUpDown.Name = "TimeoutNumericUpDown";
-			this.TimeoutNumericUpDown.Size = new System.Drawing.Size(68, 20);
+			this.TimeoutNumericUpDown.Size = new System.Drawing.Size(64, 20);
 			this.TimeoutNumericUpDown.TabIndex = 36;
 			this.TimeoutNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this.TimeoutNumericUpDown.Value = new decimal(new int[] {
@@ -415,7 +417,7 @@
 			// 
 			this.TimeoutLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.TimeoutLabel.AutoSize = true;
-			this.TimeoutLabel.Location = new System.Drawing.Point(418, 21);
+			this.TimeoutLabel.Location = new System.Drawing.Point(439, 25);
 			this.TimeoutLabel.Name = "TimeoutLabel";
 			this.TimeoutLabel.Size = new System.Drawing.Size(48, 13);
 			this.TimeoutLabel.TabIndex = 33;
@@ -425,16 +427,16 @@
 			// 
 			this.DInputFileTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.DInputFileTextBox.Location = new System.Drawing.Point(90, 71);
+			this.DInputFileTextBox.Location = new System.Drawing.Point(78, 71);
 			this.DInputFileTextBox.Name = "DInputFileTextBox";
-			this.DInputFileTextBox.Size = new System.Drawing.Size(324, 20);
+			this.DInputFileTextBox.Size = new System.Drawing.Size(337, 20);
 			this.DInputFileTextBox.TabIndex = 34;
 			this.DInputFileTextBox.TextChanged += new System.EventHandler(this.DInputFileTextBox_TextChanged);
 			// 
 			// DInputFileLabel
 			// 
 			this.DInputFileLabel.AutoSize = true;
-			this.DInputFileLabel.Location = new System.Drawing.Point(8, 74);
+			this.DInputFileLabel.Location = new System.Drawing.Point(6, 72);
 			this.DInputFileLabel.Name = "DInputFileLabel";
 			this.DInputFileLabel.Size = new System.Drawing.Size(61, 13);
 			this.DInputFileLabel.TabIndex = 32;
@@ -442,27 +444,27 @@
 			// 
 			// HookModeFakePidNumericUpDown
 			// 
-			this.HookModeFakePidNumericUpDown.Location = new System.Drawing.Point(90, 45);
+			this.HookModeFakePidNumericUpDown.Location = new System.Drawing.Point(279, 19);
 			this.HookModeFakePidNumericUpDown.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
 			this.HookModeFakePidNumericUpDown.Name = "HookModeFakePidNumericUpDown";
-			this.HookModeFakePidNumericUpDown.Size = new System.Drawing.Size(68, 20);
+			this.HookModeFakePidNumericUpDown.Size = new System.Drawing.Size(64, 20);
 			this.HookModeFakePidNumericUpDown.TabIndex = 36;
 			this.HookModeFakePidNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// HookModeFakeVidNumericUpDown
 			// 
-			this.HookModeFakeVidNumericUpDown.Location = new System.Drawing.Point(90, 19);
+			this.HookModeFakeVidNumericUpDown.Location = new System.Drawing.Point(78, 19);
 			this.HookModeFakeVidNumericUpDown.Maximum = new decimal(new int[] {
             65535,
             0,
             0,
             0});
 			this.HookModeFakeVidNumericUpDown.Name = "HookModeFakeVidNumericUpDown";
-			this.HookModeFakeVidNumericUpDown.Size = new System.Drawing.Size(68, 20);
+			this.HookModeFakeVidNumericUpDown.Size = new System.Drawing.Size(64, 20);
 			this.HookModeFakeVidNumericUpDown.TabIndex = 36;
 			this.HookModeFakeVidNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
@@ -581,6 +583,8 @@
 			this.OtherOptionsGroupBox.Controls.Add(this.HookModeFakePidNumericUpDown);
 			this.OtherOptionsGroupBox.Controls.Add(this.TimeoutNumericUpDown);
 			this.OtherOptionsGroupBox.Controls.Add(this.TimeoutLabel);
+			this.OtherOptionsGroupBox.Controls.Add(this.XInputPathTextBox);
+			this.OtherOptionsGroupBox.Controls.Add(this.XInputPathLabel);
 			this.OtherOptionsGroupBox.Controls.Add(this.DInputFileTextBox);
 			this.OtherOptionsGroupBox.Controls.Add(this.DInputFileLabel);
 			this.OtherOptionsGroupBox.Controls.Add(this.EmulationTypeComboBox);
@@ -599,10 +603,10 @@
 			this.EmulationTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.EmulationTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.EmulationTypeComboBox.FormattingEnabled = true;
-			this.EmulationTypeComboBox.Location = new System.Drawing.Point(489, 72);
+			this.EmulationTypeComboBox.Location = new System.Drawing.Point(493, 72);
 			this.EmulationTypeComboBox.Margin = new System.Windows.Forms.Padding(16, 3, 3, 3);
 			this.EmulationTypeComboBox.Name = "EmulationTypeComboBox";
-			this.EmulationTypeComboBox.Size = new System.Drawing.Size(68, 21);
+			this.EmulationTypeComboBox.Size = new System.Drawing.Size(64, 21);
 			this.EmulationTypeComboBox.TabIndex = 30;
 			// 
 			// EmulationTypeLabel
@@ -610,7 +614,7 @@
 			this.EmulationTypeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.EmulationTypeLabel.AutoSize = true;
 			this.EmulationTypeLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.EmulationTypeLabel.Location = new System.Drawing.Point(418, 74);
+			this.EmulationTypeLabel.Location = new System.Drawing.Point(431, 75);
 			this.EmulationTypeLabel.Name = "EmulationTypeLabel";
 			this.EmulationTypeLabel.Size = new System.Drawing.Size(56, 13);
 			this.EmulationTypeLabel.TabIndex = 29;
@@ -717,6 +721,25 @@
 			this.SynchronizeSettingsButton.UseVisualStyleBackColor = true;
 			this.SynchronizeSettingsButton.Click += new System.EventHandler(this.SynchronizeSettingsButton_Click);
 			// 
+			// XInputPathLabel
+			// 
+			this.XInputPathLabel.AutoSize = true;
+			this.XInputPathLabel.Location = new System.Drawing.Point(6, 46);
+			this.XInputPathLabel.Name = "XInputPathLabel";
+			this.XInputPathLabel.Size = new System.Drawing.Size(66, 13);
+			this.XInputPathLabel.TabIndex = 32;
+			this.XInputPathLabel.Text = "XInput Path:";
+			// 
+			// XInputPathTextBox
+			// 
+			this.XInputPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.XInputPathTextBox.Location = new System.Drawing.Point(78, 45);
+			this.XInputPathTextBox.Name = "XInputPathTextBox";
+			this.XInputPathTextBox.Size = new System.Drawing.Size(337, 20);
+			this.XInputPathTextBox.TabIndex = 34;
+			this.XInputPathTextBox.TextChanged += new System.EventHandler(this.XInputPathTextBox_TextChanged);
+			// 
 			// GameDetailsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -801,5 +824,7 @@
 		private System.Windows.Forms.GroupBox ActionGroupBox;
 		private System.Windows.Forms.ComboBox EmulationTypeComboBox;
 		private System.Windows.Forms.Label EmulationTypeLabel;
+		private System.Windows.Forms.TextBox XInputPathTextBox;
+		private System.Windows.Forms.Label XInputPathLabel;
 	}
 }

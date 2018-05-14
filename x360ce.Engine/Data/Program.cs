@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.IO;
 
 namespace x360ce.Engine.Data
@@ -23,6 +20,7 @@ namespace x360ce.Engine.Data
 			item.ProgramId = Guid.NewGuid();
 			item.HookMask = 0;
 			item.XInputMask = 0;
+			item.XInputPath = "";
 			item.DInputMask = 0;
 			item.DInputFile = "";
 			item.FakeVID = 0;

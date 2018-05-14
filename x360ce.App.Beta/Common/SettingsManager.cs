@@ -590,9 +590,13 @@ namespace x360ce.App
 					var data = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => x.DataBoundItem as Setting)
 						// Make sure that only enabled controllers are added.
 						.Where(x => x != null && x.IsEnabled).ToArray();
-					var instances = data.Select(x => GetInstanceSection(x.InstanceGuid)).ToArray();
-					// Separate devices with comma. x360ce.dll must combine devices separated by comma.
-					v = string.Join(",", instances);
+					data = FilterSettings(data);
+					var sections = data.Select(x => GetInstanceSection(x.InstanceGuid)).ToArray();
+					// x360ce.dll must combine devices separated by comma.
+					//v = string.Join(",", sections);
+					// Use backwards compatible mode (one device at the time).
+					v = sections.FirstOrDefault() ?? "";
+					// Note: Must code device combine workaround.
 				}
 				else
 				{
@@ -600,6 +604,19 @@ namespace x360ce.App
 				}
 			}
 			return v;
+		}
+
+		public static Setting[] FilterSettings(Setting[] settings)
+		{
+			// Make sure that non-supported keyboard, mouse and test devices are excluded.
+			var exludeTypes = new[]
+			{
+				(int)SharpDX.DirectInput.DeviceType.Mouse,
+				(int)SharpDX.DirectInput.DeviceType.Keyboard,
+			};
+			return settings
+				.Where(x => !exludeTypes.Contains(x.DeviceType) && x.ProductGuid != TestDeviceHelper.ProductGuid)
+				.ToArray();
 		}
 
 		#endregion

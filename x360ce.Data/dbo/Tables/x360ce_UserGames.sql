@@ -11,7 +11,8 @@
     [EmulationType]         INT              CONSTRAINT [DF_x360ce_UserGames_EmulationType] DEFAULT ((0)) NOT NULL,
     [AutoMapMask]           INT              CONSTRAINT [DF_x360ce_UserGames_AutoMapMask] DEFAULT ((0)) NOT NULL,
     [HookMask]              INT              CONSTRAINT [DF_x360ce_UserGames_HookMask] DEFAULT ((0)) NOT NULL,
-    [XInputMask]            INT              CONSTRAINT [DF_x360ce_UserGames_XInputFileName] DEFAULT ((0)) NOT NULL,
+    [XInputMask]            INT              CONSTRAINT [DF_x360ce_UserGames_XInputMask] DEFAULT ((0)) NOT NULL,
+    [XInputPath]            NVARCHAR (256)   CONSTRAINT [DF_x360ce_UserGames_XInputPath] DEFAULT ('') NOT NULL,
     [DInputMask]            INT              CONSTRAINT [DF_x360ce_UserGames_DInputMask] DEFAULT ((0)) NOT NULL,
     [DInputFile]            NVARCHAR (256)   CONSTRAINT [DF_x360ce_UserGames_DInputFile] DEFAULT ('') NOT NULL,
     [FakeVID]               INT              CONSTRAINT [DF_x360ce_UserGames_FakeVID] DEFAULT ((0)) NOT NULL,
@@ -25,6 +26,8 @@
     [DateUpdated]           DATETIME         CONSTRAINT [DF_x360ce_UserGames_DateUpdated] DEFAULT (getdate()) NOT NULL,
     CONSTRAINT [PK_x360ce_UserGames] PRIMARY KEY CLUSTERED ([GameId] ASC)
 );
+
+
 
 
 

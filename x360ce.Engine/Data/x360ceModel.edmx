@@ -148,6 +148,7 @@
           <Property Name="AutoMapMask" Type="int" Nullable="false" />
           <Property Name="HookMask" Type="int" Nullable="false" />
           <Property Name="XInputMask" Type="int" Nullable="false" />
+          <Property Name="XInputPath" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="DInputMask" Type="int" Nullable="false" />
           <Property Name="DInputFile" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="FakeVID" Type="int" Nullable="false" />
@@ -276,6 +277,7 @@
           <Property Name="AutoMapMask" Type="int" Nullable="false" />
           <Property Name="HookMask" Type="int" Nullable="false" />
           <Property Name="XInputMask" Type="int" Nullable="false" />
+          <Property Name="XInputPath" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="DInputMask" Type="int" Nullable="false" />
           <Property Name="DInputFile" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="FakeVID" Type="int" Nullable="false" />
@@ -579,6 +581,7 @@
           <Property Name="EnableMask" Type="Int32" Nullable="false" />
           <Property Name="EmulationType" Type="Int32" Nullable="false" />
           <Property Name="Checksum" Type="Guid" Nullable="false" />
+          <Property Name="XInputPath" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Program">
           <Key>
@@ -605,6 +608,7 @@
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="DateUpdated" Type="DateTime" Precision="3" Nullable="false" />
           <Property Name="InstanceCount" Type="Int32" Nullable="false" />
+          <Property Name="XInputPath" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Layout">
           <Key>
@@ -874,6 +878,7 @@
           <EntitySetMapping Name="UserGames">
             <EntityTypeMapping TypeName="x360ceModel.UserGame">
               <MappingFragment StoreEntitySet="x360ce_UserGames">
+                <ScalarProperty Name="XInputPath" ColumnName="XInputPath" />
                 <ScalarProperty Name="Checksum" ColumnName="Checksum" />
                 <ScalarProperty Name="EmulationType" ColumnName="EmulationType" />
                 <ScalarProperty Name="EnableMask" ColumnName="EnableMask" />
@@ -904,6 +909,7 @@
           <EntitySetMapping Name="Programs">
             <EntityTypeMapping TypeName="x360ceModel.Program">
               <MappingFragment StoreEntitySet="x360ce_Programs">
+                <ScalarProperty Name="XInputPath" ColumnName="XInputPath" />
                 <ScalarProperty Name="InstanceCount" ColumnName="InstanceCount" />
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
@@ -988,7 +994,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="43" >
+			<Diagram Name="x360ceModel" ZoomLevel="39" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />

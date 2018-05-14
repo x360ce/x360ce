@@ -90,7 +90,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Get file content with encoding header.
 		/// </summary>
-		public static byte[] GetFileConentBytes(string content, Encoding encoding = null)
+		public static byte[] GetFileContentBytes(string content, Encoding encoding = null)
 		{
 			var ms = new MemoryStream();
 			// Encoding header will be added to content.

@@ -1437,12 +1437,15 @@ namespace x360ce.App
             var result = form.ShowForm(sb.ToString(), "Synchronize", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
             if (result == DialogResult.OK)
             {
-                for (int i = 0; i < games.Length; i++)
+				// Save/synchronize game settings.
+				for (int i = 0; i < games.Length; i++)
                 {
                     var game = games[i];
-                    SettingsManager.Current.SaveINI(game);
+					// Apply game changes.
+					SettingsManager.Current.GetDllAndIniStatus(game, true);
                 }
-                SaveAll();
+				// Save application settings.
+				SaveAll();
             }
             var timer = new System.Timers.Timer();
             timer.AutoReset = false;

@@ -3458,7 +3458,8 @@ namespace x360ce.Engine.Data
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
         /// <param name="instanceCount">Initial value of the InstanceCount property.</param>
-        public static Program CreateProgram(global::System.Guid programId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.Int32 processorArchitecture, global::System.Int32 emulationType, global::System.Int32 autoMapMask, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.Guid settingChecksum, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 instanceCount)
+        /// <param name="xInputPath">Initial value of the XInputPath property.</param>
+        public static Program CreateProgram(global::System.Guid programId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.Int32 processorArchitecture, global::System.Int32 emulationType, global::System.Int32 autoMapMask, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.Guid settingChecksum, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 instanceCount, global::System.String xInputPath)
         {
             Program program = new Program();
             program.ProgramId = programId;
@@ -3482,6 +3483,7 @@ namespace x360ce.Engine.Data
             program.DateCreated = dateCreated;
             program.DateUpdated = dateUpdated;
             program.InstanceCount = instanceCount;
+            program.XInputPath = xInputPath;
             return program;
         }
 
@@ -3995,6 +3997,30 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _InstanceCount;
         partial void OnInstanceCountChanging(global::System.Int32 value);
         partial void OnInstanceCountChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String XInputPath
+        {
+            get
+            {
+                return _XInputPath;
+            }
+            set
+            {
+                OnXInputPathChanging(value);
+                ReportPropertyChanging("XInputPath");
+                _XInputPath = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("XInputPath");
+                OnXInputPathChanged();
+            }
+        }
+        private global::System.String _XInputPath;
+        partial void OnXInputPathChanging(global::System.String value);
+        partial void OnXInputPathChanged();
 
         #endregion
 
@@ -6190,7 +6216,8 @@ namespace x360ce.Engine.Data
         /// <param name="enableMask">Initial value of the EnableMask property.</param>
         /// <param name="emulationType">Initial value of the EmulationType property.</param>
         /// <param name="checksum">Initial value of the Checksum property.</param>
-        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 autoMapMask, global::System.Int32 enableMask, global::System.Int32 emulationType, global::System.Guid checksum)
+        /// <param name="xInputPath">Initial value of the XInputPath property.</param>
+        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 autoMapMask, global::System.Int32 enableMask, global::System.Int32 emulationType, global::System.Guid checksum, global::System.String xInputPath)
         {
             UserGame userGame = new UserGame();
             userGame.GameId = gameId;
@@ -6217,6 +6244,7 @@ namespace x360ce.Engine.Data
             userGame.EnableMask = enableMask;
             userGame.EmulationType = emulationType;
             userGame.Checksum = checksum;
+            userGame.XInputPath = xInputPath;
             return userGame;
         }
 
@@ -6802,6 +6830,30 @@ namespace x360ce.Engine.Data
         private global::System.Guid _Checksum;
         partial void OnChecksumChanging(global::System.Guid value);
         partial void OnChecksumChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String XInputPath
+        {
+            get
+            {
+                return _XInputPath;
+            }
+            set
+            {
+                OnXInputPathChanging(value);
+                ReportPropertyChanging("XInputPath");
+                _XInputPath = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("XInputPath");
+                OnXInputPathChanged();
+            }
+        }
+        private global::System.String _XInputPath;
+        partial void OnXInputPathChanging(global::System.String value);
+        partial void OnXInputPathChanged();
 
         #endregion
 

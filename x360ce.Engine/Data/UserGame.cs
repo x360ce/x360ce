@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.IO;
-using System.Text;
-using System.Reflection;
 using System.Xml.Serialization;
-using JocysCom.ClassLibrary.Configuration;
-using System.Threading.Tasks;
 
 namespace x360ce.Engine.Data
 {
@@ -81,6 +74,24 @@ namespace x360ce.Engine.Data
                 return ((Engine.EmulationType)EmulationType).HasFlag(Engine.EmulationType.Library);
             }
         }
+
+		/// <summary>
+		/// Sometimes program executable and folder where it expects to find XInput DLL file is different.
+		/// Use this method to get correct path to DLL and INI file.
+		/// Property 'XInputPath' will be used to adjust path.
+		/// </summary>
+		/// <returns></returns>
+		public DirectoryInfo GetLibraryAndSettingsDirectory()
+		{
+			if (string.IsNullOrEmpty(FullPath))
+				return null;
+			var fi = new FileInfo(FullPath);
+			var path = fi.Directory.FullName;
+			// If sub folder, relative to game executable file specified then...
+			if (!string.IsNullOrEmpty(XInputPath))
+				path = Path.Combine(path, XInputPath);
+			return new DirectoryInfo(path);
+		}
 
         //#region Do not serialize default values
 

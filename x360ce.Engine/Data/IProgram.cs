@@ -8,6 +8,7 @@ namespace x360ce.Engine.Data
 		string FileName { get; set; }
 		string FileProductName { get; set; }
 		int XInputMask { get; set; }
+		string XInputPath { get; set; }
 		int HookMask { get; set; }
 		int DInputMask { get; set; }
 		string DInputFile { get; set; }

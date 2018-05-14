@@ -342,6 +342,7 @@ namespace x360ce.App.Controls
 				return;
 			// Reset to default all properties which affects checksum.
 			game.XInputMask = program.XInputMask;
+			game.XInputPath = program.XInputPath ?? "";
 			game.HookMask = program.HookMask;
 			game.AutoMapMask = (int)MapToMask.None;
 			game.EmulationType = (int)EmulationType.None;
@@ -355,8 +356,17 @@ namespace x360ce.App.Controls
 		private void DInputFileTextBox_TextChanged(object sender, EventArgs e)
 		{
 			var item = CurrentItem;
-			if (item == null) return;
+			if (item == null)
+				return;
 			item.DInputFile = DInputFileTextBox.Text;
+		}
+
+		private void XInputPathTextBox_TextChanged(object sender, EventArgs e)
+		{
+			var item = CurrentItem;
+			if (item == null)
+				return;
+			item.XInputPath = XInputPathTextBox.Text;
 		}
 
 		private void HookModeFakeVidNumericUpDown_ValueChanged(object sender, EventArgs e)

@@ -3,7 +3,7 @@
   <Version>10</Version>
   <SourceModelProvider>
     <ConnectionBasedModelProvider>
-      <ConnectionString>Data Source=localhost;Initial Catalog=x360ce;Integrated Security=True;Pooling=False;Connect Timeout=30</ConnectionString>
+      <ConnectionString>Data Source=localhost;Initial Catalog=x360ce;Persist Security Info=True;User ID=x360ceAdmin;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True</ConnectionString>
     </ConnectionBasedModelProvider>
   </SourceModelProvider>
   <TargetModelProvider>

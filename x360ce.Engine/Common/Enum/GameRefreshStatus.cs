@@ -32,9 +32,9 @@ namespace x360ce.Engine
 		XInputFilesOlderVersion = 0x400,
 		[Description("Newer version of XInput files were found.")]
 		XInputFilesNewerVersion = 0x800,
-		[Description("Not necessary XInput files were found.")]
-		XInputFilesUnnecessary = 0x1000,
-        [Description("Not necessary INI file found.")]
-        IniExist = 0x2000,
+		[Description("Unnecessary XInput files were found.")]
+		UnnecessaryLibraryFile = 0x1000,
+        [Description("Unnecessary INI settings file found.")]
+        UncecessarySettingFile = 0x2000,
     }
 }

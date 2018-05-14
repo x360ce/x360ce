@@ -335,7 +335,8 @@ namespace x360ce.App.Controls
 			  .FirstOrDefault();
 			if (item == null)
 				return;
-			if (!File.Exists(item.FullPath)) return;
+			if (!File.Exists(item.FullPath))
+				return;
 			EngineHelper.BrowsePath(item.FullPath);
 		}
 

@@ -212,6 +212,7 @@ namespace x360ce.Engine
             item.GameId = Guid.NewGuid();
             item.HookMask = 0;
             item.XInputMask = (int)mask;
+			item.XInputPath = "";
             item.DInputMask = 0;
             item.DInputFile = "";
             item.FakeVID = 0;

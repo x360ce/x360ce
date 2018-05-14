@@ -255,7 +255,7 @@ namespace x360ce.App
 			newSetting.InstanceName = device.InstanceName;
 			newSetting.ProductGuid = device.ProductGuid;
 			newSetting.ProductName = device.ProductName;
-			newSetting.DeviceType = (int)device.CapType;
+			newSetting.DeviceType = device.CapType;
 			newSetting.FileName = game.FileName;
 			newSetting.FileProductName = game.FileProductName;
 			newSetting.DateCreated = DateTime.Now;

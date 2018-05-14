@@ -110,8 +110,8 @@ namespace x360ce.App
 			var result = new SearchResult();
 			var settings = new List<Setting>();
 			var padSettings = new List<PadSetting>();
-			// Get game directory.
-			var dir = new FileInfo(game.FullPath).Directory;
+			// Get settings directory.
+			var dir = game.GetLibraryAndSettingsDirectory();
 			// Get INI file.
 			var iniFile = dir.GetFiles(IniFileName).FirstOrDefault();
 			if (iniFile != null)
@@ -169,6 +169,8 @@ namespace x360ce.App
 			sb.Append(';').Append('-', 64).AppendLine();
 			// Get all instances mapped to PADs for specific game.
 			var instances = Settings.Items.Where(x => x.MapTo > 0 && x.IsEnabled && x.FileName == game.FileName && x.FileProductName == game.FileProductName).ToArray();
+			instances = FilterSettings(instances);
+			// Rout through instances.
 			for (int i = 0; i < instances.Count(); i++)
 			{
 				sb.AppendLine();
@@ -181,7 +183,7 @@ namespace x360ce.App
 				// If pad settings not found then...
 				if (ps == null)
 				{
-					// Reset setttings.
+					// Reset settings.
 					ps = new PadSetting();
 					instance.PadSettingChecksum = ps.PadSettingChecksum;
 				}
@@ -203,12 +205,12 @@ namespace x360ce.App
 					// Add PAD setting instance.
 					sb.AppendFormat("[{0}]", GetProductSection(product.ProductGuid));
 					sb.AppendLine();
-					// Get padd settings attached to specific product.
+					// Get PAD settings attached to specific product.
 					var ps = PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == product.PadSettingChecksum);
 					// If pad settings not found then...
 					if (ps == null)
 					{
-						// Reset setttings.
+						// Reset settings.
 						ps = new PadSetting();
 						product.PadSettingChecksum = ps.PadSettingChecksum;
 					}
@@ -268,21 +270,6 @@ namespace x360ce.App
 				sb.AppendFormat("{0}={1}\r\n", item.IniKey, value);
 			}
 			return sb.ToString();
-		}
-
-		public void SaveINI(UserGame game)
-		{
-			var fullPath = Path.GetDirectoryName(game.FullPath);
-			var fullName = Path.Combine(fullPath, IniFileName);
-			var content = GetIniContent(game);
-			var bytes = SettingsHelper.GetFileConentBytes(content, Encoding.Unicode);
-			SettingsHelper.WriteIfDifferent(fullName, bytes);
-			saveCount++;
-			var ev = ConfigSaved;
-			if (ev != null)
-			{
-				ev(this, new SettingEventArgs(typeof(PadSetting).Name, saveCount));
-			}
 		}
 
 	}
