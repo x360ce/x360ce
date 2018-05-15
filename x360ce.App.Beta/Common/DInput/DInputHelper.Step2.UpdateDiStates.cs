@@ -144,14 +144,13 @@ namespace x360ce.App.DInput
                                         }
                                     }
                                 }
-
-                            }
+							}
                         }
-                        catch
+                        catch (Exception ex)
                         {
-                            //var cx = new Exception("Custom Exception", ex);
-                            //cx.Data.Add("FFInfo", exceptionData.ToString());
-                            //JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+                            var cx = new DInputException("UpdateDiStates Exception", ex);
+                            cx.Data.Add("FFInfo", exceptionData.ToString());
+                            JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(cx);
                             ud.IsExclusiveMode = null;
                         }
                     }

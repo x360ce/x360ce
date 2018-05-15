@@ -1,4 +1,5 @@
-﻿using SharpDX.DirectInput;
+﻿using JocysCom.ClassLibrary.Win32;
+using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Threading;
@@ -138,7 +139,7 @@ namespace x360ce.App.DInput
                     // separate windows form must be created on the same thread as the process which will access and update device.
                     // detector.DetectorForm will be used to acquire devices.
                     detector = new JocysCom.ClassLibrary.IO.DeviceDetector(false);
-                    UpdateDevicesEnabled = true;
+					UpdateDevicesEnabled = true;
                     Manager = new DirectInput();
                 }
                 var game = MainForm.Current.CurrentGame;

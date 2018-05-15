@@ -189,16 +189,7 @@ namespace JocysCom.ClassLibrary.IO
             return sb.ToString();
         }
 
-        public static string GetDeviceDescription(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
-        {
-            var deviceDescription = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
-            if (!string.IsNullOrEmpty(deviceDescription))
-                return deviceDescription.Trim();
-            var deviceFriendlyName = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_FRIENDLYNAME);
-            return (deviceFriendlyName ?? "").Trim();
-        }
-
-        public static string GetDeviceManufacturer(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
+		public static string GetDeviceManufacturer(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
         {
             var deviceManufacturer = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_MFG);
             return (deviceManufacturer ?? "").Trim();
@@ -461,8 +452,11 @@ namespace JocysCom.ClassLibrary.IO
         {
             var di = new DeviceInfo();
             di.DeviceId = GetDeviceId(deviceInfoData.DevInst);
-            di.Description = GetDeviceDescription(deviceInfoSet, deviceInfoData);
-            di.Manufacturer = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
+			var deviceDescription = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
+			var deviceFriendlyName = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_FRIENDLYNAME);
+			di.Description = deviceDescription ?? deviceFriendlyName ?? "";
+			di.FriendlyName = deviceFriendlyName ?? "";
+			di.Manufacturer = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
             di.ClassGuid = deviceInfoData.ClassGuid;
             di.ClassDescription = GetClassDescription(di.ClassGuid);
             di.HardwareIds = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);

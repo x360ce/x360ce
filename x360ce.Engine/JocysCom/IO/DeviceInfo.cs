@@ -8,6 +8,7 @@ namespace JocysCom.ClassLibrary.IO
             // Set all string values to empty for entities.
             Manufacturer = "";
             Description = "";
+			FriendlyName = "";
             DeviceId = "";
             HardwareIds = "";
             DevicePath = "";
@@ -26,7 +27,9 @@ namespace JocysCom.ClassLibrary.IO
 
         public string Description { get; set; }
 
-        public string DeviceId { get; set; }
+		public string FriendlyName { get; set; }
+
+		public string DeviceId { get; set; }
 
         public string HardwareIds { get; set; }
 
