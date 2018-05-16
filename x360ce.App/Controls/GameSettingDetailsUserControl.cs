@@ -137,7 +137,7 @@ namespace x360ce.App.Controls
 							}
 							else
 							{
-								return GameRefreshStatus.XInputFilesUnnecessary;
+								return GameRefreshStatus.UnnecessaryLibraryFile;
 							}
 						}
 					}
