@@ -43,7 +43,6 @@ namespace x360ce.App.Controls
 
 		object CurrentGameLock = new object();
 		bool EnabledEvents = false;
-		bool ApplySettingsToFolderInstantly = false;
 
 		CheckBox[] XInputCheckBoxes;
 		CheckBox[] DInputCheckBoxes;
@@ -84,21 +83,13 @@ namespace x360ce.App.Controls
 					ControlsHelper.SetSelectedItem(EmulationTypeComboBox, (EmulationType)item.EmulationType);
                     var game = _CurrentItem as UserGame;
                     var isGame = game != null;
-                    if (game != null)
+                    if (isGame)
 					{
-						var status = SettingsManager.Current.GetDllAndIniStatus(game, false);
-						ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
-						SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK);
 						_DefaultSettings = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName == game.FileName);
-						ResetToDefaultButton.Enabled = _DefaultSettings != null;
-						if (ApplySettingsToFolderInstantly)
-						{
-
-						}
 					}
-					// Allow sync settings for game.
-					SynchronizeSettingsButton.Visible = isGame;
-					ResetToDefaultButton.Visible = isGame && _DefaultSettings != null;
+					// Allow reset to default for games.
+					ActionGroupBox.Visible = isGame;
+					ResetToDefaultButton.Enabled = isGame && _DefaultSettings != null;
 					UpdateFakeVidPidControls();
 					UpdateDinputControls();
 
@@ -218,7 +209,6 @@ namespace x360ce.App.Controls
 			lock (CheckBoxLock)
 			{
 				var cbx = (CheckBox)sender;
-				bool applySettings = true;
 				CheckBox[] cbxList = null;
 				if (XInputCheckBoxes.Contains(cbx)) cbxList = XInputCheckBoxes;
 				if (DInputCheckBoxes.Contains(cbx)) cbxList = DInputCheckBoxes;
@@ -234,7 +224,6 @@ namespace x360ce.App.Controls
 						if (cbx32.Checked)
 						{
 							cbx32.Checked = false;
-							applySettings = false;
 						}
 					}
 					// If 32-bit CheckBox an checked then...
@@ -245,7 +234,6 @@ namespace x360ce.App.Controls
 						if (cbx64.Checked)
 						{
 							cbx64.Checked = false;
-							applySettings = false;
 						}
 					}
 				}
@@ -279,11 +267,6 @@ namespace x360ce.App.Controls
 						CurrentItem.AutoMapMask = mask;
 				}
 				UpdateTitle(cbx.Parent as GroupBox, mask);
-				if (CurrentItem.EmulationType == (int)EmulationType.Library)
-				{
-					SettingsManager.Save();
-					if (applySettings && ApplySettingsToFolderInstantly) ApplySettings();
-				}
 			}
 		}
 
@@ -292,39 +275,6 @@ namespace x360ce.App.Controls
 			var end = gp.Text.IndexOf(" - ") + 3;
 			var prefix = gp.Text.Substring(0, end);
 			ControlsHelper.SetText(gp, "{0}{1:X8}", prefix, mask);
-		}
-
-		/// <summary>
-		/// Button must be available only if editing UserGame .
-		/// </summary>
-		private void SynchronizeSettingsButton_Click(object sender, EventArgs e)
-		{
-			var game = CurrentItem as UserGame;
-			MessageBoxForm form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var status = SettingsManager.Current.GetDllAndIniStatus(game, false);
-			var values = ((GameRefreshStatus[])Enum.GetValues(typeof(GameRefreshStatus))).Except(new[] { GameRefreshStatus.OK }).ToArray();
-			List<string> errors = new List<string>();
-			foreach (GameRefreshStatus value in values)
-			{
-				if (status.HasFlag(value))
-				{
-					var description = Attributes.GetDescription(value);
-					errors.Add(description);
-				}
-			}
-			var message = "Synchronize current settings to game folder?";
-			message += "\r\n\r\n\tIssues:\r\n\r\n\t - " + string.Join("\r\n\t - ", errors);
-			var result = form.ShowForm(message, "Synchronize", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-			if (result == DialogResult.OK) ApplySettings();
-		}
-
-		void ApplySettings()
-		{
-			var game = CurrentItem as UserGame;
-			var status = SettingsManager.Current.GetDllAndIniStatus(game, true);
-			ApplySettingsToFolderInstantly = (status == GameRefreshStatus.OK);
-			SynchronizeSettingsButton.Visible = (status != GameRefreshStatus.OK) && (status != GameRefreshStatus.OK);
 		}
 
 		private void ResetToDefaultButton_Click(object sender, EventArgs e)

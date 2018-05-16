@@ -70,6 +70,8 @@
 			this.AutoMapMaskGroupBox = new System.Windows.Forms.GroupBox();
 			this.DInputMaskGroupBox = new System.Windows.Forms.GroupBox();
 			this.OtherOptionsGroupBox = new System.Windows.Forms.GroupBox();
+			this.XInputPathTextBox = new System.Windows.Forms.TextBox();
+			this.XInputPathLabel = new System.Windows.Forms.Label();
 			this.EmulationTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.EmulationTypeLabel = new System.Windows.Forms.Label();
 			this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -78,9 +80,6 @@
 			this.button4 = new System.Windows.Forms.Button();
 			this.ActionGroupBox = new System.Windows.Forms.GroupBox();
 			this.ResetToDefaultButton = new System.Windows.Forms.Button();
-			this.SynchronizeSettingsButton = new System.Windows.Forms.Button();
-			this.XInputPathLabel = new System.Windows.Forms.Label();
-			this.XInputPathTextBox = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).BeginInit();
@@ -598,6 +597,25 @@
 			this.OtherOptionsGroupBox.TabStop = false;
 			this.OtherOptionsGroupBox.Text = "Other Options";
 			// 
+			// XInputPathTextBox
+			// 
+			this.XInputPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.XInputPathTextBox.Location = new System.Drawing.Point(78, 45);
+			this.XInputPathTextBox.Name = "XInputPathTextBox";
+			this.XInputPathTextBox.Size = new System.Drawing.Size(337, 20);
+			this.XInputPathTextBox.TabIndex = 34;
+			this.XInputPathTextBox.TextChanged += new System.EventHandler(this.XInputPathTextBox_TextChanged);
+			// 
+			// XInputPathLabel
+			// 
+			this.XInputPathLabel.AutoSize = true;
+			this.XInputPathLabel.Location = new System.Drawing.Point(6, 46);
+			this.XInputPathLabel.Name = "XInputPathLabel";
+			this.XInputPathLabel.Size = new System.Drawing.Size(66, 13);
+			this.XInputPathLabel.TabIndex = 32;
+			this.XInputPathLabel.Text = "XInput Path:";
+			// 
 			// EmulationTypeComboBox
 			// 
 			this.EmulationTypeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -625,9 +643,9 @@
 			this.groupBox5.Controls.Add(this.GoogleSearchButton);
 			this.groupBox5.Controls.Add(this.button3);
 			this.groupBox5.Controls.Add(this.button4);
-			this.groupBox5.Location = new System.Drawing.Point(572, 93);
+			this.groupBox5.Location = new System.Drawing.Point(572, 3);
 			this.groupBox5.Name = "groupBox5";
-			this.groupBox5.Size = new System.Drawing.Size(191, 130);
+			this.groupBox5.Size = new System.Drawing.Size(191, 115);
 			this.groupBox5.TabIndex = 42;
 			this.groupBox5.TabStop = false;
 			this.groupBox5.Text = "Help";
@@ -683,10 +701,9 @@
 			// ActionGroupBox
 			// 
 			this.ActionGroupBox.Controls.Add(this.ResetToDefaultButton);
-			this.ActionGroupBox.Controls.Add(this.SynchronizeSettingsButton);
-			this.ActionGroupBox.Location = new System.Drawing.Point(572, 3);
+			this.ActionGroupBox.Location = new System.Drawing.Point(572, 124);
 			this.ActionGroupBox.Name = "ActionGroupBox";
-			this.ActionGroupBox.Size = new System.Drawing.Size(191, 84);
+			this.ActionGroupBox.Size = new System.Drawing.Size(191, 54);
 			this.ActionGroupBox.TabIndex = 43;
 			this.ActionGroupBox.TabStop = false;
 			this.ActionGroupBox.Text = "Action";
@@ -705,40 +722,6 @@
 			this.ResetToDefaultButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.ResetToDefaultButton.UseVisualStyleBackColor = true;
 			this.ResetToDefaultButton.Click += new System.EventHandler(this.ResetToDefaultButton_Click);
-			// 
-			// SynchronizeSettingsButton
-			// 
-			this.SynchronizeSettingsButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.SynchronizeSettingsButton.Image = global::x360ce.App.Properties.Resources.fix_16x16;
-			this.SynchronizeSettingsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.SynchronizeSettingsButton.Location = new System.Drawing.Point(6, 49);
-			this.SynchronizeSettingsButton.Name = "SynchronizeSettingsButton";
-			this.SynchronizeSettingsButton.Size = new System.Drawing.Size(179, 24);
-			this.SynchronizeSettingsButton.TabIndex = 31;
-			this.SynchronizeSettingsButton.Text = "Apply/Synchronize Settings";
-			this.SynchronizeSettingsButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this.SynchronizeSettingsButton.UseVisualStyleBackColor = true;
-			this.SynchronizeSettingsButton.Click += new System.EventHandler(this.SynchronizeSettingsButton_Click);
-			// 
-			// XInputPathLabel
-			// 
-			this.XInputPathLabel.AutoSize = true;
-			this.XInputPathLabel.Location = new System.Drawing.Point(6, 46);
-			this.XInputPathLabel.Name = "XInputPathLabel";
-			this.XInputPathLabel.Size = new System.Drawing.Size(66, 13);
-			this.XInputPathLabel.TabIndex = 32;
-			this.XInputPathLabel.Text = "XInput Path:";
-			// 
-			// XInputPathTextBox
-			// 
-			this.XInputPathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.XInputPathTextBox.Location = new System.Drawing.Point(78, 45);
-			this.XInputPathTextBox.Name = "XInputPathTextBox";
-			this.XInputPathTextBox.Size = new System.Drawing.Size(337, 20);
-			this.XInputPathTextBox.TabIndex = 34;
-			this.XInputPathTextBox.TextChanged += new System.EventHandler(this.XInputPathTextBox_TextChanged);
 			// 
 			// GameDetailsUserControl
 			// 
@@ -793,7 +776,6 @@
 		private System.Windows.Forms.CheckBox XInput12_x64CheckBox;
 		private System.Windows.Forms.CheckBox XInput13_x64CheckBox;
 		private System.Windows.Forms.CheckBox XInput14_x64CheckBox;
-		private System.Windows.Forms.Button SynchronizeSettingsButton;
 		private System.Windows.Forms.CheckBox DInput8_x86CheckBox;
 		private System.Windows.Forms.CheckBox DInput8_x64CheckBox;
 		private System.Windows.Forms.Label HookModeFakePidLabel;

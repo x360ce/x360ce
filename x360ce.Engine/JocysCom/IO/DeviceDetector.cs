@@ -448,7 +448,16 @@ namespace JocysCom.ClassLibrary.IO
         //}
 
 
-        static DeviceInfo GetDeviceInfo(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
+		public static string GetDeviceDescription(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
+		{
+			var deviceDescription = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
+			if (!string.IsNullOrEmpty(deviceDescription))
+				return deviceDescription;
+			var deviceFriendlyName = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_FRIENDLYNAME);
+			return deviceDescription ?? "";
+		}
+
+		static DeviceInfo GetDeviceInfo(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
         {
             var di = new DeviceInfo();
             di.DeviceId = GetDeviceId(deviceInfoData.DevInst);
