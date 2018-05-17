@@ -1,21 +1,15 @@
 ﻿using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
 {
-    public partial class DInputHelper
+	public partial class DInputHelper
     {
 
         #region Device Detector
-
-        /// <summary>
-        /// Main job of detector is to fire event on device connection (power on) and removal (power off).
-        /// </summary>
-        DeviceDetector detector;
 
         public bool UpdateDevicesEnabled;
 
@@ -24,7 +18,7 @@ namespace x360ce.App.DInput
         object UpdateDevicesLock = new object();
         public int RefreshDevicesCount;
 
-        void UpdateDiDevices()
+        void UpdateDiDevices(DirectInput manager)
         {
             if (!UpdateDevicesEnabled)
                 return;
@@ -36,15 +30,15 @@ namespace x360ce.App.DInput
             // List of connected devices (can be a very long operation).
             var devices = new List<DeviceInstance>();
             // Controllers.
-            var controllerInstances = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+            var controllerInstances = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
             foreach (var item in controllerInstances)
                 devices.Add(item);
             // Pointers.
-            var pointerInstances = Manager.GetDevices(DeviceClass.Pointer, DeviceEnumerationFlags.AllDevices).ToList();
+            var pointerInstances = manager.GetDevices(DeviceClass.Pointer, DeviceEnumerationFlags.AllDevices).ToList();
             foreach (var item in pointerInstances)
                 devices.Add(item);
             // Keyboards.
-            var keyboardInstances = Manager.GetDevices(DeviceClass.Keyboard, DeviceEnumerationFlags.AllDevices).ToList();
+            var keyboardInstances = manager.GetDevices(DeviceClass.Keyboard, DeviceEnumerationFlags.AllDevices).ToList();
             foreach (var item in keyboardInstances)
                 devices.Add(item);
             if (Program.IsClosing)
@@ -72,7 +66,7 @@ namespace x360ce.App.DInput
                 var device = addedDevices[i];
                 var ud = new UserDevice();
                 DeviceInfo hid;
-                RefreshDevice(ud, device, intInfos, devInfos, out hid);
+                RefreshDevice(manager, ud, device, intInfos, devInfos, out hid);
                 var isVirtual = false;
                 if (hid != null)
                 {
@@ -101,7 +95,7 @@ namespace x360ce.App.DInput
                 var ud = SettingsManager.UserDevices.Items.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
                 DeviceInfo hid;
                 // Will refresh device and fill more values with new x360ce app if available.
-                RefreshDevice(ud, device, intInfos, devInfos, out hid);
+                RefreshDevice(manager, ud, device, intInfos, devInfos, out hid);
             }
             if (Program.IsClosing)
                 return;
@@ -132,7 +126,7 @@ namespace x360ce.App.DInput
         /// <summary>
         /// Refresh device.
         /// </summary>
-		void RefreshDevice(UserDevice ud, DeviceInstance device, DeviceInfo[] intInfos, DeviceInfo[] devInfos, out DeviceInfo hid)
+		void RefreshDevice(DirectInput manager, UserDevice ud, DeviceInstance device, DeviceInfo[] intInfos, DeviceInfo[] devInfos, out DeviceInfo hid)
         {
             hid = null;
             if (Program.IsClosing)
@@ -140,7 +134,7 @@ namespace x360ce.App.DInput
             // If device added then...
             if (ud.Device == null)
             {
-                var joystick = new Joystick(Manager, device.InstanceGuid);
+                var joystick = new Joystick(manager, device.InstanceGuid);
                 ud.Device = joystick;
                 ud.IsExclusiveMode = null;
                 ud.LoadCapabilities(joystick.Capabilities);

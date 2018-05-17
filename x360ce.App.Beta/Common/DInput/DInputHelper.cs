@@ -1,231 +1,254 @@
-﻿using JocysCom.ClassLibrary.Win32;
+﻿using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.Win32;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace x360ce.App.DInput
 {
-    public partial class DInputHelper : IDisposable
-    {
+	public partial class DInputHelper : IDisposable
+	{
 
-        public DInputHelper()
-        {
-            CombinedXiConencted = new bool[4];
-            CombinedXiStates = new State[4];
-            LiveXiControllers = new Controller[4];
-            LiveXiConnected = new bool[4];
-            LiveXiStates = new State[4];
-            for (int i = 0; i < 4; i++)
-            {
-                CombinedXiStates[i] = new State();
-                LiveXiControllers[i] = new Controller((UserIndex)i);
-                LiveXiStates[i] = new State();
-            }
-            watch = new System.Diagnostics.Stopwatch();
-        }
+		public DInputHelper()
+		{
+			CombinedXiConencted = new bool[4];
+			CombinedXiStates = new State[4];
+			LiveXiControllers = new Controller[4];
+			LiveXiConnected = new bool[4];
+			LiveXiStates = new State[4];
+			for (int i = 0; i < 4; i++)
+			{
+				CombinedXiStates[i] = new State();
+				LiveXiControllers[i] = new Controller((UserIndex)i);
+				LiveXiStates[i] = new State();
+			}
+			watch = new System.Diagnostics.Stopwatch();
+			_ResetEvent = new ManualResetEvent(false);
+		}
 
-        public bool Suspended;
+		// Where current DInput device state is stored:
+		//
+		//    UserDevice.Device - DirectInput Device (Joystick)
+		//    UserDevice.State - DirectInput Device (JoystickState)
+		//
+		// Process 1
+		// limited to [125, 250, 500, 1000Hz]
+		// Lock
+		// {
+		//    Acquire:
+		//    DiDevices - when device is detected.
+		//	  DiCapabilities - when device is detected.
+		//	  JoStates - from mapped devices.
+		//	  DiStates - from converted JoStates.
+		//	  XiStates - from converted DiStates
+		// }
+		//
+		// Process 2
+		// limited to [30Hz] (only when visible).
+		// Lock
+		// {
+		//	  DiDevices, DiCapabilities, DiStates, XiStates
+		//	  Update DInput and XInput forms.
+		// }
 
-        // Where current DInput device state is stored:
-        //
-        //    UserDevice.Device - DirectInput Device (Joystick)
-        //    UserDevice.State - DirectInput Device (JoystickState)
-        //
-        // Process 1
-        // limited to [125, 250, 500, 1000Hz]
-        // Lock
-        // {
-        //    Acquire:
-        //    DiDevices - when device is detected.
-        //	  DiCapabilities - when device is detected.
-        //	  JoStates - from mapped devices.
-        //	  DiStates - from converted JoStates.
-        //	  XiStates - from converted DiStates
-        // }
-        //
-        // Process 2
-        // limited to [30Hz] (only when visible).
-        // Lock
-        // {
-        //	  DiDevices, DiCapabilities, DiStates, XiStates
-        //	  Update DInput and XInput forms.
-        // }
+		public event EventHandler<DInputEventArgs> FrequencyUpdated;
+		public event EventHandler<DInputEventArgs> DevicesUpdated;
+		public event EventHandler<DInputEventArgs> StatesUpdated;
+		public event EventHandler<DInputEventArgs> StatesRetrieved;
+		public event EventHandler<DInputEventArgs> UpdateCompleted;
 
-        public event EventHandler<DInputEventArgs> FrequencyUpdated;
-        public event EventHandler<DInputEventArgs> DevicesUpdated;
-        public event EventHandler<DInputEventArgs> StatesUpdated;
-        public event EventHandler<DInputEventArgs> StatesRetrieved;
-        public event EventHandler<DInputEventArgs> UpdateCompleted;
-        DirectInput Manager;
+		/// <summary>
+		/// Timer which will be used together with ManualResetEvent to limit update refresh frequency.
+		/// </summary>
+		JocysCom.ClassLibrary.HiResTimer _timer;
 
-        JocysCom.ClassLibrary.HiResTimer _timer;
+		// Control when event can continue.
+		ManualResetEvent _ResetEvent;
+		ThreadStart _ThreadStart;
+		Thread _Thread;
+		bool _AllowThreadToRun;
+		object timerLock = new object();
 
-        //ThreadStart _ThreadStart;
-        //Thread _Thread;
+		// Suspended is used during re-loading of XInput library.
+		public bool Suspended;
 
-        object timerLock = new object();
+		public void Start()
+		{
+			lock (timerLock)
+			{
+				if (_timer != null)
+					return;
+				watch.Restart();
+				_timer = new JocysCom.ClassLibrary.HiResTimer();
+				_timer.Elapsed += Timer_Elapsed;
+				_timer.Interval = (int)Frequency;
+				_timer.Start();
+				_AllowThreadToRun = true;
+				RefreshAllAsync();
+			}
+		}
 
-        public void Start()
-        {
-            lock (timerLock)
-            {
-                if (_timer != null)
-                    return;
-                watch.Restart();
-                _timer = new JocysCom.ClassLibrary.HiResTimer();
-                _timer.Elapsed += Timer_Elapsed;
-                _timer.Interval = (int)Frequency;
-                _timer.Start();
-            }
-        }
+		public void Stop()
+		{
+			lock (timerLock)
+			{
+				if (_timer == null)
+					return;
+				_timer.Stop();
+				_timer.Dispose();
+				_timer = null;
+				_AllowThreadToRun = false;
+				_ResetEvent.Set();
+			}
+		}
 
-        public void Stop()
-        {
-            lock (timerLock)
-            {
-                if (_timer == null)
-                    return;
-                _timer.Stop();
-                _timer.Dispose();
-                _timer = null;
-            }
-        }
+		public Exception LastException = null;
 
+		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			try
+			{
+				//Sets the state of the event to signaled, allowing one or more waiting threads to proceed.
+				_ResetEvent.Set();
+			}
+			catch (Exception ex)
+			{
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				LastException = ex;
+			}
+		}
 
-        public Exception LastException = null;
+		object DiUpdatesLock = new object();
 
-        public bool SkipRefreshAll = false;
+		/// <summary>
+		/// Method which will create separate thread which will do all DInput and XInput updates.
+		/// </summary>
+		void RefreshAllAsync()
+		{
+			_ThreadStart = new ThreadStart(ThreadAction);
+			_Thread = new Thread(_ThreadStart);
+			_Thread.Start();
+		}
 
-        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            if (Suspended)
-                return;
-            try
-            {
-                RefreshAll();
-            }
-            catch (Exception ex)
-            {
-                JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-                LastException = ex;
-            }
-        }
+		void ThreadAction()
+		{
+			// Set name of the thread.
+			Thread.CurrentThread.Name = "RefreshAllThread";
+			// DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
+			// separate windows form must be created on the same thread as the process which will access and update device.
+			// detector.DetectorForm will be used to acquire devices.
+			/// Main job of detector is to fire event on device connection (power on) and removal (power off).
+			var manager = new DirectInput();
+			var detector = new DeviceDetector(false);
+			UpdateDevicesEnabled = true;
+			do
+			{
+				// Sets the state of the event to non-signaled, causing threads to block.
+				_ResetEvent.Reset();
+				// Perform all updates if not suspended.
+				if (!Suspended)
+					RefreshAll(manager, detector);
+				// Blocks the current thread until the current WaitHandle receives a signal.
+				// Thread will be release by the timer.
+				_ResetEvent.WaitOne();
+			}
+			// Loop until suspended.
+			while (_AllowThreadToRun);
+			detector.Dispose();
+			manager.Dispose();
+		}
 
-        object DiUpdatesLock = new object();
+		void RefreshAll(DirectInput manager, DeviceDetector detector)
+		{
+			lock (DiUpdatesLock)
+			{
+				var game = MainForm.Current.CurrentGame;
+				// Update information about connected devices.
+				UpdateDiDevices(manager);
+				// Update JoystickStates from devices.
+				UpdateDiStates(game, detector);
+				// Update XInput states from Custom DirectInput states.
+				UpdateXiStates();
+				// Combine XInput states of controllers.
+				CombineXiStates();
+				// Update virtual devices from combined states.
+				UpdateVirtualDevices(game);
+				// Retrieve XInput states from XInput controllers.
+				RetrieveXiStates();
+				// Update pool frequency value every second.
+				UpdateDelayFrequency();
+				// Fire event.
+				var ev = UpdateCompleted;
+				if (ev != null)
+					ev(this, new DInputEventArgs());
+			}
+		}
 
-        int? RefreshAllThreadId;
+		/// <summary>
+		/// Watch to monitor update frequency.
+		/// </summary>
+		System.Diagnostics.Stopwatch watch;
+		long lastTime;
+		long currentTick;
+		public long CurrentUpdateFrequency;
 
-        void RefreshAll()
-        {
-            lock (DiUpdatesLock)
-            {
-                // If thread changed then...
-                if (RefreshAllThreadId.HasValue && RefreshAllThreadId.Value != Thread.CurrentThread.ManagedThreadId)
-                {
-                    // Can't dispose detector, because this is another thread
-                    // and it will throw error related to cross-threading.
-                    //detector.Dispose();
-                    Manager.Dispose();
-                    RefreshAllThreadId = null;
-                }
-                // If thread was just initialized then...
-                if (!RefreshAllThreadId.HasValue)
-                {
-                    // Set name of the thread.
-                    Thread.CurrentThread.Name = "RefreshAllThread";
-                    RefreshAllThreadId = Thread.CurrentThread.ManagedThreadId;
-                    // DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
-                    // separate windows form must be created on the same thread as the process which will access and update device.
-                    // detector.DetectorForm will be used to acquire devices.
-                    detector = new JocysCom.ClassLibrary.IO.DeviceDetector(false);
-					UpdateDevicesEnabled = true;
-                    Manager = new DirectInput();
-                }
-                var game = MainForm.Current.CurrentGame;
-                // Update information about connected devices.
-                UpdateDiDevices();
-                // Update JoystickStates from devices.
-                UpdateDiStates(game);
-                // Update XInput states from Custom DirectInput states.
-                UpdateXiStates();
-                // Combine XInput states of controllers.
-                CombineXiStates();
-                // Update virtual devices from combined states.
-                UpdateVirtualDevices(game);
-                // Retrieve XInput states from XInput controllers.
-                RetrieveXiStates();
-                // Update pool frequency value and sleep if necessary.
-                UpdateDelayFrequency();
-                // Fire event.
-                var ev = UpdateCompleted;
-                if (ev != null)
-                    ev(this, new DInputEventArgs());
-            }
-        }
+		UpdateFrequency Frequency
+		{
+			get { return _Frequency; }
+			set
+			{
+				_Frequency = value;
+				var t = _timer;
+				if (t != null && t.Interval != (int)value)
+					t.Interval = (int)value;
+			}
+		}
+		UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
 
-        /// <summary>
-        /// Watch to monitor update frequency.
-        /// </summary>
-        System.Diagnostics.Stopwatch watch;
-        long lastTime;
-        long currentTick;
-        public long CurrentUpdateFrequency;
+		void UpdateDelayFrequency()
+		{
+			// Calculate update frequency.
+			currentTick++;
+			var currentTime = watch.ElapsedMilliseconds;
+			// If one second elapsed then...
+			if ((currentTime - lastTime) > 1000)
+			{
+				CurrentUpdateFrequency = currentTick;
+				currentTick = 0;
+				lastTime = currentTime;
+				var ev = FrequencyUpdated;
+				if (ev != null)
+					ev(this, new DInputEventArgs());
+			}
+		}
 
-        UpdateFrequency Frequency
-        {
-            get { return _Frequency; }
-            set
-            {
-                _Frequency = value;
-                var t = _timer;
-                if (t != null && t.Interval != (int)value)
-                    t.Interval = (int)value;
-            }
-        }
-        UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
+		#region IDisposable
 
-        void UpdateDelayFrequency()
-        {
-            // Calculate update frequency.
-            currentTick++;
-            var currentTime = watch.ElapsedMilliseconds;
-            // If one second elapsed then...
-            if ((currentTime - lastTime) > 1000)
-            {
-                CurrentUpdateFrequency = currentTick;
-                currentTick = 0;
-                lastTime = currentTime;
-                var ev = FrequencyUpdated;
-                if (ev != null)
-                    ev(this, new DInputEventArgs());
-            }
-        }
+		bool IsDisposing;
 
-        #region IDisposable
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// Do not dispose twice.
+				if (IsDisposing)
+					return;
+				IsDisposing = true;
+				Stop();
+				Nefarius.ViGEm.Client.ViGEmClient.DisposeCurrent();
+				_ResetEvent.Dispose();
+			}
+		}
 
-        // The bulk of the clean-up code is implemented in Dispose(bool)
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Stop();
-                if (Manager != null)
-                {
-                    Manager.Dispose();
-                    Manager = null;
-                }
-                Nefarius.ViGEm.Client.ViGEmClient.DisposeCurrent();
-            }
-        }
+		#endregion
 
-        #endregion
-
-    }
+	}
 }

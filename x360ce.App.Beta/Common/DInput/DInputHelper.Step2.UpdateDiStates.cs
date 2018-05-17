@@ -1,8 +1,8 @@
-﻿using SharpDX.DirectInput;
+﻿using JocysCom.ClassLibrary.IO;
+using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Linq;
-using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -11,7 +11,7 @@ namespace x360ce.App.DInput
     public partial class DInputHelper
     {
 
-        void UpdateDiStates(UserGame game)
+        void UpdateDiStates(UserGame game, DeviceDetector detector)
         {
             // Get all mapped user instances.
             var instanceGuids = SettingsManager.Settings.Items

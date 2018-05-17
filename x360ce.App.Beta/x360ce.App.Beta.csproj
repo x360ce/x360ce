@@ -708,6 +708,8 @@
     <None Include="Images\emulation_none_16x16.png" />
     <None Include="Images\emulation_virtual_16x16.png" />
     <None Include="Images\test_16x16.png" />
+    <None Include="Images\save_ok_16x16.png" />
+    <None Include="Images\save_warning_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />

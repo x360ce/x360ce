@@ -36,5 +36,7 @@ namespace x360ce.Engine
 		UnnecessaryLibraryFile = 0x1000,
         [Description("Unnecessary INI settings file found.")]
         UncecessarySettingFile = 0x2000,
-    }
+		[Description("Unnecessary TMP settings file found.")]
+		UncecessaryBackupFile = 0x4000,
+	}
 }

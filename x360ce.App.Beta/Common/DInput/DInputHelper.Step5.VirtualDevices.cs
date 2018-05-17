@@ -2,14 +2,13 @@
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
-using System.Windows.Forms;
-using x360ce.Engine;
 using System.Linq;
+using x360ce.Engine;
 using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
 {
-    public partial class DInputHelper
+	public partial class DInputHelper
     {
 
         /// <summary>

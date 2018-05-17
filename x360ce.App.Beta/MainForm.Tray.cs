@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
-using x360ce.App.Controls;
 
 namespace x360ce.App
 {
@@ -56,6 +52,9 @@ namespace x360ce.App
 						MinimizeToTray(false, SettingsManager.Options.MinimizeToTray);
 					}
 				}
+				// Form GUI update is very heavy on CPU.
+				// Enable form GUI update only if form is not minimized.
+				EnableFormUpdates(WindowState != FormWindowState.Minimized);
 			}
 		}
 
@@ -110,15 +109,14 @@ namespace x360ce.App
 			}
 			if (WindowState != FormWindowState.Minimized)
 			{
-				EnableFormUpdates(false);
 				WindowState = FormWindowState.Minimized;
 			}
 		}
 
-        /// <summary>
-        /// Restores the window.
-        /// </summary>
-        public void RestoreFromTray(bool activate = false)
+		/// <summary>
+		/// Restores the window.
+		/// </summary>
+		public void RestoreFromTray(bool activate = false)
 		{
 			if (activate)
 			{
@@ -136,7 +134,6 @@ namespace x360ce.App
 				ShowInTaskbar = true;
 			if (WindowState != FormWindowState.Normal)
 			{
-				EnableFormUpdates(true);
 				WindowState = FormWindowState.Normal;
 			}
 			// Set window style as ToolWindow to show in ALT+TAB.

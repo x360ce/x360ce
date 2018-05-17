@@ -14,8 +14,8 @@
 
 		static string _DiskId;
 		static Guid? _HashedDiskId;
-		static object HashedDiskIdLock = new object();
-		static object DiskIdLock = new object();
+		static readonly object HashedDiskIdLock = new object();
+		static readonly object DiskIdLock = new object();
 
 		/// <summary>
 		/// Get manufacturer-allocated number used to identify the physical element.

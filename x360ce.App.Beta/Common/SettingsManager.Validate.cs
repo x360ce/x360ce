@@ -41,6 +41,7 @@ namespace x360ce.App
 			{
 				var settingsDirectory = game.GetLibraryAndSettingsDirectory();
 				var iniFullName = Path.Combine(settingsDirectory.FullName, IniFileName);
+				var tmpFullName = Path.Combine(settingsDirectory.FullName, TmpFileName);
 				// Create dictionary from XInput type and XInput file name.
 				var xiValues = ((XInputMask[])Enum.GetValues(typeof(XInputMask))).Where(x => x != XInputMask.None).ToArray();
 				var dic = new Dictionary<XInputMask, string>();
@@ -55,6 +56,8 @@ namespace x360ce.App
 				{
 					// If INI file exists then...
 					status |= CheckUnnecessarySettingFile(fix, iniFullName);
+					// If TMP file exists then...
+					status |= CheckUnnecessaryBackupFile(fix, tmpFullName);
 					// Loop through XInput DLL files.
 					foreach (var xiFileName in xiFileNames)
 					{
@@ -267,6 +270,26 @@ namespace x360ce.App
 					return GameRefreshStatus.UncecessarySettingFile;
 				// Remove INI files.
 				File.Delete(iniFileName);
+			}
+			return GameRefreshStatus.OK;
+		}
+
+
+		/// <summary>
+		/// Check for unnecessary TMP file.
+		/// </summary>
+		/// <param name="fix">True - fix the issue, false - return status only.</param>
+		/// <param name="iniFileName"></param>
+		/// <returns></returns>
+		GameRefreshStatus CheckUnnecessaryBackupFile(bool fix, string tmpFileName)
+		{
+			// If INI file exists then...
+			if (File.Exists(tmpFileName))
+			{
+				if (!fix)
+					return GameRefreshStatus.UncecessaryBackupFile;
+				// Remove INI files.
+				File.Delete(tmpFileName);
 			}
 			return GameRefreshStatus.OK;
 		}
