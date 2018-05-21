@@ -14,5 +14,7 @@ namespace x360ce.App
         UninstallViGEmBus,
         InstallHidGuardian,
         UninstallHidGuardian,
+		// Synchronize specified game folder (or all games if not specified) from settings.
+		Save,
     }
 }

@@ -135,18 +135,6 @@ namespace x360ce.App
 				ViGEm.HidGuardianHelper.ClearWhiteList(true, true);
 			}
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
-			// Make sure that all GridViews are updated on the same thread as MainForm when data changes.
-			// For example User devices will be removed and added on separate thread.
-			SettingsManager.Settings.Items.SynchronizingObject = this;
-			SettingsManager.Summaries.Items.SynchronizingObject = this;
-			SettingsManager.UserDevices.Items.SynchronizingObject = this;
-			SettingsManager.UserGames.Items.SynchronizingObject = this;
-			SettingsManager.UserInstances.Items.SynchronizingObject = this;
-			SettingsManager.UserComputers.Items.SynchronizingObject = this;
-			SettingsManager.Layouts.Items.SynchronizingObject = this;
-			SettingsManager.Programs.Items.SynchronizingObject = this;
-			SettingsManager.Presets.Items.SynchronizingObject = this;
-			SettingsManager.PadSettings.Items.SynchronizingObject = this;
 			// Initialize Debug panel.
 			DebugPanel = new Forms.DebugForm();
 			// Initialize DInput Helper.
@@ -162,26 +150,8 @@ namespace x360ce.App
 			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
 			// NotifySettingsChange will be called on setting changes.
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
-			//SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
-			SettingsManager.Settings.Load();
-			SettingsManager.Summaries.Load();
+			SettingsManager.Load(this);
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
-			// Make sure that data will be filtered before loading.
-			// Note: Make sure to load Programs before Games.
-			SettingsManager.Programs.ValidateData = Programs_ValidateData;
-			SettingsManager.Programs.Load();
-			// Make sure that data will be filtered before loading.
-			SettingsManager.UserGames.ValidateData = Games_ValidateData;
-			SettingsManager.UserGames.Load();
-			SettingsManager.Presets.Load();
-			// Make sure that data will be filtered before loading.
-			SettingsManager.Layouts.ValidateData = Layouts_ValidateData;
-			SettingsManager.Layouts.Load();
-			SettingsManager.PadSettings.Load();
-			SettingsManager.UserDevices.Load();
-			SettingsManager.UserInstances.Load();
-			SettingsManager.UserComputers.Load();
-			SettingsManager.OptionsData.Items.SynchronizingObject = this;
 			XInputMaskScanner.FileInfoCache.Load();
 			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
 			// Make sure that X360CE.exe is on top.
@@ -250,95 +220,6 @@ namespace x360ce.App
 					SetHeaderError(e.Error.Message);
 				});
 			}
-		}
-
-		IList<Engine.Data.Program> Programs_ValidateData(IList<Engine.Data.Program> items)
-		{
-			// Make sure default settings have unique by file name.
-			var distinctItems = items
-				.GroupBy(p => p.FileName.ToLower())
-				.Select(g => g.First())
-				.ToList();
-			return distinctItems;
-		}
-
-		IList<Engine.Data.Layout> Layouts_ValidateData(IList<Engine.Data.Layout> items)
-		{
-			var def = Guid.Empty;
-			var defaultItem = items.FirstOrDefault(x => x.Id == def);
-			// If default item was not found then...
-			if (defaultItem == null)
-			{
-				var item = new Layout();
-				item.Id = def;
-				item.Name = "Default";
-				item.ButtonA = "A Button";
-				item.ButtonB = "B Button";
-				item.ButtonBack = "Back";
-				item.ButtonGuide = "Guide";
-				item.ButtonStart = "Start";
-				item.ButtonX = "X Button";
-				item.ButtonY = "Y Button";
-				item.DPad = "D-Pad";
-				item.DPadDown = "D-Pad Down";
-				item.DPadLeft = "D-Pad Left";
-				item.DPadRight = "D-Pad Right";
-				item.DPadUp = "D-Pad Up";
-				item.LeftShoulder = "Bumper";
-				item.LeftThumbAxisX = "Stick Axis X";
-				item.LeftThumbAxisY = "Stick Axis Y";
-				item.LeftThumbButton = "Stick Button";
-				item.LeftThumbDown = "Stick Down";
-				item.LeftThumbLeft = "Stick Left";
-				item.LeftThumbRight = "Stick Right";
-				item.LeftThumbUp = "Stick Up";
-				item.LeftTrigger = "Trigger";
-				item.RightShoulder = "Bumper";
-				item.RightThumbAxisX = "Stick Axis X";
-				item.RightThumbAxisY = "Stick Axis Y";
-				item.RightThumbButton = "Stick Button";
-				item.RightThumbDown = "Stick Down";
-				item.RightThumbLeft = "Stick Left";
-				item.RightThumbRight = "Stick Right";
-				item.RightThumbUp = "Stick Up";
-				item.RightTrigger = "Trigger";
-				items.Add(item);
-			}
-			return items;
-		}
-
-		IList<Engine.Data.UserGame> Games_ValidateData(IList<Engine.Data.UserGame> items)
-		{
-			// Make sure default settings have unique by file name.
-			var distinctItems = items
-				.GroupBy(p => p.FileName.ToLower())
-				.Select(g => g.First())
-				.ToList();
-
-			// Check if current app doesn't exist in the list then...
-			var appFile = new FileInfo(Application.ExecutablePath);
-			var appItem = distinctItems.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
-			if (appItem == null)
-			{
-				// Add x360ce.exe
-				var scanner = new XInputMaskScanner();
-				var item = scanner.FromDisk(appFile.Name);
-				var program = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
-				item.LoadDefault(program);
-				// Append to top.
-				distinctItems.Insert(0, item);
-			}
-			else
-			{
-				appItem.FullPath = appFile.FullName;
-				// Make sure it is on top.
-				if (distinctItems.IndexOf(appItem) > 0)
-				{
-					distinctItems.Remove(appItem);
-					distinctItems.Insert(0, appItem);
-				}
-			}
-			return distinctItems;
 		}
 
 		private void Summaries_ListChanged(object sender, ListChangedEventArgs e)
@@ -786,7 +667,10 @@ namespace x360ce.App
 			AboutTabPage.Controls.Add(ControlAbout);
 			// Get all enabled games and update Save buttons.
 			var games = SettingsManager.UserGames.Items.Where(x => x.IsEnabled).ToArray();
-			UpdateSyncStates(games, false);
+			// Synchronize settings.
+			SettingsManager.UpdateSyncStates(games, false, out syncText, out syncStates);
+			// Update buttons.
+			UpdateSaveButtons();
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}
@@ -1376,14 +1260,12 @@ namespace x360ce.App
 
 		private void SaveButton_Click(object sender, EventArgs e)
 		{
-			Save(CurrentGame);
+			Save();
 		}
 
 		private void SaveAllButton_Click(object sender, EventArgs e)
 		{
-			// Get all enabled games.
-			var games = SettingsManager.UserGames.Items.Where(x => x.IsEnabled).ToArray();
-			Save(games);
+			Save(true);
 		}
 
 		/// <summary>
@@ -1409,44 +1291,6 @@ namespace x360ce.App
 
 		Dictionary<UserGame, GameRefreshStatus> syncStates;
 		string syncText;
-
-		/// <summary>
-		/// Update list of games which must be synchronized.
-		/// </summary>
-		void UpdateSyncStates(UserGame[] games, bool fix)
-		{
-			var states = new Dictionary<UserGame, GameRefreshStatus>();
-			var sb = new StringBuilder();
-			var values = ((GameRefreshStatus[])Enum.GetValues(typeof(GameRefreshStatus))).Except(new[] { GameRefreshStatus.OK }).ToArray();
-			// Check changes first.
-			for (int i = 0; i < games.Length; i++)
-			{
-				var game = games[i];
-				var status = SettingsManager.Current.GetDllAndIniStatus(game, fix);
-				if (status == GameRefreshStatus.OK)
-					continue;
-				sb.AppendFormat("{0} {1}\r\n", game.FileProductName, game.FileVersion);
-				sb.AppendFormat("{0}\r\n\r\n", game.FullPath);
-				var errors = new List<string>();
-				foreach (GameRefreshStatus value in values)
-				{
-					if (status.HasFlag(value))
-					{
-						var description = Attributes.GetDescription(value);
-						errors.Add("    " + description);
-					}
-				}
-				sb.Append(string.Join("\r\n", errors));
-				sb.AppendLine();
-				sb.AppendLine();
-				states.Add(game, status);
-			}
-			// Return results.
-			syncText = sb.ToString();
-			syncStates = states;
-			// Update buttons.
-			UpdateSaveButtons();
-		}
 
 		void UpdateSaveButtons()
 		{
@@ -1476,15 +1320,22 @@ namespace x360ce.App
 			Application.DoEvents();
 		}
 
-		void Save(params UserGame[] games)
+		void Save(bool all = false)
 		{
+			var games = all
+				// Get all enabled games.
+				? SettingsManager.UserGames.Items.Where(x => x.IsEnabled).ToArray()
+				: new[] { CurrentGame };
 			// Disable buttons to make sure that user is not pressing it twice.
 			SaveButton.Enabled = false;
 			SaveAllButton.Enabled = false;
 			// Update interface.
 			Application.DoEvents();
 			// Save and synchronize settings.
-			UpdateSyncStates(games, false);
+			// Synchronize settings.
+			SettingsManager.UpdateSyncStates(games, false, out syncText, out syncStates);
+			// Update buttons.
+			UpdateSaveButtons();
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var text = syncStates.Count > 0
@@ -1496,7 +1347,14 @@ namespace x360ce.App
 			{
 				// Save application settings.
 				SaveAll();
-				UpdateSyncStates(games, true);
+				// Synchronize settings.
+				var gameFullPath = all ? null : CurrentGame.FullPath;
+				bool executedLocally = Program.RunElevated(AdminCommand.Save, gameFullPath);
+				if (!executedLocally)
+					SettingsManager.UpdateSyncStates(games, false, out syncText, out syncStates);
+				// Update buttons.
+				UpdateSaveButtons();
+
 			}
 			// Use timer to enable Save buttons after 520 ms.
 			var timer = new System.Timers.Timer();

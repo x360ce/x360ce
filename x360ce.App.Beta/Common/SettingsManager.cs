@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.ComponentModel;
 using System.IO;
+using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App
 {
@@ -161,6 +162,134 @@ namespace x360ce.App
 
 		static object saveReadFileLock = new object();
 
+		#region Load and Validate Data
+
+		public static void Load(ISynchronizeInvoke so = null)
+		{
+			// Make sure that all GridViews are updated on the same thread as MainForm when data changes.
+			// For example User devices will be removed and added on separate thread.
+			Settings.Items.SynchronizingObject = so;
+			Summaries.Items.SynchronizingObject = so;
+			UserDevices.Items.SynchronizingObject = so;
+			UserGames.Items.SynchronizingObject = so;
+			UserInstances.Items.SynchronizingObject = so;
+			UserComputers.Items.SynchronizingObject = so;
+			Layouts.Items.SynchronizingObject = so;
+			Programs.Items.SynchronizingObject = so;
+			Presets.Items.SynchronizingObject = so;
+			PadSettings.Items.SynchronizingObject = so;
+			//SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
+			Settings.Load();
+			Summaries.Load();
+			// Make sure that data will be filtered before loading.
+			// Note: Make sure to load Programs before Games.
+			Programs.ValidateData = Programs_ValidateData;
+			Programs.Load();
+			// Make sure that data will be filtered before loading.
+			UserGames.ValidateData = Games_ValidateData;
+			UserGames.Load();
+			Presets.Load();
+			// Make sure that data will be filtered before loading.
+			Layouts.ValidateData = Layouts_ValidateData;
+			Layouts.Load();
+			PadSettings.Load();
+			UserDevices.Load();
+			UserInstances.Load();
+			UserComputers.Load();
+			OptionsData.Items.SynchronizingObject = so;
+		}
+
+		static IList<Engine.Data.Program> Programs_ValidateData(IList<Engine.Data.Program> items)
+		{
+			// Make sure default settings have unique by file name.
+			var distinctItems = items
+				.GroupBy(p => p.FileName.ToLower())
+				.Select(g => g.First())
+				.ToList();
+			return distinctItems;
+		}
+
+		static IList<Engine.Data.Layout> Layouts_ValidateData(IList<Engine.Data.Layout> items)
+		{
+			var def = Guid.Empty;
+			var defaultItem = items.FirstOrDefault(x => x.Id == def);
+			// If default item was not found then...
+			if (defaultItem == null)
+			{
+				var item = new Layout();
+				item.Id = def;
+				item.Name = "Default";
+				item.ButtonA = "A Button";
+				item.ButtonB = "B Button";
+				item.ButtonBack = "Back";
+				item.ButtonGuide = "Guide";
+				item.ButtonStart = "Start";
+				item.ButtonX = "X Button";
+				item.ButtonY = "Y Button";
+				item.DPad = "D-Pad";
+				item.DPadDown = "D-Pad Down";
+				item.DPadLeft = "D-Pad Left";
+				item.DPadRight = "D-Pad Right";
+				item.DPadUp = "D-Pad Up";
+				item.LeftShoulder = "Bumper";
+				item.LeftThumbAxisX = "Stick Axis X";
+				item.LeftThumbAxisY = "Stick Axis Y";
+				item.LeftThumbButton = "Stick Button";
+				item.LeftThumbDown = "Stick Down";
+				item.LeftThumbLeft = "Stick Left";
+				item.LeftThumbRight = "Stick Right";
+				item.LeftThumbUp = "Stick Up";
+				item.LeftTrigger = "Trigger";
+				item.RightShoulder = "Bumper";
+				item.RightThumbAxisX = "Stick Axis X";
+				item.RightThumbAxisY = "Stick Axis Y";
+				item.RightThumbButton = "Stick Button";
+				item.RightThumbDown = "Stick Down";
+				item.RightThumbLeft = "Stick Left";
+				item.RightThumbRight = "Stick Right";
+				item.RightThumbUp = "Stick Up";
+				item.RightTrigger = "Trigger";
+				items.Add(item);
+			}
+			return items;
+		}
+
+		static IList<Engine.Data.UserGame> Games_ValidateData(IList<Engine.Data.UserGame> items)
+		{
+			// Make sure default settings have unique by file name.
+			var distinctItems = items
+				.GroupBy(p => p.FileName.ToLower())
+				.Select(g => g.First())
+				.ToList();
+
+			// Check if current application doesn't exist in the list then...
+			var appFile = new FileInfo(Application.ExecutablePath);
+			var appItem = distinctItems.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
+			if (appItem == null)
+			{
+				// Add x360ce.exe
+				var scanner = new XInputMaskScanner();
+				var item = scanner.FromDisk(appFile.Name);
+				var program = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
+				item.LoadDefault(program);
+				// Append to top.
+				distinctItems.Insert(0, item);
+			}
+			else
+			{
+				appItem.FullPath = appFile.FullName;
+				// Make sure it is on top.
+				if (distinctItems.IndexOf(appItem) > 0)
+				{
+					distinctItems.Remove(appItem);
+					distinctItems.Insert(0, appItem);
+				}
+			}
+			return distinctItems;
+		}
+
+		#endregion
+
 		public static void Save(bool updateGameDatabase = false)
 		{
 			if (updateGameDatabase)
@@ -173,6 +302,42 @@ namespace x360ce.App
 				UserGames.Save();
 
 			}
+		}
+
+		/// <summary>
+		/// Update list of games which must be synchronized.
+		/// </summary>
+		public static void UpdateSyncStates(UserGame[] games, bool fix, out string syncText, out Dictionary<UserGame, GameRefreshStatus> syncStates)
+		{
+			var states = new Dictionary<UserGame, GameRefreshStatus>();
+			var sb = new StringBuilder();
+			var values = ((GameRefreshStatus[])Enum.GetValues(typeof(GameRefreshStatus))).Except(new[] { GameRefreshStatus.OK }).ToArray();
+			// Check changes first.
+			for (int i = 0; i < games.Length; i++)
+			{
+				var game = games[i];
+				var status = SettingsManager.Current.GetDllAndIniStatus(game, fix);
+				if (status == GameRefreshStatus.OK)
+					continue;
+				sb.AppendFormat("{0} {1}\r\n", game.FileProductName, game.FileVersion);
+				sb.AppendFormat("{0}\r\n\r\n", game.FullPath);
+				var errors = new List<string>();
+				foreach (GameRefreshStatus value in values)
+				{
+					if (status.HasFlag(value))
+					{
+						var description = Attributes.GetDescription(value);
+						errors.Add("    " + description);
+					}
+				}
+				sb.Append(string.Join("\r\n", errors));
+				sb.AppendLine();
+				sb.AppendLine();
+				states.Add(game, status);
+			}
+			// Return results.
+			syncText = sb.ToString();
+			syncStates = states;
 		}
 
 		public static UserGame ProcessExecutable(string filePath)
