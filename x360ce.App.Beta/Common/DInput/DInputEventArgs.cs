@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace x360ce.App.DInput
 {
@@ -6,10 +8,13 @@ namespace x360ce.App.DInput
 	{
 		public DInputEventArgs(Exception error = null)
 		{
-			_Error = error;
+			Error = error;
 		}
-		public Exception Error { get { return _Error; } }
-		Exception _Error;
+		public Exception Error { get; set; }
+
+		public FileInfo XInputFileInfo { get; set; }
+		public FileVersionInfo XInputVersionInfo { get; set; }
+
 
 	}
 }

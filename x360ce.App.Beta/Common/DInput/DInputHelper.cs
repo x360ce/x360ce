@@ -58,6 +58,7 @@ namespace x360ce.App.DInput
 		public event EventHandler<DInputEventArgs> StatesUpdated;
 		public event EventHandler<DInputEventArgs> StatesRetrieved;
 		public event EventHandler<DInputEventArgs> UpdateCompleted;
+		public event EventHandler<DInputEventArgs> XInputReloaded;
 
 		/// <summary>
 		/// Timer which will be used together with ManualResetEvent to limit update refresh frequency.
@@ -176,7 +177,7 @@ namespace x360ce.App.DInput
 				// Update virtual devices from combined states.
 				UpdateVirtualDevices(game);
 				// Retrieve XInput states from XInput controllers.
-				RetrieveXiStates();
+				RetrieveXiStates(game);
 				// Update pool frequency value every second.
 				UpdateDelayFrequency();
 				// Fire event.

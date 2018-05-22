@@ -143,6 +143,7 @@ namespace x360ce.App
 			DHelper.UpdateCompleted += DHelper_UpdateCompleted;
 			DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
 			DHelper.StatesRetrieved += DHelper_StatesRetrieved;
+			DHelper.XInputReloaded += DHelper_XInputReloaded;
 			SettingsGridPanel._ParentForm = this;
 			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
 			SettingsGridPanel.InitPanel();
@@ -187,7 +188,40 @@ namespace x360ce.App
 			JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
 		}
 
+		private void DHelper_XInputReloaded(object sender, DInput.DInputEventArgs e)
+		{
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				var vi = e.XInputVersionInfo;
+				var fi = e.XInputFileInfo;
+				if (vi != null && fi != null)
+				{
+					var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
+					var company = (vi.CompanyName ?? "").Replace("Microsoft Corporation", "Microsoft");
+					StatusDllLabel.Text = string.Format("{0} {1} ({2})", fi.Name, v, company);
+				}
+				else
+				{
+					StatusDllLabel.Text = "";
+				}
+				if (Controller.IsLoaded)
+				{
+					if (PadControls != null)
+					{
+						for (int i = 0; i < 4; i++)
+						{
 
+							var currentPadControl = PadControls[i];
+							currentPadControl.UpdateForceFeedBack();
+						}
+					}
+				}
+				if (e.Error != null)
+				{
+					SetHeaderError(e.Error.Message);
+				}
+			});
+		}
 
 		/// <summary>
 		/// Delay settings trough timer so interface will be more responsive on TrackBars.
@@ -419,8 +453,9 @@ namespace x360ce.App
 
 		void SettingsTimer_Elapsed(object sender, EventArgs e)
 		{
-			if (Program.IsClosing) return;
-			settingsChanged = true;
+			if (Program.IsClosing)
+				return;
+			DHelper.SettingsChanged = true;
 			UpdateTimer.Start();
 		}
 
@@ -513,10 +548,6 @@ namespace x360ce.App
 		public bool forceRecountDevices = true;
 
 		public Guid AutoSelectControllerInstance = Guid.Empty;
-
-		// This value will be modified to true when settings on the form changes and 
-		// XInput library needs to be reload.
-		bool settingsChanged = false;
 
 		object formLoadLock = new object();
 		public bool update1Enabled = true;
@@ -682,26 +713,11 @@ namespace x360ce.App
 		{
 			var game = CurrentGame;
 			var currentFile = (game == null) ? null : game.FileName;
-			// If settings changed then...
-			if (settingsChanged)
-			{
-				var IsLibrary = game != null && game.IsLibrary;
-				if (IsLibrary || !Controller.IsLoaded)
-				{
-					DHelper.Suspended = true;
-					ReloadLibrary();
-					DHelper.Suspended = false;
-					return;
-				}
-			}
-
 			// Allow if not testing or testing with option enabled.
 			var o = SettingsManager.Options;
 			var allow = !o.TestEnabled || o.TestUpdateInterface;
 			if (!allow)
 				return;
-
-
 			for (int i = 0; i < 4; i++)
 			{
 				// Get devices mapped to game and specific controller index.
@@ -742,67 +758,6 @@ namespace x360ce.App
 				string bullet = string.Format("bullet_square_glass_{0}.png", image);
 				if (ControlPages[i].ImageKey != bullet)
 					ControlPages[i].ImageKey = bullet;
-			}
-		}
-
-		public void ReloadLibrary()
-		{
-			lock (Controller.XInputLock)
-			{
-				var game = CurrentGame;
-				if (game == null)
-					return;
-				// Always load Microsoft XInput DLL by default.
-				var useMicrosoft = game.EmulationType != (int)EmulationType.Library;
-				Program.ReloadCount++;
-				settingsChanged = false;
-				var dllInfo = EngineHelper.GetDefaultDll(useMicrosoft);
-				if (dllInfo != null && dllInfo.Exists)
-				{
-					bool byMicrosoft;
-					var dllVersion = EngineHelper.GetDllVersion(dllInfo.FullName, out byMicrosoft);
-					StatusDllLabel.Text = dllInfo.Name + " " + dllVersion.ToString() + (byMicrosoft ? " (Microsoft)" : "");
-					// If fast reload of settings is supported then...
-					if (Controller.IsLoaded && Controller.IsResetSupported)
-					{
-						IAsyncResult result;
-						Action action = () =>
-						{
-							Controller.Reset();
-						};
-						result = action.BeginInvoke(null, null);
-						var timeout = !result.AsyncWaitHandle.WaitOne(1000);
-						SetHeaderError("Controller.Reset() timed out!");
-					}
-					// Slow: Reload whole x360ce.dll.
-					Exception error;
-					Controller.ReLoadLibrary(dllInfo.FullName, out error);
-					if (!Controller.IsLoaded)
-					{
-						var caption = string.Format("Failed to load '{0}'", dllInfo.FullName);
-						var text = string.Format("{0}", error == null ? "Unknown error" : error.Message);
-						var form = new MessageBoxForm();
-						form.StartPosition = FormStartPosition.CenterParent;
-						form.ShowForm(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
-					else
-					{
-						if (PadControls != null)
-						{
-							for (int i = 0; i < 4; i++)
-							{
-
-								var currentPadControl = PadControls[i];
-								currentPadControl.UpdateForceFeedBack();
-							}
-						}
-					}
-
-				}
-				else
-				{
-					StatusDllLabel.Text = "";
-				}
 			}
 		}
 
@@ -1210,8 +1165,7 @@ namespace x360ce.App
 					item.PropertyChanged += CurrentGame_PropertyChanged;
 				}
 				CurrentGame = item;
-				settingsChanged = true;
-
+				DHelper.SettingsChanged = true;
 				// If pad controls not initializes yet then return.
 				if (PadControls == null)
 					return;
