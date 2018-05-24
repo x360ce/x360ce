@@ -1,10 +1,8 @@
 ﻿using JocysCom.ClassLibrary.IO;
-using JocysCom.ClassLibrary.Win32;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace x360ce.App.DInput
 {
@@ -143,7 +141,6 @@ namespace x360ce.App.DInput
 			/// Main job of detector is to fire event on device connection (power on) and removal (power off).
 			var manager = new DirectInput();
 			var detector = new DeviceDetector(false);
-			UpdateDevicesEnabled = true;
 			do
 			{
 				// Sets the state of the event to non-signaled, causing threads to block.
@@ -166,6 +163,10 @@ namespace x360ce.App.DInput
 			lock (DiUpdatesLock)
 			{
 				var game = MainForm.Current.CurrentGame;
+				var getXInputStates = SettingsManager.Options.GetXInputStates;
+				// Best place to unload XInput DLL is at the start, because
+				// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
+				CheckAndUnloadXInputLibrarry(game, getXInputStates);
 				// Update information about connected devices.
 				UpdateDiDevices(manager);
 				// Update JoystickStates from devices.
@@ -176,8 +177,10 @@ namespace x360ce.App.DInput
 				CombineXiStates();
 				// Update virtual devices from combined states.
 				UpdateVirtualDevices(game);
+				// Load XInput library before retrieving XInput states.
+				CheckAndLoadXInputLibrary(game, getXInputStates);
 				// Retrieve XInput states from XInput controllers.
-				RetrieveXiStates(game);
+				RetrieveXiStates(game, getXInputStates);
 				// Update pool frequency value every second.
 				UpdateDelayFrequency();
 				// Fire event.

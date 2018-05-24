@@ -198,11 +198,13 @@ namespace x360ce.App
 				{
 					var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 					var company = (vi.CompanyName ?? "").Replace("Microsoft Corporation", "Microsoft");
-					StatusDllLabel.Text = string.Format("{0} {1} ({2})", fi.Name, v, company);
+					ControlsHelper.SetText(StatusDllLabel, "{0} {1} ({2})", fi.Name, v, company);
+					StatusDllLabel.Visible = true;
 				}
 				else
 				{
-					StatusDllLabel.Text = "";
+					ControlsHelper.SetText(StatusDllLabel, "");
+					StatusDllLabel.Visible = false;
 				}
 				if (Controller.IsLoaded)
 				{
@@ -969,8 +971,8 @@ namespace x360ce.App
 					new HotfixIssue(),
 					new XboxDriversIssue(),
 					new GdbFileIssue(),
-					new IniFileIssue(),
-					new DllFileIssue(),
+					new IniFileIssue(), // INI is controlled differently in 4.x!
+					 new DllFileIssue(), // DLL is controlled differently in 4.x!
 					new VirtualDeviceDriverIssue()
 				);
 				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
@@ -1214,12 +1216,12 @@ namespace x360ce.App
 
 		private void SaveButton_Click(object sender, EventArgs e)
 		{
-			Save();
+			Save(false, true);
 		}
 
 		private void SaveAllButton_Click(object sender, EventArgs e)
 		{
-			Save(true);
+			Save(true, true);
 		}
 
 		/// <summary>
@@ -1274,23 +1276,27 @@ namespace x360ce.App
 			Application.DoEvents();
 		}
 
-		void Save(bool all = false)
+		public void Save(bool all = false, bool disableButtons = false)
 		{
+			if (disableButtons)
+			{
+				Invoke((MethodInvoker)delegate ()
+				{
+					// Disable buttons to make sure that user is not pressing it twice.
+					SaveButton.Enabled = false;
+					SaveAllButton.Enabled = false;
+					// Update interface.
+					Application.DoEvents();
+				});
+			}
+			// Save and synchronize settings.
 			var games = all
 				// Get all enabled games.
 				? SettingsManager.UserGames.Items.Where(x => x.IsEnabled).ToArray()
 				: new[] { CurrentGame };
-			// Disable buttons to make sure that user is not pressing it twice.
-			SaveButton.Enabled = false;
-			SaveAllButton.Enabled = false;
-			// Update interface.
-			Application.DoEvents();
-			// Save and synchronize settings.
 			// Synchronize settings.
 			SettingsManager.UpdateSyncStates(games, false, out syncText, out syncStates);
-			// Update buttons.
-			UpdateSaveButtons();
-			MessageBoxForm form = new MessageBoxForm();
+			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var text = syncStates.Count > 0
 				? "Synchronize current settings to game folders?\r\n\r\n"
@@ -1306,17 +1312,22 @@ namespace x360ce.App
 				bool executedLocally = Program.RunElevated(AdminCommand.Save, gameFullPath);
 				if (!executedLocally)
 					SettingsManager.UpdateSyncStates(games, false, out syncText, out syncStates);
+			}
+			Invoke((MethodInvoker)delegate ()
+			{
 				// Update buttons.
 				UpdateSaveButtons();
-
-			}
-			// Use timer to enable Save buttons after 520 ms.
-			var timer = new System.Timers.Timer();
-			timer.AutoReset = false;
-			timer.Interval = 520;
-			timer.SynchronizingObject = this;
-			timer.Elapsed += Timer_Elapsed;
-			timer.Start();
+				if (disableButtons)
+				{
+					// Use timer to enable Save buttons after 520 ms.
+					var timer = new System.Timers.Timer();
+					timer.AutoReset = false;
+					timer.Interval = 520;
+					timer.SynchronizingObject = this;
+					timer.Elapsed += Timer_Elapsed;
+					timer.Start();
+				}
+			});
 		}
 
 		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)

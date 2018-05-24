@@ -11,7 +11,8 @@ namespace x360ce.App.DInput
 
         #region Device Detector
 
-        public bool UpdateDevicesEnabled;
+		// True, update device list as soon as possible.
+		public bool UpdateDevicesEnabled = true;
 
         #endregion
 
@@ -20,9 +21,9 @@ namespace x360ce.App.DInput
 
         void UpdateDiDevices(DirectInput manager)
         {
-            if (!UpdateDevicesEnabled)
+            if (!UpdateDevicesPending)
                 return;
-            UpdateDevicesEnabled = false;
+            UpdateDevicesPending = false;
             // Make sure that interface handle is created, before starting device updates.
             UserDevice[] deleteDevices;
             // Add connected devices.
