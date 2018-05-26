@@ -8,6 +8,7 @@ namespace JocysCom.ClassLibrary.Win32
 	[HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
 	public static partial class NativeMethods
 	{
+
 		[DllImport("setupapi.dll", SetLastError = true)]
 		public static extern bool SetupDiEnumDeviceInterfaces(IntPtr DeviceInfoSet, IntPtr DeviceInfoData, ref Guid InterfaceClassGuid, int MemberIndex, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
@@ -33,6 +34,9 @@ namespace JocysCom.ClassLibrary.Win32
 
 		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern bool SetupDiGetDeviceInstallParams(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, ref SP_DEVINSTALL_PARAMS DeviceInstallParams);
+
+		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		public static extern bool SetupDiSetDeviceInstallParams(IntPtr DeviceInfoSet, ref SP_DEVINFO_DATA DeviceInfoData, ref SP_DEVINSTALL_PARAMS DeviceInstallParams);
 
 		[DllImport("setupapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
 		public static extern bool SetupDiGetDeviceInterfaceDetail(IntPtr DeviceInfoSet, ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData, IntPtr DeviceInterfaceDetailData, int DeviceInterfaceDetailDataSize, ref int RequiredSize, ref SP_DEVINFO_DATA DeviceInfoData);

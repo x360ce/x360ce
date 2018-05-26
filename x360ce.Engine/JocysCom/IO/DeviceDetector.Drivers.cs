@@ -1,6 +1,8 @@
 ﻿using System;
 using JocysCom.ClassLibrary.Win32;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -37,9 +39,29 @@ namespace JocysCom.ClassLibrary.IO
 			return drvInfoList.ToArray();
 		}
 
+		const int DI_FLAGSEX_INSTALLEDDRIVER = 0x04000000;
+		const int DI_FLAGSEX_ALLOWEXCLUDEDDRVS = 0x00000800;
+
 		public static SP_DRVINFO_DATA[] GetDrivers(IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData, SPDIT driverType = SPDIT.SPDIT_COMPATDRIVER)
 		{
 			var list = new List<SP_DRVINFO_DATA>();
+			var installParams = new SP_DEVINSTALL_PARAMS();
+			installParams.Initialize();
+			// Retrieve installation parameters for a device information set or a particular device information element.
+			if (!NativeMethods.SetupDiGetDeviceInstallParams(deviceInfoSet, ref deviceInfoData, ref installParams))
+			{
+				var error = new Win32Exception(Marshal.GetLastWin32Error());
+				// Return if failed
+				return list.ToArray();
+			}
+			// Set the flags that tell SetupDiBuildDriverInfoList to include just currently installed drivers.
+			installParams.FlagsEx |= DI_FLAGSEX_INSTALLEDDRIVER;
+			// Set the flags that tell SetupDiBuildDriverInfoList to allow excluded drivers.
+			installParams.FlagsEx |= DI_FLAGSEX_ALLOWEXCLUDEDDRVS;
+			// Set the flags.
+			if (!NativeMethods.SetupDiSetDeviceInstallParams(deviceInfoSet, ref deviceInfoData, ref installParams))
+				// Return if failed
+				return list.ToArray();
 			if (NativeMethods.SetupDiBuildDriverInfoList(deviceInfoSet, ref deviceInfoData, driverType))
 			{
 				var item = new SP_DRVINFO_DATA();
@@ -52,21 +74,6 @@ namespace JocysCom.ClassLibrary.IO
 			}
 			return list.ToArray();
 		}
-
-		//public static SP_DEVINSTALL_PARAMS[] GetInstallParams(IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData)
-		//{
-		//	var installParams = new SP_DEVINSTALL_PARAMS();
-		//	installParams.Initialize();
-		//	if (NativeMethods.SetupDiGetDeviceInstallParams(deviceInfoSet, ref deviceInfoData, ref installParams))
-		//	{
-		//		//InstallParams.FlagsEx |= DI_FLAGSEX_INSTALLEDDRIVER;
-		//		//if (!NativeMethods.SetupDiSetDeviceInstallParams(DeviceInfoSet, ref DeviceInfoData, ref InstallParams))
-		//		//{
-		//		//	//Errror
-		//		//}
-		//	}
-		//	return info.ToArray();
-		//}
 
 	}
 }
