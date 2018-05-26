@@ -721,12 +721,17 @@ namespace JocysCom.ClassLibrary.IO
                                 if (success)
                                 {
                                     success = NativeMethods.SetupDiCallClassInstaller(DIF_REMOVE, deviceInfoSet, ref di);
-                                    // ex.ErrorCode = 0xE0000235: SetupDiCallClassInstaller throws ERROR_IN_WOW64 when compiled for 32 bit on a 64 bit machine.
-                                    if (!success) ex = new Win32Exception();
+									// ex.ErrorCode = 0xE0000235: SetupDiCallClassInstaller throws ERROR_IN_WOW64 when compiled for 32 bit on a 64 bit machine.
+									// Most of the SetupDi APIs run fine in a WOW64 process, but co-installer have to run from 64-bit process.
+									if (!success)
+
+										ex = new Win32Exception();
                                 }
-                                else ex = new Win32Exception();
+                                else
+									ex = new Win32Exception();
                             }
-                            else ex = new Win32Exception();
+                            else
+								ex = new Win32Exception();
                             break;
                         case 2:
                             success = NativeMethods.SetupDiRemoveDevice(deviceInfoSet, ref di);

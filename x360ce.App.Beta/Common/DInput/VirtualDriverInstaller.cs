@@ -44,11 +44,11 @@ namespace x360ce.App.DInput
 		public const string ViGEmBusHardwareId = "Root\\ViGEmBus";
 		public const string HidGuardianHardwareId = "Root\\HidGuardian";
 
-        /// <summary>
-        /// Install Virtual driver.
-        /// </summary>
-        /// <remarks>Must be executed in administrative mode.</remarks>
-        public static void InstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
+		/// <summary>
+		/// Install Virtual driver.
+		/// </summary>
+		/// <remarks>Must be executed in administrative mode.</remarks>
+		public static void InstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
 			ExtractViGemBusFiles(true);
@@ -132,6 +132,25 @@ namespace x360ce.App.DInput
 				style, true);
 		}
 
+
+		/// <summary>
+		/// Must bve used to uninstall device when this app is 32-bit, but runs on 64-bit windows.
+		/// This is because SetupDiCallClassInstaller throws ERROR_IN_WOW64 (ex.ErrorCode = 0xE0000235)
+		/// when application architecture do not match OS architecture.
+		/// </summary>
+		/// <remarks>Must be executed in administrative mode.</remarks>
+		public static void UnInstallDevice(string deviceId, ProcessWindowStyle style = ProcessWindowStyle.Hidden)
+		{
+			// Extract files first.
+			ExtractHidGuardianFiles(true);
+			var folder = GetHidGuardianPath();
+			var fullPath = System.IO.Path.Combine(folder, "devcon.exe");
+			JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
+				fullPath,
+				"remove \"" + deviceId + "\"",
+				style, true);
+		}
+
 		#endregion
 
 		#region Extract Helper
@@ -147,19 +166,19 @@ namespace x360ce.App.DInput
 			foreach (var resourceName in resourceNames)
 			{
 				var fileName = resourceName.Substring(resourceName.IndexOf(resourceFolder) + resourceFolder.Length);
-                var folderName = target;
-                // Optimize better later.
-                if (fileName.StartsWith("x64."))
-                {
-                    fileName = fileName.Substring("x64.".Length);
-                    folderName += "\\x64";
-                }
-                if (fileName.StartsWith("x86."))
-                {
-                    fileName = fileName.Substring("x86.".Length);
-                    folderName += "\\x86";
-                }
-                SaveAs(assembly, resourceName, folderName, fileName, overwrite);
+				var folderName = target;
+				// Optimize better later.
+				if (fileName.StartsWith("x64."))
+				{
+					fileName = fileName.Substring("x64.".Length);
+					folderName += "\\x64";
+				}
+				if (fileName.StartsWith("x86."))
+				{
+					fileName = fileName.Substring("x86.".Length);
+					folderName += "\\x86";
+				}
+				SaveAs(assembly, resourceName, folderName, fileName, overwrite);
 			}
 		}
 
@@ -176,12 +195,12 @@ namespace x360ce.App.DInput
 			var name = System.IO.Path.GetFileName(resource);
 			var fullPath = System.IO.Path.Combine(dir.FullName, fileName);
 			var file = new FileInfo(fullPath);
-            if (file.Exists && overwrite)
-            {
-                file.Delete();
-                file.Refresh();
-            }
-            if (!file.Exists)
+			if (file.Exists && overwrite)
+			{
+				file.Delete();
+				file.Refresh();
+			}
+			if (!file.Exists)
 			{
 				var writer = file.OpenWrite();
 				writer.Write(bytes, 0, bytes.Count());
