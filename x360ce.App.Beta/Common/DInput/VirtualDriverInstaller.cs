@@ -141,6 +141,18 @@ namespace x360ce.App.DInput
 		/// <remarks>Must be executed in administrative mode.</remarks>
 		public static void UnInstallDevice(string deviceId, ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
+			//// If architecture match then...
+			//if (Environment.Is64BitProcess == Environment.Is64BitOperatingSystem)
+			//{
+			//	// Works only on matching architecture.
+			//	foreach (var hwid in deviceIds)
+			//	{
+			//		DeviceDetector.RemoveDevice(hwid);
+			//	}
+			//}
+			//else
+			//{
+			// Use alternative method.
 			// Extract files first.
 			ExtractHidGuardianFiles(true);
 			var folder = GetHidGuardianPath();
@@ -149,6 +161,9 @@ namespace x360ce.App.DInput
 				fullPath,
 				"remove \"" + deviceId + "\"",
 				style, true);
+			//}
+			// Make sure that device is reinserted.
+			DeviceDetector.ScanForHardwareChanges();
 		}
 
 		#endregion

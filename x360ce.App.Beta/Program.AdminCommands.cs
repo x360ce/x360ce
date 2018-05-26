@@ -75,6 +75,13 @@ namespace x360ce.App
 				DInput.VirtualDriverInstaller.UninstallHidGuardian();
 				return true;
 			}
+			if (ic.Parameters.ContainsKey(AdminCommand.UninstallDevice.ToString()))
+			{
+				var hwid = ic.Parameters[AdminCommand.UninstallDevice.ToString()];
+				DInput.VirtualDriverInstaller.UnInstallDevice(hwid);
+				return true;
+			}
+
 			if (ic.Parameters.ContainsKey(AdminCommand.Save.ToString()))
 			{
 				SettingsManager.Load();

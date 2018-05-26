@@ -206,25 +206,11 @@ namespace x360ce.App.ViGEm
 		/// </summary>
 		static void ResetDevices(params string[] deviceIds)
 		{
-			foreach (var hwid in deviceIds)
+			var hwIds = GetHardwareIds(deviceIds);
+			for (int i = 0; i < hwIds.Length; i++)
 			{
-				// If architecture match then...
-				if (Environment.Is64BitProcess == Environment.Is64BitOperatingSystem)
-				{
-					// Works only on matching architecture.
-					DeviceDetector.RemoveDevice(hwid);
-				}
-				else
-				{
-					// Use alternative method.
-					var hwIds = GetHardwareIds(deviceIds);
-					for (int i = 0; i < hwIds.Length; i++)
-					{
-						VirtualDriverInstaller.UnInstallDevice(hwIds[i]);
-					}
-				}
+				Program.RunElevated(AdminCommand.UninstallDevice, hwIds[i]);
 			}
-			DeviceDetector.ScanForHardwareChanges();
 		}
 
 		/// <summary>
