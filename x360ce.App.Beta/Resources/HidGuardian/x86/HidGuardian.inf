@@ -8,10 +8,11 @@ Class=System
 ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
 Provider=%ManufacturerName%
 CatalogFile=HidGuardian.cat
-DriverVer=02/09/2017,1.5.2.0
+DriverVer = 12/19/2017,1.14.0.0
 
 [DestinationDirs]
 DefaultDestDir = 12
+HidGuardian_Device_CoInstaller_CopyFiles = 11
 
 ; ================= Class section =====================
 [SourceDisksNames]
@@ -19,15 +20,16 @@ DefaultDestDir = 12
 
 [SourceDisksFiles]
 HidGuardian.sys  = 1,,
+WdfCoInstaller01009.dll=1 ; make sure the number matches with SourceDisksNames
 
 ;*****************************************
 ; Install Section
 ;*****************************************
 
 [Manufacturer]
-%ManufacturerName%=Standard,NTx86
+%ManufacturerName%=Standard,NTamd64
 
-[Standard.NTx86]
+[Standard.NTamd64]
 %HidGuardian.DeviceDesc%=HidGuardian_Device, Root\HidGuardian
 
 [HidGuardian_Device.NT]
@@ -52,9 +54,6 @@ ServiceBinary  = %12%\HidGuardian.sys
 ;--- HidGuardian_Device Coinstaller installation ------
 ;
 
-[DestinationDirs]
-HidGuardian_Device_CoInstaller_CopyFiles = 11
-
 [HidGuardian_Device.NT.CoInstallers]
 AddReg=HidGuardian_Device_CoInstaller_AddReg
 CopyFiles=HidGuardian_Device_CoInstaller_CopyFiles
@@ -64,9 +63,6 @@ HKR,,CoInstallers32,0x00010000, "WdfCoInstaller01009.dll,WdfCoInstaller"
 
 [HidGuardian_Device_CoInstaller_CopyFiles]
 WdfCoInstaller01009.dll
-
-[SourceDisksFiles]
-WdfCoInstaller01009.dll=1 ; make sure the number matches with SourceDisksNames
 
 [HidGuardian_Device.NT.Wdf]
 KmdfService =  HidGuardian, HidGuardian_wdfsect
