@@ -38,7 +38,10 @@ namespace x360ce.App.DInput
 					 // New device was detected so exclusive lock is necessary to retrieve force feedback information.
 					 UpdateDevicesPending ||
 					// No actual XInput states are required for Virtual emulation.
-					(emType == EmulationType.Virtual && !getXInputStates);
+					(emType == EmulationType.Virtual && !getXInputStates) ||
+					// No actual XInput states are required for Library emulation when minimized.
+					// This will also release exclusive lock if another game/application must use it.
+					(emType == EmulationType.Library && !MainForm.Current.FormEventsEnabled);
 				if (!unload)
 					return;
 				if (!Controller.IsLoaded)
@@ -68,6 +71,10 @@ namespace x360ce.App.DInput
 					return;
 				// If no actual XInput states are required for Virtual emulation.
 				if (emType == EmulationType.Virtual && !getXInputStates)
+					return;
+				// No actual XInput states are required for Library emulation when minimized.
+				// This will also release exclusive lock if another game/application must use it.
+				if (emType == EmulationType.Library && !MainForm.Current.FormEventsEnabled)
 					return;
 				//MainForm.Current.Save();
 				var e = new DInputEventArgs();

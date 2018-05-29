@@ -359,7 +359,8 @@ namespace x360ce.App.Controls
         {
             HidGuardianTextBox.Text = "Installing. Please Wait...";
             Program.RunElevated(AdminCommand.InstallHidGuardian);
-            RefreshViGEmStatus();
+			ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
+			RefreshViGEmStatus();
         }
 
         private void HidGuardianUninstallButton_Click(object sender, EventArgs e)

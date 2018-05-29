@@ -16,9 +16,10 @@ namespace x360ce.App.ViGEm
 	{
 
 		static string HidGuardianRegistry = @"SYSTEM\CurrentControlSet\Services\HidGuardian";
+		static string WhiteList = "Whitelist";
 
 		static string ParametersRegistry => $"{HidGuardianRegistry}\\Parameters";
-		static string WhitelistRegistry => $"{ParametersRegistry}\\Whitelist";
+		static string WhitelistRegistry => $"{ParametersRegistry}\\{WhiteList}";
 
 		static readonly IEnumerable<object> ResponseOk = new[] { "OK" };
 		static readonly string[] HardwareIdSplitters = { "\r\n", "\n" };
@@ -33,7 +34,7 @@ namespace x360ce.App.ViGEm
 		/// <summary>
 		/// Allows application to see all hidden controllers.
 		/// </summary>
-		public static bool AddCurrentProcessToWhiteList()
+		public static bool InsertCurrentProcessToWhiteList()
 		{
 			var id = System.Diagnostics.Process.GetCurrentProcess().Id;
 			return InsertToWhiteList(id);
@@ -45,7 +46,7 @@ namespace x360ce.App.ViGEm
 		public static bool RemoveCurrentProcessFromWhiteList()
 		{
 			var id = System.Diagnostics.Process.GetCurrentProcess().Id;
-			return InsertToWhiteList(id);
+			return RemoveFromWhiteList(id);
 		}
 
 		/// <summary>
@@ -93,7 +94,7 @@ namespace x360ce.App.ViGEm
 		}
 
 		/// <summary>
-		/// Remove all process IDs from whitelist.
+		/// Remove all process IDs from white list.
 		/// </summary>
 		public static bool ClearWhiteList(bool keepCurrentProcess, bool keepRunningProcesses)
 		{
@@ -214,7 +215,7 @@ namespace x360ce.App.ViGEm
 		}
 
 		/// <summary>
-		/// Convert device IDs into hardwre Ids.
+		/// Convert device IDs into hardware Ids.
 		/// </summary>
 		static string[] GetHardwareIds(params string[] deviceIds)
 		{
@@ -322,6 +323,24 @@ namespace x360ce.App.ViGEm
 				subKey.Close();
 			}
 			return canModify;
+		}
+
+		public static void FixWhiteListRegistryKey()
+		{
+			var subKey = Registry.LocalMachine.OpenSubKey(WhitelistRegistry, true);
+			// If key exists then there is nothing to do.
+			if (subKey != null)
+			{
+				subKey.Close();
+				return;
+			}
+			var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry, true);
+			// Parameters must be present after installation of HID Guardian.
+			if (key == null)
+				return;
+			// Create sub key.
+			key.CreateSubKey(WhiteList);
+			key.Close();
 		}
 
 		#endregion

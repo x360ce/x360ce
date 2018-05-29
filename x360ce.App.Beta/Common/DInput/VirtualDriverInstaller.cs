@@ -110,7 +110,13 @@ namespace x360ce.App.DInput
 				fullPath,
 				"classfilter HIDClass upper -HidGuardian",
 				style, true);
+			// Fix registry permissions. 
+			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
+			// Fix missing white list key.
+			if (canModify)
+				ViGEm.HidGuardianHelper.FixWhiteListRegistryKey();
 		}
+
 
 		/// <summary>
 		/// Uninstall HID Guardian.

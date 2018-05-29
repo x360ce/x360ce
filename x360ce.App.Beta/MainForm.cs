@@ -131,7 +131,7 @@ namespace x360ce.App
 				return;
 			if (ViGEm.HidGuardianHelper.CanModifyParameters(true))
 			{
-				ViGEm.HidGuardianHelper.AddCurrentProcessToWhiteList();
+				ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
 				ViGEm.HidGuardianHelper.ClearWhiteList(true, true);
 			}
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
