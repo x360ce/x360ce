@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
 			this.TestingAndLoggingGroupBox = new System.Windows.Forms.GroupBox();
-			this.ShowIniTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowSettingsTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowDevicesTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowProgramsTabCheckBox = new System.Windows.Forms.CheckBox();
@@ -114,7 +113,6 @@
 			// 
 			// TestingAndLoggingGroupBox
 			// 
-			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowIniTabCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowSettingsTabCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowDevicesTabCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowProgramsTabCheckBox);
@@ -130,17 +128,6 @@
 			this.TestingAndLoggingGroupBox.TabIndex = 30;
 			this.TestingAndLoggingGroupBox.TabStop = false;
 			this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
-			// 
-			// ShowIniTabCheckBox
-			// 
-			this.ShowIniTabCheckBox.AutoSize = true;
-			this.ShowIniTabCheckBox.Location = new System.Drawing.Point(124, 113);
-			this.ShowIniTabCheckBox.Name = "ShowIniTabCheckBox";
-			this.ShowIniTabCheckBox.Size = new System.Drawing.Size(98, 17);
-			this.ShowIniTabCheckBox.TabIndex = 1;
-			this.ShowIniTabCheckBox.Text = "Show [INI] Tab";
-			this.ShowIniTabCheckBox.UseVisualStyleBackColor = true;
-			this.ShowIniTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowIniTabCheckBox_CheckedChanged);
 			// 
 			// ShowSettingsTabCheckBox
 			// 
@@ -963,7 +950,6 @@
 		public System.Windows.Forms.NumericUpDown MinimumInstanceCountNumericUpDown;
 		private System.Windows.Forms.CheckBox ShowProgramsTabCheckBox;
 		private System.Windows.Forms.CheckBox ShowSettingsTabCheckBox;
-		private System.Windows.Forms.CheckBox ShowIniTabCheckBox;
 		private System.Windows.Forms.CheckBox ShowDevicesTabCheckBox;
 		public System.Windows.Forms.CheckBox IncludeProductsCheckBox;
         private System.Windows.Forms.GroupBox UpdateOptionsGroupBox;

@@ -1219,7 +1219,7 @@ namespace x360ce.App.Controls
             var result = form.ShowForm(text, "Auto Controller Settings", buttons, MessageBoxIcon.Question);
             if (result != DialogResult.Yes)
                 return;
-            var padSetting = AutoMapHelper.GetAutoPreset(ud.DeviceObjects);
+            var padSetting = AutoMapHelper.GetAutoPreset(ud);
             // Load created setting.
             SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, padSetting);
         }
@@ -1349,7 +1349,7 @@ namespace x360ce.App.Controls
                     // Create new setting.
                     setting = AppHelper.GetNewSetting(ud, game, MappedTo);
                     // Get auto-configured pad setting.
-                    var ps = AutoMapHelper.GetAutoPreset(ud.DeviceObjects);
+                    var ps = AutoMapHelper.GetAutoPreset(ud);
                     SettingsManager.Current.LoadPadSettingAndCleanup(setting, ps, true);
                     SettingsManager.Current.SyncFormFromPadSetting(MappedTo, ps);
                     // Refresh online status
@@ -1499,9 +1499,13 @@ namespace x360ce.App.Controls
                 // Add AUTO.
                 game.EnableMask = (int)(value | flag);
             }
-        }
+			if (game.EnableMask > 0 && game.EmulationType != (int)EmulationType.Virtual)
+				game.EmulationType = (int)EmulationType.Virtual;
+			if (game.EnableMask == 0 && game.EmulationType == (int)EmulationType.Virtual)
+				game.EmulationType = (int)EmulationType.None;
+		}
 
-        public void ShowAdvancedTab(bool show)
+		public void ShowAdvancedTab(bool show)
         {
             ShowTab(show, AdvancedTabPage);
         }

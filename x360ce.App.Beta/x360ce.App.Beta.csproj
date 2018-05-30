@@ -630,8 +630,6 @@
     <EmbeddedResource Include="Resources\ViGEmBus\x86\VDX.exe" />
     <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus.inf" />
     <EmbeddedResource Include="Resources\ViGEmBus\x86\WdfCoinstaller01009.dll" />
-    <EmbeddedResource Include="Resources\DInput\x64\dinput8.dll" />
-    <EmbeddedResource Include="Resources\DInput\x86\dinput8.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
@@ -776,19 +774,6 @@ if $(PlatformName) == AnyCPU "$(SolutionDir)$(ProjectName)\Resources\NetZ\netz.e
 copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.dll" "$(ProjectDir)Resources"
 echo copy x360ce.Engine.XmlSerializers.dll to $(ProjectDir)Resources
 copy /y "$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll" "$(ProjectDir)Resources"
-if $(ConfigurationName) == Debug (
-if $(PlatformName) == x86 (
-echo copy xinput1_3.dll - 32-bit
-:: Make sure to build x360ce C++ project first.
-copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\xinput1_3.dll" "$(TargetDir)"
-copy /y "$(SolutionDir)x360ce\x360ce\bin\Debug\xinput1_3.pdb" "$(TargetDir)"
-)
-if $(PlatformName) == x64 (
-echo copy xinput1_3.dll - 64-bit
-:: Make sure to build x360ce C++ project first.
-copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\xinput1_3.dll" "$(TargetDir)"
-copy /y "$(SolutionDir)x360ce\x360ce\bin64\Debug\xinput1_3.pdb" "$(TargetDir)"
-)
-)</PreBuildEvent>
+</PreBuildEvent>
   </PropertyGroup>
 </Project>

@@ -59,6 +59,7 @@ namespace x360ce.App
 			Pad4TabPage.Text = "Controller 4";
 			InitMinimize();
 			InitiInterfaceUpdate();
+			GamesToolStrip_Resize(null, null);
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 		}
 
@@ -181,7 +182,6 @@ namespace x360ce.App
 			ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
 			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
 			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
-			ShowIniTab(SettingsManager.Options.ShowIniTab);
 			// Start Timers.
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
@@ -231,7 +231,6 @@ namespace x360ce.App
 		/// </summary>
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
 		{
-			var iniContent = UpdateINI();
 			bool changed = false;
 			changed |= SettingsManager.Current.ApplyAllSettingsToXML();
 			//changed |= SettingsManager.Current.WriteSettingToIni(changedControl);
@@ -438,20 +437,6 @@ namespace x360ce.App
 
 		string iniOld;
 		int iniUpdateCount;
-
-		public string UpdateINI()
-		{
-			var game = CurrentGame;
-			var iniNew = SettingsManager.Current.GetIniContent(game);
-			if (iniOld != iniNew)
-			{
-				iniOld = iniNew;
-				IniTextBox.Text = iniNew;
-				iniUpdateCount++;
-				IniTabPage.Text = string.Format("INI: {0}", iniUpdateCount);
-			}
-			return iniNew;
-		}
 
 		void SettingsTimer_Elapsed(object sender, EventArgs e)
 		{
@@ -1154,8 +1139,6 @@ namespace x360ce.App
 				}
 				if (item != null)
 				{
-					// Update buttons from current item.
-					UpdateButtonsAndTabs((EmulationType)item.EmulationType);
 					// Attach event to new game.
 					item.PropertyChanged += CurrentGame_PropertyChanged;
 				}
@@ -1190,8 +1173,6 @@ namespace x360ce.App
 			// Update controls by specific property.
 			if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.EmulationType))
 			{
-				// Update buttons from current item.
-				UpdateButtonsAndTabs((EmulationType)game.EmulationType);
 			}
 			SettingsManager.Current.RaiseSettingsChanged(null);
 		}
@@ -1459,7 +1440,7 @@ namespace x360ce.App
 			if (show && !tc.TabPages.Contains(page))
 			{
 				// Create list of tabs to maintain same order when hiding and showing tabs.
-				var tabs = new List<TabPage>() { ProgramsTabPage, SettingsTabPage, DevicesTabPage, IniTabPage };
+				var tabs = new List<TabPage>() { ProgramsTabPage, SettingsTabPage, DevicesTabPage };
 				// Get index of always displayed tab.
 				var index = tc.TabPages.IndexOf(GamesTabPage);
 				// Get tabs in front of tab which must be inserted.
@@ -1485,47 +1466,15 @@ namespace x360ce.App
 			ShowTab(show, DevicesTabPage);
 		}
 
-		public void ShowIniTab(bool show)
-		{
-			ShowTab(show, IniTabPage);
-		}
-
 		#endregion
 
-		private void VirtualButton_Click(object sender, EventArgs e)
-		{
-			if (VirtualButton.Checked)
-				ChangeEmulationType(EmulationType.None);
-			else
-				ChangeEmulationType(EmulationType.Virtual);
-		}
 
-		public void DisableVirtualEmulation()
-		{
-			if (VirtualButton.Checked)
-				ChangeEmulationType(EmulationType.None);
-		}
-
-		private void LibraryButton_Click(object sender, EventArgs e)
-		{
-			if (LibraryButton.Checked)
-				ChangeEmulationType(EmulationType.None);
-			else
-				ChangeEmulationType(EmulationType.Library);
-		}
-
-		void ChangeEmulationType(EmulationType type)
+		public void ChangeCurrentGameEmulationType(EmulationType type)
 		{
 			var game = CurrentGame;
 			if (game == null)
 				return;
 			game.EmulationType = (int)type;
-		}
-
-		void UpdateButtonsAndTabs(EmulationType et)
-		{
-			VirtualButton.Checked = et.HasFlag(EmulationType.Virtual);
-			LibraryButton.Checked = et.HasFlag(EmulationType.Library);
 		}
 
 		private void TestButton_Click(object sender, EventArgs e)
@@ -1539,8 +1488,23 @@ namespace x360ce.App
 			{
 				DebugPanel.ShowPanel();
 			}
+		}
 
-
+		private void GamesToolStrip_Resize(object sender, EventArgs e)
+		{
+			GameToCustomizeComboBox.AutoSize = false;
+			int width = GamesToolStrip.DisplayRectangle.Width;
+			foreach (ToolStripItem tsi in GamesToolStrip.Items)
+			{
+				if (!(tsi == GameToCustomizeComboBox))
+				{
+					width -= tsi.Width;
+					width -= tsi.Margin.Horizontal;
+				}
+			}
+			GameToCustomizeComboBox.Width = Math.Max(0, width - GameToCustomizeComboBox.Margin.Horizontal);
+			// Resolve disappearing.
+			GamesToolStrip.PerformLayout();
 		}
 	}
 }

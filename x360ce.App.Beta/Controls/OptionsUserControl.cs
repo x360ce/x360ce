@@ -172,7 +172,6 @@ namespace x360ce.App.Controls
             ShowProgramsTabCheckBox.Checked = o.ShowProgramsTab;
             ShowSettingsTabCheckBox.Checked = o.ShowSettingsTab;
             ShowDevicesTabCheckBox.Checked = o.ShowDevicesTab;
-            ShowIniTabCheckBox.Checked = o.ShowIniTab;
             GameScanLocationsListBox.Items.AddRange(o.GameScanLocations.ToArray());
             DiskIdTextBox.Text = o.DiskId;
             UsernameTextBox.Text = o.Username;
@@ -195,7 +194,6 @@ namespace x360ce.App.Controls
             o.ShowProgramsTab = ShowProgramsTabCheckBox.Checked;
             o.ShowSettingsTab = ShowSettingsTabCheckBox.Checked;
             o.ShowDevicesTab = ShowDevicesTabCheckBox.Checked;
-            o.ShowIniTab = ShowIniTabCheckBox.Checked;
             o.GameScanLocations = GameScanLocationsListBox.Items.Cast<string>().ToList();
             o.Username = UsernameTextBox.Text;
             o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
@@ -311,11 +309,6 @@ namespace x360ce.App.Controls
             MainForm.Current.ShowDevicesTab(ShowDevicesTabCheckBox.Checked);
         }
 
-        private void ShowIniTabCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            MainForm.Current.ShowIniTab(ShowIniTabCheckBox.Checked);
-        }
-
         private void CheckForUpdatesCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             var o = SettingsManager.Options;
@@ -350,7 +343,7 @@ namespace x360ce.App.Controls
         {
             ViGEmBusTextBox.Text = "Uninstalling. Please Wait...";
             // Disable Virtual mode first.
-            MainForm.Current.DisableVirtualEmulation();
+            MainForm.Current.ChangeCurrentGameEmulationType(EmulationType.None);
             DInput.DInputHelper.CheckUnInstallVirtualDriver();
             RefreshViGEmStatus();
         }

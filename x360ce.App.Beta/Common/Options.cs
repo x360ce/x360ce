@@ -12,11 +12,13 @@ namespace x360ce.App
     {
         public Options()
         {
+			// Set default values.
             AllowOnlyOneCopy = true;
             InternetFeatures = true;
             InternetAutoLoad = true;
             InternetAutoSave = true;
-        }
+			ShowDevicesTab = true;
+		}
         /// <summary>
         /// Avoid deserialization duplicates by using separate method.
         /// </summary>

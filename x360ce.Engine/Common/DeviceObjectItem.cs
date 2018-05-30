@@ -33,6 +33,7 @@ namespace x360ce.Engine
         public int ObjectId { get; set; }
         public int Instance { get; set; }
 
+		// Zero based index.
 		public int DiIndex { get; set; }
 
 		public ObjectAspect Aspect { get; set; }

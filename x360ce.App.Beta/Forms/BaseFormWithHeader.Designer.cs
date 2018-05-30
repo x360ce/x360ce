@@ -79,7 +79,7 @@
 			this.HelpBodyLabel.Name = "HelpBodyLabel";
 			this.HelpBodyLabel.Size = new System.Drawing.Size(846, 32);
 			this.HelpBodyLabel.TabIndex = 7;
-			this.HelpBodyLabel.Text = "Help Body";
+			this.HelpBodyLabel.Text = resources.GetString("HelpBodyLabel.Text");
 			// 
 			// HelpPictureBox
 			// 
@@ -112,13 +112,13 @@
 			this.HeaderPictureBox.TabIndex = 6;
 			this.HeaderPictureBox.TabStop = false;
 			// 
-			// BaseForm
+			// BaseFormWithHeader
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(948, 525);
 			this.Controls.Add(this.TopPanel);
-			this.Name = "BaseForm";
+			this.Name = "BaseFormWithHeader";
 			this.Text = "BaseForm";
 			this.TopPanel.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();

@@ -86,7 +86,8 @@ namespace x360ce.App
                     ObjectId = (int)o.ObjectId,
 					Instance = o.ObjectId.InstanceNumber,
 					Type = o.ObjectType,
-				};
+					DiIndex = o.ObjectId.InstanceNumber - 1,
+			};
 				items.Add(item);
 			}
 			return items.ToArray();

@@ -35,8 +35,6 @@ namespace x360ce.App
 			this.DevicesPanel = new x360ce.App.Controls.UserDevicesUserControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsGridPanel = new x360ce.App.Controls.SettingsGridUserControl();
-			this.IniTabPage = new System.Windows.Forms.TabPage();
-			this.IniTextBox = new System.Windows.Forms.TextBox();
 			this.CloudTabPage = new System.Windows.Forms.TabPage();
 			this.CloudPanel = new x360ce.App.Controls.CloudUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
@@ -72,16 +70,12 @@ namespace x360ce.App
 			this.TestButton = new System.Windows.Forms.ToolStripButton();
 			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
-			this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-			this.VirtualButton = new System.Windows.Forms.ToolStripButton();
-			this.LibraryButton = new System.Windows.Forms.ToolStripButton();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
 			this.ProgramsTabPage.SuspendLayout();
 			this.DevicesTabPage.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
-			this.IniTabPage.SuspendLayout();
 			this.CloudTabPage.SuspendLayout();
 			this.HelpTabPage.SuspendLayout();
 			this.IssuesTabPage.SuspendLayout();
@@ -106,7 +100,6 @@ namespace x360ce.App
 			this.MainTabControl.Controls.Add(this.ProgramsTabPage);
 			this.MainTabControl.Controls.Add(this.DevicesTabPage);
 			this.MainTabControl.Controls.Add(this.SettingsTabPage);
-			this.MainTabControl.Controls.Add(this.IniTabPage);
 			this.MainTabControl.Controls.Add(this.CloudTabPage);
 			this.MainTabControl.Controls.Add(this.HelpTabPage);
 			this.MainTabControl.Controls.Add(this.AboutTabPage);
@@ -243,29 +236,6 @@ namespace x360ce.App
 			this.SettingsGridPanel.Name = "SettingsGridPanel";
 			this.SettingsGridPanel.Size = new System.Drawing.Size(792, 602);
 			this.SettingsGridPanel.TabIndex = 0;
-			// 
-			// IniTabPage
-			// 
-			this.IniTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.IniTabPage.Controls.Add(this.IniTextBox);
-			this.IniTabPage.Location = new System.Drawing.Point(4, 23);
-			this.IniTabPage.Name = "IniTabPage";
-			this.IniTabPage.Size = new System.Drawing.Size(792, 602);
-			this.IniTabPage.TabIndex = 3;
-			this.IniTabPage.Text = "INI";
-			// 
-			// IniTextBox
-			// 
-			this.IniTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.IniTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.IniTextBox.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.IniTextBox.Location = new System.Drawing.Point(0, 0);
-			this.IniTextBox.Multiline = true;
-			this.IniTextBox.Name = "IniTextBox";
-			this.IniTextBox.ReadOnly = true;
-			this.IniTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-			this.IniTextBox.Size = new System.Drawing.Size(792, 602);
-			this.IniTextBox.TabIndex = 1;
 			// 
 			// CloudTabPage
 			// 
@@ -540,10 +510,7 @@ namespace x360ce.App
             this.SaveAllButton,
             this.TestButton,
             this.MappedDevicesLabel,
-            this.GameToCustomizeComboBox,
-            this.toolStripLabel1,
-            this.VirtualButton,
-            this.LibraryButton});
+            this.GameToCustomizeComboBox});
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 64);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 4, 0);
@@ -551,6 +518,7 @@ namespace x360ce.App
 			this.GamesToolStrip.Size = new System.Drawing.Size(810, 26);
 			this.GamesToolStrip.TabIndex = 25;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
+			this.GamesToolStrip.Resize += new System.EventHandler(this.GamesToolStrip_Resize);
 			// 
 			// SaveAllButton
 			// 
@@ -589,34 +557,6 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
 			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(360, 24);
 			// 
-			// toolStripLabel1
-			// 
-			this.toolStripLabel1.Name = "toolStripLabel1";
-			this.toolStripLabel1.Size = new System.Drawing.Size(41, 21);
-			this.toolStripLabel1.Text = "Mode:";
-			// 
-			// VirtualButton
-			// 
-			this.VirtualButton.Image = global::x360ce.App.Properties.Resources.emulation_virtual_16x16;
-			this.VirtualButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.VirtualButton.Margin = new System.Windows.Forms.Padding(1);
-			this.VirtualButton.Name = "VirtualButton";
-			this.VirtualButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-			this.VirtualButton.Size = new System.Drawing.Size(61, 22);
-			this.VirtualButton.Text = "Virtual";
-			this.VirtualButton.Click += new System.EventHandler(this.VirtualButton_Click);
-			// 
-			// LibraryButton
-			// 
-			this.LibraryButton.Image = global::x360ce.App.Properties.Resources.emulation_library_16x16;
-			this.LibraryButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.LibraryButton.Margin = new System.Windows.Forms.Padding(1);
-			this.LibraryButton.Name = "LibraryButton";
-			this.LibraryButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-			this.LibraryButton.Size = new System.Drawing.Size(63, 22);
-			this.LibraryButton.Text = "Library";
-			this.LibraryButton.Click += new System.EventHandler(this.LibraryButton_Click);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -643,8 +583,6 @@ namespace x360ce.App
 			this.ProgramsTabPage.ResumeLayout(false);
 			this.DevicesTabPage.ResumeLayout(false);
 			this.SettingsTabPage.ResumeLayout(false);
-			this.IniTabPage.ResumeLayout(false);
-			this.IniTabPage.PerformLayout();
 			this.CloudTabPage.ResumeLayout(false);
 			this.HelpTabPage.ResumeLayout(false);
 			this.IssuesTabPage.ResumeLayout(false);
@@ -693,8 +631,6 @@ namespace x360ce.App
 		internal Label HelpSubjectLabel;
 		internal PictureBox HeaderPictureBox;
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
-		private TabPage IniTabPage;
-		private TextBox IniTextBox;
 		public ToolStripStatusLabel CloudMessagesLabel;
 		private TabPage CloudTabPage;
 		public Controls.CloudUserControl CloudPanel;
@@ -710,9 +646,6 @@ namespace x360ce.App
 		private ToolStripButton SaveAllButton;
 		private ToolStripLabel MappedDevicesLabel;
 		private ToolStripComboBox GameToCustomizeComboBox;
-		private ToolStripButton VirtualButton;
-		private ToolStripButton LibraryButton;
-		private ToolStripLabel toolStripLabel1;
 		private TabPage IssuesTabPage;
 		private JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl IssuesPanel;
 		private ToolStripButton TestButton;

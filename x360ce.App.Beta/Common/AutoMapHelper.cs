@@ -9,16 +9,20 @@ namespace x360ce.App
 {
 	public class AutoMapHelper
 	{
-		public static PadSetting GetAutoPreset(DeviceObjectItem[] objects)
+		public static PadSetting GetAutoPreset(UserDevice ud)
 		{
 			var ps = new PadSetting();
+			if (ud == null)
+				return ps;
+			var objects = ud.DeviceObjects;
 			if (objects == null)
 				return ps;
 			var list = objects.ToList();
 			// Get information about device.
 			var o = list.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
+			var deviceType = (SharpDX.DirectInput.DeviceType)ud.CapType;
 			// If Right thumb triggers are missing then...
-			if (o == null)
+			if (deviceType == DeviceType.Gamepad && o == null)
 			{
 				// Logitech RumblePad 2 USB
 				ps.ButtonA = GetButtonValue(list, 1, true, "Cross");
@@ -77,7 +81,7 @@ namespace x360ce.App
 
 				ps.ButtonA = GetButtonValue(list, 0, true, "Cross");
 				ps.ButtonB = GetButtonValue(list, 1, true, "Circle");
-				ps.ButtonX = GetButtonValue(list, 2, true, "Square");
+				ps.ButtonX = GetButtonValue(list, 2, true, "Square", "SPACE"); // Jump/Kick
 				ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
 				ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
 				ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
@@ -112,7 +116,10 @@ namespace x360ce.App
 			// Try to find by name.
 			foreach (var name in names)
 			{
-				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.Button && x.Name.Contains(name));
+				// Try exact match first.
+				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && string.Compare(x.Name, name, true) == 0);
+				if (o == null)
+					o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.Name.Contains(name));
 				if (o != null)
 				{
 					if (removeIfFound)
@@ -122,9 +129,9 @@ namespace x360ce.App
 			}
 			// Try to find by instance.
 			if (o == null)
-				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.Button && x.Instance == instance);
+				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.Instance == instance);
 			// Use instance number which is same as X360CE button index.
-			return o == null ? "" : string.Format("{0}{1}", SettingName.SType.Button, o.Instance + 1);
+			return o == null ? "" : string.Format("{0}{1}", SettingName.SType.Button, o.DiIndex + 1);
 		}
 
 		/// <summary>Return axis setting value if axis exists.</summary>
@@ -134,7 +141,10 @@ namespace x360ce.App
 			// Try to find by name.
 			foreach (var name in names)
 			{
-				o = objects.FirstOrDefault(x => x.Type == ObjectGuid.Button && x.Name.Contains(name));
+				// Try exact match first.
+				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && string.Compare(x.Name, name, true) == 0);
+				if (o == null)
+					o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.Name.Contains(name));
 				if (o != null)
 				{
 					if (removeIfFound)
