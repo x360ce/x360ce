@@ -191,7 +191,7 @@ namespace x360ce.App
 				sb.Append(ConvertToIni(ps, instance.ProductName, instance.ProductGuid, instance.InstanceGuid));
 
 			}
-			if (MainForm.Current.OptionsPanel.IncludeProductsCheckBox.Checked)
+			if (SettingsManager.Options.IncludeProductsInsideINI)
 			{
 				sb.AppendLine();
 				sb.Append(';').Append('-', 64).AppendLine();

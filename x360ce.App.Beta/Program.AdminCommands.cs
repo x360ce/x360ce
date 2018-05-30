@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using x360ce.Engine;
-using x360ce.Engine.Data;
+﻿using System.Windows.Forms;
 
 namespace x360ce.App
 {
@@ -33,7 +27,7 @@ namespace x360ce.App
 			{
 				// Run command directly.
 				var args = new string[] { argument };
-				ProcessAdminCommands(args);
+				ProcessAdminCommands(true, args);
 				return true;
 			}
 			else
@@ -48,7 +42,7 @@ namespace x360ce.App
 			}
 		}
 
-		static bool ProcessAdminCommands(string[] args)
+		static bool ProcessAdminCommands(bool direct, string[] args)
 		{
 			// Requires System.Configuration.Installl reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);
@@ -79,22 +73,6 @@ namespace x360ce.App
 			{
 				var hwid = ic.Parameters[AdminCommand.UninstallDevice.ToString()];
 				DInput.VirtualDriverInstaller.UnInstallDevice(hwid);
-				return true;
-			}
-
-			if (ic.Parameters.ContainsKey(AdminCommand.Save.ToString()))
-			{
-				SettingsManager.Load();
-				var fullPath = ic.Parameters[AdminCommand.Save.ToString()];
-				var games = string.IsNullOrEmpty(fullPath)
-					? SettingsManager.UserGames.Items.Where(x => x.IsEnabled).ToArray()
-					: SettingsManager.UserGames.Items.Where(x => x.FullPath == fullPath).ToArray();
-				if (games.Length > 0)
-				{
-					string syncText;
-					Dictionary<UserGame, GameRefreshStatus> syncStates;
-					SettingsManager.UpdateSyncStates(games, true, out syncText, out syncStates);
-				}
 				return true;
 			}
 			return false;

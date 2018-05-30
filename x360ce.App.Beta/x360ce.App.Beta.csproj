@@ -388,13 +388,8 @@
     <Compile Include="Issues\ArchitectureIssue.cs" />
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
     <Compile Include="Issues\CppX86RuntimeInstallIssue.cs" />
-    <Compile Include="Issues\DllFileIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
-    <Compile Include="Issues\GdbFileClass.cs" />
     <Compile Include="Issues\HotfixIssue.cs" />
-    <Compile Include="Issues\LeakDetectorIssue.cs" />
-    <Compile Include="Issues\MdkIssue.cs" />
-    <Compile Include="Issues\IniFileIssue.cs" />
     <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
     <Compile Include="Issues\XboxDriversIssue.cs" />
     <Compile Include="MainForm.Tray.cs">
@@ -635,8 +630,6 @@
     <EmbeddedResource Include="Resources\ViGEmBus\x86\VDX.exe" />
     <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus.inf" />
     <EmbeddedResource Include="Resources\ViGEmBus\x86\WdfCoinstaller01009.dll" />
-    <EmbeddedResource Include="Resources\XInput\x64\xinput.dll" />
-    <EmbeddedResource Include="Resources\XInput\x86\xinput.dll" />
     <EmbeddedResource Include="Resources\DInput\x64\dinput8.dll" />
     <EmbeddedResource Include="Resources\DInput\x86\dinput8.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />

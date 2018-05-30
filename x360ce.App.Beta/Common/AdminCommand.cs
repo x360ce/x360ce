@@ -15,7 +15,5 @@ namespace x360ce.App
         InstallHidGuardian,
         UninstallHidGuardian,
 		UninstallDevice,
-		// Synchronize specified game folder (or all games if not specified) from settings.
-		Save,
     }
 }
