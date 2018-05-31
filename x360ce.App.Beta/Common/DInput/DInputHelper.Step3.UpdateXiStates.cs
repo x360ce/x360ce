@@ -138,13 +138,24 @@ namespace x360ce.App.DInput
 								// Target: Thumb.
 								// --------------------------------------------------------
 								else if (map.Target == TargetType.LeftThumbX)
-									gp.LeftThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.LeftThumbX = map.AxisValue.HasValue
+										? map.IsInverted ? (short)0 : map.AxisValue.Value
+										: map.IsInverted ? short.MinValue : short.MaxValue;
 								else if (map.Target == TargetType.LeftThumbY)
-									gp.LeftThumbY = map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.LeftThumbY = map.AxisValue.HasValue
+										? map.IsInverted ? (short)0 : map.AxisValue.Value
+										: map.IsInverted ? short.MinValue : short.MaxValue;
 								else if (map.Target == TargetType.RightThumbX)
-									gp.RightThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.RightThumbX = map.AxisValue.HasValue
+										? map.IsInverted ? (short)0 : map.AxisValue.Value
+										: map.IsInverted ? short.MinValue : short.MaxValue;
 								else if (map.Target == TargetType.RightThumbY)
-									gp.RightThumbY = map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.RightThumbY = map.AxisValue.HasValue
+										? map.IsInverted ? (short)0 : map.AxisValue.Value
+										: map.IsInverted ? short.MinValue : short.MaxValue;
+								// --------------------------------------------------------
+								// Target: Max.
+								// --------------------------------------------------------
 							}
 						}
 					}
@@ -188,13 +199,21 @@ namespace x360ce.App.DInput
 								// Target: Thumb.
 								// --------------------------------------------------------
 								else if (map.Target == TargetType.LeftThumbX)
-									gp.LeftThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.LeftThumbX = map.AxisValue.HasValue
+										? map.IsInverted ? (short)0 : map.AxisValue.Value
+										: map.IsInverted ? short.MinValue : short.MaxValue;
 								else if (map.Target == TargetType.LeftThumbY)
-									gp.LeftThumbY = map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.LeftThumbY = map.AxisValue.HasValue
+										? map.IsInverted ? (short)0 : map.AxisValue.Value
+										: map.IsInverted ? short.MinValue : short.MaxValue;
 								else if (map.Target == TargetType.RightThumbX)
-									gp.RightThumbX = map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.RightThumbX = map.AxisValue.HasValue
+										? map.IsInverted ? (short)0 : map.AxisValue.Value
+										: map.IsInverted ? short.MinValue : short.MaxValue;
 								else if (map.Target == TargetType.RightThumbY)
-									gp.RightThumbY = map.IsInverted ? short.MinValue : short.MaxValue;
+									gp.RightThumbY = map.AxisValue.HasValue
+										? map.IsInverted ? (short)0 : map.AxisValue.Value
+										: map.IsInverted ? short.MinValue : short.MaxValue;
 							}
 						}
 					}
@@ -214,6 +233,17 @@ namespace x360ce.App.DInput
 
 						// Get value.
 						var v = (ushort)values[map.Index - 1];
+
+						//// --------------------------------------------------------
+						//// MAP: Axis Positive / Negative Map.
+						//// --------------------------------------------------------
+						//if (map.Target == TargetType.LeftThumbX)
+						//{
+						//	var success2 = SettingsConverter.TryParseIniValue(padSetting.LeftThumbUp, out type, out index);
+						//	if (success2 && index > 0 && type == SettingType.Button)
+						//	{
+						//	}
+						//}
 
 						// Destination range.
 						//var min = short.MinValue; // -32768;

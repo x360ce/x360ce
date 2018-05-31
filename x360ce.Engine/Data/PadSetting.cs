@@ -53,6 +53,15 @@ namespace x360ce.Engine.Data
 						maps.Add(new Map(LeftThumbAxisY, TargetType.LeftThumbY, LeftThumbDeadZoneY, LeftThumbAntiDeadZoneY, LeftThumbLinearY));
 						maps.Add(new Map(RightThumbAxisX, TargetType.RightThumbX, RightThumbDeadZoneX, RightThumbAntiDeadZoneX, RightThumbLinearX));
 						maps.Add(new Map(RightThumbAxisY, TargetType.RightThumbY, RightThumbDeadZoneY, RightThumbAntiDeadZoneY, RightThumbLinearY));
+						// Add thumbs positive max and negative max map.
+						maps.Add(new Map(RightThumbUp, TargetType.RightThumbY, short.MaxValue));
+						maps.Add(new Map(RightThumbDown, TargetType.RightThumbY, short.MinValue));
+						maps.Add(new Map(RightThumbLeft, TargetType.RightThumbX, short.MinValue));
+						maps.Add(new Map(RightThumbRight, TargetType.RightThumbX, short.MaxValue));
+						maps.Add(new Map(LeftThumbUp, TargetType.LeftThumbY, short.MaxValue));
+						maps.Add(new Map(LeftThumbDown, TargetType.LeftThumbY, short.MinValue));
+						maps.Add(new Map(LeftThumbLeft, TargetType.LeftThumbX, short.MinValue));
+						maps.Add(new Map(LeftThumbRight, TargetType.LeftThumbX, short.MaxValue));
 						// Assign list.
 						_Maps = maps;
 						MapsChanged = false;

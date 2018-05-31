@@ -29,6 +29,17 @@ namespace x360ce.Engine
 			int.TryParse(linear, out Linear);
 		}
 
+
+		/// <summary>
+		///  Add range/axis type mapping.
+		/// </summary>
+		public Map(string value, TargetType target, short axisValue)
+		{
+			Target = target;
+			Load(value);
+			AxisValue = axisValue;
+		}
+
 		void Load(string value)
 		{
 			SettingsConverter.TryParseIniValue(value, out Type, out Index);
@@ -39,7 +50,7 @@ namespace x360ce.Engine
 			IsInverted = Type == SettingType.IAxis || Type == SettingType.IHAxis || Type == SettingType.ISlider || Type == SettingType.IHSlider;
 		}
 
-		// Source Paramaters.
+		// Source Parameters.
 		public SettingType Type;
 		public int Index;
 
@@ -56,6 +67,7 @@ namespace x360ce.Engine
 
 		// Used for Buttons (AxisToButton DeadZone), Thumbs and Triggers.
 		public int DeadZone;
+		public short? AxisValue;
 
 		// Used for Thumbs and Triggers.
 		public int AntiDeadZone;
