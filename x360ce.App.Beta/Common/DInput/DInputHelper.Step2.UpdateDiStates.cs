@@ -40,42 +40,50 @@ namespace x360ce.App.DInput
                     if (device != null)
                     {
                         var exceptionData = new System.Text.StringBuilder();
-                        try
-                        {
-                            var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
-                            var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
-                            // Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
-                            var exclusiveRequired = hasForceFeedback && (isVirtual || ud.DeviceEffects == null);
-                            // If exclusive mode is required and mode is unknown or not exclusive then...
-                            if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
-                            {
-                                var flags = CooperativeLevel.Background | CooperativeLevel.Exclusive;
-                                // Reacquire device in exclusive mode.
-                                exceptionData.AppendLine("Unacquire (Exclusive)...");
-                                device.Unacquire();
-                                exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
-                                device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
-                                exceptionData.AppendLine("Acquire (Exclusive)...");
-                                device.Acquire();
-                                ud.IsExclusiveMode = true;
-                            }
-                            // If current mode must be non exclusive and mode is unknown or exclusive then...
-                            else if (!exclusiveRequired && (!ud.IsExclusiveMode.HasValue || ud.IsExclusiveMode.Value))
-                            {
-                                var flags = CooperativeLevel.Background | CooperativeLevel.NonExclusive;
-                                // Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
-                                exceptionData.AppendLine("Unacquire (NonExclusive)...");
-                                device.Unacquire();
-                                exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
-                                device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
-                                exceptionData.AppendLine("Acquire (Acquire)...");
-                                device.Acquire();
-                                ud.IsExclusiveMode = false;
-                            }
-                            exceptionData.AppendFormat("device.GetCurrentState() // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
-                            state = device.GetCurrentState();
-                            // Fill device objects.
-                            if (ud.DeviceObjects == null)
+						try
+						{
+							var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
+							var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
+							// Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
+							var exclusiveRequired = hasForceFeedback && (isVirtual || ud.DeviceEffects == null);
+							// If exclusive mode is required and mode is unknown or not exclusive then...
+							if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
+							{
+								var flags = CooperativeLevel.Background | CooperativeLevel.Exclusive;
+								// Reacquire device in exclusive mode.
+								exceptionData.AppendLine("Unacquire (Exclusive)...");
+								device.Unacquire();
+								exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
+								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
+								exceptionData.AppendLine("Acquire (Exclusive)...");
+								device.Acquire();
+								ud.IsExclusiveMode = true;
+							}
+							// If current mode must be non exclusive and mode is unknown or exclusive then...
+							else if (!exclusiveRequired && (!ud.IsExclusiveMode.HasValue || ud.IsExclusiveMode.Value))
+							{
+								var flags = CooperativeLevel.Foreground | CooperativeLevel.NonExclusive;
+								// Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
+								exceptionData.AppendLine("Unacquire (NonExclusive)...");
+								device.Unacquire();
+								exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
+								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
+								exceptionData.AppendLine("Acquire (Acquire)...");
+								device.Acquire();
+								ud.IsExclusiveMode = false;
+							}
+							exceptionData.AppendFormat("device.GetCurrentState() // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
+							// Polling - Retrieves data from polled objects on a DirectInput device.
+							// Some devices require pooling (For example original "Xbox Controller S" with XBCD drivers).
+							// If the device does not require polling, calling this method has no effect.
+							// If a device that requires polling is not polled periodically, no new data is received from the device.
+							// Calling this method causes DirectInput to update the device state, generate input
+							// events (if buffered data is enabled), and set notification events (if notification is enabled).
+							device.Poll();
+							// Get device state.
+							state = device.GetCurrentState();
+							// Fill device objects.
+							if (ud.DeviceObjects == null)
                             {
                                 exceptionData.AppendFormat("AppHelper.GetDeviceObjects(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
                                 var dos = AppHelper.GetDeviceObjects(device);
