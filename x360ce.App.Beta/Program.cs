@@ -33,35 +33,35 @@ namespace x360ce.App
 		[STAThread]
 		static void Main(string[] args)
 		{
-            // First: Set working folder to the path of executable.
-            var fi = new FileInfo(Application.ExecutablePath);
-            Directory.SetCurrentDirectory(fi.Directory.FullName);
-            // Prevent brave users from running this app from Windows folder.
-            var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-            if (fi.FullName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
-            {
-                MessageBox.Show("Running from Windows folder is not allowed!\r\nPlease run this program from another folder.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+			// First: Set working folder to the path of executable.
+			var fi = new FileInfo(Application.ExecutablePath);
+			Directory.SetCurrentDirectory(fi.Directory.FullName);
+			// Prevent brave users from running this app from Windows folder.
+			var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+			if (fi.FullName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
+			{
+				MessageBox.Show("Running from Windows folder is not allowed!\r\nPlease run this program from another folder.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
 
-            //var x = @"c:\Program Files\X360CE\x360ce.ini";
-            //if (File.Exists(x))
-            //{
-            //    var rights = System.Security.AccessControl.FileSystemRights.Modify;
-            //    var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-            //    // Check if users in non elevated mode have rights to modify the file.
-            //    var hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(x, rights, users, false);
-            //    if (!hasRights && JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
-            //    {
-            //        // Allow users to modify file when in non elevated mode.
-            //        JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(x, rights, users);
-            //        hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(x, rights, users, false);
-            //    }
-            //}
+			//var x = @"c:\Program Files\X360CE\x360ce.ini";
+			//if (File.Exists(x))
+			//{
+			//    var rights = System.Security.AccessControl.FileSystemRights.Modify;
+			//    var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
+			//    // Check if users in non elevated mode have rights to modify the file.
+			//    var hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(x, rights, users, false);
+			//    if (!hasRights && JocysCom.ClassLibrary.Win32.WinAPI.IsElevated())
+			//    {
+			//        // Allow users to modify file when in non elevated mode.
+			//        JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(x, rights, users);
+			//        hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(x, rights, users, false);
+			//    }
+			//}
 
-            // IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
-            // program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+			// IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
+			// program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 			if (IsDebug)
 			{
 				StartApp(args);
@@ -88,7 +88,7 @@ namespace x360ce.App
 			}
 		}
 
-        static void StartApp(string[] args)
+		static void StartApp(string[] args)
 		{
 			//var fi = new FileInfo(Application.ExecutablePath);
 			//Directory.SetCurrentDirectory(fi.Directory.FullName);
@@ -103,15 +103,15 @@ namespace x360ce.App
 			Application.SetCompatibleTextRenderingDefault(false);
 			// Requires System.Configuration.Installl reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);
-            // ------------------------------------------------
-            // Administrator commands.
-            // ------------------------------------------------
-            var executed = ProcessAdminCommands(false, args);
-            // If valid command was executed then...
-            if (executed)
-                return;
-            // ------------------------------------------------
-            if (ic.Parameters.ContainsKey("Settings"))
+			// ------------------------------------------------
+			// Administrator commands.
+			// ------------------------------------------------
+			var executed = ProcessAdminCommands(false, args);
+			// If valid command was executed then...
+			if (executed)
+				return;
+			// ------------------------------------------------
+			if (ic.Parameters.ContainsKey("Settings"))
 			{
 				OpenSettingsFolder(Application.UserAppDataPath);
 				OpenSettingsFolder(Application.CommonAppDataPath);
@@ -257,50 +257,50 @@ namespace x360ce.App
 			return names.FirstOrDefault();
 		}
 
-        #region ExceptionToText
+		#region ExceptionToText
 
-        // Exception to string needed here so that links to other references won't be an issue.
+		// Exception to string needed here so that links to other references won't be an issue.
 
-        static string ExceptionToText(Exception ex)
-        {
-            var message = "";
-            AddExceptionMessage(ex, ref message);
-            if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
-            return message;
-        }
+		static string ExceptionToText(Exception ex)
+		{
+			var message = "";
+			AddExceptionMessage(ex, ref message);
+			if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
+			return message;
+		}
 
-        /// <summary>Add information about missing libraries and DLLs</summary>
-        static void AddExceptionMessage(Exception ex, ref string message)
-        {
-            var ex1 = ex as ConfigurationErrorsException;
-            var ex2 = ex as ReflectionTypeLoadException;
-            var m = "";
-            if (ex1 != null)
-            {
-                m += string.Format("FileName: {0}\r\n", ex1.Filename);
-                m += string.Format("Line: {0}\r\n", ex1.Line);
-            }
-            else if (ex2 != null)
-            {
-                foreach (Exception x in ex2.LoaderExceptions) m += x.Message + "\r\n";
-            }
-            if (message.Length > 0)
-            {
-                message += "===============================================================\r\n";
-            }
-            message += ex.ToString() + "\r\n";
-            foreach (var key in ex.Data.Keys)
-            {
-                m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
-            }
-            if (m.Length > 0)
-            {
-                message += "===============================================================\r\n";
-                message += m;
-            }
-        }
+		/// <summary>Add information about missing libraries and DLLs</summary>
+		static void AddExceptionMessage(Exception ex, ref string message)
+		{
+			var ex1 = ex as ConfigurationErrorsException;
+			var ex2 = ex as ReflectionTypeLoadException;
+			var m = "";
+			if (ex1 != null)
+			{
+				m += string.Format("FileName: {0}\r\n", ex1.Filename);
+				m += string.Format("Line: {0}\r\n", ex1.Line);
+			}
+			else if (ex2 != null)
+			{
+				foreach (Exception x in ex2.LoaderExceptions) m += x.Message + "\r\n";
+			}
+			if (message.Length > 0)
+			{
+				message += "===============================================================\r\n";
+			}
+			message += ex.ToString() + "\r\n";
+			foreach (var key in ex.Data.Keys)
+			{
+				m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
+			}
+			if (m.Length > 0)
+			{
+				message += "===============================================================\r\n";
+				message += m;
+			}
+		}
 
-        #endregion
+		#endregion
 
-    }
+	}
 }
