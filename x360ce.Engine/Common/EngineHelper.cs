@@ -27,38 +27,47 @@ namespace x360ce.Engine
 				{
 					// Apply default path.
 					_AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE";
-					var args = Environment.GetCommandLineArgs();
-					// Requires System.Configuration.Installl reference.
-					var ic = new System.Configuration.Install.InstallContext(null, args);
-					if (ic.Parameters.ContainsKey("Profile"))
+					var fi = new FileInfo(".\\x360ce\\x360ce.Options.xml");
+					// If local configuration was found then use it.
+					if (fi.Exists)
 					{
-						var name = ic.Parameters["Profile"].Trim(' ', '"', '\'');
-						if (string.IsNullOrEmpty(name))
+						_AppDataPath = fi.Directory.FullName;
+					}
+					else
+					{
+						var args = Environment.GetCommandLineArgs();
+						// Requires System.Configuration.Installl reference.
+						var ic = new System.Configuration.Install.InstallContext(null, args);
+						if (ic.Parameters.ContainsKey("Profile"))
 						{
-							// Name is invalid.
-						}
-						else
-						{
-							var path = Environment.ExpandEnvironmentVariables(name);
-							// Get invalid path and file name chars.
-							var ipc = Path.GetInvalidPathChars();
-							var ifc = Path.GetInvalidFileNameChars();
-							// If path is valid file name then...
-							if (!name.ToCharArray().Any(x => ifc.Contains(x)))
+							var name = ic.Parameters["Profile"].Trim(' ', '"', '\'');
+							if (string.IsNullOrEmpty(name))
 							{
-								// Use Profiles sub-folder.
-								_AppDataPath += "\\Profiles\\" + name;
+								// Name is invalid.
 							}
-							// If name is valid path then...
-							else if (!name.ToCharArray().Any(x => ipc.Contains(x)))
+							else
 							{
-								var di = new DirectoryInfo(path);
-								path = di.FullName;
-								var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-								// If path is not inside windows folder then...
-								if (!path.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
+								var path = Environment.ExpandEnvironmentVariables(name);
+								// Get invalid path and file name chars.
+								var ipc = Path.GetInvalidPathChars();
+								var ifc = Path.GetInvalidFileNameChars();
+								// If path is valid file name then...
+								if (!name.ToCharArray().Any(x => ifc.Contains(x)))
 								{
-									_AppDataPath = path;
+									// Use Profiles sub-folder.
+									_AppDataPath += "\\Profiles\\" + name;
+								}
+								// If name is valid path then...
+								else if (!name.ToCharArray().Any(x => ipc.Contains(x)))
+								{
+									var di = new DirectoryInfo(path);
+									path = di.FullName;
+									var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+									// If path is not inside windows folder then...
+									if (!path.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
+									{
+										_AppDataPath = path;
+									}
 								}
 							}
 						}
