@@ -435,9 +435,6 @@ namespace x360ce.App
 			StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
 		}
 
-		string iniOld;
-		int iniUpdateCount;
-
 		void SettingsTimer_Elapsed(object sender, EventArgs e)
 		{
 			if (Program.IsClosing)
