@@ -130,9 +130,9 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true)
+		public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true, int versionNumbers = 3)
 		{
-			var s = string.Format("{0} {1} {2}", Company, Product, Version.ToString(3));
+			var s = string.Format("{0} {1} {2}", Company, Product, Version.ToString(versionNumbers));
 			if (showBuild)
 			{
 				// Version = major.minor.build.revision

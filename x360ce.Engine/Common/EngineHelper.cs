@@ -503,7 +503,7 @@ namespace x360ce.Engine
 		public static string GetProductFullName()
 		{
 			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
-			return ai.GetTitle(true, true, true, true, false);
+			return ai.GetTitle(true, true, true, true, false, 4);
 		}
 
 		public static string GetProcessorArchitectureDescription(ProcessorArchitecture architecture)
