@@ -1,6 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
-using System;
-using System.IO;
 using x360ce.Engine;
 
 namespace x360ce.App.Issues
