@@ -17,7 +17,7 @@ namespace x360ce.App.Issues
             FixName = "Download";
         }
 
-        string program1 = "Microsoft Xbox 360 Accessories";
+        string program1 = "Microsoft Xbox 360 Accessories 1.2";
 
 
         public override void CheckTask()
