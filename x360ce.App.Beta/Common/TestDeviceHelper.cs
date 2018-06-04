@@ -49,6 +49,9 @@ namespace x360ce.App
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 1, "Collection 1"));
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 2, "Collection 2"));
 			list.Add(new DeviceObjectItem(0, ObjectGuid.Unknown, 0, DeviceObjectTypeFlags.Collection | DeviceObjectTypeFlags.NoData, 3, "Collection 3"));
+			// Update DIndexes.
+			for (int i = 0; i < list.Count; i++)
+				list[i].DiIndex = list[i].Instance;
 			return list.ToArray();
 		}
 
@@ -80,7 +83,7 @@ namespace x360ce.App
 			//ud.HidProductId = 0;
 			ud.HidDescription = instanceName;
 			ud.HidClassGuid = new Guid("4d1e55b2-f16f-11cf-88cb-001111000030");
-            ud.IsEnabled = true;
+			ud.IsEnabled = true;
 			return ud;
 		}
 
@@ -111,14 +114,14 @@ namespace x360ce.App
 				// Enable button during its index.
 				state.Buttons[i] = currentLocation == i;
 			}
-            // Do action for 4 seconds [0-3999] ms.
-            var busy = 4000;
-            var half = busy / 2;
-            // then stay for 2 seconds idle [4000-5999] ms.
-            var idle = 2000;
+			// Do action for 4 seconds [0-3999] ms.
+			var busy = 4000;
+			var half = busy / 2;
+			// then stay for 2 seconds idle [4000-5999] ms.
+			var idle = 2000;
 			// 6 = 4 + 2.
 			var time = tm % (busy + idle);
-            var invert = tm % ((busy + idle) * 2) > (busy + idle);
+			var invert = tm % ((busy + idle) * 2) > (busy + idle);
 			// Set POVs.
 			for (int i = 0; i < ud.CapPovCount; i++)
 			{
@@ -143,14 +146,14 @@ namespace x360ce.App
 			}
 			// Set Axis.
 			var axis = CustomDiState.GetAxisFromState(state);
-            // Get information about axis.
-            var axisObjects = ud.DeviceObjects
-                .Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis) || x.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis)).ToArray();
-            for (int i = 0; i < axisObjects.Count(); i++)
+			// Get information about axis.
+			var axisObjects = ud.DeviceObjects
+				.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis) || x.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis)).ToArray();
+			for (int i = 0; i < axisObjects.Count(); i++)
 			{
-                var ao = axisObjects[i];
-                // If axis index is even.
-                var isEven = i % 2 == 0;
+				var ao = axisObjects[i];
+				// If axis index is even.
+				var isEven = i % 2 == 0;
 				var position = isEven
 					// Default position is in the center.
 					? ushort.MaxValue - short.MaxValue
@@ -174,17 +177,17 @@ namespace x360ce.App
 						position = time < half
 							// Move up [0-1999].
 							? ConvertHelper.ConvertRange(0, half - 1, ushort.MinValue, ushort.MaxValue, time)
-                            // Move down  [2000-3999].
-                            : ConvertHelper.ConvertRange(half, busy - 1, ushort.MaxValue, ushort.MinValue, time);
+							// Move down  [2000-3999].
+							: ConvertHelper.ConvertRange(half, busy - 1, ushort.MaxValue, ushort.MinValue, time);
 					}
 				}
 				axis[i] = position;
 			}
 			CustomDiState.SetStateFromAxis(state, axis);
-            // Get sliders array.
-            var sliders = CustomDiState.GetSlidersFromState(state);
-            // Set sliders.
-            for (int i = 0; i < sliders.Length; i++)
+			// Get sliders array.
+			var sliders = CustomDiState.GetSlidersFromState(state);
+			// Set sliders.
+			for (int i = 0; i < sliders.Length; i++)
 			{
 				var isEven = i % 2 == 0;
 				var position = isEven
