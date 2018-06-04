@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+using System.Text.RegularExpressions;
 
 namespace x360ce.App
 {
@@ -19,28 +20,50 @@ namespace x360ce.App
 				return ps;
 			var list = objects.ToList();
 			// Get information about device.
-			var o = list.FirstOrDefault(x => x.Type == ObjectGuid.RxAxis);
 			var deviceType = (SharpDX.DirectInput.DeviceType)ud.CapType;
-			// If Right thumb triggers are missing then...
-			if (deviceType == DeviceType.Gamepad && o == null)
+			if (deviceType == DeviceType.Mouse)
 			{
-				// Logitech RumblePad 2 USB
-				ps.ButtonA = GetButtonValue(list, 1, true, "Cross");
-				ps.ButtonB = GetButtonValue(list, 2, true, "Circle");
-				ps.ButtonX = GetButtonValue(list, 0, true, "Square");
-				ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
-				ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
-				ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
-				ps.ButtonBack = GetButtonValue(list, 8, true, "Select", "Back");
-				ps.ButtonStart = GetButtonValue(list, 9, true, "Start");
-				ps.LeftThumbButton = GetButtonValue(list, 10, true, "Left Paddle");
-				ps.RightThumbButton = GetButtonValue(list, 11, true, "Right Paddle");
-				// Triggers.
-				ps.LeftTrigger = GetButtonValue(list, 6, true, "L2");
-				ps.RightTrigger = GetButtonValue(list, 7, true, "R2");
-				// Right Thumb.
-				ps.RightThumbAxisX = GetAxisValue(list, false, ObjectGuid.ZAxis, true);
-				ps.RightThumbAxisY = GetAxisValue(list, true, ObjectGuid.RzAxis, true);
+				// Offset  Type    Aspect    Flags         Instance  Name    
+				// ------  ------  --------  ------------  --------  --------
+				//      0  XAxis   Position  RelativeAxis         0  X-axis  
+				//      4  YAxis   Position  RelativeAxis         1  Y-axis  
+				//      8  ZAxis   Position  RelativeAxis         2  Wheel   
+				//     12  Button            PushButton           3  Button 0
+				//     13  Button            PushButton           4  Button 1
+				//     14  Button            PushButton           5  Button 2
+				//     15  Button            PushButton           6  Button 3
+				//     16  Button            PushButton           7  Button 4
+				//     17  Button            PushButton           8  Button 5
+				//     18  Button            PushButton           9  Button 6
+				//     19  Button            PushButton          10  Button 7
+				//
+				ps.ButtonA = GetButtonValue(list, 0, true, "Button 0");
+				ps.ButtonB = GetButtonValue(list, 1, true, "Button 1");
+				ps.ButtonX = GetButtonValue(list, 2, true, "Button 2");
+				ps.ButtonY = GetButtonValue(list, 3, true, "Button 3");
+				ps.LeftShoulder = GetButtonValue(list, 4, true, "Button 4");
+				ps.RightShoulder = GetButtonValue(list, 5, true, "Button 5");
+				ps.ButtonBack = GetButtonValue(list, 6, true, "Button 6");
+				ps.ButtonStart = GetButtonValue(list, 7, true, "Button 7");
+				ps.LeftThumbButton = GetButtonValue(list, 8, true, "Button 8");
+				ps.RightThumbButton = GetButtonValue(list, 9, true, "Button 9");
+				// Left Thumb (Look).
+				ps.LeftThumbAxisX = GetAxisValue(list, false, ObjectGuid.XAxis, true, "X-Axis");
+				ps.LeftThumbAxisY = GetAxisValue(list, true, ObjectGuid.YAxis, true, "Y-Axis");
+				// Wheel.
+				ps.RightThumbAxisY = GetAxisValue(list, true, ObjectGuid.ZAxis, true, "Wheel");
+			}
+			else if (deviceType == DeviceType.Keyboard)
+			{
+				ps.ButtonX = GetButtonValue(list, null, true, "^SPACE$"); // Jump/Kick
+				ps.LeftThumbUp = GetButtonValue(list, null, true, "^W$"); // Move Forward
+				ps.LeftThumbLeft = GetButtonValue(list, null, true, "^A$"); // Move Left
+				ps.LeftThumbDown = GetButtonValue(list, null, true, "^S$"); // Move Backward
+				ps.LeftThumbRight = GetButtonValue(list, null, true, "^D$"); // Move Right
+																			 //ps.DPadUp = GetButtonValue(list, null, true, "^$"); // Phone Up
+																			 //ps.DPadDown = GetButtonValue(list, null, true, "^]$"); // Phone Down
+				ps.DPadLeft = GetButtonValue(list, null, true, "^\\[$"); // Previous Weapon
+				ps.DPadRight = GetButtonValue(list, null, true, "^\\]$"); // Next Weapon
 			}
 			else
 			{
@@ -81,7 +104,7 @@ namespace x360ce.App
 
 				ps.ButtonA = GetButtonValue(list, 0, true, "Cross");
 				ps.ButtonB = GetButtonValue(list, 1, true, "Circle");
-				ps.ButtonX = GetButtonValue(list, 2, true, "Square", "SPACE"); // Jump/Kick
+				ps.ButtonX = GetButtonValue(list, 2, true, "Square"); // Jump/Kick
 				ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
 				ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
 				ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
@@ -97,29 +120,28 @@ namespace x360ce.App
 				ps.RightThumbAxisX = GetAxisValue(list, false, ObjectGuid.RxAxis, true);
 				// Y is inverted by default.
 				ps.RightThumbAxisY = GetAxisValue(list, true, ObjectGuid.RyAxis, true);
+				// Right Thumb.
+				ps.LeftThumbAxisX = GetAxisValue(list, false, ObjectGuid.XAxis, true, "Wheel axis");
+				// Y is inverted by default.
+				ps.LeftThumbAxisY = GetAxisValue(list, true, ObjectGuid.YAxis, true);
+				// D-Pad
+				var o = list.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
+				ps.DPad = o == null ? "" : string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1);
 			}
-			// Right Thumb.
-			ps.LeftThumbAxisX = GetAxisValue(list, false, ObjectGuid.XAxis, true, "Wheel axis");
-			// Y is inverted by default.
-			ps.LeftThumbAxisY = GetAxisValue(list, true, ObjectGuid.YAxis, true);
-			// D-Pad
-			o = list.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
-			ps.DPad = o == null ? "" : string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1);
 			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
 			return ps;
 		}
 
 		/// <summary>Return button setting value if button exists.</summary>
-		static string GetButtonValue(List<DeviceObjectItem> objects, int instance, bool removeIfFound, params string[] names)
+		static string GetButtonValue(List<DeviceObjectItem> objects, int? dIndex, bool removeIfFound, params string[] names)
 		{
 			DeviceObjectItem o = null;
 			// Try to find by name.
-			foreach (var name in names)
+			var rxs = names.Select(x => new Regex(x, RegexOptions.IgnoreCase));
+			foreach (var rx in rxs)
 			{
-				// Try exact match first.
-				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && string.Compare(x.Name, name, true) == 0);
-				if (o == null)
-					o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.Name.Contains(name));
+				// Try find a match.
+				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && rx.IsMatch(x.Name));
 				if (o != null)
 				{
 					if (removeIfFound)
@@ -127,9 +149,9 @@ namespace x360ce.App
 					break;
 				}
 			}
-			// Try to find by instance.
-			if (o == null)
-				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.Instance == instance);
+			// Try to find by Custom DIndex.
+			if (o == null && dIndex.HasValue)
+				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.DiIndex == dIndex.Value);
 			// Use instance number which is same as X360CE button index.
 			return o == null ? "" : string.Format("{0}{1}", SettingName.SType.Button, o.DiIndex + 1);
 		}
@@ -156,7 +178,7 @@ namespace x360ce.App
 			if (o == null)
 				o = objects.FirstOrDefault(x => x.Type == type);
 			return o == null ? "" : string.Format("{0}{1}",
-				(invert ? "-" : "") + SettingName.SType.Axis
+				SettingName.SType.Axis + (invert ? "-" : "")
 				// Use X360CE axis index.
 				, o.DiIndex + 1);
 		}

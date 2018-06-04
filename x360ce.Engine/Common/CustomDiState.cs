@@ -87,8 +87,9 @@ namespace x360ce.Engine
         /// </summary>
         public static int GetJoystickAxisMask(DeviceObjectItem[] items, Joystick device)
         {
-            // Must have same order as in axis.
-            var list = new List<JoystickOffset>{
+			// Must have same order as in axis.
+			// Important: These values are not the same as on DeviceObjectInstance.Offset.
+			var list = new List<JoystickOffset>{
                     JoystickOffset.X,
                     JoystickOffset.Y,
                     JoystickOffset.Z,
@@ -121,12 +122,12 @@ namespace x360ce.Engine
                 try
                 {
 					// This function accepts JoystickOffset enumeration values.
-					// These values are not the same as on DeviceObjectInstance.Offset.
+					// Important: These values are not the same as on DeviceObjectInstance.Offset.
 					var o = device.GetObjectInfoByOffset((int)list[i]);
                     if (o != null)
 					{
-						// Find same object by raw offset.
-						var item = items.First(x => x.Offset == x.Offset);
+						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
+						var item = items.First(x => x.Offset == o.Offset);
 						item.DiIndex = i;
 						mask |= (int)Math.Pow(2, i);
 					}
@@ -136,23 +137,34 @@ namespace x360ce.Engine
             return mask;
         }
 
-        public static int GetMouseAxisMask(IList<DeviceObjectInstance> items)
+        public static int GetMouseAxisMask(DeviceObjectItem[] items, Joystick device)
         {
-            // Must have same order as in Axis[] property.
-            var list = new List<MouseOffset>{
+			// Must have same order as in Axis[] property.
+			// Important: These values are not the same as on DeviceObjectInstance.Offset.
+			var list = new List<MouseOffset>{
                     MouseOffset.X,
                     MouseOffset.Y,
                     MouseOffset.Z,
                 };
             int mask = 0;
-            foreach (var item in items)
-            {
-                var offset = (MouseOffset)item.Offset;
-                var index = list.IndexOf(offset);
-                if (index > -1)
-                    mask |= (int)Math.Pow(2, index);
-            }
-            return mask;
+			for (int i = 0; i < list.Count; i++)
+			{
+				try
+				{
+					// This function accepts JoystickOffset enumeration values.
+					// Important: These values are not the same as on DeviceObjectInstance.Offset.
+					var o = device.GetObjectInfoByOffset((int)list[i]);
+					if (o != null)
+					{
+						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
+						var item = items.First(x => x.Offset == o.Offset);
+						item.DiIndex = i;
+						mask |= (int)Math.Pow(2, i);
+					}
+				}
+				catch { }
+			}
+			return mask;
         }
 
         #endregion
@@ -183,8 +195,9 @@ namespace x360ce.Engine
 
         public static int GetJoystickSlidersMask(DeviceObjectItem[] items, Joystick device)
         {
-            // Must have same order as in Sliders[] property.
-            var list = new List<JoystickOffset>{
+			// Must have same order as in Sliders[] property.
+			// Important: These values are not the same as on DeviceObjectInstance.Offset.
+			var list = new List<JoystickOffset>{
                 JoystickOffset.Sliders0,
                 JoystickOffset.Sliders1,
                 JoystickOffset.AccelerationSliders0,
@@ -200,12 +213,12 @@ namespace x360ce.Engine
                 try
                 {
 					// This function accepts JoystickOffset enumeration values.
-					// These values are not the same as on DeviceObjectInstance.Offset.
+					// Important: These values are not the same as on DeviceObjectInstance.Offset.
 					var o = device.GetObjectInfoByOffset((int)list[i]);
 					if (o != null)
 					{
-						// Find same object by raw offset.
-						var item = items.First(x => x.Offset == x.Offset);
+						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
+						var item = items.First(x => x.Offset == o.Offset);
 						item.DiIndex = i;
 						mask |= (int)Math.Pow(2, i);
 					}

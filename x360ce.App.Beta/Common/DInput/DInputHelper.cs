@@ -128,6 +128,10 @@ namespace x360ce.App.DInput
 		{
 			_ThreadStart = new ThreadStart(ThreadAction);
 			_Thread = new Thread(_ThreadStart);
+			// This thread will run function which will update BindingList, which will use synchronous Invoke() on main form running on main thread.
+			// It can freeze, because Main thread is not getting attention to process Invoke() (because attention is on this thread)
+			// and this thread is frozen because it is waiting for Invoke() to finish.
+			_Thread.IsBackground = true;
 			_Thread.Start();
 		}
 

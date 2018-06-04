@@ -194,6 +194,8 @@ namespace x360ce.App
 			Layouts.Load();
 			PadSettings.Load();
 			UserDevices.Load();
+			// Update DataGrids asynchronously in order not to freeze interface during device detection/update.
+			UserDevices.Items.AsynchronousInvoke = true;
 			UserInstances.Load();
 			UserComputers.Load();
 			OptionsData.Items.SynchronizingObject = so;

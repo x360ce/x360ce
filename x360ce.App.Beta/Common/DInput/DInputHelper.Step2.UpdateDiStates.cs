@@ -89,7 +89,9 @@ namespace x360ce.App.DInput
 								var dos = AppHelper.GetDeviceObjects(device);
 								ud.DeviceObjects = dos;
 								// Update masks.
-								ud.DiAxeMask = CustomDiState.GetJoystickAxisMask(dos, device);
+								ud.DiAxeMask = ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse
+									? CustomDiState.GetMouseAxisMask(dos, device)
+									: CustomDiState.GetJoystickAxisMask(dos, device);
 								ud.DiSliderMask = CustomDiState.GetJoystickSlidersMask(dos, device);
 							}
 							if (ud.DeviceEffects == null)

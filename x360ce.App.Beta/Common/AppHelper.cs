@@ -74,21 +74,27 @@ namespace x360ce.App
 			var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
 			List<Guid> typeGuids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
 			List<string> typeName = guidFileds.Select(x => x.Name).ToList();
-            var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x => x.ObjectId.InstanceNumber).ToArray();
-            foreach (var o in objects)
+			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x => x.ObjectId.InstanceNumber).ToArray();
+			foreach (var o in objects)
 			{
-                var item = new DeviceObjectItem()
+				var item = new DeviceObjectItem()
 				{
 					Name = o.Name,
 					Offset = o.Offset,
 					Aspect = o.Aspect,
 					Flags = o.ObjectId.Flags,
-                    ObjectId = (int)o.ObjectId,
+					ObjectId = (int)o.ObjectId,
 					Instance = o.ObjectId.InstanceNumber,
 					Type = o.ObjectType,
 					DiIndex = o.ObjectId.InstanceNumber - 1,
-			};
+				};
 				items.Add(item);
+			}
+			// Update Button DIndexes.
+			var buttons = items.Where(x => x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key).OrderBy(x => x.Instance).ToArray();
+			for (int i = 0; i < buttons.Length; i++)
+			{
+				buttons[i].DiIndex = i;
 			}
 			return items.ToArray();
 		}
@@ -110,10 +116,10 @@ namespace x360ce.App
 			{
 				// Unload XInput.
 				var isLoaded = Controller.IsLoaded;
-                if (isLoaded)
-                {
-                    Controller.FreeLibrary();
-                }
+				if (isLoaded)
+				{
+					Controller.FreeLibrary();
+				}
 				IList<EffectInfo> effects = new List<EffectInfo>();
 				try
 				{
@@ -121,8 +127,8 @@ namespace x360ce.App
 				}
 				catch (Exception ex)
 				{
-                    JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-                }
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				}
 				foreach (var eff in effects)
 				{
 					items.Add(new DeviceEffectItem()
@@ -137,7 +143,7 @@ namespace x360ce.App
 				{
 					Exception error;
 					Controller.ReLoadLibrary(Controller.LibraryName, out error);
-                }
+				}
 			}
 			return items.ToArray();
 		}
@@ -265,7 +271,7 @@ namespace x360ce.App
 			return newSetting;
 		}
 
-    	public static MapToMask GetMapFlag(MapTo mapTo)
+		public static MapToMask GetMapFlag(MapTo mapTo)
 		{
 			switch (mapTo)
 			{

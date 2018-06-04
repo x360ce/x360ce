@@ -54,7 +54,7 @@ namespace x360ce.App
 				}
 				// Form GUI update is very heavy on CPU.
 				// Enable form GUI update only if form is not minimized.
-				EnableFormUpdates(WindowState != FormWindowState.Minimized);
+				EnableFormUpdates(WindowState != FormWindowState.Minimized && !Program.IsClosing);
 			}
 		}
 
