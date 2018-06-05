@@ -20,6 +20,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             ExceptionInfoButton.Visible = false;
             // List which contains all issues.
             IssueList = new BindingListInvoked<IssueItem>();
+			IssueList.AsynchronousInvoke = true;
             IssueList.SynchronizingObject = this;
             IssueList.ListChanged += IssueList_ListChanged;
             UpdateIgnoreAllButton();

@@ -53,6 +53,7 @@ namespace x360ce.App
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
+			_ResumeTimer.Elapsed += _ResumeTimer_Elapsed;
 			Pad1TabPage.Text = "Controller 1";
 			Pad2TabPage.Text = "Controller 2";
 			Pad3TabPage.Text = "Controller 3";
@@ -700,6 +701,7 @@ namespace x360ce.App
 			var allow = !o.TestEnabled || o.TestUpdateInterface;
 			if (!allow)
 				return;
+			var client = ViGEmClient.Current;
 			for (int i = 0; i < 4; i++)
 			{
 				// Get devices mapped to game and specific controller index.
@@ -707,27 +709,13 @@ namespace x360ce.App
 				// DInput instance is ON if active devices found.
 				var diOn = devices.Count(x => x.IsOnline) > 0;
 				// XInput instance is ON.
-				var xiOn = false;
-
-				var client = ViGEmClient.Current;
-				if (client != null)
-					xiOn = client.IsControllerConnected((uint)i + 1);
-				//			State currentGamePad = emptyState;
-				//			lock (XInputLock)
-				//			{
-				//				var gamePad = XiControllers[i];
-				//				if (XInput.IsLoaded && gamePad.IsConnected)
-				//				{
-				//					currentGamePad = gamePad.GetState();
-				//					xiOn = true;
-				//				}
-				//			}
+				var xiOn = client != null && client.IsControllerConnected((uint)i + 1);
 				var padControl = PadControls[i];
-				//			// Update Form from DInput state.
+				// Update Form from DInput state.
 				padControl.UpdateFromDInput();
-				//			// Update Form from XInput state.
+				// Update Form from XInput state.
 				padControl.UpdateFromXInput();
-				//			// Update LED of GamePad state.
+				// Update LED of GamePad state.
 				string image = diOn
 					// DInput ON, XInput ON 
 					? xiOn ? "green"
@@ -900,6 +888,16 @@ namespace x360ce.App
 			return !firsInstance;
 		}
 
+		const int WM_WININICHANGE = 0x001A;
+		const int WM_SETTINGCHANGE = WM_WININICHANGE;
+
+		System.Timers.Timer _ResumeTimer = new System.Timers.Timer() { AutoReset = false, Interval = 1000 };
+
+		private void _ResumeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			DHelper.Start();
+		}
+
 		/// <summary>
 		/// NOTE: you must be careful with this method, because this method is responsible for all the
 		/// windows messages that are coming to the form.
@@ -908,6 +906,13 @@ namespace x360ce.App
 		/// <remarks>This overrides the windows messaging processing</remarks>
 		protected override void DefWndProc(ref Message m)
 		{
+			if (m.Msg == WM_SETTINGCHANGE)
+			{
+				// Must stop all updates or interface will freeze during screen updates.
+				DHelper.Stop();
+				_ResumeTimer.Stop();
+				_ResumeTimer.Start();
+			}
 			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
 			{
 				DHelper.UpdateDevicesEnabled = true;
@@ -1304,12 +1309,6 @@ namespace x360ce.App
 			}
 		}
 
-		private void DHelper_UpdateCompletedInvoked(object sender, EventArgs e)
-		{
-			UpdateForm3();
-			UpdateCompletedBusy = false;
-		}
-
 		private void DHelper_DevicesUpdated(object sender, EventArgs e)
 		{
 			lock (LockFormEvents)
@@ -1350,20 +1349,26 @@ namespace x360ce.App
 					InterfaceUpdateWatch = new System.Diagnostics.Stopwatch();
 					InterfaceUpdateWatch.Start();
 				}
+				var delay = 1000 / (interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps);
+				var currentTime = InterfaceUpdateWatch.ElapsedMilliseconds;
+				// If not enough time passed then return.
+				if ((currentTime - LastUpdateTime) < delay)
+					return;
 				// If still updating interface then return.
 				if (UpdateCompletedBusy)
 					return;
-				var delay = 1000 / (interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps);
-				var currentTime = InterfaceUpdateWatch.ElapsedMilliseconds;
-				if ((currentTime - LastUpdateTime) < delay)
-					return;
-				LastUpdateTime = currentTime;
 				UpdateCompletedBusy = true;
+				LastUpdateTime = currentTime;
+				if (!Program.IsClosing)
+				{
+					// Make sure method is executed on the same thread as this control.
+					MainForm.Current.BeginInvoke((MethodInvoker)delegate ()
+					{
+						UpdateForm3();
+						UpdateCompletedBusy = false;
+					});
+				}
 			}
-			if (Program.IsClosing) return;
-			// Make sure method is executed on the same thread as this control.
-			var method = new EventHandler<EventArgs>(DHelper_UpdateCompletedInvoked);
-			BeginInvoke(method, new object[] { sender, e });
 		}
 
 		private void DHelper_FrequencyUpdated(object sender, EventArgs e)

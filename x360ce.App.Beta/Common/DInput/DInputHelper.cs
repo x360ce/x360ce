@@ -154,7 +154,8 @@ namespace x360ce.App.DInput
 					RefreshAll(manager, detector);
 				// Blocks the current thread until the current WaitHandle receives a signal.
 				// Thread will be release by the timer.
-				_ResetEvent.WaitOne();
+				// Do not wait longer than 50ms.
+				_ResetEvent.WaitOne(50);
 			}
 			// Loop until suspended.
 			while (_AllowThreadToRun);
