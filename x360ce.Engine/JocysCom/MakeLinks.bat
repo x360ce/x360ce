@@ -49,6 +49,7 @@ CALL:MKJ Extensions
 CALL:MKJ Files
 CALL:MKJ IO
 CALL:MKJ Mail
+CALL:MKJ Network
 CALL:MKJ Processes
 CALL:MKJ Resources
 CALL:MKJ Runtime

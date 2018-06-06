@@ -1,9 +1,9 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Threading;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -19,7 +19,9 @@ namespace x360ce.App.Controls
 			if (IsDesignMode) return;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(TasksDataGridView);
             EngineHelper.EnableDoubleBuffering(TasksDataGridView);
-            TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, this);
+			InitNetworkInformation();
+			// Enable task timer.
+			TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, this);
             TasksTimer.DoWork += queueTimer_DoWork;
             TasksTimer.Queue.ListChanged += Data_ListChanged;
             TasksDataGridView.AutoGenerateColumns = false;
@@ -34,6 +36,32 @@ namespace x360ce.App.Controls
         }
 
 		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
+
+		#region Network Availability
+
+		void InitNetworkInformation()
+		{
+			// Enable network monitoring.
+			// Make sure settings are synchronized when connection is available only.
+			NetworkChange.NetworkAvailabilityChanged += NetworkInformation_NetworkAvailabilityChanged;
+			NetworkChange.NetworkAddressChanged += NetworkChange_NetworkAddressChanged;
+			isNetworkAvailable = JocysCom.ClassLibrary.Network.NetStatInfo.IsNetworkAvailable();
+		}
+
+		private void NetworkChange_NetworkAddressChanged(object sender, EventArgs e)
+		{
+			isNetworkAvailable = JocysCom.ClassLibrary.Network.NetStatInfo.IsNetworkAvailable();
+		}
+
+		bool isNetworkAvailable;
+
+		public void NetworkInformation_NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
+		{
+			isNetworkAvailable = JocysCom.ClassLibrary.Network.NetStatInfo.IsNetworkAvailable();
+		}
+
+		#endregion
+
 
 		private void TasksDataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
@@ -274,7 +302,7 @@ namespace x360ce.App.Controls
             {
                 remains = nextRunTime.Subtract(DateTime.Now);
             }
-            var nextRun = string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
+            var nextRun = string.Format("Next Run {2}: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m), isNetworkAvailable ? "ON" : "OFF");
             ControlsHelper.SetText(NextRunLabel, nextRun);
             var lrt = TasksTimer.LastActionDoneTime;
             var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
