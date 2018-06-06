@@ -16,11 +16,11 @@ namespace x360ce.App
 		{
 			get
 			{
-				bool debug;
 #if DEBUG
-				debug = true;
+				return true;
+#else
+				return false;
 #endif
-				return debug;
 			}
 		}
 
