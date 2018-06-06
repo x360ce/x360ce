@@ -300,7 +300,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			return doc;
 		}
 
-		static T SeriallizeToXml<T>(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null)
+		static T SeriallizeToXml<T>(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, bool indent = true)
 		{
 			if (o == null) return default(T);
 			// Create serialization settings.
@@ -308,7 +308,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var settings = new XmlWriterSettings();
 			settings.OmitXmlDeclaration = omitXmlDeclaration;
 			settings.Encoding = encoding;
-			settings.Indent = true;
+			settings.Indent = indent;
 			// Serialize.
 			var serializer = GetXmlSerializer(o.GetType());
 			// Serialize in memory first, so file will be locked for shorter times.
@@ -379,9 +379,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="encoding">The encoding to use (default is UTF8).</param>
 		/// <param name="namespaces">Contains the XML namespaces and prefixes that the XmlSerializer  uses to generate qualified names in an XML-document instance.</param>
 		/// <returns>XML string.</returns>
-		public static string SerializeToXmlString(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null)
+		public static string SerializeToXmlString(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, bool indent = true)
 		{
-			return SeriallizeToXml<string>(o, encoding, omitXmlDeclaration, comment);
+			return SeriallizeToXml<string>(o, encoding, omitXmlDeclaration, comment, indent);
 		}
 
 		/// <summary>
