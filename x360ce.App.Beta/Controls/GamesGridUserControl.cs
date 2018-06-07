@@ -242,7 +242,7 @@ namespace x360ce.App.Controls
 			AddNewGame();
 		}
 
-		void AddNewGame()
+		public void AddNewGame()
 		{
 			var fullPath = "";
 			var row = GamesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();

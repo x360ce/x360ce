@@ -70,6 +70,7 @@ namespace x360ce.App
 			this.TestButton = new System.Windows.Forms.ToolStripButton();
 			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
+			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -510,7 +511,8 @@ namespace x360ce.App
             this.SaveAllButton,
             this.TestButton,
             this.MappedDevicesLabel,
-            this.GameToCustomizeComboBox});
+            this.GameToCustomizeComboBox,
+            this.AddGameButton});
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 64);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 4, 0);
@@ -556,6 +558,19 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
 			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(360, 24);
+			// 
+			// AddGameButton
+			// 
+			this.AddGameButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.AddGameButton.Image = global::x360ce.App.Properties.Resources.add_16x16;
+			this.AddGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.AddGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.AddGameButton.Margin = new System.Windows.Forms.Padding(1);
+			this.AddGameButton.Name = "AddGameButton";
+			this.AddGameButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
+			this.AddGameButton.Size = new System.Drawing.Size(92, 22);
+			this.AddGameButton.Text = "Add Game...";
+			this.AddGameButton.Click += new System.EventHandler(this.AddGameButton_Click);
 			// 
 			// MainForm
 			// 
@@ -650,5 +665,6 @@ namespace x360ce.App
 		private JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl IssuesPanel;
 		private ToolStripButton TestButton;
 		private ToolStripStatusLabel FormUpdateFrequencyLabel;
+		private ToolStripButton AddGameButton;
 	}
 }

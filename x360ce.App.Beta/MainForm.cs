@@ -187,7 +187,30 @@ namespace x360ce.App
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
+			InitProcessMonitor();
 		}
+
+		#region Process Monitor
+
+		ProcessMonitor _ProcessMonitor;
+
+		void InitProcessMonitor()
+		{
+			// Supported only in elevated mode.
+			if (!WinAPI.IsElevated())
+				return;
+			_ProcessMonitor = new ProcessMonitor();
+			_ProcessMonitor.Start();
+		}
+
+		void DisposeProcessMonitor()
+		{
+			if (_ProcessMonitor != null)
+				_ProcessMonitor.Stop();
+		}
+
+		#endregion
+
 
 		private void DHelper_XInputReloaded(object sender, DInput.DInputEventArgs e)
 		{
@@ -1100,6 +1123,7 @@ namespace x360ce.App
 				{
 					_Mutex.Dispose();
 				}
+				DisposeProcessMonitor();
 				DisposeDeviceForm();
 				DisposeUpdateForm();
 				DisposeInterfaceUpdate();
@@ -1507,6 +1531,16 @@ namespace x360ce.App
 			GameToCustomizeComboBox.Width = Math.Max(0, width - GameToCustomizeComboBox.Margin.Horizontal);
 			// Resolve disappearing.
 			GamesToolStrip.PerformLayout();
+		}
+
+		private void AddGameButton_Click(object sender, EventArgs e)
+		{
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				MainTabControl.SelectedTab = GamesTabPage;
+				Application.DoEvents();
+				GameSettingsPanel.AddNewGame();
+			});
 		}
 	}
 }

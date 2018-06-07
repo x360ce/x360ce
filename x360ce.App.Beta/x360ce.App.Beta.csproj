@@ -164,6 +164,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Management.Instrumentation" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
@@ -194,6 +195,7 @@
     <Compile Include="Common\DownloaderEventArgs.cs" />
     <Compile Include="Common\DownloaderParams.cs" />
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\ProcessMonitor.cs" />
     <Compile Include="Common\SettingChangedEventArgs.cs" />
     <Compile Include="Common\UpdateFrequency.cs" />
     <Compile Include="Common\HookMode.cs" />
