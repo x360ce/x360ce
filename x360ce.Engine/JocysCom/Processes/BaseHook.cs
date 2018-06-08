@@ -113,7 +113,8 @@ namespace JocysCom.ClassLibrary.Processes
 			{
 				// If hook is installed already then return.
 				_hookType = hookType;
-				if (hook1handleRef.Handle != IntPtr.Zero) return;
+				if (hook1handleRef.Handle != IntPtr.Zero)
+					return;
 				string lpModuleName = System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName;
 				var hMod = NativeMethods.GetModuleHandle(lpModuleName);
 				// Assign Virtual function.
@@ -143,7 +144,7 @@ namespace JocysCom.ClassLibrary.Processes
 						IntPtr.Zero,
 						_Hook2Procedure,
 						0,
-						 // Associate hook procedure with current application/thread only.
+						// Associate hook procedure with current application/thread only.
 						global ? 0 : threadId,
 						WINEVENT_OUTOFCONTEXT
 					);
@@ -172,6 +173,16 @@ namespace JocysCom.ClassLibrary.Processes
 					}
 					hook3handleRef = new HandleRef(null, hook3Handle);
 
+				}
+				else if (hookType == HookType.WH_SHELL)
+				{
+					// Listen for events.
+					hook1Handle = NativeMethods.SetWindowsHookEx((uint)hookType, _Hook1Procedure, hMod, 0);
+					if (hook1Handle == IntPtr.Zero)
+					{
+						var ex = new Win32Exception();
+						throw new Exception(ex.Message);
+					}
 				}
 				else
 				{

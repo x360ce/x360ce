@@ -36,7 +36,7 @@ namespace x360ce.App
 			// First: Set working folder to the path of executable.
 			var fi = new FileInfo(Application.ExecutablePath);
 			Directory.SetCurrentDirectory(fi.Directory.FullName);
-			// Prevent brave users from running this app from Windows folder.
+			// Prevent brave users from running this application from Windows folder.
 			var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 			if (fi.FullName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 			{

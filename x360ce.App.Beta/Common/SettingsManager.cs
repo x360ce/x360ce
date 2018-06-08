@@ -266,13 +266,13 @@ namespace x360ce.App
 
 			// Check if current application doesn't exist in the list then...
 			var appFile = new FileInfo(Application.ExecutablePath);
-			var appItem = distinctItems.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
+			var appItem = distinctItems.FirstOrDefault(x => string.Compare(x.FileName, appFile.Name, true) == 0);
 			if (appItem == null)
 			{
 				// Add x360ce.exe
 				var scanner = new XInputMaskScanner();
-				var item = scanner.FromDisk(appFile.Name);
-				var program = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == appFile.Name.ToLower());
+				var item = scanner.FromDisk(appFile.FullName);
+				var program = SettingsManager.Programs.Items.FirstOrDefault(x => string.Compare(x.FileName, appFile.Name, true) == 0);
 				item.LoadDefault(program);
 				// Append to top.
 				distinctItems.Insert(0, item);

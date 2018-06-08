@@ -156,14 +156,7 @@ namespace x360ce.App
 			SettingsManager.Load(this);
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
 			XInputMaskScanner.FileInfoCache.Load();
-			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
-			// Make sure that X360CE.exe is on top.
-			GameToCustomizeComboBox.ComboBox.DisplayMember = "DisplayName";
-			GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
-
-			// Select game by manually trigger event.
-			GameToCustomizeComboBox_SelectedIndexChanged(GameToCustomizeComboBox, new EventArgs());
-
+			InitGameToCustomizeComboBox();
 			UpdateTimer = new System.Timers.Timer();
 			UpdateTimer.AutoReset = false;
 			UpdateTimer.SynchronizingObject = this;
@@ -187,7 +180,6 @@ namespace x360ce.App
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
-			InitProcessMonitor();
 		}
 
 		#region Process Monitor
@@ -197,8 +189,8 @@ namespace x360ce.App
 		void InitProcessMonitor()
 		{
 			// Supported only in elevated mode.
-			if (!WinAPI.IsElevated())
-				return;
+			//if (!WinAPI.IsElevated())
+			//	return;
 			_ProcessMonitor = new ProcessMonitor();
 			_ProcessMonitor.Start();
 		}
@@ -583,6 +575,7 @@ namespace x360ce.App
 				}
 				if (update3Enabled && IsHandleCreated)
 				{
+					InitProcessMonitor();
 					update3Enabled = false;
 					DHelper.Start();
 				}
@@ -1145,8 +1138,33 @@ namespace x360ce.App
 			Close();
 		}
 
+		#region Current Game
+
 		public UserGame CurrentGame;
 		public object CurrentGameLock = new object();
+
+		public void SelectCurrentOrDefaultGame(UserGame game = null)
+		{
+			// Get current if not found.
+			if (game == null)
+				game = SettingsManager.UserGames.Items.FirstOrDefault(x => x.IsCurrentApp());
+			BeginInvoke((MethodInvoker)delegate ()
+			{
+				GameToCustomizeComboBox.SelectedItem = game;
+			});
+		}
+
+		void InitGameToCustomizeComboBox()
+		{
+			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
+			// Make sure that X360CE.exe is on top.
+			GameToCustomizeComboBox.ComboBox.DisplayMember = "DisplayName";
+			GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
+			// Select game by manually trigger event.
+			var selected = ProcessMonitor.SelectOpenGame();
+			if (!selected)
+				GameToCustomizeComboBox_SelectedIndexChanged(GameToCustomizeComboBox, new EventArgs());
+		}
 
 		private void GameToCustomizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -1211,6 +1229,26 @@ namespace x360ce.App
 			var fullPath = Path.Combine(dir.FullName, SettingsManager.IniFileName);
 			EngineHelper.BrowsePath(fullPath);
 		}
+
+
+		private void GamesToolStrip_Resize(object sender, EventArgs e)
+		{
+			GameToCustomizeComboBox.AutoSize = false;
+			int width = GamesToolStrip.DisplayRectangle.Width;
+			foreach (ToolStripItem tsi in GamesToolStrip.Items)
+			{
+				if (!(tsi == GameToCustomizeComboBox))
+				{
+					width -= tsi.Width;
+					width -= tsi.Margin.Horizontal;
+				}
+			}
+			GameToCustomizeComboBox.Width = Math.Max(0, width - GameToCustomizeComboBox.Margin.Horizontal);
+			// Resolve disappearing.
+			GamesToolStrip.PerformLayout();
+		}
+
+		#endregion
 
 		#region Save and Synchronize Settings
 
@@ -1514,23 +1552,6 @@ namespace x360ce.App
 			{
 				DebugPanel.ShowPanel();
 			}
-		}
-
-		private void GamesToolStrip_Resize(object sender, EventArgs e)
-		{
-			GameToCustomizeComboBox.AutoSize = false;
-			int width = GamesToolStrip.DisplayRectangle.Width;
-			foreach (ToolStripItem tsi in GamesToolStrip.Items)
-			{
-				if (!(tsi == GameToCustomizeComboBox))
-				{
-					width -= tsi.Width;
-					width -= tsi.Margin.Horizontal;
-				}
-			}
-			GameToCustomizeComboBox.Width = Math.Max(0, width - GameToCustomizeComboBox.Margin.Horizontal);
-			// Resolve disappearing.
-			GamesToolStrip.PerformLayout();
 		}
 
 		private void AddGameButton_Click(object sender, EventArgs e)

@@ -3,6 +3,11 @@ using System.Diagnostics;
 using System.Management;
 using System.Linq;
 using System.IO;
+using System.Runtime.InteropServices;
+using System;
+using JocysCom.ClassLibrary.Processes;
+using x360ce.Engine.Data;
+using System.Windows.Forms;
 
 namespace x360ce.App
 {
@@ -40,8 +45,8 @@ namespace x360ce.App
 		{
 			lock (ActionLock)
 			{
-				StartWatcher.Start();
-				StopWatcher.Start();
+				StartWatcher.Stop();
+				StopWatcher.Stop();
 			}
 		}
 
@@ -61,11 +66,12 @@ namespace x360ce.App
 			var fi = GetProcessFileInfo(processId);
 			if (fi != null)
 			{
-				var setting = SettingsManager.UserGames.Items.Where(x => string.Compare(x.FullPath, fi.FullName, true) == 0).ToArray();
-				if (setting.Length > 0)
+				var game = SettingsManager.UserGames.Items.FirstOrDefault(x => string.Compare(x.FullPath, fi.FullName, true) == 0);
+				if (game != null && !game.IsCurrentApp())
 				{
 					ProcessList.Add(processId, fi);
-					// Trigger switch of the profile here.
+					// Switch to user game profile.
+					MainForm.Current.SelectCurrentOrDefaultGame(game);
 				}
 			}
 		}
@@ -83,15 +89,34 @@ namespace x360ce.App
 			//   uint ExitStatus;
 			var processId = (int)(uint)e.NewEvent.Properties["ProcessID"].Value;
 			if (ProcessList.ContainsKey(processId))
+			{
 				ProcessList.Remove(processId);
+				// Switch to user game profile.
+				MainForm.Current.SelectCurrentOrDefaultGame();
+			}
 		}
 
-		public static Process IsProcessOpen(string name)
+		public static bool SelectOpenGame()
 		{
-			foreach (var process in Process.GetProcesses())
-				if (process.ProcessName.Contains(name))
-					return process;
-			return null;
+			string query = "SELECT ExecutablePath, ProcessID FROM Win32_Process";
+			var searcher = new ManagementObjectSearcher(query);
+			var processes = searcher.Get().Cast<ManagementObject>().ToArray();
+			var defaultName = Path.GetFileName(Application.ExecutablePath);
+			foreach (var process in processes)
+			{
+				var path = (string)process.Properties["ExecutablePath"].Value;
+				if (!string.IsNullOrEmpty(path))
+				{
+					var game = SettingsManager.UserGames.Items.FirstOrDefault(x => string.Compare(x.FullPath, path, true) == 0);
+					if (game != null && !game.IsCurrentApp())
+					{
+						// Switch to user game profile.
+						MainForm.Current.SelectCurrentOrDefaultGame(game);
+						return true;
+					}
+				}
+			}
+			return false;
 		}
 
 		public static FileInfo GetProcessFileInfo(int processId)
@@ -105,8 +130,8 @@ namespace x360ce.App
 				var path = (string)item.Properties["ExecutablePath"].Value;
 				if (!string.IsNullOrEmpty(path))
 					fi = new FileInfo(path);
+				item.Dispose();
 			}
-			item.Dispose();
 			searcher.Dispose();
 			return fi;
 		}
