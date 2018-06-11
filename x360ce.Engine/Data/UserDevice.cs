@@ -66,7 +66,51 @@ namespace x360ce.Engine.Data
                 CapType = (int)cap.Type;
         }
 
-        public void LoadHidDeviceInfo(DeviceInfo info)
+		public void LoadDevDeviceInfo(DeviceInfo info)
+		{
+			if (info == null)
+			{
+				DevManufacturer = "";
+				DevVendorId = 0;
+				DevProductId = 0;
+				DevRevision = 0;
+				DevDescription = "";
+				DevDeviceId = "";
+				DevHardwareIds = "";
+				DevDevicePath = "";
+				DevParentDeviceId = "";
+				DevClassGuid = Guid.Empty;
+				DevClassDescription = "";
+			}
+			else
+			{
+				// Check if value is same to reduce grid refresh.
+				if (DevManufacturer != info.Manufacturer)
+					DevManufacturer = info.Manufacturer;
+				if (DevVendorId != (int)info.VendorId)
+					DevVendorId = (int)info.VendorId;
+				if (DevProductId != (int)info.ProductId)
+					DevProductId = (int)info.ProductId;
+				if (DevRevision != (int)info.Revision)
+					DevRevision = (int)info.Revision;
+				if (DevDescription != info.Description)
+					DevDescription = info.Description;
+				if (DevDeviceId != info.DeviceId)
+					DevDeviceId = info.DeviceId;
+				if (DevHardwareIds != info.HardwareIds)
+					DevHardwareIds = info.HardwareIds;
+				if (DevDevicePath != info.DevicePath)
+					DevDevicePath = info.DevicePath;
+				if (DevParentDeviceId != info.ParentDeviceId)
+					DevParentDeviceId = info.ParentDeviceId;
+				if (DevClassGuid != info.ClassGuid)
+					DevClassGuid = info.ClassGuid;
+				if (DevClassDescription != info.ClassDescription)
+					DevClassDescription = info.ClassDescription;
+			}
+		}
+
+		public void LoadHidDeviceInfo(DeviceInfo info)
         {
             if (info == null)
             {
@@ -76,10 +120,12 @@ namespace x360ce.Engine.Data
                 HidRevision = 0;
                 HidDescription = "";
                 HidDeviceId = "";
-                HidDevicePath = "";
+				HidHardwareIds = "";
+				HidDevicePath = "";
                 HidParentDeviceId = "";
                 HidClassGuid = Guid.Empty;
                 HidClassDescription = "";
+				HidHardwareIds = info.HardwareIds;
             }
             else
             {
@@ -96,7 +142,9 @@ namespace x360ce.Engine.Data
                     HidDescription = info.Description;
                 if (HidDeviceId != info.DeviceId)
                     HidDeviceId = info.DeviceId;
-                if (HidDevicePath != info.DevicePath)
+				if (HidHardwareIds != info.HardwareIds)
+					HidHardwareIds = info.HardwareIds;
+				if (HidDevicePath != info.DevicePath)
                     HidDevicePath = info.DevicePath;
                 if (HidParentDeviceId != info.ParentDeviceId)
                     HidParentDeviceId = info.ParentDeviceId;
@@ -104,47 +152,6 @@ namespace x360ce.Engine.Data
                     HidClassGuid = info.ClassGuid;
                 if (HidClassDescription != info.ClassDescription)
                     HidClassDescription = info.ClassDescription;
-            }
-        }
-
-        public void LoadDevDeviceInfo(DeviceInfo info)
-        {
-            if (info == null)
-            {
-                DevManufacturer = "";
-                DevVendorId = 0;
-                DevProductId = 0;
-                DevRevision = 0;
-                DevDescription = "";
-                DevDeviceId = "";
-                DevDevicePath = "";
-                DevParentDeviceId = "";
-                DevClassGuid = Guid.Empty;
-                DevClassDescription = "";
-            }
-            else
-            {
-                // Check if value is same to reduce grid refresh.
-                if (DevManufacturer != info.Manufacturer)
-                    DevManufacturer = info.Manufacturer;
-                if (DevVendorId != (int)info.VendorId)
-                    DevVendorId = (int)info.VendorId;
-                if (DevProductId != (int)info.ProductId)
-                    DevProductId = (int)info.ProductId;
-                if (DevRevision != (int)info.Revision)
-                    DevRevision = (int)info.Revision;
-                if (DevDescription != info.Description)
-                    DevDescription = info.Description;
-                if (DevDeviceId != info.DeviceId)
-                    DevDeviceId = info.DeviceId;
-                if (DevDevicePath != info.DevicePath)
-                    DevDevicePath = info.DevicePath;
-                if (DevParentDeviceId != info.ParentDeviceId)
-                    DevParentDeviceId = info.ParentDeviceId;
-                if (DevClassGuid != info.ClassGuid)
-                    DevClassGuid = info.ClassGuid;
-                if (DevClassDescription != info.ClassDescription)
-                    DevClassDescription = info.ClassDescription;
             }
         }
 
@@ -186,7 +193,13 @@ namespace x360ce.Engine.Data
         [XmlIgnore]
         public bool? IsExclusiveMode;
 
-        [XmlIgnore]
+		[XmlIgnore]
+		public string DevHardwareIds;
+
+		[XmlIgnore]
+		public string HidHardwareIds;
+
+		[XmlIgnore]
         public bool IsOnline
         {
             get { return _IsOnline; }

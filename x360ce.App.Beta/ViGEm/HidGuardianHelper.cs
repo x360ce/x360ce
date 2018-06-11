@@ -217,7 +217,7 @@ namespace x360ce.App.ViGEm
 		/// <summary>
 		/// Convert device IDs into hardware Ids.
 		/// </summary>
-		static string[] GetHardwareIds(params string[] deviceIds)
+		public static string[] GetHardwareIds(params string[] deviceIds)
 		{
 			var list = new List<string>();
 			foreach (var did in deviceIds)

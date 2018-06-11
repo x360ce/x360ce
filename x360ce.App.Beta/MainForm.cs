@@ -188,9 +188,6 @@ namespace x360ce.App
 
 		void InitProcessMonitor()
 		{
-			// Supported only in elevated mode.
-			//if (!WinAPI.IsElevated())
-			//	return;
 			_ProcessMonitor = new ProcessMonitor();
 			_ProcessMonitor.Start();
 		}

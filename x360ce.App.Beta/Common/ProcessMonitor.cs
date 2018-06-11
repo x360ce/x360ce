@@ -1,13 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.Management;
 using System.Linq;
 using System.IO;
-using System.Runtime.InteropServices;
-using System;
-using JocysCom.ClassLibrary.Processes;
-using x360ce.Engine.Data;
 using System.Windows.Forms;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App
 {
@@ -16,12 +12,15 @@ namespace x360ce.App
 
 		public ProcessMonitor()
 		{
-			StartQuery = new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace");
-			StartWatcher = new ManagementEventWatcher(StartQuery);
-			StartWatcher.EventArrived += startWatcher_EventArrived;
-			StopQuery = new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace");
-			StopWatcher = new ManagementEventWatcher(StopQuery);
-			StopWatcher.EventArrived += stopWatcher_EventArrived;
+			if (WinAPI.IsElevated())
+			{
+				StartQuery = new WqlEventQuery("SELECT * FROM Win32_ProcessStartTrace");
+				StartWatcher = new ManagementEventWatcher(StartQuery);
+				StartWatcher.EventArrived += startWatcher_EventArrived;
+				StopQuery = new WqlEventQuery("SELECT * FROM Win32_ProcessStopTrace");
+				StopWatcher = new ManagementEventWatcher(StopQuery);
+				StopWatcher.EventArrived += stopWatcher_EventArrived;
+			}
 		}
 
 		WqlEventQuery StartQuery;
@@ -34,6 +33,9 @@ namespace x360ce.App
 
 		public void Start()
 		{
+			// Supported only in elevated mode.
+			if (!WinAPI.IsElevated())
+				return;
 			lock (ActionLock)
 			{
 				StartWatcher.Start();
@@ -43,6 +45,9 @@ namespace x360ce.App
 
 		public void Stop()
 		{
+			// Supported only in elevated mode.
+			if (!WinAPI.IsElevated())
+				return;
 			lock (ActionLock)
 			{
 				StartWatcher.Stop();
@@ -119,7 +124,7 @@ namespace x360ce.App
 			return false;
 		}
 
-		public static FileInfo GetProcessFileInfo(int processId)
+		static FileInfo GetProcessFileInfo(int processId)
 		{
 			FileInfo fi = null;
 			string query = string.Format("SELECT ExecutablePath FROM Win32_Process WHERE ProcessID = {0}", processId);
