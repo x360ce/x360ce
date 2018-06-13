@@ -133,24 +133,28 @@ namespace x360ce.App.Controls
 			MainForm.Current.DHelper.UpdateDevicesEnabled = true;
 		}
 
-		List<string> GetIds(UserDevice ud)
+		/// <summary>
+		/// Get all IDs required for HID guardian to block device.
+		/// </summary>
+		/// <param name="ud"></param>
+		/// <returns></returns>
+		string[] GetIdsToBlock(string hidDeviceId, string hidHardwareIds)
 		{
 			var list = new List<string>();
-			var ids = ViGEm.HidGuardianHelper.GetHardwareIds(ud.HidDeviceId);
+			var ids = ViGEm.HidGuardianHelper.ConvertToHidVidPid(hidDeviceId);
 			if (ids.Length == 0)
-				return list;
-			// Add hardware ids to the list.
-			if (!string.IsNullOrEmpty(ud.HidHardwareIds))
-			{
-				var hids = ud.HidHardwareIds.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-				for (int i = 0; i < hids.Length; i++)
-				{
-					// If hardware id have VID and PID then...
-					if (hids[i].StartsWith(ids[0], StringComparison.OrdinalIgnoreCase))
-						list.Add(hids[i]);
-				}
-			}
-			return list;
+				return list.ToArray();
+			// If no hardware ids then return;
+			if (string.IsNullOrEmpty(hidHardwareIds))
+				return list.ToArray();
+			// Extract all IDs which starts from VID and PID.
+			var hwids = hidHardwareIds
+				.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+				.Where(x => x.StartsWith(ids[0], StringComparison.OrdinalIgnoreCase))
+				.ToArray();
+			// Add results to the list.
+			list.AddRange(hwids);
+			return list.ToArray();
 		}
 
 		private void DevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -168,30 +172,25 @@ namespace x360ce.App.Controls
 			}
 			else if (e.ColumnIndex == grid.Columns[IsHiddenColumn.Name].Index)
 			{
-				//var guardianHardwareId = ViGEm.HidGuardianHelper.GetHardwareId(item.HidDevicePath);
-				var hidDeviceId = ud.HidDeviceId;
-				if (!string.IsNullOrEmpty(hidDeviceId))
+				var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
+				if (canModify)
 				{
-					var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
-					if (canModify)
+					var ids = GetIdsToBlock(ud.HidDeviceId, ud.HidHardwareIds);
+					ud.IsHidden = !ud.IsHidden;
+					if (ud.IsHidden)
 					{
-
-						ud.IsHidden = !ud.IsHidden;
-						if (ud.IsHidden)
-						{
-							ViGEm.HidGuardianHelper.InsertToAffected(hidDeviceId);
-						}
-						else
-						{
-							ViGEm.HidGuardianHelper.RemoveFromAffected(hidDeviceId);
-						}
+						ViGEm.HidGuardianHelper.InsertToAffected(ids);
 					}
 					else
 					{
-						MessageBoxForm form = new MessageBoxForm();
-						form.StartPosition = FormStartPosition.CenterParent;
-						form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+						ViGEm.HidGuardianHelper.RemoveFromAffected(ids);
 					}
+				}
+				else
+				{
+					var form = new MessageBoxForm();
+					form.StartPosition = FormStartPosition.CenterParent;
+					form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
 			}
 		}
@@ -226,6 +225,31 @@ namespace x360ce.App.Controls
 			var devices = SettingsManager.UserDevices.Items.ToArray();
 			for (int i = 0; i < devices.Length; i++)
 				devices[i].IsHidden = false;
+		}
+
+		private void synchronizeToHidGuardianToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			// Get all devices which must be hidden.
+			var devices = SettingsManager.UserDevices.Items.Where(x=>x.IsHidden).ToList();
+			// Get all Ids.
+			var ids = new List<string>();
+			foreach (var ud in devices)
+			{
+				var idsToBlock = GetIdsToBlock(ud.HidDeviceId, ud.HidHardwareIds);
+				ids.AddRange(idsToBlock);
+			}
+			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
+			if (canModify)
+			{
+				var idsToBlock = ids.Distinct().ToArray();
+				ViGEm.HidGuardianHelper.InsertToAffected(idsToBlock);
+			}
+			else
+			{
+				var form = new MessageBoxForm();
+				form.StartPosition = FormStartPosition.CenterParent;
+				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			}
 		}
 	}
 }
