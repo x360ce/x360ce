@@ -195,7 +195,7 @@ namespace x360ce.App
 		void DisposeProcessMonitor()
 		{
 			if (_ProcessMonitor != null)
-				_ProcessMonitor.Stop();
+				_ProcessMonitor.Dispose();
 		}
 
 		#endregion

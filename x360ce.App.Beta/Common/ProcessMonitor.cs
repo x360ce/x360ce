@@ -4,10 +4,11 @@ using System.Linq;
 using System.IO;
 using System.Windows.Forms;
 using JocysCom.ClassLibrary.Win32;
+using System;
 
 namespace x360ce.App
 {
-	public class ProcessMonitor
+	public class ProcessMonitor: IDisposable
 	{
 
 		public ProcessMonitor()
@@ -140,6 +141,34 @@ namespace x360ce.App
 			searcher.Dispose();
 			return fi;
 		}
-	}
 
+		#region IDisposable
+
+		bool IsDisposing;
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// Do not dispose twice.
+				if (IsDisposing)
+					return;
+				IsDisposing = true;
+				Stop();
+				if (StartWatcher != null)
+					StartWatcher.Dispose();
+				if (StopWatcher != null)
+					StopWatcher.Dispose();
+			}
+		}
+
+		#endregion
+
+	}
 }

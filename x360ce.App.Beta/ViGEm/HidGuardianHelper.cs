@@ -25,7 +25,7 @@ namespace x360ce.App.ViGEm
 		static readonly string[] HardwareIdSplitters = { "\r\n", "\n" };
 
 		static string pattern1 = @"^HID\\VID_[0-9A-F]{4}&PID_[0-9A-F]{4}";
-		static string pattern2 = @"HID\\[{(]?[0-9A-Fa-z]{8}[-]?([0-9A-Fa-z]{4}[-]?){3}[0-9A-Fa-z]{12}[)}]?";
+		//static string pattern2 = @"HID\\[{(]?[0-9A-Fa-z]{8}[-]?([0-9A-Fa-z]{4}[-]?){3}[0-9A-Fa-z]{12}[)}]?";
 
 		static readonly Regex HardwareIdRegex = new Regex(pattern1);
 
