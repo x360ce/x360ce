@@ -14,8 +14,11 @@
     [DateSelected]       DATETIME         CONSTRAINT [DF_x360ce_Settings_DateSelected] DEFAULT (getdate()) NOT NULL,
     [IsEnabled]          BIT              CONSTRAINT [DF_x360ce_Settings_IsEnabled] DEFAULT ((1)) NOT NULL,
     [PadSettingChecksum] UNIQUEIDENTIFIER NOT NULL,
+    [Completion]         INT              CONSTRAINT [DF_x360ce_Settings_Completion] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_x360ce_Settings] PRIMARY KEY CLUSTERED ([SettingId] ASC)
 );
+
+
 
 
 

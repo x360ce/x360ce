@@ -7,7 +7,8 @@
     [EmulationType]         INT              CONSTRAINT [DF_x360ce_Programs_EmulationType] DEFAULT ((0)) NOT NULL,
     [AutoMapMask]           INT              CONSTRAINT [DF_x360ce_Programs_AutoMapMask] DEFAULT ((0)) NOT NULL,
     [HookMask]              INT              CONSTRAINT [DF_x360ce_Programs_HookMask] DEFAULT ((0)) NOT NULL,
-    [XInputMask]            INT              CONSTRAINT [DF_x360ce_Programs_XInputFileName] DEFAULT ((0)) NOT NULL,
+    [XInputMask]            INT              CONSTRAINT [DF_x360ce_Programs_XInputMask] DEFAULT ((0)) NOT NULL,
+    [XInputPath]            NVARCHAR (256)   CONSTRAINT [DF_x360ce_Programs_XInputPath] DEFAULT ('') NOT NULL,
     [DInputMask]            INT              CONSTRAINT [DF_x360ce_Programs_DInputMask] DEFAULT ((0)) NOT NULL,
     [DInputFile]            NVARCHAR (256)   CONSTRAINT [DF_x360ce_Programs_DInputFile] DEFAULT ('') NOT NULL,
     [FakeVID]               INT              CONSTRAINT [DF_x360ce_Programs_FakeVID] DEFAULT ((0)) NOT NULL,
@@ -22,6 +23,8 @@
     [InstanceCount]         INT              CONSTRAINT [DF_x360ce_Programs_InstanceCount] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_x360ce_Programs] PRIMARY KEY CLUSTERED ([ProgramId] ASC)
 );
+
+
 
 
 

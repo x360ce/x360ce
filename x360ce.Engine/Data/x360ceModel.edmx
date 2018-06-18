@@ -181,6 +181,7 @@
           <Property Name="DateSelected" Type="datetime" Nullable="false" />
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Completion" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_Summaries">
           <Key>
@@ -443,6 +444,7 @@
 					<Property Type="Guid" Name="PadSettingChecksum" Nullable="false" />
 					<Property Type="DateTime" Name="DateSelected" Nullable="false" Precision="3" />
           <Property Name="MapTo" Type="Int32" Nullable="false" />
+          <Property Name="Completion" Type="Int32" Nullable="false" />
 				</EntityType>
 				<EntityType Name="Summary">
 					<Key>
@@ -742,6 +744,7 @@
 					<EntitySetMapping Name="Settings">
 						<EntityTypeMapping TypeName="x360ceModel.Setting">
 							<MappingFragment StoreEntitySet="x360ce_Settings">
+                <ScalarProperty Name="Completion" ColumnName="Completion" />
                 <ScalarProperty Name="MapTo" ColumnName="MapTo" />
                 <ScalarProperty Name="DateSelected" ColumnName="DateSelected" />
 								<ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
@@ -994,13 +997,13 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="39" >
+			<Diagram Name="x360ceModel" ZoomLevel="38" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="9.75" PointY="3.625" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="9.75" PointY="5.75" />
-        <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="4.125" PointY="4.625" />
+        <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="4.125" PointY="4.875" />
         <EntityTypeShape EntityType="x360ceModel.UserComputer" Width="1.5" PointX="7.875" PointY="6.25" />
         <EntityTypeShape EntityType="x360ceModel.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.UserGame" Width="1.5" PointX="7.75" PointY="0.5" />

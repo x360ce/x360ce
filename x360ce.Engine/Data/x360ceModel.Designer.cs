@@ -4055,7 +4055,8 @@ namespace x360ce.Engine.Data
         /// <param name="padSettingChecksum">Initial value of the PadSettingChecksum property.</param>
         /// <param name="dateSelected">Initial value of the DateSelected property.</param>
         /// <param name="mapTo">Initial value of the MapTo property.</param>
-        public static Setting CreateSetting(global::System.Guid settingId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 deviceType, global::System.String fileName, global::System.String fileProductName, global::System.String comment, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid padSettingChecksum, global::System.DateTime dateSelected, global::System.Int32 mapTo)
+        /// <param name="completion">Initial value of the Completion property.</param>
+        public static Setting CreateSetting(global::System.Guid settingId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 deviceType, global::System.String fileName, global::System.String fileProductName, global::System.String comment, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid padSettingChecksum, global::System.DateTime dateSelected, global::System.Int32 mapTo, global::System.Int32 completion)
         {
             Setting setting = new Setting();
             setting.SettingId = settingId;
@@ -4073,6 +4074,7 @@ namespace x360ce.Engine.Data
             setting.PadSettingChecksum = padSettingChecksum;
             setting.DateSelected = dateSelected;
             setting.MapTo = mapTo;
+            setting.Completion = completion;
             return setting;
         }
 
@@ -4442,6 +4444,30 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _MapTo;
         partial void OnMapToChanging(global::System.Int32 value);
         partial void OnMapToChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Completion
+        {
+            get
+            {
+                return _Completion;
+            }
+            set
+            {
+                OnCompletionChanging(value);
+                ReportPropertyChanging("Completion");
+                _Completion = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Completion");
+                OnCompletionChanged();
+            }
+        }
+        private global::System.Int32 _Completion;
+        partial void OnCompletionChanging(global::System.Int32 value);
+        partial void OnCompletionChanged();
 
         #endregion
 
