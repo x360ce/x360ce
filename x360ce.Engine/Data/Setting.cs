@@ -23,8 +23,21 @@ namespace x360ce.Engine.Data
 		/// <summary>
 		/// Calculate map completion percent based on controller capabilities.
 		/// </summary>
-		public void UpdateCompletion(PadSetting ps, UserDevice ud)
+		public int GetCompletion(PadSetting ps, UserDevice ud = null)
 		{
+			// Xbox 360 Controller have 6 axis. Use device count if less.
+			var maxAxis = ud != null && ud.CapAxeCount > 0 && ud.CapAxeCount < 6m ? ud.CapAxeCount : 6m;
+			// Xbox 360 Controller have 14 buttons. Use device count if less.
+			var maxButtons = ud != null && ud.CapButtonCount > 0 && ud.CapButtonCount < 14m ? ud.CapButtonCount : 14m;
+			// Use device motor count.
+			var maxMotors = ud != null ? ud.DiActuatorMask : 0m;
+			var motorPoints = 0m;
+			// If force feedback enabled then...
+			if (ps.ForceEnable == "1")
+			{
+				// Give all available points.
+				motorPoints = maxMotors;
+			}
 			// Count axis points (maximum 6 points).
 			var axisPoints = 0m;
 			axisPoints += GetAxisMapPoints(ps.LeftThumbAxisX, ps.LeftThumbLeft, ps.LeftThumbRight);
@@ -33,16 +46,39 @@ namespace x360ce.Engine.Data
 			axisPoints += GetAxisMapPoints(ps.RightThumbAxisY, ps.RightThumbUp, ps.RightThumbDown);
 			axisPoints += GetAxisMapPoints(ps.LeftTrigger);
 			axisPoints += GetAxisMapPoints(ps.RightTrigger);
-			// Get required amount of maps in order to complete 100%.
-			var axisRequired = (decimal)Math.Min(6, ud.CapAxeCount);
-			var buttonsRequired = (decimal)Math.Min(14, ud.CapButtonCount);
+			// Count button points (maximum 14 points).
+			var buttonPoints = 0m;
+			SettingType type;
+			int index;
+			if (SettingsConverter.TryParseIniValue(ps.ButtonA, out type, out index)) buttonPoints += 1m;
+			if (SettingsConverter.TryParseIniValue(ps.ButtonB, out type, out index)) buttonPoints += 1m;
+			if (SettingsConverter.TryParseIniValue(ps.ButtonX, out type, out index)) buttonPoints += 1m;
+			if (SettingsConverter.TryParseIniValue(ps.ButtonY, out type, out index)) buttonPoints += 1m;
+			if (SettingsConverter.TryParseIniValue(ps.ButtonBack, out type, out index)) buttonPoints += 1m;
+			if (SettingsConverter.TryParseIniValue(ps.ButtonStart, out type, out index)) buttonPoints += 1m;
+			// If DPad is properly mapped to POV then...
+			if (SettingsConverter.TryParseIniValue(ps.DPadDown, out type, out index) && type == SettingType.POV)
+			{
+				// Add 4 points.
+				buttonPoints += 4m;
+			}
+			else
+			{
+				// Add point for each button.
+				if (SettingsConverter.TryParseIniValue(ps.DPadUp, out type, out index)) buttonPoints += 1m;
+				if (SettingsConverter.TryParseIniValue(ps.DPadDown, out type, out index)) buttonPoints += 1m;
+				if (SettingsConverter.TryParseIniValue(ps.DPadLeft, out type, out index)) buttonPoints += 1m;
+				if (SettingsConverter.TryParseIniValue(ps.DPadRight, out type, out index)) buttonPoints += 1m;
+			}
+			if (SettingsConverter.TryParseIniValue(ps.LeftThumbButton, out type, out index)) buttonPoints = +1m;
+			if (SettingsConverter.TryParseIniValue(ps.RightThumbButton, out type, out index)) buttonPoints = +1m;
+			if (SettingsConverter.TryParseIniValue(ps.LeftShoulder, out type, out index)) buttonPoints = +1m;
+			if (SettingsConverter.TryParseIniValue(ps.RightShoulder, out type, out index)) buttonPoints = +1m;
 			// Calculate completion percent.
-			Completion = (int)(100m * (
-				// Maximum 40% score if all axis are mapped.
-				Math.Min((axisPoints / axisRequired), 0.4m) +
-				// Maximum 40% score if all buttons are mapped.
-				Math.Min((axisPoints / axisRequired), 0.4m)
+			var completion = (int)(100m * (
+				(axisPoints + buttonPoints + motorPoints) / (maxAxis + maxButtons + maxMotors)
 			));
+			return completion;
 		}
 
 		decimal GetAxisMapPoints(string axis, string up = null, string down = null)

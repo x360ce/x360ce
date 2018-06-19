@@ -3,6 +3,7 @@ using SharpDX.DirectInput;
 using System;
 using System.Linq.Expressions;
 using System.Xml.Serialization;
+using System.Linq;
 
 namespace x360ce.Engine.Data
 {
@@ -37,7 +38,7 @@ namespace x360ce.Engine.Data
             ProductName = ins.ProductName;
         }
 
-        public void LoadCapabilities(SharpDX.DirectInput.Capabilities cap)
+		public void LoadCapabilities(Capabilities cap)
         {
             // Check if value is same to reduce grid refresh.
             if (CapAxeCount != cap.AxeCount)

@@ -235,6 +235,8 @@
           <Property Name="CapType" Type="int" Nullable="false" />
           <Property Name="DiAxeMask" Type="int" Nullable="false" />
           <Property Name="DiSliderMask" Type="int" Nullable="false" />
+          <Property Name="DiActuatorMask" Type="int" Nullable="false" />
+          <Property Name="DiActuatorCount" Type="int" Nullable="false" />
           <Property Name="HidManufacturer" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="HidVendorId" Type="int" Nullable="false" />
           <Property Name="HidProductId" Type="int" Nullable="false" />
@@ -554,6 +556,8 @@
           <Property Name="DiAxeMask" Type="Int32" Nullable="false" />
           <Property Name="DiSliderMask" Type="Int32" Nullable="false" />
           <Property Name="IsHidden" Type="Boolean" Nullable="false" />
+          <Property Name="DiActuatorMask" Type="Int32" Nullable="false" />
+          <Property Name="DiActuatorCount" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="UserGame">
           <Key>
@@ -830,6 +834,8 @@
           <EntitySetMapping Name="UserDevices">
             <EntityTypeMapping TypeName="x360ceModel.UserDevice">
               <MappingFragment StoreEntitySet="x360ce_UserDevices">
+                <ScalarProperty Name="DiActuatorCount" ColumnName="DiActuatorCount" />
+                <ScalarProperty Name="DiActuatorMask" ColumnName="DiActuatorMask" />
                 <ScalarProperty Name="IsHidden" ColumnName="IsHidden" />
                 <ScalarProperty Name="DiSliderMask" ColumnName="DiSliderMask" />
                 <ScalarProperty Name="DiAxeMask" ColumnName="DiAxeMask" />
@@ -997,7 +1003,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="38" >
+			<Diagram Name="x360ceModel" ZoomLevel="75" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" />
 				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />

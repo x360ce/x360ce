@@ -306,42 +306,6 @@ namespace x360ce.App
 			}
 		}
 
-		/// <summary>
-		/// Update list of games which must be synchronized.
-		/// </summary>
-		public static void UpdateSyncStates(UserGame[] games, bool fix, out string syncText, out Dictionary<UserGame, GameRefreshStatus> syncStates)
-		{
-			var states = new Dictionary<UserGame, GameRefreshStatus>();
-			var sb = new StringBuilder();
-			var values = ((GameRefreshStatus[])Enum.GetValues(typeof(GameRefreshStatus))).Except(new[] { GameRefreshStatus.OK }).ToArray();
-			// Check changes first.
-			for (int i = 0; i < games.Length; i++)
-			{
-				var game = games[i];
-				var status = SettingsManager.Current.GetDllAndIniStatus(game, fix);
-				if (status == GameRefreshStatus.OK)
-					continue;
-				sb.AppendFormat("{0} {1}\r\n", game.FileProductName, game.FileVersion);
-				sb.AppendFormat("{0}\r\n\r\n", game.FullPath);
-				var errors = new List<string>();
-				foreach (GameRefreshStatus value in values)
-				{
-					if (status.HasFlag(value))
-					{
-						var description = Attributes.GetDescription(value);
-						errors.Add("    " + description);
-					}
-				}
-				sb.Append(string.Join("\r\n", errors));
-				sb.AppendLine();
-				sb.AppendLine();
-				states.Add(game, status);
-			}
-			// Return results.
-			syncText = sb.ToString();
-			syncStates = states;
-		}
-
 		public static UserGame ProcessExecutable(string filePath)
 		{
 			var fi = new FileInfo(filePath);
@@ -361,8 +325,6 @@ namespace x360ce.App
 			{
 				game.FullPath = fi.FullName;
 			}
-			// Import INI settings.
-			Current.ReadIniFile(game);
 			Save();
 			return game;
 		}
@@ -468,8 +430,6 @@ namespace x360ce.App
 
 		public int saveCount = 0;
 		public int loadCount = 0;
-
-		public event EventHandler<SettingEventArgs> ConfigSaved;
 
 		public event EventHandler<SettingEventArgs> ConfigLoaded;
 

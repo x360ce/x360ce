@@ -347,7 +347,6 @@ namespace x360ce.App
 		void UpdateSettingsMap()
 		{
 			// INI setting keys with controls.
-			SettingsManager.Current.ConfigSaved += Current_ConfigSaved;
 			SettingsManager.Current.ConfigLoaded += Current_ConfigLoaded;
 			OptionsPanel.UpdateSettingsMap();
 		}
@@ -694,10 +693,6 @@ namespace x360ce.App
 			ControlAbout = new AboutControl();
 			ControlAbout.Dock = DockStyle.Fill;
 			AboutTabPage.Controls.Add(ControlAbout);
-			// Get all enabled games and update Save buttons.
-			var games = SettingsManager.UserGames.Items.Where(x => x.IsEnabled).ToArray();
-			// Synchronize settings.
-			SettingsManager.UpdateSyncStates(games, false, out syncText, out syncStates);
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}
@@ -1273,35 +1268,6 @@ namespace x360ce.App
 			SettingsManager.UserInstances.Save();
 			SettingsManager.UserComputers.Save();
 			XInputMaskScanner.FileInfoCache.Save();
-		}
-
-		Dictionary<UserGame, GameRefreshStatus> syncStates;
-		string syncText;
-
-		void UpdateSaveButtons()
-		{
-			var states = syncStates;
-			var saveImage = Resources.save_16x16;
-			var saveAllImage = Resources.save_16x16;
-			// If states are available then...
-			if (states != null)
-			{
-				// Update save button images.
-				saveAllImage = states.Count > 0
-					? Resources.save_warning_16x16
-					: Resources.save_ok_16x16;
-				var game = CurrentGame;
-				if (game != null)
-				{
-					// Use warning icon if current game is in the list.
-					saveImage = states.Any(x => x.Key == game)
-						? Resources.save_warning_16x16
-						: Resources.save_ok_16x16;
-				}
-			}
-			if (SaveAllButton.Image != saveAllImage)
-				SaveAllButton.Image = saveAllImage;
-			Application.DoEvents();
 		}
 
 		public void Save()

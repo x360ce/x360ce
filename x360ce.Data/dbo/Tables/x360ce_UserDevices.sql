@@ -19,6 +19,8 @@
     [CapType]                               INT              NOT NULL,
     [DiAxeMask]                             INT              CONSTRAINT [DF_x360ce_UserDevices_DiAxeMask] DEFAULT ((0)) NOT NULL,
     [DiSliderMask]                          INT              CONSTRAINT [DF_x360ce_UserDevices_DiSliderMask] DEFAULT ((0)) NOT NULL,
+    [DiActuatorMask]                        INT              CONSTRAINT [DF_x360ce_UserDevices_DiActuatorMask] DEFAULT ((0)) NOT NULL,
+    [DiActuatorCount]                       INT              CONSTRAINT [DF_x360ce_UserDevices_DiActuatorCount] DEFAULT ((0)) NOT NULL,
     [HidManufacturer]                       NVARCHAR (256)   NOT NULL,
     [HidVendorId]                           INT              NOT NULL,
     [HidProductId]                          INT              NOT NULL,
@@ -46,6 +48,8 @@
     [Checksum]                              UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_Checksum] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     CONSTRAINT [PK_x360ce_UserDevices] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

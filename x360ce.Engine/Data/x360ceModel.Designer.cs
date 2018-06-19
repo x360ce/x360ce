@@ -5062,7 +5062,9 @@ namespace x360ce.Engine.Data
         /// <param name="diAxeMask">Initial value of the DiAxeMask property.</param>
         /// <param name="diSliderMask">Initial value of the DiSliderMask property.</param>
         /// <param name="isHidden">Initial value of the IsHidden property.</param>
-        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid computerId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid checksum, global::System.Int32 diAxeMask, global::System.Int32 diSliderMask, global::System.Boolean isHidden)
+        /// <param name="diActuatorMask">Initial value of the DiActuatorMask property.</param>
+        /// <param name="diActuatorCount">Initial value of the DiActuatorCount property.</param>
+        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid computerId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid checksum, global::System.Int32 diAxeMask, global::System.Int32 diSliderMask, global::System.Boolean isHidden, global::System.Int32 diActuatorMask, global::System.Int32 diActuatorCount)
         {
             UserDevice userDevice = new UserDevice();
             userDevice.Id = id;
@@ -5110,6 +5112,8 @@ namespace x360ce.Engine.Data
             userDevice.DiAxeMask = diAxeMask;
             userDevice.DiSliderMask = diSliderMask;
             userDevice.IsHidden = isHidden;
+            userDevice.DiActuatorMask = diActuatorMask;
+            userDevice.DiActuatorCount = diActuatorCount;
             return userDevice;
         }
 
@@ -6199,6 +6203,54 @@ namespace x360ce.Engine.Data
         private global::System.Boolean _IsHidden;
         partial void OnIsHiddenChanging(global::System.Boolean value);
         partial void OnIsHiddenChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 DiActuatorMask
+        {
+            get
+            {
+                return _DiActuatorMask;
+            }
+            set
+            {
+                OnDiActuatorMaskChanging(value);
+                ReportPropertyChanging("DiActuatorMask");
+                _DiActuatorMask = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DiActuatorMask");
+                OnDiActuatorMaskChanged();
+            }
+        }
+        private global::System.Int32 _DiActuatorMask;
+        partial void OnDiActuatorMaskChanging(global::System.Int32 value);
+        partial void OnDiActuatorMaskChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 DiActuatorCount
+        {
+            get
+            {
+                return _DiActuatorCount;
+            }
+            set
+            {
+                OnDiActuatorCountChanging(value);
+                ReportPropertyChanging("DiActuatorCount");
+                _DiActuatorCount = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DiActuatorCount");
+                OnDiActuatorCountChanged();
+            }
+        }
+        private global::System.Int32 _DiActuatorCount;
+        partial void OnDiActuatorCountChanging(global::System.Int32 value);
+        partial void OnDiActuatorCountChanged();
 
         #endregion
 

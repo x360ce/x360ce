@@ -89,10 +89,22 @@ namespace x360ce.App.DInput
 								var dos = AppHelper.GetDeviceObjects(device);
 								ud.DeviceObjects = dos;
 								// Update masks.
-								ud.DiAxeMask = ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse
-									? CustomDiState.GetMouseAxisMask(dos, device)
-									: CustomDiState.GetJoystickAxisMask(dos, device);
-								ud.DiSliderMask = CustomDiState.GetJoystickSlidersMask(dos, device);
+								int axisMask = 0;
+								int actuatorMask = 0;
+								int actuatorCount = 0;
+								if (ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse)
+								{
+									CustomDiState.GetMouseAxisMask(dos, device, out axisMask);
+								}
+								else
+								{
+									CustomDiState.GetJoystickAxisMask(dos, device, out axisMask, out actuatorMask, out actuatorCount);
+								}
+								ud.DiAxeMask = axisMask;
+								// Contains information about which axis have force feedback actuator attached.
+								ud.DiActuatorMask = actuatorMask;
+								ud.DiActuatorCount = actuatorCount;
+								CustomDiState.GetJoystickSlidersMask(dos, device);
 							}
 							if (ud.DeviceEffects == null)
 							{
