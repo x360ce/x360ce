@@ -21,9 +21,9 @@ namespace x360ce.Engine.Data
 		public Gamepad XiState;
 
 		/// <summary>
-		/// Calculate map completion percent based on controller capabilities.
+		/// Calculate map completion percent based on user device (controller) capabilities.
 		/// </summary>
-		public int GetCompletion(PadSetting ps, UserDevice ud = null)
+		public static int GetCompletionPoints(PadSetting ps, UserDevice ud = null)
 		{
 			// Xbox 360 Controller have 6 axis. Use device count if less.
 			var maxAxis = ud != null && ud.CapAxeCount > 0 && ud.CapAxeCount < 6m ? ud.CapAxeCount : 6m;
@@ -70,10 +70,10 @@ namespace x360ce.Engine.Data
 				if (SettingsConverter.TryParseIniValue(ps.DPadLeft, out type, out index)) buttonPoints += 1m;
 				if (SettingsConverter.TryParseIniValue(ps.DPadRight, out type, out index)) buttonPoints += 1m;
 			}
-			if (SettingsConverter.TryParseIniValue(ps.LeftThumbButton, out type, out index)) buttonPoints = +1m;
-			if (SettingsConverter.TryParseIniValue(ps.RightThumbButton, out type, out index)) buttonPoints = +1m;
-			if (SettingsConverter.TryParseIniValue(ps.LeftShoulder, out type, out index)) buttonPoints = +1m;
-			if (SettingsConverter.TryParseIniValue(ps.RightShoulder, out type, out index)) buttonPoints = +1m;
+			if (SettingsConverter.TryParseIniValue(ps.LeftThumbButton, out type, out index)) buttonPoints += 1m;
+			if (SettingsConverter.TryParseIniValue(ps.RightThumbButton, out type, out index)) buttonPoints += 1m;
+			if (SettingsConverter.TryParseIniValue(ps.LeftShoulder, out type, out index)) buttonPoints += 1m;
+			if (SettingsConverter.TryParseIniValue(ps.RightShoulder, out type, out index)) buttonPoints += 1m;
 			// Calculate completion percent.
 			var completion = (int)(100m * (
 				(axisPoints + buttonPoints + motorPoints) / (maxAxis + maxButtons + maxMotors)
@@ -81,7 +81,7 @@ namespace x360ce.Engine.Data
 			return completion;
 		}
 
-		decimal GetAxisMapPoints(string axis, string up = null, string down = null)
+		static decimal GetAxisMapPoints(string axis, string up = null, string down = null)
 		{
 			var points = 0m;
 			SettingType type;

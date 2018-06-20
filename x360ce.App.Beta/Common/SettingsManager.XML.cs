@@ -35,6 +35,8 @@ namespace x360ce.App
 				{
 					// Assign updated checksum.
 					setting.PadSettingChecksum = padSetting.PadSettingChecksum;
+					var ud = SettingsManager.GetDevice(setting.InstanceGuid);
+					setting.Completion = Setting.GetCompletionPoints(padSetting, ud);
 				}
 			}
 			CleanupPadSettings();

@@ -55,15 +55,6 @@ namespace x360ce.App
 			}
 		}
 
-		private void Grid_CurrentCellDirtyStateChanged(object sender, EventArgs e)
-		{
-			var grid = (DataGridView)sender;
-			if (grid.Columns[grid.CurrentCell.ColumnIndex] is DataGridViewCheckBoxColumn)
-			{
-                // Save setting and notify if value changed.
-                RaiseSettingsChanged((Control)sender);
-			}
-		}
         public void RaiseSettingsChanged(Control control)
         {
             var ev = SettingChanged;
