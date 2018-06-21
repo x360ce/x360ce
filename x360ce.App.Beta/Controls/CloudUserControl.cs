@@ -87,6 +87,7 @@ namespace x360ce.App.Controls
             // Try to assign list.
             message.Checksums = checksums;
             message.UserGames = items as UserGame[];
+			message.UserSettings = items as Setting[];
             message.UserDevices = items as UserDevice[];
             message.UserComputers = items as UserComputer[];
             message.UserInstances = items as UserInstance[];

@@ -6,6 +6,7 @@ namespace x360ce.App
     {
         None = 0,
 		SearchSettings,
+		DeleteSettings,
 		SearchSummaries,
 		SearchPresets,
 		CloudCommand,

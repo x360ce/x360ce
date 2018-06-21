@@ -316,6 +316,11 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(DeviceProductGuidTextBox, ud.ProductGuid.ToString());
 			ControlsHelper.SetText(DeviceInstanceGuidTextBox, ud.InstanceGuid.ToString());
 			ControlsHelper.SetText(DeviceTypeTextBox, ((SharpDX.DirectInput.DeviceType)ud.CapType).ToString());
+			var isMouse = ((SharpDX.DirectInput.DeviceType)ud.CapType) == SharpDX.DirectInput.DeviceType.Mouse;
+			var maxIndex = DiAxisDataGridView.Columns.Count - 1;
+			// Hide last 4 columns if device is mouse, in order to make more space for axis values.
+			for (int i = maxIndex - 3; i <= maxIndex; i++)
+				DiAxisDataGridView.Columns[i].Visible = !isMouse;
 		}
 
 		JoystickState oldState;

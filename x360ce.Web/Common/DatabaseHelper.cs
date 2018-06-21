@@ -61,20 +61,32 @@ namespace x360ce.Web
                 if (!string.IsNullOrEmpty(error))
                     messages.Add(error);
             }
-        }
+			// Get all user instances.
+			if (command.UserSettings != null)
+			{
+				Setting[] userSettings;
+				error = Select(computerId, command.UserSettings, out userSettings);
+				messages.Add(error);
+				results.UserSettings = userSettings;
+				//results.UserSettings = FilterByChecksum(userSettings, command.Checksums, out error);
+				if (!string.IsNullOrEmpty(error))
+					messages.Add(error);
+			}
+		}
 
-        public static void Delete(CloudMessage command, List<string> messages)
+		public static void Delete(CloudMessage command, List<string> messages)
         {
             messages.Add(Delete(command.UserGames));
             messages.Add(Delete(command.UserDevices));
             messages.Add(Delete(command.UserComputers));
             messages.Add(Delete(command.UserInstances));
-        }
+			messages.Add(Delete(command.UserSettings));
+		}
 
-        /// <summary>
-        /// Remove all unchanged items to save network bandwith.
-        /// </summary>
-        public static T[] FilterByChecksum<T>(T[] items, Guid[] checksums, out string error) where T : IChecksum
+		/// <summary>
+		/// Remove all unchanged items to save network bandwidth.
+		/// </summary>
+		public static T[] FilterByChecksum<T>(T[] items, Guid[] checksums, out string error) where T : IChecksum
         {
             error = null;
             var list = new T[0];
@@ -108,8 +120,8 @@ namespace x360ce.Web
                     foreach (var item in command.UserDevices)
                         item.ComputerId = computerId.Value;
                 }
-            }
-            return computerId;
+			}
+			return computerId;
         }
 
 

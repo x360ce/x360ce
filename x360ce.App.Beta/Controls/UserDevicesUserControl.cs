@@ -66,12 +66,12 @@ namespace x360ce.App.Controls
 
 		private void ControllerDeleteButton_Click(object sender, EventArgs e)
 		{
-			var items = GetSelected();
-			foreach (var item in items)
+			var userDevices = GetSelected();
+			foreach (var item in userDevices)
 			{
 				SettingsManager.UserDevices.Items.Remove(item);
 			}
-			MainForm.Current.CloudPanel.Add(CloudAction.Delete, items, true);
+			MainForm.Current.CloudPanel.Add(CloudAction.Delete, userDevices, true);
 		}
 
 		private void ControllersDataGridView_SelectionChanged(object sender, EventArgs e)

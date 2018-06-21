@@ -362,7 +362,7 @@ namespace x360ce.Web.WebServices
 						user = CloudHelper.GetUser(command, out error);
 						if (user == null)
 						{
-							messages.Add("Not authorised");
+							messages.Add("Not authorized");
 							results.ErrorCode = 2;
 						}
 						break;

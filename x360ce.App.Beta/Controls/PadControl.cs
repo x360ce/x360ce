@@ -1353,7 +1353,7 @@ namespace x360ce.App.Controls
                     SettingsManager.Current.LoadPadSettingAndCleanup(setting, ps, true);
                     SettingsManager.Current.SyncFormFromPadSetting(MappedTo, ps);
                     // Refresh online status
-                    SettingsManager.RefreshSettingsConnectionState(setting);
+                    SettingsManager.RefreshDeviceIsOnlineValueOnSettings(setting);
                     // Load created setting.
                     //SettingsManager.Current.LoadPadSettings(MappedTo, ps);
                 }

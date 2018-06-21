@@ -10,7 +10,7 @@ namespace x360ce.Engine
 {
 
     /// <summary>
-    ///  Message which will be used to communicate with webservice.
+    ///  Message which will be used to communicate with web service.
     /// </summary>
     public class CloudMessage
     {
@@ -51,11 +51,13 @@ namespace x360ce.Engine
 
         [XmlArray] public UserComputer[] UserComputers { get; set; }
 
-        /// <summary>
-        /// During request it will be used to specify search filters. If null then do not retrieve.
-        /// During response it will contain used data.
-        /// </summary>
-        [XmlArray] public UserGame[] UserGames { get; set; }
+		[XmlArray] public Setting[] UserSettings { get; set; }
+
+		/// <summary>
+		/// During request it will be used to specify search filters. If null then do not retrieve.
+		/// During response it will contain used data.
+		/// </summary>
+		[XmlArray] public UserGame[] UserGames { get; set; }
 
         #endregion
 

@@ -367,30 +367,30 @@ namespace x360ce.App.Controls
 		{
 			var grid = GamesDataGridView;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
-			var itemsToDelete = SettingsManager.UserGames.Items.Where(x => selection.Contains(x.FileName)).ToArray();
+			var userGames = SettingsManager.UserGames.Items.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			string message;
-			if (itemsToDelete.Length == 1)
+			if (userGames.Length == 1)
 			{
-				var item = itemsToDelete[0];
+				var item = userGames[0];
 				message = string.Format("Are you sure you want to delete settings for?\r\n\r\n\tFile Name: {0}\r\n\tProduct Name: {1}",
 					item.FileName,
 					item.FileProductName);
 			}
 			else
 			{
-				message = string.Format("Delete {0} setting(s)?", itemsToDelete.Length);
+				message = string.Format("Delete {0} setting(s)?", userGames.Length);
 			}
 			var result = form.ShowForm(message, "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
 			if (result == DialogResult.OK)
 			{
-				foreach (var item in itemsToDelete)
+				foreach (var item in userGames)
 				{
 					SettingsManager.UserGames.Items.Remove(item);
 				}
 				SettingsManager.Save();
-				MainForm.Current.CloudPanel.Add(CloudAction.Delete, itemsToDelete, true);
+				MainForm.Current.CloudPanel.Add(CloudAction.Delete, userGames, true);
 			}
 		}
 

@@ -61,6 +61,12 @@ namespace x360ce.App
 					if (Message.UserGames.Length == 0)
 						list.Add(string.Format("{0}s", typeof(UserGame).Name));
 				}
+				if (Message.UserSettings != null)
+				{
+					list.AddRange(Message.UserSettings.Select(x => string.Format("{0}: {1}", typeof(Setting).Name, x.SettingId)));
+					if (Message.UserSettings.Length == 0)
+						list.Add(string.Format("{0}s", typeof(Setting).Name));
+				}
 				return string.Join(", ", list);
 			}
 		}

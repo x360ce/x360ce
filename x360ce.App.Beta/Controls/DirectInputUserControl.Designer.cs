@@ -30,31 +30,41 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle29 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DiEffectsDataGridView = new System.Windows.Forms.DataGridView();
+			this.DiEffectNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiEffectParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiEffectDynamicParameters = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.CopyContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.CopyWithHeadersMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.DiAxisDataGridView = new System.Windows.Forms.DataGridView();
-			this.DiColumnAxis = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiColumnM = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiColumnR = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiColumnA = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiColumnAR = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiColumnF = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiColumnFr = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiColumnV = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiColumnVr = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DevicePidTextBox = new System.Windows.Forms.TextBox();
 			this.DeviceVidTextBox = new System.Windows.Forms.TextBox();
 			this.DeviceTypeTextBox = new System.Windows.Forms.TextBox();
@@ -87,8 +97,6 @@
 			this.ObjectsFlagsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ObjectsInstanceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ObjectsNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.CopyContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.CopyWithHeadersMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.DiEffectsDataTabPage = new System.Windows.Forms.TabPage();
 			this.DiSlidersTextBox = new System.Windows.Forms.TextBox();
 			this.SlidersLabel = new System.Windows.Forms.Label();
@@ -99,26 +107,32 @@
 			this.DeviceRevLabel = new System.Windows.Forms.Label();
 			this.DeviceRevTextBox = new System.Windows.Forms.TextBox();
 			this.DiSlidersDataGridView = new System.Windows.Forms.DataGridView();
+			this.DiPovsDataGridView = new System.Windows.Forms.DataGridView();
+			this.DiButtonsDataGridView = new System.Windows.Forms.DataGridView();
+			this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiColumnAxis = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiColumnM = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiColumnR = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiColumnA = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiColumnAR = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiColumnF = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiColumnFr = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiColumnV = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DiColumnVr = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn4 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn8 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiPovsDataGridView = new System.Windows.Forms.DataGridView();
 			this.dataGridViewTextBoxColumn3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.dataGridViewTextBoxColumn7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiButtonsDataGridView = new System.Windows.Forms.DataGridView();
-			this.dataGridViewTextBoxColumn9 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiEffectNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiEffectParamsColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DiEffectDynamicParameters = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).BeginInit();
+			this.CopyContextMenuStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).BeginInit();
 			this.DeviceDetailsTabControl.SuspendLayout();
 			this.DiObjectsTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DiObjectsDataGridView)).BeginInit();
-			this.CopyContextMenuStrip.SuspendLayout();
 			this.DiEffectsDataTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.DiSlidersDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiPovsDataGridView)).BeginInit();
@@ -150,6 +164,55 @@
 			this.DiEffectsDataGridView.Size = new System.Drawing.Size(827, 168);
 			this.DiEffectsDataGridView.TabIndex = 0;
 			// 
+			// DiEffectNameColumn
+			// 
+			this.DiEffectNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.DiEffectNameColumn.DataPropertyName = "Effect";
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.DiEffectNameColumn.DefaultCellStyle = dataGridViewCellStyle1;
+			this.DiEffectNameColumn.HeaderText = "FF Effect";
+			this.DiEffectNameColumn.MinimumWidth = 75;
+			this.DiEffectNameColumn.Name = "DiEffectNameColumn";
+			this.DiEffectNameColumn.ReadOnly = true;
+			this.DiEffectNameColumn.ToolTipText = "Supported force feedback effects";
+			this.DiEffectNameColumn.Width = 75;
+			// 
+			// DiEffectParamsColumn
+			// 
+			this.DiEffectParamsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.DiEffectParamsColumn.DataPropertyName = "Parameters";
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.DiEffectParamsColumn.DefaultCellStyle = dataGridViewCellStyle2;
+			this.DiEffectParamsColumn.HeaderText = "Static Parameters";
+			this.DiEffectParamsColumn.Name = "DiEffectParamsColumn";
+			this.DiEffectParamsColumn.ReadOnly = true;
+			this.DiEffectParamsColumn.ToolTipText = "Parameters supported by the effect";
+			// 
+			// DiEffectDynamicParameters
+			// 
+			this.DiEffectDynamicParameters.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.DiEffectDynamicParameters.DataPropertyName = "DynamicParameters";
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.DiEffectDynamicParameters.DefaultCellStyle = dataGridViewCellStyle3;
+			this.DiEffectDynamicParameters.HeaderText = "Dynamic Parameters";
+			this.DiEffectDynamicParameters.Name = "DiEffectDynamicParameters";
+			this.DiEffectDynamicParameters.ReadOnly = true;
+			this.DiEffectDynamicParameters.ToolTipText = "Parameters of the effect that can be modified while the effect is playing";
+			// 
+			// CopyContextMenuStrip
+			// 
+			this.CopyContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.CopyWithHeadersMenuItem});
+			this.CopyContextMenuStrip.Name = "CopyContextMenuStrip";
+			this.CopyContextMenuStrip.Size = new System.Drawing.Size(175, 26);
+			// 
+			// CopyWithHeadersMenuItem
+			// 
+			this.CopyWithHeadersMenuItem.Name = "CopyWithHeadersMenuItem";
+			this.CopyWithHeadersMenuItem.Size = new System.Drawing.Size(174, 22);
+			this.CopyWithHeadersMenuItem.Text = "Copy with Headers";
+			this.CopyWithHeadersMenuItem.Click += new System.EventHandler(this.CopyWithHeadersMenuItem_Click);
+			// 
 			// DiAxisDataGridView
 			// 
 			this.DiAxisDataGridView.AllowUserToAddRows = false;
@@ -179,96 +242,12 @@
 			this.DiAxisDataGridView.ReadOnly = true;
 			this.DiAxisDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiAxisDataGridView.RowHeadersVisible = false;
-			dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-			this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle14.BackColor = System.Drawing.SystemColors.Control;
+			this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle14;
 			this.DiAxisDataGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.DiAxisDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
 			this.DiAxisDataGridView.Size = new System.Drawing.Size(455, 90);
 			this.DiAxisDataGridView.TabIndex = 0;
-			// 
-			// DiColumnAxis
-			// 
-			this.DiColumnAxis.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.DiColumnAxis.DataPropertyName = "Axis";
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.DiColumnAxis.DefaultCellStyle = dataGridViewCellStyle5;
-			this.DiColumnAxis.HeaderText = "Axis";
-			this.DiColumnAxis.Name = "DiColumnAxis";
-			this.DiColumnAxis.ReadOnly = true;
-			this.DiColumnAxis.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DiColumnAxis.Width = 46;
-			// 
-			// DiColumnM
-			// 
-			this.DiColumnM.DataPropertyName = "M";
-			this.DiColumnM.HeaderText = "M";
-			this.DiColumnM.Name = "DiColumnM";
-			this.DiColumnM.ReadOnly = true;
-			this.DiColumnM.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DiColumnM.ToolTipText = "Movement";
-			// 
-			// DiColumnR
-			// 
-			this.DiColumnR.DataPropertyName = "R";
-			this.DiColumnR.HeaderText = "R";
-			this.DiColumnR.Name = "DiColumnR";
-			this.DiColumnR.ReadOnly = true;
-			this.DiColumnR.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DiColumnR.ToolTipText = "Rotation";
-			// 
-			// DiColumnA
-			// 
-			this.DiColumnA.DataPropertyName = "A";
-			this.DiColumnA.HeaderText = "A";
-			this.DiColumnA.Name = "DiColumnA";
-			this.DiColumnA.ReadOnly = true;
-			this.DiColumnA.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DiColumnA.ToolTipText = "Acceleration";
-			// 
-			// DiColumnAR
-			// 
-			this.DiColumnAR.DataPropertyName = "AR";
-			this.DiColumnAR.HeaderText = "AR";
-			this.DiColumnAR.Name = "DiColumnAR";
-			this.DiColumnAR.ReadOnly = true;
-			this.DiColumnAR.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DiColumnAR.ToolTipText = "Angular Acceleration";
-			// 
-			// DiColumnF
-			// 
-			this.DiColumnF.DataPropertyName = "F";
-			this.DiColumnF.HeaderText = "F";
-			this.DiColumnF.Name = "DiColumnF";
-			this.DiColumnF.ReadOnly = true;
-			this.DiColumnF.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DiColumnF.ToolTipText = "Force";
-			// 
-			// DiColumnFr
-			// 
-			this.DiColumnFr.DataPropertyName = "FR";
-			this.DiColumnFr.HeaderText = "FR";
-			this.DiColumnFr.Name = "DiColumnFr";
-			this.DiColumnFr.ReadOnly = true;
-			this.DiColumnFr.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DiColumnFr.ToolTipText = "Torque";
-			// 
-			// DiColumnV
-			// 
-			this.DiColumnV.DataPropertyName = "V";
-			this.DiColumnV.HeaderText = "V";
-			this.DiColumnV.Name = "DiColumnV";
-			this.DiColumnV.ReadOnly = true;
-			this.DiColumnV.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DiColumnV.ToolTipText = "Velocity";
-			// 
-			// DiColumnVr
-			// 
-			this.DiColumnVr.DataPropertyName = "VR";
-			this.DiColumnVr.HeaderText = "VR";
-			this.DiColumnVr.Name = "DiColumnVr";
-			this.DiColumnVr.ReadOnly = true;
-			this.DiColumnVr.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.DiColumnVr.ToolTipText = "Angular Velocity";
 			// 
 			// DevicePidTextBox
 			// 
@@ -531,8 +510,8 @@
 			this.DiObjectsDataGridView.Name = "DiObjectsDataGridView";
 			this.DiObjectsDataGridView.ReadOnly = true;
 			this.DiObjectsDataGridView.RowHeadersVisible = false;
-			dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
-			this.DiObjectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle9;
+			dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Control;
+			this.DiObjectsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle17;
 			this.DiObjectsDataGridView.Size = new System.Drawing.Size(827, 168);
 			this.DiObjectsDataGridView.TabIndex = 1;
 			// 
@@ -540,9 +519,9 @@
 			// 
 			this.ObjectsOffsetColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.ObjectsOffsetColumn.DataPropertyName = "Offset";
-			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			dataGridViewCellStyle7.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
-			this.ObjectsOffsetColumn.DefaultCellStyle = dataGridViewCellStyle7;
+			dataGridViewCellStyle15.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle15.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+			this.ObjectsOffsetColumn.DefaultCellStyle = dataGridViewCellStyle15;
 			this.ObjectsOffsetColumn.HeaderText = "Offset";
 			this.ObjectsOffsetColumn.Name = "ObjectsOffsetColumn";
 			this.ObjectsOffsetColumn.ReadOnly = true;
@@ -593,10 +572,10 @@
 			// 
 			this.ObjectsInstanceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.ObjectsInstanceColumn.DataPropertyName = "Instance";
-			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			dataGridViewCellStyle8.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
-			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.ObjectsInstanceColumn.DefaultCellStyle = dataGridViewCellStyle8;
+			dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle16.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+			dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.ObjectsInstanceColumn.DefaultCellStyle = dataGridViewCellStyle16;
 			this.ObjectsInstanceColumn.HeaderText = "Instance";
 			this.ObjectsInstanceColumn.Name = "ObjectsInstanceColumn";
 			this.ObjectsInstanceColumn.ReadOnly = true;
@@ -611,20 +590,6 @@
 			this.ObjectsNameColumn.Name = "ObjectsNameColumn";
 			this.ObjectsNameColumn.ReadOnly = true;
 			this.ObjectsNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// CopyContextMenuStrip
-			// 
-			this.CopyContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.CopyWithHeadersMenuItem});
-			this.CopyContextMenuStrip.Name = "CopyContextMenuStrip";
-			this.CopyContextMenuStrip.Size = new System.Drawing.Size(175, 26);
-			// 
-			// CopyWithHeadersMenuItem
-			// 
-			this.CopyWithHeadersMenuItem.Name = "CopyWithHeadersMenuItem";
-			this.CopyWithHeadersMenuItem.Size = new System.Drawing.Size(174, 22);
-			this.CopyWithHeadersMenuItem.Text = "Copy with Headers";
-			this.CopyWithHeadersMenuItem.Click += new System.EventHandler(this.CopyWithHeadersMenuItem_Click);
 			// 
 			// DiEffectsDataTabPage
 			// 
@@ -744,59 +709,12 @@
 			this.DiSlidersDataGridView.ReadOnly = true;
 			this.DiSlidersDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiSlidersDataGridView.RowHeadersVisible = false;
-			dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
-			this.DiSlidersDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle11;
+			dataGridViewCellStyle23.BackColor = System.Drawing.SystemColors.Control;
+			this.DiSlidersDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle23;
 			this.DiSlidersDataGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.DiSlidersDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
 			this.DiSlidersDataGridView.Size = new System.Drawing.Size(230, 72);
 			this.DiSlidersDataGridView.TabIndex = 3;
-			// 
-			// dataGridViewTextBoxColumn1
-			// 
-			this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.dataGridViewTextBoxColumn1.DataPropertyName = "Slider";
-			dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle10;
-			this.dataGridViewTextBoxColumn1.HeaderText = "Slider";
-			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
-			this.dataGridViewTextBoxColumn1.ReadOnly = true;
-			this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.dataGridViewTextBoxColumn1.Width = 46;
-			// 
-			// dataGridViewTextBoxColumn2
-			// 
-			this.dataGridViewTextBoxColumn2.DataPropertyName = "M";
-			this.dataGridViewTextBoxColumn2.HeaderText = "M";
-			this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
-			this.dataGridViewTextBoxColumn2.ReadOnly = true;
-			this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// dataGridViewTextBoxColumn4
-			// 
-			this.dataGridViewTextBoxColumn4.DataPropertyName = "A";
-			this.dataGridViewTextBoxColumn4.HeaderText = "A";
-			this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
-			this.dataGridViewTextBoxColumn4.ReadOnly = true;
-			this.dataGridViewTextBoxColumn4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.dataGridViewTextBoxColumn4.ToolTipText = "Acceleration";
-			// 
-			// dataGridViewTextBoxColumn6
-			// 
-			this.dataGridViewTextBoxColumn6.DataPropertyName = "F";
-			this.dataGridViewTextBoxColumn6.HeaderText = "F";
-			this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
-			this.dataGridViewTextBoxColumn6.ReadOnly = true;
-			this.dataGridViewTextBoxColumn6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.dataGridViewTextBoxColumn6.ToolTipText = "Force";
-			// 
-			// dataGridViewTextBoxColumn8
-			// 
-			this.dataGridViewTextBoxColumn8.DataPropertyName = "V";
-			this.dataGridViewTextBoxColumn8.HeaderText = "V";
-			this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
-			this.dataGridViewTextBoxColumn8.ReadOnly = true;
-			this.dataGridViewTextBoxColumn8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.dataGridViewTextBoxColumn8.ToolTipText = "Velocity";
 			// 
 			// DiPovsDataGridView
 			// 
@@ -820,39 +738,11 @@
 			this.DiPovsDataGridView.ReadOnly = true;
 			this.DiPovsDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiPovsDataGridView.RowHeadersVisible = false;
-			dataGridViewCellStyle13.BackColor = System.Drawing.SystemColors.Control;
-			this.DiPovsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle13;
+			dataGridViewCellStyle27.BackColor = System.Drawing.SystemColors.Control;
+			this.DiPovsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle27;
 			this.DiPovsDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
 			this.DiPovsDataGridView.Size = new System.Drawing.Size(138, 72);
 			this.DiPovsDataGridView.TabIndex = 3;
-			// 
-			// dataGridViewTextBoxColumn3
-			// 
-			this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-			this.dataGridViewTextBoxColumn3.DataPropertyName = "POV";
-			dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle12;
-			this.dataGridViewTextBoxColumn3.HeaderText = "POV";
-			this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
-			this.dataGridViewTextBoxColumn3.ReadOnly = true;
-			this.dataGridViewTextBoxColumn3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.dataGridViewTextBoxColumn3.Width = 46;
-			// 
-			// dataGridViewTextBoxColumn5
-			// 
-			this.dataGridViewTextBoxColumn5.DataPropertyName = "M";
-			this.dataGridViewTextBoxColumn5.HeaderText = "";
-			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
-			this.dataGridViewTextBoxColumn5.ReadOnly = true;
-			this.dataGridViewTextBoxColumn5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// dataGridViewTextBoxColumn7
-			// 
-			this.dataGridViewTextBoxColumn7.DataPropertyName = "A";
-			this.dataGridViewTextBoxColumn7.HeaderText = "";
-			this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
-			this.dataGridViewTextBoxColumn7.ReadOnly = true;
-			this.dataGridViewTextBoxColumn7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// DiButtonsDataGridView
 			// 
@@ -874,8 +764,8 @@
 			this.DiButtonsDataGridView.ReadOnly = true;
 			this.DiButtonsDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiButtonsDataGridView.RowHeadersVisible = false;
-			dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
-			this.DiButtonsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle15;
+			dataGridViewCellStyle29.BackColor = System.Drawing.SystemColors.Control;
+			this.DiButtonsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle29;
 			this.DiButtonsDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
 			this.DiButtonsDataGridView.Size = new System.Drawing.Size(138, 46);
 			this.DiButtonsDataGridView.TabIndex = 3;
@@ -884,48 +774,200 @@
 			// 
 			this.dataGridViewTextBoxColumn9.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.dataGridViewTextBoxColumn9.DataPropertyName = "M";
-			dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle14.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.dataGridViewTextBoxColumn9.DefaultCellStyle = dataGridViewCellStyle14;
+			dataGridViewCellStyle28.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle28.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.dataGridViewTextBoxColumn9.DefaultCellStyle = dataGridViewCellStyle28;
 			this.dataGridViewTextBoxColumn9.HeaderText = "Buttons";
 			this.dataGridViewTextBoxColumn9.Name = "dataGridViewTextBoxColumn9";
 			this.dataGridViewTextBoxColumn9.ReadOnly = true;
 			this.dataGridViewTextBoxColumn9.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
-			// DiEffectNameColumn
+			// DiColumnAxis
 			// 
-			this.DiEffectNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.DiEffectNameColumn.DataPropertyName = "Effect";
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.DiEffectNameColumn.DefaultCellStyle = dataGridViewCellStyle1;
-			this.DiEffectNameColumn.HeaderText = "FF Effect";
-			this.DiEffectNameColumn.MinimumWidth = 75;
-			this.DiEffectNameColumn.Name = "DiEffectNameColumn";
-			this.DiEffectNameColumn.ReadOnly = true;
-			this.DiEffectNameColumn.ToolTipText = "Supported force feedback effects";
-			this.DiEffectNameColumn.Width = 75;
+			this.DiColumnAxis.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.DiColumnAxis.DataPropertyName = "Axis";
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.DiColumnAxis.DefaultCellStyle = dataGridViewCellStyle5;
+			this.DiColumnAxis.HeaderText = "Axis";
+			this.DiColumnAxis.Name = "DiColumnAxis";
+			this.DiColumnAxis.ReadOnly = true;
+			this.DiColumnAxis.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiColumnAxis.Width = 46;
 			// 
-			// DiEffectParamsColumn
+			// DiColumnM
 			// 
-			this.DiEffectParamsColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.DiEffectParamsColumn.DataPropertyName = "Parameters";
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.DiEffectParamsColumn.DefaultCellStyle = dataGridViewCellStyle2;
-			this.DiEffectParamsColumn.HeaderText = "Static Parameters";
-			this.DiEffectParamsColumn.Name = "DiEffectParamsColumn";
-			this.DiEffectParamsColumn.ReadOnly = true;
-			this.DiEffectParamsColumn.ToolTipText = "Parameters supported by the effect";
+			this.DiColumnM.DataPropertyName = "M";
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.DiColumnM.DefaultCellStyle = dataGridViewCellStyle6;
+			this.DiColumnM.HeaderText = "M";
+			this.DiColumnM.Name = "DiColumnM";
+			this.DiColumnM.ReadOnly = true;
+			this.DiColumnM.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiColumnM.ToolTipText = "Movement";
 			// 
-			// DiEffectDynamicParameters
+			// DiColumnR
 			// 
-			this.DiEffectDynamicParameters.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.DiEffectDynamicParameters.DataPropertyName = "DynamicParameters";
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.DiEffectDynamicParameters.DefaultCellStyle = dataGridViewCellStyle3;
-			this.DiEffectDynamicParameters.HeaderText = "Dynamic Parameters";
-			this.DiEffectDynamicParameters.Name = "DiEffectDynamicParameters";
-			this.DiEffectDynamicParameters.ReadOnly = true;
-			this.DiEffectDynamicParameters.ToolTipText = "Parameters of the effect that can be modified while the effect is playing";
+			this.DiColumnR.DataPropertyName = "R";
+			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.DiColumnR.DefaultCellStyle = dataGridViewCellStyle7;
+			this.DiColumnR.HeaderText = "R";
+			this.DiColumnR.Name = "DiColumnR";
+			this.DiColumnR.ReadOnly = true;
+			this.DiColumnR.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiColumnR.ToolTipText = "Rotation";
+			// 
+			// DiColumnA
+			// 
+			this.DiColumnA.DataPropertyName = "A";
+			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.DiColumnA.DefaultCellStyle = dataGridViewCellStyle8;
+			this.DiColumnA.HeaderText = "A";
+			this.DiColumnA.Name = "DiColumnA";
+			this.DiColumnA.ReadOnly = true;
+			this.DiColumnA.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiColumnA.ToolTipText = "Acceleration";
+			// 
+			// DiColumnAR
+			// 
+			this.DiColumnAR.DataPropertyName = "AR";
+			dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.DiColumnAR.DefaultCellStyle = dataGridViewCellStyle9;
+			this.DiColumnAR.HeaderText = "AR";
+			this.DiColumnAR.Name = "DiColumnAR";
+			this.DiColumnAR.ReadOnly = true;
+			this.DiColumnAR.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiColumnAR.ToolTipText = "Angular Acceleration";
+			// 
+			// DiColumnF
+			// 
+			this.DiColumnF.DataPropertyName = "F";
+			dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.DiColumnF.DefaultCellStyle = dataGridViewCellStyle10;
+			this.DiColumnF.HeaderText = "F";
+			this.DiColumnF.Name = "DiColumnF";
+			this.DiColumnF.ReadOnly = true;
+			this.DiColumnF.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiColumnF.ToolTipText = "Force";
+			// 
+			// DiColumnFr
+			// 
+			this.DiColumnFr.DataPropertyName = "FR";
+			dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.DiColumnFr.DefaultCellStyle = dataGridViewCellStyle11;
+			this.DiColumnFr.HeaderText = "FR";
+			this.DiColumnFr.Name = "DiColumnFr";
+			this.DiColumnFr.ReadOnly = true;
+			this.DiColumnFr.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiColumnFr.ToolTipText = "Torque";
+			// 
+			// DiColumnV
+			// 
+			this.DiColumnV.DataPropertyName = "V";
+			dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.DiColumnV.DefaultCellStyle = dataGridViewCellStyle12;
+			this.DiColumnV.HeaderText = "V";
+			this.DiColumnV.Name = "DiColumnV";
+			this.DiColumnV.ReadOnly = true;
+			this.DiColumnV.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiColumnV.ToolTipText = "Velocity";
+			// 
+			// DiColumnVr
+			// 
+			this.DiColumnVr.DataPropertyName = "VR";
+			dataGridViewCellStyle13.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.DiColumnVr.DefaultCellStyle = dataGridViewCellStyle13;
+			this.DiColumnVr.HeaderText = "VR";
+			this.DiColumnVr.Name = "DiColumnVr";
+			this.DiColumnVr.ReadOnly = true;
+			this.DiColumnVr.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.DiColumnVr.ToolTipText = "Angular Velocity";
+			// 
+			// dataGridViewTextBoxColumn1
+			// 
+			this.dataGridViewTextBoxColumn1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.dataGridViewTextBoxColumn1.DataPropertyName = "Slider";
+			dataGridViewCellStyle18.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.dataGridViewTextBoxColumn1.DefaultCellStyle = dataGridViewCellStyle18;
+			this.dataGridViewTextBoxColumn1.HeaderText = "Slider";
+			this.dataGridViewTextBoxColumn1.Name = "dataGridViewTextBoxColumn1";
+			this.dataGridViewTextBoxColumn1.ReadOnly = true;
+			this.dataGridViewTextBoxColumn1.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.dataGridViewTextBoxColumn1.Width = 46;
+			// 
+			// dataGridViewTextBoxColumn2
+			// 
+			this.dataGridViewTextBoxColumn2.DataPropertyName = "M";
+			dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.BottomLeft;
+			this.dataGridViewTextBoxColumn2.DefaultCellStyle = dataGridViewCellStyle19;
+			this.dataGridViewTextBoxColumn2.HeaderText = "M";
+			this.dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
+			this.dataGridViewTextBoxColumn2.ReadOnly = true;
+			this.dataGridViewTextBoxColumn2.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// dataGridViewTextBoxColumn4
+			// 
+			this.dataGridViewTextBoxColumn4.DataPropertyName = "A";
+			dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.dataGridViewTextBoxColumn4.DefaultCellStyle = dataGridViewCellStyle20;
+			this.dataGridViewTextBoxColumn4.HeaderText = "A";
+			this.dataGridViewTextBoxColumn4.Name = "dataGridViewTextBoxColumn4";
+			this.dataGridViewTextBoxColumn4.ReadOnly = true;
+			this.dataGridViewTextBoxColumn4.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.dataGridViewTextBoxColumn4.ToolTipText = "Acceleration";
+			// 
+			// dataGridViewTextBoxColumn6
+			// 
+			this.dataGridViewTextBoxColumn6.DataPropertyName = "F";
+			dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.dataGridViewTextBoxColumn6.DefaultCellStyle = dataGridViewCellStyle21;
+			this.dataGridViewTextBoxColumn6.HeaderText = "F";
+			this.dataGridViewTextBoxColumn6.Name = "dataGridViewTextBoxColumn6";
+			this.dataGridViewTextBoxColumn6.ReadOnly = true;
+			this.dataGridViewTextBoxColumn6.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.dataGridViewTextBoxColumn6.ToolTipText = "Force";
+			// 
+			// dataGridViewTextBoxColumn8
+			// 
+			this.dataGridViewTextBoxColumn8.DataPropertyName = "V";
+			dataGridViewCellStyle22.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.dataGridViewTextBoxColumn8.DefaultCellStyle = dataGridViewCellStyle22;
+			this.dataGridViewTextBoxColumn8.HeaderText = "V";
+			this.dataGridViewTextBoxColumn8.Name = "dataGridViewTextBoxColumn8";
+			this.dataGridViewTextBoxColumn8.ReadOnly = true;
+			this.dataGridViewTextBoxColumn8.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.dataGridViewTextBoxColumn8.ToolTipText = "Velocity";
+			// 
+			// dataGridViewTextBoxColumn3
+			// 
+			this.dataGridViewTextBoxColumn3.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+			this.dataGridViewTextBoxColumn3.DataPropertyName = "POV";
+			dataGridViewCellStyle24.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.dataGridViewTextBoxColumn3.DefaultCellStyle = dataGridViewCellStyle24;
+			this.dataGridViewTextBoxColumn3.HeaderText = "POV";
+			this.dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
+			this.dataGridViewTextBoxColumn3.ReadOnly = true;
+			this.dataGridViewTextBoxColumn3.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.dataGridViewTextBoxColumn3.Width = 46;
+			// 
+			// dataGridViewTextBoxColumn5
+			// 
+			this.dataGridViewTextBoxColumn5.DataPropertyName = "M";
+			dataGridViewCellStyle25.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.dataGridViewTextBoxColumn5.DefaultCellStyle = dataGridViewCellStyle25;
+			this.dataGridViewTextBoxColumn5.HeaderText = "";
+			this.dataGridViewTextBoxColumn5.Name = "dataGridViewTextBoxColumn5";
+			this.dataGridViewTextBoxColumn5.ReadOnly = true;
+			this.dataGridViewTextBoxColumn5.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// dataGridViewTextBoxColumn7
+			// 
+			this.dataGridViewTextBoxColumn7.DataPropertyName = "A";
+			dataGridViewCellStyle26.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.dataGridViewTextBoxColumn7.DefaultCellStyle = dataGridViewCellStyle26;
+			this.dataGridViewTextBoxColumn7.HeaderText = "";
+			this.dataGridViewTextBoxColumn7.Name = "dataGridViewTextBoxColumn7";
+			this.dataGridViewTextBoxColumn7.ReadOnly = true;
+			this.dataGridViewTextBoxColumn7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			// 
 			// DirectInputUserControl
 			// 
@@ -970,11 +1012,11 @@
 			this.Size = new System.Drawing.Size(841, 408);
 			this.Load += new System.EventHandler(this.DirectInputControl_Load);
 			((System.ComponentModel.ISupportInitialize)(this.DiEffectsDataGridView)).EndInit();
+			this.CopyContextMenuStrip.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.DiAxisDataGridView)).EndInit();
 			this.DeviceDetailsTabControl.ResumeLayout(false);
 			this.DiObjectsTabPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.DiObjectsDataGridView)).EndInit();
-			this.CopyContextMenuStrip.ResumeLayout(false);
 			this.DiEffectsDataTabPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.DiSlidersDataGridView)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiPovsDataGridView)).EndInit();
@@ -1033,6 +1075,11 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn ObjectsNameColumn;
 		private System.Windows.Forms.DataGridView DiSlidersDataGridView;
 		private System.Windows.Forms.DataGridView DiPovsDataGridView;
+		private System.Windows.Forms.DataGridView DiButtonsDataGridView;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnAxis;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnM;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnR;
@@ -1042,18 +1089,13 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnFr;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnV;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DiColumnVr;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
-		private System.Windows.Forms.DataGridView DiButtonsDataGridView;
-		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn9;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn4;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn6;
 		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn8;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectNameColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectParamsColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn DiEffectDynamicParameters;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn5;
+		private System.Windows.Forms.DataGridViewTextBoxColumn dataGridViewTextBoxColumn7;
 	}
 }

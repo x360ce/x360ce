@@ -46,9 +46,7 @@ namespace x360ce.Web
         {
             var db = new x360ceModelContainer();
             items = db.UserDevices.Where(x => x.ComputerId == computerId).ToArray();
-            db.SaveChanges();
             db.Dispose();
-            db = null;
             return string.Format("{0}s: {1} selected.", items.GetType().GetElementType().Name, items.Length);
         }
 
@@ -67,7 +65,6 @@ namespace x360ce.Web
             }
             db.SaveChanges();
             db.Dispose();
-            db = null;
             return string.Format("{0}s: {1} deleted.", items.GetType().GetElementType().Name, deleted);
         }
 

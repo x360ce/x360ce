@@ -96,8 +96,11 @@ namespace x360ce.App
 		/// <summary>Contains PadSettings for Summaries, Presets and Settings.</summary>
 		public static XSettingsData<Engine.Data.PadSetting> PadSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings.xml", "User and Preset PadSettings.");
 
-		// Used for the grid.
-		public static void RefreshSettingsConnectionState(params Setting[] settings)
+		/// <summary>
+		/// Update IsOnline value on the setting from the state for DirectInput Device.
+		/// IsOnline will be set to "True" if device is connected, otherwise to "False".
+		/// </summary>
+		public static void RefreshDeviceIsOnlineValueOnSettings(params Setting[] settings)
 		{
 			foreach (var item in settings)
 			{

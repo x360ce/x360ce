@@ -1349,7 +1349,7 @@ namespace x360ce.App
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
-			SettingsManager.RefreshSettingsConnectionState(SettingsManager.Settings.Items.ToArray());
+			SettingsManager.RefreshDeviceIsOnlineValueOnSettings(SettingsManager.Settings.Items.ToArray());
 			ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
 		}
 

@@ -199,9 +199,14 @@ namespace x360ce.App.DInput
 				// Mouse needs special update.
 				if (ud.Device != null && ud.Device.Information.Type == SharpDX.DirectInput.DeviceType.Mouse)
 				{
-					var mouseState = new CustomDiState(ud.JoState);
+					if (ud.DiState == null)
+					{
+						ud.DiState = new CustomDiState(new JoystickState());
+					}
+					var mouseState = ud.DiState;
 					if (ud.OldDiState == null)
 					{
+						ud.DiState = mouseState;
 						// Make sure new state have zero values.
 						for (int a = 0; a < newState.Axis.Length; a++)
 							mouseState.Axis[a] = -short.MinValue;
@@ -211,19 +216,47 @@ namespace x360ce.App.DInput
 					}
 					else
 					{
+
+						//--------------------------------------------------------
+						// Map mouse acceleration to axis position. Good for FPS control.
+						//--------------------------------------------------------
+
 						// This parts needs to be worked on.
-						var ticks = (int)(newTime - ud.DiStateTime);
+						//var ticks = (int)(newTime - ud.DiStateTime);
 						// Update axis with delta.
-						for (int a = 0; a < newState.Axis.Length; a++)
-							mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldDiState.Axis[a]) - short.MinValue;
+						//for (int a = 0; a < newState.Axis.Length; a++)
+						//	mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldDiState.Axis[a]) - short.MinValue;
 						// Update sliders with delta.
-						for (int s = 0; s < newState.Sliders.Length; s++)
-							mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldDiState.Sliders[s]) - short.MinValue;
+						//for (int s = 0; s < newState.Sliders.Length; s++)
+						//	mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldDiState.Sliders[s]) - short.MinValue;
+
+						//--------------------------------------------------------
+						// Map mouse position to axis position. Good for car wheel controls.
+						//--------------------------------------------------------
+						var sensitivity = 10;
+
+						for (int a = 0; a < newState.Axis.Length; a++)
+						{
+							// Get delta from last state.
+							var delta = newState.Axis[a] - ud.OldDiState.Axis[a];
+							var newValue = mouseState.Axis[a] + (delta * sensitivity);
+							newValue = Math.Min(newValue, ushort.MaxValue);
+							newValue = Math.Max(newValue, ushort.MinValue);
+							mouseState.Axis[a] = newValue;
+						}
+						for (int a = 0; a < newState.Sliders.Length; a++)
+						{
+							// Get delta from last state.
+							var delta = newState.Sliders[a] - ud.OldDiState.Sliders[a];
+							var newValue = mouseState.Sliders[a] + (delta * sensitivity);
+							newValue = Math.Min(newValue, ushort.MaxValue);
+							newValue = Math.Max(newValue, ushort.MinValue);
+							mouseState.Sliders[a] = newValue;
+						}
 					}
 					// Assign unmodified state.
 					ud.OldDiState = newState;
 					ud.OldDiStateTime = ud.DiStateTime;
-					ud.DiState = mouseState;
 				}
 				else
 				{
