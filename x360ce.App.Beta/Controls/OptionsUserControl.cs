@@ -124,7 +124,7 @@ namespace x360ce.App.Controls
 
 		private void AlwaysOnTopCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SettingsManager.Sync(SettingsManager.Options, (Control)sender);
+			SettingsManager.Sync((Control)sender, SettingsManager.Options);
 		}
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
