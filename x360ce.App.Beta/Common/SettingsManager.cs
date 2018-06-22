@@ -391,6 +391,8 @@ namespace x360ce.App
 		public static void Sync(Control source, object dstination)
 		{
 			var map = Current.SettingsMap.FirstOrDefault(x => x.Control == source);
+			if (map == null)
+				return;
 			var checkBox = source as CheckBox;
 			if (checkBox != null)
 			{
@@ -405,10 +407,12 @@ namespace x360ce.App
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
-		public static void Sync(object source, Control destination)
+		public static void Sync(object source, string propertyName)
 		{
-			var map = Current.SettingsMap.FirstOrDefault(x => x.Control == destination);
-			var checkBox = destination as CheckBox;
+			var map = Current.SettingsMap.FirstOrDefault(x => x.Property.Name == propertyName);
+			if (map == null)
+				return;
+			var checkBox = map.Control as CheckBox;
 			if (checkBox != null)
 			{
 				var newValue = map.Property.GetValue(source, null);

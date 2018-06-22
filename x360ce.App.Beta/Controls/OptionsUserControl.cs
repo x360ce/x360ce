@@ -124,15 +124,15 @@ namespace x360ce.App.Controls
 
 		private void AlwaysOnTopCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SettingsManager.Sync(SettingsManager.Options, AlwaysOnTopCheckBox);
+			SettingsManager.Sync(SettingsManager.Options, (Control)sender);
 		}
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
+			SettingsManager.Sync(SettingsManager.Options, e.PropertyName);
 			// Update controls by specific property.
 			if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.AlwaysOnTop))
 			{
-				SettingsManager.Sync(SettingsManager.Options, AlwaysOnTopCheckBox);
 				// Apply setting.
 				MainForm.Current.TopMost = SettingsManager.Options.AlwaysOnTop;
 			}
