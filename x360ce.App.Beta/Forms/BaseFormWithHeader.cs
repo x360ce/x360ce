@@ -100,31 +100,36 @@ namespace x360ce.App.Controls
             }
         }
 
-        public void SetHeaderBody(string body, params object[] args)
+		public void SetHeaderError(string body, params object[] args)
+		{
+			// Apply format.
+			if (body == null)
+				body = defaultBody;
+			else if (args.Length > 0)
+				body = string.Format(body, args);
+			// Set info with time.
+			SetHeaderBody(MessageBoxIcon.Error, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
+		}
+
+		public void SetHeaderInfo(string body, params object[] args)
         {
             // Apply format.
-            if (body == null) body = defaultBody;
-            else if (args.Length > 0) body = string.Format(body, args);
+            if (body == null)
+				body = defaultBody;
+            else if (args.Length > 0)
+				body = string.Format(body, args);
             // Set info with time.
             SetHeaderBody(MessageBoxIcon.Information, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
         }
 
-        public void SetHeaderError(string body, params object[] args)
-        {
-            // Apply format.
-            if (body == null) body = defaultBody;
-            else if (args.Length > 0) body = string.Format(body, args);
-            // Set info with time.
-            SetHeaderBody(MessageBoxIcon.Error, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
-        }
-
-
         public void SetHeaderBody(MessageBoxIcon icon, string body = null, params object[] args)
         {
-            if (body == null) body = defaultBody;
-            else if (args.Length > 0) body = string.Format(body, args);
+            if (body == null)
+				body = defaultBody;
+            else if (args.Length > 0)
+				body = string.Format(body, args);
             HelpBodyLabel.Text = body;
-            // Update body colours.
+			// Update body colors.
             if (icon == MessageBoxIcon.Error) HelpBodyLabel.ForeColor = Color.DarkRed;
             else if (icon == MessageBoxIcon.Information) HelpBodyLabel.ForeColor = Color.DarkGreen;
             else HelpBodyLabel.ForeColor = SystemColors.ControlText;

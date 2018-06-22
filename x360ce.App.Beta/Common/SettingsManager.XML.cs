@@ -207,7 +207,7 @@ namespace x360ce.App
 				// If value is not set then...
 				if (string.IsNullOrEmpty(v))
 					// Restore default value.
-					v = map.DefaultValue ?? "";
+					v = string.Format("{0}", map.DefaultValue ?? "");
 				LoadSetting(map.Control, key, v);
 			}
 			// Resume form events (track setting changes on the form).

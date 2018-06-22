@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using SharpDX.DirectInput;
-using x360ce.App.Controls;
 using System.Linq;
 using x360ce.Engine.Data;
 using x360ce.Engine;
@@ -11,7 +9,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.ComponentModel;
 using System.IO;
-using JocysCom.ClassLibrary.Runtime;
+using System.Linq;
 
 namespace x360ce.App
 {
@@ -350,20 +348,75 @@ namespace x360ce.App
 
 		#region Public Methods
 		/// <summary>
-		/// Adds an entry in the control-setting map and also generates a tool-tip for the setting.
+		/// Adds an entry in the control-setting map, generates a tool-tip for the setting.
 		/// </summary>
-		/// <param name="sectionName">
-		/// The name of the section.
-		/// </param>
-		/// <param name="setting">
-		/// The name of the setting.
-		/// </param>
-		/// <param name="control">
-		/// The control used to edit the setting.
-		/// </param>
-		/// <param name="settingsMap">
-		/// The settings map to add the entry in.
-		/// </param>
+		/// <param name="setting">The name of the setting.</param>
+		/// <param name="control">The control used to edit the setting.</param>
+		static public void AddMap<T>(Expression<Func<T, object>> setting, Control control)
+		{
+			// Get the member expression
+			var me = setting.Body as MemberExpression ?? ((UnaryExpression)setting.Body).Operand as MemberExpression;
+			// Get the property
+			var prop = (PropertyInfo)me.Member;
+			// Get the setting name by reading the property
+			//var keyName = prop.Name;
+			// Get the description attribute
+			var descAttr = GetCustomAttribute<DescriptionAttribute>(prop);
+			var desc = descAttr != null ? descAttr.Description : string.Empty;
+			// Get the default value attribute
+			var dvalAttr = GetCustomAttribute<DefaultValueAttribute>(prop);
+			var dval = descAttr != null ? dvalAttr.Value : null;
+			// Display help inside yellow header.
+			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
+			control.MouseHover += control_MouseEnter;
+			control.MouseLeave += control_MouseLeave;
+			var item = new SettingsMapItem();
+			item.Description = desc;
+			//item.IniSection = sectionName;
+			//item.MapTo = mapTo;
+			//item.IniKey = keyName;
+			item.Control = control;
+			item.PropertyName = prop.Name;
+			item.DefaultValue = dval;
+			item.Property = prop;
+			// Add to the map
+			Current.SettingsMap.Add(item);
+		}
+
+		/// <summary>
+		/// Set property value from control if different.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		public static void Sync(Control source, object dstination)
+		{
+			var map = Current.SettingsMap.FirstOrDefault(x => x.Control == source);
+			var checkBox = source as CheckBox;
+			if (checkBox != null)
+			{
+				var oldValue = map.Property.GetValue(dstination, null);
+				if (!Equals(oldValue, checkBox.Checked))
+					map.Property.SetValue(dstination, checkBox.Checked, null);
+			}
+		}
+
+		/// <summary>
+		/// Set control value from property if different.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		public static void Sync(object source, Control destination)
+		{
+			var map = Current.SettingsMap.FirstOrDefault(x => x.Control == destination);
+			var checkBox = destination as CheckBox;
+			if (checkBox != null)
+			{
+				var newValue = map.Property.GetValue(source, null);
+				if (!Equals(newValue, checkBox.Checked))
+					checkBox.Checked = (bool)newValue;
+			}
+		}
+
 		static public void AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None)
 		{
 			// Get the member expression
@@ -400,16 +453,18 @@ namespace x360ce.App
 
 		static void control_MouseLeave(object sender, EventArgs e)
 		{
+			//Console.WriteLine(string.Format("Mouse Leave: {0}", sender));
 			MainForm.Current.SetHeaderBody(MessageBoxIcon.None);
 		}
 
 		static void control_MouseEnter(object sender, EventArgs e)
 		{
+			//Console.WriteLine(string.Format("Mouse Enter: {0}", sender));
 			var control = (Control)sender;
 			var item = Current.SettingsMap.FirstOrDefault(x => x.Control == control);
 			if (item != null && !string.IsNullOrEmpty(item.Description))
 			{
-				MainForm.Current.HelpBodyLabel.Text = item.Description;
+				MainForm.Current.SetHeaderInfo(item.Description);
 			}
 		}
 

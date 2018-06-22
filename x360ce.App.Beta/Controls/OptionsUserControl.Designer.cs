@@ -96,6 +96,9 @@
 			this.ViGEmBusInstallButton = new System.Windows.Forms.Button();
 			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
 			this.DeveloperToolsButton = new System.Windows.Forms.Button();
+			this.AlwaysOnTopCheckBox = new System.Windows.Forms.CheckBox();
+			this.StartWithWindowsStateComboBox = new System.Windows.Forms.ComboBox();
+			this.StartWithWindowsCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -122,7 +125,7 @@
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 86);
+			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 124);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
 			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(254, 136);
 			this.TestingAndLoggingGroupBox.TabIndex = 30;
@@ -228,11 +231,14 @@
 			// 
 			// OperationGroupBox
 			// 
+			this.OperationGroupBox.Controls.Add(this.StartWithWindowsStateComboBox);
+			this.OperationGroupBox.Controls.Add(this.StartWithWindowsCheckBox);
+			this.OperationGroupBox.Controls.Add(this.AlwaysOnTopCheckBox);
 			this.OperationGroupBox.Controls.Add(this.MinimizeToTrayCheckBox);
 			this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
 			this.OperationGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.OperationGroupBox.Name = "OperationGroupBox";
-			this.OperationGroupBox.Size = new System.Drawing.Size(254, 77);
+			this.OperationGroupBox.Size = new System.Drawing.Size(254, 115);
 			this.OperationGroupBox.TabIndex = 31;
 			this.OperationGroupBox.TabStop = false;
 			this.OperationGroupBox.Text = "Operation";
@@ -409,7 +415,7 @@
 			this.ConfigurationGroupBox.Controls.Add(this.IncludeProductsCheckBox);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
-			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 303);
+			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 341);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
 			this.ConfigurationGroupBox.Size = new System.Drawing.Size(254, 47);
 			this.ConfigurationGroupBox.TabIndex = 31;
@@ -447,7 +453,7 @@
 			// 
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
-			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 228);
+			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 266);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
 			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(254, 69);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
@@ -613,7 +619,7 @@
 			this.GamesGroupBox.Controls.Add(this.IncludeEnabledCheckBox);
 			this.GamesGroupBox.Controls.Add(this.MinimumInstanceCountLabel);
 			this.GamesGroupBox.Controls.Add(this.MinimumInstanceCountNumericUpDown);
-			this.GamesGroupBox.Location = new System.Drawing.Point(3, 356);
+			this.GamesGroupBox.Location = new System.Drawing.Point(3, 394);
 			this.GamesGroupBox.Name = "GamesGroupBox";
 			this.GamesGroupBox.Size = new System.Drawing.Size(254, 69);
 			this.GamesGroupBox.TabIndex = 31;
@@ -660,7 +666,7 @@
 			// 
 			this.UpdateOptionsGroupBox.Controls.Add(this.CheckForUpdatesCheckBox);
 			this.UpdateOptionsGroupBox.Controls.Add(this.CheckUpdatesButton);
-			this.UpdateOptionsGroupBox.Location = new System.Drawing.Point(3, 431);
+			this.UpdateOptionsGroupBox.Location = new System.Drawing.Point(3, 469);
 			this.UpdateOptionsGroupBox.Name = "UpdateOptionsGroupBox";
 			this.UpdateOptionsGroupBox.Size = new System.Drawing.Size(254, 54);
 			this.UpdateOptionsGroupBox.TabIndex = 31;
@@ -852,6 +858,39 @@
 			this.DeveloperToolsButton.UseVisualStyleBackColor = true;
 			this.DeveloperToolsButton.Click += new System.EventHandler(this.DeveloperToolsButton_Click);
 			// 
+			// AlwaysOnTopCheckBox
+			// 
+			this.AlwaysOnTopCheckBox.AutoSize = true;
+			this.AlwaysOnTopCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.AlwaysOnTopCheckBox.Location = new System.Drawing.Point(120, 52);
+			this.AlwaysOnTopCheckBox.Name = "AlwaysOnTopCheckBox";
+			this.AlwaysOnTopCheckBox.Size = new System.Drawing.Size(102, 18);
+			this.AlwaysOnTopCheckBox.TabIndex = 93;
+			this.AlwaysOnTopCheckBox.Text = "Always on Top";
+			// 
+			// StartWithWindowsStateComboBox
+			// 
+			this.StartWithWindowsStateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.StartWithWindowsStateComboBox.FormattingEnabled = true;
+			this.StartWithWindowsStateComboBox.Items.AddRange(new object[] {
+            "Maximized",
+            "Normal",
+            "Minimized"});
+			this.StartWithWindowsStateComboBox.Location = new System.Drawing.Point(124, 75);
+			this.StartWithWindowsStateComboBox.Name = "StartWithWindowsStateComboBox";
+			this.StartWithWindowsStateComboBox.Size = new System.Drawing.Size(90, 21);
+			this.StartWithWindowsStateComboBox.TabIndex = 95;
+			// 
+			// StartWithWindowsCheckBox
+			// 
+			this.StartWithWindowsCheckBox.AutoSize = true;
+			this.StartWithWindowsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.StartWithWindowsCheckBox.Location = new System.Drawing.Point(6, 76);
+			this.StartWithWindowsCheckBox.Name = "StartWithWindowsCheckBox";
+			this.StartWithWindowsCheckBox.Size = new System.Drawing.Size(126, 18);
+			this.StartWithWindowsCheckBox.TabIndex = 94;
+			this.StartWithWindowsCheckBox.Text = "Start with Windows:";
+			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -968,5 +1007,8 @@
 		private System.Windows.Forms.Button ViGEmBusInstallButton;
 		private System.Windows.Forms.Button HidGuardianUninstallButton;
 		private System.Windows.Forms.Button HidGuardianInstallButton;
+		internal System.Windows.Forms.CheckBox AlwaysOnTopCheckBox;
+		public System.Windows.Forms.ComboBox StartWithWindowsStateComboBox;
+		public System.Windows.Forms.CheckBox StartWithWindowsCheckBox;
 	}
 }

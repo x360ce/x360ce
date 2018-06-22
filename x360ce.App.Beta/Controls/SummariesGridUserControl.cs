@@ -116,7 +116,7 @@ namespace x360ce.App.Controls
             }
             else if (e.Result == null)
             {
-                _ParentForm.SetHeaderBody("No default settings received.");
+                _ParentForm.SetHeaderInfo("No default settings received.");
             }
             else
             {
@@ -128,7 +128,7 @@ namespace x360ce.App.Controls
 				SettingsManager.Current.CleanupPadSettings();
 				var summariesCount = (result.Summaries == null) ? 0 : result.Summaries.Length;
                 var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-                _ParentForm.SetHeaderBody("{0} default settings and {0} PAD settings received.", summariesCount, padSettingsCount);
+                _ParentForm.SetHeaderInfo("{0} default settings and {0} PAD settings received.", summariesCount, padSettingsCount);
             }
             _ParentForm.RemoveTask(TaskName.SearchSummaries);
             SummariesRefreshButton.Enabled = true;

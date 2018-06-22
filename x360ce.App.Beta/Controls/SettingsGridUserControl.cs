@@ -172,7 +172,7 @@ namespace x360ce.App.Controls
 			}
 			else if (e.Result == null)
 			{
-				_ParentForm.SetHeaderBody("No user settings received.");
+				_ParentForm.SetHeaderInfo("No user settings received.");
 			}
 			else
 			{
@@ -187,7 +187,7 @@ namespace x360ce.App.Controls
 				// Display results about operation.
 				var settingsCount = (result.Settings == null) ? 0 : result.Settings.Length;
 				var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-				_ParentForm.SetHeaderBody("{0} user settings and {1} PAD settings received.", settingsCount, padSettingsCount);
+				_ParentForm.SetHeaderInfo("{0} user settings and {1} PAD settings received.", settingsCount, padSettingsCount);
 			}
 			_ParentForm.RemoveTask(TaskName.SearchSettings);
 			SettingsRefreshButton.Enabled = true;

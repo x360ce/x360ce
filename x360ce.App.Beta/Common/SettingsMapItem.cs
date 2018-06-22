@@ -1,4 +1,6 @@
-﻿namespace x360ce.App
+﻿using System.Reflection;
+
+namespace x360ce.App
 {
 	public class SettingsMapItem
 	{
@@ -30,6 +32,9 @@
 		/// Property name on .NET class.
 		/// </summary>
 		public string PropertyName { get; set;}
+
+
+		public PropertyInfo Property { get; set; }
 		/// <summary>
 		/// Description of the setting.
 		/// </summary>
@@ -42,7 +47,7 @@
 		/// <summary>
 		/// Default value if property is null or empty.
 		/// </summary>
-		public string DefaultValue { get; set; }
+		public object DefaultValue { get; set; }
 
 	}
 }

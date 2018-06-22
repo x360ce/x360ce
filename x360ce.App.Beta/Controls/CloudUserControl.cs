@@ -229,7 +229,7 @@ namespace x360ce.App.Controls
                             if (result.ErrorCode > 0)
                                 MainForm.Current.SetHeaderError(result.ErrorMessage);
                             else
-                                MainForm.Current.SetHeaderBody(result.ErrorMessage);
+                                MainForm.Current.SetHeaderInfo(result.ErrorMessage);
                     }
                     if (result.UserDevices != null)
                     {
@@ -238,7 +238,7 @@ namespace x360ce.App.Controls
                             if (result.ErrorCode > 0)
                                 MainForm.Current.SetHeaderError(result.ErrorMessage);
                             else
-                                MainForm.Current.SetHeaderBody(result.ErrorMessage);
+                                MainForm.Current.SetHeaderInfo(result.ErrorMessage);
                     }
                     break;
                 case CloudAction.CheckUpdates:

@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Windows.Forms;
 using x360ce.Engine;
 
 namespace x360ce.App
@@ -60,9 +61,18 @@ namespace x360ce.App
             return false;
         }
 
-        public bool AllowOnlyOneCopy { get; set; }
+		[DefaultValue(false), Description("Allow only one instance of the application to run at a time.")]
+		public bool AllowOnlyOneCopy { get; set; }
 
-        public bool ShowProgramsTab { get; set; }
+		[DefaultValue(false), Description("Make program Top Window")]
+		public bool AlwaysOnTop { get; set; }
+
+		[DefaultValue(false), Description("Start with Windows.")]
+		public bool StartWithWindows { get; set; }
+
+		[DefaultValue(FormWindowState.Normal), Description("Windows State when program starts with Windows.")]
+		public FormWindowState StartWithWindowsState { get; set; }
+		public bool ShowProgramsTab { get; set; }
         public bool ShowSettingsTab { get; set; }
         public bool ShowDevicesTab { get; set; }
         public bool ShowIniTab { get; set; }
@@ -125,7 +135,7 @@ namespace x360ce.App
             return body.Member.Name;
         }
 
-        void ReportPropertyChanged(Expression<Func<Options, object>> selector)
+        public void ReportPropertyChanged(Expression<Func<Options, object>> selector)
         {
             var ev = PropertyChanged;
             if (ev == null) return;
