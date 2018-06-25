@@ -48,8 +48,11 @@ namespace x360ce.App.Controls
 
 		#region Operation 
 
-		public const string arg_WindowState = "WindowState";
-
+		/// <summary>
+		/// Requires no special permissions, because current used have full access to CurrentUser 'Run' registry key.
+		/// </summary>
+		/// <param name="enabled">Start with Windows after Sign-In.</param>
+		/// <param name="startState">Start Mode.</param>
 		public void UpdateWindowsStartRegistry(bool enabled, FormWindowState? startState = null)
 		{
 			startState = startState ?? SettingsManager.Options.StartWithWindowsState;
@@ -57,7 +60,7 @@ namespace x360ce.App.Controls
 			if (enabled)
 			{
 				// Add the value in the registry so that the application runs at start-up
-				string command = string.Format("\"{0}\" /{1}={2}", Application.ExecutablePath, arg_WindowState, startState.ToString());
+				string command = string.Format("\"{0}\" /{1}={2}", Application.ExecutablePath, Program.arg_WindowState, startState.ToString());
 				var value = (string)runKey.GetValue(Application.ProductName);
 				if (value != command)
 				{
@@ -111,18 +114,25 @@ namespace x360ce.App.Controls
 			SettingsManager.AddMap<Options>(x => x.StartWithWindows, StartWithWindowsCheckBox);
 			SettingsManager.AddMap<Options>(x => x.StartWithWindowsState, StartWithWindowsStateComboBox);
 			//SettingsManager.AddMap<Options>(x => x.MinimizeToTray, MinimizeToTrayCheckBox);
-
 			// Load settings into control.
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
-			AlwaysOnTopCheckBox.CheckedChanged += AlwaysOnTopCheckBox_CheckedChanged;
-			// This will trigger Options_PropertyChanged event handler.
+			// This will trigger Options_PropertyChanged event handler and update controls.
 			SettingsManager.Options.ReportPropertyChanged(x => x.AlwaysOnTop);
+			SettingsManager.Options.ReportPropertyChanged(x => x.AllowOnlyOneCopy);
+			SettingsManager.Options.ReportPropertyChanged(x => x.StartWithWindows);
+			SettingsManager.Options.ReportPropertyChanged(x => x.StartWithWindowsState);
+			// Monitor control changes.
+			AlwaysOnTopCheckBox.CheckedChanged += Control_Changed;
+			AllowOnlyOneCopyCheckBox.CheckedChanged += Control_Changed;
+			StartWithWindowsCheckBox.CheckedChanged += Control_Changed;
+			StartWithWindowsStateComboBox.SelectedIndexChanged += Control_Changed;
+			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
 			SettingsManager.OptionsData.Saving += OptionsData_Saving;
 		}
 
-		private void AlwaysOnTopCheckBox_CheckedChanged(object sender, EventArgs e)
+		private void Control_Changed(object sender, EventArgs e)
 		{
 			SettingsManager.Sync((Control)sender, SettingsManager.Options);
 		}
@@ -135,6 +145,11 @@ namespace x360ce.App.Controls
 			{
 				// Apply setting.
 				MainForm.Current.TopMost = SettingsManager.Options.AlwaysOnTop;
+			}
+			else if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.StartWithWindows) ||
+				e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.StartWithWindowsState))
+			{
+				UpdateWindowsStartRegistry(SettingsManager.Options.StartWithWindows, SettingsManager.Options.StartWithWindowsState);
 			}
 		}
 
@@ -224,10 +239,6 @@ namespace x360ce.App.Controls
 		{
 			// Load XML settings into control.
 			var o = SettingsManager.Options;
-			// Operations.
-			AllowOnlyOneCopyCheckBox.Checked = o.AllowOnlyOneCopy;
-			StartWithWindowsCheckBox.Checked = o.StartWithWindows;
-			StartWithWindowsStateComboBox.SelectedItem = o.StartWithWindowsState;
 			// Other option.
 			InternetCheckBox.Checked = o.InternetFeatures;
 			InternetAutoLoadCheckBox.Checked = o.InternetAutoLoad;
@@ -250,10 +261,6 @@ namespace x360ce.App.Controls
 		{
 			// Save XML settings into control.
 			var o = SettingsManager.Options;
-			// Operations.
-			o.AllowOnlyOneCopy = AllowOnlyOneCopyCheckBox.Checked;
-			o.StartWithWindows = StartWithWindowsCheckBox.Checked;
-			o.StartWithWindowsState = (FormWindowState)StartWithWindowsStateComboBox.SelectedItem;
 			// Other options.
 			o.InternetFeatures = InternetCheckBox.Checked;
 			o.InternetAutoLoad = InternetAutoLoadCheckBox.Checked;

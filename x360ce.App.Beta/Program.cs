@@ -88,6 +88,8 @@ namespace x360ce.App
 			}
 		}
 
+		public const string arg_WindowState = "WindowState";
+
 		static void StartApp(string[] args)
 		{
 			//var fi = new FileInfo(Application.ExecutablePath);
@@ -134,6 +136,20 @@ namespace x360ce.App
 			}
 			else
 			{
+				//MainForm.TrayNotifyIcon.Visible = true;
+				if (ic.Parameters.ContainsKey(arg_WindowState))
+				{
+					switch (ic.Parameters[arg_WindowState])
+					{
+						case "Maximized":
+							MainForm.Current.RestoreFromTray();
+							MainForm.Current.WindowState = FormWindowState.Maximized;
+							break;
+						case "Minimized":
+							MainForm.Current.MinimizeToTray(false, SettingsManager.Options.MinimizeToTray);
+							break;
+					}
+				}
 				Application.Run(MainForm.Current);
 			}
 		}

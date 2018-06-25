@@ -388,17 +388,23 @@ namespace x360ce.App
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
-		public static void Sync(Control source, object dstination)
+		public static void Sync(Control source, object destination)
 		{
 			var map = Current.SettingsMap.FirstOrDefault(x => x.Control == source);
 			if (map == null)
 				return;
+			var propValue = map.Property.GetValue(destination, null);
 			var checkBox = source as CheckBox;
 			if (checkBox != null)
 			{
-				var oldValue = map.Property.GetValue(dstination, null);
-				if (!Equals(oldValue, checkBox.Checked))
-					map.Property.SetValue(dstination, checkBox.Checked, null);
+				if (!Equals(propValue, checkBox.Checked))
+					map.Property.SetValue(destination, checkBox.Checked, null);
+			}
+			var comboBox = map.Control as ComboBox;
+			if (comboBox != null)
+			{
+				if (!Equals(propValue, comboBox.SelectedItem))
+					map.Property.SetValue(destination, comboBox.SelectedItem, null);
 			}
 		}
 
@@ -412,12 +418,18 @@ namespace x360ce.App
 			var map = Current.SettingsMap.FirstOrDefault(x => x.Property.Name == propertyName);
 			if (map == null)
 				return;
+			var propValue = map.Property.GetValue(source, null);
 			var checkBox = map.Control as CheckBox;
 			if (checkBox != null)
 			{
-				var newValue = map.Property.GetValue(source, null);
-				if (!Equals(newValue, checkBox.Checked))
-					checkBox.Checked = (bool)newValue;
+				if (!Equals(propValue, checkBox.Checked))
+					checkBox.Checked = (bool)propValue;
+			}
+			var comboBox = map.Control as ComboBox;
+			if (comboBox != null)
+			{
+				if (!Equals(propValue, comboBox.SelectedItem))
+					comboBox.SelectedItem = propValue;
 			}
 		}
 
@@ -451,6 +463,7 @@ namespace x360ce.App
 			item.MapTo = mapTo;
 			item.PropertyName = prop.Name;
 			item.DefaultValue = dval;
+			item.Property = prop;
 			// Add to the map
 			Current.SettingsMap.Add(item);
 		}

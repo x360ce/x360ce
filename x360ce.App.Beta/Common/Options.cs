@@ -62,16 +62,22 @@ namespace x360ce.App
         }
 
 		[DefaultValue(false), Description("Allow only one instance of the application to run at a time.")]
-		public bool AllowOnlyOneCopy { get; set; }
+		public bool AllowOnlyOneCopy { get { return _AllowOnlyOneCopy; } set { _AllowOnlyOneCopy = value; ReportPropertyChanged(x => x.GetXInputStates); } }
+		bool _AllowOnlyOneCopy;
 
 		[DefaultValue(false), Description("Make program Top Window")]
-		public bool AlwaysOnTop { get; set; }
+		public bool AlwaysOnTop { get { return _AlwaysOnTop; } set { _AlwaysOnTop = value; ReportPropertyChanged(x => x.AlwaysOnTop); } }
+		bool _AlwaysOnTop;
+
 
 		[DefaultValue(false), Description("Start with Windows.")]
-		public bool StartWithWindows { get; set; }
+		public bool StartWithWindows { get { return _StartWithWindows; } set { _StartWithWindows = value; ReportPropertyChanged(x => x.StartWithWindows); } }
+		bool _StartWithWindows;
 
 		[DefaultValue(FormWindowState.Normal), Description("Windows State when program starts with Windows.")]
-		public FormWindowState StartWithWindowsState { get; set; }
+		public FormWindowState StartWithWindowsState { get { return _StartWithWindowsState; } set { _StartWithWindowsState = value; ReportPropertyChanged(x => x.StartWithWindowsState); } }
+		FormWindowState _StartWithWindowsState;
+
 		public bool ShowProgramsTab { get; set; }
         public bool ShowSettingsTab { get; set; }
         public bool ShowDevicesTab { get; set; }
