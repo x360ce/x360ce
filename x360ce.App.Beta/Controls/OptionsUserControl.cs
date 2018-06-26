@@ -96,36 +96,51 @@ namespace x360ce.App.Controls
 			// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 			// INI setting keys with controls.
 			string section = SettingsManager.OptionsSection;
-			SettingsManager.AddMap(section, () => SettingName.UseInitBeep, UseInitBeepCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.DebugMode, DebugModeCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.Log, EnableLoggingCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
-			SettingsManager.AddMap(section, () => SettingName.CombineEnabled, CombineEnabledCheckBox);
+			// Attach property monitoring first.
+			var o = SettingsManager.Options;
+			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			// Stored inside XML now.
-			SettingsManager.AddMap(section, () => SettingName.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
-			SettingsManager.AddMap(section, () => SettingName.InternetFeatures, InternetCheckBox);
-			SettingsManager.AddMap(section, () => SettingName.InternetAutoLoad, InternetAutoLoadCheckBox);
-			SettingsManager.AddMap(section, () => SettingName.InternetAutoSave, InternetAutoSaveCheckBox);
-			SettingsManager.AddMap(section, () => SettingName.ProgramScanLocations, GameScanLocationsListBox);
-			// Operations.
+			SettingsManager.AddMap<Options>(x => x.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
+			SettingsManager.AddMap<Options>(x => x.InternetFeatures, InternetCheckBox);
+			SettingsManager.AddMap<Options>(x => x.InternetAutoLoad, InternetAutoLoadCheckBox);
+			SettingsManager.AddMap<Options>(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
+			SettingsManager.AddMap<Options>(x => x.GameScanLocations, GameScanLocationsListBox);
 			SettingsManager.AddMap<Options>(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			SettingsManager.AddMap<Options>(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingsManager.AddMap<Options>(x => x.StartWithWindows, StartWithWindowsCheckBox);
 			SettingsManager.AddMap<Options>(x => x.StartWithWindowsState, StartWithWindowsStateComboBox);
 			//SettingsManager.AddMap<Options>(x => x.MinimizeToTray, MinimizeToTrayCheckBox);
 			// Load settings into control.
-			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			// This will trigger Options_PropertyChanged event handler and update controls.
-			SettingsManager.Options.ReportPropertyChanged(x => x.AlwaysOnTop);
-			SettingsManager.Options.ReportPropertyChanged(x => x.AllowOnlyOneCopy);
-			SettingsManager.Options.ReportPropertyChanged(x => x.StartWithWindows);
-			SettingsManager.Options.ReportPropertyChanged(x => x.StartWithWindowsState);
+			o.ReportPropertyChanged(x => x.InternetDatabaseUrl);
+			o.ReportPropertyChanged(x => x.InternetFeatures);
+			o.ReportPropertyChanged(x => x.InternetAutoLoad);
+			o.ReportPropertyChanged(x => x.InternetAutoSave);
+			//o.ReportPropertyChanged(x => x.GameScanLocations);
+			o.ReportPropertyChanged(x => x.AlwaysOnTop);
+			o.ReportPropertyChanged(x => x.AllowOnlyOneCopy);
+			o.ReportPropertyChanged(x => x.StartWithWindows);
+			o.ReportPropertyChanged(x => x.StartWithWindowsState);
 			// Monitor control changes.
+
+			InternetDatabaseUrlComboBox.SelectedIndexChanged += Control_Changed;
+			InternetCheckBox.CheckedChanged += Control_Changed;
+			InternetAutoLoadCheckBox.CheckedChanged += Control_Changed;
+			InternetAutoSaveCheckBox.CheckedChanged += Control_Changed;
+			//GameScanLocationsListBox. += Control_Changed;
 			AlwaysOnTopCheckBox.CheckedChanged += Control_Changed;
 			AllowOnlyOneCopyCheckBox.CheckedChanged += Control_Changed;
 			StartWithWindowsCheckBox.CheckedChanged += Control_Changed;
 			StartWithWindowsStateComboBox.SelectedIndexChanged += Control_Changed;
+
+			GameScanLocationsListBox.DataSource = o.GameScanLocations;
+			InternetDatabaseUrlComboBox.DataSource = o.InternetDatabaseUrls;
+			InternetDatabaseUrlComboBox.SelectedItem = o.InternetDatabaseUrl;
+
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
@@ -161,8 +176,10 @@ namespace x360ce.App.Controls
 		private void AddLocationButton_Click(object sender, EventArgs e)
 		{
 			var path = LocationFolderBrowserDialog.SelectedPath;
-			if (string.IsNullOrEmpty(path)) path = GameScanLocationsListBox.Text;
-			if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+			if (string.IsNullOrEmpty(path))
+				path = GameScanLocationsListBox.Text;
+			if (string.IsNullOrEmpty(path))
+				path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 			LocationFolderBrowserDialog.SelectedPath = path;
 			LocationFolderBrowserDialog.Description = "Browse for Scan Location";
 			var result = LocationFolderBrowserDialog.ShowDialog();
@@ -178,9 +195,9 @@ namespace x360ce.App.Controls
 				{
 					if (!Contains(LocationFolderBrowserDialog.SelectedPath))
 					{
-						GameScanLocationsListBox.Items.Add(LocationFolderBrowserDialog.SelectedPath);
+						SettingsManager.Options.GameScanLocations.Add(LocationFolderBrowserDialog.SelectedPath);
 						// Change selected index for change event to fire.
-						GameScanLocationsListBox.SelectedIndex = GameScanLocationsListBox.Items.Count - 1;
+						GameScanLocationsListBox.SelectedItem = LocationFolderBrowserDialog.SelectedPath;
 					}
 				}
 			}
@@ -188,9 +205,11 @@ namespace x360ce.App.Controls
 
 		private void RemoveLocationButton_Click(object sender, EventArgs e)
 		{
-			if (GameScanLocationsListBox.SelectedIndex == -1) return;
+			if (GameScanLocationsListBox.SelectedIndex == -1)
+				 return;
 			var currentIndex = GameScanLocationsListBox.SelectedIndex;
-			GameScanLocationsListBox.Items.RemoveAt(currentIndex);
+			var currentItem = GameScanLocationsListBox.SelectedItem as string;
+			SettingsManager.Options.GameScanLocations.Remove(currentItem);
 			// Change selected index for change event to fire.
 			GameScanLocationsListBox.SelectedIndex = Math.Min(currentIndex, GameScanLocationsListBox.Items.Count - 1);
 		}
@@ -202,20 +221,18 @@ namespace x360ce.App.Controls
 
 		bool Contains(string path)
 		{
-			var paths = GameScanLocationsListBox.Items.Cast<string>().ToArray();
-			for (int i = 0; i < paths.Length; i++)
-			{
-				if (paths[i].ToLower() == path.ToLower()) return true;
-			}
-			return false;
+			return SettingsManager.Options.GameScanLocations
+				.Any(x => string.Equals(x, path, StringComparison.OrdinalIgnoreCase));
 		}
 
 		private void RefreshLocationsButton_Click(object sender, EventArgs e)
 		{
 			var path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-			if (!Contains(path)) GameScanLocationsListBox.Items.Add(path);
+			if (!Contains(path))
+				SettingsManager.Options.GameScanLocations.Add(path);
 			path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-			if (!Contains(path)) GameScanLocationsListBox.Items.Add(path);
+			if (!Contains(path))
+				SettingsManager.Options.GameScanLocations.Add(path);
 			DriveInfo[] allDrives = DriveInfo.GetDrives();
 			foreach (DriveInfo d in allDrives)
 			{
@@ -227,7 +244,8 @@ namespace x360ce.App.Controls
 						for (int i = 0; i < programDirs.Count(); i++)
 						{
 							path = programDirs[i].FullName;
-							if (!Contains(path)) GameScanLocationsListBox.Items.Add(path);
+							if (!Contains(path))
+								SettingsManager.Options.GameScanLocations.Add(path);
 						}
 					}
 					catch (Exception) { }
@@ -240,15 +258,9 @@ namespace x360ce.App.Controls
 			// Load XML settings into control.
 			var o = SettingsManager.Options;
 			// Other option.
-			InternetCheckBox.Checked = o.InternetFeatures;
-			InternetAutoLoadCheckBox.Checked = o.InternetAutoLoad;
-			InternetAutoSaveCheckBox.Checked = o.InternetAutoSave;
-			InternetDatabaseUrlComboBox.DataSource = o.InternetDatabaseUrls;
-			InternetDatabaseUrlComboBox.SelectedItem = o.InternetDatabaseUrl;
 			ShowProgramsTabCheckBox.Checked = o.ShowProgramsTab;
 			ShowSettingsTabCheckBox.Checked = o.ShowSettingsTab;
 			ShowDevicesTabCheckBox.Checked = o.ShowDevicesTab;
-			GameScanLocationsListBox.Items.AddRange(o.GameScanLocations.ToArray());
 			DiskIdTextBox.Text = o.DiskId;
 			UsernameTextBox.Text = o.Username;
 			ComputerIdTextBox.Text = o.ComputerId.ToString();
@@ -262,15 +274,9 @@ namespace x360ce.App.Controls
 			// Save XML settings into control.
 			var o = SettingsManager.Options;
 			// Other options.
-			o.InternetFeatures = InternetCheckBox.Checked;
-			o.InternetAutoLoad = InternetAutoLoadCheckBox.Checked;
-			o.InternetAutoSave = InternetAutoSaveCheckBox.Checked;
-			o.InternetDatabaseUrls = (List<string>)InternetDatabaseUrlComboBox.DataSource;
-			o.InternetDatabaseUrl = (string)InternetDatabaseUrlComboBox.SelectedItem;
 			o.ShowProgramsTab = ShowProgramsTabCheckBox.Checked;
 			o.ShowSettingsTab = ShowSettingsTabCheckBox.Checked;
 			o.ShowDevicesTab = ShowDevicesTabCheckBox.Checked;
-			o.GameScanLocations = GameScanLocationsListBox.Items.Cast<string>().ToList();
 			o.Username = UsernameTextBox.Text;
 			o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
 			o.ExcludeSupplementalDevices = ExcludeSupplementalDevicesCheckBox.Checked;

@@ -9,57 +9,57 @@ using x360ce.Engine;
 
 namespace x360ce.App
 {
-    public class Options : INotifyPropertyChanged
-    {
-        public Options()
-        {
+	public class Options : INotifyPropertyChanged
+	{
+		public Options()
+		{
 			// Set default values.
-            AllowOnlyOneCopy = true;
-            InternetFeatures = true;
-            InternetAutoLoad = true;
-            InternetAutoSave = true;
+			AllowOnlyOneCopy = true;
+			InternetFeatures = true;
+			InternetAutoLoad = true;
+			InternetAutoSave = true;
 			ShowDevicesTab = true;
 		}
-        /// <summary>
-        /// Avoid deserialization duplicates by using separate method.
-        /// </summary>
-        public void InitDefaults()
-        {
-            if (string.IsNullOrEmpty(InternetDatabaseUrl))
-                InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
-            if (InternetDatabaseUrls == null)
-                InternetDatabaseUrls = new List<string>();
-            if (InternetDatabaseUrls.Count == 0)
-            {
-                InternetDatabaseUrls.Add("http://www.x360ce.com/webservices/x360ce.asmx");
-                InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
-            }
-            if (GameScanLocations == null)
-                GameScanLocations = new List<string>() { };
-            if (string.IsNullOrEmpty(DiskId))
-            {
-                DiskId = Engine.BoardInfo.GetDiskId();
-            }
-            if (ComputerId == Guid.Empty)
-            {
-                ComputerId = Engine.BoardInfo.GetHashedDiskId();
-            }
-        }
+		/// <summary>
+		/// Avoid deserialization duplicates by using separate method.
+		/// </summary>
+		public void InitDefaults()
+		{
+			if (string.IsNullOrEmpty(InternetDatabaseUrl))
+				InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
+			if (InternetDatabaseUrls == null)
+				InternetDatabaseUrls = new BindingList<string>();
+			if (InternetDatabaseUrls.Count == 0)
+			{
+				InternetDatabaseUrls.Add("http://www.x360ce.com/webservices/x360ce.asmx");
+				InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
+			}
+			if (GameScanLocations == null)
+				GameScanLocations = new BindingList<string>() { };
+			if (string.IsNullOrEmpty(DiskId))
+			{
+				DiskId = Engine.BoardInfo.GetDiskId();
+			}
+			if (ComputerId == Guid.Empty)
+			{
+				ComputerId = Engine.BoardInfo.GetHashedDiskId();
+			}
+		}
 
-        public bool CheckAndFixUserRsaKeys()
-        {
-            // If user RSA keys are missing then...
-            if (string.IsNullOrEmpty(UserRsaPublicKey))
-            {
-                // Create new RSA keys which will be used to send encrypted credentials.
-                var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.User);
-                var keys = rsa.RsaNewKeys(2048);
-                UserRsaPublicKey = keys.Public;
-                UserRsaPrivateKey = keys.Private;
-                return true;
-            }
-            return false;
-        }
+		public bool CheckAndFixUserRsaKeys()
+		{
+			// If user RSA keys are missing then...
+			if (string.IsNullOrEmpty(UserRsaPublicKey))
+			{
+				// Create new RSA keys which will be used to send encrypted credentials.
+				var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.User);
+				var keys = rsa.RsaNewKeys(2048);
+				UserRsaPublicKey = keys.Public;
+				UserRsaPrivateKey = keys.Private;
+				return true;
+			}
+			return false;
+		}
 
 		[DefaultValue(false), Description("Allow only one instance of the application to run at a time.")]
 		public bool AllowOnlyOneCopy { get { return _AllowOnlyOneCopy; } set { _AllowOnlyOneCopy = value; ReportPropertyChanged(x => x.GetXInputStates); } }
@@ -79,78 +79,94 @@ namespace x360ce.App
 		FormWindowState _StartWithWindowsState;
 
 		public bool ShowProgramsTab { get; set; }
-        public bool ShowSettingsTab { get; set; }
-        public bool ShowDevicesTab { get; set; }
-        public bool ShowIniTab { get; set; }
+		public bool ShowSettingsTab { get; set; }
+		public bool ShowDevicesTab { get; set; }
+		public bool ShowIniTab { get; set; }
 
-        public bool InternetFeatures { get; set; }
-        public bool InternetAutoLoad { get; set; }
-        public bool InternetAutoSave { get; set; }
-        public string InternetDatabaseUrl { get; set; }
-        public List<string> InternetDatabaseUrls { get; set; }
-        public List<string> GameScanLocations { get; set; }
-        public string DiskId { get; set; }
-        public Guid ComputerId { get; set; }
+		[DefaultValue(true), Description("Enable the use of Internet features like the settings database.")]
+		public bool InternetFeatures { get { return _InternetFeatures; } set { _InternetFeatures = value; ReportPropertyChanged(x => x.InternetFeatures); } }
+		bool _InternetFeatures;
 
-        public string LoginEnabled { get; set; }
+		[DefaultValue(true), Description("Auto load settings from Internet Database.")]
+		public bool InternetAutoLoad { get { return _InternetAutoLoad; } set { _InternetAutoLoad = value; ReportPropertyChanged(x => x.InternetAutoLoad); } }
+		bool _InternetAutoLoad;
 
-        public bool IncludeProductsInsideINI { get; set; }
+		[DefaultValue(true), Description("Auto save settings to Internet Database.")]
+		public bool InternetAutoSave { get { return _InternetAutoSave; } set { _InternetAutoSave = value; ReportPropertyChanged(x => x.InternetAutoSave); } }
+		bool _InternetAutoSave;
 
-        public string UserRsaPublicKey { get; set; }
-        public string UserRsaPrivateKey { get; set; }
+		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
 
-        public string CloudRsaPublicKey { get; set; }
+		[DefaultValue(DefaultInternetDatabaseUrl), Description("Internet settings database URL.")]
+		public string InternetDatabaseUrl { get { return _InternetDatabaseUrl; } set { _InternetDatabaseUrl = value; ReportPropertyChanged(x => x.InternetDatabaseUrl); } }
+		string _InternetDatabaseUrl;
 
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public bool MinimizeToTray { get; set; }
-        public bool ExcludeSupplementalDevices { get; set; }
-        public bool ExcludeVirtualDevices { get; set; }
-        public bool CheckForUpdates { get; set; }
+		public BindingList<string> InternetDatabaseUrls { get; set; }
 
-        // Performance Test
+		[DefaultValue(null), Description("The locations to scan for games.")]
+		public BindingList<string> GameScanLocations { get; set; }
+		public string DiskId { get; set; }
+		public Guid ComputerId { get; set; }
 
-        public bool TestEnabled { get; set; }
-        public bool TestGetDInputStates { get; set; }
-        public bool TestSetXInputStates { get; set; }
-        public bool TestUpdateInterface { get; set; }
+		public string LoginEnabled { get; set; }
+
+		public bool IncludeProductsInsideINI { get; set; }
+
+		public string UserRsaPublicKey { get; set; }
+		public string UserRsaPrivateKey { get; set; }
+
+		public string CloudRsaPublicKey { get; set; }
+
+		public string Username { get; set; }
+		public string Password { get; set; }
+		public bool MinimizeToTray { get; set; }
+		public bool ExcludeSupplementalDevices { get; set; }
+		public bool ExcludeVirtualDevices { get; set; }
+		public bool CheckForUpdates { get; set; }
+
+		// Performance Test
+
+		public bool TestEnabled { get; set; }
+		public bool TestGetDInputStates { get; set; }
+		public bool TestSetXInputStates { get; set; }
+		public bool TestUpdateInterface { get; set; }
 
 		public bool TestCheckIssues { get; set; }
 
 		public bool ShowDebugPanel { get; set; }
 
-        public bool GetXInputStates
-        {
-            get { return _GetXInputStates; }
-            set { _GetXInputStates = value; ReportPropertyChanged(x => x.GetXInputStates); }
-        }
-        bool _GetXInputStates;
+		public bool GetXInputStates
+		{
+			get { return _GetXInputStates; }
+			set { _GetXInputStates = value; ReportPropertyChanged(x => x.GetXInputStates); }
+		}
+		bool _GetXInputStates;
 
-        #region INotifyPropertyChanged
+		#region INotifyPropertyChanged
 
-        public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
 
-        public static string GetName(Expression<Func<Options, object>> selector)
-        {
-            var body = selector.Body as MemberExpression;
-            if (body == null)
-            {
-                var ubody = (UnaryExpression)selector.Body;
-                body = ubody.Operand as MemberExpression;
-            }
-            return body.Member.Name;
-        }
+		public static string GetName(Expression<Func<Options, object>> selector)
+		{
+			var body = selector.Body as MemberExpression;
+			if (body == null)
+			{
+				var ubody = (UnaryExpression)selector.Body;
+				body = ubody.Operand as MemberExpression;
+			}
+			return body.Member.Name;
+		}
 
-        public void ReportPropertyChanged(Expression<Func<Options, object>> selector)
-        {
-            var ev = PropertyChanged;
-            if (ev == null) return;
-            var name = GetName(selector);
-            ev(this, new PropertyChangedEventArgs(name));
-        }
+		public void ReportPropertyChanged(Expression<Func<Options, object>> selector)
+		{
+			var ev = PropertyChanged;
+			if (ev == null) return;
+			var name = GetName(selector);
+			ev(this, new PropertyChangedEventArgs(name));
+		}
 
-        #endregion
+		#endregion
 
 
-    }
+	}
 }

@@ -181,7 +181,7 @@ namespace x360ce.App.Controls
 			string name = null;
 			if (string.IsNullOrEmpty(exe))
 			{
-				paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
+				paths = SettingsManager.Options.GameScanLocations.ToArray();
 			}
 			else
 			{

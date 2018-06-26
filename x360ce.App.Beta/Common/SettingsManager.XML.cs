@@ -139,7 +139,7 @@ namespace x360ce.App
 				// Get setting value from the form.
 				var v = GetSettingValue(map.Control);
 				// If value is default then...
-				if (v == map.DefaultValue)
+				if (v == map.DefaultValue as string)
 					// Remove default value.
 					v = null;
 				// Set value onto padSetting.

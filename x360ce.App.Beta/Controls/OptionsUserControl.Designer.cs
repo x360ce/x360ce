@@ -32,13 +32,14 @@
 			this.ShowSettingsTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowDevicesTabCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowProgramsTabCheckBox = new System.Windows.Forms.CheckBox();
-			this.CombineEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.XInputEnableCheckBox = new System.Windows.Forms.CheckBox();
-			this.UseInitBeepCheckBox = new System.Windows.Forms.CheckBox();
 			this.ConsoleCheckBox = new System.Windows.Forms.CheckBox();
 			this.DebugModeCheckBox = new System.Windows.Forms.CheckBox();
 			this.EnableLoggingCheckBox = new System.Windows.Forms.CheckBox();
 			this.OperationGroupBox = new System.Windows.Forms.GroupBox();
+			this.StartWithWindowsStateComboBox = new System.Windows.Forms.ComboBox();
+			this.StartWithWindowsCheckBox = new System.Windows.Forms.CheckBox();
+			this.AlwaysOnTopCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimizeToTrayCheckBox = new System.Windows.Forms.CheckBox();
 			this.AllowOnlyOneCopyCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetGroupBox = new System.Windows.Forms.GroupBox();
@@ -96,9 +97,6 @@
 			this.ViGEmBusInstallButton = new System.Windows.Forms.Button();
 			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
 			this.DeveloperToolsButton = new System.Windows.Forms.Button();
-			this.AlwaysOnTopCheckBox = new System.Windows.Forms.CheckBox();
-			this.StartWithWindowsStateComboBox = new System.Windows.Forms.ComboBox();
-			this.StartWithWindowsCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -119,9 +117,7 @@
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowSettingsTabCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowDevicesTabCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ShowProgramsTabCheckBox);
-			this.TestingAndLoggingGroupBox.Controls.Add(this.CombineEnabledCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.XInputEnableCheckBox);
-			this.TestingAndLoggingGroupBox.Controls.Add(this.UseInitBeepCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
@@ -135,7 +131,7 @@
 			// ShowSettingsTabCheckBox
 			// 
 			this.ShowSettingsTabCheckBox.AutoSize = true;
-			this.ShowSettingsTabCheckBox.Location = new System.Drawing.Point(124, 90);
+			this.ShowSettingsTabCheckBox.Location = new System.Drawing.Point(120, 71);
 			this.ShowSettingsTabCheckBox.Name = "ShowSettingsTabCheckBox";
 			this.ShowSettingsTabCheckBox.Size = new System.Drawing.Size(122, 17);
 			this.ShowSettingsTabCheckBox.TabIndex = 1;
@@ -146,7 +142,7 @@
 			// ShowDevicesTabCheckBox
 			// 
 			this.ShowDevicesTabCheckBox.AutoSize = true;
-			this.ShowDevicesTabCheckBox.Location = new System.Drawing.Point(124, 67);
+			this.ShowDevicesTabCheckBox.Location = new System.Drawing.Point(120, 48);
 			this.ShowDevicesTabCheckBox.Name = "ShowDevicesTabCheckBox";
 			this.ShowDevicesTabCheckBox.Size = new System.Drawing.Size(123, 17);
 			this.ShowDevicesTabCheckBox.TabIndex = 1;
@@ -157,23 +153,13 @@
 			// ShowProgramsTabCheckBox
 			// 
 			this.ShowProgramsTabCheckBox.AutoSize = true;
-			this.ShowProgramsTabCheckBox.Location = new System.Drawing.Point(124, 44);
+			this.ShowProgramsTabCheckBox.Location = new System.Drawing.Point(120, 25);
 			this.ShowProgramsTabCheckBox.Name = "ShowProgramsTabCheckBox";
 			this.ShowProgramsTabCheckBox.Size = new System.Drawing.Size(128, 17);
 			this.ShowProgramsTabCheckBox.TabIndex = 1;
 			this.ShowProgramsTabCheckBox.Text = "Show [Programs] Tab";
 			this.ShowProgramsTabCheckBox.UseVisualStyleBackColor = true;
 			this.ShowProgramsTabCheckBox.CheckedChanged += new System.EventHandler(this.ShowProgramsTabCheckBox_CheckedChanged);
-			// 
-			// CombineEnabledCheckBox
-			// 
-			this.CombineEnabledCheckBox.AutoSize = true;
-			this.CombineEnabledCheckBox.Location = new System.Drawing.Point(124, 21);
-			this.CombineEnabledCheckBox.Name = "CombineEnabledCheckBox";
-			this.CombineEnabledCheckBox.Size = new System.Drawing.Size(111, 17);
-			this.CombineEnabledCheckBox.TabIndex = 1;
-			this.CombineEnabledCheckBox.Text = "Enable Combining";
-			this.CombineEnabledCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// XInputEnableCheckBox
 			// 
@@ -187,20 +173,10 @@
 			this.XInputEnableCheckBox.Text = "Enable XInput";
 			this.XInputEnableCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// UseInitBeepCheckBox
-			// 
-			this.UseInitBeepCheckBox.AutoSize = true;
-			this.UseInitBeepCheckBox.Location = new System.Drawing.Point(6, 44);
-			this.UseInitBeepCheckBox.Name = "UseInitBeepCheckBox";
-			this.UseInitBeepCheckBox.Size = new System.Drawing.Size(90, 17);
-			this.UseInitBeepCheckBox.TabIndex = 0;
-			this.UseInitBeepCheckBox.Text = "Use Init Beep";
-			this.UseInitBeepCheckBox.UseVisualStyleBackColor = true;
-			// 
 			// ConsoleCheckBox
 			// 
 			this.ConsoleCheckBox.AutoSize = true;
-			this.ConsoleCheckBox.Location = new System.Drawing.Point(6, 90);
+			this.ConsoleCheckBox.Location = new System.Drawing.Point(6, 67);
 			this.ConsoleCheckBox.Name = "ConsoleCheckBox";
 			this.ConsoleCheckBox.Size = new System.Drawing.Size(100, 17);
 			this.ConsoleCheckBox.TabIndex = 0;
@@ -212,7 +188,7 @@
 			this.DebugModeCheckBox.AutoSize = true;
 			this.DebugModeCheckBox.Checked = true;
 			this.DebugModeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.DebugModeCheckBox.Location = new System.Drawing.Point(6, 113);
+			this.DebugModeCheckBox.Location = new System.Drawing.Point(6, 90);
 			this.DebugModeCheckBox.Name = "DebugModeCheckBox";
 			this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
 			this.DebugModeCheckBox.TabIndex = 0;
@@ -222,7 +198,7 @@
 			// EnableLoggingCheckBox
 			// 
 			this.EnableLoggingCheckBox.AutoSize = true;
-			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(6, 67);
+			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(6, 44);
 			this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
 			this.EnableLoggingCheckBox.Size = new System.Drawing.Size(100, 17);
 			this.EnableLoggingCheckBox.TabIndex = 0;
@@ -242,6 +218,39 @@
 			this.OperationGroupBox.TabIndex = 31;
 			this.OperationGroupBox.TabStop = false;
 			this.OperationGroupBox.Text = "Operation";
+			// 
+			// StartWithWindowsStateComboBox
+			// 
+			this.StartWithWindowsStateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.StartWithWindowsStateComboBox.FormattingEnabled = true;
+			this.StartWithWindowsStateComboBox.Items.AddRange(new object[] {
+            "Maximized",
+            "Normal",
+            "Minimized"});
+			this.StartWithWindowsStateComboBox.Location = new System.Drawing.Point(124, 75);
+			this.StartWithWindowsStateComboBox.Name = "StartWithWindowsStateComboBox";
+			this.StartWithWindowsStateComboBox.Size = new System.Drawing.Size(90, 21);
+			this.StartWithWindowsStateComboBox.TabIndex = 95;
+			// 
+			// StartWithWindowsCheckBox
+			// 
+			this.StartWithWindowsCheckBox.AutoSize = true;
+			this.StartWithWindowsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.StartWithWindowsCheckBox.Location = new System.Drawing.Point(6, 76);
+			this.StartWithWindowsCheckBox.Name = "StartWithWindowsCheckBox";
+			this.StartWithWindowsCheckBox.Size = new System.Drawing.Size(126, 18);
+			this.StartWithWindowsCheckBox.TabIndex = 94;
+			this.StartWithWindowsCheckBox.Text = "Start with Windows:";
+			// 
+			// AlwaysOnTopCheckBox
+			// 
+			this.AlwaysOnTopCheckBox.AutoSize = true;
+			this.AlwaysOnTopCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
+			this.AlwaysOnTopCheckBox.Location = new System.Drawing.Point(120, 52);
+			this.AlwaysOnTopCheckBox.Name = "AlwaysOnTopCheckBox";
+			this.AlwaysOnTopCheckBox.Size = new System.Drawing.Size(102, 18);
+			this.AlwaysOnTopCheckBox.TabIndex = 93;
+			this.AlwaysOnTopCheckBox.Text = "Always on Top";
 			// 
 			// MinimizeToTrayCheckBox
 			// 
@@ -858,39 +867,6 @@
 			this.DeveloperToolsButton.UseVisualStyleBackColor = true;
 			this.DeveloperToolsButton.Click += new System.EventHandler(this.DeveloperToolsButton_Click);
 			// 
-			// AlwaysOnTopCheckBox
-			// 
-			this.AlwaysOnTopCheckBox.AutoSize = true;
-			this.AlwaysOnTopCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.AlwaysOnTopCheckBox.Location = new System.Drawing.Point(120, 52);
-			this.AlwaysOnTopCheckBox.Name = "AlwaysOnTopCheckBox";
-			this.AlwaysOnTopCheckBox.Size = new System.Drawing.Size(102, 18);
-			this.AlwaysOnTopCheckBox.TabIndex = 93;
-			this.AlwaysOnTopCheckBox.Text = "Always on Top";
-			// 
-			// StartWithWindowsStateComboBox
-			// 
-			this.StartWithWindowsStateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.StartWithWindowsStateComboBox.FormattingEnabled = true;
-			this.StartWithWindowsStateComboBox.Items.AddRange(new object[] {
-            "Maximized",
-            "Normal",
-            "Minimized"});
-			this.StartWithWindowsStateComboBox.Location = new System.Drawing.Point(124, 75);
-			this.StartWithWindowsStateComboBox.Name = "StartWithWindowsStateComboBox";
-			this.StartWithWindowsStateComboBox.Size = new System.Drawing.Size(90, 21);
-			this.StartWithWindowsStateComboBox.TabIndex = 95;
-			// 
-			// StartWithWindowsCheckBox
-			// 
-			this.StartWithWindowsCheckBox.AutoSize = true;
-			this.StartWithWindowsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.StartWithWindowsCheckBox.Location = new System.Drawing.Point(6, 76);
-			this.StartWithWindowsCheckBox.Name = "StartWithWindowsCheckBox";
-			this.StartWithWindowsCheckBox.Size = new System.Drawing.Size(126, 18);
-			this.StartWithWindowsCheckBox.TabIndex = 94;
-			this.StartWithWindowsCheckBox.Text = "Start with Windows:";
-			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -941,7 +917,6 @@
 
         private System.Windows.Forms.GroupBox TestingAndLoggingGroupBox;
         private System.Windows.Forms.CheckBox XInputEnableCheckBox;
-        private System.Windows.Forms.CheckBox UseInitBeepCheckBox;
         private System.Windows.Forms.CheckBox ConsoleCheckBox;
         private System.Windows.Forms.CheckBox DebugModeCheckBox;
         private System.Windows.Forms.CheckBox EnableLoggingCheckBox;
@@ -964,7 +939,6 @@
         private System.Windows.Forms.ToolStripButton AddLocationButton;
         private System.Windows.Forms.ToolStripButton RemoveLocationButton;
 		private System.Windows.Forms.Button OpenSettingsFolderButton;
-        private System.Windows.Forms.CheckBox CombineEnabledCheckBox;
 		private System.Windows.Forms.GroupBox DirectInputDevicesGroupBox;
 		private System.Windows.Forms.CheckBox ExcludeSupplementalDevicesCheckBox;
 		private System.Windows.Forms.CheckBox ExcludeVirtualDevicesCheckBox;

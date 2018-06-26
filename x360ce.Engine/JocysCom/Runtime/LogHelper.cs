@@ -226,10 +226,80 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
-		#region Exceptions
+		#region Write Log
 
 		public delegate void WriteLogDelegate(string message, EventLogEntryType type);
+
+		/// <summary>
+		/// User can override these methods. Default methods are assigned.
+		/// </summary>
 		public static WriteLogDelegate WriteLogCustom;
+		public static WriteLogDelegate WriteLogConsole = new WriteLogDelegate(_WriteConsole);
+		public static WriteLogDelegate WriteLogEvent = new WriteLogDelegate(_WriteEvent);
+		public static WriteLogDelegate WriteLogFile = new WriteLogDelegate(_WriteFile);
+
+		internal static void _WriteConsole(string message, EventLogEntryType type)
+		{
+			// If user can see interface (console) then write to the console.
+			if (Environment.UserInteractive)
+				Console.Write(message);
+		}
+
+		// Requires 'EventLogInstaller' requires reference to System.Configuration.Install.dll
+
+		public static EventLogInstaller AppEventLogInstaller;
+
+		internal static void _WriteEvent(string message, EventLogEntryType type)
+		{
+			var li = AppEventLogInstaller;
+			if (li == null)
+				return;
+			var ei = new EventInstance(0, 0, type);
+			var el = new EventLog();
+			el.Log = li.Log;
+			el.Source = li.Source;
+			el.WriteEvent(ei, message);
+			el.Close();
+		}
+
+		internal static void _WriteFile(string message, EventLogEntryType type)
+		{
+			// If LogStreamWriter is not null (check inside the function) then write to file.
+			Current.WriteToLogFile(message);
+		}
+
+		/// <summary>
+		/// Writes log message to various destination types (console window, file, event and custom)
+		/// </summary>
+		public static void WriteLog(string message, EventLogEntryType type)
+		{
+			// If console logging available then...
+			if (WriteLogConsole != null)
+				WriteLogConsole(message, type);
+			// If console logging available then...
+			if (WriteLogFile != null)
+				WriteLogFile(message, type);
+			// If custom logging is enabled then write custom log (can be used to send emails).
+			if (WriteLogCustom != null)
+				WriteLogCustom(message, type);
+			// If event logging is enabled and important then write event.
+			if (WriteLogEvent != null && type != EventLogEntryType.Information)
+				WriteLogEvent(message, type);
+		}
+
+		public static void WriteWarning(string format, params object[] args)
+		{
+			WriteLog(args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Warning);
+		}
+
+		public static void WriteInfo(string format, params object[] args)
+		{
+			WriteLog(args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Information);
+		}
+
+		#endregion
+
+		#region Exceptions
 
 		//public static string ExceptionInfo(Exception ex, string body)
 		//{
