@@ -963,16 +963,25 @@ namespace x360ce.App
 					new XboxDriversIssue(),
 					new VirtualDeviceDriverIssue()
 				);
-				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
 				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
+				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
+				// This will start execution of Tasks Timer.
+				IssuesPanel.TasksTimer.ChangeSleepInterval(5000);
 				IssuesPanel.TasksTimer.DoActionNow();
 			}
 		}
 
+		// When Application is started minimized then FormEventsEnabled will be set to false
+		// Which means that IssuePanel will be suspended and will never run at least once.
+		// This 'FirstRunIsDone' property will allow to check for issues at least once.
+		bool FirstRunIsDone = false;
+
 		bool IssuesPanel_IsSuspended()
 		{
 			var o = SettingsManager.Options;
-			var allow = FormEventsEnabled && (!o.TestEnabled || o.TestCheckIssues);
+			var allow = (FormEventsEnabled || !FirstRunIsDone) && (!o.TestEnabled || o.TestCheckIssues);
+			if (allow)
+				FirstRunIsDone = true;
 			return !allow;
 		}
 
@@ -1155,16 +1164,26 @@ namespace x360ce.App
 			// Select game by manually trigger event.
 			var selected = ProcessMonitor.SelectOpenGame();
 			if (!selected)
-				GameToCustomizeComboBox_SelectedIndexChanged(GameToCustomizeComboBox, new EventArgs());
+			{
+				// Select current application.
+				var game = SettingsManager.UserGames.Items.FirstOrDefault(x => x.IsCurrentApp());
+				GameToCustomizeComboBox.ComboBox.SelectedItem = game;
+				UpdateCurrentGame(game);
+			}
 		}
 
 		private void GameToCustomizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			var game = GameToCustomizeComboBox.SelectedItem as Engine.Data.UserGame;
+			UpdateCurrentGame(game);
+		}
+
+		private void UpdateCurrentGame(UserGame game)
+		{
 			lock (CurrentGameLock)
 			{
-				var item = GameToCustomizeComboBox.SelectedItem as Engine.Data.UserGame;
 				// If nothing changed then...
-				if (Equals(item, CurrentGame))
+				if (Equals(game, CurrentGame))
 				{
 					return;
 				}
@@ -1173,12 +1192,12 @@ namespace x360ce.App
 					// Detach event from old game.
 					CurrentGame.PropertyChanged -= CurrentGame_PropertyChanged;
 				}
-				if (item != null)
+				if (game != null)
 				{
 					// Attach event to new game.
-					item.PropertyChanged += CurrentGame_PropertyChanged;
+					game.PropertyChanged += CurrentGame_PropertyChanged;
 				}
-				CurrentGame = item;
+				CurrentGame = game;
 				DHelper.SettingsChanged = true;
 				// If pad controls not initializes yet then return.
 				if (PadControls == null)

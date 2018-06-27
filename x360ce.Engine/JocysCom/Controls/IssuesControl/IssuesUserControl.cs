@@ -36,7 +36,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
             var title = ai.GetTitle(true, true, true, true, false) + " - Issues";
             Text = title;
-            TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<object>(0, 5000, this);
+            TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<object>(0, 0, this);
             TasksTimer.DoWork += queueTimer_DoWork;
             TasksTimer.Queue.ListChanged += Data_ListChanged;
             // Start monitoring tasks queue.
