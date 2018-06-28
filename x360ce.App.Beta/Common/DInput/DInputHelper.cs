@@ -203,7 +203,7 @@ namespace x360ce.App.DInput
 		long currentTick;
 		public long CurrentUpdateFrequency;
 
-		UpdateFrequency Frequency
+		public UpdateFrequency Frequency
 		{
 			get { return _Frequency; }
 			set

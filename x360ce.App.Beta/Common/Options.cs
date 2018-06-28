@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -98,8 +99,20 @@ namespace x360ce.App
 		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
 
 		[DefaultValue(DefaultInternetDatabaseUrl), Description("Internet settings database URL.")]
-		public string InternetDatabaseUrl { get { return _InternetDatabaseUrl; } set { _InternetDatabaseUrl = value; ReportPropertyChanged(x => x.InternetDatabaseUrl); } }
+		public string InternetDatabaseUrl
+		{
+			get { return _InternetDatabaseUrl; }
+			set { _InternetDatabaseUrl = value; ReportPropertyChanged(x => x.InternetDatabaseUrl); }
+		}
 		string _InternetDatabaseUrl;
+
+		[DefaultValue(UpdateFrequency.ms1_1000Hz), Description("Virtual Controller update frequency.")]
+		public UpdateFrequency PollingRate
+		{
+			get { return _PollingRate; }
+			set { _PollingRate = value; ReportPropertyChanged(x => x.PollingRate); }
+		}
+		UpdateFrequency _PollingRate = UpdateFrequency.ms1_1000Hz;
 
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 

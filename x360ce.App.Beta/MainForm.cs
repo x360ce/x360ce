@@ -1285,7 +1285,6 @@ namespace x360ce.App
 			SettingsManager.PadSettings.Save();
 			SettingsManager.UserDevices.Save();
 			SettingsManager.UserInstances.Save();
-			SettingsManager.UserComputers.Save();
 			XInputMaskScanner.FileInfoCache.Save();
 		}
 

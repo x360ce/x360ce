@@ -770,7 +770,7 @@
 			this.PollingRateComboBox.FormattingEnabled = true;
 			this.PollingRateComboBox.Location = new System.Drawing.Point(87, 19);
 			this.PollingRateComboBox.Name = "PollingRateComboBox";
-			this.PollingRateComboBox.Size = new System.Drawing.Size(79, 21);
+			this.PollingRateComboBox.Size = new System.Drawing.Size(96, 21);
 			this.PollingRateComboBox.TabIndex = 30;
 			// 
 			// HidGuardianUninstallButton

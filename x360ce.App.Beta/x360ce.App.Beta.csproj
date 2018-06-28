@@ -165,6 +165,7 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Instrumentation" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />

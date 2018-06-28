@@ -16,20 +16,8 @@ namespace x360ce.App.Controls
 		public OptionsUserControl()
 		{
 			InitializeComponent();
-			if (DesignMode) return;
-			object[] rates = {
-				1000/1, // 1000
-				1000/2, //  500
-				1000/3, //  333
-				1000/4, //  250
-				1000/5, //  200
-				1000/6, //  166
-				1000/7, //  142
-				1000/8, //  125
-			};
-			PollingRateComboBox.Items.AddRange(rates);
-			PollingRateComboBox.SelectedIndex = 0;
-			StartWithWindowsStateComboBox.DataSource = Enum.GetValues(typeof(FormWindowState));
+			if (DesignMode)
+				return;
 		}
 
 		public void InitOptions()
@@ -105,6 +93,7 @@ namespace x360ce.App.Controls
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			// Stored inside XML now.
 			SettingsManager.AddMap<Options>(x => x.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
+			SettingsManager.AddMap<Options>(x => x.PollingRate, PollingRateComboBox);
 			SettingsManager.AddMap<Options>(x => x.InternetFeatures, InternetCheckBox);
 			SettingsManager.AddMap<Options>(x => x.InternetAutoLoad, InternetAutoLoadCheckBox);
 			SettingsManager.AddMap<Options>(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
@@ -116,31 +105,35 @@ namespace x360ce.App.Controls
 			//SettingsManager.AddMap<Options>(x => x.MinimizeToTray, MinimizeToTrayCheckBox);
 			// Load settings into control.
 			// This will trigger Options_PropertyChanged event handler and update controls.
-			o.ReportPropertyChanged(x => x.InternetDatabaseUrl);
 			o.ReportPropertyChanged(x => x.InternetFeatures);
 			o.ReportPropertyChanged(x => x.InternetAutoLoad);
 			o.ReportPropertyChanged(x => x.InternetAutoSave);
 			//o.ReportPropertyChanged(x => x.GameScanLocations);
 			o.ReportPropertyChanged(x => x.AlwaysOnTop);
 			o.ReportPropertyChanged(x => x.AllowOnlyOneCopy);
-			o.ReportPropertyChanged(x => x.StartWithWindows);
-			o.ReportPropertyChanged(x => x.StartWithWindowsState);
 			// Monitor control changes.
 
-			InternetDatabaseUrlComboBox.SelectedIndexChanged += Control_Changed;
 			InternetCheckBox.CheckedChanged += Control_Changed;
 			InternetAutoLoadCheckBox.CheckedChanged += Control_Changed;
 			InternetAutoSaveCheckBox.CheckedChanged += Control_Changed;
-			//GameScanLocationsListBox. += Control_Changed;
 			AlwaysOnTopCheckBox.CheckedChanged += Control_Changed;
 			AllowOnlyOneCopyCheckBox.CheckedChanged += Control_Changed;
-			StartWithWindowsCheckBox.CheckedChanged += Control_Changed;
-			StartWithWindowsStateComboBox.SelectedIndexChanged += Control_Changed;
-
 			GameScanLocationsListBox.DataSource = o.GameScanLocations;
+			// Start with windows.
+			o.ReportPropertyChanged(x => x.StartWithWindows);
+			StartWithWindowsCheckBox.CheckedChanged += Control_Changed;
+			// Update start with windows state.
+			StartWithWindowsStateComboBox.DataSource = Enum.GetValues(typeof(FormWindowState));
+			o.ReportPropertyChanged(x => x.StartWithWindowsState);
+			StartWithWindowsStateComboBox.SelectedIndexChanged += Control_Changed;
+			// Set ComboBox and attach event last, in order to prevent changing of original value.
 			InternetDatabaseUrlComboBox.DataSource = o.InternetDatabaseUrls;
-			InternetDatabaseUrlComboBox.SelectedItem = o.InternetDatabaseUrl;
-
+			o.ReportPropertyChanged(x => x.InternetDatabaseUrl);
+			InternetDatabaseUrlComboBox.SelectedIndexChanged += Control_Changed;
+			// Update pooling rate.
+			PollingRateComboBox.DataSource = (UpdateFrequency[])Enum.GetValues(typeof(UpdateFrequency));
+			o.ReportPropertyChanged(x => x.PollingRate);
+			PollingRateComboBox.SelectedIndexChanged += Control_Changed;
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
@@ -154,17 +147,22 @@ namespace x360ce.App.Controls
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			SettingsManager.Sync(SettingsManager.Options, e.PropertyName);
+			var o = SettingsManager.Options;
+			SettingsManager.Sync(o, e.PropertyName);
 			// Update controls by specific property.
 			if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.AlwaysOnTop))
 			{
 				// Apply setting.
-				MainForm.Current.TopMost = SettingsManager.Options.AlwaysOnTop;
+				MainForm.Current.TopMost = o.AlwaysOnTop;
+			}
+			else if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.PollingRate))
+			{
+				MainForm.Current.DHelper.Frequency = o.PollingRate;
 			}
 			else if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.StartWithWindows) ||
 				e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.StartWithWindowsState))
 			{
-				UpdateWindowsStartRegistry(SettingsManager.Options.StartWithWindows, SettingsManager.Options.StartWithWindowsState);
+				UpdateWindowsStartRegistry(o.StartWithWindows, o.StartWithWindowsState);
 			}
 		}
 
@@ -206,7 +204,7 @@ namespace x360ce.App.Controls
 		private void RemoveLocationButton_Click(object sender, EventArgs e)
 		{
 			if (GameScanLocationsListBox.SelectedIndex == -1)
-				 return;
+				return;
 			var currentIndex = GameScanLocationsListBox.SelectedIndex;
 			var currentItem = GameScanLocationsListBox.SelectedItem as string;
 			SettingsManager.Options.GameScanLocations.Remove(currentItem);
@@ -336,7 +334,7 @@ namespace x360ce.App.Controls
 				}
 				else
 				{
-					MessageBoxForm.Show(string.Format("Authorised: {0}", results.ErrorMessage), string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxForm.Show(string.Format("Authorized: {0}", results.ErrorMessage), string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 			}
 			else

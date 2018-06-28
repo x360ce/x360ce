@@ -274,7 +274,6 @@ namespace x360ce.App.Controls
             TasksTimer.Queue.Clear();
             AddInsert(SettingsManager.UserDevices.Items.ToArray());
             AddInsert(SettingsManager.UserGames.Items.ToArray());
-            AddInsert(SettingsManager.UserComputers.Items.ToArray());
             AddInsert(SettingsManager.UserInstances.Items.ToArray());
         }
 

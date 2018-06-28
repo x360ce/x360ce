@@ -85,9 +85,6 @@ namespace x360ce.App
 		/// <summary>User Instances.</summary>
 		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
 
-		/// <summary>User Computers.</summary>
-		public static XSettingsData<Engine.Data.UserComputer> UserComputers = new XSettingsData<Engine.Data.UserComputer>("UserComputers.xml", "User Computers. Maps login to user computers.");
-
 		// Property below is shared between User and Global settings:
 
 		/// <summary>Contains PadSettings for Summaries, Presets and Settings.</summary>
@@ -173,7 +170,6 @@ namespace x360ce.App
 			UserDevices.Items.SynchronizingObject = so;
 			UserGames.Items.SynchronizingObject = so;
 			UserInstances.Items.SynchronizingObject = so;
-			UserComputers.Items.SynchronizingObject = so;
 			Layouts.Items.SynchronizingObject = so;
 			Programs.Items.SynchronizingObject = so;
 			Presets.Items.SynchronizingObject = so;
@@ -197,7 +193,6 @@ namespace x360ce.App
 			// Update DataGrids asynchronously in order not to freeze interface during device detection/update.
 			UserDevices.Items.AsynchronousInvoke = true;
 			UserInstances.Load();
-			UserComputers.Load();
 			OptionsData.Items.SynchronizingObject = so;
 		}
 
@@ -737,11 +732,6 @@ namespace x360ce.App
 					v = SettingsConverter.ToIniValue(control.Text);
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v)) v = "0";
-				}
-				// Save to XML.
-				if (key == SettingName.InternetDatabaseUrl)
-				{
-					Options.InternetDatabaseUrl = v;
 				}
 			}
 			else if (control is TextBox)
