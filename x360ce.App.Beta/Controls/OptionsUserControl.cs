@@ -261,9 +261,11 @@ namespace x360ce.App.Controls
 			ShowProgramsTabCheckBox.Checked = o.ShowProgramsTab;
 			ShowSettingsTabCheckBox.Checked = o.ShowSettingsTab;
 			ShowDevicesTabCheckBox.Checked = o.ShowDevicesTab;
-			DiskIdTextBox.Text = o.DiskId;
+			ComputerDiskTextBox.Text = o.ComputerDisk;
 			UsernameTextBox.Text = o.Username;
 			ComputerIdTextBox.Text = o.ComputerId.ToString();
+			ProfilePathTextBox.Text = o.ProfilePath.ToString();
+			ProfileIdTextBox.Text = o.ProfileId.ToString();
 			IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
 			ExcludeSupplementalDevicesCheckBox.Checked = o.ExcludeSupplementalDevices;
 			ExcludeVirtualDevicesCheckBox.Checked = o.ExcludeVirtualDevices;
@@ -326,6 +328,7 @@ namespace x360ce.App.Controls
 				var cmd2 = new CloudMessage(CloudAction.LogIn);
 				CloudHelper.ApplySecurity(cmd2, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
 				cmd2.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
+				cmd2.Values.Add(CloudKey.ProfileId, o.ProfileId, true);
 				results = ws.Execute(cmd2);
 				if (results.ErrorCode > 0)
 				{

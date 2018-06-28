@@ -179,7 +179,8 @@ namespace x360ce.App.Controls
                     CloudHelper.ApplySecurity(item.Message, o.UserRsaPublicKey, o.CloudRsaPublicKey, o.Username, o.Password);
                     // Add computer Id
                     item.Message.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
-                    result = ws.Execute(item.Message);
+					item.Message.Values.Add(CloudKey.ProfileId, o.ProfileId, true);
+					result = ws.Execute(item.Message);
                     if (result.ErrorCode > 0)
                     {
                         error = new Exception(result.ErrorMessage);

@@ -36,14 +36,14 @@ namespace x360ce.App
 			}
 			if (GameScanLocations == null)
 				GameScanLocations = new BindingList<string>() { };
-			if (string.IsNullOrEmpty(DiskId))
-			{
-				DiskId = Engine.BoardInfo.GetDiskId();
-			}
+			if (string.IsNullOrEmpty(ComputerDisk))
+				ComputerDisk = Engine.BoardInfo.GetDiskId();
 			if (ComputerId == Guid.Empty)
-			{
-				ComputerId = Engine.BoardInfo.GetHashedDiskId();
-			}
+				ComputerId = Engine.BoardInfo.GetHashedDiskId(ComputerDisk);
+			if (string.IsNullOrEmpty(ProfilePath))
+				ProfilePath = EngineHelper.AppDataPath;
+			if (ProfileId == Guid.Empty)
+				ProfileId = Engine.Data.UserProfile.GenerateProfileId(ComputerId, EngineHelper.AppDataPath);
 		}
 
 		public bool CheckAndFixUserRsaKeys()
@@ -105,8 +105,12 @@ namespace x360ce.App
 
 		[DefaultValue(null), Description("The locations to scan for games.")]
 		public BindingList<string> GameScanLocations { get; set; }
-		public string DiskId { get; set; }
+		public string ComputerDisk { get; set; }
 		public Guid ComputerId { get; set; }
+
+		public string ProfilePath { get; set; }
+
+		public Guid ProfileId { get; set; }
 
 		public string LoginEnabled { get; set; }
 

@@ -240,6 +240,22 @@ namespace x360ce.Engine.Data
             }
         }
         private ObjectSet<Layout> _Layouts;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<UserProfile> UserProfiles
+        {
+            get
+            {
+                if ((_UserProfiles == null))
+                {
+                    _UserProfiles = base.CreateObjectSet<UserProfile>("UserProfiles");
+                }
+                return _UserProfiles;
+            }
+        }
+        private ObjectSet<UserProfile> _UserProfiles;
 
         #endregion
 
@@ -331,6 +347,14 @@ namespace x360ce.Engine.Data
         public void AddToLayouts(Layout layout)
         {
             base.AddObject("Layouts", layout);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the UserProfiles EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUserProfiles(UserProfile userProfile)
+        {
+            base.AddObject("UserProfiles", userProfile);
         }
 
         #endregion
@@ -7145,6 +7169,219 @@ namespace x360ce.Engine.Data
         private global::System.Guid _ComputerId;
         partial void OnComputerIdChanging(global::System.Guid value);
         partial void OnComputerIdChanged();
+
+        #endregion
+
+    
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="UserProfile")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class UserProfile : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new UserProfile object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="computerId">Initial value of the ComputerId property.</param>
+        /// <param name="profileId">Initial value of the ProfileId property.</param>
+        /// <param name="profilePath">Initial value of the ProfilePath property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
+        /// <param name="checksum">Initial value of the Checksum property.</param>
+        public static UserProfile CreateUserProfile(global::System.Guid id, global::System.Guid computerId, global::System.Guid profileId, global::System.String profilePath, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Guid checksum)
+        {
+            UserProfile userProfile = new UserProfile();
+            userProfile.Id = id;
+            userProfile.ComputerId = computerId;
+            userProfile.ProfileId = profileId;
+            userProfile.ProfilePath = profilePath;
+            userProfile.DateCreated = dateCreated;
+            userProfile.DateUpdated = dateUpdated;
+            userProfile.Checksum = checksum;
+            return userProfile;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Guid _Id;
+        partial void OnIdChanging(global::System.Guid value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ComputerId
+        {
+            get
+            {
+                return _ComputerId;
+            }
+            set
+            {
+                OnComputerIdChanging(value);
+                ReportPropertyChanging("ComputerId");
+                _ComputerId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ComputerId");
+                OnComputerIdChanged();
+            }
+        }
+        private global::System.Guid _ComputerId;
+        partial void OnComputerIdChanging(global::System.Guid value);
+        partial void OnComputerIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ProfileId
+        {
+            get
+            {
+                return _ProfileId;
+            }
+            set
+            {
+                OnProfileIdChanging(value);
+                ReportPropertyChanging("ProfileId");
+                _ProfileId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProfileId");
+                OnProfileIdChanged();
+            }
+        }
+        private global::System.Guid _ProfileId;
+        partial void OnProfileIdChanging(global::System.Guid value);
+        partial void OnProfileIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ProfilePath
+        {
+            get
+            {
+                return _ProfilePath;
+            }
+            set
+            {
+                OnProfilePathChanging(value);
+                ReportPropertyChanging("ProfilePath");
+                _ProfilePath = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ProfilePath");
+                OnProfilePathChanged();
+            }
+        }
+        private global::System.String _ProfilePath;
+        partial void OnProfilePathChanging(global::System.String value);
+        partial void OnProfilePathChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateCreated
+        {
+            get
+            {
+                return _DateCreated;
+            }
+            set
+            {
+                OnDateCreatedChanging(value);
+                ReportPropertyChanging("DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateCreated");
+                OnDateCreatedChanged();
+            }
+        }
+        private global::System.DateTime _DateCreated;
+        partial void OnDateCreatedChanging(global::System.DateTime value);
+        partial void OnDateCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateUpdated
+        {
+            get
+            {
+                return _DateUpdated;
+            }
+            set
+            {
+                OnDateUpdatedChanging(value);
+                ReportPropertyChanging("DateUpdated");
+                _DateUpdated = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DateUpdated");
+                OnDateUpdatedChanged();
+            }
+        }
+        private global::System.DateTime _DateUpdated;
+        partial void OnDateUpdatedChanging(global::System.DateTime value);
+        partial void OnDateUpdatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Checksum
+        {
+            get
+            {
+                return _Checksum;
+            }
+            set
+            {
+                OnChecksumChanging(value);
+                ReportPropertyChanging("Checksum");
+                _Checksum = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Checksum");
+                OnChecksumChanged();
+            }
+        }
+        private global::System.Guid _Checksum;
+        partial void OnChecksumChanging(global::System.Guid value);
+        partial void OnChecksumChanged();
 
         #endregion
 

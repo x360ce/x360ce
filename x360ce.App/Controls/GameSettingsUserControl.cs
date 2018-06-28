@@ -25,7 +25,7 @@ namespace x360ce.App.Controls
 			ScanProgressLabel.Text = "";
 			InitData();
 			DiskIdTextBox.Text = BoardInfo.GetDiskId();
-			HashedDiskIdTextBox.Text = BoardInfo.GetHashedDiskId().ToString();
+			HashedDiskIdTextBox.Text = BoardInfo.GetHashedDiskId(BoardInfo.GetDiskId()).ToString();
 		}
 
 		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }

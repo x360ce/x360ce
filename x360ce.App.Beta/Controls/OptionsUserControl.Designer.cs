@@ -64,18 +64,17 @@
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.OnlineAccountGroupBox = new System.Windows.Forms.GroupBox();
-			this.AnonymousNoteLabel = new System.Windows.Forms.Label();
 			this.PasswordTextBox = new System.Windows.Forms.TextBox();
 			this.ResetButton = new System.Windows.Forms.Button();
 			this.CreateButton = new System.Windows.Forms.Button();
 			this.LoginButton = new System.Windows.Forms.Button();
 			this.UsernameTextBox = new System.Windows.Forms.TextBox();
-			this.DiskIdTextBox = new System.Windows.Forms.TextBox();
+			this.ComputerDiskTextBox = new System.Windows.Forms.TextBox();
 			this.ComputerIdTextBox = new System.Windows.Forms.TextBox();
 			this.PasswordLabel = new System.Windows.Forms.Label();
 			this.UsernameLabel = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
+			this.ComputerDiskLabel = new System.Windows.Forms.Label();
 			this.GamesGroupBox = new System.Windows.Forms.GroupBox();
 			this.IncludeEnabledCheckBox = new System.Windows.Forms.CheckBox();
 			this.MinimumInstanceCountLabel = new System.Windows.Forms.Label();
@@ -97,6 +96,10 @@
 			this.ViGEmBusInstallButton = new System.Windows.Forms.Button();
 			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
 			this.DeveloperToolsButton = new System.Windows.Forms.Button();
+			this.ProfilePathLabel = new System.Windows.Forms.Label();
+			this.ProfileIdLabel = new System.Windows.Forms.Label();
+			this.ProfileIdTextBox = new System.Windows.Forms.TextBox();
+			this.ProfilePathTextBox = new System.Windows.Forms.TextBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -493,44 +496,38 @@
 			// 
 			this.OnlineAccountGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.OnlineAccountGroupBox.Controls.Add(this.AnonymousNoteLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.PasswordTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.ResetButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.CreateButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.LoginButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.UsernameTextBox);
-			this.OnlineAccountGroupBox.Controls.Add(this.DiskIdTextBox);
+			this.OnlineAccountGroupBox.Controls.Add(this.ProfilePathTextBox);
+			this.OnlineAccountGroupBox.Controls.Add(this.ComputerDiskTextBox);
+			this.OnlineAccountGroupBox.Controls.Add(this.ProfileIdTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.ComputerIdTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.PasswordLabel);
+			this.OnlineAccountGroupBox.Controls.Add(this.ProfileIdLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.UsernameLabel);
+			this.OnlineAccountGroupBox.Controls.Add(this.ProfilePathLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.label2);
-			this.OnlineAccountGroupBox.Controls.Add(this.label3);
+			this.OnlineAccountGroupBox.Controls.Add(this.ComputerDiskLabel);
 			this.OnlineAccountGroupBox.Location = new System.Drawing.Point(263, 238);
 			this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
-			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(507, 140);
+			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(507, 182);
 			this.OnlineAccountGroupBox.TabIndex = 31;
 			this.OnlineAccountGroupBox.TabStop = false;
-			this.OnlineAccountGroupBox.Text = "Online Account";
-			// 
-			// AnonymousNoteLabel
-			// 
-			this.AnonymousNoteLabel.AutoSize = true;
-			this.AnonymousNoteLabel.Location = new System.Drawing.Point(104, 68);
-			this.AnonymousNoteLabel.Name = "AnonymousNoteLabel";
-			this.AnonymousNoteLabel.Size = new System.Drawing.Size(375, 13);
-			this.AnonymousNoteLabel.TabIndex = 0;
-			this.AnonymousNoteLabel.Text = "Note: Anonymous ID used when storing game configurations online by default.";
+			this.OnlineAccountGroupBox.Text = "Online Account - Anonymous Computer ID and Profile ID will be used by default";
 			// 
 			// PasswordTextBox
 			// 
-			this.PasswordTextBox.Location = new System.Drawing.Point(107, 110);
+			this.PasswordTextBox.Location = new System.Drawing.Point(106, 149);
 			this.PasswordTextBox.Name = "PasswordTextBox";
 			this.PasswordTextBox.Size = new System.Drawing.Size(152, 20);
 			this.PasswordTextBox.TabIndex = 43;
 			// 
 			// ResetButton
 			// 
-			this.ResetButton.Location = new System.Drawing.Point(424, 108);
+			this.ResetButton.Location = new System.Drawing.Point(423, 147);
 			this.ResetButton.Name = "ResetButton";
 			this.ResetButton.Size = new System.Drawing.Size(75, 23);
 			this.ResetButton.TabIndex = 45;
@@ -540,7 +537,7 @@
 			// 
 			// CreateButton
 			// 
-			this.CreateButton.Location = new System.Drawing.Point(346, 108);
+			this.CreateButton.Location = new System.Drawing.Point(345, 147);
 			this.CreateButton.Name = "CreateButton";
 			this.CreateButton.Size = new System.Drawing.Size(75, 23);
 			this.CreateButton.TabIndex = 45;
@@ -550,7 +547,7 @@
 			// 
 			// LoginButton
 			// 
-			this.LoginButton.Location = new System.Drawing.Point(265, 108);
+			this.LoginButton.Location = new System.Drawing.Point(264, 147);
 			this.LoginButton.Name = "LoginButton";
 			this.LoginButton.Size = new System.Drawing.Size(75, 23);
 			this.LoginButton.TabIndex = 44;
@@ -560,20 +557,20 @@
 			// 
 			// UsernameTextBox
 			// 
-			this.UsernameTextBox.Location = new System.Drawing.Point(107, 84);
+			this.UsernameTextBox.Location = new System.Drawing.Point(106, 123);
 			this.UsernameTextBox.Name = "UsernameTextBox";
 			this.UsernameTextBox.Size = new System.Drawing.Size(152, 20);
 			this.UsernameTextBox.TabIndex = 42;
 			// 
-			// DiskIdTextBox
+			// ComputerDiskTextBox
 			// 
-			this.DiskIdTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.ComputerDiskTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.DiskIdTextBox.BackColor = System.Drawing.SystemColors.Control;
-			this.DiskIdTextBox.Location = new System.Drawing.Point(107, 19);
-			this.DiskIdTextBox.Name = "DiskIdTextBox";
-			this.DiskIdTextBox.Size = new System.Drawing.Size(394, 20);
-			this.DiskIdTextBox.TabIndex = 40;
+			this.ComputerDiskTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.ComputerDiskTextBox.Location = new System.Drawing.Point(107, 19);
+			this.ComputerDiskTextBox.Name = "ComputerDiskTextBox";
+			this.ComputerDiskTextBox.Size = new System.Drawing.Size(394, 20);
+			this.ComputerDiskTextBox.TabIndex = 40;
 			// 
 			// ComputerIdTextBox
 			// 
@@ -587,7 +584,7 @@
 			// 
 			this.PasswordLabel.AutoSize = true;
 			this.PasswordLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.PasswordLabel.Location = new System.Drawing.Point(6, 113);
+			this.PasswordLabel.Location = new System.Drawing.Point(5, 152);
 			this.PasswordLabel.Name = "PasswordLabel";
 			this.PasswordLabel.Size = new System.Drawing.Size(56, 13);
 			this.PasswordLabel.TabIndex = 31;
@@ -597,7 +594,7 @@
 			// 
 			this.UsernameLabel.AutoSize = true;
 			this.UsernameLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.UsernameLabel.Location = new System.Drawing.Point(6, 87);
+			this.UsernameLabel.Location = new System.Drawing.Point(5, 126);
 			this.UsernameLabel.Name = "UsernameLabel";
 			this.UsernameLabel.Size = new System.Drawing.Size(95, 13);
 			this.UsernameLabel.TabIndex = 31;
@@ -609,19 +606,19 @@
 			this.label2.BackColor = System.Drawing.SystemColors.Control;
 			this.label2.Location = new System.Drawing.Point(6, 48);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(79, 13);
+			this.label2.Size = new System.Drawing.Size(69, 13);
 			this.label2.TabIndex = 31;
-			this.label2.Text = "Anonymous ID:";
+			this.label2.Text = "Computer ID:";
 			// 
-			// label3
+			// ComputerDiskLabel
 			// 
-			this.label3.AutoSize = true;
-			this.label3.BackColor = System.Drawing.SystemColors.Control;
-			this.label3.Location = new System.Drawing.Point(6, 22);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(45, 13);
-			this.label3.TabIndex = 32;
-			this.label3.Text = "Disk ID:";
+			this.ComputerDiskLabel.AutoSize = true;
+			this.ComputerDiskLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.ComputerDiskLabel.Location = new System.Drawing.Point(6, 22);
+			this.ComputerDiskLabel.Name = "ComputerDiskLabel";
+			this.ComputerDiskLabel.Size = new System.Drawing.Size(79, 13);
+			this.ComputerDiskLabel.TabIndex = 32;
+			this.ComputerDiskLabel.Text = "Computer Disk:";
 			// 
 			// GamesGroupBox
 			// 
@@ -733,9 +730,9 @@
 			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianTextBox);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusInstallButton);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusTextBox);
-			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(263, 384);
+			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(263, 426);
 			this.VirtualDeviceGroupBox.Name = "VirtualDeviceGroupBox";
-			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(507, 127);
+			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(507, 107);
 			this.VirtualDeviceGroupBox.TabIndex = 70;
 			this.VirtualDeviceGroupBox.TabStop = false;
 			this.VirtualDeviceGroupBox.Text = "Virtual Device";
@@ -867,6 +864,44 @@
 			this.DeveloperToolsButton.UseVisualStyleBackColor = true;
 			this.DeveloperToolsButton.Click += new System.EventHandler(this.DeveloperToolsButton_Click);
 			// 
+			// ProfilePathLabel
+			// 
+			this.ProfilePathLabel.AutoSize = true;
+			this.ProfilePathLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.ProfilePathLabel.Location = new System.Drawing.Point(6, 74);
+			this.ProfilePathLabel.Name = "ProfilePathLabel";
+			this.ProfilePathLabel.Size = new System.Drawing.Size(64, 13);
+			this.ProfilePathLabel.TabIndex = 32;
+			this.ProfilePathLabel.Text = "Profile Path:";
+			// 
+			// ProfileIdLabel
+			// 
+			this.ProfileIdLabel.AutoSize = true;
+			this.ProfileIdLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.ProfileIdLabel.Location = new System.Drawing.Point(6, 100);
+			this.ProfileIdLabel.Name = "ProfileIdLabel";
+			this.ProfileIdLabel.Size = new System.Drawing.Size(53, 13);
+			this.ProfileIdLabel.TabIndex = 31;
+			this.ProfileIdLabel.Text = "Profile ID:";
+			// 
+			// ProfileIdTextBox
+			// 
+			this.ProfileIdTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.ProfileIdTextBox.Location = new System.Drawing.Point(106, 97);
+			this.ProfileIdTextBox.Name = "ProfileIdTextBox";
+			this.ProfileIdTextBox.Size = new System.Drawing.Size(233, 20);
+			this.ProfileIdTextBox.TabIndex = 41;
+			// 
+			// ProfilePathTextBox
+			// 
+			this.ProfilePathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.ProfilePathTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.ProfilePathTextBox.Location = new System.Drawing.Point(106, 71);
+			this.ProfilePathTextBox.Name = "ProfilePathTextBox";
+			this.ProfilePathTextBox.Size = new System.Drawing.Size(394, 20);
+			this.ProfilePathTextBox.TabIndex = 40;
+			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -945,16 +980,15 @@
 		internal System.Windows.Forms.CheckBox MinimizeToTrayCheckBox;
 		public System.Windows.Forms.CheckBox InternetAutoSaveCheckBox;
 		private System.Windows.Forms.GroupBox OnlineAccountGroupBox;
-        private System.Windows.Forms.TextBox DiskIdTextBox;
+        private System.Windows.Forms.TextBox ComputerDiskTextBox;
         private System.Windows.Forms.TextBox ComputerIdTextBox;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label ComputerDiskLabel;
         private System.Windows.Forms.TextBox PasswordTextBox;
         private System.Windows.Forms.Button LoginButton;
         private System.Windows.Forms.TextBox UsernameTextBox;
         private System.Windows.Forms.Label PasswordLabel;
         private System.Windows.Forms.Label UsernameLabel;
-        private System.Windows.Forms.Label AnonymousNoteLabel;
         private System.Windows.Forms.Button CreateButton;
 		private System.Windows.Forms.Button ResetButton;
 		private System.Windows.Forms.GroupBox GamesGroupBox;
@@ -984,5 +1018,9 @@
 		internal System.Windows.Forms.CheckBox AlwaysOnTopCheckBox;
 		public System.Windows.Forms.ComboBox StartWithWindowsStateComboBox;
 		public System.Windows.Forms.CheckBox StartWithWindowsCheckBox;
+		private System.Windows.Forms.TextBox ProfilePathTextBox;
+		private System.Windows.Forms.TextBox ProfileIdTextBox;
+		private System.Windows.Forms.Label ProfileIdLabel;
+		private System.Windows.Forms.Label ProfilePathLabel;
 	}
 }
