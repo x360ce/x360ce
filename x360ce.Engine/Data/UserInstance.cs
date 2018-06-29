@@ -5,10 +5,12 @@ using System.Text;
 
 namespace x360ce.Engine.Data
 {
-    public partial class UserInstance : IChecksum, IDateTime
+    public partial class UserInstance : IUserRecord
     {
 
-        public UserInstance()
+		Guid IUserRecord.ItemId { get { return InstanceGuid; } set { InstanceGuid = value; } }
+
+		public UserInstance()
         {
             DateCreated = DateTime.Now;
             DateUpdated = DateCreated;

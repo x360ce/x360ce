@@ -167,6 +167,8 @@
             <PropertyRef Name="SettingId" />
           </Key>
           <Property Name="SettingId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ComputerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProfileId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="InstanceName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
@@ -182,6 +184,7 @@
           <Property Name="IsEnabled" Type="bit" Nullable="false" />
           <Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Completion" Type="int" Nullable="false" />
+          <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_Summaries">
           <Key>
@@ -217,6 +220,7 @@
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ComputerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProfileId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="InstanceName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
@@ -269,6 +273,7 @@
           </Key>
           <Property Name="GameId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ComputerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProfileId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="FileName" Type="nvarchar" MaxLength="128" Nullable="false" />
           <Property Name="FileProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="FileVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
@@ -299,6 +304,7 @@
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ComputerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProfileId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ControllerId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
@@ -461,6 +467,9 @@
 					<Property Type="DateTime" Name="DateSelected" Nullable="false" Precision="3" />
           <Property Name="MapTo" Type="Int32" Nullable="false" />
           <Property Name="Completion" Type="Int32" Nullable="false" />
+          <Property Name="ComputerId" Type="Guid" Nullable="false" />
+          <Property Name="ProfileId" Type="Guid" Nullable="false" />
+          <Property Name="Checksum" Type="Guid" Nullable="false" />
 				</EntityType>
 				<EntityType Name="Summary">
 					<Key>
@@ -507,6 +516,7 @@
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="DateUpdated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ComputerId" Type="Guid" Nullable="false" />
+          <Property Name="ProfileId" Type="Guid" Nullable="false" />
         </EntityType>
         <EntityType Name="UserComputer">
           <Key>
@@ -572,6 +582,7 @@
           <Property Name="IsHidden" Type="Boolean" Nullable="false" />
           <Property Name="DiActuatorMask" Type="Int32" Nullable="false" />
           <Property Name="DiActuatorCount" Type="Int32" Nullable="false" />
+          <Property Name="ProfileId" Type="Guid" Nullable="false" />
         </EntityType>
         <EntityType Name="UserGame">
           <Key>
@@ -602,6 +613,7 @@
           <Property Name="EmulationType" Type="Int32" Nullable="false" />
           <Property Name="Checksum" Type="Guid" Nullable="false" />
           <Property Name="XInputPath" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="ProfileId" Type="Guid" Nullable="false" />
         </EntityType>
         <EntityType Name="Program">
           <Key>
@@ -774,6 +786,9 @@
 					<EntitySetMapping Name="Settings">
 						<EntityTypeMapping TypeName="x360ceModel.Setting">
 							<MappingFragment StoreEntitySet="x360ce_Settings">
+                <ScalarProperty Name="Checksum" ColumnName="Checksum" />
+                <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
+                <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
                 <ScalarProperty Name="Completion" ColumnName="Completion" />
                 <ScalarProperty Name="MapTo" ColumnName="MapTo" />
                 <ScalarProperty Name="DateSelected" ColumnName="DateSelected" />
@@ -833,6 +848,7 @@
           <EntitySetMapping Name="UserInstances">
             <EntityTypeMapping TypeName="x360ceModel.UserInstance">
               <MappingFragment StoreEntitySet="x360ce_UserInstances">
+                <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
                 <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
@@ -860,6 +876,7 @@
           <EntitySetMapping Name="UserDevices">
             <EntityTypeMapping TypeName="x360ceModel.UserDevice">
               <MappingFragment StoreEntitySet="x360ce_UserDevices">
+                <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
                 <ScalarProperty Name="DiActuatorCount" ColumnName="DiActuatorCount" />
                 <ScalarProperty Name="DiActuatorMask" ColumnName="DiActuatorMask" />
                 <ScalarProperty Name="IsHidden" ColumnName="IsHidden" />
@@ -913,6 +930,7 @@
           <EntitySetMapping Name="UserGames">
             <EntityTypeMapping TypeName="x360ceModel.UserGame">
               <MappingFragment StoreEntitySet="x360ce_UserGames">
+                <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
                 <ScalarProperty Name="XInputPath" ColumnName="XInputPath" />
                 <ScalarProperty Name="Checksum" ColumnName="Checksum" />
                 <ScalarProperty Name="EmulationType" ColumnName="EmulationType" />
@@ -1048,13 +1066,13 @@
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="9.75" PointY="3.625" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="9.75" PointY="5.75" />
-        <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="4.125" PointY="4.875" />
-        <EntityTypeShape EntityType="x360ceModel.UserComputer" Width="1.5" PointX="7.625" PointY="6.5" />
+        <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="4.25" PointY="5.25" />
+        <EntityTypeShape EntityType="x360ceModel.UserComputer" Width="1.5" PointX="7.625" PointY="6.875" />
         <EntityTypeShape EntityType="x360ceModel.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.UserGame" Width="1.5" PointX="7.75" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="0.5" />
         <EntityTypeShape EntityType="x360ceModel.Layout" Width="1.5" PointX="13.375" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ceModel.UserProfile" Width="1.5" PointX="4.125" PointY="7.5" />
+        <EntityTypeShape EntityType="x360ceModel.UserProfile" Width="1.5" PointX="4.25" PointY="7.875" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

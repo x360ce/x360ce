@@ -4080,7 +4080,10 @@ namespace x360ce.Engine.Data
         /// <param name="dateSelected">Initial value of the DateSelected property.</param>
         /// <param name="mapTo">Initial value of the MapTo property.</param>
         /// <param name="completion">Initial value of the Completion property.</param>
-        public static Setting CreateSetting(global::System.Guid settingId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 deviceType, global::System.String fileName, global::System.String fileProductName, global::System.String comment, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid padSettingChecksum, global::System.DateTime dateSelected, global::System.Int32 mapTo, global::System.Int32 completion)
+        /// <param name="computerId">Initial value of the ComputerId property.</param>
+        /// <param name="profileId">Initial value of the ProfileId property.</param>
+        /// <param name="checksum">Initial value of the Checksum property.</param>
+        public static Setting CreateSetting(global::System.Guid settingId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 deviceType, global::System.String fileName, global::System.String fileProductName, global::System.String comment, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid padSettingChecksum, global::System.DateTime dateSelected, global::System.Int32 mapTo, global::System.Int32 completion, global::System.Guid computerId, global::System.Guid profileId, global::System.Guid checksum)
         {
             Setting setting = new Setting();
             setting.SettingId = settingId;
@@ -4099,6 +4102,9 @@ namespace x360ce.Engine.Data
             setting.DateSelected = dateSelected;
             setting.MapTo = mapTo;
             setting.Completion = completion;
+            setting.ComputerId = computerId;
+            setting.ProfileId = profileId;
+            setting.Checksum = checksum;
             return setting;
         }
 
@@ -4492,6 +4498,78 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _Completion;
         partial void OnCompletionChanging(global::System.Int32 value);
         partial void OnCompletionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ComputerId
+        {
+            get
+            {
+                return _ComputerId;
+            }
+            set
+            {
+                OnComputerIdChanging(value);
+                ReportPropertyChanging("ComputerId");
+                _ComputerId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ComputerId");
+                OnComputerIdChanged();
+            }
+        }
+        private global::System.Guid _ComputerId;
+        partial void OnComputerIdChanging(global::System.Guid value);
+        partial void OnComputerIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ProfileId
+        {
+            get
+            {
+                return _ProfileId;
+            }
+            set
+            {
+                OnProfileIdChanging(value);
+                ReportPropertyChanging("ProfileId");
+                _ProfileId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProfileId");
+                OnProfileIdChanged();
+            }
+        }
+        private global::System.Guid _ProfileId;
+        partial void OnProfileIdChanging(global::System.Guid value);
+        partial void OnProfileIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Checksum
+        {
+            get
+            {
+                return _Checksum;
+            }
+            set
+            {
+                OnChecksumChanging(value);
+                ReportPropertyChanging("Checksum");
+                _Checksum = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Checksum");
+                OnChecksumChanged();
+            }
+        }
+        private global::System.Guid _Checksum;
+        partial void OnChecksumChanging(global::System.Guid value);
+        partial void OnChecksumChanged();
 
         #endregion
 
@@ -5088,7 +5166,8 @@ namespace x360ce.Engine.Data
         /// <param name="isHidden">Initial value of the IsHidden property.</param>
         /// <param name="diActuatorMask">Initial value of the DiActuatorMask property.</param>
         /// <param name="diActuatorCount">Initial value of the DiActuatorCount property.</param>
-        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid computerId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid checksum, global::System.Int32 diAxeMask, global::System.Int32 diSliderMask, global::System.Boolean isHidden, global::System.Int32 diActuatorMask, global::System.Int32 diActuatorCount)
+        /// <param name="profileId">Initial value of the ProfileId property.</param>
+        public static UserDevice CreateUserDevice(global::System.Guid id, global::System.Guid computerId, global::System.Guid instanceGuid, global::System.String instanceName, global::System.Guid productGuid, global::System.String productName, global::System.Int32 capAxeCount, global::System.Int32 capButtonCount, global::System.Int32 capDriverVersion, global::System.Int32 capFirmwareRevision, global::System.Int32 capFlags, global::System.Int32 capForceFeedbackMinimumTimeResolution, global::System.Int32 capForceFeedbackSamplePeriod, global::System.Int32 capHardwareRevision, global::System.Int32 capPovCount, global::System.Boolean capIsHumanInterfaceDevice, global::System.Int32 capSubtype, global::System.Int32 capType, global::System.String hidManufacturer, global::System.Int32 hidVendorId, global::System.Int32 hidProductId, global::System.Int32 hidRevision, global::System.String hidDescription, global::System.String hidDeviceId, global::System.String hidDevicePath, global::System.String hidParentDeviceId, global::System.Guid hidClassGuid, global::System.String hidClassDescription, global::System.String devManufacturer, global::System.Int32 devVendorId, global::System.Int32 devProductId, global::System.Int32 devRevision, global::System.String devDescription, global::System.String devDeviceId, global::System.String devDevicePath, global::System.String devParentDeviceId, global::System.Guid devClassGuid, global::System.String devClassDescription, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Boolean isEnabled, global::System.Guid checksum, global::System.Int32 diAxeMask, global::System.Int32 diSliderMask, global::System.Boolean isHidden, global::System.Int32 diActuatorMask, global::System.Int32 diActuatorCount, global::System.Guid profileId)
         {
             UserDevice userDevice = new UserDevice();
             userDevice.Id = id;
@@ -5138,6 +5217,7 @@ namespace x360ce.Engine.Data
             userDevice.IsHidden = isHidden;
             userDevice.DiActuatorMask = diActuatorMask;
             userDevice.DiActuatorCount = diActuatorCount;
+            userDevice.ProfileId = profileId;
             return userDevice;
         }
 
@@ -6275,6 +6355,30 @@ namespace x360ce.Engine.Data
         private global::System.Int32 _DiActuatorCount;
         partial void OnDiActuatorCountChanging(global::System.Int32 value);
         partial void OnDiActuatorCountChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ProfileId
+        {
+            get
+            {
+                return _ProfileId;
+            }
+            set
+            {
+                OnProfileIdChanging(value);
+                ReportPropertyChanging("ProfileId");
+                _ProfileId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProfileId");
+                OnProfileIdChanged();
+            }
+        }
+        private global::System.Guid _ProfileId;
+        partial void OnProfileIdChanging(global::System.Guid value);
+        partial void OnProfileIdChanged();
 
         #endregion
 
@@ -6319,7 +6423,8 @@ namespace x360ce.Engine.Data
         /// <param name="emulationType">Initial value of the EmulationType property.</param>
         /// <param name="checksum">Initial value of the Checksum property.</param>
         /// <param name="xInputPath">Initial value of the XInputPath property.</param>
-        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 autoMapMask, global::System.Int32 enableMask, global::System.Int32 emulationType, global::System.Guid checksum, global::System.String xInputPath)
+        /// <param name="profileId">Initial value of the ProfileId property.</param>
+        public static UserGame CreateUserGame(global::System.Guid gameId, global::System.Guid computerId, global::System.String fileName, global::System.String fileProductName, global::System.String fileVersion, global::System.String fullPath, global::System.String companyName, global::System.Int32 processorArchitecture, global::System.Int32 hookMask, global::System.Int32 xInputMask, global::System.Int32 dInputMask, global::System.String dInputFile, global::System.Int32 fakeVID, global::System.Int32 fakePID, global::System.Int32 timeout, global::System.Int32 weight, global::System.String comment, global::System.Boolean isEnabled, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Int32 autoMapMask, global::System.Int32 enableMask, global::System.Int32 emulationType, global::System.Guid checksum, global::System.String xInputPath, global::System.Guid profileId)
         {
             UserGame userGame = new UserGame();
             userGame.GameId = gameId;
@@ -6347,6 +6452,7 @@ namespace x360ce.Engine.Data
             userGame.EmulationType = emulationType;
             userGame.Checksum = checksum;
             userGame.XInputPath = xInputPath;
+            userGame.ProfileId = profileId;
             return userGame;
         }
 
@@ -6956,6 +7062,30 @@ namespace x360ce.Engine.Data
         private global::System.String _XInputPath;
         partial void OnXInputPathChanging(global::System.String value);
         partial void OnXInputPathChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ProfileId
+        {
+            get
+            {
+                return _ProfileId;
+            }
+            set
+            {
+                OnProfileIdChanging(value);
+                ReportPropertyChanging("ProfileId");
+                _ProfileId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProfileId");
+                OnProfileIdChanged();
+            }
+        }
+        private global::System.Guid _ProfileId;
+        partial void OnProfileIdChanging(global::System.Guid value);
+        partial void OnProfileIdChanged();
 
         #endregion
 
@@ -6982,7 +7112,8 @@ namespace x360ce.Engine.Data
         /// <param name="dateCreated">Initial value of the DateCreated property.</param>
         /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
         /// <param name="computerId">Initial value of the ComputerId property.</param>
-        public static UserInstance CreateUserInstance(global::System.Guid id, global::System.Guid controllerId, global::System.Guid instanceGuid, global::System.Guid checksum, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Guid computerId)
+        /// <param name="profileId">Initial value of the ProfileId property.</param>
+        public static UserInstance CreateUserInstance(global::System.Guid id, global::System.Guid controllerId, global::System.Guid instanceGuid, global::System.Guid checksum, global::System.DateTime dateCreated, global::System.DateTime dateUpdated, global::System.Guid computerId, global::System.Guid profileId)
         {
             UserInstance userInstance = new UserInstance();
             userInstance.Id = id;
@@ -6992,6 +7123,7 @@ namespace x360ce.Engine.Data
             userInstance.DateCreated = dateCreated;
             userInstance.DateUpdated = dateUpdated;
             userInstance.ComputerId = computerId;
+            userInstance.ProfileId = profileId;
             return userInstance;
         }
 
@@ -7169,6 +7301,30 @@ namespace x360ce.Engine.Data
         private global::System.Guid _ComputerId;
         partial void OnComputerIdChanging(global::System.Guid value);
         partial void OnComputerIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ProfileId
+        {
+            get
+            {
+                return _ProfileId;
+            }
+            set
+            {
+                OnProfileIdChanging(value);
+                ReportPropertyChanging("ProfileId");
+                _ProfileId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ProfileId");
+                OnProfileIdChanged();
+            }
+        }
+        private global::System.Guid _ProfileId;
+        partial void OnProfileIdChanging(global::System.Guid value);
+        partial void OnProfileIdChanged();
 
         #endregion
 

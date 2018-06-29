@@ -1,6 +1,7 @@
 ﻿CREATE TABLE [dbo].[x360ce_UserDevices] (
     [Id]                                    UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_Id] DEFAULT (newid()) NOT NULL,
-    [ComputerId]                            UNIQUEIDENTIFIER NOT NULL,
+    [ComputerId]                            UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_ComputerId] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
+    [ProfileId]                             UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_ProfileId] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     [InstanceGuid]                          UNIQUEIDENTIFIER NOT NULL,
     [InstanceName]                          NVARCHAR (256)   NOT NULL,
     [ProductGuid]                           UNIQUEIDENTIFIER NOT NULL,
@@ -48,6 +49,8 @@
     [Checksum]                              UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_Checksum] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     CONSTRAINT [PK_x360ce_UserDevices] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

@@ -5,8 +5,10 @@ using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class Setting
+	public partial class Setting: IUserRecord
 	{
+
+		Guid IUserRecord.ItemId { get { return SettingId; } set { SettingId = value; } }
 
 		[XmlIgnore]
 		public bool IsOnline

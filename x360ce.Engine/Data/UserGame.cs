@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class UserGame : IDisplayName, IChecksum, IDateTime, IProgram
+	public partial class UserGame : IDisplayName, IUserRecord, IProgram
 	{
 
 		public UserGame()
@@ -14,6 +14,8 @@ namespace x360ce.Engine.Data
 			DateUpdated = DateCreated;
 			Timeout = -1;
 		}
+
+		Guid IUserRecord.ItemId { get { return GameId; } set { GameId = value; } }
 
 		[XmlIgnore]
 		public string DisplayName

@@ -163,6 +163,8 @@
     <Compile Include="Common\XInputMaskScannerEventArgs.cs" />
     <Compile Include="Common\XInputMaskScannerState.cs" />
     <Compile Include="Common\XSettingsData.cs" />
+    <Compile Include="Data\IComputer.cs" />
+    <Compile Include="Data\IUserRecord.cs" />
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
     <Compile Include="Data\Setting.cs" />

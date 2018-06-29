@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web.Security;
 
 namespace x360ce.Engine
@@ -9,6 +6,9 @@ namespace x360ce.Engine
 	public partial class CloudHelper
 	{
 
+		/// <summary>
+		/// Decrypt message and get user if supplied user name and password is valid.
+		/// </summary>
 		public static JocysCom.WebSites.Engine.Security.Data.User GetUser(CloudMessage input, out string error)
 		{
 			var values = input.Values;
@@ -23,12 +23,12 @@ namespace x360ce.Engine
 			// Decrypt random password supplied by the user.
 			var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
 			input.Values.DecryptRandomPassword(rsa.RsaPublicKeyValue, rsa.RsaPrivateKeyValue);
-			// Try to get user by username.
+			// Try to get user by user name.
 			var username = values.GetValue<string>(CloudKey.Username, null, true);
 			var password = values.GetValue<string>(CloudKey.Password, null, true);
 			if (string.IsNullOrEmpty(username))
 			{
-				error = "Username is empty";
+				error = "User name is empty";
 				return null;
 			}
 			if (string.IsNullOrEmpty(password))
@@ -45,7 +45,10 @@ namespace x360ce.Engine
 			return JocysCom.WebSites.Engine.Security.Data.User.GetUser(username);
 		}
 
-		public static Guid? GetComputerId(CloudMessage input, out string error)
+		/// <summary>
+		/// Decrypt message and get cloud key value as GUID.
+		/// </summary>
+		public static Guid? GetGuidId(string cloudKey, CloudMessage input, out string error)
 		{
 			var values = input.Values;
 			error = null;
@@ -60,13 +63,13 @@ namespace x360ce.Engine
 			var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
 			input.Values.DecryptRandomPassword(rsa.RsaPublicKeyValue, rsa.RsaPrivateKeyValue);
 			// Try to get computer id.
-			var computerId = input.Values.GetValue(CloudKey.ComputerId, Guid.Empty, true);
-			if (computerId == Guid.Empty)
+			var guidId = input.Values.GetValue(cloudKey, Guid.Empty, true);
+			if (guidId == Guid.Empty)
 			{
-				error = "DiskId is empty";
+				error = string.Format("{0} value is empty", cloudKey);
 				return null;
 			}
-			return computerId;
+			return guidId;
 		}
 
 		/// <summary>Get secure user command.</summary>
@@ -84,7 +87,7 @@ namespace x360ce.Engine
 			}
 			if (!string.IsNullOrEmpty(username))
 			{
-				// Add encrypted username.
+				// Add encrypted user name.
 				message.Values.Add(CloudKey.Username, username, true);
 			}
 			if (!string.IsNullOrEmpty(password))

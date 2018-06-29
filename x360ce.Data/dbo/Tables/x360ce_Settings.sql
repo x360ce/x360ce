@@ -1,5 +1,7 @@
 ﻿CREATE TABLE [dbo].[x360ce_Settings] (
     [SettingId]          UNIQUEIDENTIFIER NOT NULL,
+    [ComputerId]         UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_Settings_ComputerId] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
+    [ProfileId]          UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_Settings_ProfileId] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     [InstanceGuid]       UNIQUEIDENTIFIER NOT NULL,
     [InstanceName]       NVARCHAR (256)   NOT NULL,
     [ProductGuid]        UNIQUEIDENTIFIER NOT NULL,
@@ -15,8 +17,11 @@
     [IsEnabled]          BIT              CONSTRAINT [DF_x360ce_Settings_IsEnabled] DEFAULT ((1)) NOT NULL,
     [PadSettingChecksum] UNIQUEIDENTIFIER NOT NULL,
     [Completion]         INT              CONSTRAINT [DF_x360ce_Settings_Completion] DEFAULT ((0)) NOT NULL,
+    [Checksum]           UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_Settings_Checksum] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     CONSTRAINT [PK_x360ce_Settings] PRIMARY KEY CLUSTERED ([SettingId] ASC)
 );
+
+
 
 
 

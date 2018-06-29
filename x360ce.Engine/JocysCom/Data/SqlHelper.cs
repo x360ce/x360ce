@@ -119,7 +119,7 @@ namespace JocysCom.ClassLibrary.Data
 			// If configuration section with not found then return.
 			if (cs == null) return null;
 			string connectionString;
-            if (cs.ProviderName == "System.Data.EntityClient")
+			if (cs.ProviderName == "System.Data.EntityClient")
 			{
 				// Use entity connection.
 				var e = new System.Data.EntityClient.EntityConnection(cs.ConnectionString);
@@ -285,6 +285,39 @@ namespace JocysCom.ClassLibrary.Data
 
 		#endregion
 
+		#region Add Range
+
+		/// <summary>
+		/// Add an array of parameters to a SQL command in an IN statement.
+		/// Example:
+		///	    var cmd = new SqlCommand("SELECT * FROM table WHERE value IN (@values)");
+		///     SqlHelper.AddArrayParameters(cmd, "@values", new int[] { 1, 2, 3 });
+		/// </summary>
+		/// <param name="cmd">The SQL command object to add parameters to.</param>
+		/// <param name="paramName">Parameter name inside SQL command.</param>
+		/// <param name="values">The array of strings that need to be added as parameters.</param>
+		/// <returns>Array of added parameters.</returns>
+		/// <remarks>
+		/// An array cannot be simply added as a single parameter to a SQL command.
+		/// New SQL parameter will be created for each array value.
+		/// </remarks>
+		public static SqlParameter[] AddArrayParameters<T>(SqlCommand cmd, string paramName, params T[] values)
+		{
+			var parameters = new List<SqlParameter>();
+			for (int i = 0; i < values.Length; i++)
+			{
+				var name = string.Format("{0}_{1}", paramName, i);
+				var param = cmd.Parameters.AddWithValue(name, values[i]);
+				parameters.Add(param);
+			}
+			var rx = new System.Text.RegularExpressions.Regex(paramName + "\\b");
+			var paramNames = string.Join(", ", parameters.Select(x => x.ParameterName));
+			cmd.CommandText = rx.Replace(cmd.CommandText, paramNames);
+			return parameters.ToArray();
+		}
+
+		#endregion
+
 		#region Convert Table To/From List
 
 		/// <summary>
@@ -320,7 +353,7 @@ namespace JocysCom.ClassLibrary.Data
 		{
 			if (list == null) return null;
 			var table = new DataTable();
-			var props = typeof(T).GetProperties().Where(x=>x.CanRead).ToArray();
+			var props = typeof(T).GetProperties().Where(x => x.CanRead).ToArray();
 			foreach (var prop in props)
 			{
 				table.Columns.Add(prop.Name, prop.PropertyType);

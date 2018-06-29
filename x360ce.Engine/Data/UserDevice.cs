@@ -7,15 +7,19 @@ using System.Linq;
 
 namespace x360ce.Engine.Data
 {
-    public partial class UserDevice : IDisplayName, IChecksum, IDateTime
+    public partial class UserDevice : IDisplayName, IUserRecord
     {
 
-        public UserDevice()
+		Guid IUserRecord.ItemId { get { return InstanceGuid; } set { InstanceGuid = value; } }
+
+		public UserDevice()
         {
             DateCreated = DateTime.Now;
             DateUpdated = DateCreated;
             IsEnabled = true;
         }
+
+
 
         [XmlIgnore]
         public string DisplayName

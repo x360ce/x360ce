@@ -142,11 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\DatabaseHelper.cs" />
-    <Compile Include="Common\DatabaseHelper.Settings.cs" />
-    <Compile Include="Common\DatabaseHelper.UserComputers.cs" />
-    <Compile Include="Common\DatabaseHelper.UserDevice.cs" />
-    <Compile Include="Common\DatabaseHelper.UserGame.cs" />
-    <Compile Include="Common\DatabaseHelper.UserInstances.cs" />
     <Compile Include="Controls\ControllersChartControl.ascx.cs">
       <DependentUpon>ControllersChartControl.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

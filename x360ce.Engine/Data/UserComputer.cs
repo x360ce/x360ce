@@ -2,7 +2,7 @@
 
 namespace x360ce.Engine.Data
 {
-	public partial class UserComputer: IChecksum, IDateTime
+	public partial class UserComputer: IComputer, IChecksum, IDateTime
     {
         public UserComputer()
         {
