@@ -141,14 +141,20 @@ namespace x360ce.Engine
             Effect effectL = null;
             Effect effectR = null;
 
-            // If device already have effects then...
-            if (device.CreatedEffects.Count > 0)
-                effectL = device.CreatedEffects[0];
-            if (device.CreatedEffects.Count > 1)
-                effectR = device.CreatedEffects[1];
+			// If device already have effects then...
+			if (device.CreatedEffects.Count > 0)
+			{
+				effectL = device.CreatedEffects[0];
+				effectL.Download();
+			}
+			if (device.CreatedEffects.Count > 1)
+			{
+				effectR = device.CreatedEffects[1];
+				effectL.Download();
+			}
 
 			// Effect type changed.
-            bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
+			bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
 
 			ForceEffectType forceType = 0;
 			if (motorsChanged || forceChanged)

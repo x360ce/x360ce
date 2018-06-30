@@ -3,11 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Win32
 {
-#if WIN64
-    [StructLayout(LayoutKind.Sequential, Pack = 8)]
-#else
-	[StructLayout(LayoutKind.Sequential, Pack = 1)]
-#endif
+	[StructLayout(LayoutKind.Sequential)]
 	public struct SP_DEVICE_INTERFACE_DATA
 	{
 		public uint cbSize;

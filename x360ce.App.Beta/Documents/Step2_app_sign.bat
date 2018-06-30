@@ -1,6 +1,6 @@
 @ECHO OFF
-CALL:SIG "..\bin\Debug_x86\x360ce.exe"
-CALL:SIG "..\bin\Debug_x64\x360ce.exe"
+CALL:SIG "..\bin\Debug\x360ce.exe"
+echo.
 pause
 
 GOTO:EOF
@@ -11,6 +11,11 @@ GOTO:EOF
 :: Use the Windows 7 Platform SDK web installer that lets you
 :: download just the components you need - so just choose the
 :: ".NET developer \ Tools" and deselect everything else.
+echo.
+IF NOT EXIST "%~1" (
+  ECHO "%~1" not exist. Skipping.
+  GOTO:EOF
+)
 set sgt=%ProgramFiles%\Windows Kits\10\bin\x86\signtool.exe
 if not exist "%sgt%" set sgt=%ProgramFiles(x86)%\Windows Kits\10\bin\x86\signtool.exe
 set pfx=D:\_Backup\Configuration\SSL\CodeSign_Standard\2016\Evaldas_Jocys.CodeSign.pfx

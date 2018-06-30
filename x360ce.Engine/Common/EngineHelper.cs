@@ -195,12 +195,12 @@ namespace x360ce.Engine
 
 		public static bool IsApp64bit()
 		{
-			var assembly = Assembly.GetEntryAssembly();
-			var architecture = assembly.GetName().ProcessorArchitecture;
+			//var assembly = Assembly.GetEntryAssembly();
+			//var architecture = assembly.GetName().ProcessorArchitecture;
 			// There must be an easier way to check embedded non managed DLL version.
-			return
-				architecture == ProcessorArchitecture.Amd64 ||
-				architecture == ProcessorArchitecture.IA64;
+			//architecture == ProcessorArchitecture.Amd64 ||
+			//	architecture == ProcessorArchitecture.IA64;
+			return IntPtr.Size == 8;
 		}
 
 		/// <summary>
