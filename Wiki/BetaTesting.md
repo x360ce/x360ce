@@ -15,16 +15,15 @@ IMPORTANT Note 3: Do not close "Xbox 360 Controller Emulator" during the game, j
 
 Enabling Virtual Drivers:
 
-3. Press [Virtual] button (blue/grey glove icon) to enable support for Virtual controller.
-4. [Issues] tab will start blinking it Virtual Drivers are missing.
-5. Press [Issues] tab and hit [Install] button to install Virtual Controller Drivers.
+3. [Issues] tab will start blinking it Virtual Drivers are missing.
+4. Press [Issues] tab and hit [Install] button to install Virtual Controller Drivers.
 
 Mapping DirectInput Device:
 
-6. Connect your DirectInput Device to PC
-7. Select [Controller 1] tab and press [Add..] button.
-8. Select controller you want to map and press [OK] button.
-9. Click "[x] Enable 1 Mapped Device" checkbox inside [Controller 1] tab.
+5. Connect your DirectInput Device to PC
+6. Select [Controller 1] tab and press [Add..] button.
+7. Select controller you want to map and press [OK] button.
+8. Click "[x] Enable 1 Mapped Device" checkbox inside [Controller 1] tab.
 
 Configuring Mapping:
 
