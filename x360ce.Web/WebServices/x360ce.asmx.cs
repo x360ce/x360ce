@@ -354,7 +354,7 @@ namespace x360ce.Web.WebServices
 			{
 				JocysCom.WebSites.Engine.Security.Data.User user;
 				string error;
-				Guid? computerId;
+				bool fixSuccess;
 				switch (command.Action)
 				{
 					case CloudAction.LogIn:
@@ -375,23 +375,11 @@ namespace x360ce.Web.WebServices
 						results.Values = new KeyValueList();
 						results.Values.Add(CloudKey.RsaPublicKey, rsa.RsaPublicKeyValue);
 						break;
-					case CloudAction.Delete:
-						// Action requires valid user.
-						computerId = DatabaseHelper.FixComputerId(command, out error);
-						if (computerId.HasValue)
-						{
-							DatabaseHelper.Delete(command, messages);
-						}
-						else
-						{
-							messages.Add(error);
-							results.ErrorCode = 2;
-						}
-						break;
 					case CloudAction.Insert:
 					case CloudAction.Update:
-						computerId = DatabaseHelper.FixComputerId(command, out error);
-						if (computerId.HasValue)
+						// Insert or update user records.
+						fixSuccess = command.FixComputerId(out error);
+						if (fixSuccess)
 						{
 							DatabaseHelper.Upsert(command, messages);
 						}
@@ -402,10 +390,24 @@ namespace x360ce.Web.WebServices
 						}
 						break;
 					case CloudAction.Select:
-						computerId = DatabaseHelper.FixComputerId(command, out error);
-						if (computerId.HasValue)
+						// Select user records.
+						fixSuccess = command.FixComputerId(out error);
+						if (fixSuccess)
 						{
 							DatabaseHelper.Select(command, results, messages, out error);
+						}
+						else
+						{
+							messages.Add(error);
+							results.ErrorCode = 2;
+						}
+						break;
+					case CloudAction.Delete:
+						// Delete user records.
+						fixSuccess = command.FixComputerId(out error);
+						if (fixSuccess)
+						{
+							DatabaseHelper.Delete(command, messages);
 						}
 						else
 						{

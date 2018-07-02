@@ -106,26 +106,6 @@ namespace x360ce.Web
             return list;
         }
 
-        public static Guid? FixComputerId(CloudMessage command, out string error)
-        {
-            var computerId = CloudHelper.GetGuidId(CloudKey.ComputerId, command, out error);
-            if (computerId.HasValue)
-            {
-                // Fix computer id
-                if (command.UserGames != null)
-                {
-                    foreach (var item in command.UserGames)
-                        item.ComputerId = computerId.Value;
-                }
-                if (command.UserDevices != null)
-                {
-                    foreach (var item in command.UserDevices)
-                        item.ComputerId = computerId.Value;
-                }
-			}
-			return computerId;
-        }
-
 		#region Helper Methods
 
 		public static string Upsert<T>(T[] items) where T : EntityObject, IUserRecord
