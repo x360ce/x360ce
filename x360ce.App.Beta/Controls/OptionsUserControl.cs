@@ -285,8 +285,7 @@ namespace x360ce.App.Controls
 
 		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
 		{
-			GameDatabaseManager.Current.CheckSettingsFolder();
-			EngineHelper.BrowsePath(GameDatabaseManager.Current.GdbFile.FullName);
+			EngineHelper.BrowsePath(EngineHelper.AppDataPath);
 		}
 
 		private void LoginButton_Click(object sender, EventArgs e)

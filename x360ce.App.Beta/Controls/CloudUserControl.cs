@@ -87,7 +87,7 @@ namespace x360ce.App.Controls
             // Try to assign list.
             message.Checksums = checksums;
             message.UserGames = items as UserGame[];
-			message.UserSettings = items as Setting[];
+			message.UserSettings = items as UserSetting[];
             message.UserDevices = items as UserDevice[];
             message.UserComputers = items as UserComputer[];
             message.UserInstances = items as UserInstance[];
@@ -272,12 +272,14 @@ namespace x360ce.App.Controls
         private void UploadToCloudButton_Click(object sender, EventArgs e)
         {
             TasksTimer.Queue.Clear();
-            AddInsert(SettingsManager.UserDevices.Items.ToArray());
-            AddInsert(SettingsManager.UserGames.Items.ToArray());
+			// Add user configuration data for upload.
+			AddInsert(SettingsManager.UserGames.Items.ToArray());
+			AddInsert(SettingsManager.UserDevices.Items.ToArray());
             AddInsert(SettingsManager.UserInstances.Items.ToArray());
-        }
+			AddInsert(SettingsManager.UserSettings.Items.ToArray());
+		}
 
-        void AddInsert<T>(T[] items) where T : IChecksum
+		void AddInsert<T>(T[] items) where T : IChecksum
         {
             var arr = items.ToArray();
             EngineHelper.UpdateChecksums(arr);

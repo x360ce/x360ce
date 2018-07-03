@@ -17,7 +17,7 @@ namespace x360ce.App.DInput
 			for (int m = 0; m < 4; m++)
 			{
 				// Get all mapped devices.
-				var states = SettingsManager.Settings.Items
+				var states = SettingsManager.UserSettings.Items
 				   .Where(x => x.MapTo == m + 1)
 				   .Select(x => x.XiState)
 				   .ToArray();

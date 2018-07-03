@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
-using System.Reflection;
 using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.App.Controls
@@ -58,32 +54,6 @@ namespace x360ce.App.Controls
 			if (ExportProgramsButton.Enabled != enabled) ExportProgramsButton.Enabled = enabled;
 		}
 
-		void LoadProgramsFromLocalGdbFile()
-		{
-			var path = GameDatabaseManager.Current.GdbFile.FullName;
-			var ini = new Ini(path);
-			var sections = ini.GetSections();
-			foreach (var section in sections)
-			{
-				var program = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName.ToLower() == section.ToLower());
-				if (program == null)
-				{
-					program = new Engine.Data.Program();
-					program.FileName = section;
-					program.HookMask = 0x00000002;
-					program.XInputMask = 0x00000004;
-					SettingsManager.Programs.Items.Add(program);
-				}
-				program.FileProductName = ini.GetValue(section, "Name", section);
-				int hookMask;
-				var hookMaskValue = ini.GetValue(section, "HookMask", "0x00000002");
-				if (int.TryParse(hookMaskValue, out hookMask))
-				{
-					program.HookMask = hookMask;
-				}
-			}
-		}
-
 		private void RefreshProgramsButton_Click(object sender, EventArgs e)
 		{
 			RefreshProgramsListFromCloud();
@@ -123,11 +93,12 @@ namespace x360ce.App.Controls
 		{
 			var dialog = ImportOpenFileDialog;
 			dialog.DefaultExt = "*.xml";
-			dialog.Filter = "Game Settings (*.xml;*.xml.gz;*.ini;*.gdb)|*.xml;*.xml.gz;*.ini;*.gdb|All files (*.*)|*.*";
+			dialog.Filter = "Game Settings (*.xml;*.xml.gz)|*.xml;*.xml.gz|All files (*.*)|*.*";
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce_Games";
-			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = GameDatabaseManager.Current.GdbFile.Directory.FullName;
+			if (string.IsNullOrEmpty(dialog.InitialDirectory))
+				dialog.InitialDirectory = EngineHelper.AppDataPath;
 			dialog.Title = "Import Games Settings File";
 			var result = dialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
@@ -138,10 +109,6 @@ namespace x360ce.App.Controls
 					var compressedBytes = System.IO.File.ReadAllBytes(dialog.FileName);
 					var bytes = EngineHelper.Decompress(compressedBytes);
 					programs = Serializer.DeserializeFromXmlBytes<List<x360ce.Engine.Data.Program>>(bytes);
-				}
-				else if (dialog.FileName.EndsWith(".ini") || dialog.FileName.EndsWith(".gdb"))
-				{
-					programs = GameDatabaseManager.GetPrograms(dialog.FileName);
 				}
 				else
 				{
@@ -163,7 +130,8 @@ namespace x360ce.App.Controls
 			dialog.FilterIndex = 1;
 			dialog.RestoreDirectory = true;
 			if (string.IsNullOrEmpty(dialog.FileName)) dialog.FileName = "x360ce_Games";
-			if (string.IsNullOrEmpty(dialog.InitialDirectory)) dialog.InitialDirectory = GameDatabaseManager.Current.GdbFile.Directory.FullName;
+			if (string.IsNullOrEmpty(dialog.InitialDirectory))
+				dialog.InitialDirectory = EngineHelper.AppDataPath;
 			dialog.Title = "Export Games Settings File";
 			var result = dialog.ShowDialog();
 			if (result == System.Windows.Forms.DialogResult.OK)
@@ -258,7 +226,7 @@ namespace x360ce.App.Controls
 			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.Program).Name);
 			grid.DataSource = list;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
-			SettingsManager.Save(true);
+			SettingsManager.Save();
 		}
 
 		/// <summary>

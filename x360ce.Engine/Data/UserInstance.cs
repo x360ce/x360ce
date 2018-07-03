@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace x360ce.Engine.Data
 {
-    public partial class UserInstance : IUserRecord
-    {
-
-		Guid IUserRecord.ItemId { get { return InstanceGuid; } set { InstanceGuid = value; } }
+	/// <summary>
+	/// This record is used to link different Instance IDs to the same physical controller (Controller ID).
+	/// </summary>
+	public partial class UserInstance : IUserRecord
+	{
 
 		public UserInstance()
-        {
-            DateCreated = DateTime.Now;
-            DateUpdated = DateCreated;
-        }
+		{
+			DateCreated = DateTime.Now;
+			DateUpdated = DateCreated;
+		}
 
-    }
+	}
 }

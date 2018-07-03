@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[x360ce_UserGames] (
+CREATE TABLE [dbo].[x360ce_UserGames] (
     [GameId]                UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserGames_GameId] DEFAULT (newid()) NOT NULL,
     [ComputerId]            UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserGames_DiskDriveId] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     [ProfileId]             UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserGames_ProfileId] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
@@ -53,6 +53,10 @@
 
 
 
+
+
+
+
 GO
 
 
@@ -72,6 +76,6 @@ CREATE NONCLUSTERED INDEX [IX_x360ce_UserGames_HookMask]
 
 
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_x360ce_UserGames_ComputerId_FileName_FileProductName]
-    ON [dbo].[x360ce_UserGames]([ComputerId] ASC, [FileName] ASC, [FileProductName] ASC);
+CREATE UNIQUE NONCLUSTERED INDEX [IX_x360ce_UserGames_ComputerId_ProfileId_FileName_FileProductName]
+    ON [dbo].[x360ce_UserGames]([ComputerId] ASC, [ProfileId] ASC, [FileName] ASC, [FileProductName] ASC);
 

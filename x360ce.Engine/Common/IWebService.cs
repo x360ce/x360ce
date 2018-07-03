@@ -11,9 +11,9 @@ namespace x360ce.Engine
 {
 	public interface IWebService
 	{
-		string SaveSetting(Setting s, PadSetting ps);
+		string SaveSetting(UserSetting s, PadSetting ps);
 		SearchResult SearchSettings(SearchParameter[] args);
-		string DeleteSetting(Setting s);
+		string DeleteSetting(UserSetting s);
 		SearchResult LoadSetting(Guid[] checksum);
 		List<Vendor> GetVendors();
 		SettingsData GetSettingsData();

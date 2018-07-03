@@ -15,8 +15,6 @@ namespace x360ce.Engine.Data
 			Timeout = -1;
 		}
 
-		Guid IUserRecord.ItemId { get { return GameId; } set { GameId = value; } }
-
 		[XmlIgnore]
 		public string DisplayName
 		{

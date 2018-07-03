@@ -139,7 +139,7 @@ namespace x360ce.App.Controls
                 MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
             });
             Settings_Items_ListChanged(null, null);
-            SettingsManager.Settings.Items.ListChanged += Settings_Items_ListChanged;
+            SettingsManager.UserSettings.Items.ListChanged += Settings_Items_ListChanged;
         }
 
         public Recorder _recorder;
@@ -224,7 +224,7 @@ namespace x360ce.App.Controls
             {
                 // Remove mapping from all devices.	
                 var grid = MappedDevicesDataGridView;
-                var items = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => (Setting)x.DataBoundItem).ToArray();
+                var items = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => (UserSetting)x.DataBoundItem).ToArray();
                 foreach (var item in items)
                 {
                     item.MapTo = (int)MapTo.None;
@@ -241,7 +241,7 @@ namespace x360ce.App.Controls
 
         object DevicesToMapDataGridViewLock = new object();
 
-        SortableBindingList<Engine.Data.Setting> mappedItems = new SortableBindingList<Engine.Data.Setting>();
+        SortableBindingList<Engine.Data.UserSetting> mappedItems = new SortableBindingList<Engine.Data.UserSetting>();
 
         void ShowHideAndSelectGridRows(Guid? instanceGuid = null)
         {
@@ -250,7 +250,7 @@ namespace x360ce.App.Controls
                 var grid = MappedDevicesDataGridView;
                 var game = MainForm.Current.CurrentGame;
                 // Get rows which must be displayed on the list.
-                var itemsToShow = SettingsManager.Settings.Items
+                var itemsToShow = SettingsManager.UserSettings.Items
                     // Filter devices by controller.	
                     .Where(x => x.MapTo == (int)MappedTo)
                     // Filter devices by selected game.
@@ -721,13 +721,13 @@ namespace x360ce.App.Controls
         /// Get selected Setting. If device is not selected then return null.
         /// </summary>
         /// <returns></returns>
-        public Setting GetSelectedSetting()
+        public UserSetting GetSelectedSetting()
         {
             var grid = MappedDevicesDataGridView;
             var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
             var setting = (row == null)
                 ? null
-                : (Engine.Data.Setting)row.DataBoundItem;
+                : (Engine.Data.UserSetting)row.DataBoundItem;
             return setting;
         }
 
@@ -1411,7 +1411,7 @@ namespace x360ce.App.Controls
         {
             var grid = (DataGridView)sender;
             var viewRow = grid.Rows[e.RowIndex];
-            var item = (Engine.Data.Setting)viewRow.DataBoundItem;
+            var item = (Engine.Data.UserSetting)viewRow.DataBoundItem;
             if (e.ColumnIndex == grid.Columns[IsOnlineColumn.Name].Index)
             {
                 e.Value = item.IsOnline
@@ -1455,7 +1455,7 @@ namespace x360ce.App.Controls
             if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
             {
                 var row = grid.Rows[e.RowIndex];
-                var item = (Engine.Data.Setting)row.DataBoundItem;
+                var item = (Engine.Data.UserSetting)row.DataBoundItem;
                 // Changed check (enabled state) of the current item.
                 item.IsEnabled = !item.IsEnabled;
             }

@@ -51,7 +51,7 @@ namespace x360ce.Engine
 
 		[XmlArray] public UserComputer[] UserComputers { get; set; }
 
-		[XmlArray] public Setting[] UserSettings { get; set; }
+		[XmlArray] public UserSetting[] UserSettings { get; set; }
 
 		/// <summary>
 		/// During request it will be used to specify search filters. If null then do not retrieve.

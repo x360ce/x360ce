@@ -87,7 +87,7 @@ namespace x360ce.App.Controls
         public void FillSearchParameterWithProducts(List<SearchParameter> sp)
         {
             // Select user devices as parameters to search.
-            var userDevices = SettingsManager.Settings.Items
+            var userDevices = SettingsManager.UserSettings.Items
                 .Select(x => x.ProductGuid).Distinct()
                 // Do not add empty records.
                 .Where(x => x != Guid.Empty)

@@ -14,6 +14,5 @@ namespace x360ce.Engine.Data
 	public interface IUserRecord : IComputer, IDateTime
 	{
 		Guid ProfileId { get; set; }
-		Guid ItemId { get; set; }
 	}
 }

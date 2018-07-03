@@ -76,14 +76,14 @@ namespace x360ce.App
 		/// <summary>User Games.</summary>
 		public static XSettingsData<Engine.Data.UserGame> UserGames = new XSettingsData<Engine.Data.UserGame>("UserGames.xml", "User Games.");
 
-		/// <summary>User Devices (Direct Input).</summary>
+		/// <summary>User Devices. Contains hardware details about Direct Input Instances (Devices).</summary>
 		public static XSettingsData<Engine.Data.UserDevice> UserDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices.xml", "User Devices (Direct Input).");
 
-		/// <summary>Setting contains link between Game, Device (DInput), PadSetting and Controller (XInput)</summary>
-		public static XSettingsData<Engine.Data.Setting> Settings = new XSettingsData<Engine.Data.Setting>("Settings.xml", "User Settings.");
-
-		/// <summary>User Instances.</summary>
+		/// <summary>User Instances. Map different Instance IDs to a single physical controller.</summary>
 		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
+
+		/// <summary>User Settings. Contains link between Game, DInput Device Instance, PadSetting and XInput Controller Index.</summary>
+		public static XSettingsData<Engine.Data.UserSetting> UserSettings = new XSettingsData<Engine.Data.UserSetting>("UserSettings.xml", "User Settings.");
 
 		// Property below is shared between User and Global settings:
 
@@ -94,7 +94,7 @@ namespace x360ce.App
 		/// Update IsOnline value on the setting from the state for DirectInput Device.
 		/// IsOnline will be set to "True" if device is connected, otherwise to "False".
 		/// </summary>
-		public static void RefreshDeviceIsOnlineValueOnSettings(params Setting[] settings)
+		public static void RefreshDeviceIsOnlineValueOnSettings(params UserSetting[] settings)
 		{
 			foreach (var item in settings)
 			{
@@ -113,9 +113,9 @@ namespace x360ce.App
 			}
 		}
 
-		public static Engine.Data.Setting GetSetting(Guid instanceGuid, string fileName)
+		public static Engine.Data.UserSetting GetSetting(Guid instanceGuid, string fileName)
 		{
-			return Settings.Items.FirstOrDefault(x =>
+			return UserSettings.Items.FirstOrDefault(x =>
 				x.InstanceGuid.Equals(instanceGuid) &&
 				string.Compare(x.FileName, fileName, true) == 0
 			);
@@ -124,9 +124,9 @@ namespace x360ce.App
 		/// <summary>
 		/// Get settings by file name and optionally filter by mapped to XInput controller.
 		/// </summary>
-		public static List<Engine.Data.Setting> GetSettings(string fileName, MapTo? mapTo = null)
+		public static List<Engine.Data.UserSetting> GetSettings(string fileName, MapTo? mapTo = null)
 		{
-			return Settings.Items.Where(x =>
+			return UserSettings.Items.Where(x =>
 				string.Compare(x.FileName, fileName, true) == 0 && (!mapTo.HasValue || x.MapTo == (int)mapTo.Value)
 			).ToList();
 		}
@@ -165,7 +165,7 @@ namespace x360ce.App
 		{
 			// Make sure that all GridViews are updated on the same thread as MainForm when data changes.
 			// For example User devices will be removed and added on separate thread.
-			Settings.Items.SynchronizingObject = so;
+			UserSettings.Items.SynchronizingObject = so;
 			Summaries.Items.SynchronizingObject = so;
 			UserDevices.Items.SynchronizingObject = so;
 			UserGames.Items.SynchronizingObject = so;
@@ -175,7 +175,7 @@ namespace x360ce.App
 			Presets.Items.SynchronizingObject = so;
 			PadSettings.Items.SynchronizingObject = so;
 			//SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
-			Settings.Load();
+			UserSettings.Load();
 			Summaries.Load();
 			// Make sure that data will be filtered before loading.
 			// Note: Make sure to load Programs before Games.
@@ -287,17 +287,12 @@ namespace x360ce.App
 
 		#endregion
 
-		public static void Save(bool updateGameDatabase = false)
+		public static void Save()
 		{
-			if (updateGameDatabase)
-			{
-				GameDatabaseManager.Current.SetPrograms(Programs.Items, UserGames.Items);
-			}
 			lock (saveReadFileLock)
 			{
 				Programs.Save();
 				UserGames.Save();
-
 			}
 		}
 
@@ -778,7 +773,7 @@ namespace x360ce.App
 				var grid = (DataGridView)control;
 				if (grid.Enabled)
 				{
-					var data = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => x.DataBoundItem as Setting)
+					var data = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => x.DataBoundItem as UserSetting)
 						// Make sure that only enabled controllers are added.
 						.Where(x => x != null && x.IsEnabled).ToArray();
 					data = FilterSettings(data);
@@ -797,7 +792,7 @@ namespace x360ce.App
 			return v;
 		}
 
-		public static Setting[] FilterSettings(Setting[] settings)
+		public static UserSetting[] FilterSettings(UserSetting[] settings)
 		{
 			// Make sure that non-supported keyboard, mouse and test devices are excluded.
 			var exludeTypes = new[]
@@ -883,7 +878,7 @@ namespace x360ce.App
 		public void FillSearchParameterWithInstances(List<SearchParameter> sp)
 		{
 			// Select user devices as parameters to search.
-			var userDevices = Settings.Items
+			var userDevices = UserSettings.Items
 				.Select(x => x.InstanceGuid).Distinct()
 				// Do not add empty records.
 				.Where(x => x != Guid.Empty)
@@ -895,7 +890,7 @@ namespace x360ce.App
 		public void FillSearchParameterWithFiles(List<SearchParameter> sp)
 		{
 			// Select user games as parameters to search.
-			var settings = Settings.Items.ToArray();
+			var settings = UserSettings.Items.ToArray();
 			foreach (var setting in settings)
 			{
 				var fileName = Path.GetFileName(setting.FileName);

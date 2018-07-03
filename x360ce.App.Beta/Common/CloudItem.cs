@@ -63,9 +63,9 @@ namespace x360ce.App
 				}
 				if (Message.UserSettings != null)
 				{
-					list.AddRange(Message.UserSettings.Select(x => string.Format("{0}: {1}", typeof(Setting).Name, x.SettingId)));
+					list.AddRange(Message.UserSettings.Select(x => string.Format("{0}: {1}", typeof(UserSetting).Name, x.SettingId)));
 					if (Message.UserSettings.Length == 0)
-						list.Add(string.Format("{0}s", typeof(Setting).Name));
+						list.Add(string.Format("{0}s", typeof(UserSetting).Name));
 				}
 				return string.Join(", ", list);
 			}

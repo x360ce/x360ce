@@ -69,7 +69,16 @@
 
 
 
+
+
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_x360ce_UserDevices_InstanceGuid]
+CREATE NONCLUSTERED INDEX [IX_x360ce_UserDevices_InstanceGuid]
     ON [dbo].[x360ce_UserDevices]([InstanceGuid] ASC);
+
+
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_x360ce_UserDevices_ComputerId_ProfileId_InstanceGuid]
+    ON [dbo].[x360ce_UserDevices]([ComputerId] ASC, [ProfileId] ASC, [InstanceGuid] ASC);
 

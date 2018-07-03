@@ -352,7 +352,7 @@
 			<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="x360ceModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
 				<EntityContainer Name="x360ceModelContainer" annotation:LazyLoadingEnabled="true">
 					<EntitySet Name="PadSettings" EntityType="x360ceModel.PadSetting" />
-					<EntitySet Name="Settings" EntityType="x360ceModel.Setting" />
+					<EntitySet Name="UserSettings" EntityType="x360ceModel.UserSetting" />
 					<EntitySet Name="Summaries" EntityType="x360ceModel.Summary" />
 					<EntitySet Name="Vendors" EntityType="x360ceModel.Vendor" />
           <EntitySet Name="Products" EntityType="x360ceModel.Product" />
@@ -447,7 +447,7 @@
           <Property Name="RightTriggerAntiDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
           <Property Name="RightTriggerLinear" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 				</EntityType>
-				<EntityType Name="Setting">
+				<EntityType Name="UserSetting">
 					<Key>
 						<PropertyRef Name="SettingId" />
 					</Key>
@@ -783,8 +783,8 @@
 							</MappingFragment>
 						</EntityTypeMapping>
 					</EntitySetMapping>
-					<EntitySetMapping Name="Settings">
-						<EntityTypeMapping TypeName="x360ceModel.Setting">
+					<EntitySetMapping Name="UserSettings">
+						<EntityTypeMapping TypeName="x360ceModel.UserSetting">
 							<MappingFragment StoreEntitySet="x360ce_Settings">
                 <ScalarProperty Name="Checksum" ColumnName="Checksum" />
                 <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
@@ -1062,7 +1062,7 @@
 		<edmx:Diagrams>
 			<Diagram Name="x360ceModel" ZoomLevel="58" >
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" IsExpanded="false" />
-				<EntityTypeShape EntityType="x360ceModel.Setting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
+				<EntityTypeShape EntityType="x360ceModel.UserSetting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="9.75" PointY="3.625" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="9.75" PointY="5.75" />

@@ -14,7 +14,7 @@ namespace x360ce.App.DInput
 		void UpdateDiStates(UserGame game, DeviceDetector detector)
 		{
 			// Get all mapped user instances.
-			var instanceGuids = SettingsManager.Settings.Items
+			var instanceGuids = SettingsManager.UserSettings.Items
 				.Where(x => x.MapTo > (int)MapTo.None)
 				.Select(x => x.InstanceGuid).ToArray();
 			// Get all connected devices.
@@ -112,7 +112,7 @@ namespace x360ce.App.DInput
 								ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
 							}
 							// Get PAD index this device is mapped to.
-							var userIndex = SettingsManager.Settings.Items
+							var userIndex = SettingsManager.UserSettings.Items
 								.Where(x => x.MapTo > (int)MapTo.None)
 								.Where(x => x.InstanceGuid == ud.InstanceGuid)
 								.Select(x => x.MapTo).First();
@@ -120,7 +120,7 @@ namespace x360ce.App.DInput
 							if (hasForceFeedback)
 							{
 								// Get setting related to user device.
-								var setting = SettingsManager.Settings.Items
+								var setting = SettingsManager.UserSettings.Items
 									.FirstOrDefault(x => x.MapTo == userIndex && x.InstanceGuid == ud.InstanceGuid);
 								if (setting != null)
 								{

@@ -27,10 +27,10 @@ namespace x360ce.App.Controls
 
 		public void InitPanel()
 		{
-			SettingsManager.Settings.Items.ListChanged += Settings_ListChanged;
+			SettingsManager.UserSettings.Items.ListChanged += Settings_ListChanged;
 			// WORKAROUND: Remove SelectionChanged event.
 			SettingsDataGridView.SelectionChanged -= SettingsDataGridView_SelectionChanged;
-			SettingsDataGridView.DataSource = SettingsManager.Settings.Items;
+			SettingsDataGridView.DataSource = SettingsManager.UserSettings.Items;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			//BeginInvoke((MethodInvoker)delegate ()
 			//{
@@ -42,7 +42,7 @@ namespace x360ce.App.Controls
 
 		public void UnInitPanel()
 		{
-			SettingsManager.Settings.Items.ListChanged -= Settings_ListChanged;
+			SettingsManager.UserSettings.Items.ListChanged -= Settings_ListChanged;
 			SettingsDataGridView.DataSource = null;
 		}
 
@@ -58,7 +58,7 @@ namespace x360ce.App.Controls
 		void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var item = (Setting)grid.Rows[e.RowIndex].DataBoundItem;
+			var item = (UserSetting)grid.Rows[e.RowIndex].DataBoundItem;
 			if (e.ColumnIndex == grid.Columns[SettingsSidColumn.Name].Index)
 			{
 				e.Value = EngineHelper.GetID(item.PadSettingChecksum);
@@ -73,7 +73,7 @@ namespace x360ce.App.Controls
 		private void SettingsDeleteButton_Click(object sender, EventArgs e)
 		{
 			var grid = SettingsDataGridView;
-			var userSettings = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (Setting)x.DataBoundItem).ToArray();
+			var userSettings = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserSetting)x.DataBoundItem).ToArray();
 			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var result = form.ShowForm("Do you want to delete selected settings?", "X360CE - Delete Settings", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
@@ -81,7 +81,7 @@ namespace x360ce.App.Controls
 			{
 				foreach (var item in userSettings)
 				{
-					SettingsManager.Settings.Items.Remove(item);
+					SettingsManager.UserSettings.Items.Remove(item);
 				}
 				SettingsManager.Save();
 				MainForm.Current.CloudPanel.Add(CloudAction.Delete, userSettings, true);
@@ -99,7 +99,7 @@ namespace x360ce.App.Controls
 		{
 			var item = SettingsDataGridView.SelectedRows
 				.Cast<DataGridViewRow>()
-				.Select(x => (Setting)x.DataBoundItem)
+				.Select(x => (UserSetting)x.DataBoundItem)
 				.FirstOrDefault();
 			var note = item == null ? string.Empty : item.Comment ?? "";
 			ControlsHelper.SetText(CommentLabel, note);
@@ -110,7 +110,7 @@ namespace x360ce.App.Controls
 		{
 			var item = SettingsDataGridView.SelectedRows
 				.Cast<DataGridViewRow>()
-				.Select(x => (Setting)x.DataBoundItem)
+				.Select(x => (UserSetting)x.DataBoundItem)
 				.FirstOrDefault();
 			if (item == null)
 			{

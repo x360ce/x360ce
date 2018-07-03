@@ -114,7 +114,7 @@ namespace x360ce.App.Controls
 			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
 			grid.DataSource = list;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
-			SettingsManager.Save(true);
+			SettingsManager.Save();
 		}
 
 		#endregion

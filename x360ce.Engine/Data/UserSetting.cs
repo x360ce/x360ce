@@ -5,10 +5,11 @@ using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class Setting: IUserRecord
+	// Use "Setting" for backwards compatibility with version X360CE 3.x application.
+	[XmlRoot(ElementName = "Setting")]
+	[XmlType("Setting")]
+	public partial class UserSetting : IUserRecord
 	{
-
-		Guid IUserRecord.ItemId { get { return SettingId; } set { SettingId = value; } }
 
 		[XmlIgnore]
 		public bool IsOnline

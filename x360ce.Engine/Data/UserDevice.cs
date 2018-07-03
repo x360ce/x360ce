@@ -10,16 +10,12 @@ namespace x360ce.Engine.Data
     public partial class UserDevice : IDisplayName, IUserRecord
     {
 
-		Guid IUserRecord.ItemId { get { return InstanceGuid; } set { InstanceGuid = value; } }
-
 		public UserDevice()
         {
             DateCreated = DateTime.Now;
             DateUpdated = DateCreated;
             IsEnabled = true;
         }
-
-
 
         [XmlIgnore]
         public string DisplayName

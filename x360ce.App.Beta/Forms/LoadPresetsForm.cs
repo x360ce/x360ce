@@ -66,7 +66,7 @@ namespace x360ce.App.Controls
 				var row = SettingsGridPanel.SettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
 				if (row != null)
 				{
-					var setting = (Setting)row.DataBoundItem;
+					var setting = (UserSetting)row.DataBoundItem;
 					checksum = setting.PadSettingChecksum;
 				}
 			}

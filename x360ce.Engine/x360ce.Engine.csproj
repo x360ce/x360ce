@@ -141,7 +141,6 @@
     <Compile Include="Common\Enum\XInputMask.cs" />
     <Compile Include="Common\EngineHelper.cs" />
     <Compile Include="Common\ForceFeedbackState.cs" />
-    <Compile Include="Common\GameDatabaseManager.cs" />
     <Compile Include="Common\GamepadOffset.cs" />
     <Compile Include="Common\IChecksum.cs" />
     <Compile Include="Common\IDateTime.cs" />
@@ -166,7 +165,7 @@
     <Compile Include="Data\IUserRecord.cs" />
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
-    <Compile Include="Data\Setting.cs" />
+    <Compile Include="Data\UserSetting.cs" />
     <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\UserComputer.cs" />
     <Compile Include="Data\UserGame.cs" />

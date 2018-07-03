@@ -36,7 +36,7 @@ namespace x360ce.App
 					// Assign updated checksum.
 					setting.PadSettingChecksum = padSetting.PadSettingChecksum;
 					var ud = SettingsManager.GetDevice(setting.InstanceGuid);
-					setting.Completion = Setting.GetCompletionPoints(padSetting, ud);
+					setting.Completion = UserSetting.GetCompletionPoints(padSetting, ud);
 				}
 			}
 			CleanupPadSettings();
@@ -49,7 +49,7 @@ namespace x360ce.App
 		public void CleanupPadSettings()
 		{
 			// Get all records used by Settings.
-			var usedPadSettings = Settings.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			var usedPadSettings = UserSettings.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
 			// Get all records used by Summaries.
 			var usedPadSettings2 = Summaries.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
 			// Get all records used by Presets.
@@ -87,14 +87,14 @@ namespace x360ce.App
 		/// Insert missing settings.
 		/// </summary>
 		/// <param name="list"></param>
-		public void UpsertSettings(params Setting[] list)
+		public void UpsertSettings(params UserSetting[] list)
 		{
 			foreach (var item in list)
 			{
-				var old = Settings.Items.FirstOrDefault(x => x.SettingId == item.SettingId);
+				var old = UserSettings.Items.FirstOrDefault(x => x.SettingId == item.SettingId);
 				if (old == null)
 				{
-					Settings.Add(item);
+					UserSettings.Add(item);
 				}
 				// If item was updated then...
 				else if (item.DateUpdated > old.DateUpdated)
@@ -149,7 +149,7 @@ namespace x360ce.App
 			return ps;
 		}
 
-		public void LoadPadSettingAndCleanup(Setting setting, PadSetting ps, bool add = false)
+		public void LoadPadSettingAndCleanup(UserSetting setting, PadSetting ps, bool add = false)
 		{
 			// Link setting with pad setting.
 			setting.PadSettingChecksum = ps.PadSettingChecksum;
@@ -157,7 +157,7 @@ namespace x360ce.App
 			UpsertPadSettings(ps);
 			// Insert setting if not in the list.
 			if (add)
-				Settings.Add(setting);
+				UserSettings.Add(setting);
 			// Clean-up pad settings.
 			Current.CleanupPadSettings();
 		}

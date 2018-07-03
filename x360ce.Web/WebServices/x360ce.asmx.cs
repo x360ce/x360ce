@@ -32,7 +32,7 @@ namespace x360ce.Web.WebServices
 		/// <param name="ps">PAD settings which contains mapping between DirectInput device and virtual XBox controller.</param>
 		/// <returns>Status of operation. Empty if success.</returns>
 		[WebMethod(EnableSession = true, Description = "Save controller settings.")]
-		public string SaveSetting(Setting s, PadSetting ps)
+		public string SaveSetting(UserSetting s, PadSetting ps)
 		{
 			var db = new x360ceModelContainer();
 			var checksum = ps.CleanAndGetCheckSum();
@@ -48,7 +48,7 @@ namespace x360ce.Web.WebServices
 				db.PadSettings.AddObject(pDB);
 			}
 			// Look for existing setting.
-			var sDB = db.Settings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
+			var sDB = db.UserSettings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
 			var n = DateTime.Now;
 			if (sDB == null)
 			{
@@ -59,7 +59,7 @@ namespace x360ce.Web.WebServices
 				s.DateCreated = n;
 				// Link PadSetting with setting.
 				s.PadSettingChecksum = pDB.PadSettingChecksum;
-				db.Settings.AddObject(sDB);
+				db.UserSettings.AddObject(sDB);
 			}
 			db.SaveChanges();
 			db.Dispose();
@@ -80,7 +80,7 @@ namespace x360ce.Web.WebServices
 			sr.Presets = new Preset[0];
 			sr.PadSettings = new PadSetting[0];
 			sr.Summaries = new Summary[0];
-			sr.Settings = new Setting[0];
+			sr.Settings = new UserSetting[0];
 			// Create database.
 			var db = new x360ceModelContainer();
 			// Get user instances.
@@ -92,7 +92,7 @@ namespace x360ce.Web.WebServices
 			if (hasInstances)
 			{
 				var ds = EngineHelper.GetSettings(args);
-				sr.Settings = SqlHelper.ConvertToList<Setting>(ds.Tables[0]).ToArray();
+				sr.Settings = SqlHelper.ConvertToList<UserSetting>(ds.Tables[0]).ToArray();
 				sr.PadSettings = SqlHelper.ConvertToList<PadSetting>(ds.Tables[1]).ToArray();
 			}
 			else if (products.Length > 0)
@@ -115,12 +115,12 @@ namespace x360ce.Web.WebServices
 		}
 
 		[WebMethod(EnableSession = true, Description = "Delete controller settings.")]
-		public string DeleteSetting(Setting s)
+		public string DeleteSetting(UserSetting s)
 		{
 			var db = new x360ceModelContainer();
-			var setting = db.Settings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
+			var setting = db.UserSettings.FirstOrDefault(x => x.InstanceGuid == s.InstanceGuid && x.FileName == s.FileName && x.FileProductName == s.FileProductName);
 			if (setting == null) return "Setting not found";
-			db.Settings.DeleteObject(setting);
+			db.UserSettings.DeleteObject(setting);
 			db.SaveChanges();
 			db.Dispose();
 			db = null;

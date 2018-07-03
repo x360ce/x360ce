@@ -318,7 +318,7 @@ namespace x360ce.App
 			// Get configuration of devices for the game.
 			var settings = SettingsManager.GetSettings(game.FileName);
 			var knownDevices = settings.Select(x => x.InstanceGuid).ToList();
-			var newSettingsToProcess = new List<Engine.Data.Setting>();
+			var newSettingsToProcess = new List<Engine.Data.UserSetting>();
 			int i = 0;
 			while (true)
 			{
@@ -337,7 +337,7 @@ namespace x360ce.App
 			}
 			foreach (var item in newSettingsToProcess)
 			{
-				SettingsManager.Settings.Items.Add(item);
+				SettingsManager.UserSettings.Items.Add(item);
 			}
 		}
 
@@ -1275,7 +1275,7 @@ namespace x360ce.App
 		{
 			Settings.Default.Save();
 			SettingsManager.OptionsData.Save();
-			SettingsManager.Settings.Save();
+			SettingsManager.UserSettings.Save();
 			SettingsManager.Summaries.Save();
 			SettingsManager.Programs.Save();
 			SettingsManager.UserGames.Save();
@@ -1367,7 +1367,7 @@ namespace x360ce.App
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
-			SettingsManager.RefreshDeviceIsOnlineValueOnSettings(SettingsManager.Settings.Items.ToArray());
+			SettingsManager.RefreshDeviceIsOnlineValueOnSettings(SettingsManager.UserSettings.Items.ToArray());
 			ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
 		}
 

@@ -193,13 +193,13 @@ namespace x360ce.Engine
 		[SoapDocumentMethod(ns + "SaveSetting",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public string SaveSetting(Setting s, PadSetting ps)
+		public string SaveSetting(UserSetting s, PadSetting ps)
 		{
 			object[] results = Invoke("SaveSetting", new object[] { s, ps });
 			return (string)results[0];
 		}
 
-		public void SaveSettingAsync(Setting s, PadSetting ps, object userState = null)
+		public void SaveSettingAsync(UserSetting s, PadSetting ps, object userState = null)
 		{
 			InvokeAsync("SaveSetting", SaveSettingCompleted, userState, new object[] { s, ps });
 		}
@@ -213,13 +213,13 @@ namespace x360ce.Engine
 		[SoapDocumentMethod(ns + "DeleteSetting",
 			RequestNamespace = ns, ResponseNamespace = ns,
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public string DeleteSetting(Setting s)
+		public string DeleteSetting(UserSetting s)
 		{
 			object[] results = Invoke("DeleteSetting", new object[] { s });
 			return (string)results[0];
 		}
 
-		public void DeleteSettingAsync(Setting s, object userState = null)
+		public void DeleteSettingAsync(UserSetting s, object userState = null)
 		{
 			InvokeAsync("DeleteSetting", DeleteSettingCompleted, userState, new object[] { s });
 		}

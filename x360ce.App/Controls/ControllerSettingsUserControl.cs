@@ -254,7 +254,7 @@ namespace x360ce.App.Controls
 			UpdateActionButtons();
 		}
 
-		Setting CurrentSetting;
+		UserSetting CurrentSetting;
 
 		bool refreshed = false;
 
@@ -275,7 +275,7 @@ namespace x360ce.App.Controls
 			MyDevicesDataGridView.Refresh();
 		}
 
-		bool ContainsSetting(Setting setting)
+		bool ContainsSetting(UserSetting setting)
 		{
 
 			for (int i = 0; i < SettingManager.Settings.Items.Count; i++)
@@ -291,9 +291,9 @@ namespace x360ce.App.Controls
 
 		#region Web Services
 
-		Setting GetCurrentSetting()
+		UserSetting GetCurrentSetting()
 		{
-			var s = new Setting();
+			var s = new UserSetting();
 			if (ControllerComboBox.SelectedIndex > -1)
 			{
 				if (_devices[ControllerComboBox.SelectedIndex] != null)
@@ -448,7 +448,7 @@ namespace x360ce.App.Controls
 				refreshed = true;
 				if (e.Error != null || e.Result == null)
 				{
-					UpdateList(new List<Setting>(), SettingManager.Settings.Items);
+					UpdateList(new List<UserSetting>(), SettingManager.Settings.Items);
 					UpdateList(new List<Summary>(), SettingManager.Summaries.Items);
 					if ((bool)e.UserState)
 					{
@@ -484,14 +484,14 @@ namespace x360ce.App.Controls
 
 		#region Settings Grid
 
-		Setting SettingSelection;
+		UserSetting SettingSelection;
 
 		Color currentColor = System.Drawing.Color.FromArgb(255, 191, 210, 249);
 
 		void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var setting = ((Setting)grid.Rows[e.RowIndex].DataBoundItem);
+			var setting = ((UserSetting)grid.Rows[e.RowIndex].DataBoundItem);
 			var isCurrent = setting.InstanceGuid == CurrentSetting.InstanceGuid && setting.FileName == CurrentSetting.FileName && setting.FileProductName == CurrentSetting.FileProductName;
 			if (e.ColumnIndex == grid.Columns[MySidColumn.Name].Index)
 			{
@@ -516,7 +516,7 @@ namespace x360ce.App.Controls
 		{
 			var grid = (DataGridView)sender;
 			var rows = grid.SelectedRows;
-            SettingSelection = rows.Count == 0 ? null : (Setting)rows[0].DataBoundItem;
+            SettingSelection = rows.Count == 0 ? null : (UserSetting)rows[0].DataBoundItem;
 			CommentSelectedTextBox.Text = rows.Count == 0 ? "" : SettingSelection.Comment;
 			UpdateActionButtons();
 			grid.Refresh();
@@ -631,7 +631,7 @@ namespace x360ce.App.Controls
 		private void MySettingsSaveButton_Click(object sender, EventArgs e)
 		{
 			mainForm.LoadingCircle = true;
-			var s = new Setting();
+			var s = new UserSetting();
 			var di = _devices[ControllerComboBox.SelectedIndex];
 			s.Comment = CommentTextBox.Text;
 			s.InstanceGuid = di.InstanceGuid;
@@ -667,7 +667,7 @@ namespace x360ce.App.Controls
 			if (result == DialogResult.Yes)
 			{
 				mainForm.LoadingCircle = true;
-				var setting = (Setting)MyDevicesDataGridView.SelectedRows[0].DataBoundItem;
+				var setting = (UserSetting)MyDevicesDataGridView.SelectedRows[0].DataBoundItem;
 				var ws = new WebServiceClient();
 				ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
 				ws.DeleteSettingCompleted += ws_DeleteSettingCompleted;
@@ -682,7 +682,7 @@ namespace x360ce.App.Controls
 			var name = ((KeyValuePair)ControllerComboBox.SelectedItem).Key;
 			if (MyDevicesDataGridView.SelectedRows.Count == 0) return;
 			var title = "Load My Setting?";
-			var setting = (Setting)MyDevicesDataGridView.SelectedRows[0].DataBoundItem;
+			var setting = (UserSetting)MyDevicesDataGridView.SelectedRows[0].DataBoundItem;
 			var message = "Do you want to load My Setting:";
 			message += "\r\n\r\n    " + setting.ProductName;
 			if (!string.IsNullOrEmpty(setting.FileName)) message += " | " + setting.FileName;
@@ -829,7 +829,7 @@ namespace x360ce.App.Controls
 		private void MapToMenuItem_Click(object sender, EventArgs e)
 		{
 			var v = (MapTo)((ToolStripMenuItem)sender).Tag;
-			var items = MyDevicesDataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x=>(Setting)x.DataBoundItem).ToArray();
+			var items = MyDevicesDataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x=>(UserSetting)x.DataBoundItem).ToArray();
 			foreach (var item in items)
 			{
 				item.MapTo = (int)v;

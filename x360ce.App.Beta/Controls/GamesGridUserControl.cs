@@ -355,7 +355,7 @@ namespace x360ce.App.Controls
 
 		private void SaveGamesButton_Click(object sender, EventArgs e)
 		{
-			SettingsManager.Save(true);
+			SettingsManager.Save();
 		}
 
 		private void DeleteGamesButton_Click(object sender, EventArgs e)
@@ -482,8 +482,8 @@ namespace x360ce.App.Controls
 			}
 			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.UserGame).Name);
 			grid.DataSource = list;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
-			SettingsManager.Save(true);
+			ControlsHelper.RestoreSelection(grid, key, selection);
+			SettingsManager.Save();
 		}
 
 		#endregion
