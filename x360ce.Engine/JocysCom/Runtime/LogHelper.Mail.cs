@@ -207,9 +207,12 @@ namespace JocysCom.ClassLibrary.Runtime
 			Smtp.SendMessage(mail);
 		}
 
+		/// <summary>
+		/// Suspend error if error code (int) value is found inside ex.Data["ErrorCode"].
+		/// </summary>
 		public bool SuspendError(Exception ex)
 		{
-			if (!ex.Data.Keys.Cast<object>().Contains(SmtpClientEx.ErrorCode ))
+			if (!ex.Data.Keys.Cast<object>().Contains(SmtpClientEx.ErrorCode))
 				return false;
 			var errorCode = ex.Data[SmtpClientEx.ErrorCode] as int?;
 			if (!errorCode.HasValue)
@@ -217,7 +220,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var codes = Smtp.ErrorCodeSuspended;
 			if (string.IsNullOrEmpty(codes))
 				return false;
-			var codeStrings = codes.Replace(" ", "").Split(new[] { ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+			var codeStrings = codes.Split(new[] {' ', ',', ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var codeString in codeStrings)
 			{
 				int code;
@@ -235,9 +238,10 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public string ProcessException(Exception ex, string subject = null, bool processExtraAction = true)
 		{
-			var allowSend = Smtp.AllowToSendException(ex);
 			var body = ExceptionInfo(ex, "");
-			if (allowSend && Smtp.ErrorNotifications && !SuspendError(ex))
+			// Email exception.
+			var allowToReport = AllowReportExceptionToMail(ex);
+			if (allowToReport && Smtp.ErrorNotifications && !SuspendError(ex))
 			{
 				Smtp.SendErrorEmail(ex, subject, body);
 			}
@@ -252,6 +256,23 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
+		#region SPAM Prevention
+
+		int? ErrorMailLimitMax;
+		TimeSpan? ErrorMailLimitAge;
+		Dictionary<Type, List<DateTime>> ErrorMailList = new Dictionary<Type, List<DateTime>>();
+
+		public bool AllowReportExceptionToMail(Exception error)
+		{
+			// Maximum 10 errors of same type per 5 minutes (2880 per day).
+			if (!ErrorMailLimitMax.HasValue)
+				ErrorMailLimitMax = ParseInt("ErrorMailLimitMax", 5);
+			if (!ErrorMailLimitAge.HasValue)
+				ErrorMailLimitAge = ParseSpan("ErrorMailLimitAge", new TimeSpan(0, 5, 0));
+			return AllowToReportException(error, ErrorMailList, ErrorMailLimitMax.Value, ErrorMailLimitAge.Value);
+		}
+
+		#endregion
 
 	}
 }

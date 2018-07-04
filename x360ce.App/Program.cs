@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
-using x360ce.App.Properties;
 
 namespace x360ce.App
 {
@@ -24,33 +23,15 @@ namespace x360ce.App
 				// IMPORTANT: Make sure this method don't have any static references to x360ce.Engine library or
 				// program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
 				AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+				Application.DoEvents();
 				if (!RuntimePolicyHelper.LegacyV2RuntimeEnabledSuccessfully)
 				{
 					// Failed to enable useLegacyV2RuntimeActivationPolicy at runtime.
 				}
-				Application.EnableVisualStyles();
-				Application.SetCompatibleTextRenderingDefault(false);
-				// Requires System.Configuration.Installl reference.
-				var ic = new System.Configuration.Install.InstallContext(null, args);
-				if (ic.Parameters.ContainsKey("Settings"))
-				{
-					OpenSettingsFolder(Application.UserAppDataPath);
-					OpenSettingsFolder(Application.CommonAppDataPath);
-					OpenSettingsFolder(Application.LocalUserAppDataPath);
-					return;
-				}
-				if (!CheckSettings()) return;
-				//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
-				MainForm.Current = new MainForm();
-				if (ic.Parameters.ContainsKey("Exit"))
-				{
-					MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
-					return;
-				}
-				if (!IsOneCopyRunningAlready())
-				{
-					Application.Run(MainForm.Current);
-				}
+				// Launch MainForm from StartApp method. If you include MainForm reference inside MainMethod
+				// Then it will trigger loading of x360ce.Engine.dll before AppDomain.CurrentDomain.AssemblyResolve
+				// Event handler is attached.
+				StartApp(args);
 			}
 			catch (Exception ex)
 			{
@@ -67,6 +48,34 @@ namespace x360ce.App
 				}
 				var result = box.ShowForm(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
 				if (result == DialogResult.Cancel) Application.Exit();
+			}
+		}
+
+		static void StartApp(string[] args)
+		{
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
+			// Requires System.Configuration.Installl reference.
+			var ic = new System.Configuration.Install.InstallContext(null, args);
+			if (ic.Parameters.ContainsKey("Settings"))
+			{
+				OpenSettingsFolder(Application.UserAppDataPath);
+				OpenSettingsFolder(Application.CommonAppDataPath);
+				OpenSettingsFolder(Application.LocalUserAppDataPath);
+				return;
+			}
+			if (!CheckSettings())
+				return;
+			//Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+			MainForm.Current = new MainForm();
+			if (ic.Parameters.ContainsKey("Exit"))
+			{
+				MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
+				return;
+			}
+			if (!IsOneCopyRunningAlready())
+			{
+				Application.Run(MainForm.Current);
 			}
 		}
 
@@ -140,7 +149,7 @@ namespace x360ce.App
 		{
 			try
 			{
-				Settings.Default.Reload();
+				Properties.Settings.Default.Reload();
 			}
 			catch (ConfigurationErrorsException ex)
 			{
@@ -157,7 +166,7 @@ namespace x360ce.App
 				if (result == DialogResult.Yes)
 				{
 					File.Delete(filename);
-					Settings.Default.Reload();
+					Properties.Settings.Default.Reload();
 				}
 				else
 				{
@@ -179,7 +188,7 @@ namespace x360ce.App
 			{
 				case "vJoyInterface":
 				case "vJoyInterfaceWrap":
-					path = GetResourceName("vJoy", dllName+".dll");
+					path = GetResourceName("vJoy", dllName + ".dll");
 					break;
 				case "x360ce.Engine":
 					path = "Resources.x360ce.Engine.dll";

@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
+	/// <summary>
+	/// Write logs lines to a single file.
+	/// </summary>
 	public partial class LogHelper
 	{
 		private object streamWriterLock = new object();
@@ -59,7 +63,6 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public bool LogFileAutoFlush;
 
-
 		public void WriteToLogFile(string format, params object[] args)
 		{
 			lock (streamWriterLock)
@@ -72,6 +75,24 @@ namespace JocysCom.ClassLibrary.Runtime
 				}
 			}
 		}
+
+		#region SPAM Prevention
+
+		int? ErrorFileLimitMax;
+		TimeSpan? ErrorFileLimitAge;
+		Dictionary<Type, List<DateTime>> ErrorFileList = new Dictionary<Type, List<DateTime>>();
+
+		public bool AllowReportExceptionToFile(Exception error)
+		{
+			// Maximum 10 errors of same type per 5 minutes (2880 per day).
+			if (!ErrorFileLimitMax.HasValue)
+				ErrorFileLimitMax = ParseInt("ErrorFileLimitMax", 5);
+			if (!ErrorFileLimitAge.HasValue)
+				ErrorFileLimitAge = ParseSpan("ErrorFileLimitAge", new TimeSpan(0, 5, 0));
+			return AllowToReportException(error, ErrorFileList, ErrorFileLimitMax.Value, ErrorFileLimitAge.Value);
+		}
+
+		#endregion
 
 	}
 }

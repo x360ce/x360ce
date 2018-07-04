@@ -324,10 +324,13 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static object WriteLock = new object();
 
-		// Use dictionary to prevent mass writings of exceptions into disk.
-		Dictionary<Type, DateTime> exeptionTimes = new Dictionary<Type, DateTime>();
-		Dictionary<Type, int> exeptionCount = new Dictionary<Type, int>();
-
+		/// <summary>
+		/// Write exception to file.
+		/// </summary>
+		/// <param name="ex">Exception to write.</param>
+		/// <param name="maxFiles">Maximum files per same exception.</param>
+		/// <param name="logsFolder">Folder where exception reports will be created.</param>
+		/// <param name="writeAsHtml">True - write as HTML, false - write as TEXT.</param>
 		public void WriteException(Exception ex, int maxFiles, string logsFolder, bool writeAsHtml)
 		{
 			var ev = WritingException;
@@ -336,56 +339,39 @@ namespace JocysCom.ClassLibrary.Runtime
 				ev(this, le);
 			if (le.Cancel)
 				return;
+			var allowToReport = AllowReportExceptionToFile(ex);
+			if (!allowToReport)
+				return;
 			// Must wrap into lock so that process won't attempt to delete/write same file twice from different threads.
 			lock (WriteLock)
 			{
-				var n = DateTime.Now;
-				var type = ex.GetType();
-				if (exeptionTimes.ContainsKey(type))
-				{
-					// Increase counter.
-					exeptionCount[type] = exeptionCount[type] + 1;
-					// Do not allow write if not enough time passed.
-					if (n.Subtract(exeptionTimes[type]).Milliseconds < 500)
-						return;
-				}
-				else
-				{
-					exeptionTimes.Add(type, n);
-					exeptionCount.Add(type, 1);
-				}
-				var count = exeptionCount[type];
-				// Reset count and update last write time.
-				exeptionCount[type] = 0;
-				exeptionTimes[type] = n;
 				// Create file.
 				var prefix = "FCE_" + ex.GetType().Name;
 				var ext = writeAsHtml ? "htm" : "txt";
 				var di = new System.IO.DirectoryInfo(logsFolder);
-				if (di.Exists)
-				{
-
-					var files = di.GetFiles(prefix + "*." + ext).OrderBy(x => x.CreationTime).ToArray();
-					if (maxFiles > 0 && files.Count() > 0 && files.Count() > maxFiles)
-					{
-						// Remove oldest file.
-						files[0].Delete();
-					}
-
-				}
-				else
-				{
+				// Create folder if not exists.
+				if (!di.Exists)
 					di.Create();
+				// Get exception files ordered with oldest on top.
+				var files = di.GetFiles(prefix + "*." + ext).OrderBy(x => x.CreationTime).ToArray();
+				// Remove excess files if necessary.
+				if (maxFiles > 0 && files.Count() > 0 && files.Count() > maxFiles)
+				{
+					// Remove oldest file.
+					files[0].Delete();
 				}
-				//var fileTime = JocysCom.ClassLibrary.HiResDateTime.Current.Now;
 				var fileTime = HiResDateTime.Current.Now;
-				var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}{3}.{4}",
-					di.FullName, prefix, fileTime, count == 1 ? "" : "." + count.ToString(), ext);
+				var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}.{3}",
+					di.FullName, prefix, fileTime, ext);
 				var fi = new System.IO.FileInfo(fileName);
 				var content = writeAsHtml ? ExceptionInfo(ex, "") : ex.ToString();
 				System.IO.File.AppendAllText(fileName, content);
 			}
 		}
+
+		#endregion
+
+		#region Convert Exception to HTML String
 
 		public string ExceptionInfo(Exception ex, string body)
 		{
@@ -560,6 +546,70 @@ namespace JocysCom.ClassLibrary.Runtime
 					ex.Data.Add(key, s1);
 					i++;
 				}
+			}
+		}
+
+		#endregion
+
+		#region SPAM prevention.
+
+		/// <summary>
+		/// Prevent SPAM by suppressing frequent exceptions.
+		/// For example it can allow maximum 10 errors of same type per 5 minutes (2880 per day).
+		/// Amount of suppressed exceptions will be included inside next exception which is not suppressed.
+		/// </summary>
+		/// <param name="error">Exception</param>
+		/// <param name="errorList">Contains list of dates when exception type was reported.</param>
+		/// <param name="errorLimitMax">Maximum exceptions per specified time.</param>
+		/// <param name="errorLimitAge">Time for exceptions</param>
+		/// <returns>True - Allow to send exception. False - suppress sending.</returns>
+		public static bool AllowToReportException(Exception error, Dictionary<Type, List<DateTime>> errorList, int errorLimitMax, TimeSpan errorLimitAge)
+		{
+			if (errorLimitMax <= 0) return true;
+			if (errorLimitAge.Ticks <= 0) return true;
+			lock (errorList)
+			{
+				var errorType = error.GetType();
+				List<DateTime> list;
+				if (errorList.ContainsKey(errorType))
+				{
+					list = errorList[errorType];
+				}
+				else
+				{
+					list = new List<DateTime>();
+					errorList.Add(errorType, list);
+				}
+				var n = DateTime.Now;
+				var oldTime = n.Subtract(errorLimitAge);
+				// Remove old exceptions.
+				list.RemoveAll(x => x < oldTime);
+				var count = list.Count();
+				// If limit reached then return.
+				if (count >= errorLimitMax)
+					return false;
+				list.Add(n);
+				if (errorLimitMax == 1 || count > 0)
+				{
+					Upsert(error, "ErrorType", errorType);
+					Upsert(error, "ErrorCount", count);
+					Upsert(error, "Config: ErrorLimitMax", errorLimitMax);
+					Upsert(error, "Config: ErrorLimitAge", errorLimitAge);
+					Upsert(error, "Config: ErrorUseNewStackTrace", LogHelper.ErrorUseNewStackTrace);
+				}
+				return true;
+			}
+		}
+
+		public static void Upsert(Exception ex, object key, object value)
+		{
+			if (ex.Data.Contains(key))
+			{
+				ex.Data[key] = value;
+			}
+			else
+			{
+				ex.Data.Add(key, value);
 			}
 		}
 

@@ -124,62 +124,6 @@ namespace JocysCom.ClassLibrary.Mail
 		public string ErrorCodeSuspended;
 		public bool ErrorNotifications;
 		public SmtpDeliveryMethod SmtpDeliveryMethod;
-		/// <summary>Maximum exceptions per specified time.</summary>
-		public int ErrorLimitMax;
-		/// <summary>Time for exceptions</summary>
-		public TimeSpan ErrorLimitAge;
-
-		public object ErrorListLock = new object();
-		Dictionary<Type, List<DateTime>> ErrorList = new Dictionary<Type, List<DateTime>>();
-
-		public bool AllowToSendException(Exception ex)
-		{
-			if (ErrorLimitMax <= 0) return true;
-			if (ErrorLimitAge.Ticks <= 0) return true;
-			lock (ErrorListLock)
-			{
-				var errorType = ex.GetType();
-				List<DateTime> list;
-				if (ErrorList.ContainsKey(errorType))
-				{
-					list = ErrorList[errorType];
-				}
-				else
-				{
-					list = new List<DateTime>();
-					ErrorList.Add(errorType, list);
-				}
-				var n = DateTime.Now;
-				var oldTime = n.Subtract(ErrorLimitAge);
-				// Remove old exceptions.
-				list.RemoveAll(x => x < oldTime);
-				var count = list.Count();
-				// If limit reached then return.
-				if (count >= ErrorLimitMax) return false;
-				list.Add(n);
-				if (ErrorLimitMax == 1 || count > 0)
-				{
-					Upsert(ex, "ErrorType", errorType);
-					Upsert(ex, "ErrorCount", count);
-					Upsert(ex, "Config: ErrorLimitMax", ErrorLimitMax);
-					Upsert(ex, "Config: ErrorLimitAge", ErrorLimitAge);
-					Upsert(ex, "Config: ErrorUseNewStackTrace", LogHelper.ErrorUseNewStackTrace);
-				}
-				return true;
-			}
-		}
-
-		public void Upsert(Exception ex, object key, object value)
-		{
-			if (ex.Data.Contains(key))
-			{
-				ex.Data[key] = value;
-			}
-			else
-			{
-				ex.Data.Add(key, value);
-			}
-		}
 
 		private void Initialize()
 		{
@@ -192,13 +136,11 @@ namespace JocysCom.ClassLibrary.Mail
 			SmtpEnableSsl = LogHelper.ParseBool("SmtpEnableSsl", false);
 			SmtpFrom = LogHelper.ParseString("SmtpFrom", "");
 			SmtpSendCopyTo = LogHelper.ParseString("SmtpSendCopyTo", "");
+			SmtpDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
+			// Error reporting.
 			ErrorRecipients = LogHelper.ParseString("ErrorRecipients", "");
 			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", false);
 			ErrorCodeSuspended = LogHelper.ParseString("ErrorCodeSuspended", "");
-			SmtpDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
-			// Maximum 10 errors of same type per 5 minutes (2880 per day).
-			ErrorLimitMax = LogHelper.ParseInt("ErrorLimitMax", 5);
-			ErrorLimitAge = LogHelper.ParseSpan("ErrorLimitAge", new TimeSpan(0, 5, 0));
 			// FQDN Fix
 			IPGlobalProperties ip = IPGlobalProperties.GetIPGlobalProperties();
 			if (!string.IsNullOrEmpty(ip.HostName) && !string.IsNullOrEmpty(ip.DomainName))

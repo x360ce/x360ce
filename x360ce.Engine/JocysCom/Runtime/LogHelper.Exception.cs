@@ -5,20 +5,24 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Security;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
 
-    // Project -> Build -> [Advanced...] button -> Output - Debugging Information: 
-    //    Full     - Stack Trace will have line numbers even when exception is thrown inside non main threads.
-    //    Embedded - Stack Trace will have missing line numbers when thrown inside non-main threads.
+	// Project -> Build -> [Advanced...] button -> Output - Debugging Information: 
+	//    Full     - Stack Trace will have line numbers even when exception is thrown inside non main threads.
+	//    Embedded - Stack Trace will have missing line numbers when thrown inside non-main threads.
 
-    public class LogHelperEventArgs : CancelEventArgs
+	public class LogHelperEventArgs : CancelEventArgs
     {
         public Exception Exception { get; set; }
     }
 
-    public partial class LogHelper
+	/// <summary>
+	/// Write Exceptions to individual files.
+	/// </summary>
+	public partial class LogHelper
     {
         #region Handling
 
@@ -483,7 +487,7 @@ namespace JocysCom.ClassLibrary.Runtime
             }
         }
 
-        #endregion
+		#endregion
 
-    }
+	}
 }
