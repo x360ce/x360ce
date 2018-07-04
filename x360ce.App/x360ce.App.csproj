@@ -163,10 +163,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="vJoyInterfaceWrap">
-      <HintPath>Resources\vJoy\vJoyInterfaceWrap.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AppHelper.cs" />
@@ -207,9 +203,6 @@
     </Compile>
     <Compile Include="Controls\GameSettingDetailsUserControl.Designer.cs">
       <DependentUpon>GameSettingDetailsUserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PadControl.VirtualDevice.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ThumbUserControl.cs">
       <SubType>UserControl</SubType>
@@ -536,7 +529,7 @@
     <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj">
       <Project>{f980d78a-9448-4834-a6fe-84797077d309}</Project>
       <Name>x360ce.Engine</Name>
-      <Private>False</Private>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

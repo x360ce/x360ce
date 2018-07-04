@@ -24,18 +24,6 @@ namespace x360ce.App.Controls
 			TestTimer.AutoReset = false;
 			TestTimer.Elapsed += TestTimer_Elapsed;
 			ControllerIndex = controllerIndex;
-			object[] rates = {
-				1000/8, //  125
-				1000/7, //  142
-				1000/6, //  166
-				1000/5, //  200
-				1000/4, //  250
-				1000/3, //  333
-				1000/2, //  500
-				1000/1, // 1000
-			};
-			PollingRateComboBox.Items.AddRange(rates);
-			PollingRateComboBox.SelectedIndex = 0;
 			// Add direct input user control.
 			this.SuspendLayout();
 			diControl = new DirectInputControl();
@@ -1234,36 +1222,6 @@ namespace x360ce.App.Controls
 				Process.Start(psi);
 			}
 			catch (Exception) { }
-		}
-
-
-		private void FeedVirtualDeviceCeckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			FeedingEnabled = EnableVirtualDeviceCeckBox.Checked;
-			if (EnableVirtualDeviceCeckBox.Checked)
-			{
-				var resourceName = Program.GetResourceName("vJoy", "vJoyInterface");
-				if (!System.IO.File.Exists("vJoyInterface.dll"))
-				{
-					AppHelper.WriteFile(typeof(MainForm).Namespace + "." + resourceName + ".dll", "vJoyInterface.dll");
-				}
-
-
-
-				System.Threading.ThreadPool.QueueUserWorkItem(FeedWaitCallback, (uint)1);
-			}
-		}
-
-		bool FeedingEnabled;
-
-		void FeedWaitCallback(object state)
-		{
-			string message;
-			var success = FeedDinputDevice((uint)state, out message);
-			if (!string.IsNullOrEmpty(message) && !success)
-			{
-				MessageBox.Show(message);
-			}
 		}
 
 		object TestTimerLock = new object();
