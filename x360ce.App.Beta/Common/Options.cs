@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
 
@@ -16,6 +12,8 @@ namespace x360ce.App
 		{
 			// Set default values.
 			AllowOnlyOneCopy = true;
+			MinimizeToTray = true;
+			StartWithWindowsState = FormWindowState.Minimized;
 			InternetFeatures = true;
 			InternetAutoLoad = true;
 			InternetAutoSave = true;
@@ -75,7 +73,7 @@ namespace x360ce.App
 		public bool StartWithWindows { get { return _StartWithWindows; } set { _StartWithWindows = value; ReportPropertyChanged(x => x.StartWithWindows); } }
 		bool _StartWithWindows;
 
-		[DefaultValue(FormWindowState.Normal), Description("Windows State when program starts with Windows.")]
+		[DefaultValue(FormWindowState.Minimized), Description("Windows State when program starts with Windows.")]
 		public FormWindowState StartWithWindowsState { get { return _StartWithWindowsState; } set { _StartWithWindowsState = value; ReportPropertyChanged(x => x.StartWithWindowsState); } }
 		FormWindowState _StartWithWindowsState;
 
@@ -136,6 +134,8 @@ namespace x360ce.App
 
 		public string Username { get; set; }
 		public string Password { get; set; }
+
+		[DefaultValue(true)]
 		public bool MinimizeToTray { get; set; }
 		public bool ExcludeSupplementalDevices { get; set; }
 		public bool ExcludeVirtualDevices { get; set; }
