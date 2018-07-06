@@ -30,7 +30,7 @@ namespace x360ce.App
 		//
 
 		/// <summary>User Settings.</summary>
-		public static SettingsData<Engine.Data.UserSetting> Settings = new SettingsData<Engine.Data.UserSetting>("Settings");
+		public static SettingsData<Engine.Data.UserSetting> Settings = new SettingsData<Engine.Data.UserSetting>("UserSettings");
 
 		/// <summary>Summary of most popular Settings.</summary>
 		public static SettingsData<Engine.Data.Summary> Summaries = new SettingsData<Engine.Data.Summary>("Summaries");
