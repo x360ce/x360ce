@@ -35,6 +35,6 @@ Configuring Mapping:
 
 How to Uninstall Virtual Driver: Run "Xbox 360 Controller Emulator" as an Administrator, go to [Options] tab and press [Uninstall] button inside "Virtual Device" group box.
 
-
+# Screenshots
 
 ![https://raw.githubusercontent.com/x360ce/x360ce/master/x360ce.App.Beta/Documents/Images/v4_Controller_1.png](https://raw.githubusercontent.com/x360ce/x360ce/master/x360ce.App.Beta/Documents/Images/v4_Controller_1.png)
