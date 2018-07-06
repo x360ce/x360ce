@@ -241,8 +241,7 @@ namespace x360ce.App
 			var assembly = Assembly.GetEntryAssembly();
 			var names = assembly.GetManifestResourceNames()
 				.Where(x => x.EndsWith(name));
-			var architecture = assembly.GetName().ProcessorArchitecture;
-			var a = architecture == ProcessorArchitecture.Amd64 ? ".x64." : ".x86.";
+			var a = Environment.Is64BitProcess ? ".x64." : ".x86.";
 			// Try to get by architecture first.
 			var path = names.FirstOrDefault(x => x.Contains(a));
 			if (!string.IsNullOrEmpty(path))

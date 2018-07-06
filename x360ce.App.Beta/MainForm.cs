@@ -12,7 +12,6 @@ using x360ce.Engine;
 using x360ce.App.Properties;
 using System.ComponentModel;
 using x360ce.Engine.Data;
-using System.Text;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Win32;
 using x360ce.App.Issues;
