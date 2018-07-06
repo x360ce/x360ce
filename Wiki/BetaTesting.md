@@ -30,6 +30,7 @@ Configuring Mapping:
 9. Map buttons and axis by clicking on dropdowns, selecting [Record] and pressing on button or moving axis.
 10 Hit [Save] button (at top right corner of application) when done.
 
-11. Launch the game and see how it works.
+11. Minimize "Xbox 360 Controller Emulator" in order to reduce CPU use. Note: Grey controller icon will be visible in tray.
+12. Launch the game and see how it works.
 
 How to Uninstall Virtual Driver: Run "Xbox 360 Controller Emulator" as an Administrator, go to [Options] tab and press [Uninstall] button inside "Virtual Device" group box.
