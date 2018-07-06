@@ -781,7 +781,7 @@ namespace x360ce.App.Controls
 
 		string cRecord = "[Record]";
 		string cEmpty = "<empty>";
-
+		string cPOVs = "POVs";
 
 		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(Device device)
@@ -820,18 +820,18 @@ namespace x360ce.App.Controls
 			CreateItems(mi, "Half", "HSlider {0}", "h{0}", slidersCount);
 			CreateItems(mi, "Slider {0}", "s{0}", slidersCount);
 			// Add D-Pads.
-			mi = new ToolStripMenuItem("DPads");
+			mi = new ToolStripMenuItem(cPOVs);
 			DiMenuStrip.Items.Add(mi);
 			// Add D-Pad Top, Right, Bottom, Left button.
 			var dPadNames = Enum.GetNames(typeof(DPadEnum));
 			for (int p = 0; p < device.Capabilities.PovCount; p++)
 			{
-				var dPadItem = CreateItem("DPad {0}", "{1}{0}", p + 1, SettingName.SType.POV);
+				var dPadItem = CreateItem("POV {0}", "{1}{0}", p + 1, SettingName.SType.POV);
 				mi.DropDownItems.Add(dPadItem);
 				for (int d = 0; d < dPadNames.Length; d++)
 				{
 					var dPadButtonIndex = p * 4 + d + 1;
-					var dPadButtonItem = CreateItem("DPad {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
+					var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
 					dPadItem.DropDownItems.Add(dPadButtonItem);
 				}
 			}
@@ -909,11 +909,11 @@ namespace x360ce.App.Controls
 			{
 				if (!item.Text.StartsWith(cRecord)
 					&& !item.Text.StartsWith(cEmpty)
-					&& !item.Text.StartsWith("DPad"))
+					&& !item.Text.StartsWith(cPOVs))
 				{
 					item.Visible = !enable;
 				}
-				if (item.Text.StartsWith("DPad"))
+				if (item.Text.StartsWith(cPOVs))
 				{
 					if (item.HasDropDownItems)
 					{

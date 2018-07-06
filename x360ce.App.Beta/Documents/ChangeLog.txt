@@ -1,4 +1,8 @@
-﻿v3.2.10.82 (2015-10-20)
+v3.3.6.0 (2018-07-06)
+- Update: Shared libraries updated.
+- Update: Removed hidden exprerimental features.
+
+v3.2.10.82 (2015-10-20)
 - New: GDB file issue (windows permissions) solver added.
 
 v3.2.9.81 (2015-10-04)
