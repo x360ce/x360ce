@@ -1,4 +1,4 @@
-These are instructions for early Xbox 360 Controller Emulator 4.x Alpha version testing, which includes virtual X360 controller.
+# Xbox 360 Controller Emulator 4.x Alpha - Beta Testing
 
 IMPORTANT Note 1: This is ALPHA release. Some things will not work and this release is intended to test games with Virtual X360 controller only.
 
@@ -34,3 +34,7 @@ Configuring Mapping:
 12. Launch the game and see how it works.
 
 How to Uninstall Virtual Driver: Run "Xbox 360 Controller Emulator" as an Administrator, go to [Options] tab and press [Uninstall] button inside "Virtual Device" group box.
+
+
+
+![https://raw.githubusercontent.com/x360ce/x360ce/master/x360ce.App.Beta/Documents/Images/v4_Controller_1.png](https://raw.githubusercontent.com/x360ce/x360ce/master/x360ce.App.Beta/Documents/Images/v4_Controller_1.png)
