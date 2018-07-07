@@ -4,9 +4,9 @@
 
 Digitally Signed Application v3.3.6.0 (2018-07-06) and Libraries 3.4.1.1357 (2015-08-27)
 
-[32-bit Download - x360ce.zip](https://github.com/x360ce/x360ce/releases/download/3.3.6.0/x360ce.zip) - for 32-bit games
+[32-bit Download - x360ce.zip](https://github.com/x360ce/x360ce/releases/download/3.2.9.82/x360ce.zip) - for 32-bit games
 
-[64-bit Download - x360ce_x64.zip](https://github.com/x360ce/x360ce/releases/download/3.3.6.0/x360ce_x64.zip) - for 64-bit games 
+[64-bit Download - x360ce_x64.zip](https://github.com/x360ce/x360ce/releases/download/3.2.9.82/x360ce_x64.zip) - for 64-bit games 
 
 DInput.dll Plugin (required for some games):
 
