@@ -1,15 +1,17 @@
-# IMPORTANT Notes
+# Xbox 360 Controller Emulator 4.x Alpha - Beta Testing
 
-1. This is ALPHA release. Some things will not work and this release is intended to test games with Virtual X360 controller only.
+This is ALPHA release. Some things will not work and this release is intended to test games with Virtual X360 controller only.
 
-2. There is no need to place x360ce.exe inside the game folder. You can keep single copy of executable at one place (for example: C:\Program Files\x360ce\x360ce.exe), because same virtual "Xbox 360 Controller" will be visible for all games in Windows.
+## IMPORTANT Notes
 
-3. Do not close "Xbox 360 Controller Emulator" during the game, just minimize it in order to reduce CPU use.
+1. There is no need to place x360ce.exe inside the game folder. You can keep single copy of executable at one place (for example: C:\Program Files\x360ce\x360ce.exe), because same virtual "Xbox 360 Controller" will be visible for all games in Windows.
 
-4. Make sure your game is set to use XInput Devices. For example, in "Tom Clancy's Ghost Recon Wildlands" you have to set 
+2. Do not close "Xbox 360 Controller Emulator" during the game, just minimize it in order to reduce CPU use.
+
+3. Make sure your game is set to use XInput Devices. For example, in "Tom Clancy's Ghost Recon Wildlands" you have to set 
 OPTIONS -> CONTROLLER -> ENABLE CONTROLLER: *ONLY GAMEPADS*
 
-# Xbox 360 Controller Emulator 4.x Alpha - Beta Testing
+## Install an Use Instructions
 
 1. Download Xbox 360 Controller Emulator (32-bit will work on a 64-bit Windows too, because it contains all required 64-bit files):
 
@@ -39,6 +41,6 @@ Configuring Mapping:
 
 How to Uninstall Virtual Driver: Run "Xbox 360 Controller Emulator" as an Administrator, go to [Options] tab and press [Uninstall] button inside "Virtual Device" group box.
 
-# Screenshots
+## Screenshots
 
 ![https://raw.githubusercontent.com/x360ce/x360ce/master/x360ce.App.Beta/Documents/Images/v4_Controller_1.png](https://raw.githubusercontent.com/x360ce/x360ce/master/x360ce.App.Beta/Documents/Images/v4_Controller_1.png)
