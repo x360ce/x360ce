@@ -2,10 +2,12 @@
 
 IMPORTANT Note 1: This is ALPHA release. Some things will not work and this release is intended to test games with Virtual X360 controller only.
 
-IMPORTANT Note 2: Make sure your game is set to use XInput Devices. For example, in "Tom Clancy's Ghost Recon Wildlands" you have to set 
-OPTIONS -> CONTROLLER -> ENABLE CONTROLLER: *ONLY GAMEPADS*
+IMPORTANT Note 2: There is no need to place x360ce.exe inside the game folder. You can keep single copy of executable at one place (for example: C:\Program Files\x360ce\x360ce.exe), because same virtual "Xbox 360 Controller" will be visible for all games in Windows.
 
 IMPORTANT Note 3: Do not close "Xbox 360 Controller Emulator" during the game, just minimize it in order to reduce CPU use.
+
+IMPORTANT Note 4: Make sure your game is set to use XInput Devices. For example, in "Tom Clancy's Ghost Recon Wildlands" you have to set 
+OPTIONS -> CONTROLLER -> ENABLE CONTROLLER: *ONLY GAMEPADS*
 
 1. Download Xbox 360 Controller Emulator (32-bit will work on a 64-bit Windows too, because it contains all required 64-bit files):
 
