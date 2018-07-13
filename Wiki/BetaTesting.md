@@ -11,7 +11,7 @@ This is ALPHA release. Some things will not work and this release is intended to
 3. Make sure your game is set to use XInput Devices. For example, in "Tom Clancy's Ghost Recon Wildlands" you have to set 
 OPTIONS -> CONTROLLER -> ENABLE CONTROLLER: *ONLY GAMEPADS*
 
-## Install an Use Instructions
+## Install and Use Instructions
 
 1. Download Xbox 360 Controller Emulator (32-bit will work on a 64-bit Windows too, because it contains all required 64-bit files):
 
