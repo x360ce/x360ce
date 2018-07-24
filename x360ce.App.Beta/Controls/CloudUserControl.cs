@@ -160,8 +160,8 @@ namespace x360ce.App.Controls
                     var msg = new CloudMessage(CloudAction.GetPublicRsaKey);
                     CloudHelper.ApplySecurity(item.Message);
                     msg.Values.Add(CloudKey.RsaPublicKey, o.UserRsaPublicKey);
-                    // Retrieve public RSA key.
-                    var results = ws.Execute(msg);
+					// Retrieve public RSA key.
+					var results = ws.Execute(msg);
                     if (results.ErrorCode == 0)
                     {
                         o.CloudRsaPublicKey = results.Values.GetValue<string>(CloudKey.RsaPublicKey);
@@ -177,9 +177,12 @@ namespace x360ce.App.Controls
                 {
                     // Add security.
                     CloudHelper.ApplySecurity(item.Message, o.UserRsaPublicKey, o.CloudRsaPublicKey, o.Username, o.Password);
-                    // Add computer Id
+                    // Add computer and profile ID.
                     item.Message.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
 					item.Message.Values.Add(CloudKey.ProfileId, o.ProfileId, true);
+					// Add version so it will be possible distinguish between Library (v3.x) and Virtual (v4.x) settings.
+					item.Message.Values.Add(CloudKey.ClientVersion, Application.ProductVersion);
+					// Call web service.
 					result = ws.Execute(item.Message);
                     if (result.ErrorCode > 0)
                     {

@@ -29,6 +29,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
+		static string _configPrefix = "LogHelper_";
+
 		#region Process Exceptions
 
 		/// <summary>
@@ -82,6 +84,12 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			var v = ConfigurationManager.AppSettings[name];
 			return (v == null) ? defaultValue : int.Parse(v);
+		}
+
+		public static long ParseLong(string name, long defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[name];
+			return (v == null) ? defaultValue : long.Parse(v);
 		}
 
 		public static IPAddress ParseIPAddress(string name, IPAddress defaultValue)
@@ -170,7 +178,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			// if exception is not empty then 
 			//if (!string.IsNullOrEmpty(ex.Message))
 			//{
-			var useHtml = ParseBool("LogHelper_ErrorHtmlException", true);
+			var useHtml = ParseBool(_configPrefix + "ErrorHtmlException", true);
 			if (useHtml)
 			{
 				AddException(ref s, ExceptionToString(ex, true, JocysCom.ClassLibrary.TraceFormat.Html));
@@ -295,6 +303,24 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static void WriteInfo(string format, params object[] args)
 		{
 			WriteLog(args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Information);
+		}
+
+		#endregion
+
+		#region Exceptions: SPAM Prevention
+
+		int? ErrorFileLimitMax;
+		TimeSpan? ErrorFileLimitAge;
+		Dictionary<Type, List<DateTime>> ErrorFileList = new Dictionary<Type, List<DateTime>>();
+
+		public bool AllowReportExceptionToFile(Exception error)
+		{
+			// Maximum 10 errors of same type per 5 minutes (2880 per day).
+			if (!ErrorFileLimitMax.HasValue)
+				ErrorFileLimitMax = ParseInt("ErrorFileLimitMax", 5);
+			if (!ErrorFileLimitAge.HasValue)
+				ErrorFileLimitAge = ParseSpan("ErrorFileLimitAge", new TimeSpan(0, 5, 0));
+			return AllowToReportException(error, ErrorFileList, ErrorFileLimitMax.Value, ErrorFileLimitAge.Value);
 		}
 
 		#endregion
