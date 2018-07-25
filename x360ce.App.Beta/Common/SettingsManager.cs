@@ -889,8 +889,8 @@ namespace x360ce.App
 
 		public void FillSearchParameterWithFiles(List<SearchParameter> sp)
 		{
-			// Select user games as parameters to search.
-			var settings = UserSettings.Items.ToArray();
+			// Select enabled user game/device as parameters to search.
+			var settings = UserSettings.Items.Where(x => x.MapTo > 0).ToArray();
 			foreach (var setting in settings)
 			{
 				var fileName = Path.GetFileName(setting.FileName);
