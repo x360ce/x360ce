@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Data;
 using System.Runtime.Serialization;
 using System.Data.Objects.DataClasses;
+using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -276,6 +277,30 @@ namespace JocysCom.ClassLibrary.Runtime
 				if (pi.CanWrite) pi.SetValue(dest, pi.GetValue(o, null), null);
 			}
 			return dest;
+		}
+
+		/// <summary>
+		/// Assign property values from their [DefaultValueAttribute] value.
+		/// </summary>
+		/// <param name="o">Object to reset properties on.</param>
+		public static void ResetPropertiesToDefault(object o, bool onlyIfNull = false)
+		{
+			if (o == null)
+				return;
+			var type = o.GetType();
+			var properties = type.GetProperties();
+			foreach (var p in properties)
+			{
+				if (p.CanRead && onlyIfNull && p.GetValue(o, null) != null)
+					continue;
+				if (!p.CanWrite)
+					continue;
+				var da = p.GetCustomAttributes(typeof(DefaultValueAttribute), false);
+				if (da.Length == 0)
+					continue;
+				var value = ((DefaultValueAttribute)da[0]).Value;
+				p.SetValue(o, value, null);
+			}
 		}
 
 		/// <summary>

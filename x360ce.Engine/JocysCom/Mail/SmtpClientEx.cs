@@ -139,7 +139,8 @@ namespace JocysCom.ClassLibrary.Mail
 			SmtpDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
 			// Error reporting.
 			ErrorRecipients = LogHelper.ParseString("ErrorRecipients", "");
-			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", false);
+			var errorNotifications = !string.IsNullOrEmpty(ErrorRecipients);
+			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", errorNotifications);
 			ErrorCodeSuspended = LogHelper.ParseString("ErrorCodeSuspended", "");
 			// FQDN Fix
 			IPGlobalProperties ip = IPGlobalProperties.GetIPGlobalProperties();
