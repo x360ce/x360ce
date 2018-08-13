@@ -492,16 +492,17 @@ namespace x360ce.App.Controls
 		{
 			var grid = (DataGridView)sender;
 			var setting = ((UserSetting)grid.Rows[e.RowIndex].DataBoundItem);
+			var column = grid.Columns[e.ColumnIndex];
 			var isCurrent = setting.InstanceGuid == CurrentSetting.InstanceGuid && setting.FileName == CurrentSetting.FileName && setting.FileProductName == CurrentSetting.FileProductName;
-			if (e.ColumnIndex == grid.Columns[MySidColumn.Name].Index)
+			if (column == MySidColumn)
 			{
 				UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
 			}
-			else if (e.ColumnIndex == grid.Columns[MapToColumn.Name].Index)
+			else if (column == MapToColumn)
 			{
 				e.Value = Attributes.GetDescription((MapTo)setting.MapTo);
 			}
-			else if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
+			else if (column == MyIconColumn)
 			{
 				e.Value = isCurrent ? MySettingsSaveButton.Image : Properties.Resources.empty_16x16;
 			}
@@ -531,7 +532,8 @@ namespace x360ce.App.Controls
 		void SummariesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			if (e.ColumnIndex == grid.Columns[SidColumn.Name].Index)
+			var column = grid.Columns[e.ColumnIndex];
+			if (column == SidColumn)
 			{
 				UpdateCellStyle(grid, e, SummariesSelection == null ? null : (Guid?)SummariesSelection.PadSettingChecksum);
 			}

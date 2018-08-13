@@ -59,11 +59,12 @@ namespace x360ce.App.Controls
 		{
 			var grid = (DataGridView)sender;
 			var item = (UserSetting)grid.Rows[e.RowIndex].DataBoundItem;
-			if (e.ColumnIndex == grid.Columns[SettingsSidColumn.Name].Index)
+			var column = grid.Columns[e.ColumnIndex];
+			if (column == SettingsSidColumn)
 			{
 				e.Value = EngineHelper.GetID(item.PadSettingChecksum);
 			}
-			else if (e.ColumnIndex == grid.Columns[SettingsMapToColumn.Name].Index)
+			else if (column == SettingsMapToColumn)
 			{
 				e.Value = Attributes.GetDescription((MapTo)item.MapTo);
 			}

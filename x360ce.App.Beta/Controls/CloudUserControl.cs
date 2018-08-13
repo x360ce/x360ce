@@ -329,9 +329,9 @@ namespace x360ce.App.Controls
 
         private void TasksDataGridView_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex < 0 || e.RowIndex < 0)
-                return;
-            var item = TasksDataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x => (CloudItem)x.DataBoundItem).FirstOrDefault();
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
+			var item = TasksDataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x => (CloudItem)x.DataBoundItem).FirstOrDefault();
             if (item == null)
                 return;
             var error = item.Error;

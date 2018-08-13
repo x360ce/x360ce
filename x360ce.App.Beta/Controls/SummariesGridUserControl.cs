@@ -58,7 +58,8 @@ namespace x360ce.App.Controls
 		{
 			var grid = (DataGridView)sender;
 			var item = (Summary)grid.Rows[e.RowIndex].DataBoundItem;
-			if (e.ColumnIndex == grid.Columns[SummariesSidColumn.Name].Index)
+			var column = grid.Columns[e.ColumnIndex];
+			if (column == SummariesSidColumn)
 			{
 				e.Value = EngineHelper.GetID(item.PadSettingChecksum);
 			}

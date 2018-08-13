@@ -264,9 +264,11 @@ namespace x360ce.App.Controls
 
 		private void GamesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.RowIndex < 0) return;
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			var grid = (DataGridView)sender;
-			if (e.ColumnIndex == grid.Columns[EnabledColumn.Name].Index)
+			var column = grid.Columns[e.ColumnIndex];
+			if (column == EnabledColumn)
 			{
 				var row = grid.Rows[e.RowIndex];
 				var item = (x360ce.Engine.Data.UserGame)row.DataBoundItem;
@@ -337,6 +339,7 @@ namespace x360ce.App.Controls
 		{
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
+			var column = grid.Columns[e.ColumnIndex];
 			var item = ((x360ce.Engine.Data.UserGame)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentGame != null && item.GameId == GameDetailsControl.CurrentGame.GameId;
 			e.CellStyle.ForeColor = item.IsEnabled
@@ -348,12 +351,12 @@ namespace x360ce.App.Controls
 			//e.CellStyle.ForeColor = string.IsNullOrEmpty(item.FullPath)
 			//	? System.Drawing.Color.Gray
 			//	: grid.DefaultCellStyle.ForeColor;
-			//if (e.ColumnIndex == grid.Columns[ProgramIdColumn.Name].Index)
+			//if (column == ProgramIdColumn)
 			//{
 			//	UpdateCellStyle(grid, e, SettingSelection == null ? null : (Guid?)SettingSelection.PadSettingChecksum);
 			//}
 			//else
-			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
+			if (column == MyIconColumn)
 			{
 				e.Value = isCurrent ? SaveGamesButton.Image : Properties.Resources.empty_16x16;
 			}

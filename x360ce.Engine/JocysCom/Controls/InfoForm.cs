@@ -97,6 +97,8 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public void ControlsDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			string sClip = ControlsDataGridView[e.ColumnIndex, e.RowIndex].Value.ToString();
 			Clipboard.SetText(sClip);
 		}

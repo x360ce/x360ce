@@ -187,6 +187,8 @@ namespace x360ce.App
 
 		private void WarningsDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			var grid = (DataGridView)sender;
 			if (grid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
 			{
@@ -209,7 +211,7 @@ namespace x360ce.App
 			var row = grid.Rows[e.RowIndex];
 			var column = grid.Columns[SeverityColumn.Name];
 			var item = (WarningItem)row.DataBoundItem;
-			if (e.ColumnIndex == grid.Columns[SeverityColumn.Name].Index)
+			if (column == SeverityColumn)
 			{
 				switch (item.Severity)
 				{

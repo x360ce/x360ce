@@ -1411,24 +1411,25 @@ namespace x360ce.App.Controls
         {
             var grid = (DataGridView)sender;
             var viewRow = grid.Rows[e.RowIndex];
-            var item = (Engine.Data.UserSetting)viewRow.DataBoundItem;
-            if (e.ColumnIndex == grid.Columns[IsOnlineColumn.Name].Index)
+			var column = grid.Columns[e.ColumnIndex];
+			var item = (Engine.Data.UserSetting)viewRow.DataBoundItem;
+            if (column == IsOnlineColumn)
             {
                 e.Value = item.IsOnline
                     ? Properties.Resources.bullet_square_glass_green
                     : Properties.Resources.bullet_square_glass_grey;
             }
-            if (e.ColumnIndex == grid.Columns[InstanceIdColumn.Name].Index)
+            if (column == InstanceIdColumn)
             {
                 // Hide device Instance GUID from public eyes. Show part of checksum.
                 e.Value = EngineHelper.GetID(item.InstanceGuid);
             }
-            else if (e.ColumnIndex == grid.Columns[SettingIdColumn.Name].Index)
+            else if (column == SettingIdColumn)
             {
                 // Hide device Setting GUID from public eyes. Show part of checksum.
                 e.Value = EngineHelper.GetID(item.PadSettingChecksum);
             }
-            else if (e.ColumnIndex == grid.Columns[VendorNameColumn.Name].Index)
+            else if (column == VendorNameColumn)
             {
                 var device = SettingsManager.GetDevice(item.InstanceGuid);
                 e.Value = device == null
@@ -1449,10 +1450,12 @@ namespace x360ce.App.Controls
 
         private void MappedDevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0) return;
-            var grid = (DataGridView)sender;
-            // If user clicked on the CheckBox column then...
-            if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
+			var grid = (DataGridView)sender;
+			var column = grid.Columns[e.ColumnIndex];
+			// If user clicked on the CheckBox column then...
+			if (column == IsEnabledColumn)
             {
                 var row = grid.Rows[e.RowIndex];
                 var item = (Engine.Data.UserSetting)row.DataBoundItem;

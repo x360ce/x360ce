@@ -459,32 +459,38 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <summary>Add information about missing libraries and DLLs</summary>
 		static void AddExceptionMessage(Exception ex, ref string message)
 		{
+			// Add separator if message already have content.
+			if (message.Length > 0)
+				message += "===============================================================\r\n";
+			message += ex.ToString() + "\r\n";
+			// Add extra exception details.
+			var s = "";
+			if (ex.Data.Keys.Count > 0)
+			{
+				// Add error data values.
+				foreach (var key in ex.Data.Keys)
+					s += string.Format("{0}: {1}\r\n", key, ex.Data[key]);
+			}
+			// Exception string to add.
 			var ex1 = ex as ConfigurationErrorsException;
-			var ex2 = ex as ReflectionTypeLoadException;
-			var m = "";
 			if (ex1 != null)
 			{
-				m += string.Format("FileName: {0}\r\n", ex1.Filename);
-				m += string.Format("Line: {0}\r\n", ex1.Line);
+				s += string.Format("FileName: {0}\r\n", ex1.Filename);
+				s += string.Format("Line: {0}\r\n", ex1.Line);
 			}
-			else if (ex2 != null)
+			var ex2 = ex as ReflectionTypeLoadException;
+			if (ex2 != null)
 			{
-				foreach (Exception x in ex2.LoaderExceptions) m += x.Message + "\r\n";
+				foreach (Exception x in ex2.LoaderExceptions)
+					s += x.Message + "\r\n";
 			}
-			if (message.Length > 0)
-			{
-				message += "===============================================================\r\n";
-			}
-			message += ex.ToString() + "\r\n";
-			foreach (var key in ex.Data.Keys)
-			{
-				m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
-			}
-			if (m.Length > 0)
+			// If details available then...
+			if (s.Length > 0)
 			{
 				message += "===============================================================\r\n";
-				message += m;
+				message += s;
 			}
+
 		}
 
 		#endregion

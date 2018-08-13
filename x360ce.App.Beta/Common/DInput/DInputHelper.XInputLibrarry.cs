@@ -28,7 +28,7 @@ namespace x360ce.App.DInput
 				}
 				var e = new DInputEventArgs();
 				// Always load Microsoft XInput DLL by default.
-				var emType = (EmulationType)game.EmulationType;
+				var emType = game == null ? EmulationType.None : (EmulationType)game.EmulationType;
 				// Unload if...
 				var unload =
 					// No emulation or

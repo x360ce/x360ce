@@ -301,10 +301,12 @@ namespace x360ce.App.Controls
 
 		private void GamesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.RowIndex < 0) return;
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			var grid = (DataGridView)sender;
-			// If user clicked on the checkbox column then...
-			if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
+			var column = grid.Columns[e.ColumnIndex];
+			// If user clicked on the CheckBox column then...
+			if (column == IsEnabledColumn)
 			{
 				var row = grid.Rows[e.RowIndex];
 				var item = (x360ce.Engine.Data.UserGame)row.DataBoundItem;
@@ -406,17 +408,18 @@ namespace x360ce.App.Controls
 		{
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
+			var column = grid.Columns[e.ColumnIndex];
 			var item = ((x360ce.Engine.Data.UserGame)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentItem == item;
-			if (e.ColumnIndex == grid.Columns[MyIconColumn.Name].Index)
+			if (column == MyIconColumn)
 			{
 				e.Value = isCurrent ? SaveGamesButton.Image : Properties.Resources.empty_16x16;
 			}
-			else if (e.ColumnIndex == grid.Columns[FileFolderColumn.Name].Index)
+			else if (column == FileFolderColumn)
 			{
 				e.Value = Path.GetDirectoryName(item.FullPath);
 			}
-			else if (e.ColumnIndex == grid.Columns[PlatformColumn.Name].Index)
+			else if (column ==  PlatformColumn)
 			{
 				var platform = (ProcessorArchitecture)item.ProcessorArchitecture;
 				switch (platform)
@@ -461,24 +464,21 @@ namespace x360ce.App.Controls
 			grid.DataSource = null;
 			foreach (var newItem in newItems)
 			{
+				// Fix product name.
+				newItem.FileProductName = EngineHelper.FixName(newItem.FileProductName, newItem.FileName);
+				// If new item is missing XInputMask setting then assign default.
+				if (newItem.XInputMask == (int)XInputMask.None)
+					newItem.XInputMask = (int)XInputMask.XInput13_x86;
 				// Try to find existing item inside the list.
 				var existingItems = list.Where(x => x.FileName.ToLower() == newItem.FileName.ToLower()).ToArray();
-				// Remove existing items.
-				for (int i = 0; i < existingItems.Length; i++)
-				{
+				// Remove extra items.
+				for (int i = 1; i < existingItems.Length; i++)
 					list.Remove(existingItems[i]);
-				}
-				// Fix product name.
-				var fixedProductName = EngineHelper.FixName(newItem.FileProductName, newItem.FileName);
-				newItem.FileProductName = fixedProductName;
-				// If new item is missing XInputMask setting then...
-				if (newItem.XInputMask == (int)XInputMask.None)
-				{
-					// Assign default.
-					newItem.XInputMask = (int)XInputMask.XInput13_x86;
-				}
-				// Add new one.
-				list.Add(newItem);
+				// Get extra item.
+				var existingItem = existingItems.FirstOrDefault();
+				// If item found then update propertied without removing.
+				if (existingItem != null)
+					JocysCom.ClassLibrary.Runtime.Helper.CopyProperties(newItem, existingItem);
 			}
 			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.UserGame).Name);
 			grid.DataSource = list;

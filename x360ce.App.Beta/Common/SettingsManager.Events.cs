@@ -148,11 +148,12 @@ namespace x360ce.App
 		}
 
 		/// <summary>
-		/// This event will fire after similar event attached on tje PadControl, because it was attached later.
+		/// This event will fire after similar event attached on the PadControl, because it was attached later.
 		/// </summary>
 		private void DataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.RowIndex < 0) return;
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			var grid = (DataGridView)sender;
 			// If user clicked on the CheckBox column then...
 			if (grid.Columns[e.ColumnIndex] is DataGridViewCheckBoxColumn)

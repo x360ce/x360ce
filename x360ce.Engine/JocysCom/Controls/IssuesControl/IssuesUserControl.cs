@@ -218,8 +218,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
         private void WarningsDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            var grid = (DataGridView)sender;
-            if (grid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
+			var grid = (DataGridView)sender;
+			var column = grid.Columns[e.ColumnIndex];
+			if (column is DataGridViewButtonColumn && e.RowIndex >= 0)
             {
                 var row = grid.Rows[e.RowIndex];
                 var item = (IssueItem)row.DataBoundItem;
@@ -252,7 +255,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
             var row = grid.Rows[e.RowIndex];
             var column = grid.Columns[SeverityColumn.Name];
             var item = (IssueItem)row.DataBoundItem;
-            if (e.ColumnIndex == grid.Columns[SeverityColumn.Name].Index)
+            if (column == SeverityColumn)
             {
                 switch (item.Severity)
                 {
@@ -275,7 +278,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
                         break;
                 }
             }
-            else if (e.ColumnIndex == grid.Columns[SolutionColumn.Name].Index)
+            else if (column == SolutionColumn)
             {
                 e.Value = item.Status == IssueStatus.Fixing ? "Please Wait..." : item.FixName;
             }

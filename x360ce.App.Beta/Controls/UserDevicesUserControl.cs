@@ -35,14 +35,16 @@ namespace x360ce.App.Controls
 		private void ControllersDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
-			var item = ((UserDevice)grid.Rows[e.RowIndex].DataBoundItem);
-			if (e.ColumnIndex == grid.Columns[IsOnlineColumn.Name].Index)
+			var row = grid.Rows[e.RowIndex];
+			var column = grid.Columns[e.ColumnIndex];
+			var item = ((UserDevice)row.DataBoundItem);
+			if (column == IsOnlineColumn)
 			{
 				e.Value = item.IsOnline
 					? Properties.Resources.bullet_square_glass_green
 					: Properties.Resources.bullet_square_glass_grey;
 			}
-			else if (e.ColumnIndex == grid.Columns[DeviceIdColumn.Name].Index)
+			else if (column == DeviceIdColumn)
 			{
 				var d = item.Device;
 				if (d != null)
@@ -159,18 +161,19 @@ namespace x360ce.App.Controls
 
 		private void DevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
-			if (e.RowIndex < 0)
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
+			var column = grid.Columns[e.ColumnIndex];
 			var ud = (UserDevice)row.DataBoundItem;
 			// If user clicked on the CheckBox column then...
-			if (e.ColumnIndex == grid.Columns[IsEnabledColumn.Name].Index)
+			if (column == IsEnabledColumn)
 			{
 				// Changed check (enabled state) of the current item.
 				ud.IsEnabled = !ud.IsEnabled;
 			}
-			else if (e.ColumnIndex == grid.Columns[IsHiddenColumn.Name].Index)
+			else if (column == IsHiddenColumn)
 			{
 				var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
 				if (canModify)

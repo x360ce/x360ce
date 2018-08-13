@@ -107,7 +107,8 @@ namespace x360ce.App.Controls
         {
             var grid = (DataGridView)sender;
             var item = (Preset)grid.Rows[e.RowIndex].DataBoundItem;
-            if (e.ColumnIndex == grid.Columns[PresetSidColumn.Name].Index)
+			var column = grid.Columns[e.ColumnIndex];
+			if (column == PresetSidColumn)
             {
                 e.Value = EngineHelper.GetID(item.PadSettingChecksum);
             }
