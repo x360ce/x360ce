@@ -190,7 +190,7 @@ namespace x360ce.App
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			var grid = (DataGridView)sender;
-			if (grid.Columns[e.ColumnIndex] is DataGridViewButtonColumn && e.RowIndex >= 0)
+			if (grid.Columns[e.ColumnIndex] is DataGridViewButtonColumn)
 			{
 				var row = grid.Rows[e.RowIndex];
 				var item = (WarningItem)row.DataBoundItem;
@@ -206,10 +206,11 @@ namespace x360ce.App
 
 		private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			if (e.RowIndex == -1) return;
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
-			var column = grid.Columns[SeverityColumn.Name];
+			var column = grid.Columns[e.ColumnIndex];
 			var item = (WarningItem)row.DataBoundItem;
 			if (column == SeverityColumn)
 			{
