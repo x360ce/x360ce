@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using x360ce.App.Forms;
+using JocysCom.ClassLibrary.ComponentModel;
 
 namespace x360ce.App.Controls
 {
@@ -17,13 +18,24 @@ namespace x360ce.App.Controls
 			EngineHelper.EnableDoubleBuffering(DevicesDataGridView);
 		}
 
-		private void ControllersUserControl_Load(object sender, EventArgs e)
+		/// <summary>
+		/// Use this method to resolve format exception:
+		///     Invalid cast from 'System.Boolean' to 'System.Drawing.Image'
+		/// after list updated from the cloud with ImportAndBindItems(...) method
+		/// </summary>
+		public void AttachDataSource(SortableBindingList<UserDevice> data)
 		{
 			UpdateButtons();
 			DevicesDataGridView.AutoGenerateColumns = false;
 			// WORKAROUND: Remove SelectionChanged event.
 			DevicesDataGridView.SelectionChanged -= ControllersDataGridView_SelectionChanged;
-			DevicesDataGridView.DataSource = SettingsManager.UserDevices.Items;
+			DevicesDataGridView.DataSource = data;
+			if (!IsHandleCreated)
+			{
+				DevicesDataGridView.SelectionChanged += ControllersDataGridView_SelectionChanged;
+				ControllersDataGridView_SelectionChanged(DevicesDataGridView, new EventArgs());
+				return;
+			}
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			BeginInvoke((MethodInvoker)delegate ()
 			{
@@ -32,7 +44,12 @@ namespace x360ce.App.Controls
 			});
 		}
 
-		private void ControllersDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		private void ControllersUserControl_Load(object sender, EventArgs e)
+		{
+			AttachDataSource(SettingsManager.UserDevices.Items);
+		}
+
+		private void DevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
@@ -84,7 +101,7 @@ namespace x360ce.App.Controls
 		void UpdateButtons()
 		{
 			var grid = DevicesDataGridView;
-			ControllerDeleteButton.Enabled = grid.SelectedRows.Count > 0;
+			ControllerDeleteButton.Enabled = grid.DataSource != null && grid.SelectedRows.Count > 0;
 		}
 
 		#region Import
@@ -100,7 +117,7 @@ namespace x360ce.App.Controls
 			var list = SettingsManager.UserDevices.Items;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, key);
 			var newItems = items.ToArray();
-			grid.DataSource = null;
+			AttachDataSource(null);
 			foreach (var newItem in newItems)
 			{
 				// Try to find existing item inside the list.
@@ -114,7 +131,7 @@ namespace x360ce.App.Controls
 				list.Add(newItem);
 			}
 			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
-			grid.DataSource = list;
+			AttachDataSource(list);
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();
 		}
@@ -233,7 +250,7 @@ namespace x360ce.App.Controls
 		private void synchronizeToHidGuardianToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			// Get all devices which must be hidden.
-			var devices = SettingsManager.UserDevices.Items.Where(x=>x.IsHidden).ToList();
+			var devices = SettingsManager.UserDevices.Items.Where(x => x.IsHidden).ToList();
 			// Get all Ids.
 			var ids = new List<string>();
 			foreach (var ud in devices)
@@ -254,5 +271,6 @@ namespace x360ce.App.Controls
 				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
+
 	}
 }

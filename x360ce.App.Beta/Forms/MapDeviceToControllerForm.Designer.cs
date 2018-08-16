@@ -75,6 +75,6 @@
 		#endregion
 		private System.Windows.Forms.Button OkButton;
 		private System.Windows.Forms.Button CloseButton;
-		private UserDevicesUserControl ControllersPanel;
+		public UserDevicesUserControl ControllersPanel;
 	}
 }

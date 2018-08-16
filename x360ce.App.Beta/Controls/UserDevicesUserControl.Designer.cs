@@ -28,18 +28,12 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserDevicesUserControl));
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DevicesDataGridView = new System.Windows.Forms.DataGridView();
-			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.IsHiddenColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
 			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
@@ -50,6 +44,13 @@
 			this.HiddenDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.UnhideAllDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.synchronizeToHidGuardianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.IsHiddenColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
 			this.ControllersToolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -62,13 +63,13 @@
 			this.DevicesDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.DevicesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.DevicesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.DevicesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.DevicesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.DevicesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.DevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsOnlineColumn,
@@ -78,94 +79,33 @@
             this.MyFileColumn,
             this.DeviceIdColumn,
             this.IsHiddenColumn});
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.DevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.DevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
 			this.DevicesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DevicesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.DevicesDataGridView.Name = "DevicesDataGridView";
 			this.DevicesDataGridView.ReadOnly = true;
-			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.DevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.DevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this.DevicesDataGridView.RowHeadersVisible = false;
 			this.DevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.DevicesDataGridView.Size = new System.Drawing.Size(717, 411);
 			this.DevicesDataGridView.TabIndex = 0;
 			this.DevicesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DevicesDataGridView_CellClick);
-			this.DevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.ControllersDataGridView_CellFormatting);
-			// 
-			// IsOnlineColumn
-			// 
-			this.IsOnlineColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.IsOnlineColumn.DataPropertyName = "IsOnline";
-			this.IsOnlineColumn.HeaderText = "";
-			this.IsOnlineColumn.MinimumWidth = 24;
-			this.IsOnlineColumn.Name = "IsOnlineColumn";
-			this.IsOnlineColumn.ReadOnly = true;
-			this.IsOnlineColumn.Width = 24;
-			// 
-			// IsEnabledColumn
-			// 
-			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
-			this.IsEnabledColumn.HeaderText = "";
-			this.IsEnabledColumn.Name = "IsEnabledColumn";
-			this.IsEnabledColumn.ReadOnly = true;
-			this.IsEnabledColumn.Width = 24;
-			// 
-			// MySidColumn
-			// 
-			this.MySidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MySidColumn.DataPropertyName = "InstanceId";
-			this.MySidColumn.HeaderText = "Instance ID";
-			this.MySidColumn.Name = "MySidColumn";
-			this.MySidColumn.ReadOnly = true;
-			this.MySidColumn.Width = 87;
-			// 
-			// MyDeviceColumn
-			// 
-			this.MyDeviceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyDeviceColumn.DataPropertyName = "HidManufacturer";
-			this.MyDeviceColumn.HeaderText = "Vendor Name";
-			this.MyDeviceColumn.Name = "MyDeviceColumn";
-			this.MyDeviceColumn.ReadOnly = true;
-			this.MyDeviceColumn.Width = 97;
-			// 
-			// MyFileColumn
-			// 
-			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.MyFileColumn.DataPropertyName = "ProductName";
-			this.MyFileColumn.HeaderText = "Product Name";
-			this.MyFileColumn.Name = "MyFileColumn";
-			this.MyFileColumn.ReadOnly = true;
-			// 
-			// DeviceIdColumn
-			// 
-			this.DeviceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.DeviceIdColumn.DataPropertyName = "HidDeviceId";
-			this.DeviceIdColumn.HeaderText = "HID Device ID";
-			this.DeviceIdColumn.Name = "DeviceIdColumn";
-			this.DeviceIdColumn.ReadOnly = true;
-			// 
-			// IsHiddenColumn
-			// 
-			this.IsHiddenColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.IsHiddenColumn.DataPropertyName = "IsHidden";
-			this.IsHiddenColumn.HeaderText = "Hide";
-			this.IsHiddenColumn.Name = "IsHiddenColumn";
-			this.IsHiddenColumn.ReadOnly = true;
-			this.IsHiddenColumn.Width = 35;
+			this.DevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DevicesDataGridView_CellFormatting);
 			// 
 			// ControllersToolStrip
 			// 
@@ -240,21 +180,21 @@
 			// EnumeratedDevicesButton
 			// 
 			this.EnumeratedDevicesButton.Name = "EnumeratedDevicesButton";
-			this.EnumeratedDevicesButton.Size = new System.Drawing.Size(227, 22);
+			this.EnumeratedDevicesButton.Size = new System.Drawing.Size(228, 22);
 			this.EnumeratedDevicesButton.Text = "Show Enumerated Devices";
 			this.EnumeratedDevicesButton.Click += new System.EventHandler(this.ShowEnumeratedDevicesMenuItem_Click);
 			// 
 			// HiddenDevicesMenuItem
 			// 
 			this.HiddenDevicesMenuItem.Name = "HiddenDevicesMenuItem";
-			this.HiddenDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
+			this.HiddenDevicesMenuItem.Size = new System.Drawing.Size(228, 22);
 			this.HiddenDevicesMenuItem.Text = "Show Hidden Devices";
 			this.HiddenDevicesMenuItem.Click += new System.EventHandler(this.ShowHiddenDevicesMenuItem_Click);
 			// 
 			// UnhideAllDevicesMenuItem
 			// 
 			this.UnhideAllDevicesMenuItem.Name = "UnhideAllDevicesMenuItem";
-			this.UnhideAllDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
+			this.UnhideAllDevicesMenuItem.Size = new System.Drawing.Size(228, 22);
 			this.UnhideAllDevicesMenuItem.Text = "Unhide All Devices";
 			this.UnhideAllDevicesMenuItem.Click += new System.EventHandler(this.UnhideAllDevicesMenuItem_Click);
 			// 
@@ -264,6 +204,70 @@
 			this.synchronizeToHidGuardianToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
 			this.synchronizeToHidGuardianToolStripMenuItem.Text = "Synchronize To HID Guardian";
 			this.synchronizeToHidGuardianToolStripMenuItem.Click += new System.EventHandler(this.synchronizeToHidGuardianToolStripMenuItem_Click);
+			// 
+			// IsOnlineColumn
+			// 
+			this.IsOnlineColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.IsOnlineColumn.DataPropertyName = "IsOnline";
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle2.NullValue = null;
+			this.IsOnlineColumn.DefaultCellStyle = dataGridViewCellStyle2;
+			this.IsOnlineColumn.HeaderText = "";
+			this.IsOnlineColumn.MinimumWidth = 24;
+			this.IsOnlineColumn.Name = "IsOnlineColumn";
+			this.IsOnlineColumn.ReadOnly = true;
+			this.IsOnlineColumn.Width = 24;
+			// 
+			// IsEnabledColumn
+			// 
+			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
+			this.IsEnabledColumn.HeaderText = "";
+			this.IsEnabledColumn.Name = "IsEnabledColumn";
+			this.IsEnabledColumn.ReadOnly = true;
+			this.IsEnabledColumn.Width = 24;
+			// 
+			// MySidColumn
+			// 
+			this.MySidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MySidColumn.DataPropertyName = "InstanceId";
+			this.MySidColumn.HeaderText = "Instance ID";
+			this.MySidColumn.Name = "MySidColumn";
+			this.MySidColumn.ReadOnly = true;
+			this.MySidColumn.Width = 87;
+			// 
+			// MyDeviceColumn
+			// 
+			this.MyDeviceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyDeviceColumn.DataPropertyName = "HidManufacturer";
+			this.MyDeviceColumn.HeaderText = "Vendor Name";
+			this.MyDeviceColumn.Name = "MyDeviceColumn";
+			this.MyDeviceColumn.ReadOnly = true;
+			this.MyDeviceColumn.Width = 97;
+			// 
+			// MyFileColumn
+			// 
+			this.MyFileColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MyFileColumn.DataPropertyName = "ProductName";
+			this.MyFileColumn.HeaderText = "Product Name";
+			this.MyFileColumn.Name = "MyFileColumn";
+			this.MyFileColumn.ReadOnly = true;
+			// 
+			// DeviceIdColumn
+			// 
+			this.DeviceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.DeviceIdColumn.DataPropertyName = "HidDeviceId";
+			this.DeviceIdColumn.HeaderText = "HID Device ID";
+			this.DeviceIdColumn.Name = "DeviceIdColumn";
+			this.DeviceIdColumn.ReadOnly = true;
+			// 
+			// IsHiddenColumn
+			// 
+			this.IsHiddenColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.IsHiddenColumn.DataPropertyName = "IsHidden";
+			this.IsHiddenColumn.HeaderText = "Hide";
+			this.IsHiddenColumn.Name = "IsHiddenColumn";
+			this.IsHiddenColumn.ReadOnly = true;
+			this.IsHiddenColumn.Width = 35;
 			// 
 			// UserDevicesUserControl
 			// 
@@ -289,17 +293,17 @@
 		private System.Windows.Forms.ToolStripButton RefreshButton;
 		private System.Windows.Forms.ToolStripButton HardwareButton;
 		private System.Windows.Forms.ToolStripButton AddDemoDevice;
-        private System.Windows.Forms.DataGridViewImageColumn IsOnlineColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIdColumn;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn IsHiddenColumn;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem EnumeratedDevicesButton;
         private System.Windows.Forms.ToolStripMenuItem HiddenDevicesMenuItem;
         private System.Windows.Forms.ToolStripMenuItem UnhideAllDevicesMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem synchronizeToHidGuardianToolStripMenuItem;
+		private System.Windows.Forms.DataGridViewImageColumn IsOnlineColumn;
+		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MySidColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIdColumn;
+		private System.Windows.Forms.DataGridViewCheckBoxColumn IsHiddenColumn;
 	}
 }
