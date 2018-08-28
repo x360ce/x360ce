@@ -1042,10 +1042,7 @@ namespace x360ce.App
 				if (_DeviceForm == null)
 					return null;
 				_DeviceForm.StartPosition = FormStartPosition.CenterParent;
-				//DevicesPanel.AttachDataSource(null);
 				var result = _DeviceForm.ShowDialog();
-				//_DeviceForm.ControllersPanel.AttachDataSource(null);
-				//DevicesPanel.AttachDataSource(SettingsManager.UserDevices.Items);
 				return _DeviceForm.SelectedDevices;
 			}
 		}

@@ -69,7 +69,7 @@ namespace JocysCom.ClassLibrary.Win32
 
 
 		[DllImport("user32.dll", SetLastError = true)]
-		public static extern int GetDesktopWindow();
+		public static extern IntPtr GetDesktopWindow();
 
 		/// <summary>
 		/// Retrieves the coordinates of a window's client area.
@@ -173,6 +173,121 @@ namespace JocysCom.ClassLibrary.Win32
 		/// If the point is over a static text control, the return value is a handle to the window under the static text control. </returns>
 		[DllImport("user32.dll", SetLastError = true)]
 		public static extern IntPtr WindowFromPoint(Point point);
+
+		//[DllImport("user32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		//private static extern bool GetWindowInfo(IntPtr hWnd, ref WINDOWINFO pwo);
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool EnumChildWindows(IntPtr hwndParent, EnumWindowProc lpEnumFunc, IntPtr lParam);
+
+		public delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
+
+		[DllImport("user32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		public static extern bool GetWindowRect(IntPtr hWnd, ref RECT lpRect);
+
+		[DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		public static extern IntPtr GetWindow(IntPtr hwnd, int wFlag);
+
+		[DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		public static extern int GetWindowThreadProcessId(IntPtr hwnd, ref int lpdwProcessId);
+
+		[return: MarshalAs(UnmanagedType.Bool)]
+		[DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		public static extern bool IsWindowEnabled(IntPtr hwnd);
+
+		[return: MarshalAs(UnmanagedType.Bool)]
+		[DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		public static extern bool IsWindowVisible(IntPtr hwnd);
+
+		[DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		private static extern int AttachThreadInput(int idAttach, int idAttachTo, int fAttach);
+
+		[return: MarshalAs(UnmanagedType.Bool)]
+		[DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		private static extern bool SetForegroundWindow(IntPtr hwnd);
+
+		[DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+		private static extern IntPtr SetFocus(IntPtr hwnd);
+
+		#endregion
+
+		#region Helper Methods
+
+		private static void AppActivateHelper(IntPtr hwndApp)
+		{
+			int num = 0;
+			try
+			{
+				new UIPermission(UIPermissionWindow.AllWindows).Demand();
+			}
+			catch (Exception exception)
+			{
+				throw exception;
+			}
+			if (!IsWindowEnabled(hwndApp) || !IsWindowVisible(hwndApp))
+			{
+				IntPtr window = GetWindow(hwndApp, 0);
+				while (window != IntPtr.Zero)
+				{
+					if (GetWindow(window, 4) == hwndApp)
+					{
+						if (IsWindowEnabled(window) && IsWindowVisible(window))
+						{
+							break;
+						}
+						hwndApp = window;
+						window = GetWindow(hwndApp, 0);
+					}
+					window = GetWindow(window, 2);
+				}
+				if (window == IntPtr.Zero)
+				{
+					throw new ArgumentException("Process not found");
+				}
+				hwndApp = window;
+			}
+			AttachThreadInput(0, GetWindowThreadProcessId(hwndApp, ref num), 1);
+			SetForegroundWindow(hwndApp);
+			SetFocus(hwndApp);
+			AttachThreadInput(0, GetWindowThreadProcessId(hwndApp, ref num), 0);
+		}
+
+
+		[SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+		public static void AppActivate(int ProcessId)
+		{
+			int num = 0;
+			IntPtr window = GetWindow(GetDesktopWindow(), 5);
+			while (window != IntPtr.Zero)
+			{
+				GetWindowThreadProcessId(window, ref num);
+				if (((num == ProcessId) && IsWindowEnabled(window)) && IsWindowVisible(window))
+				{
+					break;
+				}
+				window = GetWindow(window, 2);
+			}
+			if (window == IntPtr.Zero)
+			{
+				window = GetWindow(GetDesktopWindow(), 5);
+				while (window != IntPtr.Zero)
+				{
+					GetWindowThreadProcessId(window, ref num);
+					if (num == ProcessId)
+					{
+						break;
+					}
+					window = GetWindow(window, 2);
+				}
+			}
+			if (window == IntPtr.Zero)
+			{
+				throw new ArgumentException(string.Format("Process not found: {0}", ProcessId));
+			}
+			AppActivateHelper(window);
+		}
+
 
 		#endregion
 

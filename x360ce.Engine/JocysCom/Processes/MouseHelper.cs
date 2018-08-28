@@ -31,14 +31,14 @@ namespace JocysCom.ClassLibrary.Processes
 
 		public class NativeMethods
 		{
+			//[DllImport("user32", EntryPoint = "FindWindowA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+			//public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
 			[DllImport("user32.dll", SetLastError = true)]
 			public static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
 
 			[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
 			public static extern bool SetCursorPos(int x, int y);
-
-			[DllImport("user32", EntryPoint = "FindWindowA", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-			public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
 			[DllImport("user32", CharSet = CharSet.Auto, SetLastError = true)]
 			public static extern IntPtr SendMessage(IntPtr hwnd, uint wMsg, uint wParam, uint lParam);
@@ -77,22 +77,41 @@ namespace JocysCom.ClassLibrary.Processes
 		private static int LastRectX = 0;
 		private static int LastRectY = 0;
 
-		public static void SendRMouseClick(string windowName)
+		public static void SendRMouseClick(string processName)
 		{
-			IntPtr win = NativeMethods.FindWindow(null, windowName);
-			uint dWord = MakeDWord((ushort)(LastX - LastRectX), (ushort)(LastY - LastRectY));
-			NativeMethods.SendMessage(win, WM_RBUTTONDOWN, MK_LBUTTON, dWord);
-			System.Threading.Thread.Sleep(100);
-			NativeMethods.SendMessage(win, WM_RBUTTONUP, 0, dWord);
+			SendMouseClick(processName, WM_RBUTTONDOWN, WM_RBUTTONUP);
 		}
 
-		public static void SendLMouseClick(string windowName)
+		public static void SendLMouseClick(string processName)
 		{
-			IntPtr win = NativeMethods.FindWindow(null, windowName);
+			SendMouseClick(processName, WM_LBUTTONDOWN, WM_LBUTTONUP);
+		}
+
+		static void SendMouseClick(string processName, uint button1, uint button2)
+		{
+			var ps = System.Diagnostics.Process.GetProcessesByName(processName);
+			var mainWindowHandle = IntPtr.Zero;
+			if (ps.Length > 0)
+				mainWindowHandle = ps[0].MainWindowHandle;
+			else
+			{
+				ps = System.Diagnostics.Process.GetProcesses();
+				foreach (var p in ps)
+				{
+					if (p.MainWindowTitle.IndexOf(processName, StringComparison.InvariantCulture) > -1)
+					{
+						mainWindowHandle = p.MainWindowHandle;
+						break;
+					}
+				}
+			}
+			if (mainWindowHandle == IntPtr.Zero)
+				return;
 			uint dWord = MakeDWord((ushort)(LastX - LastRectX), (ushort)(LastY - LastRectY));
-			NativeMethods.SendMessage(win, WM_LBUTTONDOWN, MK_LBUTTON, dWord);
+			NativeMethods.SendMessage(mainWindowHandle, button1, MK_LBUTTON, dWord);
 			System.Threading.Thread.Sleep(100);
-			NativeMethods.SendMessage(win, WM_LBUTTONUP, 0, dWord);
+			NativeMethods.SendMessage(mainWindowHandle, button2, 0, dWord);
+
 		}
 
 		public static uint MakeDWord(ushort x, ushort y)
