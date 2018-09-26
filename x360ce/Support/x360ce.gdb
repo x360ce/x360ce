@@ -645,3 +645,7 @@ HookMask = 0x00000002
 [XComGame.exe]
 Name = XCOM Enemy Unknown
 HookMask = 0x00000002
+
+[AppMarket.exe]
+Name = AppMarket
+HookMask = 0x00000002
