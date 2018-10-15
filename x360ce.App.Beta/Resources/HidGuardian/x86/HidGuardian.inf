@@ -8,7 +8,7 @@ Class=System
 ClassGuid={4D36E97D-E325-11CE-BFC1-08002BE10318}
 Provider=%ManufacturerName%
 CatalogFile=HidGuardian.cat
-DriverVer = 12/19/2017,1.14.0.0
+DriverVer = 01/19/2018,1.14.3.0
 
 [DestinationDirs]
 DefaultDestDir = 12
@@ -27,9 +27,9 @@ WdfCoInstaller01009.dll=1 ; make sure the number matches with SourceDisksNames
 ;*****************************************
 
 [Manufacturer]
-%ManufacturerName%=Standard,NTamd64
+%ManufacturerName%=Standard,NTx86
 
-[Standard.NTamd64]
+[Standard.NTx86]
 %HidGuardian.DeviceDesc%=HidGuardian_Device, Root\HidGuardian
 
 [HidGuardian_Device.NT]

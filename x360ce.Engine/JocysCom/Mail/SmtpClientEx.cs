@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Reflection;
@@ -99,8 +100,12 @@ namespace JocysCom.ClassLibrary.Mail
 		public string SmtpPassword;
 		public string SmtpDomain;
 		public string SmtpServer;
+		public int SmtpPort;
+		public IPAddress SmtpLocalAddress;
+		public int SmtpLocalPort;
 		public string SmtpPickupFolder;
 		public bool SmtpEnableSsl;
+		public bool SmtpFixHostName;
 		public string SmtpFrom;
 		public string SmtpSendCopyTo;
 		public string ErrorRecipients;
@@ -132,6 +137,12 @@ namespace JocysCom.ClassLibrary.Mail
 			SmtpPassword = LogHelper.ParseString("SmtpPassword", "");
 			SmtpDomain = LogHelper.ParseString("SmtpDomain", "");
 			SmtpServer = LogHelper.ParseString("SmtpServer", "");
+			SmtpPort = LogHelper.ParseInt("SmtpPort", 25);
+			SmtpLocalAddress = IPAddress.Any;
+			var localAddress = LogHelper.ParseString("SmtpLocalAddress", "");
+			if (!string.IsNullOrEmpty(localAddress))
+				IPAddress.TryParse(localAddress, out SmtpLocalAddress);
+			SmtpLocalPort = LogHelper.ParseInt("SmtpLocalPort", 0);
 			SmtpPickupFolder = LogHelper.ParseString("SmtpPickupFolder", "");
 			SmtpEnableSsl = LogHelper.ParseBool("SmtpEnableSsl", false);
 			SmtpFrom = LogHelper.ParseString("SmtpFrom", "");
@@ -142,11 +153,15 @@ namespace JocysCom.ClassLibrary.Mail
 			var errorNotifications = !string.IsNullOrEmpty(ErrorRecipients);
 			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", errorNotifications);
 			ErrorCodeSuspended = LogHelper.ParseString("ErrorCodeSuspended", "");
-			// FQDN Fix
-			IPGlobalProperties ip = IPGlobalProperties.GetIPGlobalProperties();
-			if (!string.IsNullOrEmpty(ip.HostName) && !string.IsNullOrEmpty(ip.DomainName))
+			SmtpFixHostName = LogHelper.ParseBool("SmtpFixHostName", false);
+			if (SmtpFixHostName)
 			{
-				LocalHostName = ip.HostName + "." + ip.DomainName;
+				// FQDN Fix
+				IPGlobalProperties ip = IPGlobalProperties.GetIPGlobalProperties();
+				if (!string.IsNullOrEmpty(ip.HostName) && !string.IsNullOrEmpty(ip.DomainName))
+				{
+					LocalHostName = ip.HostName + "." + ip.DomainName;
+				}
 			}
 		}
 
@@ -196,13 +211,19 @@ namespace JocysCom.ClassLibrary.Mail
 				var client = new SmtpClient(SmtpServer);
 				if (SmtpEnableSsl)
 				{
-					client.Port = 465;
 					client.EnableSsl = true;
+					// Enable TLS 1.1 and 1.2
+					var Tls11 = 768;
+					var Tls12 = 3072;
+					ServicePointManager.SecurityProtocol |= (SecurityProtocolType)Tls11 | (SecurityProtocolType)Tls12;
 				}
 				if (!string.IsNullOrEmpty(SmtpUsername))
 				{
 					client.Credentials = new System.Net.NetworkCredential(SmtpUsername, SmtpPassword, SmtpDomain);
 				}
+				client.Port = SmtpPort;
+				client.ServicePoint.BindIPEndPointDelegate = new System.Net.BindIPEndPoint(BindIPEndPointCallback);
+				// Send Email.
 				client.Send(message);
 			}
 			else
@@ -310,6 +331,18 @@ namespace JocysCom.ClassLibrary.Mail
 			SendMessage(message);
 			return message;
 		}
+
+		#region Bind to Local IP
+
+		public delegate IPEndPoint BindIPEndPoint(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount);
+
+		private IPEndPoint BindIPEndPointCallback(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
+		{
+			var endpoint = new IPEndPoint(SmtpLocalAddress, SmtpLocalPort);
+			return endpoint;
+		}
+
+		#endregion
 
 		public static void ApplyRecipients(MailMessage mail, string addFrom, string addTo, string addCc = null, string addBcc = null)
 		{

@@ -384,7 +384,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static void SetSelectedItem<T>(ComboBox control, T value)
 		{
-			if (!Enum.IsDefined(typeof(T), value))
+			if (typeof(T).IsEnum && !Enum.IsDefined(typeof(T), value))
 				value = default(T);
 			if (!Equals(control.SelectedItem, value))
 				control.SelectedItem = value;

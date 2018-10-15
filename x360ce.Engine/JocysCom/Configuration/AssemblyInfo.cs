@@ -235,10 +235,15 @@ namespace JocysCom.ClassLibrary.Configuration
 			return Marshal.PtrToStringUni(AnswerBytes);
 		}
 
-		public static DateTime GetBuildDateTime(string filePath)
+		/// <summary>
+		/// Read build time from the file.
+		/// </summary>
+		public static DateTime GetBuildDateTime(string filePath, TimeZoneInfo tzi = null)
 		{
-			const int c_PeHeaderOffset = 60;
-			const int c_LinkerTimestampOffset = 8;
+			// Constants related to the Windows PE file format.
+			const int PE_HEADER_OFFSET = 60;
+			const int LINKER_TIMESTAMP_OFFSET = 8;
+			// Read header from file
 			byte[] b = new byte[2048];
 			Stream s = null;
 			try
@@ -249,15 +254,38 @@ namespace JocysCom.ClassLibrary.Configuration
 			finally
 			{
 				if (s != null)
-				{
 					s.Close();
-				}
 			}
-			int i = BitConverter.ToInt32(b, c_PeHeaderOffset);
-			int secondsSince1970 = BitConverter.ToInt32(b, i + c_LinkerTimestampOffset);
-			DateTime dt = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-			dt = dt.AddSeconds(secondsSince1970);
-			dt = dt.ToLocalTime();
+			// Read the linker TimeStamp
+			var offset = BitConverter.ToInt32(b, PE_HEADER_OFFSET);
+			var secondsSince1970 = BitConverter.ToInt32(b, offset + LINKER_TIMESTAMP_OFFSET);
+			// Convert the TimeStamp to a DateTime
+			var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+			var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
+			var dt = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tzi ?? TimeZoneInfo.Local);
+			return dt;
+		}
+
+		/// <summary>
+		/// Read build time from the assembly.
+		/// </summary>
+		public static DateTime GetBuildDateTime(Assembly assembly, TimeZoneInfo tzi = null)
+		{
+			// Constants related to the Windows PE file format.
+			const int PE_HEADER_OFFSET = 60;
+			const int LINKER_TIMESTAMP_OFFSET = 8;
+			// Discover the base memory address where our assembly is loaded
+			var entryModule = assembly.ManifestModule;
+			var hMod = Marshal.GetHINSTANCE(entryModule);
+			if (hMod == IntPtr.Zero - 1)
+				throw new Exception("Failed to get HINSTANCE.");
+			// Read the linker TimeStamp
+			var offset = Marshal.ReadInt32(hMod, PE_HEADER_OFFSET);
+			var secondsSince1970 = Marshal.ReadInt32(hMod, offset + LINKER_TIMESTAMP_OFFSET);
+			// Convert the TimeStamp to a DateTime
+			var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+			var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
+			var dt = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tzi ?? TimeZoneInfo.Local);
 			return dt;
 		}
 
