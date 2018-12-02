@@ -162,6 +162,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			catch (Exception ex)
 			{
+				if (!ex.Data.Contains("Mail.DeliveryMethod")) ex.Data.Add("Mail.DeliveryMethod", DeliveryMethod);
+				if (!ex.Data.Contains("Mail.From")) ex.Data.Add("Mail.From", @from);
 				if (!string.IsNullOrEmpty(@to) && !ex.Data.Contains("Mail.To")) ex.Data.Add("Mail.To", @to);
 				if (!string.IsNullOrEmpty(cc) && !ex.Data.Contains("Mail.Cc")) ex.Data.Add("Mail.Cc", cc);
 				if (!string.IsNullOrEmpty(bcc) && !ex.Data.Contains("Mail.Bcc")) ex.Data.Add("Mail.Bcc", bcc);

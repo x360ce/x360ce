@@ -402,7 +402,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SettingsMapItem.cs" />
-    <Compile Include="Issues\DirectXIssue.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_TARGET_TYPE.cs" />
     <Compile Include="ViGEm\Client\Enums\XUSB_REPORT.cs" />
     <Compile Include="ViGEm\Client\ViGEmException.cs" />

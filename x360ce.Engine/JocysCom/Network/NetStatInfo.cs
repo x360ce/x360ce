@@ -178,10 +178,10 @@ namespace JocysCom.ClassLibrary.Network
 						info.IsNetworkAvailable = true;
 						// More configuration = higher priority of IP address.
 						var priority =
-							properties.GatewayAddresses.Count +
-							properties.DnsAddresses.Count +
-							properties.DhcpServerAddresses.Count +
-							properties.WinsServersAddresses.Count;
+							properties.GatewayAddresses.Where(x=>x.Address.AddressFamily == AddressFamily.InterNetwork).Count() +
+							properties.DnsAddresses.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Count() +
+							properties.DhcpServerAddresses.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Count() +
+							properties.WinsServersAddresses.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Count();
 						ips.Add(new KeyValuePair<string, int>(address.ToString(), priority));
 					}
 				}

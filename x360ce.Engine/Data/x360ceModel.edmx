@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
 	<!-- EF Runtime content -->
 	<edmx:Runtime>
 		<!-- SSDL content -->
 		<edmx:StorageModels>
-		<Schema Namespace="x360ceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+		<Schema Namespace="x360ceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="x360ce_Layouts">
           <Key>
             <PropertyRef Name="Id" />
@@ -333,24 +333,24 @@
           <Property Name="WebSite" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
         <EntityContainer Name="x360ceModelStoreContainer">
-          <EntitySet Name="x360ce_Layouts" EntityType="Self.x360ce_Layouts" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_PadSettings" EntityType="Self.x360ce_PadSettings" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_Products" EntityType="Self.x360ce_Products" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_Programs" EntityType="Self.x360ce_Programs" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_Settings" EntityType="Self.x360ce_Settings" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_Summaries" EntityType="Self.x360ce_Summaries" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_UserComputers" EntityType="Self.x360ce_UserComputers" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_UserDevices" EntityType="Self.x360ce_UserDevices" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_UserGames" EntityType="Self.x360ce_UserGames" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_UserInstances" EntityType="Self.x360ce_UserInstances" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_UserProfiles" EntityType="Self.x360ce_UserProfiles" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="x360ce_Vendors" EntityType="Self.x360ce_Vendors" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_Layouts" EntityType="Self.x360ce_Layouts" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_PadSettings" EntityType="Self.x360ce_PadSettings" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_Products" EntityType="Self.x360ce_Products" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_Programs" EntityType="Self.x360ce_Programs" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_Settings" EntityType="Self.x360ce_Settings" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_Summaries" EntityType="Self.x360ce_Summaries" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_UserComputers" EntityType="Self.x360ce_UserComputers" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_UserDevices" EntityType="Self.x360ce_UserDevices" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_UserGames" EntityType="Self.x360ce_UserGames" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_UserInstances" EntityType="Self.x360ce_UserInstances" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_UserProfiles" EntityType="Self.x360ce_UserProfiles" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_Vendors" EntityType="Self.x360ce_Vendors" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
 		<!-- CSDL content -->
 		<edmx:ConceptualModels>
-			<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="x360ceModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
-				<EntityContainer Name="x360ceModelContainer" annotation:LazyLoadingEnabled="true">
+			<Schema Namespace="x360ceModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+				<EntityContainer Name="x360ceModelContainer" annotation:LazyLoadingEnabled="true" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
 					<EntitySet Name="PadSettings" EntityType="x360ceModel.PadSetting" />
 					<EntitySet Name="UserSettings" EntityType="x360ceModel.UserSetting" />
 					<EntitySet Name="Summaries" EntityType="x360ceModel.Summary" />
@@ -502,8 +502,8 @@
           <Property Type="Guid" Name="ProductGuid" Nullable="false" />
           <Property Type="String" Name="ProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="InstanceCount" Nullable="false" />
-          <Property Name="VendorId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
-          <Property Name="ProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="VendorId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Computed" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="ProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Computed" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
         </EntityType>
         <EntityType Name="UserInstance">
           <Key>
@@ -695,7 +695,7 @@
 		</edmx:ConceptualModels>
 		<!-- C-S mapping content -->
 		<edmx:Mappings>
-			<Mapping xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs" Space="C-S">
+			<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
 				<Alias Key="Model" Value="x360ceModel" />
 				<Alias Key="Target" Value="x360ceModel.Store" />
 				<EntityContainerMapping CdmEntityContainer="x360ceModelContainer" StorageEntityContainer="x360ceModelStoreContainer">
@@ -1043,14 +1043,14 @@
 		</edmx:Mappings>
 	</edmx:Runtime>
 	<!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
-	<edmx:Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+	<edmx:Designer>
 		<edmx:Connection>
-			<DesignerInfoPropertySet>
+			<DesignerInfoPropertySet xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
 				<DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
 			</DesignerInfoPropertySet>
 		</edmx:Connection>
 		<edmx:Options>
-			<DesignerInfoPropertySet>
+			<DesignerInfoPropertySet xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
 				<DesignerProperty Name="ValidateOnBuild" Value="true" />
 				<DesignerProperty Name="EnablePluralization" Value="True" />
 				<DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
@@ -1060,7 +1060,7 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="58" >
+			<Diagram Name="x360ceModel" ZoomLevel="58" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
 				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" IsExpanded="false" />
 				<EntityTypeShape EntityType="x360ceModel.UserSetting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />

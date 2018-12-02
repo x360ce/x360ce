@@ -954,7 +954,6 @@ namespace x360ce.App
 			{
 				IssuesPanel.AddIssues(
 					new ExeFileIssue(),
-					new DirectXIssue(),
 					new ArchitectureIssue(),
 					new CppX86RuntimeInstallIssue(),
 					new CppX64RuntimeInstallIssue(),

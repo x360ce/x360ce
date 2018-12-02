@@ -68,7 +68,8 @@ namespace x360ce.App.Issues
 		{
 			if (FixType > 0)
 			{
-				var resourceName = EngineHelper.GetXInputResoureceName();
+				var appArchitecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
+				var resourceName = EngineHelper.GetXInputResoureceName(appArchitecture);
 				var file = EngineHelper.GetDefaultDll();
 				var fileName = file == null
 					? Attributes.GetDescription(XInputMask.XInput13_x86)

@@ -3,6 +3,7 @@
 	/// <summary>
 	/// Write logs lines to a single file.
 	/// </summary>
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
 	public partial class LogHelper
 	{
 		object _LogFileWriterLock = new object();

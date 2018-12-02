@@ -19,7 +19,7 @@ Install:
 
 2.  Visual Leak Detector for Visual C++
 
-    https://vld.codeplex.com
+    https://kinddragon.github.io/vld
 
 3.  Microsoft Windows SDK for Windows 8.1
 

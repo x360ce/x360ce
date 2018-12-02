@@ -450,7 +450,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -469,7 +469,7 @@ namespace x360ce.Engine.Data
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -494,7 +494,7 @@ namespace x360ce.Engine.Data
             {
                 OnNameChanging(value);
                 ReportPropertyChanging("Name");
-                _Name = StructuralObject.SetValidValue(value, false);
+                _Name = StructuralObject.SetValidValue(value, false, "Name");
                 ReportPropertyChanged("Name");
                 OnNameChanged();
             }
@@ -518,7 +518,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonAChanging(value);
                 ReportPropertyChanging("ButtonA");
-                _ButtonA = StructuralObject.SetValidValue(value, false);
+                _ButtonA = StructuralObject.SetValidValue(value, false, "ButtonA");
                 ReportPropertyChanged("ButtonA");
                 OnButtonAChanged();
             }
@@ -542,7 +542,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonBChanging(value);
                 ReportPropertyChanging("ButtonB");
-                _ButtonB = StructuralObject.SetValidValue(value, false);
+                _ButtonB = StructuralObject.SetValidValue(value, false, "ButtonB");
                 ReportPropertyChanged("ButtonB");
                 OnButtonBChanged();
             }
@@ -566,7 +566,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonBackChanging(value);
                 ReportPropertyChanging("ButtonBack");
-                _ButtonBack = StructuralObject.SetValidValue(value, false);
+                _ButtonBack = StructuralObject.SetValidValue(value, false, "ButtonBack");
                 ReportPropertyChanged("ButtonBack");
                 OnButtonBackChanged();
             }
@@ -590,7 +590,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonGuideChanging(value);
                 ReportPropertyChanging("ButtonGuide");
-                _ButtonGuide = StructuralObject.SetValidValue(value, false);
+                _ButtonGuide = StructuralObject.SetValidValue(value, false, "ButtonGuide");
                 ReportPropertyChanged("ButtonGuide");
                 OnButtonGuideChanged();
             }
@@ -614,7 +614,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonStartChanging(value);
                 ReportPropertyChanging("ButtonStart");
-                _ButtonStart = StructuralObject.SetValidValue(value, false);
+                _ButtonStart = StructuralObject.SetValidValue(value, false, "ButtonStart");
                 ReportPropertyChanged("ButtonStart");
                 OnButtonStartChanged();
             }
@@ -638,7 +638,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonXChanging(value);
                 ReportPropertyChanging("ButtonX");
-                _ButtonX = StructuralObject.SetValidValue(value, false);
+                _ButtonX = StructuralObject.SetValidValue(value, false, "ButtonX");
                 ReportPropertyChanged("ButtonX");
                 OnButtonXChanged();
             }
@@ -662,7 +662,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonYChanging(value);
                 ReportPropertyChanging("ButtonY");
-                _ButtonY = StructuralObject.SetValidValue(value, false);
+                _ButtonY = StructuralObject.SetValidValue(value, false, "ButtonY");
                 ReportPropertyChanged("ButtonY");
                 OnButtonYChanged();
             }
@@ -686,7 +686,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadChanging(value);
                 ReportPropertyChanging("DPad");
-                _DPad = StructuralObject.SetValidValue(value, false);
+                _DPad = StructuralObject.SetValidValue(value, false, "DPad");
                 ReportPropertyChanged("DPad");
                 OnDPadChanged();
             }
@@ -710,7 +710,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadDownChanging(value);
                 ReportPropertyChanging("DPadDown");
-                _DPadDown = StructuralObject.SetValidValue(value, false);
+                _DPadDown = StructuralObject.SetValidValue(value, false, "DPadDown");
                 ReportPropertyChanged("DPadDown");
                 OnDPadDownChanged();
             }
@@ -734,7 +734,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadLeftChanging(value);
                 ReportPropertyChanging("DPadLeft");
-                _DPadLeft = StructuralObject.SetValidValue(value, false);
+                _DPadLeft = StructuralObject.SetValidValue(value, false, "DPadLeft");
                 ReportPropertyChanged("DPadLeft");
                 OnDPadLeftChanged();
             }
@@ -758,7 +758,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadRightChanging(value);
                 ReportPropertyChanging("DPadRight");
-                _DPadRight = StructuralObject.SetValidValue(value, false);
+                _DPadRight = StructuralObject.SetValidValue(value, false, "DPadRight");
                 ReportPropertyChanged("DPadRight");
                 OnDPadRightChanged();
             }
@@ -782,7 +782,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadUpChanging(value);
                 ReportPropertyChanging("DPadUp");
-                _DPadUp = StructuralObject.SetValidValue(value, false);
+                _DPadUp = StructuralObject.SetValidValue(value, false, "DPadUp");
                 ReportPropertyChanged("DPadUp");
                 OnDPadUpChanged();
             }
@@ -806,7 +806,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftShoulderChanging(value);
                 ReportPropertyChanging("LeftShoulder");
-                _LeftShoulder = StructuralObject.SetValidValue(value, false);
+                _LeftShoulder = StructuralObject.SetValidValue(value, false, "LeftShoulder");
                 ReportPropertyChanged("LeftShoulder");
                 OnLeftShoulderChanged();
             }
@@ -830,7 +830,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbAxisXChanging(value);
                 ReportPropertyChanging("LeftThumbAxisX");
-                _LeftThumbAxisX = StructuralObject.SetValidValue(value, false);
+                _LeftThumbAxisX = StructuralObject.SetValidValue(value, false, "LeftThumbAxisX");
                 ReportPropertyChanged("LeftThumbAxisX");
                 OnLeftThumbAxisXChanged();
             }
@@ -854,7 +854,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbAxisYChanging(value);
                 ReportPropertyChanging("LeftThumbAxisY");
-                _LeftThumbAxisY = StructuralObject.SetValidValue(value, false);
+                _LeftThumbAxisY = StructuralObject.SetValidValue(value, false, "LeftThumbAxisY");
                 ReportPropertyChanged("LeftThumbAxisY");
                 OnLeftThumbAxisYChanged();
             }
@@ -878,7 +878,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbButtonChanging(value);
                 ReportPropertyChanging("LeftThumbButton");
-                _LeftThumbButton = StructuralObject.SetValidValue(value, false);
+                _LeftThumbButton = StructuralObject.SetValidValue(value, false, "LeftThumbButton");
                 ReportPropertyChanged("LeftThumbButton");
                 OnLeftThumbButtonChanged();
             }
@@ -902,7 +902,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbDownChanging(value);
                 ReportPropertyChanging("LeftThumbDown");
-                _LeftThumbDown = StructuralObject.SetValidValue(value, false);
+                _LeftThumbDown = StructuralObject.SetValidValue(value, false, "LeftThumbDown");
                 ReportPropertyChanged("LeftThumbDown");
                 OnLeftThumbDownChanged();
             }
@@ -926,7 +926,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbLeftChanging(value);
                 ReportPropertyChanging("LeftThumbLeft");
-                _LeftThumbLeft = StructuralObject.SetValidValue(value, false);
+                _LeftThumbLeft = StructuralObject.SetValidValue(value, false, "LeftThumbLeft");
                 ReportPropertyChanged("LeftThumbLeft");
                 OnLeftThumbLeftChanged();
             }
@@ -950,7 +950,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbRightChanging(value);
                 ReportPropertyChanging("LeftThumbRight");
-                _LeftThumbRight = StructuralObject.SetValidValue(value, false);
+                _LeftThumbRight = StructuralObject.SetValidValue(value, false, "LeftThumbRight");
                 ReportPropertyChanged("LeftThumbRight");
                 OnLeftThumbRightChanged();
             }
@@ -974,7 +974,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbUpChanging(value);
                 ReportPropertyChanging("LeftThumbUp");
-                _LeftThumbUp = StructuralObject.SetValidValue(value, false);
+                _LeftThumbUp = StructuralObject.SetValidValue(value, false, "LeftThumbUp");
                 ReportPropertyChanged("LeftThumbUp");
                 OnLeftThumbUpChanged();
             }
@@ -998,7 +998,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftTriggerChanging(value);
                 ReportPropertyChanging("LeftTrigger");
-                _LeftTrigger = StructuralObject.SetValidValue(value, false);
+                _LeftTrigger = StructuralObject.SetValidValue(value, false, "LeftTrigger");
                 ReportPropertyChanged("LeftTrigger");
                 OnLeftTriggerChanged();
             }
@@ -1022,7 +1022,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightShoulderChanging(value);
                 ReportPropertyChanging("RightShoulder");
-                _RightShoulder = StructuralObject.SetValidValue(value, false);
+                _RightShoulder = StructuralObject.SetValidValue(value, false, "RightShoulder");
                 ReportPropertyChanged("RightShoulder");
                 OnRightShoulderChanged();
             }
@@ -1046,7 +1046,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbAxisXChanging(value);
                 ReportPropertyChanging("RightThumbAxisX");
-                _RightThumbAxisX = StructuralObject.SetValidValue(value, false);
+                _RightThumbAxisX = StructuralObject.SetValidValue(value, false, "RightThumbAxisX");
                 ReportPropertyChanged("RightThumbAxisX");
                 OnRightThumbAxisXChanged();
             }
@@ -1070,7 +1070,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbAxisYChanging(value);
                 ReportPropertyChanging("RightThumbAxisY");
-                _RightThumbAxisY = StructuralObject.SetValidValue(value, false);
+                _RightThumbAxisY = StructuralObject.SetValidValue(value, false, "RightThumbAxisY");
                 ReportPropertyChanged("RightThumbAxisY");
                 OnRightThumbAxisYChanged();
             }
@@ -1094,7 +1094,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbButtonChanging(value);
                 ReportPropertyChanging("RightThumbButton");
-                _RightThumbButton = StructuralObject.SetValidValue(value, false);
+                _RightThumbButton = StructuralObject.SetValidValue(value, false, "RightThumbButton");
                 ReportPropertyChanged("RightThumbButton");
                 OnRightThumbButtonChanged();
             }
@@ -1118,7 +1118,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbDownChanging(value);
                 ReportPropertyChanging("RightThumbDown");
-                _RightThumbDown = StructuralObject.SetValidValue(value, false);
+                _RightThumbDown = StructuralObject.SetValidValue(value, false, "RightThumbDown");
                 ReportPropertyChanged("RightThumbDown");
                 OnRightThumbDownChanged();
             }
@@ -1142,7 +1142,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbLeftChanging(value);
                 ReportPropertyChanging("RightThumbLeft");
-                _RightThumbLeft = StructuralObject.SetValidValue(value, false);
+                _RightThumbLeft = StructuralObject.SetValidValue(value, false, "RightThumbLeft");
                 ReportPropertyChanged("RightThumbLeft");
                 OnRightThumbLeftChanged();
             }
@@ -1166,7 +1166,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbRightChanging(value);
                 ReportPropertyChanging("RightThumbRight");
-                _RightThumbRight = StructuralObject.SetValidValue(value, false);
+                _RightThumbRight = StructuralObject.SetValidValue(value, false, "RightThumbRight");
                 ReportPropertyChanged("RightThumbRight");
                 OnRightThumbRightChanged();
             }
@@ -1190,7 +1190,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbUpChanging(value);
                 ReportPropertyChanging("RightThumbUp");
-                _RightThumbUp = StructuralObject.SetValidValue(value, false);
+                _RightThumbUp = StructuralObject.SetValidValue(value, false, "RightThumbUp");
                 ReportPropertyChanged("RightThumbUp");
                 OnRightThumbUpChanged();
             }
@@ -1214,7 +1214,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightTriggerChanging(value);
                 ReportPropertyChanging("RightTrigger");
-                _RightTrigger = StructuralObject.SetValidValue(value, false);
+                _RightTrigger = StructuralObject.SetValidValue(value, false, "RightTrigger");
                 ReportPropertyChanged("RightTrigger");
                 OnRightTriggerChanged();
             }
@@ -1225,7 +1225,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -1405,7 +1404,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -1424,7 +1423,7 @@ namespace x360ce.Engine.Data
                 {
                     OnPadSettingChecksumChanging(value);
                     ReportPropertyChanging("PadSettingChecksum");
-                    _PadSettingChecksum = StructuralObject.SetValidValue(value);
+                    _PadSettingChecksum = StructuralObject.SetValidValue(value, "PadSettingChecksum");
                     ReportPropertyChanged("PadSettingChecksum");
                     OnPadSettingChecksumChanged();
                 }
@@ -1449,7 +1448,7 @@ namespace x360ce.Engine.Data
             {
                 OnAxisToDPadDeadZoneChanging(value);
                 ReportPropertyChanging("AxisToDPadDeadZone");
-                _AxisToDPadDeadZone = StructuralObject.SetValidValue(value, false);
+                _AxisToDPadDeadZone = StructuralObject.SetValidValue(value, false, "AxisToDPadDeadZone");
                 ReportPropertyChanged("AxisToDPadDeadZone");
                 OnAxisToDPadDeadZoneChanged();
             }
@@ -1473,7 +1472,7 @@ namespace x360ce.Engine.Data
             {
                 OnAxisToDPadEnabledChanging(value);
                 ReportPropertyChanging("AxisToDPadEnabled");
-                _AxisToDPadEnabled = StructuralObject.SetValidValue(value, false);
+                _AxisToDPadEnabled = StructuralObject.SetValidValue(value, false, "AxisToDPadEnabled");
                 ReportPropertyChanged("AxisToDPadEnabled");
                 OnAxisToDPadEnabledChanged();
             }
@@ -1497,7 +1496,7 @@ namespace x360ce.Engine.Data
             {
                 OnAxisToDPadOffsetChanging(value);
                 ReportPropertyChanging("AxisToDPadOffset");
-                _AxisToDPadOffset = StructuralObject.SetValidValue(value, false);
+                _AxisToDPadOffset = StructuralObject.SetValidValue(value, false, "AxisToDPadOffset");
                 ReportPropertyChanged("AxisToDPadOffset");
                 OnAxisToDPadOffsetChanged();
             }
@@ -1521,7 +1520,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonAChanging(value);
                 ReportPropertyChanging("ButtonA");
-                _ButtonA = StructuralObject.SetValidValue(value, false);
+                _ButtonA = StructuralObject.SetValidValue(value, false, "ButtonA");
                 ReportPropertyChanged("ButtonA");
                 OnButtonAChanged();
             }
@@ -1545,7 +1544,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonBChanging(value);
                 ReportPropertyChanging("ButtonB");
-                _ButtonB = StructuralObject.SetValidValue(value, false);
+                _ButtonB = StructuralObject.SetValidValue(value, false, "ButtonB");
                 ReportPropertyChanged("ButtonB");
                 OnButtonBChanged();
             }
@@ -1569,7 +1568,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonBackChanging(value);
                 ReportPropertyChanging("ButtonBack");
-                _ButtonBack = StructuralObject.SetValidValue(value, false);
+                _ButtonBack = StructuralObject.SetValidValue(value, false, "ButtonBack");
                 ReportPropertyChanged("ButtonBack");
                 OnButtonBackChanged();
             }
@@ -1593,7 +1592,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonGuideChanging(value);
                 ReportPropertyChanging("ButtonGuide");
-                _ButtonGuide = StructuralObject.SetValidValue(value, false);
+                _ButtonGuide = StructuralObject.SetValidValue(value, false, "ButtonGuide");
                 ReportPropertyChanged("ButtonGuide");
                 OnButtonGuideChanged();
             }
@@ -1617,7 +1616,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonStartChanging(value);
                 ReportPropertyChanging("ButtonStart");
-                _ButtonStart = StructuralObject.SetValidValue(value, false);
+                _ButtonStart = StructuralObject.SetValidValue(value, false, "ButtonStart");
                 ReportPropertyChanged("ButtonStart");
                 OnButtonStartChanged();
             }
@@ -1641,7 +1640,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonXChanging(value);
                 ReportPropertyChanging("ButtonX");
-                _ButtonX = StructuralObject.SetValidValue(value, false);
+                _ButtonX = StructuralObject.SetValidValue(value, false, "ButtonX");
                 ReportPropertyChanged("ButtonX");
                 OnButtonXChanged();
             }
@@ -1665,7 +1664,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonYChanging(value);
                 ReportPropertyChanging("ButtonY");
-                _ButtonY = StructuralObject.SetValidValue(value, false);
+                _ButtonY = StructuralObject.SetValidValue(value, false, "ButtonY");
                 ReportPropertyChanged("ButtonY");
                 OnButtonYChanged();
             }
@@ -1689,7 +1688,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadChanging(value);
                 ReportPropertyChanging("DPad");
-                _DPad = StructuralObject.SetValidValue(value, false);
+                _DPad = StructuralObject.SetValidValue(value, false, "DPad");
                 ReportPropertyChanged("DPad");
                 OnDPadChanged();
             }
@@ -1713,7 +1712,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadDownChanging(value);
                 ReportPropertyChanging("DPadDown");
-                _DPadDown = StructuralObject.SetValidValue(value, false);
+                _DPadDown = StructuralObject.SetValidValue(value, false, "DPadDown");
                 ReportPropertyChanged("DPadDown");
                 OnDPadDownChanged();
             }
@@ -1737,7 +1736,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadLeftChanging(value);
                 ReportPropertyChanging("DPadLeft");
-                _DPadLeft = StructuralObject.SetValidValue(value, false);
+                _DPadLeft = StructuralObject.SetValidValue(value, false, "DPadLeft");
                 ReportPropertyChanged("DPadLeft");
                 OnDPadLeftChanged();
             }
@@ -1761,7 +1760,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadRightChanging(value);
                 ReportPropertyChanging("DPadRight");
-                _DPadRight = StructuralObject.SetValidValue(value, false);
+                _DPadRight = StructuralObject.SetValidValue(value, false, "DPadRight");
                 ReportPropertyChanged("DPadRight");
                 OnDPadRightChanged();
             }
@@ -1785,7 +1784,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadUpChanging(value);
                 ReportPropertyChanging("DPadUp");
-                _DPadUp = StructuralObject.SetValidValue(value, false);
+                _DPadUp = StructuralObject.SetValidValue(value, false, "DPadUp");
                 ReportPropertyChanged("DPadUp");
                 OnDPadUpChanged();
             }
@@ -1809,7 +1808,7 @@ namespace x360ce.Engine.Data
             {
                 OnForceEnableChanging(value);
                 ReportPropertyChanging("ForceEnable");
-                _ForceEnable = StructuralObject.SetValidValue(value, false);
+                _ForceEnable = StructuralObject.SetValidValue(value, false, "ForceEnable");
                 ReportPropertyChanged("ForceEnable");
                 OnForceEnableChanged();
             }
@@ -1833,7 +1832,7 @@ namespace x360ce.Engine.Data
             {
                 OnForceOverallChanging(value);
                 ReportPropertyChanging("ForceOverall");
-                _ForceOverall = StructuralObject.SetValidValue(value, false);
+                _ForceOverall = StructuralObject.SetValidValue(value, false, "ForceOverall");
                 ReportPropertyChanged("ForceOverall");
                 OnForceOverallChanged();
             }
@@ -1857,7 +1856,7 @@ namespace x360ce.Engine.Data
             {
                 OnForceSwapMotorChanging(value);
                 ReportPropertyChanging("ForceSwapMotor");
-                _ForceSwapMotor = StructuralObject.SetValidValue(value, false);
+                _ForceSwapMotor = StructuralObject.SetValidValue(value, false, "ForceSwapMotor");
                 ReportPropertyChanged("ForceSwapMotor");
                 OnForceSwapMotorChanged();
             }
@@ -1881,7 +1880,7 @@ namespace x360ce.Engine.Data
             {
                 OnForceTypeChanging(value);
                 ReportPropertyChanging("ForceType");
-                _ForceType = StructuralObject.SetValidValue(value, false);
+                _ForceType = StructuralObject.SetValidValue(value, false, "ForceType");
                 ReportPropertyChanged("ForceType");
                 OnForceTypeChanged();
             }
@@ -1905,7 +1904,7 @@ namespace x360ce.Engine.Data
             {
                 OnGamePadTypeChanging(value);
                 ReportPropertyChanging("GamePadType");
-                _GamePadType = StructuralObject.SetValidValue(value, false);
+                _GamePadType = StructuralObject.SetValidValue(value, false, "GamePadType");
                 ReportPropertyChanged("GamePadType");
                 OnGamePadTypeChanged();
             }
@@ -1929,7 +1928,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftMotorPeriodChanging(value);
                 ReportPropertyChanging("LeftMotorPeriod");
-                _LeftMotorPeriod = StructuralObject.SetValidValue(value, false);
+                _LeftMotorPeriod = StructuralObject.SetValidValue(value, false, "LeftMotorPeriod");
                 ReportPropertyChanged("LeftMotorPeriod");
                 OnLeftMotorPeriodChanged();
             }
@@ -1953,7 +1952,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftShoulderChanging(value);
                 ReportPropertyChanging("LeftShoulder");
-                _LeftShoulder = StructuralObject.SetValidValue(value, false);
+                _LeftShoulder = StructuralObject.SetValidValue(value, false, "LeftShoulder");
                 ReportPropertyChanged("LeftShoulder");
                 OnLeftShoulderChanged();
             }
@@ -1977,7 +1976,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbAntiDeadZoneXChanging(value);
                 ReportPropertyChanging("LeftThumbAntiDeadZoneX");
-                _LeftThumbAntiDeadZoneX = StructuralObject.SetValidValue(value, false);
+                _LeftThumbAntiDeadZoneX = StructuralObject.SetValidValue(value, false, "LeftThumbAntiDeadZoneX");
                 ReportPropertyChanged("LeftThumbAntiDeadZoneX");
                 OnLeftThumbAntiDeadZoneXChanged();
             }
@@ -2001,7 +2000,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbAntiDeadZoneYChanging(value);
                 ReportPropertyChanging("LeftThumbAntiDeadZoneY");
-                _LeftThumbAntiDeadZoneY = StructuralObject.SetValidValue(value, false);
+                _LeftThumbAntiDeadZoneY = StructuralObject.SetValidValue(value, false, "LeftThumbAntiDeadZoneY");
                 ReportPropertyChanged("LeftThumbAntiDeadZoneY");
                 OnLeftThumbAntiDeadZoneYChanged();
             }
@@ -2025,7 +2024,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbAxisXChanging(value);
                 ReportPropertyChanging("LeftThumbAxisX");
-                _LeftThumbAxisX = StructuralObject.SetValidValue(value, false);
+                _LeftThumbAxisX = StructuralObject.SetValidValue(value, false, "LeftThumbAxisX");
                 ReportPropertyChanged("LeftThumbAxisX");
                 OnLeftThumbAxisXChanged();
             }
@@ -2049,7 +2048,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbAxisYChanging(value);
                 ReportPropertyChanging("LeftThumbAxisY");
-                _LeftThumbAxisY = StructuralObject.SetValidValue(value, false);
+                _LeftThumbAxisY = StructuralObject.SetValidValue(value, false, "LeftThumbAxisY");
                 ReportPropertyChanged("LeftThumbAxisY");
                 OnLeftThumbAxisYChanged();
             }
@@ -2073,7 +2072,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbButtonChanging(value);
                 ReportPropertyChanging("LeftThumbButton");
-                _LeftThumbButton = StructuralObject.SetValidValue(value, false);
+                _LeftThumbButton = StructuralObject.SetValidValue(value, false, "LeftThumbButton");
                 ReportPropertyChanged("LeftThumbButton");
                 OnLeftThumbButtonChanged();
             }
@@ -2097,7 +2096,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbDeadZoneXChanging(value);
                 ReportPropertyChanging("LeftThumbDeadZoneX");
-                _LeftThumbDeadZoneX = StructuralObject.SetValidValue(value, false);
+                _LeftThumbDeadZoneX = StructuralObject.SetValidValue(value, false, "LeftThumbDeadZoneX");
                 ReportPropertyChanged("LeftThumbDeadZoneX");
                 OnLeftThumbDeadZoneXChanged();
             }
@@ -2121,7 +2120,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbDeadZoneYChanging(value);
                 ReportPropertyChanging("LeftThumbDeadZoneY");
-                _LeftThumbDeadZoneY = StructuralObject.SetValidValue(value, false);
+                _LeftThumbDeadZoneY = StructuralObject.SetValidValue(value, false, "LeftThumbDeadZoneY");
                 ReportPropertyChanged("LeftThumbDeadZoneY");
                 OnLeftThumbDeadZoneYChanged();
             }
@@ -2145,7 +2144,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbDownChanging(value);
                 ReportPropertyChanging("LeftThumbDown");
-                _LeftThumbDown = StructuralObject.SetValidValue(value, false);
+                _LeftThumbDown = StructuralObject.SetValidValue(value, false, "LeftThumbDown");
                 ReportPropertyChanged("LeftThumbDown");
                 OnLeftThumbDownChanged();
             }
@@ -2169,7 +2168,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbLeftChanging(value);
                 ReportPropertyChanging("LeftThumbLeft");
-                _LeftThumbLeft = StructuralObject.SetValidValue(value, false);
+                _LeftThumbLeft = StructuralObject.SetValidValue(value, false, "LeftThumbLeft");
                 ReportPropertyChanged("LeftThumbLeft");
                 OnLeftThumbLeftChanged();
             }
@@ -2193,7 +2192,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbRightChanging(value);
                 ReportPropertyChanging("LeftThumbRight");
-                _LeftThumbRight = StructuralObject.SetValidValue(value, false);
+                _LeftThumbRight = StructuralObject.SetValidValue(value, false, "LeftThumbRight");
                 ReportPropertyChanged("LeftThumbRight");
                 OnLeftThumbRightChanged();
             }
@@ -2217,7 +2216,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbUpChanging(value);
                 ReportPropertyChanging("LeftThumbUp");
-                _LeftThumbUp = StructuralObject.SetValidValue(value, false);
+                _LeftThumbUp = StructuralObject.SetValidValue(value, false, "LeftThumbUp");
                 ReportPropertyChanged("LeftThumbUp");
                 OnLeftThumbUpChanged();
             }
@@ -2241,7 +2240,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftTriggerChanging(value);
                 ReportPropertyChanging("LeftTrigger");
-                _LeftTrigger = StructuralObject.SetValidValue(value, false);
+                _LeftTrigger = StructuralObject.SetValidValue(value, false, "LeftTrigger");
                 ReportPropertyChanged("LeftTrigger");
                 OnLeftTriggerChanged();
             }
@@ -2265,7 +2264,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftTriggerDeadZoneChanging(value);
                 ReportPropertyChanging("LeftTriggerDeadZone");
-                _LeftTriggerDeadZone = StructuralObject.SetValidValue(value, false);
+                _LeftTriggerDeadZone = StructuralObject.SetValidValue(value, false, "LeftTriggerDeadZone");
                 ReportPropertyChanged("LeftTriggerDeadZone");
                 OnLeftTriggerDeadZoneChanged();
             }
@@ -2289,7 +2288,7 @@ namespace x360ce.Engine.Data
             {
                 OnPassThroughChanging(value);
                 ReportPropertyChanging("PassThrough");
-                _PassThrough = StructuralObject.SetValidValue(value, false);
+                _PassThrough = StructuralObject.SetValidValue(value, false, "PassThrough");
                 ReportPropertyChanged("PassThrough");
                 OnPassThroughChanged();
             }
@@ -2313,7 +2312,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightMotorPeriodChanging(value);
                 ReportPropertyChanging("RightMotorPeriod");
-                _RightMotorPeriod = StructuralObject.SetValidValue(value, false);
+                _RightMotorPeriod = StructuralObject.SetValidValue(value, false, "RightMotorPeriod");
                 ReportPropertyChanged("RightMotorPeriod");
                 OnRightMotorPeriodChanged();
             }
@@ -2337,7 +2336,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightShoulderChanging(value);
                 ReportPropertyChanging("RightShoulder");
-                _RightShoulder = StructuralObject.SetValidValue(value, false);
+                _RightShoulder = StructuralObject.SetValidValue(value, false, "RightShoulder");
                 ReportPropertyChanged("RightShoulder");
                 OnRightShoulderChanged();
             }
@@ -2361,7 +2360,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbAntiDeadZoneXChanging(value);
                 ReportPropertyChanging("RightThumbAntiDeadZoneX");
-                _RightThumbAntiDeadZoneX = StructuralObject.SetValidValue(value, false);
+                _RightThumbAntiDeadZoneX = StructuralObject.SetValidValue(value, false, "RightThumbAntiDeadZoneX");
                 ReportPropertyChanged("RightThumbAntiDeadZoneX");
                 OnRightThumbAntiDeadZoneXChanged();
             }
@@ -2385,7 +2384,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbAntiDeadZoneYChanging(value);
                 ReportPropertyChanging("RightThumbAntiDeadZoneY");
-                _RightThumbAntiDeadZoneY = StructuralObject.SetValidValue(value, false);
+                _RightThumbAntiDeadZoneY = StructuralObject.SetValidValue(value, false, "RightThumbAntiDeadZoneY");
                 ReportPropertyChanged("RightThumbAntiDeadZoneY");
                 OnRightThumbAntiDeadZoneYChanged();
             }
@@ -2409,7 +2408,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbAxisXChanging(value);
                 ReportPropertyChanging("RightThumbAxisX");
-                _RightThumbAxisX = StructuralObject.SetValidValue(value, false);
+                _RightThumbAxisX = StructuralObject.SetValidValue(value, false, "RightThumbAxisX");
                 ReportPropertyChanged("RightThumbAxisX");
                 OnRightThumbAxisXChanged();
             }
@@ -2433,7 +2432,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbAxisYChanging(value);
                 ReportPropertyChanging("RightThumbAxisY");
-                _RightThumbAxisY = StructuralObject.SetValidValue(value, false);
+                _RightThumbAxisY = StructuralObject.SetValidValue(value, false, "RightThumbAxisY");
                 ReportPropertyChanged("RightThumbAxisY");
                 OnRightThumbAxisYChanged();
             }
@@ -2457,7 +2456,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbButtonChanging(value);
                 ReportPropertyChanging("RightThumbButton");
-                _RightThumbButton = StructuralObject.SetValidValue(value, false);
+                _RightThumbButton = StructuralObject.SetValidValue(value, false, "RightThumbButton");
                 ReportPropertyChanged("RightThumbButton");
                 OnRightThumbButtonChanged();
             }
@@ -2481,7 +2480,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbDeadZoneXChanging(value);
                 ReportPropertyChanging("RightThumbDeadZoneX");
-                _RightThumbDeadZoneX = StructuralObject.SetValidValue(value, false);
+                _RightThumbDeadZoneX = StructuralObject.SetValidValue(value, false, "RightThumbDeadZoneX");
                 ReportPropertyChanged("RightThumbDeadZoneX");
                 OnRightThumbDeadZoneXChanged();
             }
@@ -2505,7 +2504,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbDeadZoneYChanging(value);
                 ReportPropertyChanging("RightThumbDeadZoneY");
-                _RightThumbDeadZoneY = StructuralObject.SetValidValue(value, false);
+                _RightThumbDeadZoneY = StructuralObject.SetValidValue(value, false, "RightThumbDeadZoneY");
                 ReportPropertyChanged("RightThumbDeadZoneY");
                 OnRightThumbDeadZoneYChanged();
             }
@@ -2529,7 +2528,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbDownChanging(value);
                 ReportPropertyChanging("RightThumbDown");
-                _RightThumbDown = StructuralObject.SetValidValue(value, false);
+                _RightThumbDown = StructuralObject.SetValidValue(value, false, "RightThumbDown");
                 ReportPropertyChanged("RightThumbDown");
                 OnRightThumbDownChanged();
             }
@@ -2553,7 +2552,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbLeftChanging(value);
                 ReportPropertyChanging("RightThumbLeft");
-                _RightThumbLeft = StructuralObject.SetValidValue(value, false);
+                _RightThumbLeft = StructuralObject.SetValidValue(value, false, "RightThumbLeft");
                 ReportPropertyChanged("RightThumbLeft");
                 OnRightThumbLeftChanged();
             }
@@ -2577,7 +2576,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbRightChanging(value);
                 ReportPropertyChanging("RightThumbRight");
-                _RightThumbRight = StructuralObject.SetValidValue(value, false);
+                _RightThumbRight = StructuralObject.SetValidValue(value, false, "RightThumbRight");
                 ReportPropertyChanged("RightThumbRight");
                 OnRightThumbRightChanged();
             }
@@ -2601,7 +2600,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbUpChanging(value);
                 ReportPropertyChanging("RightThumbUp");
-                _RightThumbUp = StructuralObject.SetValidValue(value, false);
+                _RightThumbUp = StructuralObject.SetValidValue(value, false, "RightThumbUp");
                 ReportPropertyChanged("RightThumbUp");
                 OnRightThumbUpChanged();
             }
@@ -2625,7 +2624,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightTriggerChanging(value);
                 ReportPropertyChanging("RightTrigger");
-                _RightTrigger = StructuralObject.SetValidValue(value, false);
+                _RightTrigger = StructuralObject.SetValidValue(value, false, "RightTrigger");
                 ReportPropertyChanged("RightTrigger");
                 OnRightTriggerChanged();
             }
@@ -2649,7 +2648,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightTriggerDeadZoneChanging(value);
                 ReportPropertyChanging("RightTriggerDeadZone");
-                _RightTriggerDeadZone = StructuralObject.SetValidValue(value, false);
+                _RightTriggerDeadZone = StructuralObject.SetValidValue(value, false, "RightTriggerDeadZone");
                 ReportPropertyChanged("RightTriggerDeadZone");
                 OnRightTriggerDeadZoneChanged();
             }
@@ -2673,7 +2672,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbLinearXChanging(value);
                 ReportPropertyChanging("LeftThumbLinearX");
-                _LeftThumbLinearX = StructuralObject.SetValidValue(value, false);
+                _LeftThumbLinearX = StructuralObject.SetValidValue(value, false, "LeftThumbLinearX");
                 ReportPropertyChanged("LeftThumbLinearX");
                 OnLeftThumbLinearXChanged();
             }
@@ -2697,7 +2696,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbLinearYChanging(value);
                 ReportPropertyChanging("LeftThumbLinearY");
-                _LeftThumbLinearY = StructuralObject.SetValidValue(value, false);
+                _LeftThumbLinearY = StructuralObject.SetValidValue(value, false, "LeftThumbLinearY");
                 ReportPropertyChanged("LeftThumbLinearY");
                 OnLeftThumbLinearYChanged();
             }
@@ -2721,7 +2720,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbLinearXChanging(value);
                 ReportPropertyChanging("RightThumbLinearX");
-                _RightThumbLinearX = StructuralObject.SetValidValue(value, false);
+                _RightThumbLinearX = StructuralObject.SetValidValue(value, false, "RightThumbLinearX");
                 ReportPropertyChanged("RightThumbLinearX");
                 OnRightThumbLinearXChanged();
             }
@@ -2745,7 +2744,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbLinearYChanging(value);
                 ReportPropertyChanging("RightThumbLinearY");
-                _RightThumbLinearY = StructuralObject.SetValidValue(value, false);
+                _RightThumbLinearY = StructuralObject.SetValidValue(value, false, "RightThumbLinearY");
                 ReportPropertyChanged("RightThumbLinearY");
                 OnRightThumbLinearYChanged();
             }
@@ -2769,7 +2768,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftMotorStrengthChanging(value);
                 ReportPropertyChanging("LeftMotorStrength");
-                _LeftMotorStrength = StructuralObject.SetValidValue(value, false);
+                _LeftMotorStrength = StructuralObject.SetValidValue(value, false, "LeftMotorStrength");
                 ReportPropertyChanged("LeftMotorStrength");
                 OnLeftMotorStrengthChanged();
             }
@@ -2793,7 +2792,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightMotorStrengthChanging(value);
                 ReportPropertyChanging("RightMotorStrength");
-                _RightMotorStrength = StructuralObject.SetValidValue(value, false);
+                _RightMotorStrength = StructuralObject.SetValidValue(value, false, "RightMotorStrength");
                 ReportPropertyChanged("RightMotorStrength");
                 OnRightMotorStrengthChanged();
             }
@@ -2817,7 +2816,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftMotorDirectionChanging(value);
                 ReportPropertyChanging("LeftMotorDirection");
-                _LeftMotorDirection = StructuralObject.SetValidValue(value, false);
+                _LeftMotorDirection = StructuralObject.SetValidValue(value, false, "LeftMotorDirection");
                 ReportPropertyChanged("LeftMotorDirection");
                 OnLeftMotorDirectionChanged();
             }
@@ -2841,7 +2840,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightMotorDirectionChanging(value);
                 ReportPropertyChanging("RightMotorDirection");
-                _RightMotorDirection = StructuralObject.SetValidValue(value, false);
+                _RightMotorDirection = StructuralObject.SetValidValue(value, false, "RightMotorDirection");
                 ReportPropertyChanged("RightMotorDirection");
                 OnRightMotorDirectionChanged();
             }
@@ -2865,7 +2864,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonADeadZoneChanging(value);
                 ReportPropertyChanging("ButtonADeadZone");
-                _ButtonADeadZone = StructuralObject.SetValidValue(value, false);
+                _ButtonADeadZone = StructuralObject.SetValidValue(value, false, "ButtonADeadZone");
                 ReportPropertyChanged("ButtonADeadZone");
                 OnButtonADeadZoneChanged();
             }
@@ -2889,7 +2888,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonBDeadZoneChanging(value);
                 ReportPropertyChanging("ButtonBDeadZone");
-                _ButtonBDeadZone = StructuralObject.SetValidValue(value, false);
+                _ButtonBDeadZone = StructuralObject.SetValidValue(value, false, "ButtonBDeadZone");
                 ReportPropertyChanged("ButtonBDeadZone");
                 OnButtonBDeadZoneChanged();
             }
@@ -2913,7 +2912,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonBackDeadZoneChanging(value);
                 ReportPropertyChanging("ButtonBackDeadZone");
-                _ButtonBackDeadZone = StructuralObject.SetValidValue(value, false);
+                _ButtonBackDeadZone = StructuralObject.SetValidValue(value, false, "ButtonBackDeadZone");
                 ReportPropertyChanged("ButtonBackDeadZone");
                 OnButtonBackDeadZoneChanged();
             }
@@ -2937,7 +2936,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonStartDeadZoneChanging(value);
                 ReportPropertyChanging("ButtonStartDeadZone");
-                _ButtonStartDeadZone = StructuralObject.SetValidValue(value, false);
+                _ButtonStartDeadZone = StructuralObject.SetValidValue(value, false, "ButtonStartDeadZone");
                 ReportPropertyChanged("ButtonStartDeadZone");
                 OnButtonStartDeadZoneChanged();
             }
@@ -2961,7 +2960,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonXDeadZoneChanging(value);
                 ReportPropertyChanging("ButtonXDeadZone");
-                _ButtonXDeadZone = StructuralObject.SetValidValue(value, false);
+                _ButtonXDeadZone = StructuralObject.SetValidValue(value, false, "ButtonXDeadZone");
                 ReportPropertyChanged("ButtonXDeadZone");
                 OnButtonXDeadZoneChanged();
             }
@@ -2985,7 +2984,7 @@ namespace x360ce.Engine.Data
             {
                 OnButtonYDeadZoneChanging(value);
                 ReportPropertyChanging("ButtonYDeadZone");
-                _ButtonYDeadZone = StructuralObject.SetValidValue(value, false);
+                _ButtonYDeadZone = StructuralObject.SetValidValue(value, false, "ButtonYDeadZone");
                 ReportPropertyChanged("ButtonYDeadZone");
                 OnButtonYDeadZoneChanged();
             }
@@ -3009,7 +3008,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftThumbButtonDeadZoneChanging(value);
                 ReportPropertyChanging("LeftThumbButtonDeadZone");
-                _LeftThumbButtonDeadZone = StructuralObject.SetValidValue(value, false);
+                _LeftThumbButtonDeadZone = StructuralObject.SetValidValue(value, false, "LeftThumbButtonDeadZone");
                 ReportPropertyChanged("LeftThumbButtonDeadZone");
                 OnLeftThumbButtonDeadZoneChanged();
             }
@@ -3033,7 +3032,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightThumbButtonDeadZoneChanging(value);
                 ReportPropertyChanging("RightThumbButtonDeadZone");
-                _RightThumbButtonDeadZone = StructuralObject.SetValidValue(value, false);
+                _RightThumbButtonDeadZone = StructuralObject.SetValidValue(value, false, "RightThumbButtonDeadZone");
                 ReportPropertyChanged("RightThumbButtonDeadZone");
                 OnRightThumbButtonDeadZoneChanged();
             }
@@ -3057,7 +3056,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftShoulderDeadZoneChanging(value);
                 ReportPropertyChanging("LeftShoulderDeadZone");
-                _LeftShoulderDeadZone = StructuralObject.SetValidValue(value, false);
+                _LeftShoulderDeadZone = StructuralObject.SetValidValue(value, false, "LeftShoulderDeadZone");
                 ReportPropertyChanged("LeftShoulderDeadZone");
                 OnLeftShoulderDeadZoneChanged();
             }
@@ -3081,7 +3080,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightShoulderDeadZoneChanging(value);
                 ReportPropertyChanging("RightShoulderDeadZone");
-                _RightShoulderDeadZone = StructuralObject.SetValidValue(value, false);
+                _RightShoulderDeadZone = StructuralObject.SetValidValue(value, false, "RightShoulderDeadZone");
                 ReportPropertyChanged("RightShoulderDeadZone");
                 OnRightShoulderDeadZoneChanged();
             }
@@ -3105,7 +3104,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadDownDeadZoneChanging(value);
                 ReportPropertyChanging("DPadDownDeadZone");
-                _DPadDownDeadZone = StructuralObject.SetValidValue(value, false);
+                _DPadDownDeadZone = StructuralObject.SetValidValue(value, false, "DPadDownDeadZone");
                 ReportPropertyChanged("DPadDownDeadZone");
                 OnDPadDownDeadZoneChanged();
             }
@@ -3129,7 +3128,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadLeftDeadZoneChanging(value);
                 ReportPropertyChanging("DPadLeftDeadZone");
-                _DPadLeftDeadZone = StructuralObject.SetValidValue(value, false);
+                _DPadLeftDeadZone = StructuralObject.SetValidValue(value, false, "DPadLeftDeadZone");
                 ReportPropertyChanged("DPadLeftDeadZone");
                 OnDPadLeftDeadZoneChanged();
             }
@@ -3153,7 +3152,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadRightDeadZoneChanging(value);
                 ReportPropertyChanging("DPadRightDeadZone");
-                _DPadRightDeadZone = StructuralObject.SetValidValue(value, false);
+                _DPadRightDeadZone = StructuralObject.SetValidValue(value, false, "DPadRightDeadZone");
                 ReportPropertyChanged("DPadRightDeadZone");
                 OnDPadRightDeadZoneChanged();
             }
@@ -3177,7 +3176,7 @@ namespace x360ce.Engine.Data
             {
                 OnDPadUpDeadZoneChanging(value);
                 ReportPropertyChanging("DPadUpDeadZone");
-                _DPadUpDeadZone = StructuralObject.SetValidValue(value, false);
+                _DPadUpDeadZone = StructuralObject.SetValidValue(value, false, "DPadUpDeadZone");
                 ReportPropertyChanged("DPadUpDeadZone");
                 OnDPadUpDeadZoneChanged();
             }
@@ -3201,7 +3200,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftTriggerAntiDeadZoneChanging(value);
                 ReportPropertyChanging("LeftTriggerAntiDeadZone");
-                _LeftTriggerAntiDeadZone = StructuralObject.SetValidValue(value, false);
+                _LeftTriggerAntiDeadZone = StructuralObject.SetValidValue(value, false, "LeftTriggerAntiDeadZone");
                 ReportPropertyChanged("LeftTriggerAntiDeadZone");
                 OnLeftTriggerAntiDeadZoneChanged();
             }
@@ -3225,7 +3224,7 @@ namespace x360ce.Engine.Data
             {
                 OnLeftTriggerLinearChanging(value);
                 ReportPropertyChanging("LeftTriggerLinear");
-                _LeftTriggerLinear = StructuralObject.SetValidValue(value, false);
+                _LeftTriggerLinear = StructuralObject.SetValidValue(value, false, "LeftTriggerLinear");
                 ReportPropertyChanged("LeftTriggerLinear");
                 OnLeftTriggerLinearChanged();
             }
@@ -3249,7 +3248,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightTriggerAntiDeadZoneChanging(value);
                 ReportPropertyChanging("RightTriggerAntiDeadZone");
-                _RightTriggerAntiDeadZone = StructuralObject.SetValidValue(value, false);
+                _RightTriggerAntiDeadZone = StructuralObject.SetValidValue(value, false, "RightTriggerAntiDeadZone");
                 ReportPropertyChanged("RightTriggerAntiDeadZone");
                 OnRightTriggerAntiDeadZoneChanged();
             }
@@ -3273,7 +3272,7 @@ namespace x360ce.Engine.Data
             {
                 OnRightTriggerLinearChanging(value);
                 ReportPropertyChanging("RightTriggerLinear");
-                _RightTriggerLinear = StructuralObject.SetValidValue(value, false);
+                _RightTriggerLinear = StructuralObject.SetValidValue(value, false, "RightTriggerLinear");
                 ReportPropertyChanged("RightTriggerLinear");
                 OnRightTriggerLinearChanged();
             }
@@ -3284,7 +3283,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -3318,7 +3316,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -3337,7 +3335,7 @@ namespace x360ce.Engine.Data
                 {
                     OnProductGuidChanging(value);
                     ReportPropertyChanging("ProductGuid");
-                    _ProductGuid = StructuralObject.SetValidValue(value);
+                    _ProductGuid = StructuralObject.SetValidValue(value, "ProductGuid");
                     ReportPropertyChanged("ProductGuid");
                     OnProductGuidChanged();
                 }
@@ -3362,7 +3360,7 @@ namespace x360ce.Engine.Data
             {
                 OnProductNameChanging(value);
                 ReportPropertyChanging("ProductName");
-                _ProductName = StructuralObject.SetValidValue(value, false);
+                _ProductName = StructuralObject.SetValidValue(value, false, "ProductName");
                 ReportPropertyChanged("ProductName");
                 OnProductNameChanged();
             }
@@ -3386,7 +3384,7 @@ namespace x360ce.Engine.Data
             {
                 OnInstanceCountChanging(value);
                 ReportPropertyChanging("InstanceCount");
-                _InstanceCount = StructuralObject.SetValidValue(value);
+                _InstanceCount = StructuralObject.SetValidValue(value, "InstanceCount");
                 ReportPropertyChanged("InstanceCount");
                 OnInstanceCountChanged();
             }
@@ -3410,7 +3408,7 @@ namespace x360ce.Engine.Data
             {
                 OnVendorIdChanging(value);
                 ReportPropertyChanging("VendorId");
-                _VendorId = StructuralObject.SetValidValue(value);
+                _VendorId = StructuralObject.SetValidValue(value, "VendorId");
                 ReportPropertyChanged("VendorId");
                 OnVendorIdChanged();
             }
@@ -3434,7 +3432,7 @@ namespace x360ce.Engine.Data
             {
                 OnProductIdChanging(value);
                 ReportPropertyChanging("ProductId");
-                _ProductId = StructuralObject.SetValidValue(value);
+                _ProductId = StructuralObject.SetValidValue(value, "ProductId");
                 ReportPropertyChanged("ProductId");
                 OnProductIdChanged();
             }
@@ -3445,7 +3443,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -3513,7 +3510,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -3532,7 +3529,7 @@ namespace x360ce.Engine.Data
                 {
                     OnProgramIdChanging(value);
                     ReportPropertyChanging("ProgramId");
-                    _ProgramId = StructuralObject.SetValidValue(value);
+                    _ProgramId = StructuralObject.SetValidValue(value, "ProgramId");
                     ReportPropertyChanged("ProgramId");
                     OnProgramIdChanged();
                 }
@@ -3557,7 +3554,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileNameChanging(value);
                 ReportPropertyChanging("FileName");
-                _FileName = StructuralObject.SetValidValue(value, false);
+                _FileName = StructuralObject.SetValidValue(value, false, "FileName");
                 ReportPropertyChanged("FileName");
                 OnFileNameChanged();
             }
@@ -3581,7 +3578,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileProductNameChanging(value);
                 ReportPropertyChanging("FileProductName");
-                _FileProductName = StructuralObject.SetValidValue(value, false);
+                _FileProductName = StructuralObject.SetValidValue(value, false, "FileProductName");
                 ReportPropertyChanged("FileProductName");
                 OnFileProductNameChanged();
             }
@@ -3605,7 +3602,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileVersionChanging(value);
                 ReportPropertyChanging("FileVersion");
-                _FileVersion = StructuralObject.SetValidValue(value, false);
+                _FileVersion = StructuralObject.SetValidValue(value, false, "FileVersion");
                 ReportPropertyChanged("FileVersion");
                 OnFileVersionChanged();
             }
@@ -3629,7 +3626,7 @@ namespace x360ce.Engine.Data
             {
                 OnProcessorArchitectureChanging(value);
                 ReportPropertyChanging("ProcessorArchitecture");
-                _ProcessorArchitecture = StructuralObject.SetValidValue(value);
+                _ProcessorArchitecture = StructuralObject.SetValidValue(value, "ProcessorArchitecture");
                 ReportPropertyChanged("ProcessorArchitecture");
                 OnProcessorArchitectureChanged();
             }
@@ -3653,7 +3650,7 @@ namespace x360ce.Engine.Data
             {
                 OnEmulationTypeChanging(value);
                 ReportPropertyChanging("EmulationType");
-                _EmulationType = StructuralObject.SetValidValue(value);
+                _EmulationType = StructuralObject.SetValidValue(value, "EmulationType");
                 ReportPropertyChanged("EmulationType");
                 OnEmulationTypeChanged();
             }
@@ -3677,7 +3674,7 @@ namespace x360ce.Engine.Data
             {
                 OnAutoMapMaskChanging(value);
                 ReportPropertyChanging("AutoMapMask");
-                _AutoMapMask = StructuralObject.SetValidValue(value);
+                _AutoMapMask = StructuralObject.SetValidValue(value, "AutoMapMask");
                 ReportPropertyChanged("AutoMapMask");
                 OnAutoMapMaskChanged();
             }
@@ -3701,7 +3698,7 @@ namespace x360ce.Engine.Data
             {
                 OnHookMaskChanging(value);
                 ReportPropertyChanging("HookMask");
-                _HookMask = StructuralObject.SetValidValue(value);
+                _HookMask = StructuralObject.SetValidValue(value, "HookMask");
                 ReportPropertyChanged("HookMask");
                 OnHookMaskChanged();
             }
@@ -3725,7 +3722,7 @@ namespace x360ce.Engine.Data
             {
                 OnXInputMaskChanging(value);
                 ReportPropertyChanging("XInputMask");
-                _XInputMask = StructuralObject.SetValidValue(value);
+                _XInputMask = StructuralObject.SetValidValue(value, "XInputMask");
                 ReportPropertyChanged("XInputMask");
                 OnXInputMaskChanged();
             }
@@ -3749,7 +3746,7 @@ namespace x360ce.Engine.Data
             {
                 OnDInputMaskChanging(value);
                 ReportPropertyChanging("DInputMask");
-                _DInputMask = StructuralObject.SetValidValue(value);
+                _DInputMask = StructuralObject.SetValidValue(value, "DInputMask");
                 ReportPropertyChanged("DInputMask");
                 OnDInputMaskChanged();
             }
@@ -3773,7 +3770,7 @@ namespace x360ce.Engine.Data
             {
                 OnDInputFileChanging(value);
                 ReportPropertyChanging("DInputFile");
-                _DInputFile = StructuralObject.SetValidValue(value, false);
+                _DInputFile = StructuralObject.SetValidValue(value, false, "DInputFile");
                 ReportPropertyChanged("DInputFile");
                 OnDInputFileChanged();
             }
@@ -3797,7 +3794,7 @@ namespace x360ce.Engine.Data
             {
                 OnFakeVIDChanging(value);
                 ReportPropertyChanging("FakeVID");
-                _FakeVID = StructuralObject.SetValidValue(value);
+                _FakeVID = StructuralObject.SetValidValue(value, "FakeVID");
                 ReportPropertyChanged("FakeVID");
                 OnFakeVIDChanged();
             }
@@ -3821,7 +3818,7 @@ namespace x360ce.Engine.Data
             {
                 OnFakePIDChanging(value);
                 ReportPropertyChanging("FakePID");
-                _FakePID = StructuralObject.SetValidValue(value);
+                _FakePID = StructuralObject.SetValidValue(value, "FakePID");
                 ReportPropertyChanged("FakePID");
                 OnFakePIDChanged();
             }
@@ -3845,7 +3842,7 @@ namespace x360ce.Engine.Data
             {
                 OnTimeoutChanging(value);
                 ReportPropertyChanging("Timeout");
-                _Timeout = StructuralObject.SetValidValue(value);
+                _Timeout = StructuralObject.SetValidValue(value, "Timeout");
                 ReportPropertyChanged("Timeout");
                 OnTimeoutChanged();
             }
@@ -3869,7 +3866,7 @@ namespace x360ce.Engine.Data
             {
                 OnWeightChanging(value);
                 ReportPropertyChanging("Weight");
-                _Weight = StructuralObject.SetValidValue(value);
+                _Weight = StructuralObject.SetValidValue(value, "Weight");
                 ReportPropertyChanged("Weight");
                 OnWeightChanged();
             }
@@ -3893,7 +3890,7 @@ namespace x360ce.Engine.Data
             {
                 OnSettingChecksumChanging(value);
                 ReportPropertyChanging("SettingChecksum");
-                _SettingChecksum = StructuralObject.SetValidValue(value);
+                _SettingChecksum = StructuralObject.SetValidValue(value, "SettingChecksum");
                 ReportPropertyChanged("SettingChecksum");
                 OnSettingChecksumChanged();
             }
@@ -3917,7 +3914,7 @@ namespace x360ce.Engine.Data
             {
                 OnCommentChanging(value);
                 ReportPropertyChanging("Comment");
-                _Comment = StructuralObject.SetValidValue(value, false);
+                _Comment = StructuralObject.SetValidValue(value, false, "Comment");
                 ReportPropertyChanged("Comment");
                 OnCommentChanged();
             }
@@ -3941,7 +3938,7 @@ namespace x360ce.Engine.Data
             {
                 OnIsEnabledChanging(value);
                 ReportPropertyChanging("IsEnabled");
-                _IsEnabled = StructuralObject.SetValidValue(value);
+                _IsEnabled = StructuralObject.SetValidValue(value, "IsEnabled");
                 ReportPropertyChanged("IsEnabled");
                 OnIsEnabledChanged();
             }
@@ -3965,7 +3962,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -3989,7 +3986,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateUpdatedChanging(value);
                 ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
                 ReportPropertyChanged("DateUpdated");
                 OnDateUpdatedChanged();
             }
@@ -4013,7 +4010,7 @@ namespace x360ce.Engine.Data
             {
                 OnInstanceCountChanging(value);
                 ReportPropertyChanging("InstanceCount");
-                _InstanceCount = StructuralObject.SetValidValue(value);
+                _InstanceCount = StructuralObject.SetValidValue(value, "InstanceCount");
                 ReportPropertyChanged("InstanceCount");
                 OnInstanceCountChanged();
             }
@@ -4037,7 +4034,7 @@ namespace x360ce.Engine.Data
             {
                 OnXInputPathChanging(value);
                 ReportPropertyChanging("XInputPath");
-                _XInputPath = StructuralObject.SetValidValue(value, false);
+                _XInputPath = StructuralObject.SetValidValue(value, false, "XInputPath");
                 ReportPropertyChanged("XInputPath");
                 OnXInputPathChanged();
             }
@@ -4048,7 +4045,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -4092,7 +4088,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -4111,7 +4107,7 @@ namespace x360ce.Engine.Data
                 {
                     OnSummaryIdChanging(value);
                     ReportPropertyChanging("SummaryId");
-                    _SummaryId = StructuralObject.SetValidValue(value);
+                    _SummaryId = StructuralObject.SetValidValue(value, "SummaryId");
                     ReportPropertyChanged("SummaryId");
                     OnSummaryIdChanged();
                 }
@@ -4136,7 +4132,7 @@ namespace x360ce.Engine.Data
             {
                 OnUsersChanging(value);
                 ReportPropertyChanging("Users");
-                _Users = StructuralObject.SetValidValue(value);
+                _Users = StructuralObject.SetValidValue(value, "Users");
                 ReportPropertyChanged("Users");
                 OnUsersChanged();
             }
@@ -4160,7 +4156,7 @@ namespace x360ce.Engine.Data
             {
                 OnPadSettingChecksumChanging(value);
                 ReportPropertyChanging("PadSettingChecksum");
-                _PadSettingChecksum = StructuralObject.SetValidValue(value);
+                _PadSettingChecksum = StructuralObject.SetValidValue(value, "PadSettingChecksum");
                 ReportPropertyChanged("PadSettingChecksum");
                 OnPadSettingChecksumChanged();
             }
@@ -4184,7 +4180,7 @@ namespace x360ce.Engine.Data
             {
                 OnProductGuidChanging(value);
                 ReportPropertyChanging("ProductGuid");
-                _ProductGuid = StructuralObject.SetValidValue(value);
+                _ProductGuid = StructuralObject.SetValidValue(value, "ProductGuid");
                 ReportPropertyChanged("ProductGuid");
                 OnProductGuidChanged();
             }
@@ -4208,7 +4204,7 @@ namespace x360ce.Engine.Data
             {
                 OnProductNameChanging(value);
                 ReportPropertyChanging("ProductName");
-                _ProductName = StructuralObject.SetValidValue(value, false);
+                _ProductName = StructuralObject.SetValidValue(value, false, "ProductName");
                 ReportPropertyChanged("ProductName");
                 OnProductNameChanged();
             }
@@ -4232,7 +4228,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileNameChanging(value);
                 ReportPropertyChanging("FileName");
-                _FileName = StructuralObject.SetValidValue(value, false);
+                _FileName = StructuralObject.SetValidValue(value, false, "FileName");
                 ReportPropertyChanged("FileName");
                 OnFileNameChanged();
             }
@@ -4256,7 +4252,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileProductNameChanging(value);
                 ReportPropertyChanging("FileProductName");
-                _FileProductName = StructuralObject.SetValidValue(value, false);
+                _FileProductName = StructuralObject.SetValidValue(value, false, "FileProductName");
                 ReportPropertyChanged("FileProductName");
                 OnFileProductNameChanged();
             }
@@ -4280,7 +4276,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -4304,7 +4300,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateUpdatedChanging(value);
                 ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
                 ReportPropertyChanged("DateUpdated");
                 OnDateUpdatedChanged();
             }
@@ -4328,7 +4324,7 @@ namespace x360ce.Engine.Data
             {
                 OnWeightChanging(value);
                 ReportPropertyChanging("Weight");
-                _Weight = StructuralObject.SetValidValue(value);
+                _Weight = StructuralObject.SetValidValue(value, "Weight");
                 ReportPropertyChanged("Weight");
                 OnWeightChanged();
             }
@@ -4339,7 +4335,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -4379,7 +4374,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -4398,7 +4393,7 @@ namespace x360ce.Engine.Data
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -4423,7 +4418,7 @@ namespace x360ce.Engine.Data
             {
                 OnApplicationIdChanging(value);
                 ReportPropertyChanging("ApplicationId");
-                _ApplicationId = StructuralObject.SetValidValue(value);
+                _ApplicationId = StructuralObject.SetValidValue(value, "ApplicationId");
                 ReportPropertyChanged("ApplicationId");
                 OnApplicationIdChanged();
             }
@@ -4447,7 +4442,7 @@ namespace x360ce.Engine.Data
             {
                 OnUserIdChanging(value);
                 ReportPropertyChanging("UserId");
-                _UserId = StructuralObject.SetValidValue(value);
+                _UserId = StructuralObject.SetValidValue(value, "UserId");
                 ReportPropertyChanged("UserId");
                 OnUserIdChanged();
             }
@@ -4471,7 +4466,7 @@ namespace x360ce.Engine.Data
             {
                 OnComputerIdChanging(value);
                 ReportPropertyChanging("ComputerId");
-                _ComputerId = StructuralObject.SetValidValue(value);
+                _ComputerId = StructuralObject.SetValidValue(value, "ComputerId");
                 ReportPropertyChanged("ComputerId");
                 OnComputerIdChanged();
             }
@@ -4495,7 +4490,7 @@ namespace x360ce.Engine.Data
             {
                 OnComputerNameChanging(value);
                 ReportPropertyChanging("ComputerName");
-                _ComputerName = StructuralObject.SetValidValue(value, false);
+                _ComputerName = StructuralObject.SetValidValue(value, false, "ComputerName");
                 ReportPropertyChanged("ComputerName");
                 OnComputerNameChanged();
             }
@@ -4519,7 +4514,7 @@ namespace x360ce.Engine.Data
             {
                 OnChecksumChanging(value);
                 ReportPropertyChanging("Checksum");
-                _Checksum = StructuralObject.SetValidValue(value);
+                _Checksum = StructuralObject.SetValidValue(value, "Checksum");
                 ReportPropertyChanged("Checksum");
                 OnChecksumChanged();
             }
@@ -4543,7 +4538,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -4567,7 +4562,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateUpdatedChanging(value);
                 ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
                 ReportPropertyChanged("DateUpdated");
                 OnDateUpdatedChanged();
             }
@@ -4578,7 +4573,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -4698,7 +4692,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -4717,7 +4711,7 @@ namespace x360ce.Engine.Data
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -4742,7 +4736,7 @@ namespace x360ce.Engine.Data
             {
                 OnComputerIdChanging(value);
                 ReportPropertyChanging("ComputerId");
-                _ComputerId = StructuralObject.SetValidValue(value);
+                _ComputerId = StructuralObject.SetValidValue(value, "ComputerId");
                 ReportPropertyChanged("ComputerId");
                 OnComputerIdChanged();
             }
@@ -4766,7 +4760,7 @@ namespace x360ce.Engine.Data
             {
                 OnInstanceGuidChanging(value);
                 ReportPropertyChanging("InstanceGuid");
-                _InstanceGuid = StructuralObject.SetValidValue(value);
+                _InstanceGuid = StructuralObject.SetValidValue(value, "InstanceGuid");
                 ReportPropertyChanged("InstanceGuid");
                 OnInstanceGuidChanged();
             }
@@ -4790,7 +4784,7 @@ namespace x360ce.Engine.Data
             {
                 OnInstanceNameChanging(value);
                 ReportPropertyChanging("InstanceName");
-                _InstanceName = StructuralObject.SetValidValue(value, false);
+                _InstanceName = StructuralObject.SetValidValue(value, false, "InstanceName");
                 ReportPropertyChanged("InstanceName");
                 OnInstanceNameChanged();
             }
@@ -4814,7 +4808,7 @@ namespace x360ce.Engine.Data
             {
                 OnProductGuidChanging(value);
                 ReportPropertyChanging("ProductGuid");
-                _ProductGuid = StructuralObject.SetValidValue(value);
+                _ProductGuid = StructuralObject.SetValidValue(value, "ProductGuid");
                 ReportPropertyChanged("ProductGuid");
                 OnProductGuidChanged();
             }
@@ -4838,7 +4832,7 @@ namespace x360ce.Engine.Data
             {
                 OnProductNameChanging(value);
                 ReportPropertyChanging("ProductName");
-                _ProductName = StructuralObject.SetValidValue(value, false);
+                _ProductName = StructuralObject.SetValidValue(value, false, "ProductName");
                 ReportPropertyChanged("ProductName");
                 OnProductNameChanged();
             }
@@ -4862,7 +4856,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapAxeCountChanging(value);
                 ReportPropertyChanging("CapAxeCount");
-                _CapAxeCount = StructuralObject.SetValidValue(value);
+                _CapAxeCount = StructuralObject.SetValidValue(value, "CapAxeCount");
                 ReportPropertyChanged("CapAxeCount");
                 OnCapAxeCountChanged();
             }
@@ -4886,7 +4880,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapButtonCountChanging(value);
                 ReportPropertyChanging("CapButtonCount");
-                _CapButtonCount = StructuralObject.SetValidValue(value);
+                _CapButtonCount = StructuralObject.SetValidValue(value, "CapButtonCount");
                 ReportPropertyChanged("CapButtonCount");
                 OnCapButtonCountChanged();
             }
@@ -4910,7 +4904,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapDriverVersionChanging(value);
                 ReportPropertyChanging("CapDriverVersion");
-                _CapDriverVersion = StructuralObject.SetValidValue(value);
+                _CapDriverVersion = StructuralObject.SetValidValue(value, "CapDriverVersion");
                 ReportPropertyChanged("CapDriverVersion");
                 OnCapDriverVersionChanged();
             }
@@ -4934,7 +4928,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapFirmwareRevisionChanging(value);
                 ReportPropertyChanging("CapFirmwareRevision");
-                _CapFirmwareRevision = StructuralObject.SetValidValue(value);
+                _CapFirmwareRevision = StructuralObject.SetValidValue(value, "CapFirmwareRevision");
                 ReportPropertyChanged("CapFirmwareRevision");
                 OnCapFirmwareRevisionChanged();
             }
@@ -4958,7 +4952,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapFlagsChanging(value);
                 ReportPropertyChanging("CapFlags");
-                _CapFlags = StructuralObject.SetValidValue(value);
+                _CapFlags = StructuralObject.SetValidValue(value, "CapFlags");
                 ReportPropertyChanged("CapFlags");
                 OnCapFlagsChanged();
             }
@@ -4982,7 +4976,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapForceFeedbackMinimumTimeResolutionChanging(value);
                 ReportPropertyChanging("CapForceFeedbackMinimumTimeResolution");
-                _CapForceFeedbackMinimumTimeResolution = StructuralObject.SetValidValue(value);
+                _CapForceFeedbackMinimumTimeResolution = StructuralObject.SetValidValue(value, "CapForceFeedbackMinimumTimeResolution");
                 ReportPropertyChanged("CapForceFeedbackMinimumTimeResolution");
                 OnCapForceFeedbackMinimumTimeResolutionChanged();
             }
@@ -5006,7 +5000,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapForceFeedbackSamplePeriodChanging(value);
                 ReportPropertyChanging("CapForceFeedbackSamplePeriod");
-                _CapForceFeedbackSamplePeriod = StructuralObject.SetValidValue(value);
+                _CapForceFeedbackSamplePeriod = StructuralObject.SetValidValue(value, "CapForceFeedbackSamplePeriod");
                 ReportPropertyChanged("CapForceFeedbackSamplePeriod");
                 OnCapForceFeedbackSamplePeriodChanged();
             }
@@ -5030,7 +5024,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapHardwareRevisionChanging(value);
                 ReportPropertyChanging("CapHardwareRevision");
-                _CapHardwareRevision = StructuralObject.SetValidValue(value);
+                _CapHardwareRevision = StructuralObject.SetValidValue(value, "CapHardwareRevision");
                 ReportPropertyChanged("CapHardwareRevision");
                 OnCapHardwareRevisionChanged();
             }
@@ -5054,7 +5048,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapPovCountChanging(value);
                 ReportPropertyChanging("CapPovCount");
-                _CapPovCount = StructuralObject.SetValidValue(value);
+                _CapPovCount = StructuralObject.SetValidValue(value, "CapPovCount");
                 ReportPropertyChanged("CapPovCount");
                 OnCapPovCountChanged();
             }
@@ -5078,7 +5072,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapIsHumanInterfaceDeviceChanging(value);
                 ReportPropertyChanging("CapIsHumanInterfaceDevice");
-                _CapIsHumanInterfaceDevice = StructuralObject.SetValidValue(value);
+                _CapIsHumanInterfaceDevice = StructuralObject.SetValidValue(value, "CapIsHumanInterfaceDevice");
                 ReportPropertyChanged("CapIsHumanInterfaceDevice");
                 OnCapIsHumanInterfaceDeviceChanged();
             }
@@ -5102,7 +5096,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapSubtypeChanging(value);
                 ReportPropertyChanging("CapSubtype");
-                _CapSubtype = StructuralObject.SetValidValue(value);
+                _CapSubtype = StructuralObject.SetValidValue(value, "CapSubtype");
                 ReportPropertyChanged("CapSubtype");
                 OnCapSubtypeChanged();
             }
@@ -5126,7 +5120,7 @@ namespace x360ce.Engine.Data
             {
                 OnCapTypeChanging(value);
                 ReportPropertyChanging("CapType");
-                _CapType = StructuralObject.SetValidValue(value);
+                _CapType = StructuralObject.SetValidValue(value, "CapType");
                 ReportPropertyChanged("CapType");
                 OnCapTypeChanged();
             }
@@ -5150,7 +5144,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidManufacturerChanging(value);
                 ReportPropertyChanging("HidManufacturer");
-                _HidManufacturer = StructuralObject.SetValidValue(value, false);
+                _HidManufacturer = StructuralObject.SetValidValue(value, false, "HidManufacturer");
                 ReportPropertyChanged("HidManufacturer");
                 OnHidManufacturerChanged();
             }
@@ -5174,7 +5168,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidVendorIdChanging(value);
                 ReportPropertyChanging("HidVendorId");
-                _HidVendorId = StructuralObject.SetValidValue(value);
+                _HidVendorId = StructuralObject.SetValidValue(value, "HidVendorId");
                 ReportPropertyChanged("HidVendorId");
                 OnHidVendorIdChanged();
             }
@@ -5198,7 +5192,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidProductIdChanging(value);
                 ReportPropertyChanging("HidProductId");
-                _HidProductId = StructuralObject.SetValidValue(value);
+                _HidProductId = StructuralObject.SetValidValue(value, "HidProductId");
                 ReportPropertyChanged("HidProductId");
                 OnHidProductIdChanged();
             }
@@ -5222,7 +5216,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidRevisionChanging(value);
                 ReportPropertyChanging("HidRevision");
-                _HidRevision = StructuralObject.SetValidValue(value);
+                _HidRevision = StructuralObject.SetValidValue(value, "HidRevision");
                 ReportPropertyChanged("HidRevision");
                 OnHidRevisionChanged();
             }
@@ -5246,7 +5240,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidDescriptionChanging(value);
                 ReportPropertyChanging("HidDescription");
-                _HidDescription = StructuralObject.SetValidValue(value, false);
+                _HidDescription = StructuralObject.SetValidValue(value, false, "HidDescription");
                 ReportPropertyChanged("HidDescription");
                 OnHidDescriptionChanged();
             }
@@ -5270,7 +5264,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidDeviceIdChanging(value);
                 ReportPropertyChanging("HidDeviceId");
-                _HidDeviceId = StructuralObject.SetValidValue(value, false);
+                _HidDeviceId = StructuralObject.SetValidValue(value, false, "HidDeviceId");
                 ReportPropertyChanged("HidDeviceId");
                 OnHidDeviceIdChanged();
             }
@@ -5294,7 +5288,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidDevicePathChanging(value);
                 ReportPropertyChanging("HidDevicePath");
-                _HidDevicePath = StructuralObject.SetValidValue(value, false);
+                _HidDevicePath = StructuralObject.SetValidValue(value, false, "HidDevicePath");
                 ReportPropertyChanged("HidDevicePath");
                 OnHidDevicePathChanged();
             }
@@ -5318,7 +5312,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidParentDeviceIdChanging(value);
                 ReportPropertyChanging("HidParentDeviceId");
-                _HidParentDeviceId = StructuralObject.SetValidValue(value, false);
+                _HidParentDeviceId = StructuralObject.SetValidValue(value, false, "HidParentDeviceId");
                 ReportPropertyChanged("HidParentDeviceId");
                 OnHidParentDeviceIdChanged();
             }
@@ -5342,7 +5336,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidClassGuidChanging(value);
                 ReportPropertyChanging("HidClassGuid");
-                _HidClassGuid = StructuralObject.SetValidValue(value);
+                _HidClassGuid = StructuralObject.SetValidValue(value, "HidClassGuid");
                 ReportPropertyChanged("HidClassGuid");
                 OnHidClassGuidChanged();
             }
@@ -5366,7 +5360,7 @@ namespace x360ce.Engine.Data
             {
                 OnHidClassDescriptionChanging(value);
                 ReportPropertyChanging("HidClassDescription");
-                _HidClassDescription = StructuralObject.SetValidValue(value, false);
+                _HidClassDescription = StructuralObject.SetValidValue(value, false, "HidClassDescription");
                 ReportPropertyChanged("HidClassDescription");
                 OnHidClassDescriptionChanged();
             }
@@ -5390,7 +5384,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevManufacturerChanging(value);
                 ReportPropertyChanging("DevManufacturer");
-                _DevManufacturer = StructuralObject.SetValidValue(value, false);
+                _DevManufacturer = StructuralObject.SetValidValue(value, false, "DevManufacturer");
                 ReportPropertyChanged("DevManufacturer");
                 OnDevManufacturerChanged();
             }
@@ -5414,7 +5408,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevVendorIdChanging(value);
                 ReportPropertyChanging("DevVendorId");
-                _DevVendorId = StructuralObject.SetValidValue(value);
+                _DevVendorId = StructuralObject.SetValidValue(value, "DevVendorId");
                 ReportPropertyChanged("DevVendorId");
                 OnDevVendorIdChanged();
             }
@@ -5438,7 +5432,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevProductIdChanging(value);
                 ReportPropertyChanging("DevProductId");
-                _DevProductId = StructuralObject.SetValidValue(value);
+                _DevProductId = StructuralObject.SetValidValue(value, "DevProductId");
                 ReportPropertyChanged("DevProductId");
                 OnDevProductIdChanged();
             }
@@ -5462,7 +5456,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevRevisionChanging(value);
                 ReportPropertyChanging("DevRevision");
-                _DevRevision = StructuralObject.SetValidValue(value);
+                _DevRevision = StructuralObject.SetValidValue(value, "DevRevision");
                 ReportPropertyChanged("DevRevision");
                 OnDevRevisionChanged();
             }
@@ -5486,7 +5480,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevDescriptionChanging(value);
                 ReportPropertyChanging("DevDescription");
-                _DevDescription = StructuralObject.SetValidValue(value, false);
+                _DevDescription = StructuralObject.SetValidValue(value, false, "DevDescription");
                 ReportPropertyChanged("DevDescription");
                 OnDevDescriptionChanged();
             }
@@ -5510,7 +5504,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevDeviceIdChanging(value);
                 ReportPropertyChanging("DevDeviceId");
-                _DevDeviceId = StructuralObject.SetValidValue(value, false);
+                _DevDeviceId = StructuralObject.SetValidValue(value, false, "DevDeviceId");
                 ReportPropertyChanged("DevDeviceId");
                 OnDevDeviceIdChanged();
             }
@@ -5534,7 +5528,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevDevicePathChanging(value);
                 ReportPropertyChanging("DevDevicePath");
-                _DevDevicePath = StructuralObject.SetValidValue(value, false);
+                _DevDevicePath = StructuralObject.SetValidValue(value, false, "DevDevicePath");
                 ReportPropertyChanged("DevDevicePath");
                 OnDevDevicePathChanged();
             }
@@ -5558,7 +5552,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevParentDeviceIdChanging(value);
                 ReportPropertyChanging("DevParentDeviceId");
-                _DevParentDeviceId = StructuralObject.SetValidValue(value, false);
+                _DevParentDeviceId = StructuralObject.SetValidValue(value, false, "DevParentDeviceId");
                 ReportPropertyChanged("DevParentDeviceId");
                 OnDevParentDeviceIdChanged();
             }
@@ -5582,7 +5576,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevClassGuidChanging(value);
                 ReportPropertyChanging("DevClassGuid");
-                _DevClassGuid = StructuralObject.SetValidValue(value);
+                _DevClassGuid = StructuralObject.SetValidValue(value, "DevClassGuid");
                 ReportPropertyChanged("DevClassGuid");
                 OnDevClassGuidChanged();
             }
@@ -5606,7 +5600,7 @@ namespace x360ce.Engine.Data
             {
                 OnDevClassDescriptionChanging(value);
                 ReportPropertyChanging("DevClassDescription");
-                _DevClassDescription = StructuralObject.SetValidValue(value, false);
+                _DevClassDescription = StructuralObject.SetValidValue(value, false, "DevClassDescription");
                 ReportPropertyChanged("DevClassDescription");
                 OnDevClassDescriptionChanged();
             }
@@ -5630,7 +5624,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -5654,7 +5648,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateUpdatedChanging(value);
                 ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
                 ReportPropertyChanged("DateUpdated");
                 OnDateUpdatedChanged();
             }
@@ -5678,7 +5672,7 @@ namespace x360ce.Engine.Data
             {
                 OnIsEnabledChanging(value);
                 ReportPropertyChanging("IsEnabled");
-                _IsEnabled = StructuralObject.SetValidValue(value);
+                _IsEnabled = StructuralObject.SetValidValue(value, "IsEnabled");
                 ReportPropertyChanged("IsEnabled");
                 OnIsEnabledChanged();
             }
@@ -5702,7 +5696,7 @@ namespace x360ce.Engine.Data
             {
                 OnChecksumChanging(value);
                 ReportPropertyChanging("Checksum");
-                _Checksum = StructuralObject.SetValidValue(value);
+                _Checksum = StructuralObject.SetValidValue(value, "Checksum");
                 ReportPropertyChanged("Checksum");
                 OnChecksumChanged();
             }
@@ -5726,7 +5720,7 @@ namespace x360ce.Engine.Data
             {
                 OnDiAxeMaskChanging(value);
                 ReportPropertyChanging("DiAxeMask");
-                _DiAxeMask = StructuralObject.SetValidValue(value);
+                _DiAxeMask = StructuralObject.SetValidValue(value, "DiAxeMask");
                 ReportPropertyChanged("DiAxeMask");
                 OnDiAxeMaskChanged();
             }
@@ -5750,7 +5744,7 @@ namespace x360ce.Engine.Data
             {
                 OnDiSliderMaskChanging(value);
                 ReportPropertyChanging("DiSliderMask");
-                _DiSliderMask = StructuralObject.SetValidValue(value);
+                _DiSliderMask = StructuralObject.SetValidValue(value, "DiSliderMask");
                 ReportPropertyChanged("DiSliderMask");
                 OnDiSliderMaskChanged();
             }
@@ -5774,7 +5768,7 @@ namespace x360ce.Engine.Data
             {
                 OnIsHiddenChanging(value);
                 ReportPropertyChanging("IsHidden");
-                _IsHidden = StructuralObject.SetValidValue(value);
+                _IsHidden = StructuralObject.SetValidValue(value, "IsHidden");
                 ReportPropertyChanged("IsHidden");
                 OnIsHiddenChanged();
             }
@@ -5798,7 +5792,7 @@ namespace x360ce.Engine.Data
             {
                 OnDiActuatorMaskChanging(value);
                 ReportPropertyChanging("DiActuatorMask");
-                _DiActuatorMask = StructuralObject.SetValidValue(value);
+                _DiActuatorMask = StructuralObject.SetValidValue(value, "DiActuatorMask");
                 ReportPropertyChanged("DiActuatorMask");
                 OnDiActuatorMaskChanged();
             }
@@ -5822,7 +5816,7 @@ namespace x360ce.Engine.Data
             {
                 OnDiActuatorCountChanging(value);
                 ReportPropertyChanging("DiActuatorCount");
-                _DiActuatorCount = StructuralObject.SetValidValue(value);
+                _DiActuatorCount = StructuralObject.SetValidValue(value, "DiActuatorCount");
                 ReportPropertyChanged("DiActuatorCount");
                 OnDiActuatorCountChanged();
             }
@@ -5846,7 +5840,7 @@ namespace x360ce.Engine.Data
             {
                 OnProfileIdChanging(value);
                 ReportPropertyChanging("ProfileId");
-                _ProfileId = StructuralObject.SetValidValue(value);
+                _ProfileId = StructuralObject.SetValidValue(value, "ProfileId");
                 ReportPropertyChanged("ProfileId");
                 OnProfileIdChanged();
             }
@@ -5857,7 +5851,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -5933,7 +5926,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -5952,7 +5945,7 @@ namespace x360ce.Engine.Data
                 {
                     OnGameIdChanging(value);
                     ReportPropertyChanging("GameId");
-                    _GameId = StructuralObject.SetValidValue(value);
+                    _GameId = StructuralObject.SetValidValue(value, "GameId");
                     ReportPropertyChanged("GameId");
                     OnGameIdChanged();
                 }
@@ -5977,7 +5970,7 @@ namespace x360ce.Engine.Data
             {
                 OnComputerIdChanging(value);
                 ReportPropertyChanging("ComputerId");
-                _ComputerId = StructuralObject.SetValidValue(value);
+                _ComputerId = StructuralObject.SetValidValue(value, "ComputerId");
                 ReportPropertyChanged("ComputerId");
                 OnComputerIdChanged();
             }
@@ -6001,7 +5994,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileNameChanging(value);
                 ReportPropertyChanging("FileName");
-                _FileName = StructuralObject.SetValidValue(value, false);
+                _FileName = StructuralObject.SetValidValue(value, false, "FileName");
                 ReportPropertyChanged("FileName");
                 OnFileNameChanged();
             }
@@ -6025,7 +6018,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileProductNameChanging(value);
                 ReportPropertyChanging("FileProductName");
-                _FileProductName = StructuralObject.SetValidValue(value, false);
+                _FileProductName = StructuralObject.SetValidValue(value, false, "FileProductName");
                 ReportPropertyChanged("FileProductName");
                 OnFileProductNameChanged();
             }
@@ -6049,7 +6042,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileVersionChanging(value);
                 ReportPropertyChanging("FileVersion");
-                _FileVersion = StructuralObject.SetValidValue(value, false);
+                _FileVersion = StructuralObject.SetValidValue(value, false, "FileVersion");
                 ReportPropertyChanged("FileVersion");
                 OnFileVersionChanged();
             }
@@ -6073,7 +6066,7 @@ namespace x360ce.Engine.Data
             {
                 OnFullPathChanging(value);
                 ReportPropertyChanging("FullPath");
-                _FullPath = StructuralObject.SetValidValue(value, false);
+                _FullPath = StructuralObject.SetValidValue(value, false, "FullPath");
                 ReportPropertyChanged("FullPath");
                 OnFullPathChanged();
             }
@@ -6097,7 +6090,7 @@ namespace x360ce.Engine.Data
             {
                 OnCompanyNameChanging(value);
                 ReportPropertyChanging("CompanyName");
-                _CompanyName = StructuralObject.SetValidValue(value, false);
+                _CompanyName = StructuralObject.SetValidValue(value, false, "CompanyName");
                 ReportPropertyChanged("CompanyName");
                 OnCompanyNameChanged();
             }
@@ -6121,7 +6114,7 @@ namespace x360ce.Engine.Data
             {
                 OnProcessorArchitectureChanging(value);
                 ReportPropertyChanging("ProcessorArchitecture");
-                _ProcessorArchitecture = StructuralObject.SetValidValue(value);
+                _ProcessorArchitecture = StructuralObject.SetValidValue(value, "ProcessorArchitecture");
                 ReportPropertyChanged("ProcessorArchitecture");
                 OnProcessorArchitectureChanged();
             }
@@ -6145,7 +6138,7 @@ namespace x360ce.Engine.Data
             {
                 OnHookMaskChanging(value);
                 ReportPropertyChanging("HookMask");
-                _HookMask = StructuralObject.SetValidValue(value);
+                _HookMask = StructuralObject.SetValidValue(value, "HookMask");
                 ReportPropertyChanged("HookMask");
                 OnHookMaskChanged();
             }
@@ -6169,7 +6162,7 @@ namespace x360ce.Engine.Data
             {
                 OnXInputMaskChanging(value);
                 ReportPropertyChanging("XInputMask");
-                _XInputMask = StructuralObject.SetValidValue(value);
+                _XInputMask = StructuralObject.SetValidValue(value, "XInputMask");
                 ReportPropertyChanged("XInputMask");
                 OnXInputMaskChanged();
             }
@@ -6193,7 +6186,7 @@ namespace x360ce.Engine.Data
             {
                 OnDInputMaskChanging(value);
                 ReportPropertyChanging("DInputMask");
-                _DInputMask = StructuralObject.SetValidValue(value);
+                _DInputMask = StructuralObject.SetValidValue(value, "DInputMask");
                 ReportPropertyChanged("DInputMask");
                 OnDInputMaskChanged();
             }
@@ -6217,7 +6210,7 @@ namespace x360ce.Engine.Data
             {
                 OnDInputFileChanging(value);
                 ReportPropertyChanging("DInputFile");
-                _DInputFile = StructuralObject.SetValidValue(value, false);
+                _DInputFile = StructuralObject.SetValidValue(value, false, "DInputFile");
                 ReportPropertyChanged("DInputFile");
                 OnDInputFileChanged();
             }
@@ -6241,7 +6234,7 @@ namespace x360ce.Engine.Data
             {
                 OnFakeVIDChanging(value);
                 ReportPropertyChanging("FakeVID");
-                _FakeVID = StructuralObject.SetValidValue(value);
+                _FakeVID = StructuralObject.SetValidValue(value, "FakeVID");
                 ReportPropertyChanged("FakeVID");
                 OnFakeVIDChanged();
             }
@@ -6265,7 +6258,7 @@ namespace x360ce.Engine.Data
             {
                 OnFakePIDChanging(value);
                 ReportPropertyChanging("FakePID");
-                _FakePID = StructuralObject.SetValidValue(value);
+                _FakePID = StructuralObject.SetValidValue(value, "FakePID");
                 ReportPropertyChanged("FakePID");
                 OnFakePIDChanged();
             }
@@ -6289,7 +6282,7 @@ namespace x360ce.Engine.Data
             {
                 OnTimeoutChanging(value);
                 ReportPropertyChanging("Timeout");
-                _Timeout = StructuralObject.SetValidValue(value);
+                _Timeout = StructuralObject.SetValidValue(value, "Timeout");
                 ReportPropertyChanged("Timeout");
                 OnTimeoutChanged();
             }
@@ -6313,7 +6306,7 @@ namespace x360ce.Engine.Data
             {
                 OnWeightChanging(value);
                 ReportPropertyChanging("Weight");
-                _Weight = StructuralObject.SetValidValue(value);
+                _Weight = StructuralObject.SetValidValue(value, "Weight");
                 ReportPropertyChanged("Weight");
                 OnWeightChanged();
             }
@@ -6337,7 +6330,7 @@ namespace x360ce.Engine.Data
             {
                 OnCommentChanging(value);
                 ReportPropertyChanging("Comment");
-                _Comment = StructuralObject.SetValidValue(value, false);
+                _Comment = StructuralObject.SetValidValue(value, false, "Comment");
                 ReportPropertyChanged("Comment");
                 OnCommentChanged();
             }
@@ -6361,7 +6354,7 @@ namespace x360ce.Engine.Data
             {
                 OnIsEnabledChanging(value);
                 ReportPropertyChanging("IsEnabled");
-                _IsEnabled = StructuralObject.SetValidValue(value);
+                _IsEnabled = StructuralObject.SetValidValue(value, "IsEnabled");
                 ReportPropertyChanged("IsEnabled");
                 OnIsEnabledChanged();
             }
@@ -6385,7 +6378,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -6409,7 +6402,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateUpdatedChanging(value);
                 ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
                 ReportPropertyChanged("DateUpdated");
                 OnDateUpdatedChanged();
             }
@@ -6433,7 +6426,7 @@ namespace x360ce.Engine.Data
             {
                 OnAutoMapMaskChanging(value);
                 ReportPropertyChanging("AutoMapMask");
-                _AutoMapMask = StructuralObject.SetValidValue(value);
+                _AutoMapMask = StructuralObject.SetValidValue(value, "AutoMapMask");
                 ReportPropertyChanged("AutoMapMask");
                 OnAutoMapMaskChanged();
             }
@@ -6457,7 +6450,7 @@ namespace x360ce.Engine.Data
             {
                 OnEnableMaskChanging(value);
                 ReportPropertyChanging("EnableMask");
-                _EnableMask = StructuralObject.SetValidValue(value);
+                _EnableMask = StructuralObject.SetValidValue(value, "EnableMask");
                 ReportPropertyChanged("EnableMask");
                 OnEnableMaskChanged();
             }
@@ -6481,7 +6474,7 @@ namespace x360ce.Engine.Data
             {
                 OnEmulationTypeChanging(value);
                 ReportPropertyChanging("EmulationType");
-                _EmulationType = StructuralObject.SetValidValue(value);
+                _EmulationType = StructuralObject.SetValidValue(value, "EmulationType");
                 ReportPropertyChanged("EmulationType");
                 OnEmulationTypeChanged();
             }
@@ -6505,7 +6498,7 @@ namespace x360ce.Engine.Data
             {
                 OnChecksumChanging(value);
                 ReportPropertyChanging("Checksum");
-                _Checksum = StructuralObject.SetValidValue(value);
+                _Checksum = StructuralObject.SetValidValue(value, "Checksum");
                 ReportPropertyChanged("Checksum");
                 OnChecksumChanged();
             }
@@ -6529,7 +6522,7 @@ namespace x360ce.Engine.Data
             {
                 OnXInputPathChanging(value);
                 ReportPropertyChanging("XInputPath");
-                _XInputPath = StructuralObject.SetValidValue(value, false);
+                _XInputPath = StructuralObject.SetValidValue(value, false, "XInputPath");
                 ReportPropertyChanged("XInputPath");
                 OnXInputPathChanged();
             }
@@ -6553,7 +6546,7 @@ namespace x360ce.Engine.Data
             {
                 OnProfileIdChanging(value);
                 ReportPropertyChanging("ProfileId");
-                _ProfileId = StructuralObject.SetValidValue(value);
+                _ProfileId = StructuralObject.SetValidValue(value, "ProfileId");
                 ReportPropertyChanged("ProfileId");
                 OnProfileIdChanged();
             }
@@ -6564,7 +6557,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -6604,7 +6596,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -6623,7 +6615,7 @@ namespace x360ce.Engine.Data
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -6648,7 +6640,7 @@ namespace x360ce.Engine.Data
             {
                 OnControllerIdChanging(value);
                 ReportPropertyChanging("ControllerId");
-                _ControllerId = StructuralObject.SetValidValue(value);
+                _ControllerId = StructuralObject.SetValidValue(value, "ControllerId");
                 ReportPropertyChanged("ControllerId");
                 OnControllerIdChanged();
             }
@@ -6672,7 +6664,7 @@ namespace x360ce.Engine.Data
             {
                 OnInstanceGuidChanging(value);
                 ReportPropertyChanging("InstanceGuid");
-                _InstanceGuid = StructuralObject.SetValidValue(value);
+                _InstanceGuid = StructuralObject.SetValidValue(value, "InstanceGuid");
                 ReportPropertyChanged("InstanceGuid");
                 OnInstanceGuidChanged();
             }
@@ -6696,7 +6688,7 @@ namespace x360ce.Engine.Data
             {
                 OnChecksumChanging(value);
                 ReportPropertyChanging("Checksum");
-                _Checksum = StructuralObject.SetValidValue(value);
+                _Checksum = StructuralObject.SetValidValue(value, "Checksum");
                 ReportPropertyChanged("Checksum");
                 OnChecksumChanged();
             }
@@ -6720,7 +6712,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -6744,7 +6736,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateUpdatedChanging(value);
                 ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
                 ReportPropertyChanged("DateUpdated");
                 OnDateUpdatedChanged();
             }
@@ -6768,7 +6760,7 @@ namespace x360ce.Engine.Data
             {
                 OnComputerIdChanging(value);
                 ReportPropertyChanging("ComputerId");
-                _ComputerId = StructuralObject.SetValidValue(value);
+                _ComputerId = StructuralObject.SetValidValue(value, "ComputerId");
                 ReportPropertyChanged("ComputerId");
                 OnComputerIdChanged();
             }
@@ -6792,7 +6784,7 @@ namespace x360ce.Engine.Data
             {
                 OnProfileIdChanging(value);
                 ReportPropertyChanging("ProfileId");
-                _ProfileId = StructuralObject.SetValidValue(value);
+                _ProfileId = StructuralObject.SetValidValue(value, "ProfileId");
                 ReportPropertyChanged("ProfileId");
                 OnProfileIdChanged();
             }
@@ -6803,7 +6795,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -6841,7 +6832,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -6860,7 +6851,7 @@ namespace x360ce.Engine.Data
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -6885,7 +6876,7 @@ namespace x360ce.Engine.Data
             {
                 OnComputerIdChanging(value);
                 ReportPropertyChanging("ComputerId");
-                _ComputerId = StructuralObject.SetValidValue(value);
+                _ComputerId = StructuralObject.SetValidValue(value, "ComputerId");
                 ReportPropertyChanged("ComputerId");
                 OnComputerIdChanged();
             }
@@ -6909,7 +6900,7 @@ namespace x360ce.Engine.Data
             {
                 OnProfileIdChanging(value);
                 ReportPropertyChanging("ProfileId");
-                _ProfileId = StructuralObject.SetValidValue(value);
+                _ProfileId = StructuralObject.SetValidValue(value, "ProfileId");
                 ReportPropertyChanged("ProfileId");
                 OnProfileIdChanged();
             }
@@ -6933,7 +6924,7 @@ namespace x360ce.Engine.Data
             {
                 OnProfilePathChanging(value);
                 ReportPropertyChanging("ProfilePath");
-                _ProfilePath = StructuralObject.SetValidValue(value, false);
+                _ProfilePath = StructuralObject.SetValidValue(value, false, "ProfilePath");
                 ReportPropertyChanged("ProfilePath");
                 OnProfilePathChanged();
             }
@@ -6957,7 +6948,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -6981,7 +6972,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateUpdatedChanging(value);
                 ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
                 ReportPropertyChanged("DateUpdated");
                 OnDateUpdatedChanged();
             }
@@ -7005,7 +6996,7 @@ namespace x360ce.Engine.Data
             {
                 OnChecksumChanging(value);
                 ReportPropertyChanging("Checksum");
-                _Checksum = StructuralObject.SetValidValue(value);
+                _Checksum = StructuralObject.SetValidValue(value, "Checksum");
                 ReportPropertyChanged("Checksum");
                 OnChecksumChanged();
             }
@@ -7016,7 +7007,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -7078,7 +7068,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -7097,7 +7087,7 @@ namespace x360ce.Engine.Data
                 {
                     OnSettingIdChanging(value);
                     ReportPropertyChanging("SettingId");
-                    _SettingId = StructuralObject.SetValidValue(value);
+                    _SettingId = StructuralObject.SetValidValue(value, "SettingId");
                     ReportPropertyChanged("SettingId");
                     OnSettingIdChanged();
                 }
@@ -7122,7 +7112,7 @@ namespace x360ce.Engine.Data
             {
                 OnInstanceGuidChanging(value);
                 ReportPropertyChanging("InstanceGuid");
-                _InstanceGuid = StructuralObject.SetValidValue(value);
+                _InstanceGuid = StructuralObject.SetValidValue(value, "InstanceGuid");
                 ReportPropertyChanged("InstanceGuid");
                 OnInstanceGuidChanged();
             }
@@ -7146,7 +7136,7 @@ namespace x360ce.Engine.Data
             {
                 OnInstanceNameChanging(value);
                 ReportPropertyChanging("InstanceName");
-                _InstanceName = StructuralObject.SetValidValue(value, false);
+                _InstanceName = StructuralObject.SetValidValue(value, false, "InstanceName");
                 ReportPropertyChanged("InstanceName");
                 OnInstanceNameChanged();
             }
@@ -7170,7 +7160,7 @@ namespace x360ce.Engine.Data
             {
                 OnProductGuidChanging(value);
                 ReportPropertyChanging("ProductGuid");
-                _ProductGuid = StructuralObject.SetValidValue(value);
+                _ProductGuid = StructuralObject.SetValidValue(value, "ProductGuid");
                 ReportPropertyChanged("ProductGuid");
                 OnProductGuidChanged();
             }
@@ -7194,7 +7184,7 @@ namespace x360ce.Engine.Data
             {
                 OnProductNameChanging(value);
                 ReportPropertyChanging("ProductName");
-                _ProductName = StructuralObject.SetValidValue(value, false);
+                _ProductName = StructuralObject.SetValidValue(value, false, "ProductName");
                 ReportPropertyChanged("ProductName");
                 OnProductNameChanged();
             }
@@ -7218,7 +7208,7 @@ namespace x360ce.Engine.Data
             {
                 OnDeviceTypeChanging(value);
                 ReportPropertyChanging("DeviceType");
-                _DeviceType = StructuralObject.SetValidValue(value);
+                _DeviceType = StructuralObject.SetValidValue(value, "DeviceType");
                 ReportPropertyChanged("DeviceType");
                 OnDeviceTypeChanged();
             }
@@ -7242,7 +7232,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileNameChanging(value);
                 ReportPropertyChanging("FileName");
-                _FileName = StructuralObject.SetValidValue(value, false);
+                _FileName = StructuralObject.SetValidValue(value, false, "FileName");
                 ReportPropertyChanged("FileName");
                 OnFileNameChanged();
             }
@@ -7266,7 +7256,7 @@ namespace x360ce.Engine.Data
             {
                 OnFileProductNameChanging(value);
                 ReportPropertyChanging("FileProductName");
-                _FileProductName = StructuralObject.SetValidValue(value, false);
+                _FileProductName = StructuralObject.SetValidValue(value, false, "FileProductName");
                 ReportPropertyChanged("FileProductName");
                 OnFileProductNameChanged();
             }
@@ -7290,7 +7280,7 @@ namespace x360ce.Engine.Data
             {
                 OnCommentChanging(value);
                 ReportPropertyChanging("Comment");
-                _Comment = StructuralObject.SetValidValue(value, false);
+                _Comment = StructuralObject.SetValidValue(value, false, "Comment");
                 ReportPropertyChanged("Comment");
                 OnCommentChanged();
             }
@@ -7314,7 +7304,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -7338,7 +7328,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateUpdatedChanging(value);
                 ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
                 ReportPropertyChanged("DateUpdated");
                 OnDateUpdatedChanged();
             }
@@ -7362,7 +7352,7 @@ namespace x360ce.Engine.Data
             {
                 OnIsEnabledChanging(value);
                 ReportPropertyChanging("IsEnabled");
-                _IsEnabled = StructuralObject.SetValidValue(value);
+                _IsEnabled = StructuralObject.SetValidValue(value, "IsEnabled");
                 ReportPropertyChanged("IsEnabled");
                 OnIsEnabledChanged();
             }
@@ -7386,7 +7376,7 @@ namespace x360ce.Engine.Data
             {
                 OnPadSettingChecksumChanging(value);
                 ReportPropertyChanging("PadSettingChecksum");
-                _PadSettingChecksum = StructuralObject.SetValidValue(value);
+                _PadSettingChecksum = StructuralObject.SetValidValue(value, "PadSettingChecksum");
                 ReportPropertyChanged("PadSettingChecksum");
                 OnPadSettingChecksumChanged();
             }
@@ -7410,7 +7400,7 @@ namespace x360ce.Engine.Data
             {
                 OnDateSelectedChanging(value);
                 ReportPropertyChanging("DateSelected");
-                _DateSelected = StructuralObject.SetValidValue(value);
+                _DateSelected = StructuralObject.SetValidValue(value, "DateSelected");
                 ReportPropertyChanged("DateSelected");
                 OnDateSelectedChanged();
             }
@@ -7434,7 +7424,7 @@ namespace x360ce.Engine.Data
             {
                 OnMapToChanging(value);
                 ReportPropertyChanging("MapTo");
-                _MapTo = StructuralObject.SetValidValue(value);
+                _MapTo = StructuralObject.SetValidValue(value, "MapTo");
                 ReportPropertyChanged("MapTo");
                 OnMapToChanged();
             }
@@ -7458,7 +7448,7 @@ namespace x360ce.Engine.Data
             {
                 OnCompletionChanging(value);
                 ReportPropertyChanging("Completion");
-                _Completion = StructuralObject.SetValidValue(value);
+                _Completion = StructuralObject.SetValidValue(value, "Completion");
                 ReportPropertyChanged("Completion");
                 OnCompletionChanged();
             }
@@ -7482,7 +7472,7 @@ namespace x360ce.Engine.Data
             {
                 OnComputerIdChanging(value);
                 ReportPropertyChanging("ComputerId");
-                _ComputerId = StructuralObject.SetValidValue(value);
+                _ComputerId = StructuralObject.SetValidValue(value, "ComputerId");
                 ReportPropertyChanged("ComputerId");
                 OnComputerIdChanged();
             }
@@ -7506,7 +7496,7 @@ namespace x360ce.Engine.Data
             {
                 OnProfileIdChanging(value);
                 ReportPropertyChanging("ProfileId");
-                _ProfileId = StructuralObject.SetValidValue(value);
+                _ProfileId = StructuralObject.SetValidValue(value, "ProfileId");
                 ReportPropertyChanged("ProfileId");
                 OnProfileIdChanged();
             }
@@ -7530,7 +7520,7 @@ namespace x360ce.Engine.Data
             {
                 OnChecksumChanging(value);
                 ReportPropertyChanging("Checksum");
-                _Checksum = StructuralObject.SetValidValue(value);
+                _Checksum = StructuralObject.SetValidValue(value, "Checksum");
                 ReportPropertyChanged("Checksum");
                 OnChecksumChanged();
             }
@@ -7541,7 +7531,6 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
     
     /// <summary>
@@ -7573,7 +7562,7 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -7592,7 +7581,7 @@ namespace x360ce.Engine.Data
                 {
                     OnVendorIdChanging(value);
                     ReportPropertyChanging("VendorId");
-                    _VendorId = StructuralObject.SetValidValue(value);
+                    _VendorId = StructuralObject.SetValidValue(value, "VendorId");
                     ReportPropertyChanged("VendorId");
                     OnVendorIdChanged();
                 }
@@ -7617,7 +7606,7 @@ namespace x360ce.Engine.Data
             {
                 OnVendorNameChanging(value);
                 ReportPropertyChanging("VendorName");
-                _VendorName = StructuralObject.SetValidValue(value, false);
+                _VendorName = StructuralObject.SetValidValue(value, false, "VendorName");
                 ReportPropertyChanged("VendorName");
                 OnVendorNameChanged();
             }
@@ -7641,7 +7630,7 @@ namespace x360ce.Engine.Data
             {
                 OnShortNameChanging(value);
                 ReportPropertyChanging("ShortName");
-                _ShortName = StructuralObject.SetValidValue(value, false);
+                _ShortName = StructuralObject.SetValidValue(value, false, "ShortName");
                 ReportPropertyChanged("ShortName");
                 OnShortNameChanged();
             }
@@ -7665,7 +7654,7 @@ namespace x360ce.Engine.Data
             {
                 OnWebSiteChanging(value);
                 ReportPropertyChanging("WebSite");
-                _WebSite = StructuralObject.SetValidValue(value, false);
+                _WebSite = StructuralObject.SetValidValue(value, false, "WebSite");
                 ReportPropertyChanged("WebSite");
                 OnWebSiteChanged();
             }
@@ -7676,10 +7665,8 @@ namespace x360ce.Engine.Data
 
         #endregion
 
-    
     }
 
     #endregion
 
-    
 }

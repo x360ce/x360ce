@@ -117,18 +117,14 @@ namespace JocysCom.ClassLibrary.Data
 			// Try to find entity connection.
 			var cs = ConfigurationManager.ConnectionStrings[name];
 			// If configuration section with not found then return.
-			if (cs == null) return null;
-			string connectionString;
-			if (cs.ProviderName == "System.Data.EntityClient")
+			if (cs == null)
+				return null;
+			var connectionString = cs.ConnectionString;
+			if (string.Compare(cs.ProviderName, "System.Data.EntityClient", true) == 0)
 			{
-				// Use entity connection.
-				var e = new System.Data.EntityClient.EntityConnection(cs.ConnectionString);
-				connectionString = e.StoreConnection.ConnectionString;
-			}
-			else
-			{
-				// Use classic connection.
-				connectionString = cs.ConnectionString;
+				// Get connection string from entity connection string.
+				var ecsb = new System.Data.EntityClient.EntityConnectionStringBuilder(cs.ConnectionString);
+				connectionString = ecsb.ProviderConnectionString;
 			}
 			var builder = new SqlConnectionStringBuilder(connectionString);
 			if (!builder.ContainsKey("Application Name") || ".Net SqlClient Data Provider".Equals(builder["Application Name"]))
@@ -158,6 +154,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		public int ExecuteNonQuery(string connectionString, SqlCommand cmd, string comment = null, int? timeout = null)
 		{
+			//var sql = ToSqlCommandString(cmd);
 			var cb = new SqlConnectionStringBuilder(connectionString);
 			if (timeout.HasValue)
 			{
@@ -197,6 +194,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		public object ExecuteScalar(string connectionString, SqlCommand cmd, string comment = null)
 		{
+			//var sql = ToSqlCommandString(cmd);
 			var conn = new SqlConnection(connectionString);
 			cmd.Connection = conn;
 			conn.Open();
@@ -211,6 +209,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		public IDataReader ExecuteReader(string connectionString, SqlCommand cmd, string comment = null)
 		{
+			//var sql = ToSqlCommandString(cmd);
 			var conn = new SqlConnection(connectionString);
 			cmd.Connection = conn;
 			conn.Open();
@@ -220,6 +219,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		public T ExecuteDataSet<T>(string connectionString, SqlCommand cmd, string comment = null) where T : DataSet
 		{
+			//var sql = ToSqlCommandString(cmd);
 			var conn = new SqlConnection(connectionString);
 			cmd.Connection = conn;
 			conn.Open();
@@ -371,5 +371,116 @@ namespace JocysCom.ClassLibrary.Data
 		}
 
 		#endregion
+
+		#region SqlCommand to T-SQL
+
+		/// <summary>
+		/// There is no easy way to create SQL string from SqlCommand, because execution does not generate any SQL.
+		/// </summary>
+		public static string ToSqlCommandString(SqlCommand cmd)
+		{
+			var sql = new StringBuilder();
+			var FirstParam = true;
+			if (cmd.Connection != null)
+				sql.AppendLine("USE " + cmd.Connection.Database + ";");
+			switch (cmd.CommandType)
+			{
+				case CommandType.StoredProcedure:
+					sql.AppendLine("DECLARE @return_value int;");
+					foreach (SqlParameter sp in cmd.Parameters)
+					{
+						if (sp.Direction == ParameterDirection.InputOutput || sp.Direction == ParameterDirection.Output)
+						{
+							sql.Append("DECLARE " + sp.ParameterName + "\t" + sp.SqlDbType.ToString() + "; SET " + sp.ParameterName + " = ");
+							sql.AppendLine((sp.Direction == ParameterDirection.Output ? "NULL" : ParameterValueForSQL(sp)) + ";");
+						}
+					}
+					sql.AppendLine("EXEC [" + cmd.CommandText + "]");
+					foreach (SqlParameter sp in cmd.Parameters)
+					{
+						if (sp.Direction != ParameterDirection.ReturnValue)
+						{
+							sql.Append((FirstParam) ? "\t" : "\t, ");
+							if (FirstParam) FirstParam = false;
+							if (sp.Direction == ParameterDirection.Input) sql.AppendLine(sp.ParameterName + " = " + ParameterValueForSQL(sp));
+							else sql.AppendLine(sp.ParameterName + " = " + sp.ParameterName + " OUTPUT");
+						}
+					}
+					sql.AppendLine(";");
+					sql.AppendLine("SELECT '@return_value' = CONVERT(VarChar, @return_value);");
+					foreach (SqlParameter sp in cmd.Parameters)
+					{
+						if (sp.Direction == ParameterDirection.InputOutput || sp.Direction == ParameterDirection.Output)
+						{
+							sql.AppendLine("SELECT '" + sp.ParameterName + "' = CONVERT(VarChar, " + sp.ParameterName + ");");
+						}
+					}
+					break;
+				case CommandType.Text:
+					sql.AppendLine(cmd.CommandText);
+					break;
+			}
+			return sql.ToString();
+		}
+
+
+		/// <summary>
+		/// Get Parameter value in string for SQL.
+		/// </summary>
+		static string ParameterValueForSQL(SqlParameter sp)
+		{
+			string retval = "";
+			switch (sp.SqlDbType)
+			{
+				case SqlDbType.Char:
+				case SqlDbType.NChar:
+				case SqlDbType.NText:
+				case SqlDbType.NVarChar:
+				case SqlDbType.Text:
+				case SqlDbType.Time:
+				case SqlDbType.VarChar:
+				case SqlDbType.Xml:
+					retval = "'" + sp.Value.ToString().Replace("'", "''") + "'";
+					break;
+				case SqlDbType.Date:
+					retval = string.Format("'{0:yyyy-MM-dd}'", sp.Value);
+					break;
+				case SqlDbType.DateTime:
+					retval = string.Format("'{0:yyyy-MM-dd HH:mm:ss.FFF}'", sp.Value);
+					break;
+				case SqlDbType.DateTime2:
+					retval = string.Format("'{0:yyyy-MM-dd HH:mm:ss.FFFFFFF}'", sp.Value);
+					break;
+				case SqlDbType.DateTimeOffset:
+					retval = string.Format("'{0:yyyy-MM-dd HH:mm:ss.FFFFFFFzzz}'", sp.Value);
+					break;
+				case SqlDbType.Bit:
+					retval = ToBooleanOrDefault(sp.Value, false) ? "1" : "0";
+					break;
+				default:
+					retval = sp.Value.ToString().Replace("'", "''");
+					break;
+			}
+			return retval;
+		}
+
+		/// <summary>
+		/// Get boolean value from object value.
+		/// </summary>
+		static bool ToBooleanOrDefault(object o, bool defaultValue)
+		{
+			if (o != null)
+			{
+				var s = o.ToString().ToLower();
+				if (new[] { "yes", "true", "ok", "y" }.Contains(s)) return true;
+				if (new[] { "no", "false", "n" }.Contains(s)) return false;
+				bool parsed;
+				if (bool.TryParse(s, out parsed)) return parsed;
+			}
+			return defaultValue;
+		}
+
+		#endregion
+
 	}
 }

@@ -154,6 +154,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				if (!JsonSerializers.ContainsKey(type))
 				{
 					// Simple dictionary format looks like this: { "Key1": "Value1", "Key2": "Value2" }
+					// DataContractJsonSerializerSettings requires .NET 4.5
 					var settings = new DataContractJsonSerializerSettings();
 					settings.UseSimpleDictionaryFormat = true;
 					var serializer = new DataContractJsonSerializer(type, settings);

@@ -330,8 +330,8 @@ bool Config::ReadPadConfig(Controller* pController, const std::string& section, 
 	pIniFile->Get(section, "PassThrough", &pController->m_passthrough);
 	if (pController->m_passthrough)
 	{
-		u32 passthroughindex;
-		pIniFile->Get<u32>(section, "PassThroughIndex", &passthroughindex, -1);
+		int passthroughindex;
+		pIniFile->Get<int>(section, "PassThroughIndex", &passthroughindex, -1);
 		if (passthroughindex < 0 || passthroughindex > 3)
 		{
 			pController->m_passthroughindex = pController->m_user;
