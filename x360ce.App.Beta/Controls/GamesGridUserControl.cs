@@ -20,7 +20,8 @@ namespace x360ce.App.Controls
 		public GamesGridUserControl()
 		{
 			InitializeComponent();
-			if (IsDesignMode) return;
+			if (IsDesignMode)
+				return;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(GamesDataGridView);
 			//EngineHelper.EnableDoubleBuffering(GamesDataGridView);
 			GamesDataGridView.AutoGenerateColumns = false;

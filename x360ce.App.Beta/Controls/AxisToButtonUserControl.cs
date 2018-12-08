@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -16,6 +17,8 @@ namespace x360ce.App.Controls
 		public AxisToButtonUserControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			controlsLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, short.MaxValue);
 			controlsLink.ValueChanged += controlsLink_ValueChanged;
 			arrowEnabledImage = ArrowPictureBox.Image;

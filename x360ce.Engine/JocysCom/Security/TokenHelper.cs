@@ -296,56 +296,6 @@ namespace JocysCom.ClassLibrary.Security
 			return o;
 		}
 
-		///// <summary>
-		///// Convert structure to byte array.
-		///// </summary>
-		//public static byte[] StructureToBytes<T>(T value)
-		//{
-		//	var size = Marshal.SizeOf(value);
-		//	var bytes = new byte[size];
-		//	var handle = default(GCHandle);
-		//	try
-		//	{
-		//		handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-		//		Marshal.StructureToPtr(value, handle.AddrOfPinnedObject(), false);
-		//	}
-		//	finally
-		//	{
-		//		if (handle.IsAllocated)
-		//		{
-		//			handle.Free();
-		//		}
-		//	}
-		//	return bytes;
-		//}
-
-		//public static T BytesToStructure<T>(byte[] bytes)
-		//{
-		//	return (T)BytesToStructure(bytes, typeof(T));
-		//}
-
-		///// <summary>
-		///// Convert byte array to structure.
-		///// </summary>
-		//public static object BytesToStructure(byte[] bytes, Type type)
-		//{
-		//	var value = type.IsValueType ? Activator.CreateInstance(type) : null;
-		//	var handle = default(GCHandle);
-		//	try
-		//	{
-		//		handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-		//		value = Marshal.PtrToStructure(handle.AddrOfPinnedObject(), type);
-		//	}
-		//	finally
-		//	{
-		//		if (handle.IsAllocated)
-		//		{
-		//			handle.Free();
-		//		}
-		//	}
-		//	return value;
-		//}
-
 		/// <summary>
 		/// Convert object to byte array.
 		/// </summary>

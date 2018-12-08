@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Reflection;
+using System.Windows.Forms;
 using x360ce.Engine;
-using System.IO;
 using x360ce.Engine.Data;
-using JocysCom.ClassLibrary.Runtime;
-using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -20,7 +14,8 @@ namespace x360ce.App.Controls
 		public GameDetailsUserControl()
 		{
 			InitializeComponent();
-			if (IsDesignMode) return;
+			if (IsDesignMode)
+				return;
 			DInputCheckBoxes = DInputMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
 			XInputCheckBoxes = XInputMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
 			HookCheckBoxes = HookMaskGroupBox.Controls.OfType<CheckBox>().ToArray();
@@ -69,7 +64,7 @@ namespace x360ce.App.Controls
 					_CurrentItem = value;
 					// Update interface.
 					DisableEvents();
-                    // Make sure item is not null.
+					// Make sure item is not null.
 					var item = _CurrentItem ?? new x360ce.Engine.Data.Program();
 					// Set Item properties.
 					SetMask(DInputCheckBoxes, (DInputMask)item.DInputMask);
@@ -81,9 +76,9 @@ namespace x360ce.App.Controls
 					TimeoutNumericUpDown.Value = item.Timeout;
 					ControlsHelper.SetSelectedItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)item.ProcessorArchitecture);
 					ControlsHelper.SetSelectedItem(EmulationTypeComboBox, (EmulationType)item.EmulationType);
-                    var game = _CurrentItem as UserGame;
-                    var isGame = game != null;
-                    if (isGame)
+					var game = _CurrentItem as UserGame;
+					var isGame = game != null;
+					if (isGame)
 					{
 						_DefaultSettings = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName == game.FileName);
 					}

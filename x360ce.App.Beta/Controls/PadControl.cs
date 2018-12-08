@@ -23,10 +23,12 @@ namespace x360ce.App.Controls
         public PadControl(MapTo controllerIndex)
         {
             InitializeComponent();
-            // Hide left/right border.
-            //MappedDevicesDataGridView.Width = this.Width + 2;
-            //MappedDevicesDataGridView.Left = -1;
-            JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			// Hide left/right border.
+			//MappedDevicesDataGridView.Width = this.Width + 2;
+			//MappedDevicesDataGridView.Left = -1;
+				JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
             MappedTo = controllerIndex;
             // Axis to Button DeadZones
             AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
@@ -52,7 +54,7 @@ namespace x360ce.App.Controls
 
         }
 
-        private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
+		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
         {
             if (e.Item == null)
                 return;

@@ -7,6 +7,8 @@ using System.Data;
 using System.Runtime.Serialization;
 using System.Data.Objects.DataClasses;
 using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -382,7 +384,118 @@ namespace JocysCom.ClassLibrary.Runtime
 			return list;
 		}
 
+		#region Convert: Object <-> Bytes
 
+		// Note: Similar as "Structure <-> Bytes", but with ability to convert variable strings.
+
+		public static byte[] ObjectToBytes<T>(T o)
+		{
+			using (var ms = new MemoryStream())
+			{
+				var flags = BindingFlags.Instance | BindingFlags.Public;
+				var props = typeof(T).GetProperties(flags);
+				var writer = new BinaryWriter(ms);
+				foreach (var p in props)
+				{
+					var value = p.GetValue(o);
+					writer.Write((dynamic)value);
+				}
+				ms.Flush();
+				ms.Seek(0, SeekOrigin.Begin);
+				return ms.ToArray();
+			}
+		}
+
+		public static T BytesToObject<T>(byte[] bytes)
+		{
+			using (var ms = new MemoryStream(bytes))
+			{
+				var o = Activator.CreateInstance<T>();
+				var flags = BindingFlags.Instance | BindingFlags.Public;
+				var props = typeof(T).GetProperties(flags);
+				var reader = new BinaryReader(ms);
+				foreach (var p in props)
+				{
+					var typeCode = Type.GetTypeCode(p.PropertyType);
+					object v;
+					switch (typeCode)
+					{
+						case TypeCode.Boolean: v = reader.ReadBoolean(); break;
+						case TypeCode.Char: v = reader.ReadChar(); break;
+						case TypeCode.DBNull: v = DBNull.Value; break;
+						case TypeCode.DateTime: v = new DateTime(reader.ReadInt64()); break;
+						case TypeCode.Decimal: v = reader.ReadDecimal(); break;
+						case TypeCode.Double: v = reader.ReadDouble(); break;
+						case TypeCode.Empty: v = null; break;
+						case TypeCode.SByte: v = reader.ReadSByte(); break;
+						case TypeCode.Int16: v = reader.ReadInt16(); break;
+						case TypeCode.Int32: v = reader.ReadInt32(); break;
+						case TypeCode.Int64: v = reader.ReadInt64(); break;
+						case TypeCode.Single: v = reader.ReadSingle(); break;
+						case TypeCode.String: v = reader.ReadString(); break;
+						case TypeCode.Byte: v = reader.ReadByte(); break;
+						case TypeCode.UInt16: v = reader.ReadUInt16(); break;
+						case TypeCode.UInt32: v = reader.ReadUInt32(); break;
+						case TypeCode.UInt64: v = reader.ReadUInt64(); break;
+						default: throw new Exception("Non Serializable Object: " + p.PropertyType);
+					}
+					p.SetValue(o, v);
+				}
+				return o;
+			}
+		}
+
+		#endregion
+
+		#region Convert: Structure <-> Bytes
+
+		/// <summary>
+		/// Convert structure to byte array (unmanaged block of memory).
+		/// </summary>
+		public static byte[] StructureToBytes<T>(T value) where T : struct
+		{
+			var size = Marshal.SizeOf(value);
+			var bytes = new byte[size];
+			var handle = default(GCHandle);
+			try
+			{
+				handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+				Marshal.StructureToPtr(value, handle.AddrOfPinnedObject(), false);
+			}
+			finally
+			{
+				if (handle.IsAllocated)
+					handle.Free();
+			}
+			return bytes;
+		}
+
+		public static T BytesToStructure<T>(byte[] bytes) where T : struct
+		{
+			return (T)BytesToStructure(bytes, typeof(T));
+		}
+
+		/// <summary>
+		/// Convert byte array (unmanaged block of memory) to structure.
+		/// </summary>
+		public static object BytesToStructure(byte[] bytes, Type type)
+		{
+			var value = type.IsValueType ? Activator.CreateInstance(type) : null;
+			var handle = default(GCHandle);
+			try
+			{
+				handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+				value = Marshal.PtrToStructure(handle.AddrOfPinnedObject(), type);
+			}
+			finally
+			{
+				if (handle.IsAllocated)
+					handle.Free();
+			}
+			return value;
+		}
+
+		#endregion
 
 	}
 }

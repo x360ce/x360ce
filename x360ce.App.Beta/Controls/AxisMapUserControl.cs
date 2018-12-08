@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Threading;
+﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Threading;
 using SharpDX.XInput;
 using System;
 using System.ComponentModel;
@@ -13,6 +14,8 @@ namespace x360ce.App.Controls
 		public AxisMapUserControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			InitPaintObjects();
 		}
 
@@ -95,20 +98,20 @@ namespace x360ce.App.Controls
 					updateTimer.Dispose();
 				if (components != null)
 					components.Dispose();
-                if (dInputLine != null)
-                    dInputLine.Dispose();
-                if (dInputPoint != null)
-                    dInputPoint.Dispose();
-                if (nInputLine != null)
-                    nInputLine.Dispose();
-                if (xInputPoint != null)
-                    xInputPoint.Dispose();
-                if (xInputLine != null)
-                    xInputLine.Dispose();
-                if (xInputPath != null)
-                    xInputPath.Dispose();
-            }
-            base.Dispose(disposing);
+				if (dInputLine != null)
+					dInputLine.Dispose();
+				if (dInputPoint != null)
+					dInputPoint.Dispose();
+				if (nInputLine != null)
+					nInputLine.Dispose();
+				if (xInputPoint != null)
+					xInputPoint.Dispose();
+				if (xInputLine != null)
+					xInputLine.Dispose();
+				if (xInputPath != null)
+					xInputPath.Dispose();
+			}
+			base.Dispose(disposing);
 		}
 
 		private void ThumbUserControl_EnabledChanged(object sender, EventArgs e)
