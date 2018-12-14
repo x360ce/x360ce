@@ -13,8 +13,14 @@ using System.Collections.Generic;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
 	public partial class LogHelper
 	{
+
+		public LogHelper()
+		{
+			_FileWriter = new IO.LogFileWriter(_configPrefix);
+		}
 
 		private static LogHelper _Current;
 		private static object currentLock = new object();
@@ -270,10 +276,13 @@ namespace JocysCom.ClassLibrary.Runtime
 			el.Close();
 		}
 
+		public IO.LogFileWriter FileWriter { get { return _FileWriter; } }
+		IO.LogFileWriter _FileWriter;
+
 		internal static void _WriteFile(string message, EventLogEntryType type)
 		{
 			// If LogStreamWriter is not null (check inside the function) then write to file.
-			Current.WriteToLogFile(message);
+			Current.FileWriter.WriteLine(message);
 		}
 
 		/// <summary>

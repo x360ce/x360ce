@@ -193,7 +193,6 @@
     </Compile>
     <Compile Include="Common\XInputMaskScanner.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="JocysCom\ClassTools\EnumTools.cs" />
     <Compile Include="JocysCom\Collections\KeyValue.cs" />
     <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
@@ -456,7 +455,9 @@
   <ItemGroup>
     <Content Include="JocysCom\Extensions\ReadMe.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="JocysCom\ClassTools\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Web.UI.WebControls;
 
 namespace JocysCom.ClassLibrary.Web
 {
@@ -133,5 +134,74 @@ namespace JocysCom.ClassLibrary.Web
 
 		#endregion
 
+		#region Bind Lists
+
+		/// <summary>
+		/// Bind enumeration to ComboBox.
+		/// </summary>
+		/// <typeparam name="T">Enumeration type</typeparam>
+		/// <param name="control">List control</param>
+		/// <param name="format">{0} - string value, {1} - number value, {2} - description attribute.</param>
+		/// <param name="addEmpty"></param>
+		public static void BindEnum<T>(DropDownList control, T selected = default(T), bool addEmpty = false, bool sort = false, T[] exclude = null, string format = null)
+		// Declare T as same as Enumeration.
+		// where T :  struct, IComparable, IFormattable, IConvertible
+		{
+			var t = typeof(T);
+			if (Runtime.Helper.IsNullable(t))
+				t = Nullable.GetUnderlyingType(t) ?? t;
+			var list = new List<ListItem>();
+			var values = Enum.GetValues(t).Cast<T>().ToArray();
+			foreach (var value in values)
+			{
+				if (exclude != null && exclude.Contains(value))
+					continue;
+				var description = Runtime.Attributes.GetDescription(value);
+				var stringValue = string.Format("{0}", value);
+				var numberValue = System.Convert.ToInt64(value);
+				var text = string.IsNullOrEmpty(format)
+					? description
+					: string.Format(format, stringValue, numberValue, description);
+				var item = new ListItem(text, stringValue);
+				list.Add(item);
+			}
+			if (sort)
+				list = list.OrderBy(x => x.Text).ToList();
+			if (addEmpty)
+			{
+				var defaultValue = string.Format("{0}", default(T));
+				if (!list.Any(x => x.Text == defaultValue))
+					list.Insert(0, new ListItem("", defaultValue));
+			}
+			// Make sure sorted is disabled, because it is not allowed when using DataSource.
+			control.DataSource = list;
+			control.DataTextField = "Text";
+			control.DataValueField = "Value";
+			control.DataBind();
+			if (list.Count > 0)
+			{
+				var selectedValue = string.Format("{0}", selected);
+				if (selectedValue != list[0].Value)
+					SelectEnumValue(control, selected);
+			}
+		}
+
+		public static void SelectEnumValue<T>(DropDownList control, T value)
+		// Declare T as same as Enum.
+		// where T : struct, IComparable, IFormattable, IConvertible
+		{
+			var stringValue = string.Format("{0}", value);
+			for (var i = 0; i < control.Items.Count; i++)
+			{
+				var v = control.Items[i].Value;
+				if (Equals(v, stringValue))
+				{
+					control.SelectedValue = stringValue;
+					return;
+				}
+			}
+		}
+
+		#endregion
 	}
 }

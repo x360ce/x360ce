@@ -18,7 +18,6 @@ namespace JocysCom.ClassLibrary.IO
 	{
 
 		object streamWriterLock = new object();
-		object lockerCurrent = new object();
 
 		public string LogFilePrefix { get; set; }
 		public string LogFilePattern { get; set; }
@@ -31,7 +30,7 @@ namespace JocysCom.ClassLibrary.IO
 
 		StreamWriter tw;
 		bool _LogFileAutoFlush;
-		public bool IsEnabled;
+
 		public bool LogFileAutoFlush
 		{
 			get { return _LogFileAutoFlush; }
@@ -59,7 +58,6 @@ namespace JocysCom.ClassLibrary.IO
 			LogFilePrefix = ParseString("LogFilePrefix", "Logs\\" + asmName + "_");
 			// Initialize pattern
 			LogFilePattern = ParseString("LogFilePattern", "{0:yyyyMMdd_HHmmss}.txt");
-			IsEnabled = true;
 		}
 
 
@@ -109,7 +107,6 @@ namespace JocysCom.ClassLibrary.IO
 			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
 			return (v == null) ? defaultValue : long.Parse(v);
 		}
-
 
 		#endregion
 

@@ -497,5 +497,80 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
+		#region Try Parse
+
+		/// <summary>
+		/// Tries to convert the specified string representation of a logical value to
+		/// its type T equivalent. A return value indicates whether the conversion
+		/// succeeded or failed.
+		/// </summary>
+		/// <typeparam name="T">The type to try and convert to.</typeparam>
+		/// <param name="value">A string containing the value to try and convert.</param>
+		/// <param name="result">If the conversion was successful, the converted value of type T.</param>
+		/// <returns>If value was converted successfully, true; otherwise false.</returns>
+		public static bool TryParse<T>(string value, out T result)
+		{
+			var t = typeof(T);
+			if (IsNullable(t))
+				t = Nullable.GetUnderlyingType(t) ?? t;
+			//var converter = System.ComponentModel.TypeDescriptor.GetConverter(typeof(T));
+			//if (converter.IsValid(value))
+			//{
+			//	result = (T)converter.ConvertFromString(value);
+			//	return true;
+			//}
+			if (t.IsEnum)
+			{
+				var retValue = value == null ? false : Enum.IsDefined(t, value);
+				result = retValue ? (T)Enum.Parse(t, value) : default(T);
+				return retValue;
+			}
+			var tryParseMethod = t.GetMethod("TryParse",
+				BindingFlags.Static | BindingFlags.Public, null,
+				new[] { typeof(string), t.MakeByRefType() }, null);
+			var parameters = new object[] { value, null };
+			var retVal = (bool)tryParseMethod.Invoke(null, parameters);
+			result = (T)parameters[1];
+			return retVal;
+		}
+
+		/// <summary>
+		/// Tries to convert the specified string representation of a logical value to
+		/// its type T equivalent. Returns default value if conversion failed.
+		/// </summary>
+		public static T TryParse<T>(string value, T defaultValue = default(T))
+		{
+			T result = default(T);
+			return TryParse(value, out result)
+				? result
+				: defaultValue;
+		}
+
+		/// <summary>
+		/// Tries to convert the specified string representation of a logical value to
+		/// its type T equivalent. Returns default value if conversion failed.
+		/// </summary>
+		public static bool CanParse<T>(string value)
+		{
+			T result;
+			return TryParse(value, out result);
+		}
+
+		public static bool IsNullable(Type t)
+		{
+			// Throw exception if type not supplied.
+			if (t == null) throw new ArgumentNullException("t");
+			// Special Handling - known cases where Exceptions would be thrown
+			else if (t == typeof(void)) throw new Exception("There is no Nullable version of void");
+			// If this is not a value type, it is a reference type, so it is automatically nullable.
+			// (NOTE: All forms of Nullable<T> are value types)
+			if (!t.IsValueType) return true;
+			// Return true if underlying Type exists (this is faster than line above).
+			return Nullable.GetUnderlyingType(t) != null;
+		}
+
+
+		#endregion
+
 	}
 }

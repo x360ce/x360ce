@@ -8,6 +8,7 @@ using System.Drawing;
 using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -626,6 +627,62 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		#endregion
+
+		#region Bind Lists
+
+		/// <summary>
+		/// Bing Enum to ComboBox.
+		/// </summary>
+		/// <typeparam name="T">enum</typeparam>
+		/// <param name="box">Combo box control</param>
+		/// <param name="format">{0} - name, {1} - numeric value, {2} - description attribute.</param>
+		/// <param name="addEmpty"></param>
+		public static void BindEnum<T>(System.Windows.Forms.ComboBox box, string format = null, bool addEmpty = false, bool sort = false, T? selected = null, T[] exclude = null)
+			// Declare T as same as Enum.
+			where T : struct, IComparable, IFormattable, IConvertible
+		{
+			var list = new List<DictionaryEntry>();
+			if (string.IsNullOrEmpty(format)) format = "{0}";
+			string display;
+			foreach (var value in (T[])Enum.GetValues(typeof(T)))
+			{
+				if (exclude != null && exclude.Contains(value))
+					continue;
+				display = string.Format(format, value, System.Convert.ToInt64(value), Runtime.Attributes.GetDescription(value));
+				list.Add(new DictionaryEntry(display, value));
+			}
+			if (sort)
+				list = list.OrderBy(x => x.Key).ToList();
+			if (addEmpty && !list.Any(x => (string)x.Key == ""))
+				list.Insert(0, new DictionaryEntry("", null));
+			// Make sure sorted is disabled, because it is not allowed when using DataSource.
+			if (box.Sorted)
+				box.Sorted = false;
+			box.DataSource = list;
+			box.DisplayMember = "Key";
+			box.ValueMember = "Value";
+			if (selected.HasValue)
+				SelectEnumValue(box, selected.Value);
+		}
+
+		public static void SelectEnumValue<T>(ComboBox box, T value)
+			// Declare T as same as Enum.
+			where T : struct, IComparable, IFormattable, IConvertible
+		{
+			for (var i = 0; i < box.Items.Count; i++)
+			{
+				var val = ((DictionaryEntry)box.Items[i]).Value;
+				if (Equals(val, value))
+				{
+					box.SelectedIndex = i;
+					return;
+				}
+			}
+		}
+
+		#endregion
+
+
 
 	}
 }
