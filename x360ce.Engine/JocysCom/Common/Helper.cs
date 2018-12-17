@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Text;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 using System.Reflection;
-using System.Security;
-using System.Configuration;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.ClassLibrary
 {

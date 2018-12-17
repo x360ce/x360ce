@@ -284,11 +284,10 @@
     <Compile Include="JocysCom\Runtime\Attributes.cs" />
     <Compile Include="JocysCom\Runtime\ChangeState.cs" />
     <Compile Include="JocysCom\Runtime\EmailResult.cs" />
-    <Compile Include="JocysCom\Runtime\Helper.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.Exception.cs" />
-    <Compile Include="JocysCom\Runtime\LogHelper.File.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.Mail.cs" />
+    <Compile Include="JocysCom\Runtime\RuntimeHelper.cs" />
     <Compile Include="JocysCom\Runtime\Serializer.cs" />
     <Compile Include="JocysCom\Runtime\XmlValidator.cs" />
     <Compile Include="JocysCom\Security\AESHelper.cs" />

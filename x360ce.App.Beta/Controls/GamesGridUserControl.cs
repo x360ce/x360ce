@@ -479,7 +479,7 @@ namespace x360ce.App.Controls
 				var existingItem = existingItems.FirstOrDefault();
 				// If item found then update propertied without removing.
 				if (existingItem != null)
-					JocysCom.ClassLibrary.Runtime.Helper.CopyProperties(newItem, existingItem);
+					JocysCom.ClassLibrary.Runtime.RuntimeHelper.CopyProperties(newItem, existingItem);
 			}
 			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.UserGame).Name);
 			grid.DataSource = list;

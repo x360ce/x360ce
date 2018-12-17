@@ -99,7 +99,7 @@ namespace x360ce.App
 				// If item was updated then...
 				else if (item.DateUpdated > old.DateUpdated)
 				{
-					JocysCom.ClassLibrary.Runtime.Helper.CopyDataMembers(item, old);
+					JocysCom.ClassLibrary.Runtime.RuntimeHelper.CopyDataMembers(item, old);
 				}
 			}
 		}

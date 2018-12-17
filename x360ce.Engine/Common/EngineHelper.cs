@@ -685,7 +685,7 @@ namespace x360ce.Engine
 
 		static Guid UpdateChecksum(IChecksum item, System.Security.Cryptography.MD5CryptoServiceProvider md5)
 		{
-			string s = JocysCom.ClassLibrary.Runtime.Helper.GetDataMembersString(item);
+			string s = JocysCom.ClassLibrary.Runtime.RuntimeHelper.GetDataMembersString(item);
 			var bytes = Encoding.Unicode.GetBytes(s);
 			var cs = new Guid(md5.ComputeHash(bytes));
 			if (item.Checksum != cs)

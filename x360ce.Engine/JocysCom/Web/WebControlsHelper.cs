@@ -148,7 +148,7 @@ namespace JocysCom.ClassLibrary.Web
 		// where T :  struct, IComparable, IFormattable, IConvertible
 		{
 			var t = typeof(T);
-			if (Runtime.Helper.IsNullable(t))
+			if (Runtime.RuntimeHelper.IsNullable(t))
 				t = Nullable.GetUnderlyingType(t) ?? t;
 			var list = new List<ListItem>();
 			var values = Enum.GetValues(t).Cast<T>().ToArray();

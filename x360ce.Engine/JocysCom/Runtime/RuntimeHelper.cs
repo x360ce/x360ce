@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
-	public partial class Helper
+	public partial class RuntimeHelper
 	{
 
 		public static bool IsKnownType(Type type)
@@ -335,7 +335,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns></returns>
 		public static System.Data.EntityState GetClassChangeState(object item1, object item2)
 		{
-			List<ChangeState> list = Helper.CompareProperties(item1, item2);
+			List<ChangeState> list = RuntimeHelper.CompareProperties(item1, item2);
 			EntityState state = EntityState.Unchanged;
 			List<EntityState> states = list.Select(x => x.State).Distinct().ToList();
 			states.Remove(EntityState.Unchanged);

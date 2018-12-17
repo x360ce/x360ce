@@ -141,7 +141,7 @@ namespace x360ce.Web
 					// Use created date from db.
 					item.DateCreated = dbItem.DateCreated;
 					item.DateUpdated = DateTime.Now;
-					Helper.CopyDataMembers(item, dbItem, true);
+					RuntimeHelper.CopyDataMembers(item, dbItem, true);
 				}
 			}
 			db.SaveChanges();
