@@ -9,7 +9,7 @@
   </SourceModelProvider>
   <TargetModelProvider>
     <ConnectionBasedModelProvider>
-      <ConnectionString>Data Source=S001;Initial Catalog=x360ce;Persist Security Info=False;User ID=x360ceAdmin;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True</ConnectionString>
+      <ConnectionString>Data Source=S001;Initial Catalog=x360ce;Persist Security Info=True;User ID=x360ceAdmin;Pooling=False;MultipleActiveResultSets=False;Connect Timeout=60;Encrypt=False;TrustServerCertificate=True</ConnectionString>
     </ConnectionBasedModelProvider>
   </TargetModelProvider>
   <SchemaCompareSettingsService>
@@ -912,17 +912,17 @@
     <Filter>Equals_Objects,Not_Supported_Deploy</Filter>
   </SchemaCompareViewSettings>
   <ExcludedSourceElements>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>x360ce_Games</Name>
     </SelectedItem>
   </ExcludedSourceElements>
   <ExcludedTargetElements>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>x360ce_Games</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_x360ce_Games_SettingChecksum</Name>
     </SelectedItem>

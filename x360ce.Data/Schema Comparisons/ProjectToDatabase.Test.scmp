@@ -912,144 +912,152 @@
     <Filter>Equals_Objects,Not_Supported_Deploy</Filter>
   </SchemaCompareViewSettings>
   <ExcludedSourceElements>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>x360ce_PadSettings</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>x360ce_Summaries</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_x360ce_Summaries_Weight</Name>
     </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlProcedure, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>dbo</Name>
+      <Name>Tools_FixLoginAndUser</Name>
+    </SelectedItem>
   </ExcludedSourceElements>
   <ExcludedTargetElements>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_x360ce_Games_XInputMask</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>TestValues</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlPrimaryKeyConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlPrimaryKeyConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>PK_TestValues</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_TestValues_answerA</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_TestValues_answerC</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_TestValues_answerB</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_TestValues_answerD</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlScalarFunction, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlScalarFunction, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>BinaryToDecimal</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlScalarFunction, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlScalarFunction, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>CountBits</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_x360ce_UserControllers_IsEnabled</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_x360ce_UserControllers_DateCreated</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_x360ce_UserControllers_Id</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlPrimaryKeyConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlPrimaryKeyConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>PK_x360ce_UserControllers</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>x360ce_UserControllers</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>Resources_Settings</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlPrimaryKeyConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlPrimaryKeyConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>PK_Resources_Settings</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_CultureCode</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_Replacement</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_KeyType</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_ResourceId</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_DateModifed</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_DateCreated</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_IsEnabled</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_IsSerialized</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_IsExpression</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_Resources_Settings_Description</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlIndex, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlIndex, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>Resources_Settings</Name>
       <Name>IX_Resources_Settings_Category_Section_KeyName</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlScalarFunction, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlScalarFunction, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>x360ce_GetGameSettingChecksum</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>x360ce_PadSettings</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlDefaultConstraint, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>DF_x360ce_PadSettings_ButtonBig</Name>
     </SelectedItem>
-    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlTable, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Name>dbo</Name>
       <Name>x360ce_Summaries</Name>
+    </SelectedItem>
+    <SelectedItem Type="Microsoft.Data.Tools.Schema.Sql.SchemaModel.SqlProcedure, Microsoft.Data.Tools.Schema.Sql, Version=15.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>dbo</Name>
+      <Name>Tools_FixLoginAndUser</Name>
     </SelectedItem>
   </ExcludedTargetElements>
 </SchemaComparison>

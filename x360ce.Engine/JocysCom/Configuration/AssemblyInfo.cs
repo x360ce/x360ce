@@ -105,8 +105,8 @@ namespace JocysCom.ClassLibrary.Configuration
 				{
 					if (!_BuildDateTime.HasValue)
 					{
-						//_BuildDateTime = GetBuildDateTime(AssemblyPath);
-						_BuildDateTime = GetBuildDateTime(_assembly.Location);
+						_BuildDateTime = GetBuildDateTime(_assembly);
+						//_BuildDateTime = GetBuildDateTime(_assembly.Location);
 					}
 					return _BuildDateTime.Value;
 				}
@@ -236,12 +236,17 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Read build time from the file.
+		/// Read build time from the file. This won't work with deterministic builds.
 		/// </summary>
+		/// <remarks>
+		/// The C# compiler (Roslyn) supports deterministic builds since Visual Studio 2015.
+		/// This means that compiling assemblies under the same conditions (permalink)
+		/// would produce byte-for-byte equivalent binaries.
+		/// </remarks>
 		public static DateTime GetBuildDateTime(string filePath, TimeZoneInfo tzi = null)
 		{
 			// Constants related to the Windows PE file format.
-			const int PE_HEADER_OFFSET = 60;
+			const int PE_HEADER_OFFSET = 60; // 0x3C
 			const int LINKER_TIMESTAMP_OFFSET = 8;
 			// Read header from file
 			byte[] b = new byte[2048];
@@ -266,11 +271,42 @@ namespace JocysCom.ClassLibrary.Configuration
 			return dt;
 		}
 
+
 		/// <summary>
-		/// Read build time from the assembly.
+		/// Read build time from the assembly. Workaround is required to work with deterministic builds.
 		/// </summary>
+		/// <remarks>
+		/// You have two options:
+		/// Option 1: Disable Deterministic build by adding
+		///     &gt;Deterministic&lt;False&gt;/Deterministic&lt inside a &gt;PropertyGroup&lt section  of .csproj
+		///
+		/// Option 2:
+		///     Create "Resources\BuildDate.txt" and set its "Build Action: Embedded Resource"
+		///     Add to pre-build event to work with latest .NET builds:
+		///     powershell -Command "(Get-Date).ToString(\"o\") | Out-File '$(ProjectDir)Resources\BuildDate.txt'
+		///
+		/// Note:
+		/// The C# compiler (Roslyn) supports deterministic builds since Visual Studio 2015.
+		/// This means that compiling assemblies under the same conditions (permalink)
+		/// would produce byte-for-byte equivalent binaries.
+		/// </remarks>
 		public static DateTime GetBuildDateTime(Assembly assembly, TimeZoneInfo tzi = null)
 		{
+			var names = assembly.GetManifestResourceNames();
+			DateTime dt;
+			foreach (var name in names)
+			{
+				if (!name.EndsWith("BuildDate.txt"))
+					continue;
+				var stream = assembly.GetManifestResourceStream(name);
+				using (var reader = new StreamReader(stream))
+				{
+					var date = reader.ReadToEnd();
+					dt = DateTime.Parse(date);
+					dt = TimeZoneInfo.ConvertTime(dt, tzi ?? TimeZoneInfo.Local);
+					return dt;
+				}
+			}
 			// Constants related to the Windows PE file format.
 			const int PE_HEADER_OFFSET = 60;
 			const int LINKER_TIMESTAMP_OFFSET = 8;
@@ -285,7 +321,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			// Convert the TimeStamp to a DateTime
 			var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 			var linkTimeUtc = epoch.AddSeconds(secondsSince1970);
-			var dt = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tzi ?? TimeZoneInfo.Local);
+			dt = TimeZoneInfo.ConvertTimeFromUtc(linkTimeUtc, tzi ?? TimeZoneInfo.Local);
 			return dt;
 		}
 
