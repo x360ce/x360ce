@@ -266,26 +266,6 @@ namespace x360ce.Engine
 
 		#endregion
 
-		#region Method: GetProgram
-
-		public event EventHandler<ResultEventArgs> GetProgramCompleted;
-
-		[SoapDocumentMethod(ns + "GetProgram",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public Program GetProgram(string fileName, string fileProductName)
-		{
-			object[] results = Invoke("GetProgram", new object[] { fileName, fileProductName });
-			return (Program)results[0];
-		}
-
-		public void GetProgramsAsync(string fileName, string fileProductName, object userState = null)
-		{
-			InvokeAsync("GetProgram", GetProgramCompleted, userState, new object[] { fileName, fileProductName });
-		}
-
-		#endregion
-
 		#region Method: GetVendors
 
 		public event EventHandler<ResultEventArgs> GetVendorsCompleted;
@@ -322,26 +302,6 @@ namespace x360ce.Engine
 		public void GetSettingsDatasAsync(object userState = null)
 		{
 			InvokeAsync("GetSettingsData", GetSettingsDataCompleted, userState, new object[] { });
-		}
-
-		#endregion
-
-		#region Method: SetProgram
-
-		public event EventHandler<ResultEventArgs> SetProgramCompleted;
-
-		[SoapDocumentMethod(ns + "SetProgram",
-			RequestNamespace = ns, ResponseNamespace = ns,
-			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
-		public string SetProgram(Program p)
-		{
-			object[] results = Invoke("SetProgram", new object[] { p });
-			return (string)results[0];
-		}
-
-		public void SetProgramAsync(Program p, object userState = null)
-		{
-			InvokeAsync("SetProgram", SetProgramCompleted, userState, new object[] { p });
 		}
 
 		#endregion

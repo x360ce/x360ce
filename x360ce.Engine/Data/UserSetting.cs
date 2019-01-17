@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 namespace x360ce.Engine.Data
 {
 	// Use "Setting" for backwards compatibility with version X360CE 3.x application.
-	[XmlRoot(ElementName = "Setting")]
+	//[XmlRoot(ElementName = "Setting")] <- can't add this option or it will break v3.x.
 	[XmlType("Setting")]
 	public partial class UserSetting : IUserRecord
 	{

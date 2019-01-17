@@ -292,6 +292,14 @@
       <DependentUpon>x360ce.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WebServices\x360ce.asmx.v3.cs">
+      <DependentUpon>x360ce.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WebServices\x360ce.asmx.v4.cs">
+      <DependentUpon>x360ce.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Files\" />
