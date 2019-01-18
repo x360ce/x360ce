@@ -44,6 +44,7 @@ CALL:MKJ ComponentModel
 CALL:MKJ Configuration
 CALL:MKJ Controls
 CALL:MKJ Data
+CALL:MKJ Diagnostics
 CALL:MKJ Drawing
 CALL:MKJ Extensions
 CALL:MKJ Files
