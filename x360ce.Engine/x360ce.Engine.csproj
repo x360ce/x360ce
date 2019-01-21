@@ -458,9 +458,7 @@
   <ItemGroup>
     <Content Include="JocysCom\Extensions\ReadMe.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="JocysCom\ClassTools\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

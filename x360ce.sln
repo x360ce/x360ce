@@ -28,13 +28,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InputHook", "x360ce\InputHo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "x360ce", "x360ce\x360ce\x360ce.vcxproj", "{303D4435-7541-4357-91B1-CC9DA7E0E926}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Wiki", "Wiki", "{44A58B5F-E8C2-41A5-8916-A57AC3718606}"
-	ProjectSection(SolutionItems) = preProject
-		Wiki\CompatibilityList.md = Wiki\CompatibilityList.md
-		Wiki\HowTo.md = Wiki\HowTo.md
-		Wiki\ReportingCompatibility.md = Wiki\ReportingCompatibility.md
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.App.Beta", "x360ce.App.Beta\x360ce.App.Beta.csproj", "{00A8380D-72CB-4AD3-A8C4-0AF44BA2AEE0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2C4AA67E-A4C0-41CC-BEA1-FEF3BDD4BE0B}"
