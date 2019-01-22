@@ -1,4 +1,4 @@
-﻿CREATE FUNCTION [dbo].[x360ce_GetPadSettingCompletionPoints](
+﻿CREATE FUNCTION [dbo].[x360ce_GetCompletionPointsForPadSetting](
 	@PadSettingChecksum uniqueidentifier,
 	@UserDeviceId uniqueidentifier
 ) RETURNS int
@@ -24,6 +24,8 @@ DECLARE
 		SET @maxButtons = 14
 	IF @maxMotors > 2
 		SET @maxMotors = 2
+
+
 
 	-- Count axis points (maximum 6 points).
 	/*
