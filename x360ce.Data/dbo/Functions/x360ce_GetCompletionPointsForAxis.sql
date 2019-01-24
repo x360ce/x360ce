@@ -1,48 +1,47 @@
 ﻿CREATE FUNCTION [dbo].[x360ce_GetCompletionPointsForAxis](
-	@axis varchar(16),
-	@axisMin varchar(16),
-	@axisMax varchar(16)
+	@map varchar(16),
+	@mapMin varchar(16),
+	@mapMax varchar(16)
 ) RETURNS int
 BEGIN
 
 DECLARE
 	@points int = 0,
-	@isAxis bit = 0,
-	@isAxisMin bit = 0,
-	@isAxisMax bit = 0
+	@isRange bit = 0,
+	@isRangeMin bit = 0,
+	@isRangeMax bit = 0
 
 -- Check if axis: Axis = "a", HAxis = "x", Slider = "s", HSlider = "h"
-SET @isAxis = CASE WHEN @axis LIKE '%[nxsh]%' THEN 1 ELSE 0 END
-SET @isAxisMin = CASE WHEN @axisMin LIKE '%[nxsh]%' THEN 1 ELSE 0 END
-SET @isAxisMax = CASE WHEN @axisMax LIKE '%[nxsh]%' THEN 1 ELSE 0 END
+SET @isRange = CASE WHEN @map LIKE '%[nxsh]%' THEN 1 ELSE 0 END
+SET @isRangeMin = CASE WHEN @mapMin LIKE '%[nxsh]%' THEN 1 ELSE 0 END
+SET @isRangeMax = CASE WHEN @mapMax LIKE '%[nxsh]%' THEN 1 ELSE 0 END
 
--- If proper axis mapped then...
-IF @isAxis = 1
+-- For range  map - full points (100 max).
+-- For binary map - half points.
+
+-- If range mapped to axis then...
+IF @isRange = 1
 -- Give 100 points.
-SET @points = 100
+	RETURN 100
 
--- For half axis map to axis give
-IF @isAxisMin = 1
+-- If range mapped then give full points for half range.
+IF @isRangeMin = 1
 	SET @points = @points + 50
-IF @isAxisMax = 1
-	SET @points = @points + 50
-
--- For everything else give 25 points max.
-IF LEN(@axis) > 0
-BEGIN
+-- If binary map then give half points for half range.
+ELSE IF LEN(@mapMin) > 0
 	SET @points = @points + 25
-END
-ELSE
-BEGIN
-	IF LEN(@axisMin) > 0
-		SET @points = @points + 25
-	IF LEN(@axisMax) > 0
-		SET @points = @points + 25
-END
 
--- Limit points to 100
-IF @points > 100
-	SET @points = 100
+-- If range mapped then give full points for half range.
+IF @isRangeMax = 1
+	SET @points = @points + 50
+-- If binary map then give half points for half range.
+ELSE IF LEN(@mapMax) > 0
+	SET @points = @points + 25
+
+-- If just binary mapped to whole axis then...
+IF @points = 0 AND LEN(@map) > 0
+	-- Give some points.
+	SET @points = 25
 
 RETURN @points
 END

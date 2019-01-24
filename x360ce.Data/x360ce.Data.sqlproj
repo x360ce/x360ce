@@ -346,11 +346,11 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Functions\x360ce_GetCompletionPointsForPadSetting.sql">
+    <Build Include="dbo\Functions\x360ce_GetCompletionPointsForAxis.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Functions\x360ce_GetCompletionPointsForAxis.sql">
+    <Build Include="dbo\Functions\x360ce_GetCompletionPoints.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
