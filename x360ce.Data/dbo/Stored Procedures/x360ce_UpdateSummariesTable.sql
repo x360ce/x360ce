@@ -48,7 +48,7 @@ BEGIN
 		t1.PadSettingChecksum = s.PadSettingChecksum
 	WHERE t1.SettingId IS NULL
 
-	PRINT 'DELETED: ' + CAST(@@ROWCOUNT as varchar)
+	--PRINT 'DELETED: ' + CAST(@@ROWCOUNT as varchar)
 
 	-- Insert missing records.
 	INSERT INTO [dbo].[x360ce_Summaries] (ProductGuid, ProductName, [FileName], FileProductName, PadSettingChecksum, Users)
@@ -69,7 +69,7 @@ BEGIN
 	LEFT JOIN [dbo].[x360ce_Products] p ON
 		t3.ProductGuid = p.ProductGuid
 
-	PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
+	--PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
 
 	-- Update records
 	UPDATE t1 SET
@@ -95,6 +95,6 @@ BEGIN
 		t1.FileProductName = t3.FileProductName AND
 		t1.PadSettingChecksum = t3.PadSettingChecksum
 
-	PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
+	--PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
 
 END

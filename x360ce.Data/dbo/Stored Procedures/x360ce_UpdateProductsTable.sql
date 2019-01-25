@@ -103,7 +103,7 @@ BEGIN
 	INNER JOIN @mostPopularNames pu ON pu.ProductGuid = p.ProductGuid
 	WHERE p.ProductName <> pu.ProductName
 
-	PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
+	--PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
 
 	-- Update count.
 	UPDATE xp SET
@@ -124,6 +124,6 @@ BEGIN
 		GROUP BY ProductGuid
 	) t3 ON xp.ProductGuid = t3.ProductGuid
 
-	PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
+	--PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
 	
 END

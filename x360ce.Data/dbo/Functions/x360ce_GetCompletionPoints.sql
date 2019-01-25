@@ -4,10 +4,22 @@
 ) RETURNS int
 BEGIN
 
+/*
+	SELECT dbo.x360ce_GetCompletionPoints('D220021C-EF18-0BF6-E901-E1F386E021BC', 'D6CB59A0-DBEA-11E6-8001-444553540000')
+	SELECT * FROM x360ce_PadSettings WHERE PadSettingChecksum = 'D220021C-EF18-0BF6-E901-E1F386E021BC'
+	SELECT * FROM x360ce_UserDevices WHERE InstanceGuid = 'D6CB59A0-DBEA-11E6-8001-444553540000'
+*/
+
+/*
 DECLARE
-	@maxAxis int = 0,
-	@maxButtons int = 0,
-	@maxMotors int = 0
+	@PadSettingChecksum uniqueidentifier = 'D220021C-EF18-0BF6-E901-E1F386E021BC',
+	@UserDeviceId uniqueidentifier = 'D6CB59A0-DBEA-11E6-8001-444553540000'
+*/
+
+DECLARE
+	@maxAxis decimal(18,4) = 6,
+	@maxButtons decimal(18,4) = 14,
+	@maxMotors decimal(18,4) = 2
 
 	SELECT
 		-- Get device info.
@@ -26,14 +38,14 @@ DECLARE
 		SET @maxMotors = 2
 
 	DECLARE
-		@axisPoints int,
-		@buttonPoints int,
+		@axisPoints decimal(18,4),
+		@buttonPoints decimal(18,4),
 		@dpadMap varchar(16),
-		@dpadPoints int
-		
+		@dpadPoints decimal(18,4),
+		@motorPoints decimal(18,4)
 
 	SELECT
-		-- Count axis points (max 100 per axis).
+		-- Count axis points (6 max or 1 per axis).
 		@axisPoints =
 			dbo.x360ce_GetCompletionPointsForAxis(ps.LeftThumbAxisX, LeftThumbLeft, LeftThumbRight) +
 			dbo.x360ce_GetCompletionPointsForAxis(ps.LeftThumbAxisY, ps.LeftThumbUp, ps.LeftThumbDown) +
@@ -41,25 +53,28 @@ DECLARE
 			dbo.x360ce_GetCompletionPointsForAxis(ps.RightThumbAxisY, ps.RightThumbUp, ps.RightThumbDown) +
 			dbo.x360ce_GetCompletionPointsForAxis(ps.LeftTrigger, '', '') +
 			dbo.x360ce_GetCompletionPointsForAxis(ps.RightTrigger, '', ''),
-		-- Count button points (max 100 per button).
+		-- Count button points (10 max or 1 per button).
 		@buttonPoints =
-			CASE LEN(ps.ButtonA) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.ButtonB) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.ButtonX) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.ButtonY) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.ButtonBack) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.ButtonStart) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.LeftThumbButton) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.RightThumbButton) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.LeftShoulder) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.RightShoulder) WHEN 0 THEN 0 ELSE 100 END,
-		-- Count DPad points (400 or max 100 per button).
+			CASE LEN(ps.ButtonA) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.ButtonB) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.ButtonX) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.ButtonY) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.ButtonBack) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.ButtonStart) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.LeftThumbButton) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.RightThumbButton) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.LeftShoulder) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.RightShoulder) WHEN 0 THEN 0 ELSE 1 END,
+		-- Count DPad points (4 max or 1 per button).
 		@dpadMap = ps.DPad,
 		@dpadPoints =
-			CASE LEN(ps.DPadUp) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.DPadDown) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.DPadLeft) WHEN 0 THEN 0 ELSE 100 END +
-			CASE LEN(ps.DPadRight) WHEN 0 THEN 0 ELSE 100 END
+			CASE LEN(ps.DPadUp) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.DPadDown) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.DPadLeft) WHEN 0 THEN 0 ELSE 1 END +
+			CASE LEN(ps.DPadRight) WHEN 0 THEN 0 ELSE 1 END,
+		-- Count Actuator points (2 max or 1 per actuator).
+		@motorPoints =
+			CASE LEN(ps.ForceEnable) WHEN 0 THEN 0 ELSE 2 END
 	FROM x360ce_PadSettings ps WITH(NOLOCK)
 	WHERE PadSettingChecksum = @PadSettingChecksum
 
@@ -73,13 +88,17 @@ DECLARE
 
 	-- Bump DPad points to max if POV is mapped.
 	IF @isPOV = 1
-		SET @dpadPoints = 400
+		SET @dpadPoints = 4
 
 	/*
-	var completion = (int)(100m * (
-		(axisPoints + buttonPoints + motorPoints) / (maxAxis + maxButtons + maxMotors)
-	));
+	PRINT '@axisPoints = ' + CAST(@axisPoints as sysname)
+	PRINT '@buttonPoints = ' + CAST(@buttonPoints as sysname)
+	PRINT '@dpadPoints = ' + CAST(@dpadPoints as sysname)
+	PRINT '@motorPoints = ' + CAST(@motorPoints as sysname)
 	*/
 
-    RETURN 0
+	-- Return completion percent.
+	DECLARE @completion int
+	SET @completion = 100 * (@axisPoints + @buttonPoints + @dpadPoints + @motorPoints) / (@maxAxis + @maxButtons + @maxMotors)
+    RETURN ISNULL(@completion, -1)
 END

@@ -30,6 +30,8 @@
 
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_x360ce_Settings_ProductGuid_InstanceGuid]
     ON [dbo].[x360ce_Settings]([ProductGuid] ASC, [InstanceGuid] ASC);
@@ -84,3 +86,7 @@ BEGIN
 	EXEC [dbo].[x360ce_UpdateProgramsTable] @inserted2, @deleted2
 
 END
+GO
+CREATE NONCLUSTERED INDEX [IX_x360ce_Settings_DateCreated]
+    ON [dbo].[x360ce_Settings]([DateCreated] ASC);
+

@@ -44,7 +44,7 @@ BEGIN
 		xp.FileProductName = t1.FileProductName
 	WHERE t1.[FileName] IS NULL
 
-	PRINT 'DELETED: ' + CAST(@@ROWCOUNT as varchar)
+	--PRINT 'DELETED: ' + CAST(@@ROWCOUNT as varchar)
 
 	-- Insert missing records.
 	INSERT INTO dbo.x360ce_Programs(p.[FileName], p.FileProductName)
@@ -55,7 +55,7 @@ BEGIN
 		p.FileProductName = xp.FileProductName
 	WHERE xp.[FileName] IS NULL
 
-	PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
+	--PRINT 'INSERTED: ' + CAST(@@ROWCOUNT as varchar)
 
 	-- Update records.
 	UPDATE t1 SET
@@ -79,6 +79,6 @@ BEGIN
 		t1.[FileName] = t3.[FileName] AND
 		t1.FileProductName = t3.FileProductName
 
-	PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
+	--PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
 
 END
