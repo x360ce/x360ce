@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[x360ce_CleanupPadSettings]
+﻿CREATE PROCEDURE [dbo].[x360ce_Cleanup_PadSettings]
 AS
 BEGIN
 

@@ -289,10 +289,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\x360ce_CleanupPadSettings.sql">
-      <AnsiNulls>Off</AnsiNulls>
-      <QuotedIdentifier>Off</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Functions\x360ce_GetUserGameSettingChecksum.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -358,6 +354,8 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
+    <Build Include="dbo\Stored Procedures\x360ce_Cleanup_Settings_NoPadSettings.sql" />
+    <Build Include="dbo\Stored Procedures\x360ce_Cleanup_PadSettings.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Debug.publish.xml" />
