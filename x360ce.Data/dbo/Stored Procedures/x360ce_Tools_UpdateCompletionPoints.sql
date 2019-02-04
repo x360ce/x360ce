@@ -38,13 +38,19 @@ BEGIN
 	WHERE DateCreated > @currentStart
 	ORDER BY DateCreated
 
+	SET @last = @@ROWCOUNT
+
+	DECLARE @completion int
+
 	-- UPDATE the rows in a batch to minimize impact by not locking table for long time.
 	UPDATE s SET
-		s.Completion = dbo.x360ce_GetCompletionPoints(s.PadSettingChecksum, s.InstanceGuid)
+		@completion = dbo.x360ce_GetCompletionPoints(s.PadSettingChecksum, s.InstanceGuid),
+		s.Completion = @completion
 	FROM x360ce_Settings s
 	WHERE DateCreated > @currentStart AND DateCreated <= @currentEnd
+		-- Do not update same records.
+		AND s.Completion <> @completion
 	
-	SET @last = @@ROWCOUNT
 	SET @done = @done + @last
 	-- Report every 5 seconds if processed.
 	IF @last > 0 AND DATEDIFF(SECOND, @reported, GETDATE()) > 5
