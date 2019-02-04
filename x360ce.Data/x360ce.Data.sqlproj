@@ -356,6 +356,10 @@
     </Build>
     <Build Include="dbo\Stored Procedures\x360ce_Cleanup_Settings_NoPadSettings.sql" />
     <Build Include="dbo\Stored Procedures\x360ce_Cleanup_PadSettings.sql" />
+    <Build Include="dbo\Tables\x360ce_ChangeLogs.sql">
+      <AnsiNulls>On</AnsiNulls>
+      <QuotedIdentifier>On</QuotedIdentifier>
+    </Build>
   </ItemGroup>
   <ItemGroup>
     <None Include="Debug.publish.xml" />

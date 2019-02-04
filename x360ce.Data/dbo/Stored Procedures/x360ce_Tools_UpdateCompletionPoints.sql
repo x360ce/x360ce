@@ -1,7 +1,7 @@
 ﻿CREATE PROCEDURE [dbo].[x360ce_Tools_UpdateCompletionPoints]
 AS
 
--- EXEC [dbo].[x360ce_Tools_UpdateCompletion]
+-- EXEC [dbo].[x360ce_Tools_UpdateCompletionPoints]
 
 DECLARE
 	-- Define range to update.
