@@ -13,8 +13,7 @@ using System.Collections.Generic;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable")]
-	public partial class LogHelper
+	public partial class LogHelper : IDisposable
 	{
 
 		public LogHelper()
@@ -30,9 +29,20 @@ namespace JocysCom.ClassLibrary.Runtime
 			{
 				lock (currentLock)
 				{
-					return _Current = _Current ?? new LogHelper();
+					if (_Current == null)
+					{
+						_Current = new LogHelper();
+						// Won't trigger application is closing by using the close button.
+						AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+					}
+					return _Current;
 				}
 			}
+		}
+
+		private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
+		{
+			_Current.Dispose();
 		}
 
 		static string _configPrefix = "LogHelper_";
@@ -247,16 +257,16 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <summary>
 		/// User can override these methods. Default methods are assigned.
 		/// </summary>
-		public static WriteLogDelegate WriteLogCustom;
-		public static WriteLogDelegate WriteLogConsole = new WriteLogDelegate(_WriteConsole);
-		public static WriteLogDelegate WriteLogEvent = new WriteLogDelegate(_WriteEvent);
-		public static WriteLogDelegate WriteLogFile = new WriteLogDelegate(_WriteFile);
+		public WriteLogDelegate WriteLogCustom;
+		public WriteLogDelegate WriteLogConsole = new WriteLogDelegate(_WriteConsole);
+		public WriteLogDelegate WriteLogEvent = new WriteLogDelegate(_WriteEvent);
+		public WriteLogDelegate WriteLogFile = new WriteLogDelegate(_WriteFile);
 
 		internal static void _WriteConsole(string message, EventLogEntryType type)
 		{
 			// If user can see interface (console) then write to the console.
 			if (Environment.UserInteractive)
-				Console.Write(message);
+				Console.WriteLine(message);
 		}
 
 		// Requires 'EventLogInstaller' requires reference to System.Configuration.Install.dll
@@ -288,12 +298,13 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <summary>
 		/// Writes log message to various destination types (console window, file, event and custom)
 		/// </summary>
-		public static void WriteLog(string message, EventLogEntryType type)
+		/// <remarks>Appends line break.</remarks>
+		public void WriteLog(string message, EventLogEntryType type)
 		{
 			// If console logging available then...
 			if (WriteLogConsole != null)
 				WriteLogConsole(message, type);
-			// If console logging available then...
+			// If file logging available then...
 			if (WriteLogFile != null)
 				WriteLogFile(message, type);
 			// If custom logging is enabled then write custom log (can be used to send emails).
@@ -304,14 +315,19 @@ namespace JocysCom.ClassLibrary.Runtime
 				WriteLogEvent(message, type);
 		}
 
+		public static void WriteError(Exception ex)
+		{
+			Current.WriteLog(ex.ToString(), EventLogEntryType.Error);
+		}
+
 		public static void WriteWarning(string format, params object[] args)
 		{
-			WriteLog(args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Warning);
+			Current.WriteLog(args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Warning);
 		}
 
 		public static void WriteInfo(string format, params object[] args)
 		{
-			WriteLog(args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Information);
+			Current.WriteLog(args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Information);
 		}
 
 		#endregion
@@ -645,6 +661,31 @@ namespace JocysCom.ClassLibrary.Runtime
 			else
 			{
 				ex.Data.Add(key, value);
+			}
+		}
+
+		#endregion
+
+		#region IDisposable
+
+		// Dispose() calls Dispose(true)
+		public virtual void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		bool IsDisposing;
+
+		void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (IsDisposing)
+					return;
+				IsDisposing = true;
+				if (_FileWriter != null)
+					_FileWriter.Dispose();
 			}
 		}
 

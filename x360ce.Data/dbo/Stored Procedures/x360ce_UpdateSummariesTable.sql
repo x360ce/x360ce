@@ -94,7 +94,8 @@ BEGIN
 		t1.[FileName] = t3.[FileName] AND
 		t1.FileProductName = t3.FileProductName AND
 		t1.PadSettingChecksum = t3.PadSettingChecksum
-
+	-- Update only if changed.
+	WHERE t1.[Users] <> t3.Users
 	--PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
 
 END

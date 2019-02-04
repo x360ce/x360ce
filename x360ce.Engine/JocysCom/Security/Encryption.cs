@@ -102,7 +102,6 @@ namespace JocysCom.ClassLibrary.Security
 			get
 			{
 				return _HashProvider = _HashProvider ??
-
 					new System.Security.Cryptography.MD5CryptoServiceProvider();
 			}
 		}

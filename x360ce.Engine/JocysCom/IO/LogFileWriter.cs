@@ -1,11 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -19,16 +18,22 @@ namespace JocysCom.ClassLibrary.IO
 
 		object streamWriterLock = new object();
 
-		public string LogFilePrefix { get; set; }
-		public string LogFilePattern { get; set; }
 		public string LogFileName { get; set; }
+		public string _CurrentFileFileName { get; set; }
+		public bool LogFileEnabled { get; set; }
 		public DateTime LogFileDate { get; set; }
 
 		/// <summary>Time when new log file must be created.</summary>
 		[DefaultValue(0)]
 		public TimeSpan LogFileTimeout { get; set; }
+		public bool LogFileRolling { get; set; }
 
+		public StreamWriter BaseStream
+		{
+			get { return tw; }
+		}
 		StreamWriter tw;
+
 		bool _LogFileAutoFlush;
 
 		public bool LogFileAutoFlush
@@ -45,76 +50,107 @@ namespace JocysCom.ClassLibrary.IO
 			}
 		}
 
-		public LogFileWriter(string configPrefix = "")
+		public LogFileWriter()
 		{
-			_configPrefix = configPrefix;
+			_configPrefix = "";
+			_Init();
+		}
+
+		public LogFileWriter(string configPrefix)
+		{
+			_configPrefix = configPrefix ?? "";
+			if (!_configPrefix.EndsWith("_") && !_configPrefix.EndsWith("-"))
+				_configPrefix += "_";
+			_Init();
+		}
+
+		public string GetAssemblyName()
+		{
+			string fullName = Assembly.GetEntryAssembly().FullName;
+			var index = fullName.IndexOf(',');
+			var name = fullName.Substring(0, index);
+			return name;
+		}
+
+		string company { get { return GetAttribute<AssemblyCompanyAttribute>(a => a.Company); } }
+		string product { get { return GetAttribute<AssemblyProductAttribute>(a => a.Product); } }
+		string version { get { return GetAttribute<AssemblyFileVersionAttribute>(a => a.Version); } }
+
+		string GetAttribute<T>(Func<T, string> value) where T : Attribute
+		{
+			var assembly = Assembly.GetEntryAssembly();
+			T attribute = (T)Attribute.GetCustomAttribute(assembly, typeof(T));
+			return value.Invoke(attribute);
+		}
+
+		public string GetLogFolder(bool userLevel = false)
+		{
+			// Get folder.
+			var specialFolder = userLevel
+				? Environment.SpecialFolder.ApplicationData
+				: Environment.SpecialFolder.CommonApplicationData;
+			var folder = Environment.GetFolderPath(specialFolder);
+			var path = string.Format("{0}\\{1}\\{2}", folder, company, product);
+			return path;
+		}
+
+		void _Init()
+		{
+			LogFileEnabled = ParseBool("LogFileEnabled", false);
+			if (!LogFileEnabled)
+				return;
 			_LogFileAutoFlush = ParseBool("LogFileAutoFlush", false);
+			// File reset options.
 			LogFileTimeout = ParseSpan("LogFileTimeout", new TimeSpan());
-			// Create default prefix.
-			string assemblyFullName = Assembly.GetEntryAssembly().FullName;
-			var index = assemblyFullName.IndexOf(',');
-			var asmName = assemblyFullName.Substring(0, index);
-			// Initialize prefix.
-			LogFilePrefix = ParseString("LogFilePrefix", "Logs\\" + asmName + "_");
-			// Initialize pattern
-			LogFilePattern = ParseString("LogFilePattern", "{0:yyyyMMdd_HHmmss}.txt");
+			LogFileName = ParseString("LogFileName", "");
+			// Enable rolling by default if file name looks like daily.
+			var defaultRolling = LogFileName.Contains("MMdd}");
+			LogFileRolling = ParseBool("LogFileRolling", defaultRolling);
+			if (string.IsNullOrEmpty(LogFileName))
+			{
+				// Suffix pattern.
+				var defautlSuffix = LogFileRolling
+					// Rolling resets daily by default.
+					? "{0:yyyyMMdd}.txt"
+					// Use current date when creating new file.
+					: "{0:yyyyMMdd_HHmmss}.txt";
+				// File prefix to make it unique.
+				var defaultPrefix = string.IsNullOrEmpty(_configPrefix)
+					? GetAssemblyName() : _configPrefix;
+				// Generate unique file name.
+				var fileName =
+					string.Format("{0}\\{1}{2}",
+						GetLogFolder(), defaultPrefix, defautlSuffix
+					);
+				LogFileName = fileName;
+			}
 		}
-
-		#region Parse Configuration Values
-
-		string _configPrefix;
-		public string ConfigPrefix { get { return _configPrefix; } }
-
-		bool ParseBool(string name, bool defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : bool.Parse(v);
-		}
-
-		string ParseString(string name, string defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : v;
-		}
-
-		TimeSpan ParseSpan(string name, TimeSpan defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : TimeSpan.Parse(v);
-		}
-
-
-		int ParseInt(string name, int defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : int.Parse(v);
-		}
-
-		long ParseLong(string name, long defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : long.Parse(v);
-		}
-
-		#endregion
 
 		public void WriteLine(string format, params object[] args)
 		{
+			if (!LogFileEnabled || IsDisposing)
+				return;
 			Write(format + "\r\n", args);
 		}
 
 		void Write(string format, params object[] args)
 		{
+			if (!LogFileEnabled || IsDisposing)
+				return;
 			var message = args.Length > 0 ? string.Format(format, args) : format;
 			lock (streamWriterLock)
 			{
 				if (IsDisposing)
 					return;
-				// If log file exists and can expire then...
-				if (tw != null && LogFileTimeout.Ticks > 0)
+				var n = DateTime.Now;
+				if (tw != null)
 				{
-					// If log file expired then...
-					if (DateTime.Now.Subtract(LogFileDate) > LogFileTimeout)
+					var reset =
+						// If log file can expire and expired or...
+						(LogFileTimeout.Ticks > 0 && n.Subtract(LogFileDate) > LogFileTimeout) ||
+						// If file is rolling and name changed then...
+						(LogFileRolling && !_CurrentFileFileName.Equals(string.Format(LogFileName, n), StringComparison.OrdinalIgnoreCase));
+					if (reset)
 					{
 						// Flush and dispose old file.
 						tw.Flush();
@@ -124,55 +160,45 @@ namespace JocysCom.ClassLibrary.IO
 				}
 				if (tw == null)
 				{
-					var watch = new Stopwatch();
-					watch.Start();
-					// Loop till file not existing on the disk is found.
-					while (true)
+					// Create new possible file name.
+					LogFileDate = n;
+					// Expand variables first.
+					var expandedPath = Environment.ExpandEnvironmentVariables(LogFileName);
+					// Wipe old files.
+					WipeOldLogFiles(expandedPath);
+					var path = string.Format(expandedPath, n);
+					_CurrentFileFileName = path;
+					// Try to...
+					try
 					{
-						// Wipe old logs.
-						var maxLogFiles = ParseInt("LogFileMaxFiles", 0);
-						var maxLogBytes = ParseLong("LogFileMaxBytes", 0);
-						WipeOldLogFiles(LogFilePrefix, maxLogFiles, maxLogBytes);
-						// Create new possible file name.
-						LogFileDate = DateTime.Now;
-						LogFileName = LogFilePrefix + string.Format(LogFilePattern, LogFileDate);
-						// Try to...
-						try
-						{
-							// Create directory for new file.
-							var fi = new FileInfo(LogFileName);
-							if (!fi.Directory.Exists)
-								fi.Directory.Create();
-						}
-						catch (Exception ex)
-						{
-							ex.Data.Add("FullPath", LogFileName);
-							throw;
-						}
-						// If file don't exists then break.
-						if (!File.Exists(LogFileName))
-							break;
-						// If took more than one second already then break.
-						if (watch.ElapsedMilliseconds > 1200)
-						{
-							var ex = new Exception("Timeout when creating Log file!");
-							ex.Data.Add("FullPath", LogFileName);
-							throw ex;
-						}
-						// Wait a little bit before trying again.
-						new ManualResetEvent(false).WaitOne(50);
+						// Create directory for new file.
+						var fi = new FileInfo(path);
+						if (!fi.Directory.Exists)
+							fi.Directory.Create();
 					}
-					// create a writer and open the file
-					tw = new StreamWriter(LogFileName);
+					catch (Exception ex)
+					{
+						ex.Data.Add("LogFileName", _CurrentFileFileName);
+						ex.Data.Add("LogFullPath", path);
+						throw;
+					}
+					// Create a writer and open the file.
+					tw = new StreamWriter(path, true);
+					write(string.Format("#Software: {0} {1} {2}\r\n", company, product, version));
+					write(string.Format("#Date: {0:yyyy-MM-dd HH:mm:ss.fff}\r\n", n));
+					write("#Log: Start\r\n");
 				}
 				if (tw.AutoFlush != LogFileAutoFlush)
 					tw.AutoFlush = LogFileAutoFlush;
-				var datePrefix = string.Format("{0:yyyy-MM-dd HH:mm:ss} ", DateTime.Now);
-				message = datePrefix + message;
-				tw.Write(message);
+				write(message);
 			}
 		}
 
+		void write(string message, DateTime? date = null)
+		{
+			var value = string.Format("{0:yyyy-MM-dd HH:mm:ss} {1}", date ?? DateTime.Now, message);
+			tw.Write(value);
+		}
 
 		public void Flush()
 		{
@@ -183,26 +209,75 @@ namespace JocysCom.ClassLibrary.IO
 			}
 		}
 
-		#region Clean-Up
+		#region Parse Configuration Values
 
+		string _configPrefix;
+		public string ConfigPrefix { get { return _configPrefix; } }
+
+		internal bool ParseBool(string name, bool defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[_configPrefix + name];
+			return (v == null) ? defaultValue : bool.Parse(v);
+		}
+
+		string ParseString(string name, string defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[_configPrefix + name];
+			return (v == null) ? defaultValue : v;
+		}
+
+		TimeSpan ParseSpan(string name, TimeSpan defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[_configPrefix + name];
+			return (v == null) ? defaultValue : TimeSpan.Parse(v);
+		}
+
+		int ParseInt(string name, int defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[_configPrefix + name];
+			return (v == null) ? defaultValue : int.Parse(v);
+		}
+
+		long ParseLong(string name, long defaultValue)
+		{
+			var v = ConfigurationManager.AppSettings[_configPrefix + name];
+			return (v == null) ? defaultValue : long.Parse(v);
+		}
+
+		#endregion
+
+		#region Clean-Up
 
 		/// <summary>
 		/// Wipe old files.
 		/// </summary>
-		/// <param name="maxLogFiles">Number of files to keep.</param>
-		/// <param name="maxLogBytes">Number of bytes to keep.</param>
-		public static int WipeOldLogFiles(string logFilePrefix, int maxLogFiles, long maxLogBytes)
+		/// <param name="expandedPath">File which contains date pattern.</param>
+		public int WipeOldLogFiles(string expandedPath)
 		{
+			// If file is not specified then return.
+			if (string.IsNullOrEmpty(expandedPath))
+				return 0;
+			var rx = new Regex("[{].*[}]");
+			// If file don't have pattern then return.
+			if (!rx.IsMatch(expandedPath))
+				return 0;
+			// Get wipe conditions.
+			var maxLogFiles = ParseInt("LogFileMaxFiles", 0);
+			var maxLogBytes = ParseLong("LogFileMaxBytes", 0);
 			// If keep all then return.
 			if (maxLogFiles == 0 && maxLogBytes == 0)
 				return 0;
-			var fi = new FileInfo(logFilePrefix);
-			var di = fi.Directory;
+			// Remove pattern to make a valid file name.
+			var path = rx.Replace(expandedPath, "");
+			var directory = Path.GetDirectoryName(path);
+			var di = new DirectoryInfo(directory);
 			if (!di.Exists)
 				return 0;
-			var prefix = logFilePrefix.Split('\\').Last();
+			// Get file prefix.
+			var fileName = expandedPath.Split('\\').Last();
+			var pattern = rx.Replace(fileName, "*");
 			// Get file list ordered by newest on the top.
-			var files = di.GetFiles(prefix + "*" + fi.Extension).OrderByDescending(x => x.CreationTime).ToArray();
+			var files = di.GetFiles(pattern).OrderByDescending(x => x.CreationTime).ToArray();
 			var deleted = 0;
 			long totalSize = 0;
 			for (int i = 0; i < files.Length; i++)
@@ -249,6 +324,7 @@ namespace JocysCom.ClassLibrary.IO
 					IsDisposing = true;
 					if (tw != null)
 					{
+						write("#Log: End\r\n");
 						tw.Close();
 						tw.Dispose();
 						tw = null;

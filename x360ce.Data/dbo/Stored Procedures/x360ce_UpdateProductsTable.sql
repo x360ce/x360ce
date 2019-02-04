@@ -123,6 +123,8 @@ BEGIN
 		) t1
 		GROUP BY ProductGuid
 	) t3 ON xp.ProductGuid = t3.ProductGuid
+	-- Update only if changed.
+	WHERE xp.InstanceCount <> t3.InstanceCount
 
 	--PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
 	

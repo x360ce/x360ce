@@ -79,7 +79,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 				var ext = Path.GetExtension(_FileNameBasic);
 				var path = Path.Combine(dir, nam + string.Format(SuffixPattern, DateTime.Now) + ext);
 				var writer = (StreamWriter)writerField.GetValue(this);
-				// If file is missing of name changed then...
+				// If file is missing or name changed then...
 				if (writer == null || !path.Equals(((FileStream)writer.BaseStream).Name, StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (writer != null)

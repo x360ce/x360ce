@@ -45,7 +45,7 @@ namespace JocysCom.ClassLibrary.Security
         /// <summary>
         /// Returns machine and domain groups user is a member of.
         /// </summary>
-        /// <param name="sid">User sid</param>
+        /// <param name="sid">User SID</param>
         public static List<GroupPrincipal> GetUserGroups(SecurityIdentifier sid)
         {
             var groups = new List<GroupPrincipal>();
@@ -89,7 +89,7 @@ namespace JocysCom.ClassLibrary.Security
                 return false;
             var domainUsers = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, currentIdentity.User.AccountDomainSid);
             var principal = new WindowsPrincipal(currentIdentity);
-            return principal != null && (principal.IsInRole(domainUsers));
+            return principal != null && principal.IsInRole(domainUsers);
         }
 
         #endregion

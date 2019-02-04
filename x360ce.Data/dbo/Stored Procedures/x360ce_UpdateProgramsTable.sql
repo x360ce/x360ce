@@ -78,6 +78,8 @@ BEGIN
 	) t3 ON
 		t1.[FileName] = t3.[FileName] AND
 		t1.FileProductName = t3.FileProductName
+	-- Update only if changed.
+	WHERE t1.InstanceCount <> t3.InstanceCount
 
 	--PRINT 'UPDATED: ' + CAST(@@ROWCOUNT as varchar)
 
