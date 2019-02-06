@@ -18,8 +18,13 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public LogHelper()
 		{
+			// This class can be inherited therefore make sure that prefix is different.
+			// Get type will return derived class or this class if not derived.
+			_configPrefix = GetType().Name;
 			_FileWriter = new IO.LogFileWriter(_configPrefix);
 		}
+
+		static string _configPrefix;
 
 		private static LogHelper _Current;
 		private static object currentLock = new object();
@@ -44,8 +49,6 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			_Current.Dispose();
 		}
-
-		static string _configPrefix = "LogHelper_";
 
 		#region Process Exceptions
 

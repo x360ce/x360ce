@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.Security;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using System.Data;
 using JocysCom.ClassLibrary.Data;
-using JocysCom.ClassLibrary.Runtime;
-using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.Web.WebServices
 {
@@ -31,7 +26,7 @@ namespace x360ce.Web.WebServices
 		/// </summary>
 		/// <param name="args"></param>
 		/// <returns></returns>
-		[WebMethod(EnableSession = true, Description = "Search controller settings."), TraceExtension]
+		[WebMethod(EnableSession = true, Description = "Search controller settings.")]
 		public SearchResult SearchSettings(SearchParameter[] args)
 		{
 			// Create default value to reply.
@@ -78,7 +73,7 @@ namespace x360ce.Web.WebServices
 		/// </summary>
 		/// <param name="checksum">List of unique identifiers of PAD setting</param>
 		/// <returns>List of PAD settings.</returns>
-		[WebMethod(EnableSession = true, Description = "Load controller settings."), TraceExtension]
+		[WebMethod(EnableSession = true, Description = "Load controller settings.")]
 		public SearchResult LoadSetting(Guid[] checksum)
 		{
 			var sr = new SearchResult();

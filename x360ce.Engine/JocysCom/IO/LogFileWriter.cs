@@ -19,7 +19,7 @@ namespace JocysCom.ClassLibrary.IO
 		object streamWriterLock = new object();
 
 		public string LogFileName { get; set; }
-		public string _CurrentFileFileName { get; set; }
+		public string _CurrentFileFileName { get; private set; }
 		public bool LogFileEnabled { get; set; }
 		public DateTime LogFileDate { get; set; }
 
@@ -52,13 +52,17 @@ namespace JocysCom.ClassLibrary.IO
 
 		public LogFileWriter()
 		{
-			_configPrefix = "";
+			// This class can be inherited therefore make sure that prefix is different.
+			// Get type will return derived class or this class if not derived.
+			_configPrefix = GetType().Name;
 			_Init();
 		}
 
 		public LogFileWriter(string configPrefix)
 		{
-			_configPrefix = configPrefix ?? "";
+			// This class can be inherited therefore make sure that prefix is different.
+			// Get type will return derived class or this class if not derived.
+			_configPrefix = configPrefix ?? GetType().Name;
 			if (!_configPrefix.EndsWith("_") && !_configPrefix.EndsWith("-"))
 				_configPrefix += "_";
 			_Init();

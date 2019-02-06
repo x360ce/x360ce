@@ -231,6 +231,7 @@
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
     <Compile Include="JocysCom\Diagnostics\RollingXmlWriterTraceListener.cs" />
+    <Compile Include="JocysCom\Diagnostics\TraceHelper.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Common.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Grayscale.cs" />
@@ -317,9 +318,7 @@
     <Compile Include="JocysCom\Text\Helper.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
     <Compile Include="JocysCom\Threading\QueueTimerEventArgs.cs" />
-    <Compile Include="JocysCom\Web\Services\HttpLogModule.cs" />
-    <Compile Include="JocysCom\Web\Services\TraceExtension.cs" />
-    <Compile Include="JocysCom\Web\Services\TraceExtensionAttribute.cs" />
+    <Compile Include="JocysCom\Web\Services\RawDataLogHttpModule.cs" />
     <Compile Include="JocysCom\Web\WebControlsHelper.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />
     <Compile Include="JocysCom\Win32\ABM.cs" />

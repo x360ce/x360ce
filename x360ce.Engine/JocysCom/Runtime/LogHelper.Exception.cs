@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Security;
 using System.ComponentModel;
-using System.Collections.Generic;
 
 namespace JocysCom.ClassLibrary.Runtime
 {

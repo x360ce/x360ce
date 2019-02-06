@@ -7,9 +7,7 @@ using System.Web.Security;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using System.Data;
-using JocysCom.ClassLibrary.Data;
 using JocysCom.ClassLibrary.Runtime;
-using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.Web.WebServices
 {
@@ -80,7 +78,7 @@ namespace x360ce.Web.WebServices
 
 		#endregion
 
-		[WebMethod(EnableSession = true, Description = "Get default list of games."), TraceExtension]
+		[WebMethod(EnableSession = true, Description = "Get default list of games.")]
 		public SettingsData GetSettingsData()
 		{
 			var data = new SettingsData();

@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Services;
-using System.Web.Security;
 using x360ce.Engine.Data;
-using x360ce.Engine;
-using System.Data;
-using JocysCom.ClassLibrary.Data;
-using JocysCom.ClassLibrary.Runtime;
-using JocysCom.ClassLibrary.Web.Services;
+
 
 namespace x360ce.Web.WebServices
 {
@@ -21,7 +14,7 @@ namespace x360ce.Web.WebServices
 		/// <param name="s">Setting object which contains information about DirectInput device and file/game name it is used for.</param>
 		/// <param name="ps">PAD settings which contains mapping between DirectInput device and virtual XBox controller.</param>
 		/// <returns>Status of operation. Empty if success.</returns>
-		[WebMethod(EnableSession = true, Description = "Save controller settings."), TraceExtension]
+		[WebMethod(EnableSession = true, Description = "Save controller settings.")]
 		public string SaveSetting(UserSetting s, PadSetting ps)
 		{
 			var db = new x360ceModelContainer();
