@@ -14,7 +14,8 @@ DECLARE
 	@done bigint = 0,
 	@total bigint = 0,
 	@error sysname = '',
-	@reported datetime = GETDATE()
+	@reported datetime = GETDATE(),
+	@updated bigint = 0
 
 -- Create Index on DateCteated column.
 -- CREATE NONCLUSTERED INDEX IX_x360ce_Settings_DateCreated ON dbo.x360ce_Settings (DateCreated) ON [PRIMARY]
@@ -50,15 +51,19 @@ BEGIN
 	WHERE DateCreated > @currentStart AND DateCreated <= @currentEnd
 		-- Do not update same records.
 		AND s.Completion <> @completion
-	
+
+	-- Must come directly after update command.
+	SET @updated = @updated + @@ROWCOUNT
 	SET @done = @done + @last
+
 	-- Report every 5 seconds if processed.
 	IF @last > 0 AND DATEDIFF(SECOND, @reported, GETDATE()) > 5
 	BEGIN
 		SET @reported = GETDATE()
 		SET @error =
 			'Done: ' + CAST(@done AS sysname) +
-			', Last: ' + CAST(@last AS sysname) +
+			', Updated: ' + CAST(@updated AS sysname) +
+			--', Last: ' + CAST(@last AS sysname) +
 			', Percent: ' + CAST(ROUND((@done * 100 / CAST(@total AS money)), 2) AS varchar(6)) +
 			-- Custom options.
 			', Current End: ' +FORMAT(@currentEnd, 'yyyy-MM-dd hh:mm:ss')

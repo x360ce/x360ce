@@ -34,6 +34,8 @@
 
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_x360ce_Settings_ProductGuid_InstanceGuid]
     ON [dbo].[x360ce_Settings]([ProductGuid] ASC, [InstanceGuid] ASC);
@@ -64,6 +66,42 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	-----------------------------------------------------------
+	-- Update Completion points.
+	-----------------------------------------------------------
+
+	PRINT CAST(OBJECT_NAME(@@PROCID) AS sysname) + ' TRIGGER_NESTLEVEL: ' + CAST(TRIGGER_NESTLEVEL() AS sysname)
+
+	-- This trigger will run second time if table is updated inside this trigger.
+	-- If trigger was triggered from this trigger then return.
+	IF ((SELECT TRIGGER_NESTLEVEL()) > 1)
+		RETURN
+
+
+	DECLARE @table AS TABLE (SettingId uniqueidentifier PRIMARY KEY, Completion int)
+
+	-- Recalculate completion values.	
+	INSERT INTO @table
+	SELECT
+		s.SettingId,
+		dbo.x360ce_GetCompletionPoints(s.PadSettingChecksum, s.InstanceGuid)
+	FROM x360ce_Settings s
+	INNER JOIN inserted i ON s.SettingId = i.SettingId
+
+	-- Update completion values.
+	UPDATE s SET
+		s.Completion = dbo.x360ce_GetCompletionPoints(s.PadSettingChecksum, s.InstanceGuid)
+	FROM x360ce_Settings s
+	INNER JOIN @table t ON t.SettingId = s.SettingId
+	-- Update only if changed.
+	WHERE s.Completion <> t.Completion
+
+	/* TEST:
+	SELECT TOP 1 Completion FROM x360ce_Settings where SettingId = '3206CDDC-A941-4236-B874-00005012DF91'
+	-- '0' will be overriden by recalculated value.
+	UPDATE x360ce_Settings SET Completion = 0 WHERE SettingId = '3206CDDC-A941-4236-B874-00005012DF91'
+	*/
 
 	-----------------------------------------------------------
 	-- Track changes.
