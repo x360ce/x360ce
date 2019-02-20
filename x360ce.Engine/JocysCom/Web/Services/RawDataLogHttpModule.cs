@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Web;
@@ -75,7 +76,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			var body = sr.ReadToEnd();
 			request.InputStream.Position = 0;
 			col.Add("Body", body);
-			TraceHelper.AddLog(GetType().Name, col);
+			TraceHelper.AddLog(GetType().Name, TraceEventType.Information, col);
 			// Add custom information to IIS log.
 			//	response.AppendToLog(body);
 		}
@@ -110,7 +111,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			// Get raw body.
 			var body = filter.StreamContent;
 			col.Add("Body", body);
-			TraceHelper.AddLog(GetType().Name, col);
+			TraceHelper.AddLog(GetType().Name, TraceEventType.Information, col);
 		}
 
 		private class ResponseCaptureStream : Stream

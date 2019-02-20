@@ -10,18 +10,18 @@ namespace JocysCom.ClassLibrary.Diagnostics
 	public class TraceHelper
 	{
 
-		public static void AddLog(string sourceName, params object[] data)
+		public static void AddLog(string sourceName, TraceEventType eventType, params object[] data)
 		{
 			// Add source
 			var source = new TraceSource(sourceName);
 			//source.Listeners.Add(_Listener);
 			source.Switch.Level = SourceLevels.All;
-			source.TraceData(TraceEventType.Information, 0, data);
+			source.TraceData(eventType, 0, data);
 			source.Flush();
 			source.Close();
 		}
 
-		public static void AddLog(string sourceName, NameValueCollection collection)
+		public static void AddLog(string sourceName, TraceEventType eventType, NameValueCollection collection)
 		{
 			// Write Data.
 			var settings = new XmlWriterSettings();
@@ -40,12 +40,12 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			}
 			writer.WriteEndElement();
 			writer.Flush();
-			AddXml(sourceName, sb.ToString());
+			AddXml(sourceName, eventType, sb.ToString());
 			writer.Close();
 
 		}
 
-		static void AddXml(string sourceName, string xml)
+		static void AddXml(string sourceName, TraceEventType eventType, string xml)
 		{
 			using (var sr = new StringReader(xml))
 			{
@@ -61,7 +61,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 					{
 						var doc = new XPathDocument(tr);
 						var nav = doc.CreateNavigator();
-						AddLog(sourceName, nav);
+						AddLog(sourceName, eventType, nav);
 					}
 				}
 			}
