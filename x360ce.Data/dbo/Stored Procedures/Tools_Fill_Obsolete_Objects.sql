@@ -5,6 +5,20 @@ AS
 -- EXEC [dbo].[Tools_Fill_Obsolete_Objects]
 -- EXEC [dbo].[Tools_Fill_Obsolete_Objects] 5
 
+/*
+There is no reliable way to get last time from statistics because last execution/use record
+is cashed and could be missing if procedure/index cache was flushed or
+procedure/index was pushed out of cache.
+
+This is the reason why [Tools_Fill_Obsolete_Objects] procedure must be scheduled
+for daily run to collect stats before cache is flushed. More frequent and longer run
+of this procedure results in more accurate data.
+
+Note: Most obvious reason for cache reset is a failover, service restart, filling up the cache,
+an sp_configure change, which sometimes clears the procedure cache, a query with a huge memory grant,
+a manual DBCC FREEPROCCACHE, explicit recompile or drop/re-creation of procedures.
+*/
+
 -- If table do not exists then...
 IF OBJECT_ID('Tools_Obsolete_Objects', 'U') IS NULL
 BEGIN
