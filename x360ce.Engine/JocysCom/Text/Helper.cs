@@ -100,15 +100,40 @@ namespace JocysCom.ClassLibrary.Text
 		}
 
 		/// <summary>
-		/// Convert timespan to string.
+		/// Get value from text [name]:\s[value]. And parse to specific type.
 		/// </summary>
-		/// <param name="ts">TimeSpan value to convert.</param>
-		/// <param name="includeMilliseconds">include milliseconds.</param>
-		/// <param name="useWords">Use words instead of ':' and '.' separator.</param>
-		/// <param name="useShortWords">Use short words. Applied when useWords = true.</param>
-		/// <param name="precision">Precision. Applied when useWords = true.</param>
+		/// <param name="name">Prefix name.</param>
+		/// <param name="s">String to get value from.</param>
+		/// <param name="defaultValue">Override default value.</param>
 		/// <returns></returns>
-		public static string TimeSpanToString(TimeSpan ts, bool includeMilliseconds = false, bool useWords = false, bool useShortWords = false, int? precision = null)
+		public static T GetValue<T>(string name, string s, T defaultValue = default(T))
+		{
+			var pattern = string.Format(@"{0}:\s*(?<Value>[^\s]+)", name);
+			var rx = new Regex(pattern, RegexOptions.IgnoreCase);
+			var m = rx.Match(s ?? "");
+			if (!m.Success)
+				return defaultValue;
+			var v = m.Groups["Value"].Value;
+			if (typeof(T) == typeof(string))
+				return (T)(object)v;
+			return Runtime.RuntimeHelper.TryParse(v, defaultValue);
+		}
+
+		public static string GetValue(string name, string s, string defaultValue = null)
+		{
+			return GetValue<string>(name, s, defaultValue);
+		}
+
+			/// <summary>
+			/// Convert timespan to string.
+			/// </summary>
+			/// <param name="ts">TimeSpan value to convert.</param>
+			/// <param name="includeMilliseconds">include milliseconds.</param>
+			/// <param name="useWords">Use words instead of ':' and '.' separator.</param>
+			/// <param name="useShortWords">Use short words. Applied when useWords = true.</param>
+			/// <param name="precision">Precision. Applied when useWords = true.</param>
+			/// <returns></returns>
+			public static string TimeSpanToString(TimeSpan ts, bool includeMilliseconds = false, bool useWords = false, bool useShortWords = false, int? precision = null)
 		{
 			string s = "";
 			if (useWords)

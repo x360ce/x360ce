@@ -15,7 +15,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			// Add source
 			var source = new TraceSource(sourceName);
 			//source.Listeners.Add(_Listener);
-			source.Switch.Level = SourceLevels.All;
+			//source.Switch.Level = SourceLevels.All;
 			source.TraceData(eventType, 0, data);
 			source.Flush();
 			source.Close();
