@@ -278,7 +278,7 @@ namespace JocysCom.ClassLibrary.Mail
 		static readonly Regex RxMultiSpace = new Regex("[ \u00A0]+");
 
 		/// <summary>
-		/// Send exception details.
+		/// Send exception details as HTML e-mail.
 		/// </summary>
 		/// <param name="ex">Exception to generate email from.</param>
 		/// <param name="subject">Use custom subject instead of generated from exception</param>
@@ -303,7 +303,7 @@ namespace JocysCom.ClassLibrary.Mail
 				// If subject was not specified
 				if (string.IsNullOrEmpty(subject))
 				{
-					subject = LogHelper.GetSubjectPrefix(ex) + ex.Message;
+					subject = LogHelper.GetSubjectPrefix(ex, TraceEventType.Error) + ex.Message;
 				}
 			}
 			if (string.IsNullOrEmpty(subject))

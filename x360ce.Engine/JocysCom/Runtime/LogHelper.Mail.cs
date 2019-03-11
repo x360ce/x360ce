@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using System.Diagnostics;
+﻿using JocysCom.ClassLibrary.Mail;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Net.Mail;
-using JocysCom.ClassLibrary.Mail;
+using System.Reflection;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -72,19 +72,16 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 
-		public static string GetSubjectPrefix(Exception ex, string suffix = "Error")
+		public static string GetSubjectPrefix(Exception ex = null, TraceEventType? type = null)
 		{
-			Assembly asm = Assembly.GetEntryAssembly();
-			string a = "Unknown Entry Assembly";
-			if (asm == null)
+			var asm = Assembly.GetEntryAssembly();
+			string s = "Unknown Entry Assembly";
+			if (asm == null && ex != null)
 			{
-				if (ex != null)
+				var frames = new StackTrace(ex).GetFrames();
+				if (frames != null && frames.Length > 0)
 				{
-					StackFrame[] frames = new StackTrace(ex).GetFrames();
-					if (frames != null && frames.Length > 0)
-					{
-						asm = frames[0].GetMethod().DeclaringType.Assembly;
-					}
+					asm = frames[0].GetMethod().DeclaringType.Assembly;
 				}
 			}
 			if (asm == null)
@@ -94,9 +91,10 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (asm != null)
 			{
 				var last2Nodes = asm.GetName().Name.Split('.').Reverse().Take(2).Reverse();
-				a = string.Join(".", last2Nodes);
+				s = string.Join(".", last2Nodes);
 			}
-			string s = string.Format("{0} {1}", a, suffix);
+			if (type.HasValue)
+				s += string.Format(" {0}", type);
 			ApplyRunModeSuffix(ref s);
 			s += ": ";
 			return s;
@@ -104,7 +102,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Send Mail
 
-		public void SendWarningMail(string subject, string body, bool isBodyHtml = false)
+		public void SendWarningMail(string subject, string body)
 		{
 			Smtp.SendErrorEmail(null, subject, body);
 		}

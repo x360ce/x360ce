@@ -80,6 +80,11 @@
 			this.button4 = new System.Windows.Forms.Button();
 			this.ActionGroupBox = new System.Windows.Forms.GroupBox();
 			this.ResetToDefaultButton = new System.Windows.Forms.Button();
+			this.v91 = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.TimeoutNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakePidNumericUpDown)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.HookModeFakeVidNumericUpDown)).BeginInit();
@@ -95,7 +100,7 @@
 			// XInput14_x86CheckBox
 			// 
 			this.XInput14_x86CheckBox.AutoSize = true;
-			this.XInput14_x86CheckBox.Location = new System.Drawing.Point(6, 93);
+			this.XInput14_x86CheckBox.Location = new System.Drawing.Point(43, 93);
 			this.XInput14_x86CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput14_x86CheckBox.Name = "XInput14_x86CheckBox";
 			this.XInput14_x86CheckBox.Size = new System.Drawing.Size(52, 17);
@@ -106,7 +111,7 @@
 			// XInput13_x86CheckBox
 			// 
 			this.XInput13_x86CheckBox.AutoSize = true;
-			this.XInput13_x86CheckBox.Location = new System.Drawing.Point(6, 74);
+			this.XInput13_x86CheckBox.Location = new System.Drawing.Point(43, 74);
 			this.XInput13_x86CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput13_x86CheckBox.Name = "XInput13_x86CheckBox";
 			this.XInput13_x86CheckBox.Size = new System.Drawing.Size(52, 17);
@@ -117,7 +122,7 @@
 			// XInput12_x86CheckBox
 			// 
 			this.XInput12_x86CheckBox.AutoSize = true;
-			this.XInput12_x86CheckBox.Location = new System.Drawing.Point(6, 55);
+			this.XInput12_x86CheckBox.Location = new System.Drawing.Point(43, 55);
 			this.XInput12_x86CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput12_x86CheckBox.Name = "XInput12_x86CheckBox";
 			this.XInput12_x86CheckBox.Size = new System.Drawing.Size(52, 17);
@@ -128,7 +133,7 @@
 			// XInput11_x86CheckBox
 			// 
 			this.XInput11_x86CheckBox.AutoSize = true;
-			this.XInput11_x86CheckBox.Location = new System.Drawing.Point(6, 36);
+			this.XInput11_x86CheckBox.Location = new System.Drawing.Point(43, 36);
 			this.XInput11_x86CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput11_x86CheckBox.Name = "XInput11_x86CheckBox";
 			this.XInput11_x86CheckBox.Size = new System.Drawing.Size(52, 17);
@@ -139,7 +144,7 @@
 			// XInput91_x86CheckBox
 			// 
 			this.XInput91_x86CheckBox.AutoSize = true;
-			this.XInput91_x86CheckBox.Location = new System.Drawing.Point(6, 17);
+			this.XInput91_x86CheckBox.Location = new System.Drawing.Point(43, 17);
 			this.XInput91_x86CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput91_x86CheckBox.Name = "XInput91_x86CheckBox";
 			this.XInput91_x86CheckBox.Size = new System.Drawing.Size(52, 17);
@@ -262,62 +267,62 @@
 			// XInput91_x64CheckBox
 			// 
 			this.XInput91_x64CheckBox.AutoSize = true;
-			this.XInput91_x64CheckBox.Location = new System.Drawing.Point(64, 17);
+			this.XInput91_x64CheckBox.Location = new System.Drawing.Point(101, 17);
 			this.XInput91_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput91_x64CheckBox.Name = "XInput91_x64CheckBox";
-			this.XInput91_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput91_x64CheckBox.Size = new System.Drawing.Size(52, 17);
 			this.XInput91_x64CheckBox.TabIndex = 0;
-			this.XInput91_x64CheckBox.Text = "64-bit v9.1";
+			this.XInput91_x64CheckBox.Text = "64-bit";
 			this.XInput91_x64CheckBox.UseVisualStyleBackColor = true;
 			// 
 			// XInput11_x64CheckBox
 			// 
 			this.XInput11_x64CheckBox.AutoSize = true;
-			this.XInput11_x64CheckBox.Location = new System.Drawing.Point(64, 36);
+			this.XInput11_x64CheckBox.Location = new System.Drawing.Point(101, 36);
 			this.XInput11_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput11_x64CheckBox.Name = "XInput11_x64CheckBox";
-			this.XInput11_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput11_x64CheckBox.Size = new System.Drawing.Size(52, 17);
 			this.XInput11_x64CheckBox.TabIndex = 0;
-			this.XInput11_x64CheckBox.Text = "64-bit v1.1";
+			this.XInput11_x64CheckBox.Text = "64-bit";
 			this.XInput11_x64CheckBox.UseVisualStyleBackColor = true;
 			// 
 			// XInput12_x64CheckBox
 			// 
 			this.XInput12_x64CheckBox.AutoSize = true;
-			this.XInput12_x64CheckBox.Location = new System.Drawing.Point(64, 55);
+			this.XInput12_x64CheckBox.Location = new System.Drawing.Point(101, 55);
 			this.XInput12_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput12_x64CheckBox.Name = "XInput12_x64CheckBox";
-			this.XInput12_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput12_x64CheckBox.Size = new System.Drawing.Size(52, 17);
 			this.XInput12_x64CheckBox.TabIndex = 0;
-			this.XInput12_x64CheckBox.Text = "64-bit v1.2";
+			this.XInput12_x64CheckBox.Text = "64-bit";
 			this.XInput12_x64CheckBox.UseVisualStyleBackColor = true;
 			// 
 			// XInput13_x64CheckBox
 			// 
 			this.XInput13_x64CheckBox.AutoSize = true;
-			this.XInput13_x64CheckBox.Location = new System.Drawing.Point(64, 74);
+			this.XInput13_x64CheckBox.Location = new System.Drawing.Point(101, 74);
 			this.XInput13_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput13_x64CheckBox.Name = "XInput13_x64CheckBox";
-			this.XInput13_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput13_x64CheckBox.Size = new System.Drawing.Size(52, 17);
 			this.XInput13_x64CheckBox.TabIndex = 0;
-			this.XInput13_x64CheckBox.Text = "64-bit v1.3";
+			this.XInput13_x64CheckBox.Text = "64-bit";
 			this.XInput13_x64CheckBox.UseVisualStyleBackColor = true;
 			// 
 			// XInput14_x64CheckBox
 			// 
 			this.XInput14_x64CheckBox.AutoSize = true;
-			this.XInput14_x64CheckBox.Location = new System.Drawing.Point(64, 93);
+			this.XInput14_x64CheckBox.Location = new System.Drawing.Point(101, 93);
 			this.XInput14_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.XInput14_x64CheckBox.Name = "XInput14_x64CheckBox";
-			this.XInput14_x64CheckBox.Size = new System.Drawing.Size(76, 17);
+			this.XInput14_x64CheckBox.Size = new System.Drawing.Size(52, 17);
 			this.XInput14_x64CheckBox.TabIndex = 0;
-			this.XInput14_x64CheckBox.Text = "64-bit v1.4";
+			this.XInput14_x64CheckBox.Text = "64-bit";
 			this.XInput14_x64CheckBox.UseVisualStyleBackColor = true;
 			// 
 			// DInput8_x86CheckBox
 			// 
 			this.DInput8_x86CheckBox.AutoSize = true;
-			this.DInput8_x86CheckBox.Location = new System.Drawing.Point(6, 17);
+			this.DInput8_x86CheckBox.Location = new System.Drawing.Point(6, 28);
 			this.DInput8_x86CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.DInput8_x86CheckBox.Name = "DInput8_x86CheckBox";
 			this.DInput8_x86CheckBox.Size = new System.Drawing.Size(52, 17);
@@ -329,7 +334,7 @@
 			// DInput8_x64CheckBox
 			// 
 			this.DInput8_x64CheckBox.AutoSize = true;
-			this.DInput8_x64CheckBox.Location = new System.Drawing.Point(91, 17);
+			this.DInput8_x64CheckBox.Location = new System.Drawing.Point(91, 28);
 			this.DInput8_x64CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.DInput8_x64CheckBox.Name = "DInput8_x64CheckBox";
 			this.DInput8_x64CheckBox.Size = new System.Drawing.Size(52, 17);
@@ -470,7 +475,7 @@
 			// Controller1CheckBox
 			// 
 			this.Controller1CheckBox.AutoSize = true;
-			this.Controller1CheckBox.Location = new System.Drawing.Point(10, 17);
+			this.Controller1CheckBox.Location = new System.Drawing.Point(6, 17);
 			this.Controller1CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.Controller1CheckBox.Name = "Controller1CheckBox";
 			this.Controller1CheckBox.Size = new System.Drawing.Size(79, 17);
@@ -481,7 +486,7 @@
 			// Controller2CheckBox
 			// 
 			this.Controller2CheckBox.AutoSize = true;
-			this.Controller2CheckBox.Location = new System.Drawing.Point(10, 36);
+			this.Controller2CheckBox.Location = new System.Drawing.Point(6, 36);
 			this.Controller2CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.Controller2CheckBox.Name = "Controller2CheckBox";
 			this.Controller2CheckBox.Size = new System.Drawing.Size(79, 17);
@@ -492,7 +497,7 @@
 			// Controller3CheckBox
 			// 
 			this.Controller3CheckBox.AutoSize = true;
-			this.Controller3CheckBox.Location = new System.Drawing.Point(95, 17);
+			this.Controller3CheckBox.Location = new System.Drawing.Point(91, 17);
 			this.Controller3CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.Controller3CheckBox.Name = "Controller3CheckBox";
 			this.Controller3CheckBox.Size = new System.Drawing.Size(79, 17);
@@ -503,7 +508,7 @@
 			// Controller4CheckBox
 			// 
 			this.Controller4CheckBox.AutoSize = true;
-			this.Controller4CheckBox.Location = new System.Drawing.Point(95, 36);
+			this.Controller4CheckBox.Location = new System.Drawing.Point(91, 36);
 			this.Controller4CheckBox.Margin = new System.Windows.Forms.Padding(3, 1, 3, 1);
 			this.Controller4CheckBox.Name = "Controller4CheckBox";
 			this.Controller4CheckBox.Size = new System.Drawing.Size(79, 17);
@@ -534,6 +539,11 @@
 			this.XInputMaskGroupBox.Controls.Add(this.XInput91_x86CheckBox);
 			this.XInputMaskGroupBox.Controls.Add(this.XInput11_x64CheckBox);
 			this.XInputMaskGroupBox.Controls.Add(this.XInput12_x64CheckBox);
+			this.XInputMaskGroupBox.Controls.Add(this.label4);
+			this.XInputMaskGroupBox.Controls.Add(this.label3);
+			this.XInputMaskGroupBox.Controls.Add(this.label2);
+			this.XInputMaskGroupBox.Controls.Add(this.label1);
+			this.XInputMaskGroupBox.Controls.Add(this.v91);
 			this.XInputMaskGroupBox.Controls.Add(this.XInput13_x64CheckBox);
 			this.XInputMaskGroupBox.Controls.Add(this.XInput14_x64CheckBox);
 			this.XInputMaskGroupBox.Controls.Add(this.XInput11_x86CheckBox);
@@ -543,7 +553,7 @@
 			this.XInputMaskGroupBox.Controls.Add(this.XInput91_x64CheckBox);
 			this.XInputMaskGroupBox.Location = new System.Drawing.Point(211, 3);
 			this.XInputMaskGroupBox.Name = "XInputMaskGroupBox";
-			this.XInputMaskGroupBox.Size = new System.Drawing.Size(149, 115);
+			this.XInputMaskGroupBox.Size = new System.Drawing.Size(158, 115);
 			this.XInputMaskGroupBox.TabIndex = 39;
 			this.XInputMaskGroupBox.TabStop = false;
 			this.XInputMaskGroupBox.Text = "XInput Files - 00000000";
@@ -554,9 +564,9 @@
 			this.AutoMapMaskGroupBox.Controls.Add(this.Controller3CheckBox);
 			this.AutoMapMaskGroupBox.Controls.Add(this.Controller2CheckBox);
 			this.AutoMapMaskGroupBox.Controls.Add(this.Controller4CheckBox);
-			this.AutoMapMaskGroupBox.Location = new System.Drawing.Point(366, 3);
+			this.AutoMapMaskGroupBox.Location = new System.Drawing.Point(375, 3);
 			this.AutoMapMaskGroupBox.Name = "AutoMapMaskGroupBox";
-			this.AutoMapMaskGroupBox.Size = new System.Drawing.Size(200, 59);
+			this.AutoMapMaskGroupBox.Size = new System.Drawing.Size(191, 59);
 			this.AutoMapMaskGroupBox.TabIndex = 40;
 			this.AutoMapMaskGroupBox.TabStop = false;
 			this.AutoMapMaskGroupBox.Text = "Auto Map - 00000000";
@@ -565,9 +575,9 @@
 			// 
 			this.DInputMaskGroupBox.Controls.Add(this.DInput8_x86CheckBox);
 			this.DInputMaskGroupBox.Controls.Add(this.DInput8_x64CheckBox);
-			this.DInputMaskGroupBox.Location = new System.Drawing.Point(366, 68);
+			this.DInputMaskGroupBox.Location = new System.Drawing.Point(375, 68);
 			this.DInputMaskGroupBox.Name = "DInputMaskGroupBox";
-			this.DInputMaskGroupBox.Size = new System.Drawing.Size(200, 50);
+			this.DInputMaskGroupBox.Size = new System.Drawing.Size(191, 50);
 			this.DInputMaskGroupBox.TabIndex = 40;
 			this.DInputMaskGroupBox.TabStop = false;
 			this.DInputMaskGroupBox.Text = "DInput File - 00000000";
@@ -723,6 +733,51 @@
 			this.ResetToDefaultButton.UseVisualStyleBackColor = true;
 			this.ResetToDefaultButton.Click += new System.EventHandler(this.ResetToDefaultButton_Click);
 			// 
+			// v91
+			// 
+			this.v91.AutoSize = true;
+			this.v91.Location = new System.Drawing.Point(6, 18);
+			this.v91.Name = "v91";
+			this.v91.Size = new System.Drawing.Size(31, 13);
+			this.v91.TabIndex = 33;
+			this.v91.Text = "v9.1:";
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(6, 37);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(31, 13);
+			this.label1.TabIndex = 33;
+			this.label1.Text = "v1.1:";
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(6, 56);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(31, 13);
+			this.label2.TabIndex = 33;
+			this.label2.Text = "v1.2:";
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(6, 75);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(31, 13);
+			this.label3.TabIndex = 33;
+			this.label3.Text = "v1.3:";
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(6, 94);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(31, 13);
+			this.label4.TabIndex = 33;
+			this.label4.Text = "v1.4:";
+			// 
 			// GameDetailsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -808,5 +863,10 @@
 		private System.Windows.Forms.Label EmulationTypeLabel;
 		private System.Windows.Forms.TextBox XInputPathTextBox;
 		private System.Windows.Forms.Label XInputPathLabel;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label v91;
 	}
 }

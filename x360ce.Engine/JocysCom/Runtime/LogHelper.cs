@@ -161,29 +161,82 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			s += "<style type=\"text/css\">\r\n";
 			s += "table tr td { font-family: Tahoma; font-size: 10pt; white-space:nowrap; }\r\n";
+			s += "table tr th { font-family: Tahoma; font-size: 10pt; white-space:nowrap; }\r\n";
+			s += ".Table { border: solid 1px #DDDDDD; border-collapse: collapse; empty-cells: show; }\r\n";
+			s += ".Table tr td { border: solid 1px #DDDDDD; padding: 2px 4px 2px 4px; }\r\n";
+			s += ".Table tr th { border: solid 1px #DDDDDD; padding: 2px 4px 2px 4px; }\r\n";
 			s += ".Head { font-weight: bold; }\r\n";
+			s += ".Body {  }\r\n";
 			s += ".Name { padding-left: 16px; }\r\n";
 			s += ".Value { widht: 100%; }\r\n";
 			s += ".Ex { font-family: Courier New; font-size: 10pt; }\r\n";
 			s += "</style>\r\n";
 		}
 
+		/// <summary>Add empty row.</summary>
 		public static void AddRow(ref string s)
 		{
 			s += string.Format("<tr><td colspan=\"2\"> </td></tr>");
 		}
 
+		/// <summary>Add header row.</summary>
 		public static void AddRow(ref string s, string name)
 		{
-			s += string.Format("<tr><td colspan=\"2\" class=\"Head\">{0}</td></tr>", name);
+			s += string.Format("<tr><td colspan=\"2\" class=\"Head\">{0}</td></tr>",  name);
 		}
 
-		public static void AddRow(ref string s, string name, string value)
+		#region Table
+
+		public static void AddStyle(StringBuilder sb)
+		{
+			var s = "";
+			AddStyle(ref s);
+			sb.Append(s);
+		}
+
+		public static void AddTable(StringBuilder sb)
+		{
+			sb.Append("<table class=\"Table\">");
+		}
+
+		public static void EndTable(StringBuilder sb)
+		{
+			sb.Append("</table>");
+		}
+
+		/// <summary>Add head rows.</summary>
+		public static void AddHeadRows(StringBuilder sb, params object[] args)
+		{
+			sb.Append("<tr>");
+			foreach (var arg in args)
+			{
+				var v = System.Web.HttpUtility.HtmlEncode(string.Format("{0}", arg));
+				sb.AppendFormat("<th class=\"Head\">{0}</th>", v);
+			}
+			sb.Append("</tr>");
+		}
+
+		/// <summary>Add body rows.</summary>
+		public static void AddBodyRows(StringBuilder sb, params object[] args)
+		{
+			sb.Append("<tr>");
+			foreach (var arg in args)
+			{
+				var v = System.Web.HttpUtility.HtmlEncode(string.Format("{0}", arg));
+				sb.AppendFormat("<td class=\"Body\">{0}</td>", v);
+			}
+			sb.Append("</tr>");
+		}
+
+		#endregion
+
+		/// <summary>Add row with key and value cells.</summary>
+		public static void AddRow(ref string s, string key, string value)
 		{
 			string sep = "";
-			if (!string.IsNullOrEmpty(name))
+			if (!string.IsNullOrEmpty(key))
 				sep = ":";
-			s += string.Format("<tr><td class=\"Name\" valign=\"top\">{0}{1}</td><td>{2}</td></tr>", name, sep, value);
+			s += string.Format("<tr><td class=\"Name\" valign=\"top\">{0}{1}</td><td>{2}</td></tr>", key, sep, value);
 		}
 
 		protected static void AddException(ref string s, Exception ex)
