@@ -33,10 +33,14 @@ namespace JocysCom.ClassLibrary.Web.Services
 		/// <remarks/>
 		public SoapHttpClientBase()
 		{
-			// Enable TLS 1.1 and 1.2
-			var Tls11 = 768;
-			var Tls12 = 3072;
-			ServicePointManager.SecurityProtocol |= (SecurityProtocolType)Tls11 | (SecurityProtocolType)Tls12;
+			// Enable TLS 1.1, 1.2 and 1.3
+			var Tls11 = 0x0300; //   768
+			var Tls12 = 0x0C00; //  3072
+			var Tls13 = 0x3000; // 12288
+			ServicePointManager.SecurityProtocol |=
+				(SecurityProtocolType)Tls11 | 
+				(SecurityProtocolType)Tls12 | 
+				(SecurityProtocolType)Tls13;
 			if (IsLocalFileSystemWebService(Url))
 			{
 				UseDefaultCredentials = true;
