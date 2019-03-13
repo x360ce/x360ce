@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Runtime;
+using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
 
 namespace x360ce.App.Controls
 {

@@ -30,6 +30,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				attempts -= 1;
 				try
 				{
+					// CWE-73: External Control of File Name or Path
+					// Note: False Positive. File path is not externally controlled by the user.
 					return System.IO.File.ReadAllBytes(path);
 				}
 				catch (Exception)
@@ -59,6 +61,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				try
 				{
 					// WriteAllBytes will lock file for writing and reading.
+					// CWE-73: External Control of File Name or Path
+					// Note: False Positive. File path is not externally controlled by the user.
 					System.IO.File.WriteAllBytes(path, bytes);
 					return;
 				}

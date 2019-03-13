@@ -24,7 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
-    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
@@ -230,6 +230,7 @@
     </Compile>
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
+    <Compile Include="JocysCom\Diagnostics\RawDataLogHttpModule.cs" />
     <Compile Include="JocysCom\Diagnostics\RollingXmlWriterTraceListener.cs" />
     <Compile Include="JocysCom\Diagnostics\TraceHelper.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />
@@ -309,6 +310,7 @@
     <Compile Include="JocysCom\Security\HashHelper.cs" />
     <Compile Include="JocysCom\Security\MD5Helper.cs" />
     <Compile Include="JocysCom\Security\PermissionHelper.cs" />
+    <Compile Include="JocysCom\Security\SHA256Helper.cs" />
     <Compile Include="JocysCom\Security\TokenHelper.cs" />
     <Compile Include="JocysCom\Security\ValidationField.cs" />
     <Compile Include="JocysCom\Security\Encryption.cs" />
@@ -318,7 +320,10 @@
     <Compile Include="JocysCom\Text\Helper.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
     <Compile Include="JocysCom\Threading\QueueTimerEventArgs.cs" />
-    <Compile Include="JocysCom\Web\Services\RawDataLogHttpModule.cs" />
+    <Compile Include="JocysCom\Web\Services\SoapHttpClientBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Web\Services\StreamSpy.cs" />
     <Compile Include="JocysCom\Web\WebControlsHelper.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />
     <Compile Include="JocysCom\Win32\ABM.cs" />

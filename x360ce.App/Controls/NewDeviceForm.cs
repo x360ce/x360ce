@@ -13,6 +13,7 @@ using System.Linq;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.ComponentModel;
+using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
 
 namespace x360ce.App.Controls
 {

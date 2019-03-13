@@ -3,6 +3,17 @@ using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Security
 {
+	// Note: If computer is Federal Information Processing Standard (FIPS) compliant and
+	// MD5 algorithm is blocked, but you have to use it in .NET for backwards compatibility then
+	// you have to add enforceFIPSPolicy option to application/we configuration file.
+	// 
+	// <configuration>
+	//	<runtime>
+	//		<!-- Enable MD5 on FIPS-Compliant system for backwards compatibility. -->
+	//		<enforceFIPSPolicy enabled="false"/>
+	//	</runtime>
+	// </configuration>
+
 	/// <summary>
 	/// UTF-8 is used as a default encoding (smaller Internet messaging size).
 	/// </summary>

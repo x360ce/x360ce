@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Controls;
+using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
+using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.App.Controls
 {

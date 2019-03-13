@@ -69,6 +69,8 @@ namespace JocysCom.ClassLibrary.Security
 		)
 		{
 			// This method is equivalent to the FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read).
+			// CWE-73: External Control of File Name or Path
+			// Note: False Positive. File path is not externally controlled by the user.
 			using (var stream = System.IO.File.OpenRead(path))
 			{
 				int _progress = -1;

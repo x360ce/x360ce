@@ -15,12 +15,12 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			Classic mode then add node inside <configuration><system.web><httpModules> section.
 			Integrated mode then add node inside "<configuration><system.webServer><modules> section.
 
-		<!-- Enabling Tracing: JocysCom.ClassLibrary.Web.Services.TraceRawDataHttpModule -->
-		<add name="JocysComHttpModule" type="JocysCom.ClassLibrary.Web.Services.RawDataLogHttpModule,JocysCom.ClassLibrary" />
+		<!-- Enabling Tracing: JocysCom.ClassLibrary.Web.Services.RawDataLogHttpModule -->
+		<add name="JocysComHttpModule" type="JocysCom.ClassLibrary.Diagnostics.RawDataLogHttpModule,JocysCom.ClassLibrary" />
 
 		Add source inside <configuration><system.diagnostics><sources> node:
 
-		<!-- Enabling Tracing: JocysCom.ClassLibrary.Web.Services.RawDataLogHttpModule -->
+		<!-- Enabling Tracing: JocysCom.ClassLibrary.Diagnostics.RawDataLogHttpModule -->
 		<source name="RawDataLogHttpModule" switchValue="Verbose">
 		  <listeners>
 		    <add name="SvcFileTraceListener" />
@@ -191,6 +191,8 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			public override void Write(byte[] buffer, int offset, int count)
 			{
 				_streamContent += _responseEncoding.GetString(buffer);
+				// CWE-80: Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)
+				// Note: Purpose of function is to capture and log data. It won't be used in scripts.
 				_streamToCapture.Write(buffer, offset, count);
 			}
 

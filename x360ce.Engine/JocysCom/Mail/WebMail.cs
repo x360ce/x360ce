@@ -17,9 +17,12 @@ namespace JocysCom.ClassLibrary.Mail
 {
 	public class WebMail
 	{
-		private static Regex _emailRegex;
-		private readonly Regex _htmlTag = new Regex("</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>");
-		private SmtpClientEx _mailClient;
+		SmtpClientEx _mailClient;
+
+		#region Email Validation
+
+		// General Email RegEx (RFC 5322 Official Standard): http://emailregex.com/
+		static string emailRegexRFC5322 = @"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
 
 		public static Regex EmailRegex
 		{
@@ -27,12 +30,23 @@ namespace JocysCom.ClassLibrary.Mail
 			get
 			{
 				if (_emailRegex == null)
-					_emailRegex =
-						new Regex(
-							@"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", RegexOptions.IgnoreCase);
+					_emailRegex = new Regex(emailRegexRFC5322, RegexOptions.IgnoreCase);
 				return _emailRegex;
 			}
 		}
+		static Regex _emailRegex;
+
+
+		public static bool IsEmail(string s)
+		{
+			if (string.IsNullOrEmpty(s))
+				return false;
+			var match = EmailRegex.Match(s);
+			//  Make sure that full string matched.
+			return match.Success && match.Value.Length == s.Length;
+		}
+
+		#endregion
 
 		public SmtpSection SmtpSettings
 		{
@@ -109,18 +123,16 @@ namespace JocysCom.ClassLibrary.Mail
 
 		#endregion
 
+		#region HTML Validation
+
+		readonly Regex _htmlTag = new Regex("</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>");
+
 		public bool IsHtml(string s)
 		{
 			return _htmlTag.IsMatch(s);
 		}
 
-
-		public static bool IsEmail(string s)
-		{
-			if (string.IsNullOrEmpty(s)) return false;
-			var match = EmailRegex.Match(s);
-			return match.Success && match.Value.Length == s.Length;
-		}
+		#endregion
 
 		public virtual MailMessage GetMessage(string subject, string body)
 		{

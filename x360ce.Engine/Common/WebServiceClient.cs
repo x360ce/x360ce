@@ -6,6 +6,7 @@ using System.Web.Services.Description;
 using x360ce.Engine.Data;
 using System.Collections.Generic;
 using System.Net;
+using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.Engine
 {
@@ -14,137 +15,10 @@ namespace x360ce.Engine
 	[WebServiceBinding(Name = "x360ceSoap", Namespace = ns)]
 	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(StructuralObject))]
 	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(EntityKeyMember[]))]
-	public partial class WebServiceClient : SoapHttpClientProtocol, IWebService
+	public partial class WebServiceClient : SoapHttpClientBase, IWebService
 	{
 
-		#region Main Methods
-
-		/// <summary>
-		/// Create the network credentials and assign
-		/// them to the service credentials
-		/// </summary>
-		/// <param name="username"></param>
-		/// <param name="password"></param>
-		public void SetCredentials(string username, string password)
-		{
-			var nc = new NetworkCredential(username, password);
-			var uri = new Uri(Url);
-			var credentials = nc.GetCredential(uri, "Basic");
-			Credentials = credentials;
-			// Be sure to set PreAuthenticate to true or else authentication will not be sent.
-			PreAuthenticate = true;
-		}
-
-		protected override WebRequest GetWebRequest(Uri uri)
-		{
-			var request = (HttpWebRequest)base.GetWebRequest(uri);
-			if (PreAuthenticate)
-			{
-				var credentials = Credentials.GetCredential(uri, "Basic");
-				if (credentials != null)
-				{
-					var bytes = System.Text.Encoding.UTF8.GetBytes(
-					credentials.UserName + ":" +
-					credentials.Password);
-					request.Headers["Authorization"] = "Basic " + Convert.ToBase64String(bytes);
-				}
-				else
-				{
-					throw new ApplicationException("No network credentials");
-				}
-			}
-			return request;
-		}
-
 		const string ns = "http://x360ce.com/";
-		bool useDefaultCredentialsSetExplicitly;
-
-		/// <remarks/>
-		public WebServiceClient()
-		{
-			if ((IsLocalFileSystemWebService(Url) == true))
-			{
-				UseDefaultCredentials = true;
-				useDefaultCredentialsSetExplicitly = false;
-			}
-			else
-			{
-				useDefaultCredentialsSetExplicitly = true;
-			}
-		}
-
-		public new string Url
-		{
-			get { return base.Url; }
-			set
-			{
-				if ((((IsLocalFileSystemWebService(base.Url) == true)
-							&& (useDefaultCredentialsSetExplicitly == false))
-							&& (IsLocalFileSystemWebService(value) == false)))
-				{
-					base.UseDefaultCredentials = false;
-				}
-				base.Url = value;
-			}
-		}
-
-		public new bool UseDefaultCredentials
-		{
-			get
-			{
-				return base.UseDefaultCredentials;
-			}
-			set
-			{
-				base.UseDefaultCredentials = value;
-				useDefaultCredentialsSetExplicitly = true;
-			}
-		}
-
-		public new void CancelAsync(object userState)
-		{
-			base.CancelAsync(userState);
-		}
-
-		bool IsLocalFileSystemWebService(string url)
-		{
-			if (((url == null) || (url == string.Empty))) return false;
-			System.Uri wsUri = new System.Uri(url);
-			if (((wsUri.Port >= 1024)
-						&& (string.Compare(wsUri.Host, "localHost", System.StringComparison.OrdinalIgnoreCase) == 0)))
-			{
-				return true;
-			}
-			return false;
-		}
-
-		class InvokeUserState
-		{
-			public InvokeUserState(object userState, EventHandler<ResultEventArgs> handler)
-			{
-				UserState = userState;
-				Handler = handler;
-			}
-			public object UserState;
-			public EventHandler<ResultEventArgs> Handler;
-		}
-
-		void InvokeAsync(string method, EventHandler<ResultEventArgs> completedEvent, object userState, object[] args)
-		{
-			var invokeUserState = new InvokeUserState(userState, completedEvent);
-			InvokeAsync(method, args, OnAsyncOperationCompleted, invokeUserState);
-		}
-
-		void OnAsyncOperationCompleted(object arg)
-		{
-			var invokeArgs = (InvokeCompletedEventArgs)arg;
-			var invokeUserState = (InvokeUserState)invokeArgs.UserState;
-			if (invokeUserState.Handler == null) return;
-			var args = new ResultEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeUserState.UserState);
-			invokeUserState.Handler(this, args);
-		}
-
-		#endregion
 
 		#region Method: SignIn
 
@@ -346,23 +220,5 @@ namespace x360ce.Engine
 
 		#endregion
 	}
-
-	public partial class ResultEventArgs : AsyncCompletedEventArgs
-	{
-		internal ResultEventArgs(object[] results, Exception exception, bool cancelled, object userState) :
-			base(exception, cancelled, userState)
-		{ _results = results; }
-
-		object[] _results;
-		public object Result
-		{
-			get
-			{
-				RaiseExceptionIfNecessary();
-				return _results[0];
-			}
-		}
-	}
-
 
 }

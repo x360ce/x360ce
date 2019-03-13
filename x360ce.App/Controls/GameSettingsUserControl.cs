@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using System.Diagnostics;
 using JocysCom.ClassLibrary.Runtime;
+using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
 
 namespace x360ce.App.Controls
 {

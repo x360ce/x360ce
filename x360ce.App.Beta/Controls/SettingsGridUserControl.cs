@@ -10,6 +10,7 @@ using x360ce.Engine.Data;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
+using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
 
 namespace x360ce.App.Controls
 {

@@ -12,6 +12,7 @@ using x360ce.Engine.Data;
 using x360ce.Engine;
 using System.Text.RegularExpressions;
 using JocysCom.ClassLibrary.Runtime;
+using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
 
 namespace x360ce.App.Controls
 {
