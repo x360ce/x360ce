@@ -36,11 +36,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 			// Enable TLS 1.1, 1.2 and 1.3
 			var Tls11 = 0x0300; //   768
 			var Tls12 = 0x0C00; //  3072
-			var Tls13 = 0x3000; // 12288
-			ServicePointManager.SecurityProtocol |=
-				(SecurityProtocolType)Tls11 | 
-				(SecurityProtocolType)Tls12 | 
-				(SecurityProtocolType)Tls13;
+			ServicePointManager.SecurityProtocol |= (SecurityProtocolType)(Tls11 | Tls12);
 			if (IsLocalFileSystemWebService(Url))
 			{
 				UseDefaultCredentials = true;

@@ -212,10 +212,10 @@ namespace JocysCom.ClassLibrary.Mail
 				if (SmtpEnableSsl)
 				{
 					client.EnableSsl = true;
-					// Enable TLS 1.1 and 1.2
-					var Tls11 = 768;
-					var Tls12 = 3072;
-					ServicePointManager.SecurityProtocol |= (SecurityProtocolType)Tls11 | (SecurityProtocolType)Tls12;
+					// Enable TLS 1.1, 1.2 and 1.3
+					var Tls11 = 0x0300; //   768
+					var Tls12 = 0x0C00; //  3072
+					ServicePointManager.SecurityProtocol |= (SecurityProtocolType)(Tls11 | Tls12);
 				}
 				if (!string.IsNullOrEmpty(SmtpUsername))
 				{
@@ -224,6 +224,9 @@ namespace JocysCom.ClassLibrary.Mail
 				client.Port = SmtpPort;
 				client.ServicePoint.BindIPEndPointDelegate = new System.Net.BindIPEndPoint(BindIPEndPointCallback);
 				// Send Email.
+				// CWE-201: Information Exposure Through Send Data
+				// CWE-209: Information Exposure Through an Error Message
+				// Note: Generic shared method. Mitigated by design.
 				client.Send(message);
 			}
 			else

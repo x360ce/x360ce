@@ -65,6 +65,7 @@ namespace JocysCom.ClassLibrary.Security
 			writer.Write(passwordBytes);
 			writer.Write(unitBytes);
 			byte[] bytes = stream.ToArray();
+			stream.Close();
 			byte[] tokenPrefixBytesFull = Encryption.Current.ComputeHash(bytes).ToByteArray();
 			string tokenPrefix = BytesToHex(tokenPrefixBytesFull).Substring(0, securityHashSize).ToUpper();
 			byte[] tokenDataBytes = ExclusiveORValue(tokenPrefix, idBytes, hmacHashKey);
@@ -305,6 +306,8 @@ namespace JocysCom.ClassLibrary.Security
 			var o = (object)value;
 			var t = type ?? value.GetType();
 			var typeCode = Type.GetTypeCode(t);
+			// CWE-404: Improper Resource Shutdown or Release
+			// Note: Binary Writer will close underlying MemoryStream automatically.
 			var stream = new MemoryStream();
 			var writer = new BinaryWriter(stream, Encoding.UTF8);
 			switch (typeCode)
@@ -331,6 +334,9 @@ namespace JocysCom.ClassLibrary.Security
 					break;
 			}
 			var result = stream.ToArray();
+			// Binary Writer will close underlying MemoryStream automatically.
+			writer.Close();
+			//stream.Close();
 			return result;
 		}
 

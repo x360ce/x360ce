@@ -1,8 +1,8 @@
-﻿using System.Security.Permissions;
-using System.Runtime.InteropServices;
-using System;
-using System.Drawing;
+﻿using System;
 using System.ComponentModel;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace JocysCom.ClassLibrary.Win32
 {
@@ -217,14 +217,14 @@ namespace JocysCom.ClassLibrary.Win32
 		private static void AppActivateHelper(IntPtr hwndApp)
 		{
 			int num = 0;
-			try
-			{
-				new UIPermission(UIPermissionWindow.AllWindows).Demand();
-			}
-			catch (Exception exception)
-			{
-				throw exception;
-			}
+			//try
+			//{
+			new UIPermission(UIPermissionWindow.AllWindows).Demand();
+			//}
+			//catch (Exception ex)
+			//{
+			//	throw;
+			//}
 			if (!IsWindowEnabled(hwndApp) || !IsWindowVisible(hwndApp))
 			{
 				IntPtr window = GetWindow(hwndApp, 0);
