@@ -176,16 +176,15 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public static bool IsInstalledHotFix(int id)
 		{
-			string query = string.Format("SELECT HotFixID FROM Win32_QuickFixEngineering", id);
+			string query = string.Format("SELECT HotFixID FROM Win32_QuickFixEngineering WHERE HotFixID = \"KB{0}\"", id);
 			var searcher = new ManagementObjectSearcher(query);
 			var collection = searcher.Get();
 			var list = new List<string>();
 			foreach (ManagementObject quickFix in collection)
 				list.Add(quickFix["HotFixID"].ToString());
-			var installed = list.Contains("KB" + id.ToString());
 			//MessageBox.Show(string.Join(", ", list.OrderBy(x => x)));
 			searcher.Dispose();
-			return installed;
+			return list.Count > 0;
 		}
 
 		public static void OpenPath(string path, string arguments = null)
