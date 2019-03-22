@@ -48,7 +48,7 @@
     <OutputPath>bin\Debug_x64\</OutputPath>
     <DefineConstants>TRACE;DEBUG;WIN64</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
     <DebugType>full</DebugType>
     <WarningLevel>1</WarningLevel>
@@ -203,7 +203,6 @@
     <Compile Include="JocysCom\Common\ItemType.cs" />
     <Compile Include="JocysCom\Common\LinkItem.cs" />
     <Compile Include="JocysCom\Common\TimeUnitType.cs" />
-    <Compile Include="JocysCom\Common\TraceFormat.cs" />
     <Compile Include="JocysCom\ComponentModel\BindingListInvoked.cs" />
     <Compile Include="JocysCom\ComponentModel\PropertyComparer.cs" />
     <Compile Include="JocysCom\ComponentModel\SortableBindingList.cs" />
@@ -259,6 +258,7 @@
       <DependentUpon>HardwareControl.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\IO\LogFileWriter.cs" />
+    <Compile Include="JocysCom\Mail\EmailResult.cs" />
     <Compile Include="JocysCom\Mail\MailFromUser.cs" />
     <Compile Include="JocysCom\Mail\MailTextType.cs" />
     <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
@@ -286,12 +286,12 @@
     <Compile Include="JocysCom\Resources\ResourceSection.cs" />
     <Compile Include="JocysCom\Runtime\Attributes.cs" />
     <Compile Include="JocysCom\Runtime\ChangeState.cs" />
-    <Compile Include="JocysCom\Runtime\EmailResult.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.Exception.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.Mail.cs" />
     <Compile Include="JocysCom\Runtime\RuntimeHelper.cs" />
     <Compile Include="JocysCom\Runtime\Serializer.cs" />
+    <Compile Include="JocysCom\Runtime\TraceFormat.cs" />
     <Compile Include="JocysCom\Runtime\XmlValidator.cs" />
     <Compile Include="JocysCom\Security\AESHelper.cs" />
     <Compile Include="JocysCom\Security\BuildInRoles.cs" />
@@ -323,6 +323,7 @@
     <Compile Include="JocysCom\Web\Services\SoapHttpClientBase.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="JocysCom\Web\Services\SoapHttpClientEventArgs.cs" />
     <Compile Include="JocysCom\Web\Services\StreamSpy.cs" />
     <Compile Include="JocysCom\Web\WebControlsHelper.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />

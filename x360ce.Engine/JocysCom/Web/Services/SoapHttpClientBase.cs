@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Net;
-using System.Web.Services;
 using System.Web.Services.Protocols;
 using System.Xml;
 
@@ -26,6 +25,9 @@ namespace JocysCom.ClassLibrary.Web.Services
 	/// </remarks>
 	public class SoapHttpClientBase : SoapHttpClientProtocol
 	{
+		// This class can generate "WebServiceBindingAttribute is required on proxy classes" error during build.
+		// Solution: Set "Generate Serialization assembly:" to "Auto" or "Off" in the [Build] tab of project properties.
+
 		#region Main Methods
 
 		bool useDefaultCredentialsSetExplicitly;
@@ -92,16 +94,16 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		class InvokeUserState
 		{
-			public InvokeUserState(object userState, EventHandler<ResultEventArgs> handler)
+			public InvokeUserState(object userState, EventHandler<SoapHttpClientEventArgs> handler)
 			{
 				UserState = userState;
 				Handler = handler;
 			}
 			public object UserState;
-			public EventHandler<ResultEventArgs> Handler;
+			public EventHandler<SoapHttpClientEventArgs> Handler;
 		}
 
-		public void InvokeAsync(string method, EventHandler<ResultEventArgs> completedEvent, object userState, object[] args)
+		public void InvokeAsync(string method, EventHandler<SoapHttpClientEventArgs> completedEvent, object userState, object[] args)
 		{
 			var invokeUserState = new InvokeUserState(userState, completedEvent);
 			InvokeAsync(method, args, OnAsyncOperationCompleted, invokeUserState);
@@ -113,25 +115,8 @@ namespace JocysCom.ClassLibrary.Web.Services
 			var invokeUserState = (InvokeUserState)invokeArgs.UserState;
 			if (invokeUserState.Handler == null)
 				return;
-			var args = new ResultEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeUserState.UserState);
+			var args = new SoapHttpClientEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeUserState.UserState);
 			invokeUserState.Handler(this, args);
-		}
-
-		public partial class ResultEventArgs : AsyncCompletedEventArgs
-		{
-			internal ResultEventArgs(object[] results, Exception exception, bool cancelled, object userState) :
-				base(exception, cancelled, userState)
-			{ _results = results; }
-
-			object[] _results;
-			public object Result
-			{
-				get
-				{
-					RaiseExceptionIfNecessary();
-					return _results[0];
-				}
-			}
 		}
 
 		#endregion
@@ -279,5 +264,5 @@ namespace JocysCom.ClassLibrary.Web.Services
 		//#endregion
 
 	}
-	
+
 }

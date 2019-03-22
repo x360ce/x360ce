@@ -13,7 +13,7 @@ using System.Linq;
 using x360ce.Engine.Data;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.ComponentModel;
-using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
+using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.App.Controls
 {
@@ -141,7 +141,7 @@ namespace x360ce.App.Controls
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
 
-		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
+		void ws_LoadSettingCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			var result = (SearchResult)e.Result;
 			if (result.PadSettings.Length == 0)
@@ -240,7 +240,7 @@ namespace x360ce.App.Controls
 
 		SearchResult sr;
 
-		void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
+		void ws_SearchSettingsCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			sr = null;
 			if (e.Error != null)

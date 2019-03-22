@@ -23,7 +23,7 @@ namespace JocysCom.ClassLibrary
 			// Write title.
 			// Microsoft (R) SQL Server Database Publishing Wizard 1.1.1.0
 			// Copyright (C) Microsoft Corporation. All rights reserved.
-			var a = new JocysCom.ClassLibrary.Configuration.AssemblyInfo(assembly);
+			var a = new Configuration.AssemblyInfo(assembly);
 			Console.WriteLine(a.Title + " " + a.Version.ToString());
 			Console.WriteLine(a.Copyright);
 			Console.WriteLine(a.Description);

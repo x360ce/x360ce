@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Runtime;
 using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
+using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.App.Controls
 {
@@ -249,7 +250,7 @@ namespace x360ce.App.Controls
 			});
 		}
 
-		void ProgramsWebServiceClient_GetProgramsCompleted(object sender, ResultEventArgs e)
+		void ProgramsWebServiceClient_GetProgramsCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			// Make sure method is executed on the same thread as this control.
 			BeginInvoke((MethodInvoker)delegate ()

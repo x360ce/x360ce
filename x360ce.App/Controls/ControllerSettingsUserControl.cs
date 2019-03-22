@@ -12,7 +12,7 @@ using x360ce.Engine.Data;
 using x360ce.Engine;
 using System.Text.RegularExpressions;
 using JocysCom.ClassLibrary.Runtime;
-using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
+using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.App.Controls
 {
@@ -317,7 +317,7 @@ namespace x360ce.App.Controls
 			return s;
 		}
 
-		void ws_SaveSettingCompleted(object sender, ResultEventArgs e)
+		void ws_SaveSettingCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			if (e.Error != null)
 			{
@@ -337,7 +337,7 @@ namespace x360ce.App.Controls
 			RefreshGrid(false);
 		}
 
-		void ws_DeleteSettingCompleted(object sender, ResultEventArgs e)
+		void ws_DeleteSettingCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			if (e.Error != null)
 			{
@@ -414,7 +414,7 @@ namespace x360ce.App.Controls
 			ws.LoadSettingAsync(new Guid[] { padSettingChecksum });
 		}
 
-		void ws_LoadSettingCompleted(object sender, ResultEventArgs e)
+		void ws_LoadSettingCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			var result = (SearchResult)e.Result;
 			if (result.PadSettings.Length == 0)
@@ -439,7 +439,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
+		void ws_SearchSettingsCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			var ws = (WebServiceClient)sender;
 			ws.SearchSettingsCompleted -= ws_SearchSettingsCompleted;
@@ -795,7 +795,7 @@ namespace x360ce.App.Controls
 			});
 		}
 
-		void wsPresets_SearchSettingsCompleted(object sender, ResultEventArgs e)
+		void wsPresets_SearchSettingsCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			var ws = (WebServiceClient)sender;
 			ws.SearchSettingsCompleted -= wsPresets_SearchSettingsCompleted;

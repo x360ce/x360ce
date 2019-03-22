@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace JocysCom.ClassLibrary.Runtime
-{
-    public enum EmailResult
+namespace JocysCom.ClassLibrary.Mail
+{ 
+	public enum EmailResult
     {
 		[Description("OK")]
 		OK = 0,

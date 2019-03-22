@@ -11,6 +11,7 @@ using x360ce.Engine;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
+using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.App.Controls
 {
@@ -154,12 +155,12 @@ namespace x360ce.App.Controls
 			});
 		}
 
-		void ws_SearchSettingsCompleted(object sender, ResultEventArgs e)
+		void ws_SearchSettingsCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			// Make sure method is executed on the same thread as this control.
 			if (InvokeRequired)
 			{
-				var method = new EventHandler<ResultEventArgs>(ws_SearchSettingsCompleted);
+				var method = new EventHandler<SoapHttpClientEventArgs>(ws_SearchSettingsCompleted);
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}

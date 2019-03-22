@@ -1,5 +1,4 @@
-﻿using JocysCom.ClassLibrary.Mail;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,16 +9,16 @@ namespace JocysCom.ClassLibrary.Runtime
 {
 	public partial class LogHelper
 	{
-		public SmtpClientEx Smtp
+		public Mail.SmtpClientEx Smtp
 		{
-			get { return SmtpClientEx.Current; }
+			get { return Mail.SmtpClientEx.Current; }
 		}
 
 		public System.Net.Mail.MailMessage GetMailPreview(MailMessage message)
 		{
 			MailMessage mail = new MailMessage();
 			mail.IsBodyHtml = true;
-			SmtpClientEx.ApplyRecipients(mail, message.From, Smtp.ErrorRecipients);
+			Mail.SmtpClientEx.ApplyRecipients(mail, message.From, Smtp.ErrorRecipients);
 			var subject = message.Subject;
 			ApplyRunModeSuffix(ref subject);
 			mail.Subject = subject;
@@ -27,15 +26,15 @@ namespace JocysCom.ClassLibrary.Runtime
 			testBody += "In LIVE mode this email would be sent:<br />\r\n";
 			foreach (var item in message.To)
 			{
-				testBody += "To:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
+				testBody += "To:&nbsp;" + System.Net.WebUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
 			}
 			foreach (var item in message.CC)
 			{
-				testBody += "Cc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
+				testBody += "Cc:&nbsp;" + System.Net.WebUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
 			}
 			foreach (var item in message.Bcc)
 			{
-				testBody += "Bcc:&nbsp;" + System.Web.HttpUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
+				testBody += "Bcc:&nbsp;" + System.Net.WebUtility.HtmlEncode(item.ToString()) + "<br />\r\n";
 			}
 
 			testBody += "<hr />\r\n";
@@ -52,7 +51,7 @@ namespace JocysCom.ClassLibrary.Runtime
 						{
 							mail.Attachments.Add(attachments[ctr]);
 						}
-						testBody += "&nbsp;&nbsp;&nbsp;&nbsp;" + System.Web.HttpUtility.HtmlEncode(fileName);
+						testBody += "&nbsp;&nbsp;&nbsp;&nbsp;" + System.Net.WebUtility.HtmlEncode(fileName);
 						testBody += "<br />\r\n";
 					}
 				}
@@ -64,7 +63,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			else
 			{
 				testBody += "<pre>";
-				testBody += System.Web.HttpUtility.HtmlEncode(message.Body);
+				testBody += System.Net.WebUtility.HtmlEncode(message.Body);
 				testBody += "</pre>";
 			}
 			mail.Body = testBody;
@@ -141,8 +140,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			try
 			{
 				var mail = new MailMessage();
-				SmtpClientEx.ApplyRecipients(mail, @from, @to, cc, bcc);
-				SmtpClientEx.ApplyAttachments(mail, attachments);
+				Mail.SmtpClientEx.ApplyRecipients(mail, @from, @to, cc, bcc);
+				Mail.SmtpClientEx.ApplyAttachments(mail, attachments);
 				mail.IsBodyHtml = isBodyHtml;
 				mail.Subject = subject;
 				mail.Body = body;
@@ -153,7 +152,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				if (DeliveryMethod == SmtpDeliveryMethod.SpecifiedPickupDirectory)
 				{
 					Smtp.SmtpDeliveryMethod = SmtpDeliveryMethod.SpecifiedPickupDirectory;
-					Smtp.SmtpPickupFolder = SmtpClientEx.Current.SmtpPickupFolder;
+					Smtp.SmtpPickupFolder = Mail.SmtpClientEx.Current.SmtpPickupFolder;
 				}
 				Smtp.SendMessage(mail);
 				return null;
@@ -212,9 +211,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public bool SuspendError(Exception ex)
 		{
-			if (!ex.Data.Keys.Cast<object>().Contains(SmtpClientEx.ErrorCode))
+			if (!ex.Data.Keys.Cast<object>().Contains(Mail.SmtpClientEx.ErrorCode))
 				return false;
-			var errorCode = ex.Data[SmtpClientEx.ErrorCode] as int?;
+			var errorCode = ex.Data[Mail.SmtpClientEx.ErrorCode] as int?;
 			if (!errorCode.HasValue)
 				return false;
 			var codes = Smtp.ErrorCodeSuspended;

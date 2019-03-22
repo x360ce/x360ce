@@ -99,12 +99,12 @@ namespace x360ce.App.Controls
 			sp.AddRange(userDevices);
 		}
 
-		void ws_SearchSummariesCompleted(object sender, ResultEventArgs e)
+		void ws_SearchSummariesCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			// Make sure method is executed on the same thread as this control.
 			if (InvokeRequired)
 			{
-				var method = new EventHandler<ResultEventArgs>(ws_SearchSummariesCompleted);
+				var method = new EventHandler<SoapHttpClientEventArgs>(ws_SearchSummariesCompleted);
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}

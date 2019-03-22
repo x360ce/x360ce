@@ -22,7 +22,7 @@ namespace x360ce.Engine
 
 		#region Method: SignIn
 
-		public event EventHandler<ResultEventArgs> SignInCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> SignInCompleted;
 
 		public void SignInAsync(string username, string password, object userState = null)
 		{
@@ -42,7 +42,7 @@ namespace x360ce.Engine
 
 		#region Method: SearchSettings
 
-		public event EventHandler<ResultEventArgs> SearchSettingsCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> SearchSettingsCompleted;
 
 		[SoapDocumentMethod(ns + "SearchSettings",
 			RequestNamespace = ns, ResponseNamespace = ns,
@@ -62,7 +62,7 @@ namespace x360ce.Engine
 
 		#region Method: SaveSetting
 
-		public event EventHandler<ResultEventArgs> SaveSettingCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> SaveSettingCompleted;
 
 		[SoapDocumentMethod(ns + "SaveSetting",
 			RequestNamespace = ns, ResponseNamespace = ns,
@@ -82,7 +82,7 @@ namespace x360ce.Engine
 
 		#region Method: DeleteSetting
 
-		public event EventHandler<ResultEventArgs> DeleteSettingCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> DeleteSettingCompleted;
 
 		[SoapDocumentMethod(ns + "DeleteSetting",
 			RequestNamespace = ns, ResponseNamespace = ns,
@@ -102,7 +102,7 @@ namespace x360ce.Engine
 
 		#region Method: LoadSetting
 
-		public event EventHandler<ResultEventArgs> LoadSettingCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> LoadSettingCompleted;
 
 		[SoapDocumentMethod(ns + "LoadSetting",
 			RequestNamespace = ns, ResponseNamespace = ns,
@@ -122,7 +122,7 @@ namespace x360ce.Engine
 
 		#region Method: GetPrograms
 
-		public event EventHandler<ResultEventArgs> GetProgramsCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> GetProgramsCompleted;
 
 		[SoapDocumentMethod(ns + "GetPrograms",
 			RequestNamespace = ns, ResponseNamespace = ns,
@@ -142,7 +142,7 @@ namespace x360ce.Engine
 
 		#region Method: GetVendors
 
-		public event EventHandler<ResultEventArgs> GetVendorsCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> GetVendorsCompleted;
 
 		[SoapDocumentMethod(ns + "GetVendors",
 			RequestNamespace = ns, ResponseNamespace = ns,
@@ -162,7 +162,7 @@ namespace x360ce.Engine
 
 		#region Method: GetSettingsData
 
-		public event EventHandler<ResultEventArgs> GetSettingsDataCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> GetSettingsDataCompleted;
 
 		[SoapDocumentMethod(ns + "GetSettingsData",
 			RequestNamespace = ns, ResponseNamespace = ns,
@@ -182,7 +182,7 @@ namespace x360ce.Engine
 
 		#region Method: SignOut
 
-		public event EventHandler<ResultEventArgs> SignOutCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> SignOutCompleted;
 
 		[SoapDocumentMethod(ns + "SignOut",
 			RequestNamespace = ns, ResponseNamespace = ns,
@@ -202,7 +202,7 @@ namespace x360ce.Engine
 
 		#region Method: Execute
 
-		public event EventHandler<ResultEventArgs> ExecuteCompleted;
+		public event EventHandler<SoapHttpClientEventArgs> ExecuteCompleted;
 
 		[SoapDocumentMethod(ns + "Execute",
 			RequestNamespace = ns, ResponseNamespace = ns,

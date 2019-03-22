@@ -144,7 +144,7 @@ namespace JocysCom.ClassLibrary.Runtime
 							v = string.Format("<pre>{0}</pre>", pv);
 							if (v.Contains("<?xml"))
 							{
-								v = "<pre>" + System.Web.HttpUtility.HtmlEncode(v) + "</pre>";
+								v = "<pre>" + System.Net.WebUtility.HtmlEncode(v) + "</pre>";
 							}
 						}
 						catch (Exception ex2)
@@ -210,7 +210,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			sb.Append("<tr>");
 			foreach (var arg in args)
 			{
-				var v = System.Web.HttpUtility.HtmlEncode(string.Format("{0}", arg));
+				var v = System.Net.WebUtility.HtmlEncode(string.Format("{0}", arg));
 				sb.AppendFormat("<th class=\"Head\">{0}</th>", v);
 			}
 			sb.Append("</tr>");
@@ -222,7 +222,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			sb.Append("<tr>");
 			foreach (var arg in args)
 			{
-				var v = System.Web.HttpUtility.HtmlEncode(string.Format("{0}", arg));
+				var v = System.Net.WebUtility.HtmlEncode(string.Format("{0}", arg));
 				sb.AppendFormat("<td class=\"Body\">{0}</td>", v);
 			}
 			sb.Append("</tr>");
@@ -253,7 +253,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var useHtml = ParseBool(_configPrefix + "ErrorHtmlException", true);
 			if (useHtml)
 			{
-				AddException(ref s, ExceptionToString(ex, true, JocysCom.ClassLibrary.TraceFormat.Html));
+				AddException(ref s, ExceptionToString(ex, true, TraceFormat.Html));
 			}
 			else
 			{
@@ -502,7 +502,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			AddRow(ref s, "Product");
 			if (asm != null)
 			{
-				var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo(asm);
+				var ai = new Configuration.AssemblyInfo(asm);
 				var name = ai.Company + " " + ai.Product + " " + ai.Version.ToString(4);
 				ApplyRunModeSuffix(ref name);
 				AddRow(ref s, "Name", name);

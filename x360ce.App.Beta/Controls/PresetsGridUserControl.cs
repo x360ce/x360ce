@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
-using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
+using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.App.Controls
 {
@@ -68,12 +68,12 @@ namespace x360ce.App.Controls
             });
         }
 
-        void wsPresets_SearchSettingsCompleted(object sender, ResultEventArgs e)
+        void wsPresets_SearchSettingsCompleted(object sender, SoapHttpClientEventArgs e)
         {
             // Make sure method is executed on the same thread as this control.
             if (InvokeRequired)
             {
-                var method = new EventHandler<ResultEventArgs>(wsPresets_SearchSettingsCompleted);
+                var method = new EventHandler<SoapHttpClientEventArgs>(wsPresets_SearchSettingsCompleted);
                 BeginInvoke(method, new object[] { sender, e });
                 return;
             }

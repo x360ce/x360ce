@@ -28,8 +28,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		public void InitExceptionHandlers(string logFolder = "Logs")
 		{
 			_LogFolder = logFolder;
-			if (LogThreadExceptions)
-				System.Windows.Forms.Application.ThreadException += Application_ThreadException;
+			//if (LogThreadExceptions)
+			//	System.Windows.Forms.Application.ThreadException += Application_ThreadException;
 			if (LogUnhandledExceptions)
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			if (LogFirstChanceExceptions)
@@ -38,8 +38,8 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public void UnInitExceptionHandlers()
 		{
-			if (LogThreadExceptions)
-				System.Windows.Forms.Application.ThreadException -= Application_ThreadException;
+			//if (LogThreadExceptions)
+			//	System.Windows.Forms.Application.ThreadException -= Application_ThreadException;
 			if (LogUnhandledExceptions)
 				AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
 			if (LogFirstChanceExceptions)
@@ -103,7 +103,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		private static string getText(bool isHtml, string text)
 		{
-			return (isHtml) ? System.Web.HttpUtility.HtmlEncode(text) : text;
+			return (isHtml) ? System.Net.WebUtility.HtmlEncode(text) : text;
 		}
 
 		#region Application Settings
@@ -319,9 +319,9 @@ namespace JocysCom.ClassLibrary.Runtime
 						if (isHtml)
 						{
 							if (isForm) builder.Append("<span style=\"font-weight: bold;\">");
-							builder.Append(System.Web.HttpUtility.HtmlEncode(ns));
+							builder.Append(System.Net.WebUtility.HtmlEncode(ns));
 							builder.Append(".");
-							builder.AppendFormat("<span style=\"color: #2B91AF; \">{0}</span>", System.Web.HttpUtility.HtmlEncode(name));
+							builder.AppendFormat("<span style=\"color: #2B91AF; \">{0}</span>", System.Net.WebUtility.HtmlEncode(name));
 							if (isForm) builder.Append("</span>");
 						}
 						else
@@ -377,10 +377,10 @@ namespace JocysCom.ClassLibrary.Runtime
 						if (isHtml)
 						{
 							if (isClass) builder.Append("<span style=\"color: #2B91AF; \">");
-							builder.Append(System.Web.HttpUtility.HtmlEncode(paramType));
+							builder.Append(System.Net.WebUtility.HtmlEncode(paramType));
 							if (isClass) builder.Append("</span>");
 							builder.Append(" ");
-							builder.Append(System.Web.HttpUtility.HtmlEncode(paramType));
+							builder.Append(System.Net.WebUtility.HtmlEncode(paramType));
 						}
 						else
 						{
@@ -412,14 +412,14 @@ namespace JocysCom.ClassLibrary.Runtime
 							if (isHtml)
 							{
 								builder.Append("<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-								var fnHtml = System.Web.HttpUtility.HtmlEncode(fileName);
+								var fnHtml = System.Net.WebUtility.HtmlEncode(fileName);
 								var fnColor = isForm ? "#800000" : "#000000";
 								var fnSpan = string.Format("<span style=\"color: {0};\">{1}</span>", fnColor, fnHtml);
 								// Add file as link.
 								var addLink = false;
 								if (addLink)
 								{
-									var fnLink = System.Web.HttpUtility.UrlEncode(fileName.Replace("\\", "/")).Replace("+", "%20");
+									var fnLink = System.Net.WebUtility.UrlEncode(fileName.Replace("\\", "/")).Replace("+", "%20");
 									builder.AppendFormat("<a href=\"file:///{0}\" style=\"text-decoration: none; color: #000000;\">{1}</a>", fnLink, fnSpan);
 								}
 								else

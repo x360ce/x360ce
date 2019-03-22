@@ -132,11 +132,11 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true, int versionNumbers = 3)
 		{
-			var s = string.Format("{0} {1} {2}", Company, Product, Version.ToString(versionNumbers));
+			var s = string.Format("{0} {1} {2}", Company, Product, this.Version.ToString(versionNumbers));
 			if (showBuild)
 			{
 				// Version = major.minor.build.revision
-				switch (Version.Build)
+				switch (this.Version.Build)
 				{
 					case 0: s += " Alpha"; break;  // Alpha Release (AR)
 					case 1: s += " Beta 1"; break; // Master Beta (MB)
@@ -278,7 +278,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <remarks>
 		/// You have two options:
 		/// Option 1: Disable Deterministic build by adding
-		///     &gt;Deterministic&lt;False&gt;/Deterministic&lt inside a &gt;PropertyGroup&lt section  of .csproj
+		///     &gt;Deterministic&lt;False&gt;/Deterministic&lt; inside a &gt;PropertyGroup&lt section  of .csproj
 		///
 		/// Option 2:
 		///     Create "Resources\BuildDate.txt" and set its "Build Action: Embedded Resource"

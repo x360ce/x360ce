@@ -1,5 +1,4 @@
-﻿using JocysCom.ClassLibrary.Runtime;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -133,27 +132,27 @@ namespace JocysCom.ClassLibrary.Mail
 		private void Initialize()
 		{
 			// Load configuration
-			SmtpUsername = LogHelper.ParseString("SmtpUsername", "");
-			SmtpPassword = LogHelper.ParseString("SmtpPassword", "");
-			SmtpDomain = LogHelper.ParseString("SmtpDomain", "");
-			SmtpServer = LogHelper.ParseString("SmtpServer", "");
-			SmtpPort = LogHelper.ParseInt("SmtpPort", 25);
+			SmtpUsername = Runtime.LogHelper.ParseString("SmtpUsername", "");
+			SmtpPassword = Runtime.LogHelper.ParseString("SmtpPassword", "");
+			SmtpDomain = Runtime.LogHelper.ParseString("SmtpDomain", "");
+			SmtpServer = Runtime.LogHelper.ParseString("SmtpServer", "");
+			SmtpPort = Runtime.LogHelper.ParseInt("SmtpPort", 25);
 			SmtpLocalAddress = IPAddress.Any;
-			var localAddress = LogHelper.ParseString("SmtpLocalAddress", "");
+			var localAddress = Runtime.LogHelper.ParseString("SmtpLocalAddress", "");
 			if (!string.IsNullOrEmpty(localAddress))
 				IPAddress.TryParse(localAddress, out SmtpLocalAddress);
-			SmtpLocalPort = LogHelper.ParseInt("SmtpLocalPort", 0);
-			SmtpPickupFolder = LogHelper.ParseString("SmtpPickupFolder", "");
-			SmtpEnableSsl = LogHelper.ParseBool("SmtpEnableSsl", false);
-			SmtpFrom = LogHelper.ParseString("SmtpFrom", "");
-			SmtpSendCopyTo = LogHelper.ParseString("SmtpSendCopyTo", "");
-			SmtpDeliveryMethod = LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
+			SmtpLocalPort = Runtime.LogHelper.ParseInt("SmtpLocalPort", 0);
+			SmtpPickupFolder = Runtime.LogHelper.ParseString("SmtpPickupFolder", "");
+			SmtpEnableSsl = Runtime.LogHelper.ParseBool("SmtpEnableSsl", false);
+			SmtpFrom = Runtime.LogHelper.ParseString("SmtpFrom", "");
+			SmtpSendCopyTo = Runtime.LogHelper.ParseString("SmtpSendCopyTo", "");
+			SmtpDeliveryMethod = Runtime.LogHelper.ParseEnum("ErrorDeliveryMethod", SmtpDeliveryMethod.Network);
 			// Error reporting.
-			ErrorRecipients = LogHelper.ParseString("ErrorRecipients", "");
+			ErrorRecipients = Runtime.LogHelper.ParseString("ErrorRecipients", "");
 			var errorNotifications = !string.IsNullOrEmpty(ErrorRecipients);
-			ErrorNotifications = LogHelper.ParseBool("ErrorNotifications", errorNotifications);
-			ErrorCodeSuspended = LogHelper.ParseString("ErrorCodeSuspended", "");
-			SmtpFixHostName = LogHelper.ParseBool("SmtpFixHostName", false);
+			ErrorNotifications = Runtime.LogHelper.ParseBool("ErrorNotifications", errorNotifications);
+			ErrorCodeSuspended = Runtime.LogHelper.ParseString("ErrorCodeSuspended", "");
+			SmtpFixHostName = Runtime.LogHelper.ParseBool("SmtpFixHostName", false);
 			if (SmtpFixHostName)
 			{
 				// FQDN Fix
@@ -306,7 +305,7 @@ namespace JocysCom.ClassLibrary.Mail
 				// If subject was not specified
 				if (string.IsNullOrEmpty(subject))
 				{
-					subject = LogHelper.GetSubjectPrefix(ex, TraceEventType.Error) + ex.Message;
+					subject = Runtime.LogHelper.GetSubjectPrefix(ex, TraceEventType.Error) + ex.Message;
 				}
 			}
 			if (string.IsNullOrEmpty(subject))
@@ -425,7 +424,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public static bool IsValidEmail(string email, bool mandatory, out string message)
 		{
 			var result = EmailValid(email);
-			message = Attributes.GetDescription(result);
+			message = Runtime.Attributes.GetDescription(result);
 			switch (result)
 			{
 				case EmailResult.OK: return true;
