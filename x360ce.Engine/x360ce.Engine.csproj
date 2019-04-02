@@ -260,10 +260,9 @@
     <Compile Include="JocysCom\IO\LogFileWriter.cs" />
     <Compile Include="JocysCom\Mail\EmailResult.cs" />
     <Compile Include="JocysCom\Mail\MailFromUser.cs" />
+    <Compile Include="JocysCom\Mail\MailHelper.cs" />
     <Compile Include="JocysCom\Mail\MailTextType.cs" />
     <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
-    <Compile Include="JocysCom\Mail\UserToken.cs" />
-    <Compile Include="JocysCom\Mail\WebMail.cs" />
     <Compile Include="JocysCom\Network\NetStatInfo.cs" />
     <Compile Include="JocysCom\Processes\BaseHook.cs" />
     <Compile Include="JocysCom\Processes\CURSORINFO.cs" />

@@ -308,7 +308,7 @@ namespace JocysCom.ClassLibrary.IO
 		#region IDisposable
 
 		// Dispose() calls Dispose(true)
-		public virtual void Dispose()
+		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);

@@ -618,7 +618,6 @@ namespace JocysCom.ClassLibrary.IO
                 }
                 var deviceInfoData = new SP_DEVINFO_DATA();
                 deviceInfoData.Initialize();
-                deviceInfoData.Reserved = IntPtr.Zero;
                 for (var i = 0; NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, i, ref deviceInfoData); i++)
                 {
                     var currentDeviceId = GetDeviceId(deviceInfoData.DevInst);

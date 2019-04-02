@@ -18,7 +18,7 @@ namespace JocysCom.ClassLibrary.Processes
 		/// <summary>
 		/// Handle to the cursor.
 		/// </summary>
-		public IntPtr Handle;
+		public readonly IntPtr Handle;
 		/// <summary>
 		/// Screen coordinates of the cursor.
 		/// </summary>

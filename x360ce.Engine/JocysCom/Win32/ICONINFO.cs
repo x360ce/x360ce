@@ -22,11 +22,11 @@ namespace JocysCom.ClassLibrary.Win32
 		/// <summary>
 		/// (HBITMAP) Specifies the icon bitmask bitmap.
 		/// </summary>
-		public IntPtr hbmMask;
+		public readonly IntPtr hbmMask;
 		/// <summary>
 		/// (HBITMAP) Handle to the icon color bitmap.
 		/// </summary>
-		public IntPtr hbmColor;
+		public readonly IntPtr hbmColor;
 	}
 
 }

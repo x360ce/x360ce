@@ -12,8 +12,8 @@ namespace JocysCom.ClassLibrary.Win32
 		public int dbch_size;
 		public DBCH_DEVICETYPE dbch_devicetype;
 		public int dbch_reserved;
-		public IntPtr dbch_handle;
-		public IntPtr dbch_hdevnotify;
+		public readonly IntPtr dbch_handle;
+		public readonly IntPtr dbch_hdevnotify;
 		public Guid dbch_eventguid;
 		public long dbch_nameoffset;
 		public byte dbch_data;

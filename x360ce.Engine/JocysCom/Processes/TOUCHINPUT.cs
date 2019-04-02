@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Processes
 {
@@ -8,12 +9,12 @@ namespace JocysCom.ClassLibrary.Processes
 	{
 		public int x;
 		public int y;
-		public System.IntPtr hSource;
+		public readonly IntPtr hSource;
 		public int dwID;
 		public int dwFlags;
 		public int dwMask;
 		public int dwTime;
-		public System.IntPtr dwExtraInfo;
+		public readonly IntPtr dwExtraInfo;
 		public int cxContact;
 		public int cyContact;
 	}

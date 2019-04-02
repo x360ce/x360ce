@@ -9,7 +9,7 @@ namespace JocysCom.ClassLibrary.Win32
 	{
 		public int cbSize;
 		public uint DriverType;
-		public UIntPtr Reserved;
+		public readonly UIntPtr Reserved;
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
 		public string Description;
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]

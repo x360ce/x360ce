@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using JocysCom.ClassLibrary.Runtime;
+using System.Linq;
 
 namespace JocysCom.WebSites.Engine.Security.Data
 {
@@ -43,8 +44,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 			subject = subject.Replace("{Host}", u.Host);
 			body = JocysCom.ClassLibrary.Text.Helper.Replace(body, user, false);
 			body = body.Replace("{Host}", u.Host).Replace("{ResetKey}", resetUrl);
-			var helper = JocysCom.ClassLibrary.Runtime.LogHelper.Current;
-			helper.SendMailFrom(helper.Smtp.SmtpFrom, m.Email, "", "", subject, body, true);
+			LogHelper.Current.SendMailFrom(ClassLibrary.Mail.SmtpClientEx.Current.SmtpFrom, m.Email, "", "", subject, body, true);
 		}
 
 		#endregion

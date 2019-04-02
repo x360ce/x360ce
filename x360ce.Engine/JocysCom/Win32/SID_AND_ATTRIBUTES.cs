@@ -10,7 +10,7 @@ namespace JocysCom.ClassLibrary.Win32
 	[StructLayout(LayoutKind.Sequential)]
 	public struct SID_AND_ATTRIBUTES
 	{
-		public IntPtr Sid;
+		public readonly IntPtr Sid;
 		public Int32 Attributes;
 	}
 }

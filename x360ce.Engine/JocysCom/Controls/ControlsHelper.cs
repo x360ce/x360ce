@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Objects.DataClasses;
-using System.Windows.Forms;
-using System.Linq;
 using System.Drawing;
-using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Collections;
+using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -93,8 +93,11 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="primaryKeyPropertyName">Primary key name.</param>
 		public static List<T> GetSelection<T>(DataGridView grid, string primaryKeyPropertyName = null)
 		{
-			List<T> list = new List<T>();
+			var list = new List<T>();
 			var rows = grid.SelectedRows.Cast<DataGridViewRow>().ToArray();
+			// If nothing selected then try to get rows from cells.
+			if (rows.Length == 0)
+				rows = grid.SelectedCells.Cast<DataGridViewCell>().Select(x => x.OwningRow).Distinct().ToArray();
 			// If nothing selected then return.
 			if (rows.Length == 0)
 				return list;

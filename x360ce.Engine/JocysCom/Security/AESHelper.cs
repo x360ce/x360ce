@@ -98,9 +98,9 @@ namespace JocysCom.ClassLibrary.Security
 			cryptoStream.FlushFinalBlock();
 			// Convert data from a memoryStream into a byte array.
 			var outputBuffer = stream.ToArray();
-			// Close both streams.
-			stream.Close();
 			cryptoStream.Close();
+			// Underlying streams will be closed by default.
+			//stream.Close();
 			return outputBuffer;
 		}
 
@@ -243,7 +243,7 @@ namespace JocysCom.ClassLibrary.Security
 				DeflateStream gz = null;
 				var cs = new CryptoStream(output, encryptor, CryptoStreamMode.Write);
 				if (compress)
-					gz = new DeflateStream(cs, CompressionMode.Compress, true);
+					gz = new DeflateStream(cs, CompressionMode.Compress);
 				int read;
 				// 4096 buffer preferable because the CPU cache can hold such amounts.
 				byte[] buffer = new byte[0x1000];
@@ -257,8 +257,16 @@ namespace JocysCom.ClassLibrary.Security
 						cs.Write(buffer, 0, read);
 				}
 				if (compress)
+				{
+					// Will close underlying stream 'cs' and 'output'.
 					gz.Close();
-				cs.Close();
+
+				}
+				else
+				{
+					// Will close underlying stream 'output'.
+					cs.Close();
+				}
 			}
 			catch
 			{
@@ -267,7 +275,6 @@ namespace JocysCom.ClassLibrary.Security
 			finally
 			{
 				input.Close();
-				output.Close();
 			}
 			encryptor.Dispose();
 		}
@@ -313,8 +320,15 @@ namespace JocysCom.ClassLibrary.Security
 						output.Write(buffer, 0, read);
 				}
 				if (decompress)
+				{
+					// Will close underlying stream 'cs' and 'input'.
 					gz.Close();
-				cs.Close();
+				}
+				else
+				{
+					// Will close underlying stream 'input'.
+					cs.Close();
+				}
 			}
 			catch
 			{
@@ -322,7 +336,6 @@ namespace JocysCom.ClassLibrary.Security
 			}
 			finally
 			{
-				input.Close();
 				output.Close();
 			}
 			decryptor.Dispose();

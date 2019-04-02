@@ -55,8 +55,8 @@ namespace JocysCom.ClassLibrary.Win32
 		public static ABE GetPosition()
 		{
 			var data = new APPBARDATA();
+			data.Initialize();
 			data.hWnd = ShellHandle;
-			data.cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA));
 			var result = SHAppBarMessage((int)ABM.ABM_GETTASKBARPOS, ref data);
 			if (result == IntPtr.Zero) throw new InvalidOperationException();
 			return (ABE)data.uEdge;
@@ -65,9 +65,9 @@ namespace JocysCom.ClassLibrary.Win32
 		public static Rectangle GetBounds()
 		{
 			var data = new APPBARDATA();
+			data.Initialize();
 			data.hWnd = ShellHandle;
 			// Get position and bounds.
-			data.cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA));
 			var result = SHAppBarMessage((int)ABM.ABM_GETTASKBARPOS, ref data);
 			if (result == IntPtr.Zero) throw new InvalidOperationException();
 			return Rectangle.FromLTRB(data.rc.left, data.rc.top, data.rc.right, data.rc.bottom);
@@ -76,7 +76,7 @@ namespace JocysCom.ClassLibrary.Win32
 		public static ABS GetState()
 		{
 			var data = new APPBARDATA();
-			data.cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA));
+			data.Initialize();
 			data.hWnd = ShellHandle;
 			var result = SHAppBarMessage((int)ABM.ABM_GETSTATE, ref data);
 			return (ABS)result.ToInt32();
@@ -85,7 +85,7 @@ namespace JocysCom.ClassLibrary.Win32
 		public static void SetAutoHide(bool enable)
 		{
 			var data = new APPBARDATA();
-			data.cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA));
+			data.Initialize();
 			data.hWnd = ShellHandle;
 			data.lParam = (int)ABS.ABS_ALWAYSONTOP;
 			if (enable) data.lParam |= (int)ABS.ABS_AUTOHIDE;

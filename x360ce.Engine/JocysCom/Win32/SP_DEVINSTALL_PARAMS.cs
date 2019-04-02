@@ -10,12 +10,12 @@ namespace JocysCom.ClassLibrary.Win32
 		public int cbSize;
 		public int Flags;
 		public int FlagsEx;
-		public IntPtr hwndParent;
-		public IntPtr InstallMsgHandler;
-		public IntPtr InstallMsgHandlerContext;
-		public IntPtr FileQueue;
-		public IntPtr ClassInstallReserved;
-		public UIntPtr Reserved;
+		public readonly IntPtr hwndParent;
+		public readonly IntPtr InstallMsgHandler;
+		public readonly IntPtr InstallMsgHandlerContext;
+		public readonly IntPtr FileQueue;
+		public readonly IntPtr ClassInstallReserved;
+		public readonly UIntPtr Reserved;
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
 		public string DriverPath;
 		public void Initialize()
