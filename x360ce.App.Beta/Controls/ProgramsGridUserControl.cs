@@ -1,12 +1,11 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.Web.Services;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using x360ce.Engine;
-using JocysCom.ClassLibrary.Runtime;
-using static JocysCom.ClassLibrary.Web.Services.SoapHttpClientBase;
-using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.App.Controls
 {

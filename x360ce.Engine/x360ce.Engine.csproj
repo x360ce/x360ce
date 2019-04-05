@@ -37,7 +37,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
@@ -62,7 +62,7 @@
     <Optimize>true</Optimize>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DefineConstants>TRACE</DefineConstants>
-    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
     <DebugType>pdbonly</DebugType>
@@ -74,7 +74,7 @@
     <OutputPath>bin\Debug_x86\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
     <DebugType>full</DebugType>
     <DocumentationFile>
@@ -89,7 +89,7 @@
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateSerializationAssemblies>On</GenerateSerializationAssemblies>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <CodeAnalysisRuleSet>
     </CodeAnalysisRuleSet>
     <DebugType>pdbonly</DebugType>

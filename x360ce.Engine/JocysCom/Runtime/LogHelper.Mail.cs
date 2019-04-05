@@ -192,19 +192,18 @@ namespace JocysCom.ClassLibrary.Runtime
 			var sb = new StringBuilder();
 			sb.AppendFormat("From: {0}\r\n", message.From);
 			foreach (var item in message.To)
-				sb.AppendFormat("To: {0}\r\n", item);
+				sb.AppendFormat("To:   {0}\r\n", item);
 			foreach (var item in message.CC)
-				sb.AppendFormat("CC: {0}\r\n", item);
+				sb.AppendFormat("CC:   {0}\r\n", item);
 			foreach (var item in message.Bcc)
-				sb.AppendFormat("Bcc: {0}\r\n", item);
+				sb.AppendFormat("Bcc:   {0}\r\n", item);
 			var files = message.Attachments;
 			if (files != null && files.Count > 0)
 			{
-				sb.AppendLine("Attachments:");
 				var maxNumbers = files.Count.ToString().Length;
 				var maxContent = files.Max(x => x.ContentStream.Length.ToString().Length);
 				for (int i = 0; i < files.Count; i++)
-					sb.AppendFormat("  {0" + maxNumbers + "}, {1," + maxContent + "}, {2}\r\n", i, files[i].ContentStream.Length, files[i].Name);
+					sb.AppendFormat("File: {0," + maxNumbers + "}. {1," + maxContent + "} bytes - {2}\r\n", i, files[i].ContentStream.Length, files[i].Name);
 			}
 			sb.AppendFormat("Subject: {0}\r\n", message.Subject);
 			sb.AppendFormat("Body Size: {0} bytes\r\n", string.Format("{0}", message.Body).Length);

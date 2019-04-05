@@ -252,56 +252,56 @@ namespace JocysCom.ClassLibrary.IO
 
 		#region Clean-Up
 
-		/// <summary>
-		/// Wipe old files.
-		/// </summary>
-		/// <param name="expandedPath">File which contains date pattern.</param>
-		public int WipeOldLogFiles(string expandedPath)
+	/// <summary>
+	/// Wipe old files.
+	/// </summary>
+	/// <param name="expandedPath">File which contains date pattern.</param>
+	public int WipeOldLogFiles(string expandedPath)
+	{
+		// If file is not specified then return.
+		if (string.IsNullOrEmpty(expandedPath))
+			return 0;
+		var rx = new Regex("[{].*[}]");
+		// If file don't have pattern then return.
+		if (!rx.IsMatch(expandedPath))
+			return 0;
+		// Get wipe conditions.
+		var maxLogFiles = ParseInt("LogFileMaxFiles", 0);
+		var maxLogBytes = ParseLong("LogFileMaxBytes", 0);
+		// If keep all then return.
+		if (maxLogFiles == 0 && maxLogBytes == 0)
+			return 0;
+		// Remove pattern to make a valid file name.
+		var path = rx.Replace(expandedPath, "");
+		var directory = Path.GetDirectoryName(path);
+		var di = new DirectoryInfo(directory);
+		if (!di.Exists)
+			return 0;
+		// Get file prefix.
+		var fileName = expandedPath.Split('\\').Last();
+		var pattern = rx.Replace(fileName, "*");
+		// Get file list ordered by newest on the top.
+		var files = di.GetFiles(pattern).OrderByDescending(x => x.CreationTime).ToArray();
+		var deleted = 0;
+		long totalSize = 0;
+		for (int i = 0; i < files.Length; i++)
 		{
-			// If file is not specified then return.
-			if (string.IsNullOrEmpty(expandedPath))
-				return 0;
-			var rx = new Regex("[{].*[}]");
-			// If file don't have pattern then return.
-			if (!rx.IsMatch(expandedPath))
-				return 0;
-			// Get wipe conditions.
-			var maxLogFiles = ParseInt("LogFileMaxFiles", 0);
-			var maxLogBytes = ParseLong("LogFileMaxBytes", 0);
-			// If keep all then return.
-			if (maxLogFiles == 0 && maxLogBytes == 0)
-				return 0;
-			// Remove pattern to make a valid file name.
-			var path = rx.Replace(expandedPath, "");
-			var directory = Path.GetDirectoryName(path);
-			var di = new DirectoryInfo(directory);
-			if (!di.Exists)
-				return 0;
-			// Get file prefix.
-			var fileName = expandedPath.Split('\\').Last();
-			var pattern = rx.Replace(fileName, "*");
-			// Get file list ordered by newest on the top.
-			var files = di.GetFiles(pattern).OrderByDescending(x => x.CreationTime).ToArray();
-			var deleted = 0;
-			long totalSize = 0;
-			for (int i = 0; i < files.Length; i++)
+			totalSize += files[i].Length;
+			// Delete file if...
+			var deleteFile =
+				// maximum number of files specified or...
+				(maxLogFiles > 0 && i + 1 >= maxLogFiles) ||
+				// maximum number of bytes specified.
+				(maxLogBytes > 0 && totalSize >= maxLogBytes);
+			// If must delete then...
+			if (deleteFile)
 			{
-				totalSize += files[i].Length;
-				// Delete file if...
-				var deleteFile =
-					// maximum number of files specified or...
-					(maxLogFiles > 0 && i + 1 >= maxLogFiles) ||
-					// maximum number of bytes specified.
-					(maxLogBytes > 0 && totalSize >= maxLogBytes);
-				// If must delete then...
-				if (deleteFile)
-				{
-					files[i].Delete();
-					deleted++;
-				}
+				files[i].Delete();
+				deleted++;
 			}
-			return deleted;
 		}
+		return deleted;
+	}
 
 		#endregion
 

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -194,10 +194,9 @@ namespace x360ce.App
 			return true;
 		}
 
-
 		static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs e)
 		{
-			string dllName = e.Name.Contains(",") ? e.Name.Substring(0, e.Name.IndexOf(',')) : e.Name.Replace(".dll", "");
+			var dllName = e.Name.Contains(",") ? e.Name.Substring(0, e.Name.IndexOf(',')) : e.Name.Replace(".dll", "");
 			Stream sr = null;
 			switch (dllName)
 			{
@@ -214,9 +213,10 @@ namespace x360ce.App
 			}
 			if (sr == null)
 				return null;
-			byte[] bytes = new byte[sr.Length];
+			var bytes = new byte[sr.Length];
 			sr.Read(bytes, 0, bytes.Length);
 			var asm = Assembly.Load(bytes);
+			sr.Dispose();
 			return asm;
 		}
 

@@ -104,35 +104,35 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns>Byte array.</returns>
 		public static byte[] SerializeToBytes(object o)
 		{
-			if (o == null) return null;
-			NetDataContractSerializer serializer = GetByteSerializer(o.GetType());
-			MemoryStream ms = new MemoryStream();
+			if (o == null)
+				return null;
+			var serializer = GetByteSerializer(o.GetType());
+			var ms = new MemoryStream();
 			lock (serializer) { serializer.Serialize(ms, o); }
-			byte[] bytes = ms.ToArray();
+			var bytes = ms.ToArray();
 			ms.Close();
-			ms = null;
 			return bytes;
 		}
 
 		/// <summary>
-		/// Deserialize object from byte array.
+		/// De-serialize object from byte array.
 		/// </summary>
 		/// <param name="bytes">Byte array representing object. </param>
 		/// <returns>Object.</returns>
 		public static object DeserializeFromBytes(byte[] bytes, Type type)
 		{
-			if (bytes == null) return null;
-			NetDataContractSerializer serializer = GetByteSerializer(type);
-			MemoryStream ms = new MemoryStream(bytes);
+			if (bytes == null)
+				return null;
+			var serializer = GetByteSerializer(type);
+			var ms = new MemoryStream(bytes);
 			object o;
 			lock (serializer) { o = serializer.Deserialize(ms); }
 			ms.Close();
-			ms = null;
 			return o;
 		}
 
 		/// <summary>
-		/// Deserialize object from byte array.
+		/// De-serialize object from byte array.
 		/// </summary>
 		/// <param name="bytes">Byte array representing object. </param>
 		/// <returns>Object.</returns>
@@ -172,77 +172,51 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// Serialize object to JSON string.
 		/// </summary>
 		/// <param name="o">The object to serialize.</param>
-		/// <returns>JSON string.</returns>
-		public static string SerializeToJson(object o)
-		{
-			return SerializeToJson(o, Encoding.UTF8);
-		}
-
-		/// <summary>
-		/// Serialize object to JSON string.
-		/// </summary>
-		/// <param name="o">The object to serialize.</param>
 		/// <param name="encoding">JSON string encoding.</param>
 		/// <returns>JSON string.</returns>
-		public static string SerializeToJson(object o, Encoding encoding)
+		public static string SerializeToJson(object o, Encoding encoding = null)
 		{
-			if (o == null) return null;
-			DataContractJsonSerializer serializer = GetJsonSerializer(o.GetType());
-			MemoryStream ms = new MemoryStream();
+			if (o == null)
+				return null;
+			var serializer = GetJsonSerializer(o.GetType());
+			var ms = new MemoryStream();
 			lock (serializer) { serializer.WriteObject(ms, o); }
-			string json = encoding.GetString(ms.ToArray());
+			if (encoding == null)
+				encoding = Encoding.UTF8;
+			var json = encoding.GetString(ms.ToArray());
 			ms.Close();
-			ms = null;
 			return json;
 		}
 
 		/// <summary>
-		/// Deserialize object from JSON string.
-		/// </summary>
-		/// <param name="json">JSON string representing object.</param>
-		/// <param name="type">Type of object.</param>
-		/// <returns>The deserialized object.</returns>
-		public static object DeserializeFromJson(string json, Type type)
-		{
-			return DeserializeFromJson(json, type, Encoding.UTF8);
-		}
-
-		/// <summary>
-		/// Deserialize object from JSON string.
+		/// De-serialize object from JSON string.
 		/// </summary>
 		/// <param name="json">JSON string representing object.</param>
 		/// <param name="type">Type of object.</param>
 		/// <param name="encoding">JSON string encoding.</param>
-		/// <returns>The deserialized object.</returns>
-		public static object DeserializeFromJson(string json, Type type, Encoding encoding)
+		/// <returns>The de-serialized object.</returns>
+		public static object DeserializeFromJson(string json, Type type, Encoding encoding = null)
 		{
-			if (json == null) return null;
-			DataContractJsonSerializer serializer = GetJsonSerializer(type);
-			MemoryStream ms = new MemoryStream(encoding.GetBytes(json));
+			if (json == null)
+				return null;
+			var serializer = GetJsonSerializer(type);
+			if (encoding == null)
+				encoding = Encoding.UTF8;
+			var bytes = encoding.GetBytes(json);
+			var ms = new MemoryStream(bytes);
 			object o;
 			lock (serializer) { o = serializer.ReadObject(ms); }
 			ms.Close();
-			ms = null;
 			return o;
 		}
 
 		/// <summary>
-		/// Deserialize object from JSON string.
-		/// </summary>
-		/// <param name="json">JSON string representing object.</param>
-		/// <returns>The deserialized object.</returns>
-		public static T DeserializeFromJson<T>(string json)
-		{
-			return (T)DeserializeFromJson(json, typeof(T), Encoding.UTF8);
-		}
-
-		/// <summary>
-		/// Deserialize object from JSON string.
+		/// De-serialize object from JSON string.
 		/// </summary>
 		/// <param name="json">JSON string representing object.</param>
 		/// <param name="encoding">JSON string encoding.</param>
-		/// <returns>The deserialized object.</returns>
-		public static T DeserializeFromJson<T>(string json, Encoding encoding)
+		/// <returns>The de-serialized object.</returns>
+		public static T DeserializeFromJson<T>(string json, Encoding encoding = null)
 		{
 			return (T)DeserializeFromJson(json, typeof(T), encoding);
 		}
@@ -250,8 +224,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		// Created by: https://stackoverflow.com/users/17211/vince-panuccio
 		public static string FormatJson(string json, string ident = "\t")
 		{
-			int indentation = 0;
-			int quoteCount = 0;
+			var indentation = 0;
+			var quoteCount = 0;
 			var result =
 				from ch in json
 				let quotes = ch == '"' ? quoteCount++ : quoteCount
@@ -273,14 +247,14 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns></returns>
 		public static string XmlFormat(string xml)
 		{
-			XmlDocument xd = new XmlDocument();
+			var xd = new XmlDocument();
 			xd.XmlResolver = null;
 			xd.LoadXml(xml);
-			StringBuilder sb = new StringBuilder();
-			XmlWriterSettings xws = new XmlWriterSettings();
+			var sb = new StringBuilder();
+			var xws = new XmlWriterSettings();
 			xws.Indent = true;
 			xws.CheckCharacters = true;
-			XmlWriter xw = XmlTextWriter.Create(sb, xws);
+			var xw = XmlTextWriter.Create(sb, xws);
 			xd.WriteTo(xw);
 			xw.Close();
 			return sb.ToString();
@@ -292,10 +266,11 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			lock (XmlSerializersLock)
 			{
-				if (XmlSerializers == null) XmlSerializers = new Dictionary<Type, XmlSerializer>();
+				if (XmlSerializers == null)
+					XmlSerializers = new Dictionary<Type, XmlSerializer>();
 				if (!XmlSerializers.ContainsKey(type))
 				{
-					Type[] extraTypes = new Type[] { typeof(string) };
+					var extraTypes = new Type[] { typeof(string) };
 					XmlSerializers.Add(type, new XmlSerializer(type, extraTypes));
 				}
 			}
@@ -310,15 +285,16 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// Serialize object to XML document.
 		/// </summary>
 		/// <param name="o">The object to serialize.</param>
-		/// <returns>Xml document</returns>
+		/// <returns>XML document</returns>
 		public static XmlDocument SerializeToXml(object o)
 		{
-			if (o == null) return null;
-			XmlSerializer serializer = GetXmlSerializer(o.GetType());
-			MemoryStream ms = new MemoryStream();
+			if (o == null)
+				return null;
+			var serializer = GetXmlSerializer(o.GetType());
+			var ms = new MemoryStream();
 			lock (serializer) { serializer.Serialize(ms, o); }
 			ms.Seek(0, SeekOrigin.Begin);
-			XmlDocument doc = new XmlDocument();
+			var doc = new XmlDocument();
 			doc.Load(ms);
 			ms.Close();
 			ms = null;
@@ -327,7 +303,8 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		static T SeriallizeToXml<T>(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, bool indent = true)
 		{
-			if (o == null) return default(T);
+			if (o == null)
+				return default(T);
 			// Create serialization settings.
 			encoding = encoding ?? Encoding.UTF8;
 			var settings = new XmlWriterSettings();
@@ -440,14 +417,14 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
-		#region XML: Deserialize
+		#region XML: De-serialize
 
 		/// <summary>
-		/// Deserialize System.Collections.Generic.List to XML document.
+		/// De-serialize System.Collections.Generic.List to XML document.
 		/// </summary>
-		/// <param name="doc">Xml document representing object.</param>
+		/// <param name="doc">XML document representing object.</param>
 		/// <param name="type">Type of object.</param>
-		/// <returns>Xml document</returns>
+		/// <returns>XML document</returns>
 		public static object DeserializeFromXml(XmlDocument doc, Type type)
 		{
 			if (doc == null)
@@ -456,9 +433,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>
-		/// Deserialize object from XML bytes. XML bytes can contain Byte Order Mark (BOM).
+		/// De-serialize object from XML bytes. XML bytes can contain Byte Order Mark (BOM).
 		/// </summary>
-		/// <param name="xml">Xml string representing object.</param>
+		/// <param name="xml">XML string representing object.</param>
 		/// <param name="type">Type of object.</param>
 		/// <param name="encoding">Encoding to use (default is UTF8) if Byte Order Mark (BOM) is missing.</param>
 		/// <returns>Object.</returns>
@@ -488,15 +465,15 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>
-		/// Deserialize object from XML string. XML string must not contain Byte Order Mark (BOM).
+		/// De-serialize object from XML string. XML string must not contain Byte Order Mark (BOM).
 		/// </summary>
-		/// <param name="xml">Xml string representing object.</param>
+		/// <param name="xml">XML string representing object.</param>
 		/// <param name="type">Type of object.</param>
 		/// <returns>Object.</returns>
 		public static object DeserializeFromXmlString(string xml, Type type)
 		{
-			// Note: If you are getting deserialization error in XML document(1,1) then there is a chance that
-			// you are trying to deserialize string which contains Byte Order Mark (BOM) which must not be there.
+			// Note: If you are getting de-serialization error in XML document(1,1) then there is a chance that
+			// you are trying to de-serialize string which contains Byte Order Mark (BOM) which must not be there.
 			// Probably you used "var xml = System.Text.Encoding.GetString(bytes)" directly on file content.
 			// You should use "StreamReader" on file content, because this method will strip BOM properly
 			// when converting bytes to string.
@@ -519,7 +496,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>
-		/// Deserialize object from XML file.
+		/// De-serialize object from XML file.
 		/// </summary>
 		/// <param name="filename">The file name to read from.</param>
 		/// <param name="type">Type of object.</param>
@@ -535,19 +512,19 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>
-		/// Deserialize object from XML Document.
+		/// De-serialize object from XML Document.
 		/// </summary>
-		/// <param name="doc">Xml document representing object.</param>
-		/// <returns>Xml document</returns>
+		/// <param name="doc">XML document representing object.</param>
+		/// <returns>XML document</returns>
 		public static T DeserializeFromXml<T>(XmlDocument doc)
 		{
 			return (T)DeserializeFromXml(doc, typeof(T));
 		}
 
 		/// <summary>
-		/// Deserialize object from XML string.
+		/// De-serialize object from XML string.
 		/// </summary>
-		/// <param name="xml">Xml string representing object.</param>
+		/// <param name="xml">XML string representing object.</param>
 		/// <param name="encoding">The encoding to use (default is UTF8).</param>
 		/// <returns>Object.</returns>
 		public static T DeserializeFromXmlString<T>(string xml)
@@ -556,7 +533,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>
-		/// Deserialize object from XML file.
+		/// De-serialize object from XML file.
 		/// </summary>
 		/// <param name="filename">The file name to read from.</param>
 		/// <param name="encoding">Specified encoding will be used if file Byte Order Mark (BOM) is missing.</param>
@@ -567,9 +544,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>
-		/// Deserialize object from XML bytes. XML bytes can contain Byte Order Mark (BOM).
+		/// De-serialize object from XML bytes. XML bytes can contain Byte Order Mark (BOM).
 		/// </summary>
-		/// <param name="xml">Xml string representing object.</param>
+		/// <param name="xml">XML string representing object.</param>
 		/// <param name="type">Type of object.</param>
 		/// <param name="encoding">The encoding to use (default is UTF8) if Byte Order Mark (BOM) is missing.</param>
 		/// <returns>Object.</returns>
@@ -597,17 +574,17 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			encoding = encoding ?? Encoding.UTF8;
 			// Create serialization settings.
-			XmlWriterSettings settings = new XmlWriterSettings();
+			var settings = new XmlWriterSettings();
 			settings.OmitXmlDeclaration = omitXmlDeclaration;
 			settings.Encoding = encoding;
 			settings.Indent = true;
 			// Serialize in memory first, so file will be locked for shorter times.
-			MemoryStream ms = new MemoryStream();
-			XmlWriter xw = XmlWriter.Create(ms, settings);
-			XmlSerializer serializer = GetXmlSerializer(o.GetType());
+			var ms = new MemoryStream();
+			var xw = XmlWriter.Create(ms, settings);
+			var serializer = GetXmlSerializer(o.GetType());
 			try
 			{
-				XsdDataContractExporter exporter = new XsdDataContractExporter();
+				var exporter = new XsdDataContractExporter();
 				if (exporter.CanExport(o.GetType()))
 				{
 					exporter.Export(o.GetType());
@@ -626,8 +603,6 @@ namespace JocysCom.ClassLibrary.Runtime
 				xw.Close();
 				// CA2202: Do not dispose objects multiple times
 				//ms.Close();
-				xw = null;
-				ms = null;
 				throw;
 			}
 			xw.Flush();
@@ -635,8 +610,6 @@ namespace JocysCom.ClassLibrary.Runtime
 			xw.Close();
 			// CA2202: Do not dispose objects multiple times
 			//ms.Close();
-			xw = null;
-			ms = null;
 			// Write serialized data into file.
 			WriteFile(path, bytes, attempts, waitTime);
 		}

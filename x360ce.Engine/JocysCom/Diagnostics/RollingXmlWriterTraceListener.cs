@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Security.Permissions;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.ClassLibrary.Diagnostics
 {
@@ -77,13 +79,17 @@ namespace JocysCom.ClassLibrary.Diagnostics
 				var dir = Path.GetDirectoryName(_FileNameBasic);
 				var nam = Path.GetFileNameWithoutExtension(_FileNameBasic);
 				var ext = Path.GetExtension(_FileNameBasic);
-				var path = Path.Combine(dir, nam + string.Format(SuffixPattern, DateTime.Now) + ext);
+				var pathPattern = Path.Combine(dir, nam + SuffixPattern + ext);
+				var expandedPath = Environment.ExpandEnvironmentVariables(pathPattern);
+				var path = string.Format(expandedPath, DateTime.Now);
 				var writer = (StreamWriter)writerField.GetValue(this);
 				// If file is missing or name changed then...
 				if (writer == null || !path.Equals(((FileStream)writer.BaseStream).Name, StringComparison.InvariantCultureIgnoreCase))
 				{
 					if (writer != null)
 						writer.Close();
+					// Cleanup old files.
+					WipeOldLogFiles(expandedPath);
 					// create a new file stream and a new stream writer and pass it to the listener
 					var stream = new FileStream(path, FileMode.OpenOrCreate);
 					writer = new StreamWriter(stream);
@@ -102,6 +108,73 @@ namespace JocysCom.ClassLibrary.Diagnostics
 				return defaultValue;
 			return Attributes[name] ?? "";
 		}
+
+		long ParseLong(string name, long defaultValue)
+		{
+			// Note: Attributes will available only after class in constructed.
+			if (!Attributes.ContainsKey(name))
+				return defaultValue;
+			var s = Attributes[name];
+				long value;
+			return long.TryParse(s, out value)
+				? value
+				: defaultValue;
+		}
+
+		#region Clean-Up
+
+		/// <summary>
+		/// Wipe old files.
+		/// </summary>
+		/// <param name="expandedPath">File which contains date pattern.</param>
+		public int WipeOldLogFiles(string expandedPath)
+		{
+			// If file is not specified then return.
+			if (string.IsNullOrEmpty(expandedPath))
+				return 0;
+			var rx = new Regex("[{].*[}]");
+			// If file don't have pattern then return.
+			if (!rx.IsMatch(expandedPath))
+				return 0;
+			// Get wipe conditions.
+			var maxLogFiles = ParseLong("LogFileMaxFiles", 0);
+			var maxLogBytes = ParseLong("LogFileMaxBytes", 0);
+			// If keep all then return.
+			if (maxLogFiles == 0 && maxLogBytes == 0)
+				return 0;
+			// Remove pattern to make a valid file name.
+			var path = rx.Replace(expandedPath, "");
+			var directory = Path.GetDirectoryName(path);
+			var di = new DirectoryInfo(directory);
+			if (!di.Exists)
+				return 0;
+			// Get file prefix.
+			var fileName = expandedPath.Split('\\').Last();
+			var pattern = rx.Replace(fileName, "*");
+			// Get file list ordered by newest on the top.
+			var files = di.GetFiles(pattern).OrderByDescending(x => x.CreationTime).ToArray();
+			var deleted = 0;
+			long totalSize = 0;
+			for (int i = 0; i < files.Length; i++)
+			{
+				totalSize += files[i].Length;
+				// Delete file if...
+				var deleteFile =
+					// maximum number of files specified or...
+					(maxLogFiles > 0 && i + 1 >= maxLogFiles) ||
+					// maximum number of bytes specified.
+					(maxLogBytes > 0 && totalSize >= maxLogBytes);
+				// If must delete then...
+				if (deleteFile)
+				{
+					files[i].Delete();
+					deleted++;
+				}
+			}
+			return deleted;
+		}
+
+		#endregion
 
 		#region Public override methods
 
