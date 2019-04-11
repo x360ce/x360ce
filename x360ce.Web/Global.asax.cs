@@ -59,7 +59,7 @@ namespace x360ce.Web
 		protected void Application_Error(object sender, EventArgs e)
 		{
 			// Fires when an unhanded error occurs anywhere in the application
-			if (LogHelper.Current.Smtp.ErrorNotifications)
+			if (JocysCom.ClassLibrary.Mail.SmtpClientEx.Current.ErrorNotifications)
 			{
 				var ex = Server.GetLastError().GetBaseException();
 				//Context.ClearError();

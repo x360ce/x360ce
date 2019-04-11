@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using JocysCom.ClassLibrary.IO;
 using System.Linq;
 using JocysCom.ClassLibrary.Threading;
+using JocysCom.ClassLibrary.Controls;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -223,9 +224,9 @@ namespace JocysCom.ClassLibrary.IO
 				// WORKAROUND: Remove SelectionChanged event.
 				DeviceDataGridView.SelectionChanged -= DeviceDataGridView_SelectionChanged;
 				DeviceDataGridView.DataSource = view;
-				// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-				BeginInvoke((MethodInvoker)delegate ()
-				{
+                // WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+                ControlsHelper.BeginInvoke(() =>
+                {
 					DeviceDataGridView.SelectionChanged += DeviceDataGridView_SelectionChanged;
 					DeviceDataGridView_SelectionChanged(DeviceDataGridView, new EventArgs());
 				});

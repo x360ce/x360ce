@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using JocysCom.ClassLibrary.Controls;
+using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -21,8 +22,8 @@ namespace JocysCom.ClassLibrary.IO
 
 		void _Detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
-			BeginInvoke((MethodInvoker)delegate ()
-			{
+            ControlsHelper.BeginInvoke(() =>
+            {
 				InfoLabel.Text = e.ChangeType.ToString();
 			});
 		}

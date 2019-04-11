@@ -6,6 +6,7 @@ using x360ce.Engine.Data;
 using x360ce.Engine;
 using x360ce.App.Forms;
 using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -36,10 +37,10 @@ namespace x360ce.App.Controls
 				ControllersDataGridView_SelectionChanged(DevicesDataGridView, new EventArgs());
 				return;
 			}
-			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-			BeginInvoke((MethodInvoker)delegate ()
-			{
-				DevicesDataGridView.SelectionChanged += ControllersDataGridView_SelectionChanged;
+            // WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+            ControlsHelper.BeginInvoke(() =>
+            {
+                DevicesDataGridView.SelectionChanged += ControllersDataGridView_SelectionChanged;
 				ControllersDataGridView_SelectionChanged(DevicesDataGridView, new EventArgs());
 			});
 		}

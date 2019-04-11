@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Runtime;
+﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Web.Services;
 using System;
 using System.Collections.Generic;
@@ -28,10 +29,10 @@ namespace x360ce.App.Controls
 			ProgramsDataGridView.SelectionChanged -= ProgramsDataGridView_SelectionChanged;
 			ProgramsDataGridView.DataSource = SettingsManager.Programs.Items;
 			var handle = this.Handle;
-			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-			BeginInvoke((MethodInvoker)delegate ()
-			{
-				ProgramsDataGridView.SelectionChanged += ProgramsDataGridView_SelectionChanged;
+            // WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+            ControlsHelper.BeginInvoke(() =>
+            {
+                ProgramsDataGridView.SelectionChanged += ProgramsDataGridView_SelectionChanged;
 				ProgramsDataGridView_SelectionChanged(ProgramsDataGridView, new EventArgs());
 			});
 			UpdateControlsFromPrograms();
@@ -251,10 +252,10 @@ namespace x360ce.App.Controls
 
 		void ProgramsWebServiceClient_GetProgramsCompleted(object sender, SoapHttpClientEventArgs e)
 		{
-			// Make sure method is executed on the same thread as this control.
-			BeginInvoke((MethodInvoker)delegate ()
-			{
-				MainForm.Current.AddTask(TaskName.GetPrograms);
+            // Make sure method is executed on the same thread as this control.
+            ControlsHelper.BeginInvoke(() =>
+            {
+                MainForm.Current.AddTask(TaskName.GetPrograms);
 				if (e.Error != null)
 				{
 					var error = e.Error.Message;

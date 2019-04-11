@@ -38,9 +38,9 @@ namespace x360ce.App.Controls
 			// WORKAROUND: Remove SelectionChanged event.
 			GamesDataGridView.SelectionChanged -= GamesDataGridView_SelectionChanged;
 			GamesDataGridView.DataSource = SettingsManager.UserGames.Items;
-			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-			BeginInvoke((MethodInvoker)delegate ()
-			{
+            // WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+            ControlsHelper.BeginInvoke(() =>
+            {
 				GamesDataGridView.SelectionChanged += GamesDataGridView_SelectionChanged;
 				GamesDataGridView_SelectionChanged(GamesDataGridView, new EventArgs());
 			});

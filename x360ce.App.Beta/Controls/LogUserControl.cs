@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using JocysCom.ClassLibrary.ComponentModel;
 using System.Collections.Generic;
 using System.ComponentModel;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -93,7 +94,7 @@ namespace x360ce.App.Controls
         public void Add(LogItem e)
         {
             if (IsDisposed || Disposing || !IsHandleCreated) return;
-            BeginInvoke((Action)(() =>
+            ControlsHelper.BeginInvoke(() =>
             {
                 // Calculate time from last inserted item.
                 if (lastItem != null)
@@ -106,7 +107,7 @@ namespace x360ce.App.Controls
                     lastItem = e;
                     AddGridRow(LogDataGridView, LogList, e, LogSize);
                 }
-            }));
+            });
         }
 
         // Contains number for how many row add/remove actions to perform scroll.

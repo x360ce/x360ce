@@ -11,6 +11,7 @@ using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.App.Issues;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App
 {
@@ -100,9 +101,9 @@ namespace x360ce.App
 				if (issue.Severity == IssueSeverity.Critical) clearRest = true;
 				UpdateWarning(issue);
 			}
-			MainForm.Current.BeginInvoke((MethodInvoker)delegate ()
-			{
-				var update2 = MainForm.Current.update2Enabled;
+            ControlsHelper.BeginInvoke(() =>
+            {
+                var update2 = MainForm.Current.update2Enabled;
 				if (Warnings.Count > 0)
 				{
 					// If not visible and must not ignored then...

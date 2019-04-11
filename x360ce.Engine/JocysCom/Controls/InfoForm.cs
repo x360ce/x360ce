@@ -60,7 +60,7 @@ namespace JocysCom.ClassLibrary.Controls
 			ControlsDataGridView.SelectionChanged -= ControlsDataGridView_SelectionChanged;
 			ControlsDataGridView.DataSource = dtControls;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-			BeginInvoke((MethodInvoker)delegate ()
+			ControlsHelper.BeginInvoke(()=>
 			{
 				ControlsDataGridView.SelectionChanged += ControlsDataGridView_SelectionChanged;
 				ControlsDataGridView_SelectionChanged(ControlsDataGridView, new EventArgs());

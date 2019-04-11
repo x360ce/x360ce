@@ -14,6 +14,7 @@ using x360ce.Engine.Data;
 using System.Reflection;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Extensions;
 
 namespace x360ce.App.Controls
 {
@@ -133,7 +134,7 @@ namespace x360ce.App.Controls
             MappedDevicesDataGridView.SelectionChanged -= MappedDevicesDataGridView_SelectionChanged;
             MappedDevicesDataGridView.DataSource = mappedItems;
             // WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-            BeginInvoke((MethodInvoker)delegate ()
+            ControlsHelper.BeginInvoke(()=>
             {
                 MapNameComboBox.DataSource = SettingsManager.Layouts.Items;
                 MapNameComboBox.DisplayMember = "Name";
@@ -340,11 +341,8 @@ namespace x360ce.App.Controls
             var oldLeft = cbx.Left;
             // Move default DropDown away from the screen.
             cbx.Left = -10000;
-            var del = new ComboBoxDropDownDelegate(ComboBoxDropDown);
-            BeginInvoke(del, new object[] { cbx, oldLeft });
+            ControlsHelper.BeginInvoke(() => { ComboBoxDropDown(cbx, oldLeft); });
         }
-
-        delegate void ComboBoxDropDownDelegate(ComboBox cbx, int oldLeft);
 
         void ComboBoxDropDown(ComboBox cbx, int oldLeft)
         {

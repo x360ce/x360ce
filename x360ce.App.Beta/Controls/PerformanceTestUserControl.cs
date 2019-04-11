@@ -127,7 +127,7 @@ namespace x360ce.App.Controls
             {
                 if (!IsHandleCreated)
                     return;
-                BeginInvoke((MethodInvoker)delegate ()
+                ControlsHelper.BeginInvoke(() =>
                 {
                     CpuTextBox.Text = "";
                 });
@@ -162,7 +162,7 @@ namespace x360ce.App.Controls
                         _Counter = new CpuUsage();
                     }
                     var process_cpu_usage = _Counter.GetUsage();
-                    BeginInvoke((MethodInvoker)delegate ()
+                    ControlsHelper.BeginInvoke(() =>
                     {
                         CpuTextBox.Text = process_cpu_usage.HasValue
                             ? string.Format("{0:0.000} %", Math.Round(process_cpu_usage.Value, 3))
@@ -294,7 +294,7 @@ namespace x360ce.App.Controls
 
         private void _timer_TestFinished(object sender, EventArgs e)
         {
-            BeginInvoke((MethodInvoker)delegate ()
+            ControlsHelper.BeginInvoke(() =>
             {
                 MessageBox.Show(_TestTimer.TestResults);
             });
@@ -346,7 +346,7 @@ namespace x360ce.App.Controls
             list.Add(string.Format("{0,4} unknown devices", unknown.Length));
             if (Disposing || IsDisposed)
                 return;
-            BeginInvoke((MethodInvoker)delegate ()
+            ControlsHelper.BeginInvoke(() =>
             {
                 LogTextBox.Text = "";
                 var result = MessageBox.Show("Do you want to remove:\r\n\r\n" + string.Join("\r\n", list), "Remove Devices", MessageBoxButtons.YesNo);
@@ -374,13 +374,13 @@ namespace x360ce.App.Controls
                 if (Disposing || IsDisposed)
                     return;
                 var item = list[i];
-                BeginInvoke((MethodInvoker)delegate ()
+                ControlsHelper.BeginInvoke(() =>
                 {
                     LogTextBox.Text = string.Format("{0}/{1} - {2}", i + 1, list.Count, item.Description);
                 });
                 DeviceDetector.RemoveDevice(item.DeviceId);
             }
-            BeginInvoke((MethodInvoker)delegate ()
+            ControlsHelper.BeginInvoke(() =>
             {
                 LogTextBox.Text = string.Format("{0} devices removed", list.Count);
             });

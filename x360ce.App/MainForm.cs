@@ -14,6 +14,7 @@ using x360ce.App.Properties;
 using System.ComponentModel;
 using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Win32;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App
 {
@@ -21,6 +22,7 @@ namespace x360ce.App
 	{
 		public MainForm()
 		{
+            ControlsHelper.InitInvokeContext();
 			InitializeComponent();
 		}
 

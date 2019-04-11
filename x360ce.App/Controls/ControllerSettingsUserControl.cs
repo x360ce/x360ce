@@ -13,6 +13,7 @@ using x360ce.Engine;
 using System.Text.RegularExpressions;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Web.Services;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -443,10 +444,10 @@ namespace x360ce.App.Controls
 		{
 			var ws = (WebServiceClient)sender;
 			ws.SearchSettingsCompleted -= ws_SearchSettingsCompleted;
-			// Make sure method is executed on the same thread as this control.
-			BeginInvoke((MethodInvoker)delegate ()
-			{
-				refreshed = true;
+            // Make sure method is executed on the same thread as this control.
+            ControlsHelper.BeginInvoke(() =>
+            {
+                refreshed = true;
 				if (e.Error != null || e.Result == null)
 				{
 					UpdateList(new List<UserSetting>(), SettingManager.Settings.Items);
@@ -799,10 +800,10 @@ namespace x360ce.App.Controls
 		{
 			var ws = (WebServiceClient)sender;
 			ws.SearchSettingsCompleted -= wsPresets_SearchSettingsCompleted;
-			// Make sure method is executed on the same thread as this control.
-			BeginInvoke((MethodInvoker)delegate ()
-			{
-				refreshed = true;
+            // Make sure method is executed on the same thread as this control.
+            ControlsHelper.BeginInvoke(() =>
+            {
+                refreshed = true;
 				if (e.Error != null || e.Result == null)
 				{
 					var showResult = (bool)e.UserState;

@@ -8,6 +8,8 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Controls
@@ -16,7 +18,44 @@ namespace JocysCom.ClassLibrary.Controls
 	{
 		private const int WM_SETREDRAW = 0x000B;
 
-		internal class NativeMethods
+        #region Invoke and BeginInvoke
+
+        /// <summary>
+        /// Call this method from main form constructor for BeginInvoke to work.
+        /// </summary>
+        public static void InitInvokeContext()
+        {
+            MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        }
+
+        static TaskScheduler MainTaskScheduler;
+
+        static void InvokeValidate()
+        {
+            if (MainTaskScheduler == null)
+                throw new Exception("Add 'ControlsHelper.InitInvokeContext();' to main form constructor for [Begin]Invoke to work.");
+        }
+
+        /// <summary>Executes the specified action delegate asynchronously on main User Interface (UI) Thread.</summary>
+        /// <param name="action">The action delegate to execute asynchronously.</param>
+        /// <returns>The started System.Threading.Tasks.Task.</returns>
+        public static Task BeginInvoke(Action action)
+        {
+            InvokeValidate();
+            return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
+        }
+
+        /// <summary>Executes the specified action delegate synchronously on main User Interface (UI) Thread.</summary>
+        /// <param name="action">The action delegate to execute synchronously.</param>
+        public static void Invoke(Action action)
+        {
+            InvokeValidate();
+            new Task(action).RunSynchronously(MainTaskScheduler);
+        }
+
+        #endregion
+
+        internal class NativeMethods
 		{
 			/// <summary>
 			/// Retrieves a handle to the window that contains the specified point. 

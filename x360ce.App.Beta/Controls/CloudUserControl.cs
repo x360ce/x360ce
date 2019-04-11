@@ -108,7 +108,7 @@ namespace x360ce.App.Controls
 
         public void Add<T>(CloudAction action, T[] items, bool split = false, Guid[] checksums = null)
         {
-            BeginInvoke((MethodInvoker)delegate ()
+            ControlsHelper.BeginInvoke(() =>
             {
                 var allow = MainForm.Current.OptionsPanel.InternetAutoSaveCheckBox.Checked;
                 if (!allow)

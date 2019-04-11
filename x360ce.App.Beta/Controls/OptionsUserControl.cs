@@ -458,8 +458,8 @@ namespace x360ce.App.Controls
 				// Get Virtual Bus and HID Guardian status.
 				var bus = DInput.VirtualDriverInstaller.GetViGemBusDriverInfo();
 				var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
-				BeginInvoke((MethodInvoker)delegate ()
-				{
+                ControlsHelper.BeginInvoke(() =>
+                {
 					// Update Bus status.
 					var busStatus = bus.DriverVersion == 0
 						? "Not installed"
