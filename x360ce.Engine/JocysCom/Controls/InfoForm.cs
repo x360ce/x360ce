@@ -1,9 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Processes;
 using System;
-using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
-using System.Linq;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -60,7 +58,7 @@ namespace JocysCom.ClassLibrary.Controls
 			ControlsDataGridView.SelectionChanged -= ControlsDataGridView_SelectionChanged;
 			ControlsDataGridView.DataSource = dtControls;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-			ControlsHelper.BeginInvoke(()=>
+			ControlsHelper.BeginInvoke(() =>
 			{
 				ControlsDataGridView.SelectionChanged += ControlsDataGridView_SelectionChanged;
 				ControlsDataGridView_SelectionChanged(ControlsDataGridView, new EventArgs());
@@ -122,7 +120,7 @@ namespace JocysCom.ClassLibrary.Controls
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		public static void ShowFormInfo(Control c)
 		{
-			InfoForm frmInfo = new InfoForm();
+			var frmInfo = new InfoForm();
 			frmInfo.SelectedControl = c;
 			frmInfo.StartPosition = FormStartPosition.CenterParent;
 			frmInfo.ShowDialog();
@@ -168,6 +166,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public InfoForm()
 		{
+			ControlsHelper.InitInvokeContext();
 			Load += new System.EventHandler(this.InfoForm_Load);
 			InitializeComponent();
 		}

@@ -10,11 +10,13 @@ namespace JocysCom.ClassLibrary.IO
 	{
 		public DeviceDetectorForm()
 		{
+			ControlsHelper.InitInvokeContext();
 			InitializeComponent();
 		}
 
 		public DeviceDetectorForm(DeviceDetector detector)
 		{
+			ControlsHelper.InitInvokeContext();
 			InitializeComponent();
 			_Detector = detector;
 			_Detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(_Detector_DeviceChanged);
@@ -22,8 +24,8 @@ namespace JocysCom.ClassLibrary.IO
 
 		void _Detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
-            ControlsHelper.BeginInvoke(() =>
-            {
+			ControlsHelper.BeginInvoke(() =>
+			{
 				InfoLabel.Text = e.ChangeType.ToString();
 			});
 		}

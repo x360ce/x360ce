@@ -25,32 +25,28 @@ namespace JocysCom.ClassLibrary.Controls
         /// </summary>
         public static void InitInvokeContext()
         {
+			if (MainTaskScheduler != null)
+				return;
             MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
         }
 
         static TaskScheduler MainTaskScheduler;
-
-        static void InvokeValidate()
-        {
-            if (MainTaskScheduler == null)
-                throw new Exception("Add 'ControlsHelper.InitInvokeContext();' to main form constructor for [Begin]Invoke to work.");
-        }
 
         /// <summary>Executes the specified action delegate asynchronously on main User Interface (UI) Thread.</summary>
         /// <param name="action">The action delegate to execute asynchronously.</param>
         /// <returns>The started System.Threading.Tasks.Task.</returns>
         public static Task BeginInvoke(Action action)
         {
-            InvokeValidate();
-            return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
+			InitInvokeContext();
+			return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
         }
 
         /// <summary>Executes the specified action delegate synchronously on main User Interface (UI) Thread.</summary>
         /// <param name="action">The action delegate to execute synchronously.</param>
         public static void Invoke(Action action)
         {
-            InvokeValidate();
-            new Task(action).RunSynchronously(MainTaskScheduler);
+			InitInvokeContext();
+			new Task(action).RunSynchronously(MainTaskScheduler);
         }
 
         #endregion

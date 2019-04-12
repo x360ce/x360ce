@@ -617,10 +617,8 @@ namespace JocysCom.ClassLibrary.Security
 		public void RsaNewKeysSave(int keySize)
 		{
 			Keys keys = RsaNewKeys(keySize);
-			// This is needed for Entity Framework connections.
-			System.Configuration.Configuration config;
 			// Get the configuration file.
-			config = System.Web.HttpContext.Current == null || System.Web.HttpContext.Current.Request.PhysicalPath.Equals(string.Empty)
+			var config = System.Web.HttpRuntime.IISVersion == null
 				? ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
 				: System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
 			// Modify settings.

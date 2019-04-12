@@ -167,17 +167,22 @@ namespace JocysCom.ClassLibrary.Mail
 			}
 		}
 
-		public static SmtpSection GetCurrentSmtpSettings(out System.Configuration.Configuration config)
+		/// <summary>Get configuration settings from current web.config or app.config.</summary>
+		static System.Configuration.Configuration GetCurrentConfiguration()
 		{
 			// If executable then...
-			if (HttpContext.Current == null)
-				config = System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.None);
-			// If web application then...
-			else if (HttpContext.Current.Request == null)
-				config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(HttpContext.Current.Request.ApplicationPath);
+			if (HttpRuntime.IISVersion == null)
+				return System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.None);
 			// If web request then...
-			else
-				config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(HttpRuntime.AppDomainAppVirtualPath);
+			if (HttpContext.Current != null && HttpContext.Current.Request == null)
+				return System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(HttpContext.Current.Request.ApplicationPath);
+			// If web application then...
+			return System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(HttpRuntime.AppDomainAppVirtualPath);
+		}
+
+		public static SmtpSection GetCurrentSmtpSettings(out System.Configuration.Configuration config)
+		{
+			config = GetCurrentConfiguration();
 			// Get Mail settings.
 			var settings = NetSectionGroup.GetSectionGroup(config).MailSettings;
 			return settings.Smtp;
