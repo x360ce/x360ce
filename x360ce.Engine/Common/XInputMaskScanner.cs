@@ -240,8 +240,9 @@ namespace x360ce.Engine
             {
                 // Pause or Stop.
                 while (IsPaused && !IsStopping)
-                    System.Threading.Thread.Sleep(500);
-                if (IsStopping)
+					// Logical delay without blocking the current thread.
+					System.Threading.Tasks.Task.Delay(500).Wait();
+				if (IsStopping)
                     return masks;
                 // Do tasks.
                 // Skip XInput files.
@@ -311,8 +312,9 @@ namespace x360ce.Engine
                 {
                     // Pause or Stop.
                     while (IsPaused && !IsStopping)
-                        System.Threading.Thread.Sleep(500);
-                    if (IsStopping)
+						// Logical delay without blocking the current thread.
+						System.Threading.Tasks.Task.Delay(500).Wait();
+					if (IsStopping)
                         return mask;
                     // Do tasks.
                     if (fileBytes[i] == stringLBytes[0] || fileBytes[i] == stringUBytes[0])

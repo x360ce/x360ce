@@ -27,7 +27,8 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				// Pause or Stop.
 				while (IsPaused && !IsStopping)
-					System.Threading.Thread.Sleep(500);
+					// Logical delay without blocking the current thread.
+					System.Threading.Tasks.Task.Delay(500).Wait();
 				if (IsStopping)
 					return fis;
 				// Do tasks.
@@ -60,7 +61,8 @@ namespace JocysCom.ClassLibrary.IO
 					{
 						// Pause or Stop.
 						while (IsPaused && !IsStopping)
-							System.Threading.Thread.Sleep(500);
+							// Logical delay without blocking the current thread.
+							System.Threading.Tasks.Task.Delay(500).Wait();
 						if (IsStopping)
 							return;
 						// Do tasks.
@@ -94,7 +96,8 @@ namespace JocysCom.ClassLibrary.IO
 					{
 						// Pause or Stop.
 						while (IsPaused && !IsStopping)
-							System.Threading.Thread.Sleep(500);
+							// Logical delay without blocking the current thread.
+							System.Threading.Tasks.Task.Delay(500).Wait();
 						if (IsStopping)
 							return;
 						// Do tasks.

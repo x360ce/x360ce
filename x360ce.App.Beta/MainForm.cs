@@ -494,8 +494,9 @@ namespace x360ce.App
                 //	XInput.FreeLibrary();    
                 //});
             }
-            System.Threading.Thread.Sleep(100);
-            var tmp = new FileInfo(SettingsManager.TmpFileName);
+			// Logical delay without blocking the current thread.
+			System.Threading.Tasks.Task.Delay(100).Wait();
+			var tmp = new FileInfo(SettingsManager.TmpFileName);
             var ini = new FileInfo(SettingsManager.IniFileName);
             if (tmp.Exists && ini.Exists)
             {

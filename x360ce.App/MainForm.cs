@@ -463,7 +463,8 @@ namespace x360ce.App
 					//	XInput.FreeLibrary();    
 					//});
 				}
-				System.Threading.Thread.Sleep(100);
+				// Logical delay without blocking the current thread.
+				System.Threading.Tasks.Task.Delay(100).Wait();
 			}
 			catch (Exception) { }
 			var tmp = new FileInfo(SettingManager.TmpFileName);

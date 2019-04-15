@@ -109,7 +109,8 @@ namespace JocysCom.ClassLibrary.Processes
 				return;
 			uint dWord = MakeDWord((ushort)(LastX - LastRectX), (ushort)(LastY - LastRectY));
 			NativeMethods.SendMessage(mainWindowHandle, button1, MK_LBUTTON, dWord);
-			System.Threading.Thread.Sleep(100);
+			// Logical delay without blocking the current thread.
+			System.Threading.Tasks.Task.Delay(100).Wait();
 			NativeMethods.SendMessage(mainWindowHandle, button2, 0, dWord);
 
 		}
