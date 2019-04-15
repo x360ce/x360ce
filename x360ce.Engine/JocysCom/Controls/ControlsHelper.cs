@@ -38,16 +38,18 @@ namespace JocysCom.ClassLibrary.Controls
 		public static Task BeginInvoke(Action action)
 		{
 			InitInvokeContext();
-			return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
+			return Task.Factory.StartNew(action,
+				CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
 		}
 
 		/// <summary>Executes the specified action delegate asynchronously on main User Interface (UI) Thread.</summary>
 		/// <param name="action">The action delegate to execute asynchronously.</param>
 		/// <returns>The started System.Threading.Tasks.Task.</returns>
-		public static Task BeginInvoke(Delegate action, params object[] args)
+		public static Task BeginInvoke(Delegate method, params object[] args)
 		{
 			InitInvokeContext();
-			return Task.Factory.StartNew(() => { action.DynamicInvoke(args); }, CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
+			return Task.Factory.StartNew(() => { method.DynamicInvoke(args); },
+				CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
 		}
 
 		/// <summary>Executes the specified action delegate synchronously on main User Interface (UI) Thread.</summary>
@@ -55,7 +57,18 @@ namespace JocysCom.ClassLibrary.Controls
 		public static void Invoke(Action action)
 		{
 			InitInvokeContext();
-			new Task(action).RunSynchronously(MainTaskScheduler);
+			var t = new Task(action);
+			t.RunSynchronously(MainTaskScheduler);
+		}
+
+		/// <summary>Executes the specified action delegate synchronously on main User Interface (UI) Thread.</summary>
+		/// <param name="action">The delegate to execute synchronously.</param>
+		public static object Invoke(Delegate method, params object[] args)
+		{
+			InitInvokeContext();
+			var t = new Task<object>(() => method.DynamicInvoke(args));
+			t.RunSynchronously(MainTaskScheduler);
+			return t.Result;
 		}
 
 		#endregion
