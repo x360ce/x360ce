@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
@@ -19,14 +20,15 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			LinePanel.Visible = false;
 			ExceptionInfoButton.Visible = false;
 			// List which contains all issues.
+			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			IssueList = new BindingListInvoked<IssueItem>();
 			IssueList.AsynchronousInvoke = true;
-			IssueList.SynchronizingObject = this;
+			IssueList.SynchronizingObject = scheduler;
 			IssueList.ListChanged += IssueList_ListChanged;
 			UpdateIgnoreAllButton();
 			// List which is bound to the grid and displays issues, which needs user attention.
 			Warnings = new BindingListInvoked<IssueItem>();
-			Warnings.SynchronizingObject = this;
+			Warnings.SynchronizingObject = scheduler;
 			// Configure data grid.
 			ControlsHelper.ApplyBorderStyle(WarningsDataGridView);
 			WarningsDataGridView.AutoGenerateColumns = false;
@@ -36,7 +38,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
 			var title = ai.GetTitle(true, true, true, true, false) + " - Issues";
 			Text = title;
-			TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<object>(0, 0, this);
+			TasksTimer = new QueueTimer<object>(0, 0, scheduler);
 			TasksTimer.DoWork += queueTimer_DoWork;
 			TasksTimer.Queue.ListChanged += Data_ListChanged;
 			// Start monitoring tasks queue.

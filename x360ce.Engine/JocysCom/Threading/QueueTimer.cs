@@ -1,8 +1,9 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace JocysCom.ClassLibrary.Threading
@@ -10,7 +11,7 @@ namespace JocysCom.ClassLibrary.Threading
 
 	public partial class QueueTimer : QueueTimer<object>
 	{
-		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000, ISynchronizeInvoke listSynchronizingObject = null) : base(delayInterval, sleepInterval, listSynchronizingObject)
+		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000, TaskScheduler listSynchronizingObject = null) : base(delayInterval, sleepInterval, listSynchronizingObject)
 		{
 		}
 
@@ -32,7 +33,7 @@ namespace JocysCom.ClassLibrary.Threading
 		/// </summary>
 		/// <param name="delayInterval">Delay time between each run. If this value is set then some items won't be added to the queue, in order to avoid clogging.</param>
 		/// <param name="sleepInterval">If set then action will auto-run automatically after specified amount of milliseconds.</param>
-		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000, ISynchronizeInvoke listSynchronizingObject = null)
+		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000, TaskScheduler listSynchronizingObject = null)
 		{
 			// Create main properties.
 			_Queue = new BindingListInvoked<T>();
@@ -69,9 +70,9 @@ namespace JocysCom.ClassLibrary.Threading
 
 		#region Synchronizing Object
 
-		ISynchronizeInvoke SynchronizingObject;
+		TaskScheduler SynchronizingObject;
 
-		public void SetSynchronizingObject(ISynchronizeInvoke so, bool isHandleCreated)
+		public void SetSynchronizingObject(TaskScheduler so, bool isHandleCreated)
 		{
 			var o = SynchronizingObject;
 			if (o != null)
@@ -152,7 +153,7 @@ namespace JocysCom.ClassLibrary.Threading
 		/// <summary>
 		/// Controls how long application must wait between actions.
 		/// </summary>
-		Timer delayTimer;
+		System.Timers.Timer delayTimer;
 		DateTime delayTimerNextRunTime;
 		object delayTimerLock = new object();
 
@@ -170,7 +171,7 @@ namespace JocysCom.ClassLibrary.Threading
 				if (interval > 0)
 				{
 					// Create delay timer.
-					delayTimer = new Timer();
+					delayTimer = new System.Timers.Timer();
 					delayTimer.AutoReset = false;
 					delayTimer.Interval = interval;
 					delayTimer.Elapsed += DelayTimer_Elapsed;
@@ -222,7 +223,7 @@ namespace JocysCom.ClassLibrary.Threading
 		/// <summary>
 		/// Controls how long application must sleep if last action finished without doing anything.
 		/// </summary>
-		Timer sleepTimer;
+		System.Timers.Timer sleepTimer;
 		DateTime sleepTimerNextRunTime;
 		object sleepTimerLock = new object();
 
@@ -240,7 +241,7 @@ namespace JocysCom.ClassLibrary.Threading
 				if (interval > 0)
 				{
 					// Create delay timer.
-					sleepTimer = new Timer();
+					sleepTimer = new System.Timers.Timer();
 					sleepTimer.AutoReset = false;
 					sleepTimer.Interval = interval;
 					sleepTimer.Elapsed += SleepTimer_Elapsed;
@@ -293,16 +294,15 @@ namespace JocysCom.ClassLibrary.Threading
 		public virtual string DoActionNow(T item = null)
 		{
 			var so = Queue.SynchronizingObject;
-			if (so != null)
+			if (so == null)
 			{
-				return (string)so.Invoke((InvokeDelegate)delegate ()
-				{
-					_DoActionNow(item);
-				}, new object[0]);
+				return _DoActionNow(item);
 			}
 			else
 			{
-				return _DoActionNow(item);
+				var t = new Task<string>(() => _DoActionNow(item));
+				t.RunSynchronously(so);
+				return t.Result;
 			}
 		}
 
@@ -397,7 +397,6 @@ namespace JocysCom.ClassLibrary.Threading
 		/// <summary>
 		/// This function will be called inside 'queueLock' lock.
 		/// </summary>
-		/// <remarks>http://blogs.msdn.com/b/jaredpar/archive/2008/01/07/isynchronizeinvoke-now.aspx</remarks>
 		void _StarThread()
 		{
 			if (IsDisposing) return;
@@ -407,7 +406,7 @@ namespace JocysCom.ClassLibrary.Threading
 			{
 				SleepTimerStop();
 				// Put into another variable for thread safety.
-				ISynchronizeInvoke so = SynchronizingObject;
+				TaskScheduler so = SynchronizingObject;
 				if (so == null)
 				{
 					// Mark thread as running.
@@ -440,9 +439,9 @@ namespace JocysCom.ClassLibrary.Threading
 						// Mark thread as running.
 						_IsRunning = true;
 						// Use asynchronous call to avoid 'queueLock' deadlock.
-						var action = (System.Threading.WaitCallback)ThreadAction;
 						// If handle exception then, maybe you forgot to dispose QueueTimer before 'so'.
-						var ar = so.BeginInvoke(action, new object[] { null });
+						Task.Factory.StartNew(() => { ThreadAction(null); },
+							CancellationToken.None, TaskCreationOptions.DenyChildAttach, so);
 					}
 					catch (Exception)
 					{

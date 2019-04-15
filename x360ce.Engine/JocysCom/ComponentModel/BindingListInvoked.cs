@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.ComponentModel
 {
@@ -21,7 +23,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 
 		#region ISynchronizeInvoker
 
-		public ISynchronizeInvoke SynchronizingObject { get; set; }
+		public TaskScheduler SynchronizingObject { get; set; }
 
 		delegate void ItemDelegate(int index, T item);
 
@@ -30,7 +32,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		void Invoke(Delegate method, params object[] args)
 		{
 			var so = SynchronizingObject;
-			if (so != null && so.InvokeRequired)
+			if (so != null)
 			{
 				// Note that Control.Invoke(...) is a synchronous action on the main GUI thread,
 				// and will wait for EnableBackControl() to return.
@@ -45,10 +47,9 @@ namespace JocysCom.ClassLibrary.ComponentModel
 				// Try inserting a Application.DoEvents() in the loop, which will pause
 				// execution and force the main thread to process messages and any outstanding .Invoke requests.
 				if (AsynchronousInvoke)
-					so.BeginInvoke(method, args);
+					Task.Factory.StartNew(() => { method.DynamicInvoke(args); }, CancellationToken.None, TaskCreationOptions.None, so);
 				else
-					so.Invoke(method, args);
-
+					new Task(() => { method.DynamicInvoke(args); }).RunSynchronously(so);
 			}
 			else
 			{

@@ -18,40 +18,49 @@ namespace JocysCom.ClassLibrary.Controls
 	{
 		private const int WM_SETREDRAW = 0x000B;
 
-        #region Invoke and BeginInvoke
+		#region Invoke and BeginInvoke
 
-        /// <summary>
-        /// Call this method from main form constructor for BeginInvoke to work.
-        /// </summary>
-        public static void InitInvokeContext()
-        {
+		/// <summary>
+		/// Call this method from main form constructor for BeginInvoke to work.
+		/// </summary>
+		public static void InitInvokeContext()
+		{
 			if (MainTaskScheduler != null)
 				return;
-            MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-        }
+			MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+		}
 
-        static TaskScheduler MainTaskScheduler;
+		static TaskScheduler MainTaskScheduler;
 
-        /// <summary>Executes the specified action delegate asynchronously on main User Interface (UI) Thread.</summary>
-        /// <param name="action">The action delegate to execute asynchronously.</param>
-        /// <returns>The started System.Threading.Tasks.Task.</returns>
-        public static Task BeginInvoke(Action action)
-        {
+		/// <summary>Executes the specified action delegate asynchronously on main User Interface (UI) Thread.</summary>
+		/// <param name="action">The action delegate to execute asynchronously.</param>
+		/// <returns>The started System.Threading.Tasks.Task.</returns>
+		public static Task BeginInvoke(Action action)
+		{
 			InitInvokeContext();
 			return Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
-        }
+		}
 
-        /// <summary>Executes the specified action delegate synchronously on main User Interface (UI) Thread.</summary>
-        /// <param name="action">The action delegate to execute synchronously.</param>
-        public static void Invoke(Action action)
-        {
+		/// <summary>Executes the specified action delegate asynchronously on main User Interface (UI) Thread.</summary>
+		/// <param name="action">The action delegate to execute asynchronously.</param>
+		/// <returns>The started System.Threading.Tasks.Task.</returns>
+		public static Task BeginInvoke(Delegate action, params object[] args)
+		{
+			InitInvokeContext();
+			return Task.Factory.StartNew(() => { action.DynamicInvoke(args); }, CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
+		}
+
+		/// <summary>Executes the specified action delegate synchronously on main User Interface (UI) Thread.</summary>
+		/// <param name="action">The action delegate to execute synchronously.</param>
+		public static void Invoke(Action action)
+		{
 			InitInvokeContext();
 			new Task(action).RunSynchronously(MainTaskScheduler);
-        }
+		}
 
-        #endregion
+		#endregion
 
-        internal class NativeMethods
+		internal class NativeMethods
 		{
 			/// <summary>
 			/// Retrieves a handle to the window that contains the specified point. 

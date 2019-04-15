@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace JocysCom.ClassLibrary
@@ -109,7 +110,7 @@ namespace JocysCom.ClassLibrary
 		/// an interval has elapsed.
 		/// </summary>
 		[Browsable(false), DefaultValue(null)]
-		public ISynchronizeInvoke SynchronizingObject { get; set; }
+		public TaskScheduler SynchronizingObject { get; set; }
 
 		/// <summary>Starts the timing by setting 'Enabled' to 'true'.</summary>
 		public void Start() { Enabled = true; }
@@ -126,8 +127,8 @@ namespace JocysCom.ClassLibrary
 				{
 					ElapsedEventArgs e = null;
 					var so = SynchronizingObject;
-					if (so != null && so.InvokeRequired)
-						so.BeginInvoke(ev, new object[] { this, e });
+					if (so != null)
+						new Task(() => { ev(this, e); }).RunSynchronously(so);
 					else
 						ev(this, e);
 				}
