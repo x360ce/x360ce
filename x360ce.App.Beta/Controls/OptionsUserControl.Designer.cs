@@ -69,10 +69,14 @@
 			this.CreateButton = new System.Windows.Forms.Button();
 			this.LoginButton = new System.Windows.Forms.Button();
 			this.UsernameTextBox = new System.Windows.Forms.TextBox();
+			this.ProfilePathTextBox = new System.Windows.Forms.TextBox();
 			this.ComputerDiskTextBox = new System.Windows.Forms.TextBox();
+			this.ProfileIdTextBox = new System.Windows.Forms.TextBox();
 			this.ComputerIdTextBox = new System.Windows.Forms.TextBox();
 			this.PasswordLabel = new System.Windows.Forms.Label();
+			this.ProfileIdLabel = new System.Windows.Forms.Label();
 			this.UsernameLabel = new System.Windows.Forms.Label();
+			this.ProfilePathLabel = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.ComputerDiskLabel = new System.Windows.Forms.Label();
 			this.GamesGroupBox = new System.Windows.Forms.GroupBox();
@@ -96,10 +100,7 @@
 			this.ViGEmBusInstallButton = new System.Windows.Forms.Button();
 			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
 			this.DeveloperToolsButton = new System.Windows.Forms.Button();
-			this.ProfilePathLabel = new System.Windows.Forms.Label();
-			this.ProfileIdLabel = new System.Windows.Forms.Label();
-			this.ProfileIdTextBox = new System.Windows.Forms.TextBox();
-			this.ProfilePathTextBox = new System.Windows.Forms.TextBox();
+			this.AboutViGEmLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -562,6 +563,16 @@
 			this.UsernameTextBox.Size = new System.Drawing.Size(152, 20);
 			this.UsernameTextBox.TabIndex = 42;
 			// 
+			// ProfilePathTextBox
+			// 
+			this.ProfilePathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.ProfilePathTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.ProfilePathTextBox.Location = new System.Drawing.Point(106, 71);
+			this.ProfilePathTextBox.Name = "ProfilePathTextBox";
+			this.ProfilePathTextBox.Size = new System.Drawing.Size(394, 20);
+			this.ProfilePathTextBox.TabIndex = 40;
+			// 
 			// ComputerDiskTextBox
 			// 
 			this.ComputerDiskTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -571,6 +582,14 @@
 			this.ComputerDiskTextBox.Name = "ComputerDiskTextBox";
 			this.ComputerDiskTextBox.Size = new System.Drawing.Size(394, 20);
 			this.ComputerDiskTextBox.TabIndex = 40;
+			// 
+			// ProfileIdTextBox
+			// 
+			this.ProfileIdTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.ProfileIdTextBox.Location = new System.Drawing.Point(106, 97);
+			this.ProfileIdTextBox.Name = "ProfileIdTextBox";
+			this.ProfileIdTextBox.Size = new System.Drawing.Size(233, 20);
+			this.ProfileIdTextBox.TabIndex = 41;
 			// 
 			// ComputerIdTextBox
 			// 
@@ -590,6 +609,16 @@
 			this.PasswordLabel.TabIndex = 31;
 			this.PasswordLabel.Text = "Password:";
 			// 
+			// ProfileIdLabel
+			// 
+			this.ProfileIdLabel.AutoSize = true;
+			this.ProfileIdLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.ProfileIdLabel.Location = new System.Drawing.Point(6, 100);
+			this.ProfileIdLabel.Name = "ProfileIdLabel";
+			this.ProfileIdLabel.Size = new System.Drawing.Size(53, 13);
+			this.ProfileIdLabel.TabIndex = 31;
+			this.ProfileIdLabel.Text = "Profile ID:";
+			// 
 			// UsernameLabel
 			// 
 			this.UsernameLabel.AutoSize = true;
@@ -599,6 +628,16 @@
 			this.UsernameLabel.Size = new System.Drawing.Size(95, 13);
 			this.UsernameLabel.TabIndex = 31;
 			this.UsernameLabel.Text = "Username (E-mail):";
+			// 
+			// ProfilePathLabel
+			// 
+			this.ProfilePathLabel.AutoSize = true;
+			this.ProfilePathLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.ProfilePathLabel.Location = new System.Drawing.Point(6, 74);
+			this.ProfilePathLabel.Name = "ProfilePathLabel";
+			this.ProfilePathLabel.Size = new System.Drawing.Size(64, 13);
+			this.ProfilePathLabel.TabIndex = 32;
+			this.ProfilePathLabel.Text = "Profile Path:";
 			// 
 			// label2
 			// 
@@ -719,6 +758,7 @@
 			// 
 			// VirtualDeviceGroupBox
 			// 
+			this.VirtualDeviceGroupBox.Controls.Add(this.AboutViGEmLinkLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.PollingRateLabel);
@@ -735,7 +775,7 @@
 			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(507, 107);
 			this.VirtualDeviceGroupBox.TabIndex = 70;
 			this.VirtualDeviceGroupBox.TabStop = false;
-			this.VirtualDeviceGroupBox.Text = "Virtual Device";
+			this.VirtualDeviceGroupBox.Text = "Virtual Device Emulation by Nefarius";
 			// 
 			// HidGuardianLabel
 			// 
@@ -864,43 +904,17 @@
 			this.DeveloperToolsButton.UseVisualStyleBackColor = true;
 			this.DeveloperToolsButton.Click += new System.EventHandler(this.DeveloperToolsButton_Click);
 			// 
-			// ProfilePathLabel
+			// AboutViGEmLinkLabel
 			// 
-			this.ProfilePathLabel.AutoSize = true;
-			this.ProfilePathLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.ProfilePathLabel.Location = new System.Drawing.Point(6, 74);
-			this.ProfilePathLabel.Name = "ProfilePathLabel";
-			this.ProfilePathLabel.Size = new System.Drawing.Size(64, 13);
-			this.ProfilePathLabel.TabIndex = 32;
-			this.ProfilePathLabel.Text = "Profile Path:";
-			// 
-			// ProfileIdLabel
-			// 
-			this.ProfileIdLabel.AutoSize = true;
-			this.ProfileIdLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.ProfileIdLabel.Location = new System.Drawing.Point(6, 100);
-			this.ProfileIdLabel.Name = "ProfileIdLabel";
-			this.ProfileIdLabel.Size = new System.Drawing.Size(53, 13);
-			this.ProfileIdLabel.TabIndex = 31;
-			this.ProfileIdLabel.Text = "Profile ID:";
-			// 
-			// ProfileIdTextBox
-			// 
-			this.ProfileIdTextBox.BackColor = System.Drawing.SystemColors.Control;
-			this.ProfileIdTextBox.Location = new System.Drawing.Point(106, 97);
-			this.ProfileIdTextBox.Name = "ProfileIdTextBox";
-			this.ProfileIdTextBox.Size = new System.Drawing.Size(233, 20);
-			this.ProfileIdTextBox.TabIndex = 41;
-			// 
-			// ProfilePathTextBox
-			// 
-			this.ProfilePathTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.ProfilePathTextBox.BackColor = System.Drawing.SystemColors.Control;
-			this.ProfilePathTextBox.Location = new System.Drawing.Point(106, 71);
-			this.ProfilePathTextBox.Name = "ProfilePathTextBox";
-			this.ProfilePathTextBox.Size = new System.Drawing.Size(394, 20);
-			this.ProfilePathTextBox.TabIndex = 40;
+			this.AboutViGEmLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.AboutViGEmLinkLabel.AutoSize = true;
+			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(331, 17);
+			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
+			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
+			this.AboutViGEmLinkLabel.TabIndex = 45;
+			this.AboutViGEmLinkLabel.TabStop = true;
+			this.AboutViGEmLinkLabel.Text = "https://vigem.org";
+			this.AboutViGEmLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutViGEmLinkLabel_LinkClicked);
 			// 
 			// OptionsUserControl
 			// 
@@ -1022,5 +1036,6 @@
 		private System.Windows.Forms.TextBox ProfileIdTextBox;
 		private System.Windows.Forms.Label ProfileIdLabel;
 		private System.Windows.Forms.Label ProfilePathLabel;
+		private System.Windows.Forms.LinkLabel AboutViGEmLinkLabel;
 	}
 }

@@ -46,7 +46,7 @@
 			this.ChangesTabPage = new System.Windows.Forms.TabPage();
 			this.LicenseTabPage = new System.Windows.Forms.TabPage();
 			this.LicenseTextBox = new System.Windows.Forms.TextBox();
-			this.AboutWikiLinkLabel = new System.Windows.Forms.LinkLabel();
+			this.AboutViGEmLinkLabel = new System.Windows.Forms.LinkLabel();
 			((System.ComponentModel.ISupportInitialize)(this.ProductPictureBox)).BeginInit();
 			this.AboutTabControl.SuspendLayout();
 			this.ChangesTabPage.SuspendLayout();
@@ -225,16 +225,16 @@
 			this.LicenseTextBox.Size = new System.Drawing.Size(605, 330);
 			this.LicenseTextBox.TabIndex = 1;
 			// 
-			// AboutWikiLinkLabel
+			// AboutViGEmLinkLabel
 			// 
-			this.AboutWikiLinkLabel.AutoSize = true;
-			this.AboutWikiLinkLabel.Location = new System.Drawing.Point(219, 109);
-			this.AboutWikiLinkLabel.Name = "AboutWikiLinkLabel";
-			this.AboutWikiLinkLabel.Size = new System.Drawing.Size(89, 13);
-			this.AboutWikiLinkLabel.TabIndex = 0;
-			this.AboutWikiLinkLabel.TabStop = true;
-			this.AboutWikiLinkLabel.Text = "https://vigem.org";
-			this.AboutWikiLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
+			this.AboutViGEmLinkLabel.AutoSize = true;
+			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(219, 109);
+			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
+			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
+			this.AboutViGEmLinkLabel.TabIndex = 0;
+			this.AboutViGEmLinkLabel.TabStop = true;
+			this.AboutViGEmLinkLabel.Text = "https://vigem.org";
+			this.AboutViGEmLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
 			// 
 			// AboutControl
 			// 
@@ -242,7 +242,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.AboutTabControl);
 			this.Controls.Add(this.AboutDescriptionLabel);
-			this.Controls.Add(this.AboutWikiLinkLabel);
+			this.Controls.Add(this.AboutViGEmLinkLabel);
 			this.Controls.Add(this.AboutWikiLabel);
 			this.Controls.Add(this.AboutTocaEditLinkLabel);
 			this.Controls.Add(this.AboutTocaLabel);
@@ -287,6 +287,6 @@
 		private System.Windows.Forms.TabPage ChangesTabPage;
 		private System.Windows.Forms.TabPage LicenseTabPage;
 		private System.Windows.Forms.TextBox LicenseTextBox;
-		private System.Windows.Forms.LinkLabel AboutWikiLinkLabel;
+		private System.Windows.Forms.LinkLabel AboutViGEmLinkLabel;
 	}
 }

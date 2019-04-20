@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Xml;
-using System.Xml.Serialization;
-using System.IO;
-using System.Runtime.Serialization.Json;
-using System.Runtime.Serialization;
 using System.Xml.Schema;
-using System.Linq;
+using System.Xml.Serialization;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -441,26 +441,23 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns>Object.</returns>
 		public static object DeserializeFromXmlBytes(byte[] bytes, Type type, Encoding encoding = null)
 		{
-			using (var ms = new MemoryStream(bytes))
+			var ms = new MemoryStream(bytes);
+			// Use stream reader (inherits from TextReader) to avoid encoding errors.
+			// Use specified encoding if Byte Order Mark (BOM) is missing.
+			var sr = new StreamReader(ms, encoding ?? Encoding.UTF8, true);
+			// Settings used to protect from
+			// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+			// https://cwe.mitre.org/data/definitions/611.html
+			var settings = new XmlReaderSettings();
+			settings.DtdProcessing = DtdProcessing.Ignore;
+			settings.XmlResolver = null;
+			// Stream 'ms' and 'sr' will be disposed by the reader.
+			using (var reader = XmlReader.Create(sr, settings))
 			{
-				// Use stream reader (inherits from TextReader) to avoid encoding errors.
-				// Use specified encoding if Byte Order Mark (BOM) is missing.
-				using (var sr = new StreamReader(ms, encoding ?? Encoding.UTF8, true))
-				{
-					// Settings used to protect from
-					// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
-					// https://cwe.mitre.org/data/definitions/611.html
-					var settings = new XmlReaderSettings();
-					settings.DtdProcessing = DtdProcessing.Ignore;
-					settings.XmlResolver = null;
-					using (var reader = XmlReader.Create(sr, settings))
-					{
-						object o;
-						var serializer = GetXmlSerializer(type);
-						lock (serializer) { o = serializer.Deserialize(reader); }
-						return o;
-					}
-				}
+				object o;
+				var serializer = GetXmlSerializer(type);
+				lock (serializer) { o = serializer.Deserialize(reader); }
+				return o;
 			}
 		}
 
@@ -477,21 +474,20 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Probably you used "var xml = System.Text.Encoding.GetString(bytes)" directly on file content.
 			// You should use "StreamReader" on file content, because this method will strip BOM properly
 			// when converting bytes to string.
-			using (var sr = new StringReader(xml))
-			{
+			var sr = new StringReader(xml);
 				// Settings used to protect from
 				// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
 				// https://cwe.mitre.org/data/definitions/611.html
-				var settings = new XmlReaderSettings();
-				settings.DtdProcessing = DtdProcessing.Ignore;
-				settings.XmlResolver = null;
-				using (var reader = XmlReader.Create(sr, settings))
-				{
-					object o;
-					var serializer = GetXmlSerializer(type);
-					lock (serializer) { o = serializer.Deserialize(reader); }
-					return o;
-				}
+			var settings = new XmlReaderSettings();
+			settings.DtdProcessing = DtdProcessing.Ignore;
+			settings.XmlResolver = null;
+			// Stream 'sr' will be disposed by the reader.
+			using (var reader = XmlReader.Create(sr, settings))
+			{
+				object o;
+				var serializer = GetXmlSerializer(type);
+				lock (serializer) { o = serializer.Deserialize(reader); }
+				return o;
 			}
 		}
 

@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace x360ce.App
 {
@@ -161,7 +162,7 @@ namespace x360ce.App
 
 		#region Load and Validate Data
 
-		public static void Load(ISynchronizeInvoke so = null)
+		public static void Load(TaskScheduler so = null)
 		{
 			// Make sure that all GridViews are updated on the same thread as MainForm when data changes.
 			// For example User devices will be removed and added on separate thread.

@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -21,7 +22,8 @@ namespace x360ce.App.Controls
             EngineHelper.EnableDoubleBuffering(TasksDataGridView);
 			InitNetworkInformation();
 			// Enable task timer.
-			TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, this);
+			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+			TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, scheduler);
             TasksTimer.DoWork += queueTimer_DoWork;
             TasksTimer.Queue.ListChanged += Data_ListChanged;
             TasksDataGridView.AutoGenerateColumns = false;

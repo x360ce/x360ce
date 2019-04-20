@@ -102,8 +102,8 @@ namespace JocysCom.ClassLibrary.Processes
 			//			SC_TASKLIST //Activates the Start menu.
 			//			SC_VSCROLL //Scrolls vertically.
 
-			[DllImport("user32.dll")]
-			public static extern int FindWindow(
+			[DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+			internal static extern IntPtr FindWindow(
 				string lpClassName,  // class name 
 				string lpWindowName  // window name 
 				);
@@ -115,7 +115,7 @@ namespace JocysCom.ClassLibrary.Processes
 			}
 
 			[DllImport("user32.dll")]
-			public static extern void mouse_event(MouseFlags dwFlags, int dx, int dy, int dwData, UIntPtr dwExtraInfo);
+			internal static extern void mouse_event(MouseFlags dwFlags, int dx, int dy, int dwData, UIntPtr dwExtraInfo);
 
 			static uint keybd_event(byte bVk, byte bScan, int dwFlags, uint dwExtraInfo)
 			{
@@ -124,7 +124,7 @@ namespace JocysCom.ClassLibrary.Processes
 			}
 
 			[DllImport("user32.dll")]
-			public static extern uint keybd_event(byte bVk, byte bScan, int dwFlags, UIntPtr dwExtraInfo);
+			internal static extern uint keybd_event(byte bVk, byte bScan, int dwFlags, UIntPtr dwExtraInfo);
 
 			public static void KeyDown(System.Windows.Forms.Keys key)
 			{
@@ -148,7 +148,7 @@ namespace JocysCom.ClassLibrary.Processes
 			//The cursor position is always given in screen coordinates and is not affected by
 			//the mapping mode of the window that contains the cursor. 
 			[DllImport("user32.dll")]
-			public static extern int GetCursorPos(ref POINTAPI lpPoint);
+			internal static extern int GetCursorPos(ref POINTAPI lpPoint);
 
 			/// <summary>
 			/// API used to send a message to another window
@@ -185,7 +185,7 @@ namespace JocysCom.ClassLibrary.Processes
 			//that no window exists at the specified point. A handle to the window under the
 			//static' text control indicates that the point is over a static text control. 
 			[DllImport("user32.dll")]
-			public static extern int WindowFromPoint(int xPoint, int yPoint);
+			internal static extern int WindowFromPoint(int xPoint, int yPoint);
 
 			// GetClassName: By passing window handle this will return the class name of
 			// window object.
@@ -200,8 +200,8 @@ namespace JocysCom.ClassLibrary.Processes
 			//Return Values
 			//    'The number of characters copied to the specified buffer indicates success.
 			// Zero indicates failure. To get extended error information, call GetLastError. 
-			[DllImport("user32.dll")]
-			public static extern int GetClassName(ref int hWnd, string lpClassName, ref int nMaxCount);
+			[DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+			internal static extern int GetClassName(ref IntPtr hWnd, string lpClassName, ref int nMaxCount);
 
 		}
 
@@ -246,10 +246,10 @@ namespace JocysCom.ClassLibrary.Processes
 		}
 
 
-		public int FindProcessID(string strValClassName, string strWindowName)
+		public IntPtr FindProcessID(string strValClassName, string strWindowName)
 		{
 			// Determine the handle to the Application window. 
-			int iHandle = WinAPI.FindWindow(strValClassName, strWindowName);
+			var iHandle = WinAPI.FindWindow(strValClassName, strWindowName);
 			// Post a message to Application to end its existence. 
 			//int j=WinAPI.SendMessage(iHandle, WinAPI.WM_SYSCOMMAND, WinAPI.SC_CLOSE, 0); 
 			return iHandle;

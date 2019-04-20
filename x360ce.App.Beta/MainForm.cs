@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.Issues;
@@ -151,9 +152,10 @@ namespace x360ce.App
             SettingsGridPanel.InitPanel();
             // NotifySettingsChange will be called on event suspension and resume.
             SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
-            // NotifySettingsChange will be called on setting changes.
-            SettingsManager.Current.SettingChanged += Current_SettingChanged;
-            SettingsManager.Load(this);
+			// NotifySettingsChange will be called on setting changes.
+			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+			SettingsManager.Current.SettingChanged += Current_SettingChanged;
+            SettingsManager.Load(scheduler);
             SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
             XInputMaskScanner.FileInfoCache.Load();
             InitGameToCustomizeComboBox();

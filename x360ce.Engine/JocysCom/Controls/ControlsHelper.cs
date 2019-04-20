@@ -27,10 +27,17 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (MainTaskScheduler != null)
 				return;
+			MainThreadId = Thread.CurrentThread.ManagedThreadId;
 			MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 		}
 
 		static TaskScheduler MainTaskScheduler;
+		static int MainThreadId;
+
+		public static bool InvokeRequired()
+		{
+			return MainThreadId != Thread.CurrentThread.ManagedThreadId;
+		}
 
 		/// <summary>Executes the specified action delegate asynchronously on main User Interface (UI) Thread.</summary>
 		/// <param name="action">The action delegate to execute asynchronously.</param>

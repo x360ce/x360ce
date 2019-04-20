@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -35,28 +35,28 @@ namespace JocysCom.ClassLibrary.Processes
 			//public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
 			[DllImport("user32.dll", SetLastError = true)]
-			public static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
+			internal static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
 
 			[DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-			public static extern bool SetCursorPos(int x, int y);
+			internal static extern bool SetCursorPos(int x, int y);
 
 			[DllImport("user32", CharSet = CharSet.Auto, SetLastError = true)]
-			public static extern IntPtr SendMessage(IntPtr hwnd, uint wMsg, uint wParam, uint lParam);
+			internal static extern IntPtr SendMessage(IntPtr hwnd, uint wMsg, IntPtr wParam, IntPtr lParam);
 
 			[DllImport("user32.dll", EntryPoint = "GetIconInfo", SetLastError = true)]
-			public static extern bool GetIconInfo(IntPtr hIcon, out Win32.ICONINFO piconinfo);
+			internal static extern bool GetIconInfo(IntPtr hIcon, out Win32.ICONINFO piconinfo);
 
 			[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-			public static extern bool DestroyIcon(IntPtr handle);
+			internal static extern bool DestroyIcon(IntPtr handle);
 
 			[DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-			public static extern bool GetCursorInfo(out CURSORINFO pci);
+			internal static extern bool GetCursorInfo(out CURSORINFO pci);
 
 			[DllImport("user32.dll", EntryPoint = "CopyIcon", SetLastError = true)]
-			public static extern IntPtr CopyIcon(IntPtr hIcon);
+			internal static extern IntPtr CopyIcon(IntPtr hIcon);
 
 			[DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-			public static extern IntPtr DeleteObject(IntPtr hObject);
+			internal static extern int DeleteObject(IntPtr hObject);
 		}
 
 		public static void MoveMouse(int x, int y)
@@ -108,10 +108,10 @@ namespace JocysCom.ClassLibrary.Processes
 			if (mainWindowHandle == IntPtr.Zero)
 				return;
 			uint dWord = MakeDWord((ushort)(LastX - LastRectX), (ushort)(LastY - LastRectY));
-			NativeMethods.SendMessage(mainWindowHandle, button1, MK_LBUTTON, dWord);
+			NativeMethods.SendMessage(mainWindowHandle, button1, (IntPtr)MK_LBUTTON, (IntPtr)dWord);
 			// Logical delay without blocking the current thread.
 			System.Threading.Tasks.Task.Delay(100).Wait();
-			NativeMethods.SendMessage(mainWindowHandle, button2, 0, dWord);
+			NativeMethods.SendMessage(mainWindowHandle, button2, (IntPtr)0, (IntPtr)dWord);
 
 		}
 
@@ -134,7 +134,7 @@ namespace JocysCom.ClassLibrary.Processes
 			public uint mouseData;
 			public MouseEventFlags dwFlags;
 			public uint time;
-			public IntPtr dwExtraInfo;
+			IntPtr dwExtraInfo;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]

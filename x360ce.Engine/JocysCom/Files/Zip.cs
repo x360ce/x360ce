@@ -33,9 +33,9 @@ namespace JocysCom.ClassLibrary.Files
 
 		public static void GZipFile(string fileName)
 		{
-			using (FileStream inStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+			using (var inStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
 			{
-				using (FileStream outStream = new FileStream(fileName + ".gz", FileMode.OpenOrCreate, FileAccess.Write))
+				using (var outStream = new FileStream(fileName + ".gz", FileMode.OpenOrCreate, FileAccess.Write))
 				{
 					using (Stream destination = new GZipStream(outStream, CompressionMode.Compress, true))
 					{

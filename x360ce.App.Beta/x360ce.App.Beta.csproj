@@ -539,21 +539,10 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Resources\HidGuardian\x64\devcon.exe" />
-    <EmbeddedResource Include="Resources\HidGuardian\x64\hidguardian.cat" />
-    <EmbeddedResource Include="Resources\HidGuardian\x64\HidGuardian.inf" />
-    <EmbeddedResource Include="Resources\HidGuardian\x64\HidGuardian.sys" />
-    <EmbeddedResource Include="Resources\HidGuardian\x64\HidGuardian_Setup.bat" />
-    <EmbeddedResource Include="Resources\HidGuardian\x64\WdfCoinstaller01009.dll" />
     <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x64\vigembus.cat" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x64\ViGEmBus.sys" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x64\ViGEmBus_Setup.bat" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x86\vigembus.cat" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus.sys" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus_Setup.bat" />
     <EmbeddedResource Include="Resources\x360ce.Layouts.xml.gz" />
     <EmbeddedResource Include="Resources\x360ce.Programs.xml.gz" />
+    <EmbeddedResource Include="Resources\ViGEmBus.zip" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainForm.resx">
@@ -619,19 +608,8 @@
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
-    <EmbeddedResource Include="Resources\HidGuardian\x86\devcon.exe" />
-    <EmbeddedResource Include="Resources\HidGuardian\x86\HidGuardian.inf" />
-    <EmbeddedResource Include="Resources\HidGuardian\x86\WdfCoinstaller01009.dll" />
     <EmbeddedResource Include="Resources\ViGEmClient\x64\ViGEmClient.dll" />
     <EmbeddedResource Include="Resources\ViGEmClient\x86\ViGEmClient.dll" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x64\devcon.exe" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x64\VDX.exe" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x64\ViGEmBus.inf" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x64\WdfCoinstaller01009.dll" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x86\devcon.exe" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x86\VDX.exe" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x86\ViGEmBus.inf" />
-    <EmbeddedResource Include="Resources\ViGEmBus\x86\WdfCoinstaller01009.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
@@ -641,10 +619,7 @@
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
-    <None Include="Resources\HidGuardian\ViGEm-HidGuardian.url" />
-    <EmbeddedResource Include="Resources\HidGuardian\x86\HidGuardian.sys" />
-    <EmbeddedResource Include="Resources\HidGuardian\x86\hidguardian.cat" />
-    <EmbeddedResource Include="Resources\HidGuardian\x86\HidGuardian_Setup.bat" />
+    <EmbeddedResource Include="Resources\HidGuardian.zip" />
     <None Include="Resources\SharpDX\SharpDX.xml">
       <SubType>Designer</SubType>
     </None>

@@ -75,7 +75,8 @@ namespace x360ce.App.DInput
                     do
                     {
                         p = devInfos.FirstOrDefault(x=>x.DeviceId == p.ParentDeviceId);
-                        if (p != null && string.Compare(p.HardwareIds, VirtualDriverInstaller.ViGEmBusHardwareId, true) == 0)
+						// If ViGEm hardware found then...
+						if (p != null && VirtualDriverInstaller.ViGEmBusHardwareIds.Any(x=> string.Compare(p.HardwareIds, x, true) == 0))
                         {
                             isVirtual = true;
                             break;

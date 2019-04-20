@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using JocysCom.ClassLibrary.Controls;
+using Microsoft.Win32;
+using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using System.IO;
-using x360ce.Engine;
 using x360ce.App.Forms;
-using JocysCom.ClassLibrary.Controls;
-using Microsoft.Win32;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -458,8 +457,8 @@ namespace x360ce.App.Controls
 				// Get Virtual Bus and HID Guardian status.
 				var bus = DInput.VirtualDriverInstaller.GetViGemBusDriverInfo();
 				var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
-                ControlsHelper.BeginInvoke(() =>
-                {
+				ControlsHelper.BeginInvoke(() =>
+				{
 					// Update Bus status.
 					var busStatus = bus.DriverVersion == 0
 						? "Not installed"
@@ -481,5 +480,10 @@ namespace x360ce.App.Controls
 		}
 
 		#endregion
+
+		void AboutViGEmLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			EngineHelper.OpenUrl(((Control)sender).Text);
+		}
 	}
 }

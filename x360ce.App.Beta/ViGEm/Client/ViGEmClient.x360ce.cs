@@ -8,6 +8,7 @@ using System.Security;
 using x360ce.App;
 using x360ce.App.DInput;
 using x360ce.App.Issues;
+using System.Linq;
 
 namespace Nefarius.ViGEm.Client
 {
@@ -242,7 +243,7 @@ namespace Nefarius.ViGEm.Client
                 do
                 {
                     p = DeviceDetector.GetParentDevice(Guid.Empty, JocysCom.ClassLibrary.Win32.DIGCF.DIGCF_ALLCLASSES, p.DeviceId);
-                    if (p != null && string.Compare(p.HardwareIds, VirtualDriverInstaller.ViGEmBusHardwareId, true) == 0)
+                    if (p != null && VirtualDriverInstaller.ViGEmBusHardwareIds.Any(x => string.Compare(p.HardwareIds, x, true) == 0))
                     {
                         isVirtual = true;
                         break;
