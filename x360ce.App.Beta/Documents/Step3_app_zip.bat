@@ -2,6 +2,7 @@
 SET wra="%ProgramFiles%\WinRAR\winrar.exe"
 IF NOT EXIST %wra% SET wra="%ProgramFiles(x86)%\WinRAR\winrar.exe"
 IF NOT EXIST %wra% SET wra="%ProgramW6432%\WinRAR\winrar.exe"
+IF NOT EXIST %wra% SET wra="D:\Program Files\WinRAR\winrar.exe"
 SET zip=%wra% a -ep
 :: ---------------------------------------------------------------------------
 IF NOT EXIST Files\nul MKDIR Files

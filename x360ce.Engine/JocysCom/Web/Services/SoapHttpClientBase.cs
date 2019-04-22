@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Net;
 using System.Web.Services.Protocols;
 using System.Xml;
@@ -25,6 +24,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 	/// </remarks>
 	public class SoapHttpClientBase : SoapHttpClientProtocol
 	{
+
 		// This class can generate "WebServiceBindingAttribute is required on proxy classes" error during build.
 		// Solution: Set "Generate Serialization assembly:" to "Auto" or "Off" in the [Build] tab of project properties.
 
@@ -35,6 +35,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 		/// <remarks/>
 		public SoapHttpClientBase()
 		{
+			
 			// Enable TLS 1.1, 1.2 and 1.3
 			var Tls11 = 0x0300; //   768
 			var Tls12 = 0x0C00; //  3072
@@ -103,7 +104,13 @@ namespace JocysCom.ClassLibrary.Web.Services
 			public EventHandler<SoapHttpClientEventArgs> Handler;
 		}
 
-		public void InvokeAsync(string method, EventHandler<SoapHttpClientEventArgs> completedEvent, object userState, object[] args)
+		public T Invoke<T>(string method, params object[] args)
+		{
+			var results = Invoke("Execute", args);
+			return (T)results[0];
+		}
+
+		public void InvokeAsync(string method, EventHandler<SoapHttpClientEventArgs> completedEvent, object userState, params object[] args)
 		{
 			var invokeUserState = new InvokeUserState(userState, completedEvent);
 			InvokeAsync(method, args, OnAsyncOperationCompleted, invokeUserState);
@@ -124,22 +131,28 @@ namespace JocysCom.ClassLibrary.Web.Services
 		#region Copy Reader and Writer Streams
 
 		/// <summary>Stream Spy for Request</summary>
-		public StreamSpy WriterStreamSpy;
+		public SoapHttpClientSpy WriterStreamSpy;
 		/// <summary>Stream Spy for Response</summary>
-		public StreamSpy ReaderStreamSpy;
+		public SoapHttpClientSpy ReaderStreamSpy;
+
+		/// <summary>Web Request</summary>
+		public HttpWebRequest CurrentWebRequest;
+
 
 		/// <summary>Get Writer for Request</summary>
 		protected override XmlWriter GetWriterForMessage(SoapClientMessage message, int bufferSize)
 		{
 			DisposeWriterStreamSpy();
-			return StreamSpy.GetWriterForMessage(message, bufferSize, base.RequestEncoding, out WriterStreamSpy);
+			var writer = SoapHttpClientSpy.GetWriterForMessage(message, bufferSize, base.RequestEncoding, CurrentWebRequest, out WriterStreamSpy);
+			return writer;
 		}
 
 		/// <summary>Get Reader for Response</summary>
 		protected override XmlReader GetReaderForMessage(SoapClientMessage message, int bufferSize)
 		{
 			DisposeReaderStreamSpy();
-			return StreamSpy.GetReaderForMessage(message, bufferSize, out ReaderStreamSpy);
+			var reader = SoapHttpClientSpy.GetReaderForMessage(message, bufferSize, CurrentWebRequest, out ReaderStreamSpy);
+			return reader;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -180,11 +193,12 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		protected override WebRequest GetWebRequest(Uri uri)
 		{
-			var request = (HttpWebRequest)base.GetWebRequest(uri);
+	
+			CurrentWebRequest = (HttpWebRequest)base.GetWebRequest(uri);
 			// Bind to specific local IP.
-			request.ServicePoint.BindIPEndPointDelegate = new BindIPEndPoint(BindIPEndPointCallback);
-			InitPreAuthenticate(request);
-			return request;
+			CurrentWebRequest.ServicePoint.BindIPEndPointDelegate = new BindIPEndPoint(BindIPEndPointCallback);
+			InitPreAuthenticate(CurrentWebRequest);
+			return CurrentWebRequest;
 		}
 
 		private IPEndPoint BindIPEndPointCallback(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
@@ -262,6 +276,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 		//}
 
 		//#endregion
+
 
 	}
 

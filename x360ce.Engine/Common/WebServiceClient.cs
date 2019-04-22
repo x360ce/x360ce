@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Web.Services;
 using System.Web.Services.Protocols;
-using System.ComponentModel;
 using System.Web.Services.Description;
 using x360ce.Engine.Data;
 using System.Collections.Generic;
-using System.Net;
 using JocysCom.ClassLibrary.Web.Services;
 
 namespace x360ce.Engine
@@ -26,7 +24,7 @@ namespace x360ce.Engine
 
 		public void SignInAsync(string username, string password, object userState = null)
 		{
-			InvokeAsync("SignIn", SignInCompleted, userState, new object[] { username, password });
+			InvokeAsync("SignIn", SignInCompleted, userState, username, password);
 		}
 
 		[SoapDocumentMethod(ns + "SignIn",
@@ -34,8 +32,7 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public CloudMessage SignIn(string username, string password)
 		{
-			object[] results = Invoke("SignIn", new object[] { username, password });
-			return (CloudMessage)results[0];
+			return Invoke<CloudMessage>("SignIn", username, password);
 		}
 
 		#endregion
@@ -49,13 +46,12 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SearchResult SearchSettings(SearchParameter[] args)
 		{
-			object[] results = Invoke("SearchSettings", new object[] { args });
-			return (SearchResult)results[0];
+			return Invoke<SearchResult>("SearchSettings", args);
 		}
 
 		public void SearchSettingsAsync(SearchParameter[] args, object userState = null)
 		{
-			InvokeAsync("SearchSettings", SearchSettingsCompleted, userState, new object[] { args });
+			InvokeAsync("SearchSettings", SearchSettingsCompleted, userState, args);
 		}
 
 		#endregion
@@ -69,13 +65,12 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public string SaveSetting(UserSetting s, PadSetting ps)
 		{
-			object[] results = Invoke("SaveSetting", new object[] { s, ps });
-			return (string)results[0];
+			return Invoke<string>("SaveSetting", s, ps);
 		}
 
 		public void SaveSettingAsync(UserSetting s, PadSetting ps, object userState = null)
 		{
-			InvokeAsync("SaveSetting", SaveSettingCompleted, userState, new object[] { s, ps });
+			InvokeAsync("SaveSetting", SaveSettingCompleted, userState, s, ps);
 		}
 
 		#endregion
@@ -89,8 +84,7 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public string DeleteSetting(UserSetting s)
 		{
-			object[] results = Invoke("DeleteSetting", new object[] { s });
-			return (string)results[0];
+			return Invoke<string>("DeleteSetting", s);
 		}
 
 		public void DeleteSettingAsync(UserSetting s, object userState = null)
@@ -109,13 +103,12 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SearchResult LoadSetting(System.Guid[] checksum)
 		{
-			object[] results = Invoke("LoadSetting", new object[] { checksum });
-			return (SearchResult)results[0];
+			return Invoke<SearchResult>("LoadSetting", checksum);
 		}
 
 		public void LoadSettingAsync(System.Guid[] checksum, object userState = null)
 		{
-			InvokeAsync("LoadSetting", LoadSettingCompleted, userState, new object[] { checksum });
+			InvokeAsync("LoadSetting", LoadSettingCompleted, userState, checksum);
 		}
 
 		#endregion
@@ -129,13 +122,12 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public List<Program> GetPrograms(EnabledState isEnabled, int minInstanceCount)
 		{
-			object[] results = Invoke("GetPrograms", new object[] { isEnabled, minInstanceCount });
-			return (List<Program>)results[0];
+			return Invoke<List<Program>>("GetPrograms", isEnabled, minInstanceCount);
 		}
 
 		public void GetProgramsAsync(EnabledState isEnabled, int minInstanceCount, object userState = null)
 		{
-			InvokeAsync("GetPrograms", GetProgramsCompleted, userState, new object[] { isEnabled, minInstanceCount });
+			InvokeAsync("GetPrograms", GetProgramsCompleted, userState, isEnabled, minInstanceCount);
 		}
 
 		#endregion
@@ -149,13 +141,12 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public List<Vendor> GetVendors()
 		{
-			object[] results = Invoke("GetVendors", new object[] { });
-			return (List<Vendor>)results[0];
+			return Invoke<List<Vendor>>("GetVendors");
 		}
 
 		public void GetVendorssAsync(object userState = null)
 		{
-			InvokeAsync("GetVendors", GetVendorsCompleted, userState, new object[] { });
+			InvokeAsync("GetVendors", GetVendorsCompleted, userState);
 		}
 
 		#endregion
@@ -169,13 +160,12 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public SettingsData GetSettingsData()
 		{
-			object[] results = Invoke("GetSettingsData", new object[] { });
-			return (SettingsData)results[0];
+			return Invoke<SettingsData>("GetSettingsData");
 		}
 
 		public void GetSettingsDatasAsync(object userState = null)
 		{
-			InvokeAsync("GetSettingsData", GetSettingsDataCompleted, userState, new object[] { });
+			InvokeAsync("GetSettingsData", GetSettingsDataCompleted, userState);
 		}
 
 		#endregion
@@ -189,13 +179,12 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public CloudMessage SignOut()
 		{
-			object[] results = Invoke("SignOut", new object[] { });
-			return (CloudMessage)results[0];
+			return Invoke<CloudMessage>("SignOut");
 		}
 
 		public void SignOutsAsync(object userState = null)
 		{
-			InvokeAsync("SignOut", SignOutCompleted, userState, new object[] { });
+			InvokeAsync("SignOut", SignOutCompleted, userState);
 		}
 
 		#endregion
@@ -209,13 +198,12 @@ namespace x360ce.Engine
 			Use = SoapBindingUse.Literal, ParameterStyle = SoapParameterStyle.Wrapped)]
 		public CloudMessage Execute(CloudMessage command)
 		{
-			object[] results = Invoke("Execute", new object[] { command });
-			return (CloudMessage)results[0];
+			return Invoke<CloudMessage>("Execute", command);
 		}
 
 		public void ExecuteAsync(CloudMessage command, object userState = null)
 		{
-			InvokeAsync("Execute", ExecuteCompleted, userState, new object[] { command });
+			InvokeAsync("Execute", ExecuteCompleted, userState, command);
 		}
 
 		#endregion

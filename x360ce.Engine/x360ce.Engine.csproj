@@ -323,7 +323,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="JocysCom\Web\Services\SoapHttpClientEventArgs.cs" />
-    <Compile Include="JocysCom\Web\Services\StreamSpy.cs" />
+    <Compile Include="JocysCom\Web\Services\SoapHttpClientSpy.cs" />
     <Compile Include="JocysCom\Web\WebControlsHelper.cs" />
     <Compile Include="JocysCom\Win32\ABE.cs" />
     <Compile Include="JocysCom\Win32\ABM.cs" />
