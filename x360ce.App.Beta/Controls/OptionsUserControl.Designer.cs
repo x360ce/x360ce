@@ -105,12 +105,12 @@
 			this.AllowRemote4CheckBox = new System.Windows.Forms.CheckBox();
 			this.RemotePortLabel = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
-			this.RemotePasswordLabel = new System.Windows.Forms.Label();
 			this.AllowRemote3CheckBox = new System.Windows.Forms.CheckBox();
 			this.RemotePortNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.RemotePasswordTextBox = new System.Windows.Forms.TextBox();
 			this.AllowRemote2CheckBox = new System.Windows.Forms.CheckBox();
 			this.AllowRemote1CheckBox = new System.Windows.Forms.CheckBox();
+			this.RemotePasswordLabel = new System.Windows.Forms.Label();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -934,8 +934,8 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this.AllowRemote4CheckBox);
 			this.groupBox1.Controls.Add(this.RemotePortLabel);
-			this.groupBox1.Controls.Add(this.label4);
 			this.groupBox1.Controls.Add(this.RemotePasswordLabel);
+			this.groupBox1.Controls.Add(this.label4);
 			this.groupBox1.Controls.Add(this.AllowRemote3CheckBox);
 			this.groupBox1.Controls.Add(this.RemotePortNumericUpDown);
 			this.groupBox1.Controls.Add(this.RemotePasswordTextBox);
@@ -977,16 +977,6 @@
 			this.label4.Size = new System.Drawing.Size(68, 13);
 			this.label4.TabIndex = 32;
 			this.label4.Text = "Allow Control";
-			// 
-			// RemotePasswordLabel
-			// 
-			this.RemotePasswordLabel.AutoSize = true;
-			this.RemotePasswordLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.RemotePasswordLabel.Location = new System.Drawing.Point(6, 45);
-			this.RemotePasswordLabel.Name = "RemotePasswordLabel";
-			this.RemotePasswordLabel.Size = new System.Drawing.Size(87, 13);
-			this.RemotePasswordLabel.TabIndex = 32;
-			this.RemotePasswordLabel.Text = "Server Password";
 			// 
 			// AllowRemote3CheckBox
 			// 
@@ -1048,6 +1038,16 @@
 			this.AllowRemote1CheckBox.TabIndex = 30;
 			this.AllowRemote1CheckBox.Text = "Controller 1";
 			this.AllowRemote1CheckBox.UseVisualStyleBackColor = true;
+			// 
+			// RemotePasswordLabel
+			// 
+			this.RemotePasswordLabel.AutoSize = true;
+			this.RemotePasswordLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.RemotePasswordLabel.Location = new System.Drawing.Point(6, 45);
+			this.RemotePasswordLabel.Name = "RemotePasswordLabel";
+			this.RemotePasswordLabel.Size = new System.Drawing.Size(93, 13);
+			this.RemotePasswordLabel.TabIndex = 32;
+			this.RemotePasswordLabel.Text = "Remote Password";
 			// 
 			// OptionsUserControl
 			// 
@@ -1180,8 +1180,8 @@
 		public System.Windows.Forms.CheckBox AllowRemote4CheckBox;
 		private System.Windows.Forms.TextBox RemotePasswordTextBox;
 		private System.Windows.Forms.Label RemotePortLabel;
-		private System.Windows.Forms.Label RemotePasswordLabel;
 		public System.Windows.Forms.NumericUpDown RemotePortNumericUpDown;
 		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label RemotePasswordLabel;
 	}
 }

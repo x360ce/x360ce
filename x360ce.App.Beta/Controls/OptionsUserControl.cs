@@ -266,7 +266,7 @@ namespace x360ce.App.Controls
 			AllowRemote2CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller2);
 			AllowRemote3CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller3);
 			AllowRemote4CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller4);
-			RemotePasswordLabel.Text = RemotePasswordTextBox.Text;
+			RemotePasswordTextBox.Text = o.RemotePassword;
 			if (o.RemotePort >= RemotePortNumericUpDown.Minimum && o.RemotePort <= RemotePortNumericUpDown.Maximum)
 				RemotePortNumericUpDown.Value = o.RemotePort;
 
