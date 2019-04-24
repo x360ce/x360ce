@@ -241,7 +241,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 					var bytes = System.Text.Encoding.UTF8.GetBytes(
 					credentials.UserName + ":" +
 					credentials.Password);
-					request.Headers["Authorization"] = "Basic " + Convert.ToBase64String(bytes);
+					request.Headers["Authorization"] = "Basic " + System.Convert.ToBase64String(bytes);
 				}
 				else
 				{

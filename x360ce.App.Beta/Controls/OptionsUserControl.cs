@@ -4,6 +4,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Windows.Forms;
 using x360ce.App.Forms;
 using x360ce.Engine;
@@ -91,52 +92,46 @@ namespace x360ce.App.Controls
 			var o = SettingsManager.Options;
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			// Stored inside XML now.
-			SettingsManager.AddMap<Options>(x => x.InternetDatabaseUrl, InternetDatabaseUrlComboBox);
-			SettingsManager.AddMap<Options>(x => x.PollingRate, PollingRateComboBox);
-			SettingsManager.AddMap<Options>(x => x.InternetFeatures, InternetCheckBox);
-			SettingsManager.AddMap<Options>(x => x.InternetAutoLoad, InternetAutoLoadCheckBox);
-			SettingsManager.AddMap<Options>(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
-			SettingsManager.AddMap<Options>(x => x.GameScanLocations, GameScanLocationsListBox);
-			SettingsManager.AddMap<Options>(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
-			SettingsManager.AddMap<Options>(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
-			SettingsManager.AddMap<Options>(x => x.StartWithWindows, StartWithWindowsCheckBox);
-			SettingsManager.AddMap<Options>(x => x.StartWithWindowsState, StartWithWindowsStateComboBox);
-			//SettingsManager.AddMap<Options>(x => x.MinimizeToTray, MinimizeToTrayCheckBox);
-			// Load settings into control.
-			// This will trigger Options_PropertyChanged event handler and update controls.
-			o.ReportPropertyChanged(x => x.InternetFeatures);
-			o.ReportPropertyChanged(x => x.InternetAutoLoad);
-			o.ReportPropertyChanged(x => x.InternetAutoSave);
-			//o.ReportPropertyChanged(x => x.GameScanLocations);
-			o.ReportPropertyChanged(x => x.AlwaysOnTop);
-			o.ReportPropertyChanged(x => x.AllowOnlyOneCopy);
-			// Monitor control changes.
-
-			InternetCheckBox.CheckedChanged += Control_Changed;
-			InternetAutoLoadCheckBox.CheckedChanged += Control_Changed;
-			InternetAutoSaveCheckBox.CheckedChanged += Control_Changed;
-			AlwaysOnTopCheckBox.CheckedChanged += Control_Changed;
-			AllowOnlyOneCopyCheckBox.CheckedChanged += Control_Changed;
-			GameScanLocationsListBox.DataSource = o.GameScanLocations;
-			// Start with windows.
-			o.ReportPropertyChanged(x => x.StartWithWindows);
-			StartWithWindowsCheckBox.CheckedChanged += Control_Changed;
-			// Update start with windows state.
-			StartWithWindowsStateComboBox.DataSource = Enum.GetValues(typeof(FormWindowState));
-			o.ReportPropertyChanged(x => x.StartWithWindowsState);
-			StartWithWindowsStateComboBox.SelectedIndexChanged += Control_Changed;
-			// Set ComboBox and attach event last, in order to prevent changing of original value.
-			InternetDatabaseUrlComboBox.DataSource = o.InternetDatabaseUrls;
-			o.ReportPropertyChanged(x => x.InternetDatabaseUrl);
-			InternetDatabaseUrlComboBox.SelectedIndexChanged += Control_Changed;
-			// Update pooling rate.
-			PollingRateComboBox.DataSource = (UpdateFrequency[])Enum.GetValues(typeof(UpdateFrequency));
-			o.ReportPropertyChanged(x => x.PollingRate);
-			PollingRateComboBox.SelectedIndexChanged += Control_Changed;
+			LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
+			LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
+			LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
+			LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
+			LoadAndMonitor(x => x.InternetDatabaseUrl, InternetDatabaseUrlComboBox, o.InternetDatabaseUrls);
+			LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
+			LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
+			LoadAndMonitor(x => x.InternetAutoLoad, InternetAutoLoadCheckBox);
+			LoadAndMonitor(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
+			LoadAndMonitor(x => x.InternetFeatures, InternetCheckBox);
+			LoadAndMonitor(x => x.CheckForUpdates, CheckForUpdatesCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
 			SettingsManager.OptionsData.Saving += OptionsData_Saving;
+		}
+
+		void LoadAndMonitor(Expression<Func<Options, object>> setting, Control control, object dataSource = null)
+		{
+			var o = SettingsManager.Options;
+			SettingsManager.AddMap(setting, control);
+			if (dataSource != null)
+			{
+				// Set ComboBox and attach event last, in order to prevent changing of original value.
+				var lc = control as ListControl;
+				if (lc != null)
+					lc.DataSource = dataSource;
+				var lb = control as ListBox;
+				if (lb != null)
+					lb.DataSource = dataSource;
+			}
+			// Load settings into control.
+			o.ReportPropertyChanged(setting);
+			// Monitor control changes.
+			var chb = control as CheckBox;
+			if (chb != null)
+				chb.CheckedChanged += Control_Changed;
+			var cbx = control as ComboBox;
+			if (cbx != null)
+				cbx.SelectedIndexChanged += Control_Changed;
 		}
 
 		private void Control_Changed(object sender, EventArgs e)
@@ -266,6 +261,15 @@ namespace x360ce.App.Controls
 			IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
 			ExcludeSupplementalDevicesCheckBox.Checked = o.ExcludeSupplementalDevices;
 			ExcludeVirtualDevicesCheckBox.Checked = o.ExcludeVirtualDevices;
+			// Remote Options.
+			AllowRemote1CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller1);
+			AllowRemote2CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller2);
+			AllowRemote3CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller3);
+			AllowRemote4CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller4);
+			RemotePasswordLabel.Text = RemotePasswordTextBox.Text;
+			if (o.RemotePort >= RemotePortNumericUpDown.Minimum && o.RemotePort <= RemotePortNumericUpDown.Maximum)
+				RemotePortNumericUpDown.Value = o.RemotePort;
+
 		}
 
 		private void OptionsData_Saving(object sender, EventArgs e)
@@ -280,6 +284,15 @@ namespace x360ce.App.Controls
 			o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
 			o.ExcludeSupplementalDevices = ExcludeSupplementalDevicesCheckBox.Checked;
 			o.ExcludeVirtualDevices = ExcludeVirtualDevicesCheckBox.Checked;
+			// Remote Options.
+			var remoteControllers = MapToMask.None;
+			remoteControllers |= AllowRemote1CheckBox.Checked ? MapToMask.Controller1 : MapToMask.None;
+			remoteControllers |= AllowRemote2CheckBox.Checked ? MapToMask.Controller2 : MapToMask.None;
+			remoteControllers |= AllowRemote3CheckBox.Checked ? MapToMask.Controller3 : MapToMask.None;
+			remoteControllers |= AllowRemote4CheckBox.Checked ? MapToMask.Controller4 : MapToMask.None;
+			o.RemoteControllers = remoteControllers;
+			o.RemotePassword = RemotePasswordTextBox.Text;
+			o.RemotePort = (int)RemotePortNumericUpDown.Value;
 		}
 
 		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
@@ -386,12 +399,6 @@ namespace x360ce.App.Controls
 		private void ShowDevicesTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			MainForm.Current.ShowDevicesTab(ShowDevicesTabCheckBox.Checked);
-		}
-
-		private void CheckForUpdatesCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			var o = SettingsManager.Options;
-			o.CheckForUpdates = CheckForUpdatesCheckBox.Checked;
 		}
 
 		private void CheckUpdatesButton_Click(object sender, EventArgs e)

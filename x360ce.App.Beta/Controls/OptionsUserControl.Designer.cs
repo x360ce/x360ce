@@ -66,6 +66,7 @@
 			this.OnlineAccountGroupBox = new System.Windows.Forms.GroupBox();
 			this.PasswordTextBox = new System.Windows.Forms.TextBox();
 			this.ResetButton = new System.Windows.Forms.Button();
+			this.OpenSettingsFolderButton = new System.Windows.Forms.Button();
 			this.CreateButton = new System.Windows.Forms.Button();
 			this.LoginButton = new System.Windows.Forms.Button();
 			this.UsernameTextBox = new System.Windows.Forms.TextBox();
@@ -86,8 +87,8 @@
 			this.UpdateOptionsGroupBox = new System.Windows.Forms.GroupBox();
 			this.CheckForUpdatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.CheckUpdatesButton = new System.Windows.Forms.Button();
-			this.OpenSettingsFolderButton = new System.Windows.Forms.Button();
 			this.VirtualDeviceGroupBox = new System.Windows.Forms.GroupBox();
+			this.AboutViGEmLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.HidGuardianLabel = new System.Windows.Forms.Label();
 			this.ViGEmBusLabel = new System.Windows.Forms.Label();
 			this.PollingRateLabel = new System.Windows.Forms.Label();
@@ -100,7 +101,16 @@
 			this.ViGEmBusInstallButton = new System.Windows.Forms.Button();
 			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
 			this.DeveloperToolsButton = new System.Windows.Forms.Button();
-			this.AboutViGEmLinkLabel = new System.Windows.Forms.LinkLabel();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.AllowRemote4CheckBox = new System.Windows.Forms.CheckBox();
+			this.RemotePortLabel = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
+			this.RemotePasswordLabel = new System.Windows.Forms.Label();
+			this.AllowRemote3CheckBox = new System.Windows.Forms.CheckBox();
+			this.RemotePortNumericUpDown = new System.Windows.Forms.NumericUpDown();
+			this.RemotePasswordTextBox = new System.Windows.Forms.TextBox();
+			this.AllowRemote2CheckBox = new System.Windows.Forms.CheckBox();
+			this.AllowRemote1CheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -114,6 +124,8 @@
 			((System.ComponentModel.ISupportInitialize)(this.MinimumInstanceCountNumericUpDown)).BeginInit();
 			this.UpdateOptionsGroupBox.SuspendLayout();
 			this.VirtualDeviceGroupBox.SuspendLayout();
+			this.groupBox1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.RemotePortNumericUpDown)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -125,9 +137,9 @@
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 124);
+			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 115);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
-			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(254, 136);
+			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(254, 117);
 			this.TestingAndLoggingGroupBox.TabIndex = 30;
 			this.TestingAndLoggingGroupBox.TabStop = false;
 			this.TestingAndLoggingGroupBox.Text = "Testing and Logging";
@@ -218,7 +230,7 @@
 			this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
 			this.OperationGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.OperationGroupBox.Name = "OperationGroupBox";
-			this.OperationGroupBox.Size = new System.Drawing.Size(254, 115);
+			this.OperationGroupBox.Size = new System.Drawing.Size(254, 106);
 			this.OperationGroupBox.TabIndex = 31;
 			this.OperationGroupBox.TabStop = false;
 			this.OperationGroupBox.Text = "Operation";
@@ -287,7 +299,7 @@
 			this.InternetGroupBox.Controls.Add(this.InternetCheckBox);
 			this.InternetGroupBox.Location = new System.Drawing.Point(263, 3);
 			this.InternetGroupBox.Name = "InternetGroupBox";
-			this.InternetGroupBox.Size = new System.Drawing.Size(506, 87);
+			this.InternetGroupBox.Size = new System.Drawing.Size(506, 74);
 			this.InternetGroupBox.TabIndex = 32;
 			this.InternetGroupBox.TabStop = false;
 			this.InternetGroupBox.Text = "Internet";
@@ -310,19 +322,19 @@
 			this.InternetDatabaseUrlComboBox.Items.AddRange(new object[] {
             "http://www.x360ce.com/webservices/x360ce.asmx",
             "http://localhost:20360/webservices/x360ce.asmx"});
-			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(6, 57);
+			this.InternetDatabaseUrlComboBox.Location = new System.Drawing.Point(109, 44);
 			this.InternetDatabaseUrlComboBox.Name = "InternetDatabaseUrlComboBox";
-			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(494, 21);
+			this.InternetDatabaseUrlComboBox.Size = new System.Drawing.Size(391, 21);
 			this.InternetDatabaseUrlComboBox.TabIndex = 14;
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(6, 41);
+			this.label1.Location = new System.Drawing.Point(6, 47);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(97, 13);
+			this.label1.Size = new System.Drawing.Size(94, 13);
 			this.label1.TabIndex = 1;
-			this.label1.Text = "Web Service URL:";
+			this.label1.Text = "Web Service URL";
 			// 
 			// InternetAutoLoadCheckBox
 			// 
@@ -346,14 +358,15 @@
 			// 
 			// ProgramScanLocationsTabControl
 			// 
-			this.ProgramScanLocationsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.ProgramScanLocationsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProgramScanLocationsTabControl.Controls.Add(this.GameScanLocationsTabPage);
 			this.ProgramScanLocationsTabControl.ItemSize = new System.Drawing.Size(116, 24);
-			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(263, 96);
+			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(263, 83);
 			this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
 			this.ProgramScanLocationsTabControl.SelectedIndex = 0;
-			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(507, 136);
+			this.ProgramScanLocationsTabControl.Size = new System.Drawing.Size(507, 166);
 			this.ProgramScanLocationsTabControl.TabIndex = 34;
 			// 
 			// GameScanLocationsTabPage
@@ -362,7 +375,7 @@
 			this.GameScanLocationsTabPage.Controls.Add(this.LocationsToolStrip);
 			this.GameScanLocationsTabPage.Location = new System.Drawing.Point(4, 28);
 			this.GameScanLocationsTabPage.Name = "GameScanLocationsTabPage";
-			this.GameScanLocationsTabPage.Size = new System.Drawing.Size(499, 104);
+			this.GameScanLocationsTabPage.Size = new System.Drawing.Size(499, 134);
 			this.GameScanLocationsTabPage.TabIndex = 0;
 			this.GameScanLocationsTabPage.Text = "Game Scan Locations";
 			this.GameScanLocationsTabPage.UseVisualStyleBackColor = true;
@@ -374,7 +387,7 @@
 			this.GameScanLocationsListBox.FormattingEnabled = true;
 			this.GameScanLocationsListBox.Location = new System.Drawing.Point(0, 25);
 			this.GameScanLocationsListBox.Name = "GameScanLocationsListBox";
-			this.GameScanLocationsListBox.Size = new System.Drawing.Size(499, 79);
+			this.GameScanLocationsListBox.Size = new System.Drawing.Size(499, 109);
 			this.GameScanLocationsListBox.Sorted = true;
 			this.GameScanLocationsListBox.TabIndex = 0;
 			this.GameScanLocationsListBox.SelectedIndexChanged += new System.EventHandler(this.ProgramScanLocationsListBox_SelectedIndexChanged);
@@ -428,7 +441,7 @@
 			this.ConfigurationGroupBox.Controls.Add(this.IncludeProductsCheckBox);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
-			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 341);
+			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 312);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
 			this.ConfigurationGroupBox.Size = new System.Drawing.Size(254, 47);
 			this.ConfigurationGroupBox.TabIndex = 31;
@@ -466,7 +479,7 @@
 			// 
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
-			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 266);
+			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(0, 238);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
 			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(254, 69);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
@@ -495,10 +508,11 @@
 			// 
 			// OnlineAccountGroupBox
 			// 
-			this.OnlineAccountGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.OnlineAccountGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.OnlineAccountGroupBox.Controls.Add(this.PasswordTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.ResetButton);
+			this.OnlineAccountGroupBox.Controls.Add(this.OpenSettingsFolderButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.CreateButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.LoginButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.UsernameTextBox);
@@ -512,7 +526,7 @@
 			this.OnlineAccountGroupBox.Controls.Add(this.ProfilePathLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.label2);
 			this.OnlineAccountGroupBox.Controls.Add(this.ComputerDiskLabel);
-			this.OnlineAccountGroupBox.Location = new System.Drawing.Point(263, 238);
+			this.OnlineAccountGroupBox.Location = new System.Drawing.Point(263, 255);
 			this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
 			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(507, 182);
 			this.OnlineAccountGroupBox.TabIndex = 31;
@@ -528,13 +542,26 @@
 			// 
 			// ResetButton
 			// 
-			this.ResetButton.Location = new System.Drawing.Point(423, 147);
+			this.ResetButton.Location = new System.Drawing.Point(426, 147);
 			this.ResetButton.Name = "ResetButton";
 			this.ResetButton.Size = new System.Drawing.Size(75, 23);
 			this.ResetButton.TabIndex = 45;
 			this.ResetButton.Text = "Reset...";
 			this.ResetButton.UseVisualStyleBackColor = true;
 			this.ResetButton.Click += new System.EventHandler(this.ResetButton_Click);
+			// 
+			// OpenSettingsFolderButton
+			// 
+			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
+			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(426, 69);
+			this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
+			this.OpenSettingsFolderButton.Size = new System.Drawing.Size(75, 23);
+			this.OpenSettingsFolderButton.TabIndex = 69;
+			this.OpenSettingsFolderButton.Text = "Open";
+			this.OpenSettingsFolderButton.UseVisualStyleBackColor = true;
+			this.OpenSettingsFolderButton.Click += new System.EventHandler(this.OpenSettingsFolderButton_Click);
 			// 
 			// CreateButton
 			// 
@@ -570,7 +597,7 @@
 			this.ProfilePathTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.ProfilePathTextBox.Location = new System.Drawing.Point(106, 71);
 			this.ProfilePathTextBox.Name = "ProfilePathTextBox";
-			this.ProfilePathTextBox.Size = new System.Drawing.Size(394, 20);
+			this.ProfilePathTextBox.Size = new System.Drawing.Size(314, 20);
 			this.ProfilePathTextBox.TabIndex = 40;
 			// 
 			// ComputerDiskTextBox
@@ -605,9 +632,9 @@
 			this.PasswordLabel.BackColor = System.Drawing.SystemColors.Control;
 			this.PasswordLabel.Location = new System.Drawing.Point(5, 152);
 			this.PasswordLabel.Name = "PasswordLabel";
-			this.PasswordLabel.Size = new System.Drawing.Size(56, 13);
+			this.PasswordLabel.Size = new System.Drawing.Size(53, 13);
 			this.PasswordLabel.TabIndex = 31;
-			this.PasswordLabel.Text = "Password:";
+			this.PasswordLabel.Text = "Password";
 			// 
 			// ProfileIdLabel
 			// 
@@ -615,9 +642,9 @@
 			this.ProfileIdLabel.BackColor = System.Drawing.SystemColors.Control;
 			this.ProfileIdLabel.Location = new System.Drawing.Point(6, 100);
 			this.ProfileIdLabel.Name = "ProfileIdLabel";
-			this.ProfileIdLabel.Size = new System.Drawing.Size(53, 13);
+			this.ProfileIdLabel.Size = new System.Drawing.Size(50, 13);
 			this.ProfileIdLabel.TabIndex = 31;
-			this.ProfileIdLabel.Text = "Profile ID:";
+			this.ProfileIdLabel.Text = "Profile ID";
 			// 
 			// UsernameLabel
 			// 
@@ -625,9 +652,9 @@
 			this.UsernameLabel.BackColor = System.Drawing.SystemColors.Control;
 			this.UsernameLabel.Location = new System.Drawing.Point(5, 126);
 			this.UsernameLabel.Name = "UsernameLabel";
-			this.UsernameLabel.Size = new System.Drawing.Size(95, 13);
+			this.UsernameLabel.Size = new System.Drawing.Size(92, 13);
 			this.UsernameLabel.TabIndex = 31;
-			this.UsernameLabel.Text = "Username (E-mail):";
+			this.UsernameLabel.Text = "Username (E-mail)";
 			// 
 			// ProfilePathLabel
 			// 
@@ -635,9 +662,9 @@
 			this.ProfilePathLabel.BackColor = System.Drawing.SystemColors.Control;
 			this.ProfilePathLabel.Location = new System.Drawing.Point(6, 74);
 			this.ProfilePathLabel.Name = "ProfilePathLabel";
-			this.ProfilePathLabel.Size = new System.Drawing.Size(64, 13);
+			this.ProfilePathLabel.Size = new System.Drawing.Size(61, 13);
 			this.ProfilePathLabel.TabIndex = 32;
-			this.ProfilePathLabel.Text = "Profile Path:";
+			this.ProfilePathLabel.Text = "Profile Path";
 			// 
 			// label2
 			// 
@@ -645,9 +672,9 @@
 			this.label2.BackColor = System.Drawing.SystemColors.Control;
 			this.label2.Location = new System.Drawing.Point(6, 48);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(69, 13);
+			this.label2.Size = new System.Drawing.Size(66, 13);
 			this.label2.TabIndex = 31;
-			this.label2.Text = "Computer ID:";
+			this.label2.Text = "Computer ID";
 			// 
 			// ComputerDiskLabel
 			// 
@@ -655,21 +682,21 @@
 			this.ComputerDiskLabel.BackColor = System.Drawing.SystemColors.Control;
 			this.ComputerDiskLabel.Location = new System.Drawing.Point(6, 22);
 			this.ComputerDiskLabel.Name = "ComputerDiskLabel";
-			this.ComputerDiskLabel.Size = new System.Drawing.Size(79, 13);
+			this.ComputerDiskLabel.Size = new System.Drawing.Size(76, 13);
 			this.ComputerDiskLabel.TabIndex = 32;
-			this.ComputerDiskLabel.Text = "Computer Disk:";
+			this.ComputerDiskLabel.Text = "Computer Disk";
 			// 
 			// GamesGroupBox
 			// 
 			this.GamesGroupBox.Controls.Add(this.IncludeEnabledCheckBox);
 			this.GamesGroupBox.Controls.Add(this.MinimumInstanceCountLabel);
 			this.GamesGroupBox.Controls.Add(this.MinimumInstanceCountNumericUpDown);
-			this.GamesGroupBox.Location = new System.Drawing.Point(3, 394);
+			this.GamesGroupBox.Location = new System.Drawing.Point(3, 365);
 			this.GamesGroupBox.Name = "GamesGroupBox";
 			this.GamesGroupBox.Size = new System.Drawing.Size(254, 69);
 			this.GamesGroupBox.TabIndex = 31;
 			this.GamesGroupBox.TabStop = false;
-			this.GamesGroupBox.Text = "Games / Cloud";
+			this.GamesGroupBox.Text = "Games / Cloud - Default Settings";
 			// 
 			// IncludeEnabledCheckBox
 			// 
@@ -690,9 +717,9 @@
 			this.MinimumInstanceCountLabel.BackColor = System.Drawing.SystemColors.Control;
 			this.MinimumInstanceCountLabel.Location = new System.Drawing.Point(6, 16);
 			this.MinimumInstanceCountLabel.Name = "MinimumInstanceCountLabel";
-			this.MinimumInstanceCountLabel.Size = new System.Drawing.Size(178, 13);
+			this.MinimumInstanceCountLabel.Size = new System.Drawing.Size(175, 13);
 			this.MinimumInstanceCountLabel.TabIndex = 32;
-			this.MinimumInstanceCountLabel.Text = "Default Settings Minimum Instances:";
+			this.MinimumInstanceCountLabel.Text = "Default Settings Minimum Instances";
 			// 
 			// MinimumInstanceCountNumericUpDown
 			// 
@@ -711,7 +738,7 @@
 			// 
 			this.UpdateOptionsGroupBox.Controls.Add(this.CheckForUpdatesCheckBox);
 			this.UpdateOptionsGroupBox.Controls.Add(this.CheckUpdatesButton);
-			this.UpdateOptionsGroupBox.Location = new System.Drawing.Point(3, 469);
+			this.UpdateOptionsGroupBox.Location = new System.Drawing.Point(3, 440);
 			this.UpdateOptionsGroupBox.Name = "UpdateOptionsGroupBox";
 			this.UpdateOptionsGroupBox.Size = new System.Drawing.Size(254, 54);
 			this.UpdateOptionsGroupBox.TabIndex = 31;
@@ -721,16 +748,12 @@
 			// CheckForUpdatesCheckBox
 			// 
 			this.CheckForUpdatesCheckBox.AutoSize = true;
-			this.CheckForUpdatesCheckBox.Checked = true;
-			this.CheckForUpdatesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.CheckForUpdatesCheckBox.Location = new System.Drawing.Point(6, 23);
 			this.CheckForUpdatesCheckBox.Name = "CheckForUpdatesCheckBox";
 			this.CheckForUpdatesCheckBox.Size = new System.Drawing.Size(163, 17);
 			this.CheckForUpdatesCheckBox.TabIndex = 30;
 			this.CheckForUpdatesCheckBox.Text = "Check for updates on startup";
-			this.CheckForUpdatesCheckBox.ThreeState = true;
 			this.CheckForUpdatesCheckBox.UseVisualStyleBackColor = true;
-			this.CheckForUpdatesCheckBox.CheckedChanged += new System.EventHandler(this.CheckForUpdatesCheckBox_CheckedChanged);
 			// 
 			// CheckUpdatesButton
 			// 
@@ -743,21 +766,10 @@
 			this.CheckUpdatesButton.UseVisualStyleBackColor = true;
 			this.CheckUpdatesButton.Click += new System.EventHandler(this.CheckUpdatesButton_Click);
 			// 
-			// OpenSettingsFolderButton
-			// 
-			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
-			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(607, 539);
-			this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
-			this.OpenSettingsFolderButton.Size = new System.Drawing.Size(163, 23);
-			this.OpenSettingsFolderButton.TabIndex = 69;
-			this.OpenSettingsFolderButton.Text = "Open Settings Folder...";
-			this.OpenSettingsFolderButton.UseVisualStyleBackColor = true;
-			this.OpenSettingsFolderButton.Click += new System.EventHandler(this.OpenSettingsFolderButton_Click);
-			// 
 			// VirtualDeviceGroupBox
 			// 
+			this.VirtualDeviceGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.VirtualDeviceGroupBox.Controls.Add(this.AboutViGEmLinkLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusLabel);
@@ -770,39 +782,51 @@
 			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianTextBox);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusInstallButton);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusTextBox);
-			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(263, 426);
+			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(263, 443);
 			this.VirtualDeviceGroupBox.Name = "VirtualDeviceGroupBox";
 			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(507, 107);
 			this.VirtualDeviceGroupBox.TabIndex = 70;
 			this.VirtualDeviceGroupBox.TabStop = false;
 			this.VirtualDeviceGroupBox.Text = "Virtual Device Emulation by Nefarius";
 			// 
+			// AboutViGEmLinkLabel
+			// 
+			this.AboutViGEmLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.AboutViGEmLinkLabel.AutoSize = true;
+			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(331, 17);
+			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
+			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
+			this.AboutViGEmLinkLabel.TabIndex = 45;
+			this.AboutViGEmLinkLabel.TabStop = true;
+			this.AboutViGEmLinkLabel.Text = "https://vigem.org";
+			this.AboutViGEmLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutViGEmLinkLabel_LinkClicked);
+			// 
 			// HidGuardianLabel
 			// 
 			this.HidGuardianLabel.AutoSize = true;
 			this.HidGuardianLabel.Location = new System.Drawing.Point(6, 78);
 			this.HidGuardianLabel.Name = "HidGuardianLabel";
-			this.HidGuardianLabel.Size = new System.Drawing.Size(75, 13);
+			this.HidGuardianLabel.Size = new System.Drawing.Size(72, 13);
 			this.HidGuardianLabel.TabIndex = 29;
-			this.HidGuardianLabel.Text = "HID Guardian:";
+			this.HidGuardianLabel.Text = "HID Guardian";
 			// 
 			// ViGEmBusLabel
 			// 
 			this.ViGEmBusLabel.AutoSize = true;
 			this.ViGEmBusLabel.Location = new System.Drawing.Point(6, 49);
 			this.ViGEmBusLabel.Name = "ViGEmBusLabel";
-			this.ViGEmBusLabel.Size = new System.Drawing.Size(63, 13);
+			this.ViGEmBusLabel.Size = new System.Drawing.Size(60, 13);
 			this.ViGEmBusLabel.TabIndex = 29;
-			this.ViGEmBusLabel.Text = "ViGEm Bus:";
+			this.ViGEmBusLabel.Text = "ViGEm Bus";
 			// 
 			// PollingRateLabel
 			// 
 			this.PollingRateLabel.AutoSize = true;
 			this.PollingRateLabel.Location = new System.Drawing.Point(6, 22);
 			this.PollingRateLabel.Name = "PollingRateLabel";
-			this.PollingRateLabel.Size = new System.Drawing.Size(67, 13);
+			this.PollingRateLabel.Size = new System.Drawing.Size(64, 13);
 			this.PollingRateLabel.TabIndex = 29;
-			this.PollingRateLabel.Text = "Polling Rate:";
+			this.PollingRateLabel.Text = "Polling Rate";
 			// 
 			// PollingRateComboBox
 			// 
@@ -896,7 +920,7 @@
 			// 
 			this.DeveloperToolsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.DeveloperToolsButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.DeveloperToolsButton.Location = new System.Drawing.Point(3, 539);
+			this.DeveloperToolsButton.Location = new System.Drawing.Point(3, 605);
 			this.DeveloperToolsButton.Name = "DeveloperToolsButton";
 			this.DeveloperToolsButton.Size = new System.Drawing.Size(114, 23);
 			this.DeveloperToolsButton.TabIndex = 69;
@@ -904,17 +928,126 @@
 			this.DeveloperToolsButton.UseVisualStyleBackColor = true;
 			this.DeveloperToolsButton.Click += new System.EventHandler(this.DeveloperToolsButton_Click);
 			// 
-			// AboutViGEmLinkLabel
+			// groupBox1
 			// 
-			this.AboutViGEmLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.AboutViGEmLinkLabel.AutoSize = true;
-			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(331, 17);
-			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
-			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
-			this.AboutViGEmLinkLabel.TabIndex = 45;
-			this.AboutViGEmLinkLabel.TabStop = true;
-			this.AboutViGEmLinkLabel.Text = "https://vigem.org";
-			this.AboutViGEmLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutViGEmLinkLabel_LinkClicked);
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.AllowRemote4CheckBox);
+			this.groupBox1.Controls.Add(this.RemotePortLabel);
+			this.groupBox1.Controls.Add(this.label4);
+			this.groupBox1.Controls.Add(this.RemotePasswordLabel);
+			this.groupBox1.Controls.Add(this.AllowRemote3CheckBox);
+			this.groupBox1.Controls.Add(this.RemotePortNumericUpDown);
+			this.groupBox1.Controls.Add(this.RemotePasswordTextBox);
+			this.groupBox1.Controls.Add(this.AllowRemote2CheckBox);
+			this.groupBox1.Controls.Add(this.AllowRemote1CheckBox);
+			this.groupBox1.Location = new System.Drawing.Point(263, 556);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(507, 72);
+			this.groupBox1.TabIndex = 31;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "Allow Remote Controllers";
+			// 
+			// AllowRemote4CheckBox
+			// 
+			this.AllowRemote4CheckBox.AutoSize = true;
+			this.AllowRemote4CheckBox.Location = new System.Drawing.Point(363, 19);
+			this.AllowRemote4CheckBox.Name = "AllowRemote4CheckBox";
+			this.AllowRemote4CheckBox.Size = new System.Drawing.Size(79, 17);
+			this.AllowRemote4CheckBox.TabIndex = 30;
+			this.AllowRemote4CheckBox.Text = "Controller 4";
+			this.AllowRemote4CheckBox.UseVisualStyleBackColor = true;
+			// 
+			// RemotePortLabel
+			// 
+			this.RemotePortLabel.AutoSize = true;
+			this.RemotePortLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.RemotePortLabel.Location = new System.Drawing.Point(271, 45);
+			this.RemotePortLabel.Name = "RemotePortLabel";
+			this.RemotePortLabel.Size = new System.Drawing.Size(86, 13);
+			this.RemotePortLabel.TabIndex = 32;
+			this.RemotePortLabel.Text = "UDP Server Port";
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.BackColor = System.Drawing.SystemColors.Control;
+			this.label4.Location = new System.Drawing.Point(6, 20);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(68, 13);
+			this.label4.TabIndex = 32;
+			this.label4.Text = "Allow Control";
+			// 
+			// RemotePasswordLabel
+			// 
+			this.RemotePasswordLabel.AutoSize = true;
+			this.RemotePasswordLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.RemotePasswordLabel.Location = new System.Drawing.Point(6, 45);
+			this.RemotePasswordLabel.Name = "RemotePasswordLabel";
+			this.RemotePasswordLabel.Size = new System.Drawing.Size(87, 13);
+			this.RemotePasswordLabel.TabIndex = 32;
+			this.RemotePasswordLabel.Text = "Server Password";
+			// 
+			// AllowRemote3CheckBox
+			// 
+			this.AllowRemote3CheckBox.AutoSize = true;
+			this.AllowRemote3CheckBox.Location = new System.Drawing.Point(278, 19);
+			this.AllowRemote3CheckBox.Name = "AllowRemote3CheckBox";
+			this.AllowRemote3CheckBox.Size = new System.Drawing.Size(79, 17);
+			this.AllowRemote3CheckBox.TabIndex = 30;
+			this.AllowRemote3CheckBox.Text = "Controller 3";
+			this.AllowRemote3CheckBox.UseVisualStyleBackColor = true;
+			// 
+			// RemotePortNumericUpDown
+			// 
+			this.RemotePortNumericUpDown.Location = new System.Drawing.Point(363, 42);
+			this.RemotePortNumericUpDown.Maximum = new decimal(new int[] {
+            49151,
+            0,
+            0,
+            0});
+			this.RemotePortNumericUpDown.Minimum = new decimal(new int[] {
+            1024,
+            0,
+            0,
+            0});
+			this.RemotePortNumericUpDown.Name = "RemotePortNumericUpDown";
+			this.RemotePortNumericUpDown.Size = new System.Drawing.Size(59, 20);
+			this.RemotePortNumericUpDown.TabIndex = 31;
+			this.RemotePortNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.RemotePortNumericUpDown.Value = new decimal(new int[] {
+            26010,
+            0,
+            0,
+            0});
+			// 
+			// RemotePasswordTextBox
+			// 
+			this.RemotePasswordTextBox.Location = new System.Drawing.Point(108, 42);
+			this.RemotePasswordTextBox.Name = "RemotePasswordTextBox";
+			this.RemotePasswordTextBox.Size = new System.Drawing.Size(150, 20);
+			this.RemotePasswordTextBox.TabIndex = 0;
+			this.RemotePasswordTextBox.UseSystemPasswordChar = true;
+			// 
+			// AllowRemote2CheckBox
+			// 
+			this.AllowRemote2CheckBox.AutoSize = true;
+			this.AllowRemote2CheckBox.Location = new System.Drawing.Point(193, 19);
+			this.AllowRemote2CheckBox.Name = "AllowRemote2CheckBox";
+			this.AllowRemote2CheckBox.Size = new System.Drawing.Size(79, 17);
+			this.AllowRemote2CheckBox.TabIndex = 30;
+			this.AllowRemote2CheckBox.Text = "Controller 2";
+			this.AllowRemote2CheckBox.UseVisualStyleBackColor = true;
+			// 
+			// AllowRemote1CheckBox
+			// 
+			this.AllowRemote1CheckBox.AutoSize = true;
+			this.AllowRemote1CheckBox.Location = new System.Drawing.Point(108, 19);
+			this.AllowRemote1CheckBox.Name = "AllowRemote1CheckBox";
+			this.AllowRemote1CheckBox.Size = new System.Drawing.Size(79, 17);
+			this.AllowRemote1CheckBox.TabIndex = 30;
+			this.AllowRemote1CheckBox.Text = "Controller 1";
+			this.AllowRemote1CheckBox.UseVisualStyleBackColor = true;
 			// 
 			// OptionsUserControl
 			// 
@@ -922,9 +1055,9 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.VirtualDeviceGroupBox);
 			this.Controls.Add(this.DeveloperToolsButton);
-			this.Controls.Add(this.OpenSettingsFolderButton);
 			this.Controls.Add(this.TestingAndLoggingGroupBox);
 			this.Controls.Add(this.DirectInputDevicesGroupBox);
+			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.UpdateOptionsGroupBox);
 			this.Controls.Add(this.GamesGroupBox);
 			this.Controls.Add(this.ConfigurationGroupBox);
@@ -933,7 +1066,7 @@
 			this.Controls.Add(this.InternetGroupBox);
 			this.Controls.Add(this.ProgramScanLocationsTabControl);
 			this.Name = "OptionsUserControl";
-			this.Size = new System.Drawing.Size(773, 565);
+			this.Size = new System.Drawing.Size(773, 631);
 			this.TestingAndLoggingGroupBox.ResumeLayout(false);
 			this.TestingAndLoggingGroupBox.PerformLayout();
 			this.OperationGroupBox.ResumeLayout(false);
@@ -958,6 +1091,9 @@
 			this.UpdateOptionsGroupBox.PerformLayout();
 			this.VirtualDeviceGroupBox.ResumeLayout(false);
 			this.VirtualDeviceGroupBox.PerformLayout();
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.RemotePortNumericUpDown)).EndInit();
 			this.ResumeLayout(false);
 
         }
@@ -1037,5 +1173,15 @@
 		private System.Windows.Forms.Label ProfileIdLabel;
 		private System.Windows.Forms.Label ProfilePathLabel;
 		private System.Windows.Forms.LinkLabel AboutViGEmLinkLabel;
+		private System.Windows.Forms.GroupBox groupBox1;
+		public System.Windows.Forms.CheckBox AllowRemote3CheckBox;
+		public System.Windows.Forms.CheckBox AllowRemote2CheckBox;
+		public System.Windows.Forms.CheckBox AllowRemote1CheckBox;
+		public System.Windows.Forms.CheckBox AllowRemote4CheckBox;
+		private System.Windows.Forms.TextBox RemotePasswordTextBox;
+		private System.Windows.Forms.Label RemotePortLabel;
+		private System.Windows.Forms.Label RemotePasswordLabel;
+		public System.Windows.Forms.NumericUpDown RemotePortNumericUpDown;
+		private System.Windows.Forms.Label label4;
 	}
 }

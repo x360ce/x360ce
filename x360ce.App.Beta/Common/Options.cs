@@ -139,7 +139,21 @@ namespace x360ce.App
 		public bool MinimizeToTray { get; set; }
 		public bool ExcludeSupplementalDevices { get; set; }
 		public bool ExcludeVirtualDevices { get; set; }
-		public bool CheckForUpdates { get; set; }
+
+
+		[DefaultValue(false), Description("Check for updates.")]
+		public bool CheckForUpdates
+		{
+			get { return _CheckForUpdates; }
+			set { _CheckForUpdates = value; ReportPropertyChanged(x => x.CheckForUpdates); }
+		}
+		bool _CheckForUpdates;
+
+		// Remote Control
+
+		public MapToMask RemoteControllers { get; set; }
+		public string RemotePassword { get; set; }
+		public int RemotePort { get; set; }
 
 		// Performance Test
 
