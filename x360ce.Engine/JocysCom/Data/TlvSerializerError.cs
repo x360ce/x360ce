@@ -2,7 +2,7 @@
 
 namespace JocysCom.ClassLibrary.Data
 {
-	public enum TsdError
+	public enum TlvSerializerError
 	{
 		None = 0,
 		[Description("7-bit Decoder Error: Number is too large.")]

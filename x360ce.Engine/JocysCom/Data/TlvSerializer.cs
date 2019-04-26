@@ -1,22 +1,74 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Linq;
 
 namespace JocysCom.ClassLibrary.Data
 {
 	//  ValueType[0-5] + ValueSize[0-5] + ValueData[0-uint.Max]
-	public class TsdItem
-	{
-		public int Tag { get; set; }
-		//public int Size { get; set; }
-		public byte[] Data { get; set; }
 
-		byte[] ToBytes()
+	public class TlvSerializer : TlvSerializer<int>
+	{
+		public TlvSerializer(Dictionary<int, Type> types = null) : base(types) { }
+
+	}
+
+	public class TlvSerializer<E> where E : struct
+	{
+
+		public TlvSerializer(Dictionary<E, Type> types = null)
 		{
-			var ms = new MemoryStream();
-			//var br = new System.IO.BinaryReader(ms);
-			//var bw = new System.IO.BinaryWriter(ms);
-			return null;
+			Types = types;
+			Properties = new Dictionary<Type, PropertyInfo[]>();
+			foreach (var key in types.Keys)
+			{
+				var type = types[key];
+				var properties = GetProperties(type);
+				Properties.Add(type, properties);
+			}
+		}
+
+		/// <summary>Map integer/enumeration to type of serializable object </summary>
+		Dictionary<E, Type> Types;
+
+		/// <summary>Cache properties of type which will be serialized.</summary>
+		Dictionary<Type, PropertyInfo[]> Properties;
+
+		/// <summary>
+		/// Get properties of type to serialize.
+		/// </summary>
+		/// <param name="type">Type of properties.</param>
+		/// <returns>Array of properties.</returns>
+		PropertyInfo[] GetProperties(Type type)
+		{
+			if (Properties.ContainsKey(type))
+			{
+				var orders = new Dictionary<int, PropertyInfo>();
+				var infos = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+				foreach (PropertyInfo pi in infos)
+				{
+					var attributes = pi.GetCustomAttributes(typeof(DataMemberAttribute), false);
+					if (attributes.Length > 0)
+					{
+						var attribute = (DataMemberAttribute)attributes[0];
+						if (attribute.Order > -1)
+						{
+							if (orders.ContainsKey(attribute.Order))
+							{
+								var message = string.Format("Order property on DataMemberAttribute[Order={0}]{1}.{2} must be unique for TLV serialization to work!",
+									attribute.Order, type.Name, pi.PropertyType);
+								throw new Exception();
+							}
+							orders.Add(attribute.Order, pi);
+						}
+					}
+				}
+				Properties.Add(type, orders.Values.ToArray());
+			}
+			return Properties[type];
 		}
 
 		static Encoding CurrentEncoding = Encoding.UTF8;
@@ -61,7 +113,7 @@ namespace JocysCom.ClassLibrary.Data
 		/// <summary>
 		/// Read an Int32, 7 bits at a time.
 		/// </summary>
-		public static TsdError Read7BitEncoded(Stream stream, out uint result)
+		public static TlvSerializerError Read7BitEncoded(Stream stream, out uint result)
 		{
 			result = 0;
 			uint v = 0;
@@ -73,9 +125,9 @@ namespace JocysCom.ClassLibrary.Data
 				b = stream.ReadByte();
 				// if end of stream and no more bytes to read then...
 				if (b == -1)
-					return TsdError.Decoder7BitStreamIsTooShortError;
+					return TlvSerializerError.Decoder7BitStreamIsTooShortError;
 				if (i == 4 && b > 0xF)
-					return TsdError.Decoder7BitNumberIsTooLargeError;
+					return TlvSerializerError.Decoder7BitNumberIsTooLargeError;
 				// Add 7 bit value
 				v |= (uint)(b & 0x7F) << (7 * i);
 				i++;
@@ -83,7 +135,7 @@ namespace JocysCom.ClassLibrary.Data
 			// Continue if first bit is 1.
 			while (b >> 7 == 1);
 			result = v;
-			return TsdError.None;
+			return TlvSerializerError.None;
 		}
 
 		#endregion
@@ -181,16 +233,16 @@ namespace JocysCom.ClassLibrary.Data
 				case TypeCode.Decimal: o = reader.ReadDecimal(); break;
 				case TypeCode.Double: o = reader.ReadDouble(); break;
 				case TypeCode.Empty: o = null; break;
-				case TypeCode.SByte: o = Convert.ToSByte(ReadSNumber(reader)); break;
-				case TypeCode.Int16: o = Convert.ToInt16(ReadSNumber(reader)); break;
-				case TypeCode.Int32: o = Convert.ToInt32(ReadSNumber(reader)); break;
-				case TypeCode.Int64: o = Convert.ToInt64(ReadSNumber(reader)); break;
+				case TypeCode.SByte: o = System.Convert.ToSByte(ReadSNumber(reader)); break;
+				case TypeCode.Int16: o = System.Convert.ToInt16(ReadSNumber(reader)); break;
+				case TypeCode.Int32: o = System.Convert.ToInt32(ReadSNumber(reader)); break;
+				case TypeCode.Int64: o = System.Convert.ToInt64(ReadSNumber(reader)); break;
 				case TypeCode.Single: o = reader.ReadSingle(); break;
 				case TypeCode.String: o = CurrentEncoding.GetString(bytes); break;
-				case TypeCode.Byte: o = Convert.ToByte(ReadUNumber(reader)); break;
-				case TypeCode.UInt16: o = Convert.ToUInt16(ReadUNumber(reader)); break;
-				case TypeCode.UInt32: o = Convert.ToUInt32(ReadUNumber(reader)); break;
-				case TypeCode.UInt64: o = Convert.ToUInt64(ReadUNumber(reader)); break;
+				case TypeCode.Byte: o = System.Convert.ToByte(ReadUNumber(reader)); break;
+				case TypeCode.UInt16: o = System.Convert.ToUInt16(ReadUNumber(reader)); break;
+				case TypeCode.UInt32: o = System.Convert.ToUInt32(ReadUNumber(reader)); break;
+				case TypeCode.UInt64: o = System.Convert.ToUInt64(ReadUNumber(reader)); break;
 				case TypeCode.Object:
 					if (typeU2.Equals(typeof(byte[])))
 					{

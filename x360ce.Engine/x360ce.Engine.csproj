@@ -229,8 +229,8 @@
     </Compile>
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
-    <Compile Include="JocysCom\Data\TsdError.cs" />
-    <Compile Include="JocysCom\Data\TsdItem.cs" />
+    <Compile Include="JocysCom\Data\TlvSerializer.cs" />
+    <Compile Include="JocysCom\Data\TlvSerializerError.cs" />
     <Compile Include="JocysCom\Diagnostics\RawDataLogHttpModule.cs" />
     <Compile Include="JocysCom\Diagnostics\RollingXmlWriterTraceListener.cs" />
     <Compile Include="JocysCom\Diagnostics\TraceHelper.cs" />
