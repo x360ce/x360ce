@@ -96,7 +96,6 @@
 			this.HidGuardianUninstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianInstallButton = new System.Windows.Forms.Button();
 			this.VirtualInfoRefreshButton = new System.Windows.Forms.Button();
-			this.ViGEmBusUninstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianTextBox = new System.Windows.Forms.TextBox();
 			this.ViGEmBusInstallButton = new System.Windows.Forms.Button();
 			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
@@ -104,13 +103,15 @@
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.AllowRemote4CheckBox = new System.Windows.Forms.CheckBox();
 			this.RemotePortLabel = new System.Windows.Forms.Label();
+			this.RemotePasswordLabel = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this.AllowRemote3CheckBox = new System.Windows.Forms.CheckBox();
 			this.RemotePortNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.RemotePasswordTextBox = new System.Windows.Forms.TextBox();
 			this.AllowRemote2CheckBox = new System.Windows.Forms.CheckBox();
 			this.AllowRemote1CheckBox = new System.Windows.Forms.CheckBox();
-			this.RemotePasswordLabel = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this.ViGEmBusUninstallButton = new System.Windows.Forms.Button();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -528,7 +529,7 @@
 			this.OnlineAccountGroupBox.Controls.Add(this.ComputerDiskLabel);
 			this.OnlineAccountGroupBox.Location = new System.Drawing.Point(263, 255);
 			this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
-			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(507, 182);
+			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(507, 180);
 			this.OnlineAccountGroupBox.TabIndex = 31;
 			this.OnlineAccountGroupBox.TabStop = false;
 			this.OnlineAccountGroupBox.Text = "Online Account - Anonymous Computer ID and Profile ID will be used by default";
@@ -555,7 +556,7 @@
 			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
 			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(426, 69);
+			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(426, 67);
 			this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
 			this.OpenSettingsFolderButton.Size = new System.Drawing.Size(75, 23);
 			this.OpenSettingsFolderButton.TabIndex = 69;
@@ -773,6 +774,7 @@
 			this.VirtualDeviceGroupBox.Controls.Add(this.AboutViGEmLinkLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusLabel);
+			this.VirtualDeviceGroupBox.Controls.Add(this.label3);
 			this.VirtualDeviceGroupBox.Controls.Add(this.PollingRateLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.PollingRateComboBox);
 			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianUninstallButton);
@@ -782,9 +784,9 @@
 			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianTextBox);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusInstallButton);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusTextBox);
-			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(263, 443);
+			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(263, 441);
 			this.VirtualDeviceGroupBox.Name = "VirtualDeviceGroupBox";
-			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(507, 107);
+			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(507, 109);
 			this.VirtualDeviceGroupBox.TabIndex = 70;
 			this.VirtualDeviceGroupBox.TabStop = false;
 			this.VirtualDeviceGroupBox.Text = "Virtual Device Emulation by Nefarius";
@@ -793,7 +795,7 @@
 			// 
 			this.AboutViGEmLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.AboutViGEmLinkLabel.AutoSize = true;
-			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(331, 17);
+			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(331, 24);
 			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
 			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
 			this.AboutViGEmLinkLabel.TabIndex = 45;
@@ -804,7 +806,7 @@
 			// HidGuardianLabel
 			// 
 			this.HidGuardianLabel.AutoSize = true;
-			this.HidGuardianLabel.Location = new System.Drawing.Point(6, 78);
+			this.HidGuardianLabel.Location = new System.Drawing.Point(6, 82);
 			this.HidGuardianLabel.Name = "HidGuardianLabel";
 			this.HidGuardianLabel.Size = new System.Drawing.Size(72, 13);
 			this.HidGuardianLabel.TabIndex = 29;
@@ -813,7 +815,7 @@
 			// ViGEmBusLabel
 			// 
 			this.ViGEmBusLabel.AutoSize = true;
-			this.ViGEmBusLabel.Location = new System.Drawing.Point(6, 49);
+			this.ViGEmBusLabel.Location = new System.Drawing.Point(6, 53);
 			this.ViGEmBusLabel.Name = "ViGEmBusLabel";
 			this.ViGEmBusLabel.Size = new System.Drawing.Size(60, 13);
 			this.ViGEmBusLabel.TabIndex = 29;
@@ -822,7 +824,7 @@
 			// PollingRateLabel
 			// 
 			this.PollingRateLabel.AutoSize = true;
-			this.PollingRateLabel.Location = new System.Drawing.Point(6, 22);
+			this.PollingRateLabel.Location = new System.Drawing.Point(6, 24);
 			this.PollingRateLabel.Name = "PollingRateLabel";
 			this.PollingRateLabel.Size = new System.Drawing.Size(64, 13);
 			this.PollingRateLabel.TabIndex = 29;
@@ -832,7 +834,7 @@
 			// 
 			this.PollingRateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.PollingRateComboBox.FormattingEnabled = true;
-			this.PollingRateComboBox.Location = new System.Drawing.Point(87, 19);
+			this.PollingRateComboBox.Location = new System.Drawing.Point(87, 21);
 			this.PollingRateComboBox.Name = "PollingRateComboBox";
 			this.PollingRateComboBox.Size = new System.Drawing.Size(96, 21);
 			this.PollingRateComboBox.TabIndex = 30;
@@ -841,7 +843,7 @@
 			// 
 			this.HidGuardianUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.HidGuardianUninstallButton.Enabled = false;
-			this.HidGuardianUninstallButton.Location = new System.Drawing.Point(426, 73);
+			this.HidGuardianUninstallButton.Location = new System.Drawing.Point(426, 77);
 			this.HidGuardianUninstallButton.Name = "HidGuardianUninstallButton";
 			this.HidGuardianUninstallButton.Size = new System.Drawing.Size(75, 23);
 			this.HidGuardianUninstallButton.TabIndex = 44;
@@ -853,7 +855,7 @@
 			// 
 			this.HidGuardianInstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.HidGuardianInstallButton.Enabled = false;
-			this.HidGuardianInstallButton.Location = new System.Drawing.Point(345, 73);
+			this.HidGuardianInstallButton.Location = new System.Drawing.Point(345, 77);
 			this.HidGuardianInstallButton.Name = "HidGuardianInstallButton";
 			this.HidGuardianInstallButton.Size = new System.Drawing.Size(75, 23);
 			this.HidGuardianInstallButton.TabIndex = 44;
@@ -864,7 +866,7 @@
 			// VirtualInfoRefreshButton
 			// 
 			this.VirtualInfoRefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.VirtualInfoRefreshButton.Location = new System.Drawing.Point(426, 12);
+			this.VirtualInfoRefreshButton.Location = new System.Drawing.Point(426, 19);
 			this.VirtualInfoRefreshButton.Name = "VirtualInfoRefreshButton";
 			this.VirtualInfoRefreshButton.Size = new System.Drawing.Size(75, 23);
 			this.VirtualInfoRefreshButton.TabIndex = 44;
@@ -872,24 +874,12 @@
 			this.VirtualInfoRefreshButton.UseVisualStyleBackColor = true;
 			this.VirtualInfoRefreshButton.Click += new System.EventHandler(this.VirtualInfoRefreshButton_Click);
 			// 
-			// ViGEmBusUninstallButton
-			// 
-			this.ViGEmBusUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ViGEmBusUninstallButton.Enabled = false;
-			this.ViGEmBusUninstallButton.Location = new System.Drawing.Point(426, 44);
-			this.ViGEmBusUninstallButton.Name = "ViGEmBusUninstallButton";
-			this.ViGEmBusUninstallButton.Size = new System.Drawing.Size(75, 23);
-			this.ViGEmBusUninstallButton.TabIndex = 44;
-			this.ViGEmBusUninstallButton.Text = "Uninstall";
-			this.ViGEmBusUninstallButton.UseVisualStyleBackColor = true;
-			this.ViGEmBusUninstallButton.Click += new System.EventHandler(this.ViGEmBusUninstallButton_Click);
-			// 
 			// HidGuardianTextBox
 			// 
 			this.HidGuardianTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.HidGuardianTextBox.BackColor = System.Drawing.SystemColors.Control;
-			this.HidGuardianTextBox.Location = new System.Drawing.Point(87, 75);
+			this.HidGuardianTextBox.Location = new System.Drawing.Point(87, 79);
 			this.HidGuardianTextBox.Name = "HidGuardianTextBox";
 			this.HidGuardianTextBox.Size = new System.Drawing.Size(252, 20);
 			this.HidGuardianTextBox.TabIndex = 41;
@@ -898,7 +888,7 @@
 			// 
 			this.ViGEmBusInstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ViGEmBusInstallButton.Enabled = false;
-			this.ViGEmBusInstallButton.Location = new System.Drawing.Point(345, 44);
+			this.ViGEmBusInstallButton.Location = new System.Drawing.Point(345, 48);
 			this.ViGEmBusInstallButton.Name = "ViGEmBusInstallButton";
 			this.ViGEmBusInstallButton.Size = new System.Drawing.Size(75, 23);
 			this.ViGEmBusInstallButton.TabIndex = 44;
@@ -911,7 +901,7 @@
 			this.ViGEmBusTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ViGEmBusTextBox.BackColor = System.Drawing.SystemColors.Control;
-			this.ViGEmBusTextBox.Location = new System.Drawing.Point(87, 46);
+			this.ViGEmBusTextBox.Location = new System.Drawing.Point(87, 50);
 			this.ViGEmBusTextBox.Name = "ViGEmBusTextBox";
 			this.ViGEmBusTextBox.Size = new System.Drawing.Size(252, 20);
 			this.ViGEmBusTextBox.TabIndex = 41;
@@ -967,6 +957,16 @@
 			this.RemotePortLabel.Size = new System.Drawing.Size(86, 13);
 			this.RemotePortLabel.TabIndex = 32;
 			this.RemotePortLabel.Text = "UDP Server Port";
+			// 
+			// RemotePasswordLabel
+			// 
+			this.RemotePasswordLabel.AutoSize = true;
+			this.RemotePasswordLabel.BackColor = System.Drawing.SystemColors.Control;
+			this.RemotePasswordLabel.Location = new System.Drawing.Point(6, 45);
+			this.RemotePasswordLabel.Name = "RemotePasswordLabel";
+			this.RemotePasswordLabel.Size = new System.Drawing.Size(93, 13);
+			this.RemotePasswordLabel.TabIndex = 32;
+			this.RemotePasswordLabel.Text = "Remote Password";
 			// 
 			// label4
 			// 
@@ -1039,15 +1039,26 @@
 			this.AllowRemote1CheckBox.Text = "Controller 1";
 			this.AllowRemote1CheckBox.UseVisualStyleBackColor = true;
 			// 
-			// RemotePasswordLabel
+			// label3
 			// 
-			this.RemotePasswordLabel.AutoSize = true;
-			this.RemotePasswordLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.RemotePasswordLabel.Location = new System.Drawing.Point(6, 45);
-			this.RemotePasswordLabel.Name = "RemotePasswordLabel";
-			this.RemotePasswordLabel.Size = new System.Drawing.Size(93, 13);
-			this.RemotePasswordLabel.TabIndex = 32;
-			this.RemotePasswordLabel.Text = "Remote Password";
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(189, 24);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(143, 13);
+			this.label3.TabIndex = 29;
+			this.label3.Text = "Download latest version from";
+			// 
+			// ViGEmBusUninstallButton
+			// 
+			this.ViGEmBusUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ViGEmBusUninstallButton.Enabled = false;
+			this.ViGEmBusUninstallButton.Location = new System.Drawing.Point(426, 48);
+			this.ViGEmBusUninstallButton.Name = "ViGEmBusUninstallButton";
+			this.ViGEmBusUninstallButton.Size = new System.Drawing.Size(75, 23);
+			this.ViGEmBusUninstallButton.TabIndex = 44;
+			this.ViGEmBusUninstallButton.Text = "Uninstall";
+			this.ViGEmBusUninstallButton.UseVisualStyleBackColor = true;
+			this.ViGEmBusUninstallButton.Click += new System.EventHandler(this.ViGEmBusUninstallButton_Click);
 			// 
 			// OptionsUserControl
 			// 
@@ -1161,7 +1172,6 @@
         private System.Windows.Forms.Label HidGuardianLabel;
         private System.Windows.Forms.TextBox HidGuardianTextBox;
         public System.Windows.Forms.Button VirtualInfoRefreshButton;
-		private System.Windows.Forms.Button ViGEmBusUninstallButton;
 		private System.Windows.Forms.Button ViGEmBusInstallButton;
 		private System.Windows.Forms.Button HidGuardianUninstallButton;
 		private System.Windows.Forms.Button HidGuardianInstallButton;
@@ -1183,5 +1193,7 @@
 		public System.Windows.Forms.NumericUpDown RemotePortNumericUpDown;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label RemotePasswordLabel;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.Button ViGEmBusUninstallButton;
 	}
 }
