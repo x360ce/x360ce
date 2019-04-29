@@ -8,8 +8,13 @@ using System.Linq;
 
 namespace JocysCom.ClassLibrary.Data
 {
-	//  ValueType[0-5] + ValueSize[0-5] + ValueData[0-uint.Max]
-
+	// TLV Message bytes:
+	// ObjectType[0-5] + ObjectLength[0-5] + 
+	//     // ObjectValue[0-int.Max]
+	// 	   [PropertyTag[0-5] + PropertyLength[0-5] + PropertyValue[0-int.Max]
+	//	   ...
+	//	   [PropertyTag[0-5] + PropertyLength[0-5] + PropertyValue[0-int.Max]
+	//
 	public class TlvSerializer : TlvSerializer<int>
 	{
 		public TlvSerializer(Dictionary<int, Type> types = null) : base(types) { }
@@ -21,57 +26,107 @@ namespace JocysCom.ClassLibrary.Data
 
 		public TlvSerializer(Dictionary<E, Type> types = null)
 		{
-			Types = types;
-			Properties = new Dictionary<Type, PropertyInfo[]>();
+			MessageTypes = types;
+			MessageProperties = new Dictionary<Type, PropertyInfo[]>();
 			foreach (var key in types.Keys)
 			{
 				var type = types[key];
 				var properties = GetProperties(type);
-				Properties.Add(type, properties);
+				MessageProperties.Add(type, properties);
 			}
 		}
 
 		/// <summary>Map integer/enumeration to type of serializable object </summary>
-		Dictionary<E, Type> Types;
+		Dictionary<E, Type> MessageTypes;
 
 		/// <summary>Cache properties of type which will be serialized.</summary>
-		Dictionary<Type, PropertyInfo[]> Properties;
-
-		/// <summary>
-		/// Get properties of type to serialize.
-		/// </summary>
-		/// <param name="type">Type of properties.</param>
-		/// <returns>Array of properties.</returns>
-		PropertyInfo[] GetProperties(Type type)
-		{
-			if (Properties.ContainsKey(type))
-			{
-				var orders = new Dictionary<int, PropertyInfo>();
-				var infos = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-				foreach (PropertyInfo pi in infos)
-				{
-					var attributes = pi.GetCustomAttributes(typeof(DataMemberAttribute), false);
-					if (attributes.Length > 0)
-					{
-						var attribute = (DataMemberAttribute)attributes[0];
-						if (attribute.Order > -1)
-						{
-							if (orders.ContainsKey(attribute.Order))
-							{
-								var message = string.Format("Order property on DataMemberAttribute[Order={0}]{1}.{2} must be unique for TLV serialization to work!",
-									attribute.Order, type.Name, pi.PropertyType);
-								throw new Exception();
-							}
-							orders.Add(attribute.Order, pi);
-						}
-					}
-				}
-				Properties.Add(type, orders.Values.ToArray());
-			}
-			return Properties[type];
-		}
+		Dictionary<Type, PropertyInfo[]> MessageProperties;
 
 		static Encoding CurrentEncoding = Encoding.UTF8;
+
+		#region Serialize / Deserialize
+
+		/// <summary>
+		///  Deserializes the TLV bytes contained by the specified System.IO.Stream.
+		/// </summary>
+		/// <param name="stream">The System.IO.Stream that contains the TLV bytes to deserialize.</param>
+		/// <returns>The System.Object being deserialized.</returns>
+		public TlvSerializerError Deserialize(Stream stream, out object result)
+		{
+			result = null;
+			int tag;
+			byte[] value;
+			// Read header.
+			var error = ReadTlv(stream, out tag, out value);
+			if (error != TlvSerializerError.None)
+				return error;
+			// Get type from type number.
+			var typeE = (E)(object)tag;
+			if (!MessageTypes.ContainsKey(typeE))
+				return TlvSerializerError.EnumIdNotFound;
+			var typeT = MessageTypes[typeE];
+			// Read properties from stream.
+			var position = 0;
+			while (position < value.Length)
+			{
+				//var error = ReadTlv(stream, out tag, out value);
+
+			}
+			return TlvSerializerError.None;
+		}
+
+		public TlvSerializerError ReadTlv(Stream stream, out int tag, out byte[] value)
+		{
+			tag = 0;
+			value = null;
+			TlvSerializerError error;
+			// Read header bytes.
+			int type;
+			error = Read7BitEncoded(stream, out type);
+			if (error != TlvSerializerError.None)
+				return error;
+			int length;
+			error = Read7BitEncoded(stream, out length);
+			if (error != TlvSerializerError.None)
+				return error;
+			value = new byte[length];
+			stream.Read(value, 0, length);
+			return TlvSerializerError.None;
+		}
+
+		/// <summary>
+		/// Serializes the specified System.Object and writes the TLV bytes to the specified System.IO.Stream.
+		/// </summary>
+		/// <param name="stream">The System.IO.Stream used to write the TLV bytes.</param>
+		/// <param name="o">The System.Object to serialize.</param>
+		public TlvSerializerError Serialize(Stream stream, object o)
+		{
+			if (o == null)
+				return TlvSerializerError.None;
+			var typeT = o.GetType();
+			// Write Object Type.
+			if (!MessageTypes.ContainsValue(typeT))
+				return TlvSerializerError.TypeIdNotFound;
+			var typeE = MessageTypes.First(x => x.Value == typeT).Key;
+			Write7BitEncoded(stream, (int)(object)typeE);
+			// Get property bytes.
+			var properties = MessageProperties[typeT];
+			var propertiesStream = new MemoryStream();
+			foreach (var property in properties)
+			{
+				var pValue = property.GetValue(o, null);
+				var pBytes = ObjectToBytes(pValue, property.DeclaringType);
+				propertiesStream.Write(pBytes, 0, pBytes.Length);
+			}
+			var data = propertiesStream.ToArray();
+			// Write Size.
+			Write7BitEncoded(stream, data.Length);
+			// Write Data.
+			stream.Write(data, 0, data.Length);
+			return TlvSerializerError.None;
+		}
+
+		#endregion
 
 		#region 7-bit Encoder/Decoder
 
@@ -90,9 +145,9 @@ namespace JocysCom.ClassLibrary.Data
 		/// 0                                 10101101 11110100 11001100 11011000 00000100
 		/// 
 		/// </remarks>
-		public static void Write7BitEncoded(Stream stream, uint value)
+		public static void Write7BitEncoded(Stream stream, int value)
 		{
-			uint v = value;
+			int v = value;
 			byte b = 0;
 			do
 			{
@@ -113,10 +168,10 @@ namespace JocysCom.ClassLibrary.Data
 		/// <summary>
 		/// Read an Int32, 7 bits at a time.
 		/// </summary>
-		public static TlvSerializerError Read7BitEncoded(Stream stream, out uint result)
+		public static TlvSerializerError Read7BitEncoded(Stream stream, out int result)
 		{
 			result = 0;
-			uint v = 0;
+			int v = 0;
 			var b = 0;
 			var i = 0;
 			do
@@ -129,7 +184,7 @@ namespace JocysCom.ClassLibrary.Data
 				if (i == 4 && b > 0xF)
 					return TlvSerializerError.Decoder7BitNumberIsTooLargeError;
 				// Add 7 bit value
-				v |= (uint)(b & 0x7F) << (7 * i);
+				v |= (int)(b & 0x7F) << (7 * i);
 				i++;
 			}
 			// Continue if first bit is 1.
@@ -196,6 +251,40 @@ namespace JocysCom.ClassLibrary.Data
 			// Use Nullable.GetUnderlyingType() to remove the Nullable<T> wrapper if type is already nullable.
 			type = Nullable.GetUnderlyingType(type) ?? type;
 			return (type.IsValueType) ? typeof(Nullable<>).MakeGenericType(type) : type;
+		}
+
+		/// <summary>
+		/// Get properties of type to serialize.
+		/// </summary>
+		/// <param name="type">Type of properties.</param>
+		/// <returns>Array of properties.</returns>
+		PropertyInfo[] GetProperties(Type type)
+		{
+			if (MessageProperties.ContainsKey(type))
+			{
+				var orders = new Dictionary<int, PropertyInfo>();
+				var infos = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+				foreach (PropertyInfo pi in infos)
+				{
+					var attributes = pi.GetCustomAttributes(typeof(DataMemberAttribute), false);
+					if (attributes.Length > 0)
+					{
+						var attribute = (DataMemberAttribute)attributes[0];
+						if (attribute.Order > -1)
+						{
+							if (orders.ContainsKey(attribute.Order))
+							{
+								var message = string.Format("Order property on DataMemberAttribute[Order={0}]{1}.{2} must be unique for TLV serialization to work!",
+									attribute.Order, type.Name, pi.PropertyType);
+								throw new Exception();
+							}
+							orders.Add(attribute.Order, pi);
+						}
+					}
+				}
+				MessageProperties.Add(type, orders.Values.ToArray());
+			}
+			return MessageProperties[type];
 		}
 
 		#endregion
@@ -328,7 +417,8 @@ namespace JocysCom.ClassLibrary.Data
 		/// </summary>
 		public static byte[] ObjectToBytes(object o, Type declaringType)
 		{
-			if (o == null) return null;
+			if (o == null)
+				return null;
 			Type type = declaringType; //  o.GetType();
 			bool isNullable = IsNullable(type);
 			Type typeU1 = isNullable ? Nullable.GetUnderlyingType(type) ?? type : type;
@@ -481,7 +571,6 @@ namespace JocysCom.ClassLibrary.Data
 		}
 
 		#endregion
-
 
 	}
 }

@@ -72,39 +72,12 @@ namespace JocysCom.ClassLibrary.Threading
 
 		TaskScheduler SynchronizingObject;
 
-		public void SetSynchronizingObject(TaskScheduler so, bool isHandleCreated)
-		{
-			var o = SynchronizingObject;
-			if (o != null)
-			{
-				// Remove handlers from parent object.
-				var hc = o.GetType().GetEvent("HandleCreated");
-				hc.GetRemoveMethod().Invoke(o, new object[] { new EventHandler(handleCreated) });
-				var hd = o.GetType().GetEvent("HandleDestroyed");
-				hd.GetRemoveMethod().Invoke(o, new object[] { new EventHandler(handleDestroyed) });
-			}
-			SynchronizingObject = so;
-			if (so != null)
-			{
-				// Attach events to make sure that SynchronizingObject is not used when handle is not available.
-				var hc = so.GetType().GetEvent("HandleCreated");
-				hc.GetAddMethod().Invoke(so, new object[] { new EventHandler(handleCreated) });
-				var hd = so.GetType().GetEvent("HandleDestroyed");
-				hd.GetAddMethod().Invoke(so, new object[] { new EventHandler(handleDestroyed) });
-			}
-			HasHandle = isHandleCreated;
-		}
-
-		bool HasHandle;
-
-		void handleCreated(object sender, EventArgs e)
-		{
-			HasHandle = true;
-		}
-		void handleDestroyed(object sender, EventArgs e)
-		{
-			HasHandle = false;
-		}
+		// var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+		// timer = new QueueTimer(520, 4000, scheduler);
+		// HandleCreated += (sender, e) => { timer.HasHandle = true; };
+		// HandleDestroyed += (sender, e) => { timer.HasHandle = false; };
+		// timer.HasHandle = IsHandleCreated;
+		public bool HasHandle;
 
 		#endregion
 
@@ -560,8 +533,6 @@ namespace JocysCom.ClassLibrary.Threading
 				{
 					_Queue.Clear();
 				}
-				// Make sure that outside objects are not holding this timer from disposal. 
-				SetSynchronizingObject(null, false);
 				DoWork = null;
 			}
 		}

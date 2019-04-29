@@ -9,5 +9,9 @@ namespace JocysCom.ClassLibrary.Data
 		Decoder7BitNumberIsTooLargeError = 1,
 		[Description("7-bit Decoder Error: Stream is too short.")]
 		Decoder7BitStreamIsTooShortError = 2,
+		// Serialize errors.
+		TypeIdNotFound = 100,
+		// Deserialize errors.
+		EnumIdNotFound = 200,
 	}
 }
