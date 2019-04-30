@@ -28,12 +28,6 @@ namespace JocysCom.ClassLibrary.Data
 		{
 			MessageTypes = types;
 			MessageProperties = new Dictionary<Type, PropertyInfo[]>();
-			foreach (var key in types.Keys)
-			{
-				var type = types[key];
-				var properties = GetProperties(type);
-				MessageProperties.Add(type, properties);
-			}
 		}
 
 		/// <summary>Map integer/enumeration to type of serializable object </summary>
@@ -110,7 +104,7 @@ namespace JocysCom.ClassLibrary.Data
 			var typeE = MessageTypes.First(x => x.Value == typeT).Key;
 			Write7BitEncoded(stream, (int)(object)typeE);
 			// Get property bytes.
-			var properties = MessageProperties[typeT];
+			var properties = GetProperties(typeT);
 			var propertiesStream = new MemoryStream();
 			foreach (var property in properties)
 			{
@@ -260,7 +254,7 @@ namespace JocysCom.ClassLibrary.Data
 		/// <returns>Array of properties.</returns>
 		PropertyInfo[] GetProperties(Type type)
 		{
-			if (MessageProperties.ContainsKey(type))
+			if (!MessageProperties.ContainsKey(type))
 			{
 				var orders = new Dictionary<int, PropertyInfo>();
 				var infos = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
