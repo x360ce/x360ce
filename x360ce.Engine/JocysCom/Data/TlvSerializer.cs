@@ -27,14 +27,14 @@ namespace JocysCom.ClassLibrary.Data
 		public TlvSerializer(Dictionary<E, Type> types = null)
 		{
 			MessageTypes = types;
-			MessageProperties = new Dictionary<Type, PropertyInfo[]>();
+			MessageMembers = new Dictionary<Type, MemberInfo[]>();
 		}
 
 		/// <summary>Map integer/enumeration to type of serializable object </summary>
 		Dictionary<E, Type> MessageTypes;
 
 		/// <summary>Cache properties of type which will be serialized.</summary>
-		Dictionary<Type, PropertyInfo[]> MessageProperties;
+		Dictionary<Type, MemberInfo[]> MessageMembers;
 
 		static Encoding CurrentEncoding = Encoding.UTF8;
 
@@ -104,15 +104,23 @@ namespace JocysCom.ClassLibrary.Data
 			var typeE = MessageTypes.First(x => x.Value == typeT).Key;
 			Write7BitEncoded(stream, (int)(object)typeE);
 			// Get property bytes.
-			var properties = GetProperties(typeT);
-			var propertiesStream = new MemoryStream();
-			foreach (var property in properties)
+			var members = GetMembers(typeT);
+			var membersStream = new MemoryStream();
+			foreach (var member in members)
 			{
-				var pValue = property.GetValue(o, null);
-				var pBytes = ObjectToBytes(pValue, property.DeclaringType);
-				propertiesStream.Write(pBytes, 0, pBytes.Length);
+				object mValue = null;
+				byte[] mBytes = null;
+				var pi = member as PropertyInfo;
+				if (pi != null)
+					mValue = pi.GetValue(o, null);
+				var fi = member as FieldInfo;
+				if (fi != null)
+					mValue = fi.GetValue(o);
+				mBytes = ObjectToBytes(mValue, member.DeclaringType);
+				if (mBytes != null)
+					membersStream.Write(mBytes, 0, mBytes.Length);
 			}
-			var data = propertiesStream.ToArray();
+			var data = membersStream.ToArray();
 			// Write Size.
 			Write7BitEncoded(stream, data.Length);
 			// Write Data.
@@ -252,13 +260,13 @@ namespace JocysCom.ClassLibrary.Data
 		/// </summary>
 		/// <param name="type">Type of properties.</param>
 		/// <returns>Array of properties.</returns>
-		PropertyInfo[] GetProperties(Type type)
+		MemberInfo[] GetMembers(Type type)
 		{
-			if (!MessageProperties.ContainsKey(type))
+			if (!MessageMembers.ContainsKey(type))
 			{
-				var orders = new Dictionary<int, PropertyInfo>();
-				var infos = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-				foreach (PropertyInfo pi in infos)
+				var orders = new Dictionary<int, MemberInfo>();
+				var infos = type.GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+				foreach (var pi in infos)
 				{
 					var attributes = pi.GetCustomAttributes(typeof(DataMemberAttribute), false);
 					if (attributes.Length > 0)
@@ -269,16 +277,16 @@ namespace JocysCom.ClassLibrary.Data
 							if (orders.ContainsKey(attribute.Order))
 							{
 								var message = string.Format("Order property on DataMemberAttribute[Order={0}]{1}.{2} must be unique for TLV serialization to work!",
-									attribute.Order, type.Name, pi.PropertyType);
+									attribute.Order, type.Name, pi.MemberType);
 								throw new Exception();
 							}
 							orders.Add(attribute.Order, pi);
 						}
 					}
 				}
-				MessageProperties.Add(type, orders.Values.ToArray());
+				MessageMembers.Add(type, orders.OrderBy(x => x.Key).Select(x => x.Value).ToArray());
 			}
-			return MessageProperties[type];
+			return MessageMembers[type];
 		}
 
 		#endregion
