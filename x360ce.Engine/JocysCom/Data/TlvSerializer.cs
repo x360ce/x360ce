@@ -17,24 +17,25 @@ namespace JocysCom.ClassLibrary.Data
 	//
 	public class TlvSerializer : TlvSerializer<int>
 	{
-		public TlvSerializer(Dictionary<int, Type> types = null) : base(types) { }
+		public TlvSerializer(Dictionary<Type, int> types = null) : base(types) { }
 
 	}
 
 	public class TlvSerializer<E> where E : struct
 	{
 
-		public TlvSerializer(Dictionary<E, Type> types = null)
+		public TlvSerializer(Dictionary<Type, E> types = null)
 		{
-			MessageTypes = types;
-			MessageMembers = new Dictionary<Type, MemberInfo[]>();
+			Types = types;
+			MemberInfos = new Dictionary<Type, List<MemberInfo>>();
+			MemberTags = new Dictionary<Type, List<int>>();
 		}
 
 		/// <summary>Map integer/enumeration to type of serializable object </summary>
-		Dictionary<E, Type> MessageTypes;
-
+		Dictionary<Type, E> Types;
 		/// <summary>Cache properties of type which will be serialized.</summary>
-		Dictionary<Type, MemberInfo[]> MessageMembers;
+		Dictionary<Type, List<MemberInfo>> MemberInfos;
+		Dictionary<Type, List<int>> MemberTags;
 
 		static Encoding CurrentEncoding = Encoding.UTF8;
 
@@ -48,35 +49,59 @@ namespace JocysCom.ClassLibrary.Data
 		public TlvSerializerError Deserialize(Stream stream, out object result)
 		{
 			result = null;
-			int tag;
+			int typeI;
 			byte[] value;
 			// Read header.
-			var error = ReadTlv(stream, out tag, out value);
+			var error = ReadTlv(stream, out typeI, out value);
 			if (error != TlvSerializerError.None)
 				return error;
 			// Get type from type number.
-			var typeE = (E)(object)tag;
-			if (!MessageTypes.ContainsKey(typeE))
+			var typeE = (E)(object)typeI;
+			if (!Types.ContainsValue(typeE))
 				return TlvSerializerError.EnumIdNotFound;
-			var typeT = MessageTypes[typeE];
+			var typeT = Types.First(x => x.Value.Equals(typeE)).Key;
+			var o = Activator.CreateInstance(typeT);
 			// Read properties from stream.
-			var position = 0;
-			while (position < value.Length)
+			var infos = MemberInfos[typeT];
+			var tags = MemberTags[typeT];
+			int tag;
+			UpdateMembersCache(typeT);
+			var membersStream = new MemoryStream(value);
+			byte[] mBytes;
+			object mValue;
+			while (membersStream.Position < value.Length)
 			{
-				//var error = ReadTlv(stream, out tag, out value);
-
+				error = ReadTlv(membersStream, out tag, out mBytes);
+				if (error != TlvSerializerError.None)
+					return error;
+				var index = tags.IndexOf(tag);
+				var info = infos[index];
+				switch (info.MemberType)
+				{
+					case MemberTypes.Field:
+						var fi = (FieldInfo)info;
+						mValue = BytesToObject(mBytes, fi.FieldType);
+						fi.SetValue(o, mValue);
+						break;
+					case MemberTypes.Property:
+						var pi = (PropertyInfo)info;
+						mValue = BytesToObject(mBytes, pi.PropertyType);
+						pi.SetValue(o, mValue);
+						break;
+					default:
+						break;
+				}
 			}
+			result = o;
 			return TlvSerializerError.None;
 		}
 
 		public TlvSerializerError ReadTlv(Stream stream, out int tag, out byte[] value)
 		{
-			tag = 0;
 			value = null;
 			TlvSerializerError error;
 			// Read header bytes.
-			int type;
-			error = Read7BitEncoded(stream, out type);
+			error = Read7BitEncoded(stream, out tag);
 			if (error != TlvSerializerError.None)
 				return error;
 			int length;
@@ -99,31 +124,51 @@ namespace JocysCom.ClassLibrary.Data
 				return TlvSerializerError.None;
 			var typeT = o.GetType();
 			// Write Object Type.
-			if (!MessageTypes.ContainsValue(typeT))
+			if (!Types.ContainsKey(typeT))
 				return TlvSerializerError.TypeIdNotFound;
-			var typeE = MessageTypes.First(x => x.Value == typeT).Key;
+			var typeE = Types.First(x => x.Key == typeT).Value;
 			Write7BitEncoded(stream, (int)(object)typeE);
-			// Get property bytes.
-			var members = GetMembers(typeT);
+			UpdateMembersCache(typeT);
+			var infos = MemberInfos[typeT];
+			var tags = MemberTags[typeT];
 			var membersStream = new MemoryStream();
-			foreach (var member in members)
+			for (int i = 0; i < infos.Count; i++)
 			{
+				var info = infos[i];
+				var tag = tags[i];
 				object mValue = null;
+				Type mType = null;
 				byte[] mBytes = null;
-				var pi = member as PropertyInfo;
-				if (pi != null)
-					mValue = pi.GetValue(o, null);
-				var fi = member as FieldInfo;
-				if (fi != null)
-					mValue = fi.GetValue(o);
-				mBytes = ObjectToBytes(mValue, member.DeclaringType);
-				if (mBytes != null)
-					membersStream.Write(mBytes, 0, mBytes.Length);
+				switch (info.MemberType)
+				{
+					case MemberTypes.Field:
+						var fi = (FieldInfo)info;
+						mType = fi.FieldType;
+						mValue = fi.GetValue(o);
+						break;
+					case MemberTypes.Property:
+						var pi = (PropertyInfo)info;
+						mType = pi.PropertyType;
+						mValue = pi.GetValue(o, null);
+						break;
+					default:
+						break;
+				}
+				mBytes = ObjectToBytes(mValue, mType);
+				// Do not serialize null objects.
+				if (mBytes == null)
+					continue;
+				// Write Member Tag.
+				Write7BitEncoded(membersStream, tag);
+				// Write Member Length.
+				Write7BitEncoded(membersStream, mBytes.Length);
+				// Write Member Value.
+				membersStream.Write(mBytes, 0, mBytes.Length);
 			}
 			var data = membersStream.ToArray();
-			// Write Size.
+			// Write Object Length.
 			Write7BitEncoded(stream, data.Length);
-			// Write Data.
+			// Write Object Value.
 			stream.Write(data, 0, data.Length);
 			return TlvSerializerError.None;
 		}
@@ -260,33 +305,51 @@ namespace JocysCom.ClassLibrary.Data
 		/// </summary>
 		/// <param name="type">Type of properties.</param>
 		/// <returns>Array of properties.</returns>
-		MemberInfo[] GetMembers(Type type)
+		void UpdateMembersCache(Type type)
 		{
-			if (!MessageMembers.ContainsKey(type))
+			if (MemberInfos.ContainsKey(type))
+				return;
+			var orders = new Dictionary<int, MemberInfo>();
+			var members = type.GetMembers(BindingFlags.Public | BindingFlags.Instance)
+				.Where(x => x.MemberType == MemberTypes.Field || x.MemberType == MemberTypes.Property).ToArray();
+			for (int i = 0; i < members.Length; i++)
 			{
-				var orders = new Dictionary<int, MemberInfo>();
-				var infos = type.GetMembers(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-				foreach (var pi in infos)
+				var pi = members[i];
+				var attributes = pi.GetCustomAttributes(typeof(DataMemberAttribute), false);
+				// If property/Field is marked with DataMember attribute then...
+				if (attributes.Length > 0)
 				{
-					var attributes = pi.GetCustomAttributes(typeof(DataMemberAttribute), false);
-					if (attributes.Length > 0)
+					var attribute = (DataMemberAttribute)attributes[0];
+					if (attribute.Order > -1)
 					{
-						var attribute = (DataMemberAttribute)attributes[0];
-						if (attribute.Order > -1)
+						if (orders.ContainsKey(attribute.Order))
 						{
-							if (orders.ContainsKey(attribute.Order))
-							{
-								var message = string.Format("Order property on DataMemberAttribute[Order={0}]{1}.{2} must be unique for TLV serialization to work!",
-									attribute.Order, type.Name, pi.MemberType);
-								throw new Exception();
-							}
-							orders.Add(attribute.Order, pi);
+							var message = string.Format("Order property on DataMemberAttribute[Order={0}]{1}.{2} must be unique for TLV serialization to work!",
+								attribute.Order, type.Name, pi.MemberType);
+							throw new Exception();
 						}
+						orders.Add(attribute.Order, pi);
 					}
 				}
-				MessageMembers.Add(type, orders.OrderBy(x => x.Key).Select(x => x.Value).ToArray());
 			}
-			return MessageMembers[type];
+			// If no members with DataMemberAttribute found then...
+			if (orders.Count == 0)
+			{
+				// Add all.
+				MemberInfos.Add(type, members.ToList());
+				var tags = new int[members.Length];
+				for (int i = 0; i < members.Length; i++)
+					tags[i] = i;
+				MemberTags.Add(type, tags.ToList());
+			}
+			else
+			{
+				var dataMembers = orders.OrderBy(x => x.Key);
+				var oInfos = dataMembers.Select(x => x.Value).ToArray();
+				var oTags = dataMembers.Select(x => x.Key).ToArray();
+				MemberInfos.Add(type, oInfos.ToList());
+				MemberTags.Add(type, oTags.ToList());
+			}
 		}
 
 		#endregion
@@ -421,21 +484,18 @@ namespace JocysCom.ClassLibrary.Data
 		{
 			if (o == null)
 				return null;
-			Type type = declaringType; //  o.GetType();
-			bool isNullable = IsNullable(type);
-			Type typeU1 = isNullable ? Nullable.GetUnderlyingType(type) ?? type : type;
-			Type typeU2 = typeU1.IsEnum ? Enum.GetUnderlyingType(typeU1) : typeU1;
-			// If object is not nullable and supplied value is same as default value then...
+			var type = declaringType; //  o.GetType();
+			var isNullable = IsNullable(type);
+			var typeU1 = isNullable ? Nullable.GetUnderlyingType(type) ?? type : type;
+			var typeU2 = typeU1.IsEnum ? Enum.GetUnderlyingType(typeU1) : typeU1;
+			// If object can't be null and supplied value is the same as default value then don't send any data.
 			if (!isNullable && typeU2.IsValueType && Activator.CreateInstance(typeU1).Equals(o))
-			{
-				// Don't send data if default value is same.
 				return null;
-			}
-			TypeCode typeCode = Type.GetTypeCode(typeU2);
+			var typeCode = Type.GetTypeCode(typeU2);
 			// CWE-404: Improper Resource Shutdown or Release
 			// Note: Binary Writer will close underlying MemoryStream automatically.
-			MemoryStream stream = new MemoryStream();
-			BinaryWriter writer = new BinaryWriter(stream);
+			var stream = new MemoryStream();
+			var writer = new BinaryWriter(stream);
 			byte[] objectBytes = null;
 			switch (typeCode)
 			{
@@ -457,7 +517,11 @@ namespace JocysCom.ClassLibrary.Data
 				case TypeCode.UInt32: WriteUNumber(writer, (UInt32)o); break;
 				case TypeCode.UInt64: WriteUNumber(writer, (UInt64)o); break;
 				case TypeCode.Object:
-					if (typeU2.Equals(typeof(byte[])))
+					if (typeU2.Equals(typeof(object)))
+					{
+						// bytes[0] will be sent.
+					}
+					else if (typeU2.Equals(typeof(byte[])))
 					{
 						var bytes = (byte[])o;
 						var value = new byte[bytes.Length];
