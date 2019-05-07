@@ -11,7 +11,11 @@ namespace JocysCom.ClassLibrary.Data
 		Decoder7BitStreamIsTooShortError = 2,
 		// Serialize errors.
 		TypeIdNotFound = 100,
+		NonSerializableObject = 101,
+		UnknownType = 102,
 		// Deserialize errors.
 		EnumIdNotFound = 200,
+		
+
 	}
 }

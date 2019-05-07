@@ -24,6 +24,11 @@ namespace JocysCom.ClassLibrary.Data
 	public class TlvSerializer<E> where E : struct
 	{
 
+		//public static TlvSerializer<T> Create<T>(Dictionary<Type, T> types = null) where T : struct
+		//{
+		//	return new TlvSerializer<T>(types);
+		//}
+
 		public TlvSerializer(Dictionary<Type, E> types = null)
 		{
 			Types = types;
@@ -80,12 +85,20 @@ namespace JocysCom.ClassLibrary.Data
 				{
 					case MemberTypes.Field:
 						var fi = (FieldInfo)info;
-						mValue = BytesToObject(mBytes, fi.FieldType);
+						var fiStatus = BytesToObject(mBytes, fi.FieldType, out mValue);
+						if (fiStatus != TlvSerializerError.None)
+						{
+							return fiStatus;
+						}
 						fi.SetValue(o, mValue);
 						break;
 					case MemberTypes.Property:
 						var pi = (PropertyInfo)info;
-						mValue = BytesToObject(mBytes, pi.PropertyType);
+						var piStatus = BytesToObject(mBytes, pi.PropertyType, out mValue);
+						if (piStatus != TlvSerializerError.None)
+						{
+							return piStatus;
+						}
 						pi.SetValue(o, mValue);
 						break;
 					default:
@@ -154,7 +167,9 @@ namespace JocysCom.ClassLibrary.Data
 					default:
 						break;
 				}
-				mBytes = ObjectToBytes(mValue, mType);
+				var status2 = ObjectToBytes(mValue, mType, out mBytes);
+				if (status2 != TlvSerializerError.None)
+					return status2;
 				// Do not serialize null objects.
 				if (mBytes == null)
 					continue;
@@ -360,18 +375,32 @@ namespace JocysCom.ClassLibrary.Data
 		/// Convert byte array to object.
 		/// </summary>
 		/// <remarks>byte[0] is empty/default value.</remarks>
-		public static object BytesToObject(byte[] bytes, Type type)
+		public TlvSerializerError BytesToObject(byte[] bytes, Type type, out object result)
 		{
 			// Return empty values for nullable types.
 			if (bytes.Length == 0)
 			{
-				if (type == typeof(string)) return string.Empty;
-				if (type == typeof(System.DBNull)) return DBNull.Value;
+				if (type == typeof(string))
+				{
+					result = string.Empty;
+					return TlvSerializerError.None;
+				}
+				if (type == typeof(System.DBNull))
+				{
+					result = DBNull.Value;
+					return TlvSerializerError.None;
+				}
 				bytes = null;
 			}
 			// Return null or default value.
 			bool isNullable = IsNullable(type);
-			if (bytes == null) return (isNullable) ? null : Activator.CreateInstance(type);
+			if (bytes == null)
+			{
+				result = isNullable
+					? null
+					: Activator.CreateInstance(type);
+				return TlvSerializerError.None;
+			}
 			Type typeU1 = isNullable ? Nullable.GetUnderlyingType(type) ?? type : type;
 			Type typeU2 = typeU1.IsEnum ? Enum.GetUnderlyingType(typeU1) : typeU1;
 			TypeCode typeCode = Type.GetTypeCode(typeU2);
@@ -398,7 +427,12 @@ namespace JocysCom.ClassLibrary.Data
 				case TypeCode.UInt32: o = System.Convert.ToUInt32(ReadUNumber(reader)); break;
 				case TypeCode.UInt64: o = System.Convert.ToUInt64(ReadUNumber(reader)); break;
 				case TypeCode.Object:
-					if (typeU2.Equals(typeof(byte[])))
+					if (typeU2.Equals(typeof(object)))
+					{
+						// bytes[0] will be sent.
+						o = new object();
+					}
+					else if (typeU2.Equals(typeof(byte[])))
 					{
 						byte[] bo = new byte[bytes.Length];
 						Array.Copy(bytes, bo, bo.Length);
@@ -447,13 +481,23 @@ namespace JocysCom.ClassLibrary.Data
 					//}
 					else
 					{
-						throw new Exception("Non Serializable Object: " + typeU2.Name);
+						var ms2 = new MemoryStream();
+						object o2;
+						var status2 = Deserialize(ms2, out o2);
+						if (status2 != TlvSerializerError.None)
+						{
+							result = null;
+							return status2;
+						}
+						o = o2;
 					}
 					break;
 				default: throw new Exception("Unknown Type: " + typeU2.Name);
 			}
-			if (typeU1.IsEnum) o = Enum.ToObject(typeU1, o);
-			return o;
+			if (typeU1.IsEnum)
+				o = Enum.ToObject(typeU1, o);
+			result = o;
+			return TlvSerializerError.None;
 		}
 
 		static T? ToNullable<T>(T value) where T : struct
@@ -480,17 +524,18 @@ namespace JocysCom.ClassLibrary.Data
 		/// <summary>
 		/// Convert object to byte array.
 		/// </summary>
-		public static byte[] ObjectToBytes(object o, Type declaringType)
+		public TlvSerializerError ObjectToBytes(object o, Type declaringType, out byte[] bytes)
 		{
+			bytes = null;
 			if (o == null)
-				return null;
+				return TlvSerializerError.None;
 			var type = declaringType; //  o.GetType();
 			var isNullable = IsNullable(type);
 			var typeU1 = isNullable ? Nullable.GetUnderlyingType(type) ?? type : type;
 			var typeU2 = typeU1.IsEnum ? Enum.GetUnderlyingType(typeU1) : typeU1;
 			// If object can't be null and supplied value is the same as default value then don't send any data.
 			if (!isNullable && typeU2.IsValueType && Activator.CreateInstance(typeU1).Equals(o))
-				return null;
+				return TlvSerializerError.None;
 			var typeCode = Type.GetTypeCode(typeU2);
 			// CWE-404: Improper Resource Shutdown or Release
 			// Note: Binary Writer will close underlying MemoryStream automatically.
@@ -523,9 +568,9 @@ namespace JocysCom.ClassLibrary.Data
 					}
 					else if (typeU2.Equals(typeof(byte[])))
 					{
-						var bytes = (byte[])o;
-						var value = new byte[bytes.Length];
-						Array.Copy(bytes, value, value.Length);
+						var bytes2 = (byte[])o;
+						var value = new byte[bytes2.Length];
+						Array.Copy(bytes2, value, value.Length);
 						objectBytes = value;
 					}
 					//else if (IsISocketMessage(type))
@@ -548,11 +593,18 @@ namespace JocysCom.ClassLibrary.Data
 					//}
 					else
 					{
-						throw new Exception("Non Serializable Object: " + type.Name);
+						var mso = new MemoryStream();
+						var status2 = Serialize(mso, o);
+						if (status2 != TlvSerializerError.None)
+							return status2;
+						objectBytes = mso.ToArray();
+						//return TlvSerializerError.NonSerializableObject;
+						//throw new Exception("Non Serializable Object: " + type.Name);
 					}
 					break;
 				default:
-					throw new Exception("Unknown Type: " + type.Name);
+					return TlvSerializerError.UnknownType;
+					//throw new Exception("Unknown Type: " + type.Name);
 			}
 			var result = objectBytes == null
 				? stream.ToArray()
@@ -560,7 +612,8 @@ namespace JocysCom.ClassLibrary.Data
 			// Binary Writer will close underlying MemoryStream automatically.
 			writer.Close();
 			//stream.Close();
-			return result;
+			bytes = result;
+			return TlvSerializerError.None;
 		}
 
 		//public static bool IsISocketMessage(Type t)
