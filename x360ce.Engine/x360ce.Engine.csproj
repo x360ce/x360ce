@@ -116,6 +116,8 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -318,6 +320,12 @@
     <Compile Include="JocysCom\Security\RoleQueryName.cs" />
     <Compile Include="JocysCom\Security\UserFieldName.cs" />
     <Compile Include="JocysCom\Security\UserQueryName.cs" />
+    <Compile Include="JocysCom\Services\SimpleService\CtrlTypes.cs" />
+    <Compile Include="JocysCom\Services\SimpleService\ISimpleService.cs" />
+    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceBase.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceHandler.cs" />
     <Compile Include="JocysCom\Text\Helper.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
     <Compile Include="JocysCom\Threading\QueueTimerEventArgs.cs" />
