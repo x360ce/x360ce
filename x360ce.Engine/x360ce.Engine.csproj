@@ -325,7 +325,16 @@
     <Compile Include="JocysCom\Services\SimpleService\SimpleServiceBase.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceBase.Designer.cs">
+      <DependentUpon>SimpleServiceBase.cs</DependentUpon>
+    </Compile>
     <Compile Include="JocysCom\Services\SimpleService\SimpleServiceHandler.cs" />
+    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceInstaller.Designer.cs">
+      <DependentUpon>SimpleServiceInstaller.cs</DependentUpon>
+    </Compile>
     <Compile Include="JocysCom\Text\Helper.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
     <Compile Include="JocysCom\Threading\QueueTimerEventArgs.cs" />

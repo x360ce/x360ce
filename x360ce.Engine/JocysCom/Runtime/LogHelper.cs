@@ -117,7 +117,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			return (v == null) ? defaultValue : IPAddress.Parse(v);
 		}
 
-		public static string RunMode { get { return ParseString("RunMode", "TEST"); } }
+		public static string RunMode { get { return ParseString("RunMode", ParseString("Environment", "TEST")); } }
 		public static bool IsLive { get { return string.Compare(RunMode, "LIVE", true) == 0; } }
 
 		#endregion

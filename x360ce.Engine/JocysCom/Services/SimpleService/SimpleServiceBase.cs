@@ -7,12 +7,51 @@ using System.Diagnostics;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceProcess;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace JocysCom.ClassLibrary.Services.SimpleService
 {
-	public class SimpleServiceBase<T> : ServiceBase where T : ISimpleService, new()
+	public partial class SimpleServiceBase<T> : ServiceBase where T : ISimpleService, new()
 	{
+		public SimpleServiceBase()
+		{
+			InitializeComponent();
+			_installer = new SimpleServiceInstaller();
+			var assembly = Assembly.GetEntryAssembly();
+			// Get information from assembly.
+			var company = GetAttribute<AssemblyCompanyAttribute>(assembly, a => a.Company);
+			var product = GetAttribute<AssemblyProductAttribute>(assembly, a => a.Product);
+			var rm = LogHelper.RunMode;
+			var rx = new Regex("[^a-zA-Z0-9]");
+			var cp = string.Format("{0} {1} ({2})", company, product, rm);
+			var sn = rx.Replace(cp, "");
+			// Set properties.
+			_installer.AppEventLogInstaller.Log = company;
+			_installer.AppEventLogInstaller.Source = sn + "Source";
+			_installer.AppServiceInstaller.Description = cp;
+			_installer.AppServiceInstaller.DisplayName = cp;
+			_installer.AppServiceInstaller.ServiceName = sn;
+			ServiceName = sn;
+			var ic = new InstallContext(null, Environment.GetCommandLineArgs());
+			if (ic.Parameters.ContainsKey("UserName"))
+			{
+				AppServiceProcessInstaller.Account = ServiceAccount.User;
+				AppServiceProcessInstaller.Username = ic.Parameters["UserName"];
+				if (ic.Parameters.ContainsKey("Password"))
+				{
+					AppServiceProcessInstaller.Password = ic.Parameters["Password"];
+				}
+			}
+		}
+
+		SimpleServiceInstaller _installer;
+
+		string GetAttribute<A>(Assembly assembly, Func<A, string> value) where A : Attribute
+		{
+			var attribute = (A)Attribute.GetCustomAttribute(assembly, typeof(A));
+			return value.Invoke(attribute);
+		}
 
 		#region "Service"
 
@@ -144,34 +183,6 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 
 		#region "Helper Functions"
 
-		public void InitInstaller(Installer projectInstaller, ServiceInstaller serviceInstaller, EventLogInstaller eventLogInstaller, ServiceProcessInstaller serviceProcessInstaller)
-		{
-			// This call is required by the Windows Form Designer.
-			string rm = LogHelper.RunMode;
-			AppProjectInstaller = projectInstaller;
-			AppEventLogInstaller = eventLogInstaller;
-			AppEventLogInstaller.Source = string.Format("{0}{1}", eventLogInstaller.Source, rm);
-			AppServiceInstaller = serviceInstaller;
-			AppServiceInstaller.ServiceName = string.Format("{0}{1}", serviceInstaller.ServiceName, rm);
-			AppServiceInstaller.DisplayName = string.Format("{0} ({1})", serviceInstaller.DisplayName, rm);
-			AppServiceProcessInstaller = serviceProcessInstaller;
-			var ic = new InstallContext(null, Environment.GetCommandLineArgs());
-			if (ic.Parameters.ContainsKey("UserName"))
-			{
-				AppServiceProcessInstaller.Account = ServiceAccount.User;
-				AppServiceProcessInstaller.Username = ic.Parameters["UserName"];
-				if (ic.Parameters.ContainsKey("Password"))
-				{
-					AppServiceProcessInstaller.Password = ic.Parameters["Password"];
-				}
-			}
-			ServiceName = AppServiceInstaller.ServiceName;
-		}
-
-		public EventLogInstaller AppEventLogInstaller;
-		public Installer AppProjectInstaller;
-		public ServiceInstaller AppServiceInstaller;
-
 		public ServiceProcessInstaller AppServiceProcessInstaller;
 
 		object controllerLock = new object();
@@ -185,7 +196,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 				{
 					if (_controller == null)
 					{
-						_controller = new ServiceController(AppServiceInstaller.ServiceName);
+						_controller = new ServiceController(_installer.AppServiceInstaller.ServiceName);
 					}
 				}
 				return _controller;
@@ -200,7 +211,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 				ServiceController[] services = ServiceController.GetServices();
 				foreach (ServiceController item in services)
 				{
-					if (item.ServiceName == AppServiceInstaller.ServiceName)
+					if (item.ServiceName == _installer.AppServiceInstaller.ServiceName)
 					{
 						service = item;
 						return true;
@@ -230,16 +241,16 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 				}
 				return null;
 			}
-			if (EventLog.SourceExists(AppEventLogInstaller.Source))
+			if (EventLog.SourceExists(_installer.AppEventLogInstaller.Source))
 			{
-				EventLog.DeleteEventSource(AppEventLogInstaller.Source);
+				EventLog.DeleteEventSource(_installer.AppEventLogInstaller.Source);
 			}
 			var savedState = new Dictionary<object, object>();
-			AppProjectInstaller.Context = new InstallContext(null, null);
-			AppProjectInstaller.Context.Parameters["AssemblyPath"] = assemblyLocation;
+			_installer.Context = new InstallContext(null, null);
+			_installer.Context.Parameters["AssemblyPath"] = assemblyLocation;
 			try
 			{
-				AppProjectInstaller.Install(savedState);
+				_installer.Install(savedState);
 			}
 			catch (Exception ex)
 			{
@@ -263,8 +274,8 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 				Controller.WaitForStatus(ServiceControllerStatus.Stopped, new TimeSpan(0, 0, 0, 15));
 				Controller.Close();
 			}
-			AppProjectInstaller.Context = new InstallContext(null, null);
-			AppProjectInstaller.Uninstall(savedState);
+			_installer.Context = new InstallContext(null, null);
+			_installer.Uninstall(savedState);
 			return savedState;
 		}
 
@@ -292,12 +303,6 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			LogHelper.WriteInfo(description);
 			if (IsConsole)
 				Console.Title = header;
-		}
-
-		string GetAttribute<A>(Assembly assembly, Func<A, string> value) where A : Attribute
-		{
-			A attribute = (A)Attribute.GetCustomAttribute(assembly, typeof(A));
-			return value.Invoke(attribute);
 		}
 
 		public bool InitEnvironment()
@@ -344,8 +349,8 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			{
 				// Initialize and configure event log.
 				string m = ".";
-				string l = AppEventLogInstaller.Log;
-				string s = AppEventLogInstaller.Source;
+				string l = _installer.AppEventLogInstaller.Log;
+				string s = _installer.AppEventLogInstaller.Source;
 				// Remove outdated location.
 				// Important!: SourceExists(...) will fail with SecurityException if you are not running this as an administrator.
 				// This is a permissions problem - you should give the running user permission to read the following registry key:
