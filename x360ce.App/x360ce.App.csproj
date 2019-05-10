@@ -419,7 +419,6 @@
     <EmbeddedResource Include="Resources\dinput_x64.dll" />
     <EmbeddedResource Include="Resources\dinput_x86.dll" />
     <EmbeddedResource Include="Resources\xinput.dll" />
-    <EmbeddedResource Include="Resources\x360ce.Engine.XmlSerializers.dll" />
     <EmbeddedResource Include="Resources\xinput_x86.dll" />
     <EmbeddedResource Include="Resources\xinput_x64.dll" />
     <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
