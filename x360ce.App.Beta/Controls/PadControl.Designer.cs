@@ -570,7 +570,6 @@
 			this.LeftThumbAxisYComboBox.Name = "LeftThumbAxisYComboBox";
 			this.LeftThumbAxisYComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbAxisYComboBox.TabIndex = 22;
-			this.LeftThumbAxisYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbButtonLabel
 			// 
@@ -590,7 +589,6 @@
 			this.LeftThumbButtonComboBox.Name = "LeftThumbButtonComboBox";
 			this.LeftThumbButtonComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbButtonComboBox.TabIndex = 23;
-			this.LeftThumbButtonComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftTriggerLabel
 			// 
@@ -620,7 +618,6 @@
 			this.LeftThumbDownComboBox.Name = "LeftThumbDownComboBox";
 			this.LeftThumbDownComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbDownComboBox.TabIndex = 27;
-			this.LeftThumbDownComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftShoulderLabel
 			// 
@@ -640,7 +637,6 @@
 			this.LeftThumbRightComboBox.Name = "LeftThumbRightComboBox";
 			this.LeftThumbRightComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbRightComboBox.TabIndex = 26;
-			this.LeftThumbRightComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbAxisYLabel
 			// 
@@ -660,7 +656,6 @@
 			this.LeftThumbLeftComboBox.Name = "LeftThumbLeftComboBox";
 			this.LeftThumbLeftComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbLeftComboBox.TabIndex = 25;
-			this.LeftThumbLeftComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonBackLabel
 			// 
@@ -680,7 +675,6 @@
 			this.LeftThumbUpComboBox.Name = "LeftThumbUpComboBox";
 			this.LeftThumbUpComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbUpComboBox.TabIndex = 24;
-			this.LeftThumbUpComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// DPadLabel
 			// 
@@ -748,7 +742,6 @@
 			this.LeftShoulderComboBox.Name = "LeftShoulderComboBox";
 			this.LeftShoulderComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftShoulderComboBox.TabIndex = 2;
-			this.LeftShoulderComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbLeftLabel
 			// 
@@ -769,7 +762,6 @@
 			this.ButtonBackComboBox.Name = "ButtonBackComboBox";
 			this.ButtonBackComboBox.Size = new System.Drawing.Size(96, 21);
 			this.ButtonBackComboBox.TabIndex = 3;
-			this.ButtonBackComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// DPadComboBox
 			// 
@@ -780,7 +772,6 @@
 			this.DPadComboBox.Name = "DPadComboBox";
 			this.DPadComboBox.Size = new System.Drawing.Size(96, 21);
 			this.DPadComboBox.TabIndex = 6;
-			this.DPadComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonStartComboBox
 			// 
@@ -791,7 +782,6 @@
 			this.ButtonStartComboBox.Name = "ButtonStartComboBox";
 			this.ButtonStartComboBox.Size = new System.Drawing.Size(96, 21);
 			this.ButtonStartComboBox.TabIndex = 4;
-			this.ButtonStartComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonGuideComboBox
 			// 
@@ -802,7 +792,6 @@
 			this.ButtonGuideComboBox.Name = "ButtonGuideComboBox";
 			this.ButtonGuideComboBox.Size = new System.Drawing.Size(96, 21);
 			this.ButtonGuideComboBox.TabIndex = 5;
-			this.ButtonGuideComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbTextBox
 			// 
@@ -824,7 +813,6 @@
 			this.LeftThumbAxisXComboBox.Name = "LeftThumbAxisXComboBox";
 			this.LeftThumbAxisXComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbAxisXComboBox.TabIndex = 21;
-			this.LeftThumbAxisXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftTriggerComboBox
 			// 
@@ -835,7 +823,6 @@
 			this.LeftTriggerComboBox.Name = "LeftTriggerComboBox";
 			this.LeftTriggerComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftTriggerComboBox.TabIndex = 1;
-			this.LeftTriggerComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// LeftThumbAxisXLabel
 			// 
@@ -905,7 +892,6 @@
 			this.RightThumbButtonComboBox.Name = "RightThumbButtonComboBox";
 			this.RightThumbButtonComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbButtonComboBox.TabIndex = 33;
-			this.RightThumbButtonComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbAxisYComboBox
 			// 
@@ -917,7 +903,6 @@
 			this.RightThumbAxisYComboBox.Name = "RightThumbAxisYComboBox";
 			this.RightThumbAxisYComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbAxisYComboBox.TabIndex = 32;
-			this.RightThumbAxisYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbButtonLabel
 			// 
@@ -970,7 +955,6 @@
 			this.RightShoulderComboBox.Name = "RightShoulderComboBox";
 			this.RightShoulderComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightShoulderComboBox.TabIndex = 12;
-			this.RightShoulderComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonBLabel
 			// 
@@ -992,7 +976,6 @@
 			this.RightThumbAxisXComboBox.Name = "RightThumbAxisXComboBox";
 			this.RightThumbAxisXComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbAxisXComboBox.TabIndex = 31;
-			this.RightThumbAxisXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbDownComboBox
 			// 
@@ -1004,7 +987,6 @@
 			this.RightThumbDownComboBox.Name = "RightThumbDownComboBox";
 			this.RightThumbDownComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbDownComboBox.TabIndex = 37;
-			this.RightThumbDownComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonYComboBox
 			// 
@@ -1016,7 +998,6 @@
 			this.ButtonYComboBox.Name = "ButtonYComboBox";
 			this.ButtonYComboBox.Size = new System.Drawing.Size(96, 21);
 			this.ButtonYComboBox.TabIndex = 13;
-			this.ButtonYComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbRightComboBox
 			// 
@@ -1028,7 +1009,6 @@
 			this.RightThumbRightComboBox.Name = "RightThumbRightComboBox";
 			this.RightThumbRightComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbRightComboBox.TabIndex = 36;
-			this.RightThumbRightComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightShoulderLabel
 			// 
@@ -1050,7 +1030,6 @@
 			this.RightThumbLeftComboBox.Name = "RightThumbLeftComboBox";
 			this.RightThumbLeftComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbLeftComboBox.TabIndex = 35;
-			this.RightThumbLeftComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// ButtonXLabel
 			// 
@@ -1072,7 +1051,6 @@
 			this.RightThumbUpComboBox.Name = "RightThumbUpComboBox";
 			this.RightThumbUpComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbUpComboBox.TabIndex = 34;
-			this.RightThumbUpComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbAxisXLabel
 			// 
@@ -1094,7 +1072,6 @@
 			this.ButtonBComboBox.Name = "ButtonBComboBox";
 			this.ButtonBComboBox.Size = new System.Drawing.Size(96, 21);
 			this.ButtonBComboBox.TabIndex = 15;
-			this.ButtonBComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbDownLabel
 			// 
@@ -1117,7 +1094,6 @@
 			this.RightTriggerComboBox.Name = "RightTriggerComboBox";
 			this.RightTriggerComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightTriggerComboBox.TabIndex = 11;
-			this.RightTriggerComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightTriggerLabel
 			// 
@@ -1139,7 +1115,6 @@
 			this.ButtonXComboBox.Name = "ButtonXComboBox";
 			this.ButtonXComboBox.Size = new System.Drawing.Size(96, 21);
 			this.ButtonXComboBox.TabIndex = 14;
-			this.ButtonXComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbUpLabel
 			// 
@@ -1172,7 +1147,6 @@
 			this.ButtonAComboBox.Name = "ButtonAComboBox";
 			this.ButtonAComboBox.Size = new System.Drawing.Size(96, 21);
 			this.ButtonAComboBox.TabIndex = 16;
-			this.ButtonAComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// RightThumbRightLabel
 			// 
@@ -1259,7 +1233,6 @@
 			this.DPadUpComboBox.Name = "DPadUpComboBox";
 			this.DPadUpComboBox.Size = new System.Drawing.Size(96, 21);
 			this.DPadUpComboBox.TabIndex = 41;
-			this.DPadUpComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// DPadDownLabel
 			// 
@@ -1279,7 +1252,6 @@
 			this.DPadDownComboBox.Name = "DPadDownComboBox";
 			this.DPadDownComboBox.Size = new System.Drawing.Size(96, 21);
 			this.DPadDownComboBox.TabIndex = 44;
-			this.DPadDownComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// DPadRightLabel
 			// 
@@ -1299,7 +1271,6 @@
 			this.DPadLeftComboBox.Name = "DPadLeftComboBox";
 			this.DPadLeftComboBox.Size = new System.Drawing.Size(96, 21);
 			this.DPadLeftComboBox.TabIndex = 42;
-			this.DPadLeftComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// DPadLeftLabel
 			// 
@@ -1319,7 +1290,6 @@
 			this.DPadRightComboBox.Name = "DPadRightComboBox";
 			this.DPadRightComboBox.Size = new System.Drawing.Size(96, 21);
 			this.DPadRightComboBox.TabIndex = 43;
-			this.DPadRightComboBox.DropDown += new System.EventHandler(this.ComboBox_DropDown);
 			// 
 			// TopPictureBox
 			// 
@@ -2109,7 +2079,7 @@
 			// DiMenuStrip
 			// 
 			this.DiMenuStrip.Name = "DiMenuStrip";
-			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
+			this.DiMenuStrip.Size = new System.Drawing.Size(181, 26);
 			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
 			// 
 			// ClearPresetButton
