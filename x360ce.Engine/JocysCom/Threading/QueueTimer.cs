@@ -280,7 +280,8 @@ namespace JocysCom.ClassLibrary.Threading
 			lock (queueLock)
 			{
 				AddCount++;
-				if (IsDisposing) return string.Empty;
+				if (IsDisposing)
+					return string.Empty;
 				double delayTimerInterval = 0;
 				lock (delayTimerLock)
 				{

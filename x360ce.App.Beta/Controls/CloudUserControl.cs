@@ -24,7 +24,10 @@ namespace x360ce.App.Controls
 			// Enable task timer.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			TasksTimer = new JocysCom.ClassLibrary.Threading.QueueTimer<CloudItem>(0, 5000, scheduler);
-            TasksTimer.DoWork += queueTimer_DoWork;
+			HandleCreated += (sender, e) => { TasksTimer.HasHandle = true; };
+			HandleDestroyed += (sender, e) => { TasksTimer.HasHandle = false; };
+			TasksTimer.HasHandle = IsHandleCreated;
+			TasksTimer.DoWork += queueTimer_DoWork;
             TasksTimer.Queue.ListChanged += Data_ListChanged;
             TasksDataGridView.AutoGenerateColumns = false;
             // Suspend errors.
