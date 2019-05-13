@@ -56,40 +56,39 @@ namespace x360ce.Engine
 				return false;
 			// Try to convert setting from ini value.
 			var m = iniValueRegex.Match(value);
-			if (m.Success)
+			if (!m.Success)
+				return false;
+			index = int.Parse(m.Groups["num"].Value);
+			// Index must be non zero.
+			if (index == 0)
+				return false;
+			string t = m.Groups["type"].Value;
+			string n = m.Groups["neg"].Value;
+			switch (t)
 			{
-				index = int.Parse(m.Groups["num"].Value);
-				// Index must be non zero.
-				if (index == 0)
-					return false;
-				string t = m.Groups["type"].Value;
-				string n = m.Groups["neg"].Value;
-				switch (t)
-				{
-					case SettingName.SType.Axis:
-						type = n == "-" ? SettingType.IAxis : SettingType.Axis;
-						break;
-					case SettingName.SType.Slider:
-						type = n == "-" ? SettingType.ISlider : SettingType.Slider;
-						break;
-					case SettingName.SType.HAxis:
-						type = n == "-" ? SettingType.IHAxis : SettingType.HAxis;
-						break;
-					case SettingName.SType.HSlider:
-						type = n == "-" ? SettingType.IHSlider : SettingType.HSlider;
-						break;
-					case SettingName.SType.POV:
-						type = n == "-" ? SettingType.IPOV : SettingType.POV;
-						break;
-					case SettingName.SType.POVButton:
-						type = n == "-" ? SettingType.IPOVButton : SettingType.DPOVButton;
-						break;
-					default:
-						type = n == "-" ? SettingType.IButton : SettingType.Button;
-						break;
-				}
+				case SettingName.SType.Axis:
+					type = n == "-" ? SettingType.IAxis : SettingType.Axis;
+					break;
+				case SettingName.SType.Slider:
+					type = n == "-" ? SettingType.ISlider : SettingType.Slider;
+					break;
+				case SettingName.SType.HAxis:
+					type = n == "-" ? SettingType.IHAxis : SettingType.HAxis;
+					break;
+				case SettingName.SType.HSlider:
+					type = n == "-" ? SettingType.IHSlider : SettingType.HSlider;
+					break;
+				case SettingName.SType.POV:
+					type = n == "-" ? SettingType.IPOV : SettingType.POV;
+					break;
+				case SettingName.SType.POVButton:
+					type = n == "-" ? SettingType.IPOVButton : SettingType.DPOVButton;
+					break;
+				default:
+					type = n == "-" ? SettingType.IButton : SettingType.Button;
+					break;
 			}
-			return m.Success;
+			return true;
 		}
 
 		/// <summary>
@@ -129,7 +128,7 @@ namespace x360ce.Engine
 
 
 		/// <summary>Convert INI value to Text value.</summary>
-		public static string ToTextValue(string iniValue)
+		public static string FromIniValue(string iniValue)
 		{
 			var index = 0;
 			var type = SettingType.None;

@@ -188,7 +188,13 @@ namespace x360ce.Engine.Data
         [XmlIgnore]
         public long OldDiStateTime;
 
-        [XmlIgnore]
+		[XmlIgnore]
+		public CustomDiState OrgDiState;
+
+		[XmlIgnore]
+		public long OrgDiStateTime;
+
+		[XmlIgnore]
         public ForceFeedbackState FFState;
 
         [XmlIgnore]

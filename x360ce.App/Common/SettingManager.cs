@@ -279,7 +279,7 @@ namespace x360ce.App
 				}
 				else
 				{
-					var text = SettingsConverter.ToTextValue(value);
+					var text = SettingsConverter.FromIniValue(value);
 					SetComboBoxValue(cbx, text);
 				}
 			}

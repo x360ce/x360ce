@@ -1,15 +1,15 @@
-﻿using System;
+﻿using SharpDX.DirectInput;
+using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using SharpDX.DirectInput;
-using System.Linq;
-using x360ce.Engine.Data;
-using x360ce.Engine;
-using System.Linq.Expressions;
-using System.Reflection;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.App
 {
@@ -423,7 +423,7 @@ namespace x360ce.App
 			}
 		}
 
-		static public void AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None)
+		static public void AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None, bool iniConverter = false)
 		{
 			// Get the member expression
 			var me = (MemberExpression)setting.Body;
@@ -449,6 +449,7 @@ namespace x360ce.App
 			item.Description = desc;
 			item.IniSection = sectionName;
 			item.IniKey = keyName;
+			item.IniConverter = iniConverter;
 			item.Control = control;
 			item.MapTo = mapTo;
 			item.PropertyName = prop.Name;
@@ -627,14 +628,15 @@ namespace x360ce.App
 			else if (control is ComboBox)
 			{
 				var cbx = (ComboBox)control;
-				if (control.ContextMenuStrip == null)
+				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
+				if (map != null && map.IniConverter)
 				{
-					control.Text = value;
+					var text = SettingsConverter.FromIniValue(value);
+					SetComboBoxValue(cbx, text);
 				}
 				else
 				{
-					var text = SettingsConverter.ToTextValue(value);
-					SetComboBoxValue(cbx, text);
+					control.Text = value;
 				}
 			}
 			else if (control is TextBox)
@@ -719,15 +721,16 @@ namespace x360ce.App
 			else if (control is ComboBox)
 			{
 				var cbx = (ComboBox)control;
-				if (control.ContextMenuStrip == null)
-				{
-					v = control.Text;
-				}
-				else
+				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
+				if (map != null && map.IniConverter)
 				{
 					v = SettingsConverter.ToIniValue(control.Text);
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v)) v = "0";
+				}
+				else
+				{
+					v = control.Text;
 				}
 			}
 			else if (control is TextBox)

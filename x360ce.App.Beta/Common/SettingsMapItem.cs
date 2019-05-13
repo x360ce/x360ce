@@ -18,6 +18,11 @@ namespace x360ce.App
 		public string IniKey { get; set; }
 
 		/// <summary>
+		/// Property key inside INI file.
+		/// </summary>
+		public bool IniConverter { get; set; }
+		
+		/// <summary>
 		/// Property path inside INI file.
 		/// </summary>
 		public string IniPath { get { return string.Format("{0}\\{1}", IniSection, IniKey); } }

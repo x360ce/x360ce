@@ -615,12 +615,12 @@ namespace x360ce.App.Controls
 			// Mapping
 			AddMap(() => SettingName.MapToPad, DirectInputPanel.MapToPadComboBox);
 			// Left Trigger
-			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox);
+			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox, true);
 			AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.LeftTriggerAntiDeadZone, LeftTriggerUserControl.AntiDeadZoneNumericUpDown);
 			AddMap(() => SettingName.LeftTriggerLinear, LeftTriggerUserControl.SensitivityNumericUpDown);
 			// Right Trigger
-			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox);
+			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox, true);
 			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.RightTriggerAntiDeadZone, RightTriggerUserControl.AntiDeadZoneNumericUpDown);
 			AddMap(() => SettingName.RightTriggerLinear, RightTriggerUserControl.SensitivityNumericUpDown);
@@ -628,11 +628,11 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.Combined, CombinedCheckBox);
 			AddMap(() => SettingName.CombinedIndex, CombinedIndexComboBox);
 			// D-Pad
-			AddMap(() => SettingName.DPad, DPadComboBox);
-			AddMap(() => SettingName.DPadUp, DPadUpComboBox);
-			AddMap(() => SettingName.DPadDown, DPadDownComboBox);
-			AddMap(() => SettingName.DPadLeft, DPadLeftComboBox);
-			AddMap(() => SettingName.DPadRight, DPadRightComboBox);
+			AddMap(() => SettingName.DPad, DPadComboBox, true);
+			AddMap(() => SettingName.DPadUp, DPadUpComboBox, true);
+			AddMap(() => SettingName.DPadDown, DPadDownComboBox, true);
+			AddMap(() => SettingName.DPadLeft, DPadLeftComboBox, true);
+			AddMap(() => SettingName.DPadRight, DPadRightComboBox, true);
 			// Axis To Button
 			AddMap(() => SettingName.ButtonADeadZone, AxisToButtonADeadZonePanel.DeadZoneNumericUpDown);
 			AddMap(() => SettingName.ButtonBDeadZone, AxisToButtonBDeadZonePanel.DeadZoneNumericUpDown);
@@ -654,24 +654,24 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
 			AddMap(() => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
 			// Buttons
-			AddMap(() => SettingName.ButtonGuide, ButtonGuideComboBox);
-			AddMap(() => SettingName.ButtonBack, ButtonBackComboBox);
-			AddMap(() => SettingName.ButtonStart, ButtonStartComboBox);
-			AddMap(() => SettingName.ButtonA, ButtonAComboBox);
-			AddMap(() => SettingName.ButtonB, ButtonBComboBox);
-			AddMap(() => SettingName.ButtonX, ButtonXComboBox);
-			AddMap(() => SettingName.ButtonY, ButtonYComboBox);
+			AddMap(() => SettingName.ButtonGuide, ButtonGuideComboBox, true);
+			AddMap(() => SettingName.ButtonBack, ButtonBackComboBox, true);
+			AddMap(() => SettingName.ButtonStart, ButtonStartComboBox, true);
+			AddMap(() => SettingName.ButtonA, ButtonAComboBox, true);
+			AddMap(() => SettingName.ButtonB, ButtonBComboBox, true);
+			AddMap(() => SettingName.ButtonX, ButtonXComboBox, true);
+			AddMap(() => SettingName.ButtonY, ButtonYComboBox, true);
 			// Shoulders.
-			AddMap(() => SettingName.LeftShoulder, LeftShoulderComboBox);
-			AddMap(() => SettingName.RightShoulder, RightShoulderComboBox);
+			AddMap(() => SettingName.LeftShoulder, LeftShoulderComboBox, true);
+			AddMap(() => SettingName.RightShoulder, RightShoulderComboBox, true);
 			// Left Thumb
-			AddMap(() => SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox);
-			AddMap(() => SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox);
-			AddMap(() => SettingName.LeftThumbRight, LeftThumbRightComboBox);
-			AddMap(() => SettingName.LeftThumbLeft, LeftThumbLeftComboBox);
-			AddMap(() => SettingName.LeftThumbUp, LeftThumbUpComboBox);
-			AddMap(() => SettingName.LeftThumbDown, LeftThumbDownComboBox);
-			AddMap(() => SettingName.LeftThumbButton, LeftThumbButtonComboBox);
+			AddMap(() => SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox, true);
+			AddMap(() => SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox, true);
+			AddMap(() => SettingName.LeftThumbRight, LeftThumbRightComboBox, true);
+			AddMap(() => SettingName.LeftThumbLeft, LeftThumbLeftComboBox, true);
+			AddMap(() => SettingName.LeftThumbUp, LeftThumbUpComboBox, true);
+			AddMap(() => SettingName.LeftThumbDown, LeftThumbDownComboBox, true);
+			AddMap(() => SettingName.LeftThumbButton, LeftThumbButtonComboBox, true);
 			AddMap(() => SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown);
@@ -679,13 +679,13 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityNumericUpDown);
 			AddMap(() => SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityNumericUpDown);
 			// Right Thumb
-			AddMap(() => SettingName.RightThumbAxisX, RightThumbAxisXComboBox);
-			AddMap(() => SettingName.RightThumbAxisY, RightThumbAxisYComboBox);
-			AddMap(() => SettingName.RightThumbRight, RightThumbRightComboBox);
-			AddMap(() => SettingName.RightThumbLeft, RightThumbLeftComboBox);
-			AddMap(() => SettingName.RightThumbUp, RightThumbUpComboBox);
-			AddMap(() => SettingName.RightThumbDown, RightThumbDownComboBox);
-			AddMap(() => SettingName.RightThumbButton, RightThumbButtonComboBox);
+			AddMap(() => SettingName.RightThumbAxisX, RightThumbAxisXComboBox, true);
+			AddMap(() => SettingName.RightThumbAxisY, RightThumbAxisYComboBox, true);
+			AddMap(() => SettingName.RightThumbRight, RightThumbRightComboBox, true);
+			AddMap(() => SettingName.RightThumbLeft, RightThumbLeftComboBox, true);
+			AddMap(() => SettingName.RightThumbUp, RightThumbUpComboBox, true);
+			AddMap(() => SettingName.RightThumbDown, RightThumbDownComboBox, true);
+			AddMap(() => SettingName.RightThumbButton, RightThumbButtonComboBox, true);
 			AddMap(() => SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown);
@@ -705,10 +705,10 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
 		}
 
-		void AddMap<T>(Expression<Func<T>> setting, Control control)
+		void AddMap<T>(Expression<Func<T>> setting, Control control, bool iniConverter = false)
 		{
 			var section = string.Format(@"PAD{0}", (int)MappedTo);
-			SettingsManager.AddMap(section, setting, control, MappedTo);
+			SettingsManager.AddMap(section, setting, control, MappedTo, iniConverter);
 		}
 
 		#endregion

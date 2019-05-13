@@ -196,76 +196,70 @@ namespace x360ce.App.DInput
 				ud.JoState = state ?? new JoystickState();
 				var newState = new CustomDiState(ud.JoState);
 				var newTime = watch.ElapsedTicks;
+				// Remember old state.
+				ud.OldDiState = ud.DiState;
+				ud.OldDiStateTime = ud.DiStateTime;
+				// Update state.
+				ud.DiState = newState;
+				ud.DiStateTime = newTime;
 				// Mouse needs special update.
 				if (ud.Device != null && ud.Device.Information.Type == SharpDX.DirectInput.DeviceType.Mouse)
 				{
-					if (ud.DiState == null)
+					// If original state is missing then...
+					if (ud.OrgDiState == null)
 					{
-						ud.DiState = new CustomDiState(new JoystickState());
+						// Store current values.
+						ud.OrgDiState = newState;
+						ud.OrgDiStateTime = newTime;
 					}
-					var mouseState = ud.DiState;
-					if (ud.OldDiState == null)
-					{
-						ud.DiState = mouseState;
-						// Make sure new state have zero values.
-						for (int a = 0; a < newState.Axis.Length; a++)
-							mouseState.Axis[a] = -short.MinValue;
-						// Update sliders with delta.
-						for (int s = 0; s < newState.Sliders.Length; s++)
-							mouseState.Sliders[s] = -short.MinValue;
-					}
-					else
-					{
+					var mouseState = new CustomDiState(new JoystickState());
+					// Clone button values.
+					Array.Copy(newState.Buttons, mouseState.Buttons, mouseState.Buttons.Length);
 
-						//--------------------------------------------------------
-						// Map mouse acceleration to axis position. Good for FPS control.
-						//--------------------------------------------------------
+					//	//--------------------------------------------------------
+					//	// Map mouse acceleration to axis position. Good for FPS control.
+					//	//--------------------------------------------------------
 
-						// This parts needs to be worked on.
-						//var ticks = (int)(newTime - ud.DiStateTime);
-						// Update axis with delta.
-						//for (int a = 0; a < newState.Axis.Length; a++)
-						//	mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldDiState.Axis[a]) - short.MinValue;
-						// Update sliders with delta.
-						//for (int s = 0; s < newState.Sliders.Length; s++)
-						//	mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldDiState.Sliders[s]) - short.MinValue;
+					//	// This parts needs to be worked on.
+					//	//var ticks = (int)(newTime - ud.DiStateTime);
+					//	// Update axis with delta.
+					//	//for (int a = 0; a < newState.Axis.Length; a++)
+					//	//	mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldDiState.Axis[a]) - short.MinValue;
+					//	// Update sliders with delta.
+					//	//for (int s = 0; s < newState.Sliders.Length; s++)
+					//	//	mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldDiState.Sliders[s]) - short.MinValue;
 
-						//--------------------------------------------------------
-						// Map mouse position to axis position. Good for car wheel controls.
-						//--------------------------------------------------------
-						var sensitivity = 10;
-
-						for (int a = 0; a < newState.Axis.Length; a++)
-						{
-							// Get delta from last state.
-							var delta = newState.Axis[a] - ud.OldDiState.Axis[a];
-							var newValue = mouseState.Axis[a] + (delta * sensitivity);
-							newValue = Math.Min(newValue, ushort.MaxValue);
-							newValue = Math.Max(newValue, ushort.MinValue);
-							mouseState.Axis[a] = newValue;
-						}
-						for (int a = 0; a < newState.Sliders.Length; a++)
-						{
-							// Get delta from last state.
-							var delta = newState.Sliders[a] - ud.OldDiState.Sliders[a];
-							var newValue = mouseState.Sliders[a] + (delta * sensitivity);
-							newValue = Math.Min(newValue, ushort.MaxValue);
-							newValue = Math.Max(newValue, ushort.MinValue);
-							mouseState.Sliders[a] = newValue;
-						}
-					}
-					// Assign unmodified state.
-					ud.OldDiState = newState;
-					ud.OldDiStateTime = ud.DiStateTime;
+					//--------------------------------------------------------
+					// Map mouse position to axis position. Good for car wheel controls.
+					//--------------------------------------------------------
+					Calc(ud.OrgDiState.Axis, newState.Axis, mouseState.Axis);
+					Calc(ud.OrgDiState.Sliders, newState.Sliders, mouseState.Sliders);
+					ud.DiState = mouseState;
 				}
-				else
-				{
-					// Update state.
-					ud.DiState = newState;
-				}
-				ud.DiStateTime = newTime;
 			}
 		}
+
+		void Calc(int[] orgRange, int[] newState, int[] mouseState)
+		{
+			var sensitivity = 16;
+			for (int a = 0; a < newState.Length; a++)
+			{
+				// Get delta from original state.
+				var value = (newState[a] - orgRange[a]) * sensitivity;
+				if (value < ushort.MinValue)
+				{
+					value = ushort.MinValue;
+					orgRange[a] = newState[a];
+				}
+				if (value > ushort.MaxValue)
+				{
+					value = ushort.MaxValue;
+					orgRange[a] = newState[a] - (ushort.MaxValue / sensitivity);
+				}
+				mouseState[a] = value;
+			}
+		}
+
 
 	}
 
