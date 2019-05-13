@@ -197,6 +197,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="JocysCom\Collections\KeyValue.cs" />
     <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
+    <Compile Include="JocysCom\Common\EventArgs.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
     <Compile Include="JocysCom\Common\Helper.cs" />
@@ -267,7 +268,19 @@
     <Compile Include="JocysCom\Mail\MailHelper.cs" />
     <Compile Include="JocysCom\Mail\MailTextType.cs" />
     <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
+    <Compile Include="JocysCom\Network\CheckNetworkState.cs" />
     <Compile Include="JocysCom\Network\NetStatInfo.cs" />
+    <Compile Include="JocysCom\Network\NetworkHelper.cs" />
+    <Compile Include="JocysCom\Network\Sockets\DataHolder.cs" />
+    <Compile Include="JocysCom\Network\Sockets\ISocketMessage.cs" />
+    <Compile Include="JocysCom\Network\Sockets\SocketDataEventArgs.cs" />
+    <Compile Include="JocysCom\Network\Sockets\SocketLogFileWriter.cs" />
+    <Compile Include="JocysCom\Network\Sockets\SocketServer.cs" />
+    <Compile Include="JocysCom\Network\Sockets\SocketServerEventType.cs" />
+    <Compile Include="JocysCom\Network\Sockets\SocketServerState.cs" />
+    <Compile Include="JocysCom\Network\Sockets\SocketSettings.cs" />
+    <Compile Include="JocysCom\Network\Sockets\SocketState.cs" />
+    <Compile Include="JocysCom\Network\Sockets\UserToken.cs" />
     <Compile Include="JocysCom\Processes\BaseHook.cs" />
     <Compile Include="JocysCom\Processes\CURSORINFO.cs" />
     <Compile Include="JocysCom\Processes\HookType.cs" />

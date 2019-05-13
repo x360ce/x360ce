@@ -11,7 +11,8 @@ namespace JocysCom.ClassLibrary.Threading
 
 	public partial class QueueTimer : QueueTimer<object>
 	{
-		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000, TaskScheduler listSynchronizingObject = null) : base(delayInterval, sleepInterval, listSynchronizingObject)
+		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000, TaskScheduler listSynchronizingObject = null)
+			: base(delayInterval, sleepInterval, listSynchronizingObject)
 		{
 		}
 
@@ -36,8 +37,8 @@ namespace JocysCom.ClassLibrary.Threading
 		public QueueTimer(int delayInterval = 500, int sleepInterval = 5000, TaskScheduler listSynchronizingObject = null)
 		{
 			// Create main properties.
-			_Queue = new BindingListInvoked<T>();
-			_Queue.SynchronizingObject = listSynchronizingObject;
+			Queue = new BindingListInvoked<T>();
+			Queue.SynchronizingObject = listSynchronizingObject;
 			_LastActionDoneTime = new Stopwatch();
 			_LastActionDoneTime.Start();
 			queueLock = new object();
@@ -47,8 +48,8 @@ namespace JocysCom.ClassLibrary.Threading
 		}
 
 		/// <summary>If delay timer is set then queue can contain only one item.</summary>
-		public BindingListInvoked<T> Queue { get { return _Queue; } }
-		BindingListInvoked<T> _Queue;
+		public BindingListInvoked<T> Queue { get; private set; }
+
 		object queueLock;
 
 		public bool ProcessImmediately = false;
@@ -70,8 +71,6 @@ namespace JocysCom.ClassLibrary.Threading
 
 		#region Synchronizing Object
 
-		TaskScheduler SynchronizingObject;
-
 		// var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 		// timer = new QueueTimer(520, 4000, scheduler);
 		// HandleCreated += (sender, e) => { timer.HasHandle = true; };
@@ -83,28 +82,21 @@ namespace JocysCom.ClassLibrary.Threading
 
 		#region Status
 
-		public long AddCount { get { return _AddCount; } }
-		long _AddCount;
+		public long AddCount { get; private set; }
 
-		public long StartCount { get { return _StartCount; } }
-		long _StartCount;
+		public long StartCount { get; private set; }
 
-		public long ThreadCount { get { return _ThreadCount; } }
-		long _ThreadCount;
+		public long ThreadCount { get; private set; }
 
-		public long ActionCount { get { return _ActionCount; } }
-		long _ActionCount;
+		public long ActionCount { get; private set; }
 
-		public long ActionNoneCount { get { return _ActionNoneCount; } }
-		long _ActionNoneCount;
+		public long ActionNoneCount { get; private set; }
 
 		public TimeSpan LastActionDoneTime { get { return _LastActionDoneTime.Elapsed; } }
 		Stopwatch _LastActionDoneTime = new Stopwatch();
 
 		/// <summary>Thread action is running.</summary>
-		public bool IsRunning { get { return _IsRunning; } }
-
-		bool _IsRunning;
+		public bool IsRunning { get; private set; }
 
 		#endregion
 
@@ -287,7 +279,7 @@ namespace JocysCom.ClassLibrary.Threading
 			var data = new List<string>();
 			lock (queueLock)
 			{
-				_AddCount++;
+				AddCount++;
 				if (IsDisposing) return string.Empty;
 				double delayTimerInterval = 0;
 				lock (delayTimerLock)
@@ -299,7 +291,7 @@ namespace JocysCom.ClassLibrary.Threading
 				{
 					if (item != null)
 						// Simply add all job items to the queue.
-						_Queue.Add(item);
+						Queue.Add(item);
 					_StarThread();
 					data.Add("Queue item added");
 				}
@@ -308,16 +300,16 @@ namespace JocysCom.ClassLibrary.Threading
 					if (item != null)
 					{
 						// If job queue is empty or contains one processing item then...
-						if (_Queue.Count == 0 || (_Queue.Count == 1 && processingFirstItem))
+						if (Queue.Count == 0 || (Queue.Count == 1 && processingFirstItem))
 						{
 							// Add new job item.
-							_Queue.Add(item);
+							Queue.Add(item);
 							data.Add("Queue item added");
 						}
 						else
 						{
 							// Update available item in the queue.
-							_Queue[_Queue.Count - 1] = item;
+							Queue[Queue.Count - 1] = item;
 							data.Add("Queue item updated");
 						}
 					}
@@ -328,7 +320,7 @@ namespace JocysCom.ClassLibrary.Threading
 					}
 					// If thread is not running and queue have items. then...
 					// Note: If thread is still running then queue item will be processed on running thread.
-					else if (!_IsRunning && _Queue.Count > 0)
+					else if (!IsRunning && Queue.Count > 0)
 					{
 						double sleepTimerInterval = 0;
 						lock (sleepTimerLock)
@@ -347,9 +339,9 @@ namespace JocysCom.ClassLibrary.Threading
 					}
 				}
 			}
-			data.Add(string.Format("DoActionCount = {0}", _ThreadCount));
-			data.Add(string.Format("QueueCount = {0}", _Queue.Count));
-			data.Add(string.Format("IsRunning = {0}", _IsRunning));
+			data.Add(string.Format("DoActionCount = {0}", ThreadCount));
+			data.Add(string.Format("QueueCount = {0}", Queue.Count));
+			data.Add(string.Format("IsRunning = {0}", IsRunning));
 			if (exceptionCount > 0)
 			{
 				data.Add(string.Format("ExceptionCount = {0}", exceptionCount));
@@ -364,8 +356,8 @@ namespace JocysCom.ClassLibrary.Threading
 
 		public bool UseThreadPool = true;
 
-		System.Threading.ParameterizedThreadStart _ThreadStart;
-		System.Threading.Thread _Thread;
+		ParameterizedThreadStart _ThreadStart;
+		Thread _Thread;
 
 		/// <summary>
 		/// This function will be called inside 'queueLock' lock.
@@ -373,29 +365,29 @@ namespace JocysCom.ClassLibrary.Threading
 		void _StarThread()
 		{
 			if (IsDisposing) return;
-			_StartCount++;
+			StartCount++;
 			// If thread is not running and queue contains items to process then...
-			if (!_IsRunning)
+			if (!IsRunning)
 			{
 				SleepTimerStop();
 				// Put into another variable for thread safety.
-				TaskScheduler so = SynchronizingObject;
+				TaskScheduler so = Queue.SynchronizingObject;
 				if (so == null)
 				{
 					// Mark thread as running.
-					_IsRunning = true;
+					IsRunning = true;
 					// Start new thread.
 					if (UseThreadPool)
 					{
 						// The thread pool job is to share and recycle threads.
 						// It allows to avoid losing a few millisecond every time we need to create a new thread.
-						System.Threading.ThreadPool.QueueUserWorkItem(ThreadAction, null);
+						ThreadPool.QueueUserWorkItem(ThreadAction, null);
 					}
 					else
 					{
 						// Perform check on a separate thread, because checking can take a while.
-						_ThreadStart = new System.Threading.ParameterizedThreadStart(ThreadAction);
-						_Thread = new System.Threading.Thread(_ThreadStart);
+						_ThreadStart = new ParameterizedThreadStart(ThreadAction);
+						_Thread = new Thread(_ThreadStart);
 						_Thread.IsBackground = true;
 						_Thread.Start();
 					}
@@ -403,14 +395,14 @@ namespace JocysCom.ClassLibrary.Threading
 				else if (!HasHandle)
 				{
 					// BeginInvoke will fail. Silently clear the queue.
-					_Queue.Clear();
+					Queue.Clear();
 				}
 				else
 				{
 					try
 					{
 						// Mark thread as running.
-						_IsRunning = true;
+						IsRunning = true;
 						// Use asynchronous call to avoid 'queueLock' deadlock.
 						// If handle exception then, maybe you forgot to dispose QueueTimer before 'so'.
 						Task.Factory.StartNew(() => { ThreadAction(null); },
@@ -419,7 +411,7 @@ namespace JocysCom.ClassLibrary.Threading
 					catch (Exception)
 					{
 						// Silently clear the queue.
-						_Queue.Clear();
+						Queue.Clear();
 						throw;
 					}
 				}
@@ -430,11 +422,11 @@ namespace JocysCom.ClassLibrary.Threading
 
 		void ThreadAction(object state)
 		{
-			if (string.IsNullOrEmpty(System.Threading.Thread.CurrentThread.Name))
+			if (string.IsNullOrEmpty(Thread.CurrentThread.Name))
 			{
-				System.Threading.Thread.CurrentThread.Name = "QueueTimerThread";
+				Thread.CurrentThread.Name = "QueueTimerThread";
 			}
-			_ThreadCount++;
+			ThreadCount++;
 			T item = null;
 			var firstRun = true;
 			var cancelExecution = false;
@@ -443,25 +435,25 @@ namespace JocysCom.ClassLibrary.Threading
 				lock (queueLock)
 				{
 					// If no arguments left then leave the loop (except if this is firs run.
-					if (!firstRun && (_Queue.Count == 0 || IsDisposing || cancelExecution))
+					if (!firstRun && (Queue.Count == 0 || IsDisposing || cancelExecution))
 					{
 						SleepTimerStart();
 						// Start sleep timer.
 						_LastActionDoneTime.Reset();
 						_LastActionDoneTime.Start();
 						// Mark thread as not running;
-						_IsRunning = false;
+						IsRunning = false;
 						return;
 					}
-					if (_Queue.Count > 0)
+					if (Queue.Count > 0)
 					{
-						item = _Queue[0];
+						item = Queue[0];
 						processingFirstItem = true;
-						_ActionCount++;
+						ActionCount++;
 					}
 					else
 					{
-						_ActionNoneCount++;
+						ActionNoneCount++;
 					}
 					firstRun = false;
 				}
@@ -482,8 +474,8 @@ namespace JocysCom.ClassLibrary.Threading
 						if (br != null)
 							br(this, e);
 						// Remove item from the queue (mostly ALWAYS it will be the first item in the queue _Queue[0]).
-						if (_Queue.Contains(item))
-							_Queue.Remove(item);
+						if (Queue.Contains(item))
+							Queue.Remove(item);
 						processingFirstItem = false;
 					}
 				}
@@ -531,7 +523,7 @@ namespace JocysCom.ClassLibrary.Threading
 				// Dispose timers first
 				lock (queueLock)
 				{
-					_Queue.Clear();
+					Queue.Clear();
 				}
 				DoWork = null;
 			}

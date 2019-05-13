@@ -402,6 +402,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SettingsMapItem.cs" />
+    <Compile Include="Service\RemoteService.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_TARGET_TYPE.cs" />
     <Compile Include="ViGEm\Client\Enums\XUSB_REPORT.cs" />
     <Compile Include="ViGEm\Client\ViGEmException.cs" />
@@ -721,9 +722,7 @@
       <Name>x360ce.Engine</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

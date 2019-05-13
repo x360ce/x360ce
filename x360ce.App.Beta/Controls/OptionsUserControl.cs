@@ -158,6 +158,10 @@ namespace x360ce.App.Controls
 			{
 				UpdateWindowsStartRegistry(o.StartWithWindows, o.StartWithWindowsState);
 			}
+			else if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.RemoteControllers))
+			{
+				RemotePortNumericUpDown.Enabled = o.RemoteControllers == MapToMask.None;
+			}
 		}
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)

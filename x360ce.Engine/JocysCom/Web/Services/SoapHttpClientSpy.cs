@@ -92,7 +92,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 			{
 				var position = _clonedStream.Position;
 				_clonedStream.Position = 0;
-				doc = encoding.GetString(_clonedStream.ToArray());
+				doc = enc.GetString(_clonedStream.ToArray());
 				_clonedStream.Position = position;
 			}
 			return doc;

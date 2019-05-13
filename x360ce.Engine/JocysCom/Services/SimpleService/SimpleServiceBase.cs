@@ -66,11 +66,10 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 		private void SystemEvents_SessionEnded(object sender, Microsoft.Win32.SessionEndedEventArgs e)
 		{
 			LogHelper.WriteInfo("Session Ended ({0})...", e.Reason);
-			_IsSessionEnded = true;
+			IsSessionEnded = true;
 		}
 
-		public bool IsSessionEnded { get { return _IsSessionEnded; } }
-		bool _IsSessionEnded = false;
+		public bool IsSessionEnded { get; private set; } = false;
 
 		public int TerminateTimeout = 5 * 60;
 
@@ -108,7 +107,8 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			{
 				lock (serviceLock)
 				{
-					if (_service == null) _service = (ISimpleService)new T();
+					if (_service == null)
+						_service = new T();
 				}
 				return _service;
 			}
@@ -124,7 +124,6 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 		{
 			Service.IsPaused = false;
 		}
-
 
 		Thread _thread;
 		public void StartServiceAsync(object parameter)
@@ -195,9 +194,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 				lock (controllerLock)
 				{
 					if (_controller == null)
-					{
 						_controller = new ServiceController(_installer.AppServiceInstaller.ServiceName);
-					}
 				}
 				return _controller;
 			}
@@ -207,15 +204,11 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 		{
 			get
 			{
-				ServiceController service = null;
-				ServiceController[] services = ServiceController.GetServices();
-				foreach (ServiceController item in services)
+				var services = ServiceController.GetServices();
+				foreach (var item in services)
 				{
 					if (item.ServiceName == _installer.AppServiceInstaller.ServiceName)
-					{
-						service = item;
 						return true;
-					}
 				}
 				return false;
 			}
@@ -314,12 +307,12 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			if (ic.Parameters.ContainsKey("?"))
 			{
 			}
-			else if (ic.Parameters.ContainsKey("Install"))
+			else if (ic.Parameters.ContainsKey("InstallService"))
 			{
 				InstallService();
 				return false;
 			}
-			else if (ic.Parameters.ContainsKey("Uninstall"))
+			else if (ic.Parameters.ContainsKey("UninstallService"))
 			{
 				UninstallService();
 				return false;
@@ -362,7 +355,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 				// Create log if not exists.
 				if (!EventLog.SourceExists(s, m))
 				{
-					EventSourceCreationData cd = new EventSourceCreationData(s, l);
+					var cd = new EventSourceCreationData(s, l);
 					EventLog.CreateEventSource(cd);
 				}
 			}
@@ -370,7 +363,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 
 		public string GetInfo(string prefix, ServiceHost host)
 		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			var sb = new System.Text.StringBuilder();
 			sb.AppendLine(prefix + ": " + host.State.ToString());
 			sb.AppendLine();
 			for (int i = 0; i <= host.BaseAddresses.Count - 1; i++)
@@ -399,27 +392,15 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 		SimpleServiceBase<T> srv;
 		public void RunServer()
 		{
-			if (Environment.UserInteractive)
-			{
-				if ((InitEnvironment()))
-				{
-					RunServerAsConsole(this, Environment.GetCommandLineArgs());
-				}
-			}
-			else
-			{
-				RunServerAsService(this);
-			}
+			RunServer(this);
 		}
 
 		public void RunServer(SimpleServiceBase<T> service)
 		{
 			if (Environment.UserInteractive)
 			{
-				if ((InitEnvironment()))
-				{
+				if (InitEnvironment())
 					RunServerAsConsole(service, Environment.GetCommandLineArgs());
-				}
 			}
 			else
 			{
@@ -431,7 +412,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 		{
 			// Run server as windows service.
 			var ServicesToRun = new ServiceBase[] { service };
-			ServiceBase.Run(ServicesToRun);
+			Run(ServicesToRun);
 		}
 
 		public void RunServerAsConsole(SimpleServiceBase<T> service, string[] args)
