@@ -386,6 +386,7 @@
     <Compile Include="Forms\WebBrowserForm.Designer.cs">
       <DependentUpon>WebBrowserForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Global.cs" />
     <Compile Include="Html2Rtf\Converter.cs" />
     <Compile Include="Issues\ArchitectureIssue.cs" />
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />

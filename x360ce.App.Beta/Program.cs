@@ -98,7 +98,9 @@ namespace x360ce.App
 				OpenSettingsFolder(Application.LocalUserAppDataPath);
 				return;
 			}
-			if (!CheckSettings()) return;
+			if (!CheckSettings())
+				return;
+			Global.InitRemoteService();
 			MainForm.Current = new MainForm();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{

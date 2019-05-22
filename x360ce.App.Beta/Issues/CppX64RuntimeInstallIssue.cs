@@ -14,8 +14,8 @@ namespace x360ce.App.Issues
 			FixName = "Download";
 		}
 
-        string program1 = "Visual C++ 2015 Redistributable (x64)";
-        string program2 = "Visual C++ 2017 Redistributable (x64)";
+		// Use ignore case modifier.
+        string program1 = "(?i)(Visual C\\+\\+).*(Redistributable).*(x64)";
 
         public override void CheckTask()
 		{
@@ -25,8 +25,7 @@ namespace x360ce.App.Issues
                 SetSeverity(IssueSeverity.None);
                 return;
             }
-			var installed1 = IssueHelper.IsInstalled(program1, false);
-            var installed = installed1 || IssueHelper.IsInstalled(program2, false);
+			var installed = IssueHelper.IsInstalled(program1, false);
             if (!installed)
 			{
 				SetSeverity(

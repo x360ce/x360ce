@@ -103,6 +103,7 @@ namespace x360ce.App.Controls
 			LoadAndMonitor(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
 			LoadAndMonitor(x => x.InternetFeatures, InternetCheckBox);
 			LoadAndMonitor(x => x.CheckForUpdates, CheckForUpdatesCheckBox);
+			LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().

@@ -440,7 +440,7 @@ namespace JocysCom.ClassLibrary.Data
 				case SqlDbType.Time:
 				case SqlDbType.VarChar:
 				case SqlDbType.Xml:
-					retval = "'" + sp.Value.ToString().Replace("'", "''") + "'";
+					retval = "'" + string.Format("{0}", sp.Value).Replace("'", "''") + "'";
 					break;
 				case SqlDbType.Date:
 					retval = string.Format("'{0:yyyy-MM-dd}'", sp.Value);
@@ -458,7 +458,7 @@ namespace JocysCom.ClassLibrary.Data
 					retval = ToBooleanOrDefault(sp.Value, false) ? "1" : "0";
 					break;
 				default:
-					retval = sp.Value.ToString().Replace("'", "''");
+					retval = string.Format("{0}", sp.Value).Replace("'", "''");
 					break;
 			}
 			return retval;

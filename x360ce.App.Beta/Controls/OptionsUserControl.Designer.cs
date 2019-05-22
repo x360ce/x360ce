@@ -91,11 +91,13 @@
 			this.AboutViGEmLinkLabel = new System.Windows.Forms.LinkLabel();
 			this.HidGuardianLabel = new System.Windows.Forms.Label();
 			this.ViGEmBusLabel = new System.Windows.Forms.Label();
+			this.VigemLabel = new System.Windows.Forms.Label();
 			this.PollingRateLabel = new System.Windows.Forms.Label();
 			this.PollingRateComboBox = new System.Windows.Forms.ComboBox();
 			this.HidGuardianUninstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianInstallButton = new System.Windows.Forms.Button();
 			this.VirtualInfoRefreshButton = new System.Windows.Forms.Button();
+			this.ViGEmBusUninstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianTextBox = new System.Windows.Forms.TextBox();
 			this.ViGEmBusInstallButton = new System.Windows.Forms.Button();
 			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
@@ -104,14 +106,13 @@
 			this.AllowRemote4CheckBox = new System.Windows.Forms.CheckBox();
 			this.RemotePortLabel = new System.Windows.Forms.Label();
 			this.RemotePasswordLabel = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
 			this.AllowRemote3CheckBox = new System.Windows.Forms.CheckBox();
 			this.RemotePortNumericUpDown = new System.Windows.Forms.NumericUpDown();
 			this.RemotePasswordTextBox = new System.Windows.Forms.TextBox();
 			this.AllowRemote2CheckBox = new System.Windows.Forms.CheckBox();
 			this.AllowRemote1CheckBox = new System.Windows.Forms.CheckBox();
-			this.VigemLabel = new System.Windows.Forms.Label();
-			this.ViGEmBusUninstallButton = new System.Windows.Forms.Button();
+			this.RemoteEnabledCheckBox = new System.Windows.Forms.CheckBox();
+			this.label4 = new System.Windows.Forms.Label();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
@@ -822,6 +823,17 @@
 			this.ViGEmBusLabel.TabIndex = 29;
 			this.ViGEmBusLabel.Text = "ViGEm Bus";
 			// 
+			// VigemLabel
+			// 
+			this.VigemLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.VigemLabel.AutoSize = true;
+			this.VigemLabel.Location = new System.Drawing.Point(190, 24);
+			this.VigemLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
+			this.VigemLabel.Name = "VigemLabel";
+			this.VigemLabel.Size = new System.Drawing.Size(143, 13);
+			this.VigemLabel.TabIndex = 29;
+			this.VigemLabel.Text = "Download latest version from";
+			// 
 			// PollingRateLabel
 			// 
 			this.PollingRateLabel.AutoSize = true;
@@ -875,6 +887,18 @@
 			this.VirtualInfoRefreshButton.UseVisualStyleBackColor = true;
 			this.VirtualInfoRefreshButton.Click += new System.EventHandler(this.VirtualInfoRefreshButton_Click);
 			// 
+			// ViGEmBusUninstallButton
+			// 
+			this.ViGEmBusUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.ViGEmBusUninstallButton.Enabled = false;
+			this.ViGEmBusUninstallButton.Location = new System.Drawing.Point(426, 48);
+			this.ViGEmBusUninstallButton.Name = "ViGEmBusUninstallButton";
+			this.ViGEmBusUninstallButton.Size = new System.Drawing.Size(75, 23);
+			this.ViGEmBusUninstallButton.TabIndex = 44;
+			this.ViGEmBusUninstallButton.Text = "Uninstall";
+			this.ViGEmBusUninstallButton.UseVisualStyleBackColor = true;
+			this.ViGEmBusUninstallButton.Click += new System.EventHandler(this.ViGEmBusUninstallButton_Click);
+			// 
 			// HidGuardianTextBox
 			// 
 			this.HidGuardianTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -923,6 +947,7 @@
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.RemoteEnabledCheckBox);
 			this.groupBox1.Controls.Add(this.AllowRemote4CheckBox);
 			this.groupBox1.Controls.Add(this.RemotePortLabel);
 			this.groupBox1.Controls.Add(this.RemotePasswordLabel);
@@ -968,16 +993,6 @@
 			this.RemotePasswordLabel.Size = new System.Drawing.Size(93, 13);
 			this.RemotePasswordLabel.TabIndex = 32;
 			this.RemotePasswordLabel.Text = "Remote Password";
-			// 
-			// label4
-			// 
-			this.label4.AutoSize = true;
-			this.label4.BackColor = System.Drawing.SystemColors.Control;
-			this.label4.Location = new System.Drawing.Point(6, 20);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(68, 13);
-			this.label4.TabIndex = 32;
-			this.label4.Text = "Allow Control";
 			// 
 			// AllowRemote3CheckBox
 			// 
@@ -1040,28 +1055,25 @@
 			this.AllowRemote1CheckBox.Text = "Controller 1";
 			this.AllowRemote1CheckBox.UseVisualStyleBackColor = true;
 			// 
-			// VigemLabel
+			// RemoteEnabledCheckBox
 			// 
-			this.VigemLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.VigemLabel.AutoSize = true;
-			this.VigemLabel.Location = new System.Drawing.Point(190, 24);
-			this.VigemLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
-			this.VigemLabel.Name = "VigemLabel";
-			this.VigemLabel.Size = new System.Drawing.Size(143, 13);
-			this.VigemLabel.TabIndex = 29;
-			this.VigemLabel.Text = "Download latest version from";
+			this.RemoteEnabledCheckBox.AutoSize = true;
+			this.RemoteEnabledCheckBox.Location = new System.Drawing.Point(431, 44);
+			this.RemoteEnabledCheckBox.Name = "RemoteEnabledCheckBox";
+			this.RemoteEnabledCheckBox.Size = new System.Drawing.Size(65, 17);
+			this.RemoteEnabledCheckBox.TabIndex = 33;
+			this.RemoteEnabledCheckBox.Text = "Enabled";
+			this.RemoteEnabledCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// ViGEmBusUninstallButton
+			// label4
 			// 
-			this.ViGEmBusUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ViGEmBusUninstallButton.Enabled = false;
-			this.ViGEmBusUninstallButton.Location = new System.Drawing.Point(426, 48);
-			this.ViGEmBusUninstallButton.Name = "ViGEmBusUninstallButton";
-			this.ViGEmBusUninstallButton.Size = new System.Drawing.Size(75, 23);
-			this.ViGEmBusUninstallButton.TabIndex = 44;
-			this.ViGEmBusUninstallButton.Text = "Uninstall";
-			this.ViGEmBusUninstallButton.UseVisualStyleBackColor = true;
-			this.ViGEmBusUninstallButton.Click += new System.EventHandler(this.ViGEmBusUninstallButton_Click);
+			this.label4.AutoSize = true;
+			this.label4.BackColor = System.Drawing.SystemColors.Control;
+			this.label4.Location = new System.Drawing.Point(6, 20);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(68, 13);
+			this.label4.TabIndex = 32;
+			this.label4.Text = "Allow Control";
 			// 
 			// OptionsUserControl
 			// 
@@ -1194,9 +1206,10 @@
 		private System.Windows.Forms.TextBox RemotePasswordTextBox;
 		private System.Windows.Forms.Label RemotePortLabel;
 		public System.Windows.Forms.NumericUpDown RemotePortNumericUpDown;
-		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label RemotePasswordLabel;
 		private System.Windows.Forms.Label VigemLabel;
 		private System.Windows.Forms.Button ViGEmBusUninstallButton;
+		public System.Windows.Forms.CheckBox RemoteEnabledCheckBox;
+		private System.Windows.Forms.Label label4;
 	}
 }

@@ -154,6 +154,8 @@ namespace x360ce.App
 		public MapToMask RemoteControllers { get; set; }
 		public string RemotePassword { get; set; }
 		public int RemotePort { get; set; }
+		public bool RemoteEnabled { get { return _RemoteEnabled; } set { _RemoteEnabled = value; ReportPropertyChanged(x => x.RemoteEnabled); } }
+		bool _RemoteEnabled;
 
 		// Performance Test
 

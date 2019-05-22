@@ -211,6 +211,11 @@ namespace x360ce.App.DInput
 						// Store current values.
 						ud.OrgDiState = newState;
 						ud.OrgDiStateTime = newTime;
+						// Make sure new states have zero values.
+						for (int a = 0; a < newState.Axis.Length; a++)
+							newState.Axis[a] = -short.MinValue;
+						for (int s = 0; s < newState.Sliders.Length; s++)
+							newState.Sliders[s] = -short.MinValue;
 					}
 					var mouseState = new CustomDiState(new JoystickState());
 					// Clone button values.

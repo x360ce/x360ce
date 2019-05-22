@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using static System.Environment;
@@ -34,9 +35,12 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		/// <summary>
 		/// Use registry because "SELECT Name, Caption FROM Win32_Product" management query object is super slow.
 		/// </summary>
+		/// <param name="name">You can use regular expression.</param>
+		/// <param name="uninstall"></param>
 		/// <returns></returns>
 		public static bool IsInstalled(string name, bool uninstall = false)
 		{
+			var nameRx = new Regex(name);
 			var args = new List<SearchArg>();
 			args.Add(new SearchArg(Registry.CurrentUser, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "DisplayName", "UninstallPath", "UninstallString"));
 			args.Add(new SearchArg(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", "DisplayName", "UninstallPath", "UninstallString"));
@@ -61,7 +65,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 								continue;
 							var displayName = (string)subKey.GetValue(arg.ProductKeyName, "");
 							// If product found then...
-							if (displayName.ToUpper().Contains(name.ToUpper()))
+							if (nameRx.IsMatch(displayName))
 							{
 								if (uninstall)
 								{
