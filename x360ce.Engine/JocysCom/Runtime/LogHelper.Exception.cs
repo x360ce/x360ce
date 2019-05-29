@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Text;
-using System.Reflection;
+using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.Reflection;
 using System.Security;
-using System.ComponentModel;
+using System.Text;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -451,7 +451,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			var message = "";
 			AddExceptionMessage(ex, ref message);
-			if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
+			if (ex.InnerException != null)
+				AddExceptionMessage(ex.InnerException, ref message);
 			return message;
 		}
 

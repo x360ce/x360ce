@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Diagnostics;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
@@ -220,16 +221,16 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		internal static string DumpHeaders(WebHeaderCollection headers)
 		{
-			var sb = new StringBuilder();
+			var list = new List<string>();
 			for (int i = 0; i < headers.Count; ++i)
 			{
 				if (headers[i] == null)
 					continue;
 				var header = headers.GetKey(i);
 				foreach (string value in headers.GetValues(i))
-					sb.AppendFormat("{0}: {1}\r\n", header, value);
+					list.Add(string.Format("{0}: {1}", header, value));
 			}
-			return sb.ToString();
+			return string.Join("\r\n", list);
 		}
 
 		NameValueCollection ToCollection(HttpWebRequest message)

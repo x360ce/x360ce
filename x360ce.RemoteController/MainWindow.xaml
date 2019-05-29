@@ -3,29 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:JocysCom.x360ce.RemoteController"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Icon="App.ico">
+        Title="MainWindow" Height="450" Width="800" Icon="App.ico" Loaded="Window_Loaded">
 	<Viewbox OpacityMask="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 		<Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Height="420" Width="800">
-			<Ellipse Fill="#FFF4F4F5" Height="200" Margin="0,0,150,50" Stroke="Black" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="200"/>
-			<Ellipse Fill="#FFF4F4F5" HorizontalAlignment="Left" Margin="150,0,0,50" Stroke="Black" Width="200" Height="200" VerticalAlignment="Bottom"/>
-			<Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Margin="50,150,0,50" Stroke="Black" Width="50"/>
-			<Rectangle Fill="#FFF4F4F5" Margin="0,50,50,0" Stroke="Black" Height="50" VerticalAlignment="Top" HorizontalAlignment="Right" Width="50"/>
-			<Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Right" Margin="0,150,50,50" Stroke="Black" Width="50"/>
-			<Ellipse Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="50" Margin="215,75,0,0" Stroke="Black" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
-			<Ellipse Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="50" Margin="175,35,0,0" Stroke="Black" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
-			<Ellipse Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="50" Margin="175,115,0,0" Stroke="Black" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
-			<Ellipse Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="50" Margin="135,75,0,0" Stroke="Black" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
-			<Ellipse Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="50" Margin="325,125,0,0" Stroke="Black" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
-			<Ellipse Fill="#FFF4F4F5" Height="50" Margin="0,115,175,0" Stroke="Black" VerticalAlignment="Top" RenderTransformOrigin="0.489,1.479" HorizontalAlignment="Right" Width="50"/>
-			<Ellipse Fill="#FFF4F4F5" Height="50" Margin="0,125,325,0" Stroke="Black" VerticalAlignment="Top" RenderTransformOrigin="0.489,1.479" HorizontalAlignment="Right" Width="50"/>
-			<Ellipse Fill="#FFF4F4F5" Height="50" Margin="0,35,175,0" Stroke="Black" VerticalAlignment="Top" RenderTransformOrigin="0.489,1.479" HorizontalAlignment="Right" Width="50"/>
-			<Ellipse Fill="#FFF4F4F5" HorizontalAlignment="Right" Height="50" Margin="0,75,215,0" Stroke="Black" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
-			<Ellipse Fill="#FFF4F4F5" Height="50" Margin="0,75,135,0" Stroke="Black" VerticalAlignment="Top" RenderTransformOrigin="0.489,1.479" HorizontalAlignment="Right" Width="50"/>
-			<Rectangle Fill="#FFF4F4F5" HorizontalAlignment="Left" Height="50" Margin="50,50,0,0" Stroke="Black" VerticalAlignment="Top" Width="50"/>
-			<Button x:Name="OptionsButton" Content="Options..." Margin="350,25,350,0" VerticalAlignment="Top" Click="OptionsButton_Click"/>
-
+			<Rectangle Name="LeftShoulderRectangle" HorizontalAlignment="Left" Height="50" Margin="50,50,0,0"  VerticalAlignment="Top" Width="50"/>
+			<Rectangle Name="RightShoulderRectangle" Margin="0,50,50,0"  Height="50" VerticalAlignment="Top" HorizontalAlignment="Right" Width="50"/>
+			<Rectangle Name="LeftTriggerRectangle"  HorizontalAlignment="Left" Margin="50,150,0,50" Width="50"/>
+			<Rectangle Name="RightTriggerRectangle" HorizontalAlignment="Right" Margin="0,150,50,50"  Width="50"/>
+			<Ellipse Name="LeftThumbEllipse" Height="200" Margin="0,0,150,50"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="200"/>
+			<Ellipse Name="RightThumbEllipse" HorizontalAlignment="Left" Margin="150,0,0,50"  Width="200" Height="200" VerticalAlignment="Bottom"/>
+			<Ellipse Name="DPadUpEllipse" HorizontalAlignment="Left" Height="50" Margin="175,35,0,0"  VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
+			<Ellipse Name="DPadRightEllipse" HorizontalAlignment="Left" Height="50" Margin="215,75,0,0"  VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
+			<Ellipse Name="DPadDownEllipse" HorizontalAlignment="Left" Height="50" Margin="175,115,0,0" VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
+			<Ellipse Name="DPadLeftEllipse" HorizontalAlignment="Left" Height="50" Margin="135,75,0,0"  VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
+			<Ellipse Name="ButtonBackEllipse" HorizontalAlignment="Left" Height="50" Margin="325,125,0,0"  VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
+			<Ellipse Name="ButtonStartEllipse" Height="50" Margin="0,125,325,0"  VerticalAlignment="Top" RenderTransformOrigin="0.489,1.479" HorizontalAlignment="Right" Width="50"/>
+			<Ellipse Name="ButtonAEllipse" Height="50" Margin="0,115,175,0"  VerticalAlignment="Top" RenderTransformOrigin="0.489,1.479" HorizontalAlignment="Right" Width="50"/>
+			<Ellipse Name="ButtonYEllipse" Height="50" Margin="0,35,175,0"  VerticalAlignment="Top" RenderTransformOrigin="0.489,1.479" HorizontalAlignment="Right" Width="50" />
+			<Ellipse Name="ButtonXEllipse" HorizontalAlignment="Right" Height="50" Margin="0,75,215,0"  VerticalAlignment="Top" Width="50" RenderTransformOrigin="0.489,1.479"/>
+			<Ellipse Name="ButtonBEllipse" Height="50" Margin="0,75,135,0"  VerticalAlignment="Top" RenderTransformOrigin="0.489,1.479" HorizontalAlignment="Right" Width="50"/>
+			<Button Name="OptionsButton" Content="Options..." Margin="350,25,350,0" VerticalAlignment="Top" Click="OptionsButton_Click"/>
 		</Grid>
 	</Viewbox>
 </Window>

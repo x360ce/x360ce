@@ -132,7 +132,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				foreach (string key in parameters.Keys)
 				{
 					string v;
-					object pv = parameters[key];
+					var pv = parameters[key];
 					if (pv == null)
 					{
 						v = "<pre>null</pre>";
@@ -141,11 +141,9 @@ namespace JocysCom.ClassLibrary.Runtime
 					{
 						try
 						{
-							v = string.Format("<pre>{0}</pre>", pv);
-							if (v.Contains("<?xml"))
-							{
-								v = "<pre>" + System.Net.WebUtility.HtmlEncode(v) + "</pre>";
-							}
+							v = string.Format("{0}", pv);
+							v = System.Net.WebUtility.HtmlEncode(v);
+							v = "<pre>" + v + "</pre>";
 						}
 						catch (Exception ex2)
 						{

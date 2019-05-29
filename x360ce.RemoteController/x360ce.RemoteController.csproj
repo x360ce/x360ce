@@ -62,8 +62,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="..\x360ce.Engine\JocysCom\Common\HiResTimer.cs">
+      <Link>Common\HiResTimer.cs</Link>
+    </Compile>
     <Compile Include="..\x360ce.Engine\JocysCom\Configuration\AssemblyInfo.cs">
       <Link>Common\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\SharpDX.XInput\Gamepad.cs">
+      <Link>Common\Gamepad.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\SharpDX.XInput\GamepadButtonFlags.cs">
+      <Link>Common\GamepadButtonFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\SharpDX.XInput\State.cs">
+      <Link>Common\State.cs</Link>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
@@ -74,6 +86,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="OptionsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
