@@ -108,14 +108,16 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			foreach (var key in response.Headers.AllKeys)
 				sb.AppendFormat("{0}: {1}\r\n", key, response.Headers[key]);
 			col.Add("Headers", sb.ToString());
-			// Add body if text only.
-			col.Add("Body.Length", filter.StreamContent.Length.ToString());
-			if (response.ContentType.StartsWith("text"))
+			// Get raw body.
+			var body = filter.StreamContent;
+			if (body != null)
 			{
-				// Get raw body.
-				var body = filter.StreamContent;
-				col.Add("Body", body);
+				col.Add("Body.Length", body.Length.ToString());
+				// Add body if text only.
+				if (response.ContentType.StartsWith("text"))
+					col.Add("Body", body);
 			}
+
 			TraceHelper.AddLog(GetType().Name, TraceEventType.Information, col);
 		}
 
