@@ -62,11 +62,20 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="..\x360ce.Engine\Common\Enum\MapToMask.cs">
+      <Link>Common\MapToMask.cs</Link>
+    </Compile>
     <Compile Include="..\x360ce.Engine\JocysCom\Common\HiResTimer.cs">
       <Link>Common\HiResTimer.cs</Link>
     </Compile>
     <Compile Include="..\x360ce.Engine\JocysCom\Configuration\AssemblyInfo.cs">
       <Link>Common\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Data\TlvSerializer.cs">
+      <Link>Common\TlvSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Data\TlvSerializerError.cs">
+      <Link>Common\TlvSerializerError.cs</Link>
     </Compile>
     <Compile Include="..\x360ce.Engine\SharpDX.XInput\Gamepad.cs">
       <Link>Common\Gamepad.cs</Link>

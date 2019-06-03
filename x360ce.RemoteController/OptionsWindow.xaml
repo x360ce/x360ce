@@ -3,39 +3,34 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:JocysCom.x360ce.RemoteController"
         mc:Ignorable="d"
-        Title="OptionsWindow" Height="223.612" Width="486.191" Icon="App.ico">
+        Title="OptionsWindow" Height="272.612" Width="486.191" Icon="App.ico">
 	<Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
-		<GroupBox Header="Log-on settings" HorizontalAlignment="Left" Height="142" Margin="10,10,0,0" VerticalAlignment="Top" Width="248">
-			<Grid Margin="0">
-				<TextBox HorizontalAlignment="Left" Height="23" Margin="78,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="127.0.0.1"/>
-				<Label Content="Computer" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.213,-8.945"/>
-				<TextBox HorizontalAlignment="Left" Height="23" Margin="78,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="Guest 1"/>
-				<Label Content="Username" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.213,-8.945"/>
-				<Label Content="Password" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.213,-8.945"/>
-				<PasswordBox HorizontalAlignment="Left" Margin="78,66,0,0" VerticalAlignment="Top" Width="120" Height="23"/>
-				<CheckBox x:Name="AutoConnectCheckBox" Content="Auto connect on start" HorizontalAlignment="Left" Margin="78,94,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574"/>
+		<GroupBox Header="Log-on settings" HorizontalAlignment="Left" Height="195" Margin="10,10,0,0" VerticalAlignment="Top" Width="298">
+			<Grid Margin="0,0,-2,0">
+				<TextBox x:Name="RemoteHostTextBox" Height="23" Margin="102,10,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="127.0.0.1"/>
+				<Label x:Name="RemotHostLabel" Content="Remote Host" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.213,-8.945"/>
+				<TextBox x:Name="LoginUsernameTextBox" Height="23" Margin="102,66,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Guest 1"/>
+				<Label Content="Username" HorizontalAlignment="Left" Margin="10,67,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.213,-8.945"/>
+				<Label Content="Password" HorizontalAlignment="Left" Margin="10,96,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.213,-8.945"/>
+				<PasswordBox Name="LoginPasswordBox" Margin="102,94,10,0" VerticalAlignment="Top" Height="23"/>
+				<CheckBox Name="AutoConnectCheckBox" Content="Auto connect on start" HorizontalAlignment="Left" Margin="102,122,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574"/>
+				<TextBox  x:Name="RemotePortTextBox" Height="23" Margin="102,38,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="26010"/>
+				<Label x:Name="RemotePortLabel" Content="Remote Port" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.213,-8.945"/>
+				<CheckBox x:Name="ConnectCheckBox" Content="Connect" HorizontalAlignment="Left" Margin="102,142,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574"/>
 			</Grid>
 		</GroupBox>
-		<GroupBox Header="Connect to controllers" Height="142" Margin="273,10,10,0" VerticalAlignment="Top">
+		<GroupBox Header="Connect to controllers" Height="142" Margin="313,10,10,0" VerticalAlignment="Top">
 			<Grid Margin="0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="109*"/>
-					<ColumnDefinition Width="74*"/>
-				</Grid.ColumnDefinitions>
-				<CheckBox x:Name="Controller1CheckBox" Content="Controller 1" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574"/>
-				<CheckBox x:Name="Controller2CheckBox" Content="Controller 2" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574"/>
-				<CheckBox x:Name="Controller4CheckBox" Content="Controller 5" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574"/>
-				<CheckBox x:Name="Controller3CheckBox" Content="Controller 3" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574"/>
-				<CheckBox x:Name="ControllerAutoCheckBox" Content="Auto" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574"/>
+				<CheckBox x:Name="Controller1CheckBox" Content="Controller 1" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574" Width="123" Height="15"/>
+				<CheckBox x:Name="Controller2CheckBox" Content="Controller 2" HorizontalAlignment="Left" Margin="10,34,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574" Width="123" Height="15"/>
+				<CheckBox x:Name="Controller4CheckBox" Content="Controller 5" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574" Width="123" Height="15"/>
+				<CheckBox x:Name="Controller3CheckBox" Content="Controller 3" HorizontalAlignment="Left" Margin="10,54,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.627,4.574" Width="123" Height="15"/>
 			</Grid>
 		</GroupBox>
-		<Button x:Name="DisconnectButton" Content="Disconnect" Margin="90,0,0,10" RenderTransformOrigin="0.36,10.537" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="75"/>
-		<Button x:Name="ConenctButton" Content="Connect" Margin="10,0,0,10" RenderTransformOrigin="0.36,10.537" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="75"/>
-		<Label Content="Info:" Margin="170,0,220,7" VerticalAlignment="Bottom"/>
-		<Button x:Name="OkButton" Content="OK" Margin="0,0,90,10" RenderTransformOrigin="0.36,10.537" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75"/>
-		<Button x:Name="CancelButton" Content="Cancel" Margin="0,0,10,10" RenderTransformOrigin="0.36,10.537" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75"/>
+		<Label Content="Info:" Margin="10,0,380,10" VerticalAlignment="Bottom"/>
+		<Button x:Name="OkButton" Content="OK" Margin="0,0,90,10" RenderTransformOrigin="0.36,10.537" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="OkButton_Click"/>
+		<Button x:Name="CancelButton" Content="Cancel" Margin="0,0,10,10" RenderTransformOrigin="0.36,10.537" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Click="CancelButton_Click"/>
 
 	</Grid>
 </Window>

@@ -80,10 +80,10 @@ namespace x360ce.App.Service
 			}
 			try
 			{
-				var remotelEndpoint = new IPEndPoint(IPAddress.Any, 0);
-				var bytes = server.EndReceive(res, ref remotelEndpoint);
+				var remoteEndpoint = new IPEndPoint(IPAddress.Any, 0);
+				var bytes = server.EndReceive(res, ref remoteEndpoint);
 				var data = string.Join("", bytes.Select(x => x.ToString("X2")));
-				AddLog("Received Data from {0}: {1}\r\n", remotelEndpoint, data);
+				AddLog("Received Data from {0}: {1}\r\n", remoteEndpoint, data);
 				if (!IsRunning)
 					Receive();
 			}
