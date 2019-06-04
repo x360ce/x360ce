@@ -28,8 +28,8 @@ namespace JocysCom.x360ce.RemoteController
 
 		void LoadSettings()
 		{
-			ComputerHostTextBox.Text = Properties.Settings.Default.ComputerHost;
-			ComputerPortTextBox.Text = Properties.Settings.Default.ComputerPort.ToString();
+			RemoteHostTextBox.Text = Properties.Settings.Default.ComputerHost;
+			RemotePortTextBox.Text = Properties.Settings.Default.ComputerPort.ToString();
 			LoginUsernameTextBox.Text = Properties.Settings.Default.LoginUsername;
 			LoginPasswordBox.Password = Properties.Settings.Default.LoginPassword;
 			AutoConnectCheckBox.IsChecked = Properties.Settings.Default.AutoConnect;
@@ -43,9 +43,9 @@ namespace JocysCom.x360ce.RemoteController
 
 		void SaveSettings()
 		{
-			Properties.Settings.Default.ComputerHost = ComputerHostTextBox.Text;
+			Properties.Settings.Default.ComputerHost = RemoteHostTextBox.Text;
 			int port;
-			Properties.Settings.Default.ComputerPort = int.TryParse(ComputerPortTextBox.Text, out port)
+			Properties.Settings.Default.ComputerPort = int.TryParse(RemotePortTextBox.Text, out port)
 				? port : 26010;
 			Properties.Settings.Default.LoginUsername = LoginUsernameTextBox.Text;
 			Properties.Settings.Default.LoginPassword = LoginPasswordBox.Password.ToString();
