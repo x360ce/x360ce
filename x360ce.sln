@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28922.388
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Support", "Support", "{C6A1E57B-367C-431A-8934-B11D17D88718}"
 	ProjectSection(SolutionItems) = preProject
@@ -38,6 +38,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v3.x", "v3.x", "{2EDA098B-B7B4-4D27-98B3-B19BCF5D7533}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.RemoteController", "x360ce.RemoteController\x360ce.RemoteController.csproj", "{2A231FCE-E900-4031-9A5E-AE73A54516FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{0BB25F80-C7E3-4315-BEF2-EE843BA6FAC2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

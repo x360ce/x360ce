@@ -28,6 +28,14 @@ namespace JocysCom.ClassLibrary.Web.Services
 		// This class can generate "WebServiceBindingAttribute is required on proxy classes" error during build.
 		// Solution: Set "Generate Serialization assembly:" to "Auto" or "Off" in the [Build] tab of project properties.
 
+		// HttpWebRequest.Timeout - Time to wait until server accepts the client's request (TCP ACK). Default value: 100 seconds.
+		//   This doesn't include the DNS resolution time, which is managed by the ServicePointManager.
+		// HttpWebRequest.ReadWriteTimeout - Time to wait until server sends all the data. Default value: 5 minutes.
+		//   This timeout starts only after the server accepts the request.
+		// HttpWebRequest.ContinueTimeout - Time to wait until the 100-Continue is received from the server.
+		//   ContinueTimeout used when HttpWebRequest.ServicePoint.Expect100Continue = true and only header is sent with the initial request.
+		// Note: These timeouts have no effect on asynchronous requests.
+
 		#region Main Methods
 
 		bool useDefaultCredentialsSetExplicitly;
@@ -35,7 +43,6 @@ namespace JocysCom.ClassLibrary.Web.Services
 		/// <remarks/>
 		public SoapHttpClientBase()
 		{
-			
 			// Enable TLS 1.1, 1.2 and 1.3
 			var Tls11 = 0x0300; //   768
 			var Tls12 = 0x0C00; //  3072
@@ -106,7 +113,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		public T Invoke<T>(string method, params object[] args)
 		{
-			var results = Invoke("Execute", args);
+			var results = Invoke(method, args);
 			return (T)results[0];
 		}
 
@@ -143,6 +150,8 @@ namespace JocysCom.ClassLibrary.Web.Services
 		protected override XmlWriter GetWriterForMessage(SoapClientMessage message, int bufferSize)
 		{
 			DisposeWriterStreamSpy();
+			// Dispose reader too in case it was created by previous call.
+			DisposeReaderStreamSpy();
 			var writer = SoapHttpClientSpy.GetWriterForMessage(message, bufferSize, base.RequestEncoding, CurrentWebRequest, out WriterStreamSpy);
 			return writer;
 		}
@@ -158,6 +167,8 @@ namespace JocysCom.ClassLibrary.Web.Services
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
+			// Remove all events.
+			WebRequestCreated = null;
 			DisposeWriterStreamSpy();
 			DisposeReaderStreamSpy();
 		}
@@ -193,13 +204,17 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		protected override WebRequest GetWebRequest(Uri uri)
 		{
-	
 			CurrentWebRequest = (HttpWebRequest)base.GetWebRequest(uri);
 			// Bind to specific local IP.
 			CurrentWebRequest.ServicePoint.BindIPEndPointDelegate = new BindIPEndPoint(BindIPEndPointCallback);
 			InitPreAuthenticate(CurrentWebRequest);
+			var ev = WebRequestCreated;
+			if (ev != null)
+				ev(this, new EventArgs());
 			return CurrentWebRequest;
 		}
+
+		public EventHandler<EventArgs> WebRequestCreated;
 
 		private IPEndPoint BindIPEndPointCallback(ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
 		{

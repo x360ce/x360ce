@@ -89,6 +89,8 @@ namespace JocysCom.ClassLibrary.Security
 			// Copy data bytes to input buffer.
 			System.Buffer.BlockCopy(input, 0, inputBuffer, 0, inputBuffer.Length);
 			// Create a MemoryStream to hold the output bytes.
+			// CWE-404: Improper Resource Shutdown or Release
+			// Note: False Positive: cryptoStream.Close() will close underlying MemoryStream automatically.
 			var stream = new MemoryStream();
 			// Create a CryptoStream through which we are going to be processing our data.
 			var cryptoStream = new CryptoStream(stream, cryptor, CryptoStreamMode.Write);

@@ -197,13 +197,23 @@ namespace JocysCom.ClassLibrary.Runtime
 				sb.AppendFormat("CC:   {0}\r\n", item);
 			foreach (var item in message.Bcc)
 				sb.AppendFormat("Bcc:   {0}\r\n", item);
+			// Write list of files.
 			var files = message.Attachments;
 			if (files != null && files.Count > 0)
 			{
 				var maxNumbers = files.Count.ToString().Length;
 				var maxContent = files.Max(x => x.ContentStream.Length.ToString().Length);
 				for (int i = 0; i < files.Count; i++)
-					sb.AppendFormat("File: {0," + maxNumbers + "}. {1," + maxContent + "} bytes - {2}\r\n", i, files[i].ContentStream.Length, files[i].Name);
+					sb.AppendFormat("File[{0}]: {1," + maxContent + "} bytes - {2}\r\n", i, files[i].ContentStream.Length, files[i].ContentType);
+			}
+			// Write list of views.
+			var views = message.AlternateViews;
+			if (views != null && views.Count > 0)
+			{
+				var maxNumbers = views.Count.ToString().Length;
+				var maxContent = views.Max(x => x.ContentStream.Length.ToString().Length);
+				for (int i = 0; i < views.Count; i++)
+					sb.AppendFormat("View[{0}]: {1," + maxContent + "} bytes - {2}\r\n", i, views[i].ContentStream.Length, views[i].ContentType);
 			}
 			sb.AppendFormat("Subject: {0}\r\n", message.Subject);
 			sb.AppendFormat("Body Size: {0} bytes\r\n", string.Format("{0}", message.Body).Length);
@@ -238,6 +248,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			string testBody = "";
 			testBody += "In LIVE mode this email would be sent:<br /><br />\r\n";
 			testBody += "<pre>";
+			testBody += string.Format("Source: {0}\r\n", GetSubjectPrefix().Trim(' ', ':'));
 			testBody += System.Net.WebUtility.HtmlEncode(GetMailHeader(message));
 			if (client != null)
 			{
@@ -260,7 +271,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				testBody += "</pre>";
 			}
 			mail.Body = testBody;
-			// Readd attachments.
+			// Read attachments.
 			var files = message.Attachments;
 			if (files != null)
 			{
@@ -271,6 +282,29 @@ namespace JocysCom.ClassLibrary.Runtime
 					if (name.EndsWith(".ics", StringComparison.OrdinalIgnoreCase))
 					{
 						mail.Attachments.Add(files[i]);
+					}
+				}
+			}
+			// Read views
+			var views = message.AlternateViews;
+			if (views != null)
+			{
+				for (int i = 0; i < views.Count; i++)
+				{
+					var view = views[i];
+					var content = view.ContentType;
+					var name = content.Name;
+					// Re-attach calendar item.
+					if (name.EndsWith(".ics", StringComparison.OrdinalIgnoreCase))
+					{
+						// Add calendar item as attachment.
+						var attachment = new Attachment(view.ContentStream, name, content.MediaType);
+						mail.Attachments.Add(attachment);
+
+						var reader = new System.IO.StreamReader(view.ContentStream);
+						var calendar = reader.ReadToEnd();
+
+
 					}
 				}
 			}
