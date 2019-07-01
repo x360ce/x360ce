@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="JocysCom.x360ce.Mobile.RemoteController.Views.MenuPage"
+             Title="Menu">
+             
+    <StackLayout VerticalOptions="FillAndExpand">
+        <ListView x:Name="ListViewMenu"
+                    HasUnevenRows="True">
+            <d:ListView.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Item 1</x:String>
+                    <x:String>Item 2</x:String>
+                </x:Array>
+            </d:ListView.ItemsSource>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <Grid Padding="10">
+                            <Label Text="{Binding Title}" d:Text="{Binding .}" FontSize="20"/>
+                        </Grid>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackLayout>
+
+</ContentPage>
