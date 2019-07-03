@@ -90,6 +90,9 @@ namespace JocysCom.ClassLibrary.Diagnostics
 						writer.Close();
 					// Cleanup old files.
 					WipeOldLogFiles(expandedPath);
+					var fi = new FileInfo(path);
+					if (!fi.Directory.Exists)
+						fi.Directory.Create();
 					// create a new file stream and a new stream writer and pass it to the listener
 					var stream = new FileStream(path, FileMode.OpenOrCreate);
 					writer = new StreamWriter(stream);

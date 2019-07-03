@@ -174,7 +174,9 @@ namespace JocysCom.ClassLibrary.Mail
 			if (HttpRuntime.IISVersion == null)
 				return System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.None);
 			// If web request then...
-			if (HttpContext.Current != null && HttpContext.Current.Request == null)
+			if (HttpContext.Current != null
+				// Avoid Exception: Request is not available in this context...
+				&& HttpContext.Current.Handler != null && HttpContext.Current.Request != null)
 				return System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(HttpContext.Current.Request.ApplicationPath);
 			// If web application then...
 			return System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(HttpRuntime.AppDomainAppVirtualPath);

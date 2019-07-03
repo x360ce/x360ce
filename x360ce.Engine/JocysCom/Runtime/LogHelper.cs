@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Data;
 using System.Collections;
-using System.Configuration;
-using System.Diagnostics;
-using System.Data.SqlClient;
-using System.Text.RegularExpressions;
-using System.Net;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -131,25 +131,12 @@ namespace JocysCom.ClassLibrary.Runtime
 			{
 				foreach (string key in parameters.Keys)
 				{
-					string v;
 					var pv = parameters[key];
-					if (pv == null)
-					{
-						v = "<pre>null</pre>";
-					}
-					else
-					{
-						try
-						{
-							v = string.Format("{0}", pv);
-							v = System.Net.WebUtility.HtmlEncode(v);
-							v = "<pre>" + v + "</pre>";
-						}
-						catch (Exception ex2)
-						{
-							v = ex2.Message;
-						}
-					}
+					string v = pv == null
+						? "null"
+						: string.Format("{0}", pv);
+					v = System.Net.WebUtility.HtmlEncode(v);
+					v = "<span class=\"Pre\">" + v + "</span>";
 					AddRow(ref s, key, v);
 				}
 			}
@@ -159,13 +146,15 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			s += "<style type=\"text/css\">\r\n";
 			s += "table tr td { font-family: Tahoma; font-size: 10pt; white-space:nowrap; }\r\n";
-			s += "table tr th { font-family: Tahoma; font-size: 10pt; white-space:nowrap; }\r\n";
-			s += ".Table { border: solid 1px #DDDDDD; border-collapse: collapse; empty-cells: show; }\r\n";
-			s += ".Table tr td { border: solid 1px #DDDDDD; padding: 2px 4px 2px 4px; }\r\n";
-			s += ".Table tr th { border: solid 1px #DDDDDD; padding: 2px 4px 2px 4px; }\r\n";
-			s += ".Head { font-weight: bold; }\r\n";
+			s += "table tr th { font-family: Tahoma; font-size: 10pt; white-space:nowrap; text-align:left; }\r\n";
+			s += ".Table { border: solid 1px #EEEEEE; border-collapse: collapse; empty-cells: show; }\r\n";
+			s += ".Table tr td { border: solid 1px #EEEEEE; padding: 2px 4px 2px 4px; }\r\n";
+			s += ".Table tr th { border: solid 1px #EEEEEE; padding: 2px 4px 2px 4px; background-color: #EEEEEE; }\r\n";
+			s += ".Head { font-weight: bold; text-align:left; }\r\n";
 			s += ".Body {  }\r\n";
+			s += ".Grey { color: #CCCCCC; }\r\n";
 			s += ".Name { padding-left: 16px; }\r\n";
+			s += ".Pre { white-space: pre; font-family: consolas, monospace; }\r\n";
 			s += ".Value { widht: 100%; }\r\n";
 			s += ".Ex { font-family: Courier New; font-size: 10pt; }\r\n";
 			s += "</style>\r\n";
@@ -180,7 +169,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <summary>Add header row.</summary>
 		public static void AddRow(ref string s, string name)
 		{
-			s += string.Format("<tr><td colspan=\"2\" class=\"Head\">{0}</td></tr>",  name);
+			s += string.Format("<tr><th colspan=\"2\" class=\"Head\">{0}</th></tr>", name);
 		}
 
 		#region Table
@@ -237,32 +226,17 @@ namespace JocysCom.ClassLibrary.Runtime
 			s += string.Format("<tr><td class=\"Name\" valign=\"top\">{0}{1}</td><td>{2}</td></tr>", key, sep, value);
 		}
 
-		protected static void AddException(ref string s, Exception ex)
+		protected static void AddExceptionTrace(ref string s, Exception ex)
 		{
 			if (ex.Data.Count > 0)
 			{
 				AddParameters(ref s, ex.Data);
-				s += "</table>";
-				s += "<table border=\"0\" cellspacing=\"2\">";
 			}
-			// if exception is not empty then 
-			//if (!string.IsNullOrEmpty(ex.Message))
-			//{
 			var useHtml = ParseBool(_configPrefix + "ErrorHtmlException", true);
-			if (useHtml)
-			{
-				AddException(ref s, ExceptionToString(ex, true, TraceFormat.Html));
-			}
-			else
-			{
-				AddException(ref s, "<pre>" + ex.ToString() + "</pre>");
-			}
-			//}
-		}
-
-		protected static void AddException(ref string s, string name)
-		{
-			s += string.Format("<tr><td colspan=\"2\" class=\"Ex\">{0}</td></tr>", name);
+			var html = useHtml
+				? ExceptionToString(ex, true, TraceFormat.Html)
+				: "<pre>" + ex.ToString() + "</pre>";
+			AddRow(ref s, "StackTrace", html);
 		}
 
 		public static void AddConnection(ref string s, string name, string connectionString)
@@ -547,111 +521,124 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			AddRow(ref s);
 			s += "</table>";
-			s += "<table border=\"0\" cellspacing=\"2\">";
+			s += "<table border=\"0\" cellspacing=\"2\" class=\"Table\">";
 			ExceptionInfoRecursive(ref s, ex);
 			//------------------------------------------------------
 			s += "</table>";
 			return s;
 		}
 
-		public static void ExceptionInfoRecursive(ref string s, Exception ex)
+		public static void ExceptionInfoRecursive(ref string s, Exception ex, string exceptionType = null)
 		{
-			if (ex == null) return;
+			if (ex == null)
+				return;
 			StackFrame frame = GetFormStackFrame(ex);
-			AddRow(ref s, "Exception");
+			AddRow(ref s, string.Format("{0}{1}", GetClassName(ex), string.IsNullOrEmpty(exceptionType) ? "" : " <span class=\"Grey\">- " + exceptionType + "</span>"));
 			AddRow(ref s, "Exception Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+			// Get targetType and TargetName
+			var mb = ex.TargetSite;
 			if (frame != null && frame.GetMethod() != null && frame.GetMethod().DeclaringType != null)
+				mb = frame.GetMethod();
+			if (mb != null)
 			{
-				Type dt = frame.GetMethod().DeclaringType;
-				AddRow(ref s, "Target.Type", dt.FullName);
-				AddRow(ref s, "Target.Name", frame.GetMethod().Name);
+				AddRow(ref s, "Target.Type", mb.DeclaringType.ToString());
+				AddRow(ref s, "Target.Name", mb.Name);
 			}
-			else if (ex.TargetSite != null)
-			{
-				AddRow(ref s, "Target.Type", ex.TargetSite.DeclaringType.ToString());
-				AddRow(ref s, "Target.Name", ex.TargetSite.Name);
-			}
-			s += "</table>";
-			s += "<table border=\"0\" cellspacing=\"2\">";
-			FillLoaderException(ref s, ex);
-			FillSocketException(ref s, ex);
-			FillThreadAbortException(ref s, ex);
-			FillSqlException(ref s, ex);
+			if (FillLoaderException(ref s, ex)) { }
+			else if (FillSocketException(ref s, ex)) { }
+			else if (FillThreadAbortException(ref s, ex)) { }
+			else if (FillSqlException(ref s, ex)) { }
+			else FillOther(ref s, ex);
+			AddExceptionTrace(ref s, ex);
+			// Append inner exception to the end.
 			if (ex.InnerException != null)
+				ExceptionInfoRecursive(ref s, ex.InnerException, "InnerException");
+		}
+
+		public static bool FillSocketException(ref string s, Exception ex)
+		{
+			var ex2 = ex as System.Net.Sockets.SocketException;
+			if (ex2 == null)
+				return false;
+			Add(ex2, "NativeErrorCode", ex2.NativeErrorCode);
+			Add(ex2, "SocketErrorCode", ex2.SocketErrorCode);
+			return true;
+		}
+
+		public static bool FillThreadAbortException(ref string s, Exception ex)
+		{
+			var ex2 = ex as System.Threading.ThreadAbortException;
+			if (ex2 == null)
+				return false;
+			Add(ex2, "ExceptionState", ex2.ExceptionState);
+			return true;
+		}
+
+		public static bool FillSqlException(ref string s, Exception ex)
+		{
+			var ex2 = ex as SqlException;
+			if (ex2 == null)
+				return false;
+			for (int i = 0; i <= ex2.Errors.Count - 1; i++)
+			{
+				var err = ex2.Errors[i];
+				var prefix = string.Format("Errors[{0}]", i + 1);
+				Add(ex2, prefix + ".Source", err.Source);
+				Add(ex2, prefix + ".Server", err.Server);
+				Add(ex2, prefix + ".Location", string.Format("Number {0}, Level {1}, State {2}, Line {3}", err.Number, err.Class, err.State, err.LineNumber));
+				Add(ex2, prefix + ".Message", err.Message);
+				if (!string.IsNullOrEmpty(err.Procedure))
+				{
+					Add(ex2, prefix + ".Procedure", err.Procedure);
+					Add(ex2, prefix + ".Help", "SQL command to display lines of procedure: exec sp_helptext '" + err.Procedure + "'");
+				}
+			}
+			return true;
+		}
+
+		public static bool FillLoaderException(ref string s, Exception ex)
+		{
+			var ex2 = ex as ReflectionTypeLoadException;
+			if (ex2 == null)
+				return false;
+			var i = 0;
+			foreach (var ex4 in ex2.LoaderExceptions)
 			{
 				var s1 = "";
-				ExceptionInfoRecursive(ref s1, ex.InnerException);
-				var key = string.Format("InnerException");
-				if (!ex.Data.Contains(key)) ex.Data.Add(key, s1);
+				ExceptionInfoRecursive(ref s1, ex4);
+				var key = string.Format("LoaderExceptions[{0}]", i++);
+				Add(ex2, key, s1);
 			}
-			AddException(ref s, ex);
+			return true;
 		}
 
-
-		public static void FillSocketException(ref string s, Exception ex)
+		public static void FillOther(ref string s, Exception ex)
 		{
-			if (ex.GetType().Equals(typeof(System.Net.Sockets.SocketException)))
+			if (ex == null)
+				return;
+			var parameters = new Dictionary<string, object>();
+			foreach (var pi in ex.GetType().GetProperties())
 			{
-				var exIn = (System.Net.Sockets.SocketException)ex;
-				var key = "SocketException.NativeErrorCode";
-				if (ex.Data.Contains(key)) return;
-				ex.Data.Add(key, exIn.NativeErrorCode);
-				ex.Data.Add("SocketException.SocketErrorCode", exIn.SocketErrorCode);
+				if (!pi.CanRead)
+					continue;
+				// HTML stack trace will be added.
+				if (new string[] { "StackTrace", "TargetSite", "Data", "Message", "InnerException" }.Contains(pi.Name))
+					continue;
+				var value = pi.GetValue(ex);
+				if (value == null)
+					continue;
+				parameters.Add("." + pi.Name, value);
 			}
+			AddParameters(ref s, parameters);
 		}
 
-		public static void FillThreadAbortException(ref string s, Exception ex)
+		static void Add(Exception ex, string name, object value)
 		{
-			if (ex.GetType().Equals(typeof(System.Threading.ThreadAbortException)))
-			{
-				var exIn = (System.Threading.ThreadAbortException)ex;
-				var key = "ThreadAbortException.ExceptionState";
-				if (ex.Data.Contains(key)) return;
-				ex.Data.Add(key, exIn.ExceptionState);
-			}
-		}
-
-		public static void FillSqlException(ref string s, Exception ex)
-		{
-			// Add Details
-			if (ex.GetType().Equals(typeof(SqlException)))
-			{
-				var exIn = (SqlException)ex;
-				for (int i = 0; i <= exIn.Errors.Count - 1; i++)
-				{
-					SqlError err = exIn.Errors[i];
-					var prefix = string.Format("SqlException[{0}]", i + 1);
-					var key = prefix + ".Source";
-					if (ex.Data.Contains(key)) continue;
-					ex.Data.Add(key, err.Source);
-					ex.Data.Add(prefix + ".Server", err.Server);
-					ex.Data.Add(prefix + ".Location", string.Format("Number {0}, Level {1}, State {2}, Line {3}", err.Number, err.Class, err.State, err.LineNumber));
-					ex.Data.Add(prefix + ".Message", err.Message);
-					if (!string.IsNullOrEmpty(err.Procedure))
-					{
-						ex.Data.Add(prefix + ".Procedure", err.Procedure);
-						ex.Data.Add(prefix + ".Help", "SQL command to display lines of procedure: exec sp_helptext '" + err.Procedure + "'");
-					}
-				}
-			}
-		}
-
-		public static void FillLoaderException(ref string s, Exception ex)
-		{
-			if (ex.GetType().Equals(typeof(ReflectionTypeLoadException)))
-			{
-				var exIn = (ReflectionTypeLoadException)ex;
-				var i = 0;
-				foreach (Exception ex4 in exIn.LoaderExceptions)
-				{
-					var s1 = "";
-					ExceptionInfoRecursive(ref s1, ex4);
-					var key = "LoaderExceptions[" + i.ToString() + "]";
-					if (ex.Data.Contains(key)) return;
-					ex.Data.Add(key, s1);
-					i++;
-				}
-			}
+			var prefix = ex.GetType().Name;
+			var key = string.Format("{0}.{1}", prefix, name);
+			if (ex.Data.Contains(key))
+				return;
+			ex.Data.Add(key, value);
 		}
 
 		#endregion

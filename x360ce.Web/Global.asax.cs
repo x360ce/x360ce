@@ -61,7 +61,7 @@ namespace x360ce.Web
 			// Fires when an unhanded error occurs anywhere in the application
 			if (JocysCom.ClassLibrary.Mail.SmtpClientEx.Current.ErrorNotifications)
 			{
-				var ex = Server.GetLastError().GetBaseException();
+				var ex = Server.GetLastError();
 				//Context.ClearError();
 				// Send exception by email
 				LogHelper.Current.ProcessException(ex);

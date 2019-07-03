@@ -174,20 +174,14 @@ namespace JocysCom.ClassLibrary.Runtime
 			bool isHtml = (tf == TraceFormat.Html);
 			string newLine = isHtml ? "<br />" + Environment.NewLine : Environment.NewLine;
 			var builder = new StringBuilder(0xff);
-			if (isHtml)
-			{
-				var exText = (ex.GetType().Name + ": " + ex.Message).Replace("\r\n", "<br />");
-				builder.Append("<hr/>" + exText + "<hr/>");
-			}
 			if (isHtml) builder.Append("<span style=\"font-family: Courier New; font-size: 10pt;\">");
 			builder.Append(getText(isHtml, GetClassName(ex)));
-			string message = ex.Message;
-			if (!string.IsNullOrEmpty(message))
+			if (!string.IsNullOrEmpty(ex.Message))
 			{
 				builder.Append(": ");
-				builder.Append(getText(isHtml, message));
+				builder.Append(getText(isHtml, ex.Message));
 			}
-			builder.Append(newLine);
+			//builder.Append(newLine);
 			StackTrace stackTrace = new StackTrace(ex, needFileLineInfo);
 			StackTrace fullTrace = null;
 			int startFrameIndex = 0;
@@ -233,12 +227,12 @@ namespace JocysCom.ClassLibrary.Runtime
 				builder.Append(newLine);
 				builder.Append(TraceToString(trace, tf, startFrameIndex));
 			}
-			if (ex.InnerException != null)
-			{
-				builder.Append(getText(isHtml, " ---> "));
-				builder.Append(ExceptionToString(ex.InnerException, needFileLineInfo, tf));
-				builder.Append(newLine);
-			}
+			//if (ex.InnerException != null)
+			//{
+			//	builder.Append(getText(isHtml, " ---> "));
+			//	builder.Append(ExceptionToString(ex.InnerException, needFileLineInfo, tf));
+			//	builder.Append(newLine);
+			//}
 			if (isHtml) builder.Append("</span>");
 			return builder.ToString();
 		}
@@ -378,7 +372,8 @@ namespace JocysCom.ClassLibrary.Runtime
 						{
 							if (isClass) builder.Append("<span style=\"color: #2B91AF; \">");
 							builder.Append(System.Net.WebUtility.HtmlEncode(paramType));
-							if (isClass) builder.Append("</span>");
+							if (isClass)
+								builder.Append("</span>");
 							builder.Append(" ");
 							builder.Append(System.Net.WebUtility.HtmlEncode(paramType));
 						}
