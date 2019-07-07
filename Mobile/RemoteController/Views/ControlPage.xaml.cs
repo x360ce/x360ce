@@ -11,7 +11,10 @@ using JocysCom.RemoteController.Views;
 using JocysCom.RemoteController.ViewModels;
 using Xamarin.Essentials;
 using System.Numerics;
+using static Android.Provider.MediaStore;
+using Android.Media;
 
+[assembly: Dependency(typeof(Audio))]
 namespace JocysCom.RemoteController.Views
 {
 	// Learn more about making custom code visible in the Xamarin.Forms previewer
@@ -53,6 +56,8 @@ namespace JocysCom.RemoteController.Views
 				{
 					Accelerometer.Stop();
 					Accelerometer.ReadingChanged -= Accelerometer_ReadingChanged;
+					AccelerometerMin = null;
+					AccelerometerMax = null;
 				}
 			}
 			catch (FeatureNotSupportedException)
@@ -76,6 +81,8 @@ namespace JocysCom.RemoteController.Views
 			var dx = string.Format(formatDelta, max.X - min.X);
 			var dy = string.Format(formatDelta, max.Y - min.Y);
 			var dz = string.Format(formatDelta, max.Z - min.Z);
+			if (max.X - min.X > 0.1 || max.Y - min.Y > 0.1 || max.Z - min.Z > 0.1)
+				PlayAudio(true);
 			AccelerometerXLabel.Text = string.Format("X: " + format + ", " + dx, v.X);
 			AccelerometerYLabel.Text = string.Format("Y: " + format + ", " + dy, v.Y);
 			AccelerometerZLabel.Text = string.Format("Z: " + format + ", " + dz, v.Z);
@@ -98,6 +105,8 @@ namespace JocysCom.RemoteController.Views
 				{
 					Gyroscope.Stop();
 					Gyroscope.ReadingChanged -= Gyroscope_ReadingChanged;
+					GyroscopeMin = null;
+					GyroscopeMax = null;
 				}
 			}
 			catch (FeatureNotSupportedException)
@@ -122,6 +131,8 @@ namespace JocysCom.RemoteController.Views
 			var dx = string.Format(formatDelta, max.X - min.X);
 			var dy = string.Format(formatDelta, max.Y - min.Y);
 			var dz = string.Format(formatDelta, max.Z - min.Z);
+			if (max.X - min.X > 0.1 || max.Y - min.Y > 0.1 || max.Z - min.Z > 0.1)
+				PlayAudio(true);
 			GyroscopeXLabel.Text = string.Format("X: " + format + ", " + dx, v.X);
 			GyroscopeYLabel.Text = string.Format("Y: " + format + ", " + dy, v.Y);
 			GyroscopeZLabel.Text = string.Format("Z: " + format + ", " + dz, v.Z);
@@ -144,6 +155,8 @@ namespace JocysCom.RemoteController.Views
 				{
 					OrientationSensor.Stop();
 					OrientationSensor.ReadingChanged -= Orientation_ReadingChanged;
+					OrientationMin = null;
+					OrientationMax = null;
 				}
 			}
 			catch (FeatureNotSupportedException)
@@ -169,6 +182,8 @@ namespace JocysCom.RemoteController.Views
 			var dy = string.Format(formatDelta, max.Y - min.Y);
 			var dz = string.Format(formatDelta, max.Z - min.Z);
 			var dw = string.Format(formatDelta, max.W - min.W);
+			if (max.X - min.X > 0.1 || max.Y - min.Y > 0.1 || max.Z - min.Z > 0.1 || max.W - min.W > 0.1)
+				PlayAudio(true);
 			OrientationXLabel.Text = string.Format("X: " + format + ", " + dx, v.X);
 			OrientationYLabel.Text = string.Format("Y: " + format + ", " + dy, v.Y);
 			OrientationZLabel.Text = string.Format("Z: " + format + ", " + dz, v.Z);
@@ -284,6 +299,42 @@ namespace JocysCom.RemoteController.Views
 			);
 		}
 
+
+		Ringtone _Alarm;
+		System.Timers.Timer _Timer;
+
+		public void PlayAudio(bool play)
+		{
+			if (_Alarm == null)
+			{
+				var uri = RingtoneManager.GetDefaultUri(RingtoneType.Alarm);
+				_Alarm = RingtoneManager.GetRingtone(global::Android.App.Application.Context, uri);
+				_Timer = new System.Timers.Timer();
+				_Timer.Interval = 2000;
+				_Timer.AutoReset = false;
+				_Timer.Elapsed += _Timer_Elapsed;
+			}
+			if (play && !_Alarm.IsPlaying)
+			{
+				AccelerometerMin = null;
+				AccelerometerMax = null;
+				GyroscopeMin = null;
+				GyroscopeMax = null;
+				OrientationMin = null;
+				OrientationMax = null;
+				_Alarm.Play();
+				_Timer.Start();
+			}
+			else if (!play && _Alarm.IsPlaying)
+			{
+				_Alarm.Stop();
+			}
+		}
+
+		private void _Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			_Alarm.Stop();
+		}
 
 		#endregion
 
