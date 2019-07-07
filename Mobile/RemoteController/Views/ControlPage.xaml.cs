@@ -6,12 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using JocysCom.x360ce.Mobile.RemoteController.Models;
-using JocysCom.x360ce.Mobile.RemoteController.Views;
-using JocysCom.x360ce.Mobile.RemoteController.ViewModels;
+using JocysCom.RemoteController.Models;
+using JocysCom.RemoteController.Views;
+using JocysCom.RemoteController.ViewModels;
 using Xamarin.Essentials;
+using System.Numerics;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.Views
+namespace JocysCom.RemoteController.Views
 {
 	// Learn more about making custom code visible in the Xamarin.Forms previewer
 	// by visiting https://aka.ms/xamarinforms-previewer
@@ -28,6 +29,8 @@ namespace JocysCom.x360ce.Mobile.RemoteController.Views
 
 		// Set speed delay for monitoring changes.
 		SensorSpeed speed = SensorSpeed.UI;
+		string format = "{0:+#0.000000000;-#0.000000000; #0.000000000}";
+		string formatDelta = "{0:0.000000000}";
 
 		#region Accelerometer
 
@@ -62,12 +65,20 @@ namespace JocysCom.x360ce.Mobile.RemoteController.Views
 			}
 		}
 
+		Vector3? AccelerometerMin;
+		Vector3? AccelerometerMax;
+
 		void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
 		{
-			var data = e.Reading;
-			AccelerometerXLabel.Text = string.Format("X: {0}", data.Acceleration.X);
-			AccelerometerYLabel.Text = string.Format("Y: {0}", data.Acceleration.Y);
-			AccelerometerZLabel.Text = string.Format("Z: {0}", data.Acceleration.Z);
+			var v = e.Reading.Acceleration;
+			var min = (AccelerometerMin = GetMin(v, AccelerometerMin)).Value;
+			var max = (AccelerometerMax = GetMax(v, AccelerometerMax)).Value;
+			var dx = string.Format(formatDelta, max.X - min.X);
+			var dy = string.Format(formatDelta, max.Y - min.Y);
+			var dz = string.Format(formatDelta, max.Z - min.Z);
+			AccelerometerXLabel.Text = string.Format("X: " + format + ", " + dx, v.X);
+			AccelerometerYLabel.Text = string.Format("Y: " + format + ", " + dy, v.Y);
+			AccelerometerZLabel.Text = string.Format("Z: " + format + ", " + dz, v.Z);
 		}
 
 		#endregion
@@ -99,12 +110,21 @@ namespace JocysCom.x360ce.Mobile.RemoteController.Views
 			}
 		}
 
+		Vector3? GyroscopeMin;
+		Vector3? GyroscopeMax;
+
+
 		void Gyroscope_ReadingChanged(object sender, GyroscopeChangedEventArgs e)
 		{
-			var data = e.Reading;
-			GyroscopeXLabel.Text = string.Format("X: {0}", data.AngularVelocity.X);
-			GyroscopeYLabel.Text = string.Format("Y: {0}", data.AngularVelocity.Y);
-			GyroscopeZLabel.Text = string.Format("Z: {0}", data.AngularVelocity.Z);
+			var v = e.Reading.AngularVelocity;
+			var min = (GyroscopeMin = GetMin(v, GyroscopeMin)).Value;
+			var max = (GyroscopeMax = GetMax(v, GyroscopeMax)).Value;
+			var dx = string.Format(formatDelta, max.X - min.X);
+			var dy = string.Format(formatDelta, max.Y - min.Y);
+			var dz = string.Format(formatDelta, max.Z - min.Z);
+			GyroscopeXLabel.Text = string.Format("X: " + format + ", " + dx, v.X);
+			GyroscopeYLabel.Text = string.Format("Y: " + format + ", " + dy, v.Y);
+			GyroscopeZLabel.Text = string.Format("Z: " + format + ", " + dz, v.Z);
 		}
 
 		#endregion
@@ -136,13 +156,23 @@ namespace JocysCom.x360ce.Mobile.RemoteController.Views
 			}
 		}
 
+		Vector4? OrientationMin;
+		Vector4? OrientationMax;
+
 		void Orientation_ReadingChanged(object sender, OrientationSensorChangedEventArgs e)
 		{
-			var data = e.Reading;
-			OrientationXLabel.Text = string.Format("X: {0}", data.Orientation.X);
-			OrientationYLabel.Text = string.Format("Y: {0}", data.Orientation.Y);
-			OrientationZLabel.Text = string.Format("Z: {0}", data.Orientation.Z);
-			OrientationWLabel.Text = string.Format("W: {0}", data.Orientation.W);
+			var o = e.Reading.Orientation;
+			var v = new Vector4(o.X, o.Y, o.Z, o.W);
+			var min = (OrientationMin = GetMin(v, OrientationMin)).Value;
+			var max = (OrientationMax = GetMax(v, OrientationMax)).Value;
+			var dx = string.Format(formatDelta, max.X - min.X);
+			var dy = string.Format(formatDelta, max.Y - min.Y);
+			var dz = string.Format(formatDelta, max.Z - min.Z);
+			var dw = string.Format(formatDelta, max.W - min.W);
+			OrientationXLabel.Text = string.Format("X: " + format + ", " + dx, v.X);
+			OrientationYLabel.Text = string.Format("Y: " + format + ", " + dy, v.Y);
+			OrientationZLabel.Text = string.Format("Z: " + format + ", " + dz, v.Z);
+			OrientationWLabel.Text = string.Format("W: " + format + ", " + dw, v.W);
 		}
 
 		#endregion
@@ -177,7 +207,7 @@ namespace JocysCom.x360ce.Mobile.RemoteController.Views
 		void Compass_ReadingChanged(object sender, CompassChangedEventArgs e)
 		{
 			var data = e.Reading;
-			CompassNLabel.Text = string.Format("North: {0}", data.HeadingMagneticNorth);
+			CompassNLabel.Text = string.Format("N: " + format, data.HeadingMagneticNorth);
 		}
 
 		#endregion
@@ -210,6 +240,52 @@ namespace JocysCom.x360ce.Mobile.RemoteController.Views
 
 		#endregion
 
+		#region Helper methods
+
+		Vector3 GetMin(Vector3 a, Vector3? old)
+		{
+			var b = old ?? a;
+			return new Vector3(
+				Math.Min(a.X, b.X),
+				Math.Min(a.Y, b.Y),
+				Math.Min(a.Z, b.Z)
+			);
+		}
+
+		Vector3 GetMax(Vector3 a, Vector3? old)
+		{
+			var b = old ?? a;
+			return new Vector3(
+				Math.Max(a.X, b.X),
+				Math.Max(a.Y, b.Y),
+				Math.Max(a.Z, b.Z)
+			);
+		}
+
+		Vector4 GetMin(Vector4 a, Vector4? old)
+		{
+			var b = old ?? a;
+			return new Vector4(
+				Math.Min(a.X, b.X),
+				Math.Min(a.Y, b.Y),
+				Math.Min(a.Z, b.Z),
+				Math.Min(a.W, b.W)
+			);
+		}
+
+		Vector4 GetMax(Vector4 a, Vector4? old)
+		{
+			var b = old ?? a;
+			return new Vector4(
+				Math.Max(a.X, b.X),
+				Math.Max(a.Y, b.Y),
+				Math.Min(a.Z, b.Z),
+				Math.Min(a.W, b.W)
+			);
+		}
+
+
+		#endregion
 
 	}
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.Models
+namespace JocysCom.RemoteController.Models
 {
 	public enum MenuItemType
 	{

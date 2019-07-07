@@ -3,7 +3,7 @@ using System.Windows.Input;
 
 using Xamarin.Forms;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.ViewModels
+namespace JocysCom.RemoteController.ViewModels
 {
 	public class AboutViewModel : BaseViewModel
 	{

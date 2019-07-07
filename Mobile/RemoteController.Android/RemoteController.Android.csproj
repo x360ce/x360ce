@@ -7,8 +7,8 @@
     <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TemplateGuid>{9AA2D3C6-3393-45F1-8E7C-5A9901728795}</TemplateGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>JocysCom.x360ce.Mobile.RemoteController.Droid</RootNamespace>
-    <AssemblyName>JocysCom.x360ce.Mobile.RemoteController.Android</AssemblyName>
+    <RootNamespace>JocysCom.RemoteController.Droid</RootNamespace>
+    <AssemblyName>JocysCom.RemoteController.Android</AssemblyName>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>

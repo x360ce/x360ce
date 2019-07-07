@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.UWP
+namespace JocysCom.RemoteController.UWP
 {
     public sealed partial class MainPage
     {
@@ -21,7 +21,7 @@ namespace JocysCom.x360ce.Mobile.RemoteController.UWP
         {
             this.InitializeComponent();
 
-            LoadApplication(new JocysCom.x360ce.Mobile.RemoteController.App());
+            LoadApplication(new JocysCom.RemoteController.App());
         }
     }
 }

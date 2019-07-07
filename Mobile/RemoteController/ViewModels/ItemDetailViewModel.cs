@@ -1,8 +1,8 @@
 ﻿using System;
 
-using JocysCom.x360ce.Mobile.RemoteController.Models;
+using JocysCom.RemoteController.Models;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.ViewModels
+namespace JocysCom.RemoteController.ViewModels
 {
 	public class ItemDetailViewModel : BaseViewModel
 	{

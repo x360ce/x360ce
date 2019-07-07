@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 
-using JocysCom.x360ce.Mobile.RemoteController.Models;
-using JocysCom.x360ce.Mobile.RemoteController.Views;
+using JocysCom.RemoteController.Models;
+using JocysCom.RemoteController.Views;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.ViewModels
+namespace JocysCom.RemoteController.ViewModels
 {
 	public class ItemsViewModel : BaseViewModel
 	{

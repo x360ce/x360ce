@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="JocysCom.RemoteController.Themes.Generic">
+
+	<Style TargetType="Label">
+		<Setter Property="TextColor" Value="#0F627D" />
+		<Setter Property="FontFamily" Value="monospace" />
+	</Style>
+
+</ResourceDictionary>

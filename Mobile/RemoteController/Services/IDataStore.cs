@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.Services
+namespace JocysCom.RemoteController.Services
 {
 	public interface IDataStore<T>
 	{

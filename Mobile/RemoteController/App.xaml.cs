@@ -1,10 +1,10 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using JocysCom.x360ce.Mobile.RemoteController.Services;
-using JocysCom.x360ce.Mobile.RemoteController.Views;
+using JocysCom.RemoteController.Services;
+using JocysCom.RemoteController.Views;
 
-namespace JocysCom.x360ce.Mobile.RemoteController
+namespace JocysCom.RemoteController
 {
 	public partial class App : Application
 	{

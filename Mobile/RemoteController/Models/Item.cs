@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.Models
+namespace JocysCom.RemoteController.Models
 {
 	public class Item
 	{

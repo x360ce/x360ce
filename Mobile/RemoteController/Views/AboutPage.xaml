@@ -4,8 +4,8 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="JocysCom.x360ce.Mobile.RemoteController.Views.AboutPage"
-             xmlns:vm="clr-namespace:JocysCom.x360ce.Mobile.RemoteController.ViewModels"
+             x:Class="JocysCom.RemoteController.Views.AboutPage"
+             xmlns:vm="clr-namespace:JocysCom.RemoteController.ViewModels"
              Title="{Binding Title}">
     
     <ContentPage.BindingContext>

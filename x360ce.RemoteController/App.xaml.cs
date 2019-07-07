@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace JocysCom.x360ce.RemoteController
+namespace JocysCom.RemoteController
 {
 	/// <summary>
 	/// Interaction logic for App.xaml

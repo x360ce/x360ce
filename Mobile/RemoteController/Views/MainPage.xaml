@@ -4,8 +4,8 @@
             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             mc:Ignorable="d"
-            xmlns:views="clr-namespace:JocysCom.x360ce.Mobile.RemoteController.Views"
-            x:Class="JocysCom.x360ce.Mobile.RemoteController.Views.MainPage">
+            xmlns:views="clr-namespace:JocysCom.RemoteController.Views"
+            x:Class="JocysCom.RemoteController.Views.MainPage">
 
     <MasterDetailPage.Master>
         <views:MenuPage />

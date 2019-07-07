@@ -4,17 +4,20 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="JocysCom.x360ce.Mobile.RemoteController.App">
+             x:Class="JocysCom.RemoteController.App">
 
     <Application.Resources>
         <ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Themes/Generic.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
             <!--Global Styles-->
             <Color x:Key="NavigationPrimary">#2196F3</Color>
             <Style TargetType="NavigationPage">
                 <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
                 <Setter Property="BarTextColor" Value="White" />
             </Style>
-        </ResourceDictionary>
+		</ResourceDictionary>
     </Application.Resources>
     
 </Application>

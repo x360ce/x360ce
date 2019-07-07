@@ -5,10 +5,10 @@ using System.Runtime.CompilerServices;
 
 using Xamarin.Forms;
 
-using JocysCom.x360ce.Mobile.RemoteController.Models;
-using JocysCom.x360ce.Mobile.RemoteController.Services;
+using JocysCom.RemoteController.Models;
+using JocysCom.RemoteController.Services;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.ViewModels
+namespace JocysCom.RemoteController.ViewModels
 {
 	public class BaseViewModel : INotifyPropertyChanged
 	{

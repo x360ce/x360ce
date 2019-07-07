@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-using JocysCom.x360ce.Mobile.RemoteController.Models;
+using JocysCom.RemoteController.Models;
 
-namespace JocysCom.x360ce.Mobile.RemoteController.Views
+namespace JocysCom.RemoteController.Views
 {
 	// Learn more about making custom code visible in the Xamarin.Forms previewer
 	// by visiting https://aka.ms/xamarinforms-previewer
