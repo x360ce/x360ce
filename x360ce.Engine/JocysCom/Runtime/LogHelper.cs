@@ -145,18 +145,18 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static void AddStyle(ref string s)
 		{
 			s += "<style type=\"text/css\">\r\n";
-			s += "table tr td { font-family: Tahoma; font-size: 10pt; white-space:nowrap; }\r\n";
-			s += "table tr th { font-family: Tahoma; font-size: 10pt; white-space:nowrap; text-align:left; }\r\n";
+			s += "table tr td { font-family: Tahoma; font-size: 10pt; white-space: nowrap; }\r\n";
+			s += "table tr th { font-family: Tahoma; font-size: 10pt; white-space: nowrap; text-align:left; }\r\n";
 			s += ".Table { border: solid 1px #EEEEEE; border-collapse: collapse; empty-cells: show; }\r\n";
 			s += ".Table tr td { border: solid 1px #EEEEEE; padding: 2px 4px 2px 4px; }\r\n";
 			s += ".Table tr th { border: solid 1px #EEEEEE; padding: 2px 4px 2px 4px; background-color: #EEEEEE; }\r\n";
 			s += ".Head { font-weight: bold; text-align:left; }\r\n";
 			s += ".Body {  }\r\n";
-			s += ".Grey { color: #CCCCCC; }\r\n";
+			s += ".Grey { color: #606060; font-weight: normal; }\r\n";
 			s += ".Name { padding-left: 16px; }\r\n";
-			s += ".Pre { white-space: pre; font-family: consolas, monospace; }\r\n";
-			s += ".Value { widht: 100%; }\r\n";
-			s += ".Ex { font-family: Courier New; font-size: 10pt; }\r\n";
+			s += ".Mono { font-family: monospace; font-size: 10pt; }\r\n";
+			s += ".Pre { white-space: pre; font-family: monospace; font-size: 10pt; }\r\n";
+			s += ".Value { width: 100%; }\r\n";
 			s += "</style>\r\n";
 		}
 
@@ -528,12 +528,12 @@ namespace JocysCom.ClassLibrary.Runtime
 			return s;
 		}
 
-		public static void ExceptionInfoRecursive(ref string s, Exception ex, string exceptionType = null)
+		public static void ExceptionInfoRecursive(ref string s, Exception ex)
 		{
 			if (ex == null)
 				return;
 			StackFrame frame = GetFormStackFrame(ex);
-			AddRow(ref s, string.Format("{0}{1}", GetClassName(ex), string.IsNullOrEmpty(exceptionType) ? "" : " <span class=\"Grey\">- " + exceptionType + "</span>"));
+			AddRow(ref s, string.Format("{0}: <span class=\"Grey\">{1}</span>", GetClassName(ex), ex.Message));
 			AddRow(ref s, "Exception Date", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 			// Get targetType and TargetName
 			var mb = ex.TargetSite;
@@ -545,33 +545,12 @@ namespace JocysCom.ClassLibrary.Runtime
 				AddRow(ref s, "Target.Name", mb.Name);
 			}
 			if (FillLoaderException(ref s, ex)) { }
-			else if (FillSocketException(ref s, ex)) { }
-			else if (FillThreadAbortException(ref s, ex)) { }
 			else if (FillSqlException(ref s, ex)) { }
 			else FillOther(ref s, ex);
 			AddExceptionTrace(ref s, ex);
 			// Append inner exception to the end.
 			if (ex.InnerException != null)
-				ExceptionInfoRecursive(ref s, ex.InnerException, "InnerException");
-		}
-
-		public static bool FillSocketException(ref string s, Exception ex)
-		{
-			var ex2 = ex as System.Net.Sockets.SocketException;
-			if (ex2 == null)
-				return false;
-			Add(ex2, "NativeErrorCode", ex2.NativeErrorCode);
-			Add(ex2, "SocketErrorCode", ex2.SocketErrorCode);
-			return true;
-		}
-
-		public static bool FillThreadAbortException(ref string s, Exception ex)
-		{
-			var ex2 = ex as System.Threading.ThreadAbortException;
-			if (ex2 == null)
-				return false;
-			Add(ex2, "ExceptionState", ex2.ExceptionState);
-			return true;
+				ExceptionInfoRecursive(ref s, ex.InnerException);
 		}
 
 		public static bool FillSqlException(ref string s, Exception ex)

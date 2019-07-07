@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="JocysCom.x360ce.Mobile.RemoteController.Views.ItemsPage"
+             Title="{Binding Title}"
+             x:Name="BrowseItemsPage">
+
+	<ContentPage.ToolbarItems>
+		<ToolbarItem Text="Add" />
+	</ContentPage.ToolbarItems>
+
+	
+	<StackLayout>
+		<StackLayout>
+			<StackLayout Orientation="Horizontal" Spacing="0">
+				<Label x:Name="AccelerometerLabel" Text="Accelerometer" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+				<Switch x:Name="AccelerometerSwitch"
+					IsToggled="{Binding AccelerometerEnabled}"
+					Toggled="AccelerometerSwitch_Toggled" VerticalOptions="Center" HorizontalOptions="End"
+			/>
+			</StackLayout>
+			<Label x:Name="AccelerometerXLabel" Text="X:" />
+			<Label x:Name="AccelerometerYLabel" Text="Y:" />
+			<Label x:Name="AccelerometerZLabel" Text="Z:" />
+		</StackLayout>
+		<StackLayout>
+			<StackLayout Orientation="Horizontal" Spacing="0">
+				<Label x:Name="GyroscopeLabel" Text="Gyroscope" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+				<Switch x:Name="GyroscopeSwitch"
+					IsToggled="{Binding Options.EnableGyroscope}"
+					Toggled="GyroscopeSwitch_Toggled" VerticalOptions="Center" HorizontalOptions="End"
+			/>
+			</StackLayout>
+			<Label x:Name="GyroscopeXLabel" Text="X:" />
+			<Label x:Name="GyroscopeYLabel" Text="Y:" />
+			<Label x:Name="GyroscopeZLabel" Text="Z:" />
+		</StackLayout>
+		<StackLayout>
+			<StackLayout Orientation="Horizontal" Spacing="0">
+				<Label x:Name="OrientationLabel" Text="Orientation" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+				<Switch x:Name="OrientationSwitch"
+					IsToggled="{Binding Options.EnableOrientation}"
+					Toggled="OrientationSwitch_Toggled" VerticalOptions="Center" HorizontalOptions="End"
+			/>
+			</StackLayout>
+			<Label x:Name="OrientationXLabel" Text="X:" />
+			<Label x:Name="OrientationYLabel" Text="Y:" />
+			<Label x:Name="OrientationZLabel" Text="Z:" />
+			<Label x:Name="OrientationWLabel" Text="W:" />
+		</StackLayout>
+		<StackLayout>
+			<StackLayout Orientation="Horizontal" Spacing="0">
+				<Label x:Name="CompassLabel" Text="Compass" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+				<Switch x:Name="CompassSwitch"
+					IsToggled="{Binding Options.EnableCompass}"
+					Toggled="CompassSwitch_Toggled" VerticalOptions="Center" HorizontalOptions="End"
+			/>
+			</StackLayout>
+			<Label x:Name="CompassNLabel" Text="N:" />
+		</StackLayout>
+
+		<StackLayout>
+			<StackLayout Orientation="Horizontal" Spacing="0">
+				<Label x:Name="VibrateLabel" Text="Vibrate" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+				<Switch x:Name="VibrateSwitch"
+					IsToggled="{Binding Options.EnableVibrate}"
+					Toggled="VibrateSwitch_Toggled" VerticalOptions="Center" HorizontalOptions="End"
+			/>
+			</StackLayout>
+			<Label x:Name="VibrateValueLabel" Text="V:" />
+		</StackLayout>
+
+
+
+	</StackLayout>
+
+
+
+</ContentPage>

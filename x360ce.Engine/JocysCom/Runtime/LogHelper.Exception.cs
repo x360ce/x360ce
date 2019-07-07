@@ -174,7 +174,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			bool isHtml = (tf == TraceFormat.Html);
 			string newLine = isHtml ? "<br />" + Environment.NewLine : Environment.NewLine;
 			var builder = new StringBuilder(0xff);
-			if (isHtml) builder.Append("<span style=\"font-family: Courier New; font-size: 10pt;\">");
+			if (isHtml) builder.Append("<span class=\"Mono\">");
 			builder.Append(getText(isHtml, GetClassName(ex)));
 			if (!string.IsNullOrEmpty(ex.Message))
 			{
@@ -281,7 +281,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			bool flag = true;
 			bool flag2 = true;
 			var builder = new StringBuilder(0xff);
-			if (isHtml) builder.Append("<span style=\"font-family: Courier New; font-size: 10pt;\">");
+			if (isHtml) builder.Append("<span class=\"Mono\">");
 			for (int i = startFrameIndex; i < st.FrameCount; i++)
 			{
 				StackFrame frame = st.GetFrame(i);
