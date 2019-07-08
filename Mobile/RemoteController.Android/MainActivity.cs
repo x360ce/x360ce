@@ -6,6 +6,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Android.Content;
+using Android.Bluetooth;
 
 namespace JocysCom.RemoteController.Droid
 {
@@ -21,13 +23,32 @@ namespace JocysCom.RemoteController.Droid
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
-            LoadApplication(new App());
-        }
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
+
+			var app = new App();
+			BluetoothReceiver = new BluetoothDeviceReceiver();
+			BluetoothReceiver.Found += BluetoothReceiver_Found; ;
+			RegisterReceiver(BluetoothReceiver, new IntentFilter(BluetoothDevice.ActionFound));
+
+			LoadApplication(app);
+			//UnregisterReceiver(BluetoothReceiver);
+
+		}
+
+		public BluetoothDeviceReceiver BluetoothReceiver { get; set; }
+
+
+
+		private void BluetoothReceiver_Found(object sender, BluetoothDeviceReceiverEventArgs e)
+		{
+			Console.WriteLine("Device: {0}", e.Device.Name);
+		}
+
+		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
+
     }
 }

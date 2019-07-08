@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="JocysCom.RemoteController.Pages.ControllerPage">
+
+	<ContentPage.ToolbarItems />
+
+
+	<StackLayout>
+		<Button x:Name="OptionsButton" Text="Options..." />
+		<Button x:Name="LeftShoulderButton" Text="LeftShoulder" />
+		<Button x:Name="RightShoulderButton" Text="RightShoulder" />
+		<Button x:Name="LeftTriggerButton"  Text="LeftTrigger"  />
+		<Button x:Name="RightTriggerButton" Text="RightTrigger" />
+		<Button x:Name="LeftThumbButton" Text="LeftThumb" />
+		<Button x:Name="RightThumbButton" Text="RightThumb" />
+		<Button x:Name="DPadUpButton" Text="Up"/>
+		<Button x:Name="DPadRightButton" Text="Right"/>
+		<Button x:Name="DPadDownButton" Text="Down"  />
+		<Button x:Name="DPadLeftButton" Text="Left" />
+		<Button x:Name="ButtonBackButton" Text="Back" />
+		<Button x:Name="ButtonStartButton" Text="Start"/>
+		<Button x:Name="ButtonAButton" Text="A" />
+		<Button x:Name="ButtonYButton" Text="Y" />
+		<Button x:Name="ButtonXButton" Text="X" />
+		<Button x:Name="ButtonBButton" Text="B" />
+	</StackLayout>
+</ContentPage>

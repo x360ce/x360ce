@@ -8,4 +8,29 @@
 		<Setter Property="FontFamily" Value="monospace" />
 	</Style>
 
+	<!--<Style TargetType="Label">
+		<Setter Property="Margin" Value="3"/>
+		<Setter Property="Padding" Value="0"/>
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="Padding" Value="3"/>
+	</Style>-->
+	<!--<Style TargetType="TextBox" x:Key="TextBox_Default">
+		<Setter Property="Margin" Value="3"/>
+		<Setter Property="Padding" Value="3"/>
+		<Setter Property="TextAlignment" Value="Center"/>
+		<Setter Property="Background" Value="#333333" />
+		<Setter Property="Foreground" Value="#FFFFFF" />
+		<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<Setter Property="Width" Value="120"/>
+	</Style>-->
+
+	<!--<Style TargetType="Ellipse">
+		<Setter Property="Fill" Value="#FFD4D4D5"/>
+		<Setter Property="Stroke" Value="Black"/>
+	</Style>
+	<Style TargetType="Rectangle">
+		<Setter Property="Fill" Value="#FFD4D4D5"/>
+		<Setter Property="Stroke" Value="Black"/>
+	</Style>-->
+
 </ResourceDictionary>

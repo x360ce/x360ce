@@ -14,38 +14,28 @@ namespace JocysCom.RemoteController.Views
 	[DesignTimeVisible(false)]
 	public partial class MainPage : MasterDetailPage
 	{
-		Dictionary<int, NavigationPage> MenuPages = new Dictionary<int, NavigationPage>();
+		Dictionary<MenuItemType, NavigationPage> MenuPages = new Dictionary<MenuItemType, NavigationPage>();
+
 		public MainPage()
 		{
 			InitializeComponent();
 			MasterBehavior = MasterBehavior.Popover;
-			MenuPages.Add((int)MenuItemType.Browse, (NavigationPage)Detail);
+			// Set default.
+			//MenuPages.Add((MenuItemType)0, (NavigationPage)Detail);
 		}
 
-		public async Task NavigateFromMenu(int id)
+		public async Task NavigateFromMenu(HomeMenuItem item)
 		{
-			if (!MenuPages.ContainsKey(id))
-			{
-				switch (id)
-				{
-					case (int)MenuItemType.Browse:
-						MenuPages.Add(id, new NavigationPage(new ItemsPage()));
-						break;
-					case (int)MenuItemType.About:
-						MenuPages.Add(id, new NavigationPage(new AboutPage()));
-						break;
-				}
-			}
-
-			var newPage = MenuPages[id];
-
+			// Create page if missing.
+			if (!MenuPages.ContainsKey(item.MenuType))
+				MenuPages.Add(item.MenuType, new NavigationPage((Page)Activator.CreateInstance(item.PageType)));
+			// Show Page.
+			var newPage = MenuPages[item.MenuType];
 			if (newPage != null && Detail != newPage)
 			{
 				Detail = newPage;
-
 				if (Device.RuntimePlatform == Device.Android)
 					await Task.Delay(100);
-
 				IsPresented = false;
 			}
 		}

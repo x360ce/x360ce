@@ -1,9 +1,7 @@
 ﻿using JocysCom.RemoteController.Models;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace JocysCom.RemoteController.Views
 {
@@ -17,23 +15,22 @@ namespace JocysCom.RemoteController.Views
 		public MenuPage()
 		{
 			InitializeComponent();
-
 			menuItems = new List<HomeMenuItem>
 			{
-				new HomeMenuItem {Id = MenuItemType.Browse, Title="Browse" },
-				new HomeMenuItem {Id = MenuItemType.About, Title="About" }
+				new HomeMenuItem {MenuType = MenuItemType.Controller, Title="Controller", PageType = typeof(Pages.ControllerPage) },
+				new HomeMenuItem {MenuType = MenuItemType.Security, Title="Security" , PageType = typeof(Pages.SecurityPage)},
+				new HomeMenuItem {MenuType = MenuItemType.Settings, Title="Settings", PageType = typeof(Pages.SettingsPage) },
+				new HomeMenuItem {MenuType = MenuItemType.About, Title="About" , PageType = typeof(Pages.AboutPage)},
 			};
 
 			ListViewMenu.ItemsSource = menuItems;
-
 			ListViewMenu.SelectedItem = menuItems[0];
 			ListViewMenu.ItemSelected += async (sender, e) =>
 			{
 				if (e.SelectedItem == null)
 					return;
-
-				var id = (int)((HomeMenuItem)e.SelectedItem).Id;
-				await RootPage.NavigateFromMenu(id);
+				var item = (HomeMenuItem)e.SelectedItem;
+				await RootPage.NavigateFromMenu(item);
 			};
 		}
 	}

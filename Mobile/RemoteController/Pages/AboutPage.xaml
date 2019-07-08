@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="JocysCom.RemoteController.Pages.AboutPage"
+             Title="{Binding Title}">
+
+	<ContentPage.BindingContext />
+
+	<ContentPage.Resources>
+		<ResourceDictionary>
+			<Color x:Key="Primary">#2196F3</Color>
+			<Color x:Key="Accent">#96d1ff</Color>
+			<Color x:Key="LightTextColor">#999999</Color>
+		</ResourceDictionary>
+	</ContentPage.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<StackLayout BackgroundColor="{StaticResource Accent}" VerticalOptions="FillAndExpand" HorizontalOptions="Fill">
+			<StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center">
+				<ContentView Padding="0,40,0,40" VerticalOptions="FillAndExpand">
+					<Image Source="about_logo.png" VerticalOptions="Center" HeightRequest="64" />
+				</ContentView>
+			</StackLayout>
+		</StackLayout>
+		<ScrollView Grid.Row="1">
+
+
+			<StackLayout Orientation="Vertical" Padding="16,40,16,40" Spacing="0">
+				<Label FontSize="18">
+					<Label.FormattedText>
+						<FormattedString>
+							<FormattedString.Spans>
+								<Span Text="Jocys.com" ForegroundColor="{StaticResource LightTextColor}" FontAttributes="Bold" FontSize="18" />
+							</FormattedString.Spans>
+						</FormattedString>
+					</Label.FormattedText>
+				</Label>
+				<Label FontSize="24">
+					<Label.FormattedText>
+						<FormattedString>
+							<FormattedString.Spans>
+								<Span Text="Remote Controller" FontAttributes="Bold" FontSize="24" />
+								<Span Text=" " />
+								<Span Text="1.0" ForegroundColor="{StaticResource LightTextColor}" FontAttributes="Bold" FontSize="24" />
+							</FormattedString.Spans>
+						</FormattedString>
+					</Label.FormattedText>
+				</Label>
+				<Label Margin="0,10,0,0">
+					<Label.FormattedText>
+						<FormattedString>
+							<FormattedString.Spans>
+								<Span Text="Remote Controller for X360CE Application" />
+							</FormattedString.Spans>
+						</FormattedString>
+					</Label.FormattedText>
+				</Label>
+				<Button Margin="0,10,0,0" Text="www.x360ce.com"
+                        Command="{Binding OpenWebCommand}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White" />
+			</StackLayout>
+		</ScrollView>
+	</Grid>
+
+</ContentPage>

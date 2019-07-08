@@ -1,7 +1,6 @@
 ﻿using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using JocysCom.RemoteController.Services;
 using JocysCom.RemoteController.Views;
 
 namespace JocysCom.RemoteController
@@ -12,8 +11,6 @@ namespace JocysCom.RemoteController
 		public App()
 		{
 			InitializeComponent();
-
-			DependencyService.Register<MockDataStore>();
 			MainPage = new MainPage();
 		}
 

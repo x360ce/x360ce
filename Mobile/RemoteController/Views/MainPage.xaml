@@ -5,6 +5,7 @@
             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
             mc:Ignorable="d"
             xmlns:views="clr-namespace:JocysCom.RemoteController.Views"
+			xmlns:pages="clr-namespace:JocysCom.RemoteController.Pages"
             x:Class="JocysCom.RemoteController.Views.MainPage">
 
     <MasterDetailPage.Master>
@@ -19,7 +20,7 @@
                 </OnPlatform>
             </NavigationPage.Icon>
             <x:Arguments>
-                <views:ItemsPage />
+                <pages:ControllerPage  />
             </x:Arguments>
 		</NavigationPage>
 	</MasterDetailPage.Detail>

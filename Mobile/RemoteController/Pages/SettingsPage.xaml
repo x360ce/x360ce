@@ -4,7 +4,7 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="JocysCom.RemoteController.Views.ItemsPage"
+             x:Class="JocysCom.RemoteController.Pages.SettingsPage"
              Title="{Binding Title}"
              x:Name="BrowseItemsPage">
 
@@ -73,6 +73,9 @@
 			<Label x:Name="VibrateValueLabel" Text="V:" />
 		</StackLayout>
 
+		<StackLayout>
+			<Label x:Name="DeviceLabel" Text="" />
+		</StackLayout>
 
 
 	</StackLayout>

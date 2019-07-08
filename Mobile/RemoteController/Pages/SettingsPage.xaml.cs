@@ -1,34 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
-using JocysCom.RemoteController.Models;
-using JocysCom.RemoteController.Views;
-using JocysCom.RemoteController.ViewModels;
 using Xamarin.Essentials;
 using System.Numerics;
 using static Android.Provider.MediaStore;
 using Android.Media;
 
 [assembly: Dependency(typeof(Audio))]
-namespace JocysCom.RemoteController.Views
+namespace JocysCom.RemoteController.Pages
 {
 	// Learn more about making custom code visible in the Xamarin.Forms previewer
 	// by visiting https://aka.ms/xamarinforms-previewer
 	[DesignTimeVisible(false)]
-	public partial class ItemsPage : ContentPage
+	public partial class SettingsPage : ContentPage
 	{
-		ItemsViewModel viewModel;
 
-		public ItemsPage()
+		public SettingsPage()
 		{
 			InitializeComponent();
-			BindingContext = viewModel = new ItemsViewModel();
 		}
+
+		//private void BluetoothReceiver_Found(object sender, BluetoothDeviceReceiverEventArgs e)
+		//{
+		//	DeviceLabel.Text = string.Format(e.Device.Name);
+		//}
 
 		// Set speed delay for monitoring changes.
 		SensorSpeed speed = SensorSpeed.UI;

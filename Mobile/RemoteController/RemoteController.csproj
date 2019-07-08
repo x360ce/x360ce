@@ -5,12 +5,26 @@
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <AssemblyName>JocysCom.RemoteController</AssemblyName>
     <RootNamespace>JocysCom.RemoteController</RootNamespace>
+    <Company>Jocys.com</Company>
+    <Product>Remote Controller</Product>
+    <Authors>Jocys.com</Authors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ViewModels\**" />
+    <EmbeddedResource Remove="ViewModels\**" />
+    <None Remove="ViewModels\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\x360ce.Engine\SharpDX.XInput\Gamepad.cs" Link="Common\Gamepad.cs" />
+    <Compile Include="..\..\x360ce.Engine\SharpDX.XInput\GamepadButtonFlags.cs" Link="Common\GamepadButtonFlags.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="4.0.0.425677" />  
@@ -29,12 +43,18 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Views\ControlPage.xaml.cs">
-      <DependentUpon>ControlPage.xaml</DependentUpon>
+    <Compile Update="Pages\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Pages\ControllerPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Pages\SecurityPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -42,5 +62,9 @@
     <EmbeddedResource Update="Themes\Generic.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\" />
   </ItemGroup>
 </Project>
