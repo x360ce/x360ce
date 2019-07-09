@@ -5,10 +5,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="JocysCom.RemoteController.Pages.SecurityPage">
-    <ContentPage.Content>
-        <StackLayout>
-			<Button x:Name="EnableButton" Text="Enable" />
-			<Button x:Name="DisableButton" Text="Disable" />
+	<ContentPage.Content>
+		<StackLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="50*"/>
+					<RowDefinition Height="50*"/>
+				</Grid.RowDefinitions>
+			</Grid>
+			<Button Margin="8,8,8,0" Grid.Row="0" Grid.Column="0" x:Name="EnableButton" Text="Enable" Clicked="EnableButton_Clicked" BackgroundColor="Red" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" FontSize="24"  FontAttributes="Bold"/>
+			<Button Margin="8,0,8,8" Grid.Row="1" Grid.Column="0" x:Name="DisableButton" Text="Disable" Clicked="DisableButton_Clicked" BackgroundColor="Gray" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" FontSize="24"  FontAttributes="Bold" />
 		</StackLayout>
-    </ContentPage.Content>
+	</ContentPage.Content>
 </ContentPage>

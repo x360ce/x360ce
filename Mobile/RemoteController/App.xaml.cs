@@ -11,8 +11,11 @@ namespace JocysCom.RemoteController
 		public App()
 		{
 			InitializeComponent();
+			Monitor = new MoveMonitor();
 			MainPage = new MainPage();
 		}
+
+		public static MoveMonitor Monitor;
 
 		protected override void OnStart()
 		{
