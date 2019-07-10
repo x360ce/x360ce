@@ -40,9 +40,9 @@ namespace JocysCom.RemoteController.Pages
 			if (now.Subtract(AccelerometerTime).TotalMilliseconds > updateTime)
 			{
 				AccelerometerTime = now;
-				AccelerometerXLabel.Text = string.Format(format, "X", e.Value.X, e.Delta.X);
-				AccelerometerYLabel.Text = string.Format(format, "Y", e.Value.Y, e.Delta.Y);
-				AccelerometerZLabel.Text = string.Format(format, "Z", e.Value.Z, e.Delta.Z);
+				AccelerometerXLabel.Text = string.Format(format, "X", 180 * e.Value.X, 180 * e.Delta.X);
+				AccelerometerYLabel.Text = string.Format(format, "Y", 180 * e.Value.Y, 180 * e.Delta.Y);
+				AccelerometerZLabel.Text = string.Format(format, "Z", 180 * e.Value.Z, 180 * e.Delta.Z);
 			}
 		}
 

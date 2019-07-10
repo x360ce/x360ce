@@ -16,7 +16,7 @@
 	<StackLayout>
 		<StackLayout>
 			<StackLayout Orientation="Horizontal" Spacing="0">
-				<Label x:Name="AccelerometerLabel" Text="Accelerometer" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+				<Label x:Name="AccelerometerLabel" Text="Accelerometer m/s²" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
 				<Switch x:Name="AccelerometerSwitch"
 					IsToggled="{Binding AccelerometerEnabled}"
 					VerticalOptions="Center" HorizontalOptions="End"
@@ -28,7 +28,7 @@
 		</StackLayout>
 		<StackLayout>
 			<StackLayout Orientation="Horizontal" Spacing="0">
-				<Label x:Name="GyroscopeLabel" Text="Gyroscope" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+				<Label x:Name="GyroscopeLabel" Text="Gyroscope °" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
 				<Switch x:Name="GyroscopeSwitch"
 					IsToggled="{Binding Options.EnableGyroscope}"
 					VerticalOptions="Center" HorizontalOptions="End"
@@ -40,7 +40,7 @@
 		</StackLayout>
 		<StackLayout>
 			<StackLayout Orientation="Horizontal" Spacing="0">
-				<Label x:Name="OrientationLabel" Text="Orientation" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+				<Label x:Name="OrientationLabel" Text="Orientation °" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
 				<Switch x:Name="OrientationSwitch"
 					IsToggled="{Binding Options.EnableOrientation}"
 					VerticalOptions="Center" HorizontalOptions="End"

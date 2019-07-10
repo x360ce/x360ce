@@ -40,8 +40,7 @@ namespace JocysCom.RemoteController
 				{
 					Accelerometer.Stop();
 					Accelerometer.ReadingChanged -= Accelerometer_ReadingChanged;
-					AccelerometerMin = null;
-					AccelerometerMax = null;
+					AccelerometerOld = null;
 				}
 			}
 			catch (FeatureNotSupportedException)
@@ -54,16 +53,15 @@ namespace JocysCom.RemoteController
 			}
 		}
 
-		Vector3? AccelerometerMin;
-		Vector3? AccelerometerMax;
+		Vector3? AccelerometerOld;
 
 		void Accelerometer_ReadingChanged(object sender, AccelerometerChangedEventArgs e)
 		{
 			var v = e.Reading.Acceleration;
-			var min = (AccelerometerMin = GetMin(v, AccelerometerMin)).Value;
-			var max = (AccelerometerMax = GetMax(v, AccelerometerMax)).Value;
-			var d = max - min;
-			if (d.X > sensitivity || d.Y > sensitivity || d.Z > sensitivity)
+			if (!AccelerometerOld.HasValue)
+				AccelerometerOld = v;
+			var d = v - AccelerometerOld.Value;
+			if (Math.Abs(d.X) > sensitivity || Math.Abs(d.Y) > sensitivity || Math.Abs(d.Z) > sensitivity)
 				PlayAudio(true);
 			var ev = AccelerometerChanged;
 			if (ev != null)
@@ -234,8 +232,7 @@ namespace JocysCom.RemoteController
 			}
 			if (play && !_Alarm.IsPlaying)
 			{
-				AccelerometerMin = null;
-				AccelerometerMax = null;
+				AccelerometerOld = null;
 				GyroscopeMin = null;
 				GyroscopeMax = null;
 				OrientationMin = null;
