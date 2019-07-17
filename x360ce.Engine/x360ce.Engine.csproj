@@ -304,6 +304,7 @@
     <Compile Include="JocysCom\Runtime\ChangeState.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.Exception.cs" />
+    <Compile Include="JocysCom\Runtime\LogHelper.File.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.Mail.cs" />
     <Compile Include="JocysCom\Runtime\RuntimeHelper.cs" />
     <Compile Include="JocysCom\Runtime\Serializer.cs" />
@@ -326,6 +327,7 @@
     <Compile Include="JocysCom\Security\HashHelper.cs" />
     <Compile Include="JocysCom\Security\MD5Helper.cs" />
     <Compile Include="JocysCom\Security\PermissionHelper.cs" />
+    <Compile Include="JocysCom\Security\SecurityHelper.cs" />
     <Compile Include="JocysCom\Security\SHA256Helper.cs" />
     <Compile Include="JocysCom\Security\TokenHelper.cs" />
     <Compile Include="JocysCom\Security\ValidationField.cs" />

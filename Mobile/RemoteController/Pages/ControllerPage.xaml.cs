@@ -15,6 +15,9 @@ namespace JocysCom.RemoteController.Pages
 		public ControllerPage()
 		{
 			InitializeComponent();
+			
 		}
+
+		
 	}
 }

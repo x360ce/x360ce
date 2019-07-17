@@ -7,25 +7,43 @@
              x:Class="JocysCom.RemoteController.Pages.ControllerPage">
 
 	<ContentPage.ToolbarItems />
+	<StackLayout  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+		<Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="18*"/>
+				<RowDefinition Height="18*"/>
+				<RowDefinition Height="18*"/>
+				<RowDefinition Height="18*"/>
+				<RowDefinition Height="28*"/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="20*" />
+				<ColumnDefinition Width="20*" />
+				<ColumnDefinition Width="20*" />
+				<ColumnDefinition Width="20*" />
+			</Grid.ColumnDefinitions>
+			<Button Grid.Row="0" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="LeftTriggerButton" Text="LeftTrigger" />
+			<Button Grid.Row="0" Grid.Column="3" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="RightTriggerButton" Text="RightTrigger" />
 
+			<Button Grid.Row="1" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="LeftShoulderButton" Text="LeftShoulder" />
+			<Button Grid.Row="1" Grid.Column="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="ButtonBackButton" Text="Back" />
+			<Button Grid.Row="1" Grid.Column="2" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="ButtonStartButton" Text="Start"/>
+			<Button Grid.Row="1" Grid.Column="3" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="RightShoulderButton" Text="RightShoulder" />
 
-	<StackLayout>
-		<Button x:Name="OptionsButton" Text="Options..." />
-		<Button x:Name="LeftShoulderButton" Text="LeftShoulder" />
-		<Button x:Name="RightShoulderButton" Text="RightShoulder" />
-		<Button x:Name="LeftTriggerButton"  Text="LeftTrigger"  />
-		<Button x:Name="RightTriggerButton" Text="RightTrigger" />
-		<Button x:Name="LeftThumbButton" Text="LeftThumb" />
-		<Button x:Name="RightThumbButton" Text="RightThumb" />
-		<Button x:Name="DPadUpButton" Text="Up"/>
-		<Button x:Name="DPadRightButton" Text="Right"/>
-		<Button x:Name="DPadDownButton" Text="Down"  />
-		<Button x:Name="DPadLeftButton" Text="Left" />
-		<Button x:Name="ButtonBackButton" Text="Back" />
-		<Button x:Name="ButtonStartButton" Text="Start"/>
-		<Button x:Name="ButtonAButton" Text="A" />
-		<Button x:Name="ButtonYButton" Text="Y" />
-		<Button x:Name="ButtonXButton" Text="X" />
-		<Button x:Name="ButtonBButton" Text="B" />
+			<Button Grid.Row="2" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="DPadUpButton" Text="Up" />
+			<Button Grid.Row="2" Grid.Column="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="DPadRightButton" Text="Right"/>
+			<Button Grid.Row="3" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="DPadDownButton" Text="Down"/>
+			<Button Grid.Row="3" Grid.Column="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="DPadLeftButton" Text="Left"  />
+
+			<Button Grid.Row="2" Grid.Column="2" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="ButtonAButton" Text="A" />
+			<Button Grid.Row="2" Grid.Column="3" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="ButtonYButton" Text="Y" />
+			<Button Grid.Row="3" Grid.Column="2" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="ButtonXButton" Text="X" />
+			<Button Grid.Row="3" Grid.Column="3" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="ButtonBButton" Text="B" />
+
+			<Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="LeftThumbButton" Text="LeftThumb" Opacity="50" />
+			<Button Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" x:Name="RightThumbButton" Text="RightThumb" Opacity="50" />
+
+		</Grid>
+
 	</StackLayout>
 </ContentPage>

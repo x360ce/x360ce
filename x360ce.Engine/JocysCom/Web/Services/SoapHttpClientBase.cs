@@ -47,6 +47,8 @@ namespace JocysCom.ClassLibrary.Web.Services
 			var Tls11 = 0x0300; //   768
 			var Tls12 = 0x0C00; //  3072
 			ServicePointManager.SecurityProtocol |= (SecurityProtocolType)(Tls11 | Tls12);
+			// This will allow to validate certificates and allow SSL connection if certificate have problem.
+			ServicePointManager.ServerCertificateValidationCallback = Security.SecurityHelper.ValidateServerCertificate;
 			if (IsLocalFileSystemWebService(Url))
 			{
 				UseDefaultCredentials = true;
