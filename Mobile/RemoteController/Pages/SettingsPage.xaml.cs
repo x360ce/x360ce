@@ -3,10 +3,10 @@ using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Essentials;
 using System.Numerics;
-using static Android.Provider.MediaStore;
-using Android.Media;
+using Plugin.SimpleAudioPlayer;
+using System.Linq;
+using System.IO;
 
-[assembly: Dependency(typeof(Audio))]
 namespace JocysCom.RemoteController.Pages
 {
 	// Learn more about making custom code visible in the Xamarin.Forms previewer
@@ -99,8 +99,29 @@ namespace JocysCom.RemoteController.Pages
 			}
 		}
 
+
 		#endregion
 
+
+		private void BeepSwitch_Toggled(object sender, ToggledEventArgs e)
+		{
+			App.Monitor.PlayBeep(e.Value);
+		}
+
+		private void AlarmSwitch_Toggled(object sender, ToggledEventArgs e)
+		{
+			App.Monitor.PlayAlarm(e.Value);
+		}
+
+		private void BeepVolumeSlider_ValueChanged(object sender, ValueChangedEventArgs e)
+		{
+			App.Monitor._BeepPlayer.Volume = e.NewValue;
+		}
+
+		private void AlarmVolumeSlider_ValueChanged(object sender, ValueChangedEventArgs e)
+		{
+			App.Monitor._AlarmPlayer.Volume = e.NewValue;
+		}
 
 	}
 }

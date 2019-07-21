@@ -12,63 +12,99 @@
 		<ToolbarItem Text="Add" />
 	</ContentPage.ToolbarItems>
 
-	
-	<StackLayout>
+	<ScrollView VerticalScrollBarVisibility="Always">
+
 		<StackLayout>
-			<StackLayout Orientation="Horizontal" Spacing="0">
-				<Label x:Name="AccelerometerLabel" Text="Accelerometer m/s²" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
-				<Switch x:Name="AccelerometerSwitch"
+			<StackLayout>
+				<StackLayout Orientation="Horizontal" Spacing="0">
+					<Label x:Name="AccelerometerLabel" Text="Accelerometer m/s²" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+					<Switch x:Name="AccelerometerSwitch"
 					IsToggled="{Binding AccelerometerEnabled}"
 					VerticalOptions="Center" HorizontalOptions="End"
 			/>
+				</StackLayout>
+				<Label x:Name="AccelerometerXLabel" Text="X:" />
+				<Label x:Name="AccelerometerYLabel" Text="Y:" />
+				<Label x:Name="AccelerometerZLabel" Text="Z:" />
 			</StackLayout>
-			<Label x:Name="AccelerometerXLabel" Text="X:" />
-			<Label x:Name="AccelerometerYLabel" Text="Y:" />
-			<Label x:Name="AccelerometerZLabel" Text="Z:" />
-		</StackLayout>
-		<StackLayout>
-			<StackLayout Orientation="Horizontal" Spacing="0">
-				<Label x:Name="GyroscopeLabel" Text="Gyroscope °" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
-				<Switch x:Name="GyroscopeSwitch"
+			<StackLayout>
+				<StackLayout Orientation="Horizontal" Spacing="0">
+					<Label x:Name="GyroscopeLabel" Text="Gyroscope °" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+					<Switch x:Name="GyroscopeSwitch"
 					IsToggled="{Binding Options.EnableGyroscope}"
 					VerticalOptions="Center" HorizontalOptions="End"
 			/>
+				</StackLayout>
+				<Label x:Name="GyroscopeXLabel" Text="X:" />
+				<Label x:Name="GyroscopeYLabel" Text="Y:" />
+				<Label x:Name="GyroscopeZLabel" Text="Z:" />
 			</StackLayout>
-			<Label x:Name="GyroscopeXLabel" Text="X:" />
-			<Label x:Name="GyroscopeYLabel" Text="Y:" />
-			<Label x:Name="GyroscopeZLabel" Text="Z:" />
-		</StackLayout>
-		<StackLayout>
-			<StackLayout Orientation="Horizontal" Spacing="0">
-				<Label x:Name="OrientationLabel" Text="Orientation °" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
-				<Switch x:Name="OrientationSwitch"
+			<StackLayout>
+				<StackLayout Orientation="Horizontal" Spacing="0">
+					<Label x:Name="OrientationLabel" Text="Orientation °" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+					<Switch x:Name="OrientationSwitch"
 					IsToggled="{Binding Options.EnableOrientation}"
 					VerticalOptions="Center" HorizontalOptions="End"
 			/>
+				</StackLayout>
+				<Label x:Name="OrientationXLabel" Text="X:" />
+				<Label x:Name="OrientationYLabel" Text="Y:" />
+				<Label x:Name="OrientationZLabel" Text="Z:" />
+				<Label x:Name="OrientationWLabel" Text="W:" />
 			</StackLayout>
-			<Label x:Name="OrientationXLabel" Text="X:" />
-			<Label x:Name="OrientationYLabel" Text="Y:" />
-			<Label x:Name="OrientationZLabel" Text="Z:" />
-			<Label x:Name="OrientationWLabel" Text="W:" />
-		</StackLayout>
-		<StackLayout>
-			<StackLayout Orientation="Horizontal" Spacing="0">
-				<Label x:Name="VibrateLabel" Text="Vibrate" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
-				<Switch x:Name="VibrateSwitch"
+			<StackLayout>
+				<StackLayout Orientation="Horizontal" Spacing="0">
+					<Label x:Name="VibrateLabel" Text="Vibrate" VerticalOptions="Center" HorizontalOptions="StartAndExpand"  />
+					<Switch x:Name="VibrateSwitch"
 					IsToggled="{Binding Options.EnableVibrate}"
 					Toggled="VibrateSwitch_Toggled" VerticalOptions="Center" HorizontalOptions="End"
 			/>
+				</StackLayout>
+				<Label x:Name="VibrateValueLabel" Text="V:" />
 			</StackLayout>
-			<Label x:Name="VibrateValueLabel" Text="V:" />
+
+			<StackLayout>
+				<Label x:Name="DeviceLabel" Text="" />
+			</StackLayout>
+
+			<Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<Label Grid.Row="1" Grid.Column="1" x:Name="BeepLabel" Text="Beep" VerticalOptions="Center" />
+				<Slider Grid.Row="1" Grid.Column="2" x:Name="BeepVolumeSlider" 
+					Minimum="0"
+					Maximum="1"
+					Value="1"
+					MaximumTrackColor="#4040FF"
+					MinimumTrackColor="#4040FF"
+					WidthRequest="200"
+					ValueChanged="BeepVolumeSlider_ValueChanged" HorizontalOptions="FillAndExpand"
+			/>
+				<Switch Grid.Row="1" Grid.Column="3" x:Name="BeepSwitch"	Toggled="BeepSwitch_Toggled"
+					VerticalOptions="Center" />
+				<Label  Grid.Row="2" Grid.Column="1" x:Name="AlarmLabel" Text="Alarm"  VerticalOptions="Center" />
+				<Slider Grid.Row="2" Grid.Column="2" x:Name="AlarmVolumeSlider"
+					Minimum="0" 
+					Maximum="1"
+					Value="1"
+					MaximumTrackColor="#4040FF"
+					MinimumTrackColor="#4040FF"
+					WidthRequest="200"
+					ValueChanged="AlarmVolumeSlider_ValueChanged"
+					VerticalOptions="Center" HorizontalOptions="FillAndExpand"
+			/>
+				<Switch Grid.Row="2" Grid.Column="3" x:Name="AlarmSwitch" Toggled="AlarmSwitch_Toggled" VerticalOptions="Center" />
+			</Grid>
+
 		</StackLayout>
 
-		<StackLayout>
-			<Label x:Name="DeviceLabel" Text="" />
-		</StackLayout>
-
-
-	</StackLayout>
-
-
+	</ScrollView>
 
 </ContentPage>

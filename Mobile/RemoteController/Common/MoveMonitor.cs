@@ -1,15 +1,22 @@
-﻿using Android.Media;
+﻿using Plugin.SimpleAudioPlayer;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using System.Linq;
+using System.IO;
 
 namespace JocysCom.RemoteController
 {
 	public partial class MoveMonitor
 	{
+		public MoveMonitor()
+		{
+			InitAudio();
+		}
+
 		//private void BluetoothReceiver_Found(object sender, BluetoothDeviceReceiverEventArgs e)
 		//{
 		//	DeviceLabel.Text = string.Format(e.Device.Name);
@@ -62,7 +69,7 @@ namespace JocysCom.RemoteController
 				AccelerometerOld = v;
 			var d = v - AccelerometerOld.Value;
 			if (Math.Abs(d.X) > sensitivity || Math.Abs(d.Y) > sensitivity || Math.Abs(d.Z) > sensitivity)
-				PlayAudio(true);
+				PlayAlarm(true);
 			var ev = AccelerometerChanged;
 			if (ev != null)
 				ev(this, new MoveMonitorEventArgs<Vector3>(v, d));
@@ -111,7 +118,7 @@ namespace JocysCom.RemoteController
 			var max = (GyroscopeMax = GetMax(v, GyroscopeMax)).Value;
 			var d = max - min;
 			if (d.X > sensitivity || d.Y > sensitivity || d.Z > sensitivity)
-				PlayAudio(true);
+				PlayAlarm(true);
 			var ev = GyroscopeChanged;
 			if (ev != null)
 				ev(this, new MoveMonitorEventArgs<Vector3>(v, d));
@@ -152,7 +159,7 @@ namespace JocysCom.RemoteController
 
 		Vector4? OrientationMin;
 		Vector4? OrientationMax;
-	
+
 		void Orientation_ReadingChanged(object sender, OrientationSensorChangedEventArgs e)
 		{
 			var o = e.Reading.Orientation;
@@ -161,7 +168,7 @@ namespace JocysCom.RemoteController
 			var max = (OrientationMax = GetMax(v, OrientationMax)).Value;
 			var d = max - min;
 			if (d.X > sensitivity || d.Y > sensitivity || d.Z > sensitivity || d.W > sensitivity)
-				PlayAudio(true);
+				PlayAlarm(true);
 			var ev = OrientationChanged;
 			if (ev != null)
 				ev(this, new MoveMonitorEventArgs<Vector4>(v, d));
@@ -215,40 +222,97 @@ namespace JocysCom.RemoteController
 			);
 		}
 
+		System.Timers.Timer _AlarmTimer;
 
-		Ringtone _Alarm;
-		System.Timers.Timer _Timer;
-
-		public void PlayAudio(bool play)
+		public void PlayAlarm(bool play)
 		{
-			if (_Alarm == null)
+			if (play && !IsAlarmEnabled)
 			{
-				var uri = RingtoneManager.GetDefaultUri(RingtoneType.Alarm);
-				_Alarm = RingtoneManager.GetRingtone(global::Android.App.Application.Context, uri);
-				_Timer = new System.Timers.Timer();
-				_Timer.Interval = 2000;
-				_Timer.AutoReset = false;
-				_Timer.Elapsed += _Timer_Elapsed;
-			}
-			if (play && !_Alarm.IsPlaying)
-			{
+				IsAlarmEnabled = play;
 				AccelerometerOld = null;
 				GyroscopeMin = null;
 				GyroscopeMax = null;
 				OrientationMin = null;
 				OrientationMax = null;
-				_Alarm.Play();
-				_Timer.Start();
+				_AlarmPlayer.Play();
+				_AlarmTimer.Start();
 			}
-			else if (!play && _Alarm.IsPlaying)
+			else if (!play && IsAlarmEnabled)
 			{
-				_Alarm.Stop();
+				_AlarmPlayer.Stop();
 			}
+			if (play)
+			{
+				// Restart stop timer.
+				_AlarmTimer.Stop();
+				_AlarmTimer.Start();
+			}
+			IsAlarmEnabled = play;
+		}
+
+		public void PlayBeep(bool play)
+		{
+			if (play && !IsBeepEnabled)
+			{
+				_BeepPlayer.Play();
+			}
+			else if (!play && IsBeepEnabled)
+			{
+				_BeepPlayer.Stop();
+			}
+			IsBeepEnabled = play;
 		}
 
 		private void _Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			_Alarm.Stop();
+			PlayAlarm(false);
+		}
+
+		#endregion
+
+		#region Audio
+
+		public ISimpleAudioPlayer _BeepPlayer;
+		public ISimpleAudioPlayer _AlarmPlayer;
+
+		bool IsAlarmEnabled;
+		bool IsBeepEnabled;
+
+		void InitAudio()
+		{
+			var alarmStream = GetStreamFromFile("Alarm.wav");
+			_AlarmPlayer = Plugin.SimpleAudioPlayer.CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
+			_AlarmPlayer.PlaybackEnded += _AlarmPlayer_PlaybackEnded;
+			_AlarmPlayer.Load(alarmStream);
+			var beepStream = GetStreamFromFile("Beep.wav");
+			_BeepPlayer = Plugin.SimpleAudioPlayer.CrossSimpleAudioPlayer.CreateSimpleAudioPlayer();
+			_BeepPlayer.PlaybackEnded += _BeepPlayer_PlaybackEnded;
+			_BeepPlayer.Load(beepStream);
+			// Stop timer.
+			_AlarmTimer = new System.Timers.Timer();
+			_AlarmTimer.Interval = 10000;
+			_AlarmTimer.AutoReset = false;
+			_AlarmTimer.Elapsed += _Timer_Elapsed;
+		}
+
+		Stream GetStreamFromFile(string filename)
+		{
+			var assembly = this.GetType().Assembly;
+			var path = assembly.GetManifestResourceNames().FirstOrDefault(x => x.EndsWith(filename));
+			var stream = assembly.GetManifestResourceStream(path);
+			return stream;
+		}
+
+		private void _BeepPlayer_PlaybackEnded(object sender, EventArgs e)
+		{
+			if (IsBeepEnabled)
+				_BeepPlayer.Play();
+		}
+
+		private void _AlarmPlayer_PlaybackEnded(object sender, EventArgs e)
+		{
+			if (IsAlarmEnabled)
+				_AlarmPlayer.Play();
 		}
 
 		#endregion
