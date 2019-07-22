@@ -2,6 +2,8 @@
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using JocysCom.RemoteController.Views;
+using System.Diagnostics;
+using System.Linq;
 
 namespace JocysCom.RemoteController
 {
@@ -14,6 +16,7 @@ namespace JocysCom.RemoteController
 			Monitor = new MoveMonitor();
 			MainPage = new MainPage();
 		}
+
 
 		public static MoveMonitor Monitor;
 
@@ -31,5 +34,7 @@ namespace JocysCom.RemoteController
 		{
 			// Handle when your app resumes
 		}
+
+
 	}
 }

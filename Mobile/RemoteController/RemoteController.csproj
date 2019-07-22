@@ -22,14 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Audio\Alarm.mp3" />
     <None Remove="Resources\Audio\Alarm.wav" />
-    <None Remove="Resources\Audio\analog-watch-alarm_daniel-simion.mp3" />
-    <None Remove="Resources\Audio\analog-watch-alarm_daniel-simion.wav" />
-    <None Remove="Resources\Audio\Beep.mp3" />
     <None Remove="Resources\Audio\Beep.wav" />
-    <None Remove="Resources\Audio\Siren_Noise-KevanGC-1337458893.mp3" />
-    <None Remove="Resources\Audio\Siren_Noise-KevanGC-1337458893.wav" />
     <None Remove="Resources\Audio\_Alarm.wav" />
     <None Remove="Resources\Audio\_Beep.wav" />
   </ItemGroup>
@@ -47,13 +41,17 @@
   <ItemGroup>
     <PackageReference Include="SkiaSharp" Version="1.68.0" />
     <PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.3.0" />
-    <PackageReference Include="Xamarin.Forms" Version="4.0.0.425677" />  
-    <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
+    <PackageReference Include="Xamarin.Forms" Version="4.1.0.581479" />  
+    <PackageReference Include="Xamarin.Essentials" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Mono.Android">
       <HintPath>C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\ReferenceAssemblies\Microsoft\Framework\MonoAndroid\v9.0\Mono.Android.dll</HintPath>
+    </Reference>
+    <Reference Include="Windows.Foundation.UniversalApiContract">
+      <HintPath>C:\Program Files (x86)\Windows Kits\10\References\10.0.17134.0\Windows.Foundation.UniversalApiContract\6.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
+      <IsWinMDFile>true</IsWinMDFile>
     </Reference>
   </ItemGroup>
 

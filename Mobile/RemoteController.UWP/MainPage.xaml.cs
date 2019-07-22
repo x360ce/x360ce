@@ -20,8 +20,8 @@ namespace JocysCom.RemoteController.UWP
         public MainPage()
         {
             this.InitializeComponent();
-
-            LoadApplication(new JocysCom.RemoteController.App());
+			var app = new JocysCom.RemoteController.App();
+			LoadApplication(app);
         }
     }
 }
