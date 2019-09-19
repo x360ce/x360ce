@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
-using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -25,7 +24,8 @@ namespace x360ce.App.Controls
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(GamesDataGridView);
 			//EngineHelper.EnableDoubleBuffering(GamesDataGridView);
 			GamesDataGridView.AutoGenerateColumns = false;
-			ScanProgressLabel.Text = "";
+			ScanProgressLevel0Label.Text = "";
+			ScanProgressLevel1Label.Text = "";
 		}
 
 		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
@@ -38,9 +38,9 @@ namespace x360ce.App.Controls
 			// WORKAROUND: Remove SelectionChanged event.
 			GamesDataGridView.SelectionChanged -= GamesDataGridView_SelectionChanged;
 			GamesDataGridView.DataSource = SettingsManager.UserGames.Items;
-            // WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-            ControlsHelper.BeginInvoke(() =>
-            {
+			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+			ControlsHelper.BeginInvoke(() =>
+			{
 				GamesDataGridView.SelectionChanged += GamesDataGridView_SelectionChanged;
 				GamesDataGridView_SelectionChanged(GamesDataGridView, new EventArgs());
 			});
@@ -64,7 +64,11 @@ namespace x360ce.App.Controls
 			{
 				ScanStarted = DateTime.Now;
 				var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames);
-				if (!success) ScanProgressLabel.Text = "Scan failed!";
+				if (!success)
+				{
+					ScanProgressLevel0Label.Text = "Scan failed!";
+					ScanProgressLevel1Label.Text = "";
+				}
 			}
 		}
 
@@ -85,10 +89,13 @@ namespace x360ce.App.Controls
 				return;
 			}
 			var scanner = (XInputMaskScanner)sender;
+			var label = e.Level == 0
+				? ScanProgressLevel0Label
+				: ScanProgressLevel1Label;
 			switch (e.State)
 			{
 				case XInputMaskScannerState.Started:
-					ScanProgressLabel.Text = "Scanning...";
+					label.Text = "Scanning...";
 					break;
 				case XInputMaskScannerState.GameFound:
 					lock (GameAddLock)
@@ -149,12 +156,17 @@ namespace x360ce.App.Controls
 					}
 					if (e.State == XInputMaskScannerState.FileUpdate && e.Files != null)
 					{
-						sb.AppendFormat("Current File: {0}", e.Files[e.FileIndex].FullName);
+						var file = e.Files[e.FileIndex];
+						var size = file.Length / 1024 / 1024;
+						sb.AppendFormat("Current File ({0:0.0} MB): {1} ", size, file.FullName);
+					}
+					if (e.Level == 0)
+					{
+						sb.AppendLine();
+						sb.AppendFormat("Skipped = {0}, Added = {1}, Updated = {2}", e.Skipped, e.Added, e.Updated);
 					}
 					sb.AppendLine();
-					sb.AppendFormat("Skipped = {0}, Added = {1}, Updated = {2}", e.Skipped, e.Added, e.Updated);
-					sb.AppendLine();
-					ScanProgressLabel.Text = sb.ToString();
+					label.Text = sb.ToString();
 					Application.DoEvents();
 					break;
 				case XInputMaskScannerState.Completed:
@@ -173,6 +185,8 @@ namespace x360ce.App.Controls
 			var exe = state as string;
 			Invoke((MethodInvoker)delegate ()
 			{
+				ScanProgressLevel0Label.Text = "...";
+				ScanProgressLevel1Label.Text = "";
 				ScanProgressPanel.Visible = true;
 				ScanGamesButton.Enabled = false;
 			});
@@ -280,7 +294,11 @@ namespace x360ce.App.Controls
 				{
 					ScanStarted = DateTime.Now;
 					var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames, AddGameOpenFileDialog.FileName);
-					if (!success) ScanProgressLabel.Text = "Scan failed!";
+					if (!success)
+					{
+						ScanProgressLevel0Label.Text = "Scan failed!";
+						ScanProgressLevel1Label.Text = "";
+					}
 				}
 			}
 		}
@@ -420,7 +438,7 @@ namespace x360ce.App.Controls
 			{
 				e.Value = Path.GetDirectoryName(item.FullPath);
 			}
-			else if (column ==  PlatformColumn)
+			else if (column == PlatformColumn)
 			{
 				var platform = (ProcessorArchitecture)item.ProcessorArchitecture;
 				switch (platform)

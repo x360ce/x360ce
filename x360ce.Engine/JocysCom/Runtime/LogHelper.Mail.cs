@@ -20,10 +20,10 @@ namespace JocysCom.ClassLibrary.Runtime
 		public virtual void SendMail(MailMessage message, SmtpClientEx client = null, bool forcePreview = false)
 		{
 			var smtp = client ?? SmtpClientEx.Current;
-			// Send preview if forced preview or non error recipient found.
-			var sendPreview = forcePreview || NonErrorRecipientsFound(message);
+			// If non-live environment then send preview, except if all recipients are known.
+			var sendPreview = !IsLive && NonErrorRecipientsFound(message);
 			// If not LIVE environment then send preview message to developers instead.
-			if (sendPreview)
+			if (forcePreview || sendPreview)
 				message = GetMailPreview(message, smtp);
 			string fileName;
 			smtp.SendMessage(message, out fileName);

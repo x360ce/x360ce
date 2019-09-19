@@ -15,10 +15,10 @@
 		/// </summary>
 		void InitializeComponent()
 		{
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.GamesDataGridView = new System.Windows.Forms.DataGridView();
 			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.MyIconColumn = new System.Windows.Forms.DataGridViewImageColumn();
@@ -39,15 +39,18 @@
 			this.ShowAllGamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ShowEnabledGamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ShowDisabledGamesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.ScanProgressLabel = new System.Windows.Forms.Label();
+			this.ScanProgressLevel0Label = new System.Windows.Forms.Label();
 			this.AddGameOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ImportOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.ExportSaveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.ScanProgressPanel = new System.Windows.Forms.Panel();
 			this.GameDetailsControl = new x360ce.App.Controls.GameDetailsUserControl();
+			this.ScanProgressLevel1Label = new System.Windows.Forms.Label();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			((System.ComponentModel.ISupportInitialize)(this.GamesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.ScanProgressPanel.SuspendLayout();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// GamesDataGridView
@@ -58,13 +61,13 @@
 			this.GamesDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.GamesDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.GamesDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GamesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.GamesDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
 			this.GamesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.GamesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsEnabledColumn,
@@ -75,27 +78,27 @@
             this.PlatformColumn,
             this.FileFolderColumn,
             this.EmptyColumn});
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle7;
 			this.GamesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GamesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.GamesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.GamesDataGridView.Name = "GamesDataGridView";
 			this.GamesDataGridView.ReadOnly = true;
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.GamesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.GamesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
 			this.GamesDataGridView.RowHeadersVisible = false;
 			this.GamesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.GamesDataGridView.Size = new System.Drawing.Size(781, 338);
@@ -154,8 +157,8 @@
 			// 
 			this.PlatformColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.PlatformColumn.DataPropertyName = "ProcessorArchitecture";
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.PlatformColumn.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.PlatformColumn.DefaultCellStyle = dataGridViewCellStyle6;
 			this.PlatformColumn.HeaderText = "Platform";
 			this.PlatformColumn.Name = "PlatformColumn";
 			this.PlatformColumn.ReadOnly = true;
@@ -292,25 +295,26 @@
 			this.ShowDisabledGamesMenuItem.Text = "Show: Disabled";
 			this.ShowDisabledGamesMenuItem.Click += new System.EventHandler(this.ShowGamesMenuItem_Click);
 			// 
-			// ScanProgressLabel
+			// ScanProgressLevel0Label
 			// 
-			this.ScanProgressLabel.AutoSize = true;
-			this.ScanProgressLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.ScanProgressLabel.Location = new System.Drawing.Point(0, 0);
-			this.ScanProgressLabel.Name = "ScanProgressLabel";
-			this.ScanProgressLabel.Padding = new System.Windows.Forms.Padding(3);
-			this.ScanProgressLabel.Size = new System.Drawing.Size(111, 19);
-			this.ScanProgressLabel.TabIndex = 0;
-			this.ScanProgressLabel.Text = "[ScanProgressLabel]";
+			this.ScanProgressLevel0Label.AutoSize = true;
+			this.ScanProgressLevel0Label.BackColor = System.Drawing.SystemColors.Control;
+			this.ScanProgressLevel0Label.Location = new System.Drawing.Point(3, 0);
+			this.ScanProgressLevel0Label.Name = "ScanProgressLevel0Label";
+			this.ScanProgressLevel0Label.Padding = new System.Windows.Forms.Padding(3);
+			this.ScanProgressLevel0Label.Size = new System.Drawing.Size(143, 19);
+			this.ScanProgressLevel0Label.TabIndex = 0;
+			this.ScanProgressLevel0Label.Text = "[ScanProgressLevel0Label]";
 			// 
 			// ScanProgressPanel
 			// 
 			this.ScanProgressPanel.AutoSize = true;
-			this.ScanProgressPanel.Controls.Add(this.ScanProgressLabel);
+			this.ScanProgressPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.ScanProgressPanel.Controls.Add(this.tableLayoutPanel1);
 			this.ScanProgressPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 344);
+			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 317);
 			this.ScanProgressPanel.Name = "ScanProgressPanel";
-			this.ScanProgressPanel.Size = new System.Drawing.Size(781, 19);
+			this.ScanProgressPanel.Size = new System.Drawing.Size(781, 46);
 			this.ScanProgressPanel.TabIndex = 4;
 			this.ScanProgressPanel.Visible = false;
 			// 
@@ -324,6 +328,33 @@
 			this.GameDetailsControl.Name = "GameDetailsControl";
 			this.GameDetailsControl.Size = new System.Drawing.Size(781, 226);
 			this.GameDetailsControl.TabIndex = 3;
+			// 
+			// ScanProgressLevel1Label
+			// 
+			this.ScanProgressLevel1Label.AutoSize = true;
+			this.ScanProgressLevel1Label.BackColor = System.Drawing.SystemColors.Control;
+			this.ScanProgressLevel1Label.Location = new System.Drawing.Point(3, 19);
+			this.ScanProgressLevel1Label.Name = "ScanProgressLevel1Label";
+			this.ScanProgressLevel1Label.Padding = new System.Windows.Forms.Padding(3);
+			this.ScanProgressLevel1Label.Size = new System.Drawing.Size(143, 19);
+			this.ScanProgressLevel1Label.TabIndex = 1;
+			this.ScanProgressLevel1Label.Text = "[ScanProgressLevel1Label]";
+			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.AutoSize = true;
+			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel1.Controls.Add(this.ScanProgressLevel0Label, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.ScanProgressLevel1Label, 0, 1);
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(149, 38);
+			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// GamesGridUserControl
 			// 
@@ -341,6 +372,8 @@
 			this.GamesToolStrip.PerformLayout();
 			this.ScanProgressPanel.ResumeLayout(false);
 			this.ScanProgressPanel.PerformLayout();
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -348,7 +381,7 @@
 
 		#endregion
 		private System.Windows.Forms.OpenFileDialog AddGameOpenFileDialog;
-		private System.Windows.Forms.Label ScanProgressLabel;
+		private System.Windows.Forms.Label ScanProgressLevel0Label;
 		private System.Windows.Forms.ToolStrip GamesToolStrip;
         private System.Windows.Forms.ToolStripButton DeleteGamesButton;
         private System.Windows.Forms.ToolStripButton SaveGamesButton;
@@ -373,5 +406,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn PlatformColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn FileFolderColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn EmptyColumn;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private System.Windows.Forms.Label ScanProgressLevel1Label;
 	}
 }

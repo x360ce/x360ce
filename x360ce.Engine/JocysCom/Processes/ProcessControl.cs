@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Threading;
 using System.Security;
+using System.Drawing;
 
 namespace JocysCom.ClassLibrary.Processes
 {
@@ -108,12 +109,6 @@ namespace JocysCom.ClassLibrary.Processes
 				string lpWindowName  // window name 
 				);
 
-			public struct POINTAPI
-			{
-				public int x;
-				public int y;
-			}
-
 			[DllImport("user32.dll")]
 			internal static extern void mouse_event(MouseFlags dwFlags, int dx, int dy, int dwData, UIntPtr dwExtraInfo);
 
@@ -148,7 +143,7 @@ namespace JocysCom.ClassLibrary.Processes
 			//The cursor position is always given in screen coordinates and is not affected by
 			//the mapping mode of the window that contains the cursor. 
 			[DllImport("user32.dll")]
-			internal static extern int GetCursorPos(ref POINTAPI lpPoint);
+			internal static extern int GetCursorPos(ref Point lpPoint);
 
 			/// <summary>
 			/// API used to send a message to another window

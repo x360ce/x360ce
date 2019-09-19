@@ -236,8 +236,18 @@ namespace x360ce.Engine
             XInputMask mask = Engine.XInputMask.None;
             // Create list to store masks.
             var masks = new Dictionary<string, XInputMask>();
-            foreach (var file in files)
-            {
+			// If file doesn't exist in the game list then continue.
+			var e = new XInputMaskScannerEventArgs();
+			e.Level = 1;
+			e.Files = files.Select(x => new FileInfo(x)).ToList();
+			e.State = XInputMaskScannerState.FileUpdate;
+			ReportProgress(e);
+			for (int i = 0; i < files.Count; i++)
+			{
+				e.FileIndex = i;
+				e.Message = string.Format("Scan file {0} of {1}. Please wait...", i + 1, files.Count);
+				ReportProgress(e);
+				var file = files[i];
                 // Pause or Stop.
                 while (IsPaused && !IsStopping)
 					// Logical delay without blocking the current thread.

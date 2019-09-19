@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Xml;
@@ -83,15 +84,15 @@ namespace JocysCom.ClassLibrary.Runtime
 		#region Bytes
 
 		static object ByteSerializersLock = new object();
-		static Dictionary<Type, NetDataContractSerializer> ByteSerializers;
-		static NetDataContractSerializer GetByteSerializer(Type type)
+		static Dictionary<Type, BinaryFormatter> ByteSerializers;
+		static BinaryFormatter GetByteSerializer(Type type)
 		{
 			lock (ByteSerializersLock)
 			{
-				if (ByteSerializers == null) ByteSerializers = new Dictionary<Type, NetDataContractSerializer>();
+				if (ByteSerializers == null) ByteSerializers = new Dictionary<Type, BinaryFormatter>();
 				if (!ByteSerializers.ContainsKey(type))
 				{
-					ByteSerializers.Add(type, new NetDataContractSerializer());
+					ByteSerializers.Add(type, new BinaryFormatter());
 				}
 			}
 			return ByteSerializers[type];
@@ -451,13 +452,18 @@ namespace JocysCom.ClassLibrary.Runtime
 			var settings = new XmlReaderSettings();
 			settings.DtdProcessing = DtdProcessing.Ignore;
 			settings.XmlResolver = null;
-			// Stream 'ms' and 'sr' will be disposed by the reader.
-			using (var reader = XmlReader.Create(sr, settings))
+			using (var tr = new XmlTextReader(sr))
 			{
-				object o;
-				var serializer = GetXmlSerializer(type);
-				lock (serializer) { o = serializer.Deserialize(reader); }
-				return o;
+				// Ignore namespaces.
+				tr.Namespaces = false;
+				// Stream 'ms' and 'sr' will be disposed by the reader.
+				using (var reader = XmlReader.Create(tr, settings))
+				{
+					object o;
+					var serializer = GetXmlSerializer(type);
+					lock (serializer) { o = serializer.Deserialize(reader); }
+					return o;
+				}
 			}
 		}
 
@@ -475,19 +481,24 @@ namespace JocysCom.ClassLibrary.Runtime
 			// You should use "StreamReader" on file content, because this method will strip BOM properly
 			// when converting bytes to string.
 			var sr = new StringReader(xml);
-				// Settings used to protect from
-				// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
-				// https://cwe.mitre.org/data/definitions/611.html
+			// Settings used to protect from
+			// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+			// https://cwe.mitre.org/data/definitions/611.html
 			var settings = new XmlReaderSettings();
 			settings.DtdProcessing = DtdProcessing.Ignore;
 			settings.XmlResolver = null;
-			// Stream 'sr' will be disposed by the reader.
-			using (var reader = XmlReader.Create(sr, settings))
+			using (var tr = new XmlTextReader(sr))
 			{
-				object o;
-				var serializer = GetXmlSerializer(type);
-				lock (serializer) { o = serializer.Deserialize(reader); }
-				return o;
+				// Ignore namespaces.
+				tr.Namespaces = false;
+				// Stream 'sr' will be disposed by the reader.
+				using (var reader = XmlReader.Create(tr, settings))
+				{
+					object o;
+					var serializer = GetXmlSerializer(type);
+					lock (serializer) { o = serializer.Deserialize(reader); }
+					return o;
+				}
 			}
 		}
 

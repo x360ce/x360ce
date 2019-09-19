@@ -24,9 +24,11 @@ namespace JocysCom.ClassLibrary.Runtime
 	public partial class LogHelper
 	{
 
+		const string DefaultLogsFolder = "Logs";
+
 		#region Handling
 
-		public void InitExceptionHandlers(string logFolder = "Logs")
+		public void InitExceptionHandlers(string logFolder = DefaultLogsFolder)
 		{
 			_LogFolder = logFolder;
 			//if (LogThreadExceptions)
@@ -47,7 +49,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				AppDomain.CurrentDomain.FirstChanceException -= CurrentDomain_FirstChanceException;
 		}
 
-		string _LogFolder;
+		string _LogFolder = DefaultLogsFolder;
 
 		public event EventHandler<LogHelperEventArgs> WritingException;
 

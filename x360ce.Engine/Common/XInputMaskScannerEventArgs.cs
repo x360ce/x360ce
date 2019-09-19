@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using x360ce.Engine.Data;
 
 namespace x360ce.Engine
 {
 	public class XInputMaskScannerEventArgs : EventArgs
 	{
+		public int Level { get; set; }
+
 		public XInputMaskScannerState State { get; set; }
 		public UserGame Game { get; set; }
 
