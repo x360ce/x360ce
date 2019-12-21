@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 
 namespace JocysCom.ClassLibrary.Win32
 {

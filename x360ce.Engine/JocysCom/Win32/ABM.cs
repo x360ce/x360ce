@@ -1,6 +1,6 @@
 ﻿namespace JocysCom.ClassLibrary.Win32
 {
-	public enum ABM: uint
+	public enum ABM : uint
 	{
 		/// <summary>Registers a new appbar and specifies the message identifier that the system should use to send notification messages to the appbar.</summary>
 		ABM_NEW = 0,

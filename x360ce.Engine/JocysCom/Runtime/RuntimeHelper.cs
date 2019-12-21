@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
-using System.Data;
-using System.Runtime.Serialization;
-using System.Data.Objects.DataClasses;
 using System.ComponentModel;
+using System.Data;
+using System.Data.Objects.DataClasses;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Text;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -559,7 +559,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static bool IsNullable(Type t)
 		{
 			// Throw exception if type not supplied.
-			if (t == null) throw new ArgumentNullException("t");
+			if (t == null) throw new ArgumentNullException(nameof(t));
 			// Special Handling - known cases where Exceptions would be thrown
 			else if (t == typeof(void)) throw new Exception("There is no Nullable version of void");
 			// If this is not a value type, it is a reference type, so it is automatically nullable.

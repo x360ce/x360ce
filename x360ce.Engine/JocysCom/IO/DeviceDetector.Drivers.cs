@@ -1,5 +1,5 @@
-﻿using System;
-using JocysCom.ClassLibrary.Win32;
+﻿using JocysCom.ClassLibrary.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices;

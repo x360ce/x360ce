@@ -1,6 +1,6 @@
-﻿using System.Runtime.InteropServices;
-using System;
+﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Processes
 {

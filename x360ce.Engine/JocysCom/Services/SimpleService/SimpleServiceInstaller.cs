@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Reflection;
-using System.Text.RegularExpressions;
+﻿using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Services.SimpleService
 {

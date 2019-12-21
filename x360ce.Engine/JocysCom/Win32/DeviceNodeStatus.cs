@@ -9,7 +9,7 @@ namespace JocysCom.ClassLibrary.Win32
 	/// c:\Program Files\Microsoft SDKs\Windows\v7.1\Include\cfg.h
 	/// </summary>
 	[Flags]
-	public enum DeviceNodeStatus: uint
+	public enum DeviceNodeStatus : uint
 	{
 		/// <summary>Was enumerated by ROOT <summary>
 		DN_ROOT_ENUMERATED = 0x00000001,

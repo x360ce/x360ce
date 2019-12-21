@@ -37,7 +37,7 @@ namespace JocysCom.ClassLibrary.Win32
 			unchecked
 			{
 				var h = unchecked((long)DriverDate.dwHighDateTime << 32);
-				var l = unchecked((long)DriverDate.dwLowDateTime & 0xFFFFFFFF);
+				var l = unchecked(DriverDate.dwLowDateTime & 0xFFFFFFFF);
 				var dt = DateTime.FromFileTimeUtc(h | l);
 				return dt;
 			}

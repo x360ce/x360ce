@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Win32.SafeHandles;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 
 namespace JocysCom.ClassLibrary.Win32
 {

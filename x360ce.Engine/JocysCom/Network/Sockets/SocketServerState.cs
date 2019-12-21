@@ -66,7 +66,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		public void IncrementReturned(bool error)
 		{
 			Interlocked.Increment(ref Returned);
-			if (error) Interlocked.Increment(ref ReturnedFailure); 
+			if (error) Interlocked.Increment(ref ReturnedFailure);
 			else Interlocked.Increment(ref ReturnedSuccess);
 		}
 

@@ -20,11 +20,8 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace JocysCom.ClassLibrary.Win32
 {
@@ -32,12 +29,12 @@ namespace JocysCom.ClassLibrary.Win32
 	{
 
 		public IMAGE_COR20_HEADER CliHeader { get { return cliHeader; } }
-        public bool CliHeaderWasRead { get { return _CliHeaderWasRead; } }
+		public bool CliHeaderWasRead { get { return _CliHeaderWasRead; } }
 		public IMAGE_FILE_HEADER FileHeader { get { return headers.FileHeader; } }
 		public IMAGE_OPTIONAL_HEADER OptionalHeader { get { return headers.OptionalHeader; } }
 
-        bool _CliHeaderWasRead;
-        MSDOS_HEADER msdos = new MSDOS_HEADER();
+		bool _CliHeaderWasRead;
+		MSDOS_HEADER msdos = new MSDOS_HEADER();
 		IMAGE_NT_HEADERS headers = new IMAGE_NT_HEADERS();
 		IMAGE_SECTION_HEADER[] sections;
 		IMAGE_COR20_HEADER cliHeader = new IMAGE_COR20_HEADER();
@@ -69,9 +66,9 @@ namespace JocysCom.ClassLibrary.Win32
 			switch (pe.FileHeader.Machine)
 			{
 				case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_I386:
-                    if (!pe.CliHeaderWasRead) return ProcessorArchitecture.X86;
-                    else if (pe.CliHeader.COR_IS_32BIT_REQUIRED()) return ProcessorArchitecture.X86; // 32-bit
-                    else return ProcessorArchitecture.MSIL; // AnyCPU
+					if (!pe.CliHeaderWasRead) return ProcessorArchitecture.X86;
+					else if (pe.CliHeader.COR_IS_32BIT_REQUIRED()) return ProcessorArchitecture.X86; // 32-bit
+					else return ProcessorArchitecture.MSIL; // AnyCPU
 				case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_AMD64: return ProcessorArchitecture.Amd64; // 64-bit
 				case IMAGE_FILE_HEADER.IMAGE_FILE_MACHINE_IA64: return ProcessorArchitecture.IA64; // 64-bit
 				default: return ProcessorArchitecture.None;
@@ -95,13 +92,13 @@ namespace JocysCom.ClassLibrary.Win32
 				sections[i] = new IMAGE_SECTION_HEADER();
 				sections[i].Read(br);
 			}
-            var virtualAddress = GetComDescriptorVirtualAddress();
-            if (virtualAddress > 0)
-            {
-                br.BaseStream.Seek(RvaToFileOffset(virtualAddress), SeekOrigin.Begin);
-                cliHeader.Read(br);
-                _CliHeaderWasRead = true;
-            }
+			var virtualAddress = GetComDescriptorVirtualAddress();
+			if (virtualAddress > 0)
+			{
+				br.BaseStream.Seek(RvaToFileOffset(virtualAddress), SeekOrigin.Begin);
+				cliHeader.Read(br);
+				_CliHeaderWasRead = true;
+			}
 		}
 
 		public uint GetComDescriptorVirtualAddress()
@@ -132,7 +129,7 @@ namespace JocysCom.ClassLibrary.Win32
 	{
 		public const ushort IMAGE_DOS_SIGNATURE = 0x5A4D;      // MZ
 		public ushort signature; // 'MZ'
-		// skip 58 bytes
+								 // skip 58 bytes
 		public uint peSignatureOffset;
 	}
 

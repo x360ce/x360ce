@@ -4,7 +4,7 @@ using System.IO.Compression;
 namespace JocysCom.ClassLibrary.Files
 {
 
-	public class Zip
+	public static class Zip
 	{
 
 		private const int bufSize = 4096;
@@ -20,29 +20,17 @@ namespace JocysCom.ClassLibrary.Files
 		public static void UnGZipFile(string zipFileName, string fileName)
 		{
 			using (FileStream inStream = new FileStream(zipFileName, FileMode.Open, FileAccess.Read))
-			{
-				using (FileStream outStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))
-				{
-					using (Stream source = new GZipStream(inStream, CompressionMode.Decompress, true))
-					{
-						CopyStream(source, outStream);
-					}
-				}
-			}
+			using (FileStream outStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))
+			using (Stream source = new GZipStream(inStream, CompressionMode.Decompress, true))
+				CopyStream(source, outStream);
 		}
 
 		public static void GZipFile(string fileName)
 		{
 			using (var inStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
-			{
-				using (var outStream = new FileStream(fileName + ".gz", FileMode.OpenOrCreate, FileAccess.Write))
-				{
-					using (Stream destination = new GZipStream(outStream, CompressionMode.Compress, true))
-					{
-						CopyStream(inStream, destination);
-					}
-				}
-			}
+			using (var outStream = new FileStream(fileName + ".gz", FileMode.OpenOrCreate, FileAccess.Write))
+			using (Stream destination = new GZipStream(outStream, CompressionMode.Compress, true))
+				CopyStream(inStream, destination);
 		}
 
 		/// <summary>

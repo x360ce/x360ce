@@ -1,8 +1,16 @@
 using System;
-using System.Security.Cryptography;
+using System.ComponentModel;
+
+/* Unmerged change from project 'Dac.Volante.Mdt.UsbAutorun'
+Before:
 using System.Text;
 using System.Linq;
-using System.ComponentModel;
+After:
+using System.Linq;
+using System.Security.Cryptography;
+*/
+using System.Security.Cryptography;
+using System.Text;
 
 namespace JocysCom.ClassLibrary.Security
 {
@@ -77,9 +85,9 @@ namespace JocysCom.ClassLibrary.Security
 			return hash;
 		}
 
-    }
+	}
 
-    public partial class CRC32Helper
+	public partial class CRC32Helper
 	{
 
 		/// <summary>
@@ -108,34 +116,34 @@ namespace JocysCom.ClassLibrary.Security
 			return hash;
 		}
 
-        public static string GetHashAsString(byte[] bytes)
-        {
-            var hash = ComputeHash(bytes);
-            // Reverse array so it will be compatible with SFV files.
-            Array.Reverse(hash);
-            var intHash = BitConverter.ToUInt32(hash, 0);
-            return string.Format("{0:X8}", intHash);
-        }
+		public static string GetHashAsString(byte[] bytes)
+		{
+			var hash = ComputeHash(bytes);
+			// Reverse array so it will be compatible with SFV files.
+			Array.Reverse(hash);
+			var intHash = BitConverter.ToUInt32(hash, 0);
+			return string.Format("{0:X8}", intHash);
+		}
 
-        public static byte[] GetHashFromFile(string path, object sender = null, ProgressChangedEventHandler progressHandler = null, RunWorkerCompletedEventHandler completedHandler = null)
-        {
-            var algorithm = new CRC32();
-            var hash = HashHelper.GetHashFromFile(algorithm, path, sender, progressHandler, completedHandler);
-            algorithm.Dispose();
-            return hash;
-        }
+		public static byte[] GetHashFromFile(string path, object sender = null, ProgressChangedEventHandler progressHandler = null, RunWorkerCompletedEventHandler completedHandler = null)
+		{
+			var algorithm = new CRC32();
+			var hash = HashHelper.GetHashFromFile(algorithm, path, sender, progressHandler, completedHandler);
+			algorithm.Dispose();
+			return hash;
+		}
 
-        public static string GetHashFromFileAsString(string path, object sender = null, ProgressChangedEventHandler progressHandler = null, RunWorkerCompletedEventHandler completedHandler = null)
-        {
-            var algorithm = new CRC32();
-            var hash = HashHelper.GetHashFromFile(algorithm, path, sender, progressHandler, completedHandler);
-            algorithm.Dispose();
-            // Reverse array so it will be compatible with SFV files.
-            Array.Reverse(hash);
-            var intHash = BitConverter.ToUInt32(hash, 0);
-            return string.Format("{0:X8}", intHash);
-        }
+		public static string GetHashFromFileAsString(string path, object sender = null, ProgressChangedEventHandler progressHandler = null, RunWorkerCompletedEventHandler completedHandler = null)
+		{
+			var algorithm = new CRC32();
+			var hash = HashHelper.GetHashFromFile(algorithm, path, sender, progressHandler, completedHandler);
+			algorithm.Dispose();
+			// Reverse array so it will be compatible with SFV files.
+			Array.Reverse(hash);
+			var intHash = BitConverter.ToUInt32(hash, 0);
+			return string.Format("{0:X8}", intHash);
+		}
 
 
-    }
+	}
 }

@@ -16,7 +16,7 @@ BEGIN
 		t1.*
 	FROM (
 		SELECT  p.FileProductName, SUM(InstanceCount) AS InstanceCount
-		FROM dbo.x360ce_Programs p
+		FROM dbo.x360ce_Programs p (NOLOCK)
 		GROUP BY p.FileProductName
 	) t1
 	WHERE FileProductName NOT IN ('x360ce.exe', 'X360 Controller Emulator', 'Launcher.exe', '')

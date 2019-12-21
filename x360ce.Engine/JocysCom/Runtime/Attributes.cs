@@ -19,7 +19,7 @@ namespace JocysCom.ClassLibrary.Runtime
 	//	Trace.WriteLine("source line number: " + sourceLineNumber);
 	//}
 
-	public partial class Attributes
+	public static partial class Attributes
 	{
 
 		#region Description Attribute
@@ -74,7 +74,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		#region DefaultValue
 
 		/// <summary>Cache data for speed.</summary>
-		static private Dictionary<object, object> DefaultValues = new Dictionary<object, object>();
+		private static Dictionary<object, object> DefaultValues = new Dictionary<object, object>();
 		static object DefaultValuesLock = new object();
 
 		public static string GetDefaultValue(object value)
@@ -97,23 +97,33 @@ namespace JocysCom.ClassLibrary.Runtime
 			return default(T);
 		}
 
+		/// <summary>
+		/// Return default attribute value.
+		/// </summary>
+		/// <typeparam name="T">Source Type</typeparam>
+		/// <typeparam name="TResult">Return Type</typeparam>
+		/// <param name="memberName">Member name i.e. property or field name.</param>
+		public static TResult GetDefaultValue<T, TResult>(string memberName)
+		{
+			var member = typeof(T).GetMember(memberName);
+			return GetDefaultValue<TResult>(member[0]);
+		}
+
 		public static T GetDefaultValue<T>(object value)
 		{
 			lock (DefaultValuesLock)
 			{
 				if (!DefaultValues.ContainsKey(value))
 				{
-					DefaultValueAttribute[] attributes;
-					ICustomAttributeProvider p;
-					if (value is ICustomAttributeProvider)
+					var p = value as ICustomAttributeProvider;
+					// Assume it is enumeration value.
+					if (p == null)
 					{
-						p = (ICustomAttributeProvider)value;
-					}
-					else
-					{
+						if (value == null)
+							throw new ArgumentNullException(nameof(value));
 						p = value.GetType().GetField(value.ToString());
 					}
-					attributes = (DefaultValueAttribute[])p.GetCustomAttributes(typeof(DefaultValueAttribute), false);
+					var attributes = (DefaultValueAttribute[])p.GetCustomAttributes(typeof(DefaultValueAttribute), false);
 					var r = attributes.Length > 0 ? attributes[0].Value : null;
 					DefaultValues.Add(value, r);
 				}

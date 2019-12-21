@@ -1,10 +1,10 @@
-﻿using System.Security.Permissions;
-using System.Runtime.InteropServices;
-using System;
-using System.Diagnostics;
-using System.Windows.Forms;
-using System.Security.Principal;
+﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using System.Security.Principal;
+using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Win32
 {

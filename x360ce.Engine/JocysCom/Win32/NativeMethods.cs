@@ -1,9 +1,8 @@
-﻿using System.Security.Permissions;
-using System.Runtime.InteropServices;
-using System;
-using System.Drawing;
-using System.Diagnostics;
+﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Security.Permissions;
 
 namespace JocysCom.ClassLibrary.Win32
 {
@@ -50,7 +49,7 @@ namespace JocysCom.ClassLibrary.Win32
 
 		public static IntPtr ShellHandle { get { return FindWindow("Shell_TrayWnd", null); } }
 
-		static IntPtr StartButtonHandle { get { return FindWindowEx((IntPtr)GetDesktopWindow(), IntPtr.Zero, "Button", "Start"); } }
+		static IntPtr StartButtonHandle { get { return FindWindowEx(GetDesktopWindow(), IntPtr.Zero, "Button", "Start"); } }
 
 		public static ABE GetPosition()
 		{
@@ -59,7 +58,7 @@ namespace JocysCom.ClassLibrary.Win32
 			data.hWnd = ShellHandle;
 			var result = SHAppBarMessage((int)ABM.ABM_GETTASKBARPOS, ref data);
 			if (result == IntPtr.Zero) throw new InvalidOperationException();
-			return (ABE)data.uEdge;
+			return data.uEdge;
 		}
 
 		public static Rectangle GetBounds()

@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Mail
-{ 
+{
 	public enum EmailResult
-    {
+	{
 		[Description("OK")]
 		OK = 0,
 		[Description("The email address is compulsory")]

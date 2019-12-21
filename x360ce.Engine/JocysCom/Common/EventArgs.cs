@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace JocysCom.ClassLibrary
 {
-	public class EventArgs<T>: EventArgs
+	public class EventArgs<T> : EventArgs
 	{
 		public EventArgs()
 		{
@@ -17,7 +14,7 @@ namespace JocysCom.ClassLibrary
 		}
 
 		T _data;
-		public T Data {get {return _data; } }
+		public T Data { get { return _data; } }
 
 	}
 }

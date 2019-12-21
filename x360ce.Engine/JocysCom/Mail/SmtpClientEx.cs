@@ -76,7 +76,7 @@ namespace JocysCom.ClassLibrary.Mail
 			set
 			{
 				if (string.IsNullOrEmpty(value))
-					throw new ArgumentNullException("value");
+					throw new ArgumentNullException(nameof(value));
 				if (localHostName != null)
 					localHostName.SetValue(this, value);
 			}
@@ -233,7 +233,7 @@ namespace JocysCom.ClassLibrary.Mail
 			// Send Email.
 			// CWE-201: Information Exposure Through Send Data
 			// CWE-209: Information Exposure Through an Error Message
-			// Note: Generic shared method. Mitigated by design.
+			// Note: Mitigated by design. Generic shared method.
 			Send(message);
 		}
 

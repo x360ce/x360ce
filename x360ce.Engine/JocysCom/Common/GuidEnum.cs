@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace JocysCom.WebSites.Engine
@@ -58,13 +56,13 @@ namespace JocysCom.WebSites.Engine
 		/// <returns></returns>
 		public static E Parse<E>(string value)
 		{
-			if (value == null) throw new ArgumentNullException("value");
+			if (value == null) throw new ArgumentNullException(nameof(value));
 			return (E)Enum.Parse(typeof(E), value);
 		}
 
 		public static E TryParse<E>(string value, E defaultValue, bool asString)
 		{
-			if (value == null) throw new ArgumentNullException("value");
+			if (value == null) throw new ArgumentNullException(nameof(value));
 			E results = defaultValue;
 			try
 			{
@@ -86,7 +84,7 @@ namespace JocysCom.WebSites.Engine
 		/// <returns></returns>
 		public static E Parse<E>(string value, bool ignoreCase)
 		{
-			if (value == null) throw new ArgumentNullException("value");
+			if (value == null) throw new ArgumentNullException(nameof(value));
 			return (E)Enum.Parse(typeof(E), value, ignoreCase);
 		}
 
@@ -173,7 +171,7 @@ namespace JocysCom.WebSites.Engine
 		public static SortedDictionary<string, object> ToNameDictionary(Type type)
 		{
 			SortedDictionary<string, object> list = new SortedDictionary<string, object>();
-			if (type == null) throw new ArgumentNullException("type");
+			if (type == null) throw new ArgumentNullException(nameof(type));
 			string[] names = Enum.GetNames(type);
 			foreach (string name in names) list.Add(name, name);
 			return list;

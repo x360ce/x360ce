@@ -210,6 +210,20 @@ namespace JocysCom.ClassLibrary.Win32
 		[DllImport("user32", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
 		private static extern IntPtr SetFocus(IntPtr hwnd);
 
+		/// <summary>
+		/// Places the given window in the system-maintained clipboard format listener list.
+		/// </summary>
+		[DllImport("user32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool AddClipboardFormatListener(IntPtr hwnd);
+
+		/// <summary>
+		/// Removes the given window from the system-maintained clipboard format listener list.
+		/// </summary>
+		[DllImport("user32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		internal static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
+
 		#endregion
 
 		#region Helper Methods

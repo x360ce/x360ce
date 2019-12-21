@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Net;
 using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel;
+using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace JocysCom.ClassLibrary.Network.Sockets
 {
@@ -24,7 +24,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		public IPEndPoint OriginalRemoteEndpoint
 		{
 			get { return _OriginalRemoteEndpoint; }
-			set { NotifyPropertyChanging("OriginalRemoteEndpoint"); _OriginalRemoteEndpoint = value; NotifyPropertyChanged("OriginalRemoteEndpoint"); }
+			set { OnPropertyChanging(); _OriginalRemoteEndpoint = value; OnPropertyChanged(); }
 		}
 
 		IPEndPoint _DeliveryRemoteEndpoint;
@@ -34,17 +34,17 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		public IPEndPoint DeliveryRemoteEndpoint
 		{
 			get { return _DeliveryRemoteEndpoint; }
-			set { NotifyPropertyChanging("DeliveryRemoteEndpoint"); _DeliveryRemoteEndpoint = value; NotifyPropertyChanged("DeliveryRemoteEndpoint"); }
+			set { OnPropertyChanging(); _DeliveryRemoteEndpoint = value; OnPropertyChanged(); }
 		}
 
 		public void IncreaseSendCount()
 		{
-			NotifyPropertyChanging("SendDate");
+			OnPropertyChanging(nameof(SendDate));
 			_SendDate = DateTime.Now;
-			NotifyPropertyChanged("SendDate");
-			NotifyPropertyChanging("SendCount");
+			OnPropertyChanged(nameof(SendDate));
+			OnPropertyChanging(nameof(SendCount));
 			_SendCount += 1;
-			NotifyPropertyChanged("SendCount");
+			OnPropertyChanged(nameof(SendCount));
 		}
 
 		/// <summary>
@@ -63,21 +63,21 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		public bool Available
 		{
 			get { return _Available; }
-			set { NotifyPropertyChanging("Available"); _Available = value; NotifyPropertyChanged("Available"); }
+			set { OnPropertyChanging(); _Available = value; OnPropertyChanged(); }
 		}
 
 		DateTime _ReceivedDate;
 		public DateTime ReceivedDate
 		{
 			get { return _ReceivedDate; }
-			set { NotifyPropertyChanging("ReceivedDate"); _ReceivedDate = value; NotifyPropertyChanged("ReceivedDate"); }
+			set { OnPropertyChanging(); _ReceivedDate = value; OnPropertyChanged(); }
 		}
 
 		Exception _Exception;
 		public Exception Exception
 		{
 			get { return _Exception; }
-			set { NotifyPropertyChanging("Exception"); _Exception = value; NotifyPropertyChanged("Exception"); }
+			set { OnPropertyChanging(); _Exception = value; OnPropertyChanged(); }
 		}
 
 		/// <summary>
@@ -98,7 +98,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 
 		public event PropertyChangingEventHandler PropertyChanging;
 
-		void NotifyPropertyChanging(string propertyName)
+		internal void OnPropertyChanging([CallerMemberName] string propertyName = null)
 		{
 			var ev = PropertyChanging;
 			if (ev == null) return;
@@ -111,7 +111,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		void NotifyPropertyChanged(string propertyName)
+		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var ev = PropertyChanged;
 			if (ev == null) return;

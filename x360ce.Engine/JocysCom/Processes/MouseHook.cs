@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Drawing;
 
 namespace JocysCom.ClassLibrary.Processes
 {
@@ -157,8 +157,8 @@ namespace JocysCom.ClassLibrary.Processes
 							}
 							lastX = x - prevX;
 							lastY = y - prevY;
-							var fX = (int)Math.Max(Math.Min(scrnX, x), 0);
-							var fY = (int)Math.Max(Math.Min(scrnY, y), 0);
+							var fX = Math.Max(Math.Min(scrnX, x), 0);
+							var fY = Math.Max(Math.Min(scrnY, y), 0);
 							if (fX != x || fY != y) NativeMethods.SetCursorPos(fX, fY);
 							prevX = fX;
 							prevY = fY;
@@ -194,7 +194,7 @@ namespace JocysCom.ClassLibrary.Processes
 							break;
 						case WM_MOUSEWHEEL:
 						case WM_MOUSEHWHEEL:
-							delta = (int)tu.High;
+							delta = tu.High;
 							mk = (MouseKey)tu.ULow;
 							break;
 						case WM_TOUCH:

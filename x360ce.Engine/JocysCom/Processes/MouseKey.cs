@@ -2,7 +2,7 @@
 namespace JocysCom.ClassLibrary.Processes
 {
 	[Flags]
-	public enum MouseKey: ushort
+	public enum MouseKey : ushort
 	{
 		/// <summary>The CTRL key is down.</summary>
 		MK_CONTROL = 0x0008,

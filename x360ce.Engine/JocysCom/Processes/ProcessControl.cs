@@ -1,9 +1,6 @@
 using System;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.Threading;
-using System.Security;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Processes
 {

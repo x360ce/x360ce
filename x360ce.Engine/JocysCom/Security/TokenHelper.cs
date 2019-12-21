@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace JocysCom.ClassLibrary.Security
 {
@@ -301,7 +301,7 @@ namespace JocysCom.ClassLibrary.Security
 		public static byte[] ObjectToBytes(object value, Type type = null)
 		{
 			if (value == null) return new byte[0];
-			var o = (object)value;
+			var o = value;
 			var t = type ?? value.GetType();
 			var typeCode = Type.GetTypeCode(t);
 			// CWE-404: Improper Resource Shutdown or Release

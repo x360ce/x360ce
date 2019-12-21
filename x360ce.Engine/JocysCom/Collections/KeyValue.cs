@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Collections
 {
@@ -37,10 +35,10 @@ namespace JocysCom.ClassLibrary.Collections
 			get { return _key; }
 			set
 			{
-				if (!IEquatable<T>.Equals(_key, value))
+				if (!Equals(_key, value))
 				{
 					_key = value;
-					NotifyPropertyChanged("Key");
+					OnPropertyChanged();
 				}
 			}
 		}
@@ -49,10 +47,10 @@ namespace JocysCom.ClassLibrary.Collections
 			get { return _value; }
 			set
 			{
-				if (!IEquatable<T>.Equals(_value, value))
+				if (!Equals(_value, value))
 				{
 					_value = value;
-					NotifyPropertyChanged("Value");
+					OnPropertyChanged();
 				}
 			}
 		}
@@ -66,7 +64,7 @@ namespace JocysCom.ClassLibrary.Collections
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		private void NotifyPropertyChanged(string propertyName)
+		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var ev = PropertyChanged;
 			if (ev == null) return;
@@ -75,47 +73,46 @@ namespace JocysCom.ClassLibrary.Collections
 
 		#endregion
 
-
 	}
 
 
 	[Serializable, StructLayout(LayoutKind.Sequential)]
-	public class KeyValue<K, V> : INotifyPropertyChanged
+	public class KeyValue<Tk, Tv> : INotifyPropertyChanged
 	{
 
 		public KeyValue()
 		{
 		}
 
-		public KeyValue(K key, V value)
+		public KeyValue(Tk key, Tv value)
 		{
 			_key = key;
 			_value = value;
 		}
 
-		K _key;
-		V _value;
-		public K Key
+		Tk _key;
+		Tv _value;
+		public Tk Key
 		{
 			get { return _key; }
 			set
 			{
-				if (!IEquatable<K>.Equals(_key, value))
+				if (!Equals(_key, value))
 				{
 					_key = value;
-					NotifyPropertyChanged("Key");
+					OnPropertyChanged();
 				}
 			}
 		}
-		public V Value
+		public Tv Value
 		{
 			get { return _value; }
 			set
 			{
-				if (!IEquatable<V>.Equals(_value, value))
+				if (!Equals(_value, value))
 				{
 					_value = value;
-					NotifyPropertyChanged("Value");
+					OnPropertyChanged();
 				}
 			}
 		}
@@ -129,7 +126,7 @@ namespace JocysCom.ClassLibrary.Collections
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		private void NotifyPropertyChanged(string propertyName = "")
+		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var ev = PropertyChanged;
 			if (ev == null) return;
@@ -137,7 +134,6 @@ namespace JocysCom.ClassLibrary.Collections
 		}
 
 		#endregion
-
 
 	}
 

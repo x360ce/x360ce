@@ -114,6 +114,8 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public static void ApplyRecipients(MailMessage mail, string addFrom, string addTo, string addCc = null, string addBcc = null)
 		{
+			if (string.IsNullOrEmpty(addFrom))
+				throw new ArgumentNullException(nameof(addFrom));
 			ApplyRecipients(mail, new MailAddress(addFrom), addTo, addCc, addBcc);
 		}
 

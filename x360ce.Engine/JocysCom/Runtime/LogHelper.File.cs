@@ -42,7 +42,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				// Get exception files ordered with oldest on top.
 				var files = di.GetFiles(prefix + "*." + ext).OrderBy(x => x.CreationTime).ToArray();
 				// Remove excess files if necessary.
-				if (MaxFiles > 0 && files.Count() > 0 && files.Count() > MaxFiles)
+				if (MaxFiles > 0 && files.Length > 0 && files.Length > MaxFiles)
 				{
 					// Remove oldest file.
 					files[0].Delete();

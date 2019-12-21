@@ -118,7 +118,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			if (!Attributes.ContainsKey(name))
 				return defaultValue;
 			var s = Attributes[name];
-				long value;
+			long value;
 			return long.TryParse(s, out value)
 				? value
 				: defaultValue;

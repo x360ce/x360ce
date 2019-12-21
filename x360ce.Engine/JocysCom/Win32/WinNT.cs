@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JocysCom.ClassLibrary.Win32
+﻿namespace JocysCom.ClassLibrary.Win32
 {
 	/// <summary>
 	/// Microsoft SDKs\Windows\v7.0\Include\Winnt.h

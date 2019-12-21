@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace JocysCom.WebSites.Engine.Security
+﻿namespace JocysCom.WebSites.Engine.Security
 {
 	public enum BuiltInUsers
 	{

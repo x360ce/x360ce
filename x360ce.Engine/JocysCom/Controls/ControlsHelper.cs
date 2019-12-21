@@ -6,6 +6,7 @@ using System.Data;
 using System.Data.Objects.DataClasses;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -14,7 +15,7 @@ using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Controls
 {
-	public partial class ControlsHelper
+	public static partial class ControlsHelper
 	{
 		private const int WM_SETREDRAW = 0x000B;
 
@@ -33,7 +34,11 @@ namespace JocysCom.ClassLibrary.Controls
 			MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 		}
 
-		static TaskScheduler MainTaskScheduler;
+		/// <summary>
+		/// Object that handles the low-level work of queuing tasks onto main User Interface (GUI) thread.
+		/// </summary>
+		public static TaskScheduler MainTaskScheduler { get; private set; }
+
 		static int MainThreadId;
 
 		public static bool InvokeRequired()
@@ -41,7 +46,64 @@ namespace JocysCom.ClassLibrary.Controls
 			return MainThreadId != Thread.CurrentThread.ManagedThreadId;
 		}
 
-		/// <summary>Executes the specified action delegate asynchronously on main User Interface (UI) Thread.</summary>
+		/*
+
+		public static void TestTasks(TaskCreationOptions childOptions)
+		{
+			var i = 5000000;
+			Console.WriteLine("//");
+			Console.WriteLine("TestTasks(TaskCreationOptions.{0});", childOptions);
+			Console.WriteLine("// Parent starting");
+			var parent = Task.Factory.StartNew(() =>
+			{
+				Console.WriteLine("// Parent started");
+				Console.WriteLine("// Child starting");
+				var child = Task.Factory.StartNew(() =>
+				{
+					Console.WriteLine("// Child started");
+					Thread.SpinWait(i);
+					Console.WriteLine("// Child completing");
+				}, childOptions);
+				//child.Wait();
+				//Console.WriteLine("// Child completed");
+				Console.WriteLine("// Parent completing");
+			});
+			parent.Wait();
+			Console.WriteLine("// Parent completed");
+			Thread.SpinWait(i * 4);
+		}
+		
+		// Attached and Detached Child Tasks.
+		//
+		// TaskCreationOptions.AttachedToParent:
+		//
+		//     - Parent task waits for child tasks to complete.
+		//     - Parent task propagates exceptions thrown by child tasks.
+		//     - Status of parent task depends on status of child task.
+	    //
+		TestTasks(TaskCreationOptions.AttachedToParent);
+		//
+		// Parent starting
+		// Parent started
+		// Child starting
+		// Parent completing
+		// Child started
+		// Child completing
+		// Parent completed
+		//
+		TestTasks(TaskCreationOptions.None);
+		//
+		// Parent starting
+		// Parent started
+		// Child starting
+		// Parent completing
+		// Parent completed
+		// Child started
+		// Child completing
+
+		*/
+
+		/// <summary>Executes the specified action delegate asynchronously on main Graphical User Interface (GUI) Thread.</summary>
 		/// <param name="action">The action delegate to execute asynchronously.</param>
 		/// <returns>The started System.Threading.Tasks.Task.</returns>
 		public static Task BeginInvoke(Action action)
@@ -57,11 +119,12 @@ namespace JocysCom.ClassLibrary.Controls
 		public static Task BeginInvoke(Delegate method, params object[] args)
 		{
 			InitInvokeContext();
+			// 
 			return Task.Factory.StartNew(() => { method.DynamicInvoke(args); },
 				CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
 		}
 
-		/// <summary>Executes the specified action delegate synchronously on main User Interface (UI) Thread.</summary>
+		/// <summary>Executes the specified action delegate synchronously on main Graphical User Interface (GUI) Thread.</summary>
 		/// <param name="action">The action delegate to execute synchronously.</param>
 		public static void Invoke(Action action)
 		{
@@ -70,11 +133,13 @@ namespace JocysCom.ClassLibrary.Controls
 			t.RunSynchronously(MainTaskScheduler);
 		}
 
-		/// <summary>Executes the specified action delegate synchronously on main User Interface (UI) Thread.</summary>
+		/// <summary>Executes the specified action delegate synchronously on main Graphical User Interface (GUI) Thread.</summary>
 		/// <param name="action">The delegate to execute synchronously.</param>
 		public static object Invoke(Delegate method, params object[] args)
 		{
-			InitInvokeContext();
+			if (method == null)
+				throw new ArgumentNullException(nameof(method));
+			// Run method on main Graphical User Interface thread.
 			var t = new Task<object>(() => method.DynamicInvoke(args));
 			t.RunSynchronously(MainTaskScheduler);
 			return t.Result;
@@ -161,7 +226,7 @@ namespace JocysCom.ClassLibrary.Controls
 			RestoreSelection(grid, primaryKeyPropertyName, sel, selectFirst);
 		}
 
-		static public string GetPrimaryKey(EntityObject eo)
+		public static string GetPrimaryKey(EntityObject eo)
 		{
 			// Try to select primary key name.
 			if (eo.EntityKey != null && eo.EntityKey.EntityKeyValues.Length > 0)
@@ -733,6 +798,64 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
+		#region Apply TabControl Image Style
+
+		static string ApplyImageStyleDisabledSuffix = "_DisabledStyle";
+
+		public static void ApplyImageStyle(TabControl control)
+		{
+			var list = control.ImageList;
+			var keys = list.Images.Keys.Cast<string>().ToArray();
+			for (int i = 0; i < keys.Length; i++)
+			{
+				var key = keys[i];
+				var image = (Bitmap)list.Images[key];
+				var disabledImage = (Bitmap)image.Clone();
+				MakeImageTransparent(disabledImage, 128);
+				list.Images.Add(key + ApplyImageStyleDisabledSuffix, disabledImage);
+			}
+			control.SelectedIndexChanged += ApplyImageStyle_TabControl_SelectedIndexChanged;
+			ApplyImageStyle_TabControl_SelectedIndexChanged(control, new EventArgs());
+		}
+
+		/// <summary>Make bitmap transparent.</summary>
+		/// <param name="b"></param>
+		/// <param name="alpha">256 max</param>
+		static void MakeImageTransparent(Bitmap b, int alpha)
+		{
+			var w = b.Width;
+			var h = b.Height;
+			int a;
+			Color p;
+			for (int y = 0; y < h; y++)
+			{
+				for (int x = 0; x < w; x++)
+				{
+					p = b.GetPixel(x, y);
+					a = (int)(p.A * (float)alpha / byte.MaxValue);
+					if (a >= byte.MaxValue) a = byte.MaxValue;
+					if (a <= byte.MinValue) a = byte.MinValue;
+					b.SetPixel(x, y, Color.FromArgb(a, p.R, p.G, p.B));
+				}
+			}
+		}
+
+		private static void ApplyImageStyle_TabControl_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			var control = (TabControl)sender;
+			var list = control.ImageList;
+			foreach (TabPage item in control.TabPages)
+			{
+				var en = item == control.SelectedTab;
+				var key = item.ImageKey.Replace(ApplyImageStyleDisabledSuffix, "");
+				if (!en)
+					key += ApplyImageStyleDisabledSuffix;
+				item.ImageKey = key;
+			}
+		}
+
+		#endregion
+
 		#region IsDesignMode
 
 		public static bool _IsDesignMode(IComponent component, IComponent parent)
@@ -763,7 +886,71 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		#region Bind Lists
+		#region Binding
+
+		public static Binding AddDataBinding<Ds, Dp>(
+			IBindableComponent control,
+			Ds data, Expression<Func<Ds, Dp>> dataProperty)
+		{
+			var dataMemberBody = (MemberExpression)dataProperty.Body;
+			var dataMemberName = dataMemberBody.Member.Name;
+			string name = null;
+			// Add TextBox.
+			var textBox = control as TextBox;
+			if (textBox != null)
+				name = nameof(textBox.Text);
+			// Add ComboBox.
+			var comboBox = control as ComboBox;
+			if (comboBox != null)
+			{
+				name = string.IsNullOrEmpty(comboBox.ValueMember)
+					? nameof(comboBox.SelectedItem)
+					: nameof(comboBox.SelectedValue);
+			}
+			// Add CheckBox.
+			var checkBox = control as CheckBox;
+			if (checkBox != null)
+				name = nameof(checkBox.Checked);
+			// Add NumericUpDown.
+			var upDown = control as NumericUpDown;
+			if (upDown != null)
+				name = nameof(upDown.Value);
+			// If type is missing then throw error.
+			if (string.IsNullOrEmpty(name))
+				throw new Exception(string.Format("Add control Type '{0}' to ControlsHelper.AddDataBinding(control, data, dataProperty) method!", control.GetType()));
+			// Add data binding.
+			return control.DataBindings.Add(name, data, dataMemberName,
+				false,
+				DataSourceUpdateMode.OnPropertyChanged,
+				null,
+				null,
+				null);
+		}
+
+		/// <summary>
+		/// To avoid validation problems, make sure to add DataBindings inside "Load" event and not inside Constructor.
+		/// </summary>
+		public static Binding AddDataBinding<Cs, Cp, Ds, Dp>(
+				Cs control, Expression<Func<Cs, Cp>> controlProperty,
+				Ds data, Expression<Func<Ds, Dp>> dataProperty,
+				bool formattingEnabled = false,
+				DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged,
+				object nullValue = null,
+				string formatString = null,
+				IFormatProvider formatInfo = null
+			) where Cs : IBindableComponent
+		{
+			var propertyBody = (MemberExpression)controlProperty.Body;
+			var propertyName = propertyBody.Member.Name;
+			var dataMemberBody = (MemberExpression)dataProperty.Body;
+			var dataMemberName = dataMemberBody.Member.Name;
+			return control.DataBindings.Add(propertyName, data, dataMemberName,
+				formattingEnabled,
+				updateMode,
+				nullValue,
+				formatString,
+				formatInfo);
+		}
 
 		/// <summary>
 		/// Bing Enum to ComboBox.

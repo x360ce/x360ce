@@ -7,7 +7,7 @@ namespace JocysCom.ClassLibrary.Win32
 	/// The broadcast option.
 	/// </summary>
 	[Flags]
-	public enum BSF: int 
+	public enum BSF : int
 	{
 		/// <summary>Enables the recipient to set the foreground window while processing the message.</summary>
 		BSF_ALLOWSFW = 0x00000080,

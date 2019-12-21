@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Linq;
 
 namespace JocysCom.ClassLibrary.Data
 {
@@ -246,7 +246,7 @@ namespace JocysCom.ClassLibrary.Data
 				if (i == 4 && b > 0xF)
 					return TlvSerializerError.Decoder7BitNumberIsTooLargeError;
 				// Add 7 bit value
-				v |= (int)(b & 0x7F) << (7 * i);
+				v |= (b & 0x7F) << (7 * i);
 				i++;
 			}
 			// Continue if first bit is 1.
@@ -262,7 +262,7 @@ namespace JocysCom.ClassLibrary.Data
 		public static bool IsNullable(Type t)
 		{
 			// Throw exception if type not supplied.
-			if (t == null) throw new ArgumentNullException("t");
+			if (t == null) throw new ArgumentNullException(nameof(t));
 			// Special Handling - known cases where Exceptions would be thrown
 			else if (t == typeof(void)) throw new Exception("There is no Nullable version of void");
 			// If this is not a value type, it is a reference type, so it is automatically nullable.

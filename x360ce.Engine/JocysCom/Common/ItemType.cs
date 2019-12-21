@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace JocysCom.WebSites.Engine
 {
@@ -23,7 +20,7 @@ namespace JocysCom.WebSites.Engine
 	{
 		None,
 		Book,
-		BookCategory, 
+		BookCategory,
 		Author,
 		Member,
 		Group,
@@ -38,7 +35,7 @@ namespace JocysCom.WebSites.Engine
 		ForumCategory,
 		ForumThread,
 		ForumPost,
-        Email,
+		Email,
 		// ASP.NET Membership provider.
 		User,
 		Role,

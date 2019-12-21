@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Text;
-using System.Xml;
-using System.Security.Cryptography.Xml;
 using System.Configuration;
+using System.Security.Cryptography.Xml;
+using System.Text;
+using System.Web.Security;
+using System.Xml;
 
 namespace JocysCom.ClassLibrary.Security
 {
@@ -91,6 +92,32 @@ namespace JocysCom.ClassLibrary.Security
 			}
 			set { _RsaUseOaepValue = value; }
 		}
+
+		#region Machine Key
+
+		/// <summary>Encrypts text with MachineKey and converts to Base64 string.</summary>
+		public static string ProtectWithMachineKey(string text, string purpose, Encoding encoding = null)
+		{
+			if (string.IsNullOrEmpty(text))
+				return text;
+			var stream = (encoding ?? Encoding.UTF8).GetBytes(text);
+			var encrypted = MachineKey.Protect(stream, purpose);
+			var base64 = System.Convert.ToBase64String(encrypted);
+			return base64;
+		}
+
+		/// <summary>Decrypts text with MachineKey from Base64 string.</summary>
+		public static string UnProtectWithMachineKey(string base64, string purpose, Encoding encoding = null)
+		{
+			if (string.IsNullOrEmpty(base64))
+				return base64;
+			var encrypted = System.Convert.FromBase64String(base64);
+			var decrypted = MachineKey.Unprotect(encrypted, purpose);
+			var text = (encoding ?? Encoding.UTF8).GetString(decrypted);
+			return text;
+		}
+
+		#endregion
 
 		#region MD5
 
@@ -208,10 +235,8 @@ namespace JocysCom.ClassLibrary.Security
 			if (hashKeyBytes == null)
 			{
 				lock (MacProviderLock)
-				{
 					// Use default from config file.
 					hash = MacProvider.ComputeHash(bytes);
-				}
 			}
 			else
 			{

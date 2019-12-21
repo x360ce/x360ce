@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
@@ -26,20 +27,20 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		void SetStatus(IssueStatus status)
 		{
 			_Status = status;
-			NotifyPropertyChanged("Status");
+			OnPropertyChanged(nameof(Status));
 		}
 
 		public string Name
 		{
 			get { return _Name; }
-			set { _Name = value; NotifyPropertyChanged("Name"); }
+			set { _Name = value; OnPropertyChanged(); }
 		}
 		string _Name;
 
 		public string Description
 		{
 			get { return _Description; }
-			set { _Description = value; NotifyPropertyChanged("Description"); }
+			set { _Description = value; OnPropertyChanged(); }
 		}
 		string _Description;
 
@@ -48,7 +49,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public string FixName
 		{
 			get { return _FixName; }
-			set { _FixName = value; NotifyPropertyChanged("FixName"); }
+			set { _FixName = value; OnPropertyChanged(); }
 		}
 		string _FixName;
 
@@ -56,14 +57,14 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public bool IsEnabled
 		{
 			get { return _IsEnabled; }
-			set { _IsEnabled = value; NotifyPropertyChanged("IsEnabled"); }
+			set { _IsEnabled = value; OnPropertyChanged(); }
 		}
 		bool _IsEnabled = true;
 
 		public IssueSeverity? Severity
 		{
 			get { return _Severity; }
-			set { _Severity = value; NotifyPropertyChanged("Severity"); }
+			set { _Severity = value; OnPropertyChanged(); }
 		}
 		IssueSeverity? _Severity;
 
@@ -153,7 +154,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		private void NotifyPropertyChanged(string propertyName = "")
+		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var ev = PropertyChanged;
 			if (ev == null) return;
@@ -161,6 +162,5 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		}
 
 		#endregion
-
 	}
 }

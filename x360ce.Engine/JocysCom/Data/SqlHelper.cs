@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.Data
 {
@@ -30,7 +29,7 @@ namespace JocysCom.ClassLibrary.Data
 			}
 		}
 
-		#region Session Parameters / SetContext
+		#region CONTEXT_INFO Property - Session Parameters / SetContext
 
 		int? _SessionId;
 		int? _UserId;
@@ -74,17 +73,64 @@ namespace JocysCom.ClassLibrary.Data
 			}
 		}
 
-		public void SetContext(IDbConnection connection, string comment = null)
+		/*
+			// CONTEXT_INFO Example:
+			var conn = new System.Data.SqlClient.SqlConnection(cn);
+			conn.Open();
+			var mw = new System.IO.MemoryStream(128);
+			var bw = new System.IO.BinaryWriter(mw);
+			bw.Write((int)174);
+			bw.Write("Test1");
+			ClassLibrary.Data.SqlHelper.Current.SetContext(conn, mw.ToArray());
+			var value = ClassLibrary.Data.SqlHelper.Current.GetContext(conn);
+			conn.Close();
+			var mr = new System.IO.MemoryStream(value);
+			var br = new System.IO.BinaryReader(mr);
+			var value1 = br.ReadInt32();
+			var value2 = br.ReadString();
+		*/
+
+		/// <summary>Get SQL session context value.</summary>
+		/// <param name="connection">Existing and open database connection.</param>
+		/// <returns>Context value.</returns>
+		public byte[] GetContext(IDbConnection connection)
+		{
+			var cmd = connection.CreateCommand();
+			cmd.CommandText = "SELECT CONTEXT_INFO()";
+			cmd.CommandType = CommandType.Text;
+			var bytes = (byte[])cmd.ExecuteScalar();
+			return bytes;
+		}
+
+		/// <summary>Set SQL session context value.</summary>
+		/// <param name="connection">Existing and open database connection.</param>
+		/// <param name="value">Context value. 128 bytes max.</param>
+		/// <returns>The number of rows affected.</returns>
+		public int SetContext(IDbConnection connection, byte[] value)
+		{
+			var cmd = connection.CreateCommand();
+			cmd.CommandText = "SET CONTEXT_INFO @value";
+			cmd.CommandType = CommandType.Text;
+			cmd.Parameters.Add(new SqlParameter("@value", value));
+			return cmd.ExecuteNonQuery();
+		}
+
+		/// <summary>
+		/// Set current SessionId, UserID and ASCII Comment.
+		/// </summary>
+		/// <param name="connection">Existing and open database connection.</param>
+		/// <param name="comment">Optional comment to pass into SQL.</param>
+		/// <returns></returns>
+		public int SetSessionUserCommentContext(IDbConnection connection, string comment = null)
 		{
 			int? sessionId;
 			int? userId;
 			GetSessionParameter(out sessionId, out userId);
-			if (!sessionId.HasValue) return;
-			if (!userId.HasValue) return;
-			// use the existing open connection to set the context info
-			var command = connection.CreateCommand();
-			command.CommandText = "SET CONTEXT_INFO @ContextUserID";
-			command.CommandType = CommandType.Text;
+			if (!sessionId.HasValue)
+				return 0;
+			if (!userId.HasValue)
+				return 0;
+			// Use the existing open connection to set the context info
 			var data = new byte[128];
 			if (!string.IsNullOrEmpty(comment))
 			{
@@ -96,9 +142,62 @@ namespace JocysCom.ClassLibrary.Data
 			AddValue(data, sessionId.Value, data.Length - 4);
 			// Add profile_id.
 			AddValue(data, userId.Value, 0);
-			var p = new SqlParameter("@ContextUserID", data);
-			command.Parameters.Add(p);
-			command.ExecuteNonQuery();
+			// Set context info.
+			return SetContext(connection, data);
+		}
+
+		#endregion
+
+		#region SESSION_CONTEXT Property (SQL Server 2016)
+
+		/*
+			// SESSION_CONTEXT Example:
+			var conn = new System.Data.SqlClient.SqlConnection(cn);
+			conn.Open();
+			ClassLibrary.Data.SqlHelper.Current.SetSessionContext(conn, "Key1", 174);
+			var value = (int)ClassLibrary.Data.SqlHelper.Current.GetSessionContext(conn, "Key1");
+			conn.Close();
+		*/
+
+		/// <summary>
+		/// SQL 2016. Maximum storage space - 256 kilobytes.
+		/// </summary>
+		/// <param name="connection">Existing and open database connection.</param>
+		/// <param name="key">Key name. Up to 128 Unicode characters.</param>
+		/// <param name="value">Any type.</param>
+		/// <param name="read_only">If true then can's be cannot be changed unless session ends.</param>
+		/// <remarks>SELECT SESSION_CONTEXT(N'ID');</remarks>
+		/// <returns>The number of rows affected.</returns>
+		public int SetSessionContext(IDbConnection connection, string key, object value, bool read_only = false)
+		{
+			if (connection == null)
+				throw new ArgumentNullException(nameof(connection));
+			var cmd = connection.CreateCommand();
+			cmd.CommandText = "sys.sp_set_session_context";
+			cmd.CommandType = CommandType.StoredProcedure;
+			var p = cmd.Parameters;
+			p.Add(new SqlParameter("@key", key));
+			p.Add(new SqlParameter("@value", value));
+			p.Add(new SqlParameter("@read_only", read_only));
+			return cmd.ExecuteNonQuery();
+		}
+
+		/// <summary>
+		/// SQL 2016. Maximum storage space - 256 kilobytes.
+		/// </summary>
+		/// <param name="connection">Existing and open database connection.</param>
+		/// <param name="key">Key name. Up to 128 Unicode characters.</param>
+		/// <returns>Value.</returns>
+		public object GetSessionContext(IDbConnection connection, string key)
+		{
+			if (connection == null)
+				throw new ArgumentNullException(nameof(connection));
+			var cmd = connection.CreateCommand();
+			cmd.CommandText = "SELECT SESSION_CONTEXT(@key);";
+			cmd.CommandType = CommandType.Text;
+			var p = cmd.Parameters;
+			p.Add(new SqlParameter("@key", key));
+			return cmd.ExecuteScalar();
 		}
 
 		#endregion
@@ -112,8 +211,39 @@ namespace JocysCom.ClassLibrary.Data
 			Array.Copy(bytes, 0, data, destinationIndex, bytes.Length);
 		}
 
-		public string GetConnectionString(string name)
+		public static string GetProviderConnectionString(string connectionString, out bool isEntity)
 		{
+			isEntity = false;
+			if (string.Compare(connectionString, "metadata=", true) == 0)
+			{
+				// Get connection string from entity connection string.
+				var ecsb = new System.Data.EntityClient.EntityConnectionStringBuilder(connectionString);
+				connectionString = ecsb.ProviderConnectionString;
+				isEntity = true;
+			}
+			var builder = new SqlConnectionStringBuilder(connectionString);
+			if (!builder.ContainsKey("Application Name") || ".Net SqlClient Data Provider".Equals(builder["Application Name"]))
+			{
+				var asm = Assembly.GetEntryAssembly();
+				if (asm == null)
+					asm = Assembly.GetExecutingAssembly();
+				var appPrefix = asm.GetName().Name.Replace(".", "");
+				var appName = string.Format("{0}", appPrefix);
+				builder.Add("Application Name", appName);
+				connectionString = builder.ToString();
+			}
+			return connectionString;
+		}
+
+		public static string GetConnectionString(string name)
+		{
+			bool isEntity;
+			return GetConnectionString(name, out isEntity);
+		}
+
+		public static string GetConnectionString(string name, out bool isEntity)
+		{
+			isEntity = false;
 			// Try to find entity connection.
 			var cs = ConfigurationManager.ConnectionStrings[name];
 			// If configuration section with not found then return.
@@ -125,6 +255,7 @@ namespace JocysCom.ClassLibrary.Data
 				// Get connection string from entity connection string.
 				var ecsb = new System.Data.EntityClient.EntityConnectionStringBuilder(cs.ConnectionString);
 				connectionString = ecsb.ProviderConnectionString;
+				isEntity = true;
 			}
 			var builder = new SqlConnectionStringBuilder(connectionString);
 			if (!builder.ContainsKey("Application Name") || ".Net SqlClient Data Provider".Equals(builder["Application Name"]))
@@ -137,6 +268,15 @@ namespace JocysCom.ClassLibrary.Data
 				connectionString = builder.ToString();
 			}
 			return connectionString;
+		}
+
+		/// <summary>Hide connection string password.</summary>
+		/// <param name="text"></param>
+		public static string FilterConnectionString(string text)
+		{
+			System.Text.RegularExpressions.Regex regex;
+			regex = new System.Text.RegularExpressions.Regex("(Password|PWD)\\s*=([^;]*)([;]*)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+			return regex.Replace(text, "$1=<hidden>$3");
 		}
 
 		public void SetReadUncommited(IDbConnection connection)
@@ -164,7 +304,7 @@ namespace JocysCom.ClassLibrary.Data
 			var conn = new SqlConnection(cb.ConnectionString);
 			cmd.Connection = conn;
 			conn.Open();
-			SetContext(conn, comment);
+			SetSessionUserCommentContext(conn, comment);
 			int rv = cmd.ExecuteNonQuery();
 			cmd.Dispose();
 			// Dispose calls conn.Close() internally.
@@ -172,25 +312,13 @@ namespace JocysCom.ClassLibrary.Data
 			return rv;
 		}
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-		public int ExecuteNonQuery(string connectionString, string cmdText, string comment = null, int? timeout = null)
-		{
-			var cmd = new SqlCommand(cmdText);
-			cmd.CommandType = CommandType.Text;
-			return ExecuteNonQuery(connectionString, cmd, comment, timeout);
-		}
-
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-		public int ExecuteNonQuery(string connectionString, CommandType commandType, string cmdText, string comment = null, params SqlParameter[] commandParameters)
-		{
-			var cmd = new SqlCommand(cmdText);
-			cmd.CommandType = commandType;
-			if (commandParameters != null && commandParameters.Length > 0)
-			{
-				cmd.Parameters.AddRange(commandParameters);
-			}
-			return ExecuteNonQuery(connectionString, cmd, comment);
-		}
+		//[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+		//public int ExecuteNonQuery(string connectionString, string cmdText, string comment = null, int? timeout = null)
+		//{
+		//	var cmd = new SqlCommand(cmdText);
+		//	cmd.CommandType = CommandType.Text;
+		//	return ExecuteNonQuery(connectionString, cmd, comment, timeout);
+		//}
 
 		public object ExecuteScalar(string connectionString, SqlCommand cmd, string comment = null)
 		{
@@ -198,7 +326,7 @@ namespace JocysCom.ClassLibrary.Data
 			var conn = new SqlConnection(connectionString);
 			cmd.Connection = conn;
 			conn.Open();
-			SetContext(conn, comment);
+			SetSessionUserCommentContext(conn, comment);
 			// Returns first column of the first row.
 			var returnValue = cmd.ExecuteScalar();
 			cmd.Dispose();
@@ -213,7 +341,7 @@ namespace JocysCom.ClassLibrary.Data
 			var conn = new SqlConnection(connectionString);
 			cmd.Connection = conn;
 			conn.Open();
-			SetContext(conn, comment);
+			SetSessionUserCommentContext(conn, comment);
 			return cmd.ExecuteReader();
 		}
 
@@ -223,7 +351,7 @@ namespace JocysCom.ClassLibrary.Data
 			var conn = new SqlConnection(connectionString);
 			cmd.Connection = conn;
 			conn.Open();
-			SetContext(conn, comment);
+			SetSessionUserCommentContext(conn, comment);
 			var adapter = new SqlDataAdapter(cmd);
 			var ds = Activator.CreateInstance<T>();
 			int rowsAffected = ds.GetType() == typeof(DataSet)
@@ -233,7 +361,7 @@ namespace JocysCom.ClassLibrary.Data
 			cmd.Dispose();
 			// Dispose calls conn.Close() internally.
 			conn.Dispose();
-			return (T)ds;
+			return ds;
 		}
 
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
@@ -303,6 +431,8 @@ namespace JocysCom.ClassLibrary.Data
 		/// </remarks>
 		public static SqlParameter[] AddArrayParameters<T>(SqlCommand cmd, string paramName, params T[] values)
 		{
+			if (cmd == null)
+				throw new ArgumentNullException(nameof(cmd));
 			var parameters = new List<SqlParameter>();
 			for (int i = 0; i < values.Length; i++)
 			{

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using System.Diagnostics;
 using System.ComponentModel;
-using System.Security.Principal;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Security.Principal;
+using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Win32
 {
@@ -113,7 +113,7 @@ namespace JocysCom.ClassLibrary.Win32
 			// See http://msdn2.microsoft.com/en-us/library/aa361904.aspx
 			uint BCM_FIRST = 0x1600; // Normal button
 			uint BCM_SETSHIELD = BCM_FIRST + 0x000C; // Shield button
-			// Input validation
+													 // Input validation
 			if (button == null) return;
 			button.FlatStyle = FlatStyle.System;
 			// Send the BCM_SETSHIELD message to the control
@@ -124,7 +124,7 @@ namespace JocysCom.ClassLibrary.Win32
 		{
 			uint BCM_FIRST = 0x1600; // Normal button
 			uint BCM_SETSHIELD = BCM_FIRST + 0x000C; // Shield button
-			// Input validation
+													 // Input validation
 			if (button == null) return;
 			button.FlatStyle = FlatStyle.System;
 			// Send the BCM_SETSHIELD message to the control
@@ -171,7 +171,7 @@ namespace JocysCom.ClassLibrary.Win32
 					var fi = new System.IO.FileInfo(fileName);
 					process.StartInfo = new ProcessStartInfo();
 					process.StartInfo.FileName = fileName;
-                    process.StartInfo.WorkingDirectory = fi.Directory.FullName;
+					process.StartInfo.WorkingDirectory = fi.Directory.FullName;
 					process.Start();
 				}
 				catch (Win32Exception)

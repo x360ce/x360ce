@@ -16,7 +16,7 @@ BEGIN
 		t1.*
 	FROM (
 		SELECT  p.ProductName, SUM(InstanceCount) AS InstanceCount
-		FROM dbo.x360ce_Products p
+		FROM dbo.x360ce_Products p (NOLOCK)
 		GROUP BY p.ProductName
 	) t1
 	ORDER BY t1.InstanceCount DESC

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-namespace JocysCom.ClassLibrary.Win32
+﻿namespace JocysCom.ClassLibrary.Win32
 {
-	public enum DBCH_DEVICETYPE: int
+	public enum DBCH_DEVICETYPE : int
 	{
 		/// <summary>Class of devices. This structure is a DEV_BROADCAST_DEVICEINTERFACE structure.</summary>
 		DBT_DEVTYP_DEVICEINTERFACE = 0x00000005,

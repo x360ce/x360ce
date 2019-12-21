@@ -50,7 +50,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			var items = IssueList.Where(x => x.IsEnabled).ToArray();
 			var noIssues =
 				// List contains enabled issues.
-				items.Count() > 0 &&
+				items.Length > 0 &&
 				// There are no unchecked issues or issues with the problem.
 				!items.Any(x => !x.Severity.HasValue || x.Severity.Value != IssueSeverity.None);
 			// Panel is visible only if all tests are complete and no issues were found.

@@ -94,9 +94,9 @@ namespace JocysCom.ClassLibrary.Win32
 		public static Guid FSFILTER_SYSTEM = new Guid("5d1b9aaa-01e2-46af-849f-272b3f324c46");
 		public static Guid FSFILTER_INFRASTRUCTURE = new Guid("e55fa6f9-128c-4d04-abab-630c74b1453a");
 		// Audio and Midi
-		public static Guid DEVINTERFACE_AUDIO_RENDER =    new Guid("e6327cad-dcec-4949-ae8a-991e976a79d2");
-		public static Guid DEVINTERFACE_AUDIO_CAPTURE =     new Guid("2eef81be-33fa-4800-9670-1cd474972c3f");
-		public static Guid DEVINTERFACE_MIDI_OUTPUT =   new Guid("6dc23320-ab33-4ce4-80d4-bbb3ebbf2814");
-		public static Guid DEVINTERFACE_MIDI_INPUT =    new Guid("504be32c-ccf6-4d2c-b73f-6f8b3747e22b");
+		public static Guid DEVINTERFACE_AUDIO_RENDER = new Guid("e6327cad-dcec-4949-ae8a-991e976a79d2");
+		public static Guid DEVINTERFACE_AUDIO_CAPTURE = new Guid("2eef81be-33fa-4800-9670-1cd474972c3f");
+		public static Guid DEVINTERFACE_MIDI_OUTPUT = new Guid("6dc23320-ab33-4ce4-80d4-bbb3ebbf2814");
+		public static Guid DEVINTERFACE_MIDI_INPUT = new Guid("504be32c-ccf6-4d2c-b73f-6f8b3747e22b");
 	}
 }

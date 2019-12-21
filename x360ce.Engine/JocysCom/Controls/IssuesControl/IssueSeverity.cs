@@ -5,7 +5,7 @@
 		None = 0,
 		// Information.
 		Low = 1,
-        // Some features disabled.
+		// Some features disabled.
 		Important = 2,
 		// Main features won't run.
 		Moderate = 3,

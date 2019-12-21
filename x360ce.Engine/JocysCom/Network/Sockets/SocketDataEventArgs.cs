@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Sockets;
-using System.Threading;
 namespace JocysCom.ClassLibrary.Network.Sockets
 {
 	public class SocketDataEventArgs : EventArgs

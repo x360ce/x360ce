@@ -166,7 +166,7 @@ namespace System.IO.Compression
 		/// <returns>A valid ZipStorer object</returns>
 		public static ZipStorer Open(string _filename, FileAccess _access)
 		{
-			Stream stream = (Stream)new FileStream(_filename, FileMode.Open, _access == FileAccess.Read ? FileAccess.Read : FileAccess.ReadWrite);
+			Stream stream = new FileStream(_filename, FileMode.Open, _access == FileAccess.Read ? FileAccess.Read : FileAccess.ReadWrite);
 
 			ZipStorer zip = Open(stream, _access);
 			zip.FileName = _filename;

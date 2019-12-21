@@ -1,12 +1,10 @@
 ﻿using JocysCom.ClassLibrary.Collections;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -74,16 +72,25 @@ namespace JocysCom.ClassLibrary.Network
 			}
 			return list;
 		}
-		public static bool IsExcludedIp(string ip, string ipList = null)
+
+		/// <summary>
+		/// Returns true if IP address have match one of the patterns.
+		/// </summary>
+		public static bool IsMatch(string ip, params string[] ipWildcards)
 		{
-			var ips = ipList ?? "";
-			string[] list = ips.Split(';', ',').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+			var ips = string.Join(",", ipWildcards);
+			var list = ips.Split(';', ',').Select(x => x.Trim()).Where(x => !string.IsNullOrEmpty(x)).ToArray();
 			foreach (string item in list)
 			{
-				var rxString = item.Replace(".", "\\.").Replace("*", ".*");
+				// Convert wild-card pattern to regular expression.
+				var rxString = Regex
+					.Escape(item)
+					.Replace("\\*", ".*")
+					.Replace("\\?", ".");
 				var rx = new Regex("^" + rxString + "$");
 				var match = rx.Match(ip);
-				if (match.Success) return true;
+				if (match.Success)
+					return true;
 			}
 			return false;
 		}
@@ -121,7 +128,7 @@ namespace JocysCom.ClassLibrary.Network
 					if (IPAddress.IsLoopback(address))
 						continue;
 					// If excluded IP then continue.
-					if (excludeIps != null && IsExcludedIp(address.ToString(), excludeIps))
+					if (excludeIps != null && IsMatch(address.ToString(), excludeIps))
 						continue;
 					// Address passed availability.
 					return true;
@@ -132,8 +139,9 @@ namespace JocysCom.ClassLibrary.Network
 
 		/// <summary>
 		/// This method is time consuming and would freeze application if you run it on main thread.
+		/// Returns IP4 only.
 		/// </summary>
-		public static NetworkInfo CheckNetwork(string excludeIps = null)
+		public static NetworkInfo CheckNetwork(string excludeIps = null, bool includeAutomaticPrivateAddress = false)
 		{
 			var info = new NetworkInfo();
 			var nicsList = new List<String>();
@@ -167,18 +175,22 @@ namespace JocysCom.ClassLibrary.Network
 						// If not IP4 version then skip.
 						if (address.AddressFamily != AddressFamily.InterNetwork)
 							continue;
+						// Exclude Automatic Private IP Address range (169.254.*.*).
+						var addressBytes = address.GetAddressBytes();
+						if (!includeAutomaticPrivateAddress && addressBytes[0] == 169 && addressBytes[1] == 254)
+							continue;
 						// If loop-back then skip.
 						if (IPAddress.IsLoopback(address))
 							continue;
 						nicsSb.AppendFormat(", Address = {0}", address);
 						// If excluded then skip.
-						if (excludeIps != null && IsExcludedIp(address.ToString(), excludeIps))
+						if (excludeIps != null && IsMatch(address.ToString(), excludeIps))
 							continue;
 						// Normal IP4 address was found.
 						info.IsNetworkAvailable = true;
 						// More configuration = higher priority of IP address.
 						var priority =
-							properties.GatewayAddresses.Where(x=>x.Address.AddressFamily == AddressFamily.InterNetwork).Count() +
+							properties.GatewayAddresses.Where(x => x.Address.AddressFamily == AddressFamily.InterNetwork).Count() +
 							properties.DnsAddresses.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Count() +
 							properties.DhcpServerAddresses.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Count() +
 							properties.WinsServersAddresses.Where(x => x.AddressFamily == AddressFamily.InterNetwork).Count();

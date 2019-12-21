@@ -86,10 +86,17 @@ namespace JocysCom.ClassLibrary
 				if (resourceName.EndsWith(name))
 				{
 					results = GetResource<T>(assembly, resourceName);
-					return (T)results;
+					return results;
 				}
 			}
 			return default(T);
+		}
+
+		// Get Embedded Resource from type (*.resx file).
+		public static T GetResource<TSource, T>(string name)
+		{
+			var resources = new System.ComponentModel.ComponentResourceManager(typeof(T));
+			return (T)resources.GetObject(name);
 		}
 
 		public static T GetResource<T>(string name)
@@ -132,7 +139,7 @@ namespace JocysCom.ClassLibrary
 					results = bytes;
 				}
 			}
-			return (T)(object)results;
+			return (T)results;
 		}
 
 		#endregion

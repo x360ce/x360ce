@@ -15,7 +15,7 @@ namespace JocysCom.ClassLibrary.Data
 		UnknownType = 102,
 		// Deserialize errors.
 		EnumIdNotFound = 200,
-		
+
 
 	}
 }

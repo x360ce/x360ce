@@ -1,7 +1,4 @@
-using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
 
 namespace JocysCom.ClassLibrary.Drawing
 {
@@ -17,10 +14,10 @@ namespace JocysCom.ClassLibrary.Drawing
 			{
 				for (int x = 0; x < w; ++x)
 				{
-					byte[] p = ColorToBytes(b.GetPixel(x, y)); 
+					byte[] p = ColorToBytes(b.GetPixel(x, y));
 					for (int i = 1; i < 4; i++)
 					{
-						nVal = (int)(p[i] + level);
+						nVal = p[i] + level;
 						if (nVal < 0) nVal = 0;
 						if (nVal > 255) nVal = 255;
 						p[i] = (byte)nVal;

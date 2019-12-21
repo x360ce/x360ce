@@ -46,7 +46,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			return message
 				.To.Union(message.CC).Union(message.Bcc)
 				.Select(x => x.Address.ToUpper())
-				.Except(addresses).Count() > 0;
+				.Except(addresses).Any();
 		}
 
 		public Exception SendMail(string to, string subject, string body, bool isBodyHtml = false)

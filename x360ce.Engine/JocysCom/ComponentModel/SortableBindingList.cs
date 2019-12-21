@@ -211,6 +211,6 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index));
 		}
 
-    }
+	}
 
 }

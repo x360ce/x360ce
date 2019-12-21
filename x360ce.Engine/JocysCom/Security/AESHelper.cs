@@ -1,8 +1,9 @@
-﻿using System.Text;
-using System.Security.Cryptography;
+﻿using System;
+using System.Configuration;
 using System.IO;
 using System.IO.Compression;
-using System.Configuration;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace JocysCom.ClassLibrary.Security
 {
@@ -10,7 +11,7 @@ namespace JocysCom.ClassLibrary.Security
 	/// <summary>
 	/// UTF-8 is used as a default encoding (smaller Internet messaging size).
 	/// </summary>
-	public class AESHelper
+	public static class AESHelper
 	{
 
 		#region Shared Functions
@@ -66,11 +67,12 @@ namespace JocysCom.ClassLibrary.Security
 			// Rfc2898DeriveBytes generator based on HMACSHA1 by default.
 			// Ability to specify HMAC algorithm is available since .NET 4.7.2
 			var secretKey = new Rfc2898DeriveBytes(password, salt, 10);
-			// Create a cryptor from the existing SecretKey bytes by using
 			// 32 bytes (256 bits) for the secret key and
 			// 16 bytes (128 bits) for the initialization vector (IV).
 			var key = secretKey.GetBytes(provider.KeySize / 8);
 			var iv = secretKey.GetBytes(provider.BlockSize / 8);
+			secretKey.Dispose();
+			// Create a cryptor from the existing SecretKey bytes.
 			var cryptor = encrypt
 				? provider.CreateEncryptor(key, iv)
 				: provider.CreateDecryptor(key, iv);
@@ -94,9 +96,9 @@ namespace JocysCom.ClassLibrary.Security
 			var stream = new MemoryStream();
 			// Create a CryptoStream through which we are going to be processing our data.
 			var cryptoStream = new CryptoStream(stream, cryptor, CryptoStreamMode.Write);
-			// Start the crypting process.
+			// Start the encrypting or decrypting process.
 			cryptoStream.Write(inputBuffer, 0, inputBuffer.Length);
-			// Finish crypting.
+			// Finish encrypting or decrypting.
 			cryptoStream.FlushFinalBlock();
 			// Convert data from a memoryStream into a byte array.
 			var outputBuffer = stream.ToArray();
@@ -136,7 +138,8 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Encrypted bytes.</returns>
 		public static byte[] Encrypt(string password, byte[] bytes)
 		{
-			// Create a encryptor.
+			if (bytes == null)
+				throw new ArgumentNullException(nameof(bytes));
 			var encryptor = GetTransform(password, true);
 			var encryptedBytes = CipherStreamWrite(encryptor, bytes);
 			encryptor.Dispose();
@@ -173,7 +176,8 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Decrypted bytes.</returns>
 		public static byte[] Decrypt(string password, byte[] bytes)
 		{
-			// Create a encryptor.
+			if (bytes == null)
+				throw new ArgumentNullException(nameof(bytes));
 			var decryptor = GetTransform(password, false);
 			var decryptedBytes = CipherStreamWrite(decryptor, bytes);
 			decryptor.Dispose();
@@ -227,7 +231,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// Encrypt file.
 		/// </summary>
 		/// <param name="password">Password used to protect the file.</param>
-		/// <param name="inputFile">Unecrypted input file.</param>
+		/// <param name="inputFile">Unencrypted input file.</param>
 		/// <param name="outputFile">Encrypted output file.</param>
 		/// <param name="compress">Compress file before encryption</param>
 		public static void EncryptFile(string password, string inputFile, string outputFile, bool compress = false)
@@ -242,33 +246,27 @@ namespace JocysCom.ClassLibrary.Security
 			var output = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
 			try
 			{
-				DeflateStream gz = null;
 				var cs = new CryptoStream(output, encryptor, CryptoStreamMode.Write);
-				if (compress)
-					gz = new DeflateStream(cs, CompressionMode.Compress);
+				var gz = compress
+					? new DeflateStream(cs, CompressionMode.Compress, true)
+					: null;
 				int read;
 				// 4096 buffer preferable because the CPU cache can hold such amounts.
-				byte[] buffer = new byte[0x1000];
+				var buffer = new byte[0x1000];
 				while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
 				{
-					if (compress)
+					if (gz != null)
 						// Write data to the DeflateStream, which in turn writes to the underlying CryptoStream.
 						gz.Write(buffer, 0, read);
 					else
 						// Write data to the CryptoStream.
 						cs.Write(buffer, 0, read);
 				}
-				if (compress)
-				{
+				if (gz != null)
 					// Will close underlying stream 'cs' and 'output'.
 					gz.Close();
-
-				}
-				else
-				{
-					// Will close underlying stream 'output'.
-					cs.Close();
-				}
+				// Will close underlying stream 'output'.
+				cs.Close();
 			}
 			catch
 			{
@@ -285,7 +283,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// Decrypt file.
 		/// </summary>
 		/// <param name="password">Password used to protect the file.</param>
-		/// <param name="inputFile">Ecrypted input file.</param>
+		/// <param name="inputFile">Encrypted input file.</param>
 		/// <param name="outputFile">Decrypted output file.</param>
 		/// <param name="decompress">Decompress file after decryption</param>
 		// CWE-73: External Control of File Name or Path
@@ -303,12 +301,12 @@ namespace JocysCom.ClassLibrary.Security
 			try
 			{
 				var cs = new CryptoStream(input, decryptor, CryptoStreamMode.Read);
-				DeflateStream gz = null;
-				if (decompress)
-					gz = new DeflateStream(cs, CompressionMode.Decompress);
+				var gz = decompress
+					? new DeflateStream(cs, CompressionMode.Decompress, true)
+					: null;
 				int read;
 				// 4096 buffer preferable because the CPU cache can hold such amounts.
-				byte[] buffer = new byte[0x1000];
+				var buffer = new byte[0x1000];
 				if (decompress)
 				{
 					// Read data from the DeflateStream, which in turn reads from the underlying CryptoStream.
@@ -321,16 +319,11 @@ namespace JocysCom.ClassLibrary.Security
 					while ((read = cs.Read(buffer, 0, buffer.Length)) > 0)
 						output.Write(buffer, 0, read);
 				}
-				if (decompress)
-				{
+				if (gz != null)
 					// Will close underlying stream 'cs' and 'input'.
 					gz.Close();
-				}
-				else
-				{
-					// Will close underlying stream 'input'.
-					cs.Close();
-				}
+				// Will close underlying stream 'input'.
+				cs.Close();
 			}
 			catch
 			{

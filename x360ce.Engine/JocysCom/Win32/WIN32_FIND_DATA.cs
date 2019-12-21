@@ -22,5 +22,5 @@ namespace JocysCom.ClassLibrary.Win32
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
 		public string cAlternateFileName;
 	}
- 
+
 }

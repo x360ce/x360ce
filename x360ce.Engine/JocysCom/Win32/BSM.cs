@@ -1,11 +1,9 @@
-﻿using System;
-
-namespace JocysCom.ClassLibrary.Win32
+﻿namespace JocysCom.ClassLibrary.Win32
 {
 	/// <summary>
 	/// Recipients of the message.
 	/// </summary>
-	public enum BSM: int
+	public enum BSM : int
 	{
 		/// <summary>Broadcast to all system components.</summary>
 		BSM_ALLCOMPONENTS = 0x00000000,

@@ -575,11 +575,11 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			{
 				if (keepAliveTimer != null)
 				{
-					if (e.PropertyName == SocketSettings.GetName(x => x.KeepAliveEnabled))
+					if (e.PropertyName == nameof(Settings.KeepAliveEnabled))
 					{
 						keepAliveTimer.Enabled = Settings.KeepAliveEnabled;
 					}
-					else if (e.PropertyName == SocketSettings.GetName(x => x.KeepAliveInterval))
+					else if (e.PropertyName == nameof(Settings.KeepAliveInterval))
 					{
 						keepAliveTimer.Interval = Settings.KeepAliveInterval;
 					}
@@ -1912,8 +1912,8 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 					// Copy the bytes to the buffer associated with this SAEA object.
 					Buffer.BlockCopy(token.MessageToSendBytes, token.MessageBytesProcessed, args.Buffer, token.BufferOffset, bytesToSend);
 				}
-				IPEndPoint delRE = (IPEndPoint)token.DataHolder.DeliveryRemoteEndpoint;
-				IPEndPoint oriRE = (IPEndPoint)token.DataHolder.OriginalRemoteEndpoint;
+				IPEndPoint delRE = token.DataHolder.DeliveryRemoteEndpoint;
+				IPEndPoint oriRE = token.DataHolder.OriginalRemoteEndpoint;
 				// If delivery endpoint specified then...
 				if (delRE != null)
 				{

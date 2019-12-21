@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices;
-
-namespace JocysCom.ClassLibrary.Win32
+﻿namespace JocysCom.ClassLibrary.Win32
 {
 	/// <summary>
 	/// Registry property value types.

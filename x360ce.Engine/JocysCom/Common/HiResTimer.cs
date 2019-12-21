@@ -31,7 +31,7 @@ namespace JocysCom.ClassLibrary
 		public HiResTimer(int interval)
 		{
 			if (interval <= 0)
-				throw new ArgumentException("Invalid value", "interval");
+				throw new ArgumentException("Invalid value", nameof(interval));
 			_Interval = interval;
 		}
 
@@ -84,7 +84,7 @@ namespace JocysCom.ClassLibrary
 				if (_Interval == value)
 					return;
 				if (value <= 0)
-					throw new ArgumentException("Invalid value", "interval");
+					throw new ArgumentException("Invalid value", nameof(Interval));
 				_Interval = value;
 				UpdateTimer();
 			}
@@ -158,12 +158,12 @@ namespace JocysCom.ClassLibrary
 			currentIndex = 0;
 			stopwatch = new Stopwatch();
 			stopwatch.Restart();
-			// Get hz.
+			// Get Hz.
 			var hz = 1000 / Interval;
 			// Run for two seconds.
 			var maxMarks = hz * 2;
-			Array.Resize(ref marks, (int)maxMarks);
-			// Get amount of ticks to wait inbetween actions.
+			Array.Resize(ref marks, maxMarks);
+			// Get amount of ticks to wait in-between actions.
 			ticksToWait = Stopwatch.Frequency * Interval / 1000;
 			StartTimer(OnTestElapsed);
 		}
@@ -184,7 +184,7 @@ namespace JocysCom.ClassLibrary
 					var waited = marks[i + 1] - marks[i];
 					// Get difference:
 					// positive - waited too long.
-					// negatice - waited not enougth.
+					// negative - waited not enough.
 					var diff = waited - ticksToWait;
 					if (diff < minDiff)
 						minDiff = diff;
@@ -195,12 +195,12 @@ namespace JocysCom.ClassLibrary
 				}
 				var averageInaccuracyTicks = totalDiff / marks.Length - 1;
 				// Ticks per second.
-				var ms = (float)averageInaccuracyTicks * 1000f / (float)Stopwatch.Frequency;
-				var msPc = (float)ms / (float)Interval;
-				var msMin = (float)minDiff * 1000f / (float)Stopwatch.Frequency;
-				var msMax = (float)maxDiff * 1000f / (float)Stopwatch.Frequency;
+				var ms = (float)averageInaccuracyTicks * 1000f / Stopwatch.Frequency;
+				var msPc = ms / Interval;
+				var msMin = (float)minDiff * 1000f / Stopwatch.Frequency;
+				var msMax = (float)maxDiff * 1000f / Stopwatch.Frequency;
 				var totalRuntimeTicks = marks[marks.Length - 1] - marks[0];
-				var totalRuntimeMs = (float)totalRuntimeTicks * 1000f / (float)Stopwatch.Frequency;
+				var totalRuntimeMs = totalRuntimeTicks * 1000f / Stopwatch.Frequency;
 				var sb = new StringBuilder();
 				sb.AppendFormat("Ticks per Second = {0}\r\n", Stopwatch.Frequency);
 				sb.AppendFormat("Timer Interval = {0}\r\n", Interval);
@@ -247,7 +247,6 @@ namespace JocysCom.ClassLibrary
 		}
 
 		#endregion
-
 
 		#region  Hi Resolution timer.
 
@@ -304,7 +303,7 @@ namespace JocysCom.ClassLibrary
 			{
 				if (_TimerId <= 0)
 					return;
-				NativeMethods.timeKillEvent(_TimerId);
+				var unused = NativeMethods.timeKillEvent(_TimerId);
 				_TimerId = 0;
 			}
 		}
@@ -321,7 +320,7 @@ namespace JocysCom.ClassLibrary
 				// Kill timer.
 				if (_TimerId > 0)
 				{
-					NativeMethods.timeKillEvent(_TimerId);
+					var unused = NativeMethods.timeKillEvent(_TimerId);
 					_TimerId = 0;
 				}
 				// Must create callback or timer will crash.
