@@ -458,7 +458,7 @@ namespace x360ce.App
 						//}
 
 					}
-					//BeginInvoke((MethodInvoker)delegate()
+					//BeginInvoke((Action)delegate()
 					//{
 					//	XInput.FreeLibrary();    
 					//});

@@ -30,7 +30,7 @@ namespace x360ce.App.Controls
 			SettingsDataGridView.SelectionChanged -= SettingsDataGridView_SelectionChanged;
 			SettingsDataGridView.DataSource = SettingsManager.UserSettings.Items;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-			//BeginInvoke((MethodInvoker)delegate ()
+			//BeginInvoke((Action)delegate ()
 			//{
 			SettingsDataGridView.SelectionChanged += SettingsDataGridView_SelectionChanged;
 			SettingsDataGridView_SelectionChanged(SettingsDataGridView, new EventArgs());

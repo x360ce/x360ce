@@ -67,7 +67,7 @@ namespace x360ce.App.Controls
 		void ScanGames(object state)
 		{
 			string[] paths = null;
-			Invoke((MethodInvoker)delegate ()
+			Invoke((Action)delegate ()
 			{
 				ScanProgressLabel.Visible = true;
 				ScanGamesButton.Enabled = false;
@@ -83,7 +83,7 @@ namespace x360ce.App.Controls
 				// Don't allow to scan windows folder.
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 				if (path.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
-                    continue;
+					continue;
 				var di = new System.IO.DirectoryInfo(path);
 				// Skip folders if don't exists.
 				if (!di.Exists) continue;
@@ -107,7 +107,7 @@ namespace x360ce.App.Controls
 						// If file doesn't exist in the game list then continue.
 						if (game == null)
 						{
-							Invoke((MethodInvoker)delegate ()
+							Invoke((Action)delegate ()
 							{
 								var scanner = new XInputMaskScanner();
 								game = scanner.FromDisk(exe.FullName);
@@ -126,14 +126,14 @@ namespace x360ce.App.Controls
 							updated++;
 						}
 					}
-					Invoke((MethodInvoker)delegate ()
-						{
-							ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
-						});
+					Invoke((Action)delegate ()
+					{
+						ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
+					});
 				}
 				SettingManager.Save();
 			}
-			Invoke((MethodInvoker)delegate ()
+			Invoke((Action)delegate ()
 			{
 				ScanGamesButton.Enabled = true;
 				ScanProgressLabel.Visible = false;
@@ -611,10 +611,10 @@ namespace x360ce.App.Controls
 
 		void ProgramsWebServiceClient_GetProgramsCompleted(object sender, SoapHttpClientEventArgs e)
 		{
-            // Make sure method is executed on the same thread as this control.
-            ControlsHelper.BeginInvoke(() =>
-            {
-                MainForm.Current.LoadingCircle = false;
+			// Make sure method is executed on the same thread as this control.
+			ControlsHelper.BeginInvoke(() =>
+			{
+				MainForm.Current.LoadingCircle = false;
 				if (e.Error != null)
 				{
 					var error = e.Error.Message;

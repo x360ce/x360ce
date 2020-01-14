@@ -164,12 +164,12 @@ namespace x360ce.App.Controls
 			int deadZone = 0;
 			int antiDeadZone = 0;
 			int sensitivity = 0;
-			Invoke(((MethodInvoker)delegate ()
+			Invoke((Action)delegate ()
 			{
 				deadZone = (int)DeadZoneNumericUpDown.Value;
 				antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
 				sensitivity = (int)SensitivityNumericUpDown.Value;
-			}));
+			});
 			var borders = MainPictureBox.BorderStyle == System.Windows.Forms.BorderStyle.None ? 0 : 2;
 			var w = MainPictureBox.Width - borders;
 			var h = MainPictureBox.Height - borders;
@@ -204,11 +204,11 @@ namespace x360ce.App.Controls
 				var radius = 0.5f;
 				DrawDot(g, i, y, radius, xInputPath);
 			}
-			Invoke(((MethodInvoker)delegate ()
+			Invoke((Action)delegate ()
 			{
 				LastBackgroundImage = bmp;
 				MainPictureBox.BackgroundImage = Enabled ? LastBackgroundImage : null;
-			}));
+			});
 		}
 
 		void DrawDLineLine(Graphics g, float x)

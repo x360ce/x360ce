@@ -82,7 +82,7 @@ namespace x360ce.App.Controls
 		{
 			if (MainForm.Current.InvokeRequired)
 			{
-				Invoke((MethodInvoker)delegate ()
+				Invoke((Action)delegate ()
 				{
 					Scanner_Progress(sender, e);
 				});
@@ -183,7 +183,7 @@ namespace x360ce.App.Controls
 		void ScanGames(object state)
 		{
 			var exe = state as string;
-			Invoke((MethodInvoker)delegate ()
+			Invoke((Action)delegate ()
 			{
 				ScanProgressLevel0Label.Text = "...";
 				ScanProgressLevel1Label.Text = "";

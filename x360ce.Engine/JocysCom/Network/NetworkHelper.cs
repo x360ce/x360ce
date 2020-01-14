@@ -306,6 +306,8 @@ namespace JocysCom.ClassLibrary.Network
 
 		#endregion
 
+		#region Get Information
+
 		public static string GetProcessName(int pid)
 		{
 			var processHandle = NativeMethods.OpenProcess(0x0400 | 0x0010, false, pid);
@@ -384,7 +386,6 @@ namespace JocysCom.ClassLibrary.Network
 			return rows;
 		}
 
-
 		public static NetStatInfo[] GetExtendedUdpTable(bool sorted = false)
 		{
 			IntPtr table = IntPtr.Zero;
@@ -431,6 +432,8 @@ namespace JocysCom.ClassLibrary.Network
 
 			return rows;
 		}
+
+		#endregion
 
 		#region TCP socket enumerations and structures
 
@@ -524,6 +527,75 @@ namespace JocysCom.ClassLibrary.Network
 			[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct,
 				SizeConst = 1)]
 			public MIB_UDPROW_OWNER_PID[] table;
+		}
+
+		#endregion
+
+		#region Validate
+
+		/// <summary>
+		/// Return true if IP Address falls inside the CIDR range.
+		/// var inRange = IsInRange("192.168.10.1", "10.10.10.140, 10.16.11.128/25, 192.168.10.0/24"); // true  - 192.168.10.0/24
+		/// </summary>
+		/// <param name="address">IP address to check.</param>
+		/// <param name="networks">IP Addresses or Networks list.</param>
+		/// <returns>True if IP Address falls inside the CIDR range.</returns>
+		/// <remarks>
+		/// Example:
+		/// bool inRange;
+		/// var networks = "10.10.10.140, 10.16.11.128/25, 192.168.10.0/24";
+		/// inRange = IsInRange("192.168.10.1", networks); // true  - 192.168.10.0/24
+		/// inRange = IsInRange("10.16.11.120", networks); // false
+		/// inRange = IsInRange("10.16.11.128", networks); // true - 10.16.11.128/25 
+		/// inRange = IsInRange("10.16.11.255", networks); // true - 10.16.11.128/25
+		/// inRange = IsInRange("10.16.12.130", networks); // false
+		/// inRange = IsInRange("10.10.10.140", networks); // true - 10.10.10.140
+		/// </remarks>
+		public static bool IsInRange(string address, string networks)
+		{
+			IPAddress a;
+			if (!IPAddress.TryParse(address, out a))
+				return false;
+			// Get address as integer.
+			var aBytes = a.GetAddressBytes().Reverse().ToArray();
+			var aInt = BitConverter.ToInt32(aBytes, 0);
+			// Split list. Support various separators.
+			var list = networks
+				.Split(new char[] { ';', ',', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(x => x.Trim())
+				.Where(x => !string.IsNullOrEmpty(x))
+				.ToList();
+			foreach (string network in list)
+			{
+				// If network specified.
+				if (network.Contains("/"))
+				{
+					// Get network and mask strings.
+					var nString = network.Split('/')[0].Trim();
+					var mString = network.Split('/')[1].Trim();
+					IPAddress n;
+					if (!IPAddress.TryParse(nString, out n))
+						continue;
+					int m;
+					if (!int.TryParse(mString, out m))
+						continue;
+					// Get network as integer.
+					var nBytes = n.GetAddressBytes().Reverse().ToArray();
+					var nInt = BitConverter.ToInt32(nBytes, 0);
+					var networkMask = uint.MaxValue << 32 - m;
+					// IF IP Address belong to the same network then...
+					if ((aInt & networkMask) == (nInt & networkMask))
+						return true;
+				}
+				// Compare with IP address IP Address.
+				else
+				{
+					// If match then...
+					if (network == address)
+						return true;
+				}
+			}
+			return false;
 		}
 
 		#endregion

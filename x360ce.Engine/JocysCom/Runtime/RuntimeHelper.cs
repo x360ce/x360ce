@@ -314,7 +314,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns></returns>
 		public static ChangeState GetValueChangeSet(Type type, object oldValue, object newValue)
 		{
-			ChangeState state = new ChangeState();
+			var state = new ChangeState();
 			state.ValueType = type;
 			state.oldValue = oldValue;
 			state.newValue = newValue;
@@ -335,9 +335,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns></returns>
 		public static System.Data.EntityState GetClassChangeState(object item1, object item2)
 		{
-			List<ChangeState> list = RuntimeHelper.CompareProperties(item1, item2);
-			EntityState state = EntityState.Unchanged;
-			List<EntityState> states = list.Select(x => x.State).Distinct().ToList();
+			var list = CompareProperties(item1, item2);
+			var state = EntityState.Unchanged;
+			var states = list.Select(x => x.State).Distinct().ToList();
 			states.Remove(EntityState.Unchanged);
 			if (states.Count == 0) return state;
 			if (states.Count == 1) return states[0];
