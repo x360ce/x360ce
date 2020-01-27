@@ -184,8 +184,6 @@ namespace x360ce.App.Controls
             // 
             // LogUserControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.LogDataGridView);
             this.Controls.Add(this.LogToolStrip);
             this.DoubleBuffered = true;

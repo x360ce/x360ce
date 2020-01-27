@@ -71,6 +71,7 @@ namespace x360ce.App
 			this.MappedDevicesLabel = new System.Windows.Forms.ToolStripLabel();
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
 			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
+			this.panel1 = new System.Windows.Forms.Panel();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -85,13 +86,11 @@ namespace x360ce.App
 			((System.ComponentModel.ISupportInitialize)(this.HeaderPictureBox)).BeginInit();
 			this.TrayContextMenuStrip.SuspendLayout();
 			this.GamesToolStrip.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// MainTabControl
 			// 
-			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.MainTabControl.Controls.Add(this.Pad1TabPage);
 			this.MainTabControl.Controls.Add(this.Pad2TabPage);
 			this.MainTabControl.Controls.Add(this.Pad3TabPage);
@@ -105,11 +104,12 @@ namespace x360ce.App
 			this.MainTabControl.Controls.Add(this.HelpTabPage);
 			this.MainTabControl.Controls.Add(this.AboutTabPage);
 			this.MainTabControl.Controls.Add(this.IssuesTabPage);
+			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.ImageList = this.BuletImageList;
-			this.MainTabControl.Location = new System.Drawing.Point(6, 92);
+			this.MainTabControl.Location = new System.Drawing.Point(3, 3);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
-			this.MainTabControl.Size = new System.Drawing.Size(800, 618);
+			this.MainTabControl.Size = new System.Drawing.Size(804, 611);
 			this.MainTabControl.TabIndex = 1;
 			// 
 			// Pad1TabPage
@@ -117,7 +117,7 @@ namespace x360ce.App
 			this.Pad1TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad1TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad1TabPage.Name = "Pad1TabPage";
-			this.Pad1TabPage.Size = new System.Drawing.Size(792, 591);
+			this.Pad1TabPage.Size = new System.Drawing.Size(796, 584);
 			this.Pad1TabPage.TabIndex = 0;
 			this.Pad1TabPage.Text = "PAD 1";
 			// 
@@ -126,7 +126,7 @@ namespace x360ce.App
 			this.Pad2TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad2TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad2TabPage.Name = "Pad2TabPage";
-			this.Pad2TabPage.Size = new System.Drawing.Size(792, 602);
+			this.Pad2TabPage.Size = new System.Drawing.Size(796, 584);
 			this.Pad2TabPage.TabIndex = 0;
 			this.Pad2TabPage.Text = "PAD 2";
 			// 
@@ -135,7 +135,7 @@ namespace x360ce.App
 			this.Pad3TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad3TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad3TabPage.Name = "Pad3TabPage";
-			this.Pad3TabPage.Size = new System.Drawing.Size(792, 602);
+			this.Pad3TabPage.Size = new System.Drawing.Size(796, 584);
 			this.Pad3TabPage.TabIndex = 0;
 			this.Pad3TabPage.Text = "PAD 3";
 			// 
@@ -144,7 +144,7 @@ namespace x360ce.App
 			this.Pad4TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad4TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad4TabPage.Name = "Pad4TabPage";
-			this.Pad4TabPage.Size = new System.Drawing.Size(792, 602);
+			this.Pad4TabPage.Size = new System.Drawing.Size(796, 584);
 			this.Pad4TabPage.TabIndex = 0;
 			this.Pad4TabPage.Text = "PAD 4";
 			// 
@@ -154,7 +154,7 @@ namespace x360ce.App
 			this.OptionsTabPage.Controls.Add(this.OptionsPanel);
 			this.OptionsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.OptionsTabPage.Name = "OptionsTabPage";
-			this.OptionsTabPage.Size = new System.Drawing.Size(792, 602);
+			this.OptionsTabPage.Size = new System.Drawing.Size(796, 584);
 			this.OptionsTabPage.TabIndex = 0;
 			this.OptionsTabPage.Text = "Options";
 			// 
@@ -163,7 +163,7 @@ namespace x360ce.App
 			this.OptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.OptionsPanel.Location = new System.Drawing.Point(0, 0);
 			this.OptionsPanel.Name = "OptionsPanel";
-			this.OptionsPanel.Size = new System.Drawing.Size(792, 602);
+			this.OptionsPanel.Size = new System.Drawing.Size(796, 584);
 			this.OptionsPanel.TabIndex = 30;
 			// 
 			// GamesTabPage
@@ -173,7 +173,7 @@ namespace x360ce.App
 			this.GamesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.GamesTabPage.Name = "GamesTabPage";
 			this.GamesTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.GamesTabPage.Size = new System.Drawing.Size(792, 602);
+			this.GamesTabPage.Size = new System.Drawing.Size(796, 584);
 			this.GamesTabPage.TabIndex = 2;
 			this.GamesTabPage.Text = "Games";
 			// 
@@ -182,7 +182,7 @@ namespace x360ce.App
 			this.GameSettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GameSettingsPanel.Location = new System.Drawing.Point(3, 3);
 			this.GameSettingsPanel.Name = "GameSettingsPanel";
-			this.GameSettingsPanel.Size = new System.Drawing.Size(786, 596);
+			this.GameSettingsPanel.Size = new System.Drawing.Size(790, 578);
 			this.GameSettingsPanel.TabIndex = 1;
 			// 
 			// ProgramsTabPage
@@ -190,7 +190,7 @@ namespace x360ce.App
 			this.ProgramsTabPage.Controls.Add(this.ProgramsPanel);
 			this.ProgramsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.ProgramsTabPage.Name = "ProgramsTabPage";
-			this.ProgramsTabPage.Size = new System.Drawing.Size(792, 602);
+			this.ProgramsTabPage.Size = new System.Drawing.Size(796, 583);
 			this.ProgramsTabPage.TabIndex = 7;
 			this.ProgramsTabPage.Text = "Programs";
 			this.ProgramsTabPage.UseVisualStyleBackColor = true;
@@ -200,7 +200,7 @@ namespace x360ce.App
 			this.ProgramsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ProgramsPanel.Location = new System.Drawing.Point(0, 0);
 			this.ProgramsPanel.Name = "ProgramsPanel";
-			this.ProgramsPanel.Size = new System.Drawing.Size(792, 602);
+			this.ProgramsPanel.Size = new System.Drawing.Size(796, 583);
 			this.ProgramsPanel.TabIndex = 0;
 			// 
 			// DevicesTabPage
@@ -209,7 +209,7 @@ namespace x360ce.App
 			this.DevicesTabPage.Controls.Add(this.DevicesPanel);
 			this.DevicesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.DevicesTabPage.Name = "DevicesTabPage";
-			this.DevicesTabPage.Size = new System.Drawing.Size(792, 602);
+			this.DevicesTabPage.Size = new System.Drawing.Size(796, 583);
 			this.DevicesTabPage.TabIndex = 4;
 			this.DevicesTabPage.Text = "Devices";
 			// 
@@ -218,7 +218,7 @@ namespace x360ce.App
 			this.DevicesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DevicesPanel.Location = new System.Drawing.Point(0, 0);
 			this.DevicesPanel.Name = "DevicesPanel";
-			this.DevicesPanel.Size = new System.Drawing.Size(792, 602);
+			this.DevicesPanel.Size = new System.Drawing.Size(796, 583);
 			this.DevicesPanel.TabIndex = 0;
 			// 
 			// SettingsTabPage
@@ -226,7 +226,7 @@ namespace x360ce.App
 			this.SettingsTabPage.Controls.Add(this.SettingsGridPanel);
 			this.SettingsTabPage.Location = new System.Drawing.Point(4, 23);
 			this.SettingsTabPage.Name = "SettingsTabPage";
-			this.SettingsTabPage.Size = new System.Drawing.Size(792, 602);
+			this.SettingsTabPage.Size = new System.Drawing.Size(796, 583);
 			this.SettingsTabPage.TabIndex = 1;
 			this.SettingsTabPage.Text = "Settings";
 			// 
@@ -235,7 +235,7 @@ namespace x360ce.App
 			this.SettingsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsGridPanel.Location = new System.Drawing.Point(0, 0);
 			this.SettingsGridPanel.Name = "SettingsGridPanel";
-			this.SettingsGridPanel.Size = new System.Drawing.Size(792, 602);
+			this.SettingsGridPanel.Size = new System.Drawing.Size(796, 583);
 			this.SettingsGridPanel.TabIndex = 0;
 			// 
 			// CloudTabPage
@@ -243,7 +243,7 @@ namespace x360ce.App
 			this.CloudTabPage.Controls.Add(this.CloudPanel);
 			this.CloudTabPage.Location = new System.Drawing.Point(4, 23);
 			this.CloudTabPage.Name = "CloudTabPage";
-			this.CloudTabPage.Size = new System.Drawing.Size(792, 602);
+			this.CloudTabPage.Size = new System.Drawing.Size(796, 583);
 			this.CloudTabPage.TabIndex = 6;
 			this.CloudTabPage.Text = "Cloud";
 			this.CloudTabPage.UseVisualStyleBackColor = true;
@@ -253,7 +253,7 @@ namespace x360ce.App
 			this.CloudPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.CloudPanel.Location = new System.Drawing.Point(0, 0);
 			this.CloudPanel.Name = "CloudPanel";
-			this.CloudPanel.Size = new System.Drawing.Size(792, 602);
+			this.CloudPanel.Size = new System.Drawing.Size(796, 583);
 			this.CloudPanel.TabIndex = 0;
 			// 
 			// HelpTabPage
@@ -261,7 +261,7 @@ namespace x360ce.App
 			this.HelpTabPage.Controls.Add(this.HelpRichTextBox);
 			this.HelpTabPage.Location = new System.Drawing.Point(4, 23);
 			this.HelpTabPage.Name = "HelpTabPage";
-			this.HelpTabPage.Size = new System.Drawing.Size(792, 602);
+			this.HelpTabPage.Size = new System.Drawing.Size(796, 583);
 			this.HelpTabPage.TabIndex = 0;
 			this.HelpTabPage.Text = "Help";
 			// 
@@ -274,7 +274,7 @@ namespace x360ce.App
 			this.HelpRichTextBox.Margin = new System.Windows.Forms.Padding(0);
 			this.HelpRichTextBox.Name = "HelpRichTextBox";
 			this.HelpRichTextBox.ReadOnly = true;
-			this.HelpRichTextBox.Size = new System.Drawing.Size(792, 602);
+			this.HelpRichTextBox.Size = new System.Drawing.Size(796, 583);
 			this.HelpRichTextBox.TabIndex = 0;
 			this.HelpRichTextBox.Text = "";
 			// 
@@ -283,7 +283,7 @@ namespace x360ce.App
 			this.AboutTabPage.BackColor = System.Drawing.Color.Transparent;
 			this.AboutTabPage.Location = new System.Drawing.Point(4, 23);
 			this.AboutTabPage.Name = "AboutTabPage";
-			this.AboutTabPage.Size = new System.Drawing.Size(792, 602);
+			this.AboutTabPage.Size = new System.Drawing.Size(796, 583);
 			this.AboutTabPage.TabIndex = 0;
 			this.AboutTabPage.Text = "About";
 			// 
@@ -294,7 +294,7 @@ namespace x360ce.App
 			this.IssuesTabPage.ImageKey = "refresh_16x16.png";
 			this.IssuesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.IssuesTabPage.Name = "IssuesTabPage";
-			this.IssuesTabPage.Size = new System.Drawing.Size(792, 602);
+			this.IssuesTabPage.Size = new System.Drawing.Size(796, 583);
 			this.IssuesTabPage.TabIndex = 8;
 			this.IssuesTabPage.Text = "Issues";
 			// 
@@ -303,7 +303,7 @@ namespace x360ce.App
 			this.IssuesPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.IssuesPanel.Location = new System.Drawing.Point(0, 0);
 			this.IssuesPanel.Name = "IssuesPanel";
-			this.IssuesPanel.Size = new System.Drawing.Size(792, 602);
+			this.IssuesPanel.Size = new System.Drawing.Size(796, 583);
 			this.IssuesPanel.TabIndex = 0;
 			// 
 			// BuletImageList
@@ -323,6 +323,7 @@ namespace x360ce.App
 			// 
 			// MainStatusStrip
 			// 
+			this.MainStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.MainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusTimerLabel,
             this.toolStripStatusLabel2,
@@ -335,9 +336,9 @@ namespace x360ce.App
             this.StatusIsAdminLabel,
             this.StatusIniLabel,
             this.StatusDllLabel});
-			this.MainStatusStrip.Location = new System.Drawing.Point(0, 717);
+			this.MainStatusStrip.Location = new System.Drawing.Point(0, 711);
 			this.MainStatusStrip.Name = "MainStatusStrip";
-			this.MainStatusStrip.Size = new System.Drawing.Size(810, 24);
+			this.MainStatusStrip.Size = new System.Drawing.Size(810, 30);
 			this.MainStatusStrip.SizingGrip = false;
 			this.MainStatusStrip.TabIndex = 0;
 			this.MainStatusStrip.Text = "statusStrip1";
@@ -345,66 +346,66 @@ namespace x360ce.App
 			// StatusTimerLabel
 			// 
 			this.StatusTimerLabel.Name = "StatusTimerLabel";
-			this.StatusTimerLabel.Size = new System.Drawing.Size(97, 19);
+			this.StatusTimerLabel.Size = new System.Drawing.Size(123, 24);
 			this.StatusTimerLabel.Text = "StatusTimerLabel";
 			// 
 			// toolStripStatusLabel2
 			// 
 			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			this.toolStripStatusLabel2.Size = new System.Drawing.Size(87, 19);
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(1, 24);
 			this.toolStripStatusLabel2.Spring = true;
 			// 
 			// UpdateFrequencyLabel
 			// 
 			this.UpdateFrequencyLabel.Name = "UpdateFrequencyLabel";
-			this.UpdateFrequencyLabel.Size = new System.Drawing.Size(33, 19);
+			this.UpdateFrequencyLabel.Size = new System.Drawing.Size(42, 24);
 			this.UpdateFrequencyLabel.Text = "Hz: 0";
 			// 
 			// FormUpdateFrequencyLabel
 			// 
 			this.FormUpdateFrequencyLabel.Name = "FormUpdateFrequencyLabel";
-			this.FormUpdateFrequencyLabel.Size = new System.Drawing.Size(33, 19);
+			this.FormUpdateFrequencyLabel.Size = new System.Drawing.Size(42, 24);
 			this.FormUpdateFrequencyLabel.Text = "Hz: 0";
 			// 
 			// UpdateDevicesStatusLabel
 			// 
 			this.UpdateDevicesStatusLabel.Name = "UpdateDevicesStatusLabel";
-			this.UpdateDevicesStatusLabel.Size = new System.Drawing.Size(27, 19);
+			this.UpdateDevicesStatusLabel.Size = new System.Drawing.Size(35, 24);
 			this.UpdateDevicesStatusLabel.Text = "D: 0";
 			// 
 			// CloudMessagesLabel
 			// 
 			this.CloudMessagesLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
 			this.CloudMessagesLabel.Name = "CloudMessagesLabel";
-			this.CloudMessagesLabel.Size = new System.Drawing.Size(34, 19);
+			this.CloudMessagesLabel.Size = new System.Drawing.Size(41, 24);
 			this.CloudMessagesLabel.Text = "M: 0";
 			// 
 			// StatusEventsLabel
 			// 
 			this.StatusEventsLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
 			this.StatusEventsLabel.Name = "StatusEventsLabel";
-			this.StatusEventsLabel.Size = new System.Drawing.Size(105, 19);
+			this.StatusEventsLabel.Size = new System.Drawing.Size(131, 24);
 			this.StatusEventsLabel.Text = "StatusEventsLabel";
 			// 
 			// StatusSaveLabel
 			// 
 			this.StatusSaveLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
 			this.StatusSaveLabel.Name = "StatusSaveLabel";
-			this.StatusSaveLabel.Size = new System.Drawing.Size(95, 19);
+			this.StatusSaveLabel.Size = new System.Drawing.Size(120, 24);
 			this.StatusSaveLabel.Text = "StatusSaveLabel";
 			// 
 			// StatusIsAdminLabel
 			// 
 			this.StatusIsAdminLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
 			this.StatusIsAdminLabel.Name = "StatusIsAdminLabel";
-			this.StatusIsAdminLabel.Size = new System.Drawing.Size(115, 19);
+			this.StatusIsAdminLabel.Size = new System.Drawing.Size(143, 24);
 			this.StatusIsAdminLabel.Text = "StatusIsAdminLabel";
 			// 
 			// StatusIniLabel
 			// 
 			this.StatusIniLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
 			this.StatusIniLabel.Name = "StatusIniLabel";
-			this.StatusIniLabel.Size = new System.Drawing.Size(84, 19);
+			this.StatusIniLabel.Size = new System.Drawing.Size(105, 24);
 			this.StatusIniLabel.Text = "StatusIniLabel";
 			this.StatusIniLabel.DoubleClick += new System.EventHandler(this.StatusIniLabel_DoubleClick);
 			// 
@@ -412,7 +413,7 @@ namespace x360ce.App
 			// 
 			this.StatusDllLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
 			this.StatusDllLabel.Name = "StatusDllLabel";
-			this.StatusDllLabel.Size = new System.Drawing.Size(85, 19);
+			this.StatusDllLabel.Size = new System.Drawing.Size(108, 24);
 			this.StatusDllLabel.Text = "StatusDllLabel";
 			// 
 			// HelpBodyLabel
@@ -465,18 +466,19 @@ namespace x360ce.App
 			// 
 			// TrayContextMenuStrip
 			// 
+			this.TrayContextMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.TrayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.OpenApplicationToolStripMenuItem,
             this.ExitToolStripMenuItem});
 			this.TrayContextMenuStrip.Name = "TrayContextMenuStrip";
-			this.TrayContextMenuStrip.Size = new System.Drawing.Size(170, 48);
+			this.TrayContextMenuStrip.Size = new System.Drawing.Size(204, 56);
 			// 
 			// OpenApplicationToolStripMenuItem
 			// 
 			this.OpenApplicationToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.OpenApplicationToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.app_16x16;
 			this.OpenApplicationToolStripMenuItem.Name = "OpenApplicationToolStripMenuItem";
-			this.OpenApplicationToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+			this.OpenApplicationToolStripMenuItem.Size = new System.Drawing.Size(203, 26);
 			this.OpenApplicationToolStripMenuItem.Text = "Open Application";
 			this.OpenApplicationToolStripMenuItem.Click += new System.EventHandler(this.OpenApplicationToolStripMenuItem_Click);
 			// 
@@ -484,7 +486,7 @@ namespace x360ce.App
 			// 
 			this.ExitToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.exit_16x16;
 			this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-			this.ExitToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+			this.ExitToolStripMenuItem.Size = new System.Drawing.Size(203, 26);
 			this.ExitToolStripMenuItem.Text = "Exit";
 			this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
 			// 
@@ -507,6 +509,7 @@ namespace x360ce.App
 			// GamesToolStrip
 			// 
 			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.GamesToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SaveAllButton,
             this.TestButton,
@@ -517,7 +520,7 @@ namespace x360ce.App
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 2, 4, 0);
 			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.GamesToolStrip.Size = new System.Drawing.Size(810, 26);
+			this.GamesToolStrip.Size = new System.Drawing.Size(810, 30);
 			this.GamesToolStrip.TabIndex = 25;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
 			this.GamesToolStrip.Resize += new System.EventHandler(this.GamesToolStrip_Resize);
@@ -530,7 +533,7 @@ namespace x360ce.App
 			this.SaveAllButton.Margin = new System.Windows.Forms.Padding(1);
 			this.SaveAllButton.Name = "SaveAllButton";
 			this.SaveAllButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-			this.SaveAllButton.Size = new System.Drawing.Size(68, 22);
+			this.SaveAllButton.Size = new System.Drawing.Size(86, 26);
 			this.SaveAllButton.Text = "Save All";
 			this.SaveAllButton.Click += new System.EventHandler(this.SaveAllButton_Click);
 			// 
@@ -543,21 +546,21 @@ namespace x360ce.App
 			this.TestButton.Margin = new System.Windows.Forms.Padding(1);
 			this.TestButton.Name = "TestButton";
 			this.TestButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-			this.TestButton.Size = new System.Drawing.Size(56, 22);
+			this.TestButton.Size = new System.Drawing.Size(68, 26);
 			this.TestButton.Text = "Test...";
 			this.TestButton.Click += new System.EventHandler(this.TestButton_Click);
 			// 
 			// MappedDevicesLabel
 			// 
 			this.MappedDevicesLabel.Name = "MappedDevicesLabel";
-			this.MappedDevicesLabel.Size = new System.Drawing.Size(41, 21);
+			this.MappedDevicesLabel.Size = new System.Drawing.Size(51, 25);
 			this.MappedDevicesLabel.Text = "Game:";
 			// 
 			// GameToCustomizeComboBox
 			// 
 			this.GameToCustomizeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.GameToCustomizeComboBox.Name = "GameToCustomizeComboBox";
-			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(360, 24);
+			this.GameToCustomizeComboBox.Size = new System.Drawing.Size(360, 28);
 			// 
 			// AddGameButton
 			// 
@@ -568,18 +571,27 @@ namespace x360ce.App
 			this.AddGameButton.Margin = new System.Windows.Forms.Padding(1);
 			this.AddGameButton.Name = "AddGameButton";
 			this.AddGameButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-			this.AddGameButton.Size = new System.Drawing.Size(92, 22);
+			this.AddGameButton.Size = new System.Drawing.Size(113, 26);
 			this.AddGameButton.Text = "Add Game...";
 			this.AddGameButton.Click += new System.EventHandler(this.AddGameButton_Click);
 			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this.MainTabControl);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(0, 94);
+			this.panel1.Name = "panel1";
+			this.panel1.Padding = new System.Windows.Forms.Padding(3);
+			this.panel1.Size = new System.Drawing.Size(810, 617);
+			this.panel1.TabIndex = 26;
+			// 
 			// MainForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(810, 741);
+			this.Controls.Add(this.panel1);
 			this.Controls.Add(this.GamesToolStrip);
 			this.Controls.Add(this.MainStatusStrip);
-			this.Controls.Add(this.MainTabControl);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
 			this.MinimumSize = new System.Drawing.Size(700, 780);
@@ -589,9 +601,9 @@ namespace x360ce.App
 			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.Shown += new System.EventHandler(this.MainForm_Shown);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
-			this.Controls.SetChildIndex(this.MainTabControl, 0);
 			this.Controls.SetChildIndex(this.MainStatusStrip, 0);
 			this.Controls.SetChildIndex(this.GamesToolStrip, 0);
+			this.Controls.SetChildIndex(this.panel1, 0);
 			this.MainTabControl.ResumeLayout(false);
 			this.OptionsTabPage.ResumeLayout(false);
 			this.GamesTabPage.ResumeLayout(false);
@@ -608,6 +620,7 @@ namespace x360ce.App
 			this.TrayContextMenuStrip.ResumeLayout(false);
 			this.GamesToolStrip.ResumeLayout(false);
 			this.GamesToolStrip.PerformLayout();
+			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -666,5 +679,6 @@ namespace x360ce.App
 		private ToolStripButton TestButton;
 		private ToolStripStatusLabel FormUpdateFrequencyLabel;
 		private ToolStripButton AddGameButton;
+		private Panel panel1;
 	}
 }

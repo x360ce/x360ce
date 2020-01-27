@@ -73,12 +73,18 @@ namespace x360ce.App
 
 		public const string arg_WindowState = "WindowState";
 
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		private static extern bool SetProcessDPIAware();
+
+
 		static void StartApp(string[] args)
 		{
 			if (!RuntimePolicyHelper.LegacyV2RuntimeEnabledSuccessfully)
 			{
 				// Failed to enable useLegacyV2RuntimeActivationPolicy at runtime.
 			}
+			if (Environment.OSVersion.Version.Major >= 6)
+				SetProcessDPIAware();
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			// Requires System.Configuration.Installl reference.

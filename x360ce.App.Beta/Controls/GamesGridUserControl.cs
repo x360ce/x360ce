@@ -19,6 +19,8 @@ namespace x360ce.App.Controls
 		public GamesGridUserControl()
 		{
 			InitializeComponent();
+			// Make font more consistent with the rest of the interface.
+			GamesToolStrip.Font = Font;
 			if (IsDesignMode)
 				return;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(GamesDataGridView);

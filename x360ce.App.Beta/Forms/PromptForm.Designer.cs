@@ -96,8 +96,6 @@
 			// PromptForm
 			// 
 			this.AcceptButton = this.OkButton;
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.CloseButton;
 			this.ClientSize = new System.Drawing.Size(464, 261);
 			this.Controls.Add(this.SizeLabel);

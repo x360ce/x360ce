@@ -23,6 +23,8 @@ namespace x360ce.App.Controls
 		public PadControl(MapTo controllerIndex)
 		{
 			InitializeComponent();
+			// Make font more consistent with the rest of the interface.
+			GamesToolStrip.Font = Font;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			// Hide left/right border.

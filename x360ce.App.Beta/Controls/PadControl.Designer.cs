@@ -44,6 +44,19 @@
 			this.DeadZoneLabel = new System.Windows.Forms.Label();
 			this.AxisToDPadDeadZoneTextBox = new System.Windows.Forms.TextBox();
 			this.GeneralTabPage = new System.Windows.Forms.TabPage();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this.GeneralCenterPanel = new System.Windows.Forms.Panel();
+			this.MapNameComboBox = new System.Windows.Forms.ComboBox();
+			this.DPadUpLabel = new System.Windows.Forms.Label();
+			this.DPadUpComboBox = new System.Windows.Forms.ComboBox();
+			this.DPadDownLabel = new System.Windows.Forms.Label();
+			this.DPadDownComboBox = new System.Windows.Forms.ComboBox();
+			this.DPadRightLabel = new System.Windows.Forms.Label();
+			this.DPadLeftComboBox = new System.Windows.Forms.ComboBox();
+			this.DPadLeftLabel = new System.Windows.Forms.Label();
+			this.DPadRightComboBox = new System.Windows.Forms.ComboBox();
+			this.TopPictureBox = new System.Windows.Forms.PictureBox();
+			this.FrontPictureBox = new System.Windows.Forms.PictureBox();
 			this.GeneralLeftPanel = new System.Windows.Forms.Panel();
 			this.LeftTriggerTextBox = new System.Windows.Forms.TextBox();
 			this.LeftThumbAxisYComboBox = new System.Windows.Forms.ComboBox();
@@ -104,18 +117,6 @@
 			this.RightThumbRightLabel = new System.Windows.Forms.Label();
 			this.RightThumbTextBox = new System.Windows.Forms.TextBox();
 			this.RightThumbLeftLabel = new System.Windows.Forms.Label();
-			this.GeneralCenterPanel = new System.Windows.Forms.Panel();
-			this.MapNameComboBox = new System.Windows.Forms.ComboBox();
-			this.DPadUpLabel = new System.Windows.Forms.Label();
-			this.DPadUpComboBox = new System.Windows.Forms.ComboBox();
-			this.DPadDownLabel = new System.Windows.Forms.Label();
-			this.DPadDownComboBox = new System.Windows.Forms.ComboBox();
-			this.DPadRightLabel = new System.Windows.Forms.Label();
-			this.DPadLeftComboBox = new System.Windows.Forms.ComboBox();
-			this.DPadLeftLabel = new System.Windows.Forms.Label();
-			this.DPadRightComboBox = new System.Windows.Forms.ComboBox();
-			this.TopPictureBox = new System.Windows.Forms.PictureBox();
-			this.FrontPictureBox = new System.Windows.Forms.PictureBox();
 			this.SavePresetButton = new System.Windows.Forms.Button();
 			this.ResetPresetButton = new System.Windows.Forms.Button();
 			this.PadTabControl = new System.Windows.Forms.TabControl();
@@ -207,7 +208,6 @@
 			this.AutoMapButton = new System.Windows.Forms.ToolStripButton();
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
 			this.GetXInputStatesCheckBox = new System.Windows.Forms.ToolStripButton();
-			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -217,11 +217,12 @@
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadDeadZoneTrackBar)).BeginInit();
 			this.GeneralTabPage.SuspendLayout();
-			this.GeneralLeftPanel.SuspendLayout();
-			this.GeneralRightPanel.SuspendLayout();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.GeneralCenterPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).BeginInit();
+			this.GeneralLeftPanel.SuspendLayout();
+			this.GeneralRightPanel.SuspendLayout();
 			this.PadTabControl.SuspendLayout();
 			this.ButtonsTabPage.SuspendLayout();
 			this.AxisToButtonPanel.SuspendLayout();
@@ -248,16 +249,15 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
-			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// DirectInputTabPage
 			// 
 			this.DirectInputTabPage.Controls.Add(this.DirectInputPanel);
-			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 22);
+			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 76);
 			this.DirectInputTabPage.Name = "DirectInputTabPage";
 			this.DirectInputTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.DirectInputTabPage.Size = new System.Drawing.Size(693, 438);
+			this.DirectInputTabPage.Size = new System.Drawing.Size(192, 20);
 			this.DirectInputTabPage.TabIndex = 0;
 			this.DirectInputTabPage.Text = "Direct Input";
 			// 
@@ -266,7 +266,7 @@
 			this.DirectInputPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DirectInputPanel.Location = new System.Drawing.Point(3, 3);
 			this.DirectInputPanel.Name = "DirectInputPanel";
-			this.DirectInputPanel.Size = new System.Drawing.Size(687, 432);
+			this.DirectInputPanel.Size = new System.Drawing.Size(186, 14);
 			this.DirectInputPanel.TabIndex = 0;
 			// 
 			// AdvancedTabPage
@@ -275,7 +275,7 @@
 			this.AdvancedTabPage.Location = new System.Drawing.Point(4, 22);
 			this.AdvancedTabPage.Name = "AdvancedTabPage";
 			this.AdvancedTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.AdvancedTabPage.Size = new System.Drawing.Size(693, 438);
+			this.AdvancedTabPage.Size = new System.Drawing.Size(192, 74);
 			this.AdvancedTabPage.TabIndex = 0;
 			this.AdvancedTabPage.Text = "Advanced";
 			// 
@@ -286,7 +286,7 @@
 			this.AdvancedOptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.AdvancedOptionsPanel.Location = new System.Drawing.Point(3, 3);
 			this.AdvancedOptionsPanel.Name = "AdvancedOptionsPanel";
-			this.AdvancedOptionsPanel.Size = new System.Drawing.Size(687, 432);
+			this.AdvancedOptionsPanel.Size = new System.Drawing.Size(186, 68);
 			this.AdvancedOptionsPanel.TabIndex = 15;
 			// 
 			// CombineGroupBox
@@ -424,7 +424,7 @@
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
 			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(501, 125);
+			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(0, 125);
 			this.AxisToDPadGroupBox.TabIndex = 14;
 			this.AxisToDPadGroupBox.TabStop = false;
 			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
@@ -511,6 +511,152 @@
 			this.GeneralTabPage.Size = new System.Drawing.Size(693, 438);
 			this.GeneralTabPage.TabIndex = 0;
 			this.GeneralTabPage.Text = "General";
+			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.ColumnCount = 3;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.Controls.Add(this.GeneralCenterPanel, 1, 0);
+			this.tableLayoutPanel1.Controls.Add(this.GeneralLeftPanel, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.GeneralRightPanel, 2, 0);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 1;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(687, 432);
+			this.tableLayoutPanel1.TabIndex = 48;
+			// 
+			// GeneralCenterPanel
+			// 
+			this.GeneralCenterPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+			this.GeneralCenterPanel.Controls.Add(this.MapNameComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.DPadUpLabel);
+			this.GeneralCenterPanel.Controls.Add(this.DPadUpComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.DPadDownLabel);
+			this.GeneralCenterPanel.Controls.Add(this.DPadDownComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.DPadRightLabel);
+			this.GeneralCenterPanel.Controls.Add(this.DPadLeftComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.DPadLeftLabel);
+			this.GeneralCenterPanel.Controls.Add(this.DPadRightComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.TopPictureBox);
+			this.GeneralCenterPanel.Controls.Add(this.FrontPictureBox);
+			this.GeneralCenterPanel.Location = new System.Drawing.Point(212, 3);
+			this.GeneralCenterPanel.Name = "GeneralCenterPanel";
+			this.GeneralCenterPanel.Size = new System.Drawing.Size(262, 426);
+			this.GeneralCenterPanel.TabIndex = 46;
+			// 
+			// MapNameComboBox
+			// 
+			this.MapNameComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.MapNameComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.MapNameComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.MapNameComboBox.FormattingEnabled = true;
+			this.MapNameComboBox.Location = new System.Drawing.Point(3, 3);
+			this.MapNameComboBox.Name = "MapNameComboBox";
+			this.MapNameComboBox.Size = new System.Drawing.Size(256, 21);
+			this.MapNameComboBox.TabIndex = 47;
+			this.MapNameComboBox.SelectedIndexChanged += new System.EventHandler(this.MapNameComboBox_SelectedIndexChanged);
+			// 
+			// DPadUpLabel
+			// 
+			this.DPadUpLabel.AutoSize = true;
+			this.DPadUpLabel.Location = new System.Drawing.Point(168, 326);
+			this.DPadUpLabel.Name = "DPadUpLabel";
+			this.DPadUpLabel.Size = new System.Drawing.Size(61, 15);
+			this.DPadUpLabel.TabIndex = 0;
+			this.DPadUpLabel.Text = "D-Pad Up";
+			// 
+			// DPadUpComboBox
+			// 
+			this.DPadUpComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.DPadUpComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.DPadUpComboBox.FormattingEnabled = true;
+			this.DPadUpComboBox.Location = new System.Drawing.Point(66, 323);
+			this.DPadUpComboBox.Name = "DPadUpComboBox";
+			this.DPadUpComboBox.Size = new System.Drawing.Size(96, 21);
+			this.DPadUpComboBox.TabIndex = 41;
+			// 
+			// DPadDownLabel
+			// 
+			this.DPadDownLabel.AutoSize = true;
+			this.DPadDownLabel.Location = new System.Drawing.Point(168, 407);
+			this.DPadDownLabel.Name = "DPadDownLabel";
+			this.DPadDownLabel.Size = new System.Drawing.Size(77, 15);
+			this.DPadDownLabel.TabIndex = 0;
+			this.DPadDownLabel.Text = "D-Pad Down";
+			// 
+			// DPadDownComboBox
+			// 
+			this.DPadDownComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.DPadDownComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.DPadDownComboBox.FormattingEnabled = true;
+			this.DPadDownComboBox.Location = new System.Drawing.Point(66, 404);
+			this.DPadDownComboBox.Name = "DPadDownComboBox";
+			this.DPadDownComboBox.Size = new System.Drawing.Size(96, 21);
+			this.DPadDownComboBox.TabIndex = 44;
+			// 
+			// DPadRightLabel
+			// 
+			this.DPadRightLabel.AutoSize = true;
+			this.DPadRightLabel.Location = new System.Drawing.Point(168, 380);
+			this.DPadRightLabel.Name = "DPadRightLabel";
+			this.DPadRightLabel.Size = new System.Drawing.Size(74, 15);
+			this.DPadRightLabel.TabIndex = 0;
+			this.DPadRightLabel.Text = "D-Pad Right";
+			// 
+			// DPadLeftComboBox
+			// 
+			this.DPadLeftComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.DPadLeftComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.DPadLeftComboBox.FormattingEnabled = true;
+			this.DPadLeftComboBox.Location = new System.Drawing.Point(66, 350);
+			this.DPadLeftComboBox.Name = "DPadLeftComboBox";
+			this.DPadLeftComboBox.Size = new System.Drawing.Size(96, 21);
+			this.DPadLeftComboBox.TabIndex = 42;
+			// 
+			// DPadLeftLabel
+			// 
+			this.DPadLeftLabel.AutoSize = true;
+			this.DPadLeftLabel.Location = new System.Drawing.Point(168, 353);
+			this.DPadLeftLabel.Name = "DPadLeftLabel";
+			this.DPadLeftLabel.Size = new System.Drawing.Size(65, 15);
+			this.DPadLeftLabel.TabIndex = 0;
+			this.DPadLeftLabel.Text = "D-Pad Left";
+			// 
+			// DPadRightComboBox
+			// 
+			this.DPadRightComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.DPadRightComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.DPadRightComboBox.FormattingEnabled = true;
+			this.DPadRightComboBox.Location = new System.Drawing.Point(66, 377);
+			this.DPadRightComboBox.Name = "DPadRightComboBox";
+			this.DPadRightComboBox.Size = new System.Drawing.Size(96, 21);
+			this.DPadRightComboBox.TabIndex = 43;
+			// 
+			// TopPictureBox
+			// 
+			this.TopPictureBox.Location = new System.Drawing.Point(3, 30);
+			this.TopPictureBox.Name = "TopPictureBox";
+			this.TopPictureBox.Size = new System.Drawing.Size(256, 105);
+			this.TopPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.TopPictureBox.TabIndex = 0;
+			this.TopPictureBox.TabStop = false;
+			this.TopPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
+			// 
+			// FrontPictureBox
+			// 
+			this.FrontPictureBox.Location = new System.Drawing.Point(3, 141);
+			this.FrontPictureBox.Name = "FrontPictureBox";
+			this.FrontPictureBox.Size = new System.Drawing.Size(256, 176);
+			this.FrontPictureBox.TabIndex = 0;
+			this.FrontPictureBox.TabStop = false;
+			this.FrontPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.FrontPictureBox_Paint);
 			// 
 			// GeneralLeftPanel
 			// 
@@ -1181,134 +1327,6 @@
 			this.RightThumbLeftLabel.Text = "Stick Left";
 			this.RightThumbLeftLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
 			// 
-			// GeneralCenterPanel
-			// 
-			this.GeneralCenterPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-			this.GeneralCenterPanel.Controls.Add(this.MapNameComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.DPadUpLabel);
-			this.GeneralCenterPanel.Controls.Add(this.DPadUpComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.DPadDownLabel);
-			this.GeneralCenterPanel.Controls.Add(this.DPadDownComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.DPadRightLabel);
-			this.GeneralCenterPanel.Controls.Add(this.DPadLeftComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.DPadLeftLabel);
-			this.GeneralCenterPanel.Controls.Add(this.DPadRightComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.TopPictureBox);
-			this.GeneralCenterPanel.Controls.Add(this.FrontPictureBox);
-			this.GeneralCenterPanel.Location = new System.Drawing.Point(212, 3);
-			this.GeneralCenterPanel.Name = "GeneralCenterPanel";
-			this.GeneralCenterPanel.Size = new System.Drawing.Size(262, 426);
-			this.GeneralCenterPanel.TabIndex = 46;
-			// 
-			// MapNameComboBox
-			// 
-			this.MapNameComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.MapNameComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.MapNameComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.MapNameComboBox.FormattingEnabled = true;
-			this.MapNameComboBox.Location = new System.Drawing.Point(3, 3);
-			this.MapNameComboBox.Name = "MapNameComboBox";
-			this.MapNameComboBox.Size = new System.Drawing.Size(256, 21);
-			this.MapNameComboBox.TabIndex = 47;
-			this.MapNameComboBox.SelectedIndexChanged += new System.EventHandler(this.MapNameComboBox_SelectedIndexChanged);
-			// 
-			// DPadUpLabel
-			// 
-			this.DPadUpLabel.AutoSize = true;
-			this.DPadUpLabel.Location = new System.Drawing.Point(168, 326);
-			this.DPadUpLabel.Name = "DPadUpLabel";
-			this.DPadUpLabel.Size = new System.Drawing.Size(61, 15);
-			this.DPadUpLabel.TabIndex = 0;
-			this.DPadUpLabel.Text = "D-Pad Up";
-			// 
-			// DPadUpComboBox
-			// 
-			this.DPadUpComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.DPadUpComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.DPadUpComboBox.FormattingEnabled = true;
-			this.DPadUpComboBox.Location = new System.Drawing.Point(66, 323);
-			this.DPadUpComboBox.Name = "DPadUpComboBox";
-			this.DPadUpComboBox.Size = new System.Drawing.Size(96, 21);
-			this.DPadUpComboBox.TabIndex = 41;
-			// 
-			// DPadDownLabel
-			// 
-			this.DPadDownLabel.AutoSize = true;
-			this.DPadDownLabel.Location = new System.Drawing.Point(168, 407);
-			this.DPadDownLabel.Name = "DPadDownLabel";
-			this.DPadDownLabel.Size = new System.Drawing.Size(77, 15);
-			this.DPadDownLabel.TabIndex = 0;
-			this.DPadDownLabel.Text = "D-Pad Down";
-			// 
-			// DPadDownComboBox
-			// 
-			this.DPadDownComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.DPadDownComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.DPadDownComboBox.FormattingEnabled = true;
-			this.DPadDownComboBox.Location = new System.Drawing.Point(66, 404);
-			this.DPadDownComboBox.Name = "DPadDownComboBox";
-			this.DPadDownComboBox.Size = new System.Drawing.Size(96, 21);
-			this.DPadDownComboBox.TabIndex = 44;
-			// 
-			// DPadRightLabel
-			// 
-			this.DPadRightLabel.AutoSize = true;
-			this.DPadRightLabel.Location = new System.Drawing.Point(168, 380);
-			this.DPadRightLabel.Name = "DPadRightLabel";
-			this.DPadRightLabel.Size = new System.Drawing.Size(74, 15);
-			this.DPadRightLabel.TabIndex = 0;
-			this.DPadRightLabel.Text = "D-Pad Right";
-			// 
-			// DPadLeftComboBox
-			// 
-			this.DPadLeftComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.DPadLeftComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.DPadLeftComboBox.FormattingEnabled = true;
-			this.DPadLeftComboBox.Location = new System.Drawing.Point(66, 350);
-			this.DPadLeftComboBox.Name = "DPadLeftComboBox";
-			this.DPadLeftComboBox.Size = new System.Drawing.Size(96, 21);
-			this.DPadLeftComboBox.TabIndex = 42;
-			// 
-			// DPadLeftLabel
-			// 
-			this.DPadLeftLabel.AutoSize = true;
-			this.DPadLeftLabel.Location = new System.Drawing.Point(168, 353);
-			this.DPadLeftLabel.Name = "DPadLeftLabel";
-			this.DPadLeftLabel.Size = new System.Drawing.Size(65, 15);
-			this.DPadLeftLabel.TabIndex = 0;
-			this.DPadLeftLabel.Text = "D-Pad Left";
-			// 
-			// DPadRightComboBox
-			// 
-			this.DPadRightComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.DPadRightComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.DPadRightComboBox.FormattingEnabled = true;
-			this.DPadRightComboBox.Location = new System.Drawing.Point(66, 377);
-			this.DPadRightComboBox.Name = "DPadRightComboBox";
-			this.DPadRightComboBox.Size = new System.Drawing.Size(96, 21);
-			this.DPadRightComboBox.TabIndex = 43;
-			// 
-			// TopPictureBox
-			// 
-			this.TopPictureBox.Location = new System.Drawing.Point(3, 30);
-			this.TopPictureBox.Name = "TopPictureBox";
-			this.TopPictureBox.Size = new System.Drawing.Size(256, 105);
-			this.TopPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.TopPictureBox.TabIndex = 0;
-			this.TopPictureBox.TabStop = false;
-			this.TopPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
-			// 
-			// FrontPictureBox
-			// 
-			this.FrontPictureBox.Location = new System.Drawing.Point(3, 141);
-			this.FrontPictureBox.Name = "FrontPictureBox";
-			this.FrontPictureBox.Size = new System.Drawing.Size(256, 176);
-			this.FrontPictureBox.TabIndex = 0;
-			this.FrontPictureBox.TabStop = false;
-			this.FrontPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.FrontPictureBox_Paint);
-			// 
 			// SavePresetButton
 			// 
 			this.SavePresetButton.Location = new System.Drawing.Point(0, 0);
@@ -1354,7 +1372,7 @@
 			this.ButtonsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.ButtonsTabPage.Name = "ButtonsTabPage";
 			this.ButtonsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ButtonsTabPage.Size = new System.Drawing.Size(693, 438);
+			this.ButtonsTabPage.Size = new System.Drawing.Size(192, 74);
 			this.ButtonsTabPage.TabIndex = 3;
 			this.ButtonsTabPage.Text = "Buttons";
 			// 
@@ -1365,7 +1383,7 @@
 			this.AxisToButtonPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.AxisToButtonPanel.Location = new System.Drawing.Point(3, 3);
 			this.AxisToButtonPanel.Name = "AxisToButtonPanel";
-			this.AxisToButtonPanel.Size = new System.Drawing.Size(687, 486);
+			this.AxisToButtonPanel.Size = new System.Drawing.Size(186, 486);
 			this.AxisToButtonPanel.TabIndex = 1;
 			// 
 			// AxisToButtonGroupBox
@@ -1388,7 +1406,7 @@
 			this.AxisToButtonGroupBox.Controls.Add(this.AxisToButtonBDeadZonePanel);
 			this.AxisToButtonGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.AxisToButtonGroupBox.Name = "AxisToButtonGroupBox";
-			this.AxisToButtonGroupBox.Size = new System.Drawing.Size(681, 430);
+			this.AxisToButtonGroupBox.Size = new System.Drawing.Size(180, 430);
 			this.AxisToButtonGroupBox.TabIndex = 3;
 			this.AxisToButtonGroupBox.TabStop = false;
 			this.AxisToButtonGroupBox.Text = "DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):";
@@ -1523,10 +1541,10 @@
 			// 
 			this.DPadTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.DPadTabPage.Controls.Add(this.DPadPanel);
-			this.DPadTabPage.Location = new System.Drawing.Point(4, 22);
+			this.DPadTabPage.Location = new System.Drawing.Point(4, 40);
 			this.DPadTabPage.Name = "DPadTabPage";
 			this.DPadTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.DPadTabPage.Size = new System.Drawing.Size(693, 438);
+			this.DPadTabPage.Size = new System.Drawing.Size(192, 56);
 			this.DPadTabPage.TabIndex = 5;
 			this.DPadTabPage.Text = "D-Pad";
 			// 
@@ -1536,17 +1554,17 @@
 			this.DPadPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DPadPanel.Location = new System.Drawing.Point(3, 3);
 			this.DPadPanel.Name = "DPadPanel";
-			this.DPadPanel.Size = new System.Drawing.Size(687, 432);
+			this.DPadPanel.Size = new System.Drawing.Size(186, 50);
 			this.DPadPanel.TabIndex = 0;
 			// 
 			// TriggersTabPage
 			// 
 			this.TriggersTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.TriggersTabPage.Controls.Add(this.TriggersPanel);
-			this.TriggersTabPage.Location = new System.Drawing.Point(4, 22);
+			this.TriggersTabPage.Location = new System.Drawing.Point(4, 40);
 			this.TriggersTabPage.Name = "TriggersTabPage";
 			this.TriggersTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.TriggersTabPage.Size = new System.Drawing.Size(693, 438);
+			this.TriggersTabPage.Size = new System.Drawing.Size(192, 56);
 			this.TriggersTabPage.TabIndex = 4;
 			this.TriggersTabPage.Text = "Triggers";
 			// 
@@ -1557,7 +1575,7 @@
 			this.TriggersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.TriggersPanel.Location = new System.Drawing.Point(3, 3);
 			this.TriggersPanel.Name = "TriggersPanel";
-			this.TriggersPanel.Size = new System.Drawing.Size(687, 432);
+			this.TriggersPanel.Size = new System.Drawing.Size(186, 50);
 			this.TriggersPanel.TabIndex = 3;
 			// 
 			// LeftTriggerUserControl
@@ -1567,7 +1585,7 @@
 			this.LeftTriggerUserControl.HeaderText = "Left Trigger";
 			this.LeftTriggerUserControl.Location = new System.Drawing.Point(3, 3);
 			this.LeftTriggerUserControl.Name = "LeftTriggerUserControl";
-			this.LeftTriggerUserControl.Size = new System.Drawing.Size(681, 193);
+			this.LeftTriggerUserControl.Size = new System.Drawing.Size(180, 193);
 			this.LeftTriggerUserControl.TabIndex = 1;
 			this.LeftTriggerUserControl.TargetType = x360ce.Engine.TargetType.LeftTrigger;
 			// 
@@ -1578,7 +1596,7 @@
 			this.RightTriggerUserControl.HeaderText = "RightTrigger";
 			this.RightTriggerUserControl.Location = new System.Drawing.Point(3, 202);
 			this.RightTriggerUserControl.Name = "RightTriggerUserControl";
-			this.RightTriggerUserControl.Size = new System.Drawing.Size(681, 193);
+			this.RightTriggerUserControl.Size = new System.Drawing.Size(180, 193);
 			this.RightTriggerUserControl.TabIndex = 2;
 			this.RightTriggerUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger)));
 			// 
@@ -1586,10 +1604,10 @@
 			// 
 			this.LeftStickTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.LeftStickTabPage.Controls.Add(this.LeftThumbPanel);
-			this.LeftStickTabPage.Location = new System.Drawing.Point(4, 22);
+			this.LeftStickTabPage.Location = new System.Drawing.Point(4, 40);
 			this.LeftStickTabPage.Name = "LeftStickTabPage";
 			this.LeftStickTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.LeftStickTabPage.Size = new System.Drawing.Size(693, 438);
+			this.LeftStickTabPage.Size = new System.Drawing.Size(192, 56);
 			this.LeftStickTabPage.TabIndex = 1;
 			this.LeftStickTabPage.Text = "Left Stick";
 			// 
@@ -1600,7 +1618,7 @@
 			this.LeftThumbPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LeftThumbPanel.Location = new System.Drawing.Point(3, 3);
 			this.LeftThumbPanel.Name = "LeftThumbPanel";
-			this.LeftThumbPanel.Size = new System.Drawing.Size(687, 432);
+			this.LeftThumbPanel.Size = new System.Drawing.Size(186, 50);
 			this.LeftThumbPanel.TabIndex = 1;
 			// 
 			// LeftThumbXUserControl
@@ -1610,7 +1628,7 @@
 			this.LeftThumbXUserControl.HeaderText = "X - Horizontal Axis";
 			this.LeftThumbXUserControl.Location = new System.Drawing.Point(3, 3);
 			this.LeftThumbXUserControl.Name = "LeftThumbXUserControl";
-			this.LeftThumbXUserControl.Size = new System.Drawing.Size(681, 193);
+			this.LeftThumbXUserControl.Size = new System.Drawing.Size(180, 193);
 			this.LeftThumbXUserControl.TabIndex = 0;
 			this.LeftThumbXUserControl.TargetType = x360ce.Engine.TargetType.LeftThumbX;
 			// 
@@ -1621,7 +1639,7 @@
 			this.LeftThumbYUserControl.HeaderText = "Y - Vertical Axis";
 			this.LeftThumbYUserControl.Location = new System.Drawing.Point(3, 202);
 			this.LeftThumbYUserControl.Name = "LeftThumbYUserControl";
-			this.LeftThumbYUserControl.Size = new System.Drawing.Size(681, 193);
+			this.LeftThumbYUserControl.Size = new System.Drawing.Size(180, 193);
 			this.LeftThumbYUserControl.TabIndex = 0;
 			this.LeftThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftThumbX)));
 			// 
@@ -1629,10 +1647,10 @@
 			// 
 			this.RightStickTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.RightStickTabPage.Controls.Add(this.RightThumbPanel);
-			this.RightStickTabPage.Location = new System.Drawing.Point(4, 22);
+			this.RightStickTabPage.Location = new System.Drawing.Point(4, 58);
 			this.RightStickTabPage.Name = "RightStickTabPage";
 			this.RightStickTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.RightStickTabPage.Size = new System.Drawing.Size(693, 438);
+			this.RightStickTabPage.Size = new System.Drawing.Size(192, 38);
 			this.RightStickTabPage.TabIndex = 2;
 			this.RightStickTabPage.Text = "Right Stick";
 			// 
@@ -1643,7 +1661,7 @@
 			this.RightThumbPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.RightThumbPanel.Location = new System.Drawing.Point(3, 3);
 			this.RightThumbPanel.Name = "RightThumbPanel";
-			this.RightThumbPanel.Size = new System.Drawing.Size(687, 432);
+			this.RightThumbPanel.Size = new System.Drawing.Size(186, 32);
 			this.RightThumbPanel.TabIndex = 1;
 			// 
 			// RightThumbXUserControl
@@ -1653,7 +1671,7 @@
 			this.RightThumbXUserControl.HeaderText = "X - Horizontal Axis";
 			this.RightThumbXUserControl.Location = new System.Drawing.Point(3, 3);
 			this.RightThumbXUserControl.Name = "RightThumbXUserControl";
-			this.RightThumbXUserControl.Size = new System.Drawing.Size(681, 193);
+			this.RightThumbXUserControl.Size = new System.Drawing.Size(180, 193);
 			this.RightThumbXUserControl.TabIndex = 0;
 			this.RightThumbXUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.LeftTrigger | x360ce.Engine.TargetType.LeftThumbX)));
 			// 
@@ -1664,7 +1682,7 @@
 			this.RightThumbYUserControl.HeaderText = "Y - Vertical Axis";
 			this.RightThumbYUserControl.Location = new System.Drawing.Point(3, 202);
 			this.RightThumbYUserControl.Name = "RightThumbYUserControl";
-			this.RightThumbYUserControl.Size = new System.Drawing.Size(681, 193);
+			this.RightThumbYUserControl.Size = new System.Drawing.Size(180, 193);
 			this.RightThumbYUserControl.TabIndex = 0;
 			this.RightThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)(((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger) 
             | x360ce.Engine.TargetType.LeftThumbX)));
@@ -1673,10 +1691,10 @@
 			// 
 			this.ForceFeedbackTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.ForceFeedbackTabPage.Controls.Add(this.ForceFeedbackPanel);
-			this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 22);
+			this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 58);
 			this.ForceFeedbackTabPage.Name = "ForceFeedbackTabPage";
 			this.ForceFeedbackTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(693, 438);
+			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(192, 38);
 			this.ForceFeedbackTabPage.TabIndex = 0;
 			this.ForceFeedbackTabPage.Text = "Force Feedback";
 			// 
@@ -1690,18 +1708,18 @@
 			this.ForceFeedbackPanel.Location = new System.Drawing.Point(3, 3);
 			this.ForceFeedbackPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ForceFeedbackPanel.Name = "ForceFeedbackPanel";
-			this.ForceFeedbackPanel.Size = new System.Drawing.Size(687, 432);
+			this.ForceFeedbackPanel.Size = new System.Drawing.Size(186, 32);
 			this.ForceFeedbackPanel.TabIndex = 11;
 			// 
 			// InforTextBox
 			// 
 			this.InforTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.InforTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.InforTextBox.Location = new System.Drawing.Point(0, 370);
+			this.InforTextBox.Location = new System.Drawing.Point(0, -30);
 			this.InforTextBox.Multiline = true;
 			this.InforTextBox.Name = "InforTextBox";
 			this.InforTextBox.ReadOnly = true;
-			this.InforTextBox.Size = new System.Drawing.Size(687, 62);
+			this.InforTextBox.Size = new System.Drawing.Size(186, 62);
 			this.InforTextBox.TabIndex = 11;
 			this.InforTextBox.Text = resources.GetString("InforTextBox.Text");
 			// 
@@ -1719,7 +1737,7 @@
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTrackBar);
 			this.ForceFeedbackGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.ForceFeedbackGroupBox.Name = "ForceFeedbackGroupBox";
-			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(681, 106);
+			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(180, 106);
 			this.ForceFeedbackGroupBox.TabIndex = 0;
 			this.ForceFeedbackGroupBox.TabStop = false;
 			this.ForceFeedbackGroupBox.Text = "Force Feedback";
@@ -1731,7 +1749,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.EffectDescriptionLabel.Location = new System.Drawing.Point(6, 66);
 			this.EffectDescriptionLabel.Name = "EffectDescriptionLabel";
-			this.EffectDescriptionLabel.Size = new System.Drawing.Size(669, 37);
+			this.EffectDescriptionLabel.Size = new System.Drawing.Size(168, 37);
 			this.EffectDescriptionLabel.TabIndex = 5;
 			this.EffectDescriptionLabel.Text = "Effect Description";
 			// 
@@ -2337,28 +2355,8 @@
 			this.GetXInputStatesCheckBox.Text = "&Get XInput State";
 			this.GetXInputStatesCheckBox.ToolTipText = "Load XInput DLL and query actual state";
 			// 
-			// tableLayoutPanel1
-			// 
-			this.tableLayoutPanel1.ColumnCount = 3;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Controls.Add(this.GeneralCenterPanel, 1, 0);
-			this.tableLayoutPanel1.Controls.Add(this.GeneralLeftPanel, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.GeneralRightPanel, 2, 0);
-			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
-			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 1;
-			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(687, 432);
-			this.tableLayoutPanel1.TabIndex = 48;
-			// 
 			// PadControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.MappedDevicesDataGridView);
 			this.Controls.Add(this.GamesToolStrip);
 			this.Controls.Add(this.SavePresetButton);
@@ -2383,14 +2381,15 @@
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadDeadZoneTrackBar)).EndInit();
 			this.GeneralTabPage.ResumeLayout(false);
-			this.GeneralLeftPanel.ResumeLayout(false);
-			this.GeneralLeftPanel.PerformLayout();
-			this.GeneralRightPanel.ResumeLayout(false);
-			this.GeneralRightPanel.PerformLayout();
+			this.tableLayoutPanel1.ResumeLayout(false);
 			this.GeneralCenterPanel.ResumeLayout(false);
 			this.GeneralCenterPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).EndInit();
+			this.GeneralLeftPanel.ResumeLayout(false);
+			this.GeneralLeftPanel.PerformLayout();
+			this.GeneralRightPanel.ResumeLayout(false);
+			this.GeneralRightPanel.PerformLayout();
 			this.PadTabControl.ResumeLayout(false);
 			this.ButtonsTabPage.ResumeLayout(false);
 			this.AxisToButtonPanel.ResumeLayout(false);
@@ -2422,7 +2421,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).EndInit();
 			this.GamesToolStrip.ResumeLayout(false);
 			this.GamesToolStrip.PerformLayout();
-			this.tableLayoutPanel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

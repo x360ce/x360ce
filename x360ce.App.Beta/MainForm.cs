@@ -27,6 +27,10 @@ namespace x360ce.App
     {
         public MainForm()
         {
+            //AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            //AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ControlsHelper.InitInvokeContext();
             // Disable some functionality in Visual Studio Interface design mode.
             if (!IsDesignMode)
@@ -52,6 +56,9 @@ namespace x360ce.App
             }
             // Initialize interface.
             InitializeComponent();
+            // Make font more consistent with the rest of the interface.
+            GamesToolStrip.Font = Font;
+            GameToCustomizeComboBox.Font = Font;
             if (IsDesignMode)
                 return;
             _ResumeTimer.Elapsed += _ResumeTimer_Elapsed;
