@@ -31,6 +31,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			typeof(uint), typeof(float),   //typeof(BigInteger)
 		};
 
+
 		public static bool IsNumeric(Type type)
 		{
 			return numericTypes.Contains(type);
@@ -42,6 +43,39 @@ namespace JocysCom.ClassLibrary.Runtime
 		//	? false
 		//	: numericTypes.Contains(item.GetType());
 		//}
+
+
+		/// <summary>Built-in types</summary>
+		static Dictionary<Type, string> _typeAlias = new Dictionary<Type, string>
+		{
+			{ typeof(bool), "bool" },
+			{ typeof(byte), "byte" },
+			{ typeof(char), "char" },
+			{ typeof(decimal), "decimal" },
+			{ typeof(double), "double" },
+			{ typeof(float), "float" },
+			{ typeof(int), "int" },
+			{ typeof(long), "long" },
+			{ typeof(object), "object" },
+			{ typeof(sbyte), "sbyte" },
+			{ typeof(short), "short" },
+			{ typeof(string), "string" },
+			{ typeof(uint), "uint" },
+			{ typeof(ulong), "ulong" },
+			{ typeof(ushort), "ushort" },
+			{ typeof(void), "void" }
+		};
+
+		public static string GetBuiltInTypeNameOrAlias(Type type)
+		{
+			var elementType = type.IsArray ? type.GetElementType() : type;
+			// Lookup alias for type
+			string alias;
+			if (_typeAlias.TryGetValue(elementType, out alias))
+				return alias + (type.IsArray ? "[]" : "");
+			// Default to CLR type name
+			return type.Name;
+		}
 
 		private static Type GetFirstArgumentOfGenericType(Type type)
 		{

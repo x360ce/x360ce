@@ -19,9 +19,17 @@ namespace JocysCom.ClassLibrary.Configuration
 	public class SettingsData<T> : ISettingsData
 	{
 
-		public SettingsData() { }
+		public SettingsData()
+		{
+			Initialize();
+		}
 
 		public SettingsData(string fileName, bool userLevel = false, string comment = null)
+		{
+			Initialize(fileName, userLevel, comment);
+		}
+
+		void Initialize(string fileName = null, bool userLevel = false, string comment = null)
 		{
 			Items = new SortableBindingList<T>();
 			_Comment = comment;

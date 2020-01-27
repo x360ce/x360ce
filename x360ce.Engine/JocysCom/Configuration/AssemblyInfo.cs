@@ -120,6 +120,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
+		//public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true, int versionNumbers = 3)
+		//{
+		//	return new AssemblyInfo().GetTitle(showBuild, showRunMode, showBuildDate, showArchitecture, showDescription, versionNumbers);
+		//}
+
+
 		public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true, int versionNumbers = 3)
 		{
 			var s = string.Format("{0} {1} {2}", Company, Product, this.Version.ToString(versionNumbers));

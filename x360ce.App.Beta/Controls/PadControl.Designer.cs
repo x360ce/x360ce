@@ -207,6 +207,7 @@
 			this.AutoMapButton = new System.Windows.Forms.ToolStripButton();
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
 			this.GetXInputStatesCheckBox = new System.Windows.Forms.ToolStripButton();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -247,6 +248,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// DirectInputTabPage
@@ -317,7 +319,7 @@
 			this.CombinedIndexLabel.AutoSize = true;
 			this.CombinedIndexLabel.Location = new System.Drawing.Point(7, 49);
 			this.CombinedIndexLabel.Name = "CombinedIndexLabel";
-			this.CombinedIndexLabel.Size = new System.Drawing.Size(72, 13);
+			this.CombinedIndexLabel.Size = new System.Drawing.Size(83, 15);
 			this.CombinedIndexLabel.TabIndex = 6;
 			this.CombinedIndexLabel.Text = "Combine Into:";
 			// 
@@ -326,7 +328,7 @@
 			this.CombinedCheckBox.AutoSize = true;
 			this.CombinedCheckBox.Location = new System.Drawing.Point(6, 21);
 			this.CombinedCheckBox.Name = "CombinedCheckBox";
-			this.CombinedCheckBox.Size = new System.Drawing.Size(132, 17);
+			this.CombinedCheckBox.Size = new System.Drawing.Size(155, 19);
 			this.CombinedCheckBox.TabIndex = 3;
 			this.CombinedCheckBox.Text = "Combine this controller";
 			this.CombinedCheckBox.UseVisualStyleBackColor = true;
@@ -363,7 +365,7 @@
 			this.PassThroughIndexLabel.AutoSize = true;
 			this.PassThroughIndexLabel.Location = new System.Drawing.Point(7, 73);
 			this.PassThroughIndexLabel.Name = "PassThroughIndexLabel";
-			this.PassThroughIndexLabel.Size = new System.Drawing.Size(90, 13);
+			this.PassThroughIndexLabel.Size = new System.Drawing.Size(101, 15);
 			this.PassThroughIndexLabel.TabIndex = 4;
 			this.PassThroughIndexLabel.Text = "Pass Through ID:";
 			// 
@@ -372,7 +374,7 @@
 			this.ForceFeedbackPassThroughCheckBox.AutoSize = true;
 			this.ForceFeedbackPassThroughCheckBox.Location = new System.Drawing.Point(6, 46);
 			this.ForceFeedbackPassThroughCheckBox.Name = "ForceFeedbackPassThroughCheckBox";
-			this.ForceFeedbackPassThroughCheckBox.Size = new System.Drawing.Size(173, 17);
+			this.ForceFeedbackPassThroughCheckBox.Size = new System.Drawing.Size(196, 19);
 			this.ForceFeedbackPassThroughCheckBox.TabIndex = 3;
 			this.ForceFeedbackPassThroughCheckBox.Text = "Force Feedback Pass Through";
 			this.ForceFeedbackPassThroughCheckBox.UseVisualStyleBackColor = true;
@@ -394,7 +396,7 @@
 			this.DeviceSubTypeLabel.AutoSize = true;
 			this.DeviceSubTypeLabel.Location = new System.Drawing.Point(6, 100);
 			this.DeviceSubTypeLabel.Name = "DeviceSubTypeLabel";
-			this.DeviceSubTypeLabel.Size = new System.Drawing.Size(93, 13);
+			this.DeviceSubTypeLabel.Size = new System.Drawing.Size(101, 15);
 			this.DeviceSubTypeLabel.TabIndex = 0;
 			this.DeviceSubTypeLabel.Text = "Device Sub Type:";
 			// 
@@ -403,7 +405,7 @@
 			this.PassThroughCheckBox.AutoSize = true;
 			this.PassThroughCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.PassThroughCheckBox.Name = "PassThroughCheckBox";
-			this.PassThroughCheckBox.Size = new System.Drawing.Size(92, 17);
+			this.PassThroughCheckBox.Size = new System.Drawing.Size(105, 19);
 			this.PassThroughCheckBox.TabIndex = 2;
 			this.PassThroughCheckBox.Text = "Pass Through";
 			this.PassThroughCheckBox.UseVisualStyleBackColor = true;
@@ -432,7 +434,7 @@
 			this.AxisToDPadEnabledCheckBox.AutoSize = true;
 			this.AxisToDPadEnabledCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.AxisToDPadEnabledCheckBox.Name = "AxisToDPadEnabledCheckBox";
-			this.AxisToDPadEnabledCheckBox.Size = new System.Drawing.Size(65, 17);
+			this.AxisToDPadEnabledCheckBox.Size = new System.Drawing.Size(75, 19);
 			this.AxisToDPadEnabledCheckBox.TabIndex = 14;
 			this.AxisToDPadEnabledCheckBox.Text = "Enabled";
 			this.AxisToDPadEnabledCheckBox.UseVisualStyleBackColor = true;
@@ -476,7 +478,7 @@
 			this.OffsetLabel.AutoSize = true;
 			this.OffsetLabel.Location = new System.Drawing.Point(87, 71);
 			this.OffsetLabel.Name = "OffsetLabel";
-			this.OffsetLabel.Size = new System.Drawing.Size(35, 13);
+			this.OffsetLabel.Size = new System.Drawing.Size(38, 15);
 			this.OffsetLabel.TabIndex = 0;
 			this.OffsetLabel.Text = "Offset";
 			// 
@@ -485,7 +487,7 @@
 			this.DeadZoneLabel.AutoSize = true;
 			this.DeadZoneLabel.Location = new System.Drawing.Point(87, 20);
 			this.DeadZoneLabel.Name = "DeadZoneLabel";
-			this.DeadZoneLabel.Size = new System.Drawing.Size(61, 13);
+			this.DeadZoneLabel.Size = new System.Drawing.Size(68, 15);
 			this.DeadZoneLabel.TabIndex = 0;
 			this.DeadZoneLabel.Text = "Dead Zone";
 			// 
@@ -502,16 +504,13 @@
 			// 
 			// GeneralTabPage
 			// 
-			this.GeneralTabPage.Controls.Add(this.GeneralLeftPanel);
-			this.GeneralTabPage.Controls.Add(this.GeneralRightPanel);
-			this.GeneralTabPage.Controls.Add(this.GeneralCenterPanel);
+			this.GeneralTabPage.Controls.Add(this.tableLayoutPanel1);
 			this.GeneralTabPage.Location = new System.Drawing.Point(4, 22);
 			this.GeneralTabPage.Name = "GeneralTabPage";
 			this.GeneralTabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.GeneralTabPage.Size = new System.Drawing.Size(693, 438);
 			this.GeneralTabPage.TabIndex = 0;
 			this.GeneralTabPage.Text = "General";
-			this.GeneralTabPage.SizeChanged += new System.EventHandler(this.GeneralTabPage_SizeChanged);
 			// 
 			// GeneralLeftPanel
 			// 
@@ -547,7 +546,7 @@
 			this.GeneralLeftPanel.Dock = System.Windows.Forms.DockStyle.Left;
 			this.GeneralLeftPanel.Location = new System.Drawing.Point(3, 3);
 			this.GeneralLeftPanel.Name = "GeneralLeftPanel";
-			this.GeneralLeftPanel.Size = new System.Drawing.Size(190, 432);
+			this.GeneralLeftPanel.Size = new System.Drawing.Size(190, 426);
 			this.GeneralLeftPanel.TabIndex = 46;
 			// 
 			// LeftTriggerTextBox
@@ -576,7 +575,7 @@
 			this.LeftThumbButtonLabel.AutoSize = true;
 			this.LeftThumbButtonLabel.Location = new System.Drawing.Point(105, 274);
 			this.LeftThumbButtonLabel.Name = "LeftThumbButtonLabel";
-			this.LeftThumbButtonLabel.Size = new System.Drawing.Size(65, 13);
+			this.LeftThumbButtonLabel.Size = new System.Drawing.Size(71, 15);
 			this.LeftThumbButtonLabel.TabIndex = 0;
 			this.LeftThumbButtonLabel.Text = "Stick Button";
 			// 
@@ -595,7 +594,7 @@
 			this.LeftTriggerLabel.AutoSize = true;
 			this.LeftTriggerLabel.Location = new System.Drawing.Point(105, 32);
 			this.LeftTriggerLabel.Name = "LeftTriggerLabel";
-			this.LeftTriggerLabel.Size = new System.Drawing.Size(40, 13);
+			this.LeftTriggerLabel.Size = new System.Drawing.Size(46, 15);
 			this.LeftTriggerLabel.TabIndex = 0;
 			this.LeftTriggerLabel.Text = "&Trigger";
 			// 
@@ -605,7 +604,7 @@
 			this.LeftLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
 			this.LeftLabel.Location = new System.Drawing.Point(105, 6);
 			this.LeftLabel.Name = "LeftLabel";
-			this.LeftLabel.Size = new System.Drawing.Size(33, 13);
+			this.LeftLabel.Size = new System.Drawing.Size(36, 15);
 			this.LeftLabel.TabIndex = 0;
 			this.LeftLabel.Text = "LEFT";
 			// 
@@ -624,7 +623,7 @@
 			this.LeftShoulderLabel.AutoSize = true;
 			this.LeftShoulderLabel.Location = new System.Drawing.Point(105, 59);
 			this.LeftShoulderLabel.Name = "LeftShoulderLabel";
-			this.LeftShoulderLabel.Size = new System.Drawing.Size(43, 13);
+			this.LeftShoulderLabel.Size = new System.Drawing.Size(51, 15);
 			this.LeftShoulderLabel.TabIndex = 0;
 			this.LeftShoulderLabel.Text = "Bumper";
 			// 
@@ -643,7 +642,7 @@
 			this.LeftThumbAxisYLabel.AutoSize = true;
 			this.LeftThumbAxisYLabel.Location = new System.Drawing.Point(105, 247);
 			this.LeftThumbAxisYLabel.Name = "LeftThumbAxisYLabel";
-			this.LeftThumbAxisYLabel.Size = new System.Drawing.Size(63, 13);
+			this.LeftThumbAxisYLabel.Size = new System.Drawing.Size(68, 15);
 			this.LeftThumbAxisYLabel.TabIndex = 0;
 			this.LeftThumbAxisYLabel.Text = "Stick Axis Y";
 			// 
@@ -662,7 +661,7 @@
 			this.ButtonBackLabel.AutoSize = true;
 			this.ButtonBackLabel.Location = new System.Drawing.Point(105, 86);
 			this.ButtonBackLabel.Name = "ButtonBackLabel";
-			this.ButtonBackLabel.Size = new System.Drawing.Size(32, 13);
+			this.ButtonBackLabel.Size = new System.Drawing.Size(34, 15);
 			this.ButtonBackLabel.TabIndex = 0;
 			this.ButtonBackLabel.Text = "Back";
 			// 
@@ -681,7 +680,7 @@
 			this.DPadLabel.AutoSize = true;
 			this.DPadLabel.Location = new System.Drawing.Point(105, 167);
 			this.DPadLabel.Name = "DPadLabel";
-			this.DPadLabel.Size = new System.Drawing.Size(37, 13);
+			this.DPadLabel.Size = new System.Drawing.Size(42, 15);
 			this.DPadLabel.TabIndex = 0;
 			this.DPadLabel.Text = "D-Pad";
 			// 
@@ -690,7 +689,7 @@
 			this.LeftThumbDownLabel.AutoSize = true;
 			this.LeftThumbDownLabel.Location = new System.Drawing.Point(105, 382);
 			this.LeftThumbDownLabel.Name = "LeftThumbDownLabel";
-			this.LeftThumbDownLabel.Size = new System.Drawing.Size(62, 13);
+			this.LeftThumbDownLabel.Size = new System.Drawing.Size(68, 15);
 			this.LeftThumbDownLabel.TabIndex = 0;
 			this.LeftThumbDownLabel.Text = "Stick Down";
 			this.LeftThumbDownLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -700,7 +699,7 @@
 			this.ButtonStartLabel.AutoSize = true;
 			this.ButtonStartLabel.Location = new System.Drawing.Point(105, 113);
 			this.ButtonStartLabel.Name = "ButtonStartLabel";
-			this.ButtonStartLabel.Size = new System.Drawing.Size(29, 13);
+			this.ButtonStartLabel.Size = new System.Drawing.Size(32, 15);
 			this.ButtonStartLabel.TabIndex = 0;
 			this.ButtonStartLabel.Text = "Start";
 			// 
@@ -709,7 +708,7 @@
 			this.LeftThumbUpLabel.AutoSize = true;
 			this.LeftThumbUpLabel.Location = new System.Drawing.Point(105, 301);
 			this.LeftThumbUpLabel.Name = "LeftThumbUpLabel";
-			this.LeftThumbUpLabel.Size = new System.Drawing.Size(48, 13);
+			this.LeftThumbUpLabel.Size = new System.Drawing.Size(52, 15);
 			this.LeftThumbUpLabel.TabIndex = 0;
 			this.LeftThumbUpLabel.Text = "Stick Up";
 			this.LeftThumbUpLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -719,7 +718,7 @@
 			this.ButtonGuideLabel.AutoSize = true;
 			this.ButtonGuideLabel.Location = new System.Drawing.Point(105, 140);
 			this.ButtonGuideLabel.Name = "ButtonGuideLabel";
-			this.ButtonGuideLabel.Size = new System.Drawing.Size(35, 13);
+			this.ButtonGuideLabel.Size = new System.Drawing.Size(40, 15);
 			this.ButtonGuideLabel.TabIndex = 0;
 			this.ButtonGuideLabel.Text = "Guide";
 			// 
@@ -728,7 +727,7 @@
 			this.LeftThumbRightLabel.AutoSize = true;
 			this.LeftThumbRightLabel.Location = new System.Drawing.Point(105, 355);
 			this.LeftThumbRightLabel.Name = "LeftThumbRightLabel";
-			this.LeftThumbRightLabel.Size = new System.Drawing.Size(59, 13);
+			this.LeftThumbRightLabel.Size = new System.Drawing.Size(65, 15);
 			this.LeftThumbRightLabel.TabIndex = 0;
 			this.LeftThumbRightLabel.Text = "Stick Right";
 			this.LeftThumbRightLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -748,7 +747,7 @@
 			this.LeftThumbLeftLabel.AutoSize = true;
 			this.LeftThumbLeftLabel.Location = new System.Drawing.Point(105, 328);
 			this.LeftThumbLeftLabel.Name = "LeftThumbLeftLabel";
-			this.LeftThumbLeftLabel.Size = new System.Drawing.Size(52, 13);
+			this.LeftThumbLeftLabel.Size = new System.Drawing.Size(56, 15);
 			this.LeftThumbLeftLabel.TabIndex = 0;
 			this.LeftThumbLeftLabel.Text = "Stick Left";
 			this.LeftThumbLeftLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -829,7 +828,7 @@
 			this.LeftThumbAxisXLabel.AutoSize = true;
 			this.LeftThumbAxisXLabel.Location = new System.Drawing.Point(105, 220);
 			this.LeftThumbAxisXLabel.Name = "LeftThumbAxisXLabel";
-			this.LeftThumbAxisXLabel.Size = new System.Drawing.Size(63, 13);
+			this.LeftThumbAxisXLabel.Size = new System.Drawing.Size(69, 15);
 			this.LeftThumbAxisXLabel.TabIndex = 0;
 			this.LeftThumbAxisXLabel.Text = "Stick Axis X";
 			// 
@@ -865,9 +864,9 @@
 			this.GeneralRightPanel.Controls.Add(this.RightThumbTextBox);
 			this.GeneralRightPanel.Controls.Add(this.RightThumbLeftLabel);
 			this.GeneralRightPanel.Dock = System.Windows.Forms.DockStyle.Right;
-			this.GeneralRightPanel.Location = new System.Drawing.Point(500, 3);
+			this.GeneralRightPanel.Location = new System.Drawing.Point(494, 3);
 			this.GeneralRightPanel.Name = "GeneralRightPanel";
-			this.GeneralRightPanel.Size = new System.Drawing.Size(190, 432);
+			this.GeneralRightPanel.Size = new System.Drawing.Size(190, 426);
 			this.GeneralRightPanel.TabIndex = 46;
 			// 
 			// RightTriggerTextBox
@@ -910,7 +909,7 @@
 			this.RightThumbButtonLabel.AutoSize = true;
 			this.RightThumbButtonLabel.Location = new System.Drawing.Point(11, 274);
 			this.RightThumbButtonLabel.Name = "RightThumbButtonLabel";
-			this.RightThumbButtonLabel.Size = new System.Drawing.Size(65, 13);
+			this.RightThumbButtonLabel.Size = new System.Drawing.Size(71, 15);
 			this.RightThumbButtonLabel.TabIndex = 0;
 			this.RightThumbButtonLabel.Text = "Stick Button";
 			// 
@@ -921,7 +920,7 @@
 			this.RightLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
 			this.RightLabel.Location = new System.Drawing.Point(10, 6);
 			this.RightLabel.Name = "RightLabel";
-			this.RightLabel.Size = new System.Drawing.Size(41, 13);
+			this.RightLabel.Size = new System.Drawing.Size(44, 15);
 			this.RightLabel.TabIndex = 0;
 			this.RightLabel.Text = "RIGHT";
 			// 
@@ -931,7 +930,7 @@
 			this.ButtonYLabel.AutoSize = true;
 			this.ButtonYLabel.Location = new System.Drawing.Point(11, 86);
 			this.ButtonYLabel.Name = "ButtonYLabel";
-			this.ButtonYLabel.Size = new System.Drawing.Size(48, 13);
+			this.ButtonYLabel.Size = new System.Drawing.Size(52, 15);
 			this.ButtonYLabel.TabIndex = 0;
 			this.ButtonYLabel.Text = "Y Button";
 			// 
@@ -941,7 +940,7 @@
 			this.RightThumbAxisYLabel.AutoSize = true;
 			this.RightThumbAxisYLabel.Location = new System.Drawing.Point(11, 247);
 			this.RightThumbAxisYLabel.Name = "RightThumbAxisYLabel";
-			this.RightThumbAxisYLabel.Size = new System.Drawing.Size(63, 13);
+			this.RightThumbAxisYLabel.Size = new System.Drawing.Size(68, 15);
 			this.RightThumbAxisYLabel.TabIndex = 0;
 			this.RightThumbAxisYLabel.Text = "Stick Axis Y";
 			// 
@@ -962,7 +961,7 @@
 			this.ButtonBLabel.AutoSize = true;
 			this.ButtonBLabel.Location = new System.Drawing.Point(11, 140);
 			this.ButtonBLabel.Name = "ButtonBLabel";
-			this.ButtonBLabel.Size = new System.Drawing.Size(48, 13);
+			this.ButtonBLabel.Size = new System.Drawing.Size(53, 15);
 			this.ButtonBLabel.TabIndex = 0;
 			this.ButtonBLabel.Text = "B Button";
 			// 
@@ -1016,7 +1015,7 @@
 			this.RightShoulderLabel.AutoSize = true;
 			this.RightShoulderLabel.Location = new System.Drawing.Point(11, 57);
 			this.RightShoulderLabel.Name = "RightShoulderLabel";
-			this.RightShoulderLabel.Size = new System.Drawing.Size(43, 13);
+			this.RightShoulderLabel.Size = new System.Drawing.Size(51, 15);
 			this.RightShoulderLabel.TabIndex = 0;
 			this.RightShoulderLabel.Text = "Bumper";
 			// 
@@ -1037,7 +1036,7 @@
 			this.ButtonXLabel.AutoSize = true;
 			this.ButtonXLabel.Location = new System.Drawing.Point(11, 113);
 			this.ButtonXLabel.Name = "ButtonXLabel";
-			this.ButtonXLabel.Size = new System.Drawing.Size(48, 13);
+			this.ButtonXLabel.Size = new System.Drawing.Size(53, 15);
 			this.ButtonXLabel.TabIndex = 0;
 			this.ButtonXLabel.Text = "X Button";
 			// 
@@ -1058,7 +1057,7 @@
 			this.RightThumbAxisXLabel.AutoSize = true;
 			this.RightThumbAxisXLabel.Location = new System.Drawing.Point(11, 220);
 			this.RightThumbAxisXLabel.Name = "RightThumbAxisXLabel";
-			this.RightThumbAxisXLabel.Size = new System.Drawing.Size(63, 13);
+			this.RightThumbAxisXLabel.Size = new System.Drawing.Size(69, 15);
 			this.RightThumbAxisXLabel.TabIndex = 0;
 			this.RightThumbAxisXLabel.Text = "Stick Axis X";
 			// 
@@ -1079,7 +1078,7 @@
 			this.RightThumbDownLabel.AutoSize = true;
 			this.RightThumbDownLabel.Location = new System.Drawing.Point(11, 382);
 			this.RightThumbDownLabel.Name = "RightThumbDownLabel";
-			this.RightThumbDownLabel.Size = new System.Drawing.Size(62, 13);
+			this.RightThumbDownLabel.Size = new System.Drawing.Size(68, 15);
 			this.RightThumbDownLabel.TabIndex = 0;
 			this.RightThumbDownLabel.Text = "Stick Down";
 			this.RightThumbDownLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1101,7 +1100,7 @@
 			this.RightTriggerLabel.AutoSize = true;
 			this.RightTriggerLabel.Location = new System.Drawing.Point(10, 30);
 			this.RightTriggerLabel.Name = "RightTriggerLabel";
-			this.RightTriggerLabel.Size = new System.Drawing.Size(40, 13);
+			this.RightTriggerLabel.Size = new System.Drawing.Size(46, 15);
 			this.RightTriggerLabel.TabIndex = 0;
 			this.RightTriggerLabel.Text = "Trigger";
 			// 
@@ -1122,7 +1121,7 @@
 			this.RightThumbUpLabel.AutoSize = true;
 			this.RightThumbUpLabel.Location = new System.Drawing.Point(11, 301);
 			this.RightThumbUpLabel.Name = "RightThumbUpLabel";
-			this.RightThumbUpLabel.Size = new System.Drawing.Size(48, 13);
+			this.RightThumbUpLabel.Size = new System.Drawing.Size(52, 15);
 			this.RightThumbUpLabel.TabIndex = 0;
 			this.RightThumbUpLabel.Text = "Stick Up";
 			this.RightThumbUpLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1133,7 +1132,7 @@
 			this.ButtonALabel.AutoSize = true;
 			this.ButtonALabel.Location = new System.Drawing.Point(11, 167);
 			this.ButtonALabel.Name = "ButtonALabel";
-			this.ButtonALabel.Size = new System.Drawing.Size(48, 13);
+			this.ButtonALabel.Size = new System.Drawing.Size(52, 15);
 			this.ButtonALabel.TabIndex = 0;
 			this.ButtonALabel.Text = "A Button";
 			// 
@@ -1154,7 +1153,7 @@
 			this.RightThumbRightLabel.AutoSize = true;
 			this.RightThumbRightLabel.Location = new System.Drawing.Point(11, 355);
 			this.RightThumbRightLabel.Name = "RightThumbRightLabel";
-			this.RightThumbRightLabel.Size = new System.Drawing.Size(59, 13);
+			this.RightThumbRightLabel.Size = new System.Drawing.Size(65, 15);
 			this.RightThumbRightLabel.TabIndex = 0;
 			this.RightThumbRightLabel.Text = "Stick Right";
 			this.RightThumbRightLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1177,7 +1176,7 @@
 			this.RightThumbLeftLabel.AutoSize = true;
 			this.RightThumbLeftLabel.Location = new System.Drawing.Point(11, 328);
 			this.RightThumbLeftLabel.Name = "RightThumbLeftLabel";
-			this.RightThumbLeftLabel.Size = new System.Drawing.Size(52, 13);
+			this.RightThumbLeftLabel.Size = new System.Drawing.Size(56, 15);
 			this.RightThumbLeftLabel.TabIndex = 0;
 			this.RightThumbLeftLabel.Text = "Stick Left";
 			this.RightThumbLeftLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1197,9 +1196,9 @@
 			this.GeneralCenterPanel.Controls.Add(this.DPadRightComboBox);
 			this.GeneralCenterPanel.Controls.Add(this.TopPictureBox);
 			this.GeneralCenterPanel.Controls.Add(this.FrontPictureBox);
-			this.GeneralCenterPanel.Location = new System.Drawing.Point(197, 3);
+			this.GeneralCenterPanel.Location = new System.Drawing.Point(212, 3);
 			this.GeneralCenterPanel.Name = "GeneralCenterPanel";
-			this.GeneralCenterPanel.Size = new System.Drawing.Size(262, 429);
+			this.GeneralCenterPanel.Size = new System.Drawing.Size(262, 426);
 			this.GeneralCenterPanel.TabIndex = 46;
 			// 
 			// MapNameComboBox
@@ -1220,7 +1219,7 @@
 			this.DPadUpLabel.AutoSize = true;
 			this.DPadUpLabel.Location = new System.Drawing.Point(168, 326);
 			this.DPadUpLabel.Name = "DPadUpLabel";
-			this.DPadUpLabel.Size = new System.Drawing.Size(54, 13);
+			this.DPadUpLabel.Size = new System.Drawing.Size(61, 15);
 			this.DPadUpLabel.TabIndex = 0;
 			this.DPadUpLabel.Text = "D-Pad Up";
 			// 
@@ -1239,7 +1238,7 @@
 			this.DPadDownLabel.AutoSize = true;
 			this.DPadDownLabel.Location = new System.Drawing.Point(168, 407);
 			this.DPadDownLabel.Name = "DPadDownLabel";
-			this.DPadDownLabel.Size = new System.Drawing.Size(68, 13);
+			this.DPadDownLabel.Size = new System.Drawing.Size(77, 15);
 			this.DPadDownLabel.TabIndex = 0;
 			this.DPadDownLabel.Text = "D-Pad Down";
 			// 
@@ -1258,7 +1257,7 @@
 			this.DPadRightLabel.AutoSize = true;
 			this.DPadRightLabel.Location = new System.Drawing.Point(168, 380);
 			this.DPadRightLabel.Name = "DPadRightLabel";
-			this.DPadRightLabel.Size = new System.Drawing.Size(65, 13);
+			this.DPadRightLabel.Size = new System.Drawing.Size(74, 15);
 			this.DPadRightLabel.TabIndex = 0;
 			this.DPadRightLabel.Text = "D-Pad Right";
 			// 
@@ -1277,7 +1276,7 @@
 			this.DPadLeftLabel.AutoSize = true;
 			this.DPadLeftLabel.Location = new System.Drawing.Point(168, 353);
 			this.DPadLeftLabel.Name = "DPadLeftLabel";
-			this.DPadLeftLabel.Size = new System.Drawing.Size(58, 13);
+			this.DPadLeftLabel.Size = new System.Drawing.Size(65, 15);
 			this.DPadLeftLabel.TabIndex = 0;
 			this.DPadLeftLabel.Text = "D-Pad Left";
 			// 
@@ -1751,7 +1750,7 @@
 			this.ForceEnableCheckBox.AutoSize = true;
 			this.ForceEnableCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.ForceEnableCheckBox.Name = "ForceEnableCheckBox";
-			this.ForceEnableCheckBox.Size = new System.Drawing.Size(140, 17);
+			this.ForceEnableCheckBox.Size = new System.Drawing.Size(159, 19);
 			this.ForceEnableCheckBox.TabIndex = 1;
 			this.ForceEnableCheckBox.Text = "Enable Force Feedback";
 			this.ForceEnableCheckBox.UseVisualStyleBackColor = true;
@@ -1772,7 +1771,7 @@
 			this.ForceSwapMotorCheckBox.AutoSize = true;
 			this.ForceSwapMotorCheckBox.Location = new System.Drawing.Point(6, 42);
 			this.ForceSwapMotorCheckBox.Name = "ForceSwapMotorCheckBox";
-			this.ForceSwapMotorCheckBox.Size = new System.Drawing.Size(88, 17);
+			this.ForceSwapMotorCheckBox.Size = new System.Drawing.Size(101, 19);
 			this.ForceSwapMotorCheckBox.TabIndex = 2;
 			this.ForceSwapMotorCheckBox.Text = "Swap Motors";
 			this.ForceSwapMotorCheckBox.UseVisualStyleBackColor = true;
@@ -1782,7 +1781,7 @@
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(152, 20);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(149, 13);
+			this.label1.Size = new System.Drawing.Size(167, 15);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Effects Type / Implementation";
 			// 
@@ -1791,7 +1790,7 @@
 			this.OveralEffectsStengthLabel.AutoSize = true;
 			this.OveralEffectsStengthLabel.Location = new System.Drawing.Point(307, 20);
 			this.OveralEffectsStengthLabel.Name = "OveralEffectsStengthLabel";
-			this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(114, 13);
+			this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(126, 15);
 			this.OveralEffectsStengthLabel.TabIndex = 0;
 			this.OveralEffectsStengthLabel.Text = "Overal Effects Stength";
 			// 
@@ -1833,7 +1832,7 @@
 			this.LeftMotorDirectionLabel.AutoSize = true;
 			this.LeftMotorDirectionLabel.Location = new System.Drawing.Point(6, 22);
 			this.LeftMotorDirectionLabel.Name = "LeftMotorDirectionLabel";
-			this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(52, 13);
+			this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(59, 15);
 			this.LeftMotorDirectionLabel.TabIndex = 0;
 			this.LeftMotorDirectionLabel.Text = "Direction:";
 			// 
@@ -1864,7 +1863,7 @@
 			this.LeftMotorStrengthLabel.AutoSize = true;
 			this.LeftMotorStrengthLabel.Location = new System.Drawing.Point(6, 55);
 			this.LeftMotorStrengthLabel.Name = "LeftMotorStrengthLabel";
-			this.LeftMotorStrengthLabel.Size = new System.Drawing.Size(47, 13);
+			this.LeftMotorStrengthLabel.Size = new System.Drawing.Size(53, 15);
 			this.LeftMotorStrengthLabel.TabIndex = 0;
 			this.LeftMotorStrengthLabel.Text = "Strength";
 			// 
@@ -1918,7 +1917,7 @@
 			this.LeftMotorPeriodLabel.AutoSize = true;
 			this.LeftMotorPeriodLabel.Location = new System.Drawing.Point(6, 101);
 			this.LeftMotorPeriodLabel.Name = "LeftMotorPeriodLabel";
-			this.LeftMotorPeriodLabel.Size = new System.Drawing.Size(59, 13);
+			this.LeftMotorPeriodLabel.Size = new System.Drawing.Size(71, 15);
 			this.LeftMotorPeriodLabel.TabIndex = 0;
 			this.LeftMotorPeriodLabel.Text = "Period (ms)";
 			// 
@@ -1938,7 +1937,7 @@
 			this.TestLeftMotorLabel.AutoSize = true;
 			this.TestLeftMotorLabel.Location = new System.Drawing.Point(6, 152);
 			this.TestLeftMotorLabel.Name = "TestLeftMotorLabel";
-			this.TestLeftMotorLabel.Size = new System.Drawing.Size(28, 13);
+			this.TestLeftMotorLabel.Size = new System.Drawing.Size(30, 15);
 			this.TestLeftMotorLabel.TabIndex = 0;
 			this.TestLeftMotorLabel.Text = "Test";
 			// 
@@ -1967,7 +1966,7 @@
 			this.RightMotorDirectionLabel.AutoSize = true;
 			this.RightMotorDirectionLabel.Location = new System.Drawing.Point(9, 22);
 			this.RightMotorDirectionLabel.Name = "RightMotorDirectionLabel";
-			this.RightMotorDirectionLabel.Size = new System.Drawing.Size(52, 13);
+			this.RightMotorDirectionLabel.Size = new System.Drawing.Size(59, 15);
 			this.RightMotorDirectionLabel.TabIndex = 0;
 			this.RightMotorDirectionLabel.Text = "Direction:";
 			// 
@@ -1998,7 +1997,7 @@
 			this.RightMotorStrengthLabel.AutoSize = true;
 			this.RightMotorStrengthLabel.Location = new System.Drawing.Point(9, 55);
 			this.RightMotorStrengthLabel.Name = "RightMotorStrengthLabel";
-			this.RightMotorStrengthLabel.Size = new System.Drawing.Size(47, 13);
+			this.RightMotorStrengthLabel.Size = new System.Drawing.Size(53, 15);
 			this.RightMotorStrengthLabel.TabIndex = 0;
 			this.RightMotorStrengthLabel.Text = "Strength";
 			// 
@@ -2018,7 +2017,7 @@
 			this.TestRightMotorLabel.AutoSize = true;
 			this.TestRightMotorLabel.Location = new System.Drawing.Point(9, 152);
 			this.TestRightMotorLabel.Name = "TestRightMotorLabel";
-			this.TestRightMotorLabel.Size = new System.Drawing.Size(28, 13);
+			this.TestRightMotorLabel.Size = new System.Drawing.Size(30, 15);
 			this.TestRightMotorLabel.TabIndex = 0;
 			this.TestRightMotorLabel.Text = "Test";
 			// 
@@ -2038,7 +2037,7 @@
 			this.RightMotorPeriodLabel.AutoSize = true;
 			this.RightMotorPeriodLabel.Location = new System.Drawing.Point(9, 101);
 			this.RightMotorPeriodLabel.Name = "RightMotorPeriodLabel";
-			this.RightMotorPeriodLabel.Size = new System.Drawing.Size(59, 13);
+			this.RightMotorPeriodLabel.Size = new System.Drawing.Size(71, 15);
 			this.RightMotorPeriodLabel.TabIndex = 0;
 			this.RightMotorPeriodLabel.Text = "Period (ms)";
 			// 
@@ -2078,8 +2077,9 @@
 			// 
 			// DiMenuStrip
 			// 
+			this.DiMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.DiMenuStrip.Name = "DiMenuStrip";
-			this.DiMenuStrip.Size = new System.Drawing.Size(181, 26);
+			this.DiMenuStrip.Size = new System.Drawing.Size(61, 4);
 			this.DiMenuStrip.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this.DiMenuStrip_Closed);
 			// 
 			// ClearPresetButton
@@ -2159,6 +2159,7 @@
 			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
 			this.MappedDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.MappedDevicesDataGridView.RowHeadersVisible = false;
+			this.MappedDevicesDataGridView.RowHeadersWidth = 51;
 			this.MappedDevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.MappedDevicesDataGridView.Size = new System.Drawing.Size(707, 85);
 			this.MappedDevicesDataGridView.TabIndex = 68;
@@ -2181,6 +2182,7 @@
 			// 
 			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
 			this.IsEnabledColumn.HeaderText = "";
+			this.IsEnabledColumn.MinimumWidth = 6;
 			this.IsEnabledColumn.Name = "IsEnabledColumn";
 			this.IsEnabledColumn.ReadOnly = true;
 			this.IsEnabledColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
@@ -2192,10 +2194,11 @@
 			this.SettingIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.SettingIdColumn.DataPropertyName = "PadSettingChecksum";
 			this.SettingIdColumn.HeaderText = "Setting ID";
+			this.SettingIdColumn.MinimumWidth = 6;
 			this.SettingIdColumn.Name = "SettingIdColumn";
 			this.SettingIdColumn.ReadOnly = true;
 			this.SettingIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.SettingIdColumn.Width = 59;
+			this.SettingIdColumn.Width = 65;
 			// 
 			// CompletionColumn
 			// 
@@ -2205,35 +2208,39 @@
 			dataGridViewCellStyle1.NullValue = null;
 			this.CompletionColumn.DefaultCellStyle = dataGridViewCellStyle1;
 			this.CompletionColumn.HeaderText = "Map %";
+			this.CompletionColumn.MinimumWidth = 6;
 			this.CompletionColumn.Name = "CompletionColumn";
 			this.CompletionColumn.ReadOnly = true;
 			this.CompletionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.CompletionColumn.Width = 44;
+			this.CompletionColumn.Width = 51;
 			// 
 			// InstanceIdColumn
 			// 
 			this.InstanceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.InstanceIdColumn.HeaderText = "Instance ID";
+			this.InstanceIdColumn.MinimumWidth = 6;
 			this.InstanceIdColumn.Name = "InstanceIdColumn";
 			this.InstanceIdColumn.ReadOnly = true;
 			this.InstanceIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.InstanceIdColumn.Width = 67;
+			this.InstanceIdColumn.Width = 73;
 			// 
 			// VendorNameColumn
 			// 
 			this.VendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.VendorNameColumn.DataPropertyName = "VendorName";
 			this.VendorNameColumn.HeaderText = "Vendor Name";
+			this.VendorNameColumn.MinimumWidth = 6;
 			this.VendorNameColumn.Name = "VendorNameColumn";
 			this.VendorNameColumn.ReadOnly = true;
 			this.VendorNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.VendorNameColumn.Width = 77;
+			this.VendorNameColumn.Width = 88;
 			// 
 			// ProductNameColumn
 			// 
 			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.ProductNameColumn.DataPropertyName = "ProductName";
 			this.ProductNameColumn.HeaderText = "Product Name";
+			this.ProductNameColumn.MinimumWidth = 6;
 			this.ProductNameColumn.Name = "ProductNameColumn";
 			this.ProductNameColumn.ReadOnly = true;
 			this.ProductNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
@@ -2241,9 +2248,11 @@
 			// MapToColumn
 			// 
 			this.MapToColumn.HeaderText = "Map To";
+			this.MapToColumn.MinimumWidth = 6;
 			this.MapToColumn.Name = "MapToColumn";
 			this.MapToColumn.ReadOnly = true;
 			this.MapToColumn.Visible = false;
+			this.MapToColumn.Width = 125;
 			// 
 			// LoadPresetButton
 			// 
@@ -2259,6 +2268,7 @@
 			// GamesToolStrip
 			// 
 			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.GamesToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.RemoveMapButton,
             this.AddMapButton,
@@ -2269,7 +2279,7 @@
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
 			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.GamesToolStrip.Size = new System.Drawing.Size(707, 25);
+			this.GamesToolStrip.Size = new System.Drawing.Size(707, 27);
 			this.GamesToolStrip.TabIndex = 3;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
 			// 
@@ -2280,7 +2290,7 @@
 			this.RemoveMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RemoveMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.RemoveMapButton.Name = "RemoveMapButton";
-			this.RemoveMapButton.Size = new System.Drawing.Size(70, 22);
+			this.RemoveMapButton.Size = new System.Drawing.Size(87, 24);
 			this.RemoveMapButton.Text = "&Remove";
 			this.RemoveMapButton.Click += new System.EventHandler(this.RemoveMapButton_Click);
 			// 
@@ -2292,7 +2302,7 @@
 			this.AddMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.AddMapButton.Name = "AddMapButton";
-			this.AddMapButton.Size = new System.Drawing.Size(58, 22);
+			this.AddMapButton.Size = new System.Drawing.Size(70, 24);
 			this.AddMapButton.Text = "Add...";
 			this.AddMapButton.Click += new System.EventHandler(this.AddMapButton_Click);
 			// 
@@ -2303,7 +2313,7 @@
 			this.AutoMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AutoMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.AutoMapButton.Name = "AutoMapButton";
-			this.AutoMapButton.Size = new System.Drawing.Size(80, 22);
+			this.AutoMapButton.Size = new System.Drawing.Size(99, 24);
 			this.AutoMapButton.Text = "&Auto Map";
 			this.AutoMapButton.Click += new System.EventHandler(this.AutoMapButton_Click);
 			// 
@@ -2313,7 +2323,7 @@
 			this.EnableButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.EnableButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.EnableButton.Name = "EnableButton";
-			this.EnableButton.Size = new System.Drawing.Size(62, 22);
+			this.EnableButton.Size = new System.Drawing.Size(78, 24);
 			this.EnableButton.Text = "&Enable";
 			this.EnableButton.Click += new System.EventHandler(this.EnableButton_Click);
 			// 
@@ -2323,9 +2333,27 @@
 			this.GetXInputStatesCheckBox.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.GetXInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.GetXInputStatesCheckBox.Name = "GetXInputStatesCheckBox";
-			this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(112, 22);
+			this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(141, 24);
 			this.GetXInputStatesCheckBox.Text = "&Get XInput State";
 			this.GetXInputStatesCheckBox.ToolTipText = "Load XInput DLL and query actual state";
+			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.ColumnCount = 3;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+			this.tableLayoutPanel1.Controls.Add(this.GeneralCenterPanel, 1, 0);
+			this.tableLayoutPanel1.Controls.Add(this.GeneralLeftPanel, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.GeneralRightPanel, 2, 0);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 1;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(687, 432);
+			this.tableLayoutPanel1.TabIndex = 48;
 			// 
 			// PadControl
 			// 
@@ -2394,6 +2422,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).EndInit();
 			this.GamesToolStrip.ResumeLayout(false);
 			this.GamesToolStrip.PerformLayout();
+			this.tableLayoutPanel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -2588,5 +2617,6 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 	}
 }

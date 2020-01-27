@@ -109,7 +109,7 @@ namespace x360ce.App
 			this.MainTabControl.Location = new System.Drawing.Point(6, 92);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
-			this.MainTabControl.Size = new System.Drawing.Size(800, 629);
+			this.MainTabControl.Size = new System.Drawing.Size(800, 618);
 			this.MainTabControl.TabIndex = 1;
 			// 
 			// Pad1TabPage
@@ -117,7 +117,7 @@ namespace x360ce.App
 			this.Pad1TabPage.ImageKey = "bullet_square_glass_grey.png";
 			this.Pad1TabPage.Location = new System.Drawing.Point(4, 23);
 			this.Pad1TabPage.Name = "Pad1TabPage";
-			this.Pad1TabPage.Size = new System.Drawing.Size(792, 602);
+			this.Pad1TabPage.Size = new System.Drawing.Size(792, 591);
 			this.Pad1TabPage.TabIndex = 0;
 			this.Pad1TabPage.Text = "PAD 1";
 			// 
@@ -335,7 +335,7 @@ namespace x360ce.App
             this.StatusIsAdminLabel,
             this.StatusIniLabel,
             this.StatusDllLabel});
-			this.MainStatusStrip.Location = new System.Drawing.Point(0, 728);
+			this.MainStatusStrip.Location = new System.Drawing.Point(0, 717);
 			this.MainStatusStrip.Name = "MainStatusStrip";
 			this.MainStatusStrip.Size = new System.Drawing.Size(810, 24);
 			this.MainStatusStrip.SizingGrip = false;
@@ -345,13 +345,13 @@ namespace x360ce.App
 			// StatusTimerLabel
 			// 
 			this.StatusTimerLabel.Name = "StatusTimerLabel";
-			this.StatusTimerLabel.Size = new System.Drawing.Size(98, 19);
+			this.StatusTimerLabel.Size = new System.Drawing.Size(97, 19);
 			this.StatusTimerLabel.Text = "StatusTimerLabel";
 			// 
 			// toolStripStatusLabel2
 			// 
 			this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-			this.toolStripStatusLabel2.Size = new System.Drawing.Size(86, 19);
+			this.toolStripStatusLabel2.Size = new System.Drawing.Size(87, 19);
 			this.toolStripStatusLabel2.Spring = true;
 			// 
 			// UpdateFrequencyLabel
@@ -543,7 +543,7 @@ namespace x360ce.App
 			this.TestButton.Margin = new System.Windows.Forms.Padding(1);
 			this.TestButton.Name = "TestButton";
 			this.TestButton.Padding = new System.Windows.Forms.Padding(0, 0, 0, 2);
-			this.TestButton.Size = new System.Drawing.Size(57, 22);
+			this.TestButton.Size = new System.Drawing.Size(56, 22);
 			this.TestButton.Text = "Test...";
 			this.TestButton.Click += new System.EventHandler(this.TestButton_Click);
 			// 
@@ -576,13 +576,13 @@ namespace x360ce.App
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.BackColor = System.Drawing.SystemColors.Control;
-			this.ClientSize = new System.Drawing.Size(810, 752);
+			this.ClientSize = new System.Drawing.Size(810, 741);
 			this.Controls.Add(this.GamesToolStrip);
 			this.Controls.Add(this.MainStatusStrip);
 			this.Controls.Add(this.MainTabControl);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(700, 790);
+			this.MinimumSize = new System.Drawing.Size(700, 780);
 			this.Name = "MainForm";
 			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
