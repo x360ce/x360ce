@@ -51,7 +51,7 @@ namespace JocysCom.WebSites.Engine
 			if (ReferenceEquals(a, b))
 				return true;
 			// If one is null, but not both, return false.
-			if (a == null || b == null)
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
 				return false;
 			// Return true if the fields match:
 			return a.Id == b.Id && a.Name == b.Name && a.Type == b.Type;
