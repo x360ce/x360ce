@@ -41,7 +41,6 @@ namespace JocysCom.ClassLibrary.Threading
 			Queue.SynchronizingObject = listSynchronizingObject;
 			_LastActionDoneTime = new Stopwatch();
 			_LastActionDoneTime.Start();
-			queueLock = new object();
 			ChangeDelayInterval(delayInterval);
 			ChangeSleepInterval(sleepInterval);
 			SleepTimerStart();
@@ -49,8 +48,7 @@ namespace JocysCom.ClassLibrary.Threading
 
 		/// <summary>If delay timer is set then queue can contain only one item.</summary>
 		public BindingListInvoked<T> Queue { get; private set; }
-
-		object queueLock;
+		readonly object queueLock = new object ();
 
 		public bool ProcessImmediately = false;
 
@@ -120,7 +118,7 @@ namespace JocysCom.ClassLibrary.Threading
 		/// </summary>
 		System.Timers.Timer delayTimer;
 		DateTime delayTimerNextRunTime;
-		object delayTimerLock = new object();
+		readonly object delayTimerLock = new object();
 
 		public void ChangeDelayInterval(int interval)
 		{
@@ -190,11 +188,11 @@ namespace JocysCom.ClassLibrary.Threading
 		/// </summary>
 		System.Timers.Timer sleepTimer;
 		DateTime sleepTimerNextRunTime;
-		object sleepTimerLock = new object();
+		readonly object sleepTimerLock = new object();
 
 		public void ChangeSleepInterval(int interval)
 		{
-			lock (queueLock)
+			lock (sleepTimerLock)
 			{
 				if (sleepTimer != null)
 				{

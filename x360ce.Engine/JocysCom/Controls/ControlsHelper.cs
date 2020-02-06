@@ -213,16 +213,21 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void RebindGrid<T>(DataGridView grid, object data, string primaryKeyPropertyName = null, bool selectFirst = true, List<T> selection = null)
 		{
+			if (grid == null)
+				throw new ArgumentNullException(nameof(grid));
 			int rowIndex = 0;
-			if (grid.Rows.Count > 0) rowIndex = grid.FirstDisplayedCell.RowIndex;
+			if (grid.Rows.Count > 0)
+			{
+				var firsCell = grid.FirstDisplayedCell;
+				if (firsCell != null)
+					rowIndex = firsCell.RowIndex;
+			}
 			var sel = (selection == null)
 				? GetSelection<T>(grid, primaryKeyPropertyName)
 				: selection;
 			grid.DataSource = data;
 			if (rowIndex != 0 && rowIndex < grid.Rows.Count)
-			{
 				grid.FirstDisplayedScrollingRowIndex = rowIndex;
-			}
 			RestoreSelection(grid, primaryKeyPropertyName, sel, selectFirst);
 		}
 
