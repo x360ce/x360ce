@@ -48,35 +48,42 @@ namespace JocysCom.ClassLibrary
 		}
 
 		/// <summary>
-		/// Find resource in all loaded assemblies.
-		/// </summary>
-		public static T FindResource<T>(string name)
-		{
-			object results = default(T);
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-			foreach (var assembly in assemblies)
-			{
-				T o = FindResource<T>(assembly, name);
-				if (o != null) return o;
-			}
-			return default(T);
-		}
-
-		/// <summary>
-		/// Get resource from class *.resx file.
+		/// Get resource from class *.resx file by full name.
 		/// </summary>
 		public static T FindResource<T>(string name, object o)
 		{
+			if (o == null)
+				throw new ArgumentNullException(nameof(o));
 			var resources = new System.ComponentModel.ComponentResourceManager(o.GetType());
 			return (T)(resources.GetObject(name));
 		}
 
 		/// <summary>
-		/// Find resource in all loaded assemblies.
+		/// Find resource in all loaded assemblies by full or partial (EndsWith) name.
+		/// </summary>
+		public static T FindResource<T>(string name)
+		{
+			object results = default(T);
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			foreach (var assembly in assemblies)
+			{
+				var o = FindResource<T>(assembly, name);
+				if (o != null)
+					return o;
+			}
+			return default(T);
+		}
+
+		/// <summary>
+		/// Find resource in all loaded assemblies by full or partial (EndsWith) name.
 		/// </summary>
 		public static T FindResource<T>(Assembly assembly, string name)
 		{
-			T results = default(T);
+			if (assembly == null)
+				throw new ArgumentNullException(nameof(assembly));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			var results = default(T);
 			if (assembly.IsDynamic)
 				return results;
 			var resourceNames = assembly.GetManifestResourceNames();
@@ -92,33 +99,45 @@ namespace JocysCom.ClassLibrary
 			return default(T);
 		}
 
-		// Get Embedded Resource from type (*.resx file).
+		/// <summary>
+		/// Get embedded resource from type (*.resx file).
+		/// </summary>
 		public static T GetResource<TSource, T>(string name)
 		{
 			var resources = new System.ComponentModel.ComponentResourceManager(typeof(T));
 			return (T)resources.GetObject(name);
 		}
 
+		/// <summary>
+		/// Get embedded resource by its full name.
+		/// </summary>
 		public static T GetResource<T>(string name)
 		{
-			object results;
-			System.Reflection.Assembly assembly;
 			// Look inside calling assembly.
-			assembly = System.Reflection.Assembly.GetCallingAssembly();
-			results = GetResource<T>(assembly, name);
-			if (results != null) return (T)results;
+			var assembly = System.Reflection.Assembly.GetCallingAssembly();
+			var results = GetResource<T>(assembly, name);
+			if (results != null)
+				return (T)results;
 			// Look inside executing assembly (class library of this method).
 			assembly = System.Reflection.Assembly.GetExecutingAssembly();
 			results = GetResource<T>(assembly, name);
-			return (results == null) ? default(T) : (T)results;
+			return (results == null)
+				? default(T)
+				: (T)results;
 		}
 
+		/// <summary>
+		/// Get embedded resource by its full name.
+		/// </summary>
 		public static T GetResource<T>(Assembly assembly, string name)
 		{
-			object results = default(T);
+			if (assembly == null)
+				throw new ArgumentNullException(nameof(assembly));
+			if (name == null)
+				throw new ArgumentNullException(nameof(name));
+			var results = default(T);
 			name = name.Replace("/", ".").Replace(@"\", ".").Replace(' ', '_');
-			var assemblyPrefix = assembly.GetName().Name;
-			System.IO.Stream stream = assembly.GetManifestResourceStream(name);
+			var stream = assembly.GetManifestResourceStream(name);
 			if (stream != null)
 			{
 				if (typeof(T) == typeof(System.Drawing.Image)
@@ -129,17 +148,19 @@ namespace JocysCom.ClassLibrary
 				}
 				else if (typeof(T) == typeof(string))
 				{
-					System.IO.StreamReader streamReader = new System.IO.StreamReader(stream);
+					// File must contain Byte Order Mark (BOM) header in order for bytes correctly encoded to string.
+					// If header is missing then get resource as byte[] type and encode manually.
+					var streamReader = new System.IO.StreamReader(stream, true);
 					return (T)(object)streamReader.ReadToEnd();
 				}
 				else
 				{
-					byte[] bytes = new byte[stream.Length];
+					var bytes = new byte[stream.Length];
 					stream.Read(bytes, 0, (int)stream.Length);
-					results = bytes;
+					results = (T)(object)bytes;
 				}
 			}
-			return (T)results;
+			return results;
 		}
 
 		#endregion
@@ -149,10 +170,10 @@ namespace JocysCom.ClassLibrary
 		// Sometimes it is good to pause if there is too much disk activity.
 		// By letting windows/SQL to commit all changes to disk we can improve speed.
 
-		PerformanceCounter _diskReadCounter = new PerformanceCounter();
-		PerformanceCounter _diskWriteCounter = new PerformanceCounter();
+		private PerformanceCounter _diskReadCounter = new PerformanceCounter();
+		private PerformanceCounter _diskWriteCounter = new PerformanceCounter();
 
-		double GetCounterValue(PerformanceCounter pc, string categoryName, string counterName, string instanceName)
+		private static double GetCounterValue(PerformanceCounter pc, string categoryName, string counterName, string instanceName)
 		{
 			pc.CategoryName = categoryName;
 			pc.CounterName = counterName;

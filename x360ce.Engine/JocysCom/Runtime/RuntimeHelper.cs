@@ -2,51 +2,42 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.Objects.DataClasses;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
 using System.Text;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
-	public partial class RuntimeHelper
+	public static partial class RuntimeHelper
 	{
 
 		public static bool IsKnownType(Type type)
 		{
+			if (type == null)
+				throw new ArgumentNullException(nameof(type));
 			return
 				type == typeof(string)
 				|| type.IsPrimitive
 				|| type.IsSerializable;
 		}
 
-		static readonly HashSet<Type> numericTypes = new HashSet<Type>
+		private static readonly HashSet<Type> numericTypes = new HashSet<Type>
 		{
 			typeof(int),  typeof(double),  typeof(decimal),
 			typeof(long), typeof(short),   typeof(sbyte),
 			typeof(byte), typeof(ulong),   typeof(ushort),
-			typeof(uint), typeof(float),   //typeof(BigInteger)
+			typeof(uint), typeof(float),
 		};
-
 
 		public static bool IsNumeric(Type type)
 		{
 			return numericTypes.Contains(type);
 		}
 
-		//public static bool IsNumeric<T>(T item)
-		//{
-		//	return item == null
-		//	? false
-		//	: numericTypes.Contains(item.GetType());
-		//}
-
-
 		/// <summary>Built-in types</summary>
-		static Dictionary<Type, string> _typeAlias = new Dictionary<Type, string>
+		private static readonly Dictionary<Type, string> _typeAlias = new Dictionary<Type, string>
 		{
 			{ typeof(bool), "bool" },
 			{ typeof(byte), "byte" },
@@ -68,11 +59,27 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static string GetBuiltInTypeNameOrAlias(Type type)
 		{
-			var elementType = type.IsArray ? type.GetElementType() : type;
+			if (type == null)
+				throw new ArgumentNullException(nameof(type));
+			var elementType = type.IsArray
+				? type.GetElementType()
+				: type;
 			// Lookup alias for type
 			string alias;
 			if (_typeAlias.TryGetValue(elementType, out alias))
 				return alias + (type.IsArray ? "[]" : "");
+			// Note: All Nullable<T> are value types.
+			if (type.IsValueType)
+			{
+				var underType = Nullable.GetUnderlyingType(type);
+				if (underType != null)
+					return GetBuiltInTypeNameOrAlias(underType) + "?";
+			}
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+			{
+				var itemType = type.GetGenericArguments()[0];
+				return string.Format("List<{0}>", GetBuiltInTypeNameOrAlias(itemType));
+			}
 			// Default to CLR type name
 			return type.Name;
 		}
@@ -84,6 +91,8 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static bool IsNullableType(Type type)
 		{
+			if (type == null)
+				throw new ArgumentNullException(nameof(type));
 			return type.IsGenericType
 				? type.GetGenericTypeDefinition() == typeof(Nullable<>)
 				: false;
@@ -98,8 +107,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		private static FieldInfo[] GetItersectingFields(object source, object dest)
 		{
-			string[] dFieldNames = dest.GetType().GetFields(DefaultBindingFlags).Select(x => x.Name).ToArray();
-			FieldInfo[] itersectingFields = source
+			var dFieldNames = dest.GetType().GetFields(DefaultBindingFlags).Select(x => x.Name).ToArray();
+			var itersectingFields = source
 				.GetType()
 				.GetFields(DefaultBindingFlags)
 				.Where(x => dFieldNames.Contains(x.Name))
@@ -109,15 +118,19 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void CopyFields(object source, object dest)
 		{
+			if (source == null)
+				throw new ArgumentNullException(nameof(source));
+			if (dest == null)
+				throw new ArgumentNullException(nameof(dest));
 			// Get type of the destination object.
-			Type destType = dest.GetType();
+			var destType = dest.GetType();
 			// Copy fields.
-			FieldInfo[] sourceItersectingFields = GetItersectingFields(source, dest);
-			foreach (FieldInfo sfi in sourceItersectingFields)
+			var sourceItersectingFields = GetItersectingFields(source, dest);
+			foreach (var sfi in sourceItersectingFields)
 			{
 				if (IsKnownType(sfi.FieldType))
 				{
-					FieldInfo dfi = destType.GetField(sfi.Name, DefaultBindingFlags);
+					var dfi = destType.GetField(sfi.Name, DefaultBindingFlags);
 					dfi.SetValue(dest, sfi.GetValue(source));
 				}
 			}
@@ -127,16 +140,66 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Copy Properties
 
-		static object PropertiesReadLock = new object();
-		static Dictionary<Type, PropertyInfo[]> PropertiesReadList = new Dictionary<Type, PropertyInfo[]>();
-		static object PropertiesWriteLock = new object();
-		static Dictionary<Type, PropertyInfo[]> PropertiesWriteList = new Dictionary<Type, PropertyInfo[]>();
+		private static readonly object PropertiesReadLock = new object();
+		private static readonly Dictionary<Type, PropertyInfo[]> PropertiesReadList = new Dictionary<Type, PropertyInfo[]>();
+		private static readonly object PropertiesWriteLock = new object();
+		private static readonly Dictionary<Type, PropertyInfo[]> PropertiesWriteList = new Dictionary<Type, PropertyInfo[]>();
 
+		/// <summary>
+		/// Get information about different and intersecting properties.
+		/// </summary>
+		public static string GetPropertyDiffInfo<TSource, TTarget>()
+		{
+			var sType = typeof(TSource);
+			var tType = typeof(TTarget);
+			var sProperties = sType.GetProperties(DefaultBindingFlags);
+			var tProperties = tType.GetProperties(DefaultBindingFlags);
+			var sNames = sProperties.Select(x => x.Name).ToArray();
+			var tNames = tProperties.Select(x => x.Name).ToArray();
+			var targetOnly = tProperties.Where(x => !sNames.Contains(x.Name)).OrderBy(x => x.Name).ToArray();
+			var sourceOnly = sProperties.Where(x => !tNames.Contains(x.Name)).OrderBy(x => x.Name).ToArray();
+			var sourceSame = sProperties.Where(x => tNames.Contains(x.Name)).OrderBy(x => x.Name).ToArray();
+			var sb = new StringBuilder();
+			var targetOnlyLines = targetOnly.Select(x => string.Format("{0} {1}", GetBuiltInTypeNameOrAlias(x.PropertyType), x.Name));
+			if (targetOnly.Length > 0)
+			{
+				sb.AppendFormat("// ---- Target Only [{0}] - {1}\r\n\t", targetOnly.Length, tType.Name);
+				sb.Append(string.Join("\r\n\t", targetOnlyLines));
+				sb.AppendLine();
+			}
+			var sourceOnlyLines = sourceOnly.Select(x => string.Format("{0} {1}", GetBuiltInTypeNameOrAlias(x.PropertyType), x.Name));
+			if (sourceOnly.Length > 0)
+			{
+				sb.AppendFormat("// ---- Source Only [{0}] - {1}\r\n\t", sourceOnly.Length, sType.Name);
+				sb.Append(string.Join("\r\n\t", sourceOnlyLines));
+				sb.AppendLine();
+			}
+			if (sourceSame.Length > 0)
+			{
+				sb.AppendFormat("// ---- Intersects [{0}]:\r\n\t", sourceSame.Length);
+				var intesectsLines = sourceSame.Select(s =>
+					string.Format("{0} {1}{2}",
+						GetBuiltInTypeNameOrAlias(s.PropertyType),
+						s.Name,
+						(GetBuiltInTypeNameOrAlias(tProperties.First(t => t.Name == s.Name).PropertyType) == GetBuiltInTypeNameOrAlias(s.PropertyType))
+						? ""
+						: " // " + GetBuiltInTypeNameOrAlias(tProperties.First(t => t.Name == s.Name).PropertyType)
+					)
+				);
+				sb.Append(string.Join("\r\n\t", intesectsLines));
+				sb.AppendLine();
+			}
+			return sb.ToString();
+		}
 		/// <summary>
 		/// Get properties which exists on both objects.
 		/// </summary>
-		private static PropertyInfo[] GetItersectingProperties(object source, object dest)
+		static PropertyInfo[] GetItersectingProperties(object source, object dest)
 		{
+			if (source == null)
+				throw new ArgumentNullException(nameof(source));
+			if (dest == null)
+				throw new ArgumentNullException(nameof(dest));
 			// Properties to read.
 			PropertyInfo[] sProperties;
 			lock (PropertiesReadLock)
@@ -180,11 +243,15 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void CopyProperties(object source, object dest)
 		{
+			if (source == null)
+				throw new ArgumentNullException(nameof(source));
+			if (dest == null)
+				throw new ArgumentNullException(nameof(dest));
 			// Get type of the destination object.
-			Type destType = dest.GetType();
+			var destType = dest.GetType();
 			// Copy properties.
-			PropertyInfo[] sourceItersectingProperties = GetItersectingProperties(source, dest);
-			foreach (PropertyInfo spi in sourceItersectingProperties)
+			var sourceItersectingProperties = GetItersectingProperties(source, dest);
+			foreach (var spi in sourceItersectingProperties)
 			{
 				// Skip if can't read.
 				if (!spi.CanRead)
@@ -214,101 +281,14 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
-		#region Copy Properties with DataMember attribute
-
-		static object DataMembersLock = new object();
-		static Dictionary<Type, PropertyInfo[]> DataMembers = new Dictionary<Type, PropertyInfo[]>();
-		static Dictionary<Type, PropertyInfo[]> DataMembersNoKey = new Dictionary<Type, PropertyInfo[]>();
-
-		static PropertyInfo[] GetDataMemberProperties<T>(T item, bool skipKey = false)
-		{
-			PropertyInfo[] ps;
-			Type t = item == null ? typeof(T) : item.GetType();
-			lock (DataMembersLock)
-			{
-				var cache = skipKey ? DataMembersNoKey : DataMembers;
-				if (cache.ContainsKey(t))
-				{
-					ps = cache[t];
-				}
-				else
-				{
-					var items = t.GetProperties(DefaultBindingFlags | BindingFlags.DeclaredOnly)
-						.Where(p => p.CanRead && p.CanWrite)
-						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)));
-					if (skipKey)
-					{
-						var keys = items
-							.Where(p => Attribute.IsDefined(p, typeof(EdmScalarPropertyAttribute)))
-							.Where(p => ((EdmScalarPropertyAttribute)Attribute.GetCustomAttribute(p, typeof(EdmScalarPropertyAttribute))).EntityKeyProperty);
-						items = items.Except(keys);
-					}
-					ps = items
-						// Order properties by name so list will change less with the code changed (important for checksums)
-						.OrderBy(x => x.Name)
-						.ToArray();
-					cache.Add(t, ps);
-				}
-			}
-			return ps;
-		}
-
-		/// <summary>
-		/// Copy properties with [DataMemberAttribute].
-		/// Only members declared at the level of the supplied type's hierarchy should be copied.
-		/// Inherited members are not copied.
-		/// </summary>
-		public static void CopyDataMembers<T>(T source, T dest, bool skipKey = false)
-		{
-			Type t = source == null ? typeof(T) : source.GetType();
-			PropertyInfo[] ps = GetDataMemberProperties(source, skipKey);
-			foreach (PropertyInfo p in ps)
-			{
-				var sValue = p.GetValue(source, null);
-				var dValue = p.GetValue(dest, null);
-				// If values are different then...
-				if (!Equals(sValue, dValue))
-					p.SetValue(dest, sValue, null);
-			}
-		}
-
-		/// <summary>
-		/// Get string representation of [DataMemberAttribute].
-		/// Inherited members are not included.
-		/// </summary>
-		public static string GetDataMembersString<T>(T item, bool skipKey = true, bool skipTime = true)
-		{
-			Type t = item == null ? typeof(T) : item.GetType();
-			PropertyInfo[] ps = GetDataMemberProperties(item, skipKey);
-			StringBuilder sb = new StringBuilder();
-			foreach (PropertyInfo p in ps)
-			{
-				var value = p.GetValue(item, null);
-				if (value == null)
-					continue;
-				var defaultValue = p.PropertyType.IsValueType ? Activator.CreateInstance(p.PropertyType) : null;
-				if (Equals(defaultValue, value))
-					continue;
-				if (skipTime && p.PropertyType == typeof(DateTime) || p.PropertyType == typeof(DateTime?))
-					continue;
-				if (p.PropertyType == typeof(string) && string.IsNullOrWhiteSpace((string)value))
-					continue;
-				if (p.Name.ToLower().Contains("checksum"))
-					continue;
-				sb.AppendFormat("{0}={1}", p.Name, value);
-				sb.AppendLine();
-			}
-			return sb.ToString();
-		}
-
-		#endregion
-
 		public static object CloneObject(object o)
 		{
-			Type t = o.GetType();
-			PropertyInfo[] properties = t.GetProperties();
-			object dest = t.InvokeMember("", BindingFlags.CreateInstance, null, o, null);
-			foreach (PropertyInfo pi in properties)
+			if (o == null)
+				throw new ArgumentNullException(nameof(o));
+			var t = o.GetType();
+			var properties = t.GetProperties();
+			var dest = t.InvokeMember("", BindingFlags.CreateInstance, null, o, null);
+			foreach (var pi in properties)
 			{
 				if (pi.CanWrite) pi.SetValue(dest, pi.GetValue(o, null), null);
 			}
@@ -339,85 +319,6 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-		/// <summary>
-		/// Get change state by comparing old and new values.
-		/// </summary>
-		/// <param name="type">Type of values.</param>
-		/// <param name="oldValue">Old value.</param>
-		/// <param name="newValue">New value.</param>
-		/// <returns></returns>
-		public static ChangeState GetValueChangeSet(Type type, object oldValue, object newValue)
-		{
-			var state = new ChangeState();
-			state.ValueType = type;
-			state.oldValue = oldValue;
-			state.newValue = newValue;
-			state.State = System.Data.EntityState.Unchanged;
-			if (oldValue != newValue) state.State = System.Data.EntityState.Modified;
-			bool oldIsEmpty = oldValue == null || oldValue == Activator.CreateInstance(type);
-			bool newIsEmpty = newValue == null || newValue == Activator.CreateInstance(type);
-			if (oldIsEmpty && !newIsEmpty) state.State = System.Data.EntityState.Added;
-			if (newIsEmpty && !oldIsEmpty) state.State = System.Data.EntityState.Deleted;
-			return state;
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="item1"></param>
-		/// <param name="item2"></param>
-		/// <returns></returns>
-		public static System.Data.EntityState GetClassChangeState(object item1, object item2)
-		{
-			var list = CompareProperties(item1, item2);
-			var state = EntityState.Unchanged;
-			var states = list.Select(x => x.State).Distinct().ToList();
-			states.Remove(EntityState.Unchanged);
-			if (states.Count == 0) return state;
-			if (states.Count == 1) return states[0];
-			return EntityState.Modified;
-		}
-
-		/// <summary>
-		/// Compare all properties of two objects and return change state for every property and field.
-		/// </summary>
-		/// <param name="source">item1</param>
-		/// <param name="dest">item2</param>
-		/// <returns></returns>
-		public static List<ChangeState> CompareProperties(object source, object dest)
-		{
-			object oldValue;
-			object newValue;
-			ChangeState state;
-			List<ChangeState> list = new List<ChangeState>();
-			Type dstType = dest.GetType();
-			FieldInfo[] itersectingFields = GetItersectingFields(source, dest);
-			foreach (FieldInfo fi in itersectingFields)
-			{
-				FieldInfo dp = dstType.GetField(fi.Name);
-				if (IsKnownType(fi.FieldType))
-				{
-					oldValue = fi.GetValue(source);
-					newValue = fi.GetValue(dest);
-					state = GetValueChangeSet(fi.FieldType, oldValue, newValue);
-					list.Add(state);
-				}
-			}
-			PropertyInfo[] itersectingProperties = GetItersectingProperties(source, dest);
-			foreach (PropertyInfo pi in itersectingProperties)
-			{
-				PropertyInfo dp = dstType.GetProperty(pi.Name);
-				if (IsKnownType(pi.PropertyType))
-				{
-					oldValue = pi.GetValue(source, null);
-					newValue = pi.GetValue(dest, null);
-					state = GetValueChangeSet(pi.PropertyType, oldValue, newValue);
-					list.Add(state);
-				}
-			}
-			return list;
-		}
-
 		#region Convert: Object <-> Bytes
 
 		// Note: Similar as "Structure <-> Bytes", but with ability to convert variable strings.
@@ -428,15 +329,17 @@ namespace JocysCom.ClassLibrary.Runtime
 			{
 				var flags = BindingFlags.Instance | BindingFlags.Public;
 				var props = typeof(T).GetProperties(flags);
-				var writer = new BinaryWriter(ms);
-				foreach (var p in props)
+				using (var writer = new BinaryWriter(ms))
 				{
-					var value = p.GetValue(o);
-					writer.Write((dynamic)value);
+					foreach (var p in props)
+					{
+						var value = p.GetValue(o);
+						writer.Write((dynamic)value);
+					}
+					ms.Flush();
+					ms.Seek(0, SeekOrigin.Begin);
+					return ms.ToArray();
 				}
-				ms.Flush();
-				ms.Seek(0, SeekOrigin.Begin);
-				return ms.ToArray();
 			}
 		}
 
@@ -447,33 +350,35 @@ namespace JocysCom.ClassLibrary.Runtime
 				var o = Activator.CreateInstance<T>();
 				var flags = BindingFlags.Instance | BindingFlags.Public;
 				var props = typeof(T).GetProperties(flags);
-				var reader = new BinaryReader(ms);
-				foreach (var p in props)
+				using (var reader = new BinaryReader(ms))
 				{
-					var typeCode = Type.GetTypeCode(p.PropertyType);
-					object v;
-					switch (typeCode)
+					foreach (var p in props)
 					{
-						case TypeCode.Boolean: v = reader.ReadBoolean(); break;
-						case TypeCode.Char: v = reader.ReadChar(); break;
-						case TypeCode.DBNull: v = DBNull.Value; break;
-						case TypeCode.DateTime: v = new DateTime(reader.ReadInt64()); break;
-						case TypeCode.Decimal: v = reader.ReadDecimal(); break;
-						case TypeCode.Double: v = reader.ReadDouble(); break;
-						case TypeCode.Empty: v = null; break;
-						case TypeCode.SByte: v = reader.ReadSByte(); break;
-						case TypeCode.Int16: v = reader.ReadInt16(); break;
-						case TypeCode.Int32: v = reader.ReadInt32(); break;
-						case TypeCode.Int64: v = reader.ReadInt64(); break;
-						case TypeCode.Single: v = reader.ReadSingle(); break;
-						case TypeCode.String: v = reader.ReadString(); break;
-						case TypeCode.Byte: v = reader.ReadByte(); break;
-						case TypeCode.UInt16: v = reader.ReadUInt16(); break;
-						case TypeCode.UInt32: v = reader.ReadUInt32(); break;
-						case TypeCode.UInt64: v = reader.ReadUInt64(); break;
-						default: throw new Exception("Non Serializable Object: " + p.PropertyType);
+						var typeCode = Type.GetTypeCode(p.PropertyType);
+						object v;
+						switch (typeCode)
+						{
+							case TypeCode.Boolean: v = reader.ReadBoolean(); break;
+							case TypeCode.Char: v = reader.ReadChar(); break;
+							case TypeCode.DBNull: v = DBNull.Value; break;
+							case TypeCode.DateTime: v = new DateTime(reader.ReadInt64()); break;
+							case TypeCode.Decimal: v = reader.ReadDecimal(); break;
+							case TypeCode.Double: v = reader.ReadDouble(); break;
+							case TypeCode.Empty: v = null; break;
+							case TypeCode.SByte: v = reader.ReadSByte(); break;
+							case TypeCode.Int16: v = reader.ReadInt16(); break;
+							case TypeCode.Int32: v = reader.ReadInt32(); break;
+							case TypeCode.Int64: v = reader.ReadInt64(); break;
+							case TypeCode.Single: v = reader.ReadSingle(); break;
+							case TypeCode.String: v = reader.ReadString(); break;
+							case TypeCode.Byte: v = reader.ReadByte(); break;
+							case TypeCode.UInt16: v = reader.ReadUInt16(); break;
+							case TypeCode.UInt32: v = reader.ReadUInt32(); break;
+							case TypeCode.UInt64: v = reader.ReadUInt64(); break;
+							default: throw new Exception("Non Serializable Object: " + p.PropertyType);
+						}
+						p.SetValue(o, v);
 					}
-					p.SetValue(o, v);
 				}
 				return o;
 			}
@@ -514,6 +419,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static object BytesToStructure(byte[] bytes, Type type)
 		{
+			if (type == null)
+				throw new ArgumentNullException(nameof(type));
 			var value = type.IsValueType ? Activator.CreateInstance(type) : null;
 			var handle = default(GCHandle);
 			try
@@ -574,7 +481,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static T TryParse<T>(string value, T defaultValue = default(T))
 		{
-			T result = default(T);
+			var result = default(T);
 			return TryParse(value, out result)
 				? result
 				: defaultValue;

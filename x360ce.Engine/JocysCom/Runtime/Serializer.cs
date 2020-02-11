@@ -151,7 +151,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		static object JsonSerializersLock = new object();
 		static Dictionary<Type, DataContractJsonSerializer> JsonSerializers;
-		static DataContractJsonSerializer GetJsonSerializer(Type type)
+		public static DataContractJsonSerializer GetJsonSerializer(Type type, DataContractJsonSerializerSettings settings = null)
 		{
 			lock (JsonSerializersLock)
 			{
@@ -160,8 +160,11 @@ namespace JocysCom.ClassLibrary.Runtime
 				{
 					// Simple dictionary format looks like this: { "Key1": "Value1", "Key2": "Value2" }
 					// DataContractJsonSerializerSettings requires .NET 4.5
-					var settings = new DataContractJsonSerializerSettings();
-					settings.UseSimpleDictionaryFormat = true;
+					if (settings == null)
+					{
+						settings = new DataContractJsonSerializerSettings();
+						settings.UseSimpleDictionaryFormat = true;
+					}
 					var serializer = new DataContractJsonSerializer(type, settings);
 					JsonSerializers.Add(type, serializer);
 				}
