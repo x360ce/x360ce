@@ -307,6 +307,7 @@
     <Compile Include="JocysCom\Runtime\LogHelper.File.cs" />
     <Compile Include="JocysCom\Runtime\LogHelper.Mail.cs" />
     <Compile Include="JocysCom\Runtime\RuntimeHelper.cs" />
+    <Compile Include="JocysCom\Runtime\RuntimeHelper.Entity.cs" />
     <Compile Include="JocysCom\Runtime\Serializer.cs" />
     <Compile Include="JocysCom\Runtime\TraceFormat.cs" />
     <Compile Include="JocysCom\Runtime\XmlValidator.cs" />
