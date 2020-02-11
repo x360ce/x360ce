@@ -17,8 +17,11 @@ namespace x360ce.App.Controls
         public CloudUserControl()
         {
             InitializeComponent();
-			if (IsDesignMode) return;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(TasksDataGridView);
+			if (IsDesignMode)
+                return;
+            // Make font more consistent with the rest of the interface.
+            Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
+            JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(TasksDataGridView);
             EngineHelper.EnableDoubleBuffering(TasksDataGridView);
 			InitNetworkInformation();
 			// Enable task timer.

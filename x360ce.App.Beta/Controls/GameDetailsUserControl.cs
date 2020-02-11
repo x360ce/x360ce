@@ -487,5 +487,9 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		private void GameDetailsUserControl_Load(object sender, EventArgs e)
+		{
+
+		}
 	}
 }

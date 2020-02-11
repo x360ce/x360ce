@@ -208,8 +208,6 @@ namespace JocysCom.ClassLibrary.Controls
 			// 
 			// InfoForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(554, 547);
 			this.Controls.Add(this.HelpLabel);
 			this.Controls.Add(this.PropertiesTabControl);

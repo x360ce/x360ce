@@ -8,13 +8,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 	public partial class InfoForm
 	{
-
-		private Control _SelectedControl;
-		public Control SelectedControl
-		{
-			get { return _SelectedControl; }
-			set { _SelectedControl = value; }
-		}
+		public Control SelectedControl { get; set; }
 
 		public bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 

@@ -18,6 +18,9 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (DesignMode)
 				return;
+			// Make font more consistent with the rest of the interface.
+			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
+			LocationsToolStrip.Font = Font;
 		}
 
 		public void InitOptions()
@@ -497,5 +500,6 @@ namespace x360ce.App.Controls
 		{
 			EngineHelper.OpenUrl(((Control)sender).Text);
 		}
+		
 	}
 }

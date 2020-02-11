@@ -16,6 +16,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
+			// Set tool strip to the same font.
+			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = this.Font);
 			NoIssuesPanel.Visible = false;
 			LinePanel.Visible = false;
 			ExceptionInfoButton.Visible = false;

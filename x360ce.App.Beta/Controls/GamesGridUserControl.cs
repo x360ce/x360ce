@@ -19,10 +19,10 @@ namespace x360ce.App.Controls
 		public GamesGridUserControl()
 		{
 			InitializeComponent();
-			// Make font more consistent with the rest of the interface.
-			GamesToolStrip.Font = Font;
 			if (IsDesignMode)
 				return;
+			// Make font more consistent with the rest of the interface.
+			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(GamesDataGridView);
 			//EngineHelper.EnableDoubleBuffering(GamesDataGridView);
 			GamesDataGridView.AutoGenerateColumns = false;

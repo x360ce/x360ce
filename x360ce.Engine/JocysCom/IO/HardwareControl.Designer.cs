@@ -588,8 +588,6 @@
 			// 
 			// HardwareControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.RefreshButton);
 			this.Controls.Add(this.RefreshOnChnageCheckBox);
 			this.Controls.Add(this.EnableFilterCheckBox);

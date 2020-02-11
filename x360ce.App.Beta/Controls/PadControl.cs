@@ -23,10 +23,10 @@ namespace x360ce.App.Controls
 		public PadControl(MapTo controllerIndex)
 		{
 			InitializeComponent();
-			// Make font more consistent with the rest of the interface.
-			GamesToolStrip.Font = Font;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			// Make font more consistent with the rest of the interface.
+			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			// Hide left/right border.
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;
