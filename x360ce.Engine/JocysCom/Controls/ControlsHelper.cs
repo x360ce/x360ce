@@ -39,7 +39,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static TaskScheduler MainTaskScheduler { get; private set; }
 
-		static int MainThreadId;
+		private static int MainThreadId;
 
 		public static bool InvokeRequired()
 		{
@@ -197,6 +197,8 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void SuspendDrawing(Control control)
 		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
 			var msgSuspendUpdate = Message.Create(control.Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
 			var window = NativeWindow.FromHandle(control.Handle);
 			window.DefWndProc(ref msgSuspendUpdate);
@@ -204,6 +206,8 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void ResumeDrawing(Control control)
 		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
 			var wparam = new IntPtr(1);
 			var msgResumeUpdate = Message.Create(control.Handle, WM_SETREDRAW, wparam, IntPtr.Zero);
 			var window = NativeWindow.FromHandle(control.Handle);
@@ -215,7 +219,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (grid == null)
 				throw new ArgumentNullException(nameof(grid));
-			int rowIndex = 0;
+			var rowIndex = 0;
 			if (grid.Rows.Count > 0)
 			{
 				var firsCell = grid.FirstDisplayedCell;
@@ -233,6 +237,8 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static string GetPrimaryKey(EntityObject eo)
 		{
+			if (eo == null)
+				throw new ArgumentNullException(nameof(eo));
 			// Try to select primary key name.
 			if (eo.EntityKey != null && eo.EntityKey.EntityKeyValues.Length > 0)
 			{
@@ -263,6 +269,8 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="primaryKeyPropertyName">Primary key name.</param>
 		public static List<T> GetSelection<T>(DataGridView grid, string primaryKeyPropertyName = null)
 		{
+			if (grid == null)
+				throw new ArgumentNullException(nameof(grid));
 			var list = new List<T>();
 			var rows = grid.SelectedRows.Cast<DataGridViewRow>().ToArray();
 			// If nothing selected then try to get rows from cells.
@@ -280,7 +288,7 @@ namespace JocysCom.ClassLibrary.Controls
 					primaryKeyPropertyName = GetPrimaryKey(eo);
 				}
 			}
-			for (int i = 0; i < rows.Length; i++)
+			for (var i = 0; i < rows.Length; i++)
 			{
 				var item = rows[i].DataBoundItem;
 				var val = GetValue<T>(item, primaryKeyPropertyName);
@@ -291,6 +299,10 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void RestoreSelection<T>(DataGridView grid, string primaryKeyPropertyName, List<T> list, bool selectFirst = true)
 		{
+			if (grid == null)
+				throw new ArgumentNullException(nameof(grid));
+			if (list == null)
+				throw new ArgumentNullException(nameof(list));
 			var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
 			// Return if grid is empty.
 			if (rows.Length == 0)
@@ -308,7 +320,7 @@ namespace JocysCom.ClassLibrary.Controls
 					}
 				}
 				DataGridViewRow firstVisibleRow = null;
-				for (int i = 0; i < rows.Length; i++)
+				for (var i = 0; i < rows.Length; i++)
 				{
 					var row = rows[i];
 					if ((firstVisibleRow == null && row.Visible))
@@ -359,21 +371,28 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static bool IsControlVisibleOnForm(Control control)
 		{
-			if (control == null) return false;
-			if (!control.IsHandleCreated) return false;
-			if (control.Parent == null) return false;
+			if (control == null)
+				return false;
+			if (!control.IsHandleCreated)
+				return false;
+			if (control.Parent == null)
+				return false;
 			var pointsToCheck = GetPoints(control, true);
 			foreach (var p in pointsToCheck)
 			{
 				var child = control.Parent.GetChildAtPoint(p);
-				if (child == null) continue;
-				if (control == child || control.Contains(child)) return true;
+				if (child == null)
+					continue;
+				if (control == child || control.Contains(child))
+					return true;
 			}
 			return false;
 		}
 
 		public static Point[] GetPoints(Control control, bool relative = false)
 		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
 			var pos = relative
 				? System.Drawing.Point.Empty
 				// Get control position on the screen
@@ -397,7 +416,10 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static bool IsControlVisibleToUser(Control control)
 		{
-			if (!control.IsHandleCreated) return false;
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			if (!control.IsHandleCreated)
+				return false;
 			var pointsToCheck = GetPoints(control);
 			foreach (var p in pointsToCheck)
 			{
@@ -410,10 +432,29 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		/// <summary>
+		/// Get parent control of specific type.
+		/// </summary>
+		public static T GetParent<T>(Control control, bool includeTop = false) where T: class
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var parent = control;
+			while (parent != null)
+			{
+				if (parent is T && (includeTop || parent != control))
+					return (T)(object)parent;
+				parent = parent.Parent;
+			}
+			return null;
+		}
+
+		/// <summary>
 		/// Get all child controls.
 		/// </summary>
 		public static IEnumerable<Control> GetAll(Control control, Type type = null, bool includeTop = false)
 		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
 			// Get all child controls.
 			var controls = control.Controls.Cast<Control>();
 			return controls
@@ -432,7 +473,8 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static T[] GetAll<T>(Control control, bool includeTop = false)
 		{
-			if (control == null) return new T[0];
+			if (control == null)
+				return new T[0];
 			var type = typeof(T);
 			// Get all child controls.
 			var controls = control.Controls.Cast<Control>();
@@ -457,15 +499,14 @@ namespace JocysCom.ClassLibrary.Controls
 
 		internal const int STATE_VISIBLE = 0x00000002;
 		internal const int STATE_ENABLED = 0x00000004;
-
-		static MethodInfo _GetState;
+		private static MethodInfo _GetState;
 
 		// Check control.Visible state.
 		public static bool IsVisible(Control control)
 		{
 			_GetState = _GetState ?? typeof(Control).GetMethod("GetState", BindingFlags.Instance | BindingFlags.NonPublic);
 			// Can't check property directly, because it will return false if parent is not visible.
-			bool stateValue = (bool)_GetState.Invoke(control, new object[] { STATE_VISIBLE });
+			var stateValue = (bool)_GetState.Invoke(control, new object[] { STATE_VISIBLE });
 			return stateValue;
 		}
 
@@ -492,7 +533,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			_GetState = _GetState ?? typeof(Control).GetMethod("GetState", BindingFlags.Instance | BindingFlags.NonPublic);
 			// Can't check property directly, because it will return false if parent is not enabled.
-			bool stateValue = (bool)_GetState.Invoke(control, new object[] { STATE_ENABLED });
+			var stateValue = (bool)_GetState.Invoke(control, new object[] { STATE_ENABLED });
 			if (stateValue != enabled) control.Enabled = enabled;
 		}
 
@@ -570,13 +611,15 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void ApplySplitterStyle(SplitContainer control)
 		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
 			// Paint 3 dots on the splitter.
 			control.Paint += SplitContainer_Paint;
 			// Remove focus from splitter after it moved.
 			control.SplitterMoved += SplitContainer_SplitterMoved;
 		}
 
-		static void SplitContainer_SplitterMoved(object sender, SplitterEventArgs e)
+		private static void SplitContainer_SplitterMoved(object sender, SplitterEventArgs e)
 		{
 			var s = sender as Control;
 			if (s.CanFocus)
@@ -592,19 +635,19 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-		static void SplitContainer_Paint(object sender, PaintEventArgs e)
+		private static void SplitContainer_Paint(object sender, PaintEventArgs e)
 		{
 			// base.OnPaint(e);
 			var s = sender as SplitContainer;
 			// Paint the three dots.
-			Point[] points = new Point[3];
+			var points = new Point[3];
 			var w = s.Width;
 			var h = s.Height;
 			var d = s.SplitterDistance;
 			var sW = s.SplitterWidth;
 			int x;
 			int y;
-			int spacing = 10;
+			var spacing = 10;
 			// Calculate the position of the points.
 			if (s.Orientation == Orientation.Horizontal)
 			{
@@ -622,7 +665,7 @@ namespace JocysCom.ClassLibrary.Controls
 				points[1] = new Point(x, y - spacing);
 				points[2] = new Point(x, y + spacing);
 			}
-			foreach (Point p in points)
+			foreach (var p in points)
 			{
 				p.Offset(-2, -2);
 				e.Graphics.FillEllipse(SystemBrushes.ControlDark, new Rectangle(p, new Size(3, 3)));
@@ -653,7 +696,7 @@ namespace JocysCom.ClassLibrary.Controls
 				grid.CellClick += Grid_CellClick;
 		}
 
-		static void Grid_CellClick(object sender, DataGridViewCellEventArgs e)
+		private static void Grid_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
@@ -670,7 +713,7 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-		static void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		private static void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
@@ -708,14 +751,14 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-		static void Grid_SelectionChanged(object sender, EventArgs e)
+		private static void Grid_SelectionChanged(object sender, EventArgs e)
 		{
 			// Sort issue with paint artifcats.
 			var grid = (DataGridView)sender;
 			grid.Invalidate();
 		}
 
-		static void SetEnabled(object item, bool enabled)
+		private static void SetEnabled(object item, bool enabled)
 		{
 			var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
 			if (enabledProperty != null)
@@ -724,15 +767,14 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-
-		static bool GetEnabled(object item)
+		private static bool GetEnabled(object item)
 		{
 			var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
 			var enabled = enabledProperty == null ? true : (bool)enabledProperty.GetValue(item, null);
 			return enabled;
 		}
 
-		static void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+		private static void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
 		{
 			// Header and cell borders must be set to "Single" style.
 			var grid = (DataGridView)sender;
@@ -805,13 +847,13 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region Apply TabControl Image Style
 
-		static string ApplyImageStyleDisabledSuffix = "_DisabledStyle";
+		private static readonly string ApplyImageStyleDisabledSuffix = "_DisabledStyle";
 
 		public static void ApplyImageStyle(TabControl control)
 		{
 			var list = control.ImageList;
 			var keys = list.Images.Keys.Cast<string>().ToArray();
-			for (int i = 0; i < keys.Length; i++)
+			for (var i = 0; i < keys.Length; i++)
 			{
 				var key = keys[i];
 				var image = (Bitmap)list.Images[key];
@@ -826,15 +868,15 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>Make bitmap transparent.</summary>
 		/// <param name="b"></param>
 		/// <param name="alpha">256 max</param>
-		static void MakeImageTransparent(Bitmap b, int alpha)
+		private static void MakeImageTransparent(Bitmap b, int alpha)
 		{
 			var w = b.Width;
 			var h = b.Height;
 			int a;
 			Color p;
-			for (int y = 0; y < h; y++)
+			for (var y = 0; y < h; y++)
 			{
-				for (int x = 0; x < w; x++)
+				for (var x = 0; x < w; x++)
 				{
 					p = b.GetPixel(x, y);
 					a = (int)(p.A * (float)alpha / byte.MaxValue);

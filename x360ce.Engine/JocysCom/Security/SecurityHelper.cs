@@ -4,7 +4,7 @@ using System.Security;
 
 namespace JocysCom.ClassLibrary.Security
 {
-	public class SecurityHelper
+	public static class SecurityHelper
 	{
 		#region Solution for CWE-316: Clear Text Storage of Sensitive Information in Memory
 
@@ -133,8 +133,6 @@ namespace JocysCom.ClassLibrary.Security
 			// Allow (or not allow depending on setting value) this client to communicate with unauthenticated servers.
 			return allow;
 		}
-
-
 
 	}
 }

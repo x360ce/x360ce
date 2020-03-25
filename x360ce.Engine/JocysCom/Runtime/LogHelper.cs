@@ -255,6 +255,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			var html = WriteAsHtml
 				? ExceptionToString(ex, true, TraceFormat.Html)
 				: "<pre>" + ex.ToString() + "</pre>";
+			if (ex.TargetSite != null && ex.TargetSite.DeclaringType != null && ex.TargetSite.DeclaringType.Assembly != null)
+				AddRow(ref s, "Target.Declaring.Assembly", ex.TargetSite.DeclaringType.Assembly.FullName);
 			AddRow(ref s, "StackTrace", html);
 		}
 

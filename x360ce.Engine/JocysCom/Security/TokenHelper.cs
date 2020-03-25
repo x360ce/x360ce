@@ -7,12 +7,11 @@ using System.Text;
 
 namespace JocysCom.ClassLibrary.Security
 {
-	public class TokenHelper
+	public static partial class TokenHelper
 	{
-
-		static int checkSumSize = 4;
-		static int securityHashSize = 12;
-		static int unlockHashSize = 6;
+		private const int checkSumSize = 4;
+		private const int securityHashSize = 12;
+		private const int unlockHashSize = 6;
 
 		/// <summary>
 		/// Get current time unit value.
@@ -41,7 +40,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns></returns>
 		public static string GetSecurityToken<T1, T2>(T1 id, T2 password, TimeUnitType unit, string hmacHashKey = null)
 		{
-			long u = GetTimeUnitValue(unit);
+			var u = GetTimeUnitValue(unit);
 			return GetSecurityToken(id, password, u, hmacHashKey);
 		}
 
@@ -54,29 +53,30 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns></returns>
 		public static string GetSecurityToken<T1, T2>(T1 id, T2 password, long unitValue, string hmacHashKey = null)
 		{
-			byte[] idBytes = ObjectToBytes(id);
-			byte[] passwordBytes = ObjectToBytes(password);
-			byte[] unitBytes = ObjectToBytes(unitValue);
-			MemoryStream stream = new MemoryStream();
-			BinaryWriter writer = new BinaryWriter(stream);
+			var idBytes = ObjectToBytes(id);
+			var passwordBytes = ObjectToBytes(password);
+			var unitBytes = ObjectToBytes(unitValue);
+			var stream = new MemoryStream();
+			var writer = new BinaryWriter(stream, Encoding.UTF8, false);
 			writer.Write(idBytes);
 			writer.Write(passwordBytes);
 			writer.Write(unitBytes);
-			byte[] bytes = stream.ToArray();
-			stream.Close();
-			byte[] tokenPrefixBytesFull = Encryption.Current.ComputeHash(bytes).ToByteArray();
-			string tokenPrefix = BytesToHex(tokenPrefixBytesFull).Substring(0, securityHashSize).ToUpper();
-			byte[] tokenDataBytes = ExclusiveORValue(tokenPrefix, idBytes, hmacHashKey);
-			string tokenData = BytesToHex(tokenDataBytes);
-			string token = string.Format("{0}{1}", tokenPrefix, tokenData);
+			var bytes = stream.ToArray();
+			writer.Close();
+			//stream.Close();
+			var tokenPrefixBytesFull = Encryption.Current.ComputeHash(bytes).ToByteArray();
+			var tokenPrefix = BytesToHex(tokenPrefixBytesFull).Substring(0, securityHashSize).ToUpper();
+			var tokenDataBytes = ExclusiveORValue(tokenPrefix, idBytes, hmacHashKey);
+			var tokenData = BytesToHex(tokenDataBytes);
+			var token = string.Format("{0}{1}", tokenPrefix, tokenData);
 			var checksum = Checksum(token);
-			string fullToken = string.Format("{0}{1}", checksum, token);
+			var fullToken = string.Format("{0}{1}", checksum, token);
 			return fullToken;
 		}
 
-		static string Checksum(string token)
+		private static string Checksum(string token)
 		{
-			byte[] bytes = Encryption.Current.ComputeHash(token).ToByteArray();
+			var bytes = Encryption.Current.ComputeHash(token).ToByteArray();
 			var checksum = BytesToHex(bytes).Substring(0, checkSumSize).ToUpper();
 			return checksum;
 		}
@@ -113,12 +113,12 @@ namespace JocysCom.ClassLibrary.Security
 				return false;
 			}
 			// Time which passed.
-			long u = GetTimeUnitValue(unit);
+			var u = GetTimeUnitValue(unit);
 			// If there is no expiry then...
 			if (u == 0) return (token == GetSecurityToken(id, password, u));
 			// Use bias to solve the issue when token generator time is inaccurate and is set up to 5 [seconds] or 1 [minute|hour|day] in future).
 			var bias = unit == TimeUnitType.Seconds ? 5 : 1;
-			for (int i = -bias; i < count; i++)
+			for (var i = -bias; i < count; i++)
 			{
 				// If resetKey matches to key for given day then...
 				if (token == GetSecurityToken(id, password, u - i)) return true;
@@ -144,7 +144,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns></returns>
 		private static string GetUnlockTokenByValue(string value, long unitValue, string hmacHashKey = null)
 		{
-			string passString = string.Format("{0}_{1}", value, unitValue);
+			var passString = string.Format("{0}_{1}", value, unitValue);
 			var hash = Encryption.Current.ComputeHash(passString, hmacHashKey).ToByteArray();
 			var numb = BitConverter.ToUInt32(hash, 0);
 			var text = numb.ToString().PadRight(unlockHashSize, '0').Substring(0, unlockHashSize);
@@ -163,56 +163,15 @@ namespace JocysCom.ClassLibrary.Security
 		public static bool CheckUnlockToken(string token, string value, TimeUnitType unit, int count, string hmacHashKey = null)
 		{
 			// Time which passed.
-			long u = GetTimeUnitValue(unit);
+			var u = GetTimeUnitValue(unit);
 			// Check keys for last units and return if token match.
-			for (int i = 0; i < count; i++) if (token == GetUnlockTokenByValue(value, u - i, hmacHashKey)) return true;
+			for (var i = 0; i < count; i++) if (token == GetUnlockTokenByValue(value, u - i, hmacHashKey)) return true;
 			// -5 solves the issue when token generator time is inaccurate and is set up to 5 [seconds|minutes|hours|days] in future
-			for (int i = -5; i < 0; i++) if (token == GetUnlockTokenByValue(value, u - i, hmacHashKey)) return true;
+			for (var i = -5; i < 0; i++) if (token == GetUnlockTokenByValue(value, u - i, hmacHashKey)) return true;
 			return false;
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Get URL to page. If runs on website then host will be replaced with current request.
-		/// </summary>
-		/// <param name="token">Token.</param>
-		/// <param name="page">Page name. Like "/Login.aspx" or "/LoginReset.aspx"</param>
-		/// <returns>URL string.</returns>
-		public static string GetUrl(string keyName, string token, Uri url = null)
-		{
-			var context = System.Web.HttpContext.Current;
-			var u = (url == null || context != null)
-				? System.Web.HttpContext.Current.Request.Url
-				: url;
-			var absolutePath = (url != null)
-				? url.AbsolutePath
-				: u.AbsolutePath;
-			var port = u.IsDefaultPort ? "" : ":" + u.Port;
-			return string.Format("{0}://{1}{2}{3}?{4}={5}", u.Scheme, u.Host, port, absolutePath, keyName, token);
-		}
-
-		public static string GetFullUrl(string absolutePath)
-		{
-			var context = System.Web.HttpContext.Current;
-			if (context == null)
-				return null;
-			var u = context.Request.Url;
-			var port = u.IsDefaultPort ? "" : ":" + u.Port;
-			var url = string.Format("{0}://{1}{2}{3}", u.Scheme, u.Host, port, absolutePath);
-			return url;
-		}
-
-		/// <summary>
-		/// Get URL to web application root.
-		/// </summary>
-		public static string GetApplicationUrl()
-		{
-			var context = System.Web.HttpContext.Current;
-			if (context == null)
-				return null;
-			return GetFullUrl(context.Request.ApplicationPath).TrimEnd('/');
-		}
 
 		/// <summary>
 		/// Get Id from token.
@@ -222,8 +181,10 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Id.</returns>
 		public static T GetData<T>(string token, string hmacHashKey = null)
 		{
-			string tokenPrefix = token.Substring(checkSumSize, securityHashSize);
-			string tokenData = token.Substring(checkSumSize + securityHashSize);
+			if (token == null)
+				throw new ArgumentNullException(nameof(token));
+			var tokenPrefix = token.Substring(checkSumSize, securityHashSize);
+			var tokenData = token.Substring(checkSumSize + securityHashSize);
 			var tokenDataBytes = HexToBytes(tokenData);
 			var value = ExclusiveORValue(tokenPrefix, tokenDataBytes, hmacHashKey);
 			var data = (T)BytesToObject(value, typeof(T));
@@ -237,7 +198,7 @@ namespace JocysCom.ClassLibrary.Security
 				o = GetData<T>(token, hmacHashKey);
 				return true;
 			}
-			catch (Exception)
+			catch
 			{
 				o = default(T);
 				return false;
@@ -255,32 +216,36 @@ namespace JocysCom.ClassLibrary.Security
 
 		public static byte[] ExclusiveOR(byte[] value, byte[] key)
 		{
-			byte[] result = new byte[value.Length];
-			for (int i = 0; i < value.Length; i++)
+			if (value == null)
+				throw new ArgumentNullException(nameof(value));
+			if (key == null)
+				throw new ArgumentNullException(nameof(key));
+			var result = new byte[value.Length];
+			for (var i = 0; i < value.Length; i++)
 			{
 				result[i] = (byte)(value[i] ^ key[i % key.Length]);
 			}
 			return result;
 		}
 
-		static string ObjectToHex<T>(T o)
+		private static string ObjectToHex<T>(T o)
 		{
 			var bytes = ObjectToBytes(o, typeof(T));
 			return BytesToHex(bytes);
 		}
 
-		static string BytesToHex(byte[] bytes)
+		private static string BytesToHex(byte[] bytes)
 		{
 			var hexList = bytes.Select(x => x.ToString("X2"));
 			return string.Join("", hexList);
 		}
 
-		static byte[] HexToBytes(string hex)
+		private static byte[] HexToBytes(string hex)
 		{
-			int offset = 0;
+			var offset = 0;
 			if ((hex.Length % 2) != 0) return new byte[0];
-			byte[] bytes = new byte[(hex.Length - offset) / 2];
-			for (int i = 0; i < bytes.Length; i++)
+			var bytes = new byte[(hex.Length - offset) / 2];
+			for (var i = 0; i < bytes.Length; i++)
 			{
 				bytes[i] = byte.Parse(hex.Substring(offset, 2), System.Globalization.NumberStyles.HexNumber);
 				offset += 2;
@@ -288,7 +253,7 @@ namespace JocysCom.ClassLibrary.Security
 			return bytes;
 		}
 
-		static T HexToObject<T>(string hex)
+		private static T HexToObject<T>(string hex)
 		{
 			var bytes = HexToBytes(hex);
 			var o = (T)BytesToObject(bytes, typeof(T));
@@ -307,24 +272,24 @@ namespace JocysCom.ClassLibrary.Security
 			// CWE-404: Improper Resource Shutdown or Release
 			// Note: Binary Writer will close underlying MemoryStream automatically.
 			var stream = new MemoryStream();
-			var writer = new BinaryWriter(stream, Encoding.UTF8);
+			var writer = new BinaryWriter(stream, Encoding.UTF8, false);
 			switch (typeCode)
 			{
-				case TypeCode.Boolean: writer.Write((Boolean)o); break;
-				case TypeCode.Byte: writer.Write((Byte)o); break;
-				case TypeCode.Char: writer.Write((Char)o); break;
+				case TypeCode.Boolean: writer.Write((bool)o); break;
+				case TypeCode.Byte: writer.Write((byte)o); break;
+				case TypeCode.Char: writer.Write((char)o); break;
 				case TypeCode.DateTime: writer.Write(((DateTime)o).Ticks); break; // Ticks type is Int64.
-				case TypeCode.Decimal: writer.Write((Decimal)o); break;
-				case TypeCode.Double: writer.Write((Double)o); break;
-				case TypeCode.Int16: writer.Write((Int16)o); break;
-				case TypeCode.Int32: writer.Write((Int32)o); break;
-				case TypeCode.Int64: writer.Write((Int64)o); break;
-				case TypeCode.SByte: writer.Write((SByte)o); break;
-				case TypeCode.Single: writer.Write((Single)o); break;
+				case TypeCode.Decimal: writer.Write((decimal)o); break;
+				case TypeCode.Double: writer.Write((double)o); break;
+				case TypeCode.Int16: writer.Write((short)o); break;
+				case TypeCode.Int32: writer.Write((int)o); break;
+				case TypeCode.Int64: writer.Write((long)o); break;
+				case TypeCode.SByte: writer.Write((sbyte)o); break;
+				case TypeCode.Single: writer.Write((float)o); break;
 				case TypeCode.String: writer.Write(Encoding.UTF8.GetBytes((string)o)); break;
-				case TypeCode.UInt16: writer.Write((UInt16)o); break;
-				case TypeCode.UInt32: writer.Write((UInt32)o); break;
-				case TypeCode.UInt64: writer.Write((UInt64)o); break;
+				case TypeCode.UInt16: writer.Write((ushort)o); break;
+				case TypeCode.UInt32: writer.Write((uint)o); break;
+				case TypeCode.UInt64: writer.Write((ulong)o); break;
 				default:
 					if (t == typeof(byte[])) writer.Write((byte[])o);
 					else if (t == typeof(Guid)) writer.Write(((Guid)o).ToByteArray());
@@ -338,13 +303,13 @@ namespace JocysCom.ClassLibrary.Security
 			return result;
 		}
 
-		static byte[] Serialize(object o, Type type)
+		private static byte[] Serialize(object o, Type type)
 		{
 
 			var list = new List<PropertyInfo>();
 			var infos = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 			var stream = new MemoryStream();
-			foreach (PropertyInfo pi in infos)
+			foreach (var pi in infos)
 			{
 				var value = pi.GetValue(o, null);
 				var vBytes = ObjectToBytes(value, pi.PropertyType);
@@ -352,6 +317,7 @@ namespace JocysCom.ClassLibrary.Security
 				stream.Write(vBytes, 0, vBytes.Length);
 			}
 			var bytes = stream.ToArray();
+			stream.Close();
 			return bytes;
 		}
 
@@ -364,7 +330,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// Convert byte array to object.
 		/// </summary>
 		/// <remarks>byte[0] is empty/default value.</remarks>
-		static object BytesToObject(byte[] bytes, Type type, int? index = null, int? count = null)
+		private static object BytesToObject(byte[] bytes, Type type, int? index = null, int? count = null)
 		{
 			if (bytes == null)
 			{
@@ -378,8 +344,8 @@ namespace JocysCom.ClassLibrary.Security
 			}
 			var typeCode = Type.GetTypeCode(type);
 			var stream = new MemoryStream(bytes, index ?? 0, count ?? bytes.Length);
-			var reader = new BinaryReader(stream, Encoding.UTF8);
-			object o = type.IsValueType ? Activator.CreateInstance(type) : null;
+			var reader = new BinaryReader(stream, Encoding.UTF8, false);
+			var o = type.IsValueType ? Activator.CreateInstance(type) : null;
 			switch (typeCode)
 			{
 				case TypeCode.Boolean: o = reader.ReadBoolean(); break;
@@ -405,10 +371,12 @@ namespace JocysCom.ClassLibrary.Security
 					else o = Deserialize(bytes, type);
 					break;
 			}
+			reader.Close();
+			//stream.Close();
 			return o;
 		}
 
-		static object Deserialize(byte[] bytes, Type type)
+		private static object Deserialize(byte[] bytes, Type type)
 		{
 			if (bytes == null || bytes.Length == 0) return null;
 			var list = new List<PropertyInfo>();
@@ -416,14 +384,15 @@ namespace JocysCom.ClassLibrary.Security
 			var stream = new MemoryStream(bytes);
 			// Don't use 'var' and declare as 'object', because if 'T' is value type then
 			// pi.SetValue(o, value, null) will fail to set interal value. 
-			object o = Activator.CreateInstance(type);
-			foreach (PropertyInfo pi in infos)
+			var o = Activator.CreateInstance(type);
+			foreach (var pi in infos)
 			{
 				var count = stream.ReadByte();
 				var value = BytesToObject(bytes, pi.PropertyType, (int)stream.Position, count);
 				stream.Position += count;
 				pi.SetValue(o, value, null);
 			}
+			stream.Close();
 			return o;
 		}
 
@@ -431,7 +400,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		#region Backwards Compatibility
 
-		const int securityHashSizeOld = 16;
+		private const int securityHashSizeOld = 16;
 
 		/// <summary>
 		/// Check if token key is valid.
@@ -450,7 +419,7 @@ namespace JocysCom.ClassLibrary.Security
 			if (u == 0) return (token == GetSecurityTokenOld(id, password, u));
 			// Use bias to solve the issue when token generator time is inaccurate and is set up to 5 [seconds] or 1 [minute|hour|day] in future).
 			var bias = unit == TimeUnitType.Seconds ? 5 : 1;
-			for (int i = -bias; i < count; i++)
+			for (var i = -bias; i < count; i++)
 			{
 				// If resetKey matches to key for given day then...
 				if (token == GetSecurityTokenOld(id, password, u - i)) return true;
@@ -467,20 +436,22 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns></returns>
 		public static string GetSecurityTokenOld<T1, T2>(T1 id, T2 password, double unitValue, string hmacHashKey = null)
 		{
-			byte[] idBytes = ObjectToBytes(id);
-			byte[] passwordBytes = ObjectToBytes(password);
-			byte[] unitBytes = ObjectToBytes(unitValue);
-			MemoryStream stream = new MemoryStream();
-			BinaryWriter writer = new BinaryWriter(stream);
+			var idBytes = ObjectToBytes(id);
+			var passwordBytes = ObjectToBytes(password);
+			var unitBytes = ObjectToBytes(unitValue);
+			var stream = new MemoryStream();
+			var writer = new BinaryWriter(stream, Encoding.UTF8, false);
 			writer.Write(idBytes);
 			writer.Write(passwordBytes);
 			writer.Write(unitBytes);
-			byte[] bytes = stream.ToArray();
-			byte[] tokenPrefixBytesFull = Encryption.Current.ComputeHash(bytes).ToByteArray();
-			string tokenPrefix = BytesToHex(tokenPrefixBytesFull).Substring(0, securityHashSizeOld).ToUpper();
-			byte[] tokenIdBytes = ExclusiveORValue(tokenPrefix, idBytes, hmacHashKey);
-			string tokenId = BytesToHex(tokenIdBytes);
-			string token = string.Format("{0}{1}", tokenPrefix, tokenId);
+			var bytes = stream.ToArray();
+			writer.Close();
+			//stream.Close();
+			var tokenPrefixBytesFull = Encryption.Current.ComputeHash(bytes).ToByteArray();
+			var tokenPrefix = BytesToHex(tokenPrefixBytesFull).Substring(0, securityHashSizeOld).ToUpper();
+			var tokenIdBytes = ExclusiveORValue(tokenPrefix, idBytes, hmacHashKey);
+			var tokenId = BytesToHex(tokenIdBytes);
+			var token = string.Format("{0}{1}", tokenPrefix, tokenId);
 			return token;
 		}
 
@@ -492,8 +463,8 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Id.</returns>
 		public static T GetIdOld<T>(string token, string hmacHashKey = null)
 		{
-			string tokenPrefix = token.Substring(0, securityHashSizeOld);
-			string tokenId = token.Substring(securityHashSizeOld);
+			var tokenPrefix = token.Substring(0, securityHashSizeOld);
+			var tokenId = token.Substring(securityHashSizeOld);
 			var tokenIdBytes = HexToBytes(tokenId);
 			var value = ExclusiveORValue(tokenPrefix, tokenIdBytes, hmacHashKey);
 			var id = (T)BytesToObject(value, typeof(T));

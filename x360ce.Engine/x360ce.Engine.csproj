@@ -331,6 +331,7 @@
     <Compile Include="JocysCom\Security\SecurityHelper.cs" />
     <Compile Include="JocysCom\Security\SHA256Helper.cs" />
     <Compile Include="JocysCom\Security\TokenHelper.cs" />
+    <Compile Include="JocysCom\Security\TokenHelper.Web.cs" />
     <Compile Include="JocysCom\Security\ValidationField.cs" />
     <Compile Include="JocysCom\Security\Encryption.cs" />
     <Compile Include="JocysCom\Security\RoleQueryName.cs" />

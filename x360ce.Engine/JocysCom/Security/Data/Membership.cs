@@ -43,7 +43,7 @@ namespace JocysCom.WebSites.Engine.Security.Data
 			var u = System.Web.HttpContext.Current.Request.Url;
 			subject = subject.Replace("{Host}", u.Host);
 			body = JocysCom.ClassLibrary.Text.Helper.Replace(body, user, false);
-			body = body.Replace("{Host}", u.Host).Replace("{ResetKey}", resetUrl);
+			body = body.Replace("{Host}", u.Host).Replace("{ResetKey}", resetUrl.AbsoluteUri);
 			LogHelper.Current.SendMailFrom(ClassLibrary.Mail.SmtpClientEx.Current.SmtpFrom, m.Email, "", "", subject, body, true);
 		}
 
