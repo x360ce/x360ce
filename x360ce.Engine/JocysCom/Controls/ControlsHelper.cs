@@ -455,17 +455,24 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control == null)
 				throw new ArgumentNullException(nameof(control));
-			// Get all child controls.
-			var controls = control.Controls.Cast<Control>();
-			return controls
-				// Get children controls and flatten resulting sequences into one sequence.
-				.SelectMany(x => GetAll(x))
-				// Merge controls with their children.
-				.Concat(controls)
-				// Include top control if required.
-				.Concat(includeTop ? new[] { control } : new Control[0])
-				// Filter controls by type.
-				.Where(x => type == null || (type.IsInterface ? x.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.GetType())));
+			// Create new list.
+			var controls = new List<Control>();
+			// Add top control if required.
+			if (includeTop)
+				controls.Add(control);
+			// If control contains children then...
+			if (control.HasChildren)
+			{
+				foreach (var child in control.Controls.Cast<Control>())
+				{
+					var children = GetAll(child, null, true);
+					controls.AddRange(children);
+				}
+			}
+			// If type filter is not set then...
+			return (type == null)
+				? controls
+				: controls.Where(x => type.IsInterface ? x.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.GetType()));
 		}
 
 		/// <summary>
@@ -475,22 +482,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control == null)
 				return new T[0];
-			var type = typeof(T);
-			// Get all child controls.
-			var controls = control.Controls.Cast<Control>();
-			// Get children of controls and flatten resulting sequences into one sequence.
-			var result = controls.SelectMany(x => GetAll(x)).ToArray();
-			// Merge controls with their children.
-			result = result.Concat(controls).ToArray();
-			// Include top control if required.
-			if (includeTop) result = result.Concat(new[] { control }).ToArray();
-			// Filter controls by type.
-			result = type.IsInterface
-				? result.Where(x => x.GetType().GetInterfaces().Contains(type)).ToArray()
-				: result.Where(x => type.IsAssignableFrom(x.GetType())).ToArray();
-			// Cast to required type.
-			var result2 = result.Select(x => (T)(object)x).ToArray();
-			return result2;
+			return GetAll(control, typeof(T), includeTop).Cast<T>().ToArray();
 		}
 
 		#endregion

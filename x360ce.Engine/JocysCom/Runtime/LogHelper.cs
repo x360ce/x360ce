@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+#if !NETSTANDARD
+using System.Data.SqlClient;
+#endif
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -17,11 +17,13 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public LogHelper()
 		{
-			_configPrefix = typeof(LogHelper).Name + "_";
+			var _configPrefix = typeof(LogHelper).Name + "_";
+			_SP = new Configuration.SettingsParser();
+			_SP.ConfigPrefix = _configPrefix;
 			_FileWriter = new IO.LogFileWriter(_configPrefix);
 		}
 
-		static string _configPrefix;
+		Configuration.SettingsParser _SP;
 
 		private static LogHelper _Current;
 		private static object currentLock = new object();
@@ -47,70 +49,31 @@ namespace JocysCom.ClassLibrary.Runtime
 			_Current.Dispose();
 		}
 
-		#region Settings
+#region Settings
 
 		/// <summary>
 		/// If used then, can loose information about original line of exception, therefore option is 'false' by default.
 		/// </summary>
-		public bool ErrorUseNewStackTrace { get { return ParseBool(_configPrefix + "UseNewStackTrace", false); } }
-		public bool WriteAsHtml { get { return ParseBool(_configPrefix + "WriteAsHtml", true); } }
-		public bool LogThreadExceptions { get { return ParseBool(_configPrefix + "LogThreadExceptions", true); } }
-		public bool LogUnhandledExceptions { get { return ParseBool(_configPrefix + "LogUnhandledExceptions", true); } }
-		public bool LogFirstChanceExceptions { get { return ParseBool(_configPrefix + "LogFirstChanceExceptions", true); } }
-		public bool GroupingEnabled { get { return ParseBool(_configPrefix + "GroupingEnabled", false); } }
-		public TimeSpan GroupingDelay { get { return ParseSpan(_configPrefix + "GroupingDelay", new TimeSpan(0, 5, 0)); } }
-		public static string RunMode { get { return ParseString("RunMode", ParseString("Environment", "TEST")); } }
+		public bool ErrorUseNewStackTrace { get { return _SP.Parse("UseNewStackTrace", false); } }
+		public bool WriteAsHtml { get { return _SP.Parse("WriteAsHtml", true); } }
+		public bool LogThreadExceptions { get { return _SP.Parse("LogThreadExceptions", true); } }
+		public bool LogUnhandledExceptions { get { return _SP.Parse("LogUnhandledExceptions", true); } }
+		public bool LogFirstChanceExceptions { get { return _SP.Parse("LogFirstChanceExceptions", true); } }
+		public bool GroupingEnabled { get { return _SP.Parse("GroupingEnabled", false); } }
+		public TimeSpan GroupingDelay { get { return _SP.ParseTimeSpan("GroupingDelay", new TimeSpan(0, 5, 0)); } }
+		public static string RunMode
+		{
+			get
+			{
+				// if "RunMode" key not found then try "Environment" key.
+				return Configuration.SettingsParser.Current.Parse("RunMode", Configuration.SettingsParser.Current.Parse("Environment", "TEST"));
+			}
+		}
 		public static bool IsLive { get { return string.Compare(RunMode, "LIVE", true) == 0; } }
 
-		#endregion
+#endregion
 
-		#region Parse
-
-		public static bool ParseBool(string name, bool defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[name];
-			return (v == null) ? defaultValue : bool.Parse(v);
-		}
-
-		public static TimeSpan ParseSpan(string name, TimeSpan defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[name];
-			return (v == null) ? defaultValue : TimeSpan.Parse(v);
-		}
-
-		public static T ParseEnum<T>(string name, T defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[name];
-			return (v == null) ? defaultValue : (T)Enum.Parse(typeof(T), v);
-		}
-
-		public static string ParseString(string name, string defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[name];
-			return (v == null) ? defaultValue : v;
-		}
-
-		public static int ParseInt(string name, int defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[name];
-			return (v == null) ? defaultValue : int.Parse(v);
-		}
-
-		public static long ParseLong(string name, long defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[name];
-			return (v == null) ? defaultValue : long.Parse(v);
-		}
-
-		public static IPAddress ParseIPAddress(string name, IPAddress defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[name];
-			return (v == null) ? defaultValue : IPAddress.Parse(v);
-		}
-
-		#endregion
-
-		#region Process Exceptions
+#region Process Exceptions
 
 		/// <summary>
 		/// Windows forms can attach function which will be used when exception is thrown.
@@ -131,9 +94,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-		#endregion
+#endregion
 
-		#region Add To String
+#region Add To String
 
 		public static void AddParameters(ref string s, IDictionary parameters, TraceFormat tf)
 		{
@@ -192,7 +155,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			s += string.Format("<tr><th colspan=\"2\" class=\"Head\">{0}</th></tr>", name);
 		}
 
-		#region Table
+#region Table
 
 		public static void AddStyle(StringBuilder sb)
 		{
@@ -235,7 +198,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			sb.Append("</tr>");
 		}
 
-		#endregion
+#endregion
 
 		/// <summary>Add row with key and value cells.</summary>
 		public static void AddRow(ref string s, string key, string value)
@@ -262,9 +225,10 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void AddConnection(ref string s, string name, string connectionString)
 		{
-			System.Data.SqlClient.SqlConnectionStringBuilder cb = null;
-			cb = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
+#if !NETSTANDARD
+			var cb = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
 			s += string.Format("<tr><td class=\"Name\"  valign=\"top\">{0}:</td><td class=\"Value\" valign=\"top\">{1}.{2}</td></tr>", name, cb.DataSource, cb.InitialCatalog);
+#endif
 		}
 
 		private static Regex nonDigitsRx = new Regex("[^0-9]");
@@ -297,9 +261,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			//Return GetFormated(sb.ToString(), "-"c)
 		}
 
-		#endregion
+#endregion
 
-		#region Write Log
+#region Write Log
 
 		public delegate void WriteLogDelegate(string message, EventLogEntryType type);
 
@@ -308,7 +272,10 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public WriteLogDelegate WriteLogCustom;
 		public WriteLogDelegate WriteLogConsole = new WriteLogDelegate(_WriteConsole);
+
+#if !NETSTANDARD
 		public WriteLogDelegate WriteLogEvent = new WriteLogDelegate(_WriteEvent);
+#endif
 		public WriteLogDelegate WriteLogFile = new WriteLogDelegate(_WriteFile);
 
 		internal static void _WriteConsole(string message, EventLogEntryType type)
@@ -318,8 +285,11 @@ namespace JocysCom.ClassLibrary.Runtime
 				Console.WriteLine(message);
 		}
 
-		// Requires 'EventLogInstaller' requires reference to System.Configuration.Install.dll
 
+
+#if !NETSTANDARD
+
+		// Requires 'EventLogInstaller' requires reference to System.Configuration.Install.dll
 		public static EventLogInstaller AppEventLogInstaller;
 
 		internal static void _WriteEvent(string message, EventLogEntryType type)
@@ -334,6 +304,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			el.WriteEvent(ei, message);
 			el.Close();
 		}
+
+#endif
 
 		public IO.LogFileWriter FileWriter { get { return _FileWriter; } }
 		IO.LogFileWriter _FileWriter;
@@ -359,9 +331,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			// If custom logging is enabled then write custom log (can be used to send emails).
 			if (WriteLogCustom != null)
 				WriteLogCustom(message, type);
+#if !NETSTANDARD
 			// If event logging is enabled and important then write event.
 			if (WriteLogEvent != null && type != EventLogEntryType.Information)
 				WriteLogEvent(message, type);
+#endif
 		}
 
 		public static void WriteError(Exception ex)
@@ -379,9 +353,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			Current.WriteLog(args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Information);
 		}
 
-		#endregion
+#endregion
 
-		#region Exceptions
+#region Exceptions
 
 		//public static string ExceptionInfo(Exception ex, string body)
 		//{
@@ -406,9 +380,9 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static object WriteLock = new object();
 
-		#endregion
+#endregion
 
-		#region Group Same exceptions
+#region Group Same exceptions
 
 		static readonly Regex RxBreaks = new Regex("[\r\n]", RegexOptions.Multiline);
 		static readonly Regex RxMultiSpace = new Regex("[ \u00A0]+");
@@ -555,9 +529,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			List<ExceptionGroup> Group;
 		}
 
-		#endregion
+#endregion
 
-		#region Convert Exception to HTML String
+#region Convert Exception to HTML String
 
 		public static string GetSubjectPrefix(Exception ex = null, TraceEventType? type = null)
 		{
@@ -691,6 +665,10 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static bool FillSqlException(ref string s, Exception ex)
 		{
+#if NETSTANDARD
+			return false;
+#else
+
 			var ex2 = ex as SqlException;
 			if (ex2 == null)
 				return false;
@@ -709,6 +687,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				}
 			}
 			return true;
+#endif
 		}
 
 		public bool FillLoaderException(ref string s, Exception ex)
@@ -756,9 +735,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			ex.Data.Add(key, value);
 		}
 
-		#endregion
+#endregion
 
-		#region IDisposable
+#region IDisposable
 
 		// Dispose() calls Dispose(true)
 		public void Dispose()
@@ -781,7 +760,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-		#endregion
+#endregion
 
 	}
 }

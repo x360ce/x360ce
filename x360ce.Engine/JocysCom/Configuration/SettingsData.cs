@@ -251,11 +251,11 @@ namespace JocysCom.ClassLibrary.Configuration
 				var assembly = assemblies[a];
 				var names = assembly.GetManifestResourceNames();
 				// Get compressed resource name.
-				var name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name + ".gz"));
+				var name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name + ".gz", StringComparison.InvariantCulture));
 				if (string.IsNullOrEmpty(name))
 				{
 					// Get uncompressed resource name.
-					name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name));
+					name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name, StringComparison.InvariantCulture));
 				}
 				// If internal preset was found.
 				if (!string.IsNullOrEmpty(name))
@@ -268,7 +268,8 @@ namespace JocysCom.ClassLibrary.Configuration
 						sr.BaseStream.CopyTo(memstream);
 						bytes = memstream.ToArray();
 					}
-					data = DeserializeData(bytes, name.EndsWith(".gz"));
+					sr.Dispose();
+					data = DeserializeData(bytes, name.EndsWith(".gz", StringComparison.InvariantCulture));
 					success = true;
 					break;
 				}

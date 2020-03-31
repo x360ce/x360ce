@@ -4,7 +4,7 @@ using System.Text;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
-	public class SettingsHelper
+	public partial class SettingsHelper
 	{
 		#region Compression
 
@@ -84,7 +84,6 @@ namespace JocysCom.ClassLibrary.Configuration
 				return reader.ReadToEnd();
 			}
 		}
-
 
 		/// <summary>
 		/// Get file content with encoding header.

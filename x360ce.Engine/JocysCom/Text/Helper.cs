@@ -455,6 +455,16 @@ namespace JocysCom.ClassLibrary.Text
 			var enc = Encoding.GetEncoding("IBM437");
 			return enc.GetString(bytes);
 		}
-	
+
+		/// <summary>
+		/// Convert .NFO file content to Unicode so they can be displayed properly between 'pre' tags on web.
+		/// </summary>
+		public static string IBM437ToUTF8(string text)
+		{
+			var bytes = Encoding.ASCII.GetBytes(text);
+			var enc = Encoding.GetEncoding("IBM437");
+			return enc.GetString(bytes);
+		}
+
 	}
 }

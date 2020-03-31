@@ -143,7 +143,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					default: break;// General Availability (GA) - Gold
 				}
 			}
-			var runMode = ConfigurationManager.AppSettings["RunMode"];
+			var runMode = SettingsParser.Current.Parse("RunMode", "");
 			var haveRunMode = !string.IsNullOrEmpty(runMode);
 			// If run mode is not specified then assume live.
 			var nonLive = haveRunMode && string.Compare(runMode, "LIVE", true) != 0;
@@ -180,6 +180,8 @@ namespace JocysCom.ClassLibrary.Configuration
 			{
 				s += " - " + Description;
 			}
+#if !NETSTANDARD
+
 			// Add elevated tag.
 			var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
 			var isElevated = identity.Owner != identity.User;
@@ -193,6 +195,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			else if (isElevated)
 				s += " (Administrator)";
 			// if (WinAPI.IsVista && WinAPI.IsElevated() && WinAPI.IsInAdministratorRole) this.Text += " (Administrator)";
+#endif
 			return s.Trim();
 		}
 
@@ -288,7 +291,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			if (assembly == null)
 				throw new ArgumentNullException(nameof(assembly));
 			var names = assembly.GetManifestResourceNames();
-			DateTime dt;
+			var dt = default(DateTime);
 			foreach (var name in names)
 			{
 				if (!name.EndsWith("BuildDate.txt"))
@@ -302,6 +305,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					return dt;
 				}
 			}
+#if !NETSTANDARD
 			// Constants related to the Windows PE file format.
 			const int PE_HEADER_OFFSET = 60;
 			const int LINKER_TIMESTAMP_OFFSET = 8;
@@ -314,6 +318,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			var offset = Marshal.ReadInt32(hMod, PE_HEADER_OFFSET);
 			var secondsSince1970 = Marshal.ReadInt32(hMod, offset + LINKER_TIMESTAMP_OFFSET);
 			dt = GetDateTime(secondsSince1970);
+#endif
 			return dt;
 		}
 

@@ -237,7 +237,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				let openChar = ch == '{' || ch == '[' ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(ident, ++indentation)) : ch.ToString()
 				let closeChar = ch == '}' || ch == ']' ? Environment.NewLine + string.Concat(Enumerable.Repeat(ident, --indentation)) + ch : ch.ToString()
 				select lineBreak == null ? openChar.Length > 1 ? openChar : closeChar : lineBreak;
-			return String.Concat(result);
+			return string.Concat(result);
 		}
 
 		#endregion

@@ -94,7 +94,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			InitializeConnectionMonitor();
 			InitializeQueueMonitor();
 			// Flush current network state.
-			var file = LogWriter._CurrentFileFileName ?? string.Format(LogWriter.LogFileName, DateTime.Now);
+			var file = LogWriter.CurrentFileFileName ?? string.Format(LogWriter.LogFileName, DateTime.Now);
 			var logFileName = System.IO.Path.GetFileNameWithoutExtension(file);
 			var directoryName = System.IO.Path.GetDirectoryName(file);
 			// File: Status.txt

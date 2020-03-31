@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.Reflection;
 using System.Security;
@@ -399,13 +398,15 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Add extra exception details.
 			var s = "";
 			AddParameters(ref s, ex.Data, TraceFormat.TrailingNewLine);
+#if !NETSTANDARD
 			// Exception string to add.
-			var ex1 = ex as ConfigurationErrorsException;
+			var ex1 = ex as System.Configuration.ConfigurationErrorsException;
 			if (ex1 != null)
 			{
 				s += string.Format("FileName: {0}\r\n", ex1.Filename);
 				s += string.Format("Line: {0}\r\n", ex1.Line);
 			}
+#endif
 			var ex2 = ex as ReflectionTypeLoadException;
 			if (ex2 != null)
 			{

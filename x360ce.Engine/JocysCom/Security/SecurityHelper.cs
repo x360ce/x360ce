@@ -95,16 +95,13 @@ namespace JocysCom.ClassLibrary.Security
 				// Allow this client to communicate with unauthenticated servers.
 				return true;
 			}
-			var allow = Runtime.LogHelper.ParseBool("CertificateErrors_Allow", false);
+			var sp = new Configuration.SettingsParser("CertificateErrors_");
+			var allow = sp.Parse("Allow", false);
+			var notify = sp.Parse("Notify", true);
 			string message = string.Format("Certificate error: {0}", sslPolicyErrors);
-			if (allow)
-			{
-				message += " Allow this client to communicate with unauthenticated server.";
-			}
-			else
-			{
-				message += " The underlying connection was closed.";
-			}
+			message += allow
+				? " Allow this client to communicate with unauthenticated server."
+				: " The underlying connection was closed.";
 			var ex = new Exception("Validate server certificate error");
 			ex.Data.Add("AllowCertificateErrors", allow);
 			if (sender != null && sender is System.Net.HttpWebRequest)
@@ -127,7 +124,6 @@ namespace JocysCom.ClassLibrary.Security
 					ex.Data.Add("Chain.ChainStatus(" + i + ")", string.Format("{0}, {1}", chain.ChainStatus[i].Status, chain.ChainStatus[i].StatusInformation));
 				}
 			}
-			var notify = Runtime.LogHelper.ParseBool("CertificateErrors_Notify", true);
 			if (notify)
 				Runtime.LogHelper.Current.ProcessException(ex);
 			// Allow (or not allow depending on setting value) this client to communicate with unauthenticated servers.

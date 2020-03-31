@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,10 +17,21 @@ namespace JocysCom.ClassLibrary.IO
 	public class LogFileWriter : IDisposable
 	{
 
-		object streamWriterLock = new object();
+		public LogFileWriter(string configPrefix = null)
+		{
+			// This class can be inherited therefore use type to make sure that prefix is different.
+			// Get type will return derived class or this class if not derived.
+			var prefix = configPrefix ?? GetType().Name;
+			// Add separator to the prefix if missing.
+			if (!prefix.EndsWith("_", StringComparison.InvariantCulture) && !prefix.EndsWith("-", StringComparison.InvariantCulture))
+				prefix += "_";
+			_SP = new Configuration.SettingsParser();
+			_SP.ConfigPrefix = prefix;
+			_Init();
+		}
 
 		public string LogFileName { get; set; }
-		public string _CurrentFileFileName { get; private set; }
+		public string CurrentFileFileName { get; private set; }
 		public bool LogFileEnabled { get; set; }
 		public DateTime LogFileDate { get; set; }
 
@@ -28,13 +40,11 @@ namespace JocysCom.ClassLibrary.IO
 		public TimeSpan LogFileTimeout { get; set; }
 		public bool LogFileRolling { get; set; }
 
-		public StreamWriter BaseStream
-		{
-			get { return tw; }
-		}
-		StreamWriter tw;
+		public StreamWriter BaseStream { get; private set; }
 
 		bool _LogFileAutoFlush;
+
+		object streamWriterLock = new object();
 
 		public bool LogFileAutoFlush
 		{
@@ -43,32 +53,16 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				lock (streamWriterLock)
 				{
-					if (tw != null && tw.AutoFlush != LogFileAutoFlush)
-						tw.AutoFlush = value;
+					if (BaseStream != null && BaseStream.AutoFlush != LogFileAutoFlush)
+						BaseStream.AutoFlush = value;
 					_LogFileAutoFlush = value;
 				}
 			}
 		}
 
-		public LogFileWriter()
-		{
-			// This class can be inherited therefore make sure that prefix is different.
-			// Get type will return derived class or this class if not derived.
-			_configPrefix = GetType().Name;
-			_Init();
-		}
+		Configuration.SettingsParser _SP;
 
-		public LogFileWriter(string configPrefix)
-		{
-			// This class can be inherited therefore make sure that prefix is different.
-			// Get type will return derived class or this class if not derived.
-			_configPrefix = configPrefix ?? GetType().Name;
-			if (!_configPrefix.EndsWith("_") && !_configPrefix.EndsWith("-"))
-				_configPrefix += "_";
-			_Init();
-		}
-
-		public string GetAssemblyName()
+		public static string GetAssemblyName()
 		{
 			string fullName = Assembly.GetEntryAssembly().FullName;
 			var index = fullName.IndexOf(',');
@@ -94,22 +88,22 @@ namespace JocysCom.ClassLibrary.IO
 				? Environment.SpecialFolder.ApplicationData
 				: Environment.SpecialFolder.CommonApplicationData;
 			var folder = Environment.GetFolderPath(specialFolder);
-			var path = string.Format("{0}\\{1}\\{2}", folder, company, product);
+			var path = string.Format(CultureInfo.InvariantCulture, "{0}\\{1}\\{2}", folder, company, product);
 			return path;
 		}
 
 		void _Init()
 		{
-			LogFileEnabled = ParseBool("LogFileEnabled", false);
+			LogFileEnabled = _SP.Parse("LogFileEnabled", false);
 			if (!LogFileEnabled)
 				return;
-			_LogFileAutoFlush = ParseBool("LogFileAutoFlush", false);
+			_LogFileAutoFlush = _SP.Parse("LogFileAutoFlush", false);
 			// File reset options.
-			LogFileTimeout = ParseSpan("LogFileTimeout", new TimeSpan());
-			LogFileName = ParseString("LogFileName", "");
+			LogFileTimeout = _SP.ParseTimeSpan("LogFileTimeout");
+			LogFileName = _SP.Parse("LogFileName", "");
 			// Enable rolling by default if file name looks like daily.
 			var defaultRolling = LogFileName.Contains("MMdd}");
-			LogFileRolling = ParseBool("LogFileRolling", defaultRolling);
+			LogFileRolling = _SP.Parse("LogFileRolling", defaultRolling);
 			if (string.IsNullOrEmpty(LogFileName))
 			{
 				// Suffix pattern.
@@ -119,11 +113,11 @@ namespace JocysCom.ClassLibrary.IO
 					// Use current date when creating new file.
 					: "{0:yyyyMMdd_HHmmss}.txt";
 				// File prefix to make it unique.
-				var defaultPrefix = string.IsNullOrEmpty(_configPrefix)
-					? GetAssemblyName() : _configPrefix;
+				var defaultPrefix = string.IsNullOrEmpty(_SP.ConfigPrefix)
+					? GetAssemblyName() : _SP.ConfigPrefix;
 				// Generate unique file name.
 				var fileName =
-					string.Format("{0}\\{1}{2}",
+					string.Format(CultureInfo.InvariantCulture, "{0}\\{1}{2}",
 						GetLogFolder(), defaultPrefix, defautlSuffix
 					);
 				LogFileName = fileName;
@@ -141,28 +135,28 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			if (!LogFileEnabled || IsDisposing)
 				return;
-			var message = args.Length > 0 ? string.Format(format, args) : format;
+			var message = args.Length > 0 ? string.Format(CultureInfo.InvariantCulture, format, args) : format;
 			lock (streamWriterLock)
 			{
 				if (IsDisposing)
 					return;
 				var n = DateTime.Now;
-				if (tw != null)
+				if (BaseStream != null)
 				{
 					var reset =
 						// If log file can expire and expired or...
 						(LogFileTimeout.Ticks > 0 && n.Subtract(LogFileDate) > LogFileTimeout) ||
 						// If file is rolling and name changed then...
-						(LogFileRolling && !_CurrentFileFileName.Equals(string.Format(LogFileName, n), StringComparison.OrdinalIgnoreCase));
+						(LogFileRolling && !CurrentFileFileName.Equals(string.Format(CultureInfo.InvariantCulture, LogFileName, n), StringComparison.OrdinalIgnoreCase));
 					if (reset)
 					{
 						// Flush and dispose old file.
-						tw.Flush();
-						tw.Dispose();
-						tw = null;
+						BaseStream.Flush();
+						BaseStream.Dispose();
+						BaseStream = null;
 					}
 				}
-				if (tw == null)
+				if (BaseStream == null)
 				{
 					// Create new possible file name.
 					LogFileDate = n;
@@ -170,8 +164,8 @@ namespace JocysCom.ClassLibrary.IO
 					var expandedPath = Environment.ExpandEnvironmentVariables(LogFileName);
 					// Wipe old files.
 					WipeOldLogFiles(expandedPath);
-					var path = string.Format(expandedPath, n);
-					_CurrentFileFileName = path;
+					var path = string.Format(CultureInfo.InvariantCulture, expandedPath, n);
+					CurrentFileFileName = path;
 					// Try to...
 					try
 					{
@@ -182,73 +176,36 @@ namespace JocysCom.ClassLibrary.IO
 					}
 					catch (Exception ex)
 					{
-						ex.Data.Add("LogFileName", _CurrentFileFileName);
+						ex.Data.Add("LogFileName", CurrentFileFileName);
 						ex.Data.Add("LogFullPath", path);
 						throw;
 					}
 					// Create a writer and open the file.
-					tw = new StreamWriter(path, true);
-					write(string.Format("#Software: {0} {1} {2}\r\n", company, product, version));
-					write(string.Format("#Date: {0:yyyy-MM-dd HH:mm:ss.fff}\r\n", n));
-					write("#Log: Start\r\n");
+					BaseStream = new StreamWriter(path, true);
+					write(string.Format(CultureInfo.InvariantCulture, "#Software: {0} {1} {2}\r\n", company, product, version));
+					write(string.Format(CultureInfo.InvariantCulture, "#Date: {0:yyyy-MM-dd HH:mm:ss.fff}\r\n", n));
+					write(string.Format(CultureInfo.InvariantCulture, "#Log: Start\r\n"));
 				}
-				if (tw.AutoFlush != LogFileAutoFlush)
-					tw.AutoFlush = LogFileAutoFlush;
+				if (BaseStream.AutoFlush != LogFileAutoFlush)
+					BaseStream.AutoFlush = LogFileAutoFlush;
 				write(message);
 			}
 		}
 
 		void write(string message, DateTime? date = null)
 		{
-			var value = string.Format("{0:yyyy-MM-dd HH:mm:ss} {1}", date ?? DateTime.Now, message);
-			tw.Write(value);
+			var value = string.Format(CultureInfo.InvariantCulture, "{0:yyyy-MM-dd HH:mm:ss} {1}", date ?? DateTime.Now, message);
+			BaseStream.Write(value);
 		}
 
 		public void Flush()
 		{
 			lock (streamWriterLock)
 			{
-				if (tw != null)
-					tw.Flush();
+				if (BaseStream != null)
+					BaseStream.Flush();
 			}
 		}
-
-		#region Parse Configuration Values
-
-		string _configPrefix;
-		public string ConfigPrefix { get { return _configPrefix; } }
-
-		internal bool ParseBool(string name, bool defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + name];
-			return (v == null) ? defaultValue : bool.Parse(v);
-		}
-
-		string ParseString(string name, string defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + name];
-			return (v == null) ? defaultValue : v;
-		}
-
-		TimeSpan ParseSpan(string name, TimeSpan defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + name];
-			return (v == null) ? defaultValue : TimeSpan.Parse(v);
-		}
-
-		int ParseInt(string name, int defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + name];
-			return (v == null) ? defaultValue : int.Parse(v);
-		}
-
-		long ParseLong(string name, long defaultValue)
-		{
-			var v = ConfigurationManager.AppSettings[_configPrefix + name];
-			return (v == null) ? defaultValue : long.Parse(v);
-		}
-
-		#endregion
 
 		#region Clean-Up
 
@@ -266,8 +223,8 @@ namespace JocysCom.ClassLibrary.IO
 			if (!rx.IsMatch(expandedPath))
 				return 0;
 			// Get wipe conditions.
-			var maxLogFiles = ParseInt("LogFileMaxFiles", 0);
-			var maxLogBytes = ParseLong("LogFileMaxBytes", 0);
+			var maxLogFiles = _SP.Parse("LogFileMaxFiles", 0);
+			var maxLogBytes = _SP.Parse<long>("LogFileMaxBytes", 0);
 			// If keep all then return.
 			if (maxLogFiles == 0 && maxLogBytes == 0)
 				return 0;
@@ -316,7 +273,7 @@ namespace JocysCom.ClassLibrary.IO
 
 		bool IsDisposing;
 
-		void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
@@ -326,12 +283,12 @@ namespace JocysCom.ClassLibrary.IO
 					if (IsDisposing)
 						return;
 					IsDisposing = true;
-					if (tw != null)
+					if (BaseStream != null)
 					{
-						write("#Log: End\r\n");
-						tw.Close();
-						tw.Dispose();
-						tw = null;
+						write(string.Format(CultureInfo.InvariantCulture, "#Log: End\r\n"));
+						BaseStream.Close();
+						BaseStream.Dispose();
+						BaseStream = null;
 					}
 				}
 			}

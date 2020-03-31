@@ -8,7 +8,7 @@ namespace JocysCom.ClassLibrary.Runtime
 	{
 		static List<ExceptionGroup> fileExceptions = new List<ExceptionGroup>();
 
-		public int MaxFiles { get { return ParseInt(_configPrefix + "MaxFiles", 10); } }
+		public int MaxFiles { get { return _SP.Parse("MaxFiles", 10); } }
 
 		/// <summary>
 		/// Write exception details to file.
@@ -47,7 +47,11 @@ namespace JocysCom.ClassLibrary.Runtime
 					// Remove oldest file.
 					files[0].Delete();
 				}
+#if NETSTANDARD
+				var fileTime = DateTime.Now;
+#else
 				var fileTime = HiResDateTime.Current.Now;
+#endif
 				var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}{3}",
 					di.FullName, prefix, fileTime, ext);
 				var fi = new System.IO.FileInfo(fileName);

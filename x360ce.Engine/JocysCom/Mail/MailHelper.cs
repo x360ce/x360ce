@@ -5,7 +5,6 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web.Security;
 
 namespace JocysCom.ClassLibrary.Mail
 {
@@ -16,6 +15,8 @@ namespace JocysCom.ClassLibrary.Mail
 
 		#region GetMailAddress - ASP.NET Membership Provider
 
+		#if !NETSTANDARD
+
 		public virtual MailAddress[] GetMailAddress(Guid[] userIds)
 		{
 			return userIds.Select(x => GetMailAddress(x)).ToArray();
@@ -23,7 +24,7 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public virtual MailAddress GetMailAddress(Guid userId)
 		{
-			var user = Membership.GetUser(userId);
+			var user = System.Web.Security.Membership.GetUser(userId);
 			if (user == null)
 				throw new Exception("User with Id '" + userId + "' doesn't exist!");
 			return new MailAddress(user.Email, user.UserName);
@@ -36,11 +37,13 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public virtual MailAddress GetMailAddress(string username)
 		{
-			var user = Membership.GetUser(username);
+			var user = System.Web.Security.Membership.GetUser(username);
 			if (user == null)
 				throw new Exception("User '" + username + "' doesn't exist!");
 			return new MailAddress(user.Email, user.UserName);
 		}
+
+		#endif
 
 		#endregion
 
