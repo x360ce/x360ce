@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Security;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -23,19 +24,30 @@ namespace JocysCom.ClassLibrary.Runtime
 	public partial class LogHelper
 	{
 
-		const string DefaultLogsFolder = "Logs";
+		public string DefaultLogsFolder
+		{
+			get
+			{
+				var ai = new Configuration.AssemblyInfo();
+				var path = ai.GetAppDataFile(false, "Logs");
+				return path.FullName;
+			}
+		}
+		string _DefaultLogsFolder;
 
 		#region Handling
 
-		public void InitExceptionHandlers(string logFolder = DefaultLogsFolder)
+		public void InitExceptionHandlers(string logFolder = null)
 		{
-			_LogFolder = logFolder;
+			_OverrideLogFolder = logFolder;
 			//if (LogThreadExceptions)
 			//	System.Windows.Forms.Application.ThreadException += Application_ThreadException;
 			if (LogUnhandledExceptions)
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			if (LogFirstChanceExceptions)
 				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+			if (LogUnobservedTaskExceptions)
+				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 		}
 
 		public void UnInitExceptionHandlers()
@@ -46,9 +58,11 @@ namespace JocysCom.ClassLibrary.Runtime
 				AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
 			if (LogFirstChanceExceptions)
 				AppDomain.CurrentDomain.FirstChanceException -= CurrentDomain_FirstChanceException;
+			if (LogUnobservedTaskExceptions)
+				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 		}
 
-		string _LogFolder = DefaultLogsFolder;
+		string _OverrideLogFolder = null;
 
 		public event EventHandler<LogHelperEventArgs> WritingException;
 
@@ -60,6 +74,11 @@ namespace JocysCom.ClassLibrary.Runtime
 		public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
 			WriteException((Exception)e.ExceptionObject);
+		}
+
+		public void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+		{
+			WriteException(e.Exception);
 		}
 
 		/// <summary>

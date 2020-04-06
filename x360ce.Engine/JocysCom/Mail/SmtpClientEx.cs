@@ -39,7 +39,7 @@ namespace JocysCom.ClassLibrary.Mail
 		}
 		private static SmtpClientEx _Current;
 
-#region FQDN Fix
+		#region FQDN Fix
 
 		private static readonly FieldInfo localHostName = GetLocalHostNameField();
 
@@ -84,7 +84,7 @@ namespace JocysCom.ClassLibrary.Mail
 			}
 		}
 
-#endregion
+		#endregion
 
 		public SmtpClientEx() { Initialize(); }
 
@@ -103,6 +103,8 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public static void SetErrorCode(Exception ex, int errorCode)
 		{
+			if (ex == null)
+				throw new ArgumentNullException(nameof(ex));
 			if (errorCode == 0)
 				return;
 			if (ex.Data.Keys.OfType<string>().Contains(ErrorCode))
@@ -146,7 +148,9 @@ namespace JocysCom.ClassLibrary.Mail
 			credentials.Password = sp.Parse("SmtpPassword", credentials.Password);
 			if (!string.IsNullOrEmpty(credentials.UserName))
 				Credentials = credentials;
-			Host = sp.Parse("SmtpServer", Host);
+			var host = sp.Parse("SmtpServer", Host);
+			if (!string.IsNullOrEmpty(host))
+				Host = host;
 			Port = sp.Parse("SmtpPort", Port);
 			EnableSsl = sp.Parse("SmtpEnableSsl", EnableSsl);
 			DeliveryMethod = sp.Parse("ErrorDeliveryMethod", DeliveryMethod);
@@ -155,8 +159,9 @@ namespace JocysCom.ClassLibrary.Mail
 			// Set local IP address and port.
 			SmtpLocalAddress = IPAddress.Any;
 			var localAddress = sp.Parse("SmtpLocalAddress", "");
+			bool _ignore;
 			if (!string.IsNullOrEmpty(localAddress))
-				IPAddress.TryParse(localAddress, out SmtpLocalAddress);
+				_ignore = IPAddress.TryParse(localAddress, out SmtpLocalAddress);
 			SmtpLocalPort = sp.Parse("SmtpLocalPort", 0);
 			// Other settings.
 			SmtpSendCopyTo = sp.Parse("SmtpSendCopyTo", "");
@@ -219,13 +224,16 @@ namespace JocysCom.ClassLibrary.Mail
 					var Tls12 = 0x0C00; //  3072
 					ServicePointManager.SecurityProtocol |= (SecurityProtocolType)(Tls11 | Tls12);
 				}
-				// Bind to local IP address.
-				ServicePoint.BindIPEndPointDelegate =
+				if (SmtpLocalAddress != IPAddress.Any || SmtpLocalPort > 0)
+				{
+					// Bind to local IP address.
+					ServicePoint.BindIPEndPointDelegate =
 					delegate (ServicePoint servicePoint, IPEndPoint remoteEndPoint, int retryCount)
 					{
 						var endpoint = new IPEndPoint(SmtpLocalAddress, SmtpLocalPort);
 						return endpoint;
 					};
+				}
 			}
 			// Override file name.
 			else if (DeliveryMethod == SmtpDeliveryMethod.SpecifiedPickupDirectory)
@@ -283,6 +291,8 @@ namespace JocysCom.ClassLibrary.Mail
 		/// <param name="message"></param>
 		public static void AddSmtpSendCopyToRecipients(MailMessage message, string recipients)
 		{
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
 			var addresses = MailHelper.ParseEmailAddress(recipients);
 			var hosts = addresses.Select(x => x.Host.ToLower()).Distinct().ToArray();
 			if (hosts.Length == 0)

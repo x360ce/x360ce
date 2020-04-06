@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Net;
+using System.Linq;
+using System.Xml.Linq;
+using System.Collections.Generic;
 #if NETSTANDARD // If .NET Standard (Xamarin) preprocessor directive is set then...
 using Xamarin.Forms;
 #else
@@ -34,12 +38,52 @@ namespace JocysCom.ClassLibrary.Configuration
 
 #if NETSTANDARD // If .NET Standard (Xamarin) preprocessor directive is set then...
 
-		string GetValue(string name) => 
-			(string)Application.Current.Properties[ConfigPrefix + name];
+		string GetValue(string name)
+		{
+			var p = Application.Current.Properties;
+			var key = ConfigPrefix + name;
+			if (!p.Keys.Contains(key))
+			{
+				if (EmbeddedAppSettings == null)
+					ReadEmbeddedSettings();
+				if (EmbeddedAppSettings.Keys.Contains(key))
+					return EmbeddedAppSettings[key];
+				return null;
+			}
+			return (string)p[key];
+		}
+
+		public static Dictionary<string, string> EmbeddedAppSettings;
+
+		public static void ReadEmbeddedSettings()
+		{
+			EmbeddedAppSettings = new Dictionary<string, string>();
+			var assembly = typeof(SettingsParser).Assembly;
+			var names = assembly.GetManifestResourceNames();
+			var name = names.FirstOrDefault(x => x.EndsWith("App.config"));
+			if (string.IsNullOrEmpty(name))
+				return;
+			var stream = assembly.GetManifestResourceStream(name);
+			using (var reader = new StreamReader(stream))
+			{
+				var doc = XDocument.Parse(reader.ReadToEnd());
+				var items = doc
+					.Element("configuration")
+					.Element("appSettings")
+					.Elements("add").ToList();
+				foreach (var item in items)
+				{
+					var k = item.Attribute("key").Value;
+					var v = item.Attribute("value").Value;
+					EmbeddedAppSettings.Add(k, v);
+				}
+
+			}
+		}
 
 #else
 
-		string GetValue(string name) =>
+		string GetValue(string name)=>
 			ConfigurationManager.AppSettings[ConfigPrefix + name];
 
 #endif

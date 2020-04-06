@@ -33,16 +33,18 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			Items = new SortableBindingList<T>();
 			_Comment = comment;
+			// Get writable application folder.
 			var specialFolder = userLevel
 				? Environment.SpecialFolder.ApplicationData
 				: Environment.SpecialFolder.CommonApplicationData;
-			var file = string.IsNullOrEmpty(fileName)
-				? string.Format("{0}.xml", typeof(T).Name)
-				: fileName;
 			var folder = string.Format("{0}\\{1}\\{2}",
 				Environment.GetFolderPath(specialFolder),
 				Application.CompanyName,
 				Application.ProductName);
+			// Get file name.
+			var file = string.IsNullOrEmpty(fileName)
+				? string.Format("{0}.xml", typeof(T).Name)
+				: fileName;
 			var path = Path.Combine(folder, file);
 			_XmlFile = new FileInfo(path);
 		}

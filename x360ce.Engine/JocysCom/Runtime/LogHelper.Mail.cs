@@ -148,8 +148,13 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public string ProcessException(Exception ex, string subject = null, string body = null, bool processExtraAction = true)
 		{
+			// Process global (there is a chance that app settings are not available yet.
+			var extra = ProcessExceptionExtraGlobal;
+			// If set then execute extra exception actions
+			if (processExtraAction && extra != null)
+				extra(ex);
 			// Show exception first, because email can fail.
-			var extra = ProcessExceptionExtra;
+			extra = ProcessExceptionExtra;
 			// If set then execute extra exception actions
 			if (processExtraAction && extra != null)
 				extra(ex);

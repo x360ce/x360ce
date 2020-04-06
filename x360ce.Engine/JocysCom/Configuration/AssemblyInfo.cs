@@ -1,5 +1,4 @@
 using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -139,8 +138,8 @@ namespace JocysCom.ClassLibrary.Configuration
 					case 2: s += " Beta 2"; break; // Feature Complete (FC)
 					case 3: s += " Beta 3"; break; // Technical Preview (TP)
 					case 4: s += " RC"; break;     // Release Candidate (RC)
-					case 5: s += " RTM"; break; // Release to Manufacturing (RTM)
-					default: break;// General Availability (GA) - Gold
+					case 5: s += " RTM"; break;    // Release to Manufacturing (RTM)
+					default: break;                // General Availability (GA) - Gold
 				}
 			}
 			var runMode = SettingsParser.Current.Parse("RunMode", "");
@@ -365,8 +364,9 @@ namespace JocysCom.ClassLibrary.Configuration
 			return value.Invoke(attribute);
 		}
 
-		public FileInfo GetAppDataFile(bool userLevel, string format, params object[] args)
+		public string GetAppDataPath(bool userLevel, string format, params object[] args)
 		{
+			// Get writable application folder.
 			var specialFolder = userLevel
 				? Environment.SpecialFolder.ApplicationData
 				: Environment.SpecialFolder.CommonApplicationData;
@@ -374,8 +374,15 @@ namespace JocysCom.ClassLibrary.Configuration
 				Environment.GetFolderPath(specialFolder),
 				Company,
 				Product);
+			// Get file name.
 			var file = string.Format(format, args);
 			var path = Path.Combine(folder, file);
+			return path;
+		}
+
+		public FileInfo GetAppDataFile(bool userLevel, string format, params object[] args)
+		{
+			var path = GetAppDataPath(userLevel, format, args);
 			return new FileInfo(path);
 		}
 
