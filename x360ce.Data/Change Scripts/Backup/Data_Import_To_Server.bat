@@ -199,7 +199,7 @@ GOTO:EOF
 ::=============================================================
 :FKD :: DISABLE FOREIGN KEYS
 ::-------------------------------------------------------------
-:: Parameters: FileName
+:: Parameters: <FTable> <FConstrain> <FColum>
 echo Disable Constraint: %1 %2
 echo ================================================= >> %log%
 echo Disable Constraint: %1 %2 >> %log%
@@ -212,13 +212,13 @@ GOTO:EOF
 ::=============================================================
 :FKE :: ENABLE FOREIGN KEYS
 ::-------------------------------------------------------------
-:: Parameters: FileName
+:: Parameters: <FTable> <FConstrain> <FColum> <RTable> <RColumn>
 echo Enable Constraint: %1 %2
 echo ================================================= >> %log%
 echo Enable Constraint: %1 %2 >> %log%
 echo ------------------------------------------------- >> %log%
 echo. >> %log%
-set cmd1=ALTER TABLE [dbo].[%1] WITH CHECK ADD CONSTRAINT [%2] FOREIGN KEY([%3]) REFERENCES [dbo].[%3] ([%4])
+set cmd1=ALTER TABLE [dbo].[%1] WITH CHECK ADD CONSTRAINT [%2] FOREIGN KEY(%3) REFERENCES [dbo].[%4] (%5)
 set cmd2=ALTER TABLE [dbo].[%1] CHECK CONSTRAINT [%2]
 %sqlcmd% %slqo% -d %cat% -Q "%cmd1%" >> %log%
 %sqlcmd% %slqo% -d %cat% -Q "%cmd2%" >> %log%
