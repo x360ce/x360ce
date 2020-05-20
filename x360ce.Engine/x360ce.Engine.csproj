@@ -196,7 +196,6 @@
     <Compile Include="Common\XInputMaskScanner.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="JocysCom\Collections\KeyValue.cs" />
-    <Compile Include="JocysCom\Common\DataContextFactoryT.cs" />
     <Compile Include="JocysCom\Common\EventArgs.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />
     <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
@@ -215,6 +214,7 @@
     <Compile Include="JocysCom\Configuration\SettingsHelper.cs" />
     <Compile Include="JocysCom\Configuration\SettingsParser.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
+    <Compile Include="JocysCom\Controls\ControlsHelper.Windows.cs" />
     <Compile Include="JocysCom\Controls\InfoForm.cs">
       <SubType>Form</SubType>
     </Compile>

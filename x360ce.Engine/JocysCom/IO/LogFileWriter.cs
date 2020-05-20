@@ -23,7 +23,7 @@ namespace JocysCom.ClassLibrary.IO
 			// Get type will return derived class or this class if not derived.
 			var prefix = configPrefix ?? GetType().Name;
 			// Add separator to the prefix if missing.
-			if (!prefix.EndsWith("_", StringComparison.InvariantCulture) && !prefix.EndsWith("-", StringComparison.InvariantCulture))
+			if (!prefix.EndsWith("_", StringComparison.OrdinalIgnoreCase) && !prefix.EndsWith("-", StringComparison.OrdinalIgnoreCase))
 				prefix += "_";
 			_SP = new Configuration.SettingsParser();
 			_SP.ConfigPrefix = prefix;

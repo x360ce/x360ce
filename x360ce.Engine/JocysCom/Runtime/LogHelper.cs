@@ -164,6 +164,8 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void AddStyle(StringBuilder sb)
 		{
+			if (sb == null)
+				throw new ArgumentNullException(nameof(sb));
 			var s = "";
 			AddStyle(ref s);
 			sb.Append(s);
@@ -171,17 +173,23 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void AddTable(StringBuilder sb)
 		{
+			if (sb == null)
+				throw new ArgumentNullException(nameof(sb));
 			sb.Append("<table class=\"Table\">");
 		}
 
 		public static void EndTable(StringBuilder sb)
 		{
+			if (sb == null)
+				throw new ArgumentNullException(nameof(sb));
 			sb.Append("</table>");
 		}
 
 		/// <summary>Add head rows.</summary>
 		public static void AddHeadRows(StringBuilder sb, params object[] args)
 		{
+			if (sb == null)
+				throw new ArgumentNullException(nameof(sb));
 			sb.Append("<tr>");
 			foreach (var arg in args)
 			{
@@ -194,6 +202,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <summary>Add body rows.</summary>
 		public static void AddBodyRows(StringBuilder sb, params object[] args)
 		{
+			if (sb == null)
+				throw new ArgumentNullException(nameof(sb));
 			sb.Append("<tr>");
 			foreach (var arg in args)
 			{
@@ -217,9 +227,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		void AddExceptionTrace(ref string s, Exception ex)
 		{
 			if (ex.Data.Count > 0)
-			{
 				AddParameters(ref s, ex.Data, TraceFormat.Html);
-			}
 			var html = WriteAsHtml
 				? ExceptionToString(ex, true, TraceFormat.Html)
 				: "<pre>" + ex.ToString() + "</pre>";
@@ -252,9 +260,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static string GetMasked(string number, char mask = '*')
 		{
 			if (string.IsNullOrEmpty(number))
-			{
 				return string.Empty;
-			}
 			string s = GetDigitsOnly(number);
 			if (s.Length < 4 + 6)
 				return string.Empty;
@@ -263,7 +269,6 @@ namespace JocysCom.ClassLibrary.Runtime
 			sb.Append(mask, s.Length - 4 - 6);
 			sb.Append(s.Substring(s.Length - 4, 4));
 			return sb.ToString();
-			//Return GetFormated(sb.ToString(), "-"c)
 		}
 
 		#endregion
@@ -345,6 +350,8 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void WriteError(Exception ex)
 		{
+			if (ex == null)
+				throw new ArgumentNullException(nameof(ex));
 			Current.WriteLog(ex.ToString(), EventLogEntryType.Error);
 		}
 
@@ -448,6 +455,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var algorithm = System.Security.Cryptography.SHA256.Create();
 			var bytes = System.Text.Encoding.UTF8.GetBytes(value);
 			var hash = algorithm.ComputeHash(bytes);
+			algorithm.Dispose();
 			var guidBytes = new byte[16];
 			Array.Copy(hash, guidBytes, guidBytes.Length);
 			var checksum = new Guid(guidBytes);
@@ -761,7 +769,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		bool IsDisposing;
 
-		void Dispose(bool disposing)
+		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
 			{

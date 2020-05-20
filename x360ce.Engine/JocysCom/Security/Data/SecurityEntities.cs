@@ -11,14 +11,12 @@ namespace JocysCom.WebSites.Engine.Security.Data
 		{
 			get
 			{
-				var db = DataContextFactory<SecurityEntities>.Instance<SecurityEntities>();
-				// AppendOnly - Objects that already exist in the object context are not loaded from the data source (Default).
-				// OverwriteChanges - Objects are always loaded from the data source.
-				// PreserveChanges - Unmodified properties of objects in the object context are overwritten with server values.
-				// NoTracking - Objects are maintained in a EntityState.Detached state and are not tracked in the ObjectStateManager.
-				return db;
+				if (_Current == null)
+					_Current = new SecurityEntities();
+				return _Current;
 			}
 		}
+		public static SecurityEntities _Current;
 
 		private static Guid _ApplicationId;
 		public static Guid ApplicationId

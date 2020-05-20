@@ -161,7 +161,9 @@ namespace JocysCom.ClassLibrary.Configuration
 							data = DeserializeData(bytes, fi.Name.EndsWith(".gz"));
 							break;
 						}
+#pragma warning disable CA1031 // Do not catch general exception types
 						catch (Exception ex)
+#pragma warning restore CA1031 // Do not catch general exception types
 						{
 							var backupFile = fi.FullName + ".bak";
 							var sb = new StringBuilder();
@@ -253,11 +255,11 @@ namespace JocysCom.ClassLibrary.Configuration
 				var assembly = assemblies[a];
 				var names = assembly.GetManifestResourceNames();
 				// Get compressed resource name.
-				var name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name + ".gz", StringComparison.InvariantCulture));
+				var name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name + ".gz", StringComparison.OrdinalIgnoreCase));
 				if (string.IsNullOrEmpty(name))
 				{
 					// Get uncompressed resource name.
-					name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name, StringComparison.InvariantCulture));
+					name = names.FirstOrDefault(x => x.EndsWith(_XmlFile.Name, StringComparison.OrdinalIgnoreCase));
 				}
 				// If internal preset was found.
 				if (!string.IsNullOrEmpty(name))
@@ -271,7 +273,7 @@ namespace JocysCom.ClassLibrary.Configuration
 						bytes = memstream.ToArray();
 					}
 					sr.Dispose();
-					data = DeserializeData(bytes, name.EndsWith(".gz", StringComparison.InvariantCulture));
+					data = DeserializeData(bytes, name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase));
 					success = true;
 					break;
 				}

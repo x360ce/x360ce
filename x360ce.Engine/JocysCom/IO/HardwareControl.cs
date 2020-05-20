@@ -275,7 +275,7 @@ namespace JocysCom.ClassLibrary.IO
 
 		bool comp(string source, string value)
 		{
-			return source.IndexOf(value, StringComparison.InvariantCultureIgnoreCase) >= 0;
+			return source.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
 		#endregion

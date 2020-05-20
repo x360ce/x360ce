@@ -84,7 +84,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 				var path = string.Format(expandedPath, DateTime.Now);
 				var writer = (StreamWriter)writerField.GetValue(this);
 				// If file is missing or name changed then...
-				if (writer == null || !path.Equals(((FileStream)writer.BaseStream).Name, StringComparison.InvariantCultureIgnoreCase))
+				if (writer == null || !path.Equals(((FileStream)writer.BaseStream).Name, StringComparison.OrdinalIgnoreCase))
 				{
 					if (writer != null)
 						writer.Close();

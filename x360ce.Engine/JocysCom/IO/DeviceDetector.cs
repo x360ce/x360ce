@@ -141,22 +141,21 @@ namespace JocysCom.ClassLibrary.IO
 
 		#region Raise Events Asynchronously
 
-		public interface IDelegate<V>
+		public interface IDelegate<Tv>
 		{
-			IAsyncResult BeginInvoke(object sender, V e, AsyncCallback callback, object @object);
+			IAsyncResult BeginInvoke(object sender, Tv e, AsyncCallback callback, object o);
 		}
 
 		void RaiseDeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
 			var ev = DeviceChanged;
-			if (ev != null)
+			if (ev == null)
+				return;
+			var eventListeners = ev.GetInvocationList();
+			for (int i = 0; i < eventListeners.Length; i++)
 			{
-				var eventListeners = ev.GetInvocationList();
-				for (int i = 0; i < eventListeners.Count(); i++)
-				{
-					var methodToInvoke = (DeviceDetectorEventHandler)eventListeners[i];
-					methodToInvoke.BeginInvoke(sender, e, EndAsyncEvent, null);
-				}
+				var methodToInvoke = (DeviceDetectorEventHandler)eventListeners[i];
+				methodToInvoke.BeginInvoke(sender, e, EndAsyncEvent, null);
 			}
 		}
 

@@ -52,7 +52,7 @@ namespace JocysCom.ClassLibrary.Text
 					var text = string.IsNullOrEmpty(format)
 						? string.Format("{0}", value)
 						: string.Format("{0:" + format + "}", value);
-					s = Replace(s, m.Value, text, StringComparison.InvariantCultureIgnoreCase);
+					s = Replace(s, m.Value, text, StringComparison.OrdinalIgnoreCase);
 				}
 			}
 			return s;

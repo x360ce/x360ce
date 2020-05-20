@@ -21,7 +21,9 @@ namespace JocysCom.ClassLibrary.Data
 
 	}
 
-	public class TlvSerializer<E> where E : struct
+	public class TlvSerializer<Te>
+		// Declare TE as same as Enum.
+		where Te : struct, IComparable, IFormattable, IConvertible
 	{
 
 		//public static TlvSerializer<T> Create<T>(Dictionary<Type, T> types = null) where T : struct
@@ -29,7 +31,7 @@ namespace JocysCom.ClassLibrary.Data
 		//	return new TlvSerializer<T>(types);
 		//}
 
-		public TlvSerializer(Dictionary<Type, E> types = null)
+		public TlvSerializer(Dictionary<Type, Te> types = null)
 		{
 			Types = types;
 			MemberInfos = new Dictionary<Type, List<MemberInfo>>();
@@ -37,7 +39,7 @@ namespace JocysCom.ClassLibrary.Data
 		}
 
 		/// <summary>Map integer/enumeration to type of serializable object </summary>
-		Dictionary<Type, E> Types;
+		Dictionary<Type, Te> Types;
 		/// <summary>Cache properties of type which will be serialized.</summary>
 		Dictionary<Type, List<MemberInfo>> MemberInfos;
 		Dictionary<Type, List<int>> MemberTags;
@@ -61,7 +63,7 @@ namespace JocysCom.ClassLibrary.Data
 			if (error != TlvSerializerError.None)
 				return error;
 			// Get type from type number.
-			var typeE = (E)(object)typeI;
+			var typeE = (Te)(object)typeI;
 			if (!Types.ContainsValue(typeE))
 				return TlvSerializerError.EnumIdNotFound;
 			var typeT = Types.First(x => x.Value.Equals(typeE)).Key;
@@ -111,6 +113,8 @@ namespace JocysCom.ClassLibrary.Data
 
 		public TlvSerializerError ReadTlv(Stream stream, out int tag, out byte[] value)
 		{
+			if (stream == null)
+				throw new ArgumentNullException(nameof(stream));
 			value = null;
 			TlvSerializerError error;
 			// Read header bytes.
@@ -135,6 +139,8 @@ namespace JocysCom.ClassLibrary.Data
 		{
 			if (o == null)
 				return TlvSerializerError.None;
+			if (stream == null)
+				throw new ArgumentNullException(nameof(stream));
 			var typeT = o.GetType();
 			// Write Object Type.
 			if (!Types.ContainsKey(typeT))
@@ -209,8 +215,10 @@ namespace JocysCom.ClassLibrary.Data
 		/// </remarks>
 		public static void Write7BitEncoded(Stream stream, int value)
 		{
+			if (stream == null)
+				throw new ArgumentNullException(nameof(stream));
 			int v = value;
-			byte b = 0;
+			byte b;
 			do
 			{
 				// Store 7 bits.
@@ -232,9 +240,11 @@ namespace JocysCom.ClassLibrary.Data
 		/// </summary>
 		public static TlvSerializerError Read7BitEncoded(Stream stream, out int result)
 		{
+			if (stream == null)
+				throw new ArgumentNullException(nameof(stream));
 			result = 0;
 			int v = 0;
-			var b = 0;
+			int b;
 			var i = 0;
 			do
 			{
@@ -377,6 +387,8 @@ namespace JocysCom.ClassLibrary.Data
 		/// <remarks>byte[0] is empty/default value.</remarks>
 		public TlvSerializerError BytesToObject(byte[] bytes, Type type, out object result)
 		{
+			if (bytes == null)
+				throw new ArgumentNullException(nameof(bytes));
 			// Return empty values for nullable types.
 			if (bytes.Length == 0)
 			{
@@ -596,8 +608,12 @@ namespace JocysCom.ClassLibrary.Data
 						var mso = new MemoryStream();
 						var status2 = Serialize(mso, o);
 						if (status2 != TlvSerializerError.None)
+						{
+							mso.Dispose();
 							return status2;
+						}
 						objectBytes = mso.ToArray();
+						mso.Dispose();
 						//return TlvSerializerError.NonSerializableObject;
 						//throw new Exception("Non Serializable Object: " + type.Name);
 					}

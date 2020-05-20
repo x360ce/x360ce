@@ -95,7 +95,7 @@ namespace JocysCom.ClassLibrary.Processes
 				ps = System.Diagnostics.Process.GetProcesses();
 				foreach (var p in ps)
 				{
-					if (p.MainWindowTitle.IndexOf(processName, StringComparison.InvariantCulture) > -1)
+					if (p.MainWindowTitle.IndexOf(processName, StringComparison.OrdinalIgnoreCase) > -1)
 					{
 						mainWindowHandle = p.MainWindowHandle;
 						break;

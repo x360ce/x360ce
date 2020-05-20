@@ -37,6 +37,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public bool NonErrorRecipientsFound(MailMessage message, List<MailAddress> extraErrorRecipients = null)
 		{
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
 			var list = MailHelper.ParseEmailAddress(SmtpClientEx.Current.ErrorRecipients);
 			// Add recipients who are allowed to receive original emails.
 			if (extraErrorRecipients != null)
@@ -233,6 +235,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns>Preview Message.</returns>
 		public static MailMessage GetMailPreview(MailMessage message, SmtpClientEx client = null)
 		{
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
 			var smtp = SmtpClientEx.Current;
 			var mail = new MailMessage();
 			mail.IsBodyHtml = true;
@@ -295,11 +299,9 @@ namespace JocysCom.ClassLibrary.Runtime
 						// Add calendar item as attachment.
 						var attachment = new Attachment(view.ContentStream, name, content.MediaType);
 						mail.Attachments.Add(attachment);
-
-						var reader = new System.IO.StreamReader(view.ContentStream);
-						var calendar = reader.ReadToEnd();
-
-
+						//var reader = new System.IO.StreamReader(view.ContentStream);
+						//var calendar = reader.ReadToEnd();
+						//reader.Dispose();
 					}
 				}
 			}
@@ -313,6 +315,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public bool SuspendError(Exception ex)
 		{
+			if (ex == null)
+				throw new ArgumentNullException(nameof(ex));
 			if (!ex.Data.Keys.Cast<object>().Contains(Mail.SmtpClientEx.ErrorCode))
 				return false;
 			var errorCode = ex.Data[Mail.SmtpClientEx.ErrorCode] as int?;

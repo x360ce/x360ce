@@ -6,11 +6,13 @@ using System.Web.UI.WebControls;
 
 namespace JocysCom.ClassLibrary.Web
 {
-	public partial class WebControlsHelper
+	public static partial class WebControlsHelper
 	{
 
 		public static System.Web.UI.Control FindControlRecursive(System.Web.UI.Control root, string id)
 		{
+			if (root == null)
+				throw new ArgumentNullException(nameof(root));
 			if (root.ID == id)
 				return root;
 			foreach (System.Web.UI.Control control in root.Controls)
@@ -27,6 +29,8 @@ namespace JocysCom.ClassLibrary.Web
 		/// </summary>
 		public static IEnumerable<System.Web.UI.Control> GetAll(System.Web.UI.Control control, Type type = null, bool includeTop = false)
 		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
 			// Get all child controls.
 			var controls = control.Controls.Cast<System.Web.UI.Control>();
 			return controls
@@ -77,6 +81,20 @@ namespace JocysCom.ClassLibrary.Web
 		/// <param name="page"></param>
 		public static void ApplyDateSuffix(System.Web.UI.Page page)
 		{
+			/*
+			<head id="Head1" runat="server">
+				<link id="Link3" rel="stylesheet" type="text/css" runat="server" href="/Default.css" />
+			</head>
+
+			<asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true">
+			<Scripts>
+				<asp:ScriptReference Path="~/Script1.js" />
+				<asp:ScriptReference Name="Company.Product.Script.js" Assembly="Company.Product" />
+			</Scripts>
+			</asp:ScriptManager>
+			*/
+			if (page == null)
+				throw new ArgumentNullException(nameof(page));
 			foreach (var control in page.Header.Controls)
 			{
 				var link = control as System.Web.UI.HtmlControls.HtmlLink;
@@ -139,19 +157,21 @@ namespace JocysCom.ClassLibrary.Web
 		/// <summary>
 		/// Bind enumeration to ComboBox.
 		/// </summary>
-		/// <typeparam name="T">Enumeration type</typeparam>
+		/// <typeparam name="TE">Enumeration type</typeparam>
 		/// <param name="control">List control</param>
 		/// <param name="format">{0} - string value, {1} - number value, {2} - description attribute.</param>
 		/// <param name="addEmpty"></param>
-		public static void BindEnum<T>(DropDownList control, T selected = default(T), bool addEmpty = false, bool sort = false, T[] exclude = null, string format = null)
-		// Declare T as same as Enumeration.
-		// where T :  struct, IComparable, IFormattable, IConvertible
+		public static void BindEnum<TE>(DropDownList control, TE selected = default(TE), bool addEmpty = false, bool sort = false, TE[] exclude = null, string format = null)
+			// Declare TE as same as Enum.
+			where TE : struct, IComparable, IFormattable, IConvertible
 		{
-			var t = typeof(T);
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var t = typeof(TE);
 			if (Runtime.RuntimeHelper.IsNullable(t))
 				t = Nullable.GetUnderlyingType(t) ?? t;
 			var list = new List<ListItem>();
-			var values = Enum.GetValues(t).Cast<T>().ToArray();
+			var values = Enum.GetValues(t).Cast<TE>().ToArray();
 			foreach (var value in values)
 			{
 				if (exclude != null && exclude.Contains(value))
@@ -169,7 +189,7 @@ namespace JocysCom.ClassLibrary.Web
 				list = list.OrderBy(x => x.Text).ToList();
 			if (addEmpty)
 			{
-				var defaultValue = string.Format("{0}", default(T));
+				var defaultValue = string.Format("{0}", default(TE));
 				if (!list.Any(x => x.Text == defaultValue))
 					list.Insert(0, new ListItem("", defaultValue));
 			}
@@ -186,10 +206,12 @@ namespace JocysCom.ClassLibrary.Web
 			}
 		}
 
-		public static void SelectEnumValue<T>(DropDownList control, T value)
-		// Declare T as same as Enum.
-		// where T : struct, IComparable, IFormattable, IConvertible
+		public static void SelectEnumValue<TE>(DropDownList control, TE value)
+			// Declare TE as same as Enum.
+			where TE : struct, IComparable, IFormattable, IConvertible
 		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
 			var stringValue = string.Format("{0}", value);
 			for (var i = 0; i < control.Items.Count; i++)
 			{

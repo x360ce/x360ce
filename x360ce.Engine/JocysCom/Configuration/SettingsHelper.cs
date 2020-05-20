@@ -1,10 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
 using System.Text;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
-	public partial class SettingsHelper
+	public static partial class SettingsHelper
 	{
 		#region Compression
 
@@ -23,6 +24,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				stream.Write(buffer, 0, numRead);
 			}
 			stream.Close();
+			srcStream.Close();
 			return dstStream.ToArray();
 		}
 
@@ -41,6 +43,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				dstStream.Write(buffer, 0, numRead);
 			}
 			dstStream.Close();
+			stream.Close();
 			return dstStream.ToArray();
 		}
 
@@ -50,6 +53,8 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public static bool IsDifferent(string name, byte[] bytes)
 		{
+			if (bytes == null)
+				throw new ArgumentNullException(nameof(bytes));
 			var fi = new FileInfo(name);
 			var isDifferent = false;
 			// If file doesn't exists or file size is different then...
@@ -67,13 +72,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			return isDifferent;
 		}
 
-		public static void WriteIfDifferent(string name, byte[] bytes)
+		public static bool WriteIfDifferent(string name, byte[] bytes)
 		{
 			var isDifferent = IsDifferent(name, bytes);
 			if (isDifferent)
-			{
 				File.WriteAllBytes(name, bytes);
-			}
+			return isDifferent;
 		}
 
 		public static string ReadFileContent(string name, out Encoding encoding)
