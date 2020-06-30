@@ -240,15 +240,11 @@ namespace x360ce.App.Controls
 		{
 			var ws = new WebServiceClient();
 			ws.Url = SettingsManager.Options.InternetDatabaseUrl;
-			var enabled = EnabledState.None;
-			var checkState = MainForm.Current.OptionsPanel.IncludeEnabledCheckBox.CheckState;
-			if (checkState == CheckState.Checked) enabled = EnabledState.Enabled;
-			if (checkState == CheckState.Unchecked) enabled = EnabledState.Disabled;
-			var minInstances = (int)MainForm.Current.OptionsPanel.MinimumInstanceCountNumericUpDown.Value;
+			var o = SettingsManager.Options;
 			ws.GetProgramsCompleted += ProgramsWebServiceClient_GetProgramsCompleted;
 			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
 			{
-				ws.GetProgramsAsync(enabled, minInstances);
+				ws.GetProgramsAsync(o.GetProgramsIncludeEnabled, o.GetProgramsMinInstances);
 			});
 		}
 

@@ -27,7 +27,8 @@ namespace x360ce.App.Controls
             WizzardTabControl.TabPages.Remove(Step2TabPage);
             SearchRadioButton.Checked = true;
             FolderPathTextBox.Text = new FileInfo(Application.ExecutablePath).DirectoryName;
-            SearchTheInternetCheckBox.Checked = SearchRadioButton.Checked && MainForm.Current.OptionsPanel.InternetCheckBox.Checked;
+            var o = SettingsManager.Options;
+            SearchTheInternetCheckBox.Checked = SearchRadioButton.Checked && o.InternetFeatures;
         }
 
         DeviceInstance _di;

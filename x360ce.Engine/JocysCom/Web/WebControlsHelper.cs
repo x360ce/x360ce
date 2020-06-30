@@ -225,5 +225,19 @@ namespace JocysCom.ClassLibrary.Web
 		}
 
 		#endregion
+
+		public static void BindData<T>(ListControl control, IEnumerable<T> data, bool addNull = false)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var old = control.SelectedValue;
+			control.DataSource = data;
+			// DataBind will create Items from data source.
+			control.DataBind();
+			if (addNull)
+				control.Items.Insert(0, new ListItem("", ""));
+			if (control.Items.Cast<ListItem>().Any(x => x.Value == old))
+				control.SelectedValue = string.Format("{0}", old);
+		}
 	}
 }

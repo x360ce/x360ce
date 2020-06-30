@@ -387,8 +387,20 @@ namespace x360ce.App
 			var checkBox = source as CheckBox;
 			if (checkBox != null)
 			{
-				if (!Equals(propValue, checkBox.Checked))
-					map.Property.SetValue(destination, checkBox.Checked, null);
+				if (map.Property.PropertyType == typeof(EnabledState))
+				{
+					var value = EnabledState.None;
+					// If CheckBox is in third state then...
+					if (checkBox.CheckState != CheckState.Indeterminate)
+						value = checkBox.Checked ? EnabledState.Enabled : EnabledState.Disabled;
+					if (!Equals(propValue, value))
+						map.Property.SetValue(destination, value, null);
+				}
+				else
+				{
+					if (!Equals(propValue, checkBox.Checked))
+						map.Property.SetValue(destination, checkBox.Checked, null);
+				}
 			}
 			var comboBox = map.Control as ComboBox;
 			if (comboBox != null)
@@ -412,8 +424,22 @@ namespace x360ce.App
 			var checkBox = map.Control as CheckBox;
 			if (checkBox != null)
 			{
-				if (!Equals(propValue, checkBox.Checked))
-					checkBox.Checked = (bool)propValue;
+				if (map.Property.PropertyType == typeof(EnabledState))
+				{
+					var value = (EnabledState)propValue;
+					var checkState = CheckState.Indeterminate;
+					if (value == EnabledState.Enabled)
+						checkState = CheckState.Checked;
+					if (value == EnabledState.Disabled)
+						checkState = CheckState.Unchecked;
+					if (!Equals(checkState, checkBox.CheckState))
+						checkBox.CheckState = checkState;
+				}
+				else
+				{
+					if (!Equals(propValue, checkBox.Checked))
+						checkBox.Checked = (bool)propValue;
+				}
 			}
 			var comboBox = map.Control as ComboBox;
 			if (comboBox != null)

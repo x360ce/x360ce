@@ -74,8 +74,9 @@ namespace x360ce.App.Controls
 			var sp = new List<SearchParameter>();
 			FillSearchParameterWithProducts(sp);
 			SettingsManager.Current.FillSearchParameterWithFiles(sp);
+			var o = SettingsManager.Options;
 			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			ws.Url = o.InternetDatabaseUrl;
 			ws.SearchSettingsCompleted += ws_SearchSummariesCompleted;
 			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)
 			{

@@ -361,7 +361,9 @@ namespace JocysCom.ClassLibrary.Configuration
 		string GetAttribute<T>(Func<T, string> value) where T : Attribute
 		{
 			T attribute = (T)Attribute.GetCustomAttribute(Assembly, typeof(T));
-			return value.Invoke(attribute);
+			return attribute == null
+				? "" 
+				: value.Invoke(attribute);
 		}
 
 		public string GetAppDataPath(bool userLevel, string format, params object[] args)

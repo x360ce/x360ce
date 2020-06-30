@@ -29,7 +29,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		public void WriteFlowWithData(byte[] bytes, int offset, int size, string format, params object[] args)
 		{
 			List<string> message = new List<string>();
-			if (Settings.LogFlow) message.Add(args.Length > 0 ? string.Format(format, args) : format);
+			if (Settings.LogFlow) message.Add(args != null && args.Length > 0 ? string.Format(format, args) : format);
 			if (Settings.LogData) message.Add(GetHexBlock(bytes, offset, size));
 			if (message.Count > 0) WriteLine(string.Join(":\r\n", message.ToArray()));
 		}

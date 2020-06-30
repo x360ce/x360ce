@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
+using System.Security;
 using System.Text;
 
 namespace JocysCom.ClassLibrary.Runtime
@@ -19,23 +20,27 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="client"></param>
 		public virtual void SendMail(MailMessage message, SmtpClientEx client = null, bool forcePreview = false)
 		{
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
 			var smtp = client ?? SmtpClientEx.Current;
 			// If non-live environment then send preview, except if all recipients are known.
 			var sendPreview = !IsLive && NonErrorRecipientsFound(message);
 			// If not LIVE environment then send preview message to developers instead.
+			MailMessage preview = null;
 			if (forcePreview || sendPreview)
-				message = GetMailPreview(message, smtp);
+				preview = GetMailPreview(message, smtp);
 			string fileName;
-			smtp.SendMessage(message, out fileName);
+			// Send preview if avialable, otherwise send original message.
+			smtp.SendMessage(preview ?? message, out fileName);
 			// Dispose preview message.
-			if (sendPreview)
-				message.Dispose();
+			if (preview != null)
+				preview.Dispose();
 		}
 
 		/// <summary>
 		/// Returns true of only error recipients found.
 		/// </summary>
-		public bool NonErrorRecipientsFound(MailMessage message, List<MailAddress> extraErrorRecipients = null)
+		public static bool NonErrorRecipientsFound(MailMessage message, List<MailAddress> extraErrorRecipients = null)
 		{
 			if (message == null)
 				throw new ArgumentNullException(nameof(message));
@@ -123,6 +128,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="body">Extra body text above exception.</param>
 		public void SendException(Exception ex, string subject = null, string body = null)
 		{
+			if (!(SmtpClientEx.Current.ErrorNotifications || LogToMail))
+				return;
 			_GroupException(mailExceptions, ex, subject, body, _SendMail);
 		}
 
@@ -161,7 +168,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (processExtraAction && extra != null)
 				extra(ex);
 			// Email exception.
-			if (SmtpClientEx.Current.ErrorNotifications && !SuspendError(ex))
+			if ((SmtpClientEx.Current.ErrorNotifications || LogToMail) && !SuspendError(ex))
 			{
 				// If processing exception fails then it should not be re-thrown or it will go into the loop.
 				try
@@ -186,6 +193,8 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static string GetMailHeader(MailMessage message)
 		{
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
 			var sb = new StringBuilder();
 			sb.AppendFormat("From: {0}\r\n", message.From);
 			foreach (var item in message.To)
@@ -313,7 +322,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <summary>
 		/// Suspend error if error code (int) value is found inside ex.Data["ErrorCode"].
 		/// </summary>
-		public bool SuspendError(Exception ex)
+		public static bool SuspendError(Exception ex)
 		{
 			if (ex == null)
 				throw new ArgumentNullException(nameof(ex));

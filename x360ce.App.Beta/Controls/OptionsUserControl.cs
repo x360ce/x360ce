@@ -1,7 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using Microsoft.Win32;
 using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -77,16 +76,15 @@ namespace x360ce.App.Controls
 			var cbx = (CheckBox)sender;
 			if (!cbx.Checked)
 				Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
-			else Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
+			else
+				Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 		}
 
-		/// <summary>
-		/// </summary>
 		public void UpdateSettingsMap()
 		{
 			// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 			// INI setting keys with controls.
-			string section = SettingsManager.OptionsSection;
+			var section = SettingsManager.OptionsSection;
 			SettingsManager.AddMap(section, () => SettingName.DebugMode, DebugModeCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.Log, EnableLoggingCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
@@ -95,53 +93,19 @@ namespace x360ce.App.Controls
 			var o = SettingsManager.Options;
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			// Stored inside XML now.
-			LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
-			LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
-			LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
-			LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
-			LoadAndMonitor(x => x.InternetDatabaseUrl, InternetDatabaseUrlComboBox, o.InternetDatabaseUrls);
-			LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
-			LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
-			LoadAndMonitor(x => x.InternetAutoLoad, InternetAutoLoadCheckBox);
-			LoadAndMonitor(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
-			LoadAndMonitor(x => x.InternetFeatures, InternetCheckBox);
-			LoadAndMonitor(x => x.CheckForUpdates, CheckForUpdatesCheckBox);
-			LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
+			ControlHelper.LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
+			ControlHelper.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
+			ControlHelper.LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
+			ControlHelper.LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
+			ControlHelper.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
+			ControlHelper.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
+			ControlHelper.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
 			SettingsManager.OptionsData.Saving += OptionsData_Saving;
 		}
 
-		void LoadAndMonitor(Expression<Func<Options, object>> setting, Control control, object dataSource = null)
-		{
-			var o = SettingsManager.Options;
-			SettingsManager.AddMap(setting, control);
-			if (dataSource != null)
-			{
-				// Set ComboBox and attach event last, in order to prevent changing of original value.
-				var lc = control as ListControl;
-				if (lc != null)
-					lc.DataSource = dataSource;
-				var lb = control as ListBox;
-				if (lb != null)
-					lb.DataSource = dataSource;
-			}
-			// Load settings into control.
-			o.ReportPropertyChanged(setting);
-			// Monitor control changes.
-			var chb = control as CheckBox;
-			if (chb != null)
-				chb.CheckedChanged += Control_Changed;
-			var cbx = control as ComboBox;
-			if (cbx != null)
-				cbx.SelectedIndexChanged += Control_Changed;
-		}
-
-		private void Control_Changed(object sender, EventArgs e)
-		{
-			SettingsManager.Sync((Control)sender, SettingsManager.Options);
-		}
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
@@ -166,11 +130,6 @@ namespace x360ce.App.Controls
 			{
 				RemotePortNumericUpDown.Enabled = o.RemoteControllers == MapToMask.None;
 			}
-		}
-
-		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			InternetAutoLoadCheckBox.Enabled = InternetCheckBox.Checked;
 		}
 
 		private void AddLocationButton_Click(object sender, EventArgs e)
@@ -261,11 +220,6 @@ namespace x360ce.App.Controls
 			ShowProgramsTabCheckBox.Checked = o.ShowProgramsTab;
 			ShowSettingsTabCheckBox.Checked = o.ShowSettingsTab;
 			ShowDevicesTabCheckBox.Checked = o.ShowDevicesTab;
-			ComputerDiskTextBox.Text = o.ComputerDisk;
-			UsernameTextBox.Text = o.Username;
-			ComputerIdTextBox.Text = o.ComputerId.ToString();
-			ProfilePathTextBox.Text = o.ProfilePath.ToString();
-			ProfileIdTextBox.Text = o.ProfileId.ToString();
 			IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
 			ExcludeSupplementalDevicesCheckBox.Checked = o.ExcludeSupplementalDevices;
 			ExcludeVirtualDevicesCheckBox.Checked = o.ExcludeVirtualDevices;
@@ -277,7 +231,6 @@ namespace x360ce.App.Controls
 			RemotePasswordTextBox.Text = o.RemotePassword;
 			if (o.RemotePort >= RemotePortNumericUpDown.Minimum && o.RemotePort <= RemotePortNumericUpDown.Maximum)
 				RemotePortNumericUpDown.Value = o.RemotePort;
-
 		}
 
 		private void OptionsData_Saving(object sender, EventArgs e)
@@ -288,7 +241,6 @@ namespace x360ce.App.Controls
 			o.ShowProgramsTab = ShowProgramsTabCheckBox.Checked;
 			o.ShowSettingsTab = ShowSettingsTabCheckBox.Checked;
 			o.ShowDevicesTab = ShowDevicesTabCheckBox.Checked;
-			o.Username = UsernameTextBox.Text;
 			o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
 			o.ExcludeSupplementalDevices = ExcludeSupplementalDevicesCheckBox.Checked;
 			o.ExcludeVirtualDevices = ExcludeVirtualDevicesCheckBox.Checked;
@@ -301,97 +253,6 @@ namespace x360ce.App.Controls
 			o.RemoteControllers = remoteControllers;
 			o.RemotePassword = RemotePasswordTextBox.Text;
 			o.RemotePort = (int)RemotePortNumericUpDown.Value;
-		}
-
-		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
-		{
-			EngineHelper.BrowsePath(EngineHelper.AppDataPath);
-		}
-
-		private void LoginButton_Click(object sender, EventArgs e)
-		{
-			// Secure login over insecure web services.
-			if (LoginButton.Text == "Log In")
-			{
-				var o = SettingsManager.Options;
-				var saveOptions = false;
-				if (o.CheckAndFixUserRsaKeys())
-				{
-					SettingsManager.OptionsData.Save();
-				}
-				var ws = new WebServiceClient();
-				var url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
-				ws.Url = url;
-				CloudMessage results;
-				// If cloud RSA keys are missing then...
-				if (string.IsNullOrEmpty(o.CloudRsaPublicKey))
-				{
-					// Step 1: Get Server's Public RSA key for encryption.
-					var msg = new CloudMessage(CloudAction.GetPublicRsaKey);
-					CloudHelper.ApplySecurity(msg);
-					msg.Values.Add(CloudKey.RsaPublicKey, o.UserRsaPublicKey);
-					// Retrieve public RSA key.
-					results = ws.Execute(msg);
-					if (results.ErrorCode == 0)
-					{
-						o.CloudRsaPublicKey = results.Values.GetValue<string>(CloudKey.RsaPublicKey);
-						saveOptions = true;
-					}
-				}
-				if (saveOptions)
-				{
-					SettingsManager.OptionsData.Save();
-				}
-				var cmd2 = new CloudMessage(CloudAction.LogIn);
-				CloudHelper.ApplySecurity(cmd2, o.UserRsaPublicKey, o.CloudRsaPublicKey, UsernameTextBox.Text, PasswordTextBox.Text);
-				cmd2.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
-				cmd2.Values.Add(CloudKey.ProfileId, o.ProfileId, true);
-				results = ws.Execute(cmd2);
-				if (results.ErrorCode > 0)
-				{
-					MessageBoxForm.Show(results.ErrorMessage, string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
-				else
-				{
-					MessageBoxForm.Show(string.Format("Authorized: {0}", results.ErrorMessage), string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
-				}
-			}
-			else
-			{
-
-			}
-		}
-
-		private void CreateButton_Click(object sender, EventArgs e)
-		{
-			var o = SettingsManager.Options;
-			var url = o.InternetDatabaseUrl;
-			var pql = new Uri(url).PathAndQuery.Length;
-			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowReset=0";
-			var form = new WebBrowserForm();
-			form.Size = new Size(400, 500);
-			form.Text = "Create Login";
-			form.StartPosition = FormStartPosition.CenterParent;
-			form.NavigateUrl = navigateUrl;
-			form.ShowDialog();
-			form.Dispose();
-			form = null;
-		}
-
-		private void ResetButton_Click(object sender, EventArgs e)
-		{
-			var o = SettingsManager.Options;
-			var url = o.InternetDatabaseUrl;
-			var pql = new Uri(url).PathAndQuery.Length;
-			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowCreate=0";
-			var form = new WebBrowserForm();
-			form.Size = new Size(400, 300);
-			form.Text = "Reset Login";
-			form.StartPosition = FormStartPosition.CenterParent;
-			form.NavigateUrl = navigateUrl;
-			form.ShowDialog();
-			form.Dispose();
-			form = null;
 		}
 
 		private void ShowProgramsTabCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -407,12 +268,6 @@ namespace x360ce.App.Controls
 		private void ShowDevicesTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			MainForm.Current.ShowDevicesTab(ShowDevicesTabCheckBox.Checked);
-		}
-
-		private void CheckUpdatesButton_Click(object sender, EventArgs e)
-		{
-			MainForm.Current.ShowUpdateForm();
-
 		}
 
 		DeveloperToolsForm _ToolsForm;
@@ -500,6 +355,30 @@ namespace x360ce.App.Controls
 		{
 			EngineHelper.OpenUrl(((Control)sender).Text);
 		}
-		
+
+		private void LoginButton_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void CreateButton_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void ResetButton_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void CheckUpdatesButton_Click(object sender, EventArgs e)
+		{
+
+		}
 	}
 }

@@ -118,7 +118,8 @@ namespace x360ce.App.Controls
         {
             ControlsHelper.BeginInvoke(() =>
             {
-                var allow = MainForm.Current.OptionsPanel.InternetAutoSaveCheckBox.Checked;
+                var o = SettingsManager.Options;
+                var allow = o.InternetAutoSave;
                 if (!allow)
                 {
                     return;

@@ -143,8 +143,9 @@ namespace x360ce.App.Controls
 			var sp = new List<SearchParameter>();
 			SettingsManager.Current.FillSearchParameterWithInstances(sp);
 			SettingsManager.Current.FillSearchParameterWithFiles(sp);
+			var o = SettingsManager.Options;
 			var ws = new WebServiceClient();
-			ws.Url = MainForm.Current.OptionsPanel.InternetDatabaseUrlComboBox.Text;
+			ws.Url = o.InternetDatabaseUrl;
 			ws.SearchSettingsCompleted += ws_SearchSettingsCompleted;
 			// Make sure it runs on another thread.
 			System.Threading.ThreadPool.QueueUserWorkItem(delegate (object state)

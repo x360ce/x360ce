@@ -358,6 +358,7 @@ namespace x360ce.App
             // INI setting keys with controls.
             SettingsManager.Current.ConfigLoaded += Current_ConfigLoaded;
             OptionsPanel.UpdateSettingsMap();
+            OptionsPanel.InternetPanel.UpdateSettingsMap();
         }
 
         void Current_ConfigSaved(object sender, SettingEventArgs e)
@@ -777,7 +778,8 @@ namespace x360ce.App
             }
             else if (MainTabControl.SelectedTab == SettingsTabPage)
             {
-                if (OptionsPanel.InternetCheckBox.Checked && OptionsPanel.InternetAutoLoadCheckBox.Checked)
+                var o = SettingsManager.Options;
+                if (o.InternetFeatures && o.InternetAutoLoad)
                 {
                     //SettingsDatabasePanel.RefreshGrid(true);
                 }

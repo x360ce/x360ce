@@ -99,7 +99,7 @@ namespace JocysCom.ClassLibrary.IO
 				return;
 			_LogFileAutoFlush = _SP.Parse("LogFileAutoFlush", false);
 			// File reset options.
-			LogFileTimeout = _SP.ParseTimeSpan("LogFileTimeout");
+			LogFileTimeout = _SP.Parse<TimeSpan>("LogFileTimeout");
 			LogFileName = _SP.Parse("LogFileName", "");
 			// Enable rolling by default if file name looks like daily.
 			var defaultRolling = LogFileName.Contains("MMdd}");
@@ -135,7 +135,7 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			if (!LogFileEnabled || IsDisposing)
 				return;
-			var message = args.Length > 0 ? string.Format(CultureInfo.InvariantCulture, format, args) : format;
+			var message = args != null && args.Length > 0 ? string.Format(CultureInfo.InvariantCulture, format, args) : format;
 			lock (streamWriterLock)
 			{
 				if (IsDisposing)

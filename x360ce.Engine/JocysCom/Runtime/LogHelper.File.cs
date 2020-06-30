@@ -17,9 +17,10 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="subject">Use custom subject instead of generated from exception</param>
 		public void WriteException(Exception ex, string subject = null, string body = null)
 		{
+			if (!LogToFile)
+				return;
 			_GroupException(fileExceptions, ex, subject, body, _WriteFile);
 		}
-
 
 		void _WriteFile(Exception ex, string subject, string body)
 		{

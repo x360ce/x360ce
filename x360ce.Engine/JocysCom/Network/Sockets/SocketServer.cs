@@ -674,9 +674,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		public void AddMessageToSend(ISocketMessage message, IPEndPoint oriRE = null, IPEndPoint delRE = null)
 		{
 			if (oriRE == null && delRE == null)
-			{
 				throw new ArgumentNullException("Original Remote Endpoint (oriRE) of Delivery Remote Endpoint (delRE) must be specified.");
-			}
 			var newHolder = new DataHolder();
 			newHolder.OriginalRemoteEndpoint = oriRE;
 			newHolder.MessageToSend = message;
@@ -960,7 +958,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		void ShowToken(string operationName, int tokenId, string format, params object[] args)
 		{
 			var part1 = string.Format("Token = {0}, {1,-18}: ", tokenId, operationName);
-			var part2 = args.Length > 0 ? string.Format(format, args) : format;
+			var part2 = args != null && args.Length > 0 ? string.Format(format, args) : format;
 			LogWriter.WriteFlow(part1 + part2);
 		}
 

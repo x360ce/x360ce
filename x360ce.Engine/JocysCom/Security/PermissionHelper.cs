@@ -99,7 +99,7 @@ namespace JocysCom.ClassLibrary.Security
 		public static bool IsLocalUser(SecurityIdentifier sid)
 		{
 			using (var context = new PrincipalContext(ContextType.Machine))
-			using (var principal = new GroupPrincipal(context))
+			using (var principal = new UserPrincipal(context))
 			using (var searcher = new PrincipalSearcher(principal))
 			{
 				var users = searcher.FindAll().ToArray();

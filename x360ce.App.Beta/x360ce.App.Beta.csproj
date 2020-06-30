@@ -227,6 +227,12 @@
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\OptionsInternetUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
+      <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PerformanceTestUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -429,6 +435,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LogUserControl.resx">
       <DependentUpon>LogUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\OptionsInternetUserControl.resx">
+      <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PerformanceTestUserControl.resx">
       <DependentUpon>PerformanceTestUserControl.cs</DependentUpon>

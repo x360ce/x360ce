@@ -175,6 +175,16 @@ namespace x360ce.App
 		}
 		bool _GetXInputStates;
 
+		#region Get Programs 
+
+		[DefaultValue(2)]
+		public int GetProgramsMinInstances { get; set; } = 2;
+
+		[DefaultValue(EnabledState.Enabled)]
+		public EnabledState GetProgramsIncludeEnabled { get; set; } = EnabledState.Enabled;
+
+		#endregion
+
 		#region INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -193,7 +203,8 @@ namespace x360ce.App
 		public void ReportPropertyChanged(Expression<Func<Options, object>> selector)
 		{
 			var ev = PropertyChanged;
-			if (ev == null) return;
+			if (ev == null)
+				return;
 			var name = GetName(selector);
 			ev(this, new PropertyChangedEventArgs(name));
 		}

@@ -163,6 +163,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					if (settings == null)
 					{
 						settings = new DataContractJsonSerializerSettings();
+						settings.IgnoreExtensionDataObject = true;
 						settings.UseSimpleDictionaryFormat = true;
 					}
 					var serializer = new DataContractJsonSerializer(type, settings);

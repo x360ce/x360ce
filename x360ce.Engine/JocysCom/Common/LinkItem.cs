@@ -85,7 +85,7 @@ namespace JocysCom.WebSites.Engine
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
 			var ev = PropertyChanged;
 			if (ev == null)

@@ -33,7 +33,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				return path.FullName;
 			}
 		}
-		string _DefaultLogsFolder;
+
+		private readonly string _DefaultLogsFolder;
 
 		#region Handling
 
@@ -42,11 +43,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			_OverrideLogFolder = logFolder;
 			//if (LogThreadExceptions)
 			//	System.Windows.Forms.Application.ThreadException += Application_ThreadException;
-			if (LogUnhandledExceptions)
+			if (LogExceptions && LogUnhandledExceptions)
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-			if (LogFirstChanceExceptions)
+			if (LogExceptions && LogFirstChanceExceptions)
 				AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
-			if (LogUnobservedTaskExceptions)
+			if (LogExceptions && LogUnobservedTaskExceptions)
 				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 		}
 
@@ -54,30 +55,36 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			//if (LogThreadExceptions)
 			//	System.Windows.Forms.Application.ThreadException -= Application_ThreadException;
-			if (LogUnhandledExceptions)
+			if (LogExceptions && LogUnhandledExceptions)
 				AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
-			if (LogFirstChanceExceptions)
+			if (LogExceptions && LogFirstChanceExceptions)
 				AppDomain.CurrentDomain.FirstChanceException -= CurrentDomain_FirstChanceException;
-			if (LogUnobservedTaskExceptions)
+			if (LogExceptions && LogUnobservedTaskExceptions)
 				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 		}
 
-		string _OverrideLogFolder = null;
+		private string _OverrideLogFolder = null;
 
 		public event EventHandler<LogHelperEventArgs> WritingException;
 
 		public void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
+			if (e == null)
+				return;
 			WriteException(e.Exception);
 		}
 
 		public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
+			if (e == null)
+				return;
 			WriteException((Exception)e.ExceptionObject);
 		}
 
 		public void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
 		{
+			if (e == null)
+				return;
 			WriteException(e.Exception);
 		}
 
@@ -87,8 +94,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
 		{
-			if (e.Exception != null)
-				WriteException(e.Exception);
+			if (e == null || e.Exception == null)
+				return;
+			WriteException(e.Exception);
 		}
 
 		#endregion
@@ -98,7 +106,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <summary>Get native error code.</summary>
 		public static int GetNativeErrorCode(Exception ex)
 		{
-			int code = 0;
+			if (ex == null)
+				throw new ArgumentNullException(nameof(ex));
+			var code = 0;
 			Win32Exception w32Ex;
 			do
 			{
@@ -122,12 +132,13 @@ namespace JocysCom.ClassLibrary.Runtime
 			return (isHtml) ? System.Net.WebUtility.HtmlEncode(text) : text;
 		}
 
-		string ExceptionToString(Exception ex, bool needFileLineInfo, TraceFormat tf)
+		private string ExceptionToString(Exception ex, bool needFileLineInfo, TraceFormat tf)
 		{
-			bool isHtml = (tf == TraceFormat.Html);
-			string newLine = isHtml ? "<br />" + Environment.NewLine : Environment.NewLine;
+			var isHtml = (tf == TraceFormat.Html);
+			var newLine = isHtml ? "<br />" + Environment.NewLine : Environment.NewLine;
 			var builder = new StringBuilder(0xff);
-			if (isHtml) builder.Append("<span class=\"Mono\">");
+			if (isHtml)
+				builder.Append("<span class=\"Mono\">");
 			builder.Append(getText(isHtml, GetClassName(ex)));
 			if (!string.IsNullOrEmpty(ex.Message))
 			{
@@ -137,7 +148,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			//builder.Append(newLine);
 			var stackTrace = new StackTrace(ex, needFileLineInfo);
 			StackTrace fullTrace = null;
-			int startFrameIndex = 0;
+			var startFrameIndex = 0;
 			// If use unstable version.
 			// Can loose information about original line of exception.
 			if (ErrorUseNewStackTrace)
@@ -151,7 +162,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					? stackTrace.GetFrame(0).GetMethod()
 					: null;
 				// Loop through full stack trace.
-				for (int i = 0; i < fullTrace.FrameCount; i++)
+				for (var i = 0; i < fullTrace.FrameCount; i++)
 				{
 					// Get frame method.
 					var m = fullTrace.GetFrame(i).GetMethod();
@@ -186,7 +197,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			//	builder.Append(ExceptionToString(ex.InnerException, needFileLineInfo, tf));
 			//	builder.Append(newLine);
 			//}
-			if (isHtml) builder.Append("</span>");
+			if (isHtml)
+				builder.Append("</span>");
 			return builder.ToString();
 		}
 
@@ -198,10 +210,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			var trace = (ex == null)
 				? new StackTrace(true)
 				: new StackTrace(ex, true);
-			for (int i = 0; i < trace.FrameCount; i++)
+			for (var i = 0; i < trace.FrameCount; i++)
 			{
 				var frame = trace.GetFrame(i);
-				if (IsFormStackFrame(frame)) return frame;
+				if (IsFormStackFrame(frame))
+					return frame;
 			}
 			return null;
 		}
@@ -211,11 +224,15 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static bool IsFormStackFrame(StackFrame sf)
 		{
+			if (sf == null)
+				throw new ArgumentNullException(nameof(sf));
 			var method = sf.GetMethod();
-			if (method == null) return false;
+			if (method == null)
+				return false;
 			var declaringType = method.DeclaringType;
-			if (declaringType == null) return false;
-			Type t = declaringType;
+			if (declaringType == null)
+				return false;
+			var t = declaringType;
 			while (t != null)
 			{
 				if (t.Name == "Form")
@@ -229,16 +246,19 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static string TraceToString(StackTrace st, TraceFormat tf, int startFrameIndex = 0)
 		{
-			bool isHtml = (tf == TraceFormat.Html);
-			string newLine = (isHtml) ? "<br />" + Environment.NewLine : Environment.NewLine;
-			bool flag = true;
-			bool flag2 = true;
+			if (st == null)
+				throw new ArgumentNullException(nameof(st));
+			var isHtml = tf == TraceFormat.Html;
+			var newLine = (isHtml) ? "<br />" + Environment.NewLine : Environment.NewLine;
+			var flag = true;
+			var flag2 = true;
 			var builder = new StringBuilder(0xff);
-			if (isHtml) builder.Append("<span class=\"Mono\">");
-			for (int i = startFrameIndex; i < st.FrameCount; i++)
+			if (isHtml)
+				builder.Append("<span class=\"Mono\">");
+			for (var i = startFrameIndex; i < st.FrameCount; i++)
 			{
-				StackFrame frame = st.GetFrame(i);
-				MethodBase method = frame.GetMethod();
+				var frame = st.GetFrame(i);
+				var method = frame.GetMethod();
 				if (method != null)
 				{
 					if (flag2)
@@ -257,12 +277,12 @@ namespace JocysCom.ClassLibrary.Runtime
 					{
 						builder.Append("   at ");
 					}
-					Type declaringType = method.DeclaringType;
-					bool isForm = IsFormStackFrame(frame);
+					var declaringType = method.DeclaringType;
+					var isForm = IsFormStackFrame(frame);
 					if (declaringType != null)
 					{
-						string ns = declaringType.Namespace.Replace('+', '.');
-						string name = declaringType.Name.Replace('+', '.');
+						var ns = declaringType.Namespace.Replace('+', '.');
+						var name = declaringType.Name.Replace('+', '.');
 						if (isHtml)
 						{
 							if (isForm)
@@ -284,10 +304,10 @@ namespace JocysCom.ClassLibrary.Runtime
 					builder.Append(method.Name);
 					if ((method is MethodInfo) && ((MethodInfo)method).IsGenericMethod)
 					{
-						Type[] genericArguments = ((MethodInfo)method).GetGenericArguments();
+						var genericArguments = ((MethodInfo)method).GetGenericArguments();
 						builder.Append("[");
-						int index = 0;
-						bool flag3 = true;
+						var index = 0;
+						var flag3 = true;
 						while (index < genericArguments.Length)
 						{
 							if (!flag3)
@@ -304,9 +324,9 @@ namespace JocysCom.ClassLibrary.Runtime
 						builder.Append("]");
 					}
 					builder.Append("(");
-					ParameterInfo[] parameters = method.GetParameters();
-					bool flag4 = true;
-					for (int j = 0; j < parameters.Length; j++)
+					var parameters = method.GetParameters();
+					var flag4 = true;
+					for (var j = 0; j < parameters.Length; j++)
 					{
 						var param = parameters[j];
 						if (!flag4)
@@ -317,8 +337,8 @@ namespace JocysCom.ClassLibrary.Runtime
 						{
 							flag4 = false;
 						}
-						string paramType = "<UnknownType>";
-						bool isClass = false;
+						var paramType = "<UnknownType>";
+						var isClass = false;
 						if (param.ParameterType != null)
 						{
 							isClass = param.ParameterType.IsClass;
@@ -326,7 +346,8 @@ namespace JocysCom.ClassLibrary.Runtime
 						}
 						if (isHtml)
 						{
-							if (isClass) builder.Append("<span style=\"color: #2B91AF; \">");
+							if (isClass)
+								builder.Append("<span style=\"color: #2B91AF; \">");
 							builder.Append(System.Net.WebUtility.HtmlEncode(paramType));
 							if (isClass)
 								builder.Append("</span>");
@@ -339,7 +360,8 @@ namespace JocysCom.ClassLibrary.Runtime
 						}
 					}
 					builder.Append(")");
-					if (isHtml && isForm) builder.Append("</span>");
+					if (isHtml && isForm)
+						builder.Append("</span>");
 					if (flag && (frame.GetILOffset() != -1))
 					{
 						string fileName = null;
@@ -389,8 +411,10 @@ namespace JocysCom.ClassLibrary.Runtime
 					}
 				}
 			}
-			if (isHtml || tf == TraceFormat.TrailingNewLine) builder.Append(newLine);
-			if (isHtml) builder.Append("</span>");
+			if (isHtml || tf == TraceFormat.TrailingNewLine)
+				builder.Append(newLine);
+			if (isHtml)
+				builder.Append("</span>");
 			return builder.ToString();
 		}
 
@@ -401,6 +425,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static string ExceptionToText(Exception ex)
 		{
 			var message = "";
+			if (ex == null)
+				throw new ArgumentNullException(nameof(ex));
 			AddExceptionMessage(ex, ref message);
 			if (ex.InnerException != null)
 				AddExceptionMessage(ex.InnerException, ref message);
@@ -408,7 +434,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>Add information about missing libraries and DLLs</summary>
-		static void AddExceptionMessage(Exception ex, ref string message)
+		private static void AddExceptionMessage(Exception ex, ref string message)
 		{
 			// Add separator if message already have content.
 			if (message.Length > 0)
@@ -429,7 +455,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var ex2 = ex as ReflectionTypeLoadException;
 			if (ex2 != null)
 			{
-				foreach (Exception x in ex2.LoaderExceptions)
+				foreach (var x in ex2.LoaderExceptions)
 					s += x.Message + "\r\n";
 			}
 			// If details available then...
