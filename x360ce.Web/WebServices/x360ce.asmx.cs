@@ -5,6 +5,7 @@ using x360ce.Engine.Data;
 using x360ce.Engine;
 using System.Data;
 using JocysCom.ClassLibrary.Data;
+using System.Collections.Generic;
 
 namespace x360ce.Web.WebServices
 {
@@ -39,34 +40,50 @@ namespace x360ce.Web.WebServices
 			var db = new x360ceModelContainer();
 			// Get user instances.
 			var p = SearchParameterCollection.GetSqlParameter(args);
-			// Get most popular settings for user controllers.
-			var products = args.Where(x => x.ProductGuid != Guid.Empty).Select(x => x.ProductGuid).Distinct().ToArray();
-			// Get all device instances of the user.
+			// If user device instances supplied.
 			var hasInstances = args.Any(x => x.InstanceGuid != Guid.Empty);
+			// If user device products supplied.
+			var hasProducts = args.Any(x => x.ProductGuid != Guid.Empty);
+			List<PadSetting> padSettings = null;
+			// If get My Settings" then...
 			if (hasInstances)
 			{
 				var ds = EngineHelper.GetSettings(args);
 				sr.Settings = SqlHelper.ConvertToList<UserSetting>(ds.Tables[0]).ToArray();
-				sr.PadSettings = SqlHelper.ConvertToList<PadSetting>(ds.Tables[1]).ToArray();
+				AddToList(ds.Tables[1], ref padSettings);
 			}
-			else if (products.Length > 0)
+			// If get "Default Settings for My Controllers" then...
+			if (hasProducts)
 			{
-				// Get presets.
 				var ds = EngineHelper.GetPresets(args);
 				sr.Summaries = SqlHelper.ConvertToList<Summary>(ds.Tables[0]).ToArray();
-				sr.PadSettings = SqlHelper.ConvertToList<PadSetting>(ds.Tables[1]).ToArray();
+				AddToList(ds.Tables[1], ref padSettings);
 			}
-			else if (args != null && args.Length > 0)
+			// If get "Default Settings for Most Popular Controllers" then...
+			if (!hasInstances && !hasProducts && args != null && args.Length > 0)
 			{
 				// Get presets.
 				var ds = EngineHelper.GetPresets(new SearchParameter[0]);
 				sr.Presets = SqlHelper.ConvertToList<Preset>(ds.Tables[0]).ToArray();
-				sr.PadSettings = SqlHelper.ConvertToList<PadSetting>(ds.Tables[1]).ToArray();
+				AddToList(ds.Tables[1], ref padSettings);
 			}
+			if (padSettings != null)
+				sr.PadSettings = padSettings.ToArray();
 			db.Dispose();
 			db = null;
 			return sr;
 		}
+
+		void AddToList(DataTable source, ref List<PadSetting> dest)
+		{
+			if (dest == null)
+				dest = new List<PadSetting>();
+			var current = dest.Select(x => x.PadSettingChecksum);
+			var ps = SqlHelper.ConvertToList<PadSetting>(source)
+				.Where(x => !current.Contains(x.PadSettingChecksum)).ToArray();
+			dest.AddRange(ps);
+		}
+
 
 		/// <summary>
 		/// Load controller settings.

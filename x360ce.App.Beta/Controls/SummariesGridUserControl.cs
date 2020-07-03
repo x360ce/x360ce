@@ -112,7 +112,8 @@ namespace x360ce.App.Controls
 			if (e.Error != null)
 			{
 				var error = e.Error.Message;
-				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
+				if (e.Error.InnerException != null)
+					error += "\r\n" + e.Error.InnerException.Message;
 				_ParentForm.SetHeaderError(error);
 			}
 			else if (e.Result == null)
@@ -122,15 +123,29 @@ namespace x360ce.App.Controls
 			else
 			{
 				var result = (SearchResult)e.Result;
-				// Reorder summaries.
-				result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
-				AppHelper.UpdateList(result.Summaries, SettingsManager.Summaries.Items);
-				// PadSettings can't be null if summaries supplied.
-				SettingsManager.Current.UpsertPadSettings(result.PadSettings);
-				SettingsManager.Current.CleanupPadSettings();
-				var summariesCount = (result.Summaries == null) ? 0 : result.Summaries.Length;
-				var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-				_ParentForm.SetHeaderInfo("{0} default settings and {0} PAD settings received.", summariesCount, padSettingsCount);
+				var summariesCount = result.Summaries?.Length ?? 0;
+				var padSettingsCount = result.PadSettings?.Length ?? 0;
+				if (summariesCount == 0)
+				{
+					_ParentForm.SetHeaderInfo("0 default settings received.");
+				}
+				else
+				{
+					if (padSettingsCount == 0)
+					{
+						_ParentForm.SetHeaderError("Error: {0} default settings received, but no PAD settings.", summariesCount);
+					}
+					else
+					{
+						// Reorder summaries.
+						result.Summaries = result.Summaries.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ThenByDescending(x => x.Users).ToArray();
+						AppHelper.UpdateList(result.Summaries, SettingsManager.Summaries.Items);
+						// Update pad settings.
+						SettingsManager.Current.UpsertPadSettings(result.PadSettings);
+						SettingsManager.Current.CleanupPadSettings();
+						_ParentForm.SetHeaderInfo("{0} default settings and {1} PAD settings received.", summariesCount, padSettingsCount);
+					}
+				}
 			}
 			_ParentForm.RemoveTask(TaskName.SearchSummaries);
 			SummariesRefreshButton.Enabled = true;

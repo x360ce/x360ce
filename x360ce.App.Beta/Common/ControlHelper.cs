@@ -96,7 +96,10 @@ namespace x360ce.App
 				chb.CheckStateChanged += Control_Changed;
 			var cbx = control as ComboBox;
 			if (cbx != null)
+			{
+				cbx.TextChanged += Control_Changed;
 				cbx.SelectedIndexChanged += Control_Changed;
+			}
 		}
 
 		private static void Control_Changed(object sender, EventArgs e)

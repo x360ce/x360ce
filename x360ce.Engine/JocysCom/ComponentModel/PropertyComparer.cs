@@ -10,9 +10,9 @@ namespace JocysCom.ClassLibrary.ComponentModel
 	/// </summary>
 	public class PropertyComparer<T> : IComparer<T>
 	{
-		ListSortDescriptionCollection _SortCollection = null;
-		PropertyDescriptor _PropDesc = null;
-		ListSortDirection _Direction = ListSortDirection.Ascending;
+		private readonly ListSortDescriptionCollection _SortCollection = null;
+		private readonly PropertyDescriptor _PropDesc = null;
+		private readonly ListSortDirection _Direction = ListSortDirection.Ascending;
 
 		public PropertyComparer(PropertyDescriptor propDesc, ListSortDirection direction)
 		{
@@ -34,43 +34,37 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		{
 			if (_PropDesc != null)
 			{
-				object xValue = _PropDesc.GetValue(x);
-				object yValue = _PropDesc.GetValue(y);
+				var xValue = _PropDesc.GetValue(x);
+				var yValue = _PropDesc.GetValue(y);
 				return CompareValues(xValue, yValue, _Direction);
 			}
 			else if (_SortCollection != null && _SortCollection.Count > 0)
-			{
 				return RecursiveCompareInternal(x, y, 0);
-			}
-			else return 0;
+			else
+				return 0;
 		}
 
-		int CompareValues(object xValue, object yValue, ListSortDirection direction)
+		private int CompareValues(object xValue, object yValue, ListSortDirection direction)
 		{
-			int retValue = 0;
+			var retValue = 0;
 			if (xValue is IComparable)
-			{
 				retValue = ((IComparable)xValue).CompareTo(yValue);
-			}
 			else if (yValue is IComparable)
-			{
 				retValue = ((IComparable)yValue).CompareTo(xValue);
-			}
 			// not comparable, compare String representations
 			else if (!xValue.Equals(yValue))
-			{
 				retValue = xValue.ToString().CompareTo(yValue.ToString());
-			}
 			return (direction == ListSortDirection.Ascending ? 1 : -1) * retValue;
 		}
 
-		int RecursiveCompareInternal(T x, T y, int index)
+		private int RecursiveCompareInternal(T x, T y, int index)
 		{
-			if (index >= _SortCollection.Count) return 0;
-			ListSortDescription listSortDesc = _SortCollection[index];
-			object xValue = listSortDesc.PropertyDescriptor.GetValue(x);
-			object yValue = listSortDesc.PropertyDescriptor.GetValue(y);
-			int retValue = CompareValues(xValue, yValue, listSortDesc.SortDirection);
+			if (index >= _SortCollection.Count)
+				return 0;
+			var listSortDesc = _SortCollection[index];
+			var xValue = listSortDesc.PropertyDescriptor.GetValue(x);
+			var yValue = listSortDesc.PropertyDescriptor.GetValue(y);
+			var retValue = CompareValues(xValue, yValue, listSortDesc.SortDirection);
 			return (retValue == 0)
 				? RecursiveCompareInternal(x, y, ++index)
 				: retValue;

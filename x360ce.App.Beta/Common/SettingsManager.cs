@@ -300,7 +300,8 @@ namespace x360ce.App
 		public static UserGame ProcessExecutable(string filePath)
 		{
 			var fi = new FileInfo(filePath);
-			if (!fi.Exists) return null;
+			if (!fi.Exists)
+				return null;
 			// Check if item already exists.
 			var game = UserGames.Items.FirstOrDefault(x => x.FileName.ToLower() == fi.Name.ToLower());
 			if (game == null)
@@ -405,8 +406,16 @@ namespace x360ce.App
 			var comboBox = map.Control as ComboBox;
 			if (comboBox != null)
 			{
-				if (!Equals(propValue, comboBox.SelectedItem))
-					map.Property.SetValue(destination, comboBox.SelectedItem, null);
+				if (map.Property.PropertyType == typeof(string))
+				{
+					if (!Equals(propValue, comboBox.Text))
+						map.Property.SetValue(destination, comboBox.Text, null);
+				}
+				else
+				{
+					if (!Equals(propValue, comboBox.SelectedItem))
+						map.Property.SetValue(destination, comboBox.SelectedItem, null);
+				}
 			}
 		}
 
@@ -444,8 +453,16 @@ namespace x360ce.App
 			var comboBox = map.Control as ComboBox;
 			if (comboBox != null)
 			{
-				if (!Equals(propValue, comboBox.SelectedItem))
-					comboBox.SelectedItem = propValue;
+				if (map.Property.PropertyType == typeof(string))
+				{
+					if (!Equals(propValue, comboBox.Text))
+						comboBox.Text = string.Format("{0}", propValue);
+				}
+				else
+				{
+					if (!Equals(propValue, comboBox.SelectedItem))
+						comboBox.SelectedItem = propValue;
+				}
 			}
 		}
 
@@ -668,11 +685,15 @@ namespace x360ce.App
 			else if (control is TextBox)
 			{
 				// if setting is read-only.
-				if (key == SettingName.ProductName) return;
-				if (key == SettingName.ProductGuid) return;
-				if (key == SettingName.InstanceGuid) return;
+				if (key == SettingName.ProductName)
+					return;
+				if (key == SettingName.ProductGuid)
+					return;
+				if (key == SettingName.InstanceGuid)
+					return;
 				// Always override version.
-				if (key == SettingName.Version) value = SettingName.DefaultVersion;
+				if (key == SettingName.Version)
+					value = SettingName.DefaultVersion;
 				control.Text = value;
 			}
 			else if (control is NumericUpDown)
@@ -680,8 +701,10 @@ namespace x360ce.App
 				var nud = (NumericUpDown)control;
 				decimal n = 0;
 				decimal.TryParse(value, out n);
-				if (n < nud.Minimum) n = nud.Minimum;
-				if (n > nud.Maximum) n = nud.Maximum;
+				if (n < nud.Minimum)
+					n = nud.Minimum;
+				if (n > nud.Maximum)
+					n = nud.Maximum;
 				nud.Value = n;
 			}
 			else if (control is TrackBar)
@@ -692,7 +715,8 @@ namespace x360ce.App
 				// convert 256  to 100%
 				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
 				{
-					if (key == SettingName.AxisToDPadDeadZone && value == "") n = 256;
+					if (key == SettingName.AxisToDPadDeadZone && value == "")
+						n = 256;
 					n = System.Convert.ToInt32((float)n / 256F * 100F);
 				}
 				// Convert 500 to 100%
@@ -705,8 +729,10 @@ namespace x360ce.App
 				{
 					n = System.Convert.ToInt32((float)n / ((float)Int16.MaxValue) * 100F);
 				}
-				if (n < tc.Minimum) n = tc.Minimum;
-				if (n > tc.Maximum) n = tc.Maximum;
+				if (n < tc.Minimum)
+					n = tc.Minimum;
+				if (n > tc.Maximum)
+					n = tc.Maximum;
 				tc.Value = n;
 			}
 			else if (control is CheckBox)
@@ -739,9 +765,12 @@ namespace x360ce.App
 				key.EndsWith(SettingName.CombinedIndex))
 			{
 				var v1 = ((ComboBox)control).SelectedItem;
-				if (v1 == null) { v = "0"; }
-				else if (v1 is KeyValuePair) { v = ((KeyValuePair)v1).Value; }
-				else { v = System.Convert.ToInt32(v1).ToString(); }
+				if (v1 == null)
+				{ v = "0"; }
+				else if (v1 is KeyValuePair)
+				{ v = ((KeyValuePair)v1).Value; }
+				else
+				{ v = System.Convert.ToInt32(v1).ToString(); }
 			}
 			// If DI menu strip attached.
 			else if (control is ComboBox)
@@ -752,7 +781,8 @@ namespace x360ce.App
 				{
 					v = SettingsConverter.ToIniValue(control.Text);
 					// make sure that disabled button value is "0".
-					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v)) v = "0";
+					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v))
+						v = "0";
 				}
 				else
 				{
@@ -766,7 +796,8 @@ namespace x360ce.App
 				{
 					v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("D") : control.Text;
 				}
-				else v = control.Text;
+				else
+					v = control.Text;
 			}
 			else if (control is NumericUpDown)
 			{
@@ -791,7 +822,8 @@ namespace x360ce.App
 				{
 					v = System.Convert.ToInt32((float)tc.Value / 100F * ((float)Int16.MaxValue)).ToString();
 				}
-				else v = tc.Value.ToString();
+				else
+					v = tc.Value.ToString();
 			}
 			else if (control is CheckBox)
 			{
@@ -842,7 +874,8 @@ namespace x360ce.App
 			var guidString = Current.SettingsMap
 				.First(x => x.MapTo == mapTo && x.IniKey == SettingName.InstanceGuid).Control.Text;
 			// If instanceGuid value is not a GUID then exit.
-			if (!EngineHelper.IsGuid(guidString)) return Guid.Empty;
+			if (!EngineHelper.IsGuid(guidString))
+				return Guid.Empty;
 			Guid ig = new Guid(guidString);
 			return ig;
 		}
@@ -851,7 +884,8 @@ namespace x360ce.App
 		{
 			var ig = GetInstanceGuid(mapTo);
 			// If InstanceGuid value is empty then exit.
-			if (ig.Equals(Guid.Empty)) return null;
+			if (ig.Equals(Guid.Empty))
+				return null;
 			// Save settings to unique Instance section.
 			return Current.GetInstanceSection(ig);
 		}
@@ -892,7 +926,8 @@ namespace x360ce.App
 			{
 				var section = string.Format("PAD{0}", i);
 				var v = ini2.GetValue(section, "InstanceGUID");
-				if (string.IsNullOrEmpty(v)) continue;
+				if (string.IsNullOrEmpty(v))
+					continue;
 				if (v.ToLower() == instanceGuid.ToString("D").ToLower())
 				{
 					sectionName = section;

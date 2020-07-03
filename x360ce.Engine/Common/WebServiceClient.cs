@@ -24,7 +24,7 @@ namespace x360ce.Engine
 
 		public void SignInAsync(string username, string password, object userState = null)
 		{
-			InvokeAsync("SignIn", SignInCompleted, userState, username, password);
+			InvokeAsync("SignIn", SignInCompleted, userState, new object[] { username, password });
 		}
 
 		[SoapDocumentMethod(ns + "SignIn",
@@ -51,7 +51,7 @@ namespace x360ce.Engine
 
 		public void SearchSettingsAsync(SearchParameter[] args, object userState = null)
 		{
-			InvokeAsync("SearchSettings", SearchSettingsCompleted, userState, args);
+			InvokeAsync("SearchSettings", SearchSettingsCompleted, userState, new object[] { args });
 		}
 
 		#endregion
@@ -70,7 +70,7 @@ namespace x360ce.Engine
 
 		public void SaveSettingAsync(UserSetting s, PadSetting ps, object userState = null)
 		{
-			InvokeAsync("SaveSetting", SaveSettingCompleted, userState, s, ps);
+			InvokeAsync("SaveSetting", SaveSettingCompleted, userState, new object[] { s, ps });
 		}
 
 		#endregion
@@ -108,7 +108,7 @@ namespace x360ce.Engine
 
 		public void LoadSettingAsync(System.Guid[] checksum, object userState = null)
 		{
-			InvokeAsync("LoadSetting", LoadSettingCompleted, userState, checksum);
+			InvokeAsync("LoadSetting", LoadSettingCompleted, userState, new object[] { checksum });
 		}
 
 		#endregion
@@ -127,7 +127,7 @@ namespace x360ce.Engine
 
 		public void GetProgramsAsync(EnabledState isEnabled, int minInstanceCount, object userState = null)
 		{
-			InvokeAsync("GetPrograms", GetProgramsCompleted, userState, isEnabled, minInstanceCount);
+			InvokeAsync("GetPrograms", GetProgramsCompleted, userState, new object[] { isEnabled, minInstanceCount });
 		}
 
 		#endregion
@@ -203,7 +203,7 @@ namespace x360ce.Engine
 
 		public void ExecuteAsync(CloudMessage command, object userState = null)
 		{
-			InvokeAsync("Execute", ExecuteCompleted, userState, command);
+			InvokeAsync("Execute", ExecuteCompleted, userState, new object[] { command });
 		}
 
 		#endregion

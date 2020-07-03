@@ -143,7 +143,6 @@
     <Content Include="WebServices\x360ce.asmx" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\DatabaseHelper.cs" />
     <Compile Include="Controls\ControllersChartControl.ascx.cs">
       <DependentUpon>ControllersChartControl.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

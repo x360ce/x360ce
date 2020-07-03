@@ -97,15 +97,11 @@ namespace JocysCom.ClassLibrary.Configuration
 				}
 				var fi = new FileInfo(fileName);
 				if (!fi.Directory.Exists)
-				{
 					fi.Directory.Create();
-				}
 				byte[] bytes;
 				bytes = Serializer.SerializeToXmlBytes(this, Encoding.UTF8, true, _Comment);
 				if (fi.Name.EndsWith(".gz"))
-				{
 					bytes = SettingsHelper.Compress(bytes);
-				}
 				SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
 			}
 		}
@@ -118,17 +114,13 @@ namespace JocysCom.ClassLibrary.Configuration
 		public void Remove(params T[] items)
 		{
 			foreach (var item in items)
-			{
 				Items.Remove(item);
-			}
 		}
 
 		public void Add(params T[] items)
 		{
 			foreach (var item in items)
-			{
 				Items.Add(item);
-			}
 		}
 
 		public delegate IList<T> ValidateDataDelegate(IList<T> items);
@@ -285,9 +277,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		SettingsData<T> DeserializeData(byte[] bytes, bool compressed)
 		{
 			if (compressed)
-			{
 				bytes = SettingsHelper.Decompress(bytes);
-			}
 			var data = Serializer.DeserializeFromXmlBytes<SettingsData<T>>(bytes);
 			return data;
 		}

@@ -256,7 +256,7 @@ namespace x360ce.Web.WebServices
 
 		List<Program> GetOverridePrograms()
 		{
-			List<Program> programs = new List<Program>();
+			List<Program> programs = null;
 			var key = "OverridePrograms";
 			var settings = System.Web.Configuration.WebConfigurationManager.AppSettings;
 			if (settings.AllKeys.Contains(key))
