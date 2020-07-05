@@ -15,6 +15,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MapDeviceToControllerForm));
 			this.OkButton = new System.Windows.Forms.Button();
 			this.CloseButton = new System.Windows.Forms.Button();
 			this.ControllersPanel = new x360ce.App.Controls.UserDevicesUserControl();
@@ -48,6 +49,7 @@
 			this.ControllersPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this.ControllersPanel.IsVisibleIsHiddenColumn = false;
 			this.ControllersPanel.Location = new System.Drawing.Point(9, 67);
 			this.ControllersPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ControllersPanel.Name = "ControllersPanel";
@@ -61,6 +63,7 @@
 			this.Controls.Add(this.ControllersPanel);
 			this.Controls.Add(this.OkButton);
 			this.Controls.Add(this.CloseButton);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "MapDeviceToControllerForm";
 			this.Text = "X360CE - Map Device To Controller";
 			this.Controls.SetChildIndex(this.CloseButton, 0);

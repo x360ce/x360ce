@@ -7,6 +7,7 @@ using x360ce.Engine;
 using x360ce.App.Forms;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using System.ComponentModel;
 
 namespace x360ce.App.Controls
 {
@@ -39,10 +40,10 @@ namespace x360ce.App.Controls
 				ControllersDataGridView_SelectionChanged(DevicesDataGridView, new EventArgs());
 				return;
 			}
-            // WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-            ControlsHelper.BeginInvoke(() =>
-            {
-                DevicesDataGridView.SelectionChanged += ControllersDataGridView_SelectionChanged;
+			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
+			ControlsHelper.BeginInvoke(() =>
+			{
+				DevicesDataGridView.SelectionChanged += ControllersDataGridView_SelectionChanged;
 				ControllersDataGridView_SelectionChanged(DevicesDataGridView, new EventArgs());
 			});
 		}
@@ -273,6 +274,13 @@ namespace x360ce.App.Controls
 				form.StartPosition = FormStartPosition.CenterParent;
 				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
+		}
+
+		[DefaultValue(true), Browsable(true)]
+		public bool IsVisibleIsHiddenColumn
+		{
+			get { return IsHiddenColumn.Visible; }
+			set { IsHiddenColumn.Visible = false; }
 		}
 
 	}

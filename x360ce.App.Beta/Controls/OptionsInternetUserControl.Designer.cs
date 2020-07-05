@@ -58,11 +58,13 @@
 			this.ProfilePathLabel = new System.Windows.Forms.Label();
 			this.ComputerIdLabel = new System.Windows.Forms.Label();
 			this.ComputerDiskLabel = new System.Windows.Forms.Label();
+			this.OnlineAccountLoginGroupBox = new System.Windows.Forms.GroupBox();
 			this.GamesGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.GetProgramsMinInstancesUpDown)).BeginInit();
 			this.UpdateOptionsGroupBox.SuspendLayout();
 			this.InternetGroupBox.SuspendLayout();
 			this.OnlineAccountGroupBox.SuspendLayout();
+			this.OnlineAccountLoginGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// GamesGroupBox
@@ -117,17 +119,18 @@
 			// 
 			this.UpdateOptionsGroupBox.Controls.Add(this.CheckForUpdatesCheckBox);
 			this.UpdateOptionsGroupBox.Controls.Add(this.CheckUpdatesButton);
-			this.UpdateOptionsGroupBox.Location = new System.Drawing.Point(263, 18);
+			this.UpdateOptionsGroupBox.Location = new System.Drawing.Point(263, 3);
 			this.UpdateOptionsGroupBox.Name = "UpdateOptionsGroupBox";
-			this.UpdateOptionsGroupBox.Size = new System.Drawing.Size(254, 54);
+			this.UpdateOptionsGroupBox.Size = new System.Drawing.Size(254, 69);
 			this.UpdateOptionsGroupBox.TabIndex = 34;
 			this.UpdateOptionsGroupBox.TabStop = false;
 			this.UpdateOptionsGroupBox.Text = "Update Options";
+			this.UpdateOptionsGroupBox.Visible = false;
 			// 
 			// CheckForUpdatesCheckBox
 			// 
 			this.CheckForUpdatesCheckBox.AutoSize = true;
-			this.CheckForUpdatesCheckBox.Location = new System.Drawing.Point(6, 23);
+			this.CheckForUpdatesCheckBox.Location = new System.Drawing.Point(4, 33);
 			this.CheckForUpdatesCheckBox.Name = "CheckForUpdatesCheckBox";
 			this.CheckForUpdatesCheckBox.Size = new System.Drawing.Size(163, 17);
 			this.CheckForUpdatesCheckBox.TabIndex = 30;
@@ -137,7 +140,7 @@
 			// CheckUpdatesButton
 			// 
 			this.CheckUpdatesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.CheckUpdatesButton.Location = new System.Drawing.Point(173, 19);
+			this.CheckUpdatesButton.Location = new System.Drawing.Point(173, 29);
 			this.CheckUpdatesButton.Name = "CheckUpdatesButton";
 			this.CheckUpdatesButton.Size = new System.Drawing.Size(75, 23);
 			this.CheckUpdatesButton.TabIndex = 68;
@@ -217,39 +220,32 @@
 			// 
 			this.OnlineAccountGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.OnlineAccountGroupBox.Controls.Add(this.PasswordTextBox);
-			this.OnlineAccountGroupBox.Controls.Add(this.ResetButton);
 			this.OnlineAccountGroupBox.Controls.Add(this.OpenSettingsFolderButton);
-			this.OnlineAccountGroupBox.Controls.Add(this.CreateButton);
-			this.OnlineAccountGroupBox.Controls.Add(this.LoginButton);
-			this.OnlineAccountGroupBox.Controls.Add(this.UsernameTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.ProfilePathTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.ComputerDiskTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.ProfileIdTextBox);
 			this.OnlineAccountGroupBox.Controls.Add(this.ComputerIdTextBox);
-			this.OnlineAccountGroupBox.Controls.Add(this.PasswordLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.ProfileIdLabel);
-			this.OnlineAccountGroupBox.Controls.Add(this.UsernameLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.ProfilePathLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.ComputerIdLabel);
 			this.OnlineAccountGroupBox.Controls.Add(this.ComputerDiskLabel);
 			this.OnlineAccountGroupBox.Location = new System.Drawing.Point(3, 158);
 			this.OnlineAccountGroupBox.Name = "OnlineAccountGroupBox";
-			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(638, 180);
+			this.OnlineAccountGroupBox.Size = new System.Drawing.Size(638, 128);
 			this.OnlineAccountGroupBox.TabIndex = 35;
 			this.OnlineAccountGroupBox.TabStop = false;
 			this.OnlineAccountGroupBox.Text = "Online Account - Anonymous Computer ID and Profile ID will be used by default";
 			// 
 			// PasswordTextBox
 			// 
-			this.PasswordTextBox.Location = new System.Drawing.Point(106, 149);
+			this.PasswordTextBox.Location = new System.Drawing.Point(123, 53);
 			this.PasswordTextBox.Name = "PasswordTextBox";
 			this.PasswordTextBox.Size = new System.Drawing.Size(152, 20);
 			this.PasswordTextBox.TabIndex = 43;
 			// 
 			// ResetButton
 			// 
-			this.ResetButton.Location = new System.Drawing.Point(426, 147);
+			this.ResetButton.Location = new System.Drawing.Point(443, 51);
 			this.ResetButton.Name = "ResetButton";
 			this.ResetButton.Size = new System.Drawing.Size(75, 23);
 			this.ResetButton.TabIndex = 45;
@@ -259,10 +255,10 @@
 			// 
 			// OpenSettingsFolderButton
 			// 
-			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.OpenSettingsFolderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.OpenSettingsFolderButton.Image = global::x360ce.App.Properties.Resources.folder_16x16;
 			this.OpenSettingsFolderButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(556, 71);
+			this.OpenSettingsFolderButton.Location = new System.Drawing.Point(557, 69);
 			this.OpenSettingsFolderButton.Name = "OpenSettingsFolderButton";
 			this.OpenSettingsFolderButton.Size = new System.Drawing.Size(75, 23);
 			this.OpenSettingsFolderButton.TabIndex = 69;
@@ -272,7 +268,7 @@
 			// 
 			// CreateButton
 			// 
-			this.CreateButton.Location = new System.Drawing.Point(345, 147);
+			this.CreateButton.Location = new System.Drawing.Point(362, 51);
 			this.CreateButton.Name = "CreateButton";
 			this.CreateButton.Size = new System.Drawing.Size(75, 23);
 			this.CreateButton.TabIndex = 45;
@@ -282,7 +278,7 @@
 			// 
 			// LoginButton
 			// 
-			this.LoginButton.Location = new System.Drawing.Point(264, 147);
+			this.LoginButton.Location = new System.Drawing.Point(281, 51);
 			this.LoginButton.Name = "LoginButton";
 			this.LoginButton.Size = new System.Drawing.Size(75, 23);
 			this.LoginButton.TabIndex = 44;
@@ -292,7 +288,7 @@
 			// 
 			// UsernameTextBox
 			// 
-			this.UsernameTextBox.Location = new System.Drawing.Point(106, 123);
+			this.UsernameTextBox.Location = new System.Drawing.Point(123, 27);
 			this.UsernameTextBox.Name = "UsernameTextBox";
 			this.UsernameTextBox.Size = new System.Drawing.Size(152, 20);
 			this.UsernameTextBox.TabIndex = 42;
@@ -337,7 +333,7 @@
 			// 
 			this.PasswordLabel.AutoSize = true;
 			this.PasswordLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.PasswordLabel.Location = new System.Drawing.Point(5, 152);
+			this.PasswordLabel.Location = new System.Drawing.Point(22, 56);
 			this.PasswordLabel.Name = "PasswordLabel";
 			this.PasswordLabel.Size = new System.Drawing.Size(53, 13);
 			this.PasswordLabel.TabIndex = 31;
@@ -357,7 +353,7 @@
 			// 
 			this.UsernameLabel.AutoSize = true;
 			this.UsernameLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.UsernameLabel.Location = new System.Drawing.Point(5, 126);
+			this.UsernameLabel.Location = new System.Drawing.Point(22, 30);
 			this.UsernameLabel.Name = "UsernameLabel";
 			this.UsernameLabel.Size = new System.Drawing.Size(92, 13);
 			this.UsernameLabel.TabIndex = 31;
@@ -393,16 +389,36 @@
 			this.ComputerDiskLabel.TabIndex = 32;
 			this.ComputerDiskLabel.Text = "Computer Disk";
 			// 
+			// OnlineAccountLoginGroupBox
+			// 
+			this.OnlineAccountLoginGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.OnlineAccountLoginGroupBox.Controls.Add(this.PasswordTextBox);
+			this.OnlineAccountLoginGroupBox.Controls.Add(this.UsernameLabel);
+			this.OnlineAccountLoginGroupBox.Controls.Add(this.ResetButton);
+			this.OnlineAccountLoginGroupBox.Controls.Add(this.PasswordLabel);
+			this.OnlineAccountLoginGroupBox.Controls.Add(this.UsernameTextBox);
+			this.OnlineAccountLoginGroupBox.Controls.Add(this.CreateButton);
+			this.OnlineAccountLoginGroupBox.Controls.Add(this.LoginButton);
+			this.OnlineAccountLoginGroupBox.Location = new System.Drawing.Point(3, 292);
+			this.OnlineAccountLoginGroupBox.Name = "OnlineAccountLoginGroupBox";
+			this.OnlineAccountLoginGroupBox.Size = new System.Drawing.Size(638, 100);
+			this.OnlineAccountLoginGroupBox.TabIndex = 37;
+			this.OnlineAccountLoginGroupBox.TabStop = false;
+			this.OnlineAccountLoginGroupBox.Text = "Online Account - Login";
+			this.OnlineAccountLoginGroupBox.Visible = false;
+			// 
 			// OptionsInternetUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this.OnlineAccountLoginGroupBox);
 			this.Controls.Add(this.GamesGroupBox);
 			this.Controls.Add(this.UpdateOptionsGroupBox);
 			this.Controls.Add(this.InternetGroupBox);
 			this.Controls.Add(this.OnlineAccountGroupBox);
 			this.Name = "OptionsInternetUserControl";
-			this.Size = new System.Drawing.Size(644, 415);
+			this.Size = new System.Drawing.Size(644, 410);
 			this.GamesGroupBox.ResumeLayout(false);
 			this.GamesGroupBox.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.GetProgramsMinInstancesUpDown)).EndInit();
@@ -412,6 +428,8 @@
 			this.InternetGroupBox.PerformLayout();
 			this.OnlineAccountGroupBox.ResumeLayout(false);
 			this.OnlineAccountGroupBox.PerformLayout();
+			this.OnlineAccountLoginGroupBox.ResumeLayout(false);
+			this.OnlineAccountLoginGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -448,5 +466,6 @@
 		private System.Windows.Forms.Label ProfilePathLabel;
 		private System.Windows.Forms.Label ComputerIdLabel;
 		private System.Windows.Forms.Label ComputerDiskLabel;
+		private System.Windows.Forms.GroupBox OnlineAccountLoginGroupBox;
 	}
 }
