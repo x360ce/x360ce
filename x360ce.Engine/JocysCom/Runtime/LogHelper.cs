@@ -751,7 +751,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			AddParameters(ref s, parameters, TraceFormat.Html);
 		}
 
-		public static void Add(IDictionary data, string name, object value)
+		public static void Add(IDictionary data, object name, object value)
 		{
 			if (data == null)
 				throw new ArgumentNullException(nameof(data));
