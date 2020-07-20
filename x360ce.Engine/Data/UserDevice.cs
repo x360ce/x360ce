@@ -126,7 +126,6 @@ namespace x360ce.Engine.Data
                 HidParentDeviceId = "";
                 HidClassGuid = Guid.Empty;
                 HidClassDescription = "";
-				HidHardwareIds = info.HardwareIds;
             }
             else
             {

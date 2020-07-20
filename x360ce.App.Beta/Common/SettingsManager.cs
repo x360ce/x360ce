@@ -140,8 +140,9 @@ namespace x360ce.App
 
 		public static PadSetting GetPadSetting(Guid padSettingChecksum)
 		{
-			return PadSettings.Items.FirstOrDefault(x =>
-				x.PadSettingChecksum.Equals(padSettingChecksum));
+			// Convert to array in order to prevent selection while modified.
+			return PadSettings.Items.ToArray()
+				.FirstOrDefault(x => x.PadSettingChecksum.Equals(padSettingChecksum));
 		}
 
 		public static List<UserDevice> GetDevices(string fileName, MapTo mapTo)
