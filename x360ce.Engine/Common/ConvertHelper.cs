@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 
@@ -42,13 +43,16 @@ namespace x360ce.Engine
 			// Convert [-32768;-1] -> [32767;0]
 			if (invert)
 				xInput = -1f - xInput;
+
+			var deadZoneApplied = false;
 			// If deadzone value is set then...
 			if (deadZone > 0f)
 			{
-				xInput = (xInput > deadZone)
+				deadZoneApplied = xInput <= deadZone;
+				xInput = deadZoneApplied
+					? 0f
 					// Convert range [deadZone;max] => [0;max];
-					? xInput = ConvertRangeF(deadZone, max, 0f, max, xInput)
-					: xInput = 0f;
+					: ConvertRangeF(deadZone, max, 0f, max, xInput);
 			}
 			// If anti-deadzone value is set then...
 			if (antiDeadZone > 0f && xInput > 0f)
@@ -64,14 +68,15 @@ namespace x360ce.Engine
 				var linearF = (float)linear / 100f;
 				var x = -valueF;
 				if (linearF < 0f) x = 1f + x;
-				var v = ((float)Math.Sqrt(1f - x * x));
+				var v = (float)Math.Sqrt(1f - x * x);
 				if (linearF < 0f) v = 1f - v;
 				valueF = valueF + (2f - v - valueF - 1f) * Math.Abs(linearF);
 				// [0;1f] => [antiDeadZone;max];
 				xInput = ConvertRangeF(0f, 1f, antiDeadZone, max, valueF);
 			}
-			// If inversion required (only thumb) then...
-			if (invert)
+			// If inversion required (only thumb) and not in deadzone then...
+			// Checking for deadzone prevents XInput value jittering between 0 and -1.
+			if (invert && !deadZoneApplied)
 				// Convert [32767;0] -> [-32768;-1]
 				xInput = -1f - xInput;
 			return xInput;
