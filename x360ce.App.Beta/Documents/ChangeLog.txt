@@ -1,4 +1,4 @@
-v4.11.12.0 (2020-07-25)
+v4.11.13.0 (2020-07-25)
 - Fix: Inaccessible dialog when Application is Always on Top.
 - Fix: Map Name drop down combo box on PAD Control.
 - Update: "Auto" map feature maps buttons and axis on Sony controllers better now.

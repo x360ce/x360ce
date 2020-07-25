@@ -1,5 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -58,15 +57,13 @@ namespace x360ce.App
 			catch (Exception ex)
 			{
 				var message = ExceptionToText(ex);
-				var box = new MessageBoxForm();
 				if (message.Contains("Could not load file or assembly 'Microsoft.DirectX"))
 				{
 					message += "===============================================================\r\n";
-					message += "You can click the link below to download Microsoft DirectX.";
-					box.MainLinkLabel.Text = "http://www.microsoft.com/en-us/download/details.aspx?id=35";
-					box.MainLinkLabel.Visible = true;
+					message += "You can download Microsoft DirectX from:\r\n";
+					message += "http://www.microsoft.com/en-us/download/details.aspx?id=35";
 				}
-				var result = box.ShowForm(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
+				var result = MessageBox.Show(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
 				if (result == DialogResult.Cancel)
 					Application.Exit();
 			}
