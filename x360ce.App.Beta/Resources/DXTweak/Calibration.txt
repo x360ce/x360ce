@@ -1,0 +1,42 @@
+Microsoft.DirectX.DirectInput.CalibrationPoint[]
+
+DeviceProperties.GetCalibrationPoints
+https://docs.microsoft.com/en-us/previous-versions/windows/desktop/bb321343(v=vs.85)
+
+DeviceProperties.SetCalibrationPoints
+https://docs.microsoft.com/en-us/previous-versions/windows/desktop/bb321353(v=vs.85)
+
+---------------------------------------------------------------
+Direct Access:
+---------------------------------------------------------------
+
+Calibration Data in Registry:
+
+<Path>: Computer\HKEY_CURRENT_USER\System\CurrentControlSet\Control\MediaProperties\PrivateProperties\DirectInput
+
+Axis Calibration, where <axis> = [0-128]
+
+<Path>\<DEVICE_ID>\Calibration\<axis>\Type\Axes
+
+// Read values byte[12].
+var bytes = (byte[])Registry.GetValue(registry + '0', "Calibration", "EMPTY");
+
+var min = 256 * Axis[1] + Axis[0];
+var cen = 256 * Axis[4] + Axis[5];
+var max = 256 * Axis[9] + Axis[9];
+
+// Modify values.
+
+// Set array.
+bytes[0] = (byte)(min % 256);
+bytes[1] = (byte)(min / 256);
+bytes[4] = (byte)(cen % 256);
+bytes[5] = (byte)(cen / 256);
+bytes[8] = (byte)(max % 256);
+bytes[9] = (byte)(max / 256);
+
+// Set values.
+Registry.SetValue(regPath + '0', "Calibration", ByteArray);
+
+
+
