@@ -117,6 +117,7 @@ namespace JocysCom.ClassLibrary.Controls
 			var frmInfo = new InfoForm();
 			frmInfo.SelectedControl = c;
 			frmInfo.StartPosition = FormStartPosition.CenterParent;
+			ControlsHelper.CheckTopMost(frmInfo);
 			frmInfo.ShowDialog();
 			frmInfo.Dispose();
 			lock (ShowLock)

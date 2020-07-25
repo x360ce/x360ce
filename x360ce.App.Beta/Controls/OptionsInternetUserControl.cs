@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using x360ce.App.Forms;
@@ -127,6 +128,7 @@ namespace x360ce.App.Controls
 			form.Text = "Create Login";
 			form.StartPosition = FormStartPosition.CenterParent;
 			form.NavigateUrl = navigateUrl;
+			ControlsHelper.CheckTopMost(form);
 			form.ShowDialog();
 			form.Dispose();
 		}
@@ -142,6 +144,7 @@ namespace x360ce.App.Controls
 			form.Text = "Reset Login";
 			form.StartPosition = FormStartPosition.CenterParent;
 			form.NavigateUrl = navigateUrl;
+			ControlsHelper.CheckTopMost(form);
 			form.ShowDialog();
 			form.Dispose();
 		}

@@ -170,32 +170,38 @@ namespace x360ce.App.Controls
 
 			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
-			foreach (var item in types) DeviceSubTypeComboBox.Items.Add(item);
+			foreach (var item in types)
+				DeviceSubTypeComboBox.Items.Add(item);
 			// Add force feedback typed to ComboBox.
 			var effectsTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
-			foreach (var item in effectsTypes) ForceTypeComboBox.Items.Add(item);
+			foreach (var item in effectsTypes)
+				ForceTypeComboBox.Items.Add(item);
 
 			var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
-			foreach (var item in effectDirections) LeftMotorDirectionComboBox.Items.Add(item);
-			foreach (var item in effectDirections) RightMotorDirectionComboBox.Items.Add(item);
+			foreach (var item in effectDirections)
+				LeftMotorDirectionComboBox.Items.Add(item);
+			foreach (var item in effectDirections)
+				RightMotorDirectionComboBox.Items.Add(item);
 
 			// Add player index to combo boxes
 			var playerOptions = new List<KeyValuePair>();
 			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));
-			foreach (var item in playerTypes) playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
+			foreach (var item in playerTypes)
+				playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
 			PassThroughIndexComboBox.DataSource = new BindingSource(playerOptions, null); // Otherwise changing one changes the other
 			PassThroughIndexComboBox.DisplayMember = "Key";
 			PassThroughIndexComboBox.ValueMember = "Value";
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
 			CombinedIndexComboBox.DisplayMember = "Key";
 			CombinedIndexComboBox.ValueMember = "Value";
+			// Attach drop down menu with record and map choices.
 			var comboBoxes = new List<ComboBox>();
 			GetAllControls(GeneralTabPage, ref comboBoxes);
+			// Exclude map name combobox
+			comboBoxes.Remove(MapNameComboBox);
 			// Attach context strip with button names to every ComboBox on general tab.
 			foreach (var cb in comboBoxes)
-			{
 				cb.DropDown += ComboBox_DropDown;
-			}
 			UpdateFromCurrentGame();
 		}
 
@@ -382,7 +388,8 @@ namespace x360ce.App.Controls
 			cbx.IntegralHeight = !cbx.IntegralHeight;
 			cbx.Left = oldLeft;
 			var menu = cbx.ContextMenuStrip;
-			if (menu != null) {
+			if (menu != null)
+			{
 				if (cbx == DPadComboBox)
 					EnableDPadMenu(true);
 				cbx.ContextMenuStrip.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
@@ -441,7 +448,8 @@ namespace x360ce.App.Controls
 		{
 			// Display controller.
 			bool on = newConnected;
-			if (!on) return;
+			if (!on)
+				return;
 			// Half mark position adjust.
 			int mW = -this.markB.Width / 2;
 			int mH = -this.markB.Height / 2;
@@ -466,26 +474,34 @@ namespace x360ce.App.Controls
 					ControlsHelper.SetText(RightTriggerTextBox, tr.ToString());
 					on = tl > 0;
 					setLabelColor(on, LeftTriggerLabel);
-					if (on) e.Graphics.DrawImage(this.markB, triggerLeft.X + mW, triggerLeft.Y + mH);
+					if (on)
+						e.Graphics.DrawImage(this.markB, triggerLeft.X + mW, triggerLeft.Y + mH);
 					on = tr > 0;
 					setLabelColor(on, RightTriggerLabel);
-					if (on) e.Graphics.DrawImage(this.markB, triggerRight.X + mW, triggerRight.Y + mH);
+					if (on)
+						e.Graphics.DrawImage(this.markB, triggerRight.X + mW, triggerRight.Y + mH);
 				}
 				on = newState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
 				setLabelColor(on, LeftShoulderLabel);
-				if (on) e.Graphics.DrawImage(this.markB, shoulderLeft.X + mW, shoulderLeft.Y + mH);
+				if (on)
+					e.Graphics.DrawImage(this.markB, shoulderLeft.X + mW, shoulderLeft.Y + mH);
 				on = newState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
 				setLabelColor(on, RightShoulderLabel);
-				if (on) e.Graphics.DrawImage(this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
+				if (on)
+					e.Graphics.DrawImage(this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
 			}
 			// If recording is in progress and recording image must be drawn then...
 			else if (_recorder.drawRecordingImage)
 			{
 				// Draw recording mark on controller.
-				if (CurrentCbx == LeftTriggerComboBox) _recorder.drawMarkR(e, triggerLeft);
-				if (CurrentCbx == LeftShoulderComboBox) _recorder.drawMarkR(e, shoulderLeft);
-				if (CurrentCbx == RightTriggerComboBox) _recorder.drawMarkR(e, triggerRight);
-				if (CurrentCbx == RightShoulderComboBox) _recorder.drawMarkR(e, shoulderRight);
+				if (CurrentCbx == LeftTriggerComboBox)
+					_recorder.drawMarkR(e, triggerLeft);
+				if (CurrentCbx == LeftShoulderComboBox)
+					_recorder.drawMarkR(e, shoulderLeft);
+				if (CurrentCbx == RightTriggerComboBox)
+					_recorder.drawMarkR(e, triggerRight);
+				if (CurrentCbx == RightShoulderComboBox)
+					_recorder.drawMarkR(e, shoulderRight);
 			}
 		}
 
@@ -513,7 +529,8 @@ namespace x360ce.App.Controls
 			pads[3] = new Point(139, 62);
 			// Display controller.
 			bool on = newConnected;
-			if (!on) return;
+			if (!on)
+				return;
 			// Display controller index light.
 			int mW = -this.markC.Width / 2;
 			int mH = -this.markC.Height / 2;
@@ -528,13 +545,17 @@ namespace x360ce.App.Controls
 			if (!_recorder.Recording)
 			{
 				setLabelColor(_leftX > 2000, LeftThumbAxisXLabel);
-				if (_leftX < -2000) LeftThumbAxisXLabel.ForeColor = Color.DarkRed;
+				if (_leftX < -2000)
+					LeftThumbAxisXLabel.ForeColor = Color.DarkRed;
 				setLabelColor(_leftY > 2000, LeftThumbAxisYLabel);
-				if (_leftY < -2000) LeftThumbAxisYLabel.ForeColor = Color.DarkRed;
+				if (_leftY < -2000)
+					LeftThumbAxisYLabel.ForeColor = Color.DarkRed;
 				setLabelColor(_rightX > 2000, RightThumbAxisXLabel);
-				if (_rightX < -2000) RightThumbAxisXLabel.ForeColor = Color.DarkRed;
+				if (_rightX < -2000)
+					RightThumbAxisXLabel.ForeColor = Color.DarkRed;
 				setLabelColor(_rightY > 2000, RightThumbAxisYLabel);
-				if (_rightY < -2000) RightThumbAxisYLabel.ForeColor = Color.DarkRed;
+				if (_rightY < -2000)
+					RightThumbAxisYLabel.ForeColor = Color.DarkRed;
 				// Draw button state green led image.
 				DrawState(GamepadButtonFlags.A, buttonA, ButtonALabel, e);
 				DrawState(GamepadButtonFlags.B, buttonB, ButtonBLabel, e);
@@ -557,22 +578,38 @@ namespace x360ce.App.Controls
 			else if (_recorder.drawRecordingImage)
 			{
 				Point? p = null;
-				if (CurrentCbx == ButtonBackComboBox) p = buttonBack;
-				if (CurrentCbx == ButtonStartComboBox) p = buttonStart;
-				if (CurrentCbx == ButtonYComboBox) p = buttonY;
-				if (CurrentCbx == ButtonXComboBox) p = buttonX;
-				if (CurrentCbx == ButtonBComboBox) p = buttonB;
-				if (CurrentCbx == ButtonAComboBox) p = buttonA;
-				if (CurrentCbx == DPadUpComboBox) p = dPadUp;
-				if (CurrentCbx == DPadRightComboBox) p = dPadRight;
-				if (CurrentCbx == DPadDownComboBox) p = dPadDown;
-				if (CurrentCbx == DPadLeftComboBox) p = dPadLeft;
-				if (CurrentCbx == LeftThumbButtonComboBox) p = thumbLeft;
-				if (CurrentCbx == RightThumbButtonComboBox) p = thumbRight;
-				if (CurrentCbx == LeftThumbAxisXComboBox) p = new Point(thumbLeft.X + 10, thumbLeft.Y);
-				if (CurrentCbx == LeftThumbAxisYComboBox) p = new Point(thumbLeft.X, thumbLeft.Y - 10);
-				if (CurrentCbx == RightThumbAxisXComboBox) p = new Point(thumbRight.X + 10, thumbRight.Y);
-				if (CurrentCbx == RightThumbAxisYComboBox) p = new Point(thumbRight.X, thumbRight.Y - 10);
+				if (CurrentCbx == ButtonBackComboBox)
+					p = buttonBack;
+				if (CurrentCbx == ButtonStartComboBox)
+					p = buttonStart;
+				if (CurrentCbx == ButtonYComboBox)
+					p = buttonY;
+				if (CurrentCbx == ButtonXComboBox)
+					p = buttonX;
+				if (CurrentCbx == ButtonBComboBox)
+					p = buttonB;
+				if (CurrentCbx == ButtonAComboBox)
+					p = buttonA;
+				if (CurrentCbx == DPadUpComboBox)
+					p = dPadUp;
+				if (CurrentCbx == DPadRightComboBox)
+					p = dPadRight;
+				if (CurrentCbx == DPadDownComboBox)
+					p = dPadDown;
+				if (CurrentCbx == DPadLeftComboBox)
+					p = dPadLeft;
+				if (CurrentCbx == LeftThumbButtonComboBox)
+					p = thumbLeft;
+				if (CurrentCbx == RightThumbButtonComboBox)
+					p = thumbRight;
+				if (CurrentCbx == LeftThumbAxisXComboBox)
+					p = new Point(thumbLeft.X + 10, thumbLeft.Y);
+				if (CurrentCbx == LeftThumbAxisYComboBox)
+					p = new Point(thumbLeft.X, thumbLeft.Y - 10);
+				if (CurrentCbx == RightThumbAxisXComboBox)
+					p = new Point(thumbRight.X + 10, thumbRight.Y);
+				if (CurrentCbx == RightThumbAxisYComboBox)
+					p = new Point(thumbRight.X, thumbRight.Y - 10);
 				if (p.HasValue)
 					_recorder.drawMarkR(e, p.Value);
 
@@ -584,14 +621,17 @@ namespace x360ce.App.Controls
 			var mW = -this.markB.Width / 2;
 			var mH = -this.markB.Height / 2;
 			var on = newState.Gamepad.Buttons.HasFlag(button);
-			if (on) e.Graphics.DrawImage(this.markB, location.X + mW, location.Y + mH);
-			if (label != null) setLabelColor(on, label);
+			if (on)
+				e.Graphics.DrawImage(this.markB, location.X + mW, location.Y + mH);
+			if (label != null)
+				setLabelColor(on, label);
 		}
 
 		void setLabelColor(bool on, Label label)
 		{
 			Color c = on ? Color.Green : SystemColors.ControlText;
-			if (label.ForeColor != c) label.ForeColor = c;
+			if (label.ForeColor != c)
+				label.ForeColor = c;
 		}
 
 		#endregion
@@ -974,7 +1014,8 @@ namespace x360ce.App.Controls
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
 			// Return if direct input device is not available.
-			if (ud == null) return;
+			if (ud == null)
+				return;
 			// Add [Record] button.
 			mi = new ToolStripMenuItem(cRecord);
 			mi.Image = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
@@ -1115,7 +1156,8 @@ namespace x360ce.App.Controls
 					{
 						foreach (ToolStripMenuItem l1 in item.DropDownItems)
 						{
-							foreach (ToolStripMenuItem l2 in l1.DropDownItems) l2.Visible = !enable;
+							foreach (ToolStripMenuItem l2 in l1.DropDownItems)
+								l2.Visible = !enable;
 						}
 					}
 				}
@@ -1303,7 +1345,8 @@ namespace x360ce.App.Controls
 				psi.UseShellExecute = true;
 				psi.WorkingDirectory = fi.Directory.FullName;
 				psi.ErrorDialog = true;
-				if (arguments != null) psi.Arguments = arguments;
+				if (arguments != null)
+					psi.Arguments = arguments;
 				Process.Start(psi);
 			}
 			catch (Exception) { }
@@ -1325,6 +1368,7 @@ namespace x360ce.App.Controls
 			}
 			presetForm.StartPosition = FormStartPosition.CenterParent;
 			presetForm.InitForm();
+			ControlsHelper.CheckTopMost(presetForm);
 			var result = presetForm.ShowDialog();
 			if (result == DialogResult.OK)
 			{

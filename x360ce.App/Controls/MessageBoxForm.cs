@@ -104,6 +104,7 @@ namespace x360ce.App.Controls
 					ActiveControl = Button3;
 					break;
 			}
+			JocysCom.ClassLibrary.Controls.ControlsHelper.CheckTopMost(this);
 			return ShowDialog();
 		}
 

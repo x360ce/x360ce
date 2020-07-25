@@ -123,6 +123,7 @@ namespace x360ce.App.Controls
 			form.EditTextBox.Text = note;
 			form.StartPosition = FormStartPosition.CenterParent;
 			form.Text = "X360CE - Edit Note";
+			ControlsHelper.CheckTopMost(form);
 			var result = form.ShowDialog();
 			if (result == DialogResult.OK)
 			{

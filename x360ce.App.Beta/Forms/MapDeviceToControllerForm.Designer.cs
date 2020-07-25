@@ -19,16 +19,20 @@
 			this.OkButton = new System.Windows.Forms.Button();
 			this.CloseButton = new System.Windows.Forms.Button();
 			this.ControllersPanel = new x360ce.App.Controls.UserDevicesUserControl();
+			this.MainTabControl = new System.Windows.Forms.TabControl();
+			this.DevicesTabPage = new System.Windows.Forms.TabPage();
+			this.MainTabControl.SuspendLayout();
+			this.DevicesTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// OkButton
 			// 
 			this.OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.OkButton.Location = new System.Drawing.Point(456, 407);
+			this.OkButton.Location = new System.Drawing.Point(399, 407);
 			this.OkButton.Name = "OkButton";
-			this.OkButton.Size = new System.Drawing.Size(75, 23);
+			this.OkButton.Size = new System.Drawing.Size(132, 23);
 			this.OkButton.TabIndex = 24;
-			this.OkButton.Text = "OK";
+			this.OkButton.Text = "Add Selected Device";
 			this.OkButton.UseVisualStyleBackColor = true;
 			this.OkButton.Click += new System.EventHandler(this.OkButton_Click);
 			// 
@@ -46,21 +50,41 @@
 			// 
 			// ControllersPanel
 			// 
-			this.ControllersPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.ControllersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ControllersPanel.IsVisibleIsHiddenColumn = false;
-			this.ControllersPanel.Location = new System.Drawing.Point(9, 67);
+			this.ControllersPanel.Location = new System.Drawing.Point(0, 0);
 			this.ControllersPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ControllersPanel.Name = "ControllersPanel";
 			this.ControllersPanel.Padding = new System.Windows.Forms.Padding(3);
-			this.ControllersPanel.Size = new System.Drawing.Size(606, 337);
+			this.ControllersPanel.Size = new System.Drawing.Size(592, 305);
 			this.ControllersPanel.TabIndex = 26;
+			// 
+			// MainTabControl
+			// 
+			this.MainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.MainTabControl.Controls.Add(this.DevicesTabPage);
+			this.MainTabControl.Location = new System.Drawing.Point(12, 70);
+			this.MainTabControl.Name = "MainTabControl";
+			this.MainTabControl.SelectedIndex = 0;
+			this.MainTabControl.Size = new System.Drawing.Size(600, 331);
+			this.MainTabControl.TabIndex = 27;
+			// 
+			// DevicesTabPage
+			// 
+			this.DevicesTabPage.Controls.Add(this.ControllersPanel);
+			this.DevicesTabPage.Location = new System.Drawing.Point(4, 22);
+			this.DevicesTabPage.Name = "DevicesTabPage";
+			this.DevicesTabPage.Size = new System.Drawing.Size(592, 305);
+			this.DevicesTabPage.TabIndex = 0;
+			this.DevicesTabPage.Text = "Direct Input Devices";
+			this.DevicesTabPage.UseVisualStyleBackColor = true;
 			// 
 			// MapDeviceToControllerForm
 			// 
 			this.ClientSize = new System.Drawing.Size(624, 442);
-			this.Controls.Add(this.ControllersPanel);
+			this.Controls.Add(this.MainTabControl);
 			this.Controls.Add(this.OkButton);
 			this.Controls.Add(this.CloseButton);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -68,7 +92,9 @@
 			this.Text = "X360CE - Map Device To Controller";
 			this.Controls.SetChildIndex(this.CloseButton, 0);
 			this.Controls.SetChildIndex(this.OkButton, 0);
-			this.Controls.SetChildIndex(this.ControllersPanel, 0);
+			this.Controls.SetChildIndex(this.MainTabControl, 0);
+			this.MainTabControl.ResumeLayout(false);
+			this.DevicesTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -77,5 +103,7 @@
 		private System.Windows.Forms.Button OkButton;
 		private System.Windows.Forms.Button CloseButton;
 		public UserDevicesUserControl ControllersPanel;
+		private System.Windows.Forms.TabControl MainTabControl;
+		private System.Windows.Forms.TabPage DevicesTabPage;
 	}
 }

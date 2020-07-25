@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.UI.WebControls;
 
 namespace JocysCom.ClassLibrary.Web
@@ -131,7 +132,7 @@ namespace JocysCom.ClassLibrary.Web
 			if (string.IsNullOrEmpty(path))
 				return path;
 			// If path is absolute then return.
-			if (path.Contains(":"))
+			if (IsAbsoluteLink(path))
 				return path;
 			var resolvedPath = page.ResolveUrl(path);
 			// Check if path contains query.
@@ -239,5 +240,14 @@ namespace JocysCom.ClassLibrary.Web
 			if (control.Items.Cast<ListItem>().Any(x => x.Value == old))
 				control.SelectedValue = string.Format("{0}", old);
 		}
+
+		// Uniform Resource Identifier (URI): Generic Syntax
+		// Appendix B.  Parsing a URI Reference with a Regular Expression
+		// https://tools.ietf.org/html/rfc3986#appendix-B
+		public static Regex UriSchemeRx = new Regex("^(([^:\\/?#]+):)", RegexOptions.Compiled);
+
+		/// <summary>Returns true it link is absolute. For example, starts with  "https:" or "C:".</summary>
+		public static bool IsAbsoluteLink(string link) =>
+			UriSchemeRx.IsMatch(link);
 	}
 }

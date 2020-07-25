@@ -35,10 +35,10 @@
 			this.SummariesTabPage = new System.Windows.Forms.TabPage();
 			this.SummariesGridPanel = new x360ce.App.Controls.SummariesGridUserControl();
 			this.PresetsTabPage = new System.Windows.Forms.TabPage();
+			this.PresetsGridPanel = new x360ce.App.Controls.PresetsGridUserControl();
 			this.CloseButton = new System.Windows.Forms.Button();
 			this.OkButton = new System.Windows.Forms.Button();
 			this.BusyLoadingCircle = new MRG.Controls.UI.LoadingCircle();
-			this.PresetsGridPanel = new x360ce.App.Controls.PresetsGridUserControl();
 			this.MainTabControl.SuspendLayout();
 			this.SettingsTabPage.SuspendLayout();
 			this.SummariesTabPage.SuspendLayout();
@@ -106,6 +106,14 @@
 			this.PresetsTabPage.Text = "Default Settings for Most Popular Controllers";
 			this.PresetsTabPage.UseVisualStyleBackColor = true;
 			// 
+			// PresetsGridPanel
+			// 
+			this.PresetsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PresetsGridPanel.Location = new System.Drawing.Point(0, 0);
+			this.PresetsGridPanel.Name = "PresetsGridPanel";
+			this.PresetsGridPanel.Size = new System.Drawing.Size(592, 304);
+			this.PresetsGridPanel.TabIndex = 0;
+			// 
 			// CloseButton
 			// 
 			this.CloseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -120,11 +128,12 @@
 			// OkButton
 			// 
 			this.OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.OkButton.Location = new System.Drawing.Point(456, 406);
+			this.OkButton.Location = new System.Drawing.Point(372, 406);
 			this.OkButton.Name = "OkButton";
-			this.OkButton.Size = new System.Drawing.Size(75, 23);
+			this.OkButton.Size = new System.Drawing.Size(159, 23);
 			this.OkButton.TabIndex = 20;
-			this.OkButton.Text = "OK";
+			this.OkButton.Text = "Load Selected Preset";
+			this.OkButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this.OkButton.UseVisualStyleBackColor = true;
 			this.OkButton.Click += new System.EventHandler(this.OkButton_Click);
 			// 
@@ -143,14 +152,6 @@
 			this.BusyLoadingCircle.SpokeThickness = 4;
 			this.BusyLoadingCircle.StylePreset = MRG.Controls.UI.LoadingCircle.StylePresets.IE7;
 			this.BusyLoadingCircle.TabIndex = 9;
-			// 
-			// PresetsGridPanel
-			// 
-			this.PresetsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PresetsGridPanel.Location = new System.Drawing.Point(0, 0);
-			this.PresetsGridPanel.Name = "PresetsGridPanel";
-			this.PresetsGridPanel.Size = new System.Drawing.Size(592, 304);
-			this.PresetsGridPanel.TabIndex = 0;
 			// 
 			// LoadPresetsForm
 			// 

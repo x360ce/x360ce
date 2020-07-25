@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -57,7 +58,7 @@ namespace x360ce.App
 			catch (Exception ex)
 			{
 				var message = ExceptionToText(ex);
-				var box = new Controls.MessageBoxForm();
+				var box = new MessageBoxForm();
 				if (message.Contains("Could not load file or assembly 'Microsoft.DirectX"))
 				{
 					message += "===============================================================\r\n";

@@ -48,10 +48,10 @@ namespace x360ce.App
 				ps.LeftThumbButton = GetButtonValue(list, 8, true, "Button 8");
 				ps.RightThumbButton = GetButtonValue(list, 9, true, "Button 9");
 				// Left Thumb (Look).
-				ps.LeftThumbAxisX = GetAxisValue(list, false, ObjectGuid.XAxis, true, "X-Axis");
-				ps.LeftThumbAxisY = GetAxisValue(list, true, ObjectGuid.YAxis, true, "Y-Axis");
+				ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "X-Axis");
+				ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true, "Y-Axis");
 				// Wheel.
-				ps.RightThumbAxisY = GetAxisValue(list, true, ObjectGuid.ZAxis, true, "Wheel");
+				ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.ZAxis, true, "Wheel");
 			}
 			else if (deviceType == DeviceType.Keyboard)
 			{
@@ -101,29 +101,69 @@ namespace x360ce.App
 				//     64       9         8  Button         Button 8                        PushButton           
 				//     65      10         9  Button         Button 9                        PushButton           
 				//     66     133        10  Button         System Main Menu                PushButton           
+				//
+				// If Sony then...
+				if (ud.DevVendorId == 0x054C)
+				{
+					ps.ButtonA = GetButtonValue(list, 1, true, "Cross");
+					ps.ButtonB = GetButtonValue(list, 2, true, "Circle");
+					ps.ButtonX = GetButtonValue(list, 0, true, "Square"); // Jump/Kick
+					ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
+					ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
+					ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
+					ps.ButtonBack = GetButtonValue(list, 8, true, "Select", "Back");
+					ps.ButtonStart = GetButtonValue(list, 9, true, "Start");
+					ps.LeftThumbButton = GetButtonValue(list, 10, true, "Left Paddle");
+					ps.RightThumbButton = GetButtonValue(list, 11, true, "Right Paddle");
+					// Map triggers from two different axis.
+					ps.LeftTrigger = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true, "L2");
+					ps.RightTrigger = GetAxisValue(list, false, false, ObjectGuid.RyAxis, true, "R2");
+					// Right Thumb.
+					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true);
+					// Y is inverted by default.
+					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true);
+					// Right Thumb.
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel axis");
+					// Y is inverted by default.
+					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true);
 
-				ps.ButtonA = GetButtonValue(list, 0, true, "Cross");
-				ps.ButtonB = GetButtonValue(list, 1, true, "Circle");
-				ps.ButtonX = GetButtonValue(list, 2, true, "Square"); // Jump/Kick
-				ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
-				ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
-				ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
-				ps.ButtonBack = GetButtonValue(list, 6, true, "Select", "Back");
-				ps.ButtonStart = GetButtonValue(list, 7, true, "Start");
-				ps.LeftThumbButton = GetButtonValue(list, 8, true, "Left Paddle");
-				ps.RightThumbButton = GetButtonValue(list, 9, true, "Right Paddle");
-				//Combined pedals
-				// Triggers.
-				ps.LeftTrigger = GetAxisValue(list, false, ObjectGuid.ZAxis, true, "L2");
-				ps.RightTrigger = GetAxisValue(list, false, ObjectGuid.RzAxis, true, "R2");
-				// Right Thumb.
-				ps.RightThumbAxisX = GetAxisValue(list, false, ObjectGuid.RxAxis, true);
-				// Y is inverted by default.
-				ps.RightThumbAxisY = GetAxisValue(list, true, ObjectGuid.RyAxis, true);
-				// Right Thumb.
-				ps.LeftThumbAxisX = GetAxisValue(list, false, ObjectGuid.XAxis, true, "Wheel axis");
-				// Y is inverted by default.
-				ps.LeftThumbAxisY = GetAxisValue(list, true, ObjectGuid.YAxis, true);
+				}
+				else
+				{
+					ps.ButtonA = GetButtonValue(list, 0, true, "Cross");
+					ps.ButtonB = GetButtonValue(list, 1, true, "Circle");
+					ps.ButtonX = GetButtonValue(list, 2, true, "Square"); // Jump/Kick
+					ps.ButtonY = GetButtonValue(list, 3, true, "Triangle");
+					ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
+					ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
+					ps.ButtonBack = GetButtonValue(list, 6, true, "Select", "Back");
+					ps.ButtonStart = GetButtonValue(list, 7, true, "Start");
+					ps.LeftThumbButton = GetButtonValue(list, 8, true, "Left Paddle");
+					ps.RightThumbButton = GetButtonValue(list, 9, true, "Right Paddle");
+					// Triggers.
+					var rightTrigger = GetAxisValue(list, false, false, ObjectGuid.RzAxis, true, "R2");
+					// If RzAxis or "R2" name is missing then...
+					if (string.IsNullOrEmpty(rightTrigger))
+					{
+						// Map triggers form single combinex axis.
+						ps.LeftTrigger = GetAxisValue(list, false, true, ObjectGuid.ZAxis, true, "L2");
+						ps.RightTrigger = GetAxisValue(list, true, true, ObjectGuid.ZAxis, true, "L2");
+					}
+					else
+					{
+						// Map triggers from two different axis.
+						ps.LeftTrigger = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true, "L2");
+						ps.RightTrigger = GetAxisValue(list, false, false, ObjectGuid.RzAxis, true, "R2");
+					}
+					// Right Thumb.
+					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true);
+					// Y is inverted by default.
+					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RyAxis, true);
+					// Right Thumb.
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel axis");
+					// Y is inverted by default.
+					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true);
+				}
 				// D-Pad
 				var o = list.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
 				ps.DPad = o == null ? "" : string.Format("{0}{1}", SettingName.SType.POV, o.Instance + 1);
@@ -157,7 +197,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>Return axis setting value if axis exists.</summary>
-		static string GetAxisValue(List<DeviceObjectItem> objects, bool invert, Guid type, bool removeIfFound, params string[] names)
+		static string GetAxisValue(List<DeviceObjectItem> objects, bool invert, bool half, Guid type, bool removeIfFound, params string[] names)
 		{
 			DeviceObjectItem o = null;
 			// Try to find by name.
@@ -177,10 +217,16 @@ namespace x360ce.App
 			// Try to find by type.
 			if (o == null)
 				o = objects.FirstOrDefault(x => x.Type == type);
-			return o == null ? "" : string.Format("{0}{1}",
-				SettingName.SType.Axis + (invert ? "-" : "")
-				// Use X360CE axis index.
-				, o.DiIndex + 1);
+			return o == null
+				? ""
+				: string.Format("{0}{1}{2}",
+					// Set Half or Full axis
+					half ? SettingName.SType.HAxis : SettingName.SType.Axis,
+					// Set invert.
+					invert ? "-" : "",
+					// Use X360CE axis index.
+					o.DiIndex + 1
+				);
 		}
 
 	}

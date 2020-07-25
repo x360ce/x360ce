@@ -1054,6 +1054,7 @@ namespace x360ce.App
                 if (_DeviceForm == null)
                     return null;
                 _DeviceForm.StartPosition = FormStartPosition.CenterParent;
+                ControlsHelper.CheckTopMost(_DeviceForm);
                 var result = _DeviceForm.ShowDialog();
                 return _DeviceForm.SelectedDevices;
             }
@@ -1096,6 +1097,7 @@ namespace x360ce.App
                 MainTabControl.SelectedTab = CloudTabPage;
                 _UpdateForm.StartPosition = FormStartPosition.CenterParent;
                 _UpdateForm.OpenDialog();
+                ControlsHelper.CheckTopMost(_UpdateForm);
                 var result = _UpdateForm.ShowDialog();
                 _UpdateForm.CloseDialog();
                 MainTabControl.SelectedTab = oldTab;

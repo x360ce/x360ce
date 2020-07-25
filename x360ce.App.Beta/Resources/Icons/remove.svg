@@ -1,0 +1,15 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>minus icon</title>
+    <desc>minus icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="16" y1="192" x2="154.4053" y2="307.221" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#ef5c51"/>
+            <stop offset="1" stop-color="#dc493e"/>
+        </linearGradient>
+    </defs>
+    <g fill="url(#color-1)" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M16,320l0,-128l480,0l0,128z" id="curve0"/>
+    </g>
+</svg>

@@ -241,6 +241,18 @@ namespace JocysCom.ClassLibrary.Controls
 			return (T)val;
 		}
 
+		/// <summary>
+		/// Set form TopMost if one of the application forms is top most.
+		/// </summary>
+		/// <param name="form"></param>
+		public static void CheckTopMost(Form form)
+		{
+			// If this form is not set as TopMost but one of the application forms is on TopMost then...
+			// Make this dialog form TopMost too or user won't be able to access it.
+			if (!form.TopMost && Application.OpenForms.Cast<Form>().Any(x => x.TopMost))
+				form.TopMost = true;
+		}
+
 		#region "UserControl is Visible"
 
 		public static bool IsControlVisibleOnForm(Control control)
@@ -299,8 +311,10 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				var hwnd = NativeMethods.WindowFromPoint(p);
 				var other = Control.FromChildHandle(hwnd);
-				if (other == null) continue;
-				if (GetAll(control, null, true).Contains(other)) return true;
+				if (other == null)
+					continue;
+				if (GetAll(control, null, true).Contains(other))
+					return true;
 			}
 			return false;
 		}
@@ -308,7 +322,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Get parent control of specific type.
 		/// </summary>
-		public static T GetParent<T>(Control control, bool includeTop = false) where T: class
+		public static T GetParent<T>(Control control, bool includeTop = false) where T : class
 		{
 			if (control == null)
 				throw new ArgumentNullException(nameof(control));
@@ -406,7 +420,8 @@ namespace JocysCom.ClassLibrary.Controls
 			_GetState = _GetState ?? typeof(Control).GetMethod("GetState", BindingFlags.Instance | BindingFlags.NonPublic);
 			// Can't check property directly, because it will return false if parent is not enabled.
 			var stateValue = (bool)_GetState.Invoke(control, new object[] { STATE_ENABLED });
-			if (stateValue != enabled) control.Enabled = enabled;
+			if (stateValue != enabled)
+				control.Enabled = enabled;
 		}
 
 		/// <summary>
@@ -420,7 +435,8 @@ namespace JocysCom.ClassLibrary.Controls
 			var text = (args == null)
 				? format
 				: string.Format(format, args);
-			if (control.Text != text) control.Text = text;
+			if (control.Text != text)
+				control.Text = text;
 		}
 
 		/// <summary>
@@ -434,7 +450,8 @@ namespace JocysCom.ClassLibrary.Controls
 			var text = (args == null)
 				? format
 				: string.Format(format, args);
-			if (control.Text != text) control.Text = text;
+			if (control.Text != text)
+				control.Text = text;
 		}
 
 		public static void SetReadOnly(Control control, bool readOnly)
@@ -770,8 +787,10 @@ namespace JocysCom.ClassLibrary.Controls
 				{
 					p = b.GetPixel(x, y);
 					a = (int)(p.A * (float)alpha / byte.MaxValue);
-					if (a >= byte.MaxValue) a = byte.MaxValue;
-					if (a <= byte.MinValue) a = byte.MinValue;
+					if (a >= byte.MaxValue)
+						a = byte.MaxValue;
+					if (a <= byte.MinValue)
+						a = byte.MinValue;
 					b.SetPixel(x, y, Color.FromArgb(a, p.R, p.G, p.B));
 				}
 			}
@@ -913,7 +932,8 @@ namespace JocysCom.ClassLibrary.Controls
 			if (box == null)
 				throw new ArgumentNullException(nameof(box));
 			var list = new List<DictionaryEntry>();
-			if (string.IsNullOrEmpty(format)) format = "{0}";
+			if (string.IsNullOrEmpty(format))
+				format = "{0}";
 			string display;
 			foreach (var value in (TE[])Enum.GetValues(typeof(TE)))
 			{
@@ -952,6 +972,47 @@ namespace JocysCom.ClassLibrary.Controls
 				}
 			}
 		}
+
+		#endregion
+
+		#region Open Path or URL
+
+
+		public static void OpenUrl(string url)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(url);
+			}
+			catch (System.ComponentModel.Win32Exception noBrowser)
+			{
+				if (noBrowser.ErrorCode == -2147467259)
+					MessageBox.Show(noBrowser.Message);
+			}
+			catch (System.Exception other)
+			{
+				MessageBox.Show(other.Message);
+			}
+		}
+
+		public static void OpenPath(string path, string arguments = null)
+		{
+			try
+			{
+				var fi = new System.IO.FileInfo(path);
+				//if (!fi.Exists) return;
+				// Brings up the "Windows cannot open this file" dialog if association not found.
+				var psi = new System.Diagnostics.ProcessStartInfo(path);
+				psi.UseShellExecute = true;
+				psi.WorkingDirectory = fi.Directory.FullName;
+				psi.ErrorDialog = true;
+				if (arguments != null)
+					psi.Arguments = arguments;
+				System.Diagnostics.Process.Start(psi);
+			}
+			catch (Exception) { }
+		}
+
 
 		#endregion
 

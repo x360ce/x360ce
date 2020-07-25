@@ -1,11 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -82,23 +77,18 @@ namespace x360ce.App.Controls
 			UpdateControls();
 		}
 
-		void UpdateControls()
+		private void UpdateControls()
 		{
 			var tab = MainTabControl.SelectedTab;
-			if (tab != null) SetHeaderSubject(tab.Text);
-			bool selected = false;
+			if (tab != null)
+				SetHeaderSubject(tab.Text);
+			var selected = false;
 			if (MainTabControl.SelectedTab == PresetsTabPage)
-			{
 				selected = PresetsGridPanel.PresetsDataGridView.Rows.Count > 0;
-			}
 			if (MainTabControl.SelectedTab == SummariesTabPage)
-			{
 				selected = SummariesGridPanel.SummariesDataGridView.Rows.Count > 0;
-			}
 			if (MainTabControl.SelectedTab == SettingsTabPage)
-			{
 				selected = SettingsGridPanel.SettingsDataGridView.Rows.Count > 0;
-			}
 			ControlsHelper.SetEnabled(OkButton, selected);
 		}
 

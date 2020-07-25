@@ -1,3 +1,32 @@
+v4.10.12.0 (2020-07-25)
+- Fix: Inaccessible dialogs when Application is Always on Top.
+- Fix: Map Name dropdown combo box on PAD Control.
+- Update: "Auto" map feature maps buttons and axis on Sony controllers better now.
+- Update: "Auto" map feature recognize combined trigger axis better.
+
+v4.11.7.0 (2020-07-20)
+- Fix: Crash when device change.
+- Fix: Presets loading.
+- Fix: Deadlock freeze.
+- Update: Hide unfinished developer options.
+- Update: Shared classes and controls updated.
+- Update: Options updated.
+- Update: Making application more DPI aware.
+- Update: PAD control layout.
+- Update: Optimise device stats procedure.
+
+v4.10.12.0 Alpha (2019-05-26)
+- Fix: Visual C++ Runtime installation check.
+- Fix: Muse button recording and PAD settings Load/Saving.
+- Fix: PAD control not loading.
+- Fix: Prevent opening drop down opening as a context menu. Issue #946.
+- Update: Code required for remote controllers (work in progress).
+- Update: Removed Engine XML Serializer resource
+- Update: Code required to run X360CE as Windows Service (work in progress).
+
+v4.9.0.0 Alpha (2019-04-22)
+- New versio, which uses Virtual Gamepad Emulation driver ViGEmBus by nefarius.
+
 v3.3.6.0 (2018-07-06)
 - Update: Shared libraries updated.
 - Update: Removed hidden exprerimental features.
@@ -379,13 +408,13 @@ v2.0.2.3 (2010-03-17)
 - Interface updated.
 - Can load custom presets from disk.
 
-v 2.0.1.2 (2010-03-14)
+v2.0.1.2 (2010-03-14)
 - Setting changes now applies instantly.
 - [Save] button makes changes permanent.
 - Updated button names to names used by Microsoft.
 - Fixed bug with multiple controllers attached.
 
-v 2.0.0.0 (2010-03-11)
+v2.0.0.0 (2010-03-11)
 - Pack of new features and improvements.
 - Supports load and save settings.
 - Presets feature added.
@@ -393,5 +422,5 @@ v 2.0.0.0 (2010-03-11)
 - New DirectInput information tab.
 - All images updated.
 
-v 1.0.3300.21118 by Racer_S
-v 1.0.3295.32855 by Racer_S
+v1.0.3300.21118 by Racer_S
+v1.0.3295.32855 by Racer_S

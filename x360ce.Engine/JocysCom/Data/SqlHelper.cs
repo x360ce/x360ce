@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Data
 {
@@ -458,22 +460,35 @@ namespace JocysCom.ClassLibrary.Data
 			if (table == null) return null;
 			var list = new List<T>();
 			var props = typeof(T).GetProperties();
+			var columns = table.Columns.Cast<DataColumn>().ToArray();
 			foreach (DataRow row in table.Rows)
 			{
-				var item = Activator.CreateInstance<T>();
-				foreach (var prop in props)
-				{
-					foreach (DataColumn column in table.Columns)
-					{
-						if (!prop.CanWrite) continue;
-						if (string.Compare(prop.Name, column.ColumnName, true) != 0) continue;
-						if (row.IsNull(column.ColumnName)) continue;
-						prop.SetValue(item, row[column.ColumnName], null);
-					}
-				}
+				var item = Convert<T>(row, props, columns);
 				list.Add(item);
 			}
 			return list;
+		}
+
+		/// <summary>Convert DataRow to object.</summary>
+		/// <param name="propsCache">Optional for cache reasons.</param>
+		/// <param name="columnsCache">Optional for cache reasons.</param>
+		public static T Convert<T>(DataRow row, PropertyInfo[] propsCache = null, DataColumn[] columnsCache = null)
+		{
+			var props = propsCache ?? typeof(T).GetProperties();
+			var columns = columnsCache ?? row.Table.Columns.Cast<DataColumn>().ToArray();
+			var item = Activator.CreateInstance<T>();
+			foreach (var prop in props)
+			{
+				var column = columns.FirstOrDefault(x => prop.Name.Equals(x.ColumnName, StringComparison.OrdinalIgnoreCase));
+				if (column == null)
+					continue;
+				if (!prop.CanWrite)
+					continue;
+				if (row.IsNull(column.ColumnName))
+					continue;
+				prop.SetValue(item, row[column.ColumnName], null);
+			}
+			return item;
 		}
 
 		/// <summary>
