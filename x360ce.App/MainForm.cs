@@ -482,7 +482,7 @@ namespace x360ce.App
 				}
 				if (changed)
 				{
-					var form = new MessageBoxForm();
+					var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
 					form.StartPosition = FormStartPosition.CenterParent;
 					var result = form.ShowForm(
 					"Do you want to save changes you made to configuration?",
@@ -886,7 +886,7 @@ namespace x360ce.App
 					{
 						var caption = string.Format("Failed to load '{0}'", dllInfo.FullName);
 						var text = string.Format("{0}", error == null ? "Unknown error" : error.Message);
-						var form = new MessageBoxForm();
+						var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
 						form.StartPosition = FormStartPosition.CenterParent;
 						form.ShowForm(text, caption, MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
@@ -1012,7 +1012,7 @@ namespace x360ce.App
 		{
 			if (destinationFileName == null) destinationFileName = resourceName;
 			DialogResult answer;
-			var form = new MessageBoxForm();
+			var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var oldDesc = EngineHelper.GetProcessorArchitectureDescription(oldArchitecture);
 			var newDesc = EngineHelper.GetProcessorArchitectureDescription(newArchitecture);
@@ -1032,7 +1032,7 @@ namespace x360ce.App
 		{
 			if (destinationFileName == null) destinationFileName = resourceName;
 			DialogResult answer;
-			var form = new MessageBoxForm();
+			var form = new Controls.MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			var fileName = new FileInfo(destinationFileName).FullName;
 			if (newVersion == null)

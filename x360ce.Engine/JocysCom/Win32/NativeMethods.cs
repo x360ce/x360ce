@@ -16,6 +16,8 @@ namespace JocysCom.ClassLibrary.Win32
 		// PDWORD - UInt32
 		// LPVOID - IntPtr
 
+		public static int ERROR_INSUFFICIENT_BUFFER =  122;
+
 		#region Disable/Enable UI Effects
 
 		public static void EnableUiEffects(bool enable)

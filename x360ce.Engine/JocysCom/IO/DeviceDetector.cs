@@ -33,12 +33,12 @@ namespace JocysCom.ClassLibrary.IO
 		//public const int MAX_DEVICE_LEN = 1000;
 		public const int MAX_DEVICE_ID_LEN = 200;
 		private const int ERROR_INVALID_HANDLE_VALUE = -1;
-		const int BROADCAST_QUERY_DENY = 0x424D5144;
+		private const int BROADCAST_QUERY_DENY = 0x424D5144;
 
 		/// <summary>
 		/// Handle of the window which receives messages from Windows. This will be a form.
 		/// </summary>
-		IntPtr _RecipientHandle;
+		private readonly IntPtr _RecipientHandle;
 
 		public delegate void DeviceDetectorEventHandler(object sender, DeviceDetectorEventArgs e);
 
@@ -97,7 +97,7 @@ namespace JocysCom.ClassLibrary.IO
 					{
 						case DBCH_DEVICETYPE.DBT_DEVTYP_DEVICEINTERFACE:
 							var di = (DEV_BROADCAST_DEVICEINTERFACE)Marshal.PtrToStructure(m.LParam, typeof(DEV_BROADCAST_DEVICEINTERFACE));
-							IntPtr dName = new IntPtr(m.LParam.ToInt64() + Marshal.OffsetOf(typeof(DEV_BROADCAST_DEVICEINTERFACE), "dbcc_name").ToInt64());
+							var dName = new IntPtr(m.LParam.ToInt64() + Marshal.OffsetOf(typeof(DEV_BROADCAST_DEVICEINTERFACE), "dbcc_name").ToInt64());
 							di.dbcc_name = Marshal.PtrToStringAuto(dName).ToCharArray();
 							deviceInfo = di;
 							break;
@@ -109,7 +109,7 @@ namespace JocysCom.ClassLibrary.IO
 							break;
 						case DBCH_DEVICETYPE.DBT_DEVTYP_PORT:
 							var pi = (DEV_BROADCAST_PORT)Marshal.PtrToStructure(m.LParam, typeof(DEV_BROADCAST_PORT));
-							IntPtr pName = new IntPtr(m.LParam.ToInt64() + Marshal.OffsetOf(typeof(DEV_BROADCAST_PORT), "dbcc_name").ToInt64());
+							var pName = new IntPtr(m.LParam.ToInt64() + Marshal.OffsetOf(typeof(DEV_BROADCAST_PORT), "dbcc_name").ToInt64());
 							pi.dbcc_name = Marshal.PtrToStringAuto(pName).ToCharArray();
 							deviceInfo = pi;
 							break;
@@ -146,13 +146,13 @@ namespace JocysCom.ClassLibrary.IO
 			IAsyncResult BeginInvoke(object sender, Tv e, AsyncCallback callback, object o);
 		}
 
-		void RaiseDeviceChanged(object sender, DeviceDetectorEventArgs e)
+		private void RaiseDeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
 			var ev = DeviceChanged;
 			if (ev == null)
 				return;
 			var eventListeners = ev.GetInvocationList();
-			for (int i = 0; i < eventListeners.Length; i++)
+			for (var i = 0; i < eventListeners.Length; i++)
 			{
 				var methodToInvoke = (DeviceDetectorEventHandler)eventListeners[i];
 				methodToInvoke.BeginInvoke(sender, e, EndAsyncEvent, null);
@@ -193,16 +193,17 @@ namespace JocysCom.ClassLibrary.IO
 			return (deviceManufacturer ?? "").Trim();
 		}
 
-		static Regex VidPidRx;
+		private static Regex VidPidRx;
 
-		static string GetVidPidRev(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, out uint vid, out uint pid, out uint rev)
+		private static string GetVidPidRev(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, out uint vid, out uint pid, out uint rev)
 		{
 			VidPidRx = VidPidRx ?? new Regex("(VID|VEN)_(?<vid>[0-9A-F]{4})&PID_(?<pid>[0-9A-F]{4})(&REV_(?<rev>[0-9A-F]{4}))?");
 			vid = 0;
 			pid = 0;
 			rev = 0;
 			var value = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID) ?? "";
-			if (string.IsNullOrEmpty(value)) return value;
+			if (string.IsNullOrEmpty(value))
+				return value;
 			var m = VidPidRx.Match(value.ToUpper());
 			if (m.Success)
 			{
@@ -218,14 +219,13 @@ namespace JocysCom.ClassLibrary.IO
 
 		private static string GetStringPropertyForDevice(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, SPDRP propId)
 		{
-			uint proptype;
-			uint outsize = 0;
 			// Get buffer size.
-			var result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out proptype, null, 0, out outsize);
+			var result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out var proptype, null, 0, out var outsize);
 			if (!result)
 			{
 				var errorCode = Marshal.GetLastWin32Error();
-				if (errorCode == ERROR_INVALID_DATA) return null;
+				if (errorCode == ERROR_INVALID_DATA)
+					return null;
 				// We can safely ignore other errors when retrieving buffer size.
 			}
 			var buffer = new byte[outsize];
@@ -234,7 +234,8 @@ namespace JocysCom.ClassLibrary.IO
 			if (!result)
 			{
 				var errorCode = Marshal.GetLastWin32Error();
-				if (errorCode == ERROR_INVALID_DATA) return null;
+				if (errorCode == ERROR_INVALID_DATA)
+					return null;
 				var error = new Win32Exception(errorCode);
 				throw new Exception("Error calling SetupDiGetDeviceRegistryPropertyW: " + error.ToString());
 			}
@@ -261,8 +262,8 @@ namespace JocysCom.ClassLibrary.IO
 
 		private static SP_DEVINFO_DATA? GetDeviceInfo(string deviceInstanceId)
 		{
-			Guid classGuid = System.Guid.Empty;
-			IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES);
+			var classGuid = System.Guid.Empty;
+			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES);
 			SP_DEVINFO_DATA? di = null;
 			if (deviceInfoSet.ToInt64() != ERROR_INVALID_HANDLE_VALUE)
 			{
@@ -277,16 +278,15 @@ namespace JocysCom.ClassLibrary.IO
 			var da = new SP_DEVINFO_DATA();
 			da.Initialize();
 			var result = NativeMethods.SetupDiOpenDeviceInfo(deviceInfoSet, deviceInstanceId, IntPtr.Zero, 0, ref da);
-			if (!result) return null;
+			if (!result)
+				return null;
 			return da;
 		}
 
 		public static System.Drawing.Icon GetClassIcon(Guid classGuid)
 		{
-			IntPtr hIcon;
-			int ix;
 			System.Drawing.Icon icon = null;
-			if (NativeMethods.SetupDiLoadClassIcon(ref classGuid, out hIcon, out ix) != 0)
+			if (NativeMethods.SetupDiLoadClassIcon(ref classGuid, out var hIcon, out var ix) != 0)
 			{
 				icon = System.Drawing.Icon.FromHandle(hIcon);
 			}
@@ -296,26 +296,32 @@ namespace JocysCom.ClassLibrary.IO
 		public static DeviceInfo[] GetInterfaces()
 		{
 			var list = new List<DeviceInfo>();
-			Guid hidGuid = Guid.Empty;
+			var hidGuid = Guid.Empty;
 			NativeMethods.HidD_GetHidGuid(ref hidGuid);
-			int requiredSize3 = 0;
+			var requiredSize3 = 0;
 			var interfaceData = new SP_DEVICE_INTERFACE_DATA();
 			interfaceData.Initialize();
-			List<string> serials = new List<string>();
+			// serialNumbers and physicalDescriptors for debug purposes only.
+			var serialNumbers = new List<string>();
+			var physicalDescriptors = new List<string>();
 			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(hidGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_DEVICEINTERFACE);
-			for (int i2 = 0; NativeMethods.SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, ref hidGuid, i2, ref interfaceData); i2++)
+			for (var i2 = 0; NativeMethods.SetupDiEnumDeviceInterfaces(deviceInfoSet, IntPtr.Zero, ref hidGuid, i2, ref interfaceData); i2++)
 			{
+				bool success;
 				var deviceInfoData = new SP_DEVINFO_DATA();
 				deviceInfoData.Initialize();
-				bool success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, IntPtr.Zero);
-				IntPtr ptrDetails = Marshal.AllocHGlobal(requiredSize3);
-				Marshal.WriteInt32(ptrDetails, (IntPtr.Size == 4) ? (4 + Marshal.SystemDefaultCharSize) : 8);
+				// Call 1: Retrieve data size. Note: Returns ERROR_INSUFFICIENT_BUFFER = 122, which is normal.
+				success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, ref deviceInfoData);
+				// Allocate memory for results. 
+				var ptrDetails = Marshal.AllocHGlobal(requiredSize3);
+				Marshal.WriteInt32(ptrDetails, IntPtr.Size == 4 ? 4 + Marshal.SystemDefaultCharSize : 8);
+				// Call 2: Retrieve data.
 				success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref deviceInfoData);
 				var interfaceDetail = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
 				var di = GetDeviceInfo(deviceInfoSet, deviceInfoData);
 				di.DevicePath = interfaceDetail.DevicePath;
-				var deviceHandle = deviceInfoData.DevInst;
 				Marshal.FreeHGlobal(ptrDetails);
+				// Note: Interfaces don't have vendor or product, therefore must get from parent device.
 				// Open the device as a file so that we can query it with HID and read/write to it.
 				var devHandle = NativeMethods.CreateFile(
 					interfaceDetail.DevicePath,
@@ -328,15 +334,18 @@ namespace JocysCom.ClassLibrary.IO
 				);
 				if (devHandle.IsInvalid)
 					continue;
+				// Get vendor product and version from device.
 				var ha = new HIDD_ATTRIBUTES();
 				ha.Size = Marshal.SizeOf(ha);
 				var success2 = NativeMethods.HidD_GetAttributes(devHandle, ref ha);
-				string serial = "";
-				string phdesc = "";
+				di.VendorId = ha.VendorID;
+				di.ProductId = ha.ProductID;
+				di.Revision = ha.VersionNumber;
+				// Get other options.
 				if (success2)
 				{
-					IntPtr preparsedDataPtr = new IntPtr();
-					HIDP_CAPS caps = new HIDP_CAPS();
+					var preparsedDataPtr = new IntPtr();
+					var caps = new HIDP_CAPS();
 					// Read out the 'pre-parsed data'.
 					NativeMethods.HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
 					// feed that to GetCaps.
@@ -345,7 +354,7 @@ namespace JocysCom.ClassLibrary.IO
 					NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
 					// This could fail if the device was recently attached.
 					// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
-					ulong capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);
+					var capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);
 					var sb = new StringBuilder((int)capacity, (int)capacity);
 					// Override manufacturer if found.
 					if (NativeMethods.HidD_GetManufacturerString(devHandle, sb, sb.Capacity) && sb.Length > 0)
@@ -353,20 +362,16 @@ namespace JocysCom.ClassLibrary.IO
 					// Override ProductName if Found.
 					if (NativeMethods.HidD_GetProductString(devHandle, sb, sb.Capacity) && sb.Length > 0)
 						di.Description = sb.ToString();
-					serial = NativeMethods.HidD_GetSerialNumberString(devHandle, sb, sb.Capacity)
+					// Get Serial number.
+					var serialNumber = NativeMethods.HidD_GetSerialNumberString(devHandle, sb, sb.Capacity)
 						? sb.ToString() : "";
-					phdesc = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, sb, sb.Capacity)
+					serialNumbers.Add(serialNumber);
+					// Get physical descriptor.
+					var physicalDescriptor = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, sb, sb.Capacity)
 						? sb.ToString() : "";
-				}
-				uint parentDeviceInstance = 0;
-				string parentDeviceId = null;
-				var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, deviceHandle, 0);
-				if (CRResult == CR.CR_SUCCESS)
-				{
-					parentDeviceId = GetDeviceId(parentDeviceInstance);
+					physicalDescriptors.Add(physicalDescriptor);
 				}
 				list.Add(di);
-				serials.Add(phdesc);
 				devHandle.Close();
 			}
 			NativeMethods.SetupDiDestroyDeviceInfoList(deviceInfoSet);
@@ -374,7 +379,7 @@ namespace JocysCom.ClassLibrary.IO
 			return list.ToArray();
 		}
 
-		static object GetDevicesLock = new object();
+		private static readonly object GetDevicesLock = new object();
 
 		/// <summary>
 		/// Get list of devices.
@@ -414,7 +419,7 @@ namespace JocysCom.ClassLibrary.IO
 				//  │   └──[Device Interface], [Device Interface], ...
 				//
 				// Create a device information set composed of all devices associated with a specified device setup class or device interface class.
-				IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid.Value, IntPtr.Zero, IntPtr.Zero, flags);
+				var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid.Value, IntPtr.Zero, IntPtr.Zero, flags);
 				if (deviceInfoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
 					throw new Exception("Invalid Handle");
 				var list = new List<DeviceInfo>();
@@ -440,12 +445,6 @@ namespace JocysCom.ClassLibrary.IO
 			}
 		}
 
-		//static SP_DEVINFO_DATA[] GetDeviceInfoData(IntPtr deviceInfoSet, )
-		//{
-
-		//}
-
-
 		public static string GetDeviceDescription(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
 		{
 			var deviceDescription = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
@@ -455,7 +454,7 @@ namespace JocysCom.ClassLibrary.IO
 			return deviceDescription ?? "";
 		}
 
-		static DeviceInfo GetDeviceInfo(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
+		private static DeviceInfo GetDeviceInfo(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
 		{
 			var di = new DeviceInfo();
 			di.DeviceId = GetDeviceId(deviceInfoData.DevInst);
@@ -467,34 +466,27 @@ namespace JocysCom.ClassLibrary.IO
 			di.ClassGuid = deviceInfoData.ClassGuid;
 			di.ClassDescription = GetClassDescription(di.ClassGuid);
 			di.HardwareIds = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
-			var deviceHandle = deviceInfoData.DevInst;
 			// Get device status.
-			DeviceNodeStatus status;
-			NativeMethods.GetDeviceNodeStatus(deviceHandle, IntPtr.Zero, out status);
+			NativeMethods.GetDeviceNodeStatus(deviceInfoData.DevInst, IntPtr.Zero, out var status);
 			di.Status = status;
 			// Get device Vendor, Product and Revision ID.
-			uint vid;
-			uint pid;
-			uint rev;
-			var hwid = GetVidPidRev(deviceInfoSet, deviceInfoData, out vid, out pid, out rev);
+			var hwid = GetVidPidRev(deviceInfoSet, deviceInfoData, out var vid, out var pid, out var rev);
 			di.VendorId = vid;
 			di.ProductId = pid;
 			di.Revision = rev;
 			// Get Parent Device.
 			uint parentDeviceInstance;
-			var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, deviceHandle, 0);
+			var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, deviceInfoData.DevInst, 0);
 			if (CRResult == CR.CR_SUCCESS)
-			{
 				di.ParentDeviceId = GetDeviceId(parentDeviceInstance);
-			}
 			return di;
 		}
 
 		public static string GetAllDeviceProperties(string deviceId)
 		{
 			var sb = new StringBuilder();
-			Guid classGuid = System.Guid.Empty;
-			IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES);
+			var classGuid = System.Guid.Empty;
+			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES);
 			if (deviceInfoSet.ToInt64() != ERROR_INVALID_HANDLE_VALUE)
 			{
 				var deviceInfoData = GetDeviceInfo(deviceInfoSet, deviceId);
@@ -528,7 +520,7 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			lock (GetDevicesLock)
 			{
-				IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, flags); //  | DIGCF.DIGCF_PRESENT
+				var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, flags); //  | DIGCF.DIGCF_PRESENT
 				if (deviceInfoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
 				{
 					throw new Exception("Invalid Handle");
@@ -541,10 +533,11 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					if (deviceId == GetDeviceId(deviceInfoData.DevInst))
 					{
-						uint parentDeviceInstance = 0;
-						var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, deviceInfoData.DevInst, 0);
-						if (CRResult == CR.CR_NO_SUCH_DEVNODE) break;
-						if (CRResult != CR.CR_SUCCESS) break;
+						var CRResult = NativeMethods.CM_Get_Parent(out var parentDeviceInstance, deviceInfoData.DevInst, 0);
+						if (CRResult == CR.CR_NO_SUCH_DEVNODE)
+							break;
+						if (CRResult != CR.CR_SUCCESS)
+							break;
 						var parentDeviceId = GetDeviceId(parentDeviceInstance);
 						var devices = GetDevices(classGuid, flags, parentDeviceId);
 						if (devices.Length > 0)
@@ -559,8 +552,8 @@ namespace JocysCom.ClassLibrary.IO
 
 		public static string GetClassDescription(Guid classGuid)
 		{
-			StringBuilder deviceClassDescription = new StringBuilder(256);
-			UInt32 retLength = 0;
+			var deviceClassDescription = new StringBuilder(256);
+			uint retLength = 0;
 			NativeMethods.SetupDiGetClassDescription(ref classGuid, deviceClassDescription, deviceClassDescription.Capacity, ref retLength);
 			return deviceClassDescription.ToString();
 		}
@@ -570,7 +563,6 @@ namespace JocysCom.ClassLibrary.IO
 
 		public static bool ScanForHardwareChanges()
 		{
-			UInt32 devInst = 0;
 			CR status;
 			var CM_LOCATE_DEVNODE_NORMAL = 0x00000000;
 			//var CM_LOCATE_DEVNODE_PHANTOM = 0x00000001;
@@ -578,7 +570,7 @@ namespace JocysCom.ClassLibrary.IO
 			//var CM_LOCATE_DEVNODE_NOVALIDATION = 0x00000004;
 			//var CM_LOCATE_DEVNODE_BITS = 0x00000007;
 			// Get the root DEV node.
-			status = NativeMethods.CM_Locate_DevNode(out devInst, IntPtr.Zero, CM_LOCATE_DEVNODE_NORMAL);
+			status = NativeMethods.CM_Locate_DevNode(out var devInst, IntPtr.Zero, CM_LOCATE_DEVNODE_NORMAL);
 			if (status != CR.CR_SUCCESS)
 			{
 				return false;
@@ -609,8 +601,8 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			try
 			{
-				Guid classGuid = System.Guid.Empty;
-				IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+				var classGuid = System.Guid.Empty;
+				var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
 				if (deviceInfoSet.ToInt32() == INVALID_HANDLE_VALUE)
 				{
 					return false;
@@ -658,17 +650,20 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			try
 			{
-				SP_CLASSINSTALL_HEADER header = new SP_CLASSINSTALL_HEADER();
-				header.cbSize = (UInt32)Marshal.SizeOf(header);
+				var header = new SP_CLASSINSTALL_HEADER();
+				header.cbSize = (uint)Marshal.SizeOf(header);
 				header.InstallFunction = DIF_PROPERTYCHANGE;
-				SP_PROPCHANGE_PARAMS classInstallParams = new SP_PROPCHANGE_PARAMS();
-				classInstallParams.ClassInstallHeader = header;
-				classInstallParams.StateChange = bEnable ? DICS_ENABLE : DICS_DISABLE;
-				classInstallParams.Scope = DICS_FLAG_GLOBAL;
-				classInstallParams.HwProfile = 0;
-				var classInstallParamsSize = (UInt32)Marshal.SizeOf(classInstallParams);
-				bool result = NativeMethods.SetupDiSetClassInstallParams(deviceInfoSet, ref deviceInfoData, classInstallParams, classInstallParamsSize);
-				if (result) result = NativeMethods.SetupDiChangeState(deviceInfoSet, ref deviceInfoData);
+				var classInstallParams = new SP_PROPCHANGE_PARAMS
+				{
+					ClassInstallHeader = header,
+					StateChange = bEnable ? DICS_ENABLE : DICS_DISABLE,
+					Scope = DICS_FLAG_GLOBAL,
+					HwProfile = 0
+				};
+				var classInstallParamsSize = (uint)Marshal.SizeOf(classInstallParams);
+				var result = NativeMethods.SetupDiSetClassInstallParams(deviceInfoSet, ref deviceInfoData, classInstallParams, classInstallParamsSize);
+				if (result)
+					result = NativeMethods.SetupDiChangeState(deviceInfoSet, ref deviceInfoData);
 				if (!result)
 				{
 					var ex = new Win32Exception();
@@ -684,14 +679,13 @@ namespace JocysCom.ClassLibrary.IO
 
 		public static Win32Exception RemoveDevice(string deviceId)
 		{
-			bool needReboot;
-			return RemoveDevice(deviceId, 1, out needReboot);
+			return RemoveDevice(deviceId, 1, out var needReboot);
 		}
 
 		public static Win32Exception RemoveDevice(string deviceId, int method, out bool needReboot)
 		{
-			Guid classGuid = System.Guid.Empty;
-			IntPtr deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES);
+			var classGuid = System.Guid.Empty;
+			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid, IntPtr.Zero, IntPtr.Zero, DIGCF.DIGCF_ALLCLASSES);
 			Win32Exception ex = null;
 			needReboot = false;
 			var success = false;
@@ -704,14 +698,16 @@ namespace JocysCom.ClassLibrary.IO
 					switch (method)
 					{
 						case 1:
-							SP_CLASSINSTALL_HEADER header = new SP_CLASSINSTALL_HEADER();
-							header.cbSize = (UInt32)Marshal.SizeOf(header);
+							var header = new SP_CLASSINSTALL_HEADER();
+							header.cbSize = (uint)Marshal.SizeOf(header);
 							header.InstallFunction = DIF_REMOVE;
-							var classInstallParams = new SP_REMOVEDEVICE_PARAMS();
-							classInstallParams.ClassInstallHeader = header;
-							classInstallParams.Scope = DICS_FLAG_GLOBAL;
-							classInstallParams.HwProfile = 0;
-							var classInstallParamsSize = (UInt32)Marshal.SizeOf(classInstallParams);
+							var classInstallParams = new SP_REMOVEDEVICE_PARAMS
+							{
+								ClassInstallHeader = header,
+								Scope = DICS_FLAG_GLOBAL,
+								HwProfile = 0
+							};
+							var classInstallParamsSize = (uint)Marshal.SizeOf(classInstallParams);
 							success = NativeMethods.SetupDiSetClassInstallParams(deviceInfoSet, ref di, classInstallParams, classInstallParamsSize);
 							if (success)
 							{
@@ -733,11 +729,13 @@ namespace JocysCom.ClassLibrary.IO
 							break;
 						case 2:
 							success = NativeMethods.SetupDiRemoveDevice(deviceInfoSet, ref di);
-							if (!success) ex = new Win32Exception();
+							if (!success)
+								ex = new Win32Exception();
 							break;
 						case 3:
 							success = NativeMethods.DiUninstallDevice(IntPtr.Zero, deviceInfoSet, ref di, 0, out needReboot);
-							if (!success) ex = new Win32Exception();
+							if (!success)
+								ex = new Win32Exception();
 							break;
 						default:
 							break;

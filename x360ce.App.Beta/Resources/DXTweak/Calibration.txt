@@ -38,5 +38,6 @@ bytes[9] = (byte)(max / 256);
 // Set values.
 Registry.SetValue(regPath + '0', "Calibration", ByteArray);
 
-
+# Raw input:
+https://www.codeproject.com/Articles/185522/Using-the-Raw-Input-API-to-Process-Joystick-Input
 

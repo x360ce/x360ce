@@ -1,3 +1,7 @@
+v4.11.15.0 (2020-07-26)
+Fix: Missing Vendor, Product and Revision for some devices.
+Fix: XInput value jittering between 0 and -1 when DeadZone is set.
+
 v4.11.13.0 (2020-07-25)
 - Fix: Inaccessible dialog when Application is Always on Top.
 - Fix: Map Name drop down combo box on PAD Control.

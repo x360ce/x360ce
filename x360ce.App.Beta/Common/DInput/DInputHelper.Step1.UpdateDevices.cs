@@ -57,7 +57,10 @@ namespace x360ce.App.DInput
             if (addedDevices.Length > 0 || updatedDevices.Length > 0)
             {
                 devInfos = DeviceDetector.GetDevices();
+                //var classes = devInfos.Select(x=>x.ClassDescription).Distinct().ToArray();
+
                 intInfos = DeviceDetector.GetInterfaces();
+                //var intclasses = intInfos.Select(x => x.ClassDescription).Distinct().ToArray();
             }
             //Joystick    = new Guid("6f1d2b70-d5a0-11cf-bfc7-444553540000");
             //SysMouse    = new Guid("6f1d2b60-d5a0-11cf-bfc7-444553540000");
@@ -155,6 +158,16 @@ namespace x360ce.App.DInput
                 hid = intInfos.FirstOrDefault(x => x.DevicePath == interfacePath);
                 // Get interface info for added devices.
                 ud.LoadHidDeviceInfo(hid);
+                // Workaround: 
+                // Override Device values and description from the Interface, 
+                // because it is more accurate and present.
+                // Note1 : Device fields below, probably, should not be used.
+                // Note 2: Available when device is online.
+                ud.DevManufacturer = ud.HidManufacturer;
+                ud.DevDescription = ud.HidDescription;
+                ud.DevVendorId = ud.HidVendorId;
+                ud.DevProductId = ud.HidProductId;
+                ud.DevRevision = ud.HidRevision;
             }
         }
 
