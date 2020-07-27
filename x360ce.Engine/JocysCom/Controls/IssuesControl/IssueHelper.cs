@@ -86,7 +86,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 											: uninstallCommand.IndexOf(' ');
 										var upath = uninstallCommand.Substring(0, splitIndex);
 										var uargs = uninstallCommand.Substring(splitIndex);
-										OpenPath(upath, uargs);
+										ControlsHelper.OpenPath(upath, uargs);
 									}
 								}
 								return true;
@@ -189,23 +189,6 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			//MessageBox.Show(string.Join(", ", list.OrderBy(x => x)));
 			searcher.Dispose();
 			return list.Count > 0;
-		}
-
-		public static void OpenPath(string path, string arguments = null)
-		{
-			try
-			{
-				var fi = new FileInfo(path);
-				//if (!fi.Exists) return;
-				// Brings up the "Windows cannot open this file" dialog if association not found.
-				var psi = new ProcessStartInfo(path);
-				psi.UseShellExecute = true;
-				psi.WorkingDirectory = fi.Directory.FullName;
-				psi.ErrorDialog = true;
-				if (arguments != null) psi.Arguments = arguments;
-				Process.Start(psi);
-			}
-			catch (Exception) { }
 		}
 
 		public static void HoldWhileRunning(string processName, string argumentFilter = null)

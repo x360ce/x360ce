@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Reflection;
 using System.IO;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -20,7 +21,7 @@ namespace x360ce.App.Controls
 
 		void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			EngineHelper.OpenUrl(((Control)sender).Text);
+			ControlsHelper.OpenUrl(((Control)sender).Text);
 		}
 
 		void AboutControl_Load(object sender, EventArgs e)

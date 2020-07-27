@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
+﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
 using x360ce.Engine;
 
@@ -76,7 +77,7 @@ namespace x360ce.App.Issues
             var url = Environment.Is64BitOperatingSystem
                 ? "https://www.microsoft.com/en-us/download/details.aspx?id=46148"
                 : "https://www.microsoft.com/en-us/download/details.aspx?id=46078";
-            EngineHelper.OpenUrl(url);
+            ControlsHelper.OpenUrl(url);
         }
 
     }

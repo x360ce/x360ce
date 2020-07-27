@@ -472,17 +472,17 @@ namespace x360ce.App.Controls
 
 		private void GoogleSearchButton_Click(object sender, EventArgs e)
 		{
-			EngineHelper.OpenUrl(GetGoogleSearchUrl());
+			ControlsHelper.OpenUrl(GetGoogleSearchUrl());
 		}
 
 		private void NGEmuSearchLinkButton_Click(object sender, EventArgs e)
 		{
-			EngineHelper.OpenUrl(GetNGemuSearchUrl());
+			ControlsHelper.OpenUrl(GetNGemuSearchUrl());
 		}
 
 		private void NGEmuThreadLinkButton_Click(object sender, EventArgs e)
 		{
-			EngineHelper.OpenUrl(GetNGemuThreadUrl());
+			ControlsHelper.OpenUrl(GetNGemuThreadUrl());
 		}
 
 		#endregion

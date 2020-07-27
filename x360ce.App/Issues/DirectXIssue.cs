@@ -1,4 +1,5 @@
 ﻿using System;
+using JocysCom.ClassLibrary.Controls;
 using Microsoft.Win32;
 using x360ce.Engine;
 
@@ -34,7 +35,7 @@ namespace x360ce.App.Issues
 
 		public override void Fix()
 		{
-			EngineHelper.OpenUrl("http://www.microsoft.com/en-us/download/details.aspx?id=8109");
+			ControlsHelper.OpenUrl("http://www.microsoft.com/en-us/download/details.aspx?id=8109");
 			RaiseFixApplied();
 		}
 

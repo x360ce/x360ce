@@ -1,5 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
-using x360ce.Engine;
+﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.IssuesControl;
 
 namespace x360ce.App.Issues
 {
@@ -31,8 +31,8 @@ namespace x360ce.App.Issues
 
 		public override void FixTask()
 		{
-            // Microsoft Visual C++ 2015 Redistributable Update 3
-            EngineHelper.OpenUrl("https://www.microsoft.com/en-us/download/details.aspx?id=53587");
+			// Microsoft Visual C++ 2015 Redistributable Update 3
+			ControlsHelper.OpenUrl("https://www.microsoft.com/en-us/download/details.aspx?id=53587");
         }
     }
 }

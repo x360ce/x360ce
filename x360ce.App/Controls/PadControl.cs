@@ -12,6 +12,7 @@ using System.Linq;
 using x360ce.Engine;
 using System.Diagnostics;
 using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -1204,24 +1205,7 @@ namespace x360ce.App.Controls
 		{
 			var path = System.Environment.GetFolderPath(Environment.SpecialFolder.System);
 			path += "\\joy.cpl";
-			OpenPath(path, "");
-		}
-
-		void OpenPath(string path, string arguments = null)
-		{
-			try
-			{
-				var fi = new System.IO.FileInfo(path);
-				//if (!fi.Exists) return;
-				// Brings up the "Windows cannot open this file" dialog if association not found.
-				var psi = new ProcessStartInfo(path);
-				psi.UseShellExecute = true;
-				psi.WorkingDirectory = fi.Directory.FullName;
-				psi.ErrorDialog = true;
-				if (arguments != null) psi.Arguments = arguments;
-				Process.Start(psi);
-			}
-			catch (Exception) { }
+			ControlsHelper.OpenPath(path);
 		}
 
 		object TestTimerLock = new object();

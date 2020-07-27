@@ -995,12 +995,15 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
+		/// <summary>
+		/// Open file with associated program.
+		/// </summary>
+		/// <param name="path">file to open.</param>
 		public static void OpenPath(string path, string arguments = null)
 		{
 			try
 			{
 				var fi = new System.IO.FileInfo(path);
-				//if (!fi.Exists) return;
 				// Brings up the "Windows cannot open this file" dialog if association not found.
 				var psi = new System.Diagnostics.ProcessStartInfo(path);
 				psi.UseShellExecute = true;
@@ -1012,7 +1015,6 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 			catch (Exception) { }
 		}
-
 
 		#endregion
 

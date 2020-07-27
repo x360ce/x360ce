@@ -353,7 +353,7 @@ namespace x360ce.App.Controls
 
 		void AboutViGEmLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			EngineHelper.OpenUrl(((Control)sender).Text);
+			ControlsHelper.OpenUrl(((Control)sender).Text);
 		}
 
 		private void LoginButton_Click(object sender, EventArgs e)

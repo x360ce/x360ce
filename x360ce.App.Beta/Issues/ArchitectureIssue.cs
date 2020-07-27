@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using JocysCom.ClassLibrary.Win32;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Issues
 {
@@ -81,11 +82,11 @@ namespace x360ce.App.Issues
 		{
 			if (FixType == 1)
 			{
-				EngineHelper.OpenUrl("http://www.x360ce.com/Files/x360ce.zip");
+				ControlsHelper.OpenUrl("http://www.x360ce.com/Files/x360ce.zip");
 			}
 			else if (FixType == 2)
 			{
-				EngineHelper.OpenUrl("http://www.x360ce.com/Files/x360ce_x64.zip");
+				ControlsHelper.OpenUrl("http://www.x360ce.com/Files/x360ce_x64.zip");
 			}
 		}
 

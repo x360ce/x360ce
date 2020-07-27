@@ -614,6 +614,7 @@
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\DXTweak\DXTweak2.exe" />
     <None Include="Resources\Icons\ok.wmf" />
     <EmbeddedResource Include="Resources\ViGEmClient\x64\ViGEmClient.dll" />
     <EmbeddedResource Include="Resources\ViGEmClient\x86\ViGEmClient.dll" />

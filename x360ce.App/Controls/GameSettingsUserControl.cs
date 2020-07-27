@@ -261,7 +261,7 @@ namespace x360ce.App.Controls
 		private void StartGameButton_Click(object sender, EventArgs e)
 		{
 			var game = GameDetailsControl.CurrentGame;
-			EngineHelper.OpenPath(game.FullPath);
+			ControlsHelper.OpenPath(game.FullPath);
 		}
 
 		private void GamesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)

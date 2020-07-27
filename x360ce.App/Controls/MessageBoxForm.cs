@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -233,7 +234,7 @@ namespace x360ce.App.Controls
 
 		void MainLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			EngineHelper.OpenUrl(MainLinkLabel.Text);
+			ControlsHelper.OpenUrl(MainLinkLabel.Text);
 		}
 
 	}

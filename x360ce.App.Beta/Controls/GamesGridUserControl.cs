@@ -372,9 +372,8 @@ namespace x360ce.App.Controls
 			  .FirstOrDefault();
 			if (item == null)
 				return;
-			EngineHelper.OpenPath(item.FullPath);
+			ControlsHelper.OpenPath(item.FullPath);
 		}
-
 
 		private void SaveGamesButton_Click(object sender, EventArgs e)
 		{

@@ -288,23 +288,6 @@ namespace x360ce.Engine
 			}
 		}
 
-		public static void OpenUrl(string url)
-		{
-			try
-			{
-				System.Diagnostics.Process.Start(url);
-			}
-			catch (System.ComponentModel.Win32Exception noBrowser)
-			{
-				if (noBrowser.ErrorCode == -2147467259)
-					MessageBox.Show(noBrowser.Message);
-			}
-			catch (System.Exception other)
-			{
-				MessageBox.Show(other.Message);
-			}
-		}
-
 		public static void BrowsePath(string path)
 		{
 			var exists = File.Exists(path);
@@ -338,7 +321,7 @@ namespace x360ce.Engine
 				var isDirectory = attributes.HasFlag(FileAttributes.Directory);
 				if (isDirectory)
 				{
-					OpenPath(fixedPath);
+					JocysCom.ClassLibrary.Controls.ControlsHelper.OpenPath(fixedPath);
 				}
 				else
 				{
@@ -351,26 +334,6 @@ namespace x360ce.Engine
 				MessageBox.Show("Path not found!", "Path not found!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
-		}
-
-		/// <summary>
-		/// Open file with associated program.
-		/// </summary>
-		/// <param name="path">file to open.</param>
-		public static void OpenPath(string path, string arguments = null)
-		{
-			try
-			{
-				var fi = new FileInfo(path);
-				// Brings up the "Windows cannot open this file" dialog if association not found.
-				var psi = new ProcessStartInfo(path);
-				psi.UseShellExecute = true;
-				psi.WorkingDirectory = fi.Directory.FullName;
-				psi.ErrorDialog = true;
-				if (arguments != null) psi.Arguments = arguments;
-				Process.Start(psi);
-			}
-			catch (Exception) { }
 		}
 
 		public static string[] GetFiles(string path, string searchPattern, bool allDirectories = false)
@@ -666,6 +629,44 @@ namespace x360ce.Engine
 		}
 
 		#endregion
+
+		public static Exception ExtractFile(string name, out FileInfo fi)
+		{
+			fi = null;
+			try
+			{
+				// Extract file from Embedded resource.
+				var chName = x360ce.Engine.EngineHelper.GetResourceChecksumFile(name);
+				var fileName = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", chName);
+				fi = new FileInfo(fileName);
+				if (!fi.Exists)
+				{
+					if (!fi.Directory.Exists)
+						fi.Directory.Create();
+					var sr = GetResourceStream(name);
+					if (sr == null)
+						return new Exception("Resource not found.");
+					FileStream sw = null;
+					sw = new FileStream(fileName, FileMode.Create, FileAccess.Write);
+					var buffer = new byte[1024];
+					while (true)
+					{
+						var count = sr.Read(buffer, 0, buffer.Length);
+						if (count == 0)
+							break;
+						sw.Write(buffer, 0, count);
+					}
+					sr.Close();
+					sw.Close();
+				}
+			}
+			catch (Exception ex)
+			{
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				return ex;
+			}
+			return null;
+		}
 
 		/// <summary>
 		/// Get file name inside the folder with CRC32 checksum prefix.

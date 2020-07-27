@@ -11,6 +11,7 @@ using x360ce.Engine;
 using System.IO;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Win32;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -525,17 +526,17 @@ namespace x360ce.App.Controls
 
 		private void GoogleSearchButton_Click(object sender, EventArgs e)
 		{
-			EngineHelper.OpenUrl(GetGoogleSearchUrl());
+			ControlsHelper.OpenUrl(GetGoogleSearchUrl());
 		}
 
 		private void NGEmuSearchLinkButton_Click(object sender, EventArgs e)
 		{
-			EngineHelper.OpenUrl(GetNGemuSearchUrl());
+			ControlsHelper.OpenUrl(GetNGemuSearchUrl());
 		}
 
 		private void NGEmuThreadLinkButton_Click(object sender, EventArgs e)
 		{
-			EngineHelper.OpenUrl(GetNGemuThreadUrl());
+			ControlsHelper.OpenUrl(GetNGemuThreadUrl());
 		}
 	}
 }

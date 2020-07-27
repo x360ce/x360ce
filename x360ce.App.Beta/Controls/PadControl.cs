@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -1331,26 +1332,9 @@ namespace x360ce.App.Controls
 		{
 			var path = System.Environment.GetFolderPath(Environment.SpecialFolder.System);
 			path += "\\joy.cpl";
-			OpenPath(path, "");
+			ControlsHelper.OpenPath(path);
 		}
 
-		void OpenPath(string path, string arguments = null)
-		{
-			try
-			{
-				var fi = new System.IO.FileInfo(path);
-				//if (!fi.Exists) return;
-				// Brings up the "Windows cannot open this file" MessageBox if association not found.
-				var psi = new ProcessStartInfo(path);
-				psi.UseShellExecute = true;
-				psi.WorkingDirectory = fi.Directory.FullName;
-				psi.ErrorDialog = true;
-				if (arguments != null)
-					psi.Arguments = arguments;
-				Process.Start(psi);
-			}
-			catch (Exception) { }
-		}
 
 		LoadPresetsForm presetForm;
 
@@ -1647,5 +1631,18 @@ namespace x360ce.App.Controls
 				list.Add("Alternative implementation - two motors / actuators per effect.");
 			EffectDescriptionLabel.Text = string.Format("{0} ({1}) - {2}", type, (int)type, string.Join(" ", list));
 		}
+
+		private void CalibrateButton_Click(object sender, EventArgs e)
+		{
+			FileInfo fi;
+			var error = EngineHelper.ExtractFile("DXTweak2.exe", out fi);
+			if (error != null)
+			{
+				MessageBox.Show(error.Message);
+				return;
+			}
+			ControlsHelper.OpenPath(fi.FullName);
+		}
+
 	}
 }

@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
+﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
 using System.IO;
 using x360ce.Engine;
@@ -79,7 +80,7 @@ namespace x360ce.App.Issues
         public override void FixTask()
         {
             // Xbox 360 Controller for Windows
-            EngineHelper.OpenUrl("https://www.microsoft.com/accessories/en-au/d/xbox-360-controller-for-windows");
+            ControlsHelper.OpenUrl("https://www.microsoft.com/accessories/en-au/d/xbox-360-controller-for-windows");
         }
     }
 }
