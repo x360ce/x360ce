@@ -232,6 +232,12 @@
     <Compile Include="JocysCom\Controls\IssuesControl\IssuesUserControl.Designer.cs">
       <DependentUpon>IssuesUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\LogTextBoxUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Controls\LogTextBoxUserControl.Designer.cs">
+      <DependentUpon>LogTextBoxUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="JocysCom\Controls\MessageBoxForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -436,6 +442,11 @@
     <Compile Include="Maps\SettingsConverter.cs" />
     <Compile Include="Maps\SettingType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SharpDX.XInput\BatteryDeviceType.cs" />
     <Compile Include="SharpDX.XInput\BatteryInformation.cs" />
     <Compile Include="SharpDX.XInput\BatteryLevel.cs" />
@@ -499,11 +510,18 @@
     <EmbeddedResource Include="JocysCom\Controls\IssuesControl\IssuesUserControl.resx">
       <DependentUpon>IssuesUserControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="JocysCom\Controls\LogTextBoxUserControl.resx">
+      <DependentUpon>LogTextBoxUserControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\Controls\MessageBoxForm.resx">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
       <DependentUpon>HardwareControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

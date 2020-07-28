@@ -220,7 +220,9 @@ namespace JocysCom.ClassLibrary.IO
 		private static string GetStringPropertyForDevice(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, SPDRP propId)
 		{
 			// Get buffer size.
-			var result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out var proptype, null, 0, out var outsize);
+			uint proptype;
+			uint outsize;
+			var result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out proptype, null, 0, out outsize);
 			if (!result)
 			{
 				var errorCode = Marshal.GetLastWin32Error();
@@ -286,10 +288,10 @@ namespace JocysCom.ClassLibrary.IO
 		public static System.Drawing.Icon GetClassIcon(Guid classGuid)
 		{
 			System.Drawing.Icon icon = null;
-			if (NativeMethods.SetupDiLoadClassIcon(ref classGuid, out var hIcon, out var ix) != 0)
-			{
+			IntPtr hIcon;
+			int index;
+			if (NativeMethods.SetupDiLoadClassIcon(ref classGuid, out hIcon, out index) != 0)
 				icon = System.Drawing.Icon.FromHandle(hIcon);
-			}
 			return icon;
 		}
 
@@ -408,7 +410,7 @@ namespace JocysCom.ClassLibrary.IO
 				classGuid = Guid.Empty;
 			lock (GetDevicesLock)
 			{
-				// https://msdn.microsoft.com/en-us/library/windows/hardware/ff541247%28v=vs.85%29.aspx
+				// https://docs.microsoft.com/en-gb/windows-hardware/drivers/install/device-information-sets
 				//
 				// [Device Information Set] 
 				//  ├──[Device Information]
@@ -456,8 +458,10 @@ namespace JocysCom.ClassLibrary.IO
 
 		private static DeviceInfo GetDeviceInfo(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData)
 		{
-			var di = new DeviceInfo();
-			di.DeviceId = GetDeviceId(deviceInfoData.DevInst);
+			var di = new DeviceInfo
+			{
+				DeviceId = GetDeviceId(deviceInfoData.DevInst)
+			};
 			var deviceDescription = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
 			var deviceFriendlyName = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_FRIENDLYNAME);
 			di.Description = deviceDescription ?? deviceFriendlyName ?? "";
@@ -467,10 +471,14 @@ namespace JocysCom.ClassLibrary.IO
 			di.ClassDescription = GetClassDescription(di.ClassGuid);
 			di.HardwareIds = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
 			// Get device status.
-			NativeMethods.GetDeviceNodeStatus(deviceInfoData.DevInst, IntPtr.Zero, out var status);
+			DeviceNodeStatus status;
+			NativeMethods.GetDeviceNodeStatus(deviceInfoData.DevInst, IntPtr.Zero, out status);
 			di.Status = status;
 			// Get device Vendor, Product and Revision ID.
-			var hwid = GetVidPidRev(deviceInfoSet, deviceInfoData, out var vid, out var pid, out var rev);
+			uint vid;
+			uint pid;
+			uint rev;
+			var hwid = GetVidPidRev(deviceInfoSet, deviceInfoData, out vid, out pid, out rev);
 			di.VendorId = vid;
 			di.ProductId = pid;
 			di.Revision = rev;
@@ -533,7 +541,8 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					if (deviceId == GetDeviceId(deviceInfoData.DevInst))
 					{
-						var CRResult = NativeMethods.CM_Get_Parent(out var parentDeviceInstance, deviceInfoData.DevInst, 0);
+						uint parentDeviceInstance;
+						var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, deviceInfoData.DevInst, 0);
 						if (CRResult == CR.CR_NO_SUCH_DEVNODE)
 							break;
 						if (CRResult != CR.CR_SUCCESS)
@@ -570,7 +579,8 @@ namespace JocysCom.ClassLibrary.IO
 			//var CM_LOCATE_DEVNODE_NOVALIDATION = 0x00000004;
 			//var CM_LOCATE_DEVNODE_BITS = 0x00000007;
 			// Get the root DEV node.
-			status = NativeMethods.CM_Locate_DevNode(out var devInst, IntPtr.Zero, CM_LOCATE_DEVNODE_NORMAL);
+			uint devInst;
+			status = NativeMethods.CM_Locate_DevNode(out devInst, IntPtr.Zero, CM_LOCATE_DEVNODE_NORMAL);
 			if (status != CR.CR_SUCCESS)
 			{
 				return false;
@@ -679,7 +689,8 @@ namespace JocysCom.ClassLibrary.IO
 
 		public static Win32Exception RemoveDevice(string deviceId)
 		{
-			return RemoveDevice(deviceId, 1, out var needReboot);
+			bool needReboot;
+			return RemoveDevice(deviceId, 1, out needReboot);
 		}
 
 		public static Win32Exception RemoveDevice(string deviceId, int method, out bool needReboot)

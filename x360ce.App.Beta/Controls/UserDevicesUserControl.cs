@@ -145,6 +145,7 @@ namespace x360ce.App.Controls
 		private void HardwareButton_Click(object sender, EventArgs e)
 		{
 			var form = new HardwareForm();
+			form.StartPosition = FormStartPosition.CenterParent;
 			ControlsHelper.CheckTopMost(form);
 			form.ShowDialog();
 			form.Dispose();

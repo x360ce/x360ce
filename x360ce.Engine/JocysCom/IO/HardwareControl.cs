@@ -1,9 +1,12 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.IO
@@ -16,6 +19,7 @@ namespace JocysCom.ClassLibrary.IO
 		public HardwareControl()
 		{
 			InitializeComponent();
+			ControlsHelper.InitInvokeContext();
 		}
 
 		DeviceDetector detector;
@@ -27,9 +31,14 @@ namespace JocysCom.ClassLibrary.IO
 		/// </summary>
 		private void HardwareControl_Load(object sender, EventArgs e)
 		{
-			if (IsDesignMode) return;
+			if (IsDesignMode)
+				return;
+			ControlsHelper.ApplyBorderStyle(MainToolStrip);
+			ControlsHelper.ApplyImageStyle(MainTabControl);
+			ControlsHelper.ApplyBorderStyle(DeviceDataGridView);
 			UpdateButtons();
 			detector = new DeviceDetector(false);
+			RefreshHardwareList();
 		}
 
 		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
@@ -206,9 +215,9 @@ namespace JocysCom.ClassLibrary.IO
 					interfaces = DeviceDetector.GetInterfaces().ToList();
 					devices.AddRange(interfaces);
 				}
-				var filter = FilterTextBox.Text.Trim();
+				var filter = FilterStripTextBox.Text.Trim();
 				var view = devices;
-				if (EnableFilterCheckBox.Checked && !string.IsNullOrEmpty(filter))
+				if (!string.IsNullOrEmpty(filter))
 				{
 					view = devices.Where(x =>
 						comp(x.ClassDescription, filter) ||
@@ -226,7 +235,7 @@ namespace JocysCom.ClassLibrary.IO
 					DeviceDataGridView.SelectionChanged += DeviceDataGridView_SelectionChanged;
 					DeviceDataGridView_SelectionChanged(DeviceDataGridView, new EventArgs());
 				});
-				DeviceTabPage.Text = string.Format("{0} Devices on {1:yyyy-MM-dd HH:mm:ss}", view.Count, DateTime.Now);
+				DeviceListTabPage.Text = string.Format("Device List [{0}]", view.Count);
 				var dis = devices.Where(x => string.IsNullOrEmpty(x.ParentDeviceId)).ToArray();
 				var classes = devices.Select(x => x.ClassGuid).Distinct();
 
@@ -334,13 +343,92 @@ namespace JocysCom.ClassLibrary.IO
 			RefreshHardwareList();
 		}
 
-		private void RefreshOnChnageCheckBox_CheckedChanged(object sender, EventArgs e)
+		#region Clear
+
+		async Task CheckAncClean(bool clean)
 		{
-			detector.DeviceChanged -= detector_DeviceChanged;
-			if (RefreshOnChnageCheckBox.Checked)
+			LogTextBox.Clear();
+			MainTabControl.SelectedTab = LogsTabPage;
+			var cancellationToken = new CancellationToken(false);
+			var so = ControlsHelper.MainTaskScheduler;
+			var unused = Task.Factory.StartNew(() =>
+			  {
+				  AddLog("Enumerating Devices...");
+				  var devices = DeviceDetector.GetDevices();
+				  var offline = devices.Where(x => !x.IsPresent && x.IsRemovable && !x.Description.Contains("RAS Async Adapter")).ToArray();
+				  var problem = devices.Where(x => x.Status.HasFlag(DeviceNodeStatus.DN_HAS_PROBLEM)).Except(offline).ToArray();
+				  var unknown = devices.Where(x => x.Description.Contains("Unknown")).Except(offline).Except(problem).ToArray();
+				  var list = new List<string>();
+				  if (offline.Length > 0)
+					  list.Add(string.Format("{0} offline devices.", offline.Length));
+				  if (problem.Length > 0)
+					  list.Add(string.Format("{0} problem devices.", problem.Length));
+				  if (unknown.Length > 0)
+					  list.Add(string.Format("{0} unknown devices.", unknown.Length));
+				  var message = string.Join("\r\n", list);
+				  if (list.Count == 0)
+				  {
+					  AddLog("No offline, problem or unknown devices found.");
+				  }
+				  else if (clean)
+				  {
+					  foreach (var item in list)
+						  AddLog(item);
+					  var result = DialogResult.No;
+					  ControlsHelper.Invoke(new Action(() =>
+					  {
+						  var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
+						  form.StartPosition = FormStartPosition.CenterParent;
+						  ControlsHelper.CheckTopMost(form);
+						  result = form.ShowForm(
+								  "Do you want to remove offline, problem or unknown devices?\r\n\r\n" + message,
+								  "Do you want to remove devices?",
+								  MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+						  form.Dispose();
+
+					  }));
+					  if (result != DialogResult.Yes)
+						  return;
+					  var devList = new List<DeviceInfo>();
+					  devList.AddRange(offline);
+					  devList.AddRange(problem);
+					  devList.AddRange(unknown);
+					  for (int i = 0; i < devList.Count; i++)
+					  {
+						  var item = devList[i];
+						  AddLog("Removing Device: {0}/{1} - {2}", i + 1, list.Count, item.Description);
+						  try
+						  {
+							  var exception = DeviceDetector.RemoveDevice(item.DeviceId);
+							  if (exception != null)
+								  AddLog(exception.Message);
+							  //System.Windows.Forms.Application.DoEvents();
+						  }
+						  catch (Exception ex)
+						  {
+							  AddLog(ex.Message);
+						  }
+					  }
+				  }
+				  AddLog("Done");
+			  }, CancellationToken.None, TaskCreationOptions.LongRunning, so).ConfigureAwait(true);
+		}
+
+		void AddLog(string format, params object[] args)
+		{
+			ControlsHelper.Invoke(new Action(() =>
 			{
-				detector.DeviceChanged += detector_DeviceChanged;
-			}
+				//LogTextBox.AddLog(format, args);
+				LogTextBox.AppendText(string.Format(format + "\r\n", args));
+			}));
+		}
+
+		#endregion
+
+		async private void CleanButton_Click(object sender, EventArgs e)
+		{
+			await CheckAncClean(true).ConfigureAwait(true);
+			RefreshHardwareList();
 		}
 	}
 }
