@@ -9,33 +9,29 @@ namespace JocysCom.ClassLibrary.IO
 	public partial class DeviceDetector
 	{
 
-		public static SP_DRVINFO_DATA[] GetDrivers(Guid? classGuid = null, DIGCF flags = DIGCF.DIGCF_ALLCLASSES, SPDIT driverType = SPDIT.SPDIT_COMPATDRIVER, string deviceId = null, string hardwareId = null)
+		public static SP_DRVINFO_DATA[] GetDrivers(Guid? classGuid = null, DIGCF? flags = null, SPDIT driverType = SPDIT.SPDIT_COMPATDRIVER, string deviceId = null, string hardwareId = null)
 		{
 			var drvInfoList = new List<SP_DRVINFO_DATA>();
-			var deviceInfoSet = NativeMethods.SetupDiGetClassDevs(classGuid ?? Guid.Empty, IntPtr.Zero, IntPtr.Zero, flags);
-			if (deviceInfoSet.ToInt64() == ERROR_INVALID_HANDLE_VALUE)
-				return drvInfoList.ToArray();
-			// Loop through device info.
-			var deviceInfoData = new SP_DEVINFO_DATA();
-			deviceInfoData.Initialize();
-			for (int i = 0; NativeMethods.SetupDiEnumDeviceInfo(deviceInfoSet, i, ref deviceInfoData); i++)
+
+			_EnumDeviceInfo(classGuid, flags, deviceId, (infoSet, infoData) =>
 			{
 				if (!string.IsNullOrEmpty(deviceId))
 				{
-					var currentDeviceId = GetDeviceId(deviceInfoData.DevInst);
+					var currentDeviceId = GetDeviceId(infoData.DevInst);
 					if (string.Compare(deviceId, currentDeviceId, true) != 0)
-						continue;
+						return true;
 				}
 				if (!string.IsNullOrEmpty(hardwareId))
 				{
-					var currentHardwareId = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
+					var currentHardwareId = GetStringPropertyForDevice(infoSet, infoData, SPDRP.SPDRP_HARDWAREID);
 					if (string.Compare(hardwareId, currentHardwareId, true) != 0)
-						continue;
+						return true;
 				}
-				var drivers = GetDrivers(deviceInfoSet, ref deviceInfoData, driverType);
+				var drivers = GetDrivers(infoSet, ref infoData, driverType);
 				drvInfoList.AddRange(drivers);
-			}
-			NativeMethods.SetupDiDestroyDeviceInfoList(deviceInfoSet);
+
+				return true;
+			});
 			return drvInfoList.ToArray();
 		}
 

@@ -81,6 +81,9 @@ namespace JocysCom.ClassLibrary.Win32
 		[DllImport("setupapi.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		public static extern bool SetupDiSetSelectedDevice(IntPtr deviceInfoSet, ref SP_DEVINFO_DATA deviceInfoData);
 
+		[DllImport("setupapi.dll", SetLastError = true)]
+		public static extern CR CM_Get_DevNode_Status(out uint status, out uint probNum, uint devInst, int flags);
+
 		[DllImport("setupapi.dll", CharSet = CharSet.Auto)]
 		public static extern CR CM_Get_DevNode_Status_Ex(UInt32 dnDevInst, StringBuilder Buffer, UInt32 BufferLen, UInt32 ulFlags);
 

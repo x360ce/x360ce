@@ -22,7 +22,7 @@ namespace JocysCom.ClassLibrary.IO
 			ControlsHelper.InitInvokeContext();
 		}
 
-		DeviceDetector detector;
+		private DeviceDetector detector;
 
 		/// <summary>
 		/// In the form load we take an initial hardware inventory,
@@ -41,9 +41,9 @@ namespace JocysCom.ClassLibrary.IO
 			RefreshHardwareList();
 		}
 
-		internal bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
+		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
 
-		void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
+		private void detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
 			if (e.ChangeType == Win32.DBT.DBT_DEVNODES_CHANGED)
 			{
@@ -108,32 +108,44 @@ namespace JocysCom.ClassLibrary.IO
 			EnableCurrentDevice(false);
 		}
 
-		void EnableCurrentDevice(bool enable)
+		private void EnableCurrentDevice(bool enable)
 		{
 			var row = DeviceDataGridView.SelectedRows.Cast<DataGridViewRow>().First();
 			if (row != null)
 			{
 				var device = (DeviceInfo)row.DataBoundItem;
 				DeviceDetector.SetDeviceState(device.DeviceId, enable);
+				UpdateButtons();
 			}
 		}
 
-		void UpdateButtons()
+		private void UpdateButtons()
 		{
-			var selected = DeviceDataGridView.SelectedRows.Count > 0;
-			EnableButton.Enabled = selected;
-			DisableButton.Enabled = selected;
-			var canRemove = false;
-			if (selected)
+			DeviceInfo di = null;
+			var devices = false;
+			if (MainTabControl.SelectedTab == DeviceTreeTabPage)
 			{
-				var row = DeviceDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-				if (row != null)
-				{
-					var device = (DeviceInfo)row.DataBoundItem;
-					canRemove = device.IsRemovable;
-				}
+				di = (DeviceInfo)DevicesTreeView.SelectedNode?.Tag;
+				devices = true;
 			}
-			RemoveButton.Enabled = canRemove;
+			if (MainTabControl.SelectedTab == DeviceListTabPage)
+			{
+				di = (DeviceInfo)DeviceDataGridView.SelectedRows
+					.Cast<DataGridViewRow>()
+					.FirstOrDefault()?.DataBoundItem;
+				devices = true;
+			}
+			bool? isDisabled = null;
+			if (di != null)
+			{
+				var value = DeviceDetector.IsDeviceDisabled(di.DeviceId);
+				isDisabled = value.HasValue && value.Value;
+			}
+			EnableButton.Enabled = isDisabled.HasValue && isDisabled.Value;
+			DisableButton.Enabled = isDisabled.HasValue && !isDisabled.Value;
+			// Update buttons.
+			RemoveButton.Enabled = di != null && di.IsRemovable;
+			CleanButton.Enabled = devices;
 		}
 
 		private void DeviceDataGridView_SelectionChanged(object sender, EventArgs e)
@@ -148,19 +160,15 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				var device = (DeviceInfo)row.DataBoundItem;
 				if (device.IsRemovable)
-				{
 					DeviceDetector.RemoveDevice(device.DeviceId);
-				}
 			}
 		}
 
 		private void DeviceDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			var item = (DeviceInfo)DeviceDataGridView.Rows[e.RowIndex].DataBoundItem;
-			if (item != null && item.IsRemovable && !item.IsPresent)
-			{
-				e.CellStyle.ForeColor = System.Drawing.SystemColors.GrayText;
-			}
+			if (item != null)
+				e.CellStyle.ForeColor = GetForeColor(item);
 		}
 
 		private void ScanButton_Click(object sender, EventArgs e)
@@ -175,19 +183,21 @@ namespace JocysCom.ClassLibrary.IO
 
 		#region Refresh Timer
 
-		object RefreshTimerLock = new object();
-		System.Timers.Timer RefreshTimer;
+		private readonly object RefreshTimerLock = new object();
+		private System.Timers.Timer RefreshTimer;
 
-		void RefreshHardwareList()
+		private void RefreshHardwareList()
 		{
 			lock (RefreshTimerLock)
 			{
 				if (RefreshTimer == null)
 				{
-					RefreshTimer = new System.Timers.Timer();
-					RefreshTimer.SynchronizingObject = this;
-					RefreshTimer.AutoReset = false;
-					RefreshTimer.Interval = 520;
+					RefreshTimer = new System.Timers.Timer
+					{
+						SynchronizingObject = this,
+						AutoReset = false,
+						Interval = 520
+					};
 					RefreshTimer.Elapsed += new System.Timers.ElapsedEventHandler(_RefreshTimer_Elapsed);
 				}
 			}
@@ -195,17 +205,17 @@ namespace JocysCom.ClassLibrary.IO
 			RefreshTimer.Start();
 		}
 
-		List<DeviceInfo> devices = new List<DeviceInfo>();
-		List<DeviceInfo> interfaces = new List<DeviceInfo>();
+		private List<DeviceInfo> devices = new List<DeviceInfo>();
+		private List<DeviceInfo> interfaces = new List<DeviceInfo>();
 
-		void _RefreshTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		private void _RefreshTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			UpdateGrid(true);
 		}
 
-		object updateGridLock = new object();
+		private readonly object updateGridLock = new object();
 
-		void UpdateGrid(bool updateDevices)
+		private void UpdateGrid(bool updateDevices)
 		{
 			lock (updateGridLock)
 			{
@@ -236,53 +246,64 @@ namespace JocysCom.ClassLibrary.IO
 					DeviceDataGridView_SelectionChanged(DeviceDataGridView, new EventArgs());
 				});
 				DeviceListTabPage.Text = string.Format("Device List [{0}]", view.Count);
-				var dis = devices.Where(x => string.IsNullOrEmpty(x.ParentDeviceId)).ToArray();
-				var classes = devices.Select(x => x.ClassGuid).Distinct();
-
-				// Suppress repainting the TreeView until all the objects have been created.
-				DevicesTreeView.Nodes.Clear();
-				TreeImageList.Images.Clear();
-				foreach (var cl in classes)
-				{
-					var icon = DeviceDetector.GetClassIcon(cl);
-					if (icon != null)
-					{
-						Image img = new Icon(icon, 16, 16).ToBitmap();
-						TreeImageList.Images.Add(cl.ToString(), img);
-					}
-				}
-				DevicesTreeView.BeginUpdate();
-				foreach (DeviceInfo di in dis)
-				{
-					var tn = new TreeNode(System.Environment.MachineName);
-					tn.Tag = di;
-					tn.ImageKey = di.ClassGuid.ToString();
-					tn.SelectedImageKey = di.ClassGuid.ToString();
-					DevicesTreeView.Nodes.Add(tn);
-					AddChildren(tn);
-				}
-				DevicesTreeView.EndUpdate();
-				DevicesTreeView.ExpandAll();
+				BindDeviceTree();
 			}
 		}
 
-		void AddChildren(TreeNode parentNode)
+		private void BindDeviceTree()
 		{
-			var parentDi = (DeviceInfo)parentNode.Tag;
-			var parentDeviceId = parentDi.DeviceId;
-			var dis = devices.Where(x => x.ParentDeviceId == parentDeviceId && x.IsPresent).OrderBy(x => x.Description).ToArray();
-			foreach (DeviceInfo di in dis)
+			var classes = devices.Select(x => x.ClassGuid).Distinct();
+			// Suppress repainting the TreeView until all the objects have been created.
+			DevicesTreeView.Nodes.Clear();
+			TreeImageList.Images.Clear();
+			foreach (var cl in classes)
 			{
-				var tn = new TreeNode(di.Description);
-				tn.Tag = di;
-				tn.ImageKey = di.ClassGuid.ToString();
-				tn.SelectedImageKey = di.ClassGuid.ToString();
-				parentNode.Nodes.Add(tn);
-				AddChildren(tn);
+				var icon = DeviceDetector.GetClassIcon(cl);
+				if (icon != null)
+				{
+					var img = new Icon(icon, 16, 16).ToBitmap();
+					TreeImageList.Images.Add(cl.ToString(), img);
+				}
+			}
+			DevicesTreeView.BeginUpdate();
+			// Get top devices with no parent (only one device).
+			var dis = devices.Where(x => string.IsNullOrEmpty(x.ParentDeviceId)).ToArray();
+			AddChildNodes(DevicesTreeView.Nodes, dis, System.Environment.MachineName);
+			DevicesTreeView.EndUpdate();
+			DevicesTreeView.ExpandAll();
+		}
+
+		Color GetForeColor(DeviceInfo di)
+		{
+			return di.IsHidden
+					? Color.DarkRed
+					: di.IsPresent
+						? ForeColor
+						: SystemColors.ControlDarkDark;
+		}
+
+		void AddChildNodes(TreeNodeCollection nodes, DeviceInfo[] dis, string overrideName = null)
+		{
+			foreach (var di in dis)
+			{
+				var tn = new TreeNode()
+				{
+					Tag = di,
+					Text = overrideName ?? di.Description,
+					ImageKey = di.ClassGuid.ToString(),
+					SelectedImageKey = di.ClassGuid.ToString(),
+					ForeColor = GetForeColor(di),
+				};
+				nodes.Add(tn);
+				var dis2 = devices
+					.Where(x => x.ParentDeviceId == di.DeviceId)
+					//.Where(x => x.IsPresent)
+					.OrderBy(x => x.Description).ToArray();
+				AddChildNodes(tn.Nodes, dis2);
 			}
 		}
 
-		bool comp(string source, string value)
+		private bool comp(string source, string value)
 		{
 			return source.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
@@ -291,19 +312,21 @@ namespace JocysCom.ClassLibrary.IO
 
 		#region Filter Timer
 
-		System.Timers.Timer FilterTimer;
-		object FilterTimerLock = new object();
+		private System.Timers.Timer FilterTimer;
+		private readonly object FilterTimerLock = new object();
 
-		void RefreshFilterTimer()
+		private void RefreshFilterTimer()
 		{
 			lock (FilterTimerLock)
 			{
 				if (FilterTimer == null)
 				{
-					FilterTimer = new System.Timers.Timer();
-					FilterTimer.AutoReset = false;
-					FilterTimer.Interval = 520;
-					FilterTimer.SynchronizingObject = this;
+					FilterTimer = new System.Timers.Timer
+					{
+						AutoReset = false,
+						Interval = 520,
+						SynchronizingObject = this
+					};
 					FilterTimer.Elapsed += FilterTimer_Elapsed;
 				}
 			}
@@ -338,6 +361,8 @@ namespace JocysCom.ClassLibrary.IO
 			DeviceStatusTextBox.Text = di.Status.ToString();
 		}
 
+		
+
 		private void RefreshButton_Click(object sender, EventArgs e)
 		{
 			RefreshHardwareList();
@@ -345,7 +370,7 @@ namespace JocysCom.ClassLibrary.IO
 
 		#region Clear
 
-		async Task CheckAncClean(bool clean)
+		private async Task CheckAncClean(bool clean)
 		{
 			LogTextBox.Clear();
 			MainTabControl.SelectedTab = LogsTabPage;
@@ -377,8 +402,10 @@ namespace JocysCom.ClassLibrary.IO
 					  var result = DialogResult.No;
 					  ControlsHelper.Invoke(new Action(() =>
 					  {
-						  var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
-						  form.StartPosition = FormStartPosition.CenterParent;
+						  var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm
+						  {
+							  StartPosition = FormStartPosition.CenterParent
+						  };
 						  ControlsHelper.CheckTopMost(form);
 						  result = form.ShowForm(
 								  "Do you want to remove offline, problem or unknown devices?\r\n\r\n" + message,
@@ -393,7 +420,7 @@ namespace JocysCom.ClassLibrary.IO
 					  devList.AddRange(offline);
 					  devList.AddRange(problem);
 					  devList.AddRange(unknown);
-					  for (int i = 0; i < devList.Count; i++)
+					  for (var i = 0; i < devList.Count; i++)
 					  {
 						  var item = devList[i];
 						  AddLog("Removing Device: {0}/{1} - {2}", i + 1, list.Count, item.Description);
@@ -414,7 +441,7 @@ namespace JocysCom.ClassLibrary.IO
 			  }, CancellationToken.None, TaskCreationOptions.LongRunning, so).ConfigureAwait(true);
 		}
 
-		void AddLog(string format, params object[] args)
+		private void AddLog(string format, params object[] args)
 		{
 			ControlsHelper.Invoke(new Action(() =>
 			{
@@ -425,7 +452,7 @@ namespace JocysCom.ClassLibrary.IO
 
 		#endregion
 
-		async private void CleanButton_Click(object sender, EventArgs e)
+		private async void CleanButton_Click(object sender, EventArgs e)
 		{
 			await CheckAncClean(true).ConfigureAwait(true);
 			RefreshHardwareList();
