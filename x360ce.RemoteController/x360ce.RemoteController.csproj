@@ -40,6 +40,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -71,6 +72,9 @@
     </Compile>
     <Compile Include="..\x360ce.Engine\JocysCom\Configuration\AssemblyInfo.cs">
       <Link>Common\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Configuration\SettingsParser.cs">
+      <Link>Common\SettingsParser.cs</Link>
     </Compile>
     <Compile Include="..\x360ce.Engine\JocysCom\Data\TlvSerializer.cs">
       <Link>Common\TlvSerializer.cs</Link>

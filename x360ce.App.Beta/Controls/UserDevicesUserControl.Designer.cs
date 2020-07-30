@@ -31,9 +31,16 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserDevicesUserControl));
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserDevicesUserControl));
 			this.DevicesDataGridView = new System.Windows.Forms.DataGridView();
+			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.IsHiddenColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
 			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
 			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
@@ -44,13 +51,6 @@
 			this.HiddenDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.UnhideAllDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.synchronizeToHidGuardianToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.MySidColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.IsHiddenColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this.DevicesDataGridView)).BeginInit();
 			this.ControllersToolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -106,104 +106,6 @@
 			this.DevicesDataGridView.TabIndex = 0;
 			this.DevicesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.DevicesDataGridView_CellClick);
 			this.DevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.DevicesDataGridView_CellFormatting);
-			// 
-			// ControllersToolStrip
-			// 
-			this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.RefreshButton,
-            this.ControllerDeleteButton,
-            this.HardwareButton,
-            this.AddDemoDevice,
-            this.toolStripDropDownButton1});
-			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
-			this.ControllersToolStrip.Name = "ControllersToolStrip";
-			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.ControllersToolStrip.Size = new System.Drawing.Size(717, 25);
-			this.ControllersToolStrip.TabIndex = 1;
-			this.ControllersToolStrip.Text = "MySettingsToolStrip";
-			// 
-			// RefreshButton
-			// 
-			this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
-			this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.RefreshButton.Name = "RefreshButton";
-			this.RefreshButton.Size = new System.Drawing.Size(66, 22);
-			this.RefreshButton.Text = "&Refresh";
-			this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
-			// 
-			// ControllerDeleteButton
-			// 
-			this.ControllerDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
-			this.ControllerDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.ControllerDeleteButton.Name = "ControllerDeleteButton";
-			this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
-			this.ControllerDeleteButton.Text = "&Delete";
-			this.ControllerDeleteButton.Click += new System.EventHandler(this.ControllerDeleteButton_Click);
-			// 
-			// HardwareButton
-			// 
-			this.HardwareButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.HardwareButton.Image = ((System.Drawing.Image)(resources.GetObject("HardwareButton.Image")));
-			this.HardwareButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.HardwareButton.Name = "HardwareButton";
-			this.HardwareButton.Size = new System.Drawing.Size(71, 22);
-			this.HardwareButton.Text = "Hardware...";
-			this.HardwareButton.Click += new System.EventHandler(this.HardwareButton_Click);
-			// 
-			// AddDemoDevice
-			// 
-			this.AddDemoDevice.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.AddDemoDevice.Image = ((System.Drawing.Image)(resources.GetObject("AddDemoDevice.Image")));
-			this.AddDemoDevice.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.AddDemoDevice.Name = "AddDemoDevice";
-			this.AddDemoDevice.Size = new System.Drawing.Size(106, 22);
-			this.AddDemoDevice.Text = "Add Demo Device";
-			this.AddDemoDevice.Click += new System.EventHandler(this.AddDemoDevice_Click);
-			// 
-			// toolStripDropDownButton1
-			// 
-			this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.EnumeratedDevicesButton,
-            this.HiddenDevicesMenuItem,
-            this.UnhideAllDevicesMenuItem,
-            this.synchronizeToHidGuardianToolStripMenuItem});
-			this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
-			this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
-			this.toolStripDropDownButton1.Size = new System.Drawing.Size(100, 22);
-			this.toolStripDropDownButton1.Text = "HID Guardian...";
-			// 
-			// EnumeratedDevicesButton
-			// 
-			this.EnumeratedDevicesButton.Name = "EnumeratedDevicesButton";
-			this.EnumeratedDevicesButton.Size = new System.Drawing.Size(228, 22);
-			this.EnumeratedDevicesButton.Text = "Show Enumerated Devices";
-			this.EnumeratedDevicesButton.Click += new System.EventHandler(this.ShowEnumeratedDevicesMenuItem_Click);
-			// 
-			// HiddenDevicesMenuItem
-			// 
-			this.HiddenDevicesMenuItem.Name = "HiddenDevicesMenuItem";
-			this.HiddenDevicesMenuItem.Size = new System.Drawing.Size(228, 22);
-			this.HiddenDevicesMenuItem.Text = "Show Hidden Devices";
-			this.HiddenDevicesMenuItem.Click += new System.EventHandler(this.ShowHiddenDevicesMenuItem_Click);
-			// 
-			// UnhideAllDevicesMenuItem
-			// 
-			this.UnhideAllDevicesMenuItem.Name = "UnhideAllDevicesMenuItem";
-			this.UnhideAllDevicesMenuItem.Size = new System.Drawing.Size(228, 22);
-			this.UnhideAllDevicesMenuItem.Text = "Unhide All Devices";
-			this.UnhideAllDevicesMenuItem.Click += new System.EventHandler(this.UnhideAllDevicesMenuItem_Click);
-			// 
-			// synchronizeToHidGuardianToolStripMenuItem
-			// 
-			this.synchronizeToHidGuardianToolStripMenuItem.Name = "synchronizeToHidGuardianToolStripMenuItem";
-			this.synchronizeToHidGuardianToolStripMenuItem.Size = new System.Drawing.Size(228, 22);
-			this.synchronizeToHidGuardianToolStripMenuItem.Text = "Synchronize To HID Guardian";
-			this.synchronizeToHidGuardianToolStripMenuItem.Click += new System.EventHandler(this.synchronizeToHidGuardianToolStripMenuItem_Click);
 			// 
 			// IsOnlineColumn
 			// 
@@ -268,6 +170,103 @@
 			this.IsHiddenColumn.Name = "IsHiddenColumn";
 			this.IsHiddenColumn.ReadOnly = true;
 			this.IsHiddenColumn.Width = 35;
+			// 
+			// ControllersToolStrip
+			// 
+			this.ControllersToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.ControllersToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.RefreshButton,
+            this.ControllerDeleteButton,
+            this.HardwareButton,
+            this.AddDemoDevice,
+            this.toolStripDropDownButton1});
+			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.ControllersToolStrip.Name = "ControllersToolStrip";
+			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+			this.ControllersToolStrip.Size = new System.Drawing.Size(717, 25);
+			this.ControllersToolStrip.TabIndex = 1;
+			this.ControllersToolStrip.Text = "MySettingsToolStrip";
+			// 
+			// RefreshButton
+			// 
+			this.RefreshButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.RefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
+			this.RefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.RefreshButton.Name = "RefreshButton";
+			this.RefreshButton.Size = new System.Drawing.Size(66, 22);
+			this.RefreshButton.Text = "&Refresh";
+			this.RefreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
+			// 
+			// ControllerDeleteButton
+			// 
+			this.ControllerDeleteButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.ControllerDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
+			this.ControllerDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.ControllerDeleteButton.Name = "ControllerDeleteButton";
+			this.ControllerDeleteButton.Size = new System.Drawing.Size(60, 22);
+			this.ControllerDeleteButton.Text = "&Delete";
+			this.ControllerDeleteButton.Click += new System.EventHandler(this.ControllerDeleteButton_Click);
+			// 
+			// HardwareButton
+			// 
+			this.HardwareButton.Image = global::x360ce.App.Properties.Resources.hardware_16x16;
+			this.HardwareButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.HardwareButton.Name = "HardwareButton";
+			this.HardwareButton.Size = new System.Drawing.Size(87, 22);
+			this.HardwareButton.Text = "Hardware...";
+			this.HardwareButton.Click += new System.EventHandler(this.HardwareButton_Click);
+			// 
+			// AddDemoDevice
+			// 
+			this.AddDemoDevice.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.AddDemoDevice.Image = ((System.Drawing.Image)(resources.GetObject("AddDemoDevice.Image")));
+			this.AddDemoDevice.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.AddDemoDevice.Name = "AddDemoDevice";
+			this.AddDemoDevice.Size = new System.Drawing.Size(106, 22);
+			this.AddDemoDevice.Text = "Add Demo Device";
+			this.AddDemoDevice.Click += new System.EventHandler(this.AddDemoDevice_Click);
+			// 
+			// toolStripDropDownButton1
+			// 
+			this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EnumeratedDevicesButton,
+            this.HiddenDevicesMenuItem,
+            this.UnhideAllDevicesMenuItem,
+            this.synchronizeToHidGuardianToolStripMenuItem});
+			this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+			this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+			this.toolStripDropDownButton1.Size = new System.Drawing.Size(100, 22);
+			this.toolStripDropDownButton1.Text = "HID Guardian...";
+			// 
+			// EnumeratedDevicesButton
+			// 
+			this.EnumeratedDevicesButton.Name = "EnumeratedDevicesButton";
+			this.EnumeratedDevicesButton.Size = new System.Drawing.Size(227, 22);
+			this.EnumeratedDevicesButton.Text = "Show Enumerated Devices";
+			this.EnumeratedDevicesButton.Click += new System.EventHandler(this.ShowEnumeratedDevicesMenuItem_Click);
+			// 
+			// HiddenDevicesMenuItem
+			// 
+			this.HiddenDevicesMenuItem.Name = "HiddenDevicesMenuItem";
+			this.HiddenDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
+			this.HiddenDevicesMenuItem.Text = "Show Hidden Devices";
+			this.HiddenDevicesMenuItem.Click += new System.EventHandler(this.ShowHiddenDevicesMenuItem_Click);
+			// 
+			// UnhideAllDevicesMenuItem
+			// 
+			this.UnhideAllDevicesMenuItem.Name = "UnhideAllDevicesMenuItem";
+			this.UnhideAllDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
+			this.UnhideAllDevicesMenuItem.Text = "Unhide All Devices";
+			this.UnhideAllDevicesMenuItem.Click += new System.EventHandler(this.UnhideAllDevicesMenuItem_Click);
+			// 
+			// synchronizeToHidGuardianToolStripMenuItem
+			// 
+			this.synchronizeToHidGuardianToolStripMenuItem.Name = "synchronizeToHidGuardianToolStripMenuItem";
+			this.synchronizeToHidGuardianToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
+			this.synchronizeToHidGuardianToolStripMenuItem.Text = "Synchronize To HID Guardian";
+			this.synchronizeToHidGuardianToolStripMenuItem.Click += new System.EventHandler(this.synchronizeToHidGuardianToolStripMenuItem_Click);
 			// 
 			// UserDevicesUserControl
 			// 

@@ -275,14 +275,14 @@ namespace JocysCom.ClassLibrary.IO
 			return di;
 		}
 
-		static SP_DEVINFO_DATA? _GetDeviceInfo(IntPtr deviceInfoSet, string deviceInstanceId)
+		public static SP_DEVINFO_DATA? GetDeviceInfo(string deviceInstanceId, IntPtr deviceInfoSet)
 		{
-			var da = new SP_DEVINFO_DATA();
-			da.Initialize();
-			var result = NativeMethods.SetupDiOpenDeviceInfo(deviceInfoSet, deviceInstanceId, IntPtr.Zero, 0, ref da);
+			var di = new SP_DEVINFO_DATA();
+			di.Initialize();
+			var result = NativeMethods.SetupDiOpenDeviceInfo(deviceInfoSet, deviceInstanceId, IntPtr.Zero, 0, ref di);
 			if (!result)
 				return null;
-			return da;
+			return di;
 		}
 
 		public static System.Drawing.Icon GetClassIcon(Guid classGuid)
@@ -302,7 +302,7 @@ namespace JocysCom.ClassLibrary.IO
 		/// </summary>
 		/// <param name="classGuid">Filter devices by class.</param>
 		/// <param name="flags">Filter devices by options.</param>
-		static void _EnumDeviceInfo(Guid? classGuid, DIGCF? flags, string deviceInstanceId, Func<IntPtr, SP_DEVINFO_DATA, bool> callback)
+		public static void _EnumDeviceInfo(Guid? classGuid, DIGCF? flags, string deviceInstanceId, Func<IntPtr, SP_DEVINFO_DATA, bool> callback)
 		{
 			if (!classGuid.HasValue)
 				classGuid = Guid.Empty;
@@ -557,6 +557,32 @@ namespace JocysCom.ClassLibrary.IO
 			return di;
 		}
 
+		/// <summary>
+		/// Fill parent devices. Destination list will contain current device on top.
+		/// </summary>
+		/// <param name="deviceId">Current device instance id.</param>
+		/// <param name="source">List of all devices.</param>
+		/// <param name="destination">Destintion list to fill.</param>
+		public static void FillParents(DeviceInfo device, IEnumerable<DeviceInfo> source, IList<DeviceInfo> destination)
+		{
+			// Note: used DeviceInfo as parameter and not deviceId, because source can contain InfoData and DeviceInterface objects with same DeviceId.
+			if (destination.Contains(device))
+				return;
+			destination.Add(device);
+			var deviceId = device.ParentDeviceId;
+			DeviceInfo di = null;
+			while (true)
+			{
+				di = source.FirstOrDefault(x => x.DeviceId == deviceId);
+				if (di == null)
+					return;
+				if (destination.Contains(di))
+					return;
+				destination.Add(di);
+				deviceId = di.ParentDeviceId;
+			}
+		}
+
 		public static DeviceInfo GetParentDevice(string deviceId)
 		{
 			string parentDeviceId = null;
@@ -658,7 +684,8 @@ namespace JocysCom.ClassLibrary.IO
 			bool? isDisabled = null;
 			try
 			{
-				_EnumDeviceInfo(null, null, deviceId, (infoSet, infoData) => {
+				_EnumDeviceInfo(null, null, deviceId, (infoSet, infoData) =>
+				{
 					uint status = 0;
 					uint problem = 0;
 					//after the call 'problem' variable will have the problem code

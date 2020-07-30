@@ -623,7 +623,6 @@
     <None Include="Images\add_16x16.png" />
     <EmbeddedResource Include="Documents\License.txt" />
     <None Include="Images\app_16x16.png" />
-    <None Include="Images\add.emf" />
     <Content Include="Images\app_48x48.png" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
@@ -687,17 +686,7 @@
     <None Include="Images\test_16x16.png" />
     <None Include="Images\save_ok_16x16.png" />
     <None Include="Images\save_warning_16x16.png" />
-    <None Include="Images\close.emf" />
-    <None Include="Images\cloud_download.emf" />
-    <None Include="Images\cloud_upload.emf" />
-    <None Include="Images\delete.emf" />
-    <Content Include="Images\ok.emf" />
-    <None Include="Images\refresh.emf" />
-    <None Include="Images\remove.emf" />
-    <None Include="Images\save.emf" />
-    <None Include="Images\switch_off.emf" />
-    <None Include="Images\switch_on.emf" />
-    <None Include="Images\test.emf" />
+    <None Include="Images\hardware_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />
