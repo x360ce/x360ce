@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Win32;
-using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

@@ -38,7 +38,16 @@ namespace JocysCom.ClassLibrary.IO
 			ControlsHelper.ApplyBorderStyle(DeviceDataGridView);
 			UpdateButtons();
 			detector = new DeviceDetector(false);
+			detector.DeviceChanged += Detector_DeviceChanged;
 			RefreshHardwareList();
+		}
+
+		private void Detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
+		{
+			RefreshHardwareList();
+			if (MainTabControl.SelectedTab != LogsTabPage)
+				return;
+			AddLogLine("{0}: {1} {2}", e.ChangeType, e.DeviceType, e.DeviceInfo);
 		}
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
@@ -161,8 +170,9 @@ namespace JocysCom.ClassLibrary.IO
 			RefreshTimer.Start();
 		}
 
-		private List<DeviceInfo> devices = new List<DeviceInfo>();
 		private List<DeviceInfo> interfaces = new List<DeviceInfo>();
+		private List<DeviceInfo> devices = new List<DeviceInfo>();
+		private List<DeviceInfo> allDevices = new List<DeviceInfo>();
 
 		private void _RefreshTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
@@ -177,14 +187,32 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				if (updateDevices)
 				{
-					devices = DeviceDetector.GetDevices().ToList();
-					interfaces = DeviceDetector.GetInterfaces().ToList();
+					var newDevices = DeviceDetector.GetDevices().ToList();
+					var newInterfaces = DeviceDetector.GetInterfaces().ToList();
+					if (devices.Count > 0)
+					{
+						var addedDevices = newDevices.Where(n => !devices.Any(o => o.DeviceId == n.DeviceId)).ToList();
+						var removedDevices = devices.Where(n => !newDevices.Any(o => o.DeviceId == n.DeviceId)).ToList();
+						AddLog("Added", addedDevices);
+						AddLog("Removed", removedDevices);
+					}
+					if (interfaces.Count > 0)
+					{
+						var addedInterfaces = newInterfaces.Where(n => !interfaces.Any(o => o.DeviceId == n.DeviceId)).ToList();
+						var removedInterfaces = interfaces.Where(n => !newInterfaces.Any(o => o.DeviceId == n.DeviceId)).ToList();
+						AddLog("Added", addedInterfaces);
+						AddLog("Removed", removedInterfaces);
+					}
+					// Store new list.
+					devices = newDevices;
+					interfaces = newInterfaces;
 					// Note: 'devices' and 'interfaces' share same DeviceId.
 					// Don't just select by DeviceID from 'devices'.
-					devices.AddRange(interfaces);
+					allDevices = newDevices;
+					allDevices.AddRange(newInterfaces);
 				}
 				var filter = FilterStripTextBox.Text.Trim();
-				var filtered = JocysCom.ClassLibrary.Data.Linq.ApplySearch(devices, filter, (x) =>
+				var filtered = JocysCom.ClassLibrary.Data.Linq.ApplySearch(allDevices, filter, (x) =>
 					{
 						return string.Join(" ",
 						x.ClassDescription,
@@ -194,6 +222,19 @@ namespace JocysCom.ClassLibrary.IO
 					}).ToList();
 				BindDeviceList(filtered);
 				BindDeviceTree(filtered);
+			}
+		}
+
+		private void AddLog(string prefix, IEnumerable<DeviceInfo> list)
+		{
+			foreach (var item in list)
+			{
+				AddLogLine("{0}:", prefix);
+				AddLogLine("{0}: {1}", nameof(item.ClassDescription), item.ClassDescription);
+				AddLogLine("{0}: {1}", nameof(item.Manufacturer), item.Manufacturer);
+				AddLogLine("{0}: {1}", nameof(item.Description), item.Description);
+				AddLogLine("{0}: {1}", nameof(item.DeviceId), item.DeviceId);
+				AddLogLine("");
 			}
 		}
 
@@ -215,7 +256,7 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			var filteredWithParents = new List<DeviceInfo>();
 			foreach (var item in filtered)
-				DeviceDetector.FillParents(item, devices, filteredWithParents);
+				DeviceDetector.FillParents(item, allDevices, filteredWithParents);
 			// Fill icons.
 			var classes = filteredWithParents.Select(x => x.ClassGuid).Distinct();
 			// Suppress repainting the TreeView until all the objects have been created.
@@ -337,7 +378,7 @@ namespace JocysCom.ClassLibrary.IO
 			var so = ControlsHelper.MainTaskScheduler;
 			var unused = Task.Factory.StartNew(() =>
 			  {
-				  AddLog("Enumerating Devices...");
+				  AddLogLine("Enumerating Devices...");
 				  var devices = DeviceDetector.GetDevices();
 				  var offline = devices.Where(x => !x.IsPresent && x.IsRemovable && !x.Description.Contains("RAS Async Adapter")).ToArray();
 				  var problem = devices.Where(x => x.Status.HasFlag(DeviceNodeStatus.DN_HAS_PROBLEM)).Except(offline).ToArray();
@@ -352,12 +393,12 @@ namespace JocysCom.ClassLibrary.IO
 				  var message = string.Join("\r\n", list);
 				  if (list.Count == 0)
 				  {
-					  AddLog("No offline, problem or unknown devices found.");
+					  AddLogLine("No offline, problem or unknown devices found.");
 				  }
 				  else if (clean)
 				  {
 					  foreach (var item in list)
-						  AddLog(item);
+						  AddLogLine(item);
 					  var result = DialogResult.No;
 					  ControlsHelper.Invoke(new Action(() =>
 					  {
@@ -382,30 +423,59 @@ namespace JocysCom.ClassLibrary.IO
 					  for (var i = 0; i < devList.Count; i++)
 					  {
 						  var item = devList[i];
-						  AddLog("Removing Device: {0}/{1} - {2}", i + 1, list.Count, item.Description);
+						  AddLogLine("Removing Device: {0}/{1} - {2}", i + 1, list.Count, item.Description);
 						  try
 						  {
 							  var exception = DeviceDetector.RemoveDevice(item.DeviceId);
 							  if (exception != null)
-								  AddLog(exception.Message);
+								  AddLogLine(exception.Message);
 							  //System.Windows.Forms.Application.DoEvents();
 						  }
 						  catch (Exception ex)
 						  {
-							  AddLog(ex.Message);
+							  AddLogLine(ex.Message);
 						  }
 					  }
 				  }
-				  AddLog("Done");
+				  AddLogLine("Done");
 			  }, CancellationToken.None, TaskCreationOptions.LongRunning, so).ConfigureAwait(true);
 		}
+
+
+		private void AddLogLine(string format, params object[] args) =>
+			AddLog(format + "\r\n", args);
 
 		private void AddLog(string format, params object[] args)
 		{
 			ControlsHelper.Invoke(new Action(() =>
 			{
-				//LogTextBox.AddLog(format, args);
-				LogTextBox.AppendText(string.Format(format + "\r\n", args));
+				var box = LogTextBox;
+				lock (box)
+				{
+					var nl = Environment.NewLine;
+					var oldText = box.Text;
+					var addText = string.Format(format, args);
+					// Get size which will go over the maximum.
+					var delSize = oldText.Length + addText.Length - box.MaxLength;
+					// If must remove then...
+					if (delSize > 0)
+					{
+						// Try to remove with next new line.
+						var index = oldText.IndexOf(nl, delSize);
+						if (index > 0)
+							delSize = index + nl.Length;
+						box.Select(0, delSize);
+						box.SelectedText = string.Empty;
+					}
+					// Appedn new text.
+					box.Select(box.TextLength + 1, 0);
+					box.SelectedText = addText;
+					if (box.Visible)
+					{
+						box.SelectionStart = box.TextLength;
+						box.ScrollToCaret();
+					}
+				}
 			}));
 		}
 
@@ -452,10 +522,16 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			var isElevated = JocysCom.ClassLibrary.Security.PermissionHelper.IsElevated;
 			if (!isElevated)
+
 				MessageBoxForm.Show("You must run this program as administrator for this feature to work.");
 			return isElevated;
 		}
 
 		#endregion
+
+		private void LogTextBox_TextChanged(object sender, EventArgs e)
+		{
+			LogsTabPage.Text = string.Format("Logs [{0}]", LogTextBox.TextLength);
+		}
 	}
 }

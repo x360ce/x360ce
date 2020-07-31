@@ -16,9 +16,9 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HardwareControl));
 			this.MainTabControl = new System.Windows.Forms.TabControl();
 			this.DeviceTreeTabPage = new System.Windows.Forms.TabPage();
@@ -62,6 +62,7 @@
 			this.RemovableColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.LogsTabPage = new System.Windows.Forms.TabPage();
+			this.LogTextBox = new System.Windows.Forms.TextBox();
 			this.TabsImageList = new System.Windows.Forms.ImageList(this.components);
 			this.MainToolStrip = new System.Windows.Forms.ToolStrip();
 			this.FilterLabel = new System.Windows.Forms.ToolStripLabel();
@@ -77,7 +78,6 @@
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.ScanButton = new System.Windows.Forms.ToolStripButton();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.LogTextBox = new System.Windows.Forms.TextBox();
 			this.MainTabControl.SuspendLayout();
 			this.DeviceTreeTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.TreeSplitContainer)).BeginInit();
@@ -413,8 +413,8 @@
 			// 
 			this.VendorIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.VendorIdColumn.DataPropertyName = "VendorId";
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.VendorIdColumn.DefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.VendorIdColumn.DefaultCellStyle = dataGridViewCellStyle4;
 			this.VendorIdColumn.HeaderText = "VID";
 			this.VendorIdColumn.Name = "VendorIdColumn";
 			this.VendorIdColumn.Width = 50;
@@ -423,8 +423,8 @@
 			// 
 			this.ProductIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.ProductIdColumn.DataPropertyName = "ProductId";
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.ProductIdColumn.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.ProductIdColumn.DefaultCellStyle = dataGridViewCellStyle5;
 			this.ProductIdColumn.HeaderText = "PID";
 			this.ProductIdColumn.Name = "ProductIdColumn";
 			this.ProductIdColumn.Width = 50;
@@ -433,8 +433,8 @@
 			// 
 			this.RevisionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.RevisionColumn.DataPropertyName = "Revision";
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.RevisionColumn.DefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.RevisionColumn.DefaultCellStyle = dataGridViewCellStyle6;
 			this.RevisionColumn.HeaderText = "REV";
 			this.RevisionColumn.Name = "RevisionColumn";
 			this.RevisionColumn.Width = 54;
@@ -446,7 +446,6 @@
 			this.ClassGuidColumn.HeaderText = "Class GUID";
 			this.ClassGuidColumn.Name = "ClassGuidColumn";
 			this.ClassGuidColumn.Visible = false;
-			this.ClassGuidColumn.Width = 87;
 			// 
 			// ClassDescriptionColumn
 			// 
@@ -479,7 +478,6 @@
 			this.IsHiddenColumn.HeaderText = "Hidden";
 			this.IsHiddenColumn.Name = "IsHiddenColumn";
 			this.IsHiddenColumn.Visible = false;
-			this.IsHiddenColumn.Width = 66;
 			// 
 			// PresentColumn
 			// 
@@ -488,7 +486,6 @@
 			this.PresentColumn.HeaderText = "Present";
 			this.PresentColumn.Name = "PresentColumn";
 			this.PresentColumn.Visible = false;
-			this.PresentColumn.Width = 68;
 			// 
 			// StatusColumn
 			// 
@@ -524,6 +521,19 @@
 			this.LogsTabPage.TabIndex = 3;
 			this.LogsTabPage.Text = "Logs";
 			this.LogsTabPage.UseVisualStyleBackColor = true;
+			// 
+			// LogTextBox
+			// 
+			this.LogTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this.LogTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.LogTextBox.Location = new System.Drawing.Point(0, 0);
+			this.LogTextBox.Multiline = true;
+			this.LogTextBox.Name = "LogTextBox";
+			this.LogTextBox.ReadOnly = true;
+			this.LogTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+			this.LogTextBox.Size = new System.Drawing.Size(749, 465);
+			this.LogTextBox.TabIndex = 0;
+			this.LogTextBox.TextChanged += new System.EventHandler(this.LogTextBox_TextChanged);
 			// 
 			// TabsImageList
 			// 
@@ -653,17 +663,6 @@
 			this.panel1.Padding = new System.Windows.Forms.Padding(3);
 			this.panel1.Size = new System.Drawing.Size(763, 500);
 			this.panel1.TabIndex = 17;
-			// 
-			// LogTextBox
-			// 
-			this.LogTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this.LogTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.LogTextBox.Location = new System.Drawing.Point(0, 0);
-			this.LogTextBox.Multiline = true;
-			this.LogTextBox.Name = "LogTextBox";
-			this.LogTextBox.ReadOnly = true;
-			this.LogTextBox.Size = new System.Drawing.Size(749, 465);
-			this.LogTextBox.TabIndex = 0;
 			// 
 			// HardwareControl
 			// 
