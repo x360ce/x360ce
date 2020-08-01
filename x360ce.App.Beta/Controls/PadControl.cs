@@ -1462,7 +1462,14 @@ namespace x360ce.App.Controls
 					? Properties.Resources.bullet_square_glass_green
 					: Properties.Resources.bullet_square_glass_grey;
 			}
-			if (column == InstanceIdColumn)
+			else if (column == ConnectionClassColumn)
+			{
+				var device = SettingsManager.GetDevice(item.InstanceGuid);
+				e.Value = device.ConnectionClass == Guid.Empty
+					? new Bitmap(16, 16)
+					: JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(device.ConnectionClass, 16)?.ToBitmap();
+			}
+			else if (column == InstanceIdColumn)
 			{
 				// Hide device Instance GUID from public eyes. Show part of checksum.
 				e.Value = EngineHelper.GetID(item.InstanceGuid);

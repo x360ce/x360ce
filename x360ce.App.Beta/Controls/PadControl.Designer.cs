@@ -17,9 +17,9 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PadControl));
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DirectInputTabPage = new System.Windows.Forms.TabPage();
 			this.DirectInputPanel = new x360ce.App.Controls.DirectInputUserControl();
 			this.AdvancedTabPage = new System.Windows.Forms.TabPage();
@@ -193,14 +193,6 @@
 			this.GameControllersButton = new System.Windows.Forms.Button();
 			this.AutoPresetButton = new System.Windows.Forms.Button();
 			this.MappedDevicesDataGridView = new System.Windows.Forms.DataGridView();
-			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.SettingIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.CompletionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.LoadPresetButton = new System.Windows.Forms.Button();
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.RemoveMapButton = new System.Windows.Forms.ToolStripButton();
@@ -209,6 +201,15 @@
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
 			this.GetXInputStatesCheckBox = new System.Windows.Forms.ToolStripButton();
 			this.DxTweakButton = new System.Windows.Forms.Button();
+			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.ConnectionClassColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.IsEnabledColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.SettingIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.CompletionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.InstanceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -2148,6 +2149,7 @@
 			this.MappedDevicesDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.MappedDevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsOnlineColumn,
+            this.ConnectionClassColumn,
             this.IsEnabledColumn,
             this.SettingIdColumn,
             this.CompletionColumn,
@@ -2155,28 +2157,28 @@
             this.VendorNameColumn,
             this.ProductNameColumn,
             this.MapToColumn});
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
 			this.MappedDevicesDataGridView.EnableHeadersVisualStyles = false;
 			this.MappedDevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.MappedDevicesDataGridView.Location = new System.Drawing.Point(0, 25);
 			this.MappedDevicesDataGridView.MultiSelect = false;
 			this.MappedDevicesDataGridView.Name = "MappedDevicesDataGridView";
 			this.MappedDevicesDataGridView.ReadOnly = true;
-			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MappedDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.MappedDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.MappedDevicesDataGridView.RowHeadersVisible = false;
 			this.MappedDevicesDataGridView.RowHeadersWidth = 51;
 			this.MappedDevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -2184,94 +2186,6 @@
 			this.MappedDevicesDataGridView.TabIndex = 68;
 			this.MappedDevicesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.MappedDevicesDataGridView_CellClick);
 			this.MappedDevicesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.MappedDevicesDataGridView_CellFormatting);
-			// 
-			// IsOnlineColumn
-			// 
-			this.IsOnlineColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.IsOnlineColumn.DataPropertyName = "IsOnline";
-			this.IsOnlineColumn.HeaderText = "";
-			this.IsOnlineColumn.MinimumWidth = 24;
-			this.IsOnlineColumn.Name = "IsOnlineColumn";
-			this.IsOnlineColumn.ReadOnly = true;
-			this.IsOnlineColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.IsOnlineColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.IsOnlineColumn.Width = 24;
-			// 
-			// IsEnabledColumn
-			// 
-			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
-			this.IsEnabledColumn.HeaderText = "";
-			this.IsEnabledColumn.MinimumWidth = 6;
-			this.IsEnabledColumn.Name = "IsEnabledColumn";
-			this.IsEnabledColumn.ReadOnly = true;
-			this.IsEnabledColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.IsEnabledColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.IsEnabledColumn.Width = 24;
-			// 
-			// SettingIdColumn
-			// 
-			this.SettingIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.SettingIdColumn.DataPropertyName = "PadSettingChecksum";
-			this.SettingIdColumn.HeaderText = "Setting ID";
-			this.SettingIdColumn.MinimumWidth = 6;
-			this.SettingIdColumn.Name = "SettingIdColumn";
-			this.SettingIdColumn.ReadOnly = true;
-			this.SettingIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.SettingIdColumn.Width = 59;
-			// 
-			// CompletionColumn
-			// 
-			this.CompletionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.CompletionColumn.DataPropertyName = "Completion";
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			dataGridViewCellStyle4.NullValue = null;
-			this.CompletionColumn.DefaultCellStyle = dataGridViewCellStyle4;
-			this.CompletionColumn.HeaderText = "Map %";
-			this.CompletionColumn.MinimumWidth = 6;
-			this.CompletionColumn.Name = "CompletionColumn";
-			this.CompletionColumn.ReadOnly = true;
-			this.CompletionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.CompletionColumn.Width = 44;
-			// 
-			// InstanceIdColumn
-			// 
-			this.InstanceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.InstanceIdColumn.HeaderText = "Instance ID";
-			this.InstanceIdColumn.MinimumWidth = 6;
-			this.InstanceIdColumn.Name = "InstanceIdColumn";
-			this.InstanceIdColumn.ReadOnly = true;
-			this.InstanceIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.InstanceIdColumn.Width = 67;
-			// 
-			// VendorNameColumn
-			// 
-			this.VendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.VendorNameColumn.DataPropertyName = "VendorName";
-			this.VendorNameColumn.HeaderText = "Vendor Name";
-			this.VendorNameColumn.MinimumWidth = 6;
-			this.VendorNameColumn.Name = "VendorNameColumn";
-			this.VendorNameColumn.ReadOnly = true;
-			this.VendorNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.VendorNameColumn.Width = 77;
-			// 
-			// ProductNameColumn
-			// 
-			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.ProductNameColumn.DataPropertyName = "ProductName";
-			this.ProductNameColumn.HeaderText = "Product Name";
-			this.ProductNameColumn.MinimumWidth = 6;
-			this.ProductNameColumn.Name = "ProductNameColumn";
-			this.ProductNameColumn.ReadOnly = true;
-			this.ProductNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			// 
-			// MapToColumn
-			// 
-			this.MapToColumn.HeaderText = "Map To";
-			this.MapToColumn.MinimumWidth = 6;
-			this.MapToColumn.Name = "MapToColumn";
-			this.MapToColumn.ReadOnly = true;
-			this.MapToColumn.Visible = false;
-			this.MapToColumn.Width = 125;
 			// 
 			// LoadPresetButton
 			// 
@@ -2366,6 +2280,104 @@
 			this.DxTweakButton.Text = "&DX Tweak...";
 			this.DxTweakButton.UseVisualStyleBackColor = true;
 			this.DxTweakButton.Click += new System.EventHandler(this.CalibrateButton_Click);
+			// 
+			// IsOnlineColumn
+			// 
+			this.IsOnlineColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.IsOnlineColumn.DataPropertyName = "IsOnline";
+			this.IsOnlineColumn.HeaderText = "";
+			this.IsOnlineColumn.MinimumWidth = 24;
+			this.IsOnlineColumn.Name = "IsOnlineColumn";
+			this.IsOnlineColumn.ReadOnly = true;
+			this.IsOnlineColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.IsOnlineColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.IsOnlineColumn.Width = 24;
+			// 
+			// ConnectionClassColumn
+			// 
+			this.ConnectionClassColumn.DataPropertyName = "ConnectionClass";
+			this.ConnectionClassColumn.HeaderText = "";
+			this.ConnectionClassColumn.MinimumWidth = 24;
+			this.ConnectionClassColumn.Name = "ConnectionClassColumn";
+			this.ConnectionClassColumn.ReadOnly = true;
+			this.ConnectionClassColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.ConnectionClassColumn.Width = 24;
+			// 
+			// IsEnabledColumn
+			// 
+			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
+			this.IsEnabledColumn.HeaderText = "";
+			this.IsEnabledColumn.MinimumWidth = 6;
+			this.IsEnabledColumn.Name = "IsEnabledColumn";
+			this.IsEnabledColumn.ReadOnly = true;
+			this.IsEnabledColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.IsEnabledColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+			this.IsEnabledColumn.Width = 24;
+			// 
+			// SettingIdColumn
+			// 
+			this.SettingIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.SettingIdColumn.DataPropertyName = "PadSettingChecksum";
+			this.SettingIdColumn.HeaderText = "Setting ID";
+			this.SettingIdColumn.MinimumWidth = 6;
+			this.SettingIdColumn.Name = "SettingIdColumn";
+			this.SettingIdColumn.ReadOnly = true;
+			this.SettingIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.SettingIdColumn.Width = 59;
+			// 
+			// CompletionColumn
+			// 
+			this.CompletionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.CompletionColumn.DataPropertyName = "Completion";
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle1.NullValue = null;
+			this.CompletionColumn.DefaultCellStyle = dataGridViewCellStyle1;
+			this.CompletionColumn.HeaderText = "Map %";
+			this.CompletionColumn.MinimumWidth = 6;
+			this.CompletionColumn.Name = "CompletionColumn";
+			this.CompletionColumn.ReadOnly = true;
+			this.CompletionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.CompletionColumn.Width = 44;
+			// 
+			// InstanceIdColumn
+			// 
+			this.InstanceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.InstanceIdColumn.HeaderText = "Instance ID";
+			this.InstanceIdColumn.MinimumWidth = 6;
+			this.InstanceIdColumn.Name = "InstanceIdColumn";
+			this.InstanceIdColumn.ReadOnly = true;
+			this.InstanceIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.InstanceIdColumn.Width = 67;
+			// 
+			// VendorNameColumn
+			// 
+			this.VendorNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.VendorNameColumn.DataPropertyName = "VendorName";
+			this.VendorNameColumn.HeaderText = "Vendor Name";
+			this.VendorNameColumn.MinimumWidth = 6;
+			this.VendorNameColumn.Name = "VendorNameColumn";
+			this.VendorNameColumn.ReadOnly = true;
+			this.VendorNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.VendorNameColumn.Width = 77;
+			// 
+			// ProductNameColumn
+			// 
+			this.ProductNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.ProductNameColumn.DataPropertyName = "ProductName";
+			this.ProductNameColumn.HeaderText = "Product Name";
+			this.ProductNameColumn.MinimumWidth = 6;
+			this.ProductNameColumn.Name = "ProductNameColumn";
+			this.ProductNameColumn.ReadOnly = true;
+			this.ProductNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// MapToColumn
+			// 
+			this.MapToColumn.HeaderText = "Map To";
+			this.MapToColumn.MinimumWidth = 6;
+			this.MapToColumn.Name = "MapToColumn";
+			this.MapToColumn.ReadOnly = true;
+			this.MapToColumn.Visible = false;
+			this.MapToColumn.Width = 125;
 			// 
 			// PadControl
 			// 
@@ -2620,7 +2632,10 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label EffectDescriptionLabel;
         private System.Windows.Forms.TextBox InforTextBox;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private System.Windows.Forms.Button DxTweakButton;
 		private System.Windows.Forms.DataGridViewImageColumn IsOnlineColumn;
+		private System.Windows.Forms.DataGridViewImageColumn ConnectionClassColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsEnabledColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn SettingIdColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn CompletionColumn;
@@ -2628,7 +2643,5 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
-		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private System.Windows.Forms.Button DxTweakButton;
 	}
 }

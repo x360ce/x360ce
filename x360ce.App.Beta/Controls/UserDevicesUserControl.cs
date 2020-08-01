@@ -8,6 +8,8 @@ using x360ce.App.Forms;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
+using JocysCom.ClassLibrary.IO;
+using System.Drawing;
 
 namespace x360ce.App.Controls
 {
@@ -58,12 +60,18 @@ namespace x360ce.App.Controls
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
 			var column = grid.Columns[e.ColumnIndex];
-			var item = ((UserDevice)row.DataBoundItem);
+			var item = (UserDevice)row.DataBoundItem;
 			if (column == IsOnlineColumn)
 			{
 				e.Value = item.IsOnline
 					? Properties.Resources.bullet_square_glass_green
 					: Properties.Resources.bullet_square_glass_grey;
+			}
+			else if (column == ConnectionClassColumn)
+			{
+				e.Value = item.ConnectionClass == Guid.Empty
+					? new Bitmap(16, 16)
+					: DeviceDetector.GetClassIcon(item.ConnectionClass, 16)?.ToBitmap();
 			}
 			else if (column == DeviceIdColumn)
 			{

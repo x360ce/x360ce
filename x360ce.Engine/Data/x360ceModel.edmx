@@ -4,7 +4,7 @@
 	<edmx:Runtime>
 		<!-- SSDL content -->
 		<edmx:StorageModels>
-		<Schema Namespace="x360ceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+		<Schema Namespace="x360ceModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="x360ce_Layouts">
           <Key>
             <PropertyRef Name="Id" />
@@ -167,8 +167,6 @@
             <PropertyRef Name="SettingId" />
           </Key>
           <Property Name="SettingId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="ComputerId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="ProfileId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="InstanceGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="InstanceName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
@@ -185,6 +183,8 @@
           <Property Name="PadSettingChecksum" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Completion" Type="int" Nullable="false" />
           <Property Name="Checksum" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ComputerId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProfileId" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <EntityType Name="x360ce_Summaries">
           <Key>
@@ -225,6 +225,7 @@
           <Property Name="InstanceName" Type="nvarchar" MaxLength="256" Nullable="false" />
           <Property Name="ProductGuid" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProductName" Type="nvarchar" MaxLength="256" Nullable="false" />
+          <Property Name="ConnectionClass" Type="uniqueidentifier" Nullable="false" />
           <Property Name="CapAxeCount" Type="int" Nullable="false" />
           <Property Name="CapButtonCount" Type="int" Nullable="false" />
           <Property Name="CapDriverVersion" Type="int" Nullable="false" />
@@ -333,18 +334,18 @@
           <Property Name="WebSite" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
         <EntityContainer Name="x360ceModelStoreContainer">
-          <EntitySet Name="x360ce_Layouts" EntityType="Self.x360ce_Layouts" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_PadSettings" EntityType="Self.x360ce_PadSettings" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_Products" EntityType="Self.x360ce_Products" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_Programs" EntityType="Self.x360ce_Programs" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_Settings" EntityType="Self.x360ce_Settings" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_Summaries" EntityType="Self.x360ce_Summaries" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_UserComputers" EntityType="Self.x360ce_UserComputers" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_UserDevices" EntityType="Self.x360ce_UserDevices" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_UserGames" EntityType="Self.x360ce_UserGames" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_UserInstances" EntityType="Self.x360ce_UserInstances" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_UserProfiles" EntityType="Self.x360ce_UserProfiles" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
-          <EntitySet Name="x360ce_Vendors" EntityType="Self.x360ce_Vendors" Schema="dbo" store:Type="Tables" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="x360ce_Layouts" EntityType="Self.x360ce_Layouts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_PadSettings" EntityType="Self.x360ce_PadSettings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_Products" EntityType="Self.x360ce_Products" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_Programs" EntityType="Self.x360ce_Programs" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_Settings" EntityType="Self.x360ce_Settings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_Summaries" EntityType="Self.x360ce_Summaries" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_UserComputers" EntityType="Self.x360ce_UserComputers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_UserDevices" EntityType="Self.x360ce_UserDevices" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_UserGames" EntityType="Self.x360ce_UserGames" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_UserInstances" EntityType="Self.x360ce_UserInstances" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_UserProfiles" EntityType="Self.x360ce_UserProfiles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="x360ce_Vendors" EntityType="Self.x360ce_Vendors" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
 		<!-- CSDL content -->
@@ -583,6 +584,7 @@
           <Property Name="DiActuatorMask" Type="Int32" Nullable="false" />
           <Property Name="DiActuatorCount" Type="Int32" Nullable="false" />
           <Property Name="ProfileId" Type="Guid" Nullable="false" />
+          <Property Name="ConnectionClass" Type="Guid" Nullable="false" />
         </EntityType>
         <EntityType Name="UserGame">
           <Key>
@@ -702,7 +704,7 @@
 					<EntitySetMapping Name="PadSettings">
 						<EntityTypeMapping TypeName="x360ceModel.PadSetting">
 							<MappingFragment StoreEntitySet="x360ce_PadSettings">
-								<ScalarProperty Name="RightTriggerLinear" ColumnName="RightTriggerLinear" />
+                <ScalarProperty Name="RightTriggerLinear" ColumnName="RightTriggerLinear" />
                 <ScalarProperty Name="RightTriggerAntiDeadZone" ColumnName="RightTriggerAntiDeadZone" />
                 <ScalarProperty Name="LeftTriggerLinear" ColumnName="LeftTriggerLinear" />
                 <ScalarProperty Name="LeftTriggerAntiDeadZone" ColumnName="LeftTriggerAntiDeadZone" />
@@ -876,6 +878,7 @@
           <EntitySetMapping Name="UserDevices">
             <EntityTypeMapping TypeName="x360ceModel.UserDevice">
               <MappingFragment StoreEntitySet="x360ce_UserDevices">
+                <ScalarProperty Name="ConnectionClass" ColumnName="ConnectionClass" />
                 <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
                 <ScalarProperty Name="DiActuatorCount" ColumnName="DiActuatorCount" />
                 <ScalarProperty Name="DiActuatorMask" ColumnName="DiActuatorMask" />
@@ -1061,7 +1064,7 @@
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
 			<Diagram Name="x360ceModel" ZoomLevel="58" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
-				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" IsExpanded="false" />
+				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" IsExpanded="true" />
 				<EntityTypeShape EntityType="x360ceModel.UserSetting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="9.75" PointY="3.625" Height="1.7879850260416674" />

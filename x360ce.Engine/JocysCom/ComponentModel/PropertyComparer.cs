@@ -46,14 +46,18 @@ namespace JocysCom.ClassLibrary.ComponentModel
 
 		private int CompareValues(object xValue, object yValue, ListSortDirection direction)
 		{
-			var retValue = 0;
-			if (xValue is IComparable)
+			int retValue;
+			if (xValue == null && yValue == null)
+				retValue = 0;
+			else if (xValue is IComparable)
 				retValue = ((IComparable)xValue).CompareTo(yValue);
 			else if (yValue is IComparable)
 				retValue = ((IComparable)yValue).CompareTo(xValue);
 			// not comparable, compare String representations
 			else if (!xValue.Equals(yValue))
 				retValue = xValue.ToString().CompareTo(yValue.ToString());
+			else
+				retValue = 0;
 			return (direction == ListSortDirection.Ascending ? 1 : -1) * retValue;
 		}
 

@@ -126,7 +126,6 @@ namespace x360ce.App
 					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel axis");
 					// Y is inverted by default.
 					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true);
-
 				}
 				else
 				{

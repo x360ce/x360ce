@@ -623,6 +623,25 @@ namespace JocysCom.ClassLibrary.IO
 			}
 		}
 
+		public static DeviceInfo GetConnectionDevice(DeviceInfo device, IEnumerable<DeviceInfo> source)
+		{
+			var parents = new List<DeviceInfo>();
+			FillParents(device, source, parents);
+			DeviceInfo di;
+			for (int i = 0; i < parents.Count; i++)
+			{
+				di = parents[i];
+				if (di.ClassGuid == DEVCLASS.BLUETOOTH)
+					return di;
+				if (di.ClassGuid == DEVCLASS.USB)
+					return di;
+				// Probably virtual controller.
+				if (di.ClassGuid == DEVCLASS.SYSTEM)
+					return di;
+			}
+			return null;
+		}
+
 		public static DeviceInfo GetParentDevice(string deviceId)
 		{
 			string parentDeviceId = null;
