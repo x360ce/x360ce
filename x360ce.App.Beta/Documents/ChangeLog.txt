@@ -1,4 +1,4 @@
-v4.11.22.0 (2020-08-01)
+v4.12.6.0 (2020-08-01)
 - Fix: Removed duplicated methods updated device manager and detector.
 - Fix: Rare app crash when device swiched off.
 - New: Added "WingManTeam DX Tweak" tool and button for raw and direct input calibration.
