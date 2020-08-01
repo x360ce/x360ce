@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -284,15 +286,54 @@ namespace JocysCom.ClassLibrary.IO
 			return di;
 		}
 
-		public static System.Drawing.Icon GetClassIcon(Guid classGuid)
+
+		#region Cached class icons
+
+		private static Dictionary<int, Dictionary<Guid, Icon>> _cacheIcons = new Dictionary<int, Dictionary<Guid, Icon>>();
+
+		public static Icon GetClassIcon(Guid classGuid, int size = 16)
 		{
-			System.Drawing.Icon icon = null;
-			IntPtr hIcon;
-			int index;
-			if (NativeMethods.SetupDiLoadClassIcon(ref classGuid, out hIcon, out index) != 0)
-				icon = System.Drawing.Icon.FromHandle(hIcon);
-			return icon;
+			Dictionary<Guid, Icon> dic;
+			lock (_cacheIcons)
+			{
+				if (_cacheIcons.ContainsKey(size))
+				{
+					dic = _cacheIcons[size];
+				}
+				else
+				{
+					dic = new Dictionary<Guid, Icon>();
+					_cacheIcons.Add(size, dic);
+				}
+			}
+			lock (dic)
+			{
+				if (dic.ContainsKey(classGuid))
+					return dic[classGuid];
+				IntPtr hIcon;
+				int index;
+				if (NativeMethods.SetupDiLoadClassIcon(ref classGuid, out hIcon, out index) != 0)
+				{
+					var icon = Icon.FromHandle(hIcon);
+					// If size doesn't match then...
+					if (icon.Width != size || icon.Height != size)
+					{
+						// Resize image with high quality.
+						var orgImage = icon.ToBitmap();
+						var newImage = Drawing.Effects.Resize(orgImage, size, size);
+						var thumb = (Bitmap)newImage.GetThumbnailImage(size, size, null, IntPtr.Zero);
+						thumb.MakeTransparent();
+						icon = Icon.FromHandle(thumb.GetHicon());
+					}
+					dic.Add(classGuid, icon);
+					return icon;
+				}
+				return null;
+			}
 		}
+
+		#endregion
+
 
 		private static readonly object GetDevicesLock = new object();
 
@@ -378,65 +419,65 @@ namespace JocysCom.ClassLibrary.IO
 				bool success;
 				var deviceInfoData = new SP_DEVINFO_DATA();
 				deviceInfoData.Initialize();
-				// Call 1: Retrieve data size. Note: Returns ERROR_INSUFFICIENT_BUFFER = 122, which is normal.
-				success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, ref deviceInfoData);
-				// Allocate memory for results. 
-				var ptrDetails = Marshal.AllocHGlobal(requiredSize3);
+		// Call 1: Retrieve data size. Note: Returns ERROR_INSUFFICIENT_BUFFER = 122, which is normal.
+		success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, ref deviceInfoData);
+		// Allocate memory for results. 
+		var ptrDetails = Marshal.AllocHGlobal(requiredSize3);
 				Marshal.WriteInt32(ptrDetails, IntPtr.Size == 4 ? 4 + Marshal.SystemDefaultCharSize : 8);
-				// Call 2: Retrieve data.
-				success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref deviceInfoData);
+		// Call 2: Retrieve data.
+		success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref deviceInfoData);
 				var interfaceDetail = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
 				var di = GetDeviceInfo(deviceInfoSet, deviceInfoData);
 				di.DevicePath = interfaceDetail.DevicePath;
 				Marshal.FreeHGlobal(ptrDetails);
-				// Note: Interfaces don't have vendor or product, therefore must get from parent device.
-				// Open the device as a file so that we can query it with HID and read/write to it.
-				var devHandle = NativeMethods.CreateFile(
-					interfaceDetail.DevicePath,
-					0,
-					FileShare.ReadWrite,
-					IntPtr.Zero,
-					FileMode.Open,
-					0, //WinNT.Overlapped
-					IntPtr.Zero
-				);
+		// Note: Interfaces don't have vendor or product, therefore must get from parent device.
+		// Open the device as a file so that we can query it with HID and read/write to it.
+		var devHandle = NativeMethods.CreateFile(
+		interfaceDetail.DevicePath,
+		0,
+		FileShare.ReadWrite,
+		IntPtr.Zero,
+		FileMode.Open,
+		0, //WinNT.Overlapped
+		IntPtr.Zero
+	);
 				if (devHandle.IsInvalid)
 					return true;
-				// Get vendor product and version from device.
-				var ha = new HIDD_ATTRIBUTES();
+		// Get vendor product and version from device.
+		var ha = new HIDD_ATTRIBUTES();
 				ha.Size = Marshal.SizeOf(ha);
 				var success2 = NativeMethods.HidD_GetAttributes(devHandle, ref ha);
 				di.VendorId = ha.VendorID;
 				di.ProductId = ha.ProductID;
 				di.Revision = ha.VersionNumber;
-				// Get other options.
-				if (success2)
+		// Get other options.
+		if (success2)
 				{
 					var preparsedDataPtr = new IntPtr();
 					var caps = new HIDP_CAPS();
-					// Read out the 'pre-parsed data'.
-					NativeMethods.HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
-					// feed that to GetCaps.
-					NativeMethods.HidP_GetCaps(preparsedDataPtr, ref caps);
-					// Free the 'pre-parsed data'.
-					NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
-					// This could fail if the device was recently attached.
-					// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
-					var capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);
+			// Read out the 'pre-parsed data'.
+			NativeMethods.HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
+			// feed that to GetCaps.
+			NativeMethods.HidP_GetCaps(preparsedDataPtr, ref caps);
+			// Free the 'pre-parsed data'.
+			NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
+			// This could fail if the device was recently attached.
+			// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
+			var capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);
 					var sb = new StringBuilder((int)capacity, (int)capacity);
-					// Override manufacturer if found.
-					if (NativeMethods.HidD_GetManufacturerString(devHandle, sb, sb.Capacity) && sb.Length > 0)
+			// Override manufacturer if found.
+			if (NativeMethods.HidD_GetManufacturerString(devHandle, sb, sb.Capacity) && sb.Length > 0)
 						di.Manufacturer = sb.ToString();
-					// Override ProductName if Found.
-					if (NativeMethods.HidD_GetProductString(devHandle, sb, sb.Capacity) && sb.Length > 0)
+			// Override ProductName if Found.
+			if (NativeMethods.HidD_GetProductString(devHandle, sb, sb.Capacity) && sb.Length > 0)
 						di.Description = sb.ToString();
-					// Get Serial number.
-					var serialNumber = NativeMethods.HidD_GetSerialNumberString(devHandle, sb, sb.Capacity)
-						? sb.ToString() : "";
+			// Get Serial number.
+			var serialNumber = NativeMethods.HidD_GetSerialNumberString(devHandle, sb, sb.Capacity)
+			? sb.ToString() : "";
 					serialNumbers.Add(serialNumber);
-					// Get physical descriptor.
-					var physicalDescriptor = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, sb, sb.Capacity)
-						? sb.ToString() : "";
+			// Get physical descriptor.
+			var physicalDescriptor = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, sb, sb.Capacity)
+			? sb.ToString() : "";
 					physicalDescriptors.Add(physicalDescriptor);
 				}
 				list.Add(di);
@@ -587,8 +628,8 @@ namespace JocysCom.ClassLibrary.IO
 			string parentDeviceId = null;
 			_EnumDeviceInfo(null, null, deviceId, (infoSet, infoData) =>
 			{
-				// If current device found then.
-				if (GetDeviceId(infoData.DevInst) == deviceId)
+		// If current device found then.
+		if (GetDeviceId(infoData.DevInst) == deviceId)
 				{
 					uint parentDeviceInstance;
 					var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, infoData.DevInst, 0);
@@ -663,11 +704,11 @@ namespace JocysCom.ClassLibrary.IO
 					if (deviceId == currentDeviceId)
 					{
 						SetDeviceState(infoSet, infoData, enable);
-						// Job done. Stop.
-						return false;
+				// Job done. Stop.
+				return false;
 					}
-					// Continue.
-					return true;
+			// Continue.
+			return true;
 				});
 			}
 			catch (Exception ex)
@@ -687,8 +728,8 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					uint status = 0;
 					uint problem = 0;
-					//after the call 'problem' variable will have the problem code
-					var cr = NativeMethods.CM_Get_DevNode_Status(out status, out problem, infoData.DevInst, 0);
+			//after the call 'problem' variable will have the problem code
+			var cr = NativeMethods.CM_Get_DevNode_Status(out status, out problem, infoData.DevInst, 0);
 					if (cr == CR.CR_SUCCESS)
 						isDisabled = problem == CM_PROB_DISABLED;
 					return true;
@@ -790,9 +831,9 @@ namespace JocysCom.ClassLibrary.IO
 								if (success)
 								{
 									success = NativeMethods.SetupDiCallClassInstaller(DIF_REMOVE, infoSet, ref infoData);
-									// ex.ErrorCode = 0xE0000235: SetupDiCallClassInstaller throws ERROR_IN_WOW64 when compiled for 32 bit on a 64 bit machine.
-									// Most of the SetupDi APIs run fine in a WOW64 process, but co-installer have to run from 64-bit process.
-									if (!success)
+							// ex.ErrorCode = 0xE0000235: SetupDiCallClassInstaller throws ERROR_IN_WOW64 when compiled for 32 bit on a 64 bit machine.
+							// Most of the SetupDi APIs run fine in a WOW64 process, but co-installer have to run from 64-bit process.
+							if (!success)
 										ex = new Win32Exception();
 								}
 								else

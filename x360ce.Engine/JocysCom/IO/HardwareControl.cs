@@ -264,12 +264,9 @@ namespace JocysCom.ClassLibrary.IO
 			TreeImageList.Images.Clear();
 			foreach (var cl in classes)
 			{
-				var icon = DeviceDetector.GetClassIcon(cl);
+				var icon = DeviceDetector.GetClassIcon(cl, 16);
 				if (icon != null)
-				{
-					var img = new Icon(icon, 16, 16).ToBitmap();
-					TreeImageList.Images.Add(cl.ToString(), img);
-				}
+					TreeImageList.Images.Add(cl.ToString(), icon.ToBitmap());
 			}
 			DevicesTreeView.BeginUpdate();
 			// Get top devices with no parent (only one device).
