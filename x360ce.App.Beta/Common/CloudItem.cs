@@ -22,7 +22,7 @@ namespace x360ce.App
         int _Try;
 
         public int Retries { get { return _Retries; } set { _Retries = value; NotifyPropertyChanged("Retries"); } }
-		int _Retries = int.MaxValue;
+		int _Retries = 4;
 
 		public DateTime Date { get; set; }
 

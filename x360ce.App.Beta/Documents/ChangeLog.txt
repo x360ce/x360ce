@@ -1,5 +1,6 @@
-v4.12.7.0 (2020-08-02)
+v4.12.8.0 (2020-08-02)
 - Fix: Server side bug was causing client fail and upload settings to cloud forever.
+- Fix: Bug which allowed to send settings to cloud until success (4 attempts max now).
 
 v4.12.6.0 (2020-08-01)
 - Fix: Removed duplicated methods updated device manager and detector.
