@@ -1,4 +1,5 @@
-﻿using SharpDX.XInput;
+﻿using JocysCom.ClassLibrary.Resources.Data;
+using SharpDX.XInput;
 using System;
 using System.Linq.Expressions;
 using System.Xml.Serialization;
@@ -10,6 +11,8 @@ namespace x360ce.Engine.Data
 	[XmlType("Setting")]
 	public partial class UserSetting : IUserRecord
 	{
+
+		Guid IUserRecord.Id { get {return SettingId; }  set { SettingId = value; } }
 
 		[XmlIgnore]
 		public bool IsOnline

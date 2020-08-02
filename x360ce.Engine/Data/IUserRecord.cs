@@ -13,6 +13,7 @@ namespace x360ce.Engine.Data
 	/// </summary>
 	public interface IUserRecord : IComputer, IDateTime
 	{
+		Guid Id { get; set; }
 		Guid ProfileId { get; set; }
 	}
 }

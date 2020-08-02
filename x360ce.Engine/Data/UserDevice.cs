@@ -15,6 +15,7 @@ namespace x360ce.Engine.Data
             DateCreated = DateTime.Now;
             DateUpdated = DateCreated;
             IsEnabled = true;
+			ConnectionClass = Guid.Empty;
         }
 
         [XmlIgnore]

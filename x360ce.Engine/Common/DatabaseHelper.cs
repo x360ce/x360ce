@@ -14,11 +14,15 @@ namespace x360ce.Engine
 		/// <summary>Execute INSERT/UPDATE commands on database.</summary>
 		public static void Upsert(CloudMessage command, List<string> messages)
 		{
-			messages.Add(Upsert(command.UserGames));
-			messages.Add(Upsert(command.UserDevices));
-			messages.Add(Upsert(command.UserInstances));
+			if (command.UserGames != null)
+				messages.Add(Upsert(command.UserGames));
+			if (command.UserDevices != null)
+				messages.Add(Upsert(command.UserDevices));
+			if (command.UserInstances != null)
+				messages.Add(Upsert(command.UserInstances));
 			// UPSERT settings last, because it depends on other records.
-			messages.Add(Upsert(command.UserSettings));
+			if (command.UserSettings != null)
+				messages.Add(Upsert(command.UserSettings));
 		}
 
 
@@ -26,12 +30,16 @@ namespace x360ce.Engine
 		public static void Delete(CloudMessage command, List<string> messages)
 		{
 			// Delete user settings first, because it links to other records.
-			messages.Add(Delete(command.UserSettings));
+			if (command.UserSettings != null)
+				messages.Add(Delete(command.UserSettings));
 			// Delete user instances because it links to used devices.
-			messages.Add(Delete(command.UserInstances));
+			if (command.UserInstances != null)
+				messages.Add(Delete(command.UserInstances));
 			// Delete other records.
-			messages.Add(Delete(command.UserGames));
-			messages.Add(Delete(command.UserDevices));
+			if (command.UserGames != null)
+				messages.Add(Delete(command.UserGames));
+			if (command.UserDevices != null)
+				messages.Add(Delete(command.UserDevices));
 		}
 
 		public static void Select(CloudMessage command, CloudMessage results, List<string> messages, out string error)
@@ -114,6 +122,26 @@ namespace x360ce.Engine
 
 		#region Helper Methods
 
+		static void FixData<T>(T item)
+		{
+			var props = typeof(T).GetProperties();
+			foreach (var p in props)
+			{
+				if (p.PropertyType == typeof(string))
+				{
+					var value = (string)p.GetValue(item);
+					if (value == null)
+						p.SetValue(item, "");
+				}
+				else if (p.PropertyType == typeof(DateTime))
+				{
+					var value = (DateTime)p.GetValue(item);
+					if (value == new DateTime())
+						p.SetValue(item, DateTime.Now);
+				}
+			}
+		}
+
 		public static string Upsert<T>(T[] items) where T : EntityObject, IUserRecord
 		{
 			var db = new x360ceModelContainer();
@@ -123,6 +151,8 @@ namespace x360ce.Engine
 			for (int i = 0; i < items.Length; i++)
 			{
 				var item = items[i];
+				// Fix nulls.
+				FixData(item);
 				var computerId = item.ComputerId;
 				var profileId = item.ProfileId;
 				IUserRecord dbItem = GetExistingItem(table, item, true);
@@ -131,6 +161,7 @@ namespace x360ce.Engine
 				{
 					// Use supplied item as new item.
 					created++;
+					item.Id = Guid.NewGuid();
 					item.DateCreated = DateTime.Now;
 					item.DateUpdated = item.DateCreated;
 					table.AddObject(item);
@@ -166,6 +197,8 @@ namespace x360ce.Engine
 			for (int i = 0; i < items.Length; i++)
 			{
 				var item = items[i];
+				// Fix nulls.
+				FixData(item);
 				var computerId = item.ComputerId;
 				var profileId = item.ProfileId;
 				var dbItem = GetExistingItem(table, item);

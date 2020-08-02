@@ -10,10 +10,13 @@ namespace x360ce.Engine.Data
 
 		public UserGame()
 		{
+			
 			DateCreated = DateTime.Now;
 			DateUpdated = DateCreated;
 			Timeout = -1;
 		}
+
+		Guid IUserRecord.Id { get { return GameId; } set { GameId = value; } }
 
 		[XmlIgnore]
 		public string DisplayName

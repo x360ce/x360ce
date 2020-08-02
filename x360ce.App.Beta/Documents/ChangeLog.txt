@@ -1,6 +1,6 @@
 v4.12.6.0 (2020-08-01)
 - Fix: Removed duplicated methods updated device manager and detector.
-- Fix: Rare app crash when device swiched off.
+- Fix: Rare app crash when device switched off.
 - New: Added "WingManTeam DX Tweak" tool and button for raw and direct input calibration.
 - New: Device connection type icon: Bluetooth, USB, System/Virtual.
 - Update: Hardware control. Added ability to remove offline, problem or unknown devices
