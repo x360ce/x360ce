@@ -45,6 +45,7 @@ namespace x360ce.App
 			// IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
 			// program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
+			// In debug mode don't try to wrap app into try catch.
 			if (IsDebug)
 			{
 				StartApp(args);
@@ -150,7 +151,8 @@ namespace x360ce.App
 
 		public static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
-			if (IsClosing) return;
+			if (IsClosing)
+				return;
 			ErrorCount++;
 			MainForm.Current.UpdateTimer.Stop();
 			MainForm.Current.UpdateStatus("- " + e.Exception.Message);

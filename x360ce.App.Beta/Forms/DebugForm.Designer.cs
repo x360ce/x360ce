@@ -28,30 +28,30 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugForm));
-            this.performanceTestUserControl1 = new x360ce.App.Controls.PerformanceTestUserControl();
-            this.SuspendLayout();
-            // 
-            // performanceTestUserControl1
-            // 
-            this.performanceTestUserControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugForm));
+			this.performanceTestUserControl1 = new x360ce.App.Controls.PerformanceTestUserControl();
+			this.SuspendLayout();
+			// 
+			// performanceTestUserControl1
+			// 
+			this.performanceTestUserControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.performanceTestUserControl1.Location = new System.Drawing.Point(12, 12);
-            this.performanceTestUserControl1.Name = "performanceTestUserControl1";
-            this.performanceTestUserControl1.Size = new System.Drawing.Size(234, 147);
-            this.performanceTestUserControl1.TabIndex = 0;
-            // 
-            // DebugForm
-            // 
-            this.ClientSize = new System.Drawing.Size(258, 171);
-            this.Controls.Add(this.performanceTestUserControl1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "DebugForm";
-            this.Text = "Debug Form";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugForm_FormClosing);
-            this.Load += new System.EventHandler(this.DebugForm_Load);
-            this.ResumeLayout(false);
+			this.performanceTestUserControl1.Location = new System.Drawing.Point(12, 12);
+			this.performanceTestUserControl1.Name = "performanceTestUserControl1";
+			this.performanceTestUserControl1.Size = new System.Drawing.Size(234, 169);
+			this.performanceTestUserControl1.TabIndex = 0;
+			// 
+			// DebugForm
+			// 
+			this.ClientSize = new System.Drawing.Size(258, 193);
+			this.Controls.Add(this.performanceTestUserControl1);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+			this.Name = "DebugForm";
+			this.Text = "Debug Form";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugForm_FormClosing);
+			this.Load += new System.EventHandler(this.DebugForm_Load);
+			this.ResumeLayout(false);
 
 		}
 

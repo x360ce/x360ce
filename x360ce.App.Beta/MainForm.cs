@@ -36,6 +36,8 @@ namespace x360ce.App
             if (!IsDesignMode)
             {
                 // Initialize exception handlers
+                LogHelper.Current.LogExceptions = true;
+                LogHelper.Current.LogToFile = true;
                 LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
                 LogHelper.Current.WritingException += Current_WritingException;
                 // Fix access rights to configuration folder.

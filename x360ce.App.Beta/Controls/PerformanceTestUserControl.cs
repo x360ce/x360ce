@@ -387,7 +387,11 @@ namespace x360ce.App.Controls
 
         }
 
-        #endregion
+		#endregion
 
-    }
+		private void ThrowExceptionButton_Click(object sender, EventArgs e)
+		{
+            throw new Exception("Test Exception");
+		}
+	}
 }

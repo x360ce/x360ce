@@ -41,7 +41,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public void InitExceptionHandlers(string logFolder = null)
 		{
 			_OverrideLogFolder = logFolder;
-			//if (LogThreadExceptions)
+			//if (LogExceptions && LogThreadExceptions)
 			//	System.Windows.Forms.Application.ThreadException += Application_ThreadException;
 			if (LogExceptions && LogUnhandledExceptions)
 				AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -53,14 +53,14 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public void UnInitExceptionHandlers()
 		{
-			//if (LogThreadExceptions)
+			//if (LogExceptions && LogThreadExceptions)
 			//	System.Windows.Forms.Application.ThreadException -= Application_ThreadException;
 			if (LogExceptions && LogUnhandledExceptions)
 				AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
 			if (LogExceptions && LogFirstChanceExceptions)
 				AppDomain.CurrentDomain.FirstChanceException -= CurrentDomain_FirstChanceException;
 			if (LogExceptions && LogUnobservedTaskExceptions)
-				TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+				TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
 		}
 
 		private string _OverrideLogFolder = null;

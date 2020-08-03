@@ -57,13 +57,33 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public bool ErrorUseNewStackTrace { get { return _SP.Parse("UseNewStackTrace", false); } }
 		public bool WriteAsHtml { get { return _SP.Parse("WriteAsHtml", true); } }
-		public bool LogToFile { get { return _SP.Parse("LogToFile", false); } }
-		public bool LogToMail { get { return _SP.Parse("LogToMail", false); } }
-		public bool LogExceptions { get { return _SP.Parse("LogExceptions", false); } }
+
+		public bool LogToFile
+		{
+			get { return _LogToFile ?? _SP.Parse("LogToFile", false); }
+			set { _LogToFile = value; }
+		}
+		private bool? _LogToFile;
+
+		public bool LogToMail
+		{
+			get { return _LogToMail ?? _SP.Parse("LogToMail", false); }
+			set { _LogToMail = value; }
+		}
+		private bool? _LogToMail;
+
+		public bool LogExceptions
+		{
+			get { return _LogExceptions ?? _SP.Parse("LogExceptions", false); }
+			set { _LogExceptions = value; }
+		}
+		private bool? _LogExceptions;
+
 		public bool LogThreadExceptions { get { return _SP.Parse("LogThreadExceptions", true); } }
 		public bool LogUnhandledExceptions { get { return _SP.Parse("LogUnhandledExceptions", true); } }
 		public bool LogFirstChanceExceptions { get { return _SP.Parse("LogFirstChanceExceptions", true); } }
 		public bool LogUnobservedTaskExceptions { get { return _SP.Parse("LogUnobservedTaskExceptions", true); } }
+
 		public bool GroupingEnabled { get { return _SP.Parse("GroupingEnabled", false); } }
 		public TimeSpan GroupingDelay { get { return _SP.Parse("GroupingDelay", new TimeSpan(0, 5, 0)); } }
 		public static string RunMode

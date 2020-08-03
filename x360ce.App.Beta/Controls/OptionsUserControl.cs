@@ -74,10 +74,11 @@ namespace x360ce.App.Controls
 		void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			var cbx = (CheckBox)sender;
-			if (!cbx.Checked)
-				Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
-			else
+			// If debug mode then don't catch exceptions.
+			if (cbx.Checked)
 				Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
+			else
+				Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 		}
 
 		public void UpdateSettingsMap()
