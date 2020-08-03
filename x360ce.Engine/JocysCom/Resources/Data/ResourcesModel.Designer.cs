@@ -150,7 +150,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
 
         #endregion
 
-        #region Primitive Properties
+        #region Simple Properties
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -169,7 +169,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
                 {
                     OnIdChanging(value);
                     ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
+                    _Id = StructuralObject.SetValidValue(value, "Id");
                     ReportPropertyChanged("Id");
                     OnIdChanged();
                 }
@@ -194,7 +194,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnCultureCodeChanging(value);
                 ReportPropertyChanging("CultureCode");
-                _CultureCode = StructuralObject.SetValidValue(value, false);
+                _CultureCode = StructuralObject.SetValidValue(value, false, "CultureCode");
                 ReportPropertyChanged("CultureCode");
                 OnCultureCodeChanged();
             }
@@ -218,7 +218,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnCategoryChanging(value);
                 ReportPropertyChanging("Category");
-                _Category = StructuralObject.SetValidValue(value, false);
+                _Category = StructuralObject.SetValidValue(value, false, "Category");
                 ReportPropertyChanged("Category");
                 OnCategoryChanged();
             }
@@ -242,7 +242,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnSectionChanging(value);
                 ReportPropertyChanging("Section");
-                _Section = StructuralObject.SetValidValue(value, false);
+                _Section = StructuralObject.SetValidValue(value, false, "Section");
                 ReportPropertyChanged("Section");
                 OnSectionChanged();
             }
@@ -266,7 +266,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnKeyTypeChanging(value);
                 ReportPropertyChanging("KeyType");
-                _KeyType = StructuralObject.SetValidValue(value, false);
+                _KeyType = StructuralObject.SetValidValue(value, false, "KeyType");
                 ReportPropertyChanged("KeyType");
                 OnKeyTypeChanged();
             }
@@ -290,7 +290,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnKeyNameChanging(value);
                 ReportPropertyChanging("KeyName");
-                _KeyName = StructuralObject.SetValidValue(value, false);
+                _KeyName = StructuralObject.SetValidValue(value, false, "KeyName");
                 ReportPropertyChanged("KeyName");
                 OnKeyNameChanged();
             }
@@ -314,7 +314,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnKeyValueChanging(value);
                 ReportPropertyChanging("KeyValue");
-                _KeyValue = StructuralObject.SetValidValue(value, false);
+                _KeyValue = StructuralObject.SetValidValue(value, false, "KeyValue");
                 ReportPropertyChanged("KeyValue");
                 OnKeyValueChanged();
             }
@@ -338,7 +338,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnReplacementChanging(value);
                 ReportPropertyChanging("Replacement");
-                _Replacement = StructuralObject.SetValidValue(value, false);
+                _Replacement = StructuralObject.SetValidValue(value, false, "Replacement");
                 ReportPropertyChanged("Replacement");
                 OnReplacementChanged();
             }
@@ -362,7 +362,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnOptionsChanging(value);
                 ReportPropertyChanging("Options");
-                _Options = StructuralObject.SetValidValue(value, true);
+                _Options = StructuralObject.SetValidValue(value, true, "Options");
                 ReportPropertyChanged("Options");
                 OnOptionsChanged();
             }
@@ -386,7 +386,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnDescriptionChanging(value);
                 ReportPropertyChanging("Description");
-                _Description = StructuralObject.SetValidValue(value, false);
+                _Description = StructuralObject.SetValidValue(value, false, "Description");
                 ReportPropertyChanged("Description");
                 OnDescriptionChanged();
             }
@@ -410,7 +410,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnIsExpressionChanging(value);
                 ReportPropertyChanging("IsExpression");
-                _IsExpression = StructuralObject.SetValidValue(value);
+                _IsExpression = StructuralObject.SetValidValue(value, "IsExpression");
                 ReportPropertyChanged("IsExpression");
                 OnIsExpressionChanged();
             }
@@ -434,7 +434,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnIsSerializedChanging(value);
                 ReportPropertyChanging("IsSerialized");
-                _IsSerialized = StructuralObject.SetValidValue(value);
+                _IsSerialized = StructuralObject.SetValidValue(value, "IsSerialized");
                 ReportPropertyChanged("IsSerialized");
                 OnIsSerializedChanged();
             }
@@ -458,7 +458,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnIsEnabledChanging(value);
                 ReportPropertyChanging("IsEnabled");
-                _IsEnabled = StructuralObject.SetValidValue(value);
+                _IsEnabled = StructuralObject.SetValidValue(value, "IsEnabled");
                 ReportPropertyChanged("IsEnabled");
                 OnIsEnabledChanged();
             }
@@ -482,7 +482,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnDateCreatedChanging(value);
                 ReportPropertyChanging("DateCreated");
-                _DateCreated = StructuralObject.SetValidValue(value);
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
                 ReportPropertyChanged("DateCreated");
                 OnDateCreatedChanged();
             }
@@ -506,7 +506,7 @@ namespace JocysCom.ClassLibrary.Resources.Data
             {
                 OnDateUpdatedChanging(value);
                 ReportPropertyChanging("DateUpdated");
-                _DateUpdated = StructuralObject.SetValidValue(value);
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
                 ReportPropertyChanged("DateUpdated");
                 OnDateUpdatedChanged();
             }
@@ -517,10 +517,8 @@ namespace JocysCom.ClassLibrary.Resources.Data
 
         #endregion
 
-    
     }
 
     #endregion
 
-    
 }

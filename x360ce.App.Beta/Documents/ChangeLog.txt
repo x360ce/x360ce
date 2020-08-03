@@ -1,3 +1,8 @@
+v4.12.13.0 (2020-08-03)
+- Update: Version of .NET Framework increased to 4.7.2
+- Update: Debug files are now embedded.
+- Update: No need for separate debug version. Exception reports will contain exact code line.
+
 v4.12.9.0 (2020-08-03)
 - Fix: Unable to log errors (C:\ProgramData\X360CE\Errors)
 
