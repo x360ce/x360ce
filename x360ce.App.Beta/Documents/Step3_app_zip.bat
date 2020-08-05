@@ -37,6 +37,7 @@ IF NOT "x360ce"=="%~2" (
 IF EXIST %arc% DEL %arc%
 %zip% %arc% %src%\%~2.exe
 :: Create archive with debug info.
+IF NOT EXIST %src%\x360ce.pdb GOTO:EOF
 SET arc=Files\%~2_debug.zip
 IF EXIST %arc% DEL %arc%
 %zip% %arc% %src%\x360ce.exe
