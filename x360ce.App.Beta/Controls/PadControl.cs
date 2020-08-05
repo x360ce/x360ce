@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -829,15 +831,19 @@ namespace x360ce.App.Controls
 			return ps;
 		}
 
-		//      /// <summary>
-		///// Get PadSetting from currently selected device.
-		///// </summary>
-		//public PadSetting GetCurrentPadSetting()
-		//      {
-		//          var setting = GetSelectedSetting();
-		//          var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-		//          return ps;
-		//      }
+		/// <summary>
+		/// Get PadSetting from currently selected device.
+		/// </summary>
+		public PadSetting GetCurrentPadSetting()
+		{
+			PadSetting ps = null;
+			var setting = GetSelectedSetting();
+			if (setting != null)
+				ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+			if (ps == null)
+				ps = new PadSetting();
+			return ps;
+		}
 
 		object updateFromDirectInputLock = new object();
 
@@ -946,12 +952,7 @@ namespace x360ce.App.Controls
 			if (ud != null && ud.DiState != null)
 			{
 				// Get current pad setting.
-				PadSetting ps = null;
-				var setting = GetSelectedSetting();
-				if (setting != null)
-					ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-				if (ps == null)
-					ps = new PadSetting();
+				var ps = GetCurrentPadSetting();
 				Map map;
 				// LeftThumbX
 				var axis = ud.DiState.Axis;
@@ -1648,6 +1649,32 @@ namespace x360ce.App.Controls
 				return;
 			}
 			ControlsHelper.OpenPath(fi.FullName);
+		}
+
+		private void CopyPresetButton_Click(object sender, EventArgs e)
+		{
+			var ps = GetCurrentPadSetting();
+			var text = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(ps, null, true);
+			Clipboard.SetText(text);
+		}
+
+		private void PastePresetButton_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				var xml = Clipboard.GetText();
+				var ps = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<PadSetting>(xml);
+				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, ps);
+			}
+			catch (Exception ex)
+			{
+				var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
+				form.StartPosition = FormStartPosition.CenterParent;
+				ControlsHelper.CheckTopMost(form);
+				form.ShowForm(ex.Message);
+				form.Dispose();
+				return;
+			}
 		}
 
 	}

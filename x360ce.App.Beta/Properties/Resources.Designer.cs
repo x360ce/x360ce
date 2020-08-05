@@ -423,6 +423,26 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap copy_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("copy_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap copy_16x161 {
+            get {
+                object obj = ResourceManager.GetObject("copy_16x161", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap data_into_16x16 {
             get {
                 object obj = ResourceManager.GetObject("data_into_16x16", resourceCulture);
@@ -636,6 +656,16 @@ namespace x360ce.App.Properties {
         public static System.Drawing.Bitmap online_help_16x16 {
             get {
                 object obj = ResourceManager.GetObject("online_help_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap paste_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("paste_16x16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -80,10 +80,10 @@ namespace x360ce.Engine.Data
 			}
 		}
 
-		public Guid CleanAndGetCheckSum()
+		public Guid CleanAndGetCheckSum(List<string> list = null)
 		{
 			// Make sure to update checksums in database if you are changing this method.
-			var list = new List<string>();
+			list = list ?? new List<string>();
 			// GamePad.
 			AddValue(ref list, x => x.PassThrough);
 			AddValue(ref list, x => x.GamePadType);
@@ -192,15 +192,10 @@ namespace x360ce.Engine.Data
 			var value = (string)p.GetValue(this, null);
 			// If value is not empty or default then...
 			if (!isDefault(value, defaultValue))
-			{
 				list.Add(string.Format("{0}={1}", p.Name, value));
-			}
 			// If value is default but not empty then reset value.
 			else if (value != "")
-			{
-
 				p.SetValue(this, "", null);
-			}
 		}
 
 		#region Do not serialize default values

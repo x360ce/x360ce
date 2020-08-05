@@ -16,9 +16,9 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HardwareControl));
 			this.MainTabControl = new System.Windows.Forms.TabControl();
 			this.DeviceTreeTabPage = new System.Windows.Forms.TabPage();
@@ -211,7 +211,7 @@
 			// ClassGuidLabel
 			// 
 			this.ClassGuidLabel.AutoSize = true;
-			this.ClassGuidLabel.Location = new System.Drawing.Point(3, 110);
+			this.ClassGuidLabel.Location = new System.Drawing.Point(3, 109);
 			this.ClassGuidLabel.Name = "ClassGuidLabel";
 			this.ClassGuidLabel.Size = new System.Drawing.Size(65, 13);
 			this.ClassGuidLabel.TabIndex = 3;
@@ -220,7 +220,7 @@
 			// ClassDescriptionLabel
 			// 
 			this.ClassDescriptionLabel.AutoSize = true;
-			this.ClassDescriptionLabel.Location = new System.Drawing.Point(3, 136);
+			this.ClassDescriptionLabel.Location = new System.Drawing.Point(3, 135);
 			this.ClassDescriptionLabel.Name = "ClassDescriptionLabel";
 			this.ClassDescriptionLabel.Size = new System.Drawing.Size(91, 13);
 			this.ClassDescriptionLabel.TabIndex = 3;
@@ -237,7 +237,7 @@
 			// ManufacturerLabel
 			// 
 			this.ManufacturerLabel.AutoSize = true;
-			this.ManufacturerLabel.Location = new System.Drawing.Point(3, 58);
+			this.ManufacturerLabel.Location = new System.Drawing.Point(3, 57);
 			this.ManufacturerLabel.Name = "ManufacturerLabel";
 			this.ManufacturerLabel.Size = new System.Drawing.Size(73, 13);
 			this.ManufacturerLabel.TabIndex = 3;
@@ -254,7 +254,7 @@
 			// DescriptionLabel
 			// 
 			this.DescriptionLabel.AutoSize = true;
-			this.DescriptionLabel.Location = new System.Drawing.Point(3, 84);
+			this.DescriptionLabel.Location = new System.Drawing.Point(3, 83);
 			this.DescriptionLabel.Name = "DescriptionLabel";
 			this.DescriptionLabel.Size = new System.Drawing.Size(63, 13);
 			this.DescriptionLabel.TabIndex = 3;
@@ -288,7 +288,7 @@
 			// ProductIdLabel
 			// 
 			this.ProductIdLabel.AutoSize = true;
-			this.ProductIdLabel.Location = new System.Drawing.Point(3, 32);
+			this.ProductIdLabel.Location = new System.Drawing.Point(3, 31);
 			this.ProductIdLabel.Name = "ProductIdLabel";
 			this.ProductIdLabel.Size = new System.Drawing.Size(86, 13);
 			this.ProductIdLabel.TabIndex = 3;
@@ -305,7 +305,7 @@
 			// VendorIdLabel
 			// 
 			this.VendorIdLabel.AutoSize = true;
-			this.VendorIdLabel.Location = new System.Drawing.Point(4, 7);
+			this.VendorIdLabel.Location = new System.Drawing.Point(3, 6);
 			this.VendorIdLabel.Name = "VendorIdLabel";
 			this.VendorIdLabel.Size = new System.Drawing.Size(83, 13);
 			this.VendorIdLabel.TabIndex = 1;
@@ -314,7 +314,7 @@
 			// DeviceStatusLabel
 			// 
 			this.DeviceStatusLabel.AutoSize = true;
-			this.DeviceStatusLabel.Location = new System.Drawing.Point(2, 164);
+			this.DeviceStatusLabel.Location = new System.Drawing.Point(3, 163);
 			this.DeviceStatusLabel.Name = "DeviceStatusLabel";
 			this.DeviceStatusLabel.Size = new System.Drawing.Size(77, 13);
 			this.DeviceStatusLabel.TabIndex = 1;
@@ -323,7 +323,7 @@
 			// DevicePathLabel
 			// 
 			this.DevicePathLabel.AutoSize = true;
-			this.DevicePathLabel.Location = new System.Drawing.Point(1, 224);
+			this.DevicePathLabel.Location = new System.Drawing.Point(3, 242);
 			this.DevicePathLabel.Name = "DevicePathLabel";
 			this.DevicePathLabel.Size = new System.Drawing.Size(66, 13);
 			this.DevicePathLabel.TabIndex = 1;
@@ -332,7 +332,7 @@
 			// DeviceIdLabel
 			// 
 			this.DeviceIdLabel.AutoSize = true;
-			this.DeviceIdLabel.Location = new System.Drawing.Point(4, 328);
+			this.DeviceIdLabel.Location = new System.Drawing.Point(3, 321);
 			this.DeviceIdLabel.Name = "DeviceIdLabel";
 			this.DeviceIdLabel.Size = new System.Drawing.Size(58, 13);
 			this.DeviceIdLabel.TabIndex = 1;
@@ -340,29 +340,29 @@
 			// 
 			// DeviceStatusTextBox
 			// 
-			this.DeviceStatusTextBox.Location = new System.Drawing.Point(4, 183);
+			this.DeviceStatusTextBox.Location = new System.Drawing.Point(3, 180);
 			this.DeviceStatusTextBox.Multiline = true;
 			this.DeviceStatusTextBox.Name = "DeviceStatusTextBox";
 			this.DeviceStatusTextBox.ReadOnly = true;
-			this.DeviceStatusTextBox.Size = new System.Drawing.Size(324, 38);
+			this.DeviceStatusTextBox.Size = new System.Drawing.Size(324, 60);
 			this.DeviceStatusTextBox.TabIndex = 0;
 			// 
 			// DevicePathTextBox
 			// 
-			this.DevicePathTextBox.Location = new System.Drawing.Point(3, 243);
+			this.DevicePathTextBox.Location = new System.Drawing.Point(3, 259);
 			this.DevicePathTextBox.Multiline = true;
 			this.DevicePathTextBox.Name = "DevicePathTextBox";
 			this.DevicePathTextBox.ReadOnly = true;
-			this.DevicePathTextBox.Size = new System.Drawing.Size(324, 82);
+			this.DevicePathTextBox.Size = new System.Drawing.Size(324, 60);
 			this.DevicePathTextBox.TabIndex = 0;
 			// 
 			// DeviceIdTextBox
 			// 
-			this.DeviceIdTextBox.Location = new System.Drawing.Point(3, 347);
+			this.DeviceIdTextBox.Location = new System.Drawing.Point(3, 338);
 			this.DeviceIdTextBox.Multiline = true;
 			this.DeviceIdTextBox.Name = "DeviceIdTextBox";
 			this.DeviceIdTextBox.ReadOnly = true;
-			this.DeviceIdTextBox.Size = new System.Drawing.Size(324, 82);
+			this.DeviceIdTextBox.Size = new System.Drawing.Size(324, 60);
 			this.DeviceIdTextBox.TabIndex = 0;
 			// 
 			// DeviceListTabPage
@@ -413,8 +413,8 @@
 			// 
 			this.VendorIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.VendorIdColumn.DataPropertyName = "VendorId";
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.VendorIdColumn.DefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.VendorIdColumn.DefaultCellStyle = dataGridViewCellStyle1;
 			this.VendorIdColumn.HeaderText = "VID";
 			this.VendorIdColumn.Name = "VendorIdColumn";
 			this.VendorIdColumn.Width = 50;
@@ -423,8 +423,8 @@
 			// 
 			this.ProductIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.ProductIdColumn.DataPropertyName = "ProductId";
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.ProductIdColumn.DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.ProductIdColumn.DefaultCellStyle = dataGridViewCellStyle2;
 			this.ProductIdColumn.HeaderText = "PID";
 			this.ProductIdColumn.Name = "ProductIdColumn";
 			this.ProductIdColumn.Width = 50;
@@ -433,8 +433,8 @@
 			// 
 			this.RevisionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.RevisionColumn.DataPropertyName = "Revision";
-			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			this.RevisionColumn.DefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			this.RevisionColumn.DefaultCellStyle = dataGridViewCellStyle3;
 			this.RevisionColumn.HeaderText = "REV";
 			this.RevisionColumn.Name = "RevisionColumn";
 			this.RevisionColumn.Width = 54;

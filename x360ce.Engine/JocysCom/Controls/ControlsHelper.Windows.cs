@@ -588,6 +588,7 @@ namespace JocysCom.ClassLibrary.Controls
 			grid.EnableHeadersVisualStyles = false;
 			grid.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
 			grid.ColumnHeadersDefaultCellStyle.BackColor = SystemColors.Control;
+			grid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.False;
 			grid.RowHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
 			grid.RowHeadersDefaultCellStyle.BackColor = SystemColors.Control;
 			grid.BackColor = SystemColors.Window;

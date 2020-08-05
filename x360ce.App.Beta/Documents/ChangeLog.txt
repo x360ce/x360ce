@@ -1,4 +1,5 @@
-v4.12.13.0 (2020-08-03)
+v4.12.18.0 (2020-08-03)
+- New: [Copy Preset] to clipboard and [Paste Preset] from clipboard buttons.
 - Update: Version of .NET Framework increased to 4.7.2
 - Update: Debug files are now embedded.
 - Update: No need for separate debug version. Exception reports will contain exact code line.
