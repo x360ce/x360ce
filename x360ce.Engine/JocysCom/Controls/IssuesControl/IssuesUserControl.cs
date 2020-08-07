@@ -114,7 +114,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		void CheckAll()
 		{
-			foreach (var issue in IssueList)
+			// Make sure that issues are checked in correct order.
+			var issues = IssueList.OrderBy(x => x.OrderId).ToArray();
+			foreach (var issue in issues)
 			{
 				if (IsDisposing)
 					return;
@@ -147,6 +149,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			for (int i = 0; i < items.Length; i++)
 			{
 				IssueList.Add(items[i]);
+				// Assign run order of the issue.
+				items[i].OrderId = i;
 				items[i].Checking += Item_Checking;
 				items[i].Checked += Item_Checked;
 				items[i].Fixing += Item_Fixing;
@@ -215,7 +219,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 					item.Fixing -= Item_Fixing;
 					item.Fixed -= Item_Fixed;
 				}
-				if (components != null) components.Dispose();
+				if (components != null)
+					components.Dispose();
 			}
 			base.Dispose(disposing);
 		}
@@ -226,11 +231,19 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				return;
 			var grid = (DataGridView)sender;
 			var column = grid.Columns[e.ColumnIndex];
-			if (column is DataGridViewButtonColumn && e.RowIndex >= 0)
+			var row = grid.Rows[e.RowIndex];
+			var item = (IssueItem)row.DataBoundItem;
+			if (column == SolutionColumn)
 			{
-				var row = grid.Rows[e.RowIndex];
-				var item = (IssueItem)row.DataBoundItem;
-				item.Fix();
+				Task.Factory.StartNew(new Action(() =>
+				{
+					item.Fix();
+				}));
+			}
+			if (column == MoreColumn)
+			{
+				if (item.MoreInfo != null)
+					ControlsHelper.OpenUrl(item.MoreInfo.AbsoluteUri);
 			}
 		}
 
@@ -286,6 +299,10 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			else if (column == SolutionColumn)
 			{
 				e.Value = item.Status == IssueStatus.Fixing ? "Please Wait..." : item.FixName;
+			}
+			else if (column == MoreColumn)
+			{
+				e.Value = item.MoreInfo == null ? "" : "More...";
 			}
 		}
 

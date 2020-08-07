@@ -7,10 +7,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 	public class IssueItem : INotifyPropertyChanged
 	{
 
-		public IssueItem()
+		public IssueItem(int orderId = 0)
 		{
 			Description = "";
 			FixName = "Fix";
+			OrderId = orderId;
 		}
 
 		public event EventHandler<EventArgs> Checking;
@@ -21,14 +22,23 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public Exception LastException;
 
-		public IssueStatus Status { get { return _Status; } }
-		IssueStatus _Status;
+		public IssueStatus Status { get; private set; }
 
 		void SetStatus(IssueStatus status)
 		{
-			_Status = status;
+			Status = status;
 			OnPropertyChanged(nameof(Status));
 		}
+
+		/// <summary>
+		/// Order ID will define in which order issues will be checked.
+		/// </summary>
+		public int OrderId
+		{
+			get { return _OrderId; }
+			set { _OrderId = value; OnPropertyChanged(); }
+		}
+		private int _OrderId ;
 
 		public string Name
 		{
@@ -43,6 +53,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			set { _Description = value; OnPropertyChanged(); }
 		}
 		string _Description;
+
+		public Uri MoreInfo
+		{
+			get { return _MoreInfo; }
+			set { _MoreInfo = value; OnPropertyChanged(); }
+		}
+		private Uri _MoreInfo;
 
 		public int FixType;
 
@@ -121,6 +138,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			LastException = null;
 			try
 			{
+
 				FixTask();
 			}
 			catch (Exception ex)

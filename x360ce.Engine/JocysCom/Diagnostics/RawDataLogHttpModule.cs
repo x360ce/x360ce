@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Web;
+using System.Linq;
 
 namespace JocysCom.ClassLibrary.Diagnostics
 {
@@ -66,10 +67,10 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			col.Add("UserHostAddress", request.UserHostAddress);
 			col.Add("Url", string.Format("{0}", request.Url));
 			col.Add("HttpMethod", request.HttpMethod);
-			var sb = new StringBuilder();
-			foreach (var key in request.Headers.AllKeys)
-				sb.AppendFormat("{0}: {1}\r\n", key, request.Headers[key]);
-			col.Add("Headers", sb.ToString());
+			// Add headers.
+			var headerLines = request.Headers.AllKeys.ToArray()
+				.Select(x => string.Format("{0}: {1}", x, request.Headers[x]));
+			col.Add("Headers", string.Join("\r\n", headerLines));
 			// Get raw body.
 			request.InputStream.Position = 0;
 			var sr = new StreamReader(request.InputStream, request.ContentEncoding);

@@ -1,8 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
-using System.IO;
-using x360ce.Engine;
 
 namespace x360ce.App.Issues
 {
@@ -12,13 +10,15 @@ namespace x360ce.App.Issues
 		public CppX64RuntimeInstallIssue() : base()
 		{
 			Name = "Software";
-			FixName = "Download";
+			FixName = "Download and Install";
+			MoreInfo = new Uri("https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads");
 		}
 
 		// Use ignore case modifier.
-        string program1 = "(?i)(Visual C\\+\\+).*(Redistributable).*(x64)";
+        string program1Rx = "(?i)(Visual C\\+\\+).*(2015|2017|2019).*(Redistributable).*(x64)";
+		string program1 = "Microsoft Visual C++ 2015-2019 Redistributable (x64)";
 
-        public override void CheckTask()
+		public override void CheckTask()
 		{
             // This issue check applies only for 64-bit OS.
             if (!Environment.Is64BitOperatingSystem)
@@ -26,7 +26,7 @@ namespace x360ce.App.Issues
                 SetSeverity(IssueSeverity.None);
                 return;
             }
-			var installed = IssueHelper.IsInstalled(program1, false);
+			var installed = IssueHelper.IsInstalled(program1Rx, false);
             if (!installed)
 			{
 				SetSeverity(
@@ -40,8 +40,9 @@ namespace x360ce.App.Issues
 
 		public override void FixTask()
 		{
-			// Microsoft Visual C++ 2015 Redistributable Update 3
-			ControlsHelper.OpenUrl("https://www.microsoft.com/en-us/download/details.aspx?id=53587");
-        }
+			// Microsoft Visual C++ 2015, 2017, 2019 Redistributable
+			var uri = new Uri("https://aka.ms/vs/16/release/vc_redist.x64.exe");
+			IssueHelper.DownloadAndInstall(uri, MoreInfo);
+		}
     }
 }

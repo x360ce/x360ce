@@ -16,19 +16,15 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssuesUserControl));
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.WarningsDataGridView = new System.Windows.Forms.DataGridView();
-			this.SeverityColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DescriptionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.SolutionColumn = new System.Windows.Forms.DataGridViewButtonColumn();
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.IgnoreAllButton = new System.Windows.Forms.ToolStripButton();
 			this.IgnoreButton = new System.Windows.Forms.ToolStripButton();
@@ -42,6 +38,11 @@
 			this.NoIssuesPanel = new System.Windows.Forms.Panel();
 			this.NoIssuesLabel = new System.Windows.Forms.Label();
 			this.LinePanel = new System.Windows.Forms.Panel();
+			this.SeverityColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DescriptionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MoreColumn = new System.Windows.Forms.DataGridViewLinkColumn();
+			this.SolutionColumn = new System.Windows.Forms.DataGridViewButtonColumn();
 			((System.ComponentModel.ISupportInitialize)(this.WarningsDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.NoIssuesPanel.SuspendLayout();
@@ -58,40 +59,41 @@
 			this.WarningsDataGridView.BackgroundColor = System.Drawing.Color.White;
 			this.WarningsDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.WarningsDataGridView.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-			dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle15.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle15.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle15.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle15.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle15.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.WarningsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle15;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.WarningsDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.WarningsDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.WarningsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.SeverityColumn,
             this.NameColumn,
             this.DescriptionColumn,
+            this.MoreColumn,
             this.SolutionColumn});
-			dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle20.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle20.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle20.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.WarningsDataGridView.DefaultCellStyle = dataGridViewCellStyle20;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.WarningsDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
 			this.WarningsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.WarningsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.WarningsDataGridView.Location = new System.Drawing.Point(0, 28);
 			this.WarningsDataGridView.Margin = new System.Windows.Forms.Padding(0);
 			this.WarningsDataGridView.Name = "WarningsDataGridView";
 			this.WarningsDataGridView.ReadOnly = true;
-			dataGridViewCellStyle21.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle21.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle21.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle21.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle21.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle21.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			this.WarningsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle21;
+			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			this.WarningsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle7;
 			this.WarningsDataGridView.RowHeadersVisible = false;
 			this.WarningsDataGridView.RowHeadersWidth = 51;
 			this.WarningsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -100,61 +102,6 @@
 			this.WarningsDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.WarningsDataGridView_CellContentClick);
 			this.WarningsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.WarningsDataGridView_CellFormatting);
 			this.WarningsDataGridView.SelectionChanged += new System.EventHandler(this.WarningsDataGridView_SelectionChanged);
-			// 
-			// SeverityColumn
-			// 
-			this.SeverityColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.SeverityColumn.DataPropertyName = "Severity";
-			dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle16.NullValue = null;
-			dataGridViewCellStyle16.Padding = new System.Windows.Forms.Padding(3);
-			dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.SeverityColumn.DefaultCellStyle = dataGridViewCellStyle16;
-			this.SeverityColumn.HeaderText = "";
-			this.SeverityColumn.MinimumWidth = 32;
-			this.SeverityColumn.Name = "SeverityColumn";
-			this.SeverityColumn.ReadOnly = true;
-			this.SeverityColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.SeverityColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.SeverityColumn.Width = 32;
-			// 
-			// NameColumn
-			// 
-			this.NameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			this.NameColumn.DataPropertyName = "Name";
-			dataGridViewCellStyle17.Padding = new System.Windows.Forms.Padding(3);
-			dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.NameColumn.DefaultCellStyle = dataGridViewCellStyle17;
-			this.NameColumn.HeaderText = "Name";
-			this.NameColumn.MinimumWidth = 6;
-			this.NameColumn.Name = "NameColumn";
-			this.NameColumn.ReadOnly = true;
-			this.NameColumn.Width = 60;
-			// 
-			// DescriptionColumn
-			// 
-			this.DescriptionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-			this.DescriptionColumn.DataPropertyName = "Description";
-			dataGridViewCellStyle18.Padding = new System.Windows.Forms.Padding(3);
-			dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.DescriptionColumn.DefaultCellStyle = dataGridViewCellStyle18;
-			this.DescriptionColumn.HeaderText = "Description";
-			this.DescriptionColumn.MinimumWidth = 6;
-			this.DescriptionColumn.Name = "DescriptionColumn";
-			this.DescriptionColumn.ReadOnly = true;
-			// 
-			// SolutionColumn
-			// 
-			this.SolutionColumn.DataPropertyName = "FixName";
-			dataGridViewCellStyle19.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle19.Padding = new System.Windows.Forms.Padding(3);
-			dataGridViewCellStyle19.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.SolutionColumn.DefaultCellStyle = dataGridViewCellStyle19;
-			this.SolutionColumn.HeaderText = "Solution";
-			this.SolutionColumn.MinimumWidth = 100;
-			this.SolutionColumn.Name = "SolutionColumn";
-			this.SolutionColumn.ReadOnly = true;
-			this.SolutionColumn.Text = "";
 			// 
 			// GamesToolStrip
 			// 
@@ -280,6 +227,73 @@
 			this.LinePanel.Size = new System.Drawing.Size(605, 1);
 			this.LinePanel.TabIndex = 26;
 			// 
+			// SeverityColumn
+			// 
+			this.SeverityColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.SeverityColumn.DataPropertyName = "Severity";
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle2.NullValue = null;
+			dataGridViewCellStyle2.Padding = new System.Windows.Forms.Padding(3);
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.SeverityColumn.DefaultCellStyle = dataGridViewCellStyle2;
+			this.SeverityColumn.HeaderText = "";
+			this.SeverityColumn.MinimumWidth = 24;
+			this.SeverityColumn.Name = "SeverityColumn";
+			this.SeverityColumn.ReadOnly = true;
+			this.SeverityColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.SeverityColumn.Width = 24;
+			// 
+			// NameColumn
+			// 
+			this.NameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.NameColumn.DataPropertyName = "Name";
+			dataGridViewCellStyle3.Padding = new System.Windows.Forms.Padding(3);
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.NameColumn.DefaultCellStyle = dataGridViewCellStyle3;
+			this.NameColumn.HeaderText = "Name";
+			this.NameColumn.MinimumWidth = 6;
+			this.NameColumn.Name = "NameColumn";
+			this.NameColumn.ReadOnly = true;
+			this.NameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.NameColumn.Width = 41;
+			// 
+			// DescriptionColumn
+			// 
+			this.DescriptionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+			this.DescriptionColumn.DataPropertyName = "Description";
+			dataGridViewCellStyle4.Padding = new System.Windows.Forms.Padding(3);
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.DescriptionColumn.DefaultCellStyle = dataGridViewCellStyle4;
+			this.DescriptionColumn.HeaderText = "Description";
+			this.DescriptionColumn.MinimumWidth = 6;
+			this.DescriptionColumn.Name = "DescriptionColumn";
+			this.DescriptionColumn.ReadOnly = true;
+			this.DescriptionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// MoreColumn
+			// 
+			this.MoreColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.MoreColumn.DataPropertyName = "MoreInfo";
+			this.MoreColumn.HeaderText = "More";
+			this.MoreColumn.Name = "MoreColumn";
+			this.MoreColumn.ReadOnly = true;
+			this.MoreColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+			this.MoreColumn.Text = "More...";
+			this.MoreColumn.Width = 37;
+			// 
+			// SolutionColumn
+			// 
+			this.SolutionColumn.DataPropertyName = "FixName";
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle5.Padding = new System.Windows.Forms.Padding(3);
+			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.SolutionColumn.DefaultCellStyle = dataGridViewCellStyle5;
+			this.SolutionColumn.HeaderText = "Solution";
+			this.SolutionColumn.MinimumWidth = 100;
+			this.SolutionColumn.Name = "SolutionColumn";
+			this.SolutionColumn.ReadOnly = true;
+			this.SolutionColumn.Text = "";
+			// 
 			// IssuesUserControl
 			// 
 			this.Controls.Add(this.WarningsDataGridView);
@@ -317,6 +331,7 @@
 		private System.Windows.Forms.DataGridViewImageColumn SeverityColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn NameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DescriptionColumn;
+		private System.Windows.Forms.DataGridViewLinkColumn MoreColumn;
 		private System.Windows.Forms.DataGridViewButtonColumn SolutionColumn;
 	}
 }

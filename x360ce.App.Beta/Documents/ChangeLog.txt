@@ -1,3 +1,7 @@
+v4.12.21.0 (2020-08-07)
+- Fix: App will check for Visual C++ 2015-2019 Redistributable correctly now.
+- Fix: App was detecting issue in incorrect order resulting in unable to fix them.
+
 v4.12.18.0 (2020-08-05)
 - New: [Copy Preset] to clipboard and [Paste Preset] from clipboard buttons.
 - Update: Version of .NET Framework increased to 4.7.2
