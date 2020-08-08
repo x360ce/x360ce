@@ -87,7 +87,7 @@
 			// AboutTocaEditLinkLabel
 			// 
 			this.AboutTocaEditLinkLabel.AutoSize = true;
-			this.AboutTocaEditLinkLabel.Location = new System.Drawing.Point(433, 87);
+			this.AboutTocaEditLinkLabel.Location = new System.Drawing.Point(433, 109);
 			this.AboutTocaEditLinkLabel.Name = "AboutTocaEditLinkLabel";
 			this.AboutTocaEditLinkLabel.Size = new System.Drawing.Size(126, 13);
 			this.AboutTocaEditLinkLabel.TabIndex = 0;
@@ -98,7 +98,7 @@
 			// AboutTocaLabel
 			// 
 			this.AboutTocaLabel.AutoSize = true;
-			this.AboutTocaLabel.Location = new System.Drawing.Point(351, 87);
+			this.AboutTocaLabel.Location = new System.Drawing.Point(351, 109);
 			this.AboutTocaLabel.Name = "AboutTocaLabel";
 			this.AboutTocaLabel.Size = new System.Drawing.Size(62, 13);
 			this.AboutTocaLabel.TabIndex = 0;
@@ -118,12 +118,12 @@
 			// AboutVirusLinkLabel
 			// 
 			this.AboutVirusLinkLabel.AutoSize = true;
-			this.AboutVirusLinkLabel.Location = new System.Drawing.Point(433, 109);
+			this.AboutVirusLinkLabel.Location = new System.Drawing.Point(433, 87);
 			this.AboutVirusLinkLabel.Name = "AboutVirusLinkLabel";
-			this.AboutVirusLinkLabel.Size = new System.Drawing.Size(119, 13);
+			this.AboutVirusLinkLabel.Size = new System.Drawing.Size(166, 13);
 			this.AboutVirusLinkLabel.TabIndex = 0;
 			this.AboutVirusLinkLabel.TabStop = true;
-			this.AboutVirusLinkLabel.Text = "http://dev.tapek.shst.pl";
+			this.AboutVirusLinkLabel.Text = "https://github.com/Nucleoprotein";
 			this.AboutVirusLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkLabel_LinkClicked);
 			// 
 			// AboutJocysLabel
@@ -138,11 +138,11 @@
 			// AboutVirusLabel
 			// 
 			this.AboutVirusLabel.AutoSize = true;
-			this.AboutVirusLabel.Location = new System.Drawing.Point(351, 109);
+			this.AboutVirusLabel.Location = new System.Drawing.Point(351, 87);
 			this.AboutVirusLabel.Name = "AboutVirusLabel";
-			this.AboutVirusLabel.Size = new System.Drawing.Size(50, 13);
+			this.AboutVirusLabel.Size = new System.Drawing.Size(73, 13);
 			this.AboutVirusLabel.TabIndex = 0;
-			this.AboutVirusLabel.Text = "VirusDev";
+			this.AboutVirusLabel.Text = "Nucleoprotein";
 			// 
 			// AboutProductLabel
 			// 
