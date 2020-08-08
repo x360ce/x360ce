@@ -93,9 +93,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public void Check()
 		{
 			SetStatus(IssueStatus.Checking);
-			var ev1 = Checking;
-			if (ev1 != null)
-				ev1(this, new EventArgs());
+			Checking?.Invoke(this, new EventArgs());
 			LastException = null;
 			try
 			{
@@ -110,9 +108,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			finally
 			{
 				SetStatus(IssueStatus.Idle);
-				var ev2 = Checked;
-				if (ev2 != null)
-					ev2(this, new EventArgs());
+				Checked?.Invoke(this, new EventArgs());
 			}
 		}
 
@@ -132,9 +128,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 					return;
 			}
 			SetStatus(IssueStatus.Fixing);
-			var ev1 = Fixing;
-			if (ev1 != null)
-				ev1(this, new EventArgs());
+			Fixing?.Invoke(this, new EventArgs());
 			LastException = null;
 			try
 			{
@@ -149,9 +143,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			finally
 			{
 				SetStatus(IssueStatus.Idle);
-				var ev2 = Fixed;
-				if (ev2 != null)
-					ev2(this, new EventArgs());
+				Fixed?.Invoke(this, new EventArgs());
 			}
 
 		}
@@ -172,11 +164,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			var ev = PropertyChanged;
-			if (ev == null) return;
-			ev(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion

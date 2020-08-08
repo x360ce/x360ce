@@ -64,11 +64,9 @@ namespace JocysCom.ClassLibrary.Collections
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			var ev = PropertyChanged;
-			if (ev == null) return;
-			ev(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion
@@ -126,11 +124,9 @@ namespace JocysCom.ClassLibrary.Collections
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			var ev = PropertyChanged;
-			if (ev == null) return;
-			ev(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion

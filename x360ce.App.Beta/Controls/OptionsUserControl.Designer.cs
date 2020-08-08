@@ -87,9 +87,11 @@
 			this.GeneralTabPage = new System.Windows.Forms.TabPage();
 			this.GeneralPanel = new System.Windows.Forms.Panel();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
-			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
+			this.ShowFormInfoCheckBox = new System.Windows.Forms.CheckBox();
+			this.DevelopingGroupBox = new System.Windows.Forms.GroupBox();
+			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
@@ -106,6 +108,7 @@
 			this.InternetOptionsTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
+			this.DevelopingGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -162,7 +165,7 @@
 			this.XInputEnableCheckBox.AutoSize = true;
 			this.XInputEnableCheckBox.Checked = true;
 			this.XInputEnableCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.XInputEnableCheckBox.Location = new System.Drawing.Point(7, 21);
+			this.XInputEnableCheckBox.Location = new System.Drawing.Point(6, 25);
 			this.XInputEnableCheckBox.Name = "XInputEnableCheckBox";
 			this.XInputEnableCheckBox.Size = new System.Drawing.Size(93, 17);
 			this.XInputEnableCheckBox.TabIndex = 0;
@@ -172,7 +175,7 @@
 			// ConsoleCheckBox
 			// 
 			this.ConsoleCheckBox.AutoSize = true;
-			this.ConsoleCheckBox.Location = new System.Drawing.Point(6, 67);
+			this.ConsoleCheckBox.Location = new System.Drawing.Point(6, 71);
 			this.ConsoleCheckBox.Name = "ConsoleCheckBox";
 			this.ConsoleCheckBox.Size = new System.Drawing.Size(100, 17);
 			this.ConsoleCheckBox.TabIndex = 0;
@@ -184,7 +187,7 @@
 			this.DebugModeCheckBox.AutoSize = true;
 			this.DebugModeCheckBox.Checked = true;
 			this.DebugModeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.DebugModeCheckBox.Location = new System.Drawing.Point(6, 90);
+			this.DebugModeCheckBox.Location = new System.Drawing.Point(6, 94);
 			this.DebugModeCheckBox.Name = "DebugModeCheckBox";
 			this.DebugModeCheckBox.Size = new System.Drawing.Size(88, 17);
 			this.DebugModeCheckBox.TabIndex = 0;
@@ -194,7 +197,7 @@
 			// EnableLoggingCheckBox
 			// 
 			this.EnableLoggingCheckBox.AutoSize = true;
-			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(6, 44);
+			this.EnableLoggingCheckBox.Location = new System.Drawing.Point(6, 48);
 			this.EnableLoggingCheckBox.Name = "EnableLoggingCheckBox";
 			this.EnableLoggingCheckBox.Size = new System.Drawing.Size(100, 17);
 			this.EnableLoggingCheckBox.TabIndex = 0;
@@ -752,6 +755,7 @@
 			this.GeneralPanel.Controls.Add(this.OperationGroupBox);
 			this.GeneralPanel.Controls.Add(this.DeveloperToolsButton);
 			this.GeneralPanel.Controls.Add(this.TestingAndLoggingGroupBox);
+			this.GeneralPanel.Controls.Add(this.DevelopingGroupBox);
 			this.GeneralPanel.Controls.Add(this.DirectInputDevicesGroupBox);
 			this.GeneralPanel.Controls.Add(this.ConfigurationGroupBox);
 			this.GeneralPanel.Controls.Add(this.ProgramScanLocationsTabControl);
@@ -768,17 +772,9 @@
 			this.InternetOptionsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.InternetOptionsTabPage.Name = "InternetOptionsTabPage";
 			this.InternetOptionsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.InternetOptionsTabPage.Size = new System.Drawing.Size(192, 74);
+			this.InternetOptionsTabPage.Size = new System.Drawing.Size(650, 421);
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
-			// 
-			// InternetPanel
-			// 
-			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.InternetPanel.Location = new System.Drawing.Point(3, 3);
-			this.InternetPanel.Name = "InternetPanel";
-			this.InternetPanel.Size = new System.Drawing.Size(186, 68);
-			this.InternetPanel.TabIndex = 33;
 			// 
 			// VirtualDeviceTabPage
 			// 
@@ -799,6 +795,37 @@
 			this.VirtualDevicePanel.Name = "VirtualDevicePanel";
 			this.VirtualDevicePanel.Size = new System.Drawing.Size(650, 421);
 			this.VirtualDevicePanel.TabIndex = 72;
+			// 
+			// ShowFormInfoCheckBox
+			// 
+			this.ShowFormInfoCheckBox.AutoSize = true;
+			this.ShowFormInfoCheckBox.Location = new System.Drawing.Point(6, 19);
+			this.ShowFormInfoCheckBox.Name = "ShowFormInfoCheckBox";
+			this.ShowFormInfoCheckBox.Size = new System.Drawing.Size(213, 17);
+			this.ShowFormInfoCheckBox.TabIndex = 1;
+			this.ShowFormInfoCheckBox.Text = "Show Form Info on CTRL+SHIFT+RMB";
+			this.ShowFormInfoCheckBox.UseVisualStyleBackColor = true;
+			this.ShowFormInfoCheckBox.CheckedChanged += new System.EventHandler(this.ShowSettingsTabCheckBox_CheckedChanged);
+			// 
+			// DevelopingGroupBox
+			// 
+			this.DevelopingGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.DevelopingGroupBox.Controls.Add(this.ShowFormInfoCheckBox);
+			this.DevelopingGroupBox.Location = new System.Drawing.Point(263, 238);
+			this.DevelopingGroupBox.Name = "DevelopingGroupBox";
+			this.DevelopingGroupBox.Size = new System.Drawing.Size(376, 69);
+			this.DevelopingGroupBox.TabIndex = 31;
+			this.DevelopingGroupBox.TabStop = false;
+			this.DevelopingGroupBox.Text = "Developing";
+			// 
+			// InternetPanel
+			// 
+			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.InternetPanel.Location = new System.Drawing.Point(3, 3);
+			this.InternetPanel.Name = "InternetPanel";
+			this.InternetPanel.Size = new System.Drawing.Size(644, 415);
+			this.InternetPanel.TabIndex = 33;
 			// 
 			// OptionsUserControl
 			// 
@@ -829,6 +856,8 @@
 			this.InternetOptionsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
+			this.DevelopingGroupBox.ResumeLayout(false);
+			this.DevelopingGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -897,5 +926,7 @@
 		private System.Windows.Forms.Panel GeneralPanel;
 		private System.Windows.Forms.Panel VirtualDevicePanel;
 		public OptionsInternetUserControl InternetPanel;
+		private System.Windows.Forms.GroupBox DevelopingGroupBox;
+		private System.Windows.Forms.CheckBox ShowFormInfoCheckBox;
 	}
 }

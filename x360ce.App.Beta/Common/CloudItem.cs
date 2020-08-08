@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 using x360ce.Engine;
 using System.Linq;
 using x360ce.Engine.Data;
+using System.Runtime.CompilerServices;
 
 namespace x360ce.App
 {
@@ -15,13 +16,13 @@ namespace x360ce.App
 	{
 		public CloudAction Action { get { return Message == null ? CloudAction.None : Message.Action; } }
 
-		public CloudState State { get { return _State; } set { _State = value; NotifyPropertyChanged("State"); } }
+		public CloudState State { get { return _State; } set { _State = value; OnPropertyChanged(); } }
 		CloudState _State;
 
-        public int Try { get { return _Try; } set { _Try = value; NotifyPropertyChanged("Try"); } }
+        public int Try { get { return _Try; } set { _Try = value; OnPropertyChanged(); } }
         int _Try;
 
-        public int Retries { get { return _Retries; } set { _Retries = value; NotifyPropertyChanged("Retries"); } }
+        public int Retries { get { return _Retries; } set { _Retries = value; OnPropertyChanged(); } }
 		int _Retries = 4;
 
 		public DateTime Date { get; set; }
@@ -38,8 +39,8 @@ namespace x360ce.App
 			set
 			{
 				_Message = value;
-				NotifyPropertyChanged("Action");
-				NotifyPropertyChanged("Description");
+				OnPropertyChanged(nameof(Action));
+				OnPropertyChanged(nameof(Description));
 			}
 		}
 		CloudMessage _Message;
@@ -75,11 +76,9 @@ namespace x360ce.App
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		private void NotifyPropertyChanged(string propertyName)
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			var ev = PropertyChanged;
-			if (ev == null) return;
-			ev(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion

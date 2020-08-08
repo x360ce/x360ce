@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using x360ce.Engine;
 
@@ -18,6 +18,7 @@ namespace x360ce.App
 			InternetAutoLoad = true;
 			InternetAutoSave = true;
 			ShowDevicesTab = true;
+			EnableShowFormInfo = false;
 		}
 		/// <summary>
 		/// Avoid deserialization duplicates by using separate method.
@@ -61,20 +62,19 @@ namespace x360ce.App
 		}
 
 		[DefaultValue(false), Description("Allow only one instance of the application to run at a time.")]
-		public bool AllowOnlyOneCopy { get { return _AllowOnlyOneCopy; } set { _AllowOnlyOneCopy = value; ReportPropertyChanged(x => x.GetXInputStates); } }
+		public bool AllowOnlyOneCopy { get { return _AllowOnlyOneCopy; } set { _AllowOnlyOneCopy = value; OnPropertyChanged(); } }
 		bool _AllowOnlyOneCopy;
 
 		[DefaultValue(false), Description("Make program Top Window")]
-		public bool AlwaysOnTop { get { return _AlwaysOnTop; } set { _AlwaysOnTop = value; ReportPropertyChanged(x => x.AlwaysOnTop); } }
+		public bool AlwaysOnTop { get { return _AlwaysOnTop; } set { _AlwaysOnTop = value; OnPropertyChanged(); } }
 		bool _AlwaysOnTop;
 
-
 		[DefaultValue(false), Description("Start with Windows.")]
-		public bool StartWithWindows { get { return _StartWithWindows; } set { _StartWithWindows = value; ReportPropertyChanged(x => x.StartWithWindows); } }
+		public bool StartWithWindows { get { return _StartWithWindows; } set { _StartWithWindows = value; OnPropertyChanged(); } }
 		bool _StartWithWindows;
 
 		[DefaultValue(FormWindowState.Minimized), Description("Windows State when program starts with Windows.")]
-		public FormWindowState StartWithWindowsState { get { return _StartWithWindowsState; } set { _StartWithWindowsState = value; ReportPropertyChanged(x => x.StartWithWindowsState); } }
+		public FormWindowState StartWithWindowsState { get { return _StartWithWindowsState; } set { _StartWithWindowsState = value; OnPropertyChanged(); } }
 		FormWindowState _StartWithWindowsState;
 
 		public bool ShowProgramsTab { get; set; }
@@ -83,15 +83,15 @@ namespace x360ce.App
 		public bool ShowIniTab { get; set; }
 
 		[DefaultValue(true), Description("Enable the use of Internet features like the settings database.")]
-		public bool InternetFeatures { get { return _InternetFeatures; } set { _InternetFeatures = value; ReportPropertyChanged(x => x.InternetFeatures); } }
+		public bool InternetFeatures { get { return _InternetFeatures; } set { _InternetFeatures = value; OnPropertyChanged(); } }
 		bool _InternetFeatures;
 
 		[DefaultValue(true), Description("Auto load settings from Internet Database.")]
-		public bool InternetAutoLoad { get { return _InternetAutoLoad; } set { _InternetAutoLoad = value; ReportPropertyChanged(x => x.InternetAutoLoad); } }
+		public bool InternetAutoLoad { get { return _InternetAutoLoad; } set { _InternetAutoLoad = value; OnPropertyChanged(); } }
 		bool _InternetAutoLoad;
 
 		[DefaultValue(true), Description("Auto save settings to Internet Database.")]
-		public bool InternetAutoSave { get { return _InternetAutoSave; } set { _InternetAutoSave = value; ReportPropertyChanged(x => x.InternetAutoSave); } }
+		public bool InternetAutoSave { get { return _InternetAutoSave; } set { _InternetAutoSave = value; OnPropertyChanged(); } }
 		bool _InternetAutoSave;
 
 		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
@@ -100,7 +100,7 @@ namespace x360ce.App
 		public string InternetDatabaseUrl
 		{
 			get { return _InternetDatabaseUrl; }
-			set { _InternetDatabaseUrl = value; ReportPropertyChanged(x => x.InternetDatabaseUrl); }
+			set { _InternetDatabaseUrl = value; OnPropertyChanged(); }
 		}
 		string _InternetDatabaseUrl;
 
@@ -108,7 +108,7 @@ namespace x360ce.App
 		public UpdateFrequency PollingRate
 		{
 			get { return _PollingRate; }
-			set { _PollingRate = value; ReportPropertyChanged(x => x.PollingRate); }
+			set { _PollingRate = value; OnPropertyChanged(); }
 		}
 		UpdateFrequency _PollingRate = UpdateFrequency.ms1_1000Hz;
 
@@ -145,7 +145,7 @@ namespace x360ce.App
 		public bool CheckForUpdates
 		{
 			get { return _CheckForUpdates; }
-			set { _CheckForUpdates = value; ReportPropertyChanged(x => x.CheckForUpdates); }
+			set { _CheckForUpdates = value; OnPropertyChanged(); }
 		}
 		bool _CheckForUpdates;
 
@@ -154,7 +154,7 @@ namespace x360ce.App
 		public MapToMask RemoteControllers { get; set; }
 		public string RemotePassword { get; set; }
 		public int RemotePort { get; set; }
-		public bool RemoteEnabled { get { return _RemoteEnabled; } set { _RemoteEnabled = value; ReportPropertyChanged(x => x.RemoteEnabled); } }
+		public bool RemoteEnabled { get { return _RemoteEnabled; } set { _RemoteEnabled = value; OnPropertyChanged(); } }
 		bool _RemoteEnabled;
 
 		// Performance Test
@@ -171,7 +171,7 @@ namespace x360ce.App
 		public bool GetXInputStates
 		{
 			get { return _GetXInputStates; }
-			set { _GetXInputStates = value; ReportPropertyChanged(x => x.GetXInputStates); }
+			set { _GetXInputStates = value; OnPropertyChanged(); }
 		}
 		bool _GetXInputStates;
 
@@ -185,28 +185,21 @@ namespace x360ce.App
 
 		#endregion
 
+		#region Options: Developing
+
+		[DefaultValue(false), Description("Enable Form Info (CTRL+SHIFT+RMB)")]
+		public bool EnableShowFormInfo { get { return _EnableShowFormInfo; } set { _EnableShowFormInfo = value; OnPropertyChanged(); } }
+		bool _EnableShowFormInfo;
+
+		#endregion
+
 		#region INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public static string GetName(Expression<Func<Options, object>> selector)
+		public void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			var body = selector.Body as MemberExpression;
-			if (body == null)
-			{
-				var ubody = (UnaryExpression)selector.Body;
-				body = ubody.Operand as MemberExpression;
-			}
-			return body.Member.Name;
-		}
-
-		public void ReportPropertyChanged(Expression<Func<Options, object>> selector)
-		{
-			var ev = PropertyChanged;
-			if (ev == null)
-				return;
-			var name = GetName(selector);
-			ev(this, new PropertyChangedEventArgs(name));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion

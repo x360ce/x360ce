@@ -113,10 +113,17 @@ namespace x360ce.App.Controls
 			{
 				// Set values without triggering events.
 				DisableEvents();
-				if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.EmulationType))
-					ControlsHelper.SetSelectedItem(EmulationTypeComboBox, (EmulationType)game.EmulationType);
-				if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.ProcessorArchitecture))
-					ControlsHelper.SetSelectedItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)game.ProcessorArchitecture);
+				switch (e.PropertyName)
+				{
+					case nameof(UserGame.EmulationType):
+						ControlsHelper.SetSelectedItem(EmulationTypeComboBox, (EmulationType)game.EmulationType);
+						break;
+					case nameof(UserGame.ProcessorArchitecture):
+						ControlsHelper.SetSelectedItem(ProcessorArchitectureComboBox, (ProcessorArchitecture)game.ProcessorArchitecture);
+						break;
+					default:
+						break;
+				}
 				EnableEvents();
 			}
 		}
@@ -131,7 +138,8 @@ namespace x360ce.App.Controls
 				// Get CheckBox linked to enum value.
 				var boxName = string.Format("{0}CheckBox", value);
 				var cb = boxes.FirstOrDefault(x => x.Name.Equals(boxName, StringComparison.OrdinalIgnoreCase));
-				if (cb != null && cb.Checked) mask |= (uint)(object)value;
+				if (cb != null && cb.Checked)
+					mask |= (uint)(object)value;
 			}
 			return (int)mask;
 		}
@@ -161,10 +169,14 @@ namespace x360ce.App.Controls
 		{
 			if (EnabledEvents)
 				return;
-			foreach (var cb in DInputCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
-			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
-			foreach (var cb in HookCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
-			foreach (var cb in AutoMapCheckBoxes) cb.CheckedChanged += CheckBox_Changed;
+			foreach (var cb in DInputCheckBoxes)
+				cb.CheckedChanged += CheckBox_Changed;
+			foreach (var cb in XInputCheckBoxes)
+				cb.CheckedChanged += CheckBox_Changed;
+			foreach (var cb in HookCheckBoxes)
+				cb.CheckedChanged += CheckBox_Changed;
+			foreach (var cb in AutoMapCheckBoxes)
+				cb.CheckedChanged += CheckBox_Changed;
 			HookModeFakeVidNumericUpDown.ValueChanged += HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged += HookModeFakePidNumericUpDown_ValueChanged;
 			TimeoutNumericUpDown.ValueChanged += TimeoutNumericUpDown_ValueChanged;
@@ -180,10 +192,14 @@ namespace x360ce.App.Controls
 		{
 			if (!EnabledEvents)
 				return;
-			foreach (var cb in DInputCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
-			foreach (var cb in XInputCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
-			foreach (var cb in HookCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
-			foreach (var cb in AutoMapCheckBoxes) cb.CheckedChanged -= CheckBox_Changed;
+			foreach (var cb in DInputCheckBoxes)
+				cb.CheckedChanged -= CheckBox_Changed;
+			foreach (var cb in XInputCheckBoxes)
+				cb.CheckedChanged -= CheckBox_Changed;
+			foreach (var cb in HookCheckBoxes)
+				cb.CheckedChanged -= CheckBox_Changed;
+			foreach (var cb in AutoMapCheckBoxes)
+				cb.CheckedChanged -= CheckBox_Changed;
 			HookModeFakeVidNumericUpDown.ValueChanged -= HookModeFakeVidNumericUpDown_ValueChanged;
 			HookModeFakePidNumericUpDown.ValueChanged -= HookModeFakePidNumericUpDown_ValueChanged;
 			TimeoutNumericUpDown.ValueChanged -= TimeoutNumericUpDown_ValueChanged;
@@ -200,13 +216,16 @@ namespace x360ce.App.Controls
 
 		void CheckBox_Changed(object sender, EventArgs e)
 		{
-			if (CurrentItem == null) return;
+			if (CurrentItem == null)
+				return;
 			lock (CheckBoxLock)
 			{
 				var cbx = (CheckBox)sender;
 				CheckBox[] cbxList = null;
-				if (XInputCheckBoxes.Contains(cbx)) cbxList = XInputCheckBoxes;
-				if (DInputCheckBoxes.Contains(cbx)) cbxList = DInputCheckBoxes;
+				if (XInputCheckBoxes.Contains(cbx))
+					cbxList = XInputCheckBoxes;
+				if (DInputCheckBoxes.Contains(cbx))
+					cbxList = DInputCheckBoxes;
 				if (cbxList != null)
 				{
 					var is64bit = cbx.Name.Contains("x64");
@@ -440,7 +459,8 @@ namespace x360ce.App.Controls
 		string GetGoogleSearchUrl()
 		{
 			var c = CurrentItem;
-			if (c == null) return "";
+			if (c == null)
+				return "";
 			var url = "https://www.google.co.uk/?#q=";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false, " ");
@@ -451,7 +471,8 @@ namespace x360ce.App.Controls
 		string GetNGemuSearchUrl()
 		{
 			var c = CurrentItem;
-			if (c == null) return "";
+			if (c == null)
+				return "";
 			var url = "http://ngemu.com/search/5815705?q=";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false, " ");
@@ -462,7 +483,8 @@ namespace x360ce.App.Controls
 		string GetNGemuThreadUrl()
 		{
 			var c = CurrentItem;
-			if (c == null) return "";
+			if (c == null)
+				return "";
 			var q = "x360ce " + c.FileProductName;
 			var keyName = EngineHelper.GetKey(q, false);
 			var url = "http://ngemu.com/threads/";

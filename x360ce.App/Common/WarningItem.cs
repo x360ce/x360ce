@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Windows.Forms;
-using x360ce.App.Controls;
+using System.Runtime.CompilerServices;
 using x360ce.App.Issues;
 
 namespace x360ce.App
@@ -13,38 +12,34 @@ namespace x360ce.App
 
 		internal void RaiseFixApplied()
 		{
-			var ev = FixApplied;
-			if (ev != null)
-			{
-				ev(this, new EventArgs());
-            }
+			FixApplied?.Invoke(this, new EventArgs());
 		}
 
 		public string Name
 		{
 			get { return _Name; }
-			set { _Name = value; NotifyPropertyChanged("Name"); }
+			set { _Name = value; OnPropertyChanged(); }
 		}
 		string _Name;
 
 		public string Description
 		{
 			get { return _Description; }
-			set { _Description = value; NotifyPropertyChanged("Description"); }
+			set { _Description = value; OnPropertyChanged(); }
 		}
 		string _Description;
 
 		public string FixName
 		{
 			get { return _FixName; }
-			set { _FixName = value; NotifyPropertyChanged("FixName"); }
+			set { _FixName = value; OnPropertyChanged(); }
 		}
 		string _FixName;
 
 		public IssueSeverity Severity
 		{
 			get { return _Severity; }
-			set { _Severity = value; NotifyPropertyChanged("Severity"); }
+			set { _Severity = value; OnPropertyChanged(); }
 		}
 		IssueSeverity _Severity;
 
@@ -54,15 +49,13 @@ namespace x360ce.App
 
 		#region INotifyPropertyChanged
 
-		public event PropertyChangedEventHandler PropertyChanged;
-
 		internal object checkLock = new object();
 
-		private void NotifyPropertyChanged(string propertyName = "")
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			var ev = PropertyChanged;
-			if (ev == null) return;
-			ev(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion

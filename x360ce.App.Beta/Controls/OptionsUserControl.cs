@@ -3,7 +3,6 @@ using Microsoft.Win32;
 using System;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Windows.Forms;
 using x360ce.App.Forms;
 using x360ce.Engine;
@@ -53,17 +52,13 @@ namespace x360ce.App.Controls
 				string command = string.Format("\"{0}\" /{1}={2}", Application.ExecutablePath, Program.arg_WindowState, startState.ToString());
 				var value = (string)runKey.GetValue(Application.ProductName);
 				if (value != command)
-				{
 					runKey.SetValue(Application.ProductName, command);
-				}
 			}
 			else
 			{
+				// Remove the value from the registry so that the application doesn't start
 				if (runKey.GetValueNames().Contains(Application.ProductName))
-				{
-					// Remove the value from the registry so that the application doesn't start
 					runKey.DeleteValue(Application.ProductName, false);
-				}
 			}
 			runKey.Close();
 		}
@@ -101,6 +96,7 @@ namespace x360ce.App.Controls
 			ControlHelper.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
+			ControlHelper.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
@@ -113,23 +109,26 @@ namespace x360ce.App.Controls
 			var o = SettingsManager.Options;
 			SettingsManager.Sync(o, e.PropertyName);
 			// Update controls by specific property.
-			if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.AlwaysOnTop))
+			switch (e.PropertyName)
 			{
-				// Apply setting.
-				MainForm.Current.TopMost = o.AlwaysOnTop;
-			}
-			else if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.PollingRate))
-			{
-				MainForm.Current.DHelper.Frequency = o.PollingRate;
-			}
-			else if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.StartWithWindows) ||
-				e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.StartWithWindowsState))
-			{
-				UpdateWindowsStartRegistry(o.StartWithWindows, o.StartWithWindowsState);
-			}
-			else if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.RemoteControllers))
-			{
-				RemotePortNumericUpDown.Enabled = o.RemoteControllers == MapToMask.None;
+				case nameof(Options.AlwaysOnTop):
+					MainForm.Current.TopMost = o.AlwaysOnTop;
+					break;
+				case nameof(Options.PollingRate):
+					MainForm.Current.DHelper.Frequency = o.PollingRate;
+					break;
+				case nameof(Options.StartWithWindows):
+				case nameof(Options.StartWithWindowsState):
+					UpdateWindowsStartRegistry(o.StartWithWindows, o.StartWithWindowsState);
+					break;
+				case nameof(Options.RemoteControllers):
+					RemotePortNumericUpDown.Enabled = o.RemoteControllers == MapToMask.None;
+					break;
+				case nameof(Options.EnableShowFormInfo):
+					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
+					break;
+				default:
+					break;
 			}
 		}
 

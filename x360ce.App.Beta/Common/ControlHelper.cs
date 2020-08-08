@@ -23,8 +23,10 @@ namespace x360ce.App
 			{
 				var item = (IDisplayName)rows[i].DataBoundItem;
 				var visible = true;
-				if (showEnabled) visible = (item.IsEnabled == true);
-				if (showDisabled) visible = (item.IsEnabled == false);
+				if (showEnabled)
+					visible = (item.IsEnabled == true);
+				if (showDisabled)
+					visible = (item.IsEnabled == false);
 				if (rows[i].Visible != visible)
 				{
 					needRebinding = true;
@@ -48,8 +50,10 @@ namespace x360ce.App
 				{
 					var item = (IDisplayName)rows[i].DataBoundItem;
 					var visible = true;
-					if (showEnabled) visible = (item.IsEnabled == true);
-					if (showDisabled) visible = (item.IsEnabled == false);
+					if (showEnabled)
+						visible = (item.IsEnabled == true);
+					if (showDisabled)
+						visible = (item.IsEnabled == false);
 					if (rows[i].Visible != visible)
 					{
 						rows[i].Visible = visible;
@@ -89,7 +93,10 @@ namespace x360ce.App
 					lb.DataSource = dataSource;
 			}
 			// Load settings into control.
-			o.ReportPropertyChanged(setting);
+			var body = (setting.Body as MemberExpression)
+				 ?? (((UnaryExpression)setting.Body).Operand as MemberExpression);
+			var propertyName = body.Member.Name;
+			o.OnPropertyChanged(propertyName);
 			// Monitor control changes.
 			var chb = control as CheckBox;
 			if (chb != null)

@@ -190,7 +190,6 @@ namespace x360ce.App
             // Start Timers.
             UpdateTimer.Start();
             JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
-            JocysCom.ClassLibrary.Controls.InfoForm.StartMonitor();
         }
 
         #region Process Monitor
@@ -1241,7 +1240,7 @@ namespace x360ce.App
                     ps.UpdateFromCurrentGame();
             }
             // Update controls by specific property.
-            if (e.PropertyName == AppHelper.GetPropertyName<UserGame>(x => x.EmulationType))
+            if (e.PropertyName == nameof(UserGame.EmulationType))
             {
             }
             SettingsManager.Current.RaiseSettingsChanged(null);

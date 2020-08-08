@@ -91,8 +91,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		public ISocketMessage ReceivedMessage;
 		public ISocketMessage MessageToSend;
 
-		List<ISocketMessage> _ExtraResponses = new List<ISocketMessage>();
-		public List<ISocketMessage> ExtraResponses { get { return _ExtraResponses; } }
+		public List<ISocketMessage> ExtraResponses { get; } = new List<ISocketMessage>();
 
 		#region INotifyPropertyChanging
 
@@ -100,9 +99,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 
 		internal void OnPropertyChanging([CallerMemberName] string propertyName = null)
 		{
-			var ev = PropertyChanging;
-			if (ev == null) return;
-			ev(this, new PropertyChangingEventArgs(propertyName));
+			PropertyChanging?.Invoke(this, new PropertyChangingEventArgs(propertyName));
 		}
 
 		#endregion
@@ -111,11 +108,9 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
 		{
-			var ev = PropertyChanged;
-			if (ev == null) return;
-			ev(this, new PropertyChangedEventArgs(propertyName));
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		#endregion

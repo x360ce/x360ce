@@ -23,14 +23,19 @@ namespace x360ce.App
 		private static void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			var o = SettingsManager.Options;
-			if (e.PropertyName == AppHelper.GetPropertyName<Options>(x => x.RemoteEnabled))
+			switch (e.PropertyName)
 			{
-				// If UDP server must be enabled then...
-				if (o.RemoteEnabled)
-					RemoteServer.StartServer();
-				else
-					RemoteServer.StopServer();
+				case nameof(Options.RemoteEnabled):
+					// If UDP server must be enabled then...
+					if (o.RemoteEnabled)
+						RemoteServer.StartServer();
+					else
+						RemoteServer.StopServer();
+					break;
+				default:
+					break;
 			}
+
 
 		}
 

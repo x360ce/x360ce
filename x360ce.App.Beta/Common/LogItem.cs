@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace x360ce.App
@@ -13,9 +14,9 @@ namespace x360ce.App
 
         public DateTime Date { get; set; }
         public TimeSpan Delay { get; set; }
-        public string Message { get { return _Message; } set { _Message = value; NotifyPropertyChanged("Message"); } }
+        public string Message { get { return _Message; } set { _Message = value; OnPropertyChanged(); } }
         string _Message;
-        public MessageBoxIcon Status { get { return _Status; } set { _Status = value; NotifyPropertyChanged("Status"); } }
+        public MessageBoxIcon Status { get { return _Status; } set { _Status = value; OnPropertyChanged(); } }
         MessageBoxIcon _Status;
 
         public Exception Error { get; set; }
@@ -24,11 +25,9 @@ namespace x360ce.App
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged(string propertyName)
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var ev = PropertyChanged;
-            if (ev == null) return;
-            ev(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion

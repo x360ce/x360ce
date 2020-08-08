@@ -9,7 +9,6 @@ using x360ce.Engine;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using x360ce.Engine.Data;
-using System.Linq.Expressions;
 using SharpDX.XInput;
 using JocysCom.ClassLibrary.Win32;
 
@@ -281,13 +280,6 @@ namespace x360ce.App
 				case MapTo.Controller4: return MapToMask.Controller4;
 				default: return MapToMask.None;
 			}
-		}
-
-		public static string GetPropertyName<T>(Expression<Func<T, object>> selector)
-		{
-			var body = (MemberExpression)((UnaryExpression)selector.Body).Operand;
-			var name = body.Member.Name;
-			return name;
 		}
 
 	}

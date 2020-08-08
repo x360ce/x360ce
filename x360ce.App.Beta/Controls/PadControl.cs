@@ -100,7 +100,7 @@ namespace x360ce.App.Controls
 			{
 				var o = SettingsManager.Options;
 				// Update values only if different.
-				if (e.PropertyDescriptor.Name == Options.GetName(x => x.GetXInputStates))
+				if (e.PropertyDescriptor.Name == nameof(Options.GetXInputStates))
 				{
 					UpdateGetXInputStatesWithNoEvents();
 				}
