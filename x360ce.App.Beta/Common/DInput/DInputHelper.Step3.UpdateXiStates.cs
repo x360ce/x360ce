@@ -1,7 +1,4 @@
-﻿using SharpDX.DirectInput;
-using SharpDX.XInput;
-using System;
-using System.Collections.Generic;
+﻿using SharpDX.XInput;
 using System.Linq;
 using x360ce.Engine;
 
@@ -25,6 +22,13 @@ namespace x360ce.App.DInput
 				// If device was not found then continue.
 				if (ud == null)
 					continue;
+				// Create GamePad to map to.
+				var gp = new Gamepad();
+				// Assing state with default values.
+				setting.XiState = gp;
+				// If device Direct Input state failed then...
+				if (ud.JoState == null)
+					continue;
 				// If device is offline then continue.
 				if (!ud.IsOnline)
 					continue;
@@ -41,8 +45,6 @@ namespace x360ce.App.DInput
 				// If custom directInput state is not available then continue.
 				if (diState == null)
 					continue;
-				// Create GamePad to map to.
-				var gp = new Gamepad();
 				bool success;
 				int index;
 				SettingType type;

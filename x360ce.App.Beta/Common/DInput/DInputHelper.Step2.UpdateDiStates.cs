@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.IO;
+using SharpDX;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
@@ -11,7 +12,7 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
-		void UpdateDiStates(UserGame game, DeviceDetector detector)
+		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector)
 		{
 			// Get all mapped user instances.
 			var instanceGuids = SettingsManager.UserSettings.Items
@@ -33,8 +34,8 @@ namespace x360ce.App.DInput
 				// Allow if not testing or testing with option enabled.
 				var o = SettingsManager.Options;
 				var allow = !o.TestEnabled || o.TestGetDInputStates;
-				var isOnline = ud != null && ud.IsOnline;
-				if (isOnline && allow)
+				var isAttached = ud != null && ud.IsOnline && manager.IsDeviceAttached(ud.InstanceGuid);
+				if (isAttached && allow)
 				{
 					var device = ud.Device;
 					if (device != null)
@@ -112,7 +113,7 @@ namespace x360ce.App.DInput
 								ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
 							}
 							// Get PAD index this device is mapped to.
-							var userIndex = SettingsManager.UserSettings.Items
+							var userIndex = SettingsManager.UserSettings.Items.ToArray()
 								.Where(x => x.MapTo > (int)MapTo.None)
 								.Where(x => x.InstanceGuid == ud.InstanceGuid)
 								.Select(x => x.MapTo).First();
@@ -170,9 +171,21 @@ namespace x360ce.App.DInput
 						}
 						catch (Exception ex)
 						{
-							var cx = new DInputException("UpdateDiStates Exception", ex);
-							cx.Data.Add("FFInfo", exceptionData.ToString());
-							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(cx);
+							var dex = ex as SharpDXException;
+							if (dex != null && dex.ResultCode == SharpDX.DirectInput.ResultCode.InputLost)
+							{
+								// Ignore error.
+							}
+							else if (dex != null && dex.ResultCode == SharpDX.DirectInput.ResultCode.NotAcquired)
+							{
+								// Ignore error
+							}
+							else
+							{
+								var cx = new DInputException("UpdateDiStates Exception", ex);
+								cx.Data.Add("FFInfo", exceptionData.ToString());
+								JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(cx);
+							}
 							ud.IsExclusiveMode = null;
 						}
 					}
@@ -193,54 +206,59 @@ namespace x360ce.App.DInput
 						state = TestDeviceHelper.GetCurrentState(ud);
 					}
 				}
-				ud.JoState = state ?? new JoystickState();
-				var newState = new CustomDiState(ud.JoState);
-				var newTime = watch.ElapsedTicks;
-				// Remember old state.
-				ud.OldDiState = ud.DiState;
-				ud.OldDiStateTime = ud.DiStateTime;
-				// Update state.
-				ud.DiState = newState;
-				ud.DiStateTime = newTime;
-				// Mouse needs special update.
-				if (ud.Device != null && ud.Device.Information.Type == SharpDX.DirectInput.DeviceType.Mouse)
+				ud.JoState = state;
+				// Update only if state available.
+				if (state != null)
 				{
-					// If original state is missing then...
-					if (ud.OrgDiState == null)
+					var newState = new CustomDiState(ud.JoState);
+					var newTime = watch.ElapsedTicks;
+					// Remember old state.
+					ud.OldDiState = ud.DiState;
+					ud.OldDiStateTime = ud.DiStateTime;
+					// Update state.
+					ud.DiState = newState;
+					ud.DiStateTime = newTime;
+					// Mouse needs special update.
+					if (ud.Device != null && ud.Device.Information.Type == SharpDX.DirectInput.DeviceType.Mouse)
 					{
-						// Store current values.
-						ud.OrgDiState = newState;
-						ud.OrgDiStateTime = newTime;
-						// Make sure new states have zero values.
-						for (int a = 0; a < newState.Axis.Length; a++)
-							newState.Axis[a] = -short.MinValue;
-						for (int s = 0; s < newState.Sliders.Length; s++)
-							newState.Sliders[s] = -short.MinValue;
+						// If original state is missing then...
+						if (ud.OrgDiState == null)
+						{
+							// Store current values.
+							ud.OrgDiState = newState;
+							ud.OrgDiStateTime = newTime;
+							// Make sure new states have zero values.
+							for (int a = 0; a < newState.Axis.Length; a++)
+								newState.Axis[a] = -short.MinValue;
+							for (int s = 0; s < newState.Sliders.Length; s++)
+								newState.Sliders[s] = -short.MinValue;
+						}
+						var mouseState = new CustomDiState(new JoystickState());
+						// Clone button values.
+						Array.Copy(newState.Buttons, mouseState.Buttons, mouseState.Buttons.Length);
+
+						//	//--------------------------------------------------------
+						//	// Map mouse acceleration to axis position. Good for FPS control.
+						//	//--------------------------------------------------------
+
+						//	// This parts needs to be worked on.
+						//	//var ticks = (int)(newTime - ud.DiStateTime);
+						//	// Update axis with delta.
+						//	//for (int a = 0; a < newState.Axis.Length; a++)
+						//	//	mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldDiState.Axis[a]) - short.MinValue;
+						//	// Update sliders with delta.
+						//	//for (int s = 0; s < newState.Sliders.Length; s++)
+						//	//	mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldDiState.Sliders[s]) - short.MinValue;
+
+						//--------------------------------------------------------
+						// Map mouse position to axis position. Good for car wheel controls.
+						//--------------------------------------------------------
+						Calc(ud.OrgDiState.Axis, newState.Axis, mouseState.Axis);
+						Calc(ud.OrgDiState.Sliders, newState.Sliders, mouseState.Sliders);
+						ud.DiState = mouseState;
 					}
-					var mouseState = new CustomDiState(new JoystickState());
-					// Clone button values.
-					Array.Copy(newState.Buttons, mouseState.Buttons, mouseState.Buttons.Length);
-
-					//	//--------------------------------------------------------
-					//	// Map mouse acceleration to axis position. Good for FPS control.
-					//	//--------------------------------------------------------
-
-					//	// This parts needs to be worked on.
-					//	//var ticks = (int)(newTime - ud.DiStateTime);
-					//	// Update axis with delta.
-					//	//for (int a = 0; a < newState.Axis.Length; a++)
-					//	//	mouseState.Axis[a] = ticks * (newState.Axis[a] - ud.OldDiState.Axis[a]) - short.MinValue;
-					//	// Update sliders with delta.
-					//	//for (int s = 0; s < newState.Sliders.Length; s++)
-					//	//	mouseState.Sliders[s] = ticks * (newState.Sliders[s] - ud.OldDiState.Sliders[s]) - short.MinValue;
-
-					//--------------------------------------------------------
-					// Map mouse position to axis position. Good for car wheel controls.
-					//--------------------------------------------------------
-					Calc(ud.OrgDiState.Axis, newState.Axis, mouseState.Axis);
-					Calc(ud.OrgDiState.Sliders, newState.Sliders, mouseState.Sliders);
-					ud.DiState = mouseState;
 				}
+
 			}
 		}
 

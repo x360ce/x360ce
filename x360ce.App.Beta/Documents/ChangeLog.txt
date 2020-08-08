@@ -1,6 +1,7 @@
-v4.12.22.0 (2020-08-08)
+v4.12.23.0 (2020-08-08)
 - Fix: App will check for Visual C++ 2015-2019 Redistributable correctly now.
 - Fix: App was detecting issue in incorrect order resulting in unable to fix them.
+- Fix: Buttons, axis and POV remained pressed after switching off controller.
 - Update: Make developer feature "Show Form Info on CTRL+SHIFT+RMB" optional.
 
 v4.12.18.0 (2020-08-05)
