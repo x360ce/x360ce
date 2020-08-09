@@ -242,11 +242,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		}
 
 
-		public static bool DownloadAndInstall(Uri filePath, Uri infoPage, bool runElevated = false)
+		public static bool DownloadAndInstall(Uri uri, string localPath, Uri infoPage, bool runElevated = false)
 		{
 			try
 			{
-				var file = DownloadFile(filePath);
+				var file = DownloadFile(uri, localPath);
 				if (runElevated)
 					ControlsHelper.OpenPath(file.FullName);
 				else
@@ -259,7 +259,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				form.StartPosition = FormStartPosition.CenterParent;
 				ControlsHelper.CheckTopMost(form);
 				var text = string.Format("Unable to download {0} file:\r\n\r\n{1}\r\n\r\nOpen source web page?",
-					filePath.AbsoluteUri, ex.Message);
+					uri.AbsoluteUri, ex.Message);
 				var result = form.ShowForm(text, "Download Error", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 				form.Dispose();
 				if (result == DialogResult.Yes)
@@ -270,11 +270,10 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			return false;
 		}
 
-		public static FileInfo DownloadFile(Uri uri)
+		public static FileInfo DownloadFile(Uri uri, string localPath)
 		{
 			var fileName = uri.Segments.Last();
 			var webClient = new System.Net.WebClient();
-			var localPath = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", fileName);
 			var localFile = new FileInfo(localPath);
 			if (localFile.Exists)
 				localFile.Delete();

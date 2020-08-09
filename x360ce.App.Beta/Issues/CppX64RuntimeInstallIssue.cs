@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
+using System.Linq;
 
 namespace x360ce.App.Issues
 {
@@ -42,7 +43,8 @@ namespace x360ce.App.Issues
 		{
 			// Microsoft Visual C++ 2015, 2017, 2019 Redistributable
 			var uri = new Uri("https://aka.ms/vs/16/release/vc_redist.x64.exe");
-			IssueHelper.DownloadAndInstall(uri, MoreInfo);
+			var localPath = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", uri.Segments.Last());
+			IssueHelper.DownloadAndInstall(uri, localPath, MoreInfo);
 		}
     }
 }
