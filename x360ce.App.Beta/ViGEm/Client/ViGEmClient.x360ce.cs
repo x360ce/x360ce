@@ -30,7 +30,7 @@ namespace Nefarius.ViGEm.Client
 				// Unable to load DLL 'vigemclient.dll':
 				// The specified module could not be found.
 				// (Exception from HRESULT: 0x8007007E)
-				if (ex.HResult == 0x8007007E)
+				if (ex.HResult == unchecked((int)0x8007007E))
 				{
 					// Probably "Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019" is missing.
 					// You can find official download links on Microsoft Page:
@@ -44,7 +44,7 @@ namespace Nefarius.ViGEm.Client
 				}
 				throw;
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				throw;
 			}

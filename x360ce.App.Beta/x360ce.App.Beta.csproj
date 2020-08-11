@@ -317,6 +317,9 @@
     <Compile Include="Forms\DeveloperToolsForm.Designer.cs">
       <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ErrorReportWindow.xaml.cs">
+      <DependentUpon>ErrorReportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Forms\HardwareForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -729,6 +732,12 @@
       <Project>{f980d78a-9448-4834-a6fe-84797077d309}</Project>
       <Name>x360ce.Engine</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Forms\ErrorReportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

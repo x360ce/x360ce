@@ -667,7 +667,6 @@ namespace x360ce.App
             StatusIsAdminLabel.Text = WinAPI.IsVista
                 ? string.Format("Elevated: {0}", WinAPI.IsElevated())
                 : "";
-            StatusIniLabel.Text = SettingsManager.IniFileName;
             CheckEncoding(SettingsManager.TmpFileName);
             CheckEncoding(SettingsManager.IniFileName);
             // Show status values.
@@ -1246,15 +1245,12 @@ namespace x360ce.App
             SettingsManager.Current.RaiseSettingsChanged(null);
         }
 
-        private void StatusIniLabel_DoubleClick(object sender, EventArgs e)
-        {
-            var game = (Engine.Data.UserGame)GameToCustomizeComboBox.SelectedItem;
-            // Get game directory.
-            var dir = new FileInfo(game.FullPath).Directory;
-            var fullPath = Path.Combine(dir.FullName, SettingsManager.IniFileName);
-            EngineHelper.BrowsePath(fullPath);
-        }
 
+        private void StatusErrorLabel_Click(object sender, EventArgs e)
+        {
+            var win = new Forms.ErrorReportWindow();
+            var result = win.ShowDialog();
+        }
 
         private void GamesToolStrip_Resize(object sender, EventArgs e)
         {
@@ -1558,6 +1554,8 @@ namespace x360ce.App
                 GameSettingsPanel.AddNewGame();
             });
         }
-    }
+
+	
+	}
 }
 
