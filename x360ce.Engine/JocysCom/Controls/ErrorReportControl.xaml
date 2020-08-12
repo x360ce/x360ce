@@ -4,9 +4,16 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="200"
-	d:DesignWidth="600"
+	Width="600"
+	Height="200"
 	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Themes/Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
 	<Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -29,37 +36,66 @@
 					<ColumnDefinition Width="*" />
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
-				<Label Grid.Row="0" Grid.Column="0" Content="Errors Folder" />
+
+
+				<Label
+					Grid.Row="0"
+					Grid.Column="0"
+					VerticalAlignment="Center"
+					Content="Errors Folder" />
 				<TextBox
 					x:Name="ErrorsFolderTextBox"
 					Grid.Row="0"
 					Grid.Column="1"
+					VerticalAlignment="Center"
 					IsReadOnly="True" />
 				<Button
 					x:Name="OpenErrorsFolder"
+					Grid.Row="0"
 					Grid.Column="2"
 					Margin="4px"
+					VerticalAlignment="Center"
 					Click="OpenErrorsFolder_Click"
 					Content="Open..." />
+
+				<Label
+					Grid.Row="1"
+					Grid.Column="0"
+					VerticalAlignment="Center"
+					Content="Error" />
+
+				<ComboBox
+					x:Name="ErrorComboBox"
+					Grid.Row="1"
+					Grid.Column="1"
+					VerticalAlignment="Center"
+					SelectionChanged="ErrorComboBox_SelectionChanged" />
+
 			</Grid>
 		</GroupBox>
 		<TabControl Grid.Row="1" Margin="4px,0,4px,4px">
 			<TabItem Header="Error Details">
-				<WebBrowser HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+				<WebBrowser x:Name="MainBrowser" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 			</TabItem>
 		</TabControl>
 		<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
 			<Button
+				Grid.Row="2"
 				Margin="4px,0,0,4px"
-				Padding="4px,2px,4px,2px"
 				HorizontalAlignment="Right"
-				Content="Cancel" />
+				Content="Send Error to X360CE"
+				FontWeight="Bold" />
 			<Button
 				Grid.Row="2"
-				Margin="4px,0,4px,4px"
-				Padding="4px,2px,4px,2px"
+				Margin="4px,0,0,4px"
 				HorizontalAlignment="Right"
-				Content="Send Report" />
+				Content="Send All Errors" />
+			<Button
+				x:Name="CancelButton"
+				Margin="4px,0,4px,4px"
+				HorizontalAlignment="Right"
+				Click="CancelButton_Click"
+				Content="Cancel" />
 		</StackPanel>
 	</Grid>
 </UserControl>

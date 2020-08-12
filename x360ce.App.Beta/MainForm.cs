@@ -1249,6 +1249,9 @@ namespace x360ce.App
         private void StatusErrorLabel_Click(object sender, EventArgs e)
         {
             var win = new Forms.ErrorReportWindow();
+            ControlsHelper.CheckTopMost(win);
+            ControlsHelper.AutoSizeByOpenForms(win);
+            win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
             var result = win.ShowDialog();
         }
 

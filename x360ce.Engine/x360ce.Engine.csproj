@@ -97,6 +97,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
@@ -221,6 +224,7 @@
     <Compile Include="JocysCom\Configuration\SettingsParser.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.Windows.cs" />
+    <Compile Include="JocysCom\Controls\ControlsHelper.WPF.cs" />
     <Compile Include="JocysCom\Controls\ErrorReportControl.xaml.cs">
       <DependentUpon>ErrorReportControl.xaml</DependentUpon>
     </Compile>
@@ -251,6 +255,9 @@
     </Compile>
     <Compile Include="JocysCom\Controls\MessageBoxForm.Designer.cs">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="JocysCom\Controls\Themes\Default.xaml.cs">
+      <DependentUpon>Default.xaml</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\Linq.cs" />
@@ -380,6 +387,7 @@
     <Compile Include="JocysCom\Text\Helper.cs" />
     <Compile Include="JocysCom\Threading\QueueTimer.cs" />
     <Compile Include="JocysCom\Threading\QueueTimerEventArgs.cs" />
+    <Compile Include="JocysCom\Threading\QueueTimerSimple.cs" />
     <Compile Include="JocysCom\Web\Services\SoapHttpClientBase.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -542,6 +550,9 @@
     <Page Include="JocysCom\Controls\ErrorReportControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="JocysCom\Controls\Themes\Default.xaml">
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

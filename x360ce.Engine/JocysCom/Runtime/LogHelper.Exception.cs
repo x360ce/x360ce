@@ -24,23 +24,25 @@ namespace JocysCom.ClassLibrary.Runtime
 	public partial class LogHelper
 	{
 
-		public string DefaultLogsFolder
+		public string LogsFolder
 		{
 			get
 			{
+				if (!string.IsNullOrEmpty(OverrideLogFolder))
+					return OverrideLogFolder;
 				var ai = new Configuration.AssemblyInfo();
 				var path = ai.GetAppDataFile(false, "Logs");
 				return path.FullName;
 			}
 		}
 
-		private readonly string _DefaultLogsFolder;
+		public string OverrideLogFolder = null;
 
 		#region Handling
 
-		public void InitExceptionHandlers(string logFolder = null)
+		public void InitExceptionHandlers(string overrideLogsFolder = null)
 		{
-			_OverrideLogFolder = logFolder;
+			OverrideLogFolder = overrideLogsFolder;
 			//if (LogExceptions && LogThreadExceptions)
 			//	System.Windows.Forms.Application.ThreadException += Application_ThreadException;
 			if (LogExceptions && LogUnhandledExceptions)
@@ -62,8 +64,6 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (LogExceptions && LogUnobservedTaskExceptions)
 				TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
 		}
-
-		private string _OverrideLogFolder = null;
 
 		public event EventHandler<LogHelperEventArgs> WritingException;
 

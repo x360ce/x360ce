@@ -36,7 +36,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				// Create file.
 				var prefix = "FCE_" + ex.GetType().Name;
 				var ext = WriteAsHtml ? ".htm" : ".txt";
-				var di = new System.IO.DirectoryInfo(_OverrideLogFolder ?? DefaultLogsFolder);
+				var di = new System.IO.DirectoryInfo(LogsFolder);
 				// Create folder if not exists.
 				if (!di.Exists)
 					di.Create();
