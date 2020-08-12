@@ -27,14 +27,20 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			InitializeComponent();
 			ErrorsFolderTextBox.Text = LogHelper.Current.LogsFolder;
+			MainBrowser.LoadCompleted += MainBrowser_LoadCompleted;
+			RefreshErrorsComboBox();
+		}
+
+		void RefreshErrorsComboBox()
+		{
 			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
 			var errors = dir.GetFiles("*.htm").OrderByDescending(x => x.CreationTime).ToArray();
 			ErrorComboBox.ItemsSource = errors;
 			ErrorComboBox.DisplayMemberPath = nameof(FileInfo.Name);
 			if (errors.Length > 0)
 				ErrorComboBox.SelectedIndex = 0;
-			MainBrowser.LoadCompleted += MainBrowser_LoadCompleted;
-
+			else
+				MainBrowser.Navigate("about:blank");
 		}
 
 		private void MainBrowser_LoadCompleted(object sender, NavigationEventArgs e)
@@ -45,6 +51,7 @@ namespace JocysCom.ClassLibrary.Controls
 			var body = doc.getElementsByTagName("body").OfType<IHTMLElement>().First();
 			if (body == null)
 				return;
+			body.insertAdjacentHTML("afterbegin", "<p>Hi,</p><p></p><p>I would like to report a problem. Error details attached below:</p>");
 			body.setAttribute("contentEditable", "true");
 		}
 
@@ -76,6 +83,34 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			var win = (Window)Parent;
 			win.DialogResult = false;
+		}
+
+		private void ClearErrorsButton_Click(object sender, RoutedEventArgs e)
+		{
+			var form = new MessageBoxForm();
+			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			ControlsHelper.CheckTopMost(form);
+			var result = form.ShowForm("Do you want to clear all errors?", "Clear Errors?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error, System.Windows.Forms.MessageBoxDefaultButton.Button2);
+			if (result != System.Windows.Forms.DialogResult.Yes)
+				return;
+			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
+			var fis = dir.GetFiles("*.htm").OrderByDescending(x => x.CreationTime).ToArray();
+			foreach (var fi in fis)
+			{
+				try
+				{
+					fi.Delete();
+				}
+				catch (Exception)
+				{
+				}
+			}
+			RefreshErrorsComboBox();
+		}
+
+		private void OpenMailButton_Click(object sender, RoutedEventArgs e)
+		{
+			ControlsHelper.OpenUrl("mailto://" + ToEmailTextBox.Text);
 		}
 	}
 }

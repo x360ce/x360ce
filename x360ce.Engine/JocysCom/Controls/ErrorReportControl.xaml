@@ -30,6 +30,8 @@
 				<Grid.RowDefinitions>
 					<RowDefinition />
 					<RowDefinition />
+					<RowDefinition />
+					<RowDefinition />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
@@ -48,6 +50,7 @@
 					Grid.Row="0"
 					Grid.Column="1"
 					VerticalAlignment="Center"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 					IsReadOnly="True" />
 				<Button
 					x:Name="OpenErrorsFolder"
@@ -63,13 +66,44 @@
 					Grid.Column="0"
 					VerticalAlignment="Center"
 					Content="Error" />
-
 				<ComboBox
 					x:Name="ErrorComboBox"
 					Grid.Row="1"
 					Grid.Column="1"
 					VerticalAlignment="Center"
 					SelectionChanged="ErrorComboBox_SelectionChanged" />
+
+				<Label
+					Grid.Row="2"
+					Grid.Column="0"
+					VerticalAlignment="Center"
+					Content="From (Optional)" />
+				<TextBox
+					x:Name="FromEmailTextBox"
+					Grid.Row="2"
+					Grid.Column="1"
+					VerticalAlignment="Center" />
+				<Label
+					Grid.Row="3"
+					Grid.Column="0"
+					VerticalAlignment="Center"
+					Content="To" />
+				<TextBox
+					x:Name="ToEmailTextBox"
+					Grid.Row="3"
+					Grid.Column="1"
+					VerticalAlignment="Center"
+					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+					IsReadOnly="True"
+					Text="support@x360ce.com" />
+				<Button
+					x:Name="OpenMailButton"
+					Grid.Row="3"
+					Grid.Column="2"
+					Margin="4px"
+					VerticalAlignment="Center"
+					Click="OpenMailButton_Click"
+					Content="Open..." />
 
 			</Grid>
 		</GroupBox>
@@ -90,6 +124,13 @@
 				Margin="4px,0,0,4px"
 				HorizontalAlignment="Right"
 				Content="Send All Errors" />
+			<Button
+				x:Name="ClearErrorsButton"
+				Grid.Row="2"
+				Margin="4px,0,0,4px"
+				HorizontalAlignment="Left"
+				Click="ClearErrorsButton_Click"
+				Content="Clear Errors" />
 			<Button
 				x:Name="CancelButton"
 				Margin="4px,0,4px,4px"
