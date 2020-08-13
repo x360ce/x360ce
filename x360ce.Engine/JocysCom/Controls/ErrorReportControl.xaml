@@ -32,6 +32,7 @@
 					<RowDefinition />
 					<RowDefinition />
 					<RowDefinition />
+					<RowDefinition />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
@@ -77,7 +78,7 @@
 					Grid.Row="2"
 					Grid.Column="0"
 					VerticalAlignment="Center"
-					Content="From (Optional)" />
+					Content="Email From (Optional)" />
 				<TextBox
 					x:Name="FromEmailTextBox"
 					Grid.Row="2"
@@ -87,7 +88,7 @@
 					Grid.Row="3"
 					Grid.Column="0"
 					VerticalAlignment="Center"
-					Content="To" />
+					Content="Email To" />
 				<TextBox
 					x:Name="ToEmailTextBox"
 					Grid.Row="3"
@@ -105,6 +106,16 @@
 					Click="OpenMailButton_Click"
 					Content="Open..." />
 
+				<Label
+					Grid.Row="4"
+					Grid.Column="0"
+					VerticalAlignment="Center"
+					Content="Subject" />
+				<TextBox
+					x:Name="SubjectTextBox"
+					Grid.Row="4"
+					Grid.Column="1"
+					VerticalAlignment="Center" />
 			</Grid>
 		</GroupBox>
 		<TabControl Grid.Row="1" Margin="4px,0,4px,4px">
@@ -114,9 +125,11 @@
 		</TabControl>
 		<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
 			<Button
+				x:Name="SendErrorButton"
 				Grid.Row="2"
 				Margin="4px,0,0,4px"
 				HorizontalAlignment="Right"
+				Click="SendErrorButton_Click"
 				Content="Send Error to X360CE"
 				FontWeight="Bold" />
 			<Button

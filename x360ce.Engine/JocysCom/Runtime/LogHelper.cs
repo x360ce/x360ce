@@ -132,9 +132,10 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (parameters == null)
 				return;
 			bool isHtml = (tf == TraceFormat.Html);
-			foreach (string key in parameters.Keys)
+			foreach (var key in parameters.Keys)
 			{
 				var pv = parameters[key];
+				var k = string.Format("{0}", key);
 				string v = pv == null
 					? "null"
 					: pv is DateTime
@@ -144,7 +145,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				{
 					v = System.Net.WebUtility.HtmlEncode(v);
 					v = "<span class=\"Pre\">" + v + "</span>";
-					AddRow(ref s, key, v);
+					AddRow(ref s, k, v);
 				}
 				else
 				{

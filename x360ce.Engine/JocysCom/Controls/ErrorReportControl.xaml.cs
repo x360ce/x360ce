@@ -1,20 +1,13 @@
-﻿using JocysCom.ClassLibrary.Runtime;
+﻿using JocysCom.ClassLibrary.Mail;
+using JocysCom.ClassLibrary.Runtime;
 using mshtml;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net.Mail;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -111,6 +104,32 @@ namespace JocysCom.ClassLibrary.Controls
 		private void OpenMailButton_Click(object sender, RoutedEventArgs e)
 		{
 			ControlsHelper.OpenUrl("mailto://" + ToEmailTextBox.Text);
+		}
+
+		public string GetBody()
+		{
+			var doc = (IHTMLDocument3)MainBrowser.Document;
+			if (doc == null)
+				return null;
+			var body = doc.getElementsByTagName("body").OfType<IHTMLElement>().First();
+			if (body == null)
+				return null;
+			return body.innerHTML;
+		}
+
+		private void SendErrorButton_Click(object sender, RoutedEventArgs e)
+		{
+			var message = new MailMessage();
+			message.Subject = SubjectTextBox.Text;
+			if (!string.IsNullOrEmpty(FromEmailTextBox.Text))
+				message.From = new MailAddress(FromEmailTextBox.Text);
+			message.To.Add(new MailAddress(ToEmailTextBox.Text));
+			message.IsBodyHtml = true;
+			message.Body = GetBody();
+
+			var xml = MailHelper.MailMessageToXmlString(message);
+			var msg = MailHelper.MailMessageFromXmlString(xml);
+
 		}
 	}
 }

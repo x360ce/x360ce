@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace JocysCom.ClassLibrary.Mail
 {
@@ -15,7 +16,7 @@ namespace JocysCom.ClassLibrary.Mail
 
 		#region GetMailAddress - ASP.NET Membership Provider
 
-		#if !NETSTANDARD
+#if !NETSTANDARD
 
 		public virtual MailAddress[] GetMailAddress(Guid[] userIds)
 		{
@@ -43,7 +44,7 @@ namespace JocysCom.ClassLibrary.Mail
 			return new MailAddress(user.Email, user.UserName);
 		}
 
-		#endif
+#endif
 
 		#endregion
 
@@ -104,7 +105,7 @@ namespace JocysCom.ClassLibrary.Mail
 
 		#region HTML Validation
 
-		static readonly Regex _htmlTag = new Regex("</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>");
+		private static readonly Regex _htmlTag = new Regex("</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>");
 
 		public static bool IsHtml(string s)
 		{
@@ -128,7 +129,7 @@ namespace JocysCom.ClassLibrary.Mail
 			if (string.IsNullOrEmpty(emails))
 				return;
 			list = emails.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
-			foreach (string item in list)
+			foreach (var item in list)
 			{
 				// If address is empty then continue.
 				if (string.IsNullOrEmpty(item.Trim()))
@@ -139,7 +140,8 @@ namespace JocysCom.ClassLibrary.Mail
 					string.Compare(x.Address, a.Address, true) == 0 &&
 					string.Compare(x.DisplayName, a.DisplayName, true) == 0
 				);
-				if (exists) continue;
+				if (exists)
+					continue;
 				collection.Add(a);
 			}
 		}
@@ -157,9 +159,9 @@ namespace JocysCom.ClassLibrary.Mail
 			var list = new List<Attachment>();
 			if (files == null)
 				return;
-			for (int i = 0; i < files.Count(); i++)
+			for (var i = 0; i < files.Count(); i++)
 			{
-				string file = files[i];
+				var file = files[i];
 				if (string.IsNullOrEmpty(file))
 					continue;
 				// Specify as "application/octet-stream" so attachment will never will be embedded in body of email.
@@ -171,8 +173,9 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public static void ApplyAttachments(MailMessage message, params Attachment[] files)
 		{
-			if (files == null) return;
-			for (int i = 0; i < files.Count(); i++)
+			if (files == null)
+				return;
+			for (var i = 0; i < files.Count(); i++)
 				message.Attachments.Add(files[i]);
 		}
 
@@ -187,8 +190,8 @@ namespace JocysCom.ClassLibrary.Mail
 		/// <returns></returns>
 		public static string HtmlToText(string result)
 		{
-			string pattern = GetPattern("a", "href");
-			MatchCollection mc = Regex.Matches(result, pattern);
+			var pattern = GetPattern("a", "href");
+			var mc = Regex.Matches(result, pattern);
 			result = Regex.Replace(result, pattern, aHrefEvaluator);
 			result = result.Replace("\t", "");
 			// Remove formatting that will prevent regex from running reliably
@@ -196,7 +199,7 @@ namespace JocysCom.ClassLibrary.Mail
 			// \n - Matches a line feed \u000A.
 			// \f - Matches a form feed \u000C.
 			// For more details see http://msdn.microsoft.com/en-us/library/4edbef7e.aspx
-			result = Regex.Replace(result, @"[\r\n\f]", String.Empty, RegexOptions.IgnoreCase);
+			result = Regex.Replace(result, @"[\r\n\f]", string.Empty, RegexOptions.IgnoreCase);
 			// Replace the most commonly used special characters.
 			result = Regex.Replace(result, @"&lt;", "<", RegexOptions.IgnoreCase);
 			result = Regex.Replace(result, @"&gt;", ">", RegexOptions.IgnoreCase);
@@ -204,29 +207,29 @@ namespace JocysCom.ClassLibrary.Mail
 			result = Regex.Replace(result, @"&quot;", "\"\"", RegexOptions.IgnoreCase);
 			result = Regex.Replace(result, @"&amp;", "&", RegexOptions.IgnoreCase);
 			// Remove ASCII character code sequences such as &#nn; and &#nnn;
-			result = Regex.Replace(result, "&#[0-9]{2,3};", String.Empty, RegexOptions.IgnoreCase);
+			result = Regex.Replace(result, "&#[0-9]{2,3};", string.Empty, RegexOptions.IgnoreCase);
 			// Remove all other special characters. More can be added - see the following for more details:
 			// http://www.degraeve.com/reference/specialcharacters.php
 			// http://www.web-source.net/symbols.htm
-			result = Regex.Replace(result, @"&.{2,6};", String.Empty, RegexOptions.IgnoreCase);
+			result = Regex.Replace(result, @"&.{2,6};", string.Empty, RegexOptions.IgnoreCase);
 			// Remove all attributes and whitespace from the <head> tag
 			result = Regex.Replace(result, @"< *head[^>]*>", "<head>", RegexOptions.IgnoreCase);
 			// Remove all whitespace from the </head> tag
 			result = Regex.Replace(result, @"< */ *head *>", "</head>", RegexOptions.IgnoreCase);
 			// Delete everything between the <head> and </head> tags
-			result = Regex.Replace(result, @"<head>.*</head>", String.Empty, RegexOptions.IgnoreCase);
+			result = Regex.Replace(result, @"<head>.*</head>", string.Empty, RegexOptions.IgnoreCase);
 			// Remove all attributes and whitespace from all <script> tags
 			result = Regex.Replace(result, @"< *script[^>]*>", "<script>", RegexOptions.IgnoreCase);
 			// Remove all whitespace from all </script> tags
 			result = Regex.Replace(result, @"< */ *script *>", "</script>", RegexOptions.IgnoreCase);
 			// Delete everything between all <script> and </script> tags
-			result = Regex.Replace(result, @"<script>.*</script>", String.Empty, RegexOptions.IgnoreCase);
+			result = Regex.Replace(result, @"<script>.*</script>", string.Empty, RegexOptions.IgnoreCase);
 			// Remove all attributes and whitespace from all <style> tags
 			result = Regex.Replace(result, @"< *style[^>]*>", "<style>", RegexOptions.IgnoreCase);
 			// Remove all whitespace from all </style> tags
 			result = Regex.Replace(result, @"< */ *style *>", "</style>", RegexOptions.IgnoreCase);
 			// Delete everything between all <style> and </style> tags
-			result = Regex.Replace(result, @"<style>.*</style>", String.Empty, RegexOptions.IgnoreCase);
+			result = Regex.Replace(result, @"<style>.*</style>", string.Empty, RegexOptions.IgnoreCase);
 			// Insert tabs in place of <td> tags
 			result = Regex.Replace(result, @"< *td[^>]*>", "\t", RegexOptions.IgnoreCase);
 			// Insert single line breaks in place of <br> and <li> tags
@@ -237,25 +240,25 @@ namespace JocysCom.ClassLibrary.Mail
 			result = Regex.Replace(result, @"< *tr[^>]*>", "\r\n" + "\r\n", RegexOptions.IgnoreCase);
 			result = Regex.Replace(result, @"< *p[^>]*>", "\r\n" + "\r\n", RegexOptions.IgnoreCase);
 			// Remove all reminaing html tags
-			result = Regex.Replace(result, @"<[^>]*>", String.Empty, RegexOptions.IgnoreCase);
+			result = Regex.Replace(result, @"<[^>]*>", string.Empty, RegexOptions.IgnoreCase);
 			// Replace repeating spaces with a single space
 			result = Regex.Replace(result, " +", " ");
 			// Remove any trailing spaces and tabs from the end of each line
 			result = Regex.Replace(result, @"[ \t]+\r\n", "\r\n");
 			// Remove any leading whitespace characters
-			result = Regex.Replace(result, @"^[\s]+", String.Empty);
+			result = Regex.Replace(result, @"^[\s]+", string.Empty);
 			// Remove any trailing whitespace characters
-			result = Regex.Replace(result, @"[\s]+$", String.Empty);
+			result = Regex.Replace(result, @"[\s]+$", string.Empty);
 			// Remove extra line breaks if there are more than two in a row
 			result = Regex.Replace(result, @"\r\n\r\n(\r\n)+", "\r\n" + "\r\n");
 			//System.IO.File.WriteAllText(@"D:\temp\mail.txt", result);
 			return result;
 		}
 
-		static string GetPattern(string tag, params string[] attributes)
+		private static string GetPattern(string tag, params string[] attributes)
 		{
-			string pattern = @"<" + tag + @"\b(?>\s+(?:";
-			for (int i = 0; i < attributes.Length; i++)
+			var pattern = @"<" + tag + @"\b(?>\s+(?:";
+			for (var i = 0; i < attributes.Length; i++)
 			{
 				pattern += i > 0 ? "|" : "";
 				pattern += attributes[i] + @"=""([^""]*)""";
@@ -264,13 +267,12 @@ namespace JocysCom.ClassLibrary.Mail
 			return pattern;
 		}
 
-
-		static string aHrefEvaluator(Match m)
+		private static string aHrefEvaluator(Match m)
 		{
-			string result = string.Empty;
-			string g5 = m.Groups[2].Value;
+			var result = string.Empty;
+			var g5 = m.Groups[2].Value;
 			// Remove all reminaing html tags
-			g5 = Regex.Replace(g5, @"<[^>]*>", String.Empty, RegexOptions.IgnoreCase);
+			g5 = Regex.Replace(g5, @"<[^>]*>", string.Empty, RegexOptions.IgnoreCase);
 			if (!string.IsNullOrEmpty(g5))
 			{
 				result = string.Format("{0} ({1})", m.Groups[2], m.Groups[1].Value);
@@ -290,7 +292,7 @@ namespace JocysCom.ClassLibrary.Mail
 				return EmailResult.Empty;
 			var emails = email.Split(';');
 			// take care of list of addresses separated by semicolon
-			foreach (string s in emails)
+			foreach (var s in emails)
 			{
 				var sEmail = s.Trim();
 				// The email address cannot end with a semicolon.
@@ -305,11 +307,11 @@ namespace JocysCom.ClassLibrary.Mail
 		}
 
 		// General Email RegEx (RFC 5322 Official Standard): http://emailregex.com/
-		static string emailRegexRFC5322 = @"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
+		private static readonly string emailRegexRFC5322 = @"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|""(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*"")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])";
 
 		public static Regex EmailRegex
 		{
-			set { _emailRegex = value; }
+			set => _emailRegex = value;
 			get
 			{
 				if (_emailRegex == null)
@@ -317,7 +319,8 @@ namespace JocysCom.ClassLibrary.Mail
 				return _emailRegex;
 			}
 		}
-		static Regex _emailRegex;
+
+		private static Regex _emailRegex;
 
 
 		public static bool IsValidEmail(string s)
@@ -335,9 +338,12 @@ namespace JocysCom.ClassLibrary.Mail
 			message = Runtime.Attributes.GetDescription(result);
 			switch (result)
 			{
-				case EmailResult.OK: return true;
-				case EmailResult.Empty: return !mandatory;
-				default: return false;
+				case EmailResult.OK:
+					return true;
+				case EmailResult.Empty:
+					return !mandatory;
+				default:
+					return false;
 			}
 		}
 
@@ -352,7 +358,7 @@ namespace JocysCom.ClassLibrary.Mail
 			if (string.IsNullOrEmpty(address))
 				return result;
 			var list = address.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries);
-			foreach (string item in list)
+			foreach (var item in list)
 			{
 				var a = item.Trim();
 				if (string.IsNullOrEmpty(a))
@@ -362,6 +368,99 @@ namespace JocysCom.ClassLibrary.Mail
 				result.Add(new MailAddress(a));
 			}
 			return result;
+		}
+
+		#endregion
+
+		#region Serialize Mail Message
+
+		public static string MailMessageToXmlString(MailMessage m)
+		{
+			// Write Data.
+			var settings = new XmlWriterSettings()
+			{
+				Indent = true,
+				IndentChars = ("\t"),
+				OmitXmlDeclaration = true,
+			};
+			var sb = new StringBuilder();
+			var writer = XmlWriter.Create(sb, settings);
+			writer.WriteStartElement(nameof(MailMessage));
+			// Start message content.
+			writer.WriteAttributeString(nameof(MailMessage.Priority), m.Priority.ToString());
+			writer.WriteAttributeString(nameof(MailMessage.IsBodyHtml), m.IsBodyHtml.ToString());
+			if (m.From != null)
+				WriteAddress(writer, m.From, nameof(MailMessage.From));
+			foreach (var address in m.To)
+				WriteAddress(writer, address, nameof(MailMessage.To));
+			foreach (var address in m.CC)
+				WriteAddress(writer, address, nameof(MailMessage.CC));
+			foreach (var address in m.Bcc)
+				WriteAddress(writer, address, nameof(MailMessage.Bcc));
+			// Subject
+			writer.WriteStartElement(nameof(MailMessage.Subject));
+			writer.WriteString(m.Subject);
+			writer.WriteEndElement();
+			// Body
+			writer.WriteStartElement(nameof(MailMessage.Body));
+			writer.WriteString(m.Body);
+			writer.WriteEndElement();
+			// End MailMessage.
+			writer.WriteEndElement();
+			writer.Flush();
+			var xml = sb.ToString();
+			writer.Dispose();
+			return xml;
+		}
+
+		public static MailMessage MailMessageFromXmlString(string xml)
+		{
+			var m = new MailMessage();
+			var doc = new XmlDocument();
+			doc.XmlResolver = null;
+			doc.LoadXml(xml);
+			// Properties
+			var root = doc.SelectSingleNode(nameof(MailMessage));
+			m.IsBodyHtml = bool.Parse(root.Attributes[nameof(MailMessage.IsBodyHtml)].Value);
+			m.Priority = (MailPriority)Enum.Parse(typeof(MailPriority), root.Attributes[nameof(MailMessage.Priority)].Value);
+			var from = ReadAddressList(doc, nameof(MailMessage.From)).FirstOrDefault();
+			if (from != null)
+				m.From = from;
+			foreach (var item in ReadAddressList(doc, nameof(MailMessage.To)))
+				m.To.Add(item);
+			foreach (var item in ReadAddressList(doc, nameof(MailMessage.CC)))
+				m.CC.Add(item);
+			foreach (var item in ReadAddressList(doc, nameof(MailMessage.Bcc)))
+				m.Bcc.Add(item);
+			m.Subject = root.SelectSingleNode(nameof(MailMessage.Subject))?.InnerText;
+			m.Body = root.SelectSingleNode(nameof(MailMessage.Body))?.InnerText;
+			return m;
+		}
+
+		private static void WriteAddress(XmlWriter writer, MailAddress address, string group)
+		{
+
+			writer.WriteStartElement(nameof(MailAddress));
+			writer.WriteAttributeString(nameof(group), group);
+			if (!string.IsNullOrEmpty(address.DisplayName))
+				writer.WriteAttributeString(nameof(MailAddress.DisplayName), address.DisplayName);
+			if (!string.IsNullOrEmpty(address.Address))
+				writer.WriteAttributeString(nameof(MailAddress.Address), address.Address);
+			writer.WriteEndElement();
+		}
+
+		private static List<MailAddress> ReadAddressList(XmlDocument doc, string group)
+		{
+			var addresses = new List<MailAddress>();
+			var nodes = doc.SelectNodes(nameof(MailMessage) + "/" + nameof(MailAddress) + "[@group='" + group + "']");
+			foreach (XmlNode node in nodes)
+			{
+				var displayValue = node.Attributes[nameof(MailAddress.DisplayName)]?.Value;
+				var addressValue = node.Attributes[nameof(MailAddress.Address)]?.Value;
+				var address = new MailAddress(addressValue, displayValue);
+				addresses.Add(address);
+			}
+			return addresses;
 		}
 
 		#endregion
