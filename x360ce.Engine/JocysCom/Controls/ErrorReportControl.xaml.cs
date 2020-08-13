@@ -126,7 +126,6 @@ namespace JocysCom.ClassLibrary.Controls
 			message.To.Add(new MailAddress(ToEmailTextBox.Text));
 			message.IsBodyHtml = true;
 			message.Body = GetBody();
-
 			var xml = MailHelper.MailMessageToXmlString(message);
 			var msg = MailHelper.MailMessageFromXmlString(xml);
 

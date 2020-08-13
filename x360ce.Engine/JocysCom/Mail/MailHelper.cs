@@ -376,7 +376,6 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public static string MailMessageToXmlString(MailMessage m)
 		{
-			// Write Data.
 			var settings = new XmlWriterSettings()
 			{
 				Indent = true,
@@ -385,8 +384,8 @@ namespace JocysCom.ClassLibrary.Mail
 			};
 			var sb = new StringBuilder();
 			var writer = XmlWriter.Create(sb, settings);
+			// Start MailMessage.
 			writer.WriteStartElement(nameof(MailMessage));
-			// Start message content.
 			writer.WriteAttributeString(nameof(MailMessage.Priority), m.Priority.ToString());
 			writer.WriteAttributeString(nameof(MailMessage.IsBodyHtml), m.IsBodyHtml.ToString());
 			if (m.From != null)
@@ -397,14 +396,8 @@ namespace JocysCom.ClassLibrary.Mail
 				WriteAddress(writer, address, nameof(MailMessage.CC));
 			foreach (var address in m.Bcc)
 				WriteAddress(writer, address, nameof(MailMessage.Bcc));
-			// Subject
-			writer.WriteStartElement(nameof(MailMessage.Subject));
-			writer.WriteString(m.Subject);
-			writer.WriteEndElement();
-			// Body
-			writer.WriteStartElement(nameof(MailMessage.Body));
-			writer.WriteString(m.Body);
-			writer.WriteEndElement();
+			writer.WriteElementString(nameof(MailMessage.Subject), m.Subject);
+			writer.WriteElementString(nameof(MailMessage.Body), m.Body);
 			// End MailMessage.
 			writer.WriteEndElement();
 			writer.Flush();
@@ -421,16 +414,16 @@ namespace JocysCom.ClassLibrary.Mail
 			doc.LoadXml(xml);
 			// Properties
 			var root = doc.SelectSingleNode(nameof(MailMessage));
-			m.IsBodyHtml = bool.Parse(root.Attributes[nameof(MailMessage.IsBodyHtml)].Value);
 			m.Priority = (MailPriority)Enum.Parse(typeof(MailPriority), root.Attributes[nameof(MailMessage.Priority)].Value);
-			var from = ReadAddressList(doc, nameof(MailMessage.From)).FirstOrDefault();
+			m.IsBodyHtml = bool.Parse(root.Attributes[nameof(MailMessage.IsBodyHtml)].Value);
+			var from = ReadAddressList(root, nameof(MailMessage.From)).FirstOrDefault();
 			if (from != null)
 				m.From = from;
-			foreach (var item in ReadAddressList(doc, nameof(MailMessage.To)))
+			foreach (var item in ReadAddressList(root, nameof(MailMessage.To)))
 				m.To.Add(item);
-			foreach (var item in ReadAddressList(doc, nameof(MailMessage.CC)))
+			foreach (var item in ReadAddressList(root, nameof(MailMessage.CC)))
 				m.CC.Add(item);
-			foreach (var item in ReadAddressList(doc, nameof(MailMessage.Bcc)))
+			foreach (var item in ReadAddressList(root, nameof(MailMessage.Bcc)))
 				m.Bcc.Add(item);
 			m.Subject = root.SelectSingleNode(nameof(MailMessage.Subject))?.InnerText;
 			m.Body = root.SelectSingleNode(nameof(MailMessage.Body))?.InnerText;
@@ -449,10 +442,10 @@ namespace JocysCom.ClassLibrary.Mail
 			writer.WriteEndElement();
 		}
 
-		private static List<MailAddress> ReadAddressList(XmlDocument doc, string group)
+		private static List<MailAddress> ReadAddressList(XmlNode root, string group)
 		{
 			var addresses = new List<MailAddress>();
-			var nodes = doc.SelectNodes(nameof(MailMessage) + "/" + nameof(MailAddress) + "[@group='" + group + "']");
+			var nodes = root.SelectNodes(nameof(MailAddress) + "[@group='" + group + "']");
 			foreach (XmlNode node in nodes)
 			{
 				var displayValue = node.Attributes[nameof(MailAddress.DisplayName)]?.Value;
