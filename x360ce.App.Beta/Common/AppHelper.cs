@@ -162,10 +162,9 @@ namespace x360ce.App
 			{
 				if (!DisabledImageCache.ContainsKey(image))
 				{
-					var effects = new JocysCom.ClassLibrary.Drawing.Effects();
 					var newImage = (Bitmap)image.Clone();
-					effects.GrayScale(newImage);
-					effects.Transparent(newImage, 50);
+					JocysCom.ClassLibrary.Drawing.Effects.GrayScale(newImage);
+					JocysCom.ClassLibrary.Drawing.Effects.Transparent(newImage, 50);
 					DisabledImageCache.Add(image, newImage);
 				}
 				return DisabledImageCache[image];

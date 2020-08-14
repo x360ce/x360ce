@@ -268,11 +268,8 @@
     <Compile Include="JocysCom\Diagnostics\RollingXmlWriterTraceListener.cs" />
     <Compile Include="JocysCom\Diagnostics\TraceHelper.cs" />
     <Compile Include="JocysCom\Drawing\Basic.cs" />
-    <Compile Include="JocysCom\Drawing\Effects\Brightness.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Common.cs" />
-    <Compile Include="JocysCom\Drawing\Effects\Grayscale.cs" />
     <Compile Include="JocysCom\Drawing\Effects\Resize.cs" />
-    <Compile Include="JocysCom\Drawing\Effects\Transparent.cs" />
     <Compile Include="JocysCom\Extensions\IQueryable.cs" />
     <Compile Include="JocysCom\Files\Zip.cs" />
     <Compile Include="JocysCom\Files\ZipStorer.cs" />
@@ -298,6 +295,7 @@
     <Compile Include="JocysCom\Mail\EmailResult.cs" />
     <Compile Include="JocysCom\Mail\MailFromUser.cs" />
     <Compile Include="JocysCom\Mail\MailHelper.cs" />
+    <Compile Include="JocysCom\Mail\MailMessageSerializable.cs" />
     <Compile Include="JocysCom\Mail\MailTextType.cs" />
     <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
     <Compile Include="JocysCom\Network\CheckNetworkState.cs" />

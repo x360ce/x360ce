@@ -5,7 +5,6 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml;
 
 namespace JocysCom.ClassLibrary.Mail
 {
@@ -311,7 +310,7 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public static Regex EmailRegex
 		{
-			set => _emailRegex = value;
+			set { _emailRegex = value; }
 			get
 			{
 				if (_emailRegex == null)
@@ -368,92 +367,6 @@ namespace JocysCom.ClassLibrary.Mail
 				result.Add(new MailAddress(a));
 			}
 			return result;
-		}
-
-		#endregion
-
-		#region Serialize Mail Message
-
-		public static string MailMessageToXmlString(MailMessage m)
-		{
-			var settings = new XmlWriterSettings()
-			{
-				Indent = true,
-				IndentChars = ("\t"),
-				OmitXmlDeclaration = true,
-			};
-			var sb = new StringBuilder();
-			var writer = XmlWriter.Create(sb, settings);
-			// Start MailMessage.
-			writer.WriteStartElement(nameof(MailMessage));
-			writer.WriteAttributeString(nameof(MailMessage.Priority), m.Priority.ToString());
-			writer.WriteAttributeString(nameof(MailMessage.IsBodyHtml), m.IsBodyHtml.ToString());
-			if (m.From != null)
-				WriteAddress(writer, m.From, nameof(MailMessage.From));
-			foreach (var address in m.To)
-				WriteAddress(writer, address, nameof(MailMessage.To));
-			foreach (var address in m.CC)
-				WriteAddress(writer, address, nameof(MailMessage.CC));
-			foreach (var address in m.Bcc)
-				WriteAddress(writer, address, nameof(MailMessage.Bcc));
-			writer.WriteElementString(nameof(MailMessage.Subject), m.Subject);
-			writer.WriteElementString(nameof(MailMessage.Body), m.Body);
-			// End MailMessage.
-			writer.WriteEndElement();
-			writer.Flush();
-			var xml = sb.ToString();
-			writer.Dispose();
-			return xml;
-		}
-
-		public static MailMessage MailMessageFromXmlString(string xml)
-		{
-			var m = new MailMessage();
-			var doc = new XmlDocument();
-			doc.XmlResolver = null;
-			doc.LoadXml(xml);
-			// Properties
-			var root = doc.SelectSingleNode(nameof(MailMessage));
-			m.Priority = (MailPriority)Enum.Parse(typeof(MailPriority), root.Attributes[nameof(MailMessage.Priority)].Value);
-			m.IsBodyHtml = bool.Parse(root.Attributes[nameof(MailMessage.IsBodyHtml)].Value);
-			var from = ReadAddressList(root, nameof(MailMessage.From)).FirstOrDefault();
-			if (from != null)
-				m.From = from;
-			foreach (var item in ReadAddressList(root, nameof(MailMessage.To)))
-				m.To.Add(item);
-			foreach (var item in ReadAddressList(root, nameof(MailMessage.CC)))
-				m.CC.Add(item);
-			foreach (var item in ReadAddressList(root, nameof(MailMessage.Bcc)))
-				m.Bcc.Add(item);
-			m.Subject = root.SelectSingleNode(nameof(MailMessage.Subject))?.InnerText;
-			m.Body = root.SelectSingleNode(nameof(MailMessage.Body))?.InnerText;
-			return m;
-		}
-
-		private static void WriteAddress(XmlWriter writer, MailAddress address, string group)
-		{
-
-			writer.WriteStartElement(nameof(MailAddress));
-			writer.WriteAttributeString(nameof(group), group);
-			if (!string.IsNullOrEmpty(address.DisplayName))
-				writer.WriteAttributeString(nameof(MailAddress.DisplayName), address.DisplayName);
-			if (!string.IsNullOrEmpty(address.Address))
-				writer.WriteAttributeString(nameof(MailAddress.Address), address.Address);
-			writer.WriteEndElement();
-		}
-
-		private static List<MailAddress> ReadAddressList(XmlNode root, string group)
-		{
-			var addresses = new List<MailAddress>();
-			var nodes = root.SelectNodes(nameof(MailAddress) + "[@group='" + group + "']");
-			foreach (XmlNode node in nodes)
-			{
-				var displayValue = node.Attributes[nameof(MailAddress.DisplayName)]?.Value;
-				var addressValue = node.Attributes[nameof(MailAddress.Address)]?.Value;
-				var address = new MailAddress(addressValue, displayValue);
-				addresses.Add(address);
-			}
-			return addresses;
 		}
 
 		#endregion

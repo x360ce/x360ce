@@ -98,8 +98,8 @@ namespace x360ce.App
 		{
 			var effects = new JocysCom.ClassLibrary.Drawing.Effects();
 			var newImage = (Bitmap)image.Clone();
-			effects.GrayScale(newImage);
-			effects.Transparent(newImage, 50);
+			JocysCom.ClassLibrary.Drawing.Effects.GrayScale(newImage);
+			JocysCom.ClassLibrary.Drawing.Effects.Transparent(newImage, 50);
 			return newImage;
 		}
 

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using System.Web.Mail;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -119,15 +120,18 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private void SendErrorButton_Click(object sender, RoutedEventArgs e)
 		{
-			var message = new MailMessage();
+			var message = new MailMessageSerializable();
 			message.Subject = SubjectTextBox.Text;
 			if (!string.IsNullOrEmpty(FromEmailTextBox.Text))
-				message.From = new MailAddress(FromEmailTextBox.Text);
-			message.To.Add(new MailAddress(ToEmailTextBox.Text));
+				message.From = new MailAddressSerializable(FromEmailTextBox.Text);
+			message.To.Add(new MailAddressSerializable(ToEmailTextBox.Text));
 			message.IsBodyHtml = true;
 			message.Body = GetBody();
-			var xml = MailHelper.MailMessageToXmlString(message);
-			var msg = MailHelper.MailMessageFromXmlString(xml);
+
+			
+			var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(message);
+			var mms = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<MailMessageSerializable>(xml);
+			var m = mms.ToMailMessage();
 
 		}
 	}

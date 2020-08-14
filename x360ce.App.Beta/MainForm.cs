@@ -190,6 +190,7 @@ namespace x360ce.App
             // Start Timers.
             UpdateTimer.Start();
             JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
+            MonitorErrors(true);
         }
 
         #region Process Monitor
@@ -471,6 +472,7 @@ namespace x360ce.App
         void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             Program.IsClosing = true;
+            MonitorErrors(false);
             // Wrap into try catch so that the form will always close and
             // there will be no need to kill it by using task manager if exception is thrown.
             try
@@ -1558,7 +1560,47 @@ namespace x360ce.App
             });
         }
 
-	
+        FileSystemWatcher errorsWatcher;
+        object errorsWatcherLock = new object();
+
+        void MonitorErrors(bool enable)
+		{
+            lock (errorsWatcherLock)
+            {
+                if (enable && errorsWatcher == null)
+                {
+                    var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
+                    if (!dir.Exists)
+                        dir.Create();
+                    errorsWatcher = new FileSystemWatcher(dir.FullName, "*.htm");
+                    errorsWatcher.Deleted += ErrorsWatcher_Changed;
+                    errorsWatcher.Created += ErrorsWatcher_Changed;
+                    errorsWatcher.EnableRaisingEvents = true;
+                    ErrorsWatcher_Changed(null, null);
+                }
+                else if (!enable && errorsWatcher != null)
+                {
+                    errorsWatcher.Deleted -= ErrorsWatcher_Changed;
+                    errorsWatcher.Created -= ErrorsWatcher_Changed;
+                    errorsWatcher.Dispose();
+                    errorsWatcher = null;
+                }
+            }
+        }
+
+		private void ErrorsWatcher_Changed(object sender, FileSystemEventArgs e)
+		{
+            var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
+            var count = dir.GetFiles("*.htm").Count();
+            StatusErrorsLabel.Text  = string.Format("Errors: {0}", count);
+            StatusErrorsLabel.ForeColor = count > 0
+                ? System.Drawing.Color.DarkRed
+                : System.Drawing.SystemColors.ControlDark;
+            StatusErrorsLabel.Image = count > 0
+                ? Resources.error_16x16
+                : AppHelper.GetDisabledImage(Resources.error_16x16);
+        }
+
 	}
 }
 
