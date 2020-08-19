@@ -117,7 +117,8 @@ namespace x360ce.App
 		{
 			var message = "";
 			AddExceptionMessage(ex, ref message);
-			if (ex.InnerException != null) AddExceptionMessage(ex.InnerException, ref message);
+			if (ex.InnerException != null)
+				AddExceptionMessage(ex.InnerException, ref message);
 			return message;
 		}
 
@@ -134,7 +135,8 @@ namespace x360ce.App
 			}
 			else if (ex2 != null)
 			{
-				foreach (Exception x in ex2.LoaderExceptions) m += x.Message + "\r\n";
+				foreach (Exception x in ex2.LoaderExceptions)
+					m += x.Message + "\r\n";
 			}
 			if (message.Length > 0)
 			{
@@ -162,7 +164,8 @@ namespace x360ce.App
 
 		public static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
-			if (IsClosing) return;
+			if (IsClosing)
+				return;
 			ErrorCount++;
 			MainForm.Current.UpdateTimer.Stop();
 			MainForm.Current.UpdateStatus("- " + e.Exception.Message);

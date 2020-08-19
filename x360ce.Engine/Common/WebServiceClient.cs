@@ -9,7 +9,6 @@ using JocysCom.ClassLibrary.Web.Services;
 namespace x360ce.Engine
 {
 
-	/// <remarks/>
 	[WebServiceBinding(Name = "x360ceSoap", Namespace = ns)]
 	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(StructuralObject))]
 	//[System.Xml.Serialization.XmlIncludeAttribute(typeof(EntityKeyMember[]))]

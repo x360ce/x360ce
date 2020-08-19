@@ -16,6 +16,15 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public event EventHandler NewException;
 
+		private static bool IgnoreException(Exception ex)
+		{
+			var fex = ex as System.IO.FileNotFoundException;
+			// Ignore serializer warning.
+			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))
+				return true;
+			return false;
+		}
+
 		/// <summary>
 		/// Write exception details to file.
 		/// </summary>
@@ -23,6 +32,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="subject">Use custom subject instead of generated from exception</param>
 		public void WriteException(Exception ex, string subject = null, string body = null)
 		{
+			if (IgnoreException(ex))
+				return;
 			Interlocked.Increment(ref ExceptionsCount);
 			NewException?.Invoke(this, new EventArgs());
 			if (!LogToFile)
