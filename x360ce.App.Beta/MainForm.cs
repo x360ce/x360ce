@@ -40,7 +40,8 @@ namespace x360ce.App
 				LogHelper.Current.LogExceptions = true;
 				LogHelper.Current.LogToFile = true;
 				LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
-				LogHelper.Current.WritingException += Current_WritingException;
+				LogHelper.Current.NewException += LogHelper_Current_NewException;
+				LogHelper.Current.WritingException += LogHelper_Current_WritingException;
 				// Fix access rights to configuration folder.
 				var di = new DirectoryInfo(EngineHelper.AppDataPath);
 				// Create configuration folder if not exists.
@@ -75,7 +76,12 @@ namespace x360ce.App
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 		}
 
-		private void Current_WritingException(object sender, LogHelperEventArgs e)
+		private void LogHelper_Current_NewException(object sender, EventArgs e)
+		{
+			ControlsHelper.BeginInvoke(new Action(() => UpdateStatusErrorsLabel()));
+		}
+
+		private void LogHelper_Current_WritingException(object sender, LogHelperEventArgs e)
 		{
 			var ex = e.Exception as SharpDX.SharpDXException;
 			if (ex != null && ex.Descriptor != null)
@@ -1648,21 +1654,29 @@ namespace x360ce.App
 			}
 		}
 
+		public static int ErrorFilesCount;
+
 		private void ErrorsWatcher_Changed(object sender, FileSystemEventArgs e)
 		{
 			ControlsHelper.BeginInvoke(new Action(() =>
 			{
 				var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
-				var count = dir.GetFiles("*.htm").Count();
-				StatusErrorsLabel.Text = string.Format("Errors: {0}", count);
-				StatusErrorsLabel.ForeColor = count > 0
-					? System.Drawing.Color.DarkRed
-					: System.Drawing.SystemColors.ControlDark;
-				StatusErrorsLabel.Image = count > 0
-					? Resources.error_16x16
-					: AppHelper.GetDisabledImage(Resources.error_16x16);
+				ErrorFilesCount = dir.GetFiles("*.htm").Count();
+				UpdateStatusErrorsLabel();
 			}));
 		}
+
+		void UpdateStatusErrorsLabel()
+		{
+			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
+			StatusErrorsLabel.ForeColor = ErrorFilesCount > 0
+						? System.Drawing.Color.DarkRed
+						: System.Drawing.SystemColors.ControlDark;
+			StatusErrorsLabel.Image = ErrorFilesCount > 0
+				? Resources.error_16x16
+				: AppHelper.GetDisabledImage(Resources.error_16x16);
+		}
+
 
 	}
 }

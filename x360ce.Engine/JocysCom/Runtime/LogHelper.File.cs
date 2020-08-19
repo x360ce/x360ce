@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Windows.Media;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -10,6 +12,10 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public int MaxFiles { get { return _SP.Parse("MaxFiles", 10); } }
 
+		public long ExceptionsCount;
+
+		public event EventHandler NewException;
+
 		/// <summary>
 		/// Write exception details to file.
 		/// </summary>
@@ -17,6 +23,8 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="subject">Use custom subject instead of generated from exception</param>
 		public void WriteException(Exception ex, string subject = null, string body = null)
 		{
+			Interlocked.Increment(ref ExceptionsCount);
+			NewException?.Invoke(this, new EventArgs());
 			if (!LogToFile)
 				return;
 			_GroupException(fileExceptions, ex, subject, body, _WriteFile);
