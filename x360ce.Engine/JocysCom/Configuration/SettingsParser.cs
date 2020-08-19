@@ -4,7 +4,6 @@ using System.Net;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Linq;
 #if NETSTANDARD // If .NET Standard (Xamarin) preprocessor directive is set then...
 using Xamarin.Forms;
 #else

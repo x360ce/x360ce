@@ -107,7 +107,8 @@ namespace x360ce.App
 			}
 			if (!CheckSettings())
 				return;
-			Global.InitRemoteService();
+			Global.InitializeRemoteService();
+			Global.InitializeCloudClient();
 			MainForm.Current = new MainForm();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{

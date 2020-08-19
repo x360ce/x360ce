@@ -9,10 +9,19 @@ namespace x360ce.App
 	public partial class Global
 	{
 
+		public static CloudClient CloudClient;
+
+		public static void InitializeCloudClient()
+		{
+			CloudClient = new CloudClient();
+			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
+		}
+
+		#region Remote Server
+
 		public static Service.RemoteService RemoteServer;
 
-
-		public static void InitRemoteService()
+		public static void InitializeRemoteService()
 		{
 			RemoteServer = new Service.RemoteService();
 			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
@@ -35,9 +44,9 @@ namespace x360ce.App
 				default:
 					break;
 			}
-
-
 		}
+
+		#endregion
 
 	}
 }

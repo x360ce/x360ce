@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Linq;
+using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -35,6 +36,11 @@ namespace JocysCom.ClassLibrary.Controls
 			win.Height = form.Height + addSize;
 			win.Top = form.Top - addSize / 2;
 			win.Left = form.Left - addSize / 2;
+		}
+
+		public static bool IsDesignMode(UIElement component)
+		{
+			return DesignerProperties.GetIsInDesignMode(component);
 		}
 
 	}

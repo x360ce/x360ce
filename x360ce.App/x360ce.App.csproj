@@ -143,6 +143,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
     <Reference Include="SharpDX">
       <HintPath>Resources\SharpDX\SharpDX.dll</HintPath>
       <Private>False</Private>

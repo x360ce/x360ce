@@ -6,8 +6,8 @@ using System.Web.Services;
 using System.Web.Security;
 using x360ce.Engine.Data;
 using x360ce.Engine;
-using System.Data;
 using JocysCom.ClassLibrary.Runtime;
+using JocysCom.ClassLibrary.Mail;
 
 namespace x360ce.Web.WebServices
 {
@@ -185,6 +185,18 @@ namespace x360ce.Web.WebServices
 						results.Values.Add(CloudKey.ServerVersion, clientVersion);
 						//results.Values.Add(CloudKey.UpdateUrl, "https://github.com/x360ce/x360ce/blob/master/x360ce.Web/Files/x360ce.zip?raw=true");
 						results.Values.Add(CloudKey.UpdateUrl, JocysCom.ClassLibrary.Security.TokenHelper.GetApplicationUrl() + "/Files/x360ce_beta.zip");
+						break;
+					case CloudAction.SendMailMessage:
+						foreach (var message in command.MailMessages)
+						{
+							var mm = message.ToMailMessage();
+							mm.Bcc.Clear();
+							mm.CC.Clear();
+							mm.Sender = null;
+							mm.To.Clear();
+							mm.To.Add("support@x360ce.com");
+							SmtpClientEx.Current.Send(mm);
+						}
 						break;
 					default:
 						break;

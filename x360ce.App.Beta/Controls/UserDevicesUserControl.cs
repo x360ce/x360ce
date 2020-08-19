@@ -10,6 +10,7 @@ using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
 using JocysCom.ClassLibrary.IO;
 using System.Drawing;
+using System.Threading.Tasks;
 
 namespace x360ce.App.Controls
 {
@@ -98,11 +99,16 @@ namespace x360ce.App.Controls
 		private void ControllerDeleteButton_Click(object sender, EventArgs e)
 		{
 			var userDevices = GetSelected();
+			// Remove from local settings.
 			foreach (var item in userDevices)
-			{
 				SettingsManager.UserDevices.Items.Remove(item);
-			}
-			MainForm.Current.CloudPanel.Add(CloudAction.Delete, userDevices, true);
+			SettingsManager.Save();
+			// Remove from cloud settings.
+			Task.Run(new Action(() =>
+			{
+				foreach (var item in userDevices)
+					Global.CloudClient.Add(CloudAction.Delete, new UserDevice[] { item });
+			}));
 		}
 
 		private void ControllersDataGridView_SelectionChanged(object sender, EventArgs e)

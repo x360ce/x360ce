@@ -184,6 +184,7 @@
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\AutoMapHelper.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
+    <Compile Include="Common\CloudClient.cs" />
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />

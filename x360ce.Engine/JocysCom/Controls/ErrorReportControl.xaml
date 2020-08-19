@@ -5,7 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Width="600"
-	Height="200"
+	Height="300"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -124,6 +124,12 @@
 			</TabItem>
 		</TabControl>
 		<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
+			<Label
+				x:Name="StatusLabel"
+				Grid.Row="2"
+				Margin="4px,0,0,4px"
+				x:FieldModifier="public"
+				Content="Status" />
 			<Button
 				x:Name="SendErrorButton"
 				Grid.Row="2"

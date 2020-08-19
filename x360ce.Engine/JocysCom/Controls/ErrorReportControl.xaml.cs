@@ -2,10 +2,10 @@
 using JocysCom.ClassLibrary.Runtime;
 using mshtml;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
-using System.Web.Mail;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -20,15 +20,19 @@ namespace JocysCom.ClassLibrary.Controls
 		public ErrorReportControl()
 		{
 			InitializeComponent();
+			if (JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this))
+				return;
 			ErrorsFolderTextBox.Text = LogHelper.Current.LogsFolder;
 			MainBrowser.LoadCompleted += MainBrowser_LoadCompleted;
 			RefreshErrorsComboBox();
+			StatusLabel.Content = "";
 		}
 
 		void RefreshErrorsComboBox()
 		{
 			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
 			var errors = dir.GetFiles("*.htm").OrderByDescending(x => x.CreationTime).ToArray();
+			SubjectTextBox.Text = "I would like to report C360CE problem";
 			ErrorComboBox.ItemsSource = errors;
 			ErrorComboBox.DisplayMemberPath = nameof(FileInfo.Name);
 			if (errors.Length > 0)
@@ -120,19 +124,23 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private void SendErrorButton_Click(object sender, RoutedEventArgs e)
 		{
-			var message = new MailMessageSerializable();
+			var message = new MailMessage();
 			message.Subject = SubjectTextBox.Text;
 			if (!string.IsNullOrEmpty(FromEmailTextBox.Text))
-				message.From = new MailAddressSerializable(FromEmailTextBox.Text);
-			message.To.Add(new MailAddressSerializable(ToEmailTextBox.Text));
+				message.From = new MailAddress(FromEmailTextBox.Text);
+			message.To.Add(new MailAddress(ToEmailTextBox.Text));
 			message.IsBodyHtml = true;
 			message.Body = GetBody();
 
-			
-			var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(message);
-			var mms = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<MailMessageSerializable>(xml);
-			var m = mms.ToMailMessage();
+			var messages = new List<MailMessage>();
+			messages.Add(message);
 
+			SendMessages?.Invoke(this, new EventArgs<List<MailMessage>>(messages));
+			// Convert to serializable.
+			//var list = messages.Select(x => new MailMessageSerializable(x)).ToList();
 		}
+
+		public event EventHandler<EventArgs<List<MailMessage>>> SendMessages;
+
 	}
 }

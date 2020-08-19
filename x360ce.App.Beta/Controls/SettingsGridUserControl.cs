@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -80,12 +81,17 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm("Do you want to delete selected settings?", "X360CE - Delete Settings", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 			if (result == DialogResult.Yes)
 			{
+				// Remove from local settings.
 				foreach (var item in userSettings)
-				{
 					SettingsManager.UserSettings.Items.Remove(item);
-				}
 				SettingsManager.Save();
-				MainForm.Current.CloudPanel.Add(CloudAction.Delete, userSettings, true);
+				// Remove from cloud settings.
+				Task.Run(new Action(() =>
+				{
+					foreach (var item in userSettings)
+						Global.CloudClient.Add(CloudAction.Delete, new UserSetting[] { item });
+
+				}));
 			}
 			form.Dispose();
 			form = null;
@@ -170,7 +176,8 @@ namespace x360ce.App.Controls
 			if (e.Error != null)
 			{
 				var error = e.Error.Message;
-				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
+				if (e.Error.InnerException != null)
+					error += "\r\n" + e.Error.InnerException.Message;
 				_ParentForm.SetHeaderError(error);
 			}
 			else if (e.Result == null)

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Xml.Serialization;
+using JocysCom.ClassLibrary.Mail;
 using x360ce.Engine.Data;
 
 namespace x360ce.Engine
@@ -52,6 +51,8 @@ namespace x360ce.Engine
 		[XmlArray] public UserComputer[] UserComputers { get; set; }
 
 		[XmlArray] public UserSetting[] UserSettings { get; set; }
+
+		[XmlArray] public MailMessageSerializable[] MailMessages { get; set; }
 
 		/// <summary>
 		/// During request it will be used to specify search filters. If null then do not retrieve.

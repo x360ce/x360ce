@@ -6,8 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -136,7 +138,8 @@ namespace x360ce.App.Controls
 						else if (enabledGame != null)
 						{
 							// Enable if platform is the same, disable otherwise.
-							game.IsEnabled = game.ProcessorArchitecture == enabledGame.ProcessorArchitecture; ;
+							game.IsEnabled = game.ProcessorArchitecture == enabledGame.ProcessorArchitecture;
+							;
 						}
 						SettingsManager.UserGames.Add(game);
 					}
@@ -274,13 +277,15 @@ namespace x360ce.App.Controls
 			if (!string.IsNullOrEmpty(fullPath))
 			{
 				var fi = new System.IO.FileInfo(fullPath);
-				if (string.IsNullOrEmpty(path)) path = fi.Directory.FullName;
+				if (string.IsNullOrEmpty(path))
+					path = fi.Directory.FullName;
 				AddGameOpenFileDialog.FileName = fi.Name;
 			}
 			AddGameOpenFileDialog.Filter = EngineHelper.GetFileDescription(".exe") + " (*.exe)|*.exe|All files (*.*)|*.*";
 			AddGameOpenFileDialog.FilterIndex = 1;
 			AddGameOpenFileDialog.RestoreDirectory = true;
-			if (string.IsNullOrEmpty(path)) path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
+			if (string.IsNullOrEmpty(path))
+				path = System.IO.Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles));
 			AddGameOpenFileDialog.InitialDirectory = path;
 			AddGameOpenFileDialog.Title = "Browse for Executable";
 			var result = AddGameOpenFileDialog.ShowDialog();
@@ -310,14 +315,17 @@ namespace x360ce.App.Controls
 			var game = SettingsManager.ProcessExecutable(fileName);
 			GamesDataGridView.ClearSelection();
 			object selelectItemKey = null;
-			if (game != null) selelectItemKey = game.GameId;
+			if (game != null)
+				selelectItemKey = game.GameId;
 			ControlHelper.ShowHideAndSelectGridRows(GamesDataGridView, ShowGamesDropDownButton, null, selelectItemKey);
 		}
 
 		private void GamesDataGridView_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Delete) DeleteSelectedGames();
-			else if (e.KeyCode == Keys.Insert) AddNewGame();
+			if (e.KeyCode == Keys.Delete)
+				DeleteSelectedGames();
+			else if (e.KeyCode == Keys.Insert)
+				AddNewGame();
 		}
 
 		private void GamesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -407,12 +415,16 @@ namespace x360ce.App.Controls
 			var result = form.ShowForm(message, "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
 			if (result == DialogResult.OK)
 			{
+				// Remove from local settings.
 				foreach (var item in userGames)
-				{
 					SettingsManager.UserGames.Items.Remove(item);
-				}
 				SettingsManager.Save();
-				MainForm.Current.CloudPanel.Add(CloudAction.Delete, userGames, true);
+				// Remove from cloud settings.
+				Task.Run(new Action(() =>
+				{
+					foreach (var item in userGames)
+						Global.CloudClient.Add(CloudAction.Delete, new UserGame[] { item });
+				}));
 			}
 		}
 

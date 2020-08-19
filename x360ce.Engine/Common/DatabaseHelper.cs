@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
 using System.Linq;
-using x360ce.Engine;
 using x360ce.Engine.Data;
 
 namespace x360ce.Engine

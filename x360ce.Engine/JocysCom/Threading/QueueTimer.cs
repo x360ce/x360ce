@@ -16,23 +16,23 @@ namespace JocysCom.ClassLibrary.Threading
 			// Create main properties.
 			Queue = new BindingListInvoked<T>();
 			Queue.SynchronizingObject = listSynchronizingObject;
+			SynchronizingObject = listSynchronizingObject;
 		}
 
-		public new BindingListInvoked<T> Queue { get { return (BindingListInvoked<T>)base.Queue; }  set { base.Queue = value; } }
+		public TaskScheduler SynchronizingObject { get; set; }
+
+		public new BindingListInvoked<T> Queue { get { return (BindingListInvoked<T>)base.Queue; } set { base.Queue = value; } }
 
 		public override string DoActionNow(T item = null)
 		{
-			var so = Queue.SynchronizingObject;
+			var so = SynchronizingObject;
 			if (so == null)
-			{
-				return base.DoActionNow(item);
-			}
-			else
-			{
-				var t = new Task<string>(() => _DoActionNow(item));
-				t.RunSynchronously(so);
-				return t.Result;
-			}
+				// Run on current thread.
+				return _DoActionNow(item);
+			// Run on synchronizing object thread.
+			var t = new Task<string>(() => _DoActionNow(item));
+			t.RunSynchronously(so);
+			return t.Result;
 		}
 
 		protected override void _StarThread()
@@ -45,7 +45,7 @@ namespace JocysCom.ClassLibrary.Threading
 			{
 				SleepTimerStop();
 				// Put into another variable for thread safety.
-				var so = Queue.SynchronizingObject;
+				var so = SynchronizingObject;
 				if (so == null)
 				{
 					// Mark thread as running.

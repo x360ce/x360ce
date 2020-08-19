@@ -18,13 +18,13 @@ namespace x360ce.App.Forms
 
         public void OpenDialog()
         {
-            MainForm.Current.CloudPanel.TasksTimer.BeforeRemove += TasksTimer_BeforeRemove;
+            Global.CloudClient.TasksTimer.BeforeRemove += TasksTimer_BeforeRemove;
         }
 
 
         public void CloseDialog()
         {
-            MainForm.Current.CloudPanel.TasksTimer.BeforeRemove -= TasksTimer_BeforeRemove;
+            Global.CloudClient.TasksTimer.BeforeRemove -= TasksTimer_BeforeRemove;
         }
 
         bool CancelUpdate;
@@ -56,7 +56,7 @@ namespace x360ce.App.Forms
                 Retries = 4,
             };
             CheckUpateItem = item;
-            MainForm.Current.CloudPanel.Add(item);
+            Global.CloudClient.TasksTimer.DoActionNow(item);
         }
 
         private void TasksTimer_BeforeRemove(object sender, QueueTimerEventArgs e)

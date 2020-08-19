@@ -116,13 +116,16 @@ namespace JocysCom.ClassLibrary.Threading
 		{
 			lock (delayTimerLock)
 			{
+				// If delay timer exist then...
 				if (delayTimer != null)
 				{
+					// Dispose delay timer.
 					delayTimer.Elapsed -= DelayTimer_Elapsed;
 					delayTimer.Dispose();
 					delayTimerNextRunTime = default(DateTime);
 					delayTimer = null;
 				}
+				// If interval is set then...
 				if (interval > 0)
 				{
 					// Create delay timer.
@@ -150,11 +153,10 @@ namespace JocysCom.ClassLibrary.Threading
 		{
 			lock (delayTimerLock)
 			{
-				if (delayTimer != null)
-				{
-					delayTimerNextRunTime = DateTime.Now.AddMilliseconds(delayTimer.Interval);
-					delayTimer.Start();
-				}
+				if (delayTimer == null)
+					return;
+				delayTimerNextRunTime = DateTime.Now.AddMilliseconds(delayTimer.Interval);
+				delayTimer.Start();
 			}
 		}
 
@@ -162,6 +164,7 @@ namespace JocysCom.ClassLibrary.Threading
 		{
 			lock (delayTimerLock)
 			{
+				// Clear delay time, because action will start now.
 				delayTimerNextRunTime = default(DateTime);
 			}
 			lock (queueLock)
@@ -312,9 +315,7 @@ namespace JocysCom.ClassLibrary.Threading
 						}
 						// Check if sleep timer expired.
 						if (sleepTimerInterval <= _LastActionDoneTime.ElapsedMilliseconds)
-						{
 							DelayTimerStop();
-						}
 						// Restart delay.
 						DelayTimerStart();
 						data.Add("Delay timer started");
