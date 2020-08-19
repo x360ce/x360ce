@@ -61,9 +61,9 @@ namespace JocysCom.ClassLibrary.Mail
 			BodyTransferEncoding = m.BodyTransferEncoding;
 			DeliveryNotificationOptions = m.DeliveryNotificationOptions;
 			if (m.Sender != null)
-				Sender = new MailAddressSerializable(Sender.Address, Sender.DisplayName);
+				Sender = new MailAddressSerializable(m.Sender.Address, m.Sender.DisplayName);
 			if (m.From != null)
-				From = new MailAddressSerializable(From.Address, From.DisplayName);
+				From = new MailAddressSerializable(m.From.Address, m.From.DisplayName);
 			foreach (MailAddress a in m.To)
 				To.Add(new MailAddressSerializable(a.Address, a.DisplayName));
 			foreach (MailAddress a in m.CC)
