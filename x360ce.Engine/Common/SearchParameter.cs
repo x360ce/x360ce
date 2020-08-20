@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace x360ce.Engine
 {
@@ -11,5 +8,14 @@ namespace x360ce.Engine
 		public Guid InstanceGuid { get; set; }
 		public string FileName { get; set; }
 		public string FileProductName { get; set; }
+
+		public bool IsEmpty()
+		{
+			return
+				string.IsNullOrEmpty(FileName) &&
+				string.IsNullOrEmpty(FileProductName) &&
+				InstanceGuid == Guid.Empty &&
+				ProductGuid == Guid.Empty;
+		}
 	}
 }

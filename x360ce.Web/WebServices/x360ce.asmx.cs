@@ -36,8 +36,10 @@ namespace x360ce.Web.WebServices
 			sr.PadSettings = new PadSetting[0];
 			sr.Summaries = new Summary[0];
 			sr.Settings = new UserSetting[0];
+
+			var hasArgs = args != null && args.Length > 0;
 			// Workaround fix.
-			args = args.Where(x => x.InstanceGuid == Guid.Empty && x.ProductGuid == Guid.Empty).ToArray();
+			args = args.Where(x => !x.IsEmpty()).ToArray();
 			// Create database.
 			var db = new x360ceModelContainer();
 			// Get user instances.
@@ -62,7 +64,7 @@ namespace x360ce.Web.WebServices
 				AddToList(ds.Tables[1], ref padSettings);
 			}
 			// If get "Default Settings for Most Popular Controllers" then...
-			if (!hasInstances && !hasProducts && args != null && args.Length > 0)
+			if (!hasInstances && !hasProducts && hasArgs)
 			{
 				// Get presets.
 				var ds = EngineHelper.GetPresets(new SearchParameter[0]);
