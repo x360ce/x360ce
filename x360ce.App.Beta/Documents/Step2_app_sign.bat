@@ -1,7 +1,5 @@
 @ECHO OFF
 CALL:SIG "..\bin\Debug\x360ce.exe"
-CALL:SIG "..\bin\Debug_x86\x360ce.exe"
-CALL:SIG "..\bin\Debug_x64\x360ce.exe"
 echo.
 pause
 

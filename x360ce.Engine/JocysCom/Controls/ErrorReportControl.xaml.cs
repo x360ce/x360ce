@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Mail;
+﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Runtime;
 using mshtml;
 using System;
@@ -20,7 +20,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public ErrorReportControl()
 		{
 			InitializeComponent();
-			if (JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this))
+			if (ControlsHelper.IsDesignMode(this))
 				return;
 			ErrorsFolderTextBox.Text = LogHelper.Current.LogsFolder;
 			MainBrowser.LoadCompleted += MainBrowser_LoadCompleted;
@@ -30,9 +30,10 @@ namespace JocysCom.ClassLibrary.Controls
 
 		void RefreshErrorsComboBox()
 		{
+			var asm = new AssemblyInfo();
 			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
 			var errors = dir.GetFiles("*.htm").OrderByDescending(x => x.CreationTime).ToArray();
-			SubjectTextBox.Text = "I would like to report C360CE problem";
+			SubjectTextBox.Text = string.Format("Problem with {0}", asm.Product);
 			ErrorComboBox.ItemsSource = errors;
 			ErrorComboBox.DisplayMemberPath = nameof(FileInfo.Name);
 			if (errors.Length > 0)
