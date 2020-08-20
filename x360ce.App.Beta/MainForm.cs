@@ -82,6 +82,8 @@ namespace x360ce.App
 
 		private void LogHelper_Current_WritingException(object sender, LogHelperEventArgs e)
 		{
+			if (Disposing)
+				e.Cancel = true;
 			var ex = e.Exception as SharpDX.SharpDXException;
 			var d = ex?.Descriptor;
 			if (d != null)
