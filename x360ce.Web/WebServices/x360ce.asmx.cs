@@ -36,6 +36,8 @@ namespace x360ce.Web.WebServices
 			sr.PadSettings = new PadSetting[0];
 			sr.Summaries = new Summary[0];
 			sr.Settings = new UserSetting[0];
+			// Workaround fix.
+			args = args.Where(x => x.InstanceGuid == Guid.Empty && x.ProductGuid == Guid.Empty).ToArray();
 			// Create database.
 			var db = new x360ceModelContainer();
 			// Get user instances.

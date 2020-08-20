@@ -188,6 +188,10 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
+				// Suspend Dinput Service.
+				MainForm.Current.DHelper.Stop();
+				SettingsDataGridView.DataSource = null;
+
 				var result = (SearchResult)e.Result;
 				// Reorder Settings.
 				result.Settings = result.Settings.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ToArray();
@@ -200,6 +204,10 @@ namespace x360ce.App.Controls
 				var settingsCount = (result.Settings == null) ? 0 : result.Settings.Length;
 				var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
 				_ParentForm.SetHeaderInfo("{0} user settings and {1} PAD settings received.", settingsCount, padSettingsCount);
+
+				SettingsDataGridView.DataSource = SettingsManager.UserSettings.Items;
+				// Resume DInput Service.
+				MainForm.Current.DHelper.Start();
 			}
 			_ParentForm.RemoveTask(TaskName.SearchSettings);
 			SettingsRefreshButton.Enabled = true;
