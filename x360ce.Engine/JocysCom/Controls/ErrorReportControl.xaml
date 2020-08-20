@@ -142,20 +142,21 @@
 				Grid.Row="2"
 				Margin="4px,0,0,4px"
 				HorizontalAlignment="Right"
-				Content="Send All Errors" />
+				Content="Send All Errors"
+				Visibility="Collapsed" />
 			<Button
 				x:Name="ClearErrorsButton"
 				Grid.Row="2"
 				Margin="4px,0,0,4px"
 				HorizontalAlignment="Left"
 				Click="ClearErrorsButton_Click"
-				Content="Clear Errors" />
+				Content="Clear Errors and Close" />
 			<Button
 				x:Name="CancelButton"
 				Margin="4px,0,4px,4px"
 				HorizontalAlignment="Right"
 				Click="CancelButton_Click"
-				Content="Cancel" />
+				Content="Close" />
 		</StackPanel>
 	</Grid>
 </UserControl>

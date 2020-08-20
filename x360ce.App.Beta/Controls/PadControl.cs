@@ -1453,6 +1453,8 @@ namespace x360ce.App.Controls
 
 		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			var grid = (DataGridView)sender;
 			var viewRow = grid.Rows[e.RowIndex];
 			var column = grid.Columns[e.ColumnIndex];

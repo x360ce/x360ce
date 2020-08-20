@@ -1,3 +1,9 @@
+v4.13.11.0 (2020-08-20)
+- New: Add application error status indicator and report form.
+- Fix: Silent internal crash in direct input code when device removed.
+- Fix: Thread crash during app closing.
+- Fix: Grid crash during device update.
+
 v4.12.23.0 (2020-08-08)
 - Fix: App will check for Visual C++ 2015-2019 Redistributable correctly now.
 - Fix: App was detecting issue in incorrect order resulting in unable to fix them.

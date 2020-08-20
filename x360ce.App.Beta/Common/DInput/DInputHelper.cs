@@ -100,6 +100,8 @@ namespace x360ce.App.DInput
 				_timer = null;
 				_AllowThreadToRun = false;
 				_ResetEvent.Set();
+				// Wait for thread to stop.
+				_Thread.Join();
 			}
 		}
 

@@ -14,17 +14,6 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public long ExceptionsCount;
 
-		public event EventHandler NewException;
-
-		private static bool IgnoreException(Exception ex)
-		{
-			var fex = ex as System.IO.FileNotFoundException;
-			// Ignore serializer warning.
-			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))
-				return true;
-			return false;
-		}
-
 		/// <summary>
 		/// Write exception details to file.
 		/// </summary>
@@ -32,10 +21,13 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="subject">Use custom subject instead of generated from exception</param>
 		public void WriteException(Exception ex, string subject = null, string body = null)
 		{
-			if (IgnoreException(ex))
+			// Check if exception can be ignored.
+			var le = new LogHelperEventArgs() { Exception = ex };
+			WritingException?.Invoke(this, le);
+			// If Exception reporting was cancelled then return.
+			if (le.Cancel)
 				return;
 			Interlocked.Increment(ref ExceptionsCount);
-			NewException?.Invoke(this, new EventArgs());
 			if (!LogToFile)
 				return;
 			_GroupException(fileExceptions, ex, subject, body, _WriteFile);
@@ -43,12 +35,6 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		void _WriteFile(Exception ex, string subject, string body)
 		{
-			var ev = WritingException;
-			var le = new LogHelperEventArgs() { Exception = ex };
-			if (ev != null)
-				ev(this, le);
-			if (le.Cancel)
-				return;
 			// Must wrap into lock so that process won't attempt to delete/write same file twice from different threads.
 			lock (WriteLock)
 			{

@@ -131,6 +131,8 @@ namespace JocysCom.ClassLibrary.IO
 
 		private void DeviceDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			var item = (DeviceInfo)DeviceDataGridView.Rows[e.RowIndex].DataBoundItem;
 			if (item != null)
 				e.CellStyle.ForeColor = GetForeColor(item);

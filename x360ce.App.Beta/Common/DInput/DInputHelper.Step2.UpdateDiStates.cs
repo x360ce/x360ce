@@ -4,6 +4,7 @@ using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Linq;
+using System.Net.Configuration;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -112,18 +113,14 @@ namespace x360ce.App.DInput
 								exceptionData.AppendFormat("AppHelper.GetDeviceEffects(device) // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
 								ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
 							}
-							// Get PAD index this device is mapped to.
-							var userIndex = SettingsManager.UserSettings.Items.ToArray()
-								.Where(x => x.MapTo > (int)MapTo.None)
-								.Where(x => x.InstanceGuid == ud.InstanceGuid)
-								.Select(x => x.MapTo).First();
 							// If device support force feedback then...
 							if (hasForceFeedback)
 							{
 								// Get setting related to user device.
-								var setting = SettingsManager.UserSettings.Items
-									.FirstOrDefault(x => x.MapTo == userIndex && x.InstanceGuid == ud.InstanceGuid);
-								if (setting != null)
+								var setting = SettingsManager.UserSettings.Items.ToArray()
+									.FirstOrDefault(x => x.InstanceGuid == ud.InstanceGuid);
+								// If device is mapped to controller then...
+								if (setting != null && setting.MapTo > (int)MapTo.None)
 								{
 									// Get pad setting attached to device.
 									var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
@@ -135,7 +132,7 @@ namespace x360ce.App.DInput
 											if (ud.FFState == null)
 												ud.FFState = new Engine.ForceFeedbackState();
 											// If force update supplied then...
-											var force = feedbacks[userIndex - 1];
+											var force = feedbacks[(int)setting.MapTo - 1];
 											if (force != null || ud.FFState.Changed(ps))
 											{
 												var v = new Vibration();

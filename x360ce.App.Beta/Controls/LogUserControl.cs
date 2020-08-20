@@ -38,7 +38,9 @@ namespace x360ce.App.Controls
 
         public void LogDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            LogItem li = (LogItem)LogDataGridView.Rows[e.RowIndex].DataBoundItem;
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
+            var li = (LogItem)LogDataGridView.Rows[e.RowIndex].DataBoundItem;
             var name = LogDataGridView.Columns[e.ColumnIndex].Name;
             if (name == StatusColumn.Name)
             {

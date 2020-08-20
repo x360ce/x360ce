@@ -438,6 +438,8 @@ namespace x360ce.App.Controls
 
 		void GamesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
 			var column = grid.Columns[e.ColumnIndex];

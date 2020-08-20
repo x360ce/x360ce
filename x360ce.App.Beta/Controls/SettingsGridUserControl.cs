@@ -58,6 +58,8 @@ namespace x360ce.App.Controls
 
 		void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
 			var grid = (DataGridView)sender;
 			var item = (UserSetting)grid.Rows[e.RowIndex].DataBoundItem;
 			var column = grid.Columns[e.ColumnIndex];

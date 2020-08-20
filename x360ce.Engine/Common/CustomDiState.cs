@@ -139,7 +139,10 @@ namespace x360ce.Engine
 						}
 					}
 				}
-				catch { }
+				catch
+				{
+					// Ignore exceptions from GetObjectInfoByOffset(int offset) method.
+				}
 			}
 		}
 

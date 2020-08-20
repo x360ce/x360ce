@@ -85,25 +85,31 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private void ClearErrorsButton_Click(object sender, RoutedEventArgs e)
 		{
-			var form = new MessageBoxForm();
-			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			ControlsHelper.CheckTopMost(form);
-			var result = form.ShowForm("Do you want to clear all errors?", "Clear Errors?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error, System.Windows.Forms.MessageBoxDefaultButton.Button2);
-			if (result != System.Windows.Forms.DialogResult.Yes)
-				return;
 			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
 			var fis = dir.GetFiles("*.htm").OrderByDescending(x => x.CreationTime).ToArray();
-			foreach (var fi in fis)
+			if (fis.Count() > 0)
 			{
-				try
+				var form = new MessageBoxForm();
+				form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+				ControlsHelper.CheckTopMost(form);
+				var result = form.ShowForm("Do you want to clear all errors?", "Clear Errors?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error, System.Windows.Forms.MessageBoxDefaultButton.Button2);
+				if (result != System.Windows.Forms.DialogResult.Yes)
+					return;
+
+				foreach (var fi in fis)
 				{
-					fi.Delete();
+					try
+					{
+						fi.Delete();
+					}
+					catch (Exception)
+					{
+					}
 				}
-				catch (Exception)
-				{
-				}
+				//RefreshErrorsComboBox();
 			}
-			RefreshErrorsComboBox();
+			var win = (Window)Parent;
+			win.DialogResult = false;
 		}
 
 		private void OpenMailButton_Click(object sender, RoutedEventArgs e)
@@ -131,13 +137,9 @@ namespace JocysCom.ClassLibrary.Controls
 			message.To.Add(new MailAddress(ToEmailTextBox.Text));
 			message.IsBodyHtml = true;
 			message.Body = GetBody();
-
 			var messages = new List<MailMessage>();
 			messages.Add(message);
-
 			SendMessages?.Invoke(this, new EventArgs<List<MailMessage>>(messages));
-			// Convert to serializable.
-			//var list = messages.Select(x => new MailMessageSerializable(x)).ToList();
 		}
 
 		public event EventHandler<EventArgs<List<MailMessage>>> SendMessages;

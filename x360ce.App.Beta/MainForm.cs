@@ -40,7 +40,6 @@ namespace x360ce.App
 				LogHelper.Current.LogExceptions = true;
 				LogHelper.Current.LogToFile = true;
 				LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
-				LogHelper.Current.NewException += LogHelper_Current_NewException;
 				LogHelper.Current.WritingException += LogHelper_Current_WritingException;
 				// Fix access rights to configuration folder.
 				var di = new DirectoryInfo(EngineHelper.AppDataPath);
@@ -84,18 +83,25 @@ namespace x360ce.App
 		private void LogHelper_Current_WritingException(object sender, LogHelperEventArgs e)
 		{
 			var ex = e.Exception as SharpDX.SharpDXException;
-			if (ex != null && ex.Descriptor != null)
+			var d = ex?.Descriptor;
+			if (d != null)
 			{
-				var d = ex.Descriptor;
-				if (d.ApiCode == "NotFound" &&
-					 d.Code == -2147024894 &&
-					 d.Module == "SharpDX.DirectInput" &&
-					d.NativeApiCode == "DIERR_NOTFOUND")
+				// If exception when getting Joystic properties in
+				// CustomDiState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
+				if (d.ApiCode == "NotFound" && d.Code == -2147024894 &&
+					d.Module == "SharpDX.DirectInput" &&
+					d.NativeApiCode == "DIERR_NOTFOUND"
+				)
 				{
-					// Cancel writing error to file.
+					// Cancel reporting error.
 					e.Cancel = true;
 				}
 			}
+			var fex = e.Exception as FileNotFoundException;
+			// If serializer warning then...
+			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))
+				// Cancel reporting error.
+				e.Cancel = true;
 		}
 
 		public DInput.DInputHelper DHelper;
@@ -1488,7 +1494,9 @@ namespace x360ce.App
 					// Make sure method is executed on the same thread as this control.
 					ControlsHelper.BeginInvoke(() =>
 					{
-						UpdateForm3();
+						// Check again.
+						if (!Program.IsClosing)
+							UpdateForm3();
 						UpdateCompletedBusy = false;
 					});
 				}
