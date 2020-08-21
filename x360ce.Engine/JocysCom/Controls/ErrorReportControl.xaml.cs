@@ -50,6 +50,9 @@ namespace JocysCom.ClassLibrary.Controls
 			var body = doc.getElementsByTagName("body").OfType<IHTMLElement>().First();
 			if (body == null)
 				return;
+			//var doc2 = (IHTMLDocument2)MainBrowser.Document;
+			//doc2.charset = "utf-8";
+			//MainBrowser.Refresh();
 			body.insertAdjacentHTML("afterbegin", "<p>Hi,</p><p></p><p>I would like to report a problem. Error details attached below:</p>");
 			body.setAttribute("contentEditable", "true");
 		}

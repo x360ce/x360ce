@@ -38,8 +38,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Must wrap into lock so that process won't attempt to delete/write same file twice from different threads.
 			lock (WriteLock)
 			{
-				// Create file.
-				var prefix = "FCE_" + ex.GetType().Name;
+				// Create file. Group by Exception type and error code.
+				var prefix = string.Format("FCE_{0}_{1:X8}", ex.GetType().Name, ex.HResult);
 				var ext = WriteAsHtml ? ".htm" : ".txt";
 				var di = new System.IO.DirectoryInfo(LogsFolder);
 				// Create folder if not exists.
@@ -62,6 +62,8 @@ namespace JocysCom.ClassLibrary.Runtime
 					di.FullName, prefix, fileTime, ext);
 				var fi = new System.IO.FileInfo(fileName);
 				var content = WriteAsHtml ? ExceptionInfo(ex, body) : ex.ToString();
+				// Wrap into html element and specify UTF-8 encoding.
+				content = "<html><head><meta charset=\"UTF-8\" /></head><body>" + content + "</body></html>";
 				System.IO.File.AppendAllText(fileName, content);
 			}
 		}
