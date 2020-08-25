@@ -643,7 +643,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var osCurrentMajorVersionNumber = skey.GetValue("CurrentMajorVersionNumber", "").ToString();
 			var osCurrentMinorVersionNumber = skey.GetValue("CurrentMinorVersionNumber", "").ToString();
 			var osCurrentBuildNumber = skey.GetValue("CurrentBuildNumber", "").ToString();
-			var osUBR = skey.GetValue("CurrentBuildNumber", "").ToString();
+			var osUBR = skey.GetValue("UBR", "").ToString();
 			skey.Close();
 			var osVersion = string.Format("{0} {1} [Version {2}.{3}.{4}.{5}]",
 				osProductName, osReleaseId,

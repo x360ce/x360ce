@@ -32,6 +32,8 @@ namespace x360ce.App
 		[STAThread]
 		static void Main(string[] args)
 		{
+			// Fix: System.TimeoutException: The operation has timed out. at System.Windows.Threading.Dispatcher.InvokeImpl
+			AppContext.SetSwitch("Switch.MS.Internal.DoNotInvokeInWeakEventTableShutdownListener", true);
 			// First: Set working folder to the path of executable.
 			var fi = new FileInfo(Application.ExecutablePath);
 			Directory.SetCurrentDirectory(fi.Directory.FullName);
