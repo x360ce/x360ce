@@ -1,7 +1,7 @@
-v4.13.14.0 (2020-08-25)
+v4.13.15.0 (2020-08-25)
 - Fix: System.TimeoutException: The operation has timed out.
 - Fix: Issue with text encoding on error report.
-- Fix: Reporting first chance handled exceptions unnecessary.
+- Fix: Clear errors interface jitter.
 
 v4.13.11.0 (2020-08-20)
 - New: Add application error status indicator and report form.

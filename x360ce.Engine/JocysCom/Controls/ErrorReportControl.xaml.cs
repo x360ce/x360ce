@@ -90,6 +90,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private void ClearErrorsButton_Click(object sender, RoutedEventArgs e)
 		{
+			ErrorsClearing?.Invoke(this, new EventArgs());
 			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
 			var fis = dir.GetFiles("*.htm").OrderByDescending(x => x.CreationTime).ToArray();
 			if (fis.Count() > 0)
@@ -114,6 +115,7 @@ namespace JocysCom.ClassLibrary.Controls
 				//RefreshErrorsComboBox();
 			}
 			var win = (Window)Parent;
+			ErrorsCleared?.Invoke(this, new EventArgs());
 			win.DialogResult = false;
 		}
 
@@ -162,6 +164,8 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		public event EventHandler<EventArgs<List<MailMessage>>> SendMessages;
+		public event EventHandler ErrorsClearing;
+		public event EventHandler ErrorsCleared;
 
 	}
 }

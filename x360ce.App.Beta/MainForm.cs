@@ -39,7 +39,7 @@ namespace x360ce.App
 				// Initialize exception handlers
 				LogHelper.Current.LogExceptions = true;
 				LogHelper.Current.LogToFile = true;
-				LogHelper.Current.LogFirstChanceExceptions = false;
+				//LogHelper.Current.LogFirstChanceExceptions = false;
 				LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
 				LogHelper.Current.WritingException += LogHelper_Current_WritingException;
 				// Fix access rights to configuration folder.
@@ -1285,57 +1285,6 @@ namespace x360ce.App
 			SettingsManager.Current.RaiseSettingsChanged(null);
 		}
 
-		Forms.ErrorReportWindow win;
-
-		void StatusErrorLabel_Click(object sender, EventArgs e)
-		{
-			win = new Forms.ErrorReportWindow();
-			ControlsHelper.CheckTopMost(win);
-			ControlsHelper.AutoSizeByOpenForms(win);
-			win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
-			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
-			CloudPanel.EnableDataSource(false);
-			win.ErrorReportPanel.SendMessages += ErrorReportPanel_SendMessages;
-			Global.CloudClient.TasksTimer.Queue.ListChanged += Queue_ListChanged;
-			var result = win.ShowDialog();
-			Global.CloudClient.TasksTimer.Queue.ListChanged -= Queue_ListChanged;
-			win.ErrorReportPanel.SendMessages -= ErrorReportPanel_SendMessages;
-			CloudPanel.EnableDataSource(true);
-		}
-
-		private void Queue_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			var w = win;
-			var q = Global.CloudClient.TasksTimer.Queue;
-			if (win != null && q != null)
-			{
-				var item = q.FirstOrDefault(x => x.Action == CloudAction.SendMailMessage);
-				Invoke(new Action(() =>
-				{
-					win.ErrorReportPanel.StatusLabel.Content = item == null ? "Message Delivered" : "Sending...";
-				}));
-			}
-		}
-
-		private void ErrorReportPanel_SendMessages(object sender, JocysCom.ClassLibrary.EventArgs<List<System.Net.Mail.MailMessage>> e)
-		{
-			var control = (ErrorReportControl)sender;
-			// Create mail message.
-			var win = (Forms.ErrorReportWindow)control.Parent;
-			control.StatusLabel.Content = "Sending...";
-			// Run cloud operation on a separate thread so that it won't freeze the app.
-			Task.Run(new Action(() =>
-			{
-				var messages = e.Data.Select(x => new MailMessageSerializable(x)).ToArray();
-
-				var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(messages.First());
-
-
-				Global.CloudClient.Add(CloudAction.SendMailMessage, messages);
-			}));
-
-		}
-
 		private void GamesToolStrip_Resize(object sender, EventArgs e)
 		{
 			GameToCustomizeComboBox.AutoSize = false;
@@ -1639,6 +1588,70 @@ namespace x360ce.App
 				Application.DoEvents();
 				GameSettingsPanel.AddNewGame();
 			});
+		}
+
+		Forms.ErrorReportWindow win;
+
+		void StatusErrorLabel_Click(object sender, EventArgs e)
+		{
+			win = new Forms.ErrorReportWindow();
+			ControlsHelper.CheckTopMost(win);
+			ControlsHelper.AutoSizeByOpenForms(win);
+			win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
+			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
+			CloudPanel.EnableDataSource(false);
+			win.ErrorReportPanel.SendMessages += ErrorReportPanel_SendMessages;
+			win.ErrorReportPanel.ErrorsClearing += ErrorReportPanel_ErrorsClearing;
+			win.ErrorReportPanel.ErrorsCleared += ErrorReportPanel_ErrorsCleared;
+			Global.CloudClient.TasksTimer.Queue.ListChanged += Queue_ListChanged;
+			var result = win.ShowDialog();
+			Global.CloudClient.TasksTimer.Queue.ListChanged -= Queue_ListChanged;
+			win.ErrorReportPanel.SendMessages -= ErrorReportPanel_SendMessages;
+			win.ErrorReportPanel.ErrorsClearing -= ErrorReportPanel_ErrorsClearing;
+			win.ErrorReportPanel.ErrorsCleared -= ErrorReportPanel_ErrorsCleared;
+
+			CloudPanel.EnableDataSource(true);
+		}
+
+		private void ErrorReportPanel_ErrorsClearing(object sender, EventArgs e)
+		{
+			// Disable monitor while deleting files.
+			MonitorErrors(false);
+		}
+
+		private void ErrorReportPanel_ErrorsCleared(object sender, EventArgs e)
+		{
+			// Enable monitor and show stats.
+			MonitorErrors(true);
+		}
+
+		private void Queue_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			var w = win;
+			var q = Global.CloudClient.TasksTimer.Queue;
+			if (win != null && q != null)
+			{
+				var item = q.FirstOrDefault(x => x.Action == CloudAction.SendMailMessage);
+				Invoke(new Action(() =>
+				{
+					win.ErrorReportPanel.StatusLabel.Content = item == null ? "Message Delivered" : "Sending...";
+				}));
+			}
+		}
+
+		private void ErrorReportPanel_SendMessages(object sender, JocysCom.ClassLibrary.EventArgs<List<System.Net.Mail.MailMessage>> e)
+		{
+			var control = (ErrorReportControl)sender;
+			// Create mail message.
+			var win = (Forms.ErrorReportWindow)control.Parent;
+			control.StatusLabel.Content = "Sending...";
+			// Run cloud operation on a separate thread so that it won't freeze the app.
+			Task.Run(new Action(() =>
+			{
+				var messages = e.Data.Select(x => new MailMessageSerializable(x)).ToArray();
+				//var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(messages.First());
+				Global.CloudClient.Add(CloudAction.SendMailMessage, messages);
+			}));
 		}
 
 		FileSystemWatcher errorsWatcher;
