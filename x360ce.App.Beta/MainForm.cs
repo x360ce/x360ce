@@ -39,6 +39,7 @@ namespace x360ce.App
 				// Initialize exception handlers
 				LogHelper.Current.LogExceptions = true;
 				LogHelper.Current.LogToFile = true;
+				LogHelper.Current.LogFirstChanceExceptions = false;
 				LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
 				LogHelper.Current.WritingException += LogHelper_Current_WritingException;
 				// Fix access rights to configuration folder.
