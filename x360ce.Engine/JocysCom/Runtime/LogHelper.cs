@@ -588,12 +588,26 @@ namespace JocysCom.ClassLibrary.Runtime
 			return s;
 		}
 
-		public string ExceptionInfo(Exception ex, string body)
+		public const string XLogHelperErrorSource = "X-LogHelper-ErrorSource";
+		public const string XLogHelperErrorType = "X-LogHelper-ErrorType";
+		public const string XLogHelperErrorCode = "X-LogHelper-ErrorCode";
+
+		public string ExceptionInfo(Exception ex, string body, bool addHead = false)
 		{
 			//------------------------------------------------------
 			// Body
 			//------------------------------------------------------
 			var s = "";
+			if (addHead)
+			{
+				// Wrap into html element and specify UTF-8 encoding.
+				s += "<html><head>" +
+					"<meta charset=\"UTF-8\" />" +
+					"<meta name=\"" + XLogHelperErrorSource + "\" content=\"" + ex.Source + "\">" +
+					"<meta name=\"" + XLogHelperErrorType + "\" content=\"" + ex.GetType().FullName + "\">" +
+					"<meta name=\"" + XLogHelperErrorCode + "\" content=\"" + ex.HResult + "\">" +
+					"</head><body>";
+			}
 			if (!string.IsNullOrEmpty(body))
 				s += "<div>" + body + "</div><br /><br />";
 			//------------------------------------------------------
@@ -618,6 +632,27 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			AddRow(ref s, "Machine", System.Environment.MachineName);
 			AddRow(ref s, "Username", System.Environment.UserName);
+			// Add OS Version.
+			//AddRow(ref s, "OS Version", System.Environment.OSVersion.ToString());
+			var subKey = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
+			var key = Microsoft.Win32.Registry.LocalMachine;
+			var skey = key.OpenSubKey(subKey);
+			var osProductName = skey.GetValue("ProductName").ToString();
+			//var osEditionID = skey.GetValue("EditionID").ToString();
+			var osReleaseId = skey.GetValue("ReleaseId").ToString();
+			var osCurrentMajorVersionNumber = skey.GetValue("CurrentMajorVersionNumber", "").ToString();
+			var osCurrentMinorVersionNumber = skey.GetValue("CurrentMinorVersionNumber", "").ToString();
+			var osCurrentBuildNumber = skey.GetValue("CurrentBuildNumber", "").ToString();
+			var osUBR = skey.GetValue("CurrentBuildNumber", "").ToString();
+			skey.Close();
+			var osVersion = string.Format("{0} {1} [Version {2}.{3}.{4}.{5}]",
+				osProductName, osReleaseId,
+					osCurrentMajorVersionNumber,
+					osCurrentMinorVersionNumber,
+					osCurrentBuildNumber,
+					osUBR
+			);
+			AddRow(ref s, "OS Version", osVersion);
 			if (asm != null)
 			{
 				var bd = Configuration.AssemblyInfo.GetBuildDateTime(asm.Location);
@@ -663,6 +698,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			StartTable(ref s);
 			ExceptionInfoRecursive(ref s, ex);
 			EndTable(ref s);
+			if (addHead)
+				s += "</body></html>";
 			return s;
 		}
 
@@ -706,14 +743,14 @@ namespace JocysCom.ClassLibrary.Runtime
 			for (int i = 0; i <= ex2.Errors.Count - 1; i++)
 			{
 				var err = ex2.Errors[i];
-				var prefix = string.Format("Errors[{0}]", i + 1);
-				Add(ex2, prefix + ".Source", err.Source);
-				Add(ex2, prefix + ".Server", err.Server);
-				Add(ex2, prefix + ".Location", string.Format("Number {0}, Level {1}, State {2}, Line {3}", err.Number, err.Class, err.State, err.LineNumber));
-				Add(ex2, prefix + ".Message", err.Message);
+				var prefix = string.Format("Errors[{0}].", i + 1);
+				Add(ex2, prefix + nameof(err.Source), err.Source);
+				Add(ex2, prefix + nameof(err.Server), err.Server);
+				Add(ex2, prefix + "Location", string.Format("Number {0}, Level {1}, State {2}, Line {3}", err.Number, err.Class, err.State, err.LineNumber));
+				Add(ex2, prefix + nameof(err.Message), err.Message);
 				if (!string.IsNullOrEmpty(err.Procedure))
 				{
-					Add(ex2, prefix + ".Procedure", err.Procedure);
+					Add(ex2, prefix + nameof(err.Procedure), err.Procedure);
 					Add(ex2, prefix + ".Help", "SQL command to display lines of procedure: exec sp_helptext '" + err.Procedure + "'");
 				}
 			}
@@ -767,7 +804,10 @@ namespace JocysCom.ClassLibrary.Runtime
 				catch (Exception) { }
 				if (value == null)
 					continue;
-				parameters.Add("." + pi.Name, value);
+				var key = "." + pi.Name;
+				if (pi.Name == nameof(Exception.HResult) && value is int)
+					value = string.Format("{0} (0x{1:X8})", value, value);
+				parameters.Add(key, value);
 			}
 			AddParameters(ref s, parameters, TraceFormat.Html);
 		}

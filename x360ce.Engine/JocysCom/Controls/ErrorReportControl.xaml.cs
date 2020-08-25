@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Net.Mail;
 using System.Windows;
 using System.Windows.Controls;
@@ -132,17 +133,31 @@ namespace JocysCom.ClassLibrary.Controls
 			return body.innerHTML;
 		}
 
+		public string GetMetaContent(string name)
+		{
+			var doc = (IHTMLDocument3)MainBrowser.Document;
+			if (doc == null)
+				return null;
+			var meta = doc.getElementsByName(name).OfType<IHTMLMetaElement>().FirstOrDefault();
+			if (meta == null)
+				return null;
+			return meta.content;
+		}
+
 		private void SendErrorButton_Click(object sender, RoutedEventArgs e)
 		{
-			var message = new MailMessage();
-			message.Subject = SubjectTextBox.Text;
+			var m = new MailMessage();
+			m.Headers.Add(LogHelper.XLogHelperErrorSource, GetMetaContent(LogHelper.XLogHelperErrorSource));
+			m.Headers.Add(LogHelper.XLogHelperErrorType, GetMetaContent(LogHelper.XLogHelperErrorType));
+			m.Headers.Add(LogHelper.XLogHelperErrorCode, GetMetaContent(LogHelper.XLogHelperErrorCode));
+			m.Subject = SubjectTextBox.Text;
 			if (!string.IsNullOrEmpty(FromEmailTextBox.Text))
-				message.From = new MailAddress(FromEmailTextBox.Text);
-			message.To.Add(new MailAddress(ToEmailTextBox.Text));
-			message.IsBodyHtml = true;
-			message.Body = GetBody();
+				m.From = new MailAddress(FromEmailTextBox.Text);
+			m.To.Add(new MailAddress(ToEmailTextBox.Text));
+			m.IsBodyHtml = true;
+			m.Body = GetBody();
 			var messages = new List<MailMessage>();
-			messages.Add(message);
+			messages.Add(m);
 			SendMessages?.Invoke(this, new EventArgs<List<MailMessage>>(messages));
 		}
 

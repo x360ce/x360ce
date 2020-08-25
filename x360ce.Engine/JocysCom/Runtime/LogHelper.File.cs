@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Windows.Media;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -61,9 +60,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}{3}",
 					di.FullName, prefix, fileTime, ext);
 				var fi = new System.IO.FileInfo(fileName);
-				var content = WriteAsHtml ? ExceptionInfo(ex, body) : ex.ToString();
-				// Wrap into html element and specify UTF-8 encoding.
-				content = "<html><head><meta charset=\"UTF-8\" /></head><body>" + content + "</body></html>";
+				var content = WriteAsHtml ? ExceptionInfo(ex, body, true) : ex.ToString();
 				System.IO.File.AppendAllText(fileName, content);
 			}
 		}

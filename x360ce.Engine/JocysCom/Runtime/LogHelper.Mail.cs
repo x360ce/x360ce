@@ -141,13 +141,17 @@ namespace JocysCom.ClassLibrary.Runtime
 		void _SendMail(Exception ex, string subject, string body)
 		{
 			var smtp = SmtpClientEx.Current;
-			var message = new MailMessage();
-			MailHelper.ApplyRecipients(message, smtp.SmtpFrom, smtp.ErrorRecipients);
-			message.Subject = subject;
-			message.Body = Current.ExceptionInfo(ex, body);
-			message.IsBodyHtml = true;
-			SendMail(message);
-			message.Dispose();
+			var m = new MailMessage();
+			MailHelper.ApplyRecipients(m, smtp.SmtpFrom, smtp.ErrorRecipients);
+			// Add headers, which can be used on server side to group errors.
+			m.Headers.Add(XLogHelperErrorSource, ex.Source);
+			m.Headers.Add(XLogHelperErrorType, ex.GetType().FullName);
+			m.Headers.Add(XLogHelperErrorCode, ex.HResult.ToString());
+			m.Subject = subject;
+			m.Body = Current.ExceptionInfo(ex, body);
+			m.IsBodyHtml = true;
+			SendMail(m);
+			m.Dispose();
 		}
 
 		public ProcessExceptionDelegate ProcessExceptionMailFailed;

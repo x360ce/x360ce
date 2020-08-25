@@ -96,18 +96,21 @@ namespace JocysCom.ClassLibrary.Web
 			*/
 			if (page == null)
 				throw new ArgumentNullException(nameof(page));
-			foreach (var control in page.Header.Controls)
+			if (page.Header != null)
 			{
-				var link = control as System.Web.UI.HtmlControls.HtmlLink;
-				if (link == null)
-					continue;
-				var isCss =
-					"text/css".Equals(link.Attributes["type"], StringComparison.CurrentCultureIgnoreCase) ||
-					"stylesheet".Equals(link.Attributes["rel"], StringComparison.CurrentCultureIgnoreCase) ||
-					"icon".Equals(link.Attributes["rel"], StringComparison.CurrentCultureIgnoreCase);
-				if (!isCss)
-					continue;
-				link.Href = GetFileWithSuffix(link.Href, page);
+				foreach (var control in page.Header.Controls)
+				{
+					var link = control as System.Web.UI.HtmlControls.HtmlLink;
+					if (link == null)
+						continue;
+					var isCss =
+						"text/css".Equals(link.Attributes["type"], StringComparison.CurrentCultureIgnoreCase) ||
+						"stylesheet".Equals(link.Attributes["rel"], StringComparison.CurrentCultureIgnoreCase) ||
+						"icon".Equals(link.Attributes["rel"], StringComparison.CurrentCultureIgnoreCase);
+					if (!isCss)
+						continue;
+					link.Href = GetFileWithSuffix(link.Href, page);
+				}
 			}
 			// ScriptManager requires System.Web.Extensions.dll
 			var sm = System.Web.UI.ScriptManager.GetCurrent(page);
