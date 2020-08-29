@@ -24,14 +24,14 @@ namespace x360ce.Engine
 
 		public string Name { get; set; }
 
-        /// <summary>
-        /// Important note: 
-        /// This Offset is in the native data format of the device. The native data format corresponds to the raw device data.
-        /// This member does not correspond to the device constant, such as DIJOFS_BUTTON0 (JoystickOffset.Buttons0), for this object.
-        /// </summary>
-        public int Offset { get; set; }
-        public int ObjectId { get; set; }
-        public int Instance { get; set; }
+		/// <summary>
+		/// Important note: 
+		/// This Offset is in the native data format of the device. The native data format corresponds to the raw device data.
+		/// This member does not correspond to the device constant, such as DIJOFS_BUTTON0 (JoystickOffset.Buttons0), for this object.
+		/// </summary>
+		public int Offset { get; set; }
+		public int ObjectId { get; set; }
+		public int Instance { get; set; }
 
 		// Zero based index.
 		public int DiIndex { get; set; }
@@ -40,7 +40,7 @@ namespace x360ce.Engine
 		public DeviceObjectTypeFlags Flags { get; set; }
 		public Guid Type { get; set; }
 
-        public string AspectName
+		public string AspectName
 		{
 			get
 			{
@@ -75,5 +75,22 @@ namespace x360ce.Engine
 			}
 		}
 
+		#region Device Properties
+
+		public int? DeadZone { get; set; }
+		public int? Granularity { get; set; }
+		public int? LogicalRangeMin { get; set; }
+		public int? LogicalRangeMax { get; set; }
+		public int? PhysicalRangeMin { get; set; }
+		public int? PhysicalRangeMax { get; set; }
+		public int? RangeMin { get; set; }
+		public int? RangeMax { get; set; }
+		public int? Saturation { get; set; }
+
+		public string Range => RangeMin.HasValue ? string.Format("{0} - {1}", RangeMin, RangeMax) : "";
+		public string PhysicalRange => PhysicalRangeMin.HasValue ? string.Format("{0} - {1}", PhysicalRangeMin, PhysicalRangeMax) : "";
+		public string LogicalRange => LogicalRangeMin.HasValue ? string.Format("{0} - {1}", LogicalRangeMin, LogicalRangeMax) : "";
+
+		#endregion
 	}
 }

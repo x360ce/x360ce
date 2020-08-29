@@ -21,7 +21,8 @@ namespace x360ce.App
 		static void Elevate()
 		{
 			// If this is Vista/7 and is not elevated then elevate.
-			if (WinAPI.IsVista && !WinAPI.IsElevated()) WinAPI.RunElevated();
+			if (WinAPI.IsVista && !WinAPI.IsElevated())
+				WinAPI.RunElevated();
 		}
 
 		public static bool WriteFile(string resourceName, string destinationFileName)
@@ -42,7 +43,8 @@ namespace x360ce.App
 			while (true)
 			{
 				var count = sr.Read(buffer, 0, buffer.Length);
-				if (count == 0) break;
+				if (count == 0)
+					break;
 				sw.Write(buffer, 0, count);
 			}
 			sr.Close();
@@ -87,6 +89,33 @@ namespace x360ce.App
 					Type = o.ObjectType,
 					DiIndex = o.ObjectId.InstanceNumber - 1,
 				};
+				var isAxis = o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.Axis);
+				isAxis |= o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis);
+				isAxis |= o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis);
+				if (isAxis)
+				{
+					try
+					{
+						var p = device.GetObjectPropertiesById(o.ObjectId);
+						if (p != null)
+						{
+							item.DeadZone = p.DeadZone;
+							item.Granularity = p.Granularity;
+							item.LogicalRangeMin = p.LogicalRange.Minimum;
+							item.LogicalRangeMax = p.LogicalRange.Maximum;
+							item.PhysicalRangeMin = p.PhysicalRange.Minimum;
+							item.PhysicalRangeMax = p.PhysicalRange.Maximum;
+							item.RangeMin = p.Range.Minimum;
+							item.RangeMax = p.Range.Maximum;
+							item.Saturation = p.Saturation;
+						}
+
+					}
+					catch (Exception ex)
+					{
+						_ = ex.Message;
+					}
+				}
 				items.Add(item);
 			}
 			// Update Button DIndexes.
@@ -236,19 +265,23 @@ namespace x360ce.App
 		/// </summary>
 		public static void UpdateList<T>(IList<T> source, IList<T> destination)
 		{
-			if (source == null) source = new List<T>();
+			if (source == null)
+				source = new List<T>();
 			var sCount = source.Count;
 			var dCount = destination.Count;
 			var length = Math.Min(sCount, dCount);
-			for (int i = 0; i < length; i++) destination[i] = source[i];
+			for (int i = 0; i < length; i++)
+				destination[i] = source[i];
 			// Add extra rows.
 			if (sCount > dCount)
 			{
-				for (int i = dCount; i < sCount; i++) destination.Add(source[i]);
+				for (int i = dCount; i < sCount; i++)
+					destination.Add(source[i]);
 			}
 			else if (dCount > sCount)
 			{
-				for (int i = dCount - 1; i >= sCount; i--) destination.RemoveAt(i);
+				for (int i = dCount - 1; i >= sCount; i--)
+					destination.RemoveAt(i);
 			}
 		}
 
@@ -273,11 +306,16 @@ namespace x360ce.App
 		{
 			switch (mapTo)
 			{
-				case MapTo.Controller1: return MapToMask.Controller1;
-				case MapTo.Controller2: return MapToMask.Controller2;
-				case MapTo.Controller3: return MapToMask.Controller3;
-				case MapTo.Controller4: return MapToMask.Controller4;
-				default: return MapToMask.None;
+				case MapTo.Controller1:
+					return MapToMask.Controller1;
+				case MapTo.Controller2:
+					return MapToMask.Controller2;
+				case MapTo.Controller3:
+					return MapToMask.Controller3;
+				case MapTo.Controller4:
+					return MapToMask.Controller4;
+				default:
+					return MapToMask.None;
 			}
 		}
 
