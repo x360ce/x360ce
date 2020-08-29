@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Management.Instrumentation;
 using System.Net.Mail;
 using System.Windows;
 using System.Windows.Controls;
@@ -149,9 +148,15 @@ namespace JocysCom.ClassLibrary.Controls
 		private void SendErrorButton_Click(object sender, RoutedEventArgs e)
 		{
 			var m = new MailMessage();
-			m.Headers.Add(LogHelper.XLogHelperErrorSource, GetMetaContent(LogHelper.XLogHelperErrorSource));
-			m.Headers.Add(LogHelper.XLogHelperErrorType, GetMetaContent(LogHelper.XLogHelperErrorType));
-			m.Headers.Add(LogHelper.XLogHelperErrorCode, GetMetaContent(LogHelper.XLogHelperErrorCode));
+			var source = GetMetaContent(LogHelper.XLogHelperErrorSource);
+			if (!string.IsNullOrEmpty(source))
+				m.Headers.Add(LogHelper.XLogHelperErrorSource, source);
+			var errType = GetMetaContent(LogHelper.XLogHelperErrorType);
+			if (!string.IsNullOrEmpty(errType))
+				m.Headers.Add(LogHelper.XLogHelperErrorType, errType);
+			var errCode = GetMetaContent(LogHelper.XLogHelperErrorCode);
+			if (!string.IsNullOrEmpty(errCode))
+				m.Headers.Add(LogHelper.XLogHelperErrorCode, errCode);
 			m.Subject = SubjectTextBox.Text;
 			if (!string.IsNullOrEmpty(FromEmailTextBox.Text))
 				m.From = new MailAddress(FromEmailTextBox.Text);

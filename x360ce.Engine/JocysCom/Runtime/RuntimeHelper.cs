@@ -290,7 +290,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			var dest = t.InvokeMember("", BindingFlags.CreateInstance, null, o, null);
 			foreach (var pi in properties)
 			{
-				if (pi.CanWrite) pi.SetValue(dest, pi.GetValue(o, null), null);
+				if (pi.CanWrite)
+					pi.SetValue(dest, pi.GetValue(o, null), null);
 			}
 			return dest;
 		}
@@ -358,24 +359,59 @@ namespace JocysCom.ClassLibrary.Runtime
 						object v;
 						switch (typeCode)
 						{
-							case TypeCode.Boolean: v = reader.ReadBoolean(); break;
-							case TypeCode.Char: v = reader.ReadChar(); break;
-							case TypeCode.DBNull: v = DBNull.Value; break;
-							case TypeCode.DateTime: v = new DateTime(reader.ReadInt64()); break;
-							case TypeCode.Decimal: v = reader.ReadDecimal(); break;
-							case TypeCode.Double: v = reader.ReadDouble(); break;
-							case TypeCode.Empty: v = null; break;
-							case TypeCode.SByte: v = reader.ReadSByte(); break;
-							case TypeCode.Int16: v = reader.ReadInt16(); break;
-							case TypeCode.Int32: v = reader.ReadInt32(); break;
-							case TypeCode.Int64: v = reader.ReadInt64(); break;
-							case TypeCode.Single: v = reader.ReadSingle(); break;
-							case TypeCode.String: v = reader.ReadString(); break;
-							case TypeCode.Byte: v = reader.ReadByte(); break;
-							case TypeCode.UInt16: v = reader.ReadUInt16(); break;
-							case TypeCode.UInt32: v = reader.ReadUInt32(); break;
-							case TypeCode.UInt64: v = reader.ReadUInt64(); break;
-							default: throw new Exception("Non Serializable Object: " + p.PropertyType);
+							case TypeCode.Boolean:
+								v = reader.ReadBoolean();
+								break;
+							case TypeCode.Char:
+								v = reader.ReadChar();
+								break;
+							case TypeCode.DBNull:
+								v = DBNull.Value;
+								break;
+							case TypeCode.DateTime:
+								v = new DateTime(reader.ReadInt64());
+								break;
+							case TypeCode.Decimal:
+								v = reader.ReadDecimal();
+								break;
+							case TypeCode.Double:
+								v = reader.ReadDouble();
+								break;
+							case TypeCode.Empty:
+								v = null;
+								break;
+							case TypeCode.SByte:
+								v = reader.ReadSByte();
+								break;
+							case TypeCode.Int16:
+								v = reader.ReadInt16();
+								break;
+							case TypeCode.Int32:
+								v = reader.ReadInt32();
+								break;
+							case TypeCode.Int64:
+								v = reader.ReadInt64();
+								break;
+							case TypeCode.Single:
+								v = reader.ReadSingle();
+								break;
+							case TypeCode.String:
+								v = reader.ReadString();
+								break;
+							case TypeCode.Byte:
+								v = reader.ReadByte();
+								break;
+							case TypeCode.UInt16:
+								v = reader.ReadUInt16();
+								break;
+							case TypeCode.UInt32:
+								v = reader.ReadUInt32();
+								break;
+							case TypeCode.UInt64:
+								v = reader.ReadUInt64();
+								break;
+							default:
+								throw new Exception("Non Serializable Object: " + p.PropertyType);
 						}
 						p.SetValue(o, v);
 					}
@@ -500,18 +536,36 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static bool IsNullable(Type t)
 		{
 			// Throw exception if type not supplied.
-			if (t == null) throw new ArgumentNullException(nameof(t));
+			if (t == null)
+				throw new ArgumentNullException(nameof(t));
 			// Special Handling - known cases where Exceptions would be thrown
-			else if (t == typeof(void)) throw new Exception("There is no Nullable version of void");
+			else if (t == typeof(void))
+				throw new Exception("There is no Nullable version of void");
 			// If this is not a value type, it is a reference type, so it is automatically nullable.
 			// (NOTE: All forms of Nullable<T> are value types)
-			if (!t.IsValueType) return true;
+			if (!t.IsValueType)
+				return true;
 			// Return true if underlying Type exists (this is faster than line above).
 			return Nullable.GetUnderlyingType(t) != null;
 		}
 
 
 		#endregion
+
+		public static void DetectType(string[] values, out Type type, out int sizeMin, int sizeMax)
+		{
+			type = typeof(string);
+			sizeMin = int.MaxValue;
+			sizeMax = int.MinValue;
+			foreach (var value in values)
+			{
+				int intResult;
+				if (int.TryParse(value, out intResult))
+				sizeMin = Math.Min(sizeMin, value.Length);
+				sizeMax = Math.Min(sizeMax, value.Length);
+			}
+		}
+
 
 	}
 }

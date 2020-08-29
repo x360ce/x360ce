@@ -44,6 +44,8 @@ namespace x360ce.App.DInput
 						var exceptionData = new System.Text.StringBuilder();
 						try
 						{
+							// Set BufferSize in order to use buffered data.
+							//device.Properties.BufferSize = 128;
 							var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 							var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
 							// Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
@@ -81,9 +83,13 @@ namespace x360ce.App.DInput
 							// If a device that requires polling is not polled periodically, no new data is received from the device.
 							// Calling this method causes DirectInput to update the device state, generate input
 							// events (if buffered data is enabled), and set notification events (if notification is enabled).
+							// Get buffered data.
+							//device.Poll();
+							//var datas = device.GetBufferedData();
 							device.Poll();
 							// Get device state.
 							state = device.GetCurrentState();
+
 							// Fill device objects.
 							if (ud.DeviceObjects == null)
 							{

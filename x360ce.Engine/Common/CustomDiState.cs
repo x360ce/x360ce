@@ -89,6 +89,7 @@ namespace x360ce.Engine
 		{
 			// Must have same order as in axis.
 			// Important: These values are not the same as on DeviceObjectInstance.Offset.
+			// JoystickUpdate.Offset here points to a field in the RawJoystickState struct.
 			var list = new List<JoystickOffset>{
 					JoystickOffset.X,
 					JoystickOffset.Y,
@@ -139,8 +140,9 @@ namespace x360ce.Engine
 						}
 					}
 				}
-				catch
+				catch (Exception ex)
 				{
+					_ = ex.Message;
 					// Ignore exceptions from GetObjectInfoByOffset(int offset) method.
 				}
 			}

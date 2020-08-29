@@ -250,7 +250,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				if (runElevated)
 					ControlsHelper.OpenPath(file.FullName);
 				else
-					Win32.WinAPI.RunElevatedAsync(file.FullName, null);
+					Win32.UacHelper.RunElevatedAsync(file.FullName, null);
 				return true;
 			}
 			catch (Exception ex)

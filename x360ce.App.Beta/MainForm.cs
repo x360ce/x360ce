@@ -1649,7 +1649,7 @@ namespace x360ce.App
 			Task.Run(new Action(() =>
 			{
 				var messages = e.Data.Select(x => new MailMessageSerializable(x)).ToArray();
-				//var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(messages.First());
+				var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(messages.First());
 				Global.CloudClient.Add(CloudAction.SendMailMessage, messages);
 			}));
 		}
