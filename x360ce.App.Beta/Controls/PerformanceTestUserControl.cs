@@ -391,7 +391,16 @@ namespace x360ce.App.Controls
 
 		private void ThrowExceptionButton_Click(object sender, EventArgs e)
 		{
-            throw new Exception("Test Exception");
+			try
+			{
+                throw new Exception("Test Exception");
+            }
+            catch (Exception ex)
+			{
+                JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+                throw;
+			}
+
 		}
 	}
 }

@@ -30,8 +30,8 @@ namespace JocysCom.ClassLibrary.Mail
 		public MailMessageSerializable() { }
 		public MailMessageSerializable(MailMessage message) { Load(message); }
 
-		[XmlArrayItem(ElementName = "Header")]
-		public List<JocysCom.ClassLibrary.Collections.KeyValue> Headers { get; set; }
+		// [XmlArrayItem(ElementName = "Header")]
+		// public List<JocysCom.ClassLibrary.Collections.KeyValue> Headers { get; set; }
 		public bool IsBodyHtml { get; set; }
 		public MailPriority Priority { get; set; }
 		public TransferEncoding BodyTransferEncoding { get; set; }
@@ -58,9 +58,9 @@ namespace JocysCom.ClassLibrary.Mail
 
 		private void Load(MailMessage m)
 		{
-			Headers = new List<JocysCom.ClassLibrary.Collections.KeyValue>();
-			foreach (var key in m.Headers.AllKeys)
-				Headers.Add(new JocysCom.ClassLibrary.Collections.KeyValue(key, m.Headers[key]));
+			//Headers = new List<JocysCom.ClassLibrary.Collections.KeyValue>();
+			//foreach (var key in m.Headers.AllKeys)
+			//	Headers.Add(new JocysCom.ClassLibrary.Collections.KeyValue(key, m.Headers[key]));
 			IsBodyHtml = m.IsBodyHtml;
 			Priority = m.Priority;
 			BodyTransferEncoding = m.BodyTransferEncoding;
@@ -86,9 +86,9 @@ namespace JocysCom.ClassLibrary.Mail
 		public MailMessage ToMailMessage()
 		{
 			var o = new MailMessage();
-			if (Headers != null)
-				foreach (var item in Headers)
-					o.Headers.Add(item.Key, item.Value);
+			//if (Headers != null)
+			//	foreach (var item in Headers)
+			//		o.Headers.Add(item.Key, item.Value);
 			o.IsBodyHtml = IsBodyHtml;
 			o.Priority = Priority;
 			o.BodyTransferEncoding = BodyTransferEncoding;

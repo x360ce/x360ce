@@ -160,7 +160,7 @@ namespace x360ce.App.DInput
 			if (dev != null)
 				ud.ConnectionClass = DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
 			// InterfacePath is available for HID devices.
-			if (device.IsHumanInterfaceDevice)
+			if (device.IsHumanInterfaceDevice && ud.Device != null)
 			{
 				var interfacePath = ud.Device.Properties.InterfacePath;
 				hid = allInterfaces.FirstOrDefault(x => x.DevicePath == interfacePath);
@@ -171,7 +171,7 @@ namespace x360ce.App.DInput
 				// Workaround: 
 				// Override Device values and description from the Interface, 
 				// because it is more accurate and present.
-				// Note1 : Device fields below, probably, should not be used.
+				// Note 1: Device fields below, probably, should not be used.
 				// Note 2: Available when device is online.
 				ud.DevManufacturer = ud.HidManufacturer;
 				ud.DevDescription = ud.HidDescription;

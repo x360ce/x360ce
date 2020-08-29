@@ -183,6 +183,10 @@ namespace x360ce.App.DInput
 							{
 								// Ignore error
 							}
+							else if (dex != null && dex.ResultCode == SharpDX.DirectInput.ResultCode.Unplugged)
+							{
+								// Ignore error
+							}
 							else
 							{
 								var cx = new DInputException("UpdateDiStates Exception", ex);

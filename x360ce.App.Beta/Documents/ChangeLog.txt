@@ -1,7 +1,10 @@
-v4.13.15.0 (2020-08-25)
+v4.13.19.0 (2020-08-29)
 - Fix: System.TimeoutException: The operation has timed out.
 - Fix: Issue with text encoding on error report.
 - Fix: Clear errors interface jitter.
+- Fix: Another crash when device removed.
+- Fix: Reduced non-important errors report.
+- New: Axis properties on DirectInput panel.
 
 v4.13.11.0 (2020-08-20)
 - New: Add application error status indicator and report form.

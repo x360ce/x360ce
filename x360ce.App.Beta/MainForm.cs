@@ -99,6 +99,9 @@ namespace x360ce.App
 					// Cancel reporting error.
 					e.Cancel = true;
 				}
+				// If another DInput errors
+
+
 			}
 			var fex = e.Exception as FileNotFoundException;
 			// If serializer warning then...
