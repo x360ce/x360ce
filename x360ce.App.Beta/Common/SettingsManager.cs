@@ -141,7 +141,8 @@ namespace x360ce.App
 		public static PadSetting GetPadSetting(Guid padSettingChecksum)
 		{
 			// Convert to array in order to prevent selection while modified.
-			return PadSettings.Items.ToArray()
+			lock (PadSettings.SyncRoot)
+				return PadSettings.Items
 				.FirstOrDefault(x => x.PadSettingChecksum.Equals(padSettingChecksum));
 		}
 

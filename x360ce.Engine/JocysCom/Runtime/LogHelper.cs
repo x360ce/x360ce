@@ -255,11 +255,14 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			if (ex.Data.Count > 0)
 				AddParameters(ref s, ex.Data, TraceFormat.Html);
+			bool containsFileAndLineNumber = false;
 			var html = WriteAsHtml
-				? ExceptionToString(ex, true, TraceFormat.Html)
+				? ExceptionToString(ex, true, TraceFormat.Html, out containsFileAndLineNumber)
 				: "<pre>" + ex.ToString() + "</pre>";
 			if (ex.TargetSite != null && ex.TargetSite.DeclaringType != null && ex.TargetSite.DeclaringType.Assembly != null)
 				AddRow(ref s, "Target.Declaring.Assembly", ex.TargetSite.DeclaringType.Assembly.FullName);
+			if (containsFileAndLineNumber)
+				AddRow(ref s, "StackTraceFile", "Yes");
 			AddRow(ref s, "StackTrace", html);
 		}
 

@@ -170,24 +170,28 @@ namespace x360ce.App.DInput
 			lock (DiUpdatesLock)
 			{
 				var game = MainForm.Current.CurrentGame;
-				var getXInputStates = SettingsManager.Options.GetXInputStates;
-				// Best place to unload XInput DLL is at the start, because
-				// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
-				CheckAndUnloadXInputLibrarry(game, getXInputStates);
-				// Update information about connected devices.
-				UpdateDiDevices(manager);
-				// Update JoystickStates from devices.
-				UpdateDiStates(manager, game, detector);
-				// Update XInput states from Custom DirectInput states.
-				UpdateXiStates();
-				// Combine XInput states of controllers.
-				CombineXiStates();
-				// Update virtual devices from combined states.
-				UpdateVirtualDevices(game);
-				// Load XInput library before retrieving XInput states.
-				CheckAndLoadXInputLibrary(game, getXInputStates);
-				// Retrieve XInput states from XInput controllers.
-				RetrieveXiStates(game, getXInputStates);
+				// If game is not selected.
+				if (game != null)
+				{
+					var getXInputStates = SettingsManager.Options.GetXInputStates;
+					// Best place to unload XInput DLL is at the start, because
+					// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
+					CheckAndUnloadXInputLibrarry(game, getXInputStates);
+					// Update information about connected devices.
+					UpdateDiDevices(manager);
+					// Update JoystickStates from devices.
+					UpdateDiStates(manager, game, detector);
+					// Update XInput states from Custom DirectInput states.
+					UpdateXiStates();
+					// Combine XInput states of controllers.
+					CombineXiStates();
+					// Update virtual devices from combined states.
+					UpdateVirtualDevices(game);
+					// Load XInput library before retrieving XInput states.
+					CheckAndLoadXInputLibrary(game, getXInputStates);
+					// Retrieve XInput states from XInput controllers.
+					RetrieveXiStates(game, getXInputStates);
+				}
 				// Update pool frequency value every second.
 				UpdateDelayFrequency();
 				// Fire event.

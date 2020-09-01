@@ -26,7 +26,7 @@ namespace x360ce.App.DInput
             // If virtual driver is missing then return.
             if (!ViGEmClient.isVBusExists(true))
                 return;
-            var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
+            var isVirtual = game != null && ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
             // If game does not use virtual emulation then...
             if (!isVirtual)
             {
@@ -48,7 +48,7 @@ namespace x360ce.App.DInput
             {
                 var mapTo = (MapTo)i;
                 var flag = AppHelper.GetMapFlag(mapTo);
-                var value = (MapToMask)game.EnableMask;
+                var value = (MapToMask)(game?.EnableMask ?? (int)MapToMask.None);
                 var virtualEnabled = value.HasFlag(flag);
                 var feedingState = FeedingState[i - 1];
                 if (virtualEnabled)

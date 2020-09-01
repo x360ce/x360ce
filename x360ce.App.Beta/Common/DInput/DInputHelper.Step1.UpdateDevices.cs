@@ -48,8 +48,9 @@ namespace x360ce.App.DInput
 			// List of connected devices.
 			var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToList();
 			// List of current devices.
-			var currentInstanceGuids = SettingsManager.UserDevices.Items.Select(x => x.InstanceGuid).ToArray();
-			deleteDevices = SettingsManager.UserDevices.Items.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
+			var uds = SettingsManager.UserDevices.ItemsToArraySyncronized();
+			var currentInstanceGuids = uds.Select(x => x.InstanceGuid).ToArray();
+			deleteDevices = uds.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
 			var addedDevices = devices.Where(x => !currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
 			var updatedDevices = devices.Where(x => currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
 			// Must find better way to find Device than by Vendor ID and Product ID.
@@ -113,7 +114,8 @@ namespace x360ce.App.DInput
 			for (int i = 0; i < insertDevices.Count; i++)
 			{
 				var ud = insertDevices[i];
-				SettingsManager.UserDevices.Items.Add(ud);
+				lock (SettingsManager.UserDevices.SyncRoot)
+					SettingsManager.UserDevices.Items.Add(ud);
 			}
 			// Enable Test instances.
 			TestDeviceHelper.EnableTestInstances();

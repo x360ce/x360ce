@@ -265,8 +265,8 @@ namespace x360ce.App.Controls
 				var itemsToShow = SettingsManager.UserSettings.Items
 					// Filter devices by controller.	
 					.Where(x => x.MapTo == (int)MappedTo)
-					// Filter devices by selected game.
-					.Where(x => x.FileName == game.FileName && x.FileProductName == game.FileProductName)
+					// Filter devices by selected game (no items will be shown if game is not selected).
+					.Where(x => game != null && x.FileName == game.FileName && x.FileProductName == game.FileProductName)
 					.ToList();
 				var itemsToRemove = mappedItems.Except(itemsToShow).ToArray();
 				var itemsToInsert = itemsToShow.Except(mappedItems).ToArray();
@@ -1522,6 +1522,9 @@ namespace x360ce.App.Controls
 		private void AutoMapButton_Click(object sender, EventArgs e)
 		{
 			var game = MainForm.Current.CurrentGame;
+			// If no game selected then ignore click.
+			if (game == null)
+				return;
 			var flag = AppHelper.GetMapFlag(MappedTo);
 			var value = (MapToMask)game.AutoMapMask;
 			var autoMap = value.HasFlag(flag);
@@ -1541,6 +1544,9 @@ namespace x360ce.App.Controls
 		private void EnableButton_Click(object sender, EventArgs e)
 		{
 			var game = MainForm.Current.CurrentGame;
+			// If no game selected then ignore click.
+			if (game == null)
+				return;
 			var flag = AppHelper.GetMapFlag(MappedTo);
 			var value = (MapToMask)game.EnableMask;
 			var autoMap = value.HasFlag(flag);

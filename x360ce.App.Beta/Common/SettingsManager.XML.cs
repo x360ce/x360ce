@@ -28,7 +28,8 @@ namespace x360ce.App
 				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == padSetting.PadSettingChecksum))
 				{
 					// Add setting to configuration.
-					PadSettings.Items.Add(padSetting);
+					lock (PadSettings.SyncRoot)
+						PadSettings.Items.Add(padSetting);
 				}
 				// If pad setting checksum changed then...
 				if (setting.PadSettingChecksum != padSetting.PadSettingChecksum)
@@ -64,7 +65,8 @@ namespace x360ce.App
 			foreach (var nu in notUsed)
 			{
 				var notUsedItems = PadSettings.Items.Where(x => x.PadSettingChecksum == nu).ToArray();
-				PadSettings.Remove(notUsedItems);
+				lock (PadSettings.SyncRoot)
+					PadSettings.Remove(notUsedItems);
 			}
 		}
 
@@ -79,7 +81,8 @@ namespace x360ce.App
 				// If pad setting was not found then...
 				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == item.PadSettingChecksum))
 					// Add pad setting.
-					PadSettings.Add(item);
+					lock (PadSettings.SyncRoot)
+						PadSettings.Add(item);
 			}
 		}
 
@@ -181,7 +184,7 @@ namespace x360ce.App
 				ps = new PadSetting();
 			LoadPadSettingAndCleanup(setting, ps);
 			SyncFormFromPadSetting(padIndex, ps);
-            RaiseSettingsChanged(null);
+			RaiseSettingsChanged(null);
 			loadCount++;
 			var ev = ConfigLoaded;
 			if (ev != null)

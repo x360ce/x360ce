@@ -264,7 +264,7 @@ namespace x360ce.App.Controls
 		private void UnhideAllDevicesMenuItem_Click(object sender, EventArgs e)
 		{
 			ViGEm.HidGuardianHelper.ClearAffected();
-			var devices = SettingsManager.UserDevices.Items.ToArray();
+			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized();
 			for (int i = 0; i < devices.Length; i++)
 				devices[i].IsHidden = false;
 		}

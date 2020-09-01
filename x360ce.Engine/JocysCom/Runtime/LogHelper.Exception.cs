@@ -132,8 +132,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return (isHtml) ? System.Net.WebUtility.HtmlEncode(text) : text;
 		}
 
-		private string ExceptionToString(Exception ex, bool needFileLineInfo, TraceFormat tf)
+		private string ExceptionToString(Exception ex, bool needFileLineInfo, TraceFormat tf, out bool containsFileAndLineNumber)
 		{
+			containsFileAndLineNumber = false;
 			var isHtml = (tf == TraceFormat.Html);
 			var newLine = isHtml ? "<br />" + Environment.NewLine : Environment.NewLine;
 			var builder = new StringBuilder(0xff);
@@ -189,7 +190,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (trace.FrameCount > 0)
 			{
 				builder.Append(newLine);
-				builder.Append(TraceToString(trace, tf, startFrameIndex));
+				builder.Append(TraceToString(trace, tf, startFrameIndex, out containsFileAndLineNumber));
 			}
 			//if (ex.InnerException != null)
 			//{
@@ -244,10 +245,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			return false;
 		}
 
-		public static string TraceToString(StackTrace st, TraceFormat tf, int startFrameIndex = 0)
+		public static string TraceToString(StackTrace st, TraceFormat tf, int startFrameIndex, out bool containsFileAndLineNumber)
 		{
 			if (st == null)
 				throw new ArgumentNullException(nameof(st));
+			containsFileAndLineNumber = false;
 			var isHtml = tf == TraceFormat.Html;
 			var newLine = (isHtml) ? "<br />" + Environment.NewLine : Environment.NewLine;
 			var flag = true;
@@ -379,6 +381,7 @@ namespace JocysCom.ClassLibrary.Runtime
 						}
 						if (fileName != null)
 						{
+							containsFileAndLineNumber = true;
 							var lineNumber = frame.GetFileLineNumber();
 							var columnNumber = frame.GetFileColumnNumber();
 							string format;

@@ -61,6 +61,26 @@ namespace JocysCom.ClassLibrary.Configuration
 		[DataMember]
 		public SortableBindingList<T> Items { get; set; }
 
+		[NonSerialized]
+		private object _SyncRoot;
+
+		// Synchronization root for this object.
+		public virtual object SyncRoot
+		{
+			get
+			{
+				if (_SyncRoot == null)
+					System.Threading.Interlocked.CompareExchange<object>(ref _SyncRoot, new object(), null);
+				return _SyncRoot;
+			}
+		}
+
+		public T[] ItemsToArraySyncronized()
+		{
+			lock (SyncRoot)
+				return Items.ToArray();
+		}
+
 		[XmlIgnore]
 		System.Collections.IList ISettingsData.Items { get { return Items; } }
 
@@ -88,11 +108,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			var ev = Saving;
 			if (ev != null)
 				ev(this, new EventArgs());
+			var items = ItemsToArraySyncronized();
 			lock (saveReadFileLock)
 			{
-				for (int i = 0; i < Items.Count; i++)
+				for (int i = 0; i < items.Length; i++)
 				{
-					var o = Items[i] as EntityObject;
+					var o = items[i] as EntityObject;
 					if (o != null) o.EntityKey = null;
 				}
 				var fi = new FileInfo(fileName);

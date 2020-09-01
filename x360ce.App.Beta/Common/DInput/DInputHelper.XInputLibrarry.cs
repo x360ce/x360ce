@@ -65,7 +65,7 @@ namespace x360ce.App.DInput
 				// Don't load until device list was not refreshed.
 				if (UpdateDevicesPending)
 					return;
-				var emType = (EmulationType)game.EmulationType;
+				var emType = (EmulationType)(game?.EmulationType ?? (int)EmulationType.None);
 				// Don't load if not needed.
 				if (emType == EmulationType.None)
 					return;
