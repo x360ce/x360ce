@@ -1,313 +1,314 @@
-v4.13.22.0 (2020-09-01)
-- Fix: Crash when game is not selected.
-- Fix: Crash when recording stopped with (Escape key).
-- Fix: Fixing multi-threading exceptions.
+v4.13.23.0 (2020-09-01)
+- Fixed: Crash when game is not selected.
+- Fixed: Crash when recording stopped with (Escape key).
+- Fixed: Fixing multi-threading exceptions.
+- Fixed: Recording would map half instead of full axis.
 
 v4.13.19.0 (2020-08-29)
-- Fix: System.TimeoutException: The operation has timed out.
-- Fix: Issue with text encoding on error report.
-- Fix: Clear errors interface jitter.
-- Fix: Another crash when device removed.
-- Fix: Reduced non-important errors report.
+- Fixed: System.TimeoutException: The operation has timed out.
+- Fixed: Issue with text encoding on error report.
+- Fixed: Clear errors interface jitter.
+- Fixed: Another crash when device removed.
+- Fixed: Reduced non-important errors report.
 - New: Axis properties on DirectInput panel.
 
 v4.13.11.0 (2020-08-20)
+- Fixed: Silent internal crash in direct input code when device removed.
+- Fixed: Thread crash during app closing.
+- Fixed: Grid crash during device update.
 - New: Add application error status indicator and report form.
-- Fix: Silent internal crash in direct input code when device removed.
-- Fix: Thread crash during app closing.
-- Fix: Grid crash during device update.
 
 v4.12.23.0 (2020-08-08)
-- Fix: App will check for Visual C++ 2015-2019 Redistributable correctly now.
-- Fix: App was detecting issue in incorrect order resulting in unable to fix them.
-- Fix: Buttons, axis and POV remained pressed after switching off controller.
-- Update: Make developer feature "Show Form Info on CTRL+SHIFT+RMB" optional.
+- Fixed: App will check for Visual C++ 2015-2019 Redistributable correctly now.
+- Fixed: App was detecting issue in incorrect order resulting in unable to fix them.
+- Fixed: Buttons, axis and POV remained pressed after switching off controller.
+- Updated: Make developer feature "Show Form Info on CTRL+SHIFT+RMB" optional.
 
 v4.12.18.0 (2020-08-05)
+- Updated: Version of .NET Framework increased to 4.7.2
+- Updated: Debug files are now embedded.
+- Updated: No need for separate debug version. Exception reports will contain exact code line.
 - New: [Copy Preset] to clipboard and [Paste Preset] from clipboard buttons.
-- Update: Version of .NET Framework increased to 4.7.2
-- Update: Debug files are now embedded.
-- Update: No need for separate debug version. Exception reports will contain exact code line.
 
 v4.12.9.0 (2020-08-03)
-- Fix: Unable to log errors (C:\ProgramData\X360CE\Errors)
+- Fixed: Unable to log errors (C:\ProgramData\X360CE\Errors)
 
 v4.12.8.0 (2020-08-02)
-- Fix: Server side bug was causing client fail and upload settings to cloud forever.
-- Fix: Bug which allowed to send settings to cloud until success (4 attempts max now).
+- Fixed: Server side bug was causing client fail and upload settings to cloud forever.
+- Fixed: Bug which allowed to send settings to cloud until success (4 attempts max now).
 
 v4.12.6.0 (2020-08-01)
-- Fix: Removed duplicated methods updated device manager and detector.
-- Fix: Rare app crash when device switched off.
+- Fixed: Removed duplicated methods updated device manager and detector.
+- Fixed: Rare app crash when device switched off.
+- Updated: Hardware control. Added ability to remove offline, problem or unknown devices
 - New: Added "WingManTeam DX Tweak" tool and button for raw and direct input calibration.
 - New: Device connection type icon: Bluetooth, USB, System/Virtual.
-- Update: Hardware control. Added ability to remove offline, problem or unknown devices
 
 v4.11.15.0 (2020-07-26)
-- Fix: Missing Vendor, Product and Revision for some devices.
-- Fix: XInput value jittering between 0 and -1 when DeadZone is set.
+- Fixed: Missing Vendor, Product and Revision for some devices.
+- Fixed: XInput value jittering between 0 and -1 when DeadZone is set.
 
 v4.11.15.0 (2020-07-26)
-- Fix: Missing Vendor, Product and Revision for some devices.
-- Fix: XInput value jittering between 0 and -1 when DeadZone is set.
+- Fixed: Missing Vendor, Product and Revision for some devices.
+- Fixed: XInput value jittering between 0 and -1 when DeadZone is set.
 
 v4.11.13.0 (2020-07-25)
-- Fix: Inaccessible dialog when Application is Always on Top.
-- Fix: Map Name drop down combo box on PAD Control.
-- Update: "Auto" map feature maps buttons and axis on Sony controllers better now.
-- Update: "Auto" map feature recognise combined trigger axis better now.
+- Fixed: Inaccessible dialog when Application is Always on Top.
+- Fixed: Map Name drop down combo box on PAD Control.
+- Updated: "Auto" map feature maps buttons and axis on Sony controllers better now.
+- Updated: "Auto" map feature recognise combined trigger axis better now.
 
 v4.11.7.0 (2020-07-20)
-- Fix: Crash when device change.
-- Fix: Presets loading.
-- Fix: Deadlock freeze.
-- Update: Hide unfinished developer options.
-- Update: Shared classes and controls updated.
-- Update: Options updated.
-- Update: Making application more DPI aware.
-- Update: PAD control layout.
-- Update: Optimise device stats procedure.
+- Fixed: Crash when device change.
+- Fixed: Presets loading.
+- Fixed: Deadlock freeze.
+- Updated: Hide unfinished developer options.
+- Updated: Shared classes and controls updated.
+- Updated: Options updated.
+- Updated: Making application more DPI aware.
+- Updated: PAD control layout.
+- Updated: Optimise device stats procedure.
 
 v4.10.12.0 Alpha (2019-05-26)
-- Fix: Visual C++ Runtime installation check.
-- Fix: Muse button recording and PAD settings Load/Saving.
-- Fix: PAD control not loading.
-- Fix: Prevent opening drop down opening as a context menu. Issue #946.
-- Update: Code required for remote controllers (work in progress).
-- Update: Removed Engine XML Serializer resource
-- Update: Code required to run X360CE as Windows Service (work in progress).
+- Fixed: Visual C++ Runtime installation check.
+- Fixed: Muse button recording and PAD settings Load/Saving.
+- Fixed: PAD control not loading.
+- Fixed: Prevent opening drop down opening as a context menu. Issue #946.
+- Updated: Code required for remote controllers (work in progress).
+- Updated: Removed Engine XML Serializer resource
+- Updated: Code required to run X360CE as Windows Service (work in progress).
 
 v4.9.0.0 Alpha (2019-04-22)
-- New version, which uses Virtual Gamepad Emulation driver ViGEmBus by nefarius.
+- New: App use Virtual Gamepad Emulation driver ViGEmBus by nefarius now.
 
 v3.3.6.0 (2018-07-06)
-- Update: Shared libraries updated.
-- Update: Removed hidden exprerimental features.
+- Updated: Shared libraries updated.
+- Updated: Removed hidden exprerimental features.
 
 v3.2.10.82 (2015-10-20)
 - New: GDB file issue (windows permissions) solver added.
 
 v3.2.9.81 (2015-10-04)
-- Fix: Crash when linking settings to controls.
-- Fix: 64-bit crash.
-- Fix: Offer fix when used tries to start application from Windows folder.
+- Fixed: Crash when linking settings to controls.
+- Fixed: 64-bit crash.
+- Fixed: Offer fix when used tries to start application from Windows folder.
+- Updated: Issue solvers updated. Fixed broken links.
 - New: Links to game help.
-- Update: Issue solvers updated. Fixed broken links.
 
 v3.2.8.76 (2015-08-28)
-- Fix: Crashes on invalid permissions.
-- Update: Changed project link to GitHub on About page.
+- Fixed: Crashes on invalid permissions.
+- Updated: Changed project link to GitHub on About page.
 
 v3.2.8.74 (2015-08-27)
-- Fix: x360ce.vshost.exe was appearing in the list on Controller Settings form.
-- Fix: PAD control indicator icons show wrong status colours.
+- Fixed: x360ce.vshost.exe was appearing in the list on Controller Settings form.
+- Fixed: PAD control indicator icons show wrong status colours.
+- Updated: Issue resolver classes updated.
+- Updated: Move gaming wheels to the top index position by default.
+- Updated: Updated x360ce_Games.xml.gz
+- Updated: Updated to xinput1_3.dll v3.4.1.1357.
 - New: Game executable will be added to game settings automatically if only one in the folder.
 - New: Option to exclude Direct Input Supplemental devices (steckdev).
 - New: Option fill XInput settings automatically from DirectInput device.
-- Update: Issue resolver classes updated.
-- Update: Move gaming wheels to the top index position by default.
-- Update: Updated x360ce_Games.xml.gz
-- Update: Updated to xinput1_3.dll v3.4.1.1357.
 
 v3.2.7.67 (2015-08-03)
-- Fix: Incorrect XInput DLL load message.
+- Fixed: Incorrect XInput DLL load message.
 - New: Warning panel which detects some problems and recommends solutions (wrong platform, missing runtime, etc.).
 - New: Map Direct Input controller to specific XInput position.
 
 v3.2.7.67 (2015-08-03)
-- Fix: Incorrect XInput DLL load message.
+- Fixed: Incorrect XInput DLL load message.
 - New: Warning panel which detects some problems and recommends solutions (wrong platform, missing runtime, etc.).
 - New: Map Direct Input controller to specific XInput position.
 
 v3.1.7.58 (2015-07-07)
-- Update: "GNU Lesser General Public License v3.0" license added to application.
+- Updated: "GNU Lesser General Public License v3.0" license added to application.
 
 v3.0.7.57 (2015-06-25)
-- Update: Updated to xinput1_3.dll v3.4.1.1346.
-- Update: Updated x360ce_Games.xml.gz
+- Updated: Updated to xinput1_3.dll v3.4.1.1346.
+- Updated: Updated x360ce_Games.xml.gz
 
 v3.0.7.55 (2015-06-08)
-- Fix: Ability to add same file due to case sensitivity.
-- Fix: Unnecessary XML load.
-- Fix: Crash when unable to read file version.
-- Fix: Crash when game settings reset to default.
+- Fixed: Ability to add same file due to case sensitivity.
+- Fixed: Unnecessary XML load.
+- Fixed: Crash when unable to read file version.
+- Fixed: Crash when game settings reset to default.
 - New: Look inside game file for "XInput..." strings and return appropriate XInput mask.
 
 v3.0.6.50 (2015-06-07)
-- Fix: Crash when c:\ProgramData\X360CE is doesn't exists.
+- Fixed: Crash when c:\ProgramData\X360CE is doesn't exists.
 
 v3.0.6.49 (2015-06-06)
-- Fix: Temporary freeze when retrieving game settings.
-- Fix: Temporary freeze when retrieving controller settings.
-- Fix: Crash on invalid permission.
-- Update: Auto-create x360ce.gdb if not exists.
-- Update: Check XInput DLL architecture and offer upgrade if doesn't match with application.
-- Update: DinputMask, DinputFile, FakeVID, FakePID and Timeout settings relocated to x360ce.gdb.
-- Update: Added SettingVersion attribute to x360ce.xml file.
-- Update: Updated to xinput1_3.dll v3.4.1.1324.
+- Fixed: Temporary freeze when retrieving game settings.
+- Fixed: Temporary freeze when retrieving controller settings.
+- Fixed: Crash on invalid permission.
+- Updated: Auto-create x360ce.gdb if not exists.
+- Updated: Check XInput DLL architecture and offer upgrade if doesn't match with application.
+- Updated: DinputMask, DinputFile, FakeVID, FakePID and Timeout settings relocated to x360ce.gdb.
+- Updated: Added SettingVersion attribute to x360ce.xml file.
+- Updated: Updated to xinput1_3.dll v3.4.1.1324.
 
 v3.0.6.39 (2015-05-16)
-- Fix: Crash when reading disk id.
+- Fixed: Crash when reading disk id.
 
 v3.0.3.36 (2015-05-12)
-- Fix: Thread lock on ThumbUserControl.
-- Update: Updated to xinput1_3.dll v3.4.1.1299.
+- Fixed: Thread lock on ThumbUserControl.
+- Updated: Updated to xinput1_3.dll v3.4.1.1299.
 
 v3.0.3.34 (2015-05-11)
-- Fix: Issue with combo box clearing (Box is empty but INI file is still mapped to old setting).
+- Fixed: Issue with combo box clearing (Box is empty but INI file is still mapped to old setting).
 - New: [Game Controllers...] button added to PAD panel.
 
 v3.0.3.32 (2015-05-11)
-- Fix: Crash when generating anonymous disk Id.
+- Fixed: Crash when generating anonymous disk Id.
+- Updated: Updated to xinput1_3.dll v3.4.1.1288.
 - New: Map Axis to Button feature added.
 - New: Map D-Pad button to Button, Axis and Trigger feature added.
-- Update: Updated to xinput1_3.dll v3.4.1.1288.
 
 v3.0.2.25 (2015-04-30)
-- Fix: Left/Right motor periods switched to match with XBox Controller.
+- Fixed: Left/Right motor periods switched to match with XBox Controller.
+- Updated: Updated to xinput1_3.dll v3.4.1.1245.
 - New: Force effect direction support added.
-- Update: Updated to xinput1_3.dll v3.4.1.1245.
 
 v3.0.2.21 (2015-04-28)
-- Fix: Force feedback controls fixed.
-- Update: Updated to xinput1_3.dll v3.4.1.1239.
+- Fixed: Force feedback controls fixed.
+- Updated: Updated to xinput1_3.dll v3.4.1.1239.
 
 v3.0.2.19 (2015-04-26)
-- Fix: Left/Right force feedback motor strength track-bars fixed.
+- Fixed: Left/Right force feedback motor strength track-bars fixed.
 - New: Confirmation dialog for clear and reset controller settings.
 
 v3.0.2.17 (2015-04-26)
-- Fix: Crash when generating Unique Disk ID hash.
-- Fix: Crash when x360ce.xml settings file is corrupted.
-- Fix: Crash when PeriodicSine force feedback is enabled.
-- Fix: Map button to axis not working.
+- Fixed: Crash when generating Unique Disk ID hash.
+- Fixed: Crash when x360ce.xml settings file is corrupted.
+- Fixed: Crash when PeriodicSine force feedback is enabled.
+- Fixed: Map button to axis not working.
+- Updated: "Apply Preset" renamed "Click Here to Apply Preset" to make button function more recognizable.
+- Updated: Updated to xinput1_3.dll v3.4.1.1229.
+- Updated: Default settings games database updated.
 - New: More help will be displayed in yellow tool-bar.
 - New: Support for new settings added.
-- Update: "Apply Preset" renamed "Click Here to Apply Preset" to make button function more recognizable.
-- Update: Updated to xinput1_3.dll v3.4.1.1229.
-- Update: Default settings games database updated.
 
 v3.0.1.8 (2015-04-19)
-- Fix: Force feedback PeriodicSine crash fix.
-- Fix: Issue with Axis on 64-bit platform.
-- Fix: Issue with negative axis not working.
-- Update: Updated to xinput1_3.dll v3.4.1.1173.
+- Fixed: Force feedback PeriodicSine crash fix.
+- Fixed: Issue with Axis on 64-bit platform.
+- Fixed: Issue with negative axis not working.
+- Updated: Updated to xinput1_3.dll v3.4.1.1173.
 
 v3.0.1.2 (2015-04-18)
-- Fix: Issue with recording and reporting of Sliders.
+- Fixed: Issue with recording and reporting of Sliders.
 
 v3.0.1.0 (2015-04-14)
-- Update: A lot of changes, fixes and new bugs.
+- Updated: A lot of changes, fixes and new bugs.
 
 v2.1.3.203 (2014-11-01)
-- Update: DeadZone, Anti-DeadZone and Sensitivity feature complete.
-- Update: Updated to xinput1_3.dll v3.4.0.956.
+- Updated: DeadZone, Anti-DeadZone and Sensitivity feature complete.
+- Updated: Updated to xinput1_3.dll v3.4.0.956.
 
 v2.1.3.203 (2014-10-20)
-- Fix: Force feedback test fixed.
-- Fix: Anti-dead-zone drop-down default value selection fix.
-- Fix: x360ce.Engine.XmlSerializers.dll library is properly embedded as a resource.
-- Fix: x360ce.Engine post build command line fixed.
-- Update: Experimental keyboard feature removed.
+- Fixed: Force feedback test fixed.
+- Fixed: Anti-dead-zone drop-down default value selection fix.
+- Fixed: x360ce.Engine.XmlSerializers.dll library is properly embedded as a resource.
+- Fixed: x360ce.Engine post build command line fixed.
+- Updated: Experimental keyboard feature removed.
 
 v2.1.3.198 (2014-10-18)
-- Fix: Left and Right trigger display value.
-- Fix: Crash when file product name is not set.
-- Update: Use of thread pool when scanning games.
+- Fixed: Left and Right trigger display value.
+- Fixed: Crash when file product name is not set.
+- Updated: Use of thread pool when scanning games.
 
 v2.1.2.196 (2013-02-17)
-- Fix: Fix crash on reading DLL version.
-- Fix: Application crash on Process Corrupted State Exceptions
+- Fixed: Fix crash on reading DLL version.
+- Fixed: Application crash on Process Corrupted State Exceptions
+- Updated: Updated to xinput1_3.dll v3.4.0.584.
+- Updated: Code validation against Microsoft Managed Recommended Rules.
+- Updated: Show most popular settings on the top on [Global Settings] list.
 - New: Added 'FirstPerson' device to supported list.
 - New: Auto-upgrade INI file to Unicode format.
-- Update: Updated to xinput1_3.dll v3.4.0.584.
-- Update: Code validation against Microsoft Managed Recommended Rules.
-- Update: Show most popular settings on the top on [Global Settings] list.
 
 v2.1.2.189 (2013-01-26)
-- Fix: Crash when [Cancel] is pressed on New Device Form.
-- Update: Updated to xinput1_3.dll v3.3.1.540.
+- Fixed: Crash when [Cancel] is pressed on New Device Form.
+- Updated: Updated to xinput1_3.dll v3.3.1.540.
 
 v2.1.2.188 (2013-01-25)
-- Fix: Default INI file will be created properly now.
-- Update: Updated to xinput1_3.dll v3.3.1.526.
+- Fixed: Default INI file will be created properly now.
+- Updated: Updated to xinput1_3.dll v3.3.1.526.
 
 v2.1.2.186 (2013-01-23)
-- Fix: Exception with xinput1_1.dll, xinput1_2.dll or xinput9_1_0.dll file in the directory.
-- Update: Update check for 'reset' code.
+- Fixed: Exception with xinput1_1.dll, xinput1_2.dll or xinput9_1_0.dll file in the directory.
+- Updated: Update check for 'reset' code.
 
 v2.1.2.184 (2013-01-22)
-- Fix:  Program offers message with download link if Microsoft DirectX not found.
+- Fixed:  Program offers message with download link if Microsoft DirectX not found.
+- Updated: New digital signature.
+- Updated: Updated to xinput1_3.dll v3.3.1.507.
 - New:  Faster 'reset' method is used for reloading settings.
-- Update: New digital signature.
-- Update: Updated to xinput1_3.dll v3.3.1.507.
 
 v2.0.2.170 (2012-10-29)
-- Update: Updated to Microsoft NET Framework 4.0.
+- Updated: Updated to Microsoft NET Framework 4.0.
 
 v2.0.2.163 (2012-09-23)
 - New: AllowOnlyOneCopy option added.
 - New: Prompt to repair .NET application settings added.
 
 v2.0.2.158 (2011-12-16)
-- Update: DLL and EXE signed with updated digital certificate.
+- Updated: DLL and EXE signed with updated digital certificate.
 
 v2.0.2.156 (2011-10-08)
-- Fix: Other bug related to loading settings from Internet.
+- Fixed: Other bug related to loading settings from Internet.
 
 v2.0.2.154 (2011-10-08)
-- Fix: Application will become visible before checking for missing files.
-- Fix: XInput library will be re-loaded after loading settings for new device.
-- Fix: Internet Database buttons now will disable/enable itself properly.
-- Fix: Loading settings from Internet.
+- Fixed: Application will become visible before checking for missing files.
+- Fixed: XInput library will be re-loaded after loading settings for new device.
+- Fixed: Internet Database buttons now will disable/enable itself properly.
+- Fixed: Loading settings from Internet.
+- Updated: Updated device insertion and removal method which reduced CPU usage.
+- Updated: Other parts of code were optimized to use less CPU resources.
+- Updated: Sortable grids.
+- Updated: Message box updated.
+- Updated: Some icons were updated.
+- Updated: "Search the Internet" CheckBox was added to "New Device Detected" wizard.
+- Updated: Internet features are now enabled by default.
+- Updated: Application option names for Internet settings were renamed.
+- Updated: Internet Database URL TextBox allows to edit URL on double click.
 - New: Confirmation box on setting deletion from Internet Settings Database.
-- Update: Updated device insertion and removal method which reduced CPU usage.
-- Update: Other parts of code were optimized to use less CPU resources.
-- Update: Sortable grids.
-- Update: Message box updated.
-- Update: Some icons were updated.
-- Update: "Search the Internet" CheckBox was added to "New Device Detected" wizard.
-- Update: Internet features are now enabled by default.
-- Update: Application option names for Internet settings were renamed.
-- Update: Internet Database URL TextBox allows to edit URL on double click.
 
 v2.0.2.132 (2011-10-04)
-- Update: Code optimizations.
-- Update: Fixed issue with multiple controllers and settings.
+- Updated: Code optimizations.
+- Updated: Fixed issue with multiple controllers and settings.
 
 v2.0.2.128 (2011-10-02)
+- Updated: On how INI file works.
+- Updated: Updated to xinput1_3.dll v3.3.1.444.
 - New: Internet Settings Database feature added.
 - New: Application now asks to save changes on exit.
-- Update: On how INI file works.
-- Update: Updated to xinput1_3.dll v3.3.1.444.
 
 v2.0.2.105 (2011-07-13)
 - New: 'Native' setting was renamed to 'PassThrough'
 
 v2.0.2.102 (2011-03-26)
-- Fix: Now properly saves HookMode under [InputHook] section.
+- Fixed: Now properly saves HookMode under [InputHook] section.
 
 v2.0.2.101 (2011-03-19)
+- Updated: Microsoft XNA Framework classes updated to 4.0.
 - New: 'Console' setting support added.
-- Update: Microsoft XNA Framework classes updated to 4.0.
 - New: Preset for "Philips Wireless PC Controller".
 
 v2.0.2.98 (2011-03-18)
-- Update: Keyboard Navigation Updated
-- Update: Updated to xinput1_3.dll v3.3.0.398.
+- Updated: Keyboard Navigation Updated
+- Updated: Updated to xinput1_3.dll v3.3.0.398.
 
 v2.0.2.96 (2010-12-20) by tapcio/Virus [not signed]
-- Update: Compatibility with latest x360ce Library.
+- Updated: Compatibility with latest x360ce Library.
 - New: Preset for "SL-6555-SBK".
 
 v2.0.2.95 (2010-11-22) by tapcio/Virus [not signed]
-- Update: Rename FakeAPI to InputHook to make it compatible to latest x360ce Library.
+- Updated: Rename FakeAPI to InputHook to make it compatible to latest x360ce Library.
 
 v2.0.2.94 (2010-11-22)
-- Update: Digital Signature updated.
+- Updated: Digital Signature updated.
 
 v2.0.2.93 (2010-11-20)
-- Update: Switched to "Microsoft Windows SDK 7.1".
+- Updated: Switched to "Microsoft Windows SDK 7.1".
 - New: Force feedback type option (FFBType) support added.
 
 v2.0.2.91 (2010-09-02)
@@ -317,112 +318,112 @@ v2.0.2.90 (2010-09-01)
 - Fixed: Fixed "Record" feature when pedals are reported as single slider.
 
 v2.0.2.89 (2010-08-29)
-- Update: AntiDeadzone presets added.
+- Updated: AntiDeadzone presets added.
 
 v2.0.2.88 (2010-08-29)
 - New: Offer update if old version of xinput1_3.dll was found.
 
 v2.0.2.87 (2010-08-29)
+- Updated: Updated to xinput1_3.dll v3.2.0.295.
 - New: AntiDeadZone settings support added.
-- Update: Updated to xinput1_3.dll v3.2.0.295.
 
 v2.0.2.85 (2010-08-28)
 - New: Preset for "Logitech G27 Racing Wheel" (from chalkman).
 
 v2.0.2.84 (2010-08-28)
-- Fix: Permission check issues on Windows XP.
-- Update: Updated to xinput1_3.dll v3.2.0.290.
+- Fixed: Permission check issues on Windows XP.
+- Updated: Updated to xinput1_3.dll v3.2.0.290.
 - New: Thumb dead-zone setting support added.
 
 v2.0.2.80 (2010-08-28)
-- Update: Updated to xinput1_3.dll v3.2.0.273.
+- Updated: Updated to xinput1_3.dll v3.2.0.273.
 - Updated: Logitech Wheel presets to support "Mafia II" game.
 - Updated: Help section updated.
 
 v2.0.2.77 (2010-08-17)
-Fix: Disable force feedback effect before closing application.
+Fixed: Disable force feedback effect before closing application.
 
 v2.0.2.76 (2010-08-11)
-- Update: Updated to xinput1_3.dll v3.2.0.188.
+- Updated: Updated to xinput1_3.dll v3.2.0.188.
 
 v2.0.2.75 (2010-08-11)
-- Update: Updated to xinput1_3.dll v3.2.0.180.
-- Update: FakeWMI and FakeDI merged into FakeMODE.
-- Update: FakeWinTrust removed.
-- Update: FakePID and FakeVid option removed.
-- Update: 'FakeWMI_NOPIDVID' option removed.
+- Updated: Updated to xinput1_3.dll v3.2.0.180.
+- Updated: FakeWMI and FakeDI merged into FakeMODE.
+- Updated: FakeWinTrust removed.
+- Updated: FakePID and FakeVid option removed.
+- Updated: 'FakeWMI_NOPIDVID' option removed.
 
 v2.0.2.71 (2010-08-09)
-- Update: Updated to xinput1_3.dll v3.2.0.165.
-- Update: Default options updated.
+- Updated: Updated to xinput1_3.dll v3.2.0.165.
+- Updated: Default options updated.
 - New: 'FakeWMI_NOPIDVID' option - Don't change PID/VID in FakeWMI spoofing.
 
 v2.0.2.67 (2010-08-05)
-- Update: Updated to xinput1_3.dll v3.2.0.138.
+- Updated: Updated to xinput1_3.dll v3.2.0.138.
 
 v2.0.2.66 (2010-08-02)
-- Update: Updated to xinput1_3.dll v3.2.0.133.
-- Update: LeftMotorDirection and RightMotorDirection setting was removed.
-- Update: Code updated.
+- Updated: Updated to xinput1_3.dll v3.2.0.133.
+- Updated: LeftMotorDirection and RightMotorDirection setting was removed.
+- Updated: Code updated.
 
 v2.0.2.62 (2010-05-25)
-- Update: Experimental keyboard option hidden.
+- Updated: Experimental keyboard option hidden.
 
 v2.0.2.61 (2010-05-25)
-- Update: Updated to xinput1_3.dll v3.2.0.120.
+- Updated: Updated to xinput1_3.dll v3.2.0.120.
 
 v2.0.2.52 (2010-04-24)
-- Update: Assembly file Updated.
-- Fix: XNA Framework Resources file fixed.
-- Fix: Don't reload DLL if value haven't changed in INI.
-- Fix: Now timer will stop during settings update.
-- Fix: Don't query devices if none connected.
+- Fixed: XNA Framework Resources file fixed.
+- Fixed: Don't reload DLL if value haven't changed in INI.
+- Fixed: Now timer will stop during settings update.
+- Fixed: Don't query devices if none connected.
+- Updated: Assembly file Updated.
 
 v2.0.2.47 (2010-04-24)
-- Fix: Force feedback test fixed.
+- Fixed: Force feedback test fixed.
 
 v2.0.2.46 (2010-04-23)
-- Update: Updated to xinput1_3.dll v3.2.0.97.
+- Updated: Updated to xinput1_3.dll v3.2.0.97.
 
 v2.0.2.44 (2010-04-22)
-- Update: Updated to xinput1_3.dll v3.2.0.91.
+- Updated: Updated to xinput1_3.dll v3.2.0.91.
 
 v2.0.2.43 (2010-04-22)
-- Update: Updated to xinput1_3.dll v3.2.0.81.
-- Update: Disabled comments in INI.
+- Updated: Updated to xinput1_3.dll v3.2.0.81.
+- Updated: Disabled comments in INI.
 
 v2.0.2.41 (2010-04-21)
-- Update: Reverted back to xinput1_3.dll v3.1.4.1.
-- Update: XNA Framework Input Code updated to 3.1 version.
+- Updated: Reverted back to xinput1_3.dll v3.1.4.1.
+- Updated: XNA Framework Input Code updated to 3.1 version.
 
 v2.0.2.35 (2010-04-17)
-- Fix: FakeDI option converted to ComboBox
+- Fixed: FakeDI option converted to ComboBox
 
 v2.0.2.34 (2010-04-17)
-- Fix: Issue with Global settings save fix.
+- Fixed: Issue with Global settings save fix.
 
 v2.0.2.33 (2010-04-17)
+- Fixed: Settings save fixed.
+- Updated: Options combined into groups.
+- Updated: Internal preset file will be removed from disk after load.
 - New: "Axis To D-Pad" settings group box added.
 - New: "FakeWinTrust" check box added.
 - New: Thrustmaster Dual Analog/Power game pads presets (from crazycat)
-- Fix: Settings save fixed.
-- Update: Options combined into groups.
-- Update: Internal preset file will be removed from disk after load.
 
 v2.0.2.24 (2010-04-16)
 - New: Support for backup settings: [IG_<InstanceGuid>] section.
 
 v2.0.2.23 (2010-04-16)
-- Update: [FakeAPI]\FakeAPI option removed.
-- Update: [FakeAPI]\FakeWMI option updated to CheckBox on interface.
+- Updated: [FakeAPI]\FakeAPI option removed.
+- Updated: [FakeAPI]\FakeWMI option updated to CheckBox on interface.
 
 v2.0.2.21 (2010-04-15)
-- Update: Project updated to Visual Studio 2010.
-- Update: 'Instance' option support added.
-- Update: xinput1_3.dll updated to 3.2.0.46 version.
+- Updated: Project updated to Visual Studio 2010.
+- Updated: 'Instance' option support added.
+- Updated: xinput1_3.dll updated to 3.2.0.46 version.
 
 v2.0.2.19 (2010-04-11)
-- Update: signed xinput1_3.dll with trusted certificate.
+- Updated: signed xinput1_3.dll with trusted certificate.
 
 v2.0.2.18 (2010-04-11)
 - New: "Logitech Cordless RumblePad 2" by Nexor from Russia.
@@ -431,49 +432,49 @@ v2.0.2.17 (2010-04-05)
 - New: "Saitek Cyborg Rumble Pad" preset by Jorge Fuentes.
 
 v2.0.2.16 (2010-03-30)
-- Fix: don't elevate if not Vista/7.
+- Fixed: don't elevate if not Vista/7.
 
 v2.0.2.15 (2010-03-30)
-- UAC support added. Application will ask for elevation if it runs from UAC protected area.
-- Status bar updated with information about loaded INI and DLL.
+- New: UAC support added. Application will ask for elevation if it runs from UAC protected area.
+- New: Status bar updated with information about loaded INI and DLL.
 
 v2.0.2.13 (2010-03-28)
-- xBox 360 controller preset thumb stick button assignment fix.
-- VID, PID, ProductName - read-only settings load fix.
-- Link to Google project added.
+- Fixed: xBox 360 controller preset thumb stick button assignment.
+- Fixed: VID, PID, ProductName - read-only settings load.
+- New: Link to Google project added.
 
 v2.0.2.11 (2010-03-25)
-- DirectInput rY fix.
-- Added preset for "Controller (Xbox 360 Wireless Receiver for Windows)".
+- Fixed: DirectInput rY.
 - Fixed Native settings section location.
+- New: Added preset for "Controller (Xbox 360 Wireless Receiver for Windows)".
 
 v2.0.2.9 (2010-03-21)
-- Help tab added.
+- New: Help tab added.
 
 v2.0.2.8 (2010-03-19)
-- Fixed recording.
-- Fixed auto-saving.
-- Fixed Thumb Left/Right/Up/Down settings map.
+- Fixed: Recording.
+- Fixed: Auto-saving.
+- Fixed: Thumb Left/Right/Up/Down settings map.
 
 v2.0.2.3 (2010-03-17)
-- Supports old INI file xbox360cemu.ini if found and new x360ce.ini doesn't exists.
-- Supports hot-plugging USB devices.
-- Interface updated.
-- Can load custom presets from disk.
+- Updated: Supports old INI file xbox360cemu.ini if found and new x360ce.ini doesn't exists.
+- Updated: Supports hot-plugging USB devices.
+- Updated: Interface.
+- New: Can load custom presets from disk.
 
 v2.0.1.2 (2010-03-14)
-- Setting changes now applies instantly.
-- [Save] button makes changes permanent.
-- Updated button names to names used by Microsoft.
-- Fixed bug with multiple controllers attached.
+- Fixed: bug with multiple controllers attached.
+- Updated: Setting changes now applies instantly.
+- Updated: [Save] button makes changes permanent.
+- Updated: Button names to names used by Microsoft.
 
 v2.0.0.0 (2010-03-11)
-- Pack of new features and improvements.
-- Supports load and save settings.
-- Presets feature added.
-- Supports DirectInput action capture/recording.
-- New DirectInput information tab.
-- All images updated.
+- Updated: All images updated.
+- New: Pack of new features and improvements.
+- New: Supports load and save settings.
+- New: Presets feature added.
+- New: Supports DirectInput action capture/recording.
+- New: DirectInput information tab.
 
 v1.0.3300.21118 by Racer_S
 v1.0.3295.32855 by Racer_S

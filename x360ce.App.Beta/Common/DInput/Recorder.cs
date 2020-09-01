@@ -219,10 +219,10 @@ namespace x360ce.App
 						// Note: Mapping wheel, which is centered in the middle, to the humb will use full axis.
 						var pn = _Map.PropertyName;
 						var thumb =
-							pn == SettingName.LeftThumbAxisX ||
-							pn == SettingName.LeftThumbAxisY ||
-							pn == SettingName.RightThumbAxisX ||
-							pn == SettingName.RightThumbAxisY;
+							pn == nameof(SettingName.LeftThumbAxisX) ||
+							pn == nameof(SettingName.LeftThumbAxisY) ||
+							pn == nameof(SettingName.RightThumbAxisX) ||
+							pn == nameof(SettingName.RightThumbAxisY);
 						// If target property is not thumb then...
 						if (!thumb)
 						{
