@@ -1,5 +1,6 @@
-v4.13.21.0 (2020-09-01)
+v4.13.22.0 (2020-09-01)
 - Fix: Crash when game is not selected.
+- Fix: Crash when recording stopped with (Escape key).
 - Fix: Fixing multi-threading exceptions.
 
 v4.13.19.0 (2020-08-29)
