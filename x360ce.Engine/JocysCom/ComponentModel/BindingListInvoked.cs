@@ -18,7 +18,8 @@ namespace JocysCom.ClassLibrary.ComponentModel
 
 		public void AddRange(IEnumerable<T> list)
 		{
-			foreach (T item in list) { Add(item); }
+			foreach (T item in list)
+			{ Add(item); }
 		}
 
 		#region ISynchronizeInvoker
@@ -32,7 +33,11 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		void Invoke(Delegate method, params object[] args)
 		{
 			var so = SynchronizingObject;
-			if (so != null)
+			if (so == null)
+			{
+				DynamicInvoke(method, args);
+			}
+			else
 			{
 				// Note that Control.Invoke(...) is a synchronous action on the main GUI thread,
 				// and will wait for EnableBackControl() to return.
@@ -47,15 +52,38 @@ namespace JocysCom.ClassLibrary.ComponentModel
 				// Try inserting a Application.DoEvents() in the loop, which will pause
 				// execution and force the main thread to process messages and any outstanding .Invoke requests.
 				if (AsynchronousInvoke)
-					Task.Factory.StartNew(() => { method.DynamicInvoke(args); }, CancellationToken.None, TaskCreationOptions.None, so);
+					Task.Factory.StartNew(() =>
+					{
+						DynamicInvoke(method, args);
+					}, CancellationToken.None, TaskCreationOptions.None, so);
 				else
-					new Task(() => { method.DynamicInvoke(args); }).RunSynchronously(so);
+				{
+					var task = new Task(() =>
+					{
+						DynamicInvoke(method, args);
+					});
+					task.RunSynchronously(so);
+				}
 			}
-			else
+		}
+
+		void DynamicInvoke(Delegate method, params object[] args)
+		{
+			try
 			{
 				method.DynamicInvoke(args);
 			}
+			catch (Exception ex)
+			{
+				// Add data to help with debuging.
+				var prefix = string.Format("{0}<T>", nameof(BindingListInvoked<T>)) + ".";
+				ex.Data.Add(prefix + "T", typeof(T).FullName);
+				ex.Data.Add(prefix + "SynchronizingObject", SynchronizingObject?.GetType().FullName);
+				ex.Data.Add(prefix + "AsynchronousInvoke", AsynchronousInvoke);
+				throw;
+			}
 		}
+
 
 		protected override void RemoveItem(int index)
 		{

@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Data
 {
@@ -247,7 +244,7 @@ namespace JocysCom.ClassLibrary.Data
 		{
 			isEntity = false;
 			// Try to find entity connection.
-			var cs = ConfigurationManager.ConnectionStrings[name];
+			var cs = System.Configuration.ConfigurationManager.ConnectionStrings[name];
 			// If configuration section with not found then return.
 			if (cs == null)
 				return null;

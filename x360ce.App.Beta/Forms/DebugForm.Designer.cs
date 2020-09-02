@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DebugForm));
-			this.performanceTestUserControl1 = new x360ce.App.Controls.PerformanceTestUserControl();
+			this.performanceTestUserControl1 = new x360ce.App.Controls.DebugUserControl();
 			this.SuspendLayout();
 			// 
 			// performanceTestUserControl1
@@ -57,6 +57,6 @@
 
 		#endregion
 
-		private Controls.PerformanceTestUserControl performanceTestUserControl1;
+		private Controls.DebugUserControl performanceTestUserControl1;
 	}
 }

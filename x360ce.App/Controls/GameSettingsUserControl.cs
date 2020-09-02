@@ -67,13 +67,13 @@ namespace x360ce.App.Controls
 		void ScanGames(object state)
 		{
 			string[] paths = null;
-			Invoke((Action)delegate ()
+			Invoke(new Action(() =>
 			{
 				ScanProgressLabel.Visible = true;
 				ScanGamesButton.Enabled = false;
 				paths = MainForm.Current.OptionsPanel.GameScanLocationsListBox.Items.Cast<string>().ToArray();
 				ScanProgressLabel.Text = "Scanning...";
-			});
+			}));
 			var skipped = 0;
 			var added = 0;
 			var updated = 0;
@@ -107,14 +107,14 @@ namespace x360ce.App.Controls
 						// If file doesn't exist in the game list then continue.
 						if (game == null)
 						{
-							Invoke((Action)delegate ()
+							Invoke(new Action(() =>
 							{
 								var scanner = new XInputMaskScanner();
 								game = scanner.FromDisk(exe.FullName);
 								game.LoadDefault(program);
 								SettingManager.Games.Items.Add(game);
 								added++;
-							});
+							}));
 						}
 						else
 						{
@@ -126,19 +126,19 @@ namespace x360ce.App.Controls
 							updated++;
 						}
 					}
-					Invoke((Action)delegate ()
+					Invoke(new Action(() =>
 					{
 						ScanProgressLabel.Text = string.Format("Scanning Path ({0}/{1}): {2}\r\nSkipped = {3}, Added = {4}, Updated = {5}", i + 1, paths.Length, path, skipped, added, updated);
-					});
+					}));
 				}
 				SettingManager.Save();
 			}
-			Invoke((Action)delegate ()
+			Invoke(new Action(() =>
 			{
 				ScanGamesButton.Enabled = true;
 				ScanProgressLabel.Visible = false;
 				ShowHideAndSelectGridRows();
-			});
+			}));
 		}
 
 		private void GameSettingsUserControl_Load(object sender, EventArgs e)

@@ -549,23 +549,134 @@ namespace JocysCom.ClassLibrary.Runtime
 			return Nullable.GetUnderlyingType(t) != null;
 		}
 
-
 		#endregion
 
-		public static void DetectType(string[] values, out Type type, out int sizeMin, int sizeMax)
+		public static void DetectType(string[] values, out Type type, out int sizeMin, int sizeMax, out bool isAscii)
 		{
+			if (values == null)
+				throw new ArgumentNullException(nameof(values));
 			type = typeof(string);
 			sizeMin = int.MaxValue;
 			sizeMax = int.MinValue;
+			isAscii = true;
+			// Order matters. First available type will be returned.
+			// If all values can be parsed to Int16 then it can be parsed to Int32 and Int64 too.
+			var tcs = new TypeCode[]
+			{
+				TypeCode.Boolean,
+				TypeCode.Byte,
+				TypeCode.SByte,
+				TypeCode.Char,
+				TypeCode.DateTime,
+				TypeCode.Single,
+				TypeCode.Double,
+				TypeCode.Decimal,
+				TypeCode.Int16,
+				TypeCode.Int32,
+				TypeCode.Int64,
+				TypeCode.UInt16,
+				TypeCode.UInt32,
+				TypeCode.UInt64,
+				TypeCode.String,
+				// TypeCode.DBNull,
+				// TypeCode.Empty,
+				// TypeCode.Object,
+			}.ToList();
+			// All available types.
+			var available = new Dictionary<TypeCode, Type>();
+			tcs.ForEach(x => available.Add(x, Type.GetType(nameof(System) + "." + x)));
+			//Convert.ChangeType(value, colType);
 			foreach (var value in values)
 			{
-				int intResult;
-				if (int.TryParse(value, out intResult))
+				// Determine string limits.
 				sizeMin = Math.Min(sizeMin, value.Length);
 				sizeMax = Math.Min(sizeMax, value.Length);
+				isAscii &= value.All(x => x < 128);
+				// Get available types to test against.
+				var availableTypeCodes = available.Keys.ToArray();
+				// If only string was left.
+				if (availableTypeCodes.Length == 1 && availableTypeCodes[0] == TypeCode.String)
+					return;
+				// Test against available types.
+				foreach (var tc in availableTypeCodes)
+				{
+					switch (tc)
+					{
+						case TypeCode.Boolean:
+							bool resultBool;
+							if (!bool.TryParse(value, out resultBool))
+								available.Remove(tc);
+							break;
+						case TypeCode.Byte:
+							byte resultByte;
+							if (!byte.TryParse(value, out resultByte))
+								available.Remove(tc);
+							break;
+						case TypeCode.Char:
+							char resultChar;
+							if (!char.TryParse(value, out resultChar))
+								available.Remove(tc);
+							break;
+						case TypeCode.DateTime:
+							DateTime resultDateTime;
+							if (!DateTime.TryParse(value, out resultDateTime))
+								available.Remove(tc);
+							break;
+						case TypeCode.Decimal:
+							decimal resultDecimal;
+							if (!decimal.TryParse(value, out resultDecimal))
+								available.Remove(tc);
+							break;
+						case TypeCode.Double:
+							double resultDouble;
+							if (!double.TryParse(value, out resultDouble))
+								available.Remove(tc);
+							break;
+						case TypeCode.Int16:
+							short resultShort;
+							if (!short.TryParse(value, out resultShort))
+								available.Remove(tc);
+							break;
+						case TypeCode.Int32:
+							int resultInt;
+							if (!int.TryParse(value, out resultInt))
+								available.Remove(tc);
+							break;
+						case TypeCode.Int64:
+							long resultLong;
+							if (!long.TryParse(value, out resultLong))
+								available.Remove(tc);
+							break;
+						case TypeCode.SByte:
+							sbyte resultSByte;
+							if (!sbyte.TryParse(value, out resultSByte))
+								available.Remove(tc);
+							break;
+						case TypeCode.Single:
+							float resultFloat;
+							if (!float.TryParse(value, out resultFloat))
+								available.Remove(tc);
+							break;
+						case TypeCode.UInt16:
+							ushort resultUShort;
+							if (!ushort.TryParse(value, out resultUShort))
+								available.Remove(tc);
+							break;
+						case TypeCode.UInt32:
+							uint resultUInt;
+							if (!uint.TryParse(value, out resultUInt))
+								available.Remove(tc);
+							break;
+						case TypeCode.UInt64:
+							ulong resultULong;
+							if (!ulong.TryParse(value, out resultULong))
+								available.Remove(tc);
+							break;
+						default:
+							break;
+					}
+				}
 			}
 		}
-
-
 	}
 }

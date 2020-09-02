@@ -1,8 +1,10 @@
-v4.13.23.0 (2020-09-01)
+v4.13.25.0 (2020-09-02)
 - Fixed: Crash when game is not selected.
 - Fixed: Crash when recording stopped with (Escape key).
-- Fixed: Fixing multi-threading exceptions.
-- Fixed: Recording would map half instead of full axis.
+- Fixed: Fixing some multi-threading exceptions.
+- Fixed: Recording was mapping half instead of full axis incorrectly.
+- Fixed: Crash when axis map index value is out of range.
+- New: Add active control name to error report to help with bug fixing.
 
 v4.13.19.0 (2020-08-29)
 - Fixed: System.TimeoutException: The operation has timed out.

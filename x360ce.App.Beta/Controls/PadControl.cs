@@ -957,27 +957,27 @@ namespace x360ce.App.Controls
 				// LeftThumbX
 				var axis = ud.DiState.Axis;
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
-				if (map != null && map.Index > 0)
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
 					LeftThumbXUserControl.DrawPoint(axis[map.Index - 1], _leftX, map.IsInverted, map.IsHalf);
 				// LeftThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
-				if (map != null && map.Index > 0)
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
 					LeftThumbYUserControl.DrawPoint(axis[map.Index - 1], _leftY, map.IsInverted, map.IsHalf);
 				// RightThumbX
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
-				if (map != null && map.Index > 0)
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
 					RightThumbXUserControl.DrawPoint(axis[map.Index - 1], _rightX, map.IsInverted, map.IsHalf);
 				// RightThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
-				if (map != null && map.Index > 0)
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
 					RightThumbYUserControl.DrawPoint(axis[map.Index - 1], _rightY, map.IsInverted, map.IsHalf);
 				// LeftTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
-				if (map != null && map.Index > 0)
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
 					LeftTriggerUserControl.DrawPoint(axis[map.Index - 1], _leftTrigger, map.IsInverted, map.IsHalf);
 				// RightTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
-				if (map != null && map.Index > 0)
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
 					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], _rightTrigger, map.IsInverted, map.IsHalf);
 			}
 			// Update controller images.

@@ -35,10 +35,10 @@ namespace x360ce.App.Issues
 			{
 				CheckFile = false;
 				// Update current settings file.
-				MainForm.Current.Invoke((Action)delegate ()
+				MainForm.Current.Invoke(new Action(() =>
 				{
 					MainForm.Current.GameSettingsPanel.ProcessExecutable(exes[0]);
-				});
+				}));
 			}
 			foreach (var exe in exes)
 			{

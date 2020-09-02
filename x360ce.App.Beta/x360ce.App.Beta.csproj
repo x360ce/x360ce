@@ -237,11 +237,11 @@
     <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PerformanceTestUserControl.cs">
+    <Compile Include="Controls\DebugUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\PerformanceTestUserControl.Designer.cs">
-      <DependentUpon>PerformanceTestUserControl.cs</DependentUpon>
+    <Compile Include="Controls\DebugUserControl.Designer.cs">
+      <DependentUpon>DebugUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PresetsGridUserControl.cs">
       <SubType>UserControl</SubType>
@@ -445,8 +445,8 @@
     <EmbeddedResource Include="Controls\OptionsInternetUserControl.resx">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\PerformanceTestUserControl.resx">
-      <DependentUpon>PerformanceTestUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\DebugUserControl.resx">
+      <DependentUpon>DebugUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PresetsGridUserControl.resx">
       <DependentUpon>PresetsGridUserControl.cs</DependentUpon>

@@ -76,40 +76,6 @@ namespace x360ce.App
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 		}
 
-		private void LogHelper_Current_NewException(object sender, EventArgs e)
-		{
-			ControlsHelper.BeginInvoke(new Action(() => UpdateStatusErrorsLabel()));
-		}
-
-		private void LogHelper_Current_WritingException(object sender, LogHelperEventArgs e)
-		{
-			if (Disposing)
-				e.Cancel = true;
-			var ex = e.Exception as SharpDX.SharpDXException;
-			var d = ex?.Descriptor;
-			if (d != null)
-			{
-				// If exception when getting Joystic properties in
-				// CustomDiState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
-				if (d.ApiCode == "NotFound" && d.Code == -2147024894 &&
-					d.Module == "SharpDX.DirectInput" &&
-					d.NativeApiCode == "DIERR_NOTFOUND"
-				)
-				{
-					// Cancel reporting error.
-					e.Cancel = true;
-				}
-				// If another DInput errors
-
-
-			}
-			var fex = e.Exception as FileNotFoundException;
-			// If serializer warning then...
-			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))
-				// Cancel reporting error.
-				e.Cancel = true;
-		}
-
 		public DInput.DInputHelper DHelper;
 
 		public static MainForm Current { get; set; }
@@ -1602,6 +1568,7 @@ namespace x360ce.App
 			ControlsHelper.AutoSizeByOpenForms(win);
 			win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
 			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
+			DHelper.Stop();
 			CloudPanel.EnableDataSource(false);
 			win.ErrorReportPanel.SendMessages += ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ErrorsClearing += ErrorReportPanel_ErrorsClearing;
@@ -1612,8 +1579,8 @@ namespace x360ce.App
 			win.ErrorReportPanel.SendMessages -= ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ErrorsClearing -= ErrorReportPanel_ErrorsClearing;
 			win.ErrorReportPanel.ErrorsCleared -= ErrorReportPanel_ErrorsCleared;
-
 			CloudPanel.EnableDataSource(true);
+			DHelper.Start();
 		}
 
 		private void ErrorReportPanel_ErrorsClearing(object sender, EventArgs e)
@@ -1707,6 +1674,68 @@ namespace x360ce.App
 				? Resources.error_16x16
 				: AppHelper.GetDisabledImage(Resources.error_16x16);
 		}
+
+		#region Exception Handling and Reporting
+
+		private void LogHelper_Current_NewException(object sender, EventArgs e)
+		{
+			ControlsHelper.BeginInvoke(new Action(() => UpdateStatusErrorsLabel()));
+		}
+
+		private void LogHelper_Current_WritingException(object sender, LogHelperEventArgs e)
+		{
+			if (Disposing)
+				e.Cancel = true;
+			var ex = e.Exception as SharpDX.SharpDXException;
+			var d = ex?.Descriptor;
+			if (d != null)
+			{
+				// If exception when getting Joystic properties in
+				// CustomDiState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
+				if (d.ApiCode == "NotFound" && d.Code == -2147024894 &&
+					d.Module == "SharpDX.DirectInput" &&
+					d.NativeApiCode == "DIERR_NOTFOUND"
+				)
+				{
+					// Cancel reporting error.
+					e.Cancel = true;
+				}
+				// If another DInput errors
+			}
+
+
+			var fex = e.Exception as FileNotFoundException;
+			// If serializer warning then...
+			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))
+				// Cancel reporting error.
+				e.Cancel = true;
+
+			Control activeControl;
+			string activePath;
+			GetActiveControl(this, out activeControl, out activePath);
+			// Add path to current control to help with error fixing.
+			e.Exception.Data.Add("ActiveControlPath", activePath);
+		}
+
+		public static void GetActiveControl(Control control, out Control activeControl, out string activePath)
+		{
+			activePath = string.Format("/{0}", control.Name);
+			activeControl = control;
+			// If control can contains active controls.
+			var container = control as ContainerControl;
+			while (container != null)
+			{
+				control = container.ActiveControl;
+				if (control != null)
+				{
+					activePath += string.Format("/{0}", control.Name);
+					activeControl = control;
+					container = control as ContainerControl;
+				}
+			}
+		}
+
+		#endregion
 
 
 	}

@@ -86,10 +86,9 @@ namespace x360ce.App.Controls
 		{
 			if (MainForm.Current.InvokeRequired)
 			{
-				Invoke((Action)delegate ()
-				{
-					Scanner_Progress(sender, e);
-				});
+				Invoke(new Action(() => 
+					Scanner_Progress(sender, e)
+				));
 				return;
 			}
 			var scanner = (XInputMaskScanner)sender;

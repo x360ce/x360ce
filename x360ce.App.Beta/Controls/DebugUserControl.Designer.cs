@@ -1,6 +1,6 @@
 ﻿namespace x360ce.App.Controls
 {
-	partial class PerformanceTestUserControl
+	partial class DebugUserControl
 	{
 		/// <summary> 
 		/// Required designer variable.
