@@ -242,7 +242,11 @@ namespace JocysCom.ClassLibrary.IO
 				if (errorCode == ERROR_INVALID_DATA)
 					return null;
 				var error = new Win32Exception(errorCode);
-				throw new Exception("Error calling SetupDiGetDeviceRegistryPropertyW: " + error.ToString());
+				var ex = new Exception("Error calling " + nameof(NativeMethods.SetupDiGetDeviceRegistryProperty) + ":" + error.ToString());
+				var prefix = nameof(GetStringPropertyForDevice) + ".";
+				ex.Data.Add(prefix + nameof(propId), propId);
+				ex.Data.Add(prefix + "deviceInfoData.ClassGuid", deviceInfoData.ClassGuid);
+				throw ex;
 			}
 			var o = "";
 			if (outsize > 0)
