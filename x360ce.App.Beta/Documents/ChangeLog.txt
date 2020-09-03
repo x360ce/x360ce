@@ -1,7 +1,5 @@
 v4.13.27.0 (2020-09-03)
 - Fixed: Issue form crashing when Virtual Driver is installed or uninstalled.
-
-v4.13.25.0 (2020-09-03)
 - Fixed: Crash when game is not selected.
 - Fixed: Crash when recording stopped with (Escape key).
 - Fixed: Fixing some multi-threading exceptions.
