@@ -67,11 +67,16 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			}
 		}
 
+		object OneChangeAtTheTime = new object();
+
 		void DynamicInvoke(Delegate method, params object[] args)
 		{
 			try
 			{
-				method.DynamicInvoke(args);
+				lock (OneChangeAtTheTime)
+				{
+					method.DynamicInvoke(args);
+				}
 			}
 			catch (Exception ex)
 			{

@@ -24,9 +24,6 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			// List which contains all issues.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			IssueList = new BindingListInvoked<IssueItem>();
-			IssueList.AsynchronousInvoke = true;
-			IssueList.SynchronizingObject = scheduler;
-			IssueList.ListChanged += IssueList_ListChanged;
 			UpdateIgnoreAllButton();
 			// List which is bound to the grid and displays issues, which needs user attention.
 			Warnings = new BindingListInvoked<IssueItem>();
@@ -78,11 +75,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		/// <returns></returns>
 		void queueTimer_DoWork(object sender, QueueTimerEventArgs e)
 		{
-			if (!IsSuspended())
-				CheckAll();
+			if (IsSuspended())
+				return;
+			CheckAll();
+			UpdateDisplayedList();
 		}
 
-		private void IssueList_ListChanged(object sender, ListChangedEventArgs e)
+		private void UpdateDisplayedList()
 		{
 			var list = IssueList.ToArray();
 			foreach (var item in list)
@@ -97,7 +96,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 					Warnings.Add(item);
 			}
 			// Get issues in progress.
-			list = IssueList.Where(x => x.Status != IssueStatus.Idle).ToArray();
+			list = list.Where(x => x.Status != IssueStatus.Idle).ToArray();
 			var sb = new StringBuilder();
 			foreach (var item in list)
 			{

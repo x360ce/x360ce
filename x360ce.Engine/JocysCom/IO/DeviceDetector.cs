@@ -573,6 +573,10 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				DeviceId = GetDeviceId(deviceInfoData.DevInst)
 			};
+			// Get device status.
+			DeviceNodeStatus status;
+			NativeMethods.GetDeviceNodeStatus(deviceInfoData.DevInst, IntPtr.Zero, out status);
+			di.Status = status;
 			var deviceDescription = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
 			var deviceFriendlyName = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_FRIENDLYNAME);
 			di.Description = deviceDescription ?? deviceFriendlyName ?? "";
@@ -581,10 +585,6 @@ namespace JocysCom.ClassLibrary.IO
 			di.ClassGuid = deviceInfoData.ClassGuid;
 			di.ClassDescription = GetClassDescription(di.ClassGuid);
 			di.HardwareIds = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
-			// Get device status.
-			DeviceNodeStatus status;
-			NativeMethods.GetDeviceNodeStatus(deviceInfoData.DevInst, IntPtr.Zero, out status);
-			di.Status = status;
 			// Get device Vendor, Product and Revision ID.
 			uint vid;
 			uint pid;
