@@ -1,5 +1,4 @@
-﻿using JocysCom.ClassLibrary.Resources.Data;
-using SharpDX.XInput;
+﻿using SharpDX.XInput;
 using System;
 using System.Linq.Expressions;
 using System.Xml.Serialization;

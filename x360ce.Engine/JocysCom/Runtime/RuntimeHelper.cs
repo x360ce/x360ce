@@ -551,14 +551,15 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
-		public static void DetectType(string[] values, out Type type, out int sizeMin, int sizeMax, out bool isAscii)
+		public static void DetectType(string[] values, out Type type, out int sizeMin, out int sizeMax, out bool isAscii, out bool haveEmpty)
 		{
 			if (values == null)
 				throw new ArgumentNullException(nameof(values));
 			type = typeof(string);
 			sizeMin = int.MaxValue;
-			sizeMax = int.MinValue;
+			sizeMax = 0;
 			isAscii = true;
+			haveEmpty = false;
 			// Order matters. First available type will be returned.
 			// If all values can be parsed to Int16 then it can be parsed to Int32 and Int64 too.
 			var tcs = new TypeCode[]
@@ -566,17 +567,17 @@ namespace JocysCom.ClassLibrary.Runtime
 				TypeCode.Boolean,
 				TypeCode.Byte,
 				TypeCode.SByte,
-				TypeCode.Char,
-				TypeCode.DateTime,
-				TypeCode.Single,
-				TypeCode.Double,
-				TypeCode.Decimal,
 				TypeCode.Int16,
 				TypeCode.Int32,
 				TypeCode.Int64,
 				TypeCode.UInt16,
 				TypeCode.UInt32,
 				TypeCode.UInt64,
+				TypeCode.Single,
+				TypeCode.Char,
+				TypeCode.DateTime,
+				TypeCode.Double,
+				TypeCode.Decimal,
 				TypeCode.String,
 				// TypeCode.DBNull,
 				// TypeCode.Empty,
@@ -588,9 +589,14 @@ namespace JocysCom.ClassLibrary.Runtime
 			//Convert.ChangeType(value, colType);
 			foreach (var value in values)
 			{
+				if (string.IsNullOrEmpty(value))
+				{
+					haveEmpty = true;
+					continue;
+				}
 				// Determine string limits.
 				sizeMin = Math.Min(sizeMin, value.Length);
-				sizeMax = Math.Min(sizeMax, value.Length);
+				sizeMax = Math.Max(sizeMax, value.Length);
 				isAscii &= value.All(x => x < 128);
 				// Get available types to test against.
 				var availableTypeCodes = available.Keys.ToArray();
@@ -677,6 +683,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					}
 				}
 			}
+			type = available.FirstOrDefault().Value;
 		}
 	}
 }

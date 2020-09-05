@@ -142,6 +142,8 @@ namespace x360ce.App
 				}
 				Application.Run(MainForm.Current);
 			}
+			Global.DisposeCloudClient();
+			Global.DisposeRemoteService();
 		}
 
 		public static bool IsClosing;

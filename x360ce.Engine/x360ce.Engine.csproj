@@ -323,12 +323,6 @@
     <Compile Include="JocysCom\Processes\TestUnion.cs" />
     <Compile Include="JocysCom\Processes\TOUCHINPUT.cs" />
     <Compile Include="JocysCom\Resources\DataPriority.cs" />
-    <Compile Include="JocysCom\Resources\Data\ResourcesModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ResourcesModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Resources\Data\Setting.cs" />
     <Compile Include="JocysCom\Resources\ResourceSection.cs" />
     <Compile Include="JocysCom\Runtime\Attributes.cs" />
     <Compile Include="JocysCom\Runtime\ChangeState.cs" />
@@ -508,14 +502,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
-    <EntityDeploy Include="JocysCom\Resources\Data\ResourcesModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>ResourcesModel.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>JocysCom.ClassLibrary.Resources.Data</CustomToolNamespace>
-    </EntityDeploy>
-    <None Include="JocysCom\Resources\Data\ResourcesModel.edmx.diagram">
-      <DependentUpon>ResourcesModel.edmx</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

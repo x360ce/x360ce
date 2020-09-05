@@ -5,7 +5,7 @@
 	xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
 	<Style TargetType="Button">
-		<Setter Property="Padding" Value="4,2,4,2" />
+		<Setter Property="Padding" Value="8,4,8,4" />
 	</Style>
 
 	<Style TargetType="Window">

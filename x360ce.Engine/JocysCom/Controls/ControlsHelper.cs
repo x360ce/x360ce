@@ -108,7 +108,6 @@ namespace JocysCom.ClassLibrary.Controls
 		public static Task BeginInvoke(Delegate method, params object[] args)
 		{
 			InitInvokeContext();
-			// 
 			return Task.Factory.StartNew(() => { method.DynamicInvoke(args); },
 				CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
 		}
@@ -117,9 +116,18 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="action">The action delegate to execute synchronously.</param>
 		public static void Invoke(Action action)
 		{
+			if (action == null)
+				throw new ArgumentNullException(nameof(action));
 			InitInvokeContext();
-			var t = new Task(action);
-			t.RunSynchronously(MainTaskScheduler);
+			if (InvokeRequired())
+			{
+				var t = new Task(action);
+				t.RunSynchronously(MainTaskScheduler);
+			}
+			else
+			{
+				action.DynamicInvoke();
+			}
 		}
 
 		/// <summary>Executes the specified action delegate synchronously on main Graphical User Interface (GUI) Thread.</summary>
@@ -129,9 +137,16 @@ namespace JocysCom.ClassLibrary.Controls
 			if (method == null)
 				throw new ArgumentNullException(nameof(method));
 			// Run method on main Graphical User Interface thread.
-			var t = new Task<object>(() => method.DynamicInvoke(args));
-			t.RunSynchronously(MainTaskScheduler);
-			return t.Result;
+			if (InvokeRequired())
+			{
+				var t = new Task<object>(() => method.DynamicInvoke(args));
+				t.RunSynchronously(MainTaskScheduler);
+				return t.Result;
+			}
+			else
+			{
+				return method.DynamicInvoke(args);
+			}
 		}
 
 		#endregion

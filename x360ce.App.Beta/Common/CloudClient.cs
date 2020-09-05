@@ -11,7 +11,7 @@ using x360ce.Engine.Data;
 
 namespace x360ce.App
 {
-	public class CloudClient
+	public class CloudClient : IDisposable
 	{
 		public QueueTimer<CloudItem> TasksTimer;
 
@@ -224,6 +224,29 @@ namespace x360ce.App
 		public void NetworkInformation_NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)
 		{
 			IsNetworkAvailable = JocysCom.ClassLibrary.Network.NetStatInfo.IsNetworkAvailable();
+		}
+
+		#endregion
+
+		#region IDisposable
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		bool IsDisposing;
+
+		// The bulk of the clean-up code is implemented in Dispose(bool)
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				IsDisposing = true;
+				// Free managed resources.
+				StopServer();
+			}
 		}
 
 		#endregion

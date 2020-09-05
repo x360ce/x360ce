@@ -17,6 +17,12 @@ namespace x360ce.App
 			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
 		}
 
+		public static void DisposeCloudClient()
+		{
+			CloudClient.Dispose();
+			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
+		}
+
 		#region Remote Server
 
 		public static Service.RemoteService RemoteServer;
@@ -27,6 +33,12 @@ namespace x360ce.App
 			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
 			// Add event which will start and stop UDP server depending on options.
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
+		}
+
+		public static void DisposeRemoteService()
+		{
+			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
+			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
 		}
 
 		private static void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
