@@ -12,7 +12,7 @@ namespace x360ce.App.DInput
 		void UpdateXiStates()
 		{
 			// Get all mapped devices.
-			var settings = SettingsManager.UserSettings.Items
+			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized()
 			   .Where(x => x.MapTo > (int)MapTo.None)
 			   .ToArray();
 			for (int i = 0; i < settings.Length; i++)

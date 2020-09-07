@@ -220,7 +220,7 @@ namespace JocysCom.ClassLibrary.IO
 			return value;
 		}
 
-		private static string GetStringPropertyForDevice(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, SPDRP propId)
+		private static string GetStringPropertyForDevice(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, SPDRP propId, System.Collections.IDictionary exData = null)
 		{
 			// Get buffer size.
 			uint proptype;
@@ -246,6 +246,9 @@ namespace JocysCom.ClassLibrary.IO
 				var prefix = nameof(GetStringPropertyForDevice) + ".";
 				ex.Data.Add(prefix + nameof(propId), propId);
 				ex.Data.Add(prefix + "deviceInfoData.ClassGuid", deviceInfoData.ClassGuid);
+				if (exData != null)
+					foreach (var key in exData.Keys)
+						ex.Data.Add(key, exData[key]);
 				throw ex;
 			}
 			var o = "";
@@ -577,14 +580,16 @@ namespace JocysCom.ClassLibrary.IO
 			DeviceNodeStatus status;
 			NativeMethods.GetDeviceNodeStatus(deviceInfoData.DevInst, IntPtr.Zero, out status);
 			di.Status = status;
-			var deviceDescription = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
-			var deviceFriendlyName = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_FRIENDLYNAME);
+			var exData = new Dictionary<object, object>();
+			exData.Add("GetDeviceNodeStatus", status);
+			var deviceDescription = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC, exData);
+			var deviceFriendlyName = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_FRIENDLYNAME, exData);
 			di.Description = deviceDescription ?? deviceFriendlyName ?? "";
 			di.FriendlyName = deviceFriendlyName ?? "";
 			di.Manufacturer = GetDeviceManufacturer(deviceInfoSet, deviceInfoData);
 			di.ClassGuid = deviceInfoData.ClassGuid;
 			di.ClassDescription = GetClassDescription(di.ClassGuid);
-			di.HardwareIds = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
+			di.HardwareIds = GetStringPropertyForDevice(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID, exData);
 			// Get device Vendor, Product and Revision ID.
 			uint vid;
 			uint pid;

@@ -62,9 +62,7 @@ namespace x360ce.Engine
             {
                 var item = FileInfoCache.Items.FirstOrDefault(x => string.Compare(x.FullName, fi.FullName, true) == 0);
                 if (item != null)
-                {
                     FileInfoCache.Remove(item);
-                }
                 item = new XInputMaskFileInfo();
                 item.FullName = fi.FullName;
                 item.Mask = mask;

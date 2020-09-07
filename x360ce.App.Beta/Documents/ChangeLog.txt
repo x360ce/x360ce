@@ -1,5 +1,6 @@
-v4.13.31.0 (2020-09-07)
+v4.13.33.0 (2020-09-07)
 - Fixed: Crash during user internal settings update.
+- Fixed: Crash during XInput devices update.
 - Fixed: Freezing during interface update.
 - Update: Add option to show [Test...] developing button, which is hidden by default.
 

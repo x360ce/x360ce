@@ -116,10 +116,11 @@ namespace x360ce.App
 
 		public static Engine.Data.UserSetting GetSetting(Guid instanceGuid, string fileName)
 		{
-			return UserSettings.Items.FirstOrDefault(x =>
-				x.InstanceGuid.Equals(instanceGuid) &&
-				string.Compare(x.FileName, fileName, true) == 0
-			);
+			lock (UserSettings.SyncRoot)
+				return UserSettings.Items.FirstOrDefault(x =>
+					x.InstanceGuid.Equals(instanceGuid) &&
+					string.Compare(x.FileName, fileName, true) == 0
+				);
 		}
 
 		/// <summary>
@@ -127,7 +128,8 @@ namespace x360ce.App
 		/// </summary>
 		public static List<Engine.Data.UserSetting> GetSettings(string fileName, MapTo? mapTo = null)
 		{
-			return UserSettings.Items.Where(x =>
+			lock (UserSettings.SyncRoot)
+				return UserSettings.Items.Where(x =>
 				string.Compare(x.FileName, fileName, true) == 0 && (!mapTo.HasValue || x.MapTo == (int)mapTo.Value)
 			).ToList();
 		}
@@ -945,7 +947,7 @@ namespace x360ce.App
 		public void FillSearchParameterWithInstances(List<SearchParameter> sp)
 		{
 			// Select user devices as parameters to search.
-			var userDevices = UserSettings.Items
+			var userDevices = UserSettings.ItemsToArraySyncronized()
 				.Select(x => x.InstanceGuid).Distinct()
 				// Do not add empty records.
 				.Where(x => x != Guid.Empty)
@@ -957,7 +959,8 @@ namespace x360ce.App
 		public void FillSearchParameterWithFiles(List<SearchParameter> sp)
 		{
 			// Select enabled user game/device as parameters to search.
-			var settings = UserSettings.Items.Where(x => x.MapTo > 0).ToArray();
+			var settings = UserSettings.ItemsToArraySyncronized()
+				.Where(x => x.MapTo > 0).ToArray();
 			foreach (var setting in settings)
 			{
 				var fileName = Path.GetFileName(setting.FileName);

@@ -114,7 +114,8 @@ namespace JocysCom.ClassLibrary.Configuration
 				for (int i = 0; i < items.Length; i++)
 				{
 					var o = items[i] as EntityObject;
-					if (o != null) o.EntityKey = null;
+					if (o != null)
+						o.EntityKey = null;
 				}
 				var fi = new FileInfo(fileName);
 				if (!fi.Directory.Exists)
@@ -132,16 +133,20 @@ namespace JocysCom.ClassLibrary.Configuration
 			SaveAs(_XmlFile.FullName);
 		}
 
+		/// <summary>Remove with SyncRoot lock.</summary>
 		public void Remove(params T[] items)
 		{
-			foreach (var item in items)
+			lock (SyncRoot)
+				foreach (var item in items)
 				Items.Remove(item);
 		}
 
+		/// <summary>Add with SyncRoot lock.</summary>
 		public void Add(params T[] items)
 		{
-			foreach (var item in items)
-				Items.Add(item);
+			lock (SyncRoot)
+				foreach (var item in items)
+					Items.Add(item);
 		}
 
 		public delegate IList<T> ValidateDataDelegate(IList<T> items);

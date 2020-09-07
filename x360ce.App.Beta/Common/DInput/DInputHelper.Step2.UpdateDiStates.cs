@@ -122,7 +122,7 @@ namespace x360ce.App.DInput
 							if (hasForceFeedback)
 							{
 								// Get setting related to user device.
-								var setting = SettingsManager.UserSettings.Items.ToArray()
+								var setting = SettingsManager.UserSettings.ItemsToArraySyncronized()
 									.FirstOrDefault(x => x.InstanceGuid == ud.InstanceGuid);
 								// If device is mapped to controller then...
 								if (setting != null && setting.MapTo > (int)MapTo.None)

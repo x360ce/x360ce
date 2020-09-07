@@ -138,7 +138,6 @@ namespace x360ce.App.Controls
 						{
 							// Enable if platform is the same, disable otherwise.
 							game.IsEnabled = game.ProcessorArchitecture == enabledGame.ProcessorArchitecture;
-							;
 						}
 						SettingsManager.UserGames.Add(game);
 					}

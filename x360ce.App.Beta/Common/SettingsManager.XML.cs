@@ -50,7 +50,8 @@ namespace x360ce.App
 		public void CleanupPadSettings()
 		{
 			// Get all records used by Settings.
-			var usedPadSettings = UserSettings.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			var usedPadSettings = UserSettings.ItemsToArraySyncronized()
+				.Select(x => x.PadSettingChecksum).Distinct().ToList();
 			// Get all records used by Summaries.
 			var usedPadSettings2 = Summaries.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
 			// Get all records used by Presets.
@@ -65,8 +66,7 @@ namespace x360ce.App
 			foreach (var nu in notUsed)
 			{
 				var notUsedItems = PadSettings.Items.Where(x => x.PadSettingChecksum == nu).ToArray();
-				lock (PadSettings.SyncRoot)
-					PadSettings.Remove(notUsedItems);
+				PadSettings.Remove(notUsedItems);
 			}
 		}
 
@@ -81,8 +81,7 @@ namespace x360ce.App
 				// If pad setting was not found then...
 				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == item.PadSettingChecksum))
 					// Add pad setting.
-					lock (PadSettings.SyncRoot)
-						PadSettings.Add(item);
+					PadSettings.Add(item);
 			}
 		}
 
@@ -94,7 +93,8 @@ namespace x360ce.App
 		{
 			foreach (var item in list)
 			{
-				var old = UserSettings.Items.FirstOrDefault(x => x.SettingId == item.SettingId);
+				var old = UserSettings.ItemsToArraySyncronized()
+					.FirstOrDefault(x => x.SettingId == item.SettingId);
 				if (old == null)
 				{
 					UserSettings.Add(item);
