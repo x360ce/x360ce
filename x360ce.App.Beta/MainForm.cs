@@ -74,7 +74,32 @@ namespace x360ce.App
 			InitiInterfaceUpdate();
 			GamesToolStrip_Resize(null, null);
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
+			// Attach property monitoring first.
+			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
+			LoadSettings();
 		}
+
+		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			var o = SettingsManager.Options;
+			//SettingsManager.Sync(o, e.PropertyName);
+			// Update controls by specific property.
+			switch (e.PropertyName)
+			{
+				case nameof(Options.ShowTestButton):
+					TestButton.Visible = o.ShowTestButton;
+					break;
+			}
+		}
+
+		public void LoadSettings()
+		{
+			// Load XML settings into control.
+			var o = SettingsManager.Options;
+			// Other option.
+			TestButton.Visible = o.ShowTestButton;
+		}
+
 
 		public DInput.DInputHelper DHelper;
 

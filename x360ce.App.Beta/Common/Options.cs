@@ -191,6 +191,11 @@ namespace x360ce.App
 		public bool EnableShowFormInfo { get { return _EnableShowFormInfo; } set { _EnableShowFormInfo = value; OnPropertyChanged(); } }
 		bool _EnableShowFormInfo;
 
+
+		[DefaultValue(false), Description("Show [Test...] Button.")]
+		public bool ShowTestButton { get { return _ShowTestButton; } set { _ShowTestButton = value; OnPropertyChanged(); } }
+		bool _ShowTestButton;
+
 		#endregion
 
 		#region INotifyPropertyChanged

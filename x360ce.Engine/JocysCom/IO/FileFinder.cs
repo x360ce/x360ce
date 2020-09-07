@@ -34,7 +34,8 @@ namespace JocysCom.ClassLibrary.IO
 				_DirectoryIndex = i;
 				var di = _Directories[i];
 				// Skip folders if don't exists.
-				if (!di.Exists) continue;
+				if (!di.Exists)
+					continue;
 				AddFiles(di, ref fis, searchPattern, allDirectories);
 			}
 			return fis;
@@ -44,6 +45,9 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			try
 			{
+				// Skip system folder.
+				//if (di.Name == "System Volume Information")
+				//	return;
 				var patterns = searchPattern.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
 				if (patterns.Length == 0)
 				{
@@ -84,7 +88,10 @@ namespace JocysCom.ClassLibrary.IO
 					}
 				}
 			}
-			catch { }
+			catch (Exception ex)
+			{
+				_ = ex.ToString();
+			}
 			try
 			{
 				// If must search inside subdirectories then...
@@ -104,7 +111,11 @@ namespace JocysCom.ClassLibrary.IO
 					}
 				}
 			}
-			catch { }
+			catch (Exception ex)
+			{
+				_ = ex.ToString();
+			}
+
 		}
 
 	}

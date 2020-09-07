@@ -1,6 +1,7 @@
-v4.13.29.0 (2020-09-05)
+v4.13.31.0 (2020-09-07)
 - Fixed: Crash during user internal settings update.
 - Fixed: Freezing during interface update.
+- Update: Add option to show [Test...] developing button, which is hidden by default.
 
 v4.13.27.0 (2020-09-03)
 - Fixed: Issue form crashing when Virtual Driver is installed or uninstalled.

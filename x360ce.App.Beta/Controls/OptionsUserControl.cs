@@ -86,9 +86,9 @@ namespace x360ce.App.Controls
 			SettingsManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
 			// Attach property monitoring first.
-			var o = SettingsManager.Options;
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			// Stored inside XML now.
+			var o = SettingsManager.Options;
 			ControlHelper.LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
 			ControlHelper.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
 			ControlHelper.LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
@@ -97,6 +97,7 @@ namespace x360ce.App.Controls
 			ControlHelper.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
+			ControlHelper.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
