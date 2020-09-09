@@ -53,7 +53,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			_Current.Dispose();
 		}
 
-#region Settings
+		#region Settings
 
 		/// <summary>
 		/// If used then, can loose information about original line of exception, therefore option is 'false' by default.
@@ -122,9 +122,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 		public static bool IsLive { get { return string.Compare(RunMode, "LIVE", true) == 0; } }
 
-#endregion
+		#endregion
 
-#region Process Exceptions
+		#region Process Exceptions
 
 		/// <summary>
 		/// Windows forms can attach function which will be used when exception is thrown.
@@ -149,9 +149,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-#endregion
+		#endregion
 
-#region Add To String
+		#region Add To String
 
 		public static void AddParameters(ref string s, IDictionary parameters, TraceFormat tf = TraceFormat.Html)
 		{
@@ -198,7 +198,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			s += "</style>\r\n";
 		}
 
-#region Table
+		#region Table
 
 		public static void StartTable(ref string s)
 		{
@@ -234,7 +234,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			s += "</tr>";
 		}
 
-#endregion
+		#endregion
 
 		/// <summary>Add row with key and value cells.</summary>
 		public static void AddRow(ref string s, string key = null, string value = null)
@@ -271,7 +271,9 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void AddConnection(ref string s, string name, string connectionString)
 		{
-#if NET40
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+#else // .NET Framework
 			var cb = new System.Data.SqlClient.SqlConnectionStringBuilder(connectionString);
 			s += string.Format("<tr><td class=\"Name\"  valign=\"top\">{0}:</td><td class=\"Value\" valign=\"top\">{1}.{2}</td></tr>", name, cb.DataSource, cb.InitialCatalog);
 #endif
@@ -304,9 +306,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return sb.ToString();
 		}
 
-#endregion
+		#endregion
 
-#region Write Log
+		#region Write Log
 
 		public delegate void WriteLogDelegate(string message, EventLogEntryType type);
 
@@ -380,9 +382,9 @@ namespace JocysCom.ClassLibrary.Runtime
 #if NETSTANDARD
 #elif NETCOREAPP
 #else
-	// If event logging is enabled and important then write event.
-	if (WriteLogEvent != null && type != EventLogEntryType.Information)
-	WriteLogEvent(message, type);
+			// If event logging is enabled and important then write event.
+			if (WriteLogEvent != null && type != EventLogEntryType.Information)
+				WriteLogEvent(message, type);
 #endif
 		}
 
@@ -403,9 +405,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			Current.WriteLog(args != null && args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Information);
 		}
 
-#endregion
+		#endregion
 
-#region Exceptions
+		#region Exceptions
 
 		//public static string ExceptionInfo(Exception ex, string body)
 		//{
@@ -432,9 +434,9 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static object WriteLock = new object();
 
-#endregion
+		#endregion
 
-#region Group Same exceptions
+		#region Group Same exceptions
 
 		static readonly Regex RxBreaks = new Regex("[\r\n]", RegexOptions.Multiline);
 		static readonly Regex RxMultiSpace = new Regex("[ \u00A0]+");
@@ -582,9 +584,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			List<ExceptionGroup> Group;
 		}
 
-#endregion
+		#endregion
 
-#region Convert Exception to HTML String
+		#region Convert Exception to HTML String
 
 		public static string GetSubjectPrefix(Exception ex = null, TraceLevel? type = null)
 		{
@@ -772,10 +774,9 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static bool FillSqlException(ref string s, Exception ex)
 		{
-#if !NET40
-			return false;
-#else
-
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+#else // .NET Framework
 			var ex2 = ex as SqlException;
 			if (ex2 == null)
 				return false;
@@ -795,6 +796,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			return true;
 #endif
+			return false;
 		}
 
 		public bool FillLoaderException(ref string s, Exception ex)
@@ -882,9 +884,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			Add(ex.Data, key, value);
 		}
 
-#endregion
+		#endregion
 
-#region IDisposable
+		#region IDisposable
 
 		// Dispose() calls Dispose(true)
 		public void Dispose()
@@ -907,7 +909,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-#endregion
+		#endregion
 
 	}
 }

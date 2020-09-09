@@ -179,7 +179,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			{
 				s += " - " + Description;
 			}
-#if NET40
+
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+#else // .NET Framework
 
 			// Add elevated tag.
 			var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
@@ -304,7 +307,10 @@ namespace JocysCom.ClassLibrary.Configuration
 					return dt;
 				}
 			}
-#if NET40
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+#else // .NET Framework
+
 			// Constants related to the Windows PE file format.
 			const int PE_HEADER_OFFSET = 60;
 			const int LINKER_TIMESTAMP_OFFSET = 8;

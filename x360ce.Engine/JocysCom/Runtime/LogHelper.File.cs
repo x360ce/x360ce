@@ -57,10 +57,12 @@ namespace JocysCom.ClassLibrary.Runtime
 					// Remove oldest file.
 					files[0].Delete();
 				}
-#if NET40
-				var fileTime = HiResDateTime.Current.Now;
-#else
+#if NETSTANDARD // .NET Standard
 				var fileTime = DateTime.Now;
+#elif NETCOREAPP // .NET Core
+				var fileTime = DateTime.Now;
+#else // .NET Framework
+				var fileTime = HiResDateTime.Current.Now;
 #endif
 				var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}{3}",
 					di.FullName, prefix, fileTime, ext);
