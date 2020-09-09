@@ -1,12 +1,12 @@
 ﻿using System;
+#if NETSTANDARD // If .NET Standard (Xamarin) preprocessor directive is set then...
 using System.Globalization;
 using System.Net;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-#if NETSTANDARD // If .NET Standard (Xamarin) preprocessor directive is set then...
 using Xamarin.Forms;
-#else
+#else // .NET Framework...
 using System.Configuration;
 #endif
 
@@ -62,10 +62,14 @@ namespace JocysCom.ClassLibrary.Configuration
 			return (T)ParseValue(typeof(T), v, defaultValue);
 		}
 
+
 #if NETSTANDARD // If .NET Standard (Xamarin) preprocessor directive is set then...
 
 		string GetValue(string name)
 		{
+			if (_GetValue != null)
+				return _GetValue(ConfigPrefix + name);
+
 			var p = Application.Current.Properties;
 			var key = ConfigPrefix + name;
 			if (!p.Keys.Contains(key))
@@ -106,14 +110,22 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-#else
+#elif NETCOREAPP // if .NET Core preprocessor directive is set then...
+
+
+
+#else // NETFRAMEWORK - .NET Framework...
 
 		private string GetValue(string name)
 		{
+			if (_GetValue != null)
+				return _GetValue(ConfigPrefix + name);
 			return ConfigurationManager.AppSettings[ConfigPrefix + name];
 		}
 
 #endif
+
+		public static Func<string, string> _GetValue;
 
 	}
 }

@@ -13,9 +13,10 @@ namespace JocysCom.ClassLibrary.Mail
 	public class MailHelper
 	{
 
-		#region GetMailAddress - ASP.NET Membership Provider
 
-#if !NETSTANDARD
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+#else // .NET Framework
 
 		public virtual MailAddress[] GetMailAddress(Guid[] userIds)
 		{
@@ -44,6 +45,8 @@ namespace JocysCom.ClassLibrary.Mail
 		}
 
 #endif
+
+		#region GetMailAddress - ASP.NET Membership Provider
 
 		#endregion
 
@@ -102,7 +105,7 @@ namespace JocysCom.ClassLibrary.Mail
 			return message;
 		}
 
-		#region HTML Validation
+#region HTML Validation
 
 		private static readonly Regex _htmlTag = new Regex("</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>");
 
@@ -111,9 +114,9 @@ namespace JocysCom.ClassLibrary.Mail
 			return _htmlTag.IsMatch(s);
 		}
 
-		#endregion
+#endregion
 
-		#region Apply Recipients and Attachments
+#region Apply Recipients and Attachments
 
 		public static void ApplyRecipients(MailMessage mail, string addFrom, string addTo, string addCc = null, string addBcc = null)
 		{
@@ -178,9 +181,9 @@ namespace JocysCom.ClassLibrary.Mail
 				message.Attachments.Add(files[i]);
 		}
 
-		#endregion
+#endregion
 
-		#region Convert Text To HTML
+#region Convert Text To HTML
 
 		/// <summary>
 		/// Create alternative view from HTML.
@@ -279,9 +282,9 @@ namespace JocysCom.ClassLibrary.Mail
 			return result;
 		}
 
-		#endregion
+#endregion
 
-		#region Email Validation
+#region Email Validation
 
 		public static EmailResult EmailValid(string email)
 		{
@@ -369,7 +372,7 @@ namespace JocysCom.ClassLibrary.Mail
 			return result;
 		}
 
-		#endregion
+#endregion
 
 	}
 }

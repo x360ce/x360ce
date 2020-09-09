@@ -89,32 +89,8 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private void ClearErrorsButton_Click(object sender, RoutedEventArgs e)
 		{
-			ErrorsClearing?.Invoke(this, new EventArgs());
-			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
-			var fis = dir.GetFiles("*.htm").OrderByDescending(x => x.CreationTime).ToArray();
-			if (fis.Count() > 0)
-			{
-				var form = new MessageBoxForm();
-				form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-				ControlsHelper.CheckTopMost(form);
-				var result = form.ShowForm("Do you want to clear all errors?", "Clear Errors?", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Error, System.Windows.Forms.MessageBoxDefaultButton.Button2);
-				if (result != System.Windows.Forms.DialogResult.Yes)
-					return;
-
-				foreach (var fi in fis)
-				{
-					try
-					{
-						fi.Delete();
-					}
-					catch (Exception)
-					{
-					}
-				}
-				//RefreshErrorsComboBox();
-			}
+			ClearErrors?.Invoke(this, new EventArgs());
 			var win = (Window)Parent;
-			ErrorsCleared?.Invoke(this, new EventArgs());
 			win.DialogResult = false;
 		}
 
@@ -169,8 +145,7 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		public event EventHandler<EventArgs<List<MailMessage>>> SendMessages;
-		public event EventHandler ErrorsClearing;
-		public event EventHandler ErrorsCleared;
+		public event EventHandler ClearErrors;
 
 	}
 }

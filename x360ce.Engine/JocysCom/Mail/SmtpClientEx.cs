@@ -5,7 +5,9 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Reflection;
-#if !NETSTANDARD
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+#else // .NET Framework
 using System.Net.Configuration;
 using System.Web;
 #endif
@@ -136,10 +138,11 @@ namespace JocysCom.ClassLibrary.Mail
 			//
 			var sp = Configuration.SettingsParser.Current;
 			string settingsFrom = null;
-#if !NETSTANDARD
-			System.Configuration.Configuration config;
-			var settings = GetCurrentSmtpSettings(out config);
-			settingsFrom = settings.From;
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+#else // .NET Framework
+			var x = GetCurrentConfiguration();
+			settingsFrom = getFrom();
 #endif
 			SmtpFrom = sp.Parse("SmtpFrom", settingsFrom);
 			var credentials = (NetworkCredential)Credentials ?? new NetworkCredential();
@@ -179,7 +182,9 @@ namespace JocysCom.ClassLibrary.Mail
 			}
 		}
 
-#if !NETSTANDARD
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+#else // .NET Framework
 
 		/// <summary>Get configuration settings from current web.config or app.config.</summary>
 		static System.Configuration.Configuration GetCurrentConfiguration()
@@ -202,6 +207,13 @@ namespace JocysCom.ClassLibrary.Mail
 			// Get Mail settings.
 			var settings = NetSectionGroup.GetSectionGroup(config).MailSettings;
 			return settings.Smtp;
+		}
+
+		private string getFrom()
+		{
+			System.Configuration.Configuration config;
+			var settings = GetCurrentSmtpSettings(out config);
+			return settings.From;
 		}
 
 #endif

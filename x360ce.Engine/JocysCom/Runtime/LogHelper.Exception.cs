@@ -446,7 +446,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Add extra exception details.
 			var s = "";
 			AddParameters(ref s, ex.Data, TraceFormat.TrailingNewLine);
-#if !NETSTANDARD
+#if NET40
 			// Exception string to add.
 			var ex1 = ex as System.Configuration.ConfigurationErrorsException;
 			if (ex1 != null)

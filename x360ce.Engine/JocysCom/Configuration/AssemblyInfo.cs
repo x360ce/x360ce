@@ -179,7 +179,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			{
 				s += " - " + Description;
 			}
-#if !NETSTANDARD
+#if NET40
 
 			// Add elevated tag.
 			var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
@@ -304,7 +304,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					return dt;
 				}
 			}
-#if !NETSTANDARD
+#if NET40
 			// Constants related to the Windows PE file format.
 			const int PE_HEADER_OFFSET = 60;
 			const int LINKER_TIMESTAMP_OFFSET = 8;

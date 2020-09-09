@@ -30,7 +30,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (forcePreview || sendPreview)
 				preview = GetMailPreview(message, smtp);
 			string fileName;
-			// Send preview if avialable, otherwise send original message.
+			// Send preview if available, otherwise send original message.
 			smtp.SendMessage(preview ?? message, out fileName);
 			// Dispose preview message.
 			if (preview != null)

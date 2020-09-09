@@ -32,6 +32,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			_GroupException(fileExceptions, ex, subject, body, _WriteFile);
 		}
 
+		public string FilePattern
+		{
+			get { return string.Format("FCE_*{0}", WriteAsHtml ? ".htm" : ".txt"); }
+		}
+
 		void _WriteFile(Exception ex, string subject, string body)
 		{
 			// Must wrap into lock so that process won't attempt to delete/write same file twice from different threads.
@@ -52,10 +57,10 @@ namespace JocysCom.ClassLibrary.Runtime
 					// Remove oldest file.
 					files[0].Delete();
 				}
-#if NETSTANDARD
-				var fileTime = DateTime.Now;
-#else
+#if NET40
 				var fileTime = HiResDateTime.Current.Now;
+#else
+				var fileTime = DateTime.Now;
 #endif
 				var fileName = string.Format("{0}\\{1}_{2:yyyyMMdd_HHmmss.ffffff}{3}",
 					di.FullName, prefix, fileTime, ext);

@@ -60,6 +60,7 @@ namespace x360ce.App
 			}
 			return false;
 		}
+		public string AppVersion { get; set; }
 
 		[DefaultValue(false), Description("Allow only one instance of the application to run at a time.")]
 		public bool AllowOnlyOneCopy { get { return _AllowOnlyOneCopy; } set { _AllowOnlyOneCopy = value; OnPropertyChanged(); } }

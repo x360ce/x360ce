@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Mail;
 using JocysCom.ClassLibrary.Runtime;
@@ -15,6 +16,7 @@ using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using System.Windows.Automation.Peers;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.Issues;
@@ -74,10 +76,17 @@ namespace x360ce.App
 			InitiInterfaceUpdate();
 			GamesToolStrip_Resize(null, null);
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
+			// Check if app version changed.
+			var o = SettingsManager.Options;
+			var appVersion = new AssemblyInfo().Version.ToString();
+			AppVersionChanged = o.AppVersion != appVersion;
+			o.AppVersion = appVersion;
 			// Attach property monitoring first.
-			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
+			o.PropertyChanged += Options_PropertyChanged;
 			LoadSettings();
 		}
+
+		bool AppVersionChanged;
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
@@ -212,6 +221,12 @@ namespace x360ce.App
 			// Start Timers.
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
+			// If enabling first time and application version changed then...
+			if (AppVersionChanged)
+			{
+				// Wipe all errors.
+				ClearErrors(true);
+			}
 			MonitorErrors(true);
 		}
 
@@ -1596,28 +1611,19 @@ namespace x360ce.App
 			DHelper.Stop();
 			CloudPanel.EnableDataSource(false);
 			win.ErrorReportPanel.SendMessages += ErrorReportPanel_SendMessages;
-			win.ErrorReportPanel.ErrorsClearing += ErrorReportPanel_ErrorsClearing;
-			win.ErrorReportPanel.ErrorsCleared += ErrorReportPanel_ErrorsCleared;
+			win.ErrorReportPanel.ClearErrors += ErrorReportPanel_ClearErrors;
 			Global.CloudClient.TasksTimer.Queue.ListChanged += Queue_ListChanged;
 			var result = win.ShowDialog();
 			Global.CloudClient.TasksTimer.Queue.ListChanged -= Queue_ListChanged;
 			win.ErrorReportPanel.SendMessages -= ErrorReportPanel_SendMessages;
-			win.ErrorReportPanel.ErrorsClearing -= ErrorReportPanel_ErrorsClearing;
-			win.ErrorReportPanel.ErrorsCleared -= ErrorReportPanel_ErrorsCleared;
+			win.ErrorReportPanel.ClearErrors -= ErrorReportPanel_ClearErrors;
 			CloudPanel.EnableDataSource(true);
 			DHelper.Start();
 		}
 
-		private void ErrorReportPanel_ErrorsClearing(object sender, EventArgs e)
+		private void ErrorReportPanel_ClearErrors(object sender, EventArgs e)
 		{
-			// Disable monitor while deleting files.
-			MonitorErrors(false);
-		}
-
-		private void ErrorReportPanel_ErrorsCleared(object sender, EventArgs e)
-		{
-			// Enable monitor and show stats.
-			MonitorErrors(true);
+			ClearErrors();
 		}
 
 		private void Queue_ListChanged(object sender, ListChangedEventArgs e)
@@ -1652,6 +1658,45 @@ namespace x360ce.App
 		FileSystemWatcher errorsWatcher;
 		object errorsWatcherLock = new object();
 
+		void ClearErrors(bool silent = false)
+		{
+			// Disable monitor while deleting files.
+			MonitorErrors(false);
+			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
+			var fis = dir
+				.GetFiles(LogHelper.Current.FilePattern)
+				.OrderByDescending(x => x.CreationTime).ToArray();
+			if (fis.Count() > 0)
+			{
+				if (!silent)
+				{
+					var form = new MessageBoxForm();
+					form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+					ControlsHelper.CheckTopMost(form);
+					var result = form.ShowForm("Do you want to clear all errors?", "Clear Errors?",
+						System.Windows.Forms.MessageBoxButtons.YesNo,
+						System.Windows.Forms.MessageBoxIcon.Error,
+						System.Windows.Forms.MessageBoxDefaultButton.Button2
+					);
+					if (result != System.Windows.Forms.DialogResult.Yes)
+						return;
+				}
+				foreach (var fi in fis)
+				{
+					try
+					{
+						fi.Delete();
+					}
+					catch (Exception ex)
+					{
+						_ = ex.Message;
+					}
+				}
+			}
+			// Enable monitor and show stats.
+			MonitorErrors(true);
+		}
+
 		void MonitorErrors(bool enable)
 		{
 			lock (errorsWatcherLock)
@@ -1661,7 +1706,7 @@ namespace x360ce.App
 					var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
 					if (!dir.Exists)
 						dir.Create();
-					errorsWatcher = new FileSystemWatcher(dir.FullName, "*.htm");
+					errorsWatcher = new FileSystemWatcher(dir.FullName, LogHelper.Current.FilePattern);
 					errorsWatcher.Deleted += ErrorsWatcher_Changed;
 					errorsWatcher.Created += ErrorsWatcher_Changed;
 					errorsWatcher.EnableRaisingEvents = true;
@@ -1684,7 +1729,7 @@ namespace x360ce.App
 			ControlsHelper.BeginInvoke(new Action(() =>
 			{
 				var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
-				ErrorFilesCount = dir.GetFiles("*.htm").Count();
+				ErrorFilesCount = dir.GetFiles(LogHelper.Current.FilePattern).Count();
 				UpdateStatusErrorsLabel();
 			}));
 		}
@@ -1727,14 +1772,11 @@ namespace x360ce.App
 				}
 				// If another DInput errors
 			}
-
-
 			var fex = e.Exception as FileNotFoundException;
 			// If serializer warning then...
 			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))
 				// Cancel reporting error.
 				e.Cancel = true;
-
 			Control activeControl;
 			string activePath;
 			GetActiveControl(this, out activeControl, out activePath);
