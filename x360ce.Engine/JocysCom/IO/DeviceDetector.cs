@@ -223,9 +223,9 @@ namespace JocysCom.ClassLibrary.IO
 		private static string GetStringPropertyForDevice(IntPtr deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, SPDRP propId, System.Collections.IDictionary exData = null)
 		{
 			// Get buffer size.
-			uint proptype;
-			uint outsize;
-			var result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out proptype, null, 0, out outsize);
+			uint propertyRegDataType;
+			uint requiredSize;
+			var result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out propertyRegDataType, null, 0, out requiredSize);
 			if (!result)
 			{
 				var errorCode = Marshal.GetLastWin32Error();
@@ -233,9 +233,12 @@ namespace JocysCom.ClassLibrary.IO
 					return null;
 				// We can safely ignore other errors when retrieving buffer size.
 			}
-			var buffer = new byte[outsize];
+			// If no description then return;
+			if (requiredSize <= 0)
+				return "";
+			var buffer = new byte[requiredSize];
 			// Get data.
-			result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out proptype, buffer, buffer.Length, out outsize);
+			result = NativeMethods.SetupDiGetDeviceRegistryProperty(deviceInfoSet, ref deviceInfoData, (uint)propId, out propertyRegDataType, buffer, buffer.Length, out requiredSize);
 			if (!result)
 			{
 				var errorCode = Marshal.GetLastWin32Error();
@@ -245,6 +248,8 @@ namespace JocysCom.ClassLibrary.IO
 				var ex = new Exception("Error calling " + nameof(NativeMethods.SetupDiGetDeviceRegistryProperty) + ":" + error.ToString());
 				var prefix = nameof(GetStringPropertyForDevice) + ".";
 				ex.Data.Add(prefix + nameof(propId), propId);
+				ex.Data.Add(prefix + "propertyRegDataType", propertyRegDataType);
+				ex.Data.Add(prefix + "requiredSize", requiredSize);
 				ex.Data.Add(prefix + "deviceInfoData.ClassGuid", deviceInfoData.ClassGuid);
 				if (exData != null)
 					foreach (var key in exData.Keys)
@@ -252,20 +257,20 @@ namespace JocysCom.ClassLibrary.IO
 				throw ex;
 			}
 			var o = "";
-			if (outsize > 0)
+			if (requiredSize > 0)
 			{
-				var type = (REG)proptype;
+				var type = (REG)propertyRegDataType;
 				switch (type)
 				{
 					case REG.REG_SZ:
-						o = Encoding.Unicode.GetString(buffer, 0, (int)outsize - 2);
+						o = Encoding.Unicode.GetString(buffer, 0, (int)requiredSize - 2);
 						break;
 					case REG.REG_MULTI_SZ:
-						o = Encoding.Unicode.GetString(buffer, 0, (int)outsize - 2);
+						o = Encoding.Unicode.GetString(buffer, 0, (int)requiredSize - 2);
 						o = o.Trim('\0').Replace("\0", "\r\n");
 						break;
 					default:
-						o = string.Format("{0} 0x{1}", type, string.Join("", buffer.Take((int)outsize).Select(x => x.ToString("X2"))));
+						o = string.Format("{0} 0x{1}", type, string.Join("", buffer.Take((int)requiredSize).Select(x => x.ToString("X2"))));
 						break;
 				}
 			}

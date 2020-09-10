@@ -207,7 +207,8 @@ namespace x360ce.App.Controls
 
 				SettingsDataGridView.DataSource = SettingsManager.UserSettings.Items;
 				// Resume DInput Service.
-				MainForm.Current.DHelper.Start();
+				if (MainForm.Current.AllowDHelperStart)
+					MainForm.Current.DHelper.Start();
 			}
 			_ParentForm.RemoveTask(TaskName.SearchSettings);
 			SettingsRefreshButton.Enabled = true;

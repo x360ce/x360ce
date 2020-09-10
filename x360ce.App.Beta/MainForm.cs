@@ -604,6 +604,7 @@ namespace x360ce.App
 		public bool update1Enabled = true;
 		public bool? update2Enabled;
 		bool update3Enabled;
+		public bool AllowDHelperStart;
 
 		void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
@@ -629,6 +630,8 @@ namespace x360ce.App
 				{
 					InitProcessMonitor();
 					update3Enabled = false;
+					// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
+					AllowDHelperStart = true;
 					DHelper.Start();
 				}
 			}
@@ -964,7 +967,8 @@ namespace x360ce.App
 
 		private void _ResumeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			DHelper.Start();
+			if (AllowDHelperStart)
+				DHelper.Start();
 		}
 
 		/// <summary>
@@ -1618,7 +1622,8 @@ namespace x360ce.App
 			win.ErrorReportPanel.SendMessages -= ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ClearErrors -= ErrorReportPanel_ClearErrors;
 			CloudPanel.EnableDataSource(true);
-			DHelper.Start();
+			if (AllowDHelperStart)
+				DHelper.Start();
 		}
 
 		private void ErrorReportPanel_ClearErrors(object sender, EventArgs e)

@@ -144,8 +144,8 @@ namespace x360ce.App.Controls
 				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
 				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
 			});
-			Settings_Items_ListChanged(null, null);
-			SettingsManager.UserSettings.Items.ListChanged += Settings_Items_ListChanged;
+			UserSettings_Items_ListChanged(null, null);
+			SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
 		}
 
 		public Recorder _recorder;
@@ -246,9 +246,13 @@ namespace x360ce.App.Controls
 			UpdateGridButtons();
 		}
 
-		private void Settings_Items_ListChanged(object sender, ListChangedEventArgs e)
+		private void UserSettings_Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			ShowHideAndSelectGridRows(null);
+			// Make sure there is no crash when function gets called from another thread.
+			ControlsHelper.Invoke(() =>
+			{
+				ShowHideAndSelectGridRows(null);
+			});
 		}
 
 		object DevicesToMapDataGridViewLock = new object();
@@ -262,7 +266,7 @@ namespace x360ce.App.Controls
 				var grid = MappedDevicesDataGridView;
 				var game = MainForm.Current.CurrentGame;
 				// Get rows which must be displayed on the list.
-				var itemsToShow = SettingsManager.UserSettings.Items
+				var itemsToShow = SettingsManager.UserSettings.ItemsToArraySyncronized()
 					// Filter devices by controller.	
 					.Where(x => x.MapTo == (int)MappedTo)
 					// Filter devices by selected game (no items will be shown if game is not selected).
@@ -290,19 +294,13 @@ namespace x360ce.App.Controls
 					}
 					// Do removal.
 					foreach (var item in itemsToRemove)
-					{
 						mappedItems.Remove(item);
-					}
 					// Do adding.
 					foreach (var item in itemsToInsert)
-					{
 						mappedItems.Add(item);
-					}
 					if (bound)
-					{
 						// Resume CurrencyManager and Layout.
 						cm.ResumeBinding();
-					}
 					grid.ResumeLayout();
 					// Restore selection.
 					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "InstanceGuid", selection);

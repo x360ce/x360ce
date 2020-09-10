@@ -60,7 +60,6 @@ namespace x360ce.App.DInput
 			{
 				devInfos = DeviceDetector.GetDevices();
 				//var classes = devInfos.Select(x=>x.ClassDescription).Distinct().ToArray();
-
 				intInfos = DeviceDetector.GetInterfaces();
 				//var intclasses = intInfos.Select(x => x.ClassDescription).Distinct().ToArray();
 			}
@@ -99,7 +98,7 @@ namespace x360ce.App.DInput
 			for (int i = 0; i < updatedDevices.Length; i++)
 			{
 				var device = updatedDevices[i];
-				var ud = SettingsManager.UserDevices.Items.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
+				var ud = uds.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
 				DeviceInfo hid;
 				// Will refresh device and fill more values with new x360ce app if available.
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
