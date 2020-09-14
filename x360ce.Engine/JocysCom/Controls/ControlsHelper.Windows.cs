@@ -1,8 +1,7 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-
-#if !NETSTANDARD
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -1019,7 +1018,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-#endif
-
 	}
 }
+
+#endif

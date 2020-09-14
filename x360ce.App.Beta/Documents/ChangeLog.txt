@@ -1,3 +1,7 @@
+v4.13.43.0 (2020-09-14)
+- Fixed: Check HID Guardian installation and help to install.
+- Updated: Shared Classes.
+
 v4.13.41.0 (2020-09-10)
 - Fixed: Crash when DirectInput helper starts before full form initialization.
 - Fixed: Crash when UserSettings list updates PAD Grid from another thread.

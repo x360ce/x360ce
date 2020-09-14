@@ -21,6 +21,8 @@ namespace JocysCom.ClassLibrary.Drawing
 			return b;
 		}
 
+#if NETFRAMEWORK
+
 		/// <summary>
 		/// Take screenshot.
 		/// </summary>
@@ -39,6 +41,9 @@ namespace JocysCom.ClassLibrary.Drawing
 			var sh = s.Bounds.Height;
 			CaptureImage(ref b, 0, 0, sw, sh);
 		}
+
+#endif
+
 		public static void CaptureImage(ref Bitmap b, int x, int y, int w, int h)
 		{
 			var format = System.Drawing.Imaging.PixelFormat.Format24bppRgb;

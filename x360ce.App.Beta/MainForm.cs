@@ -1025,7 +1025,8 @@ namespace x360ce.App
 					new CppX64RuntimeInstallIssue(),
 					new HotfixIssue(),
 					new XboxDriversIssue(),
-					new VirtualDeviceDriverIssue()
+					new VirtualDeviceDriverIssue(),
+					new HidGuardianDriverIssue()
 				);
 				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
 				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;

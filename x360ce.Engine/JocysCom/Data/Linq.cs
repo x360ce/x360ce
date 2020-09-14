@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.Linq;
@@ -272,3 +273,4 @@ namespace JocysCom.ClassLibrary.Data
 
 	}
 }
+#endif

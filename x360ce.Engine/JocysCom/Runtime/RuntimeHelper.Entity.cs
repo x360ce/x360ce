@@ -1,7 +1,13 @@
-﻿using System;
+﻿#if NETCOREAPP
+using Microsoft.EntityFrameworkCore;
+#elif NETSTANDARD
+using Microsoft.EntityFrameworkCore;
+#elif NETFRAMEWORK
+using System.Data.Objects.DataClasses;
+#endif
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Objects.DataClasses;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -34,6 +40,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					var items = t.GetProperties(DefaultBindingFlags | BindingFlags.DeclaredOnly)
 						.Where(p => p.CanRead && p.CanWrite)
 						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)));
+#if NETFRAMEWORK
 					if (skipKey)
 					{
 						var keys = items
@@ -41,6 +48,7 @@ namespace JocysCom.ClassLibrary.Runtime
 							.Where(p => ((EdmScalarPropertyAttribute)Attribute.GetCustomAttribute(p, typeof(EdmScalarPropertyAttribute))).EntityKeyProperty);
 						items = items.Except(keys);
 					}
+#endif
 					ps = items
 						// Order properties by name so list will change less with the code changed (important for checksums)
 						.OrderBy(x => x.Name)
@@ -50,6 +58,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			return ps;
 		}
+
 
 		/// <summary>
 		/// Copy properties with [DataMemberAttribute].
@@ -114,12 +123,15 @@ namespace JocysCom.ClassLibrary.Runtime
 			state.ValueType = type;
 			state.oldValue = oldValue;
 			state.newValue = newValue;
-			state.State = System.Data.EntityState.Unchanged;
-			if (oldValue != newValue) state.State = System.Data.EntityState.Modified;
+			state.State = EntityState.Unchanged;
+			if (oldValue != newValue)
+				state.State = EntityState.Modified;
 			var oldIsEmpty = oldValue == null || oldValue == Activator.CreateInstance(type);
 			var newIsEmpty = newValue == null || newValue == Activator.CreateInstance(type);
-			if (oldIsEmpty && !newIsEmpty) state.State = System.Data.EntityState.Added;
-			if (newIsEmpty && !oldIsEmpty) state.State = System.Data.EntityState.Deleted;
+			if (oldIsEmpty && !newIsEmpty)
+				state.State = EntityState.Added;
+			if (newIsEmpty && !oldIsEmpty)
+				state.State = EntityState.Deleted;
 			return state;
 		}
 
@@ -129,14 +141,16 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="item1"></param>
 		/// <param name="item2"></param>
 		/// <returns></returns>
-		public static System.Data.EntityState GetClassChangeState(object item1, object item2)
+		public static EntityState GetClassChangeState(object item1, object item2)
 		{
 			var list = CompareProperties(item1, item2);
 			var state = EntityState.Unchanged;
 			var states = list.Select(x => x.State).Distinct().ToList();
 			states.Remove(EntityState.Unchanged);
-			if (states.Count == 0) return state;
-			if (states.Count == 1) return states[0];
+			if (states.Count == 0)
+				return state;
+			if (states.Count == 1)
+				return states[0];
 			return EntityState.Modified;
 		}
 

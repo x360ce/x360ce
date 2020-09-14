@@ -404,6 +404,7 @@
     <Compile Include="Issues\CppX86RuntimeInstallIssue.cs" />
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\HotfixIssue.cs" />
+    <Compile Include="Issues\HidGuardianDriverIssue.cs" />
     <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
     <Compile Include="Issues\XboxDriversIssue.cs" />
     <Compile Include="MainForm.Tray.cs">

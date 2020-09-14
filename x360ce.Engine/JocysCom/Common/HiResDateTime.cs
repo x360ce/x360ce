@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+using System;
 using System.Diagnostics;
 
 namespace JocysCom.ClassLibrary
@@ -114,3 +115,4 @@ namespace JocysCom.ClassLibrary
 
 	}
 }
+#endif

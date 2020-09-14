@@ -196,6 +196,8 @@ namespace JocysCom.ClassLibrary.Text
 			return s;
 		}
 
+#if NETFRAMEWORK
+
 		/// <summary>
 		/// Convert string value to an escaped C# string literal.
 		/// </summary>
@@ -218,7 +220,9 @@ namespace JocysCom.ClassLibrary.Text
 			}
 		}
 
-		#region Word Wrap
+#endif
+
+#region Word Wrap
 
 		// http://www.codeproject.com/Articles/51488/Implementing-Word-Wrap-in-C
 
@@ -300,7 +304,7 @@ namespace JocysCom.ClassLibrary.Text
 			return i + 1;
 		}
 
-		#endregion
+#endregion
 
 		public static string IdentText(int tabs, string s, char ident = '\t')
 		{

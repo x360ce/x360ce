@@ -775,7 +775,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static bool FillSqlException(ref string s, Exception ex)
 		{
 #if NETSTANDARD // .NET Standard
+			return false;
 #elif NETCOREAPP // .NET Core
+			return false;
 #else // .NET Framework
 			var ex2 = ex as SqlException;
 			if (ex2 == null)
@@ -796,7 +798,6 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			return true;
 #endif
-			return false;
 		}
 
 		public bool FillLoaderException(ref string s, Exception ex)

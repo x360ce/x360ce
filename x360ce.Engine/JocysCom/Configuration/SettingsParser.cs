@@ -1,13 +1,17 @@
 ﻿using System;
-#if NETSTANDARD // If .NET Standard (Xamarin) preprocessor directive is set then...
+#if NETCOREAPP // .NET Core
+using Microsoft.Extensions.Configuration;
+#elif NETSTANDARD // .NET Standard
 using System.Globalization;
 using System.Net;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-using Xamarin.Forms;
-#else // .NET Framework...
+#elif NETFRAMEWORK // .NET Framework...
 using System.Configuration;
+#endif
+#if __MOBILE__
+	using Xamarin.Forms;
 #endif
 
 namespace JocysCom.ClassLibrary.Configuration
@@ -62,6 +66,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			return (T)ParseValue(typeof(T), v, defaultValue);
 		}
 
+		public static Func<string, string> _GetValue;
 
 #if NETSTANDARD // If .NET Standard (Xamarin) preprocessor directive is set then...
 
@@ -69,6 +74,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			if (_GetValue != null)
 				return _GetValue(ConfigPrefix + name);
+#if __MOBILE__
 
 			var p = Application.Current.Properties;
 			var key = ConfigPrefix + name;
@@ -81,7 +87,12 @@ namespace JocysCom.ClassLibrary.Configuration
 				return null;
 			}
 			return (string)p[key];
+#else
+			return null;
+#endif
 		}
+
+#if __MOBILE__
 
 		public static Dictionary<string, string> EmbeddedAppSettings;
 
@@ -110,22 +121,52 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
+#endif
+
 #elif NETCOREAPP // if .NET Core preprocessor directive is set then...
 
+		/*
+			// Call InitializeParser to initialize parser in .NET Core.
+			public class Startup
+			{
+				public Startup(IConfiguration configuration)
+				{
+					Configuration = configuration;
+					JocysCom.ClassLibrary.Configuration.SettingsParser.InitializeParser(Configuration);
+				}
+			}
+		*/
+
+		static IConfiguration Configuration { get; set; }
+
+		/// <summary>
+		/// Use this method to initialize configuration in .NET core.
+		/// </summary>
+		/// <param name="configuration"></param>
+		public static void InitializeParser(IConfiguration configuration)
+		{
+			Configuration = configuration;
+			// Override GetValue function.
+			_GetValue = (string name) =>
+				Configuration.GetValue<string>(name);
+		}
+
+		private string GetValue(string name)
+		{
+			return _GetValue(ConfigPrefix + name);
+		}
 
 
 #else // NETFRAMEWORK - .NET Framework...
 
 		private string GetValue(string name)
-		{
-			if (_GetValue != null)
-				return _GetValue(ConfigPrefix + name);
-			return ConfigurationManager.AppSettings[ConfigPrefix + name];
-		}
+{
+	if (_GetValue != null)
+		return _GetValue(ConfigPrefix + name);
+	return ConfigurationManager.AppSettings[ConfigPrefix + name];
+}
 
 #endif
-
-		public static Func<string, string> _GetValue;
 
 	}
 }

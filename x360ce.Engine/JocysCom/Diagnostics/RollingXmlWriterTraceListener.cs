@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -124,7 +125,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 				: defaultValue;
 		}
 
-		#region Clean-Up
+#region Clean-Up
 
 		/// <summary>
 		/// Wipe old files.
@@ -177,9 +178,9 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			return deleted;
 		}
 
-		#endregion
+#endregion
 
-		#region Public override methods
+#region Public override methods
 
 		public override void Fail(string message)
 		{
@@ -277,7 +278,8 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			base.WriteLine(message, category);
 		}
 
-		#endregion
+#endregion
 
 	}
 }
+#endif

@@ -90,7 +90,7 @@ namespace JocysCom.ClassLibrary.IO
 			}
 			catch (Exception ex)
 			{
-				_ = ex.ToString();
+				var _ = ex.ToString();
 			}
 			try
 			{
@@ -113,7 +113,7 @@ namespace JocysCom.ClassLibrary.IO
 			}
 			catch (Exception ex)
 			{
-				_ = ex.ToString();
+				var _ = ex.ToString();
 			}
 
 		}

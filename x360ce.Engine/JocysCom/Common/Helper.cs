@@ -165,7 +165,9 @@ namespace JocysCom.ClassLibrary
 
 		#endregion
 
-		#region Disk Activity
+#if NETFRAMEWORK
+
+#region Disk Activity
 
 		// Sometimes it is good to pause if there is too much disk activity.
 		// By letting windows/SQL to commit all changes to disk we can improve speed.
@@ -195,9 +197,11 @@ namespace JocysCom.ClassLibrary
 					0;
 		}
 
-		#endregion
+#endregion
 
-		#region Comparisons
+#endif
+
+#region Comparisons
 
 		private static Regex _GuidRegex;
 		public static Regex GuidRegex
@@ -223,9 +227,9 @@ namespace JocysCom.ClassLibrary
 				: GuidRegex.IsMatch(s);
 		}
 
-		#endregion
+#endregion
 
-		#region IDisposable
+#region IDisposable
 
 		// Dispose() calls Dispose(true)
 		public void Dispose()
@@ -239,6 +243,8 @@ namespace JocysCom.ClassLibrary
 		{
 			if (disposing)
 			{
+
+#if NETFRAMEWORK
 				// Free managed resources.
 				if (_diskReadCounter != null)
 				{
@@ -250,10 +256,11 @@ namespace JocysCom.ClassLibrary
 					_diskWriteCounter.Dispose();
 					_diskWriteCounter = null;
 				}
+#endif
 			}
 		}
 
-		#endregion
+#endregion
 
 	}
 

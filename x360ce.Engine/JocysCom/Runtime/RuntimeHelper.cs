@@ -335,7 +335,8 @@ namespace JocysCom.ClassLibrary.Runtime
 					foreach (var p in props)
 					{
 						var value = p.GetValue(o);
-						writer.Write((dynamic)value);
+						dynamic dv = (dynamic)value;
+						var _ = writer.Write(dv);
 					}
 					ms.Flush();
 					ms.Seek(0, SeekOrigin.Begin);

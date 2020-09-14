@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Configuration;
+﻿#if NETFRAMEWORK
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Runtime;
 using mshtml;
 using System;
@@ -149,3 +150,4 @@ namespace JocysCom.ClassLibrary.Controls
 
 	}
 }
+#endif

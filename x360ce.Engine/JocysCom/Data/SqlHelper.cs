@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
-using System.Data.Common;
 // Requires "System.Data.SqlClient" NuGet Package on .NET Core/Standard
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Data
 {
@@ -31,6 +29,12 @@ namespace JocysCom.ClassLibrary.Data
 				}
 			}
 		}
+
+#if NETSTANDARD // .NET Standard
+	public int SetSessionUserCommentContext(IDbConnection connection, string comment = null) { return 0; }
+#elif NETCOREAPP // .NET Core
+		public int SetSessionUserCommentContext(IDbConnection connection, string comment = null) { return 0; }
+#else // .NET Framework
 
 		#region CONTEXT_INFO Property - Session Parameters / SetContext
 
@@ -151,6 +155,8 @@ namespace JocysCom.ClassLibrary.Data
 
 		#endregion
 
+#endif
+
 		#region SESSION_CONTEXT Property (SQL Server 2016)
 
 		/*
@@ -217,6 +223,10 @@ namespace JocysCom.ClassLibrary.Data
 		public static string GetProviderConnectionString(string connectionString, out bool isEntity)
 		{
 			isEntity = false;
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+			// EF Core does not support EF specific connection strings (metadata=res:... < this kind of connection strings).
+#else // .NET Framework
 			if (string.Compare(connectionString, "metadata=", true) == 0)
 			{
 				// Get connection string from entity connection string.
@@ -224,6 +234,7 @@ namespace JocysCom.ClassLibrary.Data
 				connectionString = ecsb.ProviderConnectionString;
 				isEntity = true;
 			}
+#endif
 			var builder = new SqlConnectionStringBuilder(connectionString);
 			if (!builder.ContainsKey("Application Name") || ".Net SqlClient Data Provider".Equals(builder["Application Name"]))
 			{
@@ -253,6 +264,10 @@ namespace JocysCom.ClassLibrary.Data
 			if (cs == null)
 				return null;
 			var connectionString = cs.ConnectionString;
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+			// EF Core does not support EF specific connection strings (metadata=res:... < this kind of connection strings).
+#else // .NET Framework
 			if (string.Compare(cs.ProviderName, "System.Data.EntityClient", true) == 0)
 			{
 				// Get connection string from entity connection string.
@@ -260,6 +275,7 @@ namespace JocysCom.ClassLibrary.Data
 				connectionString = ecsb.ProviderConnectionString;
 				isEntity = true;
 			}
+#endif
 			var builder = new SqlConnectionStringBuilder(connectionString);
 			if (!builder.ContainsKey("Application Name") || ".Net SqlClient Data Provider".Equals(builder["Application Name"]))
 			{

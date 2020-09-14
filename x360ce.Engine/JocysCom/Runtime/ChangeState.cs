@@ -1,4 +1,9 @@
-﻿using System;
+﻿#if NETCOREAPP
+using Microsoft.EntityFrameworkCore;
+#elif NETSTANDARD
+using Microsoft.EntityFrameworkCore;
+#endif
+using System;
 using System.Data;
 using System.Linq;
 
