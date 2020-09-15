@@ -21,6 +21,7 @@ using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.Issues;
 using x360ce.App.Properties;
+using x360ce.App.ViGEm;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -302,6 +303,10 @@ namespace x360ce.App
 				// Update Timer will be started inside Settings timer.
 				UpdateTimer.Stop();
 				SettingsTimer.Stop();
+
+				// Synchromize settings to HID Guardian.
+				//AppHelper.SynchronizeToHidGuardian();
+
 				SettingsTimer.Start();
 			}
 		}

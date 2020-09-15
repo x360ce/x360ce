@@ -319,5 +319,57 @@ namespace x360ce.App
 			}
 		}
 
+		#region HID Guardian
+
+		public static bool SynchronizeToHidGuardian()
+		{
+			// Get all devices which must be hidden.
+			var devices = SettingsManager.UserDevices.Items.Where(x => x.IsHidden).ToList();
+			// Get all Ids.
+			var ids = new List<string>();
+			foreach (var ud in devices)
+			{
+				var idsToBlock = GetIdsToBlock(ud.HidDeviceId, ud.HidHardwareIds);
+				ids.AddRange(idsToBlock);
+				//var parentDeviceId = ud.DevParentDeviceId;
+				// If parent device ID is known then...
+				//if (!string.IsNullOrEmpty(parentDeviceId))
+				//	ids.Add(parentDeviceId);
+			}
+			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
+			if (canModify)
+			{
+				var idsToBlock = ids.Distinct().ToArray();
+				ViGEm.HidGuardianHelper.InsertToAffected(idsToBlock);
+			}
+			return canModify;
+		}
+
+		/// <summary>
+		/// Get all IDs required for HID guardian to block device.
+		/// </summary>
+		/// <param name="ud"></param>
+		/// <returns></returns>
+		public static string[] GetIdsToBlock(string hidDeviceId, string hidHardwareIds)
+		{
+			var list = new List<string>();
+			var ids = ViGEm.HidGuardianHelper.ConvertToHidVidPid(hidDeviceId);
+			if (ids.Length == 0)
+				return list.ToArray();
+			// If no hardware ids then return;
+			if (string.IsNullOrEmpty(hidHardwareIds))
+				return list.ToArray();
+			// Extract all IDs which starts from VID and PID.
+			var hwids = hidHardwareIds
+				.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+				.Where(x => x.StartsWith(ids[0], StringComparison.OrdinalIgnoreCase))
+				.ToArray();
+			// Add results to the list.
+			list.AddRange(hwids);
+			return list.ToArray();
+		}
+
+		#endregion
+
 	}
 }

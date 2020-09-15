@@ -273,7 +273,7 @@
 			// 
 			this.DeviceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.DeviceIdColumn.DataPropertyName = "HidDeviceId";
-			this.DeviceIdColumn.HeaderText = "HID Device ID";
+			this.DeviceIdColumn.HeaderText = "HID Device ID (HID Guardian)";
 			this.DeviceIdColumn.Name = "DeviceIdColumn";
 			this.DeviceIdColumn.ReadOnly = true;
 			// 

@@ -123,6 +123,19 @@ namespace x360ce.App
 				);
 		}
 
+		public static UserDevice[] GetMappedDevices()
+		{
+			// Get all mapped user instances.
+			var instanceGuids = UserSettings.ItemsToArraySyncronized()
+				.Where(x => x.MapTo > (int)MapTo.None)
+				.Select(x => x.InstanceGuid).ToArray();
+			// Get all connected devices.
+			var userDevices = UserDevices.ItemsToArraySyncronized()
+					.Where(x => instanceGuids.Contains(x.InstanceGuid) && x.IsOnline)
+					.ToArray();
+			return userDevices;
+		}
+
 		/// <summary>
 		/// Get settings by file name and optionally filter by mapped to XInput controller.
 		/// </summary>

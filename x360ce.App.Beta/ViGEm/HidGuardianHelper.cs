@@ -1,12 +1,9 @@
 ﻿using Microsoft.Win32;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using JocysCom.ClassLibrary.IO;
-using x360ce.App.DInput;
 
 namespace x360ce.App.ViGEm
 {
