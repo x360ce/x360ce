@@ -193,7 +193,7 @@ namespace x360ce.App.Controls
 				var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
 				if (canModify)
 				{
-					var ids = AppHelper.GetIdsToBlock(ud.HidDeviceId, ud.HidHardwareIds);
+					var ids = AppHelper.GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
 					var parentDeviceId = ud.DevParentDeviceId;
 					// If parent device ID is known then...
 					//if (!string.IsNullOrEmpty(parentDeviceId))
@@ -246,10 +246,7 @@ namespace x360ce.App.Controls
 
 		private void UnhideAllDevicesMenuItem_Click(object sender, EventArgs e)
 		{
-			ViGEm.HidGuardianHelper.ClearAffected();
-			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized();
-			for (int i = 0; i < devices.Length; i++)
-				devices[i].IsHidden = false;
+			AppHelper.UnhideAllDevices();
 		}
 
 		private void synchronizeToHidGuardianToolStripMenuItem_Click(object sender, EventArgs e)

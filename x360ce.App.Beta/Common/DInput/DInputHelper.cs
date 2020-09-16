@@ -169,7 +169,7 @@ namespace x360ce.App.DInput
 		{
 			lock (DiUpdatesLock)
 			{
-				var game = MainForm.Current.CurrentGame;
+				var game = SettingsManager.CurrentGame;
 				// If game is not selected.
 				if (game != null)
 				{

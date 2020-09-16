@@ -321,16 +321,69 @@ namespace x360ce.App
 
 		#region HID Guardian
 
-		public static bool SynchronizeToHidGuardian()
+		public static void InitializeHidGuardian()
 		{
-			// Get all devices which must be hidden.
-			var devices = SettingsManager.UserDevices.Items.Where(x => x.IsHidden).ToList();
+			// If can't fix and modify registry then return.
+			if (!ViGEm.HidGuardianHelper.CanModifyParameters(true))
+				return;
+			ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
+			ViGEm.HidGuardianHelper.ClearWhiteList(true, true);
+		}
+
+		public static void UnInitializeHidGuardian()
+		{
+			// If can't modify registry then return.
+			if (!ViGEm.HidGuardianHelper.CanModifyParameters())
+				return;
+			UnhideAllDevices();
+			ViGEm.HidGuardianHelper.RemoveCurrentProcessFromWhiteList();
+		}
+
+		/// <summary>
+		/// Must be executed before program close.
+		/// </summary>
+		/// <returns></returns>
+		public static bool UnhideAllDevices()
+		{
+			// Clear list of hidden devices.
+			ViGEm.HidGuardianHelper.ClearAffected();
+			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized();
+			// Unhide all devices.
+			for (int i = 0; i < devices.Length; i++)
+				devices[i].IsHidden = false;
+			return true;
+		}
+
+		public static bool SynchronizeToHidGuardian(params Guid[] instanceGuids)
+		{
+			var game = SettingsManager.CurrentGame;
+			// Affected devices.
+			UserDevice[] devices;
+			lock (SettingsManager.UserDevices.SyncRoot)
+			{
+				devices = instanceGuids == null
+					? SettingsManager.UserDevices.Items.ToArray()
+					: SettingsManager.UserDevices.Items.Where(x => instanceGuids.Contains(x.InstanceGuid)).ToArray();
+			}
 			// Get all Ids.
-			var ids = new List<string>();
+			var idsToHide = new List<string>();
+			var idsToShow = new List<string>();
 			foreach (var ud in devices)
 			{
-				var idsToBlock = GetIdsToBlock(ud.HidDeviceId, ud.HidHardwareIds);
-				ids.AddRange(idsToBlock);
+				var isKeyboardOrMouse =
+					ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse ||
+					ud.CapType == (int)SharpDX.DirectInput.DeviceType.Keyboard;
+				var idsToAffect = GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
+				if (ud.IsHidden)
+				{
+					// Don't hide Keyboards and mice.
+					if (!isKeyboardOrMouse)
+						idsToHide.AddRange(idsToAffect);
+				}
+				else
+				{
+					idsToShow.AddRange(idsToAffect);
+				}
 				//var parentDeviceId = ud.DevParentDeviceId;
 				// If parent device ID is known then...
 				//if (!string.IsNullOrEmpty(parentDeviceId))
@@ -339,8 +392,10 @@ namespace x360ce.App
 			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
 			if (canModify)
 			{
-				var idsToBlock = ids.Distinct().ToArray();
-				ViGEm.HidGuardianHelper.InsertToAffected(idsToBlock);
+				var idsToHide2 = idsToHide.Distinct().ToArray();
+				var idsToShow2 = idsToShow.Distinct().ToArray();
+				ViGEm.HidGuardianHelper.RemoveFromAffected(idsToShow2);
+				ViGEm.HidGuardianHelper.InsertToAffected(idsToHide2);
 			}
 			return canModify;
 		}
@@ -350,7 +405,7 @@ namespace x360ce.App
 		/// </summary>
 		/// <param name="ud"></param>
 		/// <returns></returns>
-		public static string[] GetIdsToBlock(string hidDeviceId, string hidHardwareIds)
+		public static string[] GetIdsToAffect(string hidDeviceId, string hidHardwareIds)
 		{
 			var list = new List<string>();
 			var ids = ViGEm.HidGuardianHelper.ConvertToHidVidPid(hidDeviceId);

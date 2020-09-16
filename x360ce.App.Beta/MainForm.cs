@@ -173,11 +173,7 @@ namespace x360ce.App
 		{
 			if (IsDesignMode)
 				return;
-			if (ViGEm.HidGuardianHelper.CanModifyParameters(true))
-			{
-				ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
-				ViGEm.HidGuardianHelper.ClearWhiteList(true, true);
-			}
+			AppHelper.InitializeHidGuardian();
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
 			// Initialize Debug panel.
 			DebugPanel = new Forms.DebugForm();
@@ -595,8 +591,7 @@ namespace x360ce.App
 				tmp.Delete();
 			}
 			SaveAll();
-			if (ViGEm.HidGuardianHelper.CanModifyParameters())
-				ViGEm.HidGuardianHelper.RemoveCurrentProcessFromWhiteList();
+			AppHelper.UnInitializeHidGuardian();
 		}
 
 		#region Timer
@@ -766,7 +761,7 @@ namespace x360ce.App
 		/// </summary>
 		void UpdateForm3()
 		{
-			var game = CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			var currentFile = (game == null) ? null : game.FileName;
 			// Allow if not testing or testing with option enabled.
 			var o = SettingsManager.Options;
@@ -1213,9 +1208,6 @@ namespace x360ce.App
 
 		#region Current Game
 
-		public UserGame CurrentGame;
-		public object CurrentGameLock = new object();
-
 		public void SelectCurrentOrDefaultGame(UserGame game = null)
 		{
 			// Get current if not found.
@@ -1252,24 +1244,19 @@ namespace x360ce.App
 
 		private void UpdateCurrentGame(UserGame game)
 		{
-			lock (CurrentGameLock)
+			lock (SettingsManager.CurrentGameLock)
 			{
 				// If nothing changed then...
-				if (Equals(game, CurrentGame))
-				{
+				if (Equals(game, SettingsManager.CurrentGame))
 					return;
-				}
-				if (CurrentGame != null)
-				{
-					// Detach event from old game.
-					CurrentGame.PropertyChanged -= CurrentGame_PropertyChanged;
-				}
+				// Detach event from old game.
+				if (SettingsManager.CurrentGame != null)
+					SettingsManager.CurrentGame.PropertyChanged -= CurrentGame_PropertyChanged;
+				// Attach event to new game.
 				if (game != null)
-				{
-					// Attach event to new game.
 					game.PropertyChanged += CurrentGame_PropertyChanged;
-				}
-				CurrentGame = game;
+				// Assing new game.
+				SettingsManager.CurrentGame = game;
 				DHelper.SettingsChanged = true;
 				// If pad controls not initializes yet then return.
 				if (PadControls == null)
@@ -1288,7 +1275,7 @@ namespace x360ce.App
 			// If pad controls not initializes yet then return.
 			if (PadControls == null)
 				return;
-			var game = CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				return;
 			// Update PAD Control.
@@ -1580,7 +1567,7 @@ namespace x360ce.App
 
 		public void ChangeCurrentGameEmulationType(EmulationType type)
 		{
-			var game = CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				return;
 			game.EmulationType = (int)type;

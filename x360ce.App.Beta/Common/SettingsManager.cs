@@ -29,6 +29,9 @@ namespace x360ce.App
 		//  [PadSetting] ←  [Setting] → [Games] → (export) → [Programs]
 		//
 
+		public static UserGame CurrentGame;
+		public static object CurrentGameLock = new object();
+
 		static object OptionsLock = new object();
 
 		/// <summary>x360ce Options</summary>
@@ -123,28 +126,41 @@ namespace x360ce.App
 				);
 		}
 
-		public static UserDevice[] GetMappedDevices()
+		public static UserDevice[] GetMappedDevices(string fileName, bool includeOffline = false)
 		{
 			// Get all mapped user instances.
 			var instanceGuids = UserSettings.ItemsToArraySyncronized()
+				// Filter by game.
+				.Where(x => string.Compare(x.FileName, fileName, true) == 0)
+				// Include only mapped devices.
 				.Where(x => x.MapTo > (int)MapTo.None)
-				.Select(x => x.InstanceGuid).ToArray();
+				// Select device instances only.
+				.Select(x => x.InstanceGuid)
+				.ToArray();
 			// Get all connected devices.
 			var userDevices = UserDevices.ItemsToArraySyncronized()
-					.Where(x => instanceGuids.Contains(x.InstanceGuid) && x.IsOnline)
-					.ToArray();
+				// Filter by instance.
+				.Where(x => instanceGuids.Contains(x.InstanceGuid))
+				// Include only currently connected devices.
+				.Where(x => includeOffline || x.IsOnline)
+				.ToArray();
 			return userDevices;
 		}
 
 		/// <summary>
 		/// Get settings by file name and optionally filter by mapped to XInput controller.
 		/// </summary>
-		public static List<Engine.Data.UserSetting> GetSettings(string fileName, MapTo? mapTo = null)
+		public static List<UserSetting> GetSettings(string fileName, MapTo? mapTo = null)
 		{
 			lock (UserSettings.SyncRoot)
-				return UserSettings.Items.Where(x =>
-				string.Compare(x.FileName, fileName, true) == 0 && (!mapTo.HasValue || x.MapTo == (int)mapTo.Value)
-			).ToList();
+			{
+				return UserSettings.Items
+					// Filter by game.
+					.Where(x => string.Compare(x.FileName, fileName, true) == 0)
+					// Filter by map.
+					.Where(x => !mapTo.HasValue || x.MapTo == (int)mapTo.Value)
+					.ToList();
+			}
 		}
 
 		public static UserDevice GetDevice(Guid instanceGuid)
@@ -992,5 +1008,76 @@ namespace x360ce.App
 				}
 			}
 		}
+
+		public static void MapGamePadDevices(UserGame game, MapTo mappedTo, params UserDevice[] devices)
+		{
+			foreach (var ud in devices)
+			{
+				// Try to get existing setting by instance guid and file name.
+				var setting = GetSetting(ud.InstanceGuid, game.FileName);
+				// If device setting for the game was not found then.
+				if (setting == null)
+				{
+					// Create new setting.
+					setting = AppHelper.GetNewSetting(ud, game, mappedTo);
+					// Get auto-configured pad setting.
+					var ps = AutoMapHelper.GetAutoPreset(ud);
+					Current.LoadPadSettingAndCleanup(setting, ps, true);
+					Current.SyncFormFromPadSetting(mappedTo, ps);
+					// Refresh online status
+					RefreshDeviceIsOnlineValueOnSettings(setting);
+					// Load created setting.
+					//SettingsManager.Current.LoadPadSettings(MappedTo, ps);
+				}
+				else
+				{
+					// Enable if not enabled.
+					if (!setting.IsEnabled)
+						setting.IsEnabled = true;
+					// Map setting to current pad.
+					setting.MapTo = (int)mappedTo;
+				}
+			}
+			var instanceGuids = devices.Select(x => x.InstanceGuid).ToArray();
+			var changed = AutoHideShowMappedDevices(game, instanceGuids);
+			if (changed)
+				AppHelper.SynchronizeToHidGuardian(instanceGuids);
+		}
+
+		/// <summary>
+		/// Hide devices if they are mapped to the game, unhide devices if they are not mapped.
+		/// </summary>
+		/// <returns>True if device hide/show state changed.</returns>
+		public static bool AutoHideShowMappedDevices(UserGame game, params Guid[] instanceGuids)
+		{
+			var changed = false;
+			// Get affected devices.
+			UserDevice[] devices;
+			lock (UserDevices.SyncRoot)
+				devices = UserDevices.Items.Where(x => instanceGuids.Contains(x.InstanceGuid)).ToArray();
+			// Get devices instances mapped to the game.
+			var mappedInstanceGuids = GetMappedDevices(game?.FileName, true)
+				.Select(x => x.InstanceGuid).ToArray();
+			for (int i = 0; i < devices.Length; i++)
+			{
+				var ud = devices[i];
+				var isKeyboardOrMouse =
+					ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse ||
+					ud.CapType == (int)SharpDX.DirectInput.DeviceType.Keyboard;
+				// Skip Keyboards and mice.
+				if (isKeyboardOrMouse)
+					continue;
+				// Mapped devices must be hidden.
+				var isHidden = mappedInstanceGuids.Contains(ud.InstanceGuid);
+				// If value is different then change.
+				if (ud.IsHidden != isHidden)
+				{
+					ud.IsHidden = isHidden;
+					changed = true;
+				}
+			}
+			return changed;
+		}
+
 	}
 }

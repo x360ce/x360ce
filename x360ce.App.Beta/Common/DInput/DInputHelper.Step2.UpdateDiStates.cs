@@ -16,7 +16,7 @@ namespace x360ce.App.DInput
 		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector)
 		{
 			// Get all mapped user devices.
-			var userDevices = SettingsManager.GetMappedDevices();
+			var userDevices = SettingsManager.GetMappedDevices(game?.FileName);
 			// Acquire copy of feedbacks for processing.
 			var feedbacks = CopyAndClearFeedbacks();
 

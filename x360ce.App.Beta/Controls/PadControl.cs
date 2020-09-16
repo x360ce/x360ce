@@ -209,7 +209,7 @@ namespace x360ce.App.Controls
 
 		public void UpdateFromCurrentGame()
 		{
-			var game = MainForm.Current.CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			var flag = AppHelper.GetMapFlag(MappedTo);
 			// Update Virtual.
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
@@ -264,7 +264,7 @@ namespace x360ce.App.Controls
 			lock (DevicesToMapDataGridViewLock)
 			{
 				var grid = MappedDevicesDataGridView;
-				var game = MainForm.Current.CurrentGame;
+				var game = SettingsManager.CurrentGame;
 				// Get rows which must be displayed on the list.
 				var itemsToShow = SettingsManager.UserSettings.ItemsToArraySyncronized()
 					// Filter devices by controller.	
@@ -1198,7 +1198,7 @@ namespace x360ce.App.Controls
 		void SendVibration()
 		{
 			var index = (int)MappedTo - 1;
-			var game = MainForm.Current.CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 			if (isVirtual)
 			{
@@ -1369,7 +1369,7 @@ namespace x360ce.App.Controls
 
 		private void AddMapButton_Click(object sender, EventArgs e)
 		{
-			var game = MainForm.Current.CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			// Return if game is not selected.
 			if (game == null)
 				return;
@@ -1380,36 +1380,9 @@ namespace x360ce.App.Controls
 				return;
 			// Check if device already have old settings before adding new ones.
 			var noOldSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count == 0;
-			// Loop trough selected devices.
-			foreach (var ud in selectedUserDevices)
-			{
-				// Try to get existing setting by instance guid and file name.
-				var setting = SettingsManager.GetSetting(ud.InstanceGuid, game.FileName);
-				// If device setting for the game was not found then.
-				if (setting == null)
-				{
-					// Create new setting.
-					setting = AppHelper.GetNewSetting(ud, game, MappedTo);
-					// Get auto-configured pad setting.
-					var ps = AutoMapHelper.GetAutoPreset(ud);
-					SettingsManager.Current.LoadPadSettingAndCleanup(setting, ps, true);
-					SettingsManager.Current.SyncFormFromPadSetting(MappedTo, ps);
-					// Refresh online status
-					SettingsManager.RefreshDeviceIsOnlineValueOnSettings(setting);
-					// Load created setting.
-					//SettingsManager.Current.LoadPadSettings(MappedTo, ps);
-				}
-				else
-				{
-					// Enable if not enabled.
-					if (!setting.IsEnabled)
-						setting.IsEnabled = true;
-					// Map setting to current pad.
-					setting.MapTo = (int)MappedTo;
-				}
-			}
+			SettingsManager.MapGamePadDevices(game, MappedTo, selectedUserDevices);
 			var hasNewSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count > 0;
-			// if new devices mapped and button is not enabled then...
+			// If new devices mapped and button is not enabled then...
 			if (noOldSettings && hasNewSettings && !EnableButton.Checked)
 			{
 				// Enable mapping.
@@ -1420,17 +1393,19 @@ namespace x360ce.App.Controls
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)
 		{
-			var game = MainForm.Current.CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			// Return if game is not selected.
 			if (game == null)
 				return;
 			var settingsOld = SettingsManager.GetSettings(game.FileName, MappedTo);
 			var setting = GetSelectedSetting();
 			if (setting != null)
-			{
 				setting.MapTo = (int)MapTo.Disabled;
-			}
 			var settingsNew = SettingsManager.GetSettings(game.FileName, MappedTo);
+			// Unhide device if no longer mapped.
+			var changed = SettingsManager.AutoHideShowMappedDevices(game, setting.InstanceGuid);
+			if (changed)
+				AppHelper.SynchronizeToHidGuardian(setting.InstanceGuid);
 			// if all devices unmapped and mapping is enabled then...
 			if (settingsOld.Count > 0 && settingsNew.Count == 0 && EnableButton.Checked)
 			{
@@ -1442,7 +1417,7 @@ namespace x360ce.App.Controls
 		void UpdateGridButtons()
 		{
 			var grid = MappedDevicesDataGridView;
-			var game = MainForm.Current.CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			var flag = AppHelper.GetMapFlag(MappedTo);
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
 			RemoveMapButton.Enabled = !auto && grid.SelectedRows.Count > 0;
@@ -1519,7 +1494,7 @@ namespace x360ce.App.Controls
 
 		private void AutoMapButton_Click(object sender, EventArgs e)
 		{
-			var game = MainForm.Current.CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			// If no game selected then ignore click.
 			if (game == null)
 				return;
@@ -1541,7 +1516,7 @@ namespace x360ce.App.Controls
 
 		private void EnableButton_Click(object sender, EventArgs e)
 		{
-			var game = MainForm.Current.CurrentGame;
+			var game = SettingsManager.CurrentGame;
 			// If no game selected then ignore click.
 			if (game == null)
 				return;
