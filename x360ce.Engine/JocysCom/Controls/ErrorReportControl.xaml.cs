@@ -1,4 +1,6 @@
-﻿#if NETFRAMEWORK
+﻿#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
 using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Runtime;
 using mshtml;

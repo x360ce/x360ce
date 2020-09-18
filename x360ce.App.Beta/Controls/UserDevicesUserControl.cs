@@ -11,6 +11,7 @@ using System.ComponentModel;
 using JocysCom.ClassLibrary.IO;
 using System.Drawing;
 using System.Threading.Tasks;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App.Controls
 {
@@ -51,15 +52,30 @@ namespace x360ce.App.Controls
 			});
 		}
 
+		public bool MapDeviceToControllerMode;
+
 		private void ControllersUserControl_Load(object sender, EventArgs e)
 		{
-			AttachDataSource(SettingsManager.UserDevices.Items);
+			if (MapDeviceToControllerMode)
+			{
+				var list = new SortableBindingList<UserDevice>();
+				var devices = SettingsManager.UserDevices.ItemsToArraySyncronized()
+					.Where(x => x.ConnectionClass != DEVCLASS.SYSTEM).ToList();
+				list.AddRange(devices);
+				AttachDataSource(list);
+			}
+			else
+			{
+				AttachDataSource(SettingsManager.UserDevices.Items);
+
+			}
 		}
 
 		private void DevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
+
 			var grid = (DataGridView)sender;
 			var row = grid.Rows[e.RowIndex];
 			var column = grid.Columns[e.ColumnIndex];
@@ -75,6 +91,16 @@ namespace x360ce.App.Controls
 				e.Value = item.ConnectionClass == Guid.Empty
 					? new Bitmap(16, 16)
 					: DeviceDetector.GetClassIcon(item.ConnectionClass, 16)?.ToBitmap();
+			}
+			else if (column == IsHiddenColumn)
+			{
+				var left = row.Cells[e.ColumnIndex].OwningColumn.Width;
+				// Show checkbox.
+				if (item.AllowHide && e.CellStyle.Padding.Left >= 0)
+					e.CellStyle.Padding = new Padding();
+				// Hide checkbox (move out of the sight).
+				if (!item.AllowHide && e.CellStyle.Padding.Left == 0)
+					e.CellStyle.Padding = new Padding(left, 0, 0, 0);
 			}
 			else if (column == DeviceIdColumn)
 			{
@@ -144,9 +170,7 @@ namespace x360ce.App.Controls
 				var existingItems = list.Where(x => x.InstanceGuid == newItem.InstanceGuid).ToArray();
 				// Remove existing items.
 				for (int i = 0; i < existingItems.Length; i++)
-				{
 					list.Remove(existingItems[i]);
-				}
 				// Add new one.
 				list.Add(newItem);
 			}
@@ -190,32 +214,35 @@ namespace x360ce.App.Controls
 			}
 			else if (column == IsHiddenColumn)
 			{
-				var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
-				if (canModify)
+				if (ud.AllowHide)
 				{
-					var ids = AppHelper.GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
-					var parentDeviceId = ud.DevParentDeviceId;
-					// If parent device ID is known then...
-					//if (!string.IsNullOrEmpty(parentDeviceId))
-					//{
-					ud.IsHidden = !ud.IsHidden;
-					if (ud.IsHidden)
+					var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
+					if (canModify)
 					{
-						ViGEm.HidGuardianHelper.InsertToAffected(ids);
-						//ViGEm.HidGuardianHelper.InsertToAffected(parentDeviceId, ud.HidDeviceId);
+						var ids = AppHelper.GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
+						var parentDeviceId = ud.DevParentDeviceId;
+						// If parent device ID is known then...
+						//if (!string.IsNullOrEmpty(parentDeviceId))
+						//{
+						ud.IsHidden = !ud.IsHidden;
+						if (ud.IsHidden)
+						{
+							ViGEm.HidGuardianHelper.InsertToAffected(ids);
+							//ViGEm.HidGuardianHelper.InsertToAffected(parentDeviceId, ud.HidDeviceId);
+						}
+						else
+						{
+							ViGEm.HidGuardianHelper.RemoveFromAffected(ids);
+							//ViGEm.HidGuardianHelper.RemoveFromAffected(parentDeviceId, ud.HidDeviceId);
+						}
+						//}
 					}
 					else
 					{
-						ViGEm.HidGuardianHelper.RemoveFromAffected(ids);
-						//ViGEm.HidGuardianHelper.RemoveFromAffected(parentDeviceId, ud.HidDeviceId);
+						var form = new MessageBoxForm();
+						form.StartPosition = FormStartPosition.CenterParent;
+						form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					}
-					//}
-				}
-				else
-				{
-					var form = new MessageBoxForm();
-					form.StartPosition = FormStartPosition.CenterParent;
-					form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
 			}
 		}
@@ -267,5 +294,8 @@ namespace x360ce.App.Controls
 			set { IsHiddenColumn.Visible = false; }
 		}
 
+		private void DevicesDataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
+		{
+		}
 	}
 }

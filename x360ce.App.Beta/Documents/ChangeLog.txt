@@ -1,6 +1,9 @@
-v4.13.45.0 (2020-09-16)
+v4.13.47.0 (2020-09-18)
 - Fixed: Check HID Guardian installation and help to install.
-- Updated: Automatically hide mapped DirectInput controllers and show unmapped.
+- Fixed: Crash when hiding device with missing Hardware ID.
+- Fixed: Virtual controllers were incorrectly available on MapDeviceToControllerForm.
+- Fixed: Hide checkbox was available for devices which should not be hidden i.e. mouse, keyboard, system.
+- Updated: Automatically hide mapped DirectInput controllers and show unmapped (HID Guardian).
 - Updated: Shared Classes.
 
 v4.13.41.0 (2020-09-10)

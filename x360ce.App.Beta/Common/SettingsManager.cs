@@ -1061,11 +1061,8 @@ namespace x360ce.App
 			for (int i = 0; i < devices.Length; i++)
 			{
 				var ud = devices[i];
-				var isKeyboardOrMouse =
-					ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse ||
-					ud.CapType == (int)SharpDX.DirectInput.DeviceType.Keyboard;
 				// Skip Keyboards and mice.
-				if (isKeyboardOrMouse)
+				if (ud.IsKeyboard || ud.IsMouse)
 					continue;
 				// Mapped devices must be hidden.
 				var isHidden = mappedInstanceGuids.Contains(ud.InstanceGuid);

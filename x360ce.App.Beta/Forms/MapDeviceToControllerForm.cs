@@ -9,9 +9,11 @@ namespace x360ce.App.Controls
 		public MapDeviceToControllerForm()
 		{
 			InitializeComponent();
-			if (IsDesignMode) return;
+			if (IsDesignMode)
+				return;
 			SetHeaderSubject(Text);
 			SetHeaderBody(MessageBoxIcon.None);
+			ControllersPanel.MapDeviceToControllerMode = true;
 		}
 
 		public UserDevice[] SelectedDevices;

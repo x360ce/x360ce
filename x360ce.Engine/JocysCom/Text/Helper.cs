@@ -196,7 +196,9 @@ namespace JocysCom.ClassLibrary.Text
 			return s;
 		}
 
-#if NETFRAMEWORK
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
 
 		/// <summary>
 		/// Convert string value to an escaped C# string literal.
@@ -222,7 +224,7 @@ namespace JocysCom.ClassLibrary.Text
 
 #endif
 
-#region Word Wrap
+		#region Word Wrap
 
 		// http://www.codeproject.com/Articles/51488/Implementing-Word-Wrap-in-C
 

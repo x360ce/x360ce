@@ -1,4 +1,6 @@
-﻿#if NETFRAMEWORK
+﻿#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
 using System;
 using System.Threading;
 using System.Threading.Tasks;

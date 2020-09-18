@@ -21,7 +21,10 @@ namespace JocysCom.ClassLibrary.Drawing
 			return b;
 		}
 
-#if NETFRAMEWORK
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
+
 
 		/// <summary>
 		/// Take screenshot.

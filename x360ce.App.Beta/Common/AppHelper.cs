@@ -370,14 +370,11 @@ namespace x360ce.App
 			var idsToShow = new List<string>();
 			foreach (var ud in devices)
 			{
-				var isKeyboardOrMouse =
-					ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse ||
-					ud.CapType == (int)SharpDX.DirectInput.DeviceType.Keyboard;
 				var idsToAffect = GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
 				if (ud.IsHidden)
 				{
 					// Don't hide Keyboards and mice.
-					if (!isKeyboardOrMouse)
+					if (!ud.IsKeyboard && !ud.IsMouse)
 						idsToHide.AddRange(idsToAffect);
 				}
 				else

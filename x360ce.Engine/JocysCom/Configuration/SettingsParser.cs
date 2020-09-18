@@ -7,7 +7,7 @@ using System.Net;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
-#elif NETFRAMEWORK // .NET Framework...
+#else // .NET Framework...
 using System.Configuration;
 #endif
 #if __MOBILE__

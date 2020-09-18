@@ -1,6 +1,6 @@
-﻿using JocysCom.ClassLibrary.Collections;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -16,7 +16,7 @@ namespace JocysCom.ClassLibrary.Network
 		public bool IsNetworkAvailable = false;
 		public bool IsMobileNicUp = false;
 		public bool IsWirelessNicUp = false;
-		public List<KeyValue> NicInfo = new List<KeyValue>();
+		public NameValueCollection NicInfo = new NameValueCollection();
 		public string LocalIpAddress = "0.0.0.0";
 		public string LocalGatewayIpAddress = "0.0.0.0";
 		public string CurrentNicks = "";
@@ -74,7 +74,7 @@ namespace JocysCom.ClassLibrary.Network
 		}
 
 		/// <summary>
-		/// Returns true if IP address have match one of the patterns.
+		/// Returns true if IP address match one of the patterns.
 		/// </summary>
 		public static bool IsMatch(string ip, params string[] ipWildcards)
 		{
@@ -158,7 +158,7 @@ namespace JocysCom.ClassLibrary.Network
 				var sb = new StringBuilder();
 				var properties = ni.GetIPProperties();
 				FillAdapter(sb, ni);
-				info.NicInfo.Add(new KeyValue(ni.Description, sb.ToString()));
+				info.NicInfo.Add(ni.Description, sb.ToString());
 				if (ni.OperationalStatus == OperationalStatus.Up)
 				{
 					var desc = ni.Description;

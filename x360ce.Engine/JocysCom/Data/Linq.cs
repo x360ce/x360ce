@@ -1,4 +1,6 @@
-﻿#if NETFRAMEWORK
+﻿#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;

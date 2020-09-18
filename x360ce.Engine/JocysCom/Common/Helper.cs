@@ -165,9 +165,11 @@ namespace JocysCom.ClassLibrary
 
 		#endregion
 
-#if NETFRAMEWORK
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
 
-#region Disk Activity
+		#region Disk Activity
 
 		// Sometimes it is good to pause if there is too much disk activity.
 		// By letting windows/SQL to commit all changes to disk we can improve speed.
@@ -197,11 +199,11 @@ namespace JocysCom.ClassLibrary
 					0;
 		}
 
-#endregion
+		#endregion
 
 #endif
 
-#region Comparisons
+		#region Comparisons
 
 		private static Regex _GuidRegex;
 		public static Regex GuidRegex
@@ -244,7 +246,10 @@ namespace JocysCom.ClassLibrary
 			if (disposing)
 			{
 
-#if NETFRAMEWORK
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
+
 				// Free managed resources.
 				if (_diskReadCounter != null)
 				{

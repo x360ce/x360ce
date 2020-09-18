@@ -1,8 +1,8 @@
-﻿#if NETCOREAPP
+﻿#if NETCOREAPP // .NET Core
 using Microsoft.EntityFrameworkCore;
-#elif NETSTANDARD
+#elif NETSTANDARD // .NET Standard
 using Microsoft.EntityFrameworkCore;
-#elif NETFRAMEWORK
+#else // .NET Framework
 using System.Data.Objects.DataClasses;
 #endif
 using System;
@@ -40,7 +40,10 @@ namespace JocysCom.ClassLibrary.Runtime
 					var items = t.GetProperties(DefaultBindingFlags | BindingFlags.DeclaredOnly)
 						.Where(p => p.CanRead && p.CanWrite)
 						.Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute)));
-#if NETFRAMEWORK
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
+
 					if (skipKey)
 					{
 						var keys = items

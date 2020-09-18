@@ -7,66 +7,66 @@ using System.Linq;
 
 namespace x360ce.Engine.Data
 {
-    public partial class UserDevice : IDisplayName, IUserRecord
-    {
+	public partial class UserDevice : IDisplayName, IUserRecord
+	{
 
 		public UserDevice()
-        {
-            DateCreated = DateTime.Now;
-            DateUpdated = DateCreated;
-            IsEnabled = true;
+		{
+			DateCreated = DateTime.Now;
+			DateUpdated = DateCreated;
+			IsEnabled = true;
 			ConnectionClass = Guid.Empty;
-        }
+		}
 
-        [XmlIgnore]
-        public string DisplayName
-        {
-            get
-            {
-                return string.Format("{0} - {1}", InstanceId, InstanceName);
-            }
-        }
+		[XmlIgnore]
+		public string DisplayName
+		{
+			get
+			{
+				return string.Format("{0} - {1}", InstanceId, InstanceName);
+			}
+		}
 
-        public void LoadInstance(DeviceInstance ins)
-        {
-            if (InstanceGuid != ins.InstanceGuid)
-            InstanceGuid = ins.InstanceGuid;
-            if (InstanceName != ins.InstanceName)
-            InstanceName = ins.InstanceName;
-            if (ProductGuid != ins.ProductGuid)
-            ProductGuid = ins.ProductGuid;
-            if (ProductName != ins.ProductName)
-            ProductName = ins.ProductName;
-        }
+		public void LoadInstance(DeviceInstance ins)
+		{
+			if (InstanceGuid != ins.InstanceGuid)
+				InstanceGuid = ins.InstanceGuid;
+			if (InstanceName != ins.InstanceName)
+				InstanceName = ins.InstanceName;
+			if (ProductGuid != ins.ProductGuid)
+				ProductGuid = ins.ProductGuid;
+			if (ProductName != ins.ProductName)
+				ProductName = ins.ProductName;
+		}
 
 		public void LoadCapabilities(Capabilities cap)
-        {
-            // Check if value is same to reduce grid refresh.
-            if (CapAxeCount != cap.AxeCount)
-                CapAxeCount = cap.AxeCount;
-            if (CapButtonCount != cap.ButtonCount)
-                CapButtonCount = cap.ButtonCount;
-            if (CapDriverVersion != cap.DriverVersion)
-                CapDriverVersion = cap.DriverVersion;
-            if (CapFirmwareRevision != cap.FirmwareRevision)
-                CapFirmwareRevision = cap.FirmwareRevision;
-            if (CapFlags != (int)cap.Flags)
-                CapFlags = (int)cap.Flags;
-            if (CapForceFeedbackMinimumTimeResolution != cap.ForceFeedbackMinimumTimeResolution)
-                CapForceFeedbackMinimumTimeResolution = cap.ForceFeedbackMinimumTimeResolution;
-            if (CapForceFeedbackSamplePeriod != cap.ForceFeedbackSamplePeriod)
-                CapForceFeedbackSamplePeriod = cap.ForceFeedbackSamplePeriod;
-            if (CapHardwareRevision != cap.HardwareRevision)
-                CapHardwareRevision = cap.HardwareRevision;
-            if (CapPovCount != cap.PovCount)
-                CapPovCount = cap.PovCount;
-            if (CapIsHumanInterfaceDevice != cap.IsHumanInterfaceDevice)
-                CapIsHumanInterfaceDevice = cap.IsHumanInterfaceDevice;
-            if (CapSubtype != cap.Subtype)
-                CapSubtype = cap.Subtype;
-            if (CapType != (int)cap.Type)
-                CapType = (int)cap.Type;
-        }
+		{
+			// Check if value is same to reduce grid refresh.
+			if (CapAxeCount != cap.AxeCount)
+				CapAxeCount = cap.AxeCount;
+			if (CapButtonCount != cap.ButtonCount)
+				CapButtonCount = cap.ButtonCount;
+			if (CapDriverVersion != cap.DriverVersion)
+				CapDriverVersion = cap.DriverVersion;
+			if (CapFirmwareRevision != cap.FirmwareRevision)
+				CapFirmwareRevision = cap.FirmwareRevision;
+			if (CapFlags != (int)cap.Flags)
+				CapFlags = (int)cap.Flags;
+			if (CapForceFeedbackMinimumTimeResolution != cap.ForceFeedbackMinimumTimeResolution)
+				CapForceFeedbackMinimumTimeResolution = cap.ForceFeedbackMinimumTimeResolution;
+			if (CapForceFeedbackSamplePeriod != cap.ForceFeedbackSamplePeriod)
+				CapForceFeedbackSamplePeriod = cap.ForceFeedbackSamplePeriod;
+			if (CapHardwareRevision != cap.HardwareRevision)
+				CapHardwareRevision = cap.HardwareRevision;
+			if (CapPovCount != cap.PovCount)
+				CapPovCount = cap.PovCount;
+			if (CapIsHumanInterfaceDevice != cap.IsHumanInterfaceDevice)
+				CapIsHumanInterfaceDevice = cap.IsHumanInterfaceDevice;
+			if (CapSubtype != cap.Subtype)
+				CapSubtype = cap.Subtype;
+			if (CapType != (int)cap.Type)
+				CapType = (int)cap.Type;
+		}
 
 		public void LoadDevDeviceInfo(DeviceInfo info)
 		{
@@ -113,80 +113,80 @@ namespace x360ce.Engine.Data
 		}
 
 		public void LoadHidDeviceInfo(DeviceInfo info)
-        {
-            if (info == null)
-            {
-                HidManufacturer = "";
-                HidVendorId = 0;
-                HidProductId = 0;
-                HidRevision = 0;
-                HidDescription = "";
-                HidDeviceId = "";
+		{
+			if (info == null)
+			{
+				HidManufacturer = "";
+				HidVendorId = 0;
+				HidProductId = 0;
+				HidRevision = 0;
+				HidDescription = "";
+				HidDeviceId = "";
 				HidHardwareIds = "";
 				HidDevicePath = "";
-                HidParentDeviceId = "";
-                HidClassGuid = Guid.Empty;
-                HidClassDescription = "";
-            }
-            else
-            {
-                // Check if value is same to reduce grid refresh.
-                if (HidManufacturer != info.Manufacturer)
-                    HidManufacturer = info.Manufacturer;
-                if (HidVendorId != (int)info.VendorId)
-                    HidVendorId = (int)info.VendorId;
-                if (HidProductId != (int)info.ProductId)
-                    HidProductId = (int)info.ProductId;
-                if (HidRevision != (int)info.Revision)
-                    HidRevision = (int)info.Revision;
-                if (HidDescription != info.Description)
-                    HidDescription = info.Description;
-                if (HidDeviceId != info.DeviceId)
-                    HidDeviceId = info.DeviceId;
+				HidParentDeviceId = "";
+				HidClassGuid = Guid.Empty;
+				HidClassDescription = "";
+			}
+			else
+			{
+				// Check if value is same to reduce grid refresh.
+				if (HidManufacturer != info.Manufacturer)
+					HidManufacturer = info.Manufacturer;
+				if (HidVendorId != (int)info.VendorId)
+					HidVendorId = (int)info.VendorId;
+				if (HidProductId != (int)info.ProductId)
+					HidProductId = (int)info.ProductId;
+				if (HidRevision != (int)info.Revision)
+					HidRevision = (int)info.Revision;
+				if (HidDescription != info.Description)
+					HidDescription = info.Description;
+				if (HidDeviceId != info.DeviceId)
+					HidDeviceId = info.DeviceId;
 				if (HidHardwareIds != info.HardwareIds)
 					HidHardwareIds = info.HardwareIds;
 				if (HidDevicePath != info.DevicePath)
-                    HidDevicePath = info.DevicePath;
-                if (HidParentDeviceId != info.ParentDeviceId)
-                    HidParentDeviceId = info.ParentDeviceId;
-                if (HidClassGuid != info.ClassGuid)
-                    HidClassGuid = info.ClassGuid;
-                if (HidClassDescription != info.ClassDescription)
-                    HidClassDescription = info.ClassDescription;
-            }
-        }
+					HidDevicePath = info.DevicePath;
+				if (HidParentDeviceId != info.ParentDeviceId)
+					HidParentDeviceId = info.ParentDeviceId;
+				if (HidClassGuid != info.ClassGuid)
+					HidClassGuid = info.ClassGuid;
+				if (HidClassDescription != info.ClassDescription)
+					HidClassDescription = info.ClassDescription;
+			}
+		}
 
-        #region Ignored properties used by application to store various device states.
+		#region Ignored properties used by application to store various device states.
 
-        [XmlIgnore]
-        public bool DeviceChanged;
+		[XmlIgnore]
+		public bool DeviceChanged;
 
-        /// <summary>DInput Device State.</summary>
-        [XmlIgnore]
-        public Joystick Device;
+		/// <summary>DInput Device State.</summary>
+		[XmlIgnore]
+		public Joystick Device;
 
-        [XmlIgnore]
-        public DeviceObjectItem[] DeviceObjects;
+		[XmlIgnore]
+		public DeviceObjectItem[] DeviceObjects;
 
-        [XmlIgnore]
-        public DeviceEffectItem[] DeviceEffects;
+		[XmlIgnore]
+		public DeviceEffectItem[] DeviceEffects;
 
-        /// <summary>DInput JoystickState State.</summary>
-        [XmlIgnore]
-        public JoystickState JoState;
+		/// <summary>DInput JoystickState State.</summary>
+		[XmlIgnore]
+		public JoystickState JoState;
 
-        /// <summary>X360CE custom DirectInput state used for configuration.</summary>
-        [XmlIgnore]
-        public CustomDiState DiState;
+		/// <summary>X360CE custom DirectInput state used for configuration.</summary>
+		[XmlIgnore]
+		public CustomDiState DiState;
 
-        [XmlIgnore]
-        public long DiStateTime;
+		[XmlIgnore]
+		public long DiStateTime;
 
-        [XmlIgnore]
-        public CustomDiState OldDiState;
+		[XmlIgnore]
+		public CustomDiState OldDiState;
 
-        [XmlIgnore]
-        public long OldDiStateTime;
+		[XmlIgnore]
+		public long OldDiStateTime;
 
 		[XmlIgnore]
 		public CustomDiState OrgDiState;
@@ -195,10 +195,10 @@ namespace x360ce.Engine.Data
 		public long OrgDiStateTime;
 
 		[XmlIgnore]
-        public ForceFeedbackState FFState;
+		public ForceFeedbackState FFState;
 
-        [XmlIgnore]
-        public bool? IsExclusiveMode;
+		[XmlIgnore]
+		public bool? IsExclusiveMode;
 
 		[XmlIgnore]
 		public string DevHardwareIds;
@@ -207,36 +207,57 @@ namespace x360ce.Engine.Data
 		public string HidHardwareIds;
 
 		[XmlIgnore]
-        public bool IsOnline
-        {
-            get { return _IsOnline; }
-            set { _IsOnline = value; ReportPropertyChanged(x => x.IsOnline); }
-        }
-        bool _IsOnline;
+		public bool IsOnline
+		{
+			get { return _IsOnline; }
+			set { _IsOnline = value; ReportPropertyChanged(x => x.IsOnline); }
+		}
+		bool _IsOnline;
 
-        [XmlIgnore]
-        public string InstanceId
-        {
-            get
-            {
-                return EngineHelper.GetID(InstanceGuid);
-            }
-        }
+		[XmlIgnore]
+		public string InstanceId
+		{
+			get
+			{
+				return EngineHelper.GetID(InstanceGuid);
+			}
+		}
 
-        #endregion
+		[XmlIgnore]
+		public bool IsMouse => CapType == (int)SharpDX.DirectInput.DeviceType.Mouse;
 
-        #region INotifyPropertyChanged
+		[XmlIgnore]
+		public bool IsKeyboard => CapType == (int)SharpDX.DirectInput.DeviceType.Keyboard;
 
-        /// <summary>
-        /// Use: ReportPropertyChanged(x => x.PropertyName);
-        /// </summary>
-        void ReportPropertyChanged(Expression<Func<UserDevice, object>> selector)
-        {
-            var body = (MemberExpression)((UnaryExpression)selector.Body).Operand;
-            var name = body.Member.Name;
-            ReportPropertyChanged(name);
-        }
+		[XmlIgnore]
+		public bool AllowHide
+		{
+			get
+			{
+				return
+					!IsKeyboard &&
+					!IsMouse &&
+					ConnectionClass != JocysCom.ClassLibrary.Win32.DEVCLASS.SYSTEM &&
+					// Device Id must be set.
+					!string.IsNullOrEmpty(HidDeviceId);
+			}
+		}
 
-        #endregion
-    }
+
+		#endregion
+
+		#region INotifyPropertyChanged
+
+		/// <summary>
+		/// Use: ReportPropertyChanged(x => x.PropertyName);
+		/// </summary>
+		void ReportPropertyChanged(Expression<Func<UserDevice, object>> selector)
+		{
+			var body = (MemberExpression)((UnaryExpression)selector.Body).Operand;
+			var name = body.Member.Name;
+			ReportPropertyChanged(name);
+		}
+
+		#endregion
+	}
 }
