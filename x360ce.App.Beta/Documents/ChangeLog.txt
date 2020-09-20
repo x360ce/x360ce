@@ -1,4 +1,4 @@
-v4.13.50.0 (2020-09-19)
+v4.14.6.0 (2020-09-20)
 - Fixed: High use of CPU resoruces due to the manager.IsDeviceAttached(ud.InstanceGuid) method.
 - Fixed: Remove and rescan just controller interface now, which is enough for HID Guardian.
 - Fixed: Check HID Guardian installation and help to install.
