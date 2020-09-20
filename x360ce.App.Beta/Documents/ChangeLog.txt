@@ -1,5 +1,6 @@
-v4.13.49.0 (2020-09-18)
+v4.13.50.0 (2020-09-19)
 - Fixed: High use of CPU resoruces due to the manager.IsDeviceAttached(ud.InstanceGuid) method.
+- Fixed: Remove and rescan just controller interface now, which is enough for HID Guardian.
 - Fixed: Check HID Guardian installation and help to install.
 - Fixed: Crash when hiding device with missing Hardware ID.
 - Fixed: Virtual controllers were incorrectly available on MapDeviceToControllerForm.

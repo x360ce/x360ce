@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using System.Runtime.InteropServices;
 
 namespace x360ce.App.ViGEm
 {
@@ -148,17 +149,25 @@ namespace x360ce.App.ViGEm
 
 		#region Affected
 
+		const string registryKeyName = "AffectedDevices";
+
 		public static bool InsertToAffected(params string[] ids)
 		{
-			// Return if invalid id found.
-			if (ids.Any(i => !HardwareIdRegex.IsMatch(i)))
+			// Extract \HID ""
+			var vidsPids = ids.SelectMany(x => ConvertToHidVidPid(x)).Distinct().ToArray();
+			// Return is no valid records found.
+			if (vidsPids.Length == 0)
 				return false;
-			FixCasing(ids);
+
+			// Return if invalid id found.
+			//if (ids.Any(i => !HardwareIdRegex.IsMatch(i)))
+			//	return false;
+			FixCasing(vidsPids);
 			// Get existing IDs.
 			var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
-			var current = (key.GetValue("AffectedDevices", new string[0]) as string[]).ToList();
+			var current = (key.GetValue(registryKeyName, new string[0]) as string[]).ToList();
 			// Combine arrays.
-			current.AddRange(ids);
+			current.AddRange(vidsPids);
 			// Get unique and sorted list.
 			var newList = current
 				.Where(x => !string.IsNullOrWhiteSpace(x))
@@ -166,7 +175,7 @@ namespace x360ce.App.ViGEm
 				.OrderBy(x => x)
 				.ToArray();
 			// Write back to registry.
-			key.SetValue("AffectedDevices", newList, RegistryValueKind.MultiString);
+			key.SetValue(registryKeyName, newList, RegistryValueKind.MultiString);
 			key.Close();
 			// Reset Devices.
 			ResetDevices(ids);
@@ -175,15 +184,16 @@ namespace x360ce.App.ViGEm
 
 		public static bool RemoveFromAffected(params string[] ids)
 		{
-			// Return if invalid id found.
-			if (ids.Any(i => !HardwareIdRegex.IsMatch(i)))
+			var vidsPids = ids.SelectMany(x => ConvertToHidVidPid(x)).Distinct().ToArray();
+			// Return is no valid records found.
+			if (vidsPids.Length == 0)
 				return false;
-			FixCasing(ids);
+			FixCasing(vidsPids);
 			// Get existing Hardware IDs.
 			var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
-			var current = (key.GetValue("AffectedDevices", new string[0]) as string[]).ToList();
+			var current = (key.GetValue(registryKeyName, new string[0]) as string[]).ToList();
 			// Remove values from array.
-			current.RemoveAll(x => ids.Contains(x));
+			current.RemoveAll(x => vidsPids.Contains(x));
 			// Get unique and sorted list.
 			var newList = current
 				.Where(x => !string.IsNullOrWhiteSpace(x))
@@ -191,7 +201,7 @@ namespace x360ce.App.ViGEm
 				.OrderBy(x => x)
 				.ToArray();
 			// Write back to registry.
-			key.SetValue("AffectedDevices", newList, RegistryValueKind.MultiString);
+			key.SetValue(registryKeyName, newList, RegistryValueKind.MultiString);
 			key.Close();
 			// Reset Devices.
 			ResetDevices(ids);
@@ -205,9 +215,7 @@ namespace x360ce.App.ViGEm
 		{
 			var hwIds = ConvertToHidVidPid(deviceIds);
 			for (int i = 0; i < hwIds.Length; i++)
-			{
 				Program.RunElevated(AdminCommand.UninstallDevice, hwIds[i]);
-			}
 		}
 
 		static readonly Regex HardwareIdSimpleRegex = new Regex(@"^HID\\VID_[0-9A-F]{4}&PID_[0-9A-F]{4}", RegexOptions.IgnoreCase);
@@ -238,7 +246,7 @@ namespace x360ce.App.ViGEm
 			var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry, false);
 			if (key == null)
 				return new string[0];
-			var current = key.GetValue("AffectedDevices", new string[0]) as string[];
+			var current = key.GetValue(registryKeyName, new string[0]) as string[];
 			key.Close();
 			return current;
 		}
@@ -248,7 +256,7 @@ namespace x360ce.App.ViGEm
 			var key = Registry.LocalMachine.OpenSubKey(ParametersRegistry, true);
 			if (key == null)
 				return true;
-			key.SetValue("AffectedDevices", new string[0], RegistryValueKind.MultiString);
+			key.SetValue(registryKeyName, new string[0], RegistryValueKind.MultiString);
 			key.Close();
 			return true;
 		}

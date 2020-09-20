@@ -11,6 +11,7 @@ using System.Security.Principal;
 using x360ce.Engine.Data;
 using SharpDX.XInput;
 using JocysCom.ClassLibrary.Win32;
+using System.Net.Sockets;
 
 namespace x360ce.App
 {
@@ -370,21 +371,12 @@ namespace x360ce.App
 			var idsToShow = new List<string>();
 			foreach (var ud in devices)
 			{
-				var idsToAffect = GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
-				if (ud.IsHidden)
-				{
-					// Don't hide Keyboards and mice.
-					if (!ud.IsKeyboard && !ud.IsMouse)
-						idsToHide.AddRange(idsToAffect);
-				}
-				else
-				{
+				var idsToAffect = new string[] { ud.HidDeviceId };
+				// If must hide and device is not keyboard or mouse.
+				if (ud.IsHidden && !ud.IsKeyboard && !ud.IsMouse)
+					idsToHide.AddRange(idsToAffect);
+				else if(!ud.IsHidden)
 					idsToShow.AddRange(idsToAffect);
-				}
-				//var parentDeviceId = ud.DevParentDeviceId;
-				// If parent device ID is known then...
-				//if (!string.IsNullOrEmpty(parentDeviceId))
-				//	ids.Add(parentDeviceId);
 			}
 			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
 			if (canModify)
@@ -395,30 +387,6 @@ namespace x360ce.App
 				ViGEm.HidGuardianHelper.InsertToAffected(idsToHide2);
 			}
 			return canModify;
-		}
-
-		/// <summary>
-		/// Get all IDs required for HID guardian to block device.
-		/// </summary>
-		/// <param name="ud"></param>
-		/// <returns></returns>
-		public static string[] GetIdsToAffect(string hidDeviceId, string hidHardwareIds)
-		{
-			var list = new List<string>();
-			var ids = ViGEm.HidGuardianHelper.ConvertToHidVidPid(hidDeviceId);
-			if (ids.Length == 0)
-				return list.ToArray();
-			// If no hardware ids then return;
-			if (string.IsNullOrEmpty(hidHardwareIds))
-				return list.ToArray();
-			// Extract all IDs which starts from VID and PID.
-			var hwids = hidHardwareIds
-				.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
-				.Where(x => x.StartsWith(ids[0], StringComparison.OrdinalIgnoreCase))
-				.ToArray();
-			// Add results to the list.
-			list.AddRange(hwids);
-			return list.ToArray();
 		}
 
 		#endregion

@@ -28,7 +28,7 @@ namespace x360ce.App.DInput
 				// Allow if not testing or testing with option enabled.
 				var o = SettingsManager.Options;
 				var allow = !o.TestEnabled || o.TestGetDInputStates;
-				// Note: manager.IsDeviceAttached ise a lot of CPU resources.
+				// Note: manager.IsDeviceAttached() use a lot of CPU resources.
 				var isAttached = ud != null && ud.IsOnline; // && manager.IsDeviceAttached(ud.InstanceGuid);
 				if (isAttached && allow)
 				{

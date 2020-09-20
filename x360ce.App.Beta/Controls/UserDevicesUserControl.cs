@@ -219,8 +219,8 @@ namespace x360ce.App.Controls
 					var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
 					if (canModify)
 					{
-						var ids = AppHelper.GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
-						var parentDeviceId = ud.DevParentDeviceId;
+						//var ids = AppHelper.GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
+						var ids = new string[] { ud.DevDeviceId };
 						// If parent device ID is known then...
 						//if (!string.IsNullOrEmpty(parentDeviceId))
 						//{
