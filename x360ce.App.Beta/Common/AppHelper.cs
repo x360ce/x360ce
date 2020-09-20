@@ -12,6 +12,7 @@ using x360ce.Engine.Data;
 using SharpDX.XInput;
 using JocysCom.ClassLibrary.Win32;
 using System.Net.Sockets;
+using x360ce.App.ViGEm;
 
 namespace x360ce.App
 {
@@ -371,12 +372,21 @@ namespace x360ce.App
 			var idsToShow = new List<string>();
 			foreach (var ud in devices)
 			{
-				var idsToAffect = new string[] { ud.HidDeviceId };
+				//var idsToAffect = new string[] { ud.HidDeviceId };
+				var idToAffect = (ud.HidHardwareIds ?? "")
+					// Split lines into arraty and exclude empty ones.
+					.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
+					// Get all Hardware IDs with vendor code and product code.
+					.Where(x => HidGuardianHelper.HardwareIdRegex.IsMatch(x)).ToList()
+					// Put longest ID on top.
+					.OrderByDescending(x => x)
+					// Take most detail Hardware ID.
+					.Take(1).FirstOrDefault();
 				// If must hide and device is not keyboard or mouse.
 				if (ud.IsHidden && !ud.IsKeyboard && !ud.IsMouse)
-					idsToHide.AddRange(idsToAffect);
+					idsToHide.Add(idToAffect);
 				else if(!ud.IsHidden)
-					idsToShow.AddRange(idsToAffect);
+					idsToShow.Add(idToAffect);
 			}
 			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
 			if (canModify)
