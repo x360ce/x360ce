@@ -1403,7 +1403,7 @@ namespace x360ce.App.Controls
 				setting.MapTo = (int)MapTo.Disabled;
 			var settingsNew = SettingsManager.GetSettings(game.FileName, MappedTo);
 			// Unhide device if no longer mapped.
-			var changed = SettingsManager.AutoHideShowMappedDevices(game, setting.InstanceGuid);
+			var changed = SettingsManager.AutoHideShowMappedDevices(game, new Guid[] { setting.InstanceGuid });
 			if (changed)
 				AppHelper.SynchronizeToHidGuardian(setting.InstanceGuid);
 			// if all devices unmapped and mapping is enabled then...

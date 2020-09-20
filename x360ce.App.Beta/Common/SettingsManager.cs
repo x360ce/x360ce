@@ -1048,13 +1048,15 @@ namespace x360ce.App
 		/// Hide devices if they are mapped to the game, unhide devices if they are not mapped.
 		/// </summary>
 		/// <returns>True if device hide/show state changed.</returns>
-		public static bool AutoHideShowMappedDevices(UserGame game, params Guid[] instanceGuids)
+		public static bool AutoHideShowMappedDevices(UserGame game, Guid[] instanceGuids = null)
 		{
 			var changed = false;
 			// Get affected devices.
 			UserDevice[] devices;
 			lock (UserDevices.SyncRoot)
-				devices = UserDevices.Items.Where(x => instanceGuids.Contains(x.InstanceGuid)).ToArray();
+				devices = instanceGuids == null
+					? UserDevices.ItemsToArraySyncronized()
+					: UserDevices.Items.Where(x => instanceGuids.Contains(x.InstanceGuid)).ToArray();
 			// Get devices instances mapped to the game.
 			var mappedInstanceGuids = GetMappedDevices(game?.FileName, true)
 				.Select(x => x.InstanceGuid).ToArray();

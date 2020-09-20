@@ -204,7 +204,7 @@ namespace x360ce.App.ViGEm
 		/// <summary>
 		/// Must remove and re-add devices for HidGuardian filters to take effect.
 		/// </summary>
-		static void ResetDevices(params string[] deviceIds)
+		public static void ResetDevices(params string[] deviceIds)
 		{
 			//var hwIds = ConvertToHidVidPid(deviceIds);
 			for (int i = 0; i < deviceIds.Length; i++)

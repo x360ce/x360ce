@@ -1,5 +1,6 @@
-v4.14.6.0 (2020-09-20)
-- Fixed: High use of CPU resoruces due to the manager.IsDeviceAttached(ud.InstanceGuid) method.
+v4.14.7.0 (2020-09-20)
+- Fixed: Hide and unhide correct controllers on app start and shutdown.
+- Fixed: High use of CPU resources due to the manager.IsDeviceAttached(ud.InstanceGuid) method.
 - Fixed: Remove and rescan just controller interface now, which is enough for HID Guardian.
 - Fixed: Check HID Guardian installation and help to install.
 - Fixed: Crash when hiding device with missing Hardware ID.

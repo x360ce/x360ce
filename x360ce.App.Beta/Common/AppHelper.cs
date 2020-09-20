@@ -347,12 +347,14 @@ namespace x360ce.App
 		/// <returns></returns>
 		public static bool UnhideAllDevices()
 		{
+			var affected = ViGEm.HidGuardianHelper.GetAffected();
 			// Clear list of hidden devices.
 			ViGEm.HidGuardianHelper.ClearAffected();
 			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized();
 			// Unhide all devices.
 			for (int i = 0; i < devices.Length; i++)
 				devices[i].IsHidden = false;
+			HidGuardianHelper.ResetDevices(affected);
 			return true;
 		}
 
@@ -363,7 +365,7 @@ namespace x360ce.App
 			UserDevice[] devices;
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
-				devices = instanceGuids == null
+				devices = instanceGuids == null || instanceGuids.Length == 0
 					? SettingsManager.UserDevices.Items.ToArray()
 					: SettingsManager.UserDevices.Items.Where(x => instanceGuids.Contains(x.InstanceGuid)).ToArray();
 			}
