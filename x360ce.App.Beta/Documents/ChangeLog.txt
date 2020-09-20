@@ -1,4 +1,5 @@
-v4.14.7.0 (2020-09-20)
+v4.14.8.0 (2020-09-20)
+- Fixed: Ask administrative permission for app for hiding/unhiding controllers.
 - Fixed: Hide and unhide correct controllers on app start and shutdown.
 - Fixed: High use of CPU resources due to the manager.IsDeviceAttached(ud.InstanceGuid) method.
 - Fixed: Remove and rescan just controller interface now, which is enough for HID Guardian.

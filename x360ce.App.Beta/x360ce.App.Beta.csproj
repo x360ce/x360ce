@@ -534,6 +534,7 @@
     <EmbeddedResource Include="Presets\x360ce.SL_6555_SBK.ini" />
     <EmbeddedResource Include="Presets\x360ce.Philips_Wireless_PC_Controller.ini" />
     <None Include="app.config" />
+    <EmbeddedResource Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
