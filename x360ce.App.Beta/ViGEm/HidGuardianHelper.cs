@@ -153,21 +153,15 @@ namespace x360ce.App.ViGEm
 
 		public static bool InsertToAffected(params string[] ids)
 		{
-			// Extract \HID ""
-			var vidsPids = ids.SelectMany(x => ConvertToHidVidPid(x)).Distinct().ToArray();
-			// Return is no valid records found.
-			if (vidsPids.Length == 0)
-				return false;
-
 			// Return if invalid id found.
-			//if (ids.Any(i => !HardwareIdRegex.IsMatch(i)))
-			//	return false;
-			FixCasing(vidsPids);
+			if (ids.Any(x => !HardwareIdRegex.IsMatch(x)))
+				return false;
+			FixCasing(ids);
 			// Get existing IDs.
 			var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
 			var current = (key.GetValue(registryKeyName, new string[0]) as string[]).ToList();
 			// Combine arrays.
-			current.AddRange(vidsPids);
+			current.AddRange(ids);
 			// Get unique and sorted list.
 			var newList = current
 				.Where(x => !string.IsNullOrWhiteSpace(x))
@@ -184,16 +178,15 @@ namespace x360ce.App.ViGEm
 
 		public static bool RemoveFromAffected(params string[] ids)
 		{
-			var vidsPids = ids.SelectMany(x => ConvertToHidVidPid(x)).Distinct().ToArray();
-			// Return is no valid records found.
-			if (vidsPids.Length == 0)
+			// Return if invalid id found.
+			if (ids.Any(x => !HardwareIdRegex.IsMatch(x)))
 				return false;
-			FixCasing(vidsPids);
+			FixCasing(ids);
 			// Get existing Hardware IDs.
 			var key = Registry.LocalMachine.CreateSubKey(ParametersRegistry);
 			var current = (key.GetValue(registryKeyName, new string[0]) as string[]).ToList();
 			// Remove values from array.
-			current.RemoveAll(x => vidsPids.Contains(x));
+			current.RemoveAll(x => ids.Contains(x));
 			// Get unique and sorted list.
 			var newList = current
 				.Where(x => !string.IsNullOrWhiteSpace(x))
@@ -213,9 +206,9 @@ namespace x360ce.App.ViGEm
 		/// </summary>
 		static void ResetDevices(params string[] deviceIds)
 		{
-			var hwIds = ConvertToHidVidPid(deviceIds);
-			for (int i = 0; i < hwIds.Length; i++)
-				Program.RunElevated(AdminCommand.UninstallDevice, hwIds[i]);
+			//var hwIds = ConvertToHidVidPid(deviceIds);
+			for (int i = 0; i < deviceIds.Length; i++)
+				Program.RunElevated(AdminCommand.UninstallDevice, deviceIds[i]);
 		}
 
 		static readonly Regex HardwareIdSimpleRegex = new Regex(@"^HID\\VID_[0-9A-F]{4}&PID_[0-9A-F]{4}", RegexOptions.IgnoreCase);

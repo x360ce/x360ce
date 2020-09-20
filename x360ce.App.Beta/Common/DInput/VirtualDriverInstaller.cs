@@ -153,6 +153,10 @@ namespace x360ce.App.DInput
 		/// This is because SetupDiCallClassInstaller throws ERROR_IN_WOW64 (ex.ErrorCode = 0xE0000235)
 		/// when application architecture do not match OS architecture.
 		/// </summary>
+		/// <param name="deviceId">
+		/// Device Hardware ID ("HID\VID_046D&PID_C219") or
+		/// Device Instance ID prefixed with '@' (@"HID\VID_046D&PID_C219\7&29C26453&0&0000").
+		/// </param>
 		/// <remarks>Must be executed in administrative mode.</remarks>
 		public static void UnInstallDevice(string deviceId, ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{

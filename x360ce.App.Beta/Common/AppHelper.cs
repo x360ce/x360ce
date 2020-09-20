@@ -372,8 +372,7 @@ namespace x360ce.App
 			var idsToShow = new List<string>();
 			foreach (var ud in devices)
 			{
-				//var idsToAffect = new string[] { ud.HidDeviceId };
-				var idToAffect = (ud.HidHardwareIds ?? "")
+				var hardwareId = (ud.HidHardwareIds ?? "")
 					// Split lines into arraty and exclude empty ones.
 					.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries)
 					// Get all Hardware IDs with vendor code and product code.
@@ -381,12 +380,17 @@ namespace x360ce.App
 					// Put longest ID on top.
 					.OrderByDescending(x => x)
 					// Take most detail Hardware ID.
-					.Take(1).FirstOrDefault();
+					.FirstOrDefault();
+				// If hardware is not available then create from instance id.
+				if (string.IsNullOrEmpty(hardwareId))
+					hardwareId = HidGuardianHelper.ConvertToHidVidPid(ud.DevDeviceId).FirstOrDefault();
+				if (string.IsNullOrEmpty(hardwareId))
+					continue;
 				// If must hide and device is not keyboard or mouse.
 				if (ud.IsHidden && !ud.IsKeyboard && !ud.IsMouse)
-					idsToHide.Add(idToAffect);
+					idsToHide.Add(hardwareId);
 				else if(!ud.IsHidden)
-					idsToShow.Add(idToAffect);
+					idsToShow.Add(hardwareId);
 			}
 			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
 			if (canModify)
