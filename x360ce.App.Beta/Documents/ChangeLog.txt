@@ -1,3 +1,6 @@
+v4.14.10.0 (2020-09-22)
+- Fixed: Crash when Error logs folder is missing during first start.
+
 v4.14.9.0 (2020-09-21)
 - Fixed: App configuration, which will ask for elevated permissions properly.
 

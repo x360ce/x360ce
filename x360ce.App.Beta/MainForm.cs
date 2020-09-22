@@ -1664,9 +1664,11 @@ namespace x360ce.App
 
 		void ClearErrors(bool silent = false)
 		{
+			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
+			if (!dir.Exists)
+				return;
 			// Disable monitor while deleting files.
 			MonitorErrors(false);
-			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
 			var fis = dir
 				.GetFiles(LogHelper.Current.FilePattern)
 				.OrderByDescending(x => x.CreationTime).ToArray();
