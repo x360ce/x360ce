@@ -4,7 +4,6 @@ using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Linq;
-using System.Net.Configuration;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 

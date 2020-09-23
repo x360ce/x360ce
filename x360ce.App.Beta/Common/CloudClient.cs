@@ -104,8 +104,6 @@ namespace x360ce.App
 				{
 					// Step 1: Get Server's Public RSA key for encryption.
 					var msg = new CloudMessage(CloudAction.GetPublicRsaKey);
-					CloudHelper.ApplySecurity(item.Message);
-					msg.Values.Add(CloudKey.RsaPublicKey, o.UserRsaPublicKey);
 					// Retrieve public RSA key.
 					var results = ws.Execute(msg);
 					if (results.ErrorCode == 0)
@@ -124,14 +122,23 @@ namespace x360ce.App
 					// Add security.
 					CloudHelper.ApplySecurity(item.Message, o.UserRsaPublicKey, o.CloudRsaPublicKey, o.Username, o.Password);
 					// Add computer and profile ID.
-					item.Message.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
-					item.Message.Values.Add(CloudKey.ProfileId, o.ProfileId, true);
+					item.Message.Values.Add(CloudKey.ComputerId, o.ComputerId, true, true);
+					item.Message.Values.Add(CloudKey.ProfileId, o.ProfileId, true, true);
 					// Add version so it will be possible distinguish between Library (v3.x) and Virtual (v4.x) settings.
-					item.Message.Values.Add(CloudKey.ClientVersion, Application.ProductVersion);
+					item.Message.Values.Add(CloudKey.ClientVersion, Application.ProductVersion, false, true);
 					// Call web service.
 					result = ws.Execute(item.Message);
-					if (result.ErrorCode > 0)
+					if (result.ErrorCode != 0)
 					{
+						// If unable to decrypt error then...
+						if (result.ErrorCode == (int)CloudErrorCode.UnableToDecrypt)
+						{
+							// Get server's RSA Public key.
+							var cloudRsaPublicKey = result.Values.GetValue<string>(CloudKey.RsaPublicKey, null);
+							// If key was set then update local key.
+							if (!string.IsNullOrEmpty(cloudRsaPublicKey))
+								o.CloudRsaPublicKey = cloudRsaPublicKey;
+						}
 						error = new Exception(result.ErrorMessage);
 					}
 					else
@@ -189,7 +196,7 @@ namespace x360ce.App
 					{
 						MainForm.Current.GameSettingsPanel.ImportAndBindItems(result.UserGames);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
-							if (result.ErrorCode > 0)
+							if (result.ErrorCode != 0)
 								MainForm.Current.SetHeaderError(result.ErrorMessage);
 							else
 								MainForm.Current.SetHeaderInfo(result.ErrorMessage);
@@ -198,7 +205,7 @@ namespace x360ce.App
 					{
 						MainForm.Current.DevicesPanel.ImportAndBindItems(result.UserDevices);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
-							if (result.ErrorCode > 0)
+							if (result.ErrorCode != 0)
 								MainForm.Current.SetHeaderError(result.ErrorMessage);
 							else
 								MainForm.Current.SetHeaderInfo(result.ErrorMessage);

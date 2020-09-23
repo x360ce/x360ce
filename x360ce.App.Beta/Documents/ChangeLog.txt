@@ -1,5 +1,6 @@
-v4.14.10.0 (2020-09-22)
+v4.14.11.0 (2020-09-23)
 - Fixed: Crash when Error logs folder is missing during first start.
+- Fixed: App was not able to receive controller settings if server changed.
 
 v4.14.9.0 (2020-09-21)
 - Fixed: App configuration, which will ask for elevated permissions properly.

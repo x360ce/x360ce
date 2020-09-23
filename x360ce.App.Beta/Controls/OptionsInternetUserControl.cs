@@ -102,7 +102,7 @@ namespace x360ce.App.Controls
 				cmd2.Values.Add(CloudKey.ComputerId, o.ComputerId, true);
 				cmd2.Values.Add(CloudKey.ProfileId, o.ProfileId, true);
 				results = ws.Execute(cmd2);
-				if (results.ErrorCode > 0)
+				if (results.ErrorCode != 0)
 				{
 					MessageBoxForm.Show(results.ErrorMessage, string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}

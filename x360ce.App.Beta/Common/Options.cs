@@ -101,7 +101,17 @@ namespace x360ce.App
 		public string InternetDatabaseUrl
 		{
 			get { return _InternetDatabaseUrl; }
-			set { _InternetDatabaseUrl = value; OnPropertyChanged(); }
+			set
+			{
+				// If server changed then...
+				if (_InternetDatabaseUrl != value)
+					// Reset Cloud RSA Public encryption key.
+					// Key will be retrieved automatically next time.
+					CloudRsaPublicKey = null;
+				_InternetDatabaseUrl = value;
+
+				OnPropertyChanged();
+			}
 		}
 		string _InternetDatabaseUrl;
 

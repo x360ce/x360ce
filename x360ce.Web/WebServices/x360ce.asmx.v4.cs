@@ -27,13 +27,16 @@ namespace x360ce.Web.WebServices
 		{
 			errorCode = 0;
 			errorMessage = null;
-			if (string.IsNullOrEmpty(password)) errorMessage = "Please enter password";
-			if (string.IsNullOrEmpty(username)) errorMessage = "Please enter user name";
+			if (string.IsNullOrEmpty(password))
+				errorMessage = "Please enter password";
+			if (string.IsNullOrEmpty(username))
+				errorMessage = "Please enter user name";
 			if (string.IsNullOrEmpty(errorMessage))
 			{
 				// Here must be validation with password. You can add third party validation here;
 				bool success = Membership.ValidateUser(username, password);
-				if (!success) errorMessage = string.Format("Validation failed. User name '{0}' was not found.", username);
+				if (!success)
+					errorMessage = string.Format("Validation failed. User name '{0}' was not found.", username);
 			}
 			var values = new KeyValueList();
 			if (!string.IsNullOrEmpty(errorMessage))
@@ -53,7 +56,8 @@ namespace x360ce.Web.WebServices
 			string rolesString = string.Empty;
 			for (int i = 0; i < roles.Length; i++)
 			{
-				if (i > 0) rolesString += ",";
+				if (i > 0)
+					rolesString += ",";
 				rolesString += roles[i];
 			}
 			var loginRememberMinutes = 30;
@@ -128,17 +132,11 @@ namespace x360ce.Web.WebServices
 						if (user == null)
 						{
 							messages.Add("Not authorized");
-							results.ErrorCode = 2;
+							results.ErrorCode = (int)CloudErrorCode.Error;
 						}
 						break;
 					case CloudAction.GetPublicRsaKey:
-						var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
-						if (string.IsNullOrEmpty(rsa.RsaPublicKeyValue))
-						{
-							rsa.RsaNewKeysSave(2048);
-						}
-						results.Values = new KeyValueList();
-						results.Values.Add(CloudKey.RsaPublicKey, rsa.RsaPublicKeyValue);
+						AddRsaPublicKey(results);
 						break;
 					case CloudAction.Insert:
 					case CloudAction.Update:
@@ -151,7 +149,7 @@ namespace x360ce.Web.WebServices
 						else
 						{
 							messages.Add(error);
-							results.ErrorCode = 2;
+							results.ErrorCode = (int)CloudErrorCode.Error;
 						}
 						break;
 					case CloudAction.Select:
@@ -164,7 +162,7 @@ namespace x360ce.Web.WebServices
 						else
 						{
 							messages.Add(error);
-							results.ErrorCode = 2;
+							results.ErrorCode = (int)CloudErrorCode.Error;
 						}
 						break;
 					case CloudAction.Delete:
@@ -177,7 +175,7 @@ namespace x360ce.Web.WebServices
 						else
 						{
 							messages.Add(error);
-							results.ErrorCode = 2;
+							results.ErrorCode = (int)CloudErrorCode.Error;
 						}
 						break;
 					case CloudAction.CheckUpdates:
@@ -205,10 +203,24 @@ namespace x360ce.Web.WebServices
 			}
 			catch (Exception ex)
 			{
-				results.ErrorCode = 1;
+				var key = nameof(CloudErrorCode);
 				results.ErrorMessage = "Server: " + ex.Message;
+				results.ErrorCode = (int)CloudErrorCode.Error;
+				if (ex.Data.Contains(key) && Equals(ex.Data[key], CloudErrorCode.UnableToDecrypt))
+				{
+					results.ErrorCode = (int)CloudErrorCode.UnableToDecrypt;
+					AddRsaPublicKey(results);
+				}
 			}
 			return results;
+		}
+
+		private void AddRsaPublicKey(CloudMessage results)
+		{
+			var rsa = new JocysCom.ClassLibrary.Security.Encryption(CloudKey.Cloud);
+			if (string.IsNullOrEmpty(rsa.RsaPublicKeyValue))
+				rsa.RsaNewKeysSave(2048);
+			results.Values.Add(CloudKey.RsaPublicKey, rsa.RsaPublicKeyValue);
 		}
 
 		#region Programs
@@ -218,7 +230,8 @@ namespace x360ce.Web.WebServices
 		{
 			var db = new x360ceModelContainer();
 			var o = db.Programs.FirstOrDefault(x => x.FileName == fileName && x.FileProductName == fileProductName);
-			if (o != null) return o;
+			if (o != null)
+				return o;
 			o = db.Programs.FirstOrDefault(x => x.FileName == fileName);
 			db.Dispose();
 			db = null;
@@ -299,9 +312,12 @@ namespace x360ce.Web.WebServices
 			{
 				var db = new x360ceModelContainer();
 				IQueryable<Program> list = db.Programs;
-				if (isEnabled == EnabledState.Enabled) list = list.Where(x => x.IsEnabled);
-				else if (isEnabled == EnabledState.Disabled) list = list.Where(x => !x.IsEnabled);
-				if (minInstanceCount > 0) list = list.Where(x => x.InstanceCount == minInstanceCount);
+				if (isEnabled == EnabledState.Enabled)
+					list = list.Where(x => x.IsEnabled);
+				else if (isEnabled == EnabledState.Disabled)
+					list = list.Where(x => !x.IsEnabled);
+				if (minInstanceCount > 0)
+					list = list.Where(x => x.InstanceCount == minInstanceCount);
 				programs = list.ToList();
 				db.Dispose();
 				db = null;

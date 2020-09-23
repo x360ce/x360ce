@@ -141,6 +141,7 @@
   <ItemGroup>
     <Compile Include="Common\BoardInfo.cs" />
     <Compile Include="Common\CloudAction.cs" />
+    <Compile Include="Common\CloudErrorCode.cs" />
     <Compile Include="Common\CloudMessage.cs" />
     <Compile Include="Common\CloudHelper.Security.cs" />
     <Compile Include="Common\ConvertHelper.cs" />

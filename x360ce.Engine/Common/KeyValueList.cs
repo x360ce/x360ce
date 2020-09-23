@@ -10,13 +10,21 @@ namespace x360ce.Engine
 		{
 		}
 
-		public void Add<T>(object key, T value, bool encrypt = false)
+		/// <summary>Add new key and value item to collection.</summary>
+		/// <typeparam name="T">Type of the value.</typeparam>
+		/// <param name="key">Key.</param>
+		/// <param name="value">Value.</param>
+		/// <param name="encrypt">Encrypt value (random password must be set)</param>
+		/// <param name="replace">Remove old values with the same key.</param>
+		public void Add<T>(object key, T value, bool encrypt = false, bool replace = false)
 		{
 			var t = typeof(T);
+			if (replace)
+				RemoveAll(x => Equals(x.Key, key));
 			// If can be serialized automatically then...
 			if (t.IsPrimitive && !encrypt)
 			{
-				base.Add(new KeyValue(key, value));
+				Add(new KeyValue(key, value));
 			}
 			else
 			{
@@ -24,25 +32,26 @@ namespace x360ce.Engine
 				var stringValue = (typeof(T) == typeof(string))
 					? (string)(object)value
 					: JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(value);
-				// If encryption required then...
+				// If encryption required then Encrypt with AES-256
 				if (encrypt)
-				{
-					// Encrypt with AES-256...
 					stringValue = JocysCom.ClassLibrary.Security.AESHelper.EncryptString(_RandomPassword, stringValue);
-				}
-				base.Add(new KeyValue(key, stringValue));
+				Add(new KeyValue(key, stringValue));
 			}
 		}
 
-		public void AddRandomPassword(string remoteRsaPublicKey)
+		// 
+		public void UpsertRandomPassword(string remoteRsaPublicKey)
 		{
+			// Generate random password if not exist for the message.
+			_RandomPassword = _RandomPassword ?? Guid.NewGuid().ToString("N");
 			// Prepare to encrypt data.
 			var rsa = new JocysCom.ClassLibrary.Security.Encryption();
 			rsa.RsaPublicKeyValue = remoteRsaPublicKey;
-			// Generate random password...
-			_RandomPassword = Guid.NewGuid().ToString("N");
-			// Encrypt and add random password with RSA...
+			// Encrypt random password with RSA public key...
 			var randomPasswordEncrypted = rsa.RsaEncrypt(_RandomPassword);
+			// Reomove old random password if exist.
+			RemoveAll(x => Equals(x.Key, CloudKey.RandomPassword));
+			// Add new random password to the list.
 			Add(CloudKey.RandomPassword, randomPasswordEncrypted);
 		}
 
@@ -71,24 +80,15 @@ namespace x360ce.Engine
 					break;
 				}
 			}
-			// If value not found or null then...
+			// If value not found or null then return default value.
 			if (!found || Equals(v, null))
-			{
-				// Return default value.
 				return defaultValue;
-			}
-			// If decryption is required.
+			// If decryption is required then decrypt value.
 			if (decrypt)
-			{
-				// Decrypt value.
 				v = JocysCom.ClassLibrary.Security.AESHelper.DecryptString(_RandomPassword, (string)v);
-			}
-			// If value is string but-non string is wanted then...
+			// If value is string but-non string is wanted then deserialize.
 			if ((v is string) && typeof(T) != typeof(string))
-			{
-				// Deserialize.
 				v = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<T>((string)v);
-			}
 			return (T)v;
 		}
 
