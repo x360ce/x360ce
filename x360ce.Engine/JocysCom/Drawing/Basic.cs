@@ -32,17 +32,19 @@ namespace JocysCom.ClassLibrary.Drawing
 		public static Bitmap CaptureImage(System.Windows.Forms.Screen screen = null)
 		{
 			var s = screen ?? System.Windows.Forms.Screen.PrimaryScreen;
-			var sw = s.Bounds.Width;
-			var sh = s.Bounds.Height;
-			return CaptureImage(0, 0, sw, sh);
+			return CaptureImage(
+				s.Bounds.X, s.Bounds.Y,
+				s.Bounds.Width, s.Bounds.Height
+			);
 		}
 
 		public static void CaptureImage(ref Bitmap b, System.Windows.Forms.Screen screen = null)
 		{
 			var s = screen ?? System.Windows.Forms.Screen.PrimaryScreen;
-			var sw = s.Bounds.Width;
-			var sh = s.Bounds.Height;
-			CaptureImage(ref b, 0, 0, sw, sh);
+			CaptureImage(ref b,
+				s.Bounds.X, s.Bounds.Y,
+				s.Bounds.Width, s.Bounds.Height
+			);
 		}
 
 #endif

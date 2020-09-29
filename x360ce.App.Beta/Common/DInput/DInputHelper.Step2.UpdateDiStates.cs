@@ -24,11 +24,13 @@ namespace x360ce.App.DInput
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				var ud = userDevices[i];
 				JoystickState state = null;
+				JoystickUpdate[] update = null;
 				// Allow if not testing or testing with option enabled.
 				var o = SettingsManager.Options;
 				var allow = !o.TestEnabled || o.TestGetDInputStates;
 				// Note: manager.IsDeviceAttached() use a lot of CPU resources.
 				var isAttached = ud != null && ud.IsOnline; // && manager.IsDeviceAttached(ud.InstanceGuid);
+
 				if (isAttached && allow)
 				{
 					var device = ud.Device;
@@ -37,8 +39,11 @@ namespace x360ce.App.DInput
 						var exceptionData = new System.Text.StringBuilder();
 						try
 						{
-							// Set BufferSize in order to use buffered data.
-							//device.Properties.BufferSize = 128;
+							if (o.UseDeviceBufferedData && device.Properties.BufferSize == 0)
+							{
+								// Set BufferSize in order to use buffered data.
+								device.Properties.BufferSize = 128;
+							}
 							var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 							var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
 							// Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
@@ -76,13 +81,14 @@ namespace x360ce.App.DInput
 							// If a device that requires polling is not polled periodically, no new data is received from the device.
 							// Calling this method causes DirectInput to update the device state, generate input
 							// events (if buffered data is enabled), and set notification events (if notification is enabled).
-							// Get buffered data.
-							//device.Poll();
-							//var datas = device.GetBufferedData();
 							device.Poll();
+							if (o.UseDeviceBufferedData)
+							{
+								// Get buffered data.
+								update = device.GetBufferedData();
+							}
 							// Get device state.
 							state = device.GetCurrentState();
-
 							// Fill device objects.
 							if (ud.DeviceObjects == null)
 							{
@@ -207,6 +213,14 @@ namespace x360ce.App.DInput
 					}
 				}
 				ud.JoState = state;
+				ud.JoUpdate = update;
+				if (update != null)
+				{
+					if (update.Length > 0)
+					{
+						
+					}
+				}
 				// Update only if state available.
 				if (state != null)
 				{

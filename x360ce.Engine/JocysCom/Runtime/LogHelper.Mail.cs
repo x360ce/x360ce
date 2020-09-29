@@ -144,7 +144,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			var m = new MailMessage();
 			MailHelper.ApplyRecipients(m, smtp.SmtpFrom, smtp.ErrorRecipients);
 			// Add headers, which can be used on server side to group errors.
-			m.Headers.Add(XLogHelperErrorSource, ex.Source);
+			if (!string.IsNullOrEmpty(ex.Source))
+				m.Headers.Add(XLogHelperErrorSource, ex.Source);
 			m.Headers.Add(XLogHelperErrorType, ex.GetType().FullName);
 			m.Headers.Add(XLogHelperErrorCode, ex.HResult.ToString());
 			m.Subject = subject;

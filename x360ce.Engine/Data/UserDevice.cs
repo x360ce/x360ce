@@ -175,6 +175,10 @@ namespace x360ce.Engine.Data
 		[XmlIgnore]
 		public JoystickState JoState;
 
+		/// <summary>DInput JoystickUpdate States.</summary>
+		[XmlIgnore]
+		public JoystickUpdate[] JoUpdate;
+
 		/// <summary>X360CE custom DirectInput state used for configuration.</summary>
 		[XmlIgnore]
 		public CustomDiState DiState;

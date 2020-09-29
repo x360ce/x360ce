@@ -248,9 +248,19 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			{
 				var file = DownloadFile(uri, localPath);
 				if (runElevated)
-					ControlsHelper.OpenPath(file.FullName);
+				{
+					var proc = new ProcessStartInfo();
+					proc.UseShellExecute = true;
+					proc.WorkingDirectory = Environment.CurrentDirectory;
+					proc.FileName = file.FullName;
+					proc.Verb = "runas";
+					Process.Start(proc);
+					//Win32.UacHelper.RunElevatedAsync(file.FullName, null);
+				}
 				else
-					Win32.UacHelper.RunElevatedAsync(file.FullName, null);
+				{
+					ControlsHelper.OpenPath(file.FullName);
+				}
 				return true;
 			}
 			catch (Exception ex)

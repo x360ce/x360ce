@@ -123,6 +123,15 @@ namespace x360ce.App
 		}
 		UpdateFrequency _PollingRate = UpdateFrequency.ms1_1000Hz;
 
+
+		[Description("Device Use Buffered Data: false - device.GetCurrentState(), 1 - device.GetBufferedData().")]
+		public bool UseDeviceBufferedData
+		{
+			get { return _UseDeviceBufferedData; }
+			set { _UseDeviceBufferedData = value; OnPropertyChanged(); }
+		}
+		bool _UseDeviceBufferedData;
+
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]

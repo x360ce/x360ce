@@ -98,6 +98,7 @@ namespace x360ce.App.Controls
 			ControlHelper.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
+			ControlHelper.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().

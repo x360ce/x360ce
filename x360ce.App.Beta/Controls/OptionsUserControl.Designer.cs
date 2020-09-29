@@ -93,6 +93,7 @@
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
+			this.UseDeviceBufferedDataCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
@@ -357,7 +358,7 @@
 			this.ConfigurationGroupBox.Controls.Add(this.IncludeProductsCheckBox);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
-			this.ConfigurationGroupBox.Location = new System.Drawing.Point(3, 313);
+			this.ConfigurationGroupBox.Location = new System.Drawing.Point(263, 313);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
 			this.ConfigurationGroupBox.Size = new System.Drawing.Size(254, 47);
 			this.ConfigurationGroupBox.TabIndex = 31;
@@ -393,11 +394,12 @@
 			// 
 			// DirectInputDevicesGroupBox
 			// 
+			this.DirectInputDevicesGroupBox.Controls.Add(this.UseDeviceBufferedDataCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 238);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
-			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(254, 69);
+			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(254, 91);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
 			this.DirectInputDevicesGroupBox.TabStop = false;
 			this.DirectInputDevicesGroupBox.Text = "Direct Input Devices";
@@ -807,7 +809,7 @@
 			this.InternetOptionsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.InternetOptionsTabPage.Name = "InternetOptionsTabPage";
 			this.InternetOptionsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.InternetOptionsTabPage.Size = new System.Drawing.Size(192, 74);
+			this.InternetOptionsTabPage.Size = new System.Drawing.Size(650, 421);
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
 			// 
@@ -816,7 +818,7 @@
 			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.InternetPanel.Location = new System.Drawing.Point(3, 3);
 			this.InternetPanel.Name = "InternetPanel";
-			this.InternetPanel.Size = new System.Drawing.Size(186, 68);
+			this.InternetPanel.Size = new System.Drawing.Size(644, 415);
 			this.InternetPanel.TabIndex = 33;
 			// 
 			// VirtualDeviceTabPage
@@ -838,6 +840,16 @@
 			this.VirtualDevicePanel.Name = "VirtualDevicePanel";
 			this.VirtualDevicePanel.Size = new System.Drawing.Size(650, 421);
 			this.VirtualDevicePanel.TabIndex = 72;
+			// 
+			// UseDeviceBufferedDataCheckBox
+			// 
+			this.UseDeviceBufferedDataCheckBox.AutoSize = true;
+			this.UseDeviceBufferedDataCheckBox.Location = new System.Drawing.Point(6, 65);
+			this.UseDeviceBufferedDataCheckBox.Name = "UseDeviceBufferedDataCheckBox";
+			this.UseDeviceBufferedDataCheckBox.Size = new System.Drawing.Size(151, 17);
+			this.UseDeviceBufferedDataCheckBox.TabIndex = 0;
+			this.UseDeviceBufferedDataCheckBox.Text = "Use Device Buffered Data";
+			this.UseDeviceBufferedDataCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// OptionsUserControl
 			// 
@@ -941,5 +953,6 @@
 		private System.Windows.Forms.GroupBox DevelopingGroupBox;
 		private System.Windows.Forms.CheckBox ShowFormInfoCheckBox;
 		private System.Windows.Forms.CheckBox ShowTestButtonCheckBox;
+		private System.Windows.Forms.CheckBox UseDeviceBufferedDataCheckBox;
 	}
 }

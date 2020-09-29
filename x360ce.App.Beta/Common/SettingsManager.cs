@@ -386,10 +386,9 @@ namespace x360ce.App
 			//var keyName = prop.Name;
 			// Get the description attribute
 			var descAttr = GetCustomAttribute<DescriptionAttribute>(prop);
-			var desc = descAttr != null ? descAttr.Description : string.Empty;
+			var desc = descAttr?.Description ?? string.Empty;
 			// Get the default value attribute
 			var dvalAttr = GetCustomAttribute<DefaultValueAttribute>(prop);
-			var dval = descAttr != null ? dvalAttr.Value : null;
 			// Display help inside yellow header.
 			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
 			control.MouseHover += control_MouseEnter;
@@ -401,7 +400,7 @@ namespace x360ce.App
 			//item.IniKey = keyName;
 			item.Control = control;
 			item.PropertyName = prop.Name;
-			item.DefaultValue = dval;
+			item.DefaultValue = dvalAttr?.Value;
 			item.Property = prop;
 			// Add to the map
 			Current.SettingsMap.Add(item);
