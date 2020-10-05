@@ -1,5 +1,8 @@
-﻿using SharpDX.XInput;
+﻿using JocysCom.ClassLibrary.Collections;
+using SharpDX.XInput;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Documents;
 using x360ce.Engine;
 
 namespace x360ce.App.DInput
@@ -49,17 +52,22 @@ namespace x360ce.App.DInput
 				int index;
 				SettingType type;
 
+				var o = SettingsManager.Options;
+
+				// Contains 
+				//var gamepadUpdates = new List<KeyValue<GamepadKeyCode, int?>>();
+
 				// --------------------------------------------------------
 				// Convert DInput POV Hat value to D-PAD buttons.
 				// --------------------------------------------------------
 
-				// Create array to store 4 buttons for each POV.
+				// Create array to store 4 buttons for each POV 4 i.e. 16 buttons.
 				var dPadButtons = new bool[4 * diState.Povs.Length];
 				// Loop trough D-Pad button states.
-				for (int d = 0; d < diState.Povs.Length; ++d)
+				for (int p = 0; p < diState.Povs.Length; ++p)
 				{
 					// Get degree value from the POV.
-					int povdeg = diState.Povs[d];
+					int povdeg = diState.Povs[p];
 					// If POV is pressed into one of the directions then...
 					if (povdeg >= 0)
 					{
@@ -68,13 +76,13 @@ namespace x360ce.App.DInput
 						// This will allow to have more flexible degree values mapped to buttons.
 						var y = ((2250 + povdeg) / 4500) % 8;
 						// XINPUT_GAMEPAD_DPAD_UP
-						dPadButtons[d * 4 + 0] = (y >= 0 && y <= 1) || y == 7;
+						dPadButtons[p * 4 + 0] = (y >= 0 && y <= 1) || y == 7;
 						// XINPUT_GAMEPAD_DPAD_RIGHT
-						dPadButtons[d * 4 + 1] = (y >= 1 && y <= 3);
+						dPadButtons[p * 4 + 1] = (y >= 1 && y <= 3);
 						// XINPUT_GAMEPAD_DPAD_DOWN
-						dPadButtons[d * 4 + 2] = (y >= 3 && y <= 5);
+						dPadButtons[p * 4 + 2] = (y >= 3 && y <= 5);
 						// XINPUT_GAMEPAD_DPAD_LEFT
-						dPadButtons[d * 4 + 3] = (y >= 5 && y <= 7);
+						dPadButtons[p * 4 + 3] = (y >= 5 && y <= 7);
 					}
 				}
 

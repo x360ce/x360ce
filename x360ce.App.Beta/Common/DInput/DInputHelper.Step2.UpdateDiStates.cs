@@ -4,6 +4,8 @@ using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Linq;
+using System.Web.UI.WebControls;
+using System.Windows.Media.TextFormatting;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -82,7 +84,7 @@ namespace x360ce.App.DInput
 							// Calling this method causes DirectInput to update the device state, generate input
 							// events (if buffered data is enabled), and set notification events (if notification is enabled).
 							device.Poll();
-							if (o.UseDeviceBufferedData)
+							if (o.UseDeviceBufferedData && device.Properties.BufferSize > 0)
 							{
 								// Get buffered data.
 								update = device.GetBufferedData();
@@ -214,23 +216,39 @@ namespace x360ce.App.DInput
 				}
 				ud.JoState = state;
 				ud.JoUpdate = update;
-				if (update != null)
-				{
-					if (update.Length > 0)
-					{
-						
-					}
-				}
-				// Update only if state available.
 				if (state != null)
 				{
 					var newState = new CustomDiState(ud.JoState);
+					var newUpdates = update?.Select(x=> new CustomDiUpdate(x)).ToArray();
+					// If updates from buffer supplied and old state is available then...
+					if (newUpdates != null && newUpdates.Count(x=>x.Type == SettingType.Button) > 1 && ud.DiState != null)
+					{
+						// Analyse if state must be modified.
+						for (int b = 0; b < newState.Buttons.Length; b++)
+						{
+							var oldPresseed = ud.DiState.Buttons[b];
+							var newPresseed = newState.Buttons[b];
+							// If button state was not changed.
+							if (oldPresseed == newPresseed)
+							{
+								// But buffer contains press then...
+								var wasPressed = newUpdates.Count(x => x.Type == SettingType.Button && x.Index == b) > 1;
+								if (wasPressed)
+								{
+									// Invert state and give chance for the game to recognize the press.
+									newState.Buttons[b] = !newState.Buttons[b];
+								}
+							}
+						}
+					}
 					var newTime = watch.ElapsedTicks;
 					// Remember old state.
 					ud.OldDiState = ud.DiState;
+					ud.OldDiUpdates = ud.DiUpdates;
 					ud.OldDiStateTime = ud.DiStateTime;
 					// Update state.
 					ud.DiState = newState;
+					ud.DiUpdates = newUpdates;
 					ud.DiStateTime = newTime;
 					// Mouse needs special update.
 					if (ud.Device != null && ud.Device.Information.Type == SharpDX.DirectInput.DeviceType.Mouse)

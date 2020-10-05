@@ -184,10 +184,16 @@ namespace x360ce.Engine.Data
 		public CustomDiState DiState;
 
 		[XmlIgnore]
+		public CustomDiUpdate[] DiUpdates;
+
+		[XmlIgnore]
 		public long DiStateTime;
 
 		[XmlIgnore]
 		public CustomDiState OldDiState;
+
+		[XmlIgnore]
+		public CustomDiUpdate[] OldDiUpdates;
 
 		[XmlIgnore]
 		public long OldDiStateTime;

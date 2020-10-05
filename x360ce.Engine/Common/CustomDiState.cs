@@ -10,6 +10,19 @@ namespace x360ce.Engine
 	/// </summary>
 	public class CustomDiState
 	{
+
+		public CustomDiState(JoystickState state)
+		{
+			// Fill 24 axis (3 x 8).
+			Axis = GetAxisFromState(state);
+			// Fill 8 sliders (2 x 4).
+			Sliders = GetSlidersFromState(state);
+			// Fill 4 POVs.
+			Povs = state.PointOfViewControllers.ToArray();
+			// Fill 128 buttons.
+			Buttons = state.Buttons.ToArray();
+		}
+
 		public const int MaxAxis = 24;
 		public const int MaxSliders = 8;
 
@@ -87,45 +100,16 @@ namespace x360ce.Engine
 		/// </summary>
 		public static void GetJoystickAxisMask(DeviceObjectItem[] items, Joystick device, out int axisMask, out int actuatorMask, out int actuatorCount)
 		{
-			// Must have same order as in axis.
-			// Important: These values are not the same as on DeviceObjectInstance.Offset.
-			// JoystickUpdate.Offset here points to a field in the RawJoystickState struct.
-			var list = new List<JoystickOffset>{
-					JoystickOffset.X,
-					JoystickOffset.Y,
-					JoystickOffset.Z,
-					JoystickOffset.RotationX,
-					JoystickOffset.RotationY,
-					JoystickOffset.RotationZ,
-					JoystickOffset.AccelerationX,
-					JoystickOffset.AccelerationY,
-					JoystickOffset.AccelerationZ,
-					JoystickOffset.AngularAccelerationX,
-					JoystickOffset.AngularAccelerationY,
-					JoystickOffset.AngularAccelerationZ,
-					JoystickOffset.ForceX,
-					JoystickOffset.ForceY,
-					JoystickOffset.ForceZ,
-					JoystickOffset.TorqueX,
-					JoystickOffset.TorqueY,
-					JoystickOffset.TorqueZ,
-					JoystickOffset.VelocityX,
-					JoystickOffset.VelocityY,
-					JoystickOffset.VelocityZ,
-					JoystickOffset.AngularVelocityX,
-					JoystickOffset.AngularVelocityY,
-					JoystickOffset.AngularVelocityZ,
-				};
 			axisMask = 0;
 			actuatorMask = 0;
 			actuatorCount = 0;
-			for (int i = 0; i < list.Count; i++)
+			for (int i = 0; i < CustomDiHelper.AxisOffsets.Count; i++)
 			{
 				try
 				{
 					// This function accepts JoystickOffset enumeration values.
 					// Important: These values are not the same as on DeviceObjectInstance.Offset.
-					var o = device.GetObjectInfoByOffset((int)list[i]);
+					var o = device.GetObjectInfoByOffset((int)CustomDiHelper.AxisOffsets[i]);
 					if (o != null)
 					{
 						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
@@ -205,26 +189,14 @@ namespace x360ce.Engine
 
 		public static int GetJoystickSlidersMask(DeviceObjectItem[] items, Joystick device)
 		{
-			// Must have same order as in Sliders[] property.
-			// Important: These values are not the same as on DeviceObjectInstance.Offset.
-			var list = new List<JoystickOffset>{
-				JoystickOffset.Sliders0,
-				JoystickOffset.Sliders1,
-				JoystickOffset.AccelerationSliders0,
-				JoystickOffset.AccelerationSliders1,
-				JoystickOffset.ForceSliders0,
-				JoystickOffset.ForceSliders1,
-				JoystickOffset.VelocitySliders0,
-				JoystickOffset.VelocitySliders1,
-			};
 			int mask = 0;
-			for (int i = 0; i < list.Count; i++)
+			for (int i = 0; i < CustomDiHelper.SliderOffsets.Count; i++)
 			{
 				try
 				{
 					// This function accepts JoystickOffset enumeration values.
 					// Important: These values are not the same as on DeviceObjectInstance.Offset.
-					var o = device.GetObjectInfoByOffset((int)list[i]);
+					var o = device.GetObjectInfoByOffset((int)CustomDiHelper.SliderOffsets[i]);
 					if (o != null)
 					{
 						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
@@ -239,18 +211,6 @@ namespace x360ce.Engine
 		}
 
 		#endregion
-
-		public CustomDiState(JoystickState state)
-		{
-			// Fill 24 axis (3 x 8).
-			Axis = GetAxisFromState(state);
-			// Fill 8 sliders (2 x 4).
-			Sliders = GetSlidersFromState(state);
-			// Fill 4 POVs.
-			Povs = state.PointOfViewControllers.ToArray();
-			// Fill 128 buttons.
-			Buttons = state.Buttons.ToArray();
-		}
 
 	}
 }

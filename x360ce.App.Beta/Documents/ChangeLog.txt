@@ -1,7 +1,9 @@
-v4.14.12.0 (2020-09-29)
+v4.14.12.0 (2020-10-25)
+- Fixed: Crash when adding new device to map.
 - Fixed: Crash when loading settings.
 - Fixed: Crash when Error logs folder is missing during first start.
 - Fixed: App was not able to receive controller settings if server changed.
+- Updated: Use of device buffer data to check for missed button clicks between states.
 
 v4.14.9.0 (2020-09-21)
 - Fixed: App configuration, which will ask for elevated permissions properly.

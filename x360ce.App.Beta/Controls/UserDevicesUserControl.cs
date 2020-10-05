@@ -59,6 +59,7 @@ namespace x360ce.App.Controls
 			if (MapDeviceToControllerMode)
 			{
 				var list = new SortableBindingList<UserDevice>();
+				list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
 				var devices = SettingsManager.UserDevices.ItemsToArraySyncronized()
 					.Where(x => x.ConnectionClass != DEVCLASS.SYSTEM).ToList();
 				list.AddRange(devices);
