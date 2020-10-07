@@ -183,6 +183,14 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			if (o == null)
 				return null;
+#if NETCOREAPP
+			var options = new System.Text.Json.JsonSerializerOptions();
+			options.IgnoreNullValues = true;
+			options.PropertyNamingPolicy = null;
+			options.WriteIndented = true;
+			options.MaxDepth = 64;
+			return System.Text.Json.JsonSerializer.Serialize(o, o.GetType(), options);
+#else
 			var serializer = GetJsonSerializer(o.GetType());
 			var ms = new MemoryStream();
 			lock (serializer) { serializer.WriteObject(ms, o); }
@@ -191,6 +199,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var json = encoding.GetString(ms.ToArray());
 			ms.Close();
 			return json;
+#endif
 		}
 
 		/// <summary>
@@ -204,6 +213,14 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			if (json == null)
 				return null;
+#if NETCOREAPP
+			var options = new System.Text.Json.JsonSerializerOptions();
+			options.IgnoreNullValues = true;
+			options.PropertyNamingPolicy = null;
+			options.WriteIndented = true;
+			options.MaxDepth = 64;
+			return System.Text.Json.JsonSerializer.Deserialize(json, type, options);
+#else
 			var serializer = GetJsonSerializer(type);
 			if (encoding == null)
 				encoding = Encoding.UTF8;
@@ -213,6 +230,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			lock (serializer) { o = serializer.ReadObject(ms); }
 			ms.Close();
 			return o;
+#endif
 		}
 
 		/// <summary>
@@ -241,9 +259,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return string.Concat(result);
 		}
 
-		#endregion
+#endregion
 
-		#region XML
+#region XML
 
 		/// <summary>
 		/// Reformat XML document.
@@ -282,9 +300,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return XmlSerializers[type];
 		}
 
-		#endregion
+#endregion
 
-		#region XML: Serialize
+#region XML: Serialize
 
 		/// <summary>
 		/// Serialize object to XML document.
@@ -429,9 +447,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return bytes;
 		}
 
-		#endregion
+#endregion
 
-		#region XML: De-serialize
+#region XML: De-serialize
 
 		/// <summary>
 		/// De-serialize System.Collections.Generic.List to XML document.
@@ -588,9 +606,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return (T)DeserializeFromXmlBytes(bytes, typeof(T), encoding);
 		}
 
-		#endregion
+#endregion
 
-		#region XSD: Serialize
+#region XSD: Serialize
 
 		/// <summary>
 		/// Serialize object schema to XSD file.
@@ -647,7 +665,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			WriteFile(path, bytes, attempts, waitTime);
 		}
 
-		#endregion
+#endregion
 
 	}
 

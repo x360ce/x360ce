@@ -1,10 +1,10 @@
-v4.14.14.0 (2020-10-07)
+v4.14.14.0 (2020-10-08)
 - Fixed: Crash when adding new device to map.
 - Fixed: Crash when loading settings.
 - Fixed: Crash when Error logs folder is missing during first start.
 - Fixed: App was not able to receive controller settings if server changed.
 - Updated: Use of device buffer data to check for missed button clicks between states.
-- New: Add option which allows choose between automatic and manual HID Guardian configuration.
+- New: Option which allows to choose between automatic and manual HID Guardian configuration.
 
 v4.14.9.0 (2020-09-21)
 - Fixed: App configuration, which will ask for elevated permissions properly.

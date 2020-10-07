@@ -8,7 +8,7 @@ namespace JocysCom.ClassLibrary.Mail
 {
 	#region Serialize Mail Message
 
-	[Serializable, XmlRoot(nameof(MailAddress))]
+	[XmlRoot(nameof(MailAddress))]
 	public class MailAddressSerializable
 	{
 		public MailAddressSerializable() { }
@@ -24,7 +24,7 @@ namespace JocysCom.ClassLibrary.Mail
 	}
 
 
-	[Serializable, XmlRoot(nameof(MailMessage))]
+	[XmlRoot(nameof(MailMessage))]
 	public class MailMessageSerializable
 	{
 		public MailMessageSerializable() { }
