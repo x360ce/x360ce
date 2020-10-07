@@ -55,6 +55,7 @@
 			this.ConfigurationVersionLabel = new System.Windows.Forms.Label();
 			this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
 			this.DirectInputDevicesGroupBox = new System.Windows.Forms.GroupBox();
+			this.UseDeviceBufferedDataCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.VirtualDeviceGroupBox = new System.Windows.Forms.GroupBox();
@@ -93,7 +94,8 @@
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
-			this.UseDeviceBufferedDataCheckBox = new System.Windows.Forms.CheckBox();
+			this.HidGuardianGroupBox = new System.Windows.Forms.GroupBox();
+			this.HidGuardianConfigureAutomaticallyCheckBox = new System.Windows.Forms.CheckBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
@@ -111,6 +113,7 @@
 			this.InternetOptionsTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
+			this.HidGuardianGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -403,6 +406,16 @@
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
 			this.DirectInputDevicesGroupBox.TabStop = false;
 			this.DirectInputDevicesGroupBox.Text = "Direct Input Devices";
+			// 
+			// UseDeviceBufferedDataCheckBox
+			// 
+			this.UseDeviceBufferedDataCheckBox.AutoSize = true;
+			this.UseDeviceBufferedDataCheckBox.Location = new System.Drawing.Point(6, 65);
+			this.UseDeviceBufferedDataCheckBox.Name = "UseDeviceBufferedDataCheckBox";
+			this.UseDeviceBufferedDataCheckBox.Size = new System.Drawing.Size(151, 17);
+			this.UseDeviceBufferedDataCheckBox.TabIndex = 0;
+			this.UseDeviceBufferedDataCheckBox.Text = "Use Device Buffered Data";
+			this.UseDeviceBufferedDataCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// ExcludeVirtualDevicesCheckBox
 			// 
@@ -809,7 +822,7 @@
 			this.InternetOptionsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.InternetOptionsTabPage.Name = "InternetOptionsTabPage";
 			this.InternetOptionsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.InternetOptionsTabPage.Size = new System.Drawing.Size(650, 421);
+			this.InternetOptionsTabPage.Size = new System.Drawing.Size(192, 74);
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
 			// 
@@ -818,7 +831,7 @@
 			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.InternetPanel.Location = new System.Drawing.Point(3, 3);
 			this.InternetPanel.Name = "InternetPanel";
-			this.InternetPanel.Size = new System.Drawing.Size(644, 415);
+			this.InternetPanel.Size = new System.Drawing.Size(186, 68);
 			this.InternetPanel.TabIndex = 33;
 			// 
 			// VirtualDeviceTabPage
@@ -833,6 +846,7 @@
 			// 
 			// VirtualDevicePanel
 			// 
+			this.VirtualDevicePanel.Controls.Add(this.HidGuardianGroupBox);
 			this.VirtualDevicePanel.Controls.Add(this.VirtualDeviceGroupBox);
 			this.VirtualDevicePanel.Controls.Add(this.AllowRemoteControllersGroupBox);
 			this.VirtualDevicePanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -841,15 +855,27 @@
 			this.VirtualDevicePanel.Size = new System.Drawing.Size(650, 421);
 			this.VirtualDevicePanel.TabIndex = 72;
 			// 
-			// UseDeviceBufferedDataCheckBox
+			// HidGuardianGroupBox
 			// 
-			this.UseDeviceBufferedDataCheckBox.AutoSize = true;
-			this.UseDeviceBufferedDataCheckBox.Location = new System.Drawing.Point(6, 65);
-			this.UseDeviceBufferedDataCheckBox.Name = "UseDeviceBufferedDataCheckBox";
-			this.UseDeviceBufferedDataCheckBox.Size = new System.Drawing.Size(151, 17);
-			this.UseDeviceBufferedDataCheckBox.TabIndex = 0;
-			this.UseDeviceBufferedDataCheckBox.Text = "Use Device Buffered Data";
-			this.UseDeviceBufferedDataCheckBox.UseVisualStyleBackColor = true;
+			this.HidGuardianGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.HidGuardianGroupBox.Controls.Add(this.HidGuardianConfigureAutomaticallyCheckBox);
+			this.HidGuardianGroupBox.Location = new System.Drawing.Point(278, 118);
+			this.HidGuardianGroupBox.Name = "HidGuardianGroupBox";
+			this.HidGuardianGroupBox.Size = new System.Drawing.Size(369, 69);
+			this.HidGuardianGroupBox.TabIndex = 71;
+			this.HidGuardianGroupBox.TabStop = false;
+			this.HidGuardianGroupBox.Text = "HID Guardian";
+			// 
+			// HidGuardianConfigureAutomaticallyCheckBox
+			// 
+			this.HidGuardianConfigureAutomaticallyCheckBox.AutoSize = true;
+			this.HidGuardianConfigureAutomaticallyCheckBox.Location = new System.Drawing.Point(6, 19);
+			this.HidGuardianConfigureAutomaticallyCheckBox.Name = "HidGuardianConfigureAutomaticallyCheckBox";
+			this.HidGuardianConfigureAutomaticallyCheckBox.Size = new System.Drawing.Size(135, 17);
+			this.HidGuardianConfigureAutomaticallyCheckBox.TabIndex = 1;
+			this.HidGuardianConfigureAutomaticallyCheckBox.Text = "Configure automatically";
+			this.HidGuardianConfigureAutomaticallyCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// OptionsUserControl
 			// 
@@ -882,6 +908,8 @@
 			this.InternetOptionsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
+			this.HidGuardianGroupBox.ResumeLayout(false);
+			this.HidGuardianGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -954,5 +982,7 @@
 		private System.Windows.Forms.CheckBox ShowFormInfoCheckBox;
 		private System.Windows.Forms.CheckBox ShowTestButtonCheckBox;
 		private System.Windows.Forms.CheckBox UseDeviceBufferedDataCheckBox;
+		private System.Windows.Forms.GroupBox HidGuardianGroupBox;
+		private System.Windows.Forms.CheckBox HidGuardianConfigureAutomaticallyCheckBox;
 	}
 }

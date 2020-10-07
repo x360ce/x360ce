@@ -226,11 +226,14 @@ namespace x360ce.App
 			}
 			MonitorErrors(true);
 			var game = SettingsManager.CurrentGame;
-			// Enable Reconfigure HID Guardian.
-			var changed = SettingsManager.AutoHideShowMappedDevices(game);
-			var mappedInstanceGuids = SettingsManager.GetMappedDevices(game?.FileName, true)
-				.Select(x => x.InstanceGuid).ToArray();
-			AppHelper.SynchronizeToHidGuardian(mappedInstanceGuids);
+			if (SettingsManager.Options.HidGuardianConfigureAutomatically)
+			{
+				// Enable Reconfigure HID Guardian.
+				var changed = SettingsManager.AutoHideShowMappedDevices(game);
+				var mappedInstanceGuids = SettingsManager.GetMappedDevices(game?.FileName, true)
+					.Select(x => x.InstanceGuid).ToArray();
+				AppHelper.SynchronizeToHidGuardian(mappedInstanceGuids);
+			}
 		}
 
 		#region Process Monitor

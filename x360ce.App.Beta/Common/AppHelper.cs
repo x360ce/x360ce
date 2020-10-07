@@ -337,7 +337,8 @@ namespace x360ce.App
 			// If can't modify registry then return.
 			if (!ViGEm.HidGuardianHelper.CanModifyParameters())
 				return;
-			UnhideAllDevices();
+			if (SettingsManager.Options.HidGuardianConfigureAutomatically)
+				UnhideAllDevices();
 			ViGEm.HidGuardianHelper.RemoveCurrentProcessFromWhiteList();
 		}
 
