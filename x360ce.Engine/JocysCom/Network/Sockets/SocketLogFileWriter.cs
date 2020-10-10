@@ -201,7 +201,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			GC.SuppressFinalize(this);
 		}
 
-		void Dispose(bool disposing)
+		private void Dispose(bool disposing)
 		{
 			if (disposing)
 			{

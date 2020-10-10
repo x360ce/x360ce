@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Linq;
 #if NETCOREAPP // .NET Core
 using Microsoft.Extensions.Configuration;
 #elif NETSTANDARD // .NET Standard
 using System.Globalization;
 using System.Net;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 #else // .NET Framework...
@@ -145,17 +145,32 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <param name="configuration"></param>
 		public static void InitializeParser(IConfiguration configuration)
 		{
+
 			Configuration = configuration;
 			// Override GetValue function.
-			_GetValue = (string name) =>
-				Configuration.GetValue<string>(name);
+			_GetValue = (name) =>
+			{
+				var config = Configuration;
+				var sectionNames = name.Split('/', StringSplitOptions.RemoveEmptyEntries);
+				if (sectionNames.Length > 1)
+				{
+					name = sectionNames.Last();
+					sectionNames = sectionNames.Take(sectionNames.Length - 1).ToArray();
+					foreach (var sectionName in sectionNames)
+					{
+						config = config.GetSection(sectionName);
+						if (config == null)
+							return null;
+					}
+				}
+				return config.GetValue<string>(name);
+			};
 		}
 
 		private string GetValue(string name)
 		{
 			return _GetValue(ConfigPrefix + name);
 		}
-
 
 #else // NETFRAMEWORK - .NET Framework...
 

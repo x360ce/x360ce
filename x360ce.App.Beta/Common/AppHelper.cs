@@ -384,8 +384,8 @@ namespace x360ce.App
 					.OrderByDescending(x => x)
 					// Take most detail Hardware ID.
 					.FirstOrDefault();
-				// If hardware is not available then create from instance id.
-				if (string.IsNullOrEmpty(hardwareId))
+				// If hardware is not available then create from device id.
+				if (string.IsNullOrEmpty(hardwareId) && !string.IsNullOrEmpty(ud.DevDeviceId))
 					hardwareId = HidGuardianHelper.ConvertToHidVidPid(ud.DevDeviceId).FirstOrDefault();
 				if (string.IsNullOrEmpty(hardwareId))
 					continue;

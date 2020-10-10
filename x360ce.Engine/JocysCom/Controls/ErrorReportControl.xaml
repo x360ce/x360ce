@@ -120,10 +120,16 @@
 		</GroupBox>
 		<TabControl Grid.Row="1" Margin="4px,0,4px,4px">
 			<TabItem Header="Error Details">
-				<WebBrowser x:Name="MainBrowser" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+				<WebBrowser
+					x:Name="MainBrowser"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch" />
 			</TabItem>
 		</TabControl>
-		<StackPanel Grid.Row="2" HorizontalAlignment="Right" Orientation="Horizontal">
+		<StackPanel
+			Grid.Row="2"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal">
 			<Label
 				x:Name="StatusLabel"
 				Grid.Row="2"
