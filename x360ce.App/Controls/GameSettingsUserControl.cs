@@ -13,6 +13,7 @@ using System.Diagnostics;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Web.Services;
 using JocysCom.ClassLibrary.Controls;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -301,7 +302,7 @@ namespace x360ce.App.Controls
 		void DeleteSelectedGames()
 		{
 			var grid = GamesDataGridView;
-			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, nameof(UserGame.FileName));
 			var itemsToDelete = SettingManager.Games.Items.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -375,7 +376,7 @@ namespace x360ce.App.Controls
 		{
 			var grid = GamesDataGridView;
 			var selection = string.IsNullOrEmpty(selectFile)
-				? JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName")
+				? JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, nameof(UserGame.FileName))
 				: new List<string>() { selectFile };
 			grid.CurrentCell = null;
 			// Suspend Layout and CurrencyManager to avoid exceptions.
@@ -402,7 +403,7 @@ namespace x360ce.App.Controls
 			cm.ResumeBinding();
 			grid.ResumeLayout();
 			// Restore selection.
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "FileName", selection);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserGame.FileName), selection);
 		}
 
 		private void GamesDataGridView_KeyDown(object sender, KeyEventArgs e)
@@ -534,7 +535,7 @@ namespace x360ce.App.Controls
 		void DeleteSelectedPrograms()
 		{
 			var grid = ProgramsDataGridView;
-			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, nameof(Engine.Data.Program.FileName));
 			var itemsToDelete = SettingManager.Programs.Items.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -564,7 +565,7 @@ namespace x360ce.App.Controls
 		void ImportAndBindPrograms(List<x360ce.Engine.Data.Program> programs)
 		{
 			var grid = ProgramsDataGridView;
-			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, nameof(Engine.Data.Program.FileName));
 			var newItems = programs.ToArray();
 			ProgramsDataGridView.DataSource = null;
 			foreach (var newItem in newItems)
@@ -591,7 +592,7 @@ namespace x360ce.App.Controls
 			var header = string.Format("{0: yyyy-MM-dd HH:mm:ss}: '{1}' program(s) loaded.", DateTime.Now, programs.Count());
 			MainForm.Current.UpdateHelpHeader(header, MessageBoxIcon.Information);
 			ProgramsDataGridView.DataSource = SettingManager.Programs.Items;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "FileName", selection);
+			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserGame.FileName), selection);
 			SettingManager.Save(true);
 		}
 

@@ -12,6 +12,8 @@ using JocysCom.ClassLibrary.IO;
 using System.Drawing;
 using System.Threading.Tasks;
 using JocysCom.ClassLibrary.Win32;
+using System.Dynamic;
+using JocysCom.ClassLibrary.Collections;
 
 namespace x360ce.App.Controls
 {
@@ -26,6 +28,8 @@ namespace x360ce.App.Controls
 			EngineHelper.EnableDoubleBuffering(DevicesDataGridView);
 		}
 
+		SortableBindingList<UserDevice> _currentData;
+
 		/// <summary>
 		/// Use this method to resolve format exception:
 		///     Invalid cast from 'System.Boolean' to 'System.Drawing.Image'
@@ -37,7 +41,8 @@ namespace x360ce.App.Controls
 			DevicesDataGridView.AutoGenerateColumns = false;
 			// WORKAROUND: Remove SelectionChanged event.
 			DevicesDataGridView.SelectionChanged -= ControllersDataGridView_SelectionChanged;
-			DevicesDataGridView.DataSource = data;
+			_currentData = data;
+			DevicesDataGridView.DataSource = _currentData;
 			if (!IsHandleCreated)
 			{
 				DevicesDataGridView.SelectionChanged += ControllersDataGridView_SelectionChanged;
@@ -56,20 +61,43 @@ namespace x360ce.App.Controls
 
 		private void ControllersUserControl_Load(object sender, EventArgs e)
 		{
+			_currentData = null;
+			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
+			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
 			if (MapDeviceToControllerMode)
 			{
-				var list = new SortableBindingList<UserDevice>();
-				list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
-				var devices = SettingsManager.UserDevices.ItemsToArraySyncronized()
-					.Where(x => x.ConnectionClass != DEVCLASS.SYSTEM).ToList();
-				list.AddRange(devices);
-				AttachDataSource(list);
+				RefreshMapDeviceToList();
 			}
 			else
 			{
 				AttachDataSource(SettingsManager.UserDevices.Items);
-
 			}
+		}
+
+		void RefreshMapDeviceToList()
+		{
+			var list = new SortableBindingList<UserDevice>();
+			list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
+			// Exclude Syste/Virtual devices.
+			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized()
+				.Where(x => x.ConnectionClass != DEVCLASS.SYSTEM).ToList();
+			list.AddRange(devices);
+			// If new list, item added or removed then...
+			if (_currentData == null)
+				AttachDataSource(list);
+			else if (_currentData.Count != list.Count)
+				CollectionsHelper.Synchronize(list, _currentData);
+		}
+
+		private void Items_ListChanged(object sender, ListChangedEventArgs e)
+		{
+			// If item added or deleted from original list then...
+			if (
+				e.ListChangedType == ListChangedType.ItemAdded ||
+				e.ListChangedType == ListChangedType.ItemDeleted
+			)
+				// Update list.
+				RefreshMapDeviceToList();
 		}
 
 		private void DevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -160,7 +188,7 @@ namespace x360ce.App.Controls
 		public void ImportAndBindItems(IList<UserDevice> items)
 		{
 			var grid = DevicesDataGridView;
-			var key = "InstanceGuid";
+			var key = nameof(UserDevice.InstanceGuid);
 			var list = SettingsManager.UserDevices.Items;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, key);
 			var newItems = items.ToArray();

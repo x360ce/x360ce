@@ -207,6 +207,7 @@
     </Compile>
     <Compile Include="Common\XInputMaskScanner.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="JocysCom\Collections\CollectionsHelper.cs" />
     <Compile Include="JocysCom\Collections\KeyValue.cs" />
     <Compile Include="JocysCom\Common\EventArgs.cs" />
     <Compile Include="JocysCom\Common\GuidEnum.cs" />

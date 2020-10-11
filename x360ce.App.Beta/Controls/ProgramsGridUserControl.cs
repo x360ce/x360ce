@@ -167,7 +167,7 @@ namespace x360ce.App.Controls
 		void DeleteSelectedPrograms()
 		{
 			var grid = ProgramsDataGridView;
-			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, nameof(Engine.Data.Program.FileName));
 			var itemsToDelete = SettingsManager.Programs.Items.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -201,7 +201,7 @@ namespace x360ce.App.Controls
 		void ImportAndBindItems(IList<Engine.Data.Program> items)
 		{
 			var grid = ProgramsDataGridView;
-			var key = "FileName";
+			var key = nameof(Engine.Data.Program.FileName);
 			var list = SettingsManager.Programs.Items;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, key);
 			var newItems = items.ToArray();

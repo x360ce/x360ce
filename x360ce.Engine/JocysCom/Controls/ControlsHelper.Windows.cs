@@ -198,7 +198,7 @@ namespace JocysCom.ClassLibrary.Controls
 				for (var i = 0; i < rows.Length; i++)
 				{
 					var row = rows[i];
-					if ((firstVisibleRow == null && row.Visible))
+					if (firstVisibleRow == null && row.Visible)
 						firstVisibleRow = row;
 					var item = row.DataBoundItem;
 					var val = GetValue<T>(item, primaryKeyPropertyName);

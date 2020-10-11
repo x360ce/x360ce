@@ -280,7 +280,7 @@ namespace x360ce.App.Controls
 				{
 					var selection = instanceGuid.HasValue
 						? new List<Guid>() { instanceGuid.Value }
-						: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, "InstanceGuid");
+						: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, nameof(UserSetting.InstanceGuid));
 					grid.CurrentCell = null;
 					// Suspend Layout.
 					grid.SuspendLayout();
@@ -303,7 +303,7 @@ namespace x360ce.App.Controls
 						cm.ResumeBinding();
 					grid.ResumeLayout();
 					// Restore selection.
-					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, "InstanceGuid", selection);
+					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserSetting.InstanceGuid), selection);
 				}
 				var visibleCount = mappedItems.Count();
 				var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");

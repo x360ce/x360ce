@@ -394,7 +394,7 @@ namespace x360ce.App.Controls
 		void DeleteSelectedGames()
 		{
 			var grid = GamesDataGridView;
-			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, "FileName");
+			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, nameof(UserGame.FileName));
 			var userGames = SettingsManager.UserGames.Items.Where(x => selection.Contains(x.FileName)).ToArray();
 			MessageBoxForm form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
@@ -489,7 +489,7 @@ namespace x360ce.App.Controls
 		public void ImportAndBindItems(IList<Engine.Data.UserGame> items)
 		{
 			var grid = GamesDataGridView;
-			var key = "FileName";
+			var key = nameof(UserGame.FileName);
 			var list = SettingsManager.UserGames.Items;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, key);
 			var newItems = items.ToArray();

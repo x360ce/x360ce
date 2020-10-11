@@ -1,3 +1,6 @@
+v4.14.16.0 (2020-10-11)
+- Fixed: Device list won't update after adding or removing demo test device.
+
 v4.14.15.0 (2020-10-10)
 - Fixed: Crash when configuring HID Guardian when Device Id is missing.
 
