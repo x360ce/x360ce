@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -13,12 +14,12 @@ namespace x360ce.App
 	public class Recorder : IDisposable
 	{
 
-		public Recorder(IContainer container, float horizontalResolution, float verticalResolution)
+		public Recorder(float horizontalResolution, float verticalResolution)
 		{
 			markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
 			markR.SetResolution(horizontalResolution, verticalResolution);
-			RecordingTimer = new System.Windows.Forms.Timer(container);
-			RecordingTimer.Tick += RecordingTimer_Tick;
+			RecordingTimer = new System.Timers.Timer();
+			RecordingTimer.Elapsed += RecordingTimer_Elapsed;
 		}
 
 		Bitmap markR;
@@ -26,12 +27,10 @@ namespace x360ce.App
 		Regex dPadRx = new Regex("(DPad [0-9]+)");
 		public bool drawRecordingImage;
 		object recordingLock = new object();
-		Timer RecordingTimer;
+		System.Timers.Timer RecordingTimer;
 		SettingsMapItem _Map;
-		//TargetType _Target;
 
-
-		private void RecordingTimer_Tick(object sender, EventArgs e)
+		private void RecordingTimer_Elapsed(object sender, EventArgs e)
 		{
 			drawRecordingImage = !drawRecordingImage;
 		}

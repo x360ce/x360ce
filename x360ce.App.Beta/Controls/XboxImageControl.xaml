@@ -1,0 +1,16 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.XboxImageControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:x360ce.App.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d">
+	<Grid>
+		<StackPanel Orientation="Vertical">
+			<Image x:Name="TopPictureBox" Width="256" Height="105" />
+			<StackPanel Height="8" />
+			<Image x:Name="FrontPictureBox" Width="256" Height="176" />
+		</StackPanel>
+	</Grid>
+</UserControl>

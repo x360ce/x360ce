@@ -10,8 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -155,20 +153,7 @@ namespace x360ce.App.Controls
 			var dv = new System.Data.DataView();
 			var grid = MappedDevicesDataGridView;
 			grid.AutoGenerateColumns = false;
-			// Initialize images.
-			this.TopPictureBox.Image = topDisabledImage;
-			this.FrontPictureBox.Image = frontDisabledImage;
-			this.markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
-			this.markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
-			this.markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
-			float rH = topDisabledImage.HorizontalResolution;
-			float rV = topDisabledImage.VerticalResolution;
-			// Make sure resolution is same everywhere so images won't be resized.
-			this.markB.SetResolution(rH, rV);
-			this.markA.SetResolution(rH, rV);
-			this.markC.SetResolution(rH, rV);
-			_recorder = new Recorder(this.components, rH, rV);
-
+			InitImagesAndRecorder();
 
 			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
@@ -405,43 +390,39 @@ namespace x360ce.App.Controls
 		Bitmap markB;
 		Bitmap markA;
 		Bitmap markC;
+		Bitmap TopImage;
+		Bitmap FrontImage;
+		Bitmap TopDisabledImage;
+		Bitmap FrontDisabledImage;
 
-		Bitmap topImage
+		Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
+
+		public void InitImagesAndRecorder()
 		{
-			get { return _topImage = _topImage ?? new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png")); }
+			locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
+			// Create images.
+			TopImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
+			FrontImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
+			TopDisabledImage = AppHelper.GetDisabledImage(TopImage);
+			FrontDisabledImage = AppHelper.GetDisabledImage(FrontImage);
+			markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
+			markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
+			markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
+			float rH = TopDisabledImage.HorizontalResolution;
+			float rV = TopDisabledImage.VerticalResolution;
+			// Make sure resolution is same everywhere so images won't be resized.
+			markB.SetResolution(rH, rV);
+			markA.SetResolution(rH, rV);
+			markC.SetResolution(rH, rV);
+			// Show disabled images by default.
+			SetImages(TopPictureBox, FrontPictureBox, false);
+			_recorder = new Recorder(rH, rV);
 		}
-		Bitmap _topImage;
 
-		Bitmap frontImage
+		void SetImages(PictureBox top, PictureBox front, bool enabled)
 		{
-			get { return _frontImage = _frontImage ?? new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png")); }
-		}
-		Bitmap _frontImage;
-
-		Bitmap _topDisabledImage;
-		Bitmap topDisabledImage
-		{
-			get
-			{
-				if (_topDisabledImage == null)
-				{
-					_topDisabledImage = AppHelper.GetDisabledImage(topImage);
-				}
-				return _topDisabledImage;
-			}
-		}
-
-		Bitmap _frontDisabledImage;
-		Bitmap frontDisabledImage
-		{
-			get
-			{
-				if (_frontDisabledImage == null)
-				{
-					_frontDisabledImage = AppHelper.GetDisabledImage(frontImage);
-				}
-				return _frontDisabledImage;
-			}
+			top.Image = enabled ? TopImage : TopDisabledImage;
+			front.Image = enabled ? FrontImage : FrontDisabledImage;
 		}
 
 		void TopPictureBox_Paint(object sender, PaintEventArgs e)
@@ -451,13 +432,13 @@ namespace x360ce.App.Controls
 			if (!on)
 				return;
 			// Half mark position adjust.
-			int mW = -this.markB.Width / 2;
-			int mH = -this.markB.Height / 2;
+			int mW = -markB.Width / 2;
+			int mH = -markB.Height / 2;
 			// Button coordinates.
 			var shoulderLeft = new Point(43, 66);
-			var shoulderRight = new Point(this.FrontPictureBox.Width - shoulderLeft.X, shoulderLeft.Y);
+			var shoulderRight = new Point(FrontPictureBox.Width - shoulderLeft.X, shoulderLeft.Y);
 			var triggerLeft = new Point(63, 27);
-			var triggerRight = new Point(this.FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
+			var triggerRight = new Point(FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
 			if (!_recorder.Recording)
 			{
 				var tl = newState.Gamepad.LeftTrigger;
@@ -465,8 +446,8 @@ namespace x360ce.App.Controls
 				// Temp workaround: when initialized triggers have default value of 127);
 				if (tl == 110 && tr == 110)
 				{
-					this.LeftTriggerTextBox.Text = "0";
-					this.RightTriggerTextBox.Text = "0";
+					LeftTriggerTextBox.Text = "0";
+					RightTriggerTextBox.Text = "0";
 				}
 				else
 				{
@@ -475,20 +456,20 @@ namespace x360ce.App.Controls
 					on = tl > 0;
 					setLabelColor(on, LeftTriggerLabel);
 					if (on)
-						e.Graphics.DrawImage(this.markB, triggerLeft.X + mW, triggerLeft.Y + mH);
+						e.Graphics.DrawImage(markB, triggerLeft.X + mW, triggerLeft.Y + mH);
 					on = tr > 0;
 					setLabelColor(on, RightTriggerLabel);
 					if (on)
-						e.Graphics.DrawImage(this.markB, triggerRight.X + mW, triggerRight.Y + mH);
+						e.Graphics.DrawImage(markB, triggerRight.X + mW, triggerRight.Y + mH);
 				}
 				on = newState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.LeftShoulder);
 				setLabelColor(on, LeftShoulderLabel);
 				if (on)
-					e.Graphics.DrawImage(this.markB, shoulderLeft.X + mW, shoulderLeft.Y + mH);
+					e.Graphics.DrawImage(markB, shoulderLeft.X + mW, shoulderLeft.Y + mH);
 				on = newState.Gamepad.Buttons.HasFlag(GamepadButtonFlags.RightShoulder);
 				setLabelColor(on, RightShoulderLabel);
 				if (on)
-					e.Graphics.DrawImage(this.markB, shoulderRight.X + mW, shoulderRight.Y + mH);
+					e.Graphics.DrawImage(markB, shoulderRight.X + mW, shoulderRight.Y + mH);
 			}
 			// If recording is in progress and recording image must be drawn then...
 			else if (_recorder.drawRecordingImage)
@@ -505,24 +486,67 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		public class ImageInfos : List<ImageInfo>
+		{
+			public void Add(GamepadKeyCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
+				=> Add(new ImageInfo(code, x, y, label, control, button));
+		}
+
+		public class ImageInfo
+		{
+			public ImageInfo(GamepadKeyCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
+			{
+				Label = label;
+				Control = control;
+				Button = button;
+				Code = code;
+				X = x;
+				Y = y;
+			}
+			public Control Label { get; set; }
+			public Control Control { get; set; }
+			public GamepadButtonFlags Button { get; set; }
+			public GamepadKeyCode Code { get; set; }
+			public double X { get; set; }
+			public double Y { get; set; }
+		}
+
+		ImageInfos imageInfos
+		{
+			get
+			{
+				if (_imageInfos == null)
+				{
+					_imageInfos = new ImageInfos();
+					_imageInfos.Add(GamepadKeyCode.Y, 196, 29, ButtonYLabel, ButtonYComboBox, GamepadButtonFlags.Y);
+					_imageInfos.Add(GamepadKeyCode.X, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
+					_imageInfos.Add(GamepadKeyCode.B, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
+					_imageInfos.Add(GamepadKeyCode.A, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
+					//_imageInfos.Add(GamepadKeyCode.Guide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox, GamepadButtonFlags.Guide);
+					_imageInfos.Add(GamepadKeyCode.Back, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
+					_imageInfos.Add(GamepadKeyCode.Start, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
+					// D-Pad
+					_imageInfos.Add(GamepadKeyCode.DPadUp, 92, 88 - 13, DPadUpLabel, DPadUpComboBox, GamepadButtonFlags.DPadUp);
+					_imageInfos.Add(GamepadKeyCode.DPadLeft, 92 - 13, 88, DPadLeftLabel, DPadLeftComboBox, GamepadButtonFlags.DPadLeft);
+					_imageInfos.Add(GamepadKeyCode.DPadRight, 92 + 13, 88, DPadRightLabel, DPadRightComboBox, GamepadButtonFlags.DPadRight);
+					_imageInfos.Add(GamepadKeyCode.DPadDown, 92, 88 + 13, DPadDownLabel, DPadDownComboBox, GamepadButtonFlags.DPadDown);
+					// Thumbs.
+					_imageInfos.Add(GamepadKeyCode.LeftThumbPress, 59, 47, LeftThumbButtonLabel, LeftThumbButtonComboBox, GamepadButtonFlags.LeftThumb);
+					_imageInfos.Add(GamepadKeyCode.LeftThumbRight, 59 + 10, 47, LeftThumbAxisXLabel, LeftThumbAxisXComboBox);
+					_imageInfos.Add(GamepadKeyCode.LeftThumbUp, 59, 47 - 10, LeftThumbAxisYLabel, LeftThumbAxisYComboBox);
+					_imageInfos.Add(GamepadKeyCode.RightThumbPress, 160, 88, RightThumbButtonLabel, RightThumbButtonComboBox, GamepadButtonFlags.RightThumb);
+					_imageInfos.Add(GamepadKeyCode.RightThumbRight, 160 + 10, 88, RightThumbAxisXLabel, RightThumbAxisXComboBox);
+					_imageInfos.Add(GamepadKeyCode.RightThumbUp, 160, 88 - 10, RightThumbAxisYLabel, RightThumbAxisYComboBox);
+				}
+				return _imageInfos;
+			}
+		}
+		ImageInfos _imageInfos;
+
 		void FrontPictureBox_Paint(object sender, PaintEventArgs e)
 		{
 			// Button coordinates.
-			Point buttonY = new Point(196, 29);
-			Point buttonX = new Point(178, 48);
-			Point buttonB = new Point(215, 48);
-			Point buttonA = new Point(196, 66);
-			Point thumbLeft = new Point(59, 47);
-			Point thumbRight = new Point(160, 88);
-			Point dPad = new Point(92, 88);
-			Point dPadUp = new Point(dPad.X, dPad.Y - 13);
-			Point dPadLeft = new Point(dPad.X - 13, dPad.Y);
-			Point dPadRight = new Point(dPad.X + 13, dPad.Y);
-			Point dPadDown = new Point(dPad.X, dPad.Y + 13);
-			Point buttonGuide = new Point(127, 48);
-			Point buttonBack = new Point(103, 48);
-			Point buttonStart = new Point(152, 48);
-			Point[] pads = new Point[4];
+			var pads = new Point[4];
 			pads[0] = new Point(116, 35);
 			pads[1] = new Point(139, 35);
 			pads[2] = new Point(116, 62);
@@ -532,104 +556,64 @@ namespace x360ce.App.Controls
 			if (!on)
 				return;
 			// Display controller index light.
-			int mW = -this.markC.Width / 2;
-			int mH = -this.markC.Height / 2;
+			int mW = -markC.Width / 2;
+			int mH = -markC.Height / 2;
 			var index = (int)MappedTo - 1;
-			e.Graphics.DrawImage(this.markC, pads[index].X + mW, pads[index].Y + mH);
-
-			float padSize = 22F / (float)(ushort.MaxValue);
-
-			mW = -this.markB.Width / 2;
-			mH = -this.markB.Height / 2;
+			e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
 
 			if (!_recorder.Recording)
 			{
-				setLabelColor(_leftX > 2000, LeftThumbAxisXLabel);
-				if (_leftX < -2000)
-					LeftThumbAxisXLabel.ForeColor = Color.DarkRed;
-				setLabelColor(_leftY > 2000, LeftThumbAxisYLabel);
-				if (_leftY < -2000)
-					LeftThumbAxisYLabel.ForeColor = Color.DarkRed;
-				setLabelColor(_rightX > 2000, RightThumbAxisXLabel);
-				if (_rightX < -2000)
-					RightThumbAxisXLabel.ForeColor = Color.DarkRed;
-				setLabelColor(_rightY > 2000, RightThumbAxisYLabel);
-				if (_rightY < -2000)
-					RightThumbAxisYLabel.ForeColor = Color.DarkRed;
+				setLabelColor(newState.Gamepad.LeftThumbX < -2000 || newState.Gamepad.LeftThumbX > 2000, LeftThumbAxisXLabel);
+				setLabelColor(newState.Gamepad.LeftThumbY < -2000 || newState.Gamepad.LeftThumbY > 2000, LeftThumbAxisYLabel);
+				setLabelColor(newState.Gamepad.RightThumbX < -2000 || newState.Gamepad.RightThumbX > 2000, RightThumbAxisXLabel);
+				setLabelColor(newState.Gamepad.RightThumbY < -2000 || newState.Gamepad.RightThumbY > 2000, RightThumbAxisYLabel);
 				// Draw button state green led image.
-				DrawState(GamepadButtonFlags.A, buttonA, ButtonALabel, e);
-				DrawState(GamepadButtonFlags.B, buttonB, ButtonBLabel, e);
-				DrawState(GamepadButtonFlags.X, buttonX, ButtonXLabel, e);
-				DrawState(GamepadButtonFlags.Y, buttonY, ButtonYLabel, e);
-				//DrawState(GamepadButtonFlags.Guide, buttonGuide, ButtonGuideLabel, e);
-				DrawState(GamepadButtonFlags.Start, buttonStart, ButtonStartLabel, e);
-				DrawState(GamepadButtonFlags.Back, buttonBack, ButtonBackLabel, e);
-				DrawState(GamepadButtonFlags.DPadUp, dPadUp, DPadUpLabel, e);
-				DrawState(GamepadButtonFlags.DPadDown, dPadDown, DPadDownLabel, e);
-				DrawState(GamepadButtonFlags.DPadLeft, dPadLeft, DPadLeftLabel, e);
-				DrawState(GamepadButtonFlags.DPadRight, dPadRight, DPadRightLabel, e);
-				DrawState(GamepadButtonFlags.RightThumb, thumbRight, RightThumbButtonLabel, e);
-				DrawState(GamepadButtonFlags.LeftThumb, thumbLeft, LeftThumbButtonLabel, e);
-				// Draw axis state green cross image.
-				e.Graphics.DrawImage(this.markA, (float)((thumbRight.X + mW) + (_rightX * padSize)), (float)((thumbRight.Y + mH) + (-_rightY * padSize)));
-				e.Graphics.DrawImage(this.markA, (float)((thumbLeft.X + mW) + (_leftX * padSize)), (float)((thumbLeft.Y + mH) + (-_leftY * padSize)));
+				foreach (var ii in imageInfos)
+					DrawState(ii, e);
 			}
 			// If recording is in progress and recording image must be drawn then...
 			else if (_recorder.drawRecordingImage)
 			{
-				Point? p = null;
-				if (CurrentCbx == ButtonBackComboBox)
-					p = buttonBack;
-				if (CurrentCbx == ButtonStartComboBox)
-					p = buttonStart;
-				if (CurrentCbx == ButtonYComboBox)
-					p = buttonY;
-				if (CurrentCbx == ButtonXComboBox)
-					p = buttonX;
-				if (CurrentCbx == ButtonBComboBox)
-					p = buttonB;
-				if (CurrentCbx == ButtonAComboBox)
-					p = buttonA;
-				if (CurrentCbx == DPadUpComboBox)
-					p = dPadUp;
-				if (CurrentCbx == DPadRightComboBox)
-					p = dPadRight;
-				if (CurrentCbx == DPadDownComboBox)
-					p = dPadDown;
-				if (CurrentCbx == DPadLeftComboBox)
-					p = dPadLeft;
-				if (CurrentCbx == LeftThumbButtonComboBox)
-					p = thumbLeft;
-				if (CurrentCbx == RightThumbButtonComboBox)
-					p = thumbRight;
-				if (CurrentCbx == LeftThumbAxisXComboBox)
-					p = new Point(thumbLeft.X + 10, thumbLeft.Y);
-				if (CurrentCbx == LeftThumbAxisYComboBox)
-					p = new Point(thumbLeft.X, thumbLeft.Y - 10);
-				if (CurrentCbx == RightThumbAxisXComboBox)
-					p = new Point(thumbRight.X + 10, thumbRight.Y);
-				if (CurrentCbx == RightThumbAxisYComboBox)
-					p = new Point(thumbRight.X, thumbRight.Y - 10);
+				Point? p = _imageInfos
+					.Where(x => x.Control == CurrentCbx)
+					.Select(x => new Point((int)x.X, (int)x.Y))
+					.FirstOrDefault();
 				if (p.HasValue)
 					_recorder.drawMarkR(e, p.Value);
-
 			}
 		}
 
-		void DrawState(GamepadButtonFlags button, Point location, Label label, PaintEventArgs e)
+		void DrawState(ImageInfo ii, PaintEventArgs e)
 		{
-			var mW = -this.markB.Width / 2;
-			var mH = -this.markB.Height / 2;
-			var on = newState.Gamepad.Buttons.HasFlag(button);
-			if (on)
-				e.Graphics.DrawImage(this.markB, location.X + mW, location.Y + mH);
-			if (label != null)
-				setLabelColor(on, label);
+			// Draw axis state green cross image.
+			if (ii.Code == GamepadKeyCode.LeftThumbPress || ii.Code == GamepadKeyCode.RightThumbPress)
+			{
+				var mWA = -markB.Width / 2;
+				var mHA = -markB.Height / 2;
+				var padSize = 22F / (float)(ushort.MaxValue);
+				var tX = ii.Code == GamepadKeyCode.LeftThumbPress
+					? newState.Gamepad.LeftThumbX
+					: newState.Gamepad.RightThumbX;
+				var tY = ii.Code == GamepadKeyCode.LeftThumbPress
+					? newState.Gamepad.LeftThumbY
+					: newState.Gamepad.RightThumbY;
+				e.Graphics.DrawImage(markA, (float)(ii.X + mWA + (tX * padSize)), (float)(ii.Y + mHA + (-tY * padSize)));
+			}
+			if (ii.Button != GamepadButtonFlags.None)
+			{
+				var mW = -markB.Width / 2;
+				var mH = -markB.Height / 2;
+				var on = newState.Gamepad.Buttons.HasFlag(ii.Button);
+				if (on)
+					e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
+				if (ii.Label != null)
+					setLabelColor(on, ii.Label);
+			}
 		}
 
-		void setLabelColor(bool on, Label label)
+		void setLabelColor(bool on, Control label)
 		{
-			Color c = on ? Color.Green : SystemColors.ControlText;
+			var c = on ? Color.Green : SystemColors.ControlText;
 			if (label.ForeColor != c)
 				label.ForeColor = c;
 		}
@@ -754,13 +738,6 @@ namespace x360ce.App.Controls
 		}
 
 		#endregion
-
-		short _leftX;
-		short _leftY;
-		byte _leftTrigger;
-		short _rightX;
-		short _rightY;
-		byte _rightTrigger;
 
 		//XINPUT_GAMEPAD GamePad;
 		Guid _InstanceGuid;
@@ -922,29 +899,15 @@ namespace x360ce.App.Controls
 			// If device is not connected and was not connected then return.
 			if (!newConnected && !oldConnected)
 				return;
-			// If device disconnected then...
+			// If device disconnected then show disabled images.
 			if (!newConnected && oldConnected)
-			{
-				// Disable form.
-				FrontPictureBox.Image = frontDisabledImage;
-				TopPictureBox.Image = topDisabledImage;
-			}
-			// If device connected then...
+				SetImages(TopPictureBox, FrontPictureBox, false);
+			// If device connected then show enabled images.
 			if (newConnected && !oldConnected)
-			{
-				// Enable form.
-				FrontPictureBox.Image = frontImage;
-				TopPictureBox.Image = topImage;
-			}
-			_leftX = newState.Gamepad.LeftThumbX;
-			_leftY = newState.Gamepad.LeftThumbY;
-			_rightX = newState.Gamepad.RightThumbX;
-			_rightY = newState.Gamepad.RightThumbY;
-			_rightTrigger = newState.Gamepad.RightTrigger;
-			_leftTrigger = newState.Gamepad.LeftTrigger;
+				SetImages(TopPictureBox, FrontPictureBox, true);
 
-			ControlsHelper.SetText(LeftThumbTextBox, "{0};{1}", _leftX, _leftY);
-			ControlsHelper.SetText(RightThumbTextBox, "{0};{1}", _rightX, _rightY);
+			ControlsHelper.SetText(LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
+			ControlsHelper.SetText(RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
 
 			var ud = GetCurrentDevice();
 			if (ud != null && ud.DiState != null)
@@ -956,27 +919,27 @@ namespace x360ce.App.Controls
 				var axis = ud.DiState.Axis;
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbXUserControl.DrawPoint(axis[map.Index - 1], _leftX, map.IsInverted, map.IsHalf);
+					LeftThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
 				// LeftThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbYUserControl.DrawPoint(axis[map.Index - 1], _leftY, map.IsInverted, map.IsHalf);
+					LeftThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
 				// RightThumbX
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbXUserControl.DrawPoint(axis[map.Index - 1], _rightX, map.IsInverted, map.IsHalf);
+					RightThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
 				// RightThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbYUserControl.DrawPoint(axis[map.Index - 1], _rightY, map.IsInverted, map.IsHalf);
+					RightThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
 				// LeftTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftTriggerUserControl.DrawPoint(axis[map.Index - 1], _leftTrigger, map.IsInverted, map.IsHalf);
+					LeftTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
 				// RightTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], _rightTrigger, map.IsInverted, map.IsHalf);
+					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
 			}
 			// Update controller images.
 			TopPictureBox.Refresh();
