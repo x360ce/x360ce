@@ -1,0 +1,37 @@
+﻿namespace x360ce.Engine.Data
+{
+	public enum LayoutCode
+	{
+		None,
+		ButtonA,
+		ButtonB,
+		ButtonBack,
+		ButtonGuide,
+		ButtonStart,
+		ButtonX,
+		ButtonY,
+		DPad,
+		DPadDown,
+		DPadLeft,
+		DPadRight,
+		DPadUp,
+		LeftShoulder,
+		LeftThumbAxisX,
+		LeftThumbAxisY,
+		LeftThumbButton,
+		LeftThumbDown,
+		LeftThumbLeft,
+		LeftThumbRight,
+		LeftThumbUp,
+		LeftTrigger,
+		RightShoulder,
+		RightThumbAxisX,
+		RightThumbAxisY,
+		RightThumbButton,
+		RightThumbDown,
+		RightThumbLeft,
+		RightThumbRight,
+		RightThumbUp,
+		RightTrigger,
+	}
+}

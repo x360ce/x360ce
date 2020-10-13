@@ -427,13 +427,13 @@ namespace x360ce.App.Controls
 
 		public class ImageInfos : List<ImageInfo>
 		{
-			public void Add(int image, GamepadKeyCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
+			public void Add(int image, LayoutCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
 				=> Add(new ImageInfo(image, code, x, y, label, control, button));
 		}
 
 		public class ImageInfo
 		{
-			public ImageInfo(int image, GamepadKeyCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
+			public ImageInfo(int image, LayoutCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
 			{
 				Image = image;
 				Label = label;
@@ -447,7 +447,7 @@ namespace x360ce.App.Controls
 			public Control Label { get; set; }
 			public Control Control { get; set; }
 			public GamepadButtonFlags Button { get; set; }
-			public GamepadKeyCode Code { get; set; }
+			public LayoutCode Code { get; set; }
 			public double X { get; set; }
 			public double Y { get; set; }
 		}
@@ -463,39 +463,43 @@ namespace x360ce.App.Controls
 					var triggerRight = new Point(FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
 					_imageInfos = new ImageInfos();
 					// Configure Image 1.
-					_imageInfos.Add(1, GamepadKeyCode.LeftTrigger, 63, 27, LeftTriggerLabel, LeftTriggerComboBox);
-					_imageInfos.Add(1, GamepadKeyCode.RightTrigger, 193, 27, RightTriggerLabel, RightTriggerComboBox);
-					_imageInfos.Add(1, GamepadKeyCode.LeftShoulder, 43, 66, LeftShoulderLabel, LeftShoulderComboBox, GamepadButtonFlags.LeftShoulder);
-					_imageInfos.Add(1, GamepadKeyCode.RightShoulder, 213, 66, RightShoulderLabel, RightShoulderComboBox, GamepadButtonFlags.RightShoulder);
+					_imageInfos.Add(1, LayoutCode.LeftTrigger, 63, 27, LeftTriggerLabel, LeftTriggerComboBox);
+					_imageInfos.Add(1, LayoutCode.RightTrigger, 193, 27, RightTriggerLabel, RightTriggerComboBox);
+					_imageInfos.Add(1, LayoutCode.LeftShoulder, 43, 66, LeftShoulderLabel, LeftShoulderComboBox, GamepadButtonFlags.LeftShoulder);
+					_imageInfos.Add(1, LayoutCode.RightShoulder, 213, 66, RightShoulderLabel, RightShoulderComboBox, GamepadButtonFlags.RightShoulder);
 					// Configure Image 2.
-					_imageInfos.Add(2, GamepadKeyCode.Y, 196, 29, ButtonYLabel, ButtonYComboBox, GamepadButtonFlags.Y);
-					_imageInfos.Add(2, GamepadKeyCode.X, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
-					_imageInfos.Add(2, GamepadKeyCode.B, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
-					_imageInfos.Add(2, GamepadKeyCode.A, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
+					_imageInfos.Add(2, LayoutCode.ButtonY, 196, 29, ButtonYLabel, ButtonYComboBox, GamepadButtonFlags.Y);
+					_imageInfos.Add(2, LayoutCode.ButtonX, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
+					_imageInfos.Add(2, LayoutCode.ButtonB, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
+					_imageInfos.Add(2, LayoutCode.ButtonA, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
 					//_imageInfos.Add(2, GamepadKeyCode.Guide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox, GamepadButtonFlags.Guide);
-					_imageInfos.Add(2, GamepadKeyCode.Back, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
-					_imageInfos.Add(2, GamepadKeyCode.Start, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
+					_imageInfos.Add(2, LayoutCode.ButtonBack, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
+					_imageInfos.Add(2, LayoutCode.ButtonStart, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
 					// D-Pad
-					_imageInfos.Add(2, GamepadKeyCode.DPadUp, 92, 88 - 13, DPadUpLabel, DPadUpComboBox, GamepadButtonFlags.DPadUp);
-					_imageInfos.Add(2, GamepadKeyCode.DPadLeft, 92 - 13, 88, DPadLeftLabel, DPadLeftComboBox, GamepadButtonFlags.DPadLeft);
-					_imageInfos.Add(2, GamepadKeyCode.DPadRight, 92 + 13, 88, DPadRightLabel, DPadRightComboBox, GamepadButtonFlags.DPadRight);
-					_imageInfos.Add(2, GamepadKeyCode.DPadDown, 92, 88 + 13, DPadDownLabel, DPadDownComboBox, GamepadButtonFlags.DPadDown);
+					_imageInfos.Add(2, LayoutCode.DPadUp, 92, 88 - 13, DPadUpLabel, DPadUpComboBox, GamepadButtonFlags.DPadUp);
+					_imageInfos.Add(2, LayoutCode.DPadLeft, 92 - 13, 88, DPadLeftLabel, DPadLeftComboBox, GamepadButtonFlags.DPadLeft);
+					_imageInfos.Add(2, LayoutCode.DPadRight, 92 + 13, 88, DPadRightLabel, DPadRightComboBox, GamepadButtonFlags.DPadRight);
+					_imageInfos.Add(2, LayoutCode.DPadDown, 92, 88 + 13, DPadDownLabel, DPadDownComboBox, GamepadButtonFlags.DPadDown);
 					// D-Pad (Extra Map)
-
+					_imageInfos.Add(2, LayoutCode.DPad, 92, 88, DPadLabel, DPadComboBox);
 					// Left Thumb.
-					_imageInfos.Add(2, GamepadKeyCode.LeftThumbPress, 59, 47, LeftThumbButtonLabel, LeftThumbButtonComboBox, GamepadButtonFlags.LeftThumb);
-					_imageInfos.Add(2, GamepadKeyCode.LeftThumbRight, 59 + 10, 47, LeftThumbAxisXLabel, LeftThumbAxisXComboBox);
-					_imageInfos.Add(2, GamepadKeyCode.LeftThumbUp, 59, 47 - 10, LeftThumbAxisYLabel, LeftThumbAxisYComboBox);
+					_imageInfos.Add(2, LayoutCode.LeftThumbButton, 59, 47, LeftThumbButtonLabel, LeftThumbButtonComboBox, GamepadButtonFlags.LeftThumb);
+					_imageInfos.Add(2, LayoutCode.LeftThumbAxisX, 59 + 10, 47, LeftThumbAxisXLabel, LeftThumbAxisXComboBox);
+					_imageInfos.Add(2, LayoutCode.LeftThumbAxisY, 59, 47 - 10, LeftThumbAxisYLabel, LeftThumbAxisYComboBox);
 					// Left Thumb (Extra Map).
-					_imageInfos.Add(2, GamepadKeyCode.LeftThumbLeft, 59 - 10, 47, LeftThumbLeftLabel, LeftThumbLeftComboBox);
-					_imageInfos.Add(2, GamepadKeyCode.LeftThumbDown, 59, 47 + 10, LeftThumbDownLabel, LeftThumbDownComboBox);
+					_imageInfos.Add(2, LayoutCode.LeftThumbUp, 59, 47 - 10, LeftThumbUpLabel, LeftThumbUpComboBox);
+					_imageInfos.Add(2, LayoutCode.LeftThumbLeft, 59 - 10, 47, LeftThumbLeftLabel, LeftThumbLeftComboBox);
+					_imageInfos.Add(2, LayoutCode.LeftThumbRight, 59 + 10, 47, LeftThumbRightLabel, LeftThumbRightComboBox);
+					_imageInfos.Add(2, LayoutCode.LeftThumbDown, 59, 47 + 10, LeftThumbDownLabel, LeftThumbDownComboBox);
 					// Right Thumb.
-					_imageInfos.Add(2, GamepadKeyCode.RightThumbPress, 160, 88, RightThumbButtonLabel, RightThumbButtonComboBox, GamepadButtonFlags.RightThumb);
-					_imageInfos.Add(2, GamepadKeyCode.RightThumbRight, 160 + 10, 88, RightThumbAxisXLabel, RightThumbAxisXComboBox);
-					_imageInfos.Add(2, GamepadKeyCode.RightThumbUp, 160, 88 - 10, RightThumbAxisYLabel, RightThumbAxisYComboBox);
+					_imageInfos.Add(2, LayoutCode.RightThumbButton, 160, 88, RightThumbButtonLabel, RightThumbButtonComboBox, GamepadButtonFlags.RightThumb);
+					_imageInfos.Add(2, LayoutCode.RightThumbAxisX, 160 + 10, 88, RightThumbAxisXLabel, RightThumbAxisXComboBox);
+					_imageInfos.Add(2, LayoutCode.RightThumbAxisY, 160, 88 - 10, RightThumbAxisYLabel, RightThumbAxisYComboBox);
 					// Right Thumb (Extra Map).
-					_imageInfos.Add(2, GamepadKeyCode.RightThumbLeft, 160 - 10, 88, RightThumbLeftLabel, RightThumbLeftComboBox);
-					_imageInfos.Add(2, GamepadKeyCode.RightThumbDown, 160, 88 + 10, RightThumbDownLabel, RightThumbDownComboBox);
+					_imageInfos.Add(2, LayoutCode.RightThumbUp, 160, 88 - 10, RightThumbUpLabel, RightThumbUpComboBox);
+					_imageInfos.Add(2, LayoutCode.RightThumbLeft, 160 - 10, 88, RightThumbLeftLabel, RightThumbLeftComboBox);
+					_imageInfos.Add(2, LayoutCode.RightThumbRight, 160 + 10, 88, RightThumbRightLabel, RightThumbRightComboBox);
+					_imageInfos.Add(2, LayoutCode.RightThumbDown, 160, 88 + 10, RightThumbDownLabel, RightThumbDownComboBox);
 				}
 				return _imageInfos;
 			}
@@ -539,47 +543,78 @@ namespace x360ce.App.Controls
 		{
 			var gp = newState.Gamepad;
 			// Draw axis state - green cross image.
-			if (ii.Code == GamepadKeyCode.LeftThumbPress || ii.Code == GamepadKeyCode.RightThumbPress)
+			if (ii.Code == LayoutCode.LeftThumbButton || ii.Code == LayoutCode.RightThumbButton)
 			{
 				var mWA = -markB.Width / 2;
 				var mHA = -markB.Height / 2;
 				var padSize = 22F / (float)(ushort.MaxValue);
-				var tX = ii.Code == GamepadKeyCode.LeftThumbPress
+				var tX = ii.Code == LayoutCode.LeftThumbButton
 					? gp.LeftThumbX
 					: gp.RightThumbX;
-				var tY = ii.Code == GamepadKeyCode.LeftThumbPress
+				var tY = ii.Code == LayoutCode.LeftThumbButton
 					? gp.LeftThumbY
 					: gp.RightThumbY;
 				e.Graphics.DrawImage(markA, (float)(ii.X + mWA + (tX * padSize)), (float)(ii.Y + mHA + (-tY * padSize)));
 			}
 			bool on;
-			// If triggers
-			if (ii.Code == GamepadKeyCode.LeftTrigger || ii.Code == GamepadKeyCode.RightTrigger)
+			// If triggers then...
+			if (ii.Code == LayoutCode.LeftTrigger || ii.Code == LayoutCode.RightTrigger)
 			{
 				// This is axis.
 				short value = 0;
-				if (ii.Code == GamepadKeyCode.LeftTrigger)
+				if (ii.Code == LayoutCode.LeftTrigger)
 					value = gp.LeftTrigger;
-				else if (ii.Code == GamepadKeyCode.RightTrigger)
+				else if (ii.Code == LayoutCode.RightTrigger)
 					value = gp.RightTrigger;
 				// Check when value is on.
 				on = value > 0;
+				// Draw button image, thou some slider image would be better.
+				var mW = -markB.Width / 2;
+				var mH = -markB.Height / 2;
+				if (on)
+					e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
+			}
+			// If D-Pad.
+			else if (ii.Code == LayoutCode.DPad)
+			{
+				on =
+					gp.Buttons.HasFlag(GamepadButtonFlags.DPadUp) ||
+					gp.Buttons.HasFlag(GamepadButtonFlags.DPadLeft) ||
+					gp.Buttons.HasFlag(GamepadButtonFlags.DPadRight) ||
+					gp.Buttons.HasFlag(GamepadButtonFlags.DPadDown);
 			}
 			// If button is not specified then...
 			else if (ii.Button == GamepadButtonFlags.None)
 			{
+				var t = 2000;
 				// This is axis.
 				short value = 0;
-				if (ii.Code == GamepadKeyCode.LeftThumbRight)
+				if (ii.Code == LayoutCode.LeftThumbAxisX)
 					value = gp.LeftThumbX;
-				else if (ii.Code == GamepadKeyCode.LeftThumbUp)
+				else if (ii.Code == LayoutCode.LeftThumbAxisY)
 					value = gp.LeftThumbY;
-				else if (ii.Code == GamepadKeyCode.RightThumbRight)
+				else if (ii.Code == LayoutCode.RightThumbAxisX)
 					value = gp.RightThumbX;
-				else if (ii.Code == GamepadKeyCode.RightThumbUp)
+				else if (ii.Code == LayoutCode.RightThumbAxisY)
 					value = gp.RightThumbY;
 				// Check when value is on.
-				on = value < -2000 || value > 2000;
+				on = value < -t || value > t;
+				if (ii.Code == LayoutCode.LeftThumbRight)
+					on = gp.LeftThumbX > t;
+				if (ii.Code == LayoutCode.LeftThumbLeft)
+					on = gp.LeftThumbX < -t;
+				if (ii.Code == LayoutCode.LeftThumbUp)
+					on = gp.LeftThumbY > t;
+				if (ii.Code == LayoutCode.LeftThumbDown)
+					on = gp.LeftThumbY < -t;
+				if (ii.Code == LayoutCode.RightThumbRight)
+					on = gp.RightThumbX > t;
+				if (ii.Code == LayoutCode.RightThumbLeft)
+					on = gp.RightThumbX < -t;
+				if (ii.Code == LayoutCode.RightThumbUp)
+					on = gp.RightThumbY > t;
+				if (ii.Code == LayoutCode.RightThumbDown)
+					on = gp.RightThumbY < -t;
 			}
 			else
 			{
