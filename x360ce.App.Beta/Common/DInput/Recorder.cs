@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,22 +19,23 @@ namespace x360ce.App
 		{
 			markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
 			markR.SetResolution(horizontalResolution, verticalResolution);
-			RecordingTimer = new System.Timers.Timer();
-			RecordingTimer.Elapsed += RecordingTimer_Elapsed;
 		}
 
 		Bitmap markR;
 		public bool Recording;
 		Regex dPadRx = new Regex("(DPad [0-9]+)");
-		public bool drawRecordingImage;
-		object recordingLock = new object();
-		System.Timers.Timer RecordingTimer;
-		SettingsMapItem _Map;
-
-		private void RecordingTimer_Elapsed(object sender, EventArgs e)
+		public bool drawRecordingImage
 		{
-			drawRecordingImage = !drawRecordingImage;
+			get
+			{
+				// Make image flash: 250 ms - ON, 250 ms - OFF.
+				var milliseconds = (int)DateTime.Now.Subtract(DateTime.Now.Date).TotalMilliseconds;
+				var show = (milliseconds / 250) % 2 == 0;
+				return Recording && show;
+			}
 		}
+		object recordingLock = new object();
+		SettingsMapItem _Map;
 
 		public void drawMarkR(PaintEventArgs e, Point position)
 		{
@@ -54,8 +56,6 @@ namespace x360ce.App
 				var pn = map.PropertyName;
 				Recording = true;
 				recordingSnapshot = null;
-				drawRecordingImage = true;
-				RecordingTimer.Start();
 				_Map.Control.ForeColor = SystemColors.GrayText;
 				MainForm.Current.StatusTimerLabel.Text = (_Map.PropertyName == SettingName.DPad)
 					 ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
@@ -121,7 +121,6 @@ namespace x360ce.App
 				{
 					var box = ((ComboBox)_Map.Control);
 					Recording = false;
-					RecordingTimer.Stop();
 					// If stop was initiated before action was recorded then...                    
 					if (string.IsNullOrEmpty(action))
 					{
@@ -252,7 +251,6 @@ namespace x360ce.App
 				{
 					markR.Dispose();
 				}
-				RecordingTimer.Dispose();
 			}
 		}
 

@@ -764,7 +764,7 @@
 			this.LeftThumbDownComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.LeftThumbDownComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.LeftThumbDownComboBox.FormattingEnabled = true;
-			this.LeftThumbDownComboBox.Location = new System.Drawing.Point(3, 379);
+			this.LeftThumbDownComboBox.Location = new System.Drawing.Point(3, 404);
 			this.LeftThumbDownComboBox.Name = "LeftThumbDownComboBox";
 			this.LeftThumbDownComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbDownComboBox.TabIndex = 27;
@@ -783,7 +783,7 @@
 			this.LeftThumbRightComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.LeftThumbRightComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.LeftThumbRightComboBox.FormattingEnabled = true;
-			this.LeftThumbRightComboBox.Location = new System.Drawing.Point(3, 352);
+			this.LeftThumbRightComboBox.Location = new System.Drawing.Point(3, 377);
 			this.LeftThumbRightComboBox.Name = "LeftThumbRightComboBox";
 			this.LeftThumbRightComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbRightComboBox.TabIndex = 26;
@@ -802,7 +802,7 @@
 			this.LeftThumbLeftComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.LeftThumbLeftComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.LeftThumbLeftComboBox.FormattingEnabled = true;
-			this.LeftThumbLeftComboBox.Location = new System.Drawing.Point(3, 325);
+			this.LeftThumbLeftComboBox.Location = new System.Drawing.Point(3, 350);
 			this.LeftThumbLeftComboBox.Name = "LeftThumbLeftComboBox";
 			this.LeftThumbLeftComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbLeftComboBox.TabIndex = 25;
@@ -821,7 +821,7 @@
 			this.LeftThumbUpComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.LeftThumbUpComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.LeftThumbUpComboBox.FormattingEnabled = true;
-			this.LeftThumbUpComboBox.Location = new System.Drawing.Point(3, 298);
+			this.LeftThumbUpComboBox.Location = new System.Drawing.Point(3, 323);
 			this.LeftThumbUpComboBox.Name = "LeftThumbUpComboBox";
 			this.LeftThumbUpComboBox.Size = new System.Drawing.Size(96, 21);
 			this.LeftThumbUpComboBox.TabIndex = 24;
@@ -838,7 +838,7 @@
 			// LeftThumbDownLabel
 			// 
 			this.LeftThumbDownLabel.AutoSize = true;
-			this.LeftThumbDownLabel.Location = new System.Drawing.Point(105, 382);
+			this.LeftThumbDownLabel.Location = new System.Drawing.Point(105, 407);
 			this.LeftThumbDownLabel.Name = "LeftThumbDownLabel";
 			this.LeftThumbDownLabel.Size = new System.Drawing.Size(62, 13);
 			this.LeftThumbDownLabel.TabIndex = 0;
@@ -857,7 +857,7 @@
 			// LeftThumbUpLabel
 			// 
 			this.LeftThumbUpLabel.AutoSize = true;
-			this.LeftThumbUpLabel.Location = new System.Drawing.Point(105, 301);
+			this.LeftThumbUpLabel.Location = new System.Drawing.Point(105, 326);
 			this.LeftThumbUpLabel.Name = "LeftThumbUpLabel";
 			this.LeftThumbUpLabel.Size = new System.Drawing.Size(48, 13);
 			this.LeftThumbUpLabel.TabIndex = 0;
@@ -876,7 +876,7 @@
 			// LeftThumbRightLabel
 			// 
 			this.LeftThumbRightLabel.AutoSize = true;
-			this.LeftThumbRightLabel.Location = new System.Drawing.Point(105, 355);
+			this.LeftThumbRightLabel.Location = new System.Drawing.Point(105, 380);
 			this.LeftThumbRightLabel.Name = "LeftThumbRightLabel";
 			this.LeftThumbRightLabel.Size = new System.Drawing.Size(59, 13);
 			this.LeftThumbRightLabel.TabIndex = 0;
@@ -896,7 +896,7 @@
 			// LeftThumbLeftLabel
 			// 
 			this.LeftThumbLeftLabel.AutoSize = true;
-			this.LeftThumbLeftLabel.Location = new System.Drawing.Point(105, 328);
+			this.LeftThumbLeftLabel.Location = new System.Drawing.Point(105, 353);
 			this.LeftThumbLeftLabel.Name = "LeftThumbLeftLabel";
 			this.LeftThumbLeftLabel.Size = new System.Drawing.Size(52, 13);
 			this.LeftThumbLeftLabel.TabIndex = 0;
@@ -1133,7 +1133,7 @@
 			this.RightThumbDownComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbDownComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbDownComboBox.FormattingEnabled = true;
-			this.RightThumbDownComboBox.Location = new System.Drawing.Point(91, 379);
+			this.RightThumbDownComboBox.Location = new System.Drawing.Point(91, 404);
 			this.RightThumbDownComboBox.Name = "RightThumbDownComboBox";
 			this.RightThumbDownComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbDownComboBox.TabIndex = 37;
@@ -1155,7 +1155,7 @@
 			this.RightThumbRightComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbRightComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbRightComboBox.FormattingEnabled = true;
-			this.RightThumbRightComboBox.Location = new System.Drawing.Point(91, 352);
+			this.RightThumbRightComboBox.Location = new System.Drawing.Point(91, 377);
 			this.RightThumbRightComboBox.Name = "RightThumbRightComboBox";
 			this.RightThumbRightComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbRightComboBox.TabIndex = 36;
@@ -1176,7 +1176,7 @@
 			this.RightThumbLeftComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbLeftComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbLeftComboBox.FormattingEnabled = true;
-			this.RightThumbLeftComboBox.Location = new System.Drawing.Point(91, 325);
+			this.RightThumbLeftComboBox.Location = new System.Drawing.Point(91, 350);
 			this.RightThumbLeftComboBox.Name = "RightThumbLeftComboBox";
 			this.RightThumbLeftComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbLeftComboBox.TabIndex = 35;
@@ -1197,7 +1197,7 @@
 			this.RightThumbUpComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.RightThumbUpComboBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.RightThumbUpComboBox.FormattingEnabled = true;
-			this.RightThumbUpComboBox.Location = new System.Drawing.Point(91, 298);
+			this.RightThumbUpComboBox.Location = new System.Drawing.Point(91, 323);
 			this.RightThumbUpComboBox.Name = "RightThumbUpComboBox";
 			this.RightThumbUpComboBox.Size = new System.Drawing.Size(96, 21);
 			this.RightThumbUpComboBox.TabIndex = 34;
@@ -1227,7 +1227,7 @@
 			// 
 			this.RightThumbDownLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbDownLabel.AutoSize = true;
-			this.RightThumbDownLabel.Location = new System.Drawing.Point(11, 382);
+			this.RightThumbDownLabel.Location = new System.Drawing.Point(11, 407);
 			this.RightThumbDownLabel.Name = "RightThumbDownLabel";
 			this.RightThumbDownLabel.Size = new System.Drawing.Size(62, 13);
 			this.RightThumbDownLabel.TabIndex = 0;
@@ -1270,7 +1270,7 @@
 			// 
 			this.RightThumbUpLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbUpLabel.AutoSize = true;
-			this.RightThumbUpLabel.Location = new System.Drawing.Point(11, 301);
+			this.RightThumbUpLabel.Location = new System.Drawing.Point(11, 326);
 			this.RightThumbUpLabel.Name = "RightThumbUpLabel";
 			this.RightThumbUpLabel.Size = new System.Drawing.Size(48, 13);
 			this.RightThumbUpLabel.TabIndex = 0;
@@ -1302,7 +1302,7 @@
 			// 
 			this.RightThumbRightLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbRightLabel.AutoSize = true;
-			this.RightThumbRightLabel.Location = new System.Drawing.Point(11, 355);
+			this.RightThumbRightLabel.Location = new System.Drawing.Point(11, 380);
 			this.RightThumbRightLabel.Name = "RightThumbRightLabel";
 			this.RightThumbRightLabel.Size = new System.Drawing.Size(59, 13);
 			this.RightThumbRightLabel.TabIndex = 0;
@@ -1325,7 +1325,7 @@
 			// 
 			this.RightThumbLeftLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.RightThumbLeftLabel.AutoSize = true;
-			this.RightThumbLeftLabel.Location = new System.Drawing.Point(11, 328);
+			this.RightThumbLeftLabel.Location = new System.Drawing.Point(11, 353);
 			this.RightThumbLeftLabel.Name = "RightThumbLeftLabel";
 			this.RightThumbLeftLabel.Size = new System.Drawing.Size(52, 13);
 			this.RightThumbLeftLabel.TabIndex = 0;
