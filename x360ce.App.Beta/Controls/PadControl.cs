@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Windows.Markup;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -25,6 +26,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			_Imager = new PadControlImager();
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			// Hide left/right border.
@@ -146,15 +148,13 @@ namespace x360ce.App.Controls
 			SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
 		}
 
-		public Recorder _recorder;
-
 		public void InitPadControl()
 		{
 			var dv = new System.Data.DataView();
 			var grid = MappedDevicesDataGridView;
 			grid.AutoGenerateColumns = false;
-			InitImagesAndRecorder();
-
+			// Show disabled images by default.
+			_Imager.SetImages(TopPictureBox, FrontPictureBox, false);
 			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
 			foreach (var item in types)
@@ -387,70 +387,7 @@ namespace x360ce.App.Controls
 
 		#region Images
 
-		Bitmap markB;
-		Bitmap markA;
-		Bitmap markC;
-		Bitmap TopImage;
-		Bitmap FrontImage;
-		Bitmap TopDisabledImage;
-		Bitmap FrontDisabledImage;
-
-		Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
-
-		public void InitImagesAndRecorder()
-		{
-			locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
-			// Create images.
-			TopImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
-			FrontImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
-			TopDisabledImage = AppHelper.GetDisabledImage(TopImage);
-			FrontDisabledImage = AppHelper.GetDisabledImage(FrontImage);
-			markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
-			markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
-			markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
-			float rH = TopDisabledImage.HorizontalResolution;
-			float rV = TopDisabledImage.VerticalResolution;
-			// Make sure resolution is same everywhere so images won't be resized.
-			markB.SetResolution(rH, rV);
-			markA.SetResolution(rH, rV);
-			markC.SetResolution(rH, rV);
-			// Show disabled images by default.
-			SetImages(TopPictureBox, FrontPictureBox, false);
-			_recorder = new Recorder(rH, rV);
-		}
-
-		void SetImages(PictureBox top, PictureBox front, bool enabled)
-		{
-			top.Image = enabled ? TopImage : TopDisabledImage;
-			front.Image = enabled ? FrontImage : FrontDisabledImage;
-		}
-
-		public class ImageInfos : List<ImageInfo>
-		{
-			public void Add(int image, LayoutCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
-				=> Add(new ImageInfo(image, code, x, y, label, control, button));
-		}
-
-		public class ImageInfo
-		{
-			public ImageInfo(int image, LayoutCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
-			{
-				Image = image;
-				Label = label;
-				Control = control;
-				Button = button;
-				Code = code;
-				X = x;
-				Y = y;
-			}
-			public int Image { get; set; }
-			public Control Label { get; set; }
-			public Control Control { get; set; }
-			public GamepadButtonFlags Button { get; set; }
-			public LayoutCode Code { get; set; }
-			public double X { get; set; }
-			public double Y { get; set; }
-		}
+		public PadControlImager _Imager;
 
 		ImageInfos imageInfos
 		{
@@ -514,7 +451,7 @@ namespace x360ce.App.Controls
 			// Process all buttons and axis.
 			var iis = imageInfos.Where(x => x.Image == 1);
 			foreach (var ii in iis)
-				DrawState(ii, e);
+				_Imager.DrawState(ii, e, newState.Gamepad, CurrentCbx);
 		}
 
 		void FrontPictureBox_Paint(object sender, PaintEventArgs e)
@@ -522,124 +459,13 @@ namespace x360ce.App.Controls
 			// Return if controller is not connected.
 			if (!newConnected)
 				return;
-			// Controller (Player) index indicator coordinates.
-			var pads = new Point[4];
-			pads[0] = new Point(116, 35);
-			pads[1] = new Point(139, 35);
-			pads[2] = new Point(116, 62);
-			pads[3] = new Point(139, 62);
-			// Display controller index light.
-			int mW = -markC.Width / 2;
-			int mH = -markC.Height / 2;
-			var index = (int)MappedTo - 1;
-			e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
+			_Imager.DrawController(e, MappedTo);
 			// Process all buttons and axis.
 			var iis = imageInfos.Where(x => x.Image == 2);
 			foreach (var ii in iis)
-				DrawState(ii, e);
+				_Imager.DrawState(ii, e, newState.Gamepad, CurrentCbx);
 		}
 
-		void DrawState(ImageInfo ii, PaintEventArgs e)
-		{
-			var gp = newState.Gamepad;
-			// Draw axis state - green cross image.
-			if (ii.Code == LayoutCode.LeftThumbButton || ii.Code == LayoutCode.RightThumbButton)
-			{
-				var mWA = -markB.Width / 2;
-				var mHA = -markB.Height / 2;
-				var padSize = 22F / (float)(ushort.MaxValue);
-				var tX = ii.Code == LayoutCode.LeftThumbButton
-					? gp.LeftThumbX
-					: gp.RightThumbX;
-				var tY = ii.Code == LayoutCode.LeftThumbButton
-					? gp.LeftThumbY
-					: gp.RightThumbY;
-				e.Graphics.DrawImage(markA, (float)(ii.X + mWA + (tX * padSize)), (float)(ii.Y + mHA + (-tY * padSize)));
-			}
-			bool on;
-			// If triggers then...
-			if (ii.Code == LayoutCode.LeftTrigger || ii.Code == LayoutCode.RightTrigger)
-			{
-				// This is axis.
-				short value = 0;
-				if (ii.Code == LayoutCode.LeftTrigger)
-					value = gp.LeftTrigger;
-				else if (ii.Code == LayoutCode.RightTrigger)
-					value = gp.RightTrigger;
-				// Check when value is on.
-				on = value > 0;
-				// Draw button image, thou some slider image would be better.
-				var mW = -markB.Width / 2;
-				var mH = -markB.Height / 2;
-				if (on)
-					e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
-			}
-			// If D-Pad.
-			else if (ii.Code == LayoutCode.DPad)
-			{
-				on =
-					gp.Buttons.HasFlag(GamepadButtonFlags.DPadUp) ||
-					gp.Buttons.HasFlag(GamepadButtonFlags.DPadLeft) ||
-					gp.Buttons.HasFlag(GamepadButtonFlags.DPadRight) ||
-					gp.Buttons.HasFlag(GamepadButtonFlags.DPadDown);
-			}
-			// If button is not specified then...
-			else if (ii.Button == GamepadButtonFlags.None)
-			{
-				var t = 2000;
-				// This is axis.
-				short value = 0;
-				if (ii.Code == LayoutCode.LeftThumbAxisX)
-					value = gp.LeftThumbX;
-				else if (ii.Code == LayoutCode.LeftThumbAxisY)
-					value = gp.LeftThumbY;
-				else if (ii.Code == LayoutCode.RightThumbAxisX)
-					value = gp.RightThumbX;
-				else if (ii.Code == LayoutCode.RightThumbAxisY)
-					value = gp.RightThumbY;
-				// Check when value is on.
-				on = value < -t || value > t;
-				if (ii.Code == LayoutCode.LeftThumbRight)
-					on = gp.LeftThumbX > t;
-				if (ii.Code == LayoutCode.LeftThumbLeft)
-					on = gp.LeftThumbX < -t;
-				if (ii.Code == LayoutCode.LeftThumbUp)
-					on = gp.LeftThumbY > t;
-				if (ii.Code == LayoutCode.LeftThumbDown)
-					on = gp.LeftThumbY < -t;
-				if (ii.Code == LayoutCode.RightThumbRight)
-					on = gp.RightThumbX > t;
-				if (ii.Code == LayoutCode.RightThumbLeft)
-					on = gp.RightThumbX < -t;
-				if (ii.Code == LayoutCode.RightThumbUp)
-					on = gp.RightThumbY > t;
-				if (ii.Code == LayoutCode.RightThumbDown)
-					on = gp.RightThumbY < -t;
-			}
-			else
-			{
-				// This is button.
-				var mW = -markB.Width / 2;
-				var mH = -markB.Height / 2;
-				// Check when value is on.
-				on = gp.Buttons.HasFlag(ii.Button);
-				if (on)
-					e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
-			}
-			// If recording is in progress and processing current recording control then...
-			// Draw recording image.
-			if (_recorder.drawRecordingImage && ii.Control == CurrentCbx)
-				_recorder.drawMarkR(e, new Point((int)ii.X, (int)ii.Y));
-			if (ii.Label != null)
-				setLabelColor(on, ii.Label);
-		}
-
-		void setLabelColor(bool on, Control label)
-		{
-			var c = on ? Color.Green : SystemColors.ControlText;
-			if (label.ForeColor != c)
-				label.ForeColor = c;
-		}
 
 		#endregion
 
@@ -883,9 +709,7 @@ namespace x360ce.App.Controls
 				UpdateDirectInputTabPage(ud);
 				DirectInputPanel.UpdateFrom(ud);
 				if (enable)
-				{
-					_recorder.StopRecording(ud.DiState);
-				}
+					_Imager.Recorder.StopRecording(ud.DiState);
 			}
 		}
 
@@ -924,10 +748,10 @@ namespace x360ce.App.Controls
 				return;
 			// If device disconnected then show disabled images.
 			if (!newConnected && oldConnected)
-				SetImages(TopPictureBox, FrontPictureBox, false);
+				_Imager.SetImages(TopPictureBox, FrontPictureBox, false);
 			// If device connected then show enabled images.
 			if (newConnected && !oldConnected)
-				SetImages(TopPictureBox, FrontPictureBox, true);
+				_Imager.SetImages(TopPictureBox, FrontPictureBox, true);
 			// Set values.
 			ControlsHelper.SetText(LeftTriggerTextBox, "{0}", newState.Gamepad.LeftTrigger);
 			ControlsHelper.SetText(RightTriggerTextBox, "{0}", newState.Gamepad.RightTrigger);
@@ -972,9 +796,7 @@ namespace x360ce.App.Controls
 			// Update Axis to Button Images.
 			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
 			foreach (var atbPanel in AxisToButtonControls)
-			{
-				atbPanel.Refresh(newState, markB);
-			}
+				atbPanel.Refresh(newState, _Imager.markB);
 			// Store old state.
 			oldState = newState;
 			oldConnected = newConnected;
@@ -1112,7 +934,7 @@ namespace x360ce.App.Controls
 				if (item.Text == cRecord)
 				{
 					var map = SettingsManager.Current.SettingsMap.First(x => x.Control == CurrentCbx);
-					_recorder.StartRecording(map);
+					_Imager.Recorder.StartRecording(map);
 				}
 				else if (item.Text == cEmpty)
 				{
@@ -1283,11 +1105,8 @@ namespace x360ce.App.Controls
 		{
 			if (disposing && (components != null))
 			{
-				markA.Dispose();
-				markB.Dispose();
-				markC.Dispose();
+				_Imager.Dispose();
 				components.Dispose();
-				_recorder.Dispose();
 			}
 			base.Dispose(disposing);
 		}

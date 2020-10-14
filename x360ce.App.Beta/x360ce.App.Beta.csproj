@@ -209,6 +209,8 @@
     <Compile Include="Common\DownloaderEventArgs.cs" />
     <Compile Include="Common\DownloaderParams.cs" />
     <Compile Include="Common\Extensions.cs" />
+    <Compile Include="Common\ImageInfo.cs" />
+    <Compile Include="Common\ImageInfos.cs" />
     <Compile Include="Common\ProcessMonitor.cs" />
     <Compile Include="Common\SettingChangedEventArgs.cs" />
     <Compile Include="Common\UpdateFrequency.cs" />
