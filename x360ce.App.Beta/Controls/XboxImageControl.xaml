@@ -67,7 +67,7 @@
 				Source="/x360ce;component/Images/xboxControllerFront.png" />
 		</StackPanel>
 		<Grid
-			x:Name="TopButtonsGrid"
+			x:Name="TriggerButtonsGrid"
 			Width="146"
 			Height="18"
 			Margin="0,18,0,0"
@@ -88,6 +88,7 @@
 			</Button>
 		</Grid>
 		<Grid
+			x:Name="ShoulderButtonsGrid"
 			Width="188"
 			Height="18"
 			Margin="0,58,0,0"

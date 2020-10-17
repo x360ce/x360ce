@@ -112,7 +112,8 @@ namespace x360ce.App.Controls
 		public bool ShowDPadButtons;
 		public bool ShowMainButtons;
 		public bool ShowMenuButtons;
-		public bool ShowTopButtons;
+		public bool ShowTriggerButtons;
+		public bool ShowShoulderButtons;
 
 		public void DrawState(ImageInfo ii, Gamepad gp, Control currentCbx)
 		{
@@ -217,7 +218,8 @@ namespace x360ce.App.Controls
 				 ShowDPadButtons && DPadCodes.Contains(ii.Code) ||
 				 ShowMainButtons && MainButtonCodes.Contains(ii.Code) ||
 				 ShowMenuButtons && MenuButtonCodes.Contains(ii.Code) ||
-				 ShowTopButtons && TopButtonCodes.Contains(ii.Code)
+				 ShowTriggerButtons && TriggerButtonCodes.Contains(ii.Code) ||
+				 ShowShoulderButtons && ShoulderButtonCodes.Contains(ii.Code)
 			)
 			{
 				ImageControl.SetImage(ii.Code, NavImageType.Normal, true);
@@ -285,11 +287,14 @@ namespace x360ce.App.Controls
 			LayoutCode.ButtonY,
 		};
 
-		LayoutCode[] TopButtonCodes = new LayoutCode[] {
-			LayoutCode.LeftShoulder,
+		LayoutCode[] TriggerButtonCodes = new LayoutCode[] {
 			LayoutCode.LeftTrigger,
-			LayoutCode.RightShoulder,
 			LayoutCode.RightTrigger,
+		};
+
+		LayoutCode[] ShoulderButtonCodes = new LayoutCode[] {
+			LayoutCode.LeftShoulder,
+			LayoutCode.RightShoulder,
 		};
 
 		bool IsDisposing;

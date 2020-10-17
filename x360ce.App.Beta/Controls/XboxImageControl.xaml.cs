@@ -110,7 +110,8 @@ namespace x360ce.App.Controls
 			Imager.ShowDPadButtons = InRange(e, DPadGrid);
 			Imager.ShowMainButtons = InRange(e, MainButtonsGrid);
 			Imager.ShowMenuButtons = InRange(e, MenuButtonsGrid);
-			Imager.ShowTopButtons = InRange(e, TopButtonsGrid);
+			Imager.ShowTriggerButtons = InRange(e, TriggerButtonsGrid);
+			Imager.ShowShoulderButtons = InRange(e, ShoulderButtonsGrid);
 		}
 
 		bool InRange(System.Windows.Input.MouseEventArgs e, FrameworkElement control)
