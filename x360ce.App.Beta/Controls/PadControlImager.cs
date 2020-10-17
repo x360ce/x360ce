@@ -2,17 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Forms;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using x360ce.Engine;
 using x360ce.Engine.Data;
-using static x360ce.App.Controls.PadControl;
 
 namespace x360ce.App.Controls
 {
-	public partial class PadControlImager: IDisposable
+	public partial class PadControlImager : IDisposable
 	{
 
 		public PadControlImager()
@@ -23,6 +23,12 @@ namespace x360ce.App.Controls
 			FrontImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
 			TopDisabledImage = AppHelper.GetDisabledImage(TopImage);
 			FrontDisabledImage = AppHelper.GetDisabledImage(FrontImage);
+			// WPF.
+			_TopImage = GetImageSource(TopImage);
+			_FrontImage = GetImageSource(FrontImage);
+			_TopDisabledImage = GetImageSource(TopDisabledImage);
+			_FrontDisabledImage = GetImageSource(FrontDisabledImage);
+			// Other.
 			markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
 			markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
 			markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
@@ -37,7 +43,7 @@ namespace x360ce.App.Controls
 
 		public Recorder Recorder;
 
-		// Green roubnd button image.
+		// Green round button image.
 		public Bitmap markB;
 		// Green cross axis image.
 		public Bitmap markA;
@@ -48,12 +54,42 @@ namespace x360ce.App.Controls
 		Bitmap TopDisabledImage;
 		Bitmap FrontDisabledImage;
 
+		ImageSource _TopImage;
+		ImageSource _FrontImage;
+		ImageSource _TopDisabledImage;
+		ImageSource _FrontDisabledImage;
+
+		public XboxImageControl ImageControl;
+
 		Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
 
-		public void SetImages(PictureBox top, PictureBox front, bool enabled)
+		public System.Windows.Controls.Image Top;
+		public System.Windows.Controls.Image Front;
+
+		public System.Windows.Controls.ContentControl LeftThumb;
+		public System.Windows.Controls.ContentControl RightThumb;
+
+		public void SetImages(bool enabled)
 		{
-			top.Image = enabled ? TopImage : TopDisabledImage;
-			front.Image = enabled ? FrontImage : FrontDisabledImage;
+			Top.Source = enabled ? _TopImage : _TopDisabledImage;
+			Front.Source = enabled ? _FrontImage : _FrontDisabledImage;
+
+
+
+
+		}
+
+		public ImageSource GetImageSource(Bitmap bitmap)
+		{
+			var photo = new BitmapImage();
+			var stream = new MemoryStream();
+			bitmap.Save(stream, ImageFormat.Png);
+			photo.BeginInit();
+			photo.CacheOption = BitmapCacheOption.OnLoad;
+			photo.StreamSource = stream;
+			photo.EndInit();
+			stream.Dispose();
+			return photo;
 		}
 
 		public void DrawController(PaintEventArgs e, MapTo mappedTo)
@@ -71,21 +107,24 @@ namespace x360ce.App.Controls
 			e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
 		}
 
-		public void DrawState(ImageInfo ii, PaintEventArgs e, Gamepad gp, Control currentCbx)
+		public void DrawState(ImageInfo ii, Gamepad gp, Control currentCbx)
 		{
 			// Draw axis state - green cross image.
 			if (ii.Code == LayoutCode.LeftThumbButton || ii.Code == LayoutCode.RightThumbButton)
 			{
-				var mWA = -markB.Width / 2;
-				var mHA = -markB.Height / 2;
-				var padSize = 22F / (float)(ushort.MaxValue);
-				var tX = ii.Code == LayoutCode.LeftThumbButton
+				var control = ii.Code == LayoutCode.LeftThumbButton
+					? LeftThumb
+					: RightThumb;
+				var w = (float)((System.Windows.FrameworkElement)control.Parent).ActualWidth / 2F;
+				var x = ii.Code == LayoutCode.LeftThumbButton
 					? gp.LeftThumbX
 					: gp.RightThumbX;
-				var tY = ii.Code == LayoutCode.LeftThumbButton
+				var y = ii.Code == LayoutCode.LeftThumbButton
 					? gp.LeftThumbY
 					: gp.RightThumbY;
-				e.Graphics.DrawImage(markA, (float)(ii.X + mWA + (tX * padSize)), (float)(ii.Y + mHA + (-tY * padSize)));
+				var l = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, -w, w, x);
+				var t = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, w, -w, y);
+				control.Margin = new System.Windows.Thickness(l, t, 0, 0);
 			}
 			bool on;
 			// If triggers then...
@@ -102,8 +141,8 @@ namespace x360ce.App.Controls
 				// Draw button image, thou some slider image would be better.
 				var mW = -markB.Width / 2;
 				var mH = -markB.Height / 2;
-				if (on)
-					e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
+				//if (on)
+				//	e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
 			}
 			// If D-Pad.
 			else if (ii.Code == LayoutCode.DPad)
@@ -155,19 +194,33 @@ namespace x360ce.App.Controls
 				// Check when value is on.
 				on = gp.Buttons.HasFlag(ii.Button);
 				if (on)
-					e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
+				{
+					//e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
+				}
 			}
-			// If recording is in progress and processing current recording control then...
-			// Draw recording image.
-			if (Recorder.drawRecordingImage && ii.Control == currentCbx)
-				Recorder.drawMarkR(e, new Point((int)ii.X, (int)ii.Y));
-			if (ii.Label != null)
+			if (Recorder.Recording)
+			{
+				if (ii.Control == currentCbx)
+				{
+					// If recording is in progress and processing current recording control then...
+					// Draw recording image.
+					if (Recorder.drawRecordingImage)
+					{
+						//Recorder.drawMarkR(e, new Point((int)ii.X, (int)ii.Y));
+					}
+					ImageControl.SetImage(ii.Code, NavImageType.Record, Recorder.drawRecordingImage);
+				}
+			}
+			else if (ii.Label != null)
+			{
 				setLabelColor(on, ii.Label);
+				ImageControl.SetImage(ii.Code, NavImageType.Active, on);
+			}
 		}
 
 		void setLabelColor(bool on, Control label)
 		{
-			var c = on ? Color.Green : SystemColors.ControlText;
+			var c = on ? System.Drawing.Color.Green : SystemColors.ControlText;
 			if (label.ForeColor != c)
 				label.ForeColor = c;
 		}

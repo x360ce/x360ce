@@ -27,6 +27,12 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			_Imager = new PadControlImager();
+			_Imager.Top = XboxImage.TopPictureBox;
+			_Imager.Front = XboxImage.FrontPictureBox;
+			_Imager.LeftThumb = XboxImage.LeftThumb;
+			_Imager.RightThumb = XboxImage.RightThumb;
+			_Imager.ImageControl = XboxImage;
+			XboxImage.InitializeImages(imageInfos);
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			// Hide left/right border.
@@ -154,7 +160,7 @@ namespace x360ce.App.Controls
 			var grid = MappedDevicesDataGridView;
 			grid.AutoGenerateColumns = false;
 			// Show disabled images by default.
-			_Imager.SetImages(TopPictureBox, FrontPictureBox, false);
+			_Imager.SetImages(false);
 			// Add GamePad typed to ComboBox.
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
 			foreach (var item in types)
@@ -397,7 +403,7 @@ namespace x360ce.App.Controls
 				{
 
 					var triggerLeft = new Point(63, 27);
-					var triggerRight = new Point(FrontPictureBox.Width - triggerLeft.X - 1, triggerLeft.Y);
+					var triggerRight = new Point((int)XboxImage.Width - triggerLeft.X - 1, triggerLeft.Y);
 					_imageInfos = new ImageInfos();
 					// Configure Image 1.
 					_imageInfos.Add(1, LayoutCode.LeftTrigger, 63, 27, LeftTriggerLabel, LeftTriggerComboBox);
@@ -409,7 +415,7 @@ namespace x360ce.App.Controls
 					_imageInfos.Add(2, LayoutCode.ButtonX, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
 					_imageInfos.Add(2, LayoutCode.ButtonB, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
 					_imageInfos.Add(2, LayoutCode.ButtonA, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
-					//_imageInfos.Add(2, GamepadKeyCode.Guide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox, GamepadButtonFlags.Guide);
+					_imageInfos.Add(2, LayoutCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox);
 					_imageInfos.Add(2, LayoutCode.ButtonBack, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
 					_imageInfos.Add(2, LayoutCode.ButtonStart, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
 					// D-Pad
@@ -443,34 +449,9 @@ namespace x360ce.App.Controls
 		}
 		ImageInfos _imageInfos;
 
-		void TopPictureBox_Paint(object sender, PaintEventArgs e)
-		{
-			// Return if controller is not connected.
-			if (!newConnected)
-				return;
-			// Process all buttons and axis.
-			var iis = imageInfos.Where(x => x.Image == 1);
-			foreach (var ii in iis)
-				_Imager.DrawState(ii, e, newState.Gamepad, CurrentCbx);
-		}
-
-		void FrontPictureBox_Paint(object sender, PaintEventArgs e)
-		{
-			// Return if controller is not connected.
-			if (!newConnected)
-				return;
-			_Imager.DrawController(e, MappedTo);
-			// Process all buttons and axis.
-			var iis = imageInfos.Where(x => x.Image == 2);
-			foreach (var ii in iis)
-				_Imager.DrawState(ii, e, newState.Gamepad, CurrentCbx);
-		}
-
-
 		#endregion
 
 		#region Settings Map
-
 
 		public MapTo MappedTo;
 
@@ -748,10 +729,18 @@ namespace x360ce.App.Controls
 				return;
 			// If device disconnected then show disabled images.
 			if (!newConnected && oldConnected)
-				_Imager.SetImages(TopPictureBox, FrontPictureBox, false);
+				_Imager.SetImages(false);
 			// If device connected then show enabled images.
 			if (newConnected && !oldConnected)
-				_Imager.SetImages(TopPictureBox, FrontPictureBox, true);
+				_Imager.SetImages(true);
+			// Return if controller is not connected.
+			if (newConnected)
+			{
+				//_Imager.DrawController(e, MappedTo);
+				// Process all buttons and axis.
+				foreach (var ii in imageInfos)
+					_Imager.DrawState(ii, newState.Gamepad, CurrentCbx);
+			}
 			// Set values.
 			ControlsHelper.SetText(LeftTriggerTextBox, "{0}", newState.Gamepad.LeftTrigger);
 			ControlsHelper.SetText(RightTriggerTextBox, "{0}", newState.Gamepad.RightTrigger);
@@ -790,9 +779,6 @@ namespace x360ce.App.Controls
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
 					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
 			}
-			// Update controller images.
-			TopPictureBox.Refresh();
-			FrontPictureBox.Refresh();
 			// Update Axis to Button Images.
 			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
 			foreach (var atbPanel in AxisToButtonControls)

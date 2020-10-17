@@ -56,8 +56,6 @@
 			this.DPadLeftComboBox = new System.Windows.Forms.ComboBox();
 			this.DPadLeftLabel = new System.Windows.Forms.Label();
 			this.DPadRightComboBox = new System.Windows.Forms.ComboBox();
-			this.TopPictureBox = new System.Windows.Forms.PictureBox();
-			this.FrontPictureBox = new System.Windows.Forms.PictureBox();
 			this.GeneralLeftPanel = new System.Windows.Forms.Panel();
 			this.LeftTriggerTextBox = new System.Windows.Forms.TextBox();
 			this.LeftThumbAxisYComboBox = new System.Windows.Forms.ComboBox();
@@ -213,6 +211,8 @@
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
 			this.GetXInputStatesCheckBox = new System.Windows.Forms.ToolStripButton();
 			this.DxTweakButton = new System.Windows.Forms.Button();
+			this.XboxImageHost = new System.Windows.Forms.Integration.ElementHost();
+			this.XboxImage = new x360ce.App.Controls.XboxImageControl();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -224,8 +224,6 @@
 			this.GeneralTabPage.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.GeneralCenterPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).BeginInit();
 			this.GeneralLeftPanel.SuspendLayout();
 			this.GeneralRightPanel.SuspendLayout();
 			this.PadTabControl.SuspendLayout();
@@ -540,6 +538,7 @@
 			this.GeneralCenterPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.GeneralCenterPanel.Controls.Add(this.MapNameComboBox);
+			this.GeneralCenterPanel.Controls.Add(this.XboxImageHost);
 			this.GeneralCenterPanel.Controls.Add(this.DPadUpLabel);
 			this.GeneralCenterPanel.Controls.Add(this.DPadUpComboBox);
 			this.GeneralCenterPanel.Controls.Add(this.DPadDownLabel);
@@ -548,8 +547,6 @@
 			this.GeneralCenterPanel.Controls.Add(this.DPadLeftComboBox);
 			this.GeneralCenterPanel.Controls.Add(this.DPadLeftLabel);
 			this.GeneralCenterPanel.Controls.Add(this.DPadRightComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.TopPictureBox);
-			this.GeneralCenterPanel.Controls.Add(this.FrontPictureBox);
 			this.GeneralCenterPanel.Location = new System.Drawing.Point(242, 3);
 			this.GeneralCenterPanel.Name = "GeneralCenterPanel";
 			this.GeneralCenterPanel.Size = new System.Drawing.Size(262, 426);
@@ -643,25 +640,6 @@
 			this.DPadRightComboBox.Name = "DPadRightComboBox";
 			this.DPadRightComboBox.Size = new System.Drawing.Size(96, 21);
 			this.DPadRightComboBox.TabIndex = 43;
-			// 
-			// TopPictureBox
-			// 
-			this.TopPictureBox.Location = new System.Drawing.Point(3, 30);
-			this.TopPictureBox.Name = "TopPictureBox";
-			this.TopPictureBox.Size = new System.Drawing.Size(256, 105);
-			this.TopPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-			this.TopPictureBox.TabIndex = 0;
-			this.TopPictureBox.TabStop = false;
-			this.TopPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.TopPictureBox_Paint);
-			// 
-			// FrontPictureBox
-			// 
-			this.FrontPictureBox.Location = new System.Drawing.Point(3, 141);
-			this.FrontPictureBox.Name = "FrontPictureBox";
-			this.FrontPictureBox.Size = new System.Drawing.Size(256, 176);
-			this.FrontPictureBox.TabIndex = 0;
-			this.FrontPictureBox.TabStop = false;
-			this.FrontPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.FrontPictureBox_Paint);
 			// 
 			// GeneralLeftPanel
 			// 
@@ -2412,6 +2390,15 @@
 			this.DxTweakButton.UseVisualStyleBackColor = true;
 			this.DxTweakButton.Click += new System.EventHandler(this.CalibrateButton_Click);
 			// 
+			// XboxImageHost
+			// 
+			this.XboxImageHost.Location = new System.Drawing.Point(3, 30);
+			this.XboxImageHost.Name = "XboxImageHost";
+			this.XboxImageHost.Size = new System.Drawing.Size(256, 289);
+			this.XboxImageHost.TabIndex = 28;
+			this.XboxImageHost.Text = "XboxImageHost";
+			this.XboxImageHost.Child = this.XboxImage;
+			// 
 			// PadControl
 			// 
 			this.Controls.Add(this.PastePresetButton);
@@ -2444,8 +2431,6 @@
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.GeneralCenterPanel.ResumeLayout(false);
 			this.GeneralCenterPanel.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.TopPictureBox)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.FrontPictureBox)).EndInit();
 			this.GeneralLeftPanel.ResumeLayout(false);
 			this.GeneralLeftPanel.PerformLayout();
 			this.GeneralRightPanel.ResumeLayout(false);
@@ -2517,7 +2502,6 @@
 		System.Windows.Forms.TextBox RightThumbTextBox;
 		System.Windows.Forms.TextBox LeftThumbTextBox;
 		System.Windows.Forms.ComboBox LeftTriggerComboBox;
-		System.Windows.Forms.PictureBox FrontPictureBox;
 		System.Windows.Forms.ComboBox ButtonAComboBox;
 		System.Windows.Forms.Label ButtonALabel;
 		System.Windows.Forms.ComboBox ButtonXComboBox;
@@ -2556,7 +2540,6 @@
 		System.Windows.Forms.ComboBox LeftThumbAxisYComboBox;
 		System.Windows.Forms.ComboBox RightThumbAxisYComboBox;
 		System.Windows.Forms.ComboBox RightThumbButtonComboBox;
-		System.Windows.Forms.PictureBox TopPictureBox;
 		System.Windows.Forms.Label RightLabel;
 		System.Windows.Forms.Label LeftLabel;
 		System.Windows.Forms.Label DeviceSubTypeLabel;
@@ -2680,5 +2663,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
 		private System.Windows.Forms.Button CopyPresetButton;
 		private System.Windows.Forms.Button PastePresetButton;
+		private System.Windows.Forms.Integration.ElementHost XboxImageHost;
+		private XboxImageControl XboxImage;
 	}
 }
