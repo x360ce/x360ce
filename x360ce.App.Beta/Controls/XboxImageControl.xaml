@@ -185,14 +185,14 @@
 				<ContentControl Content="{StaticResource NavNormal}" Style="{StaticResource M}" />
 			</Button>
 			<Button
-				x:Name="ButtonA"
+				x:Name="ButtonB"
 				HorizontalAlignment="Right"
 				Click="Button_Click"
 				Style="{StaticResource w18}">
 				<ContentControl Content="{StaticResource NavNormal}" Style="{StaticResource M}" />
 			</Button>
 			<Button
-				x:Name="ButtonB"
+				x:Name="ButtonA"
 				VerticalAlignment="Bottom"
 				Click="Button_Click"
 				Style="{StaticResource w18}">
