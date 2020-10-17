@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Markup;
@@ -32,7 +33,12 @@ namespace x360ce.App.Controls
 			_Imager.LeftThumb = XboxImage.LeftThumb;
 			_Imager.RightThumb = XboxImage.RightThumb;
 			_Imager.ImageControl = XboxImage;
-			XboxImage.InitializeImages(imageInfos);
+			XboxImage.InitializeImages(imageInfos, _Imager);
+			XboxImage.StartRecording = (SettingsMapItem map) =>
+			{
+				_CurrentCbx = (ComboBox)map.Control;
+				_Imager.Recorder.StartRecording(map);
+			};
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			// Hide left/right border.

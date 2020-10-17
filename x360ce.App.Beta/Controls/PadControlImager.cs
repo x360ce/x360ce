@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -73,10 +74,9 @@ namespace x360ce.App.Controls
 		{
 			Top.Source = enabled ? _TopImage : _TopDisabledImage;
 			Front.Source = enabled ? _FrontImage : _FrontDisabledImage;
-
-
-
-
+			var show = enabled ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+			LeftThumb.Visibility = show;
+			RightThumb.Visibility = show;
 		}
 
 		public ImageSource GetImageSource(Bitmap bitmap)
@@ -106,6 +106,13 @@ namespace x360ce.App.Controls
 			var index = (int)mappedTo - 1;
 			e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
 		}
+
+		public bool ShowRightThumbButtons;
+		public bool ShowLeftThumbButtons;
+		public bool ShowDPadButtons;
+		public bool ShowMainButtons;
+		public bool ShowMenuButtons;
+		public bool ShowTopButtons;
 
 		public void DrawState(ImageInfo ii, Gamepad gp, Control currentCbx)
 		{
@@ -188,15 +195,8 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				// This is button.
-				var mW = -markB.Width / 2;
-				var mH = -markB.Height / 2;
 				// Check when value is on.
 				on = gp.Buttons.HasFlag(ii.Button);
-				if (on)
-				{
-					//e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
-				}
 			}
 			if (Recorder.Recording)
 			{
@@ -210,6 +210,17 @@ namespace x360ce.App.Controls
 					}
 					ImageControl.SetImage(ii.Code, NavImageType.Record, Recorder.drawRecordingImage);
 				}
+			}
+			else if (
+				 ShowLeftThumbButtons && LeftThumbCodes.Contains(ii.Code) ||
+				 ShowRightThumbButtons && RightThumbCodes.Contains(ii.Code) ||
+				 ShowDPadButtons && DPadCodes.Contains(ii.Code) ||
+				 ShowMainButtons && MainButtonCodes.Contains(ii.Code) ||
+				 ShowMenuButtons && MenuButtonCodes.Contains(ii.Code) ||
+				 ShowTopButtons && TopButtonCodes.Contains(ii.Code)
+			)
+			{
+				ImageControl.SetImage(ii.Code, NavImageType.Normal, true);
 			}
 			else if (ii.Label != null)
 			{
@@ -232,6 +243,54 @@ namespace x360ce.App.Controls
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+
+		LayoutCode[] LeftThumbCodes = new LayoutCode[] {
+			LayoutCode.LeftThumbAxisX,
+			LayoutCode.LeftThumbAxisY,
+			LayoutCode.LeftThumbButton,
+			LayoutCode.LeftThumbDown,
+			LayoutCode.LeftThumbLeft,
+			LayoutCode.LeftThumbRight,
+			LayoutCode.LeftThumbUp,
+		};
+
+		LayoutCode[] RightThumbCodes = new LayoutCode[] {
+			LayoutCode.RightThumbAxisX,
+			LayoutCode.RightThumbAxisY,
+			LayoutCode.RightThumbButton,
+			LayoutCode.RightThumbDown,
+			LayoutCode.RightThumbLeft,
+			LayoutCode.RightThumbRight,
+			LayoutCode.RightThumbUp,
+		};
+
+		LayoutCode[] DPadCodes = new LayoutCode[] {
+			LayoutCode.DPad,
+			LayoutCode.DPadDown,
+			LayoutCode.DPadLeft,
+			LayoutCode.DPadRight,
+			LayoutCode.DPadUp,
+		};
+
+		LayoutCode[] MenuButtonCodes = new LayoutCode[] {
+			LayoutCode.ButtonBack,
+			LayoutCode.ButtonGuide,
+			LayoutCode.ButtonStart,
+		};
+
+		LayoutCode[] MainButtonCodes = new LayoutCode[] {
+			LayoutCode.ButtonA,
+			LayoutCode.ButtonB,
+			LayoutCode.ButtonX,
+			LayoutCode.ButtonY,
+		};
+
+		LayoutCode[] TopButtonCodes = new LayoutCode[] {
+			LayoutCode.LeftShoulder,
+			LayoutCode.LeftTrigger,
+			LayoutCode.RightShoulder,
+			LayoutCode.RightTrigger,
+		};
 
 		bool IsDisposing;
 

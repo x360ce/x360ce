@@ -53,7 +53,6 @@ namespace x360ce.App
 				if (Recording)
 					return;
 				_Map = map;
-				var pn = map.PropertyName;
 				Recording = true;
 				recordingSnapshot = null;
 				_Map.Control.ForeColor = SystemColors.GrayText;

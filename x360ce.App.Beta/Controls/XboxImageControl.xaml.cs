@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,8 +17,13 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 		}
 
-		public void InitializeImages(ImageInfos imageInfos)
+		PadControlImager Imager;
+		ImageInfos Infos;
+
+		public void InitializeImages(ImageInfos imageInfos, PadControlImager imager)
 		{
+			Infos = imageInfos;
+			Imager = imager;
 			foreach (var ii in imageInfos)
 			{
 				var nameCode = GetNameCode(ii.Code);
@@ -84,12 +90,36 @@ namespace x360ce.App.Controls
 			if (!Enum.TryParse(name, false, out code))
 				return;
 			SetImage(code, NavImageType.Record, true);
+			if (Imager.Recorder.Recording)
+				return;
+			var comboBox = Infos.Where(x => x.Code == code).Select(x => x.Control).First();
+			var map = SettingsManager.Current.SettingsMap.First(x => x.Control == comboBox);
+			StartRecording(map);
 			// LeftThumbAxisX
 			// LeftThumbAxisY
 			// RightThumbAxisX
 			// RightThumbAxisY
 		}
 
+		public Action<SettingsMapItem> StartRecording;
+
+		private void MainGrid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+		{
+			Imager.ShowLeftThumbButtons = InRange(e, LeftThumbGrid);
+			Imager.ShowRightThumbButtons = InRange(e, RightThumbGrid);
+			Imager.ShowDPadButtons = InRange(e, DPadGrid);
+			Imager.ShowMainButtons = InRange(e, MainButtonsGrid);
+			Imager.ShowMenuButtons = InRange(e, MenuButtonsGrid);
+			Imager.ShowTopButtons = InRange(e, TopButtonsGrid);
+		}
+
+		bool InRange(System.Windows.Input.MouseEventArgs e, FrameworkElement control)
+		{
+			var p = e.GetPosition(control);
+			return
+				Math.Abs(p.X - (control.Width / 2F)) < control.Width / 2F &&
+				Math.Abs(p.Y - (control.Height / 2F)) < control.Height / 2F;
+		}
 	}
 
 }

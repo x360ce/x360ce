@@ -52,7 +52,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid x:Name="MainGrid">
+	<Grid x:Name="MainGrid" MouseMove="MainGrid_MouseMove">
 		<StackPanel Orientation="Vertical">
 			<Image
 				x:Name="TopPictureBox"
@@ -67,6 +67,7 @@
 				Source="/x360ce;component/Images/xboxControllerFront.png" />
 		</StackPanel>
 		<Grid
+			x:Name="TopButtonsGrid"
 			Width="146"
 			Height="18"
 			Margin="0,18,0,0"
@@ -106,7 +107,7 @@
 				<ContentControl Content="{StaticResource NavNormal}" Style="{StaticResource M}" />
 			</Button>
 		</Grid>
-		<Grid Margin="-137,133,0,0" Style="{StaticResource Nav}">
+		<Grid x:Name="LeftThumbGrid" Margin="-137,133,0,0" Style="{StaticResource Nav}">
 			<Button
 				x:Name="LeftThumbUp"
 				VerticalAlignment="Top"
@@ -147,6 +148,7 @@
 			</Button>
 		</Grid>
 		<Grid
+			x:Name="MenuButtonsGrid"
 			Width="68"
 			Height="18"
 			Margin="0,153,0,0"
@@ -169,7 +171,7 @@
 				<ContentControl Content="{StaticResource NavNormal}" Style="{StaticResource M}" />
 			</Button>
 		</Grid>
-		<Grid Margin="137,133,0,0" Style="{StaticResource Nav}">
+		<Grid x:Name="MainButtonsGrid" Margin="137,133,0,0" Style="{StaticResource Nav}">
 			<Button
 				x:Name="ButtonY"
 				VerticalAlignment="Top"
@@ -199,7 +201,7 @@
 				<ContentControl Content="{StaticResource NavNormal}" Style="{StaticResource M}" />
 			</Button>
 		</Grid>
-		<Grid Margin="64,174,0,0" Style="{StaticResource Nav}">
+		<Grid x:Name="RightThumbGrid" Margin="64,174,0,0" Style="{StaticResource Nav}">
 			<Button
 				x:Name="RightThumbUp"
 				VerticalAlignment="Top"
@@ -239,7 +241,7 @@
 				<ContentControl Content="{StaticResource NavDownNormal}" Style="{StaticResource M}" />
 			</Button>
 		</Grid>
-		<Grid Margin="-72,174,0,0" Style="{StaticResource Nav}">
+		<Grid x:Name="DPadGrid" Margin="-72,174,0,0" Style="{StaticResource Nav}">
 			<Button
 				x:Name="DPadUp"
 				VerticalAlignment="Top"
