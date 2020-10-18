@@ -46,20 +46,41 @@ namespace x360ce.App.Controls
 			return code;
 		}
 
-		public void SetImage(LayoutCode code, NavImageType type, bool visible)
+		public void SetImage(LayoutCode code, NavImageType type, bool show)
 		{
 			var nameCode = GetNameCode(code);
+			var ii = Infos.First(x => x.Code == nameCode);
+			var m = GetMiddleImageName(code);
+			var resourceName = string.Format("Nav{0}{1}", m, type);
+			var isNameSame = ii.CurrentImageName == resourceName;
+			var isShowSame = ii.CurrentImageShow.HasValue && ii.CurrentImageShow == show;
+			// Return if no changes must be made.
+			// This will fix issue when click on image button is ignored.
+			if (isNameSame && isShowSame)
+				return;
+			ii.CurrentImageName = resourceName;
+			ii.CurrentImageShow = show;
 			var button = FindName(nameCode.ToString()) as Button;
 			if (button == null)
 				return;
 			var content = (ContentControl)button.Content;
-			var name = button.Name;
+			if (!isNameSame)
+			{
+				var vb = FindResource(resourceName) as Viewbox;
+				content.Content = vb;
+			}
+			if (!isShowSame)
+				content.Opacity = show ? 0.6F : 0f;
+		}
+
+		public string GetMiddleImageName(LayoutCode code)
+		{
+			if (code == LayoutCode.LeftTrigger || code == LayoutCode.RightTrigger)
+				return "Up";
 			var rx = new Regex("(Up|Left|Right|Down)$");
-			var ms = rx.Matches(name);
+			var ms = rx.Matches(code.ToString());
 			var m = ms.Count > 0 ? ms[0].Value : "";
-			var resourceName = string.Format("Nav{0}{1}", m, type);
-			var vb = FindResource(resourceName) as Viewbox;
-			content.Content = visible ? vb : null;
+			return m;
 		}
 
 		public static System.Drawing.Bitmap CopyRegionIntoImage(System.Drawing.Bitmap source, int x, int y, int width, int height)
@@ -89,16 +110,20 @@ namespace x360ce.App.Controls
 			LayoutCode code;
 			if (!Enum.TryParse(name, false, out code))
 				return;
-			SetImage(code, NavImageType.Record, true);
-			if (Imager.Recorder.Recording)
-				return;
 			var comboBox = Infos.Where(x => x.Code == code).Select(x => x.Control).First();
 			var map = SettingsManager.Current.SettingsMap.First(x => x.Control == comboBox);
-			StartRecording(map);
-			// LeftThumbAxisX
-			// LeftThumbAxisY
-			// RightThumbAxisX
-			// RightThumbAxisY
+			var record = true;
+			// If already recording then stop.
+			if (Imager.Recorder.Recording)
+			{
+				var currentMap = Imager.Recorder.CurrentMap;
+				Imager.Recorder.StopRecording();
+				// Record only if different button was clicked.
+				record = map != currentMap;
+			}
+			if (record)
+				StartRecording(map);
+			//SetImage(code, NavImageType.Record, record);
 		}
 
 		public Action<SettingsMapItem> StartRecording;

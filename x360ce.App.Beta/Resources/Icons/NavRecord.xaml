@@ -3,7 +3,6 @@
 	<Viewbox x:Key="NavUpRecord" x:Shared="False" Stretch="Uniform">
 		<Canvas
 			xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			Name="svg103"
 			Width="512"
 			Height="512">
 			<Canvas.RenderTransform>
@@ -22,7 +21,7 @@
 			</Canvas.Resources>
 			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
-			<Canvas Name="g101">
+			<Canvas>
 				<Path
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					Data="M496 256c0 132.5 -107.5 240 -240 240c-132.5 0 -240 -107.5 -240 -240c0 -132.5 107.5 -240 240 -240c132.5 0 240 107.5 240 240z"
@@ -50,7 +49,6 @@
 	<Viewbox x:Key="NavLeftRecord" x:Shared="False" Stretch="Uniform">
 		<Canvas
 			xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			Name="svg165"
 			Width="512"
 			Height="512">
 			<Canvas.RenderTransform>
@@ -69,7 +67,7 @@
 			</Canvas.Resources>
 			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
-			<Canvas Name="g163">
+			<Canvas>
 				<Path
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					Data="M496 256c0 132.5 -107.5 240 -240 240c-132.5 0 -240 -107.5 -240 -240c0 -132.5 107.5 -240 240 -240c132.5 0 240 107.5 240 240z"
@@ -97,7 +95,6 @@
 	<Viewbox x:Key="NavRecord" x:Shared="False" Stretch="Uniform">
 		<Canvas
 			xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			Name="svg9"
 			Width="512"
 			Height="512">
 			<Canvas.RenderTransform>
@@ -106,7 +103,7 @@
 			<Canvas.Resources />
 			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
-			<Canvas Name="g7">
+			<Canvas>
 				<Path
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					Data="M496 256c0 132.5 -107.5 240 -240 240c-132.5 0 -240 -107.5 -240 -240c0 -132.5 107.5 -240 240 -240c132.5 0 240 107.5 240 240z"
@@ -124,7 +121,6 @@
 	<Viewbox x:Key="NavRightRecord" x:Shared="False" Stretch="Uniform">
 		<Canvas
 			xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			Name="svg57"
 			Width="512"
 			Height="512">
 			<Canvas.RenderTransform>
@@ -143,7 +139,7 @@
 			</Canvas.Resources>
 			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
-			<Canvas Name="g55">
+			<Canvas>
 				<Path
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					Data="M496 256c0 132.5 -107.5 240 -240 240c-132.5 0 -240 -107.5 -240 -240c0 -132.5 107.5 -240 240 -240c132.5 0 240 107.5 240 240z"
@@ -171,7 +167,6 @@
 	<Viewbox x:Key="NavDownRecord" x:Shared="False" Stretch="Uniform">
 		<Canvas
 			xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			Name="svg119"
 			Width="512"
 			Height="512">
 			<Canvas.RenderTransform>
@@ -190,7 +185,7 @@
 			</Canvas.Resources>
 			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
-			<Canvas Name="g117">
+			<Canvas>
 				<Path
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 					Data="M496 256c0 132.5 -107.5 240 -240 240c-132.5 0 -240 -107.5 -240 -240c0 -132.5 107.5 -240 240 -240c132.5 0 240 107.5 240 240z"

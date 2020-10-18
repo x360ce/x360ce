@@ -31,6 +31,10 @@
 						<Setter Property="Width" Value="10" />
 						<Setter Property="Height" Value="10" />
 					</Style>
+					<Style x:Key="AxisStatus" TargetType="{x:Type ContentControl}">
+						<Setter Property="Width" Value="10" />
+						<Setter Property="Height" Value="10" />
+					</Style>
 					<Style TargetType="{x:Type Image}">
 						<Setter Property="HorizontalAlignment" Value="Left" />
 						<Setter Property="VerticalAlignment" Value="Top" />
@@ -55,13 +59,13 @@
 	<Grid x:Name="MainGrid" MouseMove="MainGrid_MouseMove">
 		<StackPanel Orientation="Vertical">
 			<Image
-				x:Name="TopPictureBox"
+				x:Name="TopPictureImage"
 				Width="256"
 				Height="105"
 				Source="/x360ce;component/Images/xboxControllerTop.png" />
 			<StackPanel Height="8" />
 			<Image
-				x:Name="FrontPictureBox"
+				x:Name="FrontPictureImage"
 				Width="256"
 				Height="176"
 				Source="/x360ce;component/Images/xboxControllerFront.png" />
@@ -69,22 +73,37 @@
 		<Grid
 			x:Name="TriggerButtonsGrid"
 			Width="146"
-			Height="18"
-			Margin="0,18,0,0"
+			Height="36"
+			Margin="0,20,0,0"
 			Style="{StaticResource Nav}">
+			<ContentControl
+				x:Name="LeftTriggerContentControl"
+				Margin="4,0,0,0"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Bottom"
+				Content="{StaticResource NavTriggerActive}"
+				Style="{StaticResource AxisStatus}" />
 			<Button
 				x:Name="LeftTrigger"
 				HorizontalAlignment="Left"
 				Click="Button_Click"
 				Style="{StaticResource w18}">
-				<ContentControl Content="{StaticResource NavNormal}" Style="{StaticResource M}" />
+				<ContentControl Content="{StaticResource NavUpNormal}" Style="{StaticResource M}" />
 			</Button>
+			<ContentControl
+				x:Name="RightTriggerContentControl"
+				Margin="0,0,4,0"
+				HorizontalAlignment="Right"
+				VerticalAlignment="Bottom"
+				Content="{StaticResource NavTriggerActive}"
+				Style="{StaticResource AxisStatus}" />
 			<Button
 				x:Name="RightTrigger"
-				HorizontalAlignment="Right"
+				Width="Auto"
+				Margin="128,0,0,0"
 				Click="Button_Click"
 				Style="{StaticResource w18}">
-				<ContentControl Content="{StaticResource NavNormal}" Style="{StaticResource M}" />
+				<ContentControl Content="{StaticResource NavUpNormal}" Style="{StaticResource M}" />
 			</Button>
 		</Grid>
 		<Grid
@@ -123,13 +142,7 @@
 				Style="{StaticResource w18}">
 				<ContentControl Content="{StaticResource NavLeftNormal}" Style="{StaticResource M}" />
 			</Button>
-			<ContentControl
-				x:Name="LeftThumb"
-				Width="10"
-				Height="10"
-				Content="{StaticResource NavAxisActive}"
-				Opacity="1.0"
-				Style="{StaticResource M}" />
+			<ContentControl x:Name="LeftThumbContentControl" Content="{StaticResource NavAxisActive}" Style="{StaticResource AxisStatus}" />
 			<Button x:Name="LeftThumbButton" Click="Button_Click" Style="{StaticResource w18}">
 				<ContentControl Content="{StaticResource NavNormal}" Style="{StaticResource M}" />
 			</Button>
@@ -217,13 +230,7 @@
 				Style="{StaticResource w18}">
 				<ContentControl Content="{StaticResource NavLeftNormal}" Style="{StaticResource M}" />
 			</Button>
-			<ContentControl
-				x:Name="RightThumb"
-				Width="10"
-				Height="10"
-				Content="{StaticResource NavAxisActive}"
-				Opacity="1.0"
-				Style="{StaticResource M}" />
+			<ContentControl x:Name="RightThumbContentControl" Content="{StaticResource NavAxisActive}" Style="{StaticResource AxisStatus}" />
 			<Button x:Name="RightThumbButton" Click="Button_Click" Style="{StaticResource w18}">
 				<ContentControl Content="{StaticResource NavNormal}" Style="{StaticResource M}" />
 			</Button>

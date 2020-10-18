@@ -20,21 +20,21 @@ namespace x360ce.App.Controls
 		{
 			locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
 			// Create images.
-			TopImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
-			FrontImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
-			TopDisabledImage = AppHelper.GetDisabledImage(TopImage);
-			FrontDisabledImage = AppHelper.GetDisabledImage(FrontImage);
+			var topImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
+			var frontImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
+			var topDisabledImage = AppHelper.GetDisabledImage(topImage);
+			var frontDisabledImage = AppHelper.GetDisabledImage(frontImage);
 			// WPF.
-			_TopImage = GetImageSource(TopImage);
-			_FrontImage = GetImageSource(FrontImage);
-			_TopDisabledImage = GetImageSource(TopDisabledImage);
-			_FrontDisabledImage = GetImageSource(FrontDisabledImage);
+			_TopImage = GetImageSource(topImage);
+			_FrontImage = GetImageSource(frontImage);
+			_TopDisabledImage = GetImageSource(topDisabledImage);
+			_FrontDisabledImage = GetImageSource(frontDisabledImage);
 			// Other.
 			markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
 			markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
 			markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
-			float rH = TopDisabledImage.HorizontalResolution;
-			float rV = TopDisabledImage.VerticalResolution;
+			float rH = topDisabledImage.HorizontalResolution;
+			float rV = topDisabledImage.VerticalResolution;
 			// Make sure resolution is same everywhere so images won't be resized.
 			markB.SetResolution(rH, rV);
 			markA.SetResolution(rH, rV);
@@ -50,10 +50,6 @@ namespace x360ce.App.Controls
 		public Bitmap markA;
 		// Green round controller/player number image.
 		public Bitmap markC;
-		Bitmap TopImage;
-		Bitmap FrontImage;
-		Bitmap TopDisabledImage;
-		Bitmap FrontDisabledImage;
 
 		ImageSource _TopImage;
 		ImageSource _FrontImage;
@@ -64,19 +60,25 @@ namespace x360ce.App.Controls
 
 		Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
 
+		// Background images.
 		public System.Windows.Controls.Image Top;
 		public System.Windows.Controls.Image Front;
 
-		public System.Windows.Controls.ContentControl LeftThumb;
-		public System.Windows.Controls.ContentControl RightThumb;
+		// Axis status Images.
+		public System.Windows.Controls.ContentControl LeftThumbStatus;
+		public System.Windows.Controls.ContentControl RightThumbStatus;
+		public System.Windows.Controls.ContentControl LeftTriggerStatus;
+		public System.Windows.Controls.ContentControl RightTriggerStatus;
 
 		public void SetImages(bool enabled)
 		{
 			Top.Source = enabled ? _TopImage : _TopDisabledImage;
 			Front.Source = enabled ? _FrontImage : _FrontDisabledImage;
 			var show = enabled ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
-			LeftThumb.Visibility = show;
-			RightThumb.Visibility = show;
+			LeftThumbStatus.Visibility = show;
+			RightThumbStatus.Visibility = show;
+			LeftTriggerStatus.Visibility = show;
+			RightTriggerStatus.Visibility = show;
 		}
 
 		public ImageSource GetImageSource(Bitmap bitmap)
@@ -117,43 +119,37 @@ namespace x360ce.App.Controls
 
 		public void DrawState(ImageInfo ii, Gamepad gp, Control currentCbx)
 		{
-			// Draw axis state - green cross image.
-			if (ii.Code == LayoutCode.LeftThumbButton || ii.Code == LayoutCode.RightThumbButton)
-			{
-				var control = ii.Code == LayoutCode.LeftThumbButton
-					? LeftThumb
-					: RightThumb;
-				var w = (float)((System.Windows.FrameworkElement)control.Parent).ActualWidth / 2F;
-				var x = ii.Code == LayoutCode.LeftThumbButton
-					? gp.LeftThumbX
-					: gp.RightThumbX;
-				var y = ii.Code == LayoutCode.LeftThumbButton
-					? gp.LeftThumbY
-					: gp.RightThumbY;
-				var l = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, -w, w, x);
-				var t = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, w, -w, y);
-				control.Margin = new System.Windows.Thickness(l, t, 0, 0);
-			}
 			bool on;
 			// If triggers then...
 			if (ii.Code == LayoutCode.LeftTrigger || ii.Code == LayoutCode.RightTrigger)
 			{
-				// This is axis.
-				short value = 0;
-				if (ii.Code == LayoutCode.LeftTrigger)
-					value = gp.LeftTrigger;
-				else if (ii.Code == LayoutCode.RightTrigger)
-					value = gp.RightTrigger;
-				// Check when value is on.
-				on = value > 0;
-				// Draw button image, thou some slider image would be better.
-				var mW = -markB.Width / 2;
-				var mH = -markB.Height / 2;
-				//if (on)
-				//	e.Graphics.DrawImage(markB, (float)ii.X + mW, (float)ii.Y + mH);
+				var isLeft = ii.Code == LayoutCode.LeftTrigger;
+				var control = isLeft ? LeftTriggerStatus : RightTriggerStatus;
+				var h = (float)(((System.Windows.FrameworkElement)control.Parent).Height - control.Height);
+				var y = isLeft ? gp.LeftTrigger : gp.RightTrigger;
+				var b = ConvertHelper.ConvertRangeF(byte.MinValue, byte.MaxValue, 0, h, y);
+				var m = control.Margin;
+				on = y > 0;
+				control.Margin = new System.Windows.Thickness(m.Left, m.Top, m.Right, b);
+				// Show trigger axis state -green minus image.
+				control.Visibility = on ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+			}
+			// Draw thumb axis state - green cross image.
+			if (ii.Code == LayoutCode.LeftThumbButton || ii.Code == LayoutCode.RightThumbButton)
+			{
+				var isLeft = ii.Code == LayoutCode.LeftThumbButton;
+				var control = isLeft ? LeftThumbStatus : RightThumbStatus;
+				var w = (float)((System.Windows.FrameworkElement)control.Parent).Width / 2F;
+				var x = isLeft ? gp.LeftThumbX : gp.RightThumbX;
+				var y = isLeft ? gp.LeftThumbY : gp.RightThumbY;
+				var l = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, -w, w, x);
+				var t = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, w, -w, y);
+				var m = control.Margin;
+				control.Margin = new System.Windows.Thickness(l, t, m.Right, m.Bottom);
+				control.Visibility = x != 0 || y != 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
 			}
 			// If D-Pad.
-			else if (ii.Code == LayoutCode.DPad)
+			if (ii.Code == LayoutCode.DPad)
 			{
 				on =
 					gp.Buttons.HasFlag(GamepadButtonFlags.DPadUp) ||
@@ -199,18 +195,10 @@ namespace x360ce.App.Controls
 				// Check when value is on.
 				on = gp.Buttons.HasFlag(ii.Button);
 			}
-			if (Recorder.Recording)
+			// If recording is in progress then...
+			if (Recorder.Recording && ii.Control == currentCbx)
 			{
-				if (ii.Control == currentCbx)
-				{
-					// If recording is in progress and processing current recording control then...
-					// Draw recording image.
-					if (Recorder.drawRecordingImage)
-					{
-						//Recorder.drawMarkR(e, new Point((int)ii.X, (int)ii.Y));
-					}
-					ImageControl.SetImage(ii.Code, NavImageType.Record, Recorder.drawRecordingImage);
-				}
+				ImageControl.SetImage(ii.Code, NavImageType.Record, Recorder.DrawRecordingImage);
 			}
 			else if (
 				 ShowLeftThumbButtons && LeftThumbCodes.Contains(ii.Code) ||
@@ -224,11 +212,14 @@ namespace x360ce.App.Controls
 			{
 				ImageControl.SetImage(ii.Code, NavImageType.Normal, true);
 			}
-			else if (ii.Label != null)
+			else
 			{
-				setLabelColor(on, ii.Label);
-				ImageControl.SetImage(ii.Code, NavImageType.Active, on);
+				var isAxisCode = AxisCodes.Contains(ii.Code);
+				// Axis status will be displayed as image therefore can hide active button indicator.
+				ImageControl.SetImage(ii.Code, NavImageType.Active, on && !isAxisCode);
 			}
+			if (ii.Label != null)
+				setLabelColor(on, ii.Label);
 		}
 
 		void setLabelColor(bool on, Control label)
@@ -237,8 +228,6 @@ namespace x360ce.App.Controls
 			if (label.ForeColor != c)
 				label.ForeColor = c;
 		}
-
-		#region IDisposable
 
 		public void Dispose()
 		{
@@ -296,6 +285,25 @@ namespace x360ce.App.Controls
 			LayoutCode.LeftShoulder,
 			LayoutCode.RightShoulder,
 		};
+
+		LayoutCode[] AxisCodes = new LayoutCode[] {
+			LayoutCode.LeftTrigger,
+			LayoutCode.RightTrigger,
+			LayoutCode.LeftThumbAxisX,
+			LayoutCode.LeftThumbAxisY,
+			LayoutCode.LeftThumbDown,
+			LayoutCode.LeftThumbLeft,
+			LayoutCode.LeftThumbRight,
+			LayoutCode.LeftThumbUp,
+			LayoutCode.RightThumbAxisX,
+			LayoutCode.RightThumbAxisY,
+			LayoutCode.RightThumbDown,
+			LayoutCode.RightThumbLeft,
+			LayoutCode.RightThumbRight,
+			LayoutCode.RightThumbUp,
+		};
+
+		#region IDisposable
 
 		bool IsDisposing;
 

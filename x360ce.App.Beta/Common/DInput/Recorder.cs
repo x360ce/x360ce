@@ -24,18 +24,18 @@ namespace x360ce.App
 		Bitmap markR;
 		public bool Recording;
 		Regex dPadRx = new Regex("(DPad [0-9]+)");
-		public bool drawRecordingImage
+		public bool DrawRecordingImage
 		{
 			get
 			{
 				// Make image flash: 250 ms - ON, 250 ms - OFF.
-				var milliseconds = (int)DateTime.Now.Subtract(DateTime.Now.Date).TotalMilliseconds;
+				var milliseconds = (int)DateTime.Now.Subtract(RecordingStarted).TotalMilliseconds;
 				var show = (milliseconds / 250) % 2 == 0;
 				return Recording && show;
 			}
 		}
 		object recordingLock = new object();
-		SettingsMapItem _Map;
+		public SettingsMapItem CurrentMap;
 
 		public void drawMarkR(PaintEventArgs e, Point position)
 		{
@@ -44,6 +44,7 @@ namespace x360ce.App
 			e.Graphics.DrawImage(markR, position.X + rW, position.Y + rH);
 		}
 
+		DateTime RecordingStarted = new DateTime();
 
 		public void StartRecording(SettingsMapItem map)
 		{
@@ -52,11 +53,13 @@ namespace x360ce.App
 				// If recording is already in progress then return.
 				if (Recording)
 					return;
-				_Map = map;
+				CurrentMap = map;
+				// Set time to now to make sure that DrawRecordingImage always shows image immediately.
+				RecordingStarted = DateTime.Now;
 				Recording = true;
 				recordingSnapshot = null;
-				_Map.Control.ForeColor = SystemColors.GrayText;
-				MainForm.Current.StatusTimerLabel.Text = (_Map.PropertyName == SettingName.DPad)
+				CurrentMap.Control.ForeColor = SystemColors.GrayText;
+				MainForm.Current.StatusTimerLabel.Text = (CurrentMap.PropertyName == SettingName.DPad)
 					 ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
 					 : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
 			}
@@ -98,7 +101,7 @@ namespace x360ce.App
 				if (!stop && actions.Length > 0)
 				{
 					// If this is DPad ComboBox then...
-					if (_Map.PropertyName == SettingName.DPad)
+					if (CurrentMap.PropertyName == SettingName.DPad)
 					{
 						// Get first action suitable for DPad
 						var dPadAction = actions.FirstOrDefault(x => dPadRx.IsMatch(x));
@@ -118,8 +121,9 @@ namespace x360ce.App
 				// If recording must stop then...
 				if (stop)
 				{
-					var box = ((ComboBox)_Map.Control);
+					var box = (ComboBox)CurrentMap.Control;
 					Recording = false;
+					CurrentMap = null;
 					// If stop was initiated before action was recorded then...                    
 					if (string.IsNullOrEmpty(action))
 					{
@@ -214,7 +218,7 @@ namespace x360ce.App
 					if ((oldValue > (ushort.MaxValue / 4)) && oldValue < (ushort.MaxValue * 3 / 4))
 					{
 						// Note: Mapping wheel, which is centered in the middle, to the humb will use full axis.
-						var pn = _Map.PropertyName;
+						var pn = CurrentMap.PropertyName;
 						var thumb =
 							pn == nameof(SettingName.LeftThumbAxisX) ||
 							pn == nameof(SettingName.LeftThumbAxisY) ||

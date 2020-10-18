@@ -16,6 +16,10 @@ namespace x360ce.App
 			X = x;
 			Y = y;
 		}
+
+		public bool? CurrentImageShow { get; set; }
+		public string CurrentImageName { get; set; }
+
 		public int Image { get; set; }
 		public Control Label { get; set; }
 

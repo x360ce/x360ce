@@ -28,10 +28,12 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			_Imager = new PadControlImager();
-			_Imager.Top = XboxImage.TopPictureBox;
-			_Imager.Front = XboxImage.FrontPictureBox;
-			_Imager.LeftThumb = XboxImage.LeftThumb;
-			_Imager.RightThumb = XboxImage.RightThumb;
+			_Imager.Top = XboxImage.TopPictureImage;
+			_Imager.Front = XboxImage.FrontPictureImage;
+			_Imager.LeftThumbStatus = XboxImage.LeftThumbContentControl;
+			_Imager.RightThumbStatus = XboxImage.RightThumbContentControl;
+			_Imager.LeftTriggerStatus = XboxImage.LeftTriggerContentControl;
+			_Imager.RightTriggerStatus = XboxImage.RightTriggerContentControl;
 			_Imager.ImageControl = XboxImage;
 			XboxImage.InitializeImages(imageInfos, _Imager);
 			XboxImage.StartRecording = (SettingsMapItem map) =>
