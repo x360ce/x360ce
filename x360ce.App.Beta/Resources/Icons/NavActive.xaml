@@ -250,7 +250,7 @@
 					Canvas.Left="32"
 					Canvas.Top="192"
 					Width="448"
-					Height="128"
+					Height="192"
 					Fill="{StaticResource color-1}" />
 			</Canvas>
 		</Canvas>
