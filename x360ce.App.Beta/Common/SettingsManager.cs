@@ -137,13 +137,17 @@ namespace x360ce.App
 				// Select device instances only.
 				.Select(x => x.InstanceGuid)
 				.ToArray();
+			UserDevice[] userDevices;
 			// Get all connected devices.
-			var userDevices = UserDevices.ItemsToArraySyncronized()
+			lock (UserDevices.SyncRoot)
+			{
+				userDevices = UserDevices.Items
 				// Filter by instance.
 				.Where(x => instanceGuids.Contains(x.InstanceGuid))
 				// Include only currently connected devices.
 				.Where(x => includeOffline || x.IsOnline)
 				.ToArray();
+			}
 			return userDevices;
 		}
 

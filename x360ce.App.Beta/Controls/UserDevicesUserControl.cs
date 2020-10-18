@@ -79,8 +79,12 @@ namespace x360ce.App.Controls
 			var list = new SortableBindingList<UserDevice>();
 			list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
 			// Exclude Syste/Virtual devices.
-			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized()
-				.Where(x => x.ConnectionClass != DEVCLASS.SYSTEM).ToList();
+			UserDevice[] devices;
+			lock (SettingsManager.UserDevices.SyncRoot)
+			{
+				devices = SettingsManager.UserDevices.Items
+					.Where(x => x.ConnectionClass != DEVCLASS.SYSTEM).ToArray();
+			}
 			list.AddRange(devices);
 			// If new list, item added or removed then...
 			if (_currentData == null)
