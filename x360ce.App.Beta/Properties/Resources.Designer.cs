@@ -113,6 +113,16 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap bullet_ball_glass_red_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("bullet_ball_glass_red_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap bullet_square_glass_blue {
             get {
                 object obj = ResourceManager.GetObject("bullet_square_glass_blue", resourceCulture);

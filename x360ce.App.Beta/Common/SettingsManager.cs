@@ -498,7 +498,7 @@ namespace x360ce.App
 			}
 		}
 
-		static public void AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None, bool iniConverter = false)
+		static public SettingsMapItem AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None, bool iniConverter = false)
 		{
 			// Get the member expression
 			var me = (MemberExpression)setting.Body;
@@ -532,6 +532,7 @@ namespace x360ce.App
 			item.Property = prop;
 			// Add to the map
 			Current.SettingsMap.Add(item);
+			return item;
 		}
 
 		static void control_MouseLeave(object sender, EventArgs e)

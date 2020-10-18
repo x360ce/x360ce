@@ -112,14 +112,13 @@ namespace x360ce.App.Controls
 			LayoutCode code;
 			if (!Enum.TryParse(name, false, out code))
 				return;
-			var comboBox = Infos.Where(x => x.Code == code).Select(x => x.Control).First();
-			var map = SettingsManager.Current.SettingsMap.First(x => x.Control == comboBox);
+			var map = SettingsManager.Current.SettingsMap.First(x => x.Code == code);
 			var record = true;
 			// If already recording then stop.
 			if (Imager.Recorder.Recording)
 			{
 				var currentMap = Imager.Recorder.CurrentMap;
-				Imager.Recorder.StopRecording();
+				StopRecording();
 				// Record only if different button was clicked.
 				record = map != currentMap;
 			}
@@ -129,6 +128,7 @@ namespace x360ce.App.Controls
 		}
 
 		public Action<SettingsMapItem> StartRecording;
+		public Func<bool> StopRecording;
 
 		private void MainGrid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
 		{

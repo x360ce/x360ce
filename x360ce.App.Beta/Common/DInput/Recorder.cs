@@ -23,7 +23,6 @@ namespace x360ce.App
 
 		Bitmap markR;
 		public bool Recording;
-		Regex dPadRx = new Regex("(DPad [0-9]+)");
 		public bool DrawRecordingImage
 		{
 			get
@@ -100,10 +99,12 @@ namespace x360ce.App
 				// if recording and at least one action was recorded then...
 				if (!stop && actions.Length > 0)
 				{
+					var map = CurrentMap;
 					// If this is DPad ComboBox then...
-					if (CurrentMap.PropertyName == SettingName.DPad)
+					if (map.Code ==  Engine.Data.LayoutCode.DPad)
 					{
 						// Get first action suitable for DPad
+						Regex dPadRx = new Regex("(POV [0-9]+)");
 						var dPadAction = actions.FirstOrDefault(x => dPadRx.IsMatch(x));
 						if (dPadAction != null)
 						{

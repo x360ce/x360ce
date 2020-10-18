@@ -120,7 +120,7 @@ namespace x360ce.App.Controls
 		public void DrawState(ImageInfo ii, Gamepad gp, Control currentCbx)
 		{
 			bool on;
-			// If triggers then...
+			// Show trigger axis state -green minus image.
 			if (ii.Code == LayoutCode.LeftTrigger || ii.Code == LayoutCode.RightTrigger)
 			{
 				var isLeft = ii.Code == LayoutCode.LeftTrigger;
@@ -131,8 +131,6 @@ namespace x360ce.App.Controls
 				var m = control.Margin;
 				on = y > 0;
 				control.Margin = new System.Windows.Thickness(m.Left, m.Top, m.Right, b);
-				// Show trigger axis state -green minus image.
-				control.Visibility = on ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
 			}
 			// Draw thumb axis state - green cross image.
 			if (ii.Code == LayoutCode.LeftThumbButton || ii.Code == LayoutCode.RightThumbButton)
@@ -146,7 +144,6 @@ namespace x360ce.App.Controls
 				var t = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, w, -w, y);
 				var m = control.Margin;
 				control.Margin = new System.Windows.Thickness(l, t, m.Right, m.Bottom);
-				control.Visibility = x != 0 || y != 0 ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
 			}
 			// If D-Pad.
 			if (ii.Code == LayoutCode.DPad)

@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using x360ce.Engine.Data;
 
 namespace x360ce.App
 {
@@ -21,7 +22,7 @@ namespace x360ce.App
 		/// Property key inside INI file.
 		/// </summary>
 		public bool IniConverter { get; set; }
-		
+
 		/// <summary>
 		/// Property path inside INI file.
 		/// </summary>
@@ -36,7 +37,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Property name on .NET class.
 		/// </summary>
-		public string PropertyName { get; set;}
+		public string PropertyName { get; set; }
 
 
 		public PropertyInfo Property { get; set; }
@@ -53,6 +54,11 @@ namespace x360ce.App
 		/// Default value if property is null or empty.
 		/// </summary>
 		public object DefaultValue { get; set; }
+
+		/// <summary>
+		/// X360CE PAD Map Code.
+		/// </summary>
+		public LayoutCode Code { get; set; }
 
 	}
 }

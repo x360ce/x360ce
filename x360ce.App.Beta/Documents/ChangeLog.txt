@@ -1,7 +1,9 @@
-v4.15.8.0 (2020-10-18)
+v4.15.10.0 (2020-10-18)
+- Fix: Map recorded was mapping POV direction to DPad instead of POV.
 - Updated: PAD status control updated to more modern XAML format.
 - Updated: Set XInput negative center value (-1) to 0.
 - New: Feature to record mapping by pressing on button image.
+- New: Remap All feature, which allows faster remapping.
 
 v4.14.15.0 (2020-10-10)
 - Fixed: Crash when configuring HID Guardian when Device Id is missing.
