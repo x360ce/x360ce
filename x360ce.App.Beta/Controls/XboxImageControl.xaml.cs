@@ -119,7 +119,9 @@ namespace x360ce.App.Controls
 			LayoutCode code;
 			if (!Enum.TryParse(name, false, out code))
 				return;
-			var map = SettingsManager.Current.SettingsMap.First(x => x.MapTo == MappedTo && x.Code == code);
+			var map = SettingsManager.Current.SettingsMap.FirstOrDefault(x => x.MapTo == MappedTo && x.Code == code);
+			if (map == null)
+				return;
 			var record = true;
 			// If already recording then stop.
 			if (Imager.Recorder.Recording)
