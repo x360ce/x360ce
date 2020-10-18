@@ -192,10 +192,33 @@ namespace x360ce.App.Controls
 				// Check when value is on.
 				on = gp.Buttons.HasFlag(ii.Button);
 			}
-			// If recording is in progress then...
-			if (Recorder.Recording && ii.Control == currentCbx)
+			LayoutCode recordingCode = ii.Code;
+
+			var isRecordingItem = Recorder.Recording && ii.Code == Recorder.CurrentMap.Code;
+			// If recording then...
+			if (Recorder.Recording)
 			{
-				ImageControl.SetImage(ii.Code, NavImageType.Record, Recorder.DrawRecordingImage);
+				LayoutCode? redirect = null;
+				if (Recorder.CurrentMap.Code == LayoutCode.RightThumbAxisX)
+					redirect = LayoutCode.RightThumbRight;
+				if (Recorder.CurrentMap.Code == LayoutCode.RightThumbAxisY)
+					redirect = LayoutCode.RightThumbUp;
+				if (Recorder.CurrentMap.Code == LayoutCode.LeftThumbAxisX)
+					redirect = LayoutCode.LeftThumbRight;
+				if (Recorder.CurrentMap.Code == LayoutCode.LeftThumbAxisY)
+					redirect = LayoutCode.LeftThumbUp;
+				if (redirect.HasValue)
+				{
+					recordingCode = redirect.Value;
+					// Skip if redirected control.
+					if (ii.Code == recordingCode)
+						return;
+				}
+			}
+			// If recording is in progress then...
+			if (isRecordingItem)
+			{
+				ImageControl.SetImage(recordingCode, NavImageType.Record, Recorder.DrawRecordingImage);
 			}
 			else if (
 				 ShowLeftThumbButtons && SettingsConverter.LeftThumbCodes.Contains(ii.Code) ||

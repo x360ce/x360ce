@@ -11,7 +11,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -86,6 +85,7 @@ namespace x360ce.App.Controls
 			var cbx = (ComboBox)map.Control;
 			if (_CurrentCbx != cbx)
 				_CurrentCbx = cbx;
+			XboxImage.ShowMappingDoneLabel(false);
 			_Imager.Recorder.StartRecording(map);
 		}
 
@@ -722,16 +722,15 @@ namespace x360ce.App.Controls
 					var stopped = _Imager.Recorder.StopRecording(ud.DiState);
 					// If value was found and recording stopped then...
 					if (stopped)
-						Task.Run(async () =>
+					{
+						if (RecordAllMaps.Count == 0)
 						{
-							// Wait 1 second, which will allow to relase the button.
-							await Task.Delay(1000).ConfigureAwait(true);
-							await ControlsHelper.BeginInvoke(() =>
-							{
-								// Try to record next available control from the list.
-								StartRecording();
-							});
-						});
+							XboxImage.ShowMappingDoneLabel(true);
+							return;
+						}
+						// Try to record next available control from the list.
+						ControlsHelper.BeginInvoke(() => StartRecording(), 1000);
+					}
 				}
 			}
 		}

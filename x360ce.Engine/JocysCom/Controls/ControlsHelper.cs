@@ -8,7 +8,7 @@ namespace JocysCom.ClassLibrary.Controls
 	{
 		private const int WM_SETREDRAW = 0x000B;
 
-#region Invoke and BeginInvoke
+		#region Invoke and BeginInvoke
 
 		/// <summary>
 		/// Call this method from main form constructor for BeginInvoke to work.
@@ -95,8 +95,17 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>Executes the specified action delegate asynchronously on main Graphical User Interface (GUI) Thread.</summary>
 		/// <param name="action">The action delegate to execute asynchronously.</param>
 		/// <returns>The started System.Threading.Tasks.Task.</returns>
-		public static Task BeginInvoke(Action action)
+		public static Task BeginInvoke(Action action, int? millisecondsDelay = null)
 		{
+			if (millisecondsDelay.HasValue)
+			{
+				return Task.Run(async () =>
+				{
+					// Wait 1 second, which will allow to relase the button.
+					await Task.Delay(millisecondsDelay.Value).ConfigureAwait(true);
+					await BeginInvoke(action);
+				});
+			}
 			InitInvokeContext();
 			return Task.Factory.StartNew(action,
 				CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);

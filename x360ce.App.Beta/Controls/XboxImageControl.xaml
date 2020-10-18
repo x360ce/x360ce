@@ -282,5 +282,12 @@
 				<ContentControl Content="{StaticResource NavDownNormal}" Style="{StaticResource M}" />
 			</Button>
 		</Grid>
+		<Label
+			x:Name="MappingDoneLabel"
+			HorizontalAlignment="Center"
+			VerticalAlignment="Bottom"
+			Foreground="DarkGreen">
+			Mapping Done
+		</Label>
 	</Grid>
 </UserControl>

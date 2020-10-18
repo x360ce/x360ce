@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -31,6 +32,7 @@ namespace x360ce.App.Controls
 				ii.ButtonControl = button;
 				SetImage(ii.Code, NavImageType.Normal, false);
 			}
+			ShowMappingDoneLabel(false);
 		}
 
 		public LayoutCode GetNameCode(LayoutCode code)
@@ -52,6 +54,7 @@ namespace x360ce.App.Controls
 			var ii = Infos.First(x => x.Code == nameCode);
 			var m = GetMiddleImageName(code);
 			var resourceName = string.Format("Nav{0}{1}", m, type);
+			var oldResourceName = ii.CurrentImageName;
 			var isNameSame = ii.CurrentImageName == resourceName;
 			var isShowSame = ii.CurrentImageShow.HasValue && ii.CurrentImageShow == show;
 			// Return if no changes must be made.
@@ -69,7 +72,8 @@ namespace x360ce.App.Controls
 				var vb = FindResource(resourceName) as Viewbox;
 				content.Content = vb;
 			}
-			if (!isShowSame)
+			// Opacity must be reaplied if image changed.
+			if (!isShowSame || !isNameSame)
 				content.Opacity = type == NavImageType.Record
 					? (show ? 0.8F : 0.2f)
 					: (show ? 0.6F : 0.0f);
@@ -148,6 +152,21 @@ namespace x360ce.App.Controls
 				Math.Abs(p.X - (control.Width / 2F)) < control.Width / 2F &&
 				Math.Abs(p.Y - (control.Height / 2F)) < control.Height / 2F;
 		}
+
+		public void ShowMappingDoneLabel(bool show)
+		{
+			if (!show)
+			{
+				MappingDoneLabel.Visibility = Visibility.Hidden;
+				return;
+			}
+			MappingDoneLabel.Visibility = Visibility.Visible;
+			ControlsHelper.BeginInvoke(() =>
+			{
+				MappingDoneLabel.Visibility = Visibility.Hidden;
+			}, 4000);
+		}
+
 	}
 
 }
