@@ -108,41 +108,41 @@ namespace x360ce.App
 					// If this is Thumb Up, Left, Right, Down and axis was mapped.
 					if (SettingsConverter.ThumbDirections.Contains(code) && SettingsConverter.IsAxis(type))
 					{
-							// Make full axis.
-							type = SettingsConverter.ToFull(type);
-							var isUp =
-								code == Engine.Data.LayoutCode.LeftThumbUp ||
-								code == Engine.Data.LayoutCode.RightThumbUp;
-							var isLeft =
-								code == Engine.Data.LayoutCode.LeftThumbLeft ||
-								code == Engine.Data.LayoutCode.RightThumbLeft;
-							var isRight =
-								code == Engine.Data.LayoutCode.LeftThumbRight ||
-								code == Engine.Data.LayoutCode.RightThumbRight;
-							var isDown =
-								code == Engine.Data.LayoutCode.LeftThumbDown ||
-								code == Engine.Data.LayoutCode.RightThumbDown;
-							// Invert.
-							if (isLeft || isDown)
-								type = SettingsConverter.Invert(type);
-							var newCode = code;
-							var isLeftThumb = SettingsConverter.LeftThumbCodes.Contains(code);
-							if (isRight || isLeft)
-								newCode = isLeftThumb
-									? Engine.Data.LayoutCode.LeftThumbAxisX
-									: Engine.Data.LayoutCode.RightThumbAxisX;
-							if (isUp || isDown)
-								newCode = isLeftThumb
-									? Engine.Data.LayoutCode.LeftThumbAxisY
-									: Engine.Data.LayoutCode.RightThumbAxisY;
-							// Change destination control.
-							var rMap = SettingsManager.Current.SettingsMap.First(x => x.Code == newCode);
-							box = (ComboBox)rMap.Control;
-							action = SettingsConverter.ToTextValue(type, index);
-							stop = true;
+						// Make full axis.
+						type = SettingsConverter.ToFull(type);
+						var isUp =
+							code == Engine.Data.LayoutCode.LeftThumbUp ||
+							code == Engine.Data.LayoutCode.RightThumbUp;
+						var isLeft =
+							code == Engine.Data.LayoutCode.LeftThumbLeft ||
+							code == Engine.Data.LayoutCode.RightThumbLeft;
+						var isRight =
+							code == Engine.Data.LayoutCode.LeftThumbRight ||
+							code == Engine.Data.LayoutCode.RightThumbRight;
+						var isDown =
+							code == Engine.Data.LayoutCode.LeftThumbDown ||
+							code == Engine.Data.LayoutCode.RightThumbDown;
+						// Invert.
+						if (isLeft || isDown)
+							type = SettingsConverter.Invert(type);
+						var newCode = code;
+						var isLeftThumb = SettingsConverter.LeftThumbCodes.Contains(code);
+						if (isRight || isLeft)
+							newCode = isLeftThumb
+								? Engine.Data.LayoutCode.LeftThumbAxisX
+								: Engine.Data.LayoutCode.RightThumbAxisX;
+						if (isUp || isDown)
+							newCode = isLeftThumb
+								? Engine.Data.LayoutCode.LeftThumbAxisY
+								: Engine.Data.LayoutCode.RightThumbAxisY;
+						// Change destination control.
+						var rMap = SettingsManager.Current.SettingsMap.First(x => x.MapTo == map.MapTo && x.Code == newCode);
+						box = (ComboBox)rMap.Control;
+						action = SettingsConverter.ToTextValue(type, index);
+						stop = true;
 					}
 					// If this is DPad ComboBox then...
-					else if (code ==  Engine.Data.LayoutCode.DPad)
+					else if (code == Engine.Data.LayoutCode.DPad)
 					{
 						// Get first action suitable for DPad
 						Regex dPadRx = new Regex("(POV [0-9]+)");

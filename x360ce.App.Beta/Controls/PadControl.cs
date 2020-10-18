@@ -33,7 +33,7 @@ namespace x360ce.App.Controls
 			_Imager.LeftTriggerStatus = XboxImage.LeftTriggerContentControl;
 			_Imager.RightTriggerStatus = XboxImage.RightTriggerContentControl;
 			_Imager.ImageControl = XboxImage;
-			XboxImage.InitializeImages(imageInfos, _Imager);
+			XboxImage.InitializeImages(imageInfos, _Imager, MappedTo);
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
 			// Make font more consistent with the rest of the interface.
@@ -1507,6 +1507,7 @@ namespace x360ce.App.Controls
 		{
 			if (!ClearAll())
 				return;
+			StopRecording();
 			// Buttons to record.
 			var codes = new LayoutCode[] {
 				LayoutCode.LeftTrigger,
@@ -1527,7 +1528,7 @@ namespace x360ce.App.Controls
 				LayoutCode.RightThumbRight,
 				LayoutCode.RightThumbButton,
 			};
-			RecordAllMaps = SettingsManager.Current.SettingsMap.Where(x => codes.Contains(x.Code)).ToList();
+			RecordAllMaps = SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo && codes.Contains(x.Code)).ToList();
 			StartRecording();
 		}
 

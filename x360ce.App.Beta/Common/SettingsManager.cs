@@ -908,8 +908,7 @@ namespace x360ce.App
 
 		static Guid GetInstanceGuid(MapTo mapTo)
 		{
-			var guidString = Current.SettingsMap
-				.First(x => x.MapTo == mapTo && x.IniKey == SettingName.InstanceGuid).Control.Text;
+			var guidString = Current.SettingsMap.First(x => x.MapTo == mapTo && x.IniKey == SettingName.InstanceGuid).Control.Text;
 			// If instanceGuid value is not a GUID then exit.
 			if (!EngineHelper.IsGuid(guidString))
 				return Guid.Empty;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using x360ce.Engine;
 using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
@@ -20,11 +21,13 @@ namespace x360ce.App.Controls
 
 		PadControlImager Imager;
 		ImageInfos Infos;
+		MapTo MappedTo;
 
-		public void InitializeImages(ImageInfos imageInfos, PadControlImager imager)
+		public void InitializeImages(ImageInfos imageInfos, PadControlImager imager, MapTo mappedTo)
 		{
 			Infos = imageInfos;
 			Imager = imager;
+			MappedTo = mappedTo;
 			foreach (var ii in imageInfos)
 			{
 				var nameCode = GetNameCode(ii.Code);
@@ -116,7 +119,7 @@ namespace x360ce.App.Controls
 			LayoutCode code;
 			if (!Enum.TryParse(name, false, out code))
 				return;
-			var map = SettingsManager.Current.SettingsMap.First(x => x.Code == code);
+			var map = SettingsManager.Current.SettingsMap.First(x => x.MapTo == MappedTo && x.Code == code);
 			var record = true;
 			// If already recording then stop.
 			if (Imager.Recorder.Recording)
