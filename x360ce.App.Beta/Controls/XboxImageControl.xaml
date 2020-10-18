@@ -48,8 +48,8 @@
 					<Style x:Key="Nav" TargetType="{x:Type Grid}">
 						<Setter Property="VerticalAlignment" Value="Top" />
 						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="Width" Value="54" />
-						<Setter Property="Height" Value="54" />
+						<Setter Property="Width" Value="55" />
+						<Setter Property="Height" Value="55" />
 					</Style>
 
 				</ResourceDictionary>
