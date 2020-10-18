@@ -9,9 +9,14 @@ namespace JocysCom.ClassLibrary.Runtime
 	{
 		static List<ExceptionGroup> fileExceptions = new List<ExceptionGroup>();
 
+		/// <summary>
+		/// Maximum number of files per error type and ex.HResult code.
+		/// </summary>
 		public int MaxFiles { get { return _SP.Parse("MaxFiles", 10); } }
-		
-		// If max files reached then allow remove file only if older than 10 seconds.
+
+		/// <summary>
+		/// If Maximum count of error files reached then allow remove only files older than specified by this property.
+		/// </summary>
 		public TimeSpan MaxFilesDeleteAge { get { return _SP.Parse("MaxFilesRemoveAge", new TimeSpan(0, 0, 10) ); } }
 
 		public long ExceptionsCount;
