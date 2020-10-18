@@ -70,7 +70,9 @@ namespace x360ce.App.Controls
 				content.Content = vb;
 			}
 			if (!isShowSame)
-				content.Opacity = show ? 0.6F : 0f;
+				content.Opacity = type == NavImageType.Record
+					? (show ? 0.8F : 0.2f)
+					: (show ? 0.6F : 0.0f);
 		}
 
 		public string GetMiddleImageName(LayoutCode code)
