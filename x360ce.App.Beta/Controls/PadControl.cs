@@ -25,6 +25,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();
 			_Imager.Top = XboxImage.TopPictureImage;
 			_Imager.Front = XboxImage.FrontPictureImage;
@@ -33,7 +34,7 @@ namespace x360ce.App.Controls
 			_Imager.LeftTriggerStatus = XboxImage.LeftTriggerContentControl;
 			_Imager.RightTriggerStatus = XboxImage.RightTriggerContentControl;
 			_Imager.ImageControl = XboxImage;
-			XboxImage.InitializeImages(imageInfos, _Imager, MappedTo);
+			XboxImage.InitializeImages(imageInfos, _Imager, controllerIndex);
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
 			// Make font more consistent with the rest of the interface.
@@ -42,7 +43,6 @@ namespace x360ce.App.Controls
 			//MappedDevicesDataGridView.Width = this.Width + 2;
 			//MappedDevicesDataGridView.Left = -1;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
-			MappedTo = controllerIndex;
 			// Axis to Button DeadZones
 			AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
 			AxisToButtonBDeadZonePanel.MonitorComboBox = ButtonBComboBox;
