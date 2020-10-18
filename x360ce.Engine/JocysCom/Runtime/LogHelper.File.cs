@@ -10,6 +10,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		static List<ExceptionGroup> fileExceptions = new List<ExceptionGroup>();
 
 		public int MaxFiles { get { return _SP.Parse("MaxFiles", 10); } }
+		
+		// If max files reached then allow remove file only if older than 10 seconds.
+		public TimeSpan MaxFilesDeleteAge { get { return _SP.Parse("MaxFilesRemoveAge", new TimeSpan(0, 0, 10) ); } }
 
 		public long ExceptionsCount;
 
@@ -50,12 +53,26 @@ namespace JocysCom.ClassLibrary.Runtime
 				if (!di.Exists)
 					di.Create();
 				// Get exception files ordered with oldest on top.
-				var files = di.GetFiles(prefix + "*." + ext).OrderBy(x => x.CreationTime).ToArray();
-				// Remove excess files if necessary.
-				if (MaxFiles > 0 && files.Length > 0 && files.Length > MaxFiles)
+				var files = di.GetFiles(prefix + "*" + ext).OrderBy(x => x.CreationTime).ToArray();
+				// If maximum number of files set limit reached then...
+				if (MaxFiles > 0 && files.Length > MaxFiles)
 				{
+					var dateToDelete = DateTime.Now.Subtract(MaxFilesDeleteAge);
+					// Get files allowed to remove.
+					var filesToRemove = files
+						// Make sure newest on the top.
+						.OrderByDescending(x => x.CreationTime)
+						// Keep allowed files.
+						.Skip(MaxFiles - 1)
+						// Get files older than specified date.
+						.Where(x => x.CreationTime < dateToDelete).ToArray();
 					// Remove oldest file.
-					files[0].Delete();
+					for (int f = 0; f < filesToRemove.Length; f++)
+						filesToRemove[f].Delete();
+					var filesLeft = files.Length - filesToRemove.Length;
+					// If no free space for file exist then return.
+					if (filesLeft >= MaxFiles)
+						return;
 				}
 #if NETSTANDARD // .NET Standard
 				var fileTime = DateTime.Now;
