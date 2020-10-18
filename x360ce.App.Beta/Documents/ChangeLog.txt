@@ -1,5 +1,6 @@
-v4.15.10.0 (2020-10-18)
+v4.15.11.0 (2020-10-18)
 - Fix: Map recorded was mapping POV direction to DPad instead of POV.
+- Fix: Map recorder was mapping half or inverted axis incorrectly.
 - Updated: PAD status control updated to more modern XAML format.
 - Updated: Set XInput negative center value (-1) to 0.
 - New: Feature to record mapping by pressing on button image.

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using x360ce.Engine.Data;
 
 namespace x360ce.Engine
 {
@@ -38,10 +40,18 @@ namespace x360ce.Engine
 					type = SettingType.DPOVButton;
 					switch (m.Groups["ext"].Value)
 					{
-						case "Up": index = (index - 1) * 4 + 1; break;
-						case "Right": index = (index - 1) * 4 + 2; break;
-						case "Down": index = (index - 1) * 4 + 3; break;
-						case "Left": index = (index - 1) * 4 + 4; break;
+						case "Up":
+							index = (index - 1) * 4 + 1;
+							break;
+						case "Right":
+							index = (index - 1) * 4 + 2;
+							break;
+						case "Down":
+							index = (index - 1) * 4 + 3;
+							break;
+						case "Left":
+							index = (index - 1) * 4 + 4;
+							break;
 					}
 				}
 			}
@@ -98,21 +108,36 @@ namespace x360ce.Engine
 		{
 			switch (type)
 			{
-				case SettingType.Button: return string.Format("{0}{1}", SettingName.SType.Button, index);
-				case SettingType.IButton: return string.Format("{0}{1}", SettingName.SType.Button, -index);
-				case SettingType.Axis: return string.Format("{0}{1}", SettingName.SType.Axis, index);
-				case SettingType.IAxis: return string.Format("{0}{1}", SettingName.SType.Axis, -index);
-				case SettingType.HAxis: return string.Format("{0}{1}", SettingName.SType.HAxis, index);
-				case SettingType.IHAxis: return string.Format("{0}{1}", SettingName.SType.HAxis, -index);
-				case SettingType.Slider: return string.Format("{0}{1}", SettingName.SType.Slider, index);
-				case SettingType.ISlider: return string.Format("{0}{1}", SettingName.SType.Slider, -index);
-				case SettingType.HSlider: return string.Format("{0}{1}", SettingName.SType.HSlider, index);
-				case SettingType.IHSlider: return string.Format("{0}{1}", SettingName.SType.HSlider, -index);
-				case SettingType.POV: return string.Format("{0}{1}", SettingName.SType.POV, index);
-				case SettingType.IPOV: return string.Format("{0}{1}", SettingName.SType.POV, -index);
-				case SettingType.DPOVButton: return string.Format("{0}{1}", SettingName.SType.POVButton, index);
-				case SettingType.IPOVButton: return string.Format("{0}{1}", SettingName.SType.POVButton, -index);
-				default: return "";
+				case SettingType.Button:
+					return string.Format("{0}{1}", SettingName.SType.Button, index);
+				case SettingType.IButton:
+					return string.Format("{0}{1}", SettingName.SType.Button, -index);
+				case SettingType.Axis:
+					return string.Format("{0}{1}", SettingName.SType.Axis, index);
+				case SettingType.IAxis:
+					return string.Format("{0}{1}", SettingName.SType.Axis, -index);
+				case SettingType.HAxis:
+					return string.Format("{0}{1}", SettingName.SType.HAxis, index);
+				case SettingType.IHAxis:
+					return string.Format("{0}{1}", SettingName.SType.HAxis, -index);
+				case SettingType.Slider:
+					return string.Format("{0}{1}", SettingName.SType.Slider, index);
+				case SettingType.ISlider:
+					return string.Format("{0}{1}", SettingName.SType.Slider, -index);
+				case SettingType.HSlider:
+					return string.Format("{0}{1}", SettingName.SType.HSlider, index);
+				case SettingType.IHSlider:
+					return string.Format("{0}{1}", SettingName.SType.HSlider, -index);
+				case SettingType.POV:
+					return string.Format("{0}{1}", SettingName.SType.POV, index);
+				case SettingType.IPOV:
+					return string.Format("{0}{1}", SettingName.SType.POV, -index);
+				case SettingType.DPOVButton:
+					return string.Format("{0}{1}", SettingName.SType.POVButton, index);
+				case SettingType.IPOVButton:
+					return string.Format("{0}{1}", SettingName.SType.POVButton, -index);
+				default:
+					return "";
 			}
 		}
 
@@ -161,6 +186,190 @@ namespace x360ce.Engine
 			}
 			return s;
 		}
+
+		#region Setting Type Methods
+
+		public static bool IsButton(SettingType type)
+			=> SettingButton.Contains(type);
+
+		static List<SettingType> SettingButton = new List<SettingType>
+		{
+			SettingType.Button,
+			SettingType.IButton,
+		};
+
+		public static bool IsAxis(SettingType type)
+			=> SettingAxis.Contains(type);
+
+		static List<SettingType> SettingAxis = new List<SettingType>
+		{
+			SettingType.Axis,
+			SettingType.IAxis,
+			SettingType.HAxis,
+			SettingType.IHAxis,
+		};
+
+		public static bool IsSlider(SettingType type)
+			=> SettingSlider.Contains(type);
+
+		static List<SettingType> SettingSlider = new List<SettingType>
+		{
+			SettingType.Slider,
+			SettingType.ISlider,
+			SettingType.HSlider,
+			SettingType.IHSlider,
+		};
+
+		public static bool IsHalf(SettingType type)
+			=> SettingHalf.Contains(type);
+
+		public static SettingType ToFull(SettingType type)
+		{
+			var i = SettingHalf.IndexOf(type);
+			if (i > -1)
+				return SettingFull[i];
+			return type;
+		}
+
+		static List<SettingType> SettingHalf = new List<SettingType>
+		{
+			SettingType.HAxis,
+			SettingType.IHAxis,
+			SettingType.HSlider,
+			SettingType.IHSlider,
+		};
+
+		static List<SettingType> SettingFull = new List<SettingType>
+		{
+			SettingType.Axis,
+			SettingType.IAxis,
+			SettingType.Slider,
+			SettingType.ISlider,
+		};
+
+		public static bool IsInverted(SettingType type)
+			=> SettingInverted.Contains(type);
+
+		public static SettingType Invert(SettingType type)
+		{
+			var i = SettingInverted.IndexOf(type);
+			if (i > -1)
+				return SettingNonInverted[i];
+			i = SettingNonInverted.IndexOf(type);
+			if (i > -1)
+				return SettingInverted[i];
+			return type;
+		}
+
+		static List<SettingType> SettingInverted = new List<SettingType>
+		{
+			SettingType.IAxis,
+			SettingType.IHAxis,
+			SettingType.ISlider,
+			SettingType.IHSlider,
+		};
+
+		static List<SettingType> SettingNonInverted = new List<SettingType>
+		{
+			SettingType.Axis,
+			SettingType.HAxis,
+			SettingType.Slider,
+			SettingType.HSlider,
+		};
+
+		#endregion
+
+		#region Layout Code Methods
+
+		public static List<LayoutCode> LeftThumbCodes = new List<LayoutCode>
+		{
+			LayoutCode.LeftThumbAxisX,
+			LayoutCode.LeftThumbAxisY,
+			LayoutCode.LeftThumbButton,
+			LayoutCode.LeftThumbDown,
+			LayoutCode.LeftThumbLeft,
+			LayoutCode.LeftThumbRight,
+			LayoutCode.LeftThumbUp,
+		};
+
+		public static List<LayoutCode> RightThumbCodes = new List<LayoutCode>
+		{
+			LayoutCode.RightThumbAxisX,
+			LayoutCode.RightThumbAxisY,
+			LayoutCode.RightThumbButton,
+			LayoutCode.RightThumbDown,
+			LayoutCode.RightThumbLeft,
+			LayoutCode.RightThumbRight,
+			LayoutCode.RightThumbUp,
+		};
+
+		public static List<LayoutCode> DPadCodes = new List<LayoutCode>
+		{
+			LayoutCode.DPad,
+			LayoutCode.DPadDown,
+			LayoutCode.DPadLeft,
+			LayoutCode.DPadRight,
+			LayoutCode.DPadUp,
+		};
+
+		public static List<LayoutCode> MenuButtonCodes = new List<LayoutCode>
+		{
+			LayoutCode.ButtonBack,
+			LayoutCode.ButtonGuide,
+			LayoutCode.ButtonStart,
+		};
+
+		public static List<LayoutCode> MainButtonCodes = new List<LayoutCode>
+		{
+			LayoutCode.ButtonA,
+			LayoutCode.ButtonB,
+			LayoutCode.ButtonX,
+			LayoutCode.ButtonY,
+		};
+
+		public static List<LayoutCode> TriggerButtonCodes = new List<LayoutCode>
+		{
+			LayoutCode.LeftTrigger,
+			LayoutCode.RightTrigger,
+		};
+
+		public static List<LayoutCode> ShoulderButtonCodes = new List<LayoutCode>
+		{
+			LayoutCode.LeftShoulder,
+			LayoutCode.RightShoulder,
+		};
+
+		public static List<LayoutCode> AxisCodes = new List<LayoutCode>
+		{
+			LayoutCode.LeftTrigger,
+			LayoutCode.RightTrigger,
+			LayoutCode.LeftThumbAxisX,
+			LayoutCode.LeftThumbAxisY,
+			LayoutCode.LeftThumbDown,
+			LayoutCode.LeftThumbLeft,
+			LayoutCode.LeftThumbRight,
+			LayoutCode.LeftThumbUp,
+			LayoutCode.RightThumbAxisX,
+			LayoutCode.RightThumbAxisY,
+			LayoutCode.RightThumbDown,
+			LayoutCode.RightThumbLeft,
+			LayoutCode.RightThumbRight,
+			LayoutCode.RightThumbUp,
+		};
+
+		public static List<LayoutCode> ThumbDirections = new List<LayoutCode>
+		{
+			LayoutCode.LeftThumbUp,
+			LayoutCode.LeftThumbLeft,
+			LayoutCode.LeftThumbRight,
+			LayoutCode.LeftThumbDown,
+			LayoutCode.RightThumbUp,
+			LayoutCode.RightThumbLeft,
+			LayoutCode.RightThumbRight,
+			LayoutCode.RightThumbDown,
+		};
+
+		#endregion
 
 	}
 }

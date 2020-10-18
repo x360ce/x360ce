@@ -57,7 +57,7 @@ namespace x360ce.App
 				RecordingStarted = DateTime.Now;
 				Recording = true;
 				recordingSnapshot = null;
-				CurrentMap.Control.ForeColor = SystemColors.GrayText;
+				//CurrentMap.Control.ForeColor = SystemColors.GrayText;
 				MainForm.Current.StatusTimerLabel.Text = (CurrentMap.PropertyName == SettingName.DPad)
 					 ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
 					 : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
@@ -96,12 +96,53 @@ namespace x360ce.App
 					  // Get actions by comparing initial snapshot with current state.
 					  : CompareTo(recordingSnapshot, state);
 				string action = null;
+				var map = CurrentMap;
+				var code = map.Code;
+				var box = (ComboBox)map.Control;
 				// if recording and at least one action was recorded then...
 				if (!stop && actions.Length > 0)
 				{
-					var map = CurrentMap;
+					SettingType type;
+					int index;
+					SettingsConverter.TryParseTextValue(actions[0], out type, out index);
+					// If this is Thumb Up, Left, Right, Down and axis was mapped.
+					if (SettingsConverter.ThumbDirections.Contains(code) && SettingsConverter.IsAxis(type))
+					{
+							// Make full axis.
+							type = SettingsConverter.ToFull(type);
+							var isUp =
+								code == Engine.Data.LayoutCode.LeftThumbUp ||
+								code == Engine.Data.LayoutCode.RightThumbUp;
+							var isLeft =
+								code == Engine.Data.LayoutCode.LeftThumbLeft ||
+								code == Engine.Data.LayoutCode.RightThumbLeft;
+							var isRight =
+								code == Engine.Data.LayoutCode.LeftThumbRight ||
+								code == Engine.Data.LayoutCode.RightThumbRight;
+							var isDown =
+								code == Engine.Data.LayoutCode.LeftThumbDown ||
+								code == Engine.Data.LayoutCode.RightThumbDown;
+							// Invert.
+							if (isLeft || isDown)
+								type = SettingsConverter.Invert(type);
+							var newCode = code;
+							var isLeftThumb = SettingsConverter.LeftThumbCodes.Contains(code);
+							if (isRight || isLeft)
+								newCode = isLeftThumb
+									? Engine.Data.LayoutCode.LeftThumbAxisX
+									: Engine.Data.LayoutCode.RightThumbAxisX;
+							if (isUp || isDown)
+								newCode = isLeftThumb
+									? Engine.Data.LayoutCode.LeftThumbAxisY
+									: Engine.Data.LayoutCode.RightThumbAxisY;
+							// Change destination control.
+							var rMap = SettingsManager.Current.SettingsMap.First(x => x.Code == newCode);
+							box = (ComboBox)rMap.Control;
+							action = SettingsConverter.ToTextValue(type, index);
+							stop = true;
+					}
 					// If this is DPad ComboBox then...
-					if (map.Code ==  Engine.Data.LayoutCode.DPad)
+					else if (code ==  Engine.Data.LayoutCode.DPad)
 					{
 						// Get first action suitable for DPad
 						Regex dPadRx = new Regex("(POV [0-9]+)");
@@ -122,7 +163,6 @@ namespace x360ce.App
 				// If recording must stop then...
 				if (stop)
 				{
-					var box = (ComboBox)CurrentMap.Control;
 					Recording = false;
 					CurrentMap = null;
 					// If stop was initiated before action was recorded then...                    
@@ -137,7 +177,7 @@ namespace x360ce.App
 						// Save setting and notify if value changed.
 						SettingsManager.Current.RaiseSettingsChanged(box);
 					}
-					box.ForeColor = SystemColors.WindowText;
+					//box.ForeColor = SystemColors.WindowText;
 				}
 				return stop;
 			}

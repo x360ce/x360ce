@@ -198,20 +198,20 @@ namespace x360ce.App.Controls
 				ImageControl.SetImage(ii.Code, NavImageType.Record, Recorder.DrawRecordingImage);
 			}
 			else if (
-				 ShowLeftThumbButtons && LeftThumbCodes.Contains(ii.Code) ||
-				 ShowRightThumbButtons && RightThumbCodes.Contains(ii.Code) ||
-				 ShowDPadButtons && DPadCodes.Contains(ii.Code) ||
-				 ShowMainButtons && MainButtonCodes.Contains(ii.Code) ||
-				 ShowMenuButtons && MenuButtonCodes.Contains(ii.Code) ||
-				 ShowTriggerButtons && TriggerButtonCodes.Contains(ii.Code) ||
-				 ShowShoulderButtons && ShoulderButtonCodes.Contains(ii.Code)
+				 ShowLeftThumbButtons && SettingsConverter.LeftThumbCodes.Contains(ii.Code) ||
+				 ShowRightThumbButtons && SettingsConverter.RightThumbCodes.Contains(ii.Code) ||
+				 ShowDPadButtons && SettingsConverter.DPadCodes.Contains(ii.Code) ||
+				 ShowMainButtons && SettingsConverter.MainButtonCodes.Contains(ii.Code) ||
+				 ShowMenuButtons && SettingsConverter.MenuButtonCodes.Contains(ii.Code) ||
+				 ShowTriggerButtons && SettingsConverter.TriggerButtonCodes.Contains(ii.Code) ||
+				 ShowShoulderButtons && SettingsConverter.ShoulderButtonCodes.Contains(ii.Code)
 			)
 			{
 				ImageControl.SetImage(ii.Code, NavImageType.Normal, true);
 			}
 			else
 			{
-				var isAxisCode = AxisCodes.Contains(ii.Code);
+				var isAxisCode = SettingsConverter.AxisCodes.Contains(ii.Code);
 				// Axis status will be displayed as image therefore can hide active button indicator.
 				ImageControl.SetImage(ii.Code, NavImageType.Active, on && !isAxisCode);
 			}
@@ -231,74 +231,6 @@ namespace x360ce.App.Controls
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
-
-		LayoutCode[] LeftThumbCodes = new LayoutCode[] {
-			LayoutCode.LeftThumbAxisX,
-			LayoutCode.LeftThumbAxisY,
-			LayoutCode.LeftThumbButton,
-			LayoutCode.LeftThumbDown,
-			LayoutCode.LeftThumbLeft,
-			LayoutCode.LeftThumbRight,
-			LayoutCode.LeftThumbUp,
-		};
-
-		LayoutCode[] RightThumbCodes = new LayoutCode[] {
-			LayoutCode.RightThumbAxisX,
-			LayoutCode.RightThumbAxisY,
-			LayoutCode.RightThumbButton,
-			LayoutCode.RightThumbDown,
-			LayoutCode.RightThumbLeft,
-			LayoutCode.RightThumbRight,
-			LayoutCode.RightThumbUp,
-		};
-
-		LayoutCode[] DPadCodes = new LayoutCode[] {
-			LayoutCode.DPad,
-			LayoutCode.DPadDown,
-			LayoutCode.DPadLeft,
-			LayoutCode.DPadRight,
-			LayoutCode.DPadUp,
-		};
-
-		LayoutCode[] MenuButtonCodes = new LayoutCode[] {
-			LayoutCode.ButtonBack,
-			LayoutCode.ButtonGuide,
-			LayoutCode.ButtonStart,
-		};
-
-		LayoutCode[] MainButtonCodes = new LayoutCode[] {
-			LayoutCode.ButtonA,
-			LayoutCode.ButtonB,
-			LayoutCode.ButtonX,
-			LayoutCode.ButtonY,
-		};
-
-		LayoutCode[] TriggerButtonCodes = new LayoutCode[] {
-			LayoutCode.LeftTrigger,
-			LayoutCode.RightTrigger,
-		};
-
-		LayoutCode[] ShoulderButtonCodes = new LayoutCode[] {
-			LayoutCode.LeftShoulder,
-			LayoutCode.RightShoulder,
-		};
-
-		LayoutCode[] AxisCodes = new LayoutCode[] {
-			LayoutCode.LeftTrigger,
-			LayoutCode.RightTrigger,
-			LayoutCode.LeftThumbAxisX,
-			LayoutCode.LeftThumbAxisY,
-			LayoutCode.LeftThumbDown,
-			LayoutCode.LeftThumbLeft,
-			LayoutCode.LeftThumbRight,
-			LayoutCode.LeftThumbUp,
-			LayoutCode.RightThumbAxisX,
-			LayoutCode.RightThumbAxisY,
-			LayoutCode.RightThumbDown,
-			LayoutCode.RightThumbLeft,
-			LayoutCode.RightThumbRight,
-			LayoutCode.RightThumbUp,
-		};
 
 		#region IDisposable
 

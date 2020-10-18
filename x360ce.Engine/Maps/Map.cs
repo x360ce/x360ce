@@ -1,4 +1,5 @@
 ﻿using SharpDX.XInput;
+using System.Linq;
 
 namespace x360ce.Engine
 {
@@ -43,11 +44,11 @@ namespace x360ce.Engine
 		void Load(string value)
 		{
 			SettingsConverter.TryParseIniValue(value, out Type, out Index);
-			IsButton = Type == SettingType.Button || Type == SettingType.IButton;
-			IsAxis = Type == SettingType.Axis || Type == SettingType.IAxis || Type == SettingType.HAxis || Type == SettingType.IHAxis;
-			IsSlider = Type == SettingType.Slider || Type == SettingType.ISlider || Type == SettingType.HSlider || Type == SettingType.IHSlider;
-			IsHalf = Type == SettingType.HAxis || Type == SettingType.IHAxis || Type == SettingType.HSlider || Type == SettingType.IHSlider;
-			IsInverted = Type == SettingType.IAxis || Type == SettingType.IHAxis || Type == SettingType.ISlider || Type == SettingType.IHSlider;
+			IsButton = SettingsConverter.IsButton(Type);
+			IsAxis = SettingsConverter.IsAxis(Type);
+			IsSlider = SettingsConverter.IsSlider(Type);
+			IsHalf = SettingsConverter.IsHalf(Type);
+			IsInverted = SettingsConverter.IsInverted(Type);
 		}
 
 		// Source Parameters.
