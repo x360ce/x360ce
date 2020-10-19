@@ -12,9 +12,17 @@
 		<Setter Property="Padding" Value="4" />
 	</Style>
 
-	<Style TargetType="TextBox">
+	<Style x:Key="TextBoxDefault" TargetType="TextBox">
 		<Setter Property="Padding" Value="0,2,0,2" />
+
 	</Style>
 
+	<Style BasedOn="{StaticResource TextBoxDefault}" TargetType="TextBox" />
+
+	<Style x:Key="TextBoxReadOnly" BasedOn="{StaticResource TextBoxDefault}" TargetType="TextBox">
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="IsReadOnly" Value="True" />
+	</Style>
 
 </ResourceDictionary>

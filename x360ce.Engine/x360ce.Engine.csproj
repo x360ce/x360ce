@@ -296,6 +296,9 @@
     <Compile Include="JocysCom\IO\HardwareControl.Designer.cs">
       <DependentUpon>HardwareControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\HardwareControl\HardwareDeviceControl.xaml.cs">
+      <DependentUpon>HardwareDeviceControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="JocysCom\IO\LogFileWriter.cs" />
     <Compile Include="JocysCom\Mail\EmailResult.cs" />
     <Compile Include="JocysCom\Mail\MailFromUser.cs" />
@@ -541,6 +544,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="JocysCom\Controls\Themes\Default.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="JocysCom\Controls\HardwareControl\HardwareDeviceControl.xaml">
+      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

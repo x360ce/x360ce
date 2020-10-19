@@ -189,6 +189,9 @@
 			this.RightMotorTestTrackBar = new System.Windows.Forms.TrackBar();
 			this.RightMotorTestTextBox = new System.Windows.Forms.TextBox();
 			this.RightMotorPeriodTextBox = new System.Windows.Forms.TextBox();
+			this.XInputTabPage = new System.Windows.Forms.TabPage();
+			this.XInputHost = new System.Windows.Forms.Integration.ElementHost();
+			this.xInputUserControl1 = new x360ce.App.Controls.XInputUserControl();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.PastePresetButton = new System.Windows.Forms.Button();
@@ -251,6 +254,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).BeginInit();
+			this.XInputTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -258,10 +262,10 @@
 			// DirectInputTabPage
 			// 
 			this.DirectInputTabPage.Controls.Add(this.DirectInputPanel);
-			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 76);
+			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 22);
 			this.DirectInputTabPage.Name = "DirectInputTabPage";
 			this.DirectInputTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.DirectInputTabPage.Size = new System.Drawing.Size(192, 20);
+			this.DirectInputTabPage.Size = new System.Drawing.Size(752, 438);
 			this.DirectInputTabPage.TabIndex = 0;
 			this.DirectInputTabPage.Text = "Direct Input";
 			// 
@@ -270,7 +274,7 @@
 			this.DirectInputPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DirectInputPanel.Location = new System.Drawing.Point(3, 3);
 			this.DirectInputPanel.Name = "DirectInputPanel";
-			this.DirectInputPanel.Size = new System.Drawing.Size(186, 14);
+			this.DirectInputPanel.Size = new System.Drawing.Size(746, 432);
 			this.DirectInputPanel.TabIndex = 0;
 			// 
 			// AdvancedTabPage
@@ -1364,6 +1368,7 @@
 			this.PadTabControl.Controls.Add(this.LeftStickTabPage);
 			this.PadTabControl.Controls.Add(this.RightStickTabPage);
 			this.PadTabControl.Controls.Add(this.ForceFeedbackTabPage);
+			this.PadTabControl.Controls.Add(this.XInputTabPage);
 			this.PadTabControl.Controls.Add(this.DirectInputTabPage);
 			this.PadTabControl.Location = new System.Drawing.Point(3, 116);
 			this.PadTabControl.Multiline = true;
@@ -2100,6 +2105,26 @@
 			this.RightMotorPeriodTextBox.Text = "0 ";
 			this.RightMotorPeriodTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// XInputTabPage
+			// 
+			this.XInputTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.XInputTabPage.Controls.Add(this.XInputHost);
+			this.XInputTabPage.Location = new System.Drawing.Point(4, 22);
+			this.XInputTabPage.Name = "XInputTabPage";
+			this.XInputTabPage.Size = new System.Drawing.Size(752, 438);
+			this.XInputTabPage.TabIndex = 6;
+			this.XInputTabPage.Text = "XInput";
+			// 
+			// XInputHost
+			// 
+			this.XInputHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.XInputHost.Location = new System.Drawing.Point(0, 0);
+			this.XInputHost.Name = "XInputHost";
+			this.XInputHost.Size = new System.Drawing.Size(752, 438);
+			this.XInputHost.TabIndex = 0;
+			this.XInputHost.Text = "elementHost1";
+			this.XInputHost.Child = this.xInputUserControl1;
+			// 
 			// DiMenuStrip
 			// 
 			this.DiMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -2478,6 +2503,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).EndInit();
+			this.XInputTabPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).EndInit();
 			this.GamesToolStrip.ResumeLayout(false);
 			this.GamesToolStrip.PerformLayout();
@@ -2681,5 +2707,8 @@
 		private System.Windows.Forms.Integration.ElementHost XboxImageHost;
 		private XboxImageControl XboxImage;
 		private System.Windows.Forms.Button RemapAllButton;
+		private System.Windows.Forms.TabPage XInputTabPage;
+		private System.Windows.Forms.Integration.ElementHost XInputHost;
+		private XInputUserControl xInputUserControl1;
 	}
 }

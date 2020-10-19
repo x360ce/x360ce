@@ -298,6 +298,9 @@
     <Compile Include="Controls\XboxImageControl.xaml.cs">
       <DependentUpon>XboxImageControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\XInputUserControl.xaml.cs">
+      <DependentUpon>XInputUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Forms\BaseFormWithHeader.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -755,6 +758,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\XboxImageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\XInputUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
