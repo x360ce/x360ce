@@ -35,7 +35,7 @@ namespace x360ce.App.Controls
 				ii.ButtonControl = button;
 				SetImage(ii.Code, NavImageType.Normal, false);
 			}
-			ShowMappingDoneLabel(false);
+			SetHelpText();
 		}
 
 		public LayoutCode GetNameCode(LayoutCode code)
@@ -158,17 +158,16 @@ namespace x360ce.App.Controls
 				Math.Abs(p.Y - (control.Height / 2F)) < control.Height / 2F;
 		}
 
-		public void ShowMappingDoneLabel(bool show)
+		public string MappingDone = "Mapping Done";
+
+		public void SetHelpText(string text = null)
 		{
-			if (!show)
-			{
-				MappingDoneLabel.Visibility = Visibility.Hidden;
+			HelpTextLabel.Content = text ?? "";
+			if (string.IsNullOrEmpty(text))
 				return;
-			}
-			MappingDoneLabel.Visibility = Visibility.Visible;
 			ControlsHelper.BeginInvoke(() =>
 			{
-				MappingDoneLabel.Visibility = Visibility.Hidden;
+				HelpTextLabel.Content = "";
 			}, 4000);
 		}
 

@@ -87,8 +87,13 @@ namespace x360ce.App.Controls
 			var cbx = (ComboBox)map.Control;
 			if (_CurrentCbx != cbx)
 				_CurrentCbx = cbx;
-			XboxImage.ShowMappingDoneLabel(false);
 			_Imager.Recorder.StartRecording(map);
+			var helpText =
+				SettingsConverter.ThumbDirections.Contains(map.Code) ||
+				SettingsConverter.TriggerButtonCodes.Contains(map.Code)
+					? "Move Axis"
+					: "Press Button";
+			XboxImage.HelpTextLabel.Content = helpText;
 			RemapAllButton.Text = RemapStopName;
 		}
 
@@ -733,9 +738,13 @@ namespace x360ce.App.Controls
 						if (RecordAllMaps.Count == 0)
 						{
 							if (ud.DiState != null)
-								XboxImage.ShowMappingDoneLabel(true);
+								XboxImage.SetHelpText(XboxImage.MappingDone);
 							RemapAllButton.Text = RemapName;
 							return;
+						}
+						else
+						{
+							XboxImage.HelpTextLabel.Content = "";
 						}
 						// Try to record next available control from the list.
 						ControlsHelper.BeginInvoke(() => StartRecording(), 1000);

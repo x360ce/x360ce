@@ -283,7 +283,7 @@
 			</Button>
 		</Grid>
 		<Label
-			x:Name="MappingDoneLabel"
+			x:Name="HelpTextLabel"
 			HorizontalAlignment="Center"
 			VerticalAlignment="Bottom"
 			Foreground="DarkGreen">

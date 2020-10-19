@@ -422,7 +422,7 @@ namespace JocysCom.ClassLibrary.IO
 					  for (var i = 0; i < devList.Count; i++)
 					  {
 						  var item = devList[i];
-						  AddLogLine("Removing Device: {0}/{1} - {2}", i + 1, list.Count, item.Description);
+						  AddLogLine("Removing Device: {0}/{1} - {2}", i + 1, devList.Count, item.Description);
 						  try
 						  {
 							  var exception = DeviceDetector.RemoveDevice(item.DeviceId);
