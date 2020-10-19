@@ -25,6 +25,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();
 			_Imager.Top = XboxImage.TopPictureImage;
@@ -70,6 +71,7 @@ namespace x360ce.App.Controls
 		public bool StopRecording()
 		{
 			RecordAllMaps.Clear();
+			RemapAllButton.Text = RemapName;
 			return _Imager.Recorder.StopRecording();
 		}
 
@@ -87,6 +89,7 @@ namespace x360ce.App.Controls
 				_CurrentCbx = cbx;
 			XboxImage.ShowMappingDoneLabel(false);
 			_Imager.Recorder.StartRecording(map);
+			RemapAllButton.Text = RemapStopName;
 		}
 
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
@@ -697,6 +700,7 @@ namespace x360ce.App.Controls
 				ControlsHelper.SetEnabled(AutoPresetButton, enable);
 				ControlsHelper.SetEnabled(ClearPresetButton, enable);
 				ControlsHelper.SetEnabled(ResetPresetButton, enable);
+				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.DiState != null);
 				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
 				for (int p = 0; p < pages.Length; p++)
 				{
@@ -723,9 +727,14 @@ namespace x360ce.App.Controls
 					// If value was found and recording stopped then...
 					if (stopped)
 					{
+						// Device not initialized yet.
+						if (ud.DiState == null)
+							RecordAllMaps.Clear();
 						if (RecordAllMaps.Count == 0)
 						{
-							XboxImage.ShowMappingDoneLabel(true);
+							if (ud.DiState != null)
+								XboxImage.ShowMappingDoneLabel(true);
+							RemapAllButton.Text = RemapName;
 							return;
 						}
 						// Try to record next available control from the list.
@@ -1503,32 +1512,44 @@ namespace x360ce.App.Controls
 
 		List<SettingsMapItem> RecordAllMaps = new List<SettingsMapItem>();
 
+		public string RemapName = "Remap All";
+		public string RemapStopName = "STOP";
+
 		private void RemapAllButton_Click(object sender, EventArgs e)
 		{
+			// If stop mode then...
+			if (RemapAllButton.Text != RemapName)
+			{
+				StopRecording();
+				return;
+			}
 			if (!ClearAll())
 				return;
 			StopRecording();
 			// Buttons to record.
-			var codes = new LayoutCode[] {
+			var codes = new List<LayoutCode> {
 				LayoutCode.LeftTrigger,
+				LayoutCode.RightTrigger,
 				LayoutCode.LeftShoulder,
+				LayoutCode.RightShoulder,
 				LayoutCode.ButtonBack,
 				LayoutCode.ButtonStart,
 				LayoutCode.DPad,
 				LayoutCode.LeftThumbUp,
 				LayoutCode.LeftThumbRight,
 				LayoutCode.LeftThumbButton,
-				LayoutCode.RightTrigger,
-				LayoutCode.RightShoulder,
+				LayoutCode.RightThumbUp,
+				LayoutCode.RightThumbRight,
+				LayoutCode.RightThumbButton,
 				LayoutCode.ButtonY,
 				LayoutCode.ButtonX,
 				LayoutCode.ButtonB,
 				LayoutCode.ButtonA,
-				LayoutCode.RightThumbUp,
-				LayoutCode.RightThumbRight,
-				LayoutCode.RightThumbButton,
 			};
-			RecordAllMaps = SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo && codes.Contains(x.Code)).ToList();
+			RecordAllMaps = SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo && codes.Contains(x.Code))
+				// Order as same as in the list above.
+				.OrderBy(x => codes.IndexOf(x.Code))
+				.ToList();
 			StartRecording();
 		}
 

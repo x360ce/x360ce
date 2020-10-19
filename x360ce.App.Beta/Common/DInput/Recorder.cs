@@ -82,82 +82,85 @@ namespace x360ce.App
 					recordingSnapshot = null;
 					return false;
 				}
-				// If recording snapshot was not created yet then...
-				else if (recordingSnapshot == null)
-				{
-					// Make snapshot out of the first state during recording.
-					recordingSnapshot = state;
-					return false;
-				}
 				// Must stop recording if null state passed i.e. probably ESC key was pressed.
 				var stop = state == null;
-				var actions = state == null
-					  ? Array.Empty<string>()
-					  // Get actions by comparing initial snapshot with current state.
-					  : CompareTo(recordingSnapshot, state);
 				string action = null;
 				var map = CurrentMap;
 				var code = map.Code;
 				var box = (ComboBox)map.Control;
-				// if recording and at least one action was recorded then...
-				if (!stop && actions.Length > 0)
+				if (state != null)
 				{
-					SettingType type;
-					int index;
-					SettingsConverter.TryParseTextValue(actions[0], out type, out index);
-					// If this is Thumb Up, Left, Right, Down and axis was mapped.
-					if (SettingsConverter.ThumbDirections.Contains(code) && SettingsConverter.IsAxis(type))
+					// If recording snapshot was not created yet then...
+					if (recordingSnapshot == null)
 					{
-						// Make full axis.
-						type = SettingsConverter.ToFull(type);
-						var isUp =
-							code == Engine.Data.LayoutCode.LeftThumbUp ||
-							code == Engine.Data.LayoutCode.RightThumbUp;
-						var isLeft =
-							code == Engine.Data.LayoutCode.LeftThumbLeft ||
-							code == Engine.Data.LayoutCode.RightThumbLeft;
-						var isRight =
-							code == Engine.Data.LayoutCode.LeftThumbRight ||
-							code == Engine.Data.LayoutCode.RightThumbRight;
-						var isDown =
-							code == Engine.Data.LayoutCode.LeftThumbDown ||
-							code == Engine.Data.LayoutCode.RightThumbDown;
-						// Invert.
-						if (isLeft || isDown)
-							type = SettingsConverter.Invert(type);
-						var newCode = code;
-						var isLeftThumb = SettingsConverter.LeftThumbCodes.Contains(code);
-						if (isRight || isLeft)
-							newCode = isLeftThumb
-								? Engine.Data.LayoutCode.LeftThumbAxisX
-								: Engine.Data.LayoutCode.RightThumbAxisX;
-						if (isUp || isDown)
-							newCode = isLeftThumb
-								? Engine.Data.LayoutCode.LeftThumbAxisY
-								: Engine.Data.LayoutCode.RightThumbAxisY;
-						// Change destination control.
-						var rMap = SettingsManager.Current.SettingsMap.First(x => x.MapTo == map.MapTo && x.Code == newCode);
-						box = (ComboBox)rMap.Control;
-						action = SettingsConverter.ToTextValue(type, index);
-						stop = true;
+						// Make snapshot out of the first state during recording.
+						recordingSnapshot = state;
+						return false;
 					}
-					// If this is DPad ComboBox then...
-					else if (code == Engine.Data.LayoutCode.DPad)
+					var actions = state == null
+						  ? Array.Empty<string>()
+						  // Get actions by comparing initial snapshot with current state.
+						  : CompareTo(recordingSnapshot, state);
+					// if recording and at least one action was recorded then...
+					if (!stop && actions.Length > 0)
 					{
-						// Get first action suitable for DPad
-						Regex dPadRx = new Regex("(POV [0-9]+)");
-						var dPadAction = actions.FirstOrDefault(x => dPadRx.IsMatch(x));
-						if (dPadAction != null)
+						SettingType type;
+						int index;
+						SettingsConverter.TryParseTextValue(actions[0], out type, out index);
+						// If this is Thumb Up, Left, Right, Down and axis was mapped.
+						if (SettingsConverter.ThumbDirections.Contains(code) && SettingsConverter.IsAxis(type))
 						{
-							action = dPadRx.Match(dPadAction).Groups[0].Value;
+							// Make full axis.
+							type = SettingsConverter.ToFull(type);
+							var isUp =
+								code == Engine.Data.LayoutCode.LeftThumbUp ||
+								code == Engine.Data.LayoutCode.RightThumbUp;
+							var isLeft =
+								code == Engine.Data.LayoutCode.LeftThumbLeft ||
+								code == Engine.Data.LayoutCode.RightThumbLeft;
+							var isRight =
+								code == Engine.Data.LayoutCode.LeftThumbRight ||
+								code == Engine.Data.LayoutCode.RightThumbRight;
+							var isDown =
+								code == Engine.Data.LayoutCode.LeftThumbDown ||
+								code == Engine.Data.LayoutCode.RightThumbDown;
+							// Invert.
+							if (isLeft || isDown)
+								type = SettingsConverter.Invert(type);
+							var newCode = code;
+							var isLeftThumb = SettingsConverter.LeftThumbCodes.Contains(code);
+							if (isRight || isLeft)
+								newCode = isLeftThumb
+									? Engine.Data.LayoutCode.LeftThumbAxisX
+									: Engine.Data.LayoutCode.RightThumbAxisX;
+							if (isUp || isDown)
+								newCode = isLeftThumb
+									? Engine.Data.LayoutCode.LeftThumbAxisY
+									: Engine.Data.LayoutCode.RightThumbAxisY;
+							// Change destination control.
+							var rMap = SettingsManager.Current.SettingsMap.First(x => x.MapTo == map.MapTo && x.Code == newCode);
+							box = (ComboBox)rMap.Control;
+							action = SettingsConverter.ToTextValue(type, index);
 							stop = true;
 						}
-					}
-					else
-					{
-						// Get first recorded action.
-						action = actions[0];
-						stop = true;
+						// If this is DPad ComboBox then...
+						else if (code == Engine.Data.LayoutCode.DPad)
+						{
+							// Get first action suitable for DPad
+							Regex dPadRx = new Regex("(POV [0-9]+)");
+							var dPadAction = actions.FirstOrDefault(x => dPadRx.IsMatch(x));
+							if (dPadAction != null)
+							{
+								action = dPadRx.Match(dPadAction).Groups[0].Value;
+								stop = true;
+							}
+						}
+						else
+						{
+							// Get first recorded action.
+							action = actions[0];
+							stop = true;
+						}
 					}
 				}
 				// If recording must stop then...

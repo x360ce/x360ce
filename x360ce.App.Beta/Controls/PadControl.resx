@@ -117,12 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="MainToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>137, 17</value>
-  </metadata>
   <data name="InforTextBox.Text" xml:space="preserve">
     <value>If your controller have only one motor then force feedback effects will be merged automatically. Values sent by the game to the Left Motor, which is used to simulate large explosions, crashes, gun fire, etc, will be able to reach maximum vibration effect. You can reduce strength of the Right Motor to simulate small force feedbacks effects like button responses, small collision bumps, etc. GamePads must use Constant effect type. Wheels must use Periodic effect type, which is perfect for simulating GamePad vibration effects.</value>
   </data>
+  <metadata name="MainToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>137, 17</value>
+  </metadata>
   <metadata name="DiMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
