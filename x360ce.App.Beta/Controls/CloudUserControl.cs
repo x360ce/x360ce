@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -89,7 +90,9 @@ namespace x360ce.App.Controls
 		{
 			Task.Run(new Action(() =>
 			{
-				var userDeviceChecksums = EngineHelper.UpdateChecksums(SettingsManager.UserDevices.Items.ToArray());
+				List<Guid> userDeviceChecksums;
+				lock (SettingsManager.UserDevices.SyncRoot)
+					userDeviceChecksums = EngineHelper.UpdateChecksums(SettingsManager.UserDevices.Items.ToArray());
 				Global.CloudClient.Add(CloudAction.Select, new UserDevice[0], userDeviceChecksums.ToArray());
 				var userGameChecksums = EngineHelper.UpdateChecksums(SettingsManager.UserGames.Items.ToArray());
 				Global.CloudClient.Add(CloudAction.Select, new UserGame[0], userGameChecksums.ToArray());

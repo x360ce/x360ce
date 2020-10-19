@@ -161,8 +161,11 @@ namespace x360ce.App.Controls
 		{
 			var userDevices = GetSelected();
 			// Remove from local settings.
-			foreach (var item in userDevices)
-				SettingsManager.UserDevices.Items.Remove(item);
+			lock (SettingsManager.UserDevices.SyncRoot)
+			{
+				foreach (var item in userDevices)
+					SettingsManager.UserDevices.Items.Remove(item);
+			}
 			SettingsManager.Save();
 			// Remove from cloud settings.
 			Task.Run(new Action(() =>
@@ -227,7 +230,8 @@ namespace x360ce.App.Controls
 		private void AddDemoDevice_Click(object sender, EventArgs e)
 		{
 			var ud = TestDeviceHelper.NewUserDevice();
-			SettingsManager.UserDevices.Items.Add(ud);
+			lock (SettingsManager.UserDevices.SyncRoot)
+				SettingsManager.UserDevices.Items.Add(ud);
 			MainForm.Current.DHelper.UpdateDevicesEnabled = true;
 		}
 

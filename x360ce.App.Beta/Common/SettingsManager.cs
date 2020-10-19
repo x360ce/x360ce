@@ -1075,7 +1075,7 @@ namespace x360ce.App
 			UserDevice[] devices;
 			lock (UserDevices.SyncRoot)
 				devices = instanceGuids == null
-					? UserDevices.ItemsToArraySyncronized()
+					? UserDevices.Items.ToArray()
 					: UserDevices.Items.Where(x => instanceGuids.Contains(x.InstanceGuid)).ToArray();
 			// Get devices instances mapped to the game.
 			var mappedInstanceGuids = GetMappedDevices(game?.FileName, true)

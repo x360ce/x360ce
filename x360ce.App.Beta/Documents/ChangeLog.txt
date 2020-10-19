@@ -1,3 +1,6 @@
+v4.15.17.0 (2020-10-19)
+- Fix: Crash when UserDevice list updating.
+
 v4.15.16.0 (2020-10-19)
 - Fix: Map recorder was mapping POV direction to DPad instead of POV.
 - Fix: Map recorder was mapping half or inverted axis incorrectly.
