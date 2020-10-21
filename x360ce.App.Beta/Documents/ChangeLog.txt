@@ -1,7 +1,8 @@
 v4.15.19.0 (2020-10-21)
 - Fix: Crash when UserDevice list updating.
 - Update: Make missing HID Guardian a moderate (optional) issue, which won't prevent UI to load.
-- Update: Redirect HID Guardian [Install] button to install form with warnings and instructions.
+- Update: Redirect HID Guardian [Install] issue button to dedicated install form.
+- New: Add HID Guardian warnings and manual uninstall instructions to [HID Guardian] tab.
 
 v4.15.16.0 (2020-10-19)
 - Fix: Map recorder was mapping POV direction to DPad instead of POV.

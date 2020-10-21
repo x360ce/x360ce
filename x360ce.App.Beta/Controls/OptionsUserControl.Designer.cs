@@ -60,16 +60,12 @@
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.VirtualDeviceGroupBox = new System.Windows.Forms.GroupBox();
 			this.AboutViGEmLinkLabel = new System.Windows.Forms.LinkLabel();
-			this.HidGuardianLabel = new System.Windows.Forms.Label();
 			this.ViGEmBusLabel = new System.Windows.Forms.Label();
 			this.VigemLabel = new System.Windows.Forms.Label();
 			this.PollingRateLabel = new System.Windows.Forms.Label();
 			this.PollingRateComboBox = new System.Windows.Forms.ComboBox();
-			this.HidGuardianUninstallButton = new System.Windows.Forms.Button();
-			this.HidGuardianInstallButton = new System.Windows.Forms.Button();
 			this.VirtualInfoRefreshButton = new System.Windows.Forms.Button();
 			this.ViGEmBusUninstallButton = new System.Windows.Forms.Button();
-			this.HidGuardianTextBox = new System.Windows.Forms.TextBox();
 			this.ViGEmBusInstallButton = new System.Windows.Forms.Button();
 			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
 			this.DeveloperToolsButton = new System.Windows.Forms.Button();
@@ -94,8 +90,16 @@
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
-			this.HidGuardianGroupBox = new System.Windows.Forms.GroupBox();
+			this.HidGuardianTabPage = new System.Windows.Forms.TabPage();
+			this.HidGuardianPanel = new System.Windows.Forms.Panel();
+			this.HidGuardianHost = new System.Windows.Forms.Integration.ElementHost();
+			this.hidGuardianWarningUserControl2 = new x360ce.App.Controls.HidGuardianWarningUserControl();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.HidGuardianConfigureAutomaticallyCheckBox = new System.Windows.Forms.CheckBox();
+			this.HidGuardianLabel = new System.Windows.Forms.Label();
+			this.HidGuardianUninstallButton = new System.Windows.Forms.Button();
+			this.HidGuardianInstallButton = new System.Windows.Forms.Button();
+			this.HidGuardianTextBox = new System.Windows.Forms.TextBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
@@ -113,7 +117,9 @@
 			this.InternetOptionsTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
-			this.HidGuardianGroupBox.SuspendLayout();
+			this.HidGuardianTabPage.SuspendLayout();
+			this.HidGuardianPanel.SuspendLayout();
+			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -442,21 +448,17 @@
 			this.VirtualDeviceGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.VirtualDeviceGroupBox.Controls.Add(this.AboutViGEmLinkLabel);
-			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.VigemLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.PollingRateLabel);
 			this.VirtualDeviceGroupBox.Controls.Add(this.PollingRateComboBox);
-			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianUninstallButton);
-			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianInstallButton);
 			this.VirtualDeviceGroupBox.Controls.Add(this.VirtualInfoRefreshButton);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusUninstallButton);
-			this.VirtualDeviceGroupBox.Controls.Add(this.HidGuardianTextBox);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusInstallButton);
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusTextBox);
 			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.VirtualDeviceGroupBox.Name = "VirtualDeviceGroupBox";
-			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(644, 109);
+			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(644, 80);
 			this.VirtualDeviceGroupBox.TabIndex = 70;
 			this.VirtualDeviceGroupBox.TabStop = false;
 			this.VirtualDeviceGroupBox.Text = "Virtual Device Emulation by Nefarius";
@@ -473,15 +475,6 @@
 			this.AboutViGEmLinkLabel.TabStop = true;
 			this.AboutViGEmLinkLabel.Text = "https://vigem.org";
 			this.AboutViGEmLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutViGEmLinkLabel_LinkClicked);
-			// 
-			// HidGuardianLabel
-			// 
-			this.HidGuardianLabel.AutoSize = true;
-			this.HidGuardianLabel.Location = new System.Drawing.Point(6, 82);
-			this.HidGuardianLabel.Name = "HidGuardianLabel";
-			this.HidGuardianLabel.Size = new System.Drawing.Size(72, 13);
-			this.HidGuardianLabel.TabIndex = 29;
-			this.HidGuardianLabel.Text = "HID Guardian";
 			// 
 			// ViGEmBusLabel
 			// 
@@ -521,30 +514,6 @@
 			this.PollingRateComboBox.Size = new System.Drawing.Size(96, 21);
 			this.PollingRateComboBox.TabIndex = 30;
 			// 
-			// HidGuardianUninstallButton
-			// 
-			this.HidGuardianUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HidGuardianUninstallButton.Enabled = false;
-			this.HidGuardianUninstallButton.Location = new System.Drawing.Point(563, 77);
-			this.HidGuardianUninstallButton.Name = "HidGuardianUninstallButton";
-			this.HidGuardianUninstallButton.Size = new System.Drawing.Size(75, 23);
-			this.HidGuardianUninstallButton.TabIndex = 44;
-			this.HidGuardianUninstallButton.Text = "Uninstall";
-			this.HidGuardianUninstallButton.UseVisualStyleBackColor = true;
-			this.HidGuardianUninstallButton.Click += new System.EventHandler(this.HidGuardianUninstallButton_Click);
-			// 
-			// HidGuardianInstallButton
-			// 
-			this.HidGuardianInstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HidGuardianInstallButton.Enabled = false;
-			this.HidGuardianInstallButton.Location = new System.Drawing.Point(482, 77);
-			this.HidGuardianInstallButton.Name = "HidGuardianInstallButton";
-			this.HidGuardianInstallButton.Size = new System.Drawing.Size(75, 23);
-			this.HidGuardianInstallButton.TabIndex = 44;
-			this.HidGuardianInstallButton.Text = "Install";
-			this.HidGuardianInstallButton.UseVisualStyleBackColor = true;
-			this.HidGuardianInstallButton.Click += new System.EventHandler(this.HidGuardianInstallButton_Click);
-			// 
 			// VirtualInfoRefreshButton
 			// 
 			this.VirtualInfoRefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -567,16 +536,6 @@
 			this.ViGEmBusUninstallButton.Text = "Uninstall";
 			this.ViGEmBusUninstallButton.UseVisualStyleBackColor = true;
 			this.ViGEmBusUninstallButton.Click += new System.EventHandler(this.ViGEmBusUninstallButton_Click);
-			// 
-			// HidGuardianTextBox
-			// 
-			this.HidGuardianTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.HidGuardianTextBox.BackColor = System.Drawing.SystemColors.Control;
-			this.HidGuardianTextBox.Location = new System.Drawing.Point(87, 79);
-			this.HidGuardianTextBox.Name = "HidGuardianTextBox";
-			this.HidGuardianTextBox.Size = new System.Drawing.Size(389, 20);
-			this.HidGuardianTextBox.TabIndex = 41;
 			// 
 			// ViGEmBusInstallButton
 			// 
@@ -624,7 +583,7 @@
 			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePasswordTextBox);
 			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote2CheckBox);
 			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote1CheckBox);
-			this.AllowRemoteControllersGroupBox.Location = new System.Drawing.Point(3, 118);
+			this.AllowRemoteControllersGroupBox.Location = new System.Drawing.Point(3, 89);
 			this.AllowRemoteControllersGroupBox.Name = "AllowRemoteControllersGroupBox";
 			this.AllowRemoteControllersGroupBox.Size = new System.Drawing.Size(269, 210);
 			this.AllowRemoteControllersGroupBox.TabIndex = 31;
@@ -748,6 +707,7 @@
 			this.MainTabControl.Controls.Add(this.GeneralTabPage);
 			this.MainTabControl.Controls.Add(this.InternetOptionsTabPage);
 			this.MainTabControl.Controls.Add(this.VirtualDeviceTabPage);
+			this.MainTabControl.Controls.Add(this.HidGuardianTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.Location = new System.Drawing.Point(0, 0);
 			this.MainTabControl.Name = "MainTabControl";
@@ -822,7 +782,7 @@
 			this.InternetOptionsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.InternetOptionsTabPage.Name = "InternetOptionsTabPage";
 			this.InternetOptionsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.InternetOptionsTabPage.Size = new System.Drawing.Size(650, 421);
+			this.InternetOptionsTabPage.Size = new System.Drawing.Size(192, 74);
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
 			// 
@@ -831,7 +791,7 @@
 			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.InternetPanel.Location = new System.Drawing.Point(3, 3);
 			this.InternetPanel.Name = "InternetPanel";
-			this.InternetPanel.Size = new System.Drawing.Size(644, 415);
+			this.InternetPanel.Size = new System.Drawing.Size(186, 68);
 			this.InternetPanel.TabIndex = 33;
 			// 
 			// VirtualDeviceTabPage
@@ -846,7 +806,6 @@
 			// 
 			// VirtualDevicePanel
 			// 
-			this.VirtualDevicePanel.Controls.Add(this.HidGuardianGroupBox);
 			this.VirtualDevicePanel.Controls.Add(this.VirtualDeviceGroupBox);
 			this.VirtualDevicePanel.Controls.Add(this.AllowRemoteControllersGroupBox);
 			this.VirtualDevicePanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -855,27 +814,105 @@
 			this.VirtualDevicePanel.Size = new System.Drawing.Size(650, 421);
 			this.VirtualDevicePanel.TabIndex = 72;
 			// 
-			// HidGuardianGroupBox
+			// HidGuardianTabPage
 			// 
-			this.HidGuardianGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			this.HidGuardianTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.HidGuardianTabPage.Controls.Add(this.HidGuardianPanel);
+			this.HidGuardianTabPage.Location = new System.Drawing.Point(4, 22);
+			this.HidGuardianTabPage.Name = "HidGuardianTabPage";
+			this.HidGuardianTabPage.Size = new System.Drawing.Size(650, 421);
+			this.HidGuardianTabPage.TabIndex = 3;
+			this.HidGuardianTabPage.Text = "HID Guardian";
+			// 
+			// HidGuardianPanel
+			// 
+			this.HidGuardianPanel.Controls.Add(this.HidGuardianHost);
+			this.HidGuardianPanel.Controls.Add(this.groupBox1);
+			this.HidGuardianPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.HidGuardianPanel.Location = new System.Drawing.Point(0, 0);
+			this.HidGuardianPanel.Name = "HidGuardianPanel";
+			this.HidGuardianPanel.Size = new System.Drawing.Size(650, 421);
+			this.HidGuardianPanel.TabIndex = 72;
+			// 
+			// HidGuardianHost
+			// 
+			this.HidGuardianHost.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.HidGuardianGroupBox.Controls.Add(this.HidGuardianConfigureAutomaticallyCheckBox);
-			this.HidGuardianGroupBox.Location = new System.Drawing.Point(278, 118);
-			this.HidGuardianGroupBox.Name = "HidGuardianGroupBox";
-			this.HidGuardianGroupBox.Size = new System.Drawing.Size(369, 69);
-			this.HidGuardianGroupBox.TabIndex = 71;
-			this.HidGuardianGroupBox.TabStop = false;
-			this.HidGuardianGroupBox.Text = "HID Guardian";
+			this.HidGuardianHost.Location = new System.Drawing.Point(3, 84);
+			this.HidGuardianHost.Name = "HidGuardianHost";
+			this.HidGuardianHost.Size = new System.Drawing.Size(643, 334);
+			this.HidGuardianHost.TabIndex = 72;
+			this.HidGuardianHost.Child = this.hidGuardianWarningUserControl2;
+			// 
+			// groupBox1
+			// 
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this.HidGuardianConfigureAutomaticallyCheckBox);
+			this.groupBox1.Controls.Add(this.HidGuardianLabel);
+			this.groupBox1.Controls.Add(this.HidGuardianUninstallButton);
+			this.groupBox1.Controls.Add(this.HidGuardianInstallButton);
+			this.groupBox1.Controls.Add(this.HidGuardianTextBox);
+			this.groupBox1.Location = new System.Drawing.Point(3, 3);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(643, 75);
+			this.groupBox1.TabIndex = 71;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "HID Guardian by Nefarius";
 			// 
 			// HidGuardianConfigureAutomaticallyCheckBox
 			// 
 			this.HidGuardianConfigureAutomaticallyCheckBox.AutoSize = true;
-			this.HidGuardianConfigureAutomaticallyCheckBox.Location = new System.Drawing.Point(6, 19);
+			this.HidGuardianConfigureAutomaticallyCheckBox.Location = new System.Drawing.Point(87, 47);
 			this.HidGuardianConfigureAutomaticallyCheckBox.Name = "HidGuardianConfigureAutomaticallyCheckBox";
 			this.HidGuardianConfigureAutomaticallyCheckBox.Size = new System.Drawing.Size(135, 17);
-			this.HidGuardianConfigureAutomaticallyCheckBox.TabIndex = 1;
+			this.HidGuardianConfigureAutomaticallyCheckBox.TabIndex = 45;
 			this.HidGuardianConfigureAutomaticallyCheckBox.Text = "Configure automatically";
 			this.HidGuardianConfigureAutomaticallyCheckBox.UseVisualStyleBackColor = true;
+			// 
+			// HidGuardianLabel
+			// 
+			this.HidGuardianLabel.AutoSize = true;
+			this.HidGuardianLabel.Location = new System.Drawing.Point(6, 24);
+			this.HidGuardianLabel.Name = "HidGuardianLabel";
+			this.HidGuardianLabel.Size = new System.Drawing.Size(72, 13);
+			this.HidGuardianLabel.TabIndex = 29;
+			this.HidGuardianLabel.Text = "HID Guardian";
+			// 
+			// HidGuardianUninstallButton
+			// 
+			this.HidGuardianUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.HidGuardianUninstallButton.Enabled = false;
+			this.HidGuardianUninstallButton.Location = new System.Drawing.Point(562, 19);
+			this.HidGuardianUninstallButton.Name = "HidGuardianUninstallButton";
+			this.HidGuardianUninstallButton.Size = new System.Drawing.Size(75, 23);
+			this.HidGuardianUninstallButton.TabIndex = 44;
+			this.HidGuardianUninstallButton.Text = "Uninstall";
+			this.HidGuardianUninstallButton.UseVisualStyleBackColor = true;
+			this.HidGuardianUninstallButton.Click += new System.EventHandler(this.HidGuardianUninstallButton_Click);
+			// 
+			// HidGuardianInstallButton
+			// 
+			this.HidGuardianInstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.HidGuardianInstallButton.Enabled = false;
+			this.HidGuardianInstallButton.Location = new System.Drawing.Point(481, 19);
+			this.HidGuardianInstallButton.Name = "HidGuardianInstallButton";
+			this.HidGuardianInstallButton.Size = new System.Drawing.Size(75, 23);
+			this.HidGuardianInstallButton.TabIndex = 44;
+			this.HidGuardianInstallButton.Text = "Install";
+			this.HidGuardianInstallButton.UseVisualStyleBackColor = true;
+			this.HidGuardianInstallButton.Click += new System.EventHandler(this.HidGuardianInstallButton_Click);
+			// 
+			// HidGuardianTextBox
+			// 
+			this.HidGuardianTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.HidGuardianTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.HidGuardianTextBox.Location = new System.Drawing.Point(87, 21);
+			this.HidGuardianTextBox.Name = "HidGuardianTextBox";
+			this.HidGuardianTextBox.Size = new System.Drawing.Size(388, 20);
+			this.HidGuardianTextBox.TabIndex = 41;
 			// 
 			// OptionsUserControl
 			// 
@@ -908,8 +945,10 @@
 			this.InternetOptionsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
-			this.HidGuardianGroupBox.ResumeLayout(false);
-			this.HidGuardianGroupBox.PerformLayout();
+			this.HidGuardianTabPage.ResumeLayout(false);
+			this.HidGuardianPanel.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -948,12 +987,8 @@
 		private System.Windows.Forms.Button DeveloperToolsButton;
         private System.Windows.Forms.Label ViGEmBusLabel;
         private System.Windows.Forms.TextBox ViGEmBusTextBox;
-        private System.Windows.Forms.Label HidGuardianLabel;
-        private System.Windows.Forms.TextBox HidGuardianTextBox;
         public System.Windows.Forms.Button VirtualInfoRefreshButton;
 		private System.Windows.Forms.Button ViGEmBusInstallButton;
-		private System.Windows.Forms.Button HidGuardianUninstallButton;
-		private System.Windows.Forms.Button HidGuardianInstallButton;
 		internal System.Windows.Forms.CheckBox AlwaysOnTopCheckBox;
 		public System.Windows.Forms.ComboBox StartWithWindowsStateComboBox;
 		public System.Windows.Forms.CheckBox StartWithWindowsCheckBox;
@@ -980,9 +1015,17 @@
 		private System.Windows.Forms.CheckBox ShowFormInfoCheckBox;
 		private System.Windows.Forms.CheckBox ShowTestButtonCheckBox;
 		private System.Windows.Forms.CheckBox UseDeviceBufferedDataCheckBox;
-		private System.Windows.Forms.GroupBox HidGuardianGroupBox;
-		private System.Windows.Forms.CheckBox HidGuardianConfigureAutomaticallyCheckBox;
 		public System.Windows.Forms.TabControl MainTabControl;
 		public System.Windows.Forms.TabPage VirtualDeviceTabPage;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.CheckBox HidGuardianConfigureAutomaticallyCheckBox;
+		private System.Windows.Forms.Label HidGuardianLabel;
+		private System.Windows.Forms.Button HidGuardianUninstallButton;
+		private System.Windows.Forms.Button HidGuardianInstallButton;
+		private System.Windows.Forms.TextBox HidGuardianTextBox;
+		public System.Windows.Forms.TabPage HidGuardianTabPage;
+		private System.Windows.Forms.Panel HidGuardianPanel;
+		private System.Windows.Forms.Integration.ElementHost HidGuardianHost;
+		private HidGuardianWarningUserControl hidGuardianWarningUserControl2;
 	}
 }

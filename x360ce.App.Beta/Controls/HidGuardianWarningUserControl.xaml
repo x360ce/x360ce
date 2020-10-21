@@ -1,0 +1,38 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.HidGuardianWarningUserControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:x360ce.App.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="250"
+	d:DesignWidth="400"
+	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	mc:Ignorable="d">
+	<Grid>
+		<StackPanel Margin="4" Orientation="Vertical">
+			<TextBlock
+				Margin="0,0,0,16"
+				HorizontalAlignment="Center"
+				FontWeight="Bold"
+				Foreground="DarkRed">
+				IMPORTANT !!! Please read before installing HID Guardian !!!
+			</TextBlock>
+			<TextBlock>Purpose of HID Guardian is to hide original controllers from games, so that only virtual controllers are visible.</TextBlock>
+			<TextBlock Margin="0,16,0,0" TextWrapping="Wrap">
+				[Install] HID Guardian only if original controller prevents virtual controller functioning properly in the game.
+			</TextBlock>
+			<TextBlock Margin="0,16,0,0" TextWrapping="Wrap">
+				Use [Uninstall] button if you want to remove HID Guardian.
+			</TextBlock>
+			<TextBlock Margin="0,16,0,0" Foreground="DarkRed" TextWrapping="Wrap">
+				DO NOT attempt to remove HID Guardian by simply deleting it from Device Manager. This could result in loosing access to your Mouse and Keyboard and you will be forced to follow Manual Uninstall Instructions below.
+			</TextBlock>
+			<TextBlock Margin="0,16,0,0">How to uninstall HID Guardian manually:</TextBlock>
+			<TextBlock Margin="16,4,0,0">1. Start your PC in Safe Mode with Networking</TextBlock>
+			<TextBlock Margin="16,4,0,0">2. Open Folder: C:\ProgramData\X360CE\HidGuardian</TextBlock>
+			<TextBlock Margin="16,4,0,0">3. Run: HidGuardian\HidGuardian_Setup.bat</TextBlock>
+			<TextBlock Margin="16,4,0,0">4. Choose Option: 2 - Uninstall.</TextBlock>
+		</StackPanel>
+	</Grid>
+</UserControl>

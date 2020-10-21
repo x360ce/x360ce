@@ -231,6 +231,9 @@
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
+    <Compile Include="Controls\HidGuardianWarningUserControl.xaml.cs">
+      <DependentUpon>HidGuardianWarningUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\LogUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -757,6 +760,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\HidGuardianWarningUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\XboxImageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
