@@ -822,7 +822,7 @@
 			this.InternetOptionsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.InternetOptionsTabPage.Name = "InternetOptionsTabPage";
 			this.InternetOptionsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.InternetOptionsTabPage.Size = new System.Drawing.Size(192, 74);
+			this.InternetOptionsTabPage.Size = new System.Drawing.Size(650, 421);
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
 			// 
@@ -831,7 +831,7 @@
 			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.InternetPanel.Location = new System.Drawing.Point(3, 3);
 			this.InternetPanel.Name = "InternetPanel";
-			this.InternetPanel.Size = new System.Drawing.Size(186, 68);
+			this.InternetPanel.Size = new System.Drawing.Size(644, 415);
 			this.InternetPanel.TabIndex = 33;
 			// 
 			// VirtualDeviceTabPage
@@ -971,10 +971,8 @@
 		private System.Windows.Forms.Button ViGEmBusUninstallButton;
 		public System.Windows.Forms.CheckBox RemoteEnabledCheckBox;
 		private System.Windows.Forms.Label AllowControlLabel;
-		private System.Windows.Forms.TabControl MainTabControl;
 		private System.Windows.Forms.TabPage GeneralTabPage;
 		private System.Windows.Forms.TabPage InternetOptionsTabPage;
-		private System.Windows.Forms.TabPage VirtualDeviceTabPage;
 		private System.Windows.Forms.Panel GeneralPanel;
 		private System.Windows.Forms.Panel VirtualDevicePanel;
 		public OptionsInternetUserControl InternetPanel;
@@ -984,5 +982,7 @@
 		private System.Windows.Forms.CheckBox UseDeviceBufferedDataCheckBox;
 		private System.Windows.Forms.GroupBox HidGuardianGroupBox;
 		private System.Windows.Forms.CheckBox HidGuardianConfigureAutomaticallyCheckBox;
+		public System.Windows.Forms.TabControl MainTabControl;
+		public System.Windows.Forms.TabPage VirtualDeviceTabPage;
 	}
 }

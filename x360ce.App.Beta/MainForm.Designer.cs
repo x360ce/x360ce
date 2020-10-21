@@ -638,7 +638,6 @@ namespace x360ce.App
 
 		TabPage AboutTabPage;
 		StatusStrip MainStatusStrip;
-        TabPage OptionsTabPage;
 		TabPage Pad1TabPage;
 		TabPage Pad2TabPage;
 		TabPage Pad3TabPage;
@@ -688,5 +687,6 @@ namespace x360ce.App
 		private ToolStripStatusLabel FormUpdateFrequencyLabel;
 		private ToolStripButton AddGameButton;
 		private Panel panel1;
+		public TabPage OptionsTabPage;
 	}
 }

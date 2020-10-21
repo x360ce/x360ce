@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
+﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System.Linq;
 using x360ce.Engine;
 
@@ -30,8 +31,13 @@ namespace x360ce.App.Issues
 		}
 		public override void FixTask()
 		{
-			Program.RunElevated(AdminCommand.InstallHidGuardian);
-			ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
+			ControlsHelper.BeginInvoke(() =>
+			{
+				MainForm.Current.MainTabControl.SelectedTab = MainForm.Current.OptionsTabPage;
+				MainForm.Current.OptionsPanel.MainTabControl.SelectedTab = MainForm.Current.OptionsPanel.VirtualDeviceTabPage;
+			});
+			//Program.RunElevated(AdminCommand.InstallHidGuardian);
+			//ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
 		}
 
 	}
