@@ -127,7 +127,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 					// Skip checking other issues.
 					break;
 			}
-			HasIssues = IssueList.Any(x => x.IsEnabled && x.Severity.HasValue && x.Severity.Value >= IssueSeverity.Critical);
+			// Assign result to property, because results will be read on a different i.e. main Thread.
+			CriticalIssuesCount = IssueList.Count(x => x.IsEnabled && x.Severity.HasValue && x.Severity.Value >= IssueSeverity.Critical);
+			ModerateIssuesCount = IssueList.Count(x => x.IsEnabled && x.Severity.HasValue && x.Severity.Value >= IssueSeverity.Moderate);
 			var ev = CheckCompleted;
 			if (ev != null)
 				CheckCompleted(this, new EventArgs());
@@ -157,7 +159,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			}
 		}
 
-		public bool? HasIssues;
+		public int? CriticalIssuesCount;
+		public int? ModerateIssuesCount;
 
 		public event EventHandler CheckCompleted;
 

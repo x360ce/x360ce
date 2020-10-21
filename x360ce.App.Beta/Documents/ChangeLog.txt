@@ -1,5 +1,6 @@
-v4.15.17.0 (2020-10-19)
+v4.15.18.0 (2020-10-21)
 - Fix: Crash when UserDevice list updating.
+- Update: Make missing HID Guardian a moderate (optional) issue, which won't prevent UI to load.
 
 v4.15.16.0 (2020-10-19)
 - Fix: Map recorder was mapping POV direction to DPad instead of POV.

@@ -664,24 +664,34 @@ namespace x360ce.App
 		private void IssueIconTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			var key = IssuesTabPage.ImageKey;
-			var hasIssues = IssuesPanel.HasIssues;
+			var moderateCount = IssuesPanel.ModerateIssuesCount;
+			var criticalCount = IssuesPanel.CriticalIssuesCount ?? 0;
+			var text = (moderateCount ?? 0) == 0
+				? "Issues"
+				: string.Format("{0} Issue{1}", moderateCount, moderateCount == 1 ? "" : "s");
 			// If unknown then...
-			if (!hasIssues.HasValue)
+			if (!moderateCount.HasValue)
 			{
+				// Show refreshing icon.
 				key = "refresh_16x16.png";
 			}
-			else if (hasIssues.Value)
+			// If critical issues found then...
+			if (criticalCount > 0)
 			{
+				// Make it blink.
 				key = key == "fix_16x16.png"
 					? "fix_off_16x16.png"
 					: "fix_16x16.png";
 			}
+			else if (moderateCount > 0)
+				key = "fix_16x16.png";
 			else
-			{
 				key = "ok_off_16x16.png";
-			}
+			// Set tab image.
 			if (IssuesTabPage.ImageKey != key)
 				IssuesTabPage.ImageKey = key;
+			// Set tab text.
+			ControlsHelper.SetText(IssuesTabPage, text);
 			if (Program.IsClosing)
 				return;
 			IssueIconTimer.Start();
@@ -1060,14 +1070,15 @@ namespace x360ce.App
 		}
 
 		// Remember previous has issues status.
-		bool? PrevHasIssues;
+		int oldCriticalIssueCount;
 
 		private void IssuesPanel_CheckCompleted(object sender, EventArgs e)
 		{
-			// If check completed without issued then...
-			var hasIssues = IssuesPanel.HasIssues;
-			// If has issues and there were no issues before then...
-			if (hasIssues.HasValue && hasIssues.Value && (!PrevHasIssues.HasValue || !PrevHasIssues.Value))
+			var checkDone = IssuesPanel.CriticalIssuesCount != null;
+			// If check completed without issues then...
+			var newCriticalIssuesCount = IssuesPanel.CriticalIssuesCount ?? 00;
+			// If has new issues then...
+			if (oldCriticalIssueCount == 0 && newCriticalIssuesCount > 0)
 			{
 				ControlsHelper.BeginInvoke(() =>
 				{
@@ -1075,12 +1086,11 @@ namespace x360ce.App
 					MainTabControl.SelectedTab = IssuesTabPage;
 				});
 			}
-			PrevHasIssues = hasIssues;
-			if (!update2Enabled.HasValue && hasIssues.HasValue && !hasIssues.Value)
-			{
-				// Enabled update 2 step.
+			oldCriticalIssueCount = newCriticalIssuesCount;
+			// If Step 2 is still disabled and no critical issues found then...
+			if (!update2Enabled.HasValue && checkDone && checkDone && newCriticalIssuesCount == 0)
+				// Enabled update 2 step (Display PAD forms).
 				update2Enabled = true;
-			}
 		}
 
 		#endregion
