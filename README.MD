@@ -88,6 +88,10 @@ Note:
 
 Delete x360ce.exe, x360ce.ini and all XInput DLLs from the game's executable directory.
 
+### How to remove HID Guardian if access to your Mouse and Keyboard is lost (X360CE v4.x)
+
+Instructions: https://github.com/x360ce/x360ce/wiki/HID-Guardian
+
 # Troubleshooting
 
 Some games have control issues when Dead Zone is reduced to 0%.
