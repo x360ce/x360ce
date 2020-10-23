@@ -113,17 +113,17 @@ namespace x360ce.App
 							// Make full axis.
 							type = SettingsConverter.ToFull(type);
 							var isUp =
-								code == Engine.Data.LayoutCode.LeftThumbUp ||
-								code == Engine.Data.LayoutCode.RightThumbUp;
+								code == LayoutCode.LeftThumbUp ||
+								code == LayoutCode.RightThumbUp;
 							var isLeft =
-								code == Engine.Data.LayoutCode.LeftThumbLeft ||
-								code == Engine.Data.LayoutCode.RightThumbLeft;
+								code == LayoutCode.LeftThumbLeft ||
+								code == LayoutCode.RightThumbLeft;
 							var isRight =
-								code == Engine.Data.LayoutCode.LeftThumbRight ||
-								code == Engine.Data.LayoutCode.RightThumbRight;
+								code == LayoutCode.LeftThumbRight ||
+								code == LayoutCode.RightThumbRight;
 							var isDown =
-								code == Engine.Data.LayoutCode.LeftThumbDown ||
-								code == Engine.Data.LayoutCode.RightThumbDown;
+								code == LayoutCode.LeftThumbDown ||
+								code == LayoutCode.RightThumbDown;
 							// Invert.
 							if (isLeft || isDown)
 								type = SettingsConverter.Invert(type);
@@ -131,12 +131,12 @@ namespace x360ce.App
 							var isLeftThumb = SettingsConverter.LeftThumbCodes.Contains(code);
 							if (isRight || isLeft)
 								newCode = isLeftThumb
-									? Engine.Data.LayoutCode.LeftThumbAxisX
-									: Engine.Data.LayoutCode.RightThumbAxisX;
+									? LayoutCode.LeftThumbAxisX
+									: LayoutCode.RightThumbAxisX;
 							if (isUp || isDown)
 								newCode = isLeftThumb
-									? Engine.Data.LayoutCode.LeftThumbAxisY
-									: Engine.Data.LayoutCode.RightThumbAxisY;
+									? LayoutCode.LeftThumbAxisY
+									: LayoutCode.RightThumbAxisY;
 							// Change destination control.
 							var rMap = SettingsManager.Current.SettingsMap.First(x => x.MapTo == map.MapTo && x.Code == newCode);
 							box = (ComboBox)rMap.Control;
@@ -144,7 +144,7 @@ namespace x360ce.App
 							stop = true;
 						}
 						// If this is DPad ComboBox then...
-						else if (code == Engine.Data.LayoutCode.DPad)
+						else if (code == LayoutCode.DPad)
 						{
 							// Get first action suitable for DPad
 							Regex dPadRx = new Regex("(POV [0-9]+)");

@@ -1,7 +1,7 @@
 ﻿using SharpDX.XInput;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using x360ce.Engine.Data;
+using x360ce.Engine;
 
 namespace x360ce.App
 {
