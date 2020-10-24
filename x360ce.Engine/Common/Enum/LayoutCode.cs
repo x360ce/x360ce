@@ -5,7 +5,6 @@ namespace x360ce.Engine
 	[Flags]
 	public enum LayoutCode
 	{
-		None = 0,
 		ButtonA = 2 ^ 0,
 		ButtonB = 2 ^ 1,
 		ButtonBack = 2 ^ 2,

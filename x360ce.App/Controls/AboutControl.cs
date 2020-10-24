@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using System.Reflection;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.IO;
+using System.Windows.Forms;
 using x360ce.Engine;
-using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -19,12 +13,12 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 		}
 
-		void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		private void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			ControlsHelper.OpenUrl(((Control)sender).Text);
 		}
 
-		void AboutControl_Load(object sender, EventArgs e)
+		private void AboutControl_Load(object sender, EventArgs e)
 		{
 			var stream = EngineHelper.GetResourceStream("ChangeLog.txt");
 			var sr = new StreamReader(stream);

@@ -594,10 +594,10 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
 		}
 
-		void AddMap<T>(Expression<Func<T>> setting, Control control, LayoutCode code = LayoutCode.None)
+		void AddMap<T>(Expression<Func<T>> setting, Control control, LayoutCode code = default(LayoutCode))
 		{
 			var section = string.Format(@"PAD{0}", (int)MappedTo);
-			var iniConverter = code != LayoutCode.None;
+			var iniConverter = code != default(LayoutCode);
 			var item = SettingsManager.AddMap(section, setting, control, MappedTo, iniConverter);
 			item.Code = code;
 		}

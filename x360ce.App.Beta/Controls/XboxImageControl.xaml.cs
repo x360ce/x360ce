@@ -59,7 +59,7 @@ namespace x360ce.App.Controls
 			var resourceName = string.Format("Nav{0}{1}", m, type);
 			var oldResourceName = ii.CurrentImageName;
 			var isNameSame = ii.CurrentImageName == resourceName;
-			var isShowSame = ii.CurrentImageShow.HasValue && ii.CurrentImageShow == show;
+			var isShowSame = ii.CurrentImageShow == show;
 			// Return if no changes must be made.
 			// This will fix issue when click on image button is ignored.
 			if (isNameSame && isShowSame)
