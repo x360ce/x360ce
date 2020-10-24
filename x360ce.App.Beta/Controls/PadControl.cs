@@ -739,6 +739,8 @@ namespace x360ce.App.Controls
 						{
 							if (ud.DiState != null)
 								XboxImage.SetHelpText(XboxImage.MappingDone);
+							else
+								XboxImage.HelpTextLabel.Content = "";
 							RemapAllButton.Text = RemapName;
 							return;
 						}
