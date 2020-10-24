@@ -554,6 +554,7 @@
     <EmbeddedResource Include="Presets\x360ce.Philips_Wireless_PC_Controller.ini" />
     <None Include="app.config" />
     <EmbeddedResource Include="app.manifest" />
+    <EmbeddedResource Include="Documents\Help.rtf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -721,7 +722,6 @@
     <Content Include="Presets\ReadMe.txt" />
     <EmbeddedResource Include="Images\MarkController.png" />
     <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
-    <EmbeddedResource Include="Documents\Help.htm" />
     <EmbeddedResource Include="Html2Rtf\xhtml2rtf.xsl" />
     <Content Include="Documents\x360ce.App.source-Exclude.txt" />
     <Content Include="Documents\x360ce.App.source-Include.txt" />

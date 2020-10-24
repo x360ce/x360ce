@@ -16,12 +16,10 @@ using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading.Tasks;
-using System.Windows.Automation.Peers;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.Issues;
 using x360ce.App.Properties;
-using x360ce.App.ViGEm;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -832,12 +830,13 @@ namespace x360ce.App
 			{
 				// Move this here so interface will load one second faster.
 				HelpInit = true;
-				var stream = EngineHelper.GetResourceStream("Documents.Help.htm");
+				var stream = EngineHelper.GetResourceStream("Documents.Help.rtf");
 				var sr = new StreamReader(stream);
-				NameValueCollection list = new NameValueCollection();
-				list.Add("font-name-default", "'Microsoft Sans Serif'");
-				list.Add("font-size-default", "16");
-				HelpRichTextBox.Rtf = Html2Rtf.Converter.Html2Rtf(sr.ReadToEnd(), list);
+				//NameValueCollection list = new NameValueCollection();
+				//list.Add("font-name-default", "'Microsoft Sans Serif'");
+				//list.Add("font-size-default", "16");
+				//HelpRichTextBox.Rtf = Html2Rtf.Converter.Html2Rtf(sr.ReadToEnd(), list);
+				HelpRichTextBox.Rtf = sr.ReadToEnd();
 				HelpRichTextBox.SelectAll();
 				HelpRichTextBox.SelectionIndent = 8;
 				HelpRichTextBox.SelectionRightIndent = 8;
