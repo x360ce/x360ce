@@ -806,17 +806,7 @@ namespace x360ce.App
 			{
 				// Move this here so interface will load one second faster.
 				HelpInit = true;
-				var stream = EngineHelper.GetResourceStream("Documents.Help.rtf");
-				var sr = new StreamReader(stream);
-				//NameValueCollection list = new NameValueCollection();
-				//list.Add("font-name-default", "'Microsoft Sans Serif'");
-				//list.Add("font-size-default", "16");
-				//HelpRichTextBox.Rtf = Html2Rtf.Converter.Html2Rtf(sr.ReadToEnd(), list);
-				HelpRichTextBox.Rtf = sr.ReadToEnd();
-				HelpRichTextBox.SelectAll();
-				HelpRichTextBox.SelectionIndent = 8;
-				HelpRichTextBox.SelectionRightIndent = 8;
-				HelpRichTextBox.DeselectAll();
+				AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.rtf");
 			}
 			else if (MainTabControl.SelectedTab == SettingsTabPage)
 			{
@@ -1804,6 +1794,7 @@ namespace x360ce.App
 				}
 			}
 		}
+
 
 		#endregion
 

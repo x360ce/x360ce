@@ -19,6 +19,7 @@ namespace x360ce.App.Controls
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			LocationsToolStrip.Font = Font;
+			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help_HidGuardian.rtf");
 		}
 
 		public void InitOptions()
@@ -384,6 +385,5 @@ namespace x360ce.App.Controls
 			ControlsHelper.OpenUrl(((Control)sender).Text);
 		}
 
-	
 	}
 }
