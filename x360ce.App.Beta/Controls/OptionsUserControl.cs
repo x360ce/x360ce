@@ -31,7 +31,8 @@ namespace x360ce.App.Controls
 		{
 			if (MainForm.Current.MainTabControl.SelectedTab == MainForm.Current.OptionsPanel.Parent)
 			{
-				RefreshViGEmStatus();
+				RefreshViGEmBusStatus();
+				RefreshHidGuardianStatus();
 			}
 		}
 
@@ -282,13 +283,13 @@ namespace x360ce.App.Controls
 			_ToolsForm.ShowPanel();
 		}
 
-		#region Virtual Drivers
+		#region ViGemBus Driver
 
 		private void ViGEmBusInstallButton_Click(object sender, EventArgs e)
 		{
 			ViGEmBusTextBox.Text = "Installing. Please Wait...";
 			DInput.DInputHelper.CheckInstallVirtualDriver();
-			RefreshViGEmStatus();
+			RefreshViGEmBusStatus();
 		}
 
 		private void ViGEmBusUninstallButton_Click(object sender, EventArgs e)
@@ -297,39 +298,23 @@ namespace x360ce.App.Controls
 			// Disable Virtual mode first.
 			MainForm.Current.ChangeCurrentGameEmulationType(EmulationType.None);
 			DInput.DInputHelper.CheckUnInstallVirtualDriver();
-			RefreshViGEmStatus();
+			RefreshViGEmBusStatus();
 		}
 
-		private void HidGuardianInstallButton_Click(object sender, EventArgs e)
+
+		private void ViGEmBusRefreshButton_Click(object sender, EventArgs e)
 		{
-			HidGuardianTextBox.Text = "Installing. Please Wait...";
-			Program.RunElevated(AdminCommand.InstallHidGuardian);
-			ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
-			RefreshViGEmStatus();
+			RefreshViGEmBusStatus();
 		}
 
-		private void HidGuardianUninstallButton_Click(object sender, EventArgs e)
-		{
-			HidGuardianTextBox.Text = "Uninstalling. Please Wait...";
-			Program.RunElevated(AdminCommand.UninstallHidGuardian);
-			RefreshViGEmStatus();
-		}
-
-		private void VirtualInfoRefreshButton_Click(object sender, EventArgs e)
-		{
-			RefreshViGEmStatus();
-		}
-
-		void RefreshViGEmStatus()
+		void RefreshViGEmBusStatus()
 		{
 			ControlsHelper.SetText(ViGEmBusTextBox, "Please wait...");
-			ControlsHelper.SetText(HidGuardianTextBox, "Please wait...");
 			// run in another thread, to make sure it is not freezing interface.
 			var ts = new System.Threading.ThreadStart(delegate ()
 			{
 				// Get Virtual Bus and HID Guardian status.
 				var bus = DInput.VirtualDriverInstaller.GetViGemBusDriverInfo();
-				var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
 				ControlsHelper.BeginInvoke(() =>
 				{
 					// Update Bus status.
@@ -339,6 +324,46 @@ namespace x360ce.App.Controls
 					ControlsHelper.SetText(ViGEmBusTextBox, busStatus);
 					ViGEmBusInstallButton.Enabled = bus.DriverVersion == 0;
 					ViGEmBusUninstallButton.Enabled = bus.DriverVersion != 0;
+				});
+			});
+			var t = new System.Threading.Thread(ts);
+			t.Start();
+		}
+
+		#endregion
+
+		#region HID Guardian
+
+		private void HidGuardianInstallButton_Click(object sender, EventArgs e)
+		{
+			HidGuardianTextBox.Text = "Installing. Please Wait...";
+			Program.RunElevated(AdminCommand.InstallHidGuardian);
+			ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
+			RefreshHidGuardianStatus();
+		}
+
+		private void HidGuardianRefreshButton_Click(object sender, EventArgs e)
+		{
+			RefreshHidGuardianStatus();
+		}
+
+		private void HidGuardianUninstallButton_Click(object sender, EventArgs e)
+		{
+			HidGuardianTextBox.Text = "Uninstalling. Please Wait...";
+			Program.RunElevated(AdminCommand.UninstallHidGuardian);
+			RefreshHidGuardianStatus();
+		}
+
+		void RefreshHidGuardianStatus()
+		{
+			ControlsHelper.SetText(HidGuardianTextBox, "Please wait...");
+			// run in another thread, to make sure it is not freezing interface.
+			var ts = new System.Threading.ThreadStart(delegate ()
+			{
+				// Get Virtual Bus and HID Guardian status.
+				var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
+				ControlsHelper.BeginInvoke(() =>
+				{
 					// Update HID status.
 					var hidStatus = hid.DriverVersion == 0
 						? "Not installed"
@@ -359,29 +384,6 @@ namespace x360ce.App.Controls
 			ControlsHelper.OpenUrl(((Control)sender).Text);
 		}
 
-		private void LoginButton_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void CreateButton_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void OpenSettingsFolderButton_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void ResetButton_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void CheckUpdatesButton_Click(object sender, EventArgs e)
-		{
-
-		}
+	
 	}
 }

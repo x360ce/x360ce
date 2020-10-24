@@ -28,7 +28,7 @@ namespace x360ce.App.DInput
 			return driver;
 		}
 
-		static string GetViGEmBusPath()
+		public static string GetViGEmBusPath()
 		{
 			string baseDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
 			return Path.Combine(baseDirectory, "Program Files", "ViGEm ViGEmBus");
@@ -87,7 +87,7 @@ namespace x360ce.App.DInput
 
 		#region Install/Uninstall HidGuardian
 
-		static string GetHidGuardianPath()
+		public static string GetHidGuardianPath()
 		{
 			string baseDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
 			return Path.Combine(baseDirectory, "Program Files", "ViGEm HidGuardian");

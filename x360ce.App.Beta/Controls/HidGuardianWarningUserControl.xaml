@@ -30,6 +30,10 @@
 			<TextBlock Margin="0,16,0,0" FontWeight="Bold">How to remove HID Guardian if access to your Mouse and Keyboard is lost (X360CE v4.x)</TextBlock>
 			<TextBlock Margin="16,16,0,0">
 				Instructions:<Hyperlink Click="Hyperlink_Click" NavigateUri="https://github.com/x360ce/x360ce/wiki/HID-Guardian">https://github.com/x360ce/x360ce/wiki/HID-Guardian</Hyperlink></TextBlock>
+			<TextBlock x:Name="ProgramFolderTextBox" Margin="16,16,0,0" PreviewMouseDown="ProgramFolderTextBox_PreviewMouseDown">
+				<Label Margin="0,0,0,0">Program Folder:</Label>
+				<Label x:Name="ProgramFolder" Margin="0,0,0,0" />
+			</TextBlock>
 		</StackPanel>
 	</Grid>
 </UserControl>

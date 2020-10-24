@@ -1605,6 +1605,7 @@ namespace x360ce.App
 			win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
 			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
 			DHelper.Stop();
+			FormEventsEnabled = false;
 			CloudPanel.EnableDataSource(false);
 			win.ErrorReportPanel.SendMessages += ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ClearErrors += ErrorReportPanel_ClearErrors;
@@ -1615,7 +1616,10 @@ namespace x360ce.App
 			win.ErrorReportPanel.ClearErrors -= ErrorReportPanel_ClearErrors;
 			CloudPanel.EnableDataSource(true);
 			if (AllowDHelperStart)
+			{
+				FormEventsEnabled = true;
 				DHelper.Start();
+			}
 		}
 
 		private void ErrorReportPanel_ClearErrors(object sender, EventArgs e)
