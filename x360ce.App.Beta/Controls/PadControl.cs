@@ -1385,22 +1385,26 @@ namespace x360ce.App.Controls
 				return;
 			var flag = AppHelper.GetMapFlag(MappedTo);
 			var value = (MapToMask)game.EnableMask;
+			var type = game.EmulationType;
 			var autoMap = value.HasFlag(flag);
-			// If AUTO enabled then...
-			if (autoMap)
-			{
+			// Invert flag value.
+			var enableMask = autoMap
 				// Remove AUTO.
-				game.EnableMask = (int)(value & ~flag);
-			}
-			else
-			{
-				// Add AUTO.
-				game.EnableMask = (int)(value | flag);
-			}
-			if (game.EnableMask > 0 && game.EmulationType != (int)EmulationType.Virtual)
-				game.EmulationType = (int)EmulationType.Virtual;
-			if (game.EnableMask == 0 && game.EmulationType == (int)EmulationType.Virtual)
-				game.EmulationType = (int)EmulationType.None;
+				? (int)(value & ~flag)
+				// Add AUTO.	
+				: (int)(value | flag);
+			// Update emulation type.
+			EmulationType? newType = null;
+			// If emulation enabled and game is not using virual type then...
+			if (enableMask > 0 && type != (int)EmulationType.Virtual)
+				newType = EmulationType.Virtual;
+			// If emulation disabled, but game use virtual emulation then...
+			if (enableMask == 0 && type == (int)EmulationType.Virtual)
+				newType = EmulationType.None;
+			// Set values.
+			game.EnableMask = enableMask;
+			if (newType.HasValue)
+				game.EmulationType = (int)newType.Value;
 		}
 
 		public void ShowAdvancedTab(bool show)

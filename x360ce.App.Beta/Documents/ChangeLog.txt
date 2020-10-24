@@ -1,5 +1,6 @@
 v4.15.21.0 (2020-10-24)
 - Fix: Crash when UserDevice list updating.
+- Fix: Issue detector sometimes do start when app starts.
 - Update: Make missing HID Guardian a moderate (optional) issue, which won't prevent UI to load.
 - Update: Redirect HID Guardian [Install] issue button to dedicated install form.
 - Update: Information on [Help] tab updated.

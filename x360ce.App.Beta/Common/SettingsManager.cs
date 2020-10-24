@@ -320,6 +320,13 @@ namespace x360ce.App
 					distinctItems.Insert(0, appItem);
 				}
 			}
+			for (int i = 0; i < distinctItems.Count; i++)
+			{
+				var item = distinctItems[i];
+				// If emulation is enabled but type is not set, then set to virtual (one which can be done by this app).
+				if (item.EnableMask > 0 && item.EmulationType == (int)EmulationType.None)
+					item.EmulationType = (int)EmulationType.Virtual;
+			}
 			return distinctItems;
 		}
 

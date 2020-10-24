@@ -8,7 +8,6 @@ using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -85,7 +84,7 @@ namespace x360ce.App
 			LoadSettings();
 		}
 
-		bool AppVersionChanged;
+		private readonly bool AppVersionChanged;
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
@@ -113,43 +112,9 @@ namespace x360ce.App
 
 		public static MainForm Current { get; set; }
 
+		List<TabPage> PadTabPages => new List<TabPage> { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
 
-		public int oldIndex;
-
-		public int ControllerIndex
-		{
-			get
-			{
-				int newIndex = -1;
-				if (MainTabControl.SelectedTab == Pad1TabPage)
-					newIndex = 0;
-				if (MainTabControl.SelectedTab == Pad2TabPage)
-					newIndex = 1;
-				if (MainTabControl.SelectedTab == Pad3TabPage)
-					newIndex = 2;
-				if (MainTabControl.SelectedTab == Pad4TabPage)
-					newIndex = 3;
-				return newIndex;
-			}
-			set
-			{
-				switch (value)
-				{
-					case 0:
-						MainTabControl.SelectedTab = Pad1TabPage;
-						break;
-					case 1:
-						MainTabControl.SelectedTab = Pad2TabPage;
-						break;
-					case 2:
-						MainTabControl.SelectedTab = Pad3TabPage;
-						break;
-					case 3:
-						MainTabControl.SelectedTab = Pad4TabPage;
-						break;
-				}
-			}
-		}
+		public int ControllerIndex => PadTabPages.IndexOf(MainTabControl.SelectedTab);
 
 		public AboutControl ControlAbout;
 		public PadControl[] PadControls;
@@ -164,10 +129,9 @@ namespace x360ce.App
 
 		public System.Timers.Timer CleanStatusTimer;
 		public int DefaultPoolingInterval = 50;
+		private Forms.DebugForm DebugPanel;
 
-		Forms.DebugForm DebugPanel;
-
-		void MainForm_Load(object sender, EventArgs e)
+		private void MainForm_Load(object sender, EventArgs e)
 		{
 			if (IsDesignMode)
 				return;
@@ -194,20 +158,26 @@ namespace x360ce.App
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
 			XInputMaskScanner.FileInfoCache.Load();
 			InitGameToCustomizeComboBox();
-			UpdateTimer = new System.Timers.Timer();
-			UpdateTimer.AutoReset = false;
-			UpdateTimer.SynchronizingObject = this;
-			UpdateTimer.Interval = DefaultPoolingInterval;
+			UpdateTimer = new System.Timers.Timer
+			{
+				AutoReset = false,
+				SynchronizingObject = this,
+				Interval = DefaultPoolingInterval
+			};
 			UpdateTimer.Elapsed += new System.Timers.ElapsedEventHandler(UpdateTimer_Elapsed);
-			SettingsTimer = new System.Timers.Timer();
-			SettingsTimer.AutoReset = false;
-			SettingsTimer.SynchronizingObject = this;
-			SettingsTimer.Interval = 500;
+			SettingsTimer = new System.Timers.Timer
+			{
+				AutoReset = false,
+				SynchronizingObject = this,
+				Interval = 500
+			};
 			SettingsTimer.Elapsed += new System.Timers.ElapsedEventHandler(SettingsTimer_Elapsed);
-			CleanStatusTimer = new System.Timers.Timer();
-			CleanStatusTimer.AutoReset = false;
-			CleanStatusTimer.SynchronizingObject = this;
-			CleanStatusTimer.Interval = 3000;
+			CleanStatusTimer = new System.Timers.Timer
+			{
+				AutoReset = false,
+				SynchronizingObject = this,
+				Interval = 3000
+			};
 			CleanStatusTimer.Elapsed += new System.Timers.ElapsedEventHandler(CleanStatusTimer_Elapsed);
 			Text = EngineHelper.GetProductFullName();
 			ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
@@ -236,15 +206,15 @@ namespace x360ce.App
 
 		#region Process Monitor
 
-		ProcessMonitor _ProcessMonitor;
+		private ProcessMonitor _ProcessMonitor;
 
-		void InitProcessMonitor()
+		private void InitProcessMonitor()
 		{
 			_ProcessMonitor = new ProcessMonitor();
 			_ProcessMonitor.Start();
 		}
 
-		void DisposeProcessMonitor()
+		private void DisposeProcessMonitor()
 		{
 			if (_ProcessMonitor != null)
 				_ProcessMonitor.Dispose();
@@ -275,7 +245,7 @@ namespace x360ce.App
 				{
 					if (PadControls != null)
 					{
-						for (int i = 0; i < 4; i++)
+						for (var i = 0; i < 4; i++)
 						{
 
 							var currentPadControl = PadControls[i];
@@ -296,7 +266,7 @@ namespace x360ce.App
 		/// </summary>
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
 		{
-			bool changed = false;
+			var changed = false;
 			changed |= SettingsManager.Current.ApplyAllSettingsToXML();
 			//changed |= SettingsManager.Current.WriteSettingToIni(changedControl);
 			// If settings changed then...
@@ -336,8 +306,7 @@ namespace x360ce.App
 			}
 		}
 
-
-		void AutoConfigure(Engine.Data.UserGame game)
+		private void AutoConfigure(Engine.Data.UserGame game)
 		{
 			var list = SettingsManager.UserDevices.Items.ToList();
 			// Filter devices.
@@ -375,7 +344,7 @@ namespace x360ce.App
 			var settings = SettingsManager.GetSettings(game.FileName);
 			var knownDevices = settings.Select(x => x.InstanceGuid).ToList();
 			var newSettingsToProcess = new List<Engine.Data.UserSetting>();
-			int i = 0;
+			var i = 0;
 			while (true)
 			{
 				i++;
@@ -402,7 +371,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
 		/// </summary>
-		void UpdateSettingsMap()
+		private void UpdateSettingsMap()
 		{
 			// INI setting keys with controls.
 			SettingsManager.Current.ConfigLoaded += Current_ConfigLoaded;
@@ -410,12 +379,12 @@ namespace x360ce.App
 			OptionsPanel.InternetPanel.UpdateSettingsMap();
 		}
 
-		void Current_ConfigSaved(object sender, SettingEventArgs e)
+		private void Current_ConfigSaved(object sender, SettingEventArgs e)
 		{
 			StatusSaveLabel.Text = string.Format("S {0}", e.Count);
 		}
 
-		void Current_ConfigLoaded(object sender, SettingEventArgs e)
+		private void Current_ConfigLoaded(object sender, SettingEventArgs e)
 		{
 			StatusTimerLabel.Text = string.Format("'{0}' loaded.", e.Name);
 		}
@@ -436,7 +405,7 @@ namespace x360ce.App
 			//fileSecurity.AddAccessRule(new FileSystemAccessRule(sid, FileSystemRights.Write, AccessControlType.Allow));
 			//fi.SetAccessControl(fileSecurity);
 			var rules = security.GetAccessRules(true, true, typeof(System.Security.Principal.NTAccount));
-			string message = string.Empty;
+			var message = string.Empty;
 			foreach (var myacc in rules)
 			{
 				var acc = (FileSystemAccessRule)myacc;
@@ -472,12 +441,12 @@ namespace x360ce.App
 			//    AccessControlType.Allow);
 		}
 
-		void MainForm_KeyDown(object sender, KeyEventArgs e)
+		private void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			// If pad controls not initializes yet then return.
 			if (PadControls == null)
 				return;
-			for (int i = 0; i < PadControls.Length; i++)
+			for (var i = 0; i < PadControls.Length; i++)
 			{
 				// If Escape key was pressed while recording then...
 				if (e.KeyCode == Keys.Escape)
@@ -493,7 +462,7 @@ namespace x360ce.App
 			StatusTimerLabel.Text = "";
 		}
 
-		void CleanStatusTimer_Elapsed(object sender, EventArgs e)
+		private void CleanStatusTimer_Elapsed(object sender, EventArgs e)
 		{
 			if (Program.IsClosing)
 				return;
@@ -507,7 +476,7 @@ namespace x360ce.App
 			StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
 		}
 
-		void SettingsTimer_Elapsed(object sender, EventArgs e)
+		private void SettingsTimer_Elapsed(object sender, EventArgs e)
 		{
 			if (Program.IsClosing)
 				return;
@@ -517,7 +486,7 @@ namespace x360ce.App
 
 		#endregion
 
-		void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
 			MonitorErrors(false);
@@ -530,14 +499,14 @@ namespace x360ce.App
 			catch (Exception) { }
 		}
 
-		void OnCloseAction(FormClosingEventArgs e)
+		private void OnCloseAction(FormClosingEventArgs e)
 		{
 			// Disable force feedback effect before closing application.
 			if (UpdateTimer != null)
 				UpdateTimer.Stop();
 			lock (Controller.XInputLock)
 			{
-				for (int i = 0; i < 4; i++)
+				for (var i = 0; i < 4; i++)
 				{
 					if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
 					{
@@ -573,8 +542,10 @@ namespace x360ce.App
 				}
 				if (changed)
 				{
-					var form = new MessageBoxForm();
-					form.StartPosition = FormStartPosition.CenterParent;
+					var form = new MessageBoxForm
+					{
+						StartPosition = FormStartPosition.CenterParent
+					};
 					var result = form.ShowForm(
 					"Do you want to save changes you made to configuration?",
 					"Save Changes?",
@@ -606,14 +577,13 @@ namespace x360ce.App
 		public bool forceRecountDevices = true;
 
 		public Guid AutoSelectControllerInstance = Guid.Empty;
-
-		object formLoadLock = new object();
+		private readonly object formLoadLock = new object();
 		public bool update1Enabled = true;
 		public bool? update2Enabled;
-		bool update3Enabled;
+		private bool update3Enabled;
 		public bool AllowDHelperStart;
 
-		void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		private void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			if (Program.IsClosing)
 				return;
@@ -649,12 +619,14 @@ namespace x360ce.App
 
 		public System.Timers.Timer IssueIconTimer;
 
-		void InitIssuesIcon()
+		private void InitIssuesIcon()
 		{
-			IssueIconTimer = new System.Timers.Timer();
-			IssueIconTimer.SynchronizingObject = this;
-			IssueIconTimer.AutoReset = false;
-			IssueIconTimer.Interval = 1000;
+			IssueIconTimer = new System.Timers.Timer
+			{
+				SynchronizingObject = this,
+				AutoReset = false,
+				Interval = 1000
+			};
 			IssueIconTimer.Elapsed += IssueIconTimer_Elapsed;
 			IssueIconTimer.Start();
 		}
@@ -697,7 +669,7 @@ namespace x360ce.App
 
 		#endregion
 
-		void UpdateForm1()
+		private void UpdateForm1()
 		{
 			//if (DesignMode) return;
 			OptionsPanel.InitOptions();
@@ -726,7 +698,7 @@ namespace x360ce.App
 			InitUpdateForm();
 		}
 
-		void UpdateForm2()
+		private void UpdateForm2()
 		{
 			// Set status labels.
 			StatusIsAdminLabel.Text = WinAPI.IsVista
@@ -740,12 +712,14 @@ namespace x360ce.App
 			UpdateSettingsMap();
 			// Load PAD controls.
 			PadControls = new PadControl[4];
-			for (int i = 0; i < PadControls.Length; i++)
+			for (var i = 0; i < PadControls.Length; i++)
 			{
 				var mapTo = (MapTo)(i + 1);
-				PadControls[i] = new Controls.PadControl(mapTo);
-				PadControls[i].Name = string.Format("ControlPad{0}", (int)mapTo);
-				PadControls[i].Dock = DockStyle.Fill;
+				PadControls[i] = new Controls.PadControl(mapTo)
+				{
+					Name = string.Format("ControlPad{0}", (int)mapTo),
+					Dock = DockStyle.Fill
+				};
 				ControlPages[i].Controls.Add(PadControls[i]);
 				PadControls[i].InitPadControl();
 				// Update settings manager with [Mappings] section.
@@ -756,7 +730,7 @@ namespace x360ce.App
 			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
 			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
 			// Note: There must be no such sections in new config.
-			for (int i = 0; i < PadControls.Length; i++)
+			for (var i = 0; i < PadControls.Length; i++)
 			{
 				PadControls[i].UpdateSettingsMap();
 				PadControls[i].InitPadData();
@@ -764,10 +738,12 @@ namespace x360ce.App
 			// Initialize pre-sets. Execute only after name of cIniFile is set.
 			//SettingsDatabasePanel.InitPresets();
 			// Allow events after PAD control are loaded.
-			MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
+			MainTabControl.SelectedIndexChanged += new System.EventHandler(MainTabControl_SelectedIndexChanged);
 			// Load about control.
-			ControlAbout = new AboutControl();
-			ControlAbout.Dock = DockStyle.Fill;
+			ControlAbout = new AboutControl
+			{
+				Dock = DockStyle.Fill
+			};
 			AboutTabPage.Controls.Add(ControlAbout);
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
@@ -776,7 +752,7 @@ namespace x360ce.App
 		/// <summary>
 		/// This method will run continuously if form is not minimized.
 		/// </summary>
-		void UpdateForm3()
+		private void UpdateForm3()
 		{
 			var game = SettingsManager.CurrentGame;
 			var currentFile = (game == null) ? null : game.FileName;
@@ -786,7 +762,7 @@ namespace x360ce.App
 			if (!allow)
 				return;
 			var client = ViGEmClient.Current;
-			for (int i = 0; i < 4; i++)
+			for (var i = 0; i < 4; i++)
 			{
 				// Get devices mapped to game and specific controller index.
 				var devices = SettingsManager.GetDevices(currentFile, (MapTo)(i + 1));
@@ -800,7 +776,7 @@ namespace x360ce.App
 				// Update Form from XInput state.
 				padControl.UpdateFromXInput();
 				// Update LED of GamePad state.
-				string image = diOn
+				var image = diOn
 					// DInput ON, XInput ON 
 					? xiOn ? "green"
 					// DInput ON, XInput OFF
@@ -809,7 +785,7 @@ namespace x360ce.App
 					: xiOn ? "yellow"
 					// DInput OFF, XInput OFF
 					: "grey";
-				string bullet = string.Format("bullet_square_glass_{0}.png", image);
+				var bullet = string.Format("bullet_square_glass_{0}.png", image);
 				if (ControlPages[i].ImageKey != bullet)
 					ControlPages[i].ImageKey = bullet;
 			}
@@ -822,9 +798,9 @@ namespace x360ce.App
 		}
 		#endregion
 
-		bool HelpInit = false;
+		private bool HelpInit = false;
 
-		void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (MainTabControl.SelectedTab == HelpTabPage && !HelpInit)
 			{
@@ -857,7 +833,7 @@ namespace x360ce.App
 
 		#region Check Files
 
-		void CheckEncoding(string path)
+		private void CheckEncoding(string path)
 		{
 			if (!File.Exists(path))
 				return;
@@ -870,7 +846,7 @@ namespace x360ce.App
 			}
 		}
 
-		bool IsFileSame(string fileName)
+		private bool IsFileSame(string fileName)
 		{
 			return false;
 			//if (!System.IO.File.Exists(fileName)) return false;
@@ -896,8 +872,10 @@ namespace x360ce.App
 			if (destinationFileName == null)
 				destinationFileName = resourceName;
 			DialogResult answer;
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
+			var form = new MessageBoxForm
+			{
+				StartPosition = FormStartPosition.CenterParent
+			};
 			var oldDesc = EngineHelper.GetProcessorArchitectureDescription(oldArchitecture);
 			var newDesc = EngineHelper.GetProcessorArchitectureDescription(newArchitecture);
 			var fileName = new FileInfo(destinationFileName).Name;
@@ -917,8 +895,10 @@ namespace x360ce.App
 			if (destinationFileName == null)
 				destinationFileName = resourceName;
 			DialogResult answer;
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
+			var form = new MessageBoxForm
+			{
+				StartPosition = FormStartPosition.CenterParent
+			};
 			var fileName = new FileInfo(destinationFileName).FullName;
 			if (newVersion == null)
 			{
@@ -946,9 +926,10 @@ namespace x360ce.App
 		#region Allow only one copy of Application at a time
 
 		/// <summary>Stores the unique windows message id from the RegisterWindowMessage call.</summary>
-		int _WindowMessage;
+		private int _WindowMessage;
+
 		/// <summary>Used to determine if the application is already open.</summary>
-		System.Threading.Mutex _Mutex;
+		private System.Threading.Mutex _Mutex;
 
 		public const int wParam_Restore = 1;
 		public const int wParam_Close = 2;
@@ -960,12 +941,11 @@ namespace x360ce.App
 		/// <returns>True - other instances exists; False - other instances doesn't exist.</returns>
 		public bool BroadcastMessage(int wParam)
 		{
-			Exception error;
 			// Check for previous instance of this app.
 			var uid = Application.ProductName;
 			_Mutex = new System.Threading.Mutex(false, uid);
 			// Register the windows message
-			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out error);
+			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out var error);
 			var firsInstance = _Mutex.WaitOne(1, true);
 			// If this is not the first instance then...
 			if (!firsInstance)
@@ -978,10 +958,9 @@ namespace x360ce.App
 			return !firsInstance;
 		}
 
-		const int WM_WININICHANGE = 0x001A;
-		const int WM_SETTINGCHANGE = WM_WININICHANGE;
-
-		System.Timers.Timer _ResumeTimer = new System.Timers.Timer() { AutoReset = false, Interval = 1000 };
+		private const int WM_WININICHANGE = 0x001A;
+		private const int WM_SETTINGCHANGE = WM_WININICHANGE;
+		private readonly System.Timers.Timer _ResumeTimer = new System.Timers.Timer() { AutoReset = false, Interval = 1000 };
 
 		private void _ResumeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
@@ -1030,9 +1009,9 @@ namespace x360ce.App
 
 		#region Issues Panel
 
-		object issuesPanelLock = new object();
+		private readonly object issuesPanelLock = new object();
 
-		void InitIssuesPanel()
+		private void InitIssuesPanel()
 		{
 			lock (issuesPanelLock)
 			{
@@ -1057,9 +1036,9 @@ namespace x360ce.App
 		// When Application is started minimized then FormEventsEnabled will be set to false
 		// Which means that IssuePanel will be suspended and will never run at least once.
 		// This 'FirstRunIsDone' property will allow to check for issues at least once.
-		bool FirstRunIsDone = false;
+		private bool FirstRunIsDone = false;
 
-		bool IssuesPanel_IsSuspended()
+		private bool IssuesPanel_IsSuspended()
 		{
 			var o = SettingsManager.Options;
 			var allow = (FormEventsEnabled || !FirstRunIsDone) && (!o.TestEnabled || o.TestCheckIssues);
@@ -1069,7 +1048,7 @@ namespace x360ce.App
 		}
 
 		// Remember previous has issues status.
-		int oldCriticalIssueCount;
+		private int oldCriticalIssueCount;
 
 		private void IssuesPanel_CheckCompleted(object sender, EventArgs e)
 		{
@@ -1096,10 +1075,10 @@ namespace x360ce.App
 
 		#region Device Form
 
-		MapDeviceToControllerForm _DeviceForm;
-		object DeviceFormLock = new object();
+		private MapDeviceToControllerForm _DeviceForm;
+		private readonly object DeviceFormLock = new object();
 
-		void InitDeviceForm()
+		private void InitDeviceForm()
 		{
 			lock (DeviceFormLock)
 			{
@@ -1107,7 +1086,7 @@ namespace x360ce.App
 			}
 		}
 
-		void DisposeDeviceForm()
+		private void DisposeDeviceForm()
 		{
 			lock (DeviceFormLock)
 			{
@@ -1136,10 +1115,10 @@ namespace x360ce.App
 
 		#region Update Form
 
-		Forms.UpdateForm _UpdateForm;
-		object UpdateFormLock = new object();
+		private Forms.UpdateForm _UpdateForm;
+		private readonly object UpdateFormLock = new object();
 
-		void InitUpdateForm()
+		private void InitUpdateForm()
 		{
 			lock (UpdateFormLock)
 			{
@@ -1147,7 +1126,7 @@ namespace x360ce.App
 			}
 		}
 
-		void DisposeUpdateForm()
+		private void DisposeUpdateForm()
 		{
 			lock (UpdateFormLock)
 			{
@@ -1237,7 +1216,7 @@ namespace x360ce.App
 			});
 		}
 
-		void InitGameToCustomizeComboBox()
+		private void InitGameToCustomizeComboBox()
 		{
 			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
 			// Make sure that X360CE.exe is on top.
@@ -1312,7 +1291,7 @@ namespace x360ce.App
 		private void GamesToolStrip_Resize(object sender, EventArgs e)
 		{
 			GameToCustomizeComboBox.AutoSize = false;
-			int width = GamesToolStrip.DisplayRectangle.Width;
+			var width = GamesToolStrip.DisplayRectangle.Width;
 			foreach (ToolStripItem tsi in GamesToolStrip.Items)
 			{
 				if (!(tsi == GameToCustomizeComboBox))
@@ -1363,10 +1342,12 @@ namespace x360ce.App
 			// Save application settings.
 			SaveAll();
 			// Use timer to enable Save buttons after 520 ms.
-			var timer = new System.Timers.Timer();
-			timer.AutoReset = false;
-			timer.Interval = 520;
-			timer.SynchronizingObject = this;
+			var timer = new System.Timers.Timer
+			{
+				AutoReset = false,
+				Interval = 520,
+				SynchronizingObject = this
+			};
 			timer.Elapsed += Timer_Elapsed;
 			timer.Start();
 		}
@@ -1384,17 +1365,17 @@ namespace x360ce.App
 
 		#region Update from DHelper
 
-		object LockFormEvents = new object();
+		private readonly object LockFormEvents = new object();
 
 		// Set to false when main form is minimized, which will minimize CPU usage.
 		public bool FormEventsEnabled;
 
 		// Will be used to check it event handlers were called during form update period.
-		bool FormEventsDevicesUpdated;
-		bool FormEventsUpdateCompleted;
-		bool FormEventsFrequencyUpdated;
+		private bool FormEventsDevicesUpdated;
+		private bool FormEventsUpdateCompleted;
+		private bool FormEventsFrequencyUpdated;
 
-		void EnableFormUpdates(bool enable)
+		private void EnableFormUpdates(bool enable)
 		{
 			lock (LockFormEvents)
 			{
@@ -1437,11 +1418,10 @@ namespace x360ce.App
 			ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
 		}
 
-		bool UpdateCompletedBusy;
-		object UpdateCompletedLock = new object();
-
-		System.Diagnostics.Stopwatch InterfaceUpdateWatch;
-		long LastUpdateTime;
+		private bool UpdateCompletedBusy;
+		private readonly object UpdateCompletedLock = new object();
+		private System.Diagnostics.Stopwatch InterfaceUpdateWatch;
+		private long LastUpdateTime;
 
 		private void DHelper_UpdateCompleted(object sender, EventArgs e)
 		{
@@ -1504,19 +1484,21 @@ namespace x360ce.App
 
 		#region Update Interface
 
-		bool interfaceIsForeground;
-		// Allow no more than 20 frames per second in foreground (make it look smooth and responsive).
-		int interfaceUpdateForegroundFps = 20;
-		// Allow no more than  5 frames per second in background (save CPU resources).
-		int interfaceUpdateBackgroundFps = 5;
+		private bool interfaceIsForeground;
 
-		void InitiInterfaceUpdate()
+		// Allow no more than 20 frames per second in foreground (make it look smooth and responsive).
+		private readonly int interfaceUpdateForegroundFps = 20;
+
+		// Allow no more than  5 frames per second in background (save CPU resources).
+		private readonly int interfaceUpdateBackgroundFps = 5;
+
+		private void InitiInterfaceUpdate()
 		{
 			Activated += MainForm_Activated;
 			Deactivate += MainForm_Deactivate;
 		}
 
-		void DisposeInterfaceUpdate()
+		private void DisposeInterfaceUpdate()
 		{
 			Activated -= MainForm_Activated;
 			Deactivate -= MainForm_Deactivate;
@@ -1613,9 +1595,9 @@ namespace x360ce.App
 			});
 		}
 
-		Forms.ErrorReportWindow win;
+		private Forms.ErrorReportWindow win;
 
-		void StatusErrorLabel_Click(object sender, EventArgs e)
+		private void StatusErrorLabel_Click(object sender, EventArgs e)
 		{
 			win = new Forms.ErrorReportWindow();
 			ControlsHelper.CheckTopMost(win);
@@ -1670,10 +1652,10 @@ namespace x360ce.App
 			}));
 		}
 
-		FileSystemWatcher errorsWatcher;
-		object errorsWatcherLock = new object();
+		private FileSystemWatcher errorsWatcher;
+		private readonly object errorsWatcherLock = new object();
 
-		void ClearErrors(bool silent = false)
+		private void ClearErrors(bool silent = false)
 		{
 			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
 			if (!dir.Exists)
@@ -1687,8 +1669,10 @@ namespace x360ce.App
 			{
 				if (!silent)
 				{
-					var form = new MessageBoxForm();
-					form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+					var form = new MessageBoxForm
+					{
+						StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
+					};
 					ControlsHelper.CheckTopMost(form);
 					var result = form.ShowForm("Do you want to clear all errors?", "Clear Errors?",
 						System.Windows.Forms.MessageBoxButtons.YesNo,
@@ -1714,7 +1698,7 @@ namespace x360ce.App
 			MonitorErrors(true);
 		}
 
-		void MonitorErrors(bool enable)
+		private void MonitorErrors(bool enable)
 		{
 			lock (errorsWatcherLock)
 			{
@@ -1751,7 +1735,7 @@ namespace x360ce.App
 			}));
 		}
 
-		void UpdateStatusErrorsLabel()
+		private void UpdateStatusErrorsLabel()
 		{
 			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
 			StatusErrorsLabel.ForeColor = ErrorFilesCount > 0
@@ -1794,9 +1778,7 @@ namespace x360ce.App
 			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))
 				// Cancel reporting error.
 				e.Cancel = true;
-			Control activeControl;
-			string activePath;
-			GetActiveControl(this, out activeControl, out activePath);
+			GetActiveControl(this, out var activeControl, out var activePath);
 			// Add path to current control to help with error fixing.
 			e.Exception.Data.Add("ActiveControlPath", activePath);
 		}
