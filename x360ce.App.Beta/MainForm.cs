@@ -62,6 +62,20 @@ namespace x360ce.App
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
+			// Fix Images
+			BuletImageList.TransparentColor = System.Drawing.Color.Transparent;
+			BuletImageList.ImageStream = null;
+			BuletImageList.Images.Clear();
+			BuletImageList.Images.Add("bullet_square_glass_red.png", Resources.bullet_square_glass_red);
+			BuletImageList.Images.Add("bullet_square_glass_yellow.png", Resources.bullet_square_glass_yellow);
+			BuletImageList.Images.Add("bullet_square_glass_green.png", Resources.bullet_square_glass_green);
+			BuletImageList.Images.Add("bullet_square_glass_blue.png", Resources.bullet_square_glass_blue);
+			BuletImageList.Images.Add("bullet_square_glass_grey.png", Resources.bullet_square_glass_grey);
+			BuletImageList.Images.Add("ok_16x16.png", Resources.ok_16x16);
+			BuletImageList.Images.Add("ok_off_16x16.png", Resources.ok_off_16x16);
+			BuletImageList.Images.Add("fix_16x16.png", Resources.fix_16x16);
+			BuletImageList.Images.Add("fix_off_16x16.png", Resources.fix_off_16x16);
+			BuletImageList.Images.Add("refresh_16x16.png", Resources.refresh_16x16);
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			GameToCustomizeComboBox.Font = Font;

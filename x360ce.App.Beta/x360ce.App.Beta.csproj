@@ -718,6 +718,9 @@
     <None Include="Images\copy_16x16.png" />
     <None Include="Images\paste_16x16.png" />
     <None Include="Images\error_16x16.png" />
+    <None Include="Images\ok_16x16.png" />
+    <None Include="Images\ok_off_16x16.png" />
+    <None Include="Images\fix_off_16x16.png" />
     <Content Include="Images\tip_24x24.png" />
     <None Include="Images\update_16x16.png" />
     <Content Include="Presets\ReadMe.txt" />
