@@ -1,4 +1,4 @@
-v4.16.08.0 (2020-10-25)
+v4.16.8.0 (2020-10-25)
 - Fix: Controller image scaling issue.
 - Fix: Crash when User Device list updating.
 - Fix: Issue detector sometimes do not start after app starts.
