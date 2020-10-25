@@ -143,9 +143,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup />
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -553,7 +551,6 @@
     <EmbeddedResource Include="Presets\x360ce.SL_6555_SBK.ini" />
     <EmbeddedResource Include="Presets\x360ce.Philips_Wireless_PC_Controller.ini" />
     <None Include="app.config" />
-    <EmbeddedResource Include="app.manifest" />
     <EmbeddedResource Include="Documents\Help.rtf" />
     <EmbeddedResource Include="Documents\Help_HidGuardian.rtf" />
     <None Include="Properties\Settings.settings">

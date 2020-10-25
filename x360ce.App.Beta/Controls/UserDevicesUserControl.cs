@@ -12,7 +12,6 @@ using JocysCom.ClassLibrary.IO;
 using System.Drawing;
 using System.Threading.Tasks;
 using JocysCom.ClassLibrary.Win32;
-using System.Dynamic;
 using JocysCom.ClassLibrary.Collections;
 
 namespace x360ce.App.Controls
@@ -232,7 +231,7 @@ namespace x360ce.App.Controls
 			var ud = TestDeviceHelper.NewUserDevice();
 			lock (SettingsManager.UserDevices.SyncRoot)
 				SettingsManager.UserDevices.Items.Add(ud);
-			MainForm.Current.DHelper.UpdateDevicesEnabled = true;
+			Global.DHelper.UpdateDevicesEnabled = true;
 		}
 
 		private void DevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -258,21 +257,12 @@ namespace x360ce.App.Controls
 					{
 						//var ids = AppHelper.GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
 						var ids = new string[] { ud.DevDeviceId };
-						// If parent device ID is known then...
-						//if (!string.IsNullOrEmpty(parentDeviceId))
-						//{
 						ud.IsHidden = !ud.IsHidden;
-						if (ud.IsHidden)
+						// Use begin invoke which will prevent mouse multi-select rows.
+						ControlsHelper.BeginInvoke(() =>
 						{
-							ViGEm.HidGuardianHelper.InsertToAffected(ids);
-							//ViGEm.HidGuardianHelper.InsertToAffected(parentDeviceId, ud.HidDeviceId);
-						}
-						else
-						{
-							ViGEm.HidGuardianHelper.RemoveFromAffected(ids);
-							//ViGEm.HidGuardianHelper.RemoveFromAffected(parentDeviceId, ud.HidDeviceId);
-						}
-						//}
+							AppHelper.SynchronizeToHidGuardian(ud.InstanceGuid);
+						});
 					}
 					else
 					{

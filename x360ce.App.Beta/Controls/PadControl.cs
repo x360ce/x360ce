@@ -25,6 +25,8 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			// Hide for this version.
+			PadTabControl.TabPages.Remove(XInputTabPage);
 			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();
@@ -780,11 +782,11 @@ namespace x360ce.App.Controls
 			var i = (int)MappedTo - 1;
 			var useXiStates = SettingsManager.Options.GetXInputStates;
 			newState = useXiStates
-				? MainForm.Current.DHelper.LiveXiStates[i]
-				: MainForm.Current.DHelper.CombinedXiStates[i];
+				? Global.DHelper.LiveXiStates[i]
+				: Global.DHelper.CombinedXiStates[i];
 			newConnected = useXiStates
-				? MainForm.Current.DHelper.LiveXiConnected[i]
-				: MainForm.Current.DHelper.CombinedXiConencted[i];
+				? Global.DHelper.LiveXiConnected[i]
+				: Global.DHelper.CombinedXiConencted[i];
 			// If device is not connected and was not connected then return.
 			if (!newConnected && !oldConnected)
 				return;
@@ -1067,7 +1069,7 @@ namespace x360ce.App.Controls
 			{
 				var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, LeftMotorTestTrackBar.Value);
 				var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, RightMotorTestTrackBar.Value);
-				MainForm.Current.DHelper.SetVibration(MappedTo, largeMotor, smallMotor, 0);
+				Global.DHelper.SetVibration(MappedTo, largeMotor, smallMotor, 0);
 			}
 			else
 			{
@@ -1076,8 +1078,8 @@ namespace x360ce.App.Controls
 					// Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
 					var leftMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, LeftMotorTestTrackBar.Value);
 					var rightMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, RightMotorTestTrackBar.Value);
-					var gamePad = MainForm.Current.DHelper.LiveXiControllers[index];
-					var isConnected = MainForm.Current.DHelper.LiveXiConnected[index];
+					var gamePad = Global.DHelper.LiveXiControllers[index];
+					var isConnected = Global.DHelper.LiveXiConnected[index];
 					if (Controller.IsLoaded && isConnected)
 					{
 						var vibration = new Vibration();

@@ -120,7 +120,7 @@ namespace x360ce.App.Controls
 					MainForm.Current.TopMost = o.AlwaysOnTop;
 					break;
 				case nameof(Options.PollingRate):
-					MainForm.Current.DHelper.Frequency = o.PollingRate;
+					Global.DHelper.Frequency = o.PollingRate;
 					break;
 				case nameof(Options.StartWithWindows):
 				case nameof(Options.StartWithWindowsState):

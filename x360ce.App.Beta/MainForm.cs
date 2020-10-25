@@ -121,9 +121,6 @@ namespace x360ce.App
 			TestButton.Visible = o.ShowTestButton;
 		}
 
-
-		public DInput.DInputHelper DHelper;
-
 		public static MainForm Current { get; set; }
 
 		List<TabPage> PadTabPages => new List<TabPage> { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
@@ -153,13 +150,12 @@ namespace x360ce.App
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
 			// Initialize Debug panel.
 			DebugPanel = new Forms.DebugForm();
-			// Initialize DInput Helper.
-			DHelper = new DInput.DInputHelper();
-			DHelper.DevicesUpdated += DHelper_DevicesUpdated;
-			DHelper.UpdateCompleted += DHelper_UpdateCompleted;
-			DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
-			DHelper.StatesRetrieved += DHelper_StatesRetrieved;
-			DHelper.XInputReloaded += DHelper_XInputReloaded;
+			Global.InitDHelperHelper();
+			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
+			Global.DHelper.UpdateCompleted += DHelper_UpdateCompleted;
+			Global.DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
+			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
+			Global.DHelper.XInputReloaded += DHelper_XInputReloaded;
 			SettingsGridPanel._ParentForm = this;
 			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
 			SettingsGridPanel.InitPanel();
@@ -494,7 +490,7 @@ namespace x360ce.App
 		{
 			if (Program.IsClosing)
 				return;
-			DHelper.SettingsChanged = true;
+			Global.DHelper.SettingsChanged = true;
 			UpdateTimer.Start();
 		}
 
@@ -524,8 +520,8 @@ namespace x360ce.App
 				{
 					if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
 					{
-						var gamePad = DHelper.LiveXiControllers[i];
-						var isConected = DHelper.LiveXiConnected[i];
+						var gamePad = Global.DHelper.LiveXiControllers[i];
+						var isConected = Global.DHelper.LiveXiConnected[i];
 						if (Controller.IsLoaded && isConected)
 						{
 							// Stop vibration.
@@ -623,7 +619,7 @@ namespace x360ce.App
 					update3Enabled = false;
 					// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
 					AllowDHelperStart = true;
-					DHelper.Start();
+					Global.DHelper.Start();
 				}
 			}
 			UpdateTimer.Start();
@@ -969,7 +965,7 @@ namespace x360ce.App
 		private void _ResumeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			if (AllowDHelperStart)
-				DHelper.Start();
+				Global.DHelper.Start();
 		}
 
 		/// <summary>
@@ -983,13 +979,13 @@ namespace x360ce.App
 			if (m.Msg == WM_SETTINGCHANGE)
 			{
 				// Must stop all updates or interface will freeze during screen updates.
-				DHelper.Stop();
+				Global.DHelper.Stop();
 				_ResumeTimer.Stop();
 				_ResumeTimer.Start();
 			}
 			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
 			{
-				DHelper.UpdateDevicesEnabled = true;
+				Global.DHelper.UpdateDevicesEnabled = true;
 			}
 			// If message value was found then...
 			else if (m.Msg == _WindowMessage)
@@ -1189,8 +1185,8 @@ namespace x360ce.App
 				DisposeDeviceForm();
 				DisposeUpdateForm();
 				DisposeInterfaceUpdate();
-				if (DHelper != null)
-					DHelper.Dispose();
+				if (Global.DHelper != null)
+					Global.DHelper.Dispose();
 				components.Dispose();
 				//lock (checkTimerLock)
 				//{
@@ -1258,7 +1254,7 @@ namespace x360ce.App
 					game.PropertyChanged += CurrentGame_PropertyChanged;
 				// Assing new game.
 				SettingsManager.CurrentGame = game;
-				DHelper.SettingsChanged = true;
+				Global.DHelper.SettingsChanged = true;
 				// If pad controls not initializes yet then return.
 				if (PadControls == null)
 					return;
@@ -1419,7 +1415,7 @@ namespace x360ce.App
 				return;
 			}
 			SettingsManager.RefreshDeviceIsOnlineValueOnSettings(SettingsManager.UserSettings.Items.ToArray());
-			ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", DHelper.RefreshDevicesCount);
+			ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", Global.DHelper.RefreshDevicesCount);
 		}
 
 		private bool UpdateCompletedBusy;
@@ -1481,7 +1477,7 @@ namespace x360ce.App
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
-			ControlsHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", DHelper.CurrentUpdateFrequency);
+			ControlsHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", Global.DHelper.CurrentUpdateFrequency);
 		}
 
 		#endregion
@@ -1608,7 +1604,7 @@ namespace x360ce.App
 			ControlsHelper.AutoSizeByOpenForms(win);
 			win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
 			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
-			DHelper.Stop();
+			Global.DHelper.Stop();
 			FormEventsEnabled = false;
 			CloudPanel.EnableDataSource(false);
 			win.ErrorReportPanel.SendMessages += ErrorReportPanel_SendMessages;
@@ -1622,7 +1618,7 @@ namespace x360ce.App
 			if (AllowDHelperStart)
 			{
 				FormEventsEnabled = true;
-				DHelper.Start();
+				Global.DHelper.Start();
 			}
 		}
 

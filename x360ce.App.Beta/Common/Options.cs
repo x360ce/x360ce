@@ -133,13 +133,13 @@ namespace x360ce.App
 		bool _UseDeviceBufferedData;
 
 
-		[DefaultValue(true), Description("Configure Hid Guardian Automatically.")]
+		[DefaultValue(false), Description("Configure Hid Guardian Automatically.")]
 		public bool HidGuardianConfigureAutomatically
 		{
 			get { return _HidGuardianConfigureAutomatically; }
 			set { _HidGuardianConfigureAutomatically = value; OnPropertyChanged(); }
 		}
-		bool _HidGuardianConfigureAutomatically = true;
+		bool _HidGuardianConfigureAutomatically = false;
 
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 

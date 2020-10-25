@@ -189,7 +189,7 @@ namespace x360ce.App.Controls
 			else
 			{
 				// Suspend Dinput Service.
-				MainForm.Current.DHelper.Stop();
+				Global.DHelper.Stop();
 				SettingsDataGridView.DataSource = null;
 
 				var result = (SearchResult)e.Result;
@@ -208,7 +208,7 @@ namespace x360ce.App.Controls
 				SettingsDataGridView.DataSource = SettingsManager.UserSettings.Items;
 				// Resume DInput Service.
 				if (MainForm.Current.AllowDHelperStart)
-					MainForm.Current.DHelper.Start();
+					Global.DHelper.Start();
 			}
 			_ParentForm.RemoveTask(TaskName.SearchSettings);
 			SettingsRefreshButton.Enabled = true;

@@ -60,5 +60,18 @@ namespace x360ce.App
 
 		#endregion
 
+		#region Dinput Helper
+
+		public static DInput.DInputHelper DHelper;
+
+		public static void InitDHelperHelper()
+		{
+			// Initialize DInput Helper.
+			DHelper = new DInput.DInputHelper();
+		}
+
+
+		#endregion
+
 	}
 }
