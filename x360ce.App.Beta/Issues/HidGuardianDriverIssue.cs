@@ -15,7 +15,10 @@ namespace x360ce.App.Issues
 
 		public override void CheckTask()
 		{
-			var required = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Virtual);
+			var haveVirtual = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Virtual && x.EnableMask > 0);
+			var haveHidden = SettingsManager.UserDevices.Items.Any(x => x.IsHidden);
+			// HID Guardian is required if virtual emulation is enabled and some devices must be hidden.
+			var required = haveVirtual && haveHidden;
 			if (!required)
 			{
 				SetSeverity(IssueSeverity.None);

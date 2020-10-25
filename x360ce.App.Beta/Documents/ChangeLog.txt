@@ -1,7 +1,8 @@
-v4.16.07.0 (2020-10-26)
+v4.16.07.0 (2020-10-25)
 - Fix: Controller image scaling issue.
 - Fix: Crash when UserDevice list updating.
-- Fix: Issue detector sometimes do start when app starts.
+- Fix: Issue detector sometimes do not start after app starts.
+- Fix: Issue detector was reporting missing HID Guardian when not needed.
 - Fix: Interface freezing during error report.
 - Fix: HID Guardian was not always applying settings.
 - Update: Configure Hid Guardian Automatically option is set to OFF by default now.
