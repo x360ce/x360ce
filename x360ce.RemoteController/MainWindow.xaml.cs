@@ -52,9 +52,8 @@ namespace JocysCom.x360ce.RemoteController
 			{
 				if (_timer != null)
 					return;
-				_timer = new JocysCom.ClassLibrary.HiResTimer();
+				_timer = new JocysCom.ClassLibrary.HiResTimer(2, "MainWindowTimer");
 				_timer.Elapsed += Timer_Elapsed;
-				_timer.Interval = 2;
 				_timer.Start();
 			}
 		}

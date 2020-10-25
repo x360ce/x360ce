@@ -20,20 +20,18 @@ namespace JocysCom.ClassLibrary
 	public class HiResTimer : IDisposable
 	{
 
-
 		/// <summary>
 		/// Initializes a new instance of the HiResTimer.
 		/// </summary>
-		public HiResTimer() { }
-		/// <summary>
-		/// Initializes a new instance of the HiResTimer.
-		/// </summary>
-		public HiResTimer(int interval)
+		public HiResTimer(int interval = 0, string name = null)
 		{
+			Name = name;
 			if (interval <= 0)
 				throw new ArgumentException("Invalid value", nameof(interval));
 			_Interval = interval;
 		}
+
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the Timer raises the Tick event each time the specified

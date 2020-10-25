@@ -36,6 +36,8 @@ namespace x360ce.App.DInput
 						IAsyncResult result;
 						Action action = () =>
 						{
+							// This can hit CPU hard and used for display only.
+							// Do not use when application is minimized. 
 							success = gamePad.GetState(out state);
 						};
 						result = action.BeginInvoke(null, null);

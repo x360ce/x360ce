@@ -80,9 +80,8 @@ namespace x360ce.App.DInput
 				if (_timer != null)
 					return;
 				watch.Restart();
-				_timer = new JocysCom.ClassLibrary.HiResTimer();
+				_timer = new JocysCom.ClassLibrary.HiResTimer((int)Frequency, "DInputHelperTimer");
 				_timer.Elapsed += Timer_Elapsed;
-				_timer.Interval = (int)Frequency;
 				_timer.Start();
 				_AllowThreadToRun = true;
 				RefreshAllAsync();
@@ -173,7 +172,9 @@ namespace x360ce.App.DInput
 				// If game is not selected.
 				if (game != null)
 				{
-					var getXInputStates = SettingsManager.Options.GetXInputStates;
+					// Note: Getting XInput states are not required in order to do emulation.
+					// Get states only when form is maximized in order to reduce CPU usage.
+					var getXInputStates = SettingsManager.Options.GetXInputStates && MainForm.Current.FormEventsEnabled;
 					// Best place to unload XInput DLL is at the start, because
 					// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
 					CheckAndUnloadXInputLibrarry(game, getXInputStates);

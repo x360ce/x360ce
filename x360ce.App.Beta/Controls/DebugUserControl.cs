@@ -20,8 +20,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
-			_TestTimer = new HiResTimer();
-			_TestTimer.Interval = 1;
+			_TestTimer = new HiResTimer(1, "TestTimer");
 			_TestTimer.AutoReset = true;
 			CpuTimer = new System.Timers.Timer();
 			CpuTimer.Interval = 1000;
