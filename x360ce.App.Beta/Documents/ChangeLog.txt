@@ -1,4 +1,5 @@
-v4.15.22.0 (2020-10-24)
+v4.15.23.0 (2020-10-25)
+- Fix: Controller image scaling issue.
 - Fix: Crash when UserDevice list updating.
 - Fix: Issue detector sometimes do start when app starts.
 - Fix: Interface freezing during error report.

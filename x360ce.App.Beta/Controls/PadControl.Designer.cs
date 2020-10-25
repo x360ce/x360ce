@@ -22,7 +22,6 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DirectInputTabPage = new System.Windows.Forms.TabPage();
-			this.DirectInputPanel = new x360ce.App.Controls.DirectInputUserControl();
 			this.AdvancedTabPage = new System.Windows.Forms.TabPage();
 			this.AdvancedOptionsPanel = new System.Windows.Forms.Panel();
 			this.CombineGroupBox = new System.Windows.Forms.GroupBox();
@@ -49,8 +48,6 @@
 			this.GeneralCenterPanel = new System.Windows.Forms.Panel();
 			this.RemapAllButton = new System.Windows.Forms.Button();
 			this.MapNameComboBox = new System.Windows.Forms.ComboBox();
-			this.XboxImageHost = new System.Windows.Forms.Integration.ElementHost();
-			this.XboxImage = new x360ce.App.Controls.XboxImageControl();
 			this.DPadUpLabel = new System.Windows.Forms.Label();
 			this.DPadUpComboBox = new System.Windows.Forms.ComboBox();
 			this.DPadDownLabel = new System.Windows.Forms.Label();
@@ -125,34 +122,14 @@
 			this.ButtonsTabPage = new System.Windows.Forms.TabPage();
 			this.AxisToButtonPanel = new System.Windows.Forms.Panel();
 			this.AxisToButtonGroupBox = new System.Windows.Forms.GroupBox();
-			this.AxisToButtonADeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToDPadRightDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToRightThumbButtonDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToButtonYDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToDPadLeftDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToLeftThumbButtonDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToButtonXDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToDPadDownDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToRightShoulderDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToButtonStartDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToDPadUpDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToLeftShoulderDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToButtonBackDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
-			this.AxisToButtonBDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
 			this.DPadTabPage = new System.Windows.Forms.TabPage();
 			this.DPadPanel = new System.Windows.Forms.Panel();
 			this.TriggersTabPage = new System.Windows.Forms.TabPage();
 			this.TriggersPanel = new System.Windows.Forms.Panel();
-			this.LeftTriggerUserControl = new x360ce.App.Controls.AxisMapUserControl();
-			this.RightTriggerUserControl = new x360ce.App.Controls.AxisMapUserControl();
 			this.LeftStickTabPage = new System.Windows.Forms.TabPage();
 			this.LeftThumbPanel = new System.Windows.Forms.Panel();
-			this.LeftThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
-			this.LeftThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
 			this.RightStickTabPage = new System.Windows.Forms.TabPage();
 			this.RightThumbPanel = new System.Windows.Forms.Panel();
-			this.RightThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
-			this.RightThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
 			this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
 			this.ForceFeedbackPanel = new System.Windows.Forms.Panel();
 			this.InforTextBox = new System.Windows.Forms.TextBox();
@@ -190,8 +167,6 @@
 			this.RightMotorTestTextBox = new System.Windows.Forms.TextBox();
 			this.RightMotorPeriodTextBox = new System.Windows.Forms.TextBox();
 			this.XInputTabPage = new System.Windows.Forms.TabPage();
-			this.XInputHost = new System.Windows.Forms.Integration.ElementHost();
-			this.xInputUserControl1 = new x360ce.App.Controls.XInputUserControl();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.PastePresetButton = new System.Windows.Forms.Button();
@@ -217,6 +192,31 @@
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
 			this.GetXInputStatesCheckBox = new System.Windows.Forms.ToolStripButton();
 			this.DxTweakButton = new System.Windows.Forms.Button();
+			this.XboxImageHost = new System.Windows.Forms.Integration.ElementHost();
+			this.XboxImage = new x360ce.App.Controls.XboxImageControl();
+			this.AxisToButtonADeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToDPadRightDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToRightThumbButtonDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToButtonYDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToDPadLeftDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToLeftThumbButtonDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToButtonXDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToDPadDownDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToRightShoulderDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToButtonStartDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToDPadUpDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToLeftShoulderDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToButtonBackDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.AxisToButtonBDeadZonePanel = new x360ce.App.Controls.AxisToButtonUserControl();
+			this.LeftTriggerUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.RightTriggerUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.LeftThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.LeftThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.RightThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.RightThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.XInputHost = new System.Windows.Forms.Integration.ElementHost();
+			this.xInputUserControl1 = new x360ce.App.Controls.XInputUserControl();
+			this.DirectInputPanel = new x360ce.App.Controls.DirectInputUserControl();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -269,21 +269,13 @@
 			this.DirectInputTabPage.TabIndex = 0;
 			this.DirectInputTabPage.Text = "Direct Input";
 			// 
-			// DirectInputPanel
-			// 
-			this.DirectInputPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.DirectInputPanel.Location = new System.Drawing.Point(3, 3);
-			this.DirectInputPanel.Name = "DirectInputPanel";
-			this.DirectInputPanel.Size = new System.Drawing.Size(746, 432);
-			this.DirectInputPanel.TabIndex = 0;
-			// 
 			// AdvancedTabPage
 			// 
 			this.AdvancedTabPage.Controls.Add(this.AdvancedOptionsPanel);
 			this.AdvancedTabPage.Location = new System.Drawing.Point(4, 22);
 			this.AdvancedTabPage.Name = "AdvancedTabPage";
 			this.AdvancedTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.AdvancedTabPage.Size = new System.Drawing.Size(192, 74);
+			this.AdvancedTabPage.Size = new System.Drawing.Size(752, 438);
 			this.AdvancedTabPage.TabIndex = 0;
 			this.AdvancedTabPage.Text = "Advanced";
 			// 
@@ -294,7 +286,7 @@
 			this.AdvancedOptionsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.AdvancedOptionsPanel.Location = new System.Drawing.Point(3, 3);
 			this.AdvancedOptionsPanel.Name = "AdvancedOptionsPanel";
-			this.AdvancedOptionsPanel.Size = new System.Drawing.Size(186, 68);
+			this.AdvancedOptionsPanel.Size = new System.Drawing.Size(746, 432);
 			this.AdvancedOptionsPanel.TabIndex = 15;
 			// 
 			// CombineGroupBox
@@ -327,7 +319,7 @@
 			this.CombinedIndexLabel.AutoSize = true;
 			this.CombinedIndexLabel.Location = new System.Drawing.Point(7, 49);
 			this.CombinedIndexLabel.Name = "CombinedIndexLabel";
-			this.CombinedIndexLabel.Size = new System.Drawing.Size(72, 13);
+			this.CombinedIndexLabel.Size = new System.Drawing.Size(83, 15);
 			this.CombinedIndexLabel.TabIndex = 6;
 			this.CombinedIndexLabel.Text = "Combine Into:";
 			// 
@@ -336,7 +328,7 @@
 			this.CombinedCheckBox.AutoSize = true;
 			this.CombinedCheckBox.Location = new System.Drawing.Point(6, 21);
 			this.CombinedCheckBox.Name = "CombinedCheckBox";
-			this.CombinedCheckBox.Size = new System.Drawing.Size(132, 17);
+			this.CombinedCheckBox.Size = new System.Drawing.Size(155, 19);
 			this.CombinedCheckBox.TabIndex = 3;
 			this.CombinedCheckBox.Text = "Combine this controller";
 			this.CombinedCheckBox.UseVisualStyleBackColor = true;
@@ -373,7 +365,7 @@
 			this.PassThroughIndexLabel.AutoSize = true;
 			this.PassThroughIndexLabel.Location = new System.Drawing.Point(7, 73);
 			this.PassThroughIndexLabel.Name = "PassThroughIndexLabel";
-			this.PassThroughIndexLabel.Size = new System.Drawing.Size(90, 13);
+			this.PassThroughIndexLabel.Size = new System.Drawing.Size(101, 15);
 			this.PassThroughIndexLabel.TabIndex = 4;
 			this.PassThroughIndexLabel.Text = "Pass Through ID:";
 			// 
@@ -382,7 +374,7 @@
 			this.ForceFeedbackPassThroughCheckBox.AutoSize = true;
 			this.ForceFeedbackPassThroughCheckBox.Location = new System.Drawing.Point(6, 46);
 			this.ForceFeedbackPassThroughCheckBox.Name = "ForceFeedbackPassThroughCheckBox";
-			this.ForceFeedbackPassThroughCheckBox.Size = new System.Drawing.Size(173, 17);
+			this.ForceFeedbackPassThroughCheckBox.Size = new System.Drawing.Size(196, 19);
 			this.ForceFeedbackPassThroughCheckBox.TabIndex = 3;
 			this.ForceFeedbackPassThroughCheckBox.Text = "Force Feedback Pass Through";
 			this.ForceFeedbackPassThroughCheckBox.UseVisualStyleBackColor = true;
@@ -404,7 +396,7 @@
 			this.DeviceSubTypeLabel.AutoSize = true;
 			this.DeviceSubTypeLabel.Location = new System.Drawing.Point(6, 100);
 			this.DeviceSubTypeLabel.Name = "DeviceSubTypeLabel";
-			this.DeviceSubTypeLabel.Size = new System.Drawing.Size(93, 13);
+			this.DeviceSubTypeLabel.Size = new System.Drawing.Size(101, 15);
 			this.DeviceSubTypeLabel.TabIndex = 0;
 			this.DeviceSubTypeLabel.Text = "Device Sub Type:";
 			// 
@@ -413,7 +405,7 @@
 			this.PassThroughCheckBox.AutoSize = true;
 			this.PassThroughCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.PassThroughCheckBox.Name = "PassThroughCheckBox";
-			this.PassThroughCheckBox.Size = new System.Drawing.Size(92, 17);
+			this.PassThroughCheckBox.Size = new System.Drawing.Size(105, 19);
 			this.PassThroughCheckBox.TabIndex = 2;
 			this.PassThroughCheckBox.Text = "Pass Through";
 			this.PassThroughCheckBox.UseVisualStyleBackColor = true;
@@ -432,7 +424,7 @@
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
 			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(0, 125);
+			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(560, 125);
 			this.AxisToDPadGroupBox.TabIndex = 14;
 			this.AxisToDPadGroupBox.TabStop = false;
 			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
@@ -442,7 +434,7 @@
 			this.AxisToDPadEnabledCheckBox.AutoSize = true;
 			this.AxisToDPadEnabledCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.AxisToDPadEnabledCheckBox.Name = "AxisToDPadEnabledCheckBox";
-			this.AxisToDPadEnabledCheckBox.Size = new System.Drawing.Size(65, 17);
+			this.AxisToDPadEnabledCheckBox.Size = new System.Drawing.Size(75, 19);
 			this.AxisToDPadEnabledCheckBox.TabIndex = 14;
 			this.AxisToDPadEnabledCheckBox.Text = "Enabled";
 			this.AxisToDPadEnabledCheckBox.UseVisualStyleBackColor = true;
@@ -486,7 +478,7 @@
 			this.OffsetLabel.AutoSize = true;
 			this.OffsetLabel.Location = new System.Drawing.Point(87, 71);
 			this.OffsetLabel.Name = "OffsetLabel";
-			this.OffsetLabel.Size = new System.Drawing.Size(35, 13);
+			this.OffsetLabel.Size = new System.Drawing.Size(38, 15);
 			this.OffsetLabel.TabIndex = 0;
 			this.OffsetLabel.Text = "Offset";
 			// 
@@ -495,7 +487,7 @@
 			this.DeadZoneLabel.AutoSize = true;
 			this.DeadZoneLabel.Location = new System.Drawing.Point(87, 20);
 			this.DeadZoneLabel.Name = "DeadZoneLabel";
-			this.DeadZoneLabel.Size = new System.Drawing.Size(61, 13);
+			this.DeadZoneLabel.Size = new System.Drawing.Size(68, 15);
 			this.DeadZoneLabel.TabIndex = 0;
 			this.DeadZoneLabel.Text = "Dead Zone";
 			// 
@@ -584,21 +576,12 @@
 			this.MapNameComboBox.TabIndex = 47;
 			this.MapNameComboBox.SelectedIndexChanged += new System.EventHandler(this.MapNameComboBox_SelectedIndexChanged);
 			// 
-			// XboxImageHost
-			// 
-			this.XboxImageHost.Location = new System.Drawing.Point(3, 30);
-			this.XboxImageHost.Name = "XboxImageHost";
-			this.XboxImageHost.Size = new System.Drawing.Size(256, 289);
-			this.XboxImageHost.TabIndex = 28;
-			this.XboxImageHost.Text = "XboxImageHost";
-			this.XboxImageHost.Child = this.XboxImage;
-			// 
 			// DPadUpLabel
 			// 
 			this.DPadUpLabel.AutoSize = true;
 			this.DPadUpLabel.Location = new System.Drawing.Point(168, 326);
 			this.DPadUpLabel.Name = "DPadUpLabel";
-			this.DPadUpLabel.Size = new System.Drawing.Size(54, 13);
+			this.DPadUpLabel.Size = new System.Drawing.Size(61, 15);
 			this.DPadUpLabel.TabIndex = 0;
 			this.DPadUpLabel.Text = "D-Pad Up";
 			// 
@@ -617,7 +600,7 @@
 			this.DPadDownLabel.AutoSize = true;
 			this.DPadDownLabel.Location = new System.Drawing.Point(168, 407);
 			this.DPadDownLabel.Name = "DPadDownLabel";
-			this.DPadDownLabel.Size = new System.Drawing.Size(68, 13);
+			this.DPadDownLabel.Size = new System.Drawing.Size(77, 15);
 			this.DPadDownLabel.TabIndex = 0;
 			this.DPadDownLabel.Text = "D-Pad Down";
 			// 
@@ -636,7 +619,7 @@
 			this.DPadRightLabel.AutoSize = true;
 			this.DPadRightLabel.Location = new System.Drawing.Point(168, 380);
 			this.DPadRightLabel.Name = "DPadRightLabel";
-			this.DPadRightLabel.Size = new System.Drawing.Size(65, 13);
+			this.DPadRightLabel.Size = new System.Drawing.Size(74, 15);
 			this.DPadRightLabel.TabIndex = 0;
 			this.DPadRightLabel.Text = "D-Pad Right";
 			// 
@@ -655,7 +638,7 @@
 			this.DPadLeftLabel.AutoSize = true;
 			this.DPadLeftLabel.Location = new System.Drawing.Point(168, 353);
 			this.DPadLeftLabel.Name = "DPadLeftLabel";
-			this.DPadLeftLabel.Size = new System.Drawing.Size(58, 13);
+			this.DPadLeftLabel.Size = new System.Drawing.Size(65, 15);
 			this.DPadLeftLabel.TabIndex = 0;
 			this.DPadLeftLabel.Text = "D-Pad Left";
 			// 
@@ -732,7 +715,7 @@
 			this.LeftThumbButtonLabel.AutoSize = true;
 			this.LeftThumbButtonLabel.Location = new System.Drawing.Point(105, 274);
 			this.LeftThumbButtonLabel.Name = "LeftThumbButtonLabel";
-			this.LeftThumbButtonLabel.Size = new System.Drawing.Size(65, 13);
+			this.LeftThumbButtonLabel.Size = new System.Drawing.Size(71, 15);
 			this.LeftThumbButtonLabel.TabIndex = 0;
 			this.LeftThumbButtonLabel.Text = "Stick Button";
 			// 
@@ -751,7 +734,7 @@
 			this.LeftTriggerLabel.AutoSize = true;
 			this.LeftTriggerLabel.Location = new System.Drawing.Point(105, 32);
 			this.LeftTriggerLabel.Name = "LeftTriggerLabel";
-			this.LeftTriggerLabel.Size = new System.Drawing.Size(40, 13);
+			this.LeftTriggerLabel.Size = new System.Drawing.Size(46, 15);
 			this.LeftTriggerLabel.TabIndex = 0;
 			this.LeftTriggerLabel.Text = "&Trigger";
 			// 
@@ -761,7 +744,7 @@
 			this.LeftLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
 			this.LeftLabel.Location = new System.Drawing.Point(105, 6);
 			this.LeftLabel.Name = "LeftLabel";
-			this.LeftLabel.Size = new System.Drawing.Size(33, 13);
+			this.LeftLabel.Size = new System.Drawing.Size(36, 15);
 			this.LeftLabel.TabIndex = 0;
 			this.LeftLabel.Text = "LEFT";
 			// 
@@ -780,7 +763,7 @@
 			this.LeftShoulderLabel.AutoSize = true;
 			this.LeftShoulderLabel.Location = new System.Drawing.Point(105, 59);
 			this.LeftShoulderLabel.Name = "LeftShoulderLabel";
-			this.LeftShoulderLabel.Size = new System.Drawing.Size(43, 13);
+			this.LeftShoulderLabel.Size = new System.Drawing.Size(51, 15);
 			this.LeftShoulderLabel.TabIndex = 0;
 			this.LeftShoulderLabel.Text = "Bumper";
 			// 
@@ -799,7 +782,7 @@
 			this.LeftThumbAxisYLabel.AutoSize = true;
 			this.LeftThumbAxisYLabel.Location = new System.Drawing.Point(105, 247);
 			this.LeftThumbAxisYLabel.Name = "LeftThumbAxisYLabel";
-			this.LeftThumbAxisYLabel.Size = new System.Drawing.Size(63, 13);
+			this.LeftThumbAxisYLabel.Size = new System.Drawing.Size(68, 15);
 			this.LeftThumbAxisYLabel.TabIndex = 0;
 			this.LeftThumbAxisYLabel.Text = "Stick Axis Y";
 			// 
@@ -818,7 +801,7 @@
 			this.ButtonBackLabel.AutoSize = true;
 			this.ButtonBackLabel.Location = new System.Drawing.Point(105, 86);
 			this.ButtonBackLabel.Name = "ButtonBackLabel";
-			this.ButtonBackLabel.Size = new System.Drawing.Size(32, 13);
+			this.ButtonBackLabel.Size = new System.Drawing.Size(34, 15);
 			this.ButtonBackLabel.TabIndex = 0;
 			this.ButtonBackLabel.Text = "Back";
 			// 
@@ -837,7 +820,7 @@
 			this.DPadLabel.AutoSize = true;
 			this.DPadLabel.Location = new System.Drawing.Point(105, 167);
 			this.DPadLabel.Name = "DPadLabel";
-			this.DPadLabel.Size = new System.Drawing.Size(37, 13);
+			this.DPadLabel.Size = new System.Drawing.Size(42, 15);
 			this.DPadLabel.TabIndex = 0;
 			this.DPadLabel.Text = "D-Pad";
 			// 
@@ -846,7 +829,7 @@
 			this.LeftThumbDownLabel.AutoSize = true;
 			this.LeftThumbDownLabel.Location = new System.Drawing.Point(105, 407);
 			this.LeftThumbDownLabel.Name = "LeftThumbDownLabel";
-			this.LeftThumbDownLabel.Size = new System.Drawing.Size(62, 13);
+			this.LeftThumbDownLabel.Size = new System.Drawing.Size(68, 15);
 			this.LeftThumbDownLabel.TabIndex = 0;
 			this.LeftThumbDownLabel.Text = "Stick Down";
 			this.LeftThumbDownLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -856,7 +839,7 @@
 			this.ButtonStartLabel.AutoSize = true;
 			this.ButtonStartLabel.Location = new System.Drawing.Point(105, 113);
 			this.ButtonStartLabel.Name = "ButtonStartLabel";
-			this.ButtonStartLabel.Size = new System.Drawing.Size(29, 13);
+			this.ButtonStartLabel.Size = new System.Drawing.Size(32, 15);
 			this.ButtonStartLabel.TabIndex = 0;
 			this.ButtonStartLabel.Text = "Start";
 			// 
@@ -865,7 +848,7 @@
 			this.LeftThumbUpLabel.AutoSize = true;
 			this.LeftThumbUpLabel.Location = new System.Drawing.Point(105, 326);
 			this.LeftThumbUpLabel.Name = "LeftThumbUpLabel";
-			this.LeftThumbUpLabel.Size = new System.Drawing.Size(48, 13);
+			this.LeftThumbUpLabel.Size = new System.Drawing.Size(52, 15);
 			this.LeftThumbUpLabel.TabIndex = 0;
 			this.LeftThumbUpLabel.Text = "Stick Up";
 			this.LeftThumbUpLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -875,7 +858,7 @@
 			this.ButtonGuideLabel.AutoSize = true;
 			this.ButtonGuideLabel.Location = new System.Drawing.Point(105, 140);
 			this.ButtonGuideLabel.Name = "ButtonGuideLabel";
-			this.ButtonGuideLabel.Size = new System.Drawing.Size(35, 13);
+			this.ButtonGuideLabel.Size = new System.Drawing.Size(40, 15);
 			this.ButtonGuideLabel.TabIndex = 0;
 			this.ButtonGuideLabel.Text = "Guide";
 			// 
@@ -884,7 +867,7 @@
 			this.LeftThumbRightLabel.AutoSize = true;
 			this.LeftThumbRightLabel.Location = new System.Drawing.Point(105, 380);
 			this.LeftThumbRightLabel.Name = "LeftThumbRightLabel";
-			this.LeftThumbRightLabel.Size = new System.Drawing.Size(59, 13);
+			this.LeftThumbRightLabel.Size = new System.Drawing.Size(65, 15);
 			this.LeftThumbRightLabel.TabIndex = 0;
 			this.LeftThumbRightLabel.Text = "Stick Right";
 			this.LeftThumbRightLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -904,7 +887,7 @@
 			this.LeftThumbLeftLabel.AutoSize = true;
 			this.LeftThumbLeftLabel.Location = new System.Drawing.Point(105, 353);
 			this.LeftThumbLeftLabel.Name = "LeftThumbLeftLabel";
-			this.LeftThumbLeftLabel.Size = new System.Drawing.Size(52, 13);
+			this.LeftThumbLeftLabel.Size = new System.Drawing.Size(56, 15);
 			this.LeftThumbLeftLabel.TabIndex = 0;
 			this.LeftThumbLeftLabel.Text = "Stick Left";
 			this.LeftThumbLeftLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -985,7 +968,7 @@
 			this.LeftThumbAxisXLabel.AutoSize = true;
 			this.LeftThumbAxisXLabel.Location = new System.Drawing.Point(105, 220);
 			this.LeftThumbAxisXLabel.Name = "LeftThumbAxisXLabel";
-			this.LeftThumbAxisXLabel.Size = new System.Drawing.Size(63, 13);
+			this.LeftThumbAxisXLabel.Size = new System.Drawing.Size(69, 15);
 			this.LeftThumbAxisXLabel.TabIndex = 0;
 			this.LeftThumbAxisXLabel.Text = "Stick Axis X";
 			// 
@@ -1066,7 +1049,7 @@
 			this.RightThumbButtonLabel.AutoSize = true;
 			this.RightThumbButtonLabel.Location = new System.Drawing.Point(11, 274);
 			this.RightThumbButtonLabel.Name = "RightThumbButtonLabel";
-			this.RightThumbButtonLabel.Size = new System.Drawing.Size(65, 13);
+			this.RightThumbButtonLabel.Size = new System.Drawing.Size(71, 15);
 			this.RightThumbButtonLabel.TabIndex = 0;
 			this.RightThumbButtonLabel.Text = "Stick Button";
 			// 
@@ -1077,7 +1060,7 @@
 			this.RightLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
 			this.RightLabel.Location = new System.Drawing.Point(10, 6);
 			this.RightLabel.Name = "RightLabel";
-			this.RightLabel.Size = new System.Drawing.Size(41, 13);
+			this.RightLabel.Size = new System.Drawing.Size(44, 15);
 			this.RightLabel.TabIndex = 0;
 			this.RightLabel.Text = "RIGHT";
 			// 
@@ -1087,7 +1070,7 @@
 			this.ButtonYLabel.AutoSize = true;
 			this.ButtonYLabel.Location = new System.Drawing.Point(11, 86);
 			this.ButtonYLabel.Name = "ButtonYLabel";
-			this.ButtonYLabel.Size = new System.Drawing.Size(48, 13);
+			this.ButtonYLabel.Size = new System.Drawing.Size(52, 15);
 			this.ButtonYLabel.TabIndex = 0;
 			this.ButtonYLabel.Text = "Y Button";
 			// 
@@ -1097,7 +1080,7 @@
 			this.RightThumbAxisYLabel.AutoSize = true;
 			this.RightThumbAxisYLabel.Location = new System.Drawing.Point(11, 247);
 			this.RightThumbAxisYLabel.Name = "RightThumbAxisYLabel";
-			this.RightThumbAxisYLabel.Size = new System.Drawing.Size(63, 13);
+			this.RightThumbAxisYLabel.Size = new System.Drawing.Size(68, 15);
 			this.RightThumbAxisYLabel.TabIndex = 0;
 			this.RightThumbAxisYLabel.Text = "Stick Axis Y";
 			// 
@@ -1118,7 +1101,7 @@
 			this.ButtonBLabel.AutoSize = true;
 			this.ButtonBLabel.Location = new System.Drawing.Point(11, 140);
 			this.ButtonBLabel.Name = "ButtonBLabel";
-			this.ButtonBLabel.Size = new System.Drawing.Size(48, 13);
+			this.ButtonBLabel.Size = new System.Drawing.Size(53, 15);
 			this.ButtonBLabel.TabIndex = 0;
 			this.ButtonBLabel.Text = "B Button";
 			// 
@@ -1172,7 +1155,7 @@
 			this.RightShoulderLabel.AutoSize = true;
 			this.RightShoulderLabel.Location = new System.Drawing.Point(11, 57);
 			this.RightShoulderLabel.Name = "RightShoulderLabel";
-			this.RightShoulderLabel.Size = new System.Drawing.Size(43, 13);
+			this.RightShoulderLabel.Size = new System.Drawing.Size(51, 15);
 			this.RightShoulderLabel.TabIndex = 0;
 			this.RightShoulderLabel.Text = "Bumper";
 			// 
@@ -1193,7 +1176,7 @@
 			this.ButtonXLabel.AutoSize = true;
 			this.ButtonXLabel.Location = new System.Drawing.Point(11, 113);
 			this.ButtonXLabel.Name = "ButtonXLabel";
-			this.ButtonXLabel.Size = new System.Drawing.Size(48, 13);
+			this.ButtonXLabel.Size = new System.Drawing.Size(53, 15);
 			this.ButtonXLabel.TabIndex = 0;
 			this.ButtonXLabel.Text = "X Button";
 			// 
@@ -1214,7 +1197,7 @@
 			this.RightThumbAxisXLabel.AutoSize = true;
 			this.RightThumbAxisXLabel.Location = new System.Drawing.Point(11, 220);
 			this.RightThumbAxisXLabel.Name = "RightThumbAxisXLabel";
-			this.RightThumbAxisXLabel.Size = new System.Drawing.Size(63, 13);
+			this.RightThumbAxisXLabel.Size = new System.Drawing.Size(69, 15);
 			this.RightThumbAxisXLabel.TabIndex = 0;
 			this.RightThumbAxisXLabel.Text = "Stick Axis X";
 			// 
@@ -1235,7 +1218,7 @@
 			this.RightThumbDownLabel.AutoSize = true;
 			this.RightThumbDownLabel.Location = new System.Drawing.Point(11, 407);
 			this.RightThumbDownLabel.Name = "RightThumbDownLabel";
-			this.RightThumbDownLabel.Size = new System.Drawing.Size(62, 13);
+			this.RightThumbDownLabel.Size = new System.Drawing.Size(68, 15);
 			this.RightThumbDownLabel.TabIndex = 0;
 			this.RightThumbDownLabel.Text = "Stick Down";
 			this.RightThumbDownLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1257,7 +1240,7 @@
 			this.RightTriggerLabel.AutoSize = true;
 			this.RightTriggerLabel.Location = new System.Drawing.Point(10, 30);
 			this.RightTriggerLabel.Name = "RightTriggerLabel";
-			this.RightTriggerLabel.Size = new System.Drawing.Size(40, 13);
+			this.RightTriggerLabel.Size = new System.Drawing.Size(46, 15);
 			this.RightTriggerLabel.TabIndex = 0;
 			this.RightTriggerLabel.Text = "Trigger";
 			// 
@@ -1278,7 +1261,7 @@
 			this.RightThumbUpLabel.AutoSize = true;
 			this.RightThumbUpLabel.Location = new System.Drawing.Point(11, 326);
 			this.RightThumbUpLabel.Name = "RightThumbUpLabel";
-			this.RightThumbUpLabel.Size = new System.Drawing.Size(48, 13);
+			this.RightThumbUpLabel.Size = new System.Drawing.Size(52, 15);
 			this.RightThumbUpLabel.TabIndex = 0;
 			this.RightThumbUpLabel.Text = "Stick Up";
 			this.RightThumbUpLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1289,7 +1272,7 @@
 			this.ButtonALabel.AutoSize = true;
 			this.ButtonALabel.Location = new System.Drawing.Point(11, 167);
 			this.ButtonALabel.Name = "ButtonALabel";
-			this.ButtonALabel.Size = new System.Drawing.Size(48, 13);
+			this.ButtonALabel.Size = new System.Drawing.Size(52, 15);
 			this.ButtonALabel.TabIndex = 0;
 			this.ButtonALabel.Text = "A Button";
 			// 
@@ -1310,7 +1293,7 @@
 			this.RightThumbRightLabel.AutoSize = true;
 			this.RightThumbRightLabel.Location = new System.Drawing.Point(11, 380);
 			this.RightThumbRightLabel.Name = "RightThumbRightLabel";
-			this.RightThumbRightLabel.Size = new System.Drawing.Size(59, 13);
+			this.RightThumbRightLabel.Size = new System.Drawing.Size(65, 15);
 			this.RightThumbRightLabel.TabIndex = 0;
 			this.RightThumbRightLabel.Text = "Stick Right";
 			this.RightThumbRightLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1333,7 +1316,7 @@
 			this.RightThumbLeftLabel.AutoSize = true;
 			this.RightThumbLeftLabel.Location = new System.Drawing.Point(11, 353);
 			this.RightThumbLeftLabel.Name = "RightThumbLeftLabel";
-			this.RightThumbLeftLabel.Size = new System.Drawing.Size(52, 13);
+			this.RightThumbLeftLabel.Size = new System.Drawing.Size(56, 15);
 			this.RightThumbLeftLabel.TabIndex = 0;
 			this.RightThumbLeftLabel.Text = "Stick Left";
 			this.RightThumbLeftLabel.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -1384,7 +1367,7 @@
 			this.ButtonsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.ButtonsTabPage.Name = "ButtonsTabPage";
 			this.ButtonsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ButtonsTabPage.Size = new System.Drawing.Size(192, 74);
+			this.ButtonsTabPage.Size = new System.Drawing.Size(752, 438);
 			this.ButtonsTabPage.TabIndex = 3;
 			this.ButtonsTabPage.Text = "Buttons";
 			// 
@@ -1395,7 +1378,7 @@
 			this.AxisToButtonPanel.Dock = System.Windows.Forms.DockStyle.Top;
 			this.AxisToButtonPanel.Location = new System.Drawing.Point(3, 3);
 			this.AxisToButtonPanel.Name = "AxisToButtonPanel";
-			this.AxisToButtonPanel.Size = new System.Drawing.Size(186, 486);
+			this.AxisToButtonPanel.Size = new System.Drawing.Size(746, 486);
 			this.AxisToButtonPanel.TabIndex = 1;
 			// 
 			// AxisToButtonGroupBox
@@ -1418,145 +1401,19 @@
 			this.AxisToButtonGroupBox.Controls.Add(this.AxisToButtonBDeadZonePanel);
 			this.AxisToButtonGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.AxisToButtonGroupBox.Name = "AxisToButtonGroupBox";
-			this.AxisToButtonGroupBox.Size = new System.Drawing.Size(180, 430);
+			this.AxisToButtonGroupBox.Size = new System.Drawing.Size(740, 430);
 			this.AxisToButtonGroupBox.TabIndex = 3;
 			this.AxisToButtonGroupBox.TabStop = false;
 			this.AxisToButtonGroupBox.Text = "DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):";
-			// 
-			// AxisToButtonADeadZonePanel
-			// 
-			this.AxisToButtonADeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.A;
-			this.AxisToButtonADeadZonePanel.Location = new System.Drawing.Point(6, 19);
-			this.AxisToButtonADeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToButtonADeadZonePanel.Name = "AxisToButtonADeadZonePanel";
-			this.AxisToButtonADeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToButtonADeadZonePanel.TabIndex = 0;
-			// 
-			// AxisToDPadRightDeadZonePanel
-			// 
-			this.AxisToDPadRightDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.DPadRight;
-			this.AxisToDPadRightDeadZonePanel.Location = new System.Drawing.Point(6, 396);
-			this.AxisToDPadRightDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToDPadRightDeadZonePanel.Name = "AxisToDPadRightDeadZonePanel";
-			this.AxisToDPadRightDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToDPadRightDeadZonePanel.TabIndex = 2;
-			// 
-			// AxisToRightThumbButtonDeadZonePanel
-			// 
-			this.AxisToRightThumbButtonDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.RightThumb;
-			this.AxisToRightThumbButtonDeadZonePanel.Location = new System.Drawing.Point(6, 280);
-			this.AxisToRightThumbButtonDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToRightThumbButtonDeadZonePanel.Name = "AxisToRightThumbButtonDeadZonePanel";
-			this.AxisToRightThumbButtonDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToRightThumbButtonDeadZonePanel.TabIndex = 2;
-			// 
-			// AxisToButtonYDeadZonePanel
-			// 
-			this.AxisToButtonYDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.Y;
-			this.AxisToButtonYDeadZonePanel.Location = new System.Drawing.Point(6, 106);
-			this.AxisToButtonYDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToButtonYDeadZonePanel.Name = "AxisToButtonYDeadZonePanel";
-			this.AxisToButtonYDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToButtonYDeadZonePanel.TabIndex = 0;
-			// 
-			// AxisToDPadLeftDeadZonePanel
-			// 
-			this.AxisToDPadLeftDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.DPadLeft;
-			this.AxisToDPadLeftDeadZonePanel.Location = new System.Drawing.Point(6, 367);
-			this.AxisToDPadLeftDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToDPadLeftDeadZonePanel.Name = "AxisToDPadLeftDeadZonePanel";
-			this.AxisToDPadLeftDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToDPadLeftDeadZonePanel.TabIndex = 2;
-			// 
-			// AxisToLeftThumbButtonDeadZonePanel
-			// 
-			this.AxisToLeftThumbButtonDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.LeftThumb;
-			this.AxisToLeftThumbButtonDeadZonePanel.Location = new System.Drawing.Point(6, 251);
-			this.AxisToLeftThumbButtonDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToLeftThumbButtonDeadZonePanel.Name = "AxisToLeftThumbButtonDeadZonePanel";
-			this.AxisToLeftThumbButtonDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToLeftThumbButtonDeadZonePanel.TabIndex = 2;
-			// 
-			// AxisToButtonXDeadZonePanel
-			// 
-			this.AxisToButtonXDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.X;
-			this.AxisToButtonXDeadZonePanel.Location = new System.Drawing.Point(6, 77);
-			this.AxisToButtonXDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToButtonXDeadZonePanel.Name = "AxisToButtonXDeadZonePanel";
-			this.AxisToButtonXDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToButtonXDeadZonePanel.TabIndex = 0;
-			// 
-			// AxisToDPadDownDeadZonePanel
-			// 
-			this.AxisToDPadDownDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.DPadDown;
-			this.AxisToDPadDownDeadZonePanel.Location = new System.Drawing.Point(6, 338);
-			this.AxisToDPadDownDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToDPadDownDeadZonePanel.Name = "AxisToDPadDownDeadZonePanel";
-			this.AxisToDPadDownDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToDPadDownDeadZonePanel.TabIndex = 1;
-			// 
-			// AxisToRightShoulderDeadZonePanel
-			// 
-			this.AxisToRightShoulderDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.RightShoulder;
-			this.AxisToRightShoulderDeadZonePanel.Location = new System.Drawing.Point(6, 164);
-			this.AxisToRightShoulderDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToRightShoulderDeadZonePanel.Name = "AxisToRightShoulderDeadZonePanel";
-			this.AxisToRightShoulderDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToRightShoulderDeadZonePanel.TabIndex = 1;
-			// 
-			// AxisToButtonStartDeadZonePanel
-			// 
-			this.AxisToButtonStartDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.Start;
-			this.AxisToButtonStartDeadZonePanel.Location = new System.Drawing.Point(6, 222);
-			this.AxisToButtonStartDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToButtonStartDeadZonePanel.Name = "AxisToButtonStartDeadZonePanel";
-			this.AxisToButtonStartDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToButtonStartDeadZonePanel.TabIndex = 0;
-			// 
-			// AxisToDPadUpDeadZonePanel
-			// 
-			this.AxisToDPadUpDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.DPadUp;
-			this.AxisToDPadUpDeadZonePanel.Location = new System.Drawing.Point(6, 309);
-			this.AxisToDPadUpDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToDPadUpDeadZonePanel.Name = "AxisToDPadUpDeadZonePanel";
-			this.AxisToDPadUpDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToDPadUpDeadZonePanel.TabIndex = 0;
-			// 
-			// AxisToLeftShoulderDeadZonePanel
-			// 
-			this.AxisToLeftShoulderDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.LeftShoulder;
-			this.AxisToLeftShoulderDeadZonePanel.Location = new System.Drawing.Point(6, 135);
-			this.AxisToLeftShoulderDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToLeftShoulderDeadZonePanel.Name = "AxisToLeftShoulderDeadZonePanel";
-			this.AxisToLeftShoulderDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToLeftShoulderDeadZonePanel.TabIndex = 0;
-			// 
-			// AxisToButtonBackDeadZonePanel
-			// 
-			this.AxisToButtonBackDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.Back;
-			this.AxisToButtonBackDeadZonePanel.Location = new System.Drawing.Point(6, 193);
-			this.AxisToButtonBackDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToButtonBackDeadZonePanel.Name = "AxisToButtonBackDeadZonePanel";
-			this.AxisToButtonBackDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToButtonBackDeadZonePanel.TabIndex = 0;
-			// 
-			// AxisToButtonBDeadZonePanel
-			// 
-			this.AxisToButtonBDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.B;
-			this.AxisToButtonBDeadZonePanel.Location = new System.Drawing.Point(6, 48);
-			this.AxisToButtonBDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
-			this.AxisToButtonBDeadZonePanel.Name = "AxisToButtonBDeadZonePanel";
-			this.AxisToButtonBDeadZonePanel.Size = new System.Drawing.Size(562, 28);
-			this.AxisToButtonBDeadZonePanel.TabIndex = 0;
 			// 
 			// DPadTabPage
 			// 
 			this.DPadTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.DPadTabPage.Controls.Add(this.DPadPanel);
-			this.DPadTabPage.Location = new System.Drawing.Point(4, 40);
+			this.DPadTabPage.Location = new System.Drawing.Point(4, 22);
 			this.DPadTabPage.Name = "DPadTabPage";
 			this.DPadTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.DPadTabPage.Size = new System.Drawing.Size(192, 56);
+			this.DPadTabPage.Size = new System.Drawing.Size(752, 438);
 			this.DPadTabPage.TabIndex = 5;
 			this.DPadTabPage.Text = "D-Pad";
 			// 
@@ -1566,17 +1423,17 @@
 			this.DPadPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DPadPanel.Location = new System.Drawing.Point(3, 3);
 			this.DPadPanel.Name = "DPadPanel";
-			this.DPadPanel.Size = new System.Drawing.Size(186, 50);
+			this.DPadPanel.Size = new System.Drawing.Size(746, 432);
 			this.DPadPanel.TabIndex = 0;
 			// 
 			// TriggersTabPage
 			// 
 			this.TriggersTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.TriggersTabPage.Controls.Add(this.TriggersPanel);
-			this.TriggersTabPage.Location = new System.Drawing.Point(4, 40);
+			this.TriggersTabPage.Location = new System.Drawing.Point(4, 22);
 			this.TriggersTabPage.Name = "TriggersTabPage";
 			this.TriggersTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.TriggersTabPage.Size = new System.Drawing.Size(192, 56);
+			this.TriggersTabPage.Size = new System.Drawing.Size(752, 438);
 			this.TriggersTabPage.TabIndex = 4;
 			this.TriggersTabPage.Text = "Triggers";
 			// 
@@ -1587,39 +1444,17 @@
 			this.TriggersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.TriggersPanel.Location = new System.Drawing.Point(3, 3);
 			this.TriggersPanel.Name = "TriggersPanel";
-			this.TriggersPanel.Size = new System.Drawing.Size(186, 50);
+			this.TriggersPanel.Size = new System.Drawing.Size(746, 432);
 			this.TriggersPanel.TabIndex = 3;
-			// 
-			// LeftTriggerUserControl
-			// 
-			this.LeftTriggerUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.LeftTriggerUserControl.HeaderText = "Left Trigger";
-			this.LeftTriggerUserControl.Location = new System.Drawing.Point(3, 3);
-			this.LeftTriggerUserControl.Name = "LeftTriggerUserControl";
-			this.LeftTriggerUserControl.Size = new System.Drawing.Size(180, 193);
-			this.LeftTriggerUserControl.TabIndex = 1;
-			this.LeftTriggerUserControl.TargetType = x360ce.Engine.TargetType.LeftTrigger;
-			// 
-			// RightTriggerUserControl
-			// 
-			this.RightTriggerUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.RightTriggerUserControl.HeaderText = "RightTrigger";
-			this.RightTriggerUserControl.Location = new System.Drawing.Point(3, 202);
-			this.RightTriggerUserControl.Name = "RightTriggerUserControl";
-			this.RightTriggerUserControl.Size = new System.Drawing.Size(180, 193);
-			this.RightTriggerUserControl.TabIndex = 2;
-			this.RightTriggerUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger)));
 			// 
 			// LeftStickTabPage
 			// 
 			this.LeftStickTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.LeftStickTabPage.Controls.Add(this.LeftThumbPanel);
-			this.LeftStickTabPage.Location = new System.Drawing.Point(4, 40);
+			this.LeftStickTabPage.Location = new System.Drawing.Point(4, 22);
 			this.LeftStickTabPage.Name = "LeftStickTabPage";
 			this.LeftStickTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.LeftStickTabPage.Size = new System.Drawing.Size(192, 56);
+			this.LeftStickTabPage.Size = new System.Drawing.Size(752, 438);
 			this.LeftStickTabPage.TabIndex = 1;
 			this.LeftStickTabPage.Text = "Left Stick";
 			// 
@@ -1630,39 +1465,17 @@
 			this.LeftThumbPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LeftThumbPanel.Location = new System.Drawing.Point(3, 3);
 			this.LeftThumbPanel.Name = "LeftThumbPanel";
-			this.LeftThumbPanel.Size = new System.Drawing.Size(186, 50);
+			this.LeftThumbPanel.Size = new System.Drawing.Size(746, 432);
 			this.LeftThumbPanel.TabIndex = 1;
-			// 
-			// LeftThumbXUserControl
-			// 
-			this.LeftThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.LeftThumbXUserControl.HeaderText = "X - Horizontal Axis";
-			this.LeftThumbXUserControl.Location = new System.Drawing.Point(3, 3);
-			this.LeftThumbXUserControl.Name = "LeftThumbXUserControl";
-			this.LeftThumbXUserControl.Size = new System.Drawing.Size(180, 193);
-			this.LeftThumbXUserControl.TabIndex = 0;
-			this.LeftThumbXUserControl.TargetType = x360ce.Engine.TargetType.LeftThumbX;
-			// 
-			// LeftThumbYUserControl
-			// 
-			this.LeftThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.LeftThumbYUserControl.HeaderText = "Y - Vertical Axis";
-			this.LeftThumbYUserControl.Location = new System.Drawing.Point(3, 202);
-			this.LeftThumbYUserControl.Name = "LeftThumbYUserControl";
-			this.LeftThumbYUserControl.Size = new System.Drawing.Size(180, 193);
-			this.LeftThumbYUserControl.TabIndex = 0;
-			this.LeftThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftThumbX)));
 			// 
 			// RightStickTabPage
 			// 
 			this.RightStickTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.RightStickTabPage.Controls.Add(this.RightThumbPanel);
-			this.RightStickTabPage.Location = new System.Drawing.Point(4, 58);
+			this.RightStickTabPage.Location = new System.Drawing.Point(4, 22);
 			this.RightStickTabPage.Name = "RightStickTabPage";
 			this.RightStickTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.RightStickTabPage.Size = new System.Drawing.Size(192, 38);
+			this.RightStickTabPage.Size = new System.Drawing.Size(752, 438);
 			this.RightStickTabPage.TabIndex = 2;
 			this.RightStickTabPage.Text = "Right Stick";
 			// 
@@ -1673,40 +1486,17 @@
 			this.RightThumbPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.RightThumbPanel.Location = new System.Drawing.Point(3, 3);
 			this.RightThumbPanel.Name = "RightThumbPanel";
-			this.RightThumbPanel.Size = new System.Drawing.Size(186, 32);
+			this.RightThumbPanel.Size = new System.Drawing.Size(746, 432);
 			this.RightThumbPanel.TabIndex = 1;
-			// 
-			// RightThumbXUserControl
-			// 
-			this.RightThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.RightThumbXUserControl.HeaderText = "X - Horizontal Axis";
-			this.RightThumbXUserControl.Location = new System.Drawing.Point(3, 3);
-			this.RightThumbXUserControl.Name = "RightThumbXUserControl";
-			this.RightThumbXUserControl.Size = new System.Drawing.Size(180, 193);
-			this.RightThumbXUserControl.TabIndex = 0;
-			this.RightThumbXUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.LeftTrigger | x360ce.Engine.TargetType.LeftThumbX)));
-			// 
-			// RightThumbYUserControl
-			// 
-			this.RightThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.RightThumbYUserControl.HeaderText = "Y - Vertical Axis";
-			this.RightThumbYUserControl.Location = new System.Drawing.Point(3, 202);
-			this.RightThumbYUserControl.Name = "RightThumbYUserControl";
-			this.RightThumbYUserControl.Size = new System.Drawing.Size(180, 193);
-			this.RightThumbYUserControl.TabIndex = 0;
-			this.RightThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)(((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger) 
-            | x360ce.Engine.TargetType.LeftThumbX)));
 			// 
 			// ForceFeedbackTabPage
 			// 
 			this.ForceFeedbackTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.ForceFeedbackTabPage.Controls.Add(this.ForceFeedbackPanel);
-			this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 58);
+			this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 22);
 			this.ForceFeedbackTabPage.Name = "ForceFeedbackTabPage";
 			this.ForceFeedbackTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(192, 38);
+			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(752, 438);
 			this.ForceFeedbackTabPage.TabIndex = 0;
 			this.ForceFeedbackTabPage.Text = "Force Feedback";
 			// 
@@ -1720,18 +1510,18 @@
 			this.ForceFeedbackPanel.Location = new System.Drawing.Point(3, 3);
 			this.ForceFeedbackPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ForceFeedbackPanel.Name = "ForceFeedbackPanel";
-			this.ForceFeedbackPanel.Size = new System.Drawing.Size(186, 32);
+			this.ForceFeedbackPanel.Size = new System.Drawing.Size(746, 432);
 			this.ForceFeedbackPanel.TabIndex = 11;
 			// 
 			// InforTextBox
 			// 
 			this.InforTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.InforTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.InforTextBox.Location = new System.Drawing.Point(0, -65);
+			this.InforTextBox.Location = new System.Drawing.Point(0, 335);
 			this.InforTextBox.Multiline = true;
 			this.InforTextBox.Name = "InforTextBox";
 			this.InforTextBox.ReadOnly = true;
-			this.InforTextBox.Size = new System.Drawing.Size(186, 97);
+			this.InforTextBox.Size = new System.Drawing.Size(746, 97);
 			this.InforTextBox.TabIndex = 11;
 			this.InforTextBox.Text = resources.GetString("InforTextBox.Text");
 			// 
@@ -1749,7 +1539,7 @@
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTrackBar);
 			this.ForceFeedbackGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.ForceFeedbackGroupBox.Name = "ForceFeedbackGroupBox";
-			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(180, 106);
+			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(740, 106);
 			this.ForceFeedbackGroupBox.TabIndex = 0;
 			this.ForceFeedbackGroupBox.TabStop = false;
 			this.ForceFeedbackGroupBox.Text = "Force Feedback";
@@ -1761,7 +1551,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.EffectDescriptionLabel.Location = new System.Drawing.Point(6, 66);
 			this.EffectDescriptionLabel.Name = "EffectDescriptionLabel";
-			this.EffectDescriptionLabel.Size = new System.Drawing.Size(168, 37);
+			this.EffectDescriptionLabel.Size = new System.Drawing.Size(728, 37);
 			this.EffectDescriptionLabel.TabIndex = 5;
 			this.EffectDescriptionLabel.Text = "Effect Description";
 			// 
@@ -1780,7 +1570,7 @@
 			this.ForceEnableCheckBox.AutoSize = true;
 			this.ForceEnableCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.ForceEnableCheckBox.Name = "ForceEnableCheckBox";
-			this.ForceEnableCheckBox.Size = new System.Drawing.Size(59, 17);
+			this.ForceEnableCheckBox.Size = new System.Drawing.Size(68, 19);
 			this.ForceEnableCheckBox.TabIndex = 1;
 			this.ForceEnableCheckBox.Text = "Enable";
 			this.ForceEnableCheckBox.UseVisualStyleBackColor = true;
@@ -1801,7 +1591,7 @@
 			this.ForceSwapMotorCheckBox.AutoSize = true;
 			this.ForceSwapMotorCheckBox.Location = new System.Drawing.Point(6, 42);
 			this.ForceSwapMotorCheckBox.Name = "ForceSwapMotorCheckBox";
-			this.ForceSwapMotorCheckBox.Size = new System.Drawing.Size(88, 17);
+			this.ForceSwapMotorCheckBox.Size = new System.Drawing.Size(101, 19);
 			this.ForceSwapMotorCheckBox.TabIndex = 2;
 			this.ForceSwapMotorCheckBox.Text = "Swap Motors";
 			this.ForceSwapMotorCheckBox.UseVisualStyleBackColor = true;
@@ -1811,7 +1601,7 @@
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(152, 20);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(149, 13);
+			this.label1.Size = new System.Drawing.Size(167, 15);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Effects Type / Implementation";
 			// 
@@ -1820,7 +1610,7 @@
 			this.OveralEffectsStengthLabel.AutoSize = true;
 			this.OveralEffectsStengthLabel.Location = new System.Drawing.Point(352, 20);
 			this.OveralEffectsStengthLabel.Name = "OveralEffectsStengthLabel";
-			this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(114, 13);
+			this.OveralEffectsStengthLabel.Size = new System.Drawing.Size(126, 15);
 			this.OveralEffectsStengthLabel.TabIndex = 0;
 			this.OveralEffectsStengthLabel.Text = "Overal Effects Stength";
 			// 
@@ -1862,7 +1652,7 @@
 			this.LeftMotorDirectionLabel.AutoSize = true;
 			this.LeftMotorDirectionLabel.Location = new System.Drawing.Point(6, 22);
 			this.LeftMotorDirectionLabel.Name = "LeftMotorDirectionLabel";
-			this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(52, 13);
+			this.LeftMotorDirectionLabel.Size = new System.Drawing.Size(59, 15);
 			this.LeftMotorDirectionLabel.TabIndex = 0;
 			this.LeftMotorDirectionLabel.Text = "Direction:";
 			// 
@@ -1893,7 +1683,7 @@
 			this.LeftMotorStrengthLabel.AutoSize = true;
 			this.LeftMotorStrengthLabel.Location = new System.Drawing.Point(6, 55);
 			this.LeftMotorStrengthLabel.Name = "LeftMotorStrengthLabel";
-			this.LeftMotorStrengthLabel.Size = new System.Drawing.Size(47, 13);
+			this.LeftMotorStrengthLabel.Size = new System.Drawing.Size(53, 15);
 			this.LeftMotorStrengthLabel.TabIndex = 0;
 			this.LeftMotorStrengthLabel.Text = "Strength";
 			// 
@@ -1947,7 +1737,7 @@
 			this.LeftMotorPeriodLabel.AutoSize = true;
 			this.LeftMotorPeriodLabel.Location = new System.Drawing.Point(6, 101);
 			this.LeftMotorPeriodLabel.Name = "LeftMotorPeriodLabel";
-			this.LeftMotorPeriodLabel.Size = new System.Drawing.Size(59, 13);
+			this.LeftMotorPeriodLabel.Size = new System.Drawing.Size(71, 15);
 			this.LeftMotorPeriodLabel.TabIndex = 0;
 			this.LeftMotorPeriodLabel.Text = "Period (ms)";
 			// 
@@ -1967,7 +1757,7 @@
 			this.TestLeftMotorLabel.AutoSize = true;
 			this.TestLeftMotorLabel.Location = new System.Drawing.Point(6, 152);
 			this.TestLeftMotorLabel.Name = "TestLeftMotorLabel";
-			this.TestLeftMotorLabel.Size = new System.Drawing.Size(28, 13);
+			this.TestLeftMotorLabel.Size = new System.Drawing.Size(30, 15);
 			this.TestLeftMotorLabel.TabIndex = 0;
 			this.TestLeftMotorLabel.Text = "Test";
 			// 
@@ -1996,7 +1786,7 @@
 			this.RightMotorDirectionLabel.AutoSize = true;
 			this.RightMotorDirectionLabel.Location = new System.Drawing.Point(9, 22);
 			this.RightMotorDirectionLabel.Name = "RightMotorDirectionLabel";
-			this.RightMotorDirectionLabel.Size = new System.Drawing.Size(52, 13);
+			this.RightMotorDirectionLabel.Size = new System.Drawing.Size(59, 15);
 			this.RightMotorDirectionLabel.TabIndex = 0;
 			this.RightMotorDirectionLabel.Text = "Direction:";
 			// 
@@ -2027,7 +1817,7 @@
 			this.RightMotorStrengthLabel.AutoSize = true;
 			this.RightMotorStrengthLabel.Location = new System.Drawing.Point(9, 55);
 			this.RightMotorStrengthLabel.Name = "RightMotorStrengthLabel";
-			this.RightMotorStrengthLabel.Size = new System.Drawing.Size(47, 13);
+			this.RightMotorStrengthLabel.Size = new System.Drawing.Size(53, 15);
 			this.RightMotorStrengthLabel.TabIndex = 0;
 			this.RightMotorStrengthLabel.Text = "Strength";
 			// 
@@ -2047,7 +1837,7 @@
 			this.TestRightMotorLabel.AutoSize = true;
 			this.TestRightMotorLabel.Location = new System.Drawing.Point(9, 152);
 			this.TestRightMotorLabel.Name = "TestRightMotorLabel";
-			this.TestRightMotorLabel.Size = new System.Drawing.Size(28, 13);
+			this.TestRightMotorLabel.Size = new System.Drawing.Size(30, 15);
 			this.TestRightMotorLabel.TabIndex = 0;
 			this.TestRightMotorLabel.Text = "Test";
 			// 
@@ -2067,7 +1857,7 @@
 			this.RightMotorPeriodLabel.AutoSize = true;
 			this.RightMotorPeriodLabel.Location = new System.Drawing.Point(9, 101);
 			this.RightMotorPeriodLabel.Name = "RightMotorPeriodLabel";
-			this.RightMotorPeriodLabel.Size = new System.Drawing.Size(59, 13);
+			this.RightMotorPeriodLabel.Size = new System.Drawing.Size(71, 15);
 			this.RightMotorPeriodLabel.TabIndex = 0;
 			this.RightMotorPeriodLabel.Text = "Period (ms)";
 			// 
@@ -2114,16 +1904,6 @@
 			this.XInputTabPage.Size = new System.Drawing.Size(752, 438);
 			this.XInputTabPage.TabIndex = 6;
 			this.XInputTabPage.Text = "XInput";
-			// 
-			// XInputHost
-			// 
-			this.XInputHost.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.XInputHost.Location = new System.Drawing.Point(0, 0);
-			this.XInputHost.Name = "XInputHost";
-			this.XInputHost.Size = new System.Drawing.Size(752, 438);
-			this.XInputHost.TabIndex = 0;
-			this.XInputHost.Text = "elementHost1";
-			this.XInputHost.Child = this.xInputUserControl1;
 			// 
 			// DiMenuStrip
 			// 
@@ -2287,7 +2067,7 @@
 			this.SettingIdColumn.Name = "SettingIdColumn";
 			this.SettingIdColumn.ReadOnly = true;
 			this.SettingIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.SettingIdColumn.Width = 59;
+			this.SettingIdColumn.Width = 65;
 			// 
 			// CompletionColumn
 			// 
@@ -2301,7 +2081,7 @@
 			this.CompletionColumn.Name = "CompletionColumn";
 			this.CompletionColumn.ReadOnly = true;
 			this.CompletionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.CompletionColumn.Width = 44;
+			this.CompletionColumn.Width = 51;
 			// 
 			// InstanceIdColumn
 			// 
@@ -2313,7 +2093,7 @@
 			this.InstanceIdColumn.Name = "InstanceIdColumn";
 			this.InstanceIdColumn.ReadOnly = true;
 			this.InstanceIdColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.InstanceIdColumn.Width = 67;
+			this.InstanceIdColumn.Width = 73;
 			// 
 			// VendorNameColumn
 			// 
@@ -2324,7 +2104,7 @@
 			this.VendorNameColumn.Name = "VendorNameColumn";
 			this.VendorNameColumn.ReadOnly = true;
 			this.VendorNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.VendorNameColumn.Width = 77;
+			this.VendorNameColumn.Width = 88;
 			// 
 			// ProductNameColumn
 			// 
@@ -2370,7 +2150,7 @@
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
 			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this.GamesToolStrip.Size = new System.Drawing.Size(766, 27);
+			this.GamesToolStrip.Size = new System.Drawing.Size(766, 31);
 			this.GamesToolStrip.TabIndex = 3;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
 			// 
@@ -2381,7 +2161,7 @@
 			this.RemoveMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.RemoveMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.RemoveMapButton.Name = "RemoveMapButton";
-			this.RemoveMapButton.Size = new System.Drawing.Size(74, 24);
+			this.RemoveMapButton.Size = new System.Drawing.Size(87, 28);
 			this.RemoveMapButton.Text = "&Remove";
 			this.RemoveMapButton.Click += new System.EventHandler(this.RemoveMapButton_Click);
 			// 
@@ -2393,7 +2173,7 @@
 			this.AddMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.AddMapButton.Name = "AddMapButton";
-			this.AddMapButton.Size = new System.Drawing.Size(62, 24);
+			this.AddMapButton.Size = new System.Drawing.Size(70, 28);
 			this.AddMapButton.Text = "Add...";
 			this.AddMapButton.Click += new System.EventHandler(this.AddMapButton_Click);
 			// 
@@ -2404,7 +2184,7 @@
 			this.AutoMapButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AutoMapButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.AutoMapButton.Name = "AutoMapButton";
-			this.AutoMapButton.Size = new System.Drawing.Size(84, 24);
+			this.AutoMapButton.Size = new System.Drawing.Size(99, 28);
 			this.AutoMapButton.Text = "&Auto Map";
 			this.AutoMapButton.Click += new System.EventHandler(this.AutoMapButton_Click);
 			// 
@@ -2414,7 +2194,7 @@
 			this.EnableButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.EnableButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.EnableButton.Name = "EnableButton";
-			this.EnableButton.Size = new System.Drawing.Size(66, 24);
+			this.EnableButton.Size = new System.Drawing.Size(78, 28);
 			this.EnableButton.Text = "&Enable";
 			this.EnableButton.Click += new System.EventHandler(this.EnableButton_Click);
 			// 
@@ -2424,7 +2204,7 @@
 			this.GetXInputStatesCheckBox.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.GetXInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.GetXInputStatesCheckBox.Name = "GetXInputStatesCheckBox";
-			this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(116, 24);
+			this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(141, 28);
 			this.GetXInputStatesCheckBox.Text = "&Get XInput State";
 			this.GetXInputStatesCheckBox.ToolTipText = "Load XInput DLL and query actual state";
 			// 
@@ -2438,6 +2218,226 @@
 			this.DxTweakButton.Text = "&DX Tweak...";
 			this.DxTweakButton.UseVisualStyleBackColor = true;
 			this.DxTweakButton.Click += new System.EventHandler(this.CalibrateButton_Click);
+			// 
+			// XboxImageHost
+			// 
+			this.XboxImageHost.Location = new System.Drawing.Point(3, 30);
+			this.XboxImageHost.Name = "XboxImageHost";
+			this.XboxImageHost.Size = new System.Drawing.Size(256, 289);
+			this.XboxImageHost.TabIndex = 28;
+			this.XboxImageHost.Text = "XboxImageHost";
+			this.XboxImageHost.Child = this.XboxImage;
+			// 
+			// AxisToButtonADeadZonePanel
+			// 
+			this.AxisToButtonADeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.A;
+			this.AxisToButtonADeadZonePanel.Location = new System.Drawing.Point(6, 19);
+			this.AxisToButtonADeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToButtonADeadZonePanel.Name = "AxisToButtonADeadZonePanel";
+			this.AxisToButtonADeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToButtonADeadZonePanel.TabIndex = 0;
+			// 
+			// AxisToDPadRightDeadZonePanel
+			// 
+			this.AxisToDPadRightDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.DPadRight;
+			this.AxisToDPadRightDeadZonePanel.Location = new System.Drawing.Point(6, 396);
+			this.AxisToDPadRightDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToDPadRightDeadZonePanel.Name = "AxisToDPadRightDeadZonePanel";
+			this.AxisToDPadRightDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToDPadRightDeadZonePanel.TabIndex = 2;
+			// 
+			// AxisToRightThumbButtonDeadZonePanel
+			// 
+			this.AxisToRightThumbButtonDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.RightThumb;
+			this.AxisToRightThumbButtonDeadZonePanel.Location = new System.Drawing.Point(6, 280);
+			this.AxisToRightThumbButtonDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToRightThumbButtonDeadZonePanel.Name = "AxisToRightThumbButtonDeadZonePanel";
+			this.AxisToRightThumbButtonDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToRightThumbButtonDeadZonePanel.TabIndex = 2;
+			// 
+			// AxisToButtonYDeadZonePanel
+			// 
+			this.AxisToButtonYDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.Y;
+			this.AxisToButtonYDeadZonePanel.Location = new System.Drawing.Point(6, 106);
+			this.AxisToButtonYDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToButtonYDeadZonePanel.Name = "AxisToButtonYDeadZonePanel";
+			this.AxisToButtonYDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToButtonYDeadZonePanel.TabIndex = 0;
+			// 
+			// AxisToDPadLeftDeadZonePanel
+			// 
+			this.AxisToDPadLeftDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.DPadLeft;
+			this.AxisToDPadLeftDeadZonePanel.Location = new System.Drawing.Point(6, 367);
+			this.AxisToDPadLeftDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToDPadLeftDeadZonePanel.Name = "AxisToDPadLeftDeadZonePanel";
+			this.AxisToDPadLeftDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToDPadLeftDeadZonePanel.TabIndex = 2;
+			// 
+			// AxisToLeftThumbButtonDeadZonePanel
+			// 
+			this.AxisToLeftThumbButtonDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.LeftThumb;
+			this.AxisToLeftThumbButtonDeadZonePanel.Location = new System.Drawing.Point(6, 251);
+			this.AxisToLeftThumbButtonDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToLeftThumbButtonDeadZonePanel.Name = "AxisToLeftThumbButtonDeadZonePanel";
+			this.AxisToLeftThumbButtonDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToLeftThumbButtonDeadZonePanel.TabIndex = 2;
+			// 
+			// AxisToButtonXDeadZonePanel
+			// 
+			this.AxisToButtonXDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.X;
+			this.AxisToButtonXDeadZonePanel.Location = new System.Drawing.Point(6, 77);
+			this.AxisToButtonXDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToButtonXDeadZonePanel.Name = "AxisToButtonXDeadZonePanel";
+			this.AxisToButtonXDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToButtonXDeadZonePanel.TabIndex = 0;
+			// 
+			// AxisToDPadDownDeadZonePanel
+			// 
+			this.AxisToDPadDownDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.DPadDown;
+			this.AxisToDPadDownDeadZonePanel.Location = new System.Drawing.Point(6, 338);
+			this.AxisToDPadDownDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToDPadDownDeadZonePanel.Name = "AxisToDPadDownDeadZonePanel";
+			this.AxisToDPadDownDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToDPadDownDeadZonePanel.TabIndex = 1;
+			// 
+			// AxisToRightShoulderDeadZonePanel
+			// 
+			this.AxisToRightShoulderDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.RightShoulder;
+			this.AxisToRightShoulderDeadZonePanel.Location = new System.Drawing.Point(6, 164);
+			this.AxisToRightShoulderDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToRightShoulderDeadZonePanel.Name = "AxisToRightShoulderDeadZonePanel";
+			this.AxisToRightShoulderDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToRightShoulderDeadZonePanel.TabIndex = 1;
+			// 
+			// AxisToButtonStartDeadZonePanel
+			// 
+			this.AxisToButtonStartDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.Start;
+			this.AxisToButtonStartDeadZonePanel.Location = new System.Drawing.Point(6, 222);
+			this.AxisToButtonStartDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToButtonStartDeadZonePanel.Name = "AxisToButtonStartDeadZonePanel";
+			this.AxisToButtonStartDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToButtonStartDeadZonePanel.TabIndex = 0;
+			// 
+			// AxisToDPadUpDeadZonePanel
+			// 
+			this.AxisToDPadUpDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.DPadUp;
+			this.AxisToDPadUpDeadZonePanel.Location = new System.Drawing.Point(6, 309);
+			this.AxisToDPadUpDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToDPadUpDeadZonePanel.Name = "AxisToDPadUpDeadZonePanel";
+			this.AxisToDPadUpDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToDPadUpDeadZonePanel.TabIndex = 0;
+			// 
+			// AxisToLeftShoulderDeadZonePanel
+			// 
+			this.AxisToLeftShoulderDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.LeftShoulder;
+			this.AxisToLeftShoulderDeadZonePanel.Location = new System.Drawing.Point(6, 135);
+			this.AxisToLeftShoulderDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToLeftShoulderDeadZonePanel.Name = "AxisToLeftShoulderDeadZonePanel";
+			this.AxisToLeftShoulderDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToLeftShoulderDeadZonePanel.TabIndex = 0;
+			// 
+			// AxisToButtonBackDeadZonePanel
+			// 
+			this.AxisToButtonBackDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.Back;
+			this.AxisToButtonBackDeadZonePanel.Location = new System.Drawing.Point(6, 193);
+			this.AxisToButtonBackDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToButtonBackDeadZonePanel.Name = "AxisToButtonBackDeadZonePanel";
+			this.AxisToButtonBackDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToButtonBackDeadZonePanel.TabIndex = 0;
+			// 
+			// AxisToButtonBDeadZonePanel
+			// 
+			this.AxisToButtonBDeadZonePanel.GamepadButton = SharpDX.XInput.GamepadButtonFlags.B;
+			this.AxisToButtonBDeadZonePanel.Location = new System.Drawing.Point(6, 48);
+			this.AxisToButtonBDeadZonePanel.Margin = new System.Windows.Forms.Padding(3, 1, 3, 0);
+			this.AxisToButtonBDeadZonePanel.Name = "AxisToButtonBDeadZonePanel";
+			this.AxisToButtonBDeadZonePanel.Size = new System.Drawing.Size(562, 28);
+			this.AxisToButtonBDeadZonePanel.TabIndex = 0;
+			// 
+			// LeftTriggerUserControl
+			// 
+			this.LeftTriggerUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.LeftTriggerUserControl.HeaderText = "Left Trigger";
+			this.LeftTriggerUserControl.Location = new System.Drawing.Point(3, 3);
+			this.LeftTriggerUserControl.Name = "LeftTriggerUserControl";
+			this.LeftTriggerUserControl.Size = new System.Drawing.Size(740, 193);
+			this.LeftTriggerUserControl.TabIndex = 1;
+			this.LeftTriggerUserControl.TargetType = x360ce.Engine.TargetType.LeftTrigger;
+			// 
+			// RightTriggerUserControl
+			// 
+			this.RightTriggerUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.RightTriggerUserControl.HeaderText = "RightTrigger";
+			this.RightTriggerUserControl.Location = new System.Drawing.Point(3, 202);
+			this.RightTriggerUserControl.Name = "RightTriggerUserControl";
+			this.RightTriggerUserControl.Size = new System.Drawing.Size(740, 193);
+			this.RightTriggerUserControl.TabIndex = 2;
+			this.RightTriggerUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger)));
+			// 
+			// LeftThumbXUserControl
+			// 
+			this.LeftThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.LeftThumbXUserControl.HeaderText = "X - Horizontal Axis";
+			this.LeftThumbXUserControl.Location = new System.Drawing.Point(3, 3);
+			this.LeftThumbXUserControl.Name = "LeftThumbXUserControl";
+			this.LeftThumbXUserControl.Size = new System.Drawing.Size(740, 193);
+			this.LeftThumbXUserControl.TabIndex = 0;
+			this.LeftThumbXUserControl.TargetType = x360ce.Engine.TargetType.LeftThumbX;
+			// 
+			// LeftThumbYUserControl
+			// 
+			this.LeftThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.LeftThumbYUserControl.HeaderText = "Y - Vertical Axis";
+			this.LeftThumbYUserControl.Location = new System.Drawing.Point(3, 202);
+			this.LeftThumbYUserControl.Name = "LeftThumbYUserControl";
+			this.LeftThumbYUserControl.Size = new System.Drawing.Size(740, 193);
+			this.LeftThumbYUserControl.TabIndex = 0;
+			this.LeftThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftThumbX)));
+			// 
+			// RightThumbXUserControl
+			// 
+			this.RightThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.RightThumbXUserControl.HeaderText = "X - Horizontal Axis";
+			this.RightThumbXUserControl.Location = new System.Drawing.Point(3, 3);
+			this.RightThumbXUserControl.Name = "RightThumbXUserControl";
+			this.RightThumbXUserControl.Size = new System.Drawing.Size(740, 193);
+			this.RightThumbXUserControl.TabIndex = 0;
+			this.RightThumbXUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.LeftTrigger | x360ce.Engine.TargetType.LeftThumbX)));
+			// 
+			// RightThumbYUserControl
+			// 
+			this.RightThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.RightThumbYUserControl.HeaderText = "Y - Vertical Axis";
+			this.RightThumbYUserControl.Location = new System.Drawing.Point(3, 202);
+			this.RightThumbYUserControl.Name = "RightThumbYUserControl";
+			this.RightThumbYUserControl.Size = new System.Drawing.Size(740, 193);
+			this.RightThumbYUserControl.TabIndex = 0;
+			this.RightThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)(((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger) 
+            | x360ce.Engine.TargetType.LeftThumbX)));
+			// 
+			// XInputHost
+			// 
+			this.XInputHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.XInputHost.Location = new System.Drawing.Point(0, 0);
+			this.XInputHost.Name = "XInputHost";
+			this.XInputHost.Size = new System.Drawing.Size(752, 438);
+			this.XInputHost.TabIndex = 0;
+			this.XInputHost.Text = "elementHost1";
+			this.XInputHost.Child = this.xInputUserControl1;
+			// 
+			// DirectInputPanel
+			// 
+			this.DirectInputPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DirectInputPanel.Location = new System.Drawing.Point(3, 3);
+			this.DirectInputPanel.Name = "DirectInputPanel";
+			this.DirectInputPanel.Size = new System.Drawing.Size(746, 432);
+			this.DirectInputPanel.TabIndex = 0;
 			// 
 			// PadControl
 			// 
