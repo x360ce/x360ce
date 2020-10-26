@@ -677,18 +677,18 @@ namespace JocysCom.ClassLibrary.Runtime
 			var subKey = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion";
 			var key = Microsoft.Win32.Registry.LocalMachine;
 			var skey = key.OpenSubKey(subKey);
-			var osProductName = skey.GetValue("ProductName").ToString();
-			//var osEditionID = skey.GetValue("EditionID").ToString();
-			var osReleaseId = skey.GetValue("ReleaseId").ToString();
-			var osCurrentMajorVersionNumber = skey.GetValue("CurrentMajorVersionNumber", "").ToString();
-			var osCurrentMinorVersionNumber = skey.GetValue("CurrentMinorVersionNumber", "").ToString();
-			var osCurrentBuildNumber = skey.GetValue("CurrentBuildNumber", "").ToString();
-			var osUBR = skey.GetValue("UBR", "").ToString();
+			var osProductName = string.Format("{0}", skey.GetValue("ProductName"));
+			//var osEditionID = string.Format("{0}", skey.GetValue("EditionID"));
+			var osReleaseId = string.Format("{0}", skey.GetValue("ReleaseId"));
+			var osCurrentVersion = string.Format("{0}.{1}", skey.GetValue("CurrentMajorVersionNumber"), skey.GetValue("CurrentMinorVersionNumber"));
+			if (osCurrentVersion.Trim() == ".")
+				osCurrentVersion = string.Format("{0}", skey.GetValue("currentVersion"));
+			var osCurrentBuildNumber = string.Format("{0}", skey.GetValue("CurrentBuildNumber"));
+			var osUBR = string.Format("{0}", skey.GetValue("UBR"));
 			skey.Close();
-			var osVersion = string.Format("{0} {1} [Version {2}.{3}.{4}.{5}]",
+			var osVersion = string.Format("{0} {1} [Version {2}.{3}.{4}]",
 				osProductName, osReleaseId,
-					osCurrentMajorVersionNumber,
-					osCurrentMinorVersionNumber,
+					osCurrentVersion,
 					osCurrentBuildNumber,
 					osUBR
 			);

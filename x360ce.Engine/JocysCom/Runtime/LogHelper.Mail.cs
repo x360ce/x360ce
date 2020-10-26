@@ -143,13 +143,18 @@ namespace JocysCom.ClassLibrary.Runtime
 			var smtp = SmtpClientEx.Current;
 			var m = new MailMessage();
 			MailHelper.ApplyRecipients(m, smtp.SmtpFrom, smtp.ErrorRecipients);
-			// Add headers, which can be used on server side to group errors.
-			if (!string.IsNullOrEmpty(ex.Source))
-				m.Headers.Add(XLogHelperErrorSource, ex.Source);
-			m.Headers.Add(XLogHelperErrorType, ex.GetType().FullName);
-			m.Headers.Add(XLogHelperErrorCode, ex.HResult.ToString());
+			// If exception supplied then...
+			if (ex != null)
+			{
+				// Add headers, which can be used on server side to group errors.
+				if (!string.IsNullOrEmpty(ex.Source))
+					m.Headers.Add(XLogHelperErrorSource, ex.Source);
+				m.Headers.Add(XLogHelperErrorType, ex.GetType().FullName);
+				m.Headers.Add(XLogHelperErrorCode, ex.HResult.ToString());
+				body = Current.ExceptionInfo(ex, body);
+			}
 			m.Subject = subject;
-			m.Body = Current.ExceptionInfo(ex, body);
+			m.Body = body;
 			m.IsBodyHtml = true;
 			SendMail(m);
 			m.Dispose();
