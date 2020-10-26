@@ -3,6 +3,7 @@ using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
 using System.Linq;
+using System.Runtime.InteropServices;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 

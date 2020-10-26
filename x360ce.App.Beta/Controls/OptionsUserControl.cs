@@ -102,12 +102,12 @@ namespace x360ce.App.Controls
 			ControlHelper.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
+			ControlHelper.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
 			SettingsManager.OptionsData.Saving += OptionsData_Saving;
 		}
-
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{

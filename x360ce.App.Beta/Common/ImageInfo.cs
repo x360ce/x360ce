@@ -6,7 +6,7 @@ namespace x360ce.App
 {
 	public class ImageInfo
 	{
-		public ImageInfo(int image, LayoutCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
+		public ImageInfo(int image, MapCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
 		{
 			Image = image;
 			Label = label;
@@ -26,7 +26,7 @@ namespace x360ce.App
 		public System.Windows.Controls.Button ButtonControl { get; set; }
 		public Control Control { get; set; }
 		public GamepadButtonFlags Button { get; set; }
-		public LayoutCode Code { get; set; }
+		public MapCode Code { get; set; }
 		public double X { get; set; }
 		public double Y { get; set; }
 	}

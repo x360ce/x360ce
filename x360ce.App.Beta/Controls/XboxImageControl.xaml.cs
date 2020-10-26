@@ -38,20 +38,20 @@ namespace x360ce.App.Controls
 			SetHelpText();
 		}
 
-		public LayoutCode GetNameCode(LayoutCode code)
+		public MapCode GetNameCode(MapCode code)
 		{
-			if (code == LayoutCode.LeftThumbAxisX)
-				return LayoutCode.LeftThumbRight;
-			if (code == LayoutCode.LeftThumbAxisY)
-				return LayoutCode.LeftThumbUp;
-			if (code == LayoutCode.RightThumbAxisX)
-				return LayoutCode.RightThumbRight;
-			if (code == LayoutCode.RightThumbAxisY)
-				return LayoutCode.RightThumbUp;
+			if (code == MapCode.LeftThumbAxisX)
+				return MapCode.LeftThumbRight;
+			if (code == MapCode.LeftThumbAxisY)
+				return MapCode.LeftThumbUp;
+			if (code == MapCode.RightThumbAxisX)
+				return MapCode.RightThumbRight;
+			if (code == MapCode.RightThumbAxisY)
+				return MapCode.RightThumbUp;
 			return code;
 		}
 
-		public void SetImage(LayoutCode code, NavImageType type, bool show)
+		public void SetImage(MapCode code, NavImageType type, bool show)
 		{
 			var nameCode = GetNameCode(code);
 			var ii = Infos.First(x => x.Code == nameCode);
@@ -82,9 +82,9 @@ namespace x360ce.App.Controls
 					: (show ? 0.8F : 0.0f);
 		}
 
-		public string GetMiddleImageName(LayoutCode code)
+		public string GetMiddleImageName(MapCode code)
 		{
-			if (code == LayoutCode.LeftTrigger || code == LayoutCode.RightTrigger)
+			if (code == MapCode.LeftTrigger || code == MapCode.RightTrigger)
 				return "Up";
 			var rx = new Regex("(Up|Left|Right|Down)$");
 			var ms = rx.Matches(code.ToString());
@@ -116,7 +116,7 @@ namespace x360ce.App.Controls
 		{
 			var control = (Button)sender;
 			var name = control.Name;
-			LayoutCode code;
+			MapCode code;
 			if (!Enum.TryParse(name, false, out code))
 				return;
 			var map = SettingsManager.Current.SettingsMap.FirstOrDefault(x => x.MapTo == MappedTo && x.Code == code);

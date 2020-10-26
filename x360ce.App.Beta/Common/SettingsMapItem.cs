@@ -19,11 +19,6 @@ namespace x360ce.App
 		public string IniKey { get; set; }
 
 		/// <summary>
-		/// Property key inside INI file.
-		/// </summary>
-		public bool IniConverter { get; set; }
-
-		/// <summary>
 		/// Property path inside INI file.
 		/// </summary>
 		public string IniPath { get { return string.Format("{0}\\{1}", IniSection, IniKey); } }
@@ -58,7 +53,7 @@ namespace x360ce.App
 		/// <summary>
 		/// X360CE PAD Map Code.
 		/// </summary>
-		public LayoutCode Code { get; set; }
+		public MapCode Code { get; set; }
 
 	}
 }

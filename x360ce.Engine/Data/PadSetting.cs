@@ -30,38 +30,38 @@ namespace x360ce.Engine.Data
 					{
 						var maps = new List<Map>();
 						// Add buttons.
-						maps.Add(new Map(ButtonGuide, (GamepadButtonFlags)0x400, ""));
-						maps.Add(new Map(ButtonA, GamepadButtonFlags.A, ButtonADeadZone));
-						maps.Add(new Map(ButtonB, GamepadButtonFlags.B, ButtonBDeadZone));
-						maps.Add(new Map(ButtonX, GamepadButtonFlags.X, ButtonXDeadZone));
-						maps.Add(new Map(ButtonY, GamepadButtonFlags.Y, ButtonYDeadZone));
-						maps.Add(new Map(ButtonBack, GamepadButtonFlags.Back, ButtonBackDeadZone));
-						maps.Add(new Map(ButtonStart, GamepadButtonFlags.Start, ButtonStartDeadZone));
-						maps.Add(new Map(DPadUp, GamepadButtonFlags.DPadUp, DPadUpDeadZone));
-						maps.Add(new Map(DPadDown, GamepadButtonFlags.DPadDown, DPadDownDeadZone));
-						maps.Add(new Map(DPadLeft, GamepadButtonFlags.DPadLeft, DPadLeftDeadZone));
-						maps.Add(new Map(DPadRight, GamepadButtonFlags.DPadRight, DPadRightDeadZone));
-						maps.Add(new Map(LeftShoulder, GamepadButtonFlags.LeftShoulder, LeftShoulderDeadZone));
-						maps.Add(new Map(LeftThumbButton, GamepadButtonFlags.LeftThumb, LeftThumbButtonDeadZone));
-						maps.Add(new Map(RightShoulder, GamepadButtonFlags.RightShoulder, RightShoulderDeadZone));
-						maps.Add(new Map(RightThumbButton, GamepadButtonFlags.RightThumb, RightThumbButtonDeadZone));
+						maps.Add(new Map(MapCode.ButtonGuide, ButtonGuide, GamepadButtonFlags.Guide, ""));
+						maps.Add(new Map(MapCode.ButtonA, ButtonA, GamepadButtonFlags.A, ButtonADeadZone));
+						maps.Add(new Map(MapCode.ButtonB, ButtonB, GamepadButtonFlags.B, ButtonBDeadZone));
+						maps.Add(new Map(MapCode.ButtonX, ButtonX, GamepadButtonFlags.X, ButtonXDeadZone));
+						maps.Add(new Map(MapCode.ButtonY, ButtonY, GamepadButtonFlags.Y, ButtonYDeadZone));
+						maps.Add(new Map(MapCode.ButtonBack, ButtonBack, GamepadButtonFlags.Back, ButtonBackDeadZone));
+						maps.Add(new Map(MapCode.ButtonStart, ButtonStart, GamepadButtonFlags.Start, ButtonStartDeadZone));
+						maps.Add(new Map(MapCode.DPadUp, DPadUp, GamepadButtonFlags.DPadUp, DPadUpDeadZone));
+						maps.Add(new Map(MapCode.DPadDown, DPadDown, GamepadButtonFlags.DPadDown, DPadDownDeadZone));
+						maps.Add(new Map(MapCode.DPadLeft, DPadLeft, GamepadButtonFlags.DPadLeft, DPadLeftDeadZone));
+						maps.Add(new Map(MapCode.DPadRight, DPadRight, GamepadButtonFlags.DPadRight, DPadRightDeadZone));
+						maps.Add(new Map(MapCode.LeftShoulder, LeftShoulder, GamepadButtonFlags.LeftShoulder, LeftShoulderDeadZone));
+						maps.Add(new Map(MapCode.RightShoulder, RightShoulder, GamepadButtonFlags.RightShoulder, RightShoulderDeadZone));
+						maps.Add(new Map(MapCode.LeftThumbButton, LeftThumbButton, GamepadButtonFlags.LeftThumb, LeftThumbButtonDeadZone));
+						maps.Add(new Map(MapCode.RightThumbButton, RightThumbButton, GamepadButtonFlags.RightThumb, RightThumbButtonDeadZone));
 						// Add triggers.
-						maps.Add(new Map(LeftTrigger, TargetType.LeftTrigger, LeftTriggerDeadZone, LeftTriggerAntiDeadZone, LeftTriggerLinear));
-						maps.Add(new Map(RightTrigger, TargetType.RightTrigger, RightTriggerDeadZone, RightTriggerAntiDeadZone, RightTriggerLinear));
+						maps.Add(new Map(MapCode.LeftTrigger, LeftTrigger, TargetType.LeftTrigger, LeftTriggerDeadZone, LeftTriggerAntiDeadZone, LeftTriggerLinear));
+						maps.Add(new Map(MapCode.RightTrigger, RightTrigger, TargetType.RightTrigger, RightTriggerDeadZone, RightTriggerAntiDeadZone, RightTriggerLinear));
 						// Add thumbs.
-						maps.Add(new Map(LeftThumbAxisX, TargetType.LeftThumbX, LeftThumbDeadZoneX, LeftThumbAntiDeadZoneX, LeftThumbLinearX));
-						maps.Add(new Map(LeftThumbAxisY, TargetType.LeftThumbY, LeftThumbDeadZoneY, LeftThumbAntiDeadZoneY, LeftThumbLinearY));
-						maps.Add(new Map(RightThumbAxisX, TargetType.RightThumbX, RightThumbDeadZoneX, RightThumbAntiDeadZoneX, RightThumbLinearX));
-						maps.Add(new Map(RightThumbAxisY, TargetType.RightThumbY, RightThumbDeadZoneY, RightThumbAntiDeadZoneY, RightThumbLinearY));
+						maps.Add(new Map(MapCode.LeftThumbAxisX, LeftThumbAxisX, TargetType.LeftThumbX, LeftThumbDeadZoneX, LeftThumbAntiDeadZoneX, LeftThumbLinearX));
+						maps.Add(new Map(MapCode.LeftThumbAxisY, LeftThumbAxisY, TargetType.LeftThumbY, LeftThumbDeadZoneY, LeftThumbAntiDeadZoneY, LeftThumbLinearY));
+						maps.Add(new Map(MapCode.RightThumbAxisX, RightThumbAxisX, TargetType.RightThumbX, RightThumbDeadZoneX, RightThumbAntiDeadZoneX, RightThumbLinearX));
+						maps.Add(new Map(MapCode.RightThumbAxisY, RightThumbAxisY, TargetType.RightThumbY, RightThumbDeadZoneY, RightThumbAntiDeadZoneY, RightThumbLinearY));
 						// Add thumbs positive max and negative max map.
-						maps.Add(new Map(RightThumbUp, TargetType.RightThumbY, short.MaxValue));
-						maps.Add(new Map(RightThumbDown, TargetType.RightThumbY, short.MinValue));
-						maps.Add(new Map(RightThumbLeft, TargetType.RightThumbX, short.MinValue));
-						maps.Add(new Map(RightThumbRight, TargetType.RightThumbX, short.MaxValue));
-						maps.Add(new Map(LeftThumbUp, TargetType.LeftThumbY, short.MaxValue));
-						maps.Add(new Map(LeftThumbDown, TargetType.LeftThumbY, short.MinValue));
-						maps.Add(new Map(LeftThumbLeft, TargetType.LeftThumbX, short.MinValue));
-						maps.Add(new Map(LeftThumbRight, TargetType.LeftThumbX, short.MaxValue));
+						maps.Add(new Map(MapCode.LeftThumbUp, LeftThumbUp, TargetType.LeftThumbY, short.MaxValue));
+						maps.Add(new Map(MapCode.LeftThumbDown, LeftThumbDown, TargetType.LeftThumbY, short.MinValue));
+						maps.Add(new Map(MapCode.LeftThumbLeft, LeftThumbLeft, TargetType.LeftThumbX, short.MinValue));
+						maps.Add(new Map(MapCode.LeftThumbRight, LeftThumbRight, TargetType.LeftThumbX, short.MaxValue));
+						maps.Add(new Map(MapCode.RightThumbUp, RightThumbUp, TargetType.RightThumbY, short.MaxValue));
+						maps.Add(new Map(MapCode.RightThumbDown, RightThumbDown, TargetType.RightThumbY, short.MinValue));
+						maps.Add(new Map(MapCode.RightThumbLeft, RightThumbLeft, TargetType.RightThumbX, short.MinValue));
+						maps.Add(new Map(MapCode.RightThumbRight, RightThumbRight, TargetType.RightThumbX, short.MaxValue));
 						// Assign list.
 						_Maps = maps;
 						MapsChanged = false;

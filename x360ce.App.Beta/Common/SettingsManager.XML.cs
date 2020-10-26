@@ -123,35 +123,6 @@ namespace x360ce.App
 			return true;
 		}
 
-		/// <summary>
-		/// Get PadSetting from currently selected device.
-		/// </summary>
-		/// <param name="padIndex">Source pad index.</param>
-		public PadSetting GetCurrentPadSetting(MapTo padIndex)
-		{
-			// Get settings related to PAD.
-			var maps = SettingsMap.Where(x => x.MapTo == padIndex).ToArray();
-			PropertyInfo[] properties;
-			if (!ValidatePropertyNames(maps, out properties))
-				return null;
-			var ps = new PadSetting();
-			foreach (var p in properties)
-			{
-				var map = maps.First(x => x.PropertyName == p.Name);
-				var key = map.IniPath.Split('\\')[1];
-				// Get setting value from the form.
-				var v = GetSettingValue(map.Control);
-				// If value is default then...
-				if (v == map.DefaultValue as string)
-					// Remove default value.
-					v = null;
-				// Set value onto padSetting.
-				p.SetValue(ps, v ?? "", null);
-			}
-			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
-			return ps;
-		}
-
 		public void LoadPadSettingAndCleanup(UserSetting setting, PadSetting ps, bool add = false)
 		{
 			// Link setting with pad setting.

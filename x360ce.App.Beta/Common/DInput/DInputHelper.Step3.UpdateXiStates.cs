@@ -1,8 +1,5 @@
-﻿using JocysCom.ClassLibrary.Collections;
-using SharpDX.XInput;
-using System.Collections.Generic;
+﻿using SharpDX.XInput;
 using System.Linq;
-using System.Windows.Documents;
 using x360ce.Engine;
 
 namespace x360ce.App.DInput
@@ -136,7 +133,9 @@ namespace x360ce.App.DInput
 								// Target: Button.
 								// --------------------------------------------------------
 								if (map.Target == TargetType.Button)
+								{
 									gp.Buttons |= map.ButtonFlag;
+								}
 								// --------------------------------------------------------
 								// Target: Trigger.
 								// --------------------------------------------------------

@@ -20,6 +20,7 @@
         RightShoulder = 0x200,
         RightThumb = 0x80,
         Start = 0x10,
+        Guide = 0x400,
         X = 0x4000,
         Y = -32768
     }

@@ -1,16 +1,19 @@
 ﻿using SharpDX.XInput;
-using System.Linq;
 
 namespace x360ce.Engine
 {
+
+	/// <summary>
+	/// Loads string value and creates mapping object.
+	/// </summary>
 	public class Map
 	{
 
 		/// <summary>
-		/// Add binary/button type mapping.
+		/// Add button mapping.
 		/// </summary>
 		/// <param name="deadZone">Used when source is range/axis type.</param>
-		public Map(string value, GamepadButtonFlags flag, string deadZone)
+		public Map(MapCode code, string value, GamepadButtonFlags flag, string deadZone)
 		{
 			Target = TargetType.Button;
 			Load(value);
@@ -19,9 +22,9 @@ namespace x360ce.Engine
 		}
 
 		/// <summary>
-		///  Add range/axis type mapping.
+		///  Add trigger and axis mapping: [Left|Right] [Trigger|ThumbAxisX|ThumbAxisY].
 		/// </summary>
-		public Map(string value, TargetType target, string deadZone, string antiDeadZone, string linear)
+		public Map(MapCode code, string value, TargetType target, string deadZone, string antiDeadZone, string linear)
 		{
 			Target = target;
 			Load(value);
@@ -32,9 +35,9 @@ namespace x360ce.Engine
 
 
 		/// <summary>
-		///  Add range/axis type mapping.
+		///  Add thumb mapping: [Left|Right] Thumb [Up|Left|Right|Down].
 		/// </summary>
-		public Map(string value, TargetType target, short axisValue)
+		public Map(MapCode code, string value, TargetType target, short axisValue)
 		{
 			Target = target;
 			Load(value);
@@ -50,6 +53,8 @@ namespace x360ce.Engine
 			IsHalf = SettingsConverter.IsHalf(Type);
 			IsInverted = SettingsConverter.IsInverted(Type);
 		}
+
+		MapCode Code;
 
 		// Source Parameters.
 		public SettingType Type;

@@ -121,9 +121,9 @@ namespace x360ce.App.Controls
 		{
 			bool on;
 			// Show trigger axis state -green minus image.
-			if (ii.Code == LayoutCode.LeftTrigger || ii.Code == LayoutCode.RightTrigger)
+			if (ii.Code == MapCode.LeftTrigger || ii.Code == MapCode.RightTrigger)
 			{
-				var isLeft = ii.Code == LayoutCode.LeftTrigger;
+				var isLeft = ii.Code == MapCode.LeftTrigger;
 				var control = isLeft ? LeftTriggerStatus : RightTriggerStatus;
 				var h = (float)(((System.Windows.FrameworkElement)control.Parent).Height - control.Height);
 				var y = isLeft ? gp.LeftTrigger : gp.RightTrigger;
@@ -133,9 +133,9 @@ namespace x360ce.App.Controls
 				control.Margin = new System.Windows.Thickness(m.Left, m.Top, m.Right, b);
 			}
 			// Draw thumb axis state - green cross image.
-			if (ii.Code == LayoutCode.LeftThumbButton || ii.Code == LayoutCode.RightThumbButton)
+			if (ii.Code == MapCode.LeftThumbButton || ii.Code == MapCode.RightThumbButton)
 			{
-				var isLeft = ii.Code == LayoutCode.LeftThumbButton;
+				var isLeft = ii.Code == MapCode.LeftThumbButton;
 				var control = isLeft ? LeftThumbStatus : RightThumbStatus;
 				var w = (float)((System.Windows.FrameworkElement)control.Parent).Width / 2F;
 				var x = isLeft ? gp.LeftThumbX : gp.RightThumbX;
@@ -146,7 +146,7 @@ namespace x360ce.App.Controls
 				control.Margin = new System.Windows.Thickness(l, t, m.Right, m.Bottom);
 			}
 			// If D-Pad.
-			if (ii.Code == LayoutCode.DPad)
+			if (ii.Code == MapCode.DPad)
 			{
 				on =
 					gp.Buttons.HasFlag(GamepadButtonFlags.DPadUp) ||
@@ -160,31 +160,31 @@ namespace x360ce.App.Controls
 				var t = 2000;
 				// This is axis.
 				short value = 0;
-				if (ii.Code == LayoutCode.LeftThumbAxisX)
+				if (ii.Code == MapCode.LeftThumbAxisX)
 					value = gp.LeftThumbX;
-				else if (ii.Code == LayoutCode.LeftThumbAxisY)
+				else if (ii.Code == MapCode.LeftThumbAxisY)
 					value = gp.LeftThumbY;
-				else if (ii.Code == LayoutCode.RightThumbAxisX)
+				else if (ii.Code == MapCode.RightThumbAxisX)
 					value = gp.RightThumbX;
-				else if (ii.Code == LayoutCode.RightThumbAxisY)
+				else if (ii.Code == MapCode.RightThumbAxisY)
 					value = gp.RightThumbY;
 				// Check when value is on.
 				on = value < -t || value > t;
-				if (ii.Code == LayoutCode.LeftThumbRight)
+				if (ii.Code == MapCode.LeftThumbRight)
 					on = gp.LeftThumbX > t;
-				if (ii.Code == LayoutCode.LeftThumbLeft)
+				if (ii.Code == MapCode.LeftThumbLeft)
 					on = gp.LeftThumbX < -t;
-				if (ii.Code == LayoutCode.LeftThumbUp)
+				if (ii.Code == MapCode.LeftThumbUp)
 					on = gp.LeftThumbY > t;
-				if (ii.Code == LayoutCode.LeftThumbDown)
+				if (ii.Code == MapCode.LeftThumbDown)
 					on = gp.LeftThumbY < -t;
-				if (ii.Code == LayoutCode.RightThumbRight)
+				if (ii.Code == MapCode.RightThumbRight)
 					on = gp.RightThumbX > t;
-				if (ii.Code == LayoutCode.RightThumbLeft)
+				if (ii.Code == MapCode.RightThumbLeft)
 					on = gp.RightThumbX < -t;
-				if (ii.Code == LayoutCode.RightThumbUp)
+				if (ii.Code == MapCode.RightThumbUp)
 					on = gp.RightThumbY > t;
-				if (ii.Code == LayoutCode.RightThumbDown)
+				if (ii.Code == MapCode.RightThumbDown)
 					on = gp.RightThumbY < -t;
 			}
 			else
@@ -192,21 +192,21 @@ namespace x360ce.App.Controls
 				// Check when value is on.
 				on = gp.Buttons.HasFlag(ii.Button);
 			}
-			LayoutCode recordingCode = ii.Code;
+			MapCode recordingCode = ii.Code;
 
 			var isRecordingItem = Recorder.Recording && ii.Code == Recorder.CurrentMap.Code;
 			// If recording then...
 			if (Recorder.Recording)
 			{
-				LayoutCode? redirect = null;
-				if (Recorder.CurrentMap.Code == LayoutCode.RightThumbAxisX)
-					redirect = LayoutCode.RightThumbRight;
-				if (Recorder.CurrentMap.Code == LayoutCode.RightThumbAxisY)
-					redirect = LayoutCode.RightThumbUp;
-				if (Recorder.CurrentMap.Code == LayoutCode.LeftThumbAxisX)
-					redirect = LayoutCode.LeftThumbRight;
-				if (Recorder.CurrentMap.Code == LayoutCode.LeftThumbAxisY)
-					redirect = LayoutCode.LeftThumbUp;
+				MapCode? redirect = null;
+				if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisX)
+					redirect = MapCode.RightThumbRight;
+				if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisY)
+					redirect = MapCode.RightThumbUp;
+				if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisX)
+					redirect = MapCode.LeftThumbRight;
+				if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisY)
+					redirect = MapCode.LeftThumbUp;
 				if (redirect.HasValue)
 				{
 					recordingCode = redirect.Value;

@@ -87,6 +87,7 @@
 			this.ShowTestButtonCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowFormInfoCheckBox = new System.Windows.Forms.CheckBox();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
+			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
 			this.HidGuardianTabPage = new System.Windows.Forms.TabPage();
@@ -99,7 +100,9 @@
 			this.HidGuardianUninstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianInstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianTextBox = new System.Windows.Forms.TextBox();
-			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
+			this.GuideButtonGroupBox = new System.Windows.Forms.GroupBox();
+			this.GuideButtonActionLabel = new System.Windows.Forms.Label();
+			this.GuideButtonActionTextBox = new System.Windows.Forms.TextBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
@@ -120,6 +123,7 @@
 			this.HidGuardianTabPage.SuspendLayout();
 			this.HidGuardianPanel.SuspendLayout();
 			this.groupBox1.SuspendLayout();
+			this.GuideButtonGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -733,6 +737,7 @@
 			this.GeneralPanel.Controls.Add(this.TestingAndLoggingGroupBox);
 			this.GeneralPanel.Controls.Add(this.DevelopingGroupBox);
 			this.GeneralPanel.Controls.Add(this.DirectInputDevicesGroupBox);
+			this.GeneralPanel.Controls.Add(this.GuideButtonGroupBox);
 			this.GeneralPanel.Controls.Add(this.ConfigurationGroupBox);
 			this.GeneralPanel.Controls.Add(this.ProgramScanLocationsTabControl);
 			this.GeneralPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -785,6 +790,14 @@
 			this.InternetOptionsTabPage.Size = new System.Drawing.Size(650, 421);
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
+			// 
+			// InternetPanel
+			// 
+			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.InternetPanel.Location = new System.Drawing.Point(3, 3);
+			this.InternetPanel.Name = "InternetPanel";
+			this.InternetPanel.Size = new System.Drawing.Size(644, 415);
+			this.InternetPanel.TabIndex = 33;
 			// 
 			// VirtualDeviceTabPage
 			// 
@@ -922,13 +935,33 @@
 			this.HidGuardianTextBox.Size = new System.Drawing.Size(389, 20);
 			this.HidGuardianTextBox.TabIndex = 41;
 			// 
-			// InternetPanel
+			// GuideButtonGroupBox
 			// 
-			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.InternetPanel.Location = new System.Drawing.Point(3, 3);
-			this.InternetPanel.Name = "InternetPanel";
-			this.InternetPanel.Size = new System.Drawing.Size(644, 415);
-			this.InternetPanel.TabIndex = 33;
+			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionLabel);
+			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionTextBox);
+			this.GuideButtonGroupBox.Location = new System.Drawing.Point(3, 335);
+			this.GuideButtonGroupBox.Name = "GuideButtonGroupBox";
+			this.GuideButtonGroupBox.Size = new System.Drawing.Size(254, 47);
+			this.GuideButtonGroupBox.TabIndex = 31;
+			this.GuideButtonGroupBox.TabStop = false;
+			this.GuideButtonGroupBox.Text = "Guide Button";
+			// 
+			// GuideButtonActionLabel
+			// 
+			this.GuideButtonActionLabel.AutoSize = true;
+			this.GuideButtonActionLabel.Location = new System.Drawing.Point(4, 22);
+			this.GuideButtonActionLabel.Name = "GuideButtonActionLabel";
+			this.GuideButtonActionLabel.Size = new System.Drawing.Size(40, 13);
+			this.GuideButtonActionLabel.TabIndex = 0;
+			this.GuideButtonActionLabel.Text = "Action:";
+			// 
+			// GuideButtonActionTextBox
+			// 
+			this.GuideButtonActionTextBox.Enabled = false;
+			this.GuideButtonActionTextBox.Location = new System.Drawing.Point(50, 19);
+			this.GuideButtonActionTextBox.Name = "GuideButtonActionTextBox";
+			this.GuideButtonActionTextBox.Size = new System.Drawing.Size(129, 20);
+			this.GuideButtonActionTextBox.TabIndex = 0;
 			// 
 			// OptionsUserControl
 			// 
@@ -965,6 +998,8 @@
 			this.HidGuardianPanel.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
+			this.GuideButtonGroupBox.ResumeLayout(false);
+			this.GuideButtonGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -1043,5 +1078,8 @@
 		private System.Windows.Forms.Panel HidGuardianPanel;
 		public System.Windows.Forms.Button HidGuardianRefreshButton;
 		private System.Windows.Forms.RichTextBox HelpRichTextBox;
+		private System.Windows.Forms.GroupBox GuideButtonGroupBox;
+		private System.Windows.Forms.Label GuideButtonActionLabel;
+		private System.Windows.Forms.TextBox GuideButtonActionTextBox;
 	}
 }

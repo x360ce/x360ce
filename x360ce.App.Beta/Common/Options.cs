@@ -141,6 +141,13 @@ namespace x360ce.App
 		}
 		bool _HidGuardianConfigureAutomatically = false;
 
+		public string GuideButtonAction
+		{
+			get { return _GuideButtonAction; }
+			set { _GuideButtonAction = value; OnPropertyChanged(); }
+		}
+		string _GuideButtonAction;
+
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]

@@ -441,43 +441,43 @@ namespace x360ce.App.Controls
 					var triggerRight = new Point((int)XboxImage.Width - triggerLeft.X - 1, triggerLeft.Y);
 					_imageInfos = new ImageInfos();
 					// Configure Image 1.
-					_imageInfos.Add(1, LayoutCode.LeftTrigger, 63, 27, LeftTriggerLabel, LeftTriggerComboBox);
-					_imageInfos.Add(1, LayoutCode.RightTrigger, 193, 27, RightTriggerLabel, RightTriggerComboBox);
-					_imageInfos.Add(1, LayoutCode.LeftShoulder, 43, 66, LeftShoulderLabel, LeftShoulderComboBox, GamepadButtonFlags.LeftShoulder);
-					_imageInfos.Add(1, LayoutCode.RightShoulder, 213, 66, RightShoulderLabel, RightShoulderComboBox, GamepadButtonFlags.RightShoulder);
+					_imageInfos.Add(1, MapCode.LeftTrigger, 63, 27, LeftTriggerLabel, LeftTriggerComboBox);
+					_imageInfos.Add(1, MapCode.RightTrigger, 193, 27, RightTriggerLabel, RightTriggerComboBox);
+					_imageInfos.Add(1, MapCode.LeftShoulder, 43, 66, LeftShoulderLabel, LeftShoulderComboBox, GamepadButtonFlags.LeftShoulder);
+					_imageInfos.Add(1, MapCode.RightShoulder, 213, 66, RightShoulderLabel, RightShoulderComboBox, GamepadButtonFlags.RightShoulder);
 					// Configure Image 2.
-					_imageInfos.Add(2, LayoutCode.ButtonY, 196, 29, ButtonYLabel, ButtonYComboBox, GamepadButtonFlags.Y);
-					_imageInfos.Add(2, LayoutCode.ButtonX, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
-					_imageInfos.Add(2, LayoutCode.ButtonB, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
-					_imageInfos.Add(2, LayoutCode.ButtonA, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
-					_imageInfos.Add(2, LayoutCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox);
-					_imageInfos.Add(2, LayoutCode.ButtonBack, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
-					_imageInfos.Add(2, LayoutCode.ButtonStart, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
+					_imageInfos.Add(2, MapCode.ButtonY, 196, 29, ButtonYLabel, ButtonYComboBox, GamepadButtonFlags.Y);
+					_imageInfos.Add(2, MapCode.ButtonX, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
+					_imageInfos.Add(2, MapCode.ButtonB, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
+					_imageInfos.Add(2, MapCode.ButtonA, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
+					_imageInfos.Add(2, MapCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox);
+					_imageInfos.Add(2, MapCode.ButtonBack, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
+					_imageInfos.Add(2, MapCode.ButtonStart, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
 					// D-Pad
-					_imageInfos.Add(2, LayoutCode.DPadUp, 92, 88 - 13, DPadUpLabel, DPadUpComboBox, GamepadButtonFlags.DPadUp);
-					_imageInfos.Add(2, LayoutCode.DPadLeft, 92 - 13, 88, DPadLeftLabel, DPadLeftComboBox, GamepadButtonFlags.DPadLeft);
-					_imageInfos.Add(2, LayoutCode.DPadRight, 92 + 13, 88, DPadRightLabel, DPadRightComboBox, GamepadButtonFlags.DPadRight);
-					_imageInfos.Add(2, LayoutCode.DPadDown, 92, 88 + 13, DPadDownLabel, DPadDownComboBox, GamepadButtonFlags.DPadDown);
+					_imageInfos.Add(2, MapCode.DPadUp, 92, 88 - 13, DPadUpLabel, DPadUpComboBox, GamepadButtonFlags.DPadUp);
+					_imageInfos.Add(2, MapCode.DPadLeft, 92 - 13, 88, DPadLeftLabel, DPadLeftComboBox, GamepadButtonFlags.DPadLeft);
+					_imageInfos.Add(2, MapCode.DPadRight, 92 + 13, 88, DPadRightLabel, DPadRightComboBox, GamepadButtonFlags.DPadRight);
+					_imageInfos.Add(2, MapCode.DPadDown, 92, 88 + 13, DPadDownLabel, DPadDownComboBox, GamepadButtonFlags.DPadDown);
 					// D-Pad (Extra Map)
-					_imageInfos.Add(2, LayoutCode.DPad, 92, 88, DPadLabel, DPadComboBox);
+					_imageInfos.Add(2, MapCode.DPad, 92, 88, DPadLabel, DPadComboBox);
 					// Left Thumb.
-					_imageInfos.Add(2, LayoutCode.LeftThumbButton, 59, 47, LeftThumbButtonLabel, LeftThumbButtonComboBox, GamepadButtonFlags.LeftThumb);
-					_imageInfos.Add(2, LayoutCode.LeftThumbAxisX, 59 + 10, 47, LeftThumbAxisXLabel, LeftThumbAxisXComboBox);
-					_imageInfos.Add(2, LayoutCode.LeftThumbAxisY, 59, 47 - 10, LeftThumbAxisYLabel, LeftThumbAxisYComboBox);
+					_imageInfos.Add(2, MapCode.LeftThumbButton, 59, 47, LeftThumbButtonLabel, LeftThumbButtonComboBox, GamepadButtonFlags.LeftThumb);
+					_imageInfos.Add(2, MapCode.LeftThumbAxisX, 59 + 10, 47, LeftThumbAxisXLabel, LeftThumbAxisXComboBox);
+					_imageInfos.Add(2, MapCode.LeftThumbAxisY, 59, 47 - 10, LeftThumbAxisYLabel, LeftThumbAxisYComboBox);
 					// Left Thumb (Extra Map).
-					_imageInfos.Add(2, LayoutCode.LeftThumbUp, 59, 47 - 10, LeftThumbUpLabel, LeftThumbUpComboBox);
-					_imageInfos.Add(2, LayoutCode.LeftThumbLeft, 59 - 10, 47, LeftThumbLeftLabel, LeftThumbLeftComboBox);
-					_imageInfos.Add(2, LayoutCode.LeftThumbRight, 59 + 10, 47, LeftThumbRightLabel, LeftThumbRightComboBox);
-					_imageInfos.Add(2, LayoutCode.LeftThumbDown, 59, 47 + 10, LeftThumbDownLabel, LeftThumbDownComboBox);
+					_imageInfos.Add(2, MapCode.LeftThumbUp, 59, 47 - 10, LeftThumbUpLabel, LeftThumbUpComboBox);
+					_imageInfos.Add(2, MapCode.LeftThumbLeft, 59 - 10, 47, LeftThumbLeftLabel, LeftThumbLeftComboBox);
+					_imageInfos.Add(2, MapCode.LeftThumbRight, 59 + 10, 47, LeftThumbRightLabel, LeftThumbRightComboBox);
+					_imageInfos.Add(2, MapCode.LeftThumbDown, 59, 47 + 10, LeftThumbDownLabel, LeftThumbDownComboBox);
 					// Right Thumb.
-					_imageInfos.Add(2, LayoutCode.RightThumbButton, 160, 88, RightThumbButtonLabel, RightThumbButtonComboBox, GamepadButtonFlags.RightThumb);
-					_imageInfos.Add(2, LayoutCode.RightThumbAxisX, 160 + 10, 88, RightThumbAxisXLabel, RightThumbAxisXComboBox);
-					_imageInfos.Add(2, LayoutCode.RightThumbAxisY, 160, 88 - 10, RightThumbAxisYLabel, RightThumbAxisYComboBox);
+					_imageInfos.Add(2, MapCode.RightThumbButton, 160, 88, RightThumbButtonLabel, RightThumbButtonComboBox, GamepadButtonFlags.RightThumb);
+					_imageInfos.Add(2, MapCode.RightThumbAxisX, 160 + 10, 88, RightThumbAxisXLabel, RightThumbAxisXComboBox);
+					_imageInfos.Add(2, MapCode.RightThumbAxisY, 160, 88 - 10, RightThumbAxisYLabel, RightThumbAxisYComboBox);
 					// Right Thumb (Extra Map).
-					_imageInfos.Add(2, LayoutCode.RightThumbUp, 160, 88 - 10, RightThumbUpLabel, RightThumbUpComboBox);
-					_imageInfos.Add(2, LayoutCode.RightThumbLeft, 160 - 10, 88, RightThumbLeftLabel, RightThumbLeftComboBox);
-					_imageInfos.Add(2, LayoutCode.RightThumbRight, 160 + 10, 88, RightThumbRightLabel, RightThumbRightComboBox);
-					_imageInfos.Add(2, LayoutCode.RightThumbDown, 160, 88 + 10, RightThumbDownLabel, RightThumbDownComboBox);
+					_imageInfos.Add(2, MapCode.RightThumbUp, 160, 88 - 10, RightThumbUpLabel, RightThumbUpComboBox);
+					_imageInfos.Add(2, MapCode.RightThumbLeft, 160 - 10, 88, RightThumbLeftLabel, RightThumbLeftComboBox);
+					_imageInfos.Add(2, MapCode.RightThumbRight, 160 + 10, 88, RightThumbRightLabel, RightThumbRightComboBox);
+					_imageInfos.Add(2, MapCode.RightThumbDown, 160, 88 + 10, RightThumbDownLabel, RightThumbDownComboBox);
 				}
 				return _imageInfos;
 			}
@@ -506,12 +506,12 @@ namespace x360ce.App.Controls
 			// Mapping
 			AddMap(() => SettingName.MapToPad, DirectInputPanel.MapToPadComboBox);
 			// Left Trigger
-			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox, LayoutCode.LeftTrigger);
+			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox, MapCode.LeftTrigger);
 			AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.LeftTriggerAntiDeadZone, LeftTriggerUserControl.AntiDeadZoneNumericUpDown);
 			AddMap(() => SettingName.LeftTriggerLinear, LeftTriggerUserControl.SensitivityNumericUpDown);
 			// Right Trigger
-			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox, LayoutCode.RightTrigger);
+			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox, MapCode.RightTrigger);
 			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.RightTriggerAntiDeadZone, RightTriggerUserControl.AntiDeadZoneNumericUpDown);
 			AddMap(() => SettingName.RightTriggerLinear, RightTriggerUserControl.SensitivityNumericUpDown);
@@ -519,11 +519,11 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.Combined, CombinedCheckBox);
 			AddMap(() => SettingName.CombinedIndex, CombinedIndexComboBox);
 			// D-Pad
-			AddMap(() => SettingName.DPad, DPadComboBox, LayoutCode.DPad);
-			AddMap(() => SettingName.DPadUp, DPadUpComboBox, LayoutCode.DPadUp);
-			AddMap(() => SettingName.DPadDown, DPadDownComboBox, LayoutCode.DPadDown);
-			AddMap(() => SettingName.DPadLeft, DPadLeftComboBox, LayoutCode.DPadLeft);
-			AddMap(() => SettingName.DPadRight, DPadRightComboBox, LayoutCode.DPadRight);
+			AddMap(() => SettingName.DPad, DPadComboBox, MapCode.DPad);
+			AddMap(() => SettingName.DPadUp, DPadUpComboBox, MapCode.DPadUp);
+			AddMap(() => SettingName.DPadDown, DPadDownComboBox, MapCode.DPadDown);
+			AddMap(() => SettingName.DPadLeft, DPadLeftComboBox, MapCode.DPadLeft);
+			AddMap(() => SettingName.DPadRight, DPadRightComboBox, MapCode.DPadRight);
 			// Axis To Button
 			AddMap(() => SettingName.ButtonADeadZone, AxisToButtonADeadZonePanel.DeadZoneNumericUpDown);
 			AddMap(() => SettingName.ButtonBDeadZone, AxisToButtonBDeadZonePanel.DeadZoneNumericUpDown);
@@ -545,24 +545,24 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
 			AddMap(() => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
 			// Buttons
-			AddMap(() => SettingName.ButtonGuide, ButtonGuideComboBox, LayoutCode.ButtonGuide);
-			AddMap(() => SettingName.ButtonBack, ButtonBackComboBox, LayoutCode.ButtonBack);
-			AddMap(() => SettingName.ButtonStart, ButtonStartComboBox, LayoutCode.ButtonStart);
-			AddMap(() => SettingName.ButtonA, ButtonAComboBox, LayoutCode.ButtonA);
-			AddMap(() => SettingName.ButtonB, ButtonBComboBox, LayoutCode.ButtonB);
-			AddMap(() => SettingName.ButtonX, ButtonXComboBox, LayoutCode.ButtonX);
-			AddMap(() => SettingName.ButtonY, ButtonYComboBox, LayoutCode.ButtonY);
+			AddMap(() => SettingName.ButtonGuide, ButtonGuideComboBox, MapCode.ButtonGuide);
+			AddMap(() => SettingName.ButtonBack, ButtonBackComboBox, MapCode.ButtonBack);
+			AddMap(() => SettingName.ButtonStart, ButtonStartComboBox, MapCode.ButtonStart);
+			AddMap(() => SettingName.ButtonA, ButtonAComboBox, MapCode.ButtonA);
+			AddMap(() => SettingName.ButtonB, ButtonBComboBox, MapCode.ButtonB);
+			AddMap(() => SettingName.ButtonX, ButtonXComboBox, MapCode.ButtonX);
+			AddMap(() => SettingName.ButtonY, ButtonYComboBox, MapCode.ButtonY);
 			// Shoulders.
-			AddMap(() => SettingName.LeftShoulder, LeftShoulderComboBox, LayoutCode.LeftShoulder);
-			AddMap(() => SettingName.RightShoulder, RightShoulderComboBox, LayoutCode.RightShoulder);
+			AddMap(() => SettingName.LeftShoulder, LeftShoulderComboBox, MapCode.LeftShoulder);
+			AddMap(() => SettingName.RightShoulder, RightShoulderComboBox, MapCode.RightShoulder);
 			// Left Thumb
-			AddMap(() => SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox, LayoutCode.LeftThumbAxisX);
-			AddMap(() => SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox, LayoutCode.LeftThumbAxisY);
-			AddMap(() => SettingName.LeftThumbRight, LeftThumbRightComboBox, LayoutCode.LeftThumbRight);
-			AddMap(() => SettingName.LeftThumbLeft, LeftThumbLeftComboBox, LayoutCode.LeftThumbLeft);
-			AddMap(() => SettingName.LeftThumbUp, LeftThumbUpComboBox, LayoutCode.LeftThumbUp);
-			AddMap(() => SettingName.LeftThumbDown, LeftThumbDownComboBox, LayoutCode.LeftThumbDown);
-			AddMap(() => SettingName.LeftThumbButton, LeftThumbButtonComboBox, LayoutCode.LeftThumbButton);
+			AddMap(() => SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox, MapCode.LeftThumbAxisX);
+			AddMap(() => SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox, MapCode.LeftThumbAxisY);
+			AddMap(() => SettingName.LeftThumbRight, LeftThumbRightComboBox, MapCode.LeftThumbRight);
+			AddMap(() => SettingName.LeftThumbLeft, LeftThumbLeftComboBox, MapCode.LeftThumbLeft);
+			AddMap(() => SettingName.LeftThumbUp, LeftThumbUpComboBox, MapCode.LeftThumbUp);
+			AddMap(() => SettingName.LeftThumbDown, LeftThumbDownComboBox, MapCode.LeftThumbDown);
+			AddMap(() => SettingName.LeftThumbButton, LeftThumbButtonComboBox, MapCode.LeftThumbButton);
 			AddMap(() => SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown);
@@ -570,13 +570,13 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityNumericUpDown);
 			AddMap(() => SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityNumericUpDown);
 			// Right Thumb
-			AddMap(() => SettingName.RightThumbAxisX, RightThumbAxisXComboBox, LayoutCode.RightThumbAxisX);
-			AddMap(() => SettingName.RightThumbAxisY, RightThumbAxisYComboBox, LayoutCode.RightThumbAxisY);
-			AddMap(() => SettingName.RightThumbRight, RightThumbRightComboBox, LayoutCode.RightThumbRight);
-			AddMap(() => SettingName.RightThumbLeft, RightThumbLeftComboBox, LayoutCode.RightThumbLeft);
-			AddMap(() => SettingName.RightThumbUp, RightThumbUpComboBox, LayoutCode.RightThumbUp);
-			AddMap(() => SettingName.RightThumbDown, RightThumbDownComboBox, LayoutCode.RightThumbDown);
-			AddMap(() => SettingName.RightThumbButton, RightThumbButtonComboBox, LayoutCode.RightThumbButton);
+			AddMap(() => SettingName.RightThumbAxisX, RightThumbAxisXComboBox, MapCode.RightThumbAxisX);
+			AddMap(() => SettingName.RightThumbAxisY, RightThumbAxisYComboBox, MapCode.RightThumbAxisY);
+			AddMap(() => SettingName.RightThumbRight, RightThumbRightComboBox, MapCode.RightThumbRight);
+			AddMap(() => SettingName.RightThumbLeft, RightThumbLeftComboBox, MapCode.RightThumbLeft);
+			AddMap(() => SettingName.RightThumbUp, RightThumbUpComboBox, MapCode.RightThumbUp);
+			AddMap(() => SettingName.RightThumbDown, RightThumbDownComboBox, MapCode.RightThumbDown);
+			AddMap(() => SettingName.RightThumbButton, RightThumbButtonComboBox, MapCode.RightThumbButton);
 			AddMap(() => SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown);
@@ -596,11 +596,10 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
 		}
 
-		void AddMap<T>(Expression<Func<T>> setting, Control control, LayoutCode code = default(LayoutCode))
+		void AddMap<T>(Expression<Func<T>> setting, Control control, MapCode code = default)
 		{
 			var section = string.Format(@"PAD{0}", (int)MappedTo);
-			var iniConverter = code != default(LayoutCode);
-			var item = SettingsManager.AddMap(section, setting, control, MappedTo, iniConverter);
+			var item = SettingsManager.AddMap(section, setting, control, MappedTo, code);
 			item.Code = code;
 		}
 
@@ -1544,24 +1543,24 @@ namespace x360ce.App.Controls
 				return;
 			StopRecording();
 			// Buttons to record.
-			var codes = new List<LayoutCode> {
-				LayoutCode.LeftTrigger,
-				LayoutCode.RightTrigger,
-				LayoutCode.LeftShoulder,
-				LayoutCode.RightShoulder,
-				LayoutCode.ButtonBack,
-				LayoutCode.ButtonStart,
-				LayoutCode.DPad,
-				LayoutCode.LeftThumbUp,
-				LayoutCode.LeftThumbRight,
-				LayoutCode.LeftThumbButton,
-				LayoutCode.RightThumbUp,
-				LayoutCode.RightThumbRight,
-				LayoutCode.RightThumbButton,
-				LayoutCode.ButtonY,
-				LayoutCode.ButtonX,
-				LayoutCode.ButtonB,
-				LayoutCode.ButtonA,
+			var codes = new List<MapCode> {
+				MapCode.LeftTrigger,
+				MapCode.RightTrigger,
+				MapCode.LeftShoulder,
+				MapCode.RightShoulder,
+				MapCode.ButtonBack,
+				MapCode.ButtonStart,
+				MapCode.DPad,
+				MapCode.LeftThumbUp,
+				MapCode.LeftThumbRight,
+				MapCode.LeftThumbButton,
+				MapCode.RightThumbUp,
+				MapCode.RightThumbRight,
+				MapCode.RightThumbButton,
+				MapCode.ButtonY,
+				MapCode.ButtonX,
+				MapCode.ButtonB,
+				MapCode.ButtonA,
 			};
 			RecordAllMaps = SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo && codes.Contains(x.Code))
 				// Order as same as in the list above.

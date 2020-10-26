@@ -3,7 +3,7 @@
 namespace x360ce.Engine
 {
 	[Flags]
-	public enum LayoutCode
+	public enum MapCode
 	{
 		ButtonA = 1 << 0,
 		ButtonB = 1 << 1,

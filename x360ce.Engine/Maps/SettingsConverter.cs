@@ -281,92 +281,92 @@ namespace x360ce.Engine
 
 		#region Layout Code Methods
 
-		public static List<LayoutCode> LeftThumbCodes = new List<LayoutCode>
+		public static List<MapCode> LeftThumbCodes = new List<MapCode>
 		{
-			LayoutCode.LeftThumbAxisX,
-			LayoutCode.LeftThumbAxisY,
-			LayoutCode.LeftThumbButton,
-			LayoutCode.LeftThumbDown,
-			LayoutCode.LeftThumbLeft,
-			LayoutCode.LeftThumbRight,
-			LayoutCode.LeftThumbUp,
+			MapCode.LeftThumbAxisX,
+			MapCode.LeftThumbAxisY,
+			MapCode.LeftThumbButton,
+			MapCode.LeftThumbDown,
+			MapCode.LeftThumbLeft,
+			MapCode.LeftThumbRight,
+			MapCode.LeftThumbUp,
 		};
 
-		public static List<LayoutCode> RightThumbCodes = new List<LayoutCode>
+		public static List<MapCode> RightThumbCodes = new List<MapCode>
 		{
-			LayoutCode.RightThumbAxisX,
-			LayoutCode.RightThumbAxisY,
-			LayoutCode.RightThumbButton,
-			LayoutCode.RightThumbDown,
-			LayoutCode.RightThumbLeft,
-			LayoutCode.RightThumbRight,
-			LayoutCode.RightThumbUp,
+			MapCode.RightThumbAxisX,
+			MapCode.RightThumbAxisY,
+			MapCode.RightThumbButton,
+			MapCode.RightThumbDown,
+			MapCode.RightThumbLeft,
+			MapCode.RightThumbRight,
+			MapCode.RightThumbUp,
 		};
 
-		public static List<LayoutCode> DPadCodes = new List<LayoutCode>
+		public static List<MapCode> DPadCodes = new List<MapCode>
 		{
-			LayoutCode.DPad,
-			LayoutCode.DPadDown,
-			LayoutCode.DPadLeft,
-			LayoutCode.DPadRight,
-			LayoutCode.DPadUp,
+			MapCode.DPad,
+			MapCode.DPadDown,
+			MapCode.DPadLeft,
+			MapCode.DPadRight,
+			MapCode.DPadUp,
 		};
 
-		public static List<LayoutCode> MenuButtonCodes = new List<LayoutCode>
+		public static List<MapCode> MenuButtonCodes = new List<MapCode>
 		{
-			LayoutCode.ButtonBack,
-			LayoutCode.ButtonGuide,
-			LayoutCode.ButtonStart,
+			MapCode.ButtonBack,
+			MapCode.ButtonGuide,
+			MapCode.ButtonStart,
 		};
 
-		public static List<LayoutCode> MainButtonCodes = new List<LayoutCode>
+		public static List<MapCode> MainButtonCodes = new List<MapCode>
 		{
-			LayoutCode.ButtonA,
-			LayoutCode.ButtonB,
-			LayoutCode.ButtonX,
-			LayoutCode.ButtonY,
+			MapCode.ButtonA,
+			MapCode.ButtonB,
+			MapCode.ButtonX,
+			MapCode.ButtonY,
 		};
 
-		public static List<LayoutCode> TriggerButtonCodes = new List<LayoutCode>
+		public static List<MapCode> TriggerButtonCodes = new List<MapCode>
 		{
-			LayoutCode.LeftTrigger,
-			LayoutCode.RightTrigger,
+			MapCode.LeftTrigger,
+			MapCode.RightTrigger,
 		};
 
-		public static List<LayoutCode> ShoulderButtonCodes = new List<LayoutCode>
+		public static List<MapCode> ShoulderButtonCodes = new List<MapCode>
 		{
-			LayoutCode.LeftShoulder,
-			LayoutCode.RightShoulder,
+			MapCode.LeftShoulder,
+			MapCode.RightShoulder,
 		};
 
-		public static List<LayoutCode> AxisCodes = new List<LayoutCode>
+		public static List<MapCode> AxisCodes = new List<MapCode>
 		{
-			LayoutCode.LeftTrigger,
-			LayoutCode.RightTrigger,
-			LayoutCode.LeftThumbAxisX,
-			LayoutCode.LeftThumbAxisY,
-			LayoutCode.LeftThumbDown,
-			LayoutCode.LeftThumbLeft,
-			LayoutCode.LeftThumbRight,
-			LayoutCode.LeftThumbUp,
-			LayoutCode.RightThumbAxisX,
-			LayoutCode.RightThumbAxisY,
-			LayoutCode.RightThumbDown,
-			LayoutCode.RightThumbLeft,
-			LayoutCode.RightThumbRight,
-			LayoutCode.RightThumbUp,
+			MapCode.LeftTrigger,
+			MapCode.RightTrigger,
+			MapCode.LeftThumbAxisX,
+			MapCode.LeftThumbAxisY,
+			MapCode.LeftThumbDown,
+			MapCode.LeftThumbLeft,
+			MapCode.LeftThumbRight,
+			MapCode.LeftThumbUp,
+			MapCode.RightThumbAxisX,
+			MapCode.RightThumbAxisY,
+			MapCode.RightThumbDown,
+			MapCode.RightThumbLeft,
+			MapCode.RightThumbRight,
+			MapCode.RightThumbUp,
 		};
 
-		public static List<LayoutCode> ThumbDirections = new List<LayoutCode>
+		public static List<MapCode> ThumbDirections = new List<MapCode>
 		{
-			LayoutCode.LeftThumbUp,
-			LayoutCode.LeftThumbLeft,
-			LayoutCode.LeftThumbRight,
-			LayoutCode.LeftThumbDown,
-			LayoutCode.RightThumbUp,
-			LayoutCode.RightThumbLeft,
-			LayoutCode.RightThumbRight,
-			LayoutCode.RightThumbDown,
+			MapCode.LeftThumbUp,
+			MapCode.LeftThumbLeft,
+			MapCode.LeftThumbRight,
+			MapCode.LeftThumbDown,
+			MapCode.RightThumbUp,
+			MapCode.RightThumbLeft,
+			MapCode.RightThumbRight,
+			MapCode.RightThumbDown,
 		};
 
 		#endregion

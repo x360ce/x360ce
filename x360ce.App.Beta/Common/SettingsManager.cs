@@ -509,7 +509,7 @@ namespace x360ce.App
 			}
 		}
 
-		static public SettingsMapItem AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None, bool iniConverter = false)
+		static public SettingsMapItem AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None, MapCode code = default)
 		{
 			// Get the member expression
 			var me = (MemberExpression)setting.Body;
@@ -535,7 +535,7 @@ namespace x360ce.App
 			item.Description = desc;
 			item.IniSection = sectionName;
 			item.IniKey = keyName;
-			item.IniConverter = iniConverter;
+			item.Code = code;
 			item.Control = control;
 			item.MapTo = mapTo;
 			item.PropertyName = prop.Name;
@@ -585,15 +585,6 @@ namespace x360ce.App
 		public int loadCount = 0;
 
 		public event EventHandler<SettingEventArgs> ConfigLoaded;
-
-		public bool IsDebugMode
-		{
-			get
-			{
-				var control = SettingsMap.FirstOrDefault(x => x.IniSection == OptionsSection && x.IniKey == SettingName.DebugMode).Control;
-				return ((CheckBox)control).Checked;
-			}
-		}
 
 		/// <summary>
 		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
@@ -716,7 +707,7 @@ namespace x360ce.App
 			{
 				var cbx = (ComboBox)control;
 				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
-				if (map != null && map.IniConverter)
+				if (map != null && map.Code != default)
 				{
 					var text = SettingsConverter.FromIniValue(value);
 					SetComboBoxValue(cbx, text);
@@ -821,7 +812,7 @@ namespace x360ce.App
 			{
 				var cbx = (ComboBox)control;
 				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
-				if (map != null && map.IniConverter)
+				if (map != null && map.Code != default)
 				{
 					v = SettingsConverter.ToIniValue(control.Text);
 					// make sure that disabled button value is "0".

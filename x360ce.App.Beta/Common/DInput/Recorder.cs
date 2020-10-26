@@ -36,13 +36,6 @@ namespace x360ce.App
 		object recordingLock = new object();
 		public SettingsMapItem CurrentMap;
 
-		public void drawMarkR(PaintEventArgs e, Point position)
-		{
-			int rW = -markR.Width / 2;
-			int rH = -markR.Height / 2;
-			e.Graphics.DrawImage(markR, position.X + rW, position.Y + rH);
-		}
-
 		DateTime RecordingStarted = new DateTime();
 
 		public void StartRecording(SettingsMapItem map)
@@ -113,17 +106,17 @@ namespace x360ce.App
 							// Make full axis.
 							type = SettingsConverter.ToFull(type);
 							var isUp =
-								code == LayoutCode.LeftThumbUp ||
-								code == LayoutCode.RightThumbUp;
+								code == MapCode.LeftThumbUp ||
+								code == MapCode.RightThumbUp;
 							var isLeft =
-								code == LayoutCode.LeftThumbLeft ||
-								code == LayoutCode.RightThumbLeft;
+								code == MapCode.LeftThumbLeft ||
+								code == MapCode.RightThumbLeft;
 							var isRight =
-								code == LayoutCode.LeftThumbRight ||
-								code == LayoutCode.RightThumbRight;
+								code == MapCode.LeftThumbRight ||
+								code == MapCode.RightThumbRight;
 							var isDown =
-								code == LayoutCode.LeftThumbDown ||
-								code == LayoutCode.RightThumbDown;
+								code == MapCode.LeftThumbDown ||
+								code == MapCode.RightThumbDown;
 							// Invert.
 							if (isLeft || isDown)
 								type = SettingsConverter.Invert(type);
@@ -131,12 +124,12 @@ namespace x360ce.App
 							var isLeftThumb = SettingsConverter.LeftThumbCodes.Contains(code);
 							if (isRight || isLeft)
 								newCode = isLeftThumb
-									? LayoutCode.LeftThumbAxisX
-									: LayoutCode.RightThumbAxisX;
+									? MapCode.LeftThumbAxisX
+									: MapCode.RightThumbAxisX;
 							if (isUp || isDown)
 								newCode = isLeftThumb
-									? LayoutCode.LeftThumbAxisY
-									: LayoutCode.RightThumbAxisY;
+									? MapCode.LeftThumbAxisY
+									: MapCode.RightThumbAxisY;
 							// Change destination control.
 							var rMap = SettingsManager.Current.SettingsMap.First(x => x.MapTo == map.MapTo && x.Code == newCode);
 							box = (ComboBox)rMap.Control;
@@ -144,7 +137,7 @@ namespace x360ce.App
 							stop = true;
 						}
 						// If this is DPad ComboBox then...
-						else if (code == LayoutCode.DPad)
+						else if (code == MapCode.DPad)
 						{
 							// Get first action suitable for DPad
 							Regex dPadRx = new Regex("(POV [0-9]+)");
