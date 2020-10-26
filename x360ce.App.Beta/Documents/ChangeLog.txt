@@ -1,5 +1,6 @@
 v4.16.9.0 (2020-10-26)
 - Fix: Sometimes crashing when generating exception info.
+- Fix: Guide button map.
 
 v4.16.8.0 (2020-10-25)
 - Fix: Controller image scaling issue.

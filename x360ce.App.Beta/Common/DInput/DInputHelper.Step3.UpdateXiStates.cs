@@ -133,9 +133,7 @@ namespace x360ce.App.DInput
 								// Target: Button.
 								// --------------------------------------------------------
 								if (map.Target == TargetType.Button)
-								{
 									gp.Buttons |= map.ButtonFlag;
-								}
 								// --------------------------------------------------------
 								// Target: Trigger.
 								// --------------------------------------------------------

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using x360ce.Engine.Data;
 
 namespace x360ce.Engine
 {
