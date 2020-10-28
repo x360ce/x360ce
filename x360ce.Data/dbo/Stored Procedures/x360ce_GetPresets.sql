@@ -119,6 +119,15 @@ FROM (
 						NULL AS [FileName],
 						s.PadSettingChecksum, SUM(Users) AS Users
 					FROM x360ce_Summaries s WITH(NOLOCK)
+					/*
+					-- Include settings with 80% completion only
+					INNER JOIN
+					(
+						SELECT DISTINCT ProductGuid, PadSettingChecksum
+						FROM x360ce_Settings
+						WHERE Completion > 80
+					) t2 ON t2.ProductGuid = s.ProductGuid AND t2.PadSettingChecksum = s.PadSettingChecksum
+					*/
 					WHERE @SelectAll = 1
 					GROUP BY s.ProductGuid, s.PadSettingChecksum
 				) al

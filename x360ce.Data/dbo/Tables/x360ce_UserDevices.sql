@@ -6,6 +6,7 @@
     [InstanceName]                          NVARCHAR (256)   NOT NULL,
     [ProductGuid]                           UNIQUEIDENTIFIER NOT NULL,
     [ProductName]                           NVARCHAR (256)   NOT NULL,
+    [ConnectionClass]                       UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_ConnectionClass] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     [CapAxeCount]                           INT              NOT NULL,
     [CapButtonCount]                        INT              NOT NULL,
     [CapDriverVersion]                      INT              NOT NULL,
@@ -49,6 +50,8 @@
     [Checksum]                              UNIQUEIDENTIFIER CONSTRAINT [DF_x360ce_UserDevices_Checksum] DEFAULT ('00000000-0000-0000-0000-000000000000') NOT NULL,
     CONSTRAINT [PK_x360ce_UserDevices] PRIMARY KEY CLUSTERED ([Id] ASC)
 );
+
+
 
 
 

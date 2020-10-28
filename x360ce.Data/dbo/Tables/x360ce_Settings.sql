@@ -36,6 +36,8 @@
 
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_x360ce_Settings_ProductGuid_InstanceGuid]
     ON [dbo].[x360ce_Settings]([ProductGuid] ASC, [InstanceGuid] ASC);
@@ -71,7 +73,7 @@ BEGIN
 	-- Update Completion points.
 	-----------------------------------------------------------
 
-	PRINT CAST(OBJECT_NAME(@@PROCID) AS sysname) + ' TRIGGER_NESTLEVEL: ' + CAST(TRIGGER_NESTLEVEL() AS sysname)
+	--PRINT CAST(OBJECT_NAME(@@PROCID) AS sysname) + ' TRIGGER_NESTLEVEL: ' + CAST(TRIGGER_NESTLEVEL() AS sysname)
 
 	-- This trigger will run second time if table is updated inside this trigger.
 	-- If trigger was triggered from this trigger then return.
