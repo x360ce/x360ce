@@ -190,6 +190,7 @@
     <Compile Include="Data\IUserRecord.cs" />
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
+    <Compile Include="Data\UserKeyboardMap.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
     <Compile Include="Data\UserSetting.cs" />
@@ -460,7 +461,7 @@
     <Compile Include="Maps\TargetType.cs" />
     <Compile Include="Maps\SettingName.cs" />
     <Compile Include="Maps\SettingsConverter.cs" />
-    <Compile Include="Maps\SettingType.cs" />
+    <Compile Include="Maps\MapType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

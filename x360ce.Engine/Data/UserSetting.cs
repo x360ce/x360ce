@@ -53,7 +53,7 @@ namespace x360ce.Engine.Data
 			axisPoints += GetAxisMapPoints(ps.RightTrigger);
 			// Count button points (maximum 14 points).
 			var buttonPoints = 0m;
-			SettingType type;
+			MapType type;
 			int index;
 			if (SettingsConverter.TryParseIniValue(ps.ButtonA, out type, out index)) buttonPoints += 1m;
 			if (SettingsConverter.TryParseIniValue(ps.ButtonB, out type, out index)) buttonPoints += 1m;
@@ -62,7 +62,7 @@ namespace x360ce.Engine.Data
 			if (SettingsConverter.TryParseIniValue(ps.ButtonBack, out type, out index)) buttonPoints += 1m;
 			if (SettingsConverter.TryParseIniValue(ps.ButtonStart, out type, out index)) buttonPoints += 1m;
 			// If DPad is properly mapped to POV then...
-			if (SettingsConverter.TryParseIniValue(ps.DPadDown, out type, out index) && type == SettingType.POV)
+			if (SettingsConverter.TryParseIniValue(ps.DPadDown, out type, out index) && type == MapType.POV)
 			{
 				// Add 4 points.
 				buttonPoints += 4m;
@@ -89,7 +89,7 @@ namespace x360ce.Engine.Data
 		static decimal GetAxisMapPoints(string axis, string up = null, string down = null)
 		{
 			var points = 0m;
-			SettingType type;
+			MapType type;
 			int index;
 			if (SettingsConverter.TryParseIniValue(axis, out type, out index))
 			{

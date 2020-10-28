@@ -10,7 +10,6 @@ namespace x360ce.Engine.Data
 
 		public UserGame()
 		{
-			
 			DateCreated = DateTime.Now;
 			DateUpdated = DateCreated;
 			Timeout = -1;

@@ -4,8 +4,6 @@ using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Linq;
-using System.Web.UI.WebControls;
-using System.Windows.Media.TextFormatting;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -221,7 +219,7 @@ namespace x360ce.App.DInput
 					var newState = new CustomDiState(ud.JoState);
 					var newUpdates = update?.Select(x=> new CustomDiUpdate(x)).ToArray();
 					// If updates from buffer supplied and old state is available then...
-					if (newUpdates != null && newUpdates.Count(x=>x.Type == SettingType.Button) > 1 && ud.DiState != null)
+					if (newUpdates != null && newUpdates.Count(x=>x.Type == MapType.Button) > 1 && ud.DiState != null)
 					{
 						// Analyse if state must be modified.
 						for (int b = 0; b < newState.Buttons.Length; b++)
@@ -232,7 +230,7 @@ namespace x360ce.App.DInput
 							if (oldPresseed == newPresseed)
 							{
 								// But buffer contains press then...
-								var wasPressed = newUpdates.Count(x => x.Type == SettingType.Button && x.Index == b) > 1;
+								var wasPressed = newUpdates.Count(x => x.Type == MapType.Button && x.Index == b) > 1;
 								if (wasPressed)
 								{
 									// Invert state and give chance for the game to recognize the press.

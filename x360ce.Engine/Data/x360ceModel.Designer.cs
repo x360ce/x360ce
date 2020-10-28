@@ -256,6 +256,22 @@ namespace x360ce.Engine.Data
             }
         }
         private ObjectSet<UserProfile> _UserProfiles;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<UserKeyboardMap> UserKeyboardMaps
+        {
+            get
+            {
+                if ((_UserKeyboardMaps == null))
+                {
+                    _UserKeyboardMaps = base.CreateObjectSet<UserKeyboardMap>("UserKeyboardMaps");
+                }
+                return _UserKeyboardMaps;
+            }
+        }
+        private ObjectSet<UserKeyboardMap> _UserKeyboardMaps;
 
         #endregion
 
@@ -355,6 +371,14 @@ namespace x360ce.Engine.Data
         public void AddToUserProfiles(UserProfile userProfile)
         {
             base.AddObject("UserProfiles", userProfile);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the UserKeyboardMaps EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToUserKeyboardMaps(UserKeyboardMap userKeyboardMap)
+        {
+            base.AddObject("UserKeyboardMaps", userKeyboardMap);
         }
 
         #endregion
@@ -6818,6 +6842,478 @@ namespace x360ce.Engine.Data
         private global::System.Guid _ProfileId;
         partial void OnProfileIdChanging(global::System.Guid value);
         partial void OnProfileIdChanged();
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="x360ceModel", Name="UserKeyboardMap")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class UserKeyboardMap : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new UserKeyboardMap object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="computerId">Initial value of the ComputerId property.</param>
+        /// <param name="profileId">Initial value of the ProfileId property.</param>
+        /// <param name="fileName">Initial value of the FileName property.</param>
+        /// <param name="fileProductName">Initial value of the FileProductName property.</param>
+        /// <param name="name">Initial value of the Name property.</param>
+        /// <param name="mapTo">Initial value of the MapTo property.</param>
+        /// <param name="mapType">Initial value of the MapType property.</param>
+        /// <param name="mapIndex">Initial value of the MapIndex property.</param>
+        /// <param name="mapRangeMin">Initial value of the MapRangeMin property.</param>
+        /// <param name="mapRangeMax">Initial value of the MapRangeMax property.</param>
+        /// <param name="scriptType">Initial value of the ScriptType property.</param>
+        /// <param name="scriptText">Initial value of the ScriptText property.</param>
+        /// <param name="isEnabled">Initial value of the IsEnabled property.</param>
+        /// <param name="checksum">Initial value of the Checksum property.</param>
+        /// <param name="dateCreated">Initial value of the DateCreated property.</param>
+        /// <param name="dateUpdated">Initial value of the DateUpdated property.</param>
+        public static UserKeyboardMap CreateUserKeyboardMap(global::System.Guid id, global::System.Guid computerId, global::System.Guid profileId, global::System.String fileName, global::System.String fileProductName, global::System.String name, global::System.Int32 mapTo, global::System.Int32 mapType, global::System.Int32 mapIndex, global::System.Int32 mapRangeMin, global::System.Int32 mapRangeMax, global::System.Int32 scriptType, global::System.String scriptText, global::System.Boolean isEnabled, global::System.Guid checksum, global::System.DateTime dateCreated, global::System.DateTime dateUpdated)
+        {
+            UserKeyboardMap userKeyboardMap = new UserKeyboardMap();
+            userKeyboardMap.Id = id;
+            userKeyboardMap.ComputerId = computerId;
+            userKeyboardMap.ProfileId = profileId;
+            userKeyboardMap.FileName = fileName;
+            userKeyboardMap.FileProductName = fileProductName;
+            userKeyboardMap.Name = name;
+            userKeyboardMap.MapTo = mapTo;
+            userKeyboardMap.MapType = mapType;
+            userKeyboardMap.MapIndex = mapIndex;
+            userKeyboardMap.MapRangeMin = mapRangeMin;
+            userKeyboardMap.MapRangeMax = mapRangeMax;
+            userKeyboardMap.ScriptType = scriptType;
+            userKeyboardMap.ScriptText = scriptText;
+            userKeyboardMap.IsEnabled = isEnabled;
+            userKeyboardMap.Checksum = checksum;
+            userKeyboardMap.DateCreated = dateCreated;
+            userKeyboardMap.DateUpdated = dateUpdated;
+            return userKeyboardMap;
+        }
+
+        #endregion
+
+        #region Simple Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value, "Id");
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Guid _Id;
+        partial void OnIdChanging(global::System.Guid value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ComputerId
+        {
+            get
+            {
+                return _ComputerId;
+            }
+            set
+            {
+                OnComputerIdChanging(value);
+                ReportPropertyChanging("ComputerId");
+                _ComputerId = StructuralObject.SetValidValue(value, "ComputerId");
+                ReportPropertyChanged("ComputerId");
+                OnComputerIdChanged();
+            }
+        }
+        private global::System.Guid _ComputerId;
+        partial void OnComputerIdChanging(global::System.Guid value);
+        partial void OnComputerIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid ProfileId
+        {
+            get
+            {
+                return _ProfileId;
+            }
+            set
+            {
+                OnProfileIdChanging(value);
+                ReportPropertyChanging("ProfileId");
+                _ProfileId = StructuralObject.SetValidValue(value, "ProfileId");
+                ReportPropertyChanged("ProfileId");
+                OnProfileIdChanged();
+            }
+        }
+        private global::System.Guid _ProfileId;
+        partial void OnProfileIdChanging(global::System.Guid value);
+        partial void OnProfileIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileName
+        {
+            get
+            {
+                return _FileName;
+            }
+            set
+            {
+                OnFileNameChanging(value);
+                ReportPropertyChanging("FileName");
+                _FileName = StructuralObject.SetValidValue(value, false, "FileName");
+                ReportPropertyChanged("FileName");
+                OnFileNameChanged();
+            }
+        }
+        private global::System.String _FileName;
+        partial void OnFileNameChanging(global::System.String value);
+        partial void OnFileNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String FileProductName
+        {
+            get
+            {
+                return _FileProductName;
+            }
+            set
+            {
+                OnFileProductNameChanging(value);
+                ReportPropertyChanging("FileProductName");
+                _FileProductName = StructuralObject.SetValidValue(value, false, "FileProductName");
+                ReportPropertyChanged("FileProductName");
+                OnFileProductNameChanged();
+            }
+        }
+        private global::System.String _FileProductName;
+        partial void OnFileProductNameChanging(global::System.String value);
+        partial void OnFileProductNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Name
+        {
+            get
+            {
+                return _Name;
+            }
+            set
+            {
+                OnNameChanging(value);
+                ReportPropertyChanging("Name");
+                _Name = StructuralObject.SetValidValue(value, false, "Name");
+                ReportPropertyChanged("Name");
+                OnNameChanged();
+            }
+        }
+        private global::System.String _Name;
+        partial void OnNameChanging(global::System.String value);
+        partial void OnNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MapTo
+        {
+            get
+            {
+                return _MapTo;
+            }
+            set
+            {
+                OnMapToChanging(value);
+                ReportPropertyChanging("MapTo");
+                _MapTo = StructuralObject.SetValidValue(value, "MapTo");
+                ReportPropertyChanged("MapTo");
+                OnMapToChanged();
+            }
+        }
+        private global::System.Int32 _MapTo;
+        partial void OnMapToChanging(global::System.Int32 value);
+        partial void OnMapToChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MapType
+        {
+            get
+            {
+                return _MapType;
+            }
+            set
+            {
+                OnMapTypeChanging(value);
+                ReportPropertyChanging("MapType");
+                _MapType = StructuralObject.SetValidValue(value, "MapType");
+                ReportPropertyChanged("MapType");
+                OnMapTypeChanged();
+            }
+        }
+        private global::System.Int32 _MapType;
+        partial void OnMapTypeChanging(global::System.Int32 value);
+        partial void OnMapTypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MapIndex
+        {
+            get
+            {
+                return _MapIndex;
+            }
+            set
+            {
+                OnMapIndexChanging(value);
+                ReportPropertyChanging("MapIndex");
+                _MapIndex = StructuralObject.SetValidValue(value, "MapIndex");
+                ReportPropertyChanged("MapIndex");
+                OnMapIndexChanged();
+            }
+        }
+        private global::System.Int32 _MapIndex;
+        partial void OnMapIndexChanging(global::System.Int32 value);
+        partial void OnMapIndexChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MapRangeMin
+        {
+            get
+            {
+                return _MapRangeMin;
+            }
+            set
+            {
+                OnMapRangeMinChanging(value);
+                ReportPropertyChanging("MapRangeMin");
+                _MapRangeMin = StructuralObject.SetValidValue(value, "MapRangeMin");
+                ReportPropertyChanged("MapRangeMin");
+                OnMapRangeMinChanged();
+            }
+        }
+        private global::System.Int32 _MapRangeMin;
+        partial void OnMapRangeMinChanging(global::System.Int32 value);
+        partial void OnMapRangeMinChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 MapRangeMax
+        {
+            get
+            {
+                return _MapRangeMax;
+            }
+            set
+            {
+                OnMapRangeMaxChanging(value);
+                ReportPropertyChanging("MapRangeMax");
+                _MapRangeMax = StructuralObject.SetValidValue(value, "MapRangeMax");
+                ReportPropertyChanged("MapRangeMax");
+                OnMapRangeMaxChanged();
+            }
+        }
+        private global::System.Int32 _MapRangeMax;
+        partial void OnMapRangeMaxChanging(global::System.Int32 value);
+        partial void OnMapRangeMaxChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ScriptType
+        {
+            get
+            {
+                return _ScriptType;
+            }
+            set
+            {
+                OnScriptTypeChanging(value);
+                ReportPropertyChanging("ScriptType");
+                _ScriptType = StructuralObject.SetValidValue(value, "ScriptType");
+                ReportPropertyChanged("ScriptType");
+                OnScriptTypeChanged();
+            }
+        }
+        private global::System.Int32 _ScriptType;
+        partial void OnScriptTypeChanging(global::System.Int32 value);
+        partial void OnScriptTypeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ScriptText
+        {
+            get
+            {
+                return _ScriptText;
+            }
+            set
+            {
+                OnScriptTextChanging(value);
+                ReportPropertyChanging("ScriptText");
+                _ScriptText = StructuralObject.SetValidValue(value, false, "ScriptText");
+                ReportPropertyChanged("ScriptText");
+                OnScriptTextChanged();
+            }
+        }
+        private global::System.String _ScriptText;
+        partial void OnScriptTextChanging(global::System.String value);
+        partial void OnScriptTextChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IsEnabled
+        {
+            get
+            {
+                return _IsEnabled;
+            }
+            set
+            {
+                OnIsEnabledChanging(value);
+                ReportPropertyChanging("IsEnabled");
+                _IsEnabled = StructuralObject.SetValidValue(value, "IsEnabled");
+                ReportPropertyChanged("IsEnabled");
+                OnIsEnabledChanged();
+            }
+        }
+        private global::System.Boolean _IsEnabled;
+        partial void OnIsEnabledChanging(global::System.Boolean value);
+        partial void OnIsEnabledChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid Checksum
+        {
+            get
+            {
+                return _Checksum;
+            }
+            set
+            {
+                OnChecksumChanging(value);
+                ReportPropertyChanging("Checksum");
+                _Checksum = StructuralObject.SetValidValue(value, "Checksum");
+                ReportPropertyChanged("Checksum");
+                OnChecksumChanged();
+            }
+        }
+        private global::System.Guid _Checksum;
+        partial void OnChecksumChanging(global::System.Guid value);
+        partial void OnChecksumChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateCreated
+        {
+            get
+            {
+                return _DateCreated;
+            }
+            set
+            {
+                OnDateCreatedChanging(value);
+                ReportPropertyChanging("DateCreated");
+                _DateCreated = StructuralObject.SetValidValue(value, "DateCreated");
+                ReportPropertyChanged("DateCreated");
+                OnDateCreatedChanged();
+            }
+        }
+        private global::System.DateTime _DateCreated;
+        partial void OnDateCreatedChanging(global::System.DateTime value);
+        partial void OnDateCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime DateUpdated
+        {
+            get
+            {
+                return _DateUpdated;
+            }
+            set
+            {
+                OnDateUpdatedChanging(value);
+                ReportPropertyChanging("DateUpdated");
+                _DateUpdated = StructuralObject.SetValidValue(value, "DateUpdated");
+                ReportPropertyChanged("DateUpdated");
+                OnDateUpdatedChanged();
+            }
+        }
+        private global::System.DateTime _DateUpdated;
+        partial void OnDateUpdatedChanging(global::System.DateTime value);
+        partial void OnDateUpdatedChanged();
 
         #endregion
 

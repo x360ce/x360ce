@@ -11,7 +11,6 @@ using System.Security.Principal;
 using x360ce.Engine.Data;
 using SharpDX.XInput;
 using JocysCom.ClassLibrary.Win32;
-using System.Net.Sockets;
 using x360ce.App.ViGEm;
 
 namespace x360ce.App

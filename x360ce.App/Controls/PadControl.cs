@@ -743,19 +743,19 @@ namespace x360ce.App.Controls
 			var axis = diControl.Axis;
 			bool success;
 			int index;
-			SettingType type;
+			MapType type;
 			success = SettingsConverter.TryParseTextValue(LeftThumbAxisXComboBox.Text, out type, out index);
 			if (success)
-				LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == SettingType.IAxis, false);
+				LeftThumbXUserControl.DrawPoint(axis[index - 1], _leftX, type == MapType.IAxis, false);
 			success = SettingsConverter.TryParseTextValue(LeftThumbAxisYComboBox.Text, out type, out index);
 			if (success)
-				LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == SettingType.IAxis, false);
+				LeftThumbYUserControl.DrawPoint(axis[index - 1], _leftY, type == MapType.IAxis, false);
 			success = SettingsConverter.TryParseTextValue(RightThumbAxisXComboBox.Text, out type, out index);
 			if (success)
-				RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == SettingType.IAxis, false);
+				RightThumbXUserControl.DrawPoint(axis[index - 1], _rightX, type == MapType.IAxis, false);
 			success = SettingsConverter.TryParseTextValue(RightThumbAxisYComboBox.Text, out type, out index);
 			if (success)
-				RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == SettingType.IAxis, false);
+				RightThumbYUserControl.DrawPoint(axis[index - 1], _rightY, type == MapType.IAxis, false);
 			// Update controller images.
 			this.TopPictureBox.Refresh();
 			this.FrontPictureBox.Refresh();

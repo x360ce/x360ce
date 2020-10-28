@@ -3,7 +3,6 @@ using SharpDX.DirectInput;
 using System;
 using System.Linq.Expressions;
 using System.Xml.Serialization;
-using System.Linq;
 
 namespace x360ce.Engine.Data
 {

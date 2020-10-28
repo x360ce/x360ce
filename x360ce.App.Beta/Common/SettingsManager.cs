@@ -83,6 +83,9 @@ namespace x360ce.App
 		/// <summary>User Devices. Contains hardware details about Direct Input Instances (Devices).</summary>
 		public static XSettingsData<Engine.Data.UserDevice> UserDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices.xml", "User Devices (Direct Input).");
 
+		/// <summary>User Keyboard Maps. Contains keyboard map for Direct Input Instances (Devices).</summary>
+		public static XSettingsData<Engine.Data.UserKeyboardMap> UserKeyboardMaps = new XSettingsData<Engine.Data.UserKeyboardMap>("UserKeyboardMap.xml", "User Keyboard Maps for Direct Input.");
+
 		/// <summary>User Instances. Map different Instance IDs to a single physical controller.</summary>
 		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
 
@@ -206,6 +209,7 @@ namespace x360ce.App
 			UserSettings.Items.SynchronizingObject = so;
 			Summaries.Items.SynchronizingObject = so;
 			UserDevices.Items.SynchronizingObject = so;
+			UserKeyboardMaps.Items.SynchronizingObject = so;
 			UserGames.Items.SynchronizingObject = so;
 			UserInstances.Items.SynchronizingObject = so;
 			Layouts.Items.SynchronizingObject = so;
@@ -223,6 +227,8 @@ namespace x360ce.App
 			UserGames.ValidateData = Games_ValidateData;
 			UserGames.Load();
 			Presets.Load();
+			UserKeyboardMaps.ValidateData = UserKeyboardMaps_ValidateData;
+			UserKeyboardMaps.Load();
 			// Make sure that data will be filtered before loading.
 			Layouts.ValidateData = Layouts_ValidateData;
 			Layouts.Load();
@@ -284,6 +290,21 @@ namespace x360ce.App
 				item.RightThumbRight = "Stick Right";
 				item.RightThumbUp = "Stick Up";
 				item.RightTrigger = "Trigger";
+				items.Add(item);
+			}
+			return items;
+		}
+
+		static IList<Engine.Data.UserKeyboardMap> UserKeyboardMaps_ValidateData(IList<Engine.Data.UserKeyboardMap> items)
+		{
+			if (items.Count == 0)
+			{
+				var item = new UserKeyboardMap();
+				var appFile = new FileInfo(Application.ExecutablePath);
+				var program = Programs.Items.FirstOrDefault(x => string.Compare(x.FileName, appFile.Name, true) == 0);
+				item.FileName = program.FileName;
+				item.FileProductName = program.FileProductName;
+				item.LoadGuideButton();
 				items.Add(item);
 			}
 			return items;
@@ -1094,6 +1115,20 @@ namespace x360ce.App
 				}
 			}
 			return changed;
+		}
+
+		public void InitNewUserKeyboardMapForGame(UserGame game)
+		{
+			if (game == null)
+				return;
+			var item = UserKeyboardMaps.Items.FirstOrDefault(x => x.FileName == game.FileName);
+			if (item != null)
+				return;
+			item = new UserKeyboardMap();
+			item.FileName = game.FileName;
+			item.FileProductName = game.FileProductName;
+			item.LoadGuideButton();
+			UserKeyboardMaps.Add(item);
 		}
 
 	}

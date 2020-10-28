@@ -18,10 +18,10 @@ namespace x360ce.Engine
 		// Axis - a, HAxis - x, Slider - s, HSlider - h, Button - none, DPad - p, DPadButton - d;
 		static Regex iniValueRegex = new Regex("^(?<type>[axshpd])?(?<neg>[-]*)?(?<num>[1-9][0-9]*)$");
 
-		public static bool TryParseTextValue(string value, out SettingType type, out int index)
+		public static bool TryParseTextValue(string value, out MapType type, out int index)
 		{
 			index = 0;
-			type = SettingType.None;
+			type = MapType.None;
 			if (string.IsNullOrEmpty(value))
 				return false;
 			var m = textValueRegex.Match(value);
@@ -31,12 +31,12 @@ namespace x360ce.Engine
 				// Index must be non zero.
 				if (index == 0)
 					return false;
-				type = (SettingType)Enum.Parse(typeof(SettingType), m.Groups["type"].Value);
+				type = (MapType)Enum.Parse(typeof(MapType), m.Groups["type"].Value);
 				// If type is DPad with extension then...
-				if (type == SettingType.POV && m.Groups["ext"].Success)
+				if (type == MapType.POV && m.Groups["ext"].Success)
 				{
 					// This is DPad button.
-					type = SettingType.DPOVButton;
+					type = MapType.DPOVButton;
 					switch (m.Groups["ext"].Value)
 					{
 						case "Up":
@@ -57,10 +57,10 @@ namespace x360ce.Engine
 			return m.Success;
 		}
 
-		public static bool TryParseIniValue(string value, out SettingType type, out int index)
+		public static bool TryParseIniValue(string value, out MapType type, out int index)
 		{
 			index = 0;
-			type = SettingType.None;
+			type = MapType.None;
 			if (string.IsNullOrEmpty(value))
 				return false;
 			// Try to convert setting from ini value.
@@ -76,25 +76,25 @@ namespace x360ce.Engine
 			switch (t)
 			{
 				case SettingName.SType.Axis:
-					type = n == "-" ? SettingType.IAxis : SettingType.Axis;
+					type = n == "-" ? MapType.IAxis : MapType.Axis;
 					break;
 				case SettingName.SType.Slider:
-					type = n == "-" ? SettingType.ISlider : SettingType.Slider;
+					type = n == "-" ? MapType.ISlider : MapType.Slider;
 					break;
 				case SettingName.SType.HAxis:
-					type = n == "-" ? SettingType.IHAxis : SettingType.HAxis;
+					type = n == "-" ? MapType.IHAxis : MapType.HAxis;
 					break;
 				case SettingName.SType.HSlider:
-					type = n == "-" ? SettingType.IHSlider : SettingType.HSlider;
+					type = n == "-" ? MapType.IHSlider : MapType.HSlider;
 					break;
 				case SettingName.SType.POV:
-					type = n == "-" ? SettingType.IPOV : SettingType.POV;
+					type = n == "-" ? MapType.IPOV : MapType.POV;
 					break;
 				case SettingName.SType.POVButton:
-					type = n == "-" ? SettingType.IPOVButton : SettingType.DPOVButton;
+					type = n == "-" ? MapType.IPOVButton : MapType.DPOVButton;
 					break;
 				default:
-					type = n == "-" ? SettingType.IButton : SettingType.Button;
+					type = n == "-" ? MapType.IButton : MapType.Button;
 					break;
 			}
 			return true;
@@ -103,37 +103,37 @@ namespace x360ce.Engine
 		/// <summary>
 		/// Convert setting to INI value.
 		/// </summary>
-		public static string ToIniValue(SettingType type, int index)
+		public static string ToIniValue(MapType type, int index)
 		{
 			switch (type)
 			{
-				case SettingType.Button:
+				case MapType.Button:
 					return string.Format("{0}{1}", SettingName.SType.Button, index);
-				case SettingType.IButton:
+				case MapType.IButton:
 					return string.Format("{0}{1}", SettingName.SType.Button, -index);
-				case SettingType.Axis:
+				case MapType.Axis:
 					return string.Format("{0}{1}", SettingName.SType.Axis, index);
-				case SettingType.IAxis:
+				case MapType.IAxis:
 					return string.Format("{0}{1}", SettingName.SType.Axis, -index);
-				case SettingType.HAxis:
+				case MapType.HAxis:
 					return string.Format("{0}{1}", SettingName.SType.HAxis, index);
-				case SettingType.IHAxis:
+				case MapType.IHAxis:
 					return string.Format("{0}{1}", SettingName.SType.HAxis, -index);
-				case SettingType.Slider:
+				case MapType.Slider:
 					return string.Format("{0}{1}", SettingName.SType.Slider, index);
-				case SettingType.ISlider:
+				case MapType.ISlider:
 					return string.Format("{0}{1}", SettingName.SType.Slider, -index);
-				case SettingType.HSlider:
+				case MapType.HSlider:
 					return string.Format("{0}{1}", SettingName.SType.HSlider, index);
-				case SettingType.IHSlider:
+				case MapType.IHSlider:
 					return string.Format("{0}{1}", SettingName.SType.HSlider, -index);
-				case SettingType.POV:
+				case MapType.POV:
 					return string.Format("{0}{1}", SettingName.SType.POV, index);
-				case SettingType.IPOV:
+				case MapType.IPOV:
 					return string.Format("{0}{1}", SettingName.SType.POV, -index);
-				case SettingType.DPOVButton:
+				case MapType.DPOVButton:
 					return string.Format("{0}{1}", SettingName.SType.POVButton, index);
-				case SettingType.IPOVButton:
+				case MapType.IPOVButton:
 					return string.Format("{0}{1}", SettingName.SType.POVButton, -index);
 				default:
 					return "";
@@ -144,7 +144,7 @@ namespace x360ce.Engine
 		public static string ToIniValue(string textValue)
 		{
 			var index = 0;
-			var type = SettingType.None;
+			var type = MapType.None;
 			return TryParseTextValue(textValue, out type, out index)
 				? ToIniValue(type, index)
 				: "";
@@ -155,7 +155,7 @@ namespace x360ce.Engine
 		public static string FromIniValue(string iniValue)
 		{
 			var index = 0;
-			var type = SettingType.None;
+			var type = MapType.None;
 			return TryParseIniValue(iniValue, out type, out index)
 				? ToTextValue(type, index)
 				: "";
@@ -166,10 +166,10 @@ namespace x360ce.Engine
 		/// Convert setting to text format for display to the user.
 		/// </summary>
 		/// <returns></returns>
-		public static string ToTextValue(SettingType type, int index)
+		public static string ToTextValue(MapType type, int index)
 		{
 			var s = "";
-			if (type == SettingType.DPOVButton)
+			if (type == MapType.DPOVButton)
 			{
 				var dPadNames = Enum.GetNames(typeof(DPadEnum));
 				// Zero-based D-Pad Button Index [0-3];
@@ -177,9 +177,9 @@ namespace x360ce.Engine
 				var dPadButtonName = dPadNames[dPadButtonIndex];
 				// Zero based D-Pad Index.
 				var dPadIndex = ((index - 1) - dPadButtonIndex) / dPadNames.Length;
-				s = string.Format("{0} {1} {2}", SettingType.POV, dPadIndex + 1, dPadButtonName);
+				s = string.Format("{0} {1} {2}", MapType.POV, dPadIndex + 1, dPadButtonName);
 			}
-			else if (type != SettingType.None)
+			else if (type != MapType.None)
 			{
 				s = string.Format("{0} {1}", type, index);
 			}
@@ -188,41 +188,41 @@ namespace x360ce.Engine
 
 		#region Setting Type Methods
 
-		public static bool IsButton(SettingType type)
+		public static bool IsButton(MapType type)
 			=> SettingButton.Contains(type);
 
-		static List<SettingType> SettingButton = new List<SettingType>
+		static List<MapType> SettingButton = new List<MapType>
 		{
-			SettingType.Button,
-			SettingType.IButton,
+			MapType.Button,
+			MapType.IButton,
 		};
 
-		public static bool IsAxis(SettingType type)
+		public static bool IsAxis(MapType type)
 			=> SettingAxis.Contains(type);
 
-		static List<SettingType> SettingAxis = new List<SettingType>
+		static List<MapType> SettingAxis = new List<MapType>
 		{
-			SettingType.Axis,
-			SettingType.IAxis,
-			SettingType.HAxis,
-			SettingType.IHAxis,
+			MapType.Axis,
+			MapType.IAxis,
+			MapType.HAxis,
+			MapType.IHAxis,
 		};
 
-		public static bool IsSlider(SettingType type)
+		public static bool IsSlider(MapType type)
 			=> SettingSlider.Contains(type);
 
-		static List<SettingType> SettingSlider = new List<SettingType>
+		static List<MapType> SettingSlider = new List<MapType>
 		{
-			SettingType.Slider,
-			SettingType.ISlider,
-			SettingType.HSlider,
-			SettingType.IHSlider,
+			MapType.Slider,
+			MapType.ISlider,
+			MapType.HSlider,
+			MapType.IHSlider,
 		};
 
-		public static bool IsHalf(SettingType type)
+		public static bool IsHalf(MapType type)
 			=> SettingHalf.Contains(type);
 
-		public static SettingType ToFull(SettingType type)
+		public static MapType ToFull(MapType type)
 		{
 			var i = SettingHalf.IndexOf(type);
 			if (i > -1)
@@ -230,26 +230,26 @@ namespace x360ce.Engine
 			return type;
 		}
 
-		static List<SettingType> SettingHalf = new List<SettingType>
+		static List<MapType> SettingHalf = new List<MapType>
 		{
-			SettingType.HAxis,
-			SettingType.IHAxis,
-			SettingType.HSlider,
-			SettingType.IHSlider,
+			MapType.HAxis,
+			MapType.IHAxis,
+			MapType.HSlider,
+			MapType.IHSlider,
 		};
 
-		static List<SettingType> SettingFull = new List<SettingType>
+		static List<MapType> SettingFull = new List<MapType>
 		{
-			SettingType.Axis,
-			SettingType.IAxis,
-			SettingType.Slider,
-			SettingType.ISlider,
+			MapType.Axis,
+			MapType.IAxis,
+			MapType.Slider,
+			MapType.ISlider,
 		};
 
-		public static bool IsInverted(SettingType type)
+		public static bool IsInverted(MapType type)
 			=> SettingInverted.Contains(type);
 
-		public static SettingType Invert(SettingType type)
+		public static MapType Invert(MapType type)
 		{
 			var i = SettingInverted.IndexOf(type);
 			if (i > -1)
@@ -260,20 +260,20 @@ namespace x360ce.Engine
 			return type;
 		}
 
-		static List<SettingType> SettingInverted = new List<SettingType>
+		static List<MapType> SettingInverted = new List<MapType>
 		{
-			SettingType.IAxis,
-			SettingType.IHAxis,
-			SettingType.ISlider,
-			SettingType.IHSlider,
+			MapType.IAxis,
+			MapType.IHAxis,
+			MapType.ISlider,
+			MapType.IHSlider,
 		};
 
-		static List<SettingType> SettingNonInverted = new List<SettingType>
+		static List<MapType> SettingNonInverted = new List<MapType>
 		{
-			SettingType.Axis,
-			SettingType.HAxis,
-			SettingType.Slider,
-			SettingType.HSlider,
+			MapType.Axis,
+			MapType.HAxis,
+			MapType.Slider,
+			MapType.HSlider,
 		};
 
 		#endregion

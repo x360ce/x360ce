@@ -1328,6 +1328,7 @@ namespace x360ce.App
 			SettingsManager.Presets.Save();
 			SettingsManager.Layouts.Save();
 			SettingsManager.UserDevices.Save();
+			SettingsManager.UserKeyboardMaps.Save();
 			SettingsManager.PadSettings.Save();
 			SettingsManager.UserInstances.Save();
 			XInputMaskScanner.FileInfoCache.Save();

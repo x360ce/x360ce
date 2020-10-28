@@ -57,7 +57,7 @@ namespace x360ce.Engine
 		MapCode Code;
 
 		// Source Parameters.
-		public SettingType Type;
+		public MapType Type;
 		public int Index;
 
 		public bool IsButton;

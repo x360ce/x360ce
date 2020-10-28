@@ -12,7 +12,7 @@ namespace x360ce.Engine
 	public partial class CustomDiUpdate
 	{
 
-		public SettingType Type;
+		public MapType Type;
 		public int Index;
 		public int Value;
 
@@ -22,25 +22,25 @@ namespace x360ce.Engine
 			Index = CustomDiHelper.AxisOffsets.IndexOf(update.Offset);
 			if (Index > -1)
 			{
-				Type = SettingType.Axis;
+				Type = MapType.Axis;
 				return;
 			}
 			Index = CustomDiHelper.SliderOffsets.IndexOf(update.Offset);
 			if (Index > -1)
 			{
-				Type = SettingType.Slider;
+				Type = MapType.Slider;
 				return;
 			}
 			Index = CustomDiHelper.PovOffsets.IndexOf(update.Offset);
 			if (Index > -1)
 			{
-				Type = SettingType.POV;
+				Type = MapType.POV;
 				return;
 			}
 			Index = CustomDiHelper.ButtonOffsets.IndexOf(update.Offset);
 			if (Index > -1)
 			{
-				Type = SettingType.Button;
+				Type = MapType.Button;
 				return;
 			}
 		}

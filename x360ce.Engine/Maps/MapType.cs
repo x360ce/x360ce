@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace x360ce.Engine
+﻿namespace x360ce.Engine
 {
-	public enum SettingType
+	public enum MapType
 	{
 		None = 0,
 		Button,

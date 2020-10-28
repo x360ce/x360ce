@@ -97,7 +97,7 @@ namespace x360ce.App
 					// if recording and at least one action was recorded then...
 					if (!stop && actions.Length > 0)
 					{
-						SettingType type;
+						MapType type;
 						int index;
 						SettingsConverter.TryParseTextValue(actions[0], out type, out index);
 						// If this is Thumb Up, Left, Right, Down and axis was mapped.

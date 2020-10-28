@@ -64,13 +64,9 @@ namespace x360ce.App.Controls
 			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
 			if (MapDeviceToControllerMode)
-			{
 				RefreshMapDeviceToList();
-			}
 			else
-			{
 				AttachDataSource(SettingsManager.UserDevices.Items);
-			}
 		}
 
 		void RefreshMapDeviceToList()
