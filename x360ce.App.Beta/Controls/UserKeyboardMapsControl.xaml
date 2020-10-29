@@ -13,6 +13,7 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -27,51 +28,121 @@
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch">
 			<TabItem Header="Direct Input To Keyboard">
-				<DataGrid x:Name="MainDataGrid" AutoGenerateColumns="False">
-					<DataGrid.Columns>
-						<DataGridCheckBoxColumn Binding="{Binding IsEnabled}" Header="On" />
-						<DataGridTextColumn
-							Binding="{Binding Name}"
-							EditingElementStyle="{StaticResource TextBoxCell}"
-							ElementStyle="{StaticResource TextBlockCell}"
-							Header="Name" />
-						<DataGridTextColumn
-							Binding="{Binding MapType}"
-							EditingElementStyle="{StaticResource TextBoxCell}"
-							ElementStyle="{StaticResource TextBlockCell}"
-							Header="Type" />
-						<DataGridTextColumn
-							Binding="{Binding MapIndex}"
-							EditingElementStyle="{StaticResource TextBoxRightCell}"
-							ElementStyle="{StaticResource TextBlockRightCell}"
-							Header="Index" />
-						<DataGridTextColumn
-							Binding="{Binding MapRangeMin}"
-							EditingElementStyle="{StaticResource TextBoxRightCell}"
-							ElementStyle="{StaticResource TextBlockRightCell}"
-							Header="Range Min" />
-						<DataGridTextColumn
-							Binding="{Binding MapRangeMax}"
-							EditingElementStyle="{StaticResource TextBoxRightCell}"
-							ElementStyle="{StaticResource TextBlockRightCell}"
-							Header="Range Max" />
-						<DataGridTextColumn
-							Width="*"
-							Binding="{Binding ScriptText}"
-							EditingElementStyle="{StaticResource TextBoxCell}"
-							ElementStyle="{StaticResource TextBlockCell}" />
-					</DataGrid.Columns>
-					<DataGrid.CellStyle>
-						<Style TargetType="DataGridCell">
-							<Setter Property="Padding" Value="4" />
-						</Style>
-					</DataGrid.CellStyle>
-				</DataGrid>
+
+				<Grid VerticalAlignment="Stretch">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+					<ToolBarPanel Grid.Row="0" Style="{StaticResource MainToolBarPanel}">
+						<ToolBar Style="{StaticResource MainToolBar}">
+							<Button Name="SaveButton" Style="{StaticResource Button}">
+								<StackPanel Style="{StaticResource ButtonStackPanel}">
+									<ContentControl Content="{StaticResource Icon_Save}" Style="{StaticResource ButtonContentControl}" />
+									<Label Content="Save" Style="{StaticResource ButtonLabel}" />
+								</StackPanel>
+							</Button>
+							<Separator Style="{StaticResource MainSeparator}" />
+							<Button Name="AddButton" Style="{StaticResource Button}">
+								<StackPanel Style="{StaticResource ButtonStackPanel}">
+									<ContentControl Content="{StaticResource Icon_Add}" Style="{StaticResource ButtonContentControl}" />
+									<Label Content="Add" Style="{StaticResource ButtonLabel}" />
+								</StackPanel>
+							</Button>
+							<Button Name="RemoveButton" Style="{StaticResource Button}">
+								<StackPanel Style="{StaticResource ButtonStackPanel}">
+									<ContentControl Content="{StaticResource Icon_Remove}" Style="{StaticResource ButtonContentControl}" />
+									<Label Content="Remove" Style="{StaticResource ButtonLabel}" />
+								</StackPanel>
+							</Button>
+							<Separator Style="{StaticResource MainSeparator}" />
+							<Button Name="CreatTasksButton" Style="{StaticResource Button}">
+								<StackPanel Style="{StaticResource ButtonStackPanel}">
+									<ContentControl Content="{StaticResource Icon_Refresh}" Style="{StaticResource ButtonContentControl}" />
+									<Label Content="Create Tasks" Style="{StaticResource ButtonLabel}" />
+								</StackPanel>
+							</Button>
+						</ToolBar>
+					</ToolBarPanel>
+					<Border
+						Grid.Row="1"
+						Height="1"
+						BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+						BorderThickness="1"
+						SnapsToDevicePixels="True" />
+					<DataGrid
+						x:Name="MainDataGrid"
+						Grid.Row="2"
+						Height="Auto"
+						HorizontalAlignment="Stretch"
+						AutoGenerateColumns="False"
+						SelectionChanged="MainDataGrid_SelectionChanged">
+						<DataGrid.Columns>
+							<DataGridCheckBoxColumn
+								Binding="{Binding IsEnabled}"
+								EditingElementStyle="{StaticResource CheckBoxCell}"
+								ElementStyle="{StaticResource CheckBoxCell}"
+								Header="On" />
+							<DataGridTextColumn
+								Binding="{Binding Name}"
+								EditingElementStyle="{StaticResource TextBoxCell}"
+								ElementStyle="{StaticResource TextBlockCell}"
+								Header="Name"
+								SortDirection="{x:Null}" />
+							<DataGridTextColumn
+								Binding="{Binding MapType}"
+								EditingElementStyle="{StaticResource TextBoxCell}"
+								ElementStyle="{StaticResource TextBlockCell}"
+								Header="Type" />
+							<DataGridTextColumn
+								Binding="{Binding MapIndex}"
+								EditingElementStyle="{StaticResource TextBoxRightCell}"
+								ElementStyle="{StaticResource TextBlockRightCell}"
+								Header="Index" />
+							<DataGridTextColumn
+								Binding="{Binding MapRangeMin}"
+								EditingElementStyle="{StaticResource TextBoxRightCell}"
+								ElementStyle="{StaticResource TextBlockRightCell}"
+								Header="Range Min" />
+							<DataGridTextColumn
+								Binding="{Binding MapRangeMax}"
+								EditingElementStyle="{StaticResource TextBoxRightCell}"
+								ElementStyle="{StaticResource TextBlockRightCell}"
+								Header="Range Max" />
+							<DataGridTextColumn
+								Width="*"
+								Binding="{Binding ScriptText}"
+								EditingElementStyle="{StaticResource TextBoxCell}"
+								ElementStyle="{StaticResource TextBlockCell}" />
+						</DataGrid.Columns>
+						<DataGrid.CellStyle>
+							<Style TargetType="DataGridCell">
+								<Setter Property="Padding" Value="4" />
+							</Style>
+						</DataGrid.CellStyle>
+					</DataGrid>
+
+				</Grid>
+
 			</TabItem>
 		</TabControl>
 		<StackPanel Grid.Row="1">
 			<GroupBox Header="Edit Keyboard Map">
-				<Label Content="Index" />
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto" />
+						<RowDefinition Height="auto" />
+					</Grid.RowDefinitions>
+					<Label Grid.Row="0" Content="Index" />
+					<ComboBox
+						Name="PresetsComboBox"
+						Grid.Row="1"
+						Width="160"
+						Margin="4,0,0,0"
+						VerticalAlignment="Center" />
+					<Separator Style="{StaticResource MainSeparator}" />
+				</Grid>
 			</GroupBox>
 		</StackPanel>
 	</Grid>

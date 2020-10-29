@@ -22,6 +22,9 @@ namespace x360ce.App.Controls
 
 		public SortableBindingList<UserKeyboardMap> Data;
 
+		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
 
+		}
 	}
 }

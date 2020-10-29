@@ -4,28 +4,104 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-	<Style TargetType="Button">
-		<Setter Property="Padding" Value="8,4,8,4" />
-	</Style>
+	<SolidColorBrush x:Key="SolidColorBrush_BFF">#ff000000</SolidColorBrush>
+
+	<!--  Window  -->
 
 	<Style TargetType="Window">
+		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="Padding" Value="4" />
 	</Style>
 
-	<Style x:Key="TextBoxDefault" TargetType="TextBox">
-		<Setter Property="Padding" Value="0,2,0,2" />
+	<!--  DockPanel  -->
 
+	<Style TargetType="DockPanel">
+		<Setter Property="Margin" Value="8" />
 	</Style>
 
-	<Style BasedOn="{StaticResource TextBoxDefault}" TargetType="TextBox" />
+	<!--  Grid  -->
 
-	<Style x:Key="TextBoxReadOnly" BasedOn="{StaticResource TextBoxDefault}" TargetType="TextBox">
+	<Style TargetType="Grid">
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+	</Style>
+
+	<!--  StackPanel  -->
+
+	<Style x:Name="Container" TargetType="StackPanel">
+		<Setter Property="Margin" Value="0" />
+	</Style>
+
+	<Style x:Key="ButtonStackPanel" TargetType="StackPanel">
+		<Setter Property="Margin" Value="3,1,3,1" />
+		<Setter Property="Orientation" Value="Horizontal" />
+		<Setter Property="IsHitTestVisible" Value="False" />
+	</Style>
+
+	<!--  Button  -->
+
+	<Style x:Key="Button" TargetType="Button">
+		<Setter Property="Margin" Value="3,3,3,3" />
+	</Style>
+
+	<!--  TextBox  -->
+
+	<Style x:Key="TextBox_Default" TargetType="TextBox">
+		<Setter Property="Height" Value="Auto" />
+		<Setter Property="Margin" Value="3,3,3,3" />
+		<Setter Property="Padding" Value="3,3,3,3" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+		<!--<Setter Property="TextAlignment" Value="Center" />
+		<Setter Property="Background" Value="#333333" />
+		<Setter Property="Foreground" Value="#FFFFFF" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="Width" Value="120" />
+		-->
+	</Style>
+
+	<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />
+
+	<Style x:Key="TextBoxReadOnly" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="IsReadOnly" Value="True" />
 	</Style>
 
-	<!--  Grid  -->
+	<!--  TextBox - Cell  -->
+
+	<Style x:Key="TextBoxCell" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Height" Value="Auto" />
+		<Setter Property="Padding" Value="1,4,1,2" />
+		<Setter Property="Margin" Value="0,0,0,0" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+	</Style>
+
+	<Style x:Key="TextBoxRightCell" BasedOn="{StaticResource TextBoxCell}" TargetType="TextBox">
+		<Setter Property="TextAlignment" Value="Right" />
+	</Style>
+
+	<!--  TextBlock  -->
+
+	<Style x:Key="TextBlock_Default" TargetType="TextBlock">
+		<Setter Property="Height" Value="Auto" />
+		<Setter Property="Margin" Value="3,3,3,3" />
+		<Setter Property="Padding" Value="3,3,3,3" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+	</Style>
+
+	<Style BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock" />
+
+	<!--  TextBlock - Cell  -->
+
+	<Style x:Key="TextBlockCell" BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock">
+		<Setter Property="Padding" Value="3,4,3,2" />
+		<Setter Property="Margin" Value="0,0,0,0" />
+	</Style>
+
+	<Style x:Key="TextBlockRightCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+		<Setter Property="TextAlignment" Value="Right" />
+	</Style>
+
+	<!--  DataGrid  -->
 
 	<Style x:Key="DataGridDefault" TargetType="DataGrid">
 		<Setter Property="BorderThickness" Value="0" />
@@ -40,33 +116,96 @@
 
 	<Style BasedOn="{StaticResource DataGridDefault}" TargetType="DataGrid" />
 
-	<!--  Grid TextBlock ReadOnly  -->
-
-	<Style x:Key="TextBlockCell" TargetType="TextBlock">
-		<Setter Property="Padding" Value="4,2,4,2" />
-		<Setter Property="Margin" Value="0,0,0,0" />
-	</Style>
-
-	<Style x:Key="TextBlockRightCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
-		<Setter Property="TextAlignment" Value="Right" />
-	</Style>
-
-	<Style x:Key="TextBoxCell" TargetType="TextBox">
-		<Setter Property="Padding" Value="3,1,3,1" />
-		<Setter Property="Margin" Value="0,0,0,0" />
-	</Style>
-
-	<Style x:Key="TextBoxRightCell" BasedOn="{StaticResource TextBoxCell}" TargetType="TextBox">
-		<Setter Property="TextAlignment" Value="Right" />
-	</Style>
-
 	<!--  DataGridTextColumn  -->
 
-	<!--<Style x:Key="DataGridTextColumnDefault" TargetType="DataGridTextColumn">
-		<Setter Property="ElementStyle" Value="{DynamicResource TextBlockCell}" />
-		<Setter Property="EditingElementStyle" Value="{DynamicResource TextBoxCell}" />
+	<Style BasedOn="{DynamicResource DataGridTextColumnDefault}" TargetType="DataGridTextColumn" />
+
+	<!--  ComboBox  -->
+
+	<Style x:Key="ComboBox_Default" TargetType="ComboBox">
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="Padding" Value="3" />
+		<Setter Property="Width" Value="120" />
+		<Setter Property="Height" Value="Auto" />
 	</Style>
 
-	<Style BasedOn="{DynamicResource DataGridTextColumnDefault}" TargetType="DataGridTextColumn" />-->
+	<Style BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox" />
+
+	<Style x:Key="GridComboBox" BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox">
+		<Setter Property="HorizontalAlignment" Value="Left" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+	</Style>
+
+	<!--  CheckBox  -->
+
+	<Style x:Key="CheckBox_Default" TargetType="CheckBox">
+		<Setter Property="Margin" Value="3,3,3,3" />
+		<Setter Property="Padding" Value="3,3,3,3" />
+		<Setter Property="Height" Value="Auto" />
+	</Style>
+
+	<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
+
+	<!--  CheckBox - Cell  -->
+
+	<Style x:Key="CheckBoxCell" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox">
+		<Setter Property="Margin" Value="3,0,3,0" />
+		<Setter Property="Padding" Value="0,0,0,0" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+	</Style>
+
+	<!--  ContentControl  -->
+
+	<Style x:Key="ButtonContentControl" TargetType="ContentControl">
+		<Setter Property="Margin" Value="0,0,0,0" />
+		<Setter Property="Padding" Value="0,0,0,0" />
+		<Setter Property="Width" Value="16" />
+		<Setter Property="Height" Value="16" />
+	</Style>
+
+	<!--  Label  -->
+
+	<Style x:Key="ButtonLabel" TargetType="Label">
+		<Setter Property="Margin" Value="3,3,3,3" />
+		<Setter Property="Padding" Value="4,2,4,2" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+	</Style>
+
+	<!--  ToolBarPanel  -->
+
+	<Style x:Key="MainToolBarPanel" TargetType="ToolBarPanel">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="VerticalAlignment" Value="Top" />
+		<Setter Property="ClipToBounds" Value="True" />
+		<Setter Property="Margin" Value="0,0,0,0" />
+	</Style>
+
+	<!--  ToolBar  -->
+
+	<Style x:Key="MainToolBar" TargetType="ToolBar">
+		<Setter Property="Margin" Value="-13,-13,-13,-13" />
+		<Setter Property="Padding" Value="4,5,4,4" />
+		<Setter Property="ToolBar.OverflowMode" Value="Never" />
+		<Setter Property="ToolBarTray.IsLocked" Value="True" />
+	</Style>
+
+	<!--  Separator  -->
+
+	<Style x:Key="MainSeparator" TargetType="Separator">
+		<Setter Property="Margin" Value="4,3,0,3" />
+		<Setter Property="Focusable" Value="false" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Separator}">
+					<Border
+						VerticalAlignment="Stretch"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						SnapsToDevicePixels="true" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 
 </ResourceDictionary>
