@@ -30,7 +30,6 @@ namespace x360ce.App.DInput
 				var allow = !o.TestEnabled || o.TestGetDInputStates;
 				// Note: manager.IsDeviceAttached() use a lot of CPU resources.
 				var isAttached = ud != null && ud.IsOnline; // && manager.IsDeviceAttached(ud.InstanceGuid);
-
 				if (isAttached && allow)
 				{
 					var device = ud.Device;

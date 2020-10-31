@@ -1,6 +1,7 @@
 ﻿using SharpDX.XInput;
 using System.Linq;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
 {
@@ -9,11 +10,14 @@ namespace x360ce.App.DInput
 		/// <summary>
 		/// Convert DiStates to XInput states.
 		/// </summary>
-		void UpdateXiStates()
+		void UpdateXiStates(UserGame game)
 		{
-			// Get all mapped devices.
+			// Get mapped and enabled game settings.
 			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized()
-			   .Where(x => x.MapTo > (int)MapTo.None)
+			   // Get only settings mapped to the game.
+			   .Where(x => x.FileName == game?.FileName)
+			   // Get only mapped and enabled settings.
+			   .Where(x => x.MapTo > (int)MapTo.None && x.IsEnabled)
 			   .ToArray();
 			for (int i = 0; i < settings.Length; i++)
 			{

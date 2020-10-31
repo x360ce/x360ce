@@ -183,7 +183,7 @@ namespace x360ce.App.DInput
 					// Update JoystickStates from devices.
 					UpdateDiStates(manager, game, detector);
 					// Update XInput states from Custom DirectInput states.
-					UpdateXiStates();
+					UpdateXiStates(game);
 					// Combine XInput states of controllers.
 					CombineXiStates();
 					// Update virtual devices from combined states.

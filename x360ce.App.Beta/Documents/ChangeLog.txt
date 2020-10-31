@@ -1,15 +1,18 @@
+v4.17.7.0 (2020-10-31)
+- Fixed: Issue when mappings from other games would merge into currently selected game.
+
 v4.16.9.0 (2020-10-26)
-- Fix: Sometimes crashing when generating exception info.
-- Fix: Guide button map.
+- Fixed: Sometimes crashing when generating exception info.
+- Fixed: Guide button map.
 
 v4.16.8.0 (2020-10-25)
-- Fix: Controller image scaling issue.
-- Fix: Crash when User Device list updating.
-- Fix: Issue detector sometimes do not start after app starts.
-- Fix: Issue detector was reporting missing HID Guardian when not needed.
-- Fix: Interface freezing during error report.
-- Fix: HID Guardian was not always applying settings.
-- Fix: Do not request XInput states when program is minimized to save CPU resources.
+- Fixed: Controller image scaling issue.
+- Fixed: Crash when User Device list updating.
+- Fixed: Issue detector sometimes do not start after app starts.
+- Fixed: Issue detector was reporting missing HID Guardian when not needed.
+- Fixed: Interface freezing during error report.
+- Fixed: HID Guardian was not always applying settings.
+- Fixed: Do not request XInput states when program is minimized to save CPU resources.
 - Update: Configure Hid Guardian Automatically option is set to OFF by default now.
 - Update: Application no longer requires elevated privileges when starting.
 - Update: Make missing HID Guardian a moderate (optional) issue, which won't prevent UI to load.
@@ -18,8 +21,8 @@ v4.16.8.0 (2020-10-25)
 - New: Add HID Guardian warnings and manual uninstall instructions to [HID Guardian] tab.
 
 v4.15.16.0 (2020-10-19)
-- Fix: Map recorder was mapping POV direction to DPad instead of POV.
-- Fix: Map recorder was mapping half or inverted axis incorrectly.
+- Fixed: Map recorder was mapping POV direction to DPad instead of POV.
+- Fixed: Map recorder was mapping half or inverted axis incorrectly.
 - Updated: PAD status control updated to more modern XAML format.
 - Updated: Set XInput negative center value (-1) to 0.
 - Updated: Limit error files to 10 files per 10 seconds for a different error.

@@ -263,9 +263,6 @@
     <Compile Include="JocysCom\Controls\MessageBoxForm.Designer.cs">
       <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="JocysCom\Controls\Themes\Default.xaml.cs">
-      <DependentUpon>Default.xaml</DependentUpon>
-    </Compile>
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\Linq.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
