@@ -109,7 +109,7 @@ namespace x360ce.App
 			}
 			if (!CheckSettings())
 				return;
-			Global.InitializeRemoteService();
+			Global.InitializeServices();
 			Global.InitializeCloudClient();
 			MainForm.Current = new MainForm();
 			if (ic.Parameters.ContainsKey("Exit"))
@@ -143,7 +143,7 @@ namespace x360ce.App
 				Application.Run(MainForm.Current);
 			}
 			Global.DisposeCloudClient();
-			Global.DisposeRemoteService();
+			Global.DisposeServices();
 		}
 
 		public static bool IsClosing;

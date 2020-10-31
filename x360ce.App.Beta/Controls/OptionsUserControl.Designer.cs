@@ -51,6 +51,7 @@
 			this.AddLocationButton = new System.Windows.Forms.ToolStripButton();
 			this.LocationFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 			this.ConfigurationGroupBox = new System.Windows.Forms.GroupBox();
+			this.AutoDetectForegroundWindowCheckBox = new System.Windows.Forms.CheckBox();
 			this.IncludeProductsCheckBox = new System.Windows.Forms.CheckBox();
 			this.ConfigurationVersionLabel = new System.Windows.Forms.Label();
 			this.ConfigurationVersionTextBox = new System.Windows.Forms.TextBox();
@@ -86,6 +87,9 @@
 			this.DevelopingGroupBox = new System.Windows.Forms.GroupBox();
 			this.ShowTestButtonCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowFormInfoCheckBox = new System.Windows.Forms.CheckBox();
+			this.GuideButtonGroupBox = new System.Windows.Forms.GroupBox();
+			this.GuideButtonActionLabel = new System.Windows.Forms.Label();
+			this.GuideButtonActionTextBox = new System.Windows.Forms.TextBox();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
@@ -100,9 +104,6 @@
 			this.HidGuardianUninstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianInstallButton = new System.Windows.Forms.Button();
 			this.HidGuardianTextBox = new System.Windows.Forms.TextBox();
-			this.GuideButtonGroupBox = new System.Windows.Forms.GroupBox();
-			this.GuideButtonActionLabel = new System.Windows.Forms.Label();
-			this.GuideButtonActionTextBox = new System.Windows.Forms.TextBox();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
@@ -117,13 +118,13 @@
 			this.GeneralTabPage.SuspendLayout();
 			this.GeneralPanel.SuspendLayout();
 			this.DevelopingGroupBox.SuspendLayout();
+			this.GuideButtonGroupBox.SuspendLayout();
 			this.InternetOptionsTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
 			this.HidGuardianTabPage.SuspendLayout();
 			this.HidGuardianPanel.SuspendLayout();
 			this.groupBox1.SuspendLayout();
-			this.GuideButtonGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -135,7 +136,7 @@
 			this.TestingAndLoggingGroupBox.Controls.Add(this.ConsoleCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.DebugModeCheckBox);
 			this.TestingAndLoggingGroupBox.Controls.Add(this.EnableLoggingCheckBox);
-			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 115);
+			this.TestingAndLoggingGroupBox.Location = new System.Drawing.Point(3, 117);
 			this.TestingAndLoggingGroupBox.Name = "TestingAndLoggingGroupBox";
 			this.TestingAndLoggingGroupBox.Size = new System.Drawing.Size(254, 117);
 			this.TestingAndLoggingGroupBox.TabIndex = 30;
@@ -228,7 +229,7 @@
 			this.OperationGroupBox.Controls.Add(this.AllowOnlyOneCopyCheckBox);
 			this.OperationGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.OperationGroupBox.Name = "OperationGroupBox";
-			this.OperationGroupBox.Size = new System.Drawing.Size(254, 106);
+			this.OperationGroupBox.Size = new System.Drawing.Size(254, 108);
 			this.OperationGroupBox.TabIndex = 31;
 			this.OperationGroupBox.TabStop = false;
 			this.OperationGroupBox.Text = "Operation";
@@ -368,15 +369,26 @@
 			// 
 			// ConfigurationGroupBox
 			// 
+			this.ConfigurationGroupBox.Controls.Add(this.AutoDetectForegroundWindowCheckBox);
 			this.ConfigurationGroupBox.Controls.Add(this.IncludeProductsCheckBox);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionLabel);
 			this.ConfigurationGroupBox.Controls.Add(this.ConfigurationVersionTextBox);
 			this.ConfigurationGroupBox.Location = new System.Drawing.Point(263, 313);
 			this.ConfigurationGroupBox.Name = "ConfigurationGroupBox";
-			this.ConfigurationGroupBox.Size = new System.Drawing.Size(254, 47);
+			this.ConfigurationGroupBox.Size = new System.Drawing.Size(277, 71);
 			this.ConfigurationGroupBox.TabIndex = 31;
 			this.ConfigurationGroupBox.TabStop = false;
 			this.ConfigurationGroupBox.Text = "Configuration";
+			// 
+			// AutoDetectForegroundWindowCheckBox
+			// 
+			this.AutoDetectForegroundWindowCheckBox.AutoSize = true;
+			this.AutoDetectForegroundWindowCheckBox.Location = new System.Drawing.Point(6, 45);
+			this.AutoDetectForegroundWindowCheckBox.Name = "AutoDetectForegroundWindowCheckBox";
+			this.AutoDetectForegroundWindowCheckBox.Size = new System.Drawing.Size(244, 17);
+			this.AutoDetectForegroundWindowCheckBox.TabIndex = 0;
+			this.AutoDetectForegroundWindowCheckBox.Text = "Auto switch configuration when game focused";
+			this.AutoDetectForegroundWindowCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// IncludeProductsCheckBox
 			// 
@@ -410,7 +422,7 @@
 			this.DirectInputDevicesGroupBox.Controls.Add(this.UseDeviceBufferedDataCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeVirtualDevicesCheckBox);
 			this.DirectInputDevicesGroupBox.Controls.Add(this.ExcludeSupplementalDevicesCheckBox);
-			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 238);
+			this.DirectInputDevicesGroupBox.Location = new System.Drawing.Point(3, 240);
 			this.DirectInputDevicesGroupBox.Name = "DirectInputDevicesGroupBox";
 			this.DirectInputDevicesGroupBox.Size = new System.Drawing.Size(254, 91);
 			this.DirectInputDevicesGroupBox.TabIndex = 31;
@@ -762,7 +774,7 @@
 			// ShowTestButtonCheckBox
 			// 
 			this.ShowTestButtonCheckBox.AutoSize = true;
-			this.ShowTestButtonCheckBox.Location = new System.Drawing.Point(4, 42);
+			this.ShowTestButtonCheckBox.Location = new System.Drawing.Point(6, 42);
 			this.ShowTestButtonCheckBox.Name = "ShowTestButtonCheckBox";
 			this.ShowTestButtonCheckBox.Size = new System.Drawing.Size(126, 17);
 			this.ShowTestButtonCheckBox.TabIndex = 1;
@@ -779,6 +791,34 @@
 			this.ShowFormInfoCheckBox.Text = "Show Form Info on CTRL+SHIFT+RMB";
 			this.ShowFormInfoCheckBox.UseVisualStyleBackColor = true;
 			this.ShowFormInfoCheckBox.CheckedChanged += new System.EventHandler(this.ShowSettingsTabCheckBox_CheckedChanged);
+			// 
+			// GuideButtonGroupBox
+			// 
+			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionLabel);
+			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionTextBox);
+			this.GuideButtonGroupBox.Location = new System.Drawing.Point(3, 337);
+			this.GuideButtonGroupBox.Name = "GuideButtonGroupBox";
+			this.GuideButtonGroupBox.Size = new System.Drawing.Size(254, 47);
+			this.GuideButtonGroupBox.TabIndex = 31;
+			this.GuideButtonGroupBox.TabStop = false;
+			this.GuideButtonGroupBox.Text = "Guide Button";
+			// 
+			// GuideButtonActionLabel
+			// 
+			this.GuideButtonActionLabel.AutoSize = true;
+			this.GuideButtonActionLabel.Location = new System.Drawing.Point(4, 22);
+			this.GuideButtonActionLabel.Name = "GuideButtonActionLabel";
+			this.GuideButtonActionLabel.Size = new System.Drawing.Size(40, 13);
+			this.GuideButtonActionLabel.TabIndex = 0;
+			this.GuideButtonActionLabel.Text = "Action:";
+			// 
+			// GuideButtonActionTextBox
+			// 
+			this.GuideButtonActionTextBox.Enabled = false;
+			this.GuideButtonActionTextBox.Location = new System.Drawing.Point(50, 19);
+			this.GuideButtonActionTextBox.Name = "GuideButtonActionTextBox";
+			this.GuideButtonActionTextBox.Size = new System.Drawing.Size(129, 20);
+			this.GuideButtonActionTextBox.TabIndex = 0;
 			// 
 			// InternetOptionsTabPage
 			// 
@@ -850,7 +890,7 @@
 			this.HelpRichTextBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
 			this.HelpRichTextBox.Name = "HelpRichTextBox";
 			this.HelpRichTextBox.ReadOnly = true;
-			this.HelpRichTextBox.Size = new System.Drawing.Size(644, 332);
+			this.HelpRichTextBox.Size = new System.Drawing.Size(644, 347);
 			this.HelpRichTextBox.TabIndex = 72;
 			this.HelpRichTextBox.Text = "";
 			// 
@@ -932,36 +972,8 @@
 			this.HidGuardianTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.HidGuardianTextBox.Location = new System.Drawing.Point(87, 50);
 			this.HidGuardianTextBox.Name = "HidGuardianTextBox";
-			this.HidGuardianTextBox.Size = new System.Drawing.Size(389, 20);
+			this.HidGuardianTextBox.Size = new System.Drawing.Size(458, 20);
 			this.HidGuardianTextBox.TabIndex = 41;
-			// 
-			// GuideButtonGroupBox
-			// 
-			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionLabel);
-			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionTextBox);
-			this.GuideButtonGroupBox.Location = new System.Drawing.Point(3, 335);
-			this.GuideButtonGroupBox.Name = "GuideButtonGroupBox";
-			this.GuideButtonGroupBox.Size = new System.Drawing.Size(254, 47);
-			this.GuideButtonGroupBox.TabIndex = 31;
-			this.GuideButtonGroupBox.TabStop = false;
-			this.GuideButtonGroupBox.Text = "Guide Button";
-			// 
-			// GuideButtonActionLabel
-			// 
-			this.GuideButtonActionLabel.AutoSize = true;
-			this.GuideButtonActionLabel.Location = new System.Drawing.Point(4, 22);
-			this.GuideButtonActionLabel.Name = "GuideButtonActionLabel";
-			this.GuideButtonActionLabel.Size = new System.Drawing.Size(40, 13);
-			this.GuideButtonActionLabel.TabIndex = 0;
-			this.GuideButtonActionLabel.Text = "Action:";
-			// 
-			// GuideButtonActionTextBox
-			// 
-			this.GuideButtonActionTextBox.Enabled = false;
-			this.GuideButtonActionTextBox.Location = new System.Drawing.Point(50, 19);
-			this.GuideButtonActionTextBox.Name = "GuideButtonActionTextBox";
-			this.GuideButtonActionTextBox.Size = new System.Drawing.Size(129, 20);
-			this.GuideButtonActionTextBox.TabIndex = 0;
 			// 
 			// OptionsUserControl
 			// 
@@ -991,6 +1003,8 @@
 			this.GeneralPanel.ResumeLayout(false);
 			this.DevelopingGroupBox.ResumeLayout(false);
 			this.DevelopingGroupBox.PerformLayout();
+			this.GuideButtonGroupBox.ResumeLayout(false);
+			this.GuideButtonGroupBox.PerformLayout();
 			this.InternetOptionsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
@@ -998,8 +1012,6 @@
 			this.HidGuardianPanel.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
-			this.GuideButtonGroupBox.ResumeLayout(false);
-			this.GuideButtonGroupBox.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -1081,5 +1093,6 @@
 		private System.Windows.Forms.GroupBox GuideButtonGroupBox;
 		private System.Windows.Forms.Label GuideButtonActionLabel;
 		private System.Windows.Forms.TextBox GuideButtonActionTextBox;
+		public System.Windows.Forms.CheckBox AutoDetectForegroundWindowCheckBox;
 	}
 }

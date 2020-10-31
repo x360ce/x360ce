@@ -177,6 +177,13 @@ namespace x360ce.App
 		public bool ExcludeSupplementalDevices { get; set; }
 		public bool ExcludeVirtualDevices { get; set; }
 
+		[DefaultValue(true), Description("Autodetect currently focussed game.")]
+		public bool AutoDetectForegroundWindow
+		{
+			get { return _AutoDetectForegroundWindow; }
+			set { _AutoDetectForegroundWindow = value; OnPropertyChanged(); }
+		}
+		bool _AutoDetectForegroundWindow = true;
 
 		[DefaultValue(false), Description("Check for updates.")]
 		public bool CheckForUpdates

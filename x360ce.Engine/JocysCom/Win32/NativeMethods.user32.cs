@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Text;
 
 namespace JocysCom.ClassLibrary.Win32
 {
@@ -68,8 +69,37 @@ namespace JocysCom.ClassLibrary.Win32
 		public static extern bool EnableWindow([In] IntPtr hWnd, [In] bool bEnable);
 
 
+		/// <summary>
+		/// Retrieves a handle to the desktop window. The desktop window covers the entire screen.
+		/// </summary>
 		[DllImport("user32.dll", SetLastError = true)]
 		public static extern IntPtr GetDesktopWindow();
+
+		/// <summary>
+		/// Retrieves a handle to the foreground window.
+		/// </summary>
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern IntPtr GetForegroundWindow();
+
+		/// <summary>
+		/// Copies the text of the specified window's title bar (if it has one) into a buffer.
+		/// </summary>
+		/// <param name="hWnd">A handle to the window or control containing the text.</param>
+		/// <param name="lpString">The buffer that will receive the text.</param>
+		/// <param name="nMaxCount">The maximum number of characters to copy to the buffer, including the null character.</param>
+		/// <returns>If the function succeeds, the return value is the length, in characters, of the copied string, not including the terminating null character.</returns>
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+		/// <summary>
+		/// Retrieves the full path and file name of the module associated with the specified window handle.
+		/// </summary>
+		/// <param name="hwnd">A handle to the window whose module file name is to be retrieved.</param>
+		/// <param name="lpszFileName">The path and file name.</param>
+		/// <param name="cchFileNameMax">The maximum number of characters that can be copied into the lpszFileName buffer.</param>
+		/// <returns>The return value is the total number of characters copied into the buffer.</returns>
+		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+		public static extern uint GetWindowModuleFileName(IntPtr hwnd, StringBuilder lpszFileName, uint cchFileNameMax);
 
 		/// <summary>
 		/// Retrieves the coordinates of a window's client area.

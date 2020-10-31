@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using SharpDX.DirectInput;
 using x360ce.App.Controls;

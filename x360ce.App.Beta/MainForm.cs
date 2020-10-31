@@ -62,6 +62,8 @@ namespace x360ce.App
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
+			// Map event handler.
+			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
 			// Fix Images
 			BuletImageList.TransparentColor = System.Drawing.Color.Transparent;
 			BuletImageList.ImageStream = null;
@@ -98,6 +100,7 @@ namespace x360ce.App
 			LoadSettings();
 		}
 
+	
 		private readonly bool AppVersionChanged;
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -213,25 +216,6 @@ namespace x360ce.App
 				AppHelper.SynchronizeToHidGuardian(mappedInstanceGuids);
 			}
 		}
-
-		#region Process Monitor
-
-		private ProcessMonitor _ProcessMonitor;
-
-		private void InitProcessMonitor()
-		{
-			_ProcessMonitor = new ProcessMonitor();
-			_ProcessMonitor.Start();
-		}
-
-		private void DisposeProcessMonitor()
-		{
-			if (_ProcessMonitor != null)
-				_ProcessMonitor.Dispose();
-		}
-
-		#endregion
-
 
 		private void DHelper_XInputReloaded(object sender, DInput.DInputEventArgs e)
 		{
@@ -615,7 +599,6 @@ namespace x360ce.App
 				}
 				if (update3Enabled && IsHandleCreated)
 				{
-					InitProcessMonitor();
 					update3Enabled = false;
 					// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
 					AllowDHelperStart = true;
@@ -1181,7 +1164,6 @@ namespace x360ce.App
 				{
 					_Mutex.Dispose();
 				}
-				DisposeProcessMonitor();
 				DisposeDeviceForm();
 				DisposeUpdateForm();
 				DisposeInterfaceUpdate();
@@ -1205,16 +1187,7 @@ namespace x360ce.App
 
 		#region Current Game
 
-		public void SelectCurrentOrDefaultGame(UserGame game = null)
-		{
-			// Get current if not found.
-			if (game == null)
-				game = SettingsManager.UserGames.Items.FirstOrDefault(x => x.IsCurrentApp());
-			ControlsHelper.BeginInvoke(() =>
-			{
-				GameToCustomizeComboBox.SelectedItem = game;
-			});
-		}
+		string LastActivePath;		
 
 		private void InitGameToCustomizeComboBox()
 		{
@@ -1223,48 +1196,13 @@ namespace x360ce.App
 			GameToCustomizeComboBox.ComboBox.DisplayMember = "DisplayName";
 			GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
 			// Select game by manually trigger event.
-			var selected = ProcessMonitor.SelectOpenGame();
-			if (!selected)
-			{
-				// Select current application.
-				var game = SettingsManager.UserGames.Items.FirstOrDefault(x => x.IsCurrentApp());
-				GameToCustomizeComboBox.ComboBox.SelectedItem = game;
-				UpdateCurrentGame(game);
-			}
+			Global.SelectOpenGame();
 		}
 
 		private void GameToCustomizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			var game = GameToCustomizeComboBox.SelectedItem as Engine.Data.UserGame;
-			UpdateCurrentGame(game);
-		}
-
-		private void UpdateCurrentGame(UserGame game)
-		{
-			lock (SettingsManager.CurrentGameLock)
-			{
-				// If nothing changed then...
-				if (Equals(game, SettingsManager.CurrentGame))
-					return;
-				// Detach event from old game.
-				if (SettingsManager.CurrentGame != null)
-					SettingsManager.CurrentGame.PropertyChanged -= CurrentGame_PropertyChanged;
-				// Attach event to new game.
-				if (game != null)
-					game.PropertyChanged += CurrentGame_PropertyChanged;
-				// Assing new game.
-				SettingsManager.CurrentGame = game;
-				Global.DHelper.SettingsChanged = true;
-				// If pad controls not initializes yet then return.
-				if (PadControls == null)
-					return;
-				// Update PAD Control.
-				foreach (var ps in PadControls)
-				{
-					if (ps != null)
-						ps.UpdateFromCurrentGame();
-				}
-			}
+			var game = (UserGame)GameToCustomizeComboBox.ComboBox.SelectedItem;
+			SettingsManager.UpdateCurrentGame(game);
 		}
 
 		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -1281,9 +1219,12 @@ namespace x360ce.App
 				if (ps != null)
 					ps.UpdateFromCurrentGame();
 			}
-			// Update controls by specific property.
-			if (e.PropertyName == nameof(UserGame.EmulationType))
+			var selectedGame = (UserGame)GameToCustomizeComboBox.ComboBox.SelectedItem;
+			if (selectedGame != game)
 			{
+				GameToCustomizeComboBox.SelectedIndexChanged -= GameToCustomizeComboBox_SelectedIndexChanged;
+				GameToCustomizeComboBox.ComboBox.SelectedItem = game;
+				GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
 			}
 			SettingsManager.Current.RaiseSettingsChanged(null);
 		}

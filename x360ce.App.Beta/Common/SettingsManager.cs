@@ -34,6 +34,37 @@ namespace x360ce.App
 
 		static object OptionsLock = new object();
 
+		public static event PropertyChangedEventHandler CurrentGame_PropertyChanged;
+
+		public static void UpdateCurrentGame(UserGame game)
+		{
+			lock (CurrentGameLock)
+			{
+				// If nothing changed then...
+				if (Equals(game, CurrentGame))
+					return;
+				// Detach event from old game.
+				if (CurrentGame != null)
+					CurrentGame.PropertyChanged -= CurrentGame_PropertyChanged;
+				// Attach event to new game.
+				if (game != null)
+					game.PropertyChanged += CurrentGame_PropertyChanged;
+				// Assing new game.
+				CurrentGame = game;
+				Global.DHelper.SettingsChanged = true;
+				CurrentGame_PropertyChanged(null, null);
+				//// If pad controls not initializes yet then return.
+				//if (PadControls == null)
+				//	return;
+				//// Update PAD Control.
+				//foreach (var ps in PadControls)
+				//{
+				//	if (ps != null)
+				//		ps.UpdateFromCurrentGame();
+				//}
+			}
+		}
+
 		/// <summary>x360ce Options</summary>
 		public static XSettingsData<Options> OptionsData
 		{

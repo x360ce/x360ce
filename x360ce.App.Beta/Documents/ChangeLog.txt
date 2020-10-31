@@ -1,9 +1,8 @@
-v4.17.7.0 (2020-10-31)
+v4.17.8.0 (2020-10-31)
 - Fixed: Issue when mappings from other games would merge into currently selected game.
-
-v4.16.9.0 (2020-10-26)
 - Fixed: Sometimes crashing when generating exception info.
 - Fixed: Guide button map.
+- New: Option to auto switch configuration when game focused.
 
 v4.16.8.0 (2020-10-25)
 - Fixed: Controller image scaling issue.

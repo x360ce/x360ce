@@ -212,7 +212,6 @@
     <Compile Include="Common\ImageInfo.cs" />
     <Compile Include="Common\ImageInfos.cs" />
     <Compile Include="Common\NavImageType.cs" />
-    <Compile Include="Common\ProcessMonitor.cs" />
     <Compile Include="Common\SettingChangedEventArgs.cs" />
     <Compile Include="Common\UpdateFrequency.cs" />
     <Compile Include="Common\HookMode.cs" />

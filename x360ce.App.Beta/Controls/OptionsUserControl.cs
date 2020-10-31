@@ -103,6 +103,7 @@ namespace x360ce.App.Controls
 			ControlHelper.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
 			ControlHelper.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
+			ControlHelper.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
