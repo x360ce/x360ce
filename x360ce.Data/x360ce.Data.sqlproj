@@ -388,7 +388,7 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\x360ce_UserKeyboardMaps.sql">
+    <Build Include="dbo\Tables\x360ce_UserMacros.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
