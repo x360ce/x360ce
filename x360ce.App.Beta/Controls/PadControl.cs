@@ -353,9 +353,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-
-
-
 		#region Control ComboBox'es
 
 		ComboBox CurrentCbx
@@ -377,14 +374,6 @@ namespace x360ce.App.Controls
 			}
 		}
 		ComboBox _CurrentCbx;
-
-		void PadControl_Load(object sender, EventArgs e)
-		{
-			//LeftThumbXAntiDeadZoneComboBox.SelectedIndex = 0;
-			//LeftThumbYAntiDeadZoneComboBox.SelectedIndex = 0;
-			//RightThumbXAntiDeadZoneComboBox.SelectedIndex = 0;
-			//RightThumbYAntiDeadZoneComboBox.SelectedIndex = 0;
-		}
 
 		void ComboBox_DropDown(object sender, EventArgs e)
 		{
@@ -696,12 +685,10 @@ namespace x360ce.App.Controls
 			lock (updateFromDirectInputLock)
 			{
 				var ud = GetCurrentDevice();
-				Guid instanceGuid = Guid.Empty;
+				var instanceGuid = Guid.Empty;
 				var enable = ud != null;
 				if (enable)
-				{
 					instanceGuid = ud.InstanceGuid;
-				}
 				ControlsHelper.SetEnabled(LoadPresetButton, enable);
 				ControlsHelper.SetEnabled(AutoPresetButton, enable);
 				ControlsHelper.SetEnabled(ClearPresetButton, enable);
@@ -713,9 +700,7 @@ namespace x360ce.App.Controls
 					// Get first control to disable which must be Panel.
 					var controls = pages[p].Controls.Cast<Control>().ToArray();
 					for (int c = 0; c < controls.Length; c++)
-					{
 						ControlsHelper.SetEnabled(controls[c], enable);
-					}
 				}
 				// If device instance changed then...
 				if (!Equals(instanceGuid, _InstanceGuid))
@@ -884,48 +869,53 @@ namespace x360ce.App.Controls
 			mi.Image = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
 			mi.Click += new EventHandler(DiMenuStrip_Click);
 			DiMenuStrip.Items.Add(mi);
-			// Add Buttons.
-			mi = new ToolStripMenuItem("Buttons");
-			DiMenuStrip.Items.Add(mi);
-			CreateItems(mi, "Inverted", "IButton {0}", "-{0}", ud.CapButtonCount);
-			CreateItems(mi, "Button {0}", "{0}", ud.CapButtonCount);
-			if (ud.DiAxeMask > 0)
+			// Do not add menu items for keyboard, because user interface will become too sluggish.
+			// Recording feature is preferred way to map keyboard button.
+			if (!ud.IsKeyboard)
 			{
-				// Add Axes.
-				mi = new ToolStripMenuItem("Axes");
+				// Add Buttons.
+				mi = new ToolStripMenuItem("Buttons");
 				DiMenuStrip.Items.Add(mi);
-				CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-				CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-				CreateItems(mi, "Half", "HAxis {0}", "x{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-				CreateItems(mi, "Axis {0}", "a{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-			}
-			if (ud.DiSliderMask > 0)
-			{
-				// Add Sliders.            
-				mi = new ToolStripMenuItem("Sliders");
-				DiMenuStrip.Items.Add(mi);
-				// 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
-				CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-				CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-				CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-				CreateItems(mi, "Slider {0}", "s{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-			}
-			// Add D-Pads.
-			if (ud.CapPovCount > 0)
-			{
-				mi = new ToolStripMenuItem(cPOVs);
-				DiMenuStrip.Items.Add(mi);
-				// Add D-Pad Top, Right, Bottom, Left button.
-				var dPadNames = Enum.GetNames(typeof(DPadEnum));
-				for (int p = 0; p < ud.CapPovCount; p++)
+				CreateItems(mi, "Inverted", "IButton {0}", "-{0}", ud.CapButtonCount);
+				CreateItems(mi, "Button {0}", "{0}", ud.CapButtonCount);
+				if (ud.DiAxeMask > 0)
 				{
-					var dPadItem = CreateItem("POV {0}", "{1}{0}", p + 1, SettingName.SType.POV);
-					mi.DropDownItems.Add(dPadItem);
-					for (int d = 0; d < dPadNames.Length; d++)
+					// Add Axes.
+					mi = new ToolStripMenuItem("Axes");
+					DiMenuStrip.Items.Add(mi);
+					CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Half", "HAxis {0}", "x{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+					CreateItems(mi, "Axis {0}", "a{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+				}
+				if (ud.DiSliderMask > 0)
+				{
+					// Add Sliders.            
+					mi = new ToolStripMenuItem("Sliders");
+					DiMenuStrip.Items.Add(mi);
+					// 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
+					CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+					CreateItems(mi, "Slider {0}", "s{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+				}
+				// Add D-Pads.
+				if (ud.CapPovCount > 0)
+				{
+					mi = new ToolStripMenuItem(cPOVs);
+					DiMenuStrip.Items.Add(mi);
+					// Add D-Pad Top, Right, Bottom, Left button.
+					var dPadNames = Enum.GetNames(typeof(DPadEnum));
+					for (int p = 0; p < ud.CapPovCount; p++)
 					{
-						var dPadButtonIndex = p * 4 + d + 1;
-						var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
-						dPadItem.DropDownItems.Add(dPadButtonItem);
+						var dPadItem = CreateItem("POV {0}", "{1}{0}", p + 1, SettingName.SType.POV);
+						mi.DropDownItems.Add(dPadItem);
+						for (int d = 0; d < dPadNames.Length; d++)
+						{
+							var dPadButtonIndex = p * 4 + d + 1;
+							var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
+							dPadItem.DropDownItems.Add(dPadButtonItem);
+						}
 					}
 				}
 			}
@@ -1335,6 +1325,7 @@ namespace x360ce.App.Controls
 				? null
 				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, padSetting);
+			UserMacrosPanel.LoadUserSetting(setting);
 			UpdateGridButtons();
 		}
 

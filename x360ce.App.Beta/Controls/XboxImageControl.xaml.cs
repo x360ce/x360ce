@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using x360ce.Engine;
-using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -141,6 +140,8 @@ namespace x360ce.App.Controls
 
 		private void MainGrid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			Imager.ShowLeftThumbButtons = InRange(e, LeftThumbGrid);
 			Imager.ShowRightThumbButtons = InRange(e, RightThumbGrid);
 			Imager.ShowDPadButtons = InRange(e, DPadGrid);

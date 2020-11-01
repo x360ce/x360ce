@@ -250,6 +250,7 @@
       <DependentUpon>DebugUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PadControlImager.cs" />
+    <Compile Include="Controls\PadTabPages\IPadTabPage.cs" />
     <Compile Include="Controls\PresetsGridUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -292,8 +293,8 @@
     <Compile Include="Controls\AxisToButtonUserControl.Designer.cs">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UserKeyboardMapsControl.xaml.cs">
-      <DependentUpon>UserKeyboardMapsControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadTabPages\UserMacrosControl.xaml.cs">
+      <DependentUpon>UserMacrosControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\XboxImageControl.xaml.cs">
       <DependentUpon>XboxImageControl.xaml</DependentUpon>
@@ -760,7 +761,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\UserKeyboardMapsControl.xaml">
+    <Page Include="Controls\PadTabPages\UserMacrosControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

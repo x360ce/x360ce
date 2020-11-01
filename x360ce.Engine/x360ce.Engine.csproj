@@ -191,7 +191,7 @@
     <Compile Include="Data\IUserRecord.cs" />
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
-    <Compile Include="Data\UserKeyboardMap.cs" />
+    <Compile Include="Data\UserMacro.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
     <Compile Include="Data\UserSetting.cs" />
@@ -456,6 +456,8 @@
     <Compile Include="JocysCom\Win32\WinAPI.cs" />
     <Compile Include="JocysCom\Win32\WinNT.cs" />
     <Compile Include="Maps\Map.cs" />
+    <Compile Include="Maps\MapEventType.cs" />
+    <Compile Include="Maps\MapRpmType.cs" />
     <Compile Include="Maps\TargetType.cs" />
     <Compile Include="Maps\SettingName.cs" />
     <Compile Include="Maps\SettingsConverter.cs" />

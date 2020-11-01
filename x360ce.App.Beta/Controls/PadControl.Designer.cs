@@ -189,6 +189,9 @@
 			this.RightMotorTestTrackBar = new System.Windows.Forms.TrackBar();
 			this.RightMotorTestTextBox = new System.Windows.Forms.TextBox();
 			this.RightMotorPeriodTextBox = new System.Windows.Forms.TextBox();
+			this.MacrosTabPage = new System.Windows.Forms.TabPage();
+			this.UserMacrosHost = new System.Windows.Forms.Integration.ElementHost();
+			this.UserMacrosPanel = new x360ce.App.Controls.UserMacrosControl();
 			this.XInputTabPage = new System.Windows.Forms.TabPage();
 			this.XInputHost = new System.Windows.Forms.Integration.ElementHost();
 			this.xInputUserControl1 = new x360ce.App.Controls.XInputUserControl();
@@ -217,9 +220,6 @@
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
 			this.GetXInputStatesCheckBox = new System.Windows.Forms.ToolStripButton();
 			this.DxTweakButton = new System.Windows.Forms.Button();
-			this.KeyboardTabPage = new System.Windows.Forms.TabPage();
-			this.KeyboardHost = new System.Windows.Forms.Integration.ElementHost();
-			this.userKeyboardMapsControl1 = new x360ce.App.Controls.UserKeyboardMapsControl();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -257,10 +257,10 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).BeginInit();
+			this.MacrosTabPage.SuspendLayout();
 			this.XInputTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
-			this.KeyboardTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// DirectInputTabPage
@@ -1372,7 +1372,7 @@
 			this.PadTabControl.Controls.Add(this.LeftStickTabPage);
 			this.PadTabControl.Controls.Add(this.RightStickTabPage);
 			this.PadTabControl.Controls.Add(this.ForceFeedbackTabPage);
-			this.PadTabControl.Controls.Add(this.KeyboardTabPage);
+			this.PadTabControl.Controls.Add(this.MacrosTabPage);
 			this.PadTabControl.Controls.Add(this.XInputTabPage);
 			this.PadTabControl.Controls.Add(this.DirectInputTabPage);
 			this.PadTabControl.Location = new System.Drawing.Point(3, 116);
@@ -2110,6 +2110,26 @@
 			this.RightMotorPeriodTextBox.Text = "0 ";
 			this.RightMotorPeriodTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// MacrosTabPage
+			// 
+			this.MacrosTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.MacrosTabPage.Controls.Add(this.UserMacrosHost);
+			this.MacrosTabPage.Location = new System.Drawing.Point(4, 22);
+			this.MacrosTabPage.Name = "MacrosTabPage";
+			this.MacrosTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.MacrosTabPage.Size = new System.Drawing.Size(752, 438);
+			this.MacrosTabPage.TabIndex = 7;
+			this.MacrosTabPage.Text = "Macros";
+			// 
+			// UserMacrosHost
+			// 
+			this.UserMacrosHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.UserMacrosHost.Location = new System.Drawing.Point(3, 3);
+			this.UserMacrosHost.Name = "UserMacrosHost";
+			this.UserMacrosHost.Size = new System.Drawing.Size(746, 432);
+			this.UserMacrosHost.TabIndex = 0;
+			this.UserMacrosHost.Child = this.UserMacrosPanel;
+			// 
 			// XInputTabPage
 			// 
 			this.XInputTabPage.BackColor = System.Drawing.SystemColors.Control;
@@ -2444,27 +2464,6 @@
 			this.DxTweakButton.UseVisualStyleBackColor = true;
 			this.DxTweakButton.Click += new System.EventHandler(this.CalibrateButton_Click);
 			// 
-			// KeyboardTabPage
-			// 
-			this.KeyboardTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.KeyboardTabPage.Controls.Add(this.KeyboardHost);
-			this.KeyboardTabPage.Location = new System.Drawing.Point(4, 22);
-			this.KeyboardTabPage.Name = "KeyboardTabPage";
-			this.KeyboardTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.KeyboardTabPage.Size = new System.Drawing.Size(752, 438);
-			this.KeyboardTabPage.TabIndex = 7;
-			this.KeyboardTabPage.Text = "Keyboard";
-			// 
-			// KeyboardHost
-			// 
-			this.KeyboardHost.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.KeyboardHost.Location = new System.Drawing.Point(3, 3);
-			this.KeyboardHost.Name = "KeyboardHost";
-			this.KeyboardHost.Size = new System.Drawing.Size(746, 432);
-			this.KeyboardHost.TabIndex = 0;
-			this.KeyboardHost.Text = "elementHost1";
-			this.KeyboardHost.Child = this.userKeyboardMapsControl1;
-			// 
 			// PadControl
 			// 
 			this.Controls.Add(this.PastePresetButton);
@@ -2481,7 +2480,6 @@
 			this.Controls.Add(this.ResetPresetButton);
 			this.Name = "PadControl";
 			this.Size = new System.Drawing.Size(766, 610);
-			this.Load += new System.EventHandler(this.PadControl_Load);
 			this.DirectInputTabPage.ResumeLayout(false);
 			this.AdvancedTabPage.ResumeLayout(false);
 			this.AdvancedOptionsPanel.ResumeLayout(false);
@@ -2529,11 +2527,11 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).EndInit();
+			this.MacrosTabPage.ResumeLayout(false);
 			this.XInputTabPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).EndInit();
 			this.GamesToolStrip.ResumeLayout(false);
 			this.GamesToolStrip.PerformLayout();
-			this.KeyboardTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -2737,8 +2735,8 @@
 		private System.Windows.Forms.TabPage XInputTabPage;
 		private System.Windows.Forms.Integration.ElementHost XInputHost;
 		private XInputUserControl xInputUserControl1;
-		private System.Windows.Forms.TabPage KeyboardTabPage;
-		private System.Windows.Forms.Integration.ElementHost KeyboardHost;
-		private UserKeyboardMapsControl userKeyboardMapsControl1;
+		private System.Windows.Forms.TabPage MacrosTabPage;
+		private System.Windows.Forms.Integration.ElementHost UserMacrosHost;
+		private UserMacrosControl UserMacrosPanel;
 	}
 }

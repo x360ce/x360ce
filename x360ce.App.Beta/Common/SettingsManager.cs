@@ -114,8 +114,8 @@ namespace x360ce.App
 		/// <summary>User Devices. Contains hardware details about Direct Input Instances (Devices).</summary>
 		public static XSettingsData<Engine.Data.UserDevice> UserDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices.xml", "User Devices (Direct Input).");
 
-		/// <summary>User Keyboard Maps. Contains keyboard map for Direct Input Instances (Devices).</summary>
-		public static XSettingsData<Engine.Data.UserKeyboardMap> UserKeyboardMaps = new XSettingsData<Engine.Data.UserKeyboardMap>("UserKeyboardMap.xml", "User Keyboard Maps for Direct Input.");
+		/// <summary>User Macro Maps. Advanced maps to keyboard, mouse and xinput.</summary>
+		public static XSettingsData<Engine.Data.UserMacro> UserMacros = new XSettingsData<Engine.Data.UserMacro>("UserMacros.xml", "Keyboard, mouse and xinput macro maps.");
 
 		/// <summary>User Instances. Map different Instance IDs to a single physical controller.</summary>
 		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
@@ -240,7 +240,7 @@ namespace x360ce.App
 			UserSettings.Items.SynchronizingObject = so;
 			Summaries.Items.SynchronizingObject = so;
 			UserDevices.Items.SynchronizingObject = so;
-			UserKeyboardMaps.Items.SynchronizingObject = so;
+			UserMacros.Items.SynchronizingObject = so;
 			UserGames.Items.SynchronizingObject = so;
 			UserInstances.Items.SynchronizingObject = so;
 			Layouts.Items.SynchronizingObject = so;
@@ -248,6 +248,7 @@ namespace x360ce.App
 			Presets.Items.SynchronizingObject = so;
 			PadSettings.Items.SynchronizingObject = so;
 			//SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
+			UserSettings.ValidateData = UserSettings_ValidateData;
 			UserSettings.Load();
 			Summaries.Load();
 			// Make sure that data will be filtered before loading.
@@ -258,8 +259,8 @@ namespace x360ce.App
 			UserGames.ValidateData = Games_ValidateData;
 			UserGames.Load();
 			Presets.Load();
-			UserKeyboardMaps.ValidateData = UserKeyboardMaps_ValidateData;
-			UserKeyboardMaps.Load();
+			UserMacros.ValidateData = UserKeyboardMaps_ValidateData;
+			UserMacros.Load();
 			// Make sure that data will be filtered before loading.
 			Layouts.ValidateData = Layouts_ValidateData;
 			Layouts.Load();
@@ -269,6 +270,19 @@ namespace x360ce.App
 			UserDevices.Items.AsynchronousInvoke = true;
 			UserInstances.Load();
 			OptionsData.Items.SynchronizingObject = so;
+		}
+
+		static IList<Engine.Data.UserSetting> UserSettings_ValidateData(IList<Engine.Data.UserSetting> items)
+		{
+			for (int i = 0; i < items.Count; i++)
+			{
+				var item = items[i];
+				// If setting is not set then...
+				if (item.SettingId == Guid.Empty)
+					// Assign unique id because it must be linked with UserMacro and other records.
+					item.SettingId = Guid.NewGuid();
+			}
+			return items;
 		}
 
 		static IList<Engine.Data.Program> Programs_ValidateData(IList<Engine.Data.Program> items)
@@ -326,18 +340,8 @@ namespace x360ce.App
 			return items;
 		}
 
-		static IList<Engine.Data.UserKeyboardMap> UserKeyboardMaps_ValidateData(IList<Engine.Data.UserKeyboardMap> items)
+		static IList<Engine.Data.UserMacro> UserKeyboardMaps_ValidateData(IList<Engine.Data.UserMacro> items)
 		{
-			if (items.Count == 0)
-			{
-				var item = new UserKeyboardMap();
-				var appFile = new FileInfo(Application.ExecutablePath);
-				var program = Programs.Items.FirstOrDefault(x => string.Compare(x.FileName, appFile.Name, true) == 0);
-				item.FileName = program.FileName;
-				item.FileProductName = program.FileProductName;
-				item.LoadGuideButton();
-				items.Add(item);
-			}
 			return items;
 		}
 
@@ -1148,18 +1152,17 @@ namespace x360ce.App
 			return changed;
 		}
 
-		public void InitNewUserKeyboardMapForGame(UserGame game)
+		public void InitNewUserKeyboardMapForGame(UserSetting userSetting)
 		{
-			if (game == null)
+			if (userSetting == null)
 				return;
-			var item = UserKeyboardMaps.Items.FirstOrDefault(x => x.FileName == game.FileName);
+			var item = UserMacros.Items.FirstOrDefault(x => x.SettingId == userSetting.SettingId);
 			if (item != null)
 				return;
-			item = new UserKeyboardMap();
-			item.FileName = game.FileName;
-			item.FileProductName = game.FileProductName;
+			item = new UserMacro();
+			item.SettingId = userSetting.SettingId;
 			item.LoadGuideButton();
-			UserKeyboardMaps.Add(item);
+			UserMacros.Add(item);
 		}
 
 	}

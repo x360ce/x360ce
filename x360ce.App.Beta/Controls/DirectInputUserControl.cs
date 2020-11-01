@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using SharpDX.DirectInput;
-using SharpDX.XInput;
 using System.Linq;
 using x360ce.Engine;
-using JocysCom.ClassLibrary.IO;
 using x360ce.Engine.Data;
 using JocysCom.ClassLibrary.Controls;
 
@@ -36,7 +32,6 @@ namespace x360ce.App.Controls
 
 		void InitDirectInputTab()
 		{
-			var ToolTip1 = new ToolTip();
 			CreateButtonsTable();
 			CreateAxisTable();
 			CreateSlidersTable();
