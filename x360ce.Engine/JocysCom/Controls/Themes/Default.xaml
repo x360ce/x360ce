@@ -39,6 +39,11 @@
 		<Setter Property="Margin" Value="3,3,3,3" />
 	</Style>
 
+	<Style x:Key="ToolBarButton" TargetType="Button">
+		<Setter Property="Margin" Value="0,0,0,0" />
+	</Style>
+
+
 	<!--  TextBox  -->
 
 	<Style x:Key="TextBox_Default" TargetType="TextBox">
@@ -162,7 +167,7 @@
 	<!--  Label  -->
 
 	<Style x:Key="ButtonLabel" TargetType="Label">
-		<Setter Property="Margin" Value="3,3,3,3" />
+		<Setter Property="Margin" Value="0,0,0,0" />
 		<Setter Property="Padding" Value="4,2,4,2" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>
@@ -179,16 +184,17 @@
 	<!--  ToolBar  -->
 
 	<Style x:Key="MainToolBar" TargetType="ToolBar">
-		<Setter Property="Margin" Value="-13,-13,-13,-13" />
-		<Setter Property="Padding" Value="4,5,4,4" />
+		<Setter Property="Margin" Value="0,0,-13,-3" />
+		<Setter Property="Padding" Value="0,0,0,0" />
 		<Setter Property="ToolBar.OverflowMode" Value="Never" />
 		<Setter Property="ToolBarTray.IsLocked" Value="True" />
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 	</Style>
 
 	<!--  Separator  -->
 
 	<Style x:Key="MainSeparator" TargetType="Separator">
-		<Setter Property="Margin" Value="4,3,0,3" />
+		<Setter Property="Margin" Value="1,3,1,3" />
 		<Setter Property="Focusable" Value="false" />
 		<Setter Property="Template">
 			<Setter.Value>

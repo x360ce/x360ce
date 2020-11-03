@@ -5,7 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="320"
+	d:DesignHeight="240"
 	d:DesignWidth="640"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	mc:Ignorable="d">
@@ -25,6 +25,7 @@
 		<TabControl
 			Grid.Row="0"
 			Margin="3,3,3,3"
+			Padding="0,0,0,0"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch">
 			<TabItem x:Name="UserMacrosTabPage" Header="User Macros">
@@ -36,32 +37,13 @@
 					</Grid.RowDefinitions>
 					<ToolBarPanel Grid.Row="0" Style="{StaticResource MainToolBarPanel}">
 						<ToolBar Style="{StaticResource MainToolBar}">
-							<Button Name="SaveButton" Style="{StaticResource Button}">
+							<Button Name="SaveButton" Style="{StaticResource ToolBarButton}">
 								<StackPanel Style="{StaticResource ButtonStackPanel}">
 									<ContentControl Content="{StaticResource Icon_Save}" Style="{StaticResource ButtonContentControl}" />
 									<Label Content="Save" Style="{StaticResource ButtonLabel}" />
 								</StackPanel>
 							</Button>
 							<Separator Style="{StaticResource MainSeparator}" />
-							<Button Name="AddButton" Style="{StaticResource Button}">
-								<StackPanel Style="{StaticResource ButtonStackPanel}">
-									<ContentControl Content="{StaticResource Icon_Add}" Style="{StaticResource ButtonContentControl}" />
-									<Label Content="Add" Style="{StaticResource ButtonLabel}" />
-								</StackPanel>
-							</Button>
-							<Button Name="RemoveButton" Style="{StaticResource Button}">
-								<StackPanel Style="{StaticResource ButtonStackPanel}">
-									<ContentControl Content="{StaticResource Icon_Remove}" Style="{StaticResource ButtonContentControl}" />
-									<Label Content="Remove" Style="{StaticResource ButtonLabel}" />
-								</StackPanel>
-							</Button>
-							<Separator Style="{StaticResource MainSeparator}" />
-							<Button Name="CreatTasksButton" Style="{StaticResource Button}">
-								<StackPanel Style="{StaticResource ButtonStackPanel}">
-									<ContentControl Content="{StaticResource Icon_Refresh}" Style="{StaticResource ButtonContentControl}" />
-									<Label Content="Create Tasks" Style="{StaticResource ButtonLabel}" />
-								</StackPanel>
-							</Button>
 						</ToolBar>
 					</ToolBarPanel>
 					<Border
@@ -109,11 +91,34 @@
 								EditingElementStyle="{StaticResource TextBoxRightCell}"
 								ElementStyle="{StaticResource TextBlockRightCell}"
 								Header="Range Max" />
+
+							<DataGridTextColumn
+								Binding="{Binding MapRpmType}"
+								EditingElementStyle="{StaticResource TextBoxRightCell}"
+								ElementStyle="{StaticResource TextBlockRightCell}"
+								Header="RPM Type" />
+
+							<DataGridTextColumn
+								Binding="{Binding MapRpmMin}"
+								EditingElementStyle="{StaticResource TextBoxRightCell}"
+								ElementStyle="{StaticResource TextBlockRightCell}"
+								Header="RPM Min" />
+							<DataGridTextColumn
+								Binding="{Binding MapRpmMax}"
+								EditingElementStyle="{StaticResource TextBoxRightCell}"
+								ElementStyle="{StaticResource TextBlockRightCell}"
+								Header="RPM Max" />
+							<DataGridTextColumn
+								Binding="{Binding MapEventType}"
+								EditingElementStyle="{StaticResource TextBoxRightCell}"
+								ElementStyle="{StaticResource TextBlockRightCell}"
+								Header="Event" />
 							<DataGridTextColumn
 								Width="*"
-								Binding="{Binding ScriptText}"
+								Binding="{Binding Text}"
 								EditingElementStyle="{StaticResource TextBoxCell}"
-								ElementStyle="{StaticResource TextBlockCell}" />
+								ElementStyle="{StaticResource TextBlockCell}"
+								Header="Text" />
 						</DataGrid.Columns>
 						<DataGrid.CellStyle>
 							<Style TargetType="DataGridCell">
@@ -132,15 +137,55 @@
 					<Grid.RowDefinitions>
 						<RowDefinition Height="auto" />
 						<RowDefinition Height="auto" />
+						<RowDefinition Height="auto" />
+						<RowDefinition Height="auto" />
 					</Grid.RowDefinitions>
-					<Label Grid.Row="0" Content="Index" />
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="auto" />
+						<ColumnDefinition Width="auto" />
+
+					</Grid.ColumnDefinitions>
+
+					<Label Grid.Row="0" Grid.Column="0" Content="Keys" />
+					<StackPanel
+						Grid.Row="0"
+						Grid.Column="1"
+						HorizontalAlignment="Left"
+						Orientation="Horizontal">
+						<ComboBox Name="FKeysComboBox" Width="60" />
+						<ComboBox Name="Control1KeysComboBox" Width="60" />
+						<ComboBox Name="Control2KeysComboBox" Width="60" />
+						<ComboBox Name="NumPadKeysComboBox" Width="60" />
+						<ComboBox Name="CharKeysComboBox" Width="60" />
+						<ComboBox Name="MouseKeysComboBox" Width="60" />
+						<ComboBox Name="OtherKeysComboBox" Width="60" />
+					</StackPanel>
+					<Label Grid.Row="0" Grid.Column="2" Content="Source Type" />
 					<ComboBox
-						Name="PresetsComboBox"
-						Grid.Row="1"
-						Width="160"
-						Margin="4,0,0,0"
-						VerticalAlignment="Center" />
-					<Separator Style="{StaticResource MainSeparator}" />
+						Name="MapTypeComboBox"
+						Grid.Row="0"
+						Grid.Column="3"
+						Margin="4,0,0,0" />
+
+					<Label Grid.Row="1" Grid.Column="2" Content="Source Index" />
+					<TextBox Grid.Row="1" Grid.Column="4" MaxLength="3" />
+
+					<Label Grid.Row="2" Grid.Column="0" Content="Text" />
+					<TextBox x:Name="ScriptText" Grid.Row="2" Grid.Column="1" />
+
+					<Label Grid.Row="2" Grid.Column="2" Content="Range Min" />
+					<TextBox Grid.Row="2" Grid.Column="3" />
+
+					<Label Grid.Row="3" Grid.Column="2" Content="Range Max" />
+					<TextBox Grid.Row="3" Grid.Column="3" />
+
+
+					<Label Grid.Row="3" Grid.Column="0" Content="Index" />
+					<TextBox Grid.Row="3" Grid.Column="1" />
+
+
 				</Grid>
 			</GroupBox>
 		</StackPanel>
