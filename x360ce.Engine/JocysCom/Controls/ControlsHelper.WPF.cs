@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Windows.Controls;
 using System;
 using System.Windows.Media;
+using System.Windows.Controls.Primitives;
 
 namespace JocysCom.ClassLibrary.Controls
 {

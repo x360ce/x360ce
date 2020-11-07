@@ -132,7 +132,7 @@
 			</TabItem>
 		</TabControl>
 		<StackPanel Grid.Row="1">
-			<GroupBox Header="Edit Keyboard Map">
+			<GroupBox Header="Edit Macro">
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="auto" />
@@ -145,46 +145,128 @@
 						<ColumnDefinition Width="*" />
 						<ColumnDefinition Width="auto" />
 						<ColumnDefinition Width="auto" />
-
+						<ColumnDefinition Width="auto" />
+						<ColumnDefinition Width="auto" />
 					</Grid.ColumnDefinitions>
 
-					<Label Grid.Row="0" Grid.Column="0" Content="Keys" />
-					<StackPanel
+					<Label
 						Grid.Row="0"
+						Grid.Column="0"
+						Content="Name"
+						Style="{StaticResource LabelGrid}" />
+					<TextBox Grid.Row="0" Grid.Column="1" />
+
+					<Label
+						Grid.Row="1"
+						Grid.Column="0"
+						Content="Keyboard"
+						Style="{StaticResource LabelGrid}" />
+					<StackPanel
+						Grid.Row="1"
 						Grid.Column="1"
 						HorizontalAlignment="Left"
 						Orientation="Horizontal">
-						<ComboBox Name="FKeysComboBox" Width="60" />
-						<ComboBox Name="Control1KeysComboBox" Width="60" />
-						<ComboBox Name="Control2KeysComboBox" Width="60" />
-						<ComboBox Name="NumPadKeysComboBox" Width="60" />
-						<ComboBox Name="CharKeysComboBox" Width="60" />
-						<ComboBox Name="MouseKeysComboBox" Width="60" />
-						<ComboBox Name="OtherKeysComboBox" Width="60" />
+						<ComboBox Name="Control1KeysComboBox" Style="{StaticResource ComboBoxGrid}" />
+						<ComboBox Name="CharKeysComboBox" Style="{StaticResource ComboBoxGrid}" />
+						<ComboBox Name="NumPadKeysComboBox" Style="{StaticResource ComboBoxGrid}" />
+						<ComboBox Name="Control2KeysComboBox" Style="{StaticResource ComboBoxGrid}" />
+						<ComboBox Name="FKeysComboBox" Style="{StaticResource ComboBoxGrid}" />
 					</StackPanel>
-					<Label Grid.Row="0" Grid.Column="2" Content="Source Type" />
-					<ComboBox
-						Name="MapTypeComboBox"
+
+					<Label
+						Grid.Row="2"
+						Grid.Column="0"
+						Content="Insert"
+						Style="{StaticResource LabelGrid}" />
+					<StackPanel
+						Grid.Row="2"
+						Grid.Column="1"
+						HorizontalAlignment="Left"
+						Orientation="Horizontal">
+						<ComboBox Name="OtherKeysComboBox" Style="{StaticResource ComboBoxGrid}" />
+						<ComboBox Name="MouseKeysComboBox" Style="{StaticResource ComboBoxGrid}" />
+						<ComboBox Name="XButtonsComboBox" Style="{StaticResource ComboBoxGrid}" />
+					</StackPanel>
+
+					<Label
+						Grid.Row="3"
+						Grid.Column="0"
+						Content="Macro"
+						Style="{StaticResource LabelGrid}" />
+					<TextBox x:Name="ScriptText" Grid.Row="3" Grid.Column="1" />
+					<Label
+						Grid.Row="0"
+						Grid.Column="2"
+						Content="Source Type"
+						Style="{StaticResource LabelGrid}" />
+					<StackPanel
 						Grid.Row="0"
 						Grid.Column="3"
-						Margin="4,0,0,0" />
+						HorizontalAlignment="Left"
+						Orientation="Horizontal">
+						<ComboBox x:Name="SourceTypeComboBox" Style="{StaticResource ComboBoxGrid}" />
+					</StackPanel>
 
-					<Label Grid.Row="1" Grid.Column="2" Content="Source Index" />
-					<TextBox Grid.Row="1" Grid.Column="4" MaxLength="3" />
+					<Label
+						Grid.Row="0"
+						Grid.Column="4"
+						Content="Source Index"
+						Style="{StaticResource LabelGrid}" />
+					<TextBox
+						x:Name="SourceIndexTextBox"
+						Grid.Row="0"
+						Grid.Column="5"
+						MaxLength="3" />
 
-					<Label Grid.Row="2" Grid.Column="0" Content="Text" />
-					<TextBox x:Name="ScriptText" Grid.Row="2" Grid.Column="1" />
+					<!--  Range Event  -->
 
-					<Label Grid.Row="2" Grid.Column="2" Content="Range Min" />
+					<Label
+						Grid.Row="1"
+						Grid.Column="2"
+						Content="Map Type"
+						Style="{StaticResource LabelGrid}" />
+					<StackPanel Grid.Row="1" Grid.Column="3">
+						<ComboBox Name="MapEventTypeComboBox" Style="{StaticResource ComboBoxGrid}" />
+					</StackPanel>
+
+					<Label
+						Grid.Row="2"
+						Grid.Column="2"
+						Content="Range Min"
+						Style="{StaticResource LabelGrid}" />
 					<TextBox Grid.Row="2" Grid.Column="3" />
 
-					<Label Grid.Row="3" Grid.Column="2" Content="Range Max" />
+					<Label
+						Grid.Row="3"
+						Grid.Column="2"
+						Content="Range Max"
+						Style="{StaticResource LabelGrid}" />
 					<TextBox Grid.Row="3" Grid.Column="3" />
 
+					<!--  RPM  -->
 
-					<Label Grid.Row="3" Grid.Column="0" Content="Index" />
-					<TextBox Grid.Row="3" Grid.Column="1" />
+					<Label
+						Grid.Row="1"
+						Grid.Column="4"
+						Content="RPM Type"
+						Style="{StaticResource LabelGrid}" />
+					<StackPanel Grid.Row="1" Grid.Column="5">
+						<ComboBox Name="MapRpmTypeComboBox" Style="{StaticResource ComboBoxGrid}" />
+					</StackPanel>
 
+					<Label
+						Grid.Row="2"
+						Grid.Column="4"
+						Content="RPM Min"
+						Style="{StaticResource LabelGrid}" />
+					<TextBox Grid.Row="2" Grid.Column="5" />
+
+					<Label
+						Grid.Row="3"
+						Grid.Column="4"
+						Content="RPM Max"
+						Style="{StaticResource LabelGrid}" />
+					<TextBox Grid.Row="3" Grid.Column="5" />
 
 				</Grid>
 			</GroupBox>

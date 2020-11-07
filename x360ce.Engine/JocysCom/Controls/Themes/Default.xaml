@@ -123,16 +123,18 @@
 
 	<!--  ComboBox  -->
 
-	<Style x:Key="ComboBox_Default" TargetType="ComboBox">
-		<Setter Property="Margin" Value="3" />
-		<Setter Property="Padding" Value="3" />
-		<Setter Property="Width" Value="120" />
-		<Setter Property="Height" Value="Auto" />
+	<Style x:Key="ComboBoxDefault" TargetType="ComboBox">
+		<Setter Property="Margin" Value="3,3,3,3" />
+		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
-	<Style BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox" />
+	<Style BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox" />
 
-	<Style x:Key="GridComboBox" BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox">
+	<!--  ComboBox - Grid  -->
+
+	<Style x:Key="ComboBoxGrid" BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox">
+		<Setter Property="Padding" Value="3,3,3,3" />
+		<Setter Property="Margin" Value="3,3,3,3" />
 		<Setter Property="HorizontalAlignment" Value="Left" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
@@ -168,6 +170,11 @@
 
 	<Style x:Key="ButtonLabel" TargetType="Label">
 		<Setter Property="Margin" Value="0,0,0,0" />
+		<Setter Property="Padding" Value="4,2,4,2" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+	</Style>
+
+	<Style x:Key="LabelGrid" TargetType="Label">
 		<Setter Property="Padding" Value="4,2,4,2" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>

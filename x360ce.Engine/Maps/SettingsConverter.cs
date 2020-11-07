@@ -305,10 +305,10 @@ namespace x360ce.Engine
 		public static List<MapCode> DPadCodes = new List<MapCode>
 		{
 			MapCode.DPad,
-			MapCode.DPadDown,
+			MapCode.DPadUp,
 			MapCode.DPadLeft,
 			MapCode.DPadRight,
-			MapCode.DPadUp,
+			MapCode.DPadDown,
 		};
 
 		public static List<MapCode> MenuButtonCodes = new List<MapCode>
@@ -344,16 +344,16 @@ namespace x360ce.Engine
 			MapCode.RightTrigger,
 			MapCode.LeftThumbAxisX,
 			MapCode.LeftThumbAxisY,
-			MapCode.LeftThumbDown,
+			MapCode.LeftThumbUp,
 			MapCode.LeftThumbLeft,
 			MapCode.LeftThumbRight,
-			MapCode.LeftThumbUp,
+			MapCode.LeftThumbDown,
 			MapCode.RightThumbAxisX,
 			MapCode.RightThumbAxisY,
-			MapCode.RightThumbDown,
+			MapCode.RightThumbUp,
 			MapCode.RightThumbLeft,
 			MapCode.RightThumbRight,
-			MapCode.RightThumbUp,
+			MapCode.RightThumbDown,
 		};
 
 		public static List<MapCode> ThumbDirections = new List<MapCode>
@@ -367,6 +367,26 @@ namespace x360ce.Engine
 			MapCode.RightThumbRight,
 			MapCode.RightThumbDown,
 		};
+
+		public static List<MapCode> DPadDirections = new List<MapCode>
+		{
+			MapCode.DPadUp,
+			MapCode.DPadLeft,
+			MapCode.DPadRight,
+			MapCode.DPadDown,
+		};
+
+
+		public static bool IsButtonOrDirection(MapCode code)
+		{
+			return
+				MenuButtonCodes.Contains(code) ||
+				MainButtonCodes.Contains(code) ||
+				ShoulderButtonCodes.Contains(code) ||
+				TriggerButtonCodes.Contains(code) ||
+				ThumbDirections.Contains(code) ||
+				DPadDirections.Contains(code);
+		}
 
 		#endregion
 

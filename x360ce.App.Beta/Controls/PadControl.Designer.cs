@@ -266,10 +266,10 @@
 			// DirectInputTabPage
 			// 
 			this.DirectInputTabPage.Controls.Add(this.DirectInputPanel);
-			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 22);
+			this.DirectInputTabPage.Location = new System.Drawing.Point(4, 76);
 			this.DirectInputTabPage.Name = "DirectInputTabPage";
 			this.DirectInputTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.DirectInputTabPage.Size = new System.Drawing.Size(752, 438);
+			this.DirectInputTabPage.Size = new System.Drawing.Size(192, 20);
 			this.DirectInputTabPage.TabIndex = 0;
 			this.DirectInputTabPage.Text = "Direct Input";
 			// 
@@ -278,7 +278,7 @@
 			this.DirectInputPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DirectInputPanel.Location = new System.Drawing.Point(3, 3);
 			this.DirectInputPanel.Name = "DirectInputPanel";
-			this.DirectInputPanel.Size = new System.Drawing.Size(746, 432);
+			this.DirectInputPanel.Size = new System.Drawing.Size(186, 14);
 			this.DirectInputPanel.TabIndex = 0;
 			// 
 			// AdvancedTabPage
@@ -436,7 +436,7 @@
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
 			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(560, 125);
+			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(0, 125);
 			this.AxisToDPadGroupBox.TabIndex = 14;
 			this.AxisToDPadGroupBox.TabStop = false;
 			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
@@ -1558,10 +1558,10 @@
 			// 
 			this.DPadTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.DPadTabPage.Controls.Add(this.DPadPanel);
-			this.DPadTabPage.Location = new System.Drawing.Point(4, 22);
+			this.DPadTabPage.Location = new System.Drawing.Point(4, 40);
 			this.DPadTabPage.Name = "DPadTabPage";
 			this.DPadTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.DPadTabPage.Size = new System.Drawing.Size(752, 438);
+			this.DPadTabPage.Size = new System.Drawing.Size(192, 56);
 			this.DPadTabPage.TabIndex = 5;
 			this.DPadTabPage.Text = "D-Pad";
 			// 
@@ -1571,17 +1571,17 @@
 			this.DPadPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DPadPanel.Location = new System.Drawing.Point(3, 3);
 			this.DPadPanel.Name = "DPadPanel";
-			this.DPadPanel.Size = new System.Drawing.Size(746, 432);
+			this.DPadPanel.Size = new System.Drawing.Size(186, 50);
 			this.DPadPanel.TabIndex = 0;
 			// 
 			// TriggersTabPage
 			// 
 			this.TriggersTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.TriggersTabPage.Controls.Add(this.TriggersPanel);
-			this.TriggersTabPage.Location = new System.Drawing.Point(4, 22);
+			this.TriggersTabPage.Location = new System.Drawing.Point(4, 40);
 			this.TriggersTabPage.Name = "TriggersTabPage";
 			this.TriggersTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.TriggersTabPage.Size = new System.Drawing.Size(752, 438);
+			this.TriggersTabPage.Size = new System.Drawing.Size(192, 56);
 			this.TriggersTabPage.TabIndex = 4;
 			this.TriggersTabPage.Text = "Triggers";
 			// 
@@ -1592,7 +1592,7 @@
 			this.TriggersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.TriggersPanel.Location = new System.Drawing.Point(3, 3);
 			this.TriggersPanel.Name = "TriggersPanel";
-			this.TriggersPanel.Size = new System.Drawing.Size(746, 432);
+			this.TriggersPanel.Size = new System.Drawing.Size(186, 50);
 			this.TriggersPanel.TabIndex = 3;
 			// 
 			// LeftTriggerUserControl
@@ -1602,7 +1602,7 @@
 			this.LeftTriggerUserControl.HeaderText = "Left Trigger";
 			this.LeftTriggerUserControl.Location = new System.Drawing.Point(3, 3);
 			this.LeftTriggerUserControl.Name = "LeftTriggerUserControl";
-			this.LeftTriggerUserControl.Size = new System.Drawing.Size(740, 193);
+			this.LeftTriggerUserControl.Size = new System.Drawing.Size(180, 193);
 			this.LeftTriggerUserControl.TabIndex = 1;
 			this.LeftTriggerUserControl.TargetType = x360ce.Engine.TargetType.LeftTrigger;
 			// 
@@ -1613,7 +1613,7 @@
 			this.RightTriggerUserControl.HeaderText = "RightTrigger";
 			this.RightTriggerUserControl.Location = new System.Drawing.Point(3, 202);
 			this.RightTriggerUserControl.Name = "RightTriggerUserControl";
-			this.RightTriggerUserControl.Size = new System.Drawing.Size(740, 193);
+			this.RightTriggerUserControl.Size = new System.Drawing.Size(180, 193);
 			this.RightTriggerUserControl.TabIndex = 2;
 			this.RightTriggerUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger)));
 			// 
@@ -1621,10 +1621,10 @@
 			// 
 			this.LeftStickTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.LeftStickTabPage.Controls.Add(this.LeftThumbPanel);
-			this.LeftStickTabPage.Location = new System.Drawing.Point(4, 22);
+			this.LeftStickTabPage.Location = new System.Drawing.Point(4, 40);
 			this.LeftStickTabPage.Name = "LeftStickTabPage";
 			this.LeftStickTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.LeftStickTabPage.Size = new System.Drawing.Size(752, 438);
+			this.LeftStickTabPage.Size = new System.Drawing.Size(192, 56);
 			this.LeftStickTabPage.TabIndex = 1;
 			this.LeftStickTabPage.Text = "Left Stick";
 			// 
@@ -1635,7 +1635,7 @@
 			this.LeftThumbPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LeftThumbPanel.Location = new System.Drawing.Point(3, 3);
 			this.LeftThumbPanel.Name = "LeftThumbPanel";
-			this.LeftThumbPanel.Size = new System.Drawing.Size(746, 432);
+			this.LeftThumbPanel.Size = new System.Drawing.Size(186, 50);
 			this.LeftThumbPanel.TabIndex = 1;
 			// 
 			// LeftThumbXUserControl
@@ -1645,7 +1645,7 @@
 			this.LeftThumbXUserControl.HeaderText = "X - Horizontal Axis";
 			this.LeftThumbXUserControl.Location = new System.Drawing.Point(3, 3);
 			this.LeftThumbXUserControl.Name = "LeftThumbXUserControl";
-			this.LeftThumbXUserControl.Size = new System.Drawing.Size(740, 193);
+			this.LeftThumbXUserControl.Size = new System.Drawing.Size(180, 193);
 			this.LeftThumbXUserControl.TabIndex = 0;
 			this.LeftThumbXUserControl.TargetType = x360ce.Engine.TargetType.LeftThumbX;
 			// 
@@ -1656,7 +1656,7 @@
 			this.LeftThumbYUserControl.HeaderText = "Y - Vertical Axis";
 			this.LeftThumbYUserControl.Location = new System.Drawing.Point(3, 202);
 			this.LeftThumbYUserControl.Name = "LeftThumbYUserControl";
-			this.LeftThumbYUserControl.Size = new System.Drawing.Size(740, 193);
+			this.LeftThumbYUserControl.Size = new System.Drawing.Size(180, 193);
 			this.LeftThumbYUserControl.TabIndex = 0;
 			this.LeftThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftThumbX)));
 			// 
@@ -1664,10 +1664,10 @@
 			// 
 			this.RightStickTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.RightStickTabPage.Controls.Add(this.RightThumbPanel);
-			this.RightStickTabPage.Location = new System.Drawing.Point(4, 22);
+			this.RightStickTabPage.Location = new System.Drawing.Point(4, 58);
 			this.RightStickTabPage.Name = "RightStickTabPage";
 			this.RightStickTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.RightStickTabPage.Size = new System.Drawing.Size(752, 438);
+			this.RightStickTabPage.Size = new System.Drawing.Size(192, 38);
 			this.RightStickTabPage.TabIndex = 2;
 			this.RightStickTabPage.Text = "Right Stick";
 			// 
@@ -1678,7 +1678,7 @@
 			this.RightThumbPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.RightThumbPanel.Location = new System.Drawing.Point(3, 3);
 			this.RightThumbPanel.Name = "RightThumbPanel";
-			this.RightThumbPanel.Size = new System.Drawing.Size(746, 432);
+			this.RightThumbPanel.Size = new System.Drawing.Size(186, 32);
 			this.RightThumbPanel.TabIndex = 1;
 			// 
 			// RightThumbXUserControl
@@ -1688,7 +1688,7 @@
 			this.RightThumbXUserControl.HeaderText = "X - Horizontal Axis";
 			this.RightThumbXUserControl.Location = new System.Drawing.Point(3, 3);
 			this.RightThumbXUserControl.Name = "RightThumbXUserControl";
-			this.RightThumbXUserControl.Size = new System.Drawing.Size(740, 193);
+			this.RightThumbXUserControl.Size = new System.Drawing.Size(180, 193);
 			this.RightThumbXUserControl.TabIndex = 0;
 			this.RightThumbXUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.LeftTrigger | x360ce.Engine.TargetType.LeftThumbX)));
 			// 
@@ -1699,7 +1699,7 @@
 			this.RightThumbYUserControl.HeaderText = "Y - Vertical Axis";
 			this.RightThumbYUserControl.Location = new System.Drawing.Point(3, 202);
 			this.RightThumbYUserControl.Name = "RightThumbYUserControl";
-			this.RightThumbYUserControl.Size = new System.Drawing.Size(740, 193);
+			this.RightThumbYUserControl.Size = new System.Drawing.Size(180, 193);
 			this.RightThumbYUserControl.TabIndex = 0;
 			this.RightThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)(((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger) 
             | x360ce.Engine.TargetType.LeftThumbX)));
@@ -1708,10 +1708,10 @@
 			// 
 			this.ForceFeedbackTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.ForceFeedbackTabPage.Controls.Add(this.ForceFeedbackPanel);
-			this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 22);
+			this.ForceFeedbackTabPage.Location = new System.Drawing.Point(4, 58);
 			this.ForceFeedbackTabPage.Name = "ForceFeedbackTabPage";
 			this.ForceFeedbackTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(752, 438);
+			this.ForceFeedbackTabPage.Size = new System.Drawing.Size(192, 38);
 			this.ForceFeedbackTabPage.TabIndex = 0;
 			this.ForceFeedbackTabPage.Text = "Force Feedback";
 			// 
@@ -1725,18 +1725,18 @@
 			this.ForceFeedbackPanel.Location = new System.Drawing.Point(3, 3);
 			this.ForceFeedbackPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ForceFeedbackPanel.Name = "ForceFeedbackPanel";
-			this.ForceFeedbackPanel.Size = new System.Drawing.Size(746, 432);
+			this.ForceFeedbackPanel.Size = new System.Drawing.Size(186, 32);
 			this.ForceFeedbackPanel.TabIndex = 11;
 			// 
 			// InforTextBox
 			// 
 			this.InforTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.InforTextBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.InforTextBox.Location = new System.Drawing.Point(0, 335);
+			this.InforTextBox.Location = new System.Drawing.Point(0, -65);
 			this.InforTextBox.Multiline = true;
 			this.InforTextBox.Name = "InforTextBox";
 			this.InforTextBox.ReadOnly = true;
-			this.InforTextBox.Size = new System.Drawing.Size(746, 97);
+			this.InforTextBox.Size = new System.Drawing.Size(186, 97);
 			this.InforTextBox.TabIndex = 11;
 			this.InforTextBox.Text = resources.GetString("InforTextBox.Text");
 			// 
@@ -1754,7 +1754,7 @@
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTrackBar);
 			this.ForceFeedbackGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.ForceFeedbackGroupBox.Name = "ForceFeedbackGroupBox";
-			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(740, 106);
+			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(180, 106);
 			this.ForceFeedbackGroupBox.TabIndex = 0;
 			this.ForceFeedbackGroupBox.TabStop = false;
 			this.ForceFeedbackGroupBox.Text = "Force Feedback";
@@ -1766,7 +1766,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.EffectDescriptionLabel.Location = new System.Drawing.Point(6, 66);
 			this.EffectDescriptionLabel.Name = "EffectDescriptionLabel";
-			this.EffectDescriptionLabel.Size = new System.Drawing.Size(728, 37);
+			this.EffectDescriptionLabel.Size = new System.Drawing.Size(168, 37);
 			this.EffectDescriptionLabel.TabIndex = 5;
 			this.EffectDescriptionLabel.Text = "Effect Description";
 			// 
@@ -2114,10 +2114,10 @@
 			// 
 			this.MacrosTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.MacrosTabPage.Controls.Add(this.UserMacrosHost);
-			this.MacrosTabPage.Location = new System.Drawing.Point(4, 22);
+			this.MacrosTabPage.Location = new System.Drawing.Point(4, 76);
 			this.MacrosTabPage.Name = "MacrosTabPage";
 			this.MacrosTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.MacrosTabPage.Size = new System.Drawing.Size(752, 438);
+			this.MacrosTabPage.Size = new System.Drawing.Size(192, 20);
 			this.MacrosTabPage.TabIndex = 7;
 			this.MacrosTabPage.Text = "Macros";
 			// 
@@ -2126,7 +2126,7 @@
 			this.UserMacrosHost.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.UserMacrosHost.Location = new System.Drawing.Point(3, 3);
 			this.UserMacrosHost.Name = "UserMacrosHost";
-			this.UserMacrosHost.Size = new System.Drawing.Size(746, 432);
+			this.UserMacrosHost.Size = new System.Drawing.Size(186, 14);
 			this.UserMacrosHost.TabIndex = 0;
 			this.UserMacrosHost.Child = this.UserMacrosPanel;
 			// 
@@ -2134,9 +2134,9 @@
 			// 
 			this.XInputTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.XInputTabPage.Controls.Add(this.XInputHost);
-			this.XInputTabPage.Location = new System.Drawing.Point(4, 22);
+			this.XInputTabPage.Location = new System.Drawing.Point(4, 76);
 			this.XInputTabPage.Name = "XInputTabPage";
-			this.XInputTabPage.Size = new System.Drawing.Size(752, 438);
+			this.XInputTabPage.Size = new System.Drawing.Size(192, 20);
 			this.XInputTabPage.TabIndex = 6;
 			this.XInputTabPage.Text = "XInput";
 			// 
@@ -2145,7 +2145,7 @@
 			this.XInputHost.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.XInputHost.Location = new System.Drawing.Point(0, 0);
 			this.XInputHost.Name = "XInputHost";
-			this.XInputHost.Size = new System.Drawing.Size(752, 438);
+			this.XInputHost.Size = new System.Drawing.Size(192, 20);
 			this.XInputHost.TabIndex = 0;
 			this.XInputHost.Text = "elementHost1";
 			this.XInputHost.Child = this.xInputUserControl1;

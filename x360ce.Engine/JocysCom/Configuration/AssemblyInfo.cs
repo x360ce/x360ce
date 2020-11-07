@@ -275,13 +275,18 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// </summary>
 		/// <remarks>
 		/// You have two options:
+		/// 
 		/// Option 1: Disable Deterministic build by adding
+		/// 
 		///     &gt;Deterministic&lt;False&gt;/Deterministic&lt; inside a &gt;PropertyGroup&lt section  of .csproj
 		///
 		/// Option 2:
+		/// 
 		///     Create "Resources\BuildDate.txt" and set its "Build Action: Embedded Resource"
 		///     Add to pre-build event to work with latest .NET builds:
-		///     powershell.exe -Command "(Get-Date).ToString(\"o\") | Out-File "$(ProjectDir)Resources\BuildDate.txt"
+		///     
+		///     IF NOT EXIST "$(ProjectDir)Resources" MKDIR "$(ProjectDir)Resources" 2>nul
+		///     PowerShell.exe -Command "(Get-Date).ToString(\"o\") | Out-File "$(ProjectDir)Resources\BuildDate.txt"
 		///
 		/// Note:
 		/// The C# compiler (Roslyn) supports deterministic builds since Visual Studio 2015.
