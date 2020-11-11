@@ -43,6 +43,29 @@
 									<Label Content="Save" Style="{StaticResource ButtonLabel}" />
 								</StackPanel>
 							</Button>
+
+							<Button Name="DeleteButton" Click="DeleteButton_Click" Style="{StaticResource ToolBarButton}">
+								<StackPanel Style="{StaticResource ButtonStackPanel}">
+									<ContentControl Content="{StaticResource Icon_Delete}" Style="{StaticResource ButtonContentControl}" />
+									<Label Content="Delete" Style="{StaticResource ButtonLabel}" />
+								</StackPanel>
+							</Button>
+
+							<Button Name="ResetButton" Click="ResetButton_Click" Style="{StaticResource ToolBarButton}">
+								<StackPanel Style="{StaticResource ButtonStackPanel}">
+									<ContentControl Content="{StaticResource Icon_Reset}" Style="{StaticResource ButtonContentControl}" />
+									<Label Content="Reset" Style="{StaticResource ButtonLabel}" />
+								</StackPanel>
+							</Button>
+
+							<Button Name="RefreshButton" Click="RefreshButton_Click" Style="{StaticResource ToolBarButton}">
+								<StackPanel Style="{StaticResource ButtonStackPanel}">
+									<ContentControl Content="{StaticResource Icon_Refresh}" Style="{StaticResource ButtonContentControl}" />
+									<Label Content="Refresh" Style="{StaticResource ButtonLabel}" />
+								</StackPanel>
+							</Button>
+
+
 							<Separator Style="{StaticResource MainSeparator}" />
 						</ToolBar>
 					</ToolBarPanel>
@@ -159,7 +182,7 @@
 					<Label
 						Grid.Row="1"
 						Grid.Column="0"
-						Content="Keyboard"
+						Content="Insert"
 						Style="{StaticResource LabelGrid}" />
 					<StackPanel
 						Grid.Row="1"
@@ -173,11 +196,7 @@
 						<ComboBox Name="FKeysComboBox" Style="{StaticResource ComboBoxGrid}" />
 					</StackPanel>
 
-					<Label
-						Grid.Row="2"
-						Grid.Column="0"
-						Content="Insert"
-						Style="{StaticResource LabelGrid}" />
+
 					<StackPanel
 						Grid.Row="2"
 						Grid.Column="1"
@@ -213,7 +232,7 @@
 						Content="Source Index"
 						Style="{StaticResource LabelGrid}" />
 					<TextBox
-						x:Name="SourceIndexTextBox"
+						x:Name="MapIndexTextBox"
 						Grid.Row="0"
 						Grid.Column="5"
 						MaxLength="3" />

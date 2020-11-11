@@ -8,6 +8,8 @@ using x360ce.Engine.Data;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Mail;
+using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace x360ce.Web.WebServices
 {
@@ -111,11 +113,40 @@ namespace x360ce.Web.WebServices
 			return vendors;
 		}
 
+		public class LogEntry
+		{
+			public string Address;
+			public DateTime Date;
+		}
+
+		public static List<LogEntry> IpDate = new List<LogEntry>();
+
 
 		[WebMethod(EnableSession = true, Description = "Update User Data")]
 		//[System.Web.Services.Protocols.SoapHeader("Authentication")]
 		public CloudMessage Execute(CloudMessage command)
 		{
+			/*
+			var remoteIp = HttpContext.Current.Request.UserHostAddress;
+			var now = DateTime.Now;
+			lock (IpDate)
+			{
+				IpDate.Add(new LogEntry() { Address = remoteIp, Date = now });
+				IpDate.RemoveAll(x => x.Date < now.AddMinutes(-5));
+				var count = IpDate.Count(x => x.Address == remoteIp);
+				// If 30 connections per 5 minutes.
+				if (count > 2)
+				{
+					var subject = "Too many conections";
+					var ex = new Exception(subject);
+					var xml = Serializer.SerializeToXmlString(command);
+					ex.Data.Add("Execute CloudMessage command", xml);
+					LogHelper.Current.ProcessException(ex, subject);
+					IpDate.RemoveAll(x => x.Address == remoteIp);
+				}
+			}
+			*/
+
 			var results = new CloudMessage();
 			// Output messages.
 			var messages = new List<string>();
