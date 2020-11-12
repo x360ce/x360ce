@@ -4,13 +4,15 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Linq;
 using x360ce.Engine;
+using System.Windows;
+using System.Runtime.CompilerServices;
 
 namespace x360ce.App
 {
 	/// <summary>
 	/// Global class to host all services except interface.
 	/// </summary>
-	public partial class Global
+	public static partial class Global
 	{
 
 		public static CloudClient CloudClient;
@@ -129,6 +131,28 @@ namespace x360ce.App
 			DHelper = new DInput.DInputHelper();
 		}
 
+		#endregion
+
+		#region Public events
+
+		/// <summary>
+		/// This method called from UpdateTimer on main form.
+		/// </summary>
+		public static void TriggerControlUpdates()
+		{
+			UpdateFromDInput?.Invoke(null, null);
+			UpdateFromXInput?.Invoke(null, null);
+		}
+
+		/// <summary>
+		/// Update Form or Control from DInput state.
+		/// </summary>
+		public static event EventHandler UpdateFromDInput;
+
+		/// <summary>
+		/// Update Form or Control from XInput state.
+		/// </summary>
+		public static event EventHandler UpdateFromXInput;
 
 		#endregion
 

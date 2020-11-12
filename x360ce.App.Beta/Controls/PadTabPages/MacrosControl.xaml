@@ -5,7 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="240"
+	d:DesignHeight="260"
 	d:DesignWidth="640"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	mc:Ignorable="d">
@@ -44,29 +44,34 @@
 								</StackPanel>
 							</Button>
 
+
+							<Button Name="RecordButton" Click="RecordButton_Click" Style="{StaticResource ToolBarButton}">
+								<StackPanel Style="{StaticResource ButtonStackPanel}">
+									<ContentControl Content="{StaticResource Icon_Record}" Style="{StaticResource ButtonContentControl}" />
+									<Label Content="Record Source" Style="{StaticResource ButtonLabel}" />
+								</StackPanel>
+							</Button>
+
 							<Button Name="DeleteButton" Click="DeleteButton_Click" Style="{StaticResource ToolBarButton}">
 								<StackPanel Style="{StaticResource ButtonStackPanel}">
 									<ContentControl Content="{StaticResource Icon_Delete}" Style="{StaticResource ButtonContentControl}" />
 									<Label Content="Delete" Style="{StaticResource ButtonLabel}" />
 								</StackPanel>
 							</Button>
-
+							<Separator Style="{StaticResource MainSeparator}" />
 							<Button Name="ResetButton" Click="ResetButton_Click" Style="{StaticResource ToolBarButton}">
 								<StackPanel Style="{StaticResource ButtonStackPanel}">
 									<ContentControl Content="{StaticResource Icon_Reset}" Style="{StaticResource ButtonContentControl}" />
 									<Label Content="Reset" Style="{StaticResource ButtonLabel}" />
 								</StackPanel>
 							</Button>
-
+							<Separator Style="{StaticResource MainSeparator}" />
 							<Button Name="RefreshButton" Click="RefreshButton_Click" Style="{StaticResource ToolBarButton}">
 								<StackPanel Style="{StaticResource ButtonStackPanel}">
 									<ContentControl Content="{StaticResource Icon_Refresh}" Style="{StaticResource ButtonContentControl}" />
 									<Label Content="Refresh" Style="{StaticResource ButtonLabel}" />
 								</StackPanel>
 							</Button>
-
-
-							<Separator Style="{StaticResource MainSeparator}" />
 						</ToolBar>
 					</ToolBarPanel>
 					<Border

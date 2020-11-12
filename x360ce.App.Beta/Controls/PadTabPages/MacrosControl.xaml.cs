@@ -149,5 +149,13 @@ namespace x360ce.App.Controls
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(() => RefreshList(true));
 		}
+
+		private void RecordButton_Click(object sender, RoutedEventArgs e)
+		{
+			// Must monitor direct input changes on this device.
+			var device = (_UserSetting == null)
+				? null
+				: SettingsManager.GetDevice(_UserSetting.InstanceGuid);
+		}
 	}
 }

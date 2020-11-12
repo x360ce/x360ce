@@ -4,7 +4,6 @@ using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Mail;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Win32;
-using Nefarius.ViGEm.Client;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
@@ -62,6 +61,9 @@ namespace x360ce.App
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
+			Global.UpdateFromDInput += Global_UpdateFromDInput;
+			Global.UpdateFromXInput += Global_UpdateFromXInput;
+
 			// Map event handler.
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
 			// Fix Images
@@ -100,7 +102,41 @@ namespace x360ce.App
 			LoadSettings();
 		}
 
-	
+		private void Global_UpdateFromDInput(object sender, EventArgs e)
+		{
+			var currentGameFileName = SettingsManager.CurrentGame?.FileName;
+			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
+			for (var i = 0; i < 4; i++)
+			{
+				var padControl = PadControls[i];
+				// Get devices mapped to game and specific controller index.
+				var devices = SettingsManager.GetDevices(currentGameFileName, (MapTo)(i + 1));
+				// DInput instance is ON if active devices found.
+				var diOn = devices.Count(x => x.IsOnline) > 0;
+				// XInput instance is ON.
+				var xiOn = client != null && client.IsControllerConnected((uint)i + 1);
+				// Update LED of GamePad state.
+				var image = diOn
+					// DInput ON, XInput ON 
+					? xiOn ? "green"
+					// DInput ON, XInput OFF
+					: "red"
+					// DInput OFF, XInput ON
+					: xiOn ? "yellow"
+					// DInput OFF, XInput OFF
+					: "grey";
+				var bullet = string.Format("bullet_square_glass_{0}.png", image);
+				if (ControlPages[i].ImageKey != bullet)
+					ControlPages[i].ImageKey = bullet;
+			}
+
+		}
+
+		private void Global_UpdateFromXInput(object sender, EventArgs e)
+		{
+
+		}
+
 		private readonly bool AppVersionChanged;
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -747,41 +783,12 @@ namespace x360ce.App
 		/// </summary>
 		private void UpdateForm3()
 		{
-			var game = SettingsManager.CurrentGame;
-			var currentFile = (game == null) ? null : game.FileName;
 			// Allow if not testing or testing with option enabled.
 			var o = SettingsManager.Options;
 			var allow = !o.TestEnabled || o.TestUpdateInterface;
 			if (!allow)
 				return;
-			var client = ViGEmClient.Current;
-			for (var i = 0; i < 4; i++)
-			{
-				// Get devices mapped to game and specific controller index.
-				var devices = SettingsManager.GetDevices(currentFile, (MapTo)(i + 1));
-				// DInput instance is ON if active devices found.
-				var diOn = devices.Count(x => x.IsOnline) > 0;
-				// XInput instance is ON.
-				var xiOn = client != null && client.IsControllerConnected((uint)i + 1);
-				var padControl = PadControls[i];
-				// Update Form from DInput state.
-				padControl.UpdateFromDInput();
-				// Update Form from XInput state.
-				padControl.UpdateFromXInput();
-				// Update LED of GamePad state.
-				var image = diOn
-					// DInput ON, XInput ON 
-					? xiOn ? "green"
-					// DInput ON, XInput OFF
-					: "red"
-					// DInput OFF, XInput ON
-					: xiOn ? "yellow"
-					// DInput OFF, XInput OFF
-					: "grey";
-				var bullet = string.Format("bullet_square_glass_{0}.png", image);
-				if (ControlPages[i].ImageKey != bullet)
-					ControlPages[i].ImageKey = bullet;
-			}
+			Global.TriggerControlUpdates();
 		}
 
 		public void UpdateStatus(string message = "")

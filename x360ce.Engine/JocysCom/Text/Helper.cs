@@ -1,7 +1,4 @@
-﻿using JocysCom.ClassLibrary.Collections;
-using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -12,7 +9,6 @@ namespace JocysCom.ClassLibrary.Text
 
 	public static class Helper
 	{
-		private static readonly object providerLock = new object();
 		private static readonly Regex tagRx = new Regex("{((?<prefix>[0-9A-Z]+)[.])?(?<property>[0-9A-Z]+)(:(?<format>[^{}]+))?}", RegexOptions.IgnoreCase);
 
 		/// <summary>
@@ -116,7 +112,7 @@ namespace JocysCom.ClassLibrary.Text
 		}
 
 		/// <summary>
-		/// Get value from text [name]:\s[value]. And parse to specific type.
+		/// Get value from text [name]:\s*[value]. And parse to specific type.
 		/// </summary>
 		/// <param name="name">Prefix name.</param>
 		/// <param name="s">String to get value from.</param>
@@ -186,12 +182,16 @@ namespace JocysCom.ClassLibrary.Text
 			}
 			else
 			{
-				if (ts.Days != 0) s += ts.Days.ToString("0") + ".";
-				if (s.Length != 0 || ts.Hours > 0) s += ts.Days.ToString("00") + ":";
-				if (s.Length != 0 || ts.Minutes > 0) s += ts.Minutes.ToString("00") + ":";
+				if (ts.Days != 0)
+					s += ts.Days.ToString("0") + ".";
+				if (s.Length != 0 || ts.Hours > 0)
+					s += ts.Days.ToString("00") + ":";
+				if (s.Length != 0 || ts.Minutes > 0)
+					s += ts.Minutes.ToString("00") + ":";
 				// Seconds will be always included.
 				s += ts.Seconds.ToString("00");
-				if (includeMilliseconds) s += "." + ts.Milliseconds.ToString("000");
+				if (includeMilliseconds)
+					s += "." + ts.Milliseconds.ToString("000");
 			}
 			return s;
 		}
@@ -207,10 +207,10 @@ namespace JocysCom.ClassLibrary.Text
 		{
 			using (var writer = new StringWriter())
 			{
-				using (var provider = CodeDomProvider.CreateProvider(language))
+				using (var provider = System.CodeDom.Compiler.CodeDomProvider.CreateProvider(language))
 				{
-					var exp = new CodePrimitiveExpression(input);
-					CodeGeneratorOptions options = null;
+					var exp = new System.CodeDom.CodePrimitiveExpression(input);
+					System.CodeDom.Compiler.CodeGeneratorOptions options = null;
 					provider.GenerateCodeFromExpression(exp, writer, options);
 					var literal = writer.ToString();
 					var rxLines = new Regex("\"\\s*[+]\\s*[\r\n]\"", RegexOptions.Multiline);
@@ -263,21 +263,24 @@ namespace JocysCom.ClassLibrary.Text
 			{
 				// Find end of line
 				var eol = text.IndexOf(Environment.NewLine, pos);
-				if (eol == -1) next = eol = text.Length;
-				else next = eol + Environment.NewLine.Length;
+				if (eol == -1)
+					next = eol = text.Length;
+				else
+					next = eol + Environment.NewLine.Length;
 				// Copy this line of text, breaking into smaller lines as needed
 				if (eol > pos)
 				{
 					do
 					{
 						var len = eol - pos;
-						if (len > width) len = BreakLine(text, pos, width);
+						if (len > width)
+							len = BreakLine(text, pos, width);
 						sb.Append(text, pos, len);
 						sb.Append(Environment.NewLine);
-
 						// Trim white space following break
 						pos += len;
-						while (pos < eol && char.IsWhiteSpace(text[pos])) pos++;
+						while (pos < eol && char.IsWhiteSpace(text[pos]))
+							pos++;
 					} while (eol > pos);
 				}
 				else sb.Append(Environment.NewLine); // Empty line
@@ -297,16 +300,19 @@ namespace JocysCom.ClassLibrary.Text
 		{
 			// Find last white space in line
 			var i = max;
-			while (i >= 0 && !char.IsWhiteSpace(text[pos + i])) i--;
+			while (i >= 0 && !char.IsWhiteSpace(text[pos + i]))
+				i--;
 			// If no white space found, break at maximum length
-			if (i < 0) return max;
+			if (i < 0)
+				return max;
 			// Find start of white space
-			while (i >= 0 && char.IsWhiteSpace(text[pos + i])) i--;
+			while (i >= 0 && char.IsWhiteSpace(text[pos + i]))
+				i--;
 			// Return length of text before white space
 			return i + 1;
 		}
 
-#endregion
+		#endregion
 
 		public static string IdentText(int tabs, string s, char ident = '\t')
 		{
@@ -317,7 +323,8 @@ namespace JocysCom.ClassLibrary.Text
 			var sb = new StringBuilder();
 			var tr = new StringReader(s);
 			var prefix = string.Empty;
-			for (var i = 0; i < tabs; i++) prefix += ident;
+			for (var i = 0; i < tabs; i++)
+				prefix += ident;
 			string line;
 			while ((line = tr.ReadLine()) != null)
 			{
@@ -352,29 +359,31 @@ namespace JocysCom.ClassLibrary.Text
 				var modulus = i % 16;
 				hx.Append(bytes[i - 1 + offset].ToString("X2")).Append(" ");
 				var c = (char)bytes[i - 1 + offset];
-				if (char.IsControl(c)) ch.Append(".");
-				else ch.Append(c);
+				if (char.IsControl(c))
+					ch.Append(".");
+				else
+					ch.Append(c);
 				// If line ended.
 				if ((modulus == 0 && i > 1) || (i == length))
 				{
 					if (addIndex)
 					{
 						builder.Append((lineIndex * 16).ToString("X8"));
-						if (addHex || addText) builder.Append(": ");
+						if (addHex || addText)
+							builder.Append(": ");
 					}
 					if (addHex)
 					{
 						if (hx.Length < 50) hx.Append(' ', 50 - hx.Length);
 						builder.Append(hx.ToString());
-						if (addText) builder.Append(" | ");
+						if (addText)
+							builder.Append(" | ");
 					}
 					if (addText)
 					{
 						builder.Append(ch.ToString());
 						if (!maxDisplayLines.HasValue || lines.Count < maxDisplayLines.Value)
-						{
 							lines.Add(builder.ToString());
-						}
 						builder.Clear();
 					}
 					hx.Clear();
@@ -383,74 +392,22 @@ namespace JocysCom.ClassLibrary.Text
 				}
 			}
 			if (lineIndex > lines.Count)
-			{
 				lines[lines.Count - 1] = string.Format("... {0} more lines.", lineIndex - lines.Count + 1);
-			}
 			return string.Join(Environment.NewLine, lines);
 		}
 
 		public static string CropLines(string s, int maxLines = 8)
 		{
-			if (string.IsNullOrEmpty(s)) return s;
+			if (string.IsNullOrEmpty(s))
+				return s;
 			var lines = s.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-			if (lines.Length <= maxLines) return s;
+			if (lines.Length <= maxLines)
+				return s;
 			var sb = new StringBuilder();
 			for (var i = 0; i < maxLines - 1; i++)
-			{
 				sb.AppendLine(lines[i]);
-			}
 			sb.AppendFormat("... {0} more lines.", lines.Length - maxLines + 1);
 			return sb.ToString();
-		}
-
-		private static KeyValue[] SplitAndKeep(string s, string[] separators)
-		{
-			var list = new List<KeyValue>();
-			var sepIndex = new List<int>();
-			var sepValue = new List<string>();
-			var prevSepIndex = 0;
-			var prevSepValue = "";
-			// Loop trough every character of the string.
-			for (var i = 0; i < s.Length; i++)
-			{
-				// Loop trough separators.
-				for (var j = 0; j < separators.Length; j++)
-				{
-					var sep = separators[j];
-					// If separator is empty then continue.
-					if (string.IsNullOrEmpty(sep)) continue;
-					var sepLen = sep.Length;
-					// If separator is one char length and chars match or
-					// separator is in the bounds of the string and string match then...
-					if ((sepLen == 1 && s[i] == sep[0]) || (sepLen <= (s.Length - i) && string.CompareOrdinal(s, i, sep, 0, sepLen) == 0))
-					{
-						// Find string value from last separator.
-						var prevIndex = prevSepIndex + prevSepValue.Length;
-						var prevValue = s.Substring(prevIndex, i - prevIndex);
-						var item = new KeyValue(prevSepValue, prevValue);
-						list.Add(item);
-						prevSepIndex = i;
-						prevSepValue = sep;
-						sepIndex.Add(i);
-						sepValue.Add(sep);
-						i += sepLen - 1;
-						break;
-					}
-				}
-			}
-			// If no split were done then add complete string.
-			if (list.Count == 0)
-			{
-				list.Add(new KeyValue("", s));
-			}
-			else
-			{
-				// Add value for last separator
-				var prevI = prevSepIndex + prevSepValue.Length;
-				var value = s.Substring(prevI, s.Length - prevI);
-				list.Add(new KeyValue(prevSepValue, value));
-			}
-			return list.ToArray();
 		}
 
 		/// <summary>

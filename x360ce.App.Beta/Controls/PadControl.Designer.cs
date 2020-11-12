@@ -436,7 +436,7 @@
 			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
 			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(0, 125);
+			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(560, 125);
 			this.AxisToDPadGroupBox.TabIndex = 14;
 			this.AxisToDPadGroupBox.TabStop = false;
 			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
@@ -1558,10 +1558,10 @@
 			// 
 			this.DPadTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.DPadTabPage.Controls.Add(this.DPadPanel);
-			this.DPadTabPage.Location = new System.Drawing.Point(4, 40);
+			this.DPadTabPage.Location = new System.Drawing.Point(4, 22);
 			this.DPadTabPage.Name = "DPadTabPage";
 			this.DPadTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.DPadTabPage.Size = new System.Drawing.Size(192, 56);
+			this.DPadTabPage.Size = new System.Drawing.Size(752, 438);
 			this.DPadTabPage.TabIndex = 5;
 			this.DPadTabPage.Text = "D-Pad";
 			// 
@@ -1571,17 +1571,17 @@
 			this.DPadPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DPadPanel.Location = new System.Drawing.Point(3, 3);
 			this.DPadPanel.Name = "DPadPanel";
-			this.DPadPanel.Size = new System.Drawing.Size(186, 50);
+			this.DPadPanel.Size = new System.Drawing.Size(746, 432);
 			this.DPadPanel.TabIndex = 0;
 			// 
 			// TriggersTabPage
 			// 
 			this.TriggersTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.TriggersTabPage.Controls.Add(this.TriggersPanel);
-			this.TriggersTabPage.Location = new System.Drawing.Point(4, 40);
+			this.TriggersTabPage.Location = new System.Drawing.Point(4, 22);
 			this.TriggersTabPage.Name = "TriggersTabPage";
 			this.TriggersTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.TriggersTabPage.Size = new System.Drawing.Size(192, 56);
+			this.TriggersTabPage.Size = new System.Drawing.Size(752, 438);
 			this.TriggersTabPage.TabIndex = 4;
 			this.TriggersTabPage.Text = "Triggers";
 			// 
@@ -1592,7 +1592,7 @@
 			this.TriggersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.TriggersPanel.Location = new System.Drawing.Point(3, 3);
 			this.TriggersPanel.Name = "TriggersPanel";
-			this.TriggersPanel.Size = new System.Drawing.Size(186, 50);
+			this.TriggersPanel.Size = new System.Drawing.Size(746, 432);
 			this.TriggersPanel.TabIndex = 3;
 			// 
 			// LeftTriggerUserControl
@@ -1602,7 +1602,7 @@
 			this.LeftTriggerUserControl.HeaderText = "Left Trigger";
 			this.LeftTriggerUserControl.Location = new System.Drawing.Point(3, 3);
 			this.LeftTriggerUserControl.Name = "LeftTriggerUserControl";
-			this.LeftTriggerUserControl.Size = new System.Drawing.Size(180, 193);
+			this.LeftTriggerUserControl.Size = new System.Drawing.Size(740, 193);
 			this.LeftTriggerUserControl.TabIndex = 1;
 			this.LeftTriggerUserControl.TargetType = x360ce.Engine.TargetType.LeftTrigger;
 			// 
@@ -1613,7 +1613,7 @@
 			this.RightTriggerUserControl.HeaderText = "RightTrigger";
 			this.RightTriggerUserControl.Location = new System.Drawing.Point(3, 202);
 			this.RightTriggerUserControl.Name = "RightTriggerUserControl";
-			this.RightTriggerUserControl.Size = new System.Drawing.Size(180, 193);
+			this.RightTriggerUserControl.Size = new System.Drawing.Size(740, 193);
 			this.RightTriggerUserControl.TabIndex = 2;
 			this.RightTriggerUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger)));
 			// 

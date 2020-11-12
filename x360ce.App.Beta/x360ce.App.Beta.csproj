@@ -293,14 +293,14 @@
     <Compile Include="Controls\AxisToButtonUserControl.Designer.cs">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\UserMacrosControl.xaml.cs">
-      <DependentUpon>UserMacrosControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadTabPages\MacrosControl.xaml.cs">
+      <DependentUpon>MacrosControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\XboxImageControl.xaml.cs">
+    <Compile Include="Controls\PadTabPages\General\XboxImageControl.xaml.cs">
       <DependentUpon>XboxImageControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\XInputUserControl.xaml.cs">
-      <DependentUpon>XInputUserControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadTabPages\XInputControl.xaml.cs">
+      <DependentUpon>XInputControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\BaseFormWithHeader.cs">
       <SubType>Form</SubType>
@@ -761,15 +761,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\PadTabPages\UserMacrosControl.xaml">
+    <Page Include="Controls\PadTabPages\MacrosControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\XboxImageControl.xaml">
+    <Page Include="Controls\PadTabPages\General\XboxImageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\XInputUserControl.xaml">
+    <Page Include="Controls\PadTabPages\XInputControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

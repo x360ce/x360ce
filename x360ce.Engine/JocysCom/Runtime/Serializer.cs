@@ -259,9 +259,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return string.Concat(result);
 		}
 
-#endregion
+		#endregion
 
-#region XML
+		#region XML
 
 		/// <summary>
 		/// Reformat XML document.
@@ -300,9 +300,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return XmlSerializers[type];
 		}
 
-#endregion
+		#endregion
 
-#region XML: Serialize
+		#region XML: Serialize
 
 		/// <summary>
 		/// Serialize object to XML document.
@@ -323,7 +323,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
 			// https://cwe.mitre.org/data/definitions/611.html
 			var settings = new XmlReaderSettings();
-			settings.DtdProcessing =  DtdProcessing.Ignore;
+			settings.DtdProcessing = DtdProcessing.Ignore;
 			settings.XmlResolver = null;
 			settings.CloseInput = false;
 			var reader = XmlReader.Create(ms, settings);
@@ -447,9 +447,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return bytes;
 		}
 
-#endregion
+		#endregion
 
-#region XML: De-serialize
+		#region XML: De-serialize
 
 		/// <summary>
 		/// De-serialize System.Collections.Generic.List to XML document.
@@ -606,9 +606,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return (T)DeserializeFromXmlBytes(bytes, typeof(T), encoding);
 		}
 
-#endregion
+		#endregion
 
-#region XSD: Serialize
+		#region XSD: Serialize
 
 		/// <summary>
 		/// Serialize object schema to XSD file.
@@ -665,7 +665,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			WriteFile(path, bytes, attempts, waitTime);
 		}
 
-#endregion
+		#endregion
 
 	}
 

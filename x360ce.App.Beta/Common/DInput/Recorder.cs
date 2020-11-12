@@ -1,11 +1,7 @@
-﻿using JocysCom.ClassLibrary.Controls;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -15,10 +11,13 @@ namespace x360ce.App
 	public class Recorder : IDisposable
 	{
 
-		public Recorder(float horizontalResolution, float verticalResolution)
+		public Recorder(float horizontalResolution = 0, float verticalResolution = 0)
 		{
-			markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
-			markR.SetResolution(horizontalResolution, verticalResolution);
+			if (horizontalResolution > 0 && verticalResolution > 0)
+			{
+				markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
+				markR.SetResolution(horizontalResolution, verticalResolution);
+			}
 		}
 
 		Bitmap markR;
@@ -93,7 +92,7 @@ namespace x360ce.App
 					var actions = state == null
 						  ? Array.Empty<string>()
 						  // Get actions by comparing initial snapshot with current state.
-						  : CompareTo(recordingSnapshot, state);
+						  : Recorder.CompareTo(recordingSnapshot, state, map.Code);
 					// if recording and at least one action was recorded then...
 					if (!stop && actions.Length > 0)
 					{
@@ -182,15 +181,15 @@ namespace x360ce.App
 		/// <summary>
 		/// Compare to another state.
 		/// </summary>
-		public string[] CompareTo(CustomDiState oldState, CustomDiState newState)
+		public static string[] CompareTo(CustomDiState oldState, CustomDiState newState, MapCode mappingTo)
 		{
 			if (oldState == null)
 				throw new ArgumentNullException(nameof(oldState));
 			if (newState == null)
 				throw new ArgumentNullException(nameof(newState));
 			var list = new List<string>();
-			list.AddRange(CompareAxisAndSliders(oldState.Axis, newState.Axis, "Axis"));
-			list.AddRange(CompareAxisAndSliders(oldState.Sliders, newState.Sliders, "Slider"));
+			list.AddRange(CompareAxisAndSliders(oldState.Axis, newState.Axis, "Axis", mappingTo));
+			list.AddRange(CompareAxisAndSliders(oldState.Sliders, newState.Sliders, "Slider", mappingTo));
 			// Compare Buttons
 			if (oldState.Buttons.Length == newState.Buttons.Length)
 			{
@@ -225,7 +224,7 @@ namespace x360ce.App
 			return list.ToArray();
 		}
 
-		string[] CompareAxisAndSliders(int[] oldValues, int[] newValues, string name)
+		static string[] CompareAxisAndSliders(int[] oldValues, int[] newValues, string name, MapCode mappingTo)
 		{
 			// Threshold mark at which action on axis/slider is detected.
 			// [------|------------|------]
@@ -255,12 +254,11 @@ namespace x360ce.App
 					if ((oldValue > (ushort.MaxValue / 4)) && oldValue < (ushort.MaxValue * 3 / 4))
 					{
 						// Note: Mapping wheel, which is centered in the middle, to the humb will use full axis.
-						var pn = CurrentMap.PropertyName;
 						var thumb =
-							pn == nameof(SettingName.LeftThumbAxisX) ||
-							pn == nameof(SettingName.LeftThumbAxisY) ||
-							pn == nameof(SettingName.RightThumbAxisX) ||
-							pn == nameof(SettingName.RightThumbAxisY);
+							mappingTo == MapCode.LeftThumbAxisX ||
+							mappingTo == MapCode.LeftThumbAxisY ||
+							mappingTo == MapCode.RightThumbAxisX ||
+							mappingTo == MapCode.RightThumbAxisY;
 						// If target property is not thumb then...
 						if (!thumb)
 						{

@@ -4,12 +4,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using x360ce.Engine;
-using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {

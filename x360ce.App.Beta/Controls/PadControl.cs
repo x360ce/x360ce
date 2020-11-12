@@ -25,6 +25,9 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			Global.UpdateFromDInput += Global_UpdateFromDInput;
+			Global.UpdateFromXInput += Global_UpdateFromXInput;
+
 			// Hide for this version.
 			PadTabControl.TabPages.Remove(XInputTabPage);
 			RemapName = RemapAllButton.Text;
@@ -68,6 +71,147 @@ namespace x360ce.App.Controls
 			// Monitor setting changes.
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 
+		}
+
+		private void Global_UpdateFromDInput(object sender, EventArgs e)
+		{
+				lock (updateFromDirectInputLock)
+				{
+					var ud = GetCurrentDevice();
+					var instanceGuid = Guid.Empty;
+					var enable = ud != null;
+					if (enable)
+						instanceGuid = ud.InstanceGuid;
+					ControlsHelper.SetEnabled(LoadPresetButton, enable);
+					ControlsHelper.SetEnabled(AutoPresetButton, enable);
+					ControlsHelper.SetEnabled(ClearPresetButton, enable);
+					ControlsHelper.SetEnabled(ResetPresetButton, enable);
+					ControlsHelper.SetEnabled(RemapAllButton, enable && ud.DiState != null);
+					var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
+					for (int p = 0; p < pages.Length; p++)
+					{
+						// Get first control to disable which must be Panel.
+						var controls = pages[p].Controls.Cast<Control>().ToArray();
+						for (int c = 0; c < controls.Length; c++)
+							ControlsHelper.SetEnabled(controls[c], enable);
+					}
+					// If device instance changed then...
+					if (!Equals(instanceGuid, _InstanceGuid))
+					{
+						_InstanceGuid = instanceGuid;
+						ResetDiMenuStrip(enable ? ud : null);
+					}
+					// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
+					UpdateDirectInputTabPage(ud);
+					DirectInputPanel.UpdateFrom(ud);
+					if (enable && _Imager.Recorder.Recording)
+					{
+						// Stop recording if DInput value captured.
+						var stopped = _Imager.Recorder.StopRecording(ud.DiState);
+						// If value was found and recording stopped then...
+						if (stopped)
+						{
+							// Device not initialized yet.
+							if (ud.DiState == null)
+								RecordAllMaps.Clear();
+							if (RecordAllMaps.Count == 0)
+							{
+								if (ud.DiState != null)
+									XboxImage.SetHelpText(XboxImage.MappingDone);
+								else
+									XboxImage.HelpTextLabel.Content = "";
+								RemapAllButton.Text = RemapName;
+								return;
+							}
+							else
+							{
+								XboxImage.HelpTextLabel.Content = "";
+							}
+							// Try to record next available control from the list.
+							ControlsHelper.BeginInvoke(() => StartRecording(), 1000);
+						}
+					}
+				}
+			}
+
+		private void Global_UpdateFromXInput(object sender, EventArgs e)
+		{
+			var i = (int)MappedTo - 1;
+			var useXiStates = SettingsManager.Options.GetXInputStates;
+			newState = useXiStates
+				? Global.DHelper.LiveXiStates[i]
+				: Global.DHelper.CombinedXiStates[i];
+			newConnected = useXiStates
+				? Global.DHelper.LiveXiConnected[i]
+				: Global.DHelper.CombinedXiConencted[i];
+			// If device is not connected and was not connected then return.
+			if (!newConnected && !oldConnected)
+				return;
+			// If device disconnected then show disabled images.
+			if (!newConnected && oldConnected)
+			{
+				_Imager.SetImages(false);
+				RemapAllButton.Enabled = false;
+			}
+			// If device connected then show enabled images.
+			if (newConnected && !oldConnected)
+			{
+				_Imager.SetImages(true);
+				RemapAllButton.Enabled = true;
+			}
+			// Return if controller is not connected.
+			if (newConnected)
+			{
+				//_Imager.DrawController(e, MappedTo);
+				// Process all buttons and axis.
+				foreach (var ii in imageInfos)
+					_Imager.DrawState(ii, newState.Gamepad, CurrentCbx);
+			}
+			// Set values.
+			ControlsHelper.SetText(LeftTriggerTextBox, "{0}", newState.Gamepad.LeftTrigger);
+			ControlsHelper.SetText(RightTriggerTextBox, "{0}", newState.Gamepad.RightTrigger);
+			ControlsHelper.SetText(LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
+			ControlsHelper.SetText(RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
+			// Process device.
+			var ud = GetCurrentDevice();
+			if (ud != null && ud.DiState != null)
+			{
+				// Get current pad setting.
+				var ps = GetCurrentPadSetting();
+				Map map;
+				// LeftThumbX
+				var axis = ud.DiState.Axis;
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
+					LeftThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
+				// LeftThumbY
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
+					LeftThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
+				// RightThumbX
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
+					RightThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
+				// RightThumbY
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
+					RightThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
+				// LeftTrigger
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
+					LeftTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
+				// RightTrigger
+				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
+				if (map != null && map.Index > 0 && map.Index <= axis.Length)
+					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
+			}
+			// Update Axis to Button Images.
+			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
+			foreach (var atbPanel in AxisToButtonControls)
+				atbPanel.Refresh(newState, _Imager.markB);
+			// Store old state.
+			oldState = newState;
+			oldConnected = newConnected;
 		}
 
 		public bool StopRecording()
@@ -677,70 +821,6 @@ namespace x360ce.App.Controls
 
 		object updateFromDirectInputLock = new object();
 
-		/// <summary>
-		/// This function will be called from UpdateTimer on main form.
-		/// </summary>
-		public void UpdateFromDInput()
-		{
-			lock (updateFromDirectInputLock)
-			{
-				var ud = GetCurrentDevice();
-				var instanceGuid = Guid.Empty;
-				var enable = ud != null;
-				if (enable)
-					instanceGuid = ud.InstanceGuid;
-				ControlsHelper.SetEnabled(LoadPresetButton, enable);
-				ControlsHelper.SetEnabled(AutoPresetButton, enable);
-				ControlsHelper.SetEnabled(ClearPresetButton, enable);
-				ControlsHelper.SetEnabled(ResetPresetButton, enable);
-				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.DiState != null);
-				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
-				for (int p = 0; p < pages.Length; p++)
-				{
-					// Get first control to disable which must be Panel.
-					var controls = pages[p].Controls.Cast<Control>().ToArray();
-					for (int c = 0; c < controls.Length; c++)
-						ControlsHelper.SetEnabled(controls[c], enable);
-				}
-				// If device instance changed then...
-				if (!Equals(instanceGuid, _InstanceGuid))
-				{
-					_InstanceGuid = instanceGuid;
-					ResetDiMenuStrip(enable ? ud : null);
-				}
-				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
-				UpdateDirectInputTabPage(ud);
-				DirectInputPanel.UpdateFrom(ud);
-				if (enable && _Imager.Recorder.Recording)
-				{
-					// Stop recording if DInput value captured.
-					var stopped = _Imager.Recorder.StopRecording(ud.DiState);
-					// If value was found and recording stopped then...
-					if (stopped)
-					{
-						// Device not initialized yet.
-						if (ud.DiState == null)
-							RecordAllMaps.Clear();
-						if (RecordAllMaps.Count == 0)
-						{
-							if (ud.DiState != null)
-								XboxImage.SetHelpText(XboxImage.MappingDone);
-							else
-								XboxImage.HelpTextLabel.Content = "";
-							RemapAllButton.Text = RemapName;
-							return;
-						}
-						else
-						{
-							XboxImage.HelpTextLabel.Content = "";
-						}
-						// Try to record next available control from the list.
-						ControlsHelper.BeginInvoke(() => StartRecording(), 1000);
-					}
-				}
-			}
-		}
-
 		#region Update Controls
 
 		void UpdateDirectInputTabPage(UserDevice diDevice)
@@ -761,85 +841,6 @@ namespace x360ce.App.Controls
 		State newState;
 		bool newConnected;
 
-		public void UpdateFromXInput()
-		{
-			var i = (int)MappedTo - 1;
-			var useXiStates = SettingsManager.Options.GetXInputStates;
-			newState = useXiStates
-				? Global.DHelper.LiveXiStates[i]
-				: Global.DHelper.CombinedXiStates[i];
-			newConnected = useXiStates
-				? Global.DHelper.LiveXiConnected[i]
-				: Global.DHelper.CombinedXiConencted[i];
-			// If device is not connected and was not connected then return.
-			if (!newConnected && !oldConnected)
-				return;
-			// If device disconnected then show disabled images.
-			if (!newConnected && oldConnected)
-			{
-				_Imager.SetImages(false);
-				RemapAllButton.Enabled = false;
-			}
-			// If device connected then show enabled images.
-			if (newConnected && !oldConnected)
-			{
-				_Imager.SetImages(true);
-				RemapAllButton.Enabled = true;
-			}
-			// Return if controller is not connected.
-			if (newConnected)
-			{
-				//_Imager.DrawController(e, MappedTo);
-				// Process all buttons and axis.
-				foreach (var ii in imageInfos)
-					_Imager.DrawState(ii, newState.Gamepad, CurrentCbx);
-			}
-			// Set values.
-			ControlsHelper.SetText(LeftTriggerTextBox, "{0}", newState.Gamepad.LeftTrigger);
-			ControlsHelper.SetText(RightTriggerTextBox, "{0}", newState.Gamepad.RightTrigger);
-			ControlsHelper.SetText(LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
-			ControlsHelper.SetText(RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
-			// Process device.
-			var ud = GetCurrentDevice();
-			if (ud != null && ud.DiState != null)
-			{
-				// Get current pad setting.
-				var ps = GetCurrentPadSetting();
-				Map map;
-				// LeftThumbX
-				var axis = ud.DiState.Axis;
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
-				// LeftThumbY
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
-				// RightThumbX
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
-				// RightThumbY
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
-				// LeftTrigger
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
-				// RightTrigger
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
-			}
-			// Update Axis to Button Images.
-			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
-			foreach (var atbPanel in AxisToButtonControls)
-				atbPanel.Refresh(newState, _Imager.markB);
-			// Store old state.
-			oldState = newState;
-			oldConnected = newConnected;
-		}
 
 		// Check left thumbStick
 		public float FloatToByte(float v)

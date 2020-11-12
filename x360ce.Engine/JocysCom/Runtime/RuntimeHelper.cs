@@ -37,7 +37,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		/// <summary>Built-in types</summary>
-		private static readonly Dictionary<Type, string> _typeAlias = new Dictionary<Type, string>
+		public static readonly Dictionary<Type, string> TypeAliases = new Dictionary<Type, string>
 		{
 			{ typeof(bool), "bool" },
 			{ typeof(byte), "byte" },
@@ -66,7 +66,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				: type;
 			// Lookup alias for type
 			string alias;
-			if (_typeAlias.TryGetValue(elementType, out alias))
+			if (TypeAliases.TryGetValue(elementType, out alias))
 				return alias + (type.IsArray ? "[]" : "");
 			// Note: All Nullable<T> are value types.
 			if (type.IsValueType)
