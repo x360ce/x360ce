@@ -61,8 +61,7 @@ namespace x360ce.App
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
-			Global.UpdateFromDInput += Global_UpdateFromDInput;
-			Global.UpdateFromXInput += Global_UpdateFromXInput;
+			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 
 			// Map event handler.
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
@@ -102,7 +101,7 @@ namespace x360ce.App
 			LoadSettings();
 		}
 
-		private void Global_UpdateFromDInput(object sender, EventArgs e)
+		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
 			var currentGameFileName = SettingsManager.CurrentGame?.FileName;
 			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
@@ -129,11 +128,6 @@ namespace x360ce.App
 				if (ControlPages[i].ImageKey != bullet)
 					ControlPages[i].ImageKey = bullet;
 			}
-
-		}
-
-		private void Global_UpdateFromXInput(object sender, EventArgs e)
-		{
 
 		}
 

@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using SharpDX.XInput;
@@ -17,7 +18,7 @@ using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
-	public partial class PadControl : UserControl
+	public partial class PadControl : UserControl, IPadControl
 	{
 
 		public PadControl(MapTo controllerIndex)
@@ -25,9 +26,10 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			Global.UpdateFromDInput += Global_UpdateFromDInput;
-			Global.UpdateFromXInput += Global_UpdateFromXInput;
+			// Add controls which must be notified on setting selection change.
+			UserMacrosPanel.Parent = this;
 
+			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Hide for this version.
 			PadTabControl.TabPages.Remove(XInputTabPage);
 			RemapName = RemapAllButton.Text;
@@ -72,69 +74,74 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 
 		}
-
-		private void Global_UpdateFromDInput(object sender, EventArgs e)
+		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
-				lock (updateFromDirectInputLock)
+			UpdateControlFromDInput();
+			UpdateControlFromXInput();
+		}
+
+		private void UpdateControlFromDInput()
+		{
+			lock (updateFromDirectInputLock)
+			{
+				var ud = GetSelectedDevice();
+				var instanceGuid = Guid.Empty;
+				var enable = ud != null;
+				if (enable)
+					instanceGuid = ud.InstanceGuid;
+				ControlsHelper.SetEnabled(LoadPresetButton, enable);
+				ControlsHelper.SetEnabled(AutoPresetButton, enable);
+				ControlsHelper.SetEnabled(ClearPresetButton, enable);
+				ControlsHelper.SetEnabled(ResetPresetButton, enable);
+				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.DiState != null);
+				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
+				for (int p = 0; p < pages.Length; p++)
 				{
-					var ud = GetCurrentDevice();
-					var instanceGuid = Guid.Empty;
-					var enable = ud != null;
-					if (enable)
-						instanceGuid = ud.InstanceGuid;
-					ControlsHelper.SetEnabled(LoadPresetButton, enable);
-					ControlsHelper.SetEnabled(AutoPresetButton, enable);
-					ControlsHelper.SetEnabled(ClearPresetButton, enable);
-					ControlsHelper.SetEnabled(ResetPresetButton, enable);
-					ControlsHelper.SetEnabled(RemapAllButton, enable && ud.DiState != null);
-					var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
-					for (int p = 0; p < pages.Length; p++)
+					// Get first control to disable which must be Panel.
+					var controls = pages[p].Controls.Cast<Control>().ToArray();
+					for (int c = 0; c < controls.Length; c++)
+						ControlsHelper.SetEnabled(controls[c], enable);
+				}
+				// If device instance changed then...
+				if (!Equals(instanceGuid, _InstanceGuid))
+				{
+					_InstanceGuid = instanceGuid;
+					ResetDiMenuStrip(enable ? ud : null);
+				}
+				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
+				UpdateDirectInputTabPage(ud);
+				DirectInputPanel.UpdateFrom(ud);
+				if (enable && _Imager.Recorder.Recording)
+				{
+					// Stop recording if DInput value captured.
+					var stopped = _Imager.Recorder.StopRecording(ud.DiState);
+					// If value was found and recording stopped then...
+					if (stopped)
 					{
-						// Get first control to disable which must be Panel.
-						var controls = pages[p].Controls.Cast<Control>().ToArray();
-						for (int c = 0; c < controls.Length; c++)
-							ControlsHelper.SetEnabled(controls[c], enable);
-					}
-					// If device instance changed then...
-					if (!Equals(instanceGuid, _InstanceGuid))
-					{
-						_InstanceGuid = instanceGuid;
-						ResetDiMenuStrip(enable ? ud : null);
-					}
-					// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
-					UpdateDirectInputTabPage(ud);
-					DirectInputPanel.UpdateFrom(ud);
-					if (enable && _Imager.Recorder.Recording)
-					{
-						// Stop recording if DInput value captured.
-						var stopped = _Imager.Recorder.StopRecording(ud.DiState);
-						// If value was found and recording stopped then...
-						if (stopped)
+						// Device not initialized yet.
+						if (ud.DiState == null)
+							RecordAllMaps.Clear();
+						if (RecordAllMaps.Count == 0)
 						{
-							// Device not initialized yet.
-							if (ud.DiState == null)
-								RecordAllMaps.Clear();
-							if (RecordAllMaps.Count == 0)
-							{
-								if (ud.DiState != null)
-									XboxImage.SetHelpText(XboxImage.MappingDone);
-								else
-									XboxImage.HelpTextLabel.Content = "";
-								RemapAllButton.Text = RemapName;
-								return;
-							}
+							if (ud.DiState != null)
+								XboxImage.SetHelpText(XboxImage.MappingDone);
 							else
-							{
 								XboxImage.HelpTextLabel.Content = "";
-							}
-							// Try to record next available control from the list.
-							ControlsHelper.BeginInvoke(() => StartRecording(), 1000);
+							RemapAllButton.Text = RemapName;
+							return;
 						}
+						else
+						{
+							XboxImage.HelpTextLabel.Content = "";
+						}
+						// Try to record next available control from the list.
+						ControlsHelper.BeginInvoke(() => StartRecording(), 1000);
 					}
 				}
 			}
+		}
 
-		private void Global_UpdateFromXInput(object sender, EventArgs e)
+		void UpdateControlFromXInput()
 		{
 			var i = (int)MappedTo - 1;
 			var useXiStates = SettingsManager.Options.GetXInputStates;
@@ -173,11 +180,11 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
 			ControlsHelper.SetText(RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
 			// Process device.
-			var ud = GetCurrentDevice();
+			var ud = GetSelectedDevice();
 			if (ud != null && ud.DiState != null)
 			{
 				// Get current pad setting.
-				var ps = GetCurrentPadSetting();
+				var ps = GetSelectedPadSetting();
 				Map map;
 				// LeftThumbX
 				var axis = ud.DiState.Axis;
@@ -757,28 +764,35 @@ namespace x360ce.App.Controls
 		/// <summary>
 		/// Get selected Setting. If device is not selected then return null.
 		/// </summary>
-		/// <returns></returns>
 		public UserSetting GetSelectedSetting()
 		{
 			var grid = MappedDevicesDataGridView;
 			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			var setting = (row == null)
-				? null
-				: (Engine.Data.UserSetting)row.DataBoundItem;
-			return setting;
+			if (row == null)
+				return null;
+			return (UserSetting)row.DataBoundItem;
 		}
 
 		/// <summary>
 		/// Get selected device. If device is not connected then return null.
 		/// </summary>
-		/// <returns></returns>
-		UserDevice GetCurrentDevice()
+		public UserDevice GetSelectedDevice()
 		{
 			var setting = GetSelectedSetting();
-			var device = (setting == null)
-				? null
-				: SettingsManager.GetDevice(setting.InstanceGuid);
-			return device;
+			if (setting == null)
+				return null;
+			return SettingsManager.GetDevice(setting.InstanceGuid);
+		}
+
+		/// <summary>
+		/// Get PadSetting from currently selected device.
+		/// </summary>
+		public PadSetting GetSelectedPadSetting()
+		{
+			var setting = GetSelectedSetting();
+			if (setting == null)
+				return new PadSetting();
+			return SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 		}
 
 		/// <summary>
@@ -802,20 +816,6 @@ namespace x360ce.App.Controls
 				p.SetValue(ps, v ?? "", null);
 			}
 			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
-			return ps;
-		}
-
-		/// <summary>
-		/// Get PadSetting from currently selected device.
-		/// </summary>
-		public PadSetting GetCurrentPadSetting()
-		{
-			PadSetting ps = null;
-			var setting = GetSelectedSetting();
-			if (setting != null)
-				ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-			if (ps == null)
-				ps = new PadSetting();
 			return ps;
 		}
 
@@ -1126,7 +1126,7 @@ namespace x360ce.App.Controls
 
 		private void AutoPresetButton_Click(object sender, EventArgs e)
 		{
-			var ud = GetCurrentDevice();
+			var ud = GetSelectedDevice();
 			if (ud == null)
 				return;
 			var description = Attributes.GetDescription(MappedTo);
@@ -1319,6 +1319,8 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		public event EventHandler<EventArgs<UserSetting>> OnSettingChanged;
+
 		private void MappedDevicesDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
 			var setting = GetSelectedSetting();
@@ -1326,7 +1328,7 @@ namespace x360ce.App.Controls
 				? null
 				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, padSetting);
-			UserMacrosPanel.LoadUserSetting(setting);
+			OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 			UpdateGridButtons();
 		}
 
@@ -1494,7 +1496,7 @@ namespace x360ce.App.Controls
 
 		private void CopyPresetButton_Click(object sender, EventArgs e)
 		{
-			var ps = GetCurrentPadSetting();
+			var ps = GetSelectedPadSetting();
 			var text = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(ps, null, true);
 			Clipboard.SetText(text);
 		}

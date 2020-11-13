@@ -250,7 +250,7 @@
       <DependentUpon>DebugUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\PadControlImager.cs" />
-    <Compile Include="Controls\PadTabPages\IPadTabPage.cs" />
+    <Compile Include="Controls\PadTabPages\IPadControl.cs" />
     <Compile Include="Controls\PresetsGridUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -314,11 +314,11 @@
     <Compile Include="Controls\CloudUserControl.Designer.cs">
       <DependentUpon>CloudUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DirectInputUserControl.cs">
+    <Compile Include="Controls\PadTabPages\DirectInputControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\DirectInputUserControl.Designer.cs">
-      <DependentUpon>DirectInputUserControl.cs</DependentUpon>
+    <Compile Include="Controls\PadTabPages\DirectInputControl.Designer.cs">
+      <DependentUpon>DirectInputControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\GameDetailsUserControl.cs">
       <SubType>UserControl</SubType>
@@ -488,8 +488,8 @@
     <EmbeddedResource Include="Controls\CloudUserControl.resx">
       <DependentUpon>CloudUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DirectInputUserControl.resx">
-      <DependentUpon>DirectInputUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\PadTabPages\DirectInputControl.resx">
+      <DependentUpon>DirectInputControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\GameDetailsUserControl.resx">

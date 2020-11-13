@@ -37,7 +37,7 @@ namespace x360ce.App
 
 		DateTime RecordingStarted = new DateTime();
 
-		public void StartRecording(SettingsMapItem map)
+		public void StartRecording(SettingsMapItem map = null)
 		{
 			lock (recordingLock)
 			{
@@ -49,8 +49,7 @@ namespace x360ce.App
 				RecordingStarted = DateTime.Now;
 				Recording = true;
 				recordingSnapshot = null;
-				//CurrentMap.Control.ForeColor = SystemColors.GrayText;
-				MainForm.Current.StatusTimerLabel.Text = (CurrentMap.PropertyName == SettingName.DPad)
+				MainForm.Current.StatusTimerLabel.Text = (CurrentMap?.Code == MapCode.DPad)
 					 ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
 					 : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
 			}

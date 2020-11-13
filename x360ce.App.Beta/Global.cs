@@ -140,19 +140,15 @@ namespace x360ce.App
 		/// </summary>
 		public static void TriggerControlUpdates()
 		{
-			UpdateFromDInput?.Invoke(null, null);
-			UpdateFromXInput?.Invoke(null, null);
+			UpdateControlFromStates?.Invoke(null, null);
 		}
 
 		/// <summary>
-		/// Update Form or Control from DInput state.
+		/// Update Form or Control from DInput and XInput states.
 		/// </summary>
-		public static event EventHandler UpdateFromDInput;
+		public static event EventHandler UpdateControlFromStates;
 
-		/// <summary>
-		/// Update Form or Control from XInput state.
-		/// </summary>
-		public static event EventHandler UpdateFromXInput;
+		
 
 		#endregion
 

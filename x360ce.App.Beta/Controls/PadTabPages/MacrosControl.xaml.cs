@@ -15,11 +15,27 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for UserMacrosControl.xaml
 	/// </summary>
-	public partial class UserMacrosControl : UserControl, IPadTabPage
+	public partial class UserMacrosControl : UserControl
 	{
+
+		public IPadControl Parent;
+
 		public UserMacrosControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+		}
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
+			Parent.OnSettingChanged += Parent_OnSettingChanged;
+		}
+
+		private void Parent_OnSettingChanged(object sender, JocysCom.ClassLibrary.EventArgs<UserSetting> e)
+		{
+			var setting = e.Data;
 		}
 
 		#region IPadTabPage 
@@ -150,12 +166,25 @@ namespace x360ce.App.Controls
 			ControlsHelper.BeginInvoke(() => RefreshList(true));
 		}
 
+		#region Recording
+
+		Recorder _Recorder = new Recorder();
+
 		private void RecordButton_Click(object sender, RoutedEventArgs e)
 		{
 			// Must monitor direct input changes on this device.
 			var device = (_UserSetting == null)
 				? null
 				: SettingsManager.GetDevice(_UserSetting.InstanceGuid);
+			_Recorder.StartRecording(null);
 		}
+
+		private void Global_UpdateControlFromStates(object sender, EventArgs e)
+		{
+			//_Recorder.
+		}
+
+		#endregion
+
 	}
 }
