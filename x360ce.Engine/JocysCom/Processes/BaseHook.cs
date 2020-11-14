@@ -109,10 +109,11 @@ namespace JocysCom.ClassLibrary.Processes
 		/// Used for processing EVENT_OBJECT_NAMECHANGE messages.
 		/// </summary>
 		NativeMethods.WinEventProcDelegate _Hook2Procedure;
+		NativeMethods.WinEventProcDelegate _Hook3Procedure;
 
-		protected HandleRef hook1handleRef;
-		protected HandleRef hook2handleRef;
-		protected HandleRef hook3handleRef;
+		protected HandleRef _Hook1Handle;
+		protected HandleRef _Hook2handle;
+		protected HandleRef _Hook3handle;
 
 		public virtual void Start(bool global = false) { throw new NotImplementedException(); }
 		public void Stop() { UnInstallHook(); }
@@ -127,40 +128,40 @@ namespace JocysCom.ClassLibrary.Processes
 			{
 				_hookType = hookType;
 				// If hook is installed already then return.
-				if (hook1handleRef.Handle != IntPtr.Zero)
+				if (_Hook1Handle.Handle != IntPtr.Zero)
 					return;
-				if (hook2handleRef.Handle != IntPtr.Zero)
+				if (_Hook2handle.Handle != IntPtr.Zero)
 					return;
-				if (hook2handleRef.Handle != IntPtr.Zero)
+				if (_Hook2handle.Handle != IntPtr.Zero)
 					return;
 				if (hookType == HookType.WH_MOUSE)
 				{
-					InstalltWindowsHook(ref hook1handleRef, global, (uint)hookType);
+					InstalltWindowsHook(ref _Hook1Procedure, ref _Hook1Handle, global, (uint)hookType);
 					// Listen for name change changes across all processes/threads on current desktop...
-					InstallWinEventHook(ref hook2handleRef, global, EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE);
-					InstallWinEventHook(ref hook3handleRef, global, EVENT_OBJECT_SHOW, EVENT_OBJECT_SHOW);
+					InstallWinEventHook(ref _Hook2Procedure, ref _Hook2handle, global, EVENT_OBJECT_NAMECHANGE, EVENT_OBJECT_NAMECHANGE);
+					InstallWinEventHook(ref _Hook3Procedure, ref _Hook3handle, global, EVENT_OBJECT_SHOW, EVENT_OBJECT_SHOW);
 				}
 				else if (hookType == HookType.WH_CBT)
 				{
-					InstallWinEventHook(ref hook3handleRef, global, EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND);
+					InstallWinEventHook(ref _Hook2Procedure, ref _Hook3handle, global, EVENT_SYSTEM_FOREGROUND, EVENT_SYSTEM_FOREGROUND);
 				}
 				else
 				{
-					InstalltWindowsHook(ref hook1handleRef, global, (uint)hookType);
+					InstalltWindowsHook(ref _Hook1Procedure, ref _Hook1Handle, global, (uint)hookType);
 				}
 			}
 		}
-		private void InstalltWindowsHook(ref HandleRef handle, bool global, uint hookType)
+		private void InstalltWindowsHook(ref NativeMethods.HookProcDelegate procedure, ref HandleRef handle, bool global, uint hookType)
 		{
 			var lpModuleName = System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName;
 			var threadId = NativeMethods.GetCurrentThreadId();
 			var hMod = NativeMethods.GetModuleHandle(lpModuleName);
 			// Assign Virtual function.
-			_Hook1Procedure = new NativeMethods.HookProcDelegate(Hook1Procedure);
+			procedure = new NativeMethods.HookProcDelegate(Hook1Procedure);
 			// Listen for events.
 			var hookHandle = NativeMethods.SetWindowsHookEx(
 				hookType,
-				_Hook1Procedure,
+				procedure,
 				hMod,
 				global ? 0 : threadId
 			);
@@ -172,18 +173,18 @@ namespace JocysCom.ClassLibrary.Processes
 			handle = new HandleRef(null, hookHandle);
 		}
 
-		private void InstallWinEventHook(ref HandleRef handle, bool global, uint eventMin, uint eventMax)
+		private void InstallWinEventHook(ref NativeMethods.WinEventProcDelegate procedure, ref HandleRef handle, bool global, uint eventMin, uint eventMax)
 		{
 			var lpModuleName = System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName;
 			var threadId = NativeMethods.GetCurrentThreadId();
 			// Assign Virtual function.
-			_Hook2Procedure = new NativeMethods.WinEventProcDelegate(Hook2Procedure);
+			procedure = new NativeMethods.WinEventProcDelegate(Hook2Procedure);
 			// Listen for name change changes across all processes/threads on current desktop...
 			var hookHandle = NativeMethods.SetWinEventHook(
 				eventMin,
 				eventMax,
 				IntPtr.Zero,
-				_Hook2Procedure,
+				procedure,
 				0,
 				// Associate hook procedure with current application/thread only.
 				global ? 0 : threadId,
@@ -202,14 +203,14 @@ namespace JocysCom.ClassLibrary.Processes
 			lock (HookLock)
 			{
 				// If hook is installed then...
-				if (hook1handleRef.Handle != IntPtr.Zero)
-					NativeMethods.UnhookWindowsHookEx(hook1handleRef);
+				if (_Hook1Handle.Handle != IntPtr.Zero)
+					NativeMethods.UnhookWindowsHookEx(_Hook1Handle);
 				// If hook is installed then...
-				if (hook2handleRef.Handle != IntPtr.Zero)
-					NativeMethods.UnhookWinEvent(hook2handleRef);
+				if (_Hook2handle.Handle != IntPtr.Zero)
+					NativeMethods.UnhookWinEvent(_Hook2handle);
 				// If hook is installed then...
-				if (hook3handleRef.Handle != IntPtr.Zero)
-					NativeMethods.UnhookWinEvent(hook3handleRef);
+				if (_Hook3handle.Handle != IntPtr.Zero)
+					NativeMethods.UnhookWinEvent(_Hook3handle);
 			}
 		}
 

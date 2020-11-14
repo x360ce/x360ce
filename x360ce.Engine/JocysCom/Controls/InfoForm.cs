@@ -117,23 +117,26 @@ namespace JocysCom.ClassLibrary.Controls
 			ItemPropertyGrid.SelectedObject = SelectedControl;
 		}
 
+
+		static InfoForm _infoForm;
+
 		/// <summary>
 		/// Displays form's name + some other info
 		/// </summary>
 		/// <remarks></remarks>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
 		public static void ShowFormInfo(Control c)
 		{
-			var frmInfo = new InfoForm();
-			frmInfo.SelectedControl = c;
-			frmInfo.StartPosition = FormStartPosition.CenterParent;
-			ControlsHelper.CheckTopMost(frmInfo);
-			frmInfo.ShowDialog();
-			frmInfo.Dispose();
+			if (_infoForm != null)
+				return;
+			_infoForm = new InfoForm();
+			_infoForm.SelectedControl = c;
+			_infoForm.StartPosition = FormStartPosition.CenterParent;
+			ControlsHelper.CheckTopMost(_infoForm);
+			_infoForm.ShowDialog();
+			_infoForm.Dispose();
+			_infoForm = null;
 			lock (ShowLock)
-			{
 				IsVisible = false;
-			}
 		}
 
 		static MouseHook _mouseHook;

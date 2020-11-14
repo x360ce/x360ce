@@ -233,7 +233,7 @@ namespace JocysCom.ClassLibrary.Processes
 					}
 				}
 			}
-			return NativeMethods.CallNextHookEx(hook1handleRef, nCode, wParam, lParam);
+			return NativeMethods.CallNextHookEx(_Hook1Handle, nCode, wParam, lParam);
 		}
 
 		const int OBJID_CURSOR = -9;
