@@ -1,13 +1,9 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using SharpDX.XInput;
 
 namespace x360ce.App.Controls
 {
@@ -28,19 +24,18 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void controlsLink_ValueChanged(object sender, EventArgs e)
+		private void controlsLink_ValueChanged(object sender, EventArgs e)
 		{
 		}
 
-		DeadZoneControlsLink controlsLink;
-
-		GamepadButtonFlags _GamepadButton;
+		private readonly DeadZoneControlsLink controlsLink;
+		private GamepadButtonFlags _GamepadButton;
 
 		[DefaultValue(GamepadButtonFlags.None)] // Category("Appearance")
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
 		public GamepadButtonFlags GamepadButton
 		{
-			get { return _GamepadButton; }
+			get => _GamepadButton;
 			set
 			{
 				_GamepadButton = value;
@@ -48,13 +43,12 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		Image arrowEnabledImage;
-		Image arrowDisabledImage;
+		private readonly Image arrowEnabledImage;
+		private readonly Image arrowDisabledImage;
+		private Bitmap enabledImage;
+		private Bitmap disabledImage;
 
-		Bitmap enabledImage;
-		Bitmap disabledImage;
-
-		void UpdateImage()
+		private void UpdateImage()
 		{
 			var name = GamepadButton.ToString();
 			name = name.Replace("DPad", "D-Pad ");
@@ -87,16 +81,13 @@ namespace x360ce.App.Controls
 			ButtonImagePictureBox.BackgroundImage = ButtonImagePictureBox.Enabled ? enabledImage : disabledImage;
 		}
 
-		object monitorComboBoxLock = new object();
-		ComboBox _MonitorComboBox;
+		private readonly object monitorComboBoxLock = new object();
+		private ComboBox _MonitorComboBox;
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ComboBox MonitorComboBox
 		{
-			get
-			{
-				return _MonitorComboBox;
-			}
+			get => _MonitorComboBox;
 			set
 			{
 				lock (monitorComboBoxLock)
@@ -116,7 +107,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void _MonitorComboBox_TextChanged(object sender, EventArgs e)
+		private void _MonitorComboBox_TextChanged(object sender, EventArgs e)
 		{
 			lock (monitorComboBoxLock)
 			{
@@ -162,8 +153,8 @@ namespace x360ce.App.Controls
 			ArrowPictureBox.BackgroundImage = ArrowPictureBox.Enabled ? arrowEnabledImage : arrowDisabledImage;
 		}
 
-		State _gamepadState;
-		Bitmap _markB;
+		private State _gamepadState;
+		private Bitmap _markB;
 
 		public void Refresh(State gamePadState, Bitmap markB)
 		{
@@ -182,7 +173,7 @@ namespace x360ce.App.Controls
 				var y = ButtonImagePictureBox.Height / 2;
 				var on = _gamepadState.Gamepad.Buttons.HasFlag(_GamepadButton);
 				if (on) e.Graphics.DrawImage(_markB, x + mW, y + mH);
-				Color c = on ? Color.Green : SystemColors.ControlText;
+				var c = on ? Color.Green : SystemColors.ControlText;
 				if (ButtonNameLabel.ForeColor != c) ButtonNameLabel.ForeColor = c;
 			}
 		}

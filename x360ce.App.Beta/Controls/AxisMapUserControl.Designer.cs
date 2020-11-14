@@ -349,7 +349,6 @@
 			this.Controls.Add(this.MainGroupBox);
 			this.Name = "AxisMapUserControl";
 			this.Size = new System.Drawing.Size(578, 193);
-			this.Load += new System.EventHandler(this.LinearUserControl_Load);
 			this.EnabledChanged += new System.EventHandler(this.ThumbUserControl_EnabledChanged);
 			((System.ComponentModel.ISupportInitialize)(this.SensitivityTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).EndInit();

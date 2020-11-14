@@ -54,8 +54,6 @@ namespace x360ce.Engine
 			IsInverted = SettingsConverter.IsInverted(Type);
 		}
 
-		MapCode Code;
-
 		// Source Parameters.
 		public MapType Type;
 		public int Index;

@@ -17,6 +17,17 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			InitPaintObjects();
+			// Initialize in constructor and not on "Load" event or it will reset AntiDeadZone value
+			// inside DeadZoneControlsLink(...).
+			updateTimer = new QueueTimer(500, 0);
+			updateTimer.DoWork += updateTimer_DoWork;
+			var maxValue = TargetType == TargetType.LeftTrigger || TargetType == TargetType.RightTrigger
+				? byte.MaxValue : short.MaxValue;
+			deadzoneLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, maxValue);
+			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox, maxValue);
+			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+			RefreshBackgroundImageAsync();
 		}
 
 		void deadzoneLink_ValueChanged(object sender, EventArgs e)
@@ -62,19 +73,6 @@ namespace x360ce.App.Controls
 			SensitivityLabel.Text = SensitivityCheckBox.Checked
 				? "Sensitivity - Make more sensitive in the center:"
 				: "Sensitivity - Make less sensitive in the center:";
-		}
-
-		private void LinearUserControl_Load(object sender, EventArgs e)
-		{
-			updateTimer = new QueueTimer(500, 0);
-			updateTimer.DoWork += updateTimer_DoWork;
-			var maxValue = TargetType == TargetType.LeftTrigger || TargetType == TargetType.RightTrigger
-				? byte.MaxValue : short.MaxValue;
-			deadzoneLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, maxValue);
-			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
-			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox, maxValue);
-			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
-			RefreshBackgroundImageAsync();
 		}
 
 		void updateTimer_DoWork(object sender, QueueTimerEventArgs e)
@@ -401,7 +399,6 @@ namespace x360ce.App.Controls
 			DeadZoneTrackBar.Value = deadZone;
 			AntiDeadZoneNumericUpDown.Value = (decimal)((float)xDeadZone * (float)antiDeadZone / 100f);
 		}
-
 
 	}
 }

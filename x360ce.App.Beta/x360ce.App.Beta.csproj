@@ -50,8 +50,7 @@
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
@@ -118,8 +117,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\Debug\</OutputPath>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -415,6 +413,7 @@
       <DependentUpon>WebBrowserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Global.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Html2Rtf\Converter.cs" />
     <Compile Include="Issues\ArchitectureIssue.cs" />
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
@@ -631,6 +630,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.ico" />
+    <CodeAnalysisDictionary Include="CodeAnalaysisDictionary.xml" />
     <Content Include="Forms\app.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png" />

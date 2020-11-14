@@ -157,28 +157,36 @@ namespace x360ce.App.DInput
 				ud.IsOnline = true;
 			// Get device info for added devices.
 			var dev = allDevices.FirstOrDefault(x => x.DeviceId == ud.HidDeviceId);
-			ud.LoadDevDeviceInfo(dev);
-			if (dev != null)
-				ud.ConnectionClass = DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
+			// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
+			lock (SettingsManager.UserDevices.SyncRoot)
+			{
+				ud.LoadDevDeviceInfo(dev);
+				if (dev != null)
+					ud.ConnectionClass = DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
+			}
 			// InterfacePath is available for HID devices.
 			if (device.IsHumanInterfaceDevice && ud.Device != null)
 			{
 				var interfacePath = ud.Device.Properties.InterfacePath;
-				hid = allInterfaces.FirstOrDefault(x => x.DevicePath == interfacePath);
 				// Get interface info for added devices.
-				ud.LoadHidDeviceInfo(hid);
-				if (hid != null)
-					ud.ConnectionClass = DeviceDetector.GetConnectionDevice(hid, allDevices)?.ClassGuid ?? Guid.Empty;
-				// Workaround: 
-				// Override Device values and description from the Interface, 
-				// because it is more accurate and present.
-				// Note 1: Device fields below, probably, should not be used.
-				// Note 2: Available when device is online.
-				ud.DevManufacturer = ud.HidManufacturer;
-				ud.DevDescription = ud.HidDescription;
-				ud.DevVendorId = ud.HidVendorId;
-				ud.DevProductId = ud.HidProductId;
-				ud.DevRevision = ud.HidRevision;
+				hid = allInterfaces.FirstOrDefault(x => x.DevicePath == interfacePath);
+				// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
+				lock (SettingsManager.UserDevices.SyncRoot)
+				{
+					ud.LoadHidDeviceInfo(hid);
+					if (hid != null)
+						ud.ConnectionClass = DeviceDetector.GetConnectionDevice(hid, allDevices)?.ClassGuid ?? Guid.Empty;
+					// Workaround: 
+					// Override Device values and description from the Interface, 
+					// because it is more accurate and present.
+					// Note 1: Device fields below, probably, should not be used.
+					// Note 2: Available when device is online.
+					ud.DevManufacturer = ud.HidManufacturer;
+					ud.DevDescription = ud.HidDescription;
+					ud.DevVendorId = ud.HidVendorId;
+					ud.DevProductId = ud.HidProductId;
+					ud.DevRevision = ud.HidRevision;
+				}
 			}
 		}
 

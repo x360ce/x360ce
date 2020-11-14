@@ -375,7 +375,7 @@ namespace JocysCom.ClassLibrary.IO
 			MainTabControl.SelectedTab = LogsTabPage;
 			var cancellationToken = new CancellationToken(false);
 			var so = ControlsHelper.MainTaskScheduler;
-			var unused = Task.Factory.StartNew(() =>
+			await Task.Factory.StartNew(() =>
 			  {
 				  AddLogLine("Enumerating Devices...");
 				  var devices = DeviceDetector.GetDevices();

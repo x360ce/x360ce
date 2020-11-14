@@ -1157,6 +1157,7 @@ namespace x360ce.App.Controls
 			if (disposing && (components != null))
 			{
 				_Imager.Dispose();
+				UserMacrosPanel.Dispose();
 				components.Dispose();
 			}
 			base.Dispose(disposing);

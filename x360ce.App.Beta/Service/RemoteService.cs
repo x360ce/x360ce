@@ -9,7 +9,7 @@ namespace x360ce.App.Service
 	/// <summary>
 	/// Use this class to receive controller states from remote clients.
 	/// </summary>
-	public partial class RemoteService
+	public partial class RemoteService : IDisposable
 	{
 
 		void AddLog(string format, params object[] args)
@@ -95,6 +95,27 @@ namespace x360ce.App.Service
 				throw;
 			}
 		}
+
+		#region IDisposable
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// Dispose managed resources.
+				if (server != null)
+					server.Dispose();
+			}
+			// Free native resources.
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		#endregion
 
 	}
 }

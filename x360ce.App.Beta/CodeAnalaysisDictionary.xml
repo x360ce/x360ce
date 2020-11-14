@@ -1,0 +1,20 @@
+﻿<!-- https://docs.microsoft.com/en-us/visualstudio/code-quality/how-to-customize-the-code-analysis-dictionary -->
+<Dictionary>
+	<Words>
+		<Recognized>
+			<Word>Nefarius</Word>
+			<Word>ce</Word>
+		</Recognized>
+		<DiscreteExceptions>
+			<Term>GEm</Term>
+		</DiscreteExceptions>
+	</Words>
+	<Acronyms>
+		<CasingExceptions>
+			<Acronym>MRG</Acronym>
+			<Acronym>Vi</Acronym>
+			<Acronym>ce</Acronym>
+			<Acronym>x</Acronym>
+		</CasingExceptions>
+	</Acronyms>
+</Dictionary>

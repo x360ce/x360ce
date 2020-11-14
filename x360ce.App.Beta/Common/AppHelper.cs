@@ -15,7 +15,7 @@ using x360ce.App.ViGEm;
 
 namespace x360ce.App
 {
-	public class AppHelper
+	public static class AppHelper
 	{
 		#region DLL Functions
 

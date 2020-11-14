@@ -145,11 +145,11 @@
 			this.TriggersPanel = new System.Windows.Forms.Panel();
 			this.LeftTriggerUserControl = new x360ce.App.Controls.AxisMapUserControl();
 			this.RightTriggerUserControl = new x360ce.App.Controls.AxisMapUserControl();
-			this.LeftStickTabPage = new System.Windows.Forms.TabPage();
+			this.LeftThumbTabPage = new System.Windows.Forms.TabPage();
 			this.LeftThumbPanel = new System.Windows.Forms.Panel();
 			this.LeftThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
 			this.LeftThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
-			this.RightStickTabPage = new System.Windows.Forms.TabPage();
+			this.RightThumbTabPage = new System.Windows.Forms.TabPage();
 			this.RightThumbPanel = new System.Windows.Forms.Panel();
 			this.RightThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
 			this.RightThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
@@ -241,9 +241,9 @@
 			this.DPadPanel.SuspendLayout();
 			this.TriggersTabPage.SuspendLayout();
 			this.TriggersPanel.SuspendLayout();
-			this.LeftStickTabPage.SuspendLayout();
+			this.LeftThumbTabPage.SuspendLayout();
 			this.LeftThumbPanel.SuspendLayout();
-			this.RightStickTabPage.SuspendLayout();
+			this.RightThumbTabPage.SuspendLayout();
 			this.RightThumbPanel.SuspendLayout();
 			this.ForceFeedbackTabPage.SuspendLayout();
 			this.ForceFeedbackPanel.SuspendLayout();
@@ -1369,8 +1369,8 @@
 			this.PadTabControl.Controls.Add(this.ButtonsTabPage);
 			this.PadTabControl.Controls.Add(this.DPadTabPage);
 			this.PadTabControl.Controls.Add(this.TriggersTabPage);
-			this.PadTabControl.Controls.Add(this.LeftStickTabPage);
-			this.PadTabControl.Controls.Add(this.RightStickTabPage);
+			this.PadTabControl.Controls.Add(this.LeftThumbTabPage);
+			this.PadTabControl.Controls.Add(this.RightThumbTabPage);
 			this.PadTabControl.Controls.Add(this.ForceFeedbackTabPage);
 			this.PadTabControl.Controls.Add(this.MacrosTabPage);
 			this.PadTabControl.Controls.Add(this.XInputTabPage);
@@ -1619,14 +1619,14 @@
 			// 
 			// LeftStickTabPage
 			// 
-			this.LeftStickTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.LeftStickTabPage.Controls.Add(this.LeftThumbPanel);
-			this.LeftStickTabPage.Location = new System.Drawing.Point(4, 40);
-			this.LeftStickTabPage.Name = "LeftStickTabPage";
-			this.LeftStickTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.LeftStickTabPage.Size = new System.Drawing.Size(192, 56);
-			this.LeftStickTabPage.TabIndex = 1;
-			this.LeftStickTabPage.Text = "Left Stick";
+			this.LeftThumbTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.LeftThumbTabPage.Controls.Add(this.LeftThumbPanel);
+			this.LeftThumbTabPage.Location = new System.Drawing.Point(4, 40);
+			this.LeftThumbTabPage.Name = "LeftThumbTabPage";
+			this.LeftThumbTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.LeftThumbTabPage.Size = new System.Drawing.Size(192, 56);
+			this.LeftThumbTabPage.TabIndex = 1;
+			this.LeftThumbTabPage.Text = "Left Thumb";
 			// 
 			// LeftThumbPanel
 			// 
@@ -1662,14 +1662,14 @@
 			// 
 			// RightStickTabPage
 			// 
-			this.RightStickTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.RightStickTabPage.Controls.Add(this.RightThumbPanel);
-			this.RightStickTabPage.Location = new System.Drawing.Point(4, 58);
-			this.RightStickTabPage.Name = "RightStickTabPage";
-			this.RightStickTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.RightStickTabPage.Size = new System.Drawing.Size(192, 38);
-			this.RightStickTabPage.TabIndex = 2;
-			this.RightStickTabPage.Text = "Right Stick";
+			this.RightThumbTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.RightThumbTabPage.Controls.Add(this.RightThumbPanel);
+			this.RightThumbTabPage.Location = new System.Drawing.Point(4, 58);
+			this.RightThumbTabPage.Name = "RightThumbTabPage";
+			this.RightThumbTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.RightThumbTabPage.Size = new System.Drawing.Size(192, 38);
+			this.RightThumbTabPage.TabIndex = 2;
+			this.RightThumbTabPage.Text = "Right Thumb";
 			// 
 			// RightThumbPanel
 			// 
@@ -2507,9 +2507,9 @@
 			this.DPadPanel.ResumeLayout(false);
 			this.TriggersTabPage.ResumeLayout(false);
 			this.TriggersPanel.ResumeLayout(false);
-			this.LeftStickTabPage.ResumeLayout(false);
+			this.LeftThumbTabPage.ResumeLayout(false);
 			this.LeftThumbPanel.ResumeLayout(false);
-			this.RightStickTabPage.ResumeLayout(false);
+			this.RightThumbTabPage.ResumeLayout(false);
 			this.RightThumbPanel.ResumeLayout(false);
 			this.ForceFeedbackTabPage.ResumeLayout(false);
 			this.ForceFeedbackPanel.ResumeLayout(false);
@@ -2646,8 +2646,8 @@
 		public System.Windows.Forms.TabControl PadTabControl;
         private System.Windows.Forms.Button ClearPresetButton;
         private System.Windows.Forms.GroupBox DeviceGroupBox;
-		private System.Windows.Forms.TabPage LeftStickTabPage;
-		private System.Windows.Forms.TabPage RightStickTabPage;
+		private System.Windows.Forms.TabPage LeftThumbTabPage;
+		private System.Windows.Forms.TabPage RightThumbTabPage;
 		public AxisMapUserControl RightThumbXUserControl;
 		public AxisMapUserControl LeftThumbXUserControl;
 		public AxisMapUserControl RightThumbYUserControl;

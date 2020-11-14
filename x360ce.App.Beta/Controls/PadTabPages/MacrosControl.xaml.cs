@@ -15,7 +15,7 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for UserMacrosControl.xaml
 	/// </summary>
-	public partial class UserMacrosControl : UserControl
+	public partial class UserMacrosControl : UserControl, IDisposable
 	{
 
 		public IPadControl Parent;
@@ -25,11 +25,14 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			_Recorder = new Recorder();
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
+			// Subscribe to global events.
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
+			// Subscribe to parent control events.
 			Parent.OnSettingChanged += Parent_OnSettingChanged;
 		}
 
@@ -168,7 +171,7 @@ namespace x360ce.App.Controls
 
 		#region Recording
 
-		Recorder _Recorder = new Recorder();
+		Recorder _Recorder;
 
 		private void RecordButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -182,6 +185,26 @@ namespace x360ce.App.Controls
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
 			//_Recorder.
+		}
+
+		#endregion
+
+		#region IDisposable
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// Dispose managed resources.
+				_Recorder.Dispose();
+			}
+			// Free native resources.
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		#endregion
