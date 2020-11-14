@@ -388,11 +388,11 @@
     <Compile Include="Controls\PadControl.Designer.cs">
       <DependentUpon>PadControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\GamesGridUserControl.cs">
+    <Compile Include="Controls\PadTabPages\GamesControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\GamesGridUserControl.Designer.cs">
-      <DependentUpon>GamesGridUserControl.cs</DependentUpon>
+    <Compile Include="Controls\PadTabPages\GamesControl.Designer.cs">
+      <DependentUpon>GamesControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\PromptForm.cs">
       <SubType>Form</SubType>
@@ -523,8 +523,8 @@
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\GamesGridUserControl.resx">
-      <DependentUpon>GamesGridUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\PadTabPages\GamesControl.resx">
+      <DependentUpon>GamesControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PromptForm.resx">

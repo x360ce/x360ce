@@ -1,5 +1,4 @@
-﻿using JocysCom.ClassLibrary.Configuration;
-using JocysCom.ClassLibrary.IO;
+﻿using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using x360ce.Engine.Data;
 
 namespace x360ce.Engine
 {
-    public class XInputMaskScanner
+	public class XInputMaskScanner
     {
 
         public XInputMaskScanner()
@@ -21,7 +20,7 @@ namespace x360ce.Engine
 
         public event EventHandler<XInputMaskScannerEventArgs> Progress;
 
-        void ReportProgress(XInputMaskScannerEventArgs e)
+		private void ReportProgress(XInputMaskScannerEventArgs e)
         {
             var ev = Progress;
             if (ev != null)
@@ -31,14 +30,13 @@ namespace x360ce.Engine
         }
 
         public static XSettingsData<XInputMaskFileInfo> FileInfoCache = new XSettingsData<XInputMaskFileInfo>("XInputMask.xml", "XInput mask scan cache.");
+		private static readonly object FileInfoCacheLock = new object();
 
-        static object FileInfoCacheLock = new object();
+        public bool IsStopping { get => ff.IsStopping; set => ff.IsStopping = value; }
 
-        public bool IsStopping { get { return ff.IsStopping; } set { ff.IsStopping = value; } }
+		public bool IsPaused { get => ff.IsPaused; set => ff.IsPaused = value; }
 
-        public bool IsPaused { get { return ff.IsPaused; } set { ff.IsPaused = value; } }
-
-        XInputMask? GetCachedMask(FileInfo fi)
+		private XInputMask? GetCachedMask(FileInfo fi)
         {
             lock (FileInfoCacheLock)
             {
@@ -56,32 +54,36 @@ namespace x360ce.Engine
             }
         }
 
-        void SetCachedMask(FileInfo fi, XInputMask mask)
+		private void SetCachedMask(FileInfo fi, XInputMask mask)
         {
             lock (FileInfoCacheLock)
             {
                 var item = FileInfoCache.Items.FirstOrDefault(x => string.Compare(x.FullName, fi.FullName, true) == 0);
                 if (item != null)
                     FileInfoCache.Remove(item);
-                item = new XInputMaskFileInfo();
-                item.FullName = fi.FullName;
-                item.Mask = mask;
-                item.Modified = fi.LastWriteTimeUtc;
-                item.Size = fi.Length;
-                FileInfoCache.Add(item);
+				item = new XInputMaskFileInfo
+				{
+					FullName = fi.FullName,
+					Mask = mask,
+					Modified = fi.LastWriteTimeUtc,
+					Size = fi.Length
+				};
+				FileInfoCache.Add(item);
             }
         }
 
-        FileFinder ff;
+		private readonly FileFinder ff;
 
         public void ScanGames(string[] paths, IList<UserGame> games, IList<Program> programs, string fileName = null)
         {
             IsStopping = false;
             IsPaused = false;
-            // Step 1: Get list of executables inside the folder.
-            var e = new XInputMaskScannerEventArgs();
-            e.State = XInputMaskScannerState.Started;
-            ReportProgress(e);
+			// Step 1: Get list of executables inside the folder.
+			var e = new XInputMaskScannerEventArgs
+			{
+				State = XInputMaskScannerState.Started
+			};
+			ReportProgress(e);
             var skipped = 0;
             var added = 0;
             var updated = 0;
@@ -98,21 +100,23 @@ namespace x360ce.Engine
                 // Scan specific executable.
                 : ff.GetFiles(fileName, false, dirs);
             // Step 2: Scan files.
-            for (int i = 0; i < exes.Count; i++)
+            for (var i = 0; i < exes.Count; i++)
             {
                 var exe = exes[i];
                 var exeName = exe.Name.ToLower();
                 var program = programs.FirstOrDefault(x => x.FileName.ToLower() == exeName);
-                // If file doesn't exist in the game list then continue.
-                e = new XInputMaskScannerEventArgs();
-                e.Message = string.Format("Step 2: Scan file {0} of {1}. Please wait...", i + 1, exes.Count);
-                e.FileIndex = i;
-                e.Files = exes;
-                e.State = XInputMaskScannerState.FileUpdate;
-                e.Added = added;
-                e.Skipped = skipped;
-                e.Updated = updated;
-                ReportProgress(e);
+				// If file doesn't exist in the game list then continue.
+				e = new XInputMaskScannerEventArgs
+				{
+					Message = string.Format("Step 2: Scan file {0} of {1}. Please wait...", i + 1, exes.Count),
+					FileIndex = i,
+					Files = exes,
+					State = XInputMaskScannerState.FileUpdate,
+					Added = added,
+					Skipped = skipped,
+					Updated = updated
+				};
+				ReportProgress(e);
                 // If specific file name was not specifield and program not found then... 
                 if (string.IsNullOrEmpty(fileName) && program == null)
                 {
@@ -120,11 +124,13 @@ namespace x360ce.Engine
                 }
                 else
                 {
-                    e = new XInputMaskScannerEventArgs();
-                    e.Program = program;
-                    e.GameFileInfo = exe;
-                    // Get game by executable name.
-                    var game = games.FirstOrDefault(x => x.FileName.ToLower() == exeName);
+					e = new XInputMaskScannerEventArgs
+					{
+						Program = program,
+						GameFileInfo = exe
+					};
+					// Get game by executable name.
+					var game = games.FirstOrDefault(x => x.FileName.ToLower() == exeName);
                     // If file doesn't exist in the game list then...
                     if (game == null)
                     {
@@ -143,21 +149,25 @@ namespace x360ce.Engine
                     ReportProgress(e);
                 }
             }
-            e = new XInputMaskScannerEventArgs();
-            e.State = XInputMaskScannerState.Completed;
-            ReportProgress(e);
+			e = new XInputMaskScannerEventArgs
+			{
+				State = XInputMaskScannerState.Completed
+			};
+			ReportProgress(e);
         }
 
         private void ff_FileFound(object sender, FileFinderEventArgs e)
         {
-            var e2 = new XInputMaskScannerEventArgs();
-            e2.DirectoryIndex = e.DirectoryIndex;
-            e2.Directories = e.Directories;
-            e2.FileIndex = e.FileIndex;
-            e2.Files = e.Files;
-            e2.State = XInputMaskScannerState.DirectoryUpdate;
-            e2.Message = string.Format("Step 1: {0} programs found. Searching path {1} of {2}. Please wait...", e.Files.Count, e.DirectoryIndex + 1, e.Directories.Count);
-            ReportProgress(e2);
+			var e2 = new XInputMaskScannerEventArgs
+			{
+				DirectoryIndex = e.DirectoryIndex,
+				Directories = e.Directories,
+				FileIndex = e.FileIndex,
+				Files = e.Files,
+				State = XInputMaskScannerState.DirectoryUpdate,
+				Message = string.Format("Step 1: {0} programs found. Searching path {1} of {2}. Please wait...", e.Files.Count, e.DirectoryIndex + 1, e.Directories.Count)
+			};
+			ReportProgress(e2);
         }
 
         /// <summary>
@@ -173,7 +183,7 @@ namespace x360ce.Engine
             var vi = System.Diagnostics.FileVersionInfo.GetVersionInfo(fi.FullName);
             var architecture = JocysCom.ClassLibrary.Win32.PEReader.GetProcessorArchitecture(fi.FullName);
             var is64bit = architecture == System.Reflection.ProcessorArchitecture.Amd64;
-            XInputMask mask = Engine.XInputMask.None;
+            var mask = Engine.XInputMask.None;
             if (searchOption.HasValue)
             {
                 // Get XInput files used inside game folder.
@@ -231,16 +241,18 @@ namespace x360ce.Engine
             var files = Directory.GetFiles(path, "*.exe", searchOption).ToList();
             var dlls = Directory.GetFiles(path, "*.dll", searchOption).ToList();
             files.AddRange(dlls);
-            XInputMask mask = Engine.XInputMask.None;
+            var mask = Engine.XInputMask.None;
             // Create list to store masks.
             var masks = new Dictionary<string, XInputMask>();
 			// If file doesn't exist in the game list then continue.
-			var e = new XInputMaskScannerEventArgs();
-			e.Level = 1;
-			e.Files = files.Select(x => new FileInfo(x)).ToList();
-			e.State = XInputMaskScannerState.FileUpdate;
+			var e = new XInputMaskScannerEventArgs
+			{
+				Level = 1,
+				Files = files.Select(x => new FileInfo(x)).ToList(),
+				State = XInputMaskScannerState.FileUpdate
+			};
 			ReportProgress(e);
-			for (int i = 0; i < files.Count; i++)
+			for (var i = 0; i < files.Count; i++)
 			{
 				e.FileIndex = i;
 				e.Message = string.Format("Scan file {0} of {1}. Please wait...", i + 1, files.Count);
@@ -298,7 +310,7 @@ namespace x360ce.Engine
                     .Where(x => x.ToString().Contains("x86"))
                     .ToArray();
             }
-            XInputMask mask = Engine.XInputMask.None;
+            var mask = Engine.XInputMask.None;
             var dic = new Dictionary<XInputMask, string>();
             foreach (var value in xiValues)
             {
@@ -309,35 +321,71 @@ namespace x360ce.Engine
             var cachedMask = GetCachedMask(fi);
             if (cachedMask.HasValue)
                 return cachedMask.Value;
-            // Do scan.
-            byte[] fileBytes = File.ReadAllBytes(fullName);
-            foreach (var key in dic.Keys)
+            var maxLength = 64 * 1024 * 1024;
+            // If file is less or equal 64 MB then...
+            byte[] fileBytes;
+            if (fi.Length <= maxLength)
             {
-                var stringLBytes = Encoding.UTF8.GetBytes(dic[key].ToLower());
-                var stringUBytes = Encoding.UTF8.GetBytes(dic[key].ToUpper());
-                int j;
-                for (var i = 0; i <= (fileBytes.Length - stringLBytes.Length); i++)
+                // Read all file bytes.
+                fileBytes = File.ReadAllBytes(fi.FullName);
+			}
+			else
+			{
+                // Maximum buffer 64 MB.
+                fileBytes = new byte[maxLength];
+                var half = maxLength / 2;
+                // Do not lock the file.
+                var stream = new FileStream(fi.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                // Read 32 MB from the start.
+                stream.Read(fileBytes, 0, half);
+                // Read 32 MB from the end.
+                stream.Seek(fi.Length - half, SeekOrigin.Begin);
+                stream.Read(fileBytes, half, half);
+                stream.Dispose();
+            }
+            // Get "XInput positions inside file bytes.
+            var positions = GetPositions(fileBytes, "xinput");
+            foreach (var position in positions)
+			{
+                foreach (var key in dic.Keys)
                 {
-                    // Pause or Stop.
-                    while (IsPaused && !IsStopping)
-						// Logical delay without blocking the current thread.
-						System.Threading.Tasks.Task.Delay(500).Wait();
-					if (IsStopping)
-                        return mask;
-                    // Do tasks.
-                    if (fileBytes[i] == stringLBytes[0] || fileBytes[i] == stringUBytes[0])
-                    {
-                        for (j = 1; j < stringLBytes.Length && (fileBytes[i + j] == stringLBytes[j] || fileBytes[i + j] == stringUBytes[j]); j++) ;
-                        if (j == stringLBytes.Length)
-                        {
-                            SetCachedMask(fi, key);
-                            return key;
-                        }
-                    }
+                    var value = dic[key];
+                    if (position + value.Length > fileBytes.Length)
+                        continue;
+                    var s = Encoding.ASCII.GetString(fileBytes, position, value.Length);
+                    if (value.Equals(s, StringComparison.OrdinalIgnoreCase))
+                       mask |= key;
                 }
             }
             SetCachedMask(fi, mask);
             return mask;
+        }
+
+        public List<int> GetPositions(byte[] bytes, string key)
+		{
+            var positions = new List<int>();
+            var lBytes = Encoding.UTF8.GetBytes(key.ToLower());
+            var uBytes = Encoding.UTF8.GetBytes(key.ToUpper());
+            int j;
+            for (var i = 0; i <= (bytes.Length - lBytes.Length); i++)
+            {
+                // Pause or Stop.
+                while (IsPaused && !IsStopping)
+                    // Logical delay without blocking the current thread.
+                    System.Threading.Tasks.Task.Delay(500).Wait();
+                if (IsStopping)
+                    return positions;
+                // Find first matching bytes.
+                if (bytes[i] == lBytes[0] || bytes[i] == uBytes[0])
+                {
+                    // Look forward for full match.
+                    for (j = 1; j < lBytes.Length && (bytes[i + j] == lBytes[j] || bytes[i + j] == uBytes[j]); j++);
+                    // If full match found then add position.
+                    if (j == lBytes.Length)
+                        positions.Add(i);
+                }
+            }
+            return positions;
         }
 
     }

@@ -1,9 +1,11 @@
-v4.17.9.0 (2020-10-31)
+v4.17.10.0 (2020-10-31)
 - Fixed: Issue when mappings from other games would merge into currently selected game.
 - Fixed: Sometimes crashing when generating exception info.
 - Fixed: Guide button map.
 - Fixed: Another crash when user device information updated.
-- Fixed: Anti-deadzone settings reset on application load.
+- Fixed: Anti Dead Zone settings reset on application load.
+- Fixed: Crash when scanning large files for XInput support.
+- Update: Scanning files for XInput support is much faster now.
 - New: Option to auto switch configuration when game focused.
 
 v4.16.8.0 (2020-10-25)
