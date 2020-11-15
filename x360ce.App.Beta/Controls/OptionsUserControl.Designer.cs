@@ -474,7 +474,7 @@
 			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusTextBox);
 			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.VirtualDeviceGroupBox.Name = "VirtualDeviceGroupBox";
-			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(186, 80);
+			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(644, 80);
 			this.VirtualDeviceGroupBox.TabIndex = 70;
 			this.VirtualDeviceGroupBox.TabStop = false;
 			this.VirtualDeviceGroupBox.Text = "Virtual Device Emulation by Nefarius";
@@ -483,7 +483,7 @@
 			// 
 			this.AboutViGEmLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.AboutViGEmLinkLabel.AutoSize = true;
-			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(10, 24);
+			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(468, 24);
 			this.AboutViGEmLinkLabel.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
 			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
 			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
@@ -505,7 +505,7 @@
 			// 
 			this.VigemLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.VigemLabel.AutoSize = true;
-			this.VigemLabel.Location = new System.Drawing.Point(-131, 24);
+			this.VigemLabel.Location = new System.Drawing.Point(327, 24);
 			this.VigemLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
 			this.VigemLabel.Name = "VigemLabel";
 			this.VigemLabel.Size = new System.Drawing.Size(143, 13);
@@ -533,7 +533,7 @@
 			// ViGEmBusRefreshButton
 			// 
 			this.ViGEmBusRefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ViGEmBusRefreshButton.Location = new System.Drawing.Point(105, 19);
+			this.ViGEmBusRefreshButton.Location = new System.Drawing.Point(563, 19);
 			this.ViGEmBusRefreshButton.Name = "ViGEmBusRefreshButton";
 			this.ViGEmBusRefreshButton.Size = new System.Drawing.Size(75, 23);
 			this.ViGEmBusRefreshButton.TabIndex = 44;
@@ -545,7 +545,7 @@
 			// 
 			this.ViGEmBusUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ViGEmBusUninstallButton.Enabled = false;
-			this.ViGEmBusUninstallButton.Location = new System.Drawing.Point(105, 48);
+			this.ViGEmBusUninstallButton.Location = new System.Drawing.Point(563, 48);
 			this.ViGEmBusUninstallButton.Name = "ViGEmBusUninstallButton";
 			this.ViGEmBusUninstallButton.Size = new System.Drawing.Size(75, 23);
 			this.ViGEmBusUninstallButton.TabIndex = 44;
@@ -557,7 +557,7 @@
 			// 
 			this.ViGEmBusInstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ViGEmBusInstallButton.Enabled = false;
-			this.ViGEmBusInstallButton.Location = new System.Drawing.Point(24, 48);
+			this.ViGEmBusInstallButton.Location = new System.Drawing.Point(482, 48);
 			this.ViGEmBusInstallButton.Name = "ViGEmBusInstallButton";
 			this.ViGEmBusInstallButton.Size = new System.Drawing.Size(75, 23);
 			this.ViGEmBusInstallButton.TabIndex = 44;
@@ -572,7 +572,7 @@
 			this.ViGEmBusTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.ViGEmBusTextBox.Location = new System.Drawing.Point(87, 50);
 			this.ViGEmBusTextBox.Name = "ViGEmBusTextBox";
-			this.ViGEmBusTextBox.Size = new System.Drawing.Size(0, 20);
+			this.ViGEmBusTextBox.Size = new System.Drawing.Size(458, 20);
 			this.ViGEmBusTextBox.TabIndex = 41;
 			// 
 			// DeveloperToolsButton
@@ -786,9 +786,9 @@
 			this.ShowFormInfoCheckBox.AutoSize = true;
 			this.ShowFormInfoCheckBox.Location = new System.Drawing.Point(6, 19);
 			this.ShowFormInfoCheckBox.Name = "ShowFormInfoCheckBox";
-			this.ShowFormInfoCheckBox.Size = new System.Drawing.Size(213, 17);
+			this.ShowFormInfoCheckBox.Size = new System.Drawing.Size(228, 17);
 			this.ShowFormInfoCheckBox.TabIndex = 1;
-			this.ShowFormInfoCheckBox.Text = "Show Form Info on CTRL+SHIFT+RMB";
+			this.ShowFormInfoCheckBox.Text = "Show Form Info on CTRL+SHIFT+RButton";
 			this.ShowFormInfoCheckBox.UseVisualStyleBackColor = true;
 			this.ShowFormInfoCheckBox.CheckedChanged += new System.EventHandler(this.ShowSettingsTabCheckBox_CheckedChanged);
 			// 
@@ -826,7 +826,7 @@
 			this.InternetOptionsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.InternetOptionsTabPage.Name = "InternetOptionsTabPage";
 			this.InternetOptionsTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.InternetOptionsTabPage.Size = new System.Drawing.Size(192, 74);
+			this.InternetOptionsTabPage.Size = new System.Drawing.Size(650, 421);
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
 			// 
@@ -835,7 +835,7 @@
 			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.InternetPanel.Location = new System.Drawing.Point(3, 3);
 			this.InternetPanel.Name = "InternetPanel";
-			this.InternetPanel.Size = new System.Drawing.Size(186, 68);
+			this.InternetPanel.Size = new System.Drawing.Size(644, 415);
 			this.InternetPanel.TabIndex = 33;
 			// 
 			// VirtualDeviceTabPage
@@ -844,7 +844,7 @@
 			this.VirtualDeviceTabPage.Controls.Add(this.VirtualDevicePanel);
 			this.VirtualDeviceTabPage.Location = new System.Drawing.Point(4, 22);
 			this.VirtualDeviceTabPage.Name = "VirtualDeviceTabPage";
-			this.VirtualDeviceTabPage.Size = new System.Drawing.Size(192, 74);
+			this.VirtualDeviceTabPage.Size = new System.Drawing.Size(650, 421);
 			this.VirtualDeviceTabPage.TabIndex = 2;
 			this.VirtualDeviceTabPage.Text = "Virtual Device";
 			// 
@@ -855,7 +855,7 @@
 			this.VirtualDevicePanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.VirtualDevicePanel.Location = new System.Drawing.Point(0, 0);
 			this.VirtualDevicePanel.Name = "VirtualDevicePanel";
-			this.VirtualDevicePanel.Size = new System.Drawing.Size(192, 74);
+			this.VirtualDevicePanel.Size = new System.Drawing.Size(650, 421);
 			this.VirtualDevicePanel.TabIndex = 72;
 			// 
 			// HidGuardianTabPage
@@ -864,7 +864,7 @@
 			this.HidGuardianTabPage.Controls.Add(this.HidGuardianPanel);
 			this.HidGuardianTabPage.Location = new System.Drawing.Point(4, 22);
 			this.HidGuardianTabPage.Name = "HidGuardianTabPage";
-			this.HidGuardianTabPage.Size = new System.Drawing.Size(192, 74);
+			this.HidGuardianTabPage.Size = new System.Drawing.Size(650, 421);
 			this.HidGuardianTabPage.TabIndex = 3;
 			this.HidGuardianTabPage.Text = "HID Guardian";
 			// 
@@ -875,7 +875,7 @@
 			this.HidGuardianPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.HidGuardianPanel.Location = new System.Drawing.Point(0, 0);
 			this.HidGuardianPanel.Name = "HidGuardianPanel";
-			this.HidGuardianPanel.Size = new System.Drawing.Size(192, 74);
+			this.HidGuardianPanel.Size = new System.Drawing.Size(650, 421);
 			this.HidGuardianPanel.TabIndex = 72;
 			// 
 			// HelpRichTextBox
@@ -889,7 +889,7 @@
 			this.HelpRichTextBox.Margin = new System.Windows.Forms.Padding(0, 0, 0, 3);
 			this.HelpRichTextBox.Name = "HelpRichTextBox";
 			this.HelpRichTextBox.ReadOnly = true;
-			this.HelpRichTextBox.Size = new System.Drawing.Size(186, 0);
+			this.HelpRichTextBox.Size = new System.Drawing.Size(644, 347);
 			this.HelpRichTextBox.TabIndex = 72;
 			this.HelpRichTextBox.Text = "";
 			// 
@@ -905,7 +905,7 @@
 			this.groupBox1.Controls.Add(this.HidGuardianTextBox);
 			this.groupBox1.Location = new System.Drawing.Point(3, 3);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(186, 80);
+			this.groupBox1.Size = new System.Drawing.Size(644, 80);
 			this.groupBox1.TabIndex = 71;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "HID Guardian by Nefarius";
@@ -913,7 +913,7 @@
 			// HidGuardianRefreshButton
 			// 
 			this.HidGuardianRefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.HidGuardianRefreshButton.Location = new System.Drawing.Point(105, 19);
+			this.HidGuardianRefreshButton.Location = new System.Drawing.Point(563, 19);
 			this.HidGuardianRefreshButton.Name = "HidGuardianRefreshButton";
 			this.HidGuardianRefreshButton.Size = new System.Drawing.Size(75, 23);
 			this.HidGuardianRefreshButton.TabIndex = 46;
@@ -944,7 +944,7 @@
 			// 
 			this.HidGuardianUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.HidGuardianUninstallButton.Enabled = false;
-			this.HidGuardianUninstallButton.Location = new System.Drawing.Point(105, 48);
+			this.HidGuardianUninstallButton.Location = new System.Drawing.Point(563, 48);
 			this.HidGuardianUninstallButton.Name = "HidGuardianUninstallButton";
 			this.HidGuardianUninstallButton.Size = new System.Drawing.Size(75, 23);
 			this.HidGuardianUninstallButton.TabIndex = 44;
@@ -956,7 +956,7 @@
 			// 
 			this.HidGuardianInstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.HidGuardianInstallButton.Enabled = false;
-			this.HidGuardianInstallButton.Location = new System.Drawing.Point(24, 48);
+			this.HidGuardianInstallButton.Location = new System.Drawing.Point(482, 48);
 			this.HidGuardianInstallButton.Name = "HidGuardianInstallButton";
 			this.HidGuardianInstallButton.Size = new System.Drawing.Size(75, 23);
 			this.HidGuardianInstallButton.TabIndex = 44;
@@ -971,7 +971,7 @@
 			this.HidGuardianTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.HidGuardianTextBox.Location = new System.Drawing.Point(87, 50);
 			this.HidGuardianTextBox.Name = "HidGuardianTextBox";
-			this.HidGuardianTextBox.Size = new System.Drawing.Size(0, 20);
+			this.HidGuardianTextBox.Size = new System.Drawing.Size(458, 20);
 			this.HidGuardianTextBox.TabIndex = 41;
 			// 
 			// OptionsUserControl

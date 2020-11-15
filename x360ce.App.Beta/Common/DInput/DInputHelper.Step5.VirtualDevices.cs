@@ -205,13 +205,15 @@ namespace x360ce.App.DInput
 			{
 				var s = m.Groups["key"].Value;
 				byte keyCode;
+				// Try parse as byte/number first.
 				if (byte.TryParse(s, out keyCode))
 				{
 					list.Add((Keys)keyCode);
 					continue;
 				}
+				// Try parse as "Keys" enum (ignore case).
 				Keys keyValue;
-				if (System.Enum.TryParse(s, out keyValue))
+				if (System.Enum.TryParse(s, true, out keyValue))
 				{
 					list.Add(keyValue);
 					continue;
