@@ -143,15 +143,23 @@ namespace x360ce.App.DInput
 			{
 				try
 				{
-					// Getting state can fail.
-					var joystick = new Joystick(manager, device.InstanceGuid);
-					ud.Device = joystick;
-					ud.IsExclusiveMode = null;
-					ud.LoadCapabilities(joystick.Capabilities);
+					// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
+					lock (SettingsManager.UserDevices.SyncRoot)
+					{
+						// Getting state can fail.
+						var joystick = new Joystick(manager, device.InstanceGuid);
+						ud.Device = joystick;
+						ud.IsExclusiveMode = null;
+						ud.LoadCapabilities(joystick.Capabilities);
+					}
 				}
 				catch (Exception) { }
 			}
-			ud.LoadInstance(device);
+			// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
+			lock (SettingsManager.UserDevices.SyncRoot)
+			{
+				ud.LoadInstance(device);
+			}
 			// If device is set as offline then make it online.
 			if (!ud.IsOnline)
 				ud.IsOnline = true;
