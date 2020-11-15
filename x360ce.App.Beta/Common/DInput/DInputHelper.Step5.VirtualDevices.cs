@@ -3,7 +3,9 @@ using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -171,27 +173,54 @@ namespace x360ce.App.DInput
 			{
 				// Update controller.
 				ViGEmClient.Current.Targets[i - 1].SendReport(report);
-				ControlsHelper.BeginInvoke(() =>
+				lock (guideLock)
 				{
-					lock (guideLock)
+					var isGuidePressed = n.Buttons.HasFlag(GamepadButtonFlags.Guide);
+					if (isGuidePressed && !IsGuideDown)
 					{
-						var isGuidePressed = n.Buttons.HasFlag(GamepadButtonFlags.Guide);
-						if (isGuidePressed && !IsGuideDown)
-						{
-							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendDown(Keys.LWin, Keys.G);
-							IsGuideDown = true;
-						}
-						if (!isGuidePressed && IsGuideDown)
-						{
-							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(Keys.LWin, Keys.G);
-							IsGuideDown = false;
-						}
+						var keys = GetGuideKeys();
+						if (keys.Count() > 0)
+							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendDown(keys);
+						IsGuideDown = true;
 					}
-				});
+					if (!isGuidePressed && IsGuideDown)
+					{
+						var keys = GetGuideKeys();
+						if (keys.Count() > 0)
+							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(keys);
+						IsGuideDown = false;
+					}
+				}
 				// Update old state.
 				oldGamepadStates[i - 1] = n;
 			}
 		}
+
+		private static Keys[] GetGuideKeys()
+		{
+			var list = new List<Keys>();
+			var keys = SettingsManager.Options.GuideButtonAction;
+			var matches = rxKeys.Matches(keys);
+			foreach (Match m in matches)
+			{
+				var s = m.Groups["key"].Value;
+				byte keyCode;
+				if (byte.TryParse(s, out keyCode))
+				{
+					list.Add((Keys)keyCode);
+					continue;
+				}
+				Keys keyValue;
+				if (System.Enum.TryParse(s, out keyValue))
+				{
+					list.Add(keyValue);
+					continue;
+				}
+			}
+			return list.ToArray();
+		}
+
+		private static Regex rxKeys = new Regex("{(?<key>[0-9a-zA-Z]+)}");
 
 		public static VirtualError CheckInstallVirtualDriver()
 		{
