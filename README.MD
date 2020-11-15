@@ -2,7 +2,7 @@
 
 # Download v4.x
 
-Digitally Signed Application v4.17.13.0 (2020-11-15) and Virtual Gamepad Emulation Bus 1.16.112.0
+Digitally Signed Application v4.17.15.0 (2020-11-15) and Virtual Gamepad Emulation Bus 1.16.112.0
 
 [Download - x360ce.zip](https://github.com/x360ce/x360ce/releases/download/4.17.0.0/x360ce.zip) - for All games
 
