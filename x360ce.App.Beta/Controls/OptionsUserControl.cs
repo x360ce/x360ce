@@ -87,23 +87,21 @@ namespace x360ce.App.Controls
 			SettingsManager.AddMap(section, () => SettingName.Log, EnableLoggingCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.Console, ConsoleCheckBox);
 			SettingsManager.AddMap(section, () => SettingName.Version, ConfigurationVersionTextBox);
-			// Attach property monitoring first.
-			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			// Stored inside XML now.
 			var o = SettingsManager.Options;
-			ControlHelper.LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
-			ControlHelper.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
-			ControlHelper.LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
-			ControlHelper.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
-			ControlHelper.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
+			SettingsManager.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
+			SettingsManager.LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
+			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
+			SettingsManager.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
@@ -113,7 +111,6 @@ namespace x360ce.App.Controls
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			var o = SettingsManager.Options;
-			SettingsManager.Sync(o, e.PropertyName);
 			// Update controls by specific property.
 			switch (e.PropertyName)
 			{

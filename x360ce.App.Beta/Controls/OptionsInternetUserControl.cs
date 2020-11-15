@@ -22,13 +22,13 @@ namespace x360ce.App.Controls
 		public void UpdateSettingsMap()
 		{
 			var o = SettingsManager.Options;
-			ControlHelper.LoadAndMonitor(x => x.GetProgramsMinInstances, GetProgramsMinInstancesUpDown);
-			ControlHelper.LoadAndMonitor(x => x.GetProgramsIncludeEnabled, GetProgramsIncludeEnabledCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.InternetAutoLoad, InternetAutoLoadCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.InternetFeatures, InternetFeaturesCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.CheckForUpdates, CheckForUpdatesCheckBox);
-			ControlHelper.LoadAndMonitor(x => x.InternetDatabaseUrl, InternetDatabaseUrlComboBox, o.InternetDatabaseUrls);
+			SettingsManager.LoadAndMonitor(x => x.GetProgramsMinInstances, GetProgramsMinInstancesUpDown);
+			SettingsManager.LoadAndMonitor(x => x.GetProgramsIncludeEnabled, GetProgramsIncludeEnabledCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.InternetAutoLoad, InternetAutoLoadCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.InternetAutoSave, InternetAutoSaveCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.InternetFeatures, InternetFeaturesCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.CheckForUpdates, CheckForUpdatesCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.InternetDatabaseUrl, InternetDatabaseUrlComboBox, o.InternetDatabaseUrls);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().

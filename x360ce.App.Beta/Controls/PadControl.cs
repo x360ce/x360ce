@@ -28,10 +28,11 @@ namespace x360ce.App.Controls
 				return;
 			// Add controls which must be notified on setting selection change.
 			UserMacrosPanel.Parent = this;
-
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Hide for this version.
 			PadTabControl.TabPages.Remove(XInputTabPage);
+			PadTabControl.TabPages.Remove(MacrosTabPage);
+
 			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -75,43 +74,6 @@ namespace x360ce.App
 					firstVisibleRow.Selected = true;
 				}
 			}
-		}
-
-
-		public static void LoadAndMonitor(Expression<Func<Options, object>> setting, Control control, object dataSource = null)
-		{
-			var o = SettingsManager.Options;
-			SettingsManager.AddMap(setting, control);
-			if (dataSource != null)
-			{
-				// Set ComboBox and attach event last, in order to prevent changing of original value.
-				var lc = control as ListControl;
-				if (lc != null)
-					lc.DataSource = dataSource;
-				var lb = control as ListBox;
-				if (lb != null)
-					lb.DataSource = dataSource;
-			}
-			// Load settings into control.
-			var body = (setting.Body as MemberExpression)
-				 ?? (((UnaryExpression)setting.Body).Operand as MemberExpression);
-			var propertyName = body.Member.Name;
-			o.OnPropertyChanged(propertyName);
-			// Monitor control changes.
-			var chb = control as CheckBox;
-			if (chb != null)
-				chb.CheckStateChanged += Control_Changed;
-			var cbx = control as ComboBox;
-			if (cbx != null)
-			{
-				cbx.TextChanged += Control_Changed;
-				cbx.SelectedIndexChanged += Control_Changed;
-			}
-		}
-
-		private static void Control_Changed(object sender, EventArgs e)
-		{
-			SettingsManager.Sync((Control)sender, SettingsManager.Options);
 		}
 
 	}

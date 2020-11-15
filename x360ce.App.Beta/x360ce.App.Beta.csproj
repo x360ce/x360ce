@@ -552,6 +552,7 @@
     <None Include="app.config" />
     <EmbeddedResource Include="Documents\Help.rtf" />
     <EmbeddedResource Include="Documents\Help_HidGuardian.rtf" />
+    <Compile Include="Common\SettingsManager.LoadAndSync.cs" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
