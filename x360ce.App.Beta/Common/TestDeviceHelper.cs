@@ -22,7 +22,8 @@ namespace x360ce.App
 			{
 				if (item.IsOnline)
 					return;
-				item.IsOnline = true;
+				lock (SettingsManager.UserDevices.SyncRoot)
+					item.IsOnline = true;
 			}
 		}
 

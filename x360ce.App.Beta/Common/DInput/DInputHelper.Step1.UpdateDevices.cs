@@ -108,7 +108,8 @@ namespace x360ce.App.DInput
 			// Remove disconnected devices.
 			for (int i = 0; i < deleteDevices.Length; i++)
 			{
-				deleteDevices[i].IsOnline = false;
+				lock (SettingsManager.UserDevices.SyncRoot)
+					deleteDevices[i].IsOnline = false;
 			}
 			for (int i = 0; i < insertDevices.Count; i++)
 			{
@@ -162,7 +163,8 @@ namespace x360ce.App.DInput
 			}
 			// If device is set as offline then make it online.
 			if (!ud.IsOnline)
-				ud.IsOnline = true;
+				lock (SettingsManager.UserDevices.SyncRoot)
+					ud.IsOnline = true;
 			// Get device info for added devices.
 			var dev = allDevices.FirstOrDefault(x => x.DeviceId == ud.HidDeviceId);
 			// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
