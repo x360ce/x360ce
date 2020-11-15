@@ -247,7 +247,7 @@
     <Compile Include="Controls\DebugUserControl.Designer.cs">
       <DependentUpon>DebugUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadControlImager.cs" />
+    <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
     <Compile Include="Controls\PadTabPages\IPadControl.cs" />
     <Compile Include="Controls\PresetsGridUserControl.cs">
       <SubType>UserControl</SubType>

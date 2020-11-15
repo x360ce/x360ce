@@ -42,6 +42,7 @@
 			this.P_0_60_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.P_0_40_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.P_0_20_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.P_0_0_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.SensitivityTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
 			this.MainGroupBox.SuspendLayout();
@@ -292,6 +293,7 @@
 			// ApplyPresetMenuItem
 			// 
 			this.ApplyPresetMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.P_0_0_0_MenuItem,
             this.P_5_100_0_MenuItem,
             this.P_0_100_0_MenuItem,
             this.P_0_80_0_MenuItem,
@@ -344,6 +346,13 @@
 			this.P_0_20_0_MenuItem.Text = "20% Controller Anti-DeadZone";
 			this.P_0_20_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
+			// P_0_0_0_MenuItem
+			// 
+			this.P_0_0_0_MenuItem.Name = "P_0_0_0_MenuItem";
+			this.P_0_0_0_MenuItem.Size = new System.Drawing.Size(321, 22);
+			this.P_0_0_0_MenuItem.Text = "Clear";
+			this.P_0_0_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
+			// 
 			// AxisMapUserControl
 			// 
 			this.Controls.Add(this.MainGroupBox);
@@ -394,5 +403,6 @@
         private System.Windows.Forms.ToolStripMenuItem P_0_60_0_MenuItem;
         private System.Windows.Forms.ToolStripMenuItem P_0_40_0_MenuItem;
         private System.Windows.Forms.ToolStripMenuItem P_0_20_0_MenuItem;
+		private System.Windows.Forms.ToolStripMenuItem P_0_0_0_MenuItem;
 	}
 }

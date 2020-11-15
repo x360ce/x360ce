@@ -228,10 +228,12 @@ namespace x360ce.App.Controls
 				 ShowShoulderButtons && SettingsConverter.ShoulderButtonCodes.Contains(ii.Code)
 			)
 			{
-				ImageControl.SetImage(ii.Code, NavImageType.Normal, true);
+				var nit = on ? NavImageType.Active : NavImageType.Normal;
+				ImageControl.SetImage(ii.Code, nit, true);
 			}
 			else
 			{
+
 				var isAxisCode = SettingsConverter.AxisCodes.Contains(ii.Code);
 				// Axis status will be displayed as image therefore can hide active button indicator.
 				ImageControl.SetImage(ii.Code, NavImageType.Active, on && !isAxisCode);

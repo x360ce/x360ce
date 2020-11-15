@@ -373,7 +373,7 @@ namespace x360ce.App.Controls
 		{
 			var c = (ToolStripMenuItem)sender;
 			var values = c.Name.Split('_');
-			var xDeadZone = 0;
+			decimal xDeadZone = 0;
 			switch (TargetType)
 			{
 				case TargetType.LeftTrigger:
@@ -392,12 +392,13 @@ namespace x360ce.App.Controls
 					break;
 			}
 			var deadZone = int.Parse(values[1]);
-			var antiDeadZone = int.Parse(values[2]);
+			var antiDeadZone = decimal.Parse(values[2]);
 			var sensitivity = int.Parse(values[3]);
 			// Move focus away from below controls, so that their value can be changed.
 			ActiveControl = SensitivityCheckBox;
 			DeadZoneTrackBar.Value = deadZone;
-			AntiDeadZoneNumericUpDown.Value = (decimal)((float)xDeadZone * (float)antiDeadZone / 100f);
+			AntiDeadZoneNumericUpDown.Value = xDeadZone * antiDeadZone / 100m;
+			SensitivityTrackBar.Value = sensitivity;
 		}
 
 	}
