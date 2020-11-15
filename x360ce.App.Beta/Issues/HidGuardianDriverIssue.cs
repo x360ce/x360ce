@@ -27,7 +27,7 @@ namespace x360ce.App.Issues
 			var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
 			if (hid.DriverVersion == 0)
 			{
-				SetSeverity(IssueSeverity.Moderate, 0, "You need to install HID Guardian Driver to hide DirectInput controllers.");
+				SetSeverity(IssueSeverity.Moderate, 0, "Optional: Install HID Guardian if you want to hide DirectInput controllers.");
 				return;
 			}
 			SetSeverity(IssueSeverity.None);
