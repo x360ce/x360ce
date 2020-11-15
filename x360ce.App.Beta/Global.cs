@@ -87,7 +87,7 @@ namespace x360ce.App
 			if (game == null)
 				// Select current app.
 				game = currentApp;
-			LastActivePath = game.FullPath;
+			LastActivePath = game?.FullPath;
 			SettingsManager.UpdateCurrentGame(game);
 		}
 
