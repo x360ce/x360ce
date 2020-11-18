@@ -1,4 +1,5 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace x360ce.App.Controls
 	public partial class UserMacrosControl : UserControl, IDisposable
 	{
 
-		public IPadControl Parent;
+		public IPadControl PadControl;
 
 		public UserMacrosControl()
 		{
@@ -33,19 +34,23 @@ namespace x360ce.App.Controls
 			// Subscribe to global events.
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Subscribe to parent control events.
-			Parent.OnSettingChanged += Parent_OnSettingChanged;
+			PadControl.OnSettingChanged += Parent_OnSettingChanged;
+			// Load parent setting.
+			var setting = PadControl.GetSelectedSetting();
+			LoadUserSetting(setting);
 		}
 
 		private void Parent_OnSettingChanged(object sender, JocysCom.ClassLibrary.EventArgs<UserSetting> e)
 		{
 			var setting = e.Data;
+			LoadUserSetting(setting);
 		}
 
 		#region IPadTabPage 
 
 		UserSetting _UserSetting;
 
-		public void LoadUserSetting(UserSetting userSetting)
+		void LoadUserSetting(UserSetting userSetting)
 		{
 			_UserSetting = userSetting;
 			if (_UserSetting == null)
@@ -53,9 +58,9 @@ namespace x360ce.App.Controls
 				Data = null;
 				return;
 			}
-			SourceTypeComboBox.ItemsSource = new List<MapType>() { MapType.Button, MapType.Axis, MapType.Slider, MapType.POV }
+			MapTypeComboBox.ItemsSource = new List<MapType>() { MapType.Button, MapType.Axis, MapType.Slider, MapType.POV }
 				.Select(x => x.ToString()).ToList();
-			SourceTypeComboBox.SelectedItem = MapType.Button.ToString();
+			MapTypeComboBox.SelectedItem = MapType.Button.ToString();
 			MapEventTypeComboBox.ItemsSource = Enum.GetValues(typeof(MapEventType)).Cast<MapEventType>()
 				.Select(x => x.ToString()).ToList();
 			MapEventTypeComboBox.SelectedItem = MapEventType.EnterUpLeaveDown.ToString();
@@ -120,7 +125,7 @@ namespace x360ce.App.Controls
 				return;
 			var value = (string)cb.SelectedItem;
 			cb.SelectedIndex = alwaysSelectedIndex;
-			ScriptText.Text += "{" + value + "}";
+			MacroText.Text += "{" + value + "}";
 		}
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -185,6 +190,33 @@ namespace x360ce.App.Controls
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
 			//_Recorder.
+		}
+
+		#endregion
+
+		#region ToolBar buttons
+
+		private void AddButton_Click(object sender, RoutedEventArgs e)
+		{
+			// Use begin invoke or grid update will deadlock on same thread.
+			ControlsHelper.BeginInvoke(() =>
+			{
+				var item = new UserMacro();
+				item.Name = NameTextBox.Text;
+				item.Text = MacroText.Text;
+				item.MapType = (int)SettingsParser.TryParseValue(MapTypeComboBox.Text, MapType.Button);
+				item.MapIndex = SettingsParser.TryParseValue(MapIndexTextBox.Text, 0);
+				item.MapEventType = (int)SettingsParser.TryParseValue(MapEventTypeComboBox.Text, MapEventType.EnterUpLeaveDown);
+				item.MapRpmType = (int)SettingsParser.TryParseValue(MapRpmTypeComboBox.Text, MapRpmType.DownIncrease);
+				item.MapRangeMin = SettingsParser.TryParseValue(MapRangeMin.Text, 0);
+				item.MapRangeMax = SettingsParser.TryParseValue(MapRangeMin.Text, 0);
+				item.MapRpmMin = SettingsParser.TryParseValue(MapRpmMin.Text, 0);
+				item.MapRpmMax = SettingsParser.TryParseValue(MapRpmMax.Text, 0);
+				// Assing to current controller.
+				item.SettingId = _UserSetting.SettingId;
+				SettingsManager.UserMacros.Add(item);
+				RefreshList();
+			});
 		}
 
 		#endregion

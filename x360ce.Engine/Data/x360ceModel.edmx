@@ -373,21 +373,21 @@
       </Schema></edmx:StorageModels>
 		<!-- CSDL content -->
 		<edmx:ConceptualModels>
-			<Schema Namespace="x360ceModel" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+			<Schema Namespace="x360ce.Engine.Data" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
 				<EntityContainer Name="x360ceModelContainer" annotation:LazyLoadingEnabled="true" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
-					<EntitySet Name="PadSettings" EntityType="x360ceModel.PadSetting" />
-					<EntitySet Name="UserSettings" EntityType="x360ceModel.UserSetting" />
-					<EntitySet Name="Summaries" EntityType="x360ceModel.Summary" />
-					<EntitySet Name="Vendors" EntityType="x360ceModel.Vendor" />
-          <EntitySet Name="Products" EntityType="x360ceModel.Product" />
-          <EntitySet Name="UserInstances" EntityType="x360ceModel.UserInstance" />
-          <EntitySet Name="UserComputers" EntityType="x360ceModel.UserComputer" />
-          <EntitySet Name="UserDevices" EntityType="x360ceModel.UserDevice" />
-          <EntitySet Name="UserGames" EntityType="x360ceModel.UserGame" />
-          <EntitySet Name="Programs" EntityType="x360ceModel.Program" />
-          <EntitySet Name="Layouts" EntityType="x360ceModel.Layout" />
-          <EntitySet Name="UserProfiles" EntityType="x360ceModel.UserProfile" />
-          <EntitySet Name="UserMacros" EntityType="x360ceModel.UserMacro" />
+					<EntitySet Name="PadSettings" EntityType="x360ce.Engine.Data.PadSetting" />
+					<EntitySet Name="UserSettings" EntityType="x360ce.Engine.Data.UserSetting" />
+					<EntitySet Name="Summaries" EntityType="x360ce.Engine.Data.Summary" />
+					<EntitySet Name="Vendors" EntityType="x360ce.Engine.Data.Vendor" />
+          <EntitySet Name="Products" EntityType="x360ce.Engine.Data.Product" />
+          <EntitySet Name="UserInstances" EntityType="x360ce.Engine.Data.UserInstance" />
+          <EntitySet Name="UserComputers" EntityType="x360ce.Engine.Data.UserComputer" />
+          <EntitySet Name="UserDevices" EntityType="x360ce.Engine.Data.UserDevice" />
+          <EntitySet Name="UserGames" EntityType="x360ce.Engine.Data.UserGame" />
+          <EntitySet Name="Programs" EntityType="x360ce.Engine.Data.Program" />
+          <EntitySet Name="Layouts" EntityType="x360ce.Engine.Data.Layout" />
+          <EntitySet Name="UserProfiles" EntityType="x360ce.Engine.Data.UserProfile" />
+          <EntitySet Name="UserMacros" EntityType="x360ce.Engine.Data.UserMacro" />
 				</EntityContainer>
 				<EntityType Name="PadSetting">
 					<Key>
@@ -748,7 +748,7 @@
 				<Alias Key="Target" Value="x360ceModel.Store" />
 				<EntityContainerMapping CdmEntityContainer="x360ceModelContainer" StorageEntityContainer="x360ceModelStoreContainer">
 					<EntitySetMapping Name="PadSettings">
-						<EntityTypeMapping TypeName="x360ceModel.PadSetting">
+						<EntityTypeMapping TypeName="x360ce.Engine.Data.PadSetting">
 							<MappingFragment StoreEntitySet="x360ce_PadSettings">
                 <ScalarProperty Name="RightTriggerLinear" ColumnName="RightTriggerLinear" />
                 <ScalarProperty Name="RightTriggerAntiDeadZone" ColumnName="RightTriggerAntiDeadZone" />
@@ -832,7 +832,7 @@
 						</EntityTypeMapping>
 					</EntitySetMapping>
 					<EntitySetMapping Name="UserSettings">
-						<EntityTypeMapping TypeName="x360ceModel.UserSetting">
+						<EntityTypeMapping TypeName="x360ce.Engine.Data.UserSetting">
 							<MappingFragment StoreEntitySet="x360ce_Settings">
                 <ScalarProperty Name="Checksum" ColumnName="Checksum" />
                 <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
@@ -857,7 +857,7 @@
 						</EntityTypeMapping>
 					</EntitySetMapping>
 					<EntitySetMapping Name="Summaries">
-						<EntityTypeMapping TypeName="x360ceModel.Summary">
+						<EntityTypeMapping TypeName="x360ce.Engine.Data.Summary">
 							<MappingFragment StoreEntitySet="x360ce_Summaries">
 								<ScalarProperty Name="Weight" ColumnName="Weight" />
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
@@ -873,7 +873,7 @@
 						</EntityTypeMapping>
 					</EntitySetMapping>
 					<EntitySetMapping Name="Vendors">
-						<EntityTypeMapping TypeName="x360ceModel.Vendor">
+						<EntityTypeMapping TypeName="x360ce.Engine.Data.Vendor">
 							<MappingFragment StoreEntitySet="x360ce_Vendors">
 								<ScalarProperty Name="WebSite" ColumnName="WebSite" />
 								<ScalarProperty Name="ShortName" ColumnName="ShortName" />
@@ -883,7 +883,7 @@
 						</EntityTypeMapping>
 					</EntitySetMapping>
           <EntitySetMapping Name="Products">
-            <EntityTypeMapping TypeName="x360ceModel.Product">
+            <EntityTypeMapping TypeName="x360ce.Engine.Data.Product">
               <MappingFragment StoreEntitySet="x360ce_Products">
                 <ScalarProperty Name="ProductId" ColumnName="ProductId" />
                 <ScalarProperty Name="VendorId" ColumnName="VendorId" />
@@ -894,7 +894,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserInstances">
-            <EntityTypeMapping TypeName="x360ceModel.UserInstance">
+            <EntityTypeMapping TypeName="x360ce.Engine.Data.UserInstance">
               <MappingFragment StoreEntitySet="x360ce_UserInstances">
                 <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
                 <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
@@ -908,7 +908,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserComputers">
-            <EntityTypeMapping TypeName="x360ceModel.UserComputer">
+            <EntityTypeMapping TypeName="x360ce.Engine.Data.UserComputer">
               <MappingFragment StoreEntitySet="x360ce_UserComputers">
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
@@ -922,7 +922,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserDevices">
-            <EntityTypeMapping TypeName="x360ceModel.UserDevice">
+            <EntityTypeMapping TypeName="x360ce.Engine.Data.UserDevice">
               <MappingFragment StoreEntitySet="x360ce_UserDevices">
                 <ScalarProperty Name="ConnectionClass" ColumnName="ConnectionClass" />
                 <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
@@ -977,7 +977,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserGames">
-            <EntityTypeMapping TypeName="x360ceModel.UserGame">
+            <EntityTypeMapping TypeName="x360ce.Engine.Data.UserGame">
               <MappingFragment StoreEntitySet="x360ce_UserGames">
                 <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
                 <ScalarProperty Name="XInputPath" ColumnName="XInputPath" />
@@ -1009,7 +1009,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Programs">
-            <EntityTypeMapping TypeName="x360ceModel.Program">
+            <EntityTypeMapping TypeName="x360ce.Engine.Data.Program">
               <MappingFragment StoreEntitySet="x360ce_Programs">
                 <ScalarProperty Name="XInputPath" ColumnName="XInputPath" />
                 <ScalarProperty Name="InstanceCount" ColumnName="InstanceCount" />
@@ -1037,7 +1037,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Layouts">
-            <EntityTypeMapping TypeName="x360ceModel.Layout">
+            <EntityTypeMapping TypeName="x360ce.Engine.Data.Layout">
               <MappingFragment StoreEntitySet="x360ce_Layouts">
                 <ScalarProperty Name="RightTrigger" ColumnName="RightTrigger" />
                 <ScalarProperty Name="RightThumbUp" ColumnName="RightThumbUp" />
@@ -1075,7 +1075,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserProfiles">
-            <EntityTypeMapping TypeName="x360ceModel.UserProfile">
+            <EntityTypeMapping TypeName="x360ce.Engine.Data.UserProfile">
               <MappingFragment StoreEntitySet="x360ce_UserProfiles">
                 <ScalarProperty Name="Checksum" ColumnName="Checksum" />
                 <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
@@ -1088,7 +1088,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="UserMacros">
-            <EntityTypeMapping TypeName="x360ceModel.UserMacro">
+            <EntityTypeMapping TypeName="x360ce.Engine.Data.UserMacro">
               <MappingFragment StoreEntitySet="x360ce_UserMacros">
                 <ScalarProperty Name="Updated" ColumnName="Updated" />
                 <ScalarProperty Name="Created" ColumnName="Created" />
@@ -1132,20 +1132,20 @@
 		</edmx:Options>
 		<!-- Diagram content (shape and connector positions) -->
 		<edmx:Diagrams>
-			<Diagram Name="x360ceModel" ZoomLevel="98" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
-				<EntityTypeShape EntityType="x360ceModel.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" IsExpanded="true" />
-				<EntityTypeShape EntityType="x360ceModel.UserSetting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
-				<EntityTypeShape EntityType="x360ceModel.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
-				<EntityTypeShape EntityType="x360ceModel.Vendor" Width="1.5" PointX="9.75" PointY="3.625" Height="1.7879850260416674" />
-        <EntityTypeShape EntityType="x360ceModel.Product" Width="1.5" PointX="9.75" PointY="5.75" />
-        <EntityTypeShape EntityType="x360ceModel.UserInstance" Width="1.5" PointX="4.25" PointY="5.25" />
-        <EntityTypeShape EntityType="x360ceModel.UserComputer" Width="1.5" PointX="7.625" PointY="6.875" />
-        <EntityTypeShape EntityType="x360ceModel.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ceModel.UserGame" Width="1.5" PointX="7.75" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ceModel.Program" Width="1.5" PointX="6" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ceModel.Layout" Width="1.5" PointX="13.375" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ceModel.UserProfile" Width="1.5" PointX="4.25" PointY="7.875" />
-        <EntityTypeShape EntityType="x360ceModel.UserMacro" Width="1.5" PointX="15.25" PointY="0.5" />
+			<Diagram Name="x360ceModel" ZoomLevel="58" xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+				<EntityTypeShape EntityType="x360ce.Engine.Data.PadSetting" Width="3.125" PointX="0.5" PointY="0.5" Height="10.82615234375" IsExpanded="true" />
+				<EntityTypeShape EntityType="x360ce.Engine.Data.UserSetting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
+				<EntityTypeShape EntityType="x360ce.Engine.Data.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
+				<EntityTypeShape EntityType="x360ce.Engine.Data.Vendor" Width="1.5" PointX="9.75" PointY="3.625" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="x360ce.Engine.Data.Product" Width="1.5" PointX="9.75" PointY="5.75" />
+        <EntityTypeShape EntityType="x360ce.Engine.Data.UserInstance" Width="1.5" PointX="4.25" PointY="5.25" />
+        <EntityTypeShape EntityType="x360ce.Engine.Data.UserComputer" Width="1.5" PointX="7.625" PointY="6.875" />
+        <EntityTypeShape EntityType="x360ce.Engine.Data.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
+        <EntityTypeShape EntityType="x360ce.Engine.Data.UserGame" Width="1.5" PointX="7.75" PointY="0.5" />
+        <EntityTypeShape EntityType="x360ce.Engine.Data.Program" Width="1.5" PointX="6" PointY="0.5" />
+        <EntityTypeShape EntityType="x360ce.Engine.Data.Layout" Width="1.5" PointX="13.375" PointY="0.5" />
+        <EntityTypeShape EntityType="x360ce.Engine.Data.UserProfile" Width="1.5" PointX="4.25" PointY="7.875" />
+        <EntityTypeShape EntityType="x360ce.Engine.Data.UserMacro" Width="1.5" PointX="15.25" PointY="0.5" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

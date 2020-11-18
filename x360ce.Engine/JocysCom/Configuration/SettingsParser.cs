@@ -61,6 +61,19 @@ namespace JocysCom.ClassLibrary.Configuration
 			return defaultValue;
 		}
 
+		public static T TryParseValue<T>(string v, T defaultValue = default(T))
+		{
+			try
+			{
+				return (T)ParseValue(typeof(T), v, defaultValue);
+			}
+			catch (Exception)
+			{
+				return defaultValue;
+			}
+		}
+
+
 		public static T ParseValue<T>(string v, T defaultValue = default(T))
 		{
 			return (T)ParseValue(typeof(T), v, defaultValue);

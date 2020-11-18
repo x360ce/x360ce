@@ -8,7 +8,8 @@
 	d:DesignHeight="260"
 	d:DesignWidth="640"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-	mc:Ignorable="d" Loaded="UserControl_Loaded">
+	Loaded="UserControl_Loaded"
+	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
@@ -37,6 +38,13 @@
 					</Grid.RowDefinitions>
 					<ToolBarPanel Grid.Row="0" Style="{StaticResource MainToolBarPanel}">
 						<ToolBar Style="{StaticResource MainToolBar}">
+							<Button Name="AddButton" Click="AddButton_Click" Style="{StaticResource ToolBarButton}">
+								<StackPanel Style="{StaticResource ButtonStackPanel}">
+									<ContentControl Content="{StaticResource Icon_Add}" Style="{StaticResource ButtonContentControl}" />
+									<Label Content="Add" Style="{StaticResource ButtonLabel}" />
+								</StackPanel>
+							</Button>
+
 							<Button Name="SaveButton" Style="{StaticResource ToolBarButton}">
 								<StackPanel Style="{StaticResource ButtonStackPanel}">
 									<ContentControl Content="{StaticResource Icon_Save}" Style="{StaticResource ButtonContentControl}" />
@@ -182,7 +190,7 @@
 						Grid.Column="0"
 						Content="Name"
 						Style="{StaticResource LabelGrid}" />
-					<TextBox Grid.Row="0" Grid.Column="1" />
+					<TextBox Name="NameTextBox" Grid.Row="0" Grid.Column="1" />
 
 					<Label
 						Grid.Row="1"
@@ -217,7 +225,7 @@
 						Grid.Column="0"
 						Content="Macro"
 						Style="{StaticResource LabelGrid}" />
-					<TextBox x:Name="ScriptText" Grid.Row="3" Grid.Column="1" />
+					<TextBox Name="MacroText" Grid.Row="3" Grid.Column="1" />
 					<Label
 						Grid.Row="0"
 						Grid.Column="2"
@@ -228,7 +236,7 @@
 						Grid.Column="3"
 						HorizontalAlignment="Left"
 						Orientation="Horizontal">
-						<ComboBox x:Name="SourceTypeComboBox" Style="{StaticResource ComboBoxGrid}" />
+						<ComboBox Name="MapTypeComboBox" Style="{StaticResource ComboBoxGrid}" />
 					</StackPanel>
 
 					<Label
@@ -247,7 +255,7 @@
 					<Label
 						Grid.Row="1"
 						Grid.Column="2"
-						Content="Map Type"
+						Content="Event Type"
 						Style="{StaticResource LabelGrid}" />
 					<StackPanel Grid.Row="1" Grid.Column="3">
 						<ComboBox Name="MapEventTypeComboBox" Style="{StaticResource ComboBoxGrid}" />
@@ -258,14 +266,14 @@
 						Grid.Column="2"
 						Content="Range Min"
 						Style="{StaticResource LabelGrid}" />
-					<TextBox Grid.Row="2" Grid.Column="3" />
+					<TextBox Name="MapRangeMin" Grid.Row="2" Grid.Column="3" />
 
 					<Label
 						Grid.Row="3"
 						Grid.Column="2"
 						Content="Range Max"
 						Style="{StaticResource LabelGrid}" />
-					<TextBox Grid.Row="3" Grid.Column="3" />
+					<TextBox Name="MapRangeMax" Grid.Row="3" Grid.Column="3" />
 
 					<!--  RPM  -->
 
@@ -283,14 +291,14 @@
 						Grid.Column="4"
 						Content="RPM Min"
 						Style="{StaticResource LabelGrid}" />
-					<TextBox Grid.Row="2" Grid.Column="5" />
+					<TextBox Name="MapRpmMin" Grid.Row="2" Grid.Column="5" />
 
 					<Label
 						Grid.Row="3"
 						Grid.Column="4"
 						Content="RPM Max"
 						Style="{StaticResource LabelGrid}" />
-					<TextBox Grid.Row="3" Grid.Column="5" />
+					<TextBox Name="MapRpmMax" Grid.Row="3" Grid.Column="5" />
 
 				</Grid>
 			</GroupBox>

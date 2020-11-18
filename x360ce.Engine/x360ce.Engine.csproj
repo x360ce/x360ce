@@ -501,6 +501,7 @@
     <EntityDeploy Include="Data\x360ceModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>x360ceModel.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>x360ce.Engine.Data</CustomToolNamespace>
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>

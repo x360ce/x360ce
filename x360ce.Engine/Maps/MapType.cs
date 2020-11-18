@@ -1,6 +1,6 @@
 ﻿namespace x360ce.Engine
 {
-	public enum MapType
+	public enum MapType : int
 	{
 		None = 0,
 		Button,

@@ -27,7 +27,7 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			// Add controls which must be notified on setting selection change.
-			UserMacrosPanel.Parent = this;
+			UserMacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Hide for this version.
 			PadTabControl.TabPages.Remove(XInputTabPage);
