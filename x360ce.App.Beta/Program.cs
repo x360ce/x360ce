@@ -86,10 +86,6 @@ namespace x360ce.App
 			{
 				// Failed to enable useLegacyV2RuntimeActivationPolicy at runtime.
 			}
-			if (Environment.OSVersion.Version.Major >= 6)
-				NativeMethods.SetProcessDPIAware();
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
 			// Requires System.Configuration.Installl reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);
 			// ------------------------------------------------
@@ -109,6 +105,12 @@ namespace x360ce.App
 			}
 			if (!CheckSettings())
 				return;
+			var o = SettingsManager.Options;
+			// Must be called before you create the application window.
+			if (Environment.OSVersion.Version.Major >= 6 && o.IsProcessDPIAware)
+				NativeMethods.SetProcessDPIAware();
+			Application.EnableVisualStyles();
+			Application.SetCompatibleTextRenderingDefault(false);
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
 			MainForm.Current = new MainForm();
@@ -117,7 +119,7 @@ namespace x360ce.App
 				MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
 				return;
 			}
-			var doNotAllowToRun = SettingsManager.Options.AllowOnlyOneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore);
+			var doNotAllowToRun = o.AllowOnlyOneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore);
 			// If one copy is already opened then...
 			if (doNotAllowToRun)
 			{
@@ -136,7 +138,7 @@ namespace x360ce.App
 							MainForm.Current.WindowState = FormWindowState.Maximized;
 							break;
 						case "Minimized":
-							MainForm.Current.MinimizeToTray(false, SettingsManager.Options.MinimizeToTray);
+							MainForm.Current.MinimizeToTray(false, o.MinimizeToTray);
 							break;
 					}
 				}

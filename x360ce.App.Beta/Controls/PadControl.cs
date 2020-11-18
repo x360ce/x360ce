@@ -31,7 +31,7 @@ namespace x360ce.App.Controls
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Hide for this version.
 			PadTabControl.TabPages.Remove(XInputTabPage);
-			PadTabControl.TabPages.Remove(MacrosTabPage);
+			//PadTabControl.TabPages.Remove(MacrosTabPage);
 
 			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;

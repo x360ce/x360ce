@@ -102,6 +102,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
 			SettingsManager.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.IsProcessDPIAware, IsProcessDPIAwareCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().

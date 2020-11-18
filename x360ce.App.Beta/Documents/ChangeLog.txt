@@ -1,3 +1,6 @@
+v4.17.7.0 (2020-11-18)
+- New: "Make Application Process DPI Aware." option
+
 v4.17.15.0 (2020-11-15)
 - Fixed: Crash when selecting unavailable game.
 - Fixed: Crash when loading user device capabilities.
@@ -13,7 +16,7 @@ v4.17.12.0 (2020-11-15)
 - Fixed: Anti Dead Zone settings reset on application load.
 - Fixed: Crash when scanning large files for XInput support.
 - Update: Scanning files for XInput support is much faster now.
-- New: Clear option in on Trigger and Thumb map page.
+- New: Clear option on Trigger and Thumb map page.
 - New: Option to auto switch configuration when game focused.
 
 v4.16.8.0 (2020-10-25)
