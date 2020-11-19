@@ -1,20 +1,21 @@
 ﻿using System;
-using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
 {
-	public partial class UserMacro: IDisplayName
+	public partial class UserMacro : IDisplayName
 	{
 		public UserMacro()
 		{
 			Id = Guid.NewGuid();
 			Created = DateTime.Now;
 			Updated = Created;
+			MapRangeMin = 1;
+			MapRangeMax = 1;
 		}
 
 		public void LoadGuideButton()
 		{
-			Text = "{LWin}{G}";
+			Text = "{7}";
 			MapType = (int)Engine.MapType.Button;
 			MapRangeMin = 1;
 			MapRangeMax = 1;

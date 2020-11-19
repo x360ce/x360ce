@@ -3,9 +3,11 @@ using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 using x360ce.Engine.Maps;
@@ -28,6 +30,7 @@ namespace x360ce.App.Controls
 				return;
 			_Recorder = new Recorder();
 		}
+
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -132,7 +135,10 @@ namespace x360ce.App.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			DeleteButton.IsEnabled = MainDataGrid.SelectedItems.Count > 0;
+			var isSelected = MainDataGrid.SelectedItem != null;
+			DeleteButton.IsEnabled = isSelected;
+			SaveButton.IsEnabled = isSelected;
+			Load((UserMacro)MainDataGrid.SelectedItem);
 		}
 
 		public void RefreshList(bool restoreDefault = false)
@@ -201,22 +207,58 @@ namespace x360ce.App.Controls
 			// Use begin invoke or grid update will deadlock on same thread.
 			ControlsHelper.BeginInvoke(() =>
 			{
-				var item = new UserMacro();
-				item.Name = NameTextBox.Text;
-				item.Text = MacroText.Text;
-				item.MapType = (int)SettingsParser.TryParseValue(MapTypeComboBox.Text, MapType.Button);
-				item.MapIndex = SettingsParser.TryParseValue(MapIndexTextBox.Text, 0);
-				item.MapEventType = (int)SettingsParser.TryParseValue(MapEventTypeComboBox.Text, MapEventType.EnterUpLeaveDown);
-				item.MapRpmType = (int)SettingsParser.TryParseValue(MapRpmTypeComboBox.Text, MapRpmType.DownIncrease);
-				item.MapRangeMin = SettingsParser.TryParseValue(MapRangeMin.Text, 0);
-				item.MapRangeMax = SettingsParser.TryParseValue(MapRangeMin.Text, 0);
-				item.MapRpmMin = SettingsParser.TryParseValue(MapRpmMin.Text, 0);
-				item.MapRpmMax = SettingsParser.TryParseValue(MapRpmMax.Text, 0);
-				// Assing to current controller.
-				item.SettingId = _UserSetting.SettingId;
-				SettingsManager.UserMacros.Add(item);
+				Upsert();
 				RefreshList();
 			});
+		}
+
+		private void SaveButton_Click(object sender, RoutedEventArgs e)
+		{
+			// Use begin invoke or grid update will deadlock on same thread.
+			ControlsHelper.BeginInvoke(() =>
+			{
+				var item = (UserMacro)MainDataGrid.SelectedItem;
+				Upsert(item);
+			});
+		}
+
+		private void Load(UserMacro item = null)
+		{
+			var isNew = item == null;
+			if (isNew)
+				item = new UserMacro();
+			NameTextBox.Text= item.Name;
+			MacroText.Text = item.Text;
+			MapTypeComboBox.SelectedItem = (MapType)item.MapType;
+			MapIndexTextBox.Text = item.MapIndex.ToString();
+			MapEventTypeComboBox.SelectedItem = (MapEventType)item.MapEventType;
+			MapRpmTypeComboBox.SelectedItem = (MapRpmType)item.MapRpmType;
+			MapRangeMin.Text = item.MapRangeMin.ToString();
+			MapRangeMax.Text = item.MapRangeMax.ToString();
+			MapRpmMin.Text = item.MapRpmMin.ToString();
+			MapRpmMax.Text = item.MapRpmMax.ToString();
+		}
+
+
+		private void Upsert(UserMacro item = null)
+		{
+			var isNew = item == null;
+			if (isNew)
+				item = new UserMacro();
+			item.Name = NameTextBox.Text;
+			item.Text = MacroText.Text;
+			item.MapType = (int)SettingsParser.TryParseValue(MapTypeComboBox.Text, MapType.Button);
+			item.MapIndex = SettingsParser.TryParseValue(MapIndexTextBox.Text, 0);
+			item.MapEventType = (int)SettingsParser.TryParseValue(MapEventTypeComboBox.Text, MapEventType.EnterUpLeaveDown);
+			item.MapRpmType = (int)SettingsParser.TryParseValue(MapRpmTypeComboBox.Text, MapRpmType.DownIncrease);
+			item.MapRangeMin = SettingsParser.TryParseValue(MapRangeMin.Text, 0);
+			item.MapRangeMax = SettingsParser.TryParseValue(MapRangeMin.Text, 0);
+			item.MapRpmMin = SettingsParser.TryParseValue(MapRpmMin.Text, 0);
+			item.MapRpmMax = SettingsParser.TryParseValue(MapRpmMax.Text, 0);
+			// Assing to current controller.
+			item.SettingId = _UserSetting.SettingId;
+			if (isNew)
+				SettingsManager.UserMacros.Add(item);
 		}
 
 		#endregion

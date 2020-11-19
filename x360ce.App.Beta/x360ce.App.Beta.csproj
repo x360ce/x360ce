@@ -300,6 +300,7 @@
     <Compile Include="Controls\PadTabPages\XInputControl.xaml.cs">
       <DependentUpon>XInputControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Forms\BaseFormWithHeader.cs">
       <SubType>Form</SubType>
     </Compile>
