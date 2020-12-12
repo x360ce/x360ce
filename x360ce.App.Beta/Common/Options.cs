@@ -186,7 +186,7 @@ namespace x360ce.App
 		bool _AutoDetectForegroundWindow = true;
 
 
-		[DefaultValue(false), Description("Make application process DPI aware.")]
+		[DefaultValue(true), Description("Make application process DPI aware.")]
 		public bool IsProcessDPIAware
 		{
 			get { return _IsProcessDPIAware; }
