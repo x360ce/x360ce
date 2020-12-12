@@ -27,10 +27,6 @@ namespace x360ce.App
 	{
 		public MainForm()
 		{
-			AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-			//AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			//AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			ControlsHelper.InitInvokeContext();
 			// Disable some functionality in Visual Studio Interface design mode.
 			if (!IsDesignMode)

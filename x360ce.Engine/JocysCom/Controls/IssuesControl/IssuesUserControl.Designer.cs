@@ -118,7 +118,6 @@
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 1, 1, 0);
-			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.GamesToolStrip.Size = new System.Drawing.Size(605, 28);
 			this.GamesToolStrip.TabIndex = 24;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";

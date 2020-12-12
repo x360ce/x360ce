@@ -252,7 +252,6 @@
 			// IsProcessDPIAwareCheckBox
 			// 
 			this.IsProcessDPIAwareCheckBox.AutoSize = true;
-			this.IsProcessDPIAwareCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.IsProcessDPIAwareCheckBox.Location = new System.Drawing.Point(6, 100);
 			this.IsProcessDPIAwareCheckBox.Name = "IsProcessDPIAwareCheckBox";
 			this.IsProcessDPIAwareCheckBox.Size = new System.Drawing.Size(209, 18);
@@ -262,7 +261,6 @@
 			// StartWithWindowsCheckBox
 			// 
 			this.StartWithWindowsCheckBox.AutoSize = true;
-			this.StartWithWindowsCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.StartWithWindowsCheckBox.Location = new System.Drawing.Point(6, 76);
 			this.StartWithWindowsCheckBox.Name = "StartWithWindowsCheckBox";
 			this.StartWithWindowsCheckBox.Size = new System.Drawing.Size(126, 18);
@@ -272,7 +270,6 @@
 			// AlwaysOnTopCheckBox
 			// 
 			this.AlwaysOnTopCheckBox.AutoSize = true;
-			this.AlwaysOnTopCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.AlwaysOnTopCheckBox.Location = new System.Drawing.Point(120, 52);
 			this.AlwaysOnTopCheckBox.Name = "AlwaysOnTopCheckBox";
 			this.AlwaysOnTopCheckBox.Size = new System.Drawing.Size(102, 18);
@@ -282,7 +279,6 @@
 			// MinimizeToTrayCheckBox
 			// 
 			this.MinimizeToTrayCheckBox.AutoSize = true;
-			this.MinimizeToTrayCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
 			this.MinimizeToTrayCheckBox.Location = new System.Drawing.Point(6, 52);
 			this.MinimizeToTrayCheckBox.Name = "MinimizeToTrayCheckBox";
 			this.MinimizeToTrayCheckBox.Size = new System.Drawing.Size(108, 18);
@@ -304,7 +300,6 @@
 			this.ProgramScanLocationsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ProgramScanLocationsTabControl.Controls.Add(this.GameScanLocationsTabPage);
-			this.ProgramScanLocationsTabControl.ItemSize = new System.Drawing.Size(116, 24);
 			this.ProgramScanLocationsTabControl.Location = new System.Drawing.Point(263, 9);
 			this.ProgramScanLocationsTabControl.Name = "ProgramScanLocationsTabControl";
 			this.ProgramScanLocationsTabControl.SelectedIndex = 0;
@@ -344,7 +339,6 @@
             this.AddLocationButton});
 			this.LocationsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.LocationsToolStrip.Name = "LocationsToolStrip";
-			this.LocationsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.LocationsToolStrip.Size = new System.Drawing.Size(370, 27);
 			this.LocationsToolStrip.TabIndex = 2;
 			this.LocationsToolStrip.Text = "MySettingsToolStrip";
@@ -988,6 +982,8 @@
 			// 
 			// OptionsUserControl
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.MainTabControl);
 			this.Name = "OptionsUserControl";
 			this.Size = new System.Drawing.Size(658, 496);

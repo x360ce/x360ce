@@ -832,7 +832,16 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region IsDesignMode
 
-		public static bool _IsDesignMode(IComponent component, IComponent parent)
+		private static bool? _IsDesignMode;
+
+		public static bool IsDesignMode(Component component)
+		{
+			if (!_IsDesignMode.HasValue)
+				_IsDesignMode = IsDesignMode1(component);
+			return _IsDesignMode.Value;
+		}
+
+		private static bool IsDesignMode2(IComponent component, IComponent parent)
 		{
 			// Check 1.
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
@@ -849,15 +858,15 @@ namespace JocysCom.ClassLibrary.Controls
 			return false;
 		}
 
-		public static bool IsDesignMode(Component component)
+		private static bool IsDesignMode1(Component component)
 		{
 			var form = component as Form;
 			if (form != null)
-				return _IsDesignMode(form, form.ParentForm ?? form.Owner);
+				return IsDesignMode2(form, form.ParentForm ?? form.Owner);
 			var control = component as Control;
 			if (control != null)
-				return _IsDesignMode(control, control.Parent);
-			return _IsDesignMode(component, null);
+				return IsDesignMode2(control, control.Parent);
+			return IsDesignMode2(component, null);
 		}
 
 		#endregion

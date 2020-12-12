@@ -114,6 +114,10 @@ namespace x360ce.App
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
 			MainForm.Current = new MainForm();
+			MainForm.Current.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			MainForm.Current.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			MainForm.Current.PerformAutoScale();
+
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
 				MainForm.Current.BroadcastMessage(MainForm.wParam_Close);

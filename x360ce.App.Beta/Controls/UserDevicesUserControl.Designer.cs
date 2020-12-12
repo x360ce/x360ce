@@ -201,7 +201,6 @@
             this.toolStripDropDownButton1});
 			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ControllersToolStrip.Name = "ControllersToolStrip";
-			this.ControllersToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.ControllersToolStrip.Size = new System.Drawing.Size(717, 25);
 			this.ControllersToolStrip.TabIndex = 1;
 			this.ControllersToolStrip.Text = "MySettingsToolStrip";
@@ -289,6 +288,8 @@
 			// 
 			// UserDevicesUserControl
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.DevicesDataGridView);
 			this.Controls.Add(this.ControllersToolStrip);
 			this.Name = "UserDevicesUserControl";

@@ -146,7 +146,6 @@
 			this.ProgramsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ProgramsToolStrip.Name = "ProgramsToolStrip";
 			this.ProgramsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
-			this.ProgramsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.ProgramsToolStrip.Size = new System.Drawing.Size(857, 25);
 			this.ProgramsToolStrip.TabIndex = 6;
 			this.ProgramsToolStrip.Text = "MySettingsToolStrip";
@@ -203,6 +202,8 @@
 			// 
 			// ProgramsGridUserControl
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.ProgramsDataGridView);
 			this.Controls.Add(this.GameDefaultDetailsControl);
 			this.Controls.Add(this.ProgramsToolStrip);

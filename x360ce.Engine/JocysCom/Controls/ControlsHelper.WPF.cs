@@ -43,7 +43,17 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static bool IsDesignMode(UIElement component)
 		{
-			return DesignerProperties.GetIsInDesignMode(component);
+			if (!_IsDesignMode.HasValue)
+				_IsDesignMode = IsDesignMode1(component);
+			return _IsDesignMode.Value;
+		}
+
+		private static bool IsDesignMode1(UIElement component)
+		{
+			if (DesignerProperties.GetIsInDesignMode(component))
+				return true;
+			// If WPF hosted in WinForms.
+			return System.Reflection.Assembly.GetExecutingAssembly().Location.Contains("VisualStudio");
 		}
 
 		#region Apply Grid Border Style

@@ -60,36 +60,40 @@
 			this.ChangeLogTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.ChangeLogTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.ChangeLogTextBox.Location = new System.Drawing.Point(0, 0);
+			this.ChangeLogTextBox.Margin = new System.Windows.Forms.Padding(48, 48, 48, 48);
 			this.ChangeLogTextBox.Multiline = true;
 			this.ChangeLogTextBox.Name = "ChangeLogTextBox";
 			this.ChangeLogTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.ChangeLogTextBox.Size = new System.Drawing.Size(605, 330);
+			this.ChangeLogTextBox.Size = new System.Drawing.Size(968, 572);
 			this.ChangeLogTextBox.TabIndex = 0;
 			// 
 			// AboutDescriptionLabel
 			// 
 			this.AboutDescriptionLabel.AutoSize = true;
-			this.AboutDescriptionLabel.Location = new System.Drawing.Point(148, 37);
+			this.AboutDescriptionLabel.Location = new System.Drawing.Point(152, 41);
+			this.AboutDescriptionLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutDescriptionLabel.Name = "AboutDescriptionLabel";
-			this.AboutDescriptionLabel.Size = new System.Drawing.Size(328, 13);
+			this.AboutDescriptionLabel.Size = new System.Drawing.Size(670, 25);
 			this.AboutDescriptionLabel.TabIndex = 0;
 			this.AboutDescriptionLabel.Text = "Settings editor and test application for XBOX 360 Controller Emulator";
 			// 
 			// AboutWikiLabel
 			// 
 			this.AboutWikiLabel.AutoSize = true;
-			this.AboutWikiLabel.Location = new System.Drawing.Point(148, 109);
+			this.AboutWikiLabel.Location = new System.Drawing.Point(152, 140);
+			this.AboutWikiLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutWikiLabel.Name = "AboutWikiLabel";
-			this.AboutWikiLabel.Size = new System.Drawing.Size(39, 13);
+			this.AboutWikiLabel.Size = new System.Drawing.Size(78, 25);
 			this.AboutWikiLabel.TabIndex = 0;
 			this.AboutWikiLabel.Text = "ViGEm";
 			// 
 			// AboutTocaEditLinkLabel
 			// 
 			this.AboutTocaEditLinkLabel.AutoSize = true;
-			this.AboutTocaEditLinkLabel.Location = new System.Drawing.Point(433, 109);
+			this.AboutTocaEditLinkLabel.Location = new System.Drawing.Point(709, 140);
+			this.AboutTocaEditLinkLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutTocaEditLinkLabel.Name = "AboutTocaEditLinkLabel";
-			this.AboutTocaEditLinkLabel.Size = new System.Drawing.Size(126, 13);
+			this.AboutTocaEditLinkLabel.Size = new System.Drawing.Size(239, 25);
 			this.AboutTocaEditLinkLabel.TabIndex = 0;
 			this.AboutTocaEditLinkLabel.TabStop = true;
 			this.AboutTocaEditLinkLabel.Text = "http://www.tocaedit.com";
@@ -98,18 +102,20 @@
 			// AboutTocaLabel
 			// 
 			this.AboutTocaLabel.AutoSize = true;
-			this.AboutTocaLabel.Location = new System.Drawing.Point(351, 109);
+			this.AboutTocaLabel.Location = new System.Drawing.Point(542, 140);
+			this.AboutTocaLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutTocaLabel.Name = "AboutTocaLabel";
-			this.AboutTocaLabel.Size = new System.Drawing.Size(62, 13);
+			this.AboutTocaLabel.Size = new System.Drawing.Size(119, 25);
 			this.AboutTocaLabel.TabIndex = 0;
 			this.AboutTocaLabel.Text = "ToCA EDIT";
 			// 
 			// AboutJocysLinkLabel
 			// 
 			this.AboutJocysLinkLabel.AutoSize = true;
-			this.AboutJocysLinkLabel.Location = new System.Drawing.Point(211, 87);
+			this.AboutJocysLinkLabel.Location = new System.Drawing.Point(282, 107);
+			this.AboutJocysLinkLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutJocysLinkLabel.Name = "AboutJocysLinkLabel";
-			this.AboutJocysLinkLabel.Size = new System.Drawing.Size(117, 13);
+			this.AboutJocysLinkLabel.Size = new System.Drawing.Size(224, 25);
 			this.AboutJocysLinkLabel.TabIndex = 0;
 			this.AboutJocysLinkLabel.TabStop = true;
 			this.AboutJocysLinkLabel.Text = "https://www.jocys.com";
@@ -118,9 +124,10 @@
 			// AboutVirusLinkLabel
 			// 
 			this.AboutVirusLinkLabel.AutoSize = true;
-			this.AboutVirusLinkLabel.Location = new System.Drawing.Point(433, 87);
+			this.AboutVirusLinkLabel.Location = new System.Drawing.Point(709, 107);
+			this.AboutVirusLinkLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutVirusLinkLabel.Name = "AboutVirusLinkLabel";
-			this.AboutVirusLinkLabel.Size = new System.Drawing.Size(166, 13);
+			this.AboutVirusLinkLabel.Size = new System.Drawing.Size(321, 25);
 			this.AboutVirusLinkLabel.TabIndex = 0;
 			this.AboutVirusLinkLabel.TabStop = true;
 			this.AboutVirusLinkLabel.Text = "https://github.com/Nucleoprotein";
@@ -129,55 +136,62 @@
 			// AboutJocysLabel
 			// 
 			this.AboutJocysLabel.AutoSize = true;
-			this.AboutJocysLabel.Location = new System.Drawing.Point(148, 87);
+			this.AboutJocysLabel.Location = new System.Drawing.Point(152, 107);
+			this.AboutJocysLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutJocysLabel.Name = "AboutJocysLabel";
-			this.AboutJocysLabel.Size = new System.Drawing.Size(57, 13);
+			this.AboutJocysLabel.Size = new System.Drawing.Size(114, 25);
 			this.AboutJocysLabel.TabIndex = 0;
 			this.AboutJocysLabel.Text = "Jocys.com";
 			// 
 			// AboutVirusLabel
 			// 
 			this.AboutVirusLabel.AutoSize = true;
-			this.AboutVirusLabel.Location = new System.Drawing.Point(351, 87);
+			this.AboutVirusLabel.Location = new System.Drawing.Point(542, 107);
+			this.AboutVirusLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutVirusLabel.Name = "AboutVirusLabel";
-			this.AboutVirusLabel.Size = new System.Drawing.Size(73, 13);
+			this.AboutVirusLabel.Size = new System.Drawing.Size(145, 25);
 			this.AboutVirusLabel.TabIndex = 0;
 			this.AboutVirusLabel.Text = "Nucleoprotein";
 			// 
 			// AboutProductLabel
 			// 
 			this.AboutProductLabel.AutoSize = true;
-			this.AboutProductLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.AboutProductLabel.Location = new System.Drawing.Point(148, 16);
+			this.AboutProductLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.AboutProductLabel.Location = new System.Drawing.Point(152, 8);
+			this.AboutProductLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutProductLabel.Name = "AboutProductLabel";
-			this.AboutProductLabel.Size = new System.Drawing.Size(197, 13);
+			this.AboutProductLabel.Size = new System.Drawing.Size(366, 25);
 			this.AboutProductLabel.TabIndex = 0;
 			this.AboutProductLabel.Text = "XBOX 360 Controller Emulator {0}";
 			// 
 			// ProductPictureBox
 			// 
 			this.ProductPictureBox.Image = ((System.Drawing.Image)(resources.GetObject("ProductPictureBox.Image")));
-			this.ProductPictureBox.Location = new System.Drawing.Point(3, 3);
+			this.ProductPictureBox.Location = new System.Drawing.Point(8, 8);
+			this.ProductPictureBox.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.ProductPictureBox.Name = "ProductPictureBox";
 			this.ProductPictureBox.Size = new System.Drawing.Size(128, 128);
+			this.ProductPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
 			this.ProductPictureBox.TabIndex = 0;
 			this.ProductPictureBox.TabStop = false;
 			// 
 			// GoogleProjectLabel
 			// 
 			this.GoogleProjectLabel.AutoSize = true;
-			this.GoogleProjectLabel.Location = new System.Drawing.Point(351, 66);
+			this.GoogleProjectLabel.Location = new System.Drawing.Point(542, 74);
+			this.GoogleProjectLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.GoogleProjectLabel.Name = "GoogleProjectLabel";
-			this.GoogleProjectLabel.Size = new System.Drawing.Size(76, 13);
+			this.GoogleProjectLabel.Size = new System.Drawing.Size(151, 25);
 			this.GoogleProjectLabel.TabIndex = 0;
 			this.GoogleProjectLabel.Text = "GitHub Project";
 			// 
 			// GoogleProjectLinkLabel
 			// 
 			this.GoogleProjectLinkLabel.AutoSize = true;
-			this.GoogleProjectLinkLabel.Location = new System.Drawing.Point(433, 66);
+			this.GoogleProjectLinkLabel.Location = new System.Drawing.Point(709, 74);
+			this.GoogleProjectLinkLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.GoogleProjectLinkLabel.Name = "GoogleProjectLinkLabel";
-			this.GoogleProjectLinkLabel.Size = new System.Drawing.Size(175, 13);
+			this.GoogleProjectLinkLabel.Size = new System.Drawing.Size(334, 25);
 			this.GoogleProjectLinkLabel.TabIndex = 0;
 			this.GoogleProjectLinkLabel.TabStop = true;
 			this.GoogleProjectLinkLabel.Text = "https://github.com/x360ce/x360ce";
@@ -190,18 +204,20 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.AboutTabControl.Controls.Add(this.ChangesTabPage);
 			this.AboutTabControl.Controls.Add(this.LicenseTabPage);
-			this.AboutTabControl.Location = new System.Drawing.Point(3, 137);
+			this.AboutTabControl.Location = new System.Drawing.Point(8, 173);
+			this.AboutTabControl.Margin = new System.Windows.Forms.Padding(8);
 			this.AboutTabControl.Name = "AboutTabControl";
 			this.AboutTabControl.SelectedIndex = 0;
-			this.AboutTabControl.Size = new System.Drawing.Size(613, 356);
+			this.AboutTabControl.Size = new System.Drawing.Size(1051, 619);
 			this.AboutTabControl.TabIndex = 1;
 			// 
 			// ChangesTabPage
 			// 
 			this.ChangesTabPage.Controls.Add(this.ChangeLogTextBox);
-			this.ChangesTabPage.Location = new System.Drawing.Point(4, 22);
+			this.ChangesTabPage.Location = new System.Drawing.Point(8, 39);
+			this.ChangesTabPage.Margin = new System.Windows.Forms.Padding(48, 48, 48, 48);
 			this.ChangesTabPage.Name = "ChangesTabPage";
-			this.ChangesTabPage.Size = new System.Drawing.Size(605, 330);
+			this.ChangesTabPage.Size = new System.Drawing.Size(968, 572);
 			this.ChangesTabPage.TabIndex = 0;
 			this.ChangesTabPage.Text = "Changes";
 			this.ChangesTabPage.UseVisualStyleBackColor = true;
@@ -209,9 +225,10 @@
 			// LicenseTabPage
 			// 
 			this.LicenseTabPage.Controls.Add(this.LicenseTextBox);
-			this.LicenseTabPage.Location = new System.Drawing.Point(4, 22);
+			this.LicenseTabPage.Location = new System.Drawing.Point(8, 39);
+			this.LicenseTabPage.Margin = new System.Windows.Forms.Padding(48, 48, 48, 48);
 			this.LicenseTabPage.Name = "LicenseTabPage";
-			this.LicenseTabPage.Size = new System.Drawing.Size(605, 330);
+			this.LicenseTabPage.Size = new System.Drawing.Size(1035, 572);
 			this.LicenseTabPage.TabIndex = 1;
 			this.LicenseTabPage.Text = "License";
 			this.LicenseTabPage.UseVisualStyleBackColor = true;
@@ -221,18 +238,20 @@
 			this.LicenseTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.LicenseTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LicenseTextBox.Location = new System.Drawing.Point(0, 0);
+			this.LicenseTextBox.Margin = new System.Windows.Forms.Padding(48, 48, 48, 48);
 			this.LicenseTextBox.Multiline = true;
 			this.LicenseTextBox.Name = "LicenseTextBox";
 			this.LicenseTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.LicenseTextBox.Size = new System.Drawing.Size(605, 330);
+			this.LicenseTextBox.Size = new System.Drawing.Size(1035, 572);
 			this.LicenseTextBox.TabIndex = 1;
 			// 
 			// AboutViGEmLinkLabel
 			// 
 			this.AboutViGEmLinkLabel.AutoSize = true;
-			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(211, 109);
+			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(282, 140);
+			this.AboutViGEmLinkLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
-			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
+			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(171, 25);
 			this.AboutViGEmLinkLabel.TabIndex = 0;
 			this.AboutViGEmLinkLabel.TabStop = true;
 			this.AboutViGEmLinkLabel.Text = "https://vigem.org";
@@ -241,18 +260,20 @@
 			// x360ceLabel
 			// 
 			this.x360ceLabel.AutoSize = true;
-			this.x360ceLabel.Location = new System.Drawing.Point(148, 66);
+			this.x360ceLabel.Location = new System.Drawing.Point(152, 74);
+			this.x360ceLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.x360ceLabel.Name = "x360ceLabel";
-			this.x360ceLabel.Size = new System.Drawing.Size(46, 13);
+			this.x360ceLabel.Size = new System.Drawing.Size(91, 25);
 			this.x360ceLabel.TabIndex = 0;
 			this.x360ceLabel.Text = "X360CE";
 			// 
 			// x360ceLinkLabel
 			// 
 			this.x360ceLinkLabel.AutoSize = true;
-			this.x360ceLinkLabel.Location = new System.Drawing.Point(211, 66);
+			this.x360ceLinkLabel.Location = new System.Drawing.Point(282, 74);
+			this.x360ceLinkLabel.Margin = new System.Windows.Forms.Padding(8, 8, 8, 0);
 			this.x360ceLinkLabel.Name = "x360ceLinkLabel";
-			this.x360ceLinkLabel.Size = new System.Drawing.Size(128, 13);
+			this.x360ceLinkLabel.Size = new System.Drawing.Size(244, 25);
 			this.x360ceLinkLabel.TabIndex = 0;
 			this.x360ceLinkLabel.TabStop = true;
 			this.x360ceLinkLabel.Text = "https://www.x360ce.com";
@@ -260,6 +281,8 @@
 			// 
 			// AboutControl
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.AboutTabControl);
 			this.Controls.Add(this.AboutDescriptionLabel);
 			this.Controls.Add(this.x360ceLinkLabel);
@@ -276,8 +299,9 @@
 			this.Controls.Add(this.AboutVirusLabel);
 			this.Controls.Add(this.AboutProductLabel);
 			this.Controls.Add(this.ProductPictureBox);
+			this.Margin = new System.Windows.Forms.Padding(8);
 			this.Name = "AboutControl";
-			this.Size = new System.Drawing.Size(619, 496);
+			this.Size = new System.Drawing.Size(1067, 800);
 			this.Load += new System.EventHandler(this.AboutControl_Load);
 			((System.ComponentModel.ISupportInitialize)(this.ProductPictureBox)).EndInit();
 			this.AboutTabControl.ResumeLayout(false);

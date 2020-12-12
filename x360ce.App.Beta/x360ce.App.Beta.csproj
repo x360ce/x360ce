@@ -235,6 +235,9 @@
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\OptionsHidGuardianControl.xaml.cs">
+      <DependentUpon>OptionsHidGuardianControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\OptionsInternetUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -299,6 +302,12 @@
     </Compile>
     <Compile Include="Controls\PadTabPages\XInputControl.xaml.cs">
       <DependentUpon>XInputControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\_TempUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\_TempUserControl.Designer.cs">
+      <DependentUpon>_TempUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Forms\BaseFormWithHeader.cs">
@@ -480,6 +489,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\UserDevicesUserControl.resx">
       <DependentUpon>UserDevicesUserControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\_TempUserControl.resx">
+      <DependentUpon>_TempUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BaseFormWithHeader.resx">
       <DependentUpon>BaseFormWithHeader.cs</DependentUpon>
@@ -763,6 +775,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\OptionsHidGuardianControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\PadTabPages\MacrosControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

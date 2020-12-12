@@ -146,7 +146,6 @@
             this.SummariesRefreshButton});
 			this.SummariesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.SummariesToolStrip.Name = "SummariesToolStrip";
-			this.SummariesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.SummariesToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.SummariesToolStrip.TabIndex = 4;
 			this.SummariesToolStrip.Text = "MySettingsToolStrip";
@@ -163,6 +162,8 @@
 			// 
 			// SummariesGridUserControl
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.SummariesDataGridView);
 			this.Controls.Add(this.SummariesToolStrip);
 			this.Name = "SummariesGridUserControl";

@@ -205,7 +205,6 @@
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
-			this.GamesToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.GamesToolStrip.Size = new System.Drawing.Size(781, 31);
 			this.GamesToolStrip.TabIndex = 2;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
@@ -368,6 +367,8 @@
 			// 
 			// GamesGridUserControl
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.ScanProgressPanel);
 			this.Controls.Add(this.GamesDataGridView);
 			this.Controls.Add(this.GameDetailsControl);
@@ -388,6 +389,7 @@
 		}
 
 		#endregion
+
 		private System.Windows.Forms.OpenFileDialog AddGameOpenFileDialog;
 		private System.Windows.Forms.Label ScanProgressLevel0Label;
 		private System.Windows.Forms.ToolStrip GamesToolStrip;

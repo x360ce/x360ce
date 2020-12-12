@@ -148,7 +148,6 @@ namespace x360ce.App.Controls
             this.LogSizeComboBox});
             this.LogToolStrip.Location = new System.Drawing.Point(0, 0);
             this.LogToolStrip.Name = "LogToolStrip";
-            this.LogToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.LogToolStrip.Size = new System.Drawing.Size(744, 28);
             this.LogToolStrip.TabIndex = 8;
             this.LogToolStrip.Text = "toolStrip2";
@@ -184,6 +183,8 @@ namespace x360ce.App.Controls
             // 
             // LogUserControl
             // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.LogDataGridView);
             this.Controls.Add(this.LogToolStrip);
             this.DoubleBuffered = true;

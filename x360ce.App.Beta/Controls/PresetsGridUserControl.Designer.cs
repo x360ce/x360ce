@@ -133,7 +133,6 @@
             this.PresetRefreshButton});
 			this.PresetsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.PresetsToolStrip.Name = "PresetsToolStrip";
-			this.PresetsToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
 			this.PresetsToolStrip.Size = new System.Drawing.Size(480, 25);
 			this.PresetsToolStrip.TabIndex = 5;
 			this.PresetsToolStrip.Text = "MySettingsToolStrip";
@@ -150,6 +149,8 @@
 			// 
 			// PresetsGridUserControl
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.PresetsDataGridView);
 			this.Controls.Add(this.PresetsToolStrip);
 			this.Name = "PresetsGridUserControl";

@@ -34,6 +34,8 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			// Subscribe to global events.
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Subscribe to parent control events.

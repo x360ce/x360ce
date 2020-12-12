@@ -35,14 +35,23 @@
 
 	<!--  Button  -->
 
-	<Style x:Key="Button" TargetType="Button">
+	<Style x:Key="Button_Default" TargetType="Button">
+		<Setter Property="Height" Value="Auto" />
 		<Setter Property="Margin" Value="3,3,3,3" />
+		<Setter Property="Padding" Value="3,3,3,3" />
+		<Setter Property="MinWidth" Value="75" />
+		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
+
+	<Style x:Key="Button" BasedOn="{StaticResource Button_Default}" TargetType="Button" />
+
+	<Style BasedOn="{StaticResource Button_Default}" TargetType="Button" />
+
+	<!--  Button -ToolBar  -->
 
 	<Style x:Key="ToolBarButton" TargetType="Button">
 		<Setter Property="Margin" Value="0,0,0,0" />
 	</Style>
-
 
 	<!--  TextBox  -->
 
@@ -145,6 +154,7 @@
 		<Setter Property="Margin" Value="3,3,3,3" />
 		<Setter Property="Padding" Value="3,3,3,3" />
 		<Setter Property="Height" Value="Auto" />
+		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
 	<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />

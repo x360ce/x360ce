@@ -36,13 +36,13 @@
 			this.DInputValueLabel = new System.Windows.Forms.Label();
 			this.PresetMenuStrip = new System.Windows.Forms.MenuStrip();
 			this.ApplyPresetMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.P_0_0_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.P_5_100_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.P_0_100_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.P_0_80_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.P_0_60_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.P_0_40_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.P_0_20_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.P_0_0_0_MenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			((System.ComponentModel.ISupportInitialize)(this.SensitivityTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).BeginInit();
 			this.MainGroupBox.SuspendLayout();
@@ -57,19 +57,21 @@
 			// DInputLabel
 			// 
 			this.DInputLabel.AutoSize = true;
-			this.DInputLabel.Location = new System.Drawing.Point(6, 20);
+			this.DInputLabel.Location = new System.Drawing.Point(12, 38);
+			this.DInputLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.DInputLabel.Name = "DInputLabel";
-			this.DInputLabel.Size = new System.Drawing.Size(21, 13);
+			this.DInputLabel.Size = new System.Drawing.Size(38, 25);
 			this.DInputLabel.TabIndex = 7;
 			this.DInputLabel.Text = "DI:";
 			// 
 			// SensitivityTrackBar
 			// 
 			this.SensitivityTrackBar.AutoSize = false;
-			this.SensitivityTrackBar.Location = new System.Drawing.Point(162, 154);
+			this.SensitivityTrackBar.Location = new System.Drawing.Point(324, 296);
+			this.SensitivityTrackBar.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.SensitivityTrackBar.Maximum = 100;
 			this.SensitivityTrackBar.Name = "SensitivityTrackBar";
-			this.SensitivityTrackBar.Size = new System.Drawing.Size(227, 32);
+			this.SensitivityTrackBar.Size = new System.Drawing.Size(454, 62);
 			this.SensitivityTrackBar.TabIndex = 9;
 			this.SensitivityTrackBar.TickFrequency = 2;
 			this.SensitivityTrackBar.ValueChanged += new System.EventHandler(this.SensitivityTrackBar_ValueChanged);
@@ -79,9 +81,10 @@
 			this.MainPictureBox.BackColor = System.Drawing.Color.White;
 			this.MainPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.MainPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.MainPictureBox.Location = new System.Drawing.Point(6, 36);
+			this.MainPictureBox.Location = new System.Drawing.Point(12, 69);
+			this.MainPictureBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.MainPictureBox.Name = "MainPictureBox";
-			this.MainPictureBox.Size = new System.Drawing.Size(149, 149);
+			this.MainPictureBox.Size = new System.Drawing.Size(296, 285);
 			this.MainPictureBox.TabIndex = 10;
 			this.MainPictureBox.TabStop = false;
 			this.MainPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.LinearPictureBox_Paint);
@@ -111,7 +114,8 @@
 			this.MainGroupBox.Location = new System.Drawing.Point(0, 0);
 			this.MainGroupBox.Margin = new System.Windows.Forms.Padding(0);
 			this.MainGroupBox.Name = "MainGroupBox";
-			this.MainGroupBox.Size = new System.Drawing.Size(578, 193);
+			this.MainGroupBox.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this.MainGroupBox.Size = new System.Drawing.Size(1156, 371);
 			this.MainGroupBox.TabIndex = 12;
 			this.MainGroupBox.TabStop = false;
 			this.MainGroupBox.Text = "Thumb";
@@ -119,9 +123,10 @@
 			// SensitivityCheckBox
 			// 
 			this.SensitivityCheckBox.AutoSize = true;
-			this.SensitivityCheckBox.Location = new System.Drawing.Point(443, 156);
+			this.SensitivityCheckBox.Location = new System.Drawing.Point(886, 300);
+			this.SensitivityCheckBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.SensitivityCheckBox.Name = "SensitivityCheckBox";
-			this.SensitivityCheckBox.Size = new System.Drawing.Size(53, 17);
+			this.SensitivityCheckBox.Size = new System.Drawing.Size(97, 29);
 			this.SensitivityCheckBox.TabIndex = 20;
 			this.SensitivityCheckBox.Text = "Invert";
 			this.SensitivityCheckBox.UseVisualStyleBackColor = true;
@@ -129,27 +134,29 @@
 			// 
 			// DeadZoneNumericUpDown
 			// 
-			this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 103);
+			this.DeadZoneNumericUpDown.Location = new System.Drawing.Point(888, 198);
+			this.DeadZoneNumericUpDown.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.DeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
             0,
             0});
 			this.DeadZoneNumericUpDown.Name = "DeadZoneNumericUpDown";
-			this.DeadZoneNumericUpDown.Size = new System.Drawing.Size(52, 20);
+			this.DeadZoneNumericUpDown.Size = new System.Drawing.Size(104, 31);
 			this.DeadZoneNumericUpDown.TabIndex = 19;
 			this.DeadZoneNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// SensitivityNumericUpDown
 			// 
-			this.SensitivityNumericUpDown.Location = new System.Drawing.Point(502, 155);
+			this.SensitivityNumericUpDown.Location = new System.Drawing.Point(995, 298);
+			this.SensitivityNumericUpDown.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.SensitivityNumericUpDown.Minimum = new decimal(new int[] {
             100,
             0,
             0,
             -2147483648});
 			this.SensitivityNumericUpDown.Name = "SensitivityNumericUpDown";
-			this.SensitivityNumericUpDown.Size = new System.Drawing.Size(52, 20);
+			this.SensitivityNumericUpDown.Size = new System.Drawing.Size(104, 31);
 			this.SensitivityNumericUpDown.TabIndex = 18;
 			this.SensitivityNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this.SensitivityNumericUpDown.Visible = false;
@@ -157,61 +164,67 @@
 			// 
 			// AntiDeadZoneNumericUpDown
 			// 
-			this.AntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(444, 52);
+			this.AntiDeadZoneNumericUpDown.Location = new System.Drawing.Point(888, 100);
+			this.AntiDeadZoneNumericUpDown.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.AntiDeadZoneNumericUpDown.Maximum = new decimal(new int[] {
             32767,
             0,
             0,
             0});
 			this.AntiDeadZoneNumericUpDown.Name = "AntiDeadZoneNumericUpDown";
-			this.AntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(52, 20);
+			this.AntiDeadZoneNumericUpDown.Size = new System.Drawing.Size(104, 31);
 			this.AntiDeadZoneNumericUpDown.TabIndex = 18;
 			this.AntiDeadZoneNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// AntiDeadZoneLabel
 			// 
 			this.AntiDeadZoneLabel.AutoSize = true;
-			this.AntiDeadZoneLabel.Location = new System.Drawing.Point(159, 36);
+			this.AntiDeadZoneLabel.Location = new System.Drawing.Point(318, 69);
+			this.AntiDeadZoneLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.AntiDeadZoneLabel.Name = "AntiDeadZoneLabel";
-			this.AntiDeadZoneLabel.Size = new System.Drawing.Size(85, 13);
+			this.AntiDeadZoneLabel.Size = new System.Drawing.Size(168, 25);
 			this.AntiDeadZoneLabel.TabIndex = 16;
 			this.AntiDeadZoneLabel.Text = "Anti-Dead Zone:";
 			// 
 			// DeadZoneLabel
 			// 
 			this.DeadZoneLabel.AutoSize = true;
-			this.DeadZoneLabel.Location = new System.Drawing.Point(159, 87);
+			this.DeadZoneLabel.Location = new System.Drawing.Point(318, 167);
+			this.DeadZoneLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.DeadZoneLabel.Name = "DeadZoneLabel";
-			this.DeadZoneLabel.Size = new System.Drawing.Size(64, 13);
+			this.DeadZoneLabel.Size = new System.Drawing.Size(124, 25);
 			this.DeadZoneLabel.TabIndex = 13;
 			this.DeadZoneLabel.Text = "Dead Zone:";
 			// 
 			// AntiDeadZoneTrackBar
 			// 
 			this.AntiDeadZoneTrackBar.AutoSize = false;
-			this.AntiDeadZoneTrackBar.Location = new System.Drawing.Point(162, 52);
+			this.AntiDeadZoneTrackBar.Location = new System.Drawing.Point(324, 100);
+			this.AntiDeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.AntiDeadZoneTrackBar.Maximum = 100;
 			this.AntiDeadZoneTrackBar.Name = "AntiDeadZoneTrackBar";
-			this.AntiDeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
+			this.AntiDeadZoneTrackBar.Size = new System.Drawing.Size(454, 62);
 			this.AntiDeadZoneTrackBar.TabIndex = 15;
 			this.AntiDeadZoneTrackBar.TickFrequency = 2;
 			// 
 			// DeadZoneTrackBar
 			// 
 			this.DeadZoneTrackBar.AutoSize = false;
-			this.DeadZoneTrackBar.Location = new System.Drawing.Point(162, 103);
+			this.DeadZoneTrackBar.Location = new System.Drawing.Point(324, 198);
+			this.DeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.DeadZoneTrackBar.Maximum = 100;
 			this.DeadZoneTrackBar.Name = "DeadZoneTrackBar";
-			this.DeadZoneTrackBar.Size = new System.Drawing.Size(227, 32);
+			this.DeadZoneTrackBar.Size = new System.Drawing.Size(454, 62);
 			this.DeadZoneTrackBar.TabIndex = 15;
 			this.DeadZoneTrackBar.TickFrequency = 2;
 			// 
 			// AntiDeadZoneTextBox
 			// 
-			this.AntiDeadZoneTextBox.Location = new System.Drawing.Point(395, 52);
+			this.AntiDeadZoneTextBox.Location = new System.Drawing.Point(790, 100);
+			this.AntiDeadZoneTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.AntiDeadZoneTextBox.Name = "AntiDeadZoneTextBox";
 			this.AntiDeadZoneTextBox.ReadOnly = true;
-			this.AntiDeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
+			this.AntiDeadZoneTextBox.Size = new System.Drawing.Size(82, 31);
 			this.AntiDeadZoneTextBox.TabIndex = 14;
 			this.AntiDeadZoneTextBox.TabStop = false;
 			this.AntiDeadZoneTextBox.Text = "0 % ";
@@ -219,10 +232,11 @@
 			// 
 			// DeadZoneTextBox
 			// 
-			this.DeadZoneTextBox.Location = new System.Drawing.Point(395, 103);
+			this.DeadZoneTextBox.Location = new System.Drawing.Point(790, 198);
+			this.DeadZoneTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.DeadZoneTextBox.Name = "DeadZoneTextBox";
 			this.DeadZoneTextBox.ReadOnly = true;
-			this.DeadZoneTextBox.Size = new System.Drawing.Size(43, 20);
+			this.DeadZoneTextBox.Size = new System.Drawing.Size(82, 31);
 			this.DeadZoneTextBox.TabIndex = 14;
 			this.DeadZoneTextBox.TabStop = false;
 			this.DeadZoneTextBox.Text = "0 % ";
@@ -230,10 +244,11 @@
 			// 
 			// SensitivityTextBox
 			// 
-			this.SensitivityTextBox.Location = new System.Drawing.Point(395, 154);
+			this.SensitivityTextBox.Location = new System.Drawing.Point(790, 296);
+			this.SensitivityTextBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.SensitivityTextBox.Name = "SensitivityTextBox";
 			this.SensitivityTextBox.ReadOnly = true;
-			this.SensitivityTextBox.Size = new System.Drawing.Size(43, 20);
+			this.SensitivityTextBox.Size = new System.Drawing.Size(82, 31);
 			this.SensitivityTextBox.TabIndex = 8;
 			this.SensitivityTextBox.TabStop = false;
 			this.SensitivityTextBox.Text = "0 %";
@@ -242,27 +257,30 @@
 			// SensitivityLabel
 			// 
 			this.SensitivityLabel.AutoSize = true;
-			this.SensitivityLabel.Location = new System.Drawing.Point(159, 138);
+			this.SensitivityLabel.Location = new System.Drawing.Point(318, 265);
+			this.SensitivityLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.SensitivityLabel.Name = "SensitivityLabel";
-			this.SensitivityLabel.Size = new System.Drawing.Size(57, 13);
+			this.SensitivityLabel.Size = new System.Drawing.Size(116, 25);
 			this.SensitivityLabel.TabIndex = 7;
 			this.SensitivityLabel.Text = "Sensitivity:";
 			// 
 			// XInputLabel
 			// 
 			this.XInputLabel.AutoSize = true;
-			this.XInputLabel.Location = new System.Drawing.Point(81, 20);
+			this.XInputLabel.Location = new System.Drawing.Point(162, 38);
+			this.XInputLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.XInputLabel.Name = "XInputLabel";
-			this.XInputLabel.Size = new System.Drawing.Size(20, 13);
+			this.XInputLabel.Size = new System.Drawing.Size(37, 25);
 			this.XInputLabel.TabIndex = 7;
 			this.XInputLabel.Text = "XI:";
 			// 
 			// XInputValueLabel
 			// 
 			this.XInputValueLabel.ForeColor = System.Drawing.Color.Blue;
-			this.XInputValueLabel.Location = new System.Drawing.Point(107, 20);
+			this.XInputValueLabel.Location = new System.Drawing.Point(214, 38);
+			this.XInputValueLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.XInputValueLabel.Name = "XInputValueLabel";
-			this.XInputValueLabel.Size = new System.Drawing.Size(42, 13);
+			this.XInputValueLabel.Size = new System.Drawing.Size(84, 25);
 			this.XInputValueLabel.TabIndex = 7;
 			this.XInputValueLabel.Text = "0";
 			this.XInputValueLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -270,9 +288,10 @@
 			// DInputValueLabel
 			// 
 			this.DInputValueLabel.ForeColor = System.Drawing.Color.Green;
-			this.DInputValueLabel.Location = new System.Drawing.Point(33, 20);
+			this.DInputValueLabel.Location = new System.Drawing.Point(66, 38);
+			this.DInputValueLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.DInputValueLabel.Name = "DInputValueLabel";
-			this.DInputValueLabel.Size = new System.Drawing.Size(42, 13);
+			this.DInputValueLabel.Size = new System.Drawing.Size(84, 25);
 			this.DInputValueLabel.TabIndex = 7;
 			this.DInputValueLabel.Text = "0";
 			this.DInputValueLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -281,12 +300,14 @@
 			// 
 			this.PresetMenuStrip.AutoSize = false;
 			this.PresetMenuStrip.Dock = System.Windows.Forms.DockStyle.None;
+			this.PresetMenuStrip.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
+			this.PresetMenuStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
 			this.PresetMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ApplyPresetMenuItem});
-			this.PresetMenuStrip.Location = new System.Drawing.Point(395, 16);
+			this.PresetMenuStrip.Location = new System.Drawing.Point(790, 31);
 			this.PresetMenuStrip.Name = "PresetMenuStrip";
 			this.PresetMenuStrip.Padding = new System.Windows.Forms.Padding(0);
-			this.PresetMenuStrip.Size = new System.Drawing.Size(160, 20);
+			this.PresetMenuStrip.Size = new System.Drawing.Size(320, 38);
 			this.PresetMenuStrip.TabIndex = 22;
 			this.PresetMenuStrip.Text = "ApplyPresetsMenuStrip";
 			// 
@@ -301,63 +322,66 @@
             this.P_0_40_0_MenuItem,
             this.P_0_20_0_MenuItem});
 			this.ApplyPresetMenuItem.Name = "ApplyPresetMenuItem";
-			this.ApplyPresetMenuItem.Size = new System.Drawing.Size(156, 20);
+			this.ApplyPresetMenuItem.Size = new System.Drawing.Size(312, 38);
 			this.ApplyPresetMenuItem.Text = "Click Here to Apply Preset";
+			// 
+			// P_0_0_0_MenuItem
+			// 
+			this.P_0_0_0_MenuItem.Name = "P_0_0_0_MenuItem";
+			this.P_0_0_0_MenuItem.Size = new System.Drawing.Size(655, 44);
+			this.P_0_0_0_MenuItem.Text = "Clear";
+			this.P_0_0_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_5_100_0_MenuItem
 			// 
 			this.P_5_100_0_MenuItem.Name = "P_5_100_0_MenuItem";
-			this.P_5_100_0_MenuItem.Size = new System.Drawing.Size(321, 22);
+			this.P_5_100_0_MenuItem.Size = new System.Drawing.Size(655, 44);
 			this.P_5_100_0_MenuItem.Text = "5% DeadZone, 100% Controller Anti-DeadZone";
 			this.P_5_100_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_100_0_MenuItem
 			// 
 			this.P_0_100_0_MenuItem.Name = "P_0_100_0_MenuItem";
-			this.P_0_100_0_MenuItem.Size = new System.Drawing.Size(321, 22);
+			this.P_0_100_0_MenuItem.Size = new System.Drawing.Size(655, 44);
 			this.P_0_100_0_MenuItem.Text = "100% Controller Anti-DeadZone";
 			this.P_0_100_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_80_0_MenuItem
 			// 
 			this.P_0_80_0_MenuItem.Name = "P_0_80_0_MenuItem";
-			this.P_0_80_0_MenuItem.Size = new System.Drawing.Size(321, 22);
+			this.P_0_80_0_MenuItem.Size = new System.Drawing.Size(655, 44);
 			this.P_0_80_0_MenuItem.Text = "80% Controller Anti-DeadZone";
 			this.P_0_80_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_60_0_MenuItem
 			// 
 			this.P_0_60_0_MenuItem.Name = "P_0_60_0_MenuItem";
-			this.P_0_60_0_MenuItem.Size = new System.Drawing.Size(321, 22);
+			this.P_0_60_0_MenuItem.Size = new System.Drawing.Size(655, 44);
 			this.P_0_60_0_MenuItem.Text = "60% Controller Anti-DeadZone";
 			this.P_0_60_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_40_0_MenuItem
 			// 
 			this.P_0_40_0_MenuItem.Name = "P_0_40_0_MenuItem";
-			this.P_0_40_0_MenuItem.Size = new System.Drawing.Size(321, 22);
+			this.P_0_40_0_MenuItem.Size = new System.Drawing.Size(655, 44);
 			this.P_0_40_0_MenuItem.Text = "40% Controller Anti-DeadZone";
 			this.P_0_40_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
 			// P_0_20_0_MenuItem
 			// 
 			this.P_0_20_0_MenuItem.Name = "P_0_20_0_MenuItem";
-			this.P_0_20_0_MenuItem.Size = new System.Drawing.Size(321, 22);
+			this.P_0_20_0_MenuItem.Size = new System.Drawing.Size(655, 44);
 			this.P_0_20_0_MenuItem.Text = "20% Controller Anti-DeadZone";
 			this.P_0_20_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
 			// 
-			// P_0_0_0_MenuItem
-			// 
-			this.P_0_0_0_MenuItem.Name = "P_0_0_0_MenuItem";
-			this.P_0_0_0_MenuItem.Size = new System.Drawing.Size(321, 22);
-			this.P_0_0_0_MenuItem.Text = "Clear";
-			this.P_0_0_0_MenuItem.Click += new System.EventHandler(this.P_X_Y_Z_MenuItem_Click);
-			// 
 			// AxisMapUserControl
 			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.MainGroupBox);
+			this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.Name = "AxisMapUserControl";
-			this.Size = new System.Drawing.Size(578, 193);
+			this.Size = new System.Drawing.Size(1156, 371);
 			this.EnabledChanged += new System.EventHandler(this.ThumbUserControl_EnabledChanged);
 			((System.ComponentModel.ISupportInitialize)(this.SensitivityTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.MainPictureBox)).EndInit();

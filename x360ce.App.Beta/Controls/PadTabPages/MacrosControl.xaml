@@ -46,7 +46,7 @@
 								</StackPanel>
 							</Button>
 
-							<Button Name="SaveButton" Style="{StaticResource ToolBarButton}" Click="SaveButton_Click">
+							<Button Name="SaveButton" Click="SaveButton_Click" Style="{StaticResource ToolBarButton}">
 								<StackPanel Style="{StaticResource ButtonStackPanel}">
 									<ContentControl Content="{StaticResource Icon_Save}" Style="{StaticResource ButtonContentControl}" />
 									<Label Content="Save" Style="{StaticResource ButtonLabel}" />
