@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#if NETCOREAPP
+using Microsoft.Extensions.Configuration;
+#endif
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -16,18 +13,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 	public class TraceHelper
 	{
 
-		public static void AddLog(string sourceName, TraceEventType eventType, params object[] data)
-		{
-			// Add source
-			var source = new TraceSource(sourceName);
-			//source.Listeners.Add(_Listener);
-			//source.Switch.Level = SourceLevels.All;
-			source.TraceData(eventType, 0, data);
-			source.Flush();
-			source.Close();
-		}
-
-		public static void AddLog(string sourceName, TraceEventType eventType, NameValueCollection collection)
+		public static string GetAsString(NameValueCollection collection)
 		{
 			// Write Data.
 			var settings = new XmlWriterSettings();
@@ -46,32 +32,114 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			}
 			writer.WriteEndElement();
 			writer.Flush();
-			AddXml(sourceName, eventType, sb.ToString());
 			writer.Close();
+			return sb.ToString();
+		}
 
+		public static void AddLog(string sourceName, TraceEventType eventType, NameValueCollection collection)
+		{
+			var xml = GetAsString(collection);
+			AddXml(sourceName, eventType, xml);
 		}
 
 		static void AddXml(string sourceName, TraceEventType eventType, string xml)
 		{
 			using (var sr = new StringReader(xml))
+			using (var tr = new XmlTextReader(sr))
 			{
-				using (var tr = new XmlTextReader(sr))
+				// Settings used to protect from
+				// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+				// https://cwe.mitre.org/data/definitions/611.html
+				var settings = new XmlReaderSettings();
+				settings.DtdProcessing = DtdProcessing.Ignore;
+				settings.XmlResolver = null;
+				using (var xr = XmlReader.Create(tr, settings))
 				{
-					// Settings used to protect from
-					// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
-					// https://cwe.mitre.org/data/definitions/611.html
-					var settings = new XmlReaderSettings();
-					settings.DtdProcessing = DtdProcessing.Ignore;
-					settings.XmlResolver = null;
-					using (var xr = XmlReader.Create(tr, settings))
-					{
-						var doc = new XPathDocument(tr);
-						var nav = doc.CreateNavigator();
-						AddLog(sourceName, eventType, nav);
-					}
+					var doc = new XPathDocument(tr);
+					var nav = doc.CreateNavigator();
+					AddLog(sourceName, eventType, nav);
 				}
 			}
 		}
+
+		public static void AddLog(string sourceName, TraceEventType eventType, params object[] data)
+		{
+			var source = new TraceSource(sourceName);
+#if NETCOREAPP
+			// Web.config is not available in .NET Core, therefore must manually config.
+			Configure(source);
+#endif
+			source.TraceData(eventType, 0, data);
+			source.Flush();
+			source.Close();
+		}
+
+#if NETCOREAPP
+
+		#region TraceOptions
+
+		private static IConfiguration _Configuration { get; set; }
+
+		public static void Configure(IConfiguration configuration)
+		{
+			_Configuration = configuration;
+			Configure();
+		}
+		/// <summary>
+		/// Configure specified or default Trace source.
+		/// </summary>
+		/// <param name="source">Trace source to configure. Configure default if null.</param>
+		public static void Configure(TraceSource source = null)
+		{
+			var sourcesSection = _Configuration.GetSection(nameof(TraceSource));
+			var isDefault = source == null;
+			var sourceName = isDefault ? "Default" : source.Name;
+			var sourceSection = sourcesSection.GetSection(sourceName);
+			// If source section configuration do not exists then return.
+			if (!sourceSection.Exists())
+				return;
+			// If default / global source then...
+			if (isDefault)
+			{
+				// Update default/global TraceSource.
+				Trace.AutoFlush = sourceSection.GetValue(nameof(Trace.AutoFlush), false);
+			}
+			else
+			{
+				// Update specified source.
+				sourceSection.Bind(nameof(TraceSource.Switch), source.Switch);
+			}
+			var listenersSection = _Configuration.GetSection(nameof(TraceListener));
+			// If listener section configuration do not exists then return.
+			if (!listenersSection.Exists())
+				return;
+			// Get specified source or default source listeners.
+			var listeners = isDefault ? Trace.Listeners : source.Listeners;
+			listeners.Clear();
+			// Get listener names as string array.
+			var listenerNames = sourceSection.GetSection(nameof(TraceSource.Listeners)).Get<string[]>();
+			if (listenerNames == null)
+				return;
+			foreach (var listenerName in listenerNames)
+			{
+				var section = listenersSection.GetSection(listenerName);
+				var typeName = section.GetValue<string>(nameof(System.Type));
+				var args = section.GetValue<string>("InitializeData");
+				var t = System.Type.GetType(typeName);
+				var o = (TraceListener)System.Activator.CreateInstance(t, args);
+				var attributes = section.GetSection(nameof(TraceListener.Attributes)).GetChildren();
+				o.Attributes.Clear();
+				foreach (var a in attributes)
+					o.Attributes.Add(a.Key, a.Value);
+				listeners.Add(o);
+			}
+		}
+
+		#endregion
+
+#endif
+
+		/*
 
 		#region Execute with enabled System.Net.Logging
 
@@ -286,6 +354,8 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		}
 
 		#endregion
+
+		*/
 
 
 	}

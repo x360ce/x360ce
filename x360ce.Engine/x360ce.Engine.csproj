@@ -192,6 +192,7 @@
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
     <Compile Include="Data\UserMacro.cs" />
+    <Compile Include="JocysCom\Diagnostics\RollingXmlWriterOptions.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
     <Compile Include="Data\UserSetting.cs" />

@@ -34,6 +34,13 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
+		public static string ExpandPath(string path)
+		{
+			path = Environment.ExpandEnvironmentVariables(path);
+			path = Text.Helper.Replace(path, Entry, false);
+			return path;
+		}
+
 		public AssemblyInfo(string strValFile)
 		{
 			Assembly = Assembly.LoadFile(strValFile);
@@ -373,7 +380,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			T attribute = (T)Attribute.GetCustomAttribute(Assembly, typeof(T));
 			return attribute == null
-				? "" 
+				? ""
 				: value.Invoke(attribute);
 		}
 

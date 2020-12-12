@@ -161,7 +161,7 @@ namespace JocysCom.ClassLibrary.IO
 					// Create new possible file name.
 					LogFileDate = n;
 					// Expand variables first.
-					var expandedPath = Environment.ExpandEnvironmentVariables(LogFileName);
+					var expandedPath = Configuration.AssemblyInfo.ExpandPath(LogFileName);
 					// Wipe old files.
 					WipeOldLogFiles(expandedPath);
 					var path = string.Format(CultureInfo.InvariantCulture, expandedPath, n);

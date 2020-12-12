@@ -159,9 +159,7 @@ namespace JocysCom.ClassLibrary.Controls
 				var item = rows.First().DataBoundItem;
 				var eo = item as EntityObject;
 				if (eo != null)
-				{
 					primaryKeyPropertyName = GetPrimaryKey(eo);
-				}
 			}
 			for (var i = 0; i < rows.Length; i++)
 			{
@@ -190,9 +188,7 @@ namespace JocysCom.ClassLibrary.Controls
 					var item = rows.First().DataBoundItem;
 					var eo = item as EntityObject;
 					if (eo != null)
-					{
 						primaryKeyPropertyName = GetPrimaryKey(eo);
-					}
 				}
 				DataGridViewRow firstVisibleRow = null;
 				for (var i = 0; i < rows.Length; i++)
@@ -505,6 +501,26 @@ namespace JocysCom.ClassLibrary.Controls
 				value = default(T);
 			if (!Equals(control.SelectedItem, value))
 				control.SelectedItem = value;
+		}
+
+		/// <summary>
+		/// Select item on DataGridView control.
+		/// Select item first to make sure that no items are unselected.
+		/// </summary>
+		/// <param name="control">DataGridView, Control</param>
+		/// <param name="item">Data bound object to select</param>
+		public static void SetSelectedItem<T>(DataGridView control, params T[] items)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			// Select rows first.
+			foreach (DataGridViewRow row in control.Rows)
+				if (items.Any(x=> row.DataBoundItem.Equals(x)) && !row.Selected)
+					row.Selected = true;
+			// Unselect rows.
+			foreach (DataGridViewRow row in control.Rows)
+				if (!items.Any(x => row.DataBoundItem.Equals(x)) && row.Selected)
+					row.Selected = false;
 		}
 
 		#endregion

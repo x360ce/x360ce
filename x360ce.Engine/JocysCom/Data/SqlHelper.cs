@@ -258,16 +258,15 @@ namespace JocysCom.ClassLibrary.Data
 		public static string GetConnectionString(string name, out bool isEntity)
 		{
 			isEntity = false;
+			string connectionString = null;
+#if !NETSTANDARD
 			// Try to find entity connection.
 			var cs = ConfigurationManager.ConnectionStrings[name];
+			connectionString = cs.ConnectionString;
+#endif
 			// If configuration section with not found then return.
-			if (cs == null)
-				return null;
-			var connectionString = cs.ConnectionString;
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
 			// EF Core does not support EF specific connection strings (metadata=res:... < this kind of connection strings).
-#else // .NET Framework
+#if NETFRAMEWORK // .NET Framework
 			if (string.Compare(cs.ProviderName, "System.Data.EntityClient", true) == 0)
 			{
 				// Get connection string from entity connection string.
@@ -276,6 +275,8 @@ namespace JocysCom.ClassLibrary.Data
 				isEntity = true;
 			}
 #endif
+			if (connectionString == null)
+				return null;
 			var builder = new SqlConnectionStringBuilder(connectionString);
 			if (!builder.ContainsKey("Application Name") || ".Net SqlClient Data Provider".Equals(builder["Application Name"]))
 			{
@@ -307,9 +308,9 @@ namespace JocysCom.ClassLibrary.Data
 			cmd.ExecuteNonQuery();
 		}
 
-		#endregion
+#endregion
 
-		#region Execute Methods
+#region Execute Methods
 
 		public int ExecuteNonQuery(string connectionString, SqlCommand cmd, string comment = null, int? timeout = null)
 		{
@@ -414,9 +415,9 @@ namespace JocysCom.ClassLibrary.Data
 			return null;
 		}
 
-		#endregion
+#endregion
 
-		#region Error
+#region Error
 
 		public static void SetErrorParameters(SqlParameterCollection p)
 		{
@@ -430,9 +431,9 @@ namespace JocysCom.ClassLibrary.Data
 			error_message = (string)p["@error_message"].Value;
 		}
 
-		#endregion
+#endregion
 
-		#region Add Range
+#region Add Range
 
 		/// <summary>
 		/// Add an array of parameters to a SQL command in an IN statement.
@@ -465,9 +466,9 @@ namespace JocysCom.ClassLibrary.Data
 			return parameters.ToArray();
 		}
 
-		#endregion
+#endregion
 
-		#region Convert Table To/From List
+#region Convert Table To/From List
 
 		/// <summary>
 		/// Convert DataTable to List of objects. Can be used to convert DataTable to list of framework entities. 
@@ -532,9 +533,9 @@ namespace JocysCom.ClassLibrary.Data
 			return table;
 		}
 
-		#endregion
+#endregion
 
-		#region SqlCommand to T-SQL
+#region SqlCommand to T-SQL
 
 		/// <summary>
 		/// There is no easy way to create SQL string from SqlCommand, because execution does not generate any SQL.
@@ -642,7 +643,7 @@ namespace JocysCom.ClassLibrary.Data
 			return defaultValue;
 		}
 
-		#endregion
+#endregion
 
 	}
 }

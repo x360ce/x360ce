@@ -650,22 +650,14 @@ namespace JocysCom.ClassLibrary.Runtime
 			AddStyle(ref s);
 			//------------------------------------------------------
 			StartTable(ref s);
+			var ai = Configuration.AssemblyInfo.Entry;
 			var rm = RunMode;
 			if (!string.IsNullOrEmpty(rm))
 				rm = " (" + rm + ")";
-			var asm = System.Reflection.Assembly.GetEntryAssembly();
-			if (asm == null)
-				Assembly.GetCallingAssembly();
-			if (asm == null)
-				Assembly.GetExecutingAssembly();
 			AddRow(ref s, "Product");
-			if (asm != null)
-			{
-				var ai = new Configuration.AssemblyInfo(asm);
-				var name = ai.Company + " " + ai.Product + " " + ai.Version.ToString(4);
-				ApplyRunModeSuffix(ref name);
-				AddRow(ref s, "Name", name);
-			}
+			var name = ai.Company + " " + ai.Product + " " + ai.Version.ToString(4);
+			ApplyRunModeSuffix(ref name);
+			AddRow(ref s, "Name", name);
 			AddRow(ref s, "Machine", System.Environment.MachineName);
 			AddRow(ref s, "Username", System.Environment.UserName);
 
@@ -694,6 +686,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			);
 			AddRow(ref s, "OS Version", osVersion);
 #endif
+			var asm = ai.Assembly;
 			if (asm != null)
 			{
 				var bd = Configuration.AssemblyInfo.GetBuildDateTime(asm.Location);
