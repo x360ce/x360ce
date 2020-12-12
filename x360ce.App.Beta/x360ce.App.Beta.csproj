@@ -303,11 +303,11 @@
     <Compile Include="Controls\PadTabPages\XInputControl.xaml.cs">
       <DependentUpon>XInputControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\_TempUserControl.cs">
+    <Compile Include="Controls\_TempWIN2WPF.com.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\_TempUserControl.Designer.cs">
-      <DependentUpon>_TempUserControl.cs</DependentUpon>
+    <Compile Include="Controls\_TempWIN2WPF.com.Designer.cs">
+      <DependentUpon>_TempWIN2WPF.com.cs</DependentUpon>
     </Compile>
     <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Forms\BaseFormWithHeader.cs">
@@ -490,8 +490,8 @@
     <EmbeddedResource Include="Controls\UserDevicesUserControl.resx">
       <DependentUpon>UserDevicesUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\_TempUserControl.resx">
-      <DependentUpon>_TempUserControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\_TempWIN2WPF.com.resx">
+      <DependentUpon>_TempWIN2WPF.com.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BaseFormWithHeader.resx">
       <DependentUpon>BaseFormWithHeader.cs</DependentUpon>

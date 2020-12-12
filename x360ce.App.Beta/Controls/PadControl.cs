@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -26,6 +27,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+
 			// Add controls which must be notified on setting selection change.
 			UserMacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;

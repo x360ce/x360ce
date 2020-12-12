@@ -192,7 +192,7 @@ namespace x360ce.App
 			get { return _IsProcessDPIAware; }
 			set { _IsProcessDPIAware = value; OnPropertyChanged(); }
 		}
-		bool _IsProcessDPIAware = false;
+		bool _IsProcessDPIAware = true;
 
 
 		[DefaultValue(false), Description("Check for updates.")]
