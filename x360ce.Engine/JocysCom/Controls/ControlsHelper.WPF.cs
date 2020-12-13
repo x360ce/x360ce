@@ -52,8 +52,13 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (DesignerProperties.GetIsInDesignMode(component))
 				return true;
-			// If WPF hosted in WinForms.
-			return System.Reflection.Assembly.GetExecutingAssembly().Location.Contains("VisualStudio");
+			//If WPF hosted in WinForms.
+			if (System.Reflection.Assembly.GetEntryAssembly().Location.Contains("VisualStudio"))
+				return true;
+			//If WPF hosted in WinForms.
+			if (System.Reflection.Assembly.GetExecutingAssembly().Location.Contains("VisualStudio"))
+				return true;
+			return false;
 		}
 
 		#region Apply Grid Border Style

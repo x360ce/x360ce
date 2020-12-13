@@ -83,6 +83,12 @@
     <Compile Include="..\x360ce.Engine\JocysCom\Data\TlvSerializerError.cs">
       <Link>Common\TlvSerializerError.cs</Link>
     </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\RuntimeHelper.cs">
+      <Link>Common\RuntimeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Text\Helper.cs">
+      <Link>Common\Helper.cs</Link>
+    </Compile>
     <Compile Include="..\x360ce.Engine\SharpDX.XInput\Gamepad.cs">
       <Link>Common\Gamepad.cs</Link>
     </Compile>

@@ -81,69 +81,6 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
-		#region Bytes
-
-		static object ByteSerializersLock = new object();
-		static Dictionary<Type, BinaryFormatter> ByteSerializers;
-		static BinaryFormatter GetByteSerializer(Type type)
-		{
-			lock (ByteSerializersLock)
-			{
-				if (ByteSerializers == null) ByteSerializers = new Dictionary<Type, BinaryFormatter>();
-				if (!ByteSerializers.ContainsKey(type))
-				{
-					ByteSerializers.Add(type, new BinaryFormatter());
-				}
-			}
-			return ByteSerializers[type];
-		}
-
-		/// <summary>
-		/// Serialize object to byte array.
-		/// </summary>
-		/// <param name="o">The object to serialize.</param>
-		/// <returns>Byte array.</returns>
-		public static byte[] SerializeToBytes(object o)
-		{
-			if (o == null)
-				return null;
-			var serializer = GetByteSerializer(o.GetType());
-			var ms = new MemoryStream();
-			lock (serializer) { serializer.Serialize(ms, o); }
-			var bytes = ms.ToArray();
-			ms.Close();
-			return bytes;
-		}
-
-		/// <summary>
-		/// De-serialize object from byte array.
-		/// </summary>
-		/// <param name="bytes">Byte array representing object. </param>
-		/// <returns>Object.</returns>
-		public static object DeserializeFromBytes(byte[] bytes, Type type)
-		{
-			if (bytes == null)
-				return null;
-			var serializer = GetByteSerializer(type);
-			var ms = new MemoryStream(bytes);
-			object o;
-			lock (serializer) { o = serializer.Deserialize(ms); }
-			ms.Close();
-			return o;
-		}
-
-		/// <summary>
-		/// De-serialize object from byte array.
-		/// </summary>
-		/// <param name="bytes">Byte array representing object. </param>
-		/// <returns>Object.</returns>
-		public static T DeserializeFromBytes<T>(byte[] bytes)
-		{
-			return (T)DeserializeFromBytes(bytes, typeof(T));
-		}
-
-		#endregion
-
 		#region JSON
 
 		// Notes: Use [DataMember(EmitDefaultValue = false, IsRequired = false)] attribute

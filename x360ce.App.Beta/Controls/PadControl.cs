@@ -379,7 +379,7 @@ namespace x360ce.App.Controls
 			// Attach drop down menu with record and map choices.
 			var comboBoxes = new List<ComboBox>();
 			GetAllControls(GeneralTabPage, ref comboBoxes);
-			// Exclude map name combobox
+			// Exclude map name ComboBox
 			comboBoxes.Remove(MapNameComboBox);
 			// Attach context strip with button names to every ComboBox on general tab.
 			foreach (var cb in comboBoxes)
@@ -535,7 +535,7 @@ namespace x360ce.App.Controls
 			// Move default DropDown away from the screen.
 			var oldLeft = cbx.Left;
 			cbx.Left = -10000;
-			// If same dropwon clicked then contract.
+			// If same DropDown clicked then contract.
 			if (CurrentCbx == cbx)
 			{
 				CurrentCbx = null;
@@ -831,7 +831,7 @@ namespace x360ce.App.Controls
 			var isOnline = diDevice != null && diDevice.IsOnline;
 			var hasState = isOnline && diDevice.Device != null;
 			var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
-			var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - Online" : " - Offline");
+			var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - On-line" : " - Off-line");
 			ControlsHelper.SetText(DirectInputTabPage, text);
 		}
 
@@ -1139,7 +1139,7 @@ namespace x360ce.App.Controls
 			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
 			if (ud.Device == null && !TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
 			{
-				text = string.Format("Device is offline. Please connect device to fill all {0} settings automatically.", description);
+				text = string.Format("Device is off-line. Please connect device to fill all {0} settings automatically.", description);
 				buttons = MessageBoxButtons.OK;
 			}
 			var result = form.ShowForm(text, "Auto Controller Settings", buttons, MessageBoxIcon.Question);
@@ -1394,7 +1394,7 @@ namespace x360ce.App.Controls
 				: (int)(value | flag);
 			// Update emulation type.
 			EmulationType? newType = null;
-			// If emulation enabled and game is not using virual type then...
+			// If emulation enabled and game is not using virtual type then...
 			if (enableMask > 0 && type != (int)EmulationType.Virtual)
 				newType = EmulationType.Virtual;
 			// If emulation disabled, but game use virtual emulation then...

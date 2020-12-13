@@ -26,7 +26,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 	///     </code>
 	/// </example>
 	/// </summary>
-	[HostProtection(Synchronization = true)]
+	//[HostProtection(Synchronization = true)]
 	public class RollingXmlWriterTraceListener : XmlWriterTraceListener
 	{
 

@@ -37,7 +37,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		public static string ExpandPath(string path)
 		{
 			path = Environment.ExpandEnvironmentVariables(path);
-			path = Text.Helper.Replace(path, Entry, false);
+			path = JocysCom.ClassLibrary.Text.Helper.Replace(path, Entry, false);
 			return path;
 		}
 
@@ -353,7 +353,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			get
 			{
-				string codeBase = Assembly.CodeBase;
+				string codeBase = Assembly.Location;
 				UriBuilder uri = new UriBuilder(codeBase);
 				string path = Uri.UnescapeDataString(uri.Path);
 				return path;
@@ -362,7 +362,7 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public string AssemblyFullName { get { return Assembly.GetName().FullName.ToString(); } }
 		public string AssemblyName { get { return Assembly.GetName().Name.ToString(); } }
-		public string CodeBase { get { return Assembly.CodeBase; } }
+		public string CodeBase { get { return Assembly.Location; } }
 
 		public string Company { get { return GetAttribute<AssemblyCompanyAttribute>(a => a.Company); } }
 		public string Product { get { return GetAttribute<AssemblyProductAttribute>(a => a.Product); } }

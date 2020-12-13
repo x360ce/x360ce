@@ -29,6 +29,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\x360ce.Engine\JocysCom\Runtime\RuntimeHelper.cs" Link="Common\RuntimeHelper.cs" />
+    <Compile Include="..\..\x360ce.Engine\JocysCom\Text\Helper.cs" Link="Common\Helper.cs" />
     <Compile Include="..\..\x360ce.Engine\SharpDX.XInput\Gamepad.cs" Link="Common\Gamepad.cs" />
     <Compile Include="..\..\x360ce.Engine\SharpDX.XInput\GamepadButtonFlags.cs" Link="Common\GamepadButtonFlags.cs" />
   </ItemGroup>

@@ -66,7 +66,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		{
 			var source = new TraceSource(sourceName);
 #if NETCOREAPP
-			// Web.config is not available in .NET Core, therefore must manually config.
+			// Web.config is not available in .NET Core, therefore must configure manually.
 			Configure(source);
 #endif
 			source.TraceData(eventType, 0, data);

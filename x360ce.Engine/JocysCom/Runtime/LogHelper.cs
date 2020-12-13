@@ -310,7 +310,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Write Log
 
-		public delegate void WriteLogDelegate(string message, EventLogEntryType type);
+		public delegate void WriteLogDelegate(string message, TraceLevel type);
 
 		/// <summary>
 		/// User can override these methods. Default methods are assigned.
@@ -325,7 +325,7 @@ namespace JocysCom.ClassLibrary.Runtime
 #endif
 		public WriteLogDelegate WriteLogFile = new WriteLogDelegate(_WriteFile);
 
-		internal static void _WriteConsole(string message, EventLogEntryType type)
+		internal static void _WriteConsole(string message, TraceLevel type)
 		{
 			// If user can see interface (console) then write to the console.
 			if (Environment.UserInteractive)
@@ -340,12 +340,12 @@ namespace JocysCom.ClassLibrary.Runtime
 		// Requires 'EventLogInstaller' requires reference to System.Configuration.Install.dll
 		public static EventLogInstaller AppEventLogInstaller;
 
-		internal static void _WriteEvent(string message, EventLogEntryType type)
+		internal static void _WriteEvent(string message, TraceLevel type)
 		{
 			var li = AppEventLogInstaller;
 			if (li == null)
 				return;
-			var ei = new EventInstance(0, 0, type);
+			var ei = new EventInstance(0, 0, ConvertToEventLogEntryType(type));
 			var el = new EventLog();
 			el.Log = li.Log;
 			el.Source = li.Source;
@@ -353,12 +353,27 @@ namespace JocysCom.ClassLibrary.Runtime
 			el.Close();
 		}
 
+		public static EventLogEntryType ConvertToEventLogEntryType(TraceLevel level)
+		{
+			switch (level)
+			{
+				case TraceLevel.Error:
+					return EventLogEntryType.Error;
+				case TraceLevel.Warning:
+					return EventLogEntryType.Warning;
+				case TraceLevel.Info:
+					return EventLogEntryType.Information;
+				default:
+					return default;
+			}
+		}
+
 #endif
 
 		public IO.LogFileWriter FileWriter { get { return _FileWriter; } }
 		IO.LogFileWriter _FileWriter;
 
-		internal static void _WriteFile(string message, EventLogEntryType type)
+		internal static void _WriteFile(string message, TraceLevel type)
 		{
 			// If LogStreamWriter is not null (check inside the function) then write to file.
 			Current.FileWriter.WriteLine(message);
@@ -368,7 +383,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// Writes log message to various destination types (console window, file, event and custom)
 		/// </summary>
 		/// <remarks>Appends line break.</remarks>
-		public void WriteLog(string message, EventLogEntryType type)
+		public void WriteLog(string message, TraceLevel type)
 		{
 			// If console logging available then...
 			if (WriteLogConsole != null)
@@ -383,7 +398,7 @@ namespace JocysCom.ClassLibrary.Runtime
 #elif NETCOREAPP
 #else
 			// If event logging is enabled and important then write event.
-			if (WriteLogEvent != null && type != EventLogEntryType.Information)
+			if (WriteLogEvent != null && type != TraceLevel.Info)
 				WriteLogEvent(message, type);
 #endif
 		}
@@ -392,17 +407,18 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			if (ex == null)
 				throw new ArgumentNullException(nameof(ex));
-			Current.WriteLog(ex.ToString(), EventLogEntryType.Error);
+			Current.WriteLog(ex.ToString(), TraceLevel.Error);
 		}
 
+		
 		public static void WriteWarning(string format, params object[] args)
 		{
-			Current.WriteLog(args != null && args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Warning);
+			Current.WriteLog(args != null && args.Length > 0 ? string.Format(format, args) : format, TraceLevel.Warning);
 		}
 
 		public static void WriteInfo(string format, params object[] args)
 		{
-			Current.WriteLog(args != null && args.Length > 0 ? string.Format(format, args) : format, EventLogEntryType.Information);
+			Current.WriteLog(args != null && args.Length > 0 ? string.Format(format, args) : format, TraceLevel.Info);
 		}
 
 		#endregion
