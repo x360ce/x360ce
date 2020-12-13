@@ -17,7 +17,7 @@ namespace JocysCom.Web.Security
 		public DataRow UserExtraInfoRow;
 		public DateTime LastUpdateDate;
 	}
-	
+
 	/// <summary>
 	/// Summary description for Sessions
 	/// </summary>
@@ -26,14 +26,14 @@ namespace JocysCom.Web.Security
 
 		public DataView Commands;
 
-        private System.Collections.SortedList m_items;
+		private System.Collections.SortedList m_items;
 
-        public System.Collections.SortedList Items
-        {
-            get { return m_items; }
-            set { m_items = value; }
-        }
-	
+		public System.Collections.SortedList Items
+		{
+			get { return m_items; }
+			set { m_items = value; }
+		}
+
 
 		public DataTable GetNewCommandsTable()
 		{
@@ -54,9 +54,9 @@ namespace JocysCom.Web.Security
 			return commandsTable;
 		}
 
-        public SessionList()
+		public SessionList()
 		{
-            m_items = new System.Collections.SortedList();
+			m_items = new System.Collections.SortedList();
 			Commands = new DataView();
 			Commands.Table = GetNewCommandsTable();
 		}
@@ -118,7 +118,7 @@ namespace JocysCom.Web.Security
 			return dataSet;
 		}
 
-        public void InitOnSessionStart(object sender, EventArgs e)
+		public void InitOnSessionStart(object sender, EventArgs e)
 		{
 			HttpContext.Current.Application.Lock();
 			// Add new session. 
@@ -154,6 +154,8 @@ namespace JocysCom.Web.Security
 			if (disposing)
 			{
 				// Dispose managed resources.
+				if (Commands != null)
+					Commands.Dispose();
 			}
 			// Free native resources.
 		}

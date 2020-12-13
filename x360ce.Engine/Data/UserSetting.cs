@@ -22,7 +22,7 @@ namespace x360ce.Engine.Data
 		bool _IsOnline;
 
 		/// <summary>XInput state converted from X360CE custom DirectInput state.</summary>
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public Gamepad XiState;
 
 		/// <summary>

@@ -157,62 +157,62 @@ namespace x360ce.Engine.Data
 
 		#region Ignored properties used by application to store various device states.
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public bool DeviceChanged;
 
 		/// <summary>DInput Device State.</summary>
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public Joystick Device;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public DeviceObjectItem[] DeviceObjects;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public DeviceEffectItem[] DeviceEffects;
 
 		/// <summary>DInput JoystickState State.</summary>
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public JoystickState JoState;
 
 		/// <summary>DInput JoystickUpdate States.</summary>
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public JoystickUpdate[] JoUpdate;
 
 		/// <summary>X360CE custom DirectInput state used for configuration.</summary>
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public CustomDiState DiState;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public CustomDiUpdate[] DiUpdates;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public long DiStateTime;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public CustomDiState OldDiState;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public CustomDiUpdate[] OldDiUpdates;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public long OldDiStateTime;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public CustomDiState OrgDiState;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public long OrgDiStateTime;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public ForceFeedbackState FFState;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public bool? IsExclusiveMode;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public string DevHardwareIds;
 
-		[XmlIgnore]
+		[XmlIgnore, NonSerialized]
 		public string HidHardwareIds;
 
 		[XmlIgnore]
