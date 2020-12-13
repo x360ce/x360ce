@@ -257,7 +257,7 @@ namespace x360ce.App.Controls
 
 		#region IDisposable
 
-		bool IsDisposing;
+		public bool IsDisposing;
 
 		// The bulk of the clean-up code is implemented in Dispose(bool)
 		protected virtual void Dispose(bool disposing)
