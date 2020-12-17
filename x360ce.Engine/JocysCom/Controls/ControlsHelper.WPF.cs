@@ -5,7 +5,9 @@ using System.ComponentModel;
 using System.Windows.Controls;
 using System;
 using System.Windows.Media;
-using System.Windows.Controls.Primitives;
+using System.IO;
+using System.Windows.Documents;
+using System.Reflection;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -60,6 +62,73 @@ namespace JocysCom.ClassLibrary.Controls
 				return true;
 			return false;
 		}
+
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
+		public static void SetText(TextBox control, string format, params object[] args)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var text = (args == null)
+				? format
+				: string.Format(format, args);
+			if (control.Text != text)
+				control.Text = text;
+		}
+
+		public static void SetTextFromResource(RichTextBox box, string resourceName)
+		{
+			var rtf = Helper.FindResource<byte[]>(Assembly.GetEntryAssembly(), resourceName);
+			var ms = new MemoryStream(rtf);
+			var textRange = new TextRange(box.Document.ContentStart, box.Document.ContentEnd);
+			textRange.Load(ms, DataFormats.Rtf);
+			ms.Dispose();
+			//var xdoc = new System.Xml.XmlDocument();
+			//xdoc.LoadXml(System.Windows.Markup.XamlWriter.Save(box.Document));
+			//var xml = xdoc.OuterXml;
+			//xdoc.Save("document.xml");
+			box.Document.PagePadding = new Thickness(8);
+			box.IsDocumentEnabled = true;
+			HookHyperlinks(box, null);
+		}
+
+		private static void HookHyperlinks(object sender, TextChangedEventArgs e)
+		{
+			var doc = (sender as RichTextBox).Document;
+			for (var position = doc.ContentStart;
+				position != null && position.CompareTo(doc.ContentEnd) <= 0;
+				position = position.GetNextContextPosition(LogicalDirection.Forward))
+			{
+				if (position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.ElementEnd)
+				{
+					if (position.Parent is Hyperlink link)
+						link.RequestNavigate += link_RequestNavigate;
+					else if (position.Parent is Span span)
+					{
+						var range = new TextRange(span.ContentStart, span.ContentEnd);
+						if (Uri.TryCreate(range.Text, UriKind.Absolute, out var uriResult))
+						{
+							if (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
+							{
+								var h = new Hyperlink(range.Start, range.End);
+								h.RequestNavigate += link_RequestNavigate;
+								h.NavigateUri = new Uri(range.Text);
+								h.Cursor = System.Windows.Input.Cursors.Hand;
+							}
+						}
+					}
+				}
+			}
+		}
+		private static void link_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+		{
+			var link = (Hyperlink)sender;
+			OpenUrl(link.NavigateUri.AbsoluteUri);
+			e.Handled = true;
+		}
+
 
 		#region Apply Grid Border Style
 

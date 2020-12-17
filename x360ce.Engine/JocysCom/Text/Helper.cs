@@ -128,7 +128,7 @@ namespace JocysCom.ClassLibrary.Text
 			var v = m.Groups["Value"].Value;
 			if (typeof(T) == typeof(string))
 				return (T)(object)v;
-			return Runtime.RuntimeHelper.TryParse(v, defaultValue);
+			return JocysCom.ClassLibrary.Runtime.RuntimeHelper.TryParse(v, defaultValue);
 		}
 
 		public static string GetValue(string name, string s, string defaultValue = null)

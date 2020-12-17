@@ -73,7 +73,6 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-
 		public static T ParseValue<T>(string v, T defaultValue = default(T))
 		{
 			return (T)ParseValue(typeof(T), v, defaultValue);

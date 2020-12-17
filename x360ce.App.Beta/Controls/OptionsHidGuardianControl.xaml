@@ -8,6 +8,7 @@
 	d:DesignHeight="250"
 	d:DesignWidth="800"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -17,12 +18,12 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Grid Margin="3,3,3,3">
+	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<GroupBox Grid.Row="0">
+		<GroupBox Grid.Row="0" Margin="3,3,3,3">
 			<GroupBox.Header>
 				<TextBlock Text="HID Guardian by Nefarius" />
 			</GroupBox.Header>
@@ -40,7 +41,13 @@
 				<CheckBox Name="HidGuardianConfigureAutomaticallyCheckBox" Grid.Row="0" Grid.Column="1">
 					Configure automatically - auto-hide Direct Input device when emulated.
 				</CheckBox>
-				<Button Name="HidGuardianRefreshButton" Grid.Row="0" Grid.Column="3">Refresh</Button>
+				<Button
+					Name="HidGuardianRefreshButton"
+					Grid.Row="0"
+					Grid.Column="3"
+					Click="HidGuardianRefreshButton_Click">
+					Refresh
+				</Button>
 				<Label Name="HidGuardianLabel" Grid.Row="1" Grid.Column="0">HID Guardian</Label>
 				<TextBox
 					Name="HidGuardianTextBox"
@@ -51,12 +58,14 @@
 					Name="HidGuardianUninstallButton"
 					Grid.Row="1"
 					Grid.Column="2"
+					Click="HidGuardianUninstallButton_Click"
 					Content="Uninstall"
 					IsEnabled="False" />
 				<Button
 					Name="HidGuardianInstallButton"
 					Grid.Row="1"
 					Grid.Column="3"
+					Click="HidGuardianInstallButton_Click"
 					Content="Install"
 					IsEnabled="False" />
 			</Grid>
@@ -65,6 +74,7 @@
 			Name="HelpRichTextBox"
 			Grid.Row="1"
 			Background="White"
+			BorderThickness="0"
 			IsReadOnly="True">
 			<FlowDocument>
 				<Paragraph>

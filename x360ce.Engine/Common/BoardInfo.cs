@@ -38,7 +38,7 @@
 		}
 
 		/// <summary>
-		/// This anonymous guid will be used as link betwen disk and game settings on online database.
+		/// This anonymous GUID will be used as link between disk and game settings on online database.
 		/// </summary>
 		public static Guid GetHashedDiskId(string diskId)
 		{
@@ -151,7 +151,7 @@
 				{
 					// Get header data,
 					var header = (STORAGE_DESCRIPTOR_HEADER)Marshal.PtrToStructure(headerBuffer, typeof(STORAGE_DESCRIPTOR_HEADER));
-					// Define and store intput parameters for full data retrieval.
+					// Define and store input parameters for full data retrieval.
 					var descriptorBufferSize = header.Size;
 					var descriptorBufferPointer = Marshal.AllocHGlobal(descriptorBufferSize);
 					var descriptorBytesReturned = default(UInt32);

@@ -443,7 +443,7 @@ namespace x360ce.App
 		/// </summary>
 		/// <param name="setting">The name of the setting.</param>
 		/// <param name="control">The control used to edit the setting.</param>
-		static public void AddMap<T>(Expression<Func<T, object>> setting, Control control)
+		static public void AddMap<T>(Expression<Func<T, object>> setting, object control)
 		{
 			// Get the member expression
 			var me = setting.Body as MemberExpression ?? ((UnaryExpression)setting.Body).Operand as MemberExpression;
@@ -458,8 +458,11 @@ namespace x360ce.App
 			var dvalAttr = GetCustomAttribute<DefaultValueAttribute>(prop);
 			// Display help inside yellow header.
 			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
-			control.MouseHover += control_MouseEnter;
-			control.MouseLeave += control_MouseLeave;
+			if (control is Control c)
+			{
+				c.MouseHover += control_MouseEnter;
+				c.MouseLeave += control_MouseLeave;
+			}
 			var item = new SettingsMapItem();
 			item.Description = desc;
 			//item.IniSection = sectionName;
@@ -630,7 +633,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Read setting from INI file into windows form control.
 		/// </summary>
-		public void LoadSetting(Control control, string key = null, string value = null)
+		public void LoadSetting(object control, string key = null, string value = null)
 		{
 			if (key != null && (
 				key == SettingName.HookMode ||
@@ -667,9 +670,8 @@ namespace x360ce.App
 				}
 			}
 			// If DI menu strip attached.
-			else if (control is ComboBox)
+			else if (control is ComboBox cbx)
 			{
-				var cbx = (ComboBox)control;
 				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
 				if (map != null && map.Code != default)
 				{
@@ -678,10 +680,10 @@ namespace x360ce.App
 				}
 				else
 				{
-					control.Text = value;
+					cbx.Text = value;
 				}
 			}
-			else if (control is TextBox)
+			else if (control is TextBox tbx)
 			{
 				// if setting is read-only.
 				if (key == SettingName.ProductName)
@@ -693,11 +695,10 @@ namespace x360ce.App
 				// Always override version.
 				if (key == SettingName.Version)
 					value = SettingName.DefaultVersion;
-				control.Text = value;
+				tbx.Text = value;
 			}
-			else if (control is NumericUpDown)
+			else if (control is NumericUpDown nud)
 			{
-				var nud = (NumericUpDown)control;
 				decimal n = 0;
 				decimal.TryParse(value, out n);
 				if (n < nud.Minimum)
@@ -706,9 +707,8 @@ namespace x360ce.App
 					n = nud.Maximum;
 				nud.Value = n;
 			}
-			else if (control is TrackBar)
+			else if (control is TrackBar tc)
 			{
-				TrackBar tc = (TrackBar)control;
 				int n = 0;
 				int.TryParse(value, out n);
 				// convert 256  to 100%
@@ -734,12 +734,11 @@ namespace x360ce.App
 					n = tc.Maximum;
 				tc.Value = n;
 			}
-			else if (control is CheckBox)
+			else if (control is CheckBox chb)
 			{
-				CheckBox tc = (CheckBox)control;
 				int n = 0;
 				int.TryParse(value, out n);
-				tc.Checked = n != 0;
+				chb.Checked = n != 0;
 			}
 		}
 
@@ -747,7 +746,7 @@ namespace x360ce.App
 
 		#region Save Settings
 
-		public string GetSettingValue(Control control)
+		public string GetSettingValue(object control)
 		{
 			var item = SettingsMap.First(x => x.Control == control);
 			var path = item.IniPath;
@@ -772,35 +771,33 @@ namespace x360ce.App
 				{ v = System.Convert.ToInt32(v1).ToString(); }
 			}
 			// If DI menu strip attached.
-			else if (control is ComboBox)
+			else if (control is ComboBox cbx)
 			{
-				var cbx = (ComboBox)control;
 				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
 				if (map != null && map.Code != default)
 				{
-					v = SettingsConverter.ToIniValue(control.Text);
+					v = SettingsConverter.ToIniValue(cbx.Text);
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v))
 						v = "0";
 				}
 				else
 				{
-					v = control.Text;
+					v = cbx.Text;
 				}
 			}
-			else if (control is TextBox)
+			else if (control is TextBox tbx)
 			{
 				// if setting is read-only.
 				if (key == SettingName.InstanceGuid || key == SettingName.ProductGuid)
 				{
-					v = string.IsNullOrEmpty(control.Text) ? Guid.Empty.ToString("D") : control.Text;
+					v = string.IsNullOrEmpty(tbx.Text) ? Guid.Empty.ToString("D") : tbx.Text;
 				}
 				else
-					v = control.Text;
+					v = tbx.Text;
 			}
-			else if (control is NumericUpDown)
+			else if (control is NumericUpDown nud)
 			{
-				NumericUpDown nud = (NumericUpDown)control;
 				v = nud.Value.ToString();
 			}
 			else if (control is TrackBar)
@@ -870,7 +867,8 @@ namespace x360ce.App
 
 		static Guid GetInstanceGuid(MapTo mapTo)
 		{
-			var guidString = Current.SettingsMap.First(x => x.MapTo == mapTo && x.IniKey == SettingName.InstanceGuid).Control.Text;
+			var map = Current.SettingsMap.First(x => x.MapTo == mapTo && x.IniKey == SettingName.InstanceGuid);
+			var guidString = ((Control)map.Control).Text;
 			// If instanceGuid value is not a GUID then exit.
 			if (!EngineHelper.IsGuid(guidString))
 				return Guid.Empty;

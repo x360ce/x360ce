@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Windows.Forms;
 using x360ce.Engine;
 
@@ -11,64 +13,84 @@ namespace x360ce.App
 
 		#region Load, Monitor and Sync settings between controls and properties.
 
-		private static void Control_Changed(object sender, EventArgs e)
-		{
-			// Update property from control.
-			Sync((Control)sender, Options);
-		}
-
-		private static void Property_Changed(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
+		private static void Property_Changed(object sender, PropertyChangedEventArgs e)
 			// Update control from property.
-			Sync(Options, e.PropertyName);
-		}
+			=> Sync(Options, e.PropertyName);
+
+		private static void Form_Control_Changed(object sender, EventArgs e)
+			// Update property from control.
+			=> Sync(sender, Options);
+
+		private static void Windows_Control_Changed(object sender, System.Windows.RoutedEventArgs e)
+			// Update property from control.
+			=> Sync(sender, Options);
 
 		private static object LoadAndSyncLock = new object();
-		private static bool IsLoadAndSyncEnabled;
+		private static bool IsOptionsPropertyChangedEnabled;
 
-		public static void LoadAndMonitor(Expression<Func<Options, object>> setting, Control control, object dataSource = null)
+		public static void LoadAndMonitor(Expression<Func<Options, object>> setting, object control, object dataSource = null)
 		{
 			var o = Options;
 			lock (LoadAndSyncLock)
 			{
-				// Enable monitoring.
-				if (!IsLoadAndSyncEnabled)
+				// If not monitoring changes of Options then...
+				if (!IsOptionsPropertyChangedEnabled)
+				{
+					// Enable monitoring.
 					o.PropertyChanged += Property_Changed;
-				IsLoadAndSyncEnabled = true;
+					IsOptionsPropertyChangedEnabled = true;
+				}
 			}
 			// Add control to maps.
-			AddMap(setting, control);
-			if (dataSource != null)
-			{
-				// Set ComboBox and attach event last, in order to prevent changing of original value.
-				var lc = control as ListControl;
-				if (lc != null)
-					lc.DataSource = dataSource;
-				var lb = control as ListBox;
-				if (lb != null)
-					lb.DataSource = dataSource;
-			}
+			if (control is Control c)
+				AddMap(setting, c);
 			// Load settings into control.
 			var body = (setting.Body as MemberExpression)
 				 ?? (((UnaryExpression)setting.Body).Operand as MemberExpression);
 			var propertyName = body.Member.Name;
-			// This will triger update of control from the property.
-			o.OnPropertyChanged(propertyName);
 			// Monitor control changes.
-			var chb = control as CheckBox;
-			if (chb != null)
-				chb.CheckStateChanged += Control_Changed;
-			var cbx = control as ComboBox;
-			if (cbx != null)
+			if (control is ListControl lc)
 			{
-				cbx.TextChanged += Control_Changed;
-				cbx.SelectedIndexChanged += Control_Changed;
+				if (dataSource != null)
+					lc.DataSource = dataSource;
 			}
-			var tbx = control as TextBox;
-			if (tbx != null)
+			if (control is ListBox lb)
 			{
-				tbx.TextChanged += Control_Changed;
+				if (dataSource != null)
+					lb.DataSource = dataSource;
 			}
+			else if (control is CheckBox chb)
+			{
+				chb.CheckStateChanged += Form_Control_Changed;
+			}
+			else if (control is ComboBox cob)
+			{
+				cob.TextChanged += Form_Control_Changed;
+				cob.SelectedIndexChanged += Form_Control_Changed;
+			}
+			else if (control is TextBox txb)
+			{
+				txb.TextChanged += Form_Control_Changed;
+			}
+			else if (control is NumericUpDown nud)
+			{
+				nud.ValueChanged += Form_Control_Changed;
+			}
+			else if (control is System.Windows.Controls.CheckBox wcCheckBox)
+			{
+				wcCheckBox.Checked += Windows_Control_Changed;
+			}
+			else
+
+			{
+				throw new Exception(string.Format("Type '{0}' not implemented", control.GetType().FullName));
+			}
+			// This will trigger update of control from the property.
+			// Set ComboBox and attach event later, in order to prevent changing of original value.
+			JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(() => {
+				o.OnPropertyChanged(propertyName);
+			});
+			
 		}
 
 		/// <summary>
@@ -76,57 +98,41 @@ namespace x360ce.App
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="destination"></param>
-		public static void Sync(Control source, object destination)
+		public static void Sync(object source, object destination)
 		{
 			var map = Current.SettingsMap.FirstOrDefault(x => x.Control == source);
 			if (map == null)
 				return;
 			var pi = map.Property;
 			var oldValue = pi.GetValue(destination, null);
-			// Update property from TextBox.
-			var textBox = map.Control as TextBox;
-			if (textBox != null)
+			// Update properties from various controls.
+			object newValue = null;
+			if (map.Control is TextBox textBox)
 			{
-				if (!Equals(oldValue, textBox.Text))
-					pi.SetValue(destination, textBox.Text, null);
-				return;
+				newValue = textBox.Text;
 			}
-			// Update property from CheckBox.
-			var checkBox = source as CheckBox;
-			if (checkBox != null)
+			else if (source is CheckBox checkBox)
 			{
+				newValue = checkBox.Checked;
 				if (pi.PropertyType == typeof(EnabledState))
 				{
-					var newValue = EnabledState.None;
 					// If CheckBox is in third state then...
-					if (checkBox.CheckState != CheckState.Indeterminate)
-						newValue = checkBox.Checked ? EnabledState.Enabled : EnabledState.Disabled;
-					if (!Equals(oldValue, newValue))
-						pi.SetValue(destination, newValue, null);
+					newValue = checkBox.CheckState == CheckState.Indeterminate
+						? EnabledState.None
+						: checkBox.Checked ? EnabledState.Enabled : EnabledState.Disabled;
 				}
-				else
-				{
-					if (!Equals(oldValue, checkBox.Checked))
-						pi.SetValue(destination, checkBox.Checked, null);
-				}
-				return;
 			}
-			// Update property from ComboBox.
-			var comboBox = map.Control as ComboBox;
-			if (comboBox != null)
+			else if (map.Control is ComboBox comboBox)
 			{
-				if (pi.PropertyType == typeof(string))
-				{
-					if (!Equals(oldValue, comboBox.Text))
-						pi.SetValue(destination, comboBox.Text, null);
-				}
-				else
-				{
-					if (!Equals(oldValue, comboBox.SelectedItem))
-						pi.SetValue(destination, comboBox.SelectedItem, null);
-				}
-				return;
+				newValue = pi.PropertyType == typeof(string)
+					? comboBox.Text : comboBox.SelectedItem;
 			}
+			else
+			{
+				throw new Exception(string.Format("Type '{0}' not implemented", source.GetType().FullName));
+			}
+			if (!Equals(oldValue, newValue))
+				pi.SetValue(destination, newValue, null);
 		}
 
 		/// <summary>
@@ -140,18 +146,14 @@ namespace x360ce.App
 			if (map == null)
 				return;
 			var propValue = map.Property.GetValue(source, null);
-			// Update TextBox from property.
-			var textBox = map.Control as TextBox;
-			if (textBox != null)
+			// Update Control from property.
+			if (map.Control is TextBox textBox)
 			{
 				var value = string.Format("{0}", propValue);
-				if (!Equals(value, textBox.Text))
+				if (!Equals(textBox.Text, value))
 					textBox.Text = value;
-				return;
 			}
-			// Update checkbox from property.
-			var checkBox = map.Control as CheckBox;
-			if (checkBox != null)
+			else if (map.Control is CheckBox checkBox)
 			{
 				if (map.Property.PropertyType == typeof(EnabledState))
 				{
@@ -161,32 +163,44 @@ namespace x360ce.App
 						checkState = CheckState.Checked;
 					if (value == EnabledState.Disabled)
 						checkState = CheckState.Unchecked;
-					if (!Equals(checkState, checkBox.CheckState))
+					if (!Equals(checkBox.CheckState, checkState))
 						checkBox.CheckState = checkState;
 				}
 				else
 				{
-					if (!Equals(propValue, checkBox.Checked))
+					if (!Equals(checkBox.Checked, propValue))
 						checkBox.Checked = (bool)propValue;
 				}
-				return;
 			}
-			// Update ComboBox from property.
-			var comboBox = map.Control as ComboBox;
-			if (comboBox != null)
+			else if (map.Control is ComboBox comboBox)
 			{
 				if (map.Property.PropertyType == typeof(string))
 				{
 					var value = string.Format("{0}", propValue);
-					if (!Equals(value, comboBox.Text))
+					if (!Equals(comboBox.Text, value))
 						comboBox.Text = value;
 				}
 				else
 				{
-					if (!Equals(propValue, comboBox.SelectedItem))
+					if (!Equals(comboBox.SelectedItem, propValue))
 						comboBox.SelectedItem = propValue;
 				}
 				return;
+			}
+			else if (map.Control is ListBox lbx)
+			{
+				if (!Equals(lbx.DataSource, propValue))
+					lbx.DataSource = propValue;
+			}
+			else if (map.Control is NumericUpDown nud)
+			{
+				var newValue = Convert.ToDecimal(propValue);
+				if (!Equals(nud.Value, newValue))
+					nud.Value = newValue;
+			}
+			else
+			{
+				throw new Exception(string.Format("Type '{0}' not implemented", map.Control.GetType().FullName));
 			}
 		}
 

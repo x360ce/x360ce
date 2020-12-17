@@ -463,7 +463,7 @@ namespace JocysCom.ClassLibrary.Network
 		public struct MIB_TCPTABLE_OWNER_PID
 		{
 			public uint NumEntries;
-			[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct, SizeConst = 1)]
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] //ArraySubType = UnmanagedType.Struct,
 			public MIB_TCPROW_OWNER_PID[] table;
 		}
 
@@ -524,8 +524,7 @@ namespace JocysCom.ClassLibrary.Network
 		public struct MIB_UDPTABLE_OWNER_PID
 		{
 			public uint NumEntries;
-			[MarshalAs(UnmanagedType.ByValArray, ArraySubType = UnmanagedType.Struct,
-				SizeConst = 1)]
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] //ArraySubType = UnmanagedType.Struct,
 			public MIB_UDPROW_OWNER_PID[] table;
 		}
 

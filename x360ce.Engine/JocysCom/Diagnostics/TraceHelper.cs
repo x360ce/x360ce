@@ -66,7 +66,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		{
 			var source = new TraceSource(sourceName);
 #if NETCOREAPP
-			// Web.config is not available in .NET Core, therefore must configure manually.
+			// Web.config is not available in .NET Core, therefore must manually config.
 			Configure(source);
 #endif
 			source.TraceData(eventType, 0, data);
@@ -85,13 +85,17 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			_Configuration = configuration;
 			Configure();
 		}
+
+		private static IConfigurationSection GetSection<T>()
+			=> _Configuration.GetSection(typeof(T).FullName.Replace('.', ':'));
+
 		/// <summary>
 		/// Configure specified or default Trace source.
 		/// </summary>
 		/// <param name="source">Trace source to configure. Configure default if null.</param>
 		public static void Configure(TraceSource source = null)
 		{
-			var sourcesSection = _Configuration.GetSection(nameof(TraceSource));
+			var sourcesSection = GetSection<TraceSource>();
 			var isDefault = source == null;
 			var sourceName = isDefault ? "Default" : source.Name;
 			var sourceSection = sourcesSection.GetSection(sourceName);
@@ -109,7 +113,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 				// Update specified source.
 				sourceSection.Bind(nameof(TraceSource.Switch), source.Switch);
 			}
-			var listenersSection = _Configuration.GetSection(nameof(TraceListener));
+			var listenersSection = GetSection<TraceListener>();
 			// If listener section configuration do not exists then return.
 			if (!listenersSection.Exists())
 				return;

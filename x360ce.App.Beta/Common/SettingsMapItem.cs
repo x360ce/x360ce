@@ -28,7 +28,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Property control inside windows application.
 		/// </summary>
-		public System.Windows.Forms.Control Control { get; set; }
+		public object Control { get; set; }
 		/// <summary>
 		/// Property name on .NET class.
 		/// </summary>

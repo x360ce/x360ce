@@ -179,26 +179,6 @@ namespace x360ce.App
 
 		#endregion
 
-		public static void LoadHelp(System.Windows.Forms.RichTextBox box, string resourceName)
-		{
-			var stream = EngineHelper.GetResourceStream(resourceName);
-			var sr = new StreamReader(stream);
-			//NameValueCollection list = new NameValueCollection();
-			//list.Add("font-name-default", "'Microsoft Sans Serif'");
-			//list.Add("font-size-default", "16");
-			//HelpRichTextBox.Rtf = Html2Rtf.Converter.Html2Rtf(sr.ReadToEnd(), list);
-			box.Rtf = sr.ReadToEnd();
-			box.SelectAll();
-			box.SelectionIndent = 8;
-			box.SelectionRightIndent = 8;
-			box.DeselectAll();
-			box.LinkClicked += (object sender, System.Windows.Forms.LinkClickedEventArgs e) =>
-			{
-				JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl(e.LinkText);
-			};
-		}
-
-	
 		// Use cache so same image won't processed multiple times.
 		public static Dictionary<Bitmap, Bitmap> DisabledImageCache = new Dictionary<Bitmap, Bitmap>();
 		static object DisabledImageLock = new object();

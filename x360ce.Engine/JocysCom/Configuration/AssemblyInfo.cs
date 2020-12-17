@@ -149,7 +149,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					default: break;                // General Availability (GA) - Gold
 				}
 			}
-			var runMode = SettingsParser.Current.Parse("RunMode", "");
+			var runMode = ClassLibrary.Configuration.SettingsParser.Current.Parse("RunMode", "");
 			var haveRunMode = !string.IsNullOrEmpty(runMode);
 			// If run mode is not specified then assume live.
 			var nonLive = haveRunMode && string.Compare(runMode, "LIVE", true) != 0;

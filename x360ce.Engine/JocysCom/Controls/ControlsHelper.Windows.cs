@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Data.Objects.DataClasses;
 using System.Windows.Forms;
+using System.IO;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -449,6 +450,18 @@ namespace JocysCom.ClassLibrary.Controls
 				: string.Format(format, args);
 			if (control.Text != text)
 				control.Text = text;
+		}
+
+		public static void SetTextFromResource(RichTextBox box, string resourceName)
+		{
+			var rtf = Helper.FindResource<string>(Assembly.GetEntryAssembly(), resourceName);
+			box.Rtf = rtf;
+			box.SelectAll();
+			box.SelectionIndent = 8;
+			box.SelectionRightIndent = 8;
+			box.DeselectAll();
+			box.LinkClicked += (object sender, System.Windows.Forms.LinkClickedEventArgs e) =>
+				OpenUrl(e.LinkText);
 		}
 
 		public static void SetReadOnly(Control control, bool readOnly)
