@@ -126,11 +126,16 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		//public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true, int versionNumbers = 3)
-		//{
-		//	return new AssemblyInfo().GetTitle(showBuild, showRunMode, showBuildDate, showArchitecture, showDescription, versionNumbers);
-		//}
-
+		public string RunMode
+		{
+			get
+			{
+				if (_RunMode == null)
+					_RunMode = SettingsParser.Current.Parse("RunMode", "");
+				return _RunMode;
+			}
+		}
+		public string _RunMode;
 
 		public string GetTitle(bool showBuild = true, bool showRunMode = true, bool showBuildDate = true, bool showArchitecture = true, bool showDescription = true, int versionNumbers = 3)
 		{
@@ -149,16 +154,16 @@ namespace JocysCom.ClassLibrary.Configuration
 					default: break;                // General Availability (GA) - Gold
 				}
 			}
-			var runMode = ClassLibrary.Configuration.SettingsParser.Current.Parse("RunMode", "");
-			var haveRunMode = !string.IsNullOrEmpty(runMode);
+			
+			var haveRunMode = !string.IsNullOrEmpty(RunMode);
 			// If run mode is not specified then assume live.
-			var nonLive = haveRunMode && string.Compare(runMode, "LIVE", true) != 0;
+			var nonLive = haveRunMode && string.Compare(RunMode, "LIVE", true) != 0;
 			if (showBuildDate || (showRunMode && nonLive))
 			{
 				s += " (";
 				if (showRunMode && nonLive)
 				{
-					s += string.Format("{0}", runMode);
+					s += string.Format("{0}", RunMode);
 					if (showBuildDate) s += " ";
 				}
 				if (showBuildDate)
