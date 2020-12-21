@@ -13,6 +13,10 @@ namespace x360ce.App.Controls
 		public OptionsHidGuardianControl()
 		{
 			InitializeComponent();
+
+
+			
+
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -20,18 +24,22 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			MainForm.Current.MainTabControl.SelectedIndexChanged += MainTabControl_SelectedIndexChanged;
+			MainForm.Current.OptionsPanel.MainTabControl.SelectedIndexChanged += MainTabControl_SelectedIndexChanged;
 			ControlsHelper.SetTextFromResource(HelpRichTextBox, "Documents.Help_HidGuardian.rtf");
 			// Bind Controls.
 			var o = SettingsManager.Options;
 			SettingsManager.LoadAndMonitor(o, nameof(o.HidGuardianConfigureAutomatically), HidGuardianConfigureAutomaticallyCheckBox);
+			RefreshHidGuardianStatus();
 		}
 
 		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (MainForm.Current.MainTabControl.SelectedTab == MainForm.Current.OptionsPanel.Parent)
-			{
+			var isSelected =
+				MainForm.Current.MainTabControl.SelectedTab == MainForm.Current.OptionsTabPage &&
+				MainForm.Current.OptionsPanel.MainTabControl.SelectedTab == MainForm.Current.OptionsPanel.HidGuardianTabPage;
+			// If HidGuardian Tab was selected then refresh.
+			if (isSelected)
 				RefreshHidGuardianStatus();
-			}
 		}
 
 		private void HidGuardianInstallButton_Click(object sender, RoutedEventArgs e)

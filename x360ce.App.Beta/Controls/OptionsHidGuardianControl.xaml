@@ -38,9 +38,11 @@
 					<ColumnDefinition Width="Auto" MinWidth="8" />
 					<ColumnDefinition Width="Auto" MinWidth="8" />
 				</Grid.ColumnDefinitions>
-				<CheckBox Name="HidGuardianConfigureAutomaticallyCheckBox" Grid.Row="0" Grid.Column="1">
-					Configure automatically - auto-hide Direct Input device when emulated.
-				</CheckBox>
+				<CheckBox
+					Name="HidGuardianConfigureAutomaticallyCheckBox"
+					Grid.Row="0"
+					Grid.Column="1"
+					Content="Configure automatically - auto-hide Direct Input device when emulated." />
 				<Button
 					Name="HidGuardianRefreshButton"
 					Grid.Row="0"

@@ -66,6 +66,11 @@
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="Width" Value="120" />
 		-->
+		<Style.Triggers>
+			<Trigger Property="IsReadOnly" Value="True">
+				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+			</Trigger>
+		</Style.Triggers>
 	</Style>
 
 	<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />
@@ -155,6 +160,7 @@
 		<Setter Property="Padding" Value="3,3,3,3" />
 		<Setter Property="Height" Value="Auto" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>
 
 	<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />

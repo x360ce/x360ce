@@ -8,10 +8,12 @@ using x360ce.Engine;
 
 namespace x360ce.App
 {
+
+	/// <summary>
+	/// region Load, Monitor and Sync settings between controls and properties.
+	/// </summary>
 	public partial class SettingsManager
 	{
-
-		#region Load, Monitor and Sync settings between controls and properties.
 
 		private static void Property_Changed(object sender, PropertyChangedEventArgs e)
 			// Update control from property.
@@ -271,9 +273,6 @@ namespace x360ce.App
 				throw new Exception(string.Format("Type '{0}' not implemented", map.Control.GetType().FullName));
 			}
 		}
-
-		#endregion
-
 
 	}
 }

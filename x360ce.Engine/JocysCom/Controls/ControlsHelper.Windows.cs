@@ -68,7 +68,7 @@ namespace JocysCom.ClassLibrary.Controls
 			/// If no window exists at the given point, the return value is NULL.
 			/// If the point is over a static text control, the return value is a handle to the window under the static text control. </returns>
 			[DllImport("user32.dll", SetLastError = true)]
-			public static extern IntPtr WindowFromPoint(Point point);
+			public static extern IntPtr WindowFromPoint(System.Windows.Point point);
 		}
 
 		public static void SuspendDrawing(Control control)
@@ -264,7 +264,7 @@ namespace JocysCom.ClassLibrary.Controls
 			var pointsToCheck = GetPoints(control, true);
 			foreach (var p in pointsToCheck)
 			{
-				var child = control.Parent.GetChildAtPoint(p);
+				var child = control.Parent.GetChildAtPoint(new Point((int)p.X, (int)p.Y));
 				if (child == null)
 					continue;
 				if (control == child || control.Contains(child))
@@ -273,12 +273,12 @@ namespace JocysCom.ClassLibrary.Controls
 			return false;
 		}
 
-		public static Point[] GetPoints(Control control, bool relative = false)
+		public static System.Windows.Point[] GetPoints(Control control, bool relative = false)
 		{
 			if (control == null)
 				throw new ArgumentNullException(nameof(control));
 			var pos = relative
-				? System.Drawing.Point.Empty
+				? Point.Empty
 				// Get control position on the screen
 				: control.PointToScreen(System.Drawing.Point.Empty);
 			var pointsToCheck =
@@ -295,7 +295,7 @@ namespace JocysCom.ClassLibrary.Controls
 						// Middle-Centre.
 						new Point(pos.X + control.Width/2, pos.Y + control.Height/2)
 					};
-			return pointsToCheck;
+			return pointsToCheck.Select(x=> new System.Windows.Point(x.X, x.Y)).ToArray();
 		}
 
 		public static bool IsControlVisibleToUser(Control control)

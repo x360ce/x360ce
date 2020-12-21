@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.IO;
 using System.Windows.Documents;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -129,6 +130,100 @@ namespace JocysCom.ClassLibrary.Controls
 			e.Handled = true;
 		}
 
+		#region IsVisibleToUser
+
+		public static Point[] GetPoints(Control control, bool relative = false)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var pos = relative
+				? new Point(0, 0)
+				// Get control position on the screen
+				: control.PointToScreen(new Point(0, 0));
+			var pointsToCheck =
+				new Point[]
+					{
+						// Top-Left.
+						pos,
+						// Top-Right.
+						new Point(pos.X + control.ActualWidth - 1, pos.Y),
+						// Bottom-Left.
+						new Point(pos.X, pos.Y + control.ActualHeight - 1),
+						// Bottom-Right.
+						new Point(pos.X + control.ActualWidth - 1, pos.Y + control.ActualHeight - 1),
+						// Middle-Centre.
+						new Point(pos.X + control.ActualWidth/2, pos.Y + control.ActualHeight/2)
+					};
+			return pointsToCheck;
+		}
+
+		/*
+		public static bool IsControlVisibleToUser(Control control)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var handle = (PresentationSource.FromVisual(control) as System.Windows.Interop.HwndSource)?.Handle;
+			if (!handle.HasValue)
+				return false;
+			var children = GetAll<DependencyObject>(control, true);
+			// Return true if any of the controls is visible.
+			var pointsToCheck = GetPoints(control, true);
+			foreach (var p in pointsToCheck)
+			{
+				//var hwnd = NativeMethods.WindowFromPoint(p);
+				//if (hwnd == IntPtr.Zero)
+				//	continue;
+				var result = VisualTreeHelper.HitTest(control, p);
+				if (result == null)
+					continue;
+				if (children.Contains(result.VisualHit))
+					return true;
+				//var other = Control.FromChildHandle(hwnd);
+				//if (other == null)
+				//	continue;
+				//if (GetAll(control, null, true).Contains(other))
+			}
+			return false;
+		}
+		*/
+
+		/// <summary>
+		/// Get all child controls.
+		/// </summary>
+		public static IEnumerable<DependencyObject> GetAll(DependencyObject control, Type type = null, bool includeTop = false)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			// Create new list.
+			var controls = new List<DependencyObject>();
+			// Add top control if required.
+			if (includeTop)
+				controls.Add(control);
+			// If control contains children then...
+			var childrenCount = VisualTreeHelper.GetChildrenCount(control);
+			for (int i = 0; i < childrenCount; i++)
+			{
+				var child = VisualTreeHelper.GetChild(control, i);
+				var children = GetAll(child, null, true);
+				controls.AddRange(children);
+			}
+			// If type filter is not set then...
+			return (type == null)
+				? controls
+				: controls.Where(x => type.IsInterface ? x.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.GetType()));
+		}
+
+		/// <summary>
+		/// Get all child controls.
+		/// </summary>
+		public static T[] GetAll<T>(Control control, bool includeTop = false)
+		{
+			if (control == null)
+				return new T[0];
+			return GetAll(control, typeof(T), includeTop).Cast<T>().ToArray();
+		}
+
+		#endregion
 
 		#region Apply Grid Border Style
 
