@@ -28,7 +28,7 @@
 			// OkButton
 			// 
 			this.OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.OkButton.Location = new System.Drawing.Point(399, 407);
+			this.OkButton.Location = new System.Drawing.Point(810, 415);
 			this.OkButton.Name = "OkButton";
 			this.OkButton.Size = new System.Drawing.Size(132, 23);
 			this.OkButton.TabIndex = 24;
@@ -40,7 +40,7 @@
 			// 
 			this.CloseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.CloseButton.Location = new System.Drawing.Point(537, 407);
+			this.CloseButton.Location = new System.Drawing.Point(948, 415);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.Size = new System.Drawing.Size(75, 23);
 			this.CloseButton.TabIndex = 25;
@@ -56,7 +56,7 @@
 			this.ControllersPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.ControllersPanel.Name = "ControllersPanel";
 			this.ControllersPanel.Padding = new System.Windows.Forms.Padding(3);
-			this.ControllersPanel.Size = new System.Drawing.Size(592, 305);
+			this.ControllersPanel.Size = new System.Drawing.Size(995, 292);
 			this.ControllersPanel.TabIndex = 26;
 			// 
 			// MainTabControl
@@ -68,22 +68,24 @@
 			this.MainTabControl.Location = new System.Drawing.Point(12, 70);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
-			this.MainTabControl.Size = new System.Drawing.Size(600, 331);
+			this.MainTabControl.Size = new System.Drawing.Size(1011, 339);
 			this.MainTabControl.TabIndex = 27;
 			// 
 			// DevicesTabPage
 			// 
 			this.DevicesTabPage.Controls.Add(this.ControllersPanel);
-			this.DevicesTabPage.Location = new System.Drawing.Point(4, 22);
+			this.DevicesTabPage.Location = new System.Drawing.Point(8, 39);
 			this.DevicesTabPage.Name = "DevicesTabPage";
-			this.DevicesTabPage.Size = new System.Drawing.Size(592, 305);
+			this.DevicesTabPage.Size = new System.Drawing.Size(995, 292);
 			this.DevicesTabPage.TabIndex = 0;
 			this.DevicesTabPage.Text = "Direct Input Devices";
 			this.DevicesTabPage.UseVisualStyleBackColor = true;
 			// 
 			// MapDeviceToControllerForm
 			// 
-			this.ClientSize = new System.Drawing.Size(624, 442);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(1035, 450);
 			this.Controls.Add(this.MainTabControl);
 			this.Controls.Add(this.OkButton);
 			this.Controls.Add(this.CloseButton);

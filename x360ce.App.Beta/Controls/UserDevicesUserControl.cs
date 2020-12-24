@@ -11,8 +11,8 @@ using System.ComponentModel;
 using JocysCom.ClassLibrary.IO;
 using System.Drawing;
 using System.Threading.Tasks;
-using JocysCom.ClassLibrary.Win32;
 using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.Win32;
 
 namespace x360ce.App.Controls
 {
@@ -21,6 +21,8 @@ namespace x360ce.App.Controls
 		public UserDevicesUserControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(DevicesDataGridView);
@@ -60,25 +62,33 @@ namespace x360ce.App.Controls
 
 		private void ControllersUserControl_Load(object sender, EventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			_currentData = null;
 			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
+			ShowSystemDevicesButton.Visible = MapDeviceToControllerMode;
 			if (MapDeviceToControllerMode)
+			{
 				RefreshMapDeviceToList();
+			}
 			else
+			{
 				AttachDataSource(SettingsManager.UserDevices.Items);
+			}
 		}
 
 		void RefreshMapDeviceToList()
 		{
 			var list = new SortableBindingList<UserDevice>();
 			list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
-			// Exclude Syste/Virtual devices.
+			// Exclude System/Virtual devices.
 			UserDevice[] devices;
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
 				devices = SettingsManager.UserDevices.Items
-					.Where(x => x.ConnectionClass != DEVCLASS.SYSTEM).ToArray();
+					.Where(x => ShowSystemDevices || x.ConnectionClass != DEVCLASS.SYSTEM)
+					.ToArray();
 			}
 			list.AddRange(devices);
 			// If new list, item added or removed then...
@@ -319,6 +329,18 @@ namespace x360ce.App.Controls
 
 		private void DevicesDataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
 		{
+		}
+
+		bool ShowSystemDevices = false;
+
+		private void ShowSystemDevicesButton_Click(object sender, EventArgs e)
+		{
+			ShowSystemDevicesButton.Checked = !ShowSystemDevicesButton.Checked;
+			ShowSystemDevicesButton.Image = ShowSystemDevicesButton.Checked
+				? x360ce.App.Properties.Resources.checkbox_16x16
+				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			ShowSystemDevices = ShowSystemDevicesButton.Checked;
+			RefreshMapDeviceToList();
 		}
 	}
 }
