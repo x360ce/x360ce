@@ -60,16 +60,6 @@
 			this.UseDeviceBufferedDataCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
-			this.VirtualDeviceGroupBox = new System.Windows.Forms.GroupBox();
-			this.AboutViGEmLinkLabel = new System.Windows.Forms.LinkLabel();
-			this.ViGEmBusLabel = new System.Windows.Forms.Label();
-			this.VigemLabel = new System.Windows.Forms.Label();
-			this.PollingRateLabel = new System.Windows.Forms.Label();
-			this.PollingRateComboBox = new System.Windows.Forms.ComboBox();
-			this.ViGEmBusRefreshButton = new System.Windows.Forms.Button();
-			this.ViGEmBusUninstallButton = new System.Windows.Forms.Button();
-			this.ViGEmBusInstallButton = new System.Windows.Forms.Button();
-			this.ViGEmBusTextBox = new System.Windows.Forms.TextBox();
 			this.DeveloperToolsButton = new System.Windows.Forms.Button();
 			this.AllowRemoteControllersGroupBox = new System.Windows.Forms.GroupBox();
 			this.RemoteEnabledCheckBox = new System.Windows.Forms.CheckBox();
@@ -93,11 +83,12 @@
 			this.GuideButtonActionTextBox = new System.Windows.Forms.TextBox();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
-			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
+			this.RemoteControllerTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
+			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
+			this.OptionsVirtualDeviceHost = new System.Windows.Forms.Integration.ElementHost();
 			this.HidGuardianTabPage = new System.Windows.Forms.TabPage();
 			this.OptionsHidGuardianHost = new System.Windows.Forms.Integration.ElementHost();
-			this.optionsHidGuardianControl1 = new x360ce.App.Controls.OptionsHidGuardianControl();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
@@ -105,7 +96,6 @@
 			this.LocationsToolStrip.SuspendLayout();
 			this.ConfigurationGroupBox.SuspendLayout();
 			this.DirectInputDevicesGroupBox.SuspendLayout();
-			this.VirtualDeviceGroupBox.SuspendLayout();
 			this.AllowRemoteControllersGroupBox.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.RemotePortNumericUpDown)).BeginInit();
 			this.MainTabControl.SuspendLayout();
@@ -114,8 +104,9 @@
 			this.DevelopingGroupBox.SuspendLayout();
 			this.GuideButtonGroupBox.SuspendLayout();
 			this.InternetOptionsTabPage.SuspendLayout();
-			this.VirtualDeviceTabPage.SuspendLayout();
+			this.RemoteControllerTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
+			this.VirtualDeviceTabPage.SuspendLayout();
 			this.HidGuardianTabPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -489,131 +480,6 @@
 			this.ExcludeSupplementalDevicesCheckBox.Text = "Exclude Supplemental Devices";
 			this.ExcludeSupplementalDevicesCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// VirtualDeviceGroupBox
-			// 
-			this.VirtualDeviceGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.VirtualDeviceGroupBox.Controls.Add(this.AboutViGEmLinkLabel);
-			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusLabel);
-			this.VirtualDeviceGroupBox.Controls.Add(this.VigemLabel);
-			this.VirtualDeviceGroupBox.Controls.Add(this.PollingRateLabel);
-			this.VirtualDeviceGroupBox.Controls.Add(this.PollingRateComboBox);
-			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusRefreshButton);
-			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusUninstallButton);
-			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusInstallButton);
-			this.VirtualDeviceGroupBox.Controls.Add(this.ViGEmBusTextBox);
-			this.VirtualDeviceGroupBox.Location = new System.Drawing.Point(6, 6);
-			this.VirtualDeviceGroupBox.Margin = new System.Windows.Forms.Padding(6);
-			this.VirtualDeviceGroupBox.Name = "VirtualDeviceGroupBox";
-			this.VirtualDeviceGroupBox.Padding = new System.Windows.Forms.Padding(6);
-			this.VirtualDeviceGroupBox.Size = new System.Drawing.Size(1288, 154);
-			this.VirtualDeviceGroupBox.TabIndex = 70;
-			this.VirtualDeviceGroupBox.TabStop = false;
-			this.VirtualDeviceGroupBox.Text = "Virtual Device Emulation by Nefarius";
-			// 
-			// AboutViGEmLinkLabel
-			// 
-			this.AboutViGEmLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.AboutViGEmLinkLabel.AutoSize = true;
-			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(936, 46);
-			this.AboutViGEmLinkLabel.Margin = new System.Windows.Forms.Padding(0, 0, 6, 0);
-			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
-			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(171, 25);
-			this.AboutViGEmLinkLabel.TabIndex = 45;
-			this.AboutViGEmLinkLabel.TabStop = true;
-			this.AboutViGEmLinkLabel.Text = "https://vigem.org";
-			this.AboutViGEmLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutViGEmLinkLabel_LinkClicked);
-			// 
-			// ViGEmBusLabel
-			// 
-			this.ViGEmBusLabel.AutoSize = true;
-			this.ViGEmBusLabel.Location = new System.Drawing.Point(12, 102);
-			this.ViGEmBusLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.ViGEmBusLabel.Name = "ViGEmBusLabel";
-			this.ViGEmBusLabel.Size = new System.Drawing.Size(121, 25);
-			this.ViGEmBusLabel.TabIndex = 29;
-			this.ViGEmBusLabel.Text = "ViGEm Bus";
-			// 
-			// VigemLabel
-			// 
-			this.VigemLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.VigemLabel.AutoSize = true;
-			this.VigemLabel.Location = new System.Drawing.Point(654, 46);
-			this.VigemLabel.Margin = new System.Windows.Forms.Padding(6, 0, 0, 0);
-			this.VigemLabel.Name = "VigemLabel";
-			this.VigemLabel.Size = new System.Drawing.Size(289, 25);
-			this.VigemLabel.TabIndex = 29;
-			this.VigemLabel.Text = "Download latest version from";
-			// 
-			// PollingRateLabel
-			// 
-			this.PollingRateLabel.AutoSize = true;
-			this.PollingRateLabel.Location = new System.Drawing.Point(12, 46);
-			this.PollingRateLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.PollingRateLabel.Name = "PollingRateLabel";
-			this.PollingRateLabel.Size = new System.Drawing.Size(128, 25);
-			this.PollingRateLabel.TabIndex = 29;
-			this.PollingRateLabel.Text = "Polling Rate";
-			// 
-			// PollingRateComboBox
-			// 
-			this.PollingRateComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.PollingRateComboBox.FormattingEnabled = true;
-			this.PollingRateComboBox.Location = new System.Drawing.Point(174, 40);
-			this.PollingRateComboBox.Margin = new System.Windows.Forms.Padding(6);
-			this.PollingRateComboBox.Name = "PollingRateComboBox";
-			this.PollingRateComboBox.Size = new System.Drawing.Size(188, 33);
-			this.PollingRateComboBox.TabIndex = 30;
-			// 
-			// ViGEmBusRefreshButton
-			// 
-			this.ViGEmBusRefreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ViGEmBusRefreshButton.Location = new System.Drawing.Point(1126, 37);
-			this.ViGEmBusRefreshButton.Margin = new System.Windows.Forms.Padding(6);
-			this.ViGEmBusRefreshButton.Name = "ViGEmBusRefreshButton";
-			this.ViGEmBusRefreshButton.Size = new System.Drawing.Size(150, 44);
-			this.ViGEmBusRefreshButton.TabIndex = 44;
-			this.ViGEmBusRefreshButton.Text = "Refresh";
-			this.ViGEmBusRefreshButton.UseVisualStyleBackColor = true;
-			this.ViGEmBusRefreshButton.Click += new System.EventHandler(this.ViGEmBusRefreshButton_Click);
-			// 
-			// ViGEmBusUninstallButton
-			// 
-			this.ViGEmBusUninstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ViGEmBusUninstallButton.Enabled = false;
-			this.ViGEmBusUninstallButton.Location = new System.Drawing.Point(1126, 92);
-			this.ViGEmBusUninstallButton.Margin = new System.Windows.Forms.Padding(6);
-			this.ViGEmBusUninstallButton.Name = "ViGEmBusUninstallButton";
-			this.ViGEmBusUninstallButton.Size = new System.Drawing.Size(150, 44);
-			this.ViGEmBusUninstallButton.TabIndex = 44;
-			this.ViGEmBusUninstallButton.Text = "Uninstall";
-			this.ViGEmBusUninstallButton.UseVisualStyleBackColor = true;
-			this.ViGEmBusUninstallButton.Click += new System.EventHandler(this.ViGEmBusUninstallButton_Click);
-			// 
-			// ViGEmBusInstallButton
-			// 
-			this.ViGEmBusInstallButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ViGEmBusInstallButton.Enabled = false;
-			this.ViGEmBusInstallButton.Location = new System.Drawing.Point(964, 92);
-			this.ViGEmBusInstallButton.Margin = new System.Windows.Forms.Padding(6);
-			this.ViGEmBusInstallButton.Name = "ViGEmBusInstallButton";
-			this.ViGEmBusInstallButton.Size = new System.Drawing.Size(150, 44);
-			this.ViGEmBusInstallButton.TabIndex = 44;
-			this.ViGEmBusInstallButton.Text = "Install";
-			this.ViGEmBusInstallButton.UseVisualStyleBackColor = true;
-			this.ViGEmBusInstallButton.Click += new System.EventHandler(this.ViGEmBusInstallButton_Click);
-			// 
-			// ViGEmBusTextBox
-			// 
-			this.ViGEmBusTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.ViGEmBusTextBox.BackColor = System.Drawing.SystemColors.Control;
-			this.ViGEmBusTextBox.Location = new System.Drawing.Point(174, 96);
-			this.ViGEmBusTextBox.Margin = new System.Windows.Forms.Padding(6);
-			this.ViGEmBusTextBox.Name = "ViGEmBusTextBox";
-			this.ViGEmBusTextBox.Size = new System.Drawing.Size(1116, 31);
-			this.ViGEmBusTextBox.TabIndex = 41;
-			// 
 			// DeveloperToolsButton
 			// 
 			this.DeveloperToolsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -639,7 +505,7 @@
 			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePasswordTextBox);
 			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote2CheckBox);
 			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote1CheckBox);
-			this.AllowRemoteControllersGroupBox.Location = new System.Drawing.Point(6, 171);
+			this.AllowRemoteControllersGroupBox.Location = new System.Drawing.Point(6, 6);
 			this.AllowRemoteControllersGroupBox.Margin = new System.Windows.Forms.Padding(6);
 			this.AllowRemoteControllersGroupBox.Name = "AllowRemoteControllersGroupBox";
 			this.AllowRemoteControllersGroupBox.Padding = new System.Windows.Forms.Padding(6);
@@ -774,6 +640,7 @@
 			// 
 			this.MainTabControl.Controls.Add(this.GeneralTabPage);
 			this.MainTabControl.Controls.Add(this.InternetOptionsTabPage);
+			this.MainTabControl.Controls.Add(this.RemoteControllerTabPage);
 			this.MainTabControl.Controls.Add(this.VirtualDeviceTabPage);
 			this.MainTabControl.Controls.Add(this.HidGuardianTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -903,20 +770,19 @@
 			this.InternetPanel.Size = new System.Drawing.Size(1288, 895);
 			this.InternetPanel.TabIndex = 33;
 			// 
-			// VirtualDeviceTabPage
+			// RemoteControllerTabPage
 			// 
-			this.VirtualDeviceTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.VirtualDeviceTabPage.Controls.Add(this.VirtualDevicePanel);
-			this.VirtualDeviceTabPage.Location = new System.Drawing.Point(8, 39);
-			this.VirtualDeviceTabPage.Margin = new System.Windows.Forms.Padding(6);
-			this.VirtualDeviceTabPage.Name = "VirtualDeviceTabPage";
-			this.VirtualDeviceTabPage.Size = new System.Drawing.Size(1300, 907);
-			this.VirtualDeviceTabPage.TabIndex = 2;
-			this.VirtualDeviceTabPage.Text = "Virtual Device";
+			this.RemoteControllerTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.RemoteControllerTabPage.Controls.Add(this.VirtualDevicePanel);
+			this.RemoteControllerTabPage.Location = new System.Drawing.Point(8, 39);
+			this.RemoteControllerTabPage.Margin = new System.Windows.Forms.Padding(6);
+			this.RemoteControllerTabPage.Name = "RemoteControllerTabPage";
+			this.RemoteControllerTabPage.Size = new System.Drawing.Size(1300, 907);
+			this.RemoteControllerTabPage.TabIndex = 2;
+			this.RemoteControllerTabPage.Text = "Remote Controller";
 			// 
 			// VirtualDevicePanel
 			// 
-			this.VirtualDevicePanel.Controls.Add(this.VirtualDeviceGroupBox);
 			this.VirtualDevicePanel.Controls.Add(this.AllowRemoteControllersGroupBox);
 			this.VirtualDevicePanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.VirtualDevicePanel.Location = new System.Drawing.Point(0, 0);
@@ -924,6 +790,25 @@
 			this.VirtualDevicePanel.Name = "VirtualDevicePanel";
 			this.VirtualDevicePanel.Size = new System.Drawing.Size(1300, 907);
 			this.VirtualDevicePanel.TabIndex = 72;
+			// 
+			// VirtualDeviceTabPage
+			// 
+			this.VirtualDeviceTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.VirtualDeviceTabPage.Controls.Add(this.OptionsVirtualDeviceHost);
+			this.VirtualDeviceTabPage.Location = new System.Drawing.Point(8, 39);
+			this.VirtualDeviceTabPage.Name = "VirtualDeviceTabPage";
+			this.VirtualDeviceTabPage.Size = new System.Drawing.Size(1300, 907);
+			this.VirtualDeviceTabPage.TabIndex = 4;
+			this.VirtualDeviceTabPage.Text = "Virtual Device";
+			// 
+			// OptionsVirtualDeviceHost
+			// 
+			this.OptionsVirtualDeviceHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.OptionsVirtualDeviceHost.Location = new System.Drawing.Point(0, 0);
+			this.OptionsVirtualDeviceHost.Name = "OptionsVirtualDeviceHost";
+			this.OptionsVirtualDeviceHost.Size = new System.Drawing.Size(1300, 907);
+			this.OptionsVirtualDeviceHost.TabIndex = 0;
+			this.OptionsVirtualDeviceHost.Child = null;
 			// 
 			// HidGuardianTabPage
 			// 
@@ -943,7 +828,7 @@
 			this.OptionsHidGuardianHost.Name = "OptionsHidGuardianHost";
 			this.OptionsHidGuardianHost.Size = new System.Drawing.Size(1300, 907);
 			this.OptionsHidGuardianHost.TabIndex = 0;
-			this.OptionsHidGuardianHost.Child = this.optionsHidGuardianControl1;
+			this.OptionsHidGuardianHost.Child = null;
 			// 
 			// OptionsUserControl
 			// 
@@ -966,8 +851,6 @@
 			this.ConfigurationGroupBox.PerformLayout();
 			this.DirectInputDevicesGroupBox.ResumeLayout(false);
 			this.DirectInputDevicesGroupBox.PerformLayout();
-			this.VirtualDeviceGroupBox.ResumeLayout(false);
-			this.VirtualDeviceGroupBox.PerformLayout();
 			this.AllowRemoteControllersGroupBox.ResumeLayout(false);
 			this.AllowRemoteControllersGroupBox.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.RemotePortNumericUpDown)).EndInit();
@@ -979,8 +862,9 @@
 			this.GuideButtonGroupBox.ResumeLayout(false);
 			this.GuideButtonGroupBox.PerformLayout();
 			this.InternetOptionsTabPage.ResumeLayout(false);
-			this.VirtualDeviceTabPage.ResumeLayout(false);
+			this.RemoteControllerTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
+			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.HidGuardianTabPage.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -1014,18 +898,10 @@
 		private System.Windows.Forms.CheckBox ShowSettingsTabCheckBox;
 		private System.Windows.Forms.CheckBox ShowDevicesTabCheckBox;
 		public System.Windows.Forms.CheckBox IncludeProductsCheckBox;
-		private System.Windows.Forms.GroupBox VirtualDeviceGroupBox;
-		private System.Windows.Forms.Label PollingRateLabel;
-		private System.Windows.Forms.ComboBox PollingRateComboBox;
 		private System.Windows.Forms.Button DeveloperToolsButton;
-        private System.Windows.Forms.Label ViGEmBusLabel;
-        private System.Windows.Forms.TextBox ViGEmBusTextBox;
-        public System.Windows.Forms.Button ViGEmBusRefreshButton;
-		private System.Windows.Forms.Button ViGEmBusInstallButton;
 		internal System.Windows.Forms.CheckBox AlwaysOnTopCheckBox;
 		public System.Windows.Forms.ComboBox StartWithWindowsStateComboBox;
 		public System.Windows.Forms.CheckBox StartWithWindowsCheckBox;
-		private System.Windows.Forms.LinkLabel AboutViGEmLinkLabel;
 		private System.Windows.Forms.GroupBox AllowRemoteControllersGroupBox;
 		public System.Windows.Forms.CheckBox AllowRemote3CheckBox;
 		public System.Windows.Forms.CheckBox AllowRemote2CheckBox;
@@ -1035,8 +911,6 @@
 		private System.Windows.Forms.Label RemotePortLabel;
 		public System.Windows.Forms.NumericUpDown RemotePortNumericUpDown;
 		private System.Windows.Forms.Label RemotePasswordLabel;
-		private System.Windows.Forms.Label VigemLabel;
-		private System.Windows.Forms.Button ViGEmBusUninstallButton;
 		public System.Windows.Forms.CheckBox RemoteEnabledCheckBox;
 		private System.Windows.Forms.Label AllowControlLabel;
 		private System.Windows.Forms.TabPage GeneralTabPage;
@@ -1049,7 +923,7 @@
 		private System.Windows.Forms.CheckBox ShowTestButtonCheckBox;
 		private System.Windows.Forms.CheckBox UseDeviceBufferedDataCheckBox;
 		public System.Windows.Forms.TabControl MainTabControl;
-		public System.Windows.Forms.TabPage VirtualDeviceTabPage;
+		public System.Windows.Forms.TabPage RemoteControllerTabPage;
 		public System.Windows.Forms.TabPage HidGuardianTabPage;
 		private System.Windows.Forms.GroupBox GuideButtonGroupBox;
 		private System.Windows.Forms.Label GuideButtonActionLabel;
@@ -1057,6 +931,7 @@
 		public System.Windows.Forms.CheckBox AutoDetectForegroundWindowCheckBox;
 		public System.Windows.Forms.CheckBox IsProcessDPIAwareCheckBox;
 		private System.Windows.Forms.Integration.ElementHost OptionsHidGuardianHost;
-		private OptionsHidGuardianControl optionsHidGuardianControl1;
+		private System.Windows.Forms.TabPage VirtualDeviceTabPage;
+		private System.Windows.Forms.Integration.ElementHost OptionsVirtualDeviceHost;
 	}
 }

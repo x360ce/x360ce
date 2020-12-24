@@ -35,7 +35,9 @@ namespace x360ce.App
 			if (controlProperty == null)
 			{
 				if (control is System.Windows.Controls.CheckBox)
-					controlProperty = System.Windows.Controls.CheckBox.IsCheckedProperty;
+					controlProperty = System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty;
+				if (control is System.Windows.Controls.ComboBox)
+					controlProperty = System.Windows.Controls.Primitives.Selector.SelectedValueProperty;
 			}
 			var binding = new System.Windows.Data.Binding(sourceProperty);
 			binding.Source = source;

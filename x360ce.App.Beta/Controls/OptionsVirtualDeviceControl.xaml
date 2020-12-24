@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="x360ce.App.Controls.OptionsHidGuardianControl"
+	x:Class="x360ce.App.Controls.OptionsVirtualDeviceControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -25,7 +25,7 @@
 		</Grid.RowDefinitions>
 		<GroupBox Grid.Row="0" Margin="3,3,3,3">
 			<GroupBox.Header>
-				<TextBlock Text="HID Guardian by Nefarius" />
+				<TextBlock Text="Virtual Device Emulation by Nefarius" />
 			</GroupBox.Header>
 			<Grid>
 				<Grid.RowDefinitions>
@@ -38,19 +38,23 @@
 					<ColumnDefinition Width="Auto" MinWidth="8" />
 					<ColumnDefinition Width="Auto" MinWidth="8" />
 				</Grid.ColumnDefinitions>
-				<CheckBox
-					Name="HidGuardianConfigureAutomaticallyCheckBox"
+				<Label Grid.Row="0" Grid.Column="0" Content="Polling Rate" />
+				<ComboBox
+					Name="PollingRateComboBox"
 					Grid.Row="0"
 					Grid.Column="1"
-					Content="Configure automatically - auto-hide Direct Input device when emulated." />
+					Width="Auto" />
 				<Button
-					Name="HidGuardianRefreshButton"
+					Name="RefreshButton"
 					Grid.Row="0"
 					Grid.Column="3"
-					Click="RefreshButton_Click">
-					Refresh
-				</Button>
-				<Label Name="HidGuardianLabel" Grid.Row="1" Grid.Column="0">HID Guardian</Label>
+					Click="RefreshButton_Click"
+					Content="Refresh" />
+				<Label
+					Name="VirtualDeviceLabel"
+					Grid.Row="1"
+					Grid.Column="0"
+					Content="ViGEm Bus" />
 				<TextBox
 					Name="StatusTextBox"
 					Grid.Row="1"
@@ -73,11 +77,11 @@
 			</Grid>
 		</GroupBox>
 		<RichTextBox
-			Name="HelpRichTextBox"
-			Grid.Row="1"
-			Background="White"
-			BorderThickness="0"
-			IsReadOnly="True">
+	  x:Name="HelpRichTextBox"
+	  Grid.Row="1"
+	  Background="White"
+	  BorderThickness="0"
+	  IsReadOnly="True">
 			<FlowDocument>
 				<Paragraph>
 					<Run />

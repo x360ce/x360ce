@@ -106,6 +106,9 @@ namespace x360ce.App
 			var o = SettingsManager.Options;
 			switch (e.PropertyName)
 			{
+				case nameof(Options.PollingRate):
+					DHelper.Frequency = o.PollingRate;
+					break;
 				case nameof(Options.RemoteEnabled):
 					// If UDP server must be enabled then...
 					if (o.RemoteEnabled)

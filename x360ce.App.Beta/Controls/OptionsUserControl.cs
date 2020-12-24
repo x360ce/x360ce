@@ -11,11 +11,19 @@ namespace x360ce.App.Controls
 {
 	public partial class OptionsUserControl : UserControl
 	{
+		private OptionsHidGuardianControl _OptionsHidGuardianControl;
+		private OptionsVirtualDeviceControl _OptionsVirtualDeviceControl;
+
 		public OptionsUserControl()
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			_OptionsVirtualDeviceControl = new x360ce.App.Controls.OptionsVirtualDeviceControl();
+			OptionsVirtualDeviceHost.Child = _OptionsVirtualDeviceControl;
+			_OptionsHidGuardianControl = new x360ce.App.Controls.OptionsHidGuardianControl();
+			OptionsHidGuardianHost.Child = _OptionsHidGuardianControl;
+
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			LocationsToolStrip.Font = Font;
@@ -24,15 +32,6 @@ namespace x360ce.App.Controls
 		public void InitOptions()
 		{
 			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);
-			MainForm.Current.MainTabControl.SelectedIndexChanged += MainTabControl_SelectedIndexChanged;
-		}
-
-		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			if (MainForm.Current.MainTabControl.SelectedTab == MainForm.Current.OptionsPanel.Parent)
-			{
-				RefreshViGEmBusStatus();
-			}
 		}
 
 		#region Operation 
@@ -88,7 +87,6 @@ namespace x360ce.App.Controls
 			// Stored inside XML now.
 			var o = SettingsManager.Options;
 			SettingsManager.LoadAndMonitor(x => x.GameScanLocations, GameScanLocationsListBox, o.GameScanLocations);
-			SettingsManager.LoadAndMonitor(x => x.PollingRate, PollingRateComboBox, Enum.GetValues(typeof(UpdateFrequency)));
 			SettingsManager.LoadAndMonitor(x => x.StartWithWindows, StartWithWindowsCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
 			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
@@ -114,9 +112,6 @@ namespace x360ce.App.Controls
 			{
 				case nameof(Options.AlwaysOnTop):
 					MainForm.Current.TopMost = o.AlwaysOnTop;
-					break;
-				case nameof(Options.PollingRate):
-					Global.DHelper.Frequency = o.PollingRate;
 					break;
 				case nameof(Options.StartWithWindows):
 				case nameof(Options.StartWithWindowsState):
@@ -278,60 +273,6 @@ namespace x360ce.App.Controls
 			if (_ToolsForm == null)
 				_ToolsForm = new DeveloperToolsForm();
 			_ToolsForm.ShowPanel();
-		}
-
-		#region ViGemBus Driver
-
-		private void ViGEmBusInstallButton_Click(object sender, EventArgs e)
-		{
-			ViGEmBusTextBox.Text = "Installing. Please Wait...";
-			DInput.DInputHelper.CheckInstallVirtualDriver();
-			RefreshViGEmBusStatus();
-		}
-
-		private void ViGEmBusUninstallButton_Click(object sender, EventArgs e)
-		{
-			ViGEmBusTextBox.Text = "Uninstalling. Please Wait...";
-			// Disable Virtual mode first.
-			MainForm.Current.ChangeCurrentGameEmulationType(EmulationType.None);
-			DInput.DInputHelper.CheckUnInstallVirtualDriver();
-			RefreshViGEmBusStatus();
-		}
-
-
-		private void ViGEmBusRefreshButton_Click(object sender, EventArgs e)
-		{
-			RefreshViGEmBusStatus();
-		}
-
-		void RefreshViGEmBusStatus()
-		{
-			ControlsHelper.SetText(ViGEmBusTextBox, "Please wait...");
-			// run in another thread, to make sure it is not freezing interface.
-			var ts = new System.Threading.ThreadStart(delegate ()
-			{
-				// Get Virtual Bus and HID Guardian status.
-				var bus = DInput.VirtualDriverInstaller.GetViGemBusDriverInfo();
-				ControlsHelper.BeginInvoke(() =>
-				{
-					// Update Bus status.
-					var busStatus = bus.DriverVersion == 0
-						? "Not installed"
-						: string.Format("{0} {1}", bus.Description, bus.GetVersion());
-					ControlsHelper.SetText(ViGEmBusTextBox, busStatus);
-					ViGEmBusInstallButton.Enabled = bus.DriverVersion == 0;
-					ViGEmBusUninstallButton.Enabled = bus.DriverVersion != 0;
-				});
-			});
-			var t = new System.Threading.Thread(ts);
-			t.Start();
-		}
-
-		#endregion
-
-		void AboutViGEmLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-		{
-			ControlsHelper.OpenUrl(((Control)sender).Text);
 		}
 
 	}

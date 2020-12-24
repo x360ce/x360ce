@@ -2,15 +2,16 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
 	/// <summary>
-	/// Interaction logic for OptionsHidGuardianControl.xaml
+	/// Interaction logic for OptionsVirtualDeviceControl.xaml
 	/// </summary>
-	public partial class OptionsHidGuardianControl : UserControl
+	public partial class OptionsVirtualDeviceControl : UserControl
 	{
-		public OptionsHidGuardianControl()
+		public OptionsVirtualDeviceControl()
 		{
 			InitializeComponent();
 		}
@@ -21,10 +22,11 @@ namespace x360ce.App.Controls
 				return;
 			MainForm.Current.MainTabControl.SelectedIndexChanged += MainTabControl_SelectedIndexChanged;
 			MainForm.Current.OptionsPanel.MainTabControl.SelectedIndexChanged += MainTabControl_SelectedIndexChanged;
-			ControlsHelper.SetTextFromResource(HelpRichTextBox, "Documents.Help_HidGuardian.rtf");
+			ControlsHelper.SetTextFromResource(HelpRichTextBox, "Documents.Help_ViGEmBus.rtf");
 			// Bind Controls.
 			var o = SettingsManager.Options;
-			SettingsManager.LoadAndMonitor(o, nameof(o.HidGuardianConfigureAutomatically), HidGuardianConfigureAutomaticallyCheckBox);
+			PollingRateComboBox.ItemsSource = Enum.GetValues(typeof(UpdateFrequency));
+			SettingsManager.LoadAndMonitor(o, nameof(o.PollingRate), PollingRateComboBox);
 			RefreshStatus();
 		}
 
@@ -32,7 +34,7 @@ namespace x360ce.App.Controls
 		{
 			var isSelected =
 				MainForm.Current.MainTabControl.SelectedTab == MainForm.Current.OptionsTabPage &&
-				MainForm.Current.OptionsPanel.MainTabControl.SelectedTab == MainForm.Current.OptionsPanel.HidGuardianTabPage;
+				MainForm.Current.OptionsPanel.MainTabControl.SelectedTab == MainForm.Current.OptionsPanel.RemoteControllerTabPage;
 			// If HidGuardian Tab was selected then refresh.
 			if (isSelected)
 				RefreshStatus();
@@ -43,8 +45,7 @@ namespace x360ce.App.Controls
 			ControlsHelper.BeginInvoke(() =>
 			{
 				StatusTextBox.Text = "Installing. Please Wait...";
-				Program.RunElevated(AdminCommand.InstallHidGuardian);
-				ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
+				DInput.DInputHelper.CheckInstallVirtualDriver();
 				RefreshStatus();
 			});
 		}
@@ -59,7 +60,9 @@ namespace x360ce.App.Controls
 			ControlsHelper.BeginInvoke(() =>
 			{
 				StatusTextBox.Text = "Uninstalling. Please Wait...";
-				Program.RunElevated(AdminCommand.UninstallHidGuardian);
+				// Disable Virtual mode first.
+				MainForm.Current.ChangeCurrentGameEmulationType(EmulationType.None);
+				DInput.DInputHelper.CheckUnInstallVirtualDriver();
 				RefreshStatus();
 			});
 		}
@@ -71,16 +74,16 @@ namespace x360ce.App.Controls
 			var ts = new System.Threading.ThreadStart(delegate ()
 			{
 				// Get Virtual Bus and HID Guardian status.
-				var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
+				var bus = DInput.VirtualDriverInstaller.GetViGemBusDriverInfo();
 				ControlsHelper.BeginInvoke(() =>
 				{
-					// Update HID status.
-					var hidStatus = hid.DriverVersion == 0
+					// Update Bus status.
+					var busStatus = bus.DriverVersion == 0
 						? "Not installed"
-						: string.Format("{0} {1}", hid.Description, hid.GetVersion());
-					ControlsHelper.SetText(StatusTextBox, hidStatus);
-					InstallButton.IsEnabled = hid.DriverVersion == 0;
-					UninstallButton.IsEnabled = hid.DriverVersion != 0;
+						: string.Format("{0} {1}", bus.Description, bus.GetVersion());
+					ControlsHelper.SetText(StatusTextBox, busStatus);
+					InstallButton.IsEnabled = bus.DriverVersion == 0;
+					UninstallButton.IsEnabled = bus.DriverVersion != 0;
 				});
 			});
 			var t = new System.Threading.Thread(ts);
