@@ -1,0 +1,20 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>sign warning icon</title>
+    <desc>sign warning icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="-0.125" y1="32.5" x2="276.77885" y2="428.07805" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#ffd041"/>
+            <stop offset="1" stop-color="#ffc105"/>
+        </linearGradient>
+        <linearGradient x1="286" y1="432" x2="226.999" y2="196.0005" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#50606e"/>
+            <stop offset="1" stop-color="#3a454f"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M270.5,41l119.5,207l119.5,207c3.5,5.5 3.5,11.5 0,17c-3,5.5 -8,8.5 -14.5,8.5l-239,0l-239,0c-6.5,0 -11.5,-3 -14.5,-8.5c-3.5,-5.5 -3.5,-11.5 0,-17l119.5,-207l119.5,-207c3,-5.5 8.5,-8.5 14.5,-8.5c6,0 11.5,3 14.5,8.5z" id="curve1" fill="url(#color-1)"/>
+        <path d="M278,355.5l-43.5,0l-7,-159.5l57.5,0z M226,405c0,-8 3,-14.5 8.5,-19.5c6,-5 13,-7.5 21.5,-7.5c8.5,0 15.5,2.5 21.5,7.5c5.5,5 8.5,11.5 8.5,19.5c0,8 -3,14.5 -8.5,19.5c-6,5 -13,7.5 -21.5,7.5c-8.5,0 -15.5,-2.5 -21.5,-7.5c-5.5,-5 -8.5,-11.5 -8.5,-19.5z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>
