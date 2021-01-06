@@ -320,6 +320,7 @@
     <Compile Include="Controls\_TempWIN2WPF.com.Designer.cs">
       <DependentUpon>_TempWIN2WPF.com.cs</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BoolToImageSourceConverter.cs" />
     <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Forms\BaseFormWithHeader.cs">
       <SubType>Form</SubType>

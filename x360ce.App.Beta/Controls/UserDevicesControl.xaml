@@ -120,15 +120,17 @@
 			<DataGrid.Resources>
 				<converters:MapTypeConverter x:Key="MapTypeConverter" />
 				<converters:MapEventTypeConverter x:Key="MapEventTypeConverter" />
+				<converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
 				<converters:MapRpmTypeConverter x:Key="MapRpmTypeConverter" />
 			</DataGrid.Resources>
 			<DataGrid.Columns>
-				<DataGridCheckBoxColumn
-					x:Name="IsOnlineColumn" IsReadOnly="True"
-					Binding="{Binding IsOnline}"
-					EditingElementStyle="{StaticResource CheckBoxCell}"
-					ElementStyle="{StaticResource CheckBoxCell}"
-					Header="On" />
+				<DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<ContentControl Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}" Style="{StaticResource ButtonContentControl}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
 				<DataGridTemplateColumn Width="SizeToCells" Header="C" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
