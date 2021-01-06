@@ -1,1 +1,0 @@
-Use inkscape app to load SVG and save as Microsoft XML

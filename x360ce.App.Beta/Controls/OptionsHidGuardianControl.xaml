@@ -57,18 +57,18 @@
 					Grid.Column="1"
 					IsReadOnly="True" />
 				<Button
-					Name="UninstallButton"
-					Grid.Row="1"
-					Grid.Column="2"
-					Click="UninstallButton_Click"
-					Content="Uninstall"
-					IsEnabled="False" />
-				<Button
 					Name="InstallButton"
 					Grid.Row="1"
-					Grid.Column="3"
+					Grid.Column="2"
 					Click="InstallButton_Click"
 					Content="Install"
+					IsEnabled="False" />
+				<Button
+					Name="UninstallButton"
+					Grid.Row="1"
+					Grid.Column="3"
+					Click="UninstallButton_Click"
+					Content="Uninstall"
 					IsEnabled="False" />
 			</Grid>
 		</GroupBox>

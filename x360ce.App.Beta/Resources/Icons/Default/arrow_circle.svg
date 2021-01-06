@@ -1,0 +1,15 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>arrow circle icon</title>
+    <desc>arrow circle icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="48" y1="0" x2="348.98" y2="380.396" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#129eee"/>
+            <stop offset="1" stop-color="#0e76b2"/>
+        </linearGradient>
+    </defs>
+    <g fill="url(#color-1)" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M256,0l112,112l-112,112l0,-80c-40,0 -76,16 -102,42c-26,26 -42,62 -42,102c0,40 16,76 42,102c26,26 62,42 102,42c40,0 76,-16 102,-42c26,-26 42,-62 42,-102c0,-40 -16,-76 -42,-102c-3.5,-3 -6.5,-6 -10,-9l45.5,-45c3,3 6.5,6 9.5,9c37.5,37.5 61,89.5 61,147c0,57.5 -23.5,109.5 -61,147c-37.5,37.5 -89.5,61 -147,61c-57.5,0 -109.5,-23.5 -147,-61c-37.5,-37.5 -61,-89.5 -61,-147c0,-57.5 23.5,-109.5 61,-147c37.5,-37.5 89.5,-61 147,-61z" id="curve0"/>
+    </g>
+</svg>

@@ -6,6 +6,8 @@ namespace x360ce.App.Controls
 {
 	public partial class MapDeviceToControllerForm : BaseFormWithHeader
 	{
+		UserDevicesControl ControllersPanel;
+
 		public MapDeviceToControllerForm()
 		{
 			InitializeComponent();
@@ -13,6 +15,8 @@ namespace x360ce.App.Controls
 				return;
 			SetHeaderSubject(Text);
 			SetHeaderBody(MessageBoxIcon.None);
+			ControllersPanel = new UserDevicesControl();
+			UserDevicesElementHost.Child = ControllersPanel;
 			ControllersPanel.MapDeviceToControllerMode = true;
 		}
 

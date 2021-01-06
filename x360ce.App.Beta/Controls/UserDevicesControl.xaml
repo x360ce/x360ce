@@ -1,0 +1,182 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.UserDevicesControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:converters="clr-namespace:x360ce.App.Converters"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:x360ce.App.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="260"
+	d:DesignWidth="840"
+	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	Loaded="UserControl_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<ToolBarPanel Grid.Row="0" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar Style="{StaticResource MainToolBar}">
+				<Button Name="HardwareButton" Click="HardwareButton_Click" Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_toolbox}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Hardware" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+
+				<Separator Style="{StaticResource MainSeparator}" />
+				<Button Name="AddDemoDeviceButton" Click="AddDemoDeviceButton_Click" Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_joystick}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Add Demo Device..." Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+				<Menu x:Name="HidGuardianMenu">
+					<MenuItem Margin="3,3,3,3" Padding="3,3,3,3" Header="HID Guardian">
+						<MenuItem.Icon>
+							<ContentControl Content="{StaticResource Icon_shield}" Style="{StaticResource ButtonContentControl}" />
+						</MenuItem.Icon>
+						<MenuItem Click="ShowEnumeratedDevicesMenuItem_Click" Header="Show Enumerated Devices">
+							<MenuItem.Icon>
+								<ContentControl Content="{StaticResource Icon_table}" Style="{StaticResource ButtonContentControl}" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Click="ShowHiddenDevicesMenuItem_Click" Header="Show Hidden Devices">
+							<MenuItem.Icon>
+								<ContentControl Content="{StaticResource Icon_table_selection_row}" Style="{StaticResource ButtonContentControl}" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Click="UnhideAllDevicesMenuItem_Click" Header="Unhide All Devices">
+							<MenuItem.Icon>
+								<ContentControl Content="{StaticResource Icon_erase}" Style="{StaticResource ButtonContentControl}" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Click="SynchronizeToHidGuardianMenuItem_Click" Header="Synchronize To HID Guardian">
+							<MenuItem.Icon>
+								<ContentControl Content="{StaticResource Icon_arrow_circle2}" Style="{StaticResource ButtonContentControl}" />
+							</MenuItem.Icon>
+						</MenuItem>
+					</MenuItem>
+				</Menu>
+
+				<CheckBox Name="ShowSystemDevicesButton" Click="ShowSystemDevicesButton_Click" IsChecked="False">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Name="ShowSystemDevicesContent" Content="{StaticResource Icon_checkbox_unchecked}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Show System Devices" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</CheckBox>
+			</ToolBar>
+		</ToolBarPanel>
+
+		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar Style="{StaticResource MainToolBar}">
+				<Button Name="DeleteButton" Click="DeleteButton_Click" Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Delete}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Delete" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+				<Separator Style="{StaticResource MainSeparator}" />
+				<Button
+					Name="RefreshButton"
+					HorizontalAlignment="Right"
+					Click="RefreshButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Refresh}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Refresh" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+			</ToolBar>
+		</ToolBarPanel>
+
+
+		<Border
+			Grid.Row="1"
+			Height="1"
+			BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+			BorderThickness="1"
+			SnapsToDevicePixels="True" />
+		<DataGrid
+			xmlns:local="clr-namespace:x360ce.App.Converters"
+			x:Name="MainDataGrid"
+			Grid.Row="2"
+			Height="Auto"
+			HorizontalAlignment="Stretch"
+			AutoGenerateColumns="False"
+			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+			IsReadOnly="True"
+			SelectionChanged="MainDataGrid_SelectionChanged">
+			<DataGrid.Resources>
+				<converters:MapTypeConverter x:Key="MapTypeConverter" />
+				<converters:MapEventTypeConverter x:Key="MapEventTypeConverter" />
+				<converters:MapRpmTypeConverter x:Key="MapRpmTypeConverter" />
+			</DataGrid.Resources>
+			<DataGrid.Columns>
+				<DataGridCheckBoxColumn
+					x:Name="IsOnlineColumn" IsReadOnly="True"
+					Binding="{Binding IsOnline}"
+					EditingElementStyle="{StaticResource CheckBoxCell}"
+					ElementStyle="{StaticResource CheckBoxCell}"
+					Header="On" />
+				<DataGridTemplateColumn Width="SizeToCells" Header="C" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Image Source="{Binding ConnectionClass}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridCheckBoxColumn
+					x:Name="IsEnabledColumn"
+					Binding="{Binding IsEnabled}"
+					EditingElementStyle="{StaticResource CheckBoxCell}"
+					ElementStyle="{StaticResource CheckBoxCell}"
+					Header="En" />
+				<DataGridTextColumn
+					Binding="{Binding InstanceId}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Instance ID"
+					SortDirection="{x:Null}" />
+				<DataGridTextColumn
+					Binding="{Binding HidManufacturer}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Vendor Name" />
+				<DataGridTextColumn
+					Binding="{Binding ProductName}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Product Name" />
+				<DataGridTextColumn
+					Width="*"
+					Binding="{Binding HidDeviceId}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="HID Device ID (HID Guardian)" />
+				<DataGridCheckBoxColumn
+					x:Name="IsHiddenColumn"
+					Width="SizeToHeader"
+					Binding="{Binding IsHidden}"
+					EditingElementStyle="{StaticResource CheckBoxCell}"
+					ElementStyle="{StaticResource CheckBoxCell}"
+					Header="Hidden" />
+			</DataGrid.Columns>
+			<DataGrid.CellStyle>
+				<Style TargetType="DataGridCell">
+					<Setter Property="Padding" Value="4" />
+				</Style>
+			</DataGrid.CellStyle>
+		</DataGrid>
+	</Grid>
+</UserControl>

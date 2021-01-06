@@ -17,7 +17,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (MainTaskScheduler != null)
 				return;
-			MainThreadId = Thread.CurrentThread.ManagedThreadId;
+			_MainThreadId = Thread.CurrentThread.ManagedThreadId;
 			// Create a TaskScheduler that wraps the SynchronizationContext returned from
 			// System.Threading.SynchronizationContext.Current
 			MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -28,11 +28,12 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static TaskScheduler MainTaskScheduler { get; private set; }
 
-		private static int MainThreadId;
+		public static int MainThreadId => _MainThreadId;
+		private static int _MainThreadId;
 
 		public static bool InvokeRequired()
 		{
-			return MainThreadId != Thread.CurrentThread.ManagedThreadId;
+			return _MainThreadId != Thread.CurrentThread.ManagedThreadId;
 		}
 
 		/*
@@ -101,7 +102,7 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				return Task.Run(async () =>
 				{
-					// Wait 1 second, which will allow to relase the button.
+					// Wait 1 second, which will allow to release the button.
 					await Task.Delay(millisecondsDelay.Value).ConfigureAwait(true);
 					await BeginInvoke(action);
 				});

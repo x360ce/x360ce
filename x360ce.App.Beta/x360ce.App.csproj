@@ -311,6 +311,9 @@
     <Compile Include="Controls\PadTabPages\XInputControl.xaml.cs">
       <DependentUpon>XInputControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UserDevicesControl.xaml.cs">
+      <DependentUpon>UserDevicesControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\_TempWIN2WPF.com.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -341,6 +344,9 @@
     </Compile>
     <Compile Include="Controls\GameDetailsUserControl.Designer.cs">
       <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BaseWithHeaderWindow.xaml.cs">
+      <DependentUpon>BaseWithHeaderWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\DebugForm.cs">
       <SubType>Form</SubType>
@@ -453,6 +459,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\Icons\Icons_Default.xaml.cs">
+      <DependentUpon>Icons_Default.xaml</DependentUpon>
     </Compile>
     <Compile Include="Service\RemoteService.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_TARGET_TYPE.cs" />
@@ -805,9 +814,21 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\UserDevicesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\BaseWithHeaderWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Forms\ErrorReportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Icons\Icons_Default.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\Icons\NavActive.xaml">
       <Generator>MSBuild:Compile</Generator>

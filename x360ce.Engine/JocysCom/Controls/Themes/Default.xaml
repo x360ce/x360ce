@@ -41,6 +41,11 @@
 		<Setter Property="Padding" Value="3,3,3,3" />
 		<Setter Property="MinWidth" Value="75" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+		<Style.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter Property="Opacity" Value="0.5" />
+			</Trigger>
+		</Style.Triggers>
 	</Style>
 
 	<Style x:Key="Button" BasedOn="{StaticResource Button_Default}" TargetType="Button" />
@@ -51,6 +56,11 @@
 
 	<Style x:Key="ToolBarButton" TargetType="Button">
 		<Setter Property="Margin" Value="0,0,0,0" />
+		<Style.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter Property="Opacity" Value="0.5" />
+			</Trigger>
+		</Style.Triggers>
 	</Style>
 
 	<!--  TextBox  -->

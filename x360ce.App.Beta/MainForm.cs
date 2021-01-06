@@ -191,7 +191,7 @@ namespace x360ce.App
 			// NotifySettingsChange will be called on event suspension and resume.
 			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
 			// NotifySettingsChange will be called on setting changes.
-			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+			var scheduler = ControlsHelper.MainTaskScheduler;
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 			SettingsManager.Load(scheduler);
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
@@ -713,7 +713,6 @@ namespace x360ce.App
 			MainStatusStrip.Visible = false;
 			// Check for various issues.
 			InitIssuesPanel();
-			InitDeviceForm();
 			InitUpdateForm();
 		}
 
@@ -1055,40 +1054,26 @@ namespace x360ce.App
 
 		#region Device Form
 
-		private MapDeviceToControllerForm _DeviceForm;
-		private readonly object DeviceFormLock = new object();
-
-		private void InitDeviceForm()
-		{
-			lock (DeviceFormLock)
-			{
-				_DeviceForm = new MapDeviceToControllerForm();
-			}
-		}
-
-		private void DisposeDeviceForm()
-		{
-			lock (DeviceFormLock)
-			{
-				if (_DeviceForm != null)
-				{
-					_DeviceForm.Dispose();
-					_DeviceForm = null;
-				}
-			}
-		}
-
 		public UserDevice[] ShowDeviceForm()
 		{
-			lock (DeviceFormLock)
-			{
-				if (_DeviceForm == null)
-					return null;
-				_DeviceForm.StartPosition = FormStartPosition.CenterParent;
-				ControlsHelper.CheckTopMost(_DeviceForm);
-				var result = _DeviceForm.ShowDialog();
-				return _DeviceForm.SelectedDevices;
-			}
+			var form = new Forms.BaseWithHeaderWindow();
+			form.Title = "X360CE - Map Device To Controller";
+			form.SetHead("X360CE - Map Device To Controller");
+			form.SetBodyInfo("Select Devices and press [Add Selected Devices] button.");
+			form.SetImage(Icons_Default.Icon_gamepad);
+			form.SetButton1("Add Selected Devices", Icons_Default.Icon_ok);
+			form.SetButton2("Cancel", Icons_Default.Icon_close);
+			form.SetButton3();
+			form.Width = 800;
+			form.Height = 400;
+			var control = new UserDevicesControl();
+			control.MapDeviceToControllerMode = true;
+			form.MainBody.Content = control;
+			ControlsHelper.CheckTopMost(form);
+			var result = form.ShowDialog();
+			return result.HasValue && result.Value
+				? control.GetSelected()
+				: null;
 		}
 
 		#endregion
@@ -1161,7 +1146,6 @@ namespace x360ce.App
 				{
 					_Mutex.Dispose();
 				}
-				DisposeDeviceForm();
 				DisposeUpdateForm();
 				DisposeInterfaceUpdate();
 				if (Global.DHelper != null)
@@ -1390,8 +1374,8 @@ namespace x360ce.App
 					// Make sure method is executed on the same thread as this control.
 					ControlsHelper.BeginInvoke(() =>
 					{
-						// Check again.
-						if (!Program.IsClosing)
+					// Check again.
+					if (!Program.IsClosing)
 							UpdateForm3();
 						UpdateCompletedBusy = false;
 					});

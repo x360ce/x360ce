@@ -936,14 +936,16 @@ namespace x360ce.App.Controls
 		/// <param name="mask">Mask contains information if item is present.</param>
 		void CreateItems(ToolStripMenuItem parent, string text, string tag, int count, int? mask = null)
 		{
+			var items = new List<ToolStripMenuItem>();
 			for (int i = 0; i < count; i++)
 			{
 				// If mask specified and item is not present then...
 				if (mask.HasValue && i < 32 && (((int)Math.Pow(2, i) & mask) == 0))
 					continue;
 				var item = CreateItem(text, tag, i + 1);
-				parent.DropDownItems.Add(item);
+				items.Add(item);
 			}
+			parent.DropDownItems.AddRange(items.ToArray());
 		}
 
 		ToolStripMenuItem CreateItem(string text, string tag, params object[] args)
@@ -1229,7 +1231,7 @@ namespace x360ce.App.Controls
 
 		#region Mapped Devices
 
-		private void AddMapButton_Click(object sender, EventArgs e)
+		async private void AddMapButton_Click(object sender, EventArgs e)
 		{
 			var game = SettingsManager.CurrentGame;
 			// Return if game is not selected.
@@ -1252,6 +1254,7 @@ namespace x360ce.App.Controls
 				EnableButton_Click(null, null);
 			}
 			SettingsManager.Current.RaiseSettingsChanged(null);
+
 		}
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)

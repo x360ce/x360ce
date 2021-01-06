@@ -43,6 +43,19 @@ function RemoveAttributes
         RemoveAttributes -Node $child -Name $Name;
     }
 }
+# ----------------------------------------------------------------------------
+function SHA256CheckSum
+{
+    param($filePath);
+    $SHA256 = [System.Security.Cryptography.SHA256Managed]::Create();
+    $fileStream = [System.IO.File]::OpenRead($filePath);
+    $bytes = $SHA256.ComputeHash($fileStream);
+    $hash = ($bytes|ForEach-Object ToString X2) -join '';
+    $fileStream.Dispose();
+    $SHA256.Dispose();
+    return $hash;
+}
+# ----------------------------------------------------------------------------
 # Create regular expressions for key and names generation.
 $RxAllExceptNumbersAndLetters = New-Object Regex("[^a-zA-Z0-9]", [RegexOptions]::IgnoreCase);
 $UsRx = New-Object Regex("_+");
@@ -64,9 +77,9 @@ for ($d = 0; $d -lt $dirs.Length; $d++) {
     $fileNameCs = "$($fileNameBase).xaml.cs";
     Write-Host "${dir} - $($files.Length) images -> $fileName";
     # Start <ResourceName>.xaml file.
+    $xNs = "http://schemas.microsoft.com/winfx/2006/xaml";
     if ([File]::Exists($fileName) -ne $true)
     {
-        $xNs = "http://schemas.microsoft.com/winfx/2006/xaml";
         [File]::WriteAllText($fileName, "<ResourceDictionary xmlns=`"http://schemas.microsoft.com/winfx/2006/xaml/presentation`" xmlns:x=`"$xNs`"");
         [File]::AppendAllText($fileName,"`r`nx:Class=`"x360ce.App.$($fileNameBase)`"");
         [File]::AppendAllText($fileName,"`r`nx:ClassModifier=`"public`"");
@@ -74,6 +87,7 @@ for ($d = 0; $d -lt $dirs.Length; $d++) {
         [File]::AppendAllText($fileName,"`r`n`r`n</ResourceDictionary>");
     }
     [XDocument]$xaml = [XDocument]::Load($fileName); 
+    $nodes = $xaml.Root.Nodes();
     $xaml.Root.RemoveNodes();
     # Start <ResourceName>.xaml.cs file.
     [File]::WriteAllText($fileNameCs, "using System.Windows;`r`n");
@@ -90,6 +104,7 @@ for ($d = 0; $d -lt $dirs.Length; $d++) {
     # Process files.
    for ($f = 0; $f -lt $files.Length; $f++) {
         $file = $files[$f];
+        #$hash = SHA256CheckSum -filePath $file.FullName;
         Write-Host "$($dir.Name)\$($file.Name)";
         #& $inkscape "$($file.FullName)" --export-filename="$path\$($file.BaseName).xaml";
         $nodeXml = Get-Content "$($file.FullName)" | & $inkscape --pipe --export-type=xaml | Out-String;
@@ -107,6 +122,8 @@ for ($d = 0; $d -lt $dirs.Length; $d++) {
         $ln.SetAttributeValue([XName]::Get("Key", $xNs), $key);
         # Make sure that image copy is made when it is used.
         $ln.SetAttributeValue([XName]::Get("Shared", $xNs), "False");
+        # Set file hash.
+        $ln.SetAttributeValue([XName]::Get("FileHash", $xNs), $hash);
         # Write unique name to code file.
         [File]::AppendAllText($fileNameCs, "`t`tpublic const string $key = nameof($key);`r`n");
     }
