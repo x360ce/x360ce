@@ -1,4 +1,5 @@
-﻿using SharpDX.XInput;
+﻿using JocysCom.ClassLibrary.Controls;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -23,10 +24,10 @@ namespace x360ce.App.Controls
 			var topDisabledImage = AppHelper.GetDisabledImage(topImage);
 			var frontDisabledImage = AppHelper.GetDisabledImage(frontImage);
 			// WPF.
-			_TopImage = GetImageSource(topImage);
-			_FrontImage = GetImageSource(frontImage);
-			_TopDisabledImage = GetImageSource(topDisabledImage);
-			_FrontDisabledImage = GetImageSource(frontDisabledImage);
+			_TopImage = ControlsHelper.GetImageSource(topImage);
+			_FrontImage = ControlsHelper.GetImageSource(frontImage);
+			_TopDisabledImage = ControlsHelper.GetImageSource(topDisabledImage);
+			_FrontDisabledImage = ControlsHelper.GetImageSource(frontDisabledImage);
 			// Other.
 			markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
 			markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
@@ -78,20 +79,7 @@ namespace x360ce.App.Controls
 			LeftTriggerStatus.Visibility = show;
 			RightTriggerStatus.Visibility = show;
 		}
-
-		public ImageSource GetImageSource(Bitmap bitmap)
-		{
-			var photo = new BitmapImage();
-			var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
-			photo.BeginInit();
-			photo.CacheOption = BitmapCacheOption.OnLoad;
-			photo.StreamSource = stream;
-			photo.EndInit();
-			stream.Dispose();
-			return photo;
-		}
-
+	
 		public void DrawController(PaintEventArgs e, MapTo mappedTo)
 		{
 			// Controller (Player) index indicator coordinates.

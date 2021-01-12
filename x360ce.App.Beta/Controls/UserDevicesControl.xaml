@@ -121,6 +121,7 @@
 				<converters:MapTypeConverter x:Key="MapTypeConverter" />
 				<converters:MapEventTypeConverter x:Key="MapEventTypeConverter" />
 				<converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
+				<converters:ConnectionClassToImageConverter x:Key="ConnectionClassToImageConverter" />
 				<converters:MapRpmTypeConverter x:Key="MapRpmTypeConverter" />
 			</DataGrid.Resources>
 			<DataGrid.Columns>
@@ -131,10 +132,10 @@
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
-				<DataGridTemplateColumn Width="SizeToCells" Header="C" IsReadOnly="True">
+				<DataGridTemplateColumn Width="SizeToCells" Header="" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Image Source="{Binding ConnectionClass}" />
+							<Image Source="{Binding ConnectionClass, Converter={StaticResource ConnectionClassToImageConverter}}" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>

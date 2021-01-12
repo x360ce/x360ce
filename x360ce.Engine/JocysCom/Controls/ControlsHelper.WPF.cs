@@ -95,6 +95,22 @@ namespace JocysCom.ClassLibrary.Controls
 			HookHyperlinks(box, null);
 		}
 
+		/// <summary>
+		/// Convert Bitmap to image source.
+		/// </summary>
+		public static ImageSource GetImageSource(System.Drawing.Bitmap bitmap)
+		{
+			var bi = new System.Windows.Media.Imaging.BitmapImage();
+			var ms = new MemoryStream();
+			bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+			bi.BeginInit();
+			bi.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+			bi.StreamSource = ms;
+			bi.EndInit();
+			ms.Dispose();
+			return bi;
+		}
+
 		private static void HookHyperlinks(object sender, TextChangedEventArgs e)
 		{
 			var doc = (sender as RichTextBox).Document;
