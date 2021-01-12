@@ -6,8 +6,6 @@ namespace JocysCom.ClassLibrary.Controls
 {
 	public static partial class ControlsHelper
 	{
-		private const int WM_SETREDRAW = 0x000B;
-
 		#region Invoke and BeginInvoke
 
 		/// <summary>

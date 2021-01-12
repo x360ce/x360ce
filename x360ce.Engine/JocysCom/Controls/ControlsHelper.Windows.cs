@@ -1,7 +1,4 @@
-﻿#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections;
@@ -13,14 +10,66 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Data.Objects.DataClasses;
 using System.Windows.Forms;
 using System.IO;
+
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
+using System.Data.Objects.DataClasses;
+#endif
 
 namespace JocysCom.ClassLibrary.Controls
 {
 	public static partial class ControlsHelper
 	{
+
+#region IsDesignMode
+
+		private static bool? _IsDesignMode;
+
+		public static bool IsDesignMode(Component component)
+		{
+			if (!_IsDesignMode.HasValue)
+				_IsDesignMode = IsDesignMode1(component);
+			return _IsDesignMode.Value;
+		}
+
+		private static bool IsDesignMode2(IComponent component, IComponent parent)
+		{
+			// Check 1.
+			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
+				return true;
+			if (component == null)
+				throw new ArgumentNullException(nameof(component));
+			// Check 2 (DesignMode).
+			var site = component.Site;
+			if (site != null && site.DesignMode)
+				return true;
+			if (parent != null && parent.GetType().FullName.Contains("VisualStudio"))
+				return true;
+			// Not design mode.
+			return false;
+		}
+
+		private static bool IsDesignMode1(Component component)
+		{
+			var form = component as Form;
+			if (form != null)
+				return IsDesignMode2(form, form.ParentForm ?? form.Owner);
+			var control = component as Control;
+			if (control != null)
+				return IsDesignMode2(control, control.Parent);
+			return IsDesignMode2(component, null);
+		}
+
+#endregion
+
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
+
+
 
 		/// <summary>
 		/// Raise event on same thread as the target of delegate.
@@ -70,6 +119,8 @@ namespace JocysCom.ClassLibrary.Controls
 			[DllImport("user32.dll", SetLastError = true)]
 			public static extern IntPtr WindowFromPoint(System.Windows.Point point);
 		}
+
+		private const int WM_SETREDRAW = 0x000B;
 
 		public static void SuspendDrawing(Control control)
 		{
@@ -251,7 +302,7 @@ namespace JocysCom.ClassLibrary.Controls
 				form.TopMost = true;
 		}
 
-		#region "UserControl is Visible"
+#region "UserControl is Visible"
 
 		public static bool IsControlVisibleOnForm(Control control)
 		{
@@ -371,9 +422,9 @@ namespace JocysCom.ClassLibrary.Controls
 			return GetAll(control, typeof(T), includeTop).Cast<T>().ToArray();
 		}
 
-		#endregion
+#endregion
 
-		#region Set Visible, Enabled and Text
+#region Set Visible, Enabled and Text
 
 		internal const int STATE_VISIBLE = 0x00000002;
 		internal const int STATE_ENABLED = 0x00000004;
@@ -536,9 +587,9 @@ namespace JocysCom.ClassLibrary.Controls
 					row.Selected = false;
 		}
 
-		#endregion
+#endregion
 
-		#region Add Grip to SplitContainer 
+#region Add Grip to SplitContainer 
 
 		public static void ApplySplitterStyle(SplitContainer control)
 		{
@@ -605,9 +656,9 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-		#endregion
+#endregion
 
-		#region Apply Grid Border Style
+#region Apply Grid Border Style
 
 		public static void ApplyBorderStyle(DataGridView grid, bool updateEnabledProperty = false)
 		{
@@ -768,9 +819,9 @@ namespace JocysCom.ClassLibrary.Controls
 			e.Handled = true;
 		}
 
-		#endregion
+#endregion
 
-		#region  Apply ToolStrip Border Style
+#region  Apply ToolStrip Border Style
 
 		public static void ApplyBorderStyle(ToolStrip control)
 		{
@@ -779,9 +830,9 @@ namespace JocysCom.ClassLibrary.Controls
 			control.Renderer = new ToolStripBorderlessRenderer();
 		}
 
-		#endregion
+#endregion
 
-		#region Apply TabControl Image Style
+#region Apply TabControl Image Style
 
 		private const string ApplyImageStyleDisabledSuffix = "_DisabledStyle";
 
@@ -841,50 +892,9 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-		#endregion
+#endregion
 
-		#region IsDesignMode
-
-		private static bool? _IsDesignMode;
-
-		public static bool IsDesignMode(Component component)
-		{
-			if (!_IsDesignMode.HasValue)
-				_IsDesignMode = IsDesignMode1(component);
-			return _IsDesignMode.Value;
-		}
-
-		private static bool IsDesignMode2(IComponent component, IComponent parent)
-		{
-			// Check 1.
-			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
-				return true;
-			if (component == null)
-				throw new ArgumentNullException(nameof(component));
-			// Check 2 (DesignMode).
-			var site = component.Site;
-			if (site != null && site.DesignMode)
-				return true;
-			if (parent != null && parent.GetType().FullName.Contains("VisualStudio"))
-				return true;
-			// Not design mode.
-			return false;
-		}
-
-		private static bool IsDesignMode1(Component component)
-		{
-			var form = component as Form;
-			if (form != null)
-				return IsDesignMode2(form, form.ParentForm ?? form.Owner);
-			var control = component as Control;
-			if (control != null)
-				return IsDesignMode2(control, control.Parent);
-			return IsDesignMode2(component, null);
-		}
-
-		#endregion
-
-		#region Binding
+#region Binding
 
 		public static Binding AddDataBinding<TD, TDp>(
 			IBindableComponent control,
@@ -1013,9 +1023,9 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-		#endregion
+#endregion
 
-		#region Open Path or URL
+#region Open Path or URL
 
 
 		public static void OpenUrl(string url)
@@ -1056,9 +1066,11 @@ namespace JocysCom.ClassLibrary.Controls
 			catch (Exception) { }
 		}
 
-		#endregion
+#endregion
+
+#endif
+
 
 	}
 }
 
-#endif
