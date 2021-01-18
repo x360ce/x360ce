@@ -216,6 +216,7 @@
     <Compile Include="Common\ImageInfos.cs" />
     <Compile Include="Common\NavImageType.cs" />
     <Compile Include="Common\SettingChangedEventArgs.cs" />
+    <Compile Include="Common\SettingsManager.UserDevices.cs" />
     <Compile Include="Common\UpdateFrequency.cs" />
     <Compile Include="Common\HookMode.cs" />
     <Compile Include="Common\KeyValuePair.cs" />
@@ -284,12 +285,6 @@
     <Compile Include="Controls\SummariesGridUserControl.Designer.cs">
       <DependentUpon>SummariesGridUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UserDevicesUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\UserDevicesUserControl.Designer.cs">
-      <DependentUpon>UserDevicesUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -320,6 +315,7 @@
     <Compile Include="Controls\_TempWIN2WPF.com.Designer.cs">
       <DependentUpon>_TempWIN2WPF.com.cs</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\BoolToImageSourceConverter.cs" />
     <Compile Include="Converters\ConnectionClassToImageConverter.cs" />
     <Compile Include="Converters\MapTypeConverter.cs" />
@@ -505,9 +501,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\SummariesGridUserControl.resx">
       <DependentUpon>SummariesGridUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\UserDevicesUserControl.resx">
-      <DependentUpon>UserDevicesUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\_TempWIN2WPF.com.resx">
       <DependentUpon>_TempWIN2WPF.com.cs</DependentUpon>

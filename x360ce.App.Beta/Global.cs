@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Linq;
 using x360ce.Engine;
-using System.Windows;
-using System.Runtime.CompilerServices;
 
 namespace x360ce.App
 {

@@ -246,7 +246,7 @@ namespace x360ce.Engine.Data
 				return
 					!IsKeyboard &&
 					!IsMouse &&
-					ConnectionClass != JocysCom.ClassLibrary.Win32.DEVCLASS.SYSTEM &&
+					//ConnectionClass != JocysCom.ClassLibrary.Win32.DEVCLASS.SYSTEM &&
 					// Device Id must be set.
 					!string.IsNullOrEmpty(HidDeviceId);
 			}

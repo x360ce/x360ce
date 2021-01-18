@@ -6,17 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using x360ce.App.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -229,52 +221,14 @@ namespace x360ce.App.Controls
 
 		private void AddDemoDeviceButton_Click(object sender, RoutedEventArgs e)
 		{
-			var ud = TestDeviceHelper.NewUserDevice();
-			lock (SettingsManager.UserDevices.SyncRoot)
-				SettingsManager.UserDevices.Items.Add(ud);
-			Global.DHelper.UpdateDevicesEnabled = true;
+			ControlsHelper.BeginInvoke(() =>
+			{
+				var ud = TestDeviceHelper.NewUserDevice();
+				lock (SettingsManager.UserDevices.SyncRoot)
+					SettingsManager.UserDevices.Items.Add(ud);
+				Global.DHelper.UpdateDevicesEnabled = true;
+			});
 		}
-
-		//private void MainDataGrid_CellClick(object sender, DataGridViewCellEventArgs e)
-		//{
-		//	if (e.RowIndex < 0 || e.ColumnIndex < 0)
-		//		return;
-		//	var grid = (DataGrid)sender;
-		//	var row = grid.Items[e.RowIndex];
-		//	var column = grid.Columns[e.ColumnIndex];
-		//	var ud = (UserDevice)row.DataBoundItem;
-		//	// If user clicked on the CheckBox column then...
-		//	if (column == IsEnabledColumn)
-		//	{
-		//		// Changed check (enabled state) of the current item.
-		//		ud.IsEnabled = !ud.IsEnabled;
-		//	}
-		//	else if (column == IsHiddenColumn)
-		//	{
-		//		if (ud.AllowHide)
-		//		{
-		//			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
-		//			if (canModify)
-		//			{
-		//				//var ids = AppHelper.GetIdsToAffect(ud.HidDeviceId, ud.HidHardwareIds);
-		//				var ids = new string[] { ud.DevDeviceId };
-		//				ud.IsHidden = !ud.IsHidden;
-		//				// Use begin invoke which will prevent mouse multi-select rows.
-		//				ControlsHelper.BeginInvoke(() =>
-		//				{
-		//					AppHelper.SynchronizeToHidGuardian(ud.InstanceGuid);
-		//				});
-		//			}
-		//			else
-		//			{
-		//				var form = new MessageBoxForm();
-		//				form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-		//				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied",
-		//					System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
-		//			}
-		//		}
-		//	}
-		//}
 
 		private void ShowHiddenDevicesMenuItem_Click(object sender, RoutedEventArgs e)
 		{

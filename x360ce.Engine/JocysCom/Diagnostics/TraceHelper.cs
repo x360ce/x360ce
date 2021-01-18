@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
+using System.Reflection;
 
 namespace JocysCom.ClassLibrary.Diagnostics
 {
@@ -160,7 +161,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 
 #endif
 
-		/*
+		
 
 		#region Execute with enabled System.Net.Logging
 
@@ -186,17 +187,17 @@ namespace JocysCom.ClassLibrary.Diagnostics
 				throw new ArgumentNullException(nameof(listener));
 			if (actionToExecute == null)
 				throw new ArgumentNullException(nameof(actionToExecute));
-			var logging = typeof(WebRequest).Assembly.GetType("System.Net.Logging");
+			var logging = typeof(System.Net.WebRequest).Assembly.GetType("System.Net.Logging");
 			var flags = BindingFlags.NonPublic | BindingFlags.Static;
 			var isInitializedField = logging.GetField("s_LoggingInitialized", flags);
 			if (!(bool)isInitializedField.GetValue(null))
 			{
 				// force initialization
-				WebRequest.Create("http://localhost");
-				var waitForInitializationThread = new Thread(() =>
+				System.Net.WebRequest.Create("http://localhost");
+				var waitForInitializationThread = new System.Threading.Thread(() =>
 				{
 					while (!(bool)isInitializedField.GetValue(null))
-						Thread.Sleep(100);
+						System.Threading.Thread.Sleep(100);
 				});
 				waitForInitializationThread.Start();
 				waitForInitializationThread.Join();
@@ -208,7 +209,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			var s_CacheTraceSource = (TraceSource)logging.GetField("s_CacheTraceSource", flags).GetValue(null);
 			var s_LoggingEnabledField = logging.GetField("s_LoggingEnabled", flags);
 			bool wasEnabled = (bool)s_LoggingEnabledField.GetValue(null);
-			var originalTraceSourceFilters = new Dictionary<TraceListener, TraceFilter>();
+			var originalTraceSourceFilters = new System.Collections.Generic.Dictionary<TraceListener, TraceFilter>();
 			// Save original Levels
 			var originalWebTraceSourceLevel = s_WebTraceSource.Switch.Level;
 			var originalHttpListenerTraceSourceLevel = s_HttpListenerTraceSource.Switch.Level;
@@ -375,9 +376,6 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		}
 
 		#endregion
-
-		*/
-
 
 	}
 }

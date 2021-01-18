@@ -49,7 +49,7 @@ namespace x360ce.App
 				// Attach event to new game.
 				if (game != null)
 					game.PropertyChanged += CurrentGame_PropertyChanged;
-				// Assing new game.
+				// Assign new game.
 				CurrentGame = game;
 				Global.DHelper.SettingsChanged = true;
 				CurrentGame_PropertyChanged(null, null);
@@ -267,12 +267,14 @@ namespace x360ce.App
 			PadSettings.Load();
 			UserDevices.Load();
 			// Update DataGrids asynchronously in order not to freeze interface during device detection/update.
-			UserDevices.Items.AsynchronousInvoke = true;
+			//UserDevices.Items.AsynchronousInvoke = true;
+			UserDevices.Items.ListChanged += UserDevices_Items_ListChanged;
+			UserDevices.Items.RaiseListChangedEvents = true;
 			UserInstances.Load();
 			OptionsData.Items.SynchronizingObject = so;
 		}
 
-		static IList<Engine.Data.UserSetting> UserSettings_ValidateData(IList<Engine.Data.UserSetting> items)
+	static IList<Engine.Data.UserSetting> UserSettings_ValidateData(IList<Engine.Data.UserSetting> items)
 		{
 			for (int i = 0; i < items.Count; i++)
 			{

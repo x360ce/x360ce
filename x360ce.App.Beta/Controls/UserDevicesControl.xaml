@@ -115,7 +115,6 @@
 			HorizontalAlignment="Stretch"
 			AutoGenerateColumns="False"
 			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-			IsReadOnly="True"
 			SelectionChanged="MainDataGrid_SelectionChanged">
 			<DataGrid.Resources>
 				<converters:MapTypeConverter x:Key="MapTypeConverter" />
@@ -123,6 +122,7 @@
 				<converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
 				<converters:ConnectionClassToImageConverter x:Key="ConnectionClassToImageConverter" />
 				<converters:MapRpmTypeConverter x:Key="MapRpmTypeConverter" />
+				<converters:BooleanToVisibilityConverter x:Key="_BooleanToVisibilityConverter" />
 			</DataGrid.Resources>
 			<DataGrid.Columns>
 				<DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
@@ -141,7 +141,7 @@
 				</DataGridTemplateColumn>
 				<DataGridCheckBoxColumn
 					x:Name="IsEnabledColumn"
-					Binding="{Binding IsEnabled}"
+					Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
 					EditingElementStyle="{StaticResource CheckBoxCell}"
 					ElementStyle="{StaticResource CheckBoxCell}"
 					Header="En" />
@@ -167,13 +167,13 @@
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="HID Device ID (HID Guardian)" />
-				<DataGridCheckBoxColumn
-					x:Name="IsHiddenColumn"
-					Width="SizeToHeader"
-					Binding="{Binding IsHidden}"
-					EditingElementStyle="{StaticResource CheckBoxCell}"
-					ElementStyle="{StaticResource CheckBoxCell}"
-					Header="Hidden" />
+				<DataGridTemplateColumn x:Name="IsHiddenColumn" Width="SizeToHeader" Header="Hidden">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<CheckBox IsChecked="{Binding IsHidden}" Style="{StaticResource CheckBoxCell}" Visibility="{Binding AllowHide, Converter={StaticResource _BooleanToVisibilityConverter}}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style TargetType="DataGridCell">
