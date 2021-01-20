@@ -7,11 +7,12 @@ using System.Windows.Media;
 namespace x360ce.App.Forms
 {
 	/// <summary>
-	/// Interaction logic for BaseWithHeaderWindow.xaml
+	/// Interaction logic for BaseWithHeaderControl.xaml
 	/// </summary>
-	public partial class BaseWithHeaderWindow : Window
+	public partial class BaseWithHeaderControl : UserControl
 	{
-		public BaseWithHeaderWindow()
+
+		public BaseWithHeaderControl()
 		{
 			InitializeComponent();
 			if (IsDesignMode)
@@ -23,15 +24,15 @@ namespace x360ce.App.Forms
 		/// <summary>
 		/// Gets or sets additional content for the UserControl
 		/// </summary>
-		public ContentControl AdditionalContent
+		public object MainContent
 		{
-			get { return (ContentControl)GetValue(AdditionalContentProperty); }
-			set { SetValue(AdditionalContentProperty, value); }
+			get { return GetValue(MainContentProperty); }
+			set { SetValue(MainContentProperty, value); }
 		}
 
-		public static readonly DependencyProperty AdditionalContentProperty =
-			DependencyProperty.Register("AdditionalContent", typeof(ContentControl), typeof(BaseWithHeaderWindow),
-			  new PropertyMetadata(default(Label)));
+		public static readonly DependencyProperty MainContentProperty =
+			DependencyProperty.Register(nameof(MainContent), typeof(object), typeof(BaseWithHeaderControl),
+			  new PropertyMetadata(null));
 
 		private readonly string defaultHead;
 		private readonly string defaultBody;
@@ -42,6 +43,8 @@ namespace x360ce.App.Forms
 
 		private readonly object TasksLock = new object();
 		private readonly BindingList<TaskName> Tasks = new BindingList<TaskName>();
+
+		public Window Window => System.Windows.Window.GetWindow(this);
 
 		/// <summary>Activate busy spinner.</summary>
 		public void AddTask(TaskName name)
@@ -70,17 +73,23 @@ namespace x360ce.App.Forms
 
 		#endregion
 
-		public void SetHead(string content, params object[] args)
+		public void SetTitle(string format, params object[] args)
+		{
+			Window.Title = (args.Length == 0)
+				? format
+				: string.Format(format, args);
+		}
+
+			public void SetHead(string format, params object[] args)
 		{
 			// Apply format.
-			if (content == null)
-				content = defaultHead;
+			if (format == null)
+				format = defaultHead;
 			else if (args.Length > 0)
-				content = string.Format(content, args);
-			if (HelpHeadLabel.Content as string != content)
+				format = string.Format(format, args);
+			if (HelpHeadLabel.Content as string != format)
 			{
-				HelpHeadLabel.Content = content;
-				Title = content;
+				HelpHeadLabel.Content = format;
 			}
 		}
 
@@ -171,17 +180,18 @@ namespace x360ce.App.Forms
 
 		private void Button1_Click(object sender, RoutedEventArgs e)
 		{
-			DialogResult = true;
+			Window.DialogResult = true;
 		}
 
 		private void Button2_Click(object sender, RoutedEventArgs e)
 		{
-			DialogResult = false;
+			Window.DialogResult = false;
 		}
 
 		private void Button3_Click(object sender, RoutedEventArgs e)
 		{
-			DialogResult = null;
+			Window.DialogResult = null;
 		}
+
 	}
 }

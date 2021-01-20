@@ -1205,6 +1205,18 @@ namespace x360ce.App.Controls
 			ShowPresetForm();
 		}
 
+		void ShowPresetForm2()
+		{
+			var form = new Forms.LoadPresetsWindow();
+			form.Width = 800;
+			form.Height = 400;
+			ControlsHelper.CheckTopMost(form);
+			var result = form.ShowDialog();
+			//return result.HasValue && result.Value
+			//	? control.GetSelected()
+			//	: null;
+		}
+
 		void ShowPresetForm()
 		{
 			if (presetForm == null)

@@ -56,16 +56,16 @@
 			this.MainTabControl.Location = new System.Drawing.Point(12, 70);
 			this.MainTabControl.Name = "MainTabControl";
 			this.MainTabControl.SelectedIndex = 0;
-			this.MainTabControl.Size = new System.Drawing.Size(600, 330);
+			this.MainTabControl.Size = new System.Drawing.Size(1123, 398);
 			this.MainTabControl.TabIndex = 19;
 			this.MainTabControl.SelectedIndexChanged += new System.EventHandler(this.MainTabControl_SelectedIndexChanged);
 			// 
 			// SettingsTabPage
 			// 
 			this.SettingsTabPage.Controls.Add(this.SettingsGridPanel);
-			this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.SettingsTabPage.Location = new System.Drawing.Point(8, 39);
 			this.SettingsTabPage.Name = "SettingsTabPage";
-			this.SettingsTabPage.Size = new System.Drawing.Size(592, 304);
+			this.SettingsTabPage.Size = new System.Drawing.Size(1107, 351);
 			this.SettingsTabPage.TabIndex = 0;
 			this.SettingsTabPage.Text = "My Settings";
 			this.SettingsTabPage.UseVisualStyleBackColor = true;
@@ -74,16 +74,17 @@
 			// 
 			this.SettingsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsGridPanel.Location = new System.Drawing.Point(0, 0);
+			this.SettingsGridPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.SettingsGridPanel.Name = "SettingsGridPanel";
-			this.SettingsGridPanel.Size = new System.Drawing.Size(592, 304);
+			this.SettingsGridPanel.Size = new System.Drawing.Size(1107, 351);
 			this.SettingsGridPanel.TabIndex = 0;
 			// 
 			// SummariesTabPage
 			// 
 			this.SummariesTabPage.Controls.Add(this.SummariesGridPanel);
-			this.SummariesTabPage.Location = new System.Drawing.Point(4, 22);
+			this.SummariesTabPage.Location = new System.Drawing.Point(8, 39);
 			this.SummariesTabPage.Name = "SummariesTabPage";
-			this.SummariesTabPage.Size = new System.Drawing.Size(592, 304);
+			this.SummariesTabPage.Size = new System.Drawing.Size(732, 351);
 			this.SummariesTabPage.TabIndex = 1;
 			this.SummariesTabPage.Text = "Default Settings for My Controllers";
 			this.SummariesTabPage.UseVisualStyleBackColor = true;
@@ -92,16 +93,17 @@
 			// 
 			this.SummariesGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SummariesGridPanel.Location = new System.Drawing.Point(0, 0);
+			this.SummariesGridPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.SummariesGridPanel.Name = "SummariesGridPanel";
-			this.SummariesGridPanel.Size = new System.Drawing.Size(592, 304);
+			this.SummariesGridPanel.Size = new System.Drawing.Size(732, 351);
 			this.SummariesGridPanel.TabIndex = 0;
 			// 
 			// PresetsTabPage
 			// 
 			this.PresetsTabPage.Controls.Add(this.PresetsGridPanel);
-			this.PresetsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.PresetsTabPage.Location = new System.Drawing.Point(8, 39);
 			this.PresetsTabPage.Name = "PresetsTabPage";
-			this.PresetsTabPage.Size = new System.Drawing.Size(592, 304);
+			this.PresetsTabPage.Size = new System.Drawing.Size(1107, 351);
 			this.PresetsTabPage.TabIndex = 2;
 			this.PresetsTabPage.Text = "Default Settings for Most Popular Controllers";
 			this.PresetsTabPage.UseVisualStyleBackColor = true;
@@ -110,15 +112,16 @@
 			// 
 			this.PresetsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.PresetsGridPanel.Location = new System.Drawing.Point(0, 0);
+			this.PresetsGridPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.PresetsGridPanel.Name = "PresetsGridPanel";
-			this.PresetsGridPanel.Size = new System.Drawing.Size(592, 304);
+			this.PresetsGridPanel.Size = new System.Drawing.Size(1107, 351);
 			this.PresetsGridPanel.TabIndex = 0;
 			// 
 			// CloseButton
 			// 
 			this.CloseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.CloseButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.CloseButton.Location = new System.Drawing.Point(537, 406);
+			this.CloseButton.Location = new System.Drawing.Point(1060, 474);
 			this.CloseButton.Name = "CloseButton";
 			this.CloseButton.Size = new System.Drawing.Size(75, 23);
 			this.CloseButton.TabIndex = 20;
@@ -128,7 +131,7 @@
 			// OkButton
 			// 
 			this.OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.OkButton.Location = new System.Drawing.Point(372, 406);
+			this.OkButton.Location = new System.Drawing.Point(895, 474);
 			this.OkButton.Name = "OkButton";
 			this.OkButton.Size = new System.Drawing.Size(159, 23);
 			this.OkButton.TabIndex = 20;
@@ -155,7 +158,7 @@
 			// 
 			// LoadPresetsForm
 			// 
-			this.ClientSize = new System.Drawing.Size(624, 441);
+			this.ClientSize = new System.Drawing.Size(1147, 509);
 			this.Controls.Add(this.OkButton);
 			this.Controls.Add(this.CloseButton);
 			this.Controls.Add(this.MainTabControl);

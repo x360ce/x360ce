@@ -343,6 +343,9 @@
     <Compile Include="Controls\GameDetailsUserControl.Designer.cs">
       <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\BaseWithHeaderControl.xaml.cs">
+      <DependentUpon>BaseWithHeaderControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Forms\BaseWithHeaderWindow.xaml.cs">
       <DependentUpon>BaseWithHeaderWindow.xaml</DependentUpon>
     </Compile>
@@ -372,6 +375,9 @@
     </Compile>
     <Compile Include="Forms\LoadPresetsForm.Designer.cs">
       <DependentUpon>LoadPresetsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LoadPresetsWindow.xaml.cs">
+      <DependentUpon>LoadPresetsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\MapDeviceToControllerForm.cs">
       <SubType>Form</SubType>
@@ -813,11 +819,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Forms\BaseWithHeaderControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Forms\BaseWithHeaderWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Forms\ErrorReportWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\LoadPresetsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
