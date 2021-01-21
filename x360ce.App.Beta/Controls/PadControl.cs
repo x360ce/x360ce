@@ -1202,7 +1202,7 @@ namespace x360ce.App.Controls
 
 		private void LoadPresetButton_Click(object sender, EventArgs e)
 		{
-			ShowPresetForm2();
+			ShowPresetForm();
 		}
 
 		void ShowPresetForm2()
