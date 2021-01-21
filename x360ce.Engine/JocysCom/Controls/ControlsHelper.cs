@@ -29,10 +29,8 @@ namespace JocysCom.ClassLibrary.Controls
 		public static int MainThreadId => _MainThreadId;
 		private static int _MainThreadId;
 
-		public static bool InvokeRequired()
-		{
-			return _MainThreadId != Thread.CurrentThread.ManagedThreadId;
-		}
+		public static bool InvokeRequired
+			=> _MainThreadId != Thread.CurrentThread.ManagedThreadId;
 
 		/*
 
@@ -127,7 +125,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (action == null)
 				throw new ArgumentNullException(nameof(action));
 			InitInvokeContext();
-			if (InvokeRequired())
+			if (InvokeRequired)
 			{
 				var t = new Task(action);
 				t.RunSynchronously(MainTaskScheduler);
@@ -145,7 +143,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (method == null)
 				throw new ArgumentNullException(nameof(method));
 			// Run method on main Graphical User Interface thread.
-			if (InvokeRequired())
+			if (InvokeRequired)
 			{
 				var t = new Task<object>(() => method.DynamicInvoke(args));
 				t.RunSynchronously(MainTaskScheduler);

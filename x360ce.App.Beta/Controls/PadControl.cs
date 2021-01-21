@@ -1202,7 +1202,7 @@ namespace x360ce.App.Controls
 
 		private void LoadPresetButton_Click(object sender, EventArgs e)
 		{
-			ShowPresetForm();
+			ShowPresetForm2();
 		}
 
 		void ShowPresetForm2()
@@ -1211,10 +1211,19 @@ namespace x360ce.App.Controls
 			form.Width = 800;
 			form.Height = 400;
 			ControlsHelper.CheckTopMost(form);
+			form.MainControl.InitForm();
 			var result = form.ShowDialog();
-			//return result.HasValue && result.Value
-			//	? control.GetSelected()
-			//	: null;
+			if (result == true)
+			{
+				var ps = form.MainControl.SelectedItem;
+				if (ps != null)
+				{
+					MainForm.Current.UpdateTimer.Stop();
+					SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, ps);
+					MainForm.Current.UpdateTimer.Start();
+				}
+			}
+			form.MainControl.UnInitForm();
 		}
 
 		void ShowPresetForm()

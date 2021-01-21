@@ -33,7 +33,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		void Invoke(Delegate method, params object[] args)
 		{
 			var so = SynchronizingObject;
-			if (so == null || !JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired())
+			if (so == null || !JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired)
 			{
 				DynamicInvoke(method, args);
 			}

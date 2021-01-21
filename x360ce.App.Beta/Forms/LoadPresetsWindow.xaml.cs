@@ -20,6 +20,11 @@ namespace x360ce.App.Forms
 			WinControl.SetButton1("Load Selected", Icons_Default.Icon_ok);
 			WinControl.SetButton2("Cancel", Icons_Default.Icon_close);
 			WinControl.SetButton3();
+			MainControl._ParentControl = WinControl;
 		}
+
+		public Controls.PresetsControl MainControl
+		=> (Controls.PresetsControl)WinControl.MainBody.Content;
+
 	}
 }

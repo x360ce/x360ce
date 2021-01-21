@@ -188,7 +188,7 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				// Suspend Dinput Service.
+				// Suspend DInput Service.
 				Global.DHelper.Stop();
 				SettingsDataGridView.DataSource = null;
 

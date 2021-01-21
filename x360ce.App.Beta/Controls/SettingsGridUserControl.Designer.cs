@@ -54,9 +54,10 @@
 			this.CommentPanel.BackColor = System.Drawing.SystemColors.Control;
 			this.CommentPanel.Controls.Add(this.CommentLabel);
 			this.CommentPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.CommentPanel.Location = new System.Drawing.Point(0, 221);
+			this.CommentPanel.Location = new System.Drawing.Point(0, 425);
+			this.CommentPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.CommentPanel.Name = "CommentPanel";
-			this.CommentPanel.Size = new System.Drawing.Size(480, 19);
+			this.CommentPanel.Size = new System.Drawing.Size(960, 37);
 			this.CommentPanel.TabIndex = 9;
 			// 
 			// CommentLabel
@@ -65,9 +66,10 @@
 			this.CommentLabel.BackColor = System.Drawing.SystemColors.Control;
 			this.CommentLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this.CommentLabel.Location = new System.Drawing.Point(0, 0);
+			this.CommentLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
 			this.CommentLabel.Name = "CommentLabel";
-			this.CommentLabel.Padding = new System.Windows.Forms.Padding(3);
-			this.CommentLabel.Size = new System.Drawing.Size(44, 19);
+			this.CommentLabel.Padding = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this.CommentLabel.Size = new System.Drawing.Size(86, 37);
 			this.CommentLabel.TabIndex = 5;
 			this.CommentLabel.Text = "&Notes:";
 			// 
@@ -103,7 +105,8 @@
 			this.SettingsDataGridView.DefaultCellStyle = dataGridViewCellStyle2;
 			this.SettingsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.SettingsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.SettingsDataGridView.Location = new System.Drawing.Point(0, 25);
+			this.SettingsDataGridView.Location = new System.Drawing.Point(0, 42);
+			this.SettingsDataGridView.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.SettingsDataGridView.MultiSelect = false;
 			this.SettingsDataGridView.Name = "SettingsDataGridView";
 			this.SettingsDataGridView.ReadOnly = true;
@@ -116,8 +119,9 @@
 			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
 			this.SettingsDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
 			this.SettingsDataGridView.RowHeadersVisible = false;
+			this.SettingsDataGridView.RowHeadersWidth = 82;
 			this.SettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.SettingsDataGridView.Size = new System.Drawing.Size(480, 215);
+			this.SettingsDataGridView.Size = new System.Drawing.Size(960, 420);
 			this.SettingsDataGridView.TabIndex = 8;
 			this.SettingsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.SettingsDataGridView_CellFormatting);
 			// 
@@ -126,24 +130,27 @@
 			this.SettingsSidColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.SettingsSidColumn.DataPropertyName = "PadSettingChecksum";
 			this.SettingsSidColumn.HeaderText = "SID";
+			this.SettingsSidColumn.MinimumWidth = 10;
 			this.SettingsSidColumn.Name = "SettingsSidColumn";
 			this.SettingsSidColumn.ReadOnly = true;
-			this.SettingsSidColumn.Width = 50;
+			this.SettingsSidColumn.Width = 94;
 			// 
 			// SettingsFileNameColumn
 			// 
 			this.SettingsFileNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.SettingsFileNameColumn.DataPropertyName = "FileName";
 			this.SettingsFileNameColumn.HeaderText = "File Name";
+			this.SettingsFileNameColumn.MinimumWidth = 10;
 			this.SettingsFileNameColumn.Name = "SettingsFileNameColumn";
 			this.SettingsFileNameColumn.ReadOnly = true;
-			this.SettingsFileNameColumn.Width = 79;
+			this.SettingsFileNameColumn.Width = 157;
 			// 
 			// SettingsFileTitleColumn
 			// 
 			this.SettingsFileTitleColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
 			this.SettingsFileTitleColumn.DataPropertyName = "FileProductName";
 			this.SettingsFileTitleColumn.HeaderText = "File Title";
+			this.SettingsFileTitleColumn.MinimumWidth = 10;
 			this.SettingsFileTitleColumn.Name = "SettingsFileTitleColumn";
 			this.SettingsFileTitleColumn.ReadOnly = true;
 			// 
@@ -152,31 +159,34 @@
 			this.SettingsDeviceNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.SettingsDeviceNameColumn.DataPropertyName = "ProductName";
 			this.SettingsDeviceNameColumn.HeaderText = "Device Name";
+			this.SettingsDeviceNameColumn.MinimumWidth = 10;
 			this.SettingsDeviceNameColumn.Name = "SettingsDeviceNameColumn";
 			this.SettingsDeviceNameColumn.ReadOnly = true;
-			this.SettingsDeviceNameColumn.Width = 97;
+			this.SettingsDeviceNameColumn.Width = 189;
 			// 
 			// SettingsMapToColumn
 			// 
 			this.SettingsMapToColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.SettingsMapToColumn.DataPropertyName = "MapTo";
 			this.SettingsMapToColumn.HeaderText = "Map To";
+			this.SettingsMapToColumn.MinimumWidth = 10;
 			this.SettingsMapToColumn.Name = "SettingsMapToColumn";
 			this.SettingsMapToColumn.ReadOnly = true;
 			this.SettingsMapToColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-			this.SettingsMapToColumn.Width = 69;
+			this.SettingsMapToColumn.Width = 129;
 			// 
 			// SettingsToolStrip
 			// 
 			this.SettingsToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.SettingsToolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
 			this.SettingsToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SettingsRefreshButton,
             this.SettingsDeleteButton,
             this.SettingsEditNoteButton});
 			this.SettingsToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.SettingsToolStrip.Name = "SettingsToolStrip";
-			this.SettingsToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
-			this.SettingsToolStrip.Size = new System.Drawing.Size(480, 25);
+			this.SettingsToolStrip.Padding = new System.Windows.Forms.Padding(8, 0, 2, 0);
+			this.SettingsToolStrip.Size = new System.Drawing.Size(960, 42);
 			this.SettingsToolStrip.TabIndex = 7;
 			this.SettingsToolStrip.Text = "MySettingsToolStrip";
 			// 
@@ -186,7 +196,7 @@
 			this.SettingsRefreshButton.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
 			this.SettingsRefreshButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SettingsRefreshButton.Name = "SettingsRefreshButton";
-			this.SettingsRefreshButton.Size = new System.Drawing.Size(66, 22);
+			this.SettingsRefreshButton.Size = new System.Drawing.Size(130, 36);
 			this.SettingsRefreshButton.Text = "&Refresh";
 			this.SettingsRefreshButton.Click += new System.EventHandler(this.SettingsRefreshButton_Click);
 			// 
@@ -196,7 +206,7 @@
 			this.SettingsDeleteButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
 			this.SettingsDeleteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SettingsDeleteButton.Name = "SettingsDeleteButton";
-			this.SettingsDeleteButton.Size = new System.Drawing.Size(60, 22);
+			this.SettingsDeleteButton.Size = new System.Drawing.Size(121, 36);
 			this.SettingsDeleteButton.Text = "&Delete";
 			this.SettingsDeleteButton.Click += new System.EventHandler(this.SettingsDeleteButton_Click);
 			// 
@@ -205,19 +215,20 @@
 			this.SettingsEditNoteButton.Image = global::x360ce.App.Properties.Resources.edit_note_16x16;
 			this.SettingsEditNoteButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SettingsEditNoteButton.Name = "SettingsEditNoteButton";
-			this.SettingsEditNoteButton.Size = new System.Drawing.Size(76, 22);
+			this.SettingsEditNoteButton.Size = new System.Drawing.Size(151, 36);
 			this.SettingsEditNoteButton.Text = "Edit Note";
 			this.SettingsEditNoteButton.Click += new System.EventHandler(this.SettingsEditNoteButton_Click);
 			// 
 			// SettingsGridUserControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.CommentPanel);
 			this.Controls.Add(this.SettingsDataGridView);
 			this.Controls.Add(this.SettingsToolStrip);
+			this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.Name = "SettingsGridUserControl";
-			this.Size = new System.Drawing.Size(480, 240);
+			this.Size = new System.Drawing.Size(960, 462);
 			this.CommentPanel.ResumeLayout(false);
 			this.CommentPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.SettingsDataGridView)).EndInit();

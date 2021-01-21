@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace x360ce.App.Forms
+namespace x360ce.App.Controls
 {
 	/// <summary>
 	/// Interaction logic for BaseWithHeaderControl.xaml

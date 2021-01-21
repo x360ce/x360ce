@@ -261,11 +261,17 @@
     </Compile>
     <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
     <Compile Include="Controls\PadTabPages\IPadControl.cs" />
+    <Compile Include="Controls\PresetsControl.xaml.cs">
+      <DependentUpon>PresetsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PresetsGridUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\PresetsGridUserControl.Designer.cs">
       <DependentUpon>PresetsGridUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PresetsListControl.xaml.cs">
+      <DependentUpon>PresetsListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProgramsGridUserControl.cs">
       <SubType>UserControl</SubType>
@@ -317,6 +323,7 @@
     </Compile>
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\BoolToImageSourceConverter.cs" />
+    <Compile Include="Converters\ChecksumToIdConverter.cs" />
     <Compile Include="Converters\ConnectionClassToImageConverter.cs" />
     <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Forms\BaseFormWithHeader.cs">
@@ -343,7 +350,7 @@
     <Compile Include="Controls\GameDetailsUserControl.Designer.cs">
       <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\BaseWithHeaderControl.xaml.cs">
+    <Compile Include="Controls\BaseWithHeaderControl.xaml.cs">
       <DependentUpon>BaseWithHeaderControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\DebugForm.cs">
@@ -815,11 +822,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\PresetsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PresetsListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\UserDevicesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Forms\BaseWithHeaderControl.xaml">
+    <Page Include="Controls\BaseWithHeaderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

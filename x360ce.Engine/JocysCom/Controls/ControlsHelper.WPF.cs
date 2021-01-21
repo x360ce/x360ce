@@ -96,6 +96,17 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		public static void SetEnabled(Control control, bool enabled)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			if (control.IsEnabled != enabled)
+				control.IsEnabled = enabled;
+		}
+
+		/// <summary>
 		/// Convert Bitmap to image source.
 		/// </summary>
 		public static ImageSource GetImageSource(System.Drawing.Bitmap bitmap)
