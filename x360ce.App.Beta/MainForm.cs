@@ -1056,23 +1056,10 @@ namespace x360ce.App
 
 		public UserDevice[] ShowDeviceForm()
 		{
-			var form = new Forms.BaseWithHeaderWindow();
-			form.Title = "X360CE - Map Device To Controller";
-			form.SetHead("X360CE - Map Device To Controller");
-			form.SetBodyInfo("Select Devices and press [Add Selected Devices] button.");
-			form.SetImage(Icons_Default.Icon_gamepad);
-			form.SetButton1("Add Selected Devices", Icons_Default.Icon_ok);
-			form.SetButton2("Cancel", Icons_Default.Icon_close);
-			form.SetButton3();
-			form.Width = 800;
-			form.Height = 400;
-			var control = new UserDevicesControl();
-			control.MapDeviceToControllerMode = true;
-			form.MainBody.Content = control;
-			ControlsHelper.CheckTopMost(form);
+			var form = new Forms.UserDevicesWindow();
 			var result = form.ShowDialog();
 			return result.HasValue && result.Value
-				? control.GetSelected()
+				? form.MainControl.GetSelected()
 				: null;
 		}
 
@@ -1374,8 +1361,8 @@ namespace x360ce.App
 					// Make sure method is executed on the same thread as this control.
 					ControlsHelper.BeginInvoke(() =>
 					{
-					// Check again.
-					if (!Program.IsClosing)
+						// Check again.
+						if (!Program.IsClosing)
 							UpdateForm3();
 						UpdateCompletedBusy = false;
 					});

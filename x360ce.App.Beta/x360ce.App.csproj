@@ -346,9 +346,6 @@
     <Compile Include="Forms\BaseWithHeaderControl.xaml.cs">
       <DependentUpon>BaseWithHeaderControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\BaseWithHeaderWindow.xaml.cs">
-      <DependentUpon>BaseWithHeaderWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Forms\DebugForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -433,6 +430,9 @@
     </Compile>
     <Compile Include="Forms\UpdateForm.Designer.cs">
       <DependentUpon>UpdateForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UserDevicesWindow.xaml.cs">
+      <DependentUpon>UserDevicesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\WebBrowserForm.cs">
       <SubType>Form</SubType>
@@ -823,10 +823,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Forms\BaseWithHeaderWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Forms\ErrorReportWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -834,6 +830,10 @@
     <Page Include="Forms\LoadPresetsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\UserDevicesWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\Icons\Icons_Default.xaml">
       <Generator>MSBuild:Compile</Generator>
