@@ -185,8 +185,8 @@ namespace x360ce.App
 			Global.DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
 			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
 			Global.DHelper.XInputReloaded += DHelper_XInputReloaded;
-			SettingsGridPanel._ParentForm = this;
-			SettingsGridPanel.SettingsDataGridView.MultiSelect = true;
+			SettingsGridPanel._ParentControl = this;
+			SettingsGridPanel.MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Extended;
 			SettingsGridPanel.InitPanel();
 			// NotifySettingsChange will be called on event suspension and resume.
 			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
@@ -275,7 +275,7 @@ namespace x360ce.App
 				}
 				if (e.Error != null)
 				{
-					SetHeaderError(e.Error.Message);
+					SetBodyError(e.Error.Message);
 				}
 			});
 		}
@@ -311,7 +311,7 @@ namespace x360ce.App
 				ControlsHelper.BeginInvoke(() =>
 				{
 					SettingsManager.Options.GetXInputStates = false;
-					SetHeaderError(e.Error.Message);
+					SetBodyError(e.Error.Message);
 				});
 			}
 		}
@@ -807,7 +807,7 @@ namespace x360ce.App
 			}
 			var tab = MainTabControl.SelectedTab;
 			if (tab != null)
-				SetHeaderSubject(tab.Text);
+				SetHead(tab.Text);
 		}
 
 		#region Check Files

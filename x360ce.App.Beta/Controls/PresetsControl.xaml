@@ -26,8 +26,12 @@
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			SelectionChanged="MainTabControl_SelectionChanged">
-			<TabItem x:Name="SettingsTabPage" Header="My Settings" />
-			<TabItem x:Name="SummariesTabPage" Header="Default Settings for My Controllers" />
+			<TabItem x:Name="SettingsTabPage" Header="My Settings">
+				<local:SettingsListControl x:Name="SettingsGridPanel" />
+			</TabItem>
+			<TabItem x:Name="SummariesTabPage" Header="Default Settings for My Controllers">
+				<local:SummariesListControl x:Name="SummariesGridPanel" />
+			</TabItem>
 			<TabItem x:Name="PresetsTabPage" Header="Default Settings for Most Popular Controllers">
 				<local:PresetsListControl x:Name="PresetsGridPanel" />
 			</TabItem>

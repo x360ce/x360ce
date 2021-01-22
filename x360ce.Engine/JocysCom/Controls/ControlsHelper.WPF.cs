@@ -79,6 +79,21 @@ namespace JocysCom.ClassLibrary.Controls
 				control.Text = text;
 		}
 
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
+		public static void SetText(TextBlock control, string format, params object[] args)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var text = (args == null)
+				? format
+				: string.Format(format, args);
+			if (control.Text != text)
+				control.Text = text;
+		}
+
 		public static void SetTextFromResource(RichTextBox box, string resourceName)
 		{
 			var rtf = Helper.FindResource<byte[]>(Assembly.GetEntryAssembly(), resourceName);
@@ -104,6 +119,18 @@ namespace JocysCom.ClassLibrary.Controls
 				throw new ArgumentNullException(nameof(control));
 			if (control.IsEnabled != enabled)
 				control.IsEnabled = enabled;
+		}
+
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		public static void SetVisible(StackPanel control, bool enabled)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var visibility = enabled ? Visibility.Visible : Visibility.Collapsed;
+			if (control.Visibility != visibility)
+				control.Visibility = visibility;
 		}
 
 		/// <summary>

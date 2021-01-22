@@ -16,11 +16,13 @@ namespace x360ce.App.Controls
 		public PresetsListControl()
 		{
 			InitializeComponent();
+			MainDataGrid.AutoGenerateColumns = false;
+			MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Single;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 		}
 
-		public BaseWithHeaderControl _ParentForm;
+		public BaseWithHeaderControl _ParentControl;
 
 		public void InitPanel()
 		{
@@ -35,7 +37,6 @@ namespace x360ce.App.Controls
 			MainDataGrid.ItemsSource = null;
 		}
 
-
 		void UpdateControlsFromPresets()
 		{
 		}
@@ -45,9 +46,9 @@ namespace x360ce.App.Controls
 			UpdateControlsFromPresets();
 		}
 
-		public void RefreshPresetsGrid()
+		public void RefreshData()
 		{
-			_ParentForm.AddTask(TaskName.SearchPresets);
+			_ParentControl.AddTask(TaskName.SearchPresets);
 			RefreshButton.IsEnabled = false;
 			var sp = new List<SearchParameter>();
 			sp.Add(new SearchParameter());
@@ -77,11 +78,11 @@ namespace x360ce.App.Controls
 			{
 				var error = e.Error.Message;
 				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
-				_ParentForm.SetBodyError(error);
+				_ParentControl.SetBodyError(error);
 			}
 			else if (e.Result == null)
 			{
-				_ParentForm.SetBodyInfo("No default settings received.");
+				_ParentControl.SetBodyInfo("No default settings received.");
 			}
 			else
 			{
@@ -91,9 +92,9 @@ namespace x360ce.App.Controls
 				SettingsManager.Current.CleanupPadSettings();
 				var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;
 				var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-				_ParentForm.SetBodyInfo("{0} default settings and {1} PAD settings received.", presetsCount, padSettingsCount);
+				_ParentControl.SetBodyInfo("{0} default settings and {1} PAD settings received.", presetsCount, padSettingsCount);
 			}
-			_ParentForm.RemoveTask(TaskName.SearchPresets);
+			_ParentControl.RemoveTask(TaskName.SearchPresets);
 			RefreshButton.IsEnabled = true;
 		}
 
@@ -104,7 +105,7 @@ namespace x360ce.App.Controls
 
 		private void RefreshButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			RefreshPresetsGrid();
+			RefreshData();
 		}
 	}
 }

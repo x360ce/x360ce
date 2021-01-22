@@ -9,7 +9,7 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for BaseWithHeaderControl.xaml
 	/// </summary>
-	public partial class BaseWithHeaderControl : UserControl
+	public partial class BaseWithHeaderControl : UserControl, IBaseWithHeaderControl
 	{
 
 		public BaseWithHeaderControl()
@@ -80,7 +80,7 @@ namespace x360ce.App.Controls
 				: string.Format(format, args);
 		}
 
-			public void SetHead(string format, params object[] args)
+		public void SetHead(string format, params object[] args)
 		{
 			// Apply format.
 			if (format == null)

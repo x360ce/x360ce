@@ -528,7 +528,7 @@ namespace x360ce.App
 			var item = Current.SettingsMap.FirstOrDefault(x => x.Control == control);
 			if (item != null && !string.IsNullOrEmpty(item.Description))
 			{
-				MainForm.Current.SetHeaderInfo(item.Description);
+				MainForm.Current.SetBodyInfo(item.Description);
 			}
 		}
 

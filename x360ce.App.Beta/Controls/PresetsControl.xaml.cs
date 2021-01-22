@@ -33,11 +33,11 @@ namespace x360ce.App.Controls
 		public void InitForm()
 		{
 			//_ParentForm.SetImage(SetHeaderBody(MessageBoxIcon.None);
-			//SettingsGridPanel._ParentForm = _ParentForm;
-			//SummariesGridPanel._ParentForm = _ParentForm;
-			PresetsGridPanel._ParentForm = _ParentControl;
-			//SettingsGridPanel.InitPanel();
-			//SummariesGridPanel.InitPanel();
+			SettingsGridPanel._ParentControl = _ParentControl;
+			SummariesGridPanel._ParentControl = _ParentControl;
+			PresetsGridPanel._ParentControl = _ParentControl;
+			SettingsGridPanel.InitPanel();
+			SummariesGridPanel.InitPanel();
 			PresetsGridPanel.InitPanel();
 			UpdateControls();
 			_ParentControl.Button1.Click += OkButton_Click;
@@ -52,24 +52,18 @@ namespace x360ce.App.Controls
 				if (preset != null)
 					checksum = preset.PadSettingChecksum;
 			}
-			//if (MainTabControl.SelectedItem == SummariesTabPage)
-			//{
-			//	var row = SummariesGridPanel.SummariesDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			//	if (row != null)
-			//	{
-			//		var summary = (Summary)row.DataBoundItem;
-			//		checksum = summary.PadSettingChecksum;
-			//	}
-			//}
-			//if (MainTabControl.SelectedItem == SettingsTabPage)
-			//{
-			//	var row = SettingsGridPanel.SettingsDataGridView.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			//	if (row != null)
-			//	{
-			//		var setting = (UserSetting)row.DataBoundItem;
-			//		checksum = setting.PadSettingChecksum;
-			//	}
-			//}
+			if (MainTabControl.SelectedItem == SummariesTabPage)
+			{
+				var summary = SummariesGridPanel.MainDataGrid.SelectedItems.Cast<Summary>().FirstOrDefault();
+				if (summary != null)
+					checksum = summary.PadSettingChecksum;
+			}
+			if (MainTabControl.SelectedItem == SettingsTabPage)
+			{
+				var setting = SettingsGridPanel.MainDataGrid.SelectedItems.Cast<UserSetting>().FirstOrDefault();
+				if (setting != null)
+					checksum = setting.PadSettingChecksum;
+			}
 			if (checksum.HasValue)
 			{
 				SelectedItem = SettingsManager.PadSettings.Items.FirstOrDefault(x => x.PadSettingChecksum == checksum.Value);
@@ -78,8 +72,8 @@ namespace x360ce.App.Controls
 
 		public void UnInitForm()
 		{
-			//SettingsGridPanel.UnInitPanel();
-			//SummariesGridPanel.UnInitPanel();
+			SettingsGridPanel.UnInitPanel();
+			SummariesGridPanel.UnInitPanel();
 			PresetsGridPanel.UnInitPanel();
 		}
 
@@ -97,10 +91,10 @@ namespace x360ce.App.Controls
 			if (tab != null)
 				_ParentControl.SetHead(tab.Header as string);
 			var selected = false;
-			//if (MainTabControl.SelectedItem == SummariesTabPage)
-			//	selected = SummariesGridPanel.SummariesDataGridView.Rows.Count > 0;
-			//if (MainTabControl.SelectedItem == SettingsTabPage)
-			//	selected = SettingsGridPanel.SettingsDataGridView.Rows.Count > 0;
+			if (MainTabControl.SelectedItem == SummariesTabPage)
+				selected = SummariesGridPanel.MainDataGrid.SelectedItems.Count > 0;
+			if (MainTabControl.SelectedItem == SettingsTabPage)
+				selected = SettingsGridPanel.MainDataGrid.SelectedItems.Count > 0;
 			if (MainTabControl.SelectedItem == PresetsTabPage)
 				selected = PresetsGridPanel.MainDataGrid.SelectedItems.Count > 0;
 			ControlsHelper.SetEnabled(_ParentControl.Button1, selected);

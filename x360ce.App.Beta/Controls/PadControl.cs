@@ -1198,14 +1198,12 @@ namespace x360ce.App.Controls
 		}
 
 
-		LoadPresetsForm presetForm;
-
 		private void LoadPresetButton_Click(object sender, EventArgs e)
 		{
 			ShowPresetForm();
 		}
 
-		void ShowPresetForm2()
+		void ShowPresetForm()
 		{
 			var form = new Forms.LoadPresetsWindow();
 			form.Width = 800;
@@ -1224,30 +1222,6 @@ namespace x360ce.App.Controls
 				}
 			}
 			form.MainControl.UnInitForm();
-		}
-
-		void ShowPresetForm()
-		{
-			if (presetForm == null)
-			{
-				presetForm = new LoadPresetsForm();
-				presetForm.Owner = MainForm.Current;
-			}
-			presetForm.StartPosition = FormStartPosition.CenterParent;
-			presetForm.InitForm();
-			ControlsHelper.CheckTopMost(presetForm);
-			var result = presetForm.ShowDialog();
-			if (result == DialogResult.OK)
-			{
-				var ps = presetForm.SelectedItem;
-				if (ps != null)
-				{
-					MainForm.Current.UpdateTimer.Stop();
-					SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, ps);
-					MainForm.Current.UpdateTimer.Start();
-				}
-			}
-			presetForm.UnInitForm();
 		}
 
 		#region Mapped Devices

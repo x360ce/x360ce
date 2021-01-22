@@ -35,7 +35,6 @@ namespace x360ce.App
 			this.DevicesPanelHost = new System.Windows.Forms.Integration.ElementHost();
 			this.UserDevicesPanel = new x360ce.App.Controls.UserDevicesControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
-			this.SettingsGridPanel = new x360ce.App.Controls.SettingsGridUserControl();
 			this.CloudTabPage = new System.Windows.Forms.TabPage();
 			this.CloudPanel = new x360ce.App.Controls.CloudUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
@@ -73,6 +72,8 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
 			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.SettingsGridHost = new System.Windows.Forms.Integration.ElementHost();
+			this.SettingsGridPanel = new x360ce.App.Controls.SettingsListControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -228,21 +229,12 @@ namespace x360ce.App
 			// 
 			// SettingsTabPage
 			// 
-			this.SettingsTabPage.Controls.Add(this.SettingsGridPanel);
+			this.SettingsTabPage.Controls.Add(this.SettingsGridHost);
 			this.SettingsTabPage.Location = new System.Drawing.Point(8, 39);
 			this.SettingsTabPage.Name = "SettingsTabPage";
 			this.SettingsTabPage.Size = new System.Drawing.Size(782, 536);
 			this.SettingsTabPage.TabIndex = 1;
 			this.SettingsTabPage.Text = "Settings";
-			// 
-			// SettingsGridPanel
-			// 
-			this.SettingsGridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.SettingsGridPanel.Location = new System.Drawing.Point(0, 0);
-			this.SettingsGridPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-			this.SettingsGridPanel.Name = "SettingsGridPanel";
-			this.SettingsGridPanel.Size = new System.Drawing.Size(782, 536);
-			this.SettingsGridPanel.TabIndex = 0;
 			// 
 			// CloudTabPage
 			// 
@@ -599,6 +591,16 @@ namespace x360ce.App
 			this.panel1.Size = new System.Drawing.Size(804, 589);
 			this.panel1.TabIndex = 26;
 			// 
+			// SettingsGridHost
+			// 
+			this.SettingsGridHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SettingsGridHost.Location = new System.Drawing.Point(0, 0);
+			this.SettingsGridHost.Name = "SettingsGridHost";
+			this.SettingsGridHost.Size = new System.Drawing.Size(782, 536);
+			this.SettingsGridHost.TabIndex = 0;
+			this.SettingsGridHost.Text = "elementHost1";
+			this.SettingsGridHost.Child = this.SettingsGridPanel;
+			// 
 			// MainForm
 			// 
 			this.BackColor = System.Drawing.SystemColors.Control;
@@ -676,7 +678,6 @@ namespace x360ce.App
 		private TabPage CloudTabPage;
 		public Controls.CloudUserControl CloudPanel;
 		private ToolStripStatusLabel UpdateDevicesStatusLabel;
-		private Controls.SettingsGridUserControl SettingsGridPanel;
 		private Controls.ProgramsGridUserControl ProgramsPanel;
 		public TabPage ProgramsTabPage;
 		public TabPage GamesTabPage;
@@ -695,5 +696,7 @@ namespace x360ce.App
 		public TabPage OptionsTabPage;
 		public System.Windows.Forms.Integration.ElementHost DevicesPanelHost;
 		public Controls.UserDevicesControl UserDevicesPanel;
+		private System.Windows.Forms.Integration.ElementHost SettingsGridHost;
+		private Controls.SettingsListControl SettingsGridPanel;
 	}
 }

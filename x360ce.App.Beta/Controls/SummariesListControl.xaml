@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="x360ce.App.Controls.PresetsListControl"
+	x:Class="x360ce.App.Controls.SummariesListControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:converters="clr-namespace:x360ce.App.Converters"
@@ -65,22 +65,26 @@
 					Header="SID"
 					SortDirection="{x:Null}" />
 				<DataGridTextColumn
-					Binding="{Binding Type}"
+					Binding="{Binding Users}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Type"
-					Visibility="Hidden" />
+					Header="Users" />
 				<DataGridTextColumn
-					Binding="{Binding VendorName}"
+					Binding="{Binding FileName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Device Vendor Name" />
+					Header="File Name" />
 				<DataGridTextColumn
 					Width="*"
+					Binding="{Binding FileProductName}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="File Title" />
+				<DataGridTextColumn
 					Binding="{Binding ProductName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="DeviceName" />
+					Header="Device Name" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style TargetType="DataGridCell">

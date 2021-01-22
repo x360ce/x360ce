@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace x360ce.App.Controls
 {
-	public partial class BaseFormWithHeader : Form
+	public partial class BaseFormWithHeader : Form, IBaseWithHeaderControl
 	{
 		public BaseFormWithHeader()
 		{
@@ -84,32 +84,40 @@ namespace x360ce.App.Controls
 
 		private readonly string defaultBody;
 
-		public void SetHeaderSubject(string text)
+		public void SetHead(string format, params object[] args)
 		{
+			var text = args.Length == 0 ? format : string.Format(format, args);
 			if (HelpSubjectLabel.Text != text)
 				HelpSubjectLabel.Text = text;
 		}
 
-		public void SetHeaderError(string body, params object[] args)
+		public void SetTitle(string format, params object[] args)
 		{
-			// Apply format.
-			if (body == null)
-				body = defaultBody;
-			else if (args.Length > 0)
-				body = string.Format(body, args);
-			// Set info with time.
-			SetHeaderBody(MessageBoxIcon.Error, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
+			var text = args.Length == 0 ? format : string.Format(format, args);
+			if (Text != text)
+				Text = text;
 		}
 
-		public void SetHeaderInfo(string body, params object[] args)
+		public void SetBodyError(string format, params object[] args)
 		{
 			// Apply format.
-			if (body == null)
-				body = defaultBody;
+			if (format == null)
+				format = defaultBody;
 			else if (args.Length > 0)
-				body = string.Format(body, args);
+				format = string.Format(format, args);
 			// Set info with time.
-			SetHeaderBody(MessageBoxIcon.Information, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, body);
+			SetHeaderBody(MessageBoxIcon.Error, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, format);
+		}
+
+		public void SetBodyInfo(string format, params object[] args)
+		{
+			// Apply format.
+			if (format == null)
+				format = defaultBody;
+			else if (args.Length > 0)
+				format = string.Format(format, args);
+			// Set info with time.
+			SetHeaderBody(MessageBoxIcon.Information, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, format);
 		}
 
 		public void SetHeaderBody(MessageBoxIcon icon, string body = null, params object[] args)

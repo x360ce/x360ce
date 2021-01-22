@@ -512,7 +512,7 @@ namespace x360ce.App.Controls
 				if (existingItem != null)
 					JocysCom.ClassLibrary.Runtime.RuntimeHelper.CopyProperties(newItem, existingItem);
 			}
-			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.UserGame).Name);
+			MainForm.Current.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.UserGame).Name);
 			grid.DataSource = list;
 			ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();

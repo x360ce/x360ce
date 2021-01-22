@@ -141,7 +141,7 @@ namespace x360ce.App.Controls
             var result = (SearchResult)e.Result;
             if (result.PadSettings.Length == 0)
             {
-                MainForm.Current.SetHeaderInfo("Setting was not found.");
+                MainForm.Current.SetBodyInfo("Setting was not found.");
             }
             else
             {
@@ -151,7 +151,7 @@ namespace x360ce.App.Controls
                 SettingsManager.Current.SuspendEvents();
                 //SettingManager.Current.LoadPadSettings(SettingManager.IniFileName, padSectionName, _padIndex);
                 SettingsManager.Current.ResumeEvents();
-                MainForm.Current.SetHeaderInfo("Settings loaded into '{0}.{1}' successfully.", _padIndex + 1, _di.ProductName);
+                MainForm.Current.SetBodyInfo("Settings loaded into '{0}.{1}' successfully.", _padIndex + 1, _di.ProductName);
             }
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
         }

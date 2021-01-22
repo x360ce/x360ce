@@ -197,18 +197,18 @@ namespace x360ce.App
 						MainForm.Current.GameSettingsPanel.ImportAndBindItems(result.UserGames);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
-								MainForm.Current.SetHeaderError(result.ErrorMessage);
+								MainForm.Current.SetBodyError(result.ErrorMessage);
 							else
-								MainForm.Current.SetHeaderInfo(result.ErrorMessage);
+								MainForm.Current.SetBodyInfo(result.ErrorMessage);
 					}
 					if (result.UserDevices != null)
 					{
 						MainForm.Current.UserDevicesPanel.ImportAndBindItems(result.UserDevices);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
-								MainForm.Current.SetHeaderError(result.ErrorMessage);
+								MainForm.Current.SetBodyError(result.ErrorMessage);
 							else
-								MainForm.Current.SetHeaderInfo(result.ErrorMessage);
+								MainForm.Current.SetBodyInfo(result.ErrorMessage);
 					}
 					break;
 				case CloudAction.CheckUpdates:

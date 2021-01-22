@@ -202,7 +202,7 @@ namespace x360ce.App.Controls
 				// Add new one.
 				list.Add(newItem);
 			}
-			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
+			MainForm.Current.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
 			AttachDataSource(list);
 			//JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();

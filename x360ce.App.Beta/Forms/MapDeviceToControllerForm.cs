@@ -13,7 +13,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
-			SetHeaderSubject(Text);
+			SetHead(Text);
 			SetHeaderBody(MessageBoxIcon.None);
 			ControllersPanel = new UserDevicesControl();
 			UserDevicesElementHost.Child = ControllersPanel;

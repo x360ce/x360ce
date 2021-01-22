@@ -1,42 +1,43 @@
 ﻿using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.Windows.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
-	public partial class SettingsGridUserControl : UserControl
+	/// <summary>
+	/// Interaction logic for SettingsListControl.xaml
+	/// </summary>
+	public partial class SettingsListControl : UserControl
 	{
-		public SettingsGridUserControl()
+		public SettingsListControl()
 		{
 			InitializeComponent();
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
-			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(SettingsDataGridView);
-			EngineHelper.EnableDoubleBuffering(SettingsDataGridView);
-			SettingsDataGridView.AutoGenerateColumns = false;
+			MainDataGrid.AutoGenerateColumns = false;
+			MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Single;
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 		}
 
-		public BaseFormWithHeader _ParentForm;
+		public IBaseWithHeaderControl _ParentControl;
 
 		public void InitPanel()
 		{
 			SettingsManager.UserSettings.Items.ListChanged += Settings_ListChanged;
 			// WORKAROUND: Remove SelectionChanged event.
-			SettingsDataGridView.SelectionChanged -= SettingsDataGridView_SelectionChanged;
-			SettingsDataGridView.DataSource = SettingsManager.UserSettings.Items;
+			MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
+			MainDataGrid.ItemsSource = SettingsManager.UserSettings.Items;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			//BeginInvoke((Action)delegate ()
 			//{
-			SettingsDataGridView.SelectionChanged += SettingsDataGridView_SelectionChanged;
-			SettingsDataGridView_SelectionChanged(SettingsDataGridView, new EventArgs());
+			MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
+			MainDataGrid_SelectionChanged(MainDataGrid, null);
 			//});
 			UpdateControlsFromSettings();
 		}
@@ -44,7 +45,7 @@ namespace x360ce.App.Controls
 		public void UnInitPanel()
 		{
 			SettingsManager.UserSettings.Items.ListChanged -= Settings_ListChanged;
-			SettingsDataGridView.DataSource = null;
+			MainDataGrid.ItemsSource = null;
 		}
 
 		void UpdateControlsFromSettings()
@@ -56,32 +57,15 @@ namespace x360ce.App.Controls
 			UpdateControlsFromSettings();
 		}
 
-		void SettingsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		private void DeleteButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			if (e.RowIndex < 0 || e.ColumnIndex < 0)
-				return;
-			var grid = (DataGridView)sender;
-			var item = (UserSetting)grid.Rows[e.RowIndex].DataBoundItem;
-			var column = grid.Columns[e.ColumnIndex];
-			if (column == SettingsSidColumn)
-			{
-				e.Value = EngineHelper.GetID(item.PadSettingChecksum);
-			}
-			else if (column == SettingsMapToColumn)
-			{
-				e.Value = Attributes.GetDescription((MapTo)item.MapTo);
-			}
-		}
-
-
-		private void SettingsDeleteButton_Click(object sender, EventArgs e)
-		{
-			var grid = SettingsDataGridView;
-			var userSettings = grid.SelectedRows.Cast<DataGridViewRow>().Select(x => (UserSetting)x.DataBoundItem).ToArray();
+			var grid = MainDataGrid;
+			var userSettings = grid.SelectedItems.Cast<UserSetting>().ToArray();
 			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm("Do you want to delete selected settings?", "X360CE - Delete Settings", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-			if (result == DialogResult.Yes)
+			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			var result = form.ShowForm("Do you want to delete selected settings?", "X360CE - Delete Settings",
+				System.Windows.Forms.MessageBoxButtons.YesNoCancel, System.Windows.Forms.MessageBoxIcon.Question);
+			if (result == System.Windows.Forms.DialogResult.Yes)
 			{
 				// Remove from local settings.
 				foreach (var item in userSettings)
@@ -99,27 +83,25 @@ namespace x360ce.App.Controls
 			form = null;
 		}
 
-		private void SettingsDataGridView_SelectionChanged(object sender, EventArgs e)
+		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			UpdateNoteLabel();
 		}
 
 		void UpdateNoteLabel()
 		{
-			var item = SettingsDataGridView.SelectedRows
-				.Cast<DataGridViewRow>()
-				.Select(x => (UserSetting)x.DataBoundItem)
+			var item = MainDataGrid.SelectedItems
+				.Cast<UserSetting>()
 				.FirstOrDefault();
 			var note = item == null ? string.Empty : item.Comment ?? "";
 			ControlsHelper.SetText(CommentLabel, note);
 			ControlsHelper.SetVisible(CommentPanel, !string.IsNullOrEmpty(note));
 		}
 
-		private void SettingsEditNoteButton_Click(object sender, EventArgs e)
+		private void SettingsEditNoteButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-			var item = SettingsDataGridView.SelectedRows
-				.Cast<DataGridViewRow>()
-				.Select(x => (UserSetting)x.DataBoundItem)
+			var item = MainDataGrid.SelectedItems
+				.Cast<UserSetting>()
 				.FirstOrDefault();
 			if (item == null)
 			{
@@ -129,26 +111,21 @@ namespace x360ce.App.Controls
 			var form = new PromptForm();
 			form.EditTextBox.MaxLength = 1024;
 			form.EditTextBox.Text = note;
-			form.StartPosition = FormStartPosition.CenterParent;
+			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			form.Text = "X360CE - Edit Note";
 			ControlsHelper.CheckTopMost(form);
 			var result = form.ShowDialog();
-			if (result == DialogResult.OK)
+			if (result == System.Windows.Forms.DialogResult.OK)
 			{
 				item.Comment = form.EditTextBox.Text.Trim();
 				UpdateNoteLabel();
 			}
 		}
 
-		private void SettingsRefreshButton_Click(object sender, EventArgs e)
+		public void RefreshData()
 		{
-			RefreshSettingsGrid();
-		}
-
-		public void RefreshSettingsGrid()
-		{
-			_ParentForm.AddTask(TaskName.SearchSettings);
-			SettingsRefreshButton.Enabled = false;
+			_ParentControl.AddTask(TaskName.SearchSettings);
+			RefreshButton.IsEnabled = false;
 			var sp = new List<SearchParameter>();
 			SettingsManager.Current.FillSearchParameterWithInstances(sp);
 			SettingsManager.Current.FillSearchParameterWithFiles(sp);
@@ -166,10 +143,10 @@ namespace x360ce.App.Controls
 		void ws_SearchSettingsCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			// Make sure method is executed on the same thread as this control.
-			if (InvokeRequired)
+			if (ControlsHelper.InvokeRequired)
 			{
 				var method = new EventHandler<SoapHttpClientEventArgs>(ws_SearchSettingsCompleted);
-				BeginInvoke(method, new object[] { sender, e });
+				ControlsHelper.BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
 			// Detach event handler so resource could be released.
@@ -180,17 +157,17 @@ namespace x360ce.App.Controls
 				var error = e.Error.Message;
 				if (e.Error.InnerException != null)
 					error += "\r\n" + e.Error.InnerException.Message;
-				_ParentForm.SetHeaderError(error);
+				_ParentControl.SetBodyError(error);
 			}
 			else if (e.Result == null)
 			{
-				_ParentForm.SetHeaderInfo("No user settings received.");
+				_ParentControl.SetBodyInfo("No user settings received.");
 			}
 			else
 			{
 				// Suspend DInput Service.
 				Global.DHelper.Stop();
-				SettingsDataGridView.DataSource = null;
+				MainDataGrid.ItemsSource = null;
 
 				var result = (SearchResult)e.Result;
 				// Reorder Settings.
@@ -203,17 +180,21 @@ namespace x360ce.App.Controls
 				// Display results about operation.
 				var settingsCount = (result.Settings == null) ? 0 : result.Settings.Length;
 				var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-				_ParentForm.SetHeaderInfo("{0} user settings and {1} PAD settings received.", settingsCount, padSettingsCount);
+				_ParentControl.SetBodyInfo("{0} user settings and {1} PAD settings received.", settingsCount, padSettingsCount);
 
-				SettingsDataGridView.DataSource = SettingsManager.UserSettings.Items;
+				MainDataGrid.ItemsSource = SettingsManager.UserSettings.Items;
 				// Resume DInput Service.
 				if (MainForm.Current.AllowDHelperStart)
 					Global.DHelper.Start();
 			}
-			_ParentForm.RemoveTask(TaskName.SearchSettings);
-			SettingsRefreshButton.Enabled = true;
+			_ParentControl.RemoveTask(TaskName.SearchSettings);
+			RefreshButton.IsEnabled = true;
 		}
 
+		private void RefreshButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			RefreshData();
+		}
 
 	}
 }

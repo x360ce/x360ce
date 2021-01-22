@@ -1,46 +1,45 @@
-﻿using JocysCom.ClassLibrary.Web.Services;
+﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Forms;
+using System.Windows.Controls;
 using x360ce.Engine;
-using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
-	public partial class SummariesGridUserControl : UserControl
+	/// <summary>
+	/// Interaction logic for SummariesListUserControl.xaml
+	/// </summary>
+	public partial class SummariesListControl : UserControl
 	{
-		public SummariesGridUserControl()
+		public SummariesListControl()
 		{
 			InitializeComponent();
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
-			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(SummariesDataGridView);
-			EngineHelper.EnableDoubleBuffering(SummariesDataGridView);
-			SummariesDataGridView.AutoGenerateColumns = false;
+			MainDataGrid.AutoGenerateColumns = false;
+			MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Single;
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 		}
 
-		public BaseFormWithHeader _ParentForm;
+		public BaseWithHeaderControl _ParentControl;
 
 		public void InitPanel()
 		{
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
-			SummariesDataGridView.DataSource = SettingsManager.Summaries.Items;
+			MainDataGrid.ItemsSource = SettingsManager.Summaries.Items;
 			UpdateControlsFromSummaries();
 		}
 
 		public void UnInitPanel()
 		{
 			SettingsManager.Summaries.Items.ListChanged -= Summaries_ListChanged;
-			SummariesDataGridView.DataSource = null;
+			MainDataGrid.ItemsSource = null;
 		}
 
 		void UpdateControlsFromSummaries()
 		{
-			var count = SettingsManager.Summaries.Items.Count;
-			// Allow refresh summaries.
-			//ControlsHelper.SetEnabled(SummariesRefreshButton, count > 0);
 		}
 
 		void Summaries_ListChanged(object sender, ListChangedEventArgs e)
@@ -48,31 +47,10 @@ namespace x360ce.App.Controls
 			UpdateControlsFromSummaries();
 		}
 
-		private void SummariesRefreshButton_Click(object sender, EventArgs e)
+		public void RefreshData()
 		{
-			RefreshSummariesGrid();
-		}
-
-		void SummariesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-		{
-			if (e.RowIndex < 0 || e.ColumnIndex < 0)
-				return;
-			var grid = (DataGridView)sender;
-			var item = (Summary)grid.Rows[e.RowIndex].DataBoundItem;
-			var column = grid.Columns[e.ColumnIndex];
-			if (column == SummariesSidColumn)
-			{
-				e.Value = EngineHelper.GetID(item.PadSettingChecksum);
-			}
-		}
-
-
-		public void RefreshSummariesGrid()
-		{
-			//mainForm.LoadingCircle = true;
-
-			_ParentForm.AddTask(TaskName.SearchSummaries);
-			SummariesRefreshButton.Enabled = false;
+			_ParentControl.AddTask(TaskName.SearchSummaries);
+			RefreshButton.IsEnabled = false;
 			var sp = new List<SearchParameter>();
 			FillSearchParameterWithProducts(sp);
 			SettingsManager.Current.FillSearchParameterWithFiles(sp);
@@ -102,10 +80,10 @@ namespace x360ce.App.Controls
 		void ws_SearchSummariesCompleted(object sender, SoapHttpClientEventArgs e)
 		{
 			// Make sure method is executed on the same thread as this control.
-			if (InvokeRequired)
+			if (ControlsHelper.InvokeRequired)
 			{
 				var method = new EventHandler<SoapHttpClientEventArgs>(ws_SearchSummariesCompleted);
-				BeginInvoke(method, new object[] { sender, e });
+				ControlsHelper.BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
 			// Detach event handler so resource could be released.
@@ -116,11 +94,11 @@ namespace x360ce.App.Controls
 				var error = e.Error.Message;
 				if (e.Error.InnerException != null)
 					error += "\r\n" + e.Error.InnerException.Message;
-				_ParentForm.SetHeaderError(error);
+				_ParentControl.SetBodyError(error);
 			}
 			else if (e.Result == null)
 			{
-				_ParentForm.SetHeaderInfo("No default settings received.");
+				_ParentControl.SetBodyInfo("No default settings received.");
 			}
 			else
 			{
@@ -129,13 +107,13 @@ namespace x360ce.App.Controls
 				var padSettingsCount = result.PadSettings?.Length ?? 0;
 				if (summariesCount == 0)
 				{
-					_ParentForm.SetHeaderInfo("0 default settings received.");
+					_ParentControl.SetBodyInfo("0 default settings received.");
 				}
 				else
 				{
 					if (padSettingsCount == 0)
 					{
-						_ParentForm.SetHeaderError("Error: {0} default settings received, but no PAD settings.", summariesCount);
+						_ParentControl.SetBodyError("Error: {0} default settings received, but no PAD settings.", summariesCount);
 					}
 					else
 					{
@@ -145,13 +123,22 @@ namespace x360ce.App.Controls
 						// Update pad settings.
 						SettingsManager.Current.UpsertPadSettings(result.PadSettings);
 						SettingsManager.Current.CleanupPadSettings();
-						_ParentForm.SetHeaderInfo("{0} default settings and {1} PAD settings received.", summariesCount, padSettingsCount);
+						_ParentControl.SetBodyInfo("{0} default settings and {1} PAD settings received.", summariesCount, padSettingsCount);
 					}
 				}
 			}
-			_ParentForm.RemoveTask(TaskName.SearchSummaries);
-			SummariesRefreshButton.Enabled = true;
+			_ParentControl.RemoveTask(TaskName.SearchSummaries);
+			RefreshButton.IsEnabled = true;
 		}
 
+		private void RefreshButton_Click(object sender, System.Windows.RoutedEventArgs e)
+		{
+			RefreshData();
+		}
+
+		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
+		}
 	}
 }

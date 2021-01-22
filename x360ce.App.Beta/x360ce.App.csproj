@@ -232,6 +232,7 @@
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
+    <Compile Include="Controls\IBaseWithHeaderControl.cs" />
     <Compile Include="Controls\LogUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -264,12 +265,6 @@
     <Compile Include="Controls\PresetsControl.xaml.cs">
       <DependentUpon>PresetsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PresetsGridUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\PresetsGridUserControl.Designer.cs">
-      <DependentUpon>PresetsGridUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\PresetsListControl.xaml.cs">
       <DependentUpon>PresetsListControl.xaml</DependentUpon>
     </Compile>
@@ -279,17 +274,8 @@
     <Compile Include="Controls\ProgramsGridUserControl.Designer.cs">
       <DependentUpon>ProgramsGridUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SettingsGridUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\SettingsGridUserControl.Designer.cs">
-      <DependentUpon>SettingsGridUserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SummariesGridUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\SummariesGridUserControl.Designer.cs">
-      <DependentUpon>SummariesGridUserControl.cs</DependentUpon>
+    <Compile Include="Controls\SettingsListControl.xaml.cs">
+      <DependentUpon>SettingsListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\AboutControl.cs">
       <SubType>UserControl</SubType>
@@ -312,6 +298,9 @@
     <Compile Include="Controls\PadTabPages\XInputControl.xaml.cs">
       <DependentUpon>XInputControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SummariesListControl.xaml.cs">
+      <DependentUpon>SummariesListControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UserDevicesControl.xaml.cs">
       <DependentUpon>UserDevicesControl.xaml</DependentUpon>
     </Compile>
@@ -325,6 +314,7 @@
     <Compile Include="Converters\BoolToImageSourceConverter.cs" />
     <Compile Include="Converters\ChecksumToIdConverter.cs" />
     <Compile Include="Converters\ConnectionClassToImageConverter.cs" />
+    <Compile Include="Converters\MapToIntToDescription.cs" />
     <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Forms\BaseFormWithHeader.cs">
       <SubType>Form</SubType>
@@ -373,12 +363,6 @@
     </Compile>
     <Compile Include="Forms\HardwareForm.Designer.cs">
       <DependentUpon>HardwareForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\LoadPresetsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\LoadPresetsForm.Designer.cs">
-      <DependentUpon>LoadPresetsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\LoadPresetsWindow.xaml.cs">
       <DependentUpon>LoadPresetsWindow.xaml</DependentUpon>
@@ -503,17 +487,8 @@
     <EmbeddedResource Include="Controls\DebugUserControl.resx">
       <DependentUpon>DebugUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\PresetsGridUserControl.resx">
-      <DependentUpon>PresetsGridUserControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ProgramsGridUserControl.resx">
       <DependentUpon>ProgramsGridUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\SettingsGridUserControl.resx">
-      <DependentUpon>SettingsGridUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\SummariesGridUserControl.resx">
-      <DependentUpon>SummariesGridUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\_TempWIN2WPF.com.resx">
       <DependentUpon>_TempWIN2WPF.com.cs</DependentUpon>
@@ -541,9 +516,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\HardwareForm.resx">
       <DependentUpon>HardwareForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LoadPresetsForm.resx">
-      <DependentUpon>LoadPresetsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MapDeviceToControllerForm.resx">
       <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
@@ -829,6 +801,14 @@
     <Page Include="Controls\PresetsListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\SettingsListControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\SummariesListControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\UserDevicesControl.xaml">
       <SubType>Designer</SubType>

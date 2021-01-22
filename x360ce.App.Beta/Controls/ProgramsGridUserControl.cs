@@ -227,7 +227,7 @@ namespace x360ce.App.Controls
 				// Add new one.
 				list.Add(newItem);
 			}
-			MainForm.Current.SetHeaderInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.Program).Name);
+			MainForm.Current.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.Program).Name);
 			grid.DataSource = list;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();
@@ -258,11 +258,11 @@ namespace x360ce.App.Controls
 				{
 					var error = e.Error.Message;
 					if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
-					MainForm.Current.SetHeaderError(error);
+					MainForm.Current.SetBodyError(error);
 				}
 				else if (e.Result == null)
 				{
-					MainForm.Current.SetHeaderError("No results were returned by the web service!");
+					MainForm.Current.SetBodyError("No results were returned by the web service!");
 				}
 				else
 				{
