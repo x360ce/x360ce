@@ -197,6 +197,9 @@
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
     <Compile Include="Data\UserMacro.cs" />
+    <Compile Include="JocysCom\Controls\MessageBoxWindow.xaml.cs">
+      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="JocysCom\Diagnostics\RollingWriterOptions.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
@@ -550,6 +553,10 @@
     <Page Include="JocysCom\Controls\ErrorReportControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="JocysCom\Controls\MessageBoxWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="JocysCom\Controls\Themes\Default.xaml">
       <Generator>MSBuild:Compile</Generator>

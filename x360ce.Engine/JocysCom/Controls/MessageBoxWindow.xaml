@@ -1,0 +1,86 @@
+﻿<Window
+	x:Class="JocysCom.ClassLibrary.Controls.MessageBoxWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	SizeToContent="WidthAndHeight"
+	mc:Ignorable="d">
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Themes/Default.xaml" />
+				<ResourceDictionary Source="Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<StackPanel Grid.Column="0" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+				<ContentControl
+					Name="IconContent"
+					Width="48"
+					Height="48"
+					Margin="8"
+					VerticalAlignment="Top"
+					Content="{StaticResource Icon_OK}"
+					Style="{StaticResource ButtonContentControl}" />
+			</StackPanel>
+			<StackPanel Grid.Column="1" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+				<TextBlock
+					x:Name="MessageTextBlock"
+					Margin="0,8,8,8"
+					VerticalAlignment="Top"
+					Text="Message" />
+			</StackPanel>
+		</Grid>
+
+		<StackPanel
+			Grid.Row="1"
+			Margin="8,8,8,8"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal">
+			<Button
+				Name="Button1"
+				MinWidth="75"
+				Margin="0,0,0,0"
+				Click="Button_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Name="Button1Content" Content="{StaticResource Icon_OK}" Style="{StaticResource ButtonContentControl}" />
+					<Label Name="Button1Label" Content="Button 1" Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="Button2"
+				MinWidth="75"
+				Margin="8,0,0,0"
+				Click="Button_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Name="Button2Content" Content="{StaticResource Icon_Cancel}" Style="{StaticResource ButtonContentControl}" />
+					<Label Name="Button2Label" Content="Button 2" Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="Button3"
+				Margin="8,0,0,0"
+				HorizontalContentAlignment="Stretch"
+				Click="Button_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel HorizontalAlignment="Stretch" Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Name="Button3Content" Content="{StaticResource Icon_Exit}" Style="{StaticResource ButtonContentControl}" />
+					<Label Name="Button3Label" Content="Button 3" Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+	</Grid>
+</Window>

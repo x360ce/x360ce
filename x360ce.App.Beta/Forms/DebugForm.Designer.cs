@@ -38,13 +38,14 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.performanceTestUserControl1.Location = new System.Drawing.Point(12, 12);
+			this.performanceTestUserControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
 			this.performanceTestUserControl1.Name = "performanceTestUserControl1";
-			this.performanceTestUserControl1.Size = new System.Drawing.Size(234, 169);
+			this.performanceTestUserControl1.Size = new System.Drawing.Size(603, 343);
 			this.performanceTestUserControl1.TabIndex = 0;
 			// 
 			// DebugForm
 			// 
-			this.ClientSize = new System.Drawing.Size(258, 193);
+			this.ClientSize = new System.Drawing.Size(627, 367);
 			this.Controls.Add(this.performanceTestUserControl1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "DebugForm";

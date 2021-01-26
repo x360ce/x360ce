@@ -1254,6 +1254,11 @@ namespace x360ce.App.Controls
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)
 		{
+			var win = new MessageBoxWindow();
+			var result = win.Show("Do you really want to remove selected user setting?",
+				"X360CE - Remove?", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No);
+			if (result != System.Windows.MessageBoxResult.Yes)
+				return;
 			var game = SettingsManager.CurrentGame;
 			// Return if game is not selected.
 			if (game == null)
