@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Linq;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -15,6 +16,21 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			InitializeComponent();
 			LinkTextBlock.Visibility = Visibility.Collapsed;
+			// Center owner.
+			var owner = Application.Current?.MainWindow;
+			if (owner != null)
+			{
+				WindowStartupLocation = WindowStartupLocation.CenterOwner;
+				Owner = owner;
+			}
+			Loaded += MessageBoxWindow_Loaded;
+		}
+
+		private void MessageBoxWindow_Loaded(object sender, RoutedEventArgs e)
+		{
+			// Center message box window in application.
+			if (Owner == null)
+				CenterWindowOnApplication(this);
 		}
 
 		/// <summary>Displays a message box that has a message, title bar caption, button, and icon; and that accepts a default message box result, complies with the specified options, and returns a result.</summary>
@@ -34,7 +50,6 @@ namespace JocysCom.ClassLibrary.Controls
 		)
 		{
 			var win = new MessageBoxWindow();
-			//win.Topmost = window.Topmost;
 			return win.ShowDialog(message, caption, button, icon, defaultResult, options);
 		}
 
@@ -102,6 +117,9 @@ namespace JocysCom.ClassLibrary.Controls
 				size = ApplyAspectRatio(size);
 				MessageTextBlock.MaxWidth = Math.Round(size.Width, 0);
 			}
+			if (GetMainFormTopMost())
+				Topmost = true;
+			// Show form.
 			var result = ShowDialog();
 			return Result;
 		}
@@ -141,6 +159,8 @@ namespace JocysCom.ClassLibrary.Controls
 			OpenUrl(e.Uri.AbsoluteUri);
 		}
 
+		#region Helper Methods
+
 		public static void OpenUrl(string url)
 		{
 			try
@@ -179,6 +199,88 @@ namespace JocysCom.ClassLibrary.Controls
 				1);
 			return new Size(formattedText.Width, formattedText.Height);
 		}
+		private static void CenterWindowOnApplication(Window w)
+		{
+			// Get WFF window first.
+			var win = System.Windows.Application.Current?.MainWindow;
+			System.Drawing.Rectangle? r = null;
+			var isNormal = false;
+			if (win != null)
+			{
+				r = new System.Drawing.Rectangle((int)win.Left, (int)win.Top, (int)win.Width, (int)win.Height);
+				isNormal = win.WindowState == WindowState.Normal;
+			}
+			else
+			{
+				// Try to get top windows form.
+				var form = System.Windows.Forms.Application.OpenForms.Cast<System.Windows.Forms.Form>().FirstOrDefault();
+				if (form != null)
+				{
+					double l;
+					double t;
+					double w;
+					double h;
+					TransformToUnits(form.Left, form.Top, out l, out t);
+					TransformToUnits(form.Width, form.Height, out w, out h);
+					r = new System.Drawing.Rectangle((int)l, (int)t, (int)w, (int)h);
+					isNormal = form.WindowState == System.Windows.Forms.FormWindowState.Normal;
+				}
+			}
+			if (r.HasValue)
+			{
+				if (isNormal)
+				{
+					w.Left = r.Value.X + ((r.Value.Width - w.ActualWidth) / 2);
+					w.Top = r.Value.Y + ((r.Value.Height - w.ActualHeight) / 2);
+				}
+				else
+				{
+					// Get the form screen.
+					var screen = System.Windows.Forms.Screen.FromRectangle(r.Value);
+					double screenWidth = screen.WorkingArea.Width;
+					double screenHeight = screen.WorkingArea.Height;
+					w.Left = (screenWidth / 2) - (w.Width / 2);
+					w.Top = (screenHeight / 2) - (w.Height / 2);
+				}
+			}
+		}
+
+		private static bool GetMainFormTopMost()
+		{
+			var win = System.Windows.Application.Current?.MainWindow;
+			if (win != null)
+				return win.Topmost;
+			var form = System.Windows.Forms.Application.OpenForms.Cast<System.Windows.Forms.Form>().FirstOrDefault();
+			if (form != null)
+				return form.TopMost;
+			return false;
+		}
+
+		/// <summary>
+		/// Transforms device independent units (1/96 of an inch) to pixels.
+		/// </summary>
+		private static void TransformToPixels(double unitX, double unitY, out int pixelX, out int pixelY)
+		{
+			using (var g = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
+			{
+				pixelX = (int)((g.DpiX / 96) * unitX);
+				pixelY = (int)((g.DpiY / 96) * unitY);
+			}
+		}
+
+		/// <summary>
+		/// Transforms device pixels to independent units (1/96 of an inch).
+		/// </summary>
+		private static void TransformToUnits(int pixelX, int pixelY, out double unitX, out double unitY)
+		{
+			using (var g = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
+			{
+				unitX = (double)pixelX / (g.DpiX / 96);
+				unitY = (double)pixelY / (g.DpiX / 96);
+			}
+		}
+
+		#endregion
 
 	}
 }
