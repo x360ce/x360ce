@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -11,6 +14,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public MessageBoxWindow()
 		{
 			InitializeComponent();
+			LinkTextBlock.Visibility = Visibility.Collapsed;
 		}
 
 		/// <summary>Displays a message box that has a message, title bar caption, button, and icon; and that accepts a default message box result, complies with the specified options, and returns a result.</summary>
@@ -21,7 +25,6 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="defaultResult">A value that specifies the default result of the message box.</param>
 		/// <param name="options">A value object that specifies the options.</param>
 		public static MessageBoxResult Show(
-			Window window,
 			string message,
 			string caption = "",
 			MessageBoxButton button = MessageBoxButton.OK,
@@ -31,8 +34,8 @@ namespace JocysCom.ClassLibrary.Controls
 		)
 		{
 			var win = new MessageBoxWindow();
-			win.Topmost = window.Topmost;
-			return win.Show(message, caption, button, icon, defaultResult, options);
+			//win.Topmost = window.Topmost;
+			return win.ShowDialog(message, caption, button, icon, defaultResult, options);
 		}
 
 		/// <summary>Displays a message box that has a message, title bar caption, button, and icon; and that accepts a default message box result, complies with the specified options, and returns a result.</summary>
@@ -42,7 +45,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="icon">A value that specifies the icon to display.</param>
 		/// <param name="defaultResult">A value that specifies the default result of the message box.</param>
 		/// <param name="options">A value object that specifies the options.</param>
-		public MessageBoxResult Show(
+		public MessageBoxResult ShowDialog(
 		  string message,
 		  string caption = "",
 		  MessageBoxButton button = MessageBoxButton.OK,
@@ -84,12 +87,21 @@ namespace JocysCom.ClassLibrary.Controls
 					IconContent.Content = Resources["Icon_Information"];
 					break;
 			}
-			if (defaultResult == (MessageBoxResult)Button1.Tag)
-				Button1.IsDefault = true;
-			if (defaultResult == (MessageBoxResult)Button2.Tag)
-				Button2.IsDefault = true;
-			if (defaultResult == (MessageBoxResult)Button3.Tag)
-				Button3.IsDefault = true;
+			var buttons = new[] { Button1, Button2, Button3 };
+			foreach (var b in buttons)
+			{
+				if ((MessageBoxResult)b.Tag == MessageBoxResult.Cancel)
+					b.IsCancel = true;
+				if ((MessageBoxResult)b.Tag == defaultResult)
+					b.IsDefault = true;
+			}
+			// Get text size.
+			var size = MeasureString(message, MessageTextBlock);
+			if (size.Width > 960)
+			{
+				size = ApplyAspectRatio(size);
+				MessageTextBlock.MaxWidth = Math.Round(size.Width, 0);
+			}
 			var result = ShowDialog();
 			return Result;
 		}
@@ -113,6 +125,59 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			Result = (MessageBoxResult)((Button)sender).Tag;
 			DialogResult = true;
+		}
+
+		public void SetLink(string text = null, Uri uri = null)
+		{
+			LinkTextBlock.Visibility = string.IsNullOrEmpty(text)
+				? Visibility.Collapsed
+				: Visibility.Visible;
+			MainHyperLink.NavigateUri = uri;
+			LinkLabel.Content = text;
+		}
+
+		private void MainHyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+		{
+			OpenUrl(e.Uri.AbsoluteUri);
+		}
+
+		public static void OpenUrl(string url)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(url);
+			}
+			catch (System.ComponentModel.Win32Exception noBrowser)
+			{
+				if (noBrowser.ErrorCode == -2147467259)
+					MessageBox.Show(noBrowser.Message);
+			}
+			catch (Exception other)
+			{
+				MessageBox.Show(other.Message);
+			}
+		}
+
+		private static Size ApplyAspectRatio(Size s, double w = 16, double h = 9)
+		{
+			var area = s.Width * s.Height;
+			// w * x * h * x = area;
+			var x = Math.Sqrt(area / w / h);
+			return new Size(w * x, h * x);
+		}
+
+		private static Size MeasureString(string candidate, TextBlock control)
+		{
+			var formattedText = new FormattedText(
+				candidate,
+				CultureInfo.CurrentCulture,
+				FlowDirection.LeftToRight,
+				new Typeface(control.FontFamily, control.FontStyle, control.FontWeight, control.FontStretch),
+				control.FontSize,
+				Brushes.Black,
+				new NumberSubstitution(),
+				1);
+			return new Size(formattedText.Width, formattedText.Height);
 		}
 
 	}

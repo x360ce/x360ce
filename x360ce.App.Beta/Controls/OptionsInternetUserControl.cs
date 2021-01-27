@@ -107,11 +107,11 @@ namespace x360ce.App.Controls
 				results = ws.Execute(cmd2);
 				if (results.ErrorCode != 0)
 				{
-					MessageBoxForm.Show(results.ErrorMessage, string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxWindow.Show(results.ErrorMessage, string.Format("{0} Result", CloudAction.LogIn), System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
 				}
 				else
 				{
-					MessageBoxForm.Show(string.Format("Authorized: {0}", results.ErrorMessage), string.Format("{0} Result", CloudAction.LogIn), MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxWindow.Show(string.Format("Authorized: {0}", results.ErrorMessage), string.Format("{0} Result", CloudAction.LogIn), System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
 				}
 			}
 			else

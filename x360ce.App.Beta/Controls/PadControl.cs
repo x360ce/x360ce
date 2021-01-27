@@ -1107,10 +1107,9 @@ namespace x360ce.App.Controls
 		{
 			var description = Attributes.GetDescription(MappedTo);
 			var text = string.Format("Do you want to clear all {0} settings?", description);
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm(text, "Clear Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-			if (result != DialogResult.Yes)
+			var form = new MessageBoxWindow();
+			var result = form.ShowDialog(text, "Clear Controller Settings", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
+			if (result != System.Windows.MessageBoxResult.Yes)
 				return false;
 			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, null);
 			return true;
@@ -1120,10 +1119,9 @@ namespace x360ce.App.Controls
 		{
 			var description = Attributes.GetDescription(MappedTo);
 			var text = string.Format("Do you really want to reset all {0} settings?", description);
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm(text, "Reset Controller Settings", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-			if (result == DialogResult.Yes)
+			var form = new MessageBoxWindow();
+			var result = form.ShowDialog(text, "Reset Controller Settings", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
+			if (result == System.Windows.MessageBoxResult.Yes)
 			{
 				//MainForm.Current.ReloadXinputSettings();
 			}
@@ -1135,17 +1133,16 @@ namespace x360ce.App.Controls
 			if (ud == null)
 				return;
 			var description = Attributes.GetDescription(MappedTo);
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var buttons = MessageBoxButtons.YesNo;
+			var form = new MessageBoxWindow();
+			var buttons = System.Windows.MessageBoxButton.YesNo;
 			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
 			if (ud.Device == null && !TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
 			{
 				text = string.Format("Device is off-line. Please connect device to fill all {0} settings automatically.", description);
-				buttons = MessageBoxButtons.OK;
+				buttons = System.Windows.MessageBoxButton.OK;
 			}
-			var result = form.ShowForm(text, "Auto Controller Settings", buttons, MessageBoxIcon.Question);
-			if (result != DialogResult.Yes)
+			var result = form.ShowDialog(text, "Auto Controller Settings", buttons, System.Windows.MessageBoxImage.Question);
+			if (result != System.Windows.MessageBoxResult.Yes)
 				return;
 			var padSetting = AutoMapHelper.GetAutoPreset(ud);
 			// Load created setting.
@@ -1255,7 +1252,10 @@ namespace x360ce.App.Controls
 		private void RemoveMapButton_Click(object sender, EventArgs e)
 		{
 			var win = new MessageBoxWindow();
-			var result = win.Show("Do you really want to remove selected user setting?",
+			var text = "Do you really want to remove selected user setting?";
+			while (text.Length < 1000)
+				text += " text";
+			var result = win.ShowDialog(text,
 				"X360CE - Remove?", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No);
 			if (result != System.Windows.MessageBoxResult.Yes)
 				return;
@@ -1518,11 +1518,9 @@ namespace x360ce.App.Controls
 			}
 			catch (Exception ex)
 			{
-				var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
-				form.StartPosition = FormStartPosition.CenterParent;
+				var form = new MessageBoxWindow();
 				ControlsHelper.CheckTopMost(form);
-				form.ShowForm(ex.Message);
-				form.Dispose();
+				form.ShowDialog(ex.Message);
 				return;
 			}
 		}

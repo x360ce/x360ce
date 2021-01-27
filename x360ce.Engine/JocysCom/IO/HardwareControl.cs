@@ -398,22 +398,17 @@ namespace JocysCom.ClassLibrary.IO
 				  {
 					  foreach (var item in list)
 						  AddLogLine(item);
-					  var result = DialogResult.No;
+					  var result = System.Windows.MessageBoxResult.No;
 					  ControlsHelper.Invoke(new Action(() =>
 					  {
-						  var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm
-						  {
-							  StartPosition = FormStartPosition.CenterParent
-						  };
-						  ControlsHelper.CheckTopMost(form);
-						  result = form.ShowForm(
+						  var form = new MessageBoxWindow();
+						  result = form.ShowDialog(
 								  "Do you want to remove offline, problem or unknown devices?\r\n\r\n" + message,
 								  "Do you want to remove devices?",
-								  MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-						  form.Dispose();
+								  System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
 
 					  }));
-					  if (result != DialogResult.Yes)
+					  if (result != System.Windows.MessageBoxResult.Yes)
 						  return;
 					  var devList = new List<DeviceInfo>();
 					  devList.AddRange(offline);
@@ -522,7 +517,7 @@ namespace JocysCom.ClassLibrary.IO
 			var isElevated = JocysCom.ClassLibrary.Security.PermissionHelper.IsElevated;
 			if (!isElevated)
 
-				MessageBoxForm.Show("You must run this program as administrator for this feature to work.");
+				MessageBoxWindow.Show("You must run this program as administrator for this feature to work.");
 			return isElevated;
 		}
 

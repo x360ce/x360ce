@@ -139,7 +139,7 @@ namespace x360ce.App.Controls
 			if (error == null)
 				return;
 			var message = JocysCom.ClassLibrary.Runtime.LogHelper.ExceptionToText(error);
-			MessageBoxForm.Show(message, error.Message, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBoxWindow.Show(message, error.Message, System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
 
 		}
 

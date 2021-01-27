@@ -29,10 +29,9 @@ namespace x360ce.App
 						}
 						else
 						{
-							var form = new MessageBoxForm();
-							form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-							form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied",
-								System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+							var form = new MessageBoxWindow();
+							form.ShowDialog("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied",
+								System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Warning);
 						}
 					}
 				}

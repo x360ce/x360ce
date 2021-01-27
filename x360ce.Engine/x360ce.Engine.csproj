@@ -267,12 +267,6 @@
     <Compile Include="JocysCom\Controls\LogTextBoxUserControl.Designer.cs">
       <DependentUpon>LogTextBoxUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="JocysCom\Controls\MessageBoxForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="JocysCom\Controls\MessageBoxForm.Designer.cs">
-      <DependentUpon>MessageBoxForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
     <Compile Include="JocysCom\Data\Linq.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.cs" />
@@ -534,9 +528,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\Controls\LogTextBoxUserControl.resx">
       <DependentUpon>LogTextBoxUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="JocysCom\Controls\MessageBoxForm.resx">
-      <DependentUpon>MessageBoxForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
       <DependentUpon>HardwareControl.cs</DependentUpon>

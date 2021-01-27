@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -61,11 +62,10 @@ namespace x360ce.App.Controls
 		{
 			var grid = MainDataGrid;
 			var userSettings = grid.SelectedItems.Cast<UserSetting>().ToArray();
-			var form = new MessageBoxForm();
-			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			var result = form.ShowForm("Do you want to delete selected settings?", "X360CE - Delete Settings",
-				System.Windows.Forms.MessageBoxButtons.YesNoCancel, System.Windows.Forms.MessageBoxIcon.Question);
-			if (result == System.Windows.Forms.DialogResult.Yes)
+			var form = new MessageBoxWindow();
+			var result = form.ShowDialog("Do you want to delete selected settings?", "X360CE - Delete Settings",
+				MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+			if (result ==  MessageBoxResult.Yes)
 			{
 				// Remove from local settings.
 				foreach (var item in userSettings)
@@ -79,8 +79,6 @@ namespace x360ce.App.Controls
 
 				}));
 			}
-			form.Dispose();
-			form = null;
 		}
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)

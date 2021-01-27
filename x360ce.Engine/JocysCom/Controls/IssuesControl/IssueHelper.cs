@@ -265,14 +265,12 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			}
 			catch (Exception ex)
 			{
-				var form = new MessageBoxForm();
-				form.StartPosition = FormStartPosition.CenterParent;
+				var form = new MessageBoxWindow();
 				ControlsHelper.CheckTopMost(form);
 				var text = string.Format("Unable to download {0} file:\r\n\r\n{1}\r\n\r\nOpen source web page?",
 					uri.AbsoluteUri, ex.Message);
-				var result = form.ShowForm(text, "Download Error", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-				form.Dispose();
-				if (result == DialogResult.Yes)
+				var result = form.ShowDialog(text, "Download Error", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
+				if (result == System.Windows.MessageBoxResult.Yes)
 				{
 					ControlsHelper.OpenUrl("https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads");
 				}

@@ -169,8 +169,7 @@ namespace x360ce.App.Controls
 			var grid = ProgramsDataGridView;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, nameof(Engine.Data.Program.FileName));
 			var itemsToDelete = SettingsManager.Programs.Items.Where(x => selection.Contains(x.FileName)).ToArray();
-			MessageBoxForm form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
+			var form = new MessageBoxWindow();
 			string message;
 			if (itemsToDelete.Length == 1)
 			{
@@ -183,8 +182,8 @@ namespace x360ce.App.Controls
 			{
 				message = string.Format("Delete {0} default setting(s)?", itemsToDelete.Length);
 			}
-			var result = form.ShowForm(message, "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-			if (result == DialogResult.OK)
+			var result = form.ShowDialog(message, "Delete", System.Windows.MessageBoxButton.OKCancel, System.Windows.MessageBoxImage.Warning);
+			if (result == System.Windows.MessageBoxResult.OK)
 			{
 				foreach (var item in itemsToDelete)
 				{

@@ -144,7 +144,7 @@ namespace x360ce.App.Controls
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 				if (LocationFolderBrowserDialog.SelectedPath.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 				{
-					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxWindow.Show("Windows folders are not allowed.", "Windows Folder", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
 				}
 				else
 				{

@@ -61,10 +61,9 @@ namespace x360ce.App.Controls
 		/// <param name="e"></param>
 		private void ScanButton_Click(object sender, EventArgs e)
 		{
-			MessageBoxForm form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm("Scan for games on your computer?", "Scan", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-			if (result == DialogResult.OK)
+			var form = new MessageBoxWindow();
+			var result = form.ShowDialog("Scan for games on your computer?", "Scan", System.Windows.MessageBoxButton.OKCancel, System.Windows.MessageBoxImage.Question);
+			if (result == System.Windows.MessageBoxResult.OK)
 			{
 				ScanStarted = DateTime.Now;
 				var success = System.Threading.ThreadPool.QueueUserWorkItem(ScanGames);
@@ -293,7 +292,7 @@ namespace x360ce.App.Controls
 				var winFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 				if (AddGameOpenFileDialog.FileName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 				{
-					MessageBoxForm.Show("Windows folders are not allowed.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBoxWindow.Show("Windows folders are not allowed.", "Windows Folder", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
 				}
 				else
 				{
@@ -396,8 +395,7 @@ namespace x360ce.App.Controls
 			var grid = GamesDataGridView;
 			var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, nameof(UserGame.FileName));
 			var userGames = SettingsManager.UserGames.Items.Where(x => selection.Contains(x.FileName)).ToArray();
-			MessageBoxForm form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
+			var form = new MessageBoxWindow();
 			string message;
 			if (userGames.Length == 1)
 			{
@@ -410,8 +408,8 @@ namespace x360ce.App.Controls
 			{
 				message = string.Format("Delete {0} setting(s)?", userGames.Length);
 			}
-			var result = form.ShowForm(message, "Delete", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
-			if (result == DialogResult.OK)
+			var result = form.ShowDialog(message, "Delete", System.Windows.MessageBoxButton.OKCancel, System.Windows.MessageBoxImage.Warning);
+			if (result == System.Windows.MessageBoxResult.OK)
 			{
 				// Remove from local settings.
 				foreach (var item in userGames)

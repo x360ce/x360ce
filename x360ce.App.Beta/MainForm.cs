@@ -562,24 +562,21 @@ namespace x360ce.App
 				}
 				if (changed)
 				{
-					var form = new MessageBoxForm
-					{
-						StartPosition = FormStartPosition.CenterParent
-					};
-					var result = form.ShowForm(
+					var form = new MessageBoxWindow();
+					var result = form.ShowDialog(
 					"Do you want to save changes you made to configuration?",
 					"Save Changes?",
-					MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
-					if (result == DialogResult.Yes)
+					System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Exclamation, System.Windows.MessageBoxResult.Yes);
+					if (result == System.Windows.MessageBoxResult.Yes)
 					{
 						// Do nothing since INI contains latest updates.
 					}
-					else if (result == DialogResult.No)
+					else if (result == System.Windows.MessageBoxResult.No)
 					{
 						// Rename temp to INI.
 						tmp.CopyTo(SettingsManager.IniFileName, true);
 					}
-					else if (result == DialogResult.Cancel)
+					else if (result == System.Windows.MessageBoxResult.Cancel)
 					{
 						e.Cancel = true;
 						return;
@@ -850,19 +847,16 @@ namespace x360ce.App
 		{
 			if (destinationFileName == null)
 				destinationFileName = resourceName;
-			DialogResult answer;
-			var form = new MessageBoxForm
-			{
-				StartPosition = FormStartPosition.CenterParent
-			};
+			System.Windows.MessageBoxResult answer;
+			var form = new MessageBoxWindow();
 			var oldDesc = EngineHelper.GetProcessorArchitectureDescription(oldArchitecture);
 			var newDesc = EngineHelper.GetProcessorArchitectureDescription(newArchitecture);
 			var fileName = new FileInfo(destinationFileName).Name;
-			answer = form.ShowForm(
+			answer = form.ShowDialog(
 				string.Format("You are running {2} application but {0} on the disk was built for {1} architecture.\r\n\r\nDo you want to replace {0} file with {2} version?", fileName, oldDesc, newDesc),
 				"Processor architecture mismatch.",
-				MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-			if (answer == DialogResult.Yes)
+				System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Information);
+			if (answer == System.Windows.MessageBoxResult.Yes)
 			{
 				return AppHelper.WriteFile(resourceName, destinationFileName);
 			}
@@ -873,27 +867,24 @@ namespace x360ce.App
 		{
 			if (destinationFileName == null)
 				destinationFileName = resourceName;
-			DialogResult answer;
-			var form = new MessageBoxForm
-			{
-				StartPosition = FormStartPosition.CenterParent
-			};
+			System.Windows.MessageBoxResult answer;
+			var form = new MessageBoxWindow();
 			var fileName = new FileInfo(destinationFileName).FullName;
 			if (newVersion == null)
 			{
-				answer = form.ShowForm(
+				answer = form.ShowDialog(
 					string.Format("'{0}' was not found.\r\nThis file is required for emulator to function properly.\r\n\r\nDo you want to create this file?", fileName),
 					string.Format("'{0}' was not found.", destinationFileName),
-					MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+					System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
 			}
 			else
 			{
-				answer = form.ShowForm(
+				answer = form.ShowDialog(
 					string.Format("New version of this file is available:\r\n{0}\r\n\r\nOld version: {1}\r\nNew version: {2}\r\n\r\nDo you want to update this file?", fileName, oldVersion, newVersion),
 					string.Format("New version of '{0}' file is available.", destinationFileName),
-					MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+					System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Information);
 			}
-			if (answer == DialogResult.Yes)
+			if (answer == System.Windows.MessageBoxResult.Yes)
 			{
 				return AppHelper.WriteFile(resourceName, destinationFileName);
 			}
@@ -1581,17 +1572,13 @@ namespace x360ce.App
 			{
 				if (!silent)
 				{
-					var form = new MessageBoxForm
-					{
-						StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
-					};
-					ControlsHelper.CheckTopMost(form);
-					var result = form.ShowForm("Do you want to clear all errors?", "Clear Errors?",
-						System.Windows.Forms.MessageBoxButtons.YesNo,
-						System.Windows.Forms.MessageBoxIcon.Error,
-						System.Windows.Forms.MessageBoxDefaultButton.Button2
+					var form = new MessageBoxWindow();
+					var result = form.ShowDialog("Do you want to clear all errors?", "Clear Errors?",
+						System.Windows.MessageBoxButton.YesNo,
+						System.Windows.MessageBoxImage.Error,
+						 System.Windows.MessageBoxResult.No
 					);
-					if (result != System.Windows.Forms.DialogResult.Yes)
+					if (result != System.Windows.MessageBoxResult.Yes)
 						return;
 				}
 				foreach (var fi in fis)

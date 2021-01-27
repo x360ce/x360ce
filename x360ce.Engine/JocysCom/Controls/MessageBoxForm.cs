@@ -24,7 +24,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <returns>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</returns>
 		public static DialogResult Show(string text, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Information, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1)
 		{
-			MessageBoxForm form = new MessageBoxForm();
+			var form = new MessageBoxForm();
 			form.StartPosition = FormStartPosition.CenterParent;
 			ControlsHelper.CheckTopMost(form);
 			return form.ShowForm(text, caption, buttons, icon, defaultButton);

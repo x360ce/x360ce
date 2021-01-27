@@ -233,25 +233,23 @@ namespace x360ce.App.Controls
 		private void ShowHiddenDevicesMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			var devices = ViGEm.HidGuardianHelper.GetAffected();
-			var form = new MessageBoxForm();
-			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			var form = new MessageBoxWindow();
 			var text = devices.Length == 0
 				? "None"
 				// Join and make && visible.
 				: string.Join("\r\n", devices).Replace("&", "&&");
-			form.ShowForm(text, "Affected Devices", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+			form.ShowDialog(text, "Affected Devices", MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 
 		private void ShowEnumeratedDevicesMenuItem_Click(object sender, RoutedEventArgs e)
 		{
 			var devices = ViGEm.HidGuardianHelper.GetEnumeratedDevices();
-			var form = new MessageBoxForm();
-			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			var form = new MessageBoxWindow();
 			var text = devices.Length == 0
 				? "None"
 				// Join and make && visible.
 				: string.Join("\r\n", devices).Replace("&", "&&");
-			form.ShowForm(text, "Enumerated Devices", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+			form.ShowDialog(text, "Enumerated Devices", MessageBoxButton.OK, MessageBoxImage.Information);
 		}
 
 		private void UnhideAllDevicesMenuItem_Click(object sender, RoutedEventArgs e)
@@ -264,10 +262,9 @@ namespace x360ce.App.Controls
 			var canModify = AppHelper.SynchronizeToHidGuardian();
 			if (!canModify)
 			{
-				var form = new MessageBoxForm();
-				form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-				form.ShowForm("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied",
-					System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Exclamation);
+				var form = new MessageBoxWindow();
+				form.ShowDialog("Can't modify HID Guardian registry.\r\nPlease run this application as Administrator once in order to fix permissions.", "Permission Denied",
+					MessageBoxButton.OK, MessageBoxImage.Warning);
 			}
 		}
 

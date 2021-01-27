@@ -299,10 +299,10 @@ namespace x360ce.App.Controls
 			var program = _DefaultSettings;
 			if (program == null)
 				return;
-			var form = new MessageBoxForm();
-			form.StartPosition = FormStartPosition.CenterParent;
-			var result = form.ShowForm("Reset current settings to default?", "Reset", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-			if (result != DialogResult.OK)
+			var form = new MessageBoxWindow();
+			var result = form.ShowDialog("Reset current settings to default?", "Reset",
+				System.Windows.MessageBoxButton.OKCancel, System.Windows.MessageBoxImage.Question);
+			if (result != System.Windows.MessageBoxResult.OK)
 				return;
 			// Reset to default all properties which affects checksum.
 			game.XInputMask = program.XInputMask;
