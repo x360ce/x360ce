@@ -1253,8 +1253,6 @@ namespace x360ce.App.Controls
 		{
 			var win = new MessageBoxWindow();
 			var text = "Do you really want to remove selected user setting?";
-			while (text.Length < 1000)
-				text += " text";
 			var result = win.ShowDialog(text,
 				"X360CE - Remove?", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No);
 			if (result != System.Windows.MessageBoxResult.Yes)

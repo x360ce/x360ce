@@ -199,7 +199,7 @@ namespace JocysCom.ClassLibrary.Controls
 				1);
 			return new Size(formattedText.Width, formattedText.Height);
 		}
-		private static void CenterWindowOnApplication(Window w)
+		private static void CenterWindowOnApplication(Window window)
 		{
 			// Get WFF window first.
 			var win = System.Windows.Application.Current?.MainWindow;
@@ -230,8 +230,8 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				if (isNormal)
 				{
-					w.Left = r.Value.X + ((r.Value.Width - w.ActualWidth) / 2);
-					w.Top = r.Value.Y + ((r.Value.Height - w.ActualHeight) / 2);
+					window.Left = r.Value.X + ((r.Value.Width - window.ActualWidth) / 2);
+					window.Top = r.Value.Y + ((r.Value.Height - window.ActualHeight) / 2);
 				}
 				else
 				{
@@ -239,8 +239,8 @@ namespace JocysCom.ClassLibrary.Controls
 					var screen = System.Windows.Forms.Screen.FromRectangle(r.Value);
 					double screenWidth = screen.WorkingArea.Width;
 					double screenHeight = screen.WorkingArea.Height;
-					w.Left = (screenWidth / 2) - (w.Width / 2);
-					w.Top = (screenHeight / 2) - (w.Height / 2);
+					window.Left = (screenWidth / 2) - (window.Width / 2);
+					window.Top = (screenHeight / 2) - (window.Height / 2);
 				}
 			}
 		}
