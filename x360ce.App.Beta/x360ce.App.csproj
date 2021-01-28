@@ -232,6 +232,9 @@
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
+    <Compile Include="Controls\AboutUserControl.xaml.cs">
+      <DependentUpon>AboutUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\IBaseWithHeaderControl.cs" />
     <Compile Include="Controls\LogUserControl.cs">
       <SubType>UserControl</SubType>
@@ -276,12 +279,6 @@
     </Compile>
     <Compile Include="Controls\SettingsListControl.xaml.cs">
       <DependentUpon>SettingsListControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\AboutControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\AboutControl.Designer.cs">
-      <DependentUpon>AboutControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\AxisToButtonUserControl.cs">
       <SubType>UserControl</SubType>
@@ -471,10 +468,6 @@
     <Compile Include="ViGEm\Client\ViGEmTarget.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_ERROR.cs" />
     <Compile Include="ViGEm\HidGuardianHelper.cs" />
-    <EmbeddedResource Include="Controls\AboutControl.resx">
-      <DependentUpon>AboutControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -774,6 +767,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Controls\AboutUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\OptionsHidGuardianControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

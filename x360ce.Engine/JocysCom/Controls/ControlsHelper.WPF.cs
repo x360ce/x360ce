@@ -56,10 +56,12 @@ namespace JocysCom.ClassLibrary.Controls
 			if (DesignerProperties.GetIsInDesignMode(component))
 				return true;
 			//If WPF hosted in WinForms.
-			if (System.Reflection.Assembly.GetEntryAssembly().Location.Contains("VisualStudio"))
+			var ea = System.Reflection.Assembly.GetEntryAssembly();
+			if (ea != null && ea.Location.Contains("VisualStudio"))
 				return true;
 			//If WPF hosted in WinForms.
-			if (System.Reflection.Assembly.GetExecutingAssembly().Location.Contains("VisualStudio"))
+			ea = System.Reflection.Assembly.GetExecutingAssembly();
+			if (ea != null && ea.Location.Contains("VisualStudio"))
 				return true;
 			return false;
 		}

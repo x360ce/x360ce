@@ -156,7 +156,6 @@ namespace x360ce.App
 
 		public int ControllerIndex => PadTabPages.IndexOf(MainTabControl.SelectedTab);
 
-		public AboutControl ControlAbout;
 		public PadControl[] PadControls;
 		public TabPage[] ControlPages;
 
@@ -754,12 +753,6 @@ namespace x360ce.App
 			//SettingsDatabasePanel.InitPresets();
 			// Allow events after PAD control are loaded.
 			MainTabControl.SelectedIndexChanged += new System.EventHandler(MainTabControl_SelectedIndexChanged);
-			// Load about control.
-			ControlAbout = new AboutControl
-			{
-				Dock = DockStyle.Fill
-			};
-			AboutTabPage.Controls.Add(ControlAbout);
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}

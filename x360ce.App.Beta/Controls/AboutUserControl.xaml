@@ -1,0 +1,198 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.AboutUserControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Loaded="UserControl_Loaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="auto" />
+				<RowDefinition Height="auto" />
+				<RowDefinition Height="auto" />
+				<RowDefinition Height="auto" />
+				<RowDefinition Height="auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<ContentControl
+				Name="RightIcon"
+				Grid.Row="0"
+				Grid.RowSpan="6"
+				Grid.Column="0"
+				Width="48"
+				Height="48"
+				Margin="4,4,8,4"
+				Padding="0"
+				VerticalAlignment="Top"
+				Content="{StaticResource Icon_gamepad}"
+				Style="{StaticResource ButtonContentControl}" />
+			<Label
+				Name="AboutProductLabel"
+				Grid.Row="0"
+				Grid.Column="1"
+				Grid.ColumnSpan="5"
+				Padding="4,8,0,0"
+				FontWeight="Bold">
+				XBOX 360 Controller Emulator {0}
+			</Label>
+			<Label
+				Name="AboutDescriptionLabel"
+				Grid.Row="1"
+				Grid.Column="1"
+				Grid.ColumnSpan="5"
+				Padding="4,4,0,8">
+				Settings editor and test application for XBOX 360 Controller Emulator
+			</Label>
+			<Label
+				Grid.Row="3"
+				Grid.Column="1"
+				Padding="4,0,0,0"
+				VerticalAlignment="Center">
+				X360CE
+			</Label>
+			<TextBlock
+				Grid.Row="3"
+				Grid.Column="2"
+				Margin="0"
+				Padding="4,2,2,2">
+				<Hyperlink NavigateUri="https://www.x360ce.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+					https://www.x360ce.com
+				</Hyperlink>
+			</TextBlock>
+
+			<Label
+				Grid.Row="4"
+				Grid.Column="1"
+				Padding="4,0,0,0"
+				VerticalAlignment="Center">
+				Jocys.com
+			</Label>
+			<TextBlock
+				Grid.Row="4"
+				Grid.Column="2"
+				Margin="0"
+				Padding="4,2,2,2">
+				<Hyperlink NavigateUri="https://www.jocys.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+					https://www.jocys.com
+				</Hyperlink>
+			</TextBlock>
+			<Label
+				Grid.Row="5"
+				Grid.Column="1"
+				Padding="4,0,0,0"
+				VerticalAlignment="Center">
+				ViGEm
+			</Label>
+			<TextBlock
+				Grid.Row="5"
+				Grid.Column="2"
+				Margin="0"
+				Padding="4,2,2,2">
+				<Hyperlink NavigateUri="https://vigem.org" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+					https://vigem.org
+				</Hyperlink>
+			</TextBlock>
+			<Label
+				Grid.Row="3"
+				Grid.Column="4"
+				Padding="8,0,0,0"
+				VerticalAlignment="Center">
+				GitHub Project
+			</Label>
+			<TextBlock
+				Grid.Row="3"
+				Grid.Column="5"
+				Margin="0"
+				Padding="4,2,2,2">
+				<Hyperlink NavigateUri="https://github.com/x360ce/x360ce" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+					https://github.com/x360ce/x360ce
+				</Hyperlink>
+			</TextBlock>
+
+			<Label
+				Grid.Row="4"
+				Grid.Column="4"
+				Padding="8,0,0,0"
+				VerticalAlignment="Center">
+				Nucleoprotein
+			</Label>
+			<TextBlock
+				Grid.Row="4"
+				Grid.Column="5"
+				Margin="0"
+				Padding="4,2,2,2">
+				<Hyperlink NavigateUri="https://github.com/nucleoprotein" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+					https://github.com/nucleoprotein
+				</Hyperlink>
+			</TextBlock>
+
+			<Label
+				Grid.Row="5"
+				Grid.Column="4"
+				Padding="8,0,0,0"
+				VerticalAlignment="Center">
+				ToCA EDIT
+			</Label>
+			<TextBlock
+				Grid.Row="5"
+				Grid.Column="5"
+				Margin="0"
+				Padding="4,2,2,2">
+				<Hyperlink NavigateUri="http://www.tocaedit.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+					http://www.tocaedit.com
+				</Hyperlink>
+			</TextBlock>
+		</Grid>
+		<TabControl Name="AboutTabControl" Grid.Row="1" Margin="4">
+			<TabItem Name="ChangesTabPage" Header="Changes">
+				<TextBox
+					Name="ChangeLogTextBox"
+					Margin="0"
+					Padding="0"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					BorderThickness="0"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap" />
+			</TabItem>
+			<TabItem Name="LicenseTabPage" Header="License">
+				<TextBox
+					Name="LicenseTextBox"
+					Margin="0"
+					Padding="0"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					BorderThickness="0"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap" />
+			</TabItem>
+		</TabControl>
+	</Grid>
+</UserControl>

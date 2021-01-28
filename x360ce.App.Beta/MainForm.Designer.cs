@@ -35,11 +35,15 @@ namespace x360ce.App
 			this.DevicesPanelHost = new System.Windows.Forms.Integration.ElementHost();
 			this.UserDevicesPanel = new x360ce.App.Controls.UserDevicesControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
+			this.SettingsGridHost = new System.Windows.Forms.Integration.ElementHost();
+			this.SettingsGridPanel = new x360ce.App.Controls.SettingsListControl();
 			this.CloudTabPage = new System.Windows.Forms.TabPage();
 			this.CloudPanel = new x360ce.App.Controls.CloudUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
+			this.AboutControlHost = new System.Windows.Forms.Integration.ElementHost();
+			this.aboutUserControl1 = new x360ce.App.Controls.AboutUserControl();
 			this.IssuesTabPage = new System.Windows.Forms.TabPage();
 			this.IssuesPanel = new JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl();
 			this.BuletImageList = new System.Windows.Forms.ImageList(this.components);
@@ -72,8 +76,6 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
 			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.SettingsGridHost = new System.Windows.Forms.Integration.ElementHost();
-			this.SettingsGridPanel = new x360ce.App.Controls.SettingsListControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -82,6 +84,7 @@ namespace x360ce.App
 			this.SettingsTabPage.SuspendLayout();
 			this.CloudTabPage.SuspendLayout();
 			this.HelpTabPage.SuspendLayout();
+			this.AboutTabPage.SuspendLayout();
 			this.IssuesTabPage.SuspendLayout();
 			this.MainStatusStrip.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).BeginInit();
@@ -236,6 +239,16 @@ namespace x360ce.App
 			this.SettingsTabPage.TabIndex = 1;
 			this.SettingsTabPage.Text = "Settings";
 			// 
+			// SettingsGridHost
+			// 
+			this.SettingsGridHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SettingsGridHost.Location = new System.Drawing.Point(0, 0);
+			this.SettingsGridHost.Name = "SettingsGridHost";
+			this.SettingsGridHost.Size = new System.Drawing.Size(782, 536);
+			this.SettingsGridHost.TabIndex = 0;
+			this.SettingsGridHost.Text = "elementHost1";
+			this.SettingsGridHost.Child = this.SettingsGridPanel;
+			// 
 			// CloudTabPage
 			// 
 			this.CloudTabPage.Controls.Add(this.CloudPanel);
@@ -280,11 +293,21 @@ namespace x360ce.App
 			// AboutTabPage
 			// 
 			this.AboutTabPage.BackColor = System.Drawing.Color.Transparent;
+			this.AboutTabPage.Controls.Add(this.AboutControlHost);
 			this.AboutTabPage.Location = new System.Drawing.Point(8, 39);
 			this.AboutTabPage.Name = "AboutTabPage";
 			this.AboutTabPage.Size = new System.Drawing.Size(782, 536);
 			this.AboutTabPage.TabIndex = 0;
 			this.AboutTabPage.Text = "About";
+			// 
+			// AboutControlHost
+			// 
+			this.AboutControlHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AboutControlHost.Location = new System.Drawing.Point(0, 0);
+			this.AboutControlHost.Name = "AboutControlHost";
+			this.AboutControlHost.Size = new System.Drawing.Size(782, 536);
+			this.AboutControlHost.TabIndex = 0;
+			this.AboutControlHost.Child = this.aboutUserControl1;
 			// 
 			// IssuesTabPage
 			// 
@@ -591,16 +614,6 @@ namespace x360ce.App
 			this.panel1.Size = new System.Drawing.Size(804, 589);
 			this.panel1.TabIndex = 26;
 			// 
-			// SettingsGridHost
-			// 
-			this.SettingsGridHost.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.SettingsGridHost.Location = new System.Drawing.Point(0, 0);
-			this.SettingsGridHost.Name = "SettingsGridHost";
-			this.SettingsGridHost.Size = new System.Drawing.Size(782, 536);
-			this.SettingsGridHost.TabIndex = 0;
-			this.SettingsGridHost.Text = "elementHost1";
-			this.SettingsGridHost.Child = this.SettingsGridPanel;
-			// 
 			// MainForm
 			// 
 			this.BackColor = System.Drawing.SystemColors.Control;
@@ -628,6 +641,7 @@ namespace x360ce.App
 			this.SettingsTabPage.ResumeLayout(false);
 			this.CloudTabPage.ResumeLayout(false);
 			this.HelpTabPage.ResumeLayout(false);
+			this.AboutTabPage.ResumeLayout(false);
 			this.IssuesTabPage.ResumeLayout(false);
 			this.MainStatusStrip.ResumeLayout(false);
 			this.MainStatusStrip.PerformLayout();
@@ -698,5 +712,7 @@ namespace x360ce.App
 		public Controls.UserDevicesControl UserDevicesPanel;
 		private System.Windows.Forms.Integration.ElementHost SettingsGridHost;
 		private Controls.SettingsListControl SettingsGridPanel;
+		private System.Windows.Forms.Integration.ElementHost AboutControlHost;
+		private Controls.AboutUserControl aboutUserControl1;
 	}
 }

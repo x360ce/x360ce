@@ -174,7 +174,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 			if (showArchitecture)
 			{
-				switch (Assembly.GetEntryAssembly().GetName().ProcessorArchitecture)
+				switch ((Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly()).GetName().ProcessorArchitecture)
 				{
 					case ProcessorArchitecture.Amd64:
 					case ProcessorArchitecture.IA64:

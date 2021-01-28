@@ -49,8 +49,12 @@
 				<ColumnDefinition Width="auto" />
 			</Grid.ColumnDefinitions>
 			<TextBlock x:Name="LinkTextBlock" Grid.Column="0">
-				<Hyperlink x:Name="MainHyperLink" NavigateUri="http://localhost" RequestNavigate="MainHyperLink_RequestNavigate">
-					<Label x:Name="LinkLabel">MainHyperLink</Label>
+				<Hyperlink
+					x:Name="MainHyperLink"
+					NavigateUri="http://localhost"
+					RequestNavigate="MainHyperLink_RequestNavigate"
+					TextDecorations="">
+					<TextBlock x:Name="LinkLabel">MainHyperLink</TextBlock>
 				</Hyperlink>
 			</TextBlock>
 			<StackPanel

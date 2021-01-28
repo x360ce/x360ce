@@ -151,7 +151,7 @@ namespace JocysCom.ClassLibrary.Controls
 				? Visibility.Collapsed
 				: Visibility.Visible;
 			MainHyperLink.NavigateUri = uri;
-			LinkLabel.Content = text;
+			LinkLabel.Text = text;
 		}
 
 		private void MainHyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
