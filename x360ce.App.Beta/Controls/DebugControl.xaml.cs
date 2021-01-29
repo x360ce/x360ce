@@ -1,24 +1,29 @@
-﻿using System;
-using System.Windows.Forms;
-using System.Diagnostics;
-using System.Threading;
-using System.Runtime.InteropServices;
-using JocysCom.ClassLibrary;
-using System.ComponentModel;
+﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.IO;
-using System.Collections.Generic;
-using System.Linq;
 using JocysCom.ClassLibrary.Win32;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Interop;
 
 namespace x360ce.App.Controls
 {
-	public partial class DebugUserControl : UserControl
+	/// <summary>
+	/// Interaction logic for DebugControl.xaml
+	/// </summary>
+	public partial class DebugControl : UserControl
 	{
-		public DebugUserControl()
+		public DebugControl()
 		{
 			InitializeComponent();
-			if (IsDesignMode)
+			if (ControlsHelper.IsDesignMode(this))
 				return;
 			_TestTimer = new HiResTimer(1, "TestTimer");
 			_TestTimer.AutoReset = true;
@@ -35,20 +40,17 @@ namespace x360ce.App.Controls
 		public void LoadSettings()
 		{
 			var o = SettingsManager.Options;
-			EnableCheckBox.Checked = o.TestEnabled;
-			GetDInputStatesCheckBox.Checked = o.TestGetDInputStates;
-			SetXInputStatesCheckBox.Checked = o.TestSetXInputStates;
-			UpdateInterfaceCheckBox.Checked = o.TestUpdateInterface;
-			TestCheckIssuesCheckBox.Checked = o.TestCheckIssues;
-
+			EnableCheckBox.IsChecked = o.TestEnabled;
+			GetDInputStatesCheckBox.IsChecked = o.TestGetDInputStates;
+			SetXInputStatesCheckBox.IsChecked = o.TestSetXInputStates;
+			UpdateInterfaceCheckBox.IsChecked = o.TestUpdateInterface;
+			TestCheckIssuesCheckBox.IsChecked = o.TestCheckIssues;
 			// Attach events.
-			EnableCheckBox.CheckedChanged += EnableCheckBox_CheckedChanged;
-			GetDInputStatesCheckBox.CheckedChanged += GetDInputStatesCheckBox_CheckedChanged;
-			SetXInputStatesCheckBox.CheckedChanged += SetXInputStatesCheckBox_CheckedChanged;
-			UpdateInterfaceCheckBox.CheckedChanged += UpdateInterfaceCheckBox_CheckedChanged;
-			TestCheckIssuesCheckBox.CheckedChanged += TestCheckIssuesCheckBox_CheckedChanged;
-
-
+			EnableCheckBox.Checked += EnableCheckBox_CheckedChanged;
+			GetDInputStatesCheckBox.Checked += GetDInputStatesCheckBox_CheckedChanged;
+			SetXInputStatesCheckBox.Checked += SetXInputStatesCheckBox_CheckedChanged;
+			UpdateInterfaceCheckBox.Checked += UpdateInterfaceCheckBox_CheckedChanged;
+			TestCheckIssuesCheckBox.Checked += TestCheckIssuesCheckBox_CheckedChanged;
 			// Load Settings and enable events.
 			UpdateGetXInputStatesWithNoEvents();
 			// Monitor option changes.
@@ -76,11 +78,11 @@ namespace x360ce.App.Controls
 			lock (GetXInputStatesCheckBoxLock)
 			{
 				// Disable events.
-				GetXInputStatesCheckBox.CheckedChanged -= GetXInputStatesCheckBox_CheckedChanged;
+				GetXInputStatesCheckBox.Checked -= GetXInputStatesCheckBox_CheckedChanged;
 				var o = SettingsManager.Options;
 				ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
 				// Enable events.
-				GetXInputStatesCheckBox.CheckedChanged += GetXInputStatesCheckBox_CheckedChanged;
+				GetXInputStatesCheckBox.Checked += GetXInputStatesCheckBox_CheckedChanged;
 			}
 		}
 
@@ -92,27 +94,27 @@ namespace x360ce.App.Controls
 
 		private void UpdateInterfaceCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SettingsManager.Options.TestUpdateInterface = UpdateInterfaceCheckBox.Checked;
+			SettingsManager.Options.TestUpdateInterface = UpdateInterfaceCheckBox.IsChecked ?? false;
 		}
 
 		private void TestCheckIssuesCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SettingsManager.Options.TestCheckIssues = TestCheckIssuesCheckBox.Checked;
+			SettingsManager.Options.TestCheckIssues = TestCheckIssuesCheckBox.IsChecked ?? false;
 		}
 
 		private void SetXInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SettingsManager.Options.TestSetXInputStates = SetXInputStatesCheckBox.Checked;
+			SettingsManager.Options.TestSetXInputStates = SetXInputStatesCheckBox.IsChecked ?? false;
 		}
 
 		private void GetDInputStatesCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SettingsManager.Options.TestGetDInputStates = GetDInputStatesCheckBox.Checked;
+			SettingsManager.Options.TestGetDInputStates = GetDInputStatesCheckBox.IsChecked ?? false;
 		}
 
 		private void EnableCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			SettingsManager.Options.TestEnabled = EnableCheckBox.Checked;
+			SettingsManager.Options.TestEnabled = EnableCheckBox.IsChecked ?? false;
 			CheckTimer();
 		}
 
@@ -137,10 +139,10 @@ namespace x360ce.App.Controls
 		public void SaveSettings()
 		{
 			var o = SettingsManager.Options;
-			EnableCheckBox.Checked = o.TestEnabled;
-			o.TestGetDInputStates = GetDInputStatesCheckBox.Checked;
-			o.TestSetXInputStates = SetXInputStatesCheckBox.Checked;
-			o.TestUpdateInterface = UpdateInterfaceCheckBox.Checked;
+			EnableCheckBox.IsChecked = o.TestEnabled;
+			o.TestGetDInputStates = GetDInputStatesCheckBox.IsChecked ?? false;
+			o.TestSetXInputStates = SetXInputStatesCheckBox.IsChecked ?? false;
+			o.TestUpdateInterface = UpdateInterfaceCheckBox.IsChecked ?? false;
 		}
 
 		#region Performance Counter
@@ -225,7 +227,7 @@ namespace x360ce.App.Controls
 
 					System.Runtime.InteropServices.ComTypes.FILETIME sysIdle, sysKernel, sysUser;
 					TimeSpan procTime;
-					Process process = Process.GetCurrentProcess();
+					var process = Process.GetCurrentProcess();
 					procTime = process.TotalProcessorTime;
 
 					if (!NativeMethods.GetSystemTimes(out sysIdle, out sysKernel, out sysUser))
@@ -258,10 +260,10 @@ namespace x360ce.App.Controls
 				return cpuCopy;
 			}
 
-			private UInt64 SubtractTimes(System.Runtime.InteropServices.ComTypes.FILETIME a, System.Runtime.InteropServices.ComTypes.FILETIME b)
+			private ulong SubtractTimes(System.Runtime.InteropServices.ComTypes.FILETIME a, System.Runtime.InteropServices.ComTypes.FILETIME b)
 			{
-				UInt64 aInt = ((UInt64)(a.dwHighDateTime << 32)) | (UInt64)a.dwLowDateTime;
-				UInt64 bInt = ((UInt64)(b.dwHighDateTime << 32)) | (UInt64)b.dwLowDateTime;
+				var aInt = ((UInt64)(a.dwHighDateTime << 32)) | (UInt64)a.dwLowDateTime;
+				var bInt = ((UInt64)(b.dwHighDateTime << 32)) | (UInt64)b.dwLowDateTime;
 				return aInt - bInt;
 			}
 
@@ -300,24 +302,9 @@ namespace x360ce.App.Controls
 			});
 		}
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing && (components != null))
-			{
-				components.Dispose();
-			}
-			if (_TestTimer != null)
-				_TestTimer.Dispose();
-			base.Dispose(disposing);
-		}
-
 		#region Clean-up/Remove Devices
 
-		private void CleanupDevicesButton_Click(object sender, EventArgs e)
+		private void CleanupDevicesButton_Click(object sender, RoutedEventArgs e)
 		{
 			LogTextBox.Text = "Please Wait...";
 			var ts = new ThreadStart(CheckDevices);
@@ -344,13 +331,13 @@ namespace x360ce.App.Controls
 			list.Add(string.Format("{0,4} offline devices", offline.Length));
 			list.Add(string.Format("{0,4} problem devices", problem.Length));
 			list.Add(string.Format("{0,4} unknown devices", unknown.Length));
-			if (Disposing || IsDisposed)
+			if (!IsHandleCreated)
 				return;
 			ControlsHelper.BeginInvoke(() =>
 			{
 				LogTextBox.Text = "";
-				var result = MessageBox.Show("Do you want to remove:\r\n\r\n" + string.Join("\r\n", list), "Remove Devices", MessageBoxButtons.YesNo);
-				if (result != DialogResult.Yes)
+				var result = MessageBoxWindow.Show("Do you want to remove:\r\n\r\n" + string.Join("\r\n", list), "Remove Devices", MessageBoxButton.YesNo);
+				if (result != MessageBoxResult.Yes)
 					return;
 				var ts = new ThreadStart(CleanupDevices);
 				var t = new Thread(ts);
@@ -371,7 +358,7 @@ namespace x360ce.App.Controls
 			list.AddRange(unknown);
 			for (int i = 0; i < list.Count; i++)
 			{
-				if (Disposing || IsDisposed)
+				if (!IsHandleCreated)
 					return;
 				var item = list[i];
 				ControlsHelper.BeginInvoke(() =>
@@ -389,19 +376,6 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private void ThrowExceptionButton_Click(object sender, EventArgs e)
-		{
-			ExceptionMethod();
-			//Invoke((Action)delegate()
-			//{
-			//	ExceptionMethod();
-			//});
-			//Invoke(new Action(() =>
-			//{
-			//	ExceptionMethod();
-			//}));
-		}
-
 		void ExceptionMethod()
 		{
 			try
@@ -413,6 +387,25 @@ namespace x360ce.App.Controls
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 				throw;
 			}
+		}
+
+		bool IsHandleCreated
+			=> ((HwndSource)PresentationSource.FromVisual(this)) != null;
+
+	
+		protected override void OnVisualParentChanged(DependencyObject oldParent)
+		{
+			if (oldParent != null)
+			{
+				if (_TestTimer != null)
+					_TestTimer.Dispose();
+			}
+			base.OnVisualParentChanged(oldParent);
+		}
+
+		private void ThrowExceptionButton_Click(object sender, RoutedEventArgs e)
+		{
+			ExceptionMethod();
 		}
 
 	}

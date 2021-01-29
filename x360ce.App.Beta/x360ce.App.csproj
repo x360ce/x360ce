@@ -235,6 +235,9 @@
     <Compile Include="Controls\AboutUserControl.xaml.cs">
       <DependentUpon>AboutUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DebugControl.xaml.cs">
+      <DependentUpon>DebugControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\IBaseWithHeaderControl.cs" />
     <Compile Include="Controls\LogUserControl.cs">
       <SubType>UserControl</SubType>
@@ -253,12 +256,6 @@
     </Compile>
     <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\DebugUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\DebugUserControl.Designer.cs">
-      <DependentUpon>DebugUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\OptionsVirtualDeviceControl.xaml.cs">
       <DependentUpon>OptionsVirtualDeviceControl.xaml</DependentUpon>
@@ -340,11 +337,8 @@
     <Compile Include="Controls\BaseWithHeaderControl.xaml.cs">
       <DependentUpon>BaseWithHeaderControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\DebugForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DebugForm.Designer.cs">
-      <DependentUpon>DebugForm.cs</DependentUpon>
+    <Compile Include="Forms\DebugWindow.xaml.cs">
+      <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\DeveloperToolsForm.cs">
       <SubType>Form</SubType>
@@ -477,9 +471,6 @@
     <EmbeddedResource Include="Controls\OptionsInternetUserControl.resx">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\DebugUserControl.resx">
-      <DependentUpon>DebugUserControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ProgramsGridUserControl.resx">
       <DependentUpon>ProgramsGridUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -499,10 +490,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\GameDetailsUserControl.resx">
       <DependentUpon>GameDetailsUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DebugForm.resx">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DeveloperToolsForm.resx">
       <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
@@ -771,6 +758,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\DebugControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\OptionsHidGuardianControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -814,6 +805,10 @@
     <Page Include="Controls\BaseWithHeaderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\DebugWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Forms\ErrorReportWindow.xaml">
       <SubType>Designer</SubType>

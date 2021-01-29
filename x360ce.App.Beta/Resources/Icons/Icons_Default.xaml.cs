@@ -15,6 +15,7 @@ namespace x360ce.App
 		public const string Icon_add = nameof(Icon_add);
 		public const string Icon_arrow_circle = nameof(Icon_arrow_circle);
 		public const string Icon_arrow_circle2 = nameof(Icon_arrow_circle2);
+		public const string Icon_broom = nameof(Icon_broom);
 		public const string Icon_checkbox = nameof(Icon_checkbox);
 		public const string Icon_checkbox_unchecked = nameof(Icon_checkbox_unchecked);
 		public const string Icon_close = nameof(Icon_close);

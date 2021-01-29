@@ -115,6 +115,18 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
+		public static void SetChecked(CheckBox control, bool check)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			if (control.IsChecked != check)
+				control.IsChecked = check;
+		}
+
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
 		public static void SetEnabled(Control control, bool enabled)
 		{
 			if (control == null)

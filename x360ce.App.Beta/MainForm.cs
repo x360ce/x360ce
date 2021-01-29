@@ -168,7 +168,7 @@ namespace x360ce.App
 
 		public System.Timers.Timer CleanStatusTimer;
 		public int DefaultPoolingInterval = 50;
-		private Forms.DebugForm DebugPanel;
+		private Forms.DebugWindow DebugPanel;
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
@@ -177,7 +177,7 @@ namespace x360ce.App
 			AppHelper.InitializeHidGuardian();
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
 			// Initialize Debug panel.
-			DebugPanel = new Forms.DebugForm();
+			DebugPanel = new Forms.DebugWindow();
 			Global.InitDHelperHelper();
 			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 			Global.DHelper.UpdateCompleted += DHelper_UpdateCompleted;

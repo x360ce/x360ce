@@ -1,42 +1,42 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.Windows;
 
 namespace x360ce.App.Forms
 {
-	public partial class DebugForm : Form
+	/// <summary>
+	/// Interaction logic for DebugWindow.xaml
+	/// </summary>
+	public partial class DebugWindow : Window
 	{
-		public DebugForm()
+		public DebugWindow()
 		{
 			InitializeComponent();
-			if (IsDesignMode) return;
 		}
-
-		public bool IsDesignMode { get { return JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this); } }
 
 		private void DebugForm_Load(object sender, EventArgs e)
 		{
-			if (IsDesignMode) return;
 		}
 
 		#region Show/Hide Panel
 
 		object PanelLock = new object();
-		public bool IsVisible = false;
+		public bool IsFormVisible = false;
 
 		public void ShowPanel()
 		{
 			lock (PanelLock)
 			{
-				if (!IsVisible)
+				if (!IsFormVisible)
 				{
-					IsVisible = true;
+					IsFormVisible = true;
 					SettingsManager.Options.ShowDebugPanel = true;
 					var wa = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
 					Show();
 				}
 				Left = MainForm.Current.Left + MainForm.Current.Width + 8;
 				Top = MainForm.Current.Top;
-				BringToFront();
+				// Bring to front.
+				Activate();
 			}
 		}
 
@@ -44,16 +44,18 @@ namespace x360ce.App.Forms
 		{
 			lock (PanelLock)
 			{
-				if (!IsVisible)
+				if (!IsFormVisible)
 					return;
-				IsVisible = false;
+				IsFormVisible = false;
 				SettingsManager.Options.ShowDebugPanel = false;
 				Properties.Settings.Default.Save();
 				Hide();
 			}
 		}
 
-		private void DebugForm_FormClosing(object sender, FormClosingEventArgs e)
+		#endregion
+
+		private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
 		{
 			if (!Program.IsClosing)
 			{
@@ -62,8 +64,5 @@ namespace x360ce.App.Forms
 				HidePanel();
 			}
 		}
-
-		#endregion
-
 	}
 }
