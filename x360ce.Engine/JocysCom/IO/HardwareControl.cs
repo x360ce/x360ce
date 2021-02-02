@@ -401,8 +401,7 @@ namespace JocysCom.ClassLibrary.IO
 					  var result = System.Windows.MessageBoxResult.No;
 					  ControlsHelper.Invoke(new Action(() =>
 					  {
-						  var form = new MessageBoxWindow();
-						  result = form.ShowDialog(
+						  result = System.Windows.MessageBox.Show(
 								  "Do you want to remove offline, problem or unknown devices?\r\n\r\n" + message,
 								  "Do you want to remove devices?",
 								  System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Warning);
@@ -517,7 +516,7 @@ namespace JocysCom.ClassLibrary.IO
 			var isElevated = JocysCom.ClassLibrary.Security.PermissionHelper.IsElevated;
 			if (!isElevated)
 
-				MessageBoxWindow.Show("You must run this program as administrator for this feature to work.");
+				System.Windows.MessageBox.Show("You must run this program as administrator for this feature to work.");
 			return isElevated;
 		}
 

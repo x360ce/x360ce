@@ -68,8 +68,98 @@ namespace JocysCom.ClassLibrary.Controls
 		  MessageBoxResult defaultResult = MessageBoxResult.None,
 		  MessageBoxOptions options = MessageBoxOptions.None)
 		{
+			MessageTextBlock.Visibility = Visibility.Visible;
+			MessageTextBox.Visibility = Visibility.Collapsed;
+			LinkLabel.Visibility = Visibility.Collapsed;
+			SizeLabel.Visibility = Visibility.Visible;
 			Title = caption;
 			MessageTextBlock.Text = message;
+			_SwitchButton(button, defaultResult);
+			_SwitchIcon(icon);
+			// Get text size.
+			var size = MeasureString(message, MessageTextBlock);
+			if (size.Width > 960)
+			{
+				size = ApplyAspectRatio(size);
+				MessageTextBlock.MaxWidth = Math.Round(size.Width, 0);
+			}
+			if (GetMainFormTopMost())
+				Topmost = true;
+			// Show form.
+			var result = ShowDialog();
+			return Result;
+		}
+
+		/// <summary>Displays a message box that has a message, title bar caption, button, and icon; and that accepts a default message box result, complies with the specified options, and returns a result.</summary>
+		/// <param name="message">A that specifies the text to display.</param>
+		/// <param name="caption">A that specifies the title bar caption to display.</param>
+		/// <param name="button">A value that specifies which button or buttons to display.</param>
+		/// <param name="icon">A value that specifies the icon to display.</param>
+		/// <param name="defaultResult">A value that specifies the default result of the message box.</param>
+		/// <param name="options">A value object that specifies the options.</param>
+		public MessageBoxResult ShowPrompt(
+			string message,
+			string caption = "",
+			MessageBoxButton button = MessageBoxButton.OKCancel,
+			MessageBoxImage icon = MessageBoxImage.Information,
+			MessageBoxResult defaultResult = MessageBoxResult.OK,
+			MessageBoxOptions options = MessageBoxOptions.None
+		)
+		{
+			MessageTextBlock.Visibility = Visibility.Collapsed;
+			MessageTextBox.Visibility = Visibility.Visible;
+			LinkLabel.Visibility = Visibility.Collapsed;
+			SizeLabel.Visibility = Visibility.Visible;
+			Title = caption;
+			MessageTextBlock.Text = message;
+			_SwitchButton(button, defaultResult);
+			_SwitchIcon(icon);
+			// Set size.
+			Loaded -= MessageBoxWindow_Loaded1;
+			Loaded += MessageBoxWindow_Loaded1;
+			// Update size label.
+			UpdateSizeLabel();
+			if (GetMainFormTopMost())
+				Topmost = true;
+			// Show form.
+			var result = ShowDialog();
+			return Result;
+		}
+
+		private void MessageBoxWindow_Loaded1(object sender, RoutedEventArgs e)
+		{
+			// Get text size (from 256 to 512).
+			var measureSize = Math.Min(Math.Max(256, MessageTextBlock.Text.Length), 512);
+			var measureMessage = new string('a', measureSize);
+			var size = MeasureString(measureMessage, MessageTextBlock);
+			size = ApplyAspectRatio(size);
+			var boxWidth = Math.Round(size.Width, 0);
+			var boxHeight = Math.Round(size.Height, 0);
+			// Set window size.
+			var winWidthDif = Width - MessageTextBox.ActualWidth;
+			var winHeightDif = Height - MessageTextBox.ActualHeight;
+			SizeToContent = SizeToContent.Manual;
+			Width = boxWidth + winWidthDif;
+			Height = boxHeight + winHeightDif;
+		}
+
+		void EnableButtons(MessageBoxResult r1, MessageBoxResult r2 = MessageBoxResult.None, MessageBoxResult r3 = MessageBoxResult.None)
+		{
+			Button1.Tag = r1;
+			Button1Label.Content = r1.ToString();
+			Button1.Visibility = r1 == MessageBoxResult.None ? Visibility.Collapsed : Visibility.Visible;
+			Button2.Tag = r2;
+			Button2Label.Content = r2.ToString();
+			Button2.Visibility = r2 == MessageBoxResult.None ? Visibility.Collapsed : Visibility.Visible;
+			Button3.Tag = r3;
+			Button3Label.Content = r3.ToString();
+			Button3.Visibility = r3 == MessageBoxResult.None ? Visibility.Collapsed : Visibility.Visible;
+		}
+
+		private MessageBoxResult Result = MessageBoxResult.None;
+
+		private void _SwitchButton(MessageBoxButton button, MessageBoxResult defaultResult)
+		{
 			switch (button)
 			{
 				case MessageBoxButton.OK:
@@ -87,6 +177,18 @@ namespace JocysCom.ClassLibrary.Controls
 				default:
 					break;
 			}
+			var buttons = new[] { Button1, Button2, Button3 };
+			foreach (var b in buttons)
+			{
+				if ((MessageBoxResult)b.Tag == MessageBoxResult.Cancel)
+					b.IsCancel = true;
+				if ((MessageBoxResult)b.Tag == defaultResult)
+					b.IsDefault = true;
+			}
+		}
+
+		private void _SwitchIcon(MessageBoxImage icon)
+		{
 			switch (icon)
 			{
 				case MessageBoxImage.Error:
@@ -102,42 +204,7 @@ namespace JocysCom.ClassLibrary.Controls
 					IconContent.Content = Resources["Icon_Information"];
 					break;
 			}
-			var buttons = new[] { Button1, Button2, Button3 };
-			foreach (var b in buttons)
-			{
-				if ((MessageBoxResult)b.Tag == MessageBoxResult.Cancel)
-					b.IsCancel = true;
-				if ((MessageBoxResult)b.Tag == defaultResult)
-					b.IsDefault = true;
-			}
-			// Get text size.
-			var size = MeasureString(message, MessageTextBlock);
-			if (size.Width > 960)
-			{
-				size = ApplyAspectRatio(size);
-				MessageTextBlock.MaxWidth = Math.Round(size.Width, 0);
-			}
-			if (GetMainFormTopMost())
-				Topmost = true;
-			// Show form.
-			var result = ShowDialog();
-			return Result;
 		}
-
-		void EnableButtons(MessageBoxResult r1, MessageBoxResult r2 = MessageBoxResult.None, MessageBoxResult r3 = MessageBoxResult.None)
-		{
-			Button1.Tag = r1;
-			Button1Label.Content = r1.ToString();
-			Button1.Visibility = r1 == MessageBoxResult.None ? Visibility.Collapsed : Visibility.Visible;
-			Button2.Tag = r2;
-			Button2Label.Content = r2.ToString();
-			Button2.Visibility = r2 == MessageBoxResult.None ? Visibility.Collapsed : Visibility.Visible;
-			Button3.Tag = r3;
-			Button3Label.Content = r3.ToString();
-			Button3.Visibility = r3 == MessageBoxResult.None ? Visibility.Collapsed : Visibility.Visible;
-		}
-
-		private MessageBoxResult Result = MessageBoxResult.None;
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
@@ -282,5 +349,18 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
+
+
+		private void MessageTextBox_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			UpdateSizeLabel();
+		}
+
+		void UpdateSizeLabel()
+		{
+			var text = (MessageTextBox.MaxLength - MessageTextBox.Text.Length).ToString();
+			ControlsHelper.SetText(SizeLabel, text);
+			ControlsHelper.SetVisible(SizeLabel, MessageTextBox.MaxLength > 0);
+		}
 	}
 }

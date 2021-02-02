@@ -116,7 +116,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
 		/// </summary>
-		public static void SetChecked(CheckBox control, bool check)
+		public static void SetChecked(System.Windows.Controls.Primitives.ToggleButton control, bool check)
 		{
 			if (control == null)
 				throw new ArgumentNullException(nameof(control));
@@ -127,7 +127,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
-		public static void SetEnabled(Control control, bool enabled)
+		public static void SetEnabled(UIElement control, bool enabled)
 		{
 			if (control == null)
 				throw new ArgumentNullException(nameof(control));
@@ -138,7 +138,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
-		public static void SetVisible(StackPanel control, bool enabled)
+		public static void SetVisible(UIElement control, bool enabled)
 		{
 			if (control == null)
 				throw new ArgumentNullException(nameof(control));

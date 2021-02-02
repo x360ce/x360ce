@@ -14,14 +14,14 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</Window.Resources>
-	<Grid>
+	<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<Grid>
+		<Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="auto" />
+				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
 			<StackPanel Grid.Column="0" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
@@ -34,14 +34,36 @@
 					Content="{StaticResource Icon_OK}"
 					Style="{StaticResource ButtonContentControl}" />
 			</StackPanel>
-			<StackPanel Grid.Column="1" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+			<DockPanel
+				Grid.Column="1"
+				Margin="0"
+				HorizontalAlignment="Stretch"
+				VerticalAlignment="Stretch"
+				Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+				LastChildFill="True">
 				<TextBlock
 					x:Name="MessageTextBlock"
 					Margin="0,8,8,8"
 					VerticalAlignment="Top"
 					Text="Message"
-					TextWrapping="Wrap" />
-			</StackPanel>
+					TextWrapping="Wrap"
+					Visibility="Collapsed" />
+				<TextBox
+					x:Name="MessageTextBox"
+					Margin="0,8,8,8"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					x:FieldModifier="public"
+					AcceptsReturn="True"
+					AcceptsTab="True"
+					HorizontalScrollBarVisibility="Disabled"
+					KeyUp="MessageTextBox_KeyUp"
+					MinLines="2"
+					SpellCheck.IsEnabled="True"
+					Text="Message"
+					TextWrapping="Wrap"
+					VerticalScrollBarVisibility="Auto" />
+			</DockPanel>
 		</Grid>
 		<Grid Grid.Row="1">
 			<Grid.ColumnDefinitions>
@@ -56,6 +78,7 @@
 					TextDecorations="">
 					<TextBlock x:Name="LinkLabel">MainHyperLink</TextBlock>
 				</Hyperlink>
+				<TextBlock x:Name="SizeLabel" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">0</TextBlock>
 			</TextBlock>
 			<StackPanel
 				Grid.Column="1"

@@ -65,7 +65,7 @@ namespace x360ce.App.Controls
 			var form = new MessageBoxWindow();
 			var result = form.ShowDialog("Do you want to delete selected settings?", "X360CE - Delete Settings",
 				MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-			if (result ==  MessageBoxResult.Yes)
+			if (result == MessageBoxResult.Yes)
 			{
 				// Remove from local settings.
 				foreach (var item in userSettings)
@@ -106,16 +106,13 @@ namespace x360ce.App.Controls
 				return;
 			}
 			var note = item.Comment ?? "";
-			var form = new PromptForm();
-			form.EditTextBox.MaxLength = 1024;
-			form.EditTextBox.Text = note;
-			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			form.Text = "X360CE - Edit Note";
-			ControlsHelper.CheckTopMost(form);
-			var result = form.ShowDialog();
-			if (result == System.Windows.Forms.DialogResult.OK)
+			var form = new MessageBoxWindow();
+			form.MessageTextBox.MaxLength = 1024;
+			form.MessageTextBox.Text = note;
+			var result = form.ShowPrompt(note, "X360CE - Edit Note");
+			if (result == MessageBoxResult.OK)
 			{
-				item.Comment = form.EditTextBox.Text.Trim();
+				item.Comment = form.MessageTextBox.Text.Trim();
 				UpdateNoteLabel();
 			}
 		}

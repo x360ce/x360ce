@@ -53,7 +53,7 @@
 			this.LogTextBox.Location = new System.Drawing.Point(12, 87);
 			this.LogTextBox.Multiline = true;
 			this.LogTextBox.Name = "LogTextBox";
-			this.LogTextBox.Size = new System.Drawing.Size(491, 285);
+			this.LogTextBox.Size = new System.Drawing.Size(581, 361);
 			this.LogTextBox.TabIndex = 1;
 			// 
 			// WorkingFolderTextBox
@@ -62,7 +62,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.WorkingFolderTextBox.Location = new System.Drawing.Point(12, 54);
 			this.WorkingFolderTextBox.Name = "WorkingFolderTextBox";
-			this.WorkingFolderTextBox.Size = new System.Drawing.Size(491, 20);
+			this.WorkingFolderTextBox.Size = new System.Drawing.Size(581, 31);
 			this.WorkingFolderTextBox.TabIndex = 2;
 			// 
 			// label1
@@ -70,13 +70,13 @@
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(12, 38);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(82, 13);
+			this.label1.Size = new System.Drawing.Size(164, 25);
 			this.label1.TabIndex = 3;
 			this.label1.Text = "Working Folder:";
 			// 
 			// DeveloperToolsForm
 			// 
-			this.ClientSize = new System.Drawing.Size(515, 384);
+			this.ClientSize = new System.Drawing.Size(605, 460);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.WorkingFolderTextBox);
 			this.Controls.Add(this.LogTextBox);
