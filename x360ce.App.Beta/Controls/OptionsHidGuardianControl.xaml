@@ -7,7 +7,6 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="250"
 	d:DesignWidth="800"
-	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>

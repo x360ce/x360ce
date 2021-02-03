@@ -82,13 +82,16 @@
 			this.GuideButtonActionLabel = new System.Windows.Forms.Label();
 			this.GuideButtonActionTextBox = new System.Windows.Forms.TextBox();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
-			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.RemoteControllerTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
 			this.OptionsVirtualDeviceHost = new System.Windows.Forms.Integration.ElementHost();
 			this.HidGuardianTabPage = new System.Windows.Forms.TabPage();
 			this.OptionsHidGuardianHost = new System.Windows.Forms.Integration.ElementHost();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
+			this.OptionsInternetHost = new System.Windows.Forms.Integration.ElementHost();
+			this.optionsInternetControl1 = new x360ce.App.Controls.OptionsInternetControl();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
@@ -108,6 +111,7 @@
 			this.VirtualDevicePanel.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.HidGuardianTabPage.SuspendLayout();
+			this.tabPage1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// TestingAndLoggingGroupBox
@@ -643,6 +647,7 @@
 			this.MainTabControl.Controls.Add(this.RemoteControllerTabPage);
 			this.MainTabControl.Controls.Add(this.VirtualDeviceTabPage);
 			this.MainTabControl.Controls.Add(this.HidGuardianTabPage);
+			this.MainTabControl.Controls.Add(this.tabPage1);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.Location = new System.Drawing.Point(0, 0);
 			this.MainTabControl.Margin = new System.Windows.Forms.Padding(6);
@@ -761,15 +766,6 @@
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
 			// 
-			// InternetPanel
-			// 
-			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.InternetPanel.Location = new System.Drawing.Point(6, 6);
-			this.InternetPanel.Margin = new System.Windows.Forms.Padding(12);
-			this.InternetPanel.Name = "InternetPanel";
-			this.InternetPanel.Size = new System.Drawing.Size(1288, 895);
-			this.InternetPanel.TabIndex = 33;
-			// 
 			// RemoteControllerTabPage
 			// 
 			this.RemoteControllerTabPage.BackColor = System.Drawing.SystemColors.Control;
@@ -830,6 +826,35 @@
 			this.OptionsHidGuardianHost.TabIndex = 0;
 			this.OptionsHidGuardianHost.Child = null;
 			// 
+			// tabPage1
+			// 
+			this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
+			this.tabPage1.Controls.Add(this.OptionsInternetHost);
+			this.tabPage1.Location = new System.Drawing.Point(8, 39);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage1.Size = new System.Drawing.Size(1300, 907);
+			this.tabPage1.TabIndex = 5;
+			this.tabPage1.Text = "tabPage1";
+			// 
+			// InternetPanel
+			// 
+			this.InternetPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.InternetPanel.Location = new System.Drawing.Point(6, 6);
+			this.InternetPanel.Margin = new System.Windows.Forms.Padding(12);
+			this.InternetPanel.Name = "InternetPanel";
+			this.InternetPanel.Size = new System.Drawing.Size(1288, 895);
+			this.InternetPanel.TabIndex = 33;
+			// 
+			// OptionsInternetHost
+			// 
+			this.OptionsInternetHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.OptionsInternetHost.Location = new System.Drawing.Point(3, 3);
+			this.OptionsInternetHost.Name = "OptionsInternetHost";
+			this.OptionsInternetHost.Size = new System.Drawing.Size(1294, 901);
+			this.OptionsInternetHost.TabIndex = 0;
+			this.OptionsInternetHost.Child = this.optionsInternetControl1;
+			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -866,6 +891,7 @@
 			this.VirtualDevicePanel.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.HidGuardianTabPage.ResumeLayout(false);
+			this.tabPage1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }
@@ -933,5 +959,8 @@
 		private System.Windows.Forms.Integration.ElementHost OptionsHidGuardianHost;
 		private System.Windows.Forms.TabPage VirtualDeviceTabPage;
 		private System.Windows.Forms.Integration.ElementHost OptionsVirtualDeviceHost;
+		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.Integration.ElementHost OptionsInternetHost;
+		private OptionsInternetControl optionsInternetControl1;
 	}
 }

@@ -221,6 +221,11 @@ namespace x360ce.App
 			Stream sr = null;
 			switch (dllName)
 			{
+				case "Xceed.Wpf.AvalonDock":
+				case "Xceed.Wpf.AvalonDock.Themes.Aero":
+				case "Xceed.Wpf.AvalonDock.Themes.Metro":
+				case "Xceed.Wpf.AvalonDock.Themes.VS2010":
+				case "Xceed.Wpf.Toolkit":
 				case "ViGEmClient":
 				case "x360ce.Engine":
 				case "x360ce.Engine.XmlSerializers":
