@@ -37,6 +37,8 @@ namespace x360ce.App
 					controlProperty = System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty;
 				if (control is System.Windows.Controls.ComboBox)
 					controlProperty = System.Windows.Controls.Primitives.Selector.SelectedValueProperty;
+				if (control is Xceed.Wpf.Toolkit.IntegerUpDown)
+					controlProperty = Xceed.Wpf.Toolkit.IntegerUpDown.ValueProperty;
 			}
 			var binding = new System.Windows.Data.Binding(sourceProperty);
 			binding.Source = source;

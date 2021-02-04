@@ -269,12 +269,6 @@
     <Compile Include="Controls\OptionsInternetControl.xaml.cs">
       <DependentUpon>OptionsInternetControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\OptionsInternetUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
-      <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\OptionsVirtualDeviceControl.xaml.cs">
       <DependentUpon>OptionsVirtualDeviceControl.xaml</DependentUpon>
     </Compile>
@@ -479,9 +473,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\LogUserControl.resx">
       <DependentUpon>LogUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\OptionsInternetUserControl.resx">
-      <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ProgramsGridUserControl.resx">
       <DependentUpon>ProgramsGridUserControl.cs</DependentUpon>

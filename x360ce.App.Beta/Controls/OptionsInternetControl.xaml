@@ -6,8 +6,8 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-	d:DesignHeight="270"
-	d:DesignWidth="480"
+	d:DesignHeight="440"
+	d:DesignWidth="640"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -24,239 +24,144 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<GroupBox Grid.Row="0" Grid.Column="0" Header="Online Account - Login">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				<Label
-					Name="UsernameLabel"
-					Grid.Row="0"
-					Grid.Column="0"
-					Content="Username (E-mail)" />
-				<TextBox Name="UsernameTextBox" Grid.Row="0" Grid.Column="1" />
-				<Label
-					Name="PasswordLabel"
-					Grid.Row="1"
-					Grid.Column="0"
-					Content="Password" />
-				<TextBox Name="PasswordTextBox" Grid.Row="1" Grid.Column="1" />
-				<StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-					<Button Name="ResetButton" Click="ResetButton_Click" Content="Reset..." />
-					<Button Name="CreateButton" Click="CreateButton_Click" Content="Create..." />
-					<Button Name="LoginButton" Click="LoginButton_Click" Content="Log In" />
+		<WrapPanel Orientation="Horizontal">
+			<GroupBox Header="Online Account - Login">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Label
+						Name="UsernameLabel"
+						Grid.Row="0"
+						Grid.Column="0"
+						Content="Username (E-mail)" />
+					<TextBox Name="UsernameTextBox" Grid.Row="0" Grid.Column="1" />
+					<Label
+						Name="PasswordLabel"
+						Grid.Row="1"
+						Grid.Column="0"
+						Content="Password" />
+					<TextBox Name="PasswordTextBox" Grid.Row="1" Grid.Column="1" />
+					<StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+						<Button Name="ResetButton" Click="ResetButton_Click" Content="Reset..." />
+						<Button Name="CreateButton" Click="CreateButton_Click" Content="Create..." />
+						<Button Name="LoginButton" Click="LoginButton_Click" Content="Log In" />
+					</StackPanel>
+				</Grid>
+			</GroupBox>
+			<GroupBox Header="Games / Cloud - Default Settings">
+				<StackPanel>
+					<StackPanel />
+					<Label Name="MinimumInstanceCountLabel">
+						Default Settings Minimum Instances
+					</Label>
+					<StackPanel Orientation="Horizontal">
+						<xctk:IntegerUpDown Name="GetProgramsMinInstancesUpDown" MinWidth="75" />
+						<CheckBox Name="GetProgramsIncludeEnabledCheckBox">
+							Include Enabled
+						</CheckBox>
+					</StackPanel>
 				</StackPanel>
-			</Grid>
-		</GroupBox>
-		<GroupBox Grid.Row="1" Grid.Column="0" Header="Games / Cloud - Default Settings">
-			<StackPanel>
-				<StackPanel />
-				<Label Name="MinimumInstanceCountLabel">
-					Default Settings Minimum Instances
-				</Label>
+			</GroupBox>
+			<GroupBox Header="Update Options">
 				<StackPanel Orientation="Horizontal">
-					<xctk:IntegerUpDown Name="GetProgramsMinInstancesUpDown" MinWidth="75" />
-					<CheckBox Name="GetProgramsIncludeEnabledCheckBox">
-						Include Enabled
-					</CheckBox>
+					<CheckBox Name="CheckForUpdatesCheckBox" Content="Check for updates on startup" />
+					<Button Name="CheckUpdatesButton" Click="CheckUpdatesButton_Click">
+						Check...
+					</Button>
 				</StackPanel>
-			</StackPanel>
-		</GroupBox>
-		<GroupBox Margin="263,-12,-526,-66" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-			<GroupBox.Header>
-				<TextBlock Text="Update Options" />
-			</GroupBox.Header>
-			<Canvas Width="239" Height="54">
-				<CheckBox
-					Name="CheckForUpdatesCheckBox"
-					Width="163"
-					Height="17"
-					Margin="-6,18,-157,-35"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					TabIndex="30">
-					Check for updates on startup
-				</CheckBox>
-				<Button
-					Name="CheckUpdatesButton"
-					Width="75"
-					Height="23"
-					Margin="163,14,-238,-37"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					Click="CheckUpdatesButton_Click"
-					TabIndex="68">
-					Check...
-				</Button>
-			</Canvas>
-		</GroupBox>
-		<GroupBox Margin="3,63,-650,-146" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-			<GroupBox.Header>
-				<TextBlock Text="Internet" />
-			</GroupBox.Header>
-			<Canvas Width="623" Height="59">
-				<CheckBox
-					Name="InternetAutoSaveCheckBox"
-					Width="134"
-					Height="17"
-					Margin="294,6,-428,-23"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					TabIndex="15">
-					Save Settings to Cloud
-				</CheckBox>
-				<ComboBox
-					Name="InternetDatabaseUrlComboBox"
-					Width="523"
-					Height="21"
-					Margin="99,29,-622,-50"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					TabIndex="14">
-					<ComboBoxItem>http://www.x360ce.com/webservices/x360ce.asmx</ComboBoxItem>
-					<ComboBoxItem>http://localhost:20360/webservices/x360ce.asmx</ComboBoxItem>
-				</ComboBox>
-				<Label
-					Name="WebServiceUrlLabel"
-					Width="103"
-					Height="22"
-					Margin="6,32,-109,-54"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					FontFamily="Microsoft Sans Serif"
-					FontSize="11"
-					TabIndex="1">
-					Web Service URL
-				</Label>
-				<CheckBox
-					Name="InternetAutoLoadCheckBox"
-					Width="144"
-					Height="17"
-					Margin="144,6,-288,-23"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					TabIndex="1">
-					Load Settings from Cloud
-				</CheckBox>
-				<CheckBox
-					Name="InternetFeaturesCheckBox"
-					Width="142"
-					Height="17"
-					Margin="-4,6,-138,-23"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					TabIndex="1">
-					Enable Internet Features
-				</CheckBox>
-			</Canvas>
-		</GroupBox>
-		<GroupBox Margin="3,143,-650,-280" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-			<GroupBox.Header>
-				<TextBlock Text="Online Account - Anonymous Computer ID and Profile ID will be used by default" />
-			</GroupBox.Header>
-			<Canvas Width="623" Height="113">
-				<Button
-					Name="OpenSettingsFolderButton"
-					Width="75"
-					Height="23"
-					Margin="547,54,-622,-77"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					Click="OpenSettingsFolderButton_Click"
-					TabIndex="69">
-					Open
-				</Button>
-				<TextBox
-					Name="ProfilePathTextBox"
-					Width="445"
-					Height="20"
-					Margin="96,56,-541,-76"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					TabIndex="40"
-					TextWrapping="Wrap" />
-				<TextBox
-					Name="ComputerDiskTextBox"
-					Width="525"
-					Height="20"
-					Margin="97,4,-622,-24"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					TabIndex="40"
-					TextWrapping="Wrap" />
-				<TextBox
-					Name="ProfileIdTextBox"
-					Width="233"
-					Height="20"
-					Margin="96,82,-329,-102"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					TabIndex="41"
-					TextWrapping="Wrap" />
-				<TextBox
-					Name="ComputerIdTextBox"
-					Width="233"
-					Height="20"
-					Margin="97,30,-330,-50"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					TabIndex="41"
-					TextWrapping="Wrap" />
-				<Label
-					Name="ProfileIdLabel"
-					Width="59"
-					Height="22"
-					Margin="6,85,-65,-107"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					FontFamily="Microsoft Sans Serif"
-					FontSize="11"
-					TabIndex="31">
-					Profile ID
-				</Label>
-				<Label
-					Name="ProfilePathLabel"
-					Width="70"
-					Height="22"
-					Margin="6,59,-76,-81"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					FontFamily="Microsoft Sans Serif"
-					FontSize="11"
-					TabIndex="32">
-					Profile Path
-				</Label>
-				<Label
-					Name="ComputerIdLabel"
-					Width="75"
-					Height="22"
-					Margin="6,33,-81,-55"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					FontFamily="Microsoft Sans Serif"
-					FontSize="11"
-					TabIndex="31">
-					Computer ID
-				</Label>
-				<Label
-					Name="ComputerDiskLabel"
-					Width="85"
-					Height="22"
-					Margin="6,7,-91,-29"
-					HorizontalAlignment="Right"
-					VerticalAlignment="Bottom"
-					FontFamily="Microsoft Sans Serif"
-					FontSize="11"
-					TabIndex="32">
-					Computer Disk
-				</Label>
-			</Canvas>
-		</GroupBox>
+			</GroupBox>
+			<GroupBox Header="Internet">
+				<StackPanel Orientation="Vertical">
+					<StackPanel Orientation="Horizontal">
+						<CheckBox Name="InternetAutoSaveCheckBox" Content="Save Settings to Cloud" />
+						<CheckBox Name="InternetAutoLoadCheckBox" Content="Load Settings from Cloud" />
+						<CheckBox Name="InternetFeaturesCheckBox" Content="Enable Internet Features" />
+					</StackPanel>
+					<Grid HorizontalAlignment="Stretch">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<Label
+							Name="WebServiceUrlLabel"
+							Grid.Column="0"
+							HorizontalAlignment="Left"
+							Content="Web Service URL" />
+						<ComboBox Name="InternetDatabaseUrlComboBox" Grid.Column="1" IsEditable="True" />
+					</Grid>
+				</StackPanel>
+			</GroupBox>
+			<GroupBox Header="Online Account - Anonymous Computer ID and Profile ID will be used by default">
+				<StackPanel>
+					<Grid HorizontalAlignment="Stretch">
+						<Grid.RowDefinitions>
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+							<RowDefinition />
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<Label
+							Name="ProfilePathLabel"
+							Grid.Row="0"
+							Grid.Column="0"
+							Content="Profile Path" />
+						<TextBox
+							Name="ProfilePathTextBox"
+							Grid.Row="0"
+							Grid.Column="1"
+							IsReadOnly="True" />
+						<Button
+							Name="OpenSettingsFolderButton"
+							Grid.Row="0"
+							Grid.Column="2"
+							Click="OpenSettingsFolderButton_Click"
+							Content="Open" />
+						<Label
+							Name="ProfileIdLabel"
+							Grid.Row="1"
+							Grid.Column="0"
+							Content="Profile ID" />
+						<TextBox
+							Name="ProfileIdTextBox"
+							Grid.Row="1"
+							Grid.Column="1"
+							IsReadOnly="True" />
+
+						<Label
+							Name="ComputerIdLabel"
+							Grid.Row="2"
+							Grid.Column="0"
+							Content="Computer ID" />
+						<TextBox
+							Name="ComputerIdTextBox"
+							Grid.Row="2"
+							Grid.Column="1"
+							IsReadOnly="True" />
+						<Label
+							Name="ComputerDiskLabel"
+							Grid.Row="3"
+							Grid.Column="0"
+							Content="Computer Disk" />
+						<TextBox
+							Name="ComputerDiskTextBox"
+							Grid.Row="3"
+							Grid.Column="1"
+							IsReadOnly="True" />
+					</Grid>
+				</StackPanel>
+			</GroupBox>
+		</WrapPanel>
 	</Grid>
 </UserControl>
