@@ -70,6 +70,21 @@ namespace JocysCom.ClassLibrary.Controls
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
 		/// </summary>
+		public static void SetText(Label control, string format, params object[] args)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var text = (args == null)
+				? format
+				: string.Format(format, args);
+			if (control.Content as string != text)
+				control.Content = text;
+		}
+
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
 		public static void SetText(TextBox control, string format, params object[] args)
 		{
 			if (control == null)

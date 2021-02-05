@@ -17,7 +17,7 @@ namespace x360ce.App
 
 		object TasksTimerLock = new object();
 
-		public void StartServer(TaskScheduler scheduler, UserControl control)
+		public void StartServer(TaskScheduler scheduler, UserControl control = null)
 		{
 			lock (TasksTimerLock)
 			{
@@ -25,9 +25,17 @@ namespace x360ce.App
 					return;
 				TasksTimer = new QueueTimer<CloudItem>(0, 5000, scheduler);
 				TasksTimer.SynchronizingObject = null;
-				control.HandleCreated += (sender, e) => { TasksTimer.HasHandle = true; };
-				control.HandleDestroyed += (sender, e) => { TasksTimer.HasHandle = false; };
-				TasksTimer.HasHandle = control.IsHandleCreated;
+				if (control == null)
+				{
+					TasksTimer.HasHandle = true;
+
+				}
+				else
+				{
+					control.HandleCreated += (sender, e) => { TasksTimer.HasHandle = true; };
+					control.HandleDestroyed += (sender, e) => { TasksTimer.HasHandle = false; };
+					TasksTimer.HasHandle = control.IsHandleCreated;
+				}
 				TasksTimer.DoWork += queueTimer_DoWork;
 				TasksTimer.Queue.ListChanged += Data_ListChanged;
 				// Enable network monitoring.

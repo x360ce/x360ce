@@ -19,10 +19,34 @@ namespace x360ce.App
 		public CloudState State { get { return _State; } set { _State = value; OnPropertyChanged(); } }
 		CloudState _State;
 
-        public int Try { get { return _Try; } set { _Try = value; OnPropertyChanged(); } }
-        int _Try;
+		public string TryRetry
+			=> Retries == int.MaxValue
+				? string.Format("{0}", Try)
+				: string.Format("{0}/{1}", Try, Retries);
 
-        public int Retries { get { return _Retries; } set { _Retries = value; OnPropertyChanged(); } }
+
+		public int Try
+		{
+			get { return _Try; }
+			set
+			{
+				_Try = value;
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(TryRetry));
+			}
+		}
+		int _Try;
+
+		public int Retries
+		{
+			get { return _Retries; }
+			set
+			{
+				_Retries = value;
+				OnPropertyChanged();
+				OnPropertyChanged(nameof(TryRetry));
+			}
+		}
 		int _Retries = 4;
 
 		public DateTime Date { get; set; }

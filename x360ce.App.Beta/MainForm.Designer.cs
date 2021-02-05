@@ -38,7 +38,6 @@ namespace x360ce.App
 			this.SettingsGridHost = new System.Windows.Forms.Integration.ElementHost();
 			this.SettingsGridPanel = new x360ce.App.Controls.SettingsListControl();
 			this.CloudTabPage = new System.Windows.Forms.TabPage();
-			this.CloudPanel = new x360ce.App.Controls.CloudUserControl();
 			this.HelpTabPage = new System.Windows.Forms.TabPage();
 			this.HelpRichTextBox = new System.Windows.Forms.RichTextBox();
 			this.AboutTabPage = new System.Windows.Forms.TabPage();
@@ -76,6 +75,8 @@ namespace x360ce.App
 			this.GameToCustomizeComboBox = new System.Windows.Forms.ToolStripComboBox();
 			this.AddGameButton = new System.Windows.Forms.ToolStripButton();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this.CloudHost = new System.Windows.Forms.Integration.ElementHost();
+			this.CloudPanel = new x360ce.App.Controls.CloudControl();
 			this.MainTabControl.SuspendLayout();
 			this.OptionsTabPage.SuspendLayout();
 			this.GamesTabPage.SuspendLayout();
@@ -251,22 +252,13 @@ namespace x360ce.App
 			// 
 			// CloudTabPage
 			// 
-			this.CloudTabPage.Controls.Add(this.CloudPanel);
+			this.CloudTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.CloudTabPage.Controls.Add(this.CloudHost);
 			this.CloudTabPage.Location = new System.Drawing.Point(8, 39);
 			this.CloudTabPage.Name = "CloudTabPage";
 			this.CloudTabPage.Size = new System.Drawing.Size(782, 536);
 			this.CloudTabPage.TabIndex = 6;
 			this.CloudTabPage.Text = "Cloud";
-			this.CloudTabPage.UseVisualStyleBackColor = true;
-			// 
-			// CloudPanel
-			// 
-			this.CloudPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.CloudPanel.Location = new System.Drawing.Point(0, 0);
-			this.CloudPanel.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
-			this.CloudPanel.Name = "CloudPanel";
-			this.CloudPanel.Size = new System.Drawing.Size(782, 536);
-			this.CloudPanel.TabIndex = 0;
 			// 
 			// HelpTabPage
 			// 
@@ -614,6 +606,15 @@ namespace x360ce.App
 			this.panel1.Size = new System.Drawing.Size(804, 589);
 			this.panel1.TabIndex = 26;
 			// 
+			// CloudHost
+			// 
+			this.CloudHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.CloudHost.Location = new System.Drawing.Point(0, 0);
+			this.CloudHost.Name = "CloudHost";
+			this.CloudHost.Size = new System.Drawing.Size(782, 536);
+			this.CloudHost.TabIndex = 0;
+			this.CloudHost.Child = this.CloudPanel;
+			// 
 			// MainForm
 			// 
 			this.BackColor = System.Drawing.SystemColors.Control;
@@ -690,7 +691,6 @@ namespace x360ce.App
 		private MRG.Controls.UI.LoadingCircle BusyLoadingCircle;
 		public ToolStripStatusLabel CloudMessagesLabel;
 		private TabPage CloudTabPage;
-		public Controls.CloudUserControl CloudPanel;
 		private ToolStripStatusLabel UpdateDevicesStatusLabel;
 		private Controls.ProgramsGridUserControl ProgramsPanel;
 		public TabPage ProgramsTabPage;
@@ -714,5 +714,7 @@ namespace x360ce.App
 		private Controls.SettingsListControl SettingsGridPanel;
 		private System.Windows.Forms.Integration.ElementHost AboutControlHost;
 		private Controls.AboutUserControl aboutUserControl1;
+		private System.Windows.Forms.Integration.ElementHost CloudHost;
+		private Controls.CloudControl CloudPanel;
 	}
 }

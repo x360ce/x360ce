@@ -1,0 +1,147 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.CloudControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:converters="clr-namespace:x360ce.App.Converters"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:x360ce.App.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="120"
+	d:DesignWidth="640"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar Style="{StaticResource MainToolBar}">
+				<Button
+					Name="UploadToCloudButton"
+					HorizontalAlignment="Right"
+					Click="UploadToCloudButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_cloud_upload}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Upload to Cloud" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="DownloadFromCloudButton"
+					HorizontalAlignment="Right"
+					Click="DownloadFromCloudButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_cloud_download}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Download from Cloud" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="DeleteButton"
+					HorizontalAlignment="Right"
+					Click="DeleteButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_delete}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Delete" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+			</ToolBar>
+		</ToolBarPanel>
+		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar Style="{StaticResource MainToolBar}">
+				<Label
+					Name="RunStateLabel"
+					Content="*"
+					Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+					Style="{StaticResource ButtonLabel}" />
+				<Label
+					Name="NextRunLabel"
+					Content="Next Run: 00:00:00"
+					Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
+					Style="{StaticResource ButtonLabel}" />
+				<Separator Style="{StaticResource MainSeparator}" Visibility="Collapsed" />
+				<Button
+					Name="RefreshButton"
+					HorizontalAlignment="Right"
+					Style="{StaticResource ToolBarButton}"
+					Visibility="Collapsed">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Refresh}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Refresh" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+			</ToolBar>
+		</ToolBarPanel>
+		<Border
+			Grid.Row="1"
+			Height="1"
+			BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+			BorderThickness="1"
+			SnapsToDevicePixels="True" />
+		<DataGrid
+			xmlns:local="clr-namespace:x360ce.App.Converters"
+			x:Name="MainDataGrid"
+			Grid.Row="1"
+			Height="Auto"
+			HorizontalAlignment="Stretch"
+			AutoGenerateColumns="False"
+			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+			IsReadOnly="True"
+			SelectionChanged="MainDataGrid_SelectionChanged">
+			<DataGrid.Resources>
+				<Style TargetType="{x:Type DataGridCell}">
+					<EventSetter Event="MouseDoubleClick" Handler="DataGridCell_MouseDoubleClick" />
+				</Style>
+			</DataGrid.Resources>
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					Binding="{Binding Date}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Date"
+					SortDirection="{x:Null}" />
+				<DataGridTextColumn
+					Binding="{Binding Action}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Action" />
+				<DataGridTextColumn
+					Width="*"
+					Binding="{Binding Description}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Description" />
+				<DataGridTextColumn
+					Binding="{Binding State}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="State" />
+				<DataGridTextColumn
+					Binding="{Binding TryRetry, Mode=OneWay}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Try" />
+			</DataGrid.Columns>
+			<DataGrid.CellStyle>
+				<Style TargetType="DataGridCell">
+					<Setter Property="Padding" Value="4" />
+				</Style>
+			</DataGrid.CellStyle>
+		</DataGrid>
+		<StackPanel x:Name="ItemDetailsPanel" Grid.Row="2">
+			<TextBlock x:Name="CommentLabel" Text="Note:" />
+		</StackPanel>
+	</Grid>
+
+</UserControl>
