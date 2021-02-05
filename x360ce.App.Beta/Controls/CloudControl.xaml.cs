@@ -33,6 +33,7 @@ namespace x360ce.App.Controls
 			QueueMonitorTimer.Interval = 500;
 			QueueMonitorTimer.Elapsed += QueueMonitorTimer_Elapsed;
 			QueueMonitorTimer.Start();
+			UpdateButtons();
 		}
 
 		private void QueueMonitorTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -135,7 +136,14 @@ namespace x360ce.App.Controls
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
+			UpdateButtons();
 		}
+
+		void UpdateButtons()
+		{
+			var grid = MainDataGrid;
+			DeleteButton.IsEnabled = grid.SelectedItems.Count > 0;
+		}
+
 	}
 }
