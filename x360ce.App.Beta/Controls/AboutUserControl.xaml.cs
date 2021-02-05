@@ -51,10 +51,15 @@ namespace x360ce.App.Controls
 			ChangeLogTextBox.Text = sr.ReadToEnd();
 			var ai = new AssemblyInfo();
 			AboutProductLabel.Content = string.Format((string)AboutProductLabel.Content, ai.Version);
-			stream = EngineHelper.GetResourceStream("License.txt");
+			// Load license.
+			stream = EngineHelper.GetResourceStream("Documents.License.txt");
 			sr = new StreamReader(stream);
 			LicenseTextBox.Text = sr.ReadToEnd();
 			LicenseTabPage.Header = string.Format("{0} {1} License", ai.Product, ai.Version.ToString(2));
+			// Load Xceed License.
+			stream = EngineHelper.GetResourceStream("Xceed.Wpf.Toolkit.License.txt");
+			sr = new StreamReader(stream);
+			XceedLicenseTextBox.Text = sr.ReadToEnd();
 		}
 	}
 }

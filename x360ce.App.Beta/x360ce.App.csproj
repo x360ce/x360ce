@@ -627,6 +627,7 @@
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
+    <EmbeddedResource Include="Resources\Xceed\Xceed.Wpf.Toolkit.License.txt" />
     <EmbeddedResource Include="Resources\Xceed\Xceed.Wpf.AvalonDock.dll" />
     <EmbeddedResource Include="Resources\Xceed\Xceed.Wpf.AvalonDock.Themes.Aero.dll" />
     <EmbeddedResource Include="Resources\Xceed\Xceed.Wpf.AvalonDock.Themes.Metro.dll" />

@@ -83,7 +83,6 @@
 					https://www.x360ce.com
 				</Hyperlink>
 			</TextBlock>
-
 			<Label
 				Grid.Row="4"
 				Grid.Column="1"
@@ -194,6 +193,20 @@
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
 					TextWrapping="Wrap" />
 			</TabItem>
+			<TabItem Name="XceedLicenseTabPage" Header="Xceed License">
+				<TextBox
+					Name="XceedLicenseTextBox"
+					Margin="0"
+					Padding="0"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					BorderThickness="0"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap" />
+			</TabItem>
+
 		</TabControl>
 	</Grid>
 </UserControl>
