@@ -61,17 +61,6 @@
 			this.ExcludeVirtualDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.ExcludeSupplementalDevicesCheckBox = new System.Windows.Forms.CheckBox();
 			this.DeveloperToolsButton = new System.Windows.Forms.Button();
-			this.AllowRemoteControllersGroupBox = new System.Windows.Forms.GroupBox();
-			this.RemoteEnabledCheckBox = new System.Windows.Forms.CheckBox();
-			this.AllowRemote4CheckBox = new System.Windows.Forms.CheckBox();
-			this.RemotePortLabel = new System.Windows.Forms.Label();
-			this.RemotePasswordLabel = new System.Windows.Forms.Label();
-			this.AllowControlLabel = new System.Windows.Forms.Label();
-			this.AllowRemote3CheckBox = new System.Windows.Forms.CheckBox();
-			this.RemotePortNumericUpDown = new System.Windows.Forms.NumericUpDown();
-			this.RemotePasswordTextBox = new System.Windows.Forms.TextBox();
-			this.AllowRemote2CheckBox = new System.Windows.Forms.CheckBox();
-			this.AllowRemote1CheckBox = new System.Windows.Forms.CheckBox();
 			this.MainTabControl = new System.Windows.Forms.TabControl();
 			this.GeneralTabPage = new System.Windows.Forms.TabPage();
 			this.GeneralPanel = new System.Windows.Forms.Panel();
@@ -90,6 +79,8 @@
 			this.OptionsHidGuardianHost = new System.Windows.Forms.Integration.ElementHost();
 			this.InternetHost = new System.Windows.Forms.Integration.ElementHost();
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetControl();
+			this.RemoteControllersHost = new System.Windows.Forms.Integration.ElementHost();
+			this.RemoteControllersPanel = new x360ce.App.Controls.OptionsRemoteControllerControl();
 			this.TestingAndLoggingGroupBox.SuspendLayout();
 			this.OperationGroupBox.SuspendLayout();
 			this.ProgramScanLocationsTabControl.SuspendLayout();
@@ -97,8 +88,6 @@
 			this.LocationsToolStrip.SuspendLayout();
 			this.ConfigurationGroupBox.SuspendLayout();
 			this.DirectInputDevicesGroupBox.SuspendLayout();
-			this.AllowRemoteControllersGroupBox.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.RemotePortNumericUpDown)).BeginInit();
 			this.MainTabControl.SuspendLayout();
 			this.GeneralTabPage.SuspendLayout();
 			this.GeneralPanel.SuspendLayout();
@@ -494,149 +483,6 @@
 			this.DeveloperToolsButton.UseVisualStyleBackColor = true;
 			this.DeveloperToolsButton.Click += new System.EventHandler(this.DeveloperToolsButton_Click);
 			// 
-			// AllowRemoteControllersGroupBox
-			// 
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemoteEnabledCheckBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote4CheckBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePortLabel);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePasswordLabel);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowControlLabel);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote3CheckBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePortNumericUpDown);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.RemotePasswordTextBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote2CheckBox);
-			this.AllowRemoteControllersGroupBox.Controls.Add(this.AllowRemote1CheckBox);
-			this.AllowRemoteControllersGroupBox.Location = new System.Drawing.Point(6, 6);
-			this.AllowRemoteControllersGroupBox.Margin = new System.Windows.Forms.Padding(6);
-			this.AllowRemoteControllersGroupBox.Name = "AllowRemoteControllersGroupBox";
-			this.AllowRemoteControllersGroupBox.Padding = new System.Windows.Forms.Padding(6);
-			this.AllowRemoteControllersGroupBox.Size = new System.Drawing.Size(538, 404);
-			this.AllowRemoteControllersGroupBox.TabIndex = 31;
-			this.AllowRemoteControllersGroupBox.TabStop = false;
-			this.AllowRemoteControllersGroupBox.Text = "Allow Remote Controllers";
-			this.AllowRemoteControllersGroupBox.Visible = false;
-			// 
-			// RemoteEnabledCheckBox
-			// 
-			this.RemoteEnabledCheckBox.AutoSize = true;
-			this.RemoteEnabledCheckBox.Location = new System.Drawing.Point(208, 350);
-			this.RemoteEnabledCheckBox.Margin = new System.Windows.Forms.Padding(6);
-			this.RemoteEnabledCheckBox.Name = "RemoteEnabledCheckBox";
-			this.RemoteEnabledCheckBox.Size = new System.Drawing.Size(123, 29);
-			this.RemoteEnabledCheckBox.TabIndex = 33;
-			this.RemoteEnabledCheckBox.Text = "Enabled";
-			this.RemoteEnabledCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// AllowRemote4CheckBox
-			// 
-			this.AllowRemote4CheckBox.AutoSize = true;
-			this.AllowRemote4CheckBox.Location = new System.Drawing.Point(210, 206);
-			this.AllowRemote4CheckBox.Margin = new System.Windows.Forms.Padding(6);
-			this.AllowRemote4CheckBox.Name = "AllowRemote4CheckBox";
-			this.AllowRemote4CheckBox.Size = new System.Drawing.Size(155, 29);
-			this.AllowRemote4CheckBox.TabIndex = 30;
-			this.AllowRemote4CheckBox.Text = "Controller 4";
-			this.AllowRemote4CheckBox.UseVisualStyleBackColor = true;
-			// 
-			// RemotePortLabel
-			// 
-			this.RemotePortLabel.AutoSize = true;
-			this.RemotePortLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.RemotePortLabel.Location = new System.Drawing.Point(12, 304);
-			this.RemotePortLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.RemotePortLabel.Name = "RemotePortLabel";
-			this.RemotePortLabel.Size = new System.Drawing.Size(170, 25);
-			this.RemotePortLabel.TabIndex = 32;
-			this.RemotePortLabel.Text = "UDP Server Port";
-			// 
-			// RemotePasswordLabel
-			// 
-			this.RemotePasswordLabel.AutoSize = true;
-			this.RemotePasswordLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.RemotePasswordLabel.Location = new System.Drawing.Point(12, 256);
-			this.RemotePasswordLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.RemotePasswordLabel.Name = "RemotePasswordLabel";
-			this.RemotePasswordLabel.Size = new System.Drawing.Size(186, 25);
-			this.RemotePasswordLabel.TabIndex = 32;
-			this.RemotePasswordLabel.Text = "Remote Password";
-			// 
-			// AllowControlLabel
-			// 
-			this.AllowControlLabel.AutoSize = true;
-			this.AllowControlLabel.BackColor = System.Drawing.SystemColors.Control;
-			this.AllowControlLabel.Location = new System.Drawing.Point(12, 75);
-			this.AllowControlLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.AllowControlLabel.Name = "AllowControlLabel";
-			this.AllowControlLabel.Size = new System.Drawing.Size(138, 25);
-			this.AllowControlLabel.TabIndex = 32;
-			this.AllowControlLabel.Text = "Allow Control";
-			// 
-			// AllowRemote3CheckBox
-			// 
-			this.AllowRemote3CheckBox.AutoSize = true;
-			this.AllowRemote3CheckBox.Location = new System.Drawing.Point(210, 162);
-			this.AllowRemote3CheckBox.Margin = new System.Windows.Forms.Padding(6);
-			this.AllowRemote3CheckBox.Name = "AllowRemote3CheckBox";
-			this.AllowRemote3CheckBox.Size = new System.Drawing.Size(155, 29);
-			this.AllowRemote3CheckBox.TabIndex = 30;
-			this.AllowRemote3CheckBox.Text = "Controller 3";
-			this.AllowRemote3CheckBox.UseVisualStyleBackColor = true;
-			// 
-			// RemotePortNumericUpDown
-			// 
-			this.RemotePortNumericUpDown.Location = new System.Drawing.Point(208, 300);
-			this.RemotePortNumericUpDown.Margin = new System.Windows.Forms.Padding(6);
-			this.RemotePortNumericUpDown.Maximum = new decimal(new int[] {
-            49151,
-            0,
-            0,
-            0});
-			this.RemotePortNumericUpDown.Minimum = new decimal(new int[] {
-            1024,
-            0,
-            0,
-            0});
-			this.RemotePortNumericUpDown.Name = "RemotePortNumericUpDown";
-			this.RemotePortNumericUpDown.Size = new System.Drawing.Size(118, 31);
-			this.RemotePortNumericUpDown.TabIndex = 31;
-			this.RemotePortNumericUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			this.RemotePortNumericUpDown.Value = new decimal(new int[] {
-            26010,
-            0,
-            0,
-            0});
-			// 
-			// RemotePasswordTextBox
-			// 
-			this.RemotePasswordTextBox.Location = new System.Drawing.Point(210, 250);
-			this.RemotePasswordTextBox.Margin = new System.Windows.Forms.Padding(6);
-			this.RemotePasswordTextBox.Name = "RemotePasswordTextBox";
-			this.RemotePasswordTextBox.Size = new System.Drawing.Size(296, 31);
-			this.RemotePasswordTextBox.TabIndex = 0;
-			this.RemotePasswordTextBox.UseSystemPasswordChar = true;
-			// 
-			// AllowRemote2CheckBox
-			// 
-			this.AllowRemote2CheckBox.AutoSize = true;
-			this.AllowRemote2CheckBox.Location = new System.Drawing.Point(210, 117);
-			this.AllowRemote2CheckBox.Margin = new System.Windows.Forms.Padding(6);
-			this.AllowRemote2CheckBox.Name = "AllowRemote2CheckBox";
-			this.AllowRemote2CheckBox.Size = new System.Drawing.Size(155, 29);
-			this.AllowRemote2CheckBox.TabIndex = 30;
-			this.AllowRemote2CheckBox.Text = "Controller 2";
-			this.AllowRemote2CheckBox.UseVisualStyleBackColor = true;
-			// 
-			// AllowRemote1CheckBox
-			// 
-			this.AllowRemote1CheckBox.AutoSize = true;
-			this.AllowRemote1CheckBox.Location = new System.Drawing.Point(210, 73);
-			this.AllowRemote1CheckBox.Margin = new System.Windows.Forms.Padding(6);
-			this.AllowRemote1CheckBox.Name = "AllowRemote1CheckBox";
-			this.AllowRemote1CheckBox.Size = new System.Drawing.Size(155, 29);
-			this.AllowRemote1CheckBox.TabIndex = 30;
-			this.AllowRemote1CheckBox.Text = "Controller 1";
-			this.AllowRemote1CheckBox.UseVisualStyleBackColor = true;
-			// 
 			// MainTabControl
 			// 
 			this.MainTabControl.Controls.Add(this.GeneralTabPage);
@@ -775,7 +621,7 @@
 			// 
 			// VirtualDevicePanel
 			// 
-			this.VirtualDevicePanel.Controls.Add(this.AllowRemoteControllersGroupBox);
+			this.VirtualDevicePanel.Controls.Add(this.RemoteControllersHost);
 			this.VirtualDevicePanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.VirtualDevicePanel.Location = new System.Drawing.Point(0, 0);
 			this.VirtualDevicePanel.Margin = new System.Windows.Forms.Padding(6);
@@ -831,6 +677,15 @@
 			this.InternetHost.TabIndex = 0;
 			this.InternetHost.Child = this.InternetPanel;
 			// 
+			// RemoteControllersHost
+			// 
+			this.RemoteControllersHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RemoteControllersHost.Location = new System.Drawing.Point(0, 0);
+			this.RemoteControllersHost.Name = "RemoteControllersHost";
+			this.RemoteControllersHost.Size = new System.Drawing.Size(1300, 907);
+			this.RemoteControllersHost.TabIndex = 0;
+			this.RemoteControllersHost.Child = this.RemoteControllersPanel;
+			// 
 			// OptionsUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -852,9 +707,6 @@
 			this.ConfigurationGroupBox.PerformLayout();
 			this.DirectInputDevicesGroupBox.ResumeLayout(false);
 			this.DirectInputDevicesGroupBox.PerformLayout();
-			this.AllowRemoteControllersGroupBox.ResumeLayout(false);
-			this.AllowRemoteControllersGroupBox.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.RemotePortNumericUpDown)).EndInit();
 			this.MainTabControl.ResumeLayout(false);
 			this.GeneralTabPage.ResumeLayout(false);
 			this.GeneralPanel.ResumeLayout(false);
@@ -903,17 +755,6 @@
 		internal System.Windows.Forms.CheckBox AlwaysOnTopCheckBox;
 		public System.Windows.Forms.ComboBox StartWithWindowsStateComboBox;
 		public System.Windows.Forms.CheckBox StartWithWindowsCheckBox;
-		private System.Windows.Forms.GroupBox AllowRemoteControllersGroupBox;
-		public System.Windows.Forms.CheckBox AllowRemote3CheckBox;
-		public System.Windows.Forms.CheckBox AllowRemote2CheckBox;
-		public System.Windows.Forms.CheckBox AllowRemote1CheckBox;
-		public System.Windows.Forms.CheckBox AllowRemote4CheckBox;
-		private System.Windows.Forms.TextBox RemotePasswordTextBox;
-		private System.Windows.Forms.Label RemotePortLabel;
-		public System.Windows.Forms.NumericUpDown RemotePortNumericUpDown;
-		private System.Windows.Forms.Label RemotePasswordLabel;
-		public System.Windows.Forms.CheckBox RemoteEnabledCheckBox;
-		private System.Windows.Forms.Label AllowControlLabel;
 		private System.Windows.Forms.TabPage GeneralTabPage;
 		private System.Windows.Forms.TabPage InternetOptionsTabPage;
 		private System.Windows.Forms.Panel GeneralPanel;
@@ -935,5 +776,7 @@
 		private System.Windows.Forms.Integration.ElementHost OptionsVirtualDeviceHost;
 		public System.Windows.Forms.Integration.ElementHost InternetHost;
 		public OptionsInternetControl InternetPanel;
+		private System.Windows.Forms.Integration.ElementHost RemoteControllersHost;
+		private OptionsRemoteControllerControl RemoteControllersPanel;
 	}
 }

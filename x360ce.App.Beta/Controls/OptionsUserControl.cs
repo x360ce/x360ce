@@ -91,7 +91,6 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.StartWithWindowsState, StartWithWindowsStateComboBox, Enum.GetValues(typeof(FormWindowState)));
 			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
@@ -116,9 +115,6 @@ namespace x360ce.App.Controls
 				case nameof(Options.StartWithWindows):
 				case nameof(Options.StartWithWindowsState):
 					UpdateWindowsStartRegistry(o.StartWithWindows, o.StartWithWindowsState);
-					break;
-				case nameof(Options.RemoteControllers):
-					RemotePortNumericUpDown.Enabled = o.RemoteControllers == MapToMask.None;
 					break;
 				case nameof(Options.EnableShowFormInfo):
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
@@ -219,14 +215,6 @@ namespace x360ce.App.Controls
 			IncludeProductsCheckBox.Checked = o.IncludeProductsInsideINI;
 			ExcludeSupplementalDevicesCheckBox.Checked = o.ExcludeSupplementalDevices;
 			ExcludeVirtualDevicesCheckBox.Checked = o.ExcludeVirtualDevices;
-			// Remote Options.
-			AllowRemote1CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller1);
-			AllowRemote2CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller2);
-			AllowRemote3CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller3);
-			AllowRemote4CheckBox.Checked = o.RemoteControllers.HasFlag(MapToMask.Controller4);
-			RemotePasswordTextBox.Text = o.RemotePassword;
-			if (o.RemotePort >= RemotePortNumericUpDown.Minimum && o.RemotePort <= RemotePortNumericUpDown.Maximum)
-				RemotePortNumericUpDown.Value = o.RemotePort;
 		}
 
 		private void OptionsData_Saving(object sender, EventArgs e)
@@ -240,15 +228,6 @@ namespace x360ce.App.Controls
 			o.IncludeProductsInsideINI = IncludeProductsCheckBox.Checked;
 			o.ExcludeSupplementalDevices = ExcludeSupplementalDevicesCheckBox.Checked;
 			o.ExcludeVirtualDevices = ExcludeVirtualDevicesCheckBox.Checked;
-			// Remote Options.
-			var remoteControllers = MapToMask.None;
-			remoteControllers |= AllowRemote1CheckBox.Checked ? MapToMask.Controller1 : MapToMask.None;
-			remoteControllers |= AllowRemote2CheckBox.Checked ? MapToMask.Controller2 : MapToMask.None;
-			remoteControllers |= AllowRemote3CheckBox.Checked ? MapToMask.Controller3 : MapToMask.None;
-			remoteControllers |= AllowRemote4CheckBox.Checked ? MapToMask.Controller4 : MapToMask.None;
-			o.RemoteControllers = remoteControllers;
-			o.RemotePassword = RemotePasswordTextBox.Text;
-			o.RemotePort = (int)RemotePortNumericUpDown.Value;
 		}
 
 		private void ShowProgramsTabCheckBox_CheckedChanged(object sender, EventArgs e)

@@ -272,6 +272,9 @@
     <Compile Include="Controls\OptionsInternetControl.xaml.cs">
       <DependentUpon>OptionsInternetControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OptionsRemoteControllerControl.xaml.cs">
+      <DependentUpon>OptionsRemoteControllerControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\OptionsVirtualDeviceControl.xaml.cs">
       <DependentUpon>OptionsVirtualDeviceControl.xaml</DependentUpon>
     </Compile>
@@ -771,6 +774,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\OptionsInternetControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\OptionsRemoteControllerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
