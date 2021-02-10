@@ -1,4 +1,7 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using Microsoft.Win32;
+using System;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -15,22 +18,44 @@ namespace x360ce.App
 	public partial class MainForm
 	{
 
-		void InitMinimize()
+		void InitMinimizeAndTopMost()
 		{
 			_hiddenForm.FormBorderStyle = FormBorderStyle.SizableToolWindow;
 			_hiddenForm.ShowInTaskbar = false;
-			OptionsPanel.MinimizeToTrayCheckBox.Checked = SettingsManager.Options.MinimizeToTray;
-			OptionsPanel.MinimizeToTrayCheckBox.CheckedChanged += MinimizeToTrayCheckBox_CheckedChanged;
 			Resize += MainForm_Resize;
 			TrayNotifyIcon.Click += TrayNotifyIcon_Click;
 			TrayNotifyIcon.DoubleClick += TrayNotifyIcon_DoubleClick;
 			// Run event once to apply settings.
 			MainForm_Resize(this, new EventArgs());
+			var o = SettingsManager.Options;
+			TopMost = o.AlwaysOnTop;
+			InfoForm.MonitorEnabled = o.EnableShowFormInfo;
+			// Start monitoring event.
+			o.PropertyChanged += Options_PropertyChanged_Tray;
 		}
 
-		void UnInitMinimize()
+		private void Options_PropertyChanged_Tray(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			OptionsPanel.MinimizeToTrayCheckBox.CheckedChanged -= MinimizeToTrayCheckBox_CheckedChanged;
+			var o = SettingsManager.Options;
+			// Update controls by specific property.
+			switch (e.PropertyName)
+			{
+				case nameof(Options.AlwaysOnTop):
+					ControlsHelper.BeginInvoke(() =>
+					{
+						TopMost = o.AlwaysOnTop;
+					});
+					break;
+				case nameof(Options.StartWithWindows):
+				case nameof(Options.StartWithWindowsState):
+					UpdateWindowsStartRegistry(o.StartWithWindows, o.StartWithWindowsState);
+					break;
+				case nameof(Options.EnableShowFormInfo):
+					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
+					break;
+				default:
+					break;
+			}
 		}
 
 		Form _hiddenForm = new Form();
@@ -56,11 +81,6 @@ namespace x360ce.App
 				// Enable form GUI update only if form is not minimized.
 				EnableFormUpdates(WindowState != FormWindowState.Minimized && !Program.IsClosing);
 			}
-		}
-
-		private void MinimizeToTrayCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			SettingsManager.Options.MinimizeToTray = OptionsPanel.MinimizeToTrayCheckBox.Checked;
 		}
 
 		private void TrayNotifyIcon_Click(object sender, EventArgs e)
@@ -108,9 +128,7 @@ namespace x360ce.App
 					ShowInTaskbar = false;
 			}
 			if (WindowState != FormWindowState.Minimized)
-			{
 				WindowState = FormWindowState.Minimized;
-			}
 		}
 
 		/// <summary>
@@ -147,6 +165,38 @@ namespace x360ce.App
 		}
 
 		#endregion
+
+		#region Operation 
+
+		/// <summary>
+		/// Requires no special permissions, because current used have full access to CurrentUser 'Run' registry key.
+		/// </summary>
+		/// <param name="enabled">Start with Windows after Sign-In.</param>
+		/// <param name="startState">Start Mode.</param>
+		public void UpdateWindowsStartRegistry(bool enabled, System.Windows.Forms.FormWindowState? startState = null)
+		{
+			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
+			startState = startState ?? SettingsManager.Options.StartWithWindowsState;
+			var runKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+			if (enabled)
+			{
+				// Add the value in the registry so that the application runs at start-up
+				string command = string.Format("\"{0}\" /{1}={2}", ai.AssemblyPath, Program.arg_WindowState, startState.ToString());
+				var value = (string)runKey.GetValue(ai.Product);
+				if (value != command)
+					runKey.SetValue(ai.Product, command);
+			}
+			else
+			{
+				// Remove the value from the registry so that the application doesn't start
+				if (runKey.GetValueNames().Contains(ai.Product))
+					runKey.DeleteValue(ai.Product, false);
+			}
+			runKey.Close();
+		}
+
+		#endregion
+
 
 	}
 }

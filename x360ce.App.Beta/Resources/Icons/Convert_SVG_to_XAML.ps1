@@ -101,6 +101,10 @@ for ($d = 0; $d -lt $dirs.Length; $d++) {
     [File]::AppendAllText($fileNameCs, "`t`t`tInitializeComponent();`r`n");
     [File]::AppendAllText($fileNameCs, "`t`t}`r`n");
     [File]::AppendAllText($fileNameCs, "`r`n");
+	[File]::AppendAllText($fileNameCs, "`t`tpublic static Icons_Default Current => _Current = _Current ?? new Icons_Default();`r`n");
+	[File]::AppendAllText($fileNameCs, "`t`tprivate static Icons_Default _Current;`r`n");
+    [File]::AppendAllText($fileNameCs, "`r`n");
+
     # Process files.
    for ($f = 0; $f -lt $files.Length; $f++) {
         $file = $files[$f];

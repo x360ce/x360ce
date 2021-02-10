@@ -23,10 +23,7 @@
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-		<GroupBox Grid.Row="0" Margin="3,3,3,3">
-			<GroupBox.Header>
-				<TextBlock Text="Virtual Device Emulation by Nefarius" />
-			</GroupBox.Header>
+		<GroupBox Grid.Row="0" Margin="3,3,3,3" Header="Virtual Device Emulation by Nefarius">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition />

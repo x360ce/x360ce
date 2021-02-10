@@ -57,6 +57,10 @@ namespace x360ce.App
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
+
+			OptionsPanel = new OptionsControl();
+			OptionsHost.Child = OptionsPanel;
+
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 
 			// Map event handler.
@@ -83,7 +87,7 @@ namespace x360ce.App
 			Pad2TabPage.Text = "Controller 2";
 			Pad3TabPage.Text = "Controller 3";
 			Pad4TabPage.Text = "Controller 4";
-			InitMinimize();
+			InitMinimizeAndTopMost();
 			InitiInterfaceUpdate();
 			GamesToolStrip_Resize(null, null);
 			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
@@ -96,6 +100,8 @@ namespace x360ce.App
 			o.PropertyChanged += Options_PropertyChanged;
 			LoadSettings();
 		}
+
+		public OptionsControl OptionsPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -394,7 +400,7 @@ namespace x360ce.App
 		{
 			// INI setting keys with controls.
 			SettingsManager.Current.ConfigLoaded += Current_ConfigLoaded;
-			OptionsPanel.UpdateSettingsMap();
+			OptionsPanel.GeneralPanel.UpdateSettingsMap();
 			OptionsPanel.InternetPanel.UpdateSettingsMap();
 		}
 
@@ -687,7 +693,7 @@ namespace x360ce.App
 		private void UpdateForm1()
 		{
 			//if (DesignMode) return;
-			OptionsPanel.InitOptions();
+			OptionsPanel.GeneralPanel.InitOptions();
 			// Set status.
 			StatusSaveLabel.Visible = false;
 			StatusEventsLabel.Visible = false;

@@ -37,7 +37,7 @@ namespace x360ce.App.Issues
 			ControlsHelper.BeginInvoke(() =>
 			{
 				MainForm.Current.MainTabControl.SelectedTab = MainForm.Current.OptionsTabPage;
-				MainForm.Current.OptionsPanel.MainTabControl.SelectedTab = MainForm.Current.OptionsPanel.HidGuardianTabPage;
+				MainForm.Current.OptionsPanel.MainTabControl.SelectedItem = MainForm.Current.OptionsPanel.HidGuardianTabPage;
 			});
 			//Program.RunElevated(AdminCommand.InstallHidGuardian);
 			//ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();

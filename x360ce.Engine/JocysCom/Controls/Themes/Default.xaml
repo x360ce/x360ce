@@ -21,6 +21,12 @@
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 	</Style>
 
+	<!--  GroupBox  -->
+
+	<Style TargetType="GroupBox">
+		<Setter Property="Margin" Value="4" />
+	</Style>
+
 	<!--  StackPanel  -->
 
 	<Style x:Name="Container" TargetType="StackPanel">
@@ -150,6 +156,14 @@
 	<Style x:Key="ComboBoxDefault" TargetType="ComboBox">
 		<Setter Property="Margin" Value="3,3,3,3" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+		<Style.Triggers>
+			<Trigger Property="IsEditable" Value="True">
+				<Setter Property="Padding" Value="3,3,3,3" />
+			</Trigger>
+			<Trigger Property="IsEditable" Value="False">
+				<Setter Property="Padding" Value="-2,-2,-2,-2" />
+			</Trigger>
+		</Style.Triggers>
 	</Style>
 
 	<Style BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox" />

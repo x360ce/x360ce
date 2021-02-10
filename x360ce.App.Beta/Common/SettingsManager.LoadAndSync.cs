@@ -33,9 +33,11 @@ namespace x360ce.App
 		{
 			if (controlProperty == null)
 			{
+				if (control is System.Windows.Controls.TextBox)
+					controlProperty = System.Windows.Controls.TextBox.TextProperty;
 				if (control is System.Windows.Controls.CheckBox)
 					controlProperty = System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty;
-				if (control is System.Windows.Controls.ComboBox)
+				if (control is System.Windows.Controls.ComboBox || control is System.Windows.Controls.ListBox)
 					controlProperty = System.Windows.Controls.Primitives.Selector.SelectedValueProperty;
 				if (control is Xceed.Wpf.Toolkit.IntegerUpDown)
 					controlProperty = Xceed.Wpf.Toolkit.IntegerUpDown.ValueProperty;
@@ -98,7 +100,7 @@ namespace x360ce.App
 			control.DataBindings.Add(binding);
 		}
 
-		public static void LoadAndMonitor(Expression<Func<Options, object>> setting, object control, object dataSource = null)
+		public static void LoadAndMonitor(Expression<Func<Options, object>> setting, object control, System.Collections.IEnumerable dataSource = null)
 		{
 			var o = Options;
 			lock (LoadAndSyncLock)
@@ -130,6 +132,11 @@ namespace x360ce.App
 			{
 				if (dataSource != null)
 					lb.DataSource = dataSource;
+			}
+			else if (control is System.Windows.Controls.ListBox wcLb)
+			{
+				if (dataSource != null)
+					wcLb.ItemsSource = dataSource;
 			}
 			// Attach monitoring events.
 			else if (control is CheckBox chb)

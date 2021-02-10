@@ -266,6 +266,12 @@
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\OptionsControl.xaml.cs">
+      <DependentUpon>OptionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\OptionsGeneralControl.xaml.cs">
+      <DependentUpon>OptionsGeneralControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\OptionsHidGuardianControl.xaml.cs">
       <DependentUpon>OptionsHidGuardianControl.xaml</DependentUpon>
     </Compile>
@@ -395,12 +401,6 @@
     <Compile Include="Forms\NewDeviceForm.Designer.cs">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\OptionsUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\OptionsUserControl.Designer.cs">
-      <DependentUpon>OptionsUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\PadControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -506,9 +506,6 @@
     <EmbeddedResource Include="Forms\NewDeviceForm.resx">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\OptionsUserControl.resx">
-      <DependentUpon>OptionsUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\PadControl.resx">
       <DependentUpon>PadControl.cs</DependentUpon>
@@ -766,6 +763,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\DebugControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\OptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\OptionsGeneralControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

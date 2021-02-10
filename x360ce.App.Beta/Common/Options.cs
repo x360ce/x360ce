@@ -62,9 +62,17 @@ namespace x360ce.App
 		}
 		public string AppVersion { get; set; }
 
+
+		[DefaultValue(false), Description("Throw or suspend errors.")]
+		public bool DebugMode { get { return _DebugMode; } set { _DebugMode = value; OnPropertyChanged(); } }
+		bool _DebugMode;
+
+
 		[DefaultValue(false), Description("Allow only one instance of the application to run at a time.")]
 		public bool AllowOnlyOneCopy { get { return _AllowOnlyOneCopy; } set { _AllowOnlyOneCopy = value; OnPropertyChanged(); } }
 		bool _AllowOnlyOneCopy;
+
+
 
 		[DefaultValue(false), Description("Make program Top Window")]
 		public bool AlwaysOnTop { get { return _AlwaysOnTop; } set { _AlwaysOnTop = value; OnPropertyChanged(); } }

@@ -1,0 +1,141 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.OptionsGeneralControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:x360ce.App.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Width="600"
+	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<WrapPanel>
+			<GroupBox Header="Operation">
+				<StackPanel>
+					<CheckBox Name="AllowOnlyOneCopyCheckBox" Content="Allow only one copy of Application at a time" />
+					<CheckBox Name="IsProcessDPIAwareCheckBox" Content="Make Application Process DPI Aware" />
+					<CheckBox Name="AlwaysOnTopCheckBox" Content="Always on Top" />
+					<CheckBox Name="MinimizeToTrayCheckBox" Content="Minimize to Tray" />
+					<CheckBox Name="StartWithWindowsCheckBox" Content="Start with Windows:" />
+					<ComboBox Name="StartWithWindowsStateComboBox" MinWidth="75" HorizontalAlignment="Left" />
+				</StackPanel>
+			</GroupBox>
+			<GroupBox Header="Testing and Logging">
+				<StackPanel>
+					<CheckBox Name="ShowSettingsTabCheckBox" Content="Show [Settings] Tab" />
+					<CheckBox Name="ShowDevicesTabCheckBox" Content="Show [Devices] Tab" />
+					<CheckBox Name="ShowProgramsTabCheckBox" Content="Show [Programs] Tab" />
+					<CheckBox Name="XInputEnableCheckBox" Content="Enable XInput" />
+					<CheckBox Name="DebugModeCheckBox" Content="Debug Mode" />
+				</StackPanel>
+			</GroupBox>
+			<GroupBox Header="Direct Input Devices">
+				<StackPanel>
+					<CheckBox Name="ExcludeVirtualDevicesCheckBox" Content="Exclude Virtual Devices" />
+					<CheckBox Name="ExcludeSupplementalDevicesCheckBox" Content="Exclude Supplemental Devices" />
+					<CheckBox Name="UseDeviceBufferedDataCheckBox" Content="Use Device Buffered Data" />
+				</StackPanel>
+			</GroupBox>
+			<GroupBox Header="Guide Button">
+				<StackPanel VerticalAlignment="Top" Orientation="Horizontal">
+					<Label Name="GuideButtonActionLabel" VerticalAlignment="Center" Content="Action:" />
+					<TextBox Name="GuideButtonActionTextBox" MinWidth="150" VerticalAlignment="Center" />
+				</StackPanel>
+			</GroupBox>
+			<GroupBox Header="Developing">
+				<StackPanel>
+					<CheckBox Name="ShowTestButtonCheckBox" Content="Show [Test...] Button" />
+					<CheckBox Name="ShowFormInfoCheckBox" Content="Show Form Info on CTRL+SHIFT+RButton" />
+				</StackPanel>
+			</GroupBox>
+			<GroupBox Header="Configuration">
+				<StackPanel VerticalAlignment="Top">
+					<CheckBox Name="AutoDetectForegroundWindowCheckBox" Content="Auto switch configuration when game focused" />
+					<CheckBox Name="IncludeProductsCheckBox" Content="Include [Products]" />
+					<StackPanel Orientation="Horizontal">
+						<Label Name="ConfigurationVersionLabel" VerticalAlignment="Center" Content="Version:" />
+						<TextBox
+							Name="ConfigurationVersionTextBox"
+							MinWidth="75"
+							VerticalAlignment="Center"
+							IsEnabled="False" />
+					</StackPanel>
+
+				</StackPanel>
+			</GroupBox>
+			<TabControl x:Name="MainTabControl" Margin="3,3,3,3" Padding="0,0,0,0">
+				<TabItem x:Name="SettingsTabPage" Header="Game Scan Locations">
+					<StackPanel>
+						<Grid VerticalAlignment="Stretch">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="*" />
+							</Grid.RowDefinitions>
+							<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
+								<ToolBar Style="{StaticResource MainToolBar}">
+									<Button
+										Name="LocationAddButton"
+										HorizontalAlignment="Right"
+										Click="LocationAddButton_Click"
+										Style="{StaticResource ToolBarButton}">
+										<StackPanel Style="{StaticResource ButtonStackPanel}">
+											<ContentControl Content="{StaticResource Icon_add}" Style="{StaticResource ButtonContentControl}" />
+											<Label Content="Add..." Style="{StaticResource ButtonLabel}" />
+										</StackPanel>
+									</Button>
+									<Button
+										Name="LocationRemoveButton"
+										HorizontalAlignment="Right"
+										Click="LocationRemoveButton_Click"
+										Style="{StaticResource ToolBarButton}">
+										<StackPanel Style="{StaticResource ButtonStackPanel}">
+											<ContentControl Content="{StaticResource Icon_remove}" Style="{StaticResource ButtonContentControl}" />
+											<Label Content="Remove" Style="{StaticResource ButtonLabel}" />
+										</StackPanel>
+									</Button>
+									<Button
+										Name="LocationRefreshButton"
+										HorizontalAlignment="Right"
+										Click="LocationRefreshButton_Click"
+										Style="{StaticResource ToolBarButton}">
+										<StackPanel Style="{StaticResource ButtonStackPanel}">
+											<ContentControl Content="{StaticResource Icon_Refresh}" Style="{StaticResource ButtonContentControl}" />
+											<Label Content="Refresh" Style="{StaticResource ButtonLabel}" />
+										</StackPanel>
+									</Button>
+								</ToolBar>
+							</ToolBarPanel>
+							<Border
+								Grid.Row="1"
+								Height="1"
+								BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+								BorderThickness="1"
+								SnapsToDevicePixels="True" />
+							<ListBox
+								Name="GameScanLocationsListBox"
+								Grid.Row="1"
+								Width="480"
+								Height="100"
+								BorderThickness="0" />
+						</Grid>
+					</StackPanel>
+				</TabItem>
+			</TabControl>
+
+			<Button
+				Name="DeveloperToolsButton"
+				HorizontalAlignment="Left"
+				VerticalAlignment="Bottom"
+				Content="Developer Tools..." />
+		</WrapPanel>
+	</Grid>
+</UserControl>
