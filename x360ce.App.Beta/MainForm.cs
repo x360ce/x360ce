@@ -1057,14 +1057,14 @@ namespace x360ce.App
 
 		#region Update Form
 
-		private Forms.UpdateForm _UpdateForm;
+		private Forms.UpdateWindow _UpdateWindow;
 		private readonly object UpdateFormLock = new object();
 
 		private void InitUpdateForm()
 		{
 			lock (UpdateFormLock)
 			{
-				_UpdateForm = new Forms.UpdateForm();
+				_UpdateWindow = new Forms.UpdateWindow();
 			}
 		}
 
@@ -1072,11 +1072,7 @@ namespace x360ce.App
 		{
 			lock (UpdateFormLock)
 			{
-				if (_UpdateForm != null)
-				{
-					_UpdateForm.Dispose();
-					_UpdateForm = null;
-				}
+				_UpdateWindow = null;
 			}
 		}
 
@@ -1084,15 +1080,16 @@ namespace x360ce.App
 		{
 			lock (UpdateFormLock)
 			{
-				if (_UpdateForm == null)
+				if (_UpdateWindow == null)
 					return null;
 				var oldTab = MainTabControl.SelectedTab;
 				MainTabControl.SelectedTab = CloudTabPage;
-				_UpdateForm.StartPosition = FormStartPosition.CenterParent;
-				_UpdateForm.OpenDialog();
-				ControlsHelper.CheckTopMost(_UpdateForm);
-				var result = _UpdateForm.ShowDialog();
-				_UpdateForm.CloseDialog();
+
+				ControlsHelper.CenterWindowOnApplication(_UpdateWindow);
+				_UpdateWindow.OpenDialog();
+				ControlsHelper.CheckTopMost(_UpdateWindow);
+				var result = _UpdateWindow.ShowDialog();
+				_UpdateWindow.CloseDialog();
 				MainTabControl.SelectedTab = oldTab;
 				return null;
 			}
@@ -1102,9 +1099,9 @@ namespace x360ce.App
 		{
 			lock (UpdateFormLock)
 			{
-				if (_UpdateForm == null)
+				if (_UpdateWindow == null)
 					return;
-				_UpdateForm.Step2ProcessUpdateResults(results);
+				_UpdateWindow.Step2ProcessUpdateResults(results);
 			}
 		}
 

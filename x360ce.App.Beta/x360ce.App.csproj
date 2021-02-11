@@ -257,11 +257,8 @@
       <DependentUpon>DebugControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\IBaseWithHeaderControl.cs" />
-    <Compile Include="Controls\LogUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\LogUserControl.Designer.cs">
-      <DependentUpon>LogUserControl.cs</DependentUpon>
+    <Compile Include="Controls\LogControl.xaml.cs">
+      <DependentUpon>LogControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\JcDataGridView.cs">
       <SubType>Component</SubType>
@@ -413,11 +410,8 @@
     <Compile Include="Controls\PadTabPages\GamesControl.Designer.cs">
       <DependentUpon>GamesControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UpdateForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\UpdateForm.Designer.cs">
-      <DependentUpon>UpdateForm.cs</DependentUpon>
+    <Compile Include="Forms\UpdateWindow.xaml.cs">
+      <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\UserDevicesWindow.xaml.cs">
       <DependentUpon>UserDevicesWindow.xaml</DependentUpon>
@@ -471,9 +465,6 @@
     <EmbeddedResource Include="Controls\AxisToButtonUserControl.resx">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\LogUserControl.resx">
-      <DependentUpon>LogUserControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Controls\ProgramsGridUserControl.resx">
       <DependentUpon>ProgramsGridUserControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -513,9 +504,6 @@
     <EmbeddedResource Include="Controls\PadTabPages\GamesControl.resx">
       <DependentUpon>GamesControl.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UpdateForm.resx">
-      <DependentUpon>UpdateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WebBrowserForm.resx">
       <DependentUpon>WebBrowserForm.cs</DependentUpon>
@@ -766,6 +754,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\LogControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\OptionsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -835,6 +827,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Forms\LoadPresetsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Forms\UpdateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

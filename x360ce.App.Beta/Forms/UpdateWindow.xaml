@@ -1,0 +1,62 @@
+﻿<Window
+	x:Class="x360ce.App.Forms.UpdateWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:x360ce.App.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Title="X360CE - Update"
+	Width="480"
+	Height="240"
+	Closing="Window_Closing"
+	Loaded="Window_Loaded"
+	mc:Ignorable="d">
+	<Window.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Window.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+		</Grid.ColumnDefinitions>
+		<controls:LogControl x:Name="LogPanel" Grid.Row="0" Grid.ColumnSpan="2" />
+		<StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal">
+			<Button
+				Name="CheckButton"
+				Margin="0,0,0,0"
+				Click="CheckButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_refresh}" Style="{StaticResource ButtonContentControl}" />
+					<Label Content="Check..." Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+			<CheckBox x:Name="CheckDigitalSignatureCheckBox" Margin="8,0,0,0" Content="Check Digital Signature" />
+			<CheckBox x:Name="CheckVersionCheckBox" Margin="8,0,0,0" Content="Check Version" />
+		</StackPanel>
+		<StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+			<Button
+				Name="CloseButton"
+				Margin="8,0,0,0"
+				Click="CloseButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_door_exit}" Style="{StaticResource ButtonContentControl}" />
+					<Label Content="Close" Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+
+
+	</Grid>
+</Window>
