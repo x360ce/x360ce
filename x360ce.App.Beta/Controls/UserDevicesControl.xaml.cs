@@ -64,7 +64,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		async Task RefreshMapDeviceToList()
+		Task RefreshMapDeviceToList()
 		{
 			var list = new SortableBindingList<UserDevice>();
 			// Exclude System/Virtual devices.
@@ -82,6 +82,7 @@ namespace x360ce.App.Controls
 				AttachDataSource(list);
 			else if (_currentData.Count != list.Count)
 				CollectionsHelper.Synchronize(list, _currentData);
+			return null;
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -92,7 +93,7 @@ namespace x360ce.App.Controls
 				e.ListChangedType == ListChangedType.ItemDeleted
 			)
 				// Update list.
-				RefreshMapDeviceToList();
+				RefreshMapDeviceToList().ConfigureAwait(true);
 		}
 
 		//private void MainDataGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -187,7 +188,6 @@ namespace x360ce.App.Controls
 		public void ImportAndBindItems(IList<UserDevice> items)
 		{
 			var grid = MainDataGrid;
-			var key = nameof(UserDevice.InstanceGuid);
 			var list = SettingsManager.UserDevices.Items;
 			//var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, key);
 			var newItems = items.ToArray();

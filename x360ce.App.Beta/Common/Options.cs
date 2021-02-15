@@ -62,6 +62,7 @@ namespace x360ce.App
 		}
 		public string AppVersion { get; set; }
 
+		public string SettingsVersion { get; set; } = "4";
 
 		[DefaultValue(false), Description("Throw or suspend errors.")]
 		public bool DebugMode { get { return _DebugMode; } set { _DebugMode = value; OnPropertyChanged(); } }

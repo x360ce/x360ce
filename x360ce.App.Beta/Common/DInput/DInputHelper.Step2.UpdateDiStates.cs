@@ -12,7 +12,7 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
-		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector)
+		void UpdateDiStates(UserGame game, DeviceDetector detector)
 		{
 			// Get all mapped user devices.
 			var userDevices = SettingsManager.GetMappedDevices(game?.FileName);

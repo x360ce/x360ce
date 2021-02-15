@@ -13,7 +13,7 @@ insert_final_newline = true
 indent_style = tab
 indent_size = 4
 
-# Trim trailing whitespaces
+# Trim trailing white spaces
 [*.{c,h,def,txt}]
 trim_trailing_whitespace = true
 

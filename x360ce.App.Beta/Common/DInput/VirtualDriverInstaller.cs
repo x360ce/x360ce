@@ -34,10 +34,10 @@ namespace x360ce.App.DInput
 			return Path.Combine(baseDirectory, "Program Files", "ViGEm ViGEmBus");
 		}
 
-		static void ExtractViGemBusFiles(bool overwrite)
+		static void ExtractViGemBusFiles()
 		{
 			var target = GetViGEmBusPath();
-			ExtractViGemFiles("ViGEmBus", target, overwrite);
+			ExtractViGemFiles("ViGEmBus", target);
 		}
 
 		public static string[] ViGEmBusHardwareIds = { "Root\\ViGEmBus", "Nefarius\\ViGEmBus\\Gen1" };
@@ -50,7 +50,7 @@ namespace x360ce.App.DInput
 		public static void InstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
-			ExtractViGemBusFiles(true);
+			ExtractViGemBusFiles();
 			var folder = GetViGEmBusPath();
 			var exePath = Path.Combine(folder, GetDevConPath());
 			var osString = JocysCom.ClassLibrary.Controls.IssuesControl.IssueHelper.GetRealOSVersion().Major >= 10
@@ -70,7 +70,7 @@ namespace x360ce.App.DInput
 		public static void UninstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
-			ExtractViGemBusFiles(false);
+			ExtractViGemBusFiles();
 			var folder = GetViGEmBusPath();
 			var exePath = Path.Combine(folder, GetDevConPath());
 			// Remove all old instances.
@@ -93,10 +93,10 @@ namespace x360ce.App.DInput
 			return Path.Combine(baseDirectory, "Program Files", "ViGEm HidGuardian");
 		}
 
-		static void ExtractHidGuardianFiles(bool overwrite)
+		static void ExtractHidGuardianFiles()
 		{
 			var target = GetHidGuardianPath();
-			ExtractViGemFiles("HidGuardian", target, overwrite);
+			ExtractViGemFiles("HidGuardian", target);
 		}
 
 		/// <summary>
@@ -106,7 +106,7 @@ namespace x360ce.App.DInput
 		public static void InstallHidGuardian(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
-			ExtractHidGuardianFiles(true);
+			ExtractHidGuardianFiles();
 			var folder = GetHidGuardianPath();
 			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
 			var infFile = string.Format("{0}\\{1}", paString, "HidGuardian.inf");
@@ -134,7 +134,7 @@ namespace x360ce.App.DInput
 		public static void UninstallHidGuardian(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
-			ExtractHidGuardianFiles(false);
+			ExtractHidGuardianFiles();
 			var folder = GetHidGuardianPath();
 			var exePath = Path.Combine(folder, GetDevConPath());
 			UacHelper.RunElevated(
@@ -161,7 +161,7 @@ namespace x360ce.App.DInput
 		public static void UnInstallDevice(string deviceId, ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
-			ExtractHidGuardianFiles(true);
+			ExtractHidGuardianFiles();
 			var folder = GetHidGuardianPath();
 			var exePath = Path.Combine(folder, GetDevConPath());
 			UacHelper.RunElevated(
@@ -182,7 +182,7 @@ namespace x360ce.App.DInput
 		/// <param name="source">Resource prefix.</param>
 		/// <param name="target">Target folder to extract.</param>
 		/// <param name="overwrite">Overwrite files at target.</param>
-		static void ExtractViGemFiles(string source, string target, bool overwrite)
+		static void ExtractViGemFiles(string source, string target)
 		{
 			// Get list of resources to extract.
 			var assembly = Assembly.GetEntryAssembly();

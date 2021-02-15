@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -27,7 +26,8 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-
+			AxisToButtonsListPanel = new x360ce.App.Controls.AxisToButtonListControl();
+			AxistToButtonsListHost.Child = AxisToButtonsListPanel;
 			// Add controls which must be notified on setting selection change.
 			UserMacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
@@ -55,20 +55,20 @@ namespace x360ce.App.Controls
 			//MappedDevicesDataGridView.Left = -1;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
 			// Axis to Button DeadZones
-			AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
-			AxisToButtonBDeadZonePanel.MonitorComboBox = ButtonBComboBox;
-			AxisToButtonXDeadZonePanel.MonitorComboBox = ButtonXComboBox;
-			AxisToButtonYDeadZonePanel.MonitorComboBox = ButtonYComboBox;
-			AxisToButtonStartDeadZonePanel.MonitorComboBox = ButtonStartComboBox;
-			AxisToButtonBackDeadZonePanel.MonitorComboBox = ButtonBackComboBox;
-			AxisToLeftShoulderDeadZonePanel.MonitorComboBox = LeftShoulderComboBox;
-			AxisToLeftThumbButtonDeadZonePanel.MonitorComboBox = LeftThumbButtonComboBox;
-			AxisToRightShoulderDeadZonePanel.MonitorComboBox = RightShoulderComboBox;
-			AxisToRightThumbButtonDeadZonePanel.MonitorComboBox = RightThumbButtonComboBox;
-			AxisToDPadDownDeadZonePanel.MonitorComboBox = DPadDownComboBox;
-			AxisToDPadLeftDeadZonePanel.MonitorComboBox = DPadLeftComboBox;
-			AxisToDPadRightDeadZonePanel.MonitorComboBox = DPadRightComboBox;
-			AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
+			AxisToButtonsListPanel.AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
+			AxisToButtonsListPanel.AxisToButtonBDeadZonePanel.MonitorComboBox = ButtonBComboBox;
+			AxisToButtonsListPanel.AxisToButtonXDeadZonePanel.MonitorComboBox = ButtonXComboBox;
+			AxisToButtonsListPanel.AxisToButtonYDeadZonePanel.MonitorComboBox = ButtonYComboBox;
+			AxisToButtonsListPanel.AxisToButtonStartDeadZonePanel.MonitorComboBox = ButtonStartComboBox;
+			AxisToButtonsListPanel.AxisToButtonBackDeadZonePanel.MonitorComboBox = ButtonBackComboBox;
+			AxisToButtonsListPanel.AxisToLeftShoulderDeadZonePanel.MonitorComboBox = LeftShoulderComboBox;
+			AxisToButtonsListPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorComboBox = LeftThumbButtonComboBox;
+			AxisToButtonsListPanel.AxisToRightShoulderDeadZonePanel.MonitorComboBox = RightShoulderComboBox;
+			AxisToButtonsListPanel.AxisToRightThumbButtonDeadZonePanel.MonitorComboBox = RightThumbButtonComboBox;
+			AxisToButtonsListPanel.AxisToDPadDownDeadZonePanel.MonitorComboBox = DPadDownComboBox;
+			AxisToButtonsListPanel.AxisToDPadLeftDeadZonePanel.MonitorComboBox = DPadLeftComboBox;
+			AxisToButtonsListPanel.AxisToDPadRightDeadZonePanel.MonitorComboBox = DPadRightComboBox;
+			AxisToButtonsListPanel.AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
 			// Load Settings and enable events.
 			UpdateGetXInputStatesWithNoEvents();
 			// Monitor option changes.
@@ -77,6 +77,10 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 
 		}
+
+
+		public AxisToButtonListControl AxisToButtonsListPanel;
+
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
 			UpdateControlFromDInput();
@@ -175,7 +179,7 @@ namespace x360ce.App.Controls
 				//_Imager.DrawController(e, MappedTo);
 				// Process all buttons and axis.
 				foreach (var ii in imageInfos)
-					_Imager.DrawState(ii, newState.Gamepad, CurrentCbx);
+					_Imager.DrawState(ii, newState.Gamepad);
 			}
 			// Set values.
 			ControlsHelper.SetText(LeftTriggerTextBox, "{0}", newState.Gamepad.LeftTrigger);
@@ -216,11 +220,10 @@ namespace x360ce.App.Controls
 					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
 			}
 			// Update Axis to Button Images.
-			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
+			var AxisToButtonControls = ControlsHelper.GetAll<AxisToButtonControl>(AxisToButtonsListPanel.MainGroupBox);
 			foreach (var atbPanel in AxisToButtonControls)
-				atbPanel.Refresh(newState, _Imager.markB);
+				atbPanel.Refresh(newState);
 			// Store old state.
-			oldState = newState;
 			oldConnected = newConnected;
 		}
 
@@ -370,12 +373,6 @@ namespace x360ce.App.Controls
 			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));
 			foreach (var item in playerTypes)
 				playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
-			PassThroughIndexComboBox.DataSource = new BindingSource(playerOptions, null); // Otherwise changing one changes the other
-			PassThroughIndexComboBox.DisplayMember = "Key";
-			PassThroughIndexComboBox.ValueMember = "Value";
-			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
-			CombinedIndexComboBox.DisplayMember = "Key";
-			CombinedIndexComboBox.ValueMember = "Value";
 			// Attach drop down menu with record and map choices.
 			var comboBoxes = new List<ComboBox>();
 			GetAllControls(GeneralTabPage, ref comboBoxes);
@@ -642,10 +639,11 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.ProductName, DirectInputPanel.DeviceProductNameTextBox);
 			AddMap(() => SettingName.ProductGuid, DirectInputPanel.DeviceProductGuidTextBox);
 			AddMap(() => SettingName.InstanceGuid, DirectInputPanel.DeviceInstanceGuidTextBox);
+
 			AddMap(() => SettingName.GamePadType, DeviceSubTypeComboBox);
 			AddMap(() => SettingName.PassThrough, PassThroughCheckBox);
 			AddMap(() => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox);
-			AddMap(() => SettingName.PassThroughIndex, PassThroughIndexComboBox);
+
 			// Mapping
 			AddMap(() => SettingName.MapToPad, DirectInputPanel.MapToPadComboBox);
 			// Left Trigger
@@ -658,31 +656,50 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);
 			AddMap(() => SettingName.RightTriggerAntiDeadZone, RightTriggerUserControl.AntiDeadZoneNumericUpDown);
 			AddMap(() => SettingName.RightTriggerLinear, RightTriggerUserControl.SensitivityNumericUpDown);
-			// Combining
-			AddMap(() => SettingName.Combined, CombinedCheckBox);
-			AddMap(() => SettingName.CombinedIndex, CombinedIndexComboBox);
 			// D-Pad
 			AddMap(() => SettingName.DPad, DPadComboBox, MapCode.DPad);
 			AddMap(() => SettingName.DPadUp, DPadUpComboBox, MapCode.DPadUp);
 			AddMap(() => SettingName.DPadDown, DPadDownComboBox, MapCode.DPadDown);
 			AddMap(() => SettingName.DPadLeft, DPadLeftComboBox, MapCode.DPadLeft);
 			AddMap(() => SettingName.DPadRight, DPadRightComboBox, MapCode.DPadRight);
+
+
+
 			// Axis To Button
-			AddMap(() => SettingName.ButtonADeadZone, AxisToButtonADeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.ButtonBDeadZone, AxisToButtonBDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.ButtonXDeadZone, AxisToButtonXDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.ButtonYDeadZone, AxisToButtonYDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.ButtonStartDeadZone, AxisToButtonStartDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.ButtonBackDeadZone, AxisToButtonBackDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.LeftShoulderDeadZone, AxisToLeftShoulderDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.LeftThumbButtonDeadZone, AxisToLeftThumbButtonDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.RightShoulderDeadZone, AxisToRightShoulderDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.RightThumbButtonDeadZone, AxisToRightThumbButtonDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.ButtonADeadZone, new NumericUpDown());
+			AddMap(() => SettingName.ButtonBDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.ButtonXDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.ButtonYDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.ButtonStartDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.ButtonBackDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.LeftShoulderDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.LeftThumbButtonDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.RightShoulderDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.RightThumbButtonDeadZone, new NumericUpDown());
 			// Axis To D-Pad (separate directions).
-			AddMap(() => SettingName.DPadDownDeadZone, AxisToDPadDownDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.DPadLeftDeadZone, AxisToDPadLeftDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.DPadRightDeadZone, AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown);
-			AddMap(() => SettingName.DPadUpDeadZone, AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown);
+			AddMap(() => SettingName.DPadDownDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.DPadLeftDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.DPadRightDeadZone, new NumericUpDown());
+			AddMap(() => SettingName.DPadUpDeadZone, new NumericUpDown());
+
+
+
+			//// Axis To Button
+			//AddMap(() => SettingName.ButtonADeadZone, AxisToButtonsListPanel.AxisToButtonADeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.ButtonBDeadZone, AxisToButtonsListPanel.AxisToButtonBDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.ButtonXDeadZone, AxisToButtonsListPanel.AxisToButtonXDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.ButtonYDeadZone, AxisToButtonsListPanel.AxisToButtonYDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.ButtonStartDeadZone, AxisToButtonsListPanel.AxisToButtonStartDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.ButtonBackDeadZone, AxisToButtonsListPanel.AxisToButtonBackDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.LeftShoulderDeadZone, AxisToButtonsListPanel.AxisToLeftShoulderDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.LeftThumbButtonDeadZone, AxisToButtonsListPanel.AxisToLeftThumbButtonDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.RightShoulderDeadZone, AxisToButtonsListPanel.AxisToRightShoulderDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.RightThumbButtonDeadZone, AxisToButtonsListPanel.AxisToRightThumbButtonDeadZonePanel.DeadZoneNumericUpDown);
+			//// Axis To D-Pad (separate directions).
+			//AddMap(() => SettingName.DPadDownDeadZone, AxisToButtonsListPanel.AxisToDPadDownDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.DPadLeftDeadZone, AxisToButtonsListPanel.AxisToDPadLeftDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.DPadRightDeadZone, AxisToButtonsListPanel.AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown);
+			//AddMap(() => SettingName.DPadUpDeadZone, AxisToButtonsListPanel.AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown);
 			// Axis To D-Pad.
 			AddMap(() => SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
 			AddMap(() => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
@@ -756,12 +773,8 @@ namespace x360ce.App.Controls
 			// Is Pass Through enabled?
 			bool fullPassThrough = PassThroughCheckBox.Checked;
 			bool forcesPassThrough = ForceFeedbackPassThroughCheckBox.Checked;
-
 			// If full pass-through mode is turned on, changing forces pass-through has no effect.
 			ForceFeedbackPassThroughCheckBox.Enabled = !fullPassThrough;
-
-			// Pass Through index is enabled if either pass through mode is enabled
-			PassThroughIndexComboBox.Enabled = (fullPassThrough || forcesPassThrough);
 		}
 
 		/// <summary>
@@ -812,7 +825,6 @@ namespace x360ce.App.Controls
 			foreach (var p in properties)
 			{
 				var map = maps.First(x => x.PropertyName == p.Name);
-				var key = map.IniPath.Split('\\')[1];
 				// Get setting value from the form.
 				var v = SettingsManager.Current.GetSettingValue(map.Control);
 				// Set value onto padSetting.
@@ -838,7 +850,6 @@ namespace x360ce.App.Controls
 		#endregion
 
 		// Old XInput state.
-		State oldState;
 		bool oldConnected;
 		// Current XInput state.
 		State newState;
@@ -849,7 +860,7 @@ namespace x360ce.App.Controls
 		public float FloatToByte(float v)
 		{
 			// -1 to 1 int16.MinValue int16.MaxValue.
-			return (Byte)Math.Round((double)v * (double)Byte.MaxValue);
+			return (byte)Math.Round(v * byte.MaxValue);
 		}
 
 		string cRecord = "[Record]";
@@ -1038,8 +1049,8 @@ namespace x360ce.App.Controls
 		void MotorPeriodTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			// Convert Direct Input Period force feedback effect parameter value.
-			int leftMotorPeriod = (int)LeftMotorPeriodTrackBar.Value * 5;
-			int rightMotorPeriod = (int)RightMotorPeriodTrackBar.Value * 5;
+			int leftMotorPeriod = LeftMotorPeriodTrackBar.Value * 5;
+			int rightMotorPeriod = RightMotorPeriodTrackBar.Value * 5;
 			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
 			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
 		}
@@ -1223,7 +1234,7 @@ namespace x360ce.App.Controls
 
 		#region Mapped Devices
 
-		async private void AddMapButton_Click(object sender, EventArgs e)
+		private void AddMapButton_Click(object sender, EventArgs e)
 		{
 			var game = SettingsManager.CurrentGame;
 			// Return if game is not selected.
@@ -1246,7 +1257,6 @@ namespace x360ce.App.Controls
 				EnableButton_Click(null, null);
 			}
 			SettingsManager.Current.RaiseSettingsChanged(null);
-
 		}
 
 		private void RemoveMapButton_Click(object sender, EventArgs e)
@@ -1566,5 +1576,9 @@ namespace x360ce.App.Controls
 			StartRecording();
 		}
 
+		private void AxisToButtonYDeadZonePanel_Load(object sender, EventArgs e)
+		{
+
+		}
 	}
 }

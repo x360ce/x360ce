@@ -155,7 +155,7 @@ namespace Nefarius.ViGEm.Client
 		/// Check ViGEm client. Create if not exists.
 		/// </summary>
 		/// <returns></returns>
-		public static bool isVBusExists(bool createIfMissing = false)
+		public static bool isVBusExists()
 		{
 			lock (ClientLock)
 			{

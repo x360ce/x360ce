@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using x360ce.Engine.Data;
 
 namespace x360ce.Engine
 {
@@ -32,7 +33,6 @@ namespace x360ce.Engine
 		}
 
 		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
-		static public string DefaultVersion { get { return "2"; } }
 
 		// [Options] section.
 		[DefaultValue("1"), Description("Beep when initialized. 0 = OFF, 1 = ON.")]
@@ -70,10 +70,6 @@ namespace x360ce.Engine
 
 		[DefaultValue("0"), Description("Allow multiple controllers to be combined into a virtual controller. 0 = OFF, 1 = ON.")]
 		static public string CombineEnabled { get { return "CombineEnabled"; } }
-
-		// [InputHook] section.
-		[DefaultValue("1"), Description("WMI API patching. 0 = Disabled, 1 = USB Only, 2 = USB and HID.")]
-		static public string HookMode { get { return "HookMode"; } }
 
 		[DefaultValue("0x28E"), Description("FakePID. Works in conjunction with HOOKPIDVID.")]
 		static public string FakePID { get { return "FakePID"; } }
@@ -114,18 +110,6 @@ namespace x360ce.Engine
 
 		[DefaultValue("0"), Description("Bypass x360ce for vibration data only. The controller still participates in mappings, deadzones, etc. 0 = OFF, 1 = ON.")]
 		static public string ForcesPassThrough { get { return "ForcesPassThrough"; } }
-
-		[DefaultValue("0"), Description("The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.")]
-		static public string PassThroughIndex { get { return "PassThroughIndex"; } }
-
-
-		// Combining
-		[DefaultValue("0"), Description("Allow this controller to be combined into another virtual controller. 0 = OFF, 1 = ON.")]
-		static public string Combined { get { return "Combined"; } }
-
-		[DefaultValue("0"), Description("The player that virtual controller will be mapped to. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.")]
-		static public string CombinedIndex { get { return "CombinedIndex"; } }
-
 
 		// Default Mapping.
 		[DefaultValue("0"), Description("Index of the PAD which this controller will map to. Auto = 0 or PAD Index 1-4.")]
@@ -380,33 +364,33 @@ namespace x360ce.Engine
 
 		public static bool IsButton(string name)
 		{
-			return name == LeftThumbButton
-				|| name == LeftThumbUp
-				|| name == LeftThumbRight
-				|| name == LeftThumbDown
-				|| name == LeftThumbLeft
-				|| name == RightThumbButton
-				|| name == RightThumbUp
-				|| name == RightThumbRight
-				|| name == RightThumbDown
-				|| name == RightThumbLeft;
+			return name == nameof(PadSetting.LeftThumbButton)
+				|| name == nameof(PadSetting.LeftThumbUp)
+				|| name == nameof(PadSetting.LeftThumbRight)
+				|| name == nameof(PadSetting.LeftThumbDown)
+				|| name == nameof(PadSetting.LeftThumbLeft)
+				|| name == nameof(PadSetting.RightThumbButton)
+				|| name == nameof(PadSetting.RightThumbUp)
+				|| name == nameof(PadSetting.RightThumbRight)
+				|| name == nameof(PadSetting.RightThumbDown)
+				|| name == nameof(PadSetting.RightThumbLeft);
 		}
 
 		public static bool IsDPad(string name)
 		{
-			return name == DPad
-				|| name == DPadDown
-				|| name == DPadLeft
-				|| name == DPadRight
-				|| name == DPadUp;
+			return name == nameof(PadSetting.DPad)
+				|| name == nameof(PadSetting.DPadDown)
+				|| name == nameof(PadSetting.DPadLeft)
+				|| name == nameof(PadSetting.DPadRight)
+				|| name == nameof(PadSetting.DPadUp);
 		}
 
 		public static bool IsThumbAxis(string name)
 		{
-			return name == LeftThumbAxisX
-				|| name == LeftThumbAxisY
-				|| name == RightThumbAxisX
-				|| name == RightThumbAxisY;
+			return name == nameof(PadSetting.LeftThumbAxisX)
+				|| name == nameof(PadSetting.LeftThumbAxisY)
+				|| name == nameof(PadSetting.RightThumbAxisX)
+				|| name == nameof(PadSetting.RightThumbAxisY);
 		}
 
 	}

@@ -68,7 +68,7 @@ namespace x360ce.App.Controls
 		{
 			if (updateTimer == null)
 				return;
-			var param = (int)SensitivityTrackBar.Value;
+			var param = SensitivityTrackBar.Value;
 			updateTimer.DoActionNow(param);
 			SensitivityLabel.Text = SensitivityCheckBox.Checked
 				? "Sensitivity - Make more sensitive in the center:"
@@ -118,7 +118,7 @@ namespace x360ce.App.Controls
 			MainPictureBox.BackColor = Enabled ? System.Drawing.Color.White : System.Drawing.SystemColors.Control;
 		}
 
-		// Half and Invert values are only in creating xinput path - red line.
+		// Half and Invert values are only in creating XInput path - red line.
 		bool _invert;
 		bool _half;
 
@@ -182,7 +182,7 @@ namespace x360ce.App.Controls
 			//DrawXLineLine(g, 74.5f);
 			//DrawDot(g, 74.5f, 74.5f, 0.5f, xInputPath);
 			// Draw grey line from bottom-left to top-right.
-			g.DrawLine(nInputLine, 0f, (float)h - 1f, (float)w - 1f, 0f);
+			g.DrawLine(nInputLine, 0f, h - 1f, w - 1f, 0f);
 			for (float i = 0; i <= wF; i += 0.5f)
 			{
 				var thumb =
@@ -198,7 +198,7 @@ namespace x360ce.App.Controls
 				var rounded = result >= -1f && result <= 1f;
 				// Convert XInput Y position [min;max] to image size [0;h].
 				var y = ConvertHelper.ConvertRangeF(min, max, 0f, hF, result);
-				// Put red dot where XInput dot must travel. Use radius to fix exlipse position.
+				// Put red dot where XInput dot must travel. Use radius to fix eclipse position.
 				var radius = 0.5f;
 				DrawDot(g, i, y, radius, xInputPath);
 			}
@@ -314,7 +314,7 @@ namespace x360ce.App.Controls
 			{
 				SensitivityNumericUpDown.ValueChanged -= new System.EventHandler(SensitivityNumericUpDown_ValueChanged);
 				SensitivityCheckBox.CheckedChanged -= new System.EventHandler(SensitivityCheckBox_CheckedChanged);
-				var percent = (int)control.Value;
+				var percent = control.Value;
 				var invert = SensitivityCheckBox.Checked;
 				var value = invert ? -percent : percent;
 				var percentString = string.Format("{0} % ", percent);
@@ -322,7 +322,7 @@ namespace x360ce.App.Controls
 				if (SensitivityTextBox.Text != percentString) SensitivityTextBox.Text = percentString;
 				// Update NumericUpDown.
 				if (SensitivityNumericUpDown.Value != percent) SensitivityNumericUpDown.Value = value;
-				// Update BheckBox.
+				// Update CheckBox.
 				if (SensitivityCheckBox.Checked != invert) SensitivityCheckBox.Checked = invert;
 				SensitivityCheckBox.CheckedChanged += new System.EventHandler(SensitivityCheckBox_CheckedChanged);
 				SensitivityNumericUpDown.ValueChanged += new System.EventHandler(SensitivityNumericUpDown_ValueChanged);

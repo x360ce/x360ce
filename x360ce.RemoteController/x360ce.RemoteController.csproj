@@ -82,12 +82,6 @@
     <Compile Include="..\x360ce.Engine\JocysCom\Configuration\SettingsParser.cs">
       <Link>Common\SettingsParser.cs</Link>
     </Compile>
-    <Compile Include="..\x360ce.Engine\JocysCom\Data\TlvSerializer.cs">
-      <Link>Common\TlvSerializer.cs</Link>
-    </Compile>
-    <Compile Include="..\x360ce.Engine\JocysCom\Data\TlvSerializerError.cs">
-      <Link>Common\TlvSerializerError.cs</Link>
-    </Compile>
     <Compile Include="..\x360ce.Engine\JocysCom\Runtime\RuntimeHelper.cs">
       <Link>Common\RuntimeHelper.cs</Link>
     </Compile>

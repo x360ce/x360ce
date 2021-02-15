@@ -1,0 +1,79 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.AxisToButtonControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:x360ce.App.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary Source="/x360ce;component/Resources/Icons/NavActive.xaml" />
+				<ResourceDictionary>
+					<Style x:Key="M" TargetType="{x:Type ContentControl}">
+						<Setter Property="Opacity" Value="0.6" />
+						<Setter Property="VerticalAlignment" Value="Stretch" />
+						<Setter Property="HorizontalAlignment" Value="Stretch" />
+					</Style>
+				</ResourceDictionary>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<StackPanel Orientation="Horizontal">
+		<TextBox
+			Name="MappedAxisTextBox"
+			Width="75"
+			IsReadOnly="True"
+			IsTabStop="False" />
+		<Image
+			x:Name="ArrowPictureBox"
+			Width="16"
+			Height="16"
+			IsEnabledChanged="ArrowPictureBox_IsEnabledChanged"
+			Source="arrow_right_16x16.png" />
+		<Grid>
+			<Image
+				x:Name="ButtonImagePictureBox"
+				Width="24"
+				Height="24"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				IsEnabledChanged="ButtonImagePictureBox_IsEnabledChanged"
+				Source="Button_Back.png" />
+			<ContentControl
+				Name="ButtonStatusImage"
+				Width="24"
+				Height="24"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Content="{StaticResource NavActive}"
+				Style="{StaticResource M}"
+				Visibility="Hidden" />
+		</Grid>
+		<Label
+			Name="ButtonNameLabel"
+			Width="150"
+			VerticalAlignment="Center"
+			Content="Button Name:" />
+		<Slider
+			Name="DeadZoneTrackBar"
+			Width="200"
+			VerticalAlignment="Center"
+			LargeChange="10"
+			Maximum="100" />
+		<xctk:IntegerUpDown Name="DeadZoneNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
+		<TextBox
+			Name="DeadZoneTextBox"
+			Width="43"
+			IsReadOnly="True"
+			IsTabStop="False"
+			Text="0 %"
+			TextAlignment="Right" />
+
+	</StackPanel>
+</UserControl>

@@ -30,7 +30,7 @@ namespace x360ce.App
 		{
 			var assembly = Assembly.GetExecutingAssembly();
 			var sr = assembly.GetManifestResourceStream(resourceName);
-			FileStream sw = null;
+			FileStream sw;
 			try
 			{
 				sw = new FileStream(destinationFileName, FileMode.Create, FileAccess.Write);

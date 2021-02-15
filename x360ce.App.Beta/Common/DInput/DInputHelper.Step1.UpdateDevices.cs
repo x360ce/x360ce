@@ -17,7 +17,6 @@ namespace x360ce.App.DInput
 
 		#endregion
 
-		object UpdateDevicesLock = new object();
 		public int RefreshDevicesCount;
 
 		void UpdateDiDevices(DirectInput manager)

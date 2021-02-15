@@ -176,13 +176,12 @@ namespace x360ce.App
 			foreach (var p in properties)
 			{
 				var map = maps.First(x => x.PropertyName == p.Name);
-				var key = map.IniPath.Split('\\')[1];
 				var v = (string)p.GetValue(ps, null) ?? "";
 				// If value is not set then...
 				if (string.IsNullOrEmpty(v))
 					// Restore default value.
 					v = string.Format("{0}", map.DefaultValue ?? "");
-				LoadSetting(map.Control, key, v);
+				LoadSetting(map.Control, map.PropertyName, v);
 			}
 			// Resume form events (track setting changes on the form).
 			ResumeEvents();

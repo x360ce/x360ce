@@ -19,7 +19,7 @@ namespace x360ce.App.DInput
 		// XInput library needs to be reload.
 		public bool SettingsChanged = false;
 
-		void RetrieveXiStates(UserGame game, bool getXInputStates)
+		void RetrieveXiStates(bool getXInputStates)
 		{
 			// Allow if not testing or testing with option enabled.
 			Exception error = null;

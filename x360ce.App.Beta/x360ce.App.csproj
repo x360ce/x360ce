@@ -55,7 +55,8 @@
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
@@ -210,6 +211,7 @@
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
+    <Compile Include="Common\DeadZoneWpfControlsLink.cs" />
     <Compile Include="Common\DInput\DInputEventArgs.cs" />
     <Compile Include="Common\DInput\DInputException.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
@@ -249,6 +251,12 @@
     <Compile Include="Common\WinVerify.cs" />
     <Compile Include="Controls\AboutUserControl.xaml.cs">
       <DependentUpon>AboutUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AxisToButtonControl.xaml.cs">
+      <DependentUpon>AxisToButtonControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AxisToButtonListControl.xaml.cs">
+      <DependentUpon>AxisToButtonListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CloudControl.xaml.cs">
       <DependentUpon>CloudControl.xaml</DependentUpon>
@@ -424,7 +432,6 @@
     </Compile>
     <Compile Include="Global.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Html2Rtf\Converter.cs" />
     <Compile Include="Issues\ArchitectureIssue.cs" />
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
     <Compile Include="Issues\CppX86RuntimeInstallIssue.cs" />
@@ -521,6 +528,7 @@
     <EmbeddedResource Include="Presets\x360ce.Logitech_WingMan_Formula_Force_GP_USB.ini" />
     <EmbeddedResource Include="Presets\x360ce.SL_6555_SBK.ini" />
     <EmbeddedResource Include="Presets\x360ce.Philips_Wireless_PC_Controller.ini" />
+    <None Include=".editorconfig" />
     <None Include="app.config" />
     <EmbeddedResource Include="Documents\Help.rtf" />
     <EmbeddedResource Include="Documents\Help_HidGuardian.rtf" />
@@ -606,6 +614,8 @@
   <ItemGroup>
     <Content Include="app.ico" />
     <CodeAnalysisDictionary Include="CodeAnalaysisDictionary.xml" />
+    <Content Include="Controls\arrow_right_16x16.png" />
+    <Content Include="Controls\Button_Back.png" />
     <Content Include="Forms\app.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png" />
@@ -704,11 +714,8 @@
     <Content Include="Presets\ReadMe.txt" />
     <EmbeddedResource Include="Images\MarkController.png" />
     <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
-    <EmbeddedResource Include="Html2Rtf\xhtml2rtf.xsl" />
     <Content Include="Documents\x360ce.App.source-Exclude.txt" />
     <Content Include="Documents\x360ce.App.source-Include.txt" />
-    <Content Include="Html2Rtf\Readme.htm" />
-    <Content Include="Html2Rtf\xhtml2rtf.txt" />
     <EmbeddedResource Include="Images\bullet_square_glass_blue.png" />
     <EmbeddedResource Include="Images\bullet_square_glass_green.png" />
     <EmbeddedResource Include="Images\bullet_square_glass_grey.png" />
@@ -743,6 +750,14 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\AboutUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\AxisToButtonControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\AxisToButtonListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

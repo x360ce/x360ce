@@ -1,0 +1,34 @@
+# EditorConfig is awesome: http://EditorConfig.org
+
+# top-most EditorConfig file
+#root = true
+
+# Unused Code Rules
+# Description: Unused Code - Code Analysis Rule Set
+[*.{cs,vb}]
+# Uncomment to find unused code.
+# https://docs.microsoft.com/en-us/visualstudio/code-quality/CAxxxx
+dotnet_diagnostic.CA1801.severity = error # CA1801: Review unused parameters
+dotnet_diagnostic.CA1804.severity = error # CA1804: Remove unused locals
+dotnet_diagnostic.CA1811.severity = error # CA1811: Avoid uncalled private code
+dotnet_diagnostic.CA1812.severity = error # CA1812: Avoid uninstantiated internal classes
+dotnet_diagnostic.CA1823.severity = error # CA1823: Avoid unused private fields
+# ReSharper menu => Options => Code Inspection => Inspection Severity => Unused Declaration => Non-private accessibility = Show as error
+#dotnet_diagnostic.CA????.severity = error # CA???: Avoid uncalled public code
+#dotnet_diagnostic.CA????.severity = error # CA????: Avoid unused public fields
+# https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/unnecessary-code-rules
+#dotnet_diagnostic.IDE0001.severity = error # IDE0001: Simplify name
+#dotnet_diagnostic.IDE0002.severity = error # IDE0002: Simplify member access
+dotnet_diagnostic.IDE0004.severity = error # IDE0004: Remove unnecessary cast
+dotnet_diagnostic.IDE0005.severity = error # IDE0005: Remove unnecessary import
+dotnet_diagnostic.IDE0035.severity = error # IDE0035: Remove unreachable code
+dotnet_diagnostic.IDE0051.severity = error # IDE0051: Remove unused private member
+dotnet_diagnostic.IDE0052.severity = error # IDE0052: Remove unread private member
+#dotnet_diagnostic.IDE0058.severity = error # IDE0058: Remove unused expression value
+#dotnet_diagnostic.IDE0059.severity = error # IDE0059: Remove unnecessary value assignment
+dotnet_diagnostic.IDE0060.severity = error # IDE0060: Remove unused parameter
+dotnet_diagnostic.IDE0079.severity = error # IDE0079: Remove unnecessary suppression
+dotnet_diagnostic.IDE0080.severity = error # IDE0080: Remove unnecessary suppression operator  - C# only.
+dotnet_diagnostic.IDE0081.severity = error # IDE0081: Remove 'ByVal'  - Visual Basic only.
+dotnet_diagnostic.IDE0100.severity = error # IDE0100: Remove unnecessary equality operator 
+dotnet_diagnostic.IDE0110.severity = error # IDE0110: Remove unnecessary discard  - C# only.

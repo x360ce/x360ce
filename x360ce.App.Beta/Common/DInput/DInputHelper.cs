@@ -181,7 +181,7 @@ namespace x360ce.App.DInput
 					// Update information about connected devices.
 					UpdateDiDevices(manager);
 					// Update JoystickStates from devices.
-					UpdateDiStates(manager, game, detector);
+					UpdateDiStates(game, detector);
 					// Update XInput states from Custom DirectInput states.
 					UpdateXiStates(game);
 					// Combine XInput states of controllers.
@@ -191,7 +191,7 @@ namespace x360ce.App.DInput
 					// Load XInput library before retrieving XInput states.
 					CheckAndLoadXInputLibrary(game, getXInputStates);
 					// Retrieve XInput states from XInput controllers.
-					RetrieveXiStates(game, getXInputStates);
+					RetrieveXiStates(getXInputStates);
 				}
 				// Update pool frequency value every second.
 				UpdateDelayFrequency();

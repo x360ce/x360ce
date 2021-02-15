@@ -156,6 +156,9 @@
 	<Style x:Key="ComboBoxDefault" TargetType="ComboBox">
 		<Setter Property="Margin" Value="3,3,3,3" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+	</Style>
+
+	<Style x:Key="ComboBoxFix" BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox">
 		<Style.Triggers>
 			<Trigger Property="IsEditable" Value="True">
 				<Setter Property="Padding" Value="3,3,3,3" />

@@ -103,7 +103,7 @@ namespace x360ce.App.Controls
 		public bool ShowTriggerButtons;
 		public bool ShowShoulderButtons;
 
-		public void DrawState(ImageInfo ii, Gamepad gp, Control currentCbx)
+		public void DrawState(ImageInfo ii, Gamepad gp)
 		{
 			bool on;
 			// Show trigger axis state -green minus image.

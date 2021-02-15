@@ -274,7 +274,7 @@ namespace x360ce.App
 			OptionsData.Items.SynchronizingObject = so;
 		}
 
-	static IList<Engine.Data.UserSetting> UserSettings_ValidateData(IList<Engine.Data.UserSetting> items)
+		static IList<Engine.Data.UserSetting> UserSettings_ValidateData(IList<Engine.Data.UserSetting> items)
 		{
 			for (int i = 0; i < items.Count; i++)
 			{
@@ -478,6 +478,7 @@ namespace x360ce.App
 			Current.SettingsMap.Add(item);
 		}
 
+
 		static public SettingsMapItem AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None, MapCode code = default)
 		{
 			// Get the member expression
@@ -514,6 +515,7 @@ namespace x360ce.App
 			Current.SettingsMap.Add(item);
 			return item;
 		}
+
 
 		static void control_MouseLeave(object sender, EventArgs e)
 		{
@@ -635,17 +637,13 @@ namespace x360ce.App
 		/// <summary>
 		/// Read setting from INI file into windows form control.
 		/// </summary>
-		public void LoadSetting(object control, string key = null, string value = null)
+		public void LoadSetting(object control, string p = null, string value = null)
 		{
-			if (key != null && (
-				key == SettingName.HookMode ||
-				key.EndsWith(SettingName.GamePadType) ||
-				key.EndsWith(SettingName.ForceType) ||
-				key.EndsWith(SettingName.LeftMotorDirection) ||
-				key.EndsWith(SettingName.RightMotorDirection) ||
-				key.EndsWith(SettingName.PassThroughIndex) ||
-				key.EndsWith(SettingName.CombinedIndex)
-				)
+			if (p != null && (
+				p == nameof(PadSetting.GamePadType) ||
+				p == nameof(PadSetting.ForceType) ||
+				p == nameof(PadSetting.LeftMotorDirection) ||
+				p == nameof(PadSetting.RightMotorDirection))
 			)
 			{
 				var cbx = (ComboBox)control;
@@ -687,16 +685,15 @@ namespace x360ce.App
 			}
 			else if (control is TextBox tbx)
 			{
-				// if setting is read-only.
-				if (key == SettingName.ProductName)
+				// If setting is read-only.
+				if (p == nameof(UserSetting.ProductName))
 					return;
-				if (key == SettingName.ProductGuid)
+				if (p == nameof(UserSetting.ProductGuid))
 					return;
-				if (key == SettingName.InstanceGuid)
+				if (p == nameof(UserSetting.InstanceGuid))
 					return;
-				// Always override version.
-				if (key == SettingName.Version)
-					value = SettingName.DefaultVersion;
+				if (p == nameof(Options.SettingsVersion))
+					return;
 				tbx.Text = value;
 			}
 			else if (control is NumericUpDown nud)
@@ -714,21 +711,27 @@ namespace x360ce.App
 				int n = 0;
 				int.TryParse(value, out n);
 				// convert 256  to 100%
-				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
+				if (p == nameof(PadSetting.AxisToDPadDeadZone) ||
+					p == nameof(PadSetting.AxisToDPadOffset) ||
+					p == nameof(PadSetting.LeftTriggerDeadZone) ||
+					p == nameof(PadSetting.RightTriggerDeadZone))
 				{
-					if (key == SettingName.AxisToDPadDeadZone && value == "")
+					if (p == nameof(PadSetting.AxisToDPadDeadZone) && value == "")
 						n = 256;
-					n = System.Convert.ToInt32((float)n / 256F * 100F);
+					n = System.Convert.ToInt32(n / 256F * 100F);
 				}
 				// Convert 500 to 100%
-				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
+				else if (p == nameof(PadSetting.LeftMotorPeriod) || p == nameof(PadSetting.RightMotorPeriod))
 				{
-					n = System.Convert.ToInt32((float)n / 500F * 100F);
+					n = System.Convert.ToInt32(n / 500F * 100F);
 				}
 				// Convert 32767 to 100%
-				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
+				else if (p == nameof(PadSetting.LeftThumbDeadZoneX) ||
+					p == nameof(PadSetting.LeftThumbDeadZoneY) ||
+					p == nameof(PadSetting.RightThumbDeadZoneX) ||
+					p == nameof(PadSetting.RightThumbDeadZoneY))
 				{
-					n = System.Convert.ToInt32((float)n / ((float)Int16.MaxValue) * 100F);
+					n = System.Convert.ToInt32(n / ((float)Int16.MaxValue) * 100F);
 				}
 				if (n < tc.Minimum)
 					n = tc.Minimum;
@@ -751,26 +754,20 @@ namespace x360ce.App
 		public string GetSettingValue(object control)
 		{
 			var item = SettingsMap.First(x => x.Control == control);
-			var path = item.IniPath;
-			var section = path.Split('\\')[0];
-			string key = path.Split('\\')[1];
-			var padIndex = SettingName.GetPadIndex(path);
+			var p = item.PropertyName;
 			string v = string.Empty;
-			if (key == SettingName.HookMode ||
-				key.EndsWith(SettingName.GamePadType) ||
-				key.EndsWith(SettingName.ForceType) ||
-				key.EndsWith(SettingName.LeftMotorDirection) ||
-				key.EndsWith(SettingName.RightMotorDirection) ||
-				key.EndsWith(SettingName.PassThroughIndex) ||
-				key.EndsWith(SettingName.CombinedIndex))
+			if (p == nameof(PadSetting.GamePadType) ||
+				p == nameof(PadSetting.ForceType) ||
+				p == nameof(PadSetting.LeftMotorDirection) ||
+				p == nameof(PadSetting.RightMotorDirection))
 			{
 				var v1 = ((ComboBox)control).SelectedItem;
 				if (v1 == null)
-				{ v = "0"; }
+					v = "0";
 				else if (v1 is KeyValuePair)
-				{ v = ((KeyValuePair)v1).Value; }
+					v = ((KeyValuePair)v1).Value;
 				else
-				{ v = System.Convert.ToInt32(v1).ToString(); }
+					v = System.Convert.ToInt32(v1).ToString();
 			}
 			// If DI menu strip attached.
 			else if (control is ComboBox cbx)
@@ -780,7 +777,7 @@ namespace x360ce.App
 				{
 					v = SettingsConverter.ToIniValue(cbx.Text);
 					// make sure that disabled button value is "0".
-					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v))
+					if (SettingName.IsButton(p) && string.IsNullOrEmpty(v))
 						v = "0";
 				}
 				else
@@ -791,7 +788,7 @@ namespace x360ce.App
 			else if (control is TextBox tbx)
 			{
 				// if setting is read-only.
-				if (key == SettingName.InstanceGuid || key == SettingName.ProductGuid)
+				if (p == nameof(UserSetting.InstanceGuid) || p == nameof(UserSetting.ProductGuid))
 				{
 					v = string.IsNullOrEmpty(tbx.Text) ? Guid.Empty.ToString("D") : tbx.Text;
 				}
@@ -806,19 +803,26 @@ namespace x360ce.App
 			{
 				TrackBar tc = (TrackBar)control;
 				// convert 100%  to 256
-				if (key == SettingName.AxisToDPadDeadZone || key == SettingName.AxisToDPadOffset || key == SettingName.LeftTriggerDeadZone || key == SettingName.RightTriggerDeadZone)
+				if (p == nameof(PadSetting.AxisToDPadDeadZone) ||
+					p == nameof(PadSetting.AxisToDPadOffset) ||
+					p == nameof(PadSetting.LeftTriggerDeadZone) ||
+					p == nameof(PadSetting.RightTriggerDeadZone))
 				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * 256F).ToString();
+					v = System.Convert.ToInt32(tc.Value / 100F * 256F).ToString();
 				}
 				// convert 100%  to 500
-				else if (key == SettingName.LeftMotorPeriod || key == SettingName.RightMotorPeriod)
+				else if (p == nameof(PadSetting.LeftMotorPeriod) ||
+					p == nameof(PadSetting.RightMotorPeriod))
 				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * 500F).ToString();
+					v = System.Convert.ToInt32(tc.Value / 100F * 500F).ToString();
 				}
 				// Convert 100% to 32767
-				else if (key == SettingName.LeftThumbDeadZoneX || key == SettingName.LeftThumbDeadZoneY || key == SettingName.RightThumbDeadZoneX || key == SettingName.RightThumbDeadZoneY)
+				else if (p == nameof(PadSetting.LeftThumbDeadZoneX) ||
+					p == nameof(PadSetting.LeftThumbDeadZoneY) ||
+					p == nameof(PadSetting.RightThumbDeadZoneX) ||
+					p == nameof(PadSetting.RightThumbDeadZoneY))
 				{
-					v = System.Convert.ToInt32((float)tc.Value / 100F * ((float)Int16.MaxValue)).ToString();
+					v = System.Convert.ToInt32(tc.Value / 100F * short.MaxValue).ToString();
 				}
 				else
 					v = tc.Value.ToString();
@@ -867,45 +871,9 @@ namespace x360ce.App
 
 		#endregion
 
-		static Guid GetInstanceGuid(MapTo mapTo)
-		{
-			var map = Current.SettingsMap.First(x => x.MapTo == mapTo && x.IniKey == SettingName.InstanceGuid);
-			var guidString = ((Control)map.Control).Text;
-			// If instanceGuid value is not a GUID then exit.
-			if (!EngineHelper.IsGuid(guidString))
-				return Guid.Empty;
-			Guid ig = new Guid(guidString);
-			return ig;
-		}
-
-		static string GetInstanceSection(MapTo mapTo)
-		{
-			var ig = GetInstanceGuid(mapTo);
-			// If InstanceGuid value is empty then exit.
-			if (ig.Equals(Guid.Empty))
-				return null;
-			// Save settings to unique Instance section.
-			return Current.GetInstanceSection(ig);
-		}
-
 		public string GetInstanceSection(Guid instanceGuid)
 		{
 			return string.Format("IG_{0:N}", instanceGuid).ToUpper();
-		}
-
-		public string GetProductSection(Guid productGuid)
-		{
-			return string.Format("PG_{0:N}", productGuid).ToUpper();
-		}
-
-
-		public bool ContainsProductSection(Guid productGuid, string iniFileName, out string sectionName)
-		{
-			var ini2 = new Ini(iniFileName);
-			var section = GetProductSection(productGuid);
-			var contains = !string.IsNullOrEmpty(ini2.GetValue(section, "ProductGUID"));
-			sectionName = contains ? section : null;
-			return contains;
 		}
 
 		public bool ContainsInstanceSection(Guid instanceGuid, string iniFileName, out string sectionName)
@@ -978,7 +946,7 @@ namespace x360ce.App
 		{
 			foreach (var ud in devices)
 			{
-				// Try to get existing setting by instance guid and file name.
+				// Try to get existing setting by instance GUID and file name.
 				var setting = GetSetting(ud.InstanceGuid, game.FileName);
 				// If device setting for the game was not found then.
 				if (setting == null)

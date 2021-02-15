@@ -388,12 +388,12 @@ namespace x360ce.App.Controls
 			//return actions;
 		}
 
-		void addAction(List<string> actions, int v, string type, int index)
-		{
-			string d = DetectDirection(v);
-			if (d == null) return;
-			actions.Add(string.Format("{0}{1} {2:0}", d, type, index));
-		}
+		//void addAction(List<string> actions, int v, string type, int index)
+		//{
+		//	string d = DetectDirection(v);
+		//	if (d == null) return;
+		//	actions.Add(string.Format("{0}{1} {2:0}", d, type, index));
+		//}
 
 		public string DetectDirection(int v)
 		{
@@ -542,6 +542,26 @@ namespace x360ce.App.Controls
 
 
 		#endregion
+
+
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				DiButtonsTable?.Dispose();
+				DiAxisTable?.Dispose();
+				DiSlidersTable?.Dispose();
+				DiPovsTable?.Dispose();
+				DiEffectsTable?.Dispose();
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+
 	}
 
 }

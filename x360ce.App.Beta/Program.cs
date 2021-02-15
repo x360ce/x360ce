@@ -91,7 +91,7 @@ namespace x360ce.App
 			// ------------------------------------------------
 			// Administrator commands.
 			// ------------------------------------------------
-			var executed = ProcessAdminCommands(false, args);
+			var executed = ProcessAdminCommands(args);
 			// If valid command was executed then...
 			if (executed)
 				return;

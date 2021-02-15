@@ -26,7 +26,11 @@
 					<CheckBox Name="AlwaysOnTopCheckBox" Content="Always on Top" />
 					<CheckBox Name="MinimizeToTrayCheckBox" Content="Minimize to Tray" />
 					<CheckBox Name="StartWithWindowsCheckBox" Content="Start with Windows:" />
-					<ComboBox Name="StartWithWindowsStateComboBox" MinWidth="75" HorizontalAlignment="Left" />
+					<ComboBox
+						Name="StartWithWindowsStateComboBox"
+						MinWidth="75"
+						HorizontalAlignment="Left"
+						Style="{StaticResource ComboBoxFix}" />
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Header="Testing and Logging">

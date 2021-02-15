@@ -27,7 +27,7 @@ namespace x360ce.App
 			{
 				// Run command directly.
 				var args = new string[] { argument };
-				ProcessAdminCommands(true, args);
+				ProcessAdminCommands(args);
 				return true;
 			}
 			else
@@ -42,7 +42,7 @@ namespace x360ce.App
 			}
 		}
 
-		static bool ProcessAdminCommands(bool direct, string[] args)
+		static bool ProcessAdminCommands(string[] args)
 		{
 			// Requires System.Configuration.Installl reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);

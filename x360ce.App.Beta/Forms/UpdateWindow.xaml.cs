@@ -205,10 +205,10 @@ namespace x360ce.App.Forms
 			System.IO.File.Move(processFileName, bak);
 			System.IO.File.Copy(updateFileName, processFileName);
 			CurrentLogItem.Message += " Done";
-			Step6Restart(processFileName);
+			Step6Restart();
 		}
 
-		void Step6Restart(string fileName)
+		void Step6Restart()
 		{
 			if (CancelUpdate)
 				return;
