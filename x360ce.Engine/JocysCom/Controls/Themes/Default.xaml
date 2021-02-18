@@ -107,7 +107,13 @@
 	</Style>
 
 	<Style x:Key="TextBoxRightCell" BasedOn="{StaticResource TextBoxCell}" TargetType="TextBox">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="TextAlignment" Value="Right" />
+	</Style>
+
+	<Style x:Key="TextBoxCenterCell" BasedOn="{StaticResource TextBoxCell}" TargetType="TextBox">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="TextAlignment" Value="Center" />
 	</Style>
 
 	<!--  TextBlock  -->
@@ -129,7 +135,13 @@
 	</Style>
 
 	<Style x:Key="TextBlockRightCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="TextAlignment" Value="Right" />
+	</Style>
+
+	<Style x:Key="TextBlockCenterCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="TextAlignment" Value="Center" />
 	</Style>
 
 	<!--  DataGrid  -->
@@ -146,6 +158,16 @@
 	</Style>
 
 	<Style BasedOn="{StaticResource DataGridDefault}" TargetType="DataGrid" />
+
+	<Style x:Key="DataGridReadOnly" BasedOn="{StaticResource DataGridDefault}" TargetType="DataGrid">
+		<Setter Property="RowBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="IsReadOnly" Value="true" />
+		<Setter Property="BorderThickness" Value="1,0,0,0" />
+		<Setter Property="GridLinesVisibility" Value="All" />
+		<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+		<Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+		<Setter Property="VerticalGridLinesBrush" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+	</Style>
 
 	<!--  DataGridTextColumn  -->
 

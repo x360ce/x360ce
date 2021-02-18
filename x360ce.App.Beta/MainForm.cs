@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading.Tasks;
@@ -331,7 +330,9 @@ namespace x360ce.App
 			}
 		}
 
+#pragma warning disable IDE0051 // Remove unused private members
 		private void AutoConfigure(Engine.Data.UserGame game)
+#pragma warning restore IDE0051 // Remove unused private members
 		{
 			var list = SettingsManager.UserDevices.Items.ToList();
 			// Filter devices.
@@ -744,10 +745,10 @@ namespace x360ce.App
 				PadControls[i].InitPadControl();
 				// Update settings manager with [Mappings] section.
 			}
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
+			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
+			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView);
+			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView);
+			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
 			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
 			// Note: There must be no such sections in new config.
 			for (var i = 0; i < PadControls.Length; i++)

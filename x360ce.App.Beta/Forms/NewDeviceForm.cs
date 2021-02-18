@@ -146,7 +146,7 @@ namespace x360ce.App.Controls
             else
             {
                 var padSectionName = SettingsManager.Current.GetInstanceSection(_di.InstanceGuid);
-                SettingsManager.Current.SetPadSetting(padSectionName, _di);
+                //SettingsManager.Current.SetPadSetting(padSectionName, _di);
                 //SettingManager.Current.SetPadSetting(padSectionName, result.PadSettings[0]);
                 SettingsManager.Current.SuspendEvents();
                 //SettingManager.Current.LoadPadSettings(SettingManager.IniFileName, padSectionName, _padIndex);

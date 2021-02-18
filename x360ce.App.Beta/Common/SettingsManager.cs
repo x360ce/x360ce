@@ -1,5 +1,4 @@
-﻿using SharpDX.DirectInput;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -479,32 +478,28 @@ namespace x360ce.App
 		}
 
 
-		static public SettingsMapItem AddMap<T>(string sectionName, Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None, MapCode code = default)
+		static public SettingsMapItem AddMap<T>(Expression<Func<T>> setting, Control control, MapTo mapTo = MapTo.None, MapCode code = default)
 		{
 			// Get the member expression
 			var me = (MemberExpression)setting.Body;
 			// Get the property
 			var prop = (PropertyInfo)me.Member;
-			// Get the setting name by reading the property
-			var keyName = (string)prop.GetValue(null, null);
-			if (string.IsNullOrEmpty(keyName))
-			{
-				keyName = prop.Name;
-			}
 			// Get the description attribute
 			var descAttr = GetCustomAttribute<DescriptionAttribute>(prop);
-			var desc = descAttr != null ? descAttr.Description : string.Empty;
+			var desc = descAttr != null
+				? descAttr.Description
+				: string.Empty;
 			// Get the default value attribute
 			var dvalAttr = GetCustomAttribute<DefaultValueAttribute>(prop);
-			var dval = (string)(descAttr != null ? dvalAttr.Value : null);
+			var dval = descAttr != null
+				? (string)dvalAttr.Value
+				: null;
 			// Display help inside yellow header.
 			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
 			control.MouseHover += control_MouseEnter;
 			control.MouseLeave += control_MouseLeave;
 			var item = new SettingsMapItem();
 			item.Description = desc;
-			item.IniSection = sectionName;
-			item.IniKey = keyName;
 			item.Code = code;
 			item.Control = control;
 			item.MapTo = mapTo;
@@ -595,14 +590,14 @@ namespace x360ce.App
 			return (T)prop.GetCustomAttributes(typeof(T), false).FirstOrDefault();
 		}
 
-		public void SetPadSetting(string padSectionName, DeviceInstance di)
-		{
-			var ini2 = new Ini(IniFileName);
-			//ps.PadSettingChecksum = Guid.Empty;
-			ini2.SetValue(padSectionName, SettingName.ProductName, di.ProductName);
-			ini2.SetValue(padSectionName, SettingName.ProductGuid, di.ProductGuid.ToString());
-			ini2.SetValue(padSectionName, SettingName.InstanceGuid, di.InstanceGuid.ToString());
-		}
+		//public void SetPadSetting(string padSectionName, DeviceInstance di)
+		//{
+		//	var ini2 = new Ini(IniFileName);
+		//	//ps.PadSettingChecksum = Guid.Empty;
+		//	ini2.SetValue(padSectionName, SettingName.ProductName, di.ProductName);
+		//	ini2.SetValue(padSectionName, SettingName.ProductGuid, di.ProductGuid.ToString());
+		//	ini2.SetValue(padSectionName, SettingName.InstanceGuid, di.InstanceGuid.ToString());
+		//}
 
 		public void SetComboBoxValue(ComboBox cbx, string text)
 		{

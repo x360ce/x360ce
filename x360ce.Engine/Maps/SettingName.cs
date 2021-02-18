@@ -92,15 +92,15 @@ namespace x360ce.Engine
 		static public string PAD4 { get { return "PAD4"; } }
 
 
-		// [PAD] section.
-		[DefaultValue("Unknown Device"), Description("Device product name.")]
-		static public string ProductName { get { return "ProductName"; } }
+		//// [PAD] section.
+		//[DefaultValue("Unknown Device"), Description("Device product name.")]
+		//static public string ProductName { get { return "ProductName"; } }
 
-		[DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device product GUID.")]
-		static public string ProductGuid { get { return "ProductGuid"; } }
+		//[DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device product GUID.")]
+		//static public string ProductGuid { get { return "ProductGuid"; } }
 
-		[DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device instance GUID.")]
-		static public string InstanceGuid { get { return "InstanceGuid"; } }
+		//[DefaultValue("00000000-0000-0000-0000-000000000000"), Description("Device instance GUID.")]
+		//static public string InstanceGuid { get { return "InstanceGuid"; } }
 
 		[DefaultValue("1"), Description("Device Type. None = 0, Gamepad = 1, Wheel = 2, Stick = 3, FlightStick = 4, DancePad = 5, Guitar = 6, DrumKit = 8.")]
 		static public string GamePadType { get { return "ControllerType"; } }
@@ -111,9 +111,9 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Bypass x360ce for vibration data only. The controller still participates in mappings, deadzones, etc. 0 = OFF, 1 = ON.")]
 		static public string ForcesPassThrough { get { return "ForcesPassThrough"; } }
 
-		// Default Mapping.
-		[DefaultValue("0"), Description("Index of the PAD which this controller will map to. Auto = 0 or PAD Index 1-4.")]
-		static public string MapToPad { get { return "MapToPad"; } }
+		//// Default Mapping.
+		//[DefaultValue("0"), Description("Index of the PAD which this controller will map to. Auto = 0 or PAD Index 1-4.")]
+		//static public string MapToPad { get { return "MapToPad"; } }
 
 
 		// Left Thumb.

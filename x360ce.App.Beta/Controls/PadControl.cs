@@ -28,6 +28,8 @@ namespace x360ce.App.Controls
 				return;
 			AxisToButtonsListPanel = new x360ce.App.Controls.AxisToButtonListControl();
 			AxistToButtonsListHost.Child = AxisToButtonsListPanel;
+			DirectInputPanel = new PadTabPages.DirectInputUserControl();
+			DirectInputHost.Child = DirectInputPanel;
 			// Add controls which must be notified on setting selection change.
 			UserMacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
@@ -80,6 +82,7 @@ namespace x360ce.App.Controls
 
 
 		public AxisToButtonListControl AxisToButtonsListPanel;
+		public PadTabPages.DirectInputUserControl DirectInputPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -635,17 +638,17 @@ namespace x360ce.App.Controls
 		/// </summary>
 		public void UpdateSettingsMap()
 		{
-			// FakeAPI
-			AddMap(() => SettingName.ProductName, DirectInputPanel.DeviceProductNameTextBox);
-			AddMap(() => SettingName.ProductGuid, DirectInputPanel.DeviceProductGuidTextBox);
-			AddMap(() => SettingName.InstanceGuid, DirectInputPanel.DeviceInstanceGuidTextBox);
+			//// FakeAPI
+			//AddMap(() => SettingName.ProductName, DirectInputPanel.DeviceProductNameTextBox);
+			//AddMap(() => SettingName.ProductGuid, DirectInputPanel.DeviceProductGuidTextBox);
+			//AddMap(() => SettingName.InstanceGuid, DirectInputPanel.DeviceInstanceGuidTextBox);
+			// Mapping
+			//AddMap(() => SettingName.MapToPad, DirectInputPanel.MapToPadComboBox);
 
 			AddMap(() => SettingName.GamePadType, DeviceSubTypeComboBox);
 			AddMap(() => SettingName.PassThrough, PassThroughCheckBox);
 			AddMap(() => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox);
 
-			// Mapping
-			AddMap(() => SettingName.MapToPad, DirectInputPanel.MapToPadComboBox);
 			// Left Trigger
 			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox, MapCode.LeftTrigger);
 			AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerUserControl.DeadZoneTrackBar);
@@ -757,11 +760,7 @@ namespace x360ce.App.Controls
 		}
 
 		void AddMap<T>(Expression<Func<T>> setting, Control control, MapCode code = default)
-		{
-			var section = string.Format(@"PAD{0}", (int)MappedTo);
-			var item = SettingsManager.AddMap(section, setting, control, MappedTo, code);
-			item.Code = code;
-		}
+			=> SettingsManager.AddMap(setting, control, MappedTo, code);
 
 		#endregion
 

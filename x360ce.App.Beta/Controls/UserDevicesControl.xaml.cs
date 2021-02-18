@@ -56,7 +56,7 @@ namespace x360ce.App.Controls
 			{
 				IsHiddenColumn.Visibility = Visibility.Collapsed;
 				IsEnabledColumn.Visibility = Visibility.Collapsed;
-				await RefreshMapDeviceToList();
+				await RefreshMapDeviceToList().ConfigureAwait(true);
 			}
 			else
 			{
@@ -64,7 +64,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		Task RefreshMapDeviceToList()
+		async Task RefreshMapDeviceToList()
 		{
 			var list = new SortableBindingList<UserDevice>();
 			// Exclude System/Virtual devices.
@@ -82,7 +82,6 @@ namespace x360ce.App.Controls
 				AttachDataSource(list);
 			else if (_currentData.Count != list.Count)
 				CollectionsHelper.Synchronize(list, _currentData);
-			return null;
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)

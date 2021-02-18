@@ -1,0 +1,389 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.PadTabPages.DirectInputUserControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="240" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="60" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="60" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="60" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="60" />
+			</Grid.ColumnDefinitions>
+			<Label Grid.Row="0" Grid.Column="0" Content="VN" />
+			<Label Grid.Row="1" Grid.Column="0" Content="PN" />
+			<Label Grid.Row="2" Grid.Column="0" Content="PG" />
+			<Label Grid.Row="3" Grid.Column="0" Content="IG" />
+			<TextBox
+				Name="DeviceVendorNameTextBox"
+				Grid.Row="0"
+				Grid.Column="1"
+				IsReadOnly="True" />
+			<TextBox
+				Name="DeviceProductNameTextBox"
+				Grid.Row="1"
+				Grid.Column="1"
+				IsReadOnly="True" />
+			<TextBox
+				Name="DeviceProductGuidTextBox"
+				Grid.Row="2"
+				Grid.Column="1"
+				IsReadOnly="True" />
+			<TextBox
+				Name="DeviceInstanceGuidTextBox"
+				Grid.Row="3"
+				Grid.Column="1"
+				Width="Auto"
+				IsReadOnly="True" />
+			<Label
+				Name="DeviceVidLabel"
+				Grid.Row="0"
+				Grid.Column="2"
+				Content="VID" />
+			<ComboBox Name="MapToPadComboBox" Grid.Row="0" Grid.Column="5">
+				<ComboBoxItem>0</ComboBoxItem>
+				<ComboBoxItem>1</ComboBoxItem>
+				<ComboBoxItem>2</ComboBoxItem>
+				<ComboBoxItem>3</ComboBoxItem>
+				<ComboBoxItem>4</ComboBoxItem>
+			</ComboBox>
+			<Label
+				Name="SlidersLabel"
+				Grid.Row="1"
+				Grid.Column="6"
+				Content="Sliders" />
+			<Label
+				Name="ActuatorsLabel"
+				Grid.Row="1"
+				Grid.Column="8"
+				Content="Actuators" />
+			<Label
+				Name="DiPovsLabel"
+				Grid.Row="2"
+				Grid.Column="6"
+				Content="POVs" />
+			<Label
+				Name="label3"
+				Grid.Row="3"
+				Grid.Column="6"
+				Content="Buttons" />
+			<Label
+				Name="AxeCountLabel"
+				Grid.Row="0"
+				Grid.Column="6"
+				Content="Axes" />
+			<Label
+				Name="DiCapFfLabel"
+				Grid.Row="0"
+				Grid.Column="8"
+				Content="FF State" />
+			<Label
+				Name="MapToControllerLabel"
+				Grid.Row="0"
+				Grid.Column="4"
+				Content="Map To" />
+			<TextBox
+				Name="DeviceRevTextBox"
+				Grid.Row="2"
+				Grid.Column="3"
+				IsReadOnly="True" />
+			<TextBox
+				Name="DevicePidTextBox"
+				Grid.Row="1"
+				Grid.Column="3"
+				IsReadOnly="True" />
+			<TextBox
+				Name="DeviceVidTextBox"
+				Grid.Row="0"
+				Grid.Column="3"
+				IsReadOnly="True" />
+			<TextBox
+				Name="DiSlidersTextBox"
+				Grid.Row="1"
+				Grid.Column="7"
+				IsReadOnly="True"
+				TextAlignment="Right" />
+			<TextBox
+				Name="ActuatorsTextBox"
+				Grid.Row="1"
+				Grid.Column="9"
+				IsReadOnly="True"
+				TextAlignment="Right" />
+			<TextBox
+				Name="DiCapPovsTextBox"
+				Grid.Row="2"
+				Grid.Column="7"
+				IsReadOnly="True"
+				TextAlignment="Right" />
+			<TextBox
+				Name="DiCapButtonsTextBox"
+				Grid.Row="3"
+				Grid.Column="7"
+				IsReadOnly="True"
+				TextAlignment="Right" />
+			<TextBox
+				Name="DiCapAxesTextBox"
+				Grid.Row="0"
+				Grid.Column="7"
+				IsReadOnly="True"
+				TextAlignment="Right" />
+			<TextBox
+				Name="DiCapFfStateTextBox"
+				Grid.Row="0"
+				Grid.Column="9"
+				IsReadOnly="True"
+				TextAlignment="Right" />
+			<Label
+				Name="DeviceRevLabel"
+				Grid.Row="2"
+				Grid.Column="2"
+				Content="REV" />
+			<TextBox
+				Name="DeviceTypeTextBox"
+				Grid.Row="3"
+				Grid.Column="3"
+				Grid.ColumnSpan="3"
+				IsReadOnly="True" />
+			<Label
+				Name="DevicePidLabel"
+				Grid.Row="1"
+				Grid.Column="2"
+				Content="PID" />
+			<Label
+				Name="DiDeviceTypeLabel"
+				Grid.Row="3"
+				Grid.Column="2"
+				Content="Type" />
+			<DataGrid
+				Name="DiButtonsDataGridView"
+				Grid.Row="2"
+				Grid.RowSpan="2"
+				Grid.Column="8"
+				Grid.ColumnSpan="2"
+				Margin="4,4,4,4"
+				Style="{StaticResource DataGridReadOnly}">
+				<DataGrid.Columns>
+					<DataGridTextColumn
+						MinWidth="100"
+						Binding="{Binding M}"
+						ElementStyle="{StaticResource TextBlockCenterCell}"
+						Header="Buttons" />
+				</DataGrid.Columns>
+			</DataGrid>
+		</Grid>
+		<StackPanel Grid.Row="1" Orientation="Horizontal">
+			<DataGrid
+				Name="DiAxisDataGridView"
+				Width="Auto"
+				Height="Auto"
+				VerticalAlignment="Top"
+				GridLinesVisibility="All"
+				Style="{StaticResource DataGridReadOnly}">
+				<DataGrid.Columns>
+					<DataGridTextColumn
+						Width="Auto"
+						Binding="{Binding Axis}"
+						ElementStyle="{StaticResource TextBlockCenterCell}"
+						Header="Axis" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding M}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="M" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding R}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="R" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding A}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="A" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding AR}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="AR" />
+					<DataGridTextColumn
+						Width="Auto"
+						Binding="{Binding F}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="F" />
+					<DataGridTextColumn
+						Width="Auto"
+						Binding="{Binding FR}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="FR" />
+					<DataGridTextColumn
+						Width="Auto"
+						Binding="{Binding V}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="V" />
+					<DataGridTextColumn
+						Width="Auto"
+						Binding="{Binding VR}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="VR" />
+				</DataGrid.Columns>
+			</DataGrid>
+			<DataGrid
+				Name="DiSlidersDataGridView"
+				Width="Auto"
+				Height="Auto"
+				Margin="8,0,0,0"
+				VerticalAlignment="Top"
+				Style="{StaticResource DataGridReadOnly}">
+				<DataGrid.Columns>
+					<DataGridTextColumn
+						Width="Auto"
+						Binding="{Binding Slider}"
+						ElementStyle="{StaticResource TextBlockCenterCell}"
+						Header="Slider" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding M}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="M" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding A}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="A" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding F}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="F" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding V}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="V" />
+				</DataGrid.Columns>
+			</DataGrid>
+			<DataGrid
+				Name="DiPOVsDataGridView"
+				Width="Auto"
+				Height="Auto"
+				Margin="8,0,0,0"
+				VerticalAlignment="Top"
+				Style="{StaticResource DataGridReadOnly}">
+				<DataGrid.Columns>
+					<DataGridTextColumn
+						Width="Auto"
+						Binding="{Binding POV}"
+						ElementStyle="{StaticResource TextBlockCenterCell}"
+						Header="POV" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding M}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="" />
+					<DataGridTextColumn
+						MinWidth="50"
+						Binding="{Binding A}"
+						ElementStyle="{StaticResource TextBlockRightCell}"
+						Header="" />
+				</DataGrid.Columns>
+			</DataGrid>
+		</StackPanel>
+		<TabControl
+			Name="DeviceDetailsTabControl"
+			Grid.Row="2"
+			Height="Auto"
+			Margin="0,8,0,0"
+			TabStripPlacement="Top">
+			<TabItem Name="DiObjectsTabPage" Header="Device Objects">
+				<DataGrid
+					Name="DiObjectsDataGridView"
+					Margin="0"
+					Padding="0"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					BorderThickness="0"
+					ScrollViewer.CanContentScroll="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					Style="{StaticResource DataGridReadOnly}">
+					<DataGrid.RowStyle>
+						<Style TargetType="DataGridRow">
+							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+						</Style>
+					</DataGrid.RowStyle>
+					<DataGrid.Columns>
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding Offset}"
+							ElementStyle="{StaticResource TextBlockCenterCell}"
+							Header="Offset" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding OffsetName}" Header="Offset Name" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding TypeName}" Header="Type" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding AspectName}" Header="Aspect" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding Flags}" Header="Flags" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding Instance}"
+							ElementStyle="{StaticResource TextBlockCenterCell}"
+							Header="Instance" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding Name}" Header="Name" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding Granularity}" Header="Granularity" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding Saturation}" Header="Saturation" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding Range}" Header="Range" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding LogicalRange}" Header="Logical" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding PhysicalRange}" Header="Physical" />
+						<DataGridTextColumn Width="*" />
+					</DataGrid.Columns>
+				</DataGrid>
+			</TabItem>
+			<TabItem Name="DiEffectsDataTabPage" Header="Force Feedback Effects">
+				<DataGrid
+					Name="DiEffectsDataGridView"
+					Margin="0"
+					Padding="0"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					BorderThickness="0"
+					ScrollViewer.CanContentScroll="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					Style="{StaticResource DataGridReadOnly}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Width="Auto" Binding="{Binding Effect}" Header="FF Effect" />
+						<DataGridTextColumn Width="Auto" Binding="{Binding StaticParameters}" Header="Static Parameters" />
+						<DataGridTextColumn Width="*" Binding="{Binding DynamicParameters}" Header="Dynamic Parameters" />
+					</DataGrid.Columns>
+				</DataGrid>
+			</TabItem>
+		</TabControl>
+
+	</Grid>
+</UserControl>

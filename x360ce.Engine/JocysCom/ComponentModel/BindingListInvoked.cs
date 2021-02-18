@@ -80,7 +80,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			}
 			catch (Exception ex)
 			{
-				// Add data to help with debuging.
+				// Add data to help with debugging.
 				var prefix = string.Format("{0}<T>", nameof(BindingListInvoked<T>)) + ".";
 				ex.Data.Add(prefix + "T", typeof(T).FullName);
 				ex.Data.Add(prefix + "SynchronizingObject", SynchronizingObject?.GetType().FullName);

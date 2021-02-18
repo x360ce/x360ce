@@ -203,6 +203,7 @@
     <Compile Include="JocysCom\Controls\MessageBoxWindow.xaml.cs">
       <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Data\BindableItem.cs" />
     <Compile Include="JocysCom\Diagnostics\RollingWriterOptions.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
