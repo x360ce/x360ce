@@ -300,11 +300,20 @@
     <Compile Include="Controls\PresetsListControl.xaml.cs">
       <DependentUpon>PresetsListControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ProgramControl.xaml.cs">
+      <DependentUpon>ProgramControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProgramItemControl.xaml.cs">
+      <DependentUpon>ProgramItemControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ProgramsGridUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\ProgramsGridUserControl.Designer.cs">
       <DependentUpon>ProgramsGridUserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ProgramListControl.xaml.cs">
+      <DependentUpon>ProgramListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SettingsListControl.xaml.cs">
       <DependentUpon>SettingsListControl.xaml</DependentUpon>
@@ -802,6 +811,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PresetsListControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ProgramControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ProgramItemControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ProgramListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
