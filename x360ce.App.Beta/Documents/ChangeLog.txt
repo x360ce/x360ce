@@ -1,5 +1,5 @@
 v4.17.7.0 (2020-11-18)
-- New: "Make Application Process DPI Aware." option
+- New: "Make Application Process DPI Aware" option.
 
 v4.17.15.0 (2020-11-15)
 - Fixed: Crash when selecting unavailable game.
