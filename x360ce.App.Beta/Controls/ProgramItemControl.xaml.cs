@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.ComponentModel;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace x360ce.App.Controls
 {
@@ -24,5 +12,16 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 		}
+
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public x360ce.Engine.Data.IProgram CurrentItem
+		{
+			get { return _CurrentItem; }
+			set
+			{
+			}
+		}
+		private x360ce.Engine.Data.IProgram _CurrentItem;
+
 	}
 }

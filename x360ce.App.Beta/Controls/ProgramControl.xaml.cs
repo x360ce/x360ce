@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace x360ce.App.Controls
 {
@@ -23,6 +12,20 @@ namespace x360ce.App.Controls
 		public ProgramControl()
 		{
 			InitializeComponent();
+			ProgramListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
 		}
+
+		private void MainDataGrid_SelectionChanged(object sender, EventArgs e)
+		{
+			var grid = ProgramListPanel.MainDataGrid;
+			// List can't be empty, so return.
+			// Issue: When DataSource is set then DataGridView fires the selectionChanged 3 times & it selects the first row. 
+			if (grid.SelectedItems.Count == 0)
+				return;
+			var item = grid.SelectedItems.Cast<Engine.Data.Program>().FirstOrDefault();
+			ProgramItemPanel.CurrentItem = item;
+		}
+
+
 	}
 }
