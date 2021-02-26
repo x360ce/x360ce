@@ -87,7 +87,8 @@
 			AutoGenerateColumns="False"
 			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
 			IsReadOnly="True"
-			SelectionChanged="MainDataGrid_SelectionChanged" KeyDown="MainDataGrid_KeyDown">
+			KeyDown="MainDataGrid_KeyDown"
+			SelectionChanged="MainDataGrid_SelectionChanged">
 			<DataGrid.Columns>
 				<DataGridTextColumn
 					Binding="{Binding FileName}"
