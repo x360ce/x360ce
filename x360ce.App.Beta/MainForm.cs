@@ -60,6 +60,9 @@ namespace x360ce.App
 			OptionsPanel = new OptionsControl();
 			OptionsHost.Child = OptionsPanel;
 
+			ProgramsPanel = new ProgramsControl();
+			ProgramsHost.Child = ProgramsPanel;
+
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 
 			// Map event handler.
@@ -101,6 +104,7 @@ namespace x360ce.App
 		}
 
 		public OptionsControl OptionsPanel;
+		public ProgramsControl ProgramsPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{

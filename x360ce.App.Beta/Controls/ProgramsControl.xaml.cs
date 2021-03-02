@@ -7,12 +7,13 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for ProgramControl.xaml
 	/// </summary>
-	public partial class ProgramControl : UserControl
+	public partial class ProgramsControl : UserControl
 	{
-		public ProgramControl()
+		public ProgramsControl()
 		{
 			InitializeComponent();
 			ProgramListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
+			ProgramListPanel.MainDataGrid.ItemsSource = SettingsManager.Programs.Items;
 		}
 
 		private void MainDataGrid_SelectionChanged(object sender, EventArgs e)
@@ -25,7 +26,6 @@ namespace x360ce.App.Controls
 			var item = grid.SelectedItems.Cast<Engine.Data.Program>().FirstOrDefault();
 			ProgramItemPanel.CurrentItem = item;
 		}
-
 
 	}
 }

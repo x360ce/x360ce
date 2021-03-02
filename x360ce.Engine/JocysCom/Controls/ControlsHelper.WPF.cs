@@ -82,6 +82,22 @@ namespace JocysCom.ClassLibrary.Controls
 				control.Content = text;
 		}
 
+
+		/// <summary>
+		/// Change value if it is different only.
+		/// This helps not to trigger control events when doing frequent events.
+		/// </summary>
+		public static void SetText(GroupBox control, string format, params object[] args)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var text = (args == null)
+				? format
+				: string.Format(format, args);
+			if (control.Header as string != text)
+				control.Header = text;
+		}
+
 		/// <summary>
 		/// Change value if it is different only.
 		/// This helps not to trigger control events when doing frequent events.
@@ -270,6 +286,25 @@ namespace JocysCom.ClassLibrary.Controls
 			return false;
 		}
 		*/
+		/// <summary>
+		/// Get parent control of specific type.
+		/// </summary>
+		public static T GetParent<T>(DependencyObject control, bool includeTop = false) where T : class
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			var parent = control;
+			while (parent != null)
+			{
+				if (parent is T && (includeTop || parent != control))
+					return (T)(object)parent;
+				parent = VisualTreeHelper.GetParent(parent);
+				if (parent == null)
+					parent = LogicalTreeHelper.GetParent(parent);
+			}
+			return null;
+		}
+
 
 		/// <summary>
 		/// Get all child controls.
@@ -283,11 +318,20 @@ namespace JocysCom.ClassLibrary.Controls
 			// Add top control if required.
 			if (includeTop)
 				controls.Add(control);
-			// If control contains children then...
+
+			// If control contains visual children then...
 			var childrenCount = VisualTreeHelper.GetChildrenCount(control);
 			for (int i = 0; i < childrenCount; i++)
 			{
 				var child = VisualTreeHelper.GetChild(control, i);
+				var children = GetAll(child, null, true);
+				controls.AddRange(children);
+			}
+			// Get logical children.
+			var logicalChildren = LogicalTreeHelper.GetChildren(control).OfType<DependencyObject>().ToList();
+			for (int i = 0; i < logicalChildren.Count; i++)
+			{
+				var child = logicalChildren[i];
 				var children = GetAll(child, null, true);
 				controls.AddRange(children);
 			}

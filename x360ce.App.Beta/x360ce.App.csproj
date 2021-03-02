@@ -300,8 +300,8 @@
     <Compile Include="Controls\PresetsListControl.xaml.cs">
       <DependentUpon>PresetsListControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ProgramControl.xaml.cs">
-      <DependentUpon>ProgramControl.xaml</DependentUpon>
+    <Compile Include="Controls\ProgramsControl.xaml.cs">
+      <DependentUpon>ProgramsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProgramItemControl.xaml.cs">
       <DependentUpon>ProgramItemControl.xaml</DependentUpon>
@@ -814,7 +814,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ProgramControl.xaml">
+    <Page Include="Controls\ProgramsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

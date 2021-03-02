@@ -18,6 +18,7 @@ namespace x360ce.App.Controls
 	{
 		public ProgramListControl()
 		{
+			InitializeComponent();
 			// Make font more consistent with the rest of the interface.
 			MainDataGrid.AutoGenerateColumns = false;
 			ImportOpenFileDialog = new OpenFileDialog();
@@ -54,27 +55,6 @@ namespace x360ce.App.Controls
 			if (ExportButton.IsEnabled != enabled)
 				ExportButton.IsEnabled = enabled;
 		}
-
-		private void RefreshProgramsButton_Click(object sender, EventArgs e)
-		{
-			RefreshProgramsListFromCloud();
-		}
-
-		private void ImportProgramsButton_Click(object sender, EventArgs e)
-		{
-			ImportPrograms();
-		}
-
-		private void ExportProgramsButton_Click(object sender, EventArgs e)
-		{
-			ExportPrograms();
-		}
-
-		private void DeleteProgramsButton_Click(object sender, EventArgs e)
-		{
-			DeleteSelectedPrograms();
-		}
-
 
 		/// <summary>
 		/// Import Programs (Default Game Settings) from external file.
@@ -271,28 +251,27 @@ namespace x360ce.App.Controls
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-
+			DeleteButton.IsEnabled = MainDataGrid.SelectedItems.Count > 0;
 		}
 
 		private void RefreshButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			RefreshProgramsListFromCloud();
 		}
-
 
 		private void ExportButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			ExportPrograms();
 		}
 
 		private void ImportButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			ImportPrograms();
 		}
 
 		private void DeleteButton_Click(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			DeleteSelectedPrograms();
 		}
 
 	}

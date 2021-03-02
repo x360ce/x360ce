@@ -19,7 +19,7 @@
 	</UserControl.Resources>
 	<Grid>
 		<WrapPanel>
-			<GroupBox Header="Hook Mask - 00000000">
+			<GroupBox Name="HookMaskGroupBox" Header="Hook Mask - 00000000">
 				<WrapPanel>
 					<WrapPanel Orientation="Vertical">
 						<CheckBox Name="HookCOMCheckBox" Content="COM" />
@@ -36,7 +36,7 @@
 					</WrapPanel>
 				</WrapPanel>
 			</GroupBox>
-			<GroupBox Header="XInput Files - 00000000">
+			<GroupBox Name="XInputMaskGroupBox" Header="XInput Files - 00000000">
 				<WrapPanel>
 					<WrapPanel Orientation="Vertical">
 						<Label Content="v9.1:" />
@@ -62,7 +62,7 @@
 				</WrapPanel>
 			</GroupBox>
 			<WrapPanel Orientation="Vertical">
-				<GroupBox Header="Auto Map - 00000000">
+				<GroupBox Name="AutoMapMaskGroupBox" Header="Auto Map - 00000000">
 					<WrapPanel>
 						<WrapPanel Orientation="Vertical">
 							<CheckBox Name="Controller1CheckBox" Content="PAD 1" />
@@ -74,7 +74,7 @@
 						</WrapPanel>
 					</WrapPanel>
 				</GroupBox>
-				<GroupBox Header="DInput File - 00000000">
+				<GroupBox Name="DInputMaskGroupBox" Header="DInput File - 00000000">
 					<WrapPanel>
 						<WrapPanel>
 							<CheckBox Name="DInput8_x86CheckBox" Checked="DInput8_x86CheckBox_CheckedChanged" Content="32-bit" />
@@ -179,17 +179,22 @@
 							Name="ProcessorArchitectureComboBox"
 							Grid.Row="1"
 							Grid.Column="5"
-							IsEnabled="False" />
+							IsEnabled="False"
+							Style="{StaticResource ComboBoxFix}" />
 						<Label
 							Name="EmulationTypeLabel"
 							Grid.Row="2"
 							Grid.Column="4"
 							Content="Emulation" />
-						<ComboBox Name="EmulationTypeComboBox" Grid.Row="2" Grid.Column="5" />
+						<ComboBox
+							Name="EmulationTypeComboBox"
+							Grid.Row="2"
+							Grid.Column="5"
+							Style="{StaticResource ComboBoxFix}" />
 					</Grid>
 				</WrapPanel>
 			</GroupBox>
-			<GroupBox Header="Action">
+			<GroupBox Name="ActionGroupBox" Header="Action">
 				<Button
 					Name="ResetToDefaultButton"
 					VerticalAlignment="Top"
