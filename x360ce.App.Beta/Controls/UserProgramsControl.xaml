@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="x360ce.App.Controls.ProgramsControl"
+	x:Class="x360ce.App.Controls.UserProgramsControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -22,7 +22,7 @@
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<local:ProgramListControl x:Name="ListPanel" Grid.Row="0" />
+		<local:UserProgramListControl x:Name="ListPanel" Grid.Row="0" />
 		<local:ProgramItemControl x:Name="ItemPanel" Grid.Row="1" IsEnabled="False" />
 	</Grid>
 </UserControl>

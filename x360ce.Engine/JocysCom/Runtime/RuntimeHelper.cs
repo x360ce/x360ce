@@ -335,10 +335,43 @@ namespace JocysCom.ClassLibrary.Runtime
 					foreach (var p in props)
 					{
 						var value = p.GetValue(o);
-#if NETFRAMEWORK
-						dynamic dv = (dynamic)value;
-						var _ = writer.Write(dv);
-#endif
+						switch (value)
+						{
+							case bool v:
+								writer.Write(v); break;
+							case byte v:
+								writer.Write(v); break;
+							case byte[] v:
+								writer.Write(v); break;
+							case char[] v:
+								writer.Write(v); break;
+							case char v:
+								writer.Write(v); break;
+							case decimal v:
+								writer.Write(v); break;
+							case double v:
+								writer.Write(v); break;
+							case float v:
+								writer.Write(v); break;
+							case int v:
+								writer.Write(v); break;
+							case long v:
+								writer.Write(v); break;
+							case sbyte v:
+								writer.Write(v); break;
+							case short v:
+								writer.Write(v); break;
+							case string v:
+								writer.Write(v); break;
+							case uint v:
+								writer.Write(v); break;
+							case ulong v:
+								writer.Write(v); break;
+							case ushort v:
+								writer.Write(v); break;
+							default:
+								break;
+						}
 					}
 					ms.Flush();
 					ms.Seek(0, SeekOrigin.Begin);
@@ -423,9 +456,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-#endregion
+		#endregion
 
-#region Convert: Structure <-> Bytes
+		#region Convert: Structure <-> Bytes
 
 		/// <summary>
 		/// Convert structure to byte array (unmanaged block of memory).
@@ -475,9 +508,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			return value;
 		}
 
-#endregion
+		#endregion
 
-#region Try Parse
+		#region Try Parse
 
 		/// <summary>
 		/// Tries to convert the specified string representation of a logical value to
@@ -552,7 +585,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			return Nullable.GetUnderlyingType(t) != null;
 		}
 
-#endregion
+		#endregion
 
 		public static void DetectType(string[] values, out Type type, out int sizeMin, out int sizeMax, out bool isAscii, out bool haveEmpty)
 		{

@@ -1,0 +1,21 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>radio button unselected icon</title>
+    <desc>radio button unselected icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="0" y1="160" x2="141.4157" y2="344.2725" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#4eb6f2"/>
+            <stop offset="1" stop-color="#139eee"/>
+        </linearGradient>
+        <linearGradient x1="32" y1="192" x2="118.44015" y2="304.4065" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#dcf1fd"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M96,160c53,0 96,43 96,96c0,53 -43,96 -96,96c-53,0 -96,-43 -96,-96c0,-53 43,-96 96,-96z" id="curve2" fill="url(#color-1)"/>
+        <path d="M96,192c35.5,0 64,28.5 64,64c0,35.5 -28.5,64 -64,64c-35.5,0 -64,-28.5 -64,-64c0,-35.5 28.5,-64 64,-64z" id="curve1" fill="url(#color-2)"/>
+        <path d="M224,208l288,0l0,96l-288,0z" id="curve0" fill="#91a0af"/>
+    </g>
+</svg>

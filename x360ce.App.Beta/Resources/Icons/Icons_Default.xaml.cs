@@ -18,6 +18,7 @@ namespace x360ce.App
 		public const string Icon_broom = nameof(Icon_broom);
 		public const string Icon_checkbox = nameof(Icon_checkbox);
 		public const string Icon_checkbox_unchecked = nameof(Icon_checkbox_unchecked);
+		public const string Icon_checks = nameof(Icon_checks);
 		public const string Icon_close = nameof(Icon_close);
 		public const string Icon_cloud_download = nameof(Icon_cloud_download);
 		public const string Icon_cloud_upload = nameof(Icon_cloud_upload);
@@ -31,6 +32,10 @@ namespace x360ce.App
 		public const string Icon_import = nameof(Icon_import);
 		public const string Icon_information = nameof(Icon_information);
 		public const string Icon_joystick = nameof(Icon_joystick);
+		public const string Icon_log_in = nameof(Icon_log_in);
+		public const string Icon_log_out = nameof(Icon_log_out);
+		public const string Icon_magnifying_glass = nameof(Icon_magnifying_glass);
+		public const string Icon_media_play = nameof(Icon_media_play);
 		public const string Icon_minus = nameof(Icon_minus);
 		public const string Icon_nav_down = nameof(Icon_nav_down);
 		public const string Icon_nav_left = nameof(Icon_nav_left);
@@ -40,6 +45,9 @@ namespace x360ce.App
 		public const string Icon_ok = nameof(Icon_ok);
 		public const string Icon_plus = nameof(Icon_plus);
 		public const string Icon_question = nameof(Icon_question);
+		public const string Icon_radio_button_group = nameof(Icon_radio_button_group);
+		public const string Icon_radio_button_selected = nameof(Icon_radio_button_selected);
+		public const string Icon_radio_button_unselected = nameof(Icon_radio_button_unselected);
 		public const string Icon_refresh = nameof(Icon_refresh);
 		public const string Icon_remove = nameof(Icon_remove);
 		public const string Icon_save = nameof(Icon_save);

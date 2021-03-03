@@ -1,0 +1,20 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>checks icon</title>
+    <desc>checks icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="52.5" y1="7" x2="342.348" y2="318.82885" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#77da26"/>
+            <stop offset="1" stop-color="#5ca91e"/>
+        </linearGradient>
+        <linearGradient x1="52.5" y1="188" x2="346.167" y2="503.9355" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#77da26"/>
+            <stop offset="1" stop-color="#5daa1e"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M392,7l67.5,68l-249,249l-158,-158.5l67.5,-68l90.5,90.5z" id="curve1" fill="url(#color-1)"/>
+        <path d="M392,188l67.5,68l-249,249l-158,-158.5l67.5,-68l90.5,90.5z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>

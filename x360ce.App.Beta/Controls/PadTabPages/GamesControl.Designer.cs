@@ -88,7 +88,7 @@
 			this.GamesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
 			this.GamesDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GamesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.GamesDataGridView.Location = new System.Drawing.Point(0, 31);
+			this.GamesDataGridView.Location = new System.Drawing.Point(0, 42);
 			this.GamesDataGridView.Name = "GamesDataGridView";
 			this.GamesDataGridView.ReadOnly = true;
 			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -102,7 +102,7 @@
 			this.GamesDataGridView.RowHeadersVisible = false;
 			this.GamesDataGridView.RowHeadersWidth = 51;
 			this.GamesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.GamesDataGridView.Size = new System.Drawing.Size(781, 332);
+			this.GamesDataGridView.Size = new System.Drawing.Size(781, 321);
 			this.GamesDataGridView.TabIndex = 0;
 			this.GamesDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.GamesDataGridView_CellClick);
 			this.GamesDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.GamesDataGridView_CellFormatting);
@@ -126,7 +126,7 @@
 			this.MyIconColumn.Name = "MyIconColumn";
 			this.MyIconColumn.ReadOnly = true;
 			this.MyIconColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-			this.MyIconColumn.Width = 24;
+			this.MyIconColumn.Width = 37;
 			// 
 			// GameIdColumn
 			// 
@@ -147,6 +147,7 @@
 			this.FileNameColumn.MinimumWidth = 6;
 			this.FileNameColumn.Name = "FileNameColumn";
 			this.FileNameColumn.ReadOnly = true;
+			this.FileNameColumn.Width = 157;
 			// 
 			// ProductNameColumn
 			// 
@@ -157,7 +158,7 @@
 			this.ProductNameColumn.MinimumWidth = 6;
 			this.ProductNameColumn.Name = "ProductNameColumn";
 			this.ProductNameColumn.ReadOnly = true;
-			this.ProductNameColumn.Width = 127;
+			this.ProductNameColumn.Width = 197;
 			// 
 			// PlatformColumn
 			// 
@@ -170,7 +171,6 @@
 			this.PlatformColumn.Name = "PlatformColumn";
 			this.PlatformColumn.ReadOnly = true;
 			this.PlatformColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.PlatformColumn.Width = 66;
 			// 
 			// FileFolderColumn
 			// 
@@ -180,7 +180,7 @@
 			this.FileFolderColumn.MinimumWidth = 6;
 			this.FileFolderColumn.Name = "FileFolderColumn";
 			this.FileFolderColumn.ReadOnly = true;
-			this.FileFolderColumn.Width = 103;
+			this.FileFolderColumn.Width = 159;
 			// 
 			// EmptyColumn
 			// 
@@ -205,7 +205,7 @@
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 0, 1, 0);
-			this.GamesToolStrip.Size = new System.Drawing.Size(781, 31);
+			this.GamesToolStrip.Size = new System.Drawing.Size(781, 42);
 			this.GamesToolStrip.TabIndex = 2;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
 			// 
@@ -214,7 +214,7 @@
 			this.ScanGamesButton.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
 			this.ScanGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ScanGamesButton.Name = "ScanGamesButton";
-			this.ScanGamesButton.Size = new System.Drawing.Size(64, 28);
+			this.ScanGamesButton.Size = new System.Drawing.Size(89, 36);
 			this.ScanGamesButton.Text = "&Scan";
 			this.ScanGamesButton.Click += new System.EventHandler(this.ScanButton_Click);
 			// 
@@ -224,7 +224,7 @@
 			this.AddGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.AddGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddGameButton.Name = "AddGameButton";
-			this.AddGameButton.Size = new System.Drawing.Size(70, 28);
+			this.AddGameButton.Size = new System.Drawing.Size(97, 36);
 			this.AddGameButton.Text = "Add...";
 			this.AddGameButton.Click += new System.EventHandler(this.AddGameButton_Click);
 			// 
@@ -233,7 +233,7 @@
 			this.DeleteGamesButton.Image = global::x360ce.App.Properties.Resources.delete_16x16;
 			this.DeleteGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.DeleteGamesButton.Name = "DeleteGamesButton";
-			this.DeleteGamesButton.Size = new System.Drawing.Size(77, 28);
+			this.DeleteGamesButton.Size = new System.Drawing.Size(109, 36);
 			this.DeleteGamesButton.Text = "&Delete";
 			this.DeleteGamesButton.Click += new System.EventHandler(this.DeleteGamesButton_Click);
 			// 
@@ -242,7 +242,7 @@
 			this.SaveGamesButton.Image = global::x360ce.App.Properties.Resources.save_16x16;
 			this.SaveGamesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.SaveGamesButton.Name = "SaveGamesButton";
-			this.SaveGamesButton.Size = new System.Drawing.Size(64, 28);
+			this.SaveGamesButton.Size = new System.Drawing.Size(89, 36);
 			this.SaveGamesButton.Text = "&Save";
 			this.SaveGamesButton.Click += new System.EventHandler(this.SaveGamesButton_Click);
 			// 
@@ -253,7 +253,7 @@
 			this.StartGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.StartGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.StartGameButton.Name = "StartGameButton";
-			this.StartGameButton.Size = new System.Drawing.Size(64, 28);
+			this.StartGameButton.Size = new System.Drawing.Size(87, 36);
 			this.StartGameButton.Text = "Start";
 			this.StartGameButton.Click += new System.EventHandler(this.StartGameButton_Click);
 			// 
@@ -264,7 +264,7 @@
 			this.OpenGameButton.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.OpenGameButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.OpenGameButton.Name = "OpenGameButton";
-			this.OpenGameButton.Size = new System.Drawing.Size(78, 28);
+			this.OpenGameButton.Size = new System.Drawing.Size(113, 36);
 			this.OpenGameButton.Text = "Open...";
 			this.OpenGameButton.Click += new System.EventHandler(this.OpenGameFolderButton_Click);
 			// 
@@ -277,14 +277,14 @@
 			this.ShowGamesDropDownButton.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
 			this.ShowGamesDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ShowGamesDropDownButton.Name = "ShowGamesDropDownButton";
-			this.ShowGamesDropDownButton.Size = new System.Drawing.Size(104, 28);
+			this.ShowGamesDropDownButton.Size = new System.Drawing.Size(154, 36);
 			this.ShowGamesDropDownButton.Text = "Show: All";
 			// 
 			// ShowAllGamesMenuItem
 			// 
 			this.ShowAllGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_undefined_16x16;
 			this.ShowAllGamesMenuItem.Name = "ShowAllGamesMenuItem";
-			this.ShowAllGamesMenuItem.Size = new System.Drawing.Size(194, 26);
+			this.ShowAllGamesMenuItem.Size = new System.Drawing.Size(311, 44);
 			this.ShowAllGamesMenuItem.Text = "Show: All";
 			this.ShowAllGamesMenuItem.Click += new System.EventHandler(this.ShowGamesMenuItem_Click);
 			// 
@@ -292,7 +292,7 @@
 			// 
 			this.ShowEnabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_16x16;
 			this.ShowEnabledGamesMenuItem.Name = "ShowEnabledGamesMenuItem";
-			this.ShowEnabledGamesMenuItem.Size = new System.Drawing.Size(194, 26);
+			this.ShowEnabledGamesMenuItem.Size = new System.Drawing.Size(311, 44);
 			this.ShowEnabledGamesMenuItem.Text = "Show: Enabled";
 			this.ShowEnabledGamesMenuItem.Click += new System.EventHandler(this.ShowGamesMenuItem_Click);
 			// 
@@ -300,7 +300,7 @@
 			// 
 			this.ShowDisabledGamesMenuItem.Image = global::x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
 			this.ShowDisabledGamesMenuItem.Name = "ShowDisabledGamesMenuItem";
-			this.ShowDisabledGamesMenuItem.Size = new System.Drawing.Size(194, 26);
+			this.ShowDisabledGamesMenuItem.Size = new System.Drawing.Size(311, 44);
 			this.ShowDisabledGamesMenuItem.Text = "Show: Disabled";
 			this.ShowDisabledGamesMenuItem.Click += new System.EventHandler(this.ShowGamesMenuItem_Click);
 			// 
@@ -311,7 +311,7 @@
 			this.ScanProgressLevel0Label.Location = new System.Drawing.Point(3, 0);
 			this.ScanProgressLevel0Label.Name = "ScanProgressLevel0Label";
 			this.ScanProgressLevel0Label.Padding = new System.Windows.Forms.Padding(3);
-			this.ScanProgressLevel0Label.Size = new System.Drawing.Size(163, 21);
+			this.ScanProgressLevel0Label.Size = new System.Drawing.Size(143, 19);
 			this.ScanProgressLevel0Label.TabIndex = 0;
 			this.ScanProgressLevel0Label.Text = "[ScanProgressLevel0Label]";
 			// 
@@ -321,9 +321,9 @@
 			this.ScanProgressPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.ScanProgressPanel.Controls.Add(this.tableLayoutPanel1);
 			this.ScanProgressPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 313);
+			this.ScanProgressPanel.Location = new System.Drawing.Point(0, 317);
 			this.ScanProgressPanel.Name = "ScanProgressPanel";
-			this.ScanProgressPanel.Size = new System.Drawing.Size(781, 50);
+			this.ScanProgressPanel.Size = new System.Drawing.Size(781, 46);
 			this.ScanProgressPanel.TabIndex = 4;
 			this.ScanProgressPanel.Visible = false;
 			// 
@@ -340,17 +340,17 @@
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(169, 42);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(149, 38);
 			this.tableLayoutPanel1.TabIndex = 2;
 			// 
 			// ScanProgressLevel1Label
 			// 
 			this.ScanProgressLevel1Label.AutoSize = true;
 			this.ScanProgressLevel1Label.BackColor = System.Drawing.SystemColors.Control;
-			this.ScanProgressLevel1Label.Location = new System.Drawing.Point(3, 21);
+			this.ScanProgressLevel1Label.Location = new System.Drawing.Point(3, 19);
 			this.ScanProgressLevel1Label.Name = "ScanProgressLevel1Label";
 			this.ScanProgressLevel1Label.Padding = new System.Windows.Forms.Padding(3);
-			this.ScanProgressLevel1Label.Size = new System.Drawing.Size(163, 21);
+			this.ScanProgressLevel1Label.Size = new System.Drawing.Size(143, 19);
 			this.ScanProgressLevel1Label.TabIndex = 1;
 			this.ScanProgressLevel1Label.Text = "[ScanProgressLevel1Label]";
 			// 

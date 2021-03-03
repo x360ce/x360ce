@@ -100,7 +100,7 @@
 					Binding="{Binding FileProductName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="File Title" />
+					Header="Product Name" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style TargetType="DataGridCell">
