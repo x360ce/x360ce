@@ -1,9 +1,6 @@
-﻿using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Controls.IssuesControl;
+﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
-using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace x360ce.App.Issues
 {

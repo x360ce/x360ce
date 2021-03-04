@@ -10,6 +10,8 @@ using System.Windows.Documents;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Data.Objects.DataClasses;
+using System.Windows.Data;
+using System.Xml;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -65,6 +67,27 @@ namespace JocysCom.ClassLibrary.Controls
 			if (ea != null && ea.Location.Contains("VisualStudio"))
 				return true;
 			return false;
+		}
+
+		public static T Clone<T>(T o)
+		{
+			var sb = new System.Text.StringBuilder();
+			var writer = XmlWriter.Create(sb, new XmlWriterSettings
+			{
+				Indent = true,
+				ConformanceLevel = ConformanceLevel.Fragment,
+				OmitXmlDeclaration = true,
+				NamespaceHandling = NamespaceHandling.OmitDuplicates,
+			});
+			var manager = new System.Windows.Markup.XamlDesignerSerializationManager(writer);
+			manager.XamlWriterMode = System.Windows.Markup.XamlWriterMode.Expression;
+			System.Windows.Markup.XamlWriter.Save(o, manager);
+			var stringReader = new StringReader(sb.ToString());
+			var xmlReader = XmlReader.Create(stringReader);
+			var item = System.Windows.Markup.XamlReader.Load(xmlReader);
+			if (item == null)
+				throw new ArgumentNullException("Could not be cloned.");
+			return (T)item;
 		}
 
 		/// <summary>

@@ -67,29 +67,31 @@
 					</StackPanel>
 				</Button>
 				<Menu x:Name="ShowMenu">
-					<MenuItem Margin="3,3,3,3" Padding="3,3,3,3" Header="Show: All">
+					<MenuItem
+						x:Name="ShowMenuItem"
+						Margin="3,3,3,3"
+						Padding="3,3,3,3"
+						Header="Show: All">
 						<MenuItem.Icon>
 							<ContentControl Content="{StaticResource Icon_radio_button_group}" Style="{StaticResource ButtonContentControl}" />
 						</MenuItem.Icon>
-						<MenuItem Click="ShowAllMenuItem_Click" Header="Show: All">
+						<MenuItem Click="ShowMenuItem_Click" Header="Show: All">
 							<MenuItem.Icon>
 								<ContentControl Content="{StaticResource Icon_radio_button_group}" Style="{StaticResource ButtonContentControl}" />
 							</MenuItem.Icon>
 						</MenuItem>
-						<MenuItem Click="ShowEnabledMenuItem_Click" Header="Show: Enabled">
+						<MenuItem Click="ShowMenuItem_Click" Header="Show: Enabled">
 							<MenuItem.Icon>
 								<ContentControl Content="{StaticResource Icon_radio_button_selected}" Style="{StaticResource ButtonContentControl}" />
 							</MenuItem.Icon>
 						</MenuItem>
-						<MenuItem Click="ShowDisabledMenuItem_Click" Header="Show: Disabled">
+						<MenuItem Click="ShowMenuItem_Click" Header="Show: Disabled">
 							<MenuItem.Icon>
 								<ContentControl Content="{StaticResource Icon_radio_button_unselected}" Style="{StaticResource ButtonContentControl}" />
 							</MenuItem.Icon>
 						</MenuItem>
 					</MenuItem>
 				</Menu>
-
-
 			</ToolBar>
 		</ToolBarPanel>
 		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
@@ -134,24 +136,22 @@
 			KeyDown="MainDataGrid_KeyDown"
 			SelectionChanged="MainDataGrid_SelectionChanged">
 			<DataGrid.Columns>
+				<DataGridCheckBoxColumn Binding="{Binding IsEnabled}" EditingElementStyle="{StaticResource CheckBoxCell}" ElementStyle="{StaticResource CheckBoxCell}" />
 				<DataGridTextColumn
 					Binding="{Binding FileName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="File Name" />
-
 				<DataGridTextColumn
 					Binding="{Binding FileProductName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Product Name" />
-
 				<DataGridTextColumn
 					Binding="{Binding ProcessorArchitecture}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Platform" />
-
 				<DataGridTextColumn
 					Width="*"
 					Binding="{Binding FullPath}"

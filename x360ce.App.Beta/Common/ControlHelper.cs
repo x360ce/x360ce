@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Windows.Forms;
 using x360ce.Engine;
 
@@ -23,16 +21,16 @@ namespace x360ce.App
 				var item = (IDisplayName)rows[i].DataBoundItem;
 				var visible = true;
 				if (showEnabled)
-					visible = (item.IsEnabled == true);
+					visible = item.IsEnabled;
 				if (showDisabled)
-					visible = (item.IsEnabled == false);
+					visible = !item.IsEnabled;
 				if (rows[i].Visible != visible)
 				{
 					needRebinding = true;
 					break;
 				}
 			}
-			// If there is no collmns to hide or show then...
+			// If there is no columns to hide or show then...
 			if (needRebinding)
 			{
 				var selection = selectItemKey == null
@@ -50,13 +48,11 @@ namespace x360ce.App
 					var item = (IDisplayName)rows[i].DataBoundItem;
 					var visible = true;
 					if (showEnabled)
-						visible = (item.IsEnabled == true);
+						visible = item.IsEnabled;
 					if (showDisabled)
-						visible = (item.IsEnabled == false);
+						visible = !item.IsEnabled;
 					if (rows[i].Visible != visible)
-					{
 						rows[i].Visible = visible;
-					}
 				}
 				// Resume CurrencyManager and Layout.
 				cm.ResumeBinding();
@@ -68,11 +64,9 @@ namespace x360ce.App
 			else if (grid.SelectedRows.Count == 0)
 			{
 				var firstVisibleRow = rows.FirstOrDefault(x => x.Visible);
+				// Select first visible row.
 				if (firstVisibleRow != null)
-				{
-					// Select first visible row.
 					firstVisibleRow.Selected = true;
-				}
 			}
 		}
 

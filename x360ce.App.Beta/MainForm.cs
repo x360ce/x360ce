@@ -63,6 +63,9 @@ namespace x360ce.App
 			ProgramsPanel = new ProgramsControl();
 			ProgramsHost.Child = ProgramsPanel;
 
+			UserProgramsPanel = new UserProgramsControl();
+			UserProgramsHost.Child = UserProgramsPanel;
+
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 
 			// Map event handler.
@@ -105,6 +108,7 @@ namespace x360ce.App
 
 		public OptionsControl OptionsPanel;
 		public ProgramsControl ProgramsPanel;
+		public UserProgramsControl UserProgramsPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -1422,7 +1426,7 @@ namespace x360ce.App
 			{
 				MainTabControl.SelectedTab = GamesTabPage;
 				Application.DoEvents();
-				GameSettingsPanel.AddNewGame();
+				UserProgramsPanel.ListPanel.AddNewGame();
 			});
 		}
 

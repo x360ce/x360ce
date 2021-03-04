@@ -42,7 +42,7 @@ namespace x360ce.App.Issues
 				// Update current settings file.
 				MainForm.Current.Invoke((Action)delegate ()
 				{
-					MainForm.Current.GameSettingsPanel.ProcessExecutable(exes[0]);
+					MainForm.Current.UserProgramsPanel.ListPanel.ProcessExecutable(exes[0]);
 				});
 			}
 			foreach (var exe in exes)

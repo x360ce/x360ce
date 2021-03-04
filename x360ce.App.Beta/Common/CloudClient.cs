@@ -202,7 +202,7 @@ namespace x360ce.App
 				case CloudAction.Select:
 					if (result.UserGames != null)
 					{
-						MainForm.Current.GameSettingsPanel.ImportAndBindItems(result.UserGames);
+						MainForm.Current.UserProgramsPanel.ListPanel.ImportAndBindItems(result.UserGames);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
 								MainForm.Current.SetBodyError(result.ErrorMessage);

@@ -22,7 +22,11 @@
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<local:UserProgramListControl x:Name="ListPanel" Grid.Row="0" />
-		<local:ProgramItemControl x:Name="ItemPanel" Grid.Row="1" IsEnabled="False" />
+		<local:UserProgramListControl x:Name="ListPanel" Grid.Row="0" x:FieldModifier="public" />
+		<local:ProgramItemControl
+			x:Name="ItemPanel"
+			Grid.Row="1"
+			x:FieldModifier="public"
+			IsEnabled="False" />
 	</Grid>
 </UserControl>
