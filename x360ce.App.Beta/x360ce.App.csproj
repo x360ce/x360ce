@@ -252,6 +252,9 @@
     <Compile Include="Controls\AboutUserControl.xaml.cs">
       <DependentUpon>AboutUserControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\AxisMapControl.xaml.cs">
+      <DependentUpon>AxisMapControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\AxisToButtonControl.xaml.cs">
       <DependentUpon>AxisToButtonControl.xaml</DependentUpon>
     </Compile>
@@ -721,6 +724,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Controls\AboutUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\AxisMapControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
