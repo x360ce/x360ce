@@ -12,11 +12,6 @@ namespace x360ce.App
 	public class DeadZoneWpfControlsLink : IDisposable
 	{
 
-		public void DeadZoneWpfControlsLink2()
-		{
-
-		}
-
 		public DeadZoneWpfControlsLink(Slider trackBar, IntegerUpDown numericUpDown, TextBox textBox, int maxValue)
 		{
 			// Slider will be mapped as main settings control.
@@ -43,6 +38,8 @@ namespace x360ce.App
 			if (ev != null) ev(this, new EventArgs());
 		}
 
+		public string PercentFormat = "{0:0} % ";
+
 		void UpdateValue()
 		{
 			lock (eventsLock)
@@ -50,9 +47,10 @@ namespace x360ce.App
 				if (IsDisposing) return;
 				_NumericUpDown.ValueChanged -= _NumericUpDown_ValueChanged;
 				var percent = _TrackBar.Value;
-				var percentString = string.Format("{0} % ", percent);
+				var percentString = string.Format(PercentFormat, percent);
 				// Update percent TextBox.
-				if (_TextBox.Text != percentString) _TextBox.Text = percentString;
+				if (_TextBox.Text != percentString)
+					_TextBox.Text = percentString;
 				// Update NumericUpDown.
 				var value = (decimal)Math.Round((float)percent / 100f * (float)_NumericUpDown.Maximum);
 				if (_NumericUpDown.Value != value) _NumericUpDown.Value = (int)value;
@@ -69,7 +67,7 @@ namespace x360ce.App
 				var control = (IntegerUpDown)sender;
 				_TrackBar.ValueChanged -= _TrackBar_ValueChanged;
 				var percent = (int)Math.Round(((float)control.Value / (float)_NumericUpDown.Maximum) * 100f);
-				var percentString = string.Format("{0} % ", percent);
+				var percentString = string.Format(PercentFormat, percent);
 				// Update percent TextBox.
 				if (_TextBox.Text != percentString) _TextBox.Text = percentString;
 				// Update TrackBar;

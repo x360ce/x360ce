@@ -30,6 +30,10 @@ namespace x360ce.App.Controls
 			AxistToButtonsListHost.Child = AxisToButtonsListPanel;
 			DirectInputPanel = new PadTabPages.DirectInputUserControl();
 			DirectInputHost.Child = DirectInputPanel;
+			LeftTriggerPanel = new AxisMapControl();
+			LeftTriggerPanel.HeaderText = "Left Trigger";
+			LeftTriggerPanel.TargetType = TargetType.LeftTrigger;
+			LeftTriggerHost.Child = LeftTriggerPanel;
 			// Add controls which must be notified on setting selection change.
 			UserMacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
@@ -83,6 +87,9 @@ namespace x360ce.App.Controls
 
 		public AxisToButtonListControl AxisToButtonsListPanel;
 		public PadTabPages.DirectInputUserControl DirectInputPanel;
+
+		private AxisMapControl LeftTriggerPanel;
+
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -216,7 +223,7 @@ namespace x360ce.App.Controls
 				// LeftTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
+					LeftTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
 				// RightTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
@@ -651,9 +658,9 @@ namespace x360ce.App.Controls
 
 			// Left Trigger
 			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox, MapCode.LeftTrigger);
-			AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerUserControl.DeadZoneTrackBar);
-			AddMap(() => SettingName.LeftTriggerAntiDeadZone, LeftTriggerUserControl.AntiDeadZoneNumericUpDown);
-			AddMap(() => SettingName.LeftTriggerLinear, LeftTriggerUserControl.SensitivityNumericUpDown);
+			//AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerPanel.DeadZoneTrackBar);
+			//AddMap(() => SettingName.LeftTriggerAntiDeadZone, LeftTriggerPanel.AntiDeadZoneNumericUpDown);
+			//AddMap(() => SettingName.LeftTriggerLinear, LeftTriggerPanel.SensitivityNumericUpDown);
 			// Right Trigger
 			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox, MapCode.RightTrigger);
 			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);

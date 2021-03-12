@@ -1,18 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Linq;
-using System.Text;
 
 namespace x360ce.Engine
 {
 	public class ConvertHelper
 	{
 
-		/// <summary>Get XInput thumb value by DINput value</summary>
+		/// <summary>Get XInput thumb value by DInput value</summary>
 		/// <remarks>Used to create graphs pictures.</remarks>
-		public static float GetThumbValue(float dInputValue, float deadZone, float antiDeadZone, float linear, bool inverted, bool half, bool thumb = true)
+		public static float GetThumbValue(float dInputValue, float deadZone, float antiDeadZone, float linear, bool isInverted, bool isHalf, bool isThumb = true)
 		{
+			// Check DInputValue.
+			if (dInputValue < ushort.MinValue)
+				throw new ArgumentOutOfRangeException(nameof(linear), $"DInputValue can't be less than {ushort.MinValue}!");
+			if (dInputValue > ushort.MaxValue)
+				throw new ArgumentOutOfRangeException(nameof(linear), $"DInputValue can't be greater than {ushort.MaxValue}!");
+			// Check DeadZone.
+			if (deadZone < 0)
+				throw new ArgumentOutOfRangeException(nameof(linear), $"DeadZone can't be less than {0}!");
+			if (deadZone > short.MaxValue)
+				throw new ArgumentOutOfRangeException(nameof(linear), $"DeadZone can't be greater than {short.MaxValue}!");
+			// Check AntiDeadZone.
+			if (antiDeadZone < 0)
+				throw new ArgumentOutOfRangeException(nameof(linear), $"AntiDeadZone can't be less than {0}!");
+			if (antiDeadZone > short.MaxValue)
+				throw new ArgumentOutOfRangeException(nameof(linear), $"AntiDeadZone can't be greater than {short.MaxValue}!");
+			// Check Linear sensitivity.
+			if (linear < -100f)
+				throw new ArgumentOutOfRangeException(nameof(linear), "Linear sensitivity can't be less than -100!");
+			if (linear > 100f)
+				throw new ArgumentOutOfRangeException(nameof(linear), "Linear sensitivity can't be greater than 100!");
 			//
 			//        [  32768 steps | 32768 steps ]
 			// DInput [      0 32767 | 32768 65535 ] 
@@ -21,11 +37,11 @@ namespace x360ce.Engine
 			var dih = 32768f;
 			var dInput = (float)dInputValue;
 			// If source axis must be inverted then...
-			if (inverted)
+			if (isInverted)
 				dInput = (float)ushort.MaxValue - dInput;
 			// if only upper half axis must be used then...
 			// Note: half axis is ignored if destination is thumb.
-			if (half && !thumb)
+			if (isHalf && !isThumb)
 			{
 				// Limit minimum value.
 				if (dInput < dih)
@@ -33,8 +49,8 @@ namespace x360ce.Engine
 				// Convert half Dinput range [32768;65535] range to DInput range (ushort[0;65535])
 				dInput = ConvertRangeF(dih, ushort.MaxValue, 0f, ushort.MaxValue, dInput);
 			}
-			var min = thumb ? -32768f : 0f;
-			var max = thumb ? 32767f : 255f;
+			var min = isThumb ? -32768f : 0f;
+			var max = isThumb ? 32767f : 255f;
 
 			// Convert DInput range(ushort[0; 65535]) to XInput thumb range(ushort[min; max]).
 			var xInput = ConvertRangeF(ushort.MinValue, ushort.MaxValue, min, max, dInput);
@@ -79,6 +95,10 @@ namespace x360ce.Engine
 			if (invert && !deadZoneApplied)
 				// Convert [32767;0] -> [-32768;-1]
 				xInput = -1f - xInput;
+			// Set negative center value (-1) to 0 for thumb.
+			if (isThumb && xInput == -1)
+				xInput = 0;
+			// Return value.
 			return xInput;
 		}
 

@@ -13,13 +13,29 @@
 				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary>
+					<Style TargetType="Slider">
+						<Setter Property="Width" Value="200" />
+						<Setter Property="VerticalAlignment" Value="Center" />
+						<Setter Property="LargeChange" Value="10" />
+						<Setter Property="Maximum" Value="100" />
+						<Setter Property="Margin" Value="16,0,0,0" />
+					</Style>
+				</ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Grid>
-		<GroupBox Header="Thumb">
+		<GroupBox
+			x:Name="MainGroupBox"
+			HorizontalAlignment="Left"
+			VerticalAlignment="Top"
+			Header="Thumb">
 			<Grid>
 				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
 					<RowDefinition Height="Auto" />
@@ -27,11 +43,10 @@
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition />
-					<ColumnDefinition />
-					<ColumnDefinition />
-					<ColumnDefinition />
-					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				<StackPanel
 					Grid.Row="0"
@@ -66,7 +81,7 @@
 
 				<Border
 					Grid.Row="1"
-					Grid.RowSpan="4"
+					Grid.RowSpan="7"
 					Grid.Column="0"
 					Grid.ColumnSpan="2"
 					HorizontalAlignment="Left"
@@ -75,27 +90,38 @@
 					BorderBrush="Gray"
 					BorderThickness="1">
 					<!--  This image uses a Drawing object for its source.  -->
-					<Image>
-						<Image.Source>
-							<DrawingImage>
-								<DrawingImage.Drawing>
-									<GeometryDrawing>
-										<GeometryDrawing.Geometry>
-											<GeometryGroup>
-												<EllipseGeometry Center="50,50" RadiusX="75" RadiusY="75" />
-											</GeometryGroup>
-										</GeometryDrawing.Geometry>
-										<GeometryDrawing.Pen>
-											<Pen Brush="Black" Thickness="10" />
-										</GeometryDrawing.Pen>
-									</GeometryDrawing>
-								</DrawingImage.Drawing>
-							</DrawingImage>
-						</Image.Source>
-					</Image>
+					<Grid Width="150" Height="150">
+						<Image x:Name="MainPictureBox" Width="150" Height="150" />
+						<Path Stroke="Green" StrokeThickness="1">
+							<Path.Data>
+								<LineGeometry x:Name="DInputLineGeometry" StartPoint="75,0" EndPoint="75,150" />
+							</Path.Data>
+						</Path>
+						<Path Fill="Green" StrokeThickness="1">
+							<Path.Data>
+								<EllipseGeometry
+									x:Name="DInputEllipse"
+									Center="75,75"
+									RadiusX="3"
+									RadiusY="3" />
+							</Path.Data>
+						</Path>
+						<Path Stroke="Blue" StrokeThickness="1">
+							<Path.Data>
+								<LineGeometry x:Name="XInputLineGeometry" StartPoint="0,75" EndPoint="150,75" />
+							</Path.Data>
+						</Path>
+						<Path Fill="Blue" StrokeThickness="1">
+							<Path.Data>
+								<EllipseGeometry
+									x:Name="XInputEllipse"
+									Center="75,75"
+									RadiusX="3"
+									RadiusY="3" />
+							</Path.Data>
+						</Path>
+					</Grid>
 				</Border>
-
-
 				<Menu
 					Name="PresetMenuStrip"
 					Grid.Row="0"
@@ -111,73 +137,76 @@
 						<MenuItem Name="P_0_20_0_MenuItem" Header="20% Controller Anti-DeadZone" />
 					</MenuItem>
 				</Menu>
-
 				<Label
 					Name="AntiDeadZoneLabel"
 					Grid.Row="1"
 					Grid.Column="2"
 					VerticalAlignment="Center"
-					Content="Anti-Dead Zone" />
-
-				<Slider
-					Name="AntiDeadZoneTrackBar"
-					Grid.Row="1"
-					Grid.Column="3"
-					Width="200"
-					VerticalAlignment="Center"
-					LargeChange="10"
-					Maximum="100" />
-				<TextBox
-					Name="AntiDeadZoneTextBox"
-					Grid.Row="1"
+					Content="Anti-Dead Zone:" />
+				<Slider Name="AntiDeadZoneTrackBar" Grid.Row="2" Grid.Column="2" />
+				<StackPanel
+					Grid.Row="2"
 					Grid.Column="4"
-					Width="50"
-					HorizontalAlignment="Left"
-					HorizontalContentAlignment="Right"
-					IsReadOnly="True"
-					IsTabStop="False"
-					Text="0 %" />
+					VerticalAlignment="Bottom"
+					Orientation="Horizontal">
+					<TextBox
+						Name="AntiDeadZoneTextBox"
+						Width="50"
+						HorizontalAlignment="Left"
+						HorizontalContentAlignment="Right"
+						IsReadOnly="True"
+						IsTabStop="False"
+						Text="0 %" />
+					<xctk:IntegerUpDown
+						Name="AntiDeadZoneNumericUpDown"
+						MinWidth="75"
+						VerticalAlignment="Center"
+						Maximum="100"
+						Minimum="-100"
+						ValueChanged="AntiDeadZoneUpDown_ValueChanged"
+						Value="0" />
+				</StackPanel>
 				<Label
 					Name="DeadZoneLabel"
-					Grid.Row="2"
+					Grid.Row="3"
 					Grid.Column="2"
-					VerticalAlignment="Center"
-					Content="Dead Zone" />
-				<Slider
-					Name="DeadZoneTrackBar"
-					Grid.Row="2"
-					Grid.Column="3"
-					Width="200"
-					VerticalAlignment="Center"
-					LargeChange="10"
-					Maximum="100" />
-
-				<TextBox
-					Name="DeadZoneTextBox"
-					Grid.Row="2"
+					Content="Dead Zone:" />
+				<Slider Name="DeadZoneTrackBar" Grid.Row="4" Grid.Column="2" />
+				<StackPanel
+					Grid.Row="4"
 					Grid.Column="4"
-					Width="50"
-					HorizontalAlignment="Left"
-					HorizontalContentAlignment="Right"
-					IsReadOnly="True"
-					IsTabStop="False"
-					Text="0 %" />
+					VerticalAlignment="Center"
+					Orientation="Horizontal">
+					<TextBox
+						Name="DeadZoneTextBox"
+						Width="50"
+						HorizontalAlignment="Left"
+						HorizontalContentAlignment="Right"
+						IsReadOnly="True"
+						IsTabStop="False"
+						Text="0 %" />
+					<xctk:IntegerUpDown
+						Name="DeadZoneNumericUpDown"
+						MinWidth="75"
+						VerticalAlignment="Center"
+						Maximum="100"
+						Minimum="-100"
+						ValueChanged="DeadZoneUpDown_ValueChanged"
+						Value="0" />
+				</StackPanel>
 
 				<Label
 					Name="SensitivityLabel"
-					Grid.Row="3"
+					Grid.Row="5"
 					Grid.Column="2"
+					Content="Sensitivity:" />
+				<Slider Name="SensitivityTrackBar" Grid.Row="6" Grid.Column="2" />
+
+				<StackPanel
+					Grid.Row="6"
+					Grid.Column="4"
 					VerticalAlignment="Center"
-					Content="Sensitivity" />
-				<Slider
-					Name="SensitivityTrackBar"
-					Grid.Row="3"
-					Grid.Column="3"
-					Width="200"
-					VerticalAlignment="Center"
-					LargeChange="10"
-					Maximum="100" />
-				<StackPanel Grid.Row="3" Grid.Column="4" Orientation="Horizontal">
+					Orientation="Horizontal">
 					<TextBox
 						Name="SensitivityTextBox"
 						Width="50"
@@ -186,15 +215,14 @@
 						IsReadOnly="True"
 						IsTabStop="False"
 						Text="0 %" />
-					<CheckBox Name="SensitivityCheckBox" Checked="SensitivityCheckBox_CheckedChanged" Content="Invert" />
 					<xctk:IntegerUpDown
 						Name="SensitivityNumericUpDown"
 						MinWidth="75"
 						VerticalAlignment="Center"
 						Maximum="100"
 						Minimum="-100"
-						ValueChanged="SensitivityNumericUpDown_ValueChanged"
 						Value="0" />
+					<CheckBox Name="SensitivityCheckBox" Checked="SensitivityCheckBox_CheckedChanged" Content="Invert" />
 				</StackPanel>
 			</Grid>
 		</GroupBox>

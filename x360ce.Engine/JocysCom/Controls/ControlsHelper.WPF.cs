@@ -341,14 +341,17 @@ namespace JocysCom.ClassLibrary.Controls
 			// Add top control if required.
 			if (includeTop)
 				controls.Add(control);
-
-			// If control contains visual children then...
-			var childrenCount = VisualTreeHelper.GetChildrenCount(control);
-			for (int i = 0; i < childrenCount; i++)
+			var visual = control as Visual;
+			if (visual != null)
 			{
-				var child = VisualTreeHelper.GetChild(control, i);
-				var children = GetAll(child, null, true);
-				controls.AddRange(children);
+				// If control contains visual children then...
+				var childrenCount = VisualTreeHelper.GetChildrenCount(control);
+				for (int i = 0; i < childrenCount; i++)
+				{
+					var child = VisualTreeHelper.GetChild(control, i);
+					var children = GetAll(child, null, true);
+					controls.AddRange(children);
+				}
 			}
 			// Get logical children.
 			var logicalChildren = LogicalTreeHelper.GetChildren(control).OfType<DependencyObject>().ToList();

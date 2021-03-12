@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace x360ce.App
 {
@@ -13,11 +11,11 @@ namespace x360ce.App
 			_count = count;
 		}
 
+		public string Name => _name;
 		string _name;
-		public string Name { get { return _name; } }
 
+		public int Count => _count;
 		int _count;
-		public int Count { get { return _count; } }
 
 	}
 }

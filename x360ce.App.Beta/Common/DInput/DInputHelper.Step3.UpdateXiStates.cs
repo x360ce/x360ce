@@ -324,9 +324,6 @@ namespace x360ce.App.DInput
 						else if (map.Target != TargetType.None)
 						{
 							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf);
-							// Set negative center value (-1) to 0.
-							if (thumbValue == -1)
-								thumbValue = 0;
 							if (map.Target == TargetType.LeftThumbX)
 								gp.LeftThumbX = thumbValue;
 							if (map.Target == TargetType.LeftThumbY)

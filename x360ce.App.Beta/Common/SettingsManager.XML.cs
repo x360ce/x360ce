@@ -24,6 +24,8 @@ namespace x360ce.App
 				if (setting == null)
 					continue;
 				var padSetting = padControl.CloneCurrentPadSetting();
+				if (padSetting == null)
+					continue;
 				// If setting doesn't exists then...
 				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == padSetting.PadSettingChecksum))
 				{
