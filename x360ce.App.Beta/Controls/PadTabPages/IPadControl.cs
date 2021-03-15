@@ -7,7 +7,7 @@ namespace x360ce.App.Controls
 	public interface IPadControl
 	{
 		event EventHandler<EventArgs<UserSetting>> OnSettingChanged;
-		UserSetting GetSelectedSetting();
-		UserDevice GetSelectedDevice();
+		UserSetting CurrentUserSetting { get; }
+		UserDevice CurrentUserDevice { get; }
 	}
 }

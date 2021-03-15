@@ -228,8 +228,6 @@ namespace x360ce.App.Controls
 			var png = new PngBitmapEncoder();
 			png.Frames.Add(BitmapFrame.Create(bmp));
 
-
-
 			//using (var stm = System.IO.File.Create("new.png"))
 			//	png.Save(stm);
 
@@ -252,8 +250,6 @@ namespace x360ce.App.Controls
 			}
 			else
 				MainPictureBox.Source = null;
-
-
 		}
 
 		void DrawDot(DrawingContext g, float x, float y, Brush brush, bool snap = false)
@@ -289,7 +285,7 @@ namespace x360ce.App.Controls
 				if (y > h - 1f)
 					y = h - p;
 			}
-			g.DrawEllipse(brush, null, new Point(x, y), 1f, 1f);
+			g.DrawEllipse(brush, null, new Point(x, y), 0.5f, 0.5f);
 		}
 
 		#region Sensitivity Controls

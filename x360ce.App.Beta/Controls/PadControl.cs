@@ -101,7 +101,7 @@ namespace x360ce.App.Controls
 		{
 			lock (updateFromDirectInputLock)
 			{
-				var ud = GetSelectedDevice();
+				var ud = CurrentUserDevice;
 				var instanceGuid = Guid.Empty;
 				var enable = ud != null;
 				if (enable)
@@ -197,11 +197,11 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
 			ControlsHelper.SetText(RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
 			// Process device.
-			var ud = GetSelectedDevice();
+			var ud = CurrentUserDevice;
 			if (ud != null && ud.DiState != null)
 			{
 				// Get current pad setting.
-				var ps = GetSelectedPadSetting();
+				var ps = CurrentPadSetting;
 				Map map;
 				// LeftThumbX
 				var axis = ud.DiState.Axis;
@@ -658,9 +658,11 @@ namespace x360ce.App.Controls
 
 			// Left Trigger
 			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox, MapCode.LeftTrigger);
+
 			//AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerPanel.DeadZoneTrackBar);
 			//AddMap(() => SettingName.LeftTriggerAntiDeadZone, LeftTriggerPanel.AntiDeadZoneNumericUpDown);
 			//AddMap(() => SettingName.LeftTriggerLinear, LeftTriggerPanel.SensitivityNumericUpDown);
+
 			// Right Trigger
 			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox, MapCode.RightTrigger);
 			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);
@@ -672,8 +674,6 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.DPadDown, DPadDownComboBox, MapCode.DPadDown);
 			AddMap(() => SettingName.DPadLeft, DPadLeftComboBox, MapCode.DPadLeft);
 			AddMap(() => SettingName.DPadRight, DPadRightComboBox, MapCode.DPadRight);
-
-
 
 			// Axis To Button
 			AddMap(() => SettingName.ButtonADeadZone, new NumericUpDown());
@@ -781,40 +781,6 @@ namespace x360ce.App.Controls
 			bool forcesPassThrough = ForceFeedbackPassThroughCheckBox.Checked;
 			// If full pass-through mode is turned on, changing forces pass-through has no effect.
 			ForceFeedbackPassThroughCheckBox.Enabled = !fullPassThrough;
-		}
-
-		/// <summary>
-		/// Get selected Setting. If device is not selected then return null.
-		/// </summary>
-		public UserSetting GetSelectedSetting()
-		{
-			var grid = MappedDevicesDataGridView;
-			var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
-			if (row == null)
-				return null;
-			return (UserSetting)row.DataBoundItem;
-		}
-
-		/// <summary>
-		/// Get selected device. If device is not connected then return null.
-		/// </summary>
-		public UserDevice GetSelectedDevice()
-		{
-			var setting = GetSelectedSetting();
-			if (setting == null)
-				return null;
-			return SettingsManager.GetDevice(setting.InstanceGuid);
-		}
-
-		/// <summary>
-		/// Get PadSetting from currently selected device.
-		/// </summary>
-		public PadSetting GetSelectedPadSetting()
-		{
-			var setting = GetSelectedSetting();
-			if (setting == null)
-				return new PadSetting();
-			return SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 		}
 
 		/// <summary>
@@ -1146,7 +1112,7 @@ namespace x360ce.App.Controls
 
 		private void AutoPresetButton_Click(object sender, EventArgs e)
 		{
-			var ud = GetSelectedDevice();
+			var ud = CurrentUserDevice;
 			if (ud == null)
 				return;
 			var description = Attributes.GetDescription(MappedTo);
@@ -1278,7 +1244,7 @@ namespace x360ce.App.Controls
 			if (game == null)
 				return;
 			var settingsOld = SettingsManager.GetSettings(game.FileName, MappedTo);
-			var setting = GetSelectedSetting();
+			var setting = CurrentUserSetting;
 			SettingsManager.UnMapGamePadDevices(game, setting,
 				SettingsManager.Options.HidGuardianConfigureAutomatically);
 			var settingsNew = SettingsManager.GetSettings(game.FileName, MappedTo);
@@ -1342,15 +1308,40 @@ namespace x360ce.App.Controls
 
 		public event EventHandler<EventArgs<UserSetting>> OnSettingChanged;
 
+		public UserSetting CurrentUserSetting
+			=> _CurrentUserSetting;
+		private UserSetting _CurrentUserSetting;
+
+		public UserDevice CurrentUserDevice
+			=> _CurrentUserDevice;
+		private UserDevice _CurrentUserDevice;
+		
+		public PadSetting CurrentPadSetting
+			=> _CurrentPadSetting;
+		private PadSetting _CurrentPadSetting;
+
+		static object selectionLock = new object();
+
 		private void MappedDevicesDataGridView_SelectionChanged(object sender, EventArgs e)
 		{
-			var setting = GetSelectedSetting();
-			var padSetting = setting == null
-				? null
-				: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, padSetting);
-			OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
-			UpdateGridButtons();
+			lock (selectionLock)
+			{
+				var grid = (DataGridView)sender;
+				var row = grid.SelectedRows.Cast<DataGridViewRow>().FirstOrDefault();
+				var setting = (UserSetting)row?.DataBoundItem;
+				_CurrentUserSetting = setting;
+				// Get device attached to user setting.
+				_CurrentUserDevice = setting == null
+					? new UserDevice()
+					: SettingsManager.GetDevice(setting.InstanceGuid);
+				// Get mappings attached to user setting.
+				_CurrentPadSetting = setting == null
+					? new PadSetting()
+					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, _CurrentPadSetting);
+				OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
+				UpdateGridButtons();
+			}
 		}
 
 		private void MappedDevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -1517,8 +1508,7 @@ namespace x360ce.App.Controls
 
 		private void CopyPresetButton_Click(object sender, EventArgs e)
 		{
-			var ps = GetSelectedPadSetting();
-			var text = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(ps, null, true);
+			var text = Serializer.SerializeToXmlString(CurrentPadSetting, null, true);
 			Clipboard.SetText(text);
 		}
 
@@ -1586,5 +1576,6 @@ namespace x360ce.App.Controls
 		{
 
 		}
+
 	}
 }

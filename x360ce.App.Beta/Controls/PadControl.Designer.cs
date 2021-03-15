@@ -17,10 +17,10 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PadControl));
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DirectInputTabPage = new System.Windows.Forms.TabPage();
 			this.DirectInputHost = new System.Windows.Forms.Integration.ElementHost();
 			this.AdvancedTabPage = new System.Windows.Forms.TabPage();
@@ -2154,14 +2154,14 @@
             this.VendorNameColumn,
             this.ProductNameColumn,
             this.MapToColumn});
-			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle7;
+			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
 			this.MappedDevicesDataGridView.EnableHeadersVisualStyles = false;
 			this.MappedDevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.MappedDevicesDataGridView.Location = new System.Drawing.Point(0, 48);
@@ -2169,14 +2169,14 @@
 			this.MappedDevicesDataGridView.MultiSelect = false;
 			this.MappedDevicesDataGridView.Name = "MappedDevicesDataGridView";
 			this.MappedDevicesDataGridView.ReadOnly = true;
-			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MappedDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.MappedDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
 			this.MappedDevicesDataGridView.RowHeadersVisible = false;
 			this.MappedDevicesDataGridView.RowHeadersWidth = 51;
 			this.MappedDevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -2233,9 +2233,9 @@
 			// 
 			this.CompletionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.CompletionColumn.DataPropertyName = "Completion";
-			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			dataGridViewCellStyle5.NullValue = null;
-			this.CompletionColumn.DefaultCellStyle = dataGridViewCellStyle5;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle1.NullValue = null;
+			this.CompletionColumn.DefaultCellStyle = dataGridViewCellStyle1;
 			this.CompletionColumn.HeaderText = "Map %";
 			this.CompletionColumn.MinimumWidth = 6;
 			this.CompletionColumn.Name = "CompletionColumn";
@@ -2246,8 +2246,8 @@
 			// InstanceIdColumn
 			// 
 			this.InstanceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.InstanceIdColumn.DefaultCellStyle = dataGridViewCellStyle6;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.InstanceIdColumn.DefaultCellStyle = dataGridViewCellStyle2;
 			this.InstanceIdColumn.HeaderText = "Instance ID";
 			this.InstanceIdColumn.MinimumWidth = 6;
 			this.InstanceIdColumn.Name = "InstanceIdColumn";
