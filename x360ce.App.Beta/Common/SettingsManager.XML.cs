@@ -179,7 +179,9 @@ namespace x360ce.App
 			SuspendEvents();
 			foreach (var p in properties)
 			{
-				var map = maps.First(x => x.PropertyName == p.Name);
+				var map = maps.FirstOrDefault(x => x.PropertyName == p.Name);
+				if (map == null)
+					continue;
 				var v = (string)p.GetValue(ps, null) ?? "";
 				// If value is not set then...
 				if (string.IsNullOrEmpty(v))

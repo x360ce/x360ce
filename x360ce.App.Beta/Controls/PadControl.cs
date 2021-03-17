@@ -792,7 +792,9 @@ namespace x360ce.App.Controls
 			var ps = new PadSetting();
 			foreach (var p in properties)
 			{
-				var map = maps.First(x => x.PropertyName == p.Name);
+				var map = maps.FirstOrDefault(x => x.PropertyName == p.Name);
+				if (map == null)
+					continue;
 				// Get setting value from the form.
 				var v = SettingsManager.Current.GetSettingValue(map.Control);
 				// Set value onto padSetting.

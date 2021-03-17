@@ -166,7 +166,7 @@ namespace x360ce.App.Controls
 			XInputLineGeometry.EndPoint = new Point(w, xi);
 			// Draw dots.
 			XInputEllipse.Center = new Point(di, xi);
-			DInputEllipse.Center = new Point(di, di);
+			DInputEllipse.Center = new Point(di, h - di);
 		}
 
 
