@@ -109,6 +109,8 @@ namespace x360ce.App
 			}
 		}
 
+		static bool DoValidatePropertyNames = false;
+
 		public static bool ValidatePropertyNames(SettingsMapItem[] maps, out PropertyInfo[] propertiesToSet)
 		{
 			var availableNames = maps.Select(x => x.PropertyName);
@@ -116,7 +118,7 @@ namespace x360ce.App
 			propertiesToSet = properties.Where(x => x.PropertyType == typeof(string) && x.Name != "ButtonBig").ToArray();
 			var requiredNames = propertiesToSet.Select(x => x.Name);
 			var missing = requiredNames.Except(availableNames);
-			if (missing.Count() > 0)
+			if (missing.Count() > 0 && DoValidatePropertyNames)
 			{
 				var list = string.Join(", ", missing);
 				MessageBox.Show("'PadSetting' class property names must match 'SettingName' class property names. Please make sure that these properties exists in 'SettingName' class:\r\n\r\n" + list);

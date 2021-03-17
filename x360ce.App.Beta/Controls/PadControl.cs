@@ -659,10 +659,6 @@ namespace x360ce.App.Controls
 			// Left Trigger
 			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox, MapCode.LeftTrigger);
 
-			//AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerPanel.DeadZoneTrackBar);
-			//AddMap(() => SettingName.LeftTriggerAntiDeadZone, LeftTriggerPanel.AntiDeadZoneNumericUpDown);
-			//AddMap(() => SettingName.LeftTriggerLinear, LeftTriggerPanel.SensitivityNumericUpDown);
-
 			// Right Trigger
 			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox, MapCode.RightTrigger);
 			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);
@@ -1338,6 +1334,9 @@ namespace x360ce.App.Controls
 				_CurrentPadSetting = setting == null
 					? new PadSetting()
 					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+				LeftTriggerPanel.SetBinding(_CurrentPadSetting);
+
+
 				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, _CurrentPadSetting);
 				OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 				UpdateGridButtons();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using x360ce.Engine;
 using Xceed.Wpf.Toolkit;
 
 namespace x360ce.App
@@ -12,11 +13,12 @@ namespace x360ce.App
 	public class DeadZoneWpfControlsLink : IDisposable
 	{
 
-		public DeadZoneWpfControlsLink(Slider trackBar, IntegerUpDown numericUpDown, TextBox textBox, int maxValue)
+		public DeadZoneWpfControlsLink(Slider trackBar, IntegerUpDown numericUpDown, TextBox textBox, int minValue, int maxValue)
 		{
 			// Slider will be mapped as main settings control.
 			_TrackBar = trackBar;
 			_NumericUpDown = numericUpDown;
+			_NumericUpDown.Minimum = minValue;
 			_NumericUpDown.Maximum = maxValue;
 			_TextBox = textBox;
 			// Update values from TrackBar before events attached.
@@ -44,7 +46,8 @@ namespace x360ce.App
 		{
 			lock (eventsLock)
 			{
-				if (IsDisposing) return;
+				if (IsDisposing)
+					return;
 				_NumericUpDown.ValueChanged -= _NumericUpDown_ValueChanged;
 				var percent = _TrackBar.Value;
 				var percentString = string.Format(PercentFormat, percent);
@@ -52,8 +55,10 @@ namespace x360ce.App
 				if (_TextBox.Text != percentString)
 					_TextBox.Text = percentString;
 				// Update NumericUpDown.
-				var value = (decimal)Math.Round((float)percent / 100f * (float)_NumericUpDown.Maximum);
-				if (_NumericUpDown.Value != value) _NumericUpDown.Value = (int)value;
+				var trackValue = (float)_TrackBar.Value;
+				var value = (int)ConvertHelper.ConvertRangeF((float)_TrackBar.Minimum, (float)_TrackBar.Maximum, (float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, trackValue);
+				if (_NumericUpDown.Value != value)
+					_NumericUpDown.Value = value;
 				_NumericUpDown.ValueChanged += _NumericUpDown_ValueChanged;
 			}
 		}
@@ -63,15 +68,19 @@ namespace x360ce.App
 			EventHandler<EventArgs> ev;
 			lock (eventsLock)
 			{
-				if (IsDisposing) return;
+				if (IsDisposing)
+					return;
 				var control = (IntegerUpDown)sender;
+				var value = (float)(control.Value ?? 0);
 				_TrackBar.ValueChanged -= _TrackBar_ValueChanged;
-				var percent = (int)Math.Round(((float)control.Value / (float)_NumericUpDown.Maximum) * 100f);
+				var percent = (int)Math.Round(value / (float)_NumericUpDown.Maximum * 100f);
 				var percentString = string.Format(PercentFormat, percent);
 				// Update percent TextBox.
-				if (_TextBox.Text != percentString) _TextBox.Text = percentString;
+				if (_TextBox.Text != percentString)
+					_TextBox.Text = percentString;
 				// Update TrackBar;
-				if (_TrackBar.Value != percent) _TrackBar.Value = percent;
+				if (_TrackBar.Value != percent)
+					_TrackBar.Value = percent;
 				_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 				ev = ValueChanged;
 			}

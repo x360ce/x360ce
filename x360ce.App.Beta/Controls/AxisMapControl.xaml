@@ -158,12 +158,9 @@
 						IsTabStop="False"
 						Text="0 %" />
 					<xctk:IntegerUpDown
-						Name="AntiDeadZoneNumericUpDown"
+						Name="AntiDeadZoneUpDown"
 						MinWidth="75"
 						VerticalAlignment="Center"
-						Maximum="100"
-						Minimum="-100"
-						ValueChanged="AntiDeadZoneUpDown_ValueChanged"
 						Value="0" />
 				</StackPanel>
 				<Label
@@ -186,12 +183,9 @@
 						IsTabStop="False"
 						Text="0 %" />
 					<xctk:IntegerUpDown
-						Name="DeadZoneNumericUpDown"
+						Name="DeadZoneUpDown"
 						MinWidth="75"
 						VerticalAlignment="Center"
-						Maximum="100"
-						Minimum="-100"
-						ValueChanged="DeadZoneUpDown_ValueChanged"
 						Value="0" />
 				</StackPanel>
 
@@ -200,7 +194,7 @@
 					Grid.Row="5"
 					Grid.Column="2"
 					Content="Sensitivity:" />
-				<Slider Name="SensitivityTrackBar" Grid.Row="6" Grid.Column="2" />
+				<Slider Name="LinearTrackBar" Grid.Row="6" Grid.Column="2" />
 
 				<StackPanel
 					Grid.Row="6"
@@ -208,7 +202,7 @@
 					VerticalAlignment="Center"
 					Orientation="Horizontal">
 					<TextBox
-						Name="SensitivityTextBox"
+						Name="LinearTextBox"
 						Width="50"
 						HorizontalAlignment="Left"
 						HorizontalContentAlignment="Right"
@@ -216,13 +210,10 @@
 						IsTabStop="False"
 						Text="0 %" />
 					<xctk:IntegerUpDown
-						Name="SensitivityNumericUpDown"
+						Name="LinearUpDown"
 						MinWidth="75"
-						VerticalAlignment="Center"
-						Maximum="100"
-						Minimum="-100"
+						VerticalAlignment="Center" ValueChanged="LinearUpDown_ValueChanged"
 						Value="0" />
-					<CheckBox Name="SensitivityCheckBox" Checked="SensitivityCheckBox_CheckedChanged" Content="Invert" />
 				</StackPanel>
 			</Grid>
 		</GroupBox>

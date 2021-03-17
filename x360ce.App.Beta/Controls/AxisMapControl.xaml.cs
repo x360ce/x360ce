@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using x360ce.Engine;
-using Xceed.Wpf.Toolkit;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -49,6 +49,7 @@ namespace x360ce.App.Controls
 
 		DeadZoneWpfControlsLink deadzoneLink;
 		DeadZoneWpfControlsLink antiDeadzoneLink;
+		DeadZoneWpfControlsLink linearLink;
 
 		System.Timers.Timer updateTimer;
 
@@ -71,10 +72,12 @@ namespace x360ce.App.Controls
 		void UpdateTargetType()
 		{
 			var maxValue = isThumb ? short.MaxValue : byte.MaxValue;
-			deadzoneLink = new DeadZoneWpfControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, maxValue);
+			deadzoneLink = new DeadZoneWpfControlsLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, maxValue);
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
-			antiDeadzoneLink = new DeadZoneWpfControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox, maxValue);
+			antiDeadzoneLink = new DeadZoneWpfControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneUpDown, AntiDeadZoneTextBox, 0, maxValue);
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+			linearLink = new DeadZoneWpfControlsLink(LinearTrackBar, LinearUpDown, LinearTextBox, -100, 100);
+			linearLink.ValueChanged += deadzoneLink_ValueChanged;
 			UpdateTimerReset();
 		}
 
@@ -112,19 +115,40 @@ namespace x360ce.App.Controls
 		// Half and Invert values are only in creating XInput path - red line.
 		private bool _invert;
 		private bool _half;
-		private int _dInput;
-		private int _xInput;
 
 		private float w = 150f;
 		private float h = 150f;
 
+		public void SetBinding(PadSetting o)
+		{
+			// Unbind first.
+			SettingsManager.UnLoadMonitor(DeadZoneUpDown);
+			SettingsManager.UnLoadMonitor(AntiDeadZoneUpDown);
+			SettingsManager.UnLoadMonitor(LinearUpDown);
+			if (o == null)
+				return;
+			// Set binding.
+			switch (TargetType)
+			{
+				case TargetType.LeftTrigger:
+					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerDeadZone), DeadZoneUpDown);
+					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerAntiDeadZone), AntiDeadZoneUpDown);
+					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerLinear), LinearUpDown);
+					break;
+				default:
+					break;
+			}
+		}
+
 		public void DrawPoint(int dInput, int xInput, bool invert, bool half)
 		{
+			// If properties affecting curve changed then...
+			if (_invert != invert || _half != half)
+				UpdateTimerReset();
+			// Set invert and half properties.
 			_invert = invert;
 			_half = half;
-			_dInput = dInput;
-			_xInput = xInput;
-
+			// Draw.
 			DInputValueLabel.Content = dInput.ToString();
 			XInputValueLabel.Content = xInput.ToString();
 			var di = ConvertDInputToImagePosition(dInput);
@@ -163,8 +187,6 @@ namespace x360ce.App.Controls
 		public void InitPaintObjects()
 		{
 			xInputPath = new SolidColorBrush(Colors.Red);
-			xInputPoint = new SolidColorBrush(Colors.Blue);
-			dInputPoint = new SolidColorBrush(Colors.Green);
 			// Create thin lines.
 			var xInputLineBrush = new SolidColorBrush(Colors.Blue);
 			xInputLineBrush.Opacity = 0.125f;
@@ -178,8 +200,6 @@ namespace x360ce.App.Controls
 		}
 
 		private SolidColorBrush xInputPath;
-		private SolidColorBrush xInputPoint;
-		private SolidColorBrush dInputPoint;
 		private Pen xInputLine;
 		private Pen dInputLine;
 		private Pen nInputLine;
@@ -191,9 +211,9 @@ namespace x360ce.App.Controls
 				ControlsHelper.Invoke(new Action(() => CreateBackgroundPicture()));
 				return;
 			}
-			var deadZone = (int)DeadZoneNumericUpDown.Value;
-			var antiDeadZone = (int)AntiDeadZoneNumericUpDown.Value;
-			var sensitivity = (int)SensitivityNumericUpDown.Value;
+			var deadZone = DeadZoneUpDown.Value ?? 0;
+			var antiDeadZone = AntiDeadZoneUpDown.Value ?? 0;
+			var sensitivity = LinearUpDown.Value ?? 0;
 			var visual = new DrawingVisual();
 			// Retrieve the DrawingContext in order to create new drawing content.
 			var g = visual.RenderOpen();
@@ -220,34 +240,19 @@ namespace x360ce.App.Controls
 			}
 			// Finish rendering.
 			g.Close();
-
 			var bmp = new RenderTargetBitmap((int)w, (int)h, 96, 96, PixelFormats.Pbgra32);
 			bmp.Render(visual);
-
 			// Encoding the RenderBitmapTarget as a PNG file.
 			var png = new PngBitmapEncoder();
 			png.Frames.Add(BitmapFrame.Create(bmp));
-
-			//using (var stm = System.IO.File.Create("new.png"))
-			//	png.Save(stm);
-
 			var ms = new MemoryStream();
 			png.Save(ms);
-
-
 			var imageSource = new BitmapImage();
 			imageSource.BeginInit();
 			imageSource.StreamSource = ms;
 			imageSource.EndInit();
-
-			//var image = new Image();
-			//image.Source = bmp;
-			//LastBackgroundImage = imageSource;
 			if (IsEnabled)
-			{
 				MainPictureBox.Source = imageSource;
-				//g.DrawImage(MainPictureBox.Source, new Rect(0, 0, w, h));
-			}
 			else
 				MainPictureBox.Source = null;
 		}
@@ -288,54 +293,6 @@ namespace x360ce.App.Controls
 			g.DrawEllipse(brush, null, new Point(x, y), 0.5f, 0.5f);
 		}
 
-		#region Sensitivity Controls
-
-		object SensitivityLock = new object();
-
-		private void SensitivityTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			var control = (Slider)sender;
-			lock (SensitivityLock)
-			{
-				SensitivityNumericUpDown.ValueChanged -= SensitivityUpDown_ValueChanged;
-				SensitivityCheckBox.Checked -= SensitivityCheckBox_CheckedChanged;
-				SensitivityCheckBox.Unchecked -= SensitivityCheckBox_CheckedChanged;
-				var percent = control.Value;
-				var invert = SensitivityCheckBox.IsChecked == true;
-				var value = invert ? -percent : percent;
-				var percentString = string.Format("{0} % ", percent);
-				// Update percent TextBox.
-				if (SensitivityTextBox.Text != percentString)
-					SensitivityTextBox.Text = percentString;
-				// Update NumericUpDown.
-				if (SensitivityNumericUpDown.Value != percent)
-					SensitivityNumericUpDown.Value = (int)value;
-				// Update CheckBox.
-				if (SensitivityCheckBox.IsChecked != invert)
-					SensitivityCheckBox.IsChecked = invert;
-				SensitivityCheckBox.Checked += SensitivityCheckBox_CheckedChanged;
-				SensitivityCheckBox.Unchecked += SensitivityCheckBox_CheckedChanged;
-				SensitivityNumericUpDown.ValueChanged += SensitivityUpDown_ValueChanged;
-			}
-			UpdateTimerReset();
-		}
-
-		private void SensitivityCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			var control = (CheckBox)sender;
-			lock (SensitivityLock)
-			{
-				SensitivityNumericUpDown.ValueChanged -= SensitivityUpDown_ValueChanged;
-				SensitivityTrackBar.ValueChanged -= SensitivityTrackBar_ValueChanged;
-				SensitivityNumericUpDown.Value = -SensitivityNumericUpDown.Value;
-				SensitivityTrackBar.ValueChanged += SensitivityTrackBar_ValueChanged;
-				SensitivityNumericUpDown.ValueChanged += SensitivityUpDown_ValueChanged;
-			}
-			UpdateTimerReset();
-		}
-
-		#endregion
-
 		private void P_X_Y_Z_MenuItem_Click(object sender, EventArgs e)
 		{
 			var c = (MenuItem)sender;
@@ -364,50 +321,16 @@ namespace x360ce.App.Controls
 			// Move focus away from below controls, so that their value can be changed.
 			//ActiveControl = SensitivityCheckBox;
 			DeadZoneTrackBar.Value = deadZone;
-			AntiDeadZoneNumericUpDown.Value = (int)(xDeadZone * antiDeadZone / 100m);
-			SensitivityTrackBar.Value = sensitivity;
+			AntiDeadZoneUpDown.Value = (int)(xDeadZone * antiDeadZone / 100m);
+			LinearTrackBar.Value = sensitivity;
 		}
 
-		private void DeadZoneUpDown_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
+		private void LinearUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
-
-		}
-
-		private void SensitivityUpDown_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
-		{
-			var control = (IntegerUpDown)sender;
-			lock (SensitivityLock)
-			{
-				SensitivityTrackBar.ValueChanged -= SensitivityTrackBar_ValueChanged;
-				SensitivityCheckBox.Checked -= SensitivityCheckBox_CheckedChanged;
-				SensitivityCheckBox.Unchecked -= SensitivityCheckBox_CheckedChanged;
-				var value = (int)control.Value;
-				var invert = value < 0;
-				var percent = invert ? -value : value;
-				var percentString = string.Format("{0} % ", percent);
-				// Update percent TextBox.
-				if (SensitivityTextBox.Text != percentString) SensitivityTextBox.Text = percentString;
-				// Update TrackBar.
-				if (SensitivityTrackBar.Value != value) SensitivityTrackBar.Value = percent;
-				// Update CheckBox.
-				if (SensitivityCheckBox.IsChecked != invert)
-					SensitivityCheckBox.IsChecked = invert;
-				SensitivityCheckBox.Checked += SensitivityCheckBox_CheckedChanged;
-				SensitivityTrackBar.ValueChanged += SensitivityTrackBar_ValueChanged;
-			}
-			UpdateTimerReset();
-		}
-
-		private void SensitivityCheckBox_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
-		{
-			SensitivityLabel.Content = SensitivityCheckBox.IsChecked == true
+			var text = (int)(e.NewValue ?? 0) < 0
 				? "Sensitivity - Make more sensitive in the center:"
 				: "Sensitivity - Make less sensitive in the center:";
-		}
-
-		private void AntiDeadZoneUpDown_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
-		{
-
+			ControlsHelper.SetText(SensitivityLabel, text);
 		}
 	}
 }

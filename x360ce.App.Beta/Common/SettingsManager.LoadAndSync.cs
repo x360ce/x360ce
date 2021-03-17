@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace x360ce.App
 {
@@ -9,25 +12,33 @@ namespace x360ce.App
 	public partial class SettingsManager
 	{
 
-		public static void LoadAndMonitor(INotifyPropertyChanged source, string sourceProperty, System.Windows.Controls.Control control, System.Windows.DependencyProperty controlProperty = null)
+		public static void LoadAndMonitor(INotifyPropertyChanged source, string sourceProperty, Control control, DependencyProperty controlProperty = null)
 		{
-			if (controlProperty == null)
-			{
-				if (control is System.Windows.Controls.TextBox)
-					controlProperty = System.Windows.Controls.TextBox.TextProperty;
-				if (control is System.Windows.Controls.CheckBox)
-					controlProperty = System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty;
-				if (control is System.Windows.Controls.ComboBox || control is System.Windows.Controls.ListBox)
-					controlProperty = System.Windows.Controls.Primitives.Selector.SelectedValueProperty;
-				if (control is Xceed.Wpf.Toolkit.IntegerUpDown)
-					controlProperty = Xceed.Wpf.Toolkit.IntegerUpDown.ValueProperty;
-			}
+			var p = controlProperty ?? GetProperty(control);
 			var binding = new System.Windows.Data.Binding(sourceProperty);
 			binding.Source = source;
 			binding.IsAsync = true;
-			control.SetBinding(controlProperty, binding);
+			control.SetBinding(p, binding);
 		}
 
+		public static void UnLoadMonitor(Control control, DependencyProperty controlProperty = null)
+		{
+			var p = controlProperty ?? GetProperty(control);
+			BindingOperations.ClearBinding(control, p);
+		}
+
+		static DependencyProperty GetProperty(Control control)
+		{
+			if (control is TextBox)
+				return TextBox.TextProperty;
+			if (control is CheckBox)
+				return System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty;
+			if (control is ComboBox || control is ListBox)
+				return System.Windows.Controls.Primitives.Selector.SelectedValueProperty;
+			if (control is Xceed.Wpf.Toolkit.IntegerUpDown)
+				return Xceed.Wpf.Toolkit.IntegerUpDown.ValueProperty;
+			return null;
+		}
 
 	}
 }

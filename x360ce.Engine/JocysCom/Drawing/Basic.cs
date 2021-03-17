@@ -297,6 +297,8 @@ namespace JocysCom.ClassLibrary.Drawing
 			// Draw text
 			var rect = new RectangleF(0, 0, width, height);
 			g.DrawString(text, font, brush, rect, format);
+			font.Dispose();
+			brush.Dispose();
 			return image;
 		}
 

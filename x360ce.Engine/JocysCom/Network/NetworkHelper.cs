@@ -95,7 +95,7 @@ namespace JocysCom.ClassLibrary.Network
 
 		static bool IsIpAddress(string addr)
 		{
-			IPAddress ip = null;
+			IPAddress ip;
 			if (!IPAddress.TryParse(addr, out ip))
 				return false;
 			return ip.AddressFamily == AddressFamily.InterNetworkV6 || ip.AddressFamily == AddressFamily.InterNetwork;
@@ -113,6 +113,11 @@ namespace JocysCom.ClassLibrary.Network
 				{
 					// UDP is connectionless by design, therefore method below is not 100 % reliable.
 					// Firewall and network setups might influence the result.
+					//
+					// CWE-772: Missing Release of Resource after Effective Lifetime
+					// Note: False Positive. Resources will be cleaned up, because finally block always runs.
+					// The only case when finally clause don't run is when program immediately stopped.
+					// More: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/try-finally
 					var udp = new UdpClient();
 					try
 					{
@@ -122,7 +127,6 @@ namespace JocysCom.ClassLibrary.Network
 						{
 							udp.BeginReceive(null, null);
 							udp.EndSend(result);
-
 							var result2 = udp.BeginReceive(null, null);
 							var success2 = result.AsyncWaitHandle.WaitOne(timeout);
 							if (success2)
@@ -149,6 +153,10 @@ namespace JocysCom.ClassLibrary.Network
 				}
 				else
 				{
+					// CWE-772: Missing Release of Resource after Effective Lifetime
+					// Note: False Positive. Resources will be cleaned up, because finally block always runs.
+					// The only case when finally clause don't run is when program immediately stopped.
+					// More: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/try-finally
 					var tcp = new TcpClient();
 					try
 					{

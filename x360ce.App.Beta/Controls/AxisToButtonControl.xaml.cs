@@ -18,7 +18,7 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			controlsLink = new DeadZoneWpfControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, short.MaxValue);
+			controlsLink = new DeadZoneWpfControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, 0, short.MaxValue);
 			controlsLink.ValueChanged += controlsLink_ValueChanged;
 			arrowEnabledImage = ControlsHelper.GetImageSource(Properties.Resources.arrow_right_16x16);
 			arrowDisabledImage = ControlsHelper.GetImageSource(AppHelper.GetDisabledImage(Properties.Resources.arrow_right_16x16));

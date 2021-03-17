@@ -303,14 +303,14 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.")]
 		static public string LeftTrigger { get { return "Left Trigger"; } }
 
-		[DefaultValue("0"), Description("Add deadzone to the left trigger. Range is 0 to 255. Default is 0.")]
-		static public string LeftTriggerDeadZone { get { return "Left Trigger DeadZone"; } }
+		//[DefaultValue("0"), Description("Add deadzone to the left trigger. Range is 0 to 255. Default is 0.")]
+		//static public string LeftTriggerDeadZone { get { return "Left Trigger DeadZone"; } }
 
-		[DefaultValue("0"), Description("Decrease in-game deadzone for left trigger. Range is 0 to 255. Default is 0.")]
-		static public string LeftTriggerAntiDeadZone { get { return "Left Trigger AntiDeadZone"; } }
+		//[DefaultValue("0"), Description("Decrease in-game deadzone for left trigger. Range is 0 to 255. Default is 0.")]
+		//static public string LeftTriggerAntiDeadZone { get { return "Left Trigger AntiDeadZone"; } }
 
-		[DefaultValue("0"), Description("Increase sensitivity near the bottom of left trigger. Range is -100 to 100. Default is 0.")]
-		static public string LeftTriggerLinear { get { return "Left Trigger Linear"; } }
+		//[DefaultValue("0"), Description("Increase sensitivity near the bottom of left trigger. Range is -100 to 100. Default is 0.")]
+		//static public string LeftTriggerLinear { get { return "Left Trigger Linear"; } }
 
 		[DefaultValue("0"), Description("Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.")]
 		static public string RightTrigger { get { return "Right Trigger"; } }

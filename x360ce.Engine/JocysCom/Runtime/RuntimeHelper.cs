@@ -587,10 +587,11 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#endregion
 
-		public static void DetectType(string[] values, out Type type, out int sizeMin, out int sizeMax, out bool isAscii, out bool haveEmpty)
+		public static void DetectType(string[] values, out Type type, out int sizeMin, out int sizeMax, out bool isAscii, out bool haveEmpty, out List<string> log)
 		{
 			if (values == null)
 				throw new ArgumentNullException(nameof(values));
+			log = new List<string>();
 			type = typeof(string);
 			sizeMin = int.MaxValue;
 			sizeMax = 0;
@@ -623,8 +624,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			var available = new Dictionary<TypeCode, Type>();
 			tcs.ForEach(x => available.Add(x, Type.GetType(nameof(System) + "." + x)));
 			//Convert.ChangeType(value, colType);
-			foreach (var value in values)
+			for (int i = 0; i < values.Length; i++)
 			{
+				var value = values[i];
 				if (string.IsNullOrEmpty(value))
 				{
 					haveEmpty = true;
@@ -647,72 +649,114 @@ namespace JocysCom.ClassLibrary.Runtime
 						case TypeCode.Boolean:
 							bool resultBool;
 							if (!bool.TryParse(value, out resultBool))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.Byte:
 							byte resultByte;
 							if (!byte.TryParse(value, out resultByte))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.Char:
 							char resultChar;
 							if (!char.TryParse(value, out resultChar))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.DateTime:
 							DateTime resultDateTime;
 							if (!DateTime.TryParse(value, out resultDateTime))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.Decimal:
 							decimal resultDecimal;
 							if (!decimal.TryParse(value, out resultDecimal))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.Double:
 							double resultDouble;
 							if (!double.TryParse(value, out resultDouble))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.Int16:
 							short resultShort;
 							if (!short.TryParse(value, out resultShort))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.Int32:
 							int resultInt;
 							if (!int.TryParse(value, out resultInt))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.Int64:
 							long resultLong;
 							if (!long.TryParse(value, out resultLong))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.SByte:
 							sbyte resultSByte;
 							if (!sbyte.TryParse(value, out resultSByte))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.Single:
 							float resultFloat;
 							if (!float.TryParse(value, out resultFloat))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.UInt16:
 							ushort resultUShort;
 							if (!ushort.TryParse(value, out resultUShort))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.UInt32:
 							uint resultUInt;
 							if (!uint.TryParse(value, out resultUInt))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						case TypeCode.UInt64:
 							ulong resultULong;
 							if (!ulong.TryParse(value, out resultULong))
+							{
+								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
 								available.Remove(tc);
+							}
 							break;
 						default:
 							break;

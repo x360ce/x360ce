@@ -1,13 +1,10 @@
-﻿using JocysCom.ClassLibrary.Configuration;
-using JocysCom.ClassLibrary.Controls;
-using Microsoft.Win32;
+﻿using JocysCom.ClassLibrary.Controls;
 using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using x360ce.App.Forms;
-using x360ce.Engine;
 
 namespace x360ce.App.Controls
 {
@@ -126,7 +123,7 @@ namespace x360ce.App.Controls
 			DriveInfo[] allDrives = DriveInfo.GetDrives();
 			foreach (DriveInfo d in allDrives)
 			{
-				if (d.IsReady == true && d.DriveType == DriveType.Fixed)
+				if (d.IsReady && d.DriveType == DriveType.Fixed)
 				{
 					try
 					{
