@@ -162,10 +162,10 @@ namespace x360ce.App.Controls
 			if (xi >= h)
 				xi = h - 1f;
 			// If line goes outside of the image then...
-			XInputLineGeometry.StartPoint = new Point(0, xi);
-			XInputLineGeometry.EndPoint = new Point(w, xi);
+			XInputLineGeometry.StartPoint = new Point(0, h - xi);
+			XInputLineGeometry.EndPoint = new Point(w, h - xi);
 			// Draw dots.
-			XInputEllipse.Center = new Point(di, xi);
+			XInputEllipse.Center = new Point(di, h - xi);
 			DInputEllipse.Center = new Point(di, h - di);
 		}
 
@@ -218,16 +218,16 @@ namespace x360ce.App.Controls
 			// Retrieve the DrawingContext in order to create new drawing content.
 			var g = visual.RenderOpen();
 			// Persist the drawing content.
-			g.DrawRectangle(Brushes.White, null, new Rect(new Point(0, 0), new Size(w, h)));
+			//g.DrawRectangle(Brushes.White, null, new Rect(new Point(0, 0), new Size(w, h)));
 			// Draw vertical DInput line in the middle.
-			var dim = (float)Math.Floor(w / 2);
-			g.DrawLine(dInputLine, new Point(dim, 0), new Point(dim, h));
+			//var dim = (float)Math.Floor(w / 2);
+			//g.DrawLine(dInputLine, new Point(dim, 0), new Point(dim, h));
 			// Draw vertical XInput line in the middle.
-			var xim = (float)Math.Floor(h / 2);
-			g.DrawLine(xInputLine, new Point(0, xim), new Point(w, xim));
+			//var xim = (float)Math.Floor(h / 2);
+			//g.DrawLine(xInputLine, new Point(0, xim), new Point(w, xim));
 			// Draw grey line from bottom-left to top-right.
-			g.DrawLine(nInputLine, new Point(0f, h - 1f), new Point(w - 1f, 0f));
-			for (var i = 0f; i <= w; i += 0.5f)
+			//g.DrawLine(nInputLine, new Point(0f, h - 1f), new Point(w - 1f, 0f));
+			for (var i = 0f; i <= w; i += 0.125f)
 			{
 				// Convert Image X position [0;w] to DInput position [0;65535].
 				var dInputValue = ConvertHelper.ConvertRangeF(0f, w, ushort.MinValue, ushort.MaxValue, i);
@@ -290,7 +290,7 @@ namespace x360ce.App.Controls
 				if (y > h - 1f)
 					y = h - p;
 			}
-			g.DrawEllipse(brush, null, new Point(x, y), 0.5f, 0.5f);
+			g.DrawEllipse(brush, null, new Point(x, h - y), 0.5f, 0.5f);
 		}
 
 		private void P_X_Y_Z_MenuItem_Click(object sender, EventArgs e)

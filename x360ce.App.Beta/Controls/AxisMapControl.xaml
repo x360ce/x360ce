@@ -78,7 +78,6 @@
 						Content="0"
 						Foreground="Blue" />
 				</StackPanel>
-
 				<Border
 					Grid.Row="1"
 					Grid.RowSpan="7"
@@ -88,16 +87,55 @@
 					VerticalAlignment="Top"
 					Background="White"
 					BorderBrush="Gray"
-					BorderThickness="1">
+					BorderThickness="0">
 					<!--  This image uses a Drawing object for its source.  -->
-					<Grid Width="150" Height="150">
-						<Image x:Name="MainPictureBox" Width="150" Height="150" />
-						<Path Stroke="Green" StrokeThickness="1">
+					<Grid Width="170" Height="170">
+						<Path Margin="6,10,0,0" Fill="White">
+							<Path.Data>
+								<RectangleGeometry x:Name="BackgroundGeometry" Rect="0,0,150,150" />
+							</Path.Data>
+						</Path>
+						<!--  DInput Arrow  -->
+						<Path Margin="6,159,0,0" Fill="Green">
+							<Path.Data>
+								<RectangleGeometry Rect="0,0,150,2" />
+							</Path.Data>
+						</Path>
+						<Polygon Margin="156,155,0,0" Fill="Green" Points="0,0 10,5 0,10" />
+						<!--  XInput Arrow  -->
+						<Path Margin="5,10,0,0" Fill="Blue">
+							<Path.Data>
+								<RectangleGeometry Rect="0,0,2,150" />
+							</Path.Data>
+						</Path>
+						<Polygon Margin="1,0,0,0" Fill="Blue" Points="0,10 5,0 10,10" />
+						<!--  XInput/DInput corner.  -->
+						<Path Margin="5,159,0,0" Fill="Black">
+							<Path.Data>
+								<RectangleGeometry Rect="0,0,2,2" />
+							</Path.Data>
+						</Path>
+						<Image
+							x:Name="MainPictureBox"
+							Width="150"
+							Height="150"
+							Margin="6,10,0,0"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Top" />
+						<Path
+							Margin="6,10,0,0"
+							Opacity="0.25"
+							Stroke="Green"
+							StrokeThickness="1">
 							<Path.Data>
 								<LineGeometry x:Name="DInputLineGeometry" StartPoint="75,0" EndPoint="75,150" />
 							</Path.Data>
 						</Path>
-						<Path Fill="Green" StrokeThickness="1">
+						<Path
+							Margin="6,10,0,0"
+							Fill="Green"
+							StrokeThickness="1"
+							Visibility="Collapsed">
 							<Path.Data>
 								<EllipseGeometry
 									x:Name="DInputEllipse"
@@ -106,12 +144,16 @@
 									RadiusY="3" />
 							</Path.Data>
 						</Path>
-						<Path Stroke="Blue" StrokeThickness="1">
+						<Path
+							Margin="6,10,0,0"
+							Opacity="0.25"
+							Stroke="Blue"
+							StrokeThickness="1">
 							<Path.Data>
 								<LineGeometry x:Name="XInputLineGeometry" StartPoint="0,75" EndPoint="150,75" />
 							</Path.Data>
 						</Path>
-						<Path Fill="Blue" StrokeThickness="1">
+						<Path Margin="6,10,0,0" Fill="DarkRed" StrokeThickness="1">
 							<Path.Data>
 								<EllipseGeometry
 									x:Name="XInputEllipse"
@@ -212,7 +254,8 @@
 					<xctk:IntegerUpDown
 						Name="LinearUpDown"
 						MinWidth="75"
-						VerticalAlignment="Center" ValueChanged="LinearUpDown_ValueChanged"
+						VerticalAlignment="Center"
+						ValueChanged="LinearUpDown_ValueChanged"
 						Value="0" />
 				</StackPanel>
 			</Grid>

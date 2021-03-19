@@ -1447,8 +1447,8 @@
 			// 
 			// TriggersPanel
 			// 
-			this.TriggersPanel.Controls.Add(this.LeftTriggerHost);
 			this.TriggersPanel.Controls.Add(this.RightTriggerUserControl);
+			this.TriggersPanel.Controls.Add(this.LeftTriggerHost);
 			this.TriggersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.TriggersPanel.Location = new System.Drawing.Point(6, 6);
 			this.TriggersPanel.Margin = new System.Windows.Forms.Padding(6);
@@ -1458,21 +1458,21 @@
 			// 
 			// LeftTriggerHost
 			// 
-			this.LeftTriggerHost.Location = new System.Drawing.Point(3, 3);
+			this.LeftTriggerHost.Dock = System.Windows.Forms.DockStyle.Top;
+			this.LeftTriggerHost.Location = new System.Drawing.Point(0, 0);
 			this.LeftTriggerHost.Name = "LeftTriggerHost";
-			this.LeftTriggerHost.Size = new System.Drawing.Size(1483, 400);
+			this.LeftTriggerHost.Size = new System.Drawing.Size(1492, 500);
 			this.LeftTriggerHost.TabIndex = 3;
 			this.LeftTriggerHost.Child = null;
 			// 
 			// RightTriggerUserControl
 			// 
-			this.RightTriggerUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+			this.RightTriggerUserControl.Dock = System.Windows.Forms.DockStyle.Top;
 			this.RightTriggerUserControl.HeaderText = "RightTrigger";
-			this.RightTriggerUserControl.Location = new System.Drawing.Point(6, 407);
+			this.RightTriggerUserControl.Location = new System.Drawing.Point(0, 500);
 			this.RightTriggerUserControl.Margin = new System.Windows.Forms.Padding(12);
 			this.RightTriggerUserControl.Name = "RightTriggerUserControl";
-			this.RightTriggerUserControl.Size = new System.Drawing.Size(1480, 371);
+			this.RightTriggerUserControl.Size = new System.Drawing.Size(1492, 371);
 			this.RightTriggerUserControl.TabIndex = 2;
 			this.RightTriggerUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger)));
 			// 
