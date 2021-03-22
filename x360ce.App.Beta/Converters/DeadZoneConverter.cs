@@ -1,21 +1,23 @@
-﻿using JocysCom.ClassLibrary.Runtime;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Windows.Data;
-using x360ce.Engine;
 
 namespace x360ce.App.Converters
 {
-	public class MapToIntToDescription : IValueConverter
+	public class DeadZoneConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return Attributes.GetDescription((MapTo)(int)value);
+			return value == null || (string)value == ""
+				? 0
+				: int.Parse((string)value);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			throw new NotImplementedException();
+			return value == null || (int)value == 0
+				? ""
+				: value.ToString();
 		}
 	}
 

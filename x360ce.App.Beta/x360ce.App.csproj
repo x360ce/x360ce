@@ -346,6 +346,7 @@
     <Compile Include="Converters\BoolToImageSourceConverter.cs" />
     <Compile Include="Converters\ChecksumToIdConverter.cs" />
     <Compile Include="Converters\ConnectionClassToImageConverter.cs" />
+    <Compile Include="Converters\DeadZoneConverter.cs" />
     <Compile Include="Converters\MapToIntToDescription.cs" />
     <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Forms\BaseFormWithHeader.cs">

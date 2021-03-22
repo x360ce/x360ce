@@ -12,13 +12,25 @@ namespace x360ce.App
 	public partial class SettingsManager
 	{
 
-		public static void LoadAndMonitor(INotifyPropertyChanged source, string sourceProperty, Control control, DependencyProperty controlProperty = null)
+		public static void LoadAndMonitor(INotifyPropertyChanged source, string sourceProperty, Control control, DependencyProperty controlProperty = null, IValueConverter converter = null)
 		{
 			var p = controlProperty ?? GetProperty(control);
 			var binding = new System.Windows.Data.Binding(sourceProperty);
 			binding.Source = source;
 			binding.IsAsync = true;
-			control.SetBinding(p, binding);
+			if (converter is Converters.DeadZoneConverter)
+			{
+				binding.Mode = BindingMode.OneWayToSource;
+				var value = source.GetType().GetProperty(sourceProperty).GetValue(source);
+				var v = converter.Convert(value, null, null, null);
+				control.SetValue(p, v);
+				control.SetBinding(p, binding);
+				control.SetValue(p, v);
+			}
+			else
+			{
+				control.SetBinding(p, binding);
+			}
 		}
 
 		public static void UnLoadMonitor(Control control, DependencyProperty controlProperty = null)

@@ -3,7 +3,6 @@ using JocysCom.ClassLibrary.IO;
 using System;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Windows.Data;
 
 namespace x360ce.App.Converters

@@ -17,14 +17,17 @@ namespace x360ce.App
 		{
 			// Slider will be mapped as main settings control.
 			_TrackBar = trackBar;
+			_TrackBar.Minimum = minValue;
+			_TrackBar.Maximum = maxValue;
 			_NumericUpDown = numericUpDown;
 			_NumericUpDown.Minimum = minValue;
 			_NumericUpDown.Maximum = maxValue;
+			_NumericUpDown.Value = 0;
 			_TextBox = textBox;
 			// Update values from TrackBar before events attached.
 			UpdateValue();
-			_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 			_NumericUpDown.ValueChanged += _NumericUpDown_ValueChanged;
+			_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 		}
 
 		public event EventHandler<EventArgs> ValueChanged;
@@ -37,7 +40,8 @@ namespace x360ce.App
 		{
 			UpdateValue();
 			var ev = ValueChanged;
-			if (ev != null) ev(this, new EventArgs());
+			if (ev != null)
+				ev(this, new EventArgs());
 		}
 
 		public string PercentFormat = "{0:0} % ";

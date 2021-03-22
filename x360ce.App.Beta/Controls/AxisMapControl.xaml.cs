@@ -128,12 +128,13 @@ namespace x360ce.App.Controls
 			if (o == null)
 				return;
 			// Set binding.
+			var converter = new Converters.DeadZoneConverter();
 			switch (TargetType)
 			{
 				case TargetType.LeftTrigger:
-					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerDeadZone), DeadZoneUpDown);
-					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerAntiDeadZone), AntiDeadZoneUpDown);
-					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerLinear), LinearUpDown);
+					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerDeadZone), DeadZoneUpDown, null, converter);
+					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerAntiDeadZone), AntiDeadZoneUpDown, null, converter);
+					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerLinear), LinearUpDown, null, converter);
 					break;
 				default:
 					break;
@@ -297,7 +298,7 @@ namespace x360ce.App.Controls
 		{
 			var c = (MenuItem)sender;
 			var values = c.Name.Split('_');
-			decimal xDeadZone = 0;
+			float xDeadZone = 0;
 			switch (TargetType)
 			{
 				case TargetType.LeftTrigger:
@@ -315,22 +316,33 @@ namespace x360ce.App.Controls
 				default:
 					break;
 			}
-			var deadZone = int.Parse(values[1]);
-			var antiDeadZone = decimal.Parse(values[2]);
-			var sensitivity = int.Parse(values[3]);
+			var deadZonePercent = int.Parse(values[1]);
+			var antiDeadZonePercent = int.Parse(values[2]);
+			var linearPercent = int.Parse(values[3]);
+
+			var deadZone = ConvertHelper.ConvertRangeF(0f, 100f, (float)DeadZoneUpDown.Minimum, (float)DeadZoneUpDown.Maximum, deadZonePercent);
+			var antiDeadZone = ConvertHelper.ConvertRangeF(0f, 100f, 0, xDeadZone, antiDeadZonePercent);
+			var linear = ConvertHelper.ConvertRangeF(-100f, 100f, (float)LinearUpDown.Minimum, (float)LinearUpDown.Maximum, linearPercent);
 			// Move focus away from below controls, so that their value can be changed.
-			//ActiveControl = SensitivityCheckBox;
-			DeadZoneTrackBar.Value = deadZone;
-			AntiDeadZoneUpDown.Value = (int)(xDeadZone * antiDeadZone / 100m);
-			LinearTrackBar.Value = sensitivity;
+			ApplyPresetMenuItem.Focus();
+			DeadZoneUpDown.Value = (int)deadZone;
+			AntiDeadZoneUpDown.Value = (int)antiDeadZone;
+			LinearUpDown.Value = (int)linear;
 		}
 
 		private void LinearUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
-			var text = (int)(e.NewValue ?? 0) < 0
-				? "Sensitivity - Make more sensitive in the center:"
-				: "Sensitivity - Make less sensitive in the center:";
+			var text = "Sensitivity";
+			if ((int)(e.NewValue ?? 0) < 0)
+				text = "Sensitivity - more sensitive in the center:";
+			if ((int)(e.NewValue ?? 0) > 0)
+				text = "Sensitivity - less sensitive in the center:";
 			ControlsHelper.SetText(SensitivityLabel, text);
+		}
+
+		private void P_0_0_0_MenuItem_Click(object sender, RoutedEventArgs e)
+		{
+
 		}
 	}
 }

@@ -170,13 +170,13 @@
 					Grid.Column="4"
 					VerticalAlignment="Center">
 					<MenuItem Name="ApplyPresetMenuItem" Header="Click Here to Apply Preset">
-						<MenuItem Name="P_0_0_0_MenuItem" Header="Clear" />
-						<MenuItem Name="P_5_100_0_MenuItem" Header="5% DeadZone, 100% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_100_0_MenuItem" Header="100% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_80_0_MenuItem" Header="80% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_60_0_MenuItem" Header="60% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_40_0_MenuItem" Header="40% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_20_0_MenuItem" Header="20% Controller Anti-DeadZone" />
+						<MenuItem Name="P_0_0_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="Clear" />
+						<MenuItem Name="P_5_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="5% DeadZone, 100% Controller Anti-DeadZone" />
+						<MenuItem Name="P_0_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="100% Controller Anti-DeadZone" />
+						<MenuItem Name="P_0_80_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="80% Controller Anti-DeadZone" />
+						<MenuItem Name="P_0_60_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="60% Controller Anti-DeadZone" />
+						<MenuItem Name="P_0_40_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="40% Controller Anti-DeadZone" />
+						<MenuItem Name="P_0_20_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="20% Controller Anti-DeadZone" />
 					</MenuItem>
 				</Menu>
 				<Label
