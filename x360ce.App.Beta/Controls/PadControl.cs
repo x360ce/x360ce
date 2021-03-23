@@ -1341,6 +1341,11 @@ namespace x360ce.App.Controls
 					? new PadSetting()
 					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 				TriggersWpfPanel.LeftTriggerPanel.SetBinding(_CurrentPadSetting);
+				TriggersWpfPanel.RightTriggerPanel.SetBinding(_CurrentPadSetting);
+				LeftThumbWpfPanel.LeftThumbXPanel.SetBinding(_CurrentPadSetting);
+				LeftThumbWpfPanel.LeftThumbYPanel.SetBinding(_CurrentPadSetting);
+				RightThumbWpfPanel.RightThumbXPanel.SetBinding(_CurrentPadSetting);
+				RightThumbWpfPanel.RightThumbYPanel.SetBinding(_CurrentPadSetting);
 				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, _CurrentPadSetting);
 				OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 				UpdateGridButtons();

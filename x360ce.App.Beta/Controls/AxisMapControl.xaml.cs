@@ -374,10 +374,6 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(SensitivityLabel, text);
 		}
 
-		private void P_0_0_0_MenuItem_Click(object sender, RoutedEventArgs e)
-		{
-
-		}
 	}
 }
 
