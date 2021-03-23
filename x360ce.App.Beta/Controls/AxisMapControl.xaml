@@ -34,55 +34,14 @@
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
-				<StackPanel
-					Grid.Row="0"
-					Grid.Column="0"
-					HorizontalAlignment="Stretch"
-					Orientation="Horizontal">
-					<Label Name="DInputLabel" HorizontalAlignment="Left" Content="DI:" />
-					<Label
-						Name="DInputValueLabel"
-						Grid.Row="0"
-						Grid.Column="1"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Right"
-						Content="0"
-						Foreground="Green" />
-				</StackPanel>
-				<StackPanel
-					Grid.Row="0"
-					Grid.Column="1"
-					HorizontalAlignment="Stretch"
-					Orientation="Horizontal">
-					<Label Name="XInputLabel" HorizontalAlignment="Left" Content="XI:" />
-					<Label
-						Name="XInputValueLabel"
-						Grid.Row="0"
-						Grid.Column="1"
-						HorizontalAlignment="Stretch"
-						HorizontalContentAlignment="Right"
-						Content="0"
-						Foreground="Blue" />
-				</StackPanel>
 				<Border
-					Grid.Row="1"
-					Grid.RowSpan="7"
+					Grid.Row="0"
 					Grid.Column="0"
-					Grid.ColumnSpan="2"
 					HorizontalAlignment="Left"
 					VerticalAlignment="Top"
 					Background="White"
@@ -122,6 +81,16 @@
 							Margin="6,10,0,0"
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top" />
+						<!--  Center line  -->
+						<Path
+							Margin="6,10,0,0"
+							Opacity="0.05"
+							Stroke="Black"
+							StrokeThickness="1">
+							<Path.Data>
+								<LineGeometry StartPoint="75,0" EndPoint="75,150" />
+							</Path.Data>
+						</Path>
 						<Path
 							Margin="6,10,0,0"
 							Opacity="0.25"
@@ -144,6 +113,17 @@
 									RadiusY="3" />
 							</Path.Data>
 						</Path>
+						<!--  Center line.  -->
+						<Path
+							Margin="6,10,0,0"
+							Opacity="0.05"
+							Stroke="Black"
+							StrokeThickness="1">
+							<Path.Data>
+								<LineGeometry StartPoint="0,75" EndPoint="150,75" />
+							</Path.Data>
+						</Path>
+
 						<Path
 							Margin="6,10,0,0"
 							Opacity="0.25"
@@ -164,100 +144,115 @@
 						</Path>
 					</Grid>
 				</Border>
-				<Menu
-					Name="PresetMenuStrip"
+				<StackPanel
 					Grid.Row="0"
-					Grid.Column="4"
-					VerticalAlignment="Center">
-					<MenuItem Name="ApplyPresetMenuItem" Header="Click Here to Apply Preset">
-						<MenuItem Name="P_0_0_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="Clear" />
-						<MenuItem Name="P_5_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="5% DeadZone, 100% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="100% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_80_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="80% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_60_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="60% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_40_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="40% Controller Anti-DeadZone" />
-						<MenuItem Name="P_0_20_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="20% Controller Anti-DeadZone" />
-					</MenuItem>
-				</Menu>
-				<Label
-					Name="AntiDeadZoneLabel"
-					Grid.Row="1"
-					Grid.Column="2"
-					VerticalAlignment="Center"
-					Content="Anti-Dead Zone:" />
-				<Slider Name="AntiDeadZoneTrackBar" Grid.Row="2" Grid.Column="2" />
-				<StackPanel
-					Grid.Row="2"
-					Grid.Column="4"
-					VerticalAlignment="Bottom"
-					Orientation="Horizontal">
-					<TextBox
-						Name="AntiDeadZoneTextBox"
-						Width="50"
-						HorizontalAlignment="Left"
-						HorizontalContentAlignment="Right"
-						IsReadOnly="True"
-						IsTabStop="False"
-						Text="0 %" />
-					<xctk:IntegerUpDown
-						Name="AntiDeadZoneUpDown"
-						MinWidth="75"
-						VerticalAlignment="Center"
-						Value="0" />
-				</StackPanel>
-				<Label
-					Name="DeadZoneLabel"
-					Grid.Row="3"
-					Grid.Column="2"
-					Content="Dead Zone:" />
-				<Slider Name="DeadZoneTrackBar" Grid.Row="4" Grid.Column="2" />
-				<StackPanel
-					Grid.Row="4"
-					Grid.Column="4"
-					VerticalAlignment="Center"
-					Orientation="Horizontal">
-					<TextBox
-						Name="DeadZoneTextBox"
-						Width="50"
-						HorizontalAlignment="Left"
-						HorizontalContentAlignment="Right"
-						IsReadOnly="True"
-						IsTabStop="False"
-						Text="0 %" />
-					<xctk:IntegerUpDown
-						Name="DeadZoneUpDown"
-						MinWidth="75"
-						VerticalAlignment="Center"
-						Value="0" />
+					Grid.Column="1"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Top"
+					Orientation="Vertical">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+
+						<StackPanel Grid.Column="0" HorizontalAlignment="Left" Orientation="Horizontal">
+							<Label Name="DInputLabel" HorizontalAlignment="Left" Content="DI:" />
+							<Label
+								Name="DInputValueLabel"
+								MinWidth="48"
+								HorizontalAlignment="Stretch"
+								HorizontalContentAlignment="Right"
+								Content="0"
+								Foreground="Green" />
+						</StackPanel>
+						<StackPanel Grid.Column="1" HorizontalAlignment="Left" Orientation="Horizontal">
+							<Label Name="XInputLabel" HorizontalAlignment="Left" Content="XI:" />
+							<Label
+								Name="XInputValueLabel"
+								MinWidth="48"
+								HorizontalAlignment="Stretch"
+								HorizontalContentAlignment="Right"
+								Content="0"
+								Foreground="Blue" />
+						</StackPanel>
+						<Menu
+							Name="PresetMenuStrip"
+							Grid.Column="2"
+							HorizontalAlignment="Right"
+							VerticalAlignment="Center">
+							<MenuItem Name="ApplyPresetMenuItem" Header="Click Here to Apply Preset">
+								<MenuItem Name="P_0_0_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="Clear" />
+								<MenuItem Name="P_5_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="5% DeadZone, 100% Controller Anti-DeadZone" />
+								<MenuItem Name="P_0_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="100% Controller Anti-DeadZone" />
+								<MenuItem Name="P_0_80_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="80% Controller Anti-DeadZone" />
+								<MenuItem Name="P_0_60_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="60% Controller Anti-DeadZone" />
+								<MenuItem Name="P_0_40_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="40% Controller Anti-DeadZone" />
+								<MenuItem Name="P_0_20_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="20% Controller Anti-DeadZone" />
+							</MenuItem>
+						</Menu>
+					</Grid>
+					<StackPanel Orientation="Vertical">
+						<Label Name="AntiDeadZoneLabel" VerticalAlignment="Center" Content="Anti-Dead Zone:" />
+						<StackPanel Orientation="Horizontal">
+							<Slider Name="AntiDeadZoneTrackBar" />
+							<TextBox
+								Name="AntiDeadZoneTextBox"
+								Width="50"
+								HorizontalAlignment="Left"
+								HorizontalContentAlignment="Right"
+								IsReadOnly="True"
+								IsTabStop="False"
+								Text="0 %" />
+							<xctk:IntegerUpDown
+								Name="AntiDeadZoneUpDown"
+								MinWidth="75"
+								VerticalAlignment="Center"
+								Value="0" />
+						</StackPanel>
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<Label Name="DeadZoneLabel" Content="Dead Zone:" />
+						<StackPanel Orientation="Horizontal">
+							<Slider Name="DeadZoneTrackBar" />
+							<TextBox
+								Name="DeadZoneTextBox"
+								Width="50"
+								HorizontalAlignment="Left"
+								HorizontalContentAlignment="Right"
+								IsReadOnly="True"
+								IsTabStop="False"
+								Text="0 %" />
+							<xctk:IntegerUpDown
+								Name="DeadZoneUpDown"
+								MinWidth="75"
+								VerticalAlignment="Center"
+								Value="0" />
+						</StackPanel>
+					</StackPanel>
+					<StackPanel Orientation="Vertical">
+						<Label Name="SensitivityLabel" Content="Sensitivity:" />
+						<StackPanel Orientation="Horizontal">
+							<Slider Name="LinearTrackBar" />
+							<TextBox
+								Name="LinearTextBox"
+								Width="50"
+								HorizontalAlignment="Left"
+								HorizontalContentAlignment="Right"
+								IsReadOnly="True"
+								IsTabStop="False"
+								Text="0 %" />
+							<xctk:IntegerUpDown
+								Name="LinearUpDown"
+								MinWidth="75"
+								VerticalAlignment="Center"
+								ValueChanged="LinearUpDown_ValueChanged"
+								Value="0" />
+						</StackPanel>
+					</StackPanel>
 				</StackPanel>
 
-				<Label
-					Name="SensitivityLabel"
-					Grid.Row="5"
-					Grid.Column="2"
-					Content="Sensitivity:" />
-				<Slider Name="LinearTrackBar" Grid.Row="6" Grid.Column="2" />
-
-				<StackPanel
-					Grid.Row="6"
-					Grid.Column="4"
-					VerticalAlignment="Center"
-					Orientation="Horizontal">
-					<TextBox
-						Name="LinearTextBox"
-						Width="50"
-						HorizontalAlignment="Left"
-						HorizontalContentAlignment="Right"
-						IsReadOnly="True"
-						IsTabStop="False"
-						Text="0 %" />
-					<xctk:IntegerUpDown
-						Name="LinearUpDown"
-						MinWidth="75"
-						VerticalAlignment="Center"
-						ValueChanged="LinearUpDown_ValueChanged"
-						Value="0" />
-				</StackPanel>
 			</Grid>
 		</GroupBox>
 	</Grid>

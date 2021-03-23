@@ -122,16 +122,10 @@
 			this.DPadPanel = new System.Windows.Forms.Panel();
 			this.TriggersTabPage = new System.Windows.Forms.TabPage();
 			this.TriggersPanel = new System.Windows.Forms.Panel();
-			this.LeftTriggerHost = new System.Windows.Forms.Integration.ElementHost();
-			this.RightTriggerUserControl = new x360ce.App.Controls.AxisMapUserControl();
+			this.TriggersHost = new System.Windows.Forms.Integration.ElementHost();
 			this.LeftThumbTabPage = new System.Windows.Forms.TabPage();
 			this.LeftThumbPanel = new System.Windows.Forms.Panel();
-			this.LeftThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
-			this.LeftThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
 			this.RightThumbTabPage = new System.Windows.Forms.TabPage();
-			this.RightThumbPanel = new System.Windows.Forms.Panel();
-			this.RightThumbXUserControl = new x360ce.App.Controls.AxisMapUserControl();
-			this.RightThumbYUserControl = new x360ce.App.Controls.AxisMapUserControl();
 			this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
 			this.ForceFeedbackPanel = new System.Windows.Forms.Panel();
 			this.InforTextBox = new System.Windows.Forms.TextBox();
@@ -199,6 +193,8 @@
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
 			this.GetXInputStatesCheckBox = new System.Windows.Forms.ToolStripButton();
 			this.DxTweakButton = new System.Windows.Forms.Button();
+			this.LeftThumbHost = new System.Windows.Forms.Integration.ElementHost();
+			this.RightThumbHost = new System.Windows.Forms.Integration.ElementHost();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
@@ -221,7 +217,6 @@
 			this.LeftThumbTabPage.SuspendLayout();
 			this.LeftThumbPanel.SuspendLayout();
 			this.RightThumbTabPage.SuspendLayout();
-			this.RightThumbPanel.SuspendLayout();
 			this.ForceFeedbackTabPage.SuspendLayout();
 			this.ForceFeedbackPanel.SuspendLayout();
 			this.ForceFeedbackGroupBox.SuspendLayout();
@@ -1447,8 +1442,7 @@
 			// 
 			// TriggersPanel
 			// 
-			this.TriggersPanel.Controls.Add(this.RightTriggerUserControl);
-			this.TriggersPanel.Controls.Add(this.LeftTriggerHost);
+			this.TriggersPanel.Controls.Add(this.TriggersHost);
 			this.TriggersPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.TriggersPanel.Location = new System.Drawing.Point(6, 6);
 			this.TriggersPanel.Margin = new System.Windows.Forms.Padding(6);
@@ -1456,25 +1450,15 @@
 			this.TriggersPanel.Size = new System.Drawing.Size(1492, 833);
 			this.TriggersPanel.TabIndex = 3;
 			// 
-			// LeftTriggerHost
+			// TriggersHost
 			// 
-			this.LeftTriggerHost.Dock = System.Windows.Forms.DockStyle.Top;
-			this.LeftTriggerHost.Location = new System.Drawing.Point(0, 0);
-			this.LeftTriggerHost.Name = "LeftTriggerHost";
-			this.LeftTriggerHost.Size = new System.Drawing.Size(1492, 500);
-			this.LeftTriggerHost.TabIndex = 3;
-			this.LeftTriggerHost.Child = null;
-			// 
-			// RightTriggerUserControl
-			// 
-			this.RightTriggerUserControl.Dock = System.Windows.Forms.DockStyle.Top;
-			this.RightTriggerUserControl.HeaderText = "RightTrigger";
-			this.RightTriggerUserControl.Location = new System.Drawing.Point(0, 500);
-			this.RightTriggerUserControl.Margin = new System.Windows.Forms.Padding(12);
-			this.RightTriggerUserControl.Name = "RightTriggerUserControl";
-			this.RightTriggerUserControl.Size = new System.Drawing.Size(1492, 371);
-			this.RightTriggerUserControl.TabIndex = 2;
-			this.RightTriggerUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger)));
+			this.TriggersHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.TriggersHost.Location = new System.Drawing.Point(0, 0);
+			this.TriggersHost.Margin = new System.Windows.Forms.Padding(0);
+			this.TriggersHost.Name = "TriggersHost";
+			this.TriggersHost.Size = new System.Drawing.Size(1492, 833);
+			this.TriggersHost.TabIndex = 3;
+			this.TriggersHost.Child = null;
 			// 
 			// LeftThumbTabPage
 			// 
@@ -1490,8 +1474,7 @@
 			// 
 			// LeftThumbPanel
 			// 
-			this.LeftThumbPanel.Controls.Add(this.LeftThumbXUserControl);
-			this.LeftThumbPanel.Controls.Add(this.LeftThumbYUserControl);
+			this.LeftThumbPanel.Controls.Add(this.LeftThumbHost);
 			this.LeftThumbPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.LeftThumbPanel.Location = new System.Drawing.Point(6, 6);
 			this.LeftThumbPanel.Margin = new System.Windows.Forms.Padding(6);
@@ -1499,34 +1482,10 @@
 			this.LeftThumbPanel.Size = new System.Drawing.Size(1492, 833);
 			this.LeftThumbPanel.TabIndex = 1;
 			// 
-			// LeftThumbXUserControl
-			// 
-			this.LeftThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.LeftThumbXUserControl.HeaderText = "X - Horizontal Axis";
-			this.LeftThumbXUserControl.Location = new System.Drawing.Point(6, 6);
-			this.LeftThumbXUserControl.Margin = new System.Windows.Forms.Padding(12);
-			this.LeftThumbXUserControl.Name = "LeftThumbXUserControl";
-			this.LeftThumbXUserControl.Size = new System.Drawing.Size(1480, 371);
-			this.LeftThumbXUserControl.TabIndex = 0;
-			this.LeftThumbXUserControl.TargetType = x360ce.Engine.TargetType.LeftThumbX;
-			// 
-			// LeftThumbYUserControl
-			// 
-			this.LeftThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.LeftThumbYUserControl.HeaderText = "Y - Vertical Axis";
-			this.LeftThumbYUserControl.Location = new System.Drawing.Point(6, 388);
-			this.LeftThumbYUserControl.Margin = new System.Windows.Forms.Padding(12);
-			this.LeftThumbYUserControl.Name = "LeftThumbYUserControl";
-			this.LeftThumbYUserControl.Size = new System.Drawing.Size(1480, 371);
-			this.LeftThumbYUserControl.TabIndex = 0;
-			this.LeftThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftThumbX)));
-			// 
 			// RightThumbTabPage
 			// 
 			this.RightThumbTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.RightThumbTabPage.Controls.Add(this.RightThumbPanel);
+			this.RightThumbTabPage.Controls.Add(this.RightThumbHost);
 			this.RightThumbTabPage.Location = new System.Drawing.Point(8, 39);
 			this.RightThumbTabPage.Margin = new System.Windows.Forms.Padding(6);
 			this.RightThumbTabPage.Name = "RightThumbTabPage";
@@ -1534,42 +1493,6 @@
 			this.RightThumbTabPage.Size = new System.Drawing.Size(1504, 845);
 			this.RightThumbTabPage.TabIndex = 2;
 			this.RightThumbTabPage.Text = "Right Thumb";
-			// 
-			// RightThumbPanel
-			// 
-			this.RightThumbPanel.Controls.Add(this.RightThumbXUserControl);
-			this.RightThumbPanel.Controls.Add(this.RightThumbYUserControl);
-			this.RightThumbPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.RightThumbPanel.Location = new System.Drawing.Point(6, 6);
-			this.RightThumbPanel.Margin = new System.Windows.Forms.Padding(6);
-			this.RightThumbPanel.Name = "RightThumbPanel";
-			this.RightThumbPanel.Size = new System.Drawing.Size(1492, 833);
-			this.RightThumbPanel.TabIndex = 1;
-			// 
-			// RightThumbXUserControl
-			// 
-			this.RightThumbXUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.RightThumbXUserControl.HeaderText = "X - Horizontal Axis";
-			this.RightThumbXUserControl.Location = new System.Drawing.Point(6, 6);
-			this.RightThumbXUserControl.Margin = new System.Windows.Forms.Padding(12);
-			this.RightThumbXUserControl.Name = "RightThumbXUserControl";
-			this.RightThumbXUserControl.Size = new System.Drawing.Size(1480, 371);
-			this.RightThumbXUserControl.TabIndex = 0;
-			this.RightThumbXUserControl.TargetType = ((x360ce.Engine.TargetType)((x360ce.Engine.TargetType.LeftTrigger | x360ce.Engine.TargetType.LeftThumbX)));
-			// 
-			// RightThumbYUserControl
-			// 
-			this.RightThumbYUserControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.RightThumbYUserControl.HeaderText = "Y - Vertical Axis";
-			this.RightThumbYUserControl.Location = new System.Drawing.Point(6, 388);
-			this.RightThumbYUserControl.Margin = new System.Windows.Forms.Padding(12);
-			this.RightThumbYUserControl.Name = "RightThumbYUserControl";
-			this.RightThumbYUserControl.Size = new System.Drawing.Size(1480, 371);
-			this.RightThumbYUserControl.TabIndex = 0;
-			this.RightThumbYUserControl.TargetType = ((x360ce.Engine.TargetType)(((x360ce.Engine.TargetType.Button | x360ce.Engine.TargetType.LeftTrigger) 
-            | x360ce.Engine.TargetType.LeftThumbX)));
 			// 
 			// ForceFeedbackTabPage
 			// 
@@ -2380,6 +2303,26 @@
 			this.DxTweakButton.UseVisualStyleBackColor = true;
 			this.DxTweakButton.Click += new System.EventHandler(this.CalibrateButton_Click);
 			// 
+			// LeftThumbHost
+			// 
+			this.LeftThumbHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.LeftThumbHost.Location = new System.Drawing.Point(0, 0);
+			this.LeftThumbHost.Margin = new System.Windows.Forms.Padding(0);
+			this.LeftThumbHost.Name = "LeftThumbHost";
+			this.LeftThumbHost.Size = new System.Drawing.Size(1492, 833);
+			this.LeftThumbHost.TabIndex = 0;
+			this.LeftThumbHost.Child = null;
+			// 
+			// RightThumbHost
+			// 
+			this.RightThumbHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RightThumbHost.Location = new System.Drawing.Point(6, 6);
+			this.RightThumbHost.Margin = new System.Windows.Forms.Padding(0);
+			this.RightThumbHost.Name = "RightThumbHost";
+			this.RightThumbHost.Size = new System.Drawing.Size(1492, 833);
+			this.RightThumbHost.TabIndex = 0;
+			this.RightThumbHost.Child = null;
+			// 
 			// PadControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -2425,7 +2368,6 @@
 			this.LeftThumbTabPage.ResumeLayout(false);
 			this.LeftThumbPanel.ResumeLayout(false);
 			this.RightThumbTabPage.ResumeLayout(false);
-			this.RightThumbPanel.ResumeLayout(false);
 			this.ForceFeedbackTabPage.ResumeLayout(false);
 			this.ForceFeedbackPanel.ResumeLayout(false);
 			this.ForceFeedbackPanel.PerformLayout();
@@ -2562,13 +2504,8 @@
         private System.Windows.Forms.GroupBox DeviceGroupBox;
 		private System.Windows.Forms.TabPage LeftThumbTabPage;
 		private System.Windows.Forms.TabPage RightThumbTabPage;
-		public AxisMapUserControl RightThumbXUserControl;
-		public AxisMapUserControl LeftThumbXUserControl;
-		public AxisMapUserControl RightThumbYUserControl;
-		public AxisMapUserControl LeftThumbYUserControl;
         private System.Windows.Forms.Panel AdvancedOptionsPanel;
         private System.Windows.Forms.Panel LeftThumbPanel;
-        private System.Windows.Forms.Panel RightThumbPanel;
         private System.Windows.Forms.TextBox RightMotorStrengthTextBox;
         private System.Windows.Forms.TextBox LeftMotorStrengthTextBox;
         private System.Windows.Forms.Label RightMotorStrengthLabel;
@@ -2598,7 +2535,6 @@
 		private System.Windows.Forms.ToolStripButton AutoMapButton;
 		private System.Windows.Forms.ToolStripButton EnableButton;
 		private System.Windows.Forms.TabPage TriggersTabPage;
-		public AxisMapUserControl RightTriggerUserControl;
 		private System.Windows.Forms.Panel TriggersPanel;
 		private System.Windows.Forms.TabPage DPadTabPage;
 		private System.Windows.Forms.Panel DPadPanel;
@@ -2631,6 +2567,8 @@
 		private UserMacrosControl UserMacrosPanel;
 		private System.Windows.Forms.Integration.ElementHost AxistToButtonsListHost;
 		private System.Windows.Forms.Integration.ElementHost DirectInputHost;
-		private System.Windows.Forms.Integration.ElementHost LeftTriggerHost;
+		private System.Windows.Forms.Integration.ElementHost TriggersHost;
+		private System.Windows.Forms.Integration.ElementHost LeftThumbHost;
+		private System.Windows.Forms.Integration.ElementHost RightThumbHost;
 	}
 }

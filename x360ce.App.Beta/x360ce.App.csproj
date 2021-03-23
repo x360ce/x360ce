@@ -211,7 +211,6 @@
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\DeadZoneControlsLink.cs" />
-    <Compile Include="Common\DeadZoneWpfControlsLink.cs" />
     <Compile Include="Common\DInput\DInputEventArgs.cs" />
     <Compile Include="Common\DInput\DInputException.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
@@ -297,6 +296,15 @@
     </Compile>
     <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
     <Compile Include="Controls\PadTabPages\IPadControl.cs" />
+    <Compile Include="Controls\PadTabPages\LeftThumbControl.xaml.cs">
+      <DependentUpon>LeftThumbControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PadTabPages\RightThumbControl.xaml.cs">
+      <DependentUpon>RightThumbControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PadTabPages\TriggersControl.xaml.cs">
+      <DependentUpon>TriggersControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PresetsControl.xaml.cs">
       <DependentUpon>PresetsControl.xaml</DependentUpon>
     </Compile>
@@ -385,12 +393,6 @@
     <Compile Include="Forms\MapDeviceToControllerForm.Designer.cs">
       <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\AxisMapUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\AxisMapUserControl.Designer.cs">
-      <DependentUpon>AxisMapUserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\LoadingCircle.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -476,9 +478,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MapDeviceToControllerForm.resx">
       <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Controls\AxisMapUserControl.resx">
-      <DependentUpon>AxisMapUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\NewDeviceForm.resx">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
@@ -780,11 +779,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\PadTabPages\LeftThumbControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\PadTabPages\MacrosControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PadTabPages\General\XboxImageControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PadTabPages\RightThumbControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PadTabPages\TriggersControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

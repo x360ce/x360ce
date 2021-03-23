@@ -47,9 +47,9 @@ namespace x360ce.App.Controls
 			UpdateTimerReset();
 		}
 
-		DeadZoneWpfControlsLink deadzoneLink;
-		DeadZoneWpfControlsLink antiDeadzoneLink;
-		DeadZoneWpfControlsLink linearLink;
+		DeadZoneControlsLink deadzoneLink;
+		DeadZoneControlsLink antiDeadzoneLink;
+		DeadZoneControlsLink linearLink;
 
 		System.Timers.Timer updateTimer;
 
@@ -72,11 +72,11 @@ namespace x360ce.App.Controls
 		void UpdateTargetType()
 		{
 			var maxValue = isThumb ? short.MaxValue : byte.MaxValue;
-			deadzoneLink = new DeadZoneWpfControlsLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, maxValue);
+			deadzoneLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, maxValue);
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
-			antiDeadzoneLink = new DeadZoneWpfControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneUpDown, AntiDeadZoneTextBox, 0, maxValue);
+			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneUpDown, AntiDeadZoneTextBox, 0, maxValue);
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
-			linearLink = new DeadZoneWpfControlsLink(LinearTrackBar, LinearUpDown, LinearTextBox, -100, 100);
+			linearLink = new DeadZoneControlsLink(LinearTrackBar, LinearUpDown, LinearTextBox, -100, 100);
 			linearLink.ValueChanged += deadzoneLink_ValueChanged;
 			UpdateTimerReset();
 		}
@@ -129,15 +129,50 @@ namespace x360ce.App.Controls
 				return;
 			// Set binding.
 			var converter = new Converters.DeadZoneConverter();
+			string deadZoneName = null;
+			string antiDeadZoneName = null;
+			string linearName = null;
+
 			switch (TargetType)
 			{
 				case TargetType.LeftTrigger:
-					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerDeadZone), DeadZoneUpDown, null, converter);
-					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerAntiDeadZone), AntiDeadZoneUpDown, null, converter);
-					SettingsManager.LoadAndMonitor(o, nameof(o.LeftTriggerLinear), LinearUpDown, null, converter);
+					deadZoneName = nameof(o.LeftTriggerDeadZone);
+					antiDeadZoneName = nameof(o.LeftTriggerAntiDeadZone);
+					linearName = nameof(o.LeftTriggerLinear);
+					break;
+				case TargetType.RightTrigger:
+					deadZoneName = nameof(o.RightTriggerDeadZone);
+					antiDeadZoneName = nameof(o.RightTriggerAntiDeadZone);
+					linearName = nameof(o.RightTriggerLinear);
+					break;
+				case TargetType.LeftThumbX:
+					deadZoneName = nameof(o.LeftThumbDeadZoneX);
+					antiDeadZoneName = nameof(o.LeftThumbAntiDeadZoneX);
+					linearName = nameof(o.LeftThumbLinearX);
+					break;
+				case TargetType.LeftThumbY:
+					deadZoneName = nameof(o.LeftThumbDeadZoneY);
+					antiDeadZoneName = nameof(o.LeftThumbAntiDeadZoneY);
+					linearName = nameof(o.LeftThumbLinearY);
+					break;
+				case TargetType.RightThumbX:
+					deadZoneName = nameof(o.RightThumbDeadZoneX);
+					antiDeadZoneName = nameof(o.RightThumbAntiDeadZoneX);
+					linearName = nameof(o.RightThumbLinearX);
+					break;
+				case TargetType.RightThumbY:
+					deadZoneName = nameof(o.RightThumbDeadZoneY);
+					antiDeadZoneName = nameof(o.RightThumbAntiDeadZoneY);
+					linearName = nameof(o.RightThumbLinearY);
 					break;
 				default:
 					break;
+			}
+			if (deadZoneName != null)
+			{
+				SettingsManager.LoadAndMonitor(o, deadZoneName, DeadZoneUpDown, null, converter);
+				SettingsManager.LoadAndMonitor(o, antiDeadZoneName, AntiDeadZoneUpDown, null, converter);
+				SettingsManager.LoadAndMonitor(o, linearName, LinearUpDown, null, converter);
 			}
 		}
 
@@ -169,7 +204,6 @@ namespace x360ce.App.Controls
 			XInputEllipse.Center = new Point(di, h - xi);
 			DInputEllipse.Center = new Point(di, h - di);
 		}
-
 
 		public float ConvertDInputToImagePosition(float v)
 		{

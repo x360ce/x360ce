@@ -1,5 +1,8 @@
 ﻿using System;
-using System.Windows.Forms;
+using System.Windows;
+using System.Windows.Controls;
+using x360ce.Engine;
+using Xceed.Wpf.Toolkit;
 
 namespace x360ce.App
 {
@@ -10,67 +13,79 @@ namespace x360ce.App
 	public class DeadZoneControlsLink : IDisposable
 	{
 
-		public DeadZoneControlsLink(TrackBar trackBar, NumericUpDown numericUpDown, TextBox textBox, int maxValue)
+		public DeadZoneControlsLink(Slider trackBar, IntegerUpDown numericUpDown, TextBox textBox, int minValue, int maxValue)
 		{
-			// Trackbar will be mapped as main settings control.
+			// Slider will be mapped as main settings control.
 			_TrackBar = trackBar;
+			_TrackBar.Minimum = minValue;
+			_TrackBar.Maximum = maxValue;
 			_NumericUpDown = numericUpDown;
+			_NumericUpDown.Minimum = minValue;
 			_NumericUpDown.Maximum = maxValue;
+			_NumericUpDown.Value = 0;
 			_TextBox = textBox;
 			// Update values from TrackBar before events attached.
 			UpdateValue();
-			_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 			_NumericUpDown.ValueChanged += _NumericUpDown_ValueChanged;
+			_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 		}
 
 		public event EventHandler<EventArgs> ValueChanged;
-		TrackBar _TrackBar;
-		NumericUpDown _NumericUpDown;
+		Slider _TrackBar;
+		IntegerUpDown _NumericUpDown;
 		TextBox _TextBox;
 		object eventsLock = new object();
 
-		void _TrackBar_ValueChanged(object sender, EventArgs e)
+		void _TrackBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			UpdateValue();
 			var ev = ValueChanged;
-			if (ev != null) ev(this, new EventArgs());
+			if (ev != null)
+				ev(this, new EventArgs());
 		}
+
+		public string PercentFormat = "{0:0} % ";
 
 		void UpdateValue()
 		{
 			lock (eventsLock)
 			{
-				if (IsDisposing) return;
-				_NumericUpDown.ValueChanged -= new System.EventHandler(_NumericUpDown_ValueChanged);
-				var percent = _TrackBar.Value;
-				var percentString = string.Format("{0} % ", percent);
-				// Update percent TextBox.
-				if (_TextBox.Text != percentString) _TextBox.Text = percentString;
-				// Update NumericUpDown.
-				var value = (decimal)Math.Round(percent / 100f * (float)_NumericUpDown.Maximum);
-				if (_NumericUpDown.Value != value) _NumericUpDown.Value = value;
-				_NumericUpDown.ValueChanged += new System.EventHandler(_NumericUpDown_ValueChanged);
+				if (IsDisposing)
+					return;
+				_NumericUpDown.ValueChanged -= _NumericUpDown_ValueChanged;
+				var sourceValue = (float)_TrackBar.Value;
+				var value = (int)ConvertHelper.ConvertRangeF((float)_TrackBar.Minimum, (float)_TrackBar.Maximum, (float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, sourceValue);
+				if (_NumericUpDown.Value != value)
+					_NumericUpDown.Value = value;
+				_NumericUpDown.ValueChanged += _NumericUpDown_ValueChanged;
 			}
 		}
 
-		void _NumericUpDown_ValueChanged(object sender, EventArgs e)
+		void _NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			EventHandler<EventArgs> ev;
 			lock (eventsLock)
 			{
-				if (IsDisposing) return;
-				var control = (NumericUpDown)sender;
-				_TrackBar.ValueChanged -= new System.EventHandler(_TrackBar_ValueChanged);
-				var percent = (int)Math.Round(((float)control.Value / (float)_NumericUpDown.Maximum) * 100f);
-				var percentString = string.Format("{0} % ", percent);
+				if (IsDisposing)
+					return;
+				_TrackBar.ValueChanged -= _TrackBar_ValueChanged;
+				var sourceValue = (float)(_NumericUpDown.Value ?? 0);
+				var value = (double)ConvertHelper.ConvertRangeF((float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, (float)_TrackBar.Minimum, (float)_TrackBar.Maximum, sourceValue);
+				if (_TrackBar.Value != value)
+					_TrackBar.Value = value ;
+				_TrackBar.ValueChanged += _TrackBar_ValueChanged;
+				// Set percent.
+				var minPercent = (_NumericUpDown.Minimum ?? 0) < 0 ? -100F : 0f;
+				var percent = (double)ConvertHelper.ConvertRangeF((float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, minPercent, 100f, sourceValue);
+				var percentRound = Math.Round(percent);
+				var percentString = string.Format(PercentFormat, percent);
 				// Update percent TextBox.
-				if (_TextBox.Text != percentString) _TextBox.Text = percentString;
-				// Update TrackBar;
-				if (_TrackBar.Value != percent) _TrackBar.Value = percent;
-				_TrackBar.ValueChanged += new System.EventHandler(_TrackBar_ValueChanged);
-				ev = ValueChanged;
+				if (_TextBox.Text != percentString)
+					_TextBox.Text = percentString;
 			}
-			if (ev != null) ev(this, new EventArgs());
+			ev = ValueChanged;
+			if (ev != null)
+				ev(this, new EventArgs());
 		}
 
 		#region IDisposable
@@ -83,7 +98,6 @@ namespace x360ce.App
 
 		bool IsDisposing;
 
-		// The bulk of the clean-up code is implemented in Dispose(bool)
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)

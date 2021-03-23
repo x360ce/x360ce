@@ -30,10 +30,12 @@ namespace x360ce.App.Controls
 			AxistToButtonsListHost.Child = AxisToButtonsListPanel;
 			DirectInputPanel = new PadTabPages.DirectInputUserControl();
 			DirectInputHost.Child = DirectInputPanel;
-			LeftTriggerPanel = new AxisMapControl();
-			LeftTriggerPanel.HeaderText = "Left Trigger";
-			LeftTriggerPanel.TargetType = TargetType.LeftTrigger;
-			LeftTriggerHost.Child = LeftTriggerPanel;
+			TriggersWpfPanel = new TriggersControl();
+			TriggersHost.Child = TriggersWpfPanel;
+			LeftThumbWpfPanel = new LeftThumbControl();
+			LeftThumbHost.Child = LeftThumbWpfPanel;
+			RightThumbWpfPanel = new RightThumbControl();
+			RightThumbHost.Child = RightThumbWpfPanel;
 			// Add controls which must be notified on setting selection change.
 			UserMacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
@@ -88,8 +90,9 @@ namespace x360ce.App.Controls
 		public AxisToButtonListControl AxisToButtonsListPanel;
 		public PadTabPages.DirectInputUserControl DirectInputPanel;
 
-		private AxisMapControl LeftTriggerPanel;
-
+		private TriggersControl TriggersWpfPanel;
+		private LeftThumbControl LeftThumbWpfPanel;
+		private RightThumbControl RightThumbWpfPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -207,27 +210,27 @@ namespace x360ce.App.Controls
 				var axis = ud.DiState.Axis;
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
+					LeftThumbWpfPanel.LeftThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
 				// LeftThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
+					LeftThumbWpfPanel.LeftThumbYPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
 				// RightThumbX
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
+				 RightThumbWpfPanel.RightThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
 				// RightThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
+					RightThumbWpfPanel.RightThumbYPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
 				// LeftTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
+					TriggersWpfPanel.LeftTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
 				// RightTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
+					TriggersWpfPanel.RightTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
 			}
 			// Update Axis to Button Images.
 			var AxisToButtonControls = ControlsHelper.GetAll<AxisToButtonControl>(AxisToButtonsListPanel.MainGroupBox);
@@ -661,9 +664,10 @@ namespace x360ce.App.Controls
 
 			// Right Trigger
 			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox, MapCode.RightTrigger);
-			AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);
-			AddMap(() => SettingName.RightTriggerAntiDeadZone, RightTriggerUserControl.AntiDeadZoneNumericUpDown);
-			AddMap(() => SettingName.RightTriggerLinear, RightTriggerUserControl.SensitivityNumericUpDown);
+			//AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);
+			//AddMap(() => SettingName.RightTriggerAntiDeadZone, RightTriggerUserControl.AntiDeadZoneNumericUpDown);
+			//AddMap(() => SettingName.RightTriggerLinear, RightTriggerUserControl.SensitivityNumericUpDown);
+
 			// D-Pad
 			AddMap(() => SettingName.DPad, DPadComboBox, MapCode.DPad);
 			AddMap(() => SettingName.DPadUp, DPadUpComboBox, MapCode.DPadUp);
@@ -729,12 +733,12 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.LeftThumbUp, LeftThumbUpComboBox, MapCode.LeftThumbUp);
 			AddMap(() => SettingName.LeftThumbDown, LeftThumbDownComboBox, MapCode.LeftThumbDown);
 			AddMap(() => SettingName.LeftThumbButton, LeftThumbButtonComboBox, MapCode.LeftThumbButton);
-			AddMap(() => SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar);
-			AddMap(() => SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar);
-			AddMap(() => SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown);
-			AddMap(() => SettingName.LeftThumbAntiDeadZoneY, LeftThumbYUserControl.AntiDeadZoneNumericUpDown);
-			AddMap(() => SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityNumericUpDown);
-			AddMap(() => SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityNumericUpDown);
+			//AddMap(() => SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar);
+			//AddMap(() => SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar);
+			//AddMap(() => SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown);
+			//AddMap(() => SettingName.LeftThumbAntiDeadZoneY, LeftThumbYUserControl.AntiDeadZoneNumericUpDown);
+			//AddMap(() => SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityNumericUpDown);
+			//AddMap(() => SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityNumericUpDown);
 			// Right Thumb
 			AddMap(() => SettingName.RightThumbAxisX, RightThumbAxisXComboBox, MapCode.RightThumbAxisX);
 			AddMap(() => SettingName.RightThumbAxisY, RightThumbAxisYComboBox, MapCode.RightThumbAxisY);
@@ -743,12 +747,12 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.RightThumbUp, RightThumbUpComboBox, MapCode.RightThumbUp);
 			AddMap(() => SettingName.RightThumbDown, RightThumbDownComboBox, MapCode.RightThumbDown);
 			AddMap(() => SettingName.RightThumbButton, RightThumbButtonComboBox, MapCode.RightThumbButton);
-			AddMap(() => SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar);
-			AddMap(() => SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar);
-			AddMap(() => SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown);
-			AddMap(() => SettingName.RightThumbAntiDeadZoneY, RightThumbYUserControl.AntiDeadZoneNumericUpDown);
-			AddMap(() => SettingName.RightThumbLinearX, RightThumbXUserControl.SensitivityNumericUpDown);
-			AddMap(() => SettingName.RightThumbLinearY, RightThumbYUserControl.SensitivityNumericUpDown);
+			//AddMap(() => SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar);
+			//AddMap(() => SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar);
+			//AddMap(() => SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown);
+			//AddMap(() => SettingName.RightThumbAntiDeadZoneY, RightThumbYUserControl.AntiDeadZoneNumericUpDown);
+			//AddMap(() => SettingName.RightThumbLinearX, RightThumbXUserControl.SensitivityNumericUpDown);
+			//AddMap(() => SettingName.RightThumbLinearY, RightThumbYUserControl.SensitivityNumericUpDown);
 			// Force Feedback
 			AddMap(() => SettingName.ForceEnable, ForceEnableCheckBox);
 			AddMap(() => SettingName.ForceType, ForceTypeComboBox);
@@ -1313,7 +1317,7 @@ namespace x360ce.App.Controls
 		public UserDevice CurrentUserDevice
 			=> _CurrentUserDevice;
 		private UserDevice _CurrentUserDevice;
-		
+
 		public PadSetting CurrentPadSetting
 			=> _CurrentPadSetting;
 		private PadSetting _CurrentPadSetting;
@@ -1336,9 +1340,7 @@ namespace x360ce.App.Controls
 				_CurrentPadSetting = setting == null
 					? new PadSetting()
 					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-				LeftTriggerPanel.SetBinding(_CurrentPadSetting);
-
-
+				TriggersWpfPanel.LeftTriggerPanel.SetBinding(_CurrentPadSetting);
 				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, _CurrentPadSetting);
 				OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 				UpdateGridButtons();
