@@ -36,6 +36,9 @@ namespace x360ce.App.Controls
 			LeftThumbHost.Child = LeftThumbWpfPanel;
 			RightThumbWpfPanel = new RightThumbControl();
 			RightThumbHost.Child = RightThumbWpfPanel;
+			DPadPanel = new DPadControl();
+			DPadHost.Child = DPadPanel;
+
 			// Add controls which must be notified on setting selection change.
 			UserMacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
@@ -93,6 +96,7 @@ namespace x360ce.App.Controls
 		private TriggersControl TriggersWpfPanel;
 		private LeftThumbControl LeftThumbWpfPanel;
 		private RightThumbControl RightThumbWpfPanel;
+		private DPadControl DPadPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -711,9 +715,9 @@ namespace x360ce.App.Controls
 			//AddMap(() => SettingName.DPadRightDeadZone, AxisToButtonsListPanel.AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown);
 			//AddMap(() => SettingName.DPadUpDeadZone, AxisToButtonsListPanel.AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown);
 			// Axis To D-Pad.
-			AddMap(() => SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
-			AddMap(() => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
-			AddMap(() => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
+			//AddMap(() => SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
+			//AddMap(() => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
+			//AddMap(() => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
 			// Buttons
 			AddMap(() => SettingName.ButtonGuide, ButtonGuideComboBox, MapCode.ButtonGuide);
 			AddMap(() => SettingName.ButtonBack, ButtonBackComboBox, MapCode.ButtonBack);
@@ -1071,18 +1075,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			TrackBar control = (TrackBar)sender;
-			AxisToDPadOffsetTextBox.Text = string.Format("{0} % ", control.Value);
-		}
-
-		void AxisToDPadDeadZoneTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			TrackBar control = (TrackBar)sender;
-			AxisToDPadDeadZoneTextBox.Text = string.Format("{0} % ", control.Value);
-		}
-
 		void ClearPresetButton_Click(object sender, EventArgs e)
 		{
 			ClearAll();
@@ -1340,6 +1332,7 @@ namespace x360ce.App.Controls
 				_CurrentPadSetting = setting == null
 					? new PadSetting()
 					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+				DPadPanel.SetBinding(_CurrentPadSetting);
 				TriggersWpfPanel.LeftTriggerPanel.SetBinding(_CurrentPadSetting);
 				TriggersWpfPanel.RightTriggerPanel.SetBinding(_CurrentPadSetting);
 				LeftThumbWpfPanel.LeftThumbXPanel.SetBinding(_CurrentPadSetting);

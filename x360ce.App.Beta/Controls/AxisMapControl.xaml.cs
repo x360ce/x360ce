@@ -47,9 +47,9 @@ namespace x360ce.App.Controls
 			UpdateTimerReset();
 		}
 
-		DeadZoneControlsLink deadzoneLink;
-		DeadZoneControlsLink antiDeadzoneLink;
-		DeadZoneControlsLink linearLink;
+		TrackBarUpDownTextBoxLink deadzoneLink;
+		TrackBarUpDownTextBoxLink antiDeadzoneLink;
+		TrackBarUpDownTextBoxLink linearLink;
 
 		System.Timers.Timer updateTimer;
 
@@ -72,11 +72,11 @@ namespace x360ce.App.Controls
 		void UpdateTargetType()
 		{
 			var maxValue = isThumb ? short.MaxValue : byte.MaxValue;
-			deadzoneLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, maxValue);
+			deadzoneLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, maxValue);
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
-			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneUpDown, AntiDeadZoneTextBox, 0, maxValue);
+			antiDeadzoneLink = new TrackBarUpDownTextBoxLink(AntiDeadZoneTrackBar, AntiDeadZoneUpDown, AntiDeadZoneTextBox, 0, maxValue);
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
-			linearLink = new DeadZoneControlsLink(LinearTrackBar, LinearUpDown, LinearTextBox, -100, 100);
+			linearLink = new TrackBarUpDownTextBoxLink(LinearTrackBar, LinearUpDown, LinearTextBox, -100, 100);
 			linearLink.ValueChanged += deadzoneLink_ValueChanged;
 			UpdateTimerReset();
 		}

@@ -10,10 +10,10 @@ namespace x360ce.App
 	/// <summary>
 	///  Link 3 controls.
 	/// </summary>
-	public class DeadZoneControlsLink : IDisposable
+	public class TrackBarUpDownTextBoxLink : IDisposable
 	{
 
-		public DeadZoneControlsLink(Slider trackBar, IntegerUpDown numericUpDown, TextBox textBox, int minValue, int maxValue)
+		public TrackBarUpDownTextBoxLink(Slider trackBar, IntegerUpDown numericUpDown, TextBox textBox, int minValue, int maxValue)
 		{
 			// Slider will be mapped as main settings control.
 			_TrackBar = trackBar;

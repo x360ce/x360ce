@@ -210,7 +210,7 @@
     <Compile Include="Common\CloudClient.cs" />
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
-    <Compile Include="Common\DeadZoneControlsLink.cs" />
+    <Compile Include="Common\TrackBarUpDownTextBoxLink.cs" />
     <Compile Include="Common\DInput\DInputEventArgs.cs" />
     <Compile Include="Common\DInput\DInputException.cs" />
     <Compile Include="Common\DInput\DInputHelper.cs" />
@@ -293,6 +293,9 @@
     </Compile>
     <Compile Include="Controls\PadTabPages\DirectInputUserControl.xaml.cs">
       <DependentUpon>DirectInputUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PadTabPages\DPadControl.xaml.cs">
+      <DependentUpon>DPadControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
     <Compile Include="Controls\PadTabPages\IPadControl.cs" />
@@ -776,6 +779,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PadTabPages\DirectInputUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PadTabPages\DPadControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -17,10 +17,10 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PadControl));
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.DirectInputTabPage = new System.Windows.Forms.TabPage();
 			this.DirectInputHost = new System.Windows.Forms.Integration.ElementHost();
 			this.AdvancedTabPage = new System.Windows.Forms.TabPage();
@@ -30,14 +30,6 @@
 			this.DeviceSubTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.DeviceSubTypeLabel = new System.Windows.Forms.Label();
 			this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
-			this.AxisToDPadGroupBox = new System.Windows.Forms.GroupBox();
-			this.AxisToDPadEnabledCheckBox = new System.Windows.Forms.CheckBox();
-			this.AxisToDPadOffsetTrackBar = new System.Windows.Forms.TrackBar();
-			this.AxisToDPadOffsetTextBox = new System.Windows.Forms.TextBox();
-			this.AxisToDPadDeadZoneTrackBar = new System.Windows.Forms.TrackBar();
-			this.OffsetLabel = new System.Windows.Forms.Label();
-			this.DeadZoneLabel = new System.Windows.Forms.Label();
-			this.AxisToDPadDeadZoneTextBox = new System.Windows.Forms.TextBox();
 			this.GeneralTabPage = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.GeneralCenterPanel = new System.Windows.Forms.Panel();
@@ -119,13 +111,14 @@
 			this.AxisToButtonPanel = new System.Windows.Forms.Panel();
 			this.AxistToButtonsListHost = new System.Windows.Forms.Integration.ElementHost();
 			this.DPadTabPage = new System.Windows.Forms.TabPage();
-			this.DPadPanel = new System.Windows.Forms.Panel();
 			this.TriggersTabPage = new System.Windows.Forms.TabPage();
 			this.TriggersPanel = new System.Windows.Forms.Panel();
 			this.TriggersHost = new System.Windows.Forms.Integration.ElementHost();
 			this.LeftThumbTabPage = new System.Windows.Forms.TabPage();
 			this.LeftThumbPanel = new System.Windows.Forms.Panel();
+			this.LeftThumbHost = new System.Windows.Forms.Integration.ElementHost();
 			this.RightThumbTabPage = new System.Windows.Forms.TabPage();
+			this.RightThumbHost = new System.Windows.Forms.Integration.ElementHost();
 			this.ForceFeedbackTabPage = new System.Windows.Forms.TabPage();
 			this.ForceFeedbackPanel = new System.Windows.Forms.Panel();
 			this.InforTextBox = new System.Windows.Forms.TextBox();
@@ -193,15 +186,11 @@
 			this.EnableButton = new System.Windows.Forms.ToolStripButton();
 			this.GetXInputStatesCheckBox = new System.Windows.Forms.ToolStripButton();
 			this.DxTweakButton = new System.Windows.Forms.Button();
-			this.LeftThumbHost = new System.Windows.Forms.Integration.ElementHost();
-			this.RightThumbHost = new System.Windows.Forms.Integration.ElementHost();
+			this.DPadHost = new System.Windows.Forms.Integration.ElementHost();
 			this.DirectInputTabPage.SuspendLayout();
 			this.AdvancedTabPage.SuspendLayout();
 			this.AdvancedOptionsPanel.SuspendLayout();
 			this.DeviceGroupBox.SuspendLayout();
-			this.AxisToDPadGroupBox.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadDeadZoneTrackBar)).BeginInit();
 			this.GeneralTabPage.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.GeneralCenterPanel.SuspendLayout();
@@ -211,7 +200,6 @@
 			this.ButtonsTabPage.SuspendLayout();
 			this.AxisToButtonPanel.SuspendLayout();
 			this.DPadTabPage.SuspendLayout();
-			this.DPadPanel.SuspendLayout();
 			this.TriggersTabPage.SuspendLayout();
 			this.TriggersPanel.SuspendLayout();
 			this.LeftThumbTabPage.SuspendLayout();
@@ -336,106 +324,6 @@
 			this.PassThroughCheckBox.Text = "Pass Through";
 			this.PassThroughCheckBox.UseVisualStyleBackColor = true;
 			this.PassThroughCheckBox.CheckedChanged += new System.EventHandler(this.PassThroughCheckBox_CheckedChanged);
-			// 
-			// AxisToDPadGroupBox
-			// 
-			this.AxisToDPadGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadEnabledCheckBox);
-			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadOffsetTrackBar);
-			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadOffsetTextBox);
-			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTrackBar);
-			this.AxisToDPadGroupBox.Controls.Add(this.OffsetLabel);
-			this.AxisToDPadGroupBox.Controls.Add(this.DeadZoneLabel);
-			this.AxisToDPadGroupBox.Controls.Add(this.AxisToDPadDeadZoneTextBox);
-			this.AxisToDPadGroupBox.Location = new System.Drawing.Point(6, 6);
-			this.AxisToDPadGroupBox.Margin = new System.Windows.Forms.Padding(6);
-			this.AxisToDPadGroupBox.Name = "AxisToDPadGroupBox";
-			this.AxisToDPadGroupBox.Padding = new System.Windows.Forms.Padding(6);
-			this.AxisToDPadGroupBox.Size = new System.Drawing.Size(1120, 240);
-			this.AxisToDPadGroupBox.TabIndex = 14;
-			this.AxisToDPadGroupBox.TabStop = false;
-			this.AxisToDPadGroupBox.Text = "Axis To D-Pad";
-			// 
-			// AxisToDPadEnabledCheckBox
-			// 
-			this.AxisToDPadEnabledCheckBox.AutoSize = true;
-			this.AxisToDPadEnabledCheckBox.Location = new System.Drawing.Point(12, 37);
-			this.AxisToDPadEnabledCheckBox.Margin = new System.Windows.Forms.Padding(6);
-			this.AxisToDPadEnabledCheckBox.Name = "AxisToDPadEnabledCheckBox";
-			this.AxisToDPadEnabledCheckBox.Size = new System.Drawing.Size(123, 29);
-			this.AxisToDPadEnabledCheckBox.TabIndex = 14;
-			this.AxisToDPadEnabledCheckBox.Text = "Enabled";
-			this.AxisToDPadEnabledCheckBox.UseVisualStyleBackColor = true;
-			// 
-			// AxisToDPadOffsetTrackBar
-			// 
-			this.AxisToDPadOffsetTrackBar.AutoSize = false;
-			this.AxisToDPadOffsetTrackBar.Location = new System.Drawing.Point(180, 167);
-			this.AxisToDPadOffsetTrackBar.Margin = new System.Windows.Forms.Padding(6);
-			this.AxisToDPadOffsetTrackBar.Maximum = 100;
-			this.AxisToDPadOffsetTrackBar.Name = "AxisToDPadOffsetTrackBar";
-			this.AxisToDPadOffsetTrackBar.Size = new System.Drawing.Size(454, 62);
-			this.AxisToDPadOffsetTrackBar.TabIndex = 16;
-			this.AxisToDPadOffsetTrackBar.TickFrequency = 2;
-			this.AxisToDPadOffsetTrackBar.ValueChanged += new System.EventHandler(this.AxisToDPadOffsetTrackBar_ValueChanged);
-			// 
-			// AxisToDPadOffsetTextBox
-			// 
-			this.AxisToDPadOffsetTextBox.Location = new System.Drawing.Point(646, 167);
-			this.AxisToDPadOffsetTextBox.Margin = new System.Windows.Forms.Padding(6);
-			this.AxisToDPadOffsetTextBox.Name = "AxisToDPadOffsetTextBox";
-			this.AxisToDPadOffsetTextBox.ReadOnly = true;
-			this.AxisToDPadOffsetTextBox.Size = new System.Drawing.Size(82, 31);
-			this.AxisToDPadOffsetTextBox.TabIndex = 0;
-			this.AxisToDPadOffsetTextBox.TabStop = false;
-			this.AxisToDPadOffsetTextBox.Text = "0 % ";
-			this.AxisToDPadOffsetTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			// 
-			// AxisToDPadDeadZoneTrackBar
-			// 
-			this.AxisToDPadDeadZoneTrackBar.AutoSize = false;
-			this.AxisToDPadDeadZoneTrackBar.Location = new System.Drawing.Point(180, 69);
-			this.AxisToDPadDeadZoneTrackBar.Margin = new System.Windows.Forms.Padding(6);
-			this.AxisToDPadDeadZoneTrackBar.Maximum = 100;
-			this.AxisToDPadDeadZoneTrackBar.Name = "AxisToDPadDeadZoneTrackBar";
-			this.AxisToDPadDeadZoneTrackBar.Size = new System.Drawing.Size(454, 62);
-			this.AxisToDPadDeadZoneTrackBar.TabIndex = 15;
-			this.AxisToDPadDeadZoneTrackBar.TickFrequency = 2;
-			this.AxisToDPadDeadZoneTrackBar.Value = 100;
-			this.AxisToDPadDeadZoneTrackBar.ValueChanged += new System.EventHandler(this.AxisToDPadDeadZoneTrackBar_ValueChanged);
-			// 
-			// OffsetLabel
-			// 
-			this.OffsetLabel.AutoSize = true;
-			this.OffsetLabel.Location = new System.Drawing.Point(174, 137);
-			this.OffsetLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.OffsetLabel.Name = "OffsetLabel";
-			this.OffsetLabel.Size = new System.Drawing.Size(69, 25);
-			this.OffsetLabel.TabIndex = 0;
-			this.OffsetLabel.Text = "Offset";
-			// 
-			// DeadZoneLabel
-			// 
-			this.DeadZoneLabel.AutoSize = true;
-			this.DeadZoneLabel.Location = new System.Drawing.Point(174, 38);
-			this.DeadZoneLabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
-			this.DeadZoneLabel.Name = "DeadZoneLabel";
-			this.DeadZoneLabel.Size = new System.Drawing.Size(118, 25);
-			this.DeadZoneLabel.TabIndex = 0;
-			this.DeadZoneLabel.Text = "Dead Zone";
-			// 
-			// AxisToDPadDeadZoneTextBox
-			// 
-			this.AxisToDPadDeadZoneTextBox.Location = new System.Drawing.Point(646, 69);
-			this.AxisToDPadDeadZoneTextBox.Margin = new System.Windows.Forms.Padding(6);
-			this.AxisToDPadDeadZoneTextBox.Name = "AxisToDPadDeadZoneTextBox";
-			this.AxisToDPadDeadZoneTextBox.ReadOnly = true;
-			this.AxisToDPadDeadZoneTextBox.Size = new System.Drawing.Size(82, 31);
-			this.AxisToDPadDeadZoneTextBox.TabIndex = 0;
-			this.AxisToDPadDeadZoneTextBox.TabStop = false;
-			this.AxisToDPadDeadZoneTextBox.Text = "100 % ";
-			this.AxisToDPadDeadZoneTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// GeneralTabPage
 			// 
@@ -1409,7 +1297,7 @@
 			// DPadTabPage
 			// 
 			this.DPadTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.DPadTabPage.Controls.Add(this.DPadPanel);
+			this.DPadTabPage.Controls.Add(this.DPadHost);
 			this.DPadTabPage.Location = new System.Drawing.Point(8, 39);
 			this.DPadTabPage.Margin = new System.Windows.Forms.Padding(6);
 			this.DPadTabPage.Name = "DPadTabPage";
@@ -1417,16 +1305,6 @@
 			this.DPadTabPage.Size = new System.Drawing.Size(1504, 845);
 			this.DPadTabPage.TabIndex = 5;
 			this.DPadTabPage.Text = "D-Pad";
-			// 
-			// DPadPanel
-			// 
-			this.DPadPanel.Controls.Add(this.AxisToDPadGroupBox);
-			this.DPadPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.DPadPanel.Location = new System.Drawing.Point(6, 6);
-			this.DPadPanel.Margin = new System.Windows.Forms.Padding(6);
-			this.DPadPanel.Name = "DPadPanel";
-			this.DPadPanel.Size = new System.Drawing.Size(1492, 833);
-			this.DPadPanel.TabIndex = 0;
 			// 
 			// TriggersTabPage
 			// 
@@ -1482,6 +1360,16 @@
 			this.LeftThumbPanel.Size = new System.Drawing.Size(1492, 833);
 			this.LeftThumbPanel.TabIndex = 1;
 			// 
+			// LeftThumbHost
+			// 
+			this.LeftThumbHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.LeftThumbHost.Location = new System.Drawing.Point(0, 0);
+			this.LeftThumbHost.Margin = new System.Windows.Forms.Padding(0);
+			this.LeftThumbHost.Name = "LeftThumbHost";
+			this.LeftThumbHost.Size = new System.Drawing.Size(1492, 833);
+			this.LeftThumbHost.TabIndex = 0;
+			this.LeftThumbHost.Child = null;
+			// 
 			// RightThumbTabPage
 			// 
 			this.RightThumbTabPage.BackColor = System.Drawing.SystemColors.Control;
@@ -1493,6 +1381,16 @@
 			this.RightThumbTabPage.Size = new System.Drawing.Size(1504, 845);
 			this.RightThumbTabPage.TabIndex = 2;
 			this.RightThumbTabPage.Text = "Right Thumb";
+			// 
+			// RightThumbHost
+			// 
+			this.RightThumbHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RightThumbHost.Location = new System.Drawing.Point(6, 6);
+			this.RightThumbHost.Margin = new System.Windows.Forms.Padding(0);
+			this.RightThumbHost.Name = "RightThumbHost";
+			this.RightThumbHost.Size = new System.Drawing.Size(1492, 833);
+			this.RightThumbHost.TabIndex = 0;
+			this.RightThumbHost.Child = null;
 			// 
 			// ForceFeedbackTabPage
 			// 
@@ -2077,14 +1975,14 @@
             this.VendorNameColumn,
             this.ProductNameColumn,
             this.MapToColumn});
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-			this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Window;
+			dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.ControlText;
+			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+			this.MappedDevicesDataGridView.DefaultCellStyle = dataGridViewCellStyle7;
 			this.MappedDevicesDataGridView.EnableHeadersVisualStyles = false;
 			this.MappedDevicesDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.MappedDevicesDataGridView.Location = new System.Drawing.Point(0, 48);
@@ -2092,14 +1990,14 @@
 			this.MappedDevicesDataGridView.MultiSelect = false;
 			this.MappedDevicesDataGridView.Name = "MappedDevicesDataGridView";
 			this.MappedDevicesDataGridView.ReadOnly = true;
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.MappedDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+			dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.MappedDevicesDataGridView.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
 			this.MappedDevicesDataGridView.RowHeadersVisible = false;
 			this.MappedDevicesDataGridView.RowHeadersWidth = 51;
 			this.MappedDevicesDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -2156,9 +2054,9 @@
 			// 
 			this.CompletionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.CompletionColumn.DataPropertyName = "Completion";
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-			dataGridViewCellStyle1.NullValue = null;
-			this.CompletionColumn.DefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+			dataGridViewCellStyle5.NullValue = null;
+			this.CompletionColumn.DefaultCellStyle = dataGridViewCellStyle5;
 			this.CompletionColumn.HeaderText = "Map %";
 			this.CompletionColumn.MinimumWidth = 6;
 			this.CompletionColumn.Name = "CompletionColumn";
@@ -2169,8 +2067,8 @@
 			// InstanceIdColumn
 			// 
 			this.InstanceIdColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			this.InstanceIdColumn.DefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			this.InstanceIdColumn.DefaultCellStyle = dataGridViewCellStyle6;
 			this.InstanceIdColumn.HeaderText = "Instance ID";
 			this.InstanceIdColumn.MinimumWidth = 6;
 			this.InstanceIdColumn.Name = "InstanceIdColumn";
@@ -2303,25 +2201,15 @@
 			this.DxTweakButton.UseVisualStyleBackColor = true;
 			this.DxTweakButton.Click += new System.EventHandler(this.CalibrateButton_Click);
 			// 
-			// LeftThumbHost
+			// DPadHost
 			// 
-			this.LeftThumbHost.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.LeftThumbHost.Location = new System.Drawing.Point(0, 0);
-			this.LeftThumbHost.Margin = new System.Windows.Forms.Padding(0);
-			this.LeftThumbHost.Name = "LeftThumbHost";
-			this.LeftThumbHost.Size = new System.Drawing.Size(1492, 833);
-			this.LeftThumbHost.TabIndex = 0;
-			this.LeftThumbHost.Child = null;
-			// 
-			// RightThumbHost
-			// 
-			this.RightThumbHost.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.RightThumbHost.Location = new System.Drawing.Point(6, 6);
-			this.RightThumbHost.Margin = new System.Windows.Forms.Padding(0);
-			this.RightThumbHost.Name = "RightThumbHost";
-			this.RightThumbHost.Size = new System.Drawing.Size(1492, 833);
-			this.RightThumbHost.TabIndex = 0;
-			this.RightThumbHost.Child = null;
+			this.DPadHost.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.DPadHost.Location = new System.Drawing.Point(6, 6);
+			this.DPadHost.Margin = new System.Windows.Forms.Padding(0);
+			this.DPadHost.Name = "DPadHost";
+			this.DPadHost.Size = new System.Drawing.Size(1492, 833);
+			this.DPadHost.TabIndex = 0;
+			this.DPadHost.Child = null;
 			// 
 			// PadControl
 			// 
@@ -2346,10 +2234,6 @@
 			this.AdvancedOptionsPanel.ResumeLayout(false);
 			this.DeviceGroupBox.ResumeLayout(false);
 			this.DeviceGroupBox.PerformLayout();
-			this.AxisToDPadGroupBox.ResumeLayout(false);
-			this.AxisToDPadGroupBox.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadOffsetTrackBar)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.AxisToDPadDeadZoneTrackBar)).EndInit();
 			this.GeneralTabPage.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.GeneralCenterPanel.ResumeLayout(false);
@@ -2362,7 +2246,6 @@
 			this.ButtonsTabPage.ResumeLayout(false);
 			this.AxisToButtonPanel.ResumeLayout(false);
 			this.DPadTabPage.ResumeLayout(false);
-			this.DPadPanel.ResumeLayout(false);
 			this.TriggersTabPage.ResumeLayout(false);
 			this.TriggersPanel.ResumeLayout(false);
 			this.LeftThumbTabPage.ResumeLayout(false);
@@ -2469,14 +2352,6 @@
 		System.Windows.Forms.ComboBox DeviceSubTypeComboBox;
 		public System.Windows.Forms.ContextMenuStrip DiMenuStrip;
 		System.Windows.Forms.CheckBox PassThroughCheckBox;
-        System.Windows.Forms.GroupBox AxisToDPadGroupBox;
-        System.Windows.Forms.CheckBox AxisToDPadEnabledCheckBox;
-        System.Windows.Forms.TrackBar AxisToDPadDeadZoneTrackBar;
-        System.Windows.Forms.Label DeadZoneLabel;
-        System.Windows.Forms.TextBox AxisToDPadDeadZoneTextBox;
-        System.Windows.Forms.TrackBar AxisToDPadOffsetTrackBar;
-        System.Windows.Forms.Label OffsetLabel;
-        System.Windows.Forms.TextBox AxisToDPadOffsetTextBox;
 		System.Windows.Forms.ToolTip MainToolTip;
 		System.Windows.Forms.TabPage ForceFeedbackTabPage;
 		System.Windows.Forms.GroupBox ForceFeedbackGroupBox;
@@ -2537,7 +2412,6 @@
 		private System.Windows.Forms.TabPage TriggersTabPage;
 		private System.Windows.Forms.Panel TriggersPanel;
 		private System.Windows.Forms.TabPage DPadTabPage;
-		private System.Windows.Forms.Panel DPadPanel;
 		private System.Windows.Forms.ComboBox MapNameComboBox;
         private System.Windows.Forms.ToolStripButton GetXInputStatesCheckBox;
 		private System.Windows.Forms.Label label1;
@@ -2570,5 +2444,6 @@
 		private System.Windows.Forms.Integration.ElementHost TriggersHost;
 		private System.Windows.Forms.Integration.ElementHost LeftThumbHost;
 		private System.Windows.Forms.Integration.ElementHost RightThumbHost;
+		private System.Windows.Forms.Integration.ElementHost DPadHost;
 	}
 }

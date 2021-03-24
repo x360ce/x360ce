@@ -196,7 +196,7 @@
 					<StackPanel Orientation="Vertical">
 						<Label Name="AntiDeadZoneLabel" VerticalAlignment="Center" Content="Anti-Dead Zone:" />
 						<StackPanel Orientation="Horizontal">
-							<Slider Name="AntiDeadZoneTrackBar" />
+							<Slider Name="AntiDeadZoneTrackBar" VerticalAlignment="Center" />
 							<TextBox
 								Name="AntiDeadZoneTextBox"
 								Width="50"
@@ -215,7 +215,7 @@
 					<StackPanel Orientation="Vertical">
 						<Label Name="DeadZoneLabel" Content="Dead Zone:" />
 						<StackPanel Orientation="Horizontal">
-							<Slider Name="DeadZoneTrackBar" />
+							<Slider Name="DeadZoneTrackBar" VerticalAlignment="Center" />
 							<TextBox
 								Name="DeadZoneTextBox"
 								Width="50"
@@ -234,7 +234,7 @@
 					<StackPanel Orientation="Vertical">
 						<Label Name="SensitivityLabel" Content="Sensitivity:" />
 						<StackPanel Orientation="Horizontal">
-							<Slider Name="LinearTrackBar" />
+							<Slider Name="LinearTrackBar" VerticalAlignment="Center" />
 							<TextBox
 								Name="LinearTextBox"
 								Width="50"
