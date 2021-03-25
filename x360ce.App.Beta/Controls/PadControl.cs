@@ -38,14 +38,14 @@ namespace x360ce.App.Controls
 			RightThumbHost.Child = RightThumbWpfPanel;
 			DPadPanel = new DPadControl();
 			DPadHost.Child = DPadPanel;
-
+			ForceFeedbackPanel = new PadTabPages.ForceFeedbackControl();
+			ForceFeedbackHost.Child = ForceFeedbackPanel;
 			// Add controls which must be notified on setting selection change.
 			UserMacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Hide for this version.
 			PadTabControl.TabPages.Remove(XInputTabPage);
 			//PadTabControl.TabPages.Remove(MacrosTabPage);
-
 			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();
@@ -97,6 +97,7 @@ namespace x360ce.App.Controls
 		private LeftThumbControl LeftThumbWpfPanel;
 		private RightThumbControl RightThumbWpfPanel;
 		private DPadControl DPadPanel;
+		private PadTabPages.ForceFeedbackControl ForceFeedbackPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -222,7 +223,7 @@ namespace x360ce.App.Controls
 				// RightThumbX
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-				 RightThumbWpfPanel.RightThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
+					RightThumbWpfPanel.RightThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
 				// RightThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
@@ -283,29 +284,30 @@ namespace x360ce.App.Controls
 			// If control is not specified then return.
 			if (e.Item.Control == null)
 				return;
-			// By default send vibration if force enabled/disabled changed.
-			var send = e.Item.Control == ForceEnableCheckBox;
-			// If force is enabled then...
-			if (ForceEnableCheckBox.Checked)
-			{
-				// List controls which will affect force feedback test.
-				var controls = new Control[]
-				{
-					ForceTypeComboBox,
-					ForceOverallTrackBar,
-					ForceSwapMotorCheckBox,
-					LeftMotorDirectionComboBox,
-					LeftMotorPeriodTrackBar,
-					LeftMotorStrengthTrackBar,
-					RightMotorDirectionComboBox,
-					RightMotorPeriodTrackBar,
-					RightMotorStrengthTrackBar,
-				};
-				if (controls.Contains(e.Item.Control))
-					send = true;
-			}
-			if (send)
-				SendVibration();
+
+			//// By default send vibration if force enabled/disabled changed.
+			//var send = e.Item.Control == ForceEnableCheckBox;
+			//// If force is enabled then...
+			//if (ForceEnableCheckBox.Checked)
+			//{
+			//	// List controls which will affect force feedback test.
+			//	var controls = new Control[]
+			//	{
+			//		ForceTypeComboBox,
+			//		ForceOverallTrackBar,
+			//		ForceSwapMotorCheckBox,
+			//		LeftMotorDirectionComboBox,
+			//		LeftMotorPeriodTrackBar,
+			//		LeftMotorStrengthTrackBar,
+			//		RightMotorDirectionComboBox,
+			//		RightMotorPeriodTrackBar,
+			//		RightMotorStrengthTrackBar,
+			//	};
+			//	if (controls.Contains(e.Item.Control))
+			//		send = true;
+			//}
+			//if (send)
+			//	SendVibration();
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -374,17 +376,6 @@ namespace x360ce.App.Controls
 			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
 			foreach (var item in types)
 				DeviceSubTypeComboBox.Items.Add(item);
-			// Add force feedback typed to ComboBox.
-			var effectsTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
-			foreach (var item in effectsTypes)
-				ForceTypeComboBox.Items.Add(item);
-
-			var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
-			foreach (var item in effectDirections)
-				LeftMotorDirectionComboBox.Items.Add(item);
-			foreach (var item in effectDirections)
-				RightMotorDirectionComboBox.Items.Add(item);
-
 			// Add player index to combo boxes
 			var playerOptions = new List<KeyValuePair>();
 			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));
@@ -758,16 +749,16 @@ namespace x360ce.App.Controls
 			//AddMap(() => SettingName.RightThumbLinearX, RightThumbXUserControl.SensitivityNumericUpDown);
 			//AddMap(() => SettingName.RightThumbLinearY, RightThumbYUserControl.SensitivityNumericUpDown);
 			// Force Feedback
-			AddMap(() => SettingName.ForceEnable, ForceEnableCheckBox);
-			AddMap(() => SettingName.ForceType, ForceTypeComboBox);
-			AddMap(() => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
-			AddMap(() => SettingName.ForceOverall, ForceOverallTrackBar);
-			AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
-			AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
-			AddMap(() => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
-			AddMap(() => SettingName.RightMotorDirection, RightMotorDirectionComboBox);
-			AddMap(() => SettingName.RightMotorStrength, RightMotorStrengthTrackBar);
-			AddMap(() => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
+			//AddMap(() => SettingName.ForceEnable, ForceEnableCheckBox);
+			//AddMap(() => SettingName.ForceType, ForceTypeComboBox);
+			//AddMap(() => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
+			//AddMap(() => SettingName.ForceOverall, ForceOverallTrackBar);
+			//AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
+			//AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
+			//AddMap(() => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
+			//AddMap(() => SettingName.RightMotorDirection, RightMotorDirectionComboBox);
+			//AddMap(() => SettingName.RightMotorStrength, RightMotorStrengthTrackBar);
+			//AddMap(() => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
 		}
 
 		void AddMap<T>(Expression<Func<T>> setting, Control control, MapCode code = default)
@@ -1012,69 +1003,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void ForceOverallTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			TrackBar control = (TrackBar)sender;
-			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
-		}
-
-		void MotorTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			//if (gamePadState == null) return;
-			UpdateForceFeedBack();
-		}
-
-		void MotorPeriodTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			// Convert Direct Input Period force feedback effect parameter value.
-			int leftMotorPeriod = LeftMotorPeriodTrackBar.Value * 5;
-			int rightMotorPeriod = RightMotorPeriodTrackBar.Value * 5;
-			LeftMotorPeriodTextBox.Text = string.Format("{0} ", leftMotorPeriod);
-			RightMotorPeriodTextBox.Text = string.Format("{0} ", rightMotorPeriod);
-		}
-
-		public void UpdateForceFeedBack()
-		{
-			if (MainForm.Current.ControllerIndex == -1)
-				return;
-			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
-			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
-			SendVibration();
-			//UnsafeNativeMethods.Enable(false);
-			//UnsafeNativeMethods.Enable(true);
-		}
-
-		void SendVibration()
-		{
-			var index = (int)MappedTo - 1;
-			var game = SettingsManager.CurrentGame;
-			var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
-			if (isVirtual)
-			{
-				var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, LeftMotorTestTrackBar.Value);
-				var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, RightMotorTestTrackBar.Value);
-				Global.DHelper.SetVibration(MappedTo, largeMotor, smallMotor, 0);
-			}
-			else
-			{
-				lock (Controller.XInputLock)
-				{
-					// Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
-					var leftMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, LeftMotorTestTrackBar.Value);
-					var rightMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, RightMotorTestTrackBar.Value);
-					var gamePad = Global.DHelper.LiveXiControllers[index];
-					var isConnected = Global.DHelper.LiveXiConnected[index];
-					if (Controller.IsLoaded && isConnected)
-					{
-						var vibration = new Vibration();
-						vibration.LeftMotorSpeed = leftMotor;
-						vibration.RightMotorSpeed = rightMotor;
-						gamePad.SetVibration(vibration);
-					}
-				}
-			}
-		}
-
 		void ClearPresetButton_Click(object sender, EventArgs e)
 		{
 			ClearAll();
@@ -1140,18 +1068,6 @@ namespace x360ce.App.Controls
 				components.Dispose();
 			}
 			base.Dispose(disposing);
-		}
-
-		private void LeftMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			var control = (TrackBar)sender;
-			LeftMotorStrengthTextBox.Text = string.Format("{0} % ", control.Value);
-		}
-
-		private void RightMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)
-		{
-			var control = (TrackBar)sender;
-			RightMotorStrengthTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 		private void PassThroughCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -1339,6 +1255,9 @@ namespace x360ce.App.Controls
 				LeftThumbWpfPanel.LeftThumbYPanel.SetBinding(_CurrentPadSetting);
 				RightThumbWpfPanel.RightThumbXPanel.SetBinding(_CurrentPadSetting);
 				RightThumbWpfPanel.RightThumbYPanel.SetBinding(_CurrentPadSetting);
+				ForceFeedbackPanel.SetBinding(MappedTo, _CurrentPadSetting);
+				ForceFeedbackPanel.LeftForceFeedbackMotorPanel.SetBinding(_CurrentPadSetting, 0);
+				ForceFeedbackPanel.RightForceFeedbackMotorPanel.SetBinding(_CurrentPadSetting, 1);
 				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, _CurrentPadSetting);
 				OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 				UpdateGridButtons();
@@ -1480,20 +1399,7 @@ namespace x360ce.App.Controls
 			RightTriggerLabel.Text = item.RightTrigger;
 		}
 
-		private void ForceTypeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var type = (ForceEffectType)ForceTypeComboBox.SelectedItem;
-			var list = new List<string>();
-			if (type == ForceEffectType.Constant || type == ForceEffectType._Type2)
-				list.Add("Constant force type. Good for vibrating motors on game pads.");
-			if (type.HasFlag(ForceEffectType.PeriodicSine))
-				list.Add("Periodic 'Sine Wave' force type. Good for car/plane engine vibration. Good for torque motors on wheels.");
-			if (type.HasFlag(ForceEffectType.PeriodicSawtooth))
-				list.Add("Periodic 'Sawtooth Down Wave' force type. Good for gun recoil. Good for torque motors on wheels.");
-			if (type.HasFlag(ForceEffectType._Type2))
-				list.Add("Alternative implementation - two motors / actuators per effect.");
-			EffectDescriptionLabel.Text = string.Format("{0} ({1}) - {2}", type, (int)type, string.Join(" ", list));
-		}
+
 
 		private void CalibrateButton_Click(object sender, EventArgs e)
 		{

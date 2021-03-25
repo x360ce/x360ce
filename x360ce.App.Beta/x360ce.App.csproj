@@ -297,6 +297,12 @@
     <Compile Include="Controls\PadTabPages\DPadControl.xaml.cs">
       <DependentUpon>DPadControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PadTabPages\ForceFeedbackControl.xaml.cs">
+      <DependentUpon>ForceFeedbackControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PadTabPages\ForceFeedbackMotorControl.xaml.cs">
+      <DependentUpon>ForceFeedbackMotorControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
     <Compile Include="Controls\PadTabPages\IPadControl.cs" />
     <Compile Include="Controls\PadTabPages\LeftThumbControl.xaml.cs">
@@ -783,6 +789,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\PadTabPages\DPadControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PadTabPages\ForceFeedbackControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PadTabPages\ForceFeedbackMotorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

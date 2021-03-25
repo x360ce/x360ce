@@ -273,18 +273,18 @@ namespace x360ce.App
 					ControlsHelper.SetText(StatusDllLabel, "");
 					StatusDllLabel.Visible = false;
 				}
-				if (Controller.IsLoaded)
-				{
-					if (PadControls != null)
-					{
-						for (var i = 0; i < 4; i++)
-						{
+				//if (Controller.IsLoaded)
+				//{
+				//	if (PadControls != null)
+				//	{
+				//		for (var i = 0; i < 4; i++)
+				//		{
 
-							var currentPadControl = PadControls[i];
-							currentPadControl.UpdateForceFeedBack();
-						}
-					}
-				}
+				//			var currentPadControl = PadControls[i];
+				//			currentPadControl.UpdateForceFeedBack();
+				//		}
+				//	}
+				//}
 				if (e.Error != null)
 				{
 					SetBodyError(e.Error.Message);
@@ -542,8 +542,8 @@ namespace x360ce.App
 			{
 				for (var i = 0; i < 4; i++)
 				{
-					if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
-					{
+					//if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
+					//{
 						var gamePad = Global.DHelper.LiveXiControllers[i];
 						var isConected = Global.DHelper.LiveXiConnected[i];
 						if (Controller.IsLoaded && isConected)
@@ -551,7 +551,7 @@ namespace x360ce.App
 							// Stop vibration.
 							gamePad.SetVibration(new Vibration());
 						}
-					}
+					//}
 				}
 				//BeginInvoke((Action)delegate()
 				//{

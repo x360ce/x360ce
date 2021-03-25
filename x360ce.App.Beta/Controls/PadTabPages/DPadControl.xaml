@@ -14,11 +14,11 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<GroupBox Header="Axis to D-Pad">
+	<GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Header="Axis to D-Pad">
 		<StackPanel Orientation="Horizontal">
 			<CheckBox
 				x:Name="EnabledCheckBox"
-				Margin="6,6,6,6"
+				Margin="4,4,4,4"
 				VerticalAlignment="Top"
 				Content="Enabled" />
 
