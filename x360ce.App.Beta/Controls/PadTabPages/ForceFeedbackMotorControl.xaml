@@ -31,8 +31,8 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				<StackPanel Grid.Column="3" Orientation="Horizontal">
-					<Label Content="Direction" />
-					<ComboBox x:Name="DirectionComboBox" />
+					<Label VerticalAlignment="Center" Content="Direction" />
+					<ComboBox x:Name="DirectionComboBox" Style="{StaticResource ComboBoxFix}" />
 				</StackPanel>
 			</Grid>
 			<StackPanel Orientation="Vertical">

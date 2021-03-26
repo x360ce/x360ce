@@ -57,8 +57,8 @@
 		<GroupBox Grid.Row="0" Grid.Column="1" Header="Effects">
 			<StackPanel>
 				<StackPanel Grid.Column="3" Orientation="Horizontal">
-					<Label Content="Type / Implementation" />
-					<ComboBox x:Name="ForceTypeComboBox" SelectionChanged="ForceTypeComboBox_SelectionChanged" />
+					<Label VerticalAlignment="Center" Content="Type / Implementation" />
+					<ComboBox x:Name="ForceTypeComboBox" SelectionChanged="ForceTypeComboBox_SelectionChanged" Style="{StaticResource ComboBoxFix}" />
 				</StackPanel>
 				<TextBlock
 					x:Name="ForceTypeDescriptionTextBlock"

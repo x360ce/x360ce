@@ -18,12 +18,12 @@ namespace x360ce.App
 			var binding = new System.Windows.Data.Binding(sourceProperty);
 			binding.Source = source;
 			binding.IsAsync = true;
-			if (converter is Converters.DeadZoneConverter)
+			binding.Converter = converter;
+			if (converter != null)
 			{
 				binding.Mode = BindingMode.OneWayToSource;
 				var value = source.GetType().GetProperty(sourceProperty).GetValue(source);
 				var v = converter.Convert(value, null, null, null);
-				control.SetValue(p, v);
 				control.SetBinding(p, binding);
 				control.SetValue(p, v);
 			}

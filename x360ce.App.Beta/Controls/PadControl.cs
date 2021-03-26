@@ -238,12 +238,15 @@ namespace x360ce.App.Controls
 					TriggersWpfPanel.RightTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
 			}
 			// Update Axis to Button Images.
-			var AxisToButtonControls = ControlsHelper.GetAll<AxisToButtonControl>(AxisToButtonsListPanel.MainGroupBox);
-			foreach (var atbPanel in AxisToButtonControls)
+			if (_AxisToButtonControls == null)
+				_AxisToButtonControls = ControlsHelper.GetAll<AxisToButtonControl>(AxisToButtonsListPanel.MainGroupBox);
+			foreach (var atbPanel in _AxisToButtonControls)
 				atbPanel.Refresh(newState);
 			// Store old state.
 			oldConnected = newConnected;
 		}
+
+		private AxisToButtonControl[] _AxisToButtonControls;
 
 		public bool StopRecording()
 		{

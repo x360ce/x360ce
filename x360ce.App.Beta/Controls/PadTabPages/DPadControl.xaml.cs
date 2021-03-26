@@ -27,7 +27,7 @@ namespace x360ce.App.Controls
 			if (o == null)
 				return;
 			// Set binding.
-			var converter = new Converters.DeadZoneConverter();
+			var converter = new Converters.PaddSettingToIntegerConverter();
 			SettingsManager.LoadAndMonitor(o, nameof(o.AxisToDPadEnabled), EnabledCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(o.AxisToDPadDeadZone), DeadZoneUpDown, null, converter);
 			SettingsManager.LoadAndMonitor(o, nameof(o.AxisToDPadOffset), OffsetUpDown, null, converter);

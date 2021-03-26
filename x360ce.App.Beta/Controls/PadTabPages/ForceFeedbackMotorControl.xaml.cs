@@ -44,9 +44,10 @@ namespace x360ce.App.Controls
 				default:
 					break;
 			}
-			var converter = new Converters.DeadZoneConverter();
+			var converter = new Converters.PaddSettingToIntegerConverter();
+			var enumConverter = new Converters.PaddSettingToEnumConverter<ForceEffectDirection>();
 			// Set binding.
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftMotorDirection), DirectionComboBox);
+			SettingsManager.LoadAndMonitor(o, nameof(o.LeftMotorDirection), DirectionComboBox, null, enumConverter);
 			SettingsManager.LoadAndMonitor(o, nameof(o.LeftMotorStrength), StrengthUpDown, null, converter);
 			SettingsManager.LoadAndMonitor(o, nameof(o.LeftMotorPeriod), PeriodUpDown, null, converter);
 		}

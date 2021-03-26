@@ -65,11 +65,12 @@ namespace x360ce.App.Controls.PadTabPages
 			if (o == null)
 				return;
 			_padSetting = o;
-			var converter = new Converters.DeadZoneConverter();
+			var converter = new Converters.PaddSettingToIntegerConverter();
+			var enumConverter = new Converters.PaddSettingToEnumConverter<ForceEffectType>();
 			// Set binding.
 			SettingsManager.LoadAndMonitor(o, nameof(o.ForceEnable), EnabledCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(o.ForceSwapMotor), SwapMotorsCheckBox);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ForceType), ForceTypeComboBox);
+			SettingsManager.LoadAndMonitor(o, nameof(o.ForceType), ForceTypeComboBox, null, enumConverter);
 			SettingsManager.LoadAndMonitor(o, nameof(o.ForceOverall), StrengthUpDown, null, converter);
 			_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 			LeftForceFeedbackMotorPanel.TestUpDown.ValueChanged += TestUpDown_ValueChanged;

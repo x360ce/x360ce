@@ -4,7 +4,11 @@ using System.Windows.Data;
 
 namespace x360ce.App.Converters
 {
-	public class DeadZoneConverter : IValueConverter
+
+	/// <summary>
+	///  Convert PAD setting string to integer.
+	/// </summary>
+	public class PaddSettingToIntegerConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{

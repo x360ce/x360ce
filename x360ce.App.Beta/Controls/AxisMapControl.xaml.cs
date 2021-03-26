@@ -128,7 +128,7 @@ namespace x360ce.App.Controls
 			if (o == null)
 				return;
 			// Set binding.
-			var converter = new Converters.DeadZoneConverter();
+			var converter = new Converters.PaddSettingToIntegerConverter();
 			string deadZoneName = null;
 			string antiDeadZoneName = null;
 			string linearName = null;
