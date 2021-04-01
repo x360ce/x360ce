@@ -9,6 +9,7 @@ namespace x360ce.App.Converters
 	/// </summary>
 	public class PaddSettingToEnumConverter<T> : IValueConverter where T : System.Enum
 	{
+		// Convert string number to enumeration.
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			var v = value == null || (string)value == ""
@@ -17,11 +18,19 @@ namespace x360ce.App.Converters
 			return v;
 		}
 
+		/// <summary>
+		/// Convert enumeration to integer string.
+		/// </summary>
+		/// <returns></returns>
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			return value == null || (int)value == 0
+			if (value == null)
+				return "";
+			var i = ((IConvertible)value).ToInt32(null);
+			return i == 0
 				? ""
-				: ((int)value).ToString();
+				: i.ToString();
+
 		}
 	}
 }

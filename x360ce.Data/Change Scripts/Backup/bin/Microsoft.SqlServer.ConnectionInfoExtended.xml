@@ -1,0 +1,257 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SqlServer.ConnectionInfoExtended</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SqlServer.Management.Trace.ReplayMode">
+            <summary>
+            Replay mode
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.ReplayEventArgs">
+            <summary>
+            Class used as argument for ReplayEvent
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.TraceEventArgs">
+            <summary>
+            Class used as argument for ReplayResultsEvent
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.TraceReplayOptions">
+            <summary>
+            Trace replay options
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.TraceReplay">
+            <summary>
+            Trace replay class
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReplay.Start">
+            <summary>
+            Start replay
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReplay.Pause">
+            <summary>
+            Pause replay
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReplay.Stop">
+            <summary>
+            Stop replay
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReplay.Dispose">
+            <summary>
+            IDisposable:Dispose() implementation
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReplay.Dispose(System.Boolean)">
+            <summary>
+            Internal Dispose
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.TraceUtils">
+            <summary>
+            Trace related utility methods
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceUtils.CreateInstance(System.String,System.String)">
+            <summary>
+            Create instance of an object
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceUtils.FilterException(System.Exception)">
+            <summary>
+            This method check for some exceptions that should not
+            be caught.
+            </summary>
+            <param name="exception"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceUtils.GetSqlToolsBinaryPath(System.String)">
+            <summary>
+            Helper function to get full path to the tools (DTA and Profiler, essentially)
+            installation location. This is implemented by querying the registry key that
+            SSMS writed during setup.
+            </summary>
+            <param name="appendPath">Optional relative path to append (must be prefixed with \); if null/empty, nothing is appended</param>
+            <returns>The path to the tools; if something goes wrong, empty </returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SafeNativeMethodsExtended.GetUserToken(System.String,System.String,System.String,System.IntPtr@)">
+            <summary>
+            get the HTOKEN of the specifies user, this token can then be used to impersonate the user
+            </summary>
+            <param name="user"></param>
+            <param name="domain"></param>
+            <param name="password"></param>
+            <param name="hToken"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.SqlTraceException">
+            <summary>
+            Base exception class for all SqlTrace exception classes
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.SqlTraceException.#ctor(System.Type,System.String)">
+            <summary>
+            Constructor that sets help context for the exception message box.
+            </summary>
+            <param name="messageSource">Type of strings resources class, eg. SRMainError</param>
+            <param name="messageID">Key of the message string resource</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.SqlTraceException.#ctor(System.Type,System.String,System.Exception)">
+            <summary>
+            Constructor that sets help context for the exception message box.
+            </summary>
+            <param name="innerException">An exception wrapped in this one</param>
+            <param name="messageSource">Type of strings resources class, eg. SRMainError</param>
+            <param name="messageID">Key of the message string resource</param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.SqlTraceFailToLoadInstAPIAssemblyException">
+            <summary>
+            An exception that is thrown if the Microsoft.SQLServer.InstAPI.dll was not loaded
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.SqlTraceFailToInstantiateTypeException">
+            <summary>
+            An exception that is thrown failed to instantiate 
+            one of the types in pfclnt90.dll 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.TraceReader">
+            <summary>
+            Base Class that provides trace reading a writing functionality.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReader.Dispose">
+            <summary>
+            IDisposable:Dispose() implementation
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReader.Close">
+            <summary>
+            IDataReader::Close               - Closes the IDataReader 0bject. 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReader.GetSchemaTable">
+            <summary>
+            IDataReader::GetSchemaTable      - Returns a DataTable that describes the column metadata of the IDataReader. 
+            internally would go find out Trace definition OrderedColumns and corresponding types
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReader.Read">
+            <summary>
+            IDataReader::Read    - Advances the IDataReader to the next record. 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReader.NextResult">
+            <summary>
+            IDataReader::NextResult          - Advances the data reader to the next result, when reading the results of batch 
+            No batches supported. Not implemented. 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReader.GetName(System.Int32)">
+            <summary>
+            IDataRecord::GetName         - Gets the name for the field to find. 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReader.GetDataTypeName(System.Int32)">
+            <summary>
+            IDataRecord::GetDataTypeName - Gets the data type information for the specified field. 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReader.GetFieldType(System.Int32)">
+            <summary>
+            IDataRecord::GetFieldType - Gets the Type information corresponding to the type of Object that would be returned from GetValue
+            This information can be used to increase performance by indicating the strongly-typed accessor to call. 
+            (e.g. using GetInt32 is roughly ten times faster than using GetValue.)
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.TraceReader.GetValue(System.Int32)">
+            <summary>
+            IDataRecord::GetValue        - Return the value of the specified field. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Trace.TraceReader.Depth">
+            <summary>
+            IDataReader::Depth              - Gets a value indicating the depth of nesting for the current row. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Trace.TraceReader.IsClosed">
+            <summary>
+            IDataReader::IsClosed            - Gets a value indicating whether the data reader is closed. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Trace.TraceReader.RecordsAffected">
+            <summary>
+            IDataReader::RecordsAffected     - Gets the number of rows changed, inserted, or deleted by execution of the SQL statement. 
+            Not implemented. Returns 0.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Trace.TraceReader.FieldCount">
+            <summary>
+            IDataRecord::FieldCount      - Gets the number of columns in the current row. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Trace.TraceReader.Item(System.Int32)">
+            <summary>
+            IDataRecord::Item            - Overloaded. Gets the specified column. his property is the indexer for the IDataRecord class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Trace.TraceReader.Item(System.String)">
+            <summary>
+            IDataRecord::Item            - Overloaded. Gets the specified column. his property is the indexer for the IDataRecord class.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.DataRecordChanger">
+            <summary>
+            Base Class that provides trace reading a writing functionality.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.DataRecordChanger.GetName(System.Int32)">
+            <summary>
+            IDataRecord::GetName         - Gets the name for the field to find. 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Trace.DataRecordChanger.GetFieldType(System.Int32)">
+            <summary>
+            IDataRecord::GetFieldType - Gets the Type information corresponding to the type of Object that would be returned from GetValue
+            This information can be used to increase performance by indicating the strongly-typed accessor to call. 
+            (e.g. using GetInt32 is roughly ten times faster than using GetValue.)
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Trace.DataRecordChanger.FieldCount">
+            <summary>
+            IDataRecord::FieldCount      - Gets the number of columns in the current row. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Trace.DataRecordChanger.Item(System.Int32)">
+            <summary>
+            IDataRecord::Item            - Overloaded. Gets the specified column. his property is the indexer for the IDataRecord class.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.TraceReaderWriter">
+            <summary>
+            Base Class that provides trace reading a writing functionality.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.TraceFile">
+            <summary>
+            Class that provides trace file reading a writing functionality.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.TraceTable">
+            <summary>
+            Class that provides trace file reading a writing functionality.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Trace.TraceServer">
+            <summary>
+            Class that provides trace file reading a writing functionality.
+            </summary>
+        </member>
+    </members>
+</doc>

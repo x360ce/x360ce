@@ -1,0 +1,1760 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Microsoft.SqlServer.Types</name>
+  </assembly>
+  <members>
+    <member name="M:Microsoft.SqlServer.Types.GeographyCollectionAggregate.#ctor">
+      <summary>Initializes a new instance of <see cref="T:Microsoft.SqlServer.Types.GeographyCollectionAggregate" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyCollectionAggregate.Accumulate(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object into this geography collection.</summary>
+      <param name="g">The SqlGeography object to add to this geography collection.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyCollectionAggregate.Init">
+      <summary>Initializes the properties of a <see cref="T:Microsoft.SqlServer.Types.GeographyCollectionAggregate" /> object.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyCollectionAggregate.Merge(Microsoft.SqlServer.Types.GeographyCollectionAggregate)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.GeographyCollectionAggregate" /> collection into this geography collection.</summary>
+      <param name="group">The collection of SqlGeography objects to add into this geography collection.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyCollectionAggregate.Read(System.IO.BinaryReader)">
+      <summary>Reads a binary representation of a geography type into a SqlGeometry object.</summary>
+      <param name="r">The BinaryReader object that reads a binary representation of a geography type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyCollectionAggregate.Terminate">
+      <summary>Returns the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object that represents the geography collection.</summary>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object that represents the geography collection.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyCollectionAggregate.Write(System.IO.BinaryWriter)">
+      <summary>Writes a SqlGeography object to a binary stream.</summary>
+      <param name="w">The BinaryWriter object that writes a SqlGeography object to a binary stream.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyConvexHullAggregate.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.GeographyConvexHullAggregate" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyConvexHullAggregate.Accumulate(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object into this convex hull.</summary>
+      <param name="g">The SqlGeography object to add to this convex hull.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyConvexHullAggregate.Init">
+      <summary>Initializes the properties of a <see cref="T:Microsoft.SqlServer.Types.GeographyConvexHullAggregate" /> object.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyConvexHullAggregate.Merge(Microsoft.SqlServer.Types.GeographyConvexHullAggregate)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.GeographyConvexHullAggregate" /> object into this convex hull.</summary>
+      <param name="group">The <see cref="T:Microsoft.SqlServer.Types.GeographyConvexHullAggregate" /> object to add to this convex hull.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyConvexHullAggregate.Read(System.IO.BinaryReader)">
+      <summary>Reads a binary representation of a geography type into a SqlGeometry object.</summary>
+      <param name="r">The BinaryReader object that reads a binary representation of a geography type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyConvexHullAggregate.Terminate">
+      <summary>Returns the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object that represents this convex hull.</summary>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object that represents this convex hull.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyConvexHullAggregate.Write(System.IO.BinaryWriter)">
+      <summary>Writes a SqlGeography object to a binary stream.</summary>
+      <param name="w">The BinaryWriter object that writes a SqlGeography object to a binary stream.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate.Accumulate(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object into this geography envelope.</summary>
+      <param name="g">The SqlGeography object to add to this geography envelope.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate.Init">
+      <summary>Initializes the properties of a <see cref="T:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate" /> object.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate.Merge(Microsoft.SqlServer.Types.GeographyEnvelopeAggregate)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate" /> collection into this geography envelope.</summary>
+      <param name="group">The geography envelope to add into this geography envelope.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate.Terminate">
+      <summary>Returns the <see cref="T:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate" /> object that represents the geography envelope.</summary>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object that represents the geography envelope.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyTessellationFunction.FillRow(System.Object,System.Data.SqlTypes.SqlBytes@,System.Int16@,System.Int32@)">
+      <summary>Fills the row for the <see cref="T:Microsoft.SqlServer.Types.GeographyTessellationFunction" />.</summary>
+      <param name="obj">The object.</param>
+      <param name="cellId">The cell identifier.</param>
+      <param name="cellAttributes">The cell attributes.</param>
+      <param name="spatialReferenceId">The spatial reference identifier.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyTessellationFunction.InitMethod(Microsoft.SqlServer.Types.SqlGeography,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Data.SqlTypes.SqlDouble)">
+      <summary>Returns an enumerable initialize method for the <see cref="T:Microsoft.SqlServer.Types.GeographyTessellationFunction" />.</summary>
+      <param name="geographyObject">The geography object.</param>
+      <param name="densityGrid0">The density grid.</param>
+      <param name="densityGrid1">The density grid.</param>
+      <param name="densityGrid2">The density grid.</param>
+      <param name="densityGrid3">The density grid.</param>
+      <param name="cardinality">The cardinality</param>
+      <param name="tessellationMode">The tessellation mode.</param>
+      <param name="distanceBuffer">The distance buffer.</param>
+      <returns>The initialize method.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyUnionAggregate.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.GeographyUnionAggregate" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyUnionAggregate.Accumulate(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object into this geography union.</summary>
+      <param name="g">The SqlGeography object to add into this geography union.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyUnionAggregate.Init">
+      <summary>Initializes the properties of a <see cref="T:Microsoft.SqlServer.Types.GeographyUnionAggregate" /> instance.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyUnionAggregate.Merge(Microsoft.SqlServer.Types.GeographyUnionAggregate)">
+      <summary>Adds another <see cref="T:Microsoft.SqlServer.Types.GeographyUnionAggregate" /> object into this geography union.</summary>
+      <param name="group">The other <see cref="T:Microsoft.SqlServer.Types.GeographyUnionAggregate" /> object to add into this geography union. </param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyUnionAggregate.Read(System.IO.BinaryReader)">
+      <summary>Reads a binary representation of a geography type into a SqlGeometry object.</summary>
+      <param name="r">The BinaryReader object that reads a binary representation of a geography type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyUnionAggregate.Terminate">
+      <summary>Returns the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object that represents this geography union.</summary>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object that represents this geography union.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeographyUnionAggregate.Write(System.IO.BinaryWriter)">
+      <summary>Writes a SqlGeography object to a binary stream.</summary>
+      <param name="w">The BinaryWriter object that writes a SqlGeography object to a binary stream.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryCollectionAggregate.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.GeometryCollectionAggregate" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryCollectionAggregate.Accumulate(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Adds the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object into this geometry collection.</summary>
+      <param name="g">The SqlGeometry object to add to this collection.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryCollectionAggregate.Init">
+      <summary>Initializes the properties of a <see cref="T:Microsoft.SqlServer.Types.GeometryCollectionAggregate" /> object.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryCollectionAggregate.Merge(Microsoft.SqlServer.Types.GeometryCollectionAggregate)">
+      <summary>Adds the specified <see cref="T:Microsoft.SqlServer.Types.GeometryCollectionAggregate" /> collection into this geometry collection.</summary>
+      <param name="group">The collection of SqlGeometry objects to add into this geometry collection.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryCollectionAggregate.Read(System.IO.BinaryReader)">
+      <summary>Reads a binary representation of a geometry type into a SqlGeometry object.</summary>
+      <param name="r">The BinaryReader object that reads a binary representation of a geometry type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryCollectionAggregate.Terminate">
+      <summary>Returns the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the geometry collection.</summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the geometry collection.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryCollectionAggregate.Write(System.IO.BinaryWriter)">
+      <summary>Writes a SqlGeometry object to a binary stream.</summary>
+      <param name="w">The BinaryWriter object that writes a SqlGeometry object to a binary stream.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryConvexHullAggregate.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.GeometryConvexHullAggregate" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryConvexHullAggregate.Accumulate(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Adds the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object into this convex hull.</summary>
+      <param name="g">The SqlGeometry object to add to this convex hull.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryConvexHullAggregate.Init">
+      <summary>Initializes the properties of a <see cref="T:Microsoft.SqlServer.Types.GeometryConvexHullAggregate" /> object.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryConvexHullAggregate.Merge(Microsoft.SqlServer.Types.GeometryConvexHullAggregate)">
+      <summary>Adds the specified <see cref="T:Microsoft.SqlServer.Types.GeometryConvexHullAggregate" /> object into this convex hull.</summary>
+      <param name="group">The <see cref="T:Microsoft.SqlServer.Types.GeometryConvexHullAggregate" /> object to add to this convex hull.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryConvexHullAggregate.Read(System.IO.BinaryReader)">
+      <summary>Reads a binary representation of a geometry type into a SqlGeometry object.</summary>
+      <param name="r">The BinaryReader object that reads a binary representation of a geometry type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryConvexHullAggregate.Terminate">
+      <summary>Returns the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the geometry collection.</summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the geometry collection.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryConvexHullAggregate.Write(System.IO.BinaryWriter)">
+      <summary>Writes a SqlGeometry object to a binary stream.</summary>
+      <param name="w">The BinaryWriter object that writes a SqlGeometry object to a binary stream.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryEnvelopeAggregate.#ctor">
+      <summary>Initializes a new instance of <see cref="T:Microsoft.SqlServer.Types.GeometryEnvelopeAggregate" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryEnvelopeAggregate.Accumulate(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object into this geometry envelope.</summary>
+      <param name="g">The SqlGeometry object to add into this geometry envelope.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryEnvelopeAggregate.Init">
+      <summary>Initializes the properties of a <see cref="T:Microsoft.SqlServer.Types.GeometryEnvelopeAggregate" /> instance.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryEnvelopeAggregate.Merge(Microsoft.SqlServer.Types.GeometryEnvelopeAggregate)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.GeometryEnvelopeAggregate" /> object into this geometry envelope.</summary>
+      <param name="group">The GeometryEnvelopeAggregate object to add into this geometry envelope.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryEnvelopeAggregate.Terminate">
+      <summary>Returns the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents this geometry envelope.</summary>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents this geometry envelope.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryTessellationFunction.FillRow(System.Object,System.Data.SqlTypes.SqlBytes@,System.Int16@,System.Int32@)">
+      <summary>Fills the cell parameters with tessellation property values from the specified object.</summary>
+      <param name="obj">The object used to fill the cell parameters.</param>
+      <param name="cellId">When this method returns, contains the label identifier of the cell.</param>
+      <param name="cellAttributes">When this method returns, contains the coverage attributes of the cell.</param>
+      <param name="spatialReferenceId">When this method returns, contains the spatial reference identifier of the cell.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryTessellationFunction.InitMethod(Microsoft.SqlServer.Types.SqlGeometry,System.Double,System.Double,System.Double,System.Double,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Data.SqlTypes.SqlDouble)">
+      <summary>Constructs the tessellation properties for the specified geometry object with specified settings.</summary>
+      <param name="geometryObject">The geometry object.</param>
+      <param name="rootX">The root of grid X.</param>
+      <param name="rootY">The root of grid Y.</param>
+      <param name="maxX">The maximum grid X.</param>
+      <param name="maxY">The maximum grid Y.</param>
+      <param name="densityGrid0">The density for first grid level.</param>
+      <param name="densityGrid1">The density for second grid level.</param>
+      <param name="densityGrid2">The density for third grid level.</param>
+      <param name="densityGrid3">The density for fourth grid level.</param>
+      <param name="cardinality">The number that represents the maximum cells in tessellation output.</param>
+      <param name="tessellationMode">The tessellation mode.</param>
+      <param name="distanceBuffer">The distance buffer.</param>
+      <returns>The <see cref="T:System.Collections.IEnumerable" /> object that represents the collection of tessellation properties of the specified geometry object.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryUnionAggregate.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.GeometryUnionAggregate" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryUnionAggregate.Accumulate(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object into this geometry union.</summary>
+      <param name="g">The SqlGeometry object to add into this geometry union.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryUnionAggregate.Init">
+      <summary>Initializes the properties of a <see cref="T:Microsoft.SqlServer.Types.GeometryUnionAggregate" /> object.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryUnionAggregate.Merge(Microsoft.SqlServer.Types.GeometryUnionAggregate)">
+      <summary>Adds the given <see cref="T:Microsoft.SqlServer.Types.GeometryUnionAggregate" /> object into this geometry union.</summary>
+      <param name="group">The <see cref="T:Microsoft.SqlServer.Types.GeometryUnionAggregate" /> object to add into this geometry union.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryUnionAggregate.Read(System.IO.BinaryReader)">
+      <summary>Reads a binary representation of a geometry type into a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object.</summary>
+      <param name="r">The BinaryReader object that reads a binary representation of a geography type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryUnionAggregate.Terminate">
+      <summary>Returns the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents this geometry union.</summary>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents this geometry union.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.GeometryUnionAggregate.Write(System.IO.BinaryWriter)">
+      <summary>Writes a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to a binary stream.</summary>
+      <param name="w">The BinaryWriter object that writes the SqlGeometry instance to a binary stream.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.HierarchyIdException.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.HierarchyIdException" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.HierarchyIdException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.HierarchyIdException" /> class with serialized data. </summary>
+      <param name="info">An object that contains the serialized object data about the exception that is thrown. </param>
+      <param name="context">An object that contains the contextual information about the source or destination </param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.HierarchyIdException.#ctor(System.String)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.HierarchyIdException" /> class with a custom error message.</summary>
+      <param name="message">A string that contains the custom error message. </param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.HierarchyIdException.#ctor(System.String,System.Exception)">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.HierarchyIdException" />class with a custom error message and the triggering exception object.</summary>
+      <param name="message">A string that contains the error message </param>
+      <param name="innerException">The exception instance that caused the current exception. </param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeographySink.AddLine(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Constructs additional points other than the starting endpoint in a geography type figure. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeographySink110" /> should be used instead.</summary>
+      <param name="latitude">A double that specifies the latitude of a point in a geography figure.</param>
+      <param name="longitude">A double that specifies the longitude of a point in a geography figure.</param>
+      <param name="z">A double that specifies the altitude of a point in a geography figure. Is Nullable.</param>
+      <param name="m">A double that specifies the measure type for the point. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeographySink.BeginFigure(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Starts the call sequence for a geography figure. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeographySink110" /> should be used instead.</summary>
+      <param name="latitude">A double that specifies the latitude of the starting endpoint in a geography figure.</param>
+      <param name="longitude">A double that specifies the longitude of the starting endpoint in a geography figure.</param>
+      <param name="z">A double that specifies the altitude of the starting endpoint in a geography figure. Is Nullable.</param>
+      <param name="m">A double that specifies the measure type for the starting endpoint. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeographySink.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType)">
+      <summary>Initializes a call sequence for a geography type. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeographySink110" /> should be used instead.</summary>
+      <param name="type">OpenGisGeometryType object that indicates the type being created by the call sequence.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeographySink.EndFigure">
+      <summary>Finishes a call sequence for a geography figure. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeographySink110" /> should be used instead.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeographySink.EndGeography">
+      <summary>Finishes a call sequence for a geography type. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeographySink110" /> should be used instead.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeographySink.SetSrid(System.Int32)">
+      <summary>Sets the Spatial Reference Identifier (SRID) for a geography type call sequence. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeographySink110" /> should be used instead.</summary>
+      <param name="srid">An int that contains the Spatial Reference Identifier for the geography type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeographySink110.AddCircularArc(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double},System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Adds a circular arc geography type figure with the specified startpoint and endpoint.</summary>
+      <param name="x1">The startpoint x-coordinate (latitude) of the circular arc.</param>
+      <param name="y1">The startpoint y-coordinate (longitude) of the circular arc.</param>
+      <param name="z1">The startpoint z-coordinate (altitude) of the circular arc. Is Nullable.</param>
+      <param name="m1">The startpoint m-coordinate (measure) of the circular arc. Is Nullable.</param>
+      <param name="x2">The endpoint x-coordinate (latitude) of the circular arc.</param>
+      <param name="y2">The endpoint y-coordinate (longitude) of the circular arc.</param>
+      <param name="z2">The endpoint z-coordinate (altitude) of the circular arc. Is Nullable.</param>
+      <param name="m2">The endpoint m-coordinate (measure) of the circular arc. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeometrySink.AddLine(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Defines points other than the starting endpoint in a geometry instance. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeometrySink110" /> should be used instead.</summary>
+      <param name="x">A double that specifies the x-coordinate of a point in a geometry instance.</param>
+      <param name="y">A double that specifies the y-coordinate of a point in a geometry instance.</param>
+      <param name="z">A double that specifies the z-coordinate of a point in a geometry instance. Is Nullable.</param>
+      <param name="m">A double that specifies the measure for the point. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeometrySink.BeginFigure(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Defines the starting endpoint for a geometry instance. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeometrySink110" /> should be used instead.</summary>
+      <param name="x">A double that specifies the x-coordinate of the starting endpoint of a geometry instance.</param>
+      <param name="y">A double that specifies the y-coordinate of the starting endpoint of a geometry instance.</param>
+      <param name="z">A double that specifies the z-coordinate of the starting endpoint of a geometry instance. Is Nullable.</param>
+      <param name="m">A double that specifies the measure for the point. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeometrySink.BeginGeometry(Microsoft.SqlServer.Types.OpenGisGeometryType)">
+      <summary>Starts the call sequence of a geometry type. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeometrySink110" /> should be used instead.</summary>
+      <param name="type">OpenGisGeometryType object that indicates the type being created by the call sequence.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeometrySink.EndFigure">
+      <summary>Finishes a call sequence for a geometry figure. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeometrySink110" /> should be used instead.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeometrySink.EndGeometry">
+      <summary>Finishes a call sequence for a geometry figure. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeometrySink110" /> should be used instead.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeometrySink.SetSrid(System.Int32)">
+      <summary>Sets the Spatial Reference Identifier (SRID) for a geometry type call sequence. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeometrySink110" /> should be used instead.</summary>
+      <param name="srid">An int that contains the Spatial Reference Identifier for the geometry type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.IGeometrySink110.AddCircularArc(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double},System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Adds a circular arc geometry type figure with the specified startpoint and endpoint.</summary>
+      <param name="x1">The startpoint x-coordinate (latitude) of the circular arc.</param>
+      <param name="y1">The startpoint y-coordinate (longitude) of the circular arc.</param>
+      <param name="z1">The startpoint z-coordinate (altitude) of the circular arc. Is Nullable.</param>
+      <param name="m1">The startpoint m-coordinate (measure) of the circular arc. Is Nullable.</param>
+      <param name="x2">The endpoint x-coordinate (latitude) of the circular arc.</param>
+      <param name="y2">The endpoint y-coordinate (longitude) of the circular arc.</param>
+      <param name="z2">The endpoint z-coordinate (altitude) of the circular arc. Is Nullable.</param>
+      <param name="m2">The endpoint m-coordinate (measure) of the circular arc. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.ISqlSpatialGridIndexable.BufferForDistanceQuery(System.Double,System.Boolean@)">
+      <summary>Constructs a buffer for the given distance.</summary>
+      <param name="distance">The distance used to calculate the buffer.</param>
+      <param name="disableInternalFiltering">When this method returns, contains a value that indicates whether internal filtering is disabled.</param>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.ISqlSpatialGridIndexable" /> object that represents the buffer for the given distance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.ISqlSpatialGridIndexable.GetBoundingBoxCorners(System.Double@,System.Double@,System.Double@,System.Double@)">
+      <summary>Returns the bounding box corners of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> or <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <param name="minX">When this method returns, contains the x-coordinate of the lower-left corner of the bounding box.</param>
+      <param name="minY">When this method returns, contains the y-coordinate of the lower-left corner of the bounding box.</param>
+      <param name="maxX">When this method returns, contains the x-coordinate of the upper-right corner of the bounding box.</param>
+      <param name="maxY">When this method returns, contains the y-coordinate of the upper-right corner of the bounding box.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.ISqlSpatialGridIndexable.GetGridCoverage(System.Boolean,System.Double,System.Double,System.Double,System.Double,System.Double,System.Double,System.Int32,System.Int32,System.Boolean[0:,0:],System.Boolean[0:,0:],System.Int32@,System.Int32@,System.Boolean@,System.Boolean@)">
+      <summary>Gets the grid coverage.</summary>
+      <param name="isTopmostGrid">Indicates whether the grid is a top level (level 1) grid.</param>
+      <param name="rGridMinX">The x-coordinate of the lower-left corner of the grid.</param>
+      <param name="rGridMinY">The y-coordinate of the lower-left corner of the grid.</param>
+      <param name="rGridWidth">The width of the grid.</param>
+      <param name="rGridHeight">The height of the grid.</param>
+      <param name="rFuzzX">The x-coordinate tolerance value.</param>
+      <param name="rFuzzY">The y-coordinate tolerance value.</param>
+      <param name="cGridRows">The number of rows in the grid.</param>
+      <param name="cGridColumns">The number of columns in the grid.</param>
+      <param name="touched">A two-dimensional array of bool values that specifies whether the cells touched the object.</param>
+      <param name="contained">A two-dimensional array of bool values that specifies whether the cells contained the object.</param>
+      <param name="cCellsTouched">When this method returns, contains the number of cells that the object touches.</param>
+      <param name="cCellsContained">When this method returns, contains the number of cells that the object contains.</param>
+      <param name="fGeometryExceedsGrid">When this method returns, contains a value that indicates whether the object exceeds the grid.</param>
+      <param name="fHasAmbiguousTouchedCells">When this method returns, contains a value that indicates whether the object includes ambiguously touched cells.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.ISqlSpatialGridIndexable.InteriorBufferForDistanceQuery(System.Double)">
+      <summary>Constructs an interior buffer for the given distance.</summary>
+      <param name="distance">The distance used to calculate the buffer.</param>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.ISqlSpatialGridIndexable" /> object that represents the interior buffer for the given distance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpaceFillingCurve.Hilbert(System.Int32,System.UInt32,System.UInt32)">
+      <summary>Returns the Hilbert curve for the specified point and iteration order of the curve.</summary>
+      <param name="order">The iteration order of the curve.</param>
+      <param name="x">The x-coordinate of a point within the unit square.</param>
+      <param name="y">The y-coordinate of a point within the unit square.</param>
+      <returns>The <see cref="T:System.UInt64" /> object that represents the Hilbert curve from the specified point and order of the curve.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpaceFillingCurve.ReverseHilbert(System.Int32,System.UInt64,System.UInt32@,System.UInt32@)">
+      <summary>Returns the point for the given Hilbert curve and iteration order of the curve.</summary>
+      <param name="order">The iteration order of the curve.</param>
+      <param name="hilbert">The Hilbert curve.</param>
+      <param name="ox">When this method returns, contains the x-coordinate of the point.</param>
+      <param name="oy">When this method returns, contains the y-coordinate of the point.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialGridCoverage.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.SpatialGridCoverage" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialGridCoverage.FillRow(System.Object,System.Int32@,System.Byte@,System.Byte[]@)">
+      <summary>Fills the grid cell parameters with tessellation property values from the specified object.</summary>
+      <param name="obj">The object used to fill the grid cell parameters.</param>
+      <param name="id">When this method returns, contains the label identifier of the grid cell.</param>
+      <param name="attribute">When this method returns, contains the coverage attributes of the grid cell.</param>
+      <param name="wkb">When this method returns, contains the Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation of the grid cell.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialGridCoverage.Geodetic(Microsoft.SqlServer.Types.SqlGeography,System.Int32,System.Int32)">
+      <summary>Returns the grid cell for the given <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <param name="geography">The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</param>
+      <param name="rows">The number of rows in the grid.</param>
+      <param name="columns">The number of columns in the grid.</param>
+      <returns>The <see cref="T:System.Collections.IEnumerable" /> object that represents the grid cell of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialGridCoverage.Planar(Microsoft.SqlServer.Types.SqlGeometry,System.Double,System.Double,System.Double,System.Double,System.Int32,System.Int32)">
+      <summary>Returns the grid cell for the given <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <param name="geometry">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</param>
+      <param name="rootX">The x-coordinate of the lower-left corner of the bounding box.</param>
+      <param name="rootY">The y-coordinate of the lower-left corner of the bounding box.</param>
+      <param name="maxX">The x-coordinate of the upper-right corner of the bounding box.</param>
+      <param name="maxY">The y-coordinate of the upper-right corner of the bounding box.</param>
+      <param name="rows">The number of rows in the grid.</param>
+      <param name="columns">The number of columns in the grid.</param>
+      <returns>The <see cref="T:System.Collections.IEnumerable" /> object that represents the grid cell of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialTessellationFunction.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.SpatialTessellationFunction" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialTessellationFunction.FillRow(System.Object,System.Byte[]@,System.Byte@,System.Byte[]@,System.Byte[]@)">
+      <summary>Fills the cell parameters with tessellation property values from the specified object.</summary>
+      <param name="obj">The object used to fill the cell parameters.</param>
+      <param name="cellId">When this method returns, contains the array cell identifier.</param>
+      <param name="cellAttributes">When this method returns, contains the cell attribute.</param>
+      <param name="cellIdLimit">When this method returns, contains the array cell identifier limit.</param>
+      <param name="wkbCoverage">When this method returns, contains the Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation of the grid coverage.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialTessellationFunction.Geodetic(Microsoft.SqlServer.Types.SqlGeography,System.Int32,System.Int32,System.Int32,System.Data.SqlTypes.SqlDouble)">
+      <summary>Returns the grid cell for the given <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <param name="geography">The geography object.</param>
+      <param name="cardinality">The number that represents the maximum cells in tessellation output.</param>
+      <param name="maxDepth">The maximum depth.</param>
+      <param name="options">The value that contains bitwise options for interval mode, coverage generation, and fuzz usage.</param>
+      <param name="distanceBuffer">The distance buffer.</param>
+      <returns>The <see cref="T:System.Collections.IEnumerable" /> object that represents the grid cell for the given <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialTessellationFunction.GetAttribute(System.Object)">
+      <summary>Gets the cell attribute for the given object.</summary>
+      <param name="obj">The object to get the cell attribute from.</param>
+      <returns>The <see cref="T:System.Int32" /> that represents the cell attribute for the given object.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialTessellationFunction.GetCoverage(System.Object)">
+      <summary>Gets the grid coverage for the given object.</summary>
+      <param name="obj">The object to get the grid coverage from.</param>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the grid coverage for the given object.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialTessellationFunction.GetId(System.Object)">
+      <summary>Gets the cell identifier from the specified object.</summary>
+      <param name="obj">The object to get the identifier from.</param>
+      <returns>The <see cref="T:System.String" /> that the represents the cell identifier.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialTessellationFunction.GetIsAncestor(System.Object)">
+      <summary>Indicates whether the object is an ancestor.</summary>
+      <param name="obj">The object to check.</param>
+      <returns>true if the object is an ancestor; otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SpatialTessellationFunction.Planar(Microsoft.SqlServer.Types.SqlGeometry,System.Double,System.Double,System.Double,System.Double,System.Int32,System.Int32,System.Int32,System.Data.SqlTypes.SqlDouble)">
+      <summary>Returns the grid cell for the given <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <param name="geometry">The geometry object.</param>
+      <param name="rootX">The x-coordinate of the lower-left corner of the bounding box.</param>
+      <param name="rootY">The y-coordinate of the lower-left corner of the bounding box.</param>
+      <param name="maxX">The x-coordinate of the upper-right corner of the bounding box.</param>
+      <param name="maxY">The y-coordinate of the upper-right corner of the bounding box.</param>
+      <param name="cardinality">The number that represents the maximum cells in tessellation output.</param>
+      <param name="maxDepth">The maximum depth.</param>
+      <param name="options">The value that contains bitwise options for interval mode, coverage generation, and fuzz usage.</param>
+      <param name="distanceBuffer">The distance buffer.</param>
+      <returns>The <see cref="T:System.Collections.IEnumerable" /> object that represents the grid cell for the given <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.AsBinaryZM">
+      <summary>Returns the Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <returns>The binary representation of the  <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance augmented with any Z (elevation) and M (measure) values carried by the instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.AsGml">
+      <summary>Returns the Geography Markup Language (GML) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <returns>A SqlXml object containing the GML representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.AsTextZM">
+      <summary>Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <returns>A SqlChars value containing the WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.BufferWithCurves(System.Double)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that represents the set of all points whose distance from the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is less than or equal to the <paramref name="distance" /> parameter.</summary>
+      <param name="distance">The maximum distance that points forming the buffer can be from the geography instance.</param>
+      <returns>The set of all points whose distance from the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is less than or equal to <paramref name="distance" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.BufferWithTolerance(System.Double,System.Double,System.Boolean)">
+      <summary>Returns a geometric object representing the union of all point values whose distance from a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is less than or equal to a specified value, allowing for a specified tolerance.</summary>
+      <param name="distance">Is a double that specifies the distance from the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance around which to calculate the buffer.</param>
+      <param name="tolerance">Is a double that specifies the tolerance of the buffer distance.The tolerance value refers to the maximum variation in the ideal buffer distance for the returned linear approximation.For example, the ideal buffer distance of a point is a circle, but this must be approximated by a polygon. The smaller the tolerance, the more points the polygon will have, which increases the complexity of the result, but decreases the error.</param>
+      <param name="relative">Is a bool that specifies whether the tolerance value is relative or absolute. If true, then tolerance is relative and is calculated as the product of the tolerance parameter and the angular extent * equatorial radius of the ellipsoid. If false, tolerance is absolute and the tolerance value is the absolute maximum variation in the ideal buffer distance for the returned linear approximation.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance representing the union of all point values whose distance from a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is less than or equal to a specified value.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.CurveToLineWithTolerance(System.Double,System.Boolean)">
+      <summary>Returns a polygonal approximation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that contains circular arc segments.</summary>
+      <param name="tolerance">The maximum error between the original circular arc segment and its linear approximation.</param>
+      <param name="relative">Specifies whether to use a relative maximum for the deviation. If false (0), an absolute maximum is set for the deviation that a linear approximate can have.  If true (1), tolerance is calculated as a product of the <paramref name="tolerance" /> parameter and the diameter of the bounding box for the spatial object.</param>
+      <returns>A polygonal approximation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that contains circular arc segments.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Deserialize(System.Data.SqlTypes.SqlBytes)">
+      <summary>Returns a constructed SqlGeometry from an internal SQL Server format for spatial data. Can be used for sending spatial data over the network or reading them from files.</summary>
+      <param name="bytes">The data representing the spatial data being sent across the network.</param>
+      <returns>The data being sent over the network.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.EnvelopeAngle">
+      <summary>Returns the maximum angle between the point returned by <see cref="M:Microsoft.SqlServer.Types.SqlGeography.EnvelopeCenter" /> and a point in the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance in degrees.</summary>
+      <returns>Returns SqlDouble.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.EnvelopeCenter">
+      <summary>Returns a point that can be used as the center of a bounding circle for the geography instance.</summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value that specifies the location of the center of a bounding circle.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Filter(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Offers a fast, index-only intersection method to determine if a geography instance intersects another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance, assuming an index is available.</summary>
+      <param name="other">Is another geography instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeography.Filter(Microsoft.SqlServer.Types.SqlGeography)" /> is invoked.</param>
+      <returns>A SqlBoolean value that specifies whether the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance intersects the current <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />.Returns 1 if a geography instance potentially intersects another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. This method may produce a false-positive return, and the exact result may be plan-dependent. Returns an accurate 0 value (true negative return) if there is no intersection of <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instances found.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.GeomFromGml(System.Data.SqlTypes.SqlXml,System.Int32)">
+      <summary>Constructs a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance given a representation in the SQL Server subset of the Geography Markup Language (GML).</summary>
+      <param name="xml">The XML input from which the GML will return a value.</param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the geography instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified GML.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.InstanceOf(System.String)">
+      <summary>Tests if the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is the same as the specified type. </summary>
+      <param name="geometryType">A string that specifies one of the 12 types exposed in the geography type hierarchy.</param>
+      <returns>A SqlBoolean value that indicates whether the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is the same as the specified geometry type.Returns true if the type of a geography instance is the same as the specified type, or if the specified type is an ancestor of the instance type; otherwise, returns false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.IsValidDetailed">
+      <summary>Returns a message to help identify validity issues with a spatial object.</summary>
+      <returns>A message indicating whether the spatial object is valid or not valid, and if not valid, why not.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.MakeValid">
+      <summary>Converts a geography instance that is not valid into a valid geography instance with a valid Open Geospatial Consortium (OGC) type.</summary>
+      <returns>Returns <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Microsoft#SqlServer#Types#ISqlSpatialGridIndexable#BufferForDistanceQuery(System.Double,System.Boolean@)">
+      <summary>Returns the buffer for distance query for the SQL Geography.</summary>
+      <param name="distance">Is a double that specifies the distance from the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance around which to calculate the buffer.</param>
+      <param name="disableIntermediateFiltering">True if the SQL Geography disables intermediate filtering; otherwise, false.</param>
+      <returns>The buffer for distance query.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Microsoft#SqlServer#Types#ISqlSpatialGridIndexable#GetBoundingBoxCorners(System.Double@,System.Double@,System.Double@,System.Double@)">
+      <summary>Returns a value for the bounding box corners for the SQL Geography.</summary>
+      <param name="minX">The minimum value of X.</param>
+      <param name="minY">The minimum value of Y.</param>
+      <param name="maxX">The maximum value of X.</param>
+      <param name="maxY">The maximum value of Y.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Microsoft#SqlServer#Types#ISqlSpatialGridIndexable#GetGridCoverage(System.Boolean,System.Double,System.Double,System.Double,System.Double,System.Double,System.Double,System.Int32,System.Int32,System.Boolean[0:,0:],System.Boolean[0:,0:],System.Int32@,System.Int32@,System.Boolean@,System.Boolean@)">
+      <summary>Returns the grid coverage of the SQL Geography.</summary>
+      <param name="isTopmostGrid">True if the specified object is in topmost grid; otherwise, false.</param>
+      <param name="rGridMinX">The minimum value of X of the grid.</param>
+      <param name="rGridMinY">The minimum value of Y of the grid.</param>
+      <param name="rGridWidth">The grid width.</param>
+      <param name="rGridHeight">The grid height.</param>
+      <param name="rFuzzX">The fuzzy value of X.</param>
+      <param name="rFuzzY">The Fuzzy value of Y.</param>
+      <param name="cGridRows">The grid rows.</param>
+      <param name="cGridColumns">The grid columns.</param>
+      <param name="touched">True if the specified object is touched; otherwise, false.</param>
+      <param name="contained">True if the specified grid is contained; otherwise, false.</param>
+      <param name="cCellsTouched">True if the cells of the grid is touched; otherwise, false.</param>
+      <param name="cCellsContained">True if the specified cells of the grid id contained; otherwise, false.</param>
+      <param name="fGeometryExceedsGrid">True if the geometry exceeds the grid; otherwise, false.</param>
+      <param name="fHasAmbiguousTouchedCells">True if the grid has ambiguous touched cells; otherwise, false.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Microsoft#SqlServer#Types#ISqlSpatialGridIndexable#InteriorBufferForDistanceQuery(System.Double)">
+      <summary>Gets the interior buffer for distance query for the SQL Geography.</summary>
+      <param name="distance">Is a double that specifies the distance from the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance around which to calculate the buffer.</param>
+      <returns>The interior buffer for distance query.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.MinDbCompatibilityLevel">
+      <summary>Returns the minimum database compatibility that accepts the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> type.</summary>
+      <returns>The minimum database compatibility.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.NumRings">
+      <summary>Returns the total number of rings in a Polygon instance. </summary>
+      <returns>A SqlInt32 value specifying the total number of rings. This method will return NULL if this is not a Polygon instance and will return 0 if the instance is empty.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Parse(System.Data.SqlTypes.SqlString)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation. </summary>
+      <param name="s">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance you wish to return. </param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Point(System.Double,System.Double,System.Int32)">
+      <summary>Constructs a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance representing a Point instance from its x and y values and a spatial reference ID (SRID).</summary>
+      <param name="latitude">A double that represents the x-coordinate of the Point being generated.</param>
+      <param name="longitude">A double that represents the y-coordinate of the Point being generated.</param>
+      <param name="srid">An int expression that represents the SRID of the geography instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance constructed from the specified latitude, longitude, and SRID values.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Populate(Microsoft.SqlServer.Types.IGeographySink)">
+      <summary>Applies a geography type call sequence to IGeographySink object. The call sequence is a set of figures, lines, and points for geography types.</summary>
+      <param name="sink">IGeographySink object that has a geography type call sequence of figures, lines, and points applied to it.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Populate(Microsoft.SqlServer.Types.IGeographySink110)">
+      <summary>Applies a geography type call sequence to IGeographySink object.</summary>
+      <param name="sink">IGeographySink object that has a geography type call sequence of figures, lines, and points applied to it.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Read(System.IO.BinaryReader)">
+      <summary>Reads a binary representation of a geography type into a SqlGeometry object.</summary>
+      <param name="r">BinaryReader object that reads a binary representation of a geography type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Reduce(System.Double)">
+      <summary>Returns an approximation of the given geography instance produced by running the Douglas-Peucker algorithm on the instance with the given tolerance.</summary>
+      <param name="tolerance">Is a double that represents the tolerance to input to the Douglas-Peucker algorithm. tolerance must be a positive number.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value representing an approximation of the current instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.ReorientObject">
+      <summary>Returns a geography instance with interchanged interior regions and exterior regions.</summary>
+      <returns>Returns <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.RingN(System.Int32)">
+      <summary>Returns the specified ring of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance: 1 ≤ n ≤ NumRings().</summary>
+      <param name="n">An int expression between 1 and the number of rings in a polygon instance.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> object that represents the ring specified by n.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Serialize">
+      <summary>Used for sending spatial data across the network.</summary>
+      <returns>A SqlBytes stream representing the spatial data being sent across the network.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.ShortestLineTo(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Returns the shortest distance between the two <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />instances. </summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is trying to determine the shortest distance to.</param>
+      <returns>The shortest distance between the two <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instances.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STArea">
+      <summary>Returns the total surface area of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. </summary>
+      <returns>A SqlDouble value specifying the total surface area. STArea will return 0 if a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance contains only 0- and 1-dimensional figures, or if it is empty.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STAsBinary">
+      <summary>Returns the Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. </summary>
+      <returns>A SqlBytes value containing the WKB representation of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STAsText">
+      <summary>Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. </summary>
+      <returns>A SqlChars value that contains the WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STBuffer(System.Double)">
+      <summary>Returns a geography object that represents the union of all points whose distance from a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is less than or equal to a specified value.</summary>
+      <param name="distance">Is a double that specifies the distance from the geography instance around which to calculate the buffer.</param>
+      <returns>A double that represents the union of all points that are the specified distance from the current <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STContains(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Specifies whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance spatially contains the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance passed to the method.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance to check if it is contained within the calling instance. </param>
+      <returns>true if the calling instance contains the <paramref name="other" /> instance; otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STConvexHull">
+      <summary>Returns an object that represents the convex hull of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <returns>The convex hull.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STCurveN(System.Int32)">
+      <summary>Returns the curve specified from a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that is a LineString, CircularString, or CompoundCurve. </summary>
+      <param name="n">An integer between 1 and the number of curves in the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</param>
+      <returns>The specified curve.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STCurveToLine">
+      <summary>Returns a polygonal approximation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that contains circular arc segments.</summary>
+      <returns>A polygonal approximation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that contains circular arc segments.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STDifference(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Returns an object representing the points from one <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that do not lie within another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <param name="other">Another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that indicates which points to remove from the instance on which this method is being invoked.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value that represents all of the points that are unique to the calling instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STDimension">
+      <summary>Returns the maximum dimension of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance</summary>
+      <returns>A SqlInt32 value that contains the maximum dimension of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STDisjoint(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Determines whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is spatially disjoint from the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. </summary>
+      <param name="other">A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeography.STDisjoint(Microsoft.SqlServer.Types.SqlGeography)" /> is invoked.</param>
+      <returns>A SqlBoolean value that indicates whether the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is spatially disjointed from the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />. If the instances are spatially disjointed, this method returns true. Otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STDistance(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Returns the shortest distance between a point in a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance and a point in another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <param name="other">Is another geography instance from which to measure the distance between the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeography.STDistance(Microsoft.SqlServer.Types.SqlGeography)" /> is invoked. If an empty set is specified, <see cref="M:Microsoft.SqlServer.Types.SqlGeography.STDistance(Microsoft.SqlServer.Types.SqlGeography)" /> will return null.</param>
+      <returns>Returns null if the spatial reference IDs (SRIDs) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instances do not match.If this method is used to determine distance between antipodal points, or consecutive points on opposite sides of the globe, as in the distance between POINT (0 0) and POINT (180 0), this method will return null.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STEndPoint">
+      <summary>Returns the end point of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value containing the end point.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STEquals(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Determines whether the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance has the same point set as the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. </summary>
+      <param name="other">Is a SqlGeography instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeography.STEquals(Microsoft.SqlServer.Types.SqlGeography)" /> is invoked.</param>
+      <returns>A SqlBoolean value that indicates whether the calling instance has the same point set as the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. If true, both instances have the same point set. Otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STGeomCollFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a geography instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation, augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="geometryCollectionTaggedText">Is the WKT representation of the geography instance you wish to return. geometrycollection_tagged_text is an nvarchar(max) expression.</param>
+      <param name="srid">Is an int expression representing the spatial reference ID (SRID) of the geography instance you wish to return.</param>
+      <returns>A geography instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STGeomCollFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a GeometryCollection instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbGeometryCollection">The WKB representation of the GeometryCollection instance you wish to return. </param>
+      <param name="srid">An int expression representing the spatial reference ID (SRID) of the GeometryCollection instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKB geometry collection.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STGeometryN(System.Int32)">
+      <summary>Returns a specified geography element in a GeometryCollection or one of its subtypes. </summary>
+      <param name="n">An int expression between 1 and the number of <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instances in the GeometryCollection.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> element from the specified instance in the GeometryCollection.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STGeometryType">
+      <summary>Returns the Open Geospatial Consortium (OGC) type name represented by a geography instance.</summary>
+      <returns>A SqlString value containing the OGC type name.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STGeomFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="geometryTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance constructed from the WKY representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STGeomFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbGeometry">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance you wish to return. </param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STIntersection(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Returns an object representing the points where a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance intersects another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <param name="other">A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance to compare with the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeography.STIntersection(Microsoft.SqlServer.Types.SqlGeography)" /> is being invoked. </param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value containing the points where the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance intersects the current <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STIntersects(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Determines whether the current <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance intersects with the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeography.STIntersects(Microsoft.SqlServer.Types.SqlGeography)" /> is invoked.</param>
+      <returns>A SqlBoolean value that indicates if the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance intersects another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. Returns true if there is an intersection. Otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STIsClosed">
+      <summary>Determines whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is closed.</summary>
+      <returns>A SqlBoolean value indicating whether the start and end points of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance are the same. Returns true if both points are the same. Otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STIsEmpty">
+      <summary>Determines whether the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is empty.</summary>
+      <returns>A SqlBoolean value that indicates whether the calling instance is empty. Returns true if it is empty. Otherwise, returns false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STIsValid">
+      <summary>Specifies whether a geography instance is well-formed and recognized as a valid geography object based on its Open Geospatial Consortium (OGC) type.</summary>
+      <returns>true if the geography instance is well-formed and valid; otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STLength">
+      <summary>Returns the total length of the elements in a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance or the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instances within a GeometryCollection.</summary>
+      <returns>A SqlDouble value containing the total length.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STLineFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation, augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="lineStringTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> LineString instance you wish to return. </param>
+      <param name="srid">An int expression representing the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> LineString instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STLineFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation, augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="wkbLineString">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> LineString instance you wish to return. </param>
+      <param name="srid">An int expression representing the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> LineString instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STMLineFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation, augmented with any Z (elevation) and M (measure) values carried by the instance. </summary>
+      <param name="multiLineStringTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiLineString instance you wish to return. </param>
+      <param name="srid">An integer expression representing the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiLineString instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STMLineFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> MultiLineString instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation. </summary>
+      <param name="wkbMultiLineString">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiLineString instance to return. </param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiLineString instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STMPointFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation, augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="multiPointTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiPoint instance you wish to return. </param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiPoint instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STMPointFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> MultiPoint instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbMultiPoint">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiPoint instance you wish to return. </param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiPoint instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STMPolyFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation, augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="multiPolygonTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiPolygon instance you wish to return. </param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiPolygon instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STMPolyFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> MultiPolygon instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbMultiPolygon">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiPolygon instance you wish to return. </param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />MultiPolygon instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STNumCurves">
+      <summary>Returns the number of curves in a one-dimensional <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <returns>The number of curves.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STNumGeometries">
+      <summary>Returns the number of geometries that make up a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <returns>A SqlInt32 value that specifies the number of geometries that make up the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. </returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STNumPoints">
+      <summary>Returns the total number of points in each of the figures in a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance</summary>
+      <returns>A SqlInt32 value specifying the total number of points in each figure of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STOverlaps(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Returns 1 if a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance spatially overlaps another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance, or 0 if it does not. </summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance to check if it overlaps with the calling instance.</param>
+      <returns>1 if the two instances overlap; otherwise, 0.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STPointFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation, augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="pointTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> Point instance you wish to return.</param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> Point instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STPointFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> Point instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbPoint">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> Point instance you wish to return. </param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> Point instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKB.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STPointN(System.Int32)">
+      <summary>Returns the specified point in a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</summary>
+      <param name="n">An int expression between 1 and the number of points in the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> representing the specified point in the calling instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STPolyFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="polygonTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />Polygon instance you wish to return. </param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />Polygon instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STPolyFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> Polygon instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbPolygon">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />Polygon instance you wish to return. </param>
+      <param name="srid">An int expression that represents the Spatial Reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />Polygon instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STStartPoint">
+      <summary>Returns the start point of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. </summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> value that represents the start point of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STSymDifference(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Returns an object representing all points that are either in one <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance or another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance, but not those points that lie in both instances.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance to be compared to the current <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance that contains all points unique to the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> and to the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STUnion(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Returns an object representing the union of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance with another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance. </summary>
+      <param name="other">The SqlGeography instance to form a union with the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeography.STUnion(Microsoft.SqlServer.Types.SqlGeography)" /> is being invoked.</param>
+      <returns>A SqlGeography object representing the union of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> objects.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.STWithin(Microsoft.SqlServer.Types.SqlGeography)">
+      <summary>Returns 1 if a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" />  instance is spatially within another <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance; otherwise, returns 0.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance to compare to the calling instance.</param>
+      <returns>1 if the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> is within the other <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.ToString">
+      <summary>Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <returns>A string containing the WKT representation of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeography.Write(System.IO.BinaryWriter)">
+      <summary>Writes a SqlGeography object to a binary stream.</summary>
+      <param name="w">BinaryWriter object that writes a SqlGeography object to a binary stream.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.#ctor">
+      <summary>Constructs a SqlGeographyBuilder object.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.AddCircularArc(System.Double,System.Double,System.Double,System.Double)">
+      <summary>Adds a circular arc to the path.</summary>
+      <param name="latitude1">The first latitude for the arc.</param>
+      <param name="longitude1">The first longitude for the arc.</param>
+      <param name="latitude2">The second latitude for the arc.</param>
+      <param name="longitude2">The second longitude for the arc.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.AddCircularArc(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double},System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Adds a circular arc to the path.</summary>
+      <param name="latitude1">The first latitude for the arc.</param>
+      <param name="longitude1">The first longitude for the arc.</param>
+      <param name="z1">The z1 value.</param>
+      <param name="m1">The m1 value.</param>
+      <param name="latitude2">The second latitude for the arc.</param>
+      <param name="longitude2">The second longitude for the arc.</param>
+      <param name="z2">The z2 value.</param>
+      <param name="m2">The m2 value.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.AddLine(System.Double,System.Double)">
+      <summary>Constructs additional points in a geography type figure.</summary>
+      <param name="latitude">A double that specifies the latitude of a point in a geography figure.</param>
+      <param name="longitude">A double that specifies the longitude of a point in a geography figure.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.AddLine(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Constructs additional points in a geography type figure.</summary>
+      <param name="latitude">A double that specifies the latitude of a point in a geography figure.</param>
+      <param name="longitude">A double that specifies the longitude of a point in a geography figure.</param>
+      <param name="z">A double that specifies the altitude of a point in a geography figure. Is Nullable.</param>
+      <param name="m">A double that specifies the measure type for the point. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.BeginFigure(System.Double,System.Double)">
+      <summary>Starts the call sequence for a geography figure.</summary>
+      <param name="latitude">A double that specifies the latitude of the starting endpoint in a geography figure.</param>
+      <param name="longitude">A double that specifies the longitude of the starting endpoint in a geography figure.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.BeginFigure(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Starts the call sequence for a geography figure.</summary>
+      <param name="latitude">A double that specifies the latitude of the starting endpoint in a geography figure.</param>
+      <param name="longitude">A double that specifies the longitude of the starting endpoint in a geography figure.</param>
+      <param name="z">A double that specifies the altitude of the starting endpoint in a geography figure. Is Nullable.</param>
+      <param name="m">A double that specifies the measure type for the starting endpoint. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.BeginGeography(Microsoft.SqlServer.Types.OpenGisGeographyType)">
+      <summary>Initializes a call sequence for a geography type.</summary>
+      <param name="type">OpenGisGeometryType object that indicates the type being created by the call sequence.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.EndFigure">
+      <summary>Finishes a call sequence for a geography figure.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.EndGeography">
+      <summary>Finishes a call sequence for a geography type.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeographyBuilder.SetSrid(System.Int32)">
+      <summary>Sets the Spatial Reference Identifier (SRID) for a geography type call sequence.</summary>
+      <param name="srid">An int that contains the Spatial Reference Identifier for the geography type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.#ctor">
+      <summary>Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> class.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.AsBinaryZM">
+      <summary>Returns the Elevation and Measure as a binary.</summary>
+      <returns>The Elevation and Measure as a binary.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.AsGml">
+      <summary>Returns the Geography Markup Language (GML) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <returns>A SqlXml value containing the GML representation of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.AsTextZM">
+      <summary>Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance, augmented with any Z (elevation) and M (measure) values carried by the instance. </summary>
+      <returns>A SqlChars value containing the WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> value.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.BufferWithCurves(System.Double)">
+      <summary>Buffers the geometry objects with curves.</summary>
+      <param name="distance">A double that specifies the distance from the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance around which to calculate the buffer.</param>
+      <returns>The buffered objects.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.BufferWithTolerance(System.Double,System.Double,System.Boolean)">
+      <summary>Returns a geometric object that represents the union of all point values whose distance from a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is less than or equal to a specified value, allowing for a specified tolerance. </summary>
+      <param name="distance"> A double that specifies the distance from the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance around which to calculate the buffer.</param>
+      <param name="tolerance">A double that specifies the tolerance of the buffer distance.Tolerance refers to the maximum variation in the ideal buffer distance for the returned linear approximation.For example, the ideal buffer distance of a point is a circle, but this must be approximated by a polygon. The smaller the tolerance, the more points the polygon will have, which increases the complexity of the result, but decreases the error.</param>
+      <param name="relative">A bool that specifies whether the tolerance value is relative or absolute. If true, then tolerance is relative and is calculated as the product of the tolerance parameter and the diameter of the bounding box of the instance. If false, tolerance is absolute and the tolerance value is the absolute maximum variation in the ideal buffer distance for the returned linear approximation.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> value that represents the union of all points whose distance from the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> is less than or equal to the specified values.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.CurveToLineWithTolerance(System.Double,System.Boolean)">
+      <summary>Returns a polygonal approximation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that contains circular arc segments.</summary>
+      <param name="tolerance">The maximum error between the original circular arc segment and its linear approximation.</param>
+      <param name="relative">Specifies whether to use a relative maximum for the deviation. If false (0), an absolute maximum is set for the deviation that a linear approximate can have.  If true (1), tolerance is calculated as a product of the <paramref name="tolerance" /> parameter and the diameter of the bounding box for the spatial object.</param>
+      <returns>A polygonal approximation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that contains circular arc segments.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Deserialize(System.Data.SqlTypes.SqlBytes)">
+      <summary>Returns a constructed SqlGeometry from an internal SQL Server format for spatial data.</summary>
+      <param name="bytes">A SqlBytes that specifies the spatial data being sent over the network.</param>
+      <returns>A SqlGeometry instance that represents the constructed geometry object being sent over the network.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Filter(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Offers a fast, index-only intersection method to determine if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance intersects another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance, assuming an index is available.</summary>
+      <param name="other">Specifies the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare to the current <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</param>
+      <returns>A SqlBoolean that specifies whether the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> intersects the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />. If the instances do intersect, this method returns true. Otherwise, it returns false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.GeomFromGml(System.Data.SqlTypes.SqlXml,System.Int32)">
+      <summary>Constructs a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance given a representation in the SQL Server subset of the Geography Markup Language (GML).</summary>
+      <param name="xml">An XML input from which the GML will return a value.</param>
+      <param name="srid">An int that represents the spatial reference ID (SRID) of the geometry instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance constructed from the specified GML.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.InstanceOf(System.String)">
+      <summary>Tests if the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is the same as the specified type. </summary>
+      <param name="geometryType">Specifies the type of geometry that the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> will be compared to.</param>
+      <returns>A SqlBoolean value indicating if the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> is of the specified geometry type. Returns true if the type of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is the same as the specified type, or if the specified type is an ancestor of the instance type. Otherwise, returns false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.IsValidDetailed">
+      <summary>Returns a message to help identify validity issues with a spatial object.</summary>
+      <returns>A message indicating whether the spatial object is valid or not valid, and if not valid, why not.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.MakeValid">
+      <summary>Converts an invalid <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance into a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance with a valid Open Geospatial Consortium (OGC) type. </summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> value with a valid OGC type.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Microsoft#SqlServer#Types#ISqlSpatialGridIndexable#BufferForDistanceQuery(System.Double,System.Boolean@)">
+      <summary>Returns the buffer for distance query for the SQL Geometry.</summary>
+      <param name="distance">Is a double that specifies the distance from the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance around which to calculate the buffer.</param>
+      <param name="disableInternalFiltering">True if the SQL Geometry disables intermediate filtering; otherwise, false.</param>
+      <returns>The buffer for distance query.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Microsoft#SqlServer#Types#ISqlSpatialGridIndexable#GetBoundingBoxCorners(System.Double@,System.Double@,System.Double@,System.Double@)">
+      <summary>Returns a value for the bounding box corners for the SQL Geometry.</summary>
+      <param name="minX">The minimum value of X.</param>
+      <param name="minY">The minimum value of Y.</param>
+      <param name="maxX">The maximum value of X.</param>
+      <param name="maxY">The maximum value of Y.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Microsoft#SqlServer#Types#ISqlSpatialGridIndexable#GetGridCoverage(System.Boolean,System.Double,System.Double,System.Double,System.Double,System.Double,System.Double,System.Int32,System.Int32,System.Boolean[0:,0:],System.Boolean[0:,0:],System.Int32@,System.Int32@,System.Boolean@,System.Boolean@)">
+      <summary>Returns the grid coverage of the SQL Geometry.</summary>
+      <param name="isTopmostGrid">True if the specified object is in topmost grid; otherwise, false.</param>
+      <param name="rGridMinX">The minimum value of X of the grid.</param>
+      <param name="rGridMinY">The minimum value of Y of the grid.</param>
+      <param name="rGridWidth">The grid width.</param>
+      <param name="rGridHeight">The grid height.</param>
+      <param name="rFuzzX">The fuzzy value of X.</param>
+      <param name="rFuzzY">The Fuzzy value of Y.</param>
+      <param name="cGridRows">The grid rows.</param>
+      <param name="cGridColumns">The grid columns.</param>
+      <param name="touched">True if the specified object is touched; otherwise, false.</param>
+      <param name="contained">True if the specified grid is contained; otherwise, false.</param>
+      <param name="cCellsTouched">True if the cells of the grid is touched; otherwise, false.</param>
+      <param name="cCellsContained">True if the specified cells of the grid id contained; otherwise, false.</param>
+      <param name="fGeometryExceedsGrid">True if the geometry exceeds the grid; otherwise, false.</param>
+      <param name="fHasAmbiguousTouchedCells">True if the grid has ambiguous touched cells; otherwise, false.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Microsoft#SqlServer#Types#ISqlSpatialGridIndexable#InteriorBufferForDistanceQuery(System.Double)">
+      <summary>Gets the interior buffer for distance query for the SQL Geometry.</summary>
+      <param name="distance">Is a double that specifies the distance from the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance around which to calculate the buffer.</param>
+      <returns>The interior buffer for distance query.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.MinDbCompatibilityLevel">
+      <summary>Returns the minimum database compatibility that accepts the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> type.</summary>
+      <returns>The minimum database compatibility.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Parse(System.Data.SqlTypes.SqlString)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation.</summary>
+      <param name="s">Specifies the the WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance interpreted from the provided WKT representation.Returns null if <paramref name="s" /> is null.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Point(System.Double,System.Double,System.Int32)">
+      <summary>Constructs a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that represents a Point instance from its X and Y values and an SRID. </summary>
+      <param name="x">A double that represents the X-coordinate of the Point being generated.</param>
+      <param name="y">A double that represents the Y-coordinate of the Point being generated.</param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that represents a point on a Euclidian coordinate system.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Populate(Microsoft.SqlServer.Types.IGeometrySink)">
+      <summary>Applies a geometry type call sequence to an IGeometrySink object. The call sequence is a sequential set of figures, lines, and points. <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /></summary>
+      <param name="sink"> IGeometrySink object that is the receiver of a geometry type call sequence.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Populate(Microsoft.SqlServer.Types.IGeometrySink110)">
+      <summary>Applies a geometry type call sequence to IGeometrySink object.</summary>
+      <param name="sink">IGeometrySink object that has a geometry type call sequence of figures, lines, and points applied to it.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Read(System.IO.BinaryReader)">
+      <summary>Reads a binary representation of a geometry type into a SqlGeometry object. <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /></summary>
+      <param name="r">BinaryReader object that reads a binary representation of a geometry type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Reduce(System.Double)">
+      <summary>Returns an approximation of the given <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance produced by running the Douglas-Peucker algorithm on the instance with the given tolerance.</summary>
+      <param name="tolerance">A double that represents the tolerance to input to the Douglas-Peucker algorithm.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents an approximation of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> within the specified tolerance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Serialize">
+      <summary>Returns the bytes that represent an internal SQL Server format of SqlGeometry type.</summary>
+      <returns>Returns the bytes that represent an internal SQL Server format of SqlGeometry type.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.ShortestLineTo(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Returns the shortest distance between the two <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />instances. </summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is trying to determine the shortest distance to.</param>
+      <returns>The shortest distance between the two <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instances.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STArea">
+      <summary>Returns the total surface area of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <returns>A SqlDouble value that represents the total surface area of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STAsBinary">
+      <summary>Returns the Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. This value will not contain any Z or M values carried by the instance.</summary>
+      <returns>A SqlBytes object containing the WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STAsText">
+      <summary>Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. This text will not contain any Z (elevation) or M (measure) values carried by the instance. </summary>
+      <returns>A SqlChars object containing the WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STBoundary">
+      <summary>Returns the boundary of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. </summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the boundary of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STBuffer(System.Double)">
+      <summary>Returns a geometric object that represents the union of all points whose distance from a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is less than or equal to a specified value. </summary>
+      <param name="distance">A double that specifies the distance from the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance around which to calculate the buffer.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the union of all points whose distance from the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> is less than or equal to the specified value.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STCentroid">
+      <summary>Returns the geometric center of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance consisting of one or more polygons. </summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the geometric center of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STContains(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Specifies whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance completely contains another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STContains(Microsoft.SqlServer.Types.SqlGeometry)" /> is invoked.</param>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance completely contains another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. Otherwise, returns false. </returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STConvexHull">
+      <summary>Returns an object that represents the convex hull of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> value that represents the convex hull of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STCrosses(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Determines whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance crosses the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STCrosses(Microsoft.SqlServer.Types.SqlGeometry)" /> is invoked.</param>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance crosses another geometry instance. Returns false if it does not.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STCurveN(System.Int32)">
+      <summary>Returns the curve specified from a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that is a LineString, CircularString, or CompoundCurve.</summary>
+      <param name="n">An integer between 1 and the number of curves in the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</param>
+      <returns>The specified curve.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STCurveToLine">
+      <summary>Returns a polygonal approximation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that contains circular arc segments.</summary>
+      <returns>A polygonal approximation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that contains circular arc segments.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STDifference(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Returns an object that represents the points from one <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that do not lie within another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <param name="other">The SqlGeometry instance indicating which points to remove from the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STDifference(Microsoft.SqlServer.Types.SqlGeometry)" /> is being invoked.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the unique points in the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STDimension">
+      <summary>Returns the maximum dimension of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <returns>A SqlInt32 value that represents the maximum dimension of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STDisjoint(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Determines whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is disjointed when compared against the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</summary>
+      <param name="other"> The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STDisjoint(Microsoft.SqlServer.Types.SqlGeometry)" /> is invoked.</param>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is spatially disjointed from another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. Returns false if it is not.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STDistance(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Returns the shortest distance between a point in a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance and a point in the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. </summary>
+      <param name="other"> The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from which to measure the distance between the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STDistance(Microsoft.SqlServer.Types.SqlGeometry)" /> is invoked. If <paramref name="other" /> is an empty set, <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STDistance(Microsoft.SqlServer.Types.SqlGeometry)" /> returns null.</param>
+      <returns>A SqlDouble value that represents the shortest distance between a point in the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> and a point in the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STEndPoint">
+      <summary>Returns the end point of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. </summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the endpoint of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STEnvelope">
+      <summary>Returns the minimum axis-aligned bounding rectangle of the instance.</summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the minimum axis-aligned bounding rectangle of the calling instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STEquals(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Determines whether the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> has a point set identical to the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</summary>
+      <param name="other"> The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare against the calling instance.</param>
+      <returns>Returns true if the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance represents the same point set as the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />. Returns false if it does not.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STExteriorRing">
+      <summary>Returns the exterior ring of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance that is a polygon. </summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the exterior ring of the calling instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STGeomCollFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance. </summary>
+      <param name="geometryCollectionTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance you wish to return. </param>
+      <param name="srid">An integer expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> value constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STGeomCollFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> collection instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbGeometryCollection">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> collection instance you wish to return. </param>
+      <param name="srid">An integer expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> collection constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STGeometryN(System.Int32)">
+      <summary>Returns the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> in a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> collection.</summary>
+      <param name="n">An int expression between 1 and the number of <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instances in the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> collection that specifies the instance to return.</param>
+      <returns>The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> specified by <paramref name="n" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STGeometryType">
+      <summary>Returns the Open Geospatial Consortium (OGC) type name represented by a geometry instance. <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /></summary>
+      <returns>A SqlString value containing the OGC type.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STGeomFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="geometryTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STGeomFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbGeometry">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STInteriorRingN(System.Int32)">
+      <summary>Returns the specified interior ring of a Polygon <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. </summary>
+      <param name="n">An int expression between 1 and the number of interior rings in the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the interior ring of the Polygon.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STIntersection(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Returns an object that represents the points where a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance intersects another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare with the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STIntersection(Microsoft.SqlServer.Types.SqlGeometry)" /> is being invoked, to determine where they intersect.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object containing the points where the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance intersects the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STIntersects(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Determines whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance intersects another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</summary>
+      <param name="other">Is another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STIntersects(Microsoft.SqlServer.Types.SqlGeometry)" /> is invoked.</param>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance intersects another geometry instance. Returns false if it does not.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STIsClosed">
+      <summary>Determines whether the start and end points of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> are the same.</summary>
+      <returns>Returns true if the start and end points of the given <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance are the same. Returns false if the instance is not closed, if any figures of the instance are points, or if the instance is empty.Returns true for geometry collection types if each contained <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is closed. Otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STIsEmpty">
+      <summary>Indicates whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is empty.</summary>
+      <returns>Returns true if the calling instance is empty. Returns false if it is not empty.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STIsRing">
+      <summary>Determines whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is a ring.</summary>
+      <returns>Returns true if a geometry instance fulfills the following requirements:It is a LineString instance.It is closed.It is simple.Returns false if the LineString instance does not meet the requirements.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STIsSimple">
+      <summary>Determines whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is simple.</summary>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is simple, as defined by the Open Geospatial Consortium (OGC). Returns false if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is not simple.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STIsValid">
+      <summary>Determines whether the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is well-formed.</summary>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is well-formed, based on its Open Geospatial Consortium (OGC) type. Returns false if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is not well-formed.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STLength">
+      <summary>Returns the total length of the elements in a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <returns>A SqlDouble value that contains the total length of the elements in the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STLineFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="lineStringTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> LineString instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> LineString instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STLineFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> LineString instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbLineString">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />LineString instance you wish to return. </param>
+      <param name="srid">Is an int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />LineString instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STMLineFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance. </summary>
+      <param name="multiLineStringTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />MultiLineString instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />MultiLineString instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STMLineFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> MultiLineString instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation. </summary>
+      <param name="wkbMultiLineString">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />MultiLineString instance to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />MultiLineString instance to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STMPointFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="multiPointTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> MultiPoint instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> MultiPoint instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> value constructed form the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STMPointFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Point instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbMultiPoint">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Point instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Point instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STMPolyFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="multiPolygonTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> MultiPolygon instance you wish to return.</param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> MultiPolygon instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STMPolyFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> MultiPolygon instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation. </summary>
+      <param name="wkbMultiPolygon">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> MultiPolygon instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> MultiPolygon instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STNumCurves">
+      <summary>Returns the number of curves in a one-dimensional <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <returns>The number of curves.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STNumGeometries">
+      <summary>Returns the number of <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> that comprise a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. </summary>
+      <returns>Returns 1 if the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is not a MultiPoint, MultiLineString, MultiPolygon, or GeometryCollection instance, and 0 if the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is empty.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STNumInteriorRing">
+      <summary>Returns the number of interior rings of a Polygon <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <returns>A SqlInt32 value that specifies the number of interior rings.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STNumPoints">
+      <summary>Returns the sum of the number of points in each of the figures in a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <returns>A SqlInt32 value that contains the sum of the number of points in each of the figures in the calling instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STOverlaps(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Determines whether the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> overlaps the current <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STOverlaps(Microsoft.SqlServer.Types.SqlGeometry)" /> is invoked.</param>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance overlaps another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. Returns false if it does not.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STPointFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="pointTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Point instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Point instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STPointFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Point instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbPoint">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Point instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Point instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STPointN(System.Int32)">
+      <summary>Returns a specified point in a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. </summary>
+      <param name="n">An int expression between 1 and the number of points in the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> that represents the specified point in the calling instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STPointOnSurface">
+      <summary>Returns an arbitrary point located within the interior of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. </summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents a point within the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STPolyFromText(System.Data.SqlTypes.SqlChars,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance from an Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation augmented with any Z (elevation) and M (measure) values carried by the instance.</summary>
+      <param name="polygonTaggedText">The WKT representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Polygon instance you wish to return.</param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Polygon instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKT representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STPolyFromWKB(System.Data.SqlTypes.SqlBytes,System.Int32)">
+      <summary>Returns a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Polygon instance from an Open Geospatial Consortium (OGC) Well-Known Binary (WKB) representation.</summary>
+      <param name="wkbPolygon">The WKB representation of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Polygon instance you wish to return. </param>
+      <param name="srid">An int expression that represents the spatial reference ID (SRID) of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> Polygon instance you wish to return.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object constructed from the specified WKB representation.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STRelate(Microsoft.SqlServer.Types.SqlGeometry,System.String)">
+      <summary>Determines whether the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> is related to the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</summary>
+      <param name="other">Is another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare against the instance on which <see cref="M:Microsoft.SqlServer.Types.SqlGeometry.STRelate(Microsoft.SqlServer.Types.SqlGeometry,System.String)" /> is invoked.</param>
+      <param name="intersectionPatternMatrix">A string that specifies the intersection model. This string must contain acceptable values for the DE-9IM pattern matrix device between the two <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instances.</param>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is related to another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance, where the relationship is defined by a Dimensionally Extended 9 Intersection Model (DE-9IM) pattern matrix value; otherwise, returns false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STStartPoint">
+      <summary>Returns the start point of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object containing the start point of the calling instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STSymDifference(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Returns an object that represents all points that are either in one <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance or another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance, but not those points that lie in both instances. </summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare to the current <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents all points in the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> and the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instances that are not present in both instances..</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STTouches(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Determines whether the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> touches the current <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare to the current <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</param>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance spatially touches another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. Returns false if it does not.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STUnion(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Returns an object that represents the union of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance with another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to combine with the current <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object that represents the union of the calling <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> and the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.STWithin(Microsoft.SqlServer.Types.SqlGeometry)">
+      <summary>Determines whether the current <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> is completely within the specified <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</summary>
+      <param name="other">The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance to compare to the current <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" />.</param>
+      <returns>Returns true if a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance is completely within another <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance; otherwise, returns false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.ToString">
+      <summary>Returns the Open Geospatial Consortium (OGC) Well-Known Text (WKT) representation of a <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance augmented with any Z (elevation) and M (measure) values carried by the instance. </summary>
+      <returns>A string value containing the WKT representation of the calling instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometry.Write(System.IO.BinaryWriter)">
+      <summary>Writes a SqlGeometry instance to a binary stream. <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /></summary>
+      <param name="w">BinaryWriter object that writes the SqlGeometry instance to a binary stream.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.#ctor">
+      <summary>Constructs a SqlGeometryBuilder object.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.AddCircularArc(System.Double,System.Double,System.Double,System.Double)">
+      <summary>Adds a circular arc to the path.</summary>
+      <param name="x1">The first latitude for the arc.</param>
+      <param name="y1">The first longitude for the arc.</param>
+      <param name="x2">The second latitude for the arc.</param>
+      <param name="y2">The second longitude for the arc.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.AddCircularArc(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double},System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Adds a circular arc to the path.</summary>
+      <param name="x1">The x1 value.</param>
+      <param name="y1">The y1 value.</param>
+      <param name="z1">The z1 value.</param>
+      <param name="m1">The m1 value.</param>
+      <param name="x2">The x2 value.</param>
+      <param name="y2">The y2 value.</param>
+      <param name="z2">The z2 value.</param>
+      <param name="m2">The m2 value.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.AddLine(System.Double,System.Double)">
+      <summary>Constructs additional points in a geometry type figure.</summary>
+      <param name="x">A double that specifies the x-coordinate of a point in a geometry figure.</param>
+      <param name="y">A double that specifies the y-coordinate of a point in a geometry figure.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.AddLine(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Constructs additional points in the call sequence for a geometry type.</summary>
+      <param name="x">A double that specifies the x-coordinate of a point in a geometry figure.</param>
+      <param name="y">A double that specifies the y-coordinate of a point in a geometry figure.</param>
+      <param name="z">A double that specifies the z-coordinate of a point in a geometry figure. Is Nullable.</param>
+      <param name="m">A double that specifies the measure for the point. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.BeginFigure(System.Double,System.Double)">
+      <summary>Starts the call sequence for a geometry figure.</summary>
+      <param name="x">A double that specifies the x-coordinate of the starting endpoint in a geometry figure.</param>
+      <param name="y">A double that specifies the y-coordinate of the starting endpoint in a geometry figure.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.BeginFigure(System.Double,System.Double,System.Nullable{System.Double},System.Nullable{System.Double})">
+      <summary>Starts the call sequence for a geometry figure.</summary>
+      <param name="x">A double that specifies the x-coordinate of the starting endpoint in a geometry figure.</param>
+      <param name="y">A double that specifies the y-coordinate of the starting endpoint in a geometry figure.</param>
+      <param name="z">A double that specifies the z-coordinate of the starting endpoint in a geometry figure. Is Nullable.</param>
+      <param name="m">A double that specifies the measure for the point. Is Nullable.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.BeginGeometry(Microsoft.SqlServer.Types.OpenGisGeometryType)">
+      <summary>Initializes a call sequence for a geometry type.</summary>
+      <param name="type">OpenGisGeometryType object that indicates the type being created by the call sequence.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.EndFigure">
+      <summary>Finishes a call sequence for a geometry figure.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.EndGeometry">
+      <summary>Finishes a call sequence for a geometry type.</summary>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlGeometryBuilder.SetSrid(System.Int32)">
+      <summary>Sets the Spatial Reference Identifier (SRID) for a geometry type call sequence.</summary>
+      <param name="srid">An int that contains the Spatial Reference Identifier for the geometry type.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.CompareTo(Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Returns a value indicating the results of a comparison between two <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> nodes.</summary>
+      <param name="hid">A <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node to compare to this.</param>
+      <returns>A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: ValueMeaningLess than zerothis is less than <paramref name="obj" />.Zerothis is equal to <paramref name="obj" />.Greater than zerothis is greater than <paramref name="obj" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.CompareTo(System.Object)">
+      <summary>Returns a value indicating the results of a comparison between a <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> and an object.</summary>
+      <param name="obj">An object to be compared to this.</param>
+      <returns>A 32-bit signed integer that indicates the relative order of the objects being compared. The return value has these meanings: ValueMeaningLess than zerothis is less than <paramref name="obj" />.Zerothis is equal to <paramref name="obj" />.Greater than zerothis is greater than <paramref name="obj" />.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.Equals(System.Object)">
+      <summary>Evaluates whether <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> and <paramref name="obj" /> are equal.</summary>
+      <param name="obj">The object against which to compare this.</param>
+      <returns>Boolean. true (1) if this and <paramref name="obj" /> are equal; otherwise, false (0).</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.GetAncestor(System.Int32)">
+      <summary>Retrieves the <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node <paramref name="n" /> levels up the hierarchical tree.</summary>
+      <param name="n">An integer representing the number of levels to ascend in the hierarchy. </param>
+      <returns>
+        <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> representing the <paramref name="n" />th ancestor of this.If a number greater than <see cref="M:Microsoft.SqlServer.Types.SqlHierarchyId.GetLevel" /> is passed, null is returned.If a negative number is passed, an exception is raised indicating that the argument is out of range.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.GetDescendant(Microsoft.SqlServer.Types.SqlHierarchyId,Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Gets the value of a descendant <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node that is greater than <paramref name="child1" /> and less than <paramref name="child2" />.</summary>
+      <param name="child1">The lower bound.</param>
+      <param name="child2">The upper bound.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> with a value greater than the lower bound and less than the upper bound. </returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.GetHashCode">
+      <summary>Gets a hash of the path from the root node of the hierarchy tree to the <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node.</summary>
+      <returns>A 32-bit signed integer representing the hash code for this instance.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.GetLevel">
+      <summary>Gets a value indicating the level of the <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node in the hierarchical tree.</summary>
+      <returns>A 16-bit integer indicating the depth of the <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node in the hierarchical tree. The root of the hierarchy is level 0.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.GetReparentedValue(Microsoft.SqlServer.Types.SqlHierarchyId,Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Gets a value representing the location of a new <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node that has a path from <paramref name="newRoot" /> equal to the path from <paramref name="oldRoot" /> to this, effectively moving this to the new location<paramref name="." /></summary>
+      <param name="oldRoot">An ancestor of the <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node specifying the endpoint of the path segment that is to be moved.</param>
+      <param name="newRoot">The <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node that represents the new ancestor of this.</param>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node representing the new hierarchical location of this. Will return null if <paramref name="oldRoot" />, <paramref name="newRoot" />, or this<paramref name="" />are null.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.GetRoot">
+      <summary>Gets a value representing the root <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node of the hierarchy.</summary>
+      <returns>A <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> representing the root node of the hierarchical tree.Root value is typically 0x.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.IsDescendantOf(Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Gets a value indicating whether the <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node is the descendant of the parent.</summary>
+      <param name="parent">The specified <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node for which the IsDescendantOf test is performed.</param>
+      <returns>Boolean, true (1) for all the nodes in the sub-tree rooted at <paramref name="parent" />; false (0) for all other nodes.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.op_Equality(Microsoft.SqlServer.Types.SqlHierarchyId,Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Evaluates whether two <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> nodes are equal.</summary>
+      <param name="hid1">First node to compare.</param>
+      <param name="hid2">Second node to compare.</param>
+      <returns>Boolean. true (1) if <paramref name="hid1" /> and <paramref name="hid2" /> are equal; otherwise, false (0).</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.op_GreaterThan(Microsoft.SqlServer.Types.SqlHierarchyId,Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Evaluates whether one specified <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node is greater than another.</summary>
+      <param name="hid1">First node to compare.</param>
+      <param name="hid2">Second node to compare.</param>
+      <returns>Boolean. Returns true if <paramref name="hid1" /> is greater than <paramref name="hid2" />; otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.op_GreaterThanOrEqual(Microsoft.SqlServer.Types.SqlHierarchyId,Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Evaluates whether one specified <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node is greater than or equal to another.</summary>
+      <param name="hid1">First node to compare.</param>
+      <param name="hid2">Second node to compare.</param>
+      <returns>Boolean. Returns true if <paramref name="hid1" /> is greater than or equal to <paramref name="hid2" />; otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.op_Inequality(Microsoft.SqlServer.Types.SqlHierarchyId,Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Evaluates whether two <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> nodes are unequal.</summary>
+      <param name="hid1">First node to compare.</param>
+      <param name="hid2">Second node to compare.</param>
+      <returns>Boolean. true (1) if <paramref name="hid1" /> and <paramref name="hid2" /> are unequal; otherwise, false (0).</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.op_LessThan(Microsoft.SqlServer.Types.SqlHierarchyId,Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Evaluates whether one specified <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node is less than another.</summary>
+      <param name="hid1">First node to compare.</param>
+      <param name="hid2">Second node to compare.</param>
+      <returns>Boolean. Returns true if <paramref name="hid1" /> is less than <paramref name="hid2" />; otherwise, false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.op_LessThanOrEqual(Microsoft.SqlServer.Types.SqlHierarchyId,Microsoft.SqlServer.Types.SqlHierarchyId)">
+      <summary>Evaluates whether one specified <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node is less than or equal to another.</summary>
+      <param name="hid1">First node to compare.</param>
+      <param name="hid2">Second node to compare.</param>
+      <returns>Boolean. Returns true if <paramref name="hid1" /> is less than or equal to <paramref name="hid2" />; otherwise false.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.Parse(System.Data.SqlTypes.SqlString)">
+      <summary>Converts the canonical string representation of a <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node to a <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> value.</summary>
+      <param name="input">String representation of <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node.</param>
+      <returns>
+        <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> representing the node described canonically.</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.Read(System.IO.BinaryReader)">
+      <summary>Reads from a specified binary reader into a <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" />.</summary>
+      <param name="r">The specified binary reader.</param>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.ToString">
+      <summary>Returns the canonical string representation of a <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node from a <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> value.</summary>
+      <returns>String</returns>
+    </member>
+    <member name="M:Microsoft.SqlServer.Types.SqlHierarchyId.Write(System.IO.BinaryWriter)">
+      <summary>Writes a <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> to a specified binary writer.</summary>
+      <param name="w">The specified binary writer.</param>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeography.HasM">
+      <summary>Returns true if at least one point in a spatial object contains value M; otherwise returns false. This property is read-only.</summary>
+      <returns>true if at least one point in a spatial object contains value M; otherwise false.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeography.HasZ">
+      <summary>Returns true if at least one point in a spatial object contains value Z; otherwise returns false. This property is read-only.</summary>
+      <returns>true if at least one point in a spatial object contains value Z; otherwise false.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeography.IsNull">
+      <summary>Determines whether the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is null.</summary>
+      <returns>A bool value that specifies whether the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance is null. If true, the instance is null. Otherwise, false.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeography.Lat">
+      <summary>Returns the latitude property of the geography instance.</summary>
+      <returns>A SqlDouble value that specifies the latitude.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeography.Long">
+      <summary>Returns the longitude property of the geography instance.</summary>
+      <returns>A SqlDouble value that specifies the longitude.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeography.M">
+      <summary>Returns the M (measure) value of the geography instance.</summary>
+      <returns>A SqlDouble value that specifies the measure value.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeography.Null">
+      <summary>Returns a read-only property providing a null instance of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> type.</summary>
+      <returns>A null instance of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> class.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeography.STSrid">
+      <summary>Gets or sets id is an integer representing the Spatial Reference Identifier (SRID) of the instance.</summary>
+      <returns>A SqlInt32 that represents the SRID of the <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> instance.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeography.Z">
+      <summary>Gets the Z (elevation) value of the instance. The semantics of the elevation value are user-defined.</summary>
+      <returns>A SqlDouble value that represents the elevation of the instance.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeographyBuilder.ConstructedGeography">
+      <summary>Retrieves the constructed spatial geography object.</summary>
+      <returns>Method returns a SqlGeometry object that represents the constructed spatial geography object.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometry.HasM">
+      <summary>Returns true if at least one point in a spatial object contains value M; otherwise returns false. This property is read-only.</summary>
+      <returns>true if at least one point in a spatial object contains value M; otherwise false.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometry.HasZ">
+      <summary>Returns true if at least one point in a spatial object contains value Z; otherwise returns false. This property is read-only. </summary>
+      <returns>true if at least one point in a spatial object contains value Z; otherwise false.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometry.IsNull">
+      <summary>Gets a value that indicates whether the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> object is null.</summary>
+      <returns>A bool value that indicates whether the object is null. If true, the object is null. Otherwise, false.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometry.M">
+      <summary>Gets the M (measure) value of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance. The semantics of the measure value are user-defined.</summary>
+      <returns>A SqlDouble value containing the measure of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> value.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometry.Null">
+      <summary>Gets a read-only property providing a null instance of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> type. </summary>
+      <returns>A null <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometry.STSrid">
+      <summary>Gets or sets an integer that represents the Spatial Reference Identifier (SRID) of the instance.</summary>
+      <returns>A SqlInt32 value that contains the SRID of the <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> instance.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometry.STX">
+      <summary>Gets the X-coordinate property of a Point instance. </summary>
+      <returns>A SqlDouble value that represents the X-coordinate value of a point.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometry.STY">
+      <summary>Gets the Y-coordinate property of a Point instance.</summary>
+      <returns>A SqlDouble value that represents the Y-coordinate value of a point.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometry.Z">
+      <summary>Gets the Z (elevation) value of the instance. The semantics of the elevation value are user-defined.</summary>
+      <returns>A SqlDouble value that represents the elevation of the instance.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlGeometryBuilder.ConstructedGeometry">
+      <summary>Retrieves constructed spatial geometry object.</summary>
+      <returns>Method returns a SqlGeometry object that represents the constructed spatial geometry object.</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlHierarchyId.IsNull">
+      <summary>Gets a value indicating whether the <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> is null.</summary>
+      <returns>Boolean representing true (1) if the <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> node is null; otherwise, false (0).</returns>
+    </member>
+    <member name="P:Microsoft.SqlServer.Types.SqlHierarchyId.Null">
+      <summary>Gets a <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> with a hierarchy identification of null.</summary>
+      <returns>
+        <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> with a value of null.</returns>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeographyCollectionAggregate">
+      <summary>Represents a geography collection from the given set of <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> objects.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeographyConvexHullAggregate">
+      <summary>Represents the convex hull for the given set of <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> objects.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeographyEnvelopeAggregate">
+      <summary>Represents a geography envelope from the given set of <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> objects.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeographyTessellationFunction">
+      <summary>Represents the geography tessellation functions.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeographyUnionAggregate">
+      <summary>Represents a union of a set of <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> objects.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeometryCollectionAggregate">
+      <summary>Represents a geometry collection from the given set of <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> objects.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeometryConvexHullAggregate">
+      <summary>Represents the convex hull for the given set of <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> objects.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeometryEnvelopeAggregate">
+      <summary>Represents a geometry envelope based on the given set of <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> objects.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeometryTessellationFunction">
+      <summary>Provides static methods for creating a geometry tessellation.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.GeometryUnionAggregate">
+      <summary>Represents a union from a set of <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> objects.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.HierarchyIdException">
+      <summary>The exception that is thrown for invalid SqlHierarchyId values.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.IGeographySink">
+      <summary>Interface used by SqlGeographyBuilder to construct a SqlGeography object. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeographySink110" /> should be used instead.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.IGeographySink110">
+      <summary>Defines the interface used by SqlGeographyBuilder to construct a SqlGeography object.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.IGeometrySink">
+      <summary>Defines the interface that the <see cref="T:Microsoft.SqlServer.Types.SqlGeometryBuilder" /> class uses to construct a <see cref="T:Microsoft.SqlServer.Types.SqlGeometryBuilder" />object. This API is obsolete. <see cref="T:Microsoft.SqlServer.Types.IGeometrySink110" /> should be used instead.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.IGeometrySink110">
+      <summary>Defines the interface used by SqlGeometryBuilder to construct a SqlGeometry object.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.ISqlSpatialGridIndexable">
+      <summary>Defines the interface that is implemented by <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> and <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> type objects to support spatial indexing.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.OpenGisGeographyType">
+      <summary>Lists supported and extended Open GIS geography types.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.Point">
+      <summary>Point is a 0-dimensional object that represents a single location. </summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.LineString">
+      <summary>LineString is a one-dimensional object that represents a sequence of points and the line segments connecting them.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.Polygon">
+      <summary>Polygon is a two-dimensional surface stored as a sequence of points defining an exterior bounding ring and zero or more interior rings. </summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.MultiPoint">
+      <summary>MultiPoint is a collection of zero or more points. </summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.MultiLineString">
+      <summary>MultiLineString is a collection of zero or more geographyLineString instances. </summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.MultiPolygon">
+      <summary>MultiPolygon is a collection of zero or more Polygon instances. </summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.GeometryCollection">
+      <summary>GeometryCollection is a collection of zero or more geography instances.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.CircularString">
+      <summary>A collection of zero or more continuous circular arc segments</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.CompoundCurve">
+      <summary>A collection of zero or more continuous CircularString or LineString instances of either geometry or geography types.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.CurvePolygon">
+      <summary>CurvePolygon is a topologically closed surface defined by an exterior bounding ring and zero or more interior rings</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeographyType.FullGlobe">
+      <summary>FullGlobe is a special type of Polygon that covers the entire globe.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.OpenGisGeometryType">
+      <summary>Lists Open GIS geometry types.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.Point">
+      <summary>Point is a 0-dimensional object that represents a single location.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.LineString">
+      <summary>LineString is a one-dimensional object representing a sequence of points and the line segments connecting them.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.Polygon">
+      <summary>Polygon is a two-dimensional surface stored as a sequence of points defining an exterior bounding ring and zero or more interior rings.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.MultiPoint">
+      <summary>MultiPoint is a collection of zero or more points.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.MultiLineString">
+      <summary>MultiLineString is a collection of zero or more geometryLineString instances.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.MultiPolygon">
+      <summary>MultiPolygon is a collection of zero or more Polygon instances.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.GeometryCollection">
+      <summary>GeometryCollection is a collection of zero or more geometry instances.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.CircularString">
+      <summary>A CircularString is a collection of zero or more continuous circular arc segments.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.CompoundCurve">
+      <summary>A CompoundCurve is a collection of zero or more continuous CircularString or LineString instances of either geometry or geography types.</summary>
+    </member>
+    <member name="F:Microsoft.SqlServer.Types.OpenGisGeometryType.CurvePolygon">
+      <summary>A CurvePolygon is a topologically closed surface defined by an exterior bounding ring and zero or more interior rings.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.SpaceFillingCurve">
+      <summary>Provides methods for calculating a space-filling curve.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.SpatialGridCoverage">
+      <summary>Provides methods for obtaining a spatial grid coverage.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.SpatialTessellationFunction">
+      <summary>Provides static methods for creating a spatial tessellation.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.SqlGeography">
+      <summary>The <see cref="T:Microsoft.SqlServer.Types.SqlGeography" /> type represents data in a geodetic (round earth) coordinate system.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.SqlGeographyBuilder">
+      <summary>Constructs instances of SqlGeography objects by using IGeographySink interface.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.SqlGeometry">
+      <summary>The <see cref="T:Microsoft.SqlServer.Types.SqlGeometry" /> type represents data in a Euclidean (flat) coordinate system.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.SqlGeometryBuilder">
+      <summary>Constructs instances of SqlGeometry objects by using IGeometrySink interface.</summary>
+    </member>
+    <member name="T:Microsoft.SqlServer.Types.SqlHierarchyId">
+      <summary>The <see cref="T:Microsoft.SqlServer.Types.SqlHierarchyId" /> type represents a position in a hierarchical structure, specifying depth and breadth. </summary>
+    </member>
+  </members>
+</doc>

@@ -130,8 +130,8 @@ namespace JocysCom.ClassLibrary.Controls
 			if (control == null)
 				throw new ArgumentNullException(nameof(control));
 			var text = (args == null)
-				? format
-				: string.Format(format, args);
+				? format ?? ""
+				: string.Format(format ?? "", args);
 			if (control.Text != text)
 				control.Text = text;
 		}
@@ -145,8 +145,8 @@ namespace JocysCom.ClassLibrary.Controls
 			if (control == null)
 				throw new ArgumentNullException(nameof(control));
 			var text = (args == null)
-				? format
-				: string.Format(format, args);
+				? format ?? ""
+				: string.Format(format ?? "", args);
 			if (control.Text != text)
 				control.Text = text;
 		}

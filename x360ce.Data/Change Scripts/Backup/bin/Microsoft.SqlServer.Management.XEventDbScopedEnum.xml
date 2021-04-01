@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SqlServer.Management.XEventDbScopedEnum</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SqlServer.Management.XEventDbScoped.XEStoreObject">
+            <summary>
+            This is the Enumerator object for XEvnet object model. It derived from SqlObject, the
+            base class for all enumerator in SFC enabled object model.Override the ResourceAssembly
+            to provide the correct assembly that contains the resources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.XEStoreObject.GetServerVersion(System.Object)">
+            <summary>
+            Return the server version for the given connection.
+            </summary>
+            <param name="conn">connetion to the server we want to know the version</param>
+            <returns>server version on the connection</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.XEStoreObject.GetDatabaseEngineType(System.Object)">
+            <summary>
+            Return the databse engine type for the given connection.
+            </summary>
+            <param name="conn">connetion to the server we want to know the type</param>
+            <returns>engine type of the server on the connection</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.XEStoreObject.ResourceAssembly">
+            <summary>
+            Return the assebmly that contains the resources.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.XEventDbScoped.XEventObject">
+            <summary>
+            This is the Enumerator object for XEvnet object model. It derived from SqlObject, the
+            base class for all enumerator in SFC enabled object model.Override the ResourceAssembly
+            to provide the correct assembly that contains the resources.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.XEventObject.GetServerVersion(System.Object)">
+            <summary>
+            Return the server version for the given connection.
+            </summary>
+            <param name="conn">connetion to the server we want to know the version</param>
+            <returns>server version on the connection</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.XEventObject.GetDatabaseEngineType(System.Object)">
+            <summary>
+            Return the databse engine type for the given connection.
+            </summary>
+            <param name="conn">connetion to the server we want to know the type</param>
+            <returns>engine type of the server on the connection</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.XEventObject.ResourceAssembly">
+            <summary>
+            Return the assebmly that contains the resources.
+            </summary>
+        </member>
+    </members>
+</doc>

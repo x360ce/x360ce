@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Data xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Connections>
+		<Connection Name="SourceConnection" Value="Server=localhost;Database=x360ce;Trusted_Connection=yes" />
+		<Connection Name="TargetConnection" Value="Server=localhost;Database=dbImport;Trusted_Connection=yes" />
+	</Connections>
+	<Items>
+		<Item Schema="dbo" Table="x360ce_ChangeLogs" />
+		<Item Schema="dbo" Table="x360ce_ControllerInstances" />
+		<Item Schema="dbo" Table="x360ce_Controllers" />
+		<Item Schema="dbo" Table="x360ce_Layouts" />
+		<Item Schema="dbo" Table="x360ce_NewDeviceStats" />
+		<Item Schema="dbo" Table="x360ce_PadSettings" />
+		<Item Schema="dbo" Table="x360ce_Products" />
+		<Item Schema="dbo" Table="x360ce_Programs" />
+		<Item Schema="dbo" Table="x360ce_Settings" />
+		<Item Schema="dbo" Table="x360ce_Summaries" />
+		<Item Schema="dbo" Table="x360ce_UserComputers" />
+		<Item Schema="dbo" Table="x360ce_UserDevices" />
+		<Item Schema="dbo" Table="x360ce_UserGames" />
+		<Item Schema="dbo" Table="x360ce_UserInstances" />
+		<Item Schema="dbo" Table="x360ce_UserMacros" />
+		<Item Schema="dbo" Table="x360ce_UserProfiles" />
+		<Item Schema="dbo" Table="x360ce_Vendors" />
+		<Item Schema="dbo" Table="x360ce_WebsiteLogs" Query="SELECT TOP(100) * FROM [x360ce_WebsiteLogs] (NOLOCK)" />
+	</Items>
+</Data>

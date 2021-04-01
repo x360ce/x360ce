@@ -116,14 +116,46 @@ namespace x360ce.App.Controls
 		private readonly object monitorComboBoxLock = new object();
 		private System.Windows.Forms.ComboBox _MonitorComboBox;
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public TextBox MonitorComboBoxWpf
+		{
+			get => _MonitorComboBoxWpf;
+			set
+			{
+				lock (monitorComboBoxLock)
+				{
+					if (_MonitorComboBox != null)
+					{
+						_MonitorComboBox.TextChanged -= _MonitorComboBox_TextChanged;
+					}
+					_MonitorComboBoxWpf = value;
+					if (_MonitorComboBox != null)
+					{
+						_MonitorComboBox.TextChanged += _MonitorComboBox_TextChanged;
+					}
+				}
+			}
+		}
+		TextBox _MonitorComboBoxWpf;
+
 
 		private void _MonitorComboBox_TextChanged(object sender, EventArgs e)
 		{
 			lock (monitorComboBoxLock)
 			{
-				// If axis is mapped to the button then...
-				var en = _MonitorComboBox != null && (_MonitorComboBox.Text.Contains("Axis") || _MonitorComboBox.Text.Contains("Slider"));
-				MappedAxisTextBox.Text = en ? _MonitorComboBox.Text : "";
+				var en = false;
+				var text = "";
+				if (_MonitorComboBox != null)
+				{
+					en = _MonitorComboBox.Text.Contains("Axis") || _MonitorComboBox.Text.Contains("Slider");
+					text = en ? _MonitorComboBox.Text : "";
+				}
+				if (_MonitorComboBoxWpf != null)
+				{
+					en = _MonitorComboBoxWpf.Text.Contains("Axis") || _MonitorComboBoxWpf.Text.Contains("Slider");
+					text = en ? _MonitorComboBoxWpf.Text : "";
+				}
+				MappedAxisTextBox.Text = text;
 				IsEnabled = en;
 				// If enabled and value is 0.
 				if (en && DeadZoneNumericUpDown.Value == 0)

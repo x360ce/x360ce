@@ -1,0 +1,97 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.PadItem_ForceFeedback_MotorControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<GroupBox
+		x:Name="MainGroupBox"
+		HorizontalAlignment="Left"
+		VerticalAlignment="Top"
+		Header="Motor">
+
+
+
+		<StackPanel Orientation="Vertical">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<StackPanel Grid.Column="3" Orientation="Horizontal">
+					<Label VerticalAlignment="Center" Content="Direction" />
+					<ComboBox x:Name="DirectionComboBox" Style="{StaticResource ComboBoxFix}" />
+				</StackPanel>
+			</Grid>
+			<StackPanel Orientation="Vertical">
+				<Label Name="StrengthLabel" Content="Strength" />
+				<StackPanel Orientation="Horizontal">
+					<Slider Name="StrengthTrackBar" Width="200" VerticalAlignment="Center" />
+					<TextBox
+						Name="StrengthTextBox"
+						Width="50"
+						HorizontalAlignment="Left"
+						HorizontalContentAlignment="Right"
+						IsReadOnly="True"
+						IsTabStop="False"
+						Text="0 %" />
+					<xctk:IntegerUpDown
+						Name="StrengthUpDown"
+						MinWidth="75"
+						VerticalAlignment="Center"
+						Value="0" />
+				</StackPanel>
+			</StackPanel>
+			<StackPanel Orientation="Vertical">
+				<Label Name="PeriodLabel" Content="Period (ms)" />
+				<StackPanel Orientation="Horizontal">
+					<Slider Name="PeriodTrackBar" Width="200" VerticalAlignment="Center" />
+					<TextBox
+						Name="PeriodTextBox"
+						Width="50"
+						HorizontalAlignment="Left"
+						HorizontalContentAlignment="Right"
+						IsReadOnly="True"
+						IsTabStop="False"
+						Text="0 %" />
+					<xctk:IntegerUpDown
+						Name="PeriodUpDown"
+						MinWidth="75"
+						VerticalAlignment="Center"
+						Value="0" />
+				</StackPanel>
+			</StackPanel>
+			<StackPanel Orientation="Vertical">
+				<Label Name="TestLabel" Content="Test" />
+				<StackPanel Orientation="Horizontal">
+					<Slider Name="TestTrackBar" Width="200" VerticalAlignment="Center" />
+					<TextBox
+						Name="TestTextBox"
+						Width="50"
+						HorizontalAlignment="Left"
+						HorizontalContentAlignment="Right"
+						IsReadOnly="True"
+						IsTabStop="False"
+						Text="0 %" />
+					<xctk:IntegerUpDown
+						Name="TestUpDown"
+						MinWidth="75"
+						VerticalAlignment="Center"
+						Value="0" />
+				</StackPanel>
+			</StackPanel>
+		</StackPanel>
+	</GroupBox>
+</UserControl>

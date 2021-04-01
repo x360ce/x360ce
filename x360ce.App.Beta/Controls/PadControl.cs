@@ -9,9 +9,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -26,27 +24,16 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			AxisToButtonsListPanel = new x360ce.App.Controls.AxisToButtonListControl();
-			AxistToButtonsListHost.Child = AxisToButtonsListPanel;
-			DirectInputPanel = new PadTabPages.DirectInputUserControl();
-			DirectInputHost.Child = DirectInputPanel;
-			TriggersWpfPanel = new TriggersControl();
-			TriggersHost.Child = TriggersWpfPanel;
-			LeftThumbWpfPanel = new LeftThumbControl();
-			LeftThumbHost.Child = LeftThumbWpfPanel;
-			RightThumbWpfPanel = new RightThumbControl();
-			RightThumbHost.Child = RightThumbWpfPanel;
-			DPadPanel = new DPadControl();
-			DPadHost.Child = DPadPanel;
-			ForceFeedbackPanel = new PadTabPages.ForceFeedbackControl();
-			ForceFeedbackHost.Child = ForceFeedbackPanel;
+
+			PadItemPanel = new PadItemControl();
+			PadItemHost.Child = PadItemPanel;
 			// Add controls which must be notified on setting selection change.
-			UserMacrosPanel.PadControl = this;
+			MacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Hide for this version.
-			PadTabControl.TabPages.Remove(XInputTabPage);
+			PadItemPanel.PadTabControl.Items.Remove(PadItemPanel.XInputTabPage);
 			//PadTabControl.TabPages.Remove(MacrosTabPage);
-			RemapName = RemapAllButton.Text;
+			RemapName = GeneralPanel.RemapAllButton.Content as string;
 			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();
 			_Imager.Top = XboxImage.TopPictureImage;
@@ -66,20 +53,20 @@ namespace x360ce.App.Controls
 			//MappedDevicesDataGridView.Left = -1;
 			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
 			// Axis to Button DeadZones
-			AxisToButtonsListPanel.AxisToButtonADeadZonePanel.MonitorComboBox = ButtonAComboBox;
-			AxisToButtonsListPanel.AxisToButtonBDeadZonePanel.MonitorComboBox = ButtonBComboBox;
-			AxisToButtonsListPanel.AxisToButtonXDeadZonePanel.MonitorComboBox = ButtonXComboBox;
-			AxisToButtonsListPanel.AxisToButtonYDeadZonePanel.MonitorComboBox = ButtonYComboBox;
-			AxisToButtonsListPanel.AxisToButtonStartDeadZonePanel.MonitorComboBox = ButtonStartComboBox;
-			AxisToButtonsListPanel.AxisToButtonBackDeadZonePanel.MonitorComboBox = ButtonBackComboBox;
-			AxisToButtonsListPanel.AxisToLeftShoulderDeadZonePanel.MonitorComboBox = LeftShoulderComboBox;
-			AxisToButtonsListPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorComboBox = LeftThumbButtonComboBox;
-			AxisToButtonsListPanel.AxisToRightShoulderDeadZonePanel.MonitorComboBox = RightShoulderComboBox;
-			AxisToButtonsListPanel.AxisToRightThumbButtonDeadZonePanel.MonitorComboBox = RightThumbButtonComboBox;
-			AxisToButtonsListPanel.AxisToDPadDownDeadZonePanel.MonitorComboBox = DPadDownComboBox;
-			AxisToButtonsListPanel.AxisToDPadLeftDeadZonePanel.MonitorComboBox = DPadLeftComboBox;
-			AxisToButtonsListPanel.AxisToDPadRightDeadZonePanel.MonitorComboBox = DPadRightComboBox;
-			AxisToButtonsListPanel.AxisToDPadUpDeadZonePanel.MonitorComboBox = DPadUpComboBox;
+			ButtonsPanel.AxisToButtonADeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonATextBox;
+			ButtonsPanel.AxisToButtonBDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonBTextBox;
+			ButtonsPanel.AxisToButtonXDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonXTextBox;
+			ButtonsPanel.AxisToButtonYDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonYTextBox;
+			ButtonsPanel.AxisToButtonStartDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonStartTextBox;
+			ButtonsPanel.AxisToButtonBackDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonBackTextBox;
+			ButtonsPanel.AxisToLeftShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.LeftShoulderTextBox;
+			ButtonsPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.LeftThumbButtonTextBox;
+			ButtonsPanel.AxisToRightShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.RightShoulderTextBox;
+			ButtonsPanel.AxisToRightThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.RightThumbButtonTextBox;
+			ButtonsPanel.AxisToDPadDownDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadDownTextBox;
+			ButtonsPanel.AxisToDPadLeftDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadLeftTextBox;
+			ButtonsPanel.AxisToDPadRightDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadRightTextBox;
+			ButtonsPanel.AxisToDPadUpDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadUpTextBox;
 			// Load Settings and enable events.
 			UpdateGetXInputStatesWithNoEvents();
 			// Monitor option changes.
@@ -88,16 +75,26 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 
 		}
+		private PadItemControl PadItemPanel;
+		private PadItem_GeneralControl GeneralPanel => PadItemPanel.GeneralPanel;
+		private PadItem_AdvancedControl AdvancedPanel => PadItemPanel.AdvancedPanel;
+		private AxisToButtonListControl ButtonsPanel => PadItemPanel.ButtonsPanel;
+		private PadItem_DPadControl DPadPanel => PadItemPanel.DPadPanel;
+		private AxisMapControl LeftTriggerPanel => PadItemPanel.LeftTriggerPanel;
+		private AxisMapControl RightTriggerPanel => PadItemPanel.RightTriggerPanel;
+		private AxisMapControl LeftThumbXPanel => PadItemPanel.LeftThumbXPanel;
+		private AxisMapControl LeftThumbYPanel => PadItemPanel.LeftThumbYPanel;
+		private AxisMapControl RightThumbXPanel => PadItemPanel.RightThumbXPanel;
+		private AxisMapControl RightThumbYPanel => PadItemPanel.RightThumbYPanel;
+		private PadItem_MacrosControl MacrosPanel => PadItemPanel.MacrosPanel;
+		private PadItem_ForceFeedbackControl ForceFeedbackPanel => PadItemPanel.ForceFeedbackPanel;
+		//private XInputUserControl XInputPanel => PadItemPanel.XInputPanel;
+		private PadItem_DInputControl DInputPanel => PadItemPanel.DInputPanel;
+
+		private PadItem_General_XboxImageControl XboxImage => GeneralPanel.XboxImage;
 
 
-		public AxisToButtonListControl AxisToButtonsListPanel;
-		public PadTabPages.DirectInputUserControl DirectInputPanel;
 
-		private TriggersControl TriggersWpfPanel;
-		private LeftThumbControl LeftThumbWpfPanel;
-		private RightThumbControl RightThumbWpfPanel;
-		private DPadControl DPadPanel;
-		private PadTabPages.ForceFeedbackControl ForceFeedbackPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -118,24 +115,17 @@ namespace x360ce.App.Controls
 				ControlsHelper.SetEnabled(AutoPresetButton, enable);
 				ControlsHelper.SetEnabled(ClearPresetButton, enable);
 				ControlsHelper.SetEnabled(ResetPresetButton, enable);
-				ControlsHelper.SetEnabled(RemapAllButton, enable && ud.DiState != null);
-				var pages = PadTabControl.TabPages.Cast<TabPage>().ToArray();
-				for (int p = 0; p < pages.Length; p++)
-				{
-					// Get first control to disable which must be Panel.
-					var controls = pages[p].Controls.Cast<Control>().ToArray();
-					for (int c = 0; c < controls.Length; c++)
-						ControlsHelper.SetEnabled(controls[c], enable);
-				}
+				ControlsHelper.SetEnabled(GeneralPanel.RemapAllButton, enable && ud.DiState != null);
+				PadItemPanel.SetEnabled(enable);
 				// If device instance changed then...
 				if (!Equals(instanceGuid, _InstanceGuid))
 				{
 					_InstanceGuid = instanceGuid;
-					ResetDiMenuStrip(enable ? ud : null);
+					GeneralPanel.ResetDiMenuStrip(enable ? ud : null);
 				}
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
-				DirectInputPanel.UpdateFrom(ud);
+				DInputPanel.UpdateFrom(ud);
 				if (enable && _Imager.Recorder.Recording)
 				{
 					// Stop recording if DInput value captured.
@@ -152,7 +142,7 @@ namespace x360ce.App.Controls
 								XboxImage.SetHelpText(XboxImage.MappingDone);
 							else
 								XboxImage.HelpTextLabel.Content = "";
-							RemapAllButton.Text = RemapName;
+							GeneralPanel.RemapAllButton.Content = RemapName;
 							return;
 						}
 						else
@@ -183,13 +173,13 @@ namespace x360ce.App.Controls
 			if (!newConnected && oldConnected)
 			{
 				_Imager.SetImages(false);
-				RemapAllButton.Enabled = false;
+				GeneralPanel.RemapAllButton.IsEnabled = false;
 			}
 			// If device connected then show enabled images.
 			if (newConnected && !oldConnected)
 			{
 				_Imager.SetImages(true);
-				RemapAllButton.Enabled = true;
+				GeneralPanel.RemapAllButton.IsEnabled = true;
 			}
 			// Return if controller is not connected.
 			if (newConnected)
@@ -200,10 +190,10 @@ namespace x360ce.App.Controls
 					_Imager.DrawState(ii, newState.Gamepad);
 			}
 			// Set values.
-			ControlsHelper.SetText(LeftTriggerTextBox, "{0}", newState.Gamepad.LeftTrigger);
-			ControlsHelper.SetText(RightTriggerTextBox, "{0}", newState.Gamepad.RightTrigger);
-			ControlsHelper.SetText(LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
-			ControlsHelper.SetText(RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
+			ControlsHelper.SetText(GeneralPanel.LeftTextBox, "{0}", newState.Gamepad.LeftTrigger);
+			ControlsHelper.SetText(GeneralPanel.RightTextBox, "{0}", newState.Gamepad.RightTrigger);
+			ControlsHelper.SetText(GeneralPanel.LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
+			ControlsHelper.SetText(GeneralPanel.RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
 			// Process device.
 			var ud = CurrentUserDevice;
 			if (ud != null && ud.DiState != null)
@@ -215,31 +205,31 @@ namespace x360ce.App.Controls
 				var axis = ud.DiState.Axis;
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbWpfPanel.LeftThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
+					LeftThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
 				// LeftThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbWpfPanel.LeftThumbYPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
+					LeftThumbYPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
 				// RightThumbX
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbWpfPanel.RightThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
+					RightThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
 				// RightThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbWpfPanel.RightThumbYPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
+					RightThumbYPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
 				// LeftTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					TriggersWpfPanel.LeftTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
+					LeftTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
 				// RightTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					TriggersWpfPanel.RightTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
+					RightTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
 			}
 			// Update Axis to Button Images.
 			if (_AxisToButtonControls == null)
-				_AxisToButtonControls = ControlsHelper.GetAll<AxisToButtonControl>(AxisToButtonsListPanel.MainGroupBox);
+				_AxisToButtonControls = ControlsHelper.GetAll<AxisToButtonControl>(ButtonsPanel.MainGroupBox);
 			foreach (var atbPanel in _AxisToButtonControls)
 				atbPanel.Refresh(newState);
 			// Store old state.
@@ -251,7 +241,7 @@ namespace x360ce.App.Controls
 		public bool StopRecording()
 		{
 			RecordAllMaps.Clear();
-			RemapAllButton.Text = RemapName;
+			GeneralPanel.RemapAllButton.Content = RemapName;
 			return _Imager.Recorder.StopRecording();
 		}
 
@@ -265,8 +255,10 @@ namespace x360ce.App.Controls
 				RecordAllMaps.Remove(map);
 			}
 			var cbx = (ComboBox)map.Control;
-			if (_CurrentCbx != cbx)
-				_CurrentCbx = cbx;
+			/*
+				if (_CurrentCbx != cbx)
+					_CurrentCbx = cbx;
+			*/
 			_Imager.Recorder.StartRecording(map);
 			var helpText =
 				SettingsConverter.ThumbDirections.Contains(map.Code) ||
@@ -274,7 +266,7 @@ namespace x360ce.App.Controls
 					? "Move Axis"
 					: "Press Button";
 			XboxImage.HelpTextLabel.Content = helpText;
-			RemapAllButton.Text = RemapStopName;
+			GeneralPanel.RemapAllButton.Content = RemapStopName;
 		}
 
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
@@ -356,11 +348,10 @@ namespace x360ce.App.Controls
 			// WORKAROUND: Remove SelectionChanged event.
 			MappedDevicesDataGridView.SelectionChanged -= MappedDevicesDataGridView_SelectionChanged;
 			MappedDevicesDataGridView.DataSource = mappedItems;
+			GeneralPanel.InitPadData();
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			ControlsHelper.BeginInvoke(() =>
 			{
-				MapNameComboBox.DataSource = SettingsManager.Layouts.Items;
-				MapNameComboBox.DisplayMember = "Name";
 				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
 				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
 			});
@@ -375,23 +366,11 @@ namespace x360ce.App.Controls
 			grid.AutoGenerateColumns = false;
 			// Show disabled images by default.
 			_Imager.SetImages(false);
-			// Add GamePad typed to ComboBox.
-			var types = (SharpDX.XInput.DeviceSubType[])Enum.GetValues(typeof(SharpDX.XInput.DeviceSubType));
-			foreach (var item in types)
-				DeviceSubTypeComboBox.Items.Add(item);
 			// Add player index to combo boxes
 			var playerOptions = new List<KeyValuePair>();
 			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));
 			foreach (var item in playerTypes)
 				playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
-			// Attach drop down menu with record and map choices.
-			var comboBoxes = new List<ComboBox>();
-			GetAllControls(GeneralTabPage, ref comboBoxes);
-			// Exclude map name ComboBox
-			comboBoxes.Remove(MapNameComboBox);
-			// Attach context strip with button names to every ComboBox on general tab.
-			foreach (var cb in comboBoxes)
-				cb.DropDown += ComboBox_DropDown;
 			UpdateFromCurrentGame();
 		}
 
@@ -515,125 +494,63 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		#region Control ComboBox'es
-
-		ComboBox CurrentCbx
-		{
-			get { return _CurrentCbx; }
-			set
-			{
-				// If changed then...
-				if (_CurrentCbx != value)
-				{
-					// If current exist then remove context menu.
-					if (_CurrentCbx != null)
-						_CurrentCbx.ContextMenuStrip = null;
-					// if new exist then add context menu.
-					if (value != null)
-						value.ContextMenuStrip = DiMenuStrip;
-				}
-				_CurrentCbx = value;
-			}
-		}
-		ComboBox _CurrentCbx;
-
-		void ComboBox_DropDown(object sender, EventArgs e)
-		{
-			var cbx = (ComboBox)sender;
-			// Move default DropDown away from the screen.
-			var oldLeft = cbx.Left;
-			cbx.Left = -10000;
-			// If same DropDown clicked then contract.
-			if (CurrentCbx == cbx)
-			{
-				CurrentCbx = null;
-			}
-			else
-			{
-				CurrentCbx = cbx;
-			}
-			ControlsHelper.BeginInvoke(() =>
-			{
-				ComboBoxDropDown(cbx, oldLeft);
-			});
-		}
-
-		void ComboBoxDropDown(ComboBox cbx, int oldLeft)
-		{
-			// Move default DropDown back to the screen.
-			cbx.IntegralHeight = !cbx.IntegralHeight;
-			cbx.IntegralHeight = !cbx.IntegralHeight;
-			cbx.Left = oldLeft;
-			var menu = cbx.ContextMenuStrip;
-			if (menu != null)
-			{
-				if (cbx == DPadComboBox)
-					EnableDPadMenu(true);
-				cbx.ContextMenuStrip.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
-			}
-			if (cbx.Items.Count > 0)
-				cbx.SelectedIndex = 0;
-		}
-
-		#endregion
-
 		#region Images
 
 		public PadControlImager _Imager;
 
-		ImageInfos imageInfos
+		List<ImageInfo> imageInfos
 		{
 			get
 			{
 				if (_imageInfos == null)
 				{
-
-					var triggerLeft = new Point(63, 27);
-					var triggerRight = new Point((int)XboxImage.Width - triggerLeft.X - 1, triggerLeft.Y);
-					_imageInfos = new ImageInfos();
+					_imageInfos = new List<ImageInfo>();
 					// Configure Image 1.
-					_imageInfos.Add(1, MapCode.LeftTrigger, 63, 27, LeftTriggerLabel, LeftTriggerComboBox);
-					_imageInfos.Add(1, MapCode.RightTrigger, 193, 27, RightTriggerLabel, RightTriggerComboBox);
-					_imageInfos.Add(1, MapCode.LeftShoulder, 43, 66, LeftShoulderLabel, LeftShoulderComboBox, GamepadButtonFlags.LeftShoulder);
-					_imageInfos.Add(1, MapCode.RightShoulder, 213, 66, RightShoulderLabel, RightShoulderComboBox, GamepadButtonFlags.RightShoulder);
+					AddImageInfo(1, MapCode.LeftTrigger, 63, 27, GeneralPanel.LeftTriggerLabel, GeneralPanel.LeftTriggerTextBox);
+					AddImageInfo(1, MapCode.RightTrigger, 193, 27, GeneralPanel.RightTriggerLabel, GeneralPanel.RightTriggerTextBox);
+					AddImageInfo(1, MapCode.LeftShoulder, 43, 66, GeneralPanel.LeftShoulderLabel, GeneralPanel.LeftShoulderTextBox, GamepadButtonFlags.LeftShoulder);
+					AddImageInfo(1, MapCode.RightShoulder, 213, 66, GeneralPanel.RightShoulderLabel, GeneralPanel.RightShoulderTextBox, GamepadButtonFlags.RightShoulder);
 					// Configure Image 2.
-					_imageInfos.Add(2, MapCode.ButtonY, 196, 29, ButtonYLabel, ButtonYComboBox, GamepadButtonFlags.Y);
-					_imageInfos.Add(2, MapCode.ButtonX, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
-					_imageInfos.Add(2, MapCode.ButtonB, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
-					_imageInfos.Add(2, MapCode.ButtonA, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
-					_imageInfos.Add(2, MapCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox);
-					_imageInfos.Add(2, MapCode.ButtonBack, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
-					_imageInfos.Add(2, MapCode.ButtonStart, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
+					AddImageInfo(2, MapCode.ButtonY, 196, 29, GeneralPanel.ButtonYLabel, GeneralPanel.ButtonYTextBox, GamepadButtonFlags.Y);
+					AddImageInfo(2, MapCode.ButtonX, 178, 48, GeneralPanel.ButtonXLabel, GeneralPanel.ButtonXTextBox, GamepadButtonFlags.X);
+					AddImageInfo(2, MapCode.ButtonB, 215, 48, GeneralPanel.ButtonBLabel, GeneralPanel.ButtonBTextBox, GamepadButtonFlags.B);
+					AddImageInfo(2, MapCode.ButtonA, 196, 66, GeneralPanel.ButtonALabel, GeneralPanel.ButtonATextBox, GamepadButtonFlags.A);
+					AddImageInfo(2, MapCode.ButtonGuide, 127, 48, GeneralPanel.ButtonGuideLabel, GeneralPanel.ButtonGuideTextBox);
+					AddImageInfo(2, MapCode.ButtonBack, 103, 48, GeneralPanel.ButtonBackLabel, GeneralPanel.ButtonBackTextBox, GamepadButtonFlags.Back);
+					AddImageInfo(2, MapCode.ButtonStart, 152, 48, GeneralPanel.ButtonStartLabel, GeneralPanel.ButtonStartTextBox, GamepadButtonFlags.Start);
 					// D-Pad
-					_imageInfos.Add(2, MapCode.DPadUp, 92, 88 - 13, DPadUpLabel, DPadUpComboBox, GamepadButtonFlags.DPadUp);
-					_imageInfos.Add(2, MapCode.DPadLeft, 92 - 13, 88, DPadLeftLabel, DPadLeftComboBox, GamepadButtonFlags.DPadLeft);
-					_imageInfos.Add(2, MapCode.DPadRight, 92 + 13, 88, DPadRightLabel, DPadRightComboBox, GamepadButtonFlags.DPadRight);
-					_imageInfos.Add(2, MapCode.DPadDown, 92, 88 + 13, DPadDownLabel, DPadDownComboBox, GamepadButtonFlags.DPadDown);
+					AddImageInfo(2, MapCode.DPadUp, 92, 88 - 13, GeneralPanel.DPadUpLabel, GeneralPanel.DPadUpTextBox, GamepadButtonFlags.DPadUp);
+					AddImageInfo(2, MapCode.DPadLeft, 92 - 13, 88, GeneralPanel.DPadLeftLabel, GeneralPanel.DPadLeftTextBox, GamepadButtonFlags.DPadLeft);
+					AddImageInfo(2, MapCode.DPadRight, 92 + 13, 88, GeneralPanel.DPadRightLabel, GeneralPanel.DPadRightTextBox, GamepadButtonFlags.DPadRight);
+					AddImageInfo(2, MapCode.DPadDown, 92, 88 + 13, GeneralPanel.DPadDownLabel, GeneralPanel.DPadDownTextBox, GamepadButtonFlags.DPadDown);
 					// D-Pad (Extra Map)
-					_imageInfos.Add(2, MapCode.DPad, 92, 88, DPadLabel, DPadComboBox);
+					AddImageInfo(2, MapCode.DPad, 92, 88, GeneralPanel.DPadLabel, GeneralPanel.DPadTextBox);
 					// Left Thumb.
-					_imageInfos.Add(2, MapCode.LeftThumbButton, 59, 47, LeftThumbButtonLabel, LeftThumbButtonComboBox, GamepadButtonFlags.LeftThumb);
-					_imageInfos.Add(2, MapCode.LeftThumbAxisX, 59 + 10, 47, LeftThumbAxisXLabel, LeftThumbAxisXComboBox);
-					_imageInfos.Add(2, MapCode.LeftThumbAxisY, 59, 47 - 10, LeftThumbAxisYLabel, LeftThumbAxisYComboBox);
+					AddImageInfo(2, MapCode.LeftThumbButton, 59, 47, GeneralPanel.LeftThumbButtonLabel, GeneralPanel.LeftThumbButtonTextBox, GamepadButtonFlags.LeftThumb);
+					AddImageInfo(2, MapCode.LeftThumbAxisX, 59 + 10, 47, GeneralPanel.LeftThumbAxisXLabel, GeneralPanel.LeftThumbAxisXTextBox);
+					AddImageInfo(2, MapCode.LeftThumbAxisY, 59, 47 - 10, GeneralPanel.LeftThumbAxisYLabel, GeneralPanel.LeftThumbAxisYTextBox);
 					// Left Thumb (Extra Map).
-					_imageInfos.Add(2, MapCode.LeftThumbUp, 59, 47 - 10, LeftThumbUpLabel, LeftThumbUpComboBox);
-					_imageInfos.Add(2, MapCode.LeftThumbLeft, 59 - 10, 47, LeftThumbLeftLabel, LeftThumbLeftComboBox);
-					_imageInfos.Add(2, MapCode.LeftThumbRight, 59 + 10, 47, LeftThumbRightLabel, LeftThumbRightComboBox);
-					_imageInfos.Add(2, MapCode.LeftThumbDown, 59, 47 + 10, LeftThumbDownLabel, LeftThumbDownComboBox);
+					AddImageInfo(2, MapCode.LeftThumbUp, 59, 47 - 10, GeneralPanel.LeftThumbUpLabel, GeneralPanel.LeftThumbUpTextBox);
+					AddImageInfo(2, MapCode.LeftThumbLeft, 59 - 10, 47, GeneralPanel.LeftThumbLeftLabel, GeneralPanel.LeftThumbLeftTextBox);
+					AddImageInfo(2, MapCode.LeftThumbRight, 59 + 10, 47, GeneralPanel.LeftThumbRightLabel, GeneralPanel.LeftThumbRightTextBox);
+					AddImageInfo(2, MapCode.LeftThumbDown, 59, 47 + 10, GeneralPanel.LeftThumbDownLabel, GeneralPanel.LeftThumbDownTextBox);
 					// Right Thumb.
-					_imageInfos.Add(2, MapCode.RightThumbButton, 160, 88, RightThumbButtonLabel, RightThumbButtonComboBox, GamepadButtonFlags.RightThumb);
-					_imageInfos.Add(2, MapCode.RightThumbAxisX, 160 + 10, 88, RightThumbAxisXLabel, RightThumbAxisXComboBox);
-					_imageInfos.Add(2, MapCode.RightThumbAxisY, 160, 88 - 10, RightThumbAxisYLabel, RightThumbAxisYComboBox);
+					AddImageInfo(2, MapCode.RightThumbButton, 160, 88, GeneralPanel.RightThumbButtonLabel, GeneralPanel.RightThumbButtonTextBox, GamepadButtonFlags.RightThumb);
+					AddImageInfo(2, MapCode.RightThumbAxisX, 160 + 10, 88, GeneralPanel.RightThumbAxisXLabel, GeneralPanel.RightThumbAxisXTextBox);
+					AddImageInfo(2, MapCode.RightThumbAxisY, 160, 88 - 10, GeneralPanel.RightThumbAxisYLabel, GeneralPanel.RightThumbAxisYTextBox);
 					// Right Thumb (Extra Map).
-					_imageInfos.Add(2, MapCode.RightThumbUp, 160, 88 - 10, RightThumbUpLabel, RightThumbUpComboBox);
-					_imageInfos.Add(2, MapCode.RightThumbLeft, 160 - 10, 88, RightThumbLeftLabel, RightThumbLeftComboBox);
-					_imageInfos.Add(2, MapCode.RightThumbRight, 160 + 10, 88, RightThumbRightLabel, RightThumbRightComboBox);
-					_imageInfos.Add(2, MapCode.RightThumbDown, 160, 88 + 10, RightThumbDownLabel, RightThumbDownComboBox);
+					AddImageInfo(2, MapCode.RightThumbUp, 160, 88 - 10, GeneralPanel.RightThumbUpLabel, GeneralPanel.RightThumbUpTextBox);
+					AddImageInfo(2, MapCode.RightThumbLeft, 160 - 10, 88, GeneralPanel.RightThumbLeftLabel, GeneralPanel.RightThumbLeftTextBox);
+					AddImageInfo(2, MapCode.RightThumbRight, 160 + 10, 88, GeneralPanel.RightThumbRightLabel, GeneralPanel.RightThumbRightTextBox);
+					AddImageInfo(2, MapCode.RightThumbDown, 160, 88 + 10, GeneralPanel.RightThumbDownLabel, GeneralPanel.RightThumbDownTextBox);
 				}
 				return _imageInfos;
 			}
 		}
-		ImageInfos _imageInfos;
+		List<ImageInfo> _imageInfos;
+
+		public void AddImageInfo(int image, MapCode code, double x, double y, object label, object control, GamepadButtonFlags button = GamepadButtonFlags.None)
+			=> _imageInfos.Add(new ImageInfo(image, code, x, y, label, control, button));
 
 		#endregion
 
@@ -641,145 +558,10 @@ namespace x360ce.App.Controls
 
 		public MapTo MappedTo;
 
-		/// <summary>
-		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
-		/// </summary>
-		public void UpdateSettingsMap()
-		{
-			//// FakeAPI
-			//AddMap(() => SettingName.ProductName, DirectInputPanel.DeviceProductNameTextBox);
-			//AddMap(() => SettingName.ProductGuid, DirectInputPanel.DeviceProductGuidTextBox);
-			//AddMap(() => SettingName.InstanceGuid, DirectInputPanel.DeviceInstanceGuidTextBox);
-			// Mapping
-			//AddMap(() => SettingName.MapToPad, DirectInputPanel.MapToPadComboBox);
-
-			AddMap(() => SettingName.GamePadType, DeviceSubTypeComboBox);
-			AddMap(() => SettingName.PassThrough, PassThroughCheckBox);
-			AddMap(() => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox);
-
-			// Left Trigger
-			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox, MapCode.LeftTrigger);
-
-			// Right Trigger
-			AddMap(() => SettingName.RightTrigger, RightTriggerComboBox, MapCode.RightTrigger);
-			//AddMap(() => SettingName.RightTriggerDeadZone, RightTriggerUserControl.DeadZoneTrackBar);
-			//AddMap(() => SettingName.RightTriggerAntiDeadZone, RightTriggerUserControl.AntiDeadZoneNumericUpDown);
-			//AddMap(() => SettingName.RightTriggerLinear, RightTriggerUserControl.SensitivityNumericUpDown);
-
-			// D-Pad
-			AddMap(() => SettingName.DPad, DPadComboBox, MapCode.DPad);
-			AddMap(() => SettingName.DPadUp, DPadUpComboBox, MapCode.DPadUp);
-			AddMap(() => SettingName.DPadDown, DPadDownComboBox, MapCode.DPadDown);
-			AddMap(() => SettingName.DPadLeft, DPadLeftComboBox, MapCode.DPadLeft);
-			AddMap(() => SettingName.DPadRight, DPadRightComboBox, MapCode.DPadRight);
-
-			// Axis To Button
-			AddMap(() => SettingName.ButtonADeadZone, new NumericUpDown());
-			AddMap(() => SettingName.ButtonBDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.ButtonXDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.ButtonYDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.ButtonStartDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.ButtonBackDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.LeftShoulderDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.LeftThumbButtonDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.RightShoulderDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.RightThumbButtonDeadZone, new NumericUpDown());
-			// Axis To D-Pad (separate directions).
-			AddMap(() => SettingName.DPadDownDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.DPadLeftDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.DPadRightDeadZone, new NumericUpDown());
-			AddMap(() => SettingName.DPadUpDeadZone, new NumericUpDown());
-
-
-
-			//// Axis To Button
-			//AddMap(() => SettingName.ButtonADeadZone, AxisToButtonsListPanel.AxisToButtonADeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.ButtonBDeadZone, AxisToButtonsListPanel.AxisToButtonBDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.ButtonXDeadZone, AxisToButtonsListPanel.AxisToButtonXDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.ButtonYDeadZone, AxisToButtonsListPanel.AxisToButtonYDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.ButtonStartDeadZone, AxisToButtonsListPanel.AxisToButtonStartDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.ButtonBackDeadZone, AxisToButtonsListPanel.AxisToButtonBackDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.LeftShoulderDeadZone, AxisToButtonsListPanel.AxisToLeftShoulderDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.LeftThumbButtonDeadZone, AxisToButtonsListPanel.AxisToLeftThumbButtonDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.RightShoulderDeadZone, AxisToButtonsListPanel.AxisToRightShoulderDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.RightThumbButtonDeadZone, AxisToButtonsListPanel.AxisToRightThumbButtonDeadZonePanel.DeadZoneNumericUpDown);
-			//// Axis To D-Pad (separate directions).
-			//AddMap(() => SettingName.DPadDownDeadZone, AxisToButtonsListPanel.AxisToDPadDownDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.DPadLeftDeadZone, AxisToButtonsListPanel.AxisToDPadLeftDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.DPadRightDeadZone, AxisToButtonsListPanel.AxisToDPadRightDeadZonePanel.DeadZoneNumericUpDown);
-			//AddMap(() => SettingName.DPadUpDeadZone, AxisToButtonsListPanel.AxisToDPadUpDeadZonePanel.DeadZoneNumericUpDown);
-			// Axis To D-Pad.
-			//AddMap(() => SettingName.AxisToDPadEnabled, AxisToDPadEnabledCheckBox);
-			//AddMap(() => SettingName.AxisToDPadDeadZone, AxisToDPadDeadZoneTrackBar);
-			//AddMap(() => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
-			// Buttons
-			AddMap(() => SettingName.ButtonGuide, ButtonGuideComboBox, MapCode.ButtonGuide);
-			AddMap(() => SettingName.ButtonBack, ButtonBackComboBox, MapCode.ButtonBack);
-			AddMap(() => SettingName.ButtonStart, ButtonStartComboBox, MapCode.ButtonStart);
-			AddMap(() => SettingName.ButtonA, ButtonAComboBox, MapCode.ButtonA);
-			AddMap(() => SettingName.ButtonB, ButtonBComboBox, MapCode.ButtonB);
-			AddMap(() => SettingName.ButtonX, ButtonXComboBox, MapCode.ButtonX);
-			AddMap(() => SettingName.ButtonY, ButtonYComboBox, MapCode.ButtonY);
-			// Shoulders.
-			AddMap(() => SettingName.LeftShoulder, LeftShoulderComboBox, MapCode.LeftShoulder);
-			AddMap(() => SettingName.RightShoulder, RightShoulderComboBox, MapCode.RightShoulder);
-			// Left Thumb
-			AddMap(() => SettingName.LeftThumbAxisX, LeftThumbAxisXComboBox, MapCode.LeftThumbAxisX);
-			AddMap(() => SettingName.LeftThumbAxisY, LeftThumbAxisYComboBox, MapCode.LeftThumbAxisY);
-			AddMap(() => SettingName.LeftThumbRight, LeftThumbRightComboBox, MapCode.LeftThumbRight);
-			AddMap(() => SettingName.LeftThumbLeft, LeftThumbLeftComboBox, MapCode.LeftThumbLeft);
-			AddMap(() => SettingName.LeftThumbUp, LeftThumbUpComboBox, MapCode.LeftThumbUp);
-			AddMap(() => SettingName.LeftThumbDown, LeftThumbDownComboBox, MapCode.LeftThumbDown);
-			AddMap(() => SettingName.LeftThumbButton, LeftThumbButtonComboBox, MapCode.LeftThumbButton);
-			//AddMap(() => SettingName.LeftThumbDeadZoneX, LeftThumbXUserControl.DeadZoneTrackBar);
-			//AddMap(() => SettingName.LeftThumbDeadZoneY, LeftThumbYUserControl.DeadZoneTrackBar);
-			//AddMap(() => SettingName.LeftThumbAntiDeadZoneX, LeftThumbXUserControl.AntiDeadZoneNumericUpDown);
-			//AddMap(() => SettingName.LeftThumbAntiDeadZoneY, LeftThumbYUserControl.AntiDeadZoneNumericUpDown);
-			//AddMap(() => SettingName.LeftThumbLinearX, LeftThumbXUserControl.SensitivityNumericUpDown);
-			//AddMap(() => SettingName.LeftThumbLinearY, LeftThumbYUserControl.SensitivityNumericUpDown);
-			// Right Thumb
-			AddMap(() => SettingName.RightThumbAxisX, RightThumbAxisXComboBox, MapCode.RightThumbAxisX);
-			AddMap(() => SettingName.RightThumbAxisY, RightThumbAxisYComboBox, MapCode.RightThumbAxisY);
-			AddMap(() => SettingName.RightThumbRight, RightThumbRightComboBox, MapCode.RightThumbRight);
-			AddMap(() => SettingName.RightThumbLeft, RightThumbLeftComboBox, MapCode.RightThumbLeft);
-			AddMap(() => SettingName.RightThumbUp, RightThumbUpComboBox, MapCode.RightThumbUp);
-			AddMap(() => SettingName.RightThumbDown, RightThumbDownComboBox, MapCode.RightThumbDown);
-			AddMap(() => SettingName.RightThumbButton, RightThumbButtonComboBox, MapCode.RightThumbButton);
-			//AddMap(() => SettingName.RightThumbDeadZoneX, RightThumbXUserControl.DeadZoneTrackBar);
-			//AddMap(() => SettingName.RightThumbDeadZoneY, RightThumbYUserControl.DeadZoneTrackBar);
-			//AddMap(() => SettingName.RightThumbAntiDeadZoneX, RightThumbXUserControl.AntiDeadZoneNumericUpDown);
-			//AddMap(() => SettingName.RightThumbAntiDeadZoneY, RightThumbYUserControl.AntiDeadZoneNumericUpDown);
-			//AddMap(() => SettingName.RightThumbLinearX, RightThumbXUserControl.SensitivityNumericUpDown);
-			//AddMap(() => SettingName.RightThumbLinearY, RightThumbYUserControl.SensitivityNumericUpDown);
-			// Force Feedback
-			//AddMap(() => SettingName.ForceEnable, ForceEnableCheckBox);
-			//AddMap(() => SettingName.ForceType, ForceTypeComboBox);
-			//AddMap(() => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
-			//AddMap(() => SettingName.ForceOverall, ForceOverallTrackBar);
-			//AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
-			//AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
-			//AddMap(() => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
-			//AddMap(() => SettingName.RightMotorDirection, RightMotorDirectionComboBox);
-			//AddMap(() => SettingName.RightMotorStrength, RightMotorStrengthTrackBar);
-			//AddMap(() => SettingName.RightMotorPeriod, RightMotorPeriodTrackBar);
-		}
-
-		void AddMap<T>(Expression<Func<T>> setting, Control control, MapCode code = default)
-			=> SettingsManager.AddMap(setting, control, MappedTo, code);
-
 		#endregion
 
 		//XINPUT_GAMEPAD GamePad;
 		Guid _InstanceGuid;
-
-		private void UpdatePassThroughRelatedControls()
-		{
-			// Is Pass Through enabled?
-			bool fullPassThrough = PassThroughCheckBox.Checked;
-			bool forcesPassThrough = ForceFeedbackPassThroughCheckBox.Checked;
-			// If full pass-through mode is turned on, changing forces pass-through has no effect.
-			ForceFeedbackPassThroughCheckBox.Enabled = !fullPassThrough;
-		}
 
 		/// <summary>
 		/// Get PadSetting from currently selected device.
@@ -816,7 +598,7 @@ namespace x360ce.App.Controls
 			var hasState = isOnline && diDevice.Device != null;
 			var instance = diDevice == null ? "" : " - " + diDevice.InstanceId;
 			var text = "Direct Input" + instance + (isOnline ? hasState ? "" : " - On-line" : " - Off-line");
-			ControlsHelper.SetText(DirectInputTabPage, text);
+			PadItemPanel.DInputTabPage.Header = text;
 		}
 
 		#endregion
@@ -833,177 +615,6 @@ namespace x360ce.App.Controls
 		{
 			// -1 to 1 int16.MinValue int16.MaxValue.
 			return (byte)Math.Round(v * byte.MaxValue);
-		}
-
-		string cRecord = "[Record]";
-		string cEmpty = "<empty>";
-		string cPOVs = "POVs";
-
-		// Function is recreated as soon as new DirectInput Device is available.
-		public void ResetDiMenuStrip(UserDevice ud)
-		{
-			DiMenuStrip.Items.Clear();
-			ToolStripMenuItem mi;
-			mi = new ToolStripMenuItem(cEmpty);
-			mi.ForeColor = SystemColors.ControlDarkDark;
-			mi.Click += new EventHandler(DiMenuStrip_Click);
-			DiMenuStrip.Items.Add(mi);
-			// Return if direct input device is not available.
-			if (ud == null)
-				return;
-			// Add [Record] button.
-			mi = new ToolStripMenuItem(cRecord);
-			mi.Image = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
-			mi.Click += new EventHandler(DiMenuStrip_Click);
-			DiMenuStrip.Items.Add(mi);
-			// Do not add menu items for keyboard, because user interface will become too sluggish.
-			// Recording feature is preferred way to map keyboard button.
-			if (!ud.IsKeyboard)
-			{
-				// Add Buttons.
-				mi = new ToolStripMenuItem("Buttons");
-				DiMenuStrip.Items.Add(mi);
-				CreateItems(mi, "Inverted", "IButton {0}", "-{0}", ud.CapButtonCount);
-				CreateItems(mi, "Button {0}", "{0}", ud.CapButtonCount);
-				if (ud.DiAxeMask > 0)
-				{
-					// Add Axes.
-					mi = new ToolStripMenuItem("Axes");
-					DiMenuStrip.Items.Add(mi);
-					CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Half", "HAxis {0}", "x{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-					CreateItems(mi, "Axis {0}", "a{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-				}
-				if (ud.DiSliderMask > 0)
-				{
-					// Add Sliders.            
-					mi = new ToolStripMenuItem("Sliders");
-					DiMenuStrip.Items.Add(mi);
-					// 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
-					CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-					CreateItems(mi, "Slider {0}", "s{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-				}
-				// Add D-Pads.
-				if (ud.CapPovCount > 0)
-				{
-					mi = new ToolStripMenuItem(cPOVs);
-					DiMenuStrip.Items.Add(mi);
-					// Add D-Pad Top, Right, Bottom, Left button.
-					var dPadNames = Enum.GetNames(typeof(DPadEnum));
-					for (int p = 0; p < ud.CapPovCount; p++)
-					{
-						var dPadItem = CreateItem("POV {0}", "{1}{0}", p + 1, SettingName.SType.POV);
-						mi.DropDownItems.Add(dPadItem);
-						for (int d = 0; d < dPadNames.Length; d++)
-						{
-							var dPadButtonIndex = p * 4 + d + 1;
-							var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
-							dPadItem.DropDownItems.Add(dPadButtonItem);
-						}
-					}
-				}
-			}
-		}
-
-		void CreateItems(ToolStripMenuItem parent, string subMenu, string text, string tag, int count, int? mask = null)
-		{
-			var smi = new ToolStripMenuItem(subMenu);
-			parent.DropDownItems.Add(smi);
-			CreateItems(smi, text, tag, count, mask);
-		}
-
-		/// <summary>Create menu item.</summary>
-		/// <param name="mask">Mask contains information if item is present.</param>
-		void CreateItems(ToolStripMenuItem parent, string text, string tag, int count, int? mask = null)
-		{
-			var items = new List<ToolStripMenuItem>();
-			for (int i = 0; i < count; i++)
-			{
-				// If mask specified and item is not present then...
-				if (mask.HasValue && i < 32 && (((int)Math.Pow(2, i) & mask) == 0))
-					continue;
-				var item = CreateItem(text, tag, i + 1);
-				items.Add(item);
-			}
-			parent.DropDownItems.AddRange(items.ToArray());
-		}
-
-		ToolStripMenuItem CreateItem(string text, string tag, params object[] args)
-		{
-			var item = new ToolStripMenuItem(string.Format(text, args));
-			item.Tag = string.Format(tag, args);
-			item.DisplayStyle = ToolStripItemDisplayStyle.Text;
-			item.Padding = new Padding(0);
-			item.Margin = new Padding(0);
-			item.Click += new EventHandler(DiMenuStrip_Click);
-			return item;
-		}
-
-
-		void DiMenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
-		{
-			EnableDPadMenu(false);
-		}
-
-		void DiMenuStrip_Click(object sender, EventArgs e)
-		{
-			ToolStripMenuItem item = (ToolStripMenuItem)sender;
-			Regex rx = new Regex("^(DPad [0-9]+)$");
-			// If this DPad parent menu.
-			if (rx.IsMatch(item.Text))
-			{
-				if (CurrentCbx == DPadComboBox)
-				{
-					SettingsManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
-					CurrentCbx = null;
-					//DiMenuStrip.Close();
-				}
-			}
-			else
-			{
-				if (item.Text == cRecord)
-				{
-					var map = SettingsManager.Current.SettingsMap.First(x => x.Control == CurrentCbx);
-					StartRecording(map);
-				}
-				else if (item.Text == cEmpty)
-				{
-					SettingsManager.Current.SetComboBoxValue(CurrentCbx, string.Empty);
-					CurrentCbx = null;
-				}
-				else
-				{
-					SettingsManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
-					CurrentCbx = null;
-				}
-			}
-		}
-
-		public void EnableDPadMenu(bool enable)
-		{
-			foreach (ToolStripMenuItem item in DiMenuStrip.Items)
-			{
-				if (!item.Text.StartsWith(cRecord)
-					&& !item.Text.StartsWith(cEmpty)
-					&& !item.Text.StartsWith(cPOVs))
-				{
-					item.Visible = !enable;
-				}
-				if (item.Text.StartsWith(cPOVs))
-				{
-					if (item.HasDropDownItems)
-					{
-						foreach (ToolStripMenuItem l1 in item.DropDownItems)
-						{
-							foreach (ToolStripMenuItem l2 in l1.DropDownItems)
-								l2.Visible = !enable;
-						}
-					}
-				}
-			}
 		}
 
 		void ClearPresetButton_Click(object sender, EventArgs e)
@@ -1067,20 +678,10 @@ namespace x360ce.App.Controls
 			if (disposing && (components != null))
 			{
 				_Imager.Dispose();
-				UserMacrosPanel.Dispose();
+				MacrosPanel.Dispose();
 				components.Dispose();
 			}
 			base.Dispose(disposing);
-		}
-
-		private void PassThroughCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			UpdatePassThroughRelatedControls();
-		}
-
-		private void ForcesPassThroughCheckBox_CheckedChanged(object sender, EventArgs e)
-		{
-			UpdatePassThroughRelatedControls();
 		}
 
 		private void GameControllersButton_Click(object sender, EventArgs e)
@@ -1252,12 +853,14 @@ namespace x360ce.App.Controls
 					? new PadSetting()
 					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 				DPadPanel.SetBinding(_CurrentPadSetting);
-				TriggersWpfPanel.LeftTriggerPanel.SetBinding(_CurrentPadSetting);
-				TriggersWpfPanel.RightTriggerPanel.SetBinding(_CurrentPadSetting);
-				LeftThumbWpfPanel.LeftThumbXPanel.SetBinding(_CurrentPadSetting);
-				LeftThumbWpfPanel.LeftThumbYPanel.SetBinding(_CurrentPadSetting);
-				RightThumbWpfPanel.RightThumbXPanel.SetBinding(_CurrentPadSetting);
-				RightThumbWpfPanel.RightThumbYPanel.SetBinding(_CurrentPadSetting);
+				GeneralPanel.SetBinding(MappedTo, _CurrentPadSetting);
+				AdvancedPanel.SetBinding(_CurrentPadSetting);
+				LeftTriggerPanel.SetBinding(_CurrentPadSetting);
+				RightTriggerPanel.SetBinding(_CurrentPadSetting);
+				LeftThumbXPanel.SetBinding(_CurrentPadSetting);
+				LeftThumbYPanel.SetBinding(_CurrentPadSetting);
+				RightThumbXPanel.SetBinding(_CurrentPadSetting);
+				RightThumbYPanel.SetBinding(_CurrentPadSetting);
 				ForceFeedbackPanel.SetBinding(MappedTo, _CurrentPadSetting);
 				ForceFeedbackPanel.LeftForceFeedbackMotorPanel.SetBinding(_CurrentPadSetting, 0);
 				ForceFeedbackPanel.RightForceFeedbackMotorPanel.SetBinding(_CurrentPadSetting, 1);
@@ -1338,71 +941,7 @@ namespace x360ce.App.Controls
 		}
 
 		public void ShowAdvancedTab(bool show)
-		{
-			ShowTab(show, AdvancedTabPage);
-		}
-
-		void ShowTab(bool show, TabPage page)
-		{
-			var tc = PadTabControl;
-			// If must hide then...
-			if (!show && tc.TabPages.Contains(page))
-			{
-				// Hide and return.
-				tc.TabPages.Remove(page);
-				return;
-			}
-			// If must show then..
-			if (show && !tc.TabPages.Contains(page))
-			{
-				// Create list of tabs to maintain same order when hiding and showing tabs.
-				var tabs = new List<TabPage>() { AdvancedTabPage };
-				// Get index of always displayed tab.
-				var index = tc.TabPages.IndexOf(GeneralTabPage);
-				// Get tabs in front of tab which must be inserted.
-				var tabsBefore = tabs.Where(x => tabs.IndexOf(x) < tabs.IndexOf(page));
-				// Count visible tabs.
-				var countBefore = tabsBefore.Count(x => tc.TabPages.Contains(x));
-				tc.TabPages.Insert(index + countBefore + 1, page);
-			}
-		}
-
-		private void MapNameComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var item = (Layout)MapNameComboBox.SelectedItem;
-			ButtonALabel.Text = item.ButtonA;
-			ButtonBLabel.Text = item.ButtonB;
-			ButtonBackLabel.Text = item.ButtonBack;
-			ButtonGuideLabel.Text = item.ButtonGuide;
-			ButtonStartLabel.Text = item.ButtonStart;
-			ButtonXLabel.Text = item.ButtonX;
-			ButtonYLabel.Text = item.ButtonY;
-			DPadLabel.Text = item.DPad;
-			DPadDownLabel.Text = item.DPadDown;
-			DPadLeftLabel.Text = item.DPadLeft;
-			DPadRightLabel.Text = item.DPadRight;
-			DPadUpLabel.Text = item.DPadUp;
-			LeftShoulderLabel.Text = item.LeftShoulder;
-			LeftThumbAxisXLabel.Text = item.LeftThumbAxisX;
-			LeftThumbAxisYLabel.Text = item.LeftThumbAxisY;
-			LeftThumbButtonLabel.Text = item.LeftThumbButton;
-			LeftThumbDownLabel.Text = item.LeftThumbDown;
-			LeftThumbLeftLabel.Text = item.LeftThumbLeft;
-			LeftThumbRightLabel.Text = item.LeftThumbRight;
-			LeftThumbUpLabel.Text = item.LeftThumbUp;
-			LeftTriggerLabel.Text = item.LeftTrigger;
-			RightShoulderLabel.Text = item.RightShoulder;
-			RightThumbAxisXLabel.Text = item.RightThumbAxisX;
-			RightThumbAxisYLabel.Text = item.RightThumbAxisY;
-			RightThumbButtonLabel.Text = item.RightThumbButton;
-			RightThumbDownLabel.Text = item.RightThumbDown;
-			RightThumbLeftLabel.Text = item.RightThumbLeft;
-			RightThumbRightLabel.Text = item.RightThumbRight;
-			RightThumbUpLabel.Text = item.RightThumbUp;
-			RightTriggerLabel.Text = item.RightTrigger;
-		}
-
-
+			=> PadItemPanel.ShowTab(show, PadItemPanel.AdvancedTabPage);
 
 		private void CalibrateButton_Click(object sender, EventArgs e)
 		{
@@ -1447,7 +986,7 @@ namespace x360ce.App.Controls
 		private void RemapAllButton_Click(object sender, EventArgs e)
 		{
 			// If stop mode then...
-			if (RemapAllButton.Text != RemapName)
+			if (GeneralPanel.RemapAllButton.Content as string != RemapName)
 			{
 				StopRecording();
 				return;
@@ -1480,11 +1019,6 @@ namespace x360ce.App.Controls
 				.OrderBy(x => codes.IndexOf(x.Code))
 				.ToList();
 			StartRecording();
-		}
-
-		private void AxisToButtonYDeadZonePanel_Load(object sender, EventArgs e)
-		{
-
 		}
 
 	}

@@ -1,0 +1,1789 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SqlServer.SmoExtended</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegisteredServer">
+            <summary>
+            Instance class encapsulating : ServerType[@ServerType='8c91a03d-f9b4-46c0-a305-b5dcc79ff907']/RegisteredServer[@Path='']
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegSvrSmoObject">
+            <summary>
+             Contains common functionality for all the WMI classes
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegSvrSmoObject.OnPropertyMissing(System.String,System.Boolean)">
+            <summary>
+            Called when one of the properties is missing from the property collection
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegSvrSmoObject.Initialize">
+            <summary>
+            Initializes the object, by reading its properties from the enumerator.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegSvrSmoObject.ParentColl">
+            <summary>
+            Pointer to the collection that holds the object, if any
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegSvrSmoObject.CollectionPath">
+            <summary>
+            The path to this object. 
+            Collection classes override this to add there path. Leaf class can use this implementation
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegSvrSmoObject.Urn">
+            <summary>
+            Derived class needs to create the URN
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegSvrSmoObject.UrnSkeleton">
+            <summary>
+            Derived classes need to create the URN
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegSvrSmoObject.Properties">
+            <summary>
+            The property bag of the object
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegisteredServer.GetSmoObject(Microsoft.SqlServer.Management.Sdk.Sfc.Urn)">
+            <summary>
+            Returns the object with the corresponding Urn
+            </summary>
+            <param name="urn"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegisteredServer.SecurePassword">
+            <summary>
+             The password that is used with Login to connect to the server.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             PropertyNotSetException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegisteredServer.LoginSecure">
+            <summary>
+             If set to true, Sql Server Authentication is used.
+             If not set, Login and Password are ignored.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegisteredServers.ServerGroup">
+            <summary>
+            Instance class encapsulating : ServerType[@ServerType='8c91a03d-f9b4-46c0-a305-b5dcc79ff907']/ServerGroup[@Path='']
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegisteredServers.ServerGroupBase.GetSmoObject(Microsoft.SqlServer.Management.Sdk.Sfc.Urn)">
+            <summary>
+            Returns the object with the corresponding Urn
+            </summary>
+            <param name="urn"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegisteredServers.ServerGroupBase.CollectionPath">
+            <summary>
+            The path to this object
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.#ctor">
+            <summary>
+            base class constructor
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.blockSize">
+            <summary>
+            Specifies block size option for backup/restore
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.bufferCount">
+            <summary>
+            Specifies buffer count option for backup/restore
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.maxTransferSize">
+            <summary>
+            Specifies max transfer size option for backup/restore
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.m_retryFailedQueries">
+            <summary>
+            Whether we retry queries that fail with an exception that closes the connection
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.SetServer(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Called to set a server object 
+            for the duration of an backup/restore operation.
+            </summary>
+            <param name="server"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.ResetServer">
+            <summary>
+            Called to reset server object after
+            backup/restore operation.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.CheckForHADRMaintPlan(Microsoft.SqlServer.Management.Smo.Server,System.Text.StringBuilder)">
+            <summary>
+            If invoked from Maintenance plan Check if HADR is enabled
+            </summary>
+            <param name="targetServer"></param>
+            <param name="sb"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.GetMaintPlanTSQLForRightReplica(System.Text.StringBuilder)">
+            <summary>
+            Add a condition in the Backup/Restore TSQL to check if it is executed on the preferred backup replica
+            </summary>
+            <param name="SqlStatement"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.Abort">
+            <summary>
+            Aborts the current action, if any
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.Wait">
+            <summary>
+            Waits for the current asynchronous action to complete.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.m_checkForHADRMaintPlan">
+            <summary>
+            Check if backup/restore scripting is invoked from Maintenance plan
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.IsBackupUrlDeviceSupported(Microsoft.SqlServer.Management.Common.ServerVersion)">
+            <summary>
+            Helper to check if BackupToUrl is supported on the connected server version
+            </summary>
+            <param name="currentServerVersion"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.IsBackupFileDeviceSupported(Microsoft.SqlServer.Management.Common.DatabaseEngineEdition)">
+            <summary>
+            Helper to check if BackupToFile is supported on the connected server edition.
+            SQL Managed Instances do not support backup to file.
+            </summary>
+            <param name="serverEdition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.AddCredential(Microsoft.SqlServer.Management.Common.ServerVersion,System.Text.StringBuilder,System.Boolean,System.Boolean)">
+            <summary>
+            Add Credential Info to BACKUP DDL, Only supported for versions greater than SQL 11 PCU1 
+            </summary>
+            <param name="targetVersion"></param>
+            <param name="sb"></param>
+            <param name="withCommaStart"></param>
+            <param name="withCommaEnd"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.IsBackupDeviceUrl(System.String)">
+            <summary>
+            Check whether a string is an URL
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.AsyncStatus">
+            <summary>
+            A status of most recent asynchronous operation,
+            including possible errors.
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.PercentComplete">
+            <summary>
+            PercentComplete event
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.NextMedia">
+            <summary>
+            NextMedia event
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.Complete">
+            <summary>
+            Complete event
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.Information">
+            <summary>
+            Information event
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.Devices">
+            <summary>
+            A list of devices used as a target for backup
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.CredentialName">
+            <summary>
+            Gets or sets the credential name that is used by Backup to Url
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.BackupUrlDeviceSupportedServerVersion">
+            <summary>
+            SQL 11 PCU1 CU2 version is 11.0.3339.0
+            Reference: http://hotfix.partners.extranet.microsoft.com/search.aspx?search=2790947
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupRestoreBase.IgnoreReplicaType">
+            <summary>
+            IgnoreReplicaType property get or sets flag to ignore replica when scripting for HADR Database
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Backup.SqlBackup(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Runs backup operation synchronously, i.e. the function call
+            blocks untill the backup is done.
+            </summary>
+            <param name="srv">Server to run backup on.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Backup.SqlBackupAsync(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Runs backup operation asynchronously, i.e. the call returns
+            immediately, and the backup operation runs in the background
+            </summary>
+            <param name="srv">Server to run backup on</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Backup.Script(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Generates script for the current backup operation
+            </summary>
+            <param name="targetServer"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.Backup.copyOnly">
+            <summary>
+            The CopyOnly property specifies backup CopyOnly option
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Backup.Mirrors">
+            <summary>
+            Mirrors
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Backup.CompressionOption">
+            <summary>
+            The CompressionOption property specifies backup compression option
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Backup.EncryptionOption">
+            <summary>
+            The EncryptionOption property specifies backup encryption option.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.BackupCompressionOptions">
+            <summary>
+            The BackupCompressionOptions enumeration contains values that are
+            used to specify a backup compression option
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions">
+            <summary>
+            The BackupEncryptionOptions represents encryption options for backup operations.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions"/> class.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions.#ctor(Microsoft.SqlServer.Management.Smo.BackupEncryptionAlgorithm,Microsoft.SqlServer.Management.Smo.BackupEncryptorType,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions"/> class.
+            </summary>
+            <param name="algorithm">The encryption algorithm.</param>
+            <param name="encryptorType">The encryptor type.</param>
+            <param name="encryptorName">The encryptor name (server certificate name or server asymmetric key name).</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions.Script">
+            <summary>
+            Script the T-SQL encryption option.
+            </summary>
+            <returns>The script fragment of encryption option.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions.GetAlgorithmString(Microsoft.SqlServer.Management.Smo.BackupEncryptionAlgorithm)">
+            <summary>
+            Gets the string value of the encryption algorithm.
+            </summary>
+            <param name="algorithm">algorithm</param>
+            <returns>The string value.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions.GetEncryptorTypeString(Microsoft.SqlServer.Management.Smo.BackupEncryptorType)">
+            <summary>
+            Gets the string value of the encryptor type.
+            </summary>
+            <param name="encryptorType">encryptor type</param>
+            <returns>The string value.</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions.NoEncryption">
+            <summary>
+            Gets or sets whether encryption is disabled.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions.Algorithm">
+            <summary>
+            Gets or sets the encryption algorithm.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions.EncryptorType">
+            <summary>
+            Gets or sets the encryptor type.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupEncryptionOptions.EncryptorName">
+            <summary>
+            Gets or sets the encryptor name (server certificate name or server asymmetric key name).
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.NextRestoreEventHandler">
+            <summary>
+            the prototype of the callback method for next restore
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.NextRestoreEventArgs">
+            <summary>
+            Next Restore Event arguments
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.NextRestoreEventArgs.#ctor(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.NextRestoreEventArgs"/> class.
+            </summary>
+            <param name="backupSetName">Name of the backup set.</param>
+            <param name="backupSetDescription">The backup set description.</param>
+            <param name="deviceName">Name of the device.</param>
+            <param name="count">The count.</param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.NextRestoreEventArgs.Continue">
+            <summary>
+            Gets or sets a value indicating whether to continue next Restore Operation.
+            </summary>
+            <value><c>true</c> if continue; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.NextRestoreEventArgs.BackupSetName">
+            <summary>
+            Gets or sets the name of the backup set.
+            </summary>
+            <value>The name of the backup set.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.NextRestoreEventArgs.BackupSetDescription">
+            <summary>
+            Gets or sets the backup set description.
+            </summary>
+            <value>The backup set description.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.NextRestoreEventArgs.DevicesName">
+            <summary>
+            Gets or sets the name of the backup media.
+            </summary>
+            <value>The name of the backup media.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.NextRestoreEventArgs.Count">
+            <summary>
+            Gets or sets the count.
+            </summary>
+            <value>The count.</value>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.PercentCompleteEventHandler">
+            <summary>
+            the prototype of the callback method for percent complete 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.PercentCompleteEventArgs">
+            <summary>
+            Arguments for the event handler of the percent complete
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.PercentCompleteEventArgs.Percent">
+            <summary>
+            Percent
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.PercentCompleteEventArgs.Message">
+            <summary>
+            Gets the message.
+            </summary>
+            <value>The message.</value>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.AsyncStatus">
+            <summary>
+            A helper class that describes status and last exception
+            from an asynchronous operation.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.AsyncStatus.ExecutionStatus">
+            <summary>
+            ExecutionStatus
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.AsyncStatus.LastException">
+            <summary>
+            LastException
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.BackupDeviceItem">
+            <summary>
+            Represents a device that will be used to backup to or restore from
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupDeviceItem.#ctor">
+            <summary>
+            Creates a BackupDeviceItem 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupDeviceItem.#ctor(System.String,Microsoft.SqlServer.Management.Smo.DeviceType)">
+            <summary>
+            Creates a BackupDeviceItem object
+            </summary>
+            <param name="name"></param>
+            <param name="deviceType"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupDeviceItem.#ctor(System.String,Microsoft.SqlServer.Management.Smo.DeviceType,System.String)">
+            <summary>
+            Creates a BackupDeviceItem object
+            </summary>
+            <param name="name"></param>
+            <param name="deviceType"></param>
+            <param name="credentialName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupDeviceItem.DeviceHeader(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Returns the Device header.
+            </summary>
+            <param name="server">The server.</param>
+            <returns>header</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupDeviceItem.DeviceLabel(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Returns the Device label.
+            </summary>
+            <param name="server">The server.</param>
+            <returns>label</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupDeviceItem.CompareTo(System.Object)">
+            <summary>
+            IComparable implementation
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupDeviceItem.Name">
+            <summary>
+            The name of the backup object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupDeviceItem.DeviceType">
+            <summary>
+            Type of the backup object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.BackupDeviceItem.CredentialName">
+            <summary>
+            Credential of the backup object
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.SuspectPage">
+            <summary>
+            Database page used for Page Restore.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.SuspectPage.#ctor(System.Int32,System.Int64)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.SuspectPage"/> class.
+            </summary>
+            <param name="fileID">The file ID.</param>
+            <param name="pageID">The page ID.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.SuspectPage.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this instance.
+            </returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.SuspectPage.Equals(System.Object)">
+            <summary>
+            Determines whether the specified <see cref="T:System.Object"/> is equal to this instance.
+            </summary>
+            <param name="obj">The <see cref="T:System.Object"/> to compare with this instance.</param>
+            <returns>
+            	<c>true</c> if the specified <see cref="T:System.Object"/> is equal to this instance; otherwise, <c>false</c>.
+            </returns>
+            <exception cref="T:System.NullReferenceException">
+            The <paramref name="obj"/> parameter is null.
+            </exception>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.SuspectPage.GetHashCode">
+            <summary>
+            Returns a hash code for this instance.
+            </summary>
+            <returns>
+            A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+            </returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.SuspectPage.Validate">
+            <summary>
+            Determines whether suspect page is valid  .
+            </summary>
+            <returns>
+            <c>true</c> if valid; otherwise, <c>false</c>.
+            </returns>
+            <exception cref="T:Microsoft.SqlServer.Management.Smo.SmoException"></exception>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.SuspectPage.CompareTo(Microsoft.SqlServer.Management.Smo.SuspectPage)">
+            <summary>
+            Compares to other SuspectPage
+            </summary>
+            <param name="other">The other SuspectPage.</param>
+            <returns>
+            Less than zero - This object is less than the object specified by the CompareTo method.
+            Zero - This object is equal to the object specified by the CompareTo method. 
+            Greater than zero - This object is greater than the object specified by the CompareTo method. 
+            </returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.SuspectPage.FileID">
+            <summary>
+            Gets or sets the file ID.
+            </summary>
+            <value>The file ID.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.SuspectPage.PageID">
+            <summary>
+            Gets or sets the page ID.
+            </summary>
+            <value>The page ID.</value>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.BackupDeviceList">
+            <summary>
+            Strongly typed list of BackupDeviceItem objects
+            </summary> 
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.BackupDeviceList.AddDevice(System.String,Microsoft.SqlServer.Management.Smo.DeviceType)">
+            <summary>
+            Adds a new BackupDeviceItem to the collection
+            </summary>
+            <param name="name"></param>
+            <param name="deviceType"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.CreateRestorePlanEventArgs">
+            <summary>
+            Create restore plan status event args
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.CreateRestorePlanEventArgs.Status">
+            <summary>
+            status
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.CreateRestorePlanEventArgs.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.CreateRestorePlanEventArgs"/> class.
+            </summary>
+            <param name="status">status</param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner">
+            <summary>
+            Database Restore Planner.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.#ctor(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner"/> class.
+            </summary>
+            <param name="server">The server.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.#ctor(Microsoft.SqlServer.Management.Smo.Server,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner"/> class.
+            </summary>
+            <param name="server">The server.</param>
+            <param name="databaseName">Name of the database.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.#ctor(Microsoft.SqlServer.Management.Smo.Server,System.String,System.DateTime,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner"/> class.
+            For point in time recovery.
+            </summary>
+            <param name="server">The server.</param>
+            <param name="databaseName">Name of the database.</param>
+            <param name="pointInTime">The point in time to restore.</param>
+            <param name="tailLogBackupFile">The tail log backup device item.</param>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.IncludeSnapshotBackups">
+            <summary>
+            Whether to include snapshot backups in the enumeration.
+            Must be set before retrieving BackupSets property.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.CreateRestorePlan">
+            <summary>
+            Creates the restore plan.
+            </summary>
+            <returns>Restore plan</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.CreateRestorePlan(Microsoft.SqlServer.Management.Smo.RestoreOptions)">
+            <summary>
+            Creates the restore plan.
+            </summary>
+            <param name="ro">The restore options.</param>
+            <returns>Restore Plan</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.createShilohPlan(Microsoft.SqlServer.Management.Smo.BackupSetCollection)">
+            <summary>
+            Creates the plan for shiloh server .
+            </summary>
+            <param name="backupsets">The backupsets.</param>
+            <returns>Backup sets to restore.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.SelectBackupSetsForPlan(Microsoft.SqlServer.Management.Smo.RestorePlan)">
+            <summary>
+            Creates the plan assuming the recovery path is forked.
+            </summary>
+            <param name="plan"></param>
+            <returns> Backup sets to restore</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.IsTailLogBackupPossible(System.String)">
+            <summary>
+            Determines whether it's possible to do a tail-log backup before restoring the database.
+            </summary>
+            <param name="databaseName">The database.</param>
+            <returns>
+            	<c>true</c> if it's possible to do a tail-log backup before restoring the database; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.IsTailLogBackupWithNoRecoveryPossible(System.String)">
+            <summary>
+            Determines whether it's possible to do a tail-log backup with NORECOVERY before restoring the database.
+            </summary>
+            <param name="databaseName">The database.</param>
+            <returns>
+            	<c>true</c> if it's possible to do a tail-log backup with NORECOVERY before restoring the database; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.LogStartTime(Microsoft.SqlServer.Management.Smo.BackupSet)">
+            <summary>
+            Start time of the coverage of the Log backup.
+            </summary>
+            <param name="bkset">The bkset.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.TailLogStartTime">
+            <summary>
+            Gives the Tail-log start time coverage.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.TakeTailLogBackup(Microsoft.SqlServer.Management.Smo.RestorePlan)">
+            <summary>
+            Takes the tail log backup.
+            </summary>
+            <param name="plan">The plan.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.TakeTailLogRestore(Microsoft.SqlServer.Management.Smo.RestorePlan)">
+            <summary>
+            Takes the tail log restore.
+            </summary>
+            <param name="plan">The plan.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.IsBackupDeviceUrl">
+            <summary>
+            Check whether the backup media is in URL
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.GetBackupSetFromMSDB">
+            <summary>
+            Gets the backup set from MSDB.
+            </summary>
+            <returns>BackupSetCollection</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.GetBackupDeviceReadErrors">
+            <summary>
+            Gets the error that occurred while reading the bachup devices
+            </summary>
+            <returns>An Exception including the error message</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.GetBackupSetFromDevices">
+            <summary>
+            Gets the backup set from devices.
+            </summary>
+            <returns>BackupSetCollection</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.GetMediaSetGuid(Microsoft.SqlServer.Management.Smo.BackupDeviceItem)">
+            <summary>
+            Gets the media set GUID.
+            </summary>
+            <param name="bkDeviceItem">The backup device item.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.RefreshBackupSets">
+            <summary>
+            Refreshes the backup sets.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.Server">
+            <summary>
+            Gets or sets the server.
+            </summary>
+            <value>The server.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.DatabaseName">
+            <summary>
+            Gets or sets the name of the database.
+            </summary>
+            <value>The name of the database.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.RestoreToLastBackup">
+            <summary>
+            Gets or sets a value indicating whether [restore to last backup].
+            </summary>
+            <value>
+            	<c>true</c> if [restore to last backup]; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.RestoreToPointInTime">
+            <summary>
+            Gets or sets the restore to point in time.
+            </summary>
+            <value>The restore to point in time.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.ReadHeaderFromMedia">
+            <summary>
+            Gets or sets a value indicating whether [read header from devices].
+            </summary>
+            <value>
+            	<c>true</c> if [read header from devices]; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.BackupMediaList">
+            <summary>
+            Gets the backup device item list.
+            </summary>
+            <value>The backup device item list.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.BackupTailLog">
+            <summary>
+            Gets or sets a value indicating whether to [backup tail log].
+            </summary>
+            <value><c>true</c> if [backup tail log]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.TailLogWithNoRecovery">
+            <summary>
+            Gets or sets a value indicating whether to backup tail log with NoRecovery.
+            </summary>
+            <value><c>true</c> if NoRecovery is set; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.TailLogBackupFile">
+            <summary>
+            Gets or sets the tail log backup file.
+            </summary>
+            <value>New tail log backup file.</value>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.CreateRestorePlanUpdates">
+            <summary>
+            Create restore plan status update event handler
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.BackupSets">
+            <summary>
+            Gets the backup sets.
+            </summary>
+            <returns>Backup sets collection</returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.DatabaseRestorePlanner.CreateRestorePlanEventHandler">
+            <summary>
+            Create restore plan status update delegate
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.TransferBase">
+            <summary>
+            Base class for transfer
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.TransferBase.SetTargetServerInfo">
+            <summary>
+            Sets the target server version based on the Destination server information
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.TransferBase.ScriptTransfer">
+            <summary>
+            Returns a StringCollection object with the script for the objects. This method
+            throws an error if ScriptData is true
+            </summary>
+            <exception cref="T:Microsoft.SqlServer.Management.Smo.FailedOperationException">If Options.ScriptData is true</exception>
+            <returns>StringCollection object with the script for objects</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.TransferBase.EnumScriptTransfer">
+            <summary>
+            Returns an IEnumerable&lt;string&gt; object with the script for the objects.
+            </summary>
+            <returns>an IEnumerable&lt;string&gt; object with the script for the objects</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.TransferBase.EnumObjects">
+            <summary>
+            Gets URNs to be transferred
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.TransferBase.EnumObjects(System.Boolean)">
+            <summary>
+            Gets URNs to be transferred
+            </summary>
+            <param name="ordered"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.TransferBase.AddWithoutDependencyDiscovery(Microsoft.SqlServer.Management.Smo.DependencyCollection,Microsoft.SqlServer.Management.Smo.DependencyCollectionNode)">
+             <summary>
+             Adds objects to the scripting list after the dependency discovery.
+             </summary>
+             <param name="depList"></param>
+             <param name="node"></param>
+            
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.TransferBase.SetDefaultInitFields(System.Collections.Generic.Dictionary{System.Type,System.Collections.Specialized.StringCollection},System.Type,System.String[])">
+            <summary>
+            Used by GetObjectList() to update Default Init Fields for SMO types.
+            Stores original Default Init Fields so that they can be restored later
+            </summary>
+            <param name="originalDefaultFields">Dictionary that contains {Type,DefaultFields} pairs</param>
+            <param name="type">SMO Type</param>
+            <param name="fields">Array of Default Init Fields for the type</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.TransferBase.RestoreDefaultInitFields(System.Collections.Generic.Dictionary{System.Type,System.Collections.Specialized.StringCollection})">
+            <summary>
+            Used at the end of GetObjectList() to restore any Default Init Fields for SMO types
+            that may have been changed by the funtion
+            </summary>
+            <param name="originalDefaultFields">Dictionary that contains {Type,DefaultFields} pairs</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.TransferBase.CanScriptDownlevel(Microsoft.SqlServer.Management.Sdk.Sfc.Urn,Microsoft.SqlServer.Management.Smo.SqlServerVersionInternal)">
+            <summary>
+            Returns true if this object can be scripted on downlevel versions
+            Currently it's Yukon objects that may or may not be creatable on Shiloh
+            databases
+            (e.g. a sproc that receives an XML parameter will fail the test).
+            </summary>
+            <param name="urn"></param>
+            <param name="targetVersion"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.TransferBase.CopyExternalTables">
+            <summary>
+            Sets or gets a value indicating whether external tables will be scripted.
+            By default we don't script them in Transfer because we are unable to also script
+            the correct credential secret to access the external data source.
+            The UI will set this to true for Generate Scripts wizard.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.TransferBase.DestinationLoginSecure">
+            <summary>
+             If set to true, Sql Server Authentication is used.
+             If not set, Login and Password are ignored.
+             </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.DependencyObject.ancestors">
+            <summary>
+            List of ancestor SqlSmoObjects
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.DependencyObject.children">
+            <summary>
+            List of children SqlSmoObjects
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.DependencyObjects.nodeDict">
+            <summary>
+            Map each node to the list of ancestor (parent) and dependent (child) nodes which must exist before self can
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.DependencyObjects.dependencyList">
+            <summary>
+            The dependency list in order
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DependencyObjects.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DependencyObjects.Add(Microsoft.SqlServer.Management.Smo.SqlSmoObject,Microsoft.SqlServer.Management.Smo.SqlSmoObject)">
+            <summary>
+            Add a new tuple relation of a parent node and its child node which depends on it.
+            A node can be added multiple times as a parent, child or single node in successive calls.
+            </summary>
+            <param name="node">The parent node of the dependent child node.</param>
+            <param name="dependent">The child node dependent on the existence of the parent node.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DependencyObjects.Add(Microsoft.SqlServer.Management.Smo.SqlSmoObject)">
+            <summary>
+            Add a new single node with no relation to either a parent or child node.
+            A node can be added multiple times as a parent, child or single node in successive calls.
+            </summary>
+            <param name="node">The single node.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DependencyObjects.Clear">
+            <summary>
+            Clear the internal state to be reused.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DependencyObjects.GetDependencies">
+            <summary>
+            Return the list of dependencies such that each node is guaranteed to depend on no more than the preceding nodes (if any).
+            The ancestor and child lists could be returned with each node but it currently isn't needed.
+            This can be called as many times as you want with node tuples being added as well. If you want to start over completely, call Clear().
+            </summary>
+            <returns>The List of SqlSmoObjects in dependency order.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.DependencyObjects.StartNode">
+            <summary>
+            Get a valid starting node for a dependency descent until there are no more valid candidates (signifying we are done).
+            </summary>
+            <returns>A valid SqlSmoObject, or null if no more valid root nodes are left to process.</returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.PageRestorePlanner">
+            <summary>
+            Page Restore Planner
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.#ctor(Microsoft.SqlServer.Management.Smo.Database)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.PageRestorePlanner"/> class.
+            </summary>
+            <param name="database">The database.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.#ctor(Microsoft.SqlServer.Management.Smo.Database,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.PageRestorePlanner"/> class.
+            </summary>
+            <param name="database">The database.</param>
+            <param name="tailLogBackupFileName">Name of the tail log backup file.</param>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.database">
+            <summary>
+            Gets or sets the database.
+            </summary>
+            <value>The database.</value>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.CreateRestorePlan">
+            <summary>
+            Creates the restore plan.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.AddTailLogBackupRestore(Microsoft.SqlServer.Management.Smo.RestorePlan,Microsoft.SqlServer.Management.Smo.BackupSetCollection)">
+            <summary>
+            Adds the tail log backup.
+            </summary>
+            <param name="plan">The plan.</param>
+            <param name="backupSets"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.CheckPageRestorePossible">
+            <summary>
+            Determines whether [is tail log backup possible].
+            </summary>
+            <returns>
+            	<c>true</c> if [is tail log backup possible]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.CreatePageRestorePlan(Microsoft.SqlServer.Management.Smo.BackupSetCollection)">
+            <summary>
+            Creates the page restore plan.
+            </summary>
+            <param name="backupsets">The backup set collection.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.CheckDuplicateSuspectPages">
+            <summary>
+            Checks for duplicate suspect pages.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.Server">
+            <summary>
+            Gets or sets the server.
+            </summary>
+            <value>The server.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.TailLogBackupFile">
+            <summary>
+            Gets or sets the tail log backup file.
+            </summary>
+            <value>The tail log backup file.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.PageRestorePlanner.SuspectPages">
+            <summary>
+            Gets or sets the suspect pages.
+            </summary>
+            <value>The suspect pages.</value>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.PrefetchEventArgs">
+            <summary>
+            PrefetchEventArgs is used as an argument for
+            BeforePrefetch and AfterPrefetch events
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.PrefetchEventArgs.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.PrefetchEventArgs.Type">
+            <summary>
+            SMO Type being pre-fetched
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.PrefetchEventArgs.FilterConditionText">
+            <summary>
+            XPATH filter condition (used as filter in XPATH at the level corresponding to
+            the current SMO Type)
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Prefetch">
+            <summary>
+            This class is responsible for batching prefetching of SMO objects for Database scripting.
+            
+            The class takes a list of URNs produced by Transfer.GetObjects and while enumerating through URNs looks ahead for 
+            URNs of the same type, groups them together in batches of manageable size and pre-fetches
+            all needed objects in memory. It's functionality currently overlaps with functionality of Transfer, however
+            it does prefetching in a more optimal way that ensures that memory consumption never goes
+            too high.
+            
+            At the moment it isn't used directly from Transfer class. The only user of this
+            class is Generate Script Wizard.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Prefetch.#ctor(Microsoft.SqlServer.Management.Smo.Database,Microsoft.SqlServer.Management.Smo.ScriptingOptions)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Prefetch.EnumerateObjectUrns(System.Collections.Generic.IList{Microsoft.SqlServer.Management.Sdk.Sfc.Urn})">
+            <summary>
+            Enumerates Urns while prefetching corresponsing portions of the database into memory
+            Most of the types gets prefetched entirely when they first appear in the list
+            Tables and Views are further sub-divided into batches, typically 5000 objects at a time
+            This function purges a previous batch before bringing into memory - this is done to cap 
+            the total memory consumption.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Prefetch.CreateBatchBlock(System.String)">
+            <summary>
+            Factory method for creating prefetch blocks
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Prefetch.Database">
+            <summary>
+            Current Database
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Prefetch.Server">
+            <summary>
+            Current Server
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Prefetch.ScriptingPreferences">
+            <summary>
+            Current Scripting Options
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Prefetch.UrnIterator.BuildBatchBlocks">
+            <summary>
+            This function builds batch blocks.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Prefetch.UrnIterator.TryGetBatchBlock(System.String,Microsoft.SqlServer.Management.Smo.BatchBlock@)">
+            <summary>
+            Search for the last batch block with matching type name.
+            Use that block only when the schema matches too.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.BatchBlock">
+            <summary>
+            Each batch block contains enough information to prefetch a batch of SMO objects.
+            Due to implementation all objects in the same batch must share the same type and schema -
+            only object name can vary.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.LimitedBatchBlock">
+            <summary>
+            This class represents a batch block used to load Tables, Views, Stored Procedures, etc
+            The total number of objects in one batch is limited to a predefined constant - see MaximumObjectsPerBatch below
+            Also due to implementation all objects must share the same schema.
+            LimitedBatchBlock instances accumulate names and use them later when querying SMO objects
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.UnlimitedBatchBlock">
+            <summary>
+            This class represents an unlimited batch which is used to load all existing objects of a given type.
+            It doesn't record individual names of objects and doesn't care about the total number of objects returned by a query
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegSvrCollectionBase">
+            <summary>
+            Base collection for children of ManagedComputer
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.#ctor(System.String,Microsoft.SqlServer.Management.Smo.BackupSet)">
+            <summary>
+            Creates a Restore object
+            </summary>
+            <param name="DestinationDatabaseName">Name of the database to be restored.</param>
+            <param name="backupSet">The backup set.</param>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.Restore.VerifyComplete">
+            <summary>
+            An event raised at the end of SqlVerify operation.
+            It indicates if verification succeeded or not.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerify(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Runs Verify operation in a synchronous way, i.e. 
+            the call blocks until verification is completed.
+            </summary>
+            <param name="srv">Server to run verification on.</param>
+            <returns>true if verification succeeded, false otherwise</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerify(Microsoft.SqlServer.Management.Smo.Server,System.Boolean)">
+            <summary>
+            Runs Verify operation in a synchronous way, i.e. 
+            the call blocks until verification is completed.
+            </summary>
+            <param name="srv">Server to run verification on.</param>
+            <param name="loadHistory">Load history.</param>
+            <returns>true if verification succeeded, false otherwise</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerify(Microsoft.SqlServer.Management.Smo.Server,System.String@)">
+            <summary>
+            Runs Verify operation in a synchronous way, i.e. 
+            the call blocks until verification is completed.
+            </summary>
+            <param name="srv">Server to run verification on.</param>
+            <param name="errorMessage">Returns a detailed error message if verification failed.</param>
+            <returns>true if verification succeeded, false otherwise</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerify(Microsoft.SqlServer.Management.Smo.Server,System.Boolean,System.String@)">
+            <summary>
+            Runs Verify operation in a synchronous way, i.e. 
+            the call blocks until verification is completed.
+            </summary>
+            <param name="srv">Server to run verification on.</param>
+            <param name="loadHistory">Load history.</param>
+            <param name="errorMessage">Returns a detailed error message if verification failed.</param>
+            <returns>true if verification succeeded, false otherwise</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerifyLatest(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Performs a verify on the last backup recorded in the backup history. FileNumber 
+            will be ignored, as the latest file number will be automatically determined.
+            </summary>
+            <param name="srv">Server to run the operation on.</param>
+            <returns>true if verification succeeded, false otherwise</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerifyLatest(Microsoft.SqlServer.Management.Smo.Server,System.String@)">
+            <summary>
+            Performs a verify on the last backup recorded in the backup history. FileNumber 
+            will be ignored, as the latest file number will be automatically determined.
+            </summary>
+            <param name="srv">Server to run the operation on.</param>
+            <param name="errorMessage">Returns a detailed error message if verification failed.</param>
+            <returns>true if verification succeeded, false otherwise</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerifyLatest(Microsoft.SqlServer.Management.Smo.Server,Microsoft.SqlServer.Management.Smo.SqlVerifyAction)">
+            <summary>
+            Performs a verify on the last backup recorded in the backup history. FileNumber 
+            will be ignored, as the latest file number will be automatically determined.
+            </summary>
+            <param name="srv">Server to run the operation on.</param>
+            <param name="sqlVerifyAction">specifies what is the action whose latest results</param>
+            <returns>true if verification succeeded, false otherwise</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerifyLatest(Microsoft.SqlServer.Management.Smo.Server,Microsoft.SqlServer.Management.Smo.SqlVerifyAction,System.String@)">
+            <summary>
+            Performs a verify on the last backup recorded in the backup history. FileNumber 
+            will be ignored, as the latest file number will be automatically determined.
+            </summary>
+            <param name="srv">Server to run the operation on.</param>
+            <param name="sqlVerifyAction">specifies what is the action whose latest results</param>
+            <param name="errorMessage">Returns a detailed error message if verification failed.</param>
+            <returns>true if verification succeeded, false otherwise</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerifyAsync(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Runs Verify operation in an asynchronous way, i.e.
+            the call returns immediately and verify operation
+            continues in background.
+            </summary>
+            <param name="srv">Server to run the operation on.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlVerifyAsync(Microsoft.SqlServer.Management.Smo.Server,System.Boolean)">
+            <summary>
+            Runs Verify operation in an asynchronous way, i.e.
+            the call returns immediately and verify operation
+            continues in background.
+            </summary>
+            <param name="srv">Server to run the operation on.</param>
+            <param name="loadHistory">Load history</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlRestore(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Runs Restore operation in a synchronous way, i.e. 
+            the call blocks until verification is completed.
+            </summary>
+            <param name="srv">Server to run restore on.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Restore.SqlRestoreAsync(Microsoft.SqlServer.Management.Smo.Server)">
+            <summary>
+            Runs Restore operation in an asynchronous way, i.e.
+            the call returns immediately and verify operation
+            continues in background.
+            </summary>
+            <param name="srv">Server to run the operation on.</param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Restore.BackupSet">
+            <summary>
+            The restore backup set
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Restore.DatabasePages">
+            <summary>
+            Gets the restore pages.
+            </summary>
+            <value>The restore pages.</value>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.SqlVerifyAction">
+            <summary>
+            Specifies what needs to be verified 
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.SqlVerifyAction.VerifyDatabase">
+            <summary>
+            Verify latest database backup
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.SqlVerifyAction.VerifyLog">
+            <summary>
+            Verify latest log backup
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.SqlVerifyAction.VerifyFile">
+            <summary>
+            Verify latest File or FileGroup backup
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.SqlVerifyAction.VerifyIncremental">
+            <summary>
+            Verify latest incremental backup
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.VerifyCompleteEventHandler">
+            <summary>
+            Event signature for VerifyComplete event
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.VerifyCompleteEventArgs">
+            <summary>
+            Event argument class for VerifyCompleteEventHandler
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.VerifyCompleteEventArgs.VerifySuccess">
+            <summary>
+            Indicates whether the verify operation was successful
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestoreOptions.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.RestoreOptions"/> class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.KeepReplication">
+            <summary>
+            KEEP_REPLICATION
+            KEEP_REPLICATION prevents replication settings
+            from being removed when a database backup or log
+            backup is restored on a warm standby server and
+            the database is recovered.
+            </summary>
+            <value><c>true</c> if [keep replication]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.KeepTemporalRetention">
+            <summary>
+            KEEP_TEMPORAL_RETENTION
+            KEEP_TEMPORAL_RETENTION prevents temporal history tables retention
+            policy setting from being removed when a database backup
+            is restored on a warm standby server and
+            the database is recovered.
+            </summary>
+            <value><c>true</c> if [keep temporal retention]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.SetRestrictedUser">
+            <summary>
+            RESTRICTED_USER
+            Restricts access for the newly restored database to
+            members of the db_owner, dbcreator, or sysadmin roles.
+            </summary>
+            <value><c>true</c> if [set restricted user]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.ContinueAfterError">
+            <summary>
+            CONTINUE_AFTER_ERROR
+            Specifies that the restore operation is to continue
+            after an error is encountered.
+            </summary>
+            <value><c>true</c> if [continue after error]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.ClearSuspectPageTableAfterRestore">
+            <summary>
+            Deletes entries in the suspect page table.
+            </summary>
+            <value>
+            	<c>true</c> if [clear suspect page table after restore]; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.RecoveryState">
+            <value><c>true</c> if [with no recovery]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.StandByFile">
+            <summary>
+            STANDBY
+            Undo uncommitted transactions, but save the undo
+            actions in a standby file that allows the recovery
+            effects to be reversed.
+            </summary>
+            <value>The recovery with stand by file.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.Blocksize">
+            <summary>
+            BLOCKSIZE
+            Specifies the physical block size, in bytes. The
+            supported sizes are 512, 1024, 2048, 4096, 8192,
+            16384, 32768, and 65536 (64 KB) bytes.
+            The default is 65536 for tape devices and 512 otherwise.
+            If you are restoring a backup from a CD-ROM, specify BLOCKSIZE=2048.
+            </summary>
+            <value>The blocksize.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.BufferCount">
+            <summary>
+            BUFFERCOUNT
+            Specifies the total number of I/O buffers to be used
+            for the restore operation. Large numbers of buffers
+            might cause "out of memory" errors because of inadequate
+            virtual address space in the Sqlservr.exe process.
+            </summary>
+            <value>The buffer count.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.MaxTransferSize">
+            <summary>
+            MAXTRANSFERSIZE
+            Specifies the largest unit of transfer in bytes to be
+            used between the backup media and SQL Server. The
+            possible values are multiples of 65536 bytes (64 KB)
+            ranging up to 4194304 bytes (4 MB).
+            </summary>
+            <value>The size of the max transfer.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.ReplaceDatabase">
+            <summary>
+            REPLACE
+            Specifies that SQL Server should create the specified
+            database and its related files even if another database
+            already exists with the same name. In such a case, the
+            existing database is deleted. When the REPLACE option
+            is not specified, a safety check occurs. This prevents
+            overwriting a different database by accident.
+            </summary>
+            <value><c>true</c> if [replace database]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestoreOptions.PercentCompleteNotification">
+            <summary>
+            Gets or sets the percentage interval for
+            PercentCompleteEventHandler event handler calls for
+            individual Restore Operations.
+            </summary>
+            <value>The percent complete notification.</value>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.DatabaseRecoveryState">
+            <summary>
+            Database recovery state.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.DatabaseRecoveryState.WithRecovery">
+            <summary>
+            RECOVERY
+            Leave the database ready to use by rolling back 
+            uncommitted transactions. Additional transaction 
+            logs cannot be restored.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.DatabaseRecoveryState.WithNoRecovery">
+            <summary>
+            NORECOVERY
+            Instructs the restore operation to not roll back any
+            uncommitted transactions for another transaction log
+            backup to be restored later. The database remains in
+            the restoring state after the restore operation.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.DatabaseRecoveryState.WithStandBy">
+            <summary>
+            STANDBY
+            Undo uncommitted transactions, but save the undo
+            actions in a standby file that allows the recovery
+            effects to be reversed.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RestorePlan">
+            <summary>
+            Database Restore Plan is a sequence of Database Restore
+            operations which will recover a Database to a particular
+            state in a point in time.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.#ctor(Microsoft.SqlServer.Management.Smo.Server,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.RestorePlan"/> class.
+            </summary>
+            <param name="server">The server.</param>
+            <param name="databaseName">Name of the database.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.#ctor(Microsoft.SqlServer.Management.Smo.Database)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.Smo.RestorePlan"/> class.
+            </summary>
+            <param name="database">The database.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.Execute">
+            <summary>
+            Verifies and executes the Restore Plan.
+            <exeception>
+            InvalidRestorePlanException is thrown when verification fails.
+            </exeception>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.RefreshOENode(System.String)">
+            <summary>
+            The method Raises a database event on Smo that causes Object
+            Explorer node corresponding to string databaseName to refresh
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.ExecuteAsync">
+            <summary>
+            Verifies and executes the Restore Plan async.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.Script">
+            <summary>
+            Verifies the Restore plan and scripts the operation.
+            </summary>
+            <returns>StringColection of the T-SQL script for the operation. </returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.ScriptPreRestore(System.Collections.Specialized.StringCollection)">
+            <summary>
+            Scripts the pre restore.
+            </summary>
+            <param name="script">The script.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.ScriptRestore(System.Collections.Specialized.StringCollection)">
+            <summary>
+            Scripts the restore.
+            </summary>
+            <param name="script">The script.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.ScriptPostRestore(System.Collections.Specialized.StringCollection,System.Nullable{Microsoft.SqlServer.Management.Smo.DatabaseUserAccess})">
+            <summary>
+            Scripts the post restore.
+            </summary>
+            <param name="script">The script.</param>
+            <param name="dbUserAccess">The db user access.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.CanDropExistingConnections(System.String)">
+            <summary>
+            Checks if the given database supports dropping connections. 
+            The ones that are in 9.0 (SQL 2005) compatibility mode, or in a status that is not normal 
+            don't support dropping connections. 
+            </summary>
+            <param name="dbName">The database.</param>
+            <returns>
+            <c>true</c> if this instance can drop existing connections of the specified database; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.OnExecuteNonQueryCompleted(System.Object,Microsoft.SqlServer.Management.Smo.ExecuteNonQueryCompletedEventArgs)">
+            <summary>
+            Called when [execute non query completed].
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="args">The <see cref="T:Microsoft.SqlServer.Management.Smo.ExecuteNonQueryCompletedEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.OnInfoMessage(System.Object,Microsoft.SqlServer.Management.Common.ServerMessageEventArgs)">
+            <summary>
+            Called when Sever sends messages .
+            </summary>
+            <param name="sender">The sender.</param>
+            <param name="e">The <see cref="T:Microsoft.SqlServer.Management.Common.ServerMessageEventArgs"/> instance containing the event data.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.Verify(System.Boolean)">
+            <summary>
+            Verifies the restore plan.
+            InvalidRestorePlanException is thrown when verification fails.
+            Supported only for SQL Server 2005 or later.
+            </summary>
+            <param name="checkBackupMediaIntegrity">if set to <c>true</c> [check backup media integrity].</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.CheckBackupSetsExistence">
+            <summary>
+            Checks the backup sets existence.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.SetRestoreOptions(Microsoft.SqlServer.Management.Smo.RestoreOptions)">
+            <summary>
+            Sets the restore options.
+            </summary>
+            <param name="restoreOptions">The restore options.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.AddRestoreOperation(Microsoft.SqlServer.Management.Smo.BackupSet)">
+            <summary>
+            Adds the restore operation.
+            </summary>
+            <param name="backupSet">The backup set to be restored.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RestorePlan.AddRestoreOperation(System.Collections.Generic.List{Microsoft.SqlServer.Management.Smo.BackupSet})">
+            <summary>
+            Adds the restore operations.
+            </summary>
+            <param name="backupSets">The backup sets.</param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestorePlan.Server">
+            <summary>
+            Server where the Restore plan executes.
+            </summary>
+            <value>The server.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestorePlan.DatabaseName">
+            <summary>
+            Gets or sets the name of the database.
+            </summary>
+            <value>The name of the database.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestorePlan.RestoreAction">
+            <summary>
+            Gets and sets the type of the Restore action:
+            Database,File,Log,Page
+            </summary>
+            <value>The restore action.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestorePlan.TailLogBackupOperation">
+            <summary>
+            Gets or sets the tail log backup operation.
+            </summary>
+            <value>The tail log backup operation.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestorePlan.RestoreOperations">
+            <summary>
+            Gets or sets the restore operations.
+            </summary>
+            <value>The restore operations.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestorePlan.AsyncStatus">
+            <summary>
+            Gets the status of most recent asynchronous operation
+            including possible errors.
+            </summary>
+            <value>The async status.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RestorePlan.CloseExistingConnections">
+            <summary>
+            Gets or sets a value indicating whether [close existing connections].
+            </summary>
+            <value>
+            	<c>true</c> if [close existing connections]; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.RestorePlan.PercentComplete">
+            <summary>
+            Occurs when [Server sends percent complete information].
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.RestorePlan.NextMedia">
+            <summary>
+            Occurs when [Next media needs to be loaded].
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.RestorePlan.Complete">
+            <summary>
+            Occurs when [Restore operation gets completed].
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.RestorePlan.Information">
+            <summary>
+            Occurs when [Server sends information].
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.RestorePlan.NextRestore">
+            <summary>
+            Occurs when [next restore].
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.InvalidRestorePlanException">
+            <summary>
+            Exception thrown on trying to execute or verify an invalid Restore plan.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegisteredServers.ServerType.Urn">
+            <summary>
+            ServerType Urn is always the UrnSuffix
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Transfer">
+            <summary>
+            Instance class encapsulating Transfer object
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.ProcessDependencyChain(Microsoft.SqlServer.Management.Smo.Server,Microsoft.SqlServer.Management.Sdk.Sfc.DependencyChainCollection,System.Boolean,System.Boolean)">
+            <summary>
+            Process a dependency chain, into a list of objects. Order is preserved, but
+            duplicates are removed
+            </summary>
+            <param name="server"></param>
+            <param name="dependencyChain"></param>
+            <param name="isDataOnly">
+            specifies if the ordering is needed for data only scripting or not. In case
+            of data only scripting, foreign key relationships are never broken
+            All other type of relationships can be broken since other objects are not scripted
+            during data only
+            </param>
+            <param name="isCreateOrder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.AddDependency(System.Collections.Generic.List{Microsoft.SqlServer.Management.Sdk.Sfc.Urn},System.Collections.Generic.Dictionary{Microsoft.SqlServer.Management.Sdk.Sfc.Urn,System.Object},Microsoft.SqlServer.Management.Sdk.Sfc.Dependency)">
+            <summary>
+            Adds the dependency urn to the list after verifying that all dependent links
+            have been added
+            </summary>
+            <param name="objectsInOrder"></param>
+            <param name="lookupTable"></param>
+            <param name="dependency"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.FindCycles(Microsoft.SqlServer.Management.Sdk.Sfc.DependencyChainCollection,Microsoft.SqlServer.Management.Smo.Server,System.Boolean,System.Boolean,System.Collections.Generic.Dictionary{Microsoft.SqlServer.Management.Sdk.Sfc.Dependency,System.Boolean[]})">
+            <summary>
+            This method finds the cycles  amongst objects in the passed DependencyChainCollection
+            </summary>
+            <param name="dependencyChain"></param>
+            <param name="server"></param>
+            <param name="isDataOnly"></param>
+            <param name="isCreateOrder"></param>
+            <param name="BrokenLinks"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.BreakCycles(System.Collections.Generic.Dictionary{Microsoft.SqlServer.Management.Sdk.Sfc.Dependency,System.Boolean[]})">
+            <summary>
+            Actually remove all the links which had been marked as broken earlier
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.MarkNodeForBreaking(Microsoft.SqlServer.Management.Sdk.Sfc.Dependency[],Microsoft.SqlServer.Management.Smo.Server,System.Boolean,System.Boolean,System.Collections.Generic.Dictionary{Microsoft.SqlServer.Management.Sdk.Sfc.Dependency,System.Boolean[]})">
+            <summary>
+            Breaks cycles by finding and marking the links that can be broken
+            </summary>
+            <param name="server"></param>
+            <param name="cycle"></param>
+            <param name="isDataOnly">
+            specifies if the ordering is needed for data only scripting or not. In case
+            of data only scripting, foreign key relationships are never broken
+            All other type of relationships can be broken since other objects are not scripted
+            during data only
+            </param>
+            <param name="isCreateOrder"></param>
+            <param name="BrokenLinks"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.Visit(Microsoft.SqlServer.Management.Sdk.Sfc.Dependency,System.Collections.Generic.List{Microsoft.SqlServer.Management.Sdk.Sfc.Dependency},System.Collections.Generic.Dictionary{Microsoft.SqlServer.Management.Sdk.Sfc.Urn,System.Object},Microsoft.SqlServer.Management.Smo.Server,System.Boolean,System.Boolean,System.Collections.Generic.Dictionary{Microsoft.SqlServer.Management.Sdk.Sfc.Dependency,System.Boolean[]})">
+            <summary>
+            Using Depth first approach to find all the cycles and then breaking all cycles found 
+            </summary>
+            <param name="dependency"></param>
+            <param name="currentChain"></param>
+            <param name="visitedUrns"></param>
+            <param name="server"></param>
+            <param name="isDataOnly"></param>
+            <param name="isCreateOrder"></param>
+            <param name="BrokenLinks"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.MarkFalseDependency(Microsoft.SqlServer.Management.Sdk.Sfc.Dependency,System.Boolean[],System.Boolean)">
+            <summary>
+            Procedure to mark all non necessary links as broken
+            </summary>
+            <param name="d1"></param>
+            <param name="b"></param>
+            <param name="isDataOnly"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.TransferData">
+            <summary>
+            Performs data transfer
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.GetTransferProvider">
+            <summary>
+            Returns the component that is used to perform transfer
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.Microsoft#SqlServer#Management#Common#ITransferMetadataProvider#SaveMetadata">
+            <summary>
+            Save the metadata in the paths provided by the variables in the input list
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.Microsoft#SqlServer#Management#Common#ITransferMetadataProvider#GetOptions">
+            <summary>
+            returns the options as a collection of named variables
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Transfer.DumpWriterContent(System.String,System.Collections.Generic.IEnumerable{System.String},System.IO.StreamWriter,System.IO.StreamWriter)">
+            <summary>
+            Dump the contents of the given filename to the given outfile stream (and optionally a second stream if not null)
+            </summary>
+            <param name="strings"></param>
+            <param name="outfile"></param>
+            <param name="label"></param>
+            <param name="outfile2"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Transfer.BatchSize">
+            <summary>
+            Number of rows in each batch of SqlBulkCopy. At the end of each batch, the rows in the batch are sent to the server.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Transfer.BulkCopyTimeout">
+            <summary>
+            Number of seconds for the operation to complete before SqlBulkCopy times out. 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.TransferWriter">
+            <summary>
+            Smo ScriptWriter to store scripts based on transactablity
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.TransferWriter.Header">
+            <summary>
+            Not implemented - not used by this writer
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegisteredServers.RegisteredServerCollection">
+            <summary>
+             Strongly typed list of MAPPED_TYPE objects
+             Has strongly typed support for all of the methods of the sorted list class
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegisteredServers.ServerGroupCollection">
+            <summary>
+             Strongly typed list of MAPPED_TYPE objects
+             Has strongly typed support for all of the methods of the sorted list class
+            </summary>
+        </member>
+    </members>
+</doc>

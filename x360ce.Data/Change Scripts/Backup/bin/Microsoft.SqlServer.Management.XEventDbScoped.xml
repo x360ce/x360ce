@@ -1,0 +1,272 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SqlServer.Management.XEventDbScoped</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseEventProvider">
+            <summary>
+            Sql provider for Event.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseEventProvider.GetCreateScript">
+            <summary>
+            Script Create for the Event.
+            </summary>
+            <returns>Event Create script.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseEventProvider.GetDropScript">
+            <summary>
+            Scripts Drop for this event.
+            </summary>
+            <returns>Event Drop script.</returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseSessionProvider">
+            <summary>
+            Sql provider for Session at database scope
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseTargetProvider">
+            <summary>
+            Provider for Target.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseTargetProvider.GetCreateScript">
+            <summary>
+            Script Create for the Target.
+            </summary>
+            <returns>Target Create script.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseTargetProvider.GetDropScript">
+            <summary>
+            Scripts Drop for this Target.
+            </summary>
+            <returns>Target Drop script.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseTargetProvider.GetTargetData">
+            <summary>
+            Gets the target data.
+            </summary>
+            <returns>Target data xml string.</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseTargetProvider.ServerConnection">
+            <summary>
+            Gets the underlying ServerConnection
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore">
+            <summary>
+            XEStore is the root for all metadata classes and runtime classes.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.TypeTypeName">
+            <summary>
+            Type name.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.#ctor(Microsoft.SqlServer.Management.Sdk.Sfc.SqlStoreConnection,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore"/> class.
+            </summary>
+            <param name="connection">The connection.</param>
+            <param name="name">Store name.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore"/> class.
+            This constructor is only used to support serialization. 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.#ctor(Microsoft.SqlServer.Management.Sdk.Sfc.SqlStoreConnection)">
+            <summary>
+            Constructs a new DatabaseXEStore instance whose name is the same as the current active database
+            </summary>
+            <param name="connection"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.ToString">
+            <summary>
+            Produces a string representing the store.
+            </summary>
+            <returns>A string representing the store.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcHasConnection#GetConnection">
+            <summary>
+            Get the current connection to query on.
+            Return a connection supporting a single serial query, so the query must end before another one may begin.
+            </summary>
+            <returns>The connection to use.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcHasConnection#SetConnection(Microsoft.SqlServer.Management.Common.ISfcConnection)">
+            <summary>
+            Sets the active connection.
+            </summary>
+            <param name="connection">Connection to use.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcHasConnection#GetConnection(Microsoft.SqlServer.Management.Sdk.Sfc.SfcObjectQueryMode)">
+            <summary>
+            Get the current connection to query on.
+            Return a connection supporting either a single serial query or multiple simultaneously open queries as requested.
+            </summary>
+            <param name="mode">Query mode.</param>
+            <returns>The connection to use, or null to use Cache mode. Cache mode avoids connection and open data reader issues.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcDomain#GetType(System.String)">
+            <summary>
+            Gets the type.
+            </summary>
+            <param name="typeName">Name of the type.</param>
+            <returns>Type correspoding to the given name.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcDomain#GetKey(Microsoft.SqlServer.Management.Sdk.Sfc.IUrnFragment)">
+            <summary>
+            Returns a Key object given a Urn fragment.
+            </summary>
+            <param name="urnFragment">A urn fragment.</param>
+            <returns>An <see cref="T:Microsoft.SqlServer.Management.Sdk.Sfc.SfcKey"/> for given Urn fragment.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcDomain#GetExecutionEngine">
+            <summary>
+            Gets the execution engine.
+            </summary>
+            <returns>The execution engine to use.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcDomainLite#GetLogicalVersion">
+            <summary>
+            Returns the logical version of the domain.
+            </summary>
+            <returns>The logical version of the domain.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.CreateIdentityKey">
+            <summary>
+            Creates a key identifying the store.
+            </summary>
+            <returns>A key identifying the store.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.GetStoreProvider">
+            <summary>
+            Gets provider to perform operations on the Store.
+            </summary>
+            <returns>The provider to use.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.GetSessionProivder(Microsoft.SqlServer.Management.XEvent.Session)">
+            <summary>
+            Gets provider to perform Session operations.
+            </summary>
+            <param name="session">A session to use.</param>
+            <returns>The provider to use.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.GetTargetProvider(Microsoft.SqlServer.Management.XEvent.Target)">
+            <summary>
+            Gets provider to perform Target operations.
+            </summary>
+            <param name="target">A target to use.</param>
+            <returns>The provider to use.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.GetEventProvider(Microsoft.SqlServer.Management.XEvent.Event)">
+            <summary>
+            Gets provider to perform Event operations.
+            </summary>
+            <param name="xevent">An event to use.</param>
+            <returns>The provider to use.</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.IdentityKey">
+            <summary>
+            Returns the key associated with the store.
+            </summary>
+            <returns>The key associated with the store.</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcHasConnection#ConnectionContext">
+            <summary>
+            Gets connection context.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcDomainLite#DomainName">
+            <summary>
+            Gets the name of the domain.
+            </summary>
+            <value>The name of the domain.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcDomainLite#DomainInstanceName">
+            <summary>
+            Gets the name of the domain instance.
+            </summary>
+            <value>The name of the domain instance.</value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.Name">
+            <summary>
+            Gets the name of XEStore.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStore.ServerName">
+            <summary>
+            Gets ServerName for the store.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStoreProvider">
+            <summary>
+            Sql provider for the DatabaseXEStore.
+            </summary>    
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStoreProvider.GetExecutionEngine">
+            <summary>
+            Gets an execution engine associated with Store's connection.
+            </summary>
+            <returns>Execution engine.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStoreProvider.GetConnection(Microsoft.SqlServer.Management.Sdk.Sfc.SfcObjectQueryMode)">
+            <summary>
+            Get the current connection to query on.
+            Return a connection supporting either a single serial query or multiple simultaneously open queries as requested.
+            </summary>
+            <param name="mode">Query mode.</param>
+            <returns>The connection to use, or null to use Cache mode. Cache mode avoids connection and open data reader issues.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStoreProvider.GetComparer">
+            <summary>
+             Gets a comparer for the child collections.
+            </summary>
+            <returns>Requested comparer.</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStoreProvider.DomainInstanceName">
+            <summary>
+            Gets the name of the domain instance.
+            </summary>
+            <value>The name of the domain instance.</value>        
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.DatabaseXEStoreProvider.ServerConnection">
+            <summary>
+            Gets the underlying ServerConnection
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.XEventDbScoped.XsdResource">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.XsdResource.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.XsdResource.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.XEventDbScoped.XsdResource.xeconfig">
+             <summary>
+               Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+            &lt;xs:schema targetNamespace=&quot;http://schemas.microsoft.com/sqlserver/2008/07/extendedeventsconfig&quot; elementFormDefault=&quot;qualified&quot; xmlns=&quot;http://schemas.microsoft.com/sqlserver/2008/07/extendedeventsconfig&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+            	&lt;xs:simpleType name=&quot;retentionModes&quot;&gt;
+            		&lt;xs:annotation&gt;
+            			&lt;xs:documentation xml:lang=&quot;en&quot;&gt;
+            				retention modes supported
+            			&lt;/xs:documentation&gt;
+            		&lt;/xs:annotation&gt;
+            		&lt;xs:restriction base=&quot;xs:string&quot;&gt;
+            			&lt;xs:enumeration value=&quot;allowSingleEventLo [rest of string was truncated]&quot;;.
+             </summary>
+        </member>
+    </members>
+</doc>

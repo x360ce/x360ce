@@ -1,0 +1,2827 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SqlServer.Dmf.Common</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SqlServer.Management.Facets.StateChangeEventAttribute">
+            <summary>
+            Custom attribute that describes what events are of interest for 
+            adapters that implement facets
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Facets.StateChangeEventAttribute.#ctor(System.String,System.String)">
+            <summary>
+            ctor short
+            </summary>
+            <param name="eventName"></param>
+            <param name="targetType"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Facets.StateChangeEventAttribute.#ctor(System.String,System.String,System.String)">
+            <summary>
+            ctor with alias
+            </summary>
+            <param name="eventName"></param>
+            <param name="targetType"></param>
+            <param name="targetTypeAlias"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Facets.StateChangeEventAttribute.EventName">
+            <summary>
+            prop
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Facets.StateChangeEventAttribute.TargetType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Facets.StateChangeEventAttribute.TargetTypeAlias">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Facets.PropertySourceSubObjectTypeAttribute">
+            <summary>
+            Custom attribute that declares property source types for facet
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Facets.PropertySourceSubObjectTypeAttribute.#ctor(System.Type)">
+            <summary>
+            ctor
+            </summary>
+            <param name="sourceType"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Facets.PropertySourceSubObjectTypeAttribute.SourceType">
+            <summary>
+            prop
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Facets.EvaluationModeAttribute">
+            <summary>
+            Custom attribute that describes what evaluation modes are supported 
+            by adapters
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Facets.EvaluationModeAttribute.#ctor(Microsoft.SqlServer.Management.Dmf.AutomatedPolicyEvaluationMode)">
+            <summary>
+            ctor
+            </summary>
+            <param name="evaluationModes"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Facets.EvaluationModeAttribute.EvaluationModes">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Facets.EvaluationModeAttribute.AutomatedPolicyEvaluationMode">
+            <summary>
+            prop
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.DmfConstants">
+            <summary>
+            Constants for use in DMF
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfConstants.MICROSOFT_SQLSERVER_PUBLIC_KEY">
+            <summary>
+            SqlServer Public Key
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.DmfExceptionType">
+            <summary>
+            Types of Dmf Exceptions
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.DmfException">
+            Base type
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.AssemblyAlreadyRegistered">
+            Assembly Already Registered (repeated registration)
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.AdapterAlreadyExists">
+            Adapter Already Exists (repeated registration)
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.AdapterWrongNumberOfArguments">
+            Adapter has constructor not complying with sepification
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.ExpressionTypeMistmatch">
+            Incompatible types in operator
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.OperatorNotApplicable">
+            Operator not defined for the type
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.FunctionWrongArgumentType">
+            Unexpected type of argument
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.FunctionWrongArgumentsNumber">
+            Unexpected number of arguments for the function
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.NullFacet">
+            Null Facet (null reference)
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.ExpressionSerialization">
+            ExpressionNode deserialization exception
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.TypeConversion">
+            Wrapper for System.FormatException
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.UnsupportedType">
+            Unsupported Constant Type
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.BadExpressionTree">
+            Tree cannot be evaluated
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.UnsupportedObjectType">
+            Given type is not supported by receiving host
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.ExpressionNodeNotConfigurable">
+            The expression node is non-configurable
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.ConversionNotSupported">
+            Can't convert ExpressionNode to FilterNode
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.InvalidOperand">
+            
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.InvalidInOperator">
+            
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.DmfSecurity">
+            
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.ObjectValidation">
+            Generic Validation exception (base)
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.ConflictingPropertyValues">
+            Combination of set properties prevents object creation/modification
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.ObjectAlreadyExists">
+            
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.MissingObject">
+            
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.PolicyEvaluation">
+            
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.MissingJobSchedule">
+            <summary>
+            The policy Job Schedule GUID is required when the policy execution mode is not None.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.BadEventData">
+            
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.FailedOperation">
+            Exception that gets thrown when an operation has failed.
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.ExpressionNodeNotConfigurableOperator">
+            The expression node is non-configurable operator
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.NonConfigurableReadOnlyProperty">
+            The property is read only and can't be modified
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.MissingProperty">
+            Unknown property
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.NonRetrievableProperty">
+            The property cannot be retrieved
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.MissingTypeFacetAssociation">
+            There is no association between target type and facet
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.FunctionWrongReturnType">
+            Unexpected return type 
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.FunctionNoServer">
+            Can't locate a SMO Server object in the hiearchy to run a query
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.FunctionNotASmoObject">
+            Target is not a SMO object; can't execute T-SQL against it
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.FunctionBadDatePart">
+            Bad date part
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.FunctionTooManyColumns">
+            More than one column returned by SQL or WQL scalar functions
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.StringPropertyTooLong">
+            <summary>
+            The value specified for a property is invalid (e.g too long, unacceptable value)
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.TargetSetCountMismatch">
+            <summary>
+            Number of target sets mismatch between number supported and that specified in the object set
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.UnsupportedTargetSetForFacet">
+            <summary>
+            Unsupported target set type specified in object set for a given facet
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.NoTargetSetEnabled">
+            <summary>
+            At least one target set needs to be enabled for an Object Set
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.DmfExceptionType.RestartPending">
+            property cannot be accessed because a restart of the service is pending
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.DmfException">
+            <summary>
+            Base exception class for all SMO exception classes
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.DmfException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.DmfException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.DmfException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.DmfException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.DmfException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.DmfException.SetHelpContext(System.String)">
+            <summary>
+            Sets Help Context
+            </summary>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.DmfException.ProdVer">
+            <summary>
+            Product Version
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.DmfException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.DmfException.HelpLink">
+            <summary>
+            will output a link to the help web site
+            <!--http://www.microsoft.com/products/ee/transform.aspx?ProdName=Microsoft%20SQL%20Server&ProdVer=09.00.0000.00&EvtSrc=MSSQLServer&EvtID=15401-->
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException">
+            <summary>
+            This exception gets thrown when FacetRepository attempts to scan the same assembly for the second time
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException.#ctor(System.String)">
+            <summary>
+            Creates an Exception for repeated attempt to register the same assembly
+            </summary>
+            <param name="assemblyName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AssemblyAlreadyRegisteredException.Assembly">
+            <summary>
+            Offending Assembly
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException">
+            <summary>
+            This exception gets thrown when operator's arguments have incompatible types
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="typeLeft"></param>
+            <param name="typeRight"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.TypeLeft">
+            <summary>
+            Left operand type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionTypeMistmatchException.TypeRight">
+            <summary>
+            Right operand type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException">
+            <summary>
+            This exception gets thrown when operator's arguments have incompatible types
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="operatorName"></param>
+            <param name="typeName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.Operator">
+            <summary>
+            Operator name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.OperatorNotApplicableException.Type">
+            <summary>
+            Type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException">
+            <summary>
+            This exception gets thrown when function receives argument of unexpected type
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="functionName"></param>
+            <param name="receivedType"></param>
+            <param name="expectedType"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.FunctionName">
+            <summary>
+            Function Name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.ReceivedType">
+            <summary>
+            Received type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentTypeException.ExpectedType">
+            <summary>
+            Expected type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException">
+            <summary>
+            This exception gets thrown when function receives unexpected number of arguments
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="functionName"></param>
+            <param name="receivedCount"></param>
+            <param name="expectedCount"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.FunctionName">
+            <summary>
+            Function name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.ReceivedCount">
+            <summary>
+            Received number of arguments
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongArgumentsNumberException.ExpectedCount">
+            <summary>
+            Expected number of arguments
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException">
+            <summary>
+            This exception gets thrown when Adapter Factory encounters already registered {interface; object} pair 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.Interface">
+            <summary>
+            Interface name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AdapterAlreadyExistsException.ObjectType">
+            <summary>
+            Object type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException">
+            <summary>
+            This exception gets thrown when Adapter Factory encounters adapter constructor accepting other than 1 argument
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+             <summary>
+             Serialization helper
+             </summary>
+             <param name="info"></param>
+             <param name="context"></param>
+            
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.AdapterWrongNumberOfArgumentsException.Adapter">
+            <summary>
+            Offending Adapter name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.NullFacetException">
+            <summary>
+            This exception gets thrown when function expects live adapter but gets NULL
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NullFacetException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NullFacetException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NullFacetException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NullFacetException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NullFacetException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NullFacetException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NullFacetException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NullFacetException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NullFacetException.Facet">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException">
+            <summary>
+            This exception gets thrown when ExpressionNode deserialize encounters unxpected xml-node
+            </summary>
+            
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor for Move exception
+            </summary>
+            <param name="nameRead"></param>
+            <param name="nameExpected"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Constructor for Read exception
+            </summary>
+            <param name="typeRead"></param>
+            <param name="nameRead"></param>
+            <param name="typeExpected"></param>
+            <param name="nameExpected"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.ActionType">
+            <summary>
+            XmlReader action (assumed from parameters)
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.TypeExpected">
+            <summary>
+            Expected xml-node type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.NameExpected">
+            <summary>
+            Expected xml-node name (if supplied)
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.TypeRead">
+            <summary>
+            Read xml-node type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.NameRead">
+            <summary>
+            Read xml-node name 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.ReaderActionType">
+            <summary>
+            XmlReader action
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.ReaderActionType.Undefined">
+            <summary>
+            No action/unknown 
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.ReaderActionType.Move">
+            <summary>
+            Move to next element
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ExpressionSerializationException.ReaderActionType.Read">
+            <summary>
+            Read immediate xml-node
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.TypeConversionException">
+            <summary>
+            This exception gets thrown when ExpressionNode deserialize encounters unxpected xml-node
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TypeConversionException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TypeConversionException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TypeConversionException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TypeConversionException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TypeConversionException.#ctor(System.String,System.String,System.Exception)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="inputString"></param>
+            <param name="typeName"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TypeConversionException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.TypeConversionException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.TypeConversionException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.TypeConversionException.InputString">
+            <summary>
+            input string
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.TypeConversionException.TypeName">
+            <summary>
+            type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException">
+            <summary>
+            This exception gets thrown when ExpressionNode deserialize
+            encounters an unexpected xml-node
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="node"></param>
+            <param name="typeName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.NodeType">
+            <summary>
+            node type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedTypeException.TypeName">
+            <summary>
+            type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.BadExpressionTreeException">
+            <summary>
+            Run-time exception for ExpressionTree evaluation
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadExpressionTreeException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadExpressionTreeException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadExpressionTreeException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadExpressionTreeException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="reason"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadExpressionTreeException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.BadExpressionTreeException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.BadExpressionTreeException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.BadExpressionTreeException.Reason">
+            <summary>
+            Deatiled message for exception 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="typeName"></param>
+            <param name="host"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.TypeName">
+            <summary>
+            type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedObjectTypeException.Host">
+            <summary>
+            hosting object/type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ExpressionNodeConfigurationException">
+            <summary>
+            This exception gets thrown when we attempt to configure an expression
+            that contains a non-configurable expression node.
+            </summary>
+            
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeConfigurationException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeConfigurationException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeConfigurationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeConfigurationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeConfigurationException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeConfigurationException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionNodeConfigurationException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionNodeConfigurationException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException">
+            <summary>
+            This exception gets thrown when we attempt to configure an expression
+            that contains a non-configurable expression node.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="subtype"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException.Subtype">
+            <summary>
+            Node type (ex. "EQ")
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException">
+            <summary>
+            This exception gets thrown when we attempt to configure an expression
+            that contains a non-configurable expression operators.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.PropertyName">
+            <summary>
+            The property name to be set
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.Expression">
+            <summary>
+            Expression
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ExpressionNodeNotConfigurableOperatorException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException">
+            <summary>
+            This exception gets thrown when we attempt to configure some read only properties
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.#ctor(System.String,System.String,System.Exception)">
+            <summary>
+            Base constructor with additional property name
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.PropertyName">
+            <summary>
+            Property Name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NonConfigurableReadOnlyPropertyException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="typeName"></param>
+            <param name="host"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.TypeName">
+            <summary>
+            type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConversionNotSupportedException.Host">
+            <summary>
+            hosting object/type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.InvalidOperandException">
+            <summary>
+            This exception gets thrown when operator's arguments have incompatible types
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="nodeType"></param>
+            <param name="operand"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.NodeType">
+            <summary>
+            NodeType name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.InvalidOperandException.Type">
+            <summary>
+            Type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException">
+            <summary>
+            IN Operator must have right operand List
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.operatorTypeValue">
+            <summary>
+            Operator Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.InvalidInOperatorException.OperatorType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ObjectValidationException">
+            <summary>
+            Generic validation exception
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.#ctor(System.String,System.String,System.Exception)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="objectType"></param>
+            <param name="objectName"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor 
+            </summary>
+            <param name="objectType"></param>
+            <param name="objectName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.objectType">
+            <summary>
+            Type of validated object
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.objectName">
+            <summary>
+            Name of validated object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.ObjectType">
+            <summary>
+            Type of validated object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ObjectValidationException.ObjectName">
+            <summary>
+            Name of validated object
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException">
+            <summary>
+            Object already exists (attempt to create a duplicate)
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor 
+            </summary>
+            <param name="objectType"></param>
+            <param name="objectName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.objectType">
+            <summary>
+            Type of validated object
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.objectName">
+            <summary>
+            Name of validated object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.ObjectType">
+            <summary>
+            Type of validated object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ObjectAlreadyExistsException.ObjectName">
+            <summary>
+            Name of validated object
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.MissingObjectException">
+            <summary>
+            Object doesn't exists (attempt to reference non-existent object)
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingObjectException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingObjectException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingObjectException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingObjectException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor 
+            </summary>
+            <param name="objectType"></param>
+            <param name="objectName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingObjectException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingObjectException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingObjectException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.MissingObjectException.objectType">
+            <summary>
+            Type of validated object
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.MissingObjectException.objectName">
+            <summary>
+            Name of validated object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingObjectException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingObjectException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingObjectException.ObjectType">
+            <summary>
+            Type of validated object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingObjectException.ObjectName">
+            <summary>
+            Name of validated object
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException">
+            <summary>
+            This exception gets thrown when object cannot be created or modified
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.#ctor(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="mode"></param>
+            <param name="type1"></param>
+            <param name="name1"></param>
+            <param name="type2"></param>
+            <param name="name2"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.Mode">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.Type1">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.Name1">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.Type2">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.ConflictingPropertyValuesException.Name2">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.MissingJobScheduleException">
+            <summary>
+            This exception gets thrown when a policy Job Schedule GUID is empty but the execution mode is not None
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingJobScheduleException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingJobScheduleException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingJobScheduleException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingJobScheduleException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingJobScheduleException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingJobScheduleException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingJobScheduleException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.PolicyEvaluationException">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.PolicyEvaluationException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.PolicyEvaluationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.PolicyEvaluationException.#ctor(System.String)">
+            <summary>
+            Creates an Exception for repeated attempt to register the same assembly
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.PolicyEvaluationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.PolicyEvaluationException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.PolicyEvaluationException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.PolicyEvaluationException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.BadEventDataException">
+            <summary>
+            Exception that gets thrown when EVENTDATA blob is malformed
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadEventDataException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadEventDataException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadEventDataException.#ctor(System.String)">
+            <summary>
+            Creates an Exception for repeated attempt to register the same assembly
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadEventDataException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadEventDataException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.BadEventDataException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.BadEventDataException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.FailedOperationException">
+            <summary>
+            This exception gets thrown when an operation has failed
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FailedOperationException.#ctor">
+            <summary>
+            ctor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FailedOperationException.#ctor(System.String)">
+            <summary>
+            ctor
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FailedOperationException.#ctor(System.String,System.Exception)">
+            <summary>
+            ctor
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FailedOperationException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FailedOperationException.#ctor(System.String,System.String,System.String,System.Exception)">
+            <summary>
+            ctor
+            </summary>
+            <param name="operation"></param>
+            <param name="failedObjectName"></param>
+            <param name="failedObjectType"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FailedOperationException.Operation">
+            <summary>
+            Operation that failed.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FailedOperationException.FailedObjectName">
+            <summary>
+            Name of the object that failed.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FailedOperationException.FailedObjectType">
+            <summary>
+            Type of the object that failed.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FailedOperationException.Message">
+            <summary>
+            Message
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FailedOperationException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.MissingPropertyException">
+            <summary>
+            This exception gets thrown when we attempt to configure some read only properties
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingPropertyException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingPropertyException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingPropertyException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingPropertyException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingPropertyException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingPropertyException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingPropertyException.PropertyName">
+            <summary>
+            Property Name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingPropertyException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingPropertyException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException">
+            <summary>
+            This exception gets thrown when we attempt to retrieve some properties which do not 
+            apply to the instance
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException.PropertyName">
+            <summary>
+            Property Name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NonRetrievablePropertyException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="typeName"></param>
+            <param name="facet"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.TypeName">
+            <summary>
+            type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.MissingTypeFacetAssociationException.Facet">
+            <summary>
+            hosting object/type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException">
+            <summary>
+            This exception gets thrown when ExecuteSQLScalar is attempted against a non-SMO target
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.#ctor(System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="functionName"></param>
+            <param name="targetType"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.FunctionName">
+            <summary>
+            Function Name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionNotASmoObjectException.TargetType">
+            <summary>
+            Received type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.FunctionNoServerException">
+            <summary>
+            This exception gets thrown when the ExecuteSQL scalar function can't find a server
+            to send its query to
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNoServerException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNoServerException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNoServerException.#ctor(System.String)">
+            <summary>
+            Creates an Exception for repeated attempt to register the same assembly
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNoServerException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNoServerException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionNoServerException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionNoServerException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException">
+            <summary>
+            This exception gets thrown when function specifies a return value of unexpected type
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="functionName"></param>
+            <param name="receivedType"></param>
+            <param name="expectedType"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.FunctionName">
+            <summary>
+            Function Name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.ReceivedType">
+            <summary>
+            Received type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionWrongReturnTypeException.ExpectedType">
+            <summary>
+            Expected type name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.FunctionBadDatePartException">
+            <summary>
+            This exception gets thrown when a date function receives a bad date part string
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionBadDatePartException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionBadDatePartException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionBadDatePartException.#ctor(System.String)">
+            <summary>
+            Creates an Exception for repeated attempt to register the same assembly
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionBadDatePartException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionBadDatePartException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionBadDatePartException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionBadDatePartException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.FunctionTooManyColumnsException">
+            <summary>
+            This exception gets thrown when the ExecuteSql or ExecuteWql scalar functions execute
+            queries that return more than one column
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionTooManyColumnsException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionTooManyColumnsException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionTooManyColumnsException.#ctor(System.String)">
+            <summary>
+            Creates an Exception for repeated attempt to register the same assembly
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionTooManyColumnsException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionTooManyColumnsException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.FunctionTooManyColumnsException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.FunctionTooManyColumnsException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException">
+            <summary>
+            This exception gets thrown when value specified for a string property is longer than maximum length for that property
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.#ctor(System.String,System.Int32,System.Int32)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="propertyName"></param>
+            <param name="maxLength"></param>
+            <param name="currentLength"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.PropertyName">
+            <summary>
+            NodeType name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.MaxLength">
+            <summary>
+            Type name
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.StringPropertyTooLongException.CurrentLength">
+            <summary>
+            Length of current property value that is too long
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException">
+            <summary>
+            This exception is thrown when the TargetSets collection created automatically by the ObjectSet has been tampered with.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException.#ctor(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="objectSetName"></param>
+            <param name="facetName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException.Message">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException.ObjectSetName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.TargetSetCountMismatchException.FacetName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException">
+            <summary>
+            This exception is thrown when the TargetSets collection created automatically by the ObjectSet has been tampered with and an
+            unsupported target type has been defined for the given facet
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.#ctor(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="targetSetSkeleton"></param>
+            <param name="objectSetName"></param>
+            <param name="facetName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.Message">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.TargetSetSkeleton">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.ObjectSetName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.UnsupportedTargetSetForFacetException.FacetName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.NoTargetSetEnabledException">
+            <summary>
+            This exception is thrown when no Target Sets have been enabled for a given object set
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NoTargetSetEnabledException.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NoTargetSetEnabledException.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="objectSetName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NoTargetSetEnabledException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.NoTargetSetEnabledException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NoTargetSetEnabledException.Message">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NoTargetSetEnabledException.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.NoTargetSetEnabledException.ObjectSetName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.RestartPendingException">
+            <summary>
+            base class for generic RestartPendingException
+            we need to create this so we can catch all exceptions of this form 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1">
+            <summary>
+            This exception gets thrown when value specified for a string property is longer than maximum length for that property
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.#ctor(System.String,`0,`0)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="propertyName"></param>
+            <param name="configValue"></param>
+            <param name="runValue"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization helper
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.DmfExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.ConfigValue">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.RunValue">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.RestartPendingException`1.PropertyName">
+            <summary>
+            NodeType name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.AutomatedPolicyEvaluationMode">
+            <summary>
+            Possible Evaluation modes for automated policies
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.AutomatedPolicyEvaluationMode.None">
+            No action
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.AutomatedPolicyEvaluationMode.Enforce">
+            enforce the policy by rolling back changes
+            that break the policy
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.AutomatedPolicyEvaluationMode.CheckOnChanges">
+            check only when changes to the targets occur
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.AutomatedPolicyEvaluationMode.CheckOnSchedule">
+            check on a set schedule
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.PolicyEffectiveState">
+            <summary>
+            The PolicyEffectiveState bit flag enum is used as the data
+            table for the enumeration of policies on a particular target
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.PolicyEffectiveState.None">
+            Default value
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.PolicyEffectiveState.Enabled">
+            The policy is enabled.
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.PolicyEffectiveState.InFilter">
+            The policy filter includes the target.
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.PolicyEffectiveState.InCategory">
+            The policy is in a category that the database subscribes to.
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.ImportPolicyEnabledState">
+            <summary>
+            The ImportPolicyEnabledState bit flag enum is used as a parameter to
+            PolicyStore.ImportPolicy. It is used to set the imported Policy's Enabled property.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ImportPolicyEnabledState.Unchanged">
+            The Policy.Enabled property will not be changed. Whatever the policy's Enabled state
+            was, it will be retained.
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ImportPolicyEnabledState.Enable">
+            The policy is enabled on import.
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.ImportPolicyEnabledState.Disable">
+            The policy is disabled on import.
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Facets.IDmfAdapter">
+            <summary>
+            Base Adapter interface - indicates implementing cass is an Adapter
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Facets.IDmfObjectInfo">
+            <summary>
+            An interface for adapters to supply object path (URI) and server info to UI and/or logs
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Facets.IDmfObjectInfo.ObjectPath">
+            <summary>
+            Object path
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Facets.IDmfObjectInfo.RootPath">
+            <summary>
+            Root path
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.PostConfigurationActionAttribute">
+            <summary>
+            Custom attribute which describes post actions required for property
+            configuration.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.PostConfigurationActionAttribute.#ctor(Microsoft.SqlServer.Management.Dmf.PostConfigurationAction)">
+            <summary>
+            
+            </summary>
+            <param name="postConfigurationAction"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Dmf.PostConfigurationActionAttribute.PostConfigurationAction">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.PostConfigurationAction">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.PostConfigurationAction.None">
+            No action
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Dmf.PostConfigurationAction.RestartService">
+            Restart service
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Dmf.Common.Utils">
+            <summary>
+            Class that provides various utilities. Public because UI modules also needs some methods here
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Dmf.Common.Utils.CheckConfigurationProperty``1(System.String,``0,``0)">
+            <summary>
+            Helper for configuration property validation
+            </summary>
+            <param name="property"></param>
+            <param name="runValue"></param>
+            <param name="configValue"></param>
+        </member>
+    </members>
+</doc>

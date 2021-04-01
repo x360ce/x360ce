@@ -37,6 +37,8 @@ namespace x360ce.App
 		public const string Icon_magnifying_glass = nameof(Icon_magnifying_glass);
 		public const string Icon_media_play = nameof(Icon_media_play);
 		public const string Icon_minus = nameof(Icon_minus);
+		public const string Icon_navigate_close = nameof(Icon_navigate_close);
+		public const string Icon_navigate_down = nameof(Icon_navigate_down);
 		public const string Icon_nav_down = nameof(Icon_nav_down);
 		public const string Icon_nav_left = nameof(Icon_nav_left);
 		public const string Icon_nav_plain = nameof(Icon_nav_plain);

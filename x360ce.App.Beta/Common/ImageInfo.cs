@@ -1,12 +1,12 @@
 ﻿using SharpDX.XInput;
-using System.Windows.Forms;
 using x360ce.Engine;
 
 namespace x360ce.App
 {
 	public class ImageInfo
 	{
-		public ImageInfo(int image, MapCode code, double x, double y, Control label, Control control, GamepadButtonFlags button = GamepadButtonFlags.None)
+		// Content control.
+		public ImageInfo(int image, MapCode code, double x, double y, object label, object control, GamepadButtonFlags button = GamepadButtonFlags.None)
 		{
 			Image = image;
 			Label = label;
@@ -21,10 +21,10 @@ namespace x360ce.App
 		public string CurrentImageName { get; set; }
 
 		public int Image { get; set; }
-		public Control Label { get; set; }
+		public object Label { get; set; }
 
 		public System.Windows.Controls.Button ButtonControl { get; set; }
-		public Control Control { get; set; }
+		public object Control { get; set; }
 		public GamepadButtonFlags Button { get; set; }
 		public MapCode Code { get; set; }
 		public double X { get; set; }

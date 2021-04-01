@@ -2141,6 +2141,84 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		x:Key="Icon_navigate_close"
+		x:Shared="False"
+		Stretch="Uniform">
+		<Canvas Width="512" Height="512">
+			<Canvas.RenderTransform>
+				<TranslateTransform X="0" Y="0" />
+			</Canvas.RenderTransform>
+			<Canvas.Resources>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" StartPoint="49,192" EndPoint="257,404">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#3FB0F1" />
+							<GradientStop Offset="0.83922" Color="#129EEE" />
+							<GradientStop Offset="1" Color="#1197E4" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
+			<!--  Unknown tag: sodipodi:namedview  -->
+			<Canvas>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-1}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M461.5 205.5l-194 194c-6.5 6 -16.5 6 -23 0l-194 -194c-2 -2.5 -2.5 -5.5 -1.5 -8.5c1.5 -3 4 -5 7.5 -5l399 0c3.5 0 6 2 7.5 5c1 3 0.5 6 -1.5 8.5z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+			</Canvas>
+		</Canvas>
+	</Viewbox>
+	<Viewbox
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		x:Key="Icon_navigate_down"
+		x:Shared="False"
+		Stretch="Uniform">
+		<Canvas Width="512" Height="512">
+			<Canvas.RenderTransform>
+				<TranslateTransform X="0" Y="0" />
+			</Canvas.RenderTransform>
+			<Canvas.Resources>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" StartPoint="21,108" EndPoint="348,404">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#40B0F1" />
+							<GradientStop Offset="0.63922" Color="#129EEE" />
+							<GradientStop Offset="1" Color="#108AD0" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
+			<!--  Unknown tag: sodipodi:namedview  -->
+			<Canvas>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-1}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M486.5 180.5l-219 219c-6.5 6.5 -16.5 6.5 -23 0l-219 -219c-6.5 -6.5 -6.5 -16.5 0 -23l45 -45c6.5 -6.5 16.5 -6.5 23 0l162.5 162.5l162.5 -162.5c6.5 -6.5 16.5 -6.5 23 0l45 45c6.5 6.5 6.5 16.5 0 23z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+			</Canvas>
+		</Canvas>
+	</Viewbox>
+	<Viewbox
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		x:Key="Icon_nav_down"
 		x:Shared="False"
 		Stretch="Uniform">

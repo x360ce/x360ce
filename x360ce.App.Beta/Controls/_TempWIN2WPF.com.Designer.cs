@@ -33,11 +33,10 @@ namespace x360ce.App.Controls
 			// 
 			// _TempUserControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Margin = new System.Windows.Forms.Padding(6);
 			this.Name = "_TempUserControl";
-			this.Size = new System.Drawing.Size(2012, 1170);
+			this.Size = new System.Drawing.Size(1006, 608);
 			this.ResumeLayout(false);
 
 		}

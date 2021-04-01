@@ -761,7 +761,6 @@ namespace x360ce.App
 			// Note: There must be no such sections in new config.
 			for (var i = 0; i < PadControls.Length; i++)
 			{
-				PadControls[i].UpdateSettingsMap();
 				PadControls[i].InitPadData();
 			}
 			// Initialize pre-sets. Execute only after name of cIniFile is set.

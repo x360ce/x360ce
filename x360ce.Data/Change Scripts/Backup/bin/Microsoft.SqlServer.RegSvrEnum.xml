@@ -1,0 +1,734 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SqlServer.RegSvrEnum</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.DataProtection">
+            <summary>
+            Summary description for DataProtection.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationEventHandler">
+            <summary>
+            
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationEventArgs">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationEventArgs.#ctor(Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo)">
+            <summary>
+            
+            </summary>
+            <param name="node"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationEventArgs.Node">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationEventArgs.Parent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegSvrConnectionInfo">
+            <summary>
+            Connection structure that points to the root of the registered servers store
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.EnumRegServerBase.RetrieveParentRequest">
+            <summary>
+            return what types of results does this object support
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.EnumRegServerBase.PostProcess(Microsoft.SqlServer.Management.Sdk.Sfc.EnumResult)">
+            <summary>
+            Override this method to generate a Request for the parent object
+            The response from the parent object will give us the subset of parent objects for which 
+            the current level must generate it's result
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.EnumRegServerBase.ResultTypes">
+            <summary>
+            The ResultTypes that this object supports
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.EnumServerType">
+            <summary>
+            Class to handle the ServerGroup enum element
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.EnumServerType.GetData(Microsoft.SqlServer.Management.Sdk.Sfc.EnumResult)">
+            <summary>
+            This is called after the data has been retrieved by the final object so the chain is preparing to be freed
+            Because the objects are persisted between calls free any call specific data
+            </summary>
+            <param name="erParent"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.EnumServerGroup">
+            <summary>
+            Class to handle the ServerGroup enum element
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.EnumServerGroup.GetData(Microsoft.SqlServer.Management.Sdk.Sfc.EnumResult)">
+            <summary>
+            This is called after the data has been retrieved by the final object so the chain is preparing to be freed
+            Because the objects are persisted between calls free any call specific data
+            </summary>
+            <param name="erParent"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.EnumRegisteredServer">
+            <summary>
+            Class to handle the RegisteredServer enum element
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.EnumRegisteredServer.GetData(Microsoft.SqlServer.Management.Sdk.Sfc.EnumResult)">
+            <summary>
+            This is called after the data has been retrieved by the final object so the chain is preparing to be freed
+            Because the objects are persisted between calls free any call specific data
+            </summary>
+            <param name="erParent"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.GroupRegistrationInfo">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo">
+            <summary>
+            base class for various types of registration information for registered servers
+            infrastructure
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo.FriendlyName">
+            <summary>
+            
+            </summary>
+            <exception cref="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegisteredServerException"></exception>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo.Description">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo.ServerType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo.Parent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo.Ancestors">
+            <summary>
+            returns collection of our ancestors (Parent, Parent.Parent etc)
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo.GenerateUniqueName(System.String)">
+            <summary>
+            generates unique name for the given existing name
+            </summary>
+            <param name="oldName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo.AddChild(Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo)">
+            <summary>
+            adds new child to our collection
+            </summary>
+            <param name="reg"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationAddBehavior">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationAddBehavior.CreateCopy">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationAddBehavior.Overwrite">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationAddBehavior.Prompt">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfoCollection.Contains(System.String)">
+            <summary>
+            checks whether registrationinfo with given name already exists.
+            NOTE: comparison is case insensitive
+            </summary>
+            <param name="childName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfoCollection.CopyTo(Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo[],System.Int32)">
+            <summary>
+            Strongly  typed version of ICollection.CopyTo(...)
+            </summary>
+            <param name="array"></param>
+            <param name="index"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfoCollection.Item(System.String)">
+            <summary>
+            returns RegistrationInfo with specified name. 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider">
+            <summary>
+            This class supports the SMO implementation and should not be used for applications
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.FileExtension">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.Export(Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo,System.String,System.Boolean)">
+            <summary>
+            Exports a subtree of the server registration
+            </summary>
+            <param name="reg">The root node of the export</param>
+            <param name="filename">The location to export to</param>
+            <param name="includeNames">Whether to include usernames in the exported file</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.Import(System.String)">
+            <summary>
+            reads registration information from the specified file and returns the
+            node that corresponds to the root node read from the file. It will let
+            whatever exception that might be encountered to fly out
+            </summary>
+            <param name="fileName"></param>
+            <returns>Node that corresponds to the root node read from the file</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.GetProviderFilePath">
+            <summary>
+            Returns the path to the XML file where the provider stores data
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.AddServerTypeNode(Microsoft.SqlServer.Management.Smo.RegSvrEnum.ServerTypeRegistrationInfo)">
+            <summary>
+            
+            </summary>
+            <param name="node"></param>
+            <returns>newly created registered node if registration succeeded, null if user cancelled</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.AddGroupNode(System.String,System.String,Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationAddBehavior)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <param name="desc"></param>
+            <param name="parent"></param>
+            <param name="behavior"></param>
+            <returns>newly created registration info if add succeeded, null if user cancelled</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.AddNode(Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationAddBehavior)">
+            <summary>
+            
+            </summary>
+            <param name="reg"></param>
+            <param name="parent"></param>
+            <param name="behavior"></param>
+            <returns>newly added node if succeeded, null if user cannceled</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.RemoveNode(Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo)">
+            <summary>
+            removes given node from the registered servers and notifies clients about this event
+            </summary>
+            <param name="reg"></param>
+            <param name="parent"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.MoveNode(Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationAddBehavior)">
+            <summary>
+            
+            </summary>
+            <param name="reg"></param>
+            <param name="newParent"></param>
+            <param name="behavior"></param>
+            <returns>true if move succeeded, false if canceled by user (in case there were duplicates)</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.AddGroupNodeInternal(System.String,System.String,Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationAddBehavior)">
+            <summary>
+            added node that represents group with given name
+            </summary>
+            <param name="name"></param>
+            <param name="desc"></param>
+            <param name="parent"></param>
+            <param name="behavior"></param>
+            <returns>newly created node if successfull, null if cancelled by user</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.AddNodeInternal(Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.ParentRegistrationInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationAddBehavior)">
+            <summary>
+            
+            </summary>
+            <param name="reg"></param>
+            <param name="parent"></param>
+            <param name="behavior"></param>
+            <returns>node that was added (if success), null if cancelled by user</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.ProviderStore">
+            <summary>
+            Not for use by applications
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.ProviderStoreVersion">
+            <summary>
+            
+             </summary>
+            Our rampant use of InternalsVisibleTo prevents us from having our own AssemblyVersionInfo so provide a way
+            for our callers to set the version. It was previously hard coded to 90.
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.AddedNode">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.RemovedNode">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.NodeModified">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.SaveIsDisabled">
+            <summary>
+            allow disabling of the save operation. This property will perform automatic Save
+            operation if Save used to be disabled and became enabled as a result of the call
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.SyncRoot">
+            <summary>
+            gets synchronization object
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegistrationProvider.RegistrationProviderStore">
+            <summary>
+            Not for use by applications
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegisteredServerException">
+            <summary>
+            Summary description for RegisteredServerException.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegisteredServerException.#ctor(System.String,System.Exception)">
+            <summary>
+            An exception in a RegisteredServer object
+            </summary>
+            <param name="message"></param>
+            <param name="previous"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegisteredServerException.#ctor(System.String)">
+            <summary>
+            An exception in a RegisteredServer object
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegisteredServerException.#ctor">
+            <summary>
+            An exception in a RegisteredServer object
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.RegisteredServerException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            An exception in a RegisteredServer object
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ServerInstanceRegistrationInfo">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ServerInstanceRegistrationInfo.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ServerInstanceRegistrationInfo.#ctor(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo)">
+            <summary>
+            
+            </summary>
+            <param name="ci"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ServerInstanceRegistrationInfo.ConnectionInfo">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ServerTypeRegistrationInfo">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.ServerTypeRegistrationInfo.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.Tracing">
+            <summary>
+            Holds constants for use with the Managed Trace Provider
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo">
+            <summary>
+            A nameable list of UIConnectionInfo objects
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo.#ctor">
+            <summary>
+                Initializes a new instance of the UIConnectionGroupInfo class
+                that is empty and has the default initial capacity.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo.#ctor(System.Collections.Generic.IEnumerable{Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo})">
+            <summary>
+            Initializes a new instance of the UIConnectionGroupInfo class
+            that contains elements copied from the specified collection and has sufficient
+            capacity to accommodate the number of elements copied.
+            </summary>
+            <param name="collection">The collection whose elements are copied to the new list.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo.#ctor(System.Int32)">
+            <summary>
+            Initializes a new instance of the UIConnectionGroupInfo class
+            that is empty and has the specified initial capacity.
+            </summary>
+            <param name="capacity">The number of elements that the new list can initially store.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo.#ctor(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo)">
+            <summary>
+            Initializes a new instance of the UIConnectionGroupInfo class
+            that contains a shallow copy of the items from another
+            UIConnectionGroupInfo
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo.#ctor(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo)">
+            <summary>
+            Initializes a new instance of the UIConnectionGroupInfo class
+            with a single item in the group
+            </summary>
+            <param name="connectionInfo">The connection info to put in the group</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo.ShallowCopy">
+            <summary>
+            Create a new collection containing the same objects this group contains
+            </summary>
+            <returns>The copy of the group</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo.DeepCopy(System.Boolean)">
+            <summary>
+            Create a new collection containing copies of the objects this group contains
+            </summary>
+            <param name="withNewConnectionIds">
+            Whether the copied connection objects should have new IDs.  Set this to true if we want 
+            different connections.  Set it to false if we want the copies to hash to the same
+            values as their progenitors.
+            </param>
+            <returns>The copy of the group</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionGroupInfo.Name">
+            <summary>
+            The name of the group
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.SavePasswordState">
+            <summary>
+            The state of the password for this connection
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.RegSvrEnum.SavePasswordState.PasswordLoaded">
+            <summary>
+            The password has been loaded from persistance storage
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.RegSvrEnum.SavePasswordState.PasswordChecked">
+            <summary>
+            The password has been marked to be persisted
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Smo.RegSvrEnum.SavePasswordState.PasswordUnchecked">
+            <summary>
+            The password has not been marked to be persisted
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo">
+            <summary>
+            Object for storing and persisting server connection information
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.#ctor(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo,System.Boolean)">
+            <summary>
+            Copy constructor - create connection like lhs.  
+            </summary>
+            <param name="lhs">The UIConnection info to copy</param>
+            <param name="generateNewId">
+            Set to true to generate a new id for the connection, or false
+            if this info will refer to the same connection as lhs 
+            </param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.#ctor(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo)">
+            <summary>
+            Copy constructor - create connection to the same server as lhs
+            </summary>
+            <param name="lhs">The UIConnection info to copy</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.SaveToStream(System.Xml.XmlWriter,System.Boolean)">
+            <summary>
+            Saves a UIConnectionInfo object to an XML stream
+            </summary>
+            <param name="writer">The XML Stream to save the UIConnectionInfo object to.  It is the caller's
+            responsibility to open and close the stream</param>
+            <param name="saveName">True if the user name (with possibly the encrypted 
+            password) needs to be serialized to the XML stream; false, otherwise.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.LoadFromStream(System.Xml.XmlReader)">
+            <summary>
+            Reads from an open XML Stream
+            </summary>
+            <param name="reader">an open XmlReader</param>
+            <returns>A fully created UIConnectionInfo object</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.Copy">
+            <summary>
+            Create a new connection info like this connection info.
+            </summary>
+            <remarks> Note that this generates a new id for the clone,
+            so the clone does not exactly match its progenitor, which 
+            is useful if we are going to change some parameter in the 
+            new connection info.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.NewId">
+            <summary>
+            Get the next serial number for a new UIConnectionInfo
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.CompareTo(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo)">
+            <summary>
+            Comparison used for sorting connection info
+            </summary>
+            <param name="other">The connection info to compare to</param>
+            <returns>negative if this comes before other, 0 if they are the same, or positive if this comes after other </returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.Equals(System.Object)">
+            <summary>
+            Whether this connection info refers to the same connection as the other
+            </summary>
+            <param name="obj">The other connection info</param>
+            <returns>True if they connect to the same server as the same login, otherwise false</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.GetHashCode">
+            <summary>
+            The hash code for finding the connection info in hash tables
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.op_Equality(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo)">
+            <summary>
+            Whether the two connection info objects are equal
+            </summary>
+            <param name="infoA">The first connection info</param>
+            <param name="infoB">The second connection info</param>
+            <returns>True if the objects are equal; otherwise, false</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.op_Equality(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo,System.Object)">
+            <summary>
+            Whether the two connection info objects are equal
+            </summary>
+            <param name="infoA">The first connection info</param>
+            <param name="infoB">The second connection info</param>
+            <returns>True if the objects are equal; otherwise, false</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.op_Equality(System.Object,Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo)">
+            <summary>
+            Whether the two connection info objects are equal
+            </summary>
+            <param name="infoA">The first connection info</param>
+            <param name="infoB">The second connection info</param>
+            <returns>True if the objects are equal; otherwise, false</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.op_Inequality(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo,Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo)">
+            <summary>
+            Whether the two connection info objects are not equal
+            </summary>
+            <param name="infoA">The first connection info</param>
+            <param name="infoB">The second connection info</param>
+            <returns>True if the objects are not equal; otherwise, false</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.op_Inequality(Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo,System.Object)">
+            <summary>
+            Whether the two connection info objects are not equal
+            </summary>
+            <param name="infoA">The first connection info</param>
+            <param name="infoB">The second connection info</param>
+            <returns>True if the objects are not equal; otherwise, false</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.op_Inequality(System.Object,Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo)">
+            <summary>
+            Whether the two connection info objects are not equal
+            </summary>
+            <param name="infoA">The first connection info</param>
+            <param name="infoB">The second connection info</param>
+            <returns>True if the objects are not equal; otherwise, false</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.RenewableToken">
+            <summary>
+            Gets or sets the object to fetch or renew an access token for SqlConnection objects generated from this connection info instance.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.PersistPassword">
+            <summary>
+            Used by the connection dialog to determine if the password should be persisted
+            </summary>        
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.ServerType">
+            <summary>
+            The server type that this object is configured for
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.ApplicationName">
+            <summary>
+            The Application from thich this UIConnectionInfo instance will
+            be used to connect from
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.ServerName">
+            <summary>
+            The server name to connect to 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.DisplayName">
+            <summary>
+            The display name for the server
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.ServerNameNoDot">
+            <summary>
+            returns either server name or "(local)" if the server name is "." or empty
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.UserName">
+            <summary>
+            username to connect with
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.Password">
+            <summary>
+            Password to connect with. This class holds password in encrypted format. The getter
+            will return decrypted version of the password. The setter expects to get clear-text
+            password and immediately encrypts it
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.InMemoryPassword">
+            <summary>
+            The SecureString representing the current password
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.EncryptedPassword">
+            <summary>
+            the password in encrypted form
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.AuthenticationType">
+            <summary>
+            Authentication type to use.  This is interpreted by the corresponding
+            IServerType object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.AdvancedOptions">
+            <summary>
+            Collection for storing user-defined connection parameters
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.ServerVersion">
+            <summary>
+            The version of the server for this connection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.Id">
+            <summary>
+            The serial number of the connection info
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.RegSvrEnum.UIConnectionInfo.OtherParams">
+            <summary>
+            The additional parameters if any of connection info
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.StringExtensionMethods.SecureStringToString(System.Security.SecureString)">
+            <summary>
+            Converts a secure string to a string
+            </summary>
+            <param name="secureString"></param>
+            <returns>Converted secure string to string object</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.StringExtensionMethods.StringToSecureString(System.String)">
+            <summary>
+            Converts string to a secure string
+            </summary>
+            <param name="unsecureString"></param>
+            <returns>Converted string to secure string</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.StringExtensionMethods.SecureStringToCharArray(System.Security.SecureString)">
+            <summary>
+            Converts secure string to char array
+            </summary>
+            <param name="secureString"></param>
+            <returns>secure string converted to array of characters</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.StringExtensionMethods.CharArrayToSecureString(System.Collections.Generic.IEnumerable{System.Char})">
+            <summary>
+            Converts char array to secure string
+            </summary>
+            <param name="charArray"></param>
+            <returns>Array of characters to secure string</returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.RegSvrEnum.Utils">
+            <summary>
+            Various utility functions
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.RegSvrEnum.Utils.EnsureSettingsDirExists(System.String)">
+            <summary>
+            makes sure that the directory where sqlrepl regsvr persists its settings exists
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -19,7 +19,12 @@ namespace x360ce.App
 			binding.Source = source;
 			binding.IsAsync = true;
 			binding.Converter = converter;
-			if (converter != null)
+			if (converter is Converters.PaddSettingToText)
+			{
+				binding.Mode = BindingMode.OneWay;
+				control.SetBinding(p, binding);
+			}
+			else if (converter != null)
 			{
 				binding.Mode = BindingMode.OneWayToSource;
 				var value = source.GetType().GetProperty(sourceProperty).GetValue(source);

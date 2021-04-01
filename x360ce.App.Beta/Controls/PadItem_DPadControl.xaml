@@ -1,0 +1,70 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.PadItem_DPadControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Header="Axis to D-Pad">
+		<StackPanel Orientation="Horizontal">
+			<CheckBox
+				x:Name="EnabledCheckBox"
+				Margin="4,4,4,4"
+				VerticalAlignment="Top"
+				Content="Enabled" />
+
+			<StackPanel Orientation="Vertical">
+				<StackPanel Orientation="Vertical">
+					<Label Name="DeadZoneLabel" Content="DeadZone:" />
+					<StackPanel Orientation="Horizontal">
+						<Slider Name="DeadZoneTrackBar" Width="200" VerticalAlignment="Center" />
+						<TextBox
+							Name="DeadZoneTextBox"
+							Width="50"
+							HorizontalAlignment="Left"
+							HorizontalContentAlignment="Right"
+							IsReadOnly="True"
+							IsTabStop="False"
+							Text="0 %" />
+						<xctk:IntegerUpDown
+							Name="DeadZoneUpDown"
+							MinWidth="75"
+							VerticalAlignment="Center"
+							Value="0" />
+					</StackPanel>
+
+				</StackPanel>
+				<StackPanel Orientation="Vertical">
+					<Label Name="OffsetLabel" Content="Offset:" />
+					<StackPanel Orientation="Horizontal">
+						<Slider Name="OffsetTrackBar" Width="200" VerticalAlignment="Center" />
+						<TextBox
+							Name="OffsetTextBox"
+							Width="50"
+							HorizontalAlignment="Left"
+							HorizontalContentAlignment="Right"
+							IsReadOnly="True"
+							IsTabStop="False"
+							Text="0 %" />
+						<xctk:IntegerUpDown
+							Name="OffsetUpDown"
+							MinWidth="75"
+							VerticalAlignment="Center"
+							Value="0" />
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+
+		</StackPanel>
+
+	</GroupBox>
+</UserControl>

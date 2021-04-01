@@ -1,0 +1,247 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SqlServer.SqlWmiManagement</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ClientProtocol">
+            <summary>
+            Instance class encapsulating : ManagedComputer[@Name='']/ClientProtocol
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.WmiSmoObject">
+            <summary>
+             Contains common functionality for all the WMI classes
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.WmiSmoObject.OnPropertyMissing(System.String,System.Boolean)">
+            <summary>
+            Called when one of the properties is missing from the property collection
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.WmiSmoObject.Initialize">
+            <summary>
+            Initializes the object, by reading its properties from the enumerator
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.WmiSmoObject.InvokeMgmtMethod(System.Management.ManagementObject,System.Management.ManagementOperationObserver,System.String,System.Object[])">
+            <summary>
+            Wraps InvokeMethod calls. When the call fails, returned error codes  
+            are mapped into exceptions. 
+            </summary>
+            <param name="mo"></param>
+            <param name="observer"></param>
+            <param name="methodName"></param>
+            <param name="parameters"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.WmiSmoObject.ParentColl">
+            <summary>
+            Pointer to the collection that holds the object, if any
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.WmiSmoObject.Urn">
+            <summary>
+            Returns the Urn of the object, computed on the fly
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.WmiSmoObject.Properties">
+            <summary>
+            The property bag of the object
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.WmiSmoObject.Proxy">
+            <summary>
+            The proxy object we use for SQL execution
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolBase.Alter">
+            <summary>
+             changes the object according to the modification of its members
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolBase.Refresh">
+            <summary>
+            Refreshes the property bag and the ProtocolProperties collection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolBase.ProtocolProperties">
+            <summary>
+            This is a property bag that holds the Server and Client 
+            Protocol properties
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.ClientProtocol.Refresh">
+            <summary>
+            Refreshes the property bag and the ProtocolProperties collection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.ClientProtocol.NetLibInfo">
+            <summary>
+            The encapsulated NetLibInfo object
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.ManagedComputer.GetPossibleManagementPaths(System.String)">
+            <summary>
+            Compute the possible management paths for the given target server
+            </summary>
+            <param name="machineName">The name of the machine we will connect to</param>
+            <returns>A collection of ManagementPaths</returns>
+            <remarks>This should be called by the Init() method only</remarks>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.ManagedComputer.GetSmoObject(Microsoft.SqlServer.Management.Sdk.Sfc.Urn)">
+            <summary>
+            Returns the object with the corresponding Urn
+            </summary>
+            <param name="urn"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.WmiConnectionInfo">
+            <summary>
+            Connection structure that incapsulates ConnectionOptions structure
+            in the ManagedComputer's Scope object
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolProperty">
+            <summary>
+            ProtocolProperty is a Property with two more internal members,
+            which are the keys we have to use in order to access it while 
+            dealing with the managed WMI provider
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolPropertyCollection">
+            <summary>
+            This class is a collection of properties that can be accessed by name
+            The client has also access to the Property object in itself.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolPropertyCollection.ExistAndDirty(System.String)">
+            <summary>
+            Checks if a property exists and is dirty
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolPropertyCollection.GetIfDirty(System.String)">
+            <summary>
+            returns a property if it exists and is dirty
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolPropertyCollection.Item(System.String)">
+            <summary>
+             string indexer
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolPropertyCollection.Item(System.Int32)">
+            <summary>
+             Integer indexer
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ProtocolPropertyCollection.ProtocolPropertyEnumerator">
+            <summary>
+             nested enumerator class. It ses SortedList enumerations.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ServerAlias">
+            <summary>
+            Instance class encapsulating : ManagedComputer[@Name='']/ServerAlias
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ServerInstance">
+            <summary>
+            Instance class encapsulating : ManagedComputer[@Name='']/ServerInstance
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ServerIPAddress">
+            <summary>
+            Instance class encapsulating : ManagedComputer[@Name='']/ServerInstance/ServerProtocol/IPAddress
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.ServerIPAddress.AlterImplWorker">
+            <summary>
+            this is an internal method equivalent with IAlterable.Alter() implementation
+            this method however is not exposed as public since ServerIPAddress is a minor object
+            changes applied to ServerIPAddress or to its .IPAddressProperties collection
+            are submited to WMI only when user call-s Alter() on parent WMI Server Protocol
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.ServerIPAddress.IPAddressProperties">
+            <summary>
+            This is a property bag that holds the Server and Client 
+            Protocol properties
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ServerProtocol">
+            <summary>
+            Instance class encapsulating : ManagedComputer[@Name='']/ServerInstance/ServerProtocol
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.Service">
+            <summary>
+            Instance class encapsulating : ManagedComputer[@Name='']/Service
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.Service.Dependencies">
+            <summary>
+            This is a property bag that holds the Server and Client 
+            Protocol properties
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Smo.Wmi.Service.AdvancedProperties">
+            <summary>
+            This is a property bag that holds the Server and Client 
+            Protocol properties
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.WmiCollectionBase">
+            <summary>
+            Base collection for children of ManagedComputer
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.WMIProxy">
+            <summary>
+            proxy class for the sql execution and enumerator classes
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Smo.Wmi.WMIProxy.#ctor(System.Management.ManagementScope)">
+            <summary>
+            The constructor for this class needs a reference to the server 
+            </summary>
+            <param name="scope"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ServiceCollection">
+            <summary>
+             Strongly typed list of MAPPED_TYPE objects
+             Has strongly typed support for all of the methods of the sorted list class
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ClientProtocolCollection">
+            <summary>
+             Strongly typed list of MAPPED_TYPE objects
+             Has strongly typed support for all of the methods of the sorted list class
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ServerProtocolCollection">
+            <summary>
+             Strongly typed list of MAPPED_TYPE objects
+             Has strongly typed support for all of the methods of the sorted list class
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ServerInstanceCollection">
+            <summary>
+             Strongly typed list of MAPPED_TYPE objects
+             Has strongly typed support for all of the methods of the sorted list class
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ServerIPAddressCollection">
+            <summary>
+             Strongly typed list of MAPPED_TYPE objects
+             Has strongly typed support for all of the methods of the sorted list class
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Smo.Wmi.ServerAliasCollection">
+            <summary>
+             Strongly typed list of MAPPED_TYPE objects
+             Has strongly typed support for all of the methods of the sorted list class
+            </summary>
+        </member>
+    </members>
+</doc>

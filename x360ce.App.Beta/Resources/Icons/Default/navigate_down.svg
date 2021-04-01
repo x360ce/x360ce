@@ -1,0 +1,16 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>navigate down icon</title>
+    <desc>navigate down icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="20.625" y1="107.625" x2="347.8342" y2="404.159" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#40b0f1"/>
+            <stop offset="0.63922" stop-color="#129eee"/>
+            <stop offset="1" stop-color="#108ad0"/>
+        </linearGradient>
+    </defs>
+    <g fill="url(#color-1)" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M486.5,180.5l-219,219c-6.5,6.5 -16.5,6.5 -23,0l-219,-219c-6.5,-6.5 -6.5,-16.5 0,-23l45,-45c6.5,-6.5 16.5,-6.5 23,0l162.5,162.5l162.5,-162.5c6.5,-6.5 16.5,-6.5 23,0l45,45c6.5,6.5 6.5,16.5 0,23z" id="curve0"/>
+    </g>
+</svg>

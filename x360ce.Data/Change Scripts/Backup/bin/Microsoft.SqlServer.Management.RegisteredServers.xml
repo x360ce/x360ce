@@ -1,0 +1,1485 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SqlServer.Management.RegisteredServers</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnection">
+            <summary>
+            Represents a SQL server connection stored in Azure Data Studio settings
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnection.GroupId">
+            <summary>
+            ID of the containing group
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnection.Id">
+            <summary>
+            Unique ID of the connection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnection.Options">
+            <summary>
+            Name of the connection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnection.ProviderName">
+            <summary>
+            Provider of the connection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnection.SavePassword">
+            <summary>
+            Whether the password is saved in credential manager
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionStore">
+            <summary>
+            Represents Azure Data Studio saved connections
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionStore.LoadAzureDataStudioConnections(System.String)">
+            <summary>
+            Constructs a new AzureDataStudioConnectionStore from the given settings file. If no file is specified, 
+            it looks in %appdata%\azuredatastudio\user\settings.json. 
+            </summary>
+            <param name="settingsFile"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionStore.Groups">
+            <summary>
+            The set of connection groups
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionStore.Connections">
+            <summary>
+            The set of saved connections
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionGroup">
+            <summary>
+            Represents a connection group saved in Azure Data Studio settings
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionGroup.Color">
+            <summary>
+            Color used for the group in the UI
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionGroup.Description">
+            <summary>
+            Description of the group
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionGroup.Id">
+            <summary>
+            Unique ID of the group
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionGroup.Name">
+            <summary>
+            Name of the group
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.AzureDataStudioConnectionGroup.ParentId">
+            <summary>
+            ID of the parent group, will be null for the root.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerCollection">
+            <summary>
+            This is the collection for Registered Servers
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerCollection.#ctor(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup,System.Collections.Generic.IComparer{System.String})">
+            <summary>
+            
+            </summary>
+            <param name="parent"></param>
+            <param name="customComparer"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerCollection.Contains(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerCollection.GetElementFactoryImpl">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerCollection.Item(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersEnumerator.BeforeStatementExecuted(System.String)">
+            <summary>
+            Allow subclasses to add anything to the statement
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.ServerGroupParent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.savePathSuffix">
+            This is the suffix that we add to the %appdata% variable
+            to construct the directory location where we're persisting
+            our local xml file.
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.ExceptionDelegates">
+            <summary>
+            Delegate member to hold the list of delegate handlers
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.#ctor">
+            <summary>
+            This constructor is purely a place holder to allow the serialize to construct this
+            object and set other properties on it.  This constructor will not be used for directly
+            connecting to the local store. Instead we will use a static method to initialize the
+            store from the XML file.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.#ctor(Microsoft.SqlServer.Management.Common.ServerConnection)">
+            <summary>
+            This constructor is used for a Store that represents storage in a SQL server instead
+            of a file.
+            </summary>
+            <param name="sharedRegisteredServersStoreConnection"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.ReloadLocalFileStore">
+            <summary>
+            Discard the current local file store and reload it from disk
+            </summary>
+            <remarks>
+            This isn't called "Refresh" because SfcInstance.Refresh does something
+            completely different, like populating property bags, validating connections, etc.  
+            Also, this method is just reloading the local file store.  Any non-local storage
+            is unaffected by the method.
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.InitializeLocalRegisteredServersStore">
+            <summary>
+            Initializes the store from the default configuration file.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.MigrateLocalXmlFileFromLegacySSMS(System.String)">
+            <summary>
+            Migrate the RegServer Store file from older versions of SSMS (17.x and earlier)
+            - Try to deserialize older files that may be on the machine (e.g. installed by older versions of SSMS)
+            - If the deserialization succeeds, then copy that file to the current location
+            Note: starting with SSMS 18.0, the location is not versioned anymore.
+            </summary>
+            <param name="pathToMigratedLocalXmlFile"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.TryDeserializeLocalXmlFile(System.String,Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore@,System.Exception@)">
+            <summary>
+            Tries to deserialize Local XML file.
+            </summary>
+            <param name="pathToLocalXmlFile">The full path to the file we are trying to deserialize</param>
+            <param name="registeredServersStore">The object that represents the deserialized file</param>
+            <param name="exception">The exception that was caught (if any); if no exception happened and the deserialization was successful, this is set to null</param>
+            <returns>True if the file existed and could be deserialized; false otherwise</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.InitChildObjects(System.String)">
+            <summary>
+            Helper function that inits the root's child objects
+            from a file
+            </summary>
+            <param name="file"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.UpgradeFromSqlServer2005(System.String)">
+            <summary>
+            Merges the content of the downlevel store into the local store.
+            </summary>
+            <param name="downlevelFile"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.InitFromSqlServer2005Store(System.Xml.XmlReader)">
+            <summary>
+            Initializes the object model from a SqlServer 2005 store, 
+            effectively performing the conversion.
+            </summary>
+            <param name="reader"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.AddAsAdvancedOptions(System.Data.Common.DbConnectionStringBuilder,System.Xml.XmlNode)">
+            <summary>
+            Add advanced options from the xml node to the connection string for 
+            ServerType.AnalysisServices servers
+            </summary>
+            <param name="connString"></param>
+            <param name="property"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.AddAdvancedOptions(System.Data.Common.DbConnectionStringBuilder,System.Xml.XmlNode)">
+            <summary>
+            Add advanced options from the xml node to the connection string.
+            </summary>
+            <param name="connString"></param>
+            <param name="property"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.ReadXmlAttribute(System.Xml.XmlNode,System.String,System.Boolean)">
+            <summary>
+            Reads an attribute of an XmlNode object
+            </summary>
+            <param name="node"></param>
+            <param name="name"></param>
+            <param name="throwIfMissing">throws exception if the attribute is missing</param>
+            <returns>sttribute value</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Serialize">
+            <summary>
+            Helper function that flushes the entire tree on the disk.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Export(Microsoft.SqlServer.Management.Sdk.Sfc.SfcInstance,System.String,Microsoft.SqlServer.Management.RegisteredServers.CredentialPersistenceType)">
+            <summary>
+            Exports the object and its subtree to a file.
+            </summary>
+            <param name="obj"></param>
+            <param name="file"></param>
+            <param name="cpt"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.FilterProperty(Microsoft.SqlServer.Management.Sdk.Sfc.SfcSerializer,Microsoft.SqlServer.Management.Sdk.Sfc.FilterPropertyEventArgs)">
+            <summary>
+            This function will be called during serialization to provide 
+            values for the properties of the object being serialized. 
+            We are using it to override the value of 
+            ConnectionStringWithEncryptedPassword according to a session setting
+            that instructs whether password and user name should be saved.
+            </summary>
+            <param name="serializer"></param>
+            <param name="propertyArgs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.FilterException(System.Exception)">
+            <summary>
+            Helper to detect exceptions that we can't recover from therefore 
+            it does not make sense to rethrow.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.databaseEngineServerGroupName">
+            Name of the builtin DatabaseEngine group 
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.analysisServicesServerGroupName">
+            Name of the builtin AnalysisServices group 
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.reportingServicesServerGroupName">
+            Name of the builtin ReportingServices group
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.integrationServicesServerGroupName">
+            Name of the builtin IntegrationServices group
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.sqlServerCompactEditionServerGroupName">
+            Name of the builtin SqlServerCompactEdition group
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.centralManagementServerGroupName">
+            Name of the builtin CentralManagementServer group
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.CreateIdentityKey">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.GetExecutionEngine">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.GetKey(Microsoft.SqlServer.Management.Sdk.Sfc.IUrnFragment)">
+            <summary>
+            
+            </summary>
+            <param name="urnFragment"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.GetType(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="typeName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.GetTypeMetadata(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="typeName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.UseSfcStateManagement">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcDomainLite#GetLogicalVersion">
+            <summary>
+            Returns the logical version of the domain
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcHasConnection#GetConnection(Microsoft.SqlServer.Management.Sdk.Sfc.SfcObjectQueryMode)">
+            <summary>
+            
+            </summary>
+            <param name="activeQueriesMode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcHasConnection#SetConnection(Microsoft.SqlServer.Management.Common.ISfcConnection)">
+            <summary>
+            Sets the active connection.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcHasConnection#GetConnection">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.GetChildCollection(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="elementType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.EnsureDirExists(System.String)">
+            <summary>
+            makes sure that the directory exists
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Discover(Microsoft.SqlServer.Management.Sdk.Sfc.ISfcDependencyDiscoveryObjectSink)">
+            <summary>
+            
+            </summary>
+            <param name="sink"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.LocalFileStore">
+            <summary>
+            This static property returns a Singleton instance representing the local file
+            storage.
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.LocalFileStoreReloaded">
+            <summary>
+            Event that is raised after the local file store is refreshed.  When
+            this event is raised, clients need to release their references to 
+            the store and reinitialize their UI for the new local file store. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.IsLocal">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.DisplayName">
+            <summary>
+            Display name for this store
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.LocalServerStoreDisplayName">
+            <summary>
+            The localized name of the local server store
+            </summary>
+            <remarks>
+            String compararer in GUI needs to know this so it can sort the local
+            server store differently from other nodes
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.CentralManagementServersDisplayName">
+            <summary>
+            The localized name of the shared server store
+            </summary>
+            <remarks>
+            String compararer in GUI needs to know this so it can sort the shared
+            server store differently from other nodes
+            </remarks>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.IsSerializeOnCreation">
+            <summary>
+            Used in RegisterServer::Create() method
+            to allow creation of objects without serialization
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.DatabaseEngineServerGroupName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.AnalysisServicesServerGroupName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.ReportingServicesServerGroupName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.IntegrationServicesServerGroupName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.SqlServerCompactEditionServerGroupName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.CentralManagementServerGroupName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.ServerGroups">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.DatabaseEngineServerGroup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.CentralManagementServerGroup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.AzureDataStudioConnectionStore">
+            <summary>
+            Contains the set of connections and groups stored in the user's Azure Data Studio settings
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.AnalysisServicesServerGroup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.ReportingServicesServerGroup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.IntegrationServicesServerGroup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.SqlServerCompactEditionServerGroup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.ServerConnection">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.DomainInstanceName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.DomainName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcHasConnection#ConnectionContext">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.ExceptionDelegate">
+            <summary>
+            Delegate declaration for handling any exceptions in UI scenarios
+            This is useful in cases where UI should show a user dialog and continue
+              with the rest of the code past the exception.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key">
+            Internal key class
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.#ctor">
+            <summary>
+            Default constructor for generic Key generation
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.GetHashCode">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.Equals(System.Object)">
+            <summary>
+            Equality and Hashing
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.Equals(System.Object,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="obj1"></param>
+            <param name="obj2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.Equals(Microsoft.SqlServer.Management.Sdk.Sfc.SfcKey)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.op_Equality(System.Object,Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.op_Equality(Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.op_Equality(Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key,Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.op_Inequality(System.Object,Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.op_Inequality(Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.op_Inequality(Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key,Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServersStore.Key.GetUrnFragment">
+            <summary>
+            Conversions
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.#ctor(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="parent"></param>
+            <param name="name"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.UpdateConnectionStringWithEncryptedPassword">
+            <summary>
+            Updates ConnectionStringWithEncryptedPassword based on changes made to 
+            SecureConnectionString.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.ProtectData(System.String,System.Boolean)">
+            <summary>
+            Encrypts the input string using the ProtectedData class.
+            </summary>
+            <param name="input"></param>
+            <param name="encrypt"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.SetDefaultCredentialPersistenceType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.GetConnectionObject">
+            <summary>
+            Returns the connection object that corresponds to the connection string
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.GetObjectFactory">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.CreateIdentityKey">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.SetName(System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.GetServerNameFromConnectionString(System.String)">
+            <summary>
+            There are 3 possible values to ServerName depending on the flavor of SQL and Server Type
+            Hence checking for the possible values. The 3 possible values are picked up from   
+            the method Microsoft.SqlServer.Management.UI.ConnectionDlg.UIConnectionInfoUtil.GetUIConnectionInfoFromConnectionString
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.SetServerNameInConnectionString(System.String)">
+            <summary>
+            Helper function to Update connectionstring with new servername 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.GetServerNameKeyInConnectionString(System.String)">
+            <summary>
+            Helper function to find the servername equivalent in connectionstring for different server type
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.GetChildCollection(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="elementType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Validate(System.String,System.Object[])">
+            <summary>
+            
+            </summary>
+            <param name="methodName"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcCreatable#ScriptCreate">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Create">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.PostCreate(System.Object)">
+            <summary>
+            Perform post-create action
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Alter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcDroppable#ScriptDrop">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Drop">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Rename(System.String)">
+            <summary>
+            Renames the object on the server.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Rename(Microsoft.SqlServer.Management.Sdk.Sfc.SfcKey)">
+            <summary>
+            Renames the object on the server.
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Move(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup)">
+            <summary>
+            Moves the RegisteredServer to be a child of another ServerGroup.
+            </summary>
+            <param name="newParent"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Export(System.String,Microsoft.SqlServer.Management.RegisteredServers.CredentialPersistenceType)">
+            <summary>
+            Exports the content of the group to a file.
+            </summary>
+            <param name="file"></param>
+            <param name="cpt"></param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.SecureConnectionString">
+            <summary>
+            Gets or set the connection related data, specific to this
+            server.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.ConnectionString">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Parent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.IdentityKey">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.ID">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Description">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.ServerName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.UseCustomConnectionColor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.CustomConnectionColorArgb">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.ServerType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.ConnectionStringWithEncryptedPassword">
+            <summary>
+            Connection string that contains the password in encrypted form.
+            Will always return empty string for shared servers.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.CredentialPersistenceType">
+            <summary>
+            Indicates whether the login name and the password will be saved. 
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.OtherParams">
+            <summary>
+            Additional parameters to append to the connection string
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.AuthenticationType">
+            <summary>
+            Authentication type for connections where the connection string isn't sufficient to discover it
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.ActiveDirectoryUserId">
+            <summary>
+            Active Directory User id
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.ActiveDirectoryTenant">
+            <summary>
+            Active Directory Tenant
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.IsLocal">
+            <summary>
+            Returns the IsLocal property of the RegisteredServersStore
+            that this instance is associated with.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.IsDropped">
+            <summary>
+            Returns if SFC believes this is a dropped object.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.keyName">
+            <summary>
+            Properties
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.#ctor">
+            <summary>
+            Default constructor for generic Key generation
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.#ctor(Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key)">
+            <summary>
+            Constructors
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.Equals(System.Object)">
+            <summary>
+            Equality and Hashing
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.Equals(System.Object,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="obj1"></param>
+            <param name="obj2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.Equals(Microsoft.SqlServer.Management.Sdk.Sfc.SfcKey)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.op_Equality(System.Object,Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.op_Equality(Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.op_Equality(Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key,Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.op_Inequality(System.Object,Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.op_Inequality(Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.op_Inequality(Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key,Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.GetHashCode">
+            <summary>
+            Equality and Hashing
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.GetUrnFragment">
+            <summary>
+            Conversions
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer.Key.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.CredentialPersistenceType">
+            <summary>
+            Directs what credentials will be persisted in the local store or
+            when serializing a shared server.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.CredentialPersistenceType.None">
+            No credentials will be persisted
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.CredentialPersistenceType.PersistLoginName">
+            Login name is going to be presisted
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.CredentialPersistenceType.PersistLoginNameAndPassword">
+            Login name and password are both going to be persisted
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerExceptionType">
+            <summary>
+            Types of Registered Server Exceptions
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerExceptionType.RegisteredServerException">
+            Base type
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException">
+            <summary>
+            Base exception class for all Registered Server exception classes
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException.Init">
+            <summary>
+            Initializes instance properties
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException.SetHelpContext(System.String)">
+            <summary>
+            Sets Help Context
+            </summary>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException.ProdVer">
+            <summary>
+            Product Version
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException.RegisteredServerExceptionType">
+            <summary>
+            Exception Type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.RegisteredServerException.HelpLink">
+            <summary>
+            will output a link to the help web site
+            <!--http://www.microsoft.com/products/ee/transform.aspx?ProdName=Microsoft%20SQL%20Server&ProdVer=09.00.0000.00&EvtSrc=MSSQLServer&EvtID=15401-->
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.InvalidSqlServer2005StoreFormatException">
+            <summary>
+            Exception thrown when upgrading from SqlServer2005
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.InvalidSqlServer2005StoreFormatException.#ctor">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.InvalidSqlServer2005StoreFormatException.#ctor(System.String)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.InvalidSqlServer2005StoreFormatException.#ctor(System.String,System.Exception)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.InvalidSqlServer2005StoreFormatException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Base constructor
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.#ctor(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="parent"></param>
+            <param name="name"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.GetObjectFactory">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.CreateIdentityKey">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.SetName(System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.GetChildCollection(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="elementType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Validate(System.String,System.Object[])">
+            <summary>
+            
+            </summary>
+            <param name="methodName"></param>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcCreatable#ScriptCreate">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Create">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.PostCreate(System.Object)">
+            <summary>
+            Perform post-create action
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Alter">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Microsoft#SqlServer#Management#Sdk#Sfc#ISfcDroppable#ScriptDrop">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Drop">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Rename(System.String)">
+            <summary>
+            Renames the object on the server.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Rename(Microsoft.SqlServer.Management.Sdk.Sfc.SfcKey)">
+            <summary>
+            Renames the object on the server.
+            </summary>
+            <param name="key"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Move(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup)">
+            <summary>
+            Moves the ServerGroup to be a child of another ServerGroup.
+            </summary>
+            <param name="newParent"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.GetDescendantRegisteredServers">
+            <summary>
+            Method to flatten the hierarchy for a ServerGroup and return 
+            the complete list of descendant RegisteredServers.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.GetDescendantRegisteredServersRec(System.Collections.Generic.List{Microsoft.SqlServer.Management.RegisteredServers.RegisteredServer})">
+            <summary>
+            Walks the tree recursively gathering the registered servers.
+            </summary>
+            <param name="regSrvList"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Discover(Microsoft.SqlServer.Management.Sdk.Sfc.ISfcDependencyDiscoveryObjectSink)">
+            <summary>
+            
+            </summary>
+            <param name="sink"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Export(System.String,Microsoft.SqlServer.Management.RegisteredServers.CredentialPersistenceType)">
+            <summary>
+            Exports the content of the group to a file.
+            </summary>
+            <param name="file"></param>
+            <param name="cpt"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.DeleteObject(System.Object,System.Object[],System.Boolean,System.Boolean@,System.Boolean@)">
+            <summary>
+            Raise the DuplicateFound event and capture reaction from the argument.
+            </summary>
+            <param name="obj">The registered server or the server group object to be replace</param>
+            <param name="param">The parameters to supply to the method info</param>
+            <param name="isLocal">Indicate whether this object is in the local store</param>
+            <param name="applyToAll">Check if user had selected apply to all previously</param>
+            <param name="confirm">The confirmation state to use if apply to all is used previously</param>
+            <returns>Yes - object is deleted, Cancel - abort the operation, No - object is not deleted</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Import(System.String)">
+            <summary>
+            Imports groups and servers saved in the XML file and adds them
+            as children.
+            </summary>
+            <param name="file"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.DeepCreate">
+            <summary>
+            Propagates the Create() call to all the subobjects
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.RegisteredServers">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.ServerGroups">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Parent">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.IdentityKey">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.ID">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.ServerGroupChildCount">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.RegisteredServerChildCount">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Description">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.ServerType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.DisplayName">
+            <summary>
+            Display name for the group
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.IsLocal">
+            <summary>
+            Returns the IsLocal property of the RegisteredServersStore
+            that this instance is associated with.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.IsSystemServerGroup">
+            <summary>
+            Returns true if this servergroup is one among the standard 
+            server groups.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.IsStandardServerGroup">
+            <summary>
+            Returns true if this server group is one among the standard 
+            server groups whose parent is not RegisteredServerStore.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.IsDropped">
+            <summary>
+            Returns if SFC believes this is a dropped object.
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.DuplicateFound">
+            <summary>
+            The event that is raise when user attempts to import a registered server or server group that already 
+            exists in the local store
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.keyName">
+            <summary>
+            Properties
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.#ctor">
+            <summary>
+            Default constructor for generic Key generation
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.#ctor(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key)">
+            <summary>
+            Constructors
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.#ctor(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.Equals(System.Object)">
+            <summary>
+            Equality and Hashing
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.Equals(System.Object,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="obj1"></param>
+            <param name="obj2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.Equals(Microsoft.SqlServer.Management.Sdk.Sfc.SfcKey)">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.op_Equality(System.Object,Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.op_Equality(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.op_Equality(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key,Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.op_Inequality(System.Object,Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key)">
+            <summary>
+            
+            </summary>
+            <param name="obj"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.op_Inequality(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key,System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.op_Inequality(Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key,Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key)">
+            <summary>
+            
+            </summary>
+            <param name="leftOperand"></param>
+            <param name="rightOperand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.GetHashCode">
+            <summary>
+            Equality and Hashing
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.GetUrnFragment">
+            <summary>
+            Conversions
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroup.Key.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.DialogResult">
+            <summary>
+              Specifies identifiers to indicate the return value of a dialog box.
+              This is used only as a private variable and does not need to come from Windows.Forms
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.DuplicateFoundEventArgs">
+            <summary>
+            The event args of the event raised when user attempts to import a registered server or a server group that 
+            already exists in the local store
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.DuplicateFoundEventArgs.ApplyToAll">
+            <summary>
+            Apply the Confirm state to the rest of the object during the import.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.DuplicateFoundEventArgs.Confirm">
+            <summary>
+            Confirm to overwrite the object.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.DuplicateFoundEventArgs.Cancel">
+            <summary>
+            Cancel the import operation.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.RegisteredServers.ServerGroupCollection">
+            <summary>
+            This is the collection for Server Groups
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroupCollection.#ctor(Microsoft.SqlServer.Management.RegisteredServers.ServerGroupParent,System.Collections.Generic.IComparer{System.String})">
+            <summary>
+            
+            </summary>
+            <param name="parent"></param>
+            <param name="customComparer"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroupCollection.Contains(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.RegisteredServers.ServerGroupCollection.GetElementFactoryImpl">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.RegisteredServers.ServerGroupCollection.Item(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

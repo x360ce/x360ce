@@ -101,6 +101,8 @@ namespace x360ce.App.Controls
 					deadzoneLink.Dispose();
 				if (antiDeadzoneLink != null)
 					antiDeadzoneLink.Dispose();
+				if (linearLink != null)
+					linearLink.Dispose();
 				if (updateTimer != null)
 					updateTimer.Dispose();
 			}

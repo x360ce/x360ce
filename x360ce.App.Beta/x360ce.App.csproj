@@ -229,7 +229,6 @@
     <Compile Include="Common\DownloaderParams.cs" />
     <Compile Include="Common\Extensions.cs" />
     <Compile Include="Common\ImageInfo.cs" />
-    <Compile Include="Common\ImageInfos.cs" />
     <Compile Include="Common\NavImageType.cs" />
     <Compile Include="Common\SettingChangedEventArgs.cs" />
     <Compile Include="Common\SettingsManager.UserDevices.cs" />
@@ -291,28 +290,28 @@
     <Compile Include="Controls\OptionsVirtualDeviceControl.xaml.cs">
       <DependentUpon>OptionsVirtualDeviceControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\DirectInputUserControl.xaml.cs">
-      <DependentUpon>DirectInputUserControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItemControl.xaml.cs">
+      <DependentUpon>PadItemControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\DPadControl.xaml.cs">
-      <DependentUpon>DPadControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItem_DInputControl.xaml.cs">
+      <DependentUpon>PadItem_DInputControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\ForceFeedbackControl.xaml.cs">
-      <DependentUpon>ForceFeedbackControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItem_DPadControl.xaml.cs">
+      <DependentUpon>PadItem_DPadControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\ForceFeedbackMotorControl.xaml.cs">
-      <DependentUpon>ForceFeedbackMotorControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItem_ForceFeedbackControl.xaml.cs">
+      <DependentUpon>PadItem_ForceFeedbackControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
-    <Compile Include="Controls\PadTabPages\IPadControl.cs" />
-    <Compile Include="Controls\PadTabPages\LeftThumbControl.xaml.cs">
-      <DependentUpon>LeftThumbControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItem_ForceFeedback_MotorControl.xaml.cs">
+      <DependentUpon>PadItem_ForceFeedback_MotorControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\RightThumbControl.xaml.cs">
-      <DependentUpon>RightThumbControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItem_AdvancedControl.xaml.cs">
+      <DependentUpon>PadItem_AdvancedControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\TriggersControl.xaml.cs">
-      <DependentUpon>TriggersControl.xaml</DependentUpon>
+    <Compile Include="Common\PadControlImager.cs" />
+    <Compile Include="Common\IPadControl.cs" />
+    <Compile Include="Controls\PadItem_GeneralControl.xaml.cs">
+      <DependentUpon>PadItem_GeneralControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PresetsControl.xaml.cs">
       <DependentUpon>PresetsControl.xaml</DependentUpon>
@@ -332,14 +331,14 @@
     <Compile Include="Controls\SettingsListControl.xaml.cs">
       <DependentUpon>SettingsListControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\MacrosControl.xaml.cs">
-      <DependentUpon>MacrosControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItem_MacrosControl.xaml.cs">
+      <DependentUpon>PadItem_MacrosControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\General\XboxImageControl.xaml.cs">
-      <DependentUpon>XboxImageControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItem_General_XboxImageControl.xaml.cs">
+      <DependentUpon>PadItem_General_XboxImageControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\XInputControl.xaml.cs">
-      <DependentUpon>XInputControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItem_XInputControl.xaml.cs">
+      <DependentUpon>PadItem_XInputControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SummariesListControl.xaml.cs">
       <DependentUpon>SummariesListControl.xaml</DependentUpon>
@@ -367,6 +366,7 @@
     <Compile Include="Converters\MapToIntToDescription.cs" />
     <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Converters\PadSettingToEnumConverter.cs" />
+    <Compile Include="Converters\PadSettingToTextConverter.cs" />
     <Compile Include="Forms\BaseFormWithHeader.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -598,8 +598,6 @@
   <ItemGroup>
     <Content Include="app.ico" />
     <CodeAnalysisDictionary Include="CodeAnalaysisDictionary.xml" />
-    <Content Include="Controls\arrow_right_16x16.png" />
-    <Content Include="Controls\Button_Back.png" />
     <Content Include="Forms\app.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error.ico" />
     <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png" />
@@ -785,43 +783,43 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\DirectInputUserControl.xaml">
+    <Page Include="Controls\PadItemControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\DPadControl.xaml">
+    <Page Include="Controls\PadItem_DInputControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\ForceFeedbackControl.xaml">
+    <Page Include="Controls\PadItem_DPadControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\ForceFeedbackMotorControl.xaml">
+    <Page Include="Controls\PadItem_ForceFeedbackControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\LeftThumbControl.xaml">
+    <Page Include="Controls\PadItem_ForceFeedback_MotorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\MacrosControl.xaml">
+    <Page Include="Controls\PadItem_AdvancedControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\General\XboxImageControl.xaml">
+    <Page Include="Controls\PadItem_MacrosControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\RightThumbControl.xaml">
+    <Page Include="Controls\PadItem_General_XboxImageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\TriggersControl.xaml">
+    <Page Include="Controls\PadItem_GeneralControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\PadTabPages\XInputControl.xaml">
+    <Page Include="Controls\PadItem_XInputControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

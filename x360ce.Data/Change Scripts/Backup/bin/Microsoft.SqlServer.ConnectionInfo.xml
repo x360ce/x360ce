@@ -1,0 +1,2669 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.SqlServer.ConnectionInfo</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.SqlServer.Management.Common.NetworkProtocol">
+            <summary>
+             Network protocols
+             </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.NetworkProtocol.TcpIp">
+            <summary>
+            TcpIp
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.NetworkProtocol.NamedPipes">
+            <summary>
+            NamedPipes
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.NetworkProtocol.Multiprotocol">
+            <summary>
+            Multiprotocol
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.NetworkProtocol.AppleTalk">
+            <summary>
+            AppleTalk
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.NetworkProtocol.BanyanVines">
+            <summary>
+            BanyanVines
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.NetworkProtocol.Via">
+            <summary>
+            Via
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.NetworkProtocol.SharedMemory">
+            <summary>
+            SharedMemory
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.NetworkProtocol.NWLinkIpxSpx">
+            <summary>
+            NWLinkIpxSpx
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.NetworkProtocol.NotSpecified">
+            <summary>
+            NotSpecified
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.DatabaseEngineType">
+            <summary>
+            the possible values of server configuration
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineType.Standalone">
+            The server has a Standalone configuration
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineType.SqlAzureDatabase">
+            The server has a Cloud configuration
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition">
+            <summary>
+            the possible values of server edition - match SERVERPROPERTY('EngineEdition')
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.Unknown">
+                       Currently these values are duplicated in $\Sql\ssms\smo\SMO\Main\src\enumerations.cs
+                       Eventually we would like to remove the type defined there (see TFS#7818885) but until that happens
+                       make sure to update both enums with any changes
+                    *
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.Personal">
+            The server is Personal or standard
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.Standard">
+            The server is Standard
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.Enterprise">
+            The server is Enterprise
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.Express">
+            The server is Express
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.SqlDatabase">
+            The server is SqlDatabase
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.SqlDataWarehouse">
+            The server is a DataWarehouse
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.SqlStretchDatabase">
+            The server is a StretchDatabase
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.SqlManagedInstance">
+            The server is a Sql Managed Instance
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition.SqlOnDemand">
+            The server is Sql SqlOnDemand
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ExecutionTypes">
+            <remarks>
+            Statement execution constants are used to direct the behavior of the ExecuteImmediate method, altering execution behavior or interpretation of the statement submitted for execution
+            </remarks>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ExecutionTypes.Default">
+            <summary>
+            No statement execution options set
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ExecutionTypes.NoCommands">
+            <summary>
+            Ignore the command terminator in the script. Execute as a single batch
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ExecutionTypes.ContinueOnError">
+            <summary>
+            Batch execution continues on any error that does not break the connection
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ExecutionTypes.NoExec">
+            <summary>
+            Execute SET NOEXEC ON prior to batch execution. Execute SET NOEXEC OFF after batch execution.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ExecutionTypes.ParseOnly">
+            <summary>
+            Execute SET PARSEONLY ON prior to batch execution. Execute SET PARSEONLY OFF after batch execution
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ExecutionTypes.QuotedIdentifierOn">
+            <summary>
+            Execute SET QUOTED_IDENTIFIER ON prior to batch execution. Execute SET QUOTED_IDENTIFIER OFF after batch execution.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.SqlExecutionModes">
+            <summary>
+            Determines if SQL statements are captured or sent to the server.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.SqlExecutionModes.ExecuteSql">
+            <summary>
+            execute sql
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.SqlExecutionModes.CaptureSql">
+            <summary>
+            sql is captured
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.SqlExecutionModes.ExecuteAndCaptureSql">
+            <summary>
+            sql is executed and captured
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.FixedServerRoles">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.FixedServerRoles.None">
+            <summary>
+            none
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.FixedServerRoles.SysAdmin">
+            <summary>
+            System administrators
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.FixedServerRoles.ServerAdmin">
+            <summary>
+            Server administrators
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.FixedServerRoles.SetupAdmin">
+            <summary>
+            Setup administrators
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.FixedServerRoles.SecurityAdmin">
+            <summary>
+            Security administrators
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.FixedServerRoles.ProcessAdmin">
+            <summary>
+            Process administrators
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.FixedServerRoles.DBCreator">
+            <summary>
+            Database creators
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.FixedServerRoles.DiskAdmin">
+            <summary>
+            Disk administrators
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.FixedServerRoles.BulkAdmin">
+            <summary>
+            Bulk insert administrators
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ServerUserProfiles">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerUserProfiles.None">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerUserProfiles.SALogin">
+            <summary>
+            Login is a member of the sysadmin role.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerUserProfiles.CreateDatabase">
+            <summary>
+            Login has CREATE DATABASE permission.
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerUserProfiles.CreateXP">
+            <summary>
+            Login can execute sp_addextendedproc and sp_dropextendedproc (loading and unloading extended stored procedures).
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerUserProfiles.All">
+            <summary>
+            Login has all specifiable SQL Server maintenance permissions.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.AutoDisconnectMode">
+            <summary>
+            regulates the disconnect policy
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.AutoDisconnectMode.DisconnectIfPooled">
+            <summary>
+            after statement is executed if connection is pooled disconnect connection
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.AutoDisconnectMode.NoAutoDisconnect">
+            <summary>
+            don't disconnect connection
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ServerType">
+            <summary>
+            Valid connection types
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerType.DatabaseEngine">
+            <summary>
+            SQL Engine
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerType.AnalysisServices">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerType.ReportingServices">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerType.IntegrationServices">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerType.SqlServerEverywhere">
+            <summary>
+            DO NOT USE - the name is SQL Server Compact Edition
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ServerType.SqlServerCompactEdition">
+            <summary>
+            SQL CE
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.HostPlatformNames">
+            <summary>
+            Possible values for Server.HostPlatform property in SMO
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.TypeConverters">
+            <summary>
+            Type converters to use to translate enum values to their string values and back
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ConnectionEnumsHelpers">
+            <summary>
+            Set of helper methods for use with the enums defined here
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionEnumsHelpers.GetSupportedDatabaseEngineEditions(Microsoft.SqlServer.Management.Common.DatabaseEngineType)">
+            <summary>
+            Gets the set of supported <see cref="T:Microsoft.SqlServer.Management.Common.DatabaseEngineEdition"/> for a given <see cref="T:Microsoft.SqlServer.Management.Common.DatabaseEngineType"/>
+            </summary>
+            <param name="engineType"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ConnectionException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ConnectionCannotBeChangedException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionCannotBeChangedException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionCannotBeChangedException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionCannotBeChangedException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.InvalidPropertyValueException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.InvalidPropertyValueException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.InvalidPropertyValueException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.InvalidPropertyValueException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ConnectionFailureException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionFailureException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionFailureException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionFailureException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ExecutionFailureException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ExecutionFailureException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ExecutionFailureException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ExecutionFailureException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.NotInTransactionException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.NotInTransactionException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.NotInTransactionException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.NotInTransactionException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.InvalidArgumentException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.InvalidArgumentException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.InvalidArgumentException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.InvalidArgumentException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.PropertyNotSetException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.PropertyNotSetException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.PropertyNotSetException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.PropertyNotSetException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.PropertyNotAvailableException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.PropertyNotAvailableException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.PropertyNotAvailableException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.PropertyNotAvailableException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.PropertyNotAvailableException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization constructor
+            </summary>
+            <param name="si"></param>
+            <param name="sc"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ChangePasswordFailureException">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ChangePasswordFailureException.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ChangePasswordFailureException.#ctor(System.String)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ChangePasswordFailureException.#ctor(System.String,System.Exception)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ChangePasswordFailureException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Serialization constructor
+            </summary>
+            <param name="si"></param>
+            <param name="sc"></param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.DisconnectedConnectionException">
+            <summary>
+            This exception is thrown when an attempt is made to use a connected that is forced in disconnected mode
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.DisconnectedConnectionException.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.DisconnectedConnectionException.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.DisconnectedConnectionException.#ctor(System.String,System.Exception)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionInfoHelper.SetTokenOnConnection(System.Data.SqlClient.SqlConnection,System.String)">
+            <summary>
+            Sets the AccessToken property on SqlConnection object
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionInfoHelper.GetTokenFromSqlConnection(System.Data.SqlClient.SqlConnection)">
+            <summary>
+            Get AccessToken from SqlConnection
+            </summary>
+            <remarks>Will be an empty string if AccessToken is not supported in the current .NET Framework (&lt;4.6)</remarks>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionInfoHelper.CreateSqlConnection(Microsoft.SqlServer.Management.Common.SqlConnectionInfo)">
+            <summary>
+            Creates SqlConnection from the SqlConnectionInfo class
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionInfoHelper.GetAccessTokenProperty">
+            <summary>
+            Gets the AccessToken property if it's available (requires .NET 4.6)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ConnectionManager">
+            <summary>
+            connection settings and creation
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ConnectionSettings">
+            <summary>
+            connection settings and creation
+            </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ConnectionSettings.NoConnectionTimeout">
+            <summary>
+            Infinite wait
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.#ctor(Microsoft.SqlServer.Management.Common.SqlConnectionInfo)">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.InitDefaults">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.InitFromSqlConnectionInfo(Microsoft.SqlServer.Management.Common.SqlConnectionInfo)">
+             <summary>
+            
+             </summary>
+             <param name="sci"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.InitFromSqlConnection(System.Data.SqlClient.SqlConnection)">
+             <summary>
+            
+             </summary>
+             <param name="sc"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.ThrowIfUpdatesAreBlocked">
+            <summary>
+            check that we are not already connected
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.ThrowIfInvalidValue(System.String,System.String,System.Boolean)">
+            <summary>
+            check if the input value is valid ( != null )
+            </summary>
+            <param name="str">string to be checked</param>
+            <param name="propertyName"></param>
+            <param name="checkEmpty"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.ThrowIfInvalidValue(System.Int32,System.Int32,System.String)">
+            <summary>
+            check if the input value is valid ( > 0 )
+            </summary>
+            <param name="n">integer to be checked</param>
+            <param name="value"></param>
+            <param name="propertyName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.GetConnectionString">
+            <summary>
+            builds the connection string
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.SetAuthentication(System.Data.SqlClient.SqlConnectionStringBuilder)">
+            <summary>
+            Set Authentication using reflection
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionSettings.SetApplicationIntent(System.Data.SqlClient.SqlConnectionStringBuilder)">
+            <summary>
+            Set the ApplicationIntent of the SqlConnectionStringBuilder. If the property is not
+            supported or we have an invalid ApplicationIntent the value is ignored.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.ServerInstance">
+            <summary>
+             The name of the SQL Server the object will connect to.
+             If not set, the local server is implied.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.IsLoginInitialized">
+            <summary>
+            true if Login property has been initialized
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.Login">
+            <summary>
+             The SQL Server Login name that is used to connect to the server.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             PropertyNotSetException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.IsPasswordInitialized">
+            <summary>
+            true if Password property has been initialized
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.Password">
+            <summary>
+             The password that is used with Login to connect to the server.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             PropertyNotSetException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.SecurePassword">
+            <summary>
+             The password that is used with Login to connect to the server.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             PropertyNotSetException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.LoginSecure">
+            <summary>
+             If set to true, Windows integrate security is used and Login and Password are ignored.
+             If not set, Sql Server Authentication is used.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.ConnectAsUserName">
+            <summary>
+             Specifies the NT user that is used when creating an impersonated connection.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             PropertyNotSetException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.ConnectAsUserPassword">
+            <summary>
+             Specifies password of the NT user that is used when creating an impersonated connection.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             PropertyNotSetException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.ConnectAsUser">
+            <summary>
+             If set to true, the connection will be made with the credentials
+             of the specified user. This will assume impersonation, however
+             the LoginSecure flags and Login and Password fields will
+             not be affected.
+             ConnectionCannotBeChangedException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.NonPooledConnection">
+            <summary>
+             By default, all connections to SQL Server are taken from an ADO.NET connection
+             pool.If set to true, this allows users to create a non-pooled connection
+             (will not be reused when closed).
+             Exceptions:
+             ConnectionCannotBeChangedException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.PooledConnectionLifetime">
+            <summary>
+             When a connection is returned to the pool, its creation time is compared with
+             the current time, and the connection is destroyed if that time span (in seconds)
+             exceeds the value specified by connection lifetime.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.MinPoolSize">
+            <summary>
+             The minimum number of connections maintained in the pool.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.MaxPoolSize">
+            <summary>
+             The maximum number of connections allowed in the pool.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.ConnectTimeout">
+            <summary>
+             The length of time (in seconds) to wait for a connection to the server before
+             terminating the attempt and throwing an exception.
+             Default is 30 seconds (same as Shiloh).
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.Authentication">
+            <summary>
+             The authentication type of the connection
+             </summary>
+             <value></value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.ApplicationIntent">
+            <summary>
+             The application intent of the connection
+             Valid values are ReadWrite and ReadOnly
+             </summary>
+             <value></value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.TrustServerCertificate">
+            <summary>
+             Indicate whether the client trusts the server certificate
+             </summary>
+             <value></value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.ConnectionString">
+            <summary>
+             The property will return either the user specified connection string or it will
+             return the computed connection string based on object settings.
+             If explicitly set, All properties in the ServerConnection object will be populated to reflect the passed in connection string.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.SecureConnectionString">
+            <summary>
+             The property will return a SecureString version of either
+             the user specified connection string or it will return the
+             computed connection string based on object settings.  If
+             explicitly set, All properties in the ServerConnection
+             object will be populated to reflect the passed in
+             connection string.  Exceptions:
+             ConnectionCannotBeChangedException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.NetworkProtocol">
+            <summary>
+             Identifies the client network protocol that is used to connect to SQL Server.
+             If you do not specify a network and you use a local server, shared memory is used.
+             If you do not specify a network and you use a remote server, the one of the
+             configured client protocols is used.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.IsApplicationNameInitialized">
+            <summary>
+            true if ApplicationName property has been initialized
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.ApplicationName">
+            <summary>
+             The name of the application. 'SQL Management' if no application name
+             has been provided.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.IsWorkstationIdInitialized">
+            <summary>
+            true if WorkstationId property has been initialized
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.WorkstationId">
+            <summary>
+             The name of the workstation connecting to SQL Server.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.IsDatabaseNameInitialized">
+            <summary>
+            true if DatabaseName property has been initialized
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.DatabaseName">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.PacketSize">
+            <summary>
+             Size in bytes of the network packets used to communicate with an instance
+             of SQL Server. Default is 8192.
+             Exceptions:
+             ConnectionCannotBeChangedException
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.MultipleActiveResultSets">
+            <summary>
+            Enable MARS from the connection. Default is false.
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.EncryptConnection">
+            <summary>
+            whether "encrypt=true" is specified in the connection string
+            </summary>
+            <value></value>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.AdditionalParameters">
+            <summary>
+            Returns whether additional parameters have been specified in connection string
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.InitialCatalog">
+            <summary>
+            Gets the InitialCatalog.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionSettings.ResetConnectionString">
+            <summary>
+            Tells us whether ConnectionString needs to be reset in
+            SqlConnectionObject property of ConnectionManager or not.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.#ctor">
+            <summary>
+            TBD
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.#ctor(System.Data.SqlClient.SqlConnection,Microsoft.SqlServer.Management.Common.IRenewableToken)">
+            <summary>
+            Constructor. Initialize properties by using information from parameter sqlConnectionObject.
+            If the status of sqlConnectionObject is Open, also query server for @@LOCK_TIMEOUT
+            to set the LockTimeout property.
+            </summary>
+            <param name="sqlConnectionObject">SqlConnection</param>
+            <param name="accessToken"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.#ctor(Microsoft.SqlServer.Management.Common.SqlConnectionInfo)">
+             <summary>
+            
+             </summary>
+             <param name="sci"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.InitSqlConnectionObject(System.Boolean,System.Boolean)">
+            <summary>
+            Initialize the SqlConnection object.
+            </summary>
+            <param name="setConnectionString">if ConnectionString needs to be set.</param>
+            <param name="removeIntegratedSecurity"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.GetWindowsIdentityForConnection">
+            <summary>
+            if impersonation is required return the identity to be impersonated else returns null
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.InternalConnect(System.Security.Principal.WindowsIdentity)">
+            <summary>
+            connects to the server impersonating if necessary ( if null != impersonatedIdentity )
+            </summary>
+            <param name="impersonatedIdentity"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.Connect">
+            <summary>
+             Creates the actual connection to SQL Server. Ignored if already connected.
+             It is optional to call this method, as the connection will be opened when
+             required.
+             Exceptions:
+             ConnectionFailureException
+             </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.ExecuteTSql(Microsoft.SqlServer.Management.Common.ConnectionManager.ExecuteTSqlAction,System.Object,System.Data.DataSet,System.Boolean)">
+            <summary>
+            Executes T-SQL using the appropriate methods depending on the action information passed as the parameter.
+            </summary>
+            <param name="action">Defines method to be used for executing T-SQL</param>
+            <param name="execObject">Object on which that method needs to be called</param>
+            <param name="fillDataSet">DataSet in which data need to filled in case of SqlDataAdapter execObject</param>
+            <param name="catchException">If the exception to be caught.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.IsDatabaseValid(System.Data.SqlClient.SqlConnection,System.String)">
+            <summary>
+            Verifies that a given database exists
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.CheckServerVersion(Microsoft.SqlServer.Management.Common.ServerVersion)">
+            <summary>
+            Check if we are connecting to a supported server version.
+            block off &lt;= 7.0 in ServerConnection.
+            </summary>
+            <param name="version"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.Disconnect">
+            <summary>
+             Closes the connection with SQL Server. Ignored if already disconnected.
+             Exceptions:
+             ConnectionFailureException
+             </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.PoolConnect">
+            <summary>
+            connects only if not already connected
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.PoolDisconnect">
+            <summary>
+            disconnects only if it is pooled
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.GenerateStatementExecutedEvent(System.String)">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="F:Microsoft.SqlServer.Management.Common.ConnectionManager.statementEventHandler">
+            <summary>
+            Event that is called each time a T-SQL statement has been executed and capture is set
+            This allows users to add a event hook to trace T-SQL statements.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ConnectionManager.ForceDisconnected">
+            <summary>
+            Enforces a disconnect and ensures that connection cannot be re-opened again
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.InUse">
+            <summary>
+             Returns true if the object has been connected with the server at least once.
+             If true, property changes are not allowed any more and
+             ConnectionCannotBeChangedException will be thrown when a property has
+             been changed.
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.LockTimeout">
+            <summary>
+            LockTimeout is the Lock timeout in seconds. Default -1 is for indefinite. InvalidPropertyValueException
+            is thrown for all other negative numbers. Positive LockTimeout will be multiplied by 1000 and then
+            used for "SET LOCK_TIMEOUT" setting.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.ServerVersion">
+            <summary>
+             Returns the major version number of SQL Server. I.e. 8 for SQL Server 2000.
+             Exceptions:
+             ConnectionFailureException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.ProductVersion">
+            <summary>
+            Gets the ProductVersion server property of this connection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.DatabaseEngineType">
+            <summary>
+             Returns the database engine type of SQL Server.
+             Exceptions:
+             ConnectionFailureException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.DatabaseEngineEdition">
+            <summary>
+            The edition of the Database Engine
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.HostPlatform">
+            <summary>
+            The host platform of the server (Linux/Windows/etc)
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.ConnectionProtocol">
+            <summary>
+            Connection protocol.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.IsContainedAuthentication">
+            <summary>
+             Returns true if the database engine authenticates using contained authentication.
+             Exceptions:
+             ConnectionFailureException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.SqlConnectionObject">
+            <summary>
+             Returns a reference to the SqlConnection object used by the
+             ConnectionContext object.
+             This should always return the valid sqlConnection object with the latest valid ConnectionString set.
+             Exceptions:
+             PropertyNotAvailableException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.CurrentDatabase">
+            <summary>
+            Returns the current database context.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.IsOpen">
+            <summary>
+             Returns true if the SqlConnection object is connected with the server.
+             This can only return true for non pooled connections as pooled connections
+             are always closed directly after an operation.
+             </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Common.ConnectionManager.StateChange">
+            <summary>
+            Occurs when the state of the connection changes.
+            Uses System.Data.StateChangeEventHandler.
+            </summary>
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Common.ConnectionManager.InfoMessage">
+             <summary>
+             Occurs when SQL Server returns a warning or informational message.
+             Uses System.Data.SqlClient.SqlInfoMessageEventHandler.
+             </summary>
+            
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Common.ConnectionManager.ServerMessage">
+             <summary>
+             Occurs when SQL Server returns a warning or informational message.
+             Uses System.Data.SqlClient.SqlInfoMessageEventHandler.
+             </summary>
+            
+        </member>
+        <member name="E:Microsoft.SqlServer.Management.Common.ConnectionManager.RemoteLoginFailed">
+            <summary>
+            Called when the server needs to connect to remote servers
+            and the login fails
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.CapturedSql">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.AutoDisconnectMode">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ConnectionManager.IsForceDisconnected">
+            <summary>
+            Indicates that the connection has been forcefully disconnected
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ConnectionManager.ExecuteTSqlAction">
+            <summary>
+            Defines all the Methods used to Execute T-SQL on a server in the ServerConnection object.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.EncryptionUtility">
+            <summary>
+            Utility methods for working with SecureStrings
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.EncryptionUtility.DecryptSecureString(System.Security.SecureString)">
+            <summary>
+            Decrypt a SecureString
+            </summary>
+            <param name="ss">The secure string to decrypt</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.EncryptionUtility.EncryptString(System.String)">
+            <summary>
+            Encrypt a string
+            </summary>
+            <param name="s">The string to encrypt</param>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.CommonUtils">
+            <summary>
+            General utility methods.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonUtils.MakeSqlBraket(System.String)">
+            <summary>
+            Makes the string a SQL identifier.
+            </summary>
+            <param name="s"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonUtils.MakeSqlString(System.String)">
+            <summary>
+            Makes the string a unicode sql string.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonUtils.EscapeString(System.String,System.String)">
+            <summary>
+            Escape the specified cEsc character
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ExecutionCache`2">
+            <summary>
+            ExecutionCache is a simple cache that manages cached items. The cache holds up to #capacity# number 
+            of items and will remove the first item it added to the cache when it is full.
+            
+            It is intent to be used by a single thread.
+            
+            Implementation note: The access time is linear to the number of item in the cache. The cache is initially 
+            extracted from ServerConnection such that the cache and item management can be unit tested thoughtfully 
+            without configuration. It is not designed to be a widely-used cache utilities class. It is generalized 
+            for testability. 
+            </summary>
+            <typeparam name="C"></typeparam>
+            <typeparam name="K"></typeparam>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ExecutionCache`2.#ctor(System.Int32)">
+            <summary>
+            Constructor.
+            </summary>
+            <param name="capacity">The capacity of the cache. If item is added when the cache is full, the first item of the cache will be evicted.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ExecutionCache`2.ContainsKey(`0)">
+            <summary>
+            Returns true of the cache contains an item with the specified key.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ExecutionCache`2.Add(`1)">
+            <summary>
+            Add a cache item into the cache. The item must have a unique key. The item and key must not be null.
+            </summary>
+            <param name="item">Item to be added</param>
+            <exception cref="T:System.ArgumentException">Throws to indicate another item in the cache has the same key as the specified item</exception>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ExecutionCache`2.ClearResults">
+            <summary>
+            Clear results in all cache items.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ExecutionCache`2.Clear">
+            <summary>
+            Clear the cache.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ExecutionCache`2.IsEmpty">
+            <summary>
+            Report if the cache is empty.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ExecutionCache`2.Item(`0)">
+            <summary>
+            Obtain the cache item with the specified key.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ExecutionCache`2.Count">
+            <summary>
+            Report the number of item in the cache.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.CacheItem`1">
+            <summary>
+            CacheItem is a item container for the payloads identified the same key.
+            
+            The CacheItem has three specific concepts, Key, Result and ExecutionCount. Each item is identified
+            by its key, and it must be unique. Adding non-unique item to the cache results in exception. 
+            
+            The Result and ExecutionCount is specific payload that a CacheItem supports. The result distinguishes 
+            between null result and no result by hasResult(). ExecutionCount is nothing more than a manual counter. 
+            Sub-class of CacheItem can add more payload that suite the purpose of them.
+            </summary>    
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CacheItem`1.#ctor">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CacheItem`1.HasResult">
+            <summary>
+            Returns to if result has been set.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CacheItem`1.ClearResult">
+            <summary>
+            Unset the result
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.CacheItem`1.Key">
+            <summary>
+            The key of the cache item.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.CacheItem`1.Result">
+            <summary>
+            The result of the item
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.CacheItem`1.ExecutionCount">
+            <summary>
+            Execution count
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ICreateOrAlterable">
+            <summary>
+            Interface for CreateOrAlter method. All classes that support create or alter
+            implement this interface.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ICreateOrAlterable.CreateOrAlter">
+            <summary>
+            Create OR ALTER the object.
+            First perform setup for execution
+            Then validate "CREATE OR ALTER" syntax through ScriptCreateOrAlter(),
+            Finally execute the query and do cleanup.
+            return without exception.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.IDropIfExists">
+            <summary>
+            Interface for DropIfExists method. All classes that support drop with existence check
+            implement this interface.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.IDropIfExists.DropIfExists">
+            <summary>
+            Drops the object with IF EXISTS option. If object is invalid for drop function will
+            return without exception.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ISafeRenamable">
+            <summary>
+            Implemented by objects that may prefer to have the UI confirm the rename before proceeding
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.IRenewableToken">
+            <summary>
+            Simple interface to hide details of access token renewal.
+            Consumers of this interface must defer retrieval of the token string until the point of SqlConnectionUsage
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.IRenewableToken.GetAccessToken">
+            <summary>
+            Returns an access token that can be used to query the associated Resource until the TokenExpiry time
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.IRenewableToken.TokenExpiry">
+            <summary>
+            Returns the expiration time of the most recently retrieved token
+            If no token has been retrieved the value is undefined.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.IRenewableToken.Resource">
+            <summary>
+            The URL of the resource associated with the token
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.IRenewableToken.Tenant">
+            <summary>
+            The tenant id associated with the token
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.IRenewableToken.UserId">
+            <summary>
+            The user id associated with the token
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ISfcConnection">
+            <summary>
+            This interface is a high-level connection interface.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ISfcConnection.ForceDisconnected">
+            <summary>
+            Enforces a disconnect and ensures that connection cannot be re-opened again
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ISfcConnection.IsOpen">
+            <summary>
+            Returns if the connection is currently active.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ISfcConnection.ServerInstance">
+            <summary>
+            Name of the server we are connecting to.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ISfcConnection.ServerVersion">
+            <summary>
+            Returns the version of the service we are connected to.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ISfcConnection.IsForceDisconnected">
+            <summary>
+            Indicates that the connection has been forcefully disconnected
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.CommonLocalizedPropertyResourcesAttribute">
+            <summary>
+            The name of the resources containing localized property category, name, and description strings
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizedPropertyResourcesAttribute.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="resourcesName">The name of the resources (e.g. Microsoft.SqlServer.Foo.BarStrings)</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizedPropertyResourcesAttribute.#ctor(System.String,System.Boolean)">
+            <summary>
+            Constructor
+             </summary>
+            <param name="resourcesName">the name of the resource (e.g. Microsoft.SqlServer.Foo.BarStrings)</param>
+            <param name="useDefaultKeys"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizedPropertyResourcesAttribute.#ctor(System.Type)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="resourceType">The type of the resources (e.g. Microsoft.SqlServer.Foo.BarStrings)</param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.CommonLocalizedPropertyResourcesAttribute.ResourcesName">
+            <summary>
+            The name of the resources containing localized property category and name strings
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.CommonLocalizedPropertyResourcesAttribute.UseDefaultKeys">
+            <summary>
+            Returns true if the keys should be picked up by defaults or if they should be retrieve as attributes
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.GetDisplayKey(System.Type)">
+            <summary>
+            A factory method for getting an instance of the type that implements IDisplayKey
+            </summary>
+            <param name="keyAttribute"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.GetValueFromCustomAttribute(System.Reflection.FieldInfo,System.Type,System.Resources.ResourceManager,System.Boolean)">
+            <summary>
+            Gets the Display value for a field
+            </summary>
+            <param name="field"></param>
+            <param name="keyAttribute"></param>
+            <param name="resourceManager"></param>
+            <param name="isDefault"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.GetValueFromCustomAttribute(System.Reflection.PropertyInfo,System.Type,System.Resources.ResourceManager,System.Boolean)">
+            <summary>
+            Gets the Display value for a property
+            </summary>
+            <param name="property"></param>
+            <param name="keyAttribute"></param>
+            <param name="resourceManager"></param>
+            <param name="isDefault"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.GetValueFromCustomAttribute(System.Type,System.Type,System.Resources.ResourceManager,System.Boolean)">
+            <summary>
+            Gets the Display value for a Type
+            </summary>
+            <param name="type"></param>
+            <param name="keyAttribute"></param>
+            <param name="resourceManager"></param>
+            <param name="isDefault"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.GetDisplayValue(System.String,System.Resources.ResourceManager)">
+            <summary>
+            Retrives the key from the resource manager
+            </summary>
+            <param name="key"></param>
+            <param name="resourceManager"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.GetCustomDisplayValue(System.Object[],System.Resources.ResourceManager)">
+            <summary>
+            Retrives the first key value from the customAttribute and retrives the value from the resource manager
+            </summary>
+            <param name="customAttributes"></param>
+            <param name="resourceManager"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.ConvertNullToEmptyString(System.String)">
+            <summary>
+            A helper class for getting an empty string if the value is null
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.ConstructDefaultKey(System.String,System.String,System.Reflection.PropertyInfo)">
+            <summary>
+            Returns the default key for a property
+            </summary>
+            <param name="postfix"></param>
+            <param name="delim"></param>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.ConstructDefaultKey(System.String,System.String,System.Type)">
+            <summary>
+            /// Returns the default key for a type
+            </summary>
+            <param name="postfix"></param>
+            <param name="delim"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayKeyHelper.ConstructDefaultKey(System.String,System.String,System.Reflection.FieldInfo)">
+            <summary>
+            /// Returns the default key for a field
+            </summary>
+            <param name="postfix"></param>
+            <param name="delim"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.CommonDisplayCategoryKeyAttribute">
+            <summary>
+            The key used to look up the localized property category
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayCategoryKeyAttribute.GetDefaultKey(System.Reflection.PropertyInfo)">
+            <summary>
+            The key used to look up a localized property category in a default resource file
+            </summary>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayCategoryKeyAttribute.GetDefaultKey(System.Type)">
+            <summary>
+            The key used to look up a localized type category in a default resource file
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayCategoryKeyAttribute.GetDefaultKey(System.Reflection.FieldInfo)">
+            <summary>
+            The key used to look up a localized field category in a default resource file
+            </summary>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayCategoryKeyAttribute.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="key">The key used to look up the localized property category</param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.CommonDisplayCategoryKeyAttribute.Key">
+            <summary>
+            The key used to look up the localized property category
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.CommonDisplayNameKeyAttribute">
+            <summary>
+            The key used to look up the localized property name
+            </summary>
+            <remarks>
+            The AttributeTargets.Field is added to allow this attribute to be placed on Enum
+            elements which the EnumConverter will use to localize each Enum value
+            </remarks>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayNameKeyAttribute.GetDefaultKey(System.Reflection.PropertyInfo)">
+            <summary>
+            The key used to look up a localized property category in a default resource file
+            </summary>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayNameKeyAttribute.GetDefaultKey(System.Type)">
+            <summary>
+            The key used to look up a localized property category in a default resource file
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayNameKeyAttribute.GetDefaultKey(System.Reflection.FieldInfo)">
+            <summary>
+            The key used to look up a localized property category in a default resource file
+            </summary>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayNameKeyAttribute.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="key">The key used to look up the localized property name</param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.CommonDisplayNameKeyAttribute.Key">
+            <summary>
+            The key used to look up the localized property name
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.CommonDisplayDescriptionKeyAttribute">
+            <summary>
+            The key used to look up the localized description
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayDescriptionKeyAttribute.GetDefaultKey(System.Reflection.PropertyInfo)">
+            <summary>
+            The key used to look up a localized property category in a default resource file
+            </summary>
+            <param name="property"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayDescriptionKeyAttribute.GetDefaultKey(System.Type)">
+            <summary>
+            The key used to look up a localized property category in a default resource file
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayDescriptionKeyAttribute.GetDefaultKey(System.Reflection.FieldInfo)">
+            <summary>
+            The key used to look up a localized property category in a default resource file
+            </summary>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonDisplayDescriptionKeyAttribute.#ctor(System.String)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="key">The key used to look up the localized property description</param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.CommonDisplayDescriptionKeyAttribute.Key">
+            <summary>
+            The key used to look up the localized property description
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ICommonDynamicVisible">
+             <summary>
+             The ICommonDynamicVisible interface should be implemented by any class that wants to limit
+             the visibility of certain Enum values based on state of the class at that moment.
+            
+             If a class contains a property which exposes an Enum and that class implements the
+             ICommonDynamicVisible interface then it will be called for each property that is of an Enum type.
+            
+             The context param can be used to determine for which Enum this method is being called. If a class
+             only has one Enum it is not necessary to make this check.
+            
+             The way to limit the visibility of certain items is to simply remove the unwanted Enum values
+             from the values ArrayList. This method is called on every drop down of the enum so it is possible
+             to change the list on each and every drop down. If the list will not change once it has been
+             initially determined caching the ArrayList and returning it would be helpful.
+            
+             Care should be taken to ensure that you are not removing values that the Enum property is already
+             set to. This will not cause any errors as all Enum values are still valid but when the user clicks
+             on the dropdown they will not see the current choice as an option.
+            
+             Also no new values should be added to the list since these values will not be convertable to valid
+             Enum values and an error will be thrown at runtime. If more dynamic control is needed then
+             consider using the DynamicValues design.
+             </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ICommonDynamicVisible.ConfigureVisibleEnumFields(System.ComponentModel.ITypeDescriptorContext,System.Collections.ArrayList)">
+             <summary>
+             Removing items from the values list and returning that new list will control
+             the values shown in the Enum specified in context.
+            
+             The enum can be determined with code similar to the following
+                 if (context.PropertyDescriptor.PropertyType == typeof(myEnum))
+             </summary>
+             <param name="context"></param>
+             <param name="values"></param>
+             <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter">
+            <summary>
+            The CommonLocalizableEnumConverter allows for the values of an Enum to be converted to localized
+            strings based on the DisplayNameKey attribute applied to the individual items in the Enum.
+            </summary>
+            <example>
+                public enum ScriptModeOptions
+                {
+                    [DisplayNameKey("CreateOnlyMode")] scriptCreateOnly,
+                    [DisplayNameKey("DropOnlyMode")] scriptDropOnly
+                }
+            </example>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.LoadLocalizedNames(System.Type,System.Resources.ResourceManager)">
+            <summary>
+            Load display names for the enum fields
+            </summary>
+            <param name="type">The .NET Type for the enum</param>
+            <param name="manager">The resource manager used to load localized field names</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.LoadLocalizedFieldNames(System.Type,System.Resources.ResourceManager)">
+            <summary>
+            Load localized display names for the enum fields from a resource manager
+            </summary>
+            <param name="type">The .NET Type for the enum</param>
+            <param name="manager">The resource manager used to load localized field names</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.LoadUnlocalizedFieldNames(System.Type)">
+            <summary>
+            Load the field names for the enum
+            </summary>
+            <remarks>
+            this is called when there are no localized strings for the field names.  In lieu of localized
+            field names, the method puts the C# enum field names in the field name dictionary.
+            </remarks>
+            <param name="type">The .NET Type for the enum</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.#ctor(System.Type,System.Resources.ResourceManager)">
+            <summary>
+            This constructor is used by our internal PropertyDescriptor when it is created automatically
+            for any Enum property.
+            </summary>
+            <param name="type"></param>
+            <param name="manager"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.#ctor(System.Type)">
+            <summary>
+            This constructor is the default constructor that would be used if this converter is placed
+            on an Enum class directly and not via the abstraction through the LocalizedTypeConverter attribute
+            on the containing class.
+            </summary>
+            <param name="type"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.GetEnumDescription(System.Enum)">
+            <summary>
+            used to translate the enum value into the localized string.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.GetEnumValue(System.String)">
+            <summary>
+            Get the enum value based on the string. This uses the hashtable lookup to increase perf.
+            </summary>
+            <param name="description"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
+            <summary>
+            Does the conversion from Enum to string and the odd string to string. All others are passed on to the base
+            </summary>
+            <param name="context"></param>
+            <param name="culture"></param>
+            <param name="value"></param>
+            <param name="destinationType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)">
+            <summary>
+            Does the conversion from string to enum and the odd enum to enum. All others are passed on to the base
+            </summary>
+            <param name="context"></param>
+            <param name="culture"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CommonLocalizableEnumConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)">
+            <summary>
+            Returns the list of values for the list box in the property grid.
+            If the ICommonDynamicVisible interface is defined then we call into that to get the manipulated values
+            array. If not then we just return the list of values.
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.OlapConnectionInfo.Copy">
+            <summary>
+            Deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.OlapConnectionInfo.EncryptConnection">
+            <summary>
+            whether connection should be opened with encryption
+            </summary>
+            <value></value>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SafeNativeMethods.GetUserToken(System.String,System.String,System.String,System.IntPtr@)">
+            <summary>
+            get the HTOKEN of the specifies user, this token can then be used to impersonate the user
+            </summary>
+            <param name="user"></param>
+            <param name="domain"></param>
+            <param name="password"></param>
+            <param name="hToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerComparer.#ctor(Microsoft.SqlServer.Management.Common.ServerConnection)">
+             <summary>
+            
+             </summary>
+             <param name="conn"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerComparer.#ctor(Microsoft.SqlServer.Management.Common.ServerConnection,System.String)">
+             <summary>
+            
+             </summary>
+             <param name="conn"></param>
+             <param name="databaseName"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerComparer.System#Collections#Generic#IComparer{System#String}#Compare(System.String,System.String)">
+             <summary>
+            
+             </summary>
+             <param name="x"></param>
+             <param name="y"></param>
+             <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerComparer.DatabaseNameEqualityComparer">
+            <summary>
+            Returns a comparer which matches the server's master database string comparer
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.DatabaseNameEqualityComparer">
+            <summary>
+            Utility <see cref="T:System.Collections.IEqualityComparer"/> used for comparing database names using the same
+            semantics as the target server
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ServerConnection">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.#ctor">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.#ctor(Microsoft.SqlServer.Management.Common.IRenewableToken)">
+            <summary>
+            Creates a ServerConnection object taking in the token.
+            The extra boolean is used to overload this constructor as another constructor with string is present.
+            </summary>
+            <param name="token">An optional access token provider</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.#ctor(Microsoft.SqlServer.Management.Common.SqlConnectionInfo)">
+             <summary>
+            
+             </summary>
+             <param name="sci"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.#ctor(System.Data.SqlClient.SqlConnection)">
+            <summary>
+            Constructs a new ServerConnection object from the given SqlConnection
+            </summary>
+            <param name="sqlConnection"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.#ctor(System.Data.SqlClient.SqlConnection,Microsoft.SqlServer.Management.Common.IRenewableToken)">
+             <summary>
+            Constructs a new ServerConnection object 
+             </summary>
+             <param name="sqlConnection"></param>
+            <param name="accessToken"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.#ctor(System.String)">
+             <summary>
+            
+             </summary>
+             <param name="serverInstance"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.Copy">
+            <summary>
+            This function performs a deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.AddParameterLiterals(System.Text.RegularExpressions.Match)">
+            <summary>
+            Used to add the query parameters when the query is in parameterization mode ParameterizeLiterals
+            </summary>
+            <param name="match"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.AddParameterForced(System.Text.RegularExpressions.Match)">
+            <summary>
+            Match delegate method for parameter replacement RegEx
+            Adds each parameter value to parameter collection during RegEx
+            search of query text
+            Returns parameter marker (e.g., @P0) for insertion into query text
+            </summary>
+            <param name="match">Match object passed in by RegEx engine</param>
+            <returns>Marker corresponding to value added to parameter collection</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.NormalizeQuery(System.String,System.Boolean)">
+             <summary>
+             Translate a query with embedded literals to a normalized form (all literals replaced by
+             a standard token)
+             </summary>
+             <remarks>
+             Examples:
+            
+             SELECT * FROM table WHERE column = 123
+            
+             becomes:
+            
+             SELECT * FROM table WHERE column = ?
+            
+             SELECT * FROM table WHERE column = 'foo'
+            
+             becomes:
+            
+             SELECT * FROM table WHERE column = '?'
+             </remarks>
+             <param name="QueryText">Query text to normalize</param>
+             <param name="QuotedIdentifiers">Switch indicating whether query text expects QUOTED_IDENTIFER to be enabled</param>
+             <returns>Query text with inline literals translated to ? symbols</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.NormalizeQuery(System.String)">
+            <summary>
+            Overload for the above function -- see it for details
+            </summary>
+            <param name="QueryText"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.GetSqlCommand(System.String)">
+            <summary>Creates a SqlCommand with CommandText set to the specified query</summary>
+             <param name="query"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.Microsoft#SqlServer#Management#Common#ISfcConnection#Connect">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.Microsoft#SqlServer#Management#Common#ISfcConnection#Disconnect">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.Microsoft#SqlServer#Management#Common#ISfcConnection#ToEnumeratorObject">
+            Temporary function needed as long as the sql enumerator is
+            unaware of the SqlStoreConnection type
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteNonQuery(System.Collections.Specialized.StringCollection)">
+             <summary>
+            
+             </summary>
+             <param name="sqlCommands"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteNonQuery(System.Collections.Specialized.StringCollection,Microsoft.SqlServer.Management.Common.ExecutionTypes)">
+            <summary>
+            Executes the T-SQL statements in the StringCollection.
+            The command termininator ('GO') is recognized by ExecuteNonQuery.
+            Batches separated with the GO statement will be sent and executed individually.
+            The statement is recorded and not executed if CaptureMode has been set to true.
+            An array of int values is returned that contain the numbers of rows affected for
+            each statement in the StringCollection.
+            If multiple batches
+            are executed, the total numbers of affected rows of all batches is returned.
+            The Connect() method will be called if the connection with the server is not open.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommands"></param>
+            <param name="executionType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteNonQuery(System.Collections.Specialized.StringCollection,Microsoft.SqlServer.Management.Common.ExecutionTypes,System.Boolean)">
+            <summary>
+            Executes the T-SQL statements in the StringCollection.
+            The command termininator ('GO') is recognized by ExecuteNonQuery.
+            Batches separated with the GO statement will be sent and executed individually.
+            The statement is recorded and not executed if CaptureMode has been set to true.
+            An array of int values is returned that contain the numbers of rows affected for
+            each statement in the StringCollection.
+            If multiple batches
+            are executed, the total numbers of affected rows of all batches is returned.
+            The Connect() method will be called if the connection with the server is not open.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommands"></param>
+            <param name="executionType"></param>
+            <param name="retry">Whether we should retry if an exception is thrown during execution</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteNonQuery(System.String)">
+             <summary>
+            
+             </summary>
+             <param name="sqlCommand"></param>
+             <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteNonQuery(System.String,Microsoft.SqlServer.Management.Common.ExecutionTypes)">
+            <summary>
+            Executes a T-SQL statement. The command termininator ('GO') is recognized by
+            ExecuteNonQuery. Batches will be sent and executed individually.
+            The statement is recorded and not executed if CaptureMode has been set to true.
+            An int value is returned that contain the numbers of rows affected. If multiple batches
+            are executed, the total numbers of affected rows of all batches is returned.
+            The Connect() method will be called if the connection with the server is not open.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommand"></param>
+            <param name="executionType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteNonQuery(System.String,Microsoft.SqlServer.Management.Common.ExecutionTypes,System.Boolean)">
+            <summary>
+            Executes a T-SQL statement. The command termininator ('GO') is recognized by
+            ExecuteNonQuery. Batches will be sent and executed individually.
+            The statement is recorded and not executed if CaptureMode has been set to true.
+            An int value is returned that contain the numbers of rows affected. If multiple batches
+            are executed, the total numbers of affected rows of all batches is returned.
+            The Connect() method will be called if the connection with the server is not open.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommand"></param>
+            <param name="executionType"></param>
+            <param name="retry">Whether we should retry if an exception is thrown during execution</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteWithResults(System.Collections.Specialized.StringCollection)">
+            <summary>
+            Executes the T-SQL statements in the StringCollection.
+            An array of DataSets are returned that contain the results for each statement
+            in the StringCollection.
+            The Connect() method will be called if the connection with the server is not open.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommands"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteWithResults(System.String)">
+            <summary>
+            Executes the T-SQL statements in sqlCommand.
+            A DataSet is returned that contains the results.
+            The Connect() method will be called if the connection with the server is not open.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteWithResults(System.String,System.Boolean)">
+            <summary>
+            Executes the T-SQL statements in sqlCommand.
+            A DataSet is returned that contains the results.
+            The Connect() method will be called if the connection with the server is not open.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommand"></param>
+            <param name="retry">Whether we should retry if an exception is thrown during execution</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteReader(System.String)">
+            <summary>
+            Executes T-SQL statements.
+            A SqlDataReader object is returned that can be used to read the stream of
+            rows that are returned by SQL Server.
+            The Connect() method will be called if the connection with the server is not open.
+            it doesn't automatically disconnect
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommand">The SQL command text.</param>
+            <returns>The data reader.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteReader(System.String,System.Data.SqlClient.SqlCommand@)">
+            <summary>
+            Executes T-SQL statements.
+            A SqlDataReader object is returned that can be used to read the stream of
+            rows that are returned by SQL Server.
+            A SqlCommand object is also returned that can be used to cancel the data reader pipe if an abort of a long-running query is needed.
+            it doesn't automatically disconnect
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommand">The SQL command text.</param>
+            <param name="command">The resulting SqlCommand object for data reader pipe cancellation.</param>
+            <returns>The data reader.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteReader(System.Data.SqlClient.SqlCommand)">
+            <summary>
+            Executes T-SQL statements.
+            A SqlDataReader object is returned that can be used to read the stream of
+            rows that are returned by SQL Server.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="command">SQL command object.</param>
+            <returns>The data reader.</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.GetExecuteReader(System.Data.SqlClient.SqlCommand)">
+            <summary>
+            Returns a SqlDataReader with an active connection.
+            </summary>
+            <param name="command">Ready to execute sqlcommand object.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteScalar(System.Collections.Specialized.StringCollection)">
+            <summary>
+            Executes the T-SQL statements in the StringCollection.
+            An array of objects are returned that each contain the first column of the
+            first row of the result set of each executed statement.
+            The Connect() method will be called if the connection with the server is not open.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommands"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ExecuteScalar(System.String)">
+            <summary>
+            Executes a T-SQL statement.
+            An objects is returned that contains the first column of the first row of
+            the result set.
+            The Connect() method will be called if the connection with the server is not open.
+            Exceptions:
+            ConnectionFailureException
+            ExecutionFailureExeception
+            </summary>
+            <param name="sqlCommand"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.BeginTransaction">
+            <summary>
+            Starts a new transaction. If CaptureMode is true, the transaction statement
+            will be added to the capture buffer.It is possible to nest transactions.
+            It is the user's responsibility to commit or rollback every opened transaction.
+            It is not guaranteed that all T-SQL emitted by the object model, can be
+            encapsulated by a transaction. Furthermore, the state of the objects that
+            have been changed will not reflect the actual database state until a
+            transaction has been committed or after a transaction has been rolled backed.
+            It is the responsibility of the user to refresh affected objects.
+            Use with care.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.CommitTransaction">
+            <summary>
+            Commits a transaction.
+            If CaptureMode is true, the transaction command will be added to the
+            capture buffer.
+            Exceptions:
+            NotInTransactionException
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.RollBackTransaction">
+            <summary>
+            Aborts a transaction (all changes made will not be saved to the database).
+            If CaptureMode is true, the transaction command will be added to the
+            capture buffer.
+            Exceptions:
+            NotInTransactionException
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.IsInFixedServerRole(Microsoft.SqlServer.Management.Common.FixedServerRoles)">
+            <summary>
+            Tests if login is member of any of the specified server roles.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.GetDatabaseConnection(System.String,System.Boolean)">
+            <summary>
+                Returns a connection that has the specified database name in the connection string
+            </summary>
+            <param name="dbName"></param>
+            <param name="poolConnection"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.GetDatabaseConnection(System.String,System.Boolean,Microsoft.SqlServer.Management.Common.IRenewableToken)">
+            <summary>
+            Returns a connection that has the specified database name in the connection string
+            </summary>
+            <param name="dbName"></param>
+            <param name="poolConnection"></param>
+            <param name="accessToken"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.StatementTimeout">
+            <summary>
+             This is the number of seconds that a statement is attempted to be sent to the
+             server before it fails.
+             Default is 600 seconds (same as Shiloh).
+             Exceptions:
+             InvalidPropertyValueException
+             </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.BatchSeparator">
+            <summary>
+            Defines the batch separator used by the ExecuteNonQuery methods. Default is "GO".
+            The batch separator is case-insensitive.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.TransactionDepth">
+            <summary>
+            Provides the transaction depth as counted by the object model. This
+            doesn't include any transactions that may have been started on the
+            server, or by issuing BEGIN TRAN with the ExecuteNonQuery method.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.SqlExecutionModes">
+            <summary>
+            Determines if SQL statements are captured or sent to the server.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.FixedServerRoles">
+            <summary>
+            Returns an enum that specified the fixed server role
+            the login is member of.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.UserProfile">
+            <summary>
+            The UserProfile property returns a high-level role description for the Microsoft SQL Server login used by the current connection.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.ProcessID">
+            <summary>
+            The ProcessID property returns the SQL Server process identifier for the connection
+            used by the ServerConnection object.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.TrueLogin">
+            <summary>
+            The TrueLogin property returns the login record name used by the current connection.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.TrueName">
+            <summary>
+            The TrueName property returns the result set of the Microsoft® SQL Server global function @@INSTANCENAME.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ServerConnection.ConnectionFactory">
+            <summary>
+            The factory also takes care of caching the connections
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ConnectionFactory.GetInstance(Microsoft.SqlServer.Management.Common.ServerConnection)">
+            <summary>
+            Gets the connection factory instance for the given server connection
+            </summary>
+            <param name="serverConnection">Connection for which to get a factory</param>
+            <returns>A cached connection factory instance</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ConnectionFactory.#ctor(Microsoft.SqlServer.Management.Common.ServerConnection)">
+            <summary>
+            Creates a new <see cref="T:Microsoft.SqlServer.Management.Common.ServerConnection.ConnectionFactory"/> object
+            </summary>
+            <param name="serverConnection">Connection for which to create the connection factory</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ConnectionFactory.GetDatabaseConnection(System.String,System.Boolean,Microsoft.SqlServer.Management.Common.IRenewableToken)">
+            <summary>
+            Returns a connection that has the specified database name in the connection string
+            </summary>
+            <param name="dbName">Database for which to get a connection</param>
+            <param name="poolConnection">Indicates if the connection should be pooled</param>
+            <param name="accessToken">Access token for the connection</param>
+            <returns>Connection to the specified database</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerConnection.ConnectionFactory.CreateServerConnection(System.String,System.String,System.Boolean,Microsoft.SqlServer.Management.Common.IRenewableToken)">
+            <summary>
+            Helper function to create a ServerConnection object with the specified parameters
+            </summary>
+            <param name="connString">Connection string to use</param>
+            <param name="initialCatalog">Initial database</param>
+            <param name="poolConn">Indicates if pooling should be used</param>
+            <param name="accessToken">Access token for the connection</param>
+            <returns>Server connection</returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerConnection.ConnectionFactory.ServerComparer">
+            <summary>
+            Gets the server comparer used for this connection factory
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ServerInformation">
+            <summary>
+            Encapsulates server version, database engine type and database engine edition
+            values into a single entity
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerInformation.#ctor(Microsoft.SqlServer.Management.Common.ServerVersion,System.Version,Microsoft.SqlServer.Management.Common.DatabaseEngineType,Microsoft.SqlServer.Management.Common.DatabaseEngineEdition)">
+            <summary>
+            Constructs a new ServerInformation object with the given values and HostPlatform of Windows
+            Use this constructor only when the real value of the host platform isn't needed
+            </summary>
+            <param name="sv"></param>
+            <param name="productVersion"></param>
+            <param name="dt"></param>
+            <param name="databaseEngineEdition"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerInformation.#ctor(Microsoft.SqlServer.Management.Common.ServerVersion,System.Version,Microsoft.SqlServer.Management.Common.DatabaseEngineType,Microsoft.SqlServer.Management.Common.DatabaseEngineEdition,System.String,Microsoft.SqlServer.Management.Common.NetworkProtocol)">
+            <summary>
+            Constructs a new ServerInformation object with the given values
+            </summary>
+            <param name="sv"></param>
+            <param name="productVersion"></param>
+            <param name="dt"></param>
+            <param name="databaseEngineEdition"></param>
+            <param name="hostPlatform"></param>
+            <param name="connectionProtocol">net_transport value from dm_exec_connections for the current spid</param>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerInformation.HostPlatform">
+            <summary>
+            The host platform of the connection as given by select host_platform from sys.dm_os_host_info
+            </summary>
+            <remarks>Returns Windows prior to 2016 (when this DMV was introduced)</remarks>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerInformation.ServerVersion">
+            <summary>
+            The server version string given when this was initialized
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerInformation.ProductVersion">
+            <summary>
+            The Product Version as given by SERVERPROPERTY('ProductVersion')
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerInformation.DatabaseEngineType">
+            <summary>
+            The DatabaseEngineType of the connection as given by SERVERPROPERTY('EDITION')
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerInformation.DatabaseEngineEdition">
+            <summary>
+            The DatabaseEngineEdition of the connection as given by SERVERPROPERTY('EngineEdition')
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerInformation.ConnectionProtocol">
+            <summary>
+            Protocol used for the connection. 
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ServerVersion">
+            <summary>
+            server version
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerVersion.#ctor(System.Int32,System.Int32)">
+            <summary>
+            initializes server version
+            </summary>
+            <param name="major"></param>
+            <param name="minor"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerVersion.ToString">
+            <summary>
+            string representation in format Major.Minor.BuildNumber Example: 11.0.1234
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerVersion.op_Explicit(Microsoft.SqlServer.Management.Common.ServerVersion)~System.Version">
+            <summary>
+            Explicit conversion to .Net Version type
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerVersion.Major">
+            <summary>
+            major version
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerVersion.Minor">
+            <summary>
+            minor version
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlCeConnectionInfo.Copy">
+            <summary>
+            Deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.IsAuthenticationKeywordSupported">
+            <summary>
+            Checks whether "Authentication" is supported in the runtime environment
+            The keyword "Authentication" is not supported until .Net4.6. If user uses a version of .Net less than 4.6, SSMS should avoid using "Authentication"
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.GetAuthenticationMethod(System.Data.SqlClient.SqlConnectionStringBuilder)">
+            <summary>
+            Retrieve the Authentication value from SqlConnectionStringBuilder and convert it to SqlConnectionInfo.AuthenticationMethod
+            </summary>
+            <param name="connectionStringBuilder"></param>
+            <returns>SqlConnectionInfo.AuthenticationMethod</returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.#ctor(Microsoft.SqlServer.Management.Common.ServerConnection,Microsoft.SqlServer.Management.Common.ConnectionType)">
+            <summary>
+            Initializes SqlConnectionInfo from ServerConnection object
+            </summary>
+            <param name="serverConnection"></param>
+            <param name="connectionType"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.Copy">
+            <summary>
+            Deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.CreateConnectionObject">
+            <summary>
+            Returns a new IDbConnection implementation. Callers should use this object and release the reference to it
+            in a short amount of time, as the associated access token may have a limited lifetime.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.IsApplicationIntentKeywordSupported">
+            <summary>
+            Checks whether "ApplicationIntent" is supported in the runtime environment
+            </summary>
+            <returns></returns>
+            <remarks>
+            "ApplicationIntent" is not supported until .Net4.5</remarks>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.Authentication">
+            <summary>
+            return SqlConnectionInfo.AuthenticationMethod
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.ApplicationIntent">
+            <summary>
+            ApplicationIntent for the connection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.TrustServerCertificate">
+            <summary>
+            return whether to trust server certificate
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.AccessToken">
+            <summary>
+            The access token value to use for universal auth
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.SqlConnectionInfo.AuthenticationMethod">
+            <summary>
+            The Authentication Method used to log in
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlConnectionInfoWithConnection.Copy">
+            <summary>
+            Deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.SqlDirectConnection">
+            <summary>
+            SqlDirectConnection is a simple ConnectionInfoBase that wraps a SqlConnection object.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlDirectConnection.#ctor">
+            <summary>
+            Constructs a new SqlDirectConnection with no SqlConnection
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlDirectConnection.#ctor(System.Data.SqlClient.SqlConnection)">
+            <summary>
+            Constructs a new SqlDirectConnection whose properties are calculated from the given SqlConnection
+            </summary>
+            <param name="sqlConnection"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.SqlDirectConnection.Copy">
+            <summary>
+            Deep copy
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.SqlDirectConnection.ServerName">
+            <summary>
+            Returns the ServerName from the wrapped SqlConnection
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.SqlDirectConnection.SqlConnection">
+            <summary>
+            Returns the wrapped SqlConnection
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.CapturedSql">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CapturedSql.#ctor">
+            <summary>
+            constructor
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CapturedSql.Add(System.String)">
+            <summary>
+            Adds the string to the capture buffer.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.CapturedSql.Clear">
+            <summary>
+            Clears the capture buffer.
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.CapturedSql.Text">
+            <summary>
+            Returns a copy of the string collection that contains the captured SQL statements.
+            The buffer has to be explicitly cleared with Clear.
+            NOTE: According to Dima, no memory will be copied over; will be handled by URT
+            and therefore there is not added overhead.
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.StatementEventHandler">
+            <summary>
+            Event Handler for Statements
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.StatementEventArgs">
+            <summary>
+            This class contains the details of an executed Sql statement.
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.StatementEventArgs.#ctor(System.String,System.DateTime)">
+            <summary>
+            TBD
+            </summary>
+            <param name="sqlStatement">statement executes</param>
+            <param name="timeStamp">Execution time</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.StatementEventArgs.ToString">
+            <summary>
+            string representation
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.StatementEventArgs.SqlStatement">
+            <summary>
+            statement executed
+            </summary>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.StatementEventArgs.TimeStamp">
+            <summary>
+            execution time
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ServerMessageEventHandler">
+            <summary>
+            the prototype of the callback method
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ServerMessageEventArgs">
+            <summary>
+            Arguments for the event handler 
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerMessageEventArgs.#ctor(System.Data.SqlClient.SqlError)">
+            <summary>
+            
+            </summary>
+            <param name="sqlError"></param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ServerMessageEventArgs.ToString">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Microsoft.SqlServer.Management.Common.ServerMessageEventArgs.Error">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.ITransferMetadataProvider">
+            <summary>
+            This interface abstracts the metadata provider - which is
+            the component that computes the metadata needed in the transfer process
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ITransferMetadataProvider.SaveMetadata">
+            <summary>
+            Save the metadata in the paths provided by the variables in the input list
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.ITransferMetadataProvider.GetOptions">
+            <summary>
+            returns the options as a collection of named variables
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.IDataTransferProvider">
+            <summary>
+            This interface abstracts the data transfer mechanism
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.TransferException">
+            <summary>
+            This is the exception that will be thrown by the transfer operation
+            </summary>
+        </member>
+        <member name="T:Microsoft.SqlServer.Management.Common.WindowsCredential">
+            <summary>
+            Enables storage and retrieval of passwords from Windows Credential Manager, keyed by connection type and user name
+            </summary>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.WindowsCredential.GetKey(System.String,System.String,System.Int32,System.String,System.Guid)">
+            <summary>
+            Here are factors influencing the choice of key:
+            1. SSMS stores the list of saved connections in a versioned file, for both connection dialog and registered servers. If in SSMS 19 we decide we want to use the same credentials as 18,
+            we can change this code to use the 18 instead of the SSMSMajorVersionString. Having a version allows us to change the semantic in the future, perhaps by encoding the entire blob in the store
+            and enumerating all the credentials from there instead of from the BIN file.
+            2. There are multiple saved connection lists - SSMS registered servers, SqlRepl Ui registered servers, SSMS connection dialog. We have a repo name for each of those lists.
+            3. All the lists have groupings by server type, auth type, and user name.
+            4. We want it to be human readable so users can edit the passwords using the Windows ui if desired. Unfortunately the Windows UI truncates the key name in the display but
+            that's beyond our control. The user has to hover over the name to see the full text in a tooltip.
+            </summary>
+            <param name="repo"></param>
+            <param name="instance"></param>
+            <param name="authType"></param>
+            <param name="user"></param>
+            <param name="serverType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.WindowsCredential.GetAdsKey(System.String,System.String,System.String,System.String)">
+            <summary>
+            Returns a key for Azure Data Studio credential
+            </summary>
+            <param name="instance"></param>
+            <param name="database"></param>
+            <param name="authType"></param>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.WindowsCredential.SetSqlSsmsCredential(System.String,System.Int32,System.String,System.Guid,System.Security.SecureString)">
+            <summary>
+            Stores the password for the given SSMS saved connection in Windows Credential Manager
+            </summary>
+            <param name="instance">The server name</param>
+            <param name="authType">The type of authentication used by the connection. The meaning of the value depends on the <paramref name="serverType"/></param>
+            <param name="user">The user name</param>
+            <param name="serverType">The type of server connection. The valid values are application dependent.</param>
+            <param name="password">The password</param>
+            <exception cref="T:System.ComponentModel.Win32Exception">Thrown when saving the password fails</exception>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.WindowsCredential.SetSqlRegSvrCredential(System.String,System.Int32,System.String,System.Guid,System.Security.SecureString)">
+            <summary>
+            Stores the password for the given RegSvr connection in Windows Credential Manager. Currently only used by SqlRepl UI, not to be confused with
+            SSMS registered servers.
+            </summary>
+            <param name="instance">The server name</param>
+            <param name="authType">The type of authentication used by the connection. The meaning of the value depends on the <paramref name="serverType"/></param>
+            <param name="user">The user name</param>
+            <param name="serverType">The type of server connection. The valid values are application dependent.</param>
+            <param name="password">The password</param>
+            <exception cref="T:System.ComponentModel.Win32Exception">Thrown when saving the password fails</exception>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.WindowsCredential.GetSqlSsmsCredential(System.String,System.Int32,System.String,System.Guid)">
+            <summary>
+            Returns the password from Windows Credential Manager for the given SSMS saved connection
+            </summary>
+            <param name="instance">The server name</param>
+            <param name="authType">The type of authentication used by the connection. The meaning of the value depends on the <paramref name="serverType"/></param>
+            <param name="user">The user name</param>
+            <param name="serverType">The type of server connection. The valid values are application dependent.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.WindowsCredential.GetSqlRegSvrCredential(System.String,System.Int32,System.String,System.Guid)">
+            <summary>
+            Returns the password from Windows Credential Manager for the given RegSvr. Currently only used by SqlRepl UI, not to be confused with
+            SSMS registered servers.
+            </summary>
+            <param name="instance">The server name</param>
+            <param name="authType">The type of authentication used by the connection. The meaning of the value depends on the <paramref name="serverType"/></param>
+            <param name="user">The user name</param>
+            <param name="serverType">The type of server connection. The valid values are application dependent.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.WindowsCredential.RemoveSsmsCredential(System.String,System.Int32,System.String,System.Guid)">
+            <summary>
+            Removes the password of the given SSMS saved connection from Windows Credential Manager
+            </summary>
+            <param name="instance">The server name</param>
+            <param name="authType">The type of authentication used by the connection. The meaning of the value depends on the <paramref name="serverType"/></param>
+            <param name="user">The user name</param>
+            <param name="serverType">The type of server connection. The valid values are application dependent.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.WindowsCredential.RemoveRegSvrCredential(System.String,System.Int32,System.String,System.Guid)">
+            <summary>
+            Removes the password of the given registered server from Windows Credential Manager
+            </summary>
+            <param name="instance">The server name</param>
+            <param name="authType">The type of authentication used by the connection. The meaning of the value depends on the <paramref name="serverType"/></param>
+            <param name="user">The user name</param>
+            <param name="serverType">The type of server connection. The valid values are application dependent.</param>
+        </member>
+        <member name="M:Microsoft.SqlServer.Management.Common.WmiMgmtScopeConnection.Copy">
+            <summary>
+            Deep copy
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
