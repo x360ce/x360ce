@@ -12,13 +12,14 @@ namespace x360ce.App
 	public partial class SettingsManager
 	{
 
-		public static void LoadAndMonitor(INotifyPropertyChanged source, string sourceProperty, Control control, DependencyProperty controlProperty = null, IValueConverter converter = null)
+		public static void LoadAndMonitor(INotifyPropertyChanged source, string sourceProperty, Control control, DependencyProperty controlProperty = null, IValueConverter converter = null, BindingMode mode = BindingMode.Default)
 		{
 			var p = controlProperty ?? GetProperty(control);
 			var binding = new System.Windows.Data.Binding(sourceProperty);
 			binding.Source = source;
 			binding.IsAsync = true;
 			binding.Converter = converter;
+			binding.Mode = mode;
 			if (converter is Converters.PaddSettingToText)
 			{
 				binding.Mode = BindingMode.OneWay;

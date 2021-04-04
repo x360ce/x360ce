@@ -36,7 +36,7 @@ namespace x360ce.App
 			this.UserDevicesPanel = new x360ce.App.Controls.UserDevicesControl();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsGridHost = new System.Windows.Forms.Integration.ElementHost();
-			this.SettingsGridPanel = new x360ce.App.Controls.SettingsListControl();
+			this.SettingsGridPanel = new x360ce.App.Controls.UserSettingListControl();
 			this.CloudTabPage = new System.Windows.Forms.TabPage();
 			this.CloudHost = new System.Windows.Forms.Integration.ElementHost();
 			this.CloudPanel = new x360ce.App.Controls.CloudControl();
@@ -708,7 +708,7 @@ namespace x360ce.App
 		public System.Windows.Forms.Integration.ElementHost DevicesPanelHost;
 		public Controls.UserDevicesControl UserDevicesPanel;
 		private System.Windows.Forms.Integration.ElementHost SettingsGridHost;
-		private Controls.SettingsListControl SettingsGridPanel;
+		private Controls.UserSettingListControl SettingsGridPanel;
 		private System.Windows.Forms.Integration.ElementHost AboutControlHost;
 		private Controls.AboutUserControl aboutUserControl1;
 		private System.Windows.Forms.Integration.ElementHost CloudHost;

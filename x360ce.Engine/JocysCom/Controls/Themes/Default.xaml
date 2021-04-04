@@ -69,6 +69,20 @@
 		</Style.Triggers>
 	</Style>
 
+	<!--  TabItem  -->
+
+	<Style x:Key="TabItem_Default" TargetType="TabItem" />
+
+	<Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />
+
+	<!--  TabControl  -->
+
+	<Style x:Key="TabControl_Default" TargetType="TabControl">
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+	</Style>
+
+	<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
+
 	<!--  TextBox  -->
 
 	<Style x:Key="TextBox_Default" TargetType="TextBox">

@@ -1,12 +1,9 @@
 ﻿using JocysCom.ClassLibrary;
-using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,17 +13,16 @@ using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
-	public partial class PadControl : UserControl, IPadControl
+	public partial class PadUserControl : UserControl, IPadControl
 	{
 
-		public PadControl(MapTo controllerIndex)
+		public PadUserControl(MapTo controllerIndex)
 		{
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-
-			PadItemPanel = new PadItemControl();
-			PadItemHost.Child = PadItemPanel;
+			PadPanel = new PadControl();
+			PadHost.Child = PadPanel;
 			// Add controls which must be notified on setting selection change.
 			MacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
@@ -48,10 +44,6 @@ namespace x360ce.App.Controls
 			XboxImage.StopRecording = StopRecording;
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
-			// Hide left/right border.
-			//MappedDevicesDataGridView.Width = this.Width + 2;
-			//MappedDevicesDataGridView.Left = -1;
-			JocysCom.ClassLibrary.Controls.ControlsHelper.ApplyBorderStyle(MappedDevicesDataGridView);
 			// Axis to Button DeadZones
 			ButtonsPanel.AxisToButtonADeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonATextBox;
 			ButtonsPanel.AxisToButtonBDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonBTextBox;
@@ -67,18 +59,13 @@ namespace x360ce.App.Controls
 			ButtonsPanel.AxisToDPadLeftDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadLeftTextBox;
 			ButtonsPanel.AxisToDPadRightDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadRightTextBox;
 			ButtonsPanel.AxisToDPadUpDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadUpTextBox;
-			// Load Settings and enable events.
-			UpdateGetXInputStatesWithNoEvents();
-			// Monitor option changes.
-			SettingsManager.OptionsData.Items.ListChanged += Items_ListChanged;
 			// Monitor setting changes.
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 
 		}
-		private PadItemControl PadItemPanel;
 		private PadItem_GeneralControl GeneralPanel => PadItemPanel.GeneralPanel;
 		private PadItem_AdvancedControl AdvancedPanel => PadItemPanel.AdvancedPanel;
-		private AxisToButtonListControl ButtonsPanel => PadItemPanel.ButtonsPanel;
+		private PadItem_ButtonsControl ButtonsPanel => PadItemPanel.ButtonsPanel;
 		private PadItem_DPadControl DPadPanel => PadItemPanel.DPadPanel;
 		private AxisMapControl LeftTriggerPanel => PadItemPanel.LeftTriggerPanel;
 		private AxisMapControl RightTriggerPanel => PadItemPanel.RightTriggerPanel;
@@ -93,8 +80,13 @@ namespace x360ce.App.Controls
 
 		private PadItem_General_XboxImageControl XboxImage => GeneralPanel.XboxImage;
 
+		private PadControl PadPanel; 
 
+		public PadListControl PadListPanel
+			=>PadPanel.PadListPanel;
 
+		private PadItemControl PadItemPanel
+			=>PadPanel.PadItemPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -305,65 +297,14 @@ namespace x360ce.App.Controls
 			//	SendVibration();
 		}
 
-		private void Items_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			var pd = e.PropertyDescriptor;
-			if (pd != null)
-			{
-				var o = SettingsManager.Options;
-				// Update values only if different.
-				if (e.PropertyDescriptor.Name == nameof(Options.GetXInputStates))
-				{
-					UpdateGetXInputStatesWithNoEvents();
-				}
-			}
-		}
-
-		object GetXInputStatesCheckBoxLock = new object();
-
-		public void UpdateGetXInputStatesWithNoEvents()
-		{
-			lock (GetXInputStatesCheckBoxLock)
-			{
-				// Disable events.
-				GetXInputStatesCheckBox.Click -= GetXInputStatesCheckBox_Click;
-				var o = SettingsManager.Options;
-				ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
-				GetXInputStatesCheckBox.Image = o.GetXInputStates
-				   ? Properties.Resources.checkbox_16x16
-				   : Properties.Resources.checkbox_unchecked_16x16;
-				// Enable events.
-				GetXInputStatesCheckBox.Click += GetXInputStatesCheckBox_Click;
-			}
-		}
-
-		// Must trigger only by the user input.
-		private void GetXInputStatesCheckBox_Click(object sender, EventArgs e)
-		{
-			SettingsManager.Options.GetXInputStates = !SettingsManager.Options.GetXInputStates;
-		}
-
 		public void InitPadData()
 		{
-			// WORKAROUND: Remove SelectionChanged event.
-			MappedDevicesDataGridView.SelectionChanged -= MappedDevicesDataGridView_SelectionChanged;
-			MappedDevicesDataGridView.DataSource = mappedItems;
 			GeneralPanel.InitPadData();
-			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
-			ControlsHelper.BeginInvoke(() =>
-			{
-				MappedDevicesDataGridView.SelectionChanged += MappedDevicesDataGridView_SelectionChanged;
-				MappedDevicesDataGridView_SelectionChanged(MappedDevicesDataGridView, new EventArgs());
-			});
-			UserSettings_Items_ListChanged(null, null);
-			SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
 		}
 
 		public void InitPadControl()
 		{
 			var dv = new System.Data.DataView();
-			var grid = MappedDevicesDataGridView;
-			grid.AutoGenerateColumns = false;
 			// Show disabled images by default.
 			_Imager.SetImages(false);
 			// Add player index to combo boxes
@@ -371,115 +312,10 @@ namespace x360ce.App.Controls
 			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));
 			foreach (var item in playerTypes)
 				playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
-			UpdateFromCurrentGame();
-		}
-
-		public void UpdateFromCurrentGame()
-		{
-			var game = SettingsManager.CurrentGame;
-			var flag = AppHelper.GetMapFlag(MappedTo);
-			// Update Virtual.
-			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
-			EnableButton.Checked = virt;
-			EnableButton.Image = virt
-				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
+			 PadListPanel.UpdateFromCurrentGame();
 			// Update emulation type.
+			var game = SettingsManager.CurrentGame; 
 			ShowAdvancedTab(game != null && game.EmulationType == (int)EmulationType.Library);
-			// Update AutoMap.
-			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
-			AutoMapButton.Checked = auto;
-			AutoMapButton.Image = auto
-				? x360ce.App.Properties.Resources.checkbox_16x16
-				: x360ce.App.Properties.Resources.checkbox_unchecked_16x16;
-			MappedDevicesDataGridView.Enabled = !auto;
-			MappedDevicesDataGridView.BackgroundColor = auto
-				? SystemColors.Control
-				: SystemColors.Window;
-			MappedDevicesDataGridView.DefaultCellStyle.BackColor = auto
-				? SystemColors.Control
-				: SystemColors.Window;
-			if (auto)
-			{
-				// Remove mapping from all devices.	
-				var grid = MappedDevicesDataGridView;
-				var items = grid.Rows.Cast<DataGridViewRow>().Where(x => x.Visible).Select(x => (UserSetting)x.DataBoundItem).ToArray();
-				foreach (var item in items)
-				{
-					item.MapTo = (int)MapTo.None;
-				}
-			}
-			ShowHideAndSelectGridRows(null);
-			UpdateGridButtons();
-		}
-
-		private void UserSettings_Items_ListChanged(object sender, ListChangedEventArgs e)
-		{
-			// Make sure there is no crash when function gets called from another thread.
-			ControlsHelper.Invoke(() =>
-			{
-				ShowHideAndSelectGridRows(null);
-			});
-		}
-
-		object DevicesToMapDataGridViewLock = new object();
-
-		SortableBindingList<Engine.Data.UserSetting> mappedItems = new SortableBindingList<Engine.Data.UserSetting>();
-
-		void ShowHideAndSelectGridRows(Guid? instanceGuid = null)
-		{
-			lock (DevicesToMapDataGridViewLock)
-			{
-				var grid = MappedDevicesDataGridView;
-				var game = SettingsManager.CurrentGame;
-				// Get rows which must be displayed on the list.
-				var itemsToShow = SettingsManager.UserSettings.ItemsToArraySyncronized()
-					// Filter devices by controller.	
-					.Where(x => x.MapTo == (int)MappedTo)
-					// Filter devices by selected game (no items will be shown if game is not selected).
-					.Where(x => game != null && x.FileName == game.FileName && x.FileProductName == game.FileProductName)
-					.ToList();
-				var itemsToRemove = mappedItems.Except(itemsToShow).ToArray();
-				var itemsToInsert = itemsToShow.Except(mappedItems).ToArray();
-
-				// If columns will be hidden or shown then...
-				if (itemsToRemove.Length > 0 || itemsToInsert.Length > 0)
-				{
-					var selection = instanceGuid.HasValue
-						? new List<Guid>() { instanceGuid.Value }
-						: JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, nameof(UserSetting.InstanceGuid));
-					grid.CurrentCell = null;
-					// Suspend Layout.
-					grid.SuspendLayout();
-					var bound = grid.DataSource != null;
-					CurrencyManager cm = null;
-					if (bound)
-					{
-						// Suspend CurrencyManager to avoid exceptions.
-						cm = (CurrencyManager)BindingContext[grid.DataSource];
-						cm.SuspendBinding();
-					}
-					// Do removal.
-					foreach (var item in itemsToRemove)
-						mappedItems.Remove(item);
-					// Do adding.
-					foreach (var item in itemsToInsert)
-						mappedItems.Add(item);
-					if (bound)
-						// Resume CurrencyManager and Layout.
-						cm.ResumeBinding();
-					grid.ResumeLayout();
-					// Restore selection.
-					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserSetting.InstanceGuid), selection);
-				}
-				var visibleCount = mappedItems.Count();
-				var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
-				if (mappedItems.Count(x => x.IsEnabled) > 1)
-				{
-					title += " (Combine)";
-				}
-				ControlsHelper.SetText(EnableButton, title);
-			}
 		}
 
 		public void GetAllControls<T>(Control c, ref List<T> l) where T : Control
@@ -719,107 +555,7 @@ namespace x360ce.App.Controls
 		}
 
 		#region Mapped Devices
-
-		private void AddMapButton_Click(object sender, EventArgs e)
-		{
-			var game = SettingsManager.CurrentGame;
-			// Return if game is not selected.
-			if (game == null)
-				return;
-			// Show form which allows to select device.
-			var selectedUserDevices = MainForm.Current.ShowDeviceForm();
-			// Return if no devices were selected.
-			if (selectedUserDevices == null)
-				return;
-			// Check if device already have old settings before adding new ones.
-			var noOldSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count == 0;
-			SettingsManager.MapGamePadDevices(game, MappedTo, selectedUserDevices,
-				SettingsManager.Options.HidGuardianConfigureAutomatically);
-			var hasNewSettings = SettingsManager.GetSettings(game.FileName, MappedTo).Count > 0;
-			// If new devices mapped and button is not enabled then...
-			if (noOldSettings && hasNewSettings && !EnableButton.Checked)
-			{
-				// Enable mapping.
-				EnableButton_Click(null, null);
-			}
-			SettingsManager.Current.RaiseSettingsChanged(null);
-		}
-
-		private void RemoveMapButton_Click(object sender, EventArgs e)
-		{
-			var win = new MessageBoxWindow();
-			var text = "Do you really want to remove selected user setting?";
-			var result = win.ShowDialog(text,
-				"X360CE - Remove?", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No);
-			if (result != System.Windows.MessageBoxResult.Yes)
-				return;
-			var game = SettingsManager.CurrentGame;
-			// Return if game is not selected.
-			if (game == null)
-				return;
-			var settingsOld = SettingsManager.GetSettings(game.FileName, MappedTo);
-			var setting = CurrentUserSetting;
-			SettingsManager.UnMapGamePadDevices(game, setting,
-				SettingsManager.Options.HidGuardianConfigureAutomatically);
-			var settingsNew = SettingsManager.GetSettings(game.FileName, MappedTo);
-			// if all devices unmapped and mapping is enabled then...
-			if (settingsOld.Count > 0 && settingsNew.Count == 0 && EnableButton.Checked)
-			{
-				// Disable mapping.
-				EnableButton_Click(null, null);
-			}
-		}
-
-		void UpdateGridButtons()
-		{
-			var grid = MappedDevicesDataGridView;
-			var game = SettingsManager.CurrentGame;
-			var flag = AppHelper.GetMapFlag(MappedTo);
-			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
-			RemoveMapButton.Enabled = !auto && grid.SelectedRows.Count > 0;
-			AddMapButton.Enabled = !auto;
-		}
-
-		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-		{
-			if (e.RowIndex < 0 || e.ColumnIndex < 0)
-				return;
-			var grid = (DataGridView)sender;
-			var viewRow = grid.Rows[e.RowIndex];
-			var column = grid.Columns[e.ColumnIndex];
-			var item = (Engine.Data.UserSetting)viewRow.DataBoundItem;
-			if (column == IsOnlineColumn)
-			{
-				e.Value = item.IsOnline
-					? Properties.Resources.bullet_square_glass_green
-					: Properties.Resources.bullet_square_glass_grey;
-			}
-			else if (column == ConnectionClassColumn)
-			{
-				var device = SettingsManager.GetDevice(item.InstanceGuid);
-				e.Value = device.ConnectionClass == Guid.Empty
-					? new Bitmap(16, 16)
-					: JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(device.ConnectionClass, 16)?.ToBitmap();
-			}
-			else if (column == InstanceIdColumn)
-			{
-				// Hide device Instance GUID from public eyes. Show part of checksum.
-				e.Value = EngineHelper.GetID(item.InstanceGuid);
-			}
-			else if (column == SettingIdColumn)
-			{
-				// Hide device Setting GUID from public eyes. Show part of checksum.
-				e.Value = EngineHelper.GetID(item.PadSettingChecksum);
-			}
-			else if (column == VendorNameColumn)
-			{
-				var device = SettingsManager.GetDevice(item.InstanceGuid);
-				e.Value = device == null
-					? ""
-					: device.DevManufacturer;
-			}
-		}
-
+	
 		public event EventHandler<EventArgs<UserSetting>> OnSettingChanged;
 
 		public UserSetting CurrentUserSetting
@@ -853,6 +589,7 @@ namespace x360ce.App.Controls
 					? new PadSetting()
 					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 				DPadPanel.SetBinding(_CurrentPadSetting);
+				PadListPanel.SetBinding(MappedTo, _CurrentUserSetting);
 				GeneralPanel.SetBinding(MappedTo, _CurrentPadSetting);
 				AdvancedPanel.SetBinding(_CurrentPadSetting);
 				LeftTriggerPanel.SetBinding(_CurrentPadSetting);
@@ -866,79 +603,10 @@ namespace x360ce.App.Controls
 				ForceFeedbackPanel.RightForceFeedbackMotorPanel.SetBinding(_CurrentPadSetting, 1);
 				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, _CurrentPadSetting);
 				OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
-				UpdateGridButtons();
-			}
-		}
-
-		private void MappedDevicesDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
-		{
-			if (e.RowIndex < 0 || e.ColumnIndex < 0)
-				return;
-			var grid = (DataGridView)sender;
-			var column = grid.Columns[e.ColumnIndex];
-			// If user clicked on the CheckBox column then...
-			if (column == IsEnabledColumn)
-			{
-				var row = grid.Rows[e.RowIndex];
-				var item = (Engine.Data.UserSetting)row.DataBoundItem;
-				// Changed check (enabled state) of the current item.
-				item.IsEnabled = !item.IsEnabled;
 			}
 		}
 
 		#endregion
-
-		private void AutoMapButton_Click(object sender, EventArgs e)
-		{
-			var game = SettingsManager.CurrentGame;
-			// If no game selected then ignore click.
-			if (game == null)
-				return;
-			var flag = AppHelper.GetMapFlag(MappedTo);
-			var value = (MapToMask)game.AutoMapMask;
-			var autoMap = value.HasFlag(flag);
-			// If AUTO enabled then...
-			if (autoMap)
-			{
-				// Remove AUTO.
-				game.AutoMapMask = (int)(value & ~flag);
-			}
-			else
-			{
-				// Add AUTO.
-				game.AutoMapMask = (int)(value | flag);
-			}
-		}
-
-		private void EnableButton_Click(object sender, EventArgs e)
-		{
-			var game = SettingsManager.CurrentGame;
-			// If no game selected then ignore click.
-			if (game == null)
-				return;
-			var flag = AppHelper.GetMapFlag(MappedTo);
-			var value = (MapToMask)game.EnableMask;
-			var type = game.EmulationType;
-			var autoMap = value.HasFlag(flag);
-			// Invert flag value.
-			var enableMask = autoMap
-				// Remove AUTO.
-				? (int)(value & ~flag)
-				// Add AUTO.	
-				: (int)(value | flag);
-			// Update emulation type.
-			EmulationType? newType = null;
-			// If emulation enabled and game is not using virtual type then...
-			if (enableMask > 0 && type != (int)EmulationType.Virtual)
-				newType = EmulationType.Virtual;
-			// If emulation disabled, but game use virtual emulation then...
-			if (enableMask == 0 && type == (int)EmulationType.Virtual)
-				newType = EmulationType.None;
-			// Set values.
-			game.EnableMask = enableMask;
-			if (newType.HasValue)
-				game.EmulationType = (int)newType.Value;
-		}
 
 		public void ShowAdvancedTab(bool show)
 			=> PadItemPanel.ShowTab(show, PadItemPanel.AdvancedTabPage);

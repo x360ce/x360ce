@@ -125,6 +125,7 @@
 				<converters:BooleanToVisibilityConverter x:Key="_BooleanToVisibilityConverter" />
 			</DataGrid.Resources>
 			<DataGrid.Columns>
+				<!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
 				<DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
@@ -144,7 +145,7 @@
 					Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
 					EditingElementStyle="{StaticResource CheckBoxCell}"
 					ElementStyle="{StaticResource CheckBoxCell}"
-					Header="En" />
+					Header="On" />
 				<DataGridTextColumn
 					Binding="{Binding InstanceId}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
@@ -160,7 +161,7 @@
 					Binding="{Binding ProductName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Product Name" />
+					Header="Device Name" />
 				<DataGridTextColumn
 					Width="*"
 					Binding="{Binding HidDeviceId}"

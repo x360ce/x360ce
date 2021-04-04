@@ -1,5 +1,5 @@
 ﻿<UserControl
-	x:Class="x360ce.App.Controls.SettingsListControl"
+	x:Class="x360ce.App.Controls.PadListControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:converters="clr-namespace:x360ce.App.Converters"
@@ -7,7 +7,7 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="120"
-	d:DesignWidth="480"
+	d:DesignWidth="640"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -26,28 +26,46 @@
 		</Grid.RowDefinitions>
 		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
 			<ToolBar Style="{StaticResource MainToolBar}">
-				<Button
-					Name="EditButton"
-					HorizontalAlignment="Right"
-					Click="SettingsEditNoteButton_Click"
-					Style="{StaticResource ToolBarButton}">
+				<CheckBox Name="EnabledCheckBox" Click="EnabledCheckBox_Click" IsChecked="False">
 					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Edit}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Edit Note" Style="{StaticResource ButtonLabel}" />
+						<ContentControl Name="EnabledContentControl" Content="{StaticResource Icon_checkbox_unchecked}" Style="{StaticResource ButtonContentControl}" />
+						<Label x:Name="EnabledLabel" Content="Enabled" Style="{StaticResource ButtonLabel}" />
 					</StackPanel>
-				</Button>
+				</CheckBox>
+				<CheckBox Name="UseXInputStateCheckBox" Click="UseXInputStateCheckBox_Click" IsChecked="False">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Name="UseXInputStateContentControl" Content="{StaticResource Icon_checkbox_unchecked}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Use XInput State" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</CheckBox>
+				<CheckBox Name="AutoMapCheckBox" Click="AutoMapCheckBox_Click" IsChecked="False">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Name="AutoMapContentControl" Content="{StaticResource Icon_checkbox_unchecked}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Auto Map" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</CheckBox>
 			</ToolBar>
 		</ToolBarPanel>
 		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
 			<ToolBar Style="{StaticResource MainToolBar}">
 				<Button
-					Name="DeleteButton"
+					Name="AddButton"
 					HorizontalAlignment="Right"
-					Click="DeleteButton_Click"
+					Click="AddButton_Click"
 					Style="{StaticResource ToolBarButton}">
 					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Delete}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Delete" Style="{StaticResource ButtonLabel}" />
+						<ContentControl Content="{StaticResource Icon_add}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Add..." Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="RemoveButton"
+					HorizontalAlignment="Right"
+					Click="RemoveButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_remove}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Remove" Style="{StaticResource ButtonLabel}" />
 					</StackPanel>
 				</Button>
 				<Button
@@ -81,9 +99,48 @@
 			<DataGrid.Resources>
 				<converters:ChecksumToIdConverter x:Key="_ChecksumToIdConverter" />
 				<converters:MapToIntToDescription x:Key="_MapToIntToDescription" />
-
+				<converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
+				<converters:ConnectionClassToImageConverter x:Key="ConnectionClassToImageConverter" />
 			</DataGrid.Resources>
 			<DataGrid.Columns>
+				<!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
+				<DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<ContentControl Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}" Style="{StaticResource ButtonContentControl}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn Width="SizeToCells" Header="" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Image Source="{Binding ConnectionClass, Converter={StaticResource ConnectionClassToImageConverter}}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridCheckBoxColumn
+					x:Name="IsEnabledColumn"
+					Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
+					EditingElementStyle="{StaticResource CheckBoxCell}"
+					ElementStyle="{StaticResource CheckBoxCell}"
+					Header="On" />
+				<DataGridTextColumn
+					Binding="{Binding InstanceId}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Instance ID"
+					SortDirection="{x:Null}" />
+				<DataGridTextColumn
+					Binding="{Binding HidManufacturer}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Vendor Name" />
+				<DataGridTextColumn
+					Width="*"
+					Binding="{Binding ProductName}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Device Name" />
 				<DataGridTextColumn
 					Binding="{Binding PadSettingChecksum, Converter={StaticResource _ChecksumToIdConverter}}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
@@ -91,26 +148,10 @@
 					Header="SID"
 					SortDirection="{x:Null}" />
 				<DataGridTextColumn
-					Binding="{Binding FileName}"
+					Binding="{Binding Completion}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="File Name" />
-				<DataGridTextColumn
-					Width="*"
-					Binding="{Binding FileProductName}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="File Title" />
-				<DataGridTextColumn
-					Binding="{Binding ProductName}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Device Name" />
-				<DataGridTextColumn
-					Binding="{Binding MapTo, Converter={StaticResource _MapToIntToDescription}}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Map To" />
+					Header="Comp" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style TargetType="DataGridCell">
@@ -118,9 +159,5 @@
 				</Style>
 			</DataGrid.CellStyle>
 		</DataGrid>
-		<StackPanel x:Name="CommentPanel" Grid.Row="2">
-			<TextBlock x:Name="CommentLabel" Text="Note:" />
-		</StackPanel>
 	</Grid>
-
 </UserControl>

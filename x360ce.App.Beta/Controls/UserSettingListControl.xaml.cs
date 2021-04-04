@@ -15,9 +15,9 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for SettingsListControl.xaml
 	/// </summary>
-	public partial class SettingsListControl : UserControl
+	public partial class UserSettingListControl : UserControl
 	{
-		public SettingsListControl()
+		public UserSettingListControl()
 		{
 			InitializeComponent();
 			MainDataGrid.AutoGenerateColumns = false;

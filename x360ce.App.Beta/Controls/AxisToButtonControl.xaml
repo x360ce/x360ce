@@ -34,8 +34,7 @@
 			x:Name="ArrowPictureBox"
 			Width="16"
 			Height="16"
-			IsEnabledChanged="ArrowPictureBox_IsEnabledChanged"
-			Source="arrow_right_16x16.png" />
+			IsEnabledChanged="ArrowPictureBox_IsEnabledChanged" />
 		<Grid>
 			<Image
 				x:Name="ButtonImagePictureBox"
@@ -43,8 +42,7 @@
 				Height="24"
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
-				IsEnabledChanged="ButtonImagePictureBox_IsEnabledChanged"
-				Source="Button_Back.png" />
+				IsEnabledChanged="ButtonImagePictureBox_IsEnabledChanged" />
 			<ContentControl
 				Name="ButtonStatusImage"
 				Width="24"

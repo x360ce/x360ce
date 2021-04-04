@@ -169,7 +169,7 @@ namespace x360ce.App
 
 		public int ControllerIndex => PadTabPages.IndexOf(MainTabControl.SelectedTab);
 
-		public PadControl[] PadControls;
+		public PadUserControl[] PadControls;
 		public TabPage[] ControlPages;
 
 		/// <summary>
@@ -740,11 +740,11 @@ namespace x360ce.App
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
 			// Load PAD controls.
-			PadControls = new PadControl[4];
+			PadControls = new PadUserControl[4];
 			for (var i = 0; i < PadControls.Length; i++)
 			{
 				var mapTo = (MapTo)(i + 1);
-				PadControls[i] = new Controls.PadControl(mapTo)
+				PadControls[i] = new Controls.PadUserControl(mapTo)
 				{
 					Name = string.Format("ControlPad{0}", (int)mapTo),
 					Dock = DockStyle.Fill
@@ -1109,7 +1109,11 @@ namespace x360ce.App
 			foreach (var ps in PadControls)
 			{
 				if (ps != null)
-					ps.UpdateFromCurrentGame();
+				{
+					ps.PadListPanel.UpdateFromCurrentGame();
+					// Update emulation type.
+					ps.ShowAdvancedTab(game != null && game.EmulationType == (int)EmulationType.Library);
+				}
 			}
 			var selectedGame = (UserGame)GameToCustomizeComboBox.ComboBox.SelectedItem;
 			if (selectedGame != game)

@@ -5,9 +5,9 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for AxisToButtonListControl.xaml
 	/// </summary>
-	public partial class AxisToButtonListControl : UserControl
+	public partial class PadItem_ButtonsControl : UserControl
 	{
-		public AxisToButtonListControl()
+		public PadItem_ButtonsControl()
 		{
 			InitializeComponent();
 		}

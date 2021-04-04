@@ -256,8 +256,8 @@
     <Compile Include="Controls\AxisToButtonControl.xaml.cs">
       <DependentUpon>AxisToButtonControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\AxisToButtonListControl.xaml.cs">
-      <DependentUpon>AxisToButtonListControl.xaml</DependentUpon>
+    <Compile Include="Controls\PadItem_ButtonsControl.xaml.cs">
+      <DependentUpon>PadItem_ButtonsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CloudControl.xaml.cs">
       <DependentUpon>CloudControl.xaml</DependentUpon>
@@ -289,6 +289,9 @@
     </Compile>
     <Compile Include="Controls\OptionsVirtualDeviceControl.xaml.cs">
       <DependentUpon>OptionsVirtualDeviceControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PadControl.xaml.cs">
+      <DependentUpon>PadControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PadItemControl.xaml.cs">
       <DependentUpon>PadItemControl.xaml</DependentUpon>
@@ -328,8 +331,8 @@
     <Compile Include="Controls\ProgramListControl.xaml.cs">
       <DependentUpon>ProgramListControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\SettingsListControl.xaml.cs">
-      <DependentUpon>SettingsListControl.xaml</DependentUpon>
+    <Compile Include="Controls\UserSettingListControl.xaml.cs">
+      <DependentUpon>UserSettingListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\PadItem_MacrosControl.xaml.cs">
       <DependentUpon>PadItem_MacrosControl.xaml</DependentUpon>
@@ -351,6 +354,9 @@
     </Compile>
     <Compile Include="Controls\UserProgramsControl.xaml.cs">
       <DependentUpon>UserProgramsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\PadListControl.xaml.cs">
+      <DependentUpon>PadListControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\_TempWIN2WPF.com.cs">
       <SubType>UserControl</SubType>
@@ -416,11 +422,11 @@
     <Compile Include="Forms\NewDeviceForm.Designer.cs">
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadControl.cs">
+    <Compile Include="Controls\PadUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\PadControl.Designer.cs">
-      <DependentUpon>PadControl.cs</DependentUpon>
+    <Compile Include="Controls\PadUserControl.Designer.cs">
+      <DependentUpon>PadUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
@@ -493,8 +499,8 @@
       <DependentUpon>NewDeviceForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\PadControl.resx">
-      <DependentUpon>PadControl.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\PadUserControl.resx">
+      <DependentUpon>PadUserControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\WebBrowserForm.resx">
       <DependentUpon>WebBrowserForm.cs</DependentUpon>
@@ -743,7 +749,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\AxisToButtonListControl.xaml">
+    <Page Include="Controls\PadItem_ButtonsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -780,6 +786,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\OptionsVirtualDeviceControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PadControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -843,7 +853,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\SettingsListControl.xaml">
+    <Page Include="Controls\UserSettingListControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -864,6 +874,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\UserProgramsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\PadListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
