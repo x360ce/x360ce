@@ -1,0 +1,115 @@
+﻿<UserControl
+	x:Class="x360ce.App.Controls.PadFootControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:x360ce.App.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	MinWidth="720"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+			<Button
+				Name="GameControllersButton"
+				HorizontalAlignment="Right"
+				Click="GameControllersButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<Label Content="GameControllers..." Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="DxTweakButton"
+				Margin="8,0,0,0"
+				HorizontalAlignment="Right"
+				Click="DxTweakButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<Label Content="DX Tweak..." Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+		</StackPanel>
+
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+			<Label Content="Preset: " />
+			<Button
+				Name="CopyButton"
+				HorizontalAlignment="Right"
+				Click="CopyButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_copy}" Style="{StaticResource ButtonContentControl}" />
+					<Label Content="Copy" Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="PasteButton"
+				Margin="8,0,0,0"
+				HorizontalAlignment="Right"
+				Click="PasteButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_clipboard_paste}" Style="{StaticResource ButtonContentControl}" />
+					<Label Content="Paste" Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="LoadButton"
+				Margin="8,0,0,0"
+				HorizontalAlignment="Right"
+				Click="LoadButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_download}" Style="{StaticResource ButtonContentControl}" />
+					<Label Content="Load..." Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+
+			<Button
+				Name="AutoButton"
+				Margin="8,0,0,0"
+				HorizontalAlignment="Right"
+				Click="AutoButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_window_gear}" Style="{StaticResource ButtonContentControl}" />
+					<Label Content="Auto" Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="ClearButton"
+				Margin="8,0,0,0"
+				HorizontalAlignment="Right"
+				Click="ClearButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_broom}" Style="{StaticResource ButtonContentControl}" />
+					<Label Content="Clear" Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+			<Button
+				Name="ResetButton"
+				Margin="8,0,0,0"
+				HorizontalAlignment="Right"
+				Click="ResetButton_Click"
+				Style="{StaticResource ToolBarButton}">
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<ContentControl Content="{StaticResource Icon_Reset}" Style="{StaticResource ButtonContentControl}" />
+					<Label Content="Reset" Style="{StaticResource ButtonLabel}" />
+				</StackPanel>
+			</Button>
+
+
+
+		</StackPanel>
+	</Grid>
+</UserControl>

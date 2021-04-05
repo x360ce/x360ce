@@ -503,7 +503,7 @@ namespace x360ce.App
 			StatusTimerLabel.Text = "";
 		}
 
-		#region Control Changed Events
+		#region ■ Control Changed Events
 
 		public void NotifySettingsStatus(int eventsSuspendCount)
 		{
@@ -603,7 +603,7 @@ namespace x360ce.App
 			AppHelper.UnInitializeHidGuardian();
 		}
 
-		#region Timer
+		#region ■ Timer
 
 		public bool forceRecountDevices = true;
 
@@ -645,7 +645,7 @@ namespace x360ce.App
 			UpdateTimer.Start();
 		}
 
-		#region Issue Icon Timer
+		#region ■ Issue Icon Timer
 
 		public System.Timers.Timer IssueIconTimer;
 
@@ -814,7 +814,7 @@ namespace x360ce.App
 				SetHead(tab.Text);
 		}
 
-		#region Check Files
+		#region ■ Check Files
 
 		private void CheckEncoding(string path)
 		{
@@ -831,7 +831,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Allow only one copy of Application at a time
+		#region ■ Allow only one copy of Application at a time
 
 		/// <summary>Stores the unique windows message id from the RegisterWindowMessage call.</summary>
 		private int _WindowMessage;
@@ -915,7 +915,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Issues Panel
+		#region ■ Issues Panel
 
 		private readonly object issuesPanelLock = new object();
 
@@ -981,7 +981,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Device Form
+		#region ■ Device Form
 
 		public UserDevice[] ShowDeviceForm()
 		{
@@ -994,7 +994,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Update Form
+		#region ■ Update Form
 
 		private Forms.UpdateWindow _UpdateWindow;
 		private readonly object UpdateFormLock = new object();
@@ -1079,7 +1079,7 @@ namespace x360ce.App
 			Close();
 		}
 
-		#region Current Game
+		#region ■ Current Game
 
 		private void InitGameToCustomizeComboBox()
 		{
@@ -1144,7 +1144,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Save and Synchronize Settings
+		#region ■ Save and Synchronize Settings
 
 		private void SaveAllButton_Click(object sender, EventArgs e)
 		{
@@ -1201,7 +1201,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Update from DHelper
+		#region ■ Update from DHelper
 
 		private readonly object LockFormEvents = new object();
 
@@ -1320,7 +1320,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Update Interface
+		#region ■ Update Interface
 
 		private bool interfaceIsForeground;
 
@@ -1356,7 +1356,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Show/Hide tabs.
+		#region ■ Show/Hide tabs.
 
 
 		public void ShowTab(bool show, TabPage page)
@@ -1584,7 +1584,7 @@ namespace x360ce.App
 				: AppHelper.GetDisabledImage(Resources.error_16x16);
 		}
 
-		#region Exception Handling and Reporting
+		#region ■ Exception Handling and Reporting
 
 		private void LogHelper_Current_NewException(object sender, EventArgs e)
 		{

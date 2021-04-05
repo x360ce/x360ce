@@ -240,7 +240,7 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		#region IDisposable
+		#region ■ IDisposable
 
 		bool IsDisposing;
 

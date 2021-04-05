@@ -49,7 +49,7 @@ namespace x360ce.App.Controls
 			LoadUserSetting(setting);
 		}
 
-		#region IPadTabPage 
+		#region ■ IPadTabPage 
 
 		UserSetting _UserSetting;
 
@@ -180,7 +180,7 @@ namespace x360ce.App.Controls
 			ControlsHelper.BeginInvoke(() => RefreshList(true));
 		}
 
-		#region Recording
+		#region ■ Recording
 
 		Recorder _Recorder;
 
@@ -200,7 +200,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region ToolBar buttons
+		#region ■ ToolBar buttons
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -263,7 +263,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region IDisposable
+		#region ■ IDisposable
 
 		protected virtual void Dispose(bool disposing)
 		{

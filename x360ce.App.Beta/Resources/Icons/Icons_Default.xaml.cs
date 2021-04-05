@@ -19,11 +19,15 @@ namespace x360ce.App
 		public const string Icon_checkbox = nameof(Icon_checkbox);
 		public const string Icon_checkbox_unchecked = nameof(Icon_checkbox_unchecked);
 		public const string Icon_checks = nameof(Icon_checks);
+		public const string Icon_clipboard_paste = nameof(Icon_clipboard_paste);
 		public const string Icon_close = nameof(Icon_close);
 		public const string Icon_cloud_download = nameof(Icon_cloud_download);
 		public const string Icon_cloud_upload = nameof(Icon_cloud_upload);
+		public const string Icon_copy = nameof(Icon_copy);
 		public const string Icon_delete = nameof(Icon_delete);
+		public const string Icon_document_gear = nameof(Icon_document_gear);
 		public const string Icon_door_exit = nameof(Icon_door_exit);
+		public const string Icon_download = nameof(Icon_download);
 		public const string Icon_erase = nameof(Icon_erase);
 		public const string Icon_error = nameof(Icon_error);
 		public const string Icon_export = nameof(Icon_export);
@@ -66,6 +70,7 @@ namespace x360ce.App
 		public const string Icon_table_selection_row = nameof(Icon_table_selection_row);
 		public const string Icon_test = nameof(Icon_test);
 		public const string Icon_toolbox = nameof(Icon_toolbox);
+		public const string Icon_window_gear = nameof(Icon_window_gear);
 
 	}
 }

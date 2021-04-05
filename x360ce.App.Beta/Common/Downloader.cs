@@ -109,7 +109,7 @@ namespace x360ce.App
 			}
 		}
 
-        #region IDisposable
+        #region ■ IDisposable
 
         public void Dispose()
         {

@@ -37,7 +37,7 @@ namespace x360ce.App.Controls
 				gs.IsStopping = true;
 		}
 
-		#region Scan Games
+		#region ■ Scan Games
 
 		/// <summary>
 		/// Scan for games
@@ -200,7 +200,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Games (My Game Settings)
+		#region ■ Games (My Game Settings)
 
 		x360ce.Engine.Data.UserGame SelectedItem
 			=> MainDataGrid.SelectedItems.Cast<x360ce.Engine.Data.UserGame>().FirstOrDefault();
@@ -379,7 +379,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Import
+		#region ■ Import
 
 		/// <summary>
 		/// Merge supplied list of items with current settings.

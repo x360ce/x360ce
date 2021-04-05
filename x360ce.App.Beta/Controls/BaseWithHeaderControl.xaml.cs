@@ -39,7 +39,7 @@ namespace x360ce.App.Controls
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
 
-		#region WebService loading circle
+		#region ■ WebService loading circle
 
 		private readonly object TasksLock = new object();
 		private readonly BindingList<TaskName> Tasks = new BindingList<TaskName>();

@@ -218,7 +218,7 @@ namespace CSCreateCabinet.Signature
             }
         }
 
-        #region WinTrustData struct field enums and structs
+        #region ■ WinTrustData struct field enums and structs
         public enum WTDUIChoice : uint
         {
 

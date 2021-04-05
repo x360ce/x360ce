@@ -59,7 +59,7 @@ namespace x360ce.App.Controls
 			DiPOVsDataGridView.ItemsSource = DiPOVsTable;
 		}
 
-		#region Effects Table
+		#region ■ Effects Table
 
 		public class EffectsRow : BindableItem
 		{
@@ -73,7 +73,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Buttons Table
+		#region ■ Buttons Table
 
 		public class ButtonsRow : BindableItem
 		{
@@ -98,7 +98,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Axis Table
+		#region ■ Axis Table
 
 		public class AxisRow : BindableItem
 		{
@@ -175,7 +175,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Sliders Table
+		#region ■ Sliders Table
 
 		public class SliderRow : BindableItem
 		{
@@ -214,7 +214,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region POVs Table
+		#region ■ POVs Table
 
 		public class POVsRow : BindableItem
 		{
@@ -411,7 +411,7 @@ namespace x360ce.App.Controls
 
 		/*
 
-		#region Copy Data
+		#region ■ Copy Data
 
 		private void CopyWithHeadersMenuItem_Click(object sender, EventArgs e)
 		{

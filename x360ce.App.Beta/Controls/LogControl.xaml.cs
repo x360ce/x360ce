@@ -28,7 +28,7 @@ namespace x360ce.App.Controls
 			MainDataGrid.ItemsSource = Items;
 		}
 
-		#region TabPage: Log
+		#region ■ TabPage: Log
 
 		public SortableBindingList<LogItem> Items { get; } = new SortableBindingList<LogItem>();
 

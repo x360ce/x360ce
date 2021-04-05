@@ -145,7 +145,7 @@ namespace x360ce.App.Controls
 			o.TestUpdateInterface = UpdateInterfaceCheckBox.IsChecked ?? false;
 		}
 
-		#region Performance Counter
+		#region ■ Performance Counter
 
 		CpuUsage _Counter;
 
@@ -302,7 +302,7 @@ namespace x360ce.App.Controls
 			});
 		}
 
-		#region Clean-up/Remove Devices
+		#region ■ Clean-up/Remove Devices
 
 		private void CleanupDevicesButton_Click(object sender, RoutedEventArgs e)
 		{

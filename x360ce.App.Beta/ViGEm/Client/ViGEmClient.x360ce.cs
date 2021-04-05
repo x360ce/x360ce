@@ -131,7 +131,7 @@ namespace Nefarius.ViGEm.Client
 			return connected[i - 1];
 		}
 
-		#region Static Members
+		#region ■ Static Members
 
 		public static ViGEmClient Current;
 		public static object ClientLock = new object();

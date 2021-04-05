@@ -443,7 +443,7 @@ namespace x360ce.App.Controls
 		}
 
 
-		#region Update original item when user interacts with the interface
+		#region ■ Update original item when user interacts with the interface
 
 		private void TimeoutNumericUpDown_ValueChanged(object sender, EventArgs e)
 		{
@@ -477,7 +477,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Help Links
+		#region ■ Help Links
 
 		string GetGoogleSearchUrl()
 		{

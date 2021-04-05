@@ -100,7 +100,7 @@ namespace x360ce.App
 		}
 
 
-		#region Minimize / Restore
+		#region ■ Minimize / Restore
 
 		/// <summary>
 		/// Minimize the window and hide it from the TaskBar. 
@@ -166,7 +166,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Operation 
+		#region ■ Operation 
 
 		/// <summary>
 		/// Requires no special permissions, because current used have full access to CurrentUser 'Run' registry key.

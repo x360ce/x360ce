@@ -126,7 +126,7 @@ namespace x360ce.App.Controls
             }
         }
 
-        #region Load Settings from the Internet
+        #region ■ Load Settings from the Internet
 
         public void LoadSetting(Guid padSettingChecksum)
         {

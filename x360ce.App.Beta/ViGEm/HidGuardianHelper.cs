@@ -23,7 +23,7 @@ namespace x360ce.App.ViGEm
 
 		public static readonly Regex HardwareIdRegex = new Regex(pattern1);
 
-		#region WhiteList
+		#region ■ WhiteList
 
 
 		/// <summary>
@@ -120,7 +120,7 @@ namespace x360ce.App.ViGEm
 
 		#endregion
 
-		#region Force
+		#region ■ Force
 
 		public static bool GetForce()
 		{
@@ -143,7 +143,7 @@ namespace x360ce.App.ViGEm
 
 		#endregion
 
-		#region Affected
+		#region ■ Affected
 
 		const string registryKeyName = "AffectedDevices";
 
@@ -289,7 +289,7 @@ namespace x360ce.App.ViGEm
 
 		#endregion
 
-		#region Helper
+		#region ■ Helper
 
 		/// <summary>
 		/// Check if Users have right to modify programs white list.

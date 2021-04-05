@@ -158,7 +158,7 @@ namespace x360ce.App.Controls
 			RightTriggerLabel.Content = item.RightTrigger;
 		}
 
-		#region Direct Input Menu
+		#region ■ Direct Input Menu
 
 		List<MenuItem> DiMenuStrip = new List<MenuItem>();
 		string cRecord = "[Record]";

@@ -10,7 +10,7 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
-		#region Device Detector
+		#region ■ Device Detector
 
 		// True, update device list as soon as possible.
 		public bool UpdateDevicesEnabled = true;

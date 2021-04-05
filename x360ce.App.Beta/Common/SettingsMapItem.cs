@@ -6,7 +6,7 @@ namespace x360ce.App
 	public class SettingsMapItem
 	{
 
-		#region INI
+		#region ■ INI
 
 		/// <summary>
 		/// Property Section inside INI file.

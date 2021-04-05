@@ -96,7 +96,7 @@ namespace x360ce.App
 			}
 		}
 
-		#region INotifyPropertyChanged
+		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

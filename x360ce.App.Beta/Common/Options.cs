@@ -238,7 +238,7 @@ namespace x360ce.App
 		}
 		bool _GetXInputStates;
 
-		#region Get Programs 
+		#region ■ Get Programs 
 
 		[DefaultValue(2)]
 		public int GetProgramsMinInstances { get; set; } = 2;
@@ -248,7 +248,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Options: Developing
+		#region ■ Options: Developing
 
 		[DefaultValue(false), Description("Enable Form Info (CTRL+SHIFT+RMB)")]
 		public bool EnableShowFormInfo { get { return _EnableShowFormInfo; } set { _EnableShowFormInfo = value; OnPropertyChanged(); } }
@@ -261,7 +261,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region INotifyPropertyChanged
+		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

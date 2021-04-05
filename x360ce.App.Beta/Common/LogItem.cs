@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
@@ -34,7 +34,7 @@ namespace x360ce.App
 
 		public Exception Error { get; set; }
 
-		#region INotifyPropertyChanged
+		#region ■ INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

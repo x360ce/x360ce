@@ -88,7 +88,7 @@ namespace x360ce.App
 				ev(this, new EventArgs());
 		}
 
-		#region IDisposable
+		#region ■ IDisposable
 
 		public void Dispose()
 		{

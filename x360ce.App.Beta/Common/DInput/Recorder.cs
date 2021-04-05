@@ -271,7 +271,7 @@ namespace x360ce.App
 			return list.ToArray();
 		}
 
-		#region IDisposable
+		#region ■ IDisposable
 
 		public void Dispose()
 		{

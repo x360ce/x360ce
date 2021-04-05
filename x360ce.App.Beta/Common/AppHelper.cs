@@ -17,7 +17,7 @@ namespace x360ce.App
 {
 	public static class AppHelper
 	{
-		#region DLL Functions
+		#region ■ DLL Functions
 
 		static void Elevate()
 		{
@@ -320,7 +320,7 @@ namespace x360ce.App
 			}
 		}
 
-		#region HID Guardian
+		#region ■ HID Guardian
 
 		public static void InitializeHidGuardian()
 		{

@@ -63,6 +63,9 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 
 		}
+
+		#region ■ ■ Control Links
+
 		private PadItem_GeneralControl GeneralPanel => PadItemPanel.GeneralPanel;
 		private PadItem_AdvancedControl AdvancedPanel => PadItemPanel.AdvancedPanel;
 		private PadItem_ButtonsControl ButtonsPanel => PadItemPanel.ButtonsPanel;
@@ -87,6 +90,8 @@ namespace x360ce.App.Controls
 
 		private PadItemControl PadItemPanel
 			=>PadPanel.PadItemPanel;
+
+		#endregion
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -330,7 +335,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		#region Images
+		#region ■ Images
 
 		public PadControlImager _Imager;
 
@@ -390,7 +395,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Settings Map
+		#region ■ Settings Map
 
 		public MapTo MappedTo;
 
@@ -426,7 +431,7 @@ namespace x360ce.App.Controls
 
 		object updateFromDirectInputLock = new object();
 
-		#region Update Controls
+		#region ■ Update Controls
 
 		void UpdateDirectInputTabPage(UserDevice diDevice)
 		{
@@ -554,7 +559,7 @@ namespace x360ce.App.Controls
 			form.MainControl.UnInitForm();
 		}
 
-		#region Mapped Devices
+		#region ■ Mapped Devices
 	
 		public event EventHandler<EventArgs<UserSetting>> OnSettingChanged;
 

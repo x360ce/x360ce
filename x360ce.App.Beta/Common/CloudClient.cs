@@ -227,7 +227,7 @@ namespace x360ce.App
 
 
 
-		#region Network Availability
+		#region ■ Network Availability
 
 		private void NetworkChange_NetworkAddressChanged(object sender, EventArgs e)
 		{
@@ -243,7 +243,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region IDisposable
+		#region ■ IDisposable
 
 		public void Dispose()
 		{

@@ -262,7 +262,7 @@ namespace x360ce.App.Controls
 			GC.SuppressFinalize(this);
 		}
 
-		#region IDisposable
+		#region ■ IDisposable
 
 		public bool IsDisposing;
 

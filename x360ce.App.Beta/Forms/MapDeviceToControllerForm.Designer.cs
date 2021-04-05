@@ -7,7 +7,7 @@
 		/// </summary>
 		private System.ComponentModel.IContainer components = null;
 
-		#region Windows Form Designer generated code
+		#region ■ Windows Form Designer generated code
 
 		/// <summary>
 		/// Required method for Designer support - do not modify

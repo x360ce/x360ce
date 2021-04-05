@@ -18,7 +18,7 @@ namespace x360ce.App.Controls
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
 
-		#region WebService loading circle
+		#region ■ WebService loading circle
 
 		private void InitLoadingCircle()
 		{
@@ -80,7 +80,7 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region Help Header
+		#region ■ Help Header
 
 		private readonly string defaultBody;
 

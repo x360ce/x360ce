@@ -12,7 +12,7 @@ namespace x360ce.App.DInput
 	public class VirtualDriverInstaller
 	{
 
-		#region Install/Uninstall ViGEmBus
+		#region ■ Install/Uninstall ViGEmBus
 
 		static Guid GUID_DEVINTERFACE_BUSENUM_VIGEM = new Guid("96E42B22-F5E9-42F8-B043-ED0F932F014F");
 		public static SP_DRVINFO_DATA GetViGemBusDriverInfo()
@@ -85,7 +85,7 @@ namespace x360ce.App.DInput
 
 		#endregion
 
-		#region Install/Uninstall HidGuardian
+		#region ■ Install/Uninstall HidGuardian
 
 		public static string GetHidGuardianPath()
 		{
@@ -174,7 +174,7 @@ namespace x360ce.App.DInput
 
 		#endregion
 
-		#region Extract Helper
+		#region ■ Extract Helper
 
 		/// <summary>
 		/// Extract resource files

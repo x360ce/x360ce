@@ -20,7 +20,7 @@ namespace x360ce.App.DInput
 			//CustomProperty = info.GetString("CustomProperty");
 		}
 
-		#region ISerializable
+		#region ■ ISerializable
 
 		/// <summary>
 		/// Method responsible for storing object fields during the serialization process.

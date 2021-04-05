@@ -10,8 +10,10 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<local:PadListControl x:Name="PadListPanel" Grid.Row="0" />
+		<local:PadListControl x:Name="PadListPanel" Grid.Row="0" MinHeight="100" />
 		<local:PadItemControl x:Name="PadItemPanel" Grid.Row="1" />
+		<local:PadFootControl x:Name="PadFootPanel" Grid.Row="2" Margin="0,8,0,8" />
 	</Grid>
 </UserControl>

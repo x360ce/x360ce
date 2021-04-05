@@ -230,7 +230,7 @@ namespace x360ce.App
 
 		static object saveReadFileLock = new object();
 
-		#region Load and Validate Data
+		#region ■ Load and Validate Data
 
 		public static void Load(TaskScheduler so = null)
 		{
@@ -422,9 +422,9 @@ namespace x360ce.App
 			return game;
 		}
 
-		#region Static Version
+		#region ■ Static Version
 
-		#region Constants
+		#region ■ Constants
 
 		public const string IniFileName = "x360ce.ini";
 		public const string TmpFileName = "x360ce.tmp";
@@ -434,11 +434,11 @@ namespace x360ce.App
 
 		#endregion // Constants
 
-		#region Member Variables
+		#region ■ Member Variables
 		static SettingsManager _current;
 		#endregion // Member Variables
 
-		#region Public Methods
+		#region ■ Public Methods
 		/// <summary>
 		/// Adds an entry in the control-setting map, generates a tool-tip for the setting.
 		/// </summary>
@@ -531,7 +531,7 @@ namespace x360ce.App
 
 		#endregion // Public Methods
 
-		#region Public Properties
+		#region ■ Public Properties
 		/// <summary>
 		/// Gets the SettingManager singleton instance.
 		/// </summary>
@@ -541,7 +541,7 @@ namespace x360ce.App
 		}
 		#endregion // Public Properties
 		#endregion // Static Version
-		#region Instance Version
+		#region ■ Instance Version
 
 		public SettingsManager()
 		{
@@ -627,7 +627,7 @@ namespace x360ce.App
 			cbx.SelectedIndex = 0;
 		}
 
-		#region Load Settings
+		#region ■ Load Settings
 
 		/// <summary>
 		/// Read setting from INI file into windows form control.
@@ -744,7 +744,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Save Settings
+		#region ■ Save Settings
 
 		public string GetSettingValue(object control)
 		{

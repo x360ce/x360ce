@@ -73,7 +73,7 @@ namespace Nefarius.ViGEm.Client
 			}
 		}
 
-        #region IDisposable Support
+        #region ■ IDisposable Support
 
         private bool disposedValue; // To detect redundant calls
 

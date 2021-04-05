@@ -27,7 +27,7 @@ namespace x360ce.App
 			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
 		}
 
-		#region Global Services
+		#region ■ Global Services
 
 		public static Service.RemoteService RemoteServer;
 		static Engine.ForegroundWindowHook WindowHook;
@@ -122,7 +122,7 @@ namespace x360ce.App
 			}
 		}
 
-		#region Dinput Helper
+		#region ■ Dinput Helper
 
 		public static DInput.DInputHelper DHelper;
 
@@ -134,7 +134,7 @@ namespace x360ce.App
 
 		#endregion
 
-		#region Public events
+		#region ■ Public events
 
 		/// <summary>
 		/// This method called from UpdateTimer on main form.

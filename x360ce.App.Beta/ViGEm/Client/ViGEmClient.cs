@@ -28,7 +28,7 @@ namespace Nefarius.ViGEm.Client
         /// </summary>
         internal PVIGEM_CLIENT NativeHandle { get; }
 
-        #region IDisposable Support
+        #region ■ IDisposable Support
 
         // To detect redundant calls
         public bool IsDisposed;

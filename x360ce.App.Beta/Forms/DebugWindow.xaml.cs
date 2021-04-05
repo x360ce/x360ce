@@ -17,7 +17,7 @@ namespace x360ce.App.Forms
 		{
 		}
 
-		#region Show/Hide Panel
+		#region ■ Show/Hide Panel
 
 		object PanelLock = new object();
 		public bool IsFormVisible = false;

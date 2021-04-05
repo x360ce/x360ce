@@ -280,7 +280,7 @@ namespace x360ce.App
 			return names.FirstOrDefault();
 		}
 
-		#region ExceptionToText
+		#region ■ ExceptionToText
 
 		// Exception to string needed here so that links to other references won't be an issue.
 

@@ -178,7 +178,7 @@ namespace x360ce.App.Controls
 			DeleteButton.IsEnabled = grid.SelectedItems.Count > 0;
 		}
 
-		#region Import
+		#region ■ Import
 
 		/// <summary>
 		/// Merge supplied list of items with current settings.
