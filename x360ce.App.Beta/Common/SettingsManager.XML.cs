@@ -193,5 +193,17 @@ namespace x360ce.App
 			ResumeEvents();
 		}
 
+		public bool ClearAll(MapTo padIndex)
+		{
+			var description = JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(padIndex);
+			var text = string.Format("Do you want to clear all {0} settings?", description);
+			var form = new JocysCom.ClassLibrary.Controls.MessageBoxWindow();
+			var result = form.ShowDialog(text, "Clear Controller Settings", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
+			if (result != System.Windows.MessageBoxResult.Yes)
+				return false;
+			LoadPadSettingsIntoSelectedDevice(padIndex, null);
+			return true;
+		}
+
 	}
 }

@@ -169,7 +169,8 @@ namespace x360ce.App
 
 		public int ControllerIndex => PadTabPages.IndexOf(MainTabControl.SelectedTab);
 
-		public PadUserControl[] PadControls;
+		public PadControl[] PadControls;
+		public System.Windows.Forms.Integration.ElementHost[] PadHosts;
 		public TabPage[] ControlPages;
 
 		/// <summary>
@@ -740,17 +741,21 @@ namespace x360ce.App
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
 			// Load PAD controls.
-			PadControls = new PadUserControl[4];
+
+			PadHosts = new  System.Windows.Forms.Integration.ElementHost[4];
+			PadControls = new PadControl[4];
 			for (var i = 0; i < PadControls.Length; i++)
 			{
 				var mapTo = (MapTo)(i + 1);
-				PadControls[i] = new Controls.PadUserControl(mapTo)
-				{
-					Name = string.Format("ControlPad{0}", (int)mapTo),
-					Dock = DockStyle.Fill
-				};
-				ControlPages[i].Controls.Add(PadControls[i]);
-				PadControls[i].InitPadControl();
+				var ph = new System.Windows.Forms.Integration.ElementHost();
+				var pc = new Controls.PadControl();
+				PadControls[i] = pc;
+				pc.Name = string.Format("ControlPad{0}", (int)mapTo);
+				ph.Dock = DockStyle.Fill;
+				ph.Child = pc;
+				pc.InitControls(mapTo);
+				ControlPages[i].Controls.Add(ph);
+				pc.InitPadControl();
 				// Update settings manager with [Mappings] section.
 			}
 			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
