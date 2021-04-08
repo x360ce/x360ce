@@ -1,0 +1,22 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>shield icon</title>
+    <desc>shield icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="32" y1="0" x2="480.0003" y2="512.00059" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#d8e0e8"/>
+            <stop offset="1" stop-color="#b3c0cd"/>
+        </linearGradient>
+        <linearGradient x1="64" y1="34" x2="448" y2="34" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#129eee"/>
+            <stop offset="0.47059" stop-color="#108bd2"/>
+            <stop offset="0.54118" stop-color="#1083c5"/>
+            <stop offset="1" stop-color="#0e76b2"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M256,512c-131.5,-55.5 -224,-185.5 -224,-337l0,-111.5c0,-4.5 1.5,-8.5 5,-11.5c3,-3.5 7,-5 11.5,-4.5c5.5,0 10.5,0 15.5,0c67,0 130,-14 184,-45.5c2.5,-1.5 5.5,-2 8,-2c2.5,0 5.5,0.5 8,2c54,31.5 117,45.5 184,45.5c5,0 10,0 15.5,0c4.5,-0.5 8.5,1 11.5,4.5c3.5,3 5,7 5,11.5l0,111.5c0,151.5 -92.5,281.5 -224,337z" id="curve1" fill="url(#color-1)"/>
+        <path d="M256,477c116.5,-55 192,-172.5 192,-302l0,-95.5l0,0c-67,0 -133,-13.5 -192,-45.5c-59,32 -125,45.5 -192,45.5l0,95.5c0,130 75.5,247 192,302z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>

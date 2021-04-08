@@ -1,0 +1,21 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>cloud download icon</title>
+    <desc>cloud download icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <radialGradient cx="112.49017" cy="82.14779" r="520.67147" fx="112.49017" fy="82.14779" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="0.67843" stop-color="#c5e7fb"/>
+            <stop offset="1" stop-color="#89cff7"/>
+        </radialGradient>
+        <linearGradient x1="160" y1="288" x2="352" y2="468.043" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#76d926"/>
+            <stop offset="1" stop-color="#5ba71e"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M0,288c0,-62 33,-99.5 80,-118.5c0,-0.5 0,-1 0,-1.5c0,-75 61,-136 136,-136c53.5,0 99.5,31 122,75.5c13.5,-7 29.5,-11.5 46,-11.5c53,0 96,43 96,96c0,17 -4.5,33 -12.5,47c27,17 44.5,37.5 44.5,81c0,48 -47.5,96 -96,96l-288,0c-66.5,0 -128,-61.5 -128,-128z" id="curve1" fill="url(#color-1)"/>
+        <path d="M208,288l96,0l0,128l48,0l-96,96l-96,-96l48,0z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>

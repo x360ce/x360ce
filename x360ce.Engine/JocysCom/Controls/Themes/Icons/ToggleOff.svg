@@ -1,0 +1,27 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>switch3 off icon</title>
+    <desc>switch3 off icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="0" y1="112" x2="0" y2="400" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#b3c0cd"/>
+            <stop offset="1" stop-color="#91a0af"/>
+        </linearGradient>
+        <linearGradient x1="32" y1="143.99635" x2="32" y2="368.00535" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#ecf7fe"/>
+            <stop offset="1" stop-color="#cfebfc"/>
+        </linearGradient>
+        <linearGradient x1="0" y1="112" x2="151.1042" y2="360.1575" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#717f8f"/>
+            <stop offset="1" stop-color="#51616f"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M368,112c79.5,0 144,64.5 144,144c0,79.5 -64.5,144 -144,144l-224,0c-79.5,0 -144,-64.5 -144,-144c0,-79.5 64.5,-144 144,-144z" id="curve4" fill="url(#color-1)"/>
+        <path d="M368,144l-224,0c-62,-0.5 -112,50.5 -112,112c0,61.5 50,112.5 112,112l224,0c62,0.5 112,-50.5 112,-112c0,-61.5 -50,-112.5 -112,-112z" id="curve3" fill="url(#color-2)"/>
+        <path d="M368,144l-224,0c-62,-0.5 -112,50.5 -112,112c0,2.5 0,5.5 0.5,8c4,-58 52,-104.5 111.5,-104l224,0c59.5,-0.5 107.5,46 111.5,104c0.5,-2.5 0.5,-5.5 0.5,-8c0,-61.5 -50,-112.5 -112,-112z" id="curve2" fill="#c5e7fb"/>
+        <path d="M144,112c79.5,0 144,64.5 144,144c0,79.5 -64.5,144 -144,144c-79.5,0 -144,-64.5 -144,-144c0,-79.5 64.5,-144 144,-144z" id="curve1" fill="url(#color-3)"/>
+        <path d="M144,175c44.5,0 81,36.5 81,81c0,44.5 -36.5,81 -81,81c-44.5,0 -81,-36.5 -81,-81c0,-44.5 36.5,-81 81,-81z" id="curve0" fill="#d8e0e8"/>
+    </g>
+</svg>

@@ -1,0 +1,21 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>close icon</title>
+    <desc>close icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="32" y1="32" x2="480.0003" y2="459.63685" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#ef5c51"/>
+            <stop offset="1" stop-color="#c63328"/>
+        </linearGradient>
+        <radialGradient cx="255.99946" cy="388.40506" r="346.48136" fx="255.99946" fy="388.40506" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="0.6" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#d8e0e8"/>
+        </radialGradient>
+    </defs>
+    <g fill="none" fill-rule="none" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M48,32l416,0c9,0 16,7 16,16l0,416c0,9 -7,16 -16,16l-416,0c-9,0 -16,-7 -16,-16l0,-416c0,-9 7,-16 16,-16z" id="curve1" fill="url(#color-1)" fill-rule="nonzero"/>
+        <path d="M358,86.5l67.5,67.5l-101.5,102l101.5,102l-67.5,67.5l-102,-101.5l-102,101.5l-67.5,-67.5l101.5,-102l-101.5,-102l67.5,-67.5l102,101.5z" id="curve0" fill="url(#color-2)" fill-rule="evenodd"/>
+    </g>
+</svg>

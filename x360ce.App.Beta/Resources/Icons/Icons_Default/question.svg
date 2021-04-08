@@ -1,0 +1,21 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>question icon</title>
+    <desc>question icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="16" y1="16" x2="388.8732" y2="485.5433" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#8d9bab"/>
+            <stop offset="1" stop-color="#717f8f"/>
+        </linearGradient>
+        <radialGradient cx="256.01543" cy="319.79265" r="235.45638" fx="256.01543" fy="319.79265" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="0.34118" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#d8e0e8"/>
+        </radialGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M256,16c132.5,0 240,107.5 240,240c0,132.5 -107.5,240 -240,240c-132.5,0 -240,-107.5 -240,-240c0,-132.5 107.5,-240 240,-240z" id="curve1" fill="url(#color-1)"/>
+        <path d="M224,311c0,-19.5 2,-35.5 6.5,-46.5c4.5,-11.5 12,-21.5 22,-30c10,-8.5 17.5,-16 22.5,-23c5.5,-7 8,-15 8,-23.5c0,-20.5 -8.5,-30.5 -26.5,-30.5c-8,0 -14.5,3 -19.5,9c-5,6 -8,14 -8,24l-69,0c0.5,-27 9,-48 26,-63.5c16.5,-15 40,-22.5 70.5,-22.5c30.5,0 54,7 70.5,21c16.5,14 25,34 25,59.5c0,11.5 -2.5,21.5 -7,31c-4.5,9 -11.5,18.5 -21.5,28l-23.5,22c-6.5,6.5 -11,13 -13.5,19.5c-3,7 -4,15.5 -4.5,25.5z M215.5,373c0,-10 3.5,-18 11,-24.5c7,-6.5 16,-10 27,-10c11,0 20,3.5 27,10c7.5,6.5 11,14.5 11,24.5c0,10 -3.5,18.5 -11,25c-7,6.5 -16,9.5 -27,9.5c-11,0 -20,-3 -27,-9.5c-7.5,-6.5 -11,-15 -11,-25z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>

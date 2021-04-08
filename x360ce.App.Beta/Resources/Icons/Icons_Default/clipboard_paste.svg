@@ -1,0 +1,39 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>clipboard paste icon</title>
+    <desc>clipboard paste icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="80" y1="48" x2="408.0885" y2="479.99995" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#da9e5d"/>
+            <stop offset="0.56078" stop-color="#d08730"/>
+            <stop offset="1" stop-color="#d08730"/>
+        </linearGradient>
+        <linearGradient x1="144" y1="80" x2="272.001" y2="112.0005" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#d08730"/>
+            <stop offset="1" stop-color="#c47e2d"/>
+        </linearGradient>
+        <linearGradient x1="144" y1="0" x2="144" y2="96.00009" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#b3c0cd"/>
+            <stop offset="0.36863" stop-color="#b3c0cd"/>
+            <stop offset="0.58039" stop-color="#91a0af"/>
+            <stop offset="1" stop-color="#717f8f"/>
+        </linearGradient>
+        <linearGradient x1="256" y1="240" x2="443.587" y2="512.0005" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#f7fcfe"/>
+            <stop offset="0.65882" stop-color="#e6f5fd"/>
+            <stop offset="1" stop-color="#d5eefc"/>
+        </linearGradient>
+        <linearGradient x1="288" y1="272" x2="436.571" y2="480" gradientUnits="userSpaceOnUse" id="color-5">
+            <stop offset="0" stop-color="#91a0af"/>
+            <stop offset="1" stop-color="#738191"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M96,48l320,0c9,0 16,7 16,16l0,400c0,9 -7,16 -16,16l-320,0c-9,0 -16,-7 -16,-16l0,-400c0,-9 7,-16 16,-16z" id="curve4" fill="url(#color-1)"/>
+        <path d="M144,80l224,0l0,32l-224,0z" id="curve3" fill="url(#color-2)"/>
+        <path d="M256,0c28.5,0 54,12.5 71.5,32l24.5,0c9,0 16,7 16,16l0,48l-224,0l0,-48c0,-9 7,-16 16,-16l24.5,0c17.5,-19.5 43,-32 71.5,-32z M256,16c9,0 16,7 16,16c0,9 -7,16 -16,16c-9,0 -16,-7 -16,-16c0,-9 7,-16 16,-16z" id="curve2" fill="url(#color-3)"/>
+        <path d="M256,240l224,0l0,272l-224,0z" id="curve1" fill="url(#color-4)"/>
+        <path d="M288,272l160,0l0,16l-160,0z M288,464l101.5,0l0,16l-101.5,0z M288,416l160,0l0,16l-160,0z M288,368l160,0l0,16l-160,0z M288,320l160,0l0,16l-160,0z" id="curve0" fill="url(#color-5)"/>
+    </g>
+</svg>

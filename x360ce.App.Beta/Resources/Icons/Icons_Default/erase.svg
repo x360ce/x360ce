@@ -1,0 +1,27 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>erase icon</title>
+    <desc>erase icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="32" y1="304" x2="233.0663" y2="512" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#ffcc2f"/>
+            <stop offset="1" stop-color="#ffc513"/>
+        </linearGradient>
+        <linearGradient x1="64" y1="16.125" x2="275.69" y2="234.80175" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#fcfdfd"/>
+            <stop offset="0.65882" stop-color="#eaeff3"/>
+            <stop offset="1" stop-color="#d8e0e8"/>
+        </linearGradient>
+        <linearGradient x1="106" y1="45.5" x2="202" y2="141.5" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#129eee"/>
+            <stop offset="0.65882" stop-color="#108ad0"/>
+            <stop offset="1" stop-color="#0e76b2"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M288,304l-80,0c32,15 64,72 64,112c16,-24 32,-82.5 16,-112z M480,304l-96,0c0,59.5 -48,163.5 -96,208l192,0z M32,304l0,208l160,0c0,-74.5 -48,-133.5 -128,-208z" id="curve2" fill="url(#color-1)"/>
+        <path d="M329,21l79,79c6.5,6.5 6.5,16.5 0,22.5l-24.5,24.5l-7,0l-169,169l0,7l-37,37.5c-6,6 -16.5,6 -22.5,0l-79.5,-79.5c-6,-6 -6,-16.5 0,-22.5l37.5,-37l7,0l169,-169l0,-7l24.5,-24.5c6,-6.5 16,-6.5 22.5,0z" id="curve1" fill="url(#color-2)"/>
+        <path d="M383.5,147l-176,176l-101.5,-101.5l176,-176z" id="curve0" fill="url(#color-3)"/>
+    </g>
+</svg>

@@ -1,0 +1,20 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>table icon</title>
+    <desc>table icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="48" y1="32" x2="464.00045" y2="253.00085" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#1197e3"/>
+            <stop offset="1" stop-color="#1089cf"/>
+        </linearGradient>
+        <linearGradient x1="64" y1="80" x2="448" y2="449.6005" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#fefefe"/>
+            <stop offset="1" stop-color="#f4f6f8"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M464,32l0,448l-416,0l0,-448z" id="curve1" fill="url(#color-1)"/>
+        <path d="M64,80l64,0l0,64l-64,0z M64,400l64,0l0,64l-64,0z M144,400l64,0l0,64l-64,0z M224,400l64,0l0,64l-64,0z M304,400l64,0l0,64l-64,0z M384,400l64,0l0,64l-64,0z M64,320l64,0l0,64l-64,0z M144,320l64,0l0,64l-64,0z M224,320l64,0l0,64l-64,0z M304,320l64,0l0,64l-64,0z M384,320l64,0l0,64l-64,0z M64,240l64,0l0,64l-64,0z M144,240l64,0l0,64l-64,0z M224,240l64,0l0,64l-64,0z M304,240l64,0l0,64l-64,0z M384,240l64,0l0,64l-64,0z M64,160l64,0l0,64l-64,0z M144,160l64,0l0,64l-64,0z M224,160l64,0l0,64l-64,0z M304,160l64,0l0,64l-64,0z M144,80l64,0l0,64l-64,0z M224,80l64,0l0,64l-64,0z M304,80l64,0l0,64l-64,0z M384,80l64,0l0,64l-64,0z M384,160l64,0l0,64l-64,0z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>

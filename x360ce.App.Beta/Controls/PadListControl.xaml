@@ -87,7 +87,6 @@
 			BorderThickness="1"
 			SnapsToDevicePixels="True" />
 		<DataGrid
-			xmlns:local="clr-namespace:x360ce.App.Converters"
 			x:Name="MainDataGrid"
 			Grid.Row="1"
 			Height="Auto"

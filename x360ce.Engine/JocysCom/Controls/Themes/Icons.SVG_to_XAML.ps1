@@ -6,7 +6,7 @@ using namespace System.Text.RegularExpressions;
 
 [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq") | Out-Null;
 
-$namespace = "x360ce.App";
+$namespace = "JocysCom.ClassLibrary.Controls.Themes";
 
 # ----------------------------------------------------------------------------
 # Get current command path.

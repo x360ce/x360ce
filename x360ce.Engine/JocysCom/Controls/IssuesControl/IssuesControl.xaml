@@ -1,0 +1,126 @@
+﻿<UserControl
+	x:Class="JocysCom.ClassLibrary.Controls.IssuesControl.IssuesControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.ClassLibrary.Controls.IssuesControl"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="250"
+	d:DesignWidth="800"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="../Themes/Default.xaml" />
+				<ResourceDictionary Source="../Themes/Icons.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid VerticalAlignment="Stretch">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar Style="{StaticResource MainToolBar}">
+				<CheckBox Name="ExceptionInfoCheckBox" Click="ExceptionInfoCheckBox_Click" IsChecked="False">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Name="ExceptionInfoContentControl" Content="{StaticResource Icon_Warning}" Style="{StaticResource ButtonContentControl}" />
+						<Label x:Name="ExceptionInfoLabel" Content="Exception Info" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</CheckBox>
+				<Label x:Name="StatusLabel" Content="Status:" />
+			</ToolBar>
+		</ToolBarPanel>
+		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar Style="{StaticResource MainToolBar}">
+				<Label x:Name="NextRunLabel" Content="Next Run: 00:00:00" Foreground="Gray" />
+				<Button
+					Name="IgnoreButton"
+					HorizontalAlignment="Right"
+					Click="IgnoreButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Ignore}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Ignore" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="IgnoreAllButton"
+					HorizontalAlignment="Right"
+					Click="IgnoreAllButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Ignore}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Ignore All" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+			</ToolBar>
+		</ToolBarPanel>
+		<Border
+			Grid.Row="1"
+			Height="1"
+			BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
+			BorderThickness="1"
+			SnapsToDevicePixels="True" />
+		<DataGrid
+			x:Name="MainDataGrid"
+			Grid.Row="1"
+			Height="Auto"
+			HorizontalAlignment="Stretch"
+			AutoGenerateColumns="False"
+			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+			IsReadOnly="True"
+			SelectionChanged="MainDataGrid_SelectionChanged">
+			<DataGrid.Resources>
+				<local:SeverityToImageConverter x:Key="_SeverityToImageConverter" />
+			</DataGrid.Resources>
+			<DataGrid.Columns>
+				<!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
+				<DataGridTemplateColumn Width="SizeToCells" Header="" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Image Source="{Binding Severity, Converter={StaticResource _SeverityToImageConverter}}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTextColumn
+					Binding="{Binding Name}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Name" />
+				<DataGridTextColumn
+					Width="*"
+					Binding="{Binding Description}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Description" />
+				<DataGridTextColumn
+					Binding="{Binding MoreInfo}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="More"
+					SortDirection="{x:Null}" />
+				<DataGridTextColumn
+					Binding="{Binding FixName}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Solution" />
+			</DataGrid.Columns>
+			<DataGrid.CellStyle>
+				<Style TargetType="DataGridCell">
+					<Setter Property="Padding" Value="4" />
+				</Style>
+			</DataGrid.CellStyle>
+		</DataGrid>
+		<StackPanel x:Name="NoIssuesPanel" Grid.Row="2">
+			<Label
+				x:Name="NoIssuesLabel"
+				Margin="8,8,8,8"
+				Content="All OK. No issues were found."
+				FontWeight="Bold"
+				Foreground="Green" />
+		</StackPanel>
+	</Grid>
+</UserControl>

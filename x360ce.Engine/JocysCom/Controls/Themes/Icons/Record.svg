@@ -1,0 +1,26 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>media record icon</title>
+    <desc>media record icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="32" y1="32" x2="495.9998" y2="480.00035" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#4eb6f2"/>
+            <stop offset="0.5098" stop-color="#129eee"/>
+            <stop offset="1" stop-color="#0e76b2"/>
+        </linearGradient>
+        <linearGradient x1="112" y1="112" x2="464" y2="448.0005" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#c5e7fb"/>
+        </linearGradient>
+        <linearGradient x1="144" y1="144" x2="384" y2="416.0005" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#ef5c51"/>
+            <stop offset="1" stop-color="#af1c11"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M48,32l416,0c9,0 16,7 16,16l0,416c0,9 -7,16 -16,16l-416,0c-9,0 -16,-7 -16,-16l0,-416c0,-9 7,-16 16,-16z" fill="url(#color-1)"/>
+        <path d="M256,112c79.5,0 144,64.5 144,144c0,79.5 -64.5,144 -144,144c-79.5,0 -144,-64.5 -144,-144c0,-79.5 64.5,-144 144,-144z" fill="url(#color-2)"/>
+        <path d="M256,144c62,0 112,50 112,112c0,62 -50,112 -112,112c-62,0 -112,-50 -112,-112c0,-62 50,-112 112,-112z" fill="url(#color-3)"/>
+    </g>
+</svg>

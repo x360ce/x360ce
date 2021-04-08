@@ -1,0 +1,57 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>joystick icon</title>
+    <desc>joystick icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="64" y1="352" x2="176.0005" y2="352" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#e14e43"/>
+            <stop offset="0.23922" stop-color="#ef5c51"/>
+            <stop offset="1" stop-color="#b9261b"/>
+        </linearGradient>
+        <linearGradient x1="336" y1="352" x2="447.999" y2="352" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#e14e43"/>
+            <stop offset="0.23922" stop-color="#ef5c51"/>
+            <stop offset="1" stop-color="#b9261b"/>
+        </linearGradient>
+        <linearGradient x1="208" y1="192" x2="304" y2="192" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#dd4a3f"/>
+            <stop offset="0.34118" stop-color="#ef5c51"/>
+            <stop offset="1" stop-color="#ba271c"/>
+        </linearGradient>
+        <linearGradient x1="208" y1="336" x2="304" y2="336" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#81909f"/>
+            <stop offset="0.32157" stop-color="#91a0af"/>
+            <stop offset="1" stop-color="#667684"/>
+        </linearGradient>
+        <linearGradient x1="224" y1="192" x2="287.9995" y2="201.503" gradientUnits="userSpaceOnUse" id="color-5">
+            <stop offset="0" stop-color="#e14e43"/>
+            <stop offset="1" stop-color="#be2b20"/>
+        </linearGradient>
+        <radialGradient cx="193.40799" cy="65.20037" r="236.26372" fx="193.40799" fy="65.20037" gradientUnits="userSpaceOnUse" id="color-6">
+            <stop offset="0" stop-color="#f5928b"/>
+            <stop offset="0.38824" stop-color="#ef5c51"/>
+            <stop offset="1" stop-color="#af1c11"/>
+        </radialGradient>
+        <linearGradient x1="32" y1="384" x2="324.3275" y2="503.0965" gradientUnits="userSpaceOnUse" id="color-7">
+            <stop offset="0" stop-color="#717f8f"/>
+            <stop offset="0.43922" stop-color="#667484"/>
+            <stop offset="1" stop-color="#5a6978"/>
+        </linearGradient>
+        <linearGradient x1="32" y1="496" x2="66.7583" y2="512" gradientUnits="userSpaceOnUse" id="color-8">
+            <stop offset="0" stop-color="#5e6b79"/>
+            <stop offset="0.43922" stop-color="#5d6a78"/>
+            <stop offset="1" stop-color="#5c6977"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M80,352l80,0c9,0 16,7 16,16l0,48l-112,0l0,-48c0,-9 7,-16 16,-16z" id="curve7" fill="url(#color-1)"/>
+        <path d="M352,352l80,0c9,0 16,7 16,16l0,48l-112,0l0,-48c0,-9 7,-16 16,-16z" id="curve6" fill="url(#color-2)"/>
+        <path d="M224,336l0,-144l64,0l0,144c9,0 16,7 16,16l0,48l0,32l-96,0l0,-32l0,-48c0,-9 7,-16 16,-16z" id="curve5" fill="url(#color-3)"/>
+        <path d="M224,336l64,0c9,0 16,7 16,16l0,48l0,32l-96,0l0,-32l0,-48c0,-9 7,-16 16,-16z" id="curve4" fill="url(#color-4)"/>
+        <path d="M224,236l0,-44l64,0l0,44c-10,2.5 -21,4 -32,4c-11,0 -22,-1.5 -32,-4z" id="curve3" fill="url(#color-5)"/>
+        <path d="M256,0c62,0 112,50 112,112c0,62 -50,112 -112,112c-62,0 -112,-50 -112,-112c0,-62 50,-112 112,-112z" id="curve2" fill="url(#color-6)"/>
+        <path d="M48,384l416,0c9,0 16,7 16,16l0,112l-448,0l0,-112c0,-9 7,-16 16,-16z" id="curve1" fill="url(#color-7)"/>
+        <path d="M480,496l0,16l-448,0l0,-16z" id="curve0" fill="url(#color-8)"/>
+    </g>
+</svg>

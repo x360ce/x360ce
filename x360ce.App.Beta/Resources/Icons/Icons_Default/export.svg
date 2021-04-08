@@ -1,0 +1,25 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>export icon</title>
+    <desc>export icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="64" y1="336" x2="384.0005" y2="528" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#d8e0e8"/>
+            <stop offset="1" stop-color="#b3c0cd"/>
+        </linearGradient>
+        <linearGradient x1="64" y1="496" x2="624.00005" y2="688.0005" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#d8e0e8"/>
+            <stop offset="1" stop-color="#91a0af"/>
+        </linearGradient>
+        <linearGradient x1="96" y1="0" x2="461.768" y2="443.4273" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#ef5c51"/>
+            <stop offset="1" stop-color="#af1c11"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M80,336l352,0c9,0 16,7 16,16l0,144c0,9 -7,16 -16,16l-352,0c-9,0 -16,-7 -16,-16l0,-144c0,-9 7,-16 16,-16z" fill="url(#color-1)"/>
+        <path d="M448,496c0,9 -7,16 -16,16l-352,0c-9,0 -16,-7 -16,-16z" fill="url(#color-2)"/>
+        <path d="M192,304l128,0l0,-144l96,0l-160,-160l-160,160l96,0z" fill="url(#color-3)"/>
+    </g>
+</svg>

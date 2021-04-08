@@ -1,0 +1,22 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>folder open icon</title>
+    <desc>folder open icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="32" y1="64" x2="32" y2="480" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#f0ca62"/>
+            <stop offset="0.47843" stop-color="#deaf3d"/>
+            <stop offset="1" stop-color="#cc9418"/>
+        </linearGradient>
+        <linearGradient x1="4.4525" y1="480" x2="6.00446" y2="239.999" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#ffd24b"/>
+            <stop offset="0.58823" stop-color="#ffd863"/>
+            <stop offset="1" stop-color="#ffdf7c"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M202.5,78l14,20c6,9 15.5,14 26,14l229.5,0c4.5,0 8,3.5 8,8l0,352c0,4.5 -3.5,8 -8,8l-432,0c-4.5,0 -8,-3.5 -8,-8l0,-400c0,-4.5 3.5,-8 8,-8l136,0c11,0 20,5 26.5,14z" id="curve1" fill="url(#color-1)"/>
+        <path d="M172,266l-159.5,0c-5,0 -8.5,2.5 -8,6l27,203c0,3 4,5 8.5,5c144,0 288,0 432,0c4.5,0 8.5,-2 8.5,-5c10.5,-76 20.5,-152.5 30.5,-228.5c0.5,-3.5 -3,-6.5 -8,-6.5l-266.5,0c-11,0 -20,3 -27,8.5c-3.5,3 -7.5,6 -11,9c-7,5.5 -16,8.5 -26.5,8.5z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>

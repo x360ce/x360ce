@@ -1,0 +1,21 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>information icon</title>
+    <desc>information icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="16" y1="16" x2="16" y2="496.0003" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#4eb6f2"/>
+            <stop offset="1" stop-color="#129eee"/>
+        </linearGradient>
+        <radialGradient cx="259.07508" cy="373.95001" r="276.24253" fx="259.07508" fy="373.95001" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="0.45882" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#d8e0e8"/>
+        </radialGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M256,16c132.5,0 240,107.5 240,240c0,132.5 -107.5,240 -240,240c-132.5,0 -240,-107.5 -240,-240c0,-132.5 107.5,-240 240,-240z" id="curve1" fill="url(#color-1)"/>
+        <path d="M291,411l-69,0l0,-220l69,0z M218,134.5c0,-10 3.5,-18 10.5,-24.5c7,-6 16,-9 27.5,-9c11.5,0 20.5,3 27.5,9c7,6.5 10.5,14.5 10.5,24.5c0,9.5 -3.5,17.5 -10.5,24c-7,6 -16,9.5 -27.5,9.5c-11.5,0 -20.5,-3.5 -27.5,-9.5c-7,-6.5 -10.5,-14.5 -10.5,-24z" id="curve0" fill="url(#color-2)"/>
+    </g>
+</svg>

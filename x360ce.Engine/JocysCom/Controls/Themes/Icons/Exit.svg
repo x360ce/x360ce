@@ -1,0 +1,36 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>door exit icon</title>
+    <desc>door exit icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="80" y1="16" x2="369.2685" y2="472.92185" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#717f8f"/>
+            <stop offset="1" stop-color="#5c6b7a"/>
+        </linearGradient>
+        <linearGradient x1="112" y1="48" x2="227.902" y2="480.00055" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#4d5d6a"/>
+            <stop offset="1" stop-color="#3b4852"/>
+        </linearGradient>
+        <linearGradient x1="288" y1="0" x2="303.524" y2="504.44059" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#dca162"/>
+            <stop offset="1" stop-color="#d08730"/>
+        </linearGradient>
+        <linearGradient x1="320" y1="0" x2="399.9995" y2="327.99909" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#cb832f"/>
+            <stop offset="1" stop-color="#b16f29"/>
+        </linearGradient>
+        <linearGradient x1="0" y1="128" x2="0" y2="365.7925" gradientUnits="userSpaceOnUse" id="color-5">
+            <stop offset="0" stop-color="#77da26"/>
+            <stop offset="1" stop-color="#59a31d"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M80,16l352,0l0,464l-352,0z" id="curve5" fill="url(#color-1)"/>
+        <path d="M112,48l288,0l0,432l-288,0z" id="curve4" fill="url(#color-2)"/>
+        <path d="M288,0l32,0l80,48l0,432l-80,32l-32,0z" id="curve3" fill="url(#color-3)"/>
+        <path d="M320,0l80,48l0,432l-80,32z" id="curve2" fill="url(#color-4)"/>
+        <path d="M368,272c0,9 -3.5,16 -8,16l-16,0c-4.5,0 -8,-7 -8,-16c0,-9 3.5,-16 8,-16l36,0c2,0 4,3.5 4,8c0,4.5 -2,8 -4,8z" id="curve1" fill="#d8e0e8"/>
+        <path d="M0,208l0,96l112,0l0,80l128,-128l-128,-128l0,80z" id="curve0" fill="url(#color-5)"/>
+    </g>
+</svg>

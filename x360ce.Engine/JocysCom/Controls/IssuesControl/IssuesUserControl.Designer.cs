@@ -19,12 +19,17 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssuesUserControl));
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IssuesUserControl));
 			this.WarningsDataGridView = new System.Windows.Forms.DataGridView();
+			this.SeverityColumn = new System.Windows.Forms.DataGridViewImageColumn();
+			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.DescriptionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.MoreColumn = new System.Windows.Forms.DataGridViewLinkColumn();
+			this.SolutionColumn = new System.Windows.Forms.DataGridViewButtonColumn();
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.IgnoreAllButton = new System.Windows.Forms.ToolStripButton();
 			this.IgnoreButton = new System.Windows.Forms.ToolStripButton();
@@ -38,11 +43,6 @@
 			this.NoIssuesPanel = new System.Windows.Forms.Panel();
 			this.NoIssuesLabel = new System.Windows.Forms.Label();
 			this.LinePanel = new System.Windows.Forms.Panel();
-			this.SeverityColumn = new System.Windows.Forms.DataGridViewImageColumn();
-			this.NameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.DescriptionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.MoreColumn = new System.Windows.Forms.DataGridViewLinkColumn();
-			this.SolutionColumn = new System.Windows.Forms.DataGridViewButtonColumn();
 			((System.ComponentModel.ISupportInitialize)(this.WarningsDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.NoIssuesPanel.SuspendLayout();
@@ -83,7 +83,7 @@
 			this.WarningsDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
 			this.WarningsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.WarningsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.WarningsDataGridView.Location = new System.Drawing.Point(0, 28);
+			this.WarningsDataGridView.Location = new System.Drawing.Point(0, 50);
 			this.WarningsDataGridView.Margin = new System.Windows.Forms.Padding(0);
 			this.WarningsDataGridView.Name = "WarningsDataGridView";
 			this.WarningsDataGridView.ReadOnly = true;
@@ -97,134 +97,11 @@
 			this.WarningsDataGridView.RowHeadersVisible = false;
 			this.WarningsDataGridView.RowHeadersWidth = 51;
 			this.WarningsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.WarningsDataGridView.Size = new System.Drawing.Size(605, 182);
+			this.WarningsDataGridView.Size = new System.Drawing.Size(1072, 590);
 			this.WarningsDataGridView.TabIndex = 23;
 			this.WarningsDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.WarningsDataGridView_CellContentClick);
 			this.WarningsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.WarningsDataGridView_CellFormatting);
 			this.WarningsDataGridView.SelectionChanged += new System.EventHandler(this.WarningsDataGridView_SelectionChanged);
-			// 
-			// GamesToolStrip
-			// 
-			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			this.GamesToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.IgnoreAllButton,
-            this.IgnoreButton,
-            this.ExceptionInfoButton,
-            this.StatusLabel,
-            this.NextRunSeparator,
-            this.NextRunLabel,
-            this.RunStateLabel});
-			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
-			this.GamesToolStrip.Name = "GamesToolStrip";
-			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 1, 1, 0);
-			this.GamesToolStrip.Size = new System.Drawing.Size(605, 28);
-			this.GamesToolStrip.TabIndex = 24;
-			this.GamesToolStrip.Text = "MySettingsToolStrip";
-			// 
-			// IgnoreAllButton
-			// 
-			this.IgnoreAllButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.IgnoreAllButton.Image = ((System.Drawing.Image)(resources.GetObject("IgnoreAllButton.Image")));
-			this.IgnoreAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.IgnoreAllButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
-			this.IgnoreAllButton.Name = "IgnoreAllButton";
-			this.IgnoreAllButton.Size = new System.Drawing.Size(82, 24);
-			this.IgnoreAllButton.Text = "Ignore All";
-			this.IgnoreAllButton.Click += new System.EventHandler(this.IgnoreAllButton_Click);
-			// 
-			// IgnoreButton
-			// 
-			this.IgnoreButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.IgnoreButton.Image = ((System.Drawing.Image)(resources.GetObject("IgnoreButton.Image")));
-			this.IgnoreButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.IgnoreButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
-			this.IgnoreButton.Name = "IgnoreButton";
-			this.IgnoreButton.Size = new System.Drawing.Size(65, 24);
-			this.IgnoreButton.Text = "Ignore";
-			this.IgnoreButton.Click += new System.EventHandler(this.IgnoreButton_Click);
-			// 
-			// ExceptionInfoButton
-			// 
-			this.ExceptionInfoButton.Image = ((System.Drawing.Image)(resources.GetObject("ExceptionInfoButton.Image")));
-			this.ExceptionInfoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.ExceptionInfoButton.Name = "ExceptionInfoButton";
-			this.ExceptionInfoButton.Size = new System.Drawing.Size(107, 24);
-			this.ExceptionInfoButton.Text = "Exception Info";
-			this.ExceptionInfoButton.Click += new System.EventHandler(this.ExceptionInfoButton_Click);
-			// 
-			// StatusLabel
-			// 
-			this.StatusLabel.Name = "StatusLabel";
-			this.StatusLabel.Size = new System.Drawing.Size(42, 24);
-			this.StatusLabel.Text = "Status:";
-			// 
-			// NextRunSeparator
-			// 
-			this.NextRunSeparator.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.NextRunSeparator.Name = "NextRunSeparator";
-			this.NextRunSeparator.Size = new System.Drawing.Size(6, 27);
-			// 
-			// NextRunLabel
-			// 
-			this.NextRunLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.NextRunLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
-			this.NextRunLabel.Name = "NextRunLabel";
-			this.NextRunLabel.Size = new System.Drawing.Size(104, 24);
-			this.NextRunLabel.Text = "Next Run: 00:00:00";
-			// 
-			// RunStateLabel
-			// 
-			this.RunStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-			this.RunStateLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
-			this.RunStateLabel.Name = "RunStateLabel";
-			this.RunStateLabel.Size = new System.Drawing.Size(10, 24);
-			this.RunStateLabel.Text = " ";
-			// 
-			// QueueMonitorTimer
-			// 
-			this.QueueMonitorTimer.Interval = 500;
-			this.QueueMonitorTimer.Tick += new System.EventHandler(this.QueueMonitorTimer_Tick);
-			// 
-			// SeverityImageList
-			// 
-			this.SeverityImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("SeverityImageList.ImageStream")));
-			this.SeverityImageList.TransparentColor = System.Drawing.Color.Transparent;
-			this.SeverityImageList.Images.SetKeyName(0, "Error");
-			this.SeverityImageList.Images.SetKeyName(1, "Information");
-			this.SeverityImageList.Images.SetKeyName(2, "Warning");
-			// 
-			// NoIssuesPanel
-			// 
-			this.NoIssuesPanel.AutoSize = true;
-			this.NoIssuesPanel.Controls.Add(this.NoIssuesLabel);
-			this.NoIssuesPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.NoIssuesPanel.Location = new System.Drawing.Point(0, 211);
-			this.NoIssuesPanel.Margin = new System.Windows.Forms.Padding(0);
-			this.NoIssuesPanel.Name = "NoIssuesPanel";
-			this.NoIssuesPanel.Padding = new System.Windows.Forms.Padding(16);
-			this.NoIssuesPanel.Size = new System.Drawing.Size(605, 47);
-			this.NoIssuesPanel.TabIndex = 25;
-			// 
-			// NoIssuesLabel
-			// 
-			this.NoIssuesLabel.AutoSize = true;
-			this.NoIssuesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.NoIssuesLabel.ForeColor = System.Drawing.Color.Green;
-			this.NoIssuesLabel.Location = new System.Drawing.Point(19, 16);
-			this.NoIssuesLabel.Name = "NoIssuesLabel";
-			this.NoIssuesLabel.Size = new System.Drawing.Size(196, 15);
-			this.NoIssuesLabel.TabIndex = 0;
-			this.NoIssuesLabel.Text = "All OK. No issues were found.";
-			// 
-			// LinePanel
-			// 
-			this.LinePanel.BackColor = System.Drawing.SystemColors.ControlDark;
-			this.LinePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.LinePanel.Location = new System.Drawing.Point(0, 210);
-			this.LinePanel.Name = "LinePanel";
-			this.LinePanel.Size = new System.Drawing.Size(605, 1);
-			this.LinePanel.TabIndex = 26;
 			// 
 			// SeverityColumn
 			// 
@@ -254,7 +131,7 @@
 			this.NameColumn.Name = "NameColumn";
 			this.NameColumn.ReadOnly = true;
 			this.NameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-			this.NameColumn.Width = 41;
+			this.NameColumn.Width = 77;
 			// 
 			// DescriptionColumn
 			// 
@@ -274,11 +151,12 @@
 			this.MoreColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.MoreColumn.DataPropertyName = "MoreInfo";
 			this.MoreColumn.HeaderText = "More";
+			this.MoreColumn.MinimumWidth = 10;
 			this.MoreColumn.Name = "MoreColumn";
 			this.MoreColumn.ReadOnly = true;
 			this.MoreColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
 			this.MoreColumn.Text = "More...";
-			this.MoreColumn.Width = 37;
+			this.MoreColumn.Width = 67;
 			// 
 			// SolutionColumn
 			// 
@@ -293,6 +171,129 @@
 			this.SolutionColumn.ReadOnly = true;
 			this.SolutionColumn.Text = "";
 			// 
+			// GamesToolStrip
+			// 
+			this.GamesToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this.GamesToolStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+			this.GamesToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.IgnoreAllButton,
+            this.IgnoreButton,
+            this.ExceptionInfoButton,
+            this.StatusLabel,
+            this.NextRunSeparator,
+            this.NextRunLabel,
+            this.RunStateLabel});
+			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
+			this.GamesToolStrip.Name = "GamesToolStrip";
+			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 1, 1, 0);
+			this.GamesToolStrip.Size = new System.Drawing.Size(1072, 50);
+			this.GamesToolStrip.TabIndex = 24;
+			this.GamesToolStrip.Text = "MySettingsToolStrip";
+			// 
+			// IgnoreAllButton
+			// 
+			this.IgnoreAllButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.IgnoreAllButton.Image = ((System.Drawing.Image)(resources.GetObject("IgnoreAllButton.Image")));
+			this.IgnoreAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.IgnoreAllButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
+			this.IgnoreAllButton.Name = "IgnoreAllButton";
+			this.IgnoreAllButton.Size = new System.Drawing.Size(142, 46);
+			this.IgnoreAllButton.Text = "Ignore All";
+			this.IgnoreAllButton.Click += new System.EventHandler(this.IgnoreAllButton_Click);
+			// 
+			// IgnoreButton
+			// 
+			this.IgnoreButton.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.IgnoreButton.Image = ((System.Drawing.Image)(resources.GetObject("IgnoreButton.Image")));
+			this.IgnoreButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.IgnoreButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
+			this.IgnoreButton.Name = "IgnoreButton";
+			this.IgnoreButton.Size = new System.Drawing.Size(108, 46);
+			this.IgnoreButton.Text = "Ignore";
+			this.IgnoreButton.Click += new System.EventHandler(this.IgnoreButton_Click);
+			// 
+			// ExceptionInfoButton
+			// 
+			this.ExceptionInfoButton.Image = ((System.Drawing.Image)(resources.GetObject("ExceptionInfoButton.Image")));
+			this.ExceptionInfoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.ExceptionInfoButton.Name = "ExceptionInfoButton";
+			this.ExceptionInfoButton.Size = new System.Drawing.Size(191, 43);
+			this.ExceptionInfoButton.Text = "Exception Info";
+			this.ExceptionInfoButton.Click += new System.EventHandler(this.ExceptionInfoButton_Click);
+			// 
+			// StatusLabel
+			// 
+			this.StatusLabel.Name = "StatusLabel";
+			this.StatusLabel.Size = new System.Drawing.Size(84, 43);
+			this.StatusLabel.Text = "Status:";
+			// 
+			// NextRunSeparator
+			// 
+			this.NextRunSeparator.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.NextRunSeparator.Name = "NextRunSeparator";
+			this.NextRunSeparator.Size = new System.Drawing.Size(6, 49);
+			// 
+			// NextRunLabel
+			// 
+			this.NextRunLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.NextRunLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.NextRunLabel.Name = "NextRunLabel";
+			this.NextRunLabel.Size = new System.Drawing.Size(214, 43);
+			this.NextRunLabel.Text = "Next Run: 00:00:00";
+			// 
+			// RunStateLabel
+			// 
+			this.RunStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+			this.RunStateLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
+			this.RunStateLabel.Name = "RunStateLabel";
+			this.RunStateLabel.Size = new System.Drawing.Size(22, 43);
+			this.RunStateLabel.Text = " ";
+			// 
+			// QueueMonitorTimer
+			// 
+			this.QueueMonitorTimer.Interval = 500;
+			this.QueueMonitorTimer.Tick += new System.EventHandler(this.QueueMonitorTimer_Tick);
+			// 
+			// SeverityImageList
+			// 
+			this.SeverityImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("SeverityImageList.ImageStream")));
+			this.SeverityImageList.TransparentColor = System.Drawing.Color.Transparent;
+			this.SeverityImageList.Images.SetKeyName(0, "Error");
+			this.SeverityImageList.Images.SetKeyName(1, "Information");
+			this.SeverityImageList.Images.SetKeyName(2, "Warning");
+			// 
+			// NoIssuesPanel
+			// 
+			this.NoIssuesPanel.AutoSize = true;
+			this.NoIssuesPanel.Controls.Add(this.NoIssuesLabel);
+			this.NoIssuesPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.NoIssuesPanel.Location = new System.Drawing.Point(0, 641);
+			this.NoIssuesPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.NoIssuesPanel.Name = "NoIssuesPanel";
+			this.NoIssuesPanel.Padding = new System.Windows.Forms.Padding(16);
+			this.NoIssuesPanel.Size = new System.Drawing.Size(1072, 61);
+			this.NoIssuesPanel.TabIndex = 25;
+			// 
+			// NoIssuesLabel
+			// 
+			this.NoIssuesLabel.AutoSize = true;
+			this.NoIssuesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.NoIssuesLabel.ForeColor = System.Drawing.Color.Green;
+			this.NoIssuesLabel.Location = new System.Drawing.Point(19, 16);
+			this.NoIssuesLabel.Name = "NoIssuesLabel";
+			this.NoIssuesLabel.Size = new System.Drawing.Size(361, 29);
+			this.NoIssuesLabel.TabIndex = 0;
+			this.NoIssuesLabel.Text = "All OK. No issues were found.";
+			// 
+			// LinePanel
+			// 
+			this.LinePanel.BackColor = System.Drawing.SystemColors.ControlDark;
+			this.LinePanel.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.LinePanel.Location = new System.Drawing.Point(0, 640);
+			this.LinePanel.Name = "LinePanel";
+			this.LinePanel.Size = new System.Drawing.Size(1072, 1);
+			this.LinePanel.TabIndex = 26;
+			// 
 			// IssuesUserControl
 			// 
 			this.Controls.Add(this.WarningsDataGridView);
@@ -300,7 +301,7 @@
 			this.Controls.Add(this.NoIssuesPanel);
 			this.Controls.Add(this.GamesToolStrip);
 			this.Name = "IssuesUserControl";
-			this.Size = new System.Drawing.Size(605, 258);
+			this.Size = new System.Drawing.Size(1072, 702);
 			((System.ComponentModel.ISupportInitialize)(this.WarningsDataGridView)).EndInit();
 			this.GamesToolStrip.ResumeLayout(false);
 			this.GamesToolStrip.PerformLayout();
