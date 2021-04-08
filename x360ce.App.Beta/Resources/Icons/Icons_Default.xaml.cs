@@ -31,6 +31,7 @@ namespace x360ce.App
 		public const string Icon_erase = nameof(Icon_erase);
 		public const string Icon_error = nameof(Icon_error);
 		public const string Icon_export = nameof(Icon_export);
+		public const string Icon_eye_blind = nameof(Icon_eye_blind);
 		public const string Icon_gamepad = nameof(Icon_gamepad);
 		public const string Icon_hardware = nameof(Icon_hardware);
 		public const string Icon_import = nameof(Icon_import);

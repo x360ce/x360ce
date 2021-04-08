@@ -6,6 +6,8 @@ using namespace System.Text.RegularExpressions;
 
 [Reflection.Assembly]::LoadWithPartialName("System.Xml.Linq") | Out-Null;
 
+$namespace = "x360ce.App";
+
 # ----------------------------------------------------------------------------
 # Get current command path.
 [string]$current = $MyInvocation.MyCommand.Path;
@@ -81,7 +83,7 @@ for ($d = 0; $d -lt $dirs.Length; $d++) {
     if ([File]::Exists($fileName) -ne $true)
     {
         [File]::WriteAllText($fileName, "<ResourceDictionary xmlns=`"http://schemas.microsoft.com/winfx/2006/xaml/presentation`" xmlns:x=`"$xNs`"");
-        [File]::AppendAllText($fileName,"`r`nx:Class=`"x360ce.App.$($fileNameBase)`"");
+        [File]::AppendAllText($fileName,"`r`nx:Class=`"$namespace.$($fileNameBase)`"");
         [File]::AppendAllText($fileName,"`r`nx:ClassModifier=`"public`"");
         [File]::AppendAllText($fileName,'>');
         [File]::AppendAllText($fileName,"`r`n`r`n</ResourceDictionary>");
@@ -92,7 +94,7 @@ for ($d = 0; $d -lt $dirs.Length; $d++) {
     # Start <ResourceName>.xaml.cs file.
     [File]::WriteAllText($fileNameCs, "using System.Windows;`r`n");
     [File]::AppendAllText($fileNameCs, "`r`n");
-    [File]::AppendAllText($fileNameCs, "namespace x360ce.App`r`n");
+    [File]::AppendAllText($fileNameCs, "namespace $namespace`r`n");
     [File]::AppendAllText($fileNameCs, "{`r`n");
     [File]::AppendAllText($fileNameCs, "`tpartial class Icons_Default : ResourceDictionary`r`n");
     [File]::AppendAllText($fileNameCs, "`t{`r`n");
