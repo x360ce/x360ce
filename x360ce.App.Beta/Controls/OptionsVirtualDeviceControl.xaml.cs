@@ -20,7 +20,7 @@ namespace x360ce.App.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			MainForm.Current.MainTabControl.SelectedIndexChanged += MainTabControl_SelectionChanged;
+			MainForm.Current.MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
 			MainForm.Current.OptionsPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
 			ControlsHelper.SetTextFromResource(HelpRichTextBox, "Documents.Help_ViGEmBus.rtf");
 			// Bind Controls.
@@ -33,7 +33,7 @@ namespace x360ce.App.Controls
 		private void MainTabControl_SelectionChanged(object sender, EventArgs e)
 		{
 			var isSelected =
-				MainForm.Current.MainTabControl.SelectedTab == MainForm.Current.OptionsTabPage &&
+				MainForm.Current.MainBodyPanel.MainTabControl.SelectedItem == MainForm.Current.MainBodyPanel.OptionsTabPage &&
 				MainForm.Current.OptionsPanel.MainTabControl.SelectedItem == MainForm.Current.OptionsPanel.RemoteControllerTabPage;
 			// If HidGuardian Tab was selected then refresh.
 			if (isSelected)

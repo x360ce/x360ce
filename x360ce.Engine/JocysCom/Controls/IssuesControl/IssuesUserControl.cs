@@ -315,9 +315,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			var nextRunTime = TasksTimer.NextRunTime;
 			TimeSpan remains = new TimeSpan();
 			if (nextRunTime.Ticks > 0)
-			{
 				remains = nextRunTime.Subtract(DateTime.Now);
-			}
 			var nextRun = string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
 			ControlsHelper.SetText(NextRunLabel, nextRun);
 			var lrt = TasksTimer.LastActionDoneTime;

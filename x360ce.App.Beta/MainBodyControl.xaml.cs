@@ -1,0 +1,153 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Media;
+
+namespace x360ce.App
+{
+	/// <summary>
+	/// Interaction logic for MainBodyControl.xaml
+	/// </summary>
+	public partial class MainBodyControl : UserControl
+	{
+		public MainBodyControl()
+		{
+			InitializeComponent();
+			PadIcons = new ContentControl[]
+			{
+				Pad1TabIcon,
+				Pad2TabIcon,
+				Pad3TabIcon,
+				Pad4TabIcon,
+			};
+			PadColors = new Color[4];
+		}
+
+		ContentControl[] PadIcons;
+		Color[] PadColors;
+
+		public void SetIconColor(int index, Color color)
+		{
+			if (PadColors[index] == color)
+				return;
+			PadColors[index] = color;
+			var icon = PadIcons[index];
+			var resource = Resources[Icons_Default.Icon_square_grey];
+			if (color == Colors.Red)
+				resource = Resources[Icons_Default.Icon_square_red];
+			if (color == Colors.Green)
+				resource = Resources[Icons_Default.Icon_square_green];
+			if (color == Colors.Blue)
+				resource = Resources[Icons_Default.Icon_square_blue];
+			if (color == Colors.Yellow)
+				resource = Resources[Icons_Default.Icon_square_yellow];
+			icon.Content = resource;
+		}
+
+		#region ■ Show/Hide tabs.
+
+		public void ShowTab(bool show, TabItem page)
+		{
+			var tc = MainTabControl;
+			// If must hide then...
+			if (!show && tc.Items.Contains(page))
+			{
+				// Hide and return.
+				tc.Items.Remove(page);
+				return;
+			}
+			// If must show then..
+			if (show && !tc.Items.Contains(page))
+			{
+				// Create list of tabs to maintain same order when hiding and showing tabs.
+				var tabs = new List<TabItem>() { 
+					ProgramsTabPage,
+					SettingsTabPage,
+					DevicesTabPage,
+				};
+				// Get index of always displayed tab.
+				var index = tc.Items.IndexOf(GamesTabPage);
+				// Get tabs in front of tab which must be inserted.
+				var tabsBefore = tabs.Where(x => tabs.IndexOf(x) < tabs.IndexOf(page));
+				// Count visible tabs.
+				var countBefore = tabsBefore.Count(x => tc.Items.Contains(x));
+				tc.Items.Insert(index + countBefore + 1, page);
+			}
+		}
+
+		public void ShowProgramsTab(bool show)
+		{
+			ShowTab(show, ProgramsTabPage);
+		}
+
+		public void ShowSettingsTab(bool show)
+		{
+			ShowTab(show, SettingsTabPage);
+		}
+
+		public void ShowDevicesTab(bool show)
+		{
+			ShowTab(show, DevicesTabPage);
+		}
+
+		#endregion
+
+
+		#region ■ Issue Icon Timer
+
+		public System.Timers.Timer IssueIconTimer;
+
+		//private void InitIssuesIcon()
+		//{
+		//	IssueIconTimer = new System.Timers.Timer
+		//	{
+		//		AutoReset = false,
+		//		Interval = 1000
+		//	};
+		//	IssueIconTimer.Elapsed += IssueIconTimer_Elapsed;
+		//	IssueIconTimer.Start();
+		//}
+
+		//private void IssueIconTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		//{
+		//	ControlsHelper.BeginInvoke(() => {
+		//		var key = IssuesTabPage.ImageKey;
+		//		var moderateCount = IssuesPanel.ModerateIssuesCount;
+		//		var criticalCount = IssuesPanel.CriticalIssuesCount ?? 0;
+		//		var text = (moderateCount ?? 0) == 0
+		//			? "Issues"
+		//			: string.Format("{0} Issue{1}", moderateCount, moderateCount == 1 ? "" : "s");
+		//		// If unknown then...
+		//		if (!moderateCount.HasValue)
+		//		{
+		//			// Show refreshing icon.
+		//			key = "refresh_16x16.png";
+		//		}
+		//		// If critical issues found then...
+		//		if (criticalCount > 0)
+		//		{
+		//			// Make it blink.
+		//			key = key == "fix_16x16.png"
+		//				? "fix_off_16x16.png"
+		//				: "fix_16x16.png";
+		//		}
+		//		else if (moderateCount > 0)
+		//			key = "fix_16x16.png";
+		//		else
+		//			key = "ok_off_16x16.png";
+		//		// Set tab image.
+		//		if (IssuesTabPage.ImageKey != key)
+		//			IssuesTabPage.ImageKey = key;
+		//		// Set tab text.
+		//		ControlsHelper.SetText(IssuesTabPage, text);
+		//		if (Program.IsClosing)
+		//			return;
+		//		IssueIconTimer.Start();
+		//	});
+		//}
+
+		#endregion
+
+
+	}
+}

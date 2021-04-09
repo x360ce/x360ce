@@ -24,38 +24,33 @@
 		</Grid.RowDefinitions>
 		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
 			<ToolBar Style="{StaticResource MainToolBar}">
-				<CheckBox Name="ExceptionInfoCheckBox" Click="ExceptionInfoCheckBox_Click" IsChecked="False">
+				<Button Name="ExceptionInfoButton" Click="ExceptionInfoButton_Click" Style="{StaticResource ToolBarButton}">
 					<StackPanel Style="{StaticResource ButtonStackPanel}">
 						<ContentControl Name="ExceptionInfoContentControl" Content="{StaticResource Icon_Warning}" Style="{StaticResource ButtonContentControl}" />
 						<Label x:Name="ExceptionInfoLabel" Content="Exception Info" Style="{StaticResource ButtonLabel}" />
 					</StackPanel>
-				</CheckBox>
-				<Label x:Name="StatusLabel" Content="Status:" />
+				</Button>
+				<StackPanel Style="{StaticResource ButtonStackPanel}">
+					<Label x:Name="StatusLabel" Content="Status:" />
+				</StackPanel>
 			</ToolBar>
 		</ToolBarPanel>
 		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
 			<ToolBar Style="{StaticResource MainToolBar}">
+				<Label x:Name="RunStateLabel" Content="[RunStateLabel]" Foreground="Gray" />
 				<Label x:Name="NextRunLabel" Content="Next Run: 00:00:00" Foreground="Gray" />
-				<Button
-					Name="IgnoreButton"
-					HorizontalAlignment="Right"
-					Click="IgnoreButton_Click"
-					Style="{StaticResource ToolBarButton}">
+				<CheckBox Name="IgnoreButton" HorizontalAlignment="Right" Click="IgnoreButton_Click">
 					<StackPanel Style="{StaticResource ButtonStackPanel}">
 						<ContentControl Content="{StaticResource Icon_Ignore}" Style="{StaticResource ButtonContentControl}" />
 						<Label Content="Ignore" Style="{StaticResource ButtonLabel}" />
 					</StackPanel>
-				</Button>
-				<Button
-					Name="IgnoreAllButton"
-					HorizontalAlignment="Right"
-					Click="IgnoreAllButton_Click"
-					Style="{StaticResource ToolBarButton}">
+				</CheckBox>
+				<CheckBox Name="IgnoreAllButton" HorizontalAlignment="Right" Click="IgnoreAllButton_Click">
 					<StackPanel Style="{StaticResource ButtonStackPanel}">
 						<ContentControl Content="{StaticResource Icon_Ignore}" Style="{StaticResource ButtonContentControl}" />
 						<Label Content="Ignore All" Style="{StaticResource ButtonLabel}" />
 					</StackPanel>
-				</Button>
+				</CheckBox>
 			</ToolBar>
 		</ToolBarPanel>
 		<Border
@@ -96,17 +91,26 @@
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Description" />
-				<DataGridTextColumn
-					Binding="{Binding MoreInfo}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="More"
-					SortDirection="{x:Null}" />
-				<DataGridTextColumn
-					Binding="{Binding FixName}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Solution" />
+				<DataGridTemplateColumn Header="More" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<TextBlock Margin="0">
+								<Hyperlink NavigateUri="{Binding MoreInfo}" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+									<Label Content="{Binding MoreInfo}" />
+								</Hyperlink>
+							</TextBlock>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn Header="Solution" IsReadOnly="True">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button x:Name="SolutionButton" Click="SolutionButton_Click" Tag="{Binding .}">
+								<Label Content="{Binding FixName}" />
+							</Button>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style TargetType="DataGridCell">
@@ -114,13 +118,19 @@
 				</Style>
 			</DataGrid.CellStyle>
 		</DataGrid>
-		<StackPanel x:Name="NoIssuesPanel" Grid.Row="2">
-			<Label
-				x:Name="NoIssuesLabel"
-				Margin="8,8,8,8"
-				Content="All OK. No issues were found."
-				FontWeight="Bold"
-				Foreground="Green" />
-		</StackPanel>
+		<Border
+			x:Name="LinePanel"
+			Grid.Row="2"
+			BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
+			BorderThickness="0,1,0,0">
+			<StackPanel x:Name="NoIssuesPanel">
+				<Label
+					x:Name="NoIssuesLabel"
+					Margin="8,8,8,8"
+					Content="All OK. No issues were found."
+					FontWeight="Bold"
+					Foreground="Green" />
+			</StackPanel>
+		</Border>
 	</Grid>
 </UserControl>

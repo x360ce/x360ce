@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 	public partial class PadItem_MacrosControl : UserControl, IDisposable
 	{
 
-		public IPadControl PadControl;
+		private IPadControl PadControl;
 
 		public PadItem_MacrosControl()
 		{
@@ -37,6 +37,7 @@ namespace x360ce.App.Controls
 			// Subscribe to global events.
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Subscribe to parent control events.
+			PadControl = ControlsHelper.GetParent<PadControl>(this);
 			PadControl.OnSettingChanged += Parent_OnSettingChanged;
 			// Load parent setting.
 			var setting = PadControl.CurrentUserSetting;

@@ -57,14 +57,8 @@ namespace x360ce.App
 			if (IsDesignMode)
 				return;
 
-			OptionsPanel = new OptionsControl();
-			OptionsHost.Child = OptionsPanel;
-
-			ProgramsPanel = new ProgramsControl();
-			ProgramsHost.Child = ProgramsPanel;
-
-			UserProgramsPanel = new UserProgramsControl();
-			UserProgramsHost.Child = UserProgramsPanel;
+			MainBodyPanel = new MainBodyControl();
+			MainBodyHost.Child = MainBodyPanel;
 
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 
@@ -88,10 +82,6 @@ namespace x360ce.App
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			GameToCustomizeComboBox.Font = Font;
 			_ResumeTimer.Elapsed += _ResumeTimer_Elapsed;
-			Pad1TabPage.Text = "Controller 1";
-			Pad2TabPage.Text = "Controller 2";
-			Pad3TabPage.Text = "Controller 3";
-			Pad4TabPage.Text = "Controller 4";
 			InitMinimizeAndTopMost();
 			InitiInterfaceUpdate();
 			GamesToolStrip_Resize(null, null);
@@ -106,9 +96,15 @@ namespace x360ce.App
 			LoadSettings();
 		}
 
-		public OptionsControl OptionsPanel;
-		public ProgramsControl ProgramsPanel;
-		public UserProgramsControl UserProgramsPanel;
+		public MainBodyControl MainBodyPanel;
+		public OptionsControl OptionsPanel
+			=> MainBodyPanel.OptionsPanel;
+
+		public ProgramsControl ProgramsPanel
+			=> MainBodyPanel.ProgramsPanel;
+
+		public UserProgramsControl UserProgramsPanel
+			=> MainBodyPanel.GamesPanel;
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
@@ -126,16 +122,14 @@ namespace x360ce.App
 				// Update LED of GamePad state.
 				var image = diOn
 					// DInput ON, XInput ON 
-					? xiOn ? "green"
+					? xiOn ? System.Windows.Media.Colors.Green
 					// DInput ON, XInput OFF
-					: "red"
+					: System.Windows.Media.Colors.Red
 					// DInput OFF, XInput ON
-					: xiOn ? "yellow"
+					: xiOn ? System.Windows.Media.Colors.Yellow
 					// DInput OFF, XInput OFF
-					: "grey";
-				var bullet = string.Format("bullet_square_glass_{0}.png", image);
-				if (ControlPages[i].ImageKey != bullet)
-					ControlPages[i].ImageKey = bullet;
+					: System.Windows.Media.Colors.Gray;
+				MainBodyPanel.SetIconColor(i, image);
 			}
 
 		}
@@ -165,12 +159,7 @@ namespace x360ce.App
 
 		public static MainForm Current { get; set; }
 
-		List<TabPage> PadTabPages => new List<TabPage> { Pad1TabPage, Pad2TabPage, Pad3TabPage, Pad4TabPage };
-
-		public int ControllerIndex => PadTabPages.IndexOf(MainTabControl.SelectedTab);
-
 		public PadControl[] PadControls;
-		public System.Windows.Forms.Integration.ElementHost[] PadHosts;
 		public TabPage[] ControlPages;
 
 		/// <summary>
@@ -198,9 +187,9 @@ namespace x360ce.App
 			Global.DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
 			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
 			Global.DHelper.XInputReloaded += DHelper_XInputReloaded;
-			SettingsGridPanel._ParentControl = this;
-			SettingsGridPanel.MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Extended;
-			SettingsGridPanel.InitPanel();
+			MainBodyPanel.SettingsPanel._ParentControl = this;
+			MainBodyPanel.SettingsPanel.MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Extended;
+			MainBodyPanel.SettingsPanel.InitPanel();
 			// NotifySettingsChange will be called on event suspension and resume.
 			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
 			// NotifySettingsChange will be called on setting changes.
@@ -232,9 +221,9 @@ namespace x360ce.App
 			};
 			CleanStatusTimer.Elapsed += new System.Timers.ElapsedEventHandler(CleanStatusTimer_Elapsed);
 			Text = EngineHelper.GetProductFullName();
-			ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
-			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
-			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
+			MainBodyPanel.ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
+			MainBodyPanel.ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
+			MainBodyPanel.ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
 			// Start Timers.
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
@@ -545,13 +534,13 @@ namespace x360ce.App
 				{
 					//if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
 					//{
-						var gamePad = Global.DHelper.LiveXiControllers[i];
-						var isConected = Global.DHelper.LiveXiConnected[i];
-						if (Controller.IsLoaded && isConected)
-						{
-							// Stop vibration.
-							gamePad.SetVibration(new Vibration());
-						}
+					var gamePad = Global.DHelper.LiveXiControllers[i];
+					var isConected = Global.DHelper.LiveXiConnected[i];
+					if (Controller.IsLoaded && isConected)
+					{
+						// Stop vibration.
+						gamePad.SetVibration(new Vibration());
+					}
 					//}
 				}
 				//BeginInvoke((Action)delegate()
@@ -625,7 +614,6 @@ namespace x360ce.App
 				if (update1Enabled)
 				{
 					update1Enabled = false;
-					InitIssuesIcon();
 					UpdateForm1();
 					// Update 2 part will be enabled after all issues are checked.
 				}
@@ -646,60 +634,6 @@ namespace x360ce.App
 			UpdateTimer.Start();
 		}
 
-		#region ■ Issue Icon Timer
-
-		public System.Timers.Timer IssueIconTimer;
-
-		private void InitIssuesIcon()
-		{
-			IssueIconTimer = new System.Timers.Timer
-			{
-				SynchronizingObject = this,
-				AutoReset = false,
-				Interval = 1000
-			};
-			IssueIconTimer.Elapsed += IssueIconTimer_Elapsed;
-			IssueIconTimer.Start();
-		}
-
-		private void IssueIconTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			var key = IssuesTabPage.ImageKey;
-			var moderateCount = IssuesPanel.ModerateIssuesCount;
-			var criticalCount = IssuesPanel.CriticalIssuesCount ?? 0;
-			var text = (moderateCount ?? 0) == 0
-				? "Issues"
-				: string.Format("{0} Issue{1}", moderateCount, moderateCount == 1 ? "" : "s");
-			// If unknown then...
-			if (!moderateCount.HasValue)
-			{
-				// Show refreshing icon.
-				key = "refresh_16x16.png";
-			}
-			// If critical issues found then...
-			if (criticalCount > 0)
-			{
-				// Make it blink.
-				key = key == "fix_16x16.png"
-					? "fix_off_16x16.png"
-					: "fix_16x16.png";
-			}
-			else if (moderateCount > 0)
-				key = "fix_16x16.png";
-			else
-				key = "ok_off_16x16.png";
-			// Set tab image.
-			if (IssuesTabPage.ImageKey != key)
-				IssuesTabPage.ImageKey = key;
-			// Set tab text.
-			ControlsHelper.SetText(IssuesTabPage, text);
-			if (Program.IsClosing)
-				return;
-			IssueIconTimer.Start();
-		}
-
-		#endregion
-
 		private void UpdateForm1()
 		{
 			//if (DesignMode) return;
@@ -707,19 +641,6 @@ namespace x360ce.App
 			// Set status.
 			StatusSaveLabel.Visible = false;
 			StatusEventsLabel.Visible = false;
-			// Load Tab pages.
-			ControlPages = new TabPage[4];
-			ControlPages[0] = Pad1TabPage;
-			ControlPages[1] = Pad2TabPage;
-			ControlPages[2] = Pad3TabPage;
-			ControlPages[3] = Pad4TabPage;
-			//BuletImageList.Images.Add("bullet_square_glass_blue.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_blue.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_green.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_green.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_grey.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_grey.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_red.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_red.png")));
-			//BuletImageList.Images.Add("bullet_square_glass_yellow.png", new Bitmap(Helper.GetResource("Images.bullet_square_glass_yellow.png")));
-			foreach (var item in ControlPages)
-				item.ImageKey = "bullet_square_glass_grey.png";
 			// Hide status values.
 			StatusDllLabel.Text = "";
 			MainStatusStrip.Visible = false;
@@ -742,19 +663,17 @@ namespace x360ce.App
 			UpdateSettingsMap();
 			// Load PAD controls.
 
-			PadHosts = new  System.Windows.Forms.Integration.ElementHost[4];
-			PadControls = new PadControl[4];
+			PadControls = new PadControl[] {
+				MainBodyPanel.Pad1Panel,
+				MainBodyPanel.Pad2Panel,
+				MainBodyPanel.Pad3Panel,
+				MainBodyPanel.Pad4Panel,
+			};
 			for (var i = 0; i < PadControls.Length; i++)
 			{
+				var pc = PadControls[i];
 				var mapTo = (MapTo)(i + 1);
-				var ph = new System.Windows.Forms.Integration.ElementHost();
-				var pc = new Controls.PadControl();
-				PadControls[i] = pc;
-				pc.Name = string.Format("ControlPad{0}", (int)mapTo);
-				ph.Dock = DockStyle.Fill;
-				ph.Child = pc;
 				pc.InitControls(mapTo);
-				ControlPages[i].Controls.Add(ph);
 				pc.InitPadControl();
 				// Update settings manager with [Mappings] section.
 			}
@@ -771,7 +690,7 @@ namespace x360ce.App
 			// Initialize pre-sets. Execute only after name of cIniFile is set.
 			//SettingsDatabasePanel.InitPresets();
 			// Allow events after PAD control are loaded.
-			MainTabControl.SelectedIndexChanged += new System.EventHandler(MainTabControl_SelectedIndexChanged);
+			MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}
@@ -798,15 +717,15 @@ namespace x360ce.App
 
 		private bool HelpInit = false;
 
-		private void MainTabControl_SelectedIndexChanged(object sender, EventArgs e)
+		private void MainTabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
 		{
-			if (MainTabControl.SelectedTab == HelpTabPage && !HelpInit)
+			if (MainBodyPanel.MainTabControl.SelectedItem == MainBodyPanel.HelpTabPage && !HelpInit)
 			{
 				// Move this here so interface will load one second faster.
 				HelpInit = true;
-				ControlsHelper.SetTextFromResource(HelpRichTextBox, "Documents.Help.rtf");
+				ControlsHelper.SetTextFromResource(MainBodyPanel.HelpRichTextBox, "Documents.Help.rtf");
 			}
-			else if (MainTabControl.SelectedTab == SettingsTabPage)
+			else if (MainBodyPanel.MainTabControl.SelectedItem == MainBodyPanel.SettingsTabPage)
 			{
 				var o = SettingsManager.Options;
 				if (o.InternetFeatures && o.InternetAutoLoad)
@@ -814,9 +733,9 @@ namespace x360ce.App
 					//SettingsDatabasePanel.RefreshGrid(true);
 				}
 			}
-			var tab = MainTabControl.SelectedTab;
-			if (tab != null)
-				SetHead(tab.Text);
+			var tab = MainBodyPanel.MainTabControl.SelectedItem;
+			//if (tab != null)
+			//	SetHead(tab.);
 		}
 
 		#region ■ Check Files
@@ -922,7 +841,12 @@ namespace x360ce.App
 
 		#region ■ Issues Panel
 
+		
+
 		private readonly object issuesPanelLock = new object();
+
+		private JocysCom.ClassLibrary.Controls.IssuesControl.IssuesControl IssuesPanel
+			=> MainBodyPanel.IssuesPanel;
 
 		private void InitIssuesPanel()
 		{
@@ -974,7 +898,7 @@ namespace x360ce.App
 				ControlsHelper.BeginInvoke(() =>
 				{
 					// Focus issues tab automatically.
-					MainTabControl.SelectedTab = IssuesTabPage;
+					MainBodyPanel.MainTabControl.SelectedItem = MainBodyPanel.IssuesTabPage;
 				});
 			}
 			oldCriticalIssueCount = newCriticalIssuesCount;
@@ -1026,15 +950,15 @@ namespace x360ce.App
 			{
 				if (_UpdateWindow == null)
 					return null;
-				var oldTab = MainTabControl.SelectedTab;
-				MainTabControl.SelectedTab = CloudTabPage;
+				var oldTab = MainBodyPanel.MainTabControl.SelectedItem;
+				MainBodyPanel.MainTabControl.SelectedItem = MainBodyPanel.CloudTabPage;
 
 				ControlsHelper.CenterWindowOnApplication(_UpdateWindow);
 				_UpdateWindow.OpenDialog();
 				ControlsHelper.CheckTopMost(_UpdateWindow);
 				var result = _UpdateWindow.ShowDialog();
 				_UpdateWindow.CloseDialog();
-				MainTabControl.SelectedTab = oldTab;
+				MainBodyPanel.MainTabControl.SelectedItem = oldTab;
 				return null;
 			}
 		}
@@ -1361,52 +1285,6 @@ namespace x360ce.App
 
 		#endregion
 
-		#region ■ Show/Hide tabs.
-
-
-		public void ShowTab(bool show, TabPage page)
-		{
-			var tc = MainTabControl;
-			// If must hide then...
-			if (!show && tc.TabPages.Contains(page))
-			{
-				// Hide and return.
-				tc.TabPages.Remove(page);
-				return;
-			}
-			// If must show then..
-			if (show && !tc.TabPages.Contains(page))
-			{
-				// Create list of tabs to maintain same order when hiding and showing tabs.
-				var tabs = new List<TabPage>() { ProgramsTabPage, SettingsTabPage, DevicesTabPage };
-				// Get index of always displayed tab.
-				var index = tc.TabPages.IndexOf(GamesTabPage);
-				// Get tabs in front of tab which must be inserted.
-				var tabsBefore = tabs.Where(x => tabs.IndexOf(x) < tabs.IndexOf(page));
-				// Count visible tabs.
-				var countBefore = tabsBefore.Count(x => tc.TabPages.Contains(x));
-				tc.TabPages.Insert(index + countBefore + 1, page);
-			}
-		}
-
-		public void ShowProgramsTab(bool show)
-		{
-			ShowTab(show, ProgramsTabPage);
-		}
-
-		public void ShowSettingsTab(bool show)
-		{
-			ShowTab(show, SettingsTabPage);
-		}
-
-		public void ShowDevicesTab(bool show)
-		{
-			ShowTab(show, DevicesTabPage);
-		}
-
-		#endregion
-
-
 		public void ChangeCurrentGameEmulationType(EmulationType type)
 		{
 			var game = SettingsManager.CurrentGame;
@@ -1432,7 +1310,7 @@ namespace x360ce.App
 		{
 			ControlsHelper.BeginInvoke(() =>
 			{
-				MainTabControl.SelectedTab = GamesTabPage;
+				MainBodyPanel.MainTabControl.SelectedItem = MainBodyPanel.GamesTabPage;
 				Application.DoEvents();
 				UserProgramsPanel.ListPanel.AddNewGame();
 			});
@@ -1449,7 +1327,7 @@ namespace x360ce.App
 			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
 			Global.DHelper.Stop();
 			FormEventsEnabled = false;
-			CloudPanel.EnableDataSource(false);
+			MainBodyPanel.CloudPanel.EnableDataSource(false);
 			win.ErrorReportPanel.SendMessages += ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ClearErrors += ErrorReportPanel_ClearErrors;
 			Global.CloudClient.TasksTimer.Queue.ListChanged += Queue_ListChanged;
@@ -1457,7 +1335,7 @@ namespace x360ce.App
 			Global.CloudClient.TasksTimer.Queue.ListChanged -= Queue_ListChanged;
 			win.ErrorReportPanel.SendMessages -= ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ClearErrors -= ErrorReportPanel_ClearErrors;
-			CloudPanel.EnableDataSource(true);
+			MainBodyPanel.CloudPanel.EnableDataSource(true);
 			if (AllowDHelperStart)
 			{
 				FormEventsEnabled = true;

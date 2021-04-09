@@ -36,6 +36,7 @@ namespace x360ce.App.Controls
 				SetImage(ii.Code, NavImageType.Normal, false);
 			}
 			SetHelpText();
+			MainGrid.MouseMove += MainGrid_MouseMove;
 		}
 
 		public MapCode GetNameCode(MapCode code)

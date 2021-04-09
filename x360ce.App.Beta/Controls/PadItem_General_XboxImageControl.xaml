@@ -57,7 +57,7 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	<Viewbox>
-		<Grid x:Name="MainGrid" MouseMove="MainGrid_MouseMove">
+		<Grid x:Name="MainGrid">
 			<StackPanel Orientation="Vertical">
 				<Image
 					x:Name="TopPictureImage"

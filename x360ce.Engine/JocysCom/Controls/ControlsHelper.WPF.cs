@@ -321,9 +321,10 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				if (parent is T && (includeTop || parent != control))
 					return (T)(object)parent;
-				parent = VisualTreeHelper.GetParent(parent);
-				if (parent == null)
-					parent = LogicalTreeHelper.GetParent(parent);
+				var p = VisualTreeHelper.GetParent(parent);
+				if (p == null)
+					p = LogicalTreeHelper.GetParent(parent);
+				parent = p;
 			}
 			return null;
 		}

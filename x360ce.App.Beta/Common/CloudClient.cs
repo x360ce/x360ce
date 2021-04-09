@@ -211,7 +211,7 @@ namespace x360ce.App
 					}
 					if (result.UserDevices != null)
 					{
-						MainForm.Current.UserDevicesPanel.ImportAndBindItems(result.UserDevices);
+						MainForm.Current.MainBodyPanel.DevicesPanel.ImportAndBindItems(result.UserDevices);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
 								MainForm.Current.SetBodyError(result.ErrorMessage);
