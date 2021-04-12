@@ -450,6 +450,9 @@
     <Compile Include="MainBodyControl.xaml.cs">
       <DependentUpon>MainBodyControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainControl.xaml.cs">
+      <DependentUpon>MainControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainForm.Tray.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Form</SubType>
@@ -903,6 +906,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainBodyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

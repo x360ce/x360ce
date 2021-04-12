@@ -1,0 +1,172 @@
+﻿<UserControl
+	x:Class="x360ce.App.MainControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:x360ce.App"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Width="800"
+	Height="900"
+	HorizontalAlignment="Stretch"
+	VerticalAlignment="Stretch"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid Grid.Row="0" Background="{DynamicResource {x:Static SystemColors.InfoBrushKey}}">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Name="HelpHeadLabel"
+				Grid.Row="0"
+				Grid.Column="0"
+				Grid.ColumnSpan="2"
+				Margin="8,3,3,3"
+				Padding="0"
+				Content="Head"
+				FontWeight="Bold" />
+			<ContentControl
+				Name="LeftIcon"
+				Grid.Row="1"
+				Grid.Column="0"
+				Width="24"
+				Height="24"
+				Margin="8,0,3,3"
+				Padding="0"
+				Content="{StaticResource Icon_information}"
+				Style="{StaticResource ButtonContentControl}" />
+			<TextBlock
+				Name="HelpBodyLabel"
+				Grid.Row="1"
+				Grid.Column="1"
+				Margin="3,0,3,3"
+				Padding="0"
+				VerticalAlignment="Top"
+				Text="Useful Tip: Minimize X360CE Application during gameplay to reduce its load on CPU and GPU. Minimized application automatically turns off CPU heavy tasks like Interface updates or state requests from XInput."
+				TextWrapping="Wrap" />
+			<ContentControl
+				Name="RightIcon"
+				Grid.Row="0"
+				Grid.RowSpan="2"
+				Grid.Column="2"
+				Width="48"
+				Height="48"
+				Margin="4,4,8,4"
+				Padding="0"
+				Content="{StaticResource Icon_gamepad}"
+				Style="{StaticResource ButtonContentControl}" />
+		</Grid>
+		<ToolBarPanel Grid.Row="1" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar Style="{StaticResource MainToolBar}">
+				<Label Content="Game:" />
+				<ComboBox x:Name="GameToCustomizeComboBox" MinWidth="320" />
+			</ToolBar>
+		</ToolBarPanel>
+		<ToolBarPanel Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
+			<ToolBar Style="{StaticResource MainToolBar}">
+				<Button
+					Name="AddGameButton"
+					HorizontalAlignment="Right"
+					Click="AddGameButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_Add}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Add Game..." Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="TestButton"
+					HorizontalAlignment="Right"
+					Click="TestButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_test}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Test..." Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+				<Button
+					Name="SaveAllButton"
+					HorizontalAlignment="Right"
+					Click="SaveAllButton_Click"
+					Style="{StaticResource ToolBarButton}">
+					<StackPanel Style="{StaticResource ButtonStackPanel}">
+						<ContentControl Content="{StaticResource Icon_save}" Style="{StaticResource ButtonContentControl}" />
+						<Label Content="Save All" Style="{StaticResource ButtonLabel}" />
+					</StackPanel>
+				</Button>
+			</ToolBar>
+		</ToolBarPanel>
+		<local:MainBodyControl x:Name="MainBodyPanel" Grid.Row="2" />
+		<StatusBar Grid.Row="3" HorizontalAlignment="Left">
+			<StatusBarItem>
+				<Label x:Name="StatusTimerLabel" Padding="0,0,0,0" Content="StatusTimerLabel" />
+			</StatusBarItem>
+		</StatusBar>
+		<StatusBar Grid.Row="3" HorizontalAlignment="Right">
+			<StatusBarItem>
+				<Label x:Name="UpdateFrequencyLabel" Padding="0,0,0,0" Content="Hz:0" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="FormUpdateFrequencyLabel" Padding="0,0,0,0" Content="Hz:0" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="UpdateDevicesStatusLabel" Padding="0,0,0,0" Content="D:0" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="CloudMessagesLabel" Padding="0,0,0,0" Content="M:0" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="StatusEventsLabel" Padding="0,0,0,0" Content="StatusEventsLabel" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="StatusSaveLabel" Padding="0,0,0,0" Content="StatusSaveLabel" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="StatusIsAdminLabel" Padding="0,0,0,0" Content="StatusIsAdminLabel" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<StackPanel Orientation="Horizontal">
+					<ContentControl x:Name="StatusErrorsIcon" Content="{StaticResource Icon_error}" Style="{StaticResource ButtonContentControl}" />
+					<Label
+						x:Name="StatusErrorsLabel"
+						Margin="4,0,0,0"
+						Padding="0,0,0,0"
+						Content="StatusErrorsLabel"
+						PreviewMouseDown="StatusErrorsLabel_PreviewMouseDown" />
+				</StackPanel>
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="StatusDllLabel" Padding="0,0,0,0" Content="StatusDllLabel" />
+			</StatusBarItem>
+		</StatusBar>
+	</Grid>
+</UserControl>

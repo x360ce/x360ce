@@ -6,6 +6,7 @@
 	xmlns:issues="clr-namespace:JocysCom.ClassLibrary.Controls.IssuesControl;assembly=x360ce.Engine"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="700"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -17,7 +18,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<TabControl Name="MainTabControl" Grid.IsSharedSizeScope="True">
+	<TabControl Name="MainTabControl">
 		<TabItem Name="Pad1TabPage">
 			<TabItem.Header>
 				<StackPanel Orientation="Horizontal">
@@ -30,12 +31,7 @@
 					<Label Content="PAD 1" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadControl x:Name="Pad1Panel" />
-			</Grid>
+			<local:PadControl x:Name="Pad1Panel" />
 		</TabItem>
 		<TabItem Name="Pad2TabPage">
 			<TabItem.Header>
@@ -49,12 +45,7 @@
 					<Label Content="PAD 2" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadControl x:Name="Pad2Panel" />
-			</Grid>
+			<local:PadControl x:Name="Pad2Panel" />
 		</TabItem>
 		<TabItem Name="Pad3TabPage">
 			<TabItem.Header>
@@ -68,12 +59,7 @@
 					<Label Content="PAD 3" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadControl x:Name="Pad3Panel" />
-			</Grid>
+			<local:PadControl x:Name="Pad3Panel" />
 		</TabItem>
 		<TabItem Name="Pad4TabPage">
 			<TabItem.Header>
@@ -87,76 +73,36 @@
 					<Label Content="PAD 4" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadControl x:Name="Pad4Panel" />
-			</Grid>
+			<local:PadControl x:Name="Pad4Panel" />
 		</TabItem>
 		<TabItem Name="OptionsTabPage" Header="Options">
 			<Grid>
 				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
+					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
 				<local:OptionsControl x:Name="OptionsPanel" />
 			</Grid>
 		</TabItem>
 		<TabItem Name="GamesTabPage" Header="Games">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:UserProgramsControl x:Name="GamesPanel" />
-			</Grid>
+			<local:UserProgramsControl x:Name="GamesPanel" />
 		</TabItem>
 		<TabItem Name="ProgramsTabPage" Header="Programs">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:ProgramsControl x:Name="ProgramsPanel" />
-			</Grid>
+			<local:ProgramsControl x:Name="ProgramsPanel" />
 		</TabItem>
 		<TabItem Name="DevicesTabPage" Header="Devices">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:UserDevicesControl x:Name="DevicesPanel" />
-			</Grid>
+			<local:UserDevicesControl x:Name="DevicesPanel" />
 		</TabItem>
 		<TabItem Name="SettingsTabPage" Header="Settings">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:UserSettingListControl x:Name="SettingsPanel" />
-			</Grid>
+			<local:UserSettingListControl x:Name="SettingsPanel" />
 		</TabItem>
 		<TabItem Name="CloudTabPage" Header="Cloud">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:CloudControl x:Name="CloudPanel" />
-			</Grid>
+			<local:CloudControl x:Name="CloudPanel" />
 		</TabItem>
 		<TabItem Name="HelpTabPage" Header="Help">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<RichTextBox x:Name="HelpRichTextBox" />
-			</Grid>
+			<RichTextBox x:Name="HelpRichTextBox" />
 		</TabItem>
 		<TabItem Name="AboutTabPage" Header="About">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:AboutUserControl x:Name="AboutPanel" />
-			</Grid>
+			<local:AboutUserControl x:Name="AboutPanel" />
 		</TabItem>
 		<TabItem Name="IssuesTabPage">
 			<TabItem.Header>
@@ -169,12 +115,7 @@
 					<Label Content="Issues" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<issues:IssuesControl x:Name="IssuesPanel" />
-			</Grid>
+			<issues:IssuesControl x:Name="IssuesPanel" />
 		</TabItem>
 	</TabControl>
 </UserControl>

@@ -16,7 +16,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.Issues;
-using x360ce.App.Properties;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -57,46 +56,27 @@ namespace x360ce.App
 			if (IsDesignMode)
 				return;
 
-			MainBodyPanel = new MainBodyControl();
-			MainBodyHost.Child = MainBodyPanel;
+			MainPanel = new MainControl();
+			MainHost.Child = MainPanel;
 
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
-
-			// Map event handler.
-			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
-			// Fix Images
-			BuletImageList.TransparentColor = System.Drawing.Color.Transparent;
-			BuletImageList.ImageStream = null;
-			BuletImageList.Images.Clear();
-			BuletImageList.Images.Add("bullet_square_glass_red.png", Resources.bullet_square_glass_red);
-			BuletImageList.Images.Add("bullet_square_glass_yellow.png", Resources.bullet_square_glass_yellow);
-			BuletImageList.Images.Add("bullet_square_glass_green.png", Resources.bullet_square_glass_green);
-			BuletImageList.Images.Add("bullet_square_glass_blue.png", Resources.bullet_square_glass_blue);
-			BuletImageList.Images.Add("bullet_square_glass_grey.png", Resources.bullet_square_glass_grey);
-			BuletImageList.Images.Add("ok_16x16.png", Resources.ok_16x16);
-			BuletImageList.Images.Add("ok_off_16x16.png", Resources.ok_off_16x16);
-			BuletImageList.Images.Add("fix_16x16.png", Resources.fix_16x16);
-			BuletImageList.Images.Add("fix_off_16x16.png", Resources.fix_off_16x16);
-			BuletImageList.Images.Add("refresh_16x16.png", Resources.refresh_16x16);
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
-			GameToCustomizeComboBox.Font = Font;
 			_ResumeTimer.Elapsed += _ResumeTimer_Elapsed;
 			InitMinimizeAndTopMost();
 			InitiInterfaceUpdate();
-			GamesToolStrip_Resize(null, null);
-			ControlsHelper.ApplyBorderStyle(GamesToolStrip);
 			// Check if app version changed.
 			var o = SettingsManager.Options;
 			var appVersion = new AssemblyInfo().Version.ToString();
 			AppVersionChanged = o.AppVersion != appVersion;
 			o.AppVersion = appVersion;
-			// Attach property monitoring first.
-			o.PropertyChanged += Options_PropertyChanged;
-			LoadSettings();
 		}
 
-		public MainBodyControl MainBodyPanel;
+		public MainControl MainPanel;
+
+		public MainBodyControl MainBodyPanel
+			=> MainPanel.MainBodyPanel;
+
 		public OptionsControl OptionsPanel
 			=> MainBodyPanel.OptionsPanel;
 
@@ -112,7 +92,7 @@ namespace x360ce.App
 			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
 			for (var i = 0; i < 4; i++)
 			{
-				var padControl = PadControls[i];
+				var padControl = MainPanel.PadControls[i];
 				// Get devices mapped to game and specific controller index.
 				var devices = SettingsManager.GetDevices(currentGameFileName, (MapTo)(i + 1));
 				// DInput instance is ON if active devices found.
@@ -136,30 +116,9 @@ namespace x360ce.App
 
 		private readonly bool AppVersionChanged;
 
-		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			var o = SettingsManager.Options;
-			//SettingsManager.Sync(o, e.PropertyName);
-			// Update controls by specific property.
-			switch (e.PropertyName)
-			{
-				case nameof(Options.ShowTestButton):
-					TestButton.Visible = o.ShowTestButton;
-					break;
-			}
-		}
-
-		public void LoadSettings()
-		{
-			// Load XML settings into control.
-			var o = SettingsManager.Options;
-			// Other option.
-			TestButton.Visible = o.ShowTestButton;
-		}
-
 		public static MainForm Current { get; set; }
 
-		public PadControl[] PadControls;
+
 		public TabPage[] ControlPages;
 
 		/// <summary>
@@ -171,7 +130,6 @@ namespace x360ce.App
 
 		public System.Timers.Timer CleanStatusTimer;
 		public int DefaultPoolingInterval = 50;
-		private Forms.DebugWindow DebugPanel;
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
@@ -179,8 +137,6 @@ namespace x360ce.App
 				return;
 			AppHelper.InitializeHidGuardian();
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
-			// Initialize Debug panel.
-			DebugPanel = new Forms.DebugWindow();
 			Global.InitDHelperHelper();
 			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 			Global.DHelper.UpdateCompleted += DHelper_UpdateCompleted;
@@ -198,7 +154,6 @@ namespace x360ce.App
 			SettingsManager.Load(scheduler);
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
 			XInputMaskScanner.FileInfoCache.Load();
-			InitGameToCustomizeComboBox();
 			UpdateTimer = new System.Timers.Timer
 			{
 				AutoReset = false,
@@ -249,36 +204,21 @@ namespace x360ce.App
 		{
 			ControlsHelper.BeginInvoke(() =>
 			{
+				var label = MainPanel.StatusDllLabel;
 				var vi = e.XInputVersionInfo;
 				var fi = e.XInputFileInfo;
-				if (vi != null && fi != null)
+				var text = "";
+				var show = vi != null && fi != null;
+				if (show)
 				{
 					var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
 					var company = (vi.CompanyName ?? "").Replace("Microsoft Corporation", "Microsoft");
-					ControlsHelper.SetText(StatusDllLabel, "{0} {1} ({2})", fi.Name, v, company);
-					StatusDllLabel.Visible = true;
+					text = string.Format("{0} {1} ({2})", fi.Name, v, company);
 				}
-				else
-				{
-					ControlsHelper.SetText(StatusDllLabel, "");
-					StatusDllLabel.Visible = false;
-				}
-				//if (Controller.IsLoaded)
-				//{
-				//	if (PadControls != null)
-				//	{
-				//		for (var i = 0; i < 4; i++)
-				//		{
-
-				//			var currentPadControl = PadControls[i];
-				//			currentPadControl.UpdateForceFeedBack();
-				//		}
-				//	}
-				//}
+				ControlsHelper.SetText(label, text);
+				ControlsHelper.SetVisible(label, show);
 				if (e.Error != null)
-				{
 					SetBodyError(e.Error.Message);
-				}
 			});
 		}
 
@@ -405,12 +345,12 @@ namespace x360ce.App
 
 		private void Current_ConfigSaved(object sender, SettingEventArgs e)
 		{
-			StatusSaveLabel.Text = string.Format("S {0}", e.Count);
+			MainPanel.StatusSaveLabel.Content = string.Format("S {0}", e.Count);
 		}
 
 		private void Current_ConfigLoaded(object sender, SettingEventArgs e)
 		{
-			StatusTimerLabel.Text = string.Format("'{0}' loaded.", e.Name);
+			MainPanel.StatusTimerLabel.Content = string.Format("'{0}' loaded.", e.Name);
 		}
 
 		public void CopyElevated(string source, string dest)
@@ -468,14 +408,14 @@ namespace x360ce.App
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			// If pad controls not initializes yet then return.
-			if (PadControls == null)
+			if (MainPanel.PadControls == null)
 				return;
-			for (var i = 0; i < PadControls.Length; i++)
+			for (var i = 0; i < MainPanel.PadControls.Length; i++)
 			{
 				// If Escape key was pressed while recording then...
 				if (e.KeyCode == Keys.Escape)
 				{
-					var recordingWasStopped = PadControls[i].StopRecording();
+					var recordingWasStopped = MainPanel.PadControls[i].StopRecording();
 					if (recordingWasStopped)
 					{
 						e.Handled = true;
@@ -483,21 +423,21 @@ namespace x360ce.App
 					};
 				}
 			}
-			StatusTimerLabel.Text = "";
+			MainPanel.StatusTimerLabel.Content = "";
 		}
 
 		private void CleanStatusTimer_Elapsed(object sender, EventArgs e)
 		{
 			if (Program.IsClosing)
 				return;
-			StatusTimerLabel.Text = "";
+			MainPanel.StatusTimerLabel.Content = "";
 		}
 
 		#region ■ Control Changed Events
 
 		public void NotifySettingsStatus(int eventsSuspendCount)
 		{
-			StatusEventsLabel.Text = string.Format("Suspend: {0}", eventsSuspendCount);
+			MainPanel.StatusEventsLabel.Content = string.Format("Suspend: {0}", eventsSuspendCount);
 		}
 
 		private void SettingsTimer_Elapsed(object sender, EventArgs e)
@@ -589,7 +529,7 @@ namespace x360ce.App
 				// delete temp.
 				tmp.Delete();
 			}
-			SaveAll();
+			SettingsManager.SaveAll();
 			AppHelper.UnInitializeHidGuardian();
 		}
 
@@ -639,11 +579,8 @@ namespace x360ce.App
 			//if (DesignMode) return;
 			OptionsPanel.GeneralPanel.InitOptions();
 			// Set status.
-			StatusSaveLabel.Visible = false;
-			StatusEventsLabel.Visible = false;
-			// Hide status values.
-			StatusDllLabel.Text = "";
-			MainStatusStrip.Visible = false;
+			ControlsHelper.SetVisible(MainPanel.StatusSaveLabel, false);
+			ControlsHelper.SetVisible(MainPanel.StatusEventsLabel, false);
 			// Check for various issues.
 			InitIssuesPanel();
 			InitUpdateForm();
@@ -651,27 +588,21 @@ namespace x360ce.App
 
 		private void UpdateForm2()
 		{
-			// Set status labels.
-			StatusIsAdminLabel.Text = WinAPI.IsVista
-				? string.Format("Elevated: {0}", WinAPI.IsElevated())
-				: "";
 			CheckEncoding(SettingsManager.TmpFileName);
 			CheckEncoding(SettingsManager.IniFileName);
-			// Show status values.
-			MainStatusStrip.Visible = true;
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
 			// Load PAD controls.
 
-			PadControls = new PadControl[] {
+			MainPanel.PadControls = new PadControl[] {
 				MainBodyPanel.Pad1Panel,
 				MainBodyPanel.Pad2Panel,
 				MainBodyPanel.Pad3Panel,
 				MainBodyPanel.Pad4Panel,
 			};
-			for (var i = 0; i < PadControls.Length; i++)
+			for (var i = 0; i < MainPanel.PadControls.Length; i++)
 			{
-				var pc = PadControls[i];
+				var pc = MainPanel.PadControls[i];
 				var mapTo = (MapTo)(i + 1);
 				pc.InitControls(mapTo);
 				pc.InitPadControl();
@@ -683,10 +614,8 @@ namespace x360ce.App
 			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
 			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
 			// Note: There must be no such sections in new config.
-			for (var i = 0; i < PadControls.Length; i++)
-			{
-				PadControls[i].InitPadData();
-			}
+			for (var i = 0; i < MainPanel.PadControls.Length; i++)
+				MainPanel.PadControls[i].InitPadData();
 			// Initialize pre-sets. Execute only after name of cIniFile is set.
 			//SettingsDatabasePanel.InitPresets();
 			// Allow events after PAD control are loaded.
@@ -710,7 +639,7 @@ namespace x360ce.App
 
 		public void UpdateStatus(string message = "")
 		{
-			ControlsHelper.SetText(StatusTimerLabel, "Count: {0}, Reloads: {1}, Errors: {2} {3}",
+			ControlsHelper.SetText(MainPanel.StatusTimerLabel, "Count: {0}, Reloads: {1}, Errors: {2} {3}",
 				Program.TimerCount, Program.ReloadCount, Program.ErrorCount, message);
 		}
 		#endregion
@@ -841,7 +770,7 @@ namespace x360ce.App
 
 		#region ■ Issues Panel
 
-		
+
 
 		private readonly object issuesPanelLock = new object();
 
@@ -1008,128 +937,6 @@ namespace x360ce.App
 			Close();
 		}
 
-		#region ■ Current Game
-
-		private void InitGameToCustomizeComboBox()
-		{
-			GameToCustomizeComboBox.ComboBox.DataSource = SettingsManager.UserGames.Items;
-			// Make sure that X360CE.exe is on top.
-			GameToCustomizeComboBox.ComboBox.DisplayMember = "DisplayName";
-			GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
-			// Select game by manually trigger event.
-			Global.SelectOpenGame();
-		}
-
-		private void GameToCustomizeComboBox_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			var game = (UserGame)GameToCustomizeComboBox.ComboBox.SelectedItem;
-			SettingsManager.UpdateCurrentGame(game);
-		}
-
-		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			// If pad controls not initializes yet then return.
-			if (PadControls == null)
-				return;
-			var game = SettingsManager.CurrentGame;
-			if (game == null)
-				return;
-			// Update PAD Control.
-			foreach (var ps in PadControls)
-			{
-				if (ps != null)
-				{
-					ps.PadListPanel.UpdateFromCurrentGame();
-					// Update emulation type.
-					ps.ShowAdvancedTab(game != null && game.EmulationType == (int)EmulationType.Library);
-				}
-			}
-			var selectedGame = (UserGame)GameToCustomizeComboBox.ComboBox.SelectedItem;
-			if (selectedGame != game)
-			{
-				GameToCustomizeComboBox.SelectedIndexChanged -= GameToCustomizeComboBox_SelectedIndexChanged;
-				GameToCustomizeComboBox.ComboBox.SelectedItem = game;
-				GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
-			}
-			SettingsManager.Current.RaiseSettingsChanged(null);
-		}
-
-		private void GamesToolStrip_Resize(object sender, EventArgs e)
-		{
-			GameToCustomizeComboBox.AutoSize = false;
-			var width = GamesToolStrip.DisplayRectangle.Width;
-			foreach (ToolStripItem tsi in GamesToolStrip.Items)
-			{
-				if (!(tsi == GameToCustomizeComboBox))
-				{
-					width -= tsi.Width;
-					width -= tsi.Margin.Horizontal;
-				}
-			}
-			GameToCustomizeComboBox.Width = Math.Max(0, width - GameToCustomizeComboBox.Margin.Horizontal);
-			// Resolve disappearing.
-			GamesToolStrip.PerformLayout();
-		}
-
-		#endregion
-
-		#region ■ Save and Synchronize Settings
-
-		private void SaveAllButton_Click(object sender, EventArgs e)
-		{
-			Save();
-		}
-
-		/// <summary>
-		/// This method will be called during manual saving and automatically when form is closing.
-		/// </summary>
-		public void SaveAll()
-		{
-			Settings.Default.Save();
-			SettingsManager.OptionsData.Save();
-			SettingsManager.UserSettings.Save();
-			SettingsManager.Summaries.Save();
-			SettingsManager.Programs.Save();
-			SettingsManager.UserGames.Save();
-			SettingsManager.Presets.Save();
-			SettingsManager.Layouts.Save();
-			SettingsManager.UserDevices.Save();
-			SettingsManager.UserMacros.Save();
-			SettingsManager.PadSettings.Save();
-			SettingsManager.UserInstances.Save();
-			XInputMaskScanner.FileInfoCache.Save();
-		}
-
-		public void Save()
-		{
-			// Disable buttons to make sure that user is not pressing it twice.
-			SaveAllButton.Enabled = false;
-			// Update interface.
-			Application.DoEvents();
-			// Save application settings.
-			SaveAll();
-			// Use timer to enable Save buttons after 520 ms.
-			var timer = new System.Timers.Timer
-			{
-				AutoReset = false,
-				Interval = 520,
-				SynchronizingObject = this
-			};
-			timer.Elapsed += Timer_Elapsed;
-			timer.Start();
-		}
-
-		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			SaveAllButton.Enabled = true;
-			// Dispose original timer.
-			var timer = (System.Timers.Timer)sender;
-			timer.Elapsed -= Timer_Elapsed;
-			timer.Dispose();
-		}
-
-		#endregion
-
 		#region ■ Update from DHelper
 
 		private readonly object LockFormEvents = new object();
@@ -1182,7 +989,7 @@ namespace x360ce.App
 				return;
 			}
 			SettingsManager.RefreshDeviceIsOnlineValueOnSettings(SettingsManager.UserSettings.Items.ToArray());
-			ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", Global.DHelper.RefreshDevicesCount);
+			ControlsHelper.SetText(MainPanel.UpdateDevicesStatusLabel, "D: {0}", Global.DHelper.RefreshDevicesCount);
 		}
 
 		private bool UpdateCompletedBusy;
@@ -1244,7 +1051,7 @@ namespace x360ce.App
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
-			ControlsHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", Global.DHelper.CurrentUpdateFrequency);
+			ControlsHelper.SetText(MainPanel.UpdateFrequencyLabel, "Hz: {0}", Global.DHelper.CurrentUpdateFrequency);
 		}
 
 		#endregion
@@ -1274,13 +1081,13 @@ namespace x360ce.App
 		private void MainForm_Deactivate(object sender, EventArgs e)
 		{
 			interfaceIsForeground = false;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "Hz: {0}", interfaceUpdateBackgroundFps);
+			ControlsHelper.SetText(MainPanel.FormUpdateFrequencyLabel, "Hz: {0}", interfaceUpdateBackgroundFps);
 		}
 
 		private void MainForm_Activated(object sender, EventArgs e)
 		{
 			interfaceIsForeground = true;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "Hz: {0}", interfaceUpdateForegroundFps);
+			ControlsHelper.SetText(MainPanel.FormUpdateFrequencyLabel, "Hz: {0}", interfaceUpdateForegroundFps);
 		}
 
 		#endregion
@@ -1293,38 +1100,20 @@ namespace x360ce.App
 			game.EmulationType = (int)type;
 		}
 
-		private void TestButton_Click(object sender, EventArgs e)
-		{
-			DebugPanel.ShowPanel();
-		}
-
 		private void MainForm_Shown(object sender, EventArgs e)
 		{
-			if (SettingsManager.Options.ShowDebugPanel)
-			{
-				DebugPanel.ShowPanel();
-			}
-		}
 
-		private void AddGameButton_Click(object sender, EventArgs e)
-		{
-			ControlsHelper.BeginInvoke(() =>
-			{
-				MainBodyPanel.MainTabControl.SelectedItem = MainBodyPanel.GamesTabPage;
-				Application.DoEvents();
-				UserProgramsPanel.ListPanel.AddNewGame();
-			});
 		}
 
 		private Forms.ErrorReportWindow win;
 
-		private void StatusErrorLabel_Click(object sender, EventArgs e)
+		public void StatusErrorLabel_Click(object sender, EventArgs e)
 		{
 			win = new Forms.ErrorReportWindow();
 			ControlsHelper.CheckTopMost(win);
 			ControlsHelper.AutoSizeByOpenForms(win);
 			win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
-			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
+			// Suspend displaying cloud queue results, because ShowDialog locks UI updates in the back.
 			Global.DHelper.Stop();
 			FormEventsEnabled = false;
 			MainBodyPanel.CloudPanel.EnableDataSource(false);
@@ -1458,13 +1247,15 @@ namespace x360ce.App
 
 		private void UpdateStatusErrorsLabel()
 		{
-			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
-			StatusErrorsLabel.ForeColor = ErrorFilesCount > 0
-						? System.Drawing.Color.DarkRed
-						: System.Drawing.SystemColors.ControlDark;
-			StatusErrorsLabel.Image = ErrorFilesCount > 0
-				? Resources.error_16x16
-				: AppHelper.GetDisabledImage(Resources.error_16x16);
+			var label = MainPanel.StatusErrorsLabel;
+			var icon = MainPanel.StatusErrorsIcon;
+			label.Content = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
+			label.Foreground = ErrorFilesCount > 0
+				? System.Windows.Media.Brushes.DarkRed
+				: System.Windows.SystemColors.ControlDarkBrush;
+			icon.Opacity = ErrorFilesCount > 0
+				? 1.000
+				: 0.125;
 		}
 
 		#region ■ Exception Handling and Reporting
@@ -1513,15 +1304,13 @@ namespace x360ce.App
 			while (container != null)
 			{
 				control = container.ActiveControl;
-				if (control != null)
-				{
-					activePath += string.Format("/{0}", control.Name);
-					activeControl = control;
-					container = control as ContainerControl;
-				}
+				if (control == null)
+					break;
+				activePath += string.Format("/{0}", control.Name);
+				activeControl = control;
+				container = control as ContainerControl;
 			}
 		}
-
 
 		#endregion
 

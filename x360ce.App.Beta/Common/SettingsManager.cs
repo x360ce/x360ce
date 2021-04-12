@@ -64,6 +64,27 @@ namespace x360ce.App
 			}
 		}
 
+
+		/// <summary>
+		/// This method will be called during manual saving and automatically when form is closing.
+		/// </summary>
+		public static void SaveAll()
+		{
+			Properties.Settings.Default.Save();
+			OptionsData.Save();
+			UserSettings.Save();
+			Summaries.Save();
+			Programs.Save();
+			UserGames.Save();
+			Presets.Save();
+			Layouts.Save();
+			UserDevices.Save();
+			UserMacros.Save();
+			PadSettings.Save();
+			UserInstances.Save();
+			XInputMaskScanner.FileInfoCache.Save();
+		}
+
 		/// <summary>x360ce Options</summary>
 		public static XSettingsData<Options> OptionsData
 		{

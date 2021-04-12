@@ -181,7 +181,7 @@ namespace x360ce.App
 			// If item added or deleted then...
 			if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
 			{
-				var label = MainForm.Current?.CloudMessagesLabel;
+				var label = MainForm.Current?.MainPanel?.CloudMessagesLabel;
 				if (label == null)
 					return;
 				// update main form status bar.
