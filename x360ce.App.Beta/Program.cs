@@ -117,13 +117,13 @@ namespace x360ce.App
 			MainForm.Current.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			MainForm.Current.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			MainForm.Current.PerformAutoScale();
-
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
-				MainForm.Current.BroadcastMessage(MainForm.wParam_Close);
+				// Close all x360ce apps.
+				StartHelper.BroadcastMessage(StartHelper.wParam_Close);
 				return;
 			}
-			var doNotAllowToRun = o.AllowOnlyOneCopy && MainForm.Current.BroadcastMessage(MainForm.wParam_Restore);
+			var doNotAllowToRun = o.AllowOnlyOneCopy && StartHelper.BroadcastMessage(StartHelper.wParam_Restore);
 			// If one copy is already opened then...
 			if (doNotAllowToRun)
 			{

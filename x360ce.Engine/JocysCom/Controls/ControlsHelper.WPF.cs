@@ -9,8 +9,6 @@ using System.IO;
 using System.Windows.Documents;
 using System.Reflection;
 using System.Collections.Generic;
-using System.Data.Objects.DataClasses;
-using System.Windows.Data;
 using System.Xml;
 
 namespace JocysCom.ClassLibrary.Controls
@@ -376,6 +374,24 @@ namespace JocysCom.ClassLibrary.Controls
 			if (control == null)
 				return new T[0];
 			return GetAll(control, typeof(T), includeTop).Cast<T>().ToArray();
+		}
+
+		public static void GetActiveControl(FrameworkElement control, out FrameworkElement activeControl, out string activePath)
+		{
+			// Return current control by default.
+			activePath = string.Format("/{0}", control.Name);
+			activeControl = control;
+			// If control can contains active controls.
+			var container = control as DependencyObject;
+			while (container != null)
+			{
+				control = System.Windows.Input.FocusManager.GetFocusedElement(control) as FrameworkElement;
+				if (control == null)
+					break;
+				activePath += string.Format("/{0}", control.Name);
+				activeControl = control;
+				container = control as FrameworkElement;
+			}
 		}
 
 		#endregion

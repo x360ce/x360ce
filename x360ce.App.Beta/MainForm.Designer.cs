@@ -159,7 +159,6 @@ namespace x360ce.App
 			this.Text = "TocaEdit Xbox 360 Controller Emulator Application";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainForm_Load);
-			this.Shown += new System.EventHandler(this.MainForm_Shown);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
 			this.Controls.SetChildIndex(this.panel1, 0);
 			((System.ComponentModel.ISupportInitialize)(this.HelpPictureBox)).EndInit();

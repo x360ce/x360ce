@@ -179,7 +179,7 @@ namespace x360ce.App.Controls
 
 				MainDataGrid.ItemsSource = SettingsManager.UserSettings.Items;
 				// Resume DInput Service.
-				if (MainForm.Current.AllowDHelperStart)
+				if (Global.AllowDHelperStart)
 					Global.DHelper.Start();
 			}
 			_ParentControl.RemoveTask(TaskName.SearchSettings);

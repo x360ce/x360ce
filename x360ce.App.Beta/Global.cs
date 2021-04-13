@@ -124,6 +124,8 @@ namespace x360ce.App
 
 		#region ■ Dinput Helper
 
+		public static bool AllowDHelperStart;
+
 		public static DInput.DInputHelper DHelper;
 
 		public static void InitDHelperHelper()

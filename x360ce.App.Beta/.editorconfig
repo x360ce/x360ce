@@ -8,7 +8,7 @@
 [*.{cs,vb}]
 # Uncomment to find unused code.
 # https://docs.microsoft.com/en-us/visualstudio/code-quality/CAxxxx
-dotnet_diagnostic.CA1801.severity = error # CA1801: Review unused parameters
+#dotnet_diagnostic.CA1801.severity = error # CA1801: Review unused parameters
 dotnet_diagnostic.CA1804.severity = error # CA1804: Remove unused locals
 dotnet_diagnostic.CA1811.severity = error # CA1811: Avoid uncalled private code
 dotnet_diagnostic.CA1812.severity = error # CA1812: Avoid uninstantiated internal classes
@@ -26,7 +26,7 @@ dotnet_diagnostic.IDE0051.severity = error # IDE0051: Remove unused private memb
 #--dotnet_diagnostic.IDE0052.severity = error # IDE0052: Remove unread private member
 #dotnet_diagnostic.IDE0058.severity = error # IDE0058: Remove unused expression value
 #dotnet_diagnostic.IDE0059.severity = error # IDE0059: Remove unnecessary value assignment
-dotnet_diagnostic.IDE0060.severity = error # IDE0060: Remove unused parameter
+#dotnet_diagnostic.IDE0060.severity = error # IDE0060: Remove unused parameter
 dotnet_diagnostic.IDE0079.severity = error # IDE0079: Remove unnecessary suppression
 dotnet_diagnostic.IDE0080.severity = error # IDE0080: Remove unnecessary suppression operator  - C# only.
 dotnet_diagnostic.IDE0081.severity = error # IDE0081: Remove 'ByVal'  - Visual Basic only.

@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
+using x360ce.App.Controls;
+using x360ce.Engine;
 
 namespace x360ce.App
 {
@@ -21,7 +24,18 @@ namespace x360ce.App
 				Pad4TabIcon,
 			};
 			PadColors = new Color[4];
+			PadControls = new PadControl[]
+			{
+				Pad1Panel,
+				Pad2Panel,
+				Pad3Panel,
+				Pad4Panel,
+			};
+			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 		}
+
+
+		public PadControl[] PadControls;
 
 		ContentControl[] PadIcons;
 		Color[] PadColors;
@@ -60,7 +74,7 @@ namespace x360ce.App
 			if (show && !tc.Items.Contains(page))
 			{
 				// Create list of tabs to maintain same order when hiding and showing tabs.
-				var tabs = new List<TabItem>() { 
+				var tabs = new List<TabItem>() {
 					ProgramsTabPage,
 					SettingsTabPage,
 					DevicesTabPage,
@@ -148,6 +162,32 @@ namespace x360ce.App
 
 		#endregion
 
+		private void Global_UpdateControlFromStates(object sender, EventArgs e)
+		{
+			var currentGameFileName = SettingsManager.CurrentGame?.FileName;
+			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
+			for (var i = 0; i < 4; i++)
+			{
+				var padControl = PadControls[i];
+				// Get devices mapped to game and specific controller index.
+				var devices = SettingsManager.GetDevices(currentGameFileName, (MapTo)(i + 1));
+				// DInput instance is ON if active devices found.
+				var diOn = devices.Count(x => x.IsOnline) > 0;
+				// XInput instance is ON.
+				var xiOn = client != null && client.IsControllerConnected((uint)i + 1);
+				// Update LED of GamePad state.
+				var image = diOn
+					// DInput ON, XInput ON 
+					? xiOn ? System.Windows.Media.Colors.Green
+					// DInput ON, XInput OFF
+					: System.Windows.Media.Colors.Red
+					// DInput OFF, XInput ON
+					: xiOn ? System.Windows.Media.Colors.Yellow
+					// DInput OFF, XInput OFF
+					: System.Windows.Media.Colors.Gray;
+				SetIconColor(i, image);
+			}
+		}
 
 	}
 }

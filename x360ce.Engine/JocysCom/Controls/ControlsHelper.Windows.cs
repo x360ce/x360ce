@@ -24,7 +24,7 @@ namespace JocysCom.ClassLibrary.Controls
 	public static partial class ControlsHelper
 	{
 
-#region IsDesignMode
+		#region IsDesignMode
 
 		private static bool? _IsDesignMode;
 
@@ -63,7 +63,7 @@ namespace JocysCom.ClassLibrary.Controls
 			return IsDesignMode2(component, null);
 		}
 
-#endregion
+		#endregion
 
 #if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard
@@ -302,7 +302,7 @@ namespace JocysCom.ClassLibrary.Controls
 				form.TopMost = true;
 		}
 
-#region "UserControl is Visible"
+		#region UserControl is Visible
 
 		public static bool IsControlVisibleOnForm(Control control)
 		{
@@ -346,7 +346,7 @@ namespace JocysCom.ClassLibrary.Controls
 						// Middle-Centre.
 						new Point(pos.X + control.Width/2, pos.Y + control.Height/2)
 					};
-			return pointsToCheck.Select(x=> new System.Windows.Point(x.X, x.Y)).ToArray();
+			return pointsToCheck.Select(x => new System.Windows.Point(x.X, x.Y)).ToArray();
 		}
 
 		public static bool IsControlVisibleToUser(Control control)
@@ -422,9 +422,27 @@ namespace JocysCom.ClassLibrary.Controls
 			return GetAll(control, typeof(T), includeTop).Cast<T>().ToArray();
 		}
 
-#endregion
+		public static void GetActiveControl(Control control, out Control activeControl, out string activePath)
+		{
+			// Return current control by default.
+			activePath = string.Format("/{0}", control.Name);
+			activeControl = control;
+			// If control can contains active controls.
+			var container = control as ContainerControl;
+			while (container != null)
+			{
+				control = container.ActiveControl;
+				if (control == null)
+					break;
+				activePath += string.Format("/{0}", control.Name);
+				activeControl = control;
+				container = control as ContainerControl;
+			}
+		}
 
-#region Set Visible, Enabled and Text
+		#endregion
+
+		#region Set Visible, Enabled and Text
 
 		internal const int STATE_VISIBLE = 0x00000002;
 		internal const int STATE_ENABLED = 0x00000004;
@@ -579,7 +597,7 @@ namespace JocysCom.ClassLibrary.Controls
 				throw new ArgumentNullException(nameof(control));
 			// Select rows first.
 			foreach (DataGridViewRow row in control.Rows)
-				if (items.Any(x=> row.DataBoundItem.Equals(x)) && !row.Selected)
+				if (items.Any(x => row.DataBoundItem.Equals(x)) && !row.Selected)
 					row.Selected = true;
 			// Unselect rows.
 			foreach (DataGridViewRow row in control.Rows)
@@ -587,9 +605,9 @@ namespace JocysCom.ClassLibrary.Controls
 					row.Selected = false;
 		}
 
-#endregion
+		#endregion
 
-#region Add Grip to SplitContainer 
+		#region Add Grip to SplitContainer 
 
 		public static void ApplySplitterStyle(SplitContainer control)
 		{
@@ -656,9 +674,9 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-#endregion
+		#endregion
 
-#region Apply Grid Border Style
+		#region Apply Grid Border Style
 
 		public static void ApplyBorderStyle(DataGridView grid, bool updateEnabledProperty = false)
 		{
@@ -819,9 +837,9 @@ namespace JocysCom.ClassLibrary.Controls
 			e.Handled = true;
 		}
 
-#endregion
+		#endregion
 
-#region  Apply ToolStrip Border Style
+		#region  Apply ToolStrip Border Style
 
 		public static void ApplyBorderStyle(ToolStrip control)
 		{
@@ -830,9 +848,9 @@ namespace JocysCom.ClassLibrary.Controls
 			control.Renderer = new ToolStripBorderlessRenderer();
 		}
 
-#endregion
+		#endregion
 
-#region Apply TabControl Image Style
+		#region Apply TabControl Image Style
 
 		private const string ApplyImageStyleDisabledSuffix = "_DisabledStyle";
 
@@ -892,9 +910,9 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-#endregion
+		#endregion
 
-#region Binding
+		#region Binding
 
 		public static Binding AddDataBinding<TD, TDp>(
 			IBindableComponent control,
@@ -1023,9 +1041,9 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
-#endregion
+		#endregion
 
-#region Open Path or URL
+		#region Open Path or URL
 
 
 		public static void OpenUrl(string url)
@@ -1066,7 +1084,7 @@ namespace JocysCom.ClassLibrary.Controls
 			catch (Exception) { }
 		}
 
-#endregion
+		#endregion
 
 #endif
 

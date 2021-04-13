@@ -14,11 +14,11 @@ namespace x360ce.App
 		/// </summary>
 		public bool ApplyAllSettingsToXML()
 		{
-			var padControls = MainForm.Current.MainPanel.PadControls;
+			var padControls = MainForm.Current.MainPanel.MainBodyPanel.PadControls;
 			for (int i = 0; i < padControls.Length; i++)
 			{
 				// Get pad control with settings.
-				var padControl = MainForm.Current.MainPanel.PadControls[i];
+				var padControl = MainForm.Current.MainPanel.MainBodyPanel.PadControls[i];
 				var setting = padControl.CurrentUserSetting;
 				// Skip if not selected.
 				if (setting == null)
@@ -148,7 +148,7 @@ namespace x360ce.App
 		public void LoadPadSettingsIntoSelectedDevice(MapTo padIndex, PadSetting ps)
 		{
 			// Get pad control with settings.
-			var padControl = MainForm.Current.MainPanel.PadControls[(int)padIndex - 1];
+			var padControl = MainForm.Current.MainPanel.MainBodyPanel.PadControls[(int)padIndex - 1];
 			// Get selected setting.
 			var setting = padControl.CurrentUserSetting;
 			// Return if nothing selected.

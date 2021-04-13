@@ -1,7 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.IO;
-using JocysCom.ClassLibrary.Mail;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Win32;
 using SharpDX.XInput;
@@ -12,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.Issues;
@@ -34,7 +31,7 @@ namespace x360ce.App
 				LogHelper.Current.LogToFile = true;
 				LogHelper.Current.LogFirstChanceExceptions = false;
 				LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
-				LogHelper.Current.WritingException += LogHelper_Current_WritingException;
+				LogHelper.Current.WritingException += ErrorsHelper.LogHelper_Current_WritingException;
 				// Fix access rights to configuration folder.
 				var di = new DirectoryInfo(EngineHelper.AppDataPath);
 				// Create configuration folder if not exists.
@@ -55,14 +52,9 @@ namespace x360ce.App
 			InitializeComponent();
 			if (IsDesignMode)
 				return;
-
+			StartHelper.Initialize();
 			MainPanel = new MainControl();
 			MainHost.Child = MainPanel;
-
-			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
-			// Make font more consistent with the rest of the interface.
-			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
-			_ResumeTimer.Elapsed += _ResumeTimer_Elapsed;
 			InitMinimizeAndTopMost();
 			InitiInterfaceUpdate();
 			// Check if app version changed.
@@ -80,39 +72,8 @@ namespace x360ce.App
 		public OptionsControl OptionsPanel
 			=> MainBodyPanel.OptionsPanel;
 
-		public ProgramsControl ProgramsPanel
-			=> MainBodyPanel.ProgramsPanel;
-
 		public UserProgramsControl UserProgramsPanel
 			=> MainBodyPanel.GamesPanel;
-
-		private void Global_UpdateControlFromStates(object sender, EventArgs e)
-		{
-			var currentGameFileName = SettingsManager.CurrentGame?.FileName;
-			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
-			for (var i = 0; i < 4; i++)
-			{
-				var padControl = MainPanel.PadControls[i];
-				// Get devices mapped to game and specific controller index.
-				var devices = SettingsManager.GetDevices(currentGameFileName, (MapTo)(i + 1));
-				// DInput instance is ON if active devices found.
-				var diOn = devices.Count(x => x.IsOnline) > 0;
-				// XInput instance is ON.
-				var xiOn = client != null && client.IsControllerConnected((uint)i + 1);
-				// Update LED of GamePad state.
-				var image = diOn
-					// DInput ON, XInput ON 
-					? xiOn ? System.Windows.Media.Colors.Green
-					// DInput ON, XInput OFF
-					: System.Windows.Media.Colors.Red
-					// DInput OFF, XInput ON
-					: xiOn ? System.Windows.Media.Colors.Yellow
-					// DInput OFF, XInput OFF
-					: System.Windows.Media.Colors.Gray;
-				MainBodyPanel.SetIconColor(i, image);
-			}
-
-		}
 
 		private readonly bool AppVersionChanged;
 
@@ -135,6 +96,10 @@ namespace x360ce.App
 		{
 			if (IsDesignMode)
 				return;
+			StartHelper.OnClose += (sender1, e1)
+				=> Close();
+			StartHelper.OnRestore += (sender1, e1)
+				=> RestoreFromTray(true);
 			AppHelper.InitializeHidGuardian();
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
 			Global.InitDHelperHelper();
@@ -183,12 +148,7 @@ namespace x360ce.App
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
 			// If enabling first time and application version changed then...
-			if (AppVersionChanged)
-			{
-				// Wipe all errors.
-				ClearErrors(true);
-			}
-			MonitorErrors(true);
+			ErrorsHelper.InitErrorsHelper(AppVersionChanged, MainPanel.StatusErrorsLabel, MainPanel.StatusErrorsIcon, MainPanel);
 			var game = SettingsManager.CurrentGame;
 			if (SettingsManager.Options.HidGuardianConfigureAutomatically)
 			{
@@ -239,7 +199,7 @@ namespace x360ce.App
 				UpdateTimer.Stop();
 				SettingsTimer.Stop();
 
-				// Synchromize settings to HID Guardian.
+				// Synchronize settings to HID Guardian.
 				//AppHelper.SynchronizeToHidGuardian();
 
 				SettingsTimer.Start();
@@ -408,14 +368,14 @@ namespace x360ce.App
 		private void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			// If pad controls not initializes yet then return.
-			if (MainPanel.PadControls == null)
+			if (MainPanel.MainBodyPanel.PadControls == null)
 				return;
-			for (var i = 0; i < MainPanel.PadControls.Length; i++)
+			for (var i = 0; i < MainPanel.MainBodyPanel.PadControls.Length; i++)
 			{
 				// If Escape key was pressed while recording then...
 				if (e.KeyCode == Keys.Escape)
 				{
-					var recordingWasStopped = MainPanel.PadControls[i].StopRecording();
+					var recordingWasStopped = MainPanel.MainBodyPanel.PadControls[i].StopRecording();
 					if (recordingWasStopped)
 					{
 						e.Handled = true;
@@ -453,7 +413,7 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
-			MonitorErrors(false);
+			ErrorsHelper.DisposeErrorsHelper();
 			// Wrap into try catch so that the form will always close and
 			// there will be no need to kill it by using task manager if exception is thrown.
 			try
@@ -542,7 +502,6 @@ namespace x360ce.App
 		public bool update1Enabled = true;
 		public bool? update2Enabled;
 		private bool update3Enabled;
-		public bool AllowDHelperStart;
 
 		private void UpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
@@ -567,7 +526,7 @@ namespace x360ce.App
 				{
 					update3Enabled = false;
 					// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
-					AllowDHelperStart = true;
+					Global.AllowDHelperStart = true;
 					Global.DHelper.Start();
 				}
 			}
@@ -594,28 +553,22 @@ namespace x360ce.App
 			UpdateSettingsMap();
 			// Load PAD controls.
 
-			MainPanel.PadControls = new PadControl[] {
+			MainPanel.MainBodyPanel.PadControls = new PadControl[] {
 				MainBodyPanel.Pad1Panel,
 				MainBodyPanel.Pad2Panel,
 				MainBodyPanel.Pad3Panel,
 				MainBodyPanel.Pad4Panel,
 			};
-			for (var i = 0; i < MainPanel.PadControls.Length; i++)
+			for (var i = 0; i < MainPanel.MainBodyPanel.PadControls.Length; i++)
 			{
-				var pc = MainPanel.PadControls[i];
+				var pc = MainPanel.MainBodyPanel.PadControls[i];
 				var mapTo = (MapTo)(i + 1);
 				pc.InitControls(mapTo);
 				pc.InitPadControl();
 				// Update settings manager with [Mappings] section.
 			}
-			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
-			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView);
-			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView);
-			//SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
-			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
-			// Note: There must be no such sections in new config.
-			for (var i = 0; i < MainPanel.PadControls.Length; i++)
-				MainPanel.PadControls[i].InitPadData();
+			for (var i = 0; i < MainPanel.MainBodyPanel.PadControls.Length; i++)
+				MainPanel.MainBodyPanel.PadControls[i].InitPadData();
 			// Initialize pre-sets. Execute only after name of cIniFile is set.
 			//SettingsDatabasePanel.InitPresets();
 			// Allow events after PAD control are loaded.
@@ -686,82 +639,13 @@ namespace x360ce.App
 
 		#region ■ Allow only one copy of Application at a time
 
-		/// <summary>Stores the unique windows message id from the RegisterWindowMessage call.</summary>
-		private int _WindowMessage;
-
-		/// <summary>Used to determine if the application is already open.</summary>
-		private System.Threading.Mutex _Mutex;
-
-		public const int wParam_Restore = 1;
-		public const int wParam_Close = 2;
-
 		/// <summary>
-		/// Broadcast message to other instances of this application.
+		/// This overrides the windows messaging processing. Be careful with this method,
+		/// because this method is responsible for all the windows messages that are coming to the form.
 		/// </summary>
-		/// <param name="wParam">Send parameter to other instances of this application.</param>
-		/// <returns>True - other instances exists; False - other instances doesn't exist.</returns>
-		public bool BroadcastMessage(int wParam)
-		{
-			// Check for previous instance of this app.
-			var uid = Application.ProductName;
-			_Mutex = new System.Threading.Mutex(false, uid);
-			// Register the windows message
-			_WindowMessage = NativeMethods.RegisterWindowMessage(uid, out var error);
-			var firsInstance = _Mutex.WaitOne(1, true);
-			// If this is not the first instance then...
-			if (!firsInstance)
-			{
-				// Broadcast a message with parameters to another instance.
-				var recipients = (int)BSM.BSM_APPLICATIONS;
-				var flags = BSF.BSF_IGNORECURRENTTASK | BSF.BSF_POSTMESSAGE;
-				var ret = NativeMethods.BroadcastSystemMessage((int)flags, ref recipients, _WindowMessage, wParam, 0, out error);
-			}
-			return !firsInstance;
-		}
-
-		private const int WM_WININICHANGE = 0x001A;
-		private const int WM_SETTINGCHANGE = WM_WININICHANGE;
-		private readonly System.Timers.Timer _ResumeTimer = new System.Timers.Timer() { AutoReset = false, Interval = 1000 };
-
-		private void _ResumeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			if (AllowDHelperStart)
-				Global.DHelper.Start();
-		}
-
-		/// <summary>
-		/// NOTE: you must be careful with this method, because this method is responsible for all the
-		/// windows messages that are coming to the form.
-		/// </summary>
-		/// <param name="m"></param>
-		/// <remarks>This overrides the windows messaging processing</remarks>
 		protected override void DefWndProc(ref Message m)
 		{
-			if (m.Msg == WM_SETTINGCHANGE)
-			{
-				// Must stop all updates or interface will freeze during screen updates.
-				Global.DHelper.Stop();
-				_ResumeTimer.Stop();
-				_ResumeTimer.Start();
-			}
-			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
-			{
-				Global.DHelper.UpdateDevicesEnabled = true;
-			}
-			// If message value was found then...
-			else if (m.Msg == _WindowMessage)
-			{
-				// Show currently running instance.
-				if (m.WParam.ToInt32() == wParam_Restore)
-				{
-					RestoreFromTray(true);
-				}
-				//  Close currently running instance.
-				if (m.WParam.ToInt32() == wParam_Close)
-				{
-					Close();
-				}
-			}
+			StartHelper._WndProc(m.Msg, m.WParam);
 			// Let the normal windows messaging process it.
 			base.DefWndProc(ref m);
 		}
@@ -769,8 +653,6 @@ namespace x360ce.App
 		#endregion
 
 		#region ■ Issues Panel
-
-
 
 		private readonly object issuesPanelLock = new object();
 
@@ -860,17 +742,13 @@ namespace x360ce.App
 		private void InitUpdateForm()
 		{
 			lock (UpdateFormLock)
-			{
 				_UpdateWindow = new Forms.UpdateWindow();
-			}
 		}
 
 		private void DisposeUpdateForm()
 		{
 			lock (UpdateFormLock)
-			{
 				_UpdateWindow = null;
-			}
 		}
 
 		public bool? ShowUpdateForm()
@@ -913,21 +791,13 @@ namespace x360ce.App
 		{
 			if (disposing && (components != null))
 			{
-				if (_Mutex != null)
-				{
-					_Mutex.Dispose();
-				}
+
+				StartHelper.Dispose();
 				DisposeUpdateForm();
 				DisposeInterfaceUpdate();
 				if (Global.DHelper != null)
 					Global.DHelper.Dispose();
 				components.Dispose();
-				//lock (checkTimerLock)
-				//{
-				//	// If timer is disposed then return;
-				//	if (checkTimer == null) return;
-				//	CheckAll();
-				//}
 			}
 			base.Dispose(disposing);
 		}
@@ -1100,11 +970,6 @@ namespace x360ce.App
 			game.EmulationType = (int)type;
 		}
 
-		private void MainForm_Shown(object sender, EventArgs e)
-		{
-
-		}
-
 		private Forms.ErrorReportWindow win;
 
 		public void StatusErrorLabel_Click(object sender, EventArgs e)
@@ -1117,15 +982,15 @@ namespace x360ce.App
 			Global.DHelper.Stop();
 			FormEventsEnabled = false;
 			MainBodyPanel.CloudPanel.EnableDataSource(false);
-			win.ErrorReportPanel.SendMessages += ErrorReportPanel_SendMessages;
+			win.ErrorReportPanel.SendMessages += win.ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ClearErrors += ErrorReportPanel_ClearErrors;
 			Global.CloudClient.TasksTimer.Queue.ListChanged += Queue_ListChanged;
 			var result = win.ShowDialog();
 			Global.CloudClient.TasksTimer.Queue.ListChanged -= Queue_ListChanged;
-			win.ErrorReportPanel.SendMessages -= ErrorReportPanel_SendMessages;
+			win.ErrorReportPanel.SendMessages -= win.ErrorReportPanel_SendMessages;
 			win.ErrorReportPanel.ClearErrors -= ErrorReportPanel_ClearErrors;
 			MainBodyPanel.CloudPanel.EnableDataSource(true);
-			if (AllowDHelperStart)
+			if (Global.AllowDHelperStart)
 			{
 				FormEventsEnabled = true;
 				Global.DHelper.Start();
@@ -1134,7 +999,7 @@ namespace x360ce.App
 
 		private void ErrorReportPanel_ClearErrors(object sender, EventArgs e)
 		{
-			ClearErrors();
+			ErrorsHelper.ClearErrors();
 		}
 
 		private void Queue_ListChanged(object sender, ListChangedEventArgs e)
@@ -1151,165 +1016,11 @@ namespace x360ce.App
 			}
 		}
 
-		private void ErrorReportPanel_SendMessages(object sender, JocysCom.ClassLibrary.EventArgs<List<System.Net.Mail.MailMessage>> e)
-		{
-			var control = (ErrorReportControl)sender;
-			// Create mail message.
-			var win = (Forms.ErrorReportWindow)control.Parent;
-			control.StatusLabel.Content = "Sending...";
-			// Run cloud operation on a separate thread so that it won't freeze the app.
-			Task.Run(new Action(() =>
-			{
-				var messages = e.Data.Select(x => new MailMessageSerializable(x)).ToArray();
-				var xml = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(messages.First());
-				Global.CloudClient.Add(CloudAction.SendMailMessage, messages);
-			}));
-		}
-
-		private FileSystemWatcher errorsWatcher;
-		private readonly object errorsWatcherLock = new object();
-
-		private void ClearErrors(bool silent = false)
-		{
-			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
-			if (!dir.Exists)
-				return;
-			// Disable monitor while deleting files.
-			MonitorErrors(false);
-			var fis = dir
-				.GetFiles(LogHelper.Current.FilePattern)
-				.OrderByDescending(x => x.CreationTime).ToArray();
-			if (fis.Count() > 0)
-			{
-				if (!silent)
-				{
-					var form = new MessageBoxWindow();
-					var result = form.ShowDialog("Do you want to clear all errors?", "Clear Errors?",
-						System.Windows.MessageBoxButton.YesNo,
-						System.Windows.MessageBoxImage.Error,
-						 System.Windows.MessageBoxResult.No
-					);
-					if (result != System.Windows.MessageBoxResult.Yes)
-						return;
-				}
-				foreach (var fi in fis)
-				{
-					try
-					{
-						fi.Delete();
-					}
-					catch (Exception ex)
-					{
-						_ = ex.Message;
-					}
-				}
-			}
-			// Enable monitor and show stats.
-			MonitorErrors(true);
-		}
-
-		private void MonitorErrors(bool enable)
-		{
-			lock (errorsWatcherLock)
-			{
-				if (enable && errorsWatcher == null)
-				{
-					var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
-					if (!dir.Exists)
-						dir.Create();
-					errorsWatcher = new FileSystemWatcher(dir.FullName, LogHelper.Current.FilePattern);
-					errorsWatcher.Deleted += ErrorsWatcher_Changed;
-					errorsWatcher.Created += ErrorsWatcher_Changed;
-					errorsWatcher.EnableRaisingEvents = true;
-					ErrorsWatcher_Changed(null, null);
-				}
-				else if (!enable && errorsWatcher != null)
-				{
-					errorsWatcher.Deleted -= ErrorsWatcher_Changed;
-					errorsWatcher.Created -= ErrorsWatcher_Changed;
-					errorsWatcher.Dispose();
-					errorsWatcher = null;
-				}
-			}
-		}
-
-		public static int ErrorFilesCount;
-
-		private void ErrorsWatcher_Changed(object sender, FileSystemEventArgs e)
-		{
-			ControlsHelper.BeginInvoke(new Action(() =>
-			{
-				var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
-				ErrorFilesCount = dir.GetFiles(LogHelper.Current.FilePattern).Count();
-				UpdateStatusErrorsLabel();
-			}));
-		}
-
-		private void UpdateStatusErrorsLabel()
-		{
-			var label = MainPanel.StatusErrorsLabel;
-			var icon = MainPanel.StatusErrorsIcon;
-			label.Content = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
-			label.Foreground = ErrorFilesCount > 0
-				? System.Windows.Media.Brushes.DarkRed
-				: System.Windows.SystemColors.ControlDarkBrush;
-			icon.Opacity = ErrorFilesCount > 0
-				? 1.000
-				: 0.125;
-		}
-
 		#region ■ Exception Handling and Reporting
 
 		private void LogHelper_Current_NewException(object sender, EventArgs e)
 		{
-			ControlsHelper.BeginInvoke(new Action(() => UpdateStatusErrorsLabel()));
-		}
-
-		private void LogHelper_Current_WritingException(object sender, LogHelperEventArgs e)
-		{
-			if (Disposing)
-				e.Cancel = true;
-			var ex = e.Exception as SharpDX.SharpDXException;
-			var d = ex?.Descriptor;
-			if (d != null)
-			{
-				// If exception when getting Joystic properties in
-				// CustomDiState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
-				if (d.ApiCode == "NotFound" && d.Code == -2147024894 &&
-					d.Module == "SharpDX.DirectInput" &&
-					d.NativeApiCode == "DIERR_NOTFOUND"
-				)
-				{
-					// Cancel reporting error.
-					e.Cancel = true;
-				}
-				// If another DInput errors
-			}
-			var fex = e.Exception as FileNotFoundException;
-			// If serializer warning then...
-			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))
-				// Cancel reporting error.
-				e.Cancel = true;
-			GetActiveControl(this, out var activeControl, out var activePath);
-			// Add path to current control to help with error fixing.
-			e.Exception.Data.Add("ActiveControlPath", activePath);
-		}
-
-		public static void GetActiveControl(Control control, out Control activeControl, out string activePath)
-		{
-			activePath = string.Format("/{0}", control.Name);
-			activeControl = control;
-			// If control can contains active controls.
-			var container = control as ContainerControl;
-			while (container != null)
-			{
-				control = container.ActiveControl;
-				if (control == null)
-					break;
-				activePath += string.Format("/{0}", control.Name);
-				activeControl = control;
-				container = control as ContainerControl;
-			}
+			ControlsHelper.BeginInvoke(new Action(() => ErrorsHelper.UpdateStatusErrorsLabel()));
 		}
 
 		#endregion

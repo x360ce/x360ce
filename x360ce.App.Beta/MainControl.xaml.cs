@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using x360ce.App.Controls;
 using x360ce.App.Properties;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -20,6 +19,7 @@ namespace x360ce.App
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			// Hide status values.
+			StatusTimerLabel.Content = "";
 			StatusDllLabel.Content = "";
 			// Set status labels.
 			StatusIsAdminLabel.Content = JocysCom.ClassLibrary.Win32.WinAPI.IsVista
@@ -149,18 +149,16 @@ namespace x360ce.App
 			SettingsManager.UpdateCurrentGame(game);
 		}
 
-		public PadControl[] PadControls;
-
 		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			// If pad controls not initializes yet then return.
-			if (PadControls == null)
+			if (MainBodyPanel.PadControls == null)
 				return;
 			var game = SettingsManager.CurrentGame;
 			if (game == null)
 				return;
 			// Update PAD Control.
-			foreach (var ps in PadControls)
+			foreach (var ps in MainBodyPanel.PadControls)
 			{
 				if (ps != null)
 				{
