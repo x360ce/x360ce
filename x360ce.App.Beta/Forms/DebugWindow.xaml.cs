@@ -33,8 +33,8 @@ namespace x360ce.App.Forms
 					var wa = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
 					Show();
 				}
-				Left = MainForm.Current.Left + MainForm.Current.Width + 8;
-				Top = MainForm.Current.Top;
+				Left = MainWindow.Current.Left + MainWindow.Current.Width + 8;
+				Top = MainWindow.Current.Top;
 				// Bring to front.
 				Activate();
 			}

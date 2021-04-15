@@ -1,33 +1,46 @@
-# Removes temporary bin and obj folders.
+<#
+.SYNOPSIS
+    Removes temporary bin and obj folders.
+.NOTES
+    Author:     Evaldas Jocys <evaldas@jocys.com>
+    Modified:   2021-04-14
+.LINK
+    http://www.jocys.com
+#>
 # ----------------------------------------------------------------------------
 # Get current command path.
-[string]$current = $MyInvocation.MyCommand.Path
+[string]$current = $MyInvocation.MyCommand.Path;
 # Get calling command path.
-[string]$calling = @(Get-PSCallStack)[1].InvocationInfo.MyCommand.Path
+[string]$calling = @(Get-PSCallStack)[1].InvocationInfo.MyCommand.Path;
 # If executed directly then...
 if ($calling -ne "") {
-    $current = $calling
+    $current = $calling;
 }
-
-$file = Get-Item $current
+$file = Get-Item $current;
 # Working folder.
 $wdir = $file.Directory.FullName;
-
 # ----------------------------------------------------------------------------
-
 Function RemoveDirectories
 {
 	# Parameters.
-	Param ($pattern)
+	param ($pattern);
 	# Function.
-	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object {$_ -is [System.IO.DirectoryInfo]};
+	[System.IO.DirectoryInfo[]]$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object {$_ -is [System.IO.DirectoryInfo]};
 	foreach ($item in $items)
 	{
-	  Write-Output $item.FullName;
-	  Remove-Item -LiteralPath $item.FullName -Force -Recurse
+		$item.Refresh();
+		if ($item.Exists -eq $false){
+			continue;
+		}
+		# If folder is not inside the project folder then continue.
+		if ($item.Parent.GetFiles("*.*proj").Length -eq 0){
+			continue;
+		}
+		Write-Output $item.FullName;
+		Remove-Item -LiteralPath $item.FullName -Force -Recurse;
 	}
 }
-# Clear directories.
-RemoveDirectories "bin"
-RemoveDirectories "obj"
-pause
+# Remove 'obj' folders first, because it can contain 'bin' inside.
+RemoveDirectories "obj";
+RemoveDirectories "bin";
+pause;

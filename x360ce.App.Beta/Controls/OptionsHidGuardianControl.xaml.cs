@@ -18,8 +18,8 @@ namespace x360ce.App.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			MainForm.Current.MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
-			MainForm.Current.OptionsPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
+			MainWindow.Current.MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
+			MainWindow.Current.OptionsPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
 			ControlsHelper.SetTextFromResource(HelpRichTextBox, "Documents.Help_HidGuardian.rtf");
 			// Bind Controls.
 			var o = SettingsManager.Options;
@@ -30,8 +30,8 @@ namespace x360ce.App.Controls
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var isSelected =
-				MainForm.Current.MainBodyPanel.MainTabControl.SelectedItem == MainForm.Current.MainBodyPanel.OptionsTabPage &&
-				MainForm.Current.OptionsPanel.MainTabControl.SelectedItem == MainForm.Current.OptionsPanel.HidGuardianTabPage;
+				MainWindow.Current.MainBodyPanel.MainTabControl.SelectedItem == MainWindow.Current.MainBodyPanel.OptionsTabPage &&
+				MainWindow.Current.OptionsPanel.MainTabControl.SelectedItem == MainWindow.Current.OptionsPanel.HidGuardianTabPage;
 			// If HidGuardian Tab was selected then refresh.
 			if (isSelected)
 				RefreshStatus();

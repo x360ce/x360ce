@@ -97,7 +97,7 @@ namespace x360ce.App
 			if (item == null)
 				return;
 			item.Try++;
-			MainForm.Current.AddTask(TaskName.CloudCommand);
+			MainWindow.Current.MainPanel._bwm.AddTask(TaskName.CloudCommand);
 			Exception error = null;
 			try
 			{
@@ -160,7 +160,7 @@ namespace x360ce.App
 			{
 				error = ex;
 			}
-			MainForm.Current.RemoveTask(TaskName.CloudCommand);
+			MainWindow.Current.MainPanel._bwm.RemoveTask(TaskName.CloudCommand);
 			var success = error == null;
 			item.Error = error;
 			item.State = success ? CloudState.Done : CloudState.Error;
@@ -181,7 +181,7 @@ namespace x360ce.App
 			// If item added or deleted then...
 			if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
 			{
-				var label = MainForm.Current?.MainPanel?.CloudMessagesLabel;
+				var label = MainWindow.Current?.MainPanel?.CloudMessagesLabel;
 				if (label == null)
 					return;
 				// update main form status bar.
@@ -192,9 +192,9 @@ namespace x360ce.App
 		void ProcessResult(CloudMessage command, CloudMessage result)
 		{
 			// Execute on interface thread.
-			if (MainForm.Current.InvokeRequired)
+			if (ControlsHelper.InvokeRequired)
 			{
-				MainForm.Current.Invoke(new Action(() => ProcessResult(command, result)));
+				ControlsHelper.Invoke(new Action(() => ProcessResult(command, result)));
 				return;
 			}
 			switch (command.Action)
@@ -202,25 +202,25 @@ namespace x360ce.App
 				case CloudAction.Select:
 					if (result.UserGames != null)
 					{
-						MainForm.Current.UserProgramsPanel.ListPanel.ImportAndBindItems(result.UserGames);
+						MainWindow.Current.UserProgramsPanel.ListPanel.ImportAndBindItems(result.UserGames);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
-								MainForm.Current.SetBodyError(result.ErrorMessage);
+								MainWindow.Current.MainPanel._bwm.SetBodyError(result.ErrorMessage);
 							else
-								MainForm.Current.SetBodyInfo(result.ErrorMessage);
+								MainWindow.Current.MainPanel._bwm.SetBodyInfo(result.ErrorMessage);
 					}
 					if (result.UserDevices != null)
 					{
-						MainForm.Current.MainBodyPanel.DevicesPanel.ImportAndBindItems(result.UserDevices);
+						MainWindow.Current.MainBodyPanel.DevicesPanel.ImportAndBindItems(result.UserDevices);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
-								MainForm.Current.SetBodyError(result.ErrorMessage);
+								MainWindow.Current.MainPanel._bwm.SetBodyError(result.ErrorMessage);
 							else
-								MainForm.Current.SetBodyInfo(result.ErrorMessage);
+								MainWindow.Current.MainPanel._bwm.SetBodyInfo(result.ErrorMessage);
 					}
 					break;
 				case CloudAction.CheckUpdates:
-					MainForm.Current.ProcessUpdateResults(result);
+					MainWindow.Current.ProcessUpdateResults(result);
 					break;
 			}
 		}

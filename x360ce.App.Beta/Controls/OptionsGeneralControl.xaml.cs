@@ -168,17 +168,17 @@ namespace x360ce.App.Controls
 
 		private void ShowProgramsTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			MainForm.Current.MainBodyPanel.ShowProgramsTab(ShowProgramsTabCheckBox.IsChecked ?? false);
+			MainWindow.Current.MainBodyPanel.ShowProgramsTab(ShowProgramsTabCheckBox.IsChecked ?? false);
 		}
 
 		private void ShowSettingsTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			MainForm.Current.MainBodyPanel.ShowSettingsTab(ShowSettingsTabCheckBox.IsChecked ?? false);
+			MainWindow.Current.MainBodyPanel.ShowSettingsTab(ShowSettingsTabCheckBox.IsChecked ?? false);
 		}
 
 		private void ShowDevicesTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			MainForm.Current.MainBodyPanel.ShowDevicesTab(ShowDevicesTabCheckBox.IsChecked ?? false);
+			MainWindow.Current.MainBodyPanel.ShowDevicesTab(ShowDevicesTabCheckBox.IsChecked ?? false);
 		}
 
 		DeveloperToolsForm _ToolsForm;

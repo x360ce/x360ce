@@ -20,8 +20,8 @@ namespace x360ce.App.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			MainForm.Current.MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
-			MainForm.Current.OptionsPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
+			MainWindow.Current.MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
+			MainWindow.Current.OptionsPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
 			ControlsHelper.SetTextFromResource(HelpRichTextBox, "Documents.Help_ViGEmBus.rtf");
 			// Bind Controls.
 			var o = SettingsManager.Options;
@@ -33,8 +33,8 @@ namespace x360ce.App.Controls
 		private void MainTabControl_SelectionChanged(object sender, EventArgs e)
 		{
 			var isSelected =
-				MainForm.Current.MainBodyPanel.MainTabControl.SelectedItem == MainForm.Current.MainBodyPanel.OptionsTabPage &&
-				MainForm.Current.OptionsPanel.MainTabControl.SelectedItem == MainForm.Current.OptionsPanel.RemoteControllerTabPage;
+				MainWindow.Current.MainBodyPanel.MainTabControl.SelectedItem == MainWindow.Current.MainBodyPanel.OptionsTabPage &&
+				MainWindow.Current.OptionsPanel.MainTabControl.SelectedItem == MainWindow.Current.OptionsPanel.RemoteControllerTabPage;
 			// If HidGuardian Tab was selected then refresh.
 			if (isSelected)
 				RefreshStatus();
@@ -61,7 +61,7 @@ namespace x360ce.App.Controls
 			{
 				StatusTextBox.Text = "Uninstalling. Please Wait...";
 				// Disable Virtual mode first.
-				MainForm.Current.ChangeCurrentGameEmulationType(EmulationType.None);
+				MainWindow.Current.ChangeCurrentGameEmulationType(EmulationType.None);
 				DInput.DInputHelper.CheckUnInstallVirtualDriver();
 				RefreshStatus();
 			});

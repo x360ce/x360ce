@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
+using System.Windows;
 
 namespace x360ce.App
 {
@@ -35,13 +35,14 @@ namespace x360ce.App
 			// Fix: System.TimeoutException: The operation has timed out. at System.Windows.Threading.Dispatcher.InvokeImpl
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotInvokeInWeakEventTableShutdownListener", true);
 			// First: Set working folder to the path of executable.
-			var fi = new FileInfo(Application.ExecutablePath);
+			var fi = new FileInfo(System.Windows.Forms.Application.ExecutablePath);
 			Directory.SetCurrentDirectory(fi.Directory.FullName);
 			// Prevent brave users from running this application from Windows folder.
 			var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 			if (fi.FullName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
 			{
-				MessageBox.Show("Running from Windows folder is not allowed!\r\nPlease run this program from another folder.", "Windows Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				MessageBox.Show("Running from Windows folder is not allowed!\r\nPlease run this program from another folder.",
+					"Windows Folder", MessageBoxButton.OK, MessageBoxImage.Information);
 				return;
 			}
 			// IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
@@ -66,9 +67,9 @@ namespace x360ce.App
 					message += "You can download Microsoft DirectX from:\r\n";
 					message += "http://www.microsoft.com/en-us/download/details.aspx?id=35";
 				}
-				var result = MessageBox.Show(message, "Exception!", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1);
-				if (result == DialogResult.Cancel)
-					Application.Exit();
+				var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OKCancel, MessageBoxImage.Error, MessageBoxResult.OK);
+				if (result == MessageBoxResult.Cancel)
+					app.Shutdown();
 			}
 		}
 
@@ -98,9 +99,9 @@ namespace x360ce.App
 			// ------------------------------------------------
 			if (ic.Parameters.ContainsKey("Settings"))
 			{
-				OpenSettingsFolder(Application.UserAppDataPath);
-				OpenSettingsFolder(Application.CommonAppDataPath);
-				OpenSettingsFolder(Application.LocalUserAppDataPath);
+				OpenSettingsFolder(ApplicationDataPath);
+				OpenSettingsFolder(CommonApplicationDataPath);
+				OpenSettingsFolder(LocalApplicationDataPath);
 				return;
 			}
 			if (!CheckSettings())
@@ -109,26 +110,38 @@ namespace x360ce.App
 			// Must be called before you create the application window.
 			if (Environment.OSVersion.Version.Major >= 6 && o.IsProcessDPIAware)
 				NativeMethods.SetProcessDPIAware();
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
-			MainForm.Current = new MainForm();
-			MainForm.Current.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			MainForm.Current.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			MainForm.Current.PerformAutoScale();
+
+
+			app = new App();
+			//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+			//app.Run(MainWindow.Current);
+			app.InitializeComponent();
+			app.Run();
+
+			//MainWindow.Current.Show();
+			//Application.Run(MainWindow.Current);
+
+			/*
+			  
+			  //System.Threading.SynchronizationContext.SetSynchronizationContext(new System.Threading.SynchronizationContext());
+			//MainWindow.Current = new MainWindow();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
 				// Close all x360ce apps.
 				StartHelper.BroadcastMessage(StartHelper.wParam_Close);
 				return;
 			}
+
+
+
 			var doNotAllowToRun = o.AllowOnlyOneCopy && StartHelper.BroadcastMessage(StartHelper.wParam_Restore);
 			// If one copy is already opened then...
 			if (doNotAllowToRun)
 			{
 				// Dispose properly so that the tray icon will be removed.
-				MainForm.Current.Dispose();
+				MainWindow.Current.Dispose();
 			}
 			else
 			{
@@ -138,19 +151,35 @@ namespace x360ce.App
 					switch (ic.Parameters[arg_WindowState])
 					{
 						case "Maximized":
-							MainForm.Current.RestoreFromTray();
-							MainForm.Current.WindowState = FormWindowState.Maximized;
+							MainWindow.Current.RestoreFromTray();
+							MainWindow.Current.WindowState = System.Windows.WindowState.Maximized;
 							break;
 						case "Minimized":
-							MainForm.Current.MinimizeToTray(false, o.MinimizeToTray);
+							MainWindow.Current.MinimizeToTray(false, o.MinimizeToTray);
 							break;
 					}
 				}
-				Application.Run(MainForm.Current);
+				app = new App();
+				//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+				//app.Run(MainWindow.Current);
+				//app.InitializeComponent();
+				app.Run();
+				//MainWindow.Current.Show();
+				//Application.Run(MainWindow.Current);
 			}
+
+			*/
+
 			Global.DisposeCloudClient();
 			Global.DisposeServices();
 		}
+
+		static App app;
+
+		//static void DispatchToApp(Action action)
+		//{
+		//	app.Dispatcher.Invoke(action);
+		//}
 
 		public static bool IsClosing;
 
@@ -165,9 +194,9 @@ namespace x360ce.App
 			if (IsClosing)
 				return;
 			ErrorCount++;
-			MainForm.Current.UpdateTimer.Stop();
-			MainForm.Current.UpdateStatus("- " + e.Exception.Message);
-			MainForm.Current.UpdateTimer.Start();
+			MainWindow.Current.UpdateTimer.Stop();
+			MainWindow.Current.UpdateStatus("- " + e.Exception.Message);
+			MainWindow.Current.UpdateTimer.Start();
 		}
 
 		static void OpenSettingsFolder(string path)
@@ -191,24 +220,24 @@ namespace x360ce.App
 			{
 				// Requires System.Configuration
 				string filename = ((ConfigurationErrorsException)ex.InnerException).Filename;
-				var title = "Corrupt user settings of " + Application.ProductName;
+				var title = "Corrupt user settings of " + Product;
 				var text =
 					"Program has detected that your user settings file has become corrupted. " +
 					"This may be due to a crash or improper exiting of the program. " +
 					"Program must reset your user settings in order to continue.\r\n" +
 					"Click [Yes] to reset your user settings and continue.\r\n" +
 					"Click [No] if you wish to exit and attempt manual repair.";
-				var result = MessageBox.Show(text, title, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-				if (result == DialogResult.Yes)
+				var result = MessageBox.Show(text, title, MessageBoxButton.YesNo, MessageBoxImage.Error);
+				if (result == MessageBoxResult.Yes)
 				{
 					File.Delete(filename);
 					Properties.Settings.Default.Reload();
 				}
 				else
 				{
-					OpenSettingsFolder(Application.UserAppDataPath);
-					OpenSettingsFolder(Application.CommonAppDataPath);
-					OpenSettingsFolder(Application.LocalUserAppDataPath);
+					OpenSettingsFolder(ApplicationDataPath);
+					OpenSettingsFolder(CommonApplicationDataPath);
+					OpenSettingsFolder(LocalApplicationDataPath);
 					return false;
 				}
 			}
@@ -324,6 +353,33 @@ namespace x360ce.App
 		}
 
 		#endregion
+
+		#region GetInfo
+
+		private static string ApplicationDataPath
+			=> Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+		private static string CommonApplicationDataPath
+			=> Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+		private static string LocalApplicationDataPath
+			=> Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+		//private static string Company { get { return GetAttribute<AssemblyCompanyAttribute>(a => a.Company); } }
+		private static string Product { get { return GetAttribute<AssemblyProductAttribute>(a => a.Product); } }
+
+		// Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+
+		private static string GetAttribute<T>(Func<T, string> value) where T : Attribute
+		{
+			var asm = Assembly.GetExecutingAssembly();
+			T attribute = (T)Attribute.GetCustomAttribute(asm, typeof(T));
+			return attribute == null
+				? ""
+				: value.Invoke(attribute);
+		}
+
+		#endregion
+
+
 
 	}
 }

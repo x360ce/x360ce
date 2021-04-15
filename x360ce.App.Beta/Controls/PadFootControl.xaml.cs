@@ -92,9 +92,9 @@ namespace x360ce.App.Controls
 				var ps = form.MainControl.SelectedItem;
 				if (ps != null)
 				{
-					MainForm.Current.UpdateTimer.Stop();
+					MainWindow.Current.UpdateTimer.Stop();
 					SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(_MappedTo, ps);
-					MainForm.Current.UpdateTimer.Start();
+					MainWindow.Current.UpdateTimer.Start();
 				}
 			}
 			form.MainControl.UnInitForm();

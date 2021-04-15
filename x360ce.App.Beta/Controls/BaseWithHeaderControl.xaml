@@ -55,13 +55,15 @@
 				Padding="0"
 				Content="{StaticResource Icon_information}"
 				Style="{StaticResource ButtonContentControl}" />
-			<Label
+			<TextBlock
 				Name="HelpBodyLabel"
 				Grid.Row="1"
 				Grid.Column="1"
 				Margin="3,0,3,3"
 				Padding="0"
-				Content="Body" />
+				VerticalAlignment="Top"
+				Text="Body"
+				TextWrapping="Wrap" />
 			<ContentControl
 				Name="RightIcon"
 				Grid.Row="0"

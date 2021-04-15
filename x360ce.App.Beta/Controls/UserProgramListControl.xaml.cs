@@ -66,7 +66,7 @@ namespace x360ce.App.Controls
 
 		private void Scanner_Progress(object sender, XInputMaskScannerEventArgs e)
 		{
-			if (MainForm.Current.InvokeRequired)
+			if (ControlsHelper.InvokeRequired)
 			{
 				ControlsHelper.Invoke(() =>
 					Scanner_Progress(sender, e)
@@ -411,7 +411,7 @@ namespace x360ce.App.Controls
 				if (existingItem != null)
 					JocysCom.ClassLibrary.Runtime.RuntimeHelper.CopyProperties(newItem, existingItem);
 			}
-			MainForm.Current.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.UserGame).Name);
+			MainWindow.Current.MainPanel._bwm.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.UserGame).Name);
 			grid.ItemsSource = list;
 			//ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();

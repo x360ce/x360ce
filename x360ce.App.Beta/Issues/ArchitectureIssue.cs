@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using x360ce.Engine;
@@ -40,9 +39,9 @@ namespace x360ce.App.Issues
 			{
 				CheckFile = false;
 				// Update current settings file.
-				MainForm.Current.Invoke((Action)delegate ()
+				ControlsHelper.Invoke(() =>
 				{
-					MainForm.Current.UserProgramsPanel.ListPanel.ProcessExecutable(exes[0]);
+					MainWindow.Current.UserProgramsPanel.ListPanel.ProcessExecutable(exes[0]);
 				});
 			}
 			foreach (var exe in exes)

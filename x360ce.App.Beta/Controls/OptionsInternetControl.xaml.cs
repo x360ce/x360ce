@@ -59,7 +59,7 @@ namespace x360ce.App.Controls
 
 		private void CheckUpdatesButton_Click(object sender, RoutedEventArgs e)
 		{
-			MainForm.Current.ShowUpdateForm();
+			MainWindow.Current.ShowUpdateForm();
 		}
 
 		private void OpenSettingsFolderButton_Click(object sender, RoutedEventArgs e)

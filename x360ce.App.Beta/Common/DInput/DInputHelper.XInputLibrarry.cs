@@ -1,9 +1,6 @@
 ﻿using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -41,7 +38,7 @@ namespace x360ce.App.DInput
 					(emType == EmulationType.Virtual && !getXInputStates) ||
 					// No actual XInput states are required for Library emulation when minimized.
 					// This will also release exclusive lock if another game/application must use it.
-					(emType == EmulationType.Library && !MainForm.Current.FormEventsEnabled);
+					(emType == EmulationType.Library && !MainWindow.Current.FormEventsEnabled);
 				if (!unload)
 					return;
 				if (!Controller.IsLoaded)
@@ -74,7 +71,7 @@ namespace x360ce.App.DInput
 					return;
 				// No actual XInput states are required for Library emulation when minimized.
 				// This will also release exclusive lock if another game/application must use it.
-				if (emType == EmulationType.Library && !MainForm.Current.FormEventsEnabled)
+				if (emType == EmulationType.Library && !MainWindow.Current.FormEventsEnabled)
 					return;
 				//MainForm.Current.Save();
 				var e = new DInputEventArgs();

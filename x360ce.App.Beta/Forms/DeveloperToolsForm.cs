@@ -1,12 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace x360ce.App.Forms
@@ -56,8 +51,8 @@ namespace x360ce.App.Forms
 					IsVisible = true;
 					Show();
 				}
-				Left = MainForm.Current.Left + (MainForm.Current.Width - Width) / 2;
-				Top = MainForm.Current.Top + (MainForm.Current.Height - Height) / 2;
+				Left = (int)(MainWindow.Current.Left + (MainWindow.Current.Width - Width) / 2);
+				Top = (int)(MainWindow.Current.Top + (MainWindow.Current.Height - Height) / 2);
 				BringToFront();
 			}
 		}

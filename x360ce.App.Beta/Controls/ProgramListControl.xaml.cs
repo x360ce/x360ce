@@ -190,7 +190,7 @@ namespace x360ce.App.Controls
 				// Add new one.
 				list.Add(newItem);
 			}
-			MainForm.Current.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.Program).Name);
+			MainWindow.Current.MainPanel._bwm.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.Program).Name);
 			grid.ItemsSource = list;
 			//JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();
@@ -216,23 +216,23 @@ namespace x360ce.App.Controls
 			// Make sure method is executed on the same thread as this control.
 			ControlsHelper.BeginInvoke(() =>
 			{
-				MainForm.Current.AddTask(TaskName.GetPrograms);
+				MainWindow.Current.MainPanel._bwm.AddTask(TaskName.GetPrograms);
 				if (e.Error != null)
 				{
 					var error = e.Error.Message;
 					if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
-					MainForm.Current.SetBodyError(error);
+					MainWindow.Current.MainPanel._bwm.SetBodyError(error);
 				}
 				else if (e.Result == null)
 				{
-					MainForm.Current.SetBodyError("No results were returned by the web service!");
+					MainWindow.Current.MainPanel._bwm.SetBodyError("No results were returned by the web service!");
 				}
 				else
 				{
 					var result = (List<x360ce.Engine.Data.Program>)e.Result;
 					ImportAndBindItems(result);
 				}
-				MainForm.Current.RemoveTask(TaskName.GetPrograms);
+				MainWindow.Current.MainPanel._bwm.RemoveTask(TaskName.GetPrograms);
 			});
 		}
 

@@ -15,9 +15,12 @@ namespace x360ce.App
 	{
 		public MainControl()
 		{
+			// Initialize interface.
 			InitializeComponent();
+			_bwm = new BaseWithHeaderManager(HelpHeadLabel, HelpBodyLabel, LeftIcon, this);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+		
 			// Hide status values.
 			StatusTimerLabel.Content = "";
 			StatusDllLabel.Content = "";
@@ -39,6 +42,8 @@ namespace x360ce.App
 			o.PropertyChanged += Options_PropertyChanged;
 			LoadSettings();
 		}
+		
+		public BaseWithHeaderManager _bwm;
 
 		private Forms.DebugWindow DebugPanel;
 
@@ -182,7 +187,7 @@ namespace x360ce.App
 
 		private void StatusErrorsLabel_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			MainForm.Current.StatusErrorLabel_Click(null, null);
+			MainWindow.Current.StatusErrorLabel_Click(null, null);
 		}
 	}
 }

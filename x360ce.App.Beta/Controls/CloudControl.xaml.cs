@@ -23,17 +23,6 @@ namespace x360ce.App.Controls
 				return;
 			//TasksTimer.Queue.AsynchronousInvoke = true;
 			MainDataGrid.AutoGenerateColumns = false;
-			// Enable task timer.
-			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-			Global.CloudClient.StartServer(scheduler);
-			// Display cloud queue results.
-			EnableDataSource(true);
-			// Start monitoring tasks queue.
-			QueueMonitorTimer = new System.Timers.Timer();
-			QueueMonitorTimer.Interval = 500;
-			QueueMonitorTimer.Elapsed += QueueMonitorTimer_Elapsed;
-			QueueMonitorTimer.Start();
-			UpdateButtons();
 		}
 
 		private void QueueMonitorTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -145,5 +134,21 @@ namespace x360ce.App.Controls
 			DeleteButton.IsEnabled = grid.SelectedItems.Count > 0;
 		}
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			// Enable task timer.
+			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+			Global.CloudClient.StartServer(scheduler);
+			// Display cloud queue results.
+			EnableDataSource(true);
+			// Start monitoring tasks queue.
+			QueueMonitorTimer = new System.Timers.Timer();
+			QueueMonitorTimer.Interval = 500;
+			QueueMonitorTimer.Elapsed += QueueMonitorTimer_Elapsed;
+			QueueMonitorTimer.Start();
+			UpdateButtons();
+		}
 	}
 }

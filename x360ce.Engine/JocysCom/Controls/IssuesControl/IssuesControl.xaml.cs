@@ -24,25 +24,6 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			LinePanel.Visibility = Visibility.Collapsed;
 			ExceptionInfoButton.Visibility = Visibility.Collapsed;
 			RunStateLabel.Content = "";
-			// List which contains all issues.
-			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-			IssueList = new BindingListInvoked<IssueItem>();
-			UpdateIgnoreAllButton();
-			// List which is bound to the grid and displays issues, which needs user attention.
-			Warnings = new BindingListInvoked<IssueItem>();
-			Warnings.SynchronizingObject = scheduler;
-			MainDataGrid.ItemsSource = Warnings;
-			UpdateIgnoreButton();
-			// Timer which checks for the issues.
-			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
-			var title = ai.GetTitle(true, true, true, true, false) + " - Issues";
-			TasksTimer = new QueueTimer<object>(0, 0);
-			TasksTimer.DoWork += queueTimer_DoWork;
-			TasksTimer.Queue.ListChanged += Data_ListChanged;
-			// Start monitoring tasks queue.
-			QueueMonitorTimer = new System.Windows.Forms.Timer();
-			QueueMonitorTimer.Tick += QueueMonitorTimer_Tick;
-			QueueMonitorTimer.Start();
 		}
 
 		private System.Windows.Forms.Timer QueueMonitorTimer;
@@ -351,5 +332,27 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			MessageBox.Show(message, LastException.Message, MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			// List which contains all issues.
+			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+			IssueList = new BindingListInvoked<IssueItem>();
+			UpdateIgnoreAllButton();
+			// List which is bound to the grid and displays issues, which needs user attention.
+			Warnings = new BindingListInvoked<IssueItem>();
+			Warnings.SynchronizingObject = scheduler;
+			MainDataGrid.ItemsSource = Warnings;
+			UpdateIgnoreButton();
+			// Timer which checks for the issues.
+			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
+			var title = ai.GetTitle(true, true, true, true, false) + " - Issues";
+			TasksTimer = new QueueTimer<object>(0, 0);
+			TasksTimer.DoWork += queueTimer_DoWork;
+			TasksTimer.Queue.ListChanged += Data_ListChanged;
+			// Start monitoring tasks queue.
+			QueueMonitorTimer = new System.Windows.Forms.Timer();
+			QueueMonitorTimer.Tick += QueueMonitorTimer_Tick;
+			QueueMonitorTimer.Start();
+		}
 	}
 }

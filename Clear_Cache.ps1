@@ -1,37 +1,42 @@
-# Kills and clears IIS Express. Removes temporary and user specific solution files.
+<#
+.SYNOPSIS
+    Kill and clear IIS Express. Removes temporary and user specific solution files.
+.NOTES
+    Author:     Evaldas Jocys <evaldas@jocys.com>
+    Modified:   2021-04-14
+.LINK
+    http://www.jocys.com
+#>
 # ----------------------------------------------------------------------------
 # Get current command path.
-[string]$current = $MyInvocation.MyCommand.Path
+[string]$current = $MyInvocation.MyCommand.Path;
 # Get calling command path.
-[string]$calling = @(Get-PSCallStack)[1].InvocationInfo.MyCommand.Path
+[string]$calling = @(Get-PSCallStack)[1].InvocationInfo.MyCommand.Path;
 # If executed directly then...
 if ($calling -ne "") {
-    $current = $calling
+    $current = $calling;
 }
-
-$file = Get-Item $current
+$file = Get-Item $current;
 # Working folder.
 $wdir = $file.Directory.FullName;
-
 # ----------------------------------------------------------------------------
-
 Function RemoveDirectories
 {
 	# Parameters.
-	Param ($pattern)
+	param($pattern);
 	# Function.
 	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object {$_ -is [System.IO.DirectoryInfo]};
 	foreach ($item in $items)
 	{
 	  Write-Output $item.FullName;
-	  Remove-Item -LiteralPath $item.FullName -Force -Recurse
+	  Remove-Item -LiteralPath $item.FullName -Force -Recurse;
 	}
 }
-
+# ----------------------------------------------------------------------------
 Function RemoveSubDirectories
 {
 	# Parameters.
-	Param ($path)
+	param($path);
 	# Function.
 	$dirs = Get-Item $path -ErrorAction SilentlyContinue;
 	foreach ($dir in $dirs)
@@ -45,26 +50,26 @@ Function RemoveSubDirectories
 		}
 	}
 }
-
+# ----------------------------------------------------------------------------
 Function RemoveFiles
 {
 	# Parameters.
-	Param ($pattern)
+	param($pattern);
 	# Function.
 	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object {$_ -is [System.IO.FileInfo]};
 	foreach ($item in $items)
 	{
 	  Write-Output $item.FullName;
-	  Remove-Item -LiteralPath $item.FullName -Force
+	  Remove-Item -LiteralPath $item.FullName -Force;
 	}
 }
-
+# ----------------------------------------------------------------------------
 Function KillProcess
 {
 	# Parameters.
-	Param ($pattern)
+	param($pattern);
 	# Function.
-	$procs = Get-Process
+	$procs = Get-Process;
 	foreach ($proc in $procs)
 	{
 		if ($proc.Path)
@@ -78,15 +83,14 @@ Function KillProcess
 		}
 	}	
 }
-
+# ----------------------------------------------------------------------------
 # Clear IIS Express configuration.
 KillProcess "iisexpress.exe";
 KillProcess "iisexpresstray.exe";
-RemoveSubDirectories "$($env:USERPROFILE)\Documents\My Web Sites"
-
+RemoveSubDirectories "$($env:USERPROFILE)\Documents\My Web Sites";
 # Clear directories and files.
-RemoveDirectories ".vs"
-RemoveFiles "*.dbmdl"
-RemoveFiles "*.user"
-RemoveFiles "*.suo"
-pause
+RemoveDirectories ".vs";
+RemoveFiles "*.dbmdl";
+RemoveFiles "*.user";
+RemoveFiles "*.suo";
+pause;

@@ -1,8 +1,5 @@
-﻿using System;
-using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace x360ce.App.Controls
 {
@@ -18,8 +15,12 @@ namespace x360ce.App.Controls
 			if (IsDesignMode)
 				return;
 			defaultHead = HelpHeadLabel.Content as string;
-			defaultBody = HelpBodyLabel.Content as string;
+			defaultBody = HelpBodyLabel.Text;
+			_bwm = new BaseWithHeaderManager(HelpHeadLabel, HelpBodyLabel, LeftIcon, this);
 		}
+
+		BaseWithHeaderManager _bwm;
+
 
 		/// <summary>
 		/// Gets or sets additional content for the UserControl
@@ -39,59 +40,32 @@ namespace x360ce.App.Controls
 
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
 
-		#region ■ WebService loading circle
-
-		private readonly object TasksLock = new object();
-		private readonly BindingList<TaskName> Tasks = new BindingList<TaskName>();
+		#region ■ IBaseWithHeaderControl
 
 		public Window Window => System.Windows.Window.GetWindow(this);
 
-		/// <summary>Activate busy spinner.</summary>
 		public void AddTask(TaskName name)
-		{
-			lock (TasksLock)
-			{
-				Tasks.Add(name);
-				UpdateIcon();
-			}
-		}
+			=> _bwm.AddTask(name);
 
-		/// <summary>Deactivate busy spinner if all tasks are gone.</summary>
 		public void RemoveTask(TaskName name)
-		{
-			lock (TasksLock)
-			{
-				if (Tasks.Contains(name))
-					Tasks.Remove(name);
-				UpdateIcon();
-			}
-		}
-
-		public void UpdateIcon()
-		{
-		}
-
-		#endregion
-
+			=> _bwm.RemoveTask(name);
+		
 		public void SetTitle(string format, params object[] args)
-		{
-			Window.Title = (args.Length == 0)
-				? format
-				: string.Format(format, args);
-		}
+			=> _bwm.SetTitle(format, args);
 
 		public void SetHead(string format, params object[] args)
-		{
-			// Apply format.
-			if (format == null)
-				format = defaultHead;
-			else if (args.Length > 0)
-				format = string.Format(format, args);
-			if (HelpHeadLabel.Content as string != format)
-			{
-				HelpHeadLabel.Content = format;
-			}
-		}
+			=> _bwm.SetHead(format, args);
+
+		public void SetBody(MessageBoxImage image, string format, params object[] args)
+			=> _bwm.SetBody(image, format, args);
+
+		public void SetBodyError(string format, params object[] args)
+			=> _bwm.SetBodyError(format, args);
+
+		public void SetBodyInfo(string format, params object[] args)
+			=> _bwm.SetBodyInfo(format, args);
+
+		#endregion
 
 		object _Image;
 
@@ -105,57 +79,6 @@ namespace x360ce.App.Controls
 		{
 			_Image = resource;
 			RightIcon.Content = _Image;
-		}
-
-		public void SetBodyError(string content, params object[] args)
-		{
-			// Apply format.
-			if (content == null)
-				content = defaultBody;
-			else if (args.Length > 0)
-				content = string.Format(content, args);
-			// Set info with time.
-			SetBody(MessageBoxImage.Error, "{0: yyyy-MM-dd HH:mm:ss}: {1}", DateTime.Now, content);
-		}
-
-		public void SetBodyInfo(string content, params object[] args)
-		{
-			// Apply format.
-			if (content == null)
-				content = defaultBody;
-			else if (args.Length > 0)
-				content = string.Format(content, args);
-			// Set info with time.
-			SetBody(MessageBoxImage.Information, content);
-		}
-
-		public void SetBody(MessageBoxImage image, string content = null, params object[] args)
-		{
-			if (content == null)
-				content = defaultBody;
-			else if (args.Length > 0)
-				content = string.Format(content, args);
-			HelpBodyLabel.Content = content;
-			// Update body colors.
-			switch (image)
-			{
-				case MessageBoxImage.Error:
-					HelpBodyLabel.Foreground = new SolidColorBrush(Colors.DarkRed);
-					LeftIcon.Content = Resources[Icons_Default.Icon_error];
-					break;
-				case MessageBoxImage.Question:
-					HelpBodyLabel.Foreground = new SolidColorBrush(Colors.DarkBlue);
-					LeftIcon.Content = Resources[Icons_Default.Icon_question];
-					break;
-				case MessageBoxImage.Warning:
-					HelpBodyLabel.Foreground = new SolidColorBrush(Colors.DarkOrange);
-					LeftIcon.Content = Resources[Icons_Default.Icon_sign_warning];
-					break;
-				default:
-					HelpBodyLabel.Foreground = SystemColors.ControlTextBrush;
-					LeftIcon.Content = Resources[Icons_Default.Icon_information];
-					break;
-			}
 		}
 
 		public void SetButton1(string text = null, string image = null)

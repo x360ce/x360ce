@@ -28,7 +28,6 @@ namespace x360ce.App.Controls
 			updateTimer = new System.Timers.Timer();
 			updateTimer.AutoReset = false;
 			updateTimer.Interval = 500;
-			updateTimer.Elapsed += UpdateTimer_Elapsed;
 		}
 
 		void UpdateTimerReset()
@@ -376,6 +375,12 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(SensitivityLabel, text);
 		}
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			updateTimer.Elapsed += UpdateTimer_Elapsed;
+		}
 	}
 }
 

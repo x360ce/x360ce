@@ -17,12 +17,6 @@ namespace x360ce.App.Controls
 		public PadListControl()
 		{
 			InitializeComponent();
-			var o = SettingsManager.Options;
-			MainDataGrid.ItemsSource = mappedUserSettings;
-			SettingsManager.LoadAndMonitor(o, nameof(o.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
-			SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
-			UserSettings_Items_ListChanged(null, null);
-			UpdateGridButtons();
 		}
 
 		MapTo _MappedTo;
@@ -198,7 +192,7 @@ namespace x360ce.App.Controls
 			if (game == null)
 				return;
 			// Show form which allows to select device.
-			var selectedUserDevices = MainForm.Current.ShowDeviceForm();
+			var selectedUserDevices = MainWindow.Current.ShowDeviceForm();
 			// Return if no devices were selected.
 			if (selectedUserDevices == null)
 				return;
@@ -262,6 +256,16 @@ namespace x360ce.App.Controls
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			UpdateGridButtons();
+		}
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			var o = SettingsManager.Options;
+			MainDataGrid.ItemsSource = mappedUserSettings;
+			SettingsManager.LoadAndMonitor(o, nameof(o.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
+			SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
+			UserSettings_Items_ListChanged(null, null);
 			UpdateGridButtons();
 		}
 

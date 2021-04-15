@@ -5,8 +5,8 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="450"
-	d:DesignWidth="800"
-	mc:Ignorable="d">
-	<Grid />
+	Width="820"
+	Height="820"
+	mc:Ignorable="d" Loaded="Window_Loaded">
+	<local:MainControl x:Name="MainPanel" />
 </Window>

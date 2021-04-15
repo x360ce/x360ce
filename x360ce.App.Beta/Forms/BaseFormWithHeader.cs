@@ -136,6 +136,10 @@ namespace x360ce.App.Controls
 				HelpBodyLabel.ForeColor = SystemColors.ControlText;
 		}
 
+		void IBaseWithHeaderControl.SetBody(System.Windows.MessageBoxImage image, string content, params object[] args)
+		{
+		}
+
 		#endregion
 	}
 }
