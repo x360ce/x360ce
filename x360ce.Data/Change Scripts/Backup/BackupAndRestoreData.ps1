@@ -3,7 +3,7 @@
     Export and Import SQL Data.
 .NOTES
     Author:     Evaldas Jocys <evaldas@jocys.com>
-    Modified:   2021-04-01
+    Modified:   2021-04-19
 
 	Application Server Requirements (2012 R2):
 
@@ -20,6 +20,7 @@ using namespace System;
 using namespace System.IO;
 using namespace System.Linq;
 using namespace System.Text;
+using namespace System.Text.RegularExpressions;
 using namespace System.Collections;
 using namespace System.Collections.Generic;
 using namespace System.Text.RegularExpressions;
@@ -49,7 +50,6 @@ function ConfigureSettings
     # Determine configuration file.
     Write-Host "Path: $scriptPath";
     Write-Host;
-    ShowConfigurationMenu;
 }
 # ----------------------------------------------------------------------------
 function ConfigureTools
@@ -67,7 +67,8 @@ function ConfigureTools
     #pause;
 }
 # ----------------------------------------------------------------------------
-function LoadCodeBehind{
+function LoadCodeBehind
+{
     # Load code behind.
     $assemblies = @(
         "System.Xml",
@@ -97,14 +98,24 @@ function LoadCodeBehind{
 # ----------------------------------------------------------------------------
 # Functions
 # ----------------------------------------------------------------------------
-function CheckLogErrors
+function GetOption
 {
-    param($log);
-    $content = [File]::ReadAllText($log);
-    if ($content -like "*Error*"){
-        Write-Host;
-        Write-Host "  Log errors found" -ForegroundColor Red;
+    param($name);
+    $item = [Enumerable]::FirstOrDefault($global:configData.Options, [Func[object,bool]]{ param($x) $x.Name -eq $name});
+    if ($null -eq $item){
+        return $null;
     }
+    return $item.Value;
+}
+# ----------------------------------------------------------------------------
+function GetConnection
+{
+    param($name);
+    $item = [Enumerable]::FirstOrDefault($configData.Connections, [Func[object,bool]]{ param($x) $x.Name -eq $name});
+    if ($null -eq $item){
+        return $null;
+    }
+    return $item.Value;
 }
 # ----------------------------------------------------------------------------
 function ExportDataOrSchema
@@ -113,16 +124,28 @@ function ExportDataOrSchema
     Write-Host "Exporting $action to $scriptPath\Data.$configName...";
     Write-Host;
     # Get configuration data.
-    [Data]$data = [BackupAndRestoreData]::GetSettings($configFile);
-    $connectionString =  [Enumerable]::First($data.Connections, [Func[object,bool]]{ param($x) $x.Name -eq "SourceConnection" }).Value;
+    $connectionString = GetConnection("SourceConnection");
     $builder = New-Object System.Data.SqlClient.SqlConnectionStringBuilder $connectionString;
     $server = $builder.Server;
     $database = $builder.Database;
     $user = $builder.UserID;
     $password = $builder.Password;
-    $items = $data.Items;
+    $items = $configData.Items;
     $log = "$current.log";
     "Export Log" > $log;
+    $UseVarChar = GetOption("UseVarChar");
+    $Compress = GetOption("Compress");
+    # If set to OFF them spaces will be trimmed.
+    $ANSI_PADDING = GetOption("ANSI_PADDING");
+    $Return_Null = GetOption("Return_Null");
+    Write-Host "  Compress: $Compress";
+    Write-Host "  UseVarChar: $UseVarChar";
+    Write-Host "  ANSI_PADDING: $ANSI_PADDING";
+    Write-Host "  Return_Null: $Return_Null";
+    Write-Host;
+    if ("$Return_Null" -ne ""){
+        $Return_Null_Regex = new-Object Regex($Return_Null, [System.Text.RegularExpressions.RegexOptions]::IgnoreCase);
+    }
     # Loop tables.
     for ($i = 0; $i -lt $items.Count; $i++) {
         $item =$items[$i];
@@ -142,8 +165,13 @@ function ExportDataOrSchema
                 $fi.Directory.Create();
             }
             $sql = [BackupAndRestoreData]::ScriptTable($connectionString, $schema, $table);
-            if ($null -eq $sql){
-                continue;
+            if ($UseVarChar -eq "True"){
+                # Convert char type to varchar type.
+                $sql = $sql.Replace("[char]", "[varchar]").Replace("[nchar]", "[nvarchar]");
+            }
+            if ("$ANSI_PADDING" -ne ""){
+                # Convert char type to varchar type.
+                $sql =  $sql = $sql.Replace("CREATE TABLE", "SET ANSI_PADDING $ANSI_PADDING`r`nCREATE TABLE");
             }
             if ($fi.Exists -eq $true){
                 $fi.Delete();
@@ -153,45 +181,74 @@ function ExportDataOrSchema
         if ($action -eq "Data")
         {
             # Export file in native format.
-            if ($fi.Directory.Exists  -eq $false){
-                $fi.Directory.Create();
-            }
-            $fi = New-Object FileInfo "$scriptPath\Data.$configName\$schema.$table.$dataType";
-            # bcp.exe arguments.
-            $b = @();
-            # Table or query.
-            if ($null -eq $query){
-               $b += "[$database].[$schema].[$table]", "out";
+            if ($dataType -eq "csv2") {
+                $fi = New-Object FileInfo "$scriptPath\Data.$configName\CSV\$schema.$table.csv";
+                if ($fi.Directory.Exists  -eq $false){
+                    $fi.Directory.Create();
+                }
+                $columns = [BackupAndRestoreData]::GetColumns($connectionString, $schema, $table);
+                $sl = New-Object System.Collections.Generic.List[string];
+                foreach ($column in $columns) {
+                    if ($null -ne $Return_Null_Regex -and $Return_Null_Regex.IsMatch($column.Column) -eq $true){
+
+                        $sl.Add("[$($Column.Column)] = NULL");
+                    }
+                    elseif ($column.Type -like "*char*"){
+                        $sl.Add("[$($Column.Column)] = LTRIM(RTRIM([$($Column.Column)]))");
+                        # QUOTENAME
+                    }else{
+                        $sl.Add("[$($Column.Column)]");
+                    }
+                }
+                $s = [String]::Join(",`r`n  ", $sl);
+                # Create new query which will trim all char columns.
+                $newQuery = "SELECT`r`n  " + $s + "`r`nFROM (" + $query + ") Trimmed1";
+                #Write-Host $newQuery;
+                #pause;
+                Invoke-sqlcmd -ConnectionString $connectionString  `
+                    -Query $newQuery | `
+                    Export-Csv -NoTypeInformation -path $fi.FullName -Encoding UTF8;
             }else{
-               $b += $query, "queryout", "-d", $database;
+                $fi = New-Object FileInfo "$scriptPath\Data.$configName\$schema.$table.$dataType";
+                if ($fi.Directory.Exists  -eq $false){
+                    $fi.Directory.Create();
+                }
+                # bcp.exe arguments.
+                $b = @();
+                # Table or query.
+                if ($null -eq $query){
+                $b += "[$database].[$schema].[$table]", "out";
+                }else{
+                $b += $query, "queryout";
+                }
+                # File.
+                $b += $fi.FullName;
+                # File type: csv, xml or dat.
+                if ($dataType -eq "csv"){
+                    $b += "-w", "-t,";
+                }elseif ($dataType -eq "xml"){
+                    $b += "-x";
+                }else{
+                    $b += "-n", "-N";
+                }
+                # Connection string.
+                $b += "-d", $database, "-S", $server;
+                if ($true -eq $builder.IntegratedSecurity){
+                    $b += "-T";
+                }else{
+                    $b += "-U", $user, "-P", $password;
+                
+                }
+                & $bcpExe @b >> $log;
             }
-            # File.
-            $b += $fi.FullName;
-            # File type: csv, xml or dat.
-            if ($dataType -eq "csv"){
-                $b += "-w", "-t,";
-            }elseif ($dataType -eq "xml"){
-                $b += "-x";
-            }else{
-                $b += "-n", "-N";
-            }
-            # Connection string.
-            $b += "-S", $server;
-            if ($true -eq $builder.IntegratedSecurity){
-                $b += "-T";
-            }else{
-                $b += "-U", $user, "-P", $password;
-            }
-            & $bcpExe @b >> $log;
             [void]$fi.Refresh();
-            if ($fi.Exists -eq $true)
+            if ($fi.Exists -eq $true -and $Compress -eq "True")
             {
                 Compress-Archive -Path "$($fi.FullName)" -DestinationPath "$($fi.FullName).zip" -Force;
                 $fi.Delete();
             }
         }
     }
-    CheckLogErrors($log);
     Write-Host;
 }
 # ----------------------------------------------------------------------------
@@ -201,14 +258,13 @@ function ImportDataOrSchema
     Write-Host "Import $action...";
     Write-Host;
     # Get configuration data.
-    [Data]$data = [BackupAndRestoreData]::GetSettings($configFile);
-    $connectionString =  [Enumerable]::First($data.Connections, [Func[object,bool]]{ param($x) $x.Name -eq "TargetConnection" }).Value;
+    $connectionString = GetConnection("TargetConnection");
     $builder = New-Object System.Data.SqlClient.SqlConnectionStringBuilder $connectionString;
     $server = $builder.Server;
     $database = $builder.Database;
     $user = $builder.UserID;
     $password = $builder.Password;
-    $items = $data.Items;
+    $items = $configData.Items;
     $log = "$current.log";
     "Import Log" > $log;
     # Loop tables.
@@ -256,8 +312,12 @@ function ImportDataOrSchema
         if ($action -eq "Data")
         {
             $fi = New-Object FileInfo "$scriptPath\Data.$configName\$schema.$table.$dataType";
+            # If compressed file found then...
+            if ([File]::Exists("$($fi.FullName).zip") -eq $true){
+                # Extract data file.
+                Expand-Archive -Path "$($fi.FullName).zip" -DestinationPath "$($fi.Directory.FullName)" -Force;
+            }
             # Import file from native format.
-            Expand-Archive -Path "$($fi.FullName).zip" -DestinationPath "$($fi.Directory.FullName)" -Force;
             #
             # sqlcmd.exe arguments.
             $s = @("-Q", "TRUNCATE TABLE [$database].[$schema].[$table]");
@@ -286,21 +346,30 @@ function ImportDataOrSchema
             $fi.Delete();
         }
     }
-    CheckLogErrors($log);
     Write-Host;
 }
 # ----------------------------------------------------------------------------
 function CreateConfiguration
 {
-    Write-Host "Create Configuration...";
-    Write-Host;
     $name = Read-Host -Prompt "Type configuration name and press ENTER to continue";
     Write-Host;
+    Write-Host "Create Configuration...";
+    Write-Host;
+    [string]$global:configFile = "$scriptFile.$name.xml";
+    $global:configData = new-Object Data;
+    [Connection]$source = new-Object Connection;
+    $source.Name = "SourceConnection";
+    $source.Value = "Server=localhost;Database=dbImport;Trusted_Connection=yes";
+    $configData.Connections.Add($source);
+    [Connection]$target = new-Object Connection;
+    $target.Name = "TargetConnection";
+    $target.Value = "Server=localhost;Database=dbImport;Trusted_Connection=yes";
+    $configData.Connections.Add($target);
+    [BackupAndRestoreData]::Serialize($configData, $configFile);
     # Get configuration data.
-    [Data]$data = [BackupAndRestoreData]::GetSettings($configFile);
-    $sourceConnection =  [Enumerable]::First($data.Connections, [Func[object,bool]]{ param($x) $x.Name -eq "SourceConnection" }).Value;
-    $connections = $data.Connections;
-    $items = $data.Items;
+    $sourceConnection =  [Enumerable]::First($configData.Connections, [Func[object,bool]]{ param($x) $x.Name -eq "SourceConnection" }).Value;
+    $connections = $configData.Connections;
+    $items = $configData.Items;
     $items.Clear();
     # Write configuration.
     $schemas = [BackupAndRestoreData]::GetSchemas($sourceConnection);
@@ -313,7 +382,6 @@ function CreateConfiguration
         }
     }
     # Save setting file.
-    [string]$global:configFile = "$scriptFile.$name.xml";
     [BackupAndRestoreData]::SetSettings($configFile, $connections, $items);
 }
 # ----------------------------------------------------------------------------
@@ -332,8 +400,10 @@ function ShowConfigurationMenu
     {
         $global:configFile = $null;
         $global:configName = $null;
+        $global:configData = $null;
+        return;
     }
-    elseif ($files.Count -eq 1)
+    if ($files.Count -eq 1)
     {
         $global:configFile = $files[0].FullName;
         $global:configName = [Path]::GetFileNameWithoutExtension($configFile).Substring($scriptFile.Name.Length + 1);
@@ -354,19 +424,13 @@ function ShowConfigurationMenu
         # If wrong choice then...
         if ($keyIndex -eq -1)
         {
-            $global:configFile = $files[$keyIndex].FullName;
-            $global:configName = [Path]::GetFileNameWithoutExtension($configFile).Substring($scriptFile.Name.Length + 1);
-            Write-Host "Config: $configFile";
             # Exit application.
-            pause;
             exit;
         }
-        else
-        {
-            $global:configFile = $files[$keyIndex].FullName;
-            $global:configName = [Path]::GetFileNameWithoutExtension($configFile).Substring($scriptFile.Name.Length + 1);
-        }
+        $global:configFile = $files[$keyIndex].FullName;
+        $global:configName = [Path]::GetFileNameWithoutExtension($configFile).Substring($scriptFile.Name.Length + 1);
     }
+    $global:configData = [BackupAndRestoreData]::GetSettings($configFile);
 }
 # ----------------------------------------------------------------------------
 function ShowImportExportMenu
@@ -378,13 +442,11 @@ function ShowImportExportMenu
         Write-Host;
         if ($null -ne $configFile)
         {
-
-            [Data]$data = [BackupAndRestoreData]::GetSettings($configFile);
-            $sourceItem =  [Enumerable]::FirstOrDefault($data.Connections, [Func[object,bool]]{ param($x) $x.Name -eq "SourceConnection" }).Value;
+            $sourceItem = GetConnection("SourceConnection");
             if ($null -ne $sourceItem){
                 $sourceBuilder = New-Object System.Data.SqlClient.SqlConnectionStringBuilder $sourceItem;
             }
-            $targetItem =  [Enumerable]::FirstOrDefault($data.Connections, [Func[object,bool]]{ param($x) $x.Name -eq "TargetConnection" }).Value;
+            $targetItem =  GetConnection("TargetConnection");
             if ($null -ne $targetItem){
                 $targetBuilder = New-Object System.Data.SqlClient.SqlConnectionStringBuilder $targetItem;
             }
@@ -394,8 +456,9 @@ function ShowImportExportMenu
                 Write-Host "  Source Server: $($sourceBuilder.Server), Database: $($sourceBuilder.Database)";
                 Write-Host;
                 Write-Host "    1 - Export Schema";
-                Write-Host "    2 - Export Data (CSV)";
-                Write-Host "    3 - Export Data (DAT)";
+                Write-Host "    2 - Export Data (DAT)";
+                Write-Host "    3 - Export Data (CSV)";
+                Write-Host "    4 - Export Data (CSV) with Headers";
                 #Write-Host "    4 - Export Data (XML)";
             }
             if ("$($targetBuilder.Server)" -ne ""){
@@ -403,8 +466,8 @@ function ShowImportExportMenu
                 Write-Host "  Target Server: $($targetBuilder.Server), Database: $($targetBuilder.Database)";
                 Write-Host;
                 Write-Host "    5 - Import Schema";
-                Write-Host "    6 - Import Data (CSV)";
-                Write-Host "    7 - Import Data (DAT)";
+                Write-Host "    6 - Import Data (DAT)";
+                Write-Host "    7 - Import Data (CSV)";
                 #Write-Host "    8 - Import Data (XML)";
             }
         }
@@ -418,12 +481,14 @@ function ShowImportExportMenu
         Write-Host;
         # Options:
         IF ("${m}" -eq "1") { ExportDataOrSchema "Schema"; };
-        IF ("${m}" -eq "2") { ExportDataOrSchema "Data" "csv"; };
-        IF ("${m}" -eq "3") { ExportDataOrSchema "Data" "dat"; };
+        IF ("${m}" -eq "2") { ExportDataOrSchema "Data" "dat"; };
+        IF ("${m}" -eq "3") { ExportDataOrSchema "Data" "csv"; };
+        IF ("${m}" -eq "4") { ExportDataOrSchema "Data" "csv2"; };
         #IF ("${m}" -eq "4") { ExportDataOrSchema "Data" "xml"; };
+        Write-Host;
         IF ("${m}" -eq "5") { ImportDataOrSchema "Schema"; };
-        IF ("${m}" -eq "6") { ImportDataOrSchema "Data" "csv"; };
-        IF ("${m}" -eq "7") { ImportDataOrSchema "Data" "dat"; };
+        IF ("${m}" -eq "6") { ImportDataOrSchema "Data" "dat"; };
+        IF ("${m}" -eq "7") { ImportDataOrSchema "Data" "csv"; };
         #IF ("${m}" -eq "8") { ImportDataOrSchema "Data" "xml"; };
         IF ("${m}" -eq "C") { CreateConfiguration; };
         # If option was choosen.
@@ -440,6 +505,7 @@ function ShowImportExportMenu
 ConfigureSettings;
 ConfigureTools;
 LoadCodeBehind;
+ShowConfigurationMenu;
 # ----------------------------------------------------------------------------
 #pause;
 # Show certificate menu.
@@ -449,8 +515,8 @@ ShowImportExportMenu;
 # SIG # Begin signature block
 # MIIpGgYJKoZIhvcNAQcCoIIpCzCCKQcCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCA1tYAGGWS0otgw
-# M2pmO5KYUua7JsyxSEC8iF58TAaw5qCCEYUwggWBMIIEaaADAgECAhA5ckQ6+SK3
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAdG9f4qwDpsbUq
+# zUBEPCFkG1ha6W9TwQazcVsUbYDNx6CCEYUwggWBMIIEaaADAgECAhA5ckQ6+SK3
 # UdfTbBDdMTWVMA0GCSqGSIb3DQEBDAUAMHsxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 # DBJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcMB1NhbGZvcmQxGjAYBgNVBAoM
 # EUNvbW9kbyBDQSBMaW1pdGVkMSEwHwYDVQQDDBhBQUEgQ2VydGlmaWNhdGUgU2Vy
@@ -548,25 +614,25 @@ ShowImportExportMenu;
 # VQQKEwhHb0dldFNTTDEkMCIGA1UEAxMbR29HZXRTU0wgUlNBIENvZGVzaWduaW5n
 # IENBAhBsx6KNOm/TOezkv1NYA7UWMA0GCWCGSAFlAwQCAQUAoIHQMBkGCSqGSIb3
 # DQEJAzEMBgorBgEEAYI3AgEEMBwGCisGAQQBgjcCAQsxDjAMBgorBgEEAYI3AgEV
-# MC8GCSqGSIb3DQEJBDEiBCDk9K4UWMHJVKVQBsWCchBZZX/Sc3guvpYkXRR1gNXU
-# KTBkBgorBgEEAYI3AgEMMVYwVKA4gDYASgBvAGMAeQBzAC4AYwBvAG0AIABQAG8A
+# MC8GCSqGSIb3DQEJBDEiBCCDC0rRr16an0MDuhEVZSE7219gjHhgIUHozxOD5EAK
+# nTBkBgorBgEEAYI3AgEMMVYwVKA4gDYASgBvAGMAeQBzAC4AYwBvAG0AIABQAG8A
 # dwBlAHIAUwBoAGUAbABsACAAUwBjAHIAaQBwAHShGIAWaHR0cHM6Ly93d3cuam9j
-# eXMuY29tIDANBgkqhkiG9w0BAQEFAASCAgBCXSFgGcPEeGor7qV39udnK4WR4Lkg
-# enUM3lGtV2l7GugYiUXTiLN/kcNrTnPHL4v2B8PSx41ZCyxUmPje3pkbWrGjqtLh
-# IH6JWNHYwi8F3K+Gx+FpetcOwGTJj8jz3dOWDFJMg6udCP7MElOPSofnHrzpumnE
-# Bh9Xr0kwCwQzJcVWItfS5JiOt7PBMc/0fmF4cGsKLwkvxlj59/5Xk99IxpBRkswr
-# PJV0pwsecwLVUj7o7/wOohV79lzrD/BFuhxrPq606BwMHGD/T4Dta8bKYd8btK/m
-# sn8tZ2nTXZG3+OPM/HaoNPM4dwUy2EsH6obDCsSqHksARBmKl3egQD/2PFNPqkGj
-# p0mn9DpHcVzZFHCnrwLu9gOfG84cbQg+jj+RGFihV0bTsLBnuGE3m7Mbm2DQWD/3
-# fWf19ACYh6qIUDLEB/w8tNxSzPt8poAFwJVmIcR6X9u0dW2jMxD/6zFW4fUSzSAM
-# ffHfBkydmxOCd/3N9hkl6ZO/w7/AGMjAchLft5wq+SpkV/1DdWXDATR9hhBG1Zgq
-# oN1NNSI6zL4p206F80HoQHF6ngSC7Bq/LLq//m2F09NUAKUFp4P7vBR69u/vcYWf
-# oRaliyxTIrYh+uzrS52uRhEYSaZ7xPXqIk3i4s4ZRAjhAsUB424EglHzRALwfXt1
-# sjnSA9YRgXisP6GCE4AwghN8BgorBgEEAYI3AwMBMYITbDCCE2gGCSqGSIb3DQEH
+# eXMuY29tIDANBgkqhkiG9w0BAQEFAASCAgCMq5Qd2yWMZSljoM37YKXrLKzyopVI
+# QBJIWHSGIDqMkcASZ1zS6msMXpmvmSc1v7MYVoRYOmmkvR758pUGw62x/tfzKMF2
+# 5G1L0PCIMmf3REaleXqal7V1B9wDXLoYzGmP0C5BxmZ4nAkWNk+dN6pUkLzlF0hi
+# pI70lLwU7hQmvFy2LF7qlvH2szXgG6PKrQE5hOY5bmhWcHT5ZLKgw2LrWVy+QRLX
+# TbtpsofE1EmGGUYni4r8dxrBuzMjx/KVPJAgWYuYZVDKdAe3MwN0ZL5yLhIq18Ph
+# WtGAA/JSyJ20v/8uD4sn7C7/HHcRFLYZGQ3aZepXnkkwF7xjWVVt/jXd7Ji3zn9Z
+# CBjNwau8pNhsO1z+rLQYHss3BZCn36wQJ8voYW/wDeX9KPKmupXy0/ZvdneT/FXn
+# 7lCS4rFPf+q4ViNju2iHNmgCpcAIQLA+1LrokgY6o4bh4WjDtgLKZenwiDtsXQbz
+# mDf2KkMZM1EOHeDlYVOg8tB80FBfyjKI3ho3iD9j8rmTgHFxPmZZrW6nFrMTEEV5
+# yzIsWNbNUkwLwX3kpNEpHwfrSFE/QT21UHJszksXGfGPNg2i1EwpJfhG4x0jL02S
+# 0lRf4sYphJpmdnPElVGsTFqYFHuUF40l/a8HLt7MRJPqKdSj3H3Vxa3ASwxUGndJ
+# G3eVSHLBLwCQ16GCE4AwghN8BgorBgEEAYI3AwMBMYITbDCCE2gGCSqGSIb3DQEH
 # AqCCE1kwghNVAgEDMQ8wDQYJYIZIAWUDBAICBQAwggENBgsqhkiG9w0BCRABBKCB
-# /QSB+jCB9wIBAQYKKwYBBAGyMQIBATAxMA0GCWCGSAFlAwQCAQUABCBAYgcZFEEO
-# LrVXYqiS16ZR76FPRn9g6TuCaAYMK+EA5AIVAOSfRSPPbgCVNN6VdBTS/b+chps8
-# GA8yMDIxMDQwMTE1MzMzNlqggYqkgYcwgYQxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+# /QSB+jCB9wIBAQYKKwYBBAGyMQIBATAxMA0GCWCGSAFlAwQCAQUABCDS0VKZtsnz
+# wilVpm1+dNk+WfmrgGuT50aqhhT7MrnkSQIVAK8F+fv8jGFhpPQYpf5Hb13Cp9mb
+# GA8yMDIxMDQxOTA5MjU0M1qggYqkgYcwgYQxCzAJBgNVBAYTAkdCMRswGQYDVQQI
 # ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGDAWBgNVBAoT
 # D1NlY3RpZ28gTGltaXRlZDEsMCoGA1UEAwwjU2VjdGlnbyBSU0EgVGltZSBTdGFt
 # cGluZyBTaWduZXIgIzKggg37MIIHBzCCBO+gAwIBAgIRAIx3oACP9NGwxj2fOkiD
@@ -648,23 +714,23 @@ ShowImportExportMenu;
 # Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1p
 # dGVkMSUwIwYDVQQDExxTZWN0aWdvIFJTQSBUaW1lIFN0YW1waW5nIENBAhEAjHeg
 # AI/00bDGPZ86SIONazANBglghkgBZQMEAgIFAKCCAWswGgYJKoZIhvcNAQkDMQ0G
-# CyqGSIb3DQEJEAEEMBwGCSqGSIb3DQEJBTEPFw0yMTA0MDExNTMzMzZaMD8GCSqG
-# SIb3DQEJBDEyBDBTtgo40g8p1Jdcf5migrYigi5S1pDZHYkkS1STsNe5B/bfLg4Z
-# jplp4BBWFaxHDpgwge0GCyqGSIb3DQEJEAIMMYHdMIHaMIHXMBYEFJURNxAdiC8x
+# CyqGSIb3DQEJEAEEMBwGCSqGSIb3DQEJBTEPFw0yMTA0MTkwOTI1NDNaMD8GCSqG
+# SIb3DQEJBDEyBDAyU8tGiT3Xu5vxFuK3QZ7vmvxhWih4ZoMvDq/uc/Pfw8xeKbg1
+# piX0QzoKZsfhJccwge0GCyqGSIb3DQEJEAIMMYHdMIHaMIHXMBYEFJURNxAdiC8x
 # vVE/lJraTGitjAj1MIG8BBQC1luV4oNwwVcAlfqI+SPdk3+tjzCBozCBjqSBizCB
 # iDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0pl
 # cnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAsBgNV
 # BAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkCEDAPb6zd
-# Zph0fKlGNqd4LbkwDQYJKoZIhvcNAQEBBQAEggIAXgYJkKsnJiG0TIxoX2PPhbgP
-# NgDoMxiFQ4TMFCeBXCV67uJRSPTGuA+YXV6wg3eRmxu1YbCspNSwpxT4A8b9vz7S
-# fEgJJl0K6Q+8uzBk5qEAu3TWOTHPaLzwg8qZUCK2BcZ7AGodsdVoRlSckjZL2qpz
-# JrZpTSADuB5QhFRZq8eMYi0Ix+sA1RuqQGIc/ne0YToOdBf9c45CaU5zHarF3HFf
-# iEb3HbSHxROj2QbXN0KgGDcNJZHEBsRYs/ks4cLIzdhTk6UqcmhXd0S7YVwfSZts
-# kidV/uLyljKvFKLZxLaIGX7nlVkISGstkubVjlOICm304jWLqzBwXDr1K2Zrp4X6
-# kWyBkvSFFKUhbap1iftb3zFkc1NtzM+xt/tQZKpdJjH9Q++pMeeboOLn8+bffKMz
-# mj+1mH7VW4j16sXsx+EP/EDBd9iEUzr04YWBW/lLM5VYcB4ctCsgOS3xLT7dmfj3
-# 1kfqf965ql4K7Dl2Ntn0lQHFo8CXMu6il2KpdpuXyPKzdYfF3NYztmVqqQlpzna0
-# imBGFE9u+LMBQRlvplLCY4KamN1kTLj14LISP5X9wp9qrmsKP3DwolvNz+AVwy9Y
-# lA9ZyAMrXmqJAg1Ygo6xnRcNu4tAE6FmEmBQmTZVQXq6XIEtR8yBHt6YWtlI9U1n
-# 1XgNF47Zi95+pqx98Yg=
+# Zph0fKlGNqd4LbkwDQYJKoZIhvcNAQEBBQAEggIAhYY5mKOyA5zfWWCTkOPmoeQ+
+# 65CyROcwOrccKEcmtvv8K/dRryyNl8CRpGWWsWcaV/PQRkrt0HVfCWu8Sz2vnWzm
+# zodt8VqpmhGDX0RHcg13ZATFge2eIpbSkQwOSU3mQ3qxXu/+IrVt7qOHgC4fmwYd
+# NFgF1fBCquukgaVXDxQO+S+IpWxZfFx2yRx0z3N7jpRMUGWAZeiyLsjU+QK6hwhT
+# 9Pm2kPRxoyC51CIvvB/5kwWy3hCC+su1CNqqaM+2063KBZATB80e9HZa8rWLltaY
+# n6NmOjPLDGNR+bbfy3ZSEb7Dm9cCtE50rfEgzJjgOXVuk3P5N1FTm/5vKvkAZO7/
+# eu+R4mqnq0oUnu/0bR0iAaB0pt84V8W5Modj6nNFjlJ722C+usjQf2uZ1Yh7dCJa
+# mYPjqrNPzapMhQSuzNwDviHiBzYnQHxJJLO+5zVZmDxb0w6c2/WcEwXqMszOyK8R
+# 7NKtLeMMCsfvC+VBU/zBiavr7OR3IWUBDRdKPlUZiJsL9jVGsyPt+qIZfIz3gdXr
+# fj3V+qY/2wW0xSuipb1o2aOvKUqu9kDJcE5nQXZb+S3E2qblbl6OQjx1XmDnGc9W
+# Iywz7XtZsZYQLIoNJ3k7igKO5/sPHo1O+0xgMmr0s/4ZYutUDw4O1W7NXbAL2bLo
+# 6RfslUlX2Xn3BttkvSk=
 # SIG # End signature block

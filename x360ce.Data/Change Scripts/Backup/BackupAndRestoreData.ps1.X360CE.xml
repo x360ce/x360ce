@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Data xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Options>
+		<Option Name="UseVarChar" Value="False" />
+		<Option Name="Compress" Value="False" />
+		<Option Name="ANSI_PADDING" Value="" />
+		<Option Name="Return_Null" Value="(password)" />
+	</Options>
 	<Connections>
 		<Connection Name="SourceConnection" Value="Server=localhost;Database=x360ce;Trusted_Connection=yes" />
 		<Connection Name="TargetConnection" Value="Server=localhost;Database=dbImport;Trusted_Connection=yes" />

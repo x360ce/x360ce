@@ -115,14 +115,21 @@ namespace x360ce.App.Controls
 			var url = o.InternetDatabaseUrl;
 			var pql = new Uri(url).PathAndQuery.Length;
 			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowReset=0";
-			var form = new Forms.WebBrowserForm();
-			form.Size = new System.Drawing.Size(400, 500);
-			form.Text = "Create Login";
-			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			OpenWebWindow("Create Login", navigateUrl);
+		}
+
+		void OpenWebWindow(string title, string navigateUrl)
+		{
+			var form = new Forms.WebBrowserWindow();
+			form.Owner = MainWindow.Current;
+			form.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+			form.Width = 400;
+			form.Height = 500;
+			form.Title = title;
 			form.NavigateUrl = navigateUrl;
 			ControlsHelper.CheckTopMost(form);
 			form.ShowDialog();
-			form.Dispose();
+
 		}
 
 		private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -131,14 +138,7 @@ namespace x360ce.App.Controls
 			var url = o.InternetDatabaseUrl;
 			var pql = new Uri(url).PathAndQuery.Length;
 			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowCreate=0";
-			var form = new Forms.WebBrowserForm();
-			form.Size = new System.Drawing.Size(400, 300);
-			form.Text = "Reset Login";
-			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			form.NavigateUrl = navigateUrl;
-			ControlsHelper.CheckTopMost(form);
-			form.ShowDialog();
-			form.Dispose();
+			OpenWebWindow("Reset Login", navigateUrl);
 		}
 
 	}

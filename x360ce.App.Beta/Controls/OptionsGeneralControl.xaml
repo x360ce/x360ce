@@ -134,12 +134,6 @@
 					</StackPanel>
 				</TabItem>
 			</TabControl>
-
-			<Button
-				Name="DeveloperToolsButton"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Bottom"
-				Content="Developer Tools..." />
 		</WrapPanel>
 	</Grid>
 </UserControl>

@@ -99,6 +99,37 @@ public class BackupAndRestoreData
 		return items;
 	}
 
+	public static List<Item> GetColumns(string connectionString, string schemaName, string tableName)
+	{
+		var sql = "";
+		sql += "SELECT c.[name], [type] = ut.[name]\r\n";
+		sql += "FROM sys.columns c\r\n";
+		sql += "INNER JOIN sys.tables t ON t.[object_id] = c.[object_id]\r\n";
+		sql += "INNER JOIN sys.systypes ut ON ut.xusertype = c.user_type_id\r\n";
+		sql += "WHERE SCHEMA_NAME(t.[schema_id]) = @schema_name AND OBJECT_NAME(c.[object_id]) = @table_name\r\n";
+		sql += "ORDER BY c.column_id";
+		// Get available columns.
+		var cmd = new SqlCommand(sql);
+		cmd.CommandType = CommandType.Text;
+		cmd.Parameters.AddWithValue("@schema_name", schemaName);
+		cmd.Parameters.AddWithValue("@table_name", tableName);
+		var table = ExecuteDataTable(connectionString, cmd);
+		var items = new List<Item>();
+		var rows = table.Rows.Cast<DataRow>();
+		foreach (var row in rows)
+		{
+			var item = new Item()
+			{
+				Schema = schemaName,
+				Table = tableName,
+				Column = (string)row["name"],
+				Type = (string)row["type"],
+			};
+			items.Add(item);
+		}
+		return items;
+	}
+
 	public static List<Item> GetTables(string connectionString, string schemaName)
 	{
 		// Get available schemas.
@@ -174,20 +205,14 @@ public class BackupAndRestoreData
 		var sb = new StringBuilder("");
 		var database = server.Databases[builder.InitialCatalog];
 		var table = database.Tables[tableName, schemaName];
-		if (table == null){
-        	Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine("    ...table not found");
-        	Console.ResetColor();
-			return null;
-		}
 		// Script DROP.
 		var options = new Microsoft.SqlServer.Management.Smo.ScriptingOptions();
 		// If IncludeIfNotExists = true then procedure text will be generated
 		// through "EXEC dbo.sp_executesql @statement = N'".
 		options.IncludeIfNotExists = true;
 		options.ScriptDrops = true;
-		var dropStrings = table.Script(options);
-		foreach (var s in dropStrings)
+		var strings = table.Script(options);
+		foreach (var s in strings)
 			sb.AppendLine(s);
 		sb.AppendLine();
 		// Script CREATE.
@@ -202,8 +227,8 @@ public class BackupAndRestoreData
 		//options.DriIndexes = false;
 		//options.FileName = fileInfo.FullName;
 		//options.Permissions = true;
-		var createStrings = table.Script(options);
-		foreach (var s in createStrings)
+		strings = table.Script(options);
+		foreach (var s in strings)
 			sb.AppendLine(s);
 		return sb.ToString();
 	}
@@ -214,17 +239,31 @@ public class BackupAndRestoreData
 public class Data
 {
 
-	public Data()
+	public void Reset()
 	{
+		Options = new List<Option>();
+		Options.Add(new Option(){ Name="UseVarChar", Value="False"});
+		Options.Add(new Option(){ Name="Compress", Value="True"});
+		Options.Add(new Option(){ Name="ANSI_PADDING", Value="OFF"});
 		Connections = new List<Connection>();
 		Items = new List<Item>();
 	}
+
+	[XmlArrayItem("Option")]
+	public List<Option> Options { get; set; }
 
 	[XmlArrayItem("Connection")]
 	public List<Connection> Connections { get; set; }
 
 	[XmlArrayItem("Item")]
 	public List<Item> Items { get; set; }
+
+}
+
+public class Option
+{
+	[XmlAttribute] public string Name { get; set; }
+	[XmlAttribute] public string Value { get; set; }
 }
 
 public class Connection
@@ -240,5 +279,5 @@ public class Item
 	[XmlAttribute] public string Table { get; set; }
 	[XmlAttribute] public string Column { get; set; }
 	[XmlAttribute] public string Query { get; set; }
+	[XmlAttribute] public string Type { get; set; }
 }
-

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using x360ce.App.Forms;
 
 namespace x360ce.App.Controls
 {
@@ -180,17 +179,6 @@ namespace x360ce.App.Controls
 		{
 			MainWindow.Current.MainBodyPanel.ShowDevicesTab(ShowDevicesTabCheckBox.IsChecked ?? false);
 		}
-
-		DeveloperToolsForm _ToolsForm;
-
-		private void DeveloperToolsButton_Click(object sender, EventArgs e)
-		{
-			if (_ToolsForm == null)
-				_ToolsForm = new DeveloperToolsForm();
-			_ToolsForm.ShowPanel();
-		}
-
-
 
 	}
 }

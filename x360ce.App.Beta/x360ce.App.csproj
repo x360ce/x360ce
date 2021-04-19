@@ -367,12 +367,6 @@
     <Compile Include="Controls\PadListControl.xaml.cs">
       <DependentUpon>PadListControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\_TempWIN2WPF.com.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Controls\_TempWIN2WPF.com.Designer.cs">
-      <DependentUpon>_TempWIN2WPF.com.cs</DependentUpon>
-    </Compile>
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\BoolToImageSourceConverter.cs" />
     <Compile Include="Converters\ChecksumToIdConverter.cs" />
@@ -382,41 +376,20 @@
     <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Converters\PadSettingToEnumConverter.cs" />
     <Compile Include="Converters\PadSettingToTextConverter.cs" />
-    <Compile Include="Forms\BaseFormWithHeader.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\BaseFormWithHeader.Designer.cs">
-      <DependentUpon>BaseFormWithHeader.cs</DependentUpon>
-    </Compile>
     <Compile Include="Controls\BaseWithHeaderControl.xaml.cs">
       <DependentUpon>BaseWithHeaderControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\DeveloperToolsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DeveloperToolsForm.Designer.cs">
-      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\ErrorReportWindow.xaml.cs">
       <DependentUpon>ErrorReportWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\HardwareForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\HardwareForm.Designer.cs">
-      <DependentUpon>HardwareForm.cs</DependentUpon>
+    <Compile Include="Forms\HardwareWindow.xaml.cs">
+      <DependentUpon>HardwareWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\LoadPresetsWindow.xaml.cs">
       <DependentUpon>LoadPresetsWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\MapDeviceToControllerForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\MapDeviceToControllerForm.Designer.cs">
-      <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LoadingCircle.cs">
       <SubType>Component</SubType>
@@ -425,23 +398,14 @@
       <DependentUpon>LoadingCircle.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\LoadingCircleToolStripMenuItem.cs" />
-    <Compile Include="Forms\NewDeviceForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\NewDeviceForm.Designer.cs">
-      <DependentUpon>NewDeviceForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Forms\UserDevicesWindow.xaml.cs">
       <DependentUpon>UserDevicesWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Forms\WebBrowserForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\WebBrowserForm.Designer.cs">
-      <DependentUpon>WebBrowserForm.cs</DependentUpon>
+    <Compile Include="Forms\WebBrowserWindow.xaml.cs">
+      <DependentUpon>WebBrowserWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Global.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -490,29 +454,6 @@
     <Compile Include="ViGEm\Client\ViGEmTarget.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_ERROR.cs" />
     <Compile Include="ViGEm\HidGuardianHelper.cs" />
-    <EmbeddedResource Include="Controls\_TempWIN2WPF.com.resx">
-      <DependentUpon>_TempWIN2WPF.com.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BaseFormWithHeader.resx">
-      <DependentUpon>BaseFormWithHeader.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DeveloperToolsForm.resx">
-      <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\HardwareForm.resx">
-      <DependentUpon>HardwareForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MapDeviceToControllerForm.resx">
-      <DependentUpon>MapDeviceToControllerForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\NewDeviceForm.resx">
-      <DependentUpon>NewDeviceForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\WebBrowserForm.resx">
-      <DependentUpon>WebBrowserForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
@@ -602,15 +543,6 @@
   <ItemGroup>
     <EmbeddedResource Include="app.ico" />
     <CodeAnalysisDictionary Include="CodeAnalaysisDictionary.xml" />
-    <Content Include="Forms\app.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Error_32x32.png" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Information.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Information_32x32.png" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
-    <Content Include="Forms\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
     <EmbeddedResource Include="Resources\Xceed\Xceed.Wpf.Toolkit.License.txt" />
     <EmbeddedResource Include="Resources\Xceed\Xceed.Wpf.AvalonDock.dll" />
     <EmbeddedResource Include="Resources\Xceed\Xceed.Wpf.AvalonDock.Themes.Aero.dll" />
@@ -895,6 +827,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Forms\HardwareWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Forms\LoadPresetsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -906,6 +842,10 @@
     <Page Include="Forms\UserDevicesWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Forms\WebBrowserWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainBodyControl.xaml">
       <SubType>Designer</SubType>

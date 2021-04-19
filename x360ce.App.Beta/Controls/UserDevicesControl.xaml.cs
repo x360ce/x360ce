@@ -211,11 +211,11 @@ namespace x360ce.App.Controls
 
 		private void HardwareButton_Click(object sender, RoutedEventArgs e)
 		{
-			var form = new HardwareForm();
-			form.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			var form = new HardwareWindow();
+			form.Owner = MainWindow.Current;
+			form.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 			ControlsHelper.CheckTopMost(form);
 			form.ShowDialog();
-			form.Dispose();
 		}
 
 		private void AddDemoDeviceButton_Click(object sender, RoutedEventArgs e)

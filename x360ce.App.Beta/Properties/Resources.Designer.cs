@@ -643,46 +643,6 @@ namespace x360ce.App.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap MessageBoxIcon_Error_32x32 {
-            get {
-                object obj = ResourceManager.GetObject("MessageBoxIcon_Error_32x32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MessageBoxIcon_Information_32x32 {
-            get {
-                object obj = ResourceManager.GetObject("MessageBoxIcon_Information_32x32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MessageBoxIcon_Question_32x32 {
-            get {
-                object obj = ResourceManager.GetObject("MessageBoxIcon_Question_32x32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap MessageBoxIcon_Warning_32x32 {
-            get {
-                object obj = ResourceManager.GetObject("MessageBoxIcon_Warning_32x32", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap ok_16x16 {
             get {
                 object obj = ResourceManager.GetObject("ok_16x16", resourceCulture);
