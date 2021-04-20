@@ -13,6 +13,10 @@ namespace x360ce.App
 	public static partial class Global
 	{
 
+		public static Service.LocalService _LocalService;
+		public static Service.TrayManager _TrayManager;
+		public static MainWindow _MainWindow;
+
 		public static CloudClient CloudClient;
 
 		public static void InitializeCloudClient()
@@ -150,8 +154,6 @@ namespace x360ce.App
 		/// Update Form or Control from DInput and XInput states.
 		/// </summary>
 		public static event EventHandler UpdateControlFromStates;
-
-		
 
 		#endregion
 

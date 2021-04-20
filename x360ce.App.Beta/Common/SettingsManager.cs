@@ -536,7 +536,7 @@ namespace x360ce.App
 		static void control_MouseLeave(object sender, EventArgs e)
 		{
 			//Console.WriteLine(string.Format("Mouse Leave: {0}", sender));
-			MainWindow.Current.MainPanel._bwm.SetBody(System.Windows.MessageBoxImage.None);
+			Global._MainWindow.MainPanel._bwm.SetBody(System.Windows.MessageBoxImage.None);
 		}
 
 		static void control_MouseEnter(object sender, EventArgs e)
@@ -546,7 +546,7 @@ namespace x360ce.App
 			var item = Current.SettingsMap.FirstOrDefault(x => x.Control == control);
 			if (item != null && !string.IsNullOrEmpty(item.Description))
 			{
-				MainWindow.Current.MainPanel._bwm.SetBodyInfo(item.Description);
+				Global._MainWindow.MainPanel._bwm.SetBodyInfo(item.Description);
 			}
 		}
 

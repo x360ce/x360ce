@@ -8,7 +8,8 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="120"
 	d:DesignWidth="640"
-	mc:Ignorable="d" Loaded="UserControl_Loaded">
+	Loaded="UserControl_Loaded"
+	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>

@@ -192,7 +192,7 @@ namespace x360ce.App.Controls
 			if (game == null)
 				return;
 			// Show form which allows to select device.
-			var selectedUserDevices = MainWindow.Current.ShowDeviceForm();
+			var selectedUserDevices = Global._MainWindow.ShowDeviceForm();
 			// Return if no devices were selected.
 			if (selectedUserDevices == null)
 				return;

@@ -1,13 +1,9 @@
 ﻿using JocysCom.ClassLibrary.Controls;
-using JocysCom.ClassLibrary.Runtime;
-using JocysCom.ClassLibrary.Win32;
 using SharpDX.XInput;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Windows;
 using x360ce.App.Controls;
 using x360ce.App.Issues;
@@ -27,36 +23,13 @@ namespace x360ce.App
 			// Disable some functionality in Visual Studio Interface design mode.
 			if (!ControlsHelper.IsDesignMode(this))
 			{
-				// Initialize exception handlers
-				LogHelper.Current.LogExceptions = true;
-				LogHelper.Current.LogToFile = true;
-				LogHelper.Current.LogFirstChanceExceptions = false;
-				LogHelper.Current.InitExceptionHandlers(EngineHelper.AppDataPath + "\\Errors");
-				LogHelper.Current.WritingException += ErrorsHelper.LogHelper_Current_WritingException;
-				// Fix access rights to configuration folder.
-				var di = new DirectoryInfo(EngineHelper.AppDataPath);
-				// Create configuration folder if not exists.
-				if (!di.Exists)
-					di.Create();
-				var rights = FileSystemRights.Modify;
-				var users = new SecurityIdentifier(WellKnownSidType.BuiltinUsersSid, null);
-				// Check if users in non elevated mode have rights to modify the file.
-				var hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(di.FullName, rights, users, false);
-				if (!hasRights && WinAPI.IsElevated())
-				{
-					// Allow users to modify file when in non elevated mode.
-					JocysCom.ClassLibrary.Security.PermissionHelper.SetRights(di.FullName, rights, users, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit);
-					hasRights = JocysCom.ClassLibrary.Security.PermissionHelper.HasRights(di.FullName, rights, users, false);
-				}
 				PreviewKeyDown += MainWindow_PreviewKeyDown;
 				Closing += MainWindow_Closing;
 			}
-
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			StartHelper.Initialize();
-			InitMinimizeAndTopMost();
 			InitiInterfaceUpdate();
 			// Check if app version changed.
 			var o = SettingsManager.Options;
@@ -90,8 +63,6 @@ namespace x360ce.App
 
 		private readonly bool AppVersionChanged;
 
-		public static MainWindow Current { get; set; }
-
 		/// <summary>
 		/// Settings timer will be used to delay applying settings, which will heavy load application, as long as user is changing them.
 		/// </summary>
@@ -104,13 +75,12 @@ namespace x360ce.App
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			ControlsHelper.InitInvokeContext();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			StartHelper.OnClose += (sender1, e1)
 				=> Close();
 			StartHelper.OnRestore += (sender1, e1)
-				=> RestoreFromTray(true);
+				=> Global._TrayManager.RestoreFromTray(true);
 			AppHelper.InitializeHidGuardian();
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
 			Global.InitDHelperHelper();
@@ -731,11 +701,6 @@ namespace x360ce.App
 				Global.DHelper.Dispose();
 		}
 
-		private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			Close();
-		}
-
 		#region ■ Update from DHelper
 
 		private readonly object LockFormEvents = new object();
@@ -748,7 +713,7 @@ namespace x360ce.App
 		private bool FormEventsUpdateCompleted;
 		private bool FormEventsFrequencyUpdated;
 
-		private void EnableFormUpdates(bool enable)
+		public void EnableFormUpdates(bool enable)
 		{
 			lock (LockFormEvents)
 			{

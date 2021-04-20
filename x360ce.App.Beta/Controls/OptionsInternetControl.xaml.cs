@@ -59,7 +59,7 @@ namespace x360ce.App.Controls
 
 		private void CheckUpdatesButton_Click(object sender, RoutedEventArgs e)
 		{
-			MainWindow.Current.ShowUpdateForm();
+			Global._MainWindow.ShowUpdateForm();
 		}
 
 		private void OpenSettingsFolderButton_Click(object sender, RoutedEventArgs e)
@@ -121,7 +121,7 @@ namespace x360ce.App.Controls
 		void OpenWebWindow(string title, string navigateUrl)
 		{
 			var form = new Forms.WebBrowserWindow();
-			form.Owner = MainWindow.Current;
+			form.Owner = Global._MainWindow;
 			form.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 			form.Width = 400;
 			form.Height = 500;

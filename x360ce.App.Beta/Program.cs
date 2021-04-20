@@ -116,17 +116,17 @@ namespace x360ce.App
 
 			app = new App();
 			//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
-			//app.Run(MainWindow.Current);
+			//app.Run(Global._MainWindow);
 			app.InitializeComponent();
 			app.Run();
 
-			//MainWindow.Current.Show();
-			//Application.Run(MainWindow.Current);
+			//Global._MainWindow.Show();
+			//Application.Run(Global._MainWindow);
 
 			/*
 			  
 			  //System.Threading.SynchronizationContext.SetSynchronizationContext(new System.Threading.SynchronizationContext());
-			//MainWindow.Current = new MainWindow();
+			//Global._MainWindow = new MainWindow();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
 				// Close all x360ce apps.
@@ -141,7 +141,7 @@ namespace x360ce.App
 			if (doNotAllowToRun)
 			{
 				// Dispose properly so that the tray icon will be removed.
-				MainWindow.Current.Dispose();
+				Global._MainWindow.Dispose();
 			}
 			else
 			{
@@ -151,21 +151,21 @@ namespace x360ce.App
 					switch (ic.Parameters[arg_WindowState])
 					{
 						case "Maximized":
-							MainWindow.Current.RestoreFromTray();
-							MainWindow.Current.WindowState = System.Windows.WindowState.Maximized;
+							Global._MainWindow.RestoreFromTray();
+							Global._MainWindow.WindowState = System.Windows.WindowState.Maximized;
 							break;
 						case "Minimized":
-							MainWindow.Current.MinimizeToTray(false, o.MinimizeToTray);
+							Global._MainWindow.MinimizeToTray(false, o.MinimizeToTray);
 							break;
 					}
 				}
 				app = new App();
 				//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
-				//app.Run(MainWindow.Current);
+				//app.Run(Global._MainWindow);
 				//app.InitializeComponent();
 				app.Run();
-				//MainWindow.Current.Show();
-				//Application.Run(MainWindow.Current);
+				//Global._MainWindow.Show();
+				//Application.Run(Global._MainWindow);
 			}
 
 			*/
@@ -194,9 +194,9 @@ namespace x360ce.App
 			if (IsClosing)
 				return;
 			ErrorCount++;
-			MainWindow.Current.UpdateTimer.Stop();
-			MainWindow.Current.UpdateStatus("- " + e.Exception.Message);
-			MainWindow.Current.UpdateTimer.Start();
+			Global._MainWindow.UpdateTimer.Stop();
+			Global._MainWindow.UpdateStatus("- " + e.Exception.Message);
+			Global._MainWindow.UpdateTimer.Start();
 		}
 
 		static void OpenSettingsFolder(string path)

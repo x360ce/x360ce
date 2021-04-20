@@ -174,7 +174,7 @@ namespace x360ce.App.DInput
 				{
 					// Note: Getting XInput states are not required in order to do emulation.
 					// Get states only when form is maximized in order to reduce CPU usage.
-					var getXInputStates = SettingsManager.Options.GetXInputStates && MainWindow.Current.FormEventsEnabled;
+					var getXInputStates = SettingsManager.Options.GetXInputStates && Global._MainWindow.FormEventsEnabled;
 					// Best place to unload XInput DLL is at the start, because
 					// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
 					CheckAndUnloadXInputLibrarry(game, getXInputStates);

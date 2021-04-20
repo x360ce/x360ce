@@ -49,7 +49,7 @@ namespace x360ce.App
 				RecordingStarted = DateTime.Now;
 				Recording = true;
 				recordingSnapshot = null;
-				MainWindow.Current.MainPanel.StatusTimerLabel.Content = (CurrentMap?.Code == MapCode.DPad)
+				Global._MainWindow.MainPanel.StatusTimerLabel.Content = (CurrentMap?.Code == MapCode.DPad)
 					 ? "Recording - press any D-Pad button on your direct input device. Press ESC to cancel..."
 					 : "Recording - press button, move axis or slider on your direct input device. Press ESC to cancel...";
 			}

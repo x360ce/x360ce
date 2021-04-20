@@ -187,7 +187,7 @@ namespace x360ce.App
 
 		private void StatusErrorsLabel_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
-			MainWindow.Current.StatusErrorLabel_Click(null, null);
+			Global._MainWindow.StatusErrorLabel_Click(null, null);
 		}
 	}
 }

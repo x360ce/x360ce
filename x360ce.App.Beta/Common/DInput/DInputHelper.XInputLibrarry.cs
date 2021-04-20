@@ -38,7 +38,7 @@ namespace x360ce.App.DInput
 					(emType == EmulationType.Virtual && !getXInputStates) ||
 					// No actual XInput states are required for Library emulation when minimized.
 					// This will also release exclusive lock if another game/application must use it.
-					(emType == EmulationType.Library && !MainWindow.Current.FormEventsEnabled);
+					(emType == EmulationType.Library && !Global._MainWindow.FormEventsEnabled);
 				if (!unload)
 					return;
 				if (!Controller.IsLoaded)
@@ -71,7 +71,7 @@ namespace x360ce.App.DInput
 					return;
 				// No actual XInput states are required for Library emulation when minimized.
 				// This will also release exclusive lock if another game/application must use it.
-				if (emType == EmulationType.Library && !MainWindow.Current.FormEventsEnabled)
+				if (emType == EmulationType.Library && !Global._MainWindow.FormEventsEnabled)
 					return;
 				//MainForm.Current.Save();
 				var e = new DInputEventArgs();

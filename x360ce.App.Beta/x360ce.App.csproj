@@ -178,6 +178,7 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Management.Instrumentation" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
@@ -423,9 +424,6 @@
     <Compile Include="MainControl.xaml.cs">
       <DependentUpon>MainControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainWindow.Tray.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -441,7 +439,9 @@
     <Compile Include="Resources\Icons\Icons_Default.xaml.cs">
       <DependentUpon>Icons_Default.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Service\LocalService.cs" />
     <Compile Include="Service\RemoteService.cs" />
+    <Compile Include="Service\TrayManager.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_TARGET_TYPE.cs" />
     <Compile Include="ViGEm\Client\Enums\XUSB_REPORT.cs" />
     <Compile Include="ViGEm\Client\ViGEmException.cs" />

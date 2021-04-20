@@ -201,7 +201,7 @@ namespace x360ce.App.Controls
 				// Add new one.
 				list.Add(newItem);
 			}
-			MainWindow.Current.MainPanel._bwm.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
+			Global._MainWindow.MainPanel._bwm.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
 			AttachDataSource(list);
 			//JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();
@@ -212,7 +212,7 @@ namespace x360ce.App.Controls
 		private void HardwareButton_Click(object sender, RoutedEventArgs e)
 		{
 			var form = new HardwareWindow();
-			form.Owner = MainWindow.Current;
+			form.Owner = Global._MainWindow;
 			form.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 			ControlsHelper.CheckTopMost(form);
 			form.ShowDialog();

@@ -41,7 +41,7 @@ namespace x360ce.App.Issues
 				// Update current settings file.
 				ControlsHelper.Invoke(() =>
 				{
-					MainWindow.Current.UserProgramsPanel.ListPanel.ProcessExecutable(exes[0]);
+					Global._MainWindow.UserProgramsPanel.ListPanel.ProcessExecutable(exes[0]);
 				});
 			}
 			foreach (var exe in exes)

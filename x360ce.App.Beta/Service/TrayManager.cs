@@ -6,25 +6,28 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 
-namespace x360ce.App
+namespace x360ce.App.Service
 {
-
-	// Configuration lines inside *.*proj file will open this partial class in a code editor.
-	//
-	//		<Compile Include="MainForm.Tray.cs">
-	//			<DependentUpon>MainForm.cs</DependentUpon>
-	//			<SubType>Code</SubType>
-	//		</Compile>
-
-	public partial class MainWindow
+	public partial class TrayManager: IDisposable
 	{
+
+
+		public TrayManager(Window window)
+		{
+			_Window = window;
+		}
+
+		public event EventHandler OnExitClick;
+		public event EventHandler OnWindowSizeChanged;
+
+		Window _Window;
 
 		private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
 		private System.Windows.Forms.ContextMenuStrip TrayContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem OpenApplicationToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
 
-		void InitMinimizeAndTopMost()
+		public void InitMinimizeAndTopMost()
 		{
 			OpenApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			OpenApplicationToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
@@ -34,7 +37,7 @@ namespace x360ce.App
 			ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			ExitToolStripMenuItem.Image = Properties.Resources.exit_16x16;
 			ExitToolStripMenuItem.Text = "Exit";
-			ExitToolStripMenuItem.Click += ExitToolStripMenuItem_Click;
+			ExitToolStripMenuItem.Click += (sender, e) => OnExitClick?.Invoke(sender, e);
 			TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
 			TrayNotifyIcon = new System.Windows.Forms.NotifyIcon();
 			TrayNotifyIcon.ContextMenuStrip = TrayContextMenuStrip;
@@ -47,13 +50,13 @@ namespace x360ce.App
 			TrayNotifyIcon.Icon = new System.Drawing.Icon(ms);
 			TrayNotifyIcon.Visible = true;
 			_hiddenForm.ShowInTaskbar = false;
-			SizeChanged += MainWindow_SizeChanged;
+			_Window.SizeChanged += MainWindow_SizeChanged;
 			TrayNotifyIcon.Click += TrayNotifyIcon_Click;
 			TrayNotifyIcon.DoubleClick += TrayNotifyIcon_DoubleClick;
 			// Run event once to apply settings.
 			MainWindow_SizeChanged(this, null);
 			var o = SettingsManager.Options;
-			Topmost = o.AlwaysOnTop;
+			_Window.Topmost = o.AlwaysOnTop;
 			InfoForm.MonitorEnabled = o.EnableShowFormInfo;
 			// Start monitoring event.
 			o.PropertyChanged += Options_PropertyChanged_Tray;
@@ -68,7 +71,7 @@ namespace x360ce.App
 				case nameof(Options.AlwaysOnTop):
 					ControlsHelper.BeginInvoke(() =>
 					{
-						Topmost = o.AlwaysOnTop;
+						_Window.Topmost = o.AlwaysOnTop;
 					});
 					break;
 				case nameof(Options.StartWithWindows):
@@ -92,19 +95,15 @@ namespace x360ce.App
 			// Track window state changes.
 			lock (windowStateLock)
 			{
-				var newWindowState = WindowState;
+				var newWindowState = _Window.WindowState;
 				if (!oldWindowState.HasValue || oldWindowState.Value != newWindowState)
 				{
 					oldWindowState = newWindowState;
 					// If window was minimized.
 					if (newWindowState == WindowState.Minimized)
-					{
 						MinimizeToTray(false, SettingsManager.Options.MinimizeToTray);
-					}
 				}
-				// Form GUI update is very heavy on CPU.
-				// Enable form GUI update only if form is not minimized.
-				EnableFormUpdates(WindowState != WindowState.Minimized && !Program.IsClosing);
+				OnWindowSizeChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
@@ -147,14 +146,14 @@ namespace x360ce.App
 			if (minimizeToTray)
 			{
 				// Set window style as ToolWindow to avoid its icon in ALT+TAB.
-				if (Owner != _hiddenForm)
-					Owner = _hiddenForm;
+				if (_Window.Owner != _hiddenForm)
+					_Window.Owner = _hiddenForm;
 				// Hide form bar from the TarkBar.
-				if (ShowInTaskbar)
-					ShowInTaskbar = false;
+				if (_Window.ShowInTaskbar)
+					_Window.ShowInTaskbar = false;
 			}
-			if (WindowState != WindowState.Minimized)
-				WindowState = WindowState.Minimized;
+			if (_Window.WindowState != WindowState.Minimized)
+				_Window.WindowState = WindowState.Minimized;
 		}
 
 		/// <summary>
@@ -167,23 +166,23 @@ namespace x360ce.App
 				// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
 				// Windows NT 5.0 and later: An application cannot force a window to the foreground while the user is working with another window.
 				// Instead, SetForegroundWindow will activate the window (see SetActiveWindow) and call theFlashWindowEx function to notify the user.
-				if (WindowState != WindowState.Minimized)
-					WindowState = WindowState.Minimized;
-				Activate();
+				if (_Window.WindowState != WindowState.Minimized)
+					_Window.WindowState = WindowState.Minimized;
+				_Window.Activate();
 			}
 			// Show in task bar before restoring windows state in order to prevent flickering.
-			if (!ShowInTaskbar)
-				ShowInTaskbar = true;
-			if (WindowState != WindowState.Normal)
-				WindowState = WindowState.Normal;
+			if (!_Window.ShowInTaskbar)
+				_Window.ShowInTaskbar = true;
+			if (_Window.WindowState != WindowState.Normal)
+				_Window.WindowState = WindowState.Normal;
 			// Set window style as ToolWindow to show in ALT+TAB.
-			if (Owner != null)
-				Owner = null;
+			if (_Window.Owner != null)
+				_Window.Owner = null;
 			// Bring form to the front.
-			var tm = Topmost;
-			Topmost = true;
-			Topmost = tm;
-			BringIntoView();
+			var tm = _Window.Topmost;
+			_Window.Topmost = true;
+			_Window.Topmost = tm;
+			_Window.BringIntoView();
 		}
 
 		#endregion
@@ -219,6 +218,10 @@ namespace x360ce.App
 
 		#endregion
 
+		public void Dispose()
+		{
+			TrayNotifyIcon.Dispose();
+		}
 
 	}
 }

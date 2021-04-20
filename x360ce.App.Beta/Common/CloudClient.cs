@@ -97,7 +97,7 @@ namespace x360ce.App
 			if (item == null)
 				return;
 			item.Try++;
-			MainWindow.Current.MainPanel._bwm.AddTask(TaskName.CloudCommand);
+			Global._MainWindow.MainPanel._bwm.AddTask(TaskName.CloudCommand);
 			Exception error = null;
 			try
 			{
@@ -160,7 +160,7 @@ namespace x360ce.App
 			{
 				error = ex;
 			}
-			MainWindow.Current.MainPanel._bwm.RemoveTask(TaskName.CloudCommand);
+			Global._MainWindow.MainPanel._bwm.RemoveTask(TaskName.CloudCommand);
 			var success = error == null;
 			item.Error = error;
 			item.State = success ? CloudState.Done : CloudState.Error;
@@ -181,7 +181,7 @@ namespace x360ce.App
 			// If item added or deleted then...
 			if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
 			{
-				var label = MainWindow.Current?.MainPanel?.CloudMessagesLabel;
+				var label = Global._MainWindow?.MainPanel?.CloudMessagesLabel;
 				if (label == null)
 					return;
 				// update main form status bar.
@@ -202,25 +202,25 @@ namespace x360ce.App
 				case CloudAction.Select:
 					if (result.UserGames != null)
 					{
-						MainWindow.Current.UserProgramsPanel.ListPanel.ImportAndBindItems(result.UserGames);
+						Global._MainWindow.UserProgramsPanel.ListPanel.ImportAndBindItems(result.UserGames);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
-								MainWindow.Current.MainPanel._bwm.SetBodyError(result.ErrorMessage);
+								Global._MainWindow.MainPanel._bwm.SetBodyError(result.ErrorMessage);
 							else
-								MainWindow.Current.MainPanel._bwm.SetBodyInfo(result.ErrorMessage);
+								Global._MainWindow.MainPanel._bwm.SetBodyInfo(result.ErrorMessage);
 					}
 					if (result.UserDevices != null)
 					{
-						MainWindow.Current.MainBodyPanel.DevicesPanel.ImportAndBindItems(result.UserDevices);
+						Global._MainWindow.MainBodyPanel.DevicesPanel.ImportAndBindItems(result.UserDevices);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
-								MainWindow.Current.MainPanel._bwm.SetBodyError(result.ErrorMessage);
+								Global._MainWindow.MainPanel._bwm.SetBodyError(result.ErrorMessage);
 							else
-								MainWindow.Current.MainPanel._bwm.SetBodyInfo(result.ErrorMessage);
+								Global._MainWindow.MainPanel._bwm.SetBodyInfo(result.ErrorMessage);
 					}
 					break;
 				case CloudAction.CheckUpdates:
-					MainWindow.Current.ProcessUpdateResults(result);
+					Global._MainWindow.ProcessUpdateResults(result);
 					break;
 			}
 		}
