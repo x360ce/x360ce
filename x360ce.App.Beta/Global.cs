@@ -50,12 +50,12 @@ namespace x360ce.App
 		private static void WindowHook_OnActivate(object sender, EventArgs<Process> e)
 		{
 			var process = e.Data;
-			SelectOpenGame();
+			FindAndSetOpenGame();
 		}
 
 		public static string LastActivePath;
 
-		public static void SelectOpenGame()
+		public static void FindAndSetOpenGame()
 		{
 			// Get selected process.
 			var activeProcess = ForegroundWindowHook.GetActiveProcess();
@@ -68,7 +68,7 @@ namespace x360ce.App
 			var currentApp = userGames.FirstOrDefault(x => x.IsCurrentApp());
 			if (currentApp != null)
 				userGames.Remove(currentApp);
-			// Select all games which are running (execept current app).
+			// Select all games which are running (except current app).
 			var runningGames = userGames
 				.Where(x => allPaths.Any(a => string.Equals(x.FullPath, a, StringComparison.OrdinalIgnoreCase)))
 				.ToArray();
@@ -131,12 +131,6 @@ namespace x360ce.App
 		public static bool AllowDHelperStart;
 
 		public static DInput.DInputHelper DHelper;
-
-		public static void InitDHelperHelper()
-		{
-			// Initialize DInput Helper.
-			DHelper = new DInput.DInputHelper();
-		}
 
 		#endregion
 

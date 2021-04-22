@@ -20,6 +20,9 @@ namespace x360ce.App
 		public MainWindow()
 		{
 			ControlsHelper.InitInvokeContext();
+			// Make sure setting changes updates UI on the same thread as UI.
+			var scheduler = ControlsHelper.MainTaskScheduler;
+			SettingsManager.SetSynchronizingObject(scheduler);
 			// Disable some functionality in Visual Studio Interface design mode.
 			if (!ControlsHelper.IsDesignMode(this))
 			{
@@ -83,7 +86,6 @@ namespace x360ce.App
 				=> Global._TrayManager.RestoreFromTray(true);
 			AppHelper.InitializeHidGuardian();
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
-			Global.InitDHelperHelper();
 			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 			Global.DHelper.UpdateCompleted += DHelper_UpdateCompleted;
 			Global.DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
@@ -95,9 +97,7 @@ namespace x360ce.App
 			// NotifySettingsChange will be called on event suspension and resume.
 			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
 			// NotifySettingsChange will be called on setting changes.
-			var scheduler = ControlsHelper.MainTaskScheduler;
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
-			SettingsManager.Load(scheduler);
 			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
 			XInputMaskScanner.FileInfoCache.Load();
 			UpdateTimer = new System.Timers.Timer

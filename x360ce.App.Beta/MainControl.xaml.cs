@@ -17,10 +17,9 @@ namespace x360ce.App
 		{
 			// Initialize interface.
 			InitializeComponent();
-			_bwm = new BaseWithHeaderManager(HelpHeadLabel, HelpBodyLabel, LeftIcon, this);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-		
+			_bwm = new BaseWithHeaderManager(HelpHeadLabel, HelpBodyLabel, LeftIcon, this);
 			// Hide status values.
 			StatusTimerLabel.Content = "";
 			StatusDllLabel.Content = "";
@@ -36,13 +35,11 @@ namespace x360ce.App
 					DebugPanel.ShowPanel();
 			});
 			InitGameToCustomizeComboBox();
-			// Map event handler.
-			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
 			var o = SettingsManager.Options;
 			o.PropertyChanged += Options_PropertyChanged;
 			LoadSettings();
 		}
-		
+
 		public BaseWithHeaderManager _bwm;
 
 		private Forms.DebugWindow DebugPanel;
@@ -144,8 +141,13 @@ namespace x360ce.App
 			// Make sure that X360CE.exe is on top.
 			GameToCustomizeComboBox.DisplayMemberPath = "DisplayName";
 			GameToCustomizeComboBox.SelectionChanged += GameToCustomizeComboBox_SelectionChanged;
-			// Select game by manually trigger event.
-			Global.SelectOpenGame();
+			// Set open game or 
+			Global.FindAndSetOpenGame();
+			// Assign selected game.
+			GameToCustomizeComboBox.SelectedItem = SettingsManager.CurrentGame;
+			// Enabled event handler.
+			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
+
 		}
 
 		private void GameToCustomizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

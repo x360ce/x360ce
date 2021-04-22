@@ -21,9 +21,9 @@ namespace x360ce.App
 			EnableShowFormInfo = false;
 		}
 		/// <summary>
-		/// Avoid deserialization duplicates by using separate method.
+		/// Avoid de-serialization duplicates by using separate method.
 		/// </summary>
-		public void InitDefaults()
+		public void InitializeDefaults()
 		{
 			if (string.IsNullOrEmpty(InternetDatabaseUrl))
 				InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";

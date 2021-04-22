@@ -23,9 +23,6 @@ namespace x360ce.App
 			}
 		}
 
-		internal const int STATE_VISIBLE = 0x00000002;
-		internal const int STATE_ENABLED = 0x00000004;
-
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -48,18 +45,14 @@ namespace x360ce.App
 			// IMPORTANT: Make sure this class don't have any static references to x360ce.Engine library or
 			// program tries to load x360ce.Engine.dll before AssemblyResolve event is available and fails.
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
-			// In debug mode don't try to wrap app into try catch.
-			if (IsDebug)
-			{
-				StartApp(args);
-				return;
-			}
 			try
 			{
 				StartApp(args);
 			}
 			catch (Exception ex)
 			{
+				if (IsDebug)
+					throw;
 				var message = ExceptionToText(ex);
 				if (message.Contains("Could not load file or assembly 'Microsoft.DirectX"))
 				{
@@ -97,6 +90,7 @@ namespace x360ce.App
 			if (executed)
 				return;
 			// ------------------------------------------------
+			// If must open all setting folders then...
 			if (ic.Parameters.ContainsKey("Settings"))
 			{
 				OpenSettingsFolder(ApplicationDataPath);
@@ -104,19 +98,24 @@ namespace x360ce.App
 				OpenSettingsFolder(LocalApplicationDataPath);
 				return;
 			}
-			if (!CheckSettings())
+			// If default application settings failed to load then... 
+			if (!CheckDefaultSettings())
 				return;
+			// Load all settings.
+			SettingsManager.Load();
 			var o = SettingsManager.Options;
-			// Must be called before you create the application window.
+			// DPI aware property must be set before application window is created.
 			if (Environment.OSVersion.Version.Major >= 6 && o.IsProcessDPIAware)
 				NativeMethods.SetProcessDPIAware();
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
+			// Initialize DInput Helper.
+			Global.DHelper = new DInput.DInputHelper();
+
 
 
 			app = new App();
 			//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
-			//app.Run(Global._MainWindow);
 			app.InitializeComponent();
 			app.Run();
 
@@ -210,7 +209,7 @@ namespace x360ce.App
 			Process.Start(psi);
 		}
 
-		static bool CheckSettings()
+		static bool CheckDefaultSettings()
 		{
 			try
 			{
@@ -218,7 +217,7 @@ namespace x360ce.App
 			}
 			catch (ConfigurationErrorsException ex)
 			{
-				// Requires System.Configuration
+				// Requires System.Configuration assembly.
 				string filename = ((ConfigurationErrorsException)ex.InnerException).Filename;
 				var title = "Corrupt user settings of " + Product;
 				var text =

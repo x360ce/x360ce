@@ -31,8 +31,6 @@ namespace x360ce.App
 		public static UserGame CurrentGame;
 		public static object CurrentGameLock = new object();
 
-		static object OptionsLock = new object();
-
 		public static event PropertyChangedEventHandler CurrentGame_PropertyChanged;
 
 		public static void UpdateCurrentGame(UserGame game)
@@ -51,7 +49,7 @@ namespace x360ce.App
 				// Assign new game.
 				CurrentGame = game;
 				Global.DHelper.SettingsChanged = true;
-				CurrentGame_PropertyChanged(null, null);
+				CurrentGame_PropertyChanged?.Invoke(null, null);
 				//// If pad controls not initializes yet then return.
 				//if (PadControls == null)
 				//	return;
@@ -85,30 +83,12 @@ namespace x360ce.App
 			XInputMaskScanner.FileInfoCache.Save();
 		}
 
-		/// <summary>x360ce Options</summary>
-		public static XSettingsData<Options> OptionsData
-		{
-			get
-			{
-				lock (OptionsLock)
-				{
-					if (_OptionsData == null)
-					{
-						_OptionsData = new XSettingsData<Options>("Options.xml", "x360ce Options");
-						_OptionsData.Load();
-						if (_OptionsData.Items.Count == 0)
-						{
-							var o = new Options();
-							_OptionsData.Items.Add(o);
-						}
-						_OptionsData.Items[0].InitDefaults();
-					}
-					return _OptionsData;
-				}
-			}
-		}
-		public static XSettingsData<Options> _OptionsData;
+		// Main application options
 
+		/// <summary>Main application options.</summary>
+		public static XSettingsData<Options> OptionsData = new XSettingsData<Options>("Options.xml", "x360ce Options");
+
+		/// <summary>Property can be used as shorter access to main options.</summary>
 		public static Options Options { get { return OptionsData.Items[0]; } }
 
 		// Global settings.
@@ -134,8 +114,8 @@ namespace x360ce.App
 		/// <summary>User Devices. Contains hardware details about Direct Input Instances (Devices).</summary>
 		public static XSettingsData<Engine.Data.UserDevice> UserDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices.xml", "User Devices (Direct Input).");
 
-		/// <summary>User Macro Maps. Advanced maps to keyboard, mouse and xinput.</summary>
-		public static XSettingsData<Engine.Data.UserMacro> UserMacros = new XSettingsData<Engine.Data.UserMacro>("UserMacros.xml", "Keyboard, mouse and xinput macro maps.");
+		/// <summary>User Macro Maps. Advanced maps to keyboard, mouse and XInput.</summary>
+		public static XSettingsData<Engine.Data.UserMacro> UserMacros = new XSettingsData<Engine.Data.UserMacro>("UserMacros.xml", "Keyboard, mouse and XInput macro maps.");
 
 		/// <summary>User Instances. Map different Instance IDs to a single physical controller.</summary>
 		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
@@ -156,16 +136,10 @@ namespace x360ce.App
 		{
 			foreach (var item in settings)
 			{
-				bool isOnline;
-				if (TestDeviceHelper.ProductGuid.Equals(item.ProductGuid))
-				{
-					isOnline = true;
-				}
-				else
-				{
-					var device = GetDevice(item.InstanceGuid);
-					isOnline = device == null ? false : device.IsOnline;
-				}
+				// Always online if test device or get actual online state.
+				var isOnline =
+					TestDeviceHelper.ProductGuid.Equals(item.ProductGuid) ||
+					(GetDevice(item.InstanceGuid)?.IsOnline ?? false);
 				if (item.IsOnline != isOnline)
 					item.IsOnline = isOnline;
 			}
@@ -253,7 +227,34 @@ namespace x360ce.App
 
 		#region ■ Load and Validate Data
 
-		public static void Load(TaskScheduler so = null)
+		public static void Load()
+		{
+			// Load main application options first.
+			OptionsData.ValidateData = Options_ValidateData;
+			OptionsData.Load();
+			// Load user settings second.
+			UserSettings.ValidateData = UserSettings_ValidateData;
+			UserSettings.Load();
+			// Load settings which do not require validation.
+			Presets.Load();
+			Summaries.Load();
+			PadSettings.Load();
+			UserMacros.Load();
+			UserInstances.Load();
+			// Load settings which must be validated.
+			Programs.ValidateData = Programs_ValidateData;
+			Programs.Load();
+			UserGames.ValidateData = Games_ValidateData;
+			UserGames.Load();
+			Layouts.ValidateData = Layouts_ValidateData;
+			Layouts.Load();
+			// Load user devices and attach event which will hide them with HID Guardian when IsHidden property modified.
+			UserDevices.Load();
+			UserDevices.Items.ListChanged += UserDevices_Items_ListChanged;
+			UserDevices.Items.RaiseListChangedEvents = true;
+		}
+
+		public static void SetSynchronizingObject(TaskScheduler so = null)
 		{
 			// Make sure that all GridViews are updated on the same thread as MainForm when data changes.
 			// For example User devices will be removed and added on separate thread.
@@ -267,30 +268,6 @@ namespace x360ce.App
 			Programs.Items.SynchronizingObject = so;
 			Presets.Items.SynchronizingObject = so;
 			PadSettings.Items.SynchronizingObject = so;
-			//SettingsManager.Current.NotifySettingsChange = NotifySettingsChange;
-			UserSettings.ValidateData = UserSettings_ValidateData;
-			UserSettings.Load();
-			Summaries.Load();
-			// Make sure that data will be filtered before loading.
-			// Note: Make sure to load Programs before Games.
-			Programs.ValidateData = Programs_ValidateData;
-			Programs.Load();
-			// Make sure that data will be filtered before loading.
-			UserGames.ValidateData = Games_ValidateData;
-			UserGames.Load();
-			Presets.Load();
-			UserMacros.ValidateData = UserKeyboardMaps_ValidateData;
-			UserMacros.Load();
-			// Make sure that data will be filtered before loading.
-			Layouts.ValidateData = Layouts_ValidateData;
-			Layouts.Load();
-			PadSettings.Load();
-			UserDevices.Load();
-			// Update DataGrids asynchronously in order not to freeze interface during device detection/update.
-			//UserDevices.Items.AsynchronousInvoke = true;
-			UserDevices.Items.ListChanged += UserDevices_Items_ListChanged;
-			UserDevices.Items.RaiseListChangedEvents = true;
-			UserInstances.Load();
 			OptionsData.Items.SynchronizingObject = so;
 		}
 
@@ -362,8 +339,16 @@ namespace x360ce.App
 			return items;
 		}
 
-		static IList<Engine.Data.UserMacro> UserKeyboardMaps_ValidateData(IList<Engine.Data.UserMacro> items)
+		static IList<Options> Options_ValidateData(IList<Options> items)
 		{
+			// If options empty then...
+			if (items.Count == 0)
+			{
+				var o = new Options();
+				OptionsData.Items.Add(o);
+			}
+			// Set missing values to defaults.
+			items[0].InitializeDefaults();
 			return items;
 		}
 
@@ -563,10 +548,6 @@ namespace x360ce.App
 		#endregion // Public Properties
 		#endregion // Static Version
 		#region ■ Instance Version
-
-		public SettingsManager()
-		{
-		}
 
 		public int saveCount = 0;
 		public int loadCount = 0;
