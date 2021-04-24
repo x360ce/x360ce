@@ -9,7 +9,12 @@
 	d:DesignWidth="800"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	mc:Ignorable="d">
-	<TabControl Name="MainTabControl" x:FieldModifier="public" TabStripPlacement="Top">
+	<TabControl
+		Name="MainTabControl"
+		Margin="0,0,0,0"
+		Padding="0,0,0,0"
+		x:FieldModifier="public"
+		TabStripPlacement="Top">
 		<TabItem Name="GeneralTabPage" Header="General">
 			<local:OptionsGeneralControl
 				x:Name="GeneralPanel"

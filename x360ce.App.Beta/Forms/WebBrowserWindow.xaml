@@ -1,4 +1,4 @@
-﻿<Window
+<Window
 	x:Class="x360ce.App.Forms.WebBrowserWindow"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -23,7 +23,7 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<WebBrowser x:Name="MainWebBrowser" Grid.Row="0" />
-		<StackPanel Grid.Row="1" Margin="4,4,0,4">
+		<StackPanel Grid.Row="1" Margin="3,3,0,3">
 			<Button
 				Name="CloseButton"
 				HorizontalAlignment="Right"

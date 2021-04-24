@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
@@ -16,6 +17,8 @@ namespace x360ce.App
 		public MainBodyControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			PadIcons = new ContentControl[]
 			{
 				Pad1TabIcon,

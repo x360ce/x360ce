@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
 	x:Class="x360ce.App.Controls.AboutUserControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -70,7 +70,7 @@
 			<Label
 				Grid.Row="3"
 				Grid.Column="1"
-				Padding="4,0,0,0"
+				Padding="3,0,0,0"
 				VerticalAlignment="Center">
 				X360CE
 			</Label>
@@ -86,7 +86,7 @@
 			<Label
 				Grid.Row="4"
 				Grid.Column="1"
-				Padding="4,0,0,0"
+				Padding="3,0,0,0"
 				VerticalAlignment="Center">
 				Jocys.com
 			</Label>
@@ -102,7 +102,7 @@
 			<Label
 				Grid.Row="5"
 				Grid.Column="1"
-				Padding="4,0,0,0"
+				Padding="3,0,0,0"
 				VerticalAlignment="Center">
 				ViGEm
 			</Label>
@@ -166,7 +166,11 @@
 				</Hyperlink>
 			</TextBlock>
 		</Grid>
-		<TabControl Name="AboutTabControl" Grid.Row="1" Margin="4">
+		<TabControl
+			Name="AboutTabControl"
+			Grid.Row="1"
+			Margin="3,3,3,3"
+			Padding="0,0,0,0">
 			<TabItem Name="ChangesTabPage" Header="Changes">
 				<TextBox
 					Name="ChangeLogTextBox"

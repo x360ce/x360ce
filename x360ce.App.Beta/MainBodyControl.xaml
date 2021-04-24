@@ -18,7 +18,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<TabControl Name="MainTabControl">
+	<TabControl Name="MainTabControl" Margin="0,0,0,0" Padding="0,0,0,0">
 		<TabItem Name="Pad1TabPage">
 			<TabItem.Header>
 				<StackPanel Orientation="Horizontal">
@@ -80,7 +80,7 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*" />
 				</Grid.RowDefinitions>
-				<local:OptionsControl x:Name="OptionsPanel" />
+				<local:OptionsControl x:Name="OptionsPanel" Margin="3,3,3,3" />
 			</Grid>
 		</TabItem>
 		<TabItem Name="GamesTabPage" Header="Games">

@@ -3,7 +3,6 @@ using JocysCom.ClassLibrary.Threading;
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows;
-using System.Windows.Controls;
 using x360ce.Engine;
 
 namespace x360ce.App.Forms
@@ -108,13 +107,13 @@ namespace x360ce.App.Forms
 		{
 			lock (progressLock)
 			{
-				var progress = Math.Round(100m * (decimal)e.BytesReceived / (decimal)e.TotalBytesToReceive, 1);
+				var progress = Math.Round(100m * e.BytesReceived / e.TotalBytesToReceive, 1);
 				if (oldProgress != progress || _downloader.Params.ResponseData != null)
 				{
 					oldProgress = progress;
 					ControlsHelper.Invoke(() =>
 					{
-						var mb = Math.Round((decimal)e.BytesReceived / 1024m / 1024m, 1);
+						var mb = Math.Round(e.BytesReceived / 1024m / 1024m, 1);
 						CurrentLogItem.Message = string.Format("Download... {0}% - {1} MB", progress, mb);
 						if (_downloader.Params.ResponseData != null)
 						{
@@ -224,6 +223,8 @@ namespace x360ce.App.Forms
 
 		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			CancelUpdate = false;
 			LogPanel.Items.Clear();
 			// Center message box window in application.

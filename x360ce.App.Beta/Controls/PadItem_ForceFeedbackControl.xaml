@@ -6,7 +6,8 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-	Width="720"
+	d:DesignHeight="500"
+	d:DesignWidth="800"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -18,8 +19,9 @@
 	</UserControl.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="50*" />
-			<ColumnDefinition Width="50*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
@@ -80,7 +82,7 @@
 			Grid.Row="1"
 			Grid.Column="1"
 			x:FieldModifier="public" />
-		<TextBlock Grid.Row="2" Grid.ColumnSpan="2" TextWrapping="Wrap">
+		<TextBlock Grid.Row="2" Grid.ColumnSpan="3" TextWrapping="Wrap">
 			If your controller have only one motor then force feedback effects will be merged automatically.
 			Values sent by the game to the Left Motor, which is used to simulate large explosions, crashes, gun fire, etc,
 			will be able to reach maximum vibration effect.

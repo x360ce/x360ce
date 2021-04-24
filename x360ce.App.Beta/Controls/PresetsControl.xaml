@@ -21,7 +21,7 @@
 		<TabControl
 			x:Name="MainTabControl"
 			Grid.Row="0"
-			Margin="3,3,3,3"
+			Margin="0,0,0,0"
 			Padding="0,0,0,0"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"

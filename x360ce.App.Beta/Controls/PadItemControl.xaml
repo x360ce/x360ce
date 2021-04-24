@@ -15,13 +15,17 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<TabControl Name="PadTabControl" Grid.IsSharedSizeScope="True">
+	<TabControl
+		Name="PadTabControl"
+		Margin="0,0,0,0"
+		Padding="0,0,0,0"
+		Grid.IsSharedSizeScope="True">
 		<TabItem Name="GeneralTabPage" Header="General">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition SharedSizeGroup="group1" />
 				</Grid.RowDefinitions>
-				<local:PadItem_GeneralControl x:Name="GeneralPanel" />
+				<local:PadItem_GeneralControl x:Name="GeneralPanel" Margin="3,3,3,3" />
 			</Grid>
 		</TabItem>
 		<TabItem Name="AdvancedTabPage" Header="Advanced">
@@ -110,7 +114,7 @@
 				<Grid.RowDefinitions>
 					<RowDefinition SharedSizeGroup="group1" />
 				</Grid.RowDefinitions>
-				<local:PadItem_DInputControl x:Name="DInputPanel" />
+				<local:PadItem_DInputControl x:Name="DInputPanel" Margin="3,3,3,3" />
 			</Grid>
 		</TabItem>
 	</TabControl>

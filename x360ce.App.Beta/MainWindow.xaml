@@ -7,6 +7,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Width="820"
 	Height="820"
-	mc:Ignorable="d" Loaded="Window_Loaded">
+	Loaded="Window_Loaded"
+	mc:Ignorable="d">
 	<local:MainControl x:Name="MainPanel" />
 </Window>

@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
 	x:Class="x360ce.App.MainControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -117,7 +117,7 @@
 				</Button>
 			</ToolBar>
 		</ToolBarPanel>
-		<local:MainBodyControl x:Name="MainBodyPanel" Grid.Row="2" />
+		<local:MainBodyControl x:Name="MainBodyPanel" Grid.Row="2" Margin="3,3,3,3" />
 		<StatusBar Grid.Row="3" HorizontalAlignment="Left">
 			<StatusBarItem>
 				<Label x:Name="StatusTimerLabel" Padding="0,0,0,0" Content="StatusTimerLabel" />
@@ -157,7 +157,7 @@
 					<ContentControl x:Name="StatusErrorsIcon" Content="{StaticResource Icon_error}" Style="{StaticResource ButtonContentControl}" />
 					<Label
 						x:Name="StatusErrorsLabel"
-						Margin="4,0,0,0"
+						Margin="3,0,0,0"
 						Padding="0,0,0,0"
 						Content="StatusErrorsLabel"
 						PreviewMouseDown="StatusErrorsLabel_PreviewMouseDown" />

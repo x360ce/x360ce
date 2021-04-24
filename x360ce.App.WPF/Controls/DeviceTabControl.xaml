@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="x360ce.App.Controls.DeviceTabControl"
+<UserControl x:Class="x360ce.App.Controls.DeviceTabControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -9,7 +9,7 @@
     <TabControl VerticalAlignment="Stretch" Margin="0,6,6,6">
         <TabItem Header="General">
             <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{StaticResource ColorGray}">
-            <local:DeviceTabControlGeneralTab Margin="3,4,3,4" />
+            <local:DeviceTabControlGeneralTab Margin="3,3,3,3" />
             </StackPanel>
         </TabItem>
         <TabItem Header="Axis to Button">
@@ -17,35 +17,35 @@
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Left Thumb" Margin="4,0,0,0" />
+                    <TextBlock Text="Left Thumb" Margin="3,0,0,0" />
                 </StackPanel>
             </TabItem.Header>
         </TabItem>
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Right Thumb" Margin="4,0,0,0" />
+                    <TextBlock Text="Right Thumb" Margin="3,0,0,0" />
                 </StackPanel>
             </TabItem.Header>
         </TabItem>
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Advanced" Margin="4,0,0,0" />
+                    <TextBlock Text="Advanced" Margin="3,0,0,0" />
                 </StackPanel>
             </TabItem.Header>
         </TabItem>
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Force Feedback" Margin="4,0,0,0" />
+                    <TextBlock Text="Force Feedback" Margin="3,0,0,0" />
                 </StackPanel>
             </TabItem.Header>
         </TabItem>
         <TabItem>
             <TabItem.Header>
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Direct Input" Margin="4,0,0,0" />
+                    <TextBlock Text="Direct Input" Margin="3,0,0,0" />
                 </StackPanel>
             </TabItem.Header>
         </TabItem>

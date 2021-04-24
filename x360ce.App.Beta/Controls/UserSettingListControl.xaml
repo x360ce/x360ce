@@ -15,6 +15,19 @@
 				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
 				<ResourceDictionary Source="/x360ce;component/Resources/Icons/Icons_Default.xaml" />
+				<ResourceDictionary>
+					<Style TargetType="{x:Type DataGridColumnHeader}">
+						<Setter Property="Padding" Value="3,3,3,3" />
+						<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+						<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+						<Setter Property="BorderThickness" Value="0,0,1,0" />
+					</Style>
+					<Style TargetType="{x:Type DataGridCell}">
+						<Setter Property="Padding" Value="3,3,3,3" />
+						<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+						<Setter Property="BorderThickness" Value="0,0,0,0" />
+					</Style>
+				</ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
@@ -81,7 +94,6 @@
 			<DataGrid.Resources>
 				<converters:ChecksumToIdConverter x:Key="_ChecksumToIdConverter" />
 				<converters:MapToIntToDescription x:Key="_MapToIntToDescription" />
-
 			</DataGrid.Resources>
 			<DataGrid.Columns>
 				<DataGridTextColumn
@@ -115,13 +127,27 @@
 					Binding="{Binding MapTo, Converter={StaticResource _MapToIntToDescription}}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Map To" />
+					Header="Map To">
+					<DataGridTextColumn.HeaderStyle>
+						<Style TargetType="DataGridColumnHeader">
+							<Setter Property="Padding" Value="3,3,3,3" />
+							<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+							<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" />
+							<Setter Property="BorderThickness" Value="0,0,0,0" />
+						</Style>
+					</DataGridTextColumn.HeaderStyle>
+
+					<DataGridTextColumn.CellStyle>
+						<Style TargetType="DataGridCell">
+							<Setter Property="Padding" Value="3,3,3,3" />
+							<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+							<Setter Property="BorderThickness" Value="0,0,0,0" />
+						</Style>
+					</DataGridTextColumn.CellStyle>
+
+
+				</DataGridTextColumn>
 			</DataGrid.Columns>
-			<DataGrid.CellStyle>
-				<Style TargetType="DataGridCell">
-					<Setter Property="Padding" Value="4" />
-				</Style>
-			</DataGrid.CellStyle>
 		</DataGrid>
 		<StackPanel x:Name="CommentPanel" Grid.Row="2">
 			<TextBlock x:Name="CommentLabel" Text="Note:" />

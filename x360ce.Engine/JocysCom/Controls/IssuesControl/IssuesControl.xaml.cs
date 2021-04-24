@@ -18,7 +18,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public IssuesControl()
 		{
 			InitializeComponent();
-			if (IsDesignMode)
+			if (ControlsHelper.IsDesignMode(this))
 				return;
 			NoIssuesPanel.Visibility = Visibility.Collapsed;
 			LinePanel.Visibility = Visibility.Collapsed;
@@ -92,8 +92,6 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			UpdateIgnoreAllButton();
 			UpdateNoIssuesPanel();
 		}
-
-		internal bool IsDesignMode { get { return ControlsHelper.IsDesignMode(this); } }
 
 		void CheckAll()
 		{
@@ -334,6 +332,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			// List which contains all issues.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			IssueList = new BindingListInvoked<IssueItem>();

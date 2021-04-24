@@ -15,6 +15,8 @@ namespace x360ce.App.Controls
 		public OptionsGeneralControl()
 		{
 			InitializeComponent();
+			if (ControlsHelper.IsDesignMode(this))
+				return;
 			LocationFolderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
 		}
 
