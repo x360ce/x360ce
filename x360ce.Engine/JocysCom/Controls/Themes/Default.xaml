@@ -169,6 +169,38 @@
 		<Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="VerticalGridLinesBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+		<Style.Resources>
+			<Style TargetType="DataGridColumnHeader">
+				<Setter Property="Padding" Value="3,3,3,3" />
+				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+				<Setter Property="Background">
+					<Setter.Value>
+						<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
+							<GradientStop Offset="0" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
+							<GradientStop Offset="1" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
+						</LinearGradientBrush>
+					</Setter.Value>
+				</Setter>
+				<Setter Property="BorderThickness" Value="1,0,0,0" />
+				<Style.Triggers>
+					<!--  Apply style to first column only  -->
+					<Trigger Property="DisplayIndex" Value="0">
+						<Setter Property="BorderThickness" Value="0,0,0,0" />
+					</Trigger>
+				</Style.Triggers>
+			</Style>
+			<Style TargetType="DataGridCell">
+				<Setter Property="Padding" Value="3,3,3,3" />
+				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+				<Setter Property="BorderThickness" Value="1,0,0,0" />
+				<Style.Triggers>
+					<!--  Apply style to first column only  -->
+					<DataTrigger Binding="{Binding Column.DisplayIndex, RelativeSource={RelativeSource Self}}" Value="0">
+						<Setter Property="BorderThickness" Value="0,0,0,0" />
+					</DataTrigger>
+				</Style.Triggers>
+			</Style>
+		</Style.Resources>
 	</Style>
 
 	<Style BasedOn="{StaticResource DataGridDefault}" TargetType="DataGrid" />
