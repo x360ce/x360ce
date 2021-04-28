@@ -13,12 +13,10 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
-				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
-				<ResourceDictionary Source="Resources/Icons/Icons_Default.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<TabControl Name="MainTabControl" Margin="0,0,0,0" Padding="0,0,0,0">
+	<TabControl Name="MainTabControl">
 		<TabItem Name="Pad1TabPage">
 			<TabItem.Header>
 				<StackPanel Orientation="Horizontal">
@@ -33,7 +31,7 @@
 			</TabItem.Header>
 			<local:PadControl x:Name="Pad1Panel" />
 		</TabItem>
-		<TabItem Name="Pad2TabPage">
+		<TabItem Name="Pad2TabPage" HorizontalAlignment="Right">
 			<TabItem.Header>
 				<StackPanel Orientation="Horizontal">
 					<ContentControl

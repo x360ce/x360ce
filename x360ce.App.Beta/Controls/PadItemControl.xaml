@@ -2,103 +2,12 @@
 	x:Class="x360ce.App.Controls.PadItemControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls;assembly=x360ce.Engine"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
-	<UserControl.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
-				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
-				<ResourceDictionary>
-
-					<Style x:Key="TabControlDefault" TargetType="TabControl">
-						<Setter Property="BorderThickness" Value="1,0,1,1" />
-						<Style.Resources>
-							<JcControls:TabIndexConverter x:Key="TabIndexConverter" />
-							<Style TargetType="TabItem">
-								<Setter Property="Template">
-									<Setter.Value>
-										<ControlTemplate TargetType="TabItem">
-											<Border
-												Name="Border"
-												Margin="0,0,0,0"
-												Padding="0,0,0,0"
-												BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
-												<ContentPresenter
-													x:Name="ContentSite"
-													Margin="6,3,6,3"
-													HorizontalAlignment="Center"
-													VerticalAlignment="Center"
-													ContentSource="Header" />
-											</Border>
-											<ControlTemplate.Triggers>
-												<MultiDataTrigger>
-													<MultiDataTrigger.Conditions>
-														<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="False" />
-														<Condition Binding="{Binding Converter={StaticResource TabIndexConverter}, RelativeSource={RelativeSource Self}}" Value="First" />
-													</MultiDataTrigger.Conditions>
-													<MultiDataTrigger.Setters>
-														<Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,1" />
-														<Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-													</MultiDataTrigger.Setters>
-												</MultiDataTrigger>
-												<MultiDataTrigger>
-													<MultiDataTrigger.Conditions>
-														<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
-														<Condition Binding="{Binding Converter={StaticResource TabIndexConverter}, RelativeSource={RelativeSource Self}}" Value="FirstSelected" />
-													</MultiDataTrigger.Conditions>
-													<MultiDataTrigger.Setters>
-														<Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0" />
-														<Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-														<Setter TargetName="ContentSite" Property="Margin" Value="6,3,6,4" />
-													</MultiDataTrigger.Setters>
-												</MultiDataTrigger>
-
-
-												<MultiDataTrigger>
-													<MultiDataTrigger.Conditions>
-														<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="False" />
-														<Condition Binding="{Binding Converter={StaticResource TabIndexConverter}, RelativeSource={RelativeSource Self}}" Value="" />
-													</MultiDataTrigger.Conditions>
-													<MultiDataTrigger.Setters>
-														<Setter TargetName="Border" Property="BorderThickness" Value="0,1,1,1" />
-														<Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-													</MultiDataTrigger.Setters>
-												</MultiDataTrigger>
-												<MultiDataTrigger>
-													<MultiDataTrigger.Conditions>
-														<Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
-														<Condition Binding="{Binding Converter={StaticResource TabIndexConverter}, RelativeSource={RelativeSource Self}}" Value="Selected" />
-													</MultiDataTrigger.Conditions>
-													<MultiDataTrigger.Setters>
-														<Setter TargetName="Border" Property="BorderThickness" Value="0,1,1,0" />
-														<Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-														<Setter TargetName="ContentSite" Property="Margin" Value="6,3,6,4" />
-													</MultiDataTrigger.Setters>
-												</MultiDataTrigger>
-											</ControlTemplate.Triggers>
-										</ControlTemplate>
-									</Setter.Value>
-								</Setter>
-							</Style>
-						</Style.Resources>
-					</Style>
-
-				</ResourceDictionary>
-
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</UserControl.Resources>
-	<TabControl
-		Name="PadTabControl"
-		Margin="0,0,0,0"
-		Padding="0,0,0,0"
-		Grid.IsSharedSizeScope="True"
-		Style="{StaticResource TabControlDefault}">
+	<TabControl Name="PadTabControl" Grid.IsSharedSizeScope="True">
 		<TabItem Name="GeneralTabPage" Header="General">
 			<Grid>
 				<Grid.RowDefinitions>
