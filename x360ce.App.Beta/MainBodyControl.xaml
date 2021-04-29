@@ -9,13 +9,6 @@
 	d:DesignHeight="700"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
-	<UserControl.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</UserControl.Resources>
 	<TabControl Name="MainTabControl">
 		<TabItem Name="Pad1TabPage">
 			<TabItem.Header>

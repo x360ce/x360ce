@@ -11,7 +11,6 @@
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
 				<ResourceDictionary>
 					<Style TargetType="Slider">
 						<Setter Property="Width" Value="200" />

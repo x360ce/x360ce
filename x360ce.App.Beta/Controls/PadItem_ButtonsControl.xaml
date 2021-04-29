@@ -6,13 +6,6 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	mc:Ignorable="d">
-	<UserControl.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</UserControl.Resources>
 	<Grid>
 		<GroupBox x:Name="MainGroupBox" x:FieldModifier="public" Header="DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):">
 			<StackPanel Orientation="Vertical">

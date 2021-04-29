@@ -9,12 +9,5 @@
 	Closing="Window_Closing"
 	SizeToContent="WidthAndHeight"
 	mc:Ignorable="d">
-	<Window.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</Window.Resources>
 	<controls:DebugControl />
 </Window>

@@ -9,13 +9,6 @@
 	Width="600"
 	Height="480"
 	mc:Ignorable="d">
-	<Window.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</Window.Resources>
 	<jcc:ErrorReportControl
 		x:Name="ErrorReportPanel"
 		Width="Auto"
