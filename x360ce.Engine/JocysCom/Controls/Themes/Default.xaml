@@ -4,32 +4,37 @@
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!--  Colors  -->
+
 	<SolidColorBrush x:Key="SolidColorBrush_BFF">#ff000000</SolidColorBrush>
 
 	<!--  Window  -->
 
-	<Style TargetType="Window">
+	<Style x:Key="Window_Default" TargetType="Window">
 		<Setter Property="SnapsToDevicePixels" Value="True" />
-		<Setter Property="Padding" Value="4" />
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+	</Style>
+
+	<!--  UserControl  -->
+
+	<Style x:Key="UserControl_Default" TargetType="UserControl">
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+	</Style>
+
+	<!--  Grid  -->
+
+	<Style x:Key="Grid_Default" TargetType="Grid">
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 	</Style>
 
 	<!--  DockPanel  -->
+	<!--
 
 	<Style TargetType="DockPanel">
 		<Setter Property="Margin" Value="8" />
 	</Style>
 
-	<!--  Grid  -->
-
-	<Style TargetType="Grid">
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-	</Style>
-
-	<!--  GroupBox  -->
-
-	<Style TargetType="GroupBox">
-		<Setter Property="Margin" Value="4" />
-	</Style>
+	-->
 
 	<!--  StackPanel  -->
 
@@ -60,7 +65,7 @@
 
 	<Style x:Key="Button" BasedOn="{StaticResource Button_Default}" TargetType="Button" />
 
-	<Style BasedOn="{StaticResource Button_Default}" TargetType="Button" />
+	<!--<Style BasedOn="{StaticResource Button_Default}" TargetType="Button" />-->
 
 	<!--  Button -ToolBar  -->
 
@@ -75,19 +80,16 @@
 
 	<!--  TabItem  -->
 
+
 	<Style x:Key="TabItem_Default" TargetType="TabItem" />
 
-	<Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />
+	<!--<Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />-->
+
 
 	<!--  TabControl  -->
 
 	<Style x:Key="TabControl_Default" TargetType="TabControl">
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-	</Style>
-
-	<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
-
-	<Style x:Key="CustomTabItem" TargetType="TabControl">
 		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="Template">
 			<Setter.Value>
@@ -206,12 +208,9 @@
 		<Setter Property="Margin" Value="3,3,3,3" />
 		<Setter Property="Padding" Value="3,3,3,3" />
 		<Setter Property="VerticalAlignment" Value="Center" />
-		<!--<Setter Property="TextAlignment" Value="Center" />
-		<Setter Property="Background" Value="#333333" />
-		<Setter Property="Foreground" Value="#FFFFFF" />
+		<Setter Property="TextAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="Width" Value="120" />
-		-->
 		<Style.Triggers>
 			<Trigger Property="IsReadOnly" Value="True">
 				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
@@ -219,7 +218,7 @@
 		</Style.Triggers>
 	</Style>
 
-	<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />
+	<!--<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />-->
 
 	<Style x:Key="TextBoxReadOnly" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
@@ -227,6 +226,7 @@
 	</Style>
 
 	<!--  TextBox - Cell  -->
+
 
 	<Style x:Key="TextBoxCell" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
 		<Setter Property="BorderThickness" Value="0" />
@@ -255,9 +255,11 @@
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
-	<Style BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock" />
+	<!--<Style BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock" />-->
+
 
 	<!--  TextBlock - Cell  -->
+
 
 	<Style x:Key="TextBlockCell" BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock">
 		<Setter Property="Padding" Value="3,4,3,2" />
@@ -274,9 +276,10 @@
 		<Setter Property="TextAlignment" Value="Center" />
 	</Style>
 
+
 	<!--  DataGrid  -->
 
-	<Style x:Key="DataGridDefault" TargetType="DataGrid">
+	<Style x:Key="DataGrid_Default" TargetType="DataGrid">
 		<Setter Property="BorderThickness" Value="0" />
 		<Setter Property="CanUserAddRows" Value="False" />
 		<Setter Property="CanUserDeleteRows" Value="False" />
@@ -319,9 +322,7 @@
 		</Style.Resources>
 	</Style>
 
-	<Style BasedOn="{StaticResource DataGridDefault}" TargetType="DataGrid" />
-
-	<Style x:Key="DataGridReadOnly" BasedOn="{StaticResource DataGridDefault}" TargetType="DataGrid">
+	<Style x:Key="DataGridReadOnly" BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid">
 		<Setter Property="RowBackground" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="IsReadOnly" Value="true" />
 		<Setter Property="BorderThickness" Value="1,0,0,0" />
@@ -332,10 +333,13 @@
 	</Style>
 
 	<!--  DataGridTextColumn  -->
+	<!--
 
 	<Style BasedOn="{DynamicResource DataGridTextColumnDefault}" TargetType="DataGridTextColumn" />
 
+	-->
 	<!--  ComboBox  -->
+
 
 	<Style x:Key="ComboBoxDefault" TargetType="ComboBox">
 		<Setter Property="Margin" Value="3,3,3,3" />
@@ -353,9 +357,11 @@
 		</Style.Triggers>
 	</Style>
 
-	<Style BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox" />
+	<!--<Style BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox" />-->
+
 
 	<!--  ComboBox - Grid  -->
+
 
 	<Style x:Key="ComboBoxGrid" BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox">
 		<Setter Property="Padding" Value="3,3,3,3" />
@@ -364,7 +370,9 @@
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
+
 	<!--  CheckBox  -->
+
 
 	<Style x:Key="CheckBox_Default" TargetType="CheckBox">
 		<Setter Property="Margin" Value="3,3,3,3" />
@@ -374,15 +382,18 @@
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 	</Style>
 
-	<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
+	<!--<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />-->
+
 
 	<!--  CheckBox - Cell  -->
+
 
 	<Style x:Key="CheckBoxCell" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox">
 		<Setter Property="Margin" Value="3,0,3,0" />
 		<Setter Property="Padding" Value="0,0,0,0" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
+
 
 	<!--  ContentControl  -->
 
@@ -395,12 +406,13 @@
 
 	<!--  Label  -->
 
+
 	<Style x:Key="ButtonLabel" TargetType="Label">
 		<Setter Property="Margin" Value="0,0,0,0" />
 		<Setter Property="Padding" Value="4,2,4,2" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="HorizontalContentAlignment" Value="Center" />
-		<!--<Setter Property="MinWidth" Value="48" />-->
+		<Setter Property="MinWidth" Value="48" />
 	</Style>
 
 	<Style x:Key="LabelGrid" TargetType="Label">
@@ -445,5 +457,27 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+
+	<!--  GroupBox  -->
+
+	<Style x:Key="GroupBox_Default" TargetType="GroupBox">
+		<Setter Property="Margin" Value="3" />
+		<Setter Property="HeaderTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<TextBlock Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Style="{StaticResource TextBlock_Default}" Text="{Binding}" />
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  Default Styles  -->
+
+	<Style BasedOn="{StaticResource Window_Default}" TargetType="Window" />
+	<Style BasedOn="{StaticResource UserControl_Default}" TargetType="UserControl" />
+	<Style BasedOn="{StaticResource Grid_Default}" TargetType="Grid" />
+	<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox" />
+	<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
+	<Style BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid" />
 
 </ResourceDictionary>
