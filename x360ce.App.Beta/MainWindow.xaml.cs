@@ -334,6 +334,7 @@ namespace x360ce.App
 		{
 			Program.IsClosing = true;
 			ErrorsHelper.DisposeErrorsHelper();
+			MainBodyPanel.Dispose();
 			// Wrap into try catch so that the form will always close and
 			// there will be no need to kill it by using task manager if exception is thrown.
 			try

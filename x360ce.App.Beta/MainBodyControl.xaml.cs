@@ -12,7 +12,7 @@ namespace x360ce.App
 	/// <summary>
 	/// Interaction logic for MainBodyControl.xaml
 	/// </summary>
-	public partial class MainBodyControl : UserControl
+	public partial class MainBodyControl : UserControl, IDisposable
 	{
 		public MainBodyControl()
 		{
@@ -191,6 +191,26 @@ namespace x360ce.App
 				SetIconColor(i, image);
 			}
 		}
+
+		#region ■ IDisposable
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// Dispose managed resources.
+				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
+			}
+			// Free native resources.
+		}
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		#endregion
 
 	}
 }

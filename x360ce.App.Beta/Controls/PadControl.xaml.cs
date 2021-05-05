@@ -19,7 +19,6 @@ namespace x360ce.App.Controls
 		public PadControl()
 		{
 			InitializeComponent();
-			
 		}
 
 		public void InitControls(MapTo mappedTo)
@@ -442,6 +441,7 @@ namespace x360ce.App.Controls
 		{
 			if (disposing)
 			{
+				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 				_Imager.Dispose();
 				MacrosPanel.Dispose();
 			}

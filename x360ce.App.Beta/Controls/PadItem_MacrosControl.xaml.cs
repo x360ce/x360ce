@@ -270,6 +270,7 @@ namespace x360ce.App.Controls
 		{
 			if (disposing)
 			{
+				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 				// Dispose managed resources.
 				_Recorder.Dispose();
 			}

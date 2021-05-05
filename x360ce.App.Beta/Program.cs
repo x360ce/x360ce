@@ -111,79 +111,83 @@ namespace x360ce.App
 			Global.InitializeCloudClient();
 			// Initialize DInput Helper.
 			Global.DHelper = new DInput.DInputHelper();
-
-
-
-			app = new App();
-			//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
-			app.InitializeComponent();
-			app.Run();
-
-			//Global._MainWindow.Show();
-			//Application.Run(Global._MainWindow);
-
-			/*
-			  
-			  //System.Threading.SynchronizationContext.SetSynchronizationContext(new System.Threading.SynchronizationContext());
-			//Global._MainWindow = new MainWindow();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
 				// Close all x360ce apps.
 				StartHelper.BroadcastMessage(StartHelper.wParam_Close);
 				return;
 			}
-
-
-
-			var doNotAllowToRun = o.AllowOnlyOneCopy && StartHelper.BroadcastMessage(StartHelper.wParam_Restore);
+			// Allow to run if multiple copies allowed or allow to restore window.
+			var allowToRun = !o.AllowOnlyOneCopy || !StartHelper.BroadcastMessage(StartHelper.wParam_Restore);
 			// If one copy is already opened then...
-			if (doNotAllowToRun)
+			if (allowToRun)
 			{
-				// Dispose properly so that the tray icon will be removed.
-				Global._MainWindow.Dispose();
-			}
-			else
-			{
-				//MainForm.TrayNotifyIcon.Visible = true;
-				if (ic.Parameters.ContainsKey(arg_WindowState))
-				{
-					switch (ic.Parameters[arg_WindowState])
-					{
-						case "Maximized":
-							Global._MainWindow.RestoreFromTray();
-							Global._MainWindow.WindowState = System.Windows.WindowState.Maximized;
-							break;
-						case "Minimized":
-							Global._MainWindow.MinimizeToTray(false, o.MinimizeToTray);
-							break;
-					}
-				}
+				InitializeServices();
+				InitializeTrayIcon();
 				app = new App();
 				//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
-				//app.Run(Global._MainWindow);
-				//app.InitializeComponent();
+				app.InitializeComponent();
 				app.Run();
-				//Global._MainWindow.Show();
-				//Application.Run(Global._MainWindow);
+
+
+				//if (ic.Parameters.ContainsKey(arg_WindowState))
+				//{
+				//	switch (ic.Parameters[arg_WindowState])
+				//	{
+				//		case nameof(WindowState.Maximized):
+				//			Global._TrayManager.RestoreFromTray(false, true);
+				//			break;
+				//		case nameof(WindowState.Minimized):
+				//			Global._TrayManager.MinimizeToTray(false, o.MinimizeToTray);
+				//			break;
+				//	}
+				//}
 			}
-
-			*/
-
 			Global.DisposeCloudClient();
 			Global.DisposeServices();
 		}
 
+
+		#region Service, TrayIcon and UI
+
+		static void InitializeServices()
+		{
+			// Initialize non-UI service first.
+			Global._LocalService = new Service.LocalService();
+			Global._LocalService.Start();
+		}
+
+		static void InitializeTrayIcon()
+		{
+			// Initialize Tray Icon which will manage main window.
+			Global._TrayManager = new Service.TrayManager();
+			Global._TrayManager.OnExitClick += _TrayManager_OnExitClick;
+			Global._TrayManager.OnWindowSizeChanged += _TrayManager_OnWindowSizeChanged;
+			Global._TrayManager.InitMinimizeAndTopMost();
+		}
+
+		static void _TrayManager_OnWindowSizeChanged(object sender, System.EventArgs e)
+		{
+			if (app == null || Global._MainWindow == null)
+				return;
+			// Form GUI update is very heavy on CPU.
+			// Enable form GUI update only if form is not minimized.
+			var enableUpdates = app.MainWindow.WindowState != WindowState.Minimized && !Program.IsClosing;
+			Global._MainWindow.EnableFormUpdates(enableUpdates);
+		}
+
+		static void _TrayManager_OnExitClick(object sender, System.EventArgs e)
+		{
+			// Remove tray icon first.
+			Global._TrayManager.Dispose();
+			app.Shutdown();
+		}
+
+		#endregion
+
 		static App app;
-
-		//static void DispatchToApp(Action action)
-		//{
-		//	app.Dispatcher.Invoke(action);
-		//}
-
 		public static bool IsClosing;
-
 		public static object DeviceLock = new object();
-
 		public static int TimerCount = 0;
 		public static int ReloadCount = 0;
 		public static int ErrorCount = 0;

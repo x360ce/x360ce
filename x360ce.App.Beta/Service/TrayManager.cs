@@ -8,58 +8,77 @@ using System.Windows;
 
 namespace x360ce.App.Service
 {
-	public partial class TrayManager: IDisposable
+	public partial class TrayManager : IDisposable
 	{
-
-
-		public TrayManager(Window window)
-		{
-			_Window = window;
-		}
 
 		public event EventHandler OnExitClick;
 		public event EventHandler OnWindowSizeChanged;
 
-		Window _Window;
+		public Window _Window;
 
 		private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
-		private System.Windows.Forms.ContextMenuStrip TrayContextMenuStrip;
-		private System.Windows.Forms.ToolStripMenuItem OpenApplicationToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
+		private System.Windows.Forms.ContextMenuStrip TrayMenuStrip;
+		private System.Windows.Forms.ToolStripMenuItem OpenApplicationMenu;
+		private System.Windows.Forms.ToolStripMenuItem ExitMenu;
 
 		public void InitMinimizeAndTopMost()
 		{
-			OpenApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			OpenApplicationToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
-			OpenApplicationToolStripMenuItem.Image = Properties.Resources.app_16x16;
-			OpenApplicationToolStripMenuItem.Text = "Open Application";
-			OpenApplicationToolStripMenuItem.Click += OpenApplicationToolStripMenuItem_Click;
-			ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			ExitToolStripMenuItem.Image = Properties.Resources.exit_16x16;
-			ExitToolStripMenuItem.Text = "Exit";
-			ExitToolStripMenuItem.Click += (sender, e) => OnExitClick?.Invoke(sender, e);
-			TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+			OpenApplicationMenu = new System.Windows.Forms.ToolStripMenuItem();
+			OpenApplicationMenu.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+			OpenApplicationMenu.Image = Properties.Resources.app_16x16;
+			OpenApplicationMenu.Text = "Open Application";
+			OpenApplicationMenu.Click += OpenApplicationToolStripMenuItem_Click;
+			ExitMenu = new System.Windows.Forms.ToolStripMenuItem();
+			ExitMenu.Image = Properties.Resources.exit_16x16;
+			ExitMenu.Text = "Exit";
+			ExitMenu.Click += (sender, e) => OnExitClick?.Invoke(sender, e);
+			TrayMenuStrip = new System.Windows.Forms.ContextMenuStrip();
 			TrayNotifyIcon = new System.Windows.Forms.NotifyIcon();
-			TrayNotifyIcon.ContextMenuStrip = TrayContextMenuStrip;
-			TrayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-				OpenApplicationToolStripMenuItem,
-				ExitToolStripMenuItem,
+			TrayNotifyIcon.ContextMenuStrip = TrayMenuStrip;
+			TrayMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+				OpenApplicationMenu,
+				ExitMenu,
 			});
 			var iconBytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("app.ico");
 			var ms = new MemoryStream(iconBytes);
 			TrayNotifyIcon.Icon = new System.Drawing.Icon(ms);
 			TrayNotifyIcon.Visible = true;
 			_hiddenForm.ShowInTaskbar = false;
-			_Window.SizeChanged += MainWindow_SizeChanged;
 			TrayNotifyIcon.Click += TrayNotifyIcon_Click;
 			TrayNotifyIcon.DoubleClick += TrayNotifyIcon_DoubleClick;
+		}
+
+		public void SetWindow(Window window)
+		{
+			var o = SettingsManager.Options;
+			if (_Window != null)
+			{
+				InfoForm.MonitorEnabled = false;
+				_Window.SizeChanged -= MainWindow_SizeChanged;
+				o.PropertyChanged -= Options_PropertyChanged_Tray;
+			}
+			_Window = window;
+			if (window == null)
+			{
+				CollectGarbage();
+				return;
+			}
+			_Window.SizeChanged += MainWindow_SizeChanged;
 			// Run event once to apply settings.
 			MainWindow_SizeChanged(this, null);
-			var o = SettingsManager.Options;
 			_Window.Topmost = o.AlwaysOnTop;
 			InfoForm.MonitorEnabled = o.EnableShowFormInfo;
 			// Start monitoring event.
 			o.PropertyChanged += Options_PropertyChanged_Tray;
+		}
+
+		void CollectGarbage()
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				GC.Collect(GC.MaxGeneration);
+				GC.WaitForPendingFinalizers();
+			}
 		}
 
 		private void Options_PropertyChanged_Tray(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -159,30 +178,45 @@ namespace x360ce.App.Service
 		/// <summary>
 		/// Restores the window.
 		/// </summary>
-		public void RestoreFromTray(bool activate = false)
+		public void RestoreFromTray(bool activate = false, bool maximize = false)
 		{
-			if (activate)
+			// Initialize main window.
+			var w = new MainWindow();
+			Global._MainWindow = w;
+			Application.Current.MainWindow = w;
+			// Finally show window.
+			SetWindow(w);
+			w.Show();
+			w.Closed += (sender, e) =>
 			{
-				// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
-				// Windows NT 5.0 and later: An application cannot force a window to the foreground while the user is working with another window.
-				// Instead, SetForegroundWindow will activate the window (see SetActiveWindow) and call theFlashWindowEx function to notify the user.
-				if (_Window.WindowState != WindowState.Minimized)
-					_Window.WindowState = WindowState.Minimized;
-				_Window.Activate();
-			}
-			// Show in task bar before restoring windows state in order to prevent flickering.
-			if (!_Window.ShowInTaskbar)
-				_Window.ShowInTaskbar = true;
-			if (_Window.WindowState != WindowState.Normal)
-				_Window.WindowState = WindowState.Normal;
-			// Set window style as ToolWindow to show in ALT+TAB.
-			if (_Window.Owner != null)
-				_Window.Owner = null;
-			// Bring form to the front.
-			var tm = _Window.Topmost;
-			_Window.Topmost = true;
-			_Window.Topmost = tm;
-			_Window.BringIntoView();
+				SetWindow(null);
+				Application.Current.MainWindow = null;
+				Global._MainWindow = null;
+			};
+			//if (activate)
+			//{
+			//	// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
+			//	// Windows NT 5.0 and later: An application cannot force a window to the foreground while the user is working with another window.
+			//	// Instead, SetForegroundWindow will activate the window (see SetActiveWindow) and call theFlashWindowEx function to notify the user.
+			//	if (_Window.WindowState != WindowState.Minimized)
+			//		_Window.WindowState = WindowState.Minimized;
+			//	_Window.Activate();
+			//}
+			//// Show in task bar before restoring windows state in order to prevent flickering.
+			//if (!_Window.ShowInTaskbar)
+			//	_Window.ShowInTaskbar = true;
+			//var tagetState = maximize ? WindowState.Maximized : WindowState.Normal;
+
+			//if (_Window.WindowState != tagetState)
+			//	_Window.WindowState = tagetState;
+			//// Set window style as ToolWindow to show in ALT+TAB.
+			//if (_Window.Owner != null)
+			//	_Window.Owner = null;
+			//// Bring form to the front.
+			//var tm = _Window.Topmost;
+			//_Window.Topmost = true;
+			//_Window.Topmost = tm;
+			//_Window.BringIntoView();
 		}
 
 		#endregion

@@ -126,7 +126,7 @@ namespace x360ce.App
 			}
 		}
 
-		#region ■ Dinput Helper
+		#region ■ DInput Helper
 
 		public static bool AllowDHelperStart;
 
