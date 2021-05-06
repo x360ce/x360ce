@@ -432,11 +432,16 @@
 	<!--  ToolBar  -->
 
 	<Style x:Key="MainToolBar" TargetType="ToolBar">
-		<Setter Property="Margin" Value="0,0,-13,-3" />
+		<Setter Property="Margin" Value="-1,-0,-12,-1" />
 		<Setter Property="Padding" Value="0,0,0,0" />
 		<Setter Property="ToolBar.OverflowMode" Value="Never" />
 		<Setter Property="ToolBarTray.IsLocked" Value="True" />
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Style.Resources>
+			<Style x:Key="ToolBarMainPanelBorderStyle" TargetType="{x:Type Border}">
+				<Setter Property="CornerRadius" Value="0,0,0,0" />
+			</Style>
+		</Style.Resources>
 	</Style>
 
 	<!--  Separator  -->
