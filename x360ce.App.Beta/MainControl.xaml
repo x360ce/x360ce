@@ -68,46 +68,53 @@
 				Content="{StaticResource Icon_gamepad}"
 				Style="{StaticResource ButtonContentControl}" />
 		</Grid>
-		<ToolBarPanel Grid.Row="1" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
-			<ToolBar Style="{StaticResource MainToolBar}">
-				<Label Content="Game:" />
-				<ComboBox x:Name="GameToCustomizeComboBox" MinWidth="320" />
-			</ToolBar>
-		</ToolBarPanel>
-		<ToolBarPanel Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
-			<ToolBar Style="{StaticResource MainToolBar}">
-				<Button
-					Name="AddGameButton"
-					HorizontalAlignment="Right"
-					Click="AddGameButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Add}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Add Game..." Style="{StaticResource ButtonLabel}" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="TestButton"
-					HorizontalAlignment="Right"
-					Click="TestButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_test}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Test..." Style="{StaticResource ButtonLabel}" />
-					</StackPanel>
-				</Button>
-				<Button
-					Name="SaveAllButton"
-					HorizontalAlignment="Right"
-					Click="SaveAllButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_save}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Save All" Style="{StaticResource ButtonLabel}" />
-					</StackPanel>
-				</Button>
-			</ToolBar>
-		</ToolBarPanel>
+		<DockPanel Grid.Row="1" Margin="0,0,0,-3">
+			<ToolBarPanel
+				HorizontalAlignment="Left"
+				VerticalAlignment="Center"
+				DockPanel.Dock="Left"
+				Style="{StaticResource MainToolBarPanel}">
+				<ToolBar Style="{StaticResource MainToolBar}">
+					<Label Content="Game:" />
+					<ComboBox x:Name="GameToCustomizeComboBox" MinWidth="320" />
+				</ToolBar>
+			</ToolBarPanel>
+			<ToolBarPanel HorizontalAlignment="Right" DockPanel.Dock="Right" Style="{StaticResource MainToolBarPanel}">
+				<ToolBar Style="{StaticResource MainToolBar}">
+					<Button
+						Name="AddGameButton"
+						HorizontalAlignment="Right"
+						Click="AddGameButton_Click"
+						Style="{StaticResource ToolBarButton}">
+						<StackPanel Style="{StaticResource ButtonStackPanel}">
+							<ContentControl Content="{StaticResource Icon_Add}" Style="{StaticResource ButtonContentControl}" />
+							<Label Content="Add Game..." Style="{StaticResource ButtonLabel}" />
+						</StackPanel>
+					</Button>
+					<Button
+						Name="TestButton"
+						HorizontalAlignment="Right"
+						Click="TestButton_Click"
+						Style="{StaticResource ToolBarButton}">
+						<StackPanel Style="{StaticResource ButtonStackPanel}">
+							<ContentControl Content="{StaticResource Icon_test}" Style="{StaticResource ButtonContentControl}" />
+							<Label Content="Test..." Style="{StaticResource ButtonLabel}" />
+						</StackPanel>
+					</Button>
+					<Button
+						Name="SaveAllButton"
+						HorizontalAlignment="Right"
+						Click="SaveAllButton_Click"
+						Style="{StaticResource ToolBarButton}">
+						<StackPanel Style="{StaticResource ButtonStackPanel}">
+							<ContentControl Content="{StaticResource Icon_save}" Style="{StaticResource ButtonContentControl}" />
+							<Label Content="Save All" Style="{StaticResource ButtonLabel}" />
+						</StackPanel>
+					</Button>
+				</ToolBar>
+			</ToolBarPanel>
+		</DockPanel>
+
 		<local:MainBodyControl x:Name="MainBodyPanel" Grid.Row="2" Margin="3,3,3,3" />
 		<StatusBar Grid.Row="3" HorizontalAlignment="Left">
 			<StatusBarItem>
