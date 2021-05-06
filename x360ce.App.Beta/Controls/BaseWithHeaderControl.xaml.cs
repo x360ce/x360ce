@@ -71,7 +71,7 @@ namespace x360ce.App.Controls
 
 		public void SetImage(string resource)
 		{
-			_Image = Resources[resource];
+			_Image = App.GetResource(resource);
 			RightIcon.Content = _Image;
 		}
 

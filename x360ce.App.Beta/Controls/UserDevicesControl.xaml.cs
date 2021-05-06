@@ -285,8 +285,8 @@ namespace x360ce.App.Controls
 			var newValue = ShowSystemDevicesButton.IsChecked ?? false;
 			// ShowSystemDevicesButton.IsChecked = newValue;
 			ShowSystemDevicesContent.Content = newValue
-				? Resources[Icons_Default.Icon_checkbox]
-				: Resources[Icons_Default.Icon_checkbox_unchecked];
+				? Icons_Default.Current[Icons_Default.Icon_checkbox]
+				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			ShowSystemDevices = newValue;
 			await RefreshMapDeviceToList();
 		}

@@ -49,15 +49,15 @@ namespace x360ce.App
 				return;
 			PadColors[index] = color;
 			var icon = PadIcons[index];
-			var resource = Resources[Icons_Default.Icon_square_grey];
+			var resource = Icons_Default.Current[Icons_Default.Icon_square_grey];
 			if (color == Colors.Red)
-				resource = Resources[Icons_Default.Icon_square_red];
+				resource = Icons_Default.Current[Icons_Default.Icon_square_red];
 			if (color == Colors.Green)
-				resource = Resources[Icons_Default.Icon_square_green];
+				resource = Icons_Default.Current[Icons_Default.Icon_square_green];
 			if (color == Colors.Blue)
-				resource = Resources[Icons_Default.Icon_square_blue];
+				resource = Icons_Default.Current[Icons_Default.Icon_square_blue];
 			if (color == Colors.Yellow)
-				resource = Resources[Icons_Default.Icon_square_yellow];
+				resource = Icons_Default.Current[Icons_Default.Icon_square_yellow];
 			icon.Content = resource;
 		}
 

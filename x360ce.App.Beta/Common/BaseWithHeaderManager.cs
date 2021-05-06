@@ -110,19 +110,19 @@ namespace x360ce.App
 			{
 				case MessageBoxImage.Error:
 					_BodyLabel.Foreground = new SolidColorBrush(Colors.DarkRed);
-					_LeftIcon.Content = _Control.Resources[Icons_Default.Icon_error];
+					_LeftIcon.Content = Icons_Default.Current[Icons_Default.Icon_error];
 					break;
 				case MessageBoxImage.Question:
 					_BodyLabel.Foreground = new SolidColorBrush(Colors.DarkBlue);
-					_LeftIcon.Content = _Control.Resources[Icons_Default.Icon_question];
+					_LeftIcon.Content = Icons_Default.Current[Icons_Default.Icon_question];
 					break;
 				case MessageBoxImage.Warning:
 					_BodyLabel.Foreground = new SolidColorBrush(Colors.DarkOrange);
-					_LeftIcon.Content = _Control.Resources[Icons_Default.Icon_sign_warning];
+					_LeftIcon.Content = Icons_Default.Current[Icons_Default.Icon_sign_warning];
 					break;
 				default:
 					_BodyLabel.Foreground = SystemColors.ControlTextBrush;
-					_LeftIcon.Content = _Control.Resources[Icons_Default.Icon_information];
+					_LeftIcon.Content = Icons_Default.Current[Icons_Default.Icon_information];
 					break;
 			}
 		}

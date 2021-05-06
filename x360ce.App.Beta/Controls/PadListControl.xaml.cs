@@ -83,14 +83,14 @@ namespace x360ce.App.Controls
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
 			EnabledCheckBox.IsChecked = virt;
 			EnabledContentControl.Content = virt
-				? Resources[Icons_Default.Icon_checkbox]
-				: Resources[Icons_Default.Icon_checkbox_unchecked];         
+				? Icons_Default.Current[Icons_Default.Icon_checkbox]
+				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			// Update AutoMap.
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
 			AutoMapCheckBox.IsChecked = auto;
 			AutoMapContentControl.Content = auto
-				? Resources[Icons_Default.Icon_checkbox]
-				: Resources[Icons_Default.Icon_checkbox_unchecked];
+				? Icons_Default.Current[Icons_Default.Icon_checkbox]
+				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			MainDataGrid.IsEnabled = !auto;
 			MainDataGrid.Background = auto
 				? SystemColors.ControlBrush
@@ -125,8 +125,8 @@ namespace x360ce.App.Controls
 			var newValue = box.IsChecked ?? false;
 			// ShowSystemDevicesButton.IsChecked = newValue;
 			EnabledContentControl.Content = newValue
-				? Resources[Icons_Default.Icon_checkbox]
-				: Resources[Icons_Default.Icon_checkbox_unchecked];
+				? Icons_Default.Current[Icons_Default.Icon_checkbox]
+				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			// Process.
 			var game = SettingsManager.CurrentGame;
 			// If no game selected then ignore click.
@@ -162,8 +162,8 @@ namespace x360ce.App.Controls
 			var newValue = box.IsChecked ?? false;
 			// ShowSystemDevicesButton.IsChecked = newValue;
 			AutoMapContentControl.Content = newValue
-				? Resources[Icons_Default.Icon_checkbox]
-				: Resources[Icons_Default.Icon_checkbox_unchecked];
+				? Icons_Default.Current[Icons_Default.Icon_checkbox]
+				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			// Process.
 			var game = SettingsManager.CurrentGame;
 			// If no game selected then ignore click.
@@ -240,8 +240,8 @@ namespace x360ce.App.Controls
 			var newValue = box.IsChecked ?? false;
 			// ShowSystemDevicesButton.IsChecked = newValue;
 			UseXInputStateContentControl.Content = newValue
-				? Resources[Icons_Default.Icon_checkbox]
-				: Resources[Icons_Default.Icon_checkbox_unchecked];
+				? Icons_Default.Current[Icons_Default.Icon_checkbox]
+				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 
 			ControlsHelper.BeginInvoke(() =>
 			{
@@ -271,6 +271,7 @@ namespace x360ce.App.Controls
 			UpdateGridButtons();
 		}
 
+		
 		/*
 		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{

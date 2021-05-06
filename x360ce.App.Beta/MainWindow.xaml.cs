@@ -85,7 +85,8 @@ namespace x360ce.App
 			StartHelper.OnRestore += (sender1, e1)
 				=> Global._TrayManager.RestoreFromTray(true);
 			AppHelper.InitializeHidGuardian();
-			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
+			if (string.IsNullOrEmpty(System.Threading.Thread.CurrentThread.Name))
+				System.Threading.Thread.CurrentThread.Name = "MainFormThread";
 			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
 			Global.DHelper.UpdateCompleted += DHelper_UpdateCompleted;
 			Global.DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;

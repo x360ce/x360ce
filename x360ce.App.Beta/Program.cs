@@ -126,27 +126,38 @@ namespace x360ce.App
 				InitializeTrayIcon();
 				app = new App();
 				//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+				app.Startup += App_Startup;
 				app.InitializeComponent();
 				app.Run();
-
-
-				//if (ic.Parameters.ContainsKey(arg_WindowState))
-				//{
-				//	switch (ic.Parameters[arg_WindowState])
-				//	{
-				//		case nameof(WindowState.Maximized):
-				//			Global._TrayManager.RestoreFromTray(false, true);
-				//			break;
-				//		case nameof(WindowState.Minimized):
-				//			Global._TrayManager.MinimizeToTray(false, o.MinimizeToTray);
-				//			break;
-				//	}
-				//}
 			}
 			Global.DisposeCloudClient();
 			Global.DisposeServices();
 		}
 
+		// Application starts first time.
+		private static void App_Startup(object sender, StartupEventArgs e)
+		{
+			var o = SettingsManager.Options;
+			var args = System.Environment.GetCommandLineArgs();
+			var ic = new System.Configuration.Install.InstallContext(null, args);
+			// If windows state parameter was passed then...
+			if (ic.Parameters.ContainsKey(arg_WindowState))
+			{
+				switch (ic.Parameters[arg_WindowState])
+				{
+					case nameof(WindowState.Maximized):
+						Global._TrayManager.RestoreFromTray(false, true);
+						break;
+					case nameof(WindowState.Minimized):
+						Global._TrayManager.MinimizeToTray(false, o.MinimizeToTray);
+						break;
+				}
+			}
+			else
+			{
+				Global._TrayManager.RestoreFromTray(false, false);
+			}
+		}
 
 		#region Service, TrayIcon and UI
 

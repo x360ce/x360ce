@@ -19,7 +19,7 @@
 						Height="12"
 						Content="{StaticResource Icon_square_grey}"
 						Style="{StaticResource ButtonContentControl}" />
-					<Label Content="PAD 1" Style="{StaticResource ButtonLabel}" />
+					<Label Padding="0,0,0,0" Content="PAD 1" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
 			<local:PadControl x:Name="Pad1Panel" />
@@ -33,7 +33,7 @@
 						Height="12"
 						Content="{StaticResource Icon_square_grey}"
 						Style="{StaticResource ButtonContentControl}" />
-					<Label Content="PAD 2" Style="{StaticResource ButtonLabel}" />
+					<Label Padding="0,0,0,0" Content="PAD 2" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
 			<local:PadControl x:Name="Pad2Panel" />
@@ -47,7 +47,7 @@
 						Height="12"
 						Content="{StaticResource Icon_square_grey}"
 						Style="{StaticResource ButtonContentControl}" />
-					<Label Content="PAD 3" Style="{StaticResource ButtonLabel}" />
+					<Label Padding="0,0,0,0" Content="PAD 3" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
 			<local:PadControl x:Name="Pad3Panel" />
@@ -61,7 +61,7 @@
 						Height="12"
 						Content="{StaticResource Icon_square_grey}"
 						Style="{StaticResource ButtonContentControl}" />
-					<Label Content="PAD 4" Style="{StaticResource ButtonLabel}" />
+					<Label Padding="0,0,0,0" Content="PAD 4" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
 			<local:PadControl x:Name="Pad4Panel" />
@@ -103,7 +103,7 @@
 						Height="12"
 						Content="{StaticResource Icon_square_grey}"
 						Style="{StaticResource ButtonContentControl}" />
-					<Label Content="Issues" Style="{StaticResource ButtonLabel}" />
+					<Label Padding="0,0,0,0" Content="Issues" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</TabItem.Header>
 			<issues:IssuesControl x:Name="IssuesPanel" />
