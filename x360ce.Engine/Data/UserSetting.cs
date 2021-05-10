@@ -14,6 +14,10 @@ namespace x360ce.Engine.Data
 		Guid IUserRecord.Id { get {return SettingId; }  set { SettingId = value; } }
 
 		[XmlIgnore]
+		public string InstanceId
+			=> EngineHelper.GetID(InstanceGuid);
+
+		[XmlIgnore]
 		public bool IsOnline
 		{
 			get { return _IsOnline; }

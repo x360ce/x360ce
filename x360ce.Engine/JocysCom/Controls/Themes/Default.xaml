@@ -63,10 +63,6 @@
 		</Style.Triggers>
 	</Style>
 
-	<Style x:Key="Button" BasedOn="{StaticResource Button_Default}" TargetType="Button" />
-
-	<!--<Style BasedOn="{StaticResource Button_Default}" TargetType="Button" />-->
-
 	<!--  Button -ToolBar  -->
 
 	<Style x:Key="ToolBarButton" TargetType="Button">
@@ -206,11 +202,10 @@
 	<Style x:Key="TextBox_Default" TargetType="TextBox">
 		<Setter Property="Height" Value="Auto" />
 		<Setter Property="Margin" Value="3,3,3,3" />
-		<Setter Property="Padding" Value="3,3,3,3" />
+		<Setter Property="Padding" Value="1,3,1,3" />
 		<Setter Property="VerticalAlignment" Value="Center" />
-		<Setter Property="TextAlignment" Value="Center" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="Width" Value="120" />
+		<!--<Setter Property="MinWidth" Value="120" />-->
 		<Style.Triggers>
 			<Trigger Property="IsReadOnly" Value="True">
 				<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
@@ -218,15 +213,7 @@
 		</Style.Triggers>
 	</Style>
 
-	<!--<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />-->
-
-	<Style x:Key="TextBoxReadOnly" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
-		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-		<Setter Property="IsReadOnly" Value="True" />
-	</Style>
-
 	<!--  TextBox - Cell  -->
-
 
 	<Style x:Key="TextBoxCell" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
 		<Setter Property="BorderThickness" Value="0" />
@@ -259,7 +246,6 @@
 
 
 	<!--  TextBlock - Cell  -->
-
 
 	<Style x:Key="TextBlockCell" BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock">
 		<Setter Property="Padding" Value="3,4,3,2" />
@@ -341,29 +327,14 @@
 	<!--  ComboBox  -->
 
 
-	<Style x:Key="ComboBoxDefault" TargetType="ComboBox">
+	<Style x:Key="ComboBox_Default" TargetType="ComboBox">
 		<Setter Property="Margin" Value="3,3,3,3" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
-	<Style x:Key="ComboBoxFix" BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox">
-		<Style.Triggers>
-			<Trigger Property="IsEditable" Value="True">
-				<Setter Property="Padding" Value="3,3,3,3" />
-			</Trigger>
-			<Trigger Property="IsEditable" Value="False">
-				<Setter Property="Padding" Value="-2,-2,-2,-2" />
-			</Trigger>
-		</Style.Triggers>
-	</Style>
-
-	<!--<Style BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox" />-->
-
-
 	<!--  ComboBox - Grid  -->
 
-
-	<Style x:Key="ComboBoxGrid" BasedOn="{StaticResource ComboBoxDefault}" TargetType="ComboBox">
+	<Style x:Key="ComboBoxGrid" BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox">
 		<Setter Property="Padding" Value="3,3,3,3" />
 		<Setter Property="Margin" Value="3,3,3,3" />
 		<Setter Property="HorizontalAlignment" Value="Left" />
@@ -405,7 +376,6 @@
 	</Style>
 
 	<!--  Label  -->
-
 
 	<Style x:Key="ButtonLabel" TargetType="Label">
 		<Setter Property="Margin" Value="0,0,0,0" />
@@ -484,5 +454,9 @@
 	<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox" />
 	<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
 	<Style BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid" />
+	<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />
+	<Style BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox" />
+	<Style BasedOn="{StaticResource Button_Default}" TargetType="Button" />
+	<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
 
 </ResourceDictionary>

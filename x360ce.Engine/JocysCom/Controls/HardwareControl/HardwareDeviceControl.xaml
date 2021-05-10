@@ -35,17 +35,14 @@
 			x:Name="VendorID"
 			Grid.Row="0"
 			Grid.Column="1"
-			Style="{StaticResource TextBoxReadOnly}" />
+			IsReadOnly="True" />
 
 		<Label Grid.Row="1" Grid.Column="0" Content="Product ID" />
 		<TextBox
 			x:Name="ProductID"
 			Grid.Row="1"
 			Grid.Column="1"
-			Style="{StaticResource TextBoxReadOnly}" />
-
-
-
+			IsReadOnly="True" />
 
 	</Grid>
 </UserControl>
