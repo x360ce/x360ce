@@ -9,7 +9,7 @@
 	mc:Ignorable="d">
 	<TabControl Name="PadTabControl" Grid.IsSharedSizeScope="True">
 		<TabItem Name="GeneralTabPage" Header="General">
-			<local:PadItem_GeneralControl x:Name="GeneralPanel" Padding="3,3,3,3" />
+			<local:PadItem_GeneralControl x:Name="GeneralPanel" />
 		</TabItem>
 		<TabItem Name="AdvancedTabPage" Header="Advanced">
 			<local:PadItem_AdvancedControl x:Name="AdvancedPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" />
@@ -48,7 +48,7 @@
 			<local:PadItem_XInputControl x:Name="XInputPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" />
 		</TabItem>
 		<TabItem Name="DInputTabPage" Header="DInput">
-			<local:PadItem_DInputControl x:Name="DInputPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" Padding="3,3,3,3" />
+			<local:PadItem_DInputControl x:Name="DInputPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" />
 		</TabItem>
 	</TabControl>
 </UserControl>
