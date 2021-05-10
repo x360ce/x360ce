@@ -9,101 +9,46 @@
 	mc:Ignorable="d">
 	<TabControl Name="PadTabControl" Grid.IsSharedSizeScope="True">
 		<TabItem Name="GeneralTabPage" Header="General">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadItem_GeneralControl x:Name="GeneralPanel" Margin="3,3,3,3" />
-			</Grid>
+			<local:PadItem_GeneralControl x:Name="GeneralPanel" Padding="3,3,3,3" />
 		</TabItem>
 		<TabItem Name="AdvancedTabPage" Header="Advanced">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadItem_AdvancedControl x:Name="AdvancedPanel" />
-			</Grid>
+			<local:PadItem_AdvancedControl x:Name="AdvancedPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" />
 		</TabItem>
 		<TabItem Name="ButtonsTabPage" Header="Buttons">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadItem_ButtonsControl x:Name="ButtonsPanel" />
-			</Grid>
+			<local:PadItem_ButtonsControl x:Name="ButtonsPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" />
 		</TabItem>
 		<TabItem Name="DPadTabPage" Header="D-Pad">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadItem_DPadControl x:Name="DPadPanel" />
-			</Grid>
+			<local:PadItem_DPadControl x:Name="DPadPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" />
 		</TabItem>
 		<TabItem Name="TRiggersTabPage" Header="Triggers">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<StackPanel Orientation="Vertical">
-					<local:AxisMapControl x:Name="LeftTriggerPanel" x:FieldModifier="public" />
-					<local:AxisMapControl x:Name="RightTriggerPanel" x:FieldModifier="public" />
-				</StackPanel>
-			</Grid>
+			<StackPanel Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" Orientation="Vertical">
+				<local:AxisMapControl x:Name="LeftTriggerPanel" x:FieldModifier="public" />
+				<local:AxisMapControl x:Name="RightTriggerPanel" x:FieldModifier="public" />
+			</StackPanel>
 		</TabItem>
 		<TabItem Name="LeftThumbTabPage" Header="Left Thumb">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<StackPanel Orientation="Vertical">
-					<local:AxisMapControl x:Name="LeftThumbXPanel" x:FieldModifier="public" />
-					<local:AxisMapControl x:Name="LeftThumbYPanel" x:FieldModifier="public" />
-				</StackPanel>
-			</Grid>
+			<StackPanel Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" Orientation="Vertical">
+				<local:AxisMapControl x:Name="LeftThumbXPanel" x:FieldModifier="public" />
+				<local:AxisMapControl x:Name="LeftThumbYPanel" x:FieldModifier="public" />
+			</StackPanel>
 		</TabItem>
 		<TabItem Name="RightThumbTabPage" Header="Right Thumb">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<StackPanel Orientation="Vertical">
-					<local:AxisMapControl x:Name="RightThumbXPanel" x:FieldModifier="public" />
-					<local:AxisMapControl x:Name="RightThumbYPanel" x:FieldModifier="public" />
-				</StackPanel>
-			</Grid>
+			<StackPanel Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" Orientation="Vertical">
+				<local:AxisMapControl x:Name="RightThumbXPanel" x:FieldModifier="public" />
+				<local:AxisMapControl x:Name="RightThumbYPanel" x:FieldModifier="public" />
+			</StackPanel>
 		</TabItem>
 		<TabItem Name="ForceFeedbackTabPage" Header="Force Feedback">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadItem_ForceFeedbackControl x:Name="ForceFeedbackPanel" />
-			</Grid>
+			<local:PadItem_ForceFeedbackControl x:Name="ForceFeedbackPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" />
 		</TabItem>
 		<TabItem Name="MacrosTabPage" Header="Macros">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadItem_MacrosControl x:Name="MacrosPanel" />
-			</Grid>
+			<local:PadItem_MacrosControl x:Name="MacrosPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" />
 		</TabItem>
 		<TabItem Name="XInputTabPage" Header="XInput">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadItem_XInputControl x:Name="XInputPanel" />
-			</Grid>
+			<local:PadItem_XInputControl x:Name="XInputPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" />
 		</TabItem>
 		<TabItem Name="DInputTabPage" Header="DInput">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition SharedSizeGroup="group1" />
-				</Grid.RowDefinitions>
-				<local:PadItem_DInputControl x:Name="DInputPanel" Margin="3,3,3,3" />
-			</Grid>
+			<local:PadItem_DInputControl x:Name="DInputPanel" Height="{Binding Path=ActualHeight, ElementName=GeneralPanel}" Padding="3,3,3,3" />
 		</TabItem>
 	</TabControl>
 </UserControl>

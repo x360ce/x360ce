@@ -52,7 +52,7 @@
 			<StackPanel>
 				<StackPanel Grid.Column="3" Orientation="Horizontal">
 					<Label VerticalAlignment="Center" Content="Type / Implementation" />
-					<ComboBox x:Name="ForceTypeComboBox" SelectionChanged="ForceTypeComboBox_SelectionChanged"  />
+					<ComboBox x:Name="ForceTypeComboBox" SelectionChanged="ForceTypeComboBox_SelectionChanged" />
 				</StackPanel>
 				<TextBlock
 					x:Name="ForceTypeDescriptionTextBlock"
@@ -74,7 +74,11 @@
 			Grid.Row="1"
 			Grid.Column="1"
 			x:FieldModifier="public" />
-		<TextBlock Grid.Row="2" Grid.ColumnSpan="3" TextWrapping="Wrap">
+		<TextBlock
+			Grid.Row="2"
+			Grid.ColumnSpan="3"
+			Padding="3,3,3,3"
+			TextWrapping="Wrap">
 			If your controller have only one motor then force feedback effects will be merged automatically.
 			Values sent by the game to the Left Motor, which is used to simulate large explosions, crashes, gun fire, etc,
 			will be able to reach maximum vibration effect.
