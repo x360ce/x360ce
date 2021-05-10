@@ -90,7 +90,7 @@
 			<local:CloudControl x:Name="CloudPanel" />
 		</TabItem>
 		<TabItem Name="HelpTabPage" Header="Help">
-			<RichTextBox x:Name="HelpRichTextBox" />
+			<RichTextBox x:Name="HelpRichTextBox" BorderThickness="0" />
 		</TabItem>
 		<TabItem Name="AboutTabPage" Header="About">
 			<local:AboutUserControl x:Name="AboutPanel" />

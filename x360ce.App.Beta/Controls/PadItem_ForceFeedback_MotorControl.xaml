@@ -24,7 +24,7 @@
 				</Grid.ColumnDefinitions>
 				<StackPanel Grid.Column="3" Orientation="Horizontal">
 					<Label VerticalAlignment="Center" Content="Direction" />
-					<ComboBox x:Name="DirectionComboBox" Style="{StaticResource ComboBoxFix}" />
+					<ComboBox x:Name="DirectionComboBox" />
 				</StackPanel>
 			</Grid>
 			<StackPanel Orientation="Vertical">

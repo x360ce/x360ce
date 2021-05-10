@@ -52,7 +52,7 @@
 			<StackPanel>
 				<StackPanel Grid.Column="3" Orientation="Horizontal">
 					<Label VerticalAlignment="Center" Content="Type / Implementation" />
-					<ComboBox x:Name="ForceTypeComboBox" SelectionChanged="ForceTypeComboBox_SelectionChanged" Style="{StaticResource ComboBoxFix}" />
+					<ComboBox x:Name="ForceTypeComboBox" SelectionChanged="ForceTypeComboBox_SelectionChanged"  />
 				</StackPanel>
 				<TextBlock
 					x:Name="ForceTypeDescriptionTextBlock"

@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
+using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
@@ -12,15 +13,15 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for UserSettingMapListControl.xaml
 	/// </summary>
-	public partial class PadListControl : UserControl
+	public partial class PadListControl : UserControl, IDisposable
 	{
 		public PadListControl()
 		{
 			InitializeComponent();
+			MainDataGrid.ItemsSource = mappedUserSettings;
 		}
 
 		MapTo _MappedTo;
-		UserSetting _UserSetting;
 		SortableBindingList<Engine.Data.UserSetting> mappedUserSettings = new SortableBindingList<Engine.Data.UserSetting>();
 
 		private void UserSettings_Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -38,6 +39,9 @@ namespace x360ce.App.Controls
 		{
 			lock (DevicesToMapDataGridViewLock)
 			{
+				// If list not linked to any controller then return.
+				if (_MappedTo == MapTo.None)
+					return;
 				var grid = MainDataGrid;
 				var game = SettingsManager.CurrentGame;
 				// Get rows which must be displayed on the list.
@@ -69,14 +73,24 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		public void SetBinding(MapTo mappedTo, UserSetting userSetting)
+		public void SetBinding(MapTo mappedTo)
 		{
 			_MappedTo = mappedTo;
-			_UserSetting = userSetting;
+			// Remove references which will allows form to be disposed.
+			SettingsManager.UserSettings.Items.ListChanged -= UserSettings_Items_ListChanged;
+			mappedUserSettings.Clear();
+			if (mappedTo != MapTo.None)
+			{
+				SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
+				UserSettings_Items_ListChanged(null, null);
+			}
 		}
 
 		public void UpdateFromCurrentGame()
 		{
+			// If list not linked to any controller then return.
+			if (_MappedTo == MapTo.None)
+				return;
 			var game = SettingsManager.CurrentGame;
 			var flag = AppHelper.GetMapFlag(_MappedTo);
 			// Update Virtual.
@@ -173,16 +187,11 @@ namespace x360ce.App.Controls
 			var value = (MapToMask)game.AutoMapMask;
 			var autoMap = value.HasFlag(flag);
 			// If AUTO enabled then...
-			if (autoMap)
-			{
+			game.AutoMapMask = autoMap
 				// Remove AUTO.
-				game.AutoMapMask = (int)(value & ~flag);
-			}
-			else
-			{
+				? (int)(value & ~flag)
 				// Add AUTO.
-				game.AutoMapMask = (int)(value | flag);
-			}
+				: (int)(value | flag);
 		}
 
 		private void AddButton_Click(object sender, RoutedEventArgs e)
@@ -202,9 +211,10 @@ namespace x360ce.App.Controls
 				SettingsManager.Options.HidGuardianConfigureAutomatically);
 			var hasNewSettings = SettingsManager.GetSettings(game.FileName, _MappedTo).Count > 0;
 			// If new devices mapped and button is not enabled then...
-			if (noOldSettings && hasNewSettings && !(EnabledCheckBox.IsChecked == true))
+			if (noOldSettings && hasNewSettings && EnabledCheckBox.IsChecked != true)
 			{
 				// Enable mapping.
+				EnabledCheckBox.IsChecked = true;
 				EnabledCheckBox_Click(EnabledCheckBox, null);
 			}
 			SettingsManager.Current.RaiseSettingsChanged(null);
@@ -223,14 +233,16 @@ namespace x360ce.App.Controls
 			if (game == null)
 				return;
 			var settingsOld = SettingsManager.GetSettings(game.FileName, _MappedTo);
-			SettingsManager.UnMapGamePadDevices(game, _UserSetting,
+			var userSetting = (UserSetting)MainDataGrid.SelectedItem;
+			SettingsManager.UnMapGamePadDevices(game, userSetting,
 				SettingsManager.Options.HidGuardianConfigureAutomatically);
 			var settingsNew = SettingsManager.GetSettings(game.FileName, _MappedTo);
 			// if all devices unmapped and mapping is enabled then...
 			if (settingsOld.Count > 0 && settingsNew.Count == 0 && (EnabledCheckBox.IsChecked == true))
 			{
 				// Disable mapping.
-				EnabledCheckBox_Click(null, null);
+				EnabledCheckBox.IsChecked = false;
+				EnabledCheckBox_Click(EnabledCheckBox, null);
 			}
 		}
 
@@ -264,14 +276,11 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			var o = SettingsManager.Options;
-			MainDataGrid.ItemsSource = mappedUserSettings;
 			SettingsManager.LoadAndMonitor(o, nameof(o.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
-			SettingsManager.UserSettings.Items.ListChanged += UserSettings_Items_ListChanged;
-			UserSettings_Items_ListChanged(null, null);
 			UpdateGridButtons();
 		}
 
-		
+
 		/*
 		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
@@ -330,6 +339,28 @@ namespace x360ce.App.Controls
 		}
 
 		*/
+
+		#region ■ IDisposable
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		public bool IsDisposing;
+
+		// The bulk of the clean-up code is implemented in Dispose(bool)
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				IsDisposing = true;
+				SetBinding(MapTo.None);
+			}
+		}
+
+		#endregion
 
 	}
 }

@@ -17,11 +17,7 @@
 					<CheckBox Name="AlwaysOnTopCheckBox" Content="Always on Top" />
 					<CheckBox Name="MinimizeToTrayCheckBox" Content="Minimize to Tray" />
 					<CheckBox Name="StartWithWindowsCheckBox" Content="Start with Windows:" />
-					<ComboBox
-						Name="StartWithWindowsStateComboBox"
-						MinWidth="75"
-						HorizontalAlignment="Left"
-						Style="{StaticResource ComboBoxFix}" />
+					<ComboBox Name="StartWithWindowsStateComboBox" MinWidth="75" HorizontalAlignment="Left" />
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Header="Testing and Logging">
@@ -109,12 +105,6 @@
 									</Button>
 								</ToolBar>
 							</ToolBarPanel>
-							<Border
-								Grid.Row="1"
-								Height="1"
-								BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
-								BorderThickness="1"
-								SnapsToDevicePixels="True" />
 							<ListBox
 								Name="GameScanLocationsListBox"
 								Grid.Row="1"

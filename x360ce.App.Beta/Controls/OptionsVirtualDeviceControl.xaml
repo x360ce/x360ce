@@ -32,8 +32,7 @@
 					Name="PollingRateComboBox"
 					Grid.Row="0"
 					Grid.Column="1"
-					Width="Auto"
-					Style="{StaticResource ComboBoxFix}" />
+					Width="Auto" />
 				<Button
 					Name="RefreshButton"
 					Grid.Row="0"

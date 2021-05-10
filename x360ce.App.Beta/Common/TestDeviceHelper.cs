@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -69,6 +68,7 @@ namespace x360ce.App
 				break;
 			}
 			var ud = new UserDevice();
+			ud.HidManufacturer = "X360CE";
 			ud.DevManufacturer = "X360CE";
 			ud.InstanceGuid = Guid.NewGuid();
 			ud.InstanceName = instanceName;

@@ -170,18 +170,13 @@
 							Name="ProcessorArchitectureComboBox"
 							Grid.Row="1"
 							Grid.Column="5"
-							IsEnabled="False"
-							Style="{StaticResource ComboBoxFix}" />
+							IsEnabled="False" />
 						<Label
 							Name="EmulationTypeLabel"
 							Grid.Row="2"
 							Grid.Column="4"
 							Content="Emulation" />
-						<ComboBox
-							Name="EmulationTypeComboBox"
-							Grid.Row="2"
-							Grid.Column="5"
-							Style="{StaticResource ComboBoxFix}" />
+						<ComboBox Name="EmulationTypeComboBox" Grid.Row="2" Grid.Column="5" />
 					</Grid>
 				</WrapPanel>
 			</GroupBox>

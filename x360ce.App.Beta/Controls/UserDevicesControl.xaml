@@ -6,8 +6,8 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="260"
-	d:DesignWidth="840"
+	d:DesignHeight="100"
+	d:DesignWidth="720"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	Loaded="UserControl_Loaded"
 	mc:Ignorable="d">

@@ -60,6 +60,7 @@ namespace x360ce.App.Controls
 			ButtonsPanel.AxisToDPadUpDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadUpTextBox;
 			// Monitor setting changes.
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
+			PadListPanel.SetBinding(MappedTo);
 			PadListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
 		}
 
@@ -481,7 +482,6 @@ namespace x360ce.App.Controls
 					? new PadSetting()
 					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 				DPadPanel.SetBinding(_CurrentPadSetting);
-				PadListPanel.SetBinding(MappedTo, _CurrentUserSetting);
 				GeneralPanel.SetBinding(MappedTo, _CurrentPadSetting);
 				AdvancedPanel.SetBinding(_CurrentPadSetting);
 				LeftTriggerPanel.SetBinding(_CurrentPadSetting);

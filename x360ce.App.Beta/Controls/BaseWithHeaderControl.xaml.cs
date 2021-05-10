@@ -98,7 +98,7 @@ namespace x360ce.App.Controls
 			label.Content = text;
 			content.Content = string.IsNullOrEmpty(image)
 				? null
-				: Resources[image];
+				: App.GetResource(image);
 		}
 
 		private void Button1_Click(object sender, RoutedEventArgs e)
