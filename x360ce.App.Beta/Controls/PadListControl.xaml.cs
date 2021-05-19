@@ -2,9 +2,11 @@
 using JocysCom.ClassLibrary.Controls;
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using x360ce.App.Converters;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -19,6 +21,18 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			MainDataGrid.ItemsSource = mappedUserSettings;
+			_InstanceGuidToConnectionClassImageConverter = (ItemFormattingConverter)MainDataGrid.Resources[nameof(_InstanceGuidToConnectionClassImageConverter)];
+			_InstanceGuidToConnectionClassImageConverter.ConvertFunction = _InstanceGuidToConnectionClassImageConverter_Convert;
+		}
+
+		ItemFormattingConverter _InstanceGuidToConnectionClassImageConverter;
+
+		object _InstanceGuidToConnectionClassImageConverter_Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			var instanceGuid = (Guid)value;
+			var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
+			var imageSource = ConnectionClassToImageConverter.Convert(ud?.ConnectionClass ?? Guid.Empty);
+			return imageSource;
 		}
 
 		MapTo _MappedTo;

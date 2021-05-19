@@ -92,6 +92,7 @@
 				<converters:MapToIntToDescription x:Key="_MapToIntToDescription" />
 				<converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
 				<converters:ConnectionClassToImageConverter x:Key="ConnectionClassToImageConverter" />
+				<converters:ItemFormattingConverter x:Key="_InstanceGuidToConnectionClassImageConverter" />
 			</DataGrid.Resources>
 			<DataGrid.Columns>
 				<!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
@@ -105,7 +106,7 @@
 				<DataGridTemplateColumn Width="SizeToCells" Header="" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Image Source="{Binding ConnectionClass, Converter={StaticResource ConnectionClassToImageConverter}}" />
+							<Image Source="{Binding InstanceGuid, Converter={StaticResource _InstanceGuidToConnectionClassImageConverter}}" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>

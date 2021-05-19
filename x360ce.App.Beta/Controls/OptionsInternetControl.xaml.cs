@@ -25,7 +25,6 @@ namespace x360ce.App.Controls
 		{
 			var o = SettingsManager.Options;
 			SettingsManager.LoadAndMonitor(o, nameof(o.GetProgramsMinInstances), GetProgramsMinInstancesUpDown);
-			//SettingsManager.LoadAndMonitor(o, nameof(o.GetProgramsIncludeEnabled), GetProgramsIncludeEnabledCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(o.InternetAutoLoad), InternetAutoLoadCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(o.InternetAutoSave), InternetAutoSaveCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(o.InternetFeatures), InternetFeaturesCheckBox);
@@ -36,7 +35,8 @@ namespace x360ce.App.Controls
 			LoadSettings();
 			// Attach event which will save form settings before Save().
 			SettingsManager.OptionsData.Saving += OptionsData_Saving;
-			SettingsManager.LoadAndMonitor(o, nameof(o.GetProgramsIncludeEnabled), GetProgramsIncludeEnabledCheckBox);
+			var es2b = new Converters.EnabledStateToBoolConverter();
+			SettingsManager.LoadAndMonitor(o, nameof(o.GetProgramsIncludeEnabled), GetProgramsIncludeEnabledCheckBox, null, es2b);
 		}
 
 		public void LoadSettings()
