@@ -21,20 +21,26 @@ namespace x360ce.App.Controls
 		{
 			InitializeComponent();
 			MainDataGrid.ItemsSource = mappedUserSettings;
-			_InstanceGuidToConnectionClassImageConverter = (ItemFormattingConverter)MainDataGrid.Resources[nameof(_InstanceGuidToConnectionClassImageConverter)];
-			_InstanceGuidToConnectionClassImageConverter.ConvertFunction = _InstanceGuidToConnectionClassImageConverter_Convert;
+			_MainDataGridFormattingConverter = (ItemFormattingConverter)MainDataGrid.Resources[nameof(_MainDataGridFormattingConverter)];
+			_MainDataGridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
 		}
 
-		ItemFormattingConverter _InstanceGuidToConnectionClassImageConverter;
+		ItemFormattingConverter _MainDataGridFormattingConverter;
 
-		object _InstanceGuidToConnectionClassImageConverter_Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		object _MainDataGridFormattingConverter_Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
 			var sender = (Image)values[0];
-			var item = (UserSetting)values[1];
-			var instanceGuid = (Guid)values[2];
-			var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
-			var imageSource = ConnectionClassToImageConverter.Convert(ud?.ConnectionClass ?? Guid.Empty);
-			return imageSource;
+			var cell = (DataGridCell)((FrameworkElement)values[1]).Parent;
+			var value = values[2];
+			var item = (UserSetting)cell.DataContext;
+			// Format ConnectionClassColumn value.
+			if (cell.Column == ConnectionClassColumn)
+			{
+				var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == item.InstanceGuid);
+				var imageSource = ConnectionClassToImageConverter.Convert(ud?.ConnectionClass ?? Guid.Empty);
+				return imageSource;
+			}
+			return value;
 		}
 
 		MapTo _MappedTo;
