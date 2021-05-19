@@ -106,7 +106,15 @@
 				<DataGridTemplateColumn Width="SizeToCells" Header="" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<Image Source="{Binding InstanceGuid, Converter={StaticResource _InstanceGuidToConnectionClassImageConverter}}" />
+							<Image>
+								<Image.Source>
+									<MultiBinding Converter="{StaticResource _InstanceGuidToConnectionClassImageConverter}">
+										<Binding RelativeSource="{RelativeSource Self}" />
+										<Binding Path="." />
+										<Binding Path="InstanceGuid" />
+									</MultiBinding>
+								</Image.Source>
+							</Image>
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>

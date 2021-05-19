@@ -27,9 +27,11 @@ namespace x360ce.App.Controls
 
 		ItemFormattingConverter _InstanceGuidToConnectionClassImageConverter;
 
-		object _InstanceGuidToConnectionClassImageConverter_Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		object _InstanceGuidToConnectionClassImageConverter_Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			var instanceGuid = (Guid)value;
+			var sender = (Image)values[0];
+			var item = (UserSetting)values[1];
+			var instanceGuid = (Guid)values[2];
 			var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == instanceGuid);
 			var imageSource = ConnectionClassToImageConverter.Convert(ud?.ConnectionClass ?? Guid.Empty);
 			return imageSource;
