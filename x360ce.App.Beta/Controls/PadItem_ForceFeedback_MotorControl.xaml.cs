@@ -25,13 +25,13 @@ namespace x360ce.App.Controls
 		TrackBarUpDownTextBoxLink offsetLink;
 		TrackBarUpDownTextBoxLink testLink;
 
-		public void SetBinding(PadSetting o, int motor)
+		public void SetBinding(PadSetting ps, int motor)
 		{
 			// Unbind first.
 			SettingsManager.UnLoadMonitor(DirectionComboBox);
 			SettingsManager.UnLoadMonitor(StrengthUpDown);
 			SettingsManager.UnLoadMonitor(PeriodUpDown);
-			if (o == null)
+			if (ps == null)
 				return;
 			switch (motor)
 			{
@@ -44,12 +44,12 @@ namespace x360ce.App.Controls
 				default:
 					break;
 			}
-			var converter = new Converters.PaddSettingToIntegerConverter();
+			var converter = new Converters.PadSettingToIntegerConverter();
 			var enumConverter = new Converters.PaddSettingToEnumConverter<ForceEffectDirection>();
 			// Set binding.
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftMotorDirection), DirectionComboBox, null, enumConverter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftMotorStrength), StrengthUpDown, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftMotorPeriod), PeriodUpDown, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorDirection), DirectionComboBox, null, enumConverter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorStrength), StrengthUpDown, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorPeriod), PeriodUpDown, null, converter);
 		}
 	}
 }

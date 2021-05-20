@@ -29,8 +29,9 @@ namespace x360ce.App.Controls
 
 		object _MainDataGridFormattingConverter_Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
 		{
-			var sender = (Image)values[0];
-			var cell = (DataGridCell)((FrameworkElement)values[1]).Parent;
+			var sender = (FrameworkElement)values[0];
+			var template = (FrameworkElement)values[1];
+			var cell = (DataGridCell)(template ?? sender).Parent;
 			var value = values[2];
 			var item = (UserSetting)cell.DataContext;
 			// Format ConnectionClassColumn value.
@@ -39,6 +40,11 @@ namespace x360ce.App.Controls
 				var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == item.InstanceGuid);
 				var imageSource = ConnectionClassToImageConverter.Convert(ud?.ConnectionClass ?? Guid.Empty);
 				return imageSource;
+			}
+			else if (cell.Column == VendorNameColumn)
+			{
+				var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == item.InstanceGuid);
+				return ud?.HidManufacturer;
 			}
 			return value;
 		}

@@ -120,16 +120,16 @@ namespace x360ce.App.Controls
 		private float w = 150f;
 		private float h = 150f;
 
-		public void SetBinding(PadSetting o)
+		public void SetBinding(PadSetting ps)
 		{
 			// Unbind first.
 			SettingsManager.UnLoadMonitor(DeadZoneUpDown);
 			SettingsManager.UnLoadMonitor(AntiDeadZoneUpDown);
 			SettingsManager.UnLoadMonitor(LinearUpDown);
-			if (o == null)
+			if (ps == null)
 				return;
 			// Set binding.
-			var converter = new Converters.PaddSettingToIntegerConverter();
+			var converter = new Converters.PadSettingToIntegerConverter();
 			string deadZoneName = null;
 			string antiDeadZoneName = null;
 			string linearName = null;
@@ -137,43 +137,43 @@ namespace x360ce.App.Controls
 			switch (TargetType)
 			{
 				case TargetType.LeftTrigger:
-					deadZoneName = nameof(o.LeftTriggerDeadZone);
-					antiDeadZoneName = nameof(o.LeftTriggerAntiDeadZone);
-					linearName = nameof(o.LeftTriggerLinear);
+					deadZoneName = nameof(ps.LeftTriggerDeadZone);
+					antiDeadZoneName = nameof(ps.LeftTriggerAntiDeadZone);
+					linearName = nameof(ps.LeftTriggerLinear);
 					break;
 				case TargetType.RightTrigger:
-					deadZoneName = nameof(o.RightTriggerDeadZone);
-					antiDeadZoneName = nameof(o.RightTriggerAntiDeadZone);
-					linearName = nameof(o.RightTriggerLinear);
+					deadZoneName = nameof(ps.RightTriggerDeadZone);
+					antiDeadZoneName = nameof(ps.RightTriggerAntiDeadZone);
+					linearName = nameof(ps.RightTriggerLinear);
 					break;
 				case TargetType.LeftThumbX:
-					deadZoneName = nameof(o.LeftThumbDeadZoneX);
-					antiDeadZoneName = nameof(o.LeftThumbAntiDeadZoneX);
-					linearName = nameof(o.LeftThumbLinearX);
+					deadZoneName = nameof(ps.LeftThumbDeadZoneX);
+					antiDeadZoneName = nameof(ps.LeftThumbAntiDeadZoneX);
+					linearName = nameof(ps.LeftThumbLinearX);
 					break;
 				case TargetType.LeftThumbY:
-					deadZoneName = nameof(o.LeftThumbDeadZoneY);
-					antiDeadZoneName = nameof(o.LeftThumbAntiDeadZoneY);
-					linearName = nameof(o.LeftThumbLinearY);
+					deadZoneName = nameof(ps.LeftThumbDeadZoneY);
+					antiDeadZoneName = nameof(ps.LeftThumbAntiDeadZoneY);
+					linearName = nameof(ps.LeftThumbLinearY);
 					break;
 				case TargetType.RightThumbX:
-					deadZoneName = nameof(o.RightThumbDeadZoneX);
-					antiDeadZoneName = nameof(o.RightThumbAntiDeadZoneX);
-					linearName = nameof(o.RightThumbLinearX);
+					deadZoneName = nameof(ps.RightThumbDeadZoneX);
+					antiDeadZoneName = nameof(ps.RightThumbAntiDeadZoneX);
+					linearName = nameof(ps.RightThumbLinearX);
 					break;
 				case TargetType.RightThumbY:
-					deadZoneName = nameof(o.RightThumbDeadZoneY);
-					antiDeadZoneName = nameof(o.RightThumbAntiDeadZoneY);
-					linearName = nameof(o.RightThumbLinearY);
+					deadZoneName = nameof(ps.RightThumbDeadZoneY);
+					antiDeadZoneName = nameof(ps.RightThumbAntiDeadZoneY);
+					linearName = nameof(ps.RightThumbLinearY);
 					break;
 				default:
 					break;
 			}
 			if (deadZoneName != null)
 			{
-				SettingsManager.LoadAndMonitor(o, deadZoneName, DeadZoneUpDown, null, converter);
-				SettingsManager.LoadAndMonitor(o, antiDeadZoneName, AntiDeadZoneUpDown, null, converter);
-				SettingsManager.LoadAndMonitor(o, linearName, LinearUpDown, null, converter);
+				SettingsManager.LoadAndMonitor(ps, deadZoneName, DeadZoneUpDown, null, converter);
+				SettingsManager.LoadAndMonitor(ps, antiDeadZoneName, AntiDeadZoneUpDown, null, converter);
+				SettingsManager.LoadAndMonitor(ps, linearName, LinearUpDown, null, converter);
 			}
 		}
 

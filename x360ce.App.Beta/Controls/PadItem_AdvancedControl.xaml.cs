@@ -20,19 +20,19 @@ namespace x360ce.App.Controls
 			DeviceSubTypeComboBox.ItemsSource = (DeviceSubType[])Enum.GetValues(typeof(DeviceSubType));
 		}
 
-		public void SetBinding(PadSetting o)
+		public void SetBinding(PadSetting ps)
 		{
 			// Unbind first.
 			SettingsManager.UnLoadMonitor(DeviceSubTypeComboBox);
 			SettingsManager.UnLoadMonitor(PassThroughCheckBox);
 			//SettingsManager.UnLoadMonitor(ForceFeedbackPassThroughCheckBox);
-			if (o == null)
+			if (ps == null)
 				return;
 			// Set binding.
-			var converter = new Converters.PaddSettingToEnumConverter<DeviceSubType>();
-			SettingsManager.LoadAndMonitor(o, nameof(o.GamePadType), DeviceSubTypeComboBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.PassThrough), PassThroughCheckBox, null, null);
-			//SettingsManager.LoadAndMonitor(o, nameof(o.ForcesPassThrough), ForceFeedbackPassThroughCheckBox, null, null);
+			var enumConverter = new Converters.PaddSettingToEnumConverter<DeviceSubType>();
+			var boolConverter = new Converters.PadSettingToBoolConverter();
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.GamePadType), DeviceSubTypeComboBox, null, enumConverter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.PassThrough), PassThroughCheckBox, null, boolConverter);
 		}
 
 	}

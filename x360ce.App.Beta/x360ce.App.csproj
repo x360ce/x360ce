@@ -374,7 +374,8 @@
     <Compile Include="Converters\ConnectionClassToImageConverter.cs" />
     <Compile Include="Converters\EnabledStateToBoolConverter.cs" />
     <Compile Include="Converters\ItemFormattingConverter.cs" />
-    <Compile Include="Converters\PaddSettingToIntegerConverter.cs" />
+    <Compile Include="Converters\PadSettingToBoolConverter.cs" />
+    <Compile Include="Converters\PadSettingToIntegerConverter.cs" />
     <Compile Include="Converters\MapToIntToDescription.cs" />
     <Compile Include="Converters\MapTypeConverter.cs" />
     <Compile Include="Converters\PadSettingToEnumConverter.cs" />

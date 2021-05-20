@@ -23,7 +23,7 @@
 
 		<GroupBox Grid.Row="0" Grid.Column="0" Header="General">
 			<StackPanel>
-				<CheckBox x:Name="EnabledCheckBox" Content="Enabled" />
+				<CheckBox x:Name="ForceEnabledCheckBox" Content="Enabled" />
 				<CheckBox x:Name="SwapMotorsCheckBox" Content="Swap Motors" />
 				<StackPanel Orientation="Vertical">
 					<Label Name="StrengthLabel" Content="Overall Effects Strength" />

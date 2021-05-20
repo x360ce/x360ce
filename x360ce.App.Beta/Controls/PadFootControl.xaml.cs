@@ -23,12 +23,12 @@ namespace x360ce.App.Controls
 		PadSetting _PadSetting;
 		MapTo _MappedTo;
 
-		public void SetBinding(MapTo mappedTo, UserDevice userDevice, PadSetting padSetting)
+		public void SetBinding(MapTo mappedTo, UserDevice ud, PadSetting ps)
 		{
 			_MappedTo = mappedTo;
-			_UserDevice = userDevice;
-			_PadSetting = padSetting;
-			var en = padSetting != null;
+			_UserDevice = ud;
+			_PadSetting = ps;
+			var en = ps != null;
 			ControlsHelper.SetEnabled(CopyButton, en);
 			ControlsHelper.SetEnabled(PasteButton, en);
 			ControlsHelper.SetEnabled(LoadButton, en);

@@ -30,7 +30,7 @@ namespace x360ce.App.Controls
 		PadSetting _padSetting;
 		MapTo _MappedTo;
 
-		public void SetBinding(MapTo mappedTo, PadSetting o)
+		public void SetBinding(MapTo mappedTo, PadSetting ps)
 		{
 			_MappedTo = mappedTo;
 			if (_padSetting != null)
@@ -68,43 +68,43 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(RightThumbRightTextBox);
 			SettingsManager.UnLoadMonitor(RightThumbRightTextBox);
 			SettingsManager.UnLoadMonitor(RightThumbDownTextBox);
-			if (o == null)
+			if (ps == null)
 				return;
-			_padSetting = o;
+			_padSetting = ps;
 			var converter = new Converters.PaddSettingToText();
 			// Bind right side controls.
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftTrigger), LeftTriggerTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftShoulder), LeftShoulderTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ButtonBack), ButtonBackTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ButtonStart), ButtonStartTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ButtonGuide), ButtonGuideTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.DPad), DPadTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftThumbAxisX), LeftThumbAxisXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftThumbAxisY), LeftThumbAxisYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftThumbButton), LeftThumbButtonTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftThumbUp), LeftThumbUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftThumbLeft), LeftThumbLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftThumbRight), LeftThumbRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.LeftThumbDown), LeftThumbDownTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftTrigger), LeftTriggerTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftShoulder), LeftShoulderTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonBack), ButtonBackTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonStart), ButtonStartTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonGuide), ButtonGuideTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPad), DPadTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisX), LeftThumbAxisXTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisY), LeftThumbAxisYTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbButton), LeftThumbButtonTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbUp), LeftThumbUpTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbLeft), LeftThumbLeftTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbRight), LeftThumbRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbDown), LeftThumbDownTextBox, null, converter);
 			// Bind middle controls.
-			SettingsManager.LoadAndMonitor(o, nameof(o.DPadUp), DPadUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.DPadLeft), DPadLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.DPadRight), DPadRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.DPadDown), DPadDownTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadUp), DPadUpTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadLeft), DPadLeftTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadRight), DPadRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadDown), DPadDownTextBox, null, converter);
 			// Bind right side controls.
-			SettingsManager.LoadAndMonitor(o, nameof(o.RightTrigger), RightTriggerTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.RightShoulder), RightShoulderTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ButtonY), ButtonYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ButtonX), ButtonXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ButtonB), ButtonBTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ButtonA), ButtonATextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.RightThumbAxisX), RightThumbAxisXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.RightThumbAxisY), RightThumbAxisYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.RightThumbButton), RightThumbButtonTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.RightThumbUp), RightThumbUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.RightThumbRight), RightThumbRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.RightThumbRight), RightThumbRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.RightThumbDown), RightThumbDownTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightTrigger), RightTriggerTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightShoulder), RightShoulderTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonY), ButtonYTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonX), ButtonXTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonB), ButtonBTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonA), ButtonATextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisX), RightThumbAxisXTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisY), RightThumbAxisYTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbButton), RightThumbButtonTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbUp), RightThumbUpTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), RightThumbRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), RightThumbRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), RightThumbDownTextBox, null, converter);
 			_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 		}
 

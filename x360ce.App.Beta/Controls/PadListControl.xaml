@@ -135,10 +135,18 @@
 					Header="Instance ID"
 					SortDirection="{x:Null}" />
 				<DataGridTextColumn
-					Binding="{Binding HidManufacturer}"
+					x:Name="VendorNameColumn"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Vendor Name" />
+					Header="Vendor Name">
+					<DataGridTextColumn.Binding>
+						<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
+							<Binding RelativeSource="{RelativeSource Self}" />
+							<Binding RelativeSource="{RelativeSource TemplatedParent}" />
+							<Binding Path="InstanceGuid" />
+						</MultiBinding>
+					</DataGridTextColumn.Binding>
+				</DataGridTextColumn>
 				<DataGridTextColumn
 					Width="*"
 					Binding="{Binding ProductName}"

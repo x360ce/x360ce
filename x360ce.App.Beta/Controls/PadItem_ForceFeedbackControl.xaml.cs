@@ -50,7 +50,7 @@ namespace x360ce.App.Controls
 		PadSetting _padSetting;
 		MapTo _MappedTo;
 
-		public void SetBinding(MapTo mappedTo, PadSetting o)
+		public void SetBinding(MapTo mappedTo, PadSetting ps)
 		{
 			_MappedTo = mappedTo;
 			if (_padSetting != null)
@@ -58,20 +58,21 @@ namespace x360ce.App.Controls
 			LeftForceFeedbackMotorPanel.TestUpDown.ValueChanged -= TestUpDown_ValueChanged;
 			RightForceFeedbackMotorPanel.TestUpDown.ValueChanged -= TestUpDown_ValueChanged;
 			// Unbind first.
-			SettingsManager.UnLoadMonitor(EnabledCheckBox);
+			SettingsManager.UnLoadMonitor(ForceEnabledCheckBox);
 			SettingsManager.UnLoadMonitor(SwapMotorsCheckBox);
 			SettingsManager.UnLoadMonitor(ForceTypeComboBox);
 			SettingsManager.UnLoadMonitor(StrengthUpDown);
-			if (o == null)
+			if (ps == null)
 				return;
-			_padSetting = o;
-			var converter = new Converters.PaddSettingToIntegerConverter();
+			_padSetting = ps;
+			var intConverter = new Converters.PadSettingToIntegerConverter();
+			var boolConverter = new Converters.PadSettingToBoolConverter();
 			var enumConverter = new Converters.PaddSettingToEnumConverter<ForceEffectType>();
 			// Set binding.
-			SettingsManager.LoadAndMonitor(o, nameof(o.ForceEnable), EnabledCheckBox);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ForceSwapMotor), SwapMotorsCheckBox);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ForceType), ForceTypeComboBox, null, enumConverter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.ForceOverall), StrengthUpDown, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceEnable), ForceEnabledCheckBox, null, boolConverter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceSwapMotor), SwapMotorsCheckBox, null, boolConverter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceType), ForceTypeComboBox, null, enumConverter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceOverall), StrengthUpDown, null, intConverter);
 			_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 			LeftForceFeedbackMotorPanel.TestUpDown.ValueChanged += TestUpDown_ValueChanged;
 			RightForceFeedbackMotorPanel.TestUpDown.ValueChanged += TestUpDown_ValueChanged;

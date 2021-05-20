@@ -8,7 +8,7 @@ namespace x360ce.App.Converters
 	/// <summary>
 	///  Convert PAD setting string to integer.
 	/// </summary>
-	public class PaddSettingToIntegerConverter : IValueConverter
+	public class PadSettingToIntegerConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{

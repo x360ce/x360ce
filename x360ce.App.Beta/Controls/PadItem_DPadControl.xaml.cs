@@ -18,19 +18,20 @@ namespace x360ce.App.Controls
 		TrackBarUpDownTextBoxLink deadzoneLink;
 		TrackBarUpDownTextBoxLink offsetLink;
 
-		public void SetBinding(PadSetting o)
+		public void SetBinding(PadSetting ps)
 		{
 			// Unbind first.
 			SettingsManager.UnLoadMonitor(EnabledCheckBox);
 			SettingsManager.UnLoadMonitor(DeadZoneUpDown);
 			SettingsManager.UnLoadMonitor(OffsetUpDown);
-			if (o == null)
+			if (ps == null)
 				return;
 			// Set binding.
-			var converter = new Converters.PaddSettingToIntegerConverter();
-			SettingsManager.LoadAndMonitor(o, nameof(o.AxisToDPadEnabled), EnabledCheckBox);
-			SettingsManager.LoadAndMonitor(o, nameof(o.AxisToDPadDeadZone), DeadZoneUpDown, null, converter);
-			SettingsManager.LoadAndMonitor(o, nameof(o.AxisToDPadOffset), OffsetUpDown, null, converter);
+			var intConverter = new Converters.PadSettingToIntegerConverter();
+			var boolConverter = new Converters.PadSettingToBoolConverter();
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.AxisToDPadEnabled), EnabledCheckBox, null, boolConverter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.AxisToDPadDeadZone), DeadZoneUpDown, null, intConverter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.AxisToDPadOffset), OffsetUpDown, null, intConverter);
 		}
 	}
 }
