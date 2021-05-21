@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
 using System.Windows.Controls;
+using x360ce.Engine;
 using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
@@ -290,6 +292,7 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(DiCapButtonsTextBox, ud.CapButtonCount.ToString());
 			ControlsHelper.SetText(DiCapPovsTextBox, ud.CapPovCount.ToString());
 			var objects = ud.DeviceObjects;
+			ObjectsInformationAsText = GetDiObjectsInformationAsText(objects);
 			DiObjectsDataGridView.AutoGenerateColumns = false;
 			DiObjectsDataGridView.ItemsSource = objects;
 			if (objects != null)
@@ -409,29 +412,12 @@ namespace x360ce.App.Controls
 			ShowDirectInputState(ud?.JoState);
 		}
 
-		/*
+		string ObjectsInformationAsText;
 
-		#region ■ Copy Data
-
-		private void CopyWithHeadersMenuItem_Click(object sender, EventArgs e)
+		string GetDiObjectsInformationAsText(DeviceObjectItem[] objects)
 		{
-			var menuItem = sender as MenuItem;
-			var toolItem = sender as ToolStripItem;
-			var sourceControl = menuItem == null
-				? (toolItem.Owner as ContextMenuStrip).SourceControl
-				: menuItem.GetContextMenu().SourceControl;
-			// Get the control that is displaying this context menu
-			if (sourceControl == DiObjectsDataGridView)
-				CopyDiObjectsInformation();
-			if (sourceControl == DiEffectsDataGridView)
-				CopyDiEffectsInformation();
-		}
-
-		void CopyDiObjectsInformation()
-		{
-			var objects = DiObjectsDataGridView.DataSource as DeviceObjectItem[];
 			if (objects == null)
-				return;
+				return null;
 			var sb = new StringBuilder();
 			var maxTypeName = objects.Max(x => x.TypeName.Length);
 			var maxName = objects.Max(x => x.Name.Length);
@@ -460,45 +446,29 @@ namespace x360ce.App.Controls
 				sb.AppendFormat(format, o.Offset, o.TypeName, o.AspectName, o.Flags, o.Instance, o.Name);
 				sb.AppendLine();
 			}
-			Clipboard.SetDataObject(sb.ToString());
+			//Clipboard.SetDataObject(sb.ToString());
+			return sb.ToString();
 		}
 
-		void CopyDiEffectsInformation()
+		/*
+
+		#region ■ Copy Data
+
+		private void CopyWithHeadersMenuItem_Click(object sender, EventArgs e)
 		{
-			var objects = DiEffectsDataGridView.DataSource as DeviceEffectItem[];
-			if (objects == null)
-				return;
-			var sb = new StringBuilder();
-			var maxName = objects.Max(x => x.Name.Length);
-			var maxSParams = objects.Max(x => x.StaticParameters.ToString().Length);
-			var maxDParams = objects.Max(x => x.DynamicParameters.ToString().Length);
-			var names = new string[] { "Effect Name", "Static Parameters", "Dynamic Parameters" };
-			// Use minus to align left.
-			var sizes = new int[] { -maxName, -maxSParams, -maxDParams };
-			// Create format line.
-			var format = "// ";
-			for (int i = 0; i < sizes.Length; i++)
-			{
-				if (i > 0) format += "  ";
-				format += "{" + i.ToString() + "," + sizes[i].ToString() + "}";
-			}
-			sb.AppendFormat(format, names).AppendLine();
-			sb.Append("// ");
-			for (int i = 0; i < sizes.Length; i++)
-			{
-				if (i > 0) sb.Append("  ");
-				sb.Append('-', Math.Abs(sizes[i]));
-			}
-			sb.AppendLine();
-			for (int i = 0; i < objects.Length; i++)
-			{
-				var o = objects[i];
-				sb.AppendFormat(format, o.Name, o.StaticParameters, o.DynamicParameters);
-				sb.AppendLine();
-			}
-			Clipboard.SetDataObject(sb.ToString());
+			var menuItem = sender as MenuItem;
+			var toolItem = sender as ToolStripItem;
+			var sourceControl = menuItem == null
+				? (toolItem.Owner as ContextMenuStrip).SourceControl
+				: menuItem.GetContextMenu().SourceControl;
+			// Get the control that is displaying this context menu
+			if (sourceControl == DiObjectsDataGridView)
+				CopyDiObjectsInformation();
+			if (sourceControl == DiEffectsDataGridView)
+				CopyDiEffectsInformation();
 		}
 
+		
 
 		#endregion
 

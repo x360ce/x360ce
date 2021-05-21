@@ -545,6 +545,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Icons\IconExperience.License.txt" />
     <EmbeddedResource Include="app.ico" />
     <CodeAnalysisDictionary Include="CodeAnalaysisDictionary.xml" />
     <EmbeddedResource Include="Resources\Xceed\Xceed.Wpf.Toolkit.License.txt" />

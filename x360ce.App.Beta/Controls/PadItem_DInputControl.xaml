@@ -338,7 +338,6 @@
 							Binding="{Binding Offset}"
 							ElementStyle="{StaticResource TextBlockCenterCell}"
 							Header="Offset" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding OffsetName}" Header="Offset Name" />
 						<DataGridTextColumn Width="Auto" Binding="{Binding TypeName}" Header="Type" />
 						<DataGridTextColumn Width="Auto" Binding="{Binding AspectName}" Header="Aspect" />
 						<DataGridTextColumn Width="Auto" Binding="{Binding Flags}" Header="Flags" />

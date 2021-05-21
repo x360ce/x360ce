@@ -169,6 +169,7 @@
 					Padding="0"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
 					BorderThickness="0"
 					IsReadOnly="True"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -182,6 +183,7 @@
 					Padding="0"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
 					BorderThickness="0"
 					IsReadOnly="True"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -195,13 +197,27 @@
 					Padding="0"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
 					BorderThickness="0"
 					IsReadOnly="True"
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					ScrollViewer.VerticalScrollBarVisibility="Auto"
 					TextWrapping="Wrap" />
 			</TabItem>
-
+			<TabItem Name="IconExperienceTabPage" Header="IconExperience License">
+				<TextBox
+					Name="IconExperienceTextBox"
+					Margin="0"
+					Padding="0"
+					HorizontalAlignment="Stretch"
+					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
+					BorderThickness="0"
+					IsReadOnly="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					TextWrapping="Wrap" />
+			</TabItem>
 		</TabControl>
 	</Grid>
 </UserControl>

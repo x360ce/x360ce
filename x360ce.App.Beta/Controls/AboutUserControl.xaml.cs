@@ -60,6 +60,10 @@ namespace x360ce.App.Controls
 			stream = EngineHelper.GetResourceStream("Xceed.Wpf.Toolkit.License.txt");
 			sr = new StreamReader(stream);
 			XceedLicenseTextBox.Text = sr.ReadToEnd();
+			// Load IconExperience License.
+			stream = EngineHelper.GetResourceStream("IconExperience.License.txt");
+			sr = new StreamReader(stream);
+			IconExperienceTextBox.Text = sr.ReadToEnd();
 		}
 	}
 }
