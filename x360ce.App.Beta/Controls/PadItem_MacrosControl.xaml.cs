@@ -23,7 +23,7 @@ namespace x360ce.App.Controls
 
 		public PadItem_MacrosControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			_Recorder = new Recorder();

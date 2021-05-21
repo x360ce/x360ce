@@ -9,7 +9,7 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_ButtonsControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 	}
 }

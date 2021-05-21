@@ -15,7 +15,7 @@ namespace x360ce.App.Controls
 	{
 		public AboutUserControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		private void HyperLink_RequestNavigate(object sender, RequestNavigateEventArgs e)

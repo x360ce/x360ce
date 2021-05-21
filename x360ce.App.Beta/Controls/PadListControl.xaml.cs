@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 	{
 		public PadListControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			MainDataGrid.ItemsSource = mappedUserSettings;
 			_MainDataGridFormattingConverter = (ItemFormattingConverter)MainDataGrid.Resources[nameof(_MainDataGridFormattingConverter)];
 			_MainDataGridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;

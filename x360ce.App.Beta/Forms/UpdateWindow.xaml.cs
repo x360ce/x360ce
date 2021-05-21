@@ -14,7 +14,7 @@ namespace x360ce.App.Forms
 	{
 		public UpdateWindow()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			LogPanel.LogGridScrollUp = false;

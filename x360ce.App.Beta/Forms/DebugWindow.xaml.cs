@@ -10,7 +10,7 @@ namespace x360ce.App.Forms
 	{
 		public DebugWindow()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		private void DebugForm_Load(object sender, EventArgs e)

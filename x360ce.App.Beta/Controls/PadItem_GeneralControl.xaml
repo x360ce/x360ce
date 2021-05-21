@@ -26,6 +26,8 @@
 						<Setter Property="Height" Value="24" />
 						<Setter Property="Margin" Value="0,0,0,0" />
 						<Setter Property="Padding" Value="0,0,0,0" />
+						<Setter Property="HorizontalContentAlignment" Value="Left"/>
+						<Setter Property="VerticalContentAlignment" Value="Center"/>
 					</Style>
 					<Style x:Key="MapMenu" TargetType="Menu">
 						<Setter Property="HorizontalAlignment" Value="Left" />

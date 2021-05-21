@@ -10,7 +10,7 @@ namespace x360ce.App.Forms
 	{
 		public WebBrowserWindow()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		public string NavigateUrl;

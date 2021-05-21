@@ -10,7 +10,7 @@ namespace x360ce.App.Forms
 	{
 		public UserDevicesWindow()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			WinControl.MainBody.Content = WinControl.MainContent;
 			ControlsHelper.CheckTopMost(this);
 			WinControl.SetTitle("X360CE - Map Device To Controller");

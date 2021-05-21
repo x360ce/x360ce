@@ -22,7 +22,7 @@ namespace x360ce.App.Controls
 	{
 		public DebugControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			_TestTimer = new HiResTimer(1, "TestTimer");

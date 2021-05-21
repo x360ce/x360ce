@@ -12,7 +12,7 @@ namespace x360ce.App.Controls
 	{
 		public OptionsRemoteControllerControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			LoadSettings();

@@ -13,7 +13,7 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_AdvancedControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			// Add GamePad typed to ComboBox.

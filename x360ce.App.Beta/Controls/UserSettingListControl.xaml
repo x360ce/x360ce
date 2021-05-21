@@ -72,6 +72,7 @@
 			<DataGrid.Resources>
 				<converters:ChecksumToIdConverter x:Key="_ChecksumToIdConverter" />
 				<converters:MapToIntToDescription x:Key="_MapToIntToDescription" />
+				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
 			</DataGrid.Resources>
 			<DataGrid.Columns>
 				<DataGridTextColumn
@@ -92,10 +93,18 @@
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="File Title" />
 				<DataGridTextColumn
-					Binding="{Binding VendorName}"
+					x:Name="VendorNameColumn"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Vendor Name" />
+					Header="Vendor Name">
+					<DataGridTextColumn.Binding>
+						<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
+							<Binding RelativeSource="{RelativeSource Self}" />
+							<Binding RelativeSource="{RelativeSource TemplatedParent}" />
+							<Binding Path="InstanceGuid" />
+						</MultiBinding>
+					</DataGridTextColumn.Binding>
+				</DataGridTextColumn>
 				<DataGridTextColumn
 					Binding="{Binding ProductName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"

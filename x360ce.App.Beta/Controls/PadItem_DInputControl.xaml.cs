@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 		{
 			oldState = new JoystickState();
 			emptyState = oldState;
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			InitDirectInputTab();

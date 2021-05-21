@@ -11,7 +11,7 @@ namespace x360ce.App.Controls
 
 		public BaseWithHeaderControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (IsDesignMode)
 				return;
 			defaultHead = HelpHeadLabel.Content as string;

@@ -16,7 +16,7 @@ namespace x360ce.App.Forms
 	{
 		public ErrorReportWindow()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		public void ErrorReportPanel_SendMessages(object sender, JocysCom.ClassLibrary.EventArgs<List<System.Net.Mail.MailMessage>> e)

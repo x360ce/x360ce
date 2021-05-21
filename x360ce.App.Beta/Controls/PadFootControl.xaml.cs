@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 	{
 		public PadFootControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		UserDevice _UserDevice;

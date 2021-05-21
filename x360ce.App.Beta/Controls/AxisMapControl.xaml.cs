@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 	{
 		public AxisMapControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			InitPaintObjects();

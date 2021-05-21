@@ -22,7 +22,7 @@ namespace x360ce.App.Controls
 	{
 		public UserDevicesControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 		}

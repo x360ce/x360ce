@@ -17,7 +17,7 @@ namespace x360ce.App.Controls
 	{
 		public ProgramItemControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			DInputCheckBoxes = ControlsHelper.GetAll<CheckBox>(DInputMaskGroupBox);

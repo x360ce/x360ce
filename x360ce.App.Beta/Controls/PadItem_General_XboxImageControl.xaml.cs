@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_General_XboxImageControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		PadControlImager Imager;

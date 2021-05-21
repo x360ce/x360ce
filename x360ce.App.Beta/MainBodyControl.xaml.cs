@@ -16,7 +16,7 @@ namespace x360ce.App
 	{
 		public MainBodyControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			PadIcons = new ContentControl[]

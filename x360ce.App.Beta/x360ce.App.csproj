@@ -216,6 +216,7 @@
     <Compile Include="Common\CloudItem.cs" />
     <Compile Include="Common\CloudState.cs" />
     <Compile Include="Common\ErrorsHelper.cs" />
+    <Compile Include="Common\InitHelper.cs" />
     <Compile Include="Common\StartHelper.cs" />
     <Compile Include="Common\TrackBarUpDownTextBoxLink.cs" />
     <Compile Include="Common\DInput\DInputEventArgs.cs" />

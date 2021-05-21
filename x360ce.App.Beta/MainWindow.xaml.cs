@@ -29,7 +29,7 @@ namespace x360ce.App
 				PreviewKeyDown += MainWindow_PreviewKeyDown;
 				Closing += MainWindow_Closing;
 			}
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			StartHelper.Initialize();

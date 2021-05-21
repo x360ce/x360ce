@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_ForceFeedbackControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			var effectsTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
 			ForceTypeComboBox.ItemsSource = effectsTypes;
 			overallStrengthLink = new TrackBarUpDownTextBoxLink(StrengthTrackBar, StrengthUpDown, StrengthTextBox, 0, 100);

@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_GeneralControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		public void InitPadData()

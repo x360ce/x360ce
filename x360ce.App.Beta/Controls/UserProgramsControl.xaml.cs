@@ -11,7 +11,7 @@ namespace x360ce.App.Controls
 	{
 		public UserProgramsControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			ListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
 			ListPanel.MainDataGrid.ItemsSource = SettingsManager.UserGames.Items;
 		}

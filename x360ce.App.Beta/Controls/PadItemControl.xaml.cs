@@ -14,7 +14,7 @@ namespace x360ce.App.Controls
 	{
 		public PadItemControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			LeftTriggerPanel.HeaderText = "Left Trigger";

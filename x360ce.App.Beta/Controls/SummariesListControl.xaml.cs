@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 	{
 		public SummariesListControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			MainDataGrid.AutoGenerateColumns = false;
 			MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Single;
 			if (ControlsHelper.IsDesignMode(this))

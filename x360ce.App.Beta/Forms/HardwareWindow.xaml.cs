@@ -9,7 +9,7 @@ namespace x360ce.App.Forms
 	{
 		public HardwareWindow()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			HardwareHost.Child = new JocysCom.ClassLibrary.IO.HardwareControl();
 		}
 	}

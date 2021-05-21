@@ -9,7 +9,7 @@ namespace x360ce.App.Controls
 	{
 		public OptionsControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 	}
 }

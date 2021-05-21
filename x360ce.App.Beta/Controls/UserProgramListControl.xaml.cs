@@ -20,7 +20,7 @@ namespace x360ce.App.Controls
 	{
 		public UserProgramListControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			ScanProgressLevel0Label.Text = "";

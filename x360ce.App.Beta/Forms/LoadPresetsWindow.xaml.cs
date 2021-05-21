@@ -10,7 +10,7 @@ namespace x360ce.App.Forms
 	{
 		public LoadPresetsWindow()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			ControlsHelper.CheckTopMost(this);
 			WinControl.MainBody.Content = WinControl.MainContent;
 			WinControl.SetTitle("X360CE - Load Preset");

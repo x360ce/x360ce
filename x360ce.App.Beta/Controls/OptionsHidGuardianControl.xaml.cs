@@ -11,7 +11,7 @@ namespace x360ce.App.Controls
 	{
 		public OptionsHidGuardianControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)

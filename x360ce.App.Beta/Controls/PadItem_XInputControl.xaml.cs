@@ -9,7 +9,7 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_XInputControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 	}
 }

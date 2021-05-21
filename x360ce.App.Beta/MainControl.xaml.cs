@@ -15,8 +15,7 @@ namespace x360ce.App
 	{
 		public MainControl()
 		{
-			// Initialize interface.
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			_bwm = new BaseWithHeaderManager(HelpHeadLabel, HelpBodyLabel, LeftIcon, this);

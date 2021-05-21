@@ -18,7 +18,7 @@ namespace x360ce.App.Controls
 	{
 		public PadControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		public void InitControls(MapTo mappedTo)

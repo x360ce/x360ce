@@ -3,10 +3,12 @@ using JocysCom.ClassLibrary.Web.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using x360ce.App.Converters;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -19,11 +21,32 @@ namespace x360ce.App.Controls
 	{
 		public UserSettingListControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			MainDataGrid.AutoGenerateColumns = false;
 			MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Single;
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			_MainDataGridFormattingConverter = (ItemFormattingConverter)MainDataGrid.Resources[nameof(_MainDataGridFormattingConverter)];
+			_MainDataGridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
+
+		}
+
+		ItemFormattingConverter _MainDataGridFormattingConverter;
+
+		object _MainDataGridFormattingConverter_Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		{
+			var sender = (FrameworkElement)values[0];
+			var template = (FrameworkElement)values[1];
+			var cell = (DataGridCell)(template ?? sender).Parent;
+			var value = values[2];
+			var item = (UserSetting)cell.DataContext;
+			// Format ConnectionClassColumn value.
+			if (cell.Column == VendorNameColumn)
+			{
+				var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == item.InstanceGuid);
+				return ud?.HidManufacturer;
+			}
+			return value;
 		}
 
 		public IBaseWithHeaderControl _ParentControl;

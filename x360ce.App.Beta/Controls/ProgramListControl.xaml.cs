@@ -18,7 +18,7 @@ namespace x360ce.App.Controls
 	{
 		public ProgramListControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			// Make font more consistent with the rest of the interface.
 			MainDataGrid.AutoGenerateColumns = false;
 			ImportOpenFileDialog = new OpenFileDialog();

@@ -36,9 +36,16 @@
 
 	-->
 
+	<!--  MenuItem  -->
+
+	<Style x:Key="MenuItem_Default" TargetType="MenuItem">
+		<Setter Property="HorizontalContentAlignment" Value="Left" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+	</Style>
+
 	<!--  StackPanel  -->
 
-	<Style x:Name="Container" TargetType="StackPanel">
+	<Style x:Key="Container" TargetType="StackPanel">
 		<Setter Property="Margin" Value="0" />
 	</Style>
 
@@ -458,5 +465,6 @@
 	<Style BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox" />
 	<Style BasedOn="{StaticResource Button_Default}" TargetType="Button" />
 	<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
+	<Style BasedOn="{StaticResource MenuItem_Default}" TargetType="MenuItem" />
 
 </ResourceDictionary>

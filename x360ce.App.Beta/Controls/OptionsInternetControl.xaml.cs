@@ -13,7 +13,7 @@ namespace x360ce.App.Controls
 	{
 		public OptionsInternetControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		void InternetCheckBox_CheckedChanged(object sender, EventArgs e)

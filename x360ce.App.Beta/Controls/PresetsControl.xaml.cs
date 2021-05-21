@@ -25,7 +25,7 @@ namespace x360ce.App.Controls
 	{
 		public PresetsControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		public BaseWithHeaderControl _ParentControl;

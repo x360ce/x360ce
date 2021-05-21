@@ -10,7 +10,7 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_DPadControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			deadzoneLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, 100);
 			offsetLink = new TrackBarUpDownTextBoxLink(OffsetTrackBar, OffsetUpDown, OffsetTextBox, 0, 100);
 		}
