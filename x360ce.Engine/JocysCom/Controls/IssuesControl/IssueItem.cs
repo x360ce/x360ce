@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
@@ -92,6 +93,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public void Check()
 		{
+			Debug.WriteLine("---> {0}: {1}", "Check", GetType());
 			SetStatus(IssueStatus.Checking);
 			Checking?.Invoke(this, new EventArgs());
 			LastException = null;

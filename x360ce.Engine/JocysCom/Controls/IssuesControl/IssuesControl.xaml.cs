@@ -62,7 +62,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			if (IsSuspended())
 				return;
 			CheckAll();
-			UpdateDisplayedList();
+			// Update list will affect Warnings list, which is bound to MainDataGrid on UI,
+			// therefore use Invoke to make sure that it runs on the same thread as UI.
+			ControlsHelper.Invoke(() => {
+				UpdateDisplayedList();
+			});
 		}
 
 		private void UpdateDisplayedList()
@@ -88,7 +92,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 					sb.Append(", ");
 				sb.AppendFormat("{0}/{1} {2}: {3}", IssueList.IndexOf(item), IssueList.Count, item.GetType().Name, item.Status);
 			}
-			StatusLabel.Content = sb.ToString();
+			var v = sb.ToString();
+			if (!Equals(StatusLabel.Content, v))
+				StatusLabel.Content = v;
 			UpdateIgnoreAllButton();
 			UpdateNoIssuesPanel();
 		}
@@ -283,8 +289,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		void UpdateIgnoreAllButton()
 		{
 			var check = IsIgnoreAll();
-			// If no enabled issues found.
-			IgnoreAllButton.IsChecked = check;
+			ControlsHelper.SetChecked(IgnoreAllButton, check);
 		}
 
 		private void IgnoreAllButton_Click(object sender, RoutedEventArgs e)
