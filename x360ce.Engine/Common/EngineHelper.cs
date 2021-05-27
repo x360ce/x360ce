@@ -181,6 +181,8 @@ namespace x360ce.Engine
 			if (assembly == null)
 				return null;
 			var sr = assembly.GetManifestResourceStream(path);
+
+
 			return sr;
 		}
 

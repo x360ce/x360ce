@@ -29,6 +29,7 @@ namespace x360ce.App
 		[STAThread]
 		static void Main(string[] args)
 		{
+			CaptureExceptions();
 			// Fix: System.TimeoutException: The operation has timed out. at System.Windows.Threading.Dispatcher.InvokeImpl
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotInvokeInWeakEventTableShutdownListener", true);
 			// First: Set working folder to the path of executable.
@@ -64,6 +65,25 @@ namespace x360ce.App
 				if (result == MessageBoxResult.Cancel)
 					app.Shutdown();
 			}
+		}
+
+		public static void CaptureExceptions()
+		{
+			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+			AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
+			System.Threading.Tasks.TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+		}
+
+		private static void TaskScheduler_UnobservedTaskException(object sender, System.Threading.Tasks.UnobservedTaskExceptionEventArgs e)
+		{ // <- Put breakpoint here to capture exceptions during debug.
+		}
+
+		private static void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
+		{ // <- Put breakpoint here to capture exceptions during debug.
+		}
+
+		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+		{ // <- Put breakpoint here to capture exceptions during debug.
 		}
 
 		public const string arg_WindowState = "WindowState";

@@ -2,6 +2,9 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Linq;
+using System.IO;
+using System.Collections.Generic;
 
 namespace JocysCom.ClassLibrary
 {
@@ -14,11 +17,11 @@ namespace JocysCom.ClassLibrary
 		/// </summary>
 		public static void WriteAppHeader()
 		{
-			var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+			var assembly = Assembly.GetExecutingAssembly();
 			WriteAppHeader(assembly);
 		}
 
-		public static void WriteAppHeader(System.Reflection.Assembly assembly)
+		public static void WriteAppHeader(Assembly assembly)
 		{
 			// Write title.
 			// Microsoft (R) SQL Server Database Publishing Wizard 1.1.1.0
@@ -34,17 +37,7 @@ namespace JocysCom.ClassLibrary
 		/// </summary>
 		public static void WriteAppHelp()
 		{
-			Console.Write(GetTextResource("Documents/Help.txt"));
-		}
-
-		public static string GetTextResource(string name)
-		{
-			return GetResource<string>(name);
-		}
-
-		public static string GetTextResource(Assembly assembly, string name)
-		{
-			return GetResource<string>(assembly, name);
+			Console.Write(GetResource<string>("Documents/Help.txt"));
 		}
 
 		/// <summary>
@@ -59,44 +52,56 @@ namespace JocysCom.ClassLibrary
 		}
 
 		/// <summary>
-		/// Find resource in all loaded assemblies by full or partial (EndsWith) name.
+		/// Find resource in all loaded assemblies if not specified by full or partial (EndsWith) name.
+		/// Look inside "Build Action: Embedded Resource".
 		/// </summary>
-		public static T FindResource<T>(string name)
+		public static T FindResource<T>(string name, params Assembly[] assemblies)
 		{
-			object results = default(T);
-			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			name = name.Replace("/", ".").Replace(@"\", ".").Replace(' ', '_');
+			if (assemblies.Length == 0)
+				assemblies = GetAssemblies();
 			foreach (var assembly in assemblies)
 			{
-				var o = FindResource<T>(assembly, name);
-				if (o != null)
-					return o;
+				var resourceNames = assembly.GetManifestResourceNames();
+				foreach (var resourceName in resourceNames)
+				{
+					if (!resourceName.EndsWith(name))
+						continue;
+					var stream = assembly.GetManifestResourceStream(resourceName);
+					return ConvertResource<T>(stream);
+				}
 			}
 			return default(T);
 		}
 
 		/// <summary>
-		/// Find resource in all loaded assemblies by full or partial (EndsWith) name.
+		/// Project Build Action: "Resource".
 		/// </summary>
-		public static T FindResource<T>(Assembly assembly, string name)
+		public static string[] GetResourceKeys(Assembly assembly)
 		{
-			if (assembly == null)
-				throw new ArgumentNullException(nameof(assembly));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			var results = default(T);
-			if (assembly.IsDynamic)
-				return results;
-			var resourceNames = assembly.GetManifestResourceNames();
-			name = name.Replace("/", ".").Replace(@"\", ".").Replace(' ', '_');
-			foreach (var resourceName in resourceNames)
+			string resName = assembly.GetName().Name + ".g.resources";
+			using (var stream = assembly.GetManifestResourceStream(resName))
+			using (var reader = new System.Resources.ResourceReader(stream))
+				return reader.Cast<System.Collections.DictionaryEntry>().Select(x => (string)x.Key).ToArray();
+		}
+
+		/// <summary>
+		/// Project Build Action: "Resource".
+		/// </summary>
+		public static Stream GetResourceValue(string name, Assembly assembly)
+		{
+			string resName = assembly.GetName().Name + ".g.resources";
+			using (var stream = assembly.GetManifestResourceStream(resName))
+			using (var reader = new System.Resources.ResourceReader(stream))
 			{
-				if (resourceName.EndsWith(name))
-				{
-					results = GetResource<T>(assembly, resourceName);
-					return results;
-				}
+				var value = reader.Cast<System.Collections.DictionaryEntry>()
+					.Where(x => (string)x.Key == name)
+					.Select(x => x.Value).FirstOrDefault();
+				return (Stream)value;
+				//var path = string.Format("{0};component/{1}", assembly.GetName().Name, name);
+				//var s = System.Windows.Application.GetResourceStream(new Uri(path, UriKind.Relative));
+				//return s.Stream;
 			}
-			return default(T);
 		}
 
 		/// <summary>
@@ -111,56 +116,67 @@ namespace JocysCom.ClassLibrary
 		/// <summary>
 		/// Get embedded resource by its full name.
 		/// </summary>
-		public static T GetResource<T>(string name)
+		public static T GetResource<T>(string name, params Assembly[] assemblies)
 		{
-			// Look inside calling assembly.
-			var assembly = System.Reflection.Assembly.GetCallingAssembly();
-			var results = GetResource<T>(assembly, name);
-			if (results != null)
-				return (T)results;
-			// Look inside executing assembly (class library of this method).
-			assembly = System.Reflection.Assembly.GetExecutingAssembly();
-			results = GetResource<T>(assembly, name);
-			return (results == null)
-				? default(T)
-				: (T)results;
-		}
-
-		/// <summary>
-		/// Get embedded resource by its full name.
-		/// </summary>
-		public static T GetResource<T>(Assembly assembly, string name)
-		{
-			if (assembly == null)
-				throw new ArgumentNullException(nameof(assembly));
-			if (name == null)
-				throw new ArgumentNullException(nameof(name));
-			var results = default(T);
 			name = name.Replace("/", ".").Replace(@"\", ".").Replace(' ', '_');
-			var stream = assembly.GetManifestResourceStream(name);
-			if (stream != null)
+			if (assemblies.Length == 0)
+				assemblies = GetAssemblies();
+			foreach (var assembly in assemblies)
 			{
-				if (typeof(T) == typeof(System.Drawing.Image)
-					|| typeof(T) == typeof(System.Drawing.Bitmap)
-				)
+				var resourceNames = assembly.GetManifestResourceNames();
+				foreach (var resourceName in resourceNames)
 				{
-					return (T)(object)System.Drawing.Image.FromStream(stream);
-				}
-				else if (typeof(T) == typeof(string))
-				{
-					// File must contain Byte Order Mark (BOM) header in order for bytes correctly encoded to string.
-					// If header is missing then get resource as byte[] type and encode manually.
-					var streamReader = new System.IO.StreamReader(stream, true);
-					return (T)(object)streamReader.ReadToEnd();
-				}
-				else
-				{
-					var bytes = new byte[stream.Length];
-					stream.Read(bytes, 0, (int)stream.Length);
-					results = (T)(object)bytes;
+					if (resourceName != name)
+						continue;
+					var stream = assembly.GetManifestResourceStream(resourceName);
+					return ConvertResource<T>(stream);
 				}
 			}
+			throw new Exception("Resource not found");
+		}
+
+		static T ConvertResource<T>(Stream stream)
+		{
+			var results = default(T);
+			if (typeof(T) == typeof(System.Drawing.Image) || typeof(T) == typeof(System.Drawing.Bitmap))
+			{
+				return (T)(object)System.Drawing.Image.FromStream(stream);
+			}
+			else if (typeof(T) == typeof(string))
+			{
+				// File must contain Byte Order Mark (BOM) header in order for bytes correctly encoded to string.
+				// If header is missing then get resource as byte[] type and encode manually.
+				var streamReader = new StreamReader(stream, true);
+				return (T)(object)streamReader.ReadToEnd();
+			}
+			else
+			{
+				var bytes = new byte[stream.Length];
+				stream.Read(bytes, 0, (int)stream.Length);
+				results = (T)(object)bytes;
+			}
 			return results;
+		}
+
+		static Assembly[] GetAssemblies()
+		{
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
+			var orderDesc = new Assembly[]
+			{
+				Assembly.GetExecutingAssembly(),
+				Assembly.GetCallingAssembly(),
+				Assembly.GetEntryAssembly(),
+			};
+			// Move assemblies to top.
+			foreach (var item in orderDesc)
+			{
+				if (assemblies.Contains(item))
+				{
+					assemblies.Remove(item);
+					assemblies.Insert(0, item);
+				}
+			}
+			return assemblies.ToArray();
 		}
 
 		#endregion
@@ -229,9 +245,9 @@ namespace JocysCom.ClassLibrary
 				: GuidRegex.IsMatch(s);
 		}
 
-#endregion
+		#endregion
 
-#region IDisposable
+		#region IDisposable
 
 		// Dispose() calls Dispose(true)
 		public void Dispose()
@@ -265,7 +281,7 @@ namespace JocysCom.ClassLibrary
 			}
 		}
 
-#endregion
+		#endregion
 
 	}
 

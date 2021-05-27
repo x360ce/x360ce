@@ -20,7 +20,7 @@ namespace x360ce.App
 			_Timer.Elapsed += _Timer_Elapsed;
 		}
 
-		internal UIElement Control;
+		internal FrameworkElement Control;
 		internal DateTime StartDate;
 		internal DateTime EndDate;
 		internal static int _InitEndCount;
@@ -29,7 +29,7 @@ namespace x360ce.App
 
 		private static object TimersLock = new object();
 		private static List<InitHelper> Timers = new List<InitHelper>();
-		public static void InitTimer(UIElement control, Action InitializeComponent)
+		public static void InitTimer(FrameworkElement control, Action InitializeComponent)
 		{
 			var ih = new InitHelper();
 			ih.Control = control;
@@ -47,7 +47,9 @@ namespace x360ce.App
 
 		private static void Control_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
 		{
-			var ih = Timers.FirstOrDefault(x => Equals(x.Control, sender));
+			InitHelper ih = null;
+			lock (TimersLock)
+				ih = Timers.FirstOrDefault(x => Equals(x.Control, sender));
 			if (ih == null)
 				return;
 			ih._PropertyChangedCount++;
@@ -58,7 +60,9 @@ namespace x360ce.App
 
 		private static void _Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			var ih = Timers.FirstOrDefault(x => Equals(x._Timer, sender));
+			InitHelper ih = null;
+			lock (TimersLock)
+				ih = Timers.FirstOrDefault(x => Equals(x._Timer, sender));
 			if (ih == null)
 				return;
 			_InitEndCount++;

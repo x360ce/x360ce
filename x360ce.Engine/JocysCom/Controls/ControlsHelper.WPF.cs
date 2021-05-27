@@ -151,7 +151,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void SetTextFromResource(RichTextBox box, string resourceName)
 		{
-			var rtf = Helper.FindResource<byte[]>(Assembly.GetEntryAssembly(), resourceName);
+			var rtf = Helper.FindResource<byte[]>(resourceName, Assembly.GetEntryAssembly());
 			var ms = new MemoryStream(rtf);
 			var textRange = new TextRange(box.Document.ContentStart, box.Document.ContentEnd);
 			textRange.Load(ms, DataFormats.Rtf);

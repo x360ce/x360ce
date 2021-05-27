@@ -32,8 +32,12 @@ namespace x360ce.App.Controls
 				// Create images.
 				if (topImage == null)
 				{
-					topImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
-					frontImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
+					var a = typeof(App).Assembly;
+					var keys = JocysCom.ClassLibrary.Helper.GetResourceKeys(a);
+					var ti = JocysCom.ClassLibrary.Helper.GetResourceValue("images/xboxcontrollertop.png", a);
+					topImage = new Bitmap(ti);
+					var ti2 = JocysCom.ClassLibrary.Helper.GetResourceValue("images/xboxcontrollerfront.png", a);
+					frontImage = new Bitmap(ti2);
 					topDisabledImage = AppHelper.GetDisabledImage(topImage);
 					frontDisabledImage = AppHelper.GetDisabledImage(frontImage);
 					// WPF.

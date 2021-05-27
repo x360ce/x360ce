@@ -523,7 +523,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void SetTextFromResource(RichTextBox box, string resourceName)
 		{
-			var rtf = Helper.FindResource<string>(Assembly.GetEntryAssembly(), resourceName);
+			var rtf = Helper.FindResource<string>(resourceName, Assembly.GetEntryAssembly());
 			box.Rtf = rtf;
 			box.SelectAll();
 			box.SelectionIndent = 8;

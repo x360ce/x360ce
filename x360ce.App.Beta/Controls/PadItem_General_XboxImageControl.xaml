@@ -63,13 +63,13 @@
 					x:Name="TopPictureImage"
 					Width="256"
 					Height="103"
-					Source="/x360ce;component/Images/xboxControllerTop.png" />
+					Source="../Images/xboxControllerTop.png" />
 				<StackPanel Height="8" />
 				<Image
 					x:Name="FrontPictureImage"
 					Width="256"
 					Height="175"
-					Source="/x360ce;component/Images/xboxControllerFront.png" />
+					Source="../Images/xboxControllerFront.png" />
 			</StackPanel>
 			<Grid
 				x:Name="TriggerButtonsGrid"

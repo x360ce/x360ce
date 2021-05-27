@@ -482,8 +482,8 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <EmbeddedResource Include="Images\xboxControllerFront.png" />
-    <EmbeddedResource Include="Images\xboxControllerTop.png" />
+    <Resource Include="Images\xboxControllerFront.png" />
+    <Resource Include="Images\xboxControllerTop.png" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
