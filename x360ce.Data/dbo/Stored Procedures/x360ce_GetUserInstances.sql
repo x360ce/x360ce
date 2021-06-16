@@ -24,6 +24,11 @@ INSERT INTO @instances
 SELECT DISTINCT a.InstanceGuid
 FROM @args a
 WHERE ISNULL(a.InstanceGuid, '00000000-0000-0000-0000-000000000000') <> '00000000-0000-0000-0000-000000000000'
+-- Workaround: make sure to exclude virtual devices which share same instance on all computers.
+-- Unique anonymous computer or profile ID must be supplied to this method in order to get these.
+AND a.InstanceGuid <> '6f1d2b60-d5a0-11cf-bfc7-444553540000' -- SysMouse
+AND a.InstanceGuid <> '6f1d2b61-d5a0-11cf-bfc7-444553540000' -- SysKeyboard
+AND a.InstanceGuid <> '6f1d2b70-d5a0-11cf-bfc7-444553540000' -- Joystick
 
 -- Get all device instances of the user.
 SELECT s.*

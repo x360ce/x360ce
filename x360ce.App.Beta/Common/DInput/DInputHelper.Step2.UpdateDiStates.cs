@@ -136,7 +136,7 @@ namespace x360ce.App.DInput
 											if (ud.FFState == null)
 												ud.FFState = new Engine.ForceFeedbackState();
 											// If force update supplied then...
-											var force = feedbacks[(int)setting.MapTo - 1];
+											var force = feedbacks[setting.MapTo - 1];
 											if (force != null || ud.FFState.Changed(ps))
 											{
 												var v = new Vibration();

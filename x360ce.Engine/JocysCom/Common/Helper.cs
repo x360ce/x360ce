@@ -138,17 +138,21 @@ namespace JocysCom.ClassLibrary
 		static T ConvertResource<T>(Stream stream)
 		{
 			var results = default(T);
-			if (typeof(T) == typeof(System.Drawing.Image) || typeof(T) == typeof(System.Drawing.Bitmap))
-			{
-				return (T)(object)System.Drawing.Image.FromStream(stream);
-			}
-			else if (typeof(T) == typeof(string))
+			if (typeof(T) == typeof(string))
 			{
 				// File must contain Byte Order Mark (BOM) header in order for bytes correctly encoded to string.
 				// If header is missing then get resource as byte[] type and encode manually.
 				var streamReader = new StreamReader(stream, true);
 				return (T)(object)streamReader.ReadToEnd();
 			}
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
+			else if (typeof(T) == typeof(System.Drawing.Image) || typeof(T) == typeof(System.Drawing.Bitmap))
+			{
+				return (T)(object)System.Drawing.Image.FromStream(stream);
+			}
+#endif
 			else
 			{
 				var bytes = new byte[stream.Length];

@@ -181,10 +181,10 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(GeneralPanel.RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
 			// Process device.
 			var ud = CurrentUserDevice;
-			if (ud != null && ud.DiState != null)
+			var ps = CurrentPadSetting;
+			if (ud?.DiState != null && ps != null)
 			{
 				// Get current pad setting.
-				var ps = CurrentPadSetting;
 				Map map;
 				// LeftThumbX
 				var axis = ud.DiState.Axis;

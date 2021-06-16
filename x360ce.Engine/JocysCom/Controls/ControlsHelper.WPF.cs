@@ -378,8 +378,12 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void GetActiveControl(FrameworkElement control, out FrameworkElement activeControl, out string activePath)
 		{
+			string _activePath = null;
+			Invoke(() => {
+				_activePath = string.Format("/{0}", control.Name);
+			});
+			activePath = _activePath;
 			// Return current control by default.
-			activePath = string.Format("/{0}", control.Name);
 			activeControl = control;
 			// If control can contains active controls.
 			var container = control as DependencyObject;
@@ -388,9 +392,13 @@ namespace JocysCom.ClassLibrary.Controls
 				control = System.Windows.Input.FocusManager.GetFocusedElement(control) as FrameworkElement;
 				if (control == null)
 					break;
-				activePath += string.Format("/{0}", control.Name);
+				Invoke(() => {
+					_activePath = string.Format("/{0}", control.Name);
+				});
+
+				activePath += _activePath;
 				activeControl = control;
-				container = control as FrameworkElement;
+				container = control;
 			}
 		}
 
