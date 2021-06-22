@@ -14,7 +14,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
+			<RowDefinition Height="1" />
 		</Grid.RowDefinitions>
 		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
 			<ToolBar Style="{StaticResource MainToolBar}">
@@ -72,21 +72,25 @@
 				</Button>
 			</ToolBar>
 		</ToolBarPanel>
-		<Border
+		<StackPanel
 			Grid.Row="1"
-			Height="1"
-			BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
-			BorderThickness="1"
-			SnapsToDevicePixels="True" />
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
 		<DataGrid
 			x:Name="MainDataGrid"
 			Grid.Row="1"
 			Height="Auto"
 			HorizontalAlignment="Stretch"
+			VerticalAlignment="Top"
 			AutoGenerateColumns="False"
 			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
 			IsReadOnly="True"
-			SelectionChanged="MainDataGrid_SelectionChanged">
+			ScrollViewer.CanContentScroll="True"
+			ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+			ScrollViewer.VerticalScrollBarVisibility="Auto"
+			SelectionChanged="MainDataGrid_SelectionChanged"
+			SelectionMode="Single">
 			<DataGrid.Resources>
 				<converters:ChecksumToIdConverter x:Key="_ChecksumToIdConverter" />
 				<converters:MapToIntToDescription x:Key="_MapToIntToDescription" />
@@ -124,11 +128,13 @@
 				</DataGridTemplateColumn>
 				<DataGridCheckBoxColumn
 					x:Name="IsEnabledColumn"
+					Width="Auto"
 					Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
 					EditingElementStyle="{StaticResource CheckBoxCell}"
 					ElementStyle="{StaticResource CheckBoxCell}"
 					Header="On" />
 				<DataGridTextColumn
+					Width="Auto"
 					Binding="{Binding InstanceId}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
@@ -136,6 +142,7 @@
 					SortDirection="{x:Null}" />
 				<DataGridTextColumn
 					x:Name="VendorNameColumn"
+					Width="Auto"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Vendor Name">
@@ -154,15 +161,17 @@
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Device Name" />
 				<DataGridTextColumn
+					Width="Auto"
 					Binding="{Binding PadSettingChecksum, Converter={StaticResource _ChecksumToIdConverter}}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="SID"
 					SortDirection="{x:Null}" />
 				<DataGridTextColumn
+					Width="Auto"
 					Binding="{Binding Completion}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
+					EditingElementStyle="{StaticResource TextBoxRightCell}"
+					ElementStyle="{StaticResource TextBlockRightCell}"
 					Header="Comp" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
@@ -171,5 +180,11 @@
 				</Style>
 			</DataGrid.CellStyle>
 		</DataGrid>
+		<StackPanel
+			Grid.Row="2"
+			Height="1"
+			VerticalAlignment="Bottom"
+			Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+
 	</Grid>
 </UserControl>

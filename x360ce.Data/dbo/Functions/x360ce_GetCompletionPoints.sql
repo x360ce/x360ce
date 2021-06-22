@@ -17,25 +17,25 @@ DECLARE
 */
 
 DECLARE
-	@maxAxis decimal(18,4) = 6,
-	@maxButtons decimal(18,4) = 14,
-	@maxMotors decimal(18,4) = 2
+	@maxAxis decimal(18,4) = 6.0,
+	@maxButtons decimal(18,4) = 14.0,
+	@maxMotors decimal(18,4) = 2.0
 
 	SELECT
 		-- Get device info.
-		@maxAxis = CapAxeCount,
-		@maxButtons = CapButtonCount,
-		@maxMotors = DiActuatorCount
+		@maxAxis = CAST(CapAxeCount AS decimal(18,4)),
+		@maxButtons = CAST(CapButtonCount AS decimal(18,4)),
+		@maxMotors = CAST(DiActuatorCount AS decimal(18,4))
 	FROM x360ce_UserDevices WITH(NOLOCK)
 	WHERE id = @UserDeviceId
 
 	-- Xbox 360 Controller have 6 axis, 14 buttons, 2 motors. Do not allow exceed.
-	IF @maxAxis > 6
-		SET @maxAxis = 6
-	IF @maxButtons > 14
-		SET @maxButtons = 14
-	IF @maxMotors > 2
-		SET @maxMotors = 2
+	IF @maxAxis > 6.0
+		SET @maxAxis = 6.0
+	IF @maxButtons > 14.0
+		SET @maxButtons = 14.0
+	IF @maxMotors > 2.0
+		SET @maxMotors = 2.0
 
 	DECLARE
 		@axisPoints decimal(18,4),
@@ -88,7 +88,7 @@ DECLARE
 
 	-- Bump DPad points to max if POV is mapped.
 	IF @isPOV = 1
-		SET @dpadPoints = 4
+		SET @dpadPoints = 4.0
 
 	/*
 	PRINT '@axisPoints = ' + CAST(@axisPoints as sysname)
@@ -99,6 +99,6 @@ DECLARE
 
 	-- Return completion percent.
 	DECLARE @completion int
-	SET @completion = 100 * (@axisPoints + @buttonPoints + @dpadPoints + @motorPoints) / (@maxAxis + @maxButtons + @maxMotors)
+	SET @completion = CAST(100.0 * (@axisPoints + @buttonPoints + @dpadPoints + @motorPoints) / (@maxAxis + @maxButtons + @maxMotors) AS int)
     RETURN ISNULL(@completion, -1)
 END

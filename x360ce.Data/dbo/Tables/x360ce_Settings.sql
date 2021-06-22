@@ -81,7 +81,7 @@ BEGIN
 		RETURN
 
 
-	DECLARE @table AS TABLE (SettingId uniqueidentifier PRIMARY KEY, Completion int)
+	DECLARE @table AS TABLE (SettingId uniqueidentifier PRIMARY KEY, Completion int NOT NULL)
 
 	-- Recalculate completion values.	
 	INSERT INTO @table
@@ -101,7 +101,7 @@ BEGIN
 
 	/* TEST:
 	SELECT TOP 1 Completion FROM x360ce_Settings where SettingId = '3206CDDC-A941-4236-B874-00005012DF91'
-	-- '0' will be overriden by recalculated value.
+	-- '0' will be overridden by recalculated value.
 	UPDATE x360ce_Settings SET Completion = 0 WHERE SettingId = '3206CDDC-A941-4236-B874-00005012DF91'
 	*/
 

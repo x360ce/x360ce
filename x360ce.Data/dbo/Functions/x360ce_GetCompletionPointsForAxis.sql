@@ -6,7 +6,7 @@
 BEGIN
 
 DECLARE
-	@points decimal(18,4) = 0,
+	@points decimal(18,4) = 0.0,
 	@isRange bit = 0,
 	@isRangeMin bit = 0,
 	@isRangeMax bit = 0
@@ -22,7 +22,7 @@ SET @isRangeMax = CASE WHEN @mapMax LIKE '%[nxsh]%' THEN 1 ELSE 0 END
 -- If range mapped to axis then...
 IF @isRange = 1
 -- Give 1 point.
-	RETURN 1
+	RETURN 1.0
 
 -- If range mapped then give half point for half range.
 IF @isRangeMin = 1
@@ -39,7 +39,7 @@ ELSE IF LEN(@mapMax) > 0
 	SET @points = @points + 0.25
 
 -- If just binary mapped to whole axis then...
-IF @points = 0 AND LEN(@map) > 0
+IF @points = 0.0 AND LEN(@map) > 0
 	-- Give quarter points.
 	SET @points = 0.25
 

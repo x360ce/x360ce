@@ -282,6 +282,10 @@
 		<Setter Property="VerticalGridLinesBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="VerticalScrollBarVisibility" Value="Auto" />
 		<Style.Resources>
+			<!--  Make selected row color of inactive grid as same as active grid.  -->
+			<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{x:Static SystemColors.HighlightColor}" />
+			<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}" />
+			<!--  Other styles  -->
 			<Style TargetType="DataGridColumnHeader">
 				<Setter Property="Padding" Value="3,3,3,3" />
 				<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />

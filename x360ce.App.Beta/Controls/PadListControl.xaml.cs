@@ -20,6 +20,7 @@ namespace x360ce.App.Controls
 		public PadListControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
+			InitScrollFix(MainDataGrid);
 			MainDataGrid.ItemsSource = mappedUserSettings;
 			_MainDataGridFormattingConverter = (ItemFormattingConverter)MainDataGrid.Resources[nameof(_MainDataGridFormattingConverter)];
 			_MainDataGridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
@@ -91,8 +92,22 @@ namespace x360ce.App.Controls
 					foreach (var item in itemsToInsert)
 						mappedUserSettings.Add(item);
 				}
-				foreach (var item in itemsToInsert)
-					grid.SelectedItems.Add(item);
+				var itemToSelect = itemsToInsert.FirstOrDefault();
+				// If item was inserted and not selected then...
+				if (itemToSelect != null && !grid.SelectedItems.Contains(itemToSelect))
+				{
+					if (grid.SelectionMode == DataGridSelectionMode.Single)
+					{
+						grid.SelectedItem = itemToSelect;
+					}
+					else
+					{
+						// Clear current selection.
+						grid.SelectedItems.Clear();
+						// Select new item.
+						grid.SelectedItems.Add(itemToSelect);
+					}
+				}
 				var visibleCount = mappedUserSettings.Count();
 				var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
 				if (mappedUserSettings.Count(x => x.IsEnabled) > 1)
@@ -386,6 +401,38 @@ namespace x360ce.App.Controls
 				IsDisposing = true;
 				SetBinding(MapTo.None);
 			}
+		}
+
+		#endregion
+
+		#region Fix column width with scroll.
+
+		System.Timers.Timer _Timer;
+
+		void InitScrollFix(DataGrid grid)
+		{
+			_Timer = new System.Timers.Timer();
+			_Timer.AutoReset = false;
+			_Timer.Interval = 200;
+			// Stop and start times every time new row is loaded.
+			grid.LoadingRow += (sender, e) =>
+			{
+				_Timer.Stop();
+				_Timer.Start();
+			};
+			// Resize rows when timer stops restarting.
+			_Timer.Elapsed += (sender, e) =>
+			{
+				Dispatcher.BeginInvoke(new Action(() =>
+				{
+					var widths = grid.Columns.Select(x => x.Width).ToArray();
+					for (int i = 0; i < grid.Columns.Count; i++)
+						grid.Columns[i].Width = 0;
+					grid.UpdateLayout();
+					for (int i = 0; i < grid.Columns.Count; i++)
+						grid.Columns[i].Width = widths[i];
+				}), new object[0]);
+			};
 		}
 
 		#endregion

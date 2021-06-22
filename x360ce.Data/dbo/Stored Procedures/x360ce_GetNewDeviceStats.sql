@@ -16,7 +16,6 @@ IF @oldHours > 12
 BEGIN
 
 	-- Begin process of updating the table.
-
 	IF OBJECT_ID('tempdb.dbo.#StatsTemp') IS NOT NULL
 	DROP TABLE #StatsTemp
 
