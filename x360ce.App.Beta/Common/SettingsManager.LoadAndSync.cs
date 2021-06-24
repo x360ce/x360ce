@@ -20,9 +20,12 @@ namespace x360ce.App
 			binding.IsAsync = true;
 			binding.Converter = converter;
 			binding.Mode = mode;
+			// Set UpdateSourceTrigger to PropertyChanged, otherwise control to object update won't trigger.
+			binding.UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged;
 			if (converter is Converters.PaddSettingToText)
 			{
-				binding.Mode = BindingMode.OneWay;
+				var padValidator = new Converters.PadSettingToTextValidator();
+				binding.ValidationRules.Add(padValidator);
 				control.SetBinding(p, binding);
 			}
 			else if (converter != null)

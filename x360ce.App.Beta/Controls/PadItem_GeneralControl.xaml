@@ -76,11 +76,7 @@
 			<!--  LeftTrigger  -->
 			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
 				<Label x:Name="LeftTriggerLabel" VerticalAlignment="Center" Content="Trigger" />
-				<TextBox
-					x:Name="LeftTriggerTextBox"
-					x:FieldModifier="public"
-					Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-					IsReadOnly="True" />
+				<TextBox x:Name="LeftTriggerTextBox" x:FieldModifier="public" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
 				<Menu Style="{StaticResource MapMenu}">
 					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
 						<MenuItem.Icon>
@@ -304,11 +300,7 @@
 			<!--  LeftTrigger  -->
 			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
 				<Label x:Name="RightTriggerLabel" VerticalAlignment="Center" Content="Trigger" />
-				<TextBox
-					x:Name="RightTriggerTextBox"
-					x:FieldModifier="public"
-					Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-					IsReadOnly="True" />
+				<TextBox x:Name="RightTriggerTextBox" x:FieldModifier="public" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
 				<Menu Style="{StaticResource MapMenu}">
 					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
 						<MenuItem.Icon>

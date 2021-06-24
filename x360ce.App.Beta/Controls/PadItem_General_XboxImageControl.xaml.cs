@@ -76,7 +76,7 @@ namespace x360ce.App.Controls
 				var vb = FindResource(resourceName) as Viewbox;
 				content.Content = vb;
 			}
-			// Opacity must be reaplied if image changed.
+			// Opacity must be re-applied if image changed.
 			if (!isShowSame || !isNameSame)
 				content.Opacity = type == NavImageType.Record
 					? (show ? 0.8F : 0.2f)

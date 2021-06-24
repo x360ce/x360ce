@@ -384,6 +384,7 @@
     <Compile Include="Controls\BaseWithHeaderControl.xaml.cs">
       <DependentUpon>BaseWithHeaderControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\PadSettingToTextValidator.cs" />
     <Compile Include="Forms\DebugWindow.xaml.cs">
       <DependentUpon>DebugWindow.xaml</DependentUpon>
     </Compile>
