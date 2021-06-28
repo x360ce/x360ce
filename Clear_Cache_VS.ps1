@@ -28,7 +28,7 @@ $file = Get-Item $current;
 # Working folder.
 $wdir = $file.Directory.FullName;
 # ----------------------------------------------------------------------------
-function RemoveSubDirectories
+function RemoveSubFoldersAndFiles
 {
 	# Parameters.
 	param($path);
@@ -37,7 +37,7 @@ function RemoveSubDirectories
 	foreach ($dir in $dirs)
 	{
 		Write-Output "Clear: $($dir.FullName)";
-		$items = Get-ChildItem -LiteralPath $dir.FullName -Force | Where-Object {$_ -is [System.IO.DirectoryInfo]};
+		$items = Get-ChildItem -LiteralPath $dir.FullName -Force;
 		foreach ($item in $items)
 		{
 			Write-Output "  - $($item.Name)";
@@ -51,19 +51,20 @@ function RemoveSubDirectories
 # Visual studio must be closed for this batch script to succeed.
 #
 # Clear Visual Studio.
-RemoveSubDirectories "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\12.*\ProjectAssemblies";
-RemoveSubDirectories "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\13.*\ProjectAssemblies";
-RemoveSubDirectories "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\14.*\ProjectAssemblies";
-RemoveSubDirectories "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\15.*\ProjectAssemblies";
-RemoveSubDirectories "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\16.*\ProjectAssemblies";
+RemoveSubFoldersAndFiles "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\12.*\ProjectAssemblies";
+RemoveSubFoldersAndFiles "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\13.*\ProjectAssemblies";
+RemoveSubFoldersAndFiles "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\14.*\ProjectAssemblies";
+RemoveSubFoldersAndFiles "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\15.*\ProjectAssemblies";
+RemoveSubFoldersAndFiles "$($env:USERPROFILE)\AppData\Local\Microsoft\VisualStudio\16.*\ProjectAssemblies";
 # Clear IIS Express.
-RemoveSubDirectories "$($env:LOCALAPPDATA)\Temp\iisexpress";
-RemoveSubDirectories "$($env:LOCALAPPDATA)\Temp\Temporary ASP.NET Files";
+RemoveSubFoldersAndFiles "$($env:LOCALAPPDATA)\Temp\iisexpress";
+RemoveSubFoldersAndFiles "$($env:LOCALAPPDATA)\Temp\Temporary ASP.NET Files";
 # Clear Xamarin.
-RemoveSubDirectories "$($env:LOCALAPPDATA)\Temp\Xamarin";
+RemoveSubFoldersAndFiles "$($env:LOCALAPPDATA)\Temp\Xamarin";
+RemoveSubFoldersAndFiles "$($env:LOCALAPPDATA)\Xamarin\iOS\Provisioning";
 # Clear .NET Framework.
-RemoveSubDirectories "$($env:SystemRoot)\Microsoft.NET\Framework\v4.0.30319\Temporary ASP.NET Files";
-RemoveSubDirectories "$($env:SystemRoot)\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files";
+RemoveSubFoldersAndFiles "$($env:SystemRoot)\Microsoft.NET\Framework\v4.0.30319\Temporary ASP.NET Files";
+RemoveSubFoldersAndFiles "$($env:SystemRoot)\Microsoft.NET\Framework64\v4.0.30319\Temporary ASP.NET Files";
 #
 # Solution Explorer, right-click Solution
 #	Properties -> Common Properties -> Debug Source Files -> clean "Do not look for these source files" box.

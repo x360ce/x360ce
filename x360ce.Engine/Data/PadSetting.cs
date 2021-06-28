@@ -80,6 +80,119 @@ namespace x360ce.Engine.Data
 			}
 		}
 
+		public void Load(PadSetting source)
+		{
+			var names = new string[] {
+				// GamePad.
+				nameof(PassThrough),
+				nameof(GamePadType),
+				// Force Feedback.
+				nameof(ForceEnable),
+				nameof(ForceType),
+				nameof(ForceSwapMotor),
+				nameof(ForceOverall),
+				nameof(LeftMotorPeriod),
+				nameof(LeftMotorDirection),
+				nameof(LeftMotorStrength),
+				nameof(RightMotorPeriod),
+				nameof(RightMotorDirection),
+				nameof(RightMotorStrength),
+				// D-PAD
+				nameof(AxisToDPadDeadZone),
+				nameof(AxisToDPadEnabled),
+				nameof(AxisToDPadOffset),
+				// Buttons.
+				nameof(ButtonA),
+				nameof(ButtonB),
+				nameof(ButtonGuide),
+				nameof(ButtonBack),
+				nameof(ButtonStart),
+				nameof(ButtonX),
+				nameof(ButtonY),
+				nameof(DPad),
+				nameof(DPadDown),
+				nameof(DPadLeft),
+				nameof(DPadRight),
+				nameof(DPadUp),
+				nameof(LeftShoulder),
+				nameof(LeftThumbButton),
+				nameof(RightShoulder),
+				nameof(RightThumbButton),
+				// Right Trigger.
+				nameof(RightTrigger),
+				nameof(RightTriggerDeadZone),
+				nameof(RightTriggerAntiDeadZone),
+				nameof(RightTriggerLinear),
+				// Left Thumb Virtual Buttons.
+				nameof(LeftThumbUp),
+				nameof(LeftThumbRight),
+				nameof(LeftThumbDown),
+				nameof(LeftThumbLeft),
+				// Left Thumb Axis X
+				nameof(LeftThumbAxisX),
+				nameof(LeftThumbDeadZoneX),
+				nameof(LeftThumbAntiDeadZoneX),
+				nameof(LeftThumbLinearX),
+				// Left Thumb Axis Y
+				nameof(LeftThumbAxisY),
+				nameof(LeftThumbDeadZoneY),
+				nameof(LeftThumbAntiDeadZoneY),
+				nameof(LeftThumbLinearY),
+				// Left Trigger.
+				nameof(LeftTrigger),
+				nameof(LeftTriggerDeadZone),
+				nameof(LeftTriggerAntiDeadZone),
+				nameof(LeftTriggerLinear),
+				// Right Thumb Virtual Buttons.
+				nameof(RightThumbUp),
+				nameof(RightThumbRight),
+				nameof(RightThumbDown),
+				nameof(RightThumbLeft),
+				// Right Thumb Axis X
+				nameof(RightThumbAxisX),
+				nameof(RightThumbDeadZoneX),
+				nameof(RightThumbAntiDeadZoneX),
+				nameof(RightThumbLinearX),
+				// Right Thumb Axis Y
+				nameof(RightThumbAxisY),
+				nameof(RightThumbDeadZoneY),
+				nameof(RightThumbAntiDeadZoneY),
+				nameof(RightThumbLinearY),
+				// Axis to Button dead-zones.
+				nameof(ButtonADeadZone),
+				nameof(ButtonBDeadZone),
+				nameof(ButtonBackDeadZone),
+				nameof(ButtonStartDeadZone),
+				nameof(ButtonXDeadZone),
+				nameof(ButtonYDeadZone),
+				nameof(LeftThumbButtonDeadZone),
+				nameof(RightThumbButtonDeadZone),
+				nameof(LeftShoulderDeadZone),
+				nameof(RightShoulderDeadZone),
+				nameof(DPadDownDeadZone),
+				nameof(DPadLeftDeadZone),
+				nameof(DPadRightDeadZone),
+				nameof(DPadUpDeadZone),
+			};
+			lock (_PropertiesLock)
+			{
+				if (_Properties == null)
+				{
+					var t = GetType();
+					_Properties = names.Select(x => t.GetProperty(x)).ToArray();
+				}
+			}
+			foreach (var pi in _Properties)
+			{
+				var value = pi.GetValue(source);
+				pi.SetValue(this, value ?? "");
+			}
+		}
+
+		private static object _PropertiesLock = new object();
+		private static PropertyInfo[] _Properties;
+
+
 		public Guid CleanAndGetCheckSum(List<string> list = null)
 		{
 			// Make sure to update checksums in database if you are changing this method.

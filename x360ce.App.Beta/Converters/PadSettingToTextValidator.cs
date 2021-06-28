@@ -9,7 +9,10 @@ namespace x360ce.App.Converters
 
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            var iniValue = SettingsConverter.ToIniValue((string)value);
+            var v = (string)value;
+            if (string.IsNullOrEmpty(v))
+                return ValidationResult.ValidResult;
+            var iniValue = SettingsConverter.ToIniValue(v);
             if (string.IsNullOrEmpty(iniValue))
             {
                 return new ValidationResult(false,

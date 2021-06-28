@@ -68,7 +68,7 @@ namespace x360ce.App.Controls
 			{
 				var xml = Clipboard.GetText();
 				var ps = JocysCom.ClassLibrary.Runtime.Serializer.DeserializeFromXmlString<PadSetting>(xml);
-				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(_MappedTo, ps);
+				_PadSetting.Load(ps);
 			}
 			catch (Exception ex)
 			{
@@ -93,7 +93,7 @@ namespace x360ce.App.Controls
 				if (ps != null)
 				{
 					Global._MainWindow.UpdateTimer.Stop();
-					SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(_MappedTo, ps);
+					_PadSetting.Load(ps);
 					Global._MainWindow.UpdateTimer.Start();
 				}
 			}
@@ -108,35 +108,40 @@ namespace x360ce.App.Controls
 			var description = Attributes.GetDescription(_MappedTo);
 			var form = new MessageBoxWindow();
 			var buttons = MessageBoxButton.YesNo;
-			var text = string.Format("Do you want to fill all {0} settings automatically?", description);
+			var text = string.Format("Do you want to fill {0} settings automatically?", description);
 			if (ud.Device == null && !TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
 			{
-				text = string.Format("Device is off-line. Please connect device to fill all {0} settings automatically.", description);
+				text = string.Format("Device is off-line. Please connect device to fill {0} settings automatically.", description);
 				buttons = MessageBoxButton.OK;
 			}
-			var result = form.ShowDialog(text, "Auto Controller Settings", buttons, MessageBoxImage.Question);
+			var result = form.ShowDialog(text, "Fill Controller Settings", buttons, MessageBoxImage.Question);
 			if (result != MessageBoxResult.Yes)
 				return;
-			var padSetting = AutoMapHelper.GetAutoPreset(ud);
-			// Load created setting.
-			SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(_MappedTo, padSetting);
+			var ps = AutoMapHelper.GetAutoPreset(ud);
+			_PadSetting.Load(ps);
 		}
 
 		private void ClearButton_Click(object sender, RoutedEventArgs e)
 		{
-			SettingsManager.Current.ClearAll(_MappedTo);
+			var description = Attributes.GetDescription(_MappedTo);
+			var text = string.Format("Do you want to clear all {0} settings?", description);
+			var form = new MessageBoxWindow();
+			var result = form.ShowDialog(text, "Clear Controller Settings", MessageBoxButton.YesNo, MessageBoxImage.Question);
+			if (result != MessageBoxResult.Yes)
+				return;
+			var ps = new PadSetting();
+			_PadSetting.Load(ps);
 		}
 
 		private void ResetButton_Click(object sender, RoutedEventArgs e)
 		{
 			var description = Attributes.GetDescription(_MappedTo);
-			var text = string.Format("Do you really want to reset all {0} settings?", description);
+			var text = string.Format("Do you want to reset all {0} settings?", description);
 			var form = new MessageBoxWindow();
 			var result = form.ShowDialog(text, "Reset Controller Settings", MessageBoxButton.YesNo, MessageBoxImage.Question);
-			if (result == MessageBoxResult.Yes)
-			{
-				//MainForm.Current.ReloadXinputSettings();
-			}
+			if (result != MessageBoxResult.Yes)
+				return;
+			//MainForm.Current.ReloadXinputSettings();
 		}
 
 	}
