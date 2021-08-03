@@ -243,7 +243,7 @@ namespace x360ce.App
 				var oldValue = oldValues[i];
 				var diff = newValues[i] - oldValue;
 				var prefix = "";
-				// If moved more than 10%.
+				// If differ by more than 10%.
 				if (Math.Abs(diff) > (ushort.MaxValue / 10))
 				{
 					// If value is negative then add "I" prefix.
@@ -261,7 +261,7 @@ namespace x360ce.App
 						// If target property is not thumb then...
 						if (!thumb)
 						{
-							// Allow to add add half prefix.
+							// Allow to add half prefix.
 							prefix += "H";
 						}
 					}

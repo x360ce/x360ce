@@ -2,7 +2,6 @@
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
-using System.Data.Objects.DataClasses;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -111,11 +110,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			var items = ItemsToArraySyncronized();
 			lock (saveReadFileLock)
 			{
-				for (int i = 0; i < items.Length; i++)
+				var type = items.FirstOrDefault()?.GetType();
+				if (type != null && type.Name.EndsWith("EntityObject"))
 				{
-					var o = items[i] as EntityObject;
-					if (o != null)
-						o.EntityKey = null;
+					var pi = type.GetProperty("EntityKey");
+					for (int i = 0; i < items.Length; i++)
+						pi.SetValue(items[i], null);
 				}
 				var fi = new FileInfo(fileName);
 				if (!fi.Directory.Exists)
@@ -138,7 +138,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			lock (SyncRoot)
 				foreach (var item in items)
-				Items.Remove(item);
+					Items.Remove(item);
 		}
 
 		/// <summary>Add with SyncRoot lock.</summary>
@@ -229,6 +229,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					var ao = ApplyOrder;
 					if (ao != null)
 						ao(data);
+					Version = data.Version;
 					LoadAndValidateData(data.Items);
 					settingsLoaded = true;
 				}

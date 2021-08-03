@@ -155,7 +155,9 @@
     <Compile Include="Common\ConvertHelper.cs" />
     <Compile Include="Common\CustomDiHelper.cs" />
     <Compile Include="Common\CustomDiState.cs" />
+    <Compile Include="Common\CustomDiState.Masks.cs" />
     <Compile Include="Common\CustomDiUpdate.cs" />
+    <Compile Include="Common\CustomDiUpdate.Ex.cs" />
     <Compile Include="Common\DatabaseHelper.cs" />
     <Compile Include="Common\DeviceEffectItem.cs" />
     <Compile Include="Common\DeviceObjectItem.cs" />

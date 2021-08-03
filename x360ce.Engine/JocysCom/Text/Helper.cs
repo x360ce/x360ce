@@ -136,66 +136,6 @@ namespace JocysCom.ClassLibrary.Text
 			return GetValue<string>(name, s, defaultValue);
 		}
 
-		/// <summary>
-		/// Convert timespan to string.
-		/// </summary>
-		/// <param name="ts">TimeSpan value to convert.</param>
-		/// <param name="includeMilliseconds">include milliseconds.</param>
-		/// <param name="useWords">Use words instead of ':' and '.' separator.</param>
-		/// <param name="useShortWords">Use short words. Applied when useWords = true.</param>
-		/// <param name="precision">Precision. Applied when useWords = true.</param>
-		/// <returns></returns>
-		public static string TimeSpanToString(TimeSpan ts, bool includeMilliseconds = false, bool useWords = false, bool useShortWords = false, int? precision = null)
-		{
-			var s = "";
-			if (useWords)
-			{
-				var list = new List<string>();
-				if (ts.Days != 0)
-				{
-					s = string.Format("{0} {1}", ts.Days, ts.Days == 1 ? "day" : "days");
-					list.Add(s);
-				}
-				if (ts.Hours != 0 && (!precision.HasValue || list.Count < precision.Value))
-				{
-					s = string.Format("{0} {1}", ts.Hours, ts.Hours == 1 ? "hour" : "hours");
-					list.Add(s);
-				}
-				if (ts.Minutes != 0 && (!precision.HasValue || list.Count < precision.Value))
-				{
-					s = string.Format("{0} {1}", ts.Minutes, useShortWords ? "min" : (ts.Minutes == 1 ? "minute" : "minutes"));
-					list.Add(s);
-				}
-				// Force to show seconds if milliseconds will not be visible.
-				if (!precision.HasValue || list.Count < precision.Value)
-				{
-					s = string.Format("{0} {1}", ts.Seconds, useShortWords ? "sec" : (ts.Seconds == 1 ? "second" : "seconds"));
-					list.Add(s);
-				}
-				var showMilliseconds = includeMilliseconds && (ts.Milliseconds != 0 || list.Count == 0);
-				if (showMilliseconds && (!precision.HasValue || list.Count < precision.Value))
-				{
-					s = string.Format("{0} {1}", ts.Milliseconds, useShortWords ? "ms" : (ts.Milliseconds == 1 ? "millisecond" : "milliseconds"));
-					list.Add(s);
-				}
-				s = string.Join(" ", list);
-			}
-			else
-			{
-				if (ts.Days != 0)
-					s += ts.Days.ToString("0") + ".";
-				if (s.Length != 0 || ts.Hours > 0)
-					s += ts.Days.ToString("00") + ":";
-				if (s.Length != 0 || ts.Minutes > 0)
-					s += ts.Minutes.ToString("00") + ":";
-				// Seconds will be always included.
-				s += ts.Seconds.ToString("00");
-				if (includeMilliseconds)
-					s += "." + ts.Milliseconds.ToString("000");
-			}
-			return s;
-		}
-
 #if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard
 #else // .NET Framework
@@ -428,6 +368,121 @@ namespace JocysCom.ClassLibrary.Text
 			var enc = Encoding.GetEncoding("IBM437");
 			return enc.GetString(bytes);
 		}
+
+		#region TimeSpan
+
+		/// <summary>
+		/// Convert timespan to string.
+		/// </summary>
+		/// <param name="ts">TimeSpan value to convert.</param>
+		/// <param name="includeMilliseconds">include milliseconds.</param>
+		/// <param name="useWords">Use words instead of ':' and '.' separator.</param>
+		/// <param name="useShortWords">Use short words. Applied when useWords = true.</param>
+		/// <param name="precision">Precision. Applied when useWords = true.</param>
+		/// <returns></returns>
+		public static string TimeSpanToString(TimeSpan ts, bool includeMilliseconds = false, bool useWords = false, bool useShortWords = false, int? precision = null)
+		{
+			var s = "";
+			if (useWords)
+			{
+				var list = new List<string>();
+				if (ts.Days != 0)
+				{
+					s = string.Format("{0} {1}", ts.Days, ts.Days == 1 ? "day" : "days");
+					list.Add(s);
+				}
+				if (ts.Hours != 0 && (!precision.HasValue || list.Count < precision.Value))
+				{
+					s = string.Format("{0} {1}", ts.Hours, ts.Hours == 1 ? "hour" : "hours");
+					list.Add(s);
+				}
+				if (ts.Minutes != 0 && (!precision.HasValue || list.Count < precision.Value))
+				{
+					s = string.Format("{0} {1}", ts.Minutes, useShortWords ? "min" : (ts.Minutes == 1 ? "minute" : "minutes"));
+					list.Add(s);
+				}
+				// Force to show seconds if milliseconds will not be visible.
+				if (!precision.HasValue || list.Count < precision.Value)
+				{
+					s = string.Format("{0} {1}", ts.Seconds, useShortWords ? "sec" : (ts.Seconds == 1 ? "second" : "seconds"));
+					list.Add(s);
+				}
+				var showMilliseconds = includeMilliseconds && (ts.Milliseconds != 0 || list.Count == 0);
+				if (showMilliseconds && (!precision.HasValue || list.Count < precision.Value))
+				{
+					s = string.Format("{0} {1}", ts.Milliseconds, useShortWords ? "ms" : (ts.Milliseconds == 1 ? "millisecond" : "milliseconds"));
+					list.Add(s);
+				}
+				s = string.Join(" ", list);
+			}
+			else
+			{
+				if (ts.Days != 0)
+					s += ts.Days.ToString("0") + ".";
+				if (s.Length != 0 || ts.Hours > 0)
+					s += ts.Days.ToString("00") + ":";
+				if (s.Length != 0 || ts.Minutes > 0)
+					s += ts.Minutes.ToString("00") + ":";
+				// Seconds will be always included.
+				s += ts.Seconds.ToString("00");
+				if (includeMilliseconds)
+					s += "." + ts.Milliseconds.ToString("000");
+			}
+			return s;
+		}
+
+		/// <summary>Time Span Standard regular expression.</summary>
+		/// <remarks>
+		/// Minutes are mandatory with required colon from left or right.
+		/// Pattern: [-][[dd.]HH:](:mm|mm:)[:ss[.fffffff]]
+		/// </remarks>
+		public const string TimeSpanStandard =
+			@"(?:(?<ne>-))?" +
+			@"(?:(?:(?<dd>0*[0-9]+)[.])?(?:(?<HH>0*[2][0-3]|0*[1][0-9]|0*[0-9])[:]))?" +
+			@"(?<mm>(?<=:)0*[0-5]?[0-9]|0*[5-9]?[0-9](?=[:]))" +
+			@"(?:[:](?<ss>0*[0-5]?[0-9](?:[.][0-9]{0,7})?))?";
+
+		/// <summary>
+		/// Convert JSON TimeSpan format...
+		///		From Standard: [-][d.]HH:mm[:ss.fffffff]
+		///		To   ISO8601:  P(n)Y(n)M(n)DT(n)H(n)M(n)S
+		/// </summary>
+		public static string ConvertTimeSpanStandardToISO8601(string jsonString)
+		{
+			var spanRx = new Regex("\"" + TimeSpanStandard + "\"");
+			var me = new MatchEvaluator((Match m) =>
+			{
+				var standard = m.Value.Trim('"');
+				var span = TimeSpan.Parse(standard);
+				var iso8601 = System.Xml.XmlConvert.ToString(span);
+				return string.Format(@"""{0}""", iso8601);
+			});
+			return spanRx.Replace(jsonString, me);
+		}
+
+		/// <summary>Time Span ISO8601 regular expression</summary>
+		public const string TimeSpanISO8601 =
+			@"(?<V>(P(?=\d+[YMWD])?(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?))";
+
+		/// <summary>
+		/// Convert JSON TimeSpan format...
+		///		From ISO8601:  P(n)Y(n)M(n)DT(n)H(n)M(n)S
+		///		To   Standard: [-][d.]HH:mm[:ss.fffffff]
+		/// </summary>
+		public static string ConvertTimeSpanISO8601ToStandard(string jsonString)
+		{
+			var spanRx = new Regex("\"" + TimeSpanISO8601 + "\"");
+			var me = new MatchEvaluator((Match m) =>
+			{
+				var iso8601 = m.Groups["V"].Value.Trim('"');
+				var span = System.Xml.XmlConvert.ToTimeSpan(iso8601);
+				var standard = span.ToString();
+				return string.Format(@"""{0}""", standard);
+			});
+			return spanRx.Replace(jsonString, me);
+		}
+
+		#endregion
 
 	}
 }

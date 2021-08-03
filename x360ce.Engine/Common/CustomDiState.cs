@@ -1,69 +1,101 @@
 ﻿using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace x360ce.Engine
 {
 	/// <summary>
 	///  Custom X360CE direct input state class used for configuration.
 	/// </summary>
-	public class CustomDiState
+	public partial class CustomDiState
 	{
+
+		public CustomDiState(MouseState state)
+		{
+			Copy(state.Buttons, Buttons);
+			CopyAxis(state, Axis);
+		}
+
+		public CustomDiState(KeyboardState state)
+		{
+			foreach (var key in state.PressedKeys)
+				Buttons[(int)key] = true;
+		}
 
 		public CustomDiState(JoystickState state)
 		{
-			// Fill 24 axis (3 x 8).
-			Axis = GetAxisFromState(state);
-			// Fill 8 sliders (2 x 4).
-			Sliders = GetSlidersFromState(state);
-			// Fill 4 POVs.
-			Povs = state.PointOfViewControllers.ToArray();
-			// Fill 128 buttons.
-			Buttons = state.Buttons.ToArray();
+			CopyAxis(state, Axis);
+			CopySliders(state, Sliders);
+			Copy(state.PointOfViewControllers, Povs);
+			Copy(state.Buttons, Buttons);
 		}
 
-		public const int MaxAxis = 24;
-		public const int MaxSliders = 8;
+		public const int MaxAxis = 24; // (3 x 8)
+		public const int MaxSliders = 8; // (2 x 4).
+		public const int MaxPovs = 4;
+		public const int MaxButtons = 256;
 
 		public int[] Axis = new int[MaxAxis];
 		public int[] Sliders = new int[MaxSliders];
-		public int[] Povs = new int[4];
-		public bool[] Buttons = new bool[128];
+		public int[] Povs = new int[MaxPovs];
+		public bool[] Buttons = new bool[MaxButtons];
 
-		#region Get/Set Axis Array and Existence Mask
-
-		public static int[] GetAxisFromState(JoystickState state)
+		static void Copy<T>(T[] source, T[] destination)
 		{
-			return new int[] {
-				state.X,
-				state.Y,
-				state.Z,
-				state.RotationX,
-				state.RotationY,
-				state.RotationZ,
-				state.AccelerationX,
-				state.AccelerationY,
-				state.AccelerationZ,
-				state.AngularAccelerationX,
-				state.AngularAccelerationY,
-				state.AngularAccelerationZ,
-				state.ForceX,
-				state.ForceY,
-				state.ForceZ,
-				state.TorqueX,
-				state.TorqueY,
-				state.TorqueZ,
-				state.VelocityX,
-				state.VelocityY,
-				state.VelocityZ,
-				state.AngularVelocityX,
-				state.AngularVelocityY,
-				state.AngularVelocityZ,
-			};
+			Array.Clear(destination, 0, destination.Length);
+			var length = Math.Min(source.Length, destination.Length);
+			Array.Copy(source, destination, length);
 		}
 
-		public static void SetStateFromAxis(JoystickState state, int[] axis)
+		#region Mouse
+
+		static void CopyAxis(MouseState state, int[] axis)
+		{
+			axis[0] = state.X;
+			axis[1] = state.Y;
+			axis[2] = state.Z;
+		}
+
+		public static void CopyAxis(int[] axis, MouseState state)
+		{
+			state.X = axis[0];
+			state.Y = axis[1];
+			state.Z = axis[2];
+		}
+
+		#endregion
+
+		#region Joystick
+
+		public static void CopyAxis(JoystickState state, int[] axis)
+		{
+			axis[0] = state.X;
+			axis[1] = state.Y;
+			axis[2] = state.Z;
+			axis[3] = state.RotationX;
+			axis[4] = state.RotationY;
+			axis[5] = state.RotationZ;
+			axis[6] = state.AccelerationX;
+			axis[7] = state.AccelerationY;
+			axis[8] = state.AccelerationZ;
+			axis[9] = state.AngularAccelerationX;
+			axis[10] = state.AngularAccelerationY;
+			axis[11] = state.AngularAccelerationZ;
+			axis[12] = state.ForceX;
+			axis[13] = state.ForceY;
+			axis[14] = state.ForceZ;
+			axis[15] = state.TorqueX;
+			axis[16] = state.TorqueY;
+			axis[17] = state.TorqueZ;
+			axis[18] = state.VelocityX;
+			axis[19] = state.VelocityY;
+			axis[20] = state.VelocityZ;
+			axis[21] = state.AngularVelocityX;
+			axis[22] = state.AngularVelocityY;
+			axis[23] = state.AngularVelocityZ;
+		}
+
+		public static void CopyAxis(int[] axis, JoystickState state)
 		{
 			state.X = axis[0];
 			state.Y = axis[1];
@@ -91,91 +123,19 @@ namespace x360ce.Engine
 			state.AngularVelocityZ = axis[23];
 		}
 
-		/// <summary>
-		/// Return bit-masked integer about present axis.
-		/// bit 1 = 1 - Axis 1 is present
-		/// bit 2 = 0 - Axis 2 is missing
-		/// bit 3 = 1 - Axis 3 is present
-		/// ...
-		/// </summary>
-		public static void GetJoystickAxisMask(DeviceObjectItem[] items, Joystick device, out int axisMask, out int actuatorMask, out int actuatorCount)
+		public static void CopySliders(JoystickState state, int[] sliders)
 		{
-			axisMask = 0;
-			actuatorMask = 0;
-			actuatorCount = 0;
-			for (int i = 0; i < CustomDiHelper.AxisOffsets.Count; i++)
-			{
-				try
-				{
-					// This function accepts JoystickOffset enumeration values.
-					// Important: These values are not the same as on DeviceObjectInstance.Offset.
-					var o = device.GetObjectInfoByOffset((int)CustomDiHelper.AxisOffsets[i]);
-					if (o != null)
-					{
-						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
-						var item = items.First(x => x.Offset == o.Offset);
-						item.DiIndex = i;
-						axisMask |= (int)Math.Pow(2, i);
-						// Create mask to know which axis have force feedback motor.
-						if (item.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator))
-						{
-							actuatorMask |= (int)Math.Pow(2, i);
-							actuatorCount += 1;
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					_ = ex.Message;
-					// Ignore exceptions from GetObjectInfoByOffset(int offset) method.
-				}
-			}
+			sliders[0] = state.Sliders[0];
+			sliders[1] = state.Sliders[1];
+			sliders[2] = state.AccelerationSliders[0];
+			sliders[3] = state.AccelerationSliders[1];
+			sliders[4] = state.ForceSliders[0];
+			sliders[5] = state.ForceSliders[1];
+			sliders[6] = state.VelocitySliders[0];
+			sliders[7] = state.VelocitySliders[1];
 		}
 
-		public static void GetMouseAxisMask(DeviceObjectItem[] items, Joystick device, out int axisMask)
-		{
-			// Must have same order as in Axis[] property.
-			// Important: These values are not the same as on DeviceObjectInstance.Offset.
-			var list = new List<MouseOffset>{
-					MouseOffset.X,
-					MouseOffset.Y,
-					MouseOffset.Z,
-				};
-			axisMask = 0;
-			for (int i = 0; i < list.Count; i++)
-			{
-				try
-				{
-					// This function accepts JoystickOffset enumeration values.
-					// Important: These values are not the same as on DeviceObjectInstance.Offset.
-					var o = device.GetObjectInfoByOffset((int)list[i]);
-					if (o != null)
-					{
-						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
-						var item = items.First(x => x.Offset == o.Offset);
-						item.DiIndex = i;
-						axisMask |= (int)Math.Pow(2, i);
-					}
-				}
-				catch { }
-			}
-		}
-
-		#endregion
-
-		#region Get/Set Sliders Array and Existence Mask
-
-		public static int[] GetSlidersFromState(JoystickState state)
-		{
-			List<int> sl = new List<int>();
-			sl.AddRange(state.Sliders);
-			sl.AddRange(state.AccelerationSliders);
-			sl.AddRange(state.ForceSliders);
-			sl.AddRange(state.VelocitySliders);
-			return sl.ToArray();
-		}
-
-		public static void SetStateFromSliders(JoystickState state, int[] sliders)
+		public static void CopySliders(int[] sliders, JoystickState state)
 		{
 			state.Sliders[0] = sliders[0];
 			state.Sliders[1] = sliders[1];
@@ -187,30 +147,58 @@ namespace x360ce.Engine
 			state.VelocitySliders[1] = sliders[7];
 		}
 
-		public static int GetJoystickSlidersMask(DeviceObjectItem[] items, Joystick device)
+		#endregion
+
+		/// <summary>
+		/// Compare states and return differences
+		/// </summary>
+		public static CustomDiUpdate[] CompareTo(CustomDiState oldState, CustomDiState newState)
 		{
-			int mask = 0;
-			for (int i = 0; i < CustomDiHelper.SliderOffsets.Count; i++)
-			{
-				try
-				{
-					// This function accepts JoystickOffset enumeration values.
-					// Important: These values are not the same as on DeviceObjectInstance.Offset.
-					var o = device.GetObjectInfoByOffset((int)CustomDiHelper.SliderOffsets[i]);
-					if (o != null)
-					{
-						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
-						var item = items.First(x => x.Offset == o.Offset);
-						item.DiIndex = i;
-						mask |= (int)Math.Pow(2, i);
-					}
-				}
-				catch { }
-			}
-			return mask;
+			if (oldState == null)
+				throw new ArgumentNullException(nameof(oldState));
+			if (newState == null)
+				throw new ArgumentNullException(nameof(newState));
+			var list = new List<CustomDiUpdate>();
+			list.AddRange(CompareRange(oldState.Axis, newState.Axis, MapType.Axis));
+			list.AddRange(CompareRange(oldState.Sliders, newState.Sliders, MapType.Slider));
+			list.AddRange(CompareValue(oldState.Povs, newState.Povs, MapType.POV));
+			list.AddRange(CompareValue(oldState.Buttons, newState.Buttons, MapType.Button));
+			// Return results.
+			return list.ToArray();
 		}
 
-		#endregion
+		static CustomDiUpdate[] CompareValue(bool[] oldValues, bool[] newValues, MapType mapType)
+		{
+			var list = new List<CustomDiUpdate>();
+			for (int i = 0; i < oldValues.Length; i++)
+				// If differ then...
+				if (newValues[i] != oldValues[i])
+					list.Add(new CustomDiUpdate(mapType, i, newValues[i] ? 1 : 0));
+			// Return results.
+			return list.ToArray();
+		}
+
+		static CustomDiUpdate[] CompareValue(int[] oldValues, int[] newValues, MapType mapType)
+		{
+			var list = new List<CustomDiUpdate>();
+			for (int i = 0; i < oldValues.Length; i++)
+				// If differ then...
+				if (newValues[i] != oldValues[i])
+					list.Add(new CustomDiUpdate(mapType, i, newValues[i]));
+			// Return results.
+			return list.ToArray();
+		}
+
+		static CustomDiUpdate[] CompareRange(int[] oldValues, int[] newValues, MapType mapType)
+		{
+			var list = new List<CustomDiUpdate>();
+			for (int i = 0; i < oldValues.Length; i++)
+				// If differ by more than 10% then...
+				if (Math.Abs(newValues[i] - oldValues[i]) > (ushort.MaxValue / 10))
+					list.Add(new CustomDiUpdate(mapType, i, newValues[i]));
+			// Return results.
+			return list.ToArray();
+		}
 
 	}
 }

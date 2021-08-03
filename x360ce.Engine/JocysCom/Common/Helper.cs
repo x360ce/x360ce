@@ -137,6 +137,8 @@ namespace JocysCom.ClassLibrary
 
 		static T ConvertResource<T>(Stream stream)
 		{
+			if (typeof(T) == typeof(Stream))
+				return (T)(object)stream;
 			var results = default(T);
 			if (typeof(T) == typeof(string))
 			{

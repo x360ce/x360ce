@@ -146,7 +146,8 @@ namespace x360ce.App
 				state.PointOfViewControllers[i] = degree;
 			}
 			// Set Axis.
-			var axis = CustomDiState.GetAxisFromState(state);
+			var axis = new int[CustomDiState.MaxAxis];
+			CustomDiState.CopyAxis(state, axis);
 			// Get information about axis.
 			var axisObjects = ud.DeviceObjects
 				.Where(x => x.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis) || x.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis)).ToArray();
@@ -184,9 +185,10 @@ namespace x360ce.App
 				}
 				axis[i] = position;
 			}
-			CustomDiState.SetStateFromAxis(state, axis);
+			CustomDiState.CopyAxis(axis, state);
 			// Get sliders array.
-			var sliders = CustomDiState.GetSlidersFromState(state);
+			var sliders = new int[CustomDiState.MaxSliders];
+			CustomDiState.CopySliders(state, sliders);
 			// Set sliders.
 			for (int i = 0; i < sliders.Length; i++)
 			{
@@ -220,7 +222,7 @@ namespace x360ce.App
 				}
 				sliders[i] = position;
 			}
-			CustomDiState.SetStateFromSliders(state, sliders);
+			CustomDiState.CopySliders(sliders, state);
 			// Return state.
 			return state;
 		}

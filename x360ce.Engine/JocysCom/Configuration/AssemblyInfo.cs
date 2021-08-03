@@ -213,6 +213,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			return s.Trim();
 		}
 
+#if NETSTANDARD // .NET Standard
+#elif NETCOREAPP // .NET Core
+#else // .NET Framework
+
 		internal partial class NativeMethods
 		{
 			[DllImport("wtsapi32.dll")]
@@ -247,6 +251,8 @@ namespace JocysCom.ClassLibrary.Configuration
 			);
 			return Marshal.PtrToStringUni(AnswerBytes);
 		}
+
+#endif
 
 		/// <summary>
 		/// Read build time from the file. This won't work with deterministic builds.
