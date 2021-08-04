@@ -71,7 +71,7 @@ namespace x360ce.Engine
 
         Guid GUID_Force;
 
-        public void StopDeviceForces(Joystick device)
+        public void StopDeviceForces(Device device)
         {
             for (int i = 0; i < device.CreatedEffects.Count; i++)
             {
@@ -88,7 +88,7 @@ namespace x360ce.Engine
         // Two small motors located inside each trigger,
         // that provide sharp bursts of vibration directly to the user's trigger fingers.
 
-        public bool SetDeviceForces(UserDevice ud, Joystick device, PadSetting ps, Vibration v)
+        public bool SetDeviceForces(UserDevice ud, Device device, PadSetting ps, Vibration v)
 		{
 			var motorsChanged = Changed(ref old_ForceSwapMotor, ps.ForceSwapMotor);
 			bool swapMotor = false;

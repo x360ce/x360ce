@@ -67,7 +67,7 @@ namespace x360ce.App
 			return true;
 		}
 
-		public static DeviceObjectItem[] GetDeviceObjects(Joystick device)
+		public static DeviceObjectItem[] GetDeviceObjects(Device device)
 		{
 			var items = new List<DeviceObjectItem>();
 			if (device == null)
@@ -132,7 +132,7 @@ namespace x360ce.App
 		/// <summary>
 		/// Device must be acquired in exclusive mode to get effects.
 		/// </summary>
-		public static DeviceEffectItem[] GetDeviceEffects(Joystick device)
+		public static DeviceEffectItem[] GetDeviceEffects(Device device)
 		{
 			var items = new List<DeviceEffectItem>();
 			if (device == null)

@@ -338,20 +338,56 @@
 							Binding="{Binding Offset}"
 							ElementStyle="{StaticResource TextBlockCenterCell}"
 							Header="Offset" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding TypeName}" Header="Type" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding AspectName}" Header="Aspect" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding Flags}" Header="Flags" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding TypeName}"
+							ElementStyle="{StaticResource TextBlockLeftCell}"
+							Header="Type" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding AspectName}"
+							ElementStyle="{StaticResource TextBlockLeftCell}"
+							Header="Aspect" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding Flags}"
+							ElementStyle="{StaticResource TextBlockLeftCell}"
+							Header="Flags" />
 						<DataGridTextColumn
 							Width="Auto"
 							Binding="{Binding Instance}"
 							ElementStyle="{StaticResource TextBlockCenterCell}"
 							Header="Instance" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding Name}" Header="Name" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding Granularity}" Header="Granularity" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding Saturation}" Header="Saturation" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding Range}" Header="Range" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding LogicalRange}" Header="Logical" />
-						<DataGridTextColumn Width="Auto" Binding="{Binding PhysicalRange}" Header="Physical" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding Name}"
+							ElementStyle="{StaticResource TextBlockLeftCell}"
+							Header="Name" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding Granularity}"
+							ElementStyle="{StaticResource TextBlockLeftCell}"
+							Header="Granularity" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding Saturation}"
+							ElementStyle="{StaticResource TextBlockLeftCell}"
+							Header="Saturation" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding Range}"
+							ElementStyle="{StaticResource TextBlockLeftCell}"
+							Header="Range" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding LogicalRange}"
+							ElementStyle="{StaticResource TextBlockLeftCell}"
+							Header="Logical" />
+						<DataGridTextColumn
+							Width="Auto"
+							Binding="{Binding PhysicalRange}"
+							ElementStyle="{StaticResource TextBlockLeftCell}"
+							Header="Physical" />
 						<DataGridTextColumn Width="*" />
 					</DataGrid.Columns>
 				</DataGrid>

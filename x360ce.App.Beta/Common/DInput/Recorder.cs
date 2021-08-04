@@ -201,14 +201,14 @@ namespace x360ce.App
 				}
 			};
 			// Compare POVs.
-			if (oldState.Povs.Length == newState.Povs.Length)
+			if (oldState.POVs.Length == newState.POVs.Length)
 			{
-				for (int i = 0; i < oldState.Povs.Length; i++)
+				for (int i = 0; i < oldState.POVs.Length; i++)
 				{
-					if (oldState.Povs[i] != newState.Povs[i])
+					if (oldState.POVs[i] != newState.POVs[i])
 					{
 						//list.Add(string.Format("DPad {0}", i + 1));
-						var v = newState.Povs[0];
+						var v = newState.POVs[0];
 						if ((DPadEnum)v == DPadEnum.Up)
 							list.Add(string.Format("POV {0} {1}", i + 1, DPadEnum.Up.ToString()));
 						if ((DPadEnum)v == DPadEnum.Right)

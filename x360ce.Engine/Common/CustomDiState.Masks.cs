@@ -15,6 +15,42 @@ namespace x360ce.Engine
 		/// bit 3 = 1 - Axis 3 is present
 		/// ...
 		/// </summary>
+		public static void GetMouseAxisMask(DeviceObjectItem[] items, Mouse device, out int axisMask)
+		{
+			// Must have same order as in Axis[] property.
+			// Important: These values are not the same as on DeviceObjectInstance.Offset.
+			var list = new List<MouseOffset>{
+					MouseOffset.X,
+					MouseOffset.Y,
+					MouseOffset.Z,
+				};
+			axisMask = 0;
+			for (int i = 0; i < list.Count; i++)
+			{
+				try
+				{
+					// This function accepts JoystickOffset enumeration values.
+					// Important: These values are not the same as on DeviceObjectInstance.Offset.
+					var o = device.GetObjectInfoByOffset((int)list[i]);
+					if (o != null)
+					{
+						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
+						var item = items.First(x => x.Offset == o.Offset);
+						item.DiIndex = i;
+						axisMask |= (int)Math.Pow(2, i);
+					}
+				}
+				catch { }
+			}
+		}
+
+		/// <summary>
+		/// Return bit-masked integer about present axis.
+		/// bit 1 = 1 - Axis 1 is present
+		/// bit 2 = 0 - Axis 2 is missing
+		/// bit 3 = 1 - Axis 3 is present
+		/// ...
+		/// </summary>
 		public static void GetJoystickAxisMask(DeviceObjectItem[] items, Joystick device, out int axisMask, out int actuatorMask, out int actuatorCount)
 		{
 			axisMask = 0;
@@ -49,38 +85,16 @@ namespace x360ce.Engine
 			}
 		}
 
-		public static void GetMouseAxisMask(DeviceObjectItem[] items, Joystick device, out int axisMask)
+		/// <summary>
+		/// Return bit-masked integer about present sliders.
+		/// bit 1 = 1 - Slider 1 is present
+		/// bit 2 = 0 - Slider 2 is missing
+		/// bit 3 = 1 - Slider 3 is present
+		/// ...
+		/// </summary>
+		public static void GetJoystickSlidersMask(DeviceObjectItem[] items, Joystick device, out int slidersMask)
 		{
-			// Must have same order as in Axis[] property.
-			// Important: These values are not the same as on DeviceObjectInstance.Offset.
-			var list = new List<MouseOffset>{
-					MouseOffset.X,
-					MouseOffset.Y,
-					MouseOffset.Z,
-				};
-			axisMask = 0;
-			for (int i = 0; i < list.Count; i++)
-			{
-				try
-				{
-					// This function accepts JoystickOffset enumeration values.
-					// Important: These values are not the same as on DeviceObjectInstance.Offset.
-					var o = device.GetObjectInfoByOffset((int)list[i]);
-					if (o != null)
-					{
-						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
-						var item = items.First(x => x.Offset == o.Offset);
-						item.DiIndex = i;
-						axisMask |= (int)Math.Pow(2, i);
-					}
-				}
-				catch { }
-			}
-		}
-
-		public static int GetJoystickSlidersMask(DeviceObjectItem[] items, Joystick device)
-		{
-			int mask = 0;
+			slidersMask = 0;
 			for (int i = 0; i < CustomDiHelper.SliderOffsets.Count; i++)
 			{
 				try
@@ -93,12 +107,11 @@ namespace x360ce.Engine
 						// Now we can find same object by raw offset (DeviceObjectInstance.Offset).
 						var item = items.First(x => x.Offset == o.Offset);
 						item.DiIndex = i;
-						mask |= (int)Math.Pow(2, i);
+						slidersMask |= (int)Math.Pow(2, i);
 					}
 				}
 				catch { }
 			}
-			return mask;
 		}
 
 	}

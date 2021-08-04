@@ -28,11 +28,8 @@ namespace x360ce.App.DInput
 					continue;
 				// Create GamePad to map to.
 				var gp = new Gamepad();
-				// Assing state with default values.
+				// Assign state with default values.
 				setting.XiState = gp;
-				// If device Direct Input state failed then...
-				if (ud.JoState == null)
-					continue;
 				// If device is offline then continue.
 				if (!ud.IsOnline)
 					continue;
@@ -55,20 +52,17 @@ namespace x360ce.App.DInput
 
 				var o = SettingsManager.Options;
 
-				// Contains 
-				//var gamepadUpdates = new List<KeyValue<GamepadKeyCode, int?>>();
-
 				// --------------------------------------------------------
 				// Convert DInput POV Hat value to D-PAD buttons.
 				// --------------------------------------------------------
 
 				// Create array to store 4 buttons for each POV 4 i.e. 16 buttons.
-				var dPadButtons = new bool[4 * diState.Povs.Length];
+				var dPadButtons = new bool[4 * diState.POVs.Length];
 				// Loop trough D-Pad button states.
-				for (int p = 0; p < diState.Povs.Length; ++p)
+				for (int p = 0; p < diState.POVs.Length; ++p)
 				{
 					// Get degree value from the POV.
-					int povdeg = diState.Povs[p];
+					int povdeg = diState.POVs[p];
 					// If POV is pressed into one of the directions then...
 					if (povdeg >= 0)
 					{

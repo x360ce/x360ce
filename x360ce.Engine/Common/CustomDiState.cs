@@ -10,6 +10,10 @@ namespace x360ce.Engine
 	public partial class CustomDiState
 	{
 
+		public CustomDiState()
+		{
+		}
+
 		public CustomDiState(MouseState state)
 		{
 			Copy(state.Buttons, Buttons);
@@ -26,18 +30,18 @@ namespace x360ce.Engine
 		{
 			CopyAxis(state, Axis);
 			CopySliders(state, Sliders);
-			Copy(state.PointOfViewControllers, Povs);
+			Copy(state.PointOfViewControllers, POVs);
 			Copy(state.Buttons, Buttons);
 		}
 
 		public const int MaxAxis = 24; // (3 x 8)
 		public const int MaxSliders = 8; // (2 x 4).
-		public const int MaxPovs = 4;
+		public const int MaxPOVs = 4;
 		public const int MaxButtons = 256;
 
 		public int[] Axis = new int[MaxAxis];
 		public int[] Sliders = new int[MaxSliders];
-		public int[] Povs = new int[MaxPovs];
+		public int[] POVs = new int[MaxPOVs];
 		public bool[] Buttons = new bool[MaxButtons];
 
 		static void Copy<T>(T[] source, T[] destination)
@@ -161,7 +165,7 @@ namespace x360ce.Engine
 			var list = new List<CustomDiUpdate>();
 			list.AddRange(CompareRange(oldState.Axis, newState.Axis, MapType.Axis));
 			list.AddRange(CompareRange(oldState.Sliders, newState.Sliders, MapType.Slider));
-			list.AddRange(CompareValue(oldState.Povs, newState.Povs, MapType.POV));
+			list.AddRange(CompareValue(oldState.POVs, newState.POVs, MapType.POV));
 			list.AddRange(CompareValue(oldState.Buttons, newState.Buttons, MapType.Button));
 			// Return results.
 			return list.ToArray();
@@ -193,8 +197,8 @@ namespace x360ce.Engine
 		{
 			var list = new List<CustomDiUpdate>();
 			for (int i = 0; i < oldValues.Length; i++)
-				// If differ by more than 10% then...
-				if (Math.Abs(newValues[i] - oldValues[i]) > (ushort.MaxValue / 10))
+				// If differ by more than 20% then...
+				if (Math.Abs(newValues[i] - oldValues[i]) > (ushort.MaxValue * 30 / 100))
 					list.Add(new CustomDiUpdate(mapType, i, newValues[i]));
 			// Return results.
 			return list.ToArray();

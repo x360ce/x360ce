@@ -5,10 +5,23 @@ namespace x360ce.Engine
 {
 	public static class CustomDiHelper
 	{
+
 		/// <summary>
 		/// Must have same order as in axis.
 		/// Important: These values are not the same as on DeviceObjectInstance.Offset.
-		/// JoystickUpdate.Offset here points to a field in the RawJoystickState struct.
+		/// MouseUpdate.Offset here points to a field in the RawMouseState structure.
+		/// </summary>
+		public static List<MouseOffset>MouseAxisOffsets = new List<MouseOffset>()
+		{
+			MouseOffset.X,
+			MouseOffset.Y,
+			MouseOffset.Z,
+		};
+
+		/// <summary>
+		/// Must have same order as in axis.
+		/// Important: These values are not the same as on DeviceObjectInstance.Offset.
+		/// JoystickUpdate.Offset here points to a field in the RawJoystickState structure.
 		/// </summary>
 		public static List<JoystickOffset> AxisOffsets = new List<JoystickOffset>()
 		{
@@ -55,10 +68,10 @@ namespace x360ce.Engine
 		};
 
 		/// <summary>
-		/// Must have same order as in Povs[] property.
+		/// Must have same order as in POVs[] property.
 		/// Important: These values are not the same as on DeviceObjectInstance.Offset.
 		/// </summary>
-		public static List<JoystickOffset> PovOffsets = new List<JoystickOffset>()
+		public static List<JoystickOffset> POVOffsets = new List<JoystickOffset>()
 		{
 			JoystickOffset.PointOfViewControllers0,
 			JoystickOffset.PointOfViewControllers1,
@@ -67,7 +80,7 @@ namespace x360ce.Engine
 		};
 
 		/// <summary>
-		/// Must have same order as in Povs[] property.
+		/// Must have same order as in POVs[] property.
 		/// Important: These values are not the same as on DeviceObjectInstance.Offset.
 		/// </summary>
 		public static List<JoystickOffset> ButtonOffsets = new List<JoystickOffset>()

@@ -23,8 +23,9 @@ namespace x360ce.App.DInput
 			{
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				var ud = userDevices[i];
-				JoystickState state = null;
-				JoystickUpdate[] update = null;
+				//JoystickState state = null;
+				CustomDiState newState = null;
+				CustomDiUpdate[] newUpdates = null;
 				// Allow if not testing or testing with option enabled.
 				var o = SettingsManager.Options;
 				var allow = !o.TestEnabled || o.TestGetDInputStates;
@@ -32,6 +33,7 @@ namespace x360ce.App.DInput
 				var isAttached = ud != null && ud.IsOnline; // && manager.IsDeviceAttached(ud.InstanceGuid);
 				if (isAttached && allow)
 				{
+					var useData = false;
 					var device = ud.Device;
 					if (device != null)
 					{
@@ -42,6 +44,7 @@ namespace x360ce.App.DInput
 							{
 								// Set BufferSize in order to use buffered data.
 								device.Properties.BufferSize = 128;
+								useData = true;
 							}
 							var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 							var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
@@ -52,7 +55,7 @@ namespace x360ce.App.DInput
 							{
 								var flags = CooperativeLevel.Background | CooperativeLevel.Exclusive;
 								// Reacquire device in exclusive mode.
-								exceptionData.AppendLine("Unacquire (Exclusive)...");
+								exceptionData.AppendLine("UnAcquire (Exclusive)...");
 								device.Unacquire();
 								exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
@@ -65,7 +68,7 @@ namespace x360ce.App.DInput
 							{
 								var flags = CooperativeLevel.Background | CooperativeLevel.NonExclusive;
 								// Reacquire device in non exclusive mode so that xinput.dll can control force feedback.
-								exceptionData.AppendLine("Unacquire (NonExclusive)...");
+								exceptionData.AppendLine("UnAcquire (NonExclusive)...");
 								device.Unacquire();
 								exceptionData.AppendLine("SetCooperativeLevel (Exclusive)...");
 								device.SetCooperativeLevel(detector.DetectorForm.Handle, flags);
@@ -75,19 +78,51 @@ namespace x360ce.App.DInput
 							}
 							exceptionData.AppendFormat("device.GetCurrentState() // ud.IsExclusiveMode = {0}", ud.IsExclusiveMode).AppendLine();
 							// Polling - Retrieves data from polled objects on a DirectInput device.
-							// Some devices require pooling (For example original "Xbox Controller S" with XBCD drivers).
+							// Some devices require pooling (For example original "XBOX Controller S" with XBCD drivers).
 							// If the device does not require polling, calling this method has no effect.
 							// If a device that requires polling is not polled periodically, no new data is received from the device.
 							// Calling this method causes DirectInput to update the device state, generate input
 							// events (if buffered data is enabled), and set notification events (if notification is enabled).
 							device.Poll();
-							if (o.UseDeviceBufferedData && device.Properties.BufferSize > 0)
+							// Get device states as buffered data.
+							if (device is Mouse mDevice)
 							{
-								// Get buffered data.
-								update = device.GetBufferedData();
+								if (useData)
+								{
+									var data = mDevice.GetBufferedData();
+									newUpdates = data?.Select(x => new CustomDiUpdate(x)).ToArray();
+
+								}
+								var state = mDevice.GetCurrentState();
+								newState = new CustomDiState(state);
+								ud.DeviceState = state;
 							}
-							// Get device state.
-							state = device.GetCurrentState();
+							else if (device is Keyboard kDevice)
+							{
+								if (useData)
+								{
+									var data = kDevice.GetBufferedData();
+									newUpdates = data?.Select(x => new CustomDiUpdate(x)).ToArray();
+								}
+								var state = kDevice.GetCurrentState();
+								newState = new CustomDiState(state);
+								ud.DeviceState = state;
+							}
+							else if (device is Joystick jDevice)
+							{
+								if (useData)
+								{
+									var data = jDevice.GetBufferedData();
+									newUpdates = data?.Select(x => new CustomDiUpdate(x)).ToArray();
+								}
+								var state = jDevice.GetCurrentState();
+								newState = new CustomDiState(state);
+								ud.DeviceState = state;
+							}
+							else
+							{
+								throw new Exception(string.Format("Unknown device: {0}", device));
+							}
 							// Fill device objects.
 							if (ud.DeviceObjects == null)
 							{
@@ -98,19 +133,19 @@ namespace x360ce.App.DInput
 								int axisMask = 0;
 								int actuatorMask = 0;
 								int actuatorCount = 0;
-								if (ud.CapType == (int)SharpDX.DirectInput.DeviceType.Mouse)
+								if (device is Mouse mDevice2)
 								{
-									CustomDiState.GetMouseAxisMask(dos, device, out axisMask);
+									CustomDiState.GetMouseAxisMask(dos, mDevice2, out axisMask);
 								}
-								else
+								else if (device is Joystick jDevice)
 								{
-									CustomDiState.GetJoystickAxisMask(dos, device, out axisMask, out actuatorMask, out actuatorCount);
+									CustomDiState.GetJoystickAxisMask(dos, jDevice, out axisMask, out actuatorMask, out actuatorCount);
+									//CustomDiState.GetJoystickSlidersMask(dos, (Joystick) device, out slidersMask);
 								}
 								ud.DiAxeMask = axisMask;
 								// Contains information about which axis have force feedback actuator attached.
 								ud.DiActuatorMask = actuatorMask;
 								ud.DiActuatorCount = actuatorCount;
-								CustomDiState.GetJoystickSlidersMask(dos, device);
 							}
 							if (ud.DeviceEffects == null)
 							{
@@ -208,17 +243,15 @@ namespace x360ce.App.DInput
 						}
 						if (ud.DeviceEffects == null)
 							ud.DeviceEffects = new DeviceEffectItem[0];
-						state = TestDeviceHelper.GetCurrentState(ud);
+						var state = TestDeviceHelper.GetCurrentState(ud);
+						newState = new CustomDiState(state);
+						ud.DeviceState = state;
 					}
 				}
-				ud.JoState = state;
-				ud.JoUpdate = update;
-				if (state != null)
+				if (newState != null)
 				{
-					var newState = new CustomDiState(ud.JoState);
-					var newUpdates = update?.Select(x=> new CustomDiUpdate(x)).ToArray();
 					// If updates from buffer supplied and old state is available then...
-					if (newUpdates != null && newUpdates.Count(x=>x.Type == MapType.Button) > 1 && ud.DiState != null)
+					if (newUpdates != null && newUpdates.Count(x => x.Type == MapType.Button) > 1 && ud.DiState != null)
 					{
 						// Analyse if state must be modified.
 						for (int b = 0; b < newState.Buttons.Length; b++)

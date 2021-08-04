@@ -8,6 +8,26 @@ namespace x360ce.Engine
 	public partial class CustomDiUpdate
 	{
 
+		public CustomDiUpdate(MouseUpdate update)
+		{
+			Value = update.Value;
+			Index = CustomDiHelper.MouseAxisOffsets.IndexOf(update.Offset);
+			if (Index > -1)
+			{
+				Type = MapType.Axis;
+				return;
+			}
+			Type = MapType.Button;
+		}
+
+		public CustomDiUpdate(KeyboardUpdate update)
+		{
+			Value = update.Value;
+			Index = (int)update.Key;
+			Value = update.IsPressed ? 1 : 0;
+			Type = MapType.Button;
+		}
+
 		public CustomDiUpdate(JoystickUpdate update)
 		{
 			Value = update.Value;
@@ -23,7 +43,7 @@ namespace x360ce.Engine
 				Type = MapType.Slider;
 				return;
 			}
-			Index = CustomDiHelper.PovOffsets.IndexOf(update.Offset);
+			Index = CustomDiHelper.POVOffsets.IndexOf(update.Offset);
 			if (Index > -1)
 			{
 				Type = MapType.POV;

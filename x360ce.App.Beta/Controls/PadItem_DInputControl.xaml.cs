@@ -19,8 +19,6 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_DInputControl()
 		{
-			oldState = new JoystickState();
-			emptyState = oldState;
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -83,9 +81,8 @@ namespace x360ce.App.Controls
 			private string _M;
 		}
 
-		void UpdateButtonsTable(JoystickState state)
+		void UpdateButtonsTable(bool[] buttons)
 		{
-			bool[] buttons = state.Buttons;
 			var buttonsText = "";
 			if (buttons != null)
 			{
@@ -141,6 +138,19 @@ namespace x360ce.App.Controls
 			private int _VR;
 		}
 
+		void UpdateAxisTable(MouseState state)
+		{
+			// X-axis.
+			var x = DiAxisTable[0];
+			x.M = state.X;
+			// Y-axis.
+			var y = DiAxisTable[1];
+			y.M = state.Y;
+			// Z-axis.
+			var z = DiAxisTable[2];
+			z.M = state.Z;
+		}
+
 		void UpdateAxisTable(JoystickState state)
 		{
 			// X-axis.
@@ -164,7 +174,7 @@ namespace x360ce.App.Controls
 			y.V = state.VelocityY;
 			y.VR = state.AngularVelocityY;
 			// Z-axis.
-			var z = DiAxisTable[1];
+			var z = DiAxisTable[2];
 			z.M = state.Z;
 			z.R = state.RotationZ;
 			z.A = state.AccelerationZ;
@@ -323,42 +333,76 @@ namespace x360ce.App.Controls
 					: System.Windows.Visibility.Visible;
 		}
 
-		JoystickState oldState;
-		JoystickState emptyState;
+		MouseState oldMState;
+		KeyboardState oldKState;
+		JoystickState oldJState;
+
+		object updateLock = new object();
+
+		void ShowDirectInputState(object state)
+		{
+			lock (updateLock)
+			{
+				if (state is MouseState mState)
+					ShowDirectInputState(mState);
+				if (state is KeyboardState kState)
+					ShowDirectInputState(kState);
+				if (state is JoystickState jState)
+					ShowDirectInputState(jState);
+			}
+		}
 
 		/// <summary>
-		/// Update DirectInput control from DirectInput device.
+		/// Update UI controls from DirectInput state.
 		/// </summary>
-		/// <param name="device">DirectInput device.</param>
-		/// <returns>List of buttons/DPad pressed, axis/sliders turned.</returns>
+		void ShowDirectInputState(MouseState state)
+		{
+			if (state == null)
+				return;
+			if (state == oldMState)
+				return;
+			UpdateButtonsTable(state.Buttons);
+			UpdateAxisTable(state);
+			ControlsHelper.SetVisible(DiAxisDataGridView, true);
+			ControlsHelper.SetVisible(DiSlidersDataGridView, false);
+			ControlsHelper.SetVisible(DiPOVsDataGridView, false);
+			oldMState = state;
+		}
+
+		/// <summary>
+		/// Update UI controls from DirectInput state.
+		/// </summary>
+		void ShowDirectInputState(KeyboardState state)
+		{
+			if (state == null)
+				return;
+			if (state == oldKState)
+				return;
+			var cds = new CustomDiState(state);
+			UpdateButtonsTable(cds.Buttons);
+			ControlsHelper.SetVisible(DiAxisDataGridView, false);
+			ControlsHelper.SetVisible(DiSlidersDataGridView, false);
+			ControlsHelper.SetVisible(DiPOVsDataGridView, false);
+			oldKState = state;
+		}
+
+		/// <summary>
+		/// Update UI controls from DirectInput state.
+		/// </summary>
 		void ShowDirectInputState(JoystickState state)
 		{
-			var newState = state ?? emptyState;
-			if (newState.Equals(oldState)) return;
-
-			UpdateButtonsTable(newState);
-			UpdateAxisTable(newState);
-			UpdateSlidersTable(newState);
-			UpdatePovsTable(newState);
-
-			//oldState = newState;
-
-			//var rows = DiAxisTable.Rows;
-			//var cols = DiAxisTable.Columns;
-			//int v;
-			//int axisNum;
-			//for (int r = 0; r < rows.Count; r++)
-			//{
-			//	for (int c = 1; c < cols.Count; c++)
-			//	{
-			//		if (System.DBNull.Value == rows[r][c]) continue;
-			//		v = (int)rows[r][c];
-			//		axisNum = (c - 1) * rows.Count + r + 1;
-			//		//addAction(actions, v, "Axis", axisNum);
-			//	}
-			//}
-			//// Point of view buttons
-			//int[] dPad = newState.PointOfViewControllers;
+			if (state == null)
+				return;
+			if (state == oldJState)
+				return;
+			UpdateButtonsTable(state.Buttons);
+			UpdateAxisTable(state);
+			UpdateSlidersTable(state);
+			UpdatePovsTable(state);
+			ControlsHelper.SetVisible(DiAxisDataGridView, true);
+			ControlsHelper.SetVisible(DiSlidersDataGridView, true);
+			ControlsHelper.SetVisible(DiPOVsDataGridView, true);
+			oldJState = state;
 		}
 
 		public string DetectDirection(int v)
@@ -409,7 +453,7 @@ namespace x360ce.App.Controls
 				isWheel = ud == null
 					? false : ud.CapType == (int)SharpDX.DirectInput.DeviceType.Driving;
 			}
-			ShowDirectInputState(ud?.JoState);
+			ShowDirectInputState(ud?.DeviceState);
 		}
 
 		string ObjectsInformationAsText;

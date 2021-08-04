@@ -133,7 +133,7 @@ namespace x360ce.App.DInput
 		/// <summary>
 		/// Refresh device.
 		/// </summary>
-		void RefreshDevice(DirectInput manager, UserDevice ud, DeviceInstance device, DeviceInfo[] allDevices, DeviceInfo[] allInterfaces, out DeviceInfo hid)
+		void RefreshDevice(DirectInput manager, UserDevice ud, DeviceInstance instance, DeviceInfo[] allDevices, DeviceInfo[] allInterfaces, out DeviceInfo hid)
 		{
 			hid = null;
 			if (Program.IsClosing)
@@ -146,11 +146,16 @@ namespace x360ce.App.DInput
 					// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
 					lock (SettingsManager.UserDevices.SyncRoot)
 					{
-						// Getting state can fail.
-						var joystick = new Joystick(manager, device.InstanceGuid);
-						ud.Device = joystick;
+						Device device;
+						//if (instance.Type == DeviceType.Mouse)
+						//	device = new Mouse(manager);
+						//else if (instance.Type == DeviceType.Keyboard)
+						//	device = new Keyboard(manager);
+						//else
+							device = new Joystick(manager, instance.InstanceGuid);
+						ud.Device = device;
 						ud.IsExclusiveMode = null;
-						ud.LoadCapabilities(joystick.Capabilities);
+						ud.LoadCapabilities(device.Capabilities);
 					}
 				}
 				catch (Exception) { }
@@ -158,7 +163,7 @@ namespace x360ce.App.DInput
 			// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
-				ud.LoadInstance(device);
+				ud.LoadInstance(instance);
 			}
 			// If device is set as offline then make it online.
 			if (!ud.IsOnline)
@@ -174,7 +179,7 @@ namespace x360ce.App.DInput
 					ud.ConnectionClass = DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
 			}
 			// InterfacePath is available for HID devices.
-			if (device.IsHumanInterfaceDevice && ud.Device != null)
+			if (instance.IsHumanInterfaceDevice && ud.Device != null)
 			{
 				var interfacePath = ud.Device.Properties.InterfacePath;
 				// Get interface info for added devices.
