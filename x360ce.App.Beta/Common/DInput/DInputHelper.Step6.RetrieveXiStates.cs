@@ -1,10 +1,5 @@
 ﻿using SharpDX.XInput;
 using System;
-using System.Diagnostics;
-using System.Windows.Forms;
-using x360ce.App.Controls;
-using x360ce.Engine;
-using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
 {

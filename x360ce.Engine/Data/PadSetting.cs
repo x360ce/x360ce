@@ -187,6 +187,8 @@ namespace x360ce.Engine.Data
 				var value = pi.GetValue(source);
 				pi.SetValue(this, value ?? "");
 			}
+			// Load checksum.
+			PadSettingChecksum = source.PadSettingChecksum;
 		}
 
 		private static object _PropertiesLock = new object();

@@ -177,7 +177,7 @@ namespace x360ce.App.DInput
 					var getXInputStates = SettingsManager.Options.GetXInputStates && Global._MainWindow.FormEventsEnabled;
 					// Best place to unload XInput DLL is at the start, because
 					// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
-					CheckAndUnloadXInputLibrarry(game, getXInputStates);
+					CheckAndUnloadXInputLibrary(game, getXInputStates);
 					// Update information about connected devices.
 					UpdateDiDevices(manager);
 					// Update JoystickStates from devices.

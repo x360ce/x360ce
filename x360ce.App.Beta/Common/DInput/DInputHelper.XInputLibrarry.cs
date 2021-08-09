@@ -11,7 +11,7 @@ namespace x360ce.App.DInput
 
 		public bool UpdateDevicesPending;
 
-		public void CheckAndUnloadXInputLibrarry(UserGame game, bool getXInputStates)
+		public void CheckAndUnloadXInputLibrary(UserGame game, bool getXInputStates)
 		{
 			lock (Controller.XInputLock)
 			{

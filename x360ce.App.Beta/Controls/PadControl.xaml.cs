@@ -4,7 +4,6 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -18,6 +17,7 @@ namespace x360ce.App.Controls
 	{
 		public PadControl()
 		{
+			CurrentPadSetting = new PadSetting();
 			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
@@ -62,6 +62,24 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 			PadListPanel.SetBinding(MappedTo);
 			PadListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
+		}
+
+		private void CurrentPadSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName != nameof(PadSetting.PadSettingChecksum))
+			{
+				var oldChecksum = CurrentPadSetting.PadSettingChecksum;
+				var newChecksum = CurrentPadSetting.CleanAndGetCheckSum();
+				// If checksum changed.
+				if (oldChecksum != newChecksum)
+				{
+					CurrentPadSetting.PadSettingChecksum = newChecksum;
+					System.Diagnostics.Debug.WriteLine($"{MappedTo} PadSettingChecksum: {oldChecksum} => {newChecksum}");
+					// Time to save settings by notifying that it changed.
+					SettingsManager.Current.SavePadSetting(CurrentUserSetting, CurrentPadSetting);
+					//OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(CurrentUserSetting));
+				}
+			}
 		}
 
 		#region ■ Control Links
@@ -380,30 +398,30 @@ namespace x360ce.App.Controls
 		//XINPUT_GAMEPAD GamePad;
 		Guid _InstanceGuid;
 
-		/// <summary>
-		/// Get PadSetting from currently selected device.
-		/// </summary>
-		public PadSetting CloneCurrentPadSetting()
-		{
-			// Get settings related to PAD.
-			var maps = SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo).ToArray();
-			PropertyInfo[] properties;
-			if (!SettingsManager.ValidatePropertyNames(maps, out properties))
-				return null;
-			var ps = new PadSetting();
-			foreach (var p in properties)
-			{
-				var map = maps.FirstOrDefault(x => x.PropertyName == p.Name);
-				if (map == null)
-					continue;
-				// Get setting value from the form.
-				var v = SettingsManager.Current.GetSettingValue(map.Control);
-				// Set value onto padSetting.
-				p.SetValue(ps, v ?? "", null);
-			}
-			ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
-			return ps;
-		}
+		///// <summary>
+		///// Get PadSetting from currently selected device.
+		///// </summary>
+		//public PadSetting CloneCurrentPadSetting()
+		//{
+		//	// Get settings related to PAD.
+		//	var maps = SettingsManager.Current.SettingsMap.Where(x => x.MapTo == MappedTo).ToArray();
+		//	PropertyInfo[] properties;
+		//	if (!SettingsManager.ValidatePropertyNames(maps, out properties))
+		//		return null;
+		//	var ps = new PadSetting();
+		//	foreach (var p in properties)
+		//	{
+		//		var map = maps.FirstOrDefault(x => x.PropertyName == p.Name);
+		//		if (map == null)
+		//			continue;
+		//		// Get setting value from the form.
+		//		var v = SettingsManager.Current.GetSettingValue(map.Control);
+		//		// Set value onto padSetting.
+		//		p.SetValue(ps, v ?? "", null);
+		//	}
+		//	ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
+		//	return ps;
+		//}
 
 		object updateFromDirectInputLock = new object();
 
@@ -460,9 +478,46 @@ namespace x360ce.App.Controls
 			=> _CurrentUserDevice;
 		private UserDevice _CurrentUserDevice;
 
-		public PadSetting CurrentPadSetting
-			=> _CurrentPadSetting;
-		private PadSetting _CurrentPadSetting;
+		/// <summary>
+		/// Load pad setting into control
+		/// </summary>
+		public void LoadPadSetting(Guid? padSettingChecksum)
+		{
+			// Load PadSetting object from configuration.
+			PadSetting ps = null;
+			if (padSettingChecksum.HasValue)
+				ps = SettingsManager.GetPadSetting(padSettingChecksum.Value);
+			if (ps == null)
+				ps = new PadSetting();
+			// Stop monitoring changes.
+			CurrentPadSetting.PropertyChanged -= CurrentPadSetting_PropertyChanged;
+			// Load values into current object which is attached to all controls.
+			CurrentPadSetting.Load(ps);
+			// Rebind pad setting to controls.
+			DPadPanel.SetBinding(CurrentPadSetting);
+			GeneralPanel.SetBinding(MappedTo, CurrentPadSetting);
+			AdvancedPanel.SetBinding(CurrentPadSetting);
+			LeftTriggerPanel.SetBinding(CurrentPadSetting);
+			RightTriggerPanel.SetBinding(CurrentPadSetting);
+			LeftThumbXPanel.SetBinding(CurrentPadSetting);
+			LeftThumbYPanel.SetBinding(CurrentPadSetting);
+			RightThumbXPanel.SetBinding(CurrentPadSetting);
+			RightThumbYPanel.SetBinding(CurrentPadSetting);
+			ForceFeedbackPanel.SetBinding(MappedTo, CurrentPadSetting);
+			ForceFeedbackPanel.LeftForceFeedbackMotorPanel.SetBinding(CurrentPadSetting, 0);
+			ForceFeedbackPanel.RightForceFeedbackMotorPanel.SetBinding(CurrentPadSetting, 1);
+			PadFootPanel.SetBinding(MappedTo, _CurrentUserDevice, CurrentPadSetting);
+			// Start monitoring changes.
+			CurrentPadSetting.PropertyChanged += CurrentPadSetting_PropertyChanged;
+			//SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, CurrentPadSetting);
+		}
+
+		public void SavePadSetting(PadSetting ps)
+		{
+
+		}
+
+		public readonly PadSetting CurrentPadSetting;
 
 		static object selectionLock = new object();
 
@@ -477,24 +532,8 @@ namespace x360ce.App.Controls
 				_CurrentUserDevice = setting == null
 					? new UserDevice()
 					: SettingsManager.GetDevice(setting.InstanceGuid);
-				// Get mappings attached to user setting.
-				_CurrentPadSetting = setting == null
-					? new PadSetting()
-					: SettingsManager.GetPadSetting(setting.PadSettingChecksum);
-				DPadPanel.SetBinding(_CurrentPadSetting);
-				GeneralPanel.SetBinding(MappedTo, _CurrentPadSetting);
-				AdvancedPanel.SetBinding(_CurrentPadSetting);
-				LeftTriggerPanel.SetBinding(_CurrentPadSetting);
-				RightTriggerPanel.SetBinding(_CurrentPadSetting);
-				LeftThumbXPanel.SetBinding(_CurrentPadSetting);
-				LeftThumbYPanel.SetBinding(_CurrentPadSetting);
-				RightThumbXPanel.SetBinding(_CurrentPadSetting);
-				RightThumbYPanel.SetBinding(_CurrentPadSetting);
-				ForceFeedbackPanel.SetBinding(MappedTo, _CurrentPadSetting);
-				ForceFeedbackPanel.LeftForceFeedbackMotorPanel.SetBinding(_CurrentPadSetting, 0);
-				ForceFeedbackPanel.RightForceFeedbackMotorPanel.SetBinding(_CurrentPadSetting, 1);
-				PadFootPanel.SetBinding(MappedTo, _CurrentUserDevice, _CurrentPadSetting);
-				SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, _CurrentPadSetting);
+				// Load pad settings.
+				LoadPadSetting(setting?.PadSettingChecksum);
 				OnSettingChanged?.Invoke(this, new EventArgs<UserSetting>(setting));
 			}
 		}

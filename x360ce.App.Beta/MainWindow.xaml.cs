@@ -177,7 +177,6 @@ namespace x360ce.App
 				// Update Timer will be started inside Settings timer.
 				UpdateTimer.Stop();
 				SettingsTimer.Stop();
-
 				// Synchronize settings to HID Guardian.
 				//AppHelper.SynchronizeToHidGuardian();
 				SettingsTimer.Start();

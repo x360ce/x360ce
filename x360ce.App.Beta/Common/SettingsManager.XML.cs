@@ -23,27 +23,31 @@ namespace x360ce.App
 				// Skip if not selected.
 				if (setting == null)
 					continue;
-				var padSetting = padControl.CloneCurrentPadSetting();
-				if (padSetting == null)
-					continue;
-				// If setting doesn't exists then...
-				if (!PadSettings.Items.Any(x => x.PadSettingChecksum == padSetting.PadSettingChecksum))
-				{
-					// Add setting to configuration.
-					lock (PadSettings.SyncRoot)
-						PadSettings.Items.Add(padSetting);
-				}
-				// If pad setting checksum changed then...
-				if (setting.PadSettingChecksum != padSetting.PadSettingChecksum)
-				{
-					// Assign updated checksum.
-					setting.PadSettingChecksum = padSetting.PadSettingChecksum;
-					var ud = SettingsManager.GetDevice(setting.InstanceGuid);
-					setting.Completion = UserSetting.GetCompletionPoints(padSetting, ud);
-				}
+				SavePadSetting(setting, padControl.CurrentPadSetting);
+			}
+			return true;
+		}
+
+		public void SavePadSetting(UserSetting setting, PadSetting padSetting)
+		{
+			var ps = new PadSetting();
+			ps.Load(padSetting);
+			// If setting doesn't exists then...
+			if (!PadSettings.Items.Any(x => x.PadSettingChecksum == ps.PadSettingChecksum))
+			{
+				// Add setting to configuration.
+				lock (PadSettings.SyncRoot)
+					PadSettings.Items.Add(ps);
+			}
+			// If pad setting checksum changed then...
+			if (setting.PadSettingChecksum != ps.PadSettingChecksum)
+			{
+				// Assign updated checksum.
+				setting.PadSettingChecksum = ps.PadSettingChecksum;
+				var ud = GetDevice(setting.InstanceGuid);
+				setting.Completion = UserSetting.GetCompletionPoints(ps, ud);
 			}
 			CleanupPadSettings();
-			return true;
 		}
 
 		/// <summary>
@@ -161,11 +165,7 @@ namespace x360ce.App
 			SyncFormFromPadSetting(padIndex, ps);
 			RaiseSettingsChanged(null);
 			loadCount++;
-			var ev = ConfigLoaded;
-			if (ev != null)
-			{
-				ev(this, new SettingEventArgs(typeof(PadSetting).Name, loadCount));
-			}
+			ConfigLoaded?.Invoke(this, new SettingEventArgs(typeof(PadSetting).Name, loadCount));
 		}
 
 		public void SyncFormFromPadSetting(MapTo padIndex, PadSetting ps)
