@@ -99,14 +99,14 @@ namespace x360ce.Web.WebServices
 		public List<Vendor> GetVendors()
 		{
 			var db = new x360ceModelContainer();
-			var q = from row in db.Vendors
-					select new Vendor
-					{
-						VendorId = row.VendorId,
-						VendorName = row.VendorName,
-						ShortName = row.ShortName,
-						WebSite = row.WebSite
-					};
+			var q = db.Vendors.ToList()
+				.Select(x => new Vendor
+			{
+				VendorId = x.VendorId,
+				VendorName = x.VendorName,
+				ShortName = x.ShortName,
+				WebSite = x.WebSite
+			});
 			var vendors = q.ToList();
 			db.Dispose();
 			db = null;
