@@ -216,6 +216,7 @@ namespace x360ce.App.Controls
 			form.WindowStartupLocation = WindowStartupLocation.CenterOwner;
 			ControlsHelper.CheckTopMost(form);
 			form.ShowDialog();
+			form.Owner = null;
 		}
 
 		private void AddDemoDeviceButton_Click(object sender, RoutedEventArgs e)
@@ -291,5 +292,11 @@ namespace x360ce.App.Controls
 			await RefreshMapDeviceToList();
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
+			_currentData = null;
+			MainDataGrid.ItemsSource = null;
+		}
 	}
 }

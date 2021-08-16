@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for UserMacrosControl.xaml
 	/// </summary>
-	public partial class PadItem_MacrosControl : UserControl, IDisposable
+	public partial class PadItem_MacrosControl : UserControl
 	{
 
 		private IPadControl PadControl;
@@ -228,7 +228,7 @@ namespace x360ce.App.Controls
 			var isNew = item == null;
 			if (isNew)
 				item = new UserMacro();
-			NameTextBox.Text= item.Name;
+			NameTextBox.Text = item.Name;
 			MacroText.Text = item.Text;
 			MapTypeComboBox.SelectedItem = (MapType)item.MapType;
 			MapIndexTextBox.Text = item.MapIndex.ToString();
@@ -256,7 +256,7 @@ namespace x360ce.App.Controls
 			item.MapRangeMax = SettingsParser.TryParseValue(MapRangeMin.Text, 0);
 			item.MapRpmMin = SettingsParser.TryParseValue(MapRpmMin.Text, 0);
 			item.MapRpmMax = SettingsParser.TryParseValue(MapRpmMax.Text, 0);
-			// Assing to current controller.
+			// Assign to current controller.
 			item.SettingId = _UserSetting.SettingId;
 			if (isNew)
 				SettingsManager.UserMacros.Add(item);
@@ -264,26 +264,13 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		#region ■ IDisposable
-
-		protected virtual void Dispose(bool disposing)
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			if (disposing)
-			{
-				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
-				// Dispose managed resources.
-				_Recorder.Dispose();
-			}
-			// Free native resources.
+			// Cleanup references which prevents disposal.
+			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
+			MainDataGrid.ItemsSource = null;
+			// Dispose managed resources.
+			_Recorder.Dispose();
 		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		#endregion
-
 	}
 }

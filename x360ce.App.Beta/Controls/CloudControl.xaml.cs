@@ -150,5 +150,10 @@ namespace x360ce.App.Controls
 			QueueMonitorTimer.Start();
 			UpdateButtons();
 		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			QueueMonitorTimer.Stop();
+		}
 	}
 }

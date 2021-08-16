@@ -9,6 +9,7 @@
 	VerticalAlignment="Stretch"
 	d:DesignHeight="780"
 	d:DesignWidth="800"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<Grid>
 		<Grid.RowDefinitions>

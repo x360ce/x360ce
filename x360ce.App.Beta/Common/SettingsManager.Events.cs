@@ -22,7 +22,7 @@ namespace x360ce.App
 			lock (eventsLock)
 			{
 				eventsSuspendCount++;
-				NotifySettingsStatus(eventsSuspendCount);
+				NotifySettingsStatus?.Invoke(eventsSuspendCount);
 				// If events already suspended then return.
 				if (eventsSuspendCount > 1)
 					return;
@@ -70,7 +70,7 @@ namespace x360ce.App
 			lock (eventsLock)
 			{
 				eventsSuspendCount--;
-				NotifySettingsStatus(eventsSuspendCount);
+				NotifySettingsStatus?.Invoke(eventsSuspendCount);
 				// If events must be suspended then return.
 				if (eventsSuspendCount > 0)
 					return;

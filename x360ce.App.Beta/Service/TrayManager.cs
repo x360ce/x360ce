@@ -20,23 +20,37 @@ namespace x360ce.App.Service
 		private System.Windows.Forms.ContextMenuStrip TrayMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem OpenApplicationMenu;
 		private System.Windows.Forms.ToolStripMenuItem ExitMenu;
+		private System.Windows.Forms.ToolStripMenuItem ShowLoadedControls;
 
 		public void InitMinimizeAndTopMost()
 		{
+			// Item: Open Application.
 			OpenApplicationMenu = new System.Windows.Forms.ToolStripMenuItem();
 			OpenApplicationMenu.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
 			OpenApplicationMenu.Image = Properties.Resources.app_16x16;
 			OpenApplicationMenu.Text = "Open Application";
 			OpenApplicationMenu.Click += OpenApplicationToolStripMenuItem_Click;
+			// Item: Exit Menu.
 			ExitMenu = new System.Windows.Forms.ToolStripMenuItem();
 			ExitMenu.Image = Properties.Resources.exit_16x16;
 			ExitMenu.Text = "Exit";
 			ExitMenu.Click += (sender, e) => OnExitClick?.Invoke(sender, e);
+			// Item: Show Loaded controls.
+			ShowLoadedControls = new System.Windows.Forms.ToolStripMenuItem();
+			ShowLoadedControls.Image = Properties.Resources.test_16x16;
+			ShowLoadedControls.Text = "Show Loaded Controls";
+			ShowLoadedControls.Click += (sender, e) =>
+			{
+				var names = string.Join("\r\n", InitHelper.LoadedControlNames);
+				MessageBox.Show(names);
+			};
+			// Tray menu.
 			TrayMenuStrip = new System.Windows.Forms.ContextMenuStrip();
 			TrayNotifyIcon = new System.Windows.Forms.NotifyIcon();
 			TrayNotifyIcon.ContextMenuStrip = TrayMenuStrip;
 			TrayMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 				OpenApplicationMenu,
+				ShowLoadedControls,
 				ExitMenu,
 			});
 			var iconBytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("app.ico");

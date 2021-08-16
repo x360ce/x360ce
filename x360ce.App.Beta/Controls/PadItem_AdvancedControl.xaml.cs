@@ -35,5 +35,16 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.PassThrough), PassThroughCheckBox, null, boolConverter);
 		}
 
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			SetBinding(null);
+			DeviceSubTypeComboBox.ItemsSource = null;
+		}
+
 	}
 }

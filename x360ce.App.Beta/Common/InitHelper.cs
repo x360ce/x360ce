@@ -29,6 +29,9 @@ namespace x360ce.App
 
 		private static object TimersLock = new object();
 		private static List<InitHelper> Timers = new List<InitHelper>();
+
+		public static List<string> LoadedControlNames = new List<string>();
+
 		public static void InitTimer(FrameworkElement control, Action InitializeComponent)
 		{
 			var ih = new InitHelper();
@@ -41,8 +44,28 @@ namespace x360ce.App
 			ih.WriteLine("INIT CON  ");
 			lock (TimersLock)
 				Timers.Add(ih);
+			ih.Control.Loaded += Control_Loaded;
+			ih.Control.Unloaded += Control_Unloaded;
 			ih.Control.IsVisibleChanged += Control_IsVisibleChanged;
 			ih._Timer.Start();
+		}
+
+		private static void Control_Unloaded(object sender, RoutedEventArgs e)
+		{
+			var control = (FrameworkElement)sender;
+			var name = $"{control.GetType()} {control.Name} {control.GetHashCode()}";
+			LoadedControlNames.Remove(name);
+			// Remove events.
+			control.Loaded -= Control_Loaded;
+			control.Unloaded -= Control_Unloaded;
+			control.IsVisibleChanged -= Control_IsVisibleChanged;
+		}
+
+		private static void Control_Loaded(object sender, RoutedEventArgs e)
+		{
+			var control = (FrameworkElement)sender;
+			var name = $"{control.GetType()} {control.Name} {control.GetHashCode()}";
+			LoadedControlNames.Add(name);
 		}
 
 		private static void Control_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)

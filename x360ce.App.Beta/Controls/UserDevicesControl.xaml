@@ -10,6 +10,7 @@
 	d:DesignWidth="720"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	Loaded="UserControl_Loaded"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<Grid VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>

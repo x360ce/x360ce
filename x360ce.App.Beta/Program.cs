@@ -100,7 +100,7 @@ namespace x360ce.App
 			{
 				// Failed to enable useLegacyV2RuntimeActivationPolicy at runtime.
 			}
-			// Requires System.Configuration.Installl reference.
+			// Requires System.Configuration.Install reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);
 			// ------------------------------------------------
 			// Administrator commands.
@@ -175,7 +175,7 @@ namespace x360ce.App
 			}
 			else
 			{
-				Global._TrayManager.RestoreFromTray(false, false);
+				//Global._TrayManager.RestoreFromTray(false, false);
 			}
 		}
 

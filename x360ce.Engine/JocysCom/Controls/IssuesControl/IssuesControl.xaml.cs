@@ -187,31 +187,6 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public bool IsDisposing;
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		public void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				IsDisposing = true;
-				if (TasksTimer != null)
-					TasksTimer.Dispose();
-				// Clear list.
-				var items = IssueList.ToArray();
-				IssueList.Clear();
-				// Remove events.
-				foreach (var item in items)
-				{
-					item.Checking -= Item_Checking;
-					item.Checked -= Item_Checked;
-					item.Fixing -= Item_Fixing;
-					item.Fixed -= Item_Fixed;
-				}
-			}
-		}
-
 		//private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		//{
 		//	if (e.RowIndex < 0 || e.ColumnIndex < 0)
@@ -358,6 +333,24 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			QueueMonitorTimer = new System.Windows.Forms.Timer();
 			QueueMonitorTimer.Tick += QueueMonitorTimer_Tick;
 			QueueMonitorTimer.Start();
+		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			IsDisposing = true;
+			if (TasksTimer != null)
+				TasksTimer.Dispose();
+			// Clear list.
+			var items = IssueList.ToArray();
+			IssueList.Clear();
+			// Remove events.
+			foreach (var item in items)
+			{
+				item.Checking -= Item_Checking;
+				item.Checked -= Item_Checked;
+				item.Fixing -= Item_Fixing;
+				item.Fixed -= Item_Fixed;
+			}
 		}
 	}
 }

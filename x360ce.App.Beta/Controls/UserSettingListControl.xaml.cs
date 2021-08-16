@@ -186,7 +186,6 @@ namespace x360ce.App.Controls
 				// Suspend DInput Service.
 				Global.DHelper.Stop();
 				MainDataGrid.ItemsSource = null;
-
 				var result = (SearchResult)e.Result;
 				// Reorder Settings.
 				result.Settings = result.Settings.OrderBy(x => x.ProductName).ThenBy(x => x.FileName).ThenBy(x => x.FileProductName).ToArray();
@@ -214,5 +213,9 @@ namespace x360ce.App.Controls
 			RefreshData();
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			UnInitPanel();
+		}
 	}
 }

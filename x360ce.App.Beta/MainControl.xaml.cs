@@ -34,8 +34,7 @@ namespace x360ce.App
 					DebugPanel.ShowPanel();
 			});
 			InitGameToCustomizeComboBox();
-			var o = SettingsManager.Options;
-			o.PropertyChanged += Options_PropertyChanged;
+			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			LoadSettings();
 		}
 
@@ -190,5 +189,14 @@ namespace x360ce.App
 		{
 			Global._MainWindow.StatusErrorLabel_Click(null, null);
 		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			// Cleanup references which prevents disposal.
+			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
+			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
+		}
+
+
 	}
 }

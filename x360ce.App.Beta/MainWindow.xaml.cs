@@ -80,10 +80,8 @@ namespace x360ce.App
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			StartHelper.OnClose += (sender1, e1)
-				=> Close();
-			StartHelper.OnRestore += (sender1, e1)
-				=> Global._TrayManager.RestoreFromTray(true);
+			StartHelper.OnClose += StartHelper_OnClose;
+			StartHelper.OnRestore += StartHelper_OnRestore;
 			AppHelper.InitializeHidGuardian();
 			if (string.IsNullOrEmpty(System.Threading.Thread.CurrentThread.Name))
 				System.Threading.Thread.CurrentThread.Name = "MainFormThread";
@@ -137,6 +135,16 @@ namespace x360ce.App
 					.Select(x => x.InstanceGuid).ToArray();
 				AppHelper.SynchronizeToHidGuardian(mappedInstanceGuids);
 			}
+		}
+
+		private void StartHelper_OnRestore(object sender, EventArgs e)
+		{
+			Global._TrayManager.RestoreFromTray(true);
+		}
+
+		private void StartHelper_OnClose(object sender, EventArgs e)
+		{
+			Close();
 		}
 
 		private void DHelper_XInputReloaded(object sender, DInput.DInputEventArgs e)
@@ -918,9 +926,22 @@ namespace x360ce.App
 			ControlsHelper.BeginInvoke(ErrorsHelper.UpdateStatusErrorsLabel);
 		}
 
-
-
 		#endregion
 
+		private void Window_Unloaded(object sender, RoutedEventArgs e)
+		{
+			// Cleanup references which prevents disposal.
+			StartHelper.OnClose -= StartHelper_OnClose;
+			StartHelper.OnRestore -= StartHelper_OnRestore;
+			SettingsManager.Current.SettingChanged -= Current_SettingChanged;
+			SettingsManager.Summaries.Items.ListChanged -= Summaries_ListChanged;
+			SettingsManager.Current.ConfigLoaded -= Current_ConfigLoaded;
+			Global.DHelper.DevicesUpdated -= DHelper_DevicesUpdated;
+			Global.DHelper.UpdateCompleted -= DHelper_UpdateCompleted;
+			Global.DHelper.FrequencyUpdated -= DHelper_FrequencyUpdated;
+			Global.DHelper.StatesRetrieved -= DHelper_StatesRetrieved;
+			Global.DHelper.XInputReloaded -= DHelper_XInputReloaded;
+			SettingsManager.Current.NotifySettingsStatus = null;
+		}
 	}
 }

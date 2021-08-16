@@ -11,5 +11,6 @@ namespace x360ce.App.Controls
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
 		}
+
 	}
 }

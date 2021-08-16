@@ -144,5 +144,9 @@ namespace x360ce.App.Controls
 			//MainForm.Current.ReloadXinputSettings();
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+
+		}
 	}
 }

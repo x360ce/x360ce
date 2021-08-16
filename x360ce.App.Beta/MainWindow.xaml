@@ -8,6 +8,7 @@
 	Width="820"
 	Height="820"
 	Loaded="Window_Loaded"
+	Unloaded="Window_Unloaded"
 	mc:Ignorable="d">
 	<local:MainControl x:Name="MainPanel" />
 </Window>

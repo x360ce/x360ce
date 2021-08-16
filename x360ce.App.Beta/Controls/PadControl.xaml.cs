@@ -29,6 +29,7 @@ namespace x360ce.App.Controls
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Hide for this version.
 			PadItemPanel.PadTabControl.Items.Remove(PadItemPanel.XInputTabPage);
+			PadItemPanel.XInputTabPage.Content = null;
 			//PadTabControl.TabPages.Remove(MacrosTabPage);
 			RemapName = GeneralPanel.RemapAllButton.Content as string;
 			MappedTo = mappedTo;
@@ -94,7 +95,6 @@ namespace x360ce.App.Controls
 		private AxisMapControl LeftThumbYPanel => PadItemPanel.LeftThumbYPanel;
 		private AxisMapControl RightThumbXPanel => PadItemPanel.RightThumbXPanel;
 		private AxisMapControl RightThumbYPanel => PadItemPanel.RightThumbYPanel;
-		private PadItem_MacrosControl MacrosPanel => PadItemPanel.MacrosPanel;
 		private PadItem_ForceFeedbackControl ForceFeedbackPanel => PadItemPanel.ForceFeedbackPanel;
 		//private XInputUserControl XInputPanel => PadItemPanel.XInputPanel;
 		private PadItem_DInputControl DInputPanel => PadItemPanel.DInputPanel;
@@ -452,20 +452,6 @@ namespace x360ce.App.Controls
 			return (byte)Math.Round(v * byte.MaxValue);
 		}
 
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
-				_Imager.Dispose();
-				MacrosPanel.Dispose();
-			}
-		}
-
 		#region ■ Mapped Devices
 
 		public event EventHandler<EventArgs<UserSetting>> OnSettingChanged;
@@ -586,5 +572,14 @@ namespace x360ce.App.Controls
 			StartRecording();
 		}
 
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			// Cleanup references which prevents disposal.
+			Global.UpdateControlFromStates -= Global_UpdateControlFromStates; 
+			SettingsManager.Current.SettingChanged -= Current_SettingChanged;
+			CurrentPadSetting.PropertyChanged -= CurrentPadSetting_PropertyChanged;
+			PadListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
+			_Imager.Dispose();
+		}
 	}
 }
