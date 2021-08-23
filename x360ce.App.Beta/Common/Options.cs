@@ -184,7 +184,18 @@ namespace x360ce.App
 		[DefaultValue(true)]
 		public bool MinimizeToTray { get; set; }
 		public bool ExcludeSupplementalDevices { get; set; }
+
+		#region ■ Direct Input
+
 		public bool ExcludeVirtualDevices { get; set; }
+
+		[DefaultValue(true)]
+		public bool AcquireHiddenDevicesInExclusiveMode { get; set; } = true;
+
+		[DefaultValue(true)]
+		public bool AcquireMappedDevicesInExclusiveMode { get; set; } = true;
+
+		#endregion
 
 		[DefaultValue(true), Description("Auto-detect currently focused game.")]
 		public bool AutoDetectForegroundWindow

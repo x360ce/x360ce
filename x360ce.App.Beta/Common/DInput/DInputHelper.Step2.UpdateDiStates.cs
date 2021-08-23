@@ -48,8 +48,13 @@ namespace x360ce.App.DInput
 							}
 							var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 							var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
+							// Original device will be hidden from the game when acquired in exclusive mode.
+							var acquireMappedDevicesInExclusiveMode = false;
+							// If device is not keyboard or mouse then apply AcquireMappedDevicesInExclusiveMode option.
+							if (device.Information.Type != SharpDX.DirectInput.DeviceType.Keyboard && device.Information.Type != SharpDX.DirectInput.DeviceType.Mouse)
+								acquireMappedDevicesInExclusiveMode = o.AcquireMappedDevicesInExclusiveMode;
 							// Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
-							var exclusiveRequired = hasForceFeedback && (isVirtual || ud.DeviceEffects == null);
+							var exclusiveRequired = acquireMappedDevicesInExclusiveMode || hasForceFeedback && (isVirtual || ud.DeviceEffects == null);
 							// If exclusive mode is required and mode is unknown or not exclusive then...
 							if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
 							{

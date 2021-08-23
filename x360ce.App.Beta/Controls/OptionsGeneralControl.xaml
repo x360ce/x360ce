@@ -34,6 +34,8 @@
 					<CheckBox Name="ExcludeVirtualDevicesCheckBox" Content="Exclude Virtual Devices" />
 					<CheckBox Name="ExcludeSupplementalDevicesCheckBox" Content="Exclude Supplemental Devices" />
 					<CheckBox Name="UseDeviceBufferedDataCheckBox" Content="Use Device Buffered Data" />
+					<CheckBox Name="AcquireHiddenDevicesInExclusiveModeCheckBox" Content="Acquire Hidden Devices in Exclusive Mode" />
+					<CheckBox Name="AcquireMappedDevicesInExclusiveModeCheckBox" Content="Acquire Mapped Devices in Exclusive Mode" />
 				</StackPanel>
 			</GroupBox>
 			<GroupBox Header="Guide Button">

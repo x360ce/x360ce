@@ -50,11 +50,16 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(o, nameof(Options.AllowOnlyOneCopy), AllowOnlyOneCopyCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.EnableShowFormInfo), ShowFormInfoCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.ShowTestButton), ShowTestButtonCheckBox);
-			SettingsManager.LoadAndMonitor(o, nameof(Options.UseDeviceBufferedData), UseDeviceBufferedDataCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.GuideButtonAction), GuideButtonActionTextBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.AutoDetectForegroundWindow), AutoDetectForegroundWindowCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.IsProcessDPIAware), IsProcessDPIAwareCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.MinimizeToTray), MinimizeToTrayCheckBox);
+			// Direct Input
+			SettingsManager.LoadAndMonitor(o, nameof(Options.ExcludeVirtualDevices), ExcludeVirtualDevicesCheckBox);
+			SettingsManager.LoadAndMonitor(o, nameof(Options.ExcludeSupplementalDevices), ExcludeSupplementalDevicesCheckBox);
+			SettingsManager.LoadAndMonitor(o, nameof(Options.UseDeviceBufferedData), UseDeviceBufferedDataCheckBox);
+			SettingsManager.LoadAndMonitor(o, nameof(Options.AcquireHiddenDevicesInExclusiveMode), AcquireHiddenDevicesInExclusiveModeCheckBox);
+			SettingsManager.LoadAndMonitor(o, nameof(Options.AcquireMappedDevicesInExclusiveMode), AcquireMappedDevicesInExclusiveModeCheckBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
@@ -150,8 +155,6 @@ namespace x360ce.App.Controls
 			ShowSettingsTabCheckBox.IsChecked = o.ShowSettingsTab;
 			ShowDevicesTabCheckBox.IsChecked = o.ShowDevicesTab;
 			IncludeProductsCheckBox.IsChecked = o.IncludeProductsInsideINI;
-			ExcludeSupplementalDevicesCheckBox.IsChecked = o.ExcludeSupplementalDevices;
-			ExcludeVirtualDevicesCheckBox.IsChecked = o.ExcludeVirtualDevices;
 		}
 
 		private void OptionsData_Saving(object sender, EventArgs e)
@@ -163,8 +166,6 @@ namespace x360ce.App.Controls
 			o.ShowSettingsTab = ShowSettingsTabCheckBox.IsChecked ?? false;
 			o.ShowDevicesTab = ShowDevicesTabCheckBox.IsChecked ?? false;
 			o.IncludeProductsInsideINI = IncludeProductsCheckBox.IsChecked ?? false;
-			o.ExcludeSupplementalDevices = ExcludeSupplementalDevicesCheckBox.IsChecked ?? false;
-			o.ExcludeVirtualDevices = ExcludeVirtualDevicesCheckBox.IsChecked ?? false;
 		}
 
 		private void ShowProgramsTabCheckBox_CheckedChanged(object sender, EventArgs e)

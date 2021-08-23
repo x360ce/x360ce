@@ -4,7 +4,7 @@
 // set of attributes. Change these attribute values to modify the information
 // associated with the SQLCLR assembly.
 [assembly: AssemblyTitle("TocaEdit X360 Controller Emulator Database")]
-[assembly: AssemblyDescription("SQL Databse for TocaEdit X360 Controller Emulator")]
+[assembly: AssemblyDescription("SQL Database for TocaEdit X360 Controller Emulator")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TocaEdit")]
 [assembly: AssemblyProduct("X360 Controller Emulator Database")]

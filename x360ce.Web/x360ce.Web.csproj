@@ -59,14 +59,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.DataVisualization" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System" />
@@ -74,10 +69,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
-    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>

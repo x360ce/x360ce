@@ -17,8 +17,7 @@ namespace JocysCom.ClassLibrary.Controls
 	{
 		public static void EnableWithDelay(UIElement control)
 		{
-			Task.Run(async () =>
-			{
+			Task.Run(async delegate {
 				await Task.Delay(500).ConfigureAwait(true);
 				control.Dispatcher.Invoke(() => control.IsEnabled = true);
 			});
@@ -45,15 +44,18 @@ namespace JocysCom.ClassLibrary.Controls
 			win.Left = form.Left - addSize / 2;
 		}
 
+		private static bool? _IsDesignModeWPF;
+
 		public static bool IsDesignMode(UIElement component)
 		{
-			if (!_IsDesignMode.HasValue)
-				_IsDesignMode = IsDesignMode1(component);
-			return _IsDesignMode.Value;
+			if (!_IsDesignModeWPF.HasValue)
+				_IsDesignModeWPF = IsDesignMode1(component);
+			return _IsDesignModeWPF.Value;
 		}
 
 		private static bool IsDesignMode1(UIElement component)
 		{
+			// Check 1.
 			if (DesignerProperties.GetIsInDesignMode(component))
 				return true;
 			//If WPF hosted in WinForms.
@@ -149,17 +151,12 @@ namespace JocysCom.ClassLibrary.Controls
 				control.Text = text;
 		}
 
-		public static void SetTextFromResource(RichTextBox box, string resourceName)
+		public static void SetTextFromResource(RichTextBox box, byte[] rtf)
 		{
-			var rtf = Helper.FindResource<byte[]>(resourceName, Assembly.GetEntryAssembly());
 			var ms = new MemoryStream(rtf);
 			var textRange = new TextRange(box.Document.ContentStart, box.Document.ContentEnd);
 			textRange.Load(ms, DataFormats.Rtf);
 			ms.Dispose();
-			//var xdoc = new System.Xml.XmlDocument();
-			//xdoc.LoadXml(System.Windows.Markup.XamlWriter.Save(box.Document));
-			//var xml = xdoc.OuterXml;
-			//xdoc.Save("document.xml");
 			box.Document.PagePadding = new Thickness(8);
 			box.IsDocumentEnabled = true;
 			HookHyperlinks(box, null);

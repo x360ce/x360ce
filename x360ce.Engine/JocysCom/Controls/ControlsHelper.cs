@@ -157,5 +157,60 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
+		#region Open Path or URL
+
+		public static void OpenUrl(string url)
+		{
+			try
+			{
+				System.Diagnostics.Process.Start(url);
+			}
+			catch (System.ComponentModel.Win32Exception winEx)
+			{
+				if (winEx.ErrorCode == -2147467259)
+					MessageBoxShow(winEx.Message);
+			}
+			catch (Exception ex)
+			{
+				MessageBoxShow(ex.Message);
+			}
+		}
+
+		private static void MessageBoxShow(string message)
+		{
+#if NETCOREAPP // .NET Core
+			System.Windows.Forms.MessageBox.Show(message);
+#elif NETSTANDARD // .NET Standard
+#elif NETFRAMEWORK // .NET Framework
+			System.Windows.MessageBox.Show(message);
+#else
+			System.Windows.Forms.MessageBox.Show(message);
+#endif
+		}
+
+		/// <summary>
+		/// Open file with associated program.
+		/// </summary>
+		/// <param name="path">file to open.</param>
+		public static void OpenPath(string path, string arguments = null)
+		{
+			try
+			{
+				var fi = new System.IO.FileInfo(path);
+				// Brings up the "Windows cannot open this file" dialog if association not found.
+				var psi = new System.Diagnostics.ProcessStartInfo(path);
+				psi.UseShellExecute = true;
+				psi.WorkingDirectory = fi.Directory.FullName;
+				psi.ErrorDialog = true;
+				if (arguments != null)
+					psi.Arguments = arguments;
+				System.Diagnostics.Process.Start(psi);
+			}
+			catch (Exception) { }
+		}
+
+		#endregion
+
+
 	}
 }

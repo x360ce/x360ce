@@ -20,7 +20,8 @@ namespace x360ce.App.Controls
 				return;
 			Global._MainWindow.MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
 			Global._MainWindow.OptionsPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
-			ControlsHelper.SetTextFromResource(HelpRichTextBox, "Documents.Help_HidGuardian.rtf");
+			var bytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("Documents.Help_HidGuardian.rtf");
+			ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
 			// Bind Controls.
 			var o = SettingsManager.Options;
 			SettingsManager.LoadAndMonitor(o, nameof(o.HidGuardianConfigureAutomatically), HidGuardianConfigureAutomaticallyCheckBox);

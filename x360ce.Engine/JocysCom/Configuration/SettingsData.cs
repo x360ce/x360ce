@@ -266,7 +266,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			var exasm = Assembly.GetExecutingAssembly();
 			var enasm = Assembly.GetEntryAssembly();
 			assemblies.Add(exasm);
-			if (exasm != enasm)
+			if (enasm != null && exasm != enasm)
 				assemblies.Add(enasm);
 			var success = false;
 			for (int a = 0; a < assemblies.Count; a++)

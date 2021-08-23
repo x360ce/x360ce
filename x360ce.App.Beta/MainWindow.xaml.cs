@@ -539,7 +539,8 @@ namespace x360ce.App
 			{
 				// Move this here so interface will load one second faster.
 				HelpInit = true;
-				ControlsHelper.SetTextFromResource(MainBodyPanel.HelpRichTextBox, "Documents.Help.rtf");
+				var bytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("Documents.Help.rtf");
+				ControlsHelper.SetTextFromResource(MainBodyPanel.HelpRichTextBox, bytes);
 			}
 			else if (MainBodyPanel.MainTabControl.SelectedItem == MainBodyPanel.SettingsTabPage)
 			{

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 
 namespace JocysCom.ClassLibrary.Configuration
@@ -65,9 +66,11 @@ namespace JocysCom.ClassLibrary.Configuration
 			else
 			{
 				// Compare checksums.
-				var byteHash = Security.SHA256Helper.GetGuid(bytes);
-				var fileHash = Security.SHA256Helper.GetGuidFromFile(fi.FullName);
-				isDifferent = !byteHash.Equals(fileHash);
+				var algorithm = System.Security.Cryptography.SHA256.Create();
+				var byteHash = algorithm.ComputeHash(bytes);
+				var fileBytes = File.ReadAllBytes(fi.FullName);
+				var fileHash = algorithm.ComputeHash(fileBytes);
+				isDifferent = !byteHash.SequenceEqual(fileHash);
 			}
 			return isDifferent;
 		}
