@@ -6,6 +6,7 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<GroupBox>
 		<GroupBox.Header>

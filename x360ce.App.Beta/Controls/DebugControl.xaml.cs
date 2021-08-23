@@ -408,5 +408,9 @@ namespace x360ce.App.Controls
 			ExceptionMethod();
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			SettingsManager.OptionsData.Items.ListChanged -= Items_ListChanged;
+		}
 	}
 }

@@ -437,5 +437,10 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			SetBinding(MapTo.None);
+			SettingsManager.UnLoadMonitor(EnabledCheckBox);
+		}
 	}
 }

@@ -275,5 +275,9 @@ namespace x360ce.App.Controls
 			DeleteSelectedPrograms();
 		}
 
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			UnInitPanel();
+		}
 	}
 }

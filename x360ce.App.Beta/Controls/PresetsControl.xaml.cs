@@ -90,5 +90,12 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetEnabled(_ParentControl.Button1, selected);
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			SettingsGridPanel._ParentControl = null;
+			SummariesGridPanel._ParentControl = null;
+			PresetsGridPanel._ParentControl = null;
+			SelectedItem = null;
+		}
 	}
 }

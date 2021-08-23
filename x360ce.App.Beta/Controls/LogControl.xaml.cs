@@ -126,5 +126,11 @@ namespace x360ce.App.Controls
 			}
 
 		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			MainDataGrid.ItemsSource = null;
+			Items.Clear();
+		}
 	}
 }

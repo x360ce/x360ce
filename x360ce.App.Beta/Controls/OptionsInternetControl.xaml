@@ -8,6 +8,7 @@
 	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 	d:DesignHeight="440"
 	d:DesignWidth="640"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<Grid>
 		<Grid.RowDefinitions>

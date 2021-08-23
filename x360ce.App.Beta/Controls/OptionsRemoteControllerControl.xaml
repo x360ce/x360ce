@@ -7,6 +7,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<WrapPanel>
 		<GroupBox Header="Allow Remote Controllers">

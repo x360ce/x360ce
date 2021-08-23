@@ -141,5 +141,9 @@ namespace x360ce.App.Controls
 			OpenWebWindow("Reset Login", navigateUrl);
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
+		}
 	}
 }

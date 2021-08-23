@@ -943,6 +943,8 @@ namespace x360ce.App
 			Global.DHelper.StatesRetrieved -= DHelper_StatesRetrieved;
 			Global.DHelper.XInputReloaded -= DHelper_XInputReloaded;
 			SettingsManager.Current.NotifySettingsStatus = null;
+			SettingsManager.SetSynchronizingObject(null);
+			IssuesPanel.CheckCompleted -= IssuesPanel_CheckCompleted;
 		}
 	}
 }

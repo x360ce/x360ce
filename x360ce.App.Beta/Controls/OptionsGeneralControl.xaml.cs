@@ -183,5 +183,9 @@ namespace x360ce.App.Controls
 			Global._MainWindow.MainBodyPanel.ShowDevicesTab(ShowDevicesTabCheckBox.IsChecked ?? false);
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
+		}
 	}
 }

@@ -351,6 +351,15 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				item.Fixing -= Item_Fixing;
 				item.Fixed -= Item_Fixed;
 			}
+			MainDataGrid.ItemsSource = null;
+			Warnings.SynchronizingObject = null;
+			Warnings.Clear();
+			TasksTimer.DoWork -= queueTimer_DoWork;
+			TasksTimer.Queue.ListChanged -= Data_ListChanged;
+			QueueMonitorTimer.Tick -= QueueMonitorTimer_Tick;
+			TasksTimer.Dispose();
+			QueueMonitorTimer.Dispose();
+
 		}
 	}
 }

@@ -126,6 +126,8 @@ namespace x360ce.App.Controls
 		private void MapNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var item = (Layout)MapNameComboBox.SelectedItem;
+			if (item == null)
+				return;
 			ButtonALabel.Content = item.ButtonA;
 			ButtonBLabel.Content = item.ButtonB;
 			ButtonBackLabel.Content = item.ButtonBack;
@@ -343,5 +345,9 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			MapNameComboBox.ItemsSource = null;
+		}
 	}
 }

@@ -30,9 +30,12 @@ namespace x360ce.App.Controls
 
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			var window = Global._MainWindow;
+			if (window == null)
+				return;
 			var isSelected =
-				Global._MainWindow.MainBodyPanel.MainTabControl.SelectedItem == Global._MainWindow.MainBodyPanel.OptionsTabPage &&
-				Global._MainWindow.OptionsPanel.MainTabControl.SelectedItem == Global._MainWindow.OptionsPanel.HidGuardianTabPage;
+				window.MainBodyPanel.MainTabControl.SelectedItem == window.MainBodyPanel.OptionsTabPage &&
+				window.OptionsPanel.MainTabControl.SelectedItem == window.OptionsPanel.HidGuardianTabPage;
 			// If HidGuardian Tab was selected then refresh.
 			if (isSelected)
 				RefreshStatus();

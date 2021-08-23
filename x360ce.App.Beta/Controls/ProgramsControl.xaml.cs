@@ -25,5 +25,9 @@ namespace x360ce.App.Controls
 			ItemPanel.CurrentItem = item;
 		}
 
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			ListPanel.MainDataGrid.ItemsSource = null;
+		}
 	}
 }

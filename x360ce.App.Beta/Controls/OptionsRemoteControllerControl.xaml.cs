@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			LoadSettings();
-			
+
 		}
 
 		void LoadSettings()
@@ -31,7 +31,7 @@ namespace x360ce.App.Controls
 			if (o.RemotePort >= RemotePortNumericUpDown.Minimum && o.RemotePort <= RemotePortNumericUpDown.Maximum)
 				RemotePortNumericUpDown.Value = o.RemotePort;
 			// Attach event which will save form settings before Save().
-			SettingsManager.OptionsData.Saving += OptionsData_Saving; ;
+			SettingsManager.OptionsData.Saving += OptionsData_Saving;
 		}
 
 		private void OptionsData_Saving(object sender, EventArgs e)
@@ -45,6 +45,11 @@ namespace x360ce.App.Controls
 			o.RemoteControllers = remoteControllers;
 			o.RemotePassword = RemotePasswordTextBox.Text;
 			o.RemotePort = (int)RemotePortNumericUpDown.Value;
+		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
 		}
 	}
 }
