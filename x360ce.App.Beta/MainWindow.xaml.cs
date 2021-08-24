@@ -945,6 +945,17 @@ namespace x360ce.App
 			SettingsManager.Current.NotifySettingsStatus = null;
 			SettingsManager.SetSynchronizingObject(null);
 			IssuesPanel.CheckCompleted -= IssuesPanel_CheckCompleted;
+			CollectGarbage();
 		}
+
+		static void CollectGarbage()
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				GC.Collect(GC.MaxGeneration);
+				GC.WaitForPendingFinalizers();
+			}
+		}
+
 	}
 }

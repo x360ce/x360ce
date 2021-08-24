@@ -151,5 +151,11 @@ namespace x360ce.App.Controls
 				}
 			}
 		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			overallStrengthLink.Dispose();
+			SetBinding(_MappedTo, null);
+		}
 	}
 }

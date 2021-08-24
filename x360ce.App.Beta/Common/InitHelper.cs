@@ -9,7 +9,7 @@ namespace x360ce.App
 	/// <summary>
 	/// Helps to output initialize stats when form initialize.
 	/// </summary>
-	public class InitHelper : IDisposable
+	public class InitHelper
 	{
 
 		public InitHelper()
@@ -23,10 +23,21 @@ namespace x360ce.App
 		internal FrameworkElement Control;
 		internal DateTime StartDate;
 		internal DateTime EndDate;
-		internal static int _InitEndCount;
 		internal int _PropertyChangedCount;
 		System.Timers.Timer _Timer;
 
+		public void WriteLine(string prefix)
+		{
+			var s = string.Format("-4-> {0}. {1} - {2}: {3} changes",
+				_InitEndCount, prefix, Control.GetType(), _PropertyChangedCount);
+			if (EndDate.Ticks > 0)
+				s += string.Format(", {0:# ##0} ms", EndDate.Subtract(StartDate).TotalMilliseconds);
+			Debug.WriteLine(s);
+		}
+
+		#region ■ Static 
+
+		internal static int _InitEndCount;
 		private static object TimersLock = new object();
 		private static List<InitHelper> Timers = new List<InitHelper>();
 
@@ -81,48 +92,31 @@ namespace x360ce.App
 			ih._Timer.Start();
 		}
 
+		/// <summary>
+		/// This function will trigger once, after 2000ms when control stops visible changing.
+		/// </summary>
 		private static void _Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			InitHelper ih = null;
+			// Find InitHelper by timer.
 			lock (TimersLock)
 				ih = Timers.FirstOrDefault(x => Equals(x._Timer, sender));
 			if (ih == null)
 				return;
 			_InitEndCount++;
 			ih.WriteLine("INIT END  ");
-			ih.Dispose();
-		}
-
-		public void WriteLine(string prefix)
-		{
-			var s = string.Format("-4-> {0}. {1} - {2}: {3} changes",
-				_InitEndCount, prefix, Control.GetType(), _PropertyChangedCount);
-			if (EndDate.Ticks > 0)
-				s += string.Format(", {0:# ##0} ms", EndDate.Subtract(StartDate).TotalMilliseconds);
-			Debug.WriteLine(s);
-		}
-
-		#region ■ IDisposable
-
-		public bool IsDisposing;
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
+			// Disconnect all links.
+			ih.Control.IsVisibleChanged -= Control_IsVisibleChanged;
+			ih._Timer.Dispose();
+			lock (TimersLock)
 			{
-				Control.IsVisibleChanged -= Control_IsVisibleChanged;
-				_Timer.Dispose();
-				lock (TimersLock)
-					Timers.Remove(this);
+				ih.Control = null;
+				Timers.Remove(ih);
 			}
 		}
 
-		public void Dispose()
-		{
-			Dispose(true);
-		}
-
 		#endregion
+
 
 	}
 }

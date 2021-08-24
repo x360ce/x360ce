@@ -51,5 +51,13 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorStrength), StrengthUpDown, null, converter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorPeriod), PeriodUpDown, null, converter);
 		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			deadzoneLink.Dispose();
+			offsetLink.Dispose();
+			testLink.Dispose();
+			SetBinding(null, 0);
+		}
 	}
 }

@@ -61,9 +61,10 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(o, nameof(Options.AcquireHiddenDevicesInExclusiveMode), AcquireHiddenDevicesInExclusiveModeCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.AcquireMappedDevicesInExclusiveMode), AcquireMappedDevicesInExclusiveModeCheckBox);
 			// Load other settings manually.
-			LoadSettings();
-			// Attach event which will save form settings before Save().
-			SettingsManager.OptionsData.Saving += OptionsData_Saving;
+			SettingsManager.LoadAndMonitor(o, nameof(Options.ShowProgramsTab), ShowProgramsTabCheckBox);
+			SettingsManager.LoadAndMonitor(o, nameof(Options.ShowSettingsTab), ShowSettingsTabCheckBox);
+			SettingsManager.LoadAndMonitor(o, nameof(Options.ShowDevicesTab), ShowDevicesTabCheckBox);
+			SettingsManager.LoadAndMonitor(o, nameof(Options.IncludeProductsInsideINI), IncludeProductsCheckBox);
 		}
 
 		private void LocationAddButton_Click(object sender, RoutedEventArgs e)
@@ -146,28 +147,6 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		public void LoadSettings()
-		{
-			// Load XML settings into control.
-			var o = SettingsManager.Options;
-			// Other option.
-			ShowProgramsTabCheckBox.IsChecked = o.ShowProgramsTab;
-			ShowSettingsTabCheckBox.IsChecked = o.ShowSettingsTab;
-			ShowDevicesTabCheckBox.IsChecked = o.ShowDevicesTab;
-			IncludeProductsCheckBox.IsChecked = o.IncludeProductsInsideINI;
-		}
-
-		private void OptionsData_Saving(object sender, EventArgs e)
-		{
-			// Save XML settings into control.
-			var o = SettingsManager.Options;
-			// Other options.
-			o.ShowProgramsTab = ShowProgramsTabCheckBox.IsChecked ?? false;
-			o.ShowSettingsTab = ShowSettingsTabCheckBox.IsChecked ?? false;
-			o.ShowDevicesTab = ShowDevicesTabCheckBox.IsChecked ?? false;
-			o.IncludeProductsInsideINI = IncludeProductsCheckBox.IsChecked ?? false;
-		}
-
 		private void ShowProgramsTabCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
 			Global._MainWindow.MainBodyPanel.ShowProgramsTab(ShowProgramsTabCheckBox.IsChecked ?? false);
@@ -185,7 +164,31 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
+			SettingsManager.UnLoadMonitor(DebugModeCheckBox);
+			GameScanLocationsListBox.ItemsSource = null;
+			SettingsManager.UnLoadMonitor(GameScanLocationsListBox);
+			SettingsManager.UnLoadMonitor(StartWithWindowsCheckBox);
+			StartWithWindowsStateComboBox.ItemsSource = null;
+			SettingsManager.UnLoadMonitor(StartWithWindowsStateComboBox);
+			SettingsManager.UnLoadMonitor(AlwaysOnTopCheckBox);
+			SettingsManager.UnLoadMonitor(AllowOnlyOneCopyCheckBox);
+			SettingsManager.UnLoadMonitor(ShowFormInfoCheckBox);
+			SettingsManager.UnLoadMonitor(ShowTestButtonCheckBox);
+			SettingsManager.UnLoadMonitor(GuideButtonActionTextBox);
+			SettingsManager.UnLoadMonitor(AutoDetectForegroundWindowCheckBox);
+			SettingsManager.UnLoadMonitor(IsProcessDPIAwareCheckBox);
+			SettingsManager.UnLoadMonitor(MinimizeToTrayCheckBox);
+			// Direct Input
+			SettingsManager.UnLoadMonitor(ExcludeVirtualDevicesCheckBox);
+			SettingsManager.UnLoadMonitor(ExcludeSupplementalDevicesCheckBox);
+			SettingsManager.UnLoadMonitor(UseDeviceBufferedDataCheckBox);
+			SettingsManager.UnLoadMonitor(AcquireHiddenDevicesInExclusiveModeCheckBox);
+			SettingsManager.UnLoadMonitor(AcquireMappedDevicesInExclusiveModeCheckBox);
+			// Load other settings manually.
+			SettingsManager.UnLoadMonitor(ShowProgramsTabCheckBox);
+			SettingsManager.UnLoadMonitor(ShowSettingsTabCheckBox);
+			SettingsManager.UnLoadMonitor(ShowDevicesTabCheckBox);
+			SettingsManager.UnLoadMonitor(IncludeProductsCheckBox);
 		}
 	}
 }

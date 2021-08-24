@@ -381,6 +381,15 @@ namespace x360ce.App.Controls
 				return;
 			updateTimer.Elapsed += UpdateTimer_Elapsed;
 		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			updateTimer.Elapsed -= UpdateTimer_Elapsed;
+			SetBinding(null);
+			deadzoneLink.Dispose();
+			antiDeadzoneLink.Dispose();
+			linearLink.Dispose();
+		}
 	}
 }
 

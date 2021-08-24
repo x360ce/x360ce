@@ -187,5 +187,10 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetVisible(ButtonStatusImage, on);
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			controlsLink.ValueChanged -= controlsLink_ValueChanged;
+			controlsLink.Dispose();
+		}
 	}
 }

@@ -182,9 +182,10 @@ namespace JocysCom.ClassLibrary.Controls
 			System.Windows.Forms.MessageBox.Show(message);
 #elif NETSTANDARD // .NET Standard
 #elif NETFRAMEWORK // .NET Framework
+			// Requires: PresentationFramework.dll
 			System.Windows.MessageBox.Show(message);
 #else
-			System.Windows.Forms.MessageBox.Show(message);
+			throw new NotImplementedException("MessageBox not available for this .NET type");
 #endif
 		}
 

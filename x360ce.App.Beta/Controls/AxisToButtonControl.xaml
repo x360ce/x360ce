@@ -6,6 +6,7 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>

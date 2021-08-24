@@ -196,6 +196,7 @@ namespace x360ce.App
 			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
 			GameToCustomizeComboBox.ItemsSource = null;
+			_bwm.Dispose();
 		}
 
 

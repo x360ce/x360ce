@@ -7,7 +7,7 @@ using x360ce.App.Controls;
 
 namespace x360ce.App
 {
-	public class BaseWithHeaderManager : IBaseWithHeaderControl
+	public class BaseWithHeaderManager : IBaseWithHeaderControl, IDisposable
 	{
 
 		public BaseWithHeaderManager(Label headLabel, TextBlock bodyLabel, ContentControl leftIcon, ContentControl control)
@@ -127,5 +127,29 @@ namespace x360ce.App
 			}
 		}
 
+		#region ■ IDisposable
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		public bool IsDisposing;
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				IsDisposing = true;
+				// Free managed resources.
+				_Control = null;
+				_HeadLabel = null;
+				_BodyLabel = null;
+				_LeftIcon = null;
+			}
+		}
+
+		#endregion
 	}
 }

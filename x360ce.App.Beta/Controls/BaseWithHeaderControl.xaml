@@ -9,6 +9,7 @@
 	MinHeight="160"
 	HorizontalAlignment="Stretch"
 	VerticalAlignment="Stretch"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<Grid>
 		<Grid.RowDefinitions>

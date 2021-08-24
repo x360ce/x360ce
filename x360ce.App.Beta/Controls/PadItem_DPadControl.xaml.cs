@@ -33,5 +33,12 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.AxisToDPadDeadZone), DeadZoneUpDown, null, intConverter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.AxisToDPadOffset), OffsetUpDown, null, intConverter);
 		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			deadzoneLink.Dispose();
+			offsetLink.Dispose();
+			SetBinding(null);
+		}
 	}
 }
