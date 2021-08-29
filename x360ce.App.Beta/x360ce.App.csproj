@@ -197,7 +197,6 @@
     <Compile Include="Common\AdminCommand.cs" />
     <Compile Include="Common\AppHelper.cs" />
     <Compile Include="Common\AutoMapHelper.cs" />
-    <Compile Include="Common\BaseWithHeaderManager.cs" />
     <Compile Include="Common\CertificateHelper.cs" />
     <Compile Include="Common\CloudClient.cs" />
     <Compile Include="Common\CloudItem.cs" />
@@ -263,7 +262,6 @@
     <Compile Include="Controls\DebugControl.xaml.cs">
       <DependentUpon>DebugControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\IBaseWithHeaderControl.cs" />
     <Compile Include="Controls\LogControl.xaml.cs">
       <DependentUpon>LogControl.xaml</DependentUpon>
     </Compile>

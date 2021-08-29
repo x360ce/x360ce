@@ -23,23 +23,34 @@ namespace JocysCom.ClassLibrary.Configuration
 			Initialize();
 		}
 
-		public SettingsData(string fileName, bool userLevel = false, string comment = null)
+		public SettingsData(string fileName, bool userLevel = false, string comment = null, Assembly assembly = null)
 		{
-			Initialize(fileName, userLevel, comment);
+			Initialize(fileName, userLevel, comment, assembly);
 		}
 
-		void Initialize(string fileName = null, bool userLevel = false, string comment = null)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="fileName"></param>
+		/// <param name="userLevel"></param>
+		/// <param name="comment"></param>
+		/// <param name="assembly">Used to get company and product name.</param>
+		void Initialize(string fileName = null, bool userLevel = false, string comment = null, Assembly assembly = null)
 		{
 			Items = new SortableBindingList<T>();
 			_Comment = comment;
+			var company = Application.CompanyName;
+			var product = Application.ProductName;
+			if (assembly != null)
+			{
+				company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute))).Company;
+				product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
+			}
 			// Get writable application folder.
 			var specialFolder = userLevel
 				? Environment.SpecialFolder.ApplicationData
 				: Environment.SpecialFolder.CommonApplicationData;
-			var folder = string.Format("{0}\\{1}\\{2}",
-				Environment.GetFolderPath(specialFolder),
-				Application.CompanyName,
-				Application.ProductName);
+			var folder = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), company, product);
 			// Get file name.
 			var file = string.IsNullOrEmpty(fileName)
 				? string.Format("{0}.xml", typeof(T).Name)

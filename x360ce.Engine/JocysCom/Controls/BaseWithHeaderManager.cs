@@ -1,16 +1,16 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls.Themes;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using x360ce.App.Controls;
 
-namespace x360ce.App
+namespace JocysCom.ClassLibrary.Controls
 {
-	public class BaseWithHeaderManager : IBaseWithHeaderControl, IDisposable
+	public class BaseWithHeaderManager<T> : IBaseWithHeaderControl<T>, IDisposable
 	{
 
-		public BaseWithHeaderManager(Label headLabel, TextBlock bodyLabel, ContentControl leftIcon, ContentControl control)
+		public BaseWithHeaderManager(Label headLabel, TextBlock bodyLabel, ContentControl leftIcon, ContentControl rightIcon, ContentControl control)
 		{
 			_Control = control;
 			_HeadLabel = headLabel;
@@ -18,6 +18,14 @@ namespace x360ce.App
 			_BodyLabel = bodyLabel;
 			defaultBody = bodyLabel.Text;
 			_LeftIcon = leftIcon;
+			_RightIcon = rightIcon;
+			_RightIconOriginalContent = _RightIcon.Content;
+			_RotateTransform = new RotateTransform();
+			_RightIcon.RenderTransform = _RotateTransform;
+			_RightIcon.RenderTransformOrigin = new Point(0.5, 0.5);
+			RotateTimer = new System.Timers.Timer();
+			RotateTimer.Interval = 25;
+			RotateTimer.Elapsed += RotateTimer_Elapsed;
 		}
 
 		string defaultHead;
@@ -25,12 +33,14 @@ namespace x360ce.App
 		string defaultBody;
 		TextBlock _BodyLabel;
 		ContentControl _LeftIcon;
+		ContentControl _RightIcon;
+		object _RightIconOriginalContent;
 		ContentControl _Control;
 		private readonly object TasksLock = new object();
-		private readonly BindingList<TaskName> Tasks = new BindingList<TaskName>();
+		private readonly BindingList<T> Tasks = new BindingList<T>();
 
 		/// <summary>Activate busy spinner.</summary>
-		public void AddTask(TaskName name)
+		public void AddTask(T name)
 		{
 			lock (TasksLock)
 			{
@@ -41,7 +51,7 @@ namespace x360ce.App
 		}
 
 		/// <summary>Deactivate busy spinner if all tasks are gone.</summary>
-		public void RemoveTask(TaskName name)
+		public void RemoveTask(T name)
 		{
 			lock (TasksLock)
 			{
@@ -53,6 +63,33 @@ namespace x360ce.App
 
 		public void UpdateIcon()
 		{
+			if (Tasks.Count > 0)
+			{
+				_RightIcon.Content = Icons.Current[Icons.Icon_ProcessRight];
+				_RightIcon.RenderTransform = _RotateTransform;
+				RotateTimer.Start();
+			}
+			else
+			{
+				RotateTimer.Stop();
+				_RightIcon.RenderTransform = null;
+				_RotateTransform.Angle = 0;
+				_RightIcon.Content = _RightIconOriginalContent;
+			}
+		}
+
+		RotateTransform _RotateTransform;
+		System.Timers.Timer RotateTimer;
+
+		private void RotateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+#pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
+			_RightIcon.Dispatcher.Invoke(() =>
+#pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
+			{
+				var angle = (_RotateTransform.Angle + 2) % 360;
+				_RotateTransform.Angle = angle;
+			});
 		}
 
 		public void SetHead(string format, params object[] args)
@@ -110,19 +147,19 @@ namespace x360ce.App
 			{
 				case MessageBoxImage.Error:
 					_BodyLabel.Foreground = new SolidColorBrush(Colors.DarkRed);
-					_LeftIcon.Content = Icons_Default.Current[Icons_Default.Icon_error];
+					_LeftIcon.Content = Icons.Current[Icons.Icon_Error];
 					break;
 				case MessageBoxImage.Question:
 					_BodyLabel.Foreground = new SolidColorBrush(Colors.DarkBlue);
-					_LeftIcon.Content = Icons_Default.Current[Icons_Default.Icon_question];
+					_LeftIcon.Content = Icons.Current[Icons.Icon_Question];
 					break;
 				case MessageBoxImage.Warning:
 					_BodyLabel.Foreground = new SolidColorBrush(Colors.DarkOrange);
-					_LeftIcon.Content = Icons_Default.Current[Icons_Default.Icon_sign_warning];
+					_LeftIcon.Content = Icons.Current[Icons.Icon_Warning];
 					break;
 				default:
 					_BodyLabel.Foreground = SystemColors.ControlTextBrush;
-					_LeftIcon.Content = Icons_Default.Current[Icons_Default.Icon_information];
+					_LeftIcon.Content = Icons.Current[Icons.Icon_Information];
 					break;
 			}
 		}

@@ -1,0 +1,26 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>process icon</title>
+    <desc>process icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="292" y1="59" x2="475.5735" y2="322.8865" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#ffc001"/>
+            <stop offset="0.72157" stop-color="#f3b401"/>
+            <stop offset="1" stop-color="#e6a801"/>
+        </linearGradient>
+        <linearGradient x1="17.5" y1="16.10135" x2="217.21285" y2="303.18925" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#6cc723"/>
+            <stop offset="1" stop-color="#61b11f"/>
+        </linearGradient>
+        <linearGradient x1="16.1002" y1="231" x2="200.5424" y2="496.1365" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#39aef1"/>
+            <stop offset="1" stop-color="#24a5ef"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M348,475l23.5,-88l-79.5,-22l3,-4c43,-16 73,-57 73,-105c0,-34.5 -20,-62 -40.5,-86.5l-7.5,-8.5l-20.5,-77.5l89,-24.5l8.5,3c60,43.5 99,114.5 99,194c0,98 -58.5,182 -142.5,219z" id="curve2" fill="url(#color-1)"/>
+        <path d="M17.5,231l0,0c7.5,-74 49.5,-143 118.5,-183c84.5,-48.5 187,-40 261,14l-91.5,25l22,82.5c-35.5,-29 -86,-34.5 -127.5,-10.5c-30,17.5 -49,46.5 -54.5,78.5l-3,10.5l-58,55l-66,-65z" id="curve1" fill="url(#color-2)"/>
+        <path d="M295,361l82.5,22.5l-24,91.5c-67.5,30.5 -148.5,29 -217.5,-11c-84.5,-49 -128.5,-142 -118.5,-233l67,66.5l61,-60c-7.5,45 13,91.5 54.5,115.5c30,17.5 65,19 95,8z" id="curve0" fill="url(#color-3)"/>
+    </g>
+</svg>

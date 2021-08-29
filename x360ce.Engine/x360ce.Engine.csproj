@@ -198,6 +198,8 @@
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
     <Compile Include="Data\UserMacro.cs" />
+    <Compile Include="JocysCom\Controls\BaseWithHeaderManager.cs" />
+    <Compile Include="JocysCom\Controls\IBaseWithHeaderControl.cs" />
     <Compile Include="JocysCom\Controls\IssuesControl\IssuesControl.xaml.cs">
       <DependentUpon>IssuesControl.xaml</DependentUpon>
     </Compile>

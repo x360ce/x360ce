@@ -49,7 +49,7 @@ namespace x360ce.App.Controls
 			return value;
 		}
 
-		public IBaseWithHeaderControl _ParentControl;
+		public IBaseWithHeaderControl<TaskName> _ParentControl;
 
 		public void InitPanel()
 		{

@@ -18,7 +18,7 @@ namespace x360ce.App
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			_bwm = new BaseWithHeaderManager(HelpHeadLabel, HelpBodyLabel, LeftIcon, this);
+			_bwm = new BaseWithHeaderManager<TaskName>(HelpHeadLabel, HelpBodyLabel, LeftIcon, RightIcon, this);
 			// Hide status values.
 			StatusTimerLabel.Content = "";
 			StatusDllLabel.Content = "";
@@ -38,7 +38,7 @@ namespace x360ce.App
 			LoadSettings();
 		}
 
-		public BaseWithHeaderManager _bwm;
+		public BaseWithHeaderManager<TaskName> _bwm;
 
 		private Forms.DebugWindow DebugPanel;
 

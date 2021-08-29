@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using JocysCom.ClassLibrary.Controls;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace x360ce.App.Controls
@@ -6,7 +7,7 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for BaseWithHeaderControl.xaml
 	/// </summary>
-	public partial class BaseWithHeaderControl : UserControl, IBaseWithHeaderControl
+	public partial class BaseWithHeaderControl : UserControl, IBaseWithHeaderControl<TaskName>
 	{
 
 		public BaseWithHeaderControl()
@@ -16,10 +17,10 @@ namespace x360ce.App.Controls
 				return;
 			defaultHead = HelpHeadLabel.Content as string;
 			defaultBody = HelpBodyLabel.Text;
-			_bwm = new BaseWithHeaderManager(HelpHeadLabel, HelpBodyLabel, LeftIcon, this);
+			_bwm = new BaseWithHeaderManager<TaskName>(HelpHeadLabel, HelpBodyLabel, LeftIcon, RightIcon, this);
 		}
 
-		BaseWithHeaderManager _bwm;
+		BaseWithHeaderManager<TaskName> _bwm;
 
 
 		/// <summary>
