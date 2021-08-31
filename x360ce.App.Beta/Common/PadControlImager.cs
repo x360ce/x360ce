@@ -262,6 +262,13 @@ namespace x360ce.App.Controls
 
 		public void Dispose()
 		{
+			Top = null;
+			Front = null;
+			LeftThumbStatus = null;
+			RightThumbStatus = null;
+			LeftTriggerStatus = null;
+			RightTriggerStatus = null;
+			ImageControl = null;
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
@@ -279,7 +286,13 @@ namespace x360ce.App.Controls
 				markA.Dispose();
 				markB.Dispose();
 				markC.Dispose();
+				markB = null;
+				markA = null;
+				markC = null;
 				Recorder.Dispose();
+				Recorder = null;
+				locations.Clear();
+				locations = null;
 			}
 		}
 

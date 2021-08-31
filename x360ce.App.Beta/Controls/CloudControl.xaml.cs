@@ -153,7 +153,12 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			// Disable in reverse order.
+			EnableDataSource(false);
+			QueueMonitorTimer.Elapsed -= QueueMonitorTimer_Elapsed;
 			QueueMonitorTimer.Stop();
+			QueueMonitorTimer.Dispose();
+			Global.CloudClient.StopServer();
 		}
 	}
 }

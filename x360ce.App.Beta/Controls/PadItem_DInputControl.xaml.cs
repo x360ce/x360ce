@@ -25,11 +25,11 @@ namespace x360ce.App.Controls
 			InitDirectInputTab();
 		}
 
-		ObservableCollection<EffectsRow> DiEffectsTable { get; } = new ObservableCollection<EffectsRow>();
-		ObservableCollection<ButtonsRow> DiButtonsTable { get; } = new ObservableCollection<ButtonsRow>();
-		ObservableCollection<AxisRow> DiAxisTable { get; } = new ObservableCollection<AxisRow>();
-		ObservableCollection<SliderRow> DiSlidersTable { get; } = new ObservableCollection<SliderRow>();
-		ObservableCollection<POVsRow> DiPOVsTable { get; } = new ObservableCollection<POVsRow>();
+		ObservableCollection<EffectsRow> DiEffectsTable { get; set; } = new ObservableCollection<EffectsRow>();
+		ObservableCollection<ButtonsRow> DiButtonsTable { get; set; } = new ObservableCollection<ButtonsRow>();
+		ObservableCollection<AxisRow> DiAxisTable { get; set; } = new ObservableCollection<AxisRow>();
+		ObservableCollection<SliderRow> DiSlidersTable { get; set; } = new ObservableCollection<SliderRow>();
+		ObservableCollection<POVsRow> DiPOVsTable { get; set; } = new ObservableCollection<POVsRow>();
 
 		void InitDirectInputTab()
 		{
@@ -492,6 +492,28 @@ namespace x360ce.App.Controls
 			}
 			//Clipboard.SetDataObject(sb.ToString());
 			return sb.ToString();
+		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			DiEffectsDataGridView.ItemsSource = null;
+			DiButtonsDataGridView.ItemsSource = null;
+			DiAxisDataGridView.ItemsSource = null;
+			DiSlidersDataGridView.ItemsSource = null;
+			DiPOVsDataGridView.ItemsSource = null;
+			DiEffectsTable.Clear();
+			DiButtonsTable.Clear();
+			DiAxisTable.Clear();
+			DiSlidersTable.Clear();
+			DiPOVsTable.Clear();
+			DiEffectsTable = null;
+			DiButtonsTable = null;
+			DiAxisTable = null;
+			DiSlidersTable = null;
+			DiPOVsTable = null;
+			oldMState = null;
+			oldKState = null;
+			oldJState = null;
 		}
 
 		/*

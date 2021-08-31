@@ -174,6 +174,13 @@ namespace x360ce.App.Controls
 			}, 4000);
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			MainGrid.MouseMove -= MainGrid_MouseMove;
+			Infos.Clear();
+			Infos = null;
+			Imager = null;
+		}
 	}
 
 }

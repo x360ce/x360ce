@@ -386,9 +386,17 @@ namespace x360ce.App.Controls
 		{
 			updateTimer.Elapsed -= UpdateTimer_Elapsed;
 			SetBinding(null);
+			deadzoneLink.ValueChanged -= deadzoneLink_ValueChanged;
 			deadzoneLink.Dispose();
+			deadzoneLink = null;
+			antiDeadzoneLink.ValueChanged -= deadzoneLink_ValueChanged;
 			antiDeadzoneLink.Dispose();
+			antiDeadzoneLink = null;
+			linearLink.ValueChanged -= deadzoneLink_ValueChanged;
 			linearLink.Dispose();
+			linearLink = null;
+			UpdateTimerReset();
+
 		}
 	}
 }

@@ -38,10 +38,10 @@ namespace x360ce.App
 
 		void _TrackBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
+			if (IsDisposing)
+				return;
 			UpdateValue();
-			var ev = ValueChanged;
-			if (ev != null)
-				ev(this, new EventArgs());
+			ValueChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		public string PercentFormat = "{0:0} % ";
@@ -63,7 +63,6 @@ namespace x360ce.App
 
 		void _NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
-			EventHandler<EventArgs> ev;
 			lock (eventsLock)
 			{
 				if (IsDisposing)
@@ -83,9 +82,7 @@ namespace x360ce.App
 				if (_TextBox.Text != percentString)
 					_TextBox.Text = percentString;
 			}
-			ev = ValueChanged;
-			if (ev != null)
-				ev(this, new EventArgs());
+			ValueChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		#region ■ IDisposable

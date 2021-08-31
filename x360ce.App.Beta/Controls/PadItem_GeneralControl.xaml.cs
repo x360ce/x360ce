@@ -347,7 +347,9 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			SetBinding(MapTo.None, null);
 			MapNameComboBox.ItemsSource = null;
+			DiMenuStrip.Clear();
 		}
 	}
 }

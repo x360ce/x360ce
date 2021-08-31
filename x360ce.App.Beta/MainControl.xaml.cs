@@ -195,6 +195,7 @@ namespace x360ce.App
 			// Cleanup references which prevents disposal.
 			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
+			GameToCustomizeComboBox.SelectedItem = null;
 			GameToCustomizeComboBox.ItemsSource = null;
 			_bwm.Dispose();
 		}

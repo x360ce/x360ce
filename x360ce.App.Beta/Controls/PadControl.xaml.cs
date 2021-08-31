@@ -579,7 +579,13 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SettingChanged -= Current_SettingChanged;
 			CurrentPadSetting.PropertyChanged -= CurrentPadSetting_PropertyChanged;
 			PadListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
+			XboxImage.StartRecording = null;
+			XboxImage.StopRecording = null;
+			RecordAllMaps.Clear();
+			imageInfos.Clear();
 			_Imager.Dispose();
+			_CurrentUserSetting = null;
+			_CurrentUserDevice = null;
 		}
 	}
 }

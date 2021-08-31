@@ -54,9 +54,14 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			DirectionComboBox.ItemsSource = null;
 			deadzoneLink.Dispose();
 			offsetLink.Dispose();
 			testLink.Dispose();
+			deadzoneLink = null;
+			offsetLink = null;
+			testLink = null;
+			// fill direction values.
 			SetBinding(null, 0);
 		}
 	}

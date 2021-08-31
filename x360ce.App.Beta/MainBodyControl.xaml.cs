@@ -37,7 +37,6 @@ namespace x360ce.App
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 		}
 
-
 		public PadControl[] PadControls;
 
 		ContentControl[] PadIcons;
@@ -200,6 +199,9 @@ namespace x360ce.App
 			{
 				// Dispose managed resources.
 				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
+				Array.Clear(PadControls, 0, 4);
+				Array.Clear(PadIcons, 0, 4);
+				Array.Clear(PadColors, 0, 4);
 			}
 			// Free native resources.
 		}

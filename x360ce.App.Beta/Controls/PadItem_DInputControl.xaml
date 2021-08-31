@@ -6,6 +6,7 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="300"
 	d:DesignWidth="740"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<Grid Margin="3,3,3,3">
 		<Grid.RowDefinitions>

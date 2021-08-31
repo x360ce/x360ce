@@ -945,6 +945,12 @@ namespace x360ce.App
 			SettingsManager.Current.NotifySettingsStatus = null;
 			SettingsManager.SetSynchronizingObject(null);
 			IssuesPanel.CheckCompleted -= IssuesPanel_CheckCompleted;
+			UpdateTimer.Elapsed -= UpdateTimer_Elapsed;
+			UpdateTimer.Dispose();
+			SettingsTimer.Elapsed -= SettingsTimer_Elapsed;
+			SettingsTimer.Dispose();
+			CleanStatusTimer.Elapsed -= CleanStatusTimer_Elapsed;
+			CleanStatusTimer.Dispose();
 			CollectGarbage();
 		}
 

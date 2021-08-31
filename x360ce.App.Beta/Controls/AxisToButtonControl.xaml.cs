@@ -28,7 +28,7 @@ namespace x360ce.App.Controls
 		{
 		}
 
-		private readonly TrackBarUpDownTextBoxLink controlsLink;
+		private TrackBarUpDownTextBoxLink controlsLink;
 		private GamepadButtonFlags _GamepadButton;
 
 		[DefaultValue(GamepadButtonFlags.None)] // Category("Appearance")
@@ -43,8 +43,8 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private readonly ImageSource arrowEnabledImage;
-		private readonly ImageSource arrowDisabledImage;
+		private ImageSource arrowEnabledImage;
+		private ImageSource arrowDisabledImage;
 		private ImageSource enabledImage;
 		private ImageSource disabledImage;
 
@@ -125,14 +125,10 @@ namespace x360ce.App.Controls
 				lock (monitorComboBoxLock)
 				{
 					if (_MonitorComboBox != null)
-					{
 						_MonitorComboBox.TextChanged -= _MonitorComboBox_TextChanged;
-					}
 					_MonitorComboBoxWpf = value;
 					if (_MonitorComboBox != null)
-					{
 						_MonitorComboBox.TextChanged += _MonitorComboBox_TextChanged;
-					}
 				}
 			}
 		}
@@ -189,8 +185,11 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+
 			controlsLink.ValueChanged -= controlsLink_ValueChanged;
 			controlsLink.Dispose();
+			controlsLink = null;
+			arrowDisabledImage = null;
 		}
 	}
 }

@@ -131,6 +131,7 @@ namespace x360ce.App.Controls
 		{
 			MainDataGrid.ItemsSource = null;
 			Items.Clear();
+			lastItem = null;
 		}
 	}
 }
