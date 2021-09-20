@@ -60,7 +60,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		[XmlIgnore]
-		public FileInfo XmlFile { get { return _XmlFile; } }
+		public FileInfo XmlFile { get { return _XmlFile; } set { _XmlFile = value; } }
 
 		[NonSerialized]
 		protected FileInfo _XmlFile;

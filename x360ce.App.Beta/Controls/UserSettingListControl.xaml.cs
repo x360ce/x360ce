@@ -49,7 +49,7 @@ namespace x360ce.App.Controls
 			return value;
 		}
 
-		public IBaseWithHeaderControl<TaskName> _ParentControl;
+		public BaseWithHeaderControl _ParentControl;
 
 		public void InitPanel()
 		{
@@ -142,7 +142,7 @@ namespace x360ce.App.Controls
 
 		public void RefreshData()
 		{
-			_ParentControl.AddTask(TaskName.SearchSettings);
+			_ParentControl.InfoPanel.AddTask(TaskName.SearchSettings);
 			RefreshButton.IsEnabled = false;
 			var sp = new List<SearchParameter>();
 			SettingsManager.Current.FillSearchParameterWithInstances(sp);
@@ -175,11 +175,11 @@ namespace x360ce.App.Controls
 				var error = e.Error.Message;
 				if (e.Error.InnerException != null)
 					error += "\r\n" + e.Error.InnerException.Message;
-				_ParentControl.SetBodyError(error);
+				_ParentControl.InfoPanel.SetBodyError(error);
 			}
 			else if (e.Result == null)
 			{
-				_ParentControl.SetBodyInfo("No user settings received.");
+				_ParentControl.InfoPanel.SetBodyInfo("No user settings received.");
 			}
 			else
 			{
@@ -197,14 +197,14 @@ namespace x360ce.App.Controls
 				// Display results about operation.
 				var settingsCount = (result.Settings == null) ? 0 : result.Settings.Length;
 				var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-				_ParentControl.SetBodyInfo("{0} user settings and {1} PAD settings received.", settingsCount, padSettingsCount);
+				_ParentControl.InfoPanel.SetBodyInfo("{0} user settings and {1} PAD settings received.", settingsCount, padSettingsCount);
 
 				MainDataGrid.ItemsSource = SettingsManager.UserSettings.Items;
 				// Resume DInput Service.
 				if (Global.AllowDHelperStart)
 					Global.DHelper.Start();
 			}
-			_ParentControl.RemoveTask(TaskName.SearchSettings);
+			_ParentControl.InfoPanel.RemoveTask(TaskName.SearchSettings);
 			RefreshButton.IsEnabled = true;
 		}
 

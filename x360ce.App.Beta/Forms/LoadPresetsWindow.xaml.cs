@@ -13,10 +13,10 @@ namespace x360ce.App.Forms
 			InitHelper.InitTimer(this, InitializeComponent);
 			ControlsHelper.CheckTopMost(this);
 			WinControl.MainBody.Content = WinControl.MainContent;
-			WinControl.SetTitle("X360CE - Load Preset");
-			WinControl.SetHead("Load Preset");
-			WinControl.SetBodyInfo("Select Preset and press [Load Selected] button.");
-			WinControl.SetImage(Icons_Default.Icon_gamepad);
+			WinControl.InfoPanel.SetTitle("X360CE - Load Preset");
+			WinControl.InfoPanel.SetHead("Load Preset");
+			WinControl.InfoPanel.SetBodyInfo("Select Preset and press [Load Selected] button.");
+			WinControl.InfoPanel.SetImage(App.GetResource(Icons_Default.Icon_gamepad));
 			WinControl.SetButton1("Load Selected", Icons_Default.Icon_ok);
 			WinControl.SetButton2("Cancel", Icons_Default.Icon_close);
 			WinControl.SetButton3();

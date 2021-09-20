@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Linq;
 using x360ce.Engine;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App
 {
@@ -16,6 +17,9 @@ namespace x360ce.App
 		public static Service.LocalService _LocalService;
 		public static Service.TrayManager _TrayManager;
 		public static MainWindow _MainWindow;
+
+		public static InfoControl HMan
+			=> _MainWindow?.MainPanel?.InfoPanel;
 
 		public static CloudClient CloudClient;
 

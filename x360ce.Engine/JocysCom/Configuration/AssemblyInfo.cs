@@ -303,8 +303,8 @@ namespace JocysCom.ClassLibrary.Configuration
 		///     Create "Resources\BuildDate.txt" and set its "Build Action: Embedded Resource"
 		///     Add to pre-build event to work with latest .NET builds:
 		///     
-		///     IF NOT EXIST "$(ProjectDir)Resources" MKDIR "$(ProjectDir)Resources" 2>nul
-		///     PowerShell.exe -Command "(Get-Date).ToString(\"o\") | Out-File "$(ProjectDir)Resources\BuildDate.txt"
+		///     PowerShell.exe -Command "New-Item -ItemType Directory -Force -Path \"$(ProjectDir)Resources\" | Out-Null"
+		///     PowerShell.exe -Command "(Get-Date).ToString(\"o\") | Out-File \"$(ProjectDir)Resources\BuildDate.txt\""
 		///
 		/// Note:
 		/// The C# compiler (Roslyn) supports deterministic builds since Visual Studio 2015.

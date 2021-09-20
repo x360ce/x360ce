@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Data;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -212,6 +215,72 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
+		public static PropertyInfo GetPrimaryKeyPropertyInfo(object item)
+		{
+			if (item == null)
+				return null;
+			var t = item.GetType();
+			PropertyInfo pi = null;
+#if NETCOREAPP // .NET Core
+			// Try to find property by KeyAttribute.
+			pi = t.GetProperties()
+				.Where(x => Attribute.IsDefined(x, typeof(System.ComponentModel.DataAnnotations.KeyAttribute), true))
+				.FirstOrDefault();
+			if (pi != null)
+				return pi;
+#else
+				// Try to find property by EntityFramework EdmScalarPropertyAttribute (System.Data.Entity.dll).
+				pi = t.GetProperties()
+					.Where(x =>
+						x.GetCustomAttributes(typeof(System.Data.Objects.DataClasses.EdmScalarPropertyAttribute), true)
+						.Cast<System.Data.Objects.DataClasses.EdmScalarPropertyAttribute>()
+						.Any(a => a.EntityKeyProperty))
+					.FirstOrDefault();
+			if (pi != null)
+				return pi;
+
+#endif
+			return null;
+		}
+
+		/// <summary>
+		/// Get DataViewRow, DataRow or item property value.
+		/// </summary>
+		/// <typeparam name="T">Return value type.</typeparam>
+		/// <param name="item">DataViewRow, DataRow or another type.</param>
+		/// <param name="keyPropertyName">Data property or column name.</param>
+		/// <param name="pi">Optional property info cache.</param>
+		/// <returns></returns>
+		private static T GetValue<T>(object item, string keyPropertyName, PropertyInfo pi = null)
+		{
+			// Return object value if property info supplied.
+			if (pi != null)
+				return (T)pi.GetValue(item, null);
+			// Get DataRow.
+			var row = item is System.Data.DataRowView rowView
+				? rowView.Row
+				: (System.Data.DataRow)item;
+			// Return DataRow value.
+			return row.IsNull(keyPropertyName)
+					? default
+					: (T)row[keyPropertyName];
+		}
+
+		/// <summary>
+		///  Get Property info 
+		/// </summary>
+		/// <param name="keyPropertyName"></param>
+		/// <param name="item"></param>
+		private static PropertyInfo GetPropertyInfo(string keyPropertyName, object item)
+		{
+			// Get property info if not DataRowView or DataRow.
+			PropertyInfo pi = null;
+			if (!(item is DataRowView) && !(item is DataRow))
+				pi = string.IsNullOrEmpty(keyPropertyName)
+					? GetPrimaryKeyPropertyInfo(item)
+					: item.GetType().GetProperty(keyPropertyName);
+			return pi;
+		}
 
 	}
 }

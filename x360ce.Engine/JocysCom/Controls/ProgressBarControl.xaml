@@ -1,0 +1,64 @@
+﻿<UserControl
+	x:Class="JocysCom.ClassLibrary.Controls.ProgressBarControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	mc:Ignorable="d">
+	<StackPanel x:Name="ScanProgressPanel">
+		<Grid Margin="4,4,4,4">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<ProgressBar
+				x:Name="ProgressLevelTopBar"
+				Grid.Row="0"
+				Grid.Column="0"
+				Width="100"
+				Margin="0,2,0,2" />
+			<TextBlock
+				x:Name="ProgressLevelTopBarTextBlock"
+				Grid.Row="0"
+				Grid.Column="0"
+				Margin="0,2,0,4"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Foreground="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+				Text="[x/y]" />
+			<TextBlock
+				x:Name="ProgressLevelTopLabel"
+				Grid.Row="0"
+				Grid.Column="1"
+				Margin="4,0,0,0"
+				VerticalAlignment="Center"
+				Text="[ProgressLevelTopLabel]" />
+			<ProgressBar
+				x:Name="ProgressLevelSubBar"
+				Grid.Row="1"
+				Grid.Column="0"
+				Width="100"
+				Margin="0,2,0,2" />
+			<TextBlock
+				x:Name="ProgressLevelSubBarTextBlock"
+				Grid.Row="1"
+				Grid.Column="0"
+				Margin="0,2,0,4"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Foreground="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
+				Text="[x/y]" />
+			<TextBlock
+				x:Name="ProgressLevelSubLabel"
+				Grid.Row="1"
+				Grid.Column="1"
+				Margin="4,0,0,0"
+				VerticalAlignment="Center"
+				Text="[ProgressLevelSubLabel]" />
+		</Grid>
+	</StackPanel>
+</UserControl>

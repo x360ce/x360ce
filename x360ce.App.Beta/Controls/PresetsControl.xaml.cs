@@ -79,7 +79,7 @@ namespace x360ce.App.Controls
 		{
 			var tab = MainTabControl.SelectedItem as TabItem;
 			if (tab != null)
-				_ParentControl.SetHead(tab.Header as string);
+				_ParentControl.InfoPanel.SetHead(tab.Header as string);
 			var selected = false;
 			if (MainTabControl.SelectedItem == SummariesTabPage)
 				selected = SummariesGridPanel.MainDataGrid.SelectedItems.Count > 0;

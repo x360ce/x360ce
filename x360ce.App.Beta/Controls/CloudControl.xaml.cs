@@ -30,6 +30,8 @@ namespace x360ce.App.Controls
 			ControlsHelper.Invoke(() =>
 			{
 				var t = Global.CloudClient.TasksTimer;
+				if (t == null)
+					return;
 				var nextRunTime = t.NextRunTime;
 				TimeSpan remains = new TimeSpan();
 				if (nextRunTime.Ticks > 0)

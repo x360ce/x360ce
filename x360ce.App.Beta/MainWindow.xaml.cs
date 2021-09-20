@@ -80,6 +80,7 @@ namespace x360ce.App
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			Global.HMan.SetBody(MessageBoxImage.Information, "Useful Tip: Minimize X360CE Application during game to reduce its load on CPU and GPU. Minimized application automatically turns off CPU heavy tasks like Interface updates or state requests from XInput.");
 			StartHelper.OnClose += StartHelper_OnClose;
 			StartHelper.OnRestore += StartHelper_OnRestore;
 			AppHelper.InitializeHidGuardian();
@@ -90,7 +91,6 @@ namespace x360ce.App
 			Global.DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
 			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
 			Global.DHelper.XInputReloaded += DHelper_XInputReloaded;
-			MainBodyPanel.SettingsPanel._ParentControl = MainPanel._bwm;
 			MainBodyPanel.SettingsPanel.MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Extended;
 			MainBodyPanel.SettingsPanel.InitPanel();
 			// NotifySettingsChange will be called on event suspension and resume.
@@ -165,7 +165,7 @@ namespace x360ce.App
 				ControlsHelper.SetText(label, text);
 				ControlsHelper.SetVisible(label, show);
 				if (e.Error != null)
-					MainPanel._bwm.SetBodyError(e.Error.Message);
+					Global.HMan.SetBodyError(e.Error.Message);
 			});
 		}
 
@@ -198,7 +198,7 @@ namespace x360ce.App
 				ControlsHelper.BeginInvoke(() =>
 				{
 					SettingsManager.Options.GetXInputStates = false;
-					MainPanel._bwm.SetBodyError(e.Error.Message);
+					Global.HMan.SetBodyError(e.Error.Message);
 				});
 			}
 		}

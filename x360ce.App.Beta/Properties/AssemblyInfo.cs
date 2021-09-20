@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Jocys.com")]
 [assembly: AssemblyProduct("X360 Controller Emulator")]
-[assembly: AssemblyCopyright("Copyright © Jocys.com 2020")]
+[assembly: AssemblyCopyright("Copyright © Jocys.com 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -18,7 +18,6 @@ namespace x360ce.App
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			_bwm = new BaseWithHeaderManager<TaskName>(HelpHeadLabel, HelpBodyLabel, LeftIcon, RightIcon, this);
 			// Hide status values.
 			StatusTimerLabel.Content = "";
 			StatusDllLabel.Content = "";
@@ -37,8 +36,6 @@ namespace x360ce.App
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			LoadSettings();
 		}
-
-		public BaseWithHeaderManager<TaskName> _bwm;
 
 		private Forms.DebugWindow DebugPanel;
 
@@ -197,7 +194,7 @@ namespace x360ce.App
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
 			GameToCustomizeComboBox.SelectedItem = null;
 			GameToCustomizeComboBox.ItemsSource = null;
-			_bwm.Dispose();
+			Global.HMan?.Dispose();
 		}
 
 

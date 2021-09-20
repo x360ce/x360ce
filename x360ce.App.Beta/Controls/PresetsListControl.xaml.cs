@@ -48,7 +48,7 @@ namespace x360ce.App.Controls
 
 		public void RefreshData()
 		{
-			_ParentControl.AddTask(TaskName.SearchPresets);
+			_ParentControl.InfoPanel.AddTask(TaskName.SearchPresets);
 			RefreshButton.IsEnabled = false;
 			var sp = new List<SearchParameter>();
 			sp.Add(new SearchParameter());
@@ -78,11 +78,11 @@ namespace x360ce.App.Controls
 			{
 				var error = e.Error.Message;
 				if (e.Error.InnerException != null) error += "\r\n" + e.Error.InnerException.Message;
-				_ParentControl.SetBodyError(error);
+				_ParentControl.InfoPanel.SetBodyError(error);
 			}
 			else if (e.Result == null)
 			{
-				_ParentControl.SetBodyInfo("No default settings received.");
+				_ParentControl.InfoPanel.SetBodyInfo("No default settings received.");
 			}
 			else
 			{
@@ -92,9 +92,9 @@ namespace x360ce.App.Controls
 				SettingsManager.Current.CleanupPadSettings();
 				var presetsCount = (result.Presets == null) ? 0 : result.Presets.Length;
 				var padSettingsCount = (result.PadSettings == null) ? 0 : result.PadSettings.Length;
-				_ParentControl.SetBodyInfo("{0} default settings and {1} PAD settings received.", presetsCount, padSettingsCount);
+				_ParentControl.InfoPanel.SetBodyInfo("{0} default settings and {1} PAD settings received.", presetsCount, padSettingsCount);
 			}
-			_ParentControl.RemoveTask(TaskName.SearchPresets);
+			_ParentControl.InfoPanel.RemoveTask(TaskName.SearchPresets);
 			RefreshButton.IsEnabled = true;
 		}
 

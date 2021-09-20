@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 #if NETCOREAPP // .NET Core
-using Microsoft.Extensions.Configuration;
 #elif NETSTANDARD // .NET Standard
 using System.Globalization;
 using System.Net;
@@ -33,7 +32,9 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>Parse all IConvertible types, like value types, with one function.</summary>
 		public T Parse<T>(string name, T defaultValue = default(T))
 		{
-			var v = GetValue(name);
+			if (_GetValue == null)
+				return defaultValue;
+			var v = _GetValue(ConfigPrefix + name);
 			return ParseValue<T>(v, defaultValue);
 		}
 
@@ -77,8 +78,6 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			return (T)ParseValue(typeof(T), v, defaultValue);
 		}
-
-		public static Func<string, string> _GetValue;
 
 #if NETSTANDARD // If .NET Standard (Xamarin) preprocessor directive is set then...
 
@@ -137,61 +136,12 @@ namespace JocysCom.ClassLibrary.Configuration
 
 #elif NETCOREAPP // if .NET Core preprocessor directive is set then...
 
-		/*
-			// Call InitializeParser to initialize parser in .NET Core.
-			public class Startup
-			{
-				public Startup(IConfiguration configuration)
-				{
-					Configuration = configuration;
-					JocysCom.ClassLibrary.Configuration.SettingsParser.InitializeParser(Configuration);
-				}
-			}
-		*/
-
-		static IConfiguration Configuration { get; set; }
-
-		/// <summary>
-		/// Use this method to initialize configuration in .NET core.
-		/// </summary>
-		/// <param name="configuration"></param>
-		public static void InitializeParser(IConfiguration configuration)
-		{
-
-			Configuration = configuration;
-			// Override GetValue function.
-			_GetValue = (name) =>
-			{
-				var config = Configuration;
-				var sectionNames = name.Split('/', StringSplitOptions.RemoveEmptyEntries);
-				if (sectionNames.Length > 1)
-				{
-					name = sectionNames.Last();
-					sectionNames = sectionNames.Take(sectionNames.Length - 1).ToArray();
-					foreach (var sectionName in sectionNames)
-					{
-						config = config.GetSection(sectionName);
-						if (config == null)
-							return null;
-					}
-				}
-				return config.GetValue<string>(name);
-			};
-		}
-
-		private string GetValue(string name)
-		{
-			return _GetValue(ConfigPrefix + name);
-		}
+		public static Func<string, string> _GetValue;
 
 #else // NETFRAMEWORK - .NET Framework...
 
-		private string GetValue(string name)
-{
-	if (_GetValue != null)
-		return _GetValue(ConfigPrefix + name);
-	return ConfigurationManager.AppSettings[ConfigPrefix + name];
-}
+		public static Func<string, string> _GetValue = (name)
+			=> ConfigurationManager.AppSettings[name];
 
 #endif
 

@@ -198,8 +198,9 @@
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
     <Compile Include="Data\UserMacro.cs" />
-    <Compile Include="JocysCom\Controls\BaseWithHeaderManager.cs" />
-    <Compile Include="JocysCom\Controls\IBaseWithHeaderControl.cs" />
+    <Compile Include="JocysCom\Controls\InfoControl.xaml.cs">
+      <DependentUpon>InfoControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="JocysCom\Controls\IssuesControl\IssuesControl.xaml.cs">
       <DependentUpon>IssuesControl.xaml</DependentUpon>
     </Compile>
@@ -207,6 +208,11 @@
     <Compile Include="JocysCom\Controls\MessageBoxWindow.xaml.cs">
       <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\ProgressBarControl.xaml.cs">
+      <DependentUpon>ProgressBarControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="JocysCom\Controls\ProgressEventArgs.cs" />
+    <Compile Include="JocysCom\Controls\ProgressStatus.cs" />
     <Compile Include="JocysCom\Controls\TabIndexConverter.cs" />
     <Compile Include="JocysCom\Controls\Themes\Icons.xaml.cs">
       <DependentUpon>Icons.xaml</DependentUpon>
@@ -302,7 +308,6 @@
     </Compile>
     <Compile Include="JocysCom\IO\DeviceInfo.cs" />
     <Compile Include="JocysCom\IO\FileFinder.cs" />
-    <Compile Include="JocysCom\IO\FileFinderEventArgs.cs" />
     <Compile Include="JocysCom\IO\HardwareControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -557,6 +562,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="JocysCom\Controls\InfoControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="JocysCom\Controls\IssuesControl\IssuesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -564,6 +573,10 @@
     <Page Include="JocysCom\Controls\MessageBoxWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="JocysCom\Controls\ProgressBarControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="JocysCom\Controls\Themes\Default.xaml">
       <Generator>MSBuild:Compile</Generator>

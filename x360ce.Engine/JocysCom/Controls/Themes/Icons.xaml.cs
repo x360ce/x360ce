@@ -13,7 +13,6 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		private static Icons _Current;
 
 		public const string Icon_Add = nameof(Icon_Add);
-		public const string Icon_ArrowCircle = nameof(Icon_ArrowCircle);
 		public const string Icon_Cancel = nameof(Icon_Cancel);
 		public const string Icon_Delete = nameof(Icon_Delete);
 		public const string Icon_Edit = nameof(Icon_Edit);
@@ -24,6 +23,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		public const string Icon_Ignore = nameof(Icon_Ignore);
 		public const string Icon_Import = nameof(Icon_Import);
 		public const string Icon_Information = nameof(Icon_Information);
+		public const string Icon_InformationGrey = nameof(Icon_InformationGrey);
 		public const string Icon_OK = nameof(Icon_OK);
 		public const string Icon_Play = nameof(Icon_Play);
 		public const string Icon_ProcessLeft = nameof(Icon_ProcessLeft);

@@ -1,5 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace x360ce.App.Controls
@@ -7,7 +6,7 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for BaseWithHeaderControl.xaml
 	/// </summary>
-	public partial class BaseWithHeaderControl : UserControl, IBaseWithHeaderControl<TaskName>
+	public partial class BaseWithHeaderControl : UserControl
 	{
 
 		public BaseWithHeaderControl()
@@ -15,13 +14,7 @@ namespace x360ce.App.Controls
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (IsDesignMode)
 				return;
-			defaultHead = HelpHeadLabel.Content as string;
-			defaultBody = HelpBodyLabel.Text;
-			_bwm = new BaseWithHeaderManager<TaskName>(HelpHeadLabel, HelpBodyLabel, LeftIcon, RightIcon, this);
 		}
-
-		BaseWithHeaderManager<TaskName> _bwm;
-
 
 		/// <summary>
 		/// Gets or sets additional content for the UserControl
@@ -36,51 +29,13 @@ namespace x360ce.App.Controls
 			DependencyProperty.Register(nameof(MainContent), typeof(object), typeof(BaseWithHeaderControl),
 			  new PropertyMetadata(null));
 
-		private readonly string defaultHead;
-		private readonly string defaultBody;
-
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
 
 		#region ■ IBaseWithHeaderControl
 
 		public Window Window => System.Windows.Window.GetWindow(this);
 
-		public void AddTask(TaskName name)
-			=> _bwm.AddTask(name);
-
-		public void RemoveTask(TaskName name)
-			=> _bwm.RemoveTask(name);
-		
-		public void SetTitle(string format, params object[] args)
-			=> _bwm.SetTitle(format, args);
-
-		public void SetHead(string format, params object[] args)
-			=> _bwm.SetHead(format, args);
-
-		public void SetBody(MessageBoxImage image, string format, params object[] args)
-			=> _bwm.SetBody(image, format, args);
-
-		public void SetBodyError(string format, params object[] args)
-			=> _bwm.SetBodyError(format, args);
-
-		public void SetBodyInfo(string format, params object[] args)
-			=> _bwm.SetBodyInfo(format, args);
-
 		#endregion
-
-		object _Image;
-
-		public void SetImage(string resource)
-		{
-			_Image = App.GetResource(resource);
-			RightIcon.Content = _Image;
-		}
-
-		public void SetImage(Viewbox resource)
-		{
-			_Image = resource;
-			RightIcon.Content = _Image;
-		}
 
 		public void SetButton1(string text = null, string image = null)
 			=> SetButton(Button1, Button1Label, Button1Content, text, image);
@@ -119,7 +74,7 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			_bwm.Dispose();
+			InfoPanel.Dispose();
 		}
 	}
 }

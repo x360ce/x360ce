@@ -142,7 +142,9 @@ namespace JocysCom.ClassLibrary.Controls
 			control.Invalidate();
 		}
 
-		public static void RebindGrid<T>(DataGridView grid, object data, string primaryKeyPropertyName = null, bool selectFirst = true, List<T> selection = null)
+		#region Data Grid Functions
+
+		public static void RebindGrid<T>(DataGridView grid, object data, string keyPropertyName = null, bool selectFirst = true, List<T> selection = null)
 		{
 			if (grid == null)
 				throw new ArgumentNullException(nameof(grid));
@@ -154,38 +156,12 @@ namespace JocysCom.ClassLibrary.Controls
 					rowIndex = firsCell.RowIndex;
 			}
 			var sel = (selection == null)
-				? GetSelection<T>(grid, primaryKeyPropertyName)
+				? GetSelection<T>(grid, keyPropertyName)
 				: selection;
 			grid.DataSource = data;
 			if (rowIndex != 0 && rowIndex < grid.Rows.Count)
 				grid.FirstDisplayedScrollingRowIndex = rowIndex;
-			RestoreSelection(grid, primaryKeyPropertyName, sel, selectFirst);
-		}
-
-		public static string GetPrimaryKey(EntityObject eo)
-		{
-			if (eo == null)
-				throw new ArgumentNullException(nameof(eo));
-			// Try to select primary key name.
-			if (eo.EntityKey != null && eo.EntityKey.EntityKeyValues.Length > 0)
-			{
-				return eo.EntityKey.EntityKeyValues[0].Key;
-			}
-			// Try to find primary key by [EdmScalarPropertyAttribute] attribute.
-			var properties = eo.GetType().GetProperties();
-			foreach (var pi in properties)
-			{
-				var attributes = pi.GetCustomAttributes(true);
-				foreach (var attribute in attributes)
-				{
-					var ea = attribute as EdmScalarPropertyAttribute;
-					if (ea != null && ea.EntityKeyProperty)
-					{
-						return pi.Name;
-					}
-				}
-			}
-			return null;
+			RestoreSelection(grid, keyPropertyName, sel, selectFirst);
 		}
 
 		/// <summary>
@@ -194,7 +170,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <typeparam name="T">Type of Primary key.</typeparam>
 		/// <param name="grid">Grid for getting selection</param>
 		/// <param name="primaryKeyPropertyName">Primary key name.</param>
-		public static List<T> GetSelection<T>(DataGridView grid, string primaryKeyPropertyName = null)
+		public static List<T> GetSelection<T>(DataGridView grid, string keyPropertyName = null)
 		{
 			if (grid == null)
 				throw new ArgumentNullException(nameof(grid));
@@ -206,23 +182,16 @@ namespace JocysCom.ClassLibrary.Controls
 			// If nothing selected then return.
 			if (rows.Length == 0)
 				return list;
-			if (string.IsNullOrEmpty(primaryKeyPropertyName))
-			{
-				var item = rows.First().DataBoundItem;
-				var eo = item as EntityObject;
-				if (eo != null)
-					primaryKeyPropertyName = GetPrimaryKey(eo);
-			}
+			var pi = GetPropertyInfo(keyPropertyName, rows[0].DataBoundItem);
 			for (var i = 0; i < rows.Length; i++)
 			{
-				var item = rows[i].DataBoundItem;
-				var val = GetValue<T>(item, primaryKeyPropertyName);
-				list.Add(val);
+				var value = GetValue<T>(rows[i].DataBoundItem, keyPropertyName, pi);
+				list.Add(value);
 			}
 			return list;
 		}
 
-		public static void RestoreSelection<T>(DataGridView grid, string primaryKeyPropertyName, List<T> list, bool selectFirst = true)
+		public static void RestoreSelection<T>(DataGridView grid, string keyPropertyName, List<T> list, bool selectFirst = true)
 		{
 			if (grid == null)
 				throw new ArgumentNullException(nameof(grid));
@@ -235,13 +204,7 @@ namespace JocysCom.ClassLibrary.Controls
 			// If something to restore then...
 			if (list.Count > 0)
 			{
-				if (string.IsNullOrEmpty(primaryKeyPropertyName))
-				{
-					var item = rows.First().DataBoundItem;
-					var eo = item as EntityObject;
-					if (eo != null)
-						primaryKeyPropertyName = GetPrimaryKey(eo);
-				}
+				var pi = GetPropertyInfo(keyPropertyName, rows[0].DataBoundItem);
 				DataGridViewRow firstVisibleRow = null;
 				for (var i = 0; i < rows.Length; i++)
 				{
@@ -249,7 +212,7 @@ namespace JocysCom.ClassLibrary.Controls
 					if (firstVisibleRow == null && row.Visible)
 						firstVisibleRow = row;
 					var item = row.DataBoundItem;
-					var val = GetValue<T>(item, primaryKeyPropertyName);
+					var val = GetValue<T>(item, keyPropertyName, pi);
 					if (list.Contains(val) != row.Selected)
 					{
 						var selected = list.Contains(val);
@@ -263,32 +226,13 @@ namespace JocysCom.ClassLibrary.Controls
 			if (selectFirst && grid.SelectedRows.Count == 0)
 			{
 				var firstVisibleRow = rows.FirstOrDefault(x => x.Visible);
+				// Select first visible row.
 				if (firstVisibleRow != null)
-				{
-					// Select first visible row.
 					firstVisibleRow.Selected = true;
-				}
 			}
 		}
 
-		private static T GetValue<T>(object item, string dataPropertyName)
-		{
-			object val = null;
-			if (item is DataRowView)
-			{
-				var row = ((DataRowView)item).Row;
-				if (!row.IsNull(dataPropertyName))
-				{
-					val = (T)row[dataPropertyName];
-				}
-			}
-			else
-			{
-				var pi = item.GetType().GetProperty(dataPropertyName);
-				val = (T)pi.GetValue(item, null);
-			}
-			return (T)val;
-		}
+		#endregion
 
 		/// <summary>
 		/// Set form TopMost if one of the application forms is top most.

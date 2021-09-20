@@ -97,7 +97,7 @@ namespace x360ce.App
 			if (item == null)
 				return;
 			item.Try++;
-			Global._MainWindow.MainPanel._bwm.AddTask(TaskName.CloudCommand);
+			Global.HMan.AddTask(TaskName.CloudCommand);
 			Exception error = null;
 			try
 			{
@@ -160,7 +160,7 @@ namespace x360ce.App
 			{
 				error = ex;
 			}
-			Global._MainWindow.MainPanel._bwm.RemoveTask(TaskName.CloudCommand);
+			Global.HMan.RemoveTask(TaskName.CloudCommand);
 			var success = error == null;
 			item.Error = error;
 			item.State = success ? CloudState.Done : CloudState.Error;
@@ -205,18 +205,18 @@ namespace x360ce.App
 						Global._MainWindow.UserProgramsPanel.ListPanel.ImportAndBindItems(result.UserGames);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
-								Global._MainWindow.MainPanel._bwm.SetBodyError(result.ErrorMessage);
+								Global.HMan.SetBodyError(result.ErrorMessage);
 							else
-								Global._MainWindow.MainPanel._bwm.SetBodyInfo(result.ErrorMessage);
+								Global.HMan.SetBodyInfo(result.ErrorMessage);
 					}
 					if (result.UserDevices != null)
 					{
 						Global._MainWindow.MainBodyPanel.DevicesPanel.ImportAndBindItems(result.UserDevices);
 						if (!string.IsNullOrEmpty(result.ErrorMessage))
 							if (result.ErrorCode != 0)
-								Global._MainWindow.MainPanel._bwm.SetBodyError(result.ErrorMessage);
+								Global.HMan.SetBodyError(result.ErrorMessage);
 							else
-								Global._MainWindow.MainPanel._bwm.SetBodyInfo(result.ErrorMessage);
+								Global.HMan.SetBodyInfo(result.ErrorMessage);
 					}
 					break;
 				case CloudAction.CheckUpdates:

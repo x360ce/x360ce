@@ -49,7 +49,7 @@ namespace x360ce.App.Controls
 
 		public void RefreshData()
 		{
-			_ParentControl.AddTask(TaskName.SearchSummaries);
+			_ParentControl.InfoPanel.AddTask(TaskName.SearchSummaries);
 			RefreshButton.IsEnabled = false;
 			var sp = new List<SearchParameter>();
 			FillSearchParameterWithProducts(sp);
@@ -94,11 +94,11 @@ namespace x360ce.App.Controls
 				var error = e.Error.Message;
 				if (e.Error.InnerException != null)
 					error += "\r\n" + e.Error.InnerException.Message;
-				_ParentControl.SetBodyError(error);
+				_ParentControl.InfoPanel.SetBodyError(error);
 			}
 			else if (e.Result == null)
 			{
-				_ParentControl.SetBodyInfo("No default settings received.");
+				_ParentControl.InfoPanel.SetBodyInfo("No default settings received.");
 			}
 			else
 			{
@@ -107,13 +107,13 @@ namespace x360ce.App.Controls
 				var padSettingsCount = result.PadSettings?.Length ?? 0;
 				if (summariesCount == 0)
 				{
-					_ParentControl.SetBodyInfo("0 default settings received.");
+					_ParentControl.InfoPanel.SetBodyInfo("0 default settings received.");
 				}
 				else
 				{
 					if (padSettingsCount == 0)
 					{
-						_ParentControl.SetBodyError("Error: {0} default settings received, but no PAD settings.", summariesCount);
+						_ParentControl.InfoPanel.SetBodyError("Error: {0} default settings received, but no PAD settings.", summariesCount);
 					}
 					else
 					{
@@ -123,11 +123,11 @@ namespace x360ce.App.Controls
 						// Update pad settings.
 						SettingsManager.Current.UpsertPadSettings(result.PadSettings);
 						SettingsManager.Current.CleanupPadSettings();
-						_ParentControl.SetBodyInfo("{0} default settings and {1} PAD settings received.", summariesCount, padSettingsCount);
+						_ParentControl.InfoPanel.SetBodyInfo("{0} default settings and {1} PAD settings received.", summariesCount, padSettingsCount);
 					}
 				}
 			}
-			_ParentControl.RemoveTask(TaskName.SearchSummaries);
+			_ParentControl.InfoPanel.RemoveTask(TaskName.SearchSummaries);
 			RefreshButton.IsEnabled = true;
 		}
 

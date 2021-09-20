@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +9,7 @@ namespace JocysCom.ClassLibrary.IO
 	public class FileFinder
 	{
 
-		public event EventHandler<FileFinderEventArgs> FileFound;
+		public event EventHandler<ProgressEventArgs> FileFound;
 
 		int _DirectoryIndex;
 		List<DirectoryInfo> _Directories;
@@ -74,16 +75,23 @@ namespace JocysCom.ClassLibrary.IO
 						{
 							fileList.Add(files[i]);
 							var ev = FileFound;
-
-							if (ev != null)
-							{
-								var e = new FileFinderEventArgs();
-								e.Directories = _Directories;
-								e.DirectoryIndex = _DirectoryIndex;
-								e.FileIndex = fileList.Count - 1;
-								e.Files = fileList;
-								ev(this, e);
-							}
+							if (ev == null)
+								continue;
+							// Report progress.
+							var e = new ProgressEventArgs();
+							e.TopIndex = _DirectoryIndex;
+							e.TopCount = _Directories.Count;
+							e.TopData = _Directories;
+							e.SubIndex = fileList.Count - 1;
+							e.SubCount = 0;
+							e.SubData = fileList;
+							e.State = ProgressStatus.Updated;
+							e.TopMessage = $"Scan Folder: {_Directories[e.TopIndex].FullName}";
+							var file = fileList[e.SubIndex];
+							var name = file.Name;
+							var size = BytesToString(file.Length);
+							e.SubMessage = $"File: {name} ({size})";
+							ev(this, e);
 						}
 					}
 				}
@@ -117,6 +125,20 @@ namespace JocysCom.ClassLibrary.IO
 			}
 
 		}
+
+		static string SizeToString(long value, string format = "{0:0.##} {1}", int newBase = 1000)
+		{
+			// Suffixes: Kilo, Mega, Giga, Tera, Peta, Exa.
+			string[] suffix = { "", "K", "M", "G", "T", "P", "E" };
+			var absolute = Math.Abs(value);
+			var index = (int)Math.Floor(Math.Log(absolute, newBase));
+			var number = Math.Round(absolute / Math.Pow(newBase, index), 1);
+			var signed = Math.Sign(value) * number;
+			return string.Format(format, signed, suffix[index]);
+		}
+
+		public static string BytesToString(long value)
+			=> SizeToString(value, "{0:#,##0} {1}B", 1024);
 
 	}
 }

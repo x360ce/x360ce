@@ -44,44 +44,6 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_ArrowCircle"
-		x:Shared="False"
-		Stretch="Uniform">
-		<Canvas Width="512" Height="512">
-			<Canvas.RenderTransform>
-				<TranslateTransform X="0" Y="0" />
-			</Canvas.RenderTransform>
-			<Canvas.Resources>
-				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" StartPoint="48,0" EndPoint="349,380">
-					<LinearGradientBrush.GradientStops>
-						<GradientStopCollection>
-							<GradientStop Offset="0" Color="#129EEE" />
-							<GradientStop Offset="1" Color="#0E76B2" />
-						</GradientStopCollection>
-					</LinearGradientBrush.GradientStops>
-				</LinearGradientBrush>
-			</Canvas.Resources>
-			<!--  Unknown tag: metadata  -->
-			<!--  Unknown tag: sodipodi:namedview  -->
-			<Canvas>
-				<Path
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					Fill="{StaticResource color-1}"
-					StrokeDashArray=""
-					StrokeEndLineCap="Flat"
-					StrokeLineJoin="Miter"
-					StrokeMiterLimit="10"
-					StrokeStartLineCap="Flat"
-					StrokeThickness="1">
-					<Path.Data>
-						<PathGeometry Figures="M256 0l112 112l-112 112l0 -80c-40 0 -76 16 -102 42c-26 26 -42 62 -42 102c0 40 16 76 42 102c26 26 62 42 102 42c40 0 76 -16 102 -42c26 -26 42 -62 42 -102c0 -40 -16 -76 -42 -102c-3.5 -3 -6.5 -6 -10 -9l45.5 -45c3 3 6.5 6 9.5 9c37.5 37.5 61 89.5 61 147c0 57.5 -23.5 109.5 -61 147c-37.5 37.5 -89.5 61 -147 61c-57.5 0 -109.5 -23.5 -147 -61c-37.5 -37.5 -61 -89.5 -61 -147c0 -57.5 23.5 -109.5 61 -147c37.5 -37.5 89.5 -61 147 -61z" FillRule="EvenOdd" />
-					</Path.Data>
-				</Path>
-			</Canvas>
-		</Canvas>
-	</Viewbox>
-	<Viewbox
-		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		x:Key="Icon_Cancel"
 		x:Shared="False"
 		Stretch="Uniform">
@@ -876,6 +838,53 @@
 					StrokeThickness="1">
 					<Path.Data>
 						<PathGeometry Figures="M291 411l-69 0l0 -220l69 0z M218 134.5c0 -10 3.5 -18 10.5 -24.5c7 -6 16 -9 27.5 -9c11.5 0 20.5 3 27.5 9c7 6.5 10.5 14.5 10.5 24.5c0 9.5 -3.5 17.5 -10.5 24c-7 6 -16 9.5 -27.5 9.5c-11.5 0 -20.5 -3.5 -27.5 -9.5c-7 -6.5 -10.5 -14.5 -10.5 -24z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+			</Canvas>
+		</Canvas>
+	</Viewbox>
+	<Viewbox
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		x:Key="Icon_InformationGrey"
+		x:Shared="False"
+		Stretch="Uniform">
+		<Canvas Width="512" Height="512">
+			<Canvas.RenderTransform>
+				<TranslateTransform X="0" Y="0" />
+			</Canvas.RenderTransform>
+			<Canvas.Resources>
+				<RadialGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="_Radial1" Center="0,0" MappingMode="Absolute" RadiusX="1" RadiusY="1">
+					<RadialGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#FFffffff" />
+							<GradientStop Offset="0.46" Color="#FFffffff" />
+							<GradientStop Offset="1" Color="#FFD8E0E8" />
+						</GradientStopCollection>
+					</RadialGradientBrush.GradientStops>
+					<RadialGradientBrush.Transform>
+						<MatrixTransform Matrix="276.243 0 0 276.243 259.075 373.95" />
+					</RadialGradientBrush.Transform>
+				</RadialGradientBrush>
+			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
+			<!--  Unknown tag: sodipodi:namedview  -->
+			<Canvas>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="#A0A0A0"
+					StrokeLineJoin="Round"
+					StrokeMiterLimit="2">
+					<Path.Data>
+						<PathGeometry Figures="M256 16C388.5 16 496 123.5 496 256C496 388.5 388.5 496 256 496C123.5 496 16 388.5 16 256C16 123.5 123.5 16 256 16Z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource _Radial1}"
+					StrokeLineJoin="Round"
+					StrokeMiterLimit="2">
+					<Path.Data>
+						<PathGeometry Figures="M291 411L222 411L222 191L291 191L291 411ZM218 134.5C218 124.5 221.5 116.5 228.5 110C235.5 104 244.5 101 256 101C267.5 101 276.5 104 283.5 110C290.5 116.5 294 124.5 294 134.5C294 144 290.5 152 283.5 158.5C276.5 164.5 267.5 168 256 168C244.5 168 235.5 164.5 228.5 158.5C221.5 152 218 144 218 134.5Z" FillRule="EvenOdd" />
 					</Path.Data>
 				</Path>
 			</Canvas>

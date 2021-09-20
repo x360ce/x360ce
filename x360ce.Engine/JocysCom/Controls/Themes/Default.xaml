@@ -27,6 +27,106 @@
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 	</Style>
 
+	<!--  GridSplitter  -->
+
+	<Style x:Key="GridSplitterHorizontal" TargetType="GridSplitter">
+		<Setter Property="Padding" Value="0,0,0,0" />
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="VerticalAlignment" Value="Stretch" />
+		<Setter Property="ResizeBehavior" Value="PreviousAndNext" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type GridSplitter}">
+					<Grid>
+						<StackPanel Margin="3" VerticalAlignment="Center" Orientation="Vertical">
+							<StackPanel.LayoutTransform>
+								<RotateTransform Angle="0" />
+							</StackPanel.LayoutTransform>
+							<Canvas Width="28" Height="3">
+								<Ellipse
+									Canvas.Left="0"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+								<Ellipse
+									Canvas.Left="6"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+								<Ellipse
+									Canvas.Left="12"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+								<Ellipse
+									Canvas.Left="18"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+								<Ellipse
+									Canvas.Left="24"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+							</Canvas>
+						</StackPanel>
+						<StackPanel Height="1" VerticalAlignment="Top" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+						<StackPanel Height="1" VerticalAlignment="Bottom" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="GridSplitterVertical" TargetType="GridSplitter">
+		<Setter Property="Padding" Value="0,0,0,0" />
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="VerticalAlignment" Value="Stretch" />
+		<Setter Property="ResizeBehavior" Value="PreviousAndNext" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type GridSplitter}">
+					<Grid>
+						<StackPanel Margin="3" VerticalAlignment="Center" Orientation="Vertical">
+							<StackPanel.LayoutTransform>
+								<RotateTransform Angle="90" />
+							</StackPanel.LayoutTransform>
+							<Canvas Width="28" Height="3">
+								<Ellipse
+									Canvas.Left="0"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+								<Ellipse
+									Canvas.Left="6"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+								<Ellipse
+									Canvas.Left="12"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+								<Ellipse
+									Canvas.Left="18"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+								<Ellipse
+									Canvas.Left="24"
+									Width="3"
+									Height="3"
+									Fill="LightGray" />
+							</Canvas>
+						</StackPanel>
+						<StackPanel Width="1" HorizontalAlignment="Left" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+						<StackPanel Width="1" HorizontalAlignment="Right" Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<!--  DockPanel  -->
 	<!--
 
@@ -388,7 +488,7 @@
 	<!--  ContentControl  -->
 
 	<Style x:Key="ButtonContentControl" TargetType="ContentControl">
-		<Setter Property="Margin" Value="0,0,0,0" />
+		<Setter Property="Margin" Value="0,2,0,2" />
 		<Setter Property="Padding" Value="0,0,0,0" />
 		<Setter Property="Width" Value="16" />
 		<Setter Property="Height" Value="16" />
