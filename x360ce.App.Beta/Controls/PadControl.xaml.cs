@@ -575,7 +575,7 @@ namespace x360ce.App.Controls
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			// Cleanup references which prevents disposal.
-			Global.UpdateControlFromStates -= Global_UpdateControlFromStates; 
+			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			SettingsManager.Current.SettingChanged -= Current_SettingChanged;
 			CurrentPadSetting.PropertyChanged -= CurrentPadSetting_PropertyChanged;
 			PadListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
@@ -583,7 +583,8 @@ namespace x360ce.App.Controls
 			XboxImage.StopRecording = null;
 			RecordAllMaps.Clear();
 			imageInfos.Clear();
-			_Imager.Dispose();
+			_Imager?.Dispose();
+			_Imager = null;
 			_CurrentUserSetting = null;
 			_CurrentUserDevice = null;
 		}

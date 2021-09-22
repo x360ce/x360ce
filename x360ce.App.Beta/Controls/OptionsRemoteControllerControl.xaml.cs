@@ -16,7 +16,6 @@ namespace x360ce.App.Controls
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			LoadSettings();
-
 		}
 
 		void LoadSettings()
@@ -49,6 +48,7 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			SettingsManager.UnLoadMonitor(RemoteEnabledCheckBox);
 			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
 		}
 	}

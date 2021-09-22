@@ -28,6 +28,13 @@ namespace x360ce.App.Controls
 			RefreshStatus();
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			Global._MainWindow.MainBodyPanel.MainTabControl.SelectionChanged -= MainTabControl_SelectionChanged;
+			Global._MainWindow.OptionsPanel.MainTabControl.SelectionChanged -= MainTabControl_SelectionChanged;
+			SettingsManager.UnLoadMonitor(HidGuardianConfigureAutomaticallyCheckBox);
+		}
+
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var window = Global._MainWindow;

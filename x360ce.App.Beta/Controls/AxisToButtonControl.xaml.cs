@@ -185,9 +185,7 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-
-			controlsLink.ValueChanged -= controlsLink_ValueChanged;
-			controlsLink.Dispose();
+			controlsLink?.Dispose();
 			controlsLink = null;
 			arrowDisabledImage = null;
 		}

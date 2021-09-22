@@ -58,9 +58,6 @@ namespace x360ce.App.Controls
 			deadzoneLink.Dispose();
 			offsetLink.Dispose();
 			testLink.Dispose();
-			deadzoneLink = null;
-			offsetLink = null;
-			testLink = null;
 			// fill direction values.
 			SetBinding(null, 0);
 		}

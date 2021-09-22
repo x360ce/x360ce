@@ -202,6 +202,7 @@ namespace x360ce.App
 				Array.Clear(PadControls, 0, 4);
 				Array.Clear(PadIcons, 0, 4);
 				Array.Clear(PadColors, 0, 4);
+				MainTabControl.Items.Clear();
 			}
 			// Free native resources.
 		}

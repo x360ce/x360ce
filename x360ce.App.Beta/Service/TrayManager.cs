@@ -201,10 +201,17 @@ namespace x360ce.App.Service
 			// Finally show window.
 			SetWindow(w);
 			w.Show();
+			// Closed will be executed first.
 			w.Closed += (sender, e) =>
 			{
 				SetWindow(null);
 				Application.Current.MainWindow = null;
+			};
+			// Unloaded will be executed after 'Closed' event.
+			w.Unloaded += (sender, e) =>
+			{
+				// Global._MainWindow will be used by other controls to detach events,
+				// therefore destroy reference by setting to null inside unloaded event.
 				Global._MainWindow = null;
 			};
 			//if (activate)

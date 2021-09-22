@@ -39,6 +39,19 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(o, nameof(o.GetProgramsIncludeEnabled), GetProgramsIncludeEnabledCheckBox, null, es2b);
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
+			SettingsManager.UnLoadMonitor(GetProgramsMinInstancesUpDown);
+			SettingsManager.UnLoadMonitor(InternetAutoLoadCheckBox);
+			SettingsManager.UnLoadMonitor(InternetAutoSaveCheckBox);
+			SettingsManager.UnLoadMonitor(InternetFeaturesCheckBox);
+			SettingsManager.UnLoadMonitor(CheckForUpdatesCheckBox);
+			SettingsManager.UnLoadMonitor(InternetDatabaseUrlComboBox);
+			SettingsManager.UnLoadMonitor(GetProgramsIncludeEnabledCheckBox);
+			InternetDatabaseUrlComboBox.ItemsSource = null;
+		}
+
 		public void LoadSettings()
 		{
 			// Load XML settings into control.
@@ -141,9 +154,5 @@ namespace x360ce.App.Controls
 			OpenWebWindow("Reset Login", navigateUrl);
 		}
 
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
-		}
 	}
 }

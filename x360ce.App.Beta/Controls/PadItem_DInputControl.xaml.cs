@@ -501,11 +501,11 @@ namespace x360ce.App.Controls
 			DiAxisDataGridView.ItemsSource = null;
 			DiSlidersDataGridView.ItemsSource = null;
 			DiPOVsDataGridView.ItemsSource = null;
-			DiEffectsTable.Clear();
-			DiButtonsTable.Clear();
-			DiAxisTable.Clear();
-			DiSlidersTable.Clear();
-			DiPOVsTable.Clear();
+			DiEffectsTable?.Clear();
+			DiButtonsTable?.Clear();
+			DiAxisTable?.Clear();
+			DiSlidersTable?.Clear();
+			DiPOVsTable?.Clear();
 			DiEffectsTable = null;
 			DiButtonsTable = null;
 			DiAxisTable = null;

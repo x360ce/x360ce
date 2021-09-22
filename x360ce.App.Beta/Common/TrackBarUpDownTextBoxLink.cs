@@ -15,6 +15,8 @@ namespace x360ce.App
 
 		public TrackBarUpDownTextBoxLink(Slider trackBar, IntegerUpDown numericUpDown, TextBox textBox, int minValue, int maxValue)
 		{
+			eventsLock = new object();
+			PercentFormat = "{0:0} % ";
 			// Slider will be mapped as main settings control.
 			_TrackBar = trackBar;
 			_TrackBar.Minimum = minValue;
@@ -28,15 +30,16 @@ namespace x360ce.App
 			UpdateValue();
 			_NumericUpDown.ValueChanged += _NumericUpDown_ValueChanged;
 			_TrackBar.ValueChanged += _TrackBar_ValueChanged;
+
 		}
 
 		public event EventHandler<EventArgs> ValueChanged;
-		Slider _TrackBar;
-		IntegerUpDown _NumericUpDown;
-		TextBox _TextBox;
-		object eventsLock = new object();
+		private Slider _TrackBar;
+		private IntegerUpDown _NumericUpDown;
+		private TextBox _TextBox;
+		private object eventsLock;
 
-		void _TrackBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+		private void _TrackBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (IsDisposing)
 				return;
@@ -44,9 +47,9 @@ namespace x360ce.App
 			ValueChanged?.Invoke(this, EventArgs.Empty);
 		}
 
-		public string PercentFormat = "{0:0} % ";
+		public string PercentFormat;
 
-		void UpdateValue()
+		private void UpdateValue()
 		{
 			lock (eventsLock)
 			{
@@ -61,7 +64,7 @@ namespace x360ce.App
 			}
 		}
 
-		void _NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		private void _NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
 		{
 			lock (eventsLock)
 			{
@@ -71,7 +74,7 @@ namespace x360ce.App
 				var sourceValue = (float)(_NumericUpDown.Value ?? 0);
 				var value = (double)ConvertHelper.ConvertRangeF((float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, (float)_TrackBar.Minimum, (float)_TrackBar.Maximum, sourceValue);
 				if (_TrackBar.Value != value)
-					_TrackBar.Value = value ;
+					_TrackBar.Value = value;
 				_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 				// Set percent.
 				var minPercent = (_NumericUpDown.Minimum ?? 0) < 0 ? -100F : 0f;
@@ -87,29 +90,40 @@ namespace x360ce.App
 
 		#region ■ IDisposable
 
+		// To detect redundant calls
+		private bool _disposed = false;
+
+		// Public implementation of Dispose pattern callable by consumers.
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
-		bool IsDisposing;
+		~TrackBarUpDownTextBoxLink()
+			=> Dispose(false);
+
+		private bool IsDisposing;
 
 		protected virtual void Dispose(bool disposing)
 		{
+			if (_disposed)
+				return;
 			if (disposing)
 			{
-				IsDisposing = true;
 				// Free managed resources.
-				lock (eventsLock)
-				{
-					_TrackBar.ValueChanged -= _TrackBar_ValueChanged;
-					_NumericUpDown.ValueChanged -= _NumericUpDown_ValueChanged;
-					_TrackBar = null;
-					_NumericUpDown = null;
-					_TextBox = null;
-				}
+				IsDisposing = true;
+				_TrackBar.ValueChanged -= _TrackBar_ValueChanged;
+				_NumericUpDown.ValueChanged -= _NumericUpDown_ValueChanged;
+				_TrackBar = null;
+				_NumericUpDown = null;
+				_TextBox = null;
+				ValueChanged = null;
+				eventsLock = null;
+				PercentFormat = null;
 			}
+			// Free unmanaged resources.
+			_disposed = true;
 		}
 
 		#endregion
