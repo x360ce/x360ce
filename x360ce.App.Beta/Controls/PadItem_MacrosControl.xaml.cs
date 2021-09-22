@@ -270,7 +270,7 @@ namespace x360ce.App.Controls
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			MainDataGrid.ItemsSource = null;
 			// Dispose managed resources.
-			_Recorder.Dispose();
+			_Recorder?.Dispose();
 		}
 	}
 }

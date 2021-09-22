@@ -70,7 +70,6 @@
 				</ToolBar>
 			</ToolBarPanel>
 		</DockPanel>
-
 		<local:MainBodyControl x:Name="MainBodyPanel" Grid.Row="2" Margin="3,3,3,3" />
 		<StatusBar Grid.Row="3" HorizontalAlignment="Left">
 			<StatusBarItem>

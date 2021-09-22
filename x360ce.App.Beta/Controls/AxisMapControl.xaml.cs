@@ -86,33 +86,6 @@ namespace x360ce.App.Controls
 				TargetType == TargetType.RightThumbX ||
 				TargetType == TargetType.RightThumbY;
 
-		//Image LastBackgroundImage = null;
-
-		/// <summary> 
-		/// Clean up any resources being used.
-		/// </summary>
-		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				if (deadzoneLink != null)
-					deadzoneLink.Dispose();
-				if (antiDeadzoneLink != null)
-					antiDeadzoneLink.Dispose();
-				if (linearLink != null)
-					linearLink.Dispose();
-				if (updateTimer != null)
-					updateTimer.Dispose();
-			}
-		}
-
-		private void ThumbUserControl_EnabledChanged(object sender, EventArgs e)
-		{
-			//MainPictureBox.Image = IsEnabled ? LastBackgroundImage : null;
-			//MainPictureBox.BackColor = Enabled ? System.Drawing.Color.White : System.Drawing.SystemColors.Control;
-		}
-
 		// Half and Invert values are only in creating XInput path - red line.
 		private bool _invert;
 		private bool _half;
@@ -384,7 +357,11 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			updateTimer.Elapsed -= UpdateTimer_Elapsed;
+			if (updateTimer != null)
+			{
+				updateTimer.Elapsed -= UpdateTimer_Elapsed;
+				updateTimer.Dispose();
+			}
 			SetBinding(null);
 			deadzoneLink?.Dispose();
 			deadzoneLink = null;
@@ -392,8 +369,6 @@ namespace x360ce.App.Controls
 			antiDeadzoneLink = null;
 			linearLink?.Dispose();
 			linearLink = null;
-			UpdateTimerReset();
-
 		}
 	}
 }

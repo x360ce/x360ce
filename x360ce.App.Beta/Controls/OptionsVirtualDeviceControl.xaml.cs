@@ -33,8 +33,13 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			Global._MainWindow.MainBodyPanel.MainTabControl.SelectionChanged -= MainTabControl_SelectionChanged;
-			Global._MainWindow.OptionsPanel.MainTabControl.SelectionChanged -= MainTabControl_SelectionChanged;
+			TabControl tc;
+			tc = Global._MainWindow?.MainBodyPanel?.MainTabControl;
+			if (tc != null)
+				tc.SelectionChanged -= MainTabControl_SelectionChanged;
+			tc = Global._MainWindow?.OptionsPanel?.MainTabControl;
+			if (tc != null)
+				tc.SelectionChanged -= MainTabControl_SelectionChanged;
 			SettingsManager.UnLoadMonitor(PollingRateComboBox);
 			PollingRateComboBox.ItemsSource = null;
 		}
