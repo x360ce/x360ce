@@ -345,7 +345,7 @@ namespace x360ce.App
 			if (items.Count == 0)
 			{
 				var o = new Options();
-				OptionsData.Items.Add(o);
+				items.Add(o);
 			}
 			// Set missing values to defaults.
 			items[0].InitializeDefaults();
