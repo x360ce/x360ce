@@ -142,7 +142,6 @@ namespace x360ce.App
 			GameToCustomizeComboBox.SelectedItem = SettingsManager.CurrentGame;
 			// Enabled event handler.
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
-
 		}
 
 		private void GameToCustomizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -192,6 +191,7 @@ namespace x360ce.App
 			// Cleanup references which prevents disposal.
 			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
+			GameToCustomizeComboBox.SelectionChanged -= GameToCustomizeComboBox_SelectionChanged;
 			GameToCustomizeComboBox.SelectedItem = null;
 			GameToCustomizeComboBox.ItemsSource = null;
 			Global.HMan?.Dispose();

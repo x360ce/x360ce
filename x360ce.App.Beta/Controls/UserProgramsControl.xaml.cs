@@ -27,7 +27,9 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			ListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
 			ListPanel.MainDataGrid.ItemsSource = null;
+			ItemPanel.CurrentItem = null;
 		}
 	}
 }

@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace x360ce.App
+﻿namespace x360ce.App
 {
 	public enum UpdateFrequency: int
 	{
