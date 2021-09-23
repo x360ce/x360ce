@@ -155,5 +155,11 @@ namespace x360ce.App
 
 		#endregion
 
+		// Game control monitors this event, when user wants to add new game.
+		public static event EventHandler AddGameRequest;
+
+		public static void OnAddGame(object sender)
+			=> AddGameRequest?.Invoke(sender, EventArgs.Empty);
+
 	}
 }

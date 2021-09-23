@@ -2,7 +2,6 @@
 using SharpDX.XInput;
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using x360ce.App.Controls;
@@ -175,9 +174,7 @@ namespace x360ce.App
 		/// </summary>
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
 		{
-			var changed = false;
-			changed |= SettingsManager.Current.ApplyAllSettingsToXML();
-			//changed |= SettingsManager.Current.WriteSettingToIni(changedControl);
+			var changed = SettingsManager.Current.ApplyAllSettingsToXML();
 			// If settings changed then...
 			if (changed)
 			{
@@ -379,45 +376,6 @@ namespace x360ce.App
 			}
 			// Logical delay without blocking the current thread.
 			System.Threading.Tasks.Task.Delay(100).Wait();
-			var tmp = new FileInfo(SettingsManager.TmpFileName);
-			var ini = new FileInfo(SettingsManager.IniFileName);
-			if (tmp.Exists && ini.Exists)
-			{
-				// Before renaming file check for changes.
-				var changed = false;
-				if (tmp.Length != ini.Length)
-				{ changed = true; }
-				else
-				{
-					var tmpChecksum = EngineHelper.GetFileChecksum(tmp.FullName);
-					var iniChecksum = EngineHelper.GetFileChecksum(ini.FullName);
-					changed = !tmpChecksum.Equals(iniChecksum);
-				}
-				if (changed)
-				{
-					var form = new MessageBoxWindow();
-					var result = form.ShowDialog(
-					"Do you want to save changes you made to configuration?",
-					"Save Changes?",
-					System.Windows.MessageBoxButton.YesNoCancel, System.Windows.MessageBoxImage.Exclamation, System.Windows.MessageBoxResult.Yes);
-					if (result == System.Windows.MessageBoxResult.Yes)
-					{
-						// Do nothing since INI contains latest updates.
-					}
-					else if (result == System.Windows.MessageBoxResult.No)
-					{
-						// Rename temp to INI.
-						tmp.CopyTo(SettingsManager.IniFileName, true);
-					}
-					else if (result == System.Windows.MessageBoxResult.Cancel)
-					{
-						e.Cancel = true;
-						return;
-					}
-				}
-				// delete temp.
-				tmp.Delete();
-			}
 			SettingsManager.SaveAll();
 			AppHelper.UnInitializeHidGuardian();
 		}
@@ -481,8 +439,6 @@ namespace x360ce.App
 
 		private void UpdateForm2()
 		{
-			CheckEncoding(SettingsManager.TmpFileName);
-			CheckEncoding(SettingsManager.IniFileName);
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
 			// Load PAD controls.
@@ -554,23 +510,6 @@ namespace x360ce.App
 			//if (tab != null)
 			//	SetHead(tab.);
 		}
-
-		#region ■ Check Files
-
-		private void CheckEncoding(string path)
-		{
-			if (!File.Exists(path))
-				return;
-			var sr = new StreamReader(path, true);
-			var content = sr.ReadToEnd();
-			sr.Close();
-			if (sr.CurrentEncoding != System.Text.Encoding.Unicode)
-			{
-				File.WriteAllText(path, content, System.Text.Encoding.Unicode);
-			}
-		}
-
-		#endregion
 
 		#region ■ Issues Panel
 

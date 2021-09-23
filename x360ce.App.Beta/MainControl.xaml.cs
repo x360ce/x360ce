@@ -40,13 +40,7 @@ namespace x360ce.App
 		private Forms.DebugWindow DebugPanel;
 
 		private void AddGameButton_Click(object sender, RoutedEventArgs e)
-		{
-			ControlsHelper.BeginInvoke(() =>
-			{
-				MainBodyPanel.MainTabControl.SelectedItem = MainBodyPanel.GamesTabPage;
-				MainBodyPanel.GamesPanel.ListPanel.AddNewGame();
-			});
-		}
+			=> Global.OnAddGame(this);
 
 		private void SaveAllButton_Click(object sender, RoutedEventArgs e)
 		{

@@ -12,7 +12,7 @@ namespace x360ce.App
 	/// <summary>
 	/// Interaction logic for MainBodyControl.xaml
 	/// </summary>
-	public partial class MainBodyControl : UserControl, IDisposable
+	public partial class MainBodyControl : UserControl
 	{
 		public MainBodyControl()
 		{
@@ -108,7 +108,6 @@ namespace x360ce.App
 
 		#endregion
 
-
 		#region ■ Issue Icon Timer
 
 		public System.Timers.Timer IssueIconTimer;
@@ -190,30 +189,31 @@ namespace x360ce.App
 				SetIconColor(i, image);
 			}
 		}
-
-		#region ■ IDisposable
-
-		protected virtual void Dispose(bool disposing)
+		private void Global_AddGameRequest(object sender, EventArgs e)
 		{
-			if (disposing)
+			ControlsHelper.BeginInvoke(() =>
 			{
-				// Dispose managed resources.
-				Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
-				Array.Clear(PadControls, 0, 4);
-				Array.Clear(PadIcons, 0, 4);
-				Array.Clear(PadColors, 0, 4);
-				MainTabControl.Items.Clear();
-			}
-			// Free native resources.
+				MainTabControl.SelectedItem = GamesTabPage;
+				GamesPanel.ListPanel.AddNewGame();
+			});
 		}
 
-		public void Dispose()
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
+			Global.AddGameRequest += Global_AddGameRequest;
+
 		}
 
-		#endregion
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			Global.AddGameRequest -= Global_AddGameRequest;
+			// Dispose managed resources.
+			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
+			Array.Clear(PadControls, 0, 4);
+			Array.Clear(PadIcons, 0, 4);
+			Array.Clear(PadColors, 0, 4);
+			MainTabControl.Items.Clear();
+		}
 
 	}
 }

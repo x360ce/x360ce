@@ -33,6 +33,24 @@ namespace x360ce.App
 
 		public static event PropertyChangedEventHandler CurrentGame_PropertyChanged;
 
+		/// <summary>
+		/// Apply all settings to XML.
+		/// </summary>
+		public bool ApplyAllSettingsToXML()
+		{
+			var padControls = Global._MainWindow.MainPanel.MainBodyPanel.PadControls;
+			for (int i = 0; i < padControls.Length; i++)
+			{
+				// Get pad control with settings.
+				var padControl = Global._MainWindow.MainPanel.MainBodyPanel.PadControls[i];
+				var setting = padControl.CurrentUserSetting;
+				// Skip if not selected.
+				if (setting == null)
+					continue;
+				SavePadSetting(setting, padControl.CurrentPadSetting);
+			}
+			return true;
+		}
 		public static void UpdateCurrentGame(UserGame game)
 		{
 			lock (CurrentGameLock)
@@ -431,9 +449,6 @@ namespace x360ce.App
 		#region ■ Static Version
 
 		#region ■ Constants
-
-		public const string IniFileName = "x360ce.ini";
-		public const string TmpFileName = "x360ce.tmp";
 
 		public const string MappingsSection = "Mappings";
 		public const string OptionsSection = "Options";

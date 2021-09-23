@@ -7,6 +7,8 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="700"
+	Loaded="UserControl_Loaded"
+	Unloaded="UserControl_Unloaded"
 	d:DesignWidth="800"
 	mc:Ignorable="d">
 	<TabControl Name="MainTabControl">
