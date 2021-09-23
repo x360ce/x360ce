@@ -64,7 +64,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			CheckAll();
 			// Update list will affect Warnings list, which is bound to MainDataGrid on UI,
 			// therefore use Invoke to make sure that it runs on the same thread as UI.
-			ControlsHelper.Invoke(() => {
+			ControlsHelper.Invoke(() =>
+			{
 				UpdateDisplayedList();
 			});
 		}
@@ -338,28 +339,37 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			IsDisposing = true;
-			if (TasksTimer != null)
-				TasksTimer.Dispose();
 			// Clear list.
-			var items = IssueList.ToArray();
-			IssueList.Clear();
-			// Remove events.
-			foreach (var item in items)
+			var items = IssueList?.ToArray();
+			IssueList?.Clear();
+			if (items != null)
 			{
-				item.Checking -= Item_Checking;
-				item.Checked -= Item_Checked;
-				item.Fixing -= Item_Fixing;
-				item.Fixed -= Item_Fixed;
+				// Remove events.
+				foreach (var item in items)
+				{
+					item.Checking -= Item_Checking;
+					item.Checked -= Item_Checked;
+					item.Fixing -= Item_Fixing;
+					item.Fixed -= Item_Fixed;
+				}
 			}
 			MainDataGrid.ItemsSource = null;
-			Warnings.SynchronizingObject = null;
-			Warnings.Clear();
-			TasksTimer.DoWork -= queueTimer_DoWork;
-			TasksTimer.Queue.ListChanged -= Data_ListChanged;
-			QueueMonitorTimer.Tick -= QueueMonitorTimer_Tick;
-			TasksTimer.Dispose();
-			QueueMonitorTimer.Dispose();
-
+			if (Warnings != null)
+			{
+				Warnings.SynchronizingObject = null;
+				Warnings.Clear();
+			}
+			if (TasksTimer != null)
+			{
+				TasksTimer.DoWork -= queueTimer_DoWork;
+				TasksTimer.Queue.ListChanged -= Data_ListChanged;
+				TasksTimer.Dispose();
+			}
+			if (QueueMonitorTimer != null)
+			{
+				QueueMonitorTimer.Tick -= QueueMonitorTimer_Tick;
+				QueueMonitorTimer.Dispose();
+			}
 		}
 	}
 }
