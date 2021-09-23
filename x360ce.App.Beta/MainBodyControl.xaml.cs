@@ -189,7 +189,7 @@ namespace x360ce.App
 				SetIconColor(i, image);
 			}
 		}
-		private void Global_AddGameRequest(object sender, EventArgs e)
+		private void Global_AddGame(object sender, EventArgs e)
 		{
 			ControlsHelper.BeginInvoke(() =>
 			{
@@ -200,13 +200,12 @@ namespace x360ce.App
 
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-			Global.AddGameRequest += Global_AddGameRequest;
-
+			Global.AddGame += Global_AddGame;
 		}
 
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-			Global.AddGameRequest -= Global_AddGameRequest;
+			Global.AddGame -= Global_AddGame;
 			// Dispose managed resources.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			Array.Clear(PadControls, 0, 4);
