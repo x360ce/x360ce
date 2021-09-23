@@ -451,10 +451,6 @@ namespace x360ce.App
 			}
 			for (var i = 0; i < MainPanel.MainBodyPanel.PadControls.Length; i++)
 				MainPanel.MainBodyPanel.PadControls[i].InitPadData();
-			// Initialize pre-sets. Execute only after name of cIniFile is set.
-			//SettingsDatabasePanel.InitPresets();
-			// Allow events after PAD control are loaded.
-			MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}
@@ -478,30 +474,6 @@ namespace x360ce.App
 				Program.TimerCount, Program.ReloadCount, Program.ErrorCount, message);
 		}
 		#endregion
-
-		private bool HelpInit = false;
-
-		private void MainTabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
-		{
-			if (MainBodyPanel.MainTabControl.SelectedItem == MainBodyPanel.HelpTabPage && !HelpInit)
-			{
-				// Move this here so interface will load one second faster.
-				HelpInit = true;
-				var bytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("Documents.Help.rtf");
-				ControlsHelper.SetTextFromResource(MainBodyPanel.HelpRichTextBox, bytes);
-			}
-			else if (MainBodyPanel.MainTabControl.SelectedItem == MainBodyPanel.SettingsTabPage)
-			{
-				var o = SettingsManager.Options;
-				if (o.InternetFeatures && o.InternetAutoLoad)
-				{
-					//SettingsDatabasePanel.RefreshGrid(true);
-				}
-			}
-			var tab = MainBodyPanel.MainTabControl.SelectedItem;
-			//if (tab != null)
-			//	SetHead(tab.);
-		}
 
 		#region ■ Issues Panel
 

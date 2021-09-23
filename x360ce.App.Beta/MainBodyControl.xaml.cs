@@ -215,5 +215,25 @@ namespace x360ce.App
 			MainTabControl.Items.Clear();
 		}
 
+		bool HelpInit;
+
+		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (MainTabControl.SelectedItem == HelpTabPage && !HelpInit)
+			{
+				HelpInit = true;
+				var bytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("Documents.Help.rtf");
+				ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
+			}
+			else if (MainTabControl.SelectedItem == SettingsTabPage)
+			{
+				var o = SettingsManager.Options;
+				if (o.InternetFeatures && o.InternetAutoLoad)
+				{
+					//SettingsDatabasePanel.RefreshGrid(true);
+				}
+			}
+
+		}
 	}
 }
