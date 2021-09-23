@@ -189,6 +189,8 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(ShowSettingsTabCheckBox);
 			SettingsManager.UnLoadMonitor(ShowDevicesTabCheckBox);
 			SettingsManager.UnLoadMonitor(IncludeProductsCheckBox);
+			LocationFolderBrowserDialog?.Dispose();
+			LocationFolderBrowserDialog = null;
 		}
 	}
 }

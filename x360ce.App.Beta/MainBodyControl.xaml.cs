@@ -110,7 +110,7 @@ namespace x360ce.App
 
 		#region ■ Issue Icon Timer
 
-		public System.Timers.Timer IssueIconTimer;
+		//public System.Timers.Timer IssueIconTimer;
 
 		//private void InitIssuesIcon()
 		//{
@@ -209,6 +209,7 @@ namespace x360ce.App
 			// Dispose managed resources.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			Array.Clear(PadControls, 0, 4);
+			PadIcons?.ToList().ForEach(x => x.Content = null);
 			Array.Clear(PadIcons, 0, 4);
 			Array.Clear(PadColors, 0, 4);
 			MainTabControl.Items.Clear();

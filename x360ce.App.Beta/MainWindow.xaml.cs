@@ -407,7 +407,7 @@ namespace x360ce.App
 					UpdateForm1();
 					// Update 2 part will be enabled after all issues are checked.
 				}
-				if (update2Enabled.HasValue && update2Enabled.Value)
+				if (update2Enabled == true)
 				{
 					update2Enabled = false;
 					UpdateForm2();
@@ -416,7 +416,7 @@ namespace x360ce.App
 				if (update3Enabled && IsHandleCreated)
 				{
 					update3Enabled = false;
-					// Use this property to make sure that DHelper never starts unless all steps are fully initialised.
+					// Use this property to make sure that DHelper never starts unless all steps are fully initialized.
 					Global.AllowDHelperStart = true;
 					Global.DHelper.Start();
 				}
@@ -441,13 +441,6 @@ namespace x360ce.App
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
 			// Load PAD controls.
-
-			MainPanel.MainBodyPanel.PadControls = new PadControl[] {
-				MainBodyPanel.Pad1Panel,
-				MainBodyPanel.Pad2Panel,
-				MainBodyPanel.Pad3Panel,
-				MainBodyPanel.Pad4Panel,
-			};
 			for (var i = 0; i < MainPanel.MainBodyPanel.PadControls.Length; i++)
 			{
 				var pc = MainPanel.MainBodyPanel.PadControls[i];
@@ -639,15 +632,6 @@ namespace x360ce.App
 		}
 
 		#endregion
-
-		public void Dispose()
-		{
-			StartHelper.Dispose();
-			DisposeUpdateForm();
-			DisposeInterfaceUpdate();
-			if (Global.DHelper != null)
-				Global.DHelper.Dispose();
-		}
 
 		#region ■ Update from DHelper
 
@@ -889,6 +873,9 @@ namespace x360ce.App
 			SettingsTimer.Dispose();
 			CleanStatusTimer.Elapsed -= CleanStatusTimer_Elapsed;
 			CleanStatusTimer.Dispose();
+			StartHelper.Dispose();
+			DisposeUpdateForm();
+			DisposeInterfaceUpdate();
 			CollectGarbage();
 		}
 

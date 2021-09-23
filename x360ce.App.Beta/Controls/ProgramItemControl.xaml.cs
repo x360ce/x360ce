@@ -57,15 +57,15 @@ namespace x360ce.App.Controls
 			{
 				lock (CurrentGameLock)
 				{
+					// Detach event from old game.
 					if (_CurrentItem != null)
-					{
-						// Detach event from old game.
 						_CurrentItem.PropertyChanged -= CurrentGame_PropertyChanged;
-					}
 					// Assign new value
 					_CurrentItem = value;
 					// Update interface.
 					DisableEvents();
+					if (value == null)
+						return;
 					// Make sure item is not null.
 					var item = _CurrentItem ?? new x360ce.Engine.Data.Program();
 					// Set Item properties.
@@ -81,9 +81,7 @@ namespace x360ce.App.Controls
 					var game = _CurrentItem as UserGame;
 					var isGame = game != null;
 					if (isGame)
-					{
 						_DefaultSettings = SettingsManager.Programs.Items.FirstOrDefault(x => x.FileName == game.FileName);
-					}
 					// Allow reset to default for games.
 					ActionGroupBox.Visibility = isGame
 						? Visibility.Visible
@@ -91,14 +89,11 @@ namespace x360ce.App.Controls
 					ResetToDefaultButton.IsEnabled = isGame && _DefaultSettings != null;
 					UpdateFakeVidPidControls();
 					UpdateDinputControls();
-
 					// Enable events.
 					EnableEvents();
+					// attach event to new game.
 					if (_CurrentItem != null)
-					{
-						// attach event to new game.
 						_CurrentItem.PropertyChanged += CurrentGame_PropertyChanged;
-					}
 				}
 			}
 		}

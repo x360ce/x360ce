@@ -72,10 +72,13 @@ namespace x360ce.App.Controls
 		{
 			var maxValue = isThumb ? short.MaxValue : byte.MaxValue;
 			deadzoneLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, maxValue);
+			deadzoneLink.ValueChanged -= deadzoneLink_ValueChanged;
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			antiDeadzoneLink = new TrackBarUpDownTextBoxLink(AntiDeadZoneTrackBar, AntiDeadZoneUpDown, AntiDeadZoneTextBox, 0, maxValue);
+			antiDeadzoneLink.ValueChanged -= deadzoneLink_ValueChanged;
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			linearLink = new TrackBarUpDownTextBoxLink(LinearTrackBar, LinearUpDown, LinearTextBox, -100, 100);
+			linearLink.ValueChanged -= deadzoneLink_ValueChanged;
 			linearLink.ValueChanged += deadzoneLink_ValueChanged;
 			UpdateTimerReset();
 		}

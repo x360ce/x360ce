@@ -466,5 +466,9 @@ namespace x360ce.App.Controls
 				AddNewGame();
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+
+		}
 	}
 }
