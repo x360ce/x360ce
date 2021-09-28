@@ -8,6 +8,6 @@
 	Title="X360CE - Debug"
 	Closing="Window_Closing"
 	SizeToContent="WidthAndHeight"
-	mc:Ignorable="d">
+	mc:Ignorable="d" Height="277.584">
 	<controls:DebugControl />
 </Window>

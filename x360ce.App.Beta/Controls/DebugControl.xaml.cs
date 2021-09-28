@@ -25,6 +25,7 @@ namespace x360ce.App.Controls
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
+			ProgressBarPanel.UpdateProgress();
 			_TestTimer = new HiResTimer(1, "TestTimer");
 			_TestTimer.AutoReset = true;
 			CpuTimer = new System.Timers.Timer();
@@ -392,7 +393,7 @@ namespace x360ce.App.Controls
 		bool IsHandleCreated
 			=> ((HwndSource)PresentationSource.FromVisual(this)) != null;
 
-	
+
 		protected override void OnVisualParentChanged(DependencyObject oldParent)
 		{
 			if (oldParent != null)
@@ -412,5 +413,109 @@ namespace x360ce.App.Controls
 		{
 			SettingsManager.OptionsData.Items.ListChanged -= Items_ListChanged;
 		}
+
+		private void TestDisposeButton_Click(object sender, RoutedEventArgs e)
+		{
+			LogTextBox.Text = "Please wait...";
+			var success = System.Threading.ThreadPool.QueueUserWorkItem(TestDispose);
+			if (!success)
+			{
+				ProgressBarPanel.UpdateProgress("Scan failed!", "", true);
+			}
+		}
+
+		#region TestMemoryLeak
+
+		void TestDispose(object state)
+		{
+			var text = TestMemoryLeakAssemblies(
+					typeof(App).Assembly,
+					typeof(Engine.EngineHelper).Assembly
+				);
+			ControlsHelper.Invoke(() =>
+			{
+				ProgressBarPanel.UpdateProgress();
+				LogTextBox.Text = text;
+			});
+		}
+
+		public string TestMemoryLeakAssemblies(params System.Reflection.Assembly[] assemblies)
+		{
+			var log = new List<string>();
+			var disposedCount = 0;
+			var aliveCount = 0;
+			var errorsCount = 0;
+			var e = new ProgressEventArgs();
+			for (int a = 0; a < assemblies.Length; a++)
+			{
+				var assembly = assemblies[a];
+				e.TopCount = assemblies.Length;
+				e.TopIndex = a;
+				e.TopData = assemblies;
+				e.TopMessage = $"Assembly: {assembly.FullName}";
+				ControlsHelper.Invoke(() => ProgressBarPanel.UpdateProgress(e));
+				var types = assembly.GetTypes();
+				for (int t = 0; t < types.Length; t++)
+				{
+					var type = types[t];
+					e.SubCount = types.Length;
+					e.SubIndex = t;
+					e.SubData = types;
+					e.SubMessage = $"Type: {type.FullName}";
+					ControlsHelper.Invoke(() => ProgressBarPanel.UpdateProgress(e));
+					if (type.IsInterface)
+						continue;
+					if (!type.FullName.Contains(".Controls.") && !type.FullName.Contains(".Forms."))
+						continue;
+					ControlsHelper.Invoke(() =>
+					{
+						try
+						{
+							var o = Activator.CreateInstance(type);
+							var wr = new WeakReference(o);
+							// Verify that the WeakReference actually points to the intended object instance.
+							if (wr.Target.Equals(o))
+							{
+								// Dispose object.
+								o = null;
+								for (int i = 0; i < 4; i++)
+								{
+									GC.Collect();
+									GC.WaitForPendingFinalizers();
+									GC.WaitForFullGCComplete();
+									GC.Collect();
+								}
+								// Note: Debug mode turns off a lot of optimizations, because compiler is trying to be helpful.
+								// Debug build can keep values rooted even if you set them to null i.e. wr.IsAlive will always return TRUE.
+								if (wr.IsAlive)
+								{
+									log.Add($"Is Alive: {type.FullName}");
+									aliveCount++;
+								}
+								else
+								{
+									log.Add($"Disposed: {type.FullName}");
+									disposedCount++;
+								}
+							}
+							else
+							{
+								log.Add($"Error: NOT same as {type.FullName}");
+								errorsCount++;
+							}
+						}
+						catch (Exception ex)
+						{
+							log.Add($"Error: {type.FullName} {ex.Message}");
+							errorsCount++;
+						}
+					});
+				}
+			}
+			var results = $"Disposed = {disposedCount}, Alive = {aliveCount}, Errors = {errorsCount}\r\n" + string.Join("\r\n", log);
+			return results;
+		}
+
+		#endregion
 	}
 }

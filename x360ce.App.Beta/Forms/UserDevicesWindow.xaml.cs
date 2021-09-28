@@ -16,7 +16,7 @@ namespace x360ce.App.Forms
 			Title = "X360CE - Map Device To Controller";
 			WinControl.InfoPanel.SetHead("Map Device To Controller");
 			WinControl.InfoPanel.SetBodyInfo("Select Devices and press [Add Selected Devices] button.");
-			WinControl.InfoPanel.SetImage(App.GetResource(Icons_Default.Icon_gamepad));
+			WinControl.InfoPanel.SetImage(Application.Current.Resources[Icons_Default.Icon_gamepad]);
 			WinControl.SetButton1("Add Selected Devices", Icons_Default.Icon_ok);
 			WinControl.SetButton2("Cancel", Icons_Default.Icon_close);
 			WinControl.SetButton3();

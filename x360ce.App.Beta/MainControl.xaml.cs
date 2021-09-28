@@ -113,6 +113,11 @@ namespace x360ce.App
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
+			if (ControlsHelper.InvokeRequired)
+			{
+				ControlsHelper.Invoke(() => Options_PropertyChanged(sender, e));
+				return;
+			}
 			var o = SettingsManager.Options;
 			// Update controls by specific property.
 			switch (e.PropertyName)

@@ -16,7 +16,7 @@ namespace x360ce.App.Forms
 			WinControl.InfoPanel.SetTitle("X360CE - Load Preset");
 			WinControl.InfoPanel.SetHead("Load Preset");
 			WinControl.InfoPanel.SetBodyInfo("Select Preset and press [Load Selected] button.");
-			WinControl.InfoPanel.SetImage(App.GetResource(Icons_Default.Icon_gamepad));
+			WinControl.InfoPanel.SetImage(Application.Current.Resources[Icons_Default.Icon_gamepad]);
 			WinControl.SetButton1("Load Selected", Icons_Default.Icon_ok);
 			WinControl.SetButton2("Cancel", Icons_Default.Icon_close);
 			WinControl.SetButton3();

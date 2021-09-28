@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,18 +13,12 @@ namespace x360ce.App.Controls
 	{
 		public LogControl()
 		{
-			InitHelper.InitTimer(this, InitializeComponent);
+			//InitHelper.InitTimer(this, InitializeComponent);
+			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			MainDataGrid.AutoGenerateColumns = false;
 			UpdateAppearance();
-		}
-
-		public void DebugForm_Load(object sender, EventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
-			MainDataGrid.ItemsSource = Items;
 		}
 
 		#region ■ TabPage: Log
@@ -127,11 +120,20 @@ namespace x360ce.App.Controls
 
 		}
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			MainDataGrid.ItemsSource = Items;
+		}
+
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			MainDataGrid.ItemsSource = null;
 			Items.Clear();
 			lastItem = null;
+			DataContext = null;
 		}
+
 	}
 }

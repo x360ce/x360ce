@@ -857,6 +857,8 @@ namespace x360ce.App
 			{
 				GC.Collect(GC.MaxGeneration);
 				GC.WaitForPendingFinalizers();
+				GC.WaitForFullGCComplete();
+				GC.Collect();
 			}
 		}
 

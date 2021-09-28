@@ -130,6 +130,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -140,7 +141,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
@@ -885,12 +886,12 @@
     </ItemGroup>
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>SET netz=$(SolutionDir)$(ProjectName)\Resources\NetZ\netz.exe
-if $(ConfigurationName) == Release (
-if $(PlatformName) == x86 "%25netz%25" -pl x86 -s -so -z "$(TargetPath)"
-if $(PlatformName) == x64 "%25netz%25" -pl x64 -s -so -z "$(TargetPath)"
-if $(PlatformName) == AnyCPU "%25netz%25" -s -so -z "$(TargetPath)"
-)
+    <PostBuildEvent>::SET netz=$(SolutionDir)$(ProjectName)\Resources\NetZ\netz.exe
+::if $(ConfigurationName) == Release (
+::if $(PlatformName) == x86 "%25netz%25" -pl x86 -s -so -z "$(TargetPath)"
+::if $(PlatformName) == x64 "%25netz%25" -pl x64 -s -so -z "$(TargetPath)"
+::if $(PlatformName) == AnyCPU "%25netz%25" -s -so -z "$(TargetPath)"
+::)
 ::if $(PlatformName) == x86 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin\$(ConfigurationName)"
 ::if $(PlatformName) == x64 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin64\$(ConfigurationName)"</PostBuildEvent>
   </PropertyGroup>
