@@ -70,6 +70,8 @@ namespace x360ce.App.Controls
 
 		void UpdateTargetType()
 		{
+			if (IsUnloading)
+				return;
 			var maxValue = isThumb ? short.MaxValue : byte.MaxValue;
 			deadzoneLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, maxValue);
 			deadzoneLink.ValueChanged -= deadzoneLink_ValueChanged;
@@ -102,7 +104,7 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(DeadZoneUpDown);
 			SettingsManager.UnLoadMonitor(AntiDeadZoneUpDown);
 			SettingsManager.UnLoadMonitor(LinearUpDown);
-			if (ps == null)
+			if (ps == null || IsUnloading)
 				return;
 			// Set binding.
 			var converter = new Converters.PadSettingToIntegerConverter();
@@ -358,8 +360,11 @@ namespace x360ce.App.Controls
 			updateTimer.Elapsed += UpdateTimer_Elapsed;
 		}
 
+		bool IsUnloading;
+
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			IsUnloading = true;
 			if (updateTimer != null)
 			{
 				updateTimer.Elapsed -= UpdateTimer_Elapsed;

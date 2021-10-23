@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using JocysCom.ClassLibrary.Controls;
+using System.Windows.Controls;
 
 namespace x360ce.App.Controls
 {
@@ -12,5 +13,14 @@ namespace x360ce.App.Controls
 			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+		}
 	}
 }

@@ -13,6 +13,7 @@ namespace x360ce.App.Controls
 	{
 		public LogControl()
 		{
+			Items = new SortableBindingList<LogItem>();
 			//InitHelper.InitTimer(this, InitializeComponent);
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
@@ -23,7 +24,7 @@ namespace x360ce.App.Controls
 
 		#region ■ TabPage: Log
 
-		public SortableBindingList<LogItem> Items { get; } = new SortableBindingList<LogItem>();
+		public SortableBindingList<LogItem> Items { get; set;  }
 
 		private void ClearButton_Click(object sender, RoutedEventArgs e)
 		{
@@ -131,6 +132,7 @@ namespace x360ce.App.Controls
 		{
 			MainDataGrid.ItemsSource = null;
 			Items.Clear();
+			Items = null;
 			lastItem = null;
 			DataContext = null;
 		}

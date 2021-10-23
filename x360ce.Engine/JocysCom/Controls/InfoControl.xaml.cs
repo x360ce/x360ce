@@ -15,7 +15,7 @@ namespace JocysCom.ClassLibrary.Controls
 	{
 		public InfoControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
 			var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
 			var description = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyDescriptionAttribute))).Description;

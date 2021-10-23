@@ -42,6 +42,7 @@ namespace x360ce.App.Service
 			ShowLoadedControls.Click += (sender, e) =>
 			{
 				var names = string.Join("\r\n", InitHelper.LoadedControlNames);
+				Clipboard.SetText(names);
 				MessageBox.Show(names);
 			};
 			// Tray menu.

@@ -14,7 +14,7 @@ namespace JocysCom.ClassLibrary.Controls
 	{
 		public MessageBoxWindow()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			LinkTextBlock.Visibility = Visibility.Collapsed;
 			// Center owner.
 			var owner = Application.Current?.MainWindow;

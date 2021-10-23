@@ -8,6 +8,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
+			if (value == null)
+				return Themes.Icons.Current[Themes.Icons.Icon_OK];
 			var v = (IssueSeverity)value;
 			switch (v)
 			{

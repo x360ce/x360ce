@@ -28,8 +28,8 @@ namespace x360ce.App.Controls
 			// Add controls which must be notified on setting selection change.
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Hide for this version.
-			PadItemPanel.PadTabControl.Items.Remove(PadItemPanel.XInputTabPage);
-			PadItemPanel.XInputTabPage.Content = null;
+			//PadItemPanel.PadTabControl.Items.Remove(PadItemPanel.XInputTabPage);
+			//PadItemPanel.XInputTabPage.Content = null;
 			//PadTabControl.TabPages.Remove(MacrosTabPage);
 			RemapName = GeneralPanel.RemapAllButton.Content as string;
 			MappedTo = mappedTo;
@@ -97,7 +97,6 @@ namespace x360ce.App.Controls
 		private AxisMapControl RightThumbYPanel => PadItemPanel.RightThumbYPanel;
 		private PadItem_ForceFeedbackControl ForceFeedbackPanel => PadItemPanel.ForceFeedbackPanel;
 		//private XInputUserControl XInputPanel => PadItemPanel.XInputPanel;
-		private PadItem_DInputControl DInputPanel => PadItemPanel.DInputPanel;
 
 		private PadItem_General_XboxImageControl XboxImage => GeneralPanel.XboxImage;
 
@@ -128,7 +127,7 @@ namespace x360ce.App.Controls
 				}
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
-				DInputPanel.UpdateFrom(ud);
+				PadItemPanel.DInputPanel.UpdateFrom(ud);
 				if (enable && _Imager.Recorder.Recording)
 				{
 					// Stop recording if DInput value captured.
@@ -326,7 +325,8 @@ namespace x360ce.App.Controls
 			PadListPanel.UpdateFromCurrentGame();
 			// Update emulation type.
 			var game = SettingsManager.CurrentGame;
-			ShowAdvancedTab(game != null && game.EmulationType == (int)EmulationType.Library);
+			var showAdvanced = game != null && game.EmulationType == (int)EmulationType.Library;
+			PadItemPanel.ShowTab(showAdvanced, PadItemPanel.AdvancedTabPage);
 		}
 
 		#region ■ Images
@@ -525,9 +525,6 @@ namespace x360ce.App.Controls
 		}
 
 		#endregion
-
-		public void ShowAdvancedTab(bool show)
-			=> PadItemPanel.ShowTab(show, PadItemPanel.AdvancedTabPage);
 
 		List<SettingsMapItem> RecordAllMaps = new List<SettingsMapItem>();
 

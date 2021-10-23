@@ -17,7 +17,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 	{
 		public IssuesControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			NoIssuesPanel.Visibility = Visibility.Collapsed;
@@ -47,7 +47,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		{
 			if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
 			{
-				var count = TasksTimer.Queue.Count;
+				//var count = TasksTimer.Queue.Count;
 				//ControlsHelper.SetText(f.CloudMessagesLabel, "M: {0}", count);
 			}
 		}
@@ -57,9 +57,10 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		void queueTimer_DoWork(object sender, QueueTimerEventArgs e)
+		void QueueTimer_DoWork(object sender, QueueTimerEventArgs e)
 		{
-			if (IsSuspended())
+			// Return if suspended function is not set.
+			if (IsSuspended?.Invoke() ?? true)
 				return;
 			CheckAll();
 			// Update list will affect Warnings list, which is bound to MainDataGrid on UI,
@@ -119,9 +120,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			// Assign result to property, because results will be read on a different i.e. main Thread.
 			CriticalIssuesCount = IssueList.Count(x => x.IsEnabled && x.Severity.HasValue && x.Severity.Value >= IssueSeverity.Critical);
 			ModerateIssuesCount = IssueList.Count(x => x.IsEnabled && x.Severity.HasValue && x.Severity.Value >= IssueSeverity.Moderate);
-			var ev = CheckCompleted;
-			if (ev != null)
-				CheckCompleted(this, new EventArgs());
+			CheckCompleted?.Invoke(this, new EventArgs());
 		}
 
 
@@ -129,10 +128,10 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		// List of warnings to show.
 		public BindingListInvoked<IssueItem> Warnings;
-		object checkTimerLock = new object();
+		//readonly object checkTimerLock = new object();
 
 		BindingListInvoked<IssueItem> IssueList;
-		object IssueListLock = new object();
+		//readonly object IssueListLock = new object();
 
 		public void AddIssues(params IssueItem[] items)
 		{
@@ -241,8 +240,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			}
 			var nextRun = string.Format("Next Run: {0:00}:{1:00}", remains.Minutes, remains.Seconds + (remains.Milliseconds / 1000m));
 			ControlsHelper.SetText(NextRunLabel, nextRun);
-			var lrt = TasksTimer.LastActionDoneTime;
-			var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
+			//var lrt = TasksTimer.LastActionDoneTime;
+			//var lastRun = string.Format("Last Done: {0:00}:{1:00}", lrt.Minutes, lrt.Seconds + (lrt.Milliseconds / 1000m));
 			var state = TasksTimer.IsRunning ? "↑" : " ";
 			ControlsHelper.SetText(RunStateLabel, state);
 		}
@@ -328,7 +327,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
 			var title = ai.GetTitle(true, true, true, true, false) + " - Issues";
 			TasksTimer = new QueueTimer<object>(0, 0);
-			TasksTimer.DoWork += queueTimer_DoWork;
+			TasksTimer.DoWork += QueueTimer_DoWork;
 			TasksTimer.Queue.ListChanged += Data_ListChanged;
 			// Start monitoring tasks queue.
 			QueueMonitorTimer = new System.Windows.Forms.Timer();
@@ -361,7 +360,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			}
 			if (TasksTimer != null)
 			{
-				TasksTimer.DoWork -= queueTimer_DoWork;
+				TasksTimer.DoWork -= QueueTimer_DoWork;
 				TasksTimer.Queue.ListChanged -= Data_ListChanged;
 				TasksTimer.Dispose();
 			}

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using JocysCom.ClassLibrary.Controls;
+using System.Windows.Controls;
 
 namespace x360ce.App.Controls
 {

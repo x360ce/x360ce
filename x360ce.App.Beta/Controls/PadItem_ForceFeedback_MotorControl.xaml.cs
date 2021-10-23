@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Controls;
+using System;
 using System.Windows.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;

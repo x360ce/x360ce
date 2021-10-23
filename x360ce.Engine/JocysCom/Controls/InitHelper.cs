@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Linq;
 
-namespace x360ce.App
+namespace JocysCom.ClassLibrary.Controls
 {
 	/// <summary>
 	/// Helps to output initialize stats when form initialize.

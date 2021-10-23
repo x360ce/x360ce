@@ -9,7 +9,10 @@
 	d:DesignHeight="250"
 	d:DesignWidth="600"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	Loaded="UserControl_Loaded"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
+	
 	<Grid Margin="3,3,3,3">
 		<Controls:HardwareDeviceControl />
 	</Grid>

@@ -496,7 +496,7 @@ namespace x360ce.App
 					new VirtualDeviceDriverIssue(),
 					new HidGuardianDriverIssue()
 				);
-				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
+				IssuesPanel.IsSuspended = IssuesPanel_IsSuspended;
 				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
 				// This will start execution of Tasks Timer.
 				IssuesPanel.TasksTimer.ChangeSleepInterval(5000);
@@ -838,6 +838,7 @@ namespace x360ce.App
 			Global.DHelper.XInputReloaded -= DHelper_XInputReloaded;
 			SettingsManager.Current.NotifySettingsStatus = null;
 			SettingsManager.SetSynchronizingObject(null);
+			IssuesPanel.IsSuspended = null;
 			IssuesPanel.CheckCompleted -= IssuesPanel_CheckCompleted;
 			UpdateTimer.Elapsed -= UpdateTimer_Elapsed;
 			UpdateTimer.Dispose();

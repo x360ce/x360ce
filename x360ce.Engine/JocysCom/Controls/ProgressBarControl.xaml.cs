@@ -10,7 +10,7 @@ namespace JocysCom.ClassLibrary.Controls
 	{
 		public ProgressBarControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			ControlsHelper.SetText(ProgressLevelTopBarTextBlock, "");
 			ControlsHelper.SetText(ProgressLevelSubBarTextBlock, "");
 		}

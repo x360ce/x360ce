@@ -22,7 +22,7 @@ namespace JocysCom.ClassLibrary.Controls
 	{
 		public ErrorReportControl()
 		{
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			ErrorsFolderTextBox.Text = LogHelper.Current.LogsFolder;

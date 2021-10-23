@@ -164,7 +164,8 @@ namespace x360ce.App
 				{
 					ps.PadListPanel.UpdateFromCurrentGame();
 					// Update emulation type.
-					ps.ShowAdvancedTab(game != null && game.EmulationType == (int)EmulationType.Library);
+					var showAdvanced = game != null && game.EmulationType == (int)EmulationType.Library;
+					ps.PadItemPanel.ShowTab(showAdvanced, ps.PadItemPanel.AdvancedTabPage);
 				}
 			}
 			var selectedGame = (UserGame)GameToCustomizeComboBox.SelectedItem;

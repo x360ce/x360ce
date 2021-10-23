@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using JocysCom.ClassLibrary.Controls;
+using System.Windows;
 
 namespace x360ce.App.Forms
 {

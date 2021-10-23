@@ -68,29 +68,27 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 							// If product found then...
 							if (nameRx.IsMatch(displayName))
 							{
-								if (uninstall)
+								if (!uninstall)
+									return true;
+								string uninstallCommand = null;
+								if (!string.IsNullOrEmpty(arg.UninstallKeyName1))
+									uninstallCommand = (string)subKey.GetValue(arg.UninstallKeyName1, "");
+								// If uninstall command was not found then try other key.
+								if (!string.IsNullOrEmpty(arg.UninstallKeyName2) && string.IsNullOrEmpty(uninstallCommand))
+									uninstallCommand = (string)subKey.GetValue(arg.UninstallKeyName2, "");
+								// If uninstall command was found then...
+								if (!string.IsNullOrEmpty(uninstallCommand))
 								{
-									string uninstallCommand = null;
-									if (!string.IsNullOrEmpty(arg.UninstallKeyName1))
-										uninstallCommand = (string)subKey.GetValue(arg.UninstallKeyName1, "");
-									// If uninstall command was not found then try other key.
-									if (!string.IsNullOrEmpty(arg.UninstallKeyName2) && string.IsNullOrEmpty(uninstallCommand))
-										uninstallCommand = (string)subKey.GetValue(arg.UninstallKeyName2, "");
-									// If uninstall command was found then...
-									if (!string.IsNullOrEmpty(uninstallCommand))
-									{
-										// Get first space.
-										var splitIndex = uninstallCommand.StartsWith("\"")
-											// Split from second quote.
-											? uninstallCommand.IndexOf('\"', 1)
-											// Split from first space.
-											: uninstallCommand.IndexOf(' ');
-										var upath = uninstallCommand.Substring(0, splitIndex);
-										var uargs = uninstallCommand.Substring(splitIndex);
-										ControlsHelper.OpenPath(upath, uargs);
-									}
+									// Get first space.
+									var splitIndex = uninstallCommand.StartsWith("\"")
+										// Split from second quote.
+										? uninstallCommand.IndexOf('\"', 1)
+										// Split from first space.
+										: uninstallCommand.IndexOf(' ');
+									var upath = uninstallCommand.Substring(0, splitIndex);
+									var uargs = uninstallCommand.Substring(splitIndex);
+									ControlsHelper.OpenPath(upath, uargs);
 								}
-								return true;
 							}
 						}
 					}
@@ -106,9 +104,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public static Version GetRealOSVersion()
 		{
 			if (OSVersion == null)
-			{
 				OSVersion = GetFileVersion(SpecialFolder.System, "kernel32.dll");
-			}
 			return OSVersion;
 		}
 
@@ -278,7 +274,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public static FileInfo DownloadFile(Uri uri, string localPath)
 		{
-			var fileName = uri.Segments.Last();
+			//var fileName = uri.Segments.Last();
 			var webClient = new System.Net.WebClient();
 			var localFile = new FileInfo(localPath);
 			if (localFile.Exists)

@@ -7,9 +7,9 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="120"
+	d:DesignWidth="480"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
-	d:DesignWidth="480"
 	mc:Ignorable="d">
 	<Grid VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>
