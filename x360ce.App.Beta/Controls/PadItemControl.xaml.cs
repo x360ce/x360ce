@@ -35,6 +35,7 @@ namespace x360ce.App.Controls
 
 		public void ShowTab(bool show, TabItem page)
 		{
+			// Hide TabPage instead of removing, otherwise Unload event won't trigger.
 			page.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
 			//var tc = PadTabControl;
 			//// If must hide then...

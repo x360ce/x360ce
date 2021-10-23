@@ -64,31 +64,33 @@ namespace x360ce.App
 
 		public void ShowTab(bool show, TabItem page)
 		{
-			var tc = MainTabControl;
-			// If must hide then...
-			if (!show && tc.Items.Contains(page))
-			{
-				// Hide and return.
-				tc.Items.Remove(page);
-				return;
-			}
-			// If must show then..
-			if (show && !tc.Items.Contains(page))
-			{
-				// Create list of tabs to maintain same order when hiding and showing tabs.
-				var tabs = new List<TabItem>() {
-					ProgramsTabPage,
-					SettingsTabPage,
-					DevicesTabPage,
-				};
-				// Get index of always displayed tab.
-				var index = tc.Items.IndexOf(GamesTabPage);
-				// Get tabs in front of tab which must be inserted.
-				var tabsBefore = tabs.Where(x => tabs.IndexOf(x) < tabs.IndexOf(page));
-				// Count visible tabs.
-				var countBefore = tabsBefore.Count(x => tc.Items.Contains(x));
-				tc.Items.Insert(index + countBefore + 1, page);
-			}
+			// Hide TabPage instead of removing, otherwise Unload event won't trigger.
+			page.Visibility = show ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+			//var tc = MainTabControl;
+			//// If must hide then...
+			//if (!show && tc.Items.Contains(page))
+			//{
+			//	// Hide and return.
+			//	tc.Items.Remove(page);
+			//	return;
+			//}
+			//// If must show then..
+			//if (show && !tc.Items.Contains(page))
+			//{
+			//	// Create list of tabs to maintain same order when hiding and showing tabs.
+			//	var tabs = new List<TabItem>() {
+			//		ProgramsTabPage,
+			//		SettingsTabPage,
+			//		DevicesTabPage,
+			//	};
+			//	// Get index of always displayed tab.
+			//	var index = tc.Items.IndexOf(GamesTabPage);
+			//	// Get tabs in front of tab which must be inserted.
+			//	var tabsBefore = tabs.Where(x => tabs.IndexOf(x) < tabs.IndexOf(page));
+			//	// Count visible tabs.
+			//	var countBefore = tabsBefore.Count(x => tc.Items.Contains(x));
+			//	tc.Items.Insert(index + countBefore + 1, page);
+			//}
 		}
 
 		public void ShowProgramsTab(bool show)
