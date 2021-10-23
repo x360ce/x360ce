@@ -266,11 +266,14 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			PadControl.OnSettingChanged -= Parent_OnSettingChanged;
 			// Cleanup references which prevents disposal.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			MainDataGrid.ItemsSource = null;
 			// Dispose managed resources.
 			_Recorder?.Dispose();
+			PadControl = null;
 		}
+
 	}
 }
