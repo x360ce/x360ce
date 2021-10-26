@@ -14,8 +14,8 @@ namespace x360ce.App.Controls
 		public LogControl()
 		{
 			Items = new SortableBindingList<LogItem>();
-			//InitHelper.InitTimer(this, InitializeComponent);
-			InitializeComponent();
+			InitHelper.InitTimer(this, InitializeComponent);
+			//InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			MainDataGrid.AutoGenerateColumns = false;

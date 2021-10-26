@@ -225,9 +225,9 @@ namespace x360ce.App.Controls
 				ControlsHelper.Invoke(new Action(() => CreateBackgroundPicture()));
 				return;
 			}
-			var deadZone = DeadZoneUpDown.Value ?? 0;
-			var antiDeadZone = AntiDeadZoneUpDown.Value ?? 0;
-			var sensitivity = LinearUpDown.Value ?? 0;
+			var deadZone = DeadZoneUpDown.Value;
+			var antiDeadZone = AntiDeadZoneUpDown.Value;
+			var sensitivity = LinearUpDown.Value;
 			var visual = new DrawingVisual();
 			// Retrieve the DrawingContext in order to create new drawing content.
 			var g = visual.RenderOpen();
@@ -245,7 +245,7 @@ namespace x360ce.App.Controls
 			{
 				// Convert Image X position [0;w] to DInput position [0;65535].
 				var dInputValue = ConvertHelper.ConvertRangeF(0f, w, ushort.MinValue, ushort.MaxValue, i);
-				var xInputValue = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half, isThumb);
+				var xInputValue = ConvertHelper.GetThumbValue(dInputValue, (float)deadZone, (float)antiDeadZone, (float)sensitivity, _invert, _half, isThumb);
 				//var rounded = result >= -1f && result <= 1f;
 				var di = ConvertDInputToImagePosition(dInputValue);
 				var xi = ConvertXInputToImagePosition(xInputValue);

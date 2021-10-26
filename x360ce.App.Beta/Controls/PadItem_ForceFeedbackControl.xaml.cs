@@ -124,8 +124,8 @@ namespace x360ce.App.Controls
 			var index = (int)_MappedTo - 1;
 			var game = SettingsManager.CurrentGame;
 			var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
-			int leftTestValue = LeftForceFeedbackMotorPanel.TestUpDown.Value ?? 0;
-			int rightTestValue = RightForceFeedbackMotorPanel.TestUpDown.Value ?? 0;
+			int leftTestValue = (int)LeftForceFeedbackMotorPanel.TestUpDown.Value;
+			int rightTestValue = (int)RightForceFeedbackMotorPanel.TestUpDown.Value;
 			if (isVirtual)
 			{
 				var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, leftTestValue);

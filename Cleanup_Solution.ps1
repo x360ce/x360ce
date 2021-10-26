@@ -5,28 +5,43 @@
 	Removes temporary and user specific solution files.
 .NOTES
     Author:     Evaldas Jocys <evaldas@jocys.com>
-    Modified:   2021-09-20
+    Modified:   2021-10-20
 .LINK
     http://www.jocys.com
 #>
+using namespace System;
+using namespace System.IO;
+# ----------------------------------------------------------------------------
+# Run as administrator.
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{   
+	$commandPath = "& '" + $MyInvocation.MyCommand.Path + "'";
+	Start-Process PowerShell -Verb runAs -ArgumentList $commandPath;
+	break;
+}	
 # ----------------------------------------------------------------------------
 # Get current command path.
-[string]$current = $MyInvocation.MyCommand.Path
+[string]$current = $MyInvocation.MyCommand.Path;
 # Get calling command path.
-[string]$calling = @(Get-PSCallStack)[1].InvocationInfo.MyCommand.Path
+[string]$calling = @(Get-PSCallStack)[1].InvocationInfo.MyCommand.Path;
 # If executed directly then...
 if ($calling -ne "") {
-    $current = $calling
+    $current = $calling;
 }
-
-$file = Get-Item $current
-# Working folder.
-$wdir = $file.Directory.FullName;
+# ----------------------------------------------------------------------------
+[FileInfo]$file = New-Object FileInfo($current);
+# Set public parameters.
+$global:scriptName = $file.Basename;
+$global:scriptPath = $file.Directory.FullName;
+# Change current directory.
+[Console]::WriteLine("Script Path: {0}", $scriptPath);
+[Environment]::CurrentDirectory = $scriptPath;
+Set-Location $scriptPath;
 # ----------------------------------------------------------------------------
 Function KillProcess
 {
-	# Parameters.
 	param($pattern);
+	# -------------------------
 	# Function.
 	$procs = Get-Process;
 	foreach ($proc in $procs)
@@ -45,16 +60,16 @@ Function KillProcess
 # ----------------------------------------------------------------------------
 Function RemoveDirectories
 {
-	# Parameters.
-	Param ($pattern, $mustBeInProject)
+	param ($pattern, $mustBeInProject)
+	# -------------------------
 	# Function.
-	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object {$_ -is [System.IO.DirectoryInfo]};
+	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object {$_ -is [DirectoryInfo]};
 	foreach ($item in $items)
 	{
 		if ($mustBeInProject){
 			# Get parent folder.
-			[System.IO.DirectoryInfo] $parent = $item.Parent;
-			$projects = $parent.GetFiles("*.*proj", [System.IO.SearchOption]::TopDirectoryOnly);
+			[DirectoryInfo] $parent = $item.Parent;
+			$projects = $parent.GetFiles("*.*proj", [SearchOption]::TopDirectoryOnly);
 			# If parent folder do not contain *.*proj file then...
 			if ($projects.length -eq 0)
 			{
@@ -71,8 +86,8 @@ Function RemoveDirectories
 # ----------------------------------------------------------------------------
 function RemoveSubFoldersAndFiles 
 {
-	# Parameters.
 	param($path, $onlyDirs);
+	# -------------------------
 	# Function.
 	$dirs = Get-Item $path -ErrorAction SilentlyContinue;
 	foreach ($dir in $dirs)
@@ -81,7 +96,7 @@ function RemoveSubFoldersAndFiles
 		$items = Get-ChildItem -LiteralPath $dir.FullName -Force;
 		if ($onlyDirs -eq $true)
 		{
-			$items = $items | Where-Object {$_ -is [System.IO.DirectoryInfo]};
+			$items = $items | Where-Object {$_ -is [DirectoryInfo]};
 		}
 		foreach ($item in $items)
 		{
@@ -93,10 +108,10 @@ function RemoveSubFoldersAndFiles
 # ----------------------------------------------------------------------------
 Function RemoveFiles
 {
-	# Parameters.
 	param($pattern);
+	# -------------------------
 	# Function.
-	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object {$_ -is [System.IO.FileInfo]};
+	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object {$_ -is [FileInfo]};
 	foreach ($item in $items)
 	{
 	  Write-Output $item.FullName;
@@ -127,6 +142,28 @@ function ClearCache
 	RemoveFiles "*.dbmdl";
 	RemoveFiles "*.user";
 	RemoveFiles "*.suo";
+}
+# ----------------------------------------------------------------------------
+function ResetPermissions
+{
+	param([string]$path);
+	# -------------------------
+	# Give read write permissions to local users.
+	$di = new-Object System.IO.DirectoryInfo($path);
+	Write-Host "Reset Permissions on $($di.FullName)";
+	if ($di.Exists -eq $false){
+		Write-Host "Folder not found!";
+		return;
+	}
+	# Take ownership.
+	& takeown.exe @("/F", $path);
+	# Return ownership to TrustedInstaller.
+	& icacls.exe @($path, "/setowner", "`"NT Service\TrustedInstaller`"", "/Q");
+	# Replace ACL with default inherited acls for all matching files.
+	& icacls.exe @($path, "/reset", "/T", "/C", "/Q");
+	# Add modify (M) & write (W) permission.
+	# Inherit: This folder and files (OI), This folder and subfolders (CI).
+	#& icacls.exe @($path, "/grant", "`"Users`":(OI)(CI)MW");
 }
 # ----------------------------------------------------------------------------
 function ClearCacheVS
@@ -175,12 +212,15 @@ function ShowMainMenu
         Write-Host;
 		Write-Host "    0 - Clear all";
         Write-Host;
+		Write-Host "    R - Reset Permissions";
+        Write-Host;
         $m = Read-Host -Prompt "Type option and press ENTER to continue";
         Write-Host;
         # Options:
         IF ("$m" -eq "0" -or "$m" -eq "1") { ClearBuilds; };
         IF ("$m" -eq "0" -or "$m" -eq "2") { ClearCache; };
         IF ("$m" -eq "0" -or "$m" -eq "3") { ClearCacheVS; };
+        IF ("$m" -eq "R") { ResetPermissions "$scriptPath"; };
         # If option was choosen.
         IF ("$m" -ne "") {
             pause;

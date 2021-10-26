@@ -3,9 +3,8 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:local="clr-namespace:x360ce.App.Controls"
+	xmlns:controls="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
@@ -62,7 +61,7 @@
 			VerticalAlignment="Center"
 			LargeChange="10"
 			Maximum="100" />
-		<xctk:IntegerUpDown Name="DeadZoneNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
+		<controls:NumericUpDown x:Name="DeadZoneNumericUpDown" MinWidth="75" VerticalAlignment="Center" Value="0" />
 		<TextBox
 			Name="DeadZoneTextBox"
 			Width="43"

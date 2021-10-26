@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using x360ce.Engine;
-using Xceed.Wpf.Toolkit;
+using x360ce.App.Controls;
 
 namespace x360ce.App
 {
@@ -13,7 +13,7 @@ namespace x360ce.App
 	public class TrackBarUpDownTextBoxLink : IDisposable
 	{
 
-		public TrackBarUpDownTextBoxLink(Slider trackBar, IntegerUpDown numericUpDown, TextBox textBox, int minValue, int maxValue)
+		public TrackBarUpDownTextBoxLink(Slider trackBar, NumericUpDown numericUpDown, TextBox textBox, int minValue, int maxValue)
 		{
 			eventsLock = new object();
 			PercentFormat = "{0:0} % ";
@@ -24,8 +24,8 @@ namespace x360ce.App
 			_NumericUpDown = numericUpDown;
 			_NumericUpDown.Minimum = minValue;
 			_NumericUpDown.Maximum = maxValue;
-			_NumericUpDown.Value = 0;
 			_TextBox = textBox;
+			_NumericUpDown.Value = 0;
 			// Update values from TrackBar before events attached.
 			UpdateValue();
 			_NumericUpDown.ValueChanged += _NumericUpDown_ValueChanged;
@@ -35,7 +35,7 @@ namespace x360ce.App
 
 		public event EventHandler<EventArgs> ValueChanged;
 		private Slider _TrackBar;
-		private IntegerUpDown _NumericUpDown;
+		private NumericUpDown _NumericUpDown;
 		private TextBox _TextBox;
 		private object eventsLock;
 
@@ -71,14 +71,14 @@ namespace x360ce.App
 				if (IsDisposing)
 					return;
 				_TrackBar.ValueChanged -= _TrackBar_ValueChanged;
-				var sourceValue = (float)(_NumericUpDown.Value ?? 0);
-				var value = (double)ConvertHelper.ConvertRangeF((float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, (float)_TrackBar.Minimum, (float)_TrackBar.Maximum, sourceValue);
+				var sourceValue = _NumericUpDown.Value;
+				var value = (double)ConvertHelper.ConvertRangeF((float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, (float)_TrackBar.Minimum, (float)_TrackBar.Maximum, (float)sourceValue);
 				if (_TrackBar.Value != value)
 					_TrackBar.Value = value;
 				_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 				// Set percent.
-				var minPercent = (_NumericUpDown.Minimum ?? 0) < 0 ? -100F : 0f;
-				var percent = (double)ConvertHelper.ConvertRangeF((float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, minPercent, 100f, sourceValue);
+				var minPercent = _NumericUpDown.Minimum < 0 ? -100F : 0f;
+				var percent = (double)ConvertHelper.ConvertRangeF((float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, minPercent, 100f, (float)sourceValue);
 				var percentRound = Math.Round(percent);
 				var percentString = string.Format(PercentFormat, percent);
 				// Update percent TextBox.

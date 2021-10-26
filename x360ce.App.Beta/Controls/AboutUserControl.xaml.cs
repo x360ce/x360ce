@@ -56,10 +56,6 @@ namespace x360ce.App.Controls
 			sr = new StreamReader(stream);
 			LicenseTextBox.Text = sr.ReadToEnd();
 			LicenseTabPage.Header = string.Format("{0} {1} License", ai.Product, ai.Version.ToString(2));
-			// Load Xceed License.
-			stream = EngineHelper.GetResourceStream("Xceed.Wpf.Toolkit.License.txt");
-			sr = new StreamReader(stream);
-			XceedLicenseTextBox.Text = sr.ReadToEnd();
 			// Load IconExperience License.
 			stream = EngineHelper.GetResourceStream("IconExperience.License.txt");
 			sr = new StreamReader(stream);

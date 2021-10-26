@@ -378,7 +378,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			string _activePath = null;
 			Invoke(() => {
-				_activePath = string.Format("/{0}", control.Name);
+				_activePath = string.Format("/{0}", control?.Name);
 			});
 			activePath = _activePath;
 			// Return current control by default.
@@ -391,7 +391,7 @@ namespace JocysCom.ClassLibrary.Controls
 				if (control == null)
 					break;
 				Invoke(() => {
-					_activePath = string.Format("/{0}", control.Name);
+					_activePath = string.Format("/{0}", control?.Name);
 				});
 
 				activePath += _activePath;
