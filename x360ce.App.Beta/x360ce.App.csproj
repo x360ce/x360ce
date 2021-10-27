@@ -235,9 +235,6 @@
     <Compile Include="Controls\AxisToButtonControl.xaml.cs">
       <DependentUpon>AxisToButtonControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\NumericUpDown.xaml.cs">
-      <DependentUpon>NumericUpDown.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\PadFootControl.xaml.cs">
       <DependentUpon>PadFootControl.xaml</DependentUpon>
     </Compile>
@@ -653,10 +650,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\AxisToButtonControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\NumericUpDown.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

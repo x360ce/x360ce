@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using x360ce.Engine;
-using x360ce.App.Controls;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App
 {
@@ -64,7 +64,7 @@ namespace x360ce.App
 			}
 		}
 
-		private void _NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		private void _NumericUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal?> e)
 		{
 			lock (eventsLock)
 			{

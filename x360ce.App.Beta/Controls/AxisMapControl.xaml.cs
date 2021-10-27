@@ -343,7 +343,7 @@ namespace x360ce.App.Controls
 			LinearUpDown.Value = (int)linear;
 		}
 
-		private void LinearUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		private void LinearUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal?> e)
 		{
 			var text = "Sensitivity";
 			if ((int)(e.NewValue ?? 0) < 0)
@@ -378,6 +378,7 @@ namespace x360ce.App.Controls
 			linearLink?.Dispose();
 			linearLink = null;
 		}
+	
 	}
 }
 

@@ -114,7 +114,7 @@ namespace x360ce.App.Controls
 				UpdateTimerReset();
 		}
 
-		private void TestUpDown_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
+		private void TestUpDown_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<decimal?> e)
 		{
 			UpdateTimerReset();
 		}

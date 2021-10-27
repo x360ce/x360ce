@@ -56,8 +56,8 @@ namespace x360ce.App
 				return System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty;
 			if (control is ComboBox || control is ListBox)
 				return System.Windows.Controls.Primitives.Selector.SelectedValueProperty;
-			if (control is Controls.NumericUpDown)
-				return Controls.NumericUpDown.ValueProperty;
+			if (control is JocysCom.ClassLibrary.Controls.NumericUpDown)
+				return JocysCom.ClassLibrary.Controls.NumericUpDown.ValueProperty;
 			return null;
 		}
 
