@@ -85,7 +85,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		public T[] ItemsToArraySyncronized()
+		public T[] ItemsToArraySynchronized()
 		{
 			lock (SyncRoot)
 				return Items.ToArray();
@@ -118,7 +118,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			var ev = Saving;
 			if (ev != null)
 				ev(this, new EventArgs());
-			var items = ItemsToArraySyncronized();
+			var items = ItemsToArraySynchronized();
 			lock (saveReadFileLock)
 			{
 				var type = items.FirstOrDefault()?.GetType();

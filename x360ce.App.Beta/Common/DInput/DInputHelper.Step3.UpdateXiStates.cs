@@ -13,7 +13,7 @@ namespace x360ce.App.DInput
 		void UpdateXiStates(UserGame game)
 		{
 			// Get mapped and enabled game settings.
-			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized()
+			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized()
 			   // Get only settings mapped to the game.
 			   .Where(x => x.FileName == game?.FileName)
 			   // Get only mapped and enabled settings.

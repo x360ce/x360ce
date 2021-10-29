@@ -199,6 +199,7 @@
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
     <Compile Include="Data\UserMacro.cs" />
+    <Compile Include="JocysCom\ComponentModel\ObservableCollectionInvoked.cs" />
     <Compile Include="JocysCom\Controls\InfoControl.xaml.cs">
       <DependentUpon>InfoControl.xaml</DependentUpon>
     </Compile>

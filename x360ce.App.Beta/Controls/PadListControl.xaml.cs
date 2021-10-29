@@ -15,12 +15,12 @@ namespace x360ce.App.Controls
 	/// <summary>
 	/// Interaction logic for UserSettingMapListControl.xaml
 	/// </summary>
-	public partial class PadListControl : UserControl, IDisposable
+	public partial class PadListControl : UserControl
 	{
 		public PadListControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
-			InitScrollFix(MainDataGrid);
+			InitScrollFix();
 			MainDataGrid.ItemsSource = mappedUserSettings;
 			_MainDataGridFormattingConverter = (ItemFormattingConverter)MainDataGrid.Resources[nameof(_MainDataGridFormattingConverter)];
 			_MainDataGridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
@@ -74,7 +74,7 @@ namespace x360ce.App.Controls
 				var grid = MainDataGrid;
 				var game = SettingsManager.CurrentGame;
 				// Get rows which must be displayed on the list.
-				var itemsToShow = SettingsManager.UserSettings.ItemsToArraySyncronized()
+				var itemsToShow = SettingsManager.UserSettings.ItemsToArraySynchronized()
 					// Filter devices by controller.	
 					.Where(x => x.MapTo == (int)_MappedTo)
 					// Filter devices by selected game (no items will be shown if game is not selected).
@@ -383,64 +383,64 @@ namespace x360ce.App.Controls
 
 		*/
 
-		#region ■ IDisposable
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		public bool IsDisposing;
-
-		// The bulk of the clean-up code is implemented in Dispose(bool)
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				IsDisposing = true;
-				SetBinding(MapTo.None);
-			}
-		}
-
-		#endregion
-
 		#region Fix column width with scroll.
 
 		System.Timers.Timer _Timer;
 
-		void InitScrollFix(DataGrid grid)
+		void InitScrollFix()
 		{
+			var grid = MainDataGrid;
 			_Timer = new System.Timers.Timer();
 			_Timer.AutoReset = false;
 			_Timer.Interval = 200;
 			// Stop and start times every time new row is loaded.
-			grid.LoadingRow += (sender, e) =>
-			{
-				_Timer.Stop();
-				_Timer.Start();
-			};
+			grid.LoadingRow += MainDataGrid_LoadingRow;
 			// Resize rows when timer stops restarting.
-			_Timer.Elapsed += (sender, e) =>
+			_Timer.Elapsed += _Timer_Elapsed;
+		}
+
+		private void MainDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+		{
+			_Timer.Stop();
+			_Timer.Start();
+		}
+
+		void UnInitScrollFix()
+		{
+			var grid = MainDataGrid;
+			grid.LoadingRow -= MainDataGrid_LoadingRow;
+			if (_Timer != null)
 			{
-				Dispatcher.BeginInvoke(new Action(() =>
-				{
-					var widths = grid.Columns.Select(x => x.Width).ToArray();
-					for (int i = 0; i < grid.Columns.Count; i++)
-						grid.Columns[i].Width = 0;
-					grid.UpdateLayout();
-					for (int i = 0; i < grid.Columns.Count; i++)
-						grid.Columns[i].Width = widths[i];
-				}), new object[0]);
-			};
+				_Timer.Elapsed -= _Timer_Elapsed;
+				_Timer.Dispose();
+				_Timer = null;
+			}
+		}
+
+		private void _Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			var grid = MainDataGrid;
+			Dispatcher.BeginInvoke(new Action(() =>
+			{
+				var widths = grid.Columns.Select(x => x.Width).ToArray();
+				for (int i = 0; i < grid.Columns.Count; i++)
+					grid.Columns[i].Width = 0;
+				grid.UpdateLayout();
+				for (int i = 0; i < grid.Columns.Count; i++)
+					grid.Columns[i].Width = widths[i];
+			}), new object[0]);
 		}
 
 		#endregion
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			UnInitScrollFix();
 			SetBinding(MapTo.None);
 			SettingsManager.UnLoadMonitor(EnabledCheckBox);
+			_MainDataGridFormattingConverter = null;
+			UseXInputStateContentControl.Content = null;
+			mappedUserSettings.Clear();
 		}
 	}
 }

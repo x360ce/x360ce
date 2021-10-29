@@ -350,7 +350,7 @@ namespace x360ce.App
 			var affected = ViGEm.HidGuardianHelper.GetAffected();
 			// Clear list of hidden devices.
 			ViGEm.HidGuardianHelper.ClearAffected();
-			var devices = SettingsManager.UserDevices.ItemsToArraySyncronized();
+			var devices = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			// Unhide all devices.
 			for (int i = 0; i < devices.Length; i++)
 				devices[i].IsHidden = false;

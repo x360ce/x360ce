@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.ComponentModel
 {
-	public class BindingListInvoked<T> : BindingList<T>
+	public class ObservableCollectionInvoked<T> : ObservableCollection<T>
 	{
-		public BindingListInvoked() : base() { }
+		public ObservableCollectionInvoked() : base() { }
 
-		public BindingListInvoked(IList<T> list)
+		public ObservableCollectionInvoked(IList<T> list)
 			: base(list) { }
 
-		public BindingListInvoked(IEnumerable<T> enumeration)
+		public ObservableCollectionInvoked(IEnumerable<T> enumeration)
 			: base(new List<T>(enumeration)) { }
 
 		public void AddRange(IEnumerable<T> list)
@@ -90,7 +91,6 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			}
 		}
 
-
 		protected override void RemoveItem(int index)
 		{
 			Invoke((Action<int>)base.RemoveItem, index);
@@ -106,29 +106,15 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			Invoke((ItemDelegate)base.SetItem, index, item);
 		}
 
-		protected override void OnListChanged(ListChangedEventArgs e)
+		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{
-			Invoke((Action<ListChangedEventArgs>)base.OnListChanged, e);
+			Invoke((Action<NotifyCollectionChangedEventArgs>)base.OnCollectionChanged, e);
 		}
 
-		protected override void OnAddingNew(AddingNewEventArgs e)
+		protected override void OnPropertyChanged(PropertyChangedEventArgs e)
 		{
-			Invoke((Action<AddingNewEventArgs>)base.OnAddingNew, e);
-		}
-
-		public void FixLeak()
-		{
-			var flags = BindingFlags.Instance | BindingFlags.NonPublic;
-			var fi = GetType().BaseType.BaseType.GetField("onListChanged", flags);
-			var d = (Delegate)fi.GetValue(this);
-			if (d != null)
-			{
-				var view = (System.Windows.Data.BindingListCollectionView)d.Target;
-				view.DetachFromSourceCollection();
-				var vfi = view.GetType().BaseType.GetField("_currentItem", flags);
-				vfi.SetValue(view, null);
-				fi.SetValue(this, null);
-			}
+			Invoke((Action<PropertyChangedEventArgs>)base.OnPropertyChanged, e);
+			base.OnPropertyChanged(e);
 		}
 
 		#endregion

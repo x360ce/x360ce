@@ -37,7 +37,7 @@ namespace x360ce.App
 		public void CleanupPadSettings()
 		{
 			// Get all records used by Settings.
-			var usedPadSettings = UserSettings.ItemsToArraySyncronized()
+			var usedPadSettings = UserSettings.ItemsToArraySynchronized()
 				.Select(x => x.PadSettingChecksum).Distinct().ToList();
 			// Get all records used by Summaries.
 			var usedPadSettings2 = Summaries.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
@@ -80,7 +80,7 @@ namespace x360ce.App
 		{
 			foreach (var item in list)
 			{
-				var old = UserSettings.ItemsToArraySyncronized()
+				var old = UserSettings.ItemsToArraySynchronized()
 					.FirstOrDefault(x => x.SettingId == item.SettingId);
 				if (old == null)
 				{

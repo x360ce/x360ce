@@ -47,7 +47,7 @@ namespace x360ce.App.DInput
 			// List of connected devices.
 			var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToList();
 			// List of current devices.
-			var uds = SettingsManager.UserDevices.ItemsToArraySyncronized();
+			var uds = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			var currentInstanceGuids = uds.Select(x => x.InstanceGuid).ToArray();
 			deleteDevices = uds.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
 			var addedDevices = devices.Where(x => !currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();

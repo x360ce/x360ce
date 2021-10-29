@@ -175,7 +175,7 @@ namespace x360ce.App
 		public static UserDevice[] GetMappedDevices(string fileName, bool includeOffline = false)
 		{
 			// Get all mapped user instances.
-			var instanceGuids = UserSettings.ItemsToArraySyncronized()
+			var instanceGuids = UserSettings.ItemsToArraySynchronized()
 				// Filter by game.
 				.Where(x => string.Compare(x.FileName, fileName, true) == 0)
 				// Include only mapped devices.
@@ -921,7 +921,7 @@ namespace x360ce.App
 		public void FillSearchParameterWithInstances(List<SearchParameter> sp)
 		{
 			// Select user devices as parameters to search.
-			var userDevices = UserSettings.ItemsToArraySyncronized()
+			var userDevices = UserSettings.ItemsToArraySynchronized()
 				.Select(x => x.InstanceGuid).Distinct()
 				// Do not add empty records.
 				.Where(x => x != Guid.Empty)
@@ -933,7 +933,7 @@ namespace x360ce.App
 		public void FillSearchParameterWithFiles(List<SearchParameter> sp)
 		{
 			// Select enabled user game/device as parameters to search.
-			var settings = UserSettings.ItemsToArraySyncronized()
+			var settings = UserSettings.ItemsToArraySynchronized()
 				.Where(x => x.MapTo > 0).ToArray();
 			foreach (var setting in settings)
 			{

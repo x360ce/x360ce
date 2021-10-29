@@ -68,7 +68,7 @@ namespace x360ce.App
 				.Distinct()
 				.ToArray();
 			// Get list of all configured user games.
-			var userGames = SettingsManager.UserGames.ItemsToArraySyncronized().ToList();
+			var userGames = SettingsManager.UserGames.ItemsToArraySynchronized().ToList();
 			var currentApp = userGames.FirstOrDefault(x => x.IsCurrentApp());
 			if (currentApp != null)
 				userGames.Remove(currentApp);
