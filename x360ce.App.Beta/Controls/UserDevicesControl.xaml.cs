@@ -25,22 +25,10 @@ namespace x360ce.App.Controls
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-		}
-
-		SortableBindingList<UserDevice> _currentData;
-
-		/// <summary>
-		/// Use this method to resolve format exception:
-		///     Invalid cast from 'System.Boolean' to 'System.Drawing.Image'
-		/// after list updated from the cloud with ImportAndBindItems(...) method
-		/// </summary>
-		public void AttachDataSource(SortableBindingList<UserDevice> data)
-		{
-			UpdateButtons();
 			MainDataGrid.AutoGenerateColumns = false;
-			_currentData = data;
-			MainDataGrid.ItemsSource = _currentData;
 		}
+
+		ObservableCollectionInvoked<UserDevice> _currentData;
 
 		public bool MapDeviceToControllerMode;
 
@@ -48,104 +36,87 @@ namespace x360ce.App.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			_currentData = null;
-			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
-			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
-			ShowSystemDevicesButton.Visibility = MapDeviceToControllerMode ? Visibility.Visible : Visibility.Collapsed;
+			// If mapping DInput device to XInput controller.
 			if (MapDeviceToControllerMode)
 			{
 				IsHiddenColumn.Visibility = Visibility.Collapsed;
 				IsEnabledColumn.Visibility = Visibility.Collapsed;
-				await RefreshMapDeviceToList().ConfigureAwait(true);
 			}
 			else
 			{
-				AttachDataSource(SettingsManager.UserDevices.Items);
+				RefreshButton.Visibility = Visibility.Collapsed;
+				ShowSystemDevicesButton.Visibility = Visibility.Collapsed;
 			}
+			_currentData = new ObservableCollectionInvoked<UserDevice>();
+			MainDataGrid.ItemsSource = _currentData;
+			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
+			await RefreshMapDeviceToList().ConfigureAwait(true);
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
+			MainDataGrid.ItemsSource = null;
+			_currentData.Clear();
+			_currentData = null;
+		}
+
+		#region Used when MapDeviceToControllerMode = true
+
+		/// <summary>
+		/// Show DInput devices for mapping to XInput virtual device.
+		/// </summary>
+		/// <returns></returns>
 		async Task RefreshMapDeviceToList()
 		{
-			var list = new SortableBindingList<UserDevice>();
-			// Exclude System/Virtual devices.
-			UserDevice[] devices;
-			lock (SettingsManager.UserDevices.SyncRoot)
+			var list = SettingsManager.UserDevices.Items.ToList();
+			if (MapDeviceToControllerMode)
 			{
-				devices = SettingsManager.UserDevices.Items
-					.Where(x => ShowSystemDevices || x.ConnectionClass != DEVCLASS.SYSTEM)
-					.ToArray();
+				// Exclude System/Virtual devices.
+				lock (SettingsManager.UserDevices.SyncRoot)
+				{
+					list = list
+						.Where(x => ShowSystemDevices || x.ConnectionClass != DEVCLASS.SYSTEM)
+						.ToList();
+				}
 			}
-			list.AddRange(devices);
-			list.SynchronizingObject = ControlsHelper.MainTaskScheduler;
-			// If new list, item added or removed then...
-			if (_currentData == null)
-				AttachDataSource(list);
-			else if (_currentData.Count != list.Count)
-				CollectionsHelper.Synchronize(list, _currentData);
+			// Synchronize list.
+			CollectionsHelper.Synchronize(list, _currentData);
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
+			// If device added removed then...
+			var changes = new[] { ListChangedType.ItemAdded, ListChangedType.ItemDeleted };
 			// If item added or deleted from original list then...
-			if (
-				e.ListChangedType == ListChangedType.ItemAdded ||
-				e.ListChangedType == ListChangedType.ItemDeleted
-			)
-				// Update list.
+			if (changes.Contains(e.ListChangedType))
 				RefreshMapDeviceToList().ConfigureAwait(true);
 		}
 
-		//private void MainDataGrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-		//{
-		//	if (e.RowIndex < 0 || e.ColumnIndex < 0)
-		//		return;
+		bool ShowSystemDevices = false;
 
-		//	var grid = (DataGridView)sender;
-		//	var row = grid.Rows[e.RowIndex];
-		//	var column = grid.Columns[e.ColumnIndex];
-		//	var item = (UserDevice)row.DataBoundItem;
-		//	if (column == IsOnlineColumn)
-		//	{
-		//		e.Value = item.IsOnline
-		//			? Properties.Resources.bullet_square_glass_green
-		//			: Properties.Resources.bullet_square_glass_grey;
-		//	}
-		//	else if (column == ConnectionClassColumn)
-		//	{
-		//		e.Value = item.ConnectionClass == Guid.Empty
-		//			? new Bitmap(16, 16)
-		//			: DeviceDetector.GetClassIcon(item.ConnectionClass, 16)?.ToBitmap();
-		//	}
-		//	else if (column == IsHiddenColumn)
-		//	{
-		//		var left = row.Cells[e.ColumnIndex].OwningColumn.Width;
-		//		// Show checkbox.
-		//		if (item.AllowHide && e.CellStyle.Padding.Left >= 0)
-		//			e.CellStyle.Padding = new Padding();
-		//		// Hide checkbox (move out of the sight).
-		//		if (!item.AllowHide && e.CellStyle.Padding.Left == 0)
-		//			e.CellStyle.Padding = new Padding(left, 0, 0, 0);
-		//	}
-		//	else if (column == DeviceIdColumn)
-		//	{
-		//		var d = item.Device;
-		//		if (d != null)
-		//		{
-		//		}
-		//		//e.Value = item.de
-		//	}
-		//}
+		async private void ShowSystemDevicesButton_Click(object sender, RoutedEventArgs e)
+		{
+			var newValue = ShowSystemDevicesButton.IsChecked ?? false;
+			ShowSystemDevicesContent.Content = newValue
+				? Icons_Default.Current[Icons_Default.Icon_checkbox]
+				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
+			ShowSystemDevices = newValue;
+			await RefreshMapDeviceToList();
+		}
+
+		private async void RefreshButton_Click(object sender, EventArgs e)
+		{
+			await RefreshMapDeviceToList();
+		}
+
+		#endregion
 
 		public UserDevice[] GetSelected()
 		{
 			var grid = MainDataGrid;
 			var items = grid.SelectedItems.Cast<UserDevice>().ToArray();
 			return items;
-		}
-
-		private void RefreshButton_Click(object sender, EventArgs e)
-		{
-			//MainDataGrid.Invalidate();
 		}
 
 		private void DeleteButton_Click(object sender, RoutedEventArgs e)
@@ -190,7 +161,8 @@ namespace x360ce.App.Controls
 			var list = SettingsManager.UserDevices.Items;
 			//var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<Guid>(grid, key);
 			var newItems = items.ToArray();
-			AttachDataSource(null);
+			// Suspend events.
+			grid.ItemsSource = null;
 			foreach (var newItem in newItems)
 			{
 				// Try to find existing item inside the list.
@@ -202,7 +174,8 @@ namespace x360ce.App.Controls
 				list.Add(newItem);
 			}
 			Global.HMan.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(UserDevice).Name);
-			AttachDataSource(list);
+			// Resume
+			grid.ItemsSource = _currentData;
 			//JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();
 		}
@@ -275,28 +248,5 @@ namespace x360ce.App.Controls
 			set { IsHiddenColumn.Visibility = value ? Visibility.Visible : Visibility.Hidden; }
 		}
 
-		//private void MainDataGrid_DataError(object sender, DataGridViewDataErrorEventArgs e)
-		//{
-		//}
-
-		bool ShowSystemDevices = false;
-
-		async private void ShowSystemDevicesButton_Click(object sender, RoutedEventArgs e)
-		{
-			var newValue = ShowSystemDevicesButton.IsChecked ?? false;
-			// ShowSystemDevicesButton.IsChecked = newValue;
-			ShowSystemDevicesContent.Content = newValue
-				? Icons_Default.Current[Icons_Default.Icon_checkbox]
-				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
-			ShowSystemDevices = newValue;
-			await RefreshMapDeviceToList();
-		}
-
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
-			_currentData = null;
-			MainDataGrid.ItemsSource = null;
-		}
 	}
 }

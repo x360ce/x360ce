@@ -21,7 +21,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		public void AddRange(IEnumerable<T> list)
 		{
 			foreach (T item in list)
-			{ Add(item); }
+				Add(item);
 		}
 
 		#region ISynchronizeInvoker
@@ -38,35 +38,30 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			if (so == null || !JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired)
 			{
 				DynamicInvoke(method, args);
+				return;
 			}
-			else
+			// Note that Control.Invoke(...) is a synchronous action on the main GUI thread,
+			// and will wait for EnableBackControl() to return.
+			// so.Invoke(...) line could freeze if main GUI thread is busy and can't give
+			// attention to any .Invoke requests from background threads.
+			// 
+			// Main GUI thread could be blocked because:
+			// a) Modal dialog is up (which means that it's not listening to new requests).
+			// b) It is checking something in a tight continuous loop.
+			// c) Main thread crashed because of exception.
+			// 
+			// Try inserting a Application.DoEvents() in the loop, which will pause
+			// execution and force the main thread to process messages and any outstanding .Invoke requests.
+			if (AsynchronousInvoke)
 			{
-				// Note that Control.Invoke(...) is a synchronous action on the main GUI thread,
-				// and will wait for EnableBackControl() to return.
-				// so.Invoke(...) line could freeze if main GUI thread is busy and can't give
-				// attention to any .Invoke requests from background threads.
-				// 
-				// Main GUI thread could be blocked because:
-				// a) Modal dialog is up (which means that it's not listening to new requests).
-				// b) It is checking something in a tight continuous loop.
-				// c) Main thread crashed because of exception.
-				// 
-				// Try inserting a Application.DoEvents() in the loop, which will pause
-				// execution and force the main thread to process messages and any outstanding .Invoke requests.
-				if (AsynchronousInvoke)
-					Task.Factory.StartNew(() =>
-					{
-						DynamicInvoke(method, args);
-					}, CancellationToken.None, TaskCreationOptions.None, so);
-				else
-				{
-					var task = new Task(() =>
-					{
-						DynamicInvoke(method, args);
-					});
-					task.RunSynchronously(so);
-				}
+				Task.Factory.StartNew(() =>
+					DynamicInvoke(method, args),
+					CancellationToken.None, TaskCreationOptions.None, so);
+				return;
 			}
+			var task = new Task(() =>
+				DynamicInvoke(method, args));
+			task.RunSynchronously(so);
 		}
 
 		object OneChangeAtTheTime = new object();
@@ -76,9 +71,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			try
 			{
 				lock (OneChangeAtTheTime)
-				{
 					method.DynamicInvoke(args);
-				}
 			}
 			catch (Exception ex)
 			{
@@ -92,30 +85,19 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		}
 
 		protected override void RemoveItem(int index)
-		{
-			Invoke((Action<int>)base.RemoveItem, index);
-		}
+			=> Invoke((Action<int>)base.RemoveItem, index);
 
 		protected override void InsertItem(int index, T item)
-		{
-			Invoke((ItemDelegate)base.InsertItem, index, item);
-		}
+			=> Invoke((ItemDelegate)base.InsertItem, index, item);
 
 		protected override void SetItem(int index, T item)
-		{
-			Invoke((ItemDelegate)base.SetItem, index, item);
-		}
+			=> Invoke((ItemDelegate)base.SetItem, index, item);
 
 		protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-		{
-			Invoke((Action<NotifyCollectionChangedEventArgs>)base.OnCollectionChanged, e);
-		}
+			=> Invoke((Action<NotifyCollectionChangedEventArgs>)base.OnCollectionChanged, e);
 
 		protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-		{
-			Invoke((Action<PropertyChangedEventArgs>)base.OnPropertyChanged, e);
-			base.OnPropertyChanged(e);
-		}
+			=> Invoke((Action<PropertyChangedEventArgs>)base.OnPropertyChanged, e);
 
 		#endregion
 	}

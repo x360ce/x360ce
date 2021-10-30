@@ -16,16 +16,20 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_GeneralControl()
 		{
+			LayoutsItems = new System.Windows.Data.BindingListCollectionView(SettingsManager.Layouts.Items);
 			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
 		public void InitPadData()
 		{
-			MapNameComboBox.ItemsSource = SettingsManager.Layouts.Items;
-			MapNameComboBox.DisplayMemberPath = "Name";
+			//MapNameComboBox.ItemsSource = LayoutsItems;
+			//MapNameComboBox.DisplayMemberPath = "Name";
 			if (SettingsManager.Layouts.Items.Count > 0)
 				MapNameComboBox.SelectedIndex = 0;
 		}
+
+		public System.Windows.Data.BindingListCollectionView LayoutsItems;
+
 
 		PadSetting _padSetting;
 		MapTo _MappedTo;
@@ -350,7 +354,7 @@ namespace x360ce.App.Controls
 			SetBinding(MapTo.None, null);
 			//MapNameComboBox.ItemsSource = null;
 			//MapNameComboBox.SelectedItem = null;
-			SettingsManager.Layouts.Items.FixLeak();
+			LayoutsItems.DetachFromSourceCollection();
 			DiMenuStrip.Clear();
 		}
 

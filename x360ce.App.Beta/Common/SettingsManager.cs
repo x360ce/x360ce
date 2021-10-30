@@ -289,6 +289,21 @@ namespace x360ce.App
 			OptionsData.Items.SynchronizingObject = so;
 		}
 
+		//public void FixLeaks()
+		//{
+		//	UserSettings.FixLeaks();
+		//	Summaries.FixLeaks();
+		//	UserDevices.FixLeaks();
+		//	UserMacros.FixLeaks();
+		//	UserGames.FixLeaks();
+		//	UserInstances.FixLeaks();
+		//	Layouts.FixLeaks();
+		//	Programs.FixLeaks();
+		//	Presets.FixLeaks();
+		//	PadSettings.FixLeaks();
+		//	OptionsData.FixLeaks();
+		//}
+
 		static IList<Engine.Data.UserSetting> UserSettings_ValidateData(IList<Engine.Data.UserSetting> items)
 		{
 			for (int i = 0; i < items.Count; i++)

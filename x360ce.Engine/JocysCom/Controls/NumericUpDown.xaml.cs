@@ -109,10 +109,16 @@ namespace JocysCom.ClassLibrary.Controls
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			ValueChanged = null;
-			_NumericUpDownStyleConverter.Control = null;
-			_NumericUpDownStyleConverter = null;
-			_NumericUpDownValueConverter.Control = null;
-			_NumericUpDownValueConverter = null;
+			if (_NumericUpDownStyleConverter != null)
+			{
+				_NumericUpDownStyleConverter.Control = null;
+				_NumericUpDownStyleConverter = null;
+			}
+			if (_NumericUpDownValueConverter != null)
+			{
+				_NumericUpDownValueConverter.Control = null;
+				_NumericUpDownValueConverter = null;
+			}
 		}
 
 		private void TextBox_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -147,7 +153,8 @@ namespace JocysCom.ClassLibrary.Controls
 		private void TBox_TextChanged(object sender, TextChangedEventArgs e)
 		{
 			var s = TBox.Text;
-			if (!NumericUpDownValidationRule.IsValid(s)) {
+			if (!NumericUpDownValidationRule.IsValid(s))
+			{
 				TBox.Text = oldValue;
 				return;
 			}

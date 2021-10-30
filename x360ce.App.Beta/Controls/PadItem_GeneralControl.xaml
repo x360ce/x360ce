@@ -5,6 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="This"
 	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
@@ -49,7 +50,6 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="Auto" />
 		</Grid.ColumnDefinitions>
-
 		<StackPanel
 			Grid.Row="0"
 			Grid.RowSpan="2"
@@ -267,7 +267,11 @@
 					<Label Content="Remap All" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</Button>
-			<ComboBox x:Name="MapNameComboBox" SelectionChanged="MapNameComboBox_SelectionChanged" />
+			<ComboBox
+				x:Name="MapNameComboBox"
+				DisplayMemberPath="Name"
+				ItemsSource="{Binding ElementName=This, Path=LayoutsItems}"
+				SelectionChanged="MapNameComboBox_SelectionChanged" />
 		</StackPanel>
 		<local:PadItem_General_XboxImageControl
 			x:Name="XboxImage"

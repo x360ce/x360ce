@@ -23,6 +23,18 @@ namespace JocysCom.ClassLibrary.Configuration
 			Initialize();
 		}
 
+		//public void FixLeaks()
+		//{
+
+		//	var items = new SortableBindingList<T>();
+		//	items.AddRange(Items);
+		//	var oldItems = Items;
+		//	Items.FixLeak();
+		//	Items = items;
+		//	oldItems.Clear();
+		//	oldItems = null;
+		//}
+
 		public SettingsData(string fileName, bool userLevel = false, string comment = null, Assembly assembly = null)
 		{
 			Initialize(fileName, userLevel, comment, assembly);

@@ -2,7 +2,6 @@
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Web.Services;
 using Microsoft.Win32;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -27,22 +26,6 @@ namespace x360ce.App.Controls
 
 		OpenFileDialog ImportOpenFileDialog;
 		SaveFileDialog ExportSaveFileDialog;
-
-		public void InitPanel()
-		{
-			// Configure Programs.
-			SettingsManager.Programs.Items.ListChanged += Programs_ListChanged;
-			MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
-			MainDataGrid.ItemsSource = SettingsManager.Programs.Items;
-			UpdateControlsFromPrograms();
-		}
-
-		public void UnInitPanel()
-		{
-			MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-			SettingsManager.Programs.Items.ListChanged -= Programs_ListChanged;
-			MainDataGrid.ItemsSource = null;
-		}
 
 		void Programs_ListChanged(object sender, ListChangedEventArgs e)
 		{
@@ -244,11 +227,6 @@ namespace x360ce.App.Controls
 				ImportPrograms();
 		}
 
-		private void GameDefaultDetailsControl_Load(object sender, EventArgs e)
-		{
-			InitPanel();
-		}
-
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			DeleteButton.IsEnabled = MainDataGrid.SelectedItems.Count > 0;
@@ -274,9 +252,24 @@ namespace x360ce.App.Controls
 			DeleteSelectedPrograms();
 		}
 
+		public System.Windows.Data.BindingListCollectionView ProgramItems;
+
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+
+			// Configure Programs.
+			SettingsManager.Programs.Items.ListChanged += Programs_ListChanged;
+			MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
+			MainDataGrid.ItemsSource = ProgramItems;
+			UpdateControlsFromPrograms();
+		}
+
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-			UnInitPanel();
+			MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
+			SettingsManager.Programs.Items.ListChanged -= Programs_ListChanged;
+			MainDataGrid.ItemsSource = null;
 		}
+
 	}
 }

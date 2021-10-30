@@ -20,6 +20,7 @@ namespace x360ce.App.Forms
 			WinControl.SetButton1("Add Selected Devices", Icons_Default.Icon_ok);
 			WinControl.SetButton2("Cancel", Icons_Default.Icon_close);
 			WinControl.SetButton3();
+			// This window will be used to map DInput devices to XInput controller.
 			MainControl.MapDeviceToControllerMode = true;
 		}
 
