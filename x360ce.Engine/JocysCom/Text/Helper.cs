@@ -54,6 +54,48 @@ namespace JocysCom.ClassLibrary.Text
 			return s;
 		}
 
+		/// <summary>
+		/// Replace {TypeName.PropertyName[:format]} or {customPrefix.propertyName[:format]} pattern with the property value of the object.
+		/// </summary>
+		/// <remarks>
+		/// Example 1: Supply current date. Use {customPrefix.propertyName[:format]}.
+		///	var template = "file_{date.Now:yyyyMMdd}.txt";
+		/// var fileName = JocysCom.ClassLibrary.Text.Helper.Replace(template, DateTime.Now, true, "date");
+		///
+		/// Example 2: Supply profile object. Use {TypeName.PropertyName[:format]}.
+		///	var template = "Profile full name: {Profile.first_name} {Profile.last_name}";
+		/// var fileName = JocysCom.ClassLibrary.Text.Helper.Replace(template, profile);
+		/// </remarks>
+		/// <param name="s">String template</param>
+		/// <param name="o">Object values.</param>
+		/// <param name="usePrefix">If true then type name or custom prefix, separated by dot, will be used.</param>
+		/// <param name="customPrefix">Custom prefix string.</param>
+		public static string ReplaceKeys(string s, System.Collections.IDictionary o, bool usePrefix = true, string customPrefix = null)
+		{
+			if (string.IsNullOrEmpty(s))
+				return s;
+			if (o == null)
+				return s;
+			var keys = o.Keys;
+			var prefix = string.IsNullOrEmpty(customPrefix) ? "" : customPrefix;
+			var matches = tagRx.Matches(s);
+			foreach (var key in keys)
+			{
+				foreach (Match m in matches)
+				{
+					if (usePrefix && string.Compare(prefix, m.Groups["prefix"].Value, true) != 0) continue;
+					if (string.Compare($"{key}", m.Groups["property"].Value, true) != 0) continue;
+					var format = m.Groups["format"].Value;
+					var value = o[key];
+					var text = string.IsNullOrEmpty(format)
+						? string.Format("{0}", value)
+						: string.Format("{0:" + format + "}", value);
+					s = Replace(s, m.Value, text, StringComparison.OrdinalIgnoreCase);
+				}
+			}
+			return s;
+		}
+
 		/// <summary>Case insensitive replace.</summary>
 		public static string Replace(string s, string oldValue, string newValue, StringComparison comparison)
 		{

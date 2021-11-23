@@ -16,14 +16,6 @@ namespace JocysCom.ClassLibrary.Controls
 		public InfoControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
-			var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
-			var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
-			var description = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyDescriptionAttribute))).Description;
-			DefaultHead = product;
-			DefaultBody = description;
-			SetHead(DefaultHead);
-			SetBodyInfo(DefaultBody);
-			InitRotation();
 		}
 
 		#region ■ Properties
@@ -44,7 +36,6 @@ namespace JocysCom.ClassLibrary.Controls
 			_Image = resource;
 			RightIcon.Content = _Image;
 		}
-
 
 		#endregion
 
@@ -197,26 +188,24 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		#region ■ IDisposable
-
-		public void Dispose()
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+			var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute)))?.Product;
+			var description = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyDescriptionAttribute)))?.Description;
+			DefaultHead = product;
+			DefaultBody = description;
+			SetHead(DefaultHead);
+			SetBodyInfo(DefaultBody);
+			InitRotation();
 		}
 
-		public bool IsDisposing;
-
-		protected virtual void Dispose(bool disposing)
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			if (disposing)
-			{
-				IsDisposing = true;
-				// Free managed resources.
-				_Image = null;
-			}
+			_Image = null;
 		}
 
-		#endregion
 	}
 }

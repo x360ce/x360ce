@@ -106,7 +106,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		}
 
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		public void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			ValueChanged = null;
 			if (_NumericUpDownStyleConverter != null)

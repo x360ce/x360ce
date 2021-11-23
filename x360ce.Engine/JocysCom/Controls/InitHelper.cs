@@ -28,7 +28,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public void WriteLine(string prefix)
 		{
-			var s = string.Format("-4-> {0}. {1} - {2}: {3} changes",
+			var s = string.Format("-4-> {0,4}. {1} - {2}: {3} changes",
 				_InitEndCount, prefix, Control.GetType(), _PropertyChangedCount);
 			if (EndDate.Ticks > 0)
 				s += string.Format(", {0:# ##0} ms", EndDate.Subtract(StartDate).TotalMilliseconds);

@@ -18,10 +18,6 @@ namespace x360ce.App.Controls
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			controlsLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, 0, short.MaxValue);
-			controlsLink.ValueChanged += controlsLink_ValueChanged;
-			arrowEnabledImage = ControlsHelper.GetImageSource(Properties.Resources.arrow_right_16x16);
-			arrowDisabledImage = ControlsHelper.GetImageSource(AppHelper.GetDisabledImage(Properties.Resources.arrow_right_16x16));
 		}
 
 		private void controlsLink_ValueChanged(object sender, EventArgs e)
@@ -183,11 +179,22 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetVisible(ButtonStatusImage, on);
 		}
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			controlsLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, 0, short.MaxValue);
+			controlsLink.ValueChanged += controlsLink_ValueChanged;
+			arrowEnabledImage = ControlsHelper.GetImageSource(Properties.Resources.arrow_right_16x16);
+			arrowDisabledImage = ControlsHelper.GetImageSource(AppHelper.GetDisabledImage(Properties.Resources.arrow_right_16x16));
+		}
+
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			controlsLink.ValueChanged -= controlsLink_ValueChanged;
 			controlsLink?.Dispose();
 			controlsLink = null;
+			arrowEnabledImage = null;
 			arrowDisabledImage = null;
 		}
+
 	}
 }

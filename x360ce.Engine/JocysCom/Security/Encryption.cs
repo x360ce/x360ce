@@ -100,7 +100,7 @@ namespace JocysCom.ClassLibrary.Security
 			get
 			{
 				return _HashProvider = _HashProvider ??
-					new System.Security.Cryptography.MD5CryptoServiceProvider();
+					System.Security.Cryptography.MD5.Create();
 			}
 		}
 
@@ -142,9 +142,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			byte[] hash;
 			lock (HashProviderLock)
-			{
 				hash = HashProvider.ComputeHash(bytes);
-			}
 			return new Guid(hash);
 		}
 
@@ -235,52 +233,42 @@ namespace JocysCom.ClassLibrary.Security
 			{
 				lock (RsaProviderLock)
 				{
-					if (_RsaProvider == null)
+					if (_RsaProvider != null)
+						return _RsaProvider;
+					//Problem Solution: http://support.microsoft.com/default.aspx?scid=KB;EN-US;322371
+					System.Security.Cryptography.RSACryptoServiceProvider.UseMachineKeyStore = true;
+					// Create a new CspParameters object to specify a key container.
+					System.Security.Cryptography.CspParameters cspParams = new System.Security.Cryptography.CspParameters();
+					cspParams.KeyContainerName = "XML_DSIG_RSA_KEY";
+					cspParams.Flags = System.Security.Cryptography.CspProviderFlags.UseMachineKeyStore;
+					_RsaProvider = new System.Security.Cryptography.RSACryptoServiceProvider();
+					// If web.config data is not available then return.
+					if (RsaPublicKeyValue == null) return _RsaProvider;
+					byte[] privateKeyBytes = string.IsNullOrEmpty(RsaPrivateKeyValue)
+						? new byte[0] : System.Convert.FromBase64String(RsaPrivateKeyValue);
+					byte[] publicKeyBytes = string.IsNullOrEmpty(RsaPublicKeyValue)
+						? new byte[0] : System.Convert.FromBase64String(RsaPublicKeyValue);
+					// If private key was found then...
+					byte[] rsaKeyBytes = (privateKeyBytes.Length > 0) ? privateKeyBytes : publicKeyBytes;
+					//System.Security.Cryptography.RSAParameters rp = new System.Security.Cryptography.RSAParameters()
+					try
 					{
-
-						//Problem Solution: http://support.microsoft.com/default.aspx?scid=KB;EN-US;322371
-						System.Security.Cryptography.RSACryptoServiceProvider.UseMachineKeyStore = true;
-						// Create a new CspParameters object to specify a key container.
-						System.Security.Cryptography.CspParameters cspParams = new System.Security.Cryptography.CspParameters();
-						cspParams.KeyContainerName = "XML_DSIG_RSA_KEY";
-						cspParams.Flags = System.Security.Cryptography.CspProviderFlags.UseMachineKeyStore;
-						_RsaProvider = new System.Security.Cryptography.RSACryptoServiceProvider();
-						// If web.config data is not available then return.
-						if (RsaPublicKeyValue == null) return _RsaProvider;
-						byte[] privateKeyBytes = string.IsNullOrEmpty(RsaPrivateKeyValue)
-							? new byte[0] : System.Convert.FromBase64String(RsaPrivateKeyValue);
-						byte[] publicKeyBytes = string.IsNullOrEmpty(RsaPublicKeyValue)
-							? new byte[0] : System.Convert.FromBase64String(RsaPublicKeyValue);
-						// If private key was found then...
-						byte[] rsaKeyBytes = (privateKeyBytes.Length > 0) ? privateKeyBytes : publicKeyBytes;
-						//System.Security.Cryptography.RSAParameters rp = new System.Security.Cryptography.RSAParameters()
-						try
-						{
-							// This line can fail due to missing user profile on windows.
-							_RsaProvider.ImportCspBlob(rsaKeyBytes);
-						}
-						catch (Exception) { }
+						// This line can fail due to missing user profile on windows.
+						_RsaProvider.ImportCspBlob(rsaKeyBytes);
 					}
+					catch (Exception) { }
 				}
 				return _RsaProvider;
 			}
 		}
 
-		System.Security.Cryptography.HashAlgorithm _RsaSignatureHashAlgorithm;
 		/// <summary>
 		/// RSA Signature algorithm. SHA1 is default.
 		/// </summary>
 		public System.Security.Cryptography.HashAlgorithm RsaSignatureHashAlgorithm
-		{
-			get
-			{
-				if (_RsaSignatureHashAlgorithm == null)
-				{
-					_RsaSignatureHashAlgorithm = new System.Security.Cryptography.SHA256CryptoServiceProvider();
-				}
-				return _RsaSignatureHashAlgorithm;
-			}
-		}
+			=> _RsaSignatureHashAlgorithm = _RsaSignatureHashAlgorithm ?? System.Security.Cryptography.SHA256.Create();
+
+		System.Security.Cryptography.HashAlgorithm _RsaSignatureHashAlgorithm;
 
 		/// <summary>
 		/// Encrypts data with the System.Security.Cryptography.RSA algorithm.
@@ -290,12 +278,9 @@ namespace JocysCom.ClassLibrary.Security
 		public string RsaEncrypt(byte[] bytes)
 		{
 			byte[] encrypted;
+			// Enable OAEP padding for better security.
 			lock (RsaProviderLock)
-			{
-				// Enable OAEP padding for better security.
-				// Disable for compatibility.
 				encrypted = this.RsaProvider.Encrypt(bytes, RsaUseOaepValue);
-			}
 			return System.Convert.ToBase64String(encrypted);
 		}
 
@@ -319,16 +304,13 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			byte[] bytes = System.Convert.FromBase64String(base64Text);
 			byte[] decrypted;
+			// Enable OAEP padding for better security.
 			lock (RsaProviderLock)
-			{
-				// Enable OAEP padding for better security.
-				// Disable for compatibility.
 				decrypted = RsaProvider.Decrypt(bytes, RsaUseOaepValue);
-			}
 			return System.Text.Encoding.UTF8.GetString(decrypted);
 		}
 
-		
+
 
 		#endregion
 
@@ -446,9 +428,9 @@ namespace JocysCom.ClassLibrary.Security
 			//Engine.Properties.PublicSettings.Default.Reload();
 		}
 
-#endregion
+		#endregion
 
-#region IDisposable
+		#region IDisposable
 
 		// Dispose() calls Dispose(true)
 		public void Dispose()
@@ -496,7 +478,7 @@ namespace JocysCom.ClassLibrary.Security
 			}
 		}
 
-#endregion
+		#endregion
 
 	}
 }

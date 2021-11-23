@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
@@ -229,13 +230,13 @@ namespace JocysCom.ClassLibrary.Controls
 			if (pi != null)
 				return pi;
 #else
-				// Try to find property by EntityFramework EdmScalarPropertyAttribute (System.Data.Entity.dll).
-				pi = t.GetProperties()
-					.Where(x =>
-						x.GetCustomAttributes(typeof(System.Data.Objects.DataClasses.EdmScalarPropertyAttribute), true)
-						.Cast<System.Data.Objects.DataClasses.EdmScalarPropertyAttribute>()
-						.Any(a => a.EntityKeyProperty))
-					.FirstOrDefault();
+			// Try to find property by EntityFramework EdmScalarPropertyAttribute (System.Data.Entity.dll).
+			pi = t.GetProperties()
+				.Where(x =>
+					x.GetCustomAttributes(typeof(System.Data.Objects.DataClasses.EdmScalarPropertyAttribute), true)
+					.Cast<System.Data.Objects.DataClasses.EdmScalarPropertyAttribute>()
+					.Any(a => a.EntityKeyProperty))
+				.FirstOrDefault();
 			if (pi != null)
 				return pi;
 
@@ -281,6 +282,40 @@ namespace JocysCom.ClassLibrary.Controls
 					: item.GetType().GetProperty(keyPropertyName);
 			return pi;
 		}
+
+		#region Add cool downs to controls.
+
+		// Default cool-down 1 second.
+		public static TimeSpan ControlCooldown = new TimeSpan(0, 0, 1);
+
+		public static Dictionary<object, DateTime> ControlCooldowns { get; } = new Dictionary<object, DateTime>();
+
+		/// <summary>
+		/// Returns true if control is on cool-down.
+		/// </summary>
+		/// <param name="control">Control to check.</param>
+		public static bool IsOnCooldown(object control, int? milliseconds = null)
+		{
+			lock (ControlCooldowns)
+			{
+				var now = DateTime.Now;
+				// Get expired controls.
+		        var keys = ControlCooldowns.Where(x => now > x.Value).Select(x => x.Key).ToList();
+				// Cleanup the list.
+				foreach (var key in keys)
+					ControlCooldowns.Remove(key);
+				// If on cool-down then...
+				if (ControlCooldowns.ContainsKey(control))
+					return true;
+				var cooldown = milliseconds.HasValue
+					? new TimeSpan(0, 0, 0, milliseconds.Value)
+					: ControlCooldown;
+				ControlCooldowns.Add(control, now.Add(cooldown));
+				return false;
+			}
+		}
+
+		#endregion
 
 	}
 }

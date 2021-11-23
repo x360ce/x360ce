@@ -1,9 +1,5 @@
-﻿#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
-using JocysCom.ClassLibrary.Configuration;
+﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Runtime;
-using mshtml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +8,12 @@ using System.Net.Mail;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
+using mshtml;
+#endif
+
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -47,6 +49,10 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private void MainBrowser_LoadCompleted(object sender, NavigationEventArgs e)
 		{
+#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
+
 			var doc = (IHTMLDocument3)MainBrowser.Document;
 			if (doc == null)
 				return;
@@ -58,6 +64,7 @@ namespace JocysCom.ClassLibrary.Controls
 			//MainBrowser.Refresh();
 			body.insertAdjacentHTML("afterbegin", "<p>Hi,</p><p></p><p>I would like to report a problem. Error details attached below:</p>");
 			body.setAttribute("contentEditable", "true");
+#endif
 		}
 
 		private void OpenErrorsFolder_Click(object sender, RoutedEventArgs e)
@@ -104,6 +111,11 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public string GetBody()
 		{
+#if NETCOREAPP // .NET Core
+			throw new NotImplementedException();
+#elif NETSTANDARD // .NET Standard
+			throw new NotImplementedException();
+#else // .NET Framework
 			var doc = (IHTMLDocument3)MainBrowser.Document;
 			if (doc == null)
 				return null;
@@ -111,10 +123,16 @@ namespace JocysCom.ClassLibrary.Controls
 			if (body == null)
 				return null;
 			return body.innerHTML;
+#endif
 		}
 
 		public string GetMetaContent(string name)
 		{
+#if NETCOREAPP // .NET Core
+			throw new NotImplementedException();
+#elif NETSTANDARD // .NET Standard
+			throw new NotImplementedException();
+#else // .NET Framework
 			var doc = (IHTMLDocument3)MainBrowser.Document;
 			if (doc == null)
 				return null;
@@ -122,6 +140,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (meta == null)
 				return null;
 			return meta.content;
+#endif
 		}
 
 		private void SendErrorButton_Click(object sender, RoutedEventArgs e)
@@ -152,4 +171,4 @@ namespace JocysCom.ClassLibrary.Controls
 
 	}
 }
-#endif
+

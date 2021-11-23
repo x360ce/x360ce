@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
@@ -128,10 +129,10 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		// List of warnings to show.
 		public BindingListInvoked<IssueItem> Warnings;
-		//readonly object checkTimerLock = new object();
+		// Warnings will be wrapped into BindingListCollectionView in order to break link with control and avoid memory leak.
+		BindingListCollectionView WarningsView;
 
 		BindingListInvoked<IssueItem> IssueList;
-		//readonly object IssueListLock = new object();
 
 		public void AddIssues(params IssueItem[] items)
 		{
@@ -321,7 +322,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			// List which is bound to the grid and displays issues, which needs user attention.
 			Warnings = new BindingListInvoked<IssueItem>();
 			Warnings.SynchronizingObject = scheduler;
-			MainDataGrid.ItemsSource = Warnings;
+			WarningsView = new BindingListCollectionView(Warnings);
+			MainDataGrid.ItemsSource = WarningsView;
 			UpdateIgnoreButton();
 			// Timer which checks for the issues.
 			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
@@ -352,11 +354,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 					item.Fixed -= Item_Fixed;
 				}
 			}
-			MainDataGrid.ItemsSource = null;
+			WarningsView.DetachFromSourceCollection();
+			//MainDataGrid.ItemsSource = null;
 			if (Warnings != null)
 			{
 				Warnings.SynchronizingObject = null;
 				Warnings.Clear();
+				Warnings = null;
 			}
 			if (TasksTimer != null)
 			{

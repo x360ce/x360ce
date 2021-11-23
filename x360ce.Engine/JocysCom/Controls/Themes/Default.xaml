@@ -320,6 +320,22 @@
 		</Style.Triggers>
 	</Style>
 
+	<!--  TextBox - ResultsLog  -->
+
+	<Style x:Key="TextBoxResultsLog" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
+		<Setter Property="HorizontalAlignment" Value="Stretch" />
+		<Setter Property="VerticalAlignment" Value="Stretch" />
+		<Setter Property="VerticalContentAlignment" Value="Top" />
+		<Setter Property="AcceptsReturn" Value="True" />
+		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+		<Setter Property="FontFamily" Value="Consolas" />
+		<Setter Property="MinLines" Value="5" />
+		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+		<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+		<Setter Property="TextWrapping" Value="Wrap" />
+		<Setter Property="MinLines" Value="5" />
+	</Style>
+
 	<!--  TextBox - Cell  -->
 
 	<Style x:Key="TextBoxCell" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">

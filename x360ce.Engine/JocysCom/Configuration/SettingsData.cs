@@ -49,6 +49,8 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <param name="assembly">Used to get company and product name.</param>
 		void Initialize(string fileName = null, bool userLevel = false, string comment = null, Assembly assembly = null)
 		{
+			// Wraps all methods into lock.
+			//var items = System.Collections.ArrayList.Synchronized(Items);
 			Items = new SortableBindingList<T>();
 			_Comment = comment;
 			var company = Application.CompanyName;

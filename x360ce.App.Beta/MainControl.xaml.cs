@@ -194,7 +194,6 @@ namespace x360ce.App
 			GameToCustomizeComboBox.SelectionChanged -= GameToCustomizeComboBox_SelectionChanged;
 			GameToCustomizeComboBox.SelectedItem = null;
 			GameToCustomizeComboBox.ItemsSource = null;
-			Global.HMan?.Dispose();
 		}
 
 

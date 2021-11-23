@@ -504,7 +504,11 @@ namespace JocysCom.ClassLibrary.Data
 					continue;
 				if (row.IsNull(column.ColumnName))
 					continue;
-				prop.SetValue(item, row[column.ColumnName], null);
+				var value = row[column.ColumnName];
+				// If type must be converted then...
+				if (row[column.ColumnName].GetType() != prop.PropertyType)
+					value = System.Convert.ChangeType(value, prop.PropertyType);
+				prop.SetValue(item, value, null);
 			}
 			return item;
 		}

@@ -260,22 +260,14 @@ namespace x360ce.App.Controls
 				label.Foreground = c;
 		}
 
-		public void Dispose()
-		{
-			Top = null;
-			Front = null;
-			LeftThumbStatus = null;
-			RightThumbStatus = null;
-			LeftTriggerStatus = null;
-			RightTriggerStatus = null;
-			ImageControl = null;
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
 		#region ■ IDisposable
 
 		public bool IsDisposing;
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
 		// The bulk of the clean-up code is implemented in Dispose(bool)
 		protected virtual void Dispose(bool disposing)
@@ -283,6 +275,14 @@ namespace x360ce.App.Controls
 			if (disposing)
 			{
 				IsDisposing = true;
+				Top = null;
+				Front = null;
+				LeftThumbStatus = null;
+				RightThumbStatus = null;
+				LeftTriggerStatus = null;
+				RightTriggerStatus = null;
+				ImageControl = null;
+				// Dispose other.
 				markA.Dispose();
 				markB.Dispose();
 				markC.Dispose();

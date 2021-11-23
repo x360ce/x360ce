@@ -274,10 +274,31 @@ namespace x360ce.App.Service
 
 		#endregion
 
+		#region ■ IDisposable
+
+		public bool IsDisposing;
 		public void Dispose()
 		{
-			TrayNotifyIcon.Dispose();
+			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
+
+		// The bulk of the clean-up code is implemented in Dispose(bool)
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				IsDisposing = true;
+				TrayNotifyIcon?.Dispose();
+				TrayMenuStrip?.Dispose();
+				OpenApplicationMenu?.Dispose();
+				ExitMenu?.Dispose();
+				ShowLoadedControls?.Dispose();
+			}
+		}
+
+		#endregion
+
 
 	}
 }

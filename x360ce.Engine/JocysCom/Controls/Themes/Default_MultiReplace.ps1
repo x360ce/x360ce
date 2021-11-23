@@ -53,7 +53,7 @@ Function DoReplace
 		}
 	}
 }
-# Remove 'obj' folders first, because it can contain 'bin' inside.
+# Replace default padding and margin from 4 to 3.
 DoReplace "." "*.xaml" "(4),([034]),([034]),([034])" "3,`$2,`$3,`$4";
 DoReplace "." "*.xaml" "([034]),(4),([034]),([034])" "`$1,3,`$3,`$4";
 DoReplace "." "*.xaml" "([034]),([034]),(4),([034])" "`$1,`$2,3,`$4";

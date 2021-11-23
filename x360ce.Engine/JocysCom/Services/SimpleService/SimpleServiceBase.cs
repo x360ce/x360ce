@@ -1,4 +1,7 @@
-﻿using JocysCom.ClassLibrary.Runtime;
+﻿#if NETCOREAPP // .NET Core
+#elif NETSTANDARD // .NET Standard
+#else // .NET Framework
+using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -53,7 +56,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			return value.Invoke(attribute);
 		}
 
-		#region "Service"
+#region "Service"
 
 		protected override void OnStart(string[] args)
 		{
@@ -136,7 +139,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			_thread.Start(parameter);
 		}
 
-		#endregion
+#endregion
 
 		void StartService(object parameter)
 		{
@@ -180,7 +183,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			Service.InitEnd();
 		}
 
-		#region "Helper Functions"
+#region "Helper Functions"
 
 		public ServiceProcessInstaller AppServiceProcessInstaller;
 
@@ -384,9 +387,9 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			return sb.ToString();
 		}
 
-		#endregion
+#endregion
 
-		#region "Console - Unmanaged"
+#region "Console - Unmanaged"
 
 
 		SimpleServiceBase<T> srv;
@@ -446,7 +449,8 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			return true;
 		}
 
-		#endregion
+#endregion
 
 	}
 }
+#endif

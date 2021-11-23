@@ -161,7 +161,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 
 #endif
 
-		
+
 
 		#region Execute with enabled System.Net.Logging
 
@@ -192,8 +192,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			var isInitializedField = logging.GetField("s_LoggingInitialized", flags);
 			if (!(bool)isInitializedField.GetValue(null))
 			{
-				// force initialization
-				System.Net.WebRequest.Create("http://localhost");
+				// Force initialization.
 				var waitForInitializationThread = new System.Threading.Thread(() =>
 				{
 					while (!(bool)isInitializedField.GetValue(null))

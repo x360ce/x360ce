@@ -55,7 +55,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		public static Guid GetGuid(string key, string value)
 		{
-			var algorithm = System.Security.Cryptography.HMACMD5.Create();
+			var algorithm = new System.Security.Cryptography.HMACMD5();
 			var guid = HashHelper.GetGuid(algorithm, key, value);
 			algorithm.Dispose();
 			return guid;
@@ -63,7 +63,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		public static Guid GetGuid(string key, long value)
 		{
-			var algorithm = System.Security.Cryptography.HMACMD5.Create();
+			var algorithm = new System.Security.Cryptography.HMACMD5();
 			var guid = HashHelper.GetGuid(algorithm, key, BitConverter.GetBytes(value));
 			algorithm.Dispose();
 			return guid;
@@ -71,7 +71,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		public static Guid GetGuid(string key, byte[] value)
 		{
-			var algorithm = System.Security.Cryptography.HMACMD5.Create();
+			var algorithm = new System.Security.Cryptography.HMACMD5();
 			var guid = HashHelper.GetGuid(algorithm, key, value);
 			algorithm.Dispose();
 			return guid;
@@ -79,7 +79,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		public static Guid GetGuid(byte[] key, byte[] value)
 		{
-			var algorithm = System.Security.Cryptography.HMACMD5.Create();
+			var algorithm = new System.Security.Cryptography.HMACMD5();
 			var guid = HashHelper.GetGuid(algorithm, key, value);
 			algorithm.Dispose();
 			return guid;

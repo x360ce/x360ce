@@ -59,7 +59,7 @@ namespace JocysCom.ClassLibrary.Security
 		private static ICryptoTransform GetTransform(string password, bool encrypt)
 		{
 			// Create an instance of the AES class. 
-			var provider = new AesCryptoServiceProvider();
+			var provider = Aes.Create();
 			// Calculate salt to make it harder to guess key by using a dictionary attack.
 			var salt = SaltFromPassword(password);
 			// Generate Secret Key from the password and salt.

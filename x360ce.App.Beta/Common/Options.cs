@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
@@ -35,7 +36,7 @@ namespace x360ce.App
 				InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
 			}
 			if (GameScanLocations == null)
-				GameScanLocations = new BindingList<string>() { };
+				GameScanLocations = new ObservableCollection<string>();
 			if (string.IsNullOrEmpty(ComputerDisk))
 				ComputerDisk = Engine.BoardInfo.GetDiskId();
 			if (ComputerId == Guid.Empty)
@@ -161,7 +162,7 @@ namespace x360ce.App
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]
-		public BindingList<string> GameScanLocations { get; set; }
+		public ObservableCollection<string> GameScanLocations { get; set; }
 		public string ComputerDisk { get; set; }
 		public Guid ComputerId { get; set; }
 

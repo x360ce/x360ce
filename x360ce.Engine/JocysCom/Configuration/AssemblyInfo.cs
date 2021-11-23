@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -38,6 +39,12 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			path = Environment.ExpandEnvironmentVariables(path);
 			path = JocysCom.ClassLibrary.Text.Helper.Replace(path, Entry, false);
+			var keys = (Environment.SpecialFolder[])Enum.GetValues(typeof(Environment.SpecialFolder));
+			var d = new Dictionary<object, object>();
+			foreach (var key in keys)
+				if (!d.ContainsKey(key))
+					d.Add(key, Environment.GetFolderPath(key));
+			path = JocysCom.ClassLibrary.Text.Helper.ReplaceKeys(path, d, false);
 			return path;
 		}
 
@@ -154,7 +161,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					default: break;                // General Availability (GA) - Gold
 				}
 			}
-			
+
 			var haveRunMode = !string.IsNullOrEmpty(RunMode);
 			// If run mode is not specified then assume live.
 			var nonLive = haveRunMode && string.Compare(RunMode, "LIVE", true) != 0;
@@ -395,7 +402,9 @@ namespace JocysCom.ClassLibrary.Configuration
 				: value.Invoke(attribute);
 		}
 
-		public string GetAppDataPath(bool userLevel, string format, params object[] args)
+
+
+		public string GetAppDataPath(bool userLevel = false, string format = "", params object[] args)
 		{
 			// Get writable application folder.
 			var specialFolder = userLevel
@@ -411,7 +420,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			return path;
 		}
 
-		public FileInfo GetAppDataFile(bool userLevel, string format, params object[] args)
+		public FileInfo GetAppDataFile(bool userLevel = false, string format = "", params object[] args)
 		{
 			var path = GetAppDataPath(userLevel, format, args);
 			return new FileInfo(path);

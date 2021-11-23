@@ -367,13 +367,6 @@
     <Compile Include="Forms\LoadPresetsWindow.xaml.cs">
       <DependentUpon>LoadPresetsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LoadingCircle.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\LoadingCircle.Designer.cs">
-      <DependentUpon>LoadingCircle.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\LoadingCircleToolStripMenuItem.cs" />
     <Compile Include="Forms\UpdateWindow.xaml.cs">
       <DependentUpon>UpdateWindow.xaml</DependentUpon>
     </Compile>

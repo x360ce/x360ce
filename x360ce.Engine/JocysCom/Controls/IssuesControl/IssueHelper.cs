@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Management;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Environment;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
@@ -104,11 +104,11 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public static Version GetRealOSVersion()
 		{
 			if (OSVersion == null)
-				OSVersion = GetFileVersion(SpecialFolder.System, "kernel32.dll");
+				OSVersion = GetFileVersion(Environment.SpecialFolder.System, "kernel32.dll");
 			return OSVersion;
 		}
 
-		public static Version GetFileVersion(SpecialFolder folder, string name)
+		public static Version GetFileVersion(Environment.SpecialFolder folder, string name)
 		{
 			if (OSVersion == null)
 			{
@@ -242,7 +242,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		{
 			try
 			{
-				var file = DownloadFile(uri, localPath);
+				// Run DownloadFile synchronously and without locking.
+				var file = Task.Run(() => DownloadFile(uri, localPath)).GetAwaiter().GetResult();
 				if (runElevated)
 				{
 					var proc = new ProcessStartInfo();
@@ -272,17 +273,17 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			return false;
 		}
 
-		public static FileInfo DownloadFile(Uri uri, string localPath)
+		public static async Task<FileInfo> DownloadFile(Uri uri, string localPath)
 		{
-			//var fileName = uri.Segments.Last();
-			var webClient = new System.Net.WebClient();
 			var localFile = new FileInfo(localPath);
 			if (localFile.Exists)
 				localFile.Delete();
+			using (var client = new HttpClient())
+				using (var s = await client.GetStreamAsync(uri))
+					using (var fs = new FileStream(localFile.FullName, FileMode.CreateNew))
+						await s.CopyToAsync(fs);
 			//AddLog("Downloading File: {0}", MoreInfo.AbsoluteUri);
-			webClient.DownloadFile(uri, localFile.FullName);
 			localFile.Refresh();
-			webClient.Dispose();
 			// AddLog("Done");
 			return localFile;
 		}

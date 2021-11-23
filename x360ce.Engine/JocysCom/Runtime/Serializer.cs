@@ -126,7 +126,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				return null;
 #if NETCOREAPP
 			var options = new System.Text.Json.JsonSerializerOptions();
-			options.IgnoreNullValues = true;
+			//options.IgnoreNullValues = true;
+			options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
 			options.PropertyNamingPolicy = null;
 			options.WriteIndented = true;
 			options.MaxDepth = 64;
@@ -161,7 +162,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				return null;
 #if NETCOREAPP
 			var options = new System.Text.Json.JsonSerializerOptions();
-			options.IgnoreNullValues = true;
+			//options.IgnoreNullValues = true;
+			options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
 			options.PropertyNamingPolicy = null;
 			options.WriteIndented = true;
 			options.MaxDepth = 64;
