@@ -2,6 +2,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using x360ce.Engine;
 
 namespace x360ce.App.Controls
@@ -29,7 +30,8 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(o, nameof(o.InternetAutoSave), InternetAutoSaveCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(o.InternetFeatures), InternetFeaturesCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(o.CheckForUpdates), CheckForUpdatesCheckBox);
-			InternetDatabaseUrlComboBox.ItemsSource = o.InternetDatabaseUrls;
+			var internetDatabaseUrlsView = new BindingListCollectionView(o.InternetDatabaseUrls);
+			InternetDatabaseUrlComboBox.ItemsSource = internetDatabaseUrlsView;
 			SettingsManager.LoadAndMonitor(o, nameof(o.InternetDatabaseUrl), InternetDatabaseUrlComboBox);
 			// Load other settings manually.
 			LoadSettings();
@@ -49,7 +51,8 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(CheckForUpdatesCheckBox);
 			SettingsManager.UnLoadMonitor(InternetDatabaseUrlComboBox);
 			SettingsManager.UnLoadMonitor(GetProgramsIncludeEnabledCheckBox);
-			InternetDatabaseUrlComboBox.ItemsSource = null;
+			((BindingListCollectionView)InternetDatabaseUrlComboBox.ItemsSource).DetachFromSourceCollection();
+			//InternetDatabaseUrlComboBox.ItemsSource = null;
 		}
 
 		public void LoadSettings()

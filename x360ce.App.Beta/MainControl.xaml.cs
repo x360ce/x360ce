@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using x360ce.App.Properties;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -131,7 +132,8 @@ namespace x360ce.App
 
 		private void InitGameToCustomizeComboBox()
 		{
-			GameToCustomizeComboBox.ItemsSource = SettingsManager.UserGames.Items;
+			var userGamesView = new BindingListCollectionView(SettingsManager.UserGames.Items);
+			GameToCustomizeComboBox.ItemsSource = userGamesView;
 			// Make sure that X360CE.exe is on top.
 			GameToCustomizeComboBox.DisplayMemberPath = "DisplayName";
 			GameToCustomizeComboBox.SelectionChanged += GameToCustomizeComboBox_SelectionChanged;
@@ -193,7 +195,7 @@ namespace x360ce.App
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
 			GameToCustomizeComboBox.SelectionChanged -= GameToCustomizeComboBox_SelectionChanged;
 			GameToCustomizeComboBox.SelectedItem = null;
-			GameToCustomizeComboBox.ItemsSource = null;
+			((BindingListCollectionView)GameToCustomizeComboBox.ItemsSource).DetachFromSourceCollection();
 		}
 
 

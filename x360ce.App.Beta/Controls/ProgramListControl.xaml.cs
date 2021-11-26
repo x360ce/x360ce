@@ -147,11 +147,11 @@ namespace x360ce.App.Controls
 		void ImportAndBindItems(IList<Engine.Data.Program> items)
 		{
 			var grid = MainDataGrid;
-			var key = nameof(Engine.Data.Program.FileName);
+			//var key = nameof(Engine.Data.Program.FileName);
 			var list = SettingsManager.Programs.Items;
 			//var selection = JocysCom.ClassLibrary.Controls.ControlsHelper.GetSelection<string>(grid, key);
 			var newItems = items.ToArray();
-			grid.ItemsSource = null;
+			AppHelper.SetItemsSource(grid, null);
 			foreach (var newItem in newItems)
 			{
 				// Try to find existing item inside the list.
@@ -174,7 +174,7 @@ namespace x360ce.App.Controls
 				list.Add(newItem);
 			}
 			Global.HMan.SetBodyInfo("{0} {1}(s) loaded.", items.Count(), typeof(Engine.Data.Program).Name);
-			grid.ItemsSource = list;
+			AppHelper.SetItemsSource(grid, list);
 			//JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, key, selection);
 			SettingsManager.Save();
 		}
@@ -252,15 +252,13 @@ namespace x360ce.App.Controls
 			DeleteSelectedPrograms();
 		}
 
-		public System.Windows.Data.BindingListCollectionView ProgramItems;
-
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 
 			// Configure Programs.
 			SettingsManager.Programs.Items.ListChanged += Programs_ListChanged;
 			MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
-			MainDataGrid.ItemsSource = ProgramItems;
+			AppHelper.SetItemsSource(MainDataGrid, SettingsManager.Programs.Items);
 			UpdateControlsFromPrograms();
 		}
 
@@ -268,7 +266,7 @@ namespace x360ce.App.Controls
 		{
 			MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
 			SettingsManager.Programs.Items.ListChanged -= Programs_ListChanged;
-			MainDataGrid.ItemsSource = null;
+			AppHelper.SetItemsSource(MainDataGrid, null);
 		}
 
 	}

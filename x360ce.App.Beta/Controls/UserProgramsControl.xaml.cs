@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace x360ce.App.Controls
 {
@@ -14,7 +15,8 @@ namespace x360ce.App.Controls
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
 			ListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
-			ListPanel.MainDataGrid.ItemsSource = SettingsManager.UserGames.Items;
+			var userGamesView = new BindingListCollectionView(SettingsManager.UserGames.Items);
+			ListPanel.MainDataGrid.ItemsSource = userGamesView;
 		}
 
 		private void MainDataGrid_SelectionChanged(object sender, EventArgs e)
@@ -29,7 +31,8 @@ namespace x360ce.App.Controls
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			ListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-			ListPanel.MainDataGrid.ItemsSource = null;
+			((BindingListCollectionView)ListPanel.MainDataGrid.ItemsSource).DetachFromSourceCollection();
+			//ListPanel.MainDataGrid.ItemsSource = null;
 			ItemPanel.CurrentItem = null;
 		}
 	}

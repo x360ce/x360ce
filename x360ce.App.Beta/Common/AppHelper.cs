@@ -320,6 +320,18 @@ namespace x360ce.App
 			}
 		}
 
+		public static void SetItemsSource(System.Windows.Controls.ItemsControl grid, System.ComponentModel.IBindingList list)
+		{
+			if (list == null)
+			{
+				if (grid.ItemsSource is System.Windows.Data.BindingListCollectionView view)
+					view.DetachFromSourceCollection();
+				return;
+			}
+			var newView = new System.Windows.Data.BindingListCollectionView(list);
+			grid.ItemsSource = newView;
+		}
+
 		#region ■ HID Guardian
 
 		public static void InitializeHidGuardian()
@@ -391,7 +403,7 @@ namespace x360ce.App
 				// If must hide and device is not keyboard or mouse.
 				if (ud.IsHidden && !ud.IsKeyboard && !ud.IsMouse)
 					idsToHide.Add(hardwareId);
-				else if(!ud.IsHidden)
+				else if (!ud.IsHidden)
 					idsToShow.Add(hardwareId);
 			}
 			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);

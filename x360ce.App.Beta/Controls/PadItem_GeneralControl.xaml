@@ -267,11 +267,7 @@
 					<Label Content="Remap All" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</Button>
-			<ComboBox
-				x:Name="MapNameComboBox"
-				DisplayMemberPath="Name"
-				ItemsSource="{Binding ElementName=This, Path=LayoutsItems}"
-				SelectionChanged="MapNameComboBox_SelectionChanged" />
+			<ComboBox x:Name="MapNameComboBox" DisplayMemberPath="Name" SelectionChanged="MapNameComboBox_SelectionChanged" />
 		</StackPanel>
 		<local:PadItem_General_XboxImageControl
 			x:Name="XboxImage"

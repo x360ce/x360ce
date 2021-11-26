@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using x360ce.App.Converters;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -56,7 +57,8 @@ namespace x360ce.App.Controls
 			SettingsManager.UserSettings.Items.ListChanged += Settings_ListChanged;
 			// WORKAROUND: Remove SelectionChanged event.
 			MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-			MainDataGrid.ItemsSource = SettingsManager.UserSettings.Items;
+			var userSettingsView = new BindingListCollectionView(SettingsManager.UserSettings.Items);
+			MainDataGrid.ItemsSource = userSettingsView;
 			// WORKAROUND: Use BeginInvoke to prevent SelectionChanged firing multiple times.
 			//BeginInvoke((Action)delegate ()
 			//{
@@ -69,7 +71,8 @@ namespace x360ce.App.Controls
 		public void UnInitPanel()
 		{
 			SettingsManager.UserSettings.Items.ListChanged -= Settings_ListChanged;
-			MainDataGrid.ItemsSource = null;
+			((BindingListCollectionView)MainDataGrid.ItemsSource).DetachFromSourceCollection();
+			//MainDataGrid.ItemsSource = null;
 		}
 
 		void UpdateControlsFromSettings()
