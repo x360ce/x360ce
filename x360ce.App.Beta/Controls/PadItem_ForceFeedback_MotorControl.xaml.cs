@@ -45,8 +45,8 @@ namespace x360ce.App.Controls
 				default:
 					break;
 			}
-			var converter = new Converters.PadSettingToIntegerConverter();
-			var enumConverter = new Converters.PaddSettingToEnumConverter<ForceEffectDirection>();
+			var converter = new Converters.PadSettingToNumericConverter<decimal>();
+			var enumConverter = new Converters.PadSettingToEnumConverter<ForceEffectDirection>();
 			// Set binding.
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorDirection), DirectionComboBox, null, enumConverter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorStrength), StrengthUpDown, null, converter);

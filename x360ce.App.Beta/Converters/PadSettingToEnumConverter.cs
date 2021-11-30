@@ -7,9 +7,12 @@ namespace x360ce.App.Converters
 	/// <summary>
 	///  Convert PAD setting string to enumeration.
 	/// </summary>
-	public class PaddSettingToEnumConverter<T> : IValueConverter where T : System.Enum
+	public class PadSettingToEnumConverter<T> : IValueConverter where T : System.Enum
 	{
-		// Convert string number to enumeration.
+
+		/// <summary>
+		/// Convert string number to enumeration.
+		/// </summary>
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			var v = value == null || (string)value == ""
@@ -21,7 +24,6 @@ namespace x360ce.App.Converters
 		/// <summary>
 		/// Convert enumeration to integer string.
 		/// </summary>
-		/// <returns></returns>
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
 			if (value == null)

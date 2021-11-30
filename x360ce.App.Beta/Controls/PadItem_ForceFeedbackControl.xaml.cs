@@ -65,9 +65,9 @@ namespace x360ce.App.Controls
 			if (ps == null)
 				return;
 			_padSetting = ps;
-			var intConverter = new Converters.PadSettingToIntegerConverter();
+			var intConverter = new Converters.PadSettingToNumericConverter<decimal>();
 			var boolConverter = new Converters.PadSettingToBoolConverter();
-			var enumConverter = new Converters.PaddSettingToEnumConverter<ForceEffectType>();
+			var enumConverter = new Converters.PadSettingToEnumConverter<ForceEffectType>();
 			// Set binding.
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceEnable), ForceEnabledCheckBox, null, boolConverter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.ForceSwapMotor), SwapMotorsCheckBox, null, boolConverter);

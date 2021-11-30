@@ -28,7 +28,7 @@ namespace x360ce.App.Controls
 			if (ps == null)
 				return;
 			// Set binding.
-			var intConverter = new Converters.PadSettingToIntegerConverter();
+			var intConverter = new Converters.PadSettingToNumericConverter<decimal>();
 			var boolConverter = new Converters.PadSettingToBoolConverter();
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.AxisToDPadEnabled), EnabledCheckBox, null, boolConverter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.AxisToDPadDeadZone), DeadZoneUpDown, null, intConverter);

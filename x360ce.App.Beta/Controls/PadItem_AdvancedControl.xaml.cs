@@ -29,7 +29,7 @@ namespace x360ce.App.Controls
 			if (ps == null)
 				return;
 			// Set binding.
-			var enumConverter = new Converters.PaddSettingToEnumConverter<DeviceSubType>();
+			var enumConverter = new Converters.PadSettingToEnumConverter<DeviceSubType>();
 			var boolConverter = new Converters.PadSettingToBoolConverter();
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.GamePadType), DeviceSubTypeComboBox, null, enumConverter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.PassThrough), PassThroughCheckBox, null, boolConverter);

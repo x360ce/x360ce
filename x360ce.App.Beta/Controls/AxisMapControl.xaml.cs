@@ -107,11 +107,9 @@ namespace x360ce.App.Controls
 			if (ps == null || IsUnloading)
 				return;
 			// Set binding.
-			var converter = new Converters.PadSettingToIntegerConverter();
 			string deadZoneName = null;
 			string antiDeadZoneName = null;
 			string linearName = null;
-
 			switch (TargetType)
 			{
 				case TargetType.LeftTrigger:
@@ -149,6 +147,7 @@ namespace x360ce.App.Controls
 			}
 			if (deadZoneName != null)
 			{
+				var converter = new Converters.PadSettingToNumericConverter<decimal>();
 				SettingsManager.LoadAndMonitor(ps, deadZoneName, DeadZoneUpDown, null, converter);
 				SettingsManager.LoadAndMonitor(ps, antiDeadZoneName, AntiDeadZoneUpDown, null, converter);
 				SettingsManager.LoadAndMonitor(ps, linearName, LinearUpDown, null, converter);
