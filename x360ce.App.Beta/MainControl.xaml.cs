@@ -195,7 +195,7 @@ namespace x360ce.App
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
 			GameToCustomizeComboBox.SelectionChanged -= GameToCustomizeComboBox_SelectionChanged;
 			GameToCustomizeComboBox.SelectedItem = null;
-			((BindingListCollectionView)GameToCustomizeComboBox.ItemsSource).DetachFromSourceCollection();
+			((BindingListCollectionView)GameToCustomizeComboBox.ItemsSource)?.DetachFromSourceCollection();
 		}
 
 

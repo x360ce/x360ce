@@ -169,7 +169,7 @@ namespace x360ce.App.Controls
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			SettingsManager.UnLoadMonitor(DebugModeCheckBox);
-			GameScanLocationsView.DetachFromSourceCollection();
+			GameScanLocationsView?.DetachFromSourceCollection();
 			//GameScanLocationsListBox.ItemsSource = null;
 			SettingsManager.UnLoadMonitor(GameScanLocationsListBox);
 			SettingsManager.UnLoadMonitor(StartWithWindowsCheckBox);

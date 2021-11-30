@@ -71,7 +71,7 @@ namespace x360ce.App.Controls
 		public void UnInitPanel()
 		{
 			SettingsManager.UserSettings.Items.ListChanged -= Settings_ListChanged;
-			((BindingListCollectionView)MainDataGrid.ItemsSource).DetachFromSourceCollection();
+			((BindingListCollectionView)MainDataGrid.ItemsSource)?.DetachFromSourceCollection();
 			//MainDataGrid.ItemsSource = null;
 		}
 
