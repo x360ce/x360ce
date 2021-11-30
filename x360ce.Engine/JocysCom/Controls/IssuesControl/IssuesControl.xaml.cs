@@ -354,7 +354,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 					item.Fixed -= Item_Fixed;
 				}
 			}
-			WarningsView.DetachFromSourceCollection();
+			WarningsView?.DetachFromSourceCollection();
 			//MainDataGrid.ItemsSource = null;
 			if (Warnings != null)
 			{
