@@ -134,6 +134,11 @@ namespace JocysCom.Web.Security.Controls
 		/// <summary>
 		/// Generates a pseudorandom password that cannot be predicted.
 		/// </summary>
+		/// <param name="length">
+		/// 	The length of the password to be generated,
+		/// 	if left to zero - a random password-length will be generated.
+		/// </param>
+		/// <param name="charlist">A list of characters from which the password can consist of.</param>
 		/// <returns>A string representing a securely-generated password.</returns>
 		public string NewPassword(uint length = 0, string charlist = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"£$%^&*()_+=-{}[]:@~;'#/,.<>?\\")
 		{
