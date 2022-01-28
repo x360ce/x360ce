@@ -11,6 +11,7 @@ using User = JocysCom.WebSites.Engine.Security.Data.User;
 using SecurityClassesDataContext = JocysCom.WebSites.Engine.Security.Data.SecurityEntities;
 using JocysCom.WebSites.Engine.Security;
 using System.Web.UI.HtmlControls;
+using System.Security.Cryptography;
 
 namespace JocysCom.Web.Security.Controls
 {
@@ -131,22 +132,17 @@ namespace JocysCom.Web.Security.Controls
 		}
 
 		/// <summary>
-		/// Generate easy to remember password.
+		/// Generates a pseudorandom password that cannot be predicted.
 		/// </summary>
-		/// <returns></returns>
-		public string NewPassword()
+		/// <returns>A string representing a securely-generated password.</returns>
+		public string NewPassword(uint length = 0, string charlist = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"£$%^&*()_+=-{}[]:@~;'#/,.<>?\\")
 		{
-			var rnd = new Random();
-			string chars = "qwxzQWZX";
-			;
-			string volves = "aeiouyAEIOUY".Replace(chars, "");
-			string consonants = "bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ".Replace(chars, "");
+			if (length == 0) {
+				length = (uint)RandomNumberGenerator.GetInt32(12, 32 + 1);
+			}
 			string password = string.Empty;
-
-			for (int i = 0; i < 8; i++)
-			{
-				string choice = (i % 2 == 0) ? consonants : volves;
-				password += choice[rnd.Next(choice.Length)].ToString();
+			for (uint i = 0; i < length; i++) {
+				password += charlist[RandomNumberGenerator.GetInt32(charlist.Length)];
 			}
 			return password;
 		}
