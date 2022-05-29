@@ -20,6 +20,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			Task.Run(async delegate
 			{
+				// Logical delay without blocking the current hardware thread.
 				await Task.Delay(500).ConfigureAwait(true);
 				control.Dispatcher.Invoke(() => control.IsEnabled = true);
 			});

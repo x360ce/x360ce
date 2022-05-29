@@ -196,19 +196,35 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		// Created by: https://stackoverflow.com/users/17211/vince-panuccio
-		public static string FormatJson(string json, string ident = "\t")
+		// https://stackoverflow.com/questions/4580397/json-formatter-in-c
+		public static string FormatJson(string json, string indent = "\t")
 		{
 			var indentation = 0;
 			var quoteCount = 0;
+			var escapeCount = 0;
 			var result =
-				from ch in json
-				let quotes = ch == '"' ? quoteCount++ : quoteCount
-				let lineBreak = ch == ',' && quotes % 2 == 0 ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(ident, indentation)) : null
-				let openChar = ch == '{' || ch == '[' ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(ident, ++indentation)) : ch.ToString()
-				let closeChar = ch == '}' || ch == ']' ? Environment.NewLine + string.Concat(Enumerable.Repeat(ident, --indentation)) + ch : ch.ToString()
-				select lineBreak == null ? openChar.Length > 1 ? openChar : closeChar : lineBreak;
+				from ch in json ?? string.Empty
+				let escaped = (ch == '\\' ? escapeCount++ : escapeCount > 0 ? escapeCount-- : escapeCount) > 0
+				let quotes = ch == '"' && !escaped ? quoteCount++ : quoteCount
+				let unquoted = quotes % 2 == 0
+				let colon = ch == ':' && unquoted ? ": " : null
+				let nospace = char.IsWhiteSpace(ch) && unquoted ? string.Empty : null
+				let lineBreak = ch == ',' && unquoted ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indent, indentation)) : null
+				let openChar = (ch == '{' || ch == '[') && unquoted ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(indent, ++indentation)) : ch.ToString()
+				let closeChar = (ch == '}' || ch == ']') && unquoted ? Environment.NewLine + string.Concat(Enumerable.Repeat(indent, --indentation)) + ch : ch.ToString()
+				select colon ?? nospace ?? lineBreak ?? (openChar.Length > 1 ? openChar : closeChar);
 			return string.Concat(result);
 		}
+		
+		//public static string FormatJson(string json, bool indent = true)
+		//{
+		//	using document = JsonDocument.Parse(json);
+		//	using var stream = new MemoryStream();
+		//	using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = indent });
+		//	document.WriteTo(writer);
+		//	writer.Flush();
+		//	return Encoding.UTF8.GetString(stream.ToArray());
+		//}
 
 		#endregion
 

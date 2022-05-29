@@ -19,8 +19,8 @@ namespace JocysCom.ClassLibrary.Controls
 			var owner = Application.Current?.MainWindow;
 			if (owner != null)
 			{
-				WindowStartupLocation = WindowStartupLocation.CenterOwner;
 				Owner = owner;
+				WindowStartupLocation = WindowStartupLocation.CenterOwner;
 			}
 			Loaded += MessageBoxWindow_Loaded;
 		}
@@ -125,21 +125,42 @@ namespace JocysCom.ClassLibrary.Controls
 			return Result;
 		}
 
+		public void SetSize(double width = 0, double height = 0)
+		{
+			if (width > 0 && height > 0)
+			{
+				SizeToContent = SizeToContent.Manual;
+				Width = width;
+				Height = height;
+			}
+			else
+			{
+				SizeToContent = SizeToContent.WidthAndHeight;
+			}
+		}
+
 		private void MessageBoxWindow_Loaded1(object sender, RoutedEventArgs e)
 		{
-			// Get text size (from 256 to 512).
-			var measureSize = Math.Min(Math.Max(256, MessageTextBlock.Text.Length), 512);
-			var measureMessage = new string('a', measureSize);
-			var size = MeasureString(measureMessage, MessageTextBlock);
-			size = ApplyAspectRatio(size);
-			var boxWidth = Math.Round(size.Width, 0);
-			var boxHeight = Math.Round(size.Height, 0);
-			// Set window size.
-			var winWidthDif = Width - MessageTextBox.ActualWidth;
-			var winHeightDif = Height - MessageTextBox.ActualHeight;
-			SizeToContent = SizeToContent.Manual;
-			Width = boxWidth + winWidthDif;
-			Height = boxHeight + winHeightDif;
+			if (SizeToContent == SizeToContent.Manual)
+			{
+				ControlsHelper.CenterWindowOnApplication(this);
+			}
+			else
+			{
+				// Get text size (from 256 to 512).
+				var measureSize = Math.Min(Math.Max(256, MessageTextBlock.Text.Length), 512);
+				var measureMessage = new string('a', measureSize);
+				var size = MeasureString(measureMessage, MessageTextBlock);
+				size = ApplyAspectRatio(size);
+				var boxWidth = Math.Round(size.Width, 0);
+				var boxHeight = Math.Round(size.Height, 0);
+				// Set window size.
+				var winWidthDif = Width - MessageTextBox.ActualWidth;
+				var winHeightDif = Height - MessageTextBox.ActualHeight;
+				SizeToContent = SizeToContent.Manual;
+				Width = boxWidth + winWidthDif;
+				Height = boxHeight + winHeightDif;
+			}
 		}
 
 		void EnableButtons(MessageBoxResult r1, MessageBoxResult r2 = MessageBoxResult.None, MessageBoxResult r3 = MessageBoxResult.None)

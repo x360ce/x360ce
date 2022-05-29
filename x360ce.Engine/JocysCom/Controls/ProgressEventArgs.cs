@@ -13,11 +13,12 @@ namespace JocysCom.ClassLibrary.Controls
 		// --------------------------
 
 		/// <summary>Current amount of work done by the operation.</summary>
-		public int TopIndex { get; set; }
+		public long TopIndex { get; set; }
 		/// <summary>Total amount of work required to be done by the operation.</summary>
-		public int TopCount { get; set; }
+		public long TopCount { get; set; }
 		public string TopMessage { get; set; }
 		public object TopData { get; set; }
+		public string TopProgressText { get; set; }
 
 		public void ClearTop()
 		{
@@ -32,11 +33,12 @@ namespace JocysCom.ClassLibrary.Controls
 		// --------------------------
 
 		/// <summary>Current amount of work done by the operation.</summary>
-		public int SubIndex { get; set; }
+		public long SubIndex { get; set; }
 		/// <summary>Total amount of work required to be done by the operation.</summary>
-		public int SubCount { get; set; }
+		public long SubCount { get; set; }
 		public string SubMessage { get; set; }
 		public object SubData { get; set; }
+		public string SubProgressText { get; set; }
 
 		public void ClearSub()
 		{

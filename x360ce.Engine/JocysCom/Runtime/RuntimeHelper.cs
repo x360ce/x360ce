@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -613,6 +614,16 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public class DetectTypeItem
 		{
+			public DetectTypeItem()
+			{
+				Log = new List<string>();
+				// All types are available from the start.
+				// List will be narrowed down later.
+				AvailableTypes = _TypeCodes.ToList();
+				IsAscii = true;
+				IsRequired = true;
+			}
+
 			public string Name { get; set; }
 			public Type Type { get; set; }
 			public int MinLength { get; set; }
@@ -622,203 +633,201 @@ namespace JocysCom.ClassLibrary.Runtime
 			public bool IsAscii { get; set; }
 			public bool IsRequired { get; set; }
 			public List<string> Log { get; set; }
+
+			public List<TypeCode> AvailableTypes { get; set; }
+
+			public new string ToString()
+			{
+				return $"Type={Type,-16} Name={Name,-26} Min={MinLength,3}, Max={MaxLength,3}, ASCII={(IsAscii ? 1 : 0)}, Required={(IsRequired ? 1 : 0)}";
+			}
+
+			public string ToCSharpString()
+			{
+				var type = $"{Type?.Name}{(IsRequired ? " " : "?")}";
+				var name = $"{Name};";
+				return $"{type,-9} {name,-27} // Min={MinLength,3}, Max={MaxLength,3}{(Type == typeof(string) && IsAscii ? ", ASCII" : "")}".Trim();
+			}
+
+			public string ToSqlString()
+			{
+				var code = AvailableTypes.FirstOrDefault();
+				var sqlType = Data.SqlHelper.GetSqlDataType(code, MinLength, MaxLength, !IsAscii);
+				//var isUnicode = Data.SqlHelper.HaveSize(sqlType.ToString());
+				var haveSize = Data.SqlHelper.HaveSize(sqlType.ToString());
+				// [ControlName]   VARCHAR (256) NOT NULL,
+				var columnName = $"[{Name}]";
+				var columnType = $"{sqlType}";
+				var s = $"{columnName,-24}";
+				if (haveSize)
+				{
+					columnType += code == TypeCode.Decimal
+						? $"({DecimalScale}, {DecimalPrecision})"
+						: MaxLength == -1 ? "(MAX)" : $"({MaxLength})";
+				}
+				s += $"{columnType,-12}";
+				if (IsRequired)
+					s += " NOT NULL";
+				s = s.Trim() + ",";
+				return s;
+			}
 		}
 
+		/// <summary>
+		/// Type codes to check. Order is important: from least to most flexible type.
+		/// </summary>
+		private static TypeCode[] _TypeCodes = new TypeCode[]
+		{
+			TypeCode.Boolean,
+			TypeCode.Byte,
+			TypeCode.SByte,
+			TypeCode.Int16,
+			TypeCode.Int32,
+			TypeCode.Int64,
+			TypeCode.UInt16,
+			TypeCode.UInt32,
+			TypeCode.UInt64,
+			TypeCode.Single,
+			TypeCode.Char,
+			TypeCode.DateTime,
+			TypeCode.Double,
+			TypeCode.Decimal,
+			TypeCode.String,
+			// TypeCode.DBNull,
+			// TypeCode.Empty,
+			// TypeCode.Object,
+		};
 
 		public static DetectTypeItem DetectType(string[] values)
 		{
+			var item = new DetectTypeItem();
+			DetectType(ref item, values);
+			return item;
+		}
+
+		/// <summary>
+		/// Detect leading zero, because time in databases could be stored as string "0123".
+		/// </summary>
+		private static bool HaveLeadingZero(string s)
+		{
+			if (string.IsNullOrEmpty(s))
+				return false;
+			return s.Length > 1 && s.StartsWith("0");
+		}
+
+		public static void DetectType(ref DetectTypeItem item, params string[] values)
+		{
 			if (values == null)
 				throw new ArgumentNullException(nameof(values));
-			var log = new List<string>();
-			var type = typeof(string);
-			var sizeMin = int.MaxValue;
-			var sizeMax = 0;
-			var decimalPrecision = 0;
-			var decimalScale = 0;
-			var isAscii = true;
-			var haveEmpty = false;
+			if (item == null)
+				item = new DetectTypeItem();
 			// Order matters. Strictest on the top. First available type will be returned.
 			// If all values can be parsed to Int16 then it can be parsed to Int32 and Int64 too.
-			var tcs = new TypeCode[]
-			{
-				TypeCode.Boolean,
-				TypeCode.Byte,
-				TypeCode.SByte,
-				TypeCode.Int16,
-				TypeCode.Int32,
-				TypeCode.Int64,
-				TypeCode.UInt16,
-				TypeCode.UInt32,
-				TypeCode.UInt64,
-				TypeCode.Single,
-				TypeCode.Char,
-				TypeCode.DateTime,
-				TypeCode.Double,
-				TypeCode.Decimal,
-				TypeCode.String,
-				// TypeCode.DBNull,
-				// TypeCode.Empty,
-				// TypeCode.Object,
-			}.ToList();
-			// All available types.
-			var available = new Dictionary<TypeCode, Type>();
-			tcs.ForEach(x => available.Add(x, Type.GetType(nameof(System) + "." + x)));
 			//Convert.ChangeType(value, colType);
 			for (int i = 0; i < values.Length; i++)
 			{
 				var value = values[i];
 				if (string.IsNullOrEmpty(value))
 				{
-					haveEmpty = true;
+					item.IsRequired = false;
 					continue;
 				}
-				// Determine string limits.
-				sizeMin = Math.Min(sizeMin, value.Length);
-				sizeMax = Math.Max(sizeMax, value.Length);
-				isAscii &= value.All(x => x < 128);
-				// Get available types to test against.
-				var availableTypeCodes = available.Keys.ToArray();
-				// If only string was left.
-				if (availableTypeCodes.Length == 1 && availableTypeCodes[0] == TypeCode.String)
-					break;
+				// If minimum length not set then use available, otherwise get smaller.
+				item.MinLength = item.MinLength == 0 ? value.Length : Math.Min(item.MinLength, value.Length);
+				// Determine maximum length.
+				item.MaxLength = Math.Max(item.MaxLength, value.Length);
+				// Value is not ASCII if character code is outside of 128.
+				item.IsAscii &= value.All(x => x < 128);
 				// Test against available types.
-				foreach (var tc in availableTypeCodes)
+				var tcs = item.AvailableTypes.ToArray();
+				foreach (var tc in tcs)
 				{
+					var remove = false;
 					switch (tc)
 					{
 						case TypeCode.Boolean:
 							bool resultBool;
 							if (!bool.TryParse(value, out resultBool))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+								remove = true;
 							break;
 						case TypeCode.Byte:
 							byte resultByte;
 							if (!byte.TryParse(value, out resultByte))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+								remove = true;
 							break;
 						case TypeCode.Char:
 							char resultChar;
 							if (!char.TryParse(value, out resultChar))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+								remove = true;
 							break;
 						case TypeCode.DateTime:
 							DateTime resultDateTime;
 							if (!DateTime.TryParse(value, out resultDateTime))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+								remove = true;
 							break;
 						case TypeCode.Decimal:
 							decimal resultDecimal;
 							if (!decimal.TryParse(value, out resultDecimal))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+								remove = true;
 							var d = (System.Data.SqlTypes.SqlDecimal)resultDecimal;
-							decimalPrecision = Math.Max(decimalPrecision, d.Precision);
-							decimalScale = Math.Max(decimalScale, d.Scale);
+							item.DecimalPrecision = Math.Max(item.DecimalPrecision, d.Precision);
+							item.DecimalScale = Math.Max(item.DecimalScale, d.Scale);
 							break;
 						case TypeCode.Double:
 							double resultDouble;
 							if (!double.TryParse(value, out resultDouble))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+								remove = true;
 							break;
 						case TypeCode.Int16:
 							short resultShort;
-							if (!short.TryParse(value, out resultShort))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+							if (!short.TryParse(value, out resultShort) && !HaveLeadingZero(value))
+								remove = true;
 							break;
 						case TypeCode.Int32:
 							int resultInt;
-							if (!int.TryParse(value, out resultInt))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+							if (!int.TryParse(value, out resultInt) && !HaveLeadingZero(value))
+								remove = true;
 							break;
 						case TypeCode.Int64:
 							long resultLong;
-							if (!long.TryParse(value, out resultLong))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+							if (!long.TryParse(value, out resultLong) && !HaveLeadingZero(value))
+								remove = true;
 							break;
 						case TypeCode.SByte:
 							sbyte resultSByte;
-							if (!sbyte.TryParse(value, out resultSByte))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+							if (!sbyte.TryParse(value, out resultSByte) && !HaveLeadingZero(value))
+								remove = true;
 							break;
 						case TypeCode.Single:
 							float resultFloat;
-							if (!float.TryParse(value, out resultFloat))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+							if (!float.TryParse(value, out resultFloat) && !HaveLeadingZero(value))
+								remove = true;
 							break;
 						case TypeCode.UInt16:
 							ushort resultUShort;
-							if (!ushort.TryParse(value, out resultUShort))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+							if (!ushort.TryParse(value, out resultUShort) && !HaveLeadingZero(value))
+								remove = true;
 							break;
 						case TypeCode.UInt32:
 							uint resultUInt;
-							if (!uint.TryParse(value, out resultUInt))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+							if (!uint.TryParse(value, out resultUInt) && !HaveLeadingZero(value))
+								remove = true;
 							break;
 						case TypeCode.UInt64:
 							ulong resultULong;
-							if (!ulong.TryParse(value, out resultULong))
-							{
-								log.Add(string.Format($"Removed {tc,-8} at {i,4} line. Value: {value}"));
-								available.Remove(tc);
-							}
+							if (!ulong.TryParse(value, out resultULong) && !HaveLeadingZero(value))
+								remove = true;
 							break;
 						default:
 							break;
 					}
+					if (remove)
+					{
+						item.Log.Add(string.Format($"Removed {tc,-8} - Value: {value}"));
+						item.AvailableTypes.Remove(tc);
+						item.Type = item.AvailableTypes.Count == 0 ? null : Type.GetType("System." + item.AvailableTypes[0]);
+					}
 				}
 			}
-			type = available.FirstOrDefault().Value;
-			var item = new DetectTypeItem()
-			{
-				Type = type,
-				MinLength = sizeMin,
-				MaxLength = sizeMax,
-				IsAscii = isAscii,
-				DecimalPrecision = decimalPrecision,
-				DecimalScale = decimalScale,
-				IsRequired = !haveEmpty,
-				Log = log,
-			};
-			return item;
 		}
 
 	}

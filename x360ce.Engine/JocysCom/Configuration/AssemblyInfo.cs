@@ -37,17 +37,34 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public static string ExpandPath(string path)
 		{
+			// Variables are quoted with '%' (percent) sign.
 			path = Environment.ExpandEnvironmentVariables(path);
+			// Variables are quoted with '{' and '}' sign.
 			path = JocysCom.ClassLibrary.Text.Helper.Replace(path, Entry, false);
-			var keys = (Environment.SpecialFolder[])Enum.GetValues(typeof(Environment.SpecialFolder));
-			var d = new Dictionary<object, object>();
-			foreach (var key in keys)
-				if (!d.ContainsKey(key))
-					d.Add(key, Environment.GetFolderPath(key));
-			path = JocysCom.ClassLibrary.Text.Helper.ReplaceKeys(path, d, false);
 			return path;
 		}
 
+		public static string ParameterizePath(string path)
+		{
+			// Variables are quoted with '{' and '}' sign.
+			path = JocysCom.ClassLibrary.Text.Helper.Replace(Entry, path, false);
+			return path;
+		}
+
+		//public static string GetExpandedPath(string path)
+		//{
+		//	path = ExpandPath(path);
+		//	path = IO.PathHelper.ConvertFromSpecialFoldersPattern(path, "{", "}");
+		//	return path;
+		//}
+
+		//public static string GetParametrizedPath(string path)
+		//{
+		//	path = IO.PathHelper.ConvertToSpecialFoldersPattern(path, "{", "}");
+		//	path = ParameterizePath(path);
+		//	return path;
+		//}
+		
 		public AssemblyInfo(string strValFile)
 		{
 			Assembly = Assembly.LoadFile(strValFile);
@@ -371,9 +388,11 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			get
 			{
-				string codeBase = Assembly.Location;
-				UriBuilder uri = new UriBuilder(codeBase);
-				string path = Uri.UnescapeDataString(uri.Path);
+				var codeBase = Assembly.Location;
+				if (string.IsNullOrEmpty(codeBase))
+					return codeBase;
+				var uri = new UriBuilder(codeBase);
+				var path = Uri.UnescapeDataString(uri.Path);
 				return path;
 			}
 		}

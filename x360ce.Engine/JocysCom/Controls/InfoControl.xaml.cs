@@ -16,6 +16,17 @@ namespace JocysCom.ClassLibrary.Controls
 		public InfoControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
+			if (!ControlsHelper.IsDesignMode(this))
+			{
+				var assembly = Assembly.GetEntryAssembly();
+				var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
+				var description = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyDescriptionAttribute))).Description;
+				DefaultHead = product;
+				DefaultBody = description;
+				SetHead(DefaultHead);
+				SetBodyInfo(DefaultBody);
+				InitRotation();
+			}
 		}
 
 		#region ■ Properties
@@ -192,14 +203,6 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
-			var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute)))?.Product;
-			var description = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyDescriptionAttribute)))?.Description;
-			DefaultHead = product;
-			DefaultBody = description;
-			SetHead(DefaultHead);
-			SetBodyInfo(DefaultBody);
-			InitRotation();
 		}
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)

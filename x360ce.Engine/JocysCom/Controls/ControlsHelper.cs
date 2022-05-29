@@ -103,6 +103,7 @@ namespace JocysCom.ClassLibrary.Controls
 				return Task.Run(async () =>
 				{
 					// Wait 1 second, which will allow to release the button.
+					// Logical delay without blocking the current hardware thread.
 					await Task.Delay(millisecondsDelay.Value).ConfigureAwait(true);
 					await BeginInvoke(action);
 				});

@@ -2,6 +2,7 @@
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace JocysCom.ClassLibrary.Configuration
@@ -105,6 +106,51 @@ namespace JocysCom.ClassLibrary.Configuration
 			var bytes = ms.ToArray();
 			sw.Dispose();
 			return bytes;
+		}
+
+		#endregion
+
+		#region Saving 
+
+
+		public static FileInfo SaveFileWithChecksum(string name, byte[] bytes)
+		{
+			var assembly = Assembly.GetEntryAssembly();
+			var company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute))).Company;
+			var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
+			// Get writable application folder.
+			var specialFolder = Environment.SpecialFolder.CommonApplicationData;
+			var folder = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), company, product);
+			var hash = ComputeCRC32Checksum(bytes);
+			// Put file into sub folder because file name must match with LoadLibrary() argument. 
+			var chName = string.Format("{0}.{1:X8}\\{0}", name, hash);
+			var fileName = System.IO.Path.Combine(folder, "Temp", chName);
+			var fi = new FileInfo(fileName);
+			if (fi.Exists)
+				return fi;
+			if (!fi.Directory.Exists)
+				fi.Directory.Create();
+			File.WriteAllBytes(fileName, bytes);
+			fi.Refresh();
+			return fi;
+		}
+
+		public static uint ComputeCRC32Checksum(byte[] bytes)
+		{
+			uint poly = 0xedb88320;
+			uint[] table = new uint[256];
+			uint temp;
+			for (uint i = 0; i < table.Length; ++i)
+			{
+				temp = i;
+				for (int j = 8; j > 0; --j)
+					temp = (temp & 1) == 1 ? (temp >> 1) ^ poly : temp >> 1;
+				table[i] = temp;
+			}
+			uint crc = 0xffffffff;
+			for (int i = 0; i < bytes.Length; ++i)
+				crc = (crc >> 8) ^ table[(byte)(((crc) & 0xff) ^ bytes[i])];
+			return ~crc;
 		}
 
 		#endregion

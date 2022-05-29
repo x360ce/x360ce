@@ -137,11 +137,11 @@ namespace x360ce.App.Controls
 					sb.AppendLine(e.Message);
 					if (e.State == XInputMaskScannerState.DirectoryUpdate && e.Directories != null)
 					{
-						sb.AppendFormat("Current Folder: {0}", e.Directories[e.DirectoryIndex].FullName);
+						sb.AppendFormat("Current Folder: {0}", e.Directories[(int)e.DirectoryIndex].FullName);
 					}
 					if (e.State == XInputMaskScannerState.FileUpdate && e.Files != null)
 					{
-						var file = e.Files[e.FileIndex];
+						var file = e.Files[(int)e.FileIndex];
 						var size = file.Length / 1024 / 1024;
 						sb.AppendFormat("Current File ({0:0.0} MB): {1} ", size, file.FullName);
 					}

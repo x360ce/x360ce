@@ -46,14 +46,22 @@ namespace JocysCom.ClassLibrary.Controls
 					ProgressLevelSubBar.Value = 0;
 			}
 			// Create top message.
-			var tc = $"{e.TopIndex}";
-			if (e.TopCount > 0)
-				tc += $"/{e.TopCount}";
+			var tc = e.TopProgressText;
+			if (tc == null)
+			{
+				tc += $"{e.TopIndex}";
+				if (e.TopCount > 0)
+					tc += $"/{e.TopCount}";
+			}
 			ControlsHelper.SetText(ProgressLevelTopBarTextBlock, tc);
 			// Create sub message.
-			var sc = $"{e.SubIndex}";
-			if (e.SubCount > 0)
-				sc += $"/{e.SubCount}";
+			var sc = e.SubProgressText;
+			if (sc == null)
+			{
+				sc += $"{e.SubIndex}";
+				if (e.SubCount > 0)
+					sc += $"/{e.SubCount}";
+			}
 			ControlsHelper.SetText(ProgressLevelSubBarTextBlock, sc);
 			UpdateProgress(e.TopMessage, e.SubMessage);
 		}
@@ -72,6 +80,8 @@ namespace JocysCom.ClassLibrary.Controls
 			ControlsHelper.SetVisible(ScanProgressPanel, !string.IsNullOrEmpty(topText));
 		}
 
-		
+
+
+
 	}
 }

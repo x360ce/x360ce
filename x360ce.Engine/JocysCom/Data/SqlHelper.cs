@@ -308,9 +308,9 @@ namespace JocysCom.ClassLibrary.Data
 			cmd.ExecuteNonQuery();
 		}
 
-#endregion
+		#endregion
 
-#region Execute Methods
+		#region Execute Methods
 
 		public int ExecuteNonQuery(string connectionString, SqlCommand cmd, string comment = null, int? timeout = null)
 		{
@@ -415,9 +415,9 @@ namespace JocysCom.ClassLibrary.Data
 			return null;
 		}
 
-#endregion
+		#endregion
 
-#region Error
+		#region Error
 
 		public static void SetErrorParameters(SqlParameterCollection p)
 		{
@@ -431,9 +431,9 @@ namespace JocysCom.ClassLibrary.Data
 			error_message = (string)p["@error_message"].Value;
 		}
 
-#endregion
+		#endregion
 
-#region Add Range
+		#region Add Range
 
 		/// <summary>
 		/// Add an array of parameters to a SQL command in an IN statement.
@@ -466,9 +466,9 @@ namespace JocysCom.ClassLibrary.Data
 			return parameters.ToArray();
 		}
 
-#endregion
+		#endregion
 
-#region Convert Table To/From List
+		#region Convert Table To/From List
 
 		/// <summary>
 		/// Convert DataTable to List of objects. Can be used to convert DataTable to list of framework entities. 
@@ -506,8 +506,22 @@ namespace JocysCom.ClassLibrary.Data
 					continue;
 				var value = row[column.ColumnName];
 				// If type must be converted then...
-				if (row[column.ColumnName].GetType() != prop.PropertyType)
-					value = System.Convert.ChangeType(value, prop.PropertyType);
+				var columnType = row[column.ColumnName].GetType();
+				if (columnType != prop.PropertyType)
+				{
+					// Get type if nullable.
+					var underType = Nullable.GetUnderlyingType(prop.PropertyType);
+					if (underType != null)
+					{
+						if (columnType == typeof(string) && Equals(value, ""))
+							value = null;
+					}
+					var t = underType ?? prop.PropertyType;
+					if (value != null)
+						value = t.IsEnum
+						? Enum.Parse(t, (string)value)
+						: System.Convert.ChangeType(value, t);
+				}
 				prop.SetValue(item, value, null);
 			}
 			return item;
@@ -523,23 +537,23 @@ namespace JocysCom.ClassLibrary.Data
 			var props = typeof(T).GetProperties().Where(x => x.CanRead).ToArray();
 			foreach (var prop in props)
 			{
-				table.Columns.Add(prop.Name, prop.PropertyType);
+				var underType = Nullable.GetUnderlyingType(prop.PropertyType);
+				var columnType = underType ?? prop.PropertyType;
+				table.Columns.Add(prop.Name, columnType);
 			}
 			var values = new object[props.Length];
 			foreach (T item in list)
 			{
 				for (int i = 0; i < props.Length; i++)
-				{
 					values[i] = props[i].GetValue(item, null);
-				}
 				table.Rows.Add(values);
 			}
 			return table;
 		}
 
-#endregion
+		#endregion
 
-#region SqlCommand to T-SQL
+		#region SqlCommand to T-SQL
 
 		/// <summary>
 		/// There is no easy way to create SQL string from SqlCommand, because execution does not generate any SQL.
@@ -647,7 +661,7 @@ namespace JocysCom.ClassLibrary.Data
 			return defaultValue;
 		}
 
-#endregion
+		#endregion
 
 	}
 }

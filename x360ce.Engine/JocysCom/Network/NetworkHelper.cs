@@ -107,8 +107,8 @@ namespace JocysCom.ClassLibrary.Network
 			var retryCount = 0;
 			while (retryCount < retry)
 			{
-				// Logical delay without blocking the current thread.
 				if (retryCount > 0)
+					// Logical delay without blocking the current hardware thread.
 					Task.Delay(timeout).Wait();
 				if (isUdp)
 				{

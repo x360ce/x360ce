@@ -54,6 +54,7 @@
 					Margin="0,8,8,8"
 					HorizontalAlignment="Stretch"
 					VerticalAlignment="Stretch"
+					VerticalContentAlignment="Top"
 					x:FieldModifier="public"
 					AcceptsReturn="True"
 					AcceptsTab="True"
@@ -61,7 +62,6 @@
 					KeyUp="MessageTextBox_KeyUp"
 					MinLines="2"
 					SpellCheck.IsEnabled="True"
-					Text="Message"
 					TextWrapping="Wrap"
 					VerticalScrollBarVisibility="Auto" />
 			</DockPanel>

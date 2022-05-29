@@ -27,7 +27,7 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				// Pause or Stop.
 				while (IsPaused && !IsStopping)
-					// Logical delay without blocking the current thread.
+					// Logical delay without blocking the current hardware thread.
 					System.Threading.Tasks.Task.Delay(500).Wait();
 				if (IsStopping)
 					return fis;
@@ -65,7 +65,7 @@ namespace JocysCom.ClassLibrary.IO
 					{
 						// Pause or Stop.
 						while (IsPaused && !IsStopping)
-							// Logical delay without blocking the current thread.
+							// Logical delay without blocking the current hardware thread.
 							System.Threading.Tasks.Task.Delay(500).Wait();
 						if (IsStopping)
 							return;
@@ -86,8 +86,8 @@ namespace JocysCom.ClassLibrary.IO
 							e.SubCount = 0;
 							e.SubData = fileList;
 							e.State = ProgressStatus.Updated;
-							e.TopMessage = $"Scan Folder: {_Directories[e.TopIndex].FullName}";
-							var file = fileList[e.SubIndex];
+							e.TopMessage = $"Scan Folder: {_Directories[(int)e.TopIndex].FullName}";
+							var file = fileList[(int)e.SubIndex];
 							var name = file.FullName;
 							var size = BytesToString(file.Length);
 							e.SubMessage = $"File: {name} ({size})";
@@ -110,7 +110,7 @@ namespace JocysCom.ClassLibrary.IO
 					{
 						// Pause or Stop.
 						while (IsPaused && !IsStopping)
-							// Logical delay without blocking the current thread.
+							// Logical delay without blocking the current hardware thread.
 							System.Threading.Tasks.Task.Delay(500).Wait();
 						if (IsStopping)
 							return;

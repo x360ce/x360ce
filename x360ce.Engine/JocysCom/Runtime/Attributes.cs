@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -22,77 +22,86 @@ namespace JocysCom.ClassLibrary.Runtime
 	public static partial class Attributes
 	{
 
-		#region Description Attribute
+		#region Get DescriptionAttribute Value
 
 		/// <summary>Cache data for speed.</summary>
-		static Dictionary<object, string> Descriptions = new Dictionary<object, string>();
-		static object DescriptionsLock = new object();
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<object, string> Descriptions { get; } = new ConcurrentDictionary<object, string>();
 
 		/// <summary>
 		/// Get DescriptionAttribute value from object or enumeration value.
 		/// </summary>
 		/// <param name="o">Enumeration value or object</param>
 		/// <returns>Description, class name, or enumeration property name.</returns>
-		public static string GetDescription(object o)
+		public static string GetDescription(object o, bool cache = true)
 		{
 			if (o == null)
 				return null;
-			lock (DescriptionsLock)
+			var type = o.GetType();
+			if (!cache)
+				return _GetDescription(o);
+			// If enumeration then use value as a key, otherwise use type string.
+			var key = type.IsEnum
+				? o
+				: type.ToString();
+			return Descriptions.GetOrAdd(key, x => _GetDescription(x));
+		}
+
+		private static string _GetDescription(object o)
+		{
+			if (o == null)
+				return null;
+			var type = o.GetType();
+			// If enumeration then get attribute from a field, otherwise from type.
+			var ap = type.IsEnum
+				? (ICustomAttributeProvider)type.GetField(Enum.GetName(type, o))
+				: type;
+			if (ap == null)
 			{
-				var type = o.GetType();
-				// If enumeration then use value as a key, otherwise use type string.
-				var key = type.IsEnum
-					? o
-					: type.ToString();
-				if (Descriptions.ContainsKey(key))
-					return Descriptions[key];
-				// Set default value.
-				var value = type.IsEnum
-					? string.Format("{0}", o)
-					: type.FullName;
-				// If enumeration then specify to get attribute from a field, otherwise from type.
-				var ap = type.IsEnum
-					? (ICustomAttributeProvider)type.GetField(Enum.GetName(type, o))
-					: type;
-				if (ap != null)
-				{
-					var attributes = ap.GetCustomAttributes(typeof(DescriptionAttribute), !type.IsEnum);
-					if (attributes.Length > 0)
-					{
-						var da = (DescriptionAttribute)attributes[0];
-						if (da != null)
-							value = da.Description;
-					}
-				}
-				Descriptions.Add(key, value);
-				return value;
+				var attributes = ap.GetCustomAttributes(typeof(DescriptionAttribute), !type.IsEnum);
+				// If atribute is present then return value.
+				if (attributes.Length > 0)
+					return ((DescriptionAttribute)attributes[0]).Description;
 			}
+			// Return default value.
+			return type.IsEnum
+				? string.Format("{0}", o)
+				: type.FullName;
 		}
 
 		#endregion
 
-		#region DefaultValue
+		#region Get DefaultValueAttribute Value
 
-		/// <summary>Cache data for speed.</summary>
-		private static Dictionary<object, object> DefaultValues = new Dictionary<object, object>();
-		static object DefaultValuesLock = new object();
+		private static ConcurrentDictionary<object, object> DefaultValues = new ConcurrentDictionary<object, object>();
 
+		/// <summary>
+		/// Return default value.
+		/// </summary>
+		/// <param name="value">Can be enum value or MemberInfo, PropertyInfo...
+		///	Enum.Value
+		/// typeof(ClassName)
+		/// </param>
 		public static string GetDefaultValue(object value)
 		{
 			var v = GetDefaultValue<object>(value);
-			return v == null ? null : v.ToString();
+			return v?.ToString();
 		}
 
-		public static T GetByDefaultValue<T>(string value)
+		/// <summary>
+		/// Some enums can be decorated with DefaultValue attribute:
+		///   [Description("Favourite"), DefaultValue("F")]
+		///   Favourite,
+		/// This function will get original Enum value by string default value.
+		/// </summary>
+		public static T GetByDefaultValue<T>(string defaultValue) where T : Enum
 		{
 			var items = (T[])Enum.GetValues(typeof(T));
 			foreach (var item in items)
 			{
 				var s = GetDefaultValue(item);
-				if (string.Compare(s, value, true) == 0)
-				{
+				if (string.Compare(s, defaultValue, true) == 0)
 					return item;
-				}
 			}
 			return default(T);
 		}
@@ -111,24 +120,31 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static T GetDefaultValue<T>(object value)
 		{
-			lock (DefaultValuesLock)
+			if (!_UseDefaultValuesCache)
+				_GetDefaultValue<T>(value);
+			return (T)DefaultValues.GetOrAdd(value, x => _GetDefaultValue<T>(x));
+		}
+
+		public static bool _UseDefaultValuesCache = true;
+
+		/// <summary>
+		/// </summary>
+		/// <param name="value"></param>
+		private static T _GetDefaultValue<T>(object value)
+		{
+			// Check if MemberInfo/ICustomAttributeProvider.
+			var p = value as ICustomAttributeProvider;
+			// Assume it is enumeration value.
+			if (p == null)
 			{
-				if (!DefaultValues.ContainsKey(value))
-				{
-					var p = value as ICustomAttributeProvider;
-					// Assume it is enumeration value.
-					if (p == null)
-					{
-						if (value == null)
-							throw new ArgumentNullException(nameof(value));
-						p = value.GetType().GetField(value.ToString());
-					}
-					var attributes = (DefaultValueAttribute[])p.GetCustomAttributes(typeof(DefaultValueAttribute), false);
-					var r = attributes.Length > 0 ? attributes[0].Value : null;
-					DefaultValues.Add(value, r);
-				}
+				if (value == null)
+					throw new ArgumentNullException(nameof(value));
+				p = value.GetType().GetField(value.ToString());
 			}
-			return (T)DefaultValues[value];
+			var attributes = (DefaultValueAttribute[])p.GetCustomAttributes(typeof(DefaultValueAttribute), false);
+			if (attributes.Length > 0)
+				return (T)attributes[0].Value;
+			return default;
 		}
 
 		#endregion
