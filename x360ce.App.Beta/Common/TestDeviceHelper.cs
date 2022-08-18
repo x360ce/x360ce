@@ -135,12 +135,12 @@ namespace x360ce.App
 					if (time <= half)
 					{
 						// Convert [   0-1999] to [0-35999].
-						degree = ConvertHelper.ConvertRange(0, half - 1, 0, 35999, value);
+						degree = ConvertHelper.ConvertRange(value, 0, half - 1, 0, 35999);
 					}
 					else
 					{
 						// Convert [2000-3999] to [35999-0].
-						degree = ConvertHelper.ConvertRange(half, busy - 1, 35999, 0, value);
+						degree = ConvertHelper.ConvertRange(value, half, busy - 1, 35999, 0);
 					}
 				}
 				state.PointOfViewControllers[i] = degree;
@@ -172,15 +172,15 @@ namespace x360ce.App
 						if (invert && isEven)
 							sine *= -1f;
 						var range = ConvertHelper.ConvertToShort((float)sine);
-						position = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
+						position = ConvertHelper.ConvertRange(range, short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue);
 					}
 					else
 					{
 						position = time < half
 							// Move up [0-1999].
-							? ConvertHelper.ConvertRange(0, half - 1, ushort.MinValue, ushort.MaxValue, time)
+							? ConvertHelper.ConvertRange(time, 0, half - 1, ushort.MinValue, ushort.MaxValue)
 							// Move down  [2000-3999].
-							: ConvertHelper.ConvertRange(half, busy - 1, ushort.MaxValue, ushort.MinValue, time);
+							: ConvertHelper.ConvertRange(time, half, busy - 1, ushort.MaxValue, ushort.MinValue);
 					}
 				}
 				axis[i] = position;
@@ -209,15 +209,15 @@ namespace x360ce.App
 						if (invert && isEven)
 							sine *= -1f;
 						var range = ConvertHelper.ConvertToShort((float)sine);
-						position = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue, range);
+						position = ConvertHelper.ConvertRange(range, short.MinValue, short.MaxValue, ushort.MinValue, ushort.MaxValue);
 					}
 					else
 					{
 						position = time < half
 							// Move up.
-							? ConvertHelper.ConvertRange(0, half - 1, ushort.MinValue, ushort.MaxValue, time)
+							? ConvertHelper.ConvertRange(time, 0, half - 1, ushort.MinValue, ushort.MaxValue)
 							// Move down.
-							: ConvertHelper.ConvertRange(half, busy - 1, ushort.MaxValue, ushort.MinValue, time);
+							: ConvertHelper.ConvertRange(time, half, busy - 1, ushort.MaxValue, ushort.MinValue);
 					}
 				}
 				sliders[i] = position;

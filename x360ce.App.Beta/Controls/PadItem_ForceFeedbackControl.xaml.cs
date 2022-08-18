@@ -128,8 +128,8 @@ namespace x360ce.App.Controls
 			int rightTestValue = (int)RightForceFeedbackMotorPanel.TestUpDown.Value;
 			if (isVirtual)
 			{
-				var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, leftTestValue);
-				var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, rightTestValue);
+				var largeMotor = (byte)ConvertHelper.ConvertRange(leftTestValue, 0, 100, byte.MinValue, byte.MaxValue);
+				var smallMotor = (byte)ConvertHelper.ConvertRange(rightTestValue, 0, 100, byte.MinValue, byte.MaxValue);
 				Global.DHelper.SetVibration(_MappedTo, largeMotor, smallMotor, 0);
 			}
 			else
@@ -137,8 +137,8 @@ namespace x360ce.App.Controls
 				lock (Controller.XInputLock)
 				{
 					// Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
-					var leftMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, leftTestValue);
-					var rightMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, rightTestValue);
+					var leftMotor = (short)ConvertHelper.ConvertRange(leftTestValue, 0, 100, short.MinValue, short.MaxValue);
+					var rightMotor = (short)ConvertHelper.ConvertRange(rightTestValue, 0, 100, short.MinValue, short.MaxValue);
 					var gamePad = Global.DHelper.LiveXiControllers[index];
 					var isConnected = Global.DHelper.LiveXiConnected[index];
 					if (Controller.IsLoaded && isConnected)
