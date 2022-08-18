@@ -176,7 +176,7 @@ namespace x360ce.App.Controls
 			AddButton.IsEnabled = !auto;
 		}
 
-		async private void EnabledCheckBox_Click(object sender, RoutedEventArgs e)
+		private void EnabledCheckBox_Click(object sender, RoutedEventArgs e)
 		{
 			var box = (CheckBox)sender;
 			var newValue = box.IsChecked ?? false;

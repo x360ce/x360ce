@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -168,14 +170,19 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			try
 			{
-				System.Diagnostics.Process.Start(url);
+				if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+					Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+					Process.Start("xdg-open", url);
+				else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+					Process.Start("open", url);
 			}
 			catch (System.ComponentModel.Win32Exception winEx)
 			{
 				if (winEx.ErrorCode == -2147467259)
 					MessageBoxShow(winEx.Message);
 			}
-			catch (Exception ex)
+			catch (System.Exception ex)
 			{
 				MessageBoxShow(ex.Message);
 			}
@@ -184,7 +191,7 @@ namespace JocysCom.ClassLibrary.Controls
 		private static void MessageBoxShow(string message)
 		{
 #if NETCOREAPP // .NET Core
-			System.Windows.Forms.MessageBox.Show(message);
+			System.Windows.MessageBox.Show(message);
 #elif NETSTANDARD // .NET Standard
 #elif NETFRAMEWORK // .NET Framework
 			// Requires: PresentationFramework.dll

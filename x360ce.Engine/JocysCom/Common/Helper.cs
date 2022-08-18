@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using System.IO;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace JocysCom.ClassLibrary
 {
@@ -186,6 +188,20 @@ namespace JocysCom.ClassLibrary
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Allow to delay for 292,471,209 years.
+		/// </summary>
+		/// <param name="millisecondsDelay"></param>
+		public static async Task Delay(long millisecondsDelay, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			while (millisecondsDelay > 0 && !cancellationToken.IsCancellationRequested)
+			{
+				var delay = (int)Math.Min(int.MaxValue, millisecondsDelay);
+				await Task.Delay(delay, cancellationToken);
+				millisecondsDelay -= delay;
+			}
+		}
 
 #if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard

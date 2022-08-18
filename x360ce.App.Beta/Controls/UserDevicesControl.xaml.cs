@@ -32,7 +32,7 @@ namespace x360ce.App.Controls
 
 		public bool MapDeviceToControllerMode;
 
-		async private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (ControlsHelper.IsDesignMode(this))
 				return;
@@ -50,7 +50,7 @@ namespace x360ce.App.Controls
 			_currentData = new ObservableCollectionInvoked<UserDevice>();
 			MainDataGrid.ItemsSource = _currentData;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
-			await RefreshMapDeviceToList().ConfigureAwait(true);
+			RefreshMapDeviceToList();
 		}
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
@@ -67,7 +67,7 @@ namespace x360ce.App.Controls
 		/// Show DInput devices for mapping to XInput virtual device.
 		/// </summary>
 		/// <returns></returns>
-		async Task RefreshMapDeviceToList()
+		void RefreshMapDeviceToList()
 		{
 			var list = SettingsManager.UserDevices.Items.ToList();
 			if (MapDeviceToControllerMode)
@@ -90,24 +90,24 @@ namespace x360ce.App.Controls
 			var changes = new[] { ListChangedType.ItemAdded, ListChangedType.ItemDeleted };
 			// If item added or deleted from original list then...
 			if (changes.Contains(e.ListChangedType))
-				RefreshMapDeviceToList().ConfigureAwait(true);
+				RefreshMapDeviceToList();
 		}
 
 		bool ShowSystemDevices = false;
 
-		async private void ShowSystemDevicesButton_Click(object sender, RoutedEventArgs e)
+		private void ShowSystemDevicesButton_Click(object sender, RoutedEventArgs e)
 		{
 			var newValue = ShowSystemDevicesButton.IsChecked ?? false;
 			ShowSystemDevicesContent.Content = newValue
 				? Icons_Default.Current[Icons_Default.Icon_checkbox]
 				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			ShowSystemDevices = newValue;
-			await RefreshMapDeviceToList();
+			RefreshMapDeviceToList();
 		}
 
-		private async void RefreshButton_Click(object sender, EventArgs e)
+		private void RefreshButton_Click(object sender, EventArgs e)
 		{
-			await RefreshMapDeviceToList();
+			RefreshMapDeviceToList();
 		}
 
 		#endregion

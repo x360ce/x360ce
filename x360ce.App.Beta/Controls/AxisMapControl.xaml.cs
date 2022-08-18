@@ -185,7 +185,7 @@ namespace x360ce.App.Controls
 
 		public float ConvertDInputToImagePosition(float v)
 		{
-			var di = ConvertHelper.ConvertRangeF(0f, ushort.MaxValue, 0f, w, v);
+			var di = ConvertHelper.ConvertRangeF(v, 0f, ushort.MaxValue, 0f, w);
 			return di;
 		}
 
@@ -193,7 +193,7 @@ namespace x360ce.App.Controls
 		{
 			var min = isThumb ? -32768f : 0f;
 			var max = isThumb ? 32767f : 255f;
-			var xi = ConvertHelper.ConvertRangeF(min, max, 0f, h, v);
+			var xi = ConvertHelper.ConvertRangeF(v, min, max, 0f, h);
 			return xi;
 		}
 
@@ -243,7 +243,7 @@ namespace x360ce.App.Controls
 			for (var i = 0f; i <= w; i += 0.125f)
 			{
 				// Convert Image X position [0;w] to DInput position [0;65535].
-				var dInputValue = ConvertHelper.ConvertRangeF(0f, w, ushort.MinValue, ushort.MaxValue, i);
+				var dInputValue = ConvertHelper.ConvertRangeF(i, 0f, w, ushort.MinValue, ushort.MaxValue);
 				var xInputValue = ConvertHelper.GetThumbValue(dInputValue, (float)deadZone, (float)antiDeadZone, (float)sensitivity, _invert, _half, isThumb);
 				//var rounded = result >= -1f && result <= 1f;
 				var di = ConvertDInputToImagePosition(dInputValue);
@@ -333,8 +333,8 @@ namespace x360ce.App.Controls
 			var linearPercent = int.Parse(values[3]);
 
 			var deadZone = ConvertHelper.ConvertRangeF(0f, 100f, (float)DeadZoneUpDown.Minimum, (float)DeadZoneUpDown.Maximum, deadZonePercent);
-			var antiDeadZone = ConvertHelper.ConvertRangeF(0f, 100f, 0, xDeadZone, antiDeadZonePercent);
-			var linear = ConvertHelper.ConvertRangeF(-100f, 100f, (float)LinearUpDown.Minimum, (float)LinearUpDown.Maximum, linearPercent);
+			var antiDeadZone = ConvertHelper.ConvertRangeF(xDeadZone, antiDeadZonePercent, 0f, 100f, 0);
+			var linear = ConvertHelper.ConvertRangeF(linearPercent , - 100f, 100f, (float)LinearUpDown.Minimum, (float)LinearUpDown.Maximum);
 			// Move focus away from below controls, so that their value can be changed.
 			ApplyPresetMenuItem.Focus();
 			DeadZoneUpDown.Value = (int)deadZone;

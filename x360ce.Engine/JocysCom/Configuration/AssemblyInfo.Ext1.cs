@@ -1,0 +1,1 @@
+D:/Projects/Jocys.com/Class Library/Configuration/AssemblyInfo.Ext1.cs

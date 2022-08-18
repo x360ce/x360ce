@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -9,7 +8,6 @@ namespace JocysCom.ClassLibrary.Configuration
 {
 	public partial class AssemblyInfo
 	{
-
 		public AssemblyInfo()
 		{
 			Assembly =
@@ -35,36 +33,6 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		public static string ExpandPath(string path)
-		{
-			// Variables are quoted with '%' (percent) sign.
-			path = Environment.ExpandEnvironmentVariables(path);
-			// Variables are quoted with '{' and '}' sign.
-			path = JocysCom.ClassLibrary.Text.Helper.Replace(path, Entry, false);
-			return path;
-		}
-
-		public static string ParameterizePath(string path)
-		{
-			// Variables are quoted with '{' and '}' sign.
-			path = JocysCom.ClassLibrary.Text.Helper.Replace(Entry, path, false);
-			return path;
-		}
-
-		//public static string GetExpandedPath(string path)
-		//{
-		//	path = ExpandPath(path);
-		//	path = IO.PathHelper.ConvertFromSpecialFoldersPattern(path, "{", "}");
-		//	return path;
-		//}
-
-		//public static string GetParametrizedPath(string path)
-		//{
-		//	path = IO.PathHelper.ConvertToSpecialFoldersPattern(path, "{", "}");
-		//	path = ParameterizePath(path);
-		//	return path;
-		//}
-		
 		public AssemblyInfo(string strValFile)
 		{
 			Assembly = Assembly.LoadFile(strValFile);
@@ -155,7 +123,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			get
 			{
 				if (_RunMode == null)
-					_RunMode = SettingsParser.Current.Parse("RunMode", "");
+					// TODO: Standardize configuration provider XML, JSON, INI, Registry, etc...
+					// https://docs.microsoft.com/en-us/dotnet/core/extensions/configuration-providers
+					//_RunMode = SettingsParser.Current.Parse("RunMode", "");
+					return "";
 				return _RunMode;
 			}
 		}
@@ -286,7 +257,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// This means that compiling assemblies under the same conditions (permalink)
 		/// would produce byte-for-byte equivalent binaries.
 		/// </remarks>
-		public static DateTime GetBuildDateTime(string filePath, TimeZoneInfo tzi = null)
+		public static DateTime GetBuildDateTime(string filePath)
 		{
 			// Constants related to the Windows PE file format.
 			const int PE_HEADER_OFFSET = 60; // 0x3C

@@ -187,8 +187,8 @@ namespace x360ce.App.DInput
 												}
 												else
 												{
-													v.LeftMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.LargeMotor);
-													v.RightMotorSpeed = (short)ConvertHelper.ConvertRange(byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue, force.SmallMotor);
+													v.LeftMotorSpeed = (short)ConvertHelper.ConvertRange(force.LargeMotor, byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
+													v.RightMotorSpeed = (short)ConvertHelper.ConvertRange(force.SmallMotor, byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
 												}
 												// For the future: Investigate device states if force feedback is not working. 
 												// var st = ud.Device.GetForceFeedbackState();

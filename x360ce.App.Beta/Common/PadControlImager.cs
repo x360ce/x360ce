@@ -127,7 +127,7 @@ namespace x360ce.App.Controls
 				var control = isLeft ? LeftTriggerStatus : RightTriggerStatus;
 				var h = (float)(((System.Windows.FrameworkElement)control.Parent).Height - control.Height);
 				var y = isLeft ? gp.LeftTrigger : gp.RightTrigger;
-				var b = ConvertHelper.ConvertRangeF(byte.MinValue, byte.MaxValue, 0, h, y);
+				var b = ConvertHelper.ConvertRangeF(y, byte.MinValue, byte.MaxValue, 0, h);
 				var m = control.Margin;
 				on = y > 0;
 				control.Margin = new System.Windows.Thickness(m.Left, m.Top, m.Right, b);
@@ -140,8 +140,8 @@ namespace x360ce.App.Controls
 				var w = (float)((System.Windows.FrameworkElement)control.Parent).Width / 2F;
 				var x = isLeft ? gp.LeftThumbX : gp.RightThumbX;
 				var y = isLeft ? gp.LeftThumbY : gp.RightThumbY;
-				var l = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, -w, w, x);
-				var t = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, w, -w, y);
+				var l = ConvertHelper.ConvertRangeF(x, short.MinValue, short.MaxValue, -w, w);
+				var t = ConvertHelper.ConvertRangeF(y, short.MinValue, short.MaxValue, w, -w);
 				var m = control.Margin;
 				control.Margin = new System.Windows.Thickness(l, t, m.Right, m.Bottom);
 			}

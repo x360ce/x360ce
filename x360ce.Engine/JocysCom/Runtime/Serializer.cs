@@ -112,6 +112,24 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static Func<object, Encoding, string> _SerializeToJson;
 		public static Func<string, Type, Encoding, object> _DeserializeFromJson;
 
+#if NETCOREAPP
+		private static System.Text.Json.JsonSerializerOptions GetJsonOptions()
+		{
+			var options = new System.Text.Json.JsonSerializerOptions();
+#if NETCOREAPP2_1 || NETCOREAPP3_0 || NETCOREAPP3_1
+			options.IgnoreNullValues = true;
+#else
+			options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+#endif
+			options.PropertyNamingPolicy = null;
+			options.WriteIndented = true;
+			options.MaxDepth = 64;
+			// Add support for de-serializing enumeration strings.
+			options.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+			return options;
+		}
+#endif
+
 		/// <summary>
 		/// Serialize object to JSON string.
 		/// </summary>
@@ -125,14 +143,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (o == null)
 				return null;
 #if NETCOREAPP
-			var options = new System.Text.Json.JsonSerializerOptions();
-			//options.IgnoreNullValues = true;
-			options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-			options.PropertyNamingPolicy = null;
-			options.WriteIndented = true;
-			options.MaxDepth = 64;
-			// Add support for de-serializing enumeration strings.
-			options.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+			var options = GetJsonOptions();
 			var json = System.Text.Json.JsonSerializer.Serialize(o, o.GetType(), options);
 			return json;
 #else
@@ -161,14 +172,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (json == null)
 				return null;
 #if NETCOREAPP
-			var options = new System.Text.Json.JsonSerializerOptions();
-			//options.IgnoreNullValues = true;
-			options.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-			options.PropertyNamingPolicy = null;
-			options.WriteIndented = true;
-			options.MaxDepth = 64;
-			// Add support for de-serializing enumeration strings.
-			options.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+			var options = GetJsonOptions();
 			var o = System.Text.Json.JsonSerializer.Deserialize(json, type, options);
 			return o;
 #else
@@ -406,7 +410,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="o">The object to serialize.</param>
 		/// <param name="path">The file name to write to.</param>
 		/// <param name="encoding">The encoding to use (default is UTF8).</param>
-		public static byte[] SerializeToXmlBytes(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, int attempts = 2, int waitTime = 500)
+		public static byte[] SerializeToXmlBytes(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null)
 		{
 			var bytes = (o == null)
 				? new byte[0]

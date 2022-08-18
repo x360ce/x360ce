@@ -26,27 +26,6 @@ namespace JocysCom.ClassLibrary.Controls
 			});
 		}
 
-		/// <summary>
-		/// Set form TopMost if one of the application forms is top most.
-		/// </summary>
-		/// <param name="win"></param>
-		public static void CheckTopMost(Window win)
-		{
-			// If this form is not set as TopMost but one of the application forms is on TopMost then...
-			// Make this dialog form TopMost too or user won't be able to access it.
-			if (!win.Topmost && System.Windows.Forms.Application.OpenForms.Cast<System.Windows.Forms.Form>().Any(x => x.TopMost))
-				win.Topmost = true;
-		}
-
-		public static void AutoSizeByOpenForms(Window win, int addSize = -64)
-		{
-			var form = System.Windows.Forms.Application.OpenForms.Cast<System.Windows.Forms.Form>().First();
-			win.Width = form.Width + addSize;
-			win.Height = form.Height + addSize;
-			win.Top = form.Top - addSize / 2;
-			win.Left = form.Left - addSize / 2;
-		}
-
 		private static bool? _IsDesignModeWPF;
 
 		public static bool IsDesignMode(UIElement component)
@@ -200,26 +179,6 @@ namespace JocysCom.ClassLibrary.Controls
 				control.Visibility = visibility;
 		}
 
-		/// <summary>
-		/// Convert Bitmap to image source.
-		/// </summary>
-		///	<remarks>
-		///	Requires NuGet Package on .NET Core: System.Drawing.Common or...
-		///	set property <UseWindowsForms>true</UseWindowsForms> inside the project.
-		///	</remarks>
-		public static ImageSource GetImageSource(System.Drawing.Bitmap bitmap)
-		{
-			var bi = new System.Windows.Media.Imaging.BitmapImage();
-			var ms = new MemoryStream();
-			bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-			bi.BeginInit();
-			bi.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
-			bi.StreamSource = ms;
-			bi.EndInit();
-			ms.Dispose();
-			return bi;
-		}
-
 		private static void HookHyperlinks(object sender, TextChangedEventArgs e)
 		{
 			var doc = (sender as RichTextBox).Document;
@@ -342,7 +301,7 @@ namespace JocysCom.ClassLibrary.Controls
 			// Create new list.
 			var controls = new List<DependencyObject>();
 			// Add top control if required.
-			if (includeTop)
+			if (includeTop && !controls.Contains(control))
 				controls.Add(control);
 			var visual = control as Visual;
 			if (visual != null)
@@ -353,7 +312,7 @@ namespace JocysCom.ClassLibrary.Controls
 				{
 					var child = VisualTreeHelper.GetChild(control, i);
 					var children = GetAll(child, null, true);
-					controls.AddRange(children);
+					controls.AddRange(children.Except(controls));
 				}
 			}
 			// Get logical children.
@@ -362,7 +321,7 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				var child = logicalChildren[i];
 				var children = GetAll(child, null, true);
-				controls.AddRange(children);
+				controls.AddRange(children.Except(controls));
 			}
 			// If type filter is not set then...
 			return (type == null)
@@ -412,7 +371,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region Apply Grid Border Style
 
-		public static void ApplyBorderStyle(DataGrid grid, bool updateEnabledProperty = false)
+		public static void ApplyBorderStyle(DataGrid grid)
 		{
 			if (grid == null)
 				throw new ArgumentNullException(nameof(grid));
@@ -576,91 +535,6 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		#region Center Window
-
-		public static void CenterWindowOnApplication(Window window)
-		{
-			// Get WFF window first.
-			var win = System.Windows.Application.Current?.MainWindow;
-			System.Drawing.Rectangle? r = null;
-			var isNormal = false;
-			if (win != null)
-			{
-				r = new System.Drawing.Rectangle((int)win.Left, (int)win.Top, (int)win.Width, (int)win.Height);
-				isNormal = win.WindowState == WindowState.Normal;
-			}
-			else
-			{
-				// Try to get top windows form.
-				var form = System.Windows.Forms.Application.OpenForms.Cast<System.Windows.Forms.Form>().FirstOrDefault();
-				if (form != null)
-				{
-					double l;
-					double t;
-					double w;
-					double h;
-					TransformToUnits(form.Left, form.Top, out l, out t);
-					TransformToUnits(form.Width, form.Height, out w, out h);
-					r = new System.Drawing.Rectangle((int)l, (int)t, (int)w, (int)h);
-					isNormal = form.WindowState == System.Windows.Forms.FormWindowState.Normal;
-				}
-			}
-			if (r.HasValue)
-			{
-				if (isNormal)
-				{
-					window.Left = r.Value.X + ((r.Value.Width - window.ActualWidth) / 2);
-					window.Top = r.Value.Y + ((r.Value.Height - window.ActualHeight) / 2);
-				}
-				else
-				{
-					// Get the form screen.
-					var screen = System.Windows.Forms.Screen.FromRectangle(r.Value);
-					double screenWidth = screen.WorkingArea.Width;
-					double screenHeight = screen.WorkingArea.Height;
-					window.Left = (screenWidth / 2) - (window.Width / 2);
-					window.Top = (screenHeight / 2) - (window.Height / 2);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Transforms device independent units (1/96 of an inch) to pixels.
-		/// </summary>
-		private static void TransformToPixels(double unitX, double unitY, out int pixelX, out int pixelY)
-		{
-			using (var g = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-			{
-				pixelX = (int)((g.DpiX / 96) * unitX);
-				pixelY = (int)((g.DpiY / 96) * unitY);
-			}
-		}
-
-		/// <summary>
-		/// Transforms device pixels to independent units (1/96 of an inch).
-		/// </summary>
-		private static void TransformToUnits(int pixelX, int pixelY, out double unitX, out double unitY)
-		{
-			using (var g = System.Drawing.Graphics.FromHwnd(IntPtr.Zero))
-			{
-				unitX = (double)pixelX / (g.DpiX / 96);
-				unitY = (double)pixelY / (g.DpiX / 96);
-			}
-		}
-
-		public static bool GetMainFormTopMost()
-		{
-			var win = System.Windows.Application.Current?.MainWindow;
-			if (win != null)
-				return win.Topmost;
-			var form = System.Windows.Forms.Application.OpenForms.Cast<System.Windows.Forms.Form>().FirstOrDefault();
-			if (form != null)
-				return form.TopMost;
-			return false;
-		}
-
-		#endregion
-
 		#region Data Grid Functions
 
 		/// <summary>
@@ -736,29 +610,55 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region TextBoxBase
 
-		public static VerticalAlignment GetScrollVerticalAlignment(System.Windows.Controls.Primitives.TextBoxBase control)
+		public static VerticalAlignment GetScrollVerticalAlignment(ScrollViewer control)
 		{
 			// Vertical scroll position.
 			var offset = control.VerticalOffset;
 			// Vertical size of the scrollable content area.
-			var height = control.ViewportHeight;
+			var height = control.ExtentHeight;
 			// Vertical size of the visible content area.
-			var visibleView = control.ExtentHeight;
+			var visibleView = control.ViewportHeight;
+			//var scrollBarHeight = control.ActualHeight - control.ViewportHeight;
 			// Allow flexibility of 2 pixels.
 			var flex = 2;
-			if (offset + height - visibleView < flex)
+			if (height - offset - visibleView < flex)
 				return VerticalAlignment.Bottom;
 			if (offset < flex)
 				return VerticalAlignment.Top;
 			return VerticalAlignment.Center;
 		}
 
-		private static void AutoScroll(TextBoxBase control)
+		public static void AutoScroll(Control control)
 		{
-			var scrollPosition = GetScrollVerticalAlignment(control);
-			if (scrollPosition == VerticalAlignment.Bottom && control.IsVisible)
-				control.ScrollToEnd();
+			ScrollViewer sv = null;
+			if (!(control is ScrollViewer))
+			{
+				var all = GetAll<ScrollViewer>(control);
+				// Try to get one with visible vertical bar first otherwise get default.
+				sv = all
+					.Where(x => x.ComputedVerticalScrollBarVisibility == Visibility.Visible)
+					.FirstOrDefault() ?? all.FirstOrDefault();
+			}
+			//if (control is TextBoxBase tb)
+			//{
+			//	var border = (Border)VisualTreeHelper.GetChild(control, 0);
+			//	sv = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
+			//}
+			if (sv != null)
+			{
+				var scrollPosition = GetScrollVerticalAlignment(sv);
+				if (scrollPosition == VerticalAlignment.Bottom && control.IsVisible)
+					sv.ScrollToEnd();
+			}
 		}
+
+		//public static void Measure(Control control)
+		//{
+		//	var available = LayoutInformation.GetLayoutSlot(control);
+		//	Size s = new Size(available.Width, available.Height);
+		//	control.Measure(s);
+		//	control.Arrange(available);
+		//}
 
 		public static void EnableAutoScroll(TextBoxBase control, bool enable = true)
 		{

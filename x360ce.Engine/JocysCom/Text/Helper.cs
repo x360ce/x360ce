@@ -282,25 +282,37 @@ namespace JocysCom.ClassLibrary.Text
 
 		#endregion
 
-		public static string IdentText(int tabs, string s, char ident = '\t')
+		/// <summary>
+		/// Add or remove ident.
+		/// </summary>
+		/// <param name="s">String to ident.</param>
+		/// <param name="tabs">Positive - add ident, negative - remove ident.</param>
+		/// <param name="ident">Ident character</param>
+		public static string IdentText(string s, int tabs = 1, char ident = '\t')
 		{
 			if (tabs == 0)
 				return s;
-			if (s == null)
-				s = string.Empty;
+			if (string.IsNullOrEmpty(s))
+				return s;
 			var sb = new StringBuilder();
 			var tr = new StringReader(s);
-			var prefix = string.Empty;
-			for (var i = 0; i < tabs; i++)
-				prefix += ident;
+			var prefix = new string(ident, tabs);
 			string line;
 			while ((line = tr.ReadLine()) != null)
 			{
-				if (sb.Length > 0)
-					sb.AppendLine();
-				if (tabs > 0)
-					sb.Append(prefix);
-				sb.Append(line);
+				if (line != "")
+				{
+					if (tabs > 0)
+						sb.Append(prefix);
+					else
+					{
+						var index = 0;
+						while (index < line.Length && line[index] == ident && index < tabs)
+							index++;
+						line = line.Substring(index);
+					}
+				}
+				sb.AppendLine(line);
 			}
 			tr.Dispose();
 			return sb.ToString();

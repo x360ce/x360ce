@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JocysCom.ClassLibrary.Collections;
+using System;
 
 namespace x360ce.Engine
 {
@@ -47,13 +48,13 @@ namespace x360ce.Engine
 				if (dInput < dih)
 					dInput = dih;
 				// Convert half Dinput range [32768;65535] range to DInput range (ushort[0;65535])
-				dInput = ConvertRangeF(dih, ushort.MaxValue, 0f, ushort.MaxValue, dInput);
+				dInput = ConvertRangeF(dInput, dih, ushort.MaxValue, 0f, ushort.MaxValue);
 			}
 			var min = isThumb ? -32768f : 0f;
 			var max = isThumb ? 32767f : 255f;
 
 			// Convert DInput range(ushort[0; 65535]) to XInput thumb range(ushort[min; max]).
-			var xInput = ConvertRangeF(ushort.MinValue, ushort.MaxValue, min, max, dInput);
+			var xInput = ConvertRangeF(dInput, ushort.MinValue, ushort.MaxValue, min, max);
 			// Check if value is negative (only thumb).
 			bool invert = xInput < 0f;
 			// Convert [-32768;-1] -> [32767;0]
@@ -68,19 +69,19 @@ namespace x360ce.Engine
 				xInput = deadZoneApplied
 					? 0f
 					// Convert range [deadZone;max] => [0;max];
-					: ConvertRangeF(deadZone, max, 0f, max, xInput);
+					: ConvertRangeF(xInput, deadZone, max, 0f, max);
 			}
 			// If anti-deadzone value is set then...
 			if (antiDeadZone > 0f && xInput > 0f)
 			{
 				// Convert range [0;max] => [antiDeadZone;max];
-				xInput = ConvertRangeF(0f, max, antiDeadZone, max, xInput);
+				xInput = ConvertRangeF(xInput, 0f, max, antiDeadZone, max);
 			}
 			// If linear value is set then...
 			if (linear != 0f && xInput > 0f)
 			{
 				// [antiDeadZone;32767] => [0;1f];
-				var valueF = ConvertRangeF(antiDeadZone, max, 0f, 1f, xInput);
+				var valueF = ConvertRangeF(xInput, antiDeadZone, max, 0f, 1f);
 				var linearF = (float)linear / 100f;
 				var x = -valueF;
 				if (linearF < 0f) x = 1f + x;
@@ -88,7 +89,7 @@ namespace x360ce.Engine
 				if (linearF < 0f) v = 1f - v;
 				valueF = valueF + (2f - v - valueF - 1f) * Math.Abs(linearF);
 				// [0;1f] => [antiDeadZone;max];
-				xInput = ConvertRangeF(0f, 1f, antiDeadZone, max, valueF);
+				xInput = ConvertRangeF(valueF, 0f, 1f, antiDeadZone, max);
 			}
 			// If inversion required (only thumb) and not in deadzone then...
 			// Checking for deadzone prevents XInput value jittering between 0 and -1.
@@ -105,46 +106,65 @@ namespace x360ce.Engine
 		/// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
 		public static short ConvertToShort(float value)
 		{
-			return (short)ConvertRangeF(-1f, 1f, short.MinValue, short.MaxValue, value);
+			return (short)ConvertRangeF(value, -1f, 1f, short.MinValue, short.MaxValue);
 		}
 
 		/// <summary>Convert value from [x1;y1] range to [x2;y2] range.</summary>
-		public static int ConvertRange(int oldMin, int oldMax, int newMin, int newMax, int value)
+		public static int ConvertRange(int oldValue, int oldMin, int oldMax, int newMin, int newMax)
 		{
-			var newValue = ConvertRangeF(oldMin, oldMax, newMin, newMax, value);
+			var newValue = ConvertRangeF(oldValue, oldMin, oldMax, newMin, newMax);
 			return (int)Math.Round(newValue, 0);
 		}
 
-		public static float ConvertRangeF(float oldMin, float oldMax, float newMin, float newMax, float value)
+		/// <summary>Convert value from [x1;y1] range to [x2;y2] range.</summary>
+		public static float ConvertRangeF(float oldValue, float oldMin, float oldMax, float newMin, float newMax)
 		{
-			var oldRange = oldMax - oldMin;
-			var newRange = newMax - newMin;
-			var scale = newRange / oldRange;
-			var newValue = newMin + ((value - oldMin) * scale);
-            if (newRange > 0)
-            {
-                // Limit range.
-                if (newValue > newMax)
-                    return newMax;
-                if (newValue < newMin)
-                    return newMin;
-            }
-            else
-            {
-                // Limit range.
-                if (newValue > newMin)
-                    return newMin;
-                if (newValue < newMax)
-                    return newMax;
-            }
-            return newValue;
+			if (oldMin == oldMax)
+				throw new ArgumentException($"The arguments {nameof(oldMin)} and {nameof(oldMax)} cannot be equal!");
+			if (newMin == newMax)
+				throw new ArgumentException($"The arguments {nameof(newMin)} and {nameof(newMax)} cannot be equal!");
+			if (LimitRange(oldValue, oldMin, oldMax) != oldValue)
+				throw new ArgumentOutOfRangeException(nameof(oldValue));
+			var oldSize = oldMax - oldMin;
+			var newSize = newMax - newMin;
+			var position = (oldValue - oldMin) / oldSize;
+			var newValue = position * newSize + newMin;
+			return LimitRange(newValue, newMin, newMax);
 		}
 
-		public static int DeadZone(int val, int min, int max, int lowerDZ, int upperDZ)
+		/// <summary>
+		/// Return true if value in range (inclusive).
+		/// </summary>
+		public static bool InRange(float value, float min, float max)
 		{
-			if (val < lowerDZ) return min;
-			if (val > upperDZ) return max;
-			return val;
+			// If inverted then...
+			return min > max
+				? max <= value && value <= min
+				: min <= value && value <= max;
+		}
+
+		/// <summary>
+		/// Limit to range.
+		/// </summary>
+		public static float LimitRange(float value, float min, float max)
+		{
+			// If inverted then swap.
+			if (min > max)
+				(min, max) = (max, min);
+			if (value > max)
+				return max;
+			if (value < min)
+				return min;
+			return value;
+		}
+
+		public static int DeadZone(int value, int min, int max, int lowerDZ, int upperDZ)
+		{
+			if (value < lowerDZ)
+				return min;
+			if (value > upperDZ)
+				return max;
+			return value;
 		}
 
 	}

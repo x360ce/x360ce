@@ -261,7 +261,7 @@ namespace JocysCom.ClassLibrary.Data
 			string connectionString = null;
 #if !NETSTANDARD
 			// Try to find entity connection.
-			var cs = ConfigurationManager.ConnectionStrings[name];
+			var cs = System.Configuration.ConfigurationManager.ConnectionStrings[name];
 			connectionString = cs.ConnectionString;
 #endif
 			// If configuration section with not found then return.

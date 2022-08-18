@@ -339,7 +339,7 @@ namespace JocysCom.ClassLibrary.Controls
 			// Create new list.
 			var controls = new List<Control>();
 			// Add top control if required.
-			if (includeTop)
+			if (includeTop && !controls.Contains(control))
 				controls.Add(control);
 			// If control contains children then...
 			if (control.HasChildren)
@@ -347,7 +347,7 @@ namespace JocysCom.ClassLibrary.Controls
 				foreach (var child in control.Controls.Cast<Control>())
 				{
 					var children = GetAll(child, null, true);
-					controls.AddRange(children);
+					controls.AddRange(children.Except(controls));
 				}
 			}
 			// If type filter is not set then...

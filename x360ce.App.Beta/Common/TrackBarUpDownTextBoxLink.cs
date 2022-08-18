@@ -57,7 +57,7 @@ namespace x360ce.App
 					return;
 				_NumericUpDown.ValueChanged -= _NumericUpDown_ValueChanged;
 				var sourceValue = (float)_TrackBar.Value;
-				var value = (int)ConvertHelper.ConvertRangeF((float)_TrackBar.Minimum, (float)_TrackBar.Maximum, (float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, sourceValue);
+				var value = (int)ConvertHelper.ConvertRangeF(sourceValue, (float)_TrackBar.Minimum, (float)_TrackBar.Maximum, (float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum);
 				if (_NumericUpDown.Value != value)
 					_NumericUpDown.Value = value;
 				_NumericUpDown.ValueChanged += _NumericUpDown_ValueChanged;
@@ -72,13 +72,13 @@ namespace x360ce.App
 					return;
 				_TrackBar.ValueChanged -= _TrackBar_ValueChanged;
 				var sourceValue = _NumericUpDown.Value;
-				var value = (double)ConvertHelper.ConvertRangeF((float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, (float)_TrackBar.Minimum, (float)_TrackBar.Maximum, (float)sourceValue);
+				var value = (double)ConvertHelper.ConvertRangeF((float)sourceValue, (float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, (float)_TrackBar.Minimum, (float)_TrackBar.Maximum);
 				if (_TrackBar.Value != value)
 					_TrackBar.Value = value;
 				_TrackBar.ValueChanged += _TrackBar_ValueChanged;
 				// Set percent.
 				var minPercent = _NumericUpDown.Minimum < 0 ? -100F : 0f;
-				var percent = (double)ConvertHelper.ConvertRangeF((float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, minPercent, 100f, (float)sourceValue);
+				var percent = (double)ConvertHelper.ConvertRangeF((float)sourceValue, (float)_NumericUpDown.Minimum, (float)_NumericUpDown.Maximum, minPercent, 100f);
 				var percentRound = Math.Round(percent);
 				var percentString = string.Format(PercentFormat, percent);
 				// Update percent TextBox.
