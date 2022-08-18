@@ -264,16 +264,16 @@ namespace x360ce.Engine
 
             if (motorsChanged || forceChanged || strengthChanged || strengthLChanged)
             {
-                int overalStrength = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
-                int leftGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetLeftMotorStrength());
+                int overalStrength = ConvertHelper.ConvertRange(ps.GetForceOverall(), 0, 100, 0, DI_FFNOMINALMAX);
+                int leftGain = ConvertHelper.ConvertRange(ps.GetLeftMotorStrength(), 0, 100, 0, overalStrength);
                 paramsL.Gain = leftGain;
                 flagsL |= EffectParameterFlags.Gain;
             }
 
             if (actuatorR != null && (motorsChanged || forceChanged || strengthChanged || strengthRChanged))
             {
-                int overalStrength = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, ps.GetForceOverall());
-                int rightGain = ConvertHelper.ConvertRange(0, 100, 0, overalStrength, ps.GetRightMotorStrength());
+                int overalStrength = ConvertHelper.ConvertRange(ps.GetForceOverall(), 0, 100, 0, DI_FFNOMINALMAX);
+                int rightGain = ConvertHelper.ConvertRange(ps.GetRightMotorStrength(), 0, 100, 0, overalStrength );
                 paramsR.Gain = rightGain;
                 flagsR |= EffectParameterFlags.Gain;
             }
@@ -297,7 +297,7 @@ namespace x360ce.Engine
             // Get right values first for possible combine later.
             if (motorsChanged || forceChanged || periodRChanged || speedRChanged || combine)
             {
-                rightMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_RightMotorSpeed);
+                rightMagnitudeAdjusted = ConvertHelper.ConvertRange(old_RightMotorSpeed, short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX);
                 rightPeriod = TryParse(old_RightPeriod) * 1000;
                 if (actuatorR != null)
                 {
@@ -320,7 +320,7 @@ namespace x360ce.Engine
             if (motorsChanged || forceChanged || periodLChanged || speedLChanged || combine)
             {
                 // Convert speed into magnitude/amplitude.
-                leftMagnitudeAdjusted = ConvertHelper.ConvertRange(short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX, old_LeftMotorSpeed);
+                leftMagnitudeAdjusted = ConvertHelper.ConvertRange(old_LeftMotorSpeed, short.MinValue, short.MaxValue, 0, DI_FFNOMINALMAX);
                 leftPeriod = TryParse(old_LeftPeriod) * 1000;
                 // If device have only one force feedback actuator (probably wheel).
                 if (combine)
