@@ -3,8 +3,9 @@
 # Download
 
 IMPORTANT: Please download and run digitally signed files only! If someone asks to disable antivirus or exclude X360CE app from anti-virus - DON'T! Report any suspicion in [Issues](https://github.com/x360ce/x360ce/issues) and we will try to resolve any false positive with anti-virus developers.
+
 On 2022-07-14 some malicious people updated the "Beta Testing" WIKI page with a link to a file which was not signed by developers of X360CE.
-The page has been restored and WIKI pages have been locked for project contributors only.
+The "Beta Testing" WIKI page has been restored and all WIKI pages have been locked for project contributors only, to ensure this does not happen again.
 
 ## Download v4.x
 
