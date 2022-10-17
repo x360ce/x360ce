@@ -30,6 +30,8 @@ namespace x360ce.App
 		public void LoadAsync(string url, int timeout = 60, int retries = 4, int sleep = 5)
 		{
 			Params = new DownloaderParams(url, timeout, retries, sleep);
+			// Call Close() to prevent timer auto-restart when Interval changed.
+			retryTimer.Close();
 			retryTimer.Interval = sleep * 1000;
 			retryTimer.Start();
 		}
