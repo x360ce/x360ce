@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 using x360ce.Engine.Maps;
-using Key = System.Windows.Forms.Keys;
 
 namespace x360ce.App.Controls
 {
@@ -78,9 +78,9 @@ namespace x360ce.App.Controls
 			// https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.keys?view=netcore-3.1
 			AllKeys = ((Key[])Enum.GetValues(typeof(Key))).ToList();
 			AddKeys(Control1KeysComboBox, "Mod", new Key[] {
-				Key.Shift, Key.ShiftKey, Key.LShiftKey, Key.RShiftKey,
-				Key.Control, Key.ControlKey, Key.LControlKey, Key.RControlKey,
-				Key.Alt, Key.Menu, Key.RMenu, Key.LMenu,
+				Key.LeftShift, Key.RightShift,
+				Key.LeftCtrl, Key.RightCtrl,
+				Key.LeftAlt, Key.RightAlt,
 				Key.LWin, Key.RWin,
 			});
 			AddKeys(CharKeysComboBox, "Key", AllKeys.Where(x => x >= Key.A && x <= Key.Z || x == Key.Space));
@@ -91,7 +91,10 @@ namespace x360ce.App.Controls
 				Key.Insert, Key.Delete, Key.Home, Key.End, Key.PageUp, Key.PageDown, Key.NumLock });
 			// Add remaining keys
 			AddKeys(OtherKeysComboBox, "Other", AllKeys);
-			AddKeys(MouseKeysComboBox, "Mouse", new Key[] { Key.LButton, Key.MButton, Key.RButton, Key.XButton1, Key.XButton2 });
+			//AddKeys(MouseKeysComboBox, "Mouse", new MouseButton[] {
+			//	MouseButton.Left, MouseButton.Middle, MouseButton.Right,
+			//	MouseButton.XButton1, MouseButton.XButton2
+			//});
 			// Add X360CE buttons.
 			var xKeys = Enum.GetValues(typeof(MapCode)).Cast<MapCode>()
 				.Where(x => SettingsConverter.IsButtonOrDirection(x));

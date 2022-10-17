@@ -5,7 +5,7 @@ using SharpDX.XInput;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.Windows.Input;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -195,9 +195,9 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		private static Keys[] GetGuideKeys()
+		private static Key[] GetGuideKeys()
 		{
-			var list = new List<Keys>();
+			var list = new List<Key>();
 			var keys = SettingsManager.Options.GuideButtonAction;
 			var matches = rxKeys.Matches(keys);
 			foreach (Match m in matches)
@@ -207,11 +207,11 @@ namespace x360ce.App.DInput
 				// Try parse as byte/number first.
 				if (byte.TryParse(s, out keyCode))
 				{
-					list.Add((Keys)keyCode);
+					list.Add((Key)keyCode);
 					continue;
 				}
 				// Try parse as "Keys" enum (ignore case).
-				Keys keyValue;
+				Key keyValue;
 				if (System.Enum.TryParse(s, true, out keyValue))
 				{
 					list.Add(keyValue);
