@@ -257,8 +257,10 @@ namespace x360ce.App.Service
 			var runKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 			if (enabled)
 			{
+				// Fix possible issues, dot notations and invalid path separator.
+				var fullPath = Path.GetFullPath(ai.AssemblyPath);
 				// Add the value in the registry so that the application runs at start-up
-				string command = string.Format("\"{0}\" /{1}={2}", ai.AssemblyPath, Program.arg_WindowState, startState.ToString());
+				var command = string.Format("\"{0}\" /{1}={2}", fullPath, Program.arg_WindowState, startState.ToString());
 				var value = (string)runKey.GetValue(ai.Product);
 				if (value != command)
 					runKey.SetValue(ai.Product, command);

@@ -86,7 +86,7 @@ namespace x360ce.App
 		{ // <- Put breakpoint here to capture exceptions during debug.
 		}
 
-		public const string arg_WindowState = "WindowState";
+		public const string arg_WindowState = nameof(WindowState);
 
 		internal class NativeMethods
 		{
@@ -175,7 +175,7 @@ namespace x360ce.App
 			}
 			else
 			{
-				//Global._TrayManager.RestoreFromTray(false, false);
+				Global._TrayManager.RestoreFromTray(false, false);
 			}
 		}
 
