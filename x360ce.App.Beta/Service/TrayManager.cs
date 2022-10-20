@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Forms;
 
 namespace x360ce.App.Service
 {
@@ -311,9 +310,9 @@ namespace x360ce.App.Service
 				// Add the value in the registry so that the application runs at start-up
 				//var arguments = $"/{Program.arg_WindowState}={startState}";
 				var windowsStyle = 1; // Normal
-				if (startState == FormWindowState.Maximized)
+				if (startState == System.Windows.Forms.FormWindowState.Maximized)
 					windowsStyle = 3;
-				if (startState == FormWindowState.Minimized)
+				if (startState == System.Windows.Forms.FormWindowState.Minimized)
 					windowsStyle = 7;
 				string powershellCommand = "-NoProfile -Command " +
 					$"$wShell = New-Object -ComObject WScript.Shell; " +
