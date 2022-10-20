@@ -1,10 +1,12 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using Microsoft.Win32;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Forms;
 
 namespace x360ce.App.Service
 {
@@ -110,7 +112,7 @@ namespace x360ce.App.Service
 					break;
 				case nameof(Options.StartWithWindows):
 				case nameof(Options.StartWithWindowsState):
-					UpdateWindowsStartRegistry(o.StartWithWindows, o.StartWithWindowsState);
+					UpdateWindowsStart(o.StartWithWindows, o.StartWithWindowsState);
 					break;
 				case nameof(Options.EnableShowFormInfo):
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
@@ -245,7 +247,23 @@ namespace x360ce.App.Service
 
 		#region ■ Operation 
 
+		public void UpdateWindowsStart(bool enabled, System.Windows.Forms.FormWindowState? startState = null)
+		{
+			if (enabled)
+			{
+				// Pick one only.
+				UpdateWindowsStartRegistry(enabled, startState);
+				//UpdateWindowsStartFolder(enabled, startState);
+			}
+			else
+			{
+				UpdateWindowsStartRegistry(enabled, startState);
+				UpdateWindowsStartFolder(enabled, startState);
+			}
+		}
+
 		/// <summary>
+		/// Enable or disable application start with Windows after sign-in.
 		/// Requires no special permissions, because current used have full access to CurrentUser 'Run' registry key.
 		/// </summary>
 		/// <param name="enabled">Start with Windows after Sign-In.</param>
@@ -267,11 +285,58 @@ namespace x360ce.App.Service
 			}
 			else
 			{
-				// Remove the value from the registry so that the application doesn't start
+				// Remove the value from the registry so that the application doesn't start automatically.
 				if (runKey.GetValueNames().Contains(ai.Product))
 					runKey.DeleteValue(ai.Product, false);
 			}
 			runKey.Close();
+		}
+
+		/// <summary>
+		/// Enable or disable application start with Windows after sign-in
+		/// Requires no special permissions, because current used have full access to CurrentUser 'Startup' folder.
+		/// </summary>
+		/// <param name="enabled">Start with Windows after sign-in.</param>
+		/// <param name="startState">Start Mode.</param>
+		public void UpdateWindowsStartFolder(bool enabled, System.Windows.Forms.FormWindowState? startState = null)
+		{
+			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
+			startState = startState ?? SettingsManager.Options.StartWithWindowsState;
+			var startupFolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Startup);
+			var shortcutPath = $"{startupFolder}\\{ai.Product}.lnk";
+			if (enabled)
+			{
+				// Fix possible issues, dot notations and invalid path separator.
+				var targetPath = Path.GetFullPath(ai.AssemblyPath);
+				// Add the value in the registry so that the application runs at start-up
+				//var arguments = $"/{Program.arg_WindowState}={startState}";
+				var windowsStyle = 1; // Normal
+				if (startState == FormWindowState.Maximized)
+					windowsStyle = 3;
+				if (startState == FormWindowState.Minimized)
+					windowsStyle = 7;
+				string powershellCommand = "-NoProfile -Command " +
+					$"$wShell = New-Object -ComObject WScript.Shell; " +
+					$"$shortcut = $wShell.CreateShortcut('{shortcutPath}'); " +
+					$"$shortcut.TargetPath = '\"{targetPath}\"'; " +
+					$"$shortcut.WindowStyle = '{windowsStyle}'; " +
+					//$"$shortcut.Arguments = '{arguments}'; " +
+					$"$shortcut.Save();";
+				using (var process = new Process())
+				{
+					process.StartInfo.UseShellExecute = true;
+					process.StartInfo.FileName = "powershell";
+					process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+					process.StartInfo.Arguments = powershellCommand;
+					process.Start();
+				}
+			}
+			else
+			{
+				// Remove shortcut so that the application doesn't start automatically.
+				if (File.Exists(shortcutPath))
+					File.Delete(shortcutPath);
+			}
 		}
 
 		#endregion
