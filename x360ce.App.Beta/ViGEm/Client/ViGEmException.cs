@@ -7,6 +7,11 @@ namespace Nefarius.ViGEm.Client
 	[Serializable]
 	public class ViGEmException : Exception
 	{
+		protected ViGEmException(SerializationInfo serializationInfo, StreamingContext streamingContext)
+		{
+			throw new NotImplementedException();
+		}
+
 		public VIGEM_ERROR Code { get { return _Code; } }
 		VIGEM_ERROR _Code;
 
@@ -29,11 +34,12 @@ namespace Nefarius.ViGEm.Client
 			: base(info, context) { _Code = code; }
 
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-            info.AddValue("Code", _Code);
-        }
-    }
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData(info, context);
+			info.AddValue("Code", _Code);
+		}
+
+	}
 }
