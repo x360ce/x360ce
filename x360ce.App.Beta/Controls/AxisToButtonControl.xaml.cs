@@ -181,6 +181,8 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
+			if (controlsLink != null)
+				return;
 			controlsLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, 0, short.MaxValue);
 			controlsLink.ValueChanged += controlsLink_ValueChanged;
 			arrowEnabledImage = ControlsHelper.GetImageSource(Properties.Resources.arrow_right_16x16);
@@ -189,8 +191,10 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			if (controlsLink == null)
+				return;
 			controlsLink.ValueChanged -= controlsLink_ValueChanged;
-			controlsLink?.Dispose();
+			controlsLink.Dispose();
 			controlsLink = null;
 			arrowEnabledImage = null;
 			arrowDisabledImage = null;

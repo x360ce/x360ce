@@ -14,36 +14,31 @@ namespace x360ce.App.Controls
 		public UserProgramsControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
+			var window = System.Windows.Window.GetWindow(this);
 		}
 
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-			// Load if not loaded.
-			lock (This)
-			{
-				var grid = ListPanel.MainDataGrid;
-				if (grid.ItemsSource != null)
-					return;
-				grid.SelectionChanged += MainDataGrid_SelectionChanged;
-				var userGamesView = new BindingListCollectionView(SettingsManager.UserGames.Items);
-				grid.ItemsSource = userGamesView;
-			}
+			var grid = ListPanel.MainDataGrid;
+			// Return if loaded already. Exception thrown: 'System.NullReferenceException' in PresentationFramework.dll
+			if (grid.ItemsSource != null)
+				return;
+			grid.SelectionChanged += MainDataGrid_SelectionChanged;
+			var view = new BindingListCollectionView(SettingsManager.UserGames.Items);
+			grid.ItemsSource = view;
 		}
 
-		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		private void UserControl_Unloaded(object sender, EventArgs e)
 		{
-			// Unload if loaded.
-			lock (This)
-			{
-				var grid = ListPanel.MainDataGrid;
-				if (grid.ItemsSource == null)
-					return;
-				grid.SelectionChanged -= MainDataGrid_SelectionChanged;
-				var source = ((BindingListCollectionView)grid.ItemsSource);
-				grid.ItemsSource = null;
-				source?.DetachFromSourceCollection();
-				ItemPanel.CurrentItem = null;
-			}
+			var grid = ListPanel.MainDataGrid;
+			// Return if not loaded.
+			if (grid.ItemsSource == null)
+				return;
+			grid.SelectionChanged -= MainDataGrid_SelectionChanged;
+			var source = ((BindingListCollectionView)grid.ItemsSource);
+			grid.ItemsSource = null;
+			source?.DetachFromSourceCollection();
+			ItemPanel.CurrentItem = null;
 		}
 
 		private void MainDataGrid_SelectionChanged(object sender, EventArgs e)
