@@ -54,8 +54,6 @@ namespace x360ce.App.Controls
 			TestCheckIssuesCheckBox.Checked += TestCheckIssuesCheckBox_CheckedChanged;
 			// Load Settings and enable events.
 			UpdateGetXInputStatesWithNoEvents();
-			// Monitor option changes.
-			SettingsManager.OptionsData.Items.ListChanged += Items_ListChanged;
 		}
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
@@ -409,11 +407,6 @@ namespace x360ce.App.Controls
 			ExceptionMethod();
 		}
 
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			SettingsManager.OptionsData.Items.ListChanged -= Items_ListChanged;
-		}
-
 		private void TestDisposeButton_Click(object sender, RoutedEventArgs e)
 		{
 			LogTextBox.Text = "Please wait...";
@@ -517,5 +510,21 @@ namespace x360ce.App.Controls
 		}
 
 		#endregion
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+			// Monitor option changes.
+			SettingsManager.OptionsData.Items.ListChanged += Items_ListChanged;
+		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
+			SettingsManager.OptionsData.Items.ListChanged -= Items_ListChanged;
+		}
+
 	}
 }

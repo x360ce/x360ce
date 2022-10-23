@@ -123,13 +123,15 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (ControlsHelper.IsDesignMode(this))
+			if (!ControlsHelper.AllowLoad(this))
 				return;
 			MainDataGrid.ItemsSource = Items;
 		}
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			MainDataGrid.ItemsSource = null;
 			Items.Clear();
 			Items = null;

@@ -138,7 +138,7 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (ControlsHelper.IsDesignMode(this))
+			if (!ControlsHelper.AllowLoad(this))
 				return;
 			// Enable task timer.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -155,6 +155,8 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			// Disable in reverse order.
 			EnableDataSource(false);
 			QueueMonitorTimer.Elapsed -= QueueMonitorTimer_Elapsed;

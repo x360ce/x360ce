@@ -70,7 +70,7 @@ namespace x360ce.App.Controls
 
 		void UpdateTargetType()
 		{
-			if (IsUnloading)
+			if (!ControlsHelper.IsLoaded(this))
 				return;
 			var maxValue = isThumb ? short.MaxValue : byte.MaxValue;
 			deadzoneLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, maxValue);
@@ -104,7 +104,7 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(DeadZoneUpDown);
 			SettingsManager.UnLoadMonitor(AntiDeadZoneUpDown);
 			SettingsManager.UnLoadMonitor(LinearUpDown);
-			if (ps == null || IsUnloading)
+			if (ps == null || ControlsHelper.IsLoaded(this))
 				return;
 			// Set binding.
 			string deadZoneName = null;
@@ -334,7 +334,7 @@ namespace x360ce.App.Controls
 
 			var deadZone = ConvertHelper.ConvertRangeF(0f, 100f, (float)DeadZoneUpDown.Minimum, (float)DeadZoneUpDown.Maximum, deadZonePercent);
 			var antiDeadZone = ConvertHelper.ConvertRangeF(xDeadZone, antiDeadZonePercent, 0f, 100f, 0);
-			var linear = ConvertHelper.ConvertRangeF(linearPercent , - 100f, 100f, (float)LinearUpDown.Minimum, (float)LinearUpDown.Maximum);
+			var linear = ConvertHelper.ConvertRangeF(linearPercent, -100f, 100f, (float)LinearUpDown.Minimum, (float)LinearUpDown.Maximum);
 			// Move focus away from below controls, so that their value can be changed.
 			ApplyPresetMenuItem.Focus();
 			DeadZoneUpDown.Value = (int)deadZone;
@@ -354,16 +354,15 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (ControlsHelper.IsDesignMode(this))
+			if (!ControlsHelper.AllowLoad(this))
 				return;
 			updateTimer.Elapsed += UpdateTimer_Elapsed;
 		}
 
-		bool IsUnloading;
-
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			IsUnloading = true;
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			if (updateTimer != null)
 			{
 				updateTimer.Elapsed -= UpdateTimer_Elapsed;
@@ -377,7 +376,7 @@ namespace x360ce.App.Controls
 			linearLink?.Dispose();
 			linearLink = null;
 		}
-	
+
 	}
 }
 

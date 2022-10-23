@@ -31,7 +31,6 @@ namespace x360ce.App.Controls
 			updateTimer.AutoReset = false;
 			updateTimer.Interval = 500;
 			updateTimer.Elapsed += UpdateTimer_Elapsed;
-
 		}
 
 		void UpdateTimerReset()
@@ -152,10 +151,19 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			overallStrengthLink.Dispose();
 			SetBinding(_MappedTo, null);
 		}
+
 	}
 }

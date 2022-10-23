@@ -75,67 +75,6 @@ namespace x360ce.App
 		public System.Timers.Timer CleanStatusTimer;
 		public int DefaultPoolingInterval = 50;
 
-		private void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
-			Global.HMan.SetBody(MessageBoxImage.Information, "Useful Tip: Minimize X360CE Application during game to reduce its load on CPU and GPU. Minimized application automatically turns off CPU heavy tasks like Interface updates or state requests from XInput.");
-			StartHelper.OnClose += StartHelper_OnClose;
-			StartHelper.OnRestore += StartHelper_OnRestore;
-			AppHelper.InitializeHidGuardian();
-			if (string.IsNullOrEmpty(System.Threading.Thread.CurrentThread.Name))
-				System.Threading.Thread.CurrentThread.Name = "MainFormThread";
-			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
-			Global.DHelper.UpdateCompleted += DHelper_UpdateCompleted;
-			Global.DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
-			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
-			Global.DHelper.XInputReloaded += DHelper_XInputReloaded;
-			MainBodyPanel.SettingsPanel.MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Extended;
-			MainBodyPanel.SettingsPanel.InitPanel();
-			// NotifySettingsChange will be called on event suspension and resume.
-			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
-			// NotifySettingsChange will be called on setting changes.
-			SettingsManager.Current.SettingChanged += Current_SettingChanged;
-			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
-			XInputMaskScanner.FileInfoCache.Load();
-			UpdateTimer = new System.Timers.Timer
-			{
-				AutoReset = false,
-				Interval = DefaultPoolingInterval
-			};
-			UpdateTimer.Elapsed += UpdateTimer_Elapsed;
-			SettingsTimer = new System.Timers.Timer
-			{
-				AutoReset = false,
-				Interval = 500
-			};
-			SettingsTimer.Elapsed += SettingsTimer_Elapsed;
-			CleanStatusTimer = new System.Timers.Timer
-			{
-				AutoReset = false,
-				Interval = 3000
-			};
-			CleanStatusTimer.Elapsed += CleanStatusTimer_Elapsed;
-			Title = EngineHelper.GetProductFullName();
-			MainBodyPanel.ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
-			MainBodyPanel.ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
-			MainBodyPanel.ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
-			// Start Timers.
-			UpdateTimer.Start();
-			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
-			// If enabling first time and application version changed then...
-			ErrorsHelper.InitErrorsHelper(AppVersionChanged, MainPanel.StatusErrorsLabel, MainPanel.StatusErrorsIcon, MainPanel);
-			var game = SettingsManager.CurrentGame;
-			if (SettingsManager.Options.HidGuardianConfigureAutomatically)
-			{
-				// Enable Reconfigure HID Guardian.
-				var changed = SettingsManager.AutoHideShowMappedDevices(game);
-				var mappedInstanceGuids = SettingsManager.GetMappedDevices(game?.FileName, true)
-					.Select(x => x.InstanceGuid).ToArray();
-				AppHelper.SynchronizeToHidGuardian(mappedInstanceGuids);
-			}
-		}
-
 		private void StartHelper_OnRestore(object sender, EventArgs e)
 		{
 			Global._TrayManager.RestoreFromTray(true);
@@ -823,8 +762,71 @@ namespace x360ce.App
 
 		#endregion
 
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+			Global.HMan.SetBody(MessageBoxImage.Information, "Useful Tip: Minimize X360CE Application during game to reduce its load on CPU and GPU. Minimized application automatically turns off CPU heavy tasks like Interface updates or state requests from XInput.");
+			StartHelper.OnClose += StartHelper_OnClose;
+			StartHelper.OnRestore += StartHelper_OnRestore;
+			AppHelper.InitializeHidGuardian();
+			if (string.IsNullOrEmpty(System.Threading.Thread.CurrentThread.Name))
+				System.Threading.Thread.CurrentThread.Name = "MainFormThread";
+			Global.DHelper.DevicesUpdated += DHelper_DevicesUpdated;
+			Global.DHelper.UpdateCompleted += DHelper_UpdateCompleted;
+			Global.DHelper.FrequencyUpdated += DHelper_FrequencyUpdated;
+			Global.DHelper.StatesRetrieved += DHelper_StatesRetrieved;
+			Global.DHelper.XInputReloaded += DHelper_XInputReloaded;
+			MainBodyPanel.SettingsPanel.MainDataGrid.SelectionMode = System.Windows.Controls.DataGridSelectionMode.Extended;
+			MainBodyPanel.SettingsPanel.InitPanel();
+			// NotifySettingsChange will be called on event suspension and resume.
+			SettingsManager.Current.NotifySettingsStatus = NotifySettingsStatus;
+			// NotifySettingsChange will be called on setting changes.
+			SettingsManager.Current.SettingChanged += Current_SettingChanged;
+			SettingsManager.Summaries.Items.ListChanged += Summaries_ListChanged;
+			XInputMaskScanner.FileInfoCache.Load();
+			UpdateTimer = new System.Timers.Timer
+			{
+				AutoReset = false,
+				Interval = DefaultPoolingInterval
+			};
+			UpdateTimer.Elapsed += UpdateTimer_Elapsed;
+			SettingsTimer = new System.Timers.Timer
+			{
+				AutoReset = false,
+				Interval = 500
+			};
+			SettingsTimer.Elapsed += SettingsTimer_Elapsed;
+			CleanStatusTimer = new System.Timers.Timer
+			{
+				AutoReset = false,
+				Interval = 3000
+			};
+			CleanStatusTimer.Elapsed += CleanStatusTimer_Elapsed;
+			Title = EngineHelper.GetProductFullName();
+			MainBodyPanel.ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
+			MainBodyPanel.ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
+			MainBodyPanel.ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
+			// Start Timers.
+			UpdateTimer.Start();
+			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
+			// If enabling first time and application version changed then...
+			ErrorsHelper.InitErrorsHelper(AppVersionChanged, MainPanel.StatusErrorsLabel, MainPanel.StatusErrorsIcon, MainPanel);
+			var game = SettingsManager.CurrentGame;
+			if (SettingsManager.Options.HidGuardianConfigureAutomatically)
+			{
+				// Enable Reconfigure HID Guardian.
+				var changed = SettingsManager.AutoHideShowMappedDevices(game);
+				var mappedInstanceGuids = SettingsManager.GetMappedDevices(game?.FileName, true)
+					.Select(x => x.InstanceGuid).ToArray();
+				AppHelper.SynchronizeToHidGuardian(mappedInstanceGuids);
+			}
+		}
+
 		private void Window_Unloaded(object sender, RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			// Cleanup references which prevents disposal.
 			StartHelper.OnClose -= StartHelper_OnClose;
 			StartHelper.OnRestore -= StartHelper_OnRestore;

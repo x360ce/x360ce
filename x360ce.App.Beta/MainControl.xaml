@@ -10,6 +10,7 @@
 	VerticalAlignment="Stretch"
 	d:DesignHeight="780"
 	d:DesignWidth="800"
+	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<Grid>

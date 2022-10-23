@@ -41,20 +41,6 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(o, nameof(o.GetProgramsIncludeEnabled), GetProgramsIncludeEnabledCheckBox, null, es2b);
 		}
 
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
-			SettingsManager.UnLoadMonitor(GetProgramsMinInstancesUpDown);
-			SettingsManager.UnLoadMonitor(InternetAutoLoadCheckBox);
-			SettingsManager.UnLoadMonitor(InternetAutoSaveCheckBox);
-			SettingsManager.UnLoadMonitor(InternetFeaturesCheckBox);
-			SettingsManager.UnLoadMonitor(CheckForUpdatesCheckBox);
-			SettingsManager.UnLoadMonitor(InternetDatabaseUrlComboBox);
-			SettingsManager.UnLoadMonitor(GetProgramsIncludeEnabledCheckBox);
-			((BindingListCollectionView)InternetDatabaseUrlComboBox.ItemsSource)?.DetachFromSourceCollection();
-			//InternetDatabaseUrlComboBox.ItemsSource = null;
-		}
-
 		public void LoadSettings()
 		{
 			// Load XML settings into control.
@@ -145,7 +131,6 @@ namespace x360ce.App.Controls
 			form.NavigateUrl = navigateUrl;
 			ControlsHelper.CheckTopMost(form);
 			form.ShowDialog();
-
 		}
 
 		private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -155,6 +140,28 @@ namespace x360ce.App.Controls
 			var pql = new Uri(url).PathAndQuery.Length;
 			var navigateUrl = url.Substring(0, url.Length - pql) + "/Security/Login.aspx?ShowLogin=0&ShowCreate=0";
 			OpenWebWindow("Reset Login", navigateUrl);
+		}
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
+			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
+			SettingsManager.UnLoadMonitor(GetProgramsMinInstancesUpDown);
+			SettingsManager.UnLoadMonitor(InternetAutoLoadCheckBox);
+			SettingsManager.UnLoadMonitor(InternetAutoSaveCheckBox);
+			SettingsManager.UnLoadMonitor(InternetFeaturesCheckBox);
+			SettingsManager.UnLoadMonitor(CheckForUpdatesCheckBox);
+			SettingsManager.UnLoadMonitor(InternetDatabaseUrlComboBox);
+			SettingsManager.UnLoadMonitor(GetProgramsIncludeEnabledCheckBox);
+			((BindingListCollectionView)InternetDatabaseUrlComboBox.ItemsSource)?.DetachFromSourceCollection();
+			//InternetDatabaseUrlComboBox.ItemsSource = null;
 		}
 
 	}

@@ -254,7 +254,8 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-
+			if (!ControlsHelper.AllowLoad(this))
+				return;
 			// Configure Programs.
 			SettingsManager.Programs.Items.ListChanged += Programs_ListChanged;
 			MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
@@ -264,6 +265,8 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
 			SettingsManager.Programs.Items.ListChanged -= Programs_ListChanged;
 			AppHelper.SetItemsSource(MainDataGrid, null);

@@ -569,8 +569,16 @@ namespace x360ce.App.Controls
 			StartRecording();
 		}
 
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			// Cleanup references which prevents disposal.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			SettingsManager.Current.SettingChanged -= Current_SettingChanged;
@@ -585,5 +593,6 @@ namespace x360ce.App.Controls
 			_CurrentUserSetting = null;
 			_CurrentUserDevice = null;
 		}
+
 	}
 }

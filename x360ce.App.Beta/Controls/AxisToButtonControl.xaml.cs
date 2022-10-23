@@ -181,7 +181,7 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (controlsLink != null)
+			if (!ControlsHelper.AllowLoad(this))
 				return;
 			controlsLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, 0, short.MaxValue);
 			controlsLink.ValueChanged += controlsLink_ValueChanged;
@@ -191,7 +191,7 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
-			if (controlsLink == null)
+			if (!ControlsHelper.AllowUnload(this))
 				return;
 			controlsLink.ValueChanged -= controlsLink_ValueChanged;
 			controlsLink.Dispose();

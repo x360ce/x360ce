@@ -493,9 +493,16 @@ namespace x360ce.App.Controls
 			//Clipboard.SetDataObject(sb.ToString());
 			return sb.ToString();
 		}
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
 
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			DiEffectsDataGridView.ItemsSource = null;
 			DiButtonsDataGridView.ItemsSource = null;
 			DiAxisDataGridView.ItemsSource = null;

@@ -35,11 +35,20 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.AxisToDPadOffset), OffsetUpDown, null, intConverter);
 		}
 
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			deadzoneLink.Dispose();
 			offsetLink.Dispose();
 			SetBinding(null);
 		}
+
 	}
 }

@@ -29,21 +29,6 @@ namespace x360ce.App.Controls
 			_Recorder = new Recorder();
 		}
 
-
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
-			// Subscribe to global events.
-			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
-			// Subscribe to parent control events.
-			PadControl = ControlsHelper.GetParent<PadControl>(this);
-			PadControl.OnSettingChanged += Parent_OnSettingChanged;
-			// Load parent setting.
-			var setting = PadControl.CurrentUserSetting;
-			LoadUserSetting(setting);
-		}
-
 		private void Parent_OnSettingChanged(object sender, JocysCom.ClassLibrary.EventArgs<UserSetting> e)
 		{
 			var setting = e.Data;
@@ -267,8 +252,24 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+			// Subscribe to global events.
+			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
+			// Subscribe to parent control events.
+			PadControl = ControlsHelper.GetParent<PadControl>(this);
+			PadControl.OnSettingChanged += Parent_OnSettingChanged;
+			// Load parent setting.
+			var setting = PadControl.CurrentUserSetting;
+			LoadUserSetting(setting);
+		}
+
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			// Cleanup references which prevents disposal.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			if (PadControl != null)

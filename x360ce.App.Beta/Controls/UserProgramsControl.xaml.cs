@@ -17,6 +17,15 @@ namespace x360ce.App.Controls
 			var window = System.Windows.Window.GetWindow(this);
 		}
 
+		private void MainDataGrid_SelectionChanged(object sender, EventArgs e)
+		{
+			var grid = ListPanel.MainDataGrid;
+			if (grid.SelectedItems.Count == 0)
+				return;
+			var item = grid.SelectedItems.Cast<Engine.Data.UserGame>().FirstOrDefault();
+			ItemPanel.CurrentItem = item;
+		}
+
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowLoad(this))
@@ -40,15 +49,6 @@ namespace x360ce.App.Controls
 			grid.ItemsSource = null;
 			source?.DetachFromSourceCollection();
 			ItemPanel.CurrentItem = null;
-		}
-
-		private void MainDataGrid_SelectionChanged(object sender, EventArgs e)
-		{
-			var grid = ListPanel.MainDataGrid;
-			if (grid.SelectedItems.Count == 0)
-				return;
-			var item = grid.SelectedItems.Cast<Engine.Data.UserGame>().FirstOrDefault();
-			ItemPanel.CurrentItem = item;
 		}
 
 	}

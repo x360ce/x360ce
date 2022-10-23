@@ -200,23 +200,6 @@ namespace x360ce.App
 			});
 		}
 
-		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
-		{
-			Global.AddGame += Global_AddGame;
-		}
-
-		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
-		{
-			Global.AddGame -= Global_AddGame;
-			// Dispose managed resources.
-			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
-			Array.Clear(PadControls, 0, 4);
-			PadIcons?.ToList().ForEach(x => x.Content = null);
-			Array.Clear(PadIcons, 0, 4);
-			Array.Clear(PadColors, 0, 4);
-			MainTabControl.Items.Clear();
-		}
-
 		bool HelpInit;
 
 		private void MainTabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -235,7 +218,29 @@ namespace x360ce.App
 					//SettingsDatabasePanel.RefreshGrid(true);
 				}
 			}
-
 		}
+
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+			Global.AddGame += Global_AddGame;
+		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return; 
+			Global.AddGame -= Global_AddGame;
+			// Dispose managed resources.
+			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
+			Array.Clear(PadControls, 0, 4);
+			PadIcons?.ToList().ForEach(x => x.Content = null);
+			Array.Clear(PadIcons, 0, 4);
+			Array.Clear(PadColors, 0, 4);
+			MainTabControl.Items.Clear();
+		}
+
+
 	}
 }

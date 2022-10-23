@@ -51,5 +51,10 @@ namespace x360ce.App.Controls
 			IconExperienceTextBox.Text = EngineHelper.GetResourceString("IconExperience.License.txt");
 		}
 
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
+		}
 	}
 }

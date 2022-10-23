@@ -32,35 +32,6 @@ namespace x360ce.App.Controls
 
 		public bool MapDeviceToControllerMode;
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
-			// If mapping DInput device to XInput controller.
-			if (MapDeviceToControllerMode)
-			{
-				IsHiddenColumn.Visibility = Visibility.Collapsed;
-				IsEnabledColumn.Visibility = Visibility.Collapsed;
-			}
-			else
-			{
-				RefreshButton.Visibility = Visibility.Collapsed;
-				ShowSystemDevicesButton.Visibility = Visibility.Collapsed;
-			}
-			_currentData = new ObservableCollectionInvoked<UserDevice>();
-			MainDataGrid.ItemsSource = _currentData;
-			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
-			RefreshMapDeviceToList();
-		}
-
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
-			MainDataGrid.ItemsSource = null;
-			_currentData.Clear();
-			_currentData = null;
-		}
-
 		#region Used when MapDeviceToControllerMode = true
 
 		/// <summary>
@@ -247,6 +218,38 @@ namespace x360ce.App.Controls
 			get { return IsHiddenColumn.Visibility == Visibility.Visible; }
 			set { IsHiddenColumn.Visibility = value ? Visibility.Visible : Visibility.Hidden; }
 		}
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+			// If mapping DInput device to XInput controller.
+			if (MapDeviceToControllerMode)
+			{
+				IsHiddenColumn.Visibility = Visibility.Collapsed;
+				IsEnabledColumn.Visibility = Visibility.Collapsed;
+			}
+			else
+			{
+				RefreshButton.Visibility = Visibility.Collapsed;
+				ShowSystemDevicesButton.Visibility = Visibility.Collapsed;
+			}
+			_currentData = new ObservableCollectionInvoked<UserDevice>();
+			MainDataGrid.ItemsSource = _currentData;
+			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
+			RefreshMapDeviceToList();
+		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
+			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
+			MainDataGrid.ItemsSource = null;
+			_currentData.Clear();
+			_currentData = null;
+		}
+
 
 	}
 }

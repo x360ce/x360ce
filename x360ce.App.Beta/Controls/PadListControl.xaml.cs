@@ -314,16 +314,6 @@ namespace x360ce.App.Controls
 			UpdateGridButtons();
 		}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
-			var o = SettingsManager.Options;
-			SettingsManager.LoadAndMonitor(o, nameof(o.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
-			UpdateGridButtons();
-		}
-
-
 		/*
 		private void MappedDevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
@@ -433,8 +423,19 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+			var o = SettingsManager.Options;
+			SettingsManager.LoadAndMonitor(o, nameof(o.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
+			UpdateGridButtons();
+		}
+
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			UnInitScrollFix();
 			SetBinding(MapTo.None);
 			SettingsManager.UnLoadMonitor(EnabledCheckBox);

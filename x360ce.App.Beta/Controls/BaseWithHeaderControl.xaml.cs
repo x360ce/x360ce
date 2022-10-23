@@ -73,8 +73,5 @@ namespace x360ce.App.Controls
 			Window.DialogResult = null;
 		}
 
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-		}
 	}
 }

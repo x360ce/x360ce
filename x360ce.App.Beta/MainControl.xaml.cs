@@ -188,8 +188,16 @@ namespace x360ce.App
 			Global._MainWindow.StatusErrorLabel_Click(null, null);
 		}
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			// Cleanup references which prevents disposal.
 			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
@@ -197,7 +205,6 @@ namespace x360ce.App
 			GameToCustomizeComboBox.SelectedItem = null;
 			((BindingListCollectionView)GameToCustomizeComboBox.ItemsSource)?.DetachFromSourceCollection();
 		}
-
 
 	}
 }

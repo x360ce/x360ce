@@ -166,8 +166,16 @@ namespace x360ce.App.Controls
 			Global._MainWindow.MainBodyPanel.ShowDevicesTab(ShowDevicesTabCheckBox.IsChecked ?? false);
 		}
 
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			SettingsManager.UnLoadMonitor(DebugModeCheckBox);
 			GameScanLocationsView?.DetachFromSourceCollection();
 			//GameScanLocationsListBox.ItemsSource = null;
@@ -197,5 +205,6 @@ namespace x360ce.App.Controls
 			LocationFolderBrowserDialog?.Dispose();
 			LocationFolderBrowserDialog = null;
 		}
+
 	}
 }
