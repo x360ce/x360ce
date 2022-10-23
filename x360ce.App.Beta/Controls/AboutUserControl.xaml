@@ -70,7 +70,7 @@
 				Grid.Column="2"
 				Margin="0"
 				Padding="4,2,2,2">
-				<Hyperlink NavigateUri="https://www.x360ce.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+				<Hyperlink NavigateUri="https://www.x360ce.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 					https://www.x360ce.com
 				</Hyperlink>
 			</TextBlock>
@@ -86,7 +86,7 @@
 				Grid.Column="2"
 				Margin="0"
 				Padding="4,2,2,2">
-				<Hyperlink NavigateUri="https://www.jocys.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+				<Hyperlink NavigateUri="https://www.jocys.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 					https://www.jocys.com
 				</Hyperlink>
 			</TextBlock>
@@ -102,7 +102,7 @@
 				Grid.Column="2"
 				Margin="0"
 				Padding="4,2,2,2">
-				<Hyperlink NavigateUri="https://vigem.org" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+				<Hyperlink NavigateUri="https://vigem.org" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 					https://vigem.org
 				</Hyperlink>
 			</TextBlock>
@@ -118,7 +118,7 @@
 				Grid.Column="5"
 				Margin="0"
 				Padding="4,2,2,2">
-				<Hyperlink NavigateUri="https://github.com/x360ce/x360ce" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+				<Hyperlink NavigateUri="https://github.com/x360ce/x360ce" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 					https://github.com/x360ce/x360ce
 				</Hyperlink>
 			</TextBlock>
@@ -135,7 +135,7 @@
 				Grid.Column="5"
 				Margin="0"
 				Padding="4,2,2,2">
-				<Hyperlink NavigateUri="https://github.com/nucleoprotein" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+				<Hyperlink NavigateUri="https://github.com/nucleoprotein" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 					https://github.com/nucleoprotein
 				</Hyperlink>
 			</TextBlock>
@@ -152,7 +152,7 @@
 				Grid.Column="5"
 				Margin="0"
 				Padding="4,2,2,2">
-				<Hyperlink NavigateUri="http://www.tocaedit.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+				<Hyperlink NavigateUri="http://www.tocaedit.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 					http://www.tocaedit.com
 				</Hyperlink>
 			</TextBlock>

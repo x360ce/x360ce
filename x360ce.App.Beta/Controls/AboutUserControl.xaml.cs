@@ -1,6 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -42,24 +41,15 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (ControlsHelper.IsDesignMode(this))
+			if (!ControlsHelper.AllowLoad(this))
 				return;
-			var stream = EngineHelper.GetResourceStream("ChangeLog.txt");
-			if (stream == null)
-				return;
-			var sr = new StreamReader(stream);
-			ChangeLogTextBox.Text = sr.ReadToEnd();
+			ChangeLogTextBox.Text = EngineHelper.GetResourceString("ChangeLog.txt");
 			var ai = new AssemblyInfo();
 			AboutProductLabel.Content = string.Format((string)AboutProductLabel.Content, ai.Version);
-			// Load license.
-			stream = EngineHelper.GetResourceStream("Documents.License.txt");
-			sr = new StreamReader(stream);
-			LicenseTextBox.Text = sr.ReadToEnd();
+			LicenseTextBox.Text = EngineHelper.GetResourceString("Documents.License.txt");
 			LicenseTabPage.Header = string.Format("{0} {1} License", ai.Product, ai.Version.ToString(2));
-			// Load IconExperience License.
-			stream = EngineHelper.GetResourceStream("IconExperience.License.txt");
-			sr = new StreamReader(stream);
-			IconExperienceTextBox.Text = sr.ReadToEnd();
+			IconExperienceTextBox.Text = EngineHelper.GetResourceString("IconExperience.License.txt");
 		}
+
 	}
 }

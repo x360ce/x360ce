@@ -19,6 +19,8 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
 			var grid = ListPanel.MainDataGrid;
 			// Return if loaded already. Exception thrown: 'System.NullReferenceException' in PresentationFramework.dll
 			if (grid.ItemsSource != null)
@@ -30,10 +32,9 @@ namespace x360ce.App.Controls
 
 		private void UserControl_Unloaded(object sender, EventArgs e)
 		{
-			var grid = ListPanel.MainDataGrid;
-			// Return if not loaded.
-			if (grid.ItemsSource == null)
+			if (!ControlsHelper.AllowUnload(this))
 				return;
+			var grid = ListPanel.MainDataGrid;
 			grid.SelectionChanged -= MainDataGrid_SelectionChanged;
 			var source = ((BindingListCollectionView)grid.ItemsSource);
 			grid.ItemsSource = null;

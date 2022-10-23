@@ -181,20 +181,29 @@ namespace x360ce.Engine
 			if (assembly == null)
 				return null;
 			var sr = assembly.GetManifestResourceStream(path);
-
-
 			return sr;
 		}
 
-		public static byte[] GetResourceBytes(string name)
+		private static byte[] GetResourceBytes(string name)
 		{
-			var sr = GetResourceStream(name);
-			if (sr == null)
+			var stream = GetResourceStream(name);
+			if (stream == null)
 				return null;
-			byte[] bytes = new byte[sr.Length];
-			sr.Read(bytes, 0, bytes.Length);
-			sr.Dispose();
+			var bytes = new byte[stream.Length];
+			stream.Read(bytes, 0, bytes.Length);
+			stream.Dispose();
 			return bytes;
+		}
+
+		public static string GetResourceString(string name)
+		{
+			var stream = GetResourceStream(name);
+			if (stream == null)
+				return null;
+			var sr = new StreamReader(stream);
+			var s = sr.ReadToEnd();
+			sr.Dispose();
+			return s;
 		}
 
 		/// <summary>
