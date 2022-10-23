@@ -441,7 +441,6 @@
     <EmbeddedResource Include="Documents\Help_HidGuardian.rtf" />
     <Compile Include="Common\SettingsManager.LoadAndSync.cs" />
     <EmbeddedResource Include="Documents\Help_ViGEmBus.rtf" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
