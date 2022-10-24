@@ -9,7 +9,6 @@ using System.IO;
 using System.Windows.Documents;
 using System.Collections.Generic;
 using System.Xml;
-using System.Data;
 using System.Windows.Controls.Primitives;
 
 namespace JocysCom.ClassLibrary.Controls
@@ -60,7 +59,11 @@ namespace JocysCom.ClassLibrary.Controls
 				ConformanceLevel = ConformanceLevel.Fragment,
 				OmitXmlDeclaration = true,
 				NamespaceHandling = NamespaceHandling.OmitDuplicates,
-			});
+				// XmlReader normalizes all newlines and converts '\r\n' to '\n'.
+				// This requires to save NewLines with  option which
+				// "Entitize" option replace '\r' with '&#xD;' in text node values.
+				NewLineHandling = NewLineHandling.Entitize,
+		});
 			var manager = new System.Windows.Markup.XamlDesignerSerializationManager(writer);
 			manager.XamlWriterMode = System.Windows.Markup.XamlWriterMode.Expression;
 			System.Windows.Markup.XamlWriter.Save(o, manager);
@@ -682,8 +685,52 @@ namespace JocysCom.ClassLibrary.Controls
 		private static void TextBoxBase_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
 			=> AutoScroll((TextBox)sender);
 
-
 		#endregion
+
+		// Contains unique list of control IDs for the applicaiton.
+		private static SortedSet<int> LoadedControls = new SortedSet<int>();
+
+		/// <summary>
+		/// Returnd false if displayed in desing mode (IDE).
+		/// Return true if control is not in the list of loaded controls.
+		/// Add control to the list of loaded controls.
+		/// IMPORTANT! Must be used in pair with AllowUnload.
+		/// </summary>
+		public static bool AllowLoad(FrameworkElement control)
+		{
+			if (IsDesignMode(control))
+				return false;
+			var code = control.GetHashCode();
+			return LoadedControls.Add(code);
+		}
+
+		/// <summary>
+		/// Returnd false if displayed in desing mode (IDE).
+		/// Return true if control is in the list of loaded controls.
+		/// Remove control from the list of loaded controls.
+		/// IMPORTANT! Must be used in pair with AllowLoad.
+		/// </summary>
+		public static bool AllowUnload(FrameworkElement control)
+		{
+			if (IsDesignMode(control))
+				return false;
+			var code = control.GetHashCode();
+			return LoadedControls.Remove(code);
+		}
+
+
+		/// <summary>
+		/// Returnd false if displayed in desing mode (IDE).
+		/// Return true if control is in the list of loaded controls.
+		/// Remove control from the list of loaded controls.
+		/// </summary>
+		public static bool IsLoaded(FrameworkElement control)
+		{
+			if (IsDesignMode(control))
+				return false;
+			var code = control.GetHashCode();
+			return LoadedControls.Contains(code);
+		}
 
 	}
 }
