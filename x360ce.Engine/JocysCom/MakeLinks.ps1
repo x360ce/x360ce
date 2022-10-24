@@ -91,6 +91,7 @@ foreach ($item in $items)
         Remove-Item $fullName;
         $target = "$libraryPath\$relativeName";
         New-Item -Path $fullName -ItemType SymbolicLink -Value $target;
+        #Copy-Item $target -Destination $fullName;
 
     }
 }

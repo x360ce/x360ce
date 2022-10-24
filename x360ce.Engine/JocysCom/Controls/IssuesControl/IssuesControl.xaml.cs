@@ -313,7 +313,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (ControlsHelper.IsDesignMode(this))
+			if (!ControlsHelper.AllowLoad(this))
 				return;
 			// List which contains all issues.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -339,6 +339,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 			IsDisposing = true;
 			// Clear list.
 			var items = IssueList?.ToArray();

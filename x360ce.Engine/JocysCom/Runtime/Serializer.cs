@@ -219,7 +219,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				select colon ?? nospace ?? lineBreak ?? (openChar.Length > 1 ? openChar : closeChar);
 			return string.Concat(result);
 		}
-		
+
 		//public static string FormatJson(string json, bool indent = true)
 		//{
 		//	using document = JsonDocument.Parse(json);
@@ -248,7 +248,11 @@ namespace JocysCom.ClassLibrary.Runtime
 			var xws = new XmlWriterSettings();
 			xws.Indent = true;
 			xws.CheckCharacters = true;
-			var xw = XmlTextWriter.Create(sb, xws);
+			// XmlReader normalizes all newlines and converts '\r\n' to '\n'.
+			// This requires to save NewLines with  option which
+			// "Entitize" option replace '\r' with '&#xD;' in text node values.
+			xws.NewLineHandling = NewLineHandling.Entitize;
+			var xw = XmlWriter.Create(sb, xws);
 			xd.WriteTo(xw);
 			xw.Close();
 			return sb.ToString();
@@ -314,6 +318,10 @@ namespace JocysCom.ClassLibrary.Runtime
 			settings.OmitXmlDeclaration = omitXmlDeclaration;
 			settings.Encoding = encoding;
 			settings.Indent = indent;
+			// XmlReader normalizes all newlines and converts '\r\n' to '\n'.
+			// This requires to save NewLines with  option which
+			// "Entitize" option replace '\r' with '&#xD;' in text node values.
+			settings.NewLineHandling = NewLineHandling.Entitize;
 			// Serialize.
 			var serializer = GetXmlSerializer(o.GetType());
 			// Serialize in memory first, so file will be locked for shorter times.
@@ -454,6 +462,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var settings = new XmlReaderSettings();
 			settings.DtdProcessing = DtdProcessing.Ignore;
 			settings.XmlResolver = null;
+			settings.IgnoreWhitespace = true;
 			// Stream 'ms' and 'sr' will be disposed by the reader.
 			using (var reader = XmlReader.Create(sr, settings))
 			{
@@ -463,6 +472,10 @@ namespace JocysCom.ClassLibrary.Runtime
 				return o;
 			}
 		}
+
+		
+
+
 
 		// Example how to add the missing namespaces.
 		// 
@@ -600,6 +613,10 @@ namespace JocysCom.ClassLibrary.Runtime
 			settings.OmitXmlDeclaration = omitXmlDeclaration;
 			settings.Encoding = encoding;
 			settings.Indent = true;
+			// XmlReader normalizes all newlines and converts '\r\n' to '\n'.
+			// This requires to save NewLines with  option which
+			// "Entitize" option replace '\r' with '&#xD;' in text node values.
+			settings.NewLineHandling = NewLineHandling.Entitize;
 			// Serialize in memory first, so file will be locked for shorter times.
 			var ms = new MemoryStream();
 			var xw = XmlWriter.Create(ms, settings);

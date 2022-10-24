@@ -80,8 +80,5 @@ namespace JocysCom.ClassLibrary.Controls
 			ControlsHelper.SetVisible(ScanProgressPanel, !string.IsNullOrEmpty(topText));
 		}
 
-
-
-
 	}
 }

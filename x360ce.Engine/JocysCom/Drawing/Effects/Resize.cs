@@ -10,9 +10,7 @@ namespace JocysCom.ClassLibrary.Drawing
 			// Calculate new height to maintain aspect ratio.
 			int height = image.Height;
 			if (preserveAspect)
-			{
-				height = width * (image.Height / image.Width);
-			}
+				height = image.Height * width / image.Width;
 			return Resize(image, width, height);
 		}
 
@@ -21,9 +19,7 @@ namespace JocysCom.ClassLibrary.Drawing
 			// Calculate new height to maintain aspect ratio.
 			int width = image.Width;
 			if (preserveAspect)
-			{
-				width = height * (image.Width / image.Height);
-			}
+				width = image.Width * height / image.Height;
 			return Resize(image, width, height);
 		}
 

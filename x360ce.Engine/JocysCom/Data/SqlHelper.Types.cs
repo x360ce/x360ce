@@ -54,9 +54,17 @@ namespace JocysCom.ClassLibrary.Data
 				case SqlDataType.VarCharMax:
 					t = typeof(String);
 					break;
+				case SqlDataType.Date:
 				case SqlDataType.DateTime:
+				case SqlDataType.DateTime2:
 				case SqlDataType.SmallDateTime:
 					t = typeof(DateTime);
+					break;
+				case SqlDataType.DateTimeOffset:
+					t = typeof(DateTimeOffset);
+					break;
+				case SqlDataType.Time:
+					t = typeof(TimeSpan);
 					break;
 				case SqlDataType.Decimal:
 				case SqlDataType.Money:

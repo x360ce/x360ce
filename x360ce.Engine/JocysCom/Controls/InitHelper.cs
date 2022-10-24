@@ -87,6 +87,7 @@ namespace JocysCom.ClassLibrary.Controls
 			var control = (FrameworkElement)sender;
 			var name = $"{control.GetType()} {control.Name} {control.GetHashCode()}";
 			LoadedControlNames.Remove(name);
+			Debug.WriteLine($"-5-> LoadedControlNames.Count = {LoadedControlNames.Count()} // Unloaded: {name}");
 			// Remove events.
 			control.Loaded -= Control_Loaded;
 			control.Unloaded -= Control_Unloaded;
@@ -98,6 +99,8 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			var control = (FrameworkElement)sender;
 			var name = $"{control.GetType()} {control.Name} {control.GetHashCode()}";
+			if (LoadedControlNames.Contains(name))
+				Console.WriteLine($"WARN: Control is loaded already: {name}");
 			LoadedControlNames.Add(name);
 		}
 

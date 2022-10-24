@@ -189,19 +189,36 @@ namespace JocysCom.ClassLibrary
 
 		#endregion
 
-		/// <summary>
-		/// Allow to delay for 292,471,209 years.
-		/// </summary>
-		/// <param name="millisecondsDelay"></param>
-		public static async Task Delay(long millisecondsDelay, CancellationToken cancellationToken = default(CancellationToken))
-		{
-			while (millisecondsDelay > 0 && !cancellationToken.IsCancellationRequested)
-			{
+		/* LongDelay example with CancellationToken:
+		// Create a token that auto-cancels after 10 seconds.
+		var source = new CancellationTokenSource(10000);
+		// Delay for 20 seconds.
+		try { LongDelay(20000, source.Token).Wait(); }
+		catch (TaskCanceledException) { } // Cancel silently.
+		catch (Exception) { throw; }
+		 */
+
+		/// <summary>Allow to delay Task for 292,471,209 years.</summary>
+		/// <remarks>Usage makes sense if the process won't be recycled before the delay expires.</remarks>
+		public static async Task LongDelay(
+			TimeSpan delay,
+			CancellationToken cancellationToken = default(CancellationToken)
+		) => await LongDelay((long)delay.TotalMilliseconds, cancellationToken).ConfigureAwait(false);
+
+		/// <summary>Allow to delay Task for 292,471,209 years.</summary>
+		/// <remarks>Usage makes sense if the process won't be recycled before the delay expires.</remarks>
+		public static async Task LongDelay(
+			long millisecondsDelay,
+			CancellationToken cancellationToken = default(CancellationToken)
+		) {
+			// Use 'do' to run Task.Delay at least once to reproduce the same behavior.
+			do {
 				var delay = (int)Math.Min(int.MaxValue, millisecondsDelay);
-				await Task.Delay(delay, cancellationToken);
+				await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
 				millisecondsDelay -= delay;
-			}
+			} while (millisecondsDelay > 0);
 		}
+
 
 #if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard
@@ -265,6 +282,30 @@ namespace JocysCom.ClassLibrary
 			return string.IsNullOrEmpty(s)
 				? false
 				: GuidRegex.IsMatch(s);
+		}
+
+
+		/// <summary>
+		/// Returns true if two ranges overlap.
+		/// </summary>
+		public static bool IsOverlap<T>(
+			T? min1, T? max1,
+			T? min2, T? max2 = default, bool inclusive = false
+		) where T : struct, IComparable<T>
+		{
+			// Check arguments.
+			if (min1 != null && max1 != null && min1.Value.CompareTo(max1.Value) > 0)
+				throw new ArgumentException($"{nameof(min1)} can not be after {nameof(max1)}.");
+			if (min2 != null && max2 != null && min2.Value.CompareTo(max2.Value) > 0)
+				throw new ArgumentException($"{nameof(min2)} can not be after {nameof(max2)}.");
+			// The first range begins before the second ends AND
+			// The second range begins before the first ends.
+			// -----|...|---------
+			// ---------|...|-----
+			// Null is treated as a full range.
+			return
+			(min1 == null || max2 == null || min1.Value.CompareTo(max2.Value) <= (inclusive ? 0 : -1)) &&
+			(min2 == null || max1 == null || min2.Value.CompareTo(max1.Value) <= (inclusive ? 0 : -1));
 		}
 
 		#endregion

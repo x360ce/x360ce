@@ -22,14 +22,6 @@ namespace JocysCom.ClassLibrary.Controls
 				Owner = owner;
 				WindowStartupLocation = WindowStartupLocation.CenterOwner;
 			}
-			Loaded += MessageBoxWindow_Loaded;
-		}
-
-		private void MessageBoxWindow_Loaded(object sender, RoutedEventArgs e)
-		{
-			// Center message box window in application.
-			if (Owner == null)
-				ControlsHelper.CenterWindowOnApplication(this);
 		}
 
 		/// <summary>Displays a message box that has a message, title bar caption, button, and icon; and that accepts a default message box result, complies with the specified options, and returns a result.</summary>
@@ -110,7 +102,7 @@ namespace JocysCom.ClassLibrary.Controls
 			LinkLabel.Visibility = Visibility.Collapsed;
 			SizeLabel.Visibility = Visibility.Visible;
 			Title = caption;
-			MessageTextBlock.Text = message;
+			MessageTextBox.Text = message;
 			_SwitchButton(button, defaultResult);
 			_SwitchIcon(icon);
 			// Set size.
@@ -301,6 +293,21 @@ namespace JocysCom.ClassLibrary.Controls
 			var text = (MessageTextBox.MaxLength - MessageTextBox.Text.Length).ToString();
 			ControlsHelper.SetText(SizeLabel, text);
 			ControlsHelper.SetVisible(SizeLabel, MessageTextBox.MaxLength > 0);
+		}
+
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+			// Center message box window in application.
+			if (Owner == null)
+				ControlsHelper.CenterWindowOnApplication(this);
+		}
+
+		private void Window_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
 		}
 	}
 }

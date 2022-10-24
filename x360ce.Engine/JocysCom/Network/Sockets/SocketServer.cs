@@ -546,7 +546,6 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			{
 				if (keepAliveTimer == null)
 				{
-
 					keepAliveTimer = new System.Timers.Timer();
 					keepAliveTimer.Interval = Settings.KeepAliveInterval;
 					keepAliveTimer.Elapsed += KeepAliveTimer_Elapsed;
@@ -581,6 +580,8 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 					}
 					else if (e.PropertyName == nameof(Settings.KeepAliveInterval))
 					{
+						// Call Close() to prevent timer auto-restart when Interval changed.
+						keepAliveTimer.Close();
 						keepAliveTimer.Interval = Settings.KeepAliveInterval;
 					}
 				}

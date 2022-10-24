@@ -6,6 +6,8 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	MinWidth="240"
 	SizeToContent="WidthAndHeight"
+	Loaded="Window_Loaded"
+	Unloaded="Window_Unloaded"
 	mc:Ignorable="d">
 	<Window.Resources>
 		<ResourceDictionary>

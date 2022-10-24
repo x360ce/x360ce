@@ -101,26 +101,6 @@ namespace JocysCom.ClassLibrary.Controls
 		private void DownButton_Click(object sender, RoutedEventArgs e)
 			=> ChangeValue(-SmallChange);
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-
-		}
-
-		public void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			ValueChanged = null;
-			if (_NumericUpDownStyleConverter != null)
-			{
-				_NumericUpDownStyleConverter.Control = null;
-				_NumericUpDownStyleConverter = null;
-			}
-			if (_NumericUpDownValueConverter != null)
-			{
-				_NumericUpDownValueConverter.Control = null;
-				_NumericUpDownValueConverter = null;
-			}
-		}
-
 		private void TextBox_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
 			var box = (TextBox)sender;
@@ -205,6 +185,30 @@ namespace JocysCom.ClassLibrary.Controls
 					break;
 			}
 		}
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
+		public void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return; 
+			ValueChanged = null;
+			if (_NumericUpDownStyleConverter != null)
+			{
+				_NumericUpDownStyleConverter.Control = null;
+				_NumericUpDownStyleConverter = null;
+			}
+			if (_NumericUpDownValueConverter != null)
+			{
+				_NumericUpDownValueConverter.Control = null;
+				_NumericUpDownValueConverter = null;
+			}
+		}
+
 
 	}
 }

@@ -24,9 +24,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void AutoSizeByOpenForms(Window win, int addSize = -64)
 		{
-			var form = System.Windows.Forms.Application.OpenForms.Cast<System.Windows.Forms.Form>().FirstOrDefault();
-			if (form == null)
-				return;
+			var form = System.Windows.Forms.Application.OpenForms.Cast<System.Windows.Forms.Form>().First();
 			win.Width = form.Width + addSize;
 			win.Height = form.Height + addSize;
 			win.Top = form.Top - addSize / 2;

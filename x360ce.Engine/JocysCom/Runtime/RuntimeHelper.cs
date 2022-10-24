@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -828,6 +827,33 @@ namespace JocysCom.ClassLibrary.Runtime
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Convert year values from 0 to 99 to the years xx00 to yy99 with appropriate century. 
+		/// </summary>
+		/// <param name="year">A two-digit or four-digit integer that represents the year to convert.</param>
+		/// <param name="twoDigitYearMax">The last year of a 100-year range that can be represented by a 2-digit year.</param>
+		/// <returns>An integer that contains the four-digit representation of year.</returns>
+		/// <remarks>
+		/// Use C# solution from System.Globalization.Calendar.ToFourDigitYear(System.Int32 year).
+		/// For example, if TwoDigitYearMax is set to 2029, the 100-year range is from 1930 to 2029:
+		///   a 2-digit value of 30 is interpreted as 1930
+		///   a 2-digit value of 29 is interpreted as 2029
+		/// </remarks>
+		public static int ToFourDigitYear(int year, int? twoDigitYearMax = null)
+		{
+			// If year is outside of the range then return.
+			if (year < 0 && year > 99)
+				return year;
+			// Convert year from 2 to 4 digits with the correct century (-50/+50 rule).
+			// JavaScript: By default, new Date(..) convert values from 0 to 99 to the years 1900 to 1999.
+			//var twoDigitYearMax = new Date().getFullYear() + 50;
+			var fullYearMax = twoDigitYearMax ?? DateTime.Now.Year + 50;
+			var yearMax = fullYearMax % 100;
+			var century = (fullYearMax - yearMax) / 100;
+			var fullYear = (century - (year > yearMax ? 1 : 0)) * 100 + year;
+			return fullYear;
 		}
 
 	}
