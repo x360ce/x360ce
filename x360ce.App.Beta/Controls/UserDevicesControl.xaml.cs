@@ -238,12 +238,16 @@ namespace x360ce.App.Controls
 			MainDataGrid.ItemsSource = _currentData;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
 			RefreshMapDeviceToList();
+			ControlsHelper.RestoreSelection<Guid>(MainDataGrid, nameof(UserDevice.InstanceGuid), gridSelection);
 		}
+
+		List<Guid> gridSelection = new List<Guid>();
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			gridSelection = ControlsHelper.GetSelection<Guid>(MainDataGrid, nameof(UserDevice.InstanceGuid));
 			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 			MainDataGrid.ItemsSource = null;
 			_currentData.Clear();

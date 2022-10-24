@@ -1,8 +1,10 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -35,19 +37,20 @@ namespace x360ce.App.Controls
 			if (grid.ItemsSource != null)
 				return;
 			grid.SelectionChanged += MainDataGrid_SelectionChanged;
-			var view = new BindingListCollectionView(SettingsManager.UserGames.Items);
-			grid.ItemsSource = view;
+			AppHelper.SetItemsSource(grid, SettingsManager.UserGames.Items);
+			ControlsHelper.RestoreSelection<string>(grid, nameof(UserGame.FileName), gridSelection);
 		}
+
+		List<string> gridSelection = new List<string>();
 
 		private void UserControl_Unloaded(object sender, EventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
 			var grid = ListPanel.MainDataGrid;
+			gridSelection = ControlsHelper.GetSelection<string>(grid, nameof(UserGame.FileName));
 			grid.SelectionChanged -= MainDataGrid_SelectionChanged;
-			var source = ((BindingListCollectionView)grid.ItemsSource);
-			grid.ItemsSource = null;
-			source?.DetachFromSourceCollection();
+			AppHelper.SetItemsSource(grid, null);
 			ItemPanel.CurrentItem = null;
 		}
 

@@ -267,6 +267,7 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			var selectedItems = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(Engine.Data.Program.FileName));
 			MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
 			SettingsManager.Programs.Items.ListChanged -= Programs_ListChanged;
 			AppHelper.SetItemsSource(MainDataGrid, null);

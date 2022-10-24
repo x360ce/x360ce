@@ -38,14 +38,11 @@ namespace x360ce.App.Controls
 			//	Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 		}
 
-		BindingListCollectionView GameScanLocationsView;
-
 		public void UpdateSettingsMap()
 		{
 			var o = SettingsManager.Options;
 			SettingsManager.LoadAndMonitor(o, nameof(Options.DebugMode), DebugModeCheckBox);
-			GameScanLocationsView = new BindingListCollectionView(o.GameScanLocations);
-			GameScanLocationsListBox.ItemsSource = GameScanLocationsView;
+			AppHelper.SetItemsSource(GameScanLocationsListBox, o.GameScanLocations);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.GameScanLocations), GameScanLocationsListBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.StartWithWindows), StartWithWindowsCheckBox);
 			StartWithWindowsStateComboBox.ItemsSource = Enum.GetValues(typeof(System.Windows.Forms.FormWindowState));
@@ -177,8 +174,7 @@ namespace x360ce.App.Controls
 			if (!ControlsHelper.AllowUnload(this))
 				return;
 			SettingsManager.UnLoadMonitor(DebugModeCheckBox);
-			GameScanLocationsView?.DetachFromSourceCollection();
-			//GameScanLocationsListBox.ItemsSource = null;
+			AppHelper.SetItemsSource(GameScanLocationsListBox, null);
 			SettingsManager.UnLoadMonitor(GameScanLocationsListBox);
 			SettingsManager.UnLoadMonitor(StartWithWindowsCheckBox);
 			StartWithWindowsStateComboBox.ItemsSource = null;

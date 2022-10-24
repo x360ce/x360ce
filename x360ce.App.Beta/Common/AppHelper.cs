@@ -12,6 +12,8 @@ using x360ce.Engine.Data;
 using SharpDX.XInput;
 using JocysCom.ClassLibrary.Win32;
 using x360ce.App.ViGEm;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace x360ce.App
 {
@@ -325,7 +327,10 @@ namespace x360ce.App
 			if (list == null)
 			{
 				if (grid.ItemsSource is System.Windows.Data.BindingListCollectionView view)
+				{
+					grid.ItemsSource = null;
 					view.DetachFromSourceCollection();
+				}
 				return;
 			}
 			var newView = new System.Windows.Data.BindingListCollectionView(list);
