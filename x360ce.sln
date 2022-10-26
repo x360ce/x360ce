@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28922.388
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "x360ce.Data", "x360ce.Data\x360ce.Data.sqlproj", "{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}"
 EndProject
@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.RemoteController", "x360ce.RemoteController\x360ce.RemoteController.csproj", "{2A231FCE-E900-4031-9A5E-AE73A54516FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "x360ce.Test", "x360ce.Test\x360ce.Test.csproj", "{7E3D4F7E-39C6-41DE-8071-F149C41AEA60}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{2A231FCE-E900-4031-9A5E-AE73A54516FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A231FCE-E900-4031-9A5E-AE73A54516FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A231FCE-E900-4031-9A5E-AE73A54516FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E3D4F7E-39C6-41DE-8071-F149C41AEA60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E3D4F7E-39C6-41DE-8071-F149C41AEA60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E3D4F7E-39C6-41DE-8071-F149C41AEA60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E3D4F7E-39C6-41DE-8071-F149C41AEA60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

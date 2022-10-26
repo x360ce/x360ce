@@ -142,13 +142,10 @@ namespace JocysCom.Web.Security.Controls
 		/// <returns>A string representing a securely-generated password.</returns>
 		public string NewPassword(uint length = 0, string charlist = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"£$%^&*()_+=-{}[]:@~;'#/,.<>?\\")
 		{
-			if (length == 0) {
-				length = (uint)RandomNumberGenerator.GetInt32(12, 32 + 1);
-			}
+			var rnd = new Random();
 			string password = string.Empty;
-			for (uint i = 0; i < length; i++) {
-				password += charlist[RandomNumberGenerator.GetInt32(charlist.Length)];
-			}
+			for (int i = 0; i < 12; i++)
+				password += charlist[rnd.Next(charlist.Length)];
 			return password;
 		}
 

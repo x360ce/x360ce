@@ -100,19 +100,6 @@
 					<Label Content="Cleanup Devices" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</Button>
-			<Button
-				Name="TestDisposeButton"
-				Grid.Row="5"
-				Grid.Column="1"
-				MinWidth="75"
-				Margin="4,2,4,2"
-				Click="TestDisposeButton_Click"
-				Style="{StaticResource ToolBarButton}">
-				<StackPanel Style="{StaticResource ButtonStackPanel}">
-					<ContentControl Content="{StaticResource Icon_broom}" Style="{StaticResource ButtonContentControl}" />
-					<Label Content="Test Dispose" Style="{StaticResource ButtonLabel}" />
-				</StackPanel>
-			</Button>
 			<TextBox
 				Name="LogTextBox"
 				Grid.Row="6"
