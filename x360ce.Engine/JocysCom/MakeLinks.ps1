@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
 
     Creating multiple hard links to the contents of the original file makes the same file appear to "exist in different locations".
@@ -8,22 +8,23 @@
     All file name links must be removed for the contents of the file to be released as free disk space.
     All Visual Studio projects can reside in different source code controls and repositories.
     Hard links are used so that source controls are not aware of them. For other developers, linke files look like normal files.
+    Note: There is no way to determine which file entry is the original when files are hardlinked.
 
     Original (maintaned by the owner)       Copies
     ---------------------------------       -----------------------------------------
     \Projects\Jocys.com\Class Library       \Projects\Company A\Product A\Jocys.com
-        [linked file] ◄───────────────────┬───► [linked file]
-                                          │     MakeLinks.ps1    
-                                          │
-                                          │  \Projects\Company B\Product B\Jocys.com
-                                          ├───► [linked file]
-                                          │     MakeLinks.ps1
-                                          │
-                                          │  \Projects\Company C\Product C\Jocys.com
-                                          ├───► [linked file]
-                                          │     MakeLinks.ps1
-                                          │
-        [file content on the disk]█───────┘
+        [linked file] <-----------------------> [linked file]
+                                          |     MakeLinks.ps1    
+                                          |
+                                          |  \Projects\Company B\Product B\Jocys.com
+                                          |---> [linked file]
+                                          |     MakeLinks.ps1
+                                          |
+                                          |  \Projects\Company C\Product C\Jocys.com
+                                          |---> [linked file]
+                                          |     MakeLinks.ps1
+                                          #
+                            [file content on the disk]
 
 .NOTES
     Author:     Evaldas Jocys <evaldas@jocys.com>
@@ -64,6 +65,13 @@ $global:scriptPath = $file.Directory.FullName;
 [Environment]::CurrentDirectory = $scriptPath;
 Set-Location $scriptPath;
 # ----------------------------------------------------------------------------
+# Load code behind.
+$code = [File]::ReadAllText("$current.cs");
+Add-Type -TypeDefinition $code -Language CSharp;
+# ----------------------------------------------------------------------------
+Remove-Variable $code
+
+# ----------------------------------------------------------------------------
 function FindExistingPath
 {
     [OutputType([string])] param([string[]]$ps);
@@ -88,27 +96,42 @@ function MakeSoftLink {
     param([string]$link, [string]$target);
     #----------------------------------------------------------
     $linkType = (Get-Item $link).LinkType;
-    if ($linkType -eq "SymbolicLink"){
-        Write-Host "Skip Link: $link" -ForegroundColor DarkGray;
+     if ([File]::Exists($target) -eq $false){
+    	Write-Host "Error: $link - missing link target file: $target" -ForegroundColor Red;
+    }
+    elseif ($linkType -eq "SymbolicLink"){
+        Write-Host "OK:    $link" -ForegroundColor DarkGray;
         return;
     }
     Remove-Item $link;
     $result = New-Item -Path $link -ItemType SymbolicLink -Value $target;
-    Write-Host "Make Link: $link";
+    # Update time of the link file to match the target file.
+    [MakeLinks]::UpdateLinkTimeFromFile($link, $target);
+    Write-Host "Link:  $link";
 }
 # ----------------------------------------------------------------------------
 function MakeHardLink {
     param([string]$link, [string]$target);
     #----------------------------------------------------------
     $linkType = (Get-Item $link).LinkType;
-    Remove-Item $link;
-    # Note: When hardlinked then there is no way to determine which file entry is the original.
-    $result = New-Item -Path $link -ItemType HardLink -Value $target;
-    if ($linkType -eq "HardLink"){
-		# Link will be refreshed (in case original file was recreated).
-        Write-Host "Update Link: $link" -ForegroundColor DarkGray;
+    # If the file is not hard linked (only one file points to the same content on disk) then...
+    if ([File]::Exists($target) -eq $false){
+    	Write-Host "Error: $link - missing link target file: $target" -ForegroundColor Red;
+    }
+    elseif ($linkType -ne "HardLink"){
+        # Remove file and create link.
+        Remove-Item $link;
+        $result = New-Item -Path $link -ItemType HardLink -Value $target;
+    	Write-Host "Link:  $link";
+    }
+    # If file is hard linked but to the wrong file then...
+    elseif ([MakeLinks]::IsHardLinked($link, $target) -eq $false){
+        # Remove file and create link. For example, original file was recreated.
+        Remove-Item $link;
+        $result = New-Item -Path $link -ItemType HardLink -Value $target;
+        Write-Host "Fix:   $link" -ForegroundColor Red;
     } else {
-		Write-Host "Create Link: $link";
+    	Write-Host "OK:    $link" -ForegroundColor DarkGray;
 	}
 }
 # ----------------------------------------------------------------------------
