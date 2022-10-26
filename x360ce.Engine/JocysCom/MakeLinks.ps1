@@ -1,6 +1,30 @@
-<#
+﻿<#
 .SYNOPSIS
-	Make/Fix soft or hard file links to shared files.
+
+    Creating multiple hard links to the contents of the original file makes the same file appear to "exist in different locations".
+    This allows editing "several" files at once. Same as property name refactoring in Visual Studio but with the file.
+
+    All file names are just hard links (shortcuts) to the file contents on disk.
+    All file name links must be removed for the contents of the file to be released as free disk space.
+    All Visual Studio projects can reside in different source code controls and repositories.
+    Hard links are used so that source controls are not aware of them. For other developers, linke files look like normal files.
+
+    Original (maintaned by the owner)       Copies
+    ---------------------------------       -----------------------------------------
+    \Projects\Jocys.com\Class Library       \Projects\Company A\Product A\Jocys.com
+        [linked file] ◄───────────────────┬───► [linked file]
+                                          │     MakeLinks.ps1    
+                                          │
+                                          │  \Projects\Company B\Product B\Jocys.com
+                                          ├───► [linked file]
+                                          │     MakeLinks.ps1
+                                          │
+                                          │  \Projects\Company C\Product C\Jocys.com
+                                          ├───► [linked file]
+                                          │     MakeLinks.ps1
+                                          │
+        [file content on the disk]█───────┘
+
 .NOTES
     Author:     Evaldas Jocys <evaldas@jocys.com>
     Modified:   2022-10-25
@@ -77,14 +101,15 @@ function MakeHardLink {
     param([string]$link, [string]$target);
     #----------------------------------------------------------
     $linkType = (Get-Item $link).LinkType;
-    if ($linkType -eq "HardLink"){
-        Write-Host "Skip Link: $link" -ForegroundColor DarkGray;
-        return;
-    }
     Remove-Item $link;
     # Note: When hardlinked then there is no way to determine which file entry is the original.
     $result = New-Item -Path $link -ItemType HardLink -Value $target;
-    Write-Host "Make Link: $link";
+    if ($linkType -eq "HardLink"){
+		# Link will be refreshed (in case original file was recreated).
+        Write-Host "Update Link: $link" -ForegroundColor DarkGray;
+    } else {
+		Write-Host "Create Link: $link";
+	}
 }
 # ----------------------------------------------------------------------------
 $libraryPath = FindExistingPath @("c:\Projects\Jocys.com\Class Library", "d:\Projects\Jocys.com\Class Library");
