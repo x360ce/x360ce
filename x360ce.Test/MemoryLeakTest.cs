@@ -59,37 +59,21 @@ namespace x360ce.Test
 					{
 						try
 						{
-							var o = Activator.CreateInstance(type);
-							var wr = new WeakReference(o);
-							// Verify that the WeakReference actually points to the intended object instance.
-							if (wr.Target!.Equals(o))
-							{
-								// Dispose object.
-								o = null;
-								for (int i = 0; i < 4; i++)
-								{
-									GC.Collect();
-									GC.WaitForPendingFinalizers();
-									GC.WaitForFullGCComplete();
-									GC.Collect();
-								}
-								// Note: Debug mode turns off a lot of optimizations, because compiler is trying to be helpful.
-								// Debug build can keep values rooted even if you set them to null i.e. wr.IsAlive will always return TRUE.
-								if (wr.IsAlive)
-								{
-									log.Add($"Is Alive: {type.FullName}");
-									aliveCount++;
-								}
-								else
-								{
-									log.Add($"Disposed: {type.FullName}");
-									disposedCount++;
-								}
-							}
-							else
+							var isDisposed = TestDispose(type);
+							if (isDisposed == null)
 							{
 								log.Add($"Error: NOT same as {type.FullName}");
 								errorsCount++;
+							}
+							else if (isDisposed.Value)
+							{
+								log.Add($"Disposed: {type.FullName}");
+								disposedCount++;
+							}
+							else
+							{
+								log.Add($"Is Alive: {type.FullName}");
+								aliveCount++;
 							}
 						}
 						catch (Exception ex)
@@ -102,6 +86,29 @@ namespace x360ce.Test
 			}
 			var results = $"Disposed = {disposedCount}, Alive = {aliveCount}, Errors = {errorsCount}\r\n" + string.Join("\r\n", log);
 			return results;
+		}
+
+		public bool? TestDispose(Type type)
+		{
+			var o = Activator.CreateInstance(type);
+			var wr = new WeakReference(o);
+			// If WeakReference don't point to the intended object instance then return null.
+			if (!wr.Target!.Equals(o))
+				return null;
+			// Dispose object.
+			o = null;
+			for (int i = 0; i < 4; i++)
+			{
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+				GC.WaitForFullGCComplete();
+				GC.Collect();
+			}
+			// Note: Debug mode turns off a lot of optimizations, because compiler is trying to be helpful.
+			// Debug build can keep values rooted even if you set them to null i.e. wr.IsAlive will always return TRUE.
+			//
+			// Return true if object is not allive, that is, disposed.
+			return !wr.IsAlive;
 		}
 
 		public void UpdateProgress(ProgressEventArgs e)
