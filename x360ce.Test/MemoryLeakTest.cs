@@ -5,34 +5,65 @@ namespace x360ce.Test
 	[TestClass]
 	public class MemoryLeakTest
 	{
+
 		[TestMethod]
-		public void TestMethod()
+		public void Test_x360ce_Engine()
 		{
-			Console.WriteLine("Please wait...");
+			TestMemoryLeakAssemblies(
+				new[] { typeof(Engine.EngineHelper).Assembly },
+				out List<string> disposedTypes,
+				out List<string> aliveTypes,
+				out List<string> wrongTypes,
+				out List<string> errorList);
+			var alive = string.Join(", ", aliveTypes);
+			if (string.IsNullOrEmpty(alive))
+				alive = null;
+			var errors = string.Join(", ", errorList);
+			if (string.IsNullOrEmpty(errors))
+				errors = null;
 			// Convert this to proper tests.
-			var success = System.Threading.ThreadPool.QueueUserWorkItem(TestDispose);
-			Assert.IsTrue(success);
+			Assert.IsNull(alive);
+			Assert.IsNull(errors);
+			Assert.IsTrue(disposedTypes.Count > 0);
+			Assert.IsTrue(wrongTypes.Count == 0);
+		}
+
+		[TestMethod]
+		public void Test_x360ce_App()
+		{
+			TestMemoryLeakAssemblies(
+				new[] { typeof(App.App).Assembly },
+				out List<string> disposedTypes,
+				out List<string> aliveTypes,
+				out List<string> wrongTypes,
+				out List<string> errorList);
+			var alive = string.Join(", ", aliveTypes);
+			if (string.IsNullOrEmpty(alive))
+				alive = null;
+			var errors = string.Join(", ", errorList);
+			if (string.IsNullOrEmpty(errors))
+				errors = null;
+			// Convert this to proper tests.
+			Assert.IsNull(alive);
+			Assert.IsNull(errors);
+			Assert.IsTrue(disposedTypes.Count > 0);
+			Assert.IsTrue(wrongTypes.Count == 0);
 		}
 
 		#region TestMemoryLeak
 
-		void TestDispose(object? state)
+		public void TestMemoryLeakAssemblies(
+		System.Reflection.Assembly[] assemblies,
+		out List<string> disposedTypes,
+		out List<string> aliveTypes,
+		out List<string> wrongTypes,
+		out List<string> errors
+	)
 		{
-			var text = TestMemoryLeakAssemblies(
-					typeof(App.App).Assembly,
-					typeof(Engine.EngineHelper).Assembly
-				);
-			ControlsHelper.Invoke(() =>
-			{
-			});
-		}
-
-		public string TestMemoryLeakAssemblies(params System.Reflection.Assembly[] assemblies)
-		{
-			var log = new List<string>();
-			var disposedCount = 0;
-			var aliveCount = 0;
-			var errorsCount = 0;
+			var _disposedTypes = new List<string>();
+			var _aliveTypes = new List<string>();
+			var _wrongTypes = new List<string>();
+			var _errors = new List<string>();
 			var e = new ProgressEventArgs();
 			for (int a = 0; a < assemblies.Length; a++)
 			{
@@ -41,7 +72,7 @@ namespace x360ce.Test
 				e.TopIndex = a;
 				e.TopData = assemblies;
 				e.TopMessage = $"Assembly: {assembly.FullName}";
-				ControlsHelper.Invoke(() => UpdateProgress(e));
+				UpdateProgress(e);
 				var types = assembly.GetTypes();
 				for (int t = 0; t < types.Length; t++)
 				{
@@ -50,42 +81,33 @@ namespace x360ce.Test
 					e.SubIndex = t;
 					e.SubData = types;
 					e.SubMessage = $"Type: {type.FullName}";
-					ControlsHelper.Invoke(() => UpdateProgress(e));
+					UpdateProgress(e);
+					// Don't test interfaces.
 					if (type.IsInterface)
 						continue;
 					if (!type.FullName!.Contains(".Controls.") && !type.FullName.Contains(".Forms."))
 						continue;
-					ControlsHelper.Invoke(() =>
+					try
 					{
-						try
-						{
-							var isDisposed = TestDispose(type);
-							if (isDisposed == null)
-							{
-								log.Add($"Error: NOT same as {type.FullName}");
-								errorsCount++;
-							}
-							else if (isDisposed.Value)
-							{
-								log.Add($"Disposed: {type.FullName}");
-								disposedCount++;
-							}
-							else
-							{
-								log.Add($"Is Alive: {type.FullName}");
-								aliveCount++;
-							}
-						}
-						catch (Exception ex)
-						{
-							log.Add($"Error: {type.FullName} {ex.Message}");
-							errorsCount++;
-						}
-					});
+						var isDisposed = TestDispose(type);
+						// Found different type from expected.
+						if (isDisposed == null)
+							_wrongTypes.Add(type.FullName);
+						else if (isDisposed.Value)
+							_disposedTypes.Add(type.FullName);
+						else
+							_aliveTypes.Add(type.FullName);
+					}
+					catch (Exception ex)
+					{
+						_errors.Add($"{type.FullName} {ex.Message}");
+					}
 				}
 			}
-			var results = $"Disposed = {disposedCount}, Alive = {aliveCount}, Errors = {errorsCount}\r\n" + string.Join("\r\n", log);
-			return results;
+			disposedTypes = _disposedTypes;
+			aliveTypes = _aliveTypes;
+			wrongTypes = _wrongTypes;
+			errors = _errors;
 		}
 
 		public bool? TestDispose(Type type)

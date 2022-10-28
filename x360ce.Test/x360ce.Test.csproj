@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\x360ce.App.Beta\x360ce.App.csproj" />
+    <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj" />
   </ItemGroup>
 
 </Project>
