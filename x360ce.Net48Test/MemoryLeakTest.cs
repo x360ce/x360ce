@@ -1,6 +1,10 @@
-using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Controls;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System;
+using System.Linq;
 
-namespace x360ce.Test
+namespace x360ce.Net48Test
 {
 	[TestClass]
 	public class MemoryLeakTest
@@ -73,7 +77,11 @@ namespace x360ce.Test
 				e.TopData = assemblies;
 				e.TopMessage = $"Assembly: {assembly.FullName}";
 				UpdateProgress(e);
-				var types = assembly.GetTypes();
+				var types = assembly.GetTypes()
+					.Where(x => x.IsClass)
+					.Where(x => x.IsPublic)
+					.Where(x => !x.IsAbstract)
+					.ToArray();
 				for (int t = 0; t < types.Length; t++)
 				{
 					var type = types[t];
@@ -81,27 +89,37 @@ namespace x360ce.Test
 					e.SubIndex = t;
 					e.SubData = types;
 					e.SubMessage = $"Type: {type.FullName}";
-					UpdateProgress(e);
-					// Don't test interfaces.
-					if (type.IsInterface)
-						continue;
-					if (!type.FullName!.Contains(".Controls.") && !type.FullName.Contains(".Forms."))
-						continue;
+					//if (!type.FullName.Contains(".Controls.") && !type.FullName.Contains(".Forms."))
+					//	continue;
+					// If can't create instances of the type then skip.
+					//if (!type.IsConstructedGenericType)
+					//	continue;
+
 					try
 					{
 						var isDisposed = TestDispose(type);
 						// Found different type from expected.
 						if (isDisposed == null)
+						{
+							e.SubMessage += ", Result: Wrong Type!";
 							_wrongTypes.Add(type.FullName);
+						}
 						else if (isDisposed.Value)
+						{
+							e.SubMessage += ", Result: OK";
 							_disposedTypes.Add(type.FullName);
+						}
 						else
+						{
+							e.SubMessage += ", Result: Failed to dispose!";
 							_aliveTypes.Add(type.FullName);
+						}
 					}
 					catch (Exception ex)
 					{
 						_errors.Add($"{type.FullName} {ex.Message}");
 					}
+					UpdateProgress(e);
 				}
 			}
 			disposedTypes = _disposedTypes;
@@ -115,7 +133,7 @@ namespace x360ce.Test
 			var o = Activator.CreateInstance(type);
 			var wr = new WeakReference(o);
 			// If WeakReference don't point to the intended object instance then return null.
-			if (!wr.Target!.Equals(o))
+			if (!wr.Target.Equals(o))
 				return null;
 			// Dispose object.
 			o = null;
@@ -136,14 +154,14 @@ namespace x360ce.Test
 		public void UpdateProgress(ProgressEventArgs e)
 		{
 			// Create top message.
-			var tc = e.TopProgressText;
-			if (tc == null)
-			{
-				tc += $"{e.TopIndex}";
-				if (e.TopCount > 0)
-					tc += $"/{e.TopCount}";
-			}
-			Console.WriteLine(tc);
+			//var tc = e.TopProgressText;
+			//if (tc == null)
+			//{
+			//	tc += $"{e.TopIndex}";
+			//	if (e.TopCount > 0)
+			//		tc += $"/{e.TopCount}";
+			//}
+			//Console.WriteLine(tc);
 			// Create sub message.
 			var sc = e.SubProgressText;
 			if (sc == null)
@@ -153,7 +171,7 @@ namespace x360ce.Test
 					sc += $"/{e.SubCount}";
 			}
 			Console.WriteLine(sc);
-			Console.WriteLine(e.TopMessage);
+			//Console.WriteLine(e.TopMessage);
 			Console.WriteLine(e.SubMessage);
 		}
 
