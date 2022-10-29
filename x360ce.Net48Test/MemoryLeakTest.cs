@@ -3,9 +3,19 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Runtime;
 
 namespace x360ce.Net48Test
 {
+
+	/// <summary>
+	/// Test if the controls can be disposed and garbage collected and don't result in memory leaks.
+	/// IMPORTANT!!!: Enable "Code Optimize" option for memory leak (dispose) test to work:
+	///		NET 4.8: Build \ Configuration: Debug \ [x] Optimise Code".
+	///		NET 6.0: Build \ General \ Optimize Code: [x] Debug
+	/// Note: Compiler is trying to be helpful and Debug build can keep values rooted even if
+	/// you set them to null i.e. 'wr.IsAlive' will always return 'true'.
+	/// </summary>
 	[TestClass]
 	public class MemoryLeakTest
 	{
@@ -68,15 +78,9 @@ namespace x360ce.Net48Test
 			var _aliveTypes = new List<string>();
 			var _wrongTypes = new List<string>();
 			var _errors = new List<string>();
-			var e = new ProgressEventArgs();
 			for (int a = 0; a < assemblies.Length; a++)
 			{
 				var assembly = assemblies[a];
-				e.TopCount = assemblies.Length;
-				e.TopIndex = a;
-				e.TopData = assemblies;
-				e.TopMessage = $"Assembly: {assembly.FullName}";
-				UpdateProgress(e);
 				var types = assembly.GetTypes()
 					.Where(x => x.IsClass)
 					.Where(x => x.IsPublic)
@@ -85,41 +89,76 @@ namespace x360ce.Net48Test
 				for (int t = 0; t < types.Length; t++)
 				{
 					var type = types[t];
-					e.SubCount = types.Length;
-					e.SubIndex = t;
-					e.SubData = types;
-					e.SubMessage = $"Type: {type.FullName}";
-					//if (!type.FullName.Contains(".Controls.") && !type.FullName.Contains(".Forms."))
-					//	continue;
-					// If can't create instances of the type then skip.
-					//if (!type.IsConstructedGenericType)
-					//	continue;
+					var message = "";
+					var status = "[----]";
+					var pad = "\r\n" + new string(' ', "[----] 000/000: ".Length);
+					var constructor = type.GetConstructor(Type.EmptyTypes);
+					if (type.ContainsGenericParameters)
+					{
+						status = "[Warn]";
+						_errors.Add($"{type.FullName} ContainsGenericParameters");
+						message += $"{pad}Requires generic parameters to create instance";
+					}
+					else if (constructor == null)
+					{
+						status = "[Warn]";
+						_errors.Add($"{type.FullName} Requires parameters to create instance");
+						message += $"{pad}Requires parameters to create instance";
+					}
+					else
+					{
+						CollectGarbage();
+						try
+						{
+							var writeSize = true;
+							//=======================================================
+							// Dispose test
+							//-------------------------------------------------------
+							var memBeforeCreate = GC.GetTotalMemory(false);
+							var o = Activator.CreateInstance(type);
+							var memAfterCreate = GC.GetTotalMemory(false);
+							var objectSize = memAfterCreate - memBeforeCreate;
+							var wr = new WeakReference(o);
+							// If WeakReference point to the intended object instance then...
+							if (!wr.Target.Equals(o))
+							{
+								message += $"{pad}Result: Wrong Type!";
+								status = "[Fail]";
+								_wrongTypes.Add(type.FullName);
+							}
+							o = null;
+							for (int i = 0; i < 4; i++)
+								CollectGarbage();
+							var memAfterDispose = GC.GetTotalMemory(true);
+							var memDifference = memAfterDispose - memBeforeCreate;
+							// wr.IsAlive is 'true' then...
+							if (wr.IsAlive)
+							{
+								// Dispose failed. Strong references are left to the wr.Target.
+								message += $"{pad}Result: Failed to dispose!";
+								status = "[!!!!]";
+								_aliveTypes.Add(type.FullName);
+							}
+							else
+							{
+								// Dispose was success. No strong references are left to the wr.Target.
+								status = "[ OK ]";
+								_disposedTypes.Add(type.FullName);
+								writeSize = false;
+							}
+							if (writeSize)
+								message += $"{pad}Object Size: {objectSize:#,##0}, Memory Difference {memDifference:+#,##0;-#,##0}";
 
-					try
-					{
-						var isDisposed = TestDispose(type);
-						// Found different type from expected.
-						if (isDisposed == null)
-						{
-							e.SubMessage += ", Result: Wrong Type!";
-							_wrongTypes.Add(type.FullName);
 						}
-						else if (isDisposed.Value)
+						catch (Exception ex)
 						{
-							e.SubMessage += ", Result: OK";
-							_disposedTypes.Add(type.FullName);
-						}
-						else
-						{
-							e.SubMessage += ", Result: Failed to dispose!";
-							_aliveTypes.Add(type.FullName);
+							status = "[Fail]";
+							_errors.Add($"{type.FullName} {ex.Message}");
+							message += $"{pad}Error: {type.FullName} {ex.Message}";
 						}
 					}
-					catch (Exception ex)
-					{
-						_errors.Add($"{type.FullName} {ex.Message}");
-					}
-					UpdateProgress(e);
+					if (status != "[ OK ]")
+						Console.WriteLine($"{status} {t + 1:000}/{types.Length}: {type.FullName} {message}");
 				}
 			}
 			disposedTypes = _disposedTypes;
@@ -128,51 +167,12 @@ namespace x360ce.Net48Test
 			errors = _errors;
 		}
 
-		public bool? TestDispose(Type type)
+		public static void CollectGarbage()
 		{
-			var o = Activator.CreateInstance(type);
-			var wr = new WeakReference(o);
-			// If WeakReference don't point to the intended object instance then return null.
-			if (!wr.Target.Equals(o))
-				return null;
-			// Dispose object.
-			o = null;
-			for (int i = 0; i < 4; i++)
-			{
-				GC.Collect();
-				GC.WaitForPendingFinalizers();
-				GC.WaitForFullGCComplete();
-				GC.Collect();
-			}
-			// Note: Debug mode turns off a lot of optimizations, because compiler is trying to be helpful.
-			// Debug build can keep values rooted even if you set them to null i.e. wr.IsAlive will always return TRUE.
-			//
-			// Return true if object is not allive, that is, disposed.
-			return !wr.IsAlive;
-		}
-
-		public void UpdateProgress(ProgressEventArgs e)
-		{
-			// Create top message.
-			//var tc = e.TopProgressText;
-			//if (tc == null)
-			//{
-			//	tc += $"{e.TopIndex}";
-			//	if (e.TopCount > 0)
-			//		tc += $"/{e.TopCount}";
-			//}
-			//Console.WriteLine(tc);
-			// Create sub message.
-			var sc = e.SubProgressText;
-			if (sc == null)
-			{
-				sc += $"{e.SubIndex}";
-				if (e.SubCount > 0)
-					sc += $"/{e.SubCount}";
-			}
-			Console.WriteLine(sc);
-			//Console.WriteLine(e.TopMessage);
-			Console.WriteLine(e.SubMessage);
+			// Try to remove object from the memory.
+			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+			var status = GC.WaitForFullGCComplete();
 		}
 
 		#endregion
