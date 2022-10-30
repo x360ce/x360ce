@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows;
 
 namespace x360ce.Net48Test
 {
@@ -23,6 +22,8 @@ namespace x360ce.Net48Test
 	[TestClass]
 	public class MemoryLeakTest
 	{
+
+		public const long TestMaxDurationPerClassTest = 5000;
 
 		[TestMethod]
 		public void Test_x360ce_Engine() =>
@@ -51,9 +52,11 @@ namespace x360ce.Net48Test
 			Console.WriteLine();
 			Console.WriteLine($"Disposed: {infoPass.Count}, Dispose Failed: {infoFail.Count}");
 			Console.WriteLine($"Warnings: {warnings.Count}, Dispose Errors: {errors.Count}");
+			if (results.Count == 1)
+				Console.WriteLine($"Duration: {results[0].Duration:#,##0} ms");
 			// Recommend fixing the smallest control next, because
 			// more likely that it does not contain other controls, but is used by other controls.
-			if (includeTypes.Length > 1)
+			if (infoFail.Count > 1)
 			{
 				var nextToFix = infoFail.OrderBy(x => x.MemObjectSize).FirstOrDefault();
 				if (nextToFix != null)
@@ -98,7 +101,11 @@ namespace x360ce.Net48Test
 				// Create extra messages lines.
 				message += $"{pad}{result.Message}";
 				if (result.MemObjectSize.HasValue || result.MemDifference.HasValue)
-					message += $"{pad}Object Size: {result.MemObjectSize:#,##0}, Memory Difference: {result.MemDifference:+#,##0;-#,##0;#,##0}";
+				{
+					message += $"{pad}Object Size: {result.MemObjectSize:#,##0}";
+					message += $", Memory Difference: {result.MemDifference:+#,##0;-#,##0;#,##0}";
+					message += $", Duration: {result.Duration:#,##0} ms";
+				}
 				Debug.WriteLine(message);
 				//Console.WriteLine(message);
 
@@ -116,6 +123,8 @@ namespace x360ce.Net48Test
 
 		private MemTestResult TestType(Type type)
 		{
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
 			var result = new MemTestResult();
 			result.Type = type;
 			var constructor = type.GetConstructor(Type.EmptyTypes);
@@ -150,15 +159,14 @@ namespace x360ce.Net48Test
 						var window = new System.Windows.Window();
 						window.Content = uc;
 						window.Activate();
-						Task.Delay(2000).Wait();
 						window.Content = null;
 						window = null;
 						uc = null;
 					}
 					// Trigger object dispose.
 					o = null;
-					// Cleanup memory.
-					for (int i = 0; i < 4; i++)
+					// loop untill object allive, but no longer than  seconds.
+					while (wr.IsAlive && stopwatch.ElapsedMilliseconds < TestMaxDurationPerClassTest)
 					{
 						Task.Delay(100);
 						CollectGarbage();
@@ -177,6 +185,7 @@ namespace x360ce.Net48Test
 					result.Exception = ex;
 				}
 			}
+			result.Duration = stopwatch.ElapsedMilliseconds;
 			return result;
 		}
 

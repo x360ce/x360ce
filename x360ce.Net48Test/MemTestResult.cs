@@ -12,5 +12,7 @@ namespace x360ce.Net48Test
 		public string Message { get; set; } = "";
 		public bool IsAlive { get; set; }
 		public TraceLevel Level { get; set; } = TraceLevel.Info;
+		public long Duration { get; set; }
+
 	}
 }
