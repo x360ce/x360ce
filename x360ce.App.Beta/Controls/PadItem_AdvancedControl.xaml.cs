@@ -14,9 +14,7 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_AdvancedControl()
 		{
-			// This line will create leak...
 			InitHelper.InitTimer(this, InitializeComponent);
-			//InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			// Add GamePad typed to ComboBox.

@@ -6,6 +6,8 @@ using System.Runtime;
 using System.Reflection;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows.Controls;
+using System.Windows;
 
 namespace x360ce.Net48Test
 {
@@ -142,14 +144,18 @@ namespace x360ce.Net48Test
 						result.Level = TraceLevel.Error;
 						result.Message += "Wrong Type!";
 					}
-					var lu = o as Engine.ILoadUnload;
-					if (lu != null)
+					var uc = o as UserControl;
+					if (uc != null)
 					{
-						lu.Load();
-						lu.Unload();
+						var window = new System.Windows.Window();
+						window.Content = uc;
+						window.Activate();
+						Task.Delay(2000).Wait();
+						window.Content = null;
+						window = null;
+						uc = null;
 					}
 					// Trigger object dispose.
-					lu = null;
 					o = null;
 					// Cleanup memory.
 					for (int i = 0; i < 4; i++)

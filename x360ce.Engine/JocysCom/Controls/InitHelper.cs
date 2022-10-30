@@ -82,6 +82,15 @@ namespace JocysCom.ClassLibrary.Controls
 			ih._Timer.Start();
 		}
 
+		private static void Control_Loaded(object sender, RoutedEventArgs e)
+		{
+			var control = (FrameworkElement)sender;
+			var name = $"{control.GetType()} {control.Name} {control.GetHashCode()}";
+			if (LoadedControlNames.Contains(name))
+				Console.WriteLine($"WARN: Control is loaded already: {name}");
+			LoadedControlNames.Add(name);
+		}
+
 		private static void Control_Unloaded(object sender, RoutedEventArgs e)
 		{
 			var control = (FrameworkElement)sender;
@@ -93,15 +102,6 @@ namespace JocysCom.ClassLibrary.Controls
 			control.Unloaded -= Control_Unloaded;
 			control.IsVisibleChanged -= Control_IsVisibleChanged;
 			//control.PropertyChanged -= Control_PropertyChanged;
-		}
-
-		private static void Control_Loaded(object sender, RoutedEventArgs e)
-		{
-			var control = (FrameworkElement)sender;
-			var name = $"{control.GetType()} {control.Name} {control.GetHashCode()}";
-			if (LoadedControlNames.Contains(name))
-				Console.WriteLine($"WARN: Control is loaded already: {name}");
-			LoadedControlNames.Add(name);
 		}
 
 		private static void Control_IsVisibleChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
