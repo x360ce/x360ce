@@ -1,9 +1,11 @@
-﻿using JocysCom.ClassLibrary.Controls;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Runtime;
+using System.Reflection;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace x360ce.Net48Test
 {
@@ -21,150 +23,85 @@ namespace x360ce.Net48Test
 	{
 
 		[TestMethod]
-		public void Test_x360ce_Engine()
-		{
-			TestMemoryLeakAssemblies(
-				new[] { typeof(Engine.EngineHelper).Assembly },
-				out List<string> disposedTypes,
-				out List<string> aliveTypes,
-				out List<string> wrongTypes,
-				out List<string> errorList);
-			var alive = string.Join(", ", aliveTypes);
-			if (string.IsNullOrEmpty(alive))
-				alive = null;
-			var errors = string.Join(", ", errorList);
-			if (string.IsNullOrEmpty(errors))
-				errors = null;
-			// Convert this to proper tests.
-			Assert.IsNull(alive);
-			Assert.IsNull(errors);
-			Assert.IsTrue(disposedTypes.Count > 0);
-			Assert.IsTrue(wrongTypes.Count == 0);
-		}
+		public void Test_x360ce_Engine() =>
+			Test(typeof(Engine.EngineHelper).Assembly);
 
 		[TestMethod]
-		public void Test_x360ce_App()
+		public void Test_x360ce_App() =>
+			Test(typeof(App.App).Assembly);
+
+		[TestMethod]
+		public void Test_x360ce_App_PadItem_AdvancedControl() =>
+			Test<App.Controls.PadItem_AdvancedControl>();
+
+		private void Test<T>()
 		{
-			TestMemoryLeakAssemblies(
-				new[] { typeof(App.App).Assembly },
-				out List<string> disposedTypes,
-				out List<string> aliveTypes,
-				out List<string> wrongTypes,
-				out List<string> errorList);
-			var alive = string.Join(", ", aliveTypes);
-			if (string.IsNullOrEmpty(alive))
-				alive = null;
-			var errors = string.Join(", ", errorList);
-			if (string.IsNullOrEmpty(errors))
-				errors = null;
-			// Convert this to proper tests.
-			Assert.IsNull(alive);
-			Assert.IsNull(errors);
-			Assert.IsTrue(disposedTypes.Count > 0);
-			Assert.IsTrue(wrongTypes.Count == 0);
+			Test(typeof(T).Assembly, typeof(T));
+		}
+
+		public void Test(Assembly assembly, params Type[] includeTypes)
+		{
+			var results = TestMemoryLeakByAssembly(assembly, includeTypes);
+			var errors = results.Where(x => x.Level == TraceLevel.Error).ToList();
+			var warnings = results.Where(x => x.Level == TraceLevel.Warning).ToList();
+			var infoPass = results.Where(x => x.Level == TraceLevel.Info && !x.IsAlive).ToList();
+			var infoFail = results.Where(x => x.Level == TraceLevel.Info && x.IsAlive).ToList();
+			Console.WriteLine();
+			Console.WriteLine($"Disposed: {infoPass.Count}, Dispose Failed: {infoFail.Count}");
+			Console.WriteLine($"Warnings: {warnings.Count}, Dispose Errors: {errors.Count}");
+			// Recommend fixing the smallest control next, because
+			// more likely that it does not contain other controls, but is used by other controls.
+			if (includeTypes.Length > 1)
+			{
+				var nextToFix = infoFail.OrderBy(x => x.MemObjectSize).FirstOrDefault();
+				if (nextToFix != null)
+				{
+					Console.WriteLine();
+					Console.WriteLine($"Smallest recommended control to fix: {nextToFix.Type.FullName}");
+				}
+			}
+			Assert.IsTrue(infoPass.Count > 0);
+			Assert.IsTrue(infoFail.Count == 0);
+			Assert.IsTrue(warnings.Count == 0);
+			Assert.IsTrue(errors.Count == 0);
 		}
 
 		#region TestMemoryLeak
 
-		public void TestMemoryLeakAssemblies(
-		System.Reflection.Assembly[] assemblies,
-		out List<string> disposedTypes,
-		out List<string> aliveTypes,
-		out List<string> wrongTypes,
-		out List<string> errors
-	)
+		public List<MemTestResult> TestMemoryLeakByAssembly(Assembly assembly, params Type[] includeTypes)
 		{
-			var _disposedTypes = new List<string>();
-			var _aliveTypes = new List<string>();
-			var _wrongTypes = new List<string>();
-			var _errors = new List<string>();
-			for (int a = 0; a < assemblies.Length; a++)
+			var results = new List<MemTestResult>();
+			// Test public non-abstracts classes only.
+			var types = assembly.GetTypes()
+				.Where(x => includeTypes.Length == 0 || includeTypes.Contains(x))
+				.Where(x => x.IsClass)
+				.Where(x => x.IsPublic)
+				.Where(x => !x.IsAbstract)
+				.ToArray();
+			var zeros = new string('0', types.Length.ToString().Length);
+			var pad = "\r\n" + new string(' ', $"[----] {zeros}/{zeros}: ".Length);
+			for (int t = 0; t < types.Length; t++)
 			{
-				var assembly = assemblies[a];
-				var types = assembly.GetTypes()
-					.Where(x => x.IsClass)
-					.Where(x => x.IsPublic)
-					.Where(x => !x.IsAbstract)
-					.ToArray();
-				for (int t = 0; t < types.Length; t++)
-				{
-					var type = types[t];
-					var message = "";
-					var status = "[----]";
-					var pad = "\r\n" + new string(' ', "[----] 000/000: ".Length);
-					var constructor = type.GetConstructor(Type.EmptyTypes);
-					if (type.ContainsGenericParameters)
-					{
-						status = "[Warn]";
-						_errors.Add($"{type.FullName} ContainsGenericParameters");
-						message += $"{pad}Requires generic parameters to create instance";
-					}
-					else if (constructor == null)
-					{
-						status = "[Warn]";
-						_errors.Add($"{type.FullName} Requires parameters to create instance");
-						message += $"{pad}Requires parameters to create instance";
-					}
-					else
-					{
-						CollectGarbage();
-						try
-						{
-							var writeSize = true;
-							//=======================================================
-							// Dispose test
-							//-------------------------------------------------------
-							var memBeforeCreate = GC.GetTotalMemory(false);
-							var o = Activator.CreateInstance(type);
-							var memAfterCreate = GC.GetTotalMemory(false);
-							var objectSize = memAfterCreate - memBeforeCreate;
-							var wr = new WeakReference(o);
-							// If WeakReference point to the intended object instance then...
-							if (!wr.Target.Equals(o))
-							{
-								message += $"{pad}Result: Wrong Type!";
-								status = "[Fail]";
-								_wrongTypes.Add(type.FullName);
-							}
-							o = null;
-							for (int i = 0; i < 4; i++)
-								CollectGarbage();
-							var memAfterDispose = GC.GetTotalMemory(true);
-							var memDifference = memAfterDispose - memBeforeCreate;
-							// wr.IsAlive is 'true' then...
-							if (wr.IsAlive)
-							{
-								// Dispose failed. Strong references are left to the wr.Target.
-								message += $"{pad}Result: Failed to dispose!";
-								status = "[!!!!]";
-								_aliveTypes.Add(type.FullName);
-							}
-							else
-							{
-								// Dispose was success. No strong references are left to the wr.Target.
-								status = "[ OK ]";
-								_disposedTypes.Add(type.FullName);
-								writeSize = false;
-							}
-							if (writeSize)
-								message += $"{pad}Object Size: {objectSize:#,##0}, Memory Difference {memDifference:+#,##0;-#,##0}";
+				var type = types[t];
+				var result = TestType(type);
+				results.Add(result);
+				var isSuccess = !result.IsAlive && result.Level == TraceLevel.Info;
+				// If object was ddisposed without errors then continue
+				if (isSuccess)
+					continue;
+				var status = isSuccess ? "[Pass]" : "[" + result.Level.ToString().Substring(0, 4) + "]";
+				var index = string.Format("{0:" + zeros + "}/{1:" + zeros + "}", t + 1, types.Length);
+				// Create main message.
+				var message = $"{status} {index}: {type.FullName}";
+				// Create extra messages lines.
+				message += $"{pad}{result.Message}";
+				if (result.MemObjectSize.HasValue || result.MemDifference.HasValue)
+					message += $"{pad}Object Size: {result.MemObjectSize:#,##0}, Memory Difference: {result.MemDifference:+#,##0;-#,##0;#,##0}";
+				Debug.WriteLine(message);
+				//Console.WriteLine(message);
 
-						}
-						catch (Exception ex)
-						{
-							status = "[Fail]";
-							_errors.Add($"{type.FullName} {ex.Message}");
-							message += $"{pad}Error: {type.FullName} {ex.Message}";
-						}
-					}
-					if (status != "[ OK ]")
-						Console.WriteLine($"{status} {t + 1:000}/{types.Length}: {type.FullName} {message}");
-				}
 			}
-			disposedTypes = _disposedTypes;
-			aliveTypes = _aliveTypes;
-			wrongTypes = _wrongTypes;
-			errors = _errors;
+			return results;
 		}
 
 		public static void CollectGarbage()
@@ -172,7 +109,69 @@ namespace x360ce.Net48Test
 			// Try to remove object from the memory.
 			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
 			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
-			var status = GC.WaitForFullGCComplete();
+			GC.WaitForFullGCComplete();
+		}
+
+		private MemTestResult TestType(Type type)
+		{
+			var result = new MemTestResult();
+			result.Type = type;
+			var constructor = type.GetConstructor(Type.EmptyTypes);
+			if (type.ContainsGenericParameters)
+			{
+				result.Level = TraceLevel.Warning;
+				result.Message += "Requires generic parameters to create instance";
+			}
+			else if (constructor == null)
+			{
+				result.Level = TraceLevel.Warning;
+				result.Message += "Requires parameters to create instance";
+			}
+			else
+			{
+				CollectGarbage();
+				try
+				{
+					var memBeforeCreate = GC.GetTotalMemory(false);
+					var o = Activator.CreateInstance(type);
+					result.MemObjectSize = GC.GetTotalMemory(false) - memBeforeCreate;
+					var wr = new WeakReference(o);
+					// If WeakReference point to the intended object instance then...
+					if (!wr.Target.Equals(o))
+					{
+						result.Level = TraceLevel.Error;
+						result.Message += "Wrong Type!";
+					}
+					var lu = o as Engine.ILoadUnload;
+					if (lu != null)
+					{
+						lu.Load();
+						lu.Unload();
+					}
+					// Trigger object dispose.
+					lu = null;
+					o = null;
+					// Cleanup memory.
+					for (int i = 0; i < 4; i++)
+					{
+						Task.Delay(100);
+						CollectGarbage();
+					}
+					result.MemDifference = GC.GetTotalMemory(true) - memBeforeCreate;
+					result.IsAlive = wr.IsAlive;
+					// if dispose failed. Strong references are left to the wr.Target.
+					result.Message += wr.IsAlive
+						? "Dispose Failed!"
+						: "Disposed";
+				}
+				catch (Exception ex)
+				{
+					result.Level = TraceLevel.Error;
+					result.Message = ex.Message;
+					result.Exception = ex;
+				}
+			}
+			return result;
 		}
 
 		#endregion
