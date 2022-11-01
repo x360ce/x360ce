@@ -1,10 +1,12 @@
 ﻿using JocysCom.ClassLibrary.Controls.Themes;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using x360ce.Engine.Data;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -18,7 +20,9 @@ namespace JocysCom.ClassLibrary.Controls
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (!ControlsHelper.IsDesignMode(this))
 			{
-				var assembly = Assembly.GetEntryAssembly();
+				// Get assemblies which will be used to select default (fists) and search for resources.
+				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+				//var company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute))).Company;
 				var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
 				var description = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyDescriptionAttribute))).Description;
 				DefaultHead = product;

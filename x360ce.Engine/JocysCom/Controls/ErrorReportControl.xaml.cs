@@ -35,8 +35,10 @@ namespace JocysCom.ClassLibrary.Controls
 
 		void RefreshErrorsComboBox()
 		{
-			var asm = new AssemblyInfo();
 			var dir = new DirectoryInfo(LogHelper.Current.LogsFolder);
+			if (!dir.Exists)
+				return;
+			var asm = new AssemblyInfo();
 			var errors = dir.GetFiles("*.htm").OrderByDescending(x => x.CreationTime).ToArray();
 			SubjectTextBox.Text = string.Format("Problem with {0}", asm.Product);
 			ErrorComboBox.ItemsSource = errors;

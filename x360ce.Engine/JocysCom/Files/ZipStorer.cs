@@ -298,32 +298,30 @@ namespace System.IO.Compression
 		/// <remarks>This is a required step, unless automatic dispose is used</remarks>
 		public void Close()
 		{
-			if (this.Access != FileAccess.Read)
+			if (ZipFileStream == null)
+				return;
+			if (Access != FileAccess.Read)
 			{
-				uint centralOffset = (uint)this.ZipFileStream.Position;
+				uint centralOffset = (uint)ZipFileStream.Position;
 				uint centralSize = 0;
-
-				if (this.CentralDirImage != null)
-					this.ZipFileStream.Write(CentralDirImage, 0, CentralDirImage.Length);
-
+				if (CentralDirImage != null)
+					ZipFileStream.Write(CentralDirImage, 0, CentralDirImage.Length);
 				for (int i = 0; i < Files.Count; i++)
 				{
-					long pos = this.ZipFileStream.Position;
-					this.WriteCentralDirRecord(Files[i]);
-					centralSize += (uint)(this.ZipFileStream.Position - pos);
+					long pos = ZipFileStream.Position;
+					WriteCentralDirRecord(Files[i]);
+					centralSize += (uint)(ZipFileStream.Position - pos);
 				}
-
-				if (this.CentralDirImage != null)
-					this.WriteEndRecord(centralSize + (uint)CentralDirImage.Length, centralOffset);
+				if (CentralDirImage != null)
+					WriteEndRecord(centralSize + (uint)CentralDirImage.Length, centralOffset);
 				else
-					this.WriteEndRecord(centralSize, centralOffset);
+					WriteEndRecord(centralSize, centralOffset);
 			}
-
-			if (this.ZipFileStream != null && !this.leaveOpen)
+			if (!leaveOpen)
 			{
-				this.ZipFileStream.Flush();
-				this.ZipFileStream.Dispose();
-				this.ZipFileStream = null;
+				ZipFileStream.Flush();
+				ZipFileStream.Dispose();
+				ZipFileStream = null;
 			}
 		}
 		/// <summary>

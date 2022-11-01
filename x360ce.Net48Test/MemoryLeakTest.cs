@@ -6,7 +6,9 @@ using System.Runtime;
 using System.Reflection;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows.Controls;
+using JocysCom.WebSites.Engine.Security.Data;
+using JocysCom.ClassLibrary.Web.Services;
+using x360ce.Engine.Data;
 
 namespace x360ce.Net48Test
 {
@@ -26,10 +28,6 @@ namespace x360ce.Net48Test
 		public const long TestMaxDurationPerClassTest = 5000;
 
 		[TestMethod]
-		public void Test_x360ce_Engine() =>
-			Test(typeof(Engine.EngineHelper).Assembly);
-
-		[TestMethod]
 		public void Test_x360ce_App() =>
 			Test(typeof(App.App).Assembly);
 
@@ -37,14 +35,32 @@ namespace x360ce.Net48Test
 		public void Test_x360ce_App_PadItem_AdvancedControl() =>
 			Test<App.Controls.PadItem_AdvancedControl>();
 
-		private void Test<T>()
+		[TestMethod]
+		public void Test_x360ce_Engine() =>
+			Test(typeof(Engine.EngineHelper).Assembly,
+				// Include types. null = Test all.
+				null,
+				// Exclude types.
+				new[] {
+					typeof(SecurityEntities),
+					typeof(SoapHttpClientBase),
+					typeof(x360ceModelContainer),
+				});
+
+		[TestMethod]
+		public void Test_x360ce_Engine_IssuesUserControl() =>
+			Test<JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl>();
+
+		#region TestMemoryLeak
+
+		private static void Test<T>()
 		{
-			Test(typeof(T).Assembly, typeof(T));
+			Test(typeof(T).Assembly, new[] { typeof(T) });
 		}
 
-		public void Test(Assembly assembly, params Type[] includeTypes)
+		public static void Test(Assembly assembly, Type[] includeTypes = null, Type[] excludeTypes = null)
 		{
-			var results = TestMemoryLeakByAssembly(assembly, includeTypes);
+			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes);
 			var errors = results.Where(x => x.Level == TraceLevel.Error).ToList();
 			var warnings = results.Where(x => x.Level == TraceLevel.Warning).ToList();
 			var infoPass = results.Where(x => x.Level == TraceLevel.Info && !x.IsAlive).ToList();
@@ -54,10 +70,11 @@ namespace x360ce.Net48Test
 			Console.WriteLine($"Warnings: {warnings.Count}, Dispose Errors: {errors.Count}");
 			if (results.Count == 1)
 				Console.WriteLine($"Duration: {results[0].Duration:#,##0} ms");
-			// Recommend fixing the smallest control next, because
-			// more likely that it does not contain other controls, but is used by other controls.
-			if (infoFail.Count > 1)
+			// If more than one control was tested then...
+			if (results.Count > 1)
 			{
+				// Recommend fixing the smallest control next, because
+				// more likely that it does not contain other controls, but is used by other controls.
 				var nextToFix = infoFail.OrderBy(x => x.MemObjectSize).FirstOrDefault();
 				if (nextToFix != null)
 				{
@@ -71,14 +88,14 @@ namespace x360ce.Net48Test
 			Assert.IsTrue(errors.Count == 0);
 		}
 
-		#region TestMemoryLeak
 
-		public List<MemTestResult> TestMemoryLeakByAssembly(Assembly assembly, params Type[] includeTypes)
+		public static List<MemTestResult> TestMemoryLeakByAssembly(Assembly assembly, Type[] includeTypes, Type[] excludeTypes)
 		{
 			var results = new List<MemTestResult>();
 			// Test public non-abstracts classes only.
 			var types = assembly.GetTypes()
-				.Where(x => includeTypes.Length == 0 || includeTypes.Contains(x))
+				.Where(x => includeTypes == null || includeTypes.Length == 0 || includeTypes.Contains(x))
+				.Where(x => excludeTypes == null || excludeTypes.Length == 0 || !excludeTypes.Contains(x))
 				.Where(x => x.IsClass)
 				.Where(x => x.IsPublic)
 				.Where(x => !x.IsAbstract)
@@ -121,7 +138,7 @@ namespace x360ce.Net48Test
 			GC.WaitForFullGCComplete();
 		}
 
-		private MemTestResult TestType(Type type)
+		private static MemTestResult TestType(Type type)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -153,15 +170,24 @@ namespace x360ce.Net48Test
 						result.Level = TraceLevel.Error;
 						result.Message += "Wrong Type!";
 					}
-					var uc = o as UserControl;
-					if (uc != null)
+					if (o is System.Windows.Controls.UserControl uc1)
 					{
 						var window = new System.Windows.Window();
-						window.Content = uc;
+						window.Content = uc1;
 						window.Activate();
 						window.Content = null;
 						window = null;
-						uc = null;
+						uc1 = null;
+					}
+					else if (o is System.Windows.Forms.UserControl uc2)
+					{
+						uc2.Dispose();
+						uc2 = null;
+					}
+					else if (o is IDisposable uc3)
+					{
+						uc3.Dispose();
+						uc3 = null;
 					}
 					// Trigger object dispose.
 					o = null;

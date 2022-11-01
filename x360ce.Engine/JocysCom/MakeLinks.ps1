@@ -28,7 +28,7 @@
 
 .NOTES
     Author:     Evaldas Jocys <evaldas@jocys.com>
-    Modified:   2022-10-25
+    Modified:   2022-10-31
 .LINK
     http://www.jocys.com
 #>
@@ -84,13 +84,17 @@ function FindExistingPath
     return $null;
 }
 # ----------------------------------------------------------------------------
-#soft links (also called symlinks, or symbolic links)
-#hard links
-#junctions (a type of soft link only for directories)
-# Deleting the target will cause soft links to stop working.
-# What it points to is gone.
-# Hard links will keep working until you delete the hard link itself.
-# The hard link acts just like the original file, because for all intents and purposes, it is the original file.
+# Symbolic link types:
+#
+#   SoftLink - directories and files. Acts like shortcut to an exiting directory/file.
+#              Deleting the target directory/file will cause SoftLinks to stop working.
+#   HardLink - directories and files.
+#              Points to the same file content on the disk. All hard inks must be deleted
+#              for the contents of the file to be released as free disk space.
+#   Junction - directories only. Don'o't support UNC paths.
+#
+# All hardlinks of the file can be listed with command: fsutil hardlink list <file> 
+# Example: fsutil hardlink list "c:\windows\explorer.exe"
 # ----------------------------------------------------------------------------
 function MakeSoftLink {
     param([string]$link, [string]$target);
@@ -114,10 +118,12 @@ function MakeHardLink {
     param([string]$link, [string]$target);
     #----------------------------------------------------------
     $linkType = (Get-Item $link).LinkType;
-    # If the file is not hard linked (only one file points to the same content on disk) then...
+    # If target (original) file doesn't exists then...
     if ([File]::Exists($target) -eq $false){
     	Write-Host "Error: $link - missing link target file: $target" -ForegroundColor Red;
     }
+    # If the file is not hard linked (only one file points to the same content on disk) then...
+    # $isHardLinked = ((fsutil hardlink list $linkType).count -gt 1);
     elseif ($linkType -ne "HardLink"){
         # Remove file and create link.
         Remove-Item $link;
@@ -135,14 +141,15 @@ function MakeHardLink {
 	}
 }
 # ----------------------------------------------------------------------------
+# Execute
+# ----------------------------------------------------------------------------
 $libraryPath = FindExistingPath @("c:\Projects\Jocys.com\Class Library", "d:\Projects\Jocys.com\Class Library");
 if ($null -eq $libraryPath){
     Write-Host "Library Path: Not Found!";
     return;
 }
 Write-Host "Library Path: $libraryPath";
-Write-Host;;
-
+Write-Host;
 $items = Get-ChildItem "." -Recurse -Force | Where-Object {$_ -is [FileInfo]};
 foreach ($item in $items)
 {
@@ -155,11 +162,10 @@ foreach ($item in $items)
     }
     # Original file for link to target.
     $target = "$libraryPath\$linkRelativeName";
-    #MakeSoftLink $linkRelativeName $target;
     MakeHardLink $linkRelativeName $target;
+    #MakeSoftLink $linkRelativeName $target;
     #Copy-Item $target -Destination $linkRelativeName;
 }
-# ----------------------------------------------------------------------------
-# Execute.
+Write-Host;
 # ----------------------------------------------------------------------------
 pause;
