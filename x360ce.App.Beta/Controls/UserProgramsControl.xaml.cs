@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using System.Windows.Data;
 using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
@@ -37,7 +36,7 @@ namespace x360ce.App.Controls
 			if (grid.ItemsSource != null)
 				return;
 			grid.SelectionChanged += MainDataGrid_SelectionChanged;
-			AppHelper.SetItemsSource(grid, SettingsManager.UserGames.Items);
+			ControlsHelper.SetItemsSource(grid, SettingsManager.UserGames.Items);
 			ControlsHelper.RestoreSelection<string>(grid, nameof(UserGame.FileName), gridSelection);
 		}
 
@@ -50,7 +49,7 @@ namespace x360ce.App.Controls
 			var grid = ListPanel.MainDataGrid;
 			gridSelection = ControlsHelper.GetSelection<string>(grid, nameof(UserGame.FileName));
 			grid.SelectionChanged -= MainDataGrid_SelectionChanged;
-			AppHelper.SetItemsSource(grid, null);
+			ControlsHelper.SetItemsSource(grid, null);
 			ItemPanel.CurrentItem = null;
 		}
 

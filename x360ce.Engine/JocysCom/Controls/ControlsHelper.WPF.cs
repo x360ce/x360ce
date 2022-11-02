@@ -63,7 +63,7 @@ namespace JocysCom.ClassLibrary.Controls
 				// This requires to save NewLines with  option which
 				// "Entitize" option replace '\r' with '&#xD;' in text node values.
 				NewLineHandling = NewLineHandling.Entitize,
-		});
+			});
 			var manager = new System.Windows.Markup.XamlDesignerSerializationManager(writer);
 			manager.XamlWriterMode = System.Windows.Markup.XamlWriterMode.Expression;
 			System.Windows.Markup.XamlWriter.Save(o, manager);
@@ -180,6 +180,21 @@ namespace JocysCom.ClassLibrary.Controls
 			var visibility = enabled ? Visibility.Visible : Visibility.Collapsed;
 			if (control.Visibility != visibility)
 				control.Visibility = visibility;
+		}
+
+		public static void SetItemsSource(ItemsControl grid, IBindingList list)
+		{
+			if (list == null)
+			{
+				if (grid.ItemsSource is System.Windows.Data.BindingListCollectionView view)
+				{
+					grid.ItemsSource = null;
+					view.DetachFromSourceCollection();
+				}
+				return;
+			}
+			var newView = new System.Windows.Data.BindingListCollectionView(list);
+			grid.ItemsSource = newView;
 		}
 
 		private static void HookHyperlinks(object sender, TextChangedEventArgs e)

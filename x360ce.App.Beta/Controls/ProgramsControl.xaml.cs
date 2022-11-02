@@ -14,7 +14,7 @@ namespace x360ce.App.Controls
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
 			ListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
-			AppHelper.SetItemsSource(ListPanel.MainDataGrid, SettingsManager.Programs.Items);
+			ControlsHelper.SetItemsSource(ListPanel.MainDataGrid, SettingsManager.Programs.Items);
 		}
 
 		private void MainDataGrid_SelectionChanged(object sender, EventArgs e)
@@ -37,7 +37,7 @@ namespace x360ce.App.Controls
 			if (!ControlsHelper.AllowUnload(this))
 				return;
 			ListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-			AppHelper.SetItemsSource(ListPanel.MainDataGrid, null);
+			ControlsHelper.SetItemsSource(ListPanel.MainDataGrid, null);
 		}
 
 	}

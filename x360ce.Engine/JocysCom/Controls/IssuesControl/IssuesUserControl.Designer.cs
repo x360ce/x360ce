@@ -83,7 +83,7 @@
 			this.WarningsDataGridView.DefaultCellStyle = dataGridViewCellStyle6;
 			this.WarningsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.WarningsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.WarningsDataGridView.Location = new System.Drawing.Point(0, 50);
+			this.WarningsDataGridView.Location = new System.Drawing.Point(0, 43);
 			this.WarningsDataGridView.Margin = new System.Windows.Forms.Padding(0);
 			this.WarningsDataGridView.Name = "WarningsDataGridView";
 			this.WarningsDataGridView.ReadOnly = true;
@@ -97,7 +97,7 @@
 			this.WarningsDataGridView.RowHeadersVisible = false;
 			this.WarningsDataGridView.RowHeadersWidth = 51;
 			this.WarningsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.WarningsDataGridView.Size = new System.Drawing.Size(1072, 590);
+			this.WarningsDataGridView.Size = new System.Drawing.Size(1072, 597);
 			this.WarningsDataGridView.TabIndex = 23;
 			this.WarningsDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.WarningsDataGridView_CellContentClick);
 			this.WarningsDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.WarningsDataGridView_CellFormatting);
@@ -186,7 +186,7 @@
 			this.GamesToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.GamesToolStrip.Name = "GamesToolStrip";
 			this.GamesToolStrip.Padding = new System.Windows.Forms.Padding(4, 1, 1, 0);
-			this.GamesToolStrip.Size = new System.Drawing.Size(1072, 50);
+			this.GamesToolStrip.Size = new System.Drawing.Size(1072, 43);
 			this.GamesToolStrip.TabIndex = 24;
 			this.GamesToolStrip.Text = "MySettingsToolStrip";
 			// 
@@ -197,7 +197,7 @@
 			this.IgnoreAllButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.IgnoreAllButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.IgnoreAllButton.Name = "IgnoreAllButton";
-			this.IgnoreAllButton.Size = new System.Drawing.Size(142, 46);
+			this.IgnoreAllButton.Size = new System.Drawing.Size(141, 39);
 			this.IgnoreAllButton.Text = "Ignore All";
 			this.IgnoreAllButton.Click += new System.EventHandler(this.IgnoreAllButton_Click);
 			// 
@@ -208,7 +208,7 @@
 			this.IgnoreButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.IgnoreButton.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.IgnoreButton.Name = "IgnoreButton";
-			this.IgnoreButton.Size = new System.Drawing.Size(108, 46);
+			this.IgnoreButton.Size = new System.Drawing.Size(107, 39);
 			this.IgnoreButton.Text = "Ignore";
 			this.IgnoreButton.Click += new System.EventHandler(this.IgnoreButton_Click);
 			// 
@@ -217,28 +217,28 @@
 			this.ExceptionInfoButton.Image = ((System.Drawing.Image)(resources.GetObject("ExceptionInfoButton.Image")));
 			this.ExceptionInfoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.ExceptionInfoButton.Name = "ExceptionInfoButton";
-			this.ExceptionInfoButton.Size = new System.Drawing.Size(191, 43);
+			this.ExceptionInfoButton.Size = new System.Drawing.Size(190, 36);
 			this.ExceptionInfoButton.Text = "Exception Info";
 			this.ExceptionInfoButton.Click += new System.EventHandler(this.ExceptionInfoButton_Click);
 			// 
 			// StatusLabel
 			// 
 			this.StatusLabel.Name = "StatusLabel";
-			this.StatusLabel.Size = new System.Drawing.Size(84, 43);
+			this.StatusLabel.Size = new System.Drawing.Size(83, 36);
 			this.StatusLabel.Text = "Status:";
 			// 
 			// NextRunSeparator
 			// 
 			this.NextRunSeparator.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.NextRunSeparator.Name = "NextRunSeparator";
-			this.NextRunSeparator.Size = new System.Drawing.Size(6, 49);
+			this.NextRunSeparator.Size = new System.Drawing.Size(6, 42);
 			// 
 			// NextRunLabel
 			// 
 			this.NextRunLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.NextRunLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
 			this.NextRunLabel.Name = "NextRunLabel";
-			this.NextRunLabel.Size = new System.Drawing.Size(214, 43);
+			this.NextRunLabel.Size = new System.Drawing.Size(213, 36);
 			this.NextRunLabel.Text = "Next Run: 00:00:00";
 			// 
 			// RunStateLabel
@@ -246,7 +246,7 @@
 			this.RunStateLabel.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
 			this.RunStateLabel.ForeColor = System.Drawing.SystemColors.ControlDark;
 			this.RunStateLabel.Name = "RunStateLabel";
-			this.RunStateLabel.Size = new System.Drawing.Size(22, 43);
+			this.RunStateLabel.Size = new System.Drawing.Size(21, 36);
 			this.RunStateLabel.Text = " ";
 			// 
 			// QueueMonitorTimer

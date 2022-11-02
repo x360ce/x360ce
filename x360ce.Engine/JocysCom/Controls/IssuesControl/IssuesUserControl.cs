@@ -211,15 +211,18 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 				if (TasksTimer != null)
 					TasksTimer.Dispose();
 				// Clear list.
-				var items = IssueList.ToArray();
-				IssueList.Clear();
-				// Remove events.
-				foreach (var item in items)
+				var items = IssueList?.ToArray();
+				if (items != null)
 				{
-					item.Checking -= Item_Checking;
-					item.Checked -= Item_Checked;
-					item.Fixing -= Item_Fixing;
-					item.Fixed -= Item_Fixed;
+					IssueList.Clear();
+					// Remove events.
+					foreach (var item in items)
+					{
+						item.Checking -= Item_Checking;
+						item.Checked -= Item_Checked;
+						item.Fixing -= Item_Fixing;
+						item.Fixed -= Item_Fixed;
+					}
 				}
 				if (components != null)
 					components.Dispose();

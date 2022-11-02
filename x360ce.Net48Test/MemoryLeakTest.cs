@@ -51,7 +51,18 @@ namespace x360ce.Net48Test
 		public void Test_x360ce_Engine_IssuesUserControl() =>
 			Test<JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl>();
 
+		[TestMethod]
+		public void Test_x360ce_Engine_IssuesControl() =>
+			Test<JocysCom.ClassLibrary.Controls.IssuesControl.IssuesControl>();
+
 		#region TestMemoryLeak
+
+#if DEBUG
+		static bool isDebug = true;
+#else
+		static bool isDebug = false;
+#endif
+
 
 		private static void Test<T>()
 		{
@@ -206,6 +217,8 @@ namespace x360ce.Net48Test
 				}
 				catch (Exception ex)
 				{
+					if (isDebug)
+						throw;
 					result.Level = TraceLevel.Error;
 					result.Message = ex.Message;
 					result.Exception = ex;
@@ -215,7 +228,7 @@ namespace x360ce.Net48Test
 			return result;
 		}
 
-		#endregion
+#endregion
 
 	}
 }

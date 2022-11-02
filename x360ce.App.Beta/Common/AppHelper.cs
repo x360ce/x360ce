@@ -322,21 +322,6 @@ namespace x360ce.App
 			}
 		}
 
-		public static void SetItemsSource(System.Windows.Controls.ItemsControl grid, System.ComponentModel.IBindingList list)
-		{
-			if (list == null)
-			{
-				if (grid.ItemsSource is System.Windows.Data.BindingListCollectionView view)
-				{
-					grid.ItemsSource = null;
-					view.DetachFromSourceCollection();
-				}
-				return;
-			}
-			var newView = new System.Windows.Data.BindingListCollectionView(list);
-			grid.ItemsSource = newView;
-		}
-
 		#region ■ HID Guardian
 
 		public static void InitializeHidGuardian()

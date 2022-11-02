@@ -97,7 +97,7 @@
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<TextBlock Margin="0">
-								<Hyperlink NavigateUri="{Binding MoreInfo}" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="">
+								<Hyperlink NavigateUri="{Binding MoreInfo}" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
 									<Label Content="{Binding MoreInfo}" />
 								</Hyperlink>
 							</TextBlock>

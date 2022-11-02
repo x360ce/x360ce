@@ -21,7 +21,7 @@ namespace x360ce.App.Controls
 
 		public void InitPadData()
 		{
-			AppHelper.SetItemsSource(MapNameComboBox, SettingsManager.Layouts.Items);
+			ControlsHelper.SetItemsSource(MapNameComboBox, SettingsManager.Layouts.Items);
 			//MapNameComboBox.ItemsSource = LayoutsItems;
 			//MapNameComboBox.DisplayMemberPath = "Name";
 			if (SettingsManager.Layouts.Items.Count > 0)
@@ -359,7 +359,7 @@ namespace x360ce.App.Controls
 			SetBinding(MapTo.None, null);
 			//MapNameComboBox.ItemsSource = null;
 			//MapNameComboBox.SelectedItem = null;
-			AppHelper.SetItemsSource(MapNameComboBox, null);
+			ControlsHelper.SetItemsSource(MapNameComboBox, null);
 			DiMenuStrip.Clear();
 		}
 

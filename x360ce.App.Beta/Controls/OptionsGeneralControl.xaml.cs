@@ -42,7 +42,7 @@ namespace x360ce.App.Controls
 		{
 			var o = SettingsManager.Options;
 			SettingsManager.LoadAndMonitor(o, nameof(Options.DebugMode), DebugModeCheckBox);
-			AppHelper.SetItemsSource(GameScanLocationsListBox, o.GameScanLocations);
+			ControlsHelper.SetItemsSource(GameScanLocationsListBox, o.GameScanLocations);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.GameScanLocations), GameScanLocationsListBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.StartWithWindows), StartWithWindowsCheckBox);
 			StartWithWindowsStateComboBox.ItemsSource = Enum.GetValues(typeof(System.Windows.Forms.FormWindowState));
@@ -174,7 +174,7 @@ namespace x360ce.App.Controls
 			if (!ControlsHelper.AllowUnload(this))
 				return;
 			SettingsManager.UnLoadMonitor(DebugModeCheckBox);
-			AppHelper.SetItemsSource(GameScanLocationsListBox, null);
+			ControlsHelper.SetItemsSource(GameScanLocationsListBox, null);
 			SettingsManager.UnLoadMonitor(GameScanLocationsListBox);
 			SettingsManager.UnLoadMonitor(StartWithWindowsCheckBox);
 			StartWithWindowsStateComboBox.ItemsSource = null;

@@ -7,18 +7,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
+using x360ce.Engine;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
 	/// <summary>
 	/// Interaction logic for IssuesControl.xaml
 	/// </summary>
-	public partial class IssuesControl : UserControl
+	public partial class IssuesControl : UserControl, ILoadUnload
 	{
 		public IssuesControl()
 		{
-			InitHelper.InitTimer(this, InitializeComponent);
+			//InitHelper.InitTimer(this, InitializeComponent);
+			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			NoIssuesPanel.Visibility = Visibility.Collapsed;
@@ -129,9 +130,6 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		// List of warnings to show.
 		public BindingListInvoked<IssueItem> Warnings;
-		// Warnings will be wrapped into BindingListCollectionView in order to break link with control and avoid memory leak.
-		BindingListCollectionView WarningsView;
-
 		BindingListInvoked<IssueItem> IssueList;
 
 		public void AddIssues(params IssueItem[] items)
@@ -313,8 +311,18 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
-			if (!ControlsHelper.AllowLoad(this))
-				return;
+			if (ControlsHelper.AllowLoad(this))
+				Load();
+		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (ControlsHelper.AllowUnload(this))
+				Unload();
+		}
+
+		public void Load()
+		{
 			// List which contains all issues.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			IssueList = new BindingListInvoked<IssueItem>();
@@ -322,8 +330,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			// List which is bound to the grid and displays issues, which needs user attention.
 			Warnings = new BindingListInvoked<IssueItem>();
 			Warnings.SynchronizingObject = scheduler;
-			WarningsView = new BindingListCollectionView(Warnings);
-			MainDataGrid.ItemsSource = WarningsView;
+			ControlsHelper.SetItemsSource(MainDataGrid, Warnings);
 			UpdateIgnoreButton();
 			// Timer which checks for the issues.
 			var ai = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
@@ -337,10 +344,8 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			QueueMonitorTimer.Start();
 		}
 
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		public void Unload()
 		{
-			if (!ControlsHelper.AllowUnload(this))
-				return;
 			IsDisposing = true;
 			// Clear list.
 			var items = IssueList?.ToArray();
@@ -356,8 +361,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 					item.Fixed -= Item_Fixed;
 				}
 			}
-			WarningsView?.DetachFromSourceCollection();
-			//MainDataGrid.ItemsSource = null;
+			ControlsHelper.SetItemsSource(MainDataGrid, null);
 			if (Warnings != null)
 			{
 				Warnings.SynchronizingObject = null;

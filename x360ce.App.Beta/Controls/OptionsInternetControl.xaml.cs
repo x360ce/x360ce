@@ -160,7 +160,7 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(CheckForUpdatesCheckBox);
 			SettingsManager.UnLoadMonitor(InternetDatabaseUrlComboBox);
 			SettingsManager.UnLoadMonitor(GetProgramsIncludeEnabledCheckBox);
-			AppHelper.SetItemsSource(InternetDatabaseUrlComboBox, null);
+			ControlsHelper.SetItemsSource(InternetDatabaseUrlComboBox, null);
 		}
 
 	}
