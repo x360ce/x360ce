@@ -397,6 +397,7 @@
     </Compile>
     <Compile Include="Program.AdminCommands.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="Program.TestMemoryLeak.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\SettingsMapItem.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
