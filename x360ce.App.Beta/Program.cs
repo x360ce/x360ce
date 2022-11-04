@@ -30,6 +30,7 @@ namespace x360ce.App
 		static void Main(string[] args)
 		{
 			//TestMemoryLeak(typeof(JocysCom.ClassLibrary.Controls.IssuesControl.IssuesControl));
+			//return;
 			CaptureExceptions();
 			// Fix: System.TimeoutException: The operation has timed out. at System.Windows.Threading.Dispatcher.InvokeImpl
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotInvokeInWeakEventTableShutdownListener", true);
