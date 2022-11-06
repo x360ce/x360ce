@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using JocysCom.WebSites.Engine.Security.Data;
 using JocysCom.ClassLibrary.Web.Services;
 using x360ce.Engine.Data;
+using System.Windows.Controls;
+using System.Windows;
 
 namespace x360ce.Net48Test
 {
@@ -54,6 +56,22 @@ namespace x360ce.Net48Test
 		[TestMethod]
 		public void Test_x360ce_Engine_IssuesControl() =>
 			Test<JocysCom.ClassLibrary.Controls.IssuesControl.IssuesControl>();
+
+
+		/// <summary>
+		/// Simple ListView will be garbage collected successfully.
+		/// </summary>
+		[TestMethod]
+		public void Test_ListView() =>
+			Test<System.Windows.Controls.ListView>();
+
+
+		/// <summary>
+		/// Simple DataGrid fails garbage collection and leaks memory.
+		/// </summary>
+		[TestMethod]
+		public void Test_DataGrid() =>
+			Test<System.Windows.Controls.DataGrid>();
 
 		#region TestMemoryLeak
 
@@ -149,6 +167,7 @@ namespace x360ce.Net48Test
 			GC.WaitForFullGCComplete();
 		}
 
+		//[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
 		private static MemTestResult TestType(Type type)
 		{
 			var stopwatch = new Stopwatch();
@@ -181,14 +200,26 @@ namespace x360ce.Net48Test
 						result.Level = TraceLevel.Error;
 						result.Message += "Wrong Type!";
 					}
-					if (o is System.Windows.Controls.UserControl uc1)
+					if (o is Window ucw)
 					{
-						var window = new System.Windows.Window();
-						window.Content = uc1;
-						window.Activate();
-						window.Content = null;
-						window = null;
-						uc1 = null;
+					}
+					else if (o is System.Windows.Controls.Control uc1)
+					{
+						try
+						{
+
+							var window = new System.Windows.Window();
+							window.Content = uc1;
+							window.Activate();
+							window.Content = null;
+							window = null;
+							uc1 = null;
+						}
+						catch (Exception ex1)
+						{
+							var x1 = ex1;
+							throw;
+						}
 					}
 					else if (o is System.Windows.Forms.UserControl uc2)
 					{
@@ -200,6 +231,12 @@ namespace x360ce.Net48Test
 						uc3.Dispose();
 						uc3 = null;
 					}
+
+					if (o is DataGrid dg)
+					{
+
+					}
+
 					// Trigger object dispose.
 					o = null;
 					// loop untill object allive, but no longer than  seconds.
@@ -228,7 +265,7 @@ namespace x360ce.Net48Test
 			return result;
 		}
 
-#endregion
+		#endregion
 
 	}
 }
