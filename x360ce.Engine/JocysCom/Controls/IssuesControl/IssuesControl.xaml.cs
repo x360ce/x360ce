@@ -14,7 +14,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 	/// <summary>
 	/// Interaction logic for IssuesControl.xaml
 	/// </summary>
-	public partial class IssuesControl : UserControl, ILoadUnload
+	public partial class IssuesControl : UserControl
 	{
 		public IssuesControl()
 		{

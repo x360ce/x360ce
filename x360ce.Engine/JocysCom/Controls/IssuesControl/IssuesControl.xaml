@@ -61,65 +61,57 @@
 			BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
 			BorderThickness="1"
 			SnapsToDevicePixels="True" />
-		<DataGrid
+		<ListView
 			x:Name="MainDataGrid"
 			Grid.Row="1"
 			Height="Auto"
 			HorizontalAlignment="Stretch"
-			AutoGenerateColumns="False"
 			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-			IsReadOnly="True"
 			SelectionChanged="MainDataGrid_SelectionChanged">
-			<DataGrid.Resources>
+			<ListView.Resources>
 				<local:SeverityToImageConverter x:Key="_SeverityToImageConverter" />
-			</DataGrid.Resources>
-			<DataGrid.Columns>
-				<!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
-				<DataGridTemplateColumn Width="SizeToCells" Header="" IsReadOnly="True">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Image Source="{Binding Severity, Converter={StaticResource _SeverityToImageConverter}}" />
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTextColumn
-					Binding="{Binding Name}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Name" />
-				<DataGridTextColumn
-					Width="*"
-					Binding="{Binding Description}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Description" />
-				<DataGridTemplateColumn Header="More" IsReadOnly="True">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<TextBlock Margin="0">
-								<Hyperlink NavigateUri="{Binding MoreInfo}" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
-									<Label Content="{Binding MoreInfo}" />
-								</Hyperlink>
-							</TextBlock>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridTemplateColumn Header="Solution" IsReadOnly="True">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Button x:Name="SolutionButton" Click="SolutionButton_Click" Tag="{Binding .}">
-								<Label Content="{Binding FixName}" />
-							</Button>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-			</DataGrid.Columns>
-			<DataGrid.CellStyle>
-				<Style TargetType="DataGridCell">
-					<Setter Property="Padding" Value="4" />
-				</Style>
-			</DataGrid.CellStyle>
-		</DataGrid>
+			</ListView.Resources>
+			<GridView>
+				<GridView.Columns>
+					<!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
+					<GridViewColumn Header="">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<Image Source="{Binding Severity, Converter={StaticResource _SeverityToImageConverter}}" />
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn DisplayMemberBinding="{Binding Name}" Header="Name" />
+					<GridViewColumn Header="Description">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Style="{StaticResource TextBlockCell}" Text="{Binding Description}" />
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="More">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<TextBlock Margin="0">
+									<Hyperlink NavigateUri="{Binding MoreInfo}" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
+										<Label Content="{Binding MoreInfo}" />
+									</Hyperlink>
+								</TextBlock>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+					<GridViewColumn Header="Solution">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<Button x:Name="SolutionButton" Click="SolutionButton_Click" Tag="{Binding .}">
+									<Label Content="{Binding FixName}" />
+								</Button>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
+				</GridView.Columns>
+			</GridView>
+		</ListView>
 		<Border
 			x:Name="LinePanel"
 			Grid.Row="2"

@@ -113,7 +113,7 @@ namespace x360ce.Net48Test
 			}
 			Assert.IsTrue(infoPass.Count > 0);
 			Assert.IsTrue(infoFail.Count == 0);
-			Assert.IsTrue(warnings.Count == 0);
+			//Assert.IsTrue(warnings.Count == 0);
 			Assert.IsTrue(errors.Count == 0);
 		}
 
@@ -152,8 +152,10 @@ namespace x360ce.Net48Test
 					message += $", Memory Difference: {result.MemDifference:+#,##0;-#,##0;#,##0}";
 					message += $", Duration: {result.Duration:#,##0} ms";
 				}
-				Debug.WriteLine(message);
-				//Console.WriteLine(message);
+				if (isDebug)
+					Debug.WriteLine(message);
+				else
+					Console.WriteLine(message);
 
 			}
 			return results;
@@ -205,21 +207,12 @@ namespace x360ce.Net48Test
 					}
 					else if (o is System.Windows.Controls.Control uc1)
 					{
-						try
-						{
-
-							var window = new System.Windows.Window();
-							window.Content = uc1;
-							window.Activate();
-							window.Content = null;
-							window = null;
-							uc1 = null;
-						}
-						catch (Exception ex1)
-						{
-							var x1 = ex1;
-							throw;
-						}
+						var window = new System.Windows.Window();
+						window.Content = uc1;
+						window.Activate();
+						//window.Content = null;
+						window = null;
+						uc1 = null;
 					}
 					else if (o is System.Windows.Forms.UserControl uc2)
 					{
