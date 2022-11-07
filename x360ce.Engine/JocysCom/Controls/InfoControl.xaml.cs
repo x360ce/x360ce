@@ -1,12 +1,10 @@
 ﻿using JocysCom.ClassLibrary.Controls.Themes;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using x360ce.Engine.Data;
 
 namespace JocysCom.ClassLibrary.Controls
 {

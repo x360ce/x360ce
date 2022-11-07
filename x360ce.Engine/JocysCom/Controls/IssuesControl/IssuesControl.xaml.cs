@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using x360ce.Engine;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
 {
