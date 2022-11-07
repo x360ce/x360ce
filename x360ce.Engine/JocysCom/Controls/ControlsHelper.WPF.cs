@@ -193,7 +193,13 @@ namespace JocysCom.ClassLibrary.Controls
 				}
 				return;
 			}
+			var currentView = (System.Windows.Data.BindingListCollectionView)grid.ItemsSource;
+			// If same list then...
+			if (currentView?.SourceCollection == list)
+				return;
 			var newView = new System.Windows.Data.BindingListCollectionView(list);
+			// Clear Items to avoid exception: "Items collection must be empty before using ItemsSource"
+			grid.Items.Clear();
 			grid.ItemsSource = newView;
 		}
 
