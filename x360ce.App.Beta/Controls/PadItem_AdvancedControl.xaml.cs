@@ -13,11 +13,11 @@ namespace x360ce.App.Controls
 	{
 		public PadItem_AdvancedControl()
 		{
-			InitHelper.InitTimer(this, InitializeComponent);
-			if (ControlsHelper.IsDesignMode(this))
-				return;
+			//InitHelper.InitTimer(this, InitializeComponent);
+			//if (ControlsHelper.IsDesignMode(this))
+			//	return;
 			// Add GamePad typed to ComboBox.
-			DeviceSubTypeComboBox.ItemsSource = (DeviceSubType[])Enum.GetValues(typeof(DeviceSubType));
+			//DeviceSubTypeComboBox.ItemsSource = (DeviceSubType[])Enum.GetValues(typeof(DeviceSubType));
 		}
 
 		public void SetBinding(PadSetting ps)
@@ -39,14 +39,18 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowLoad(this))
 				return;
+			Console.WriteLine("LOAD!!!");
+			//Window.GetWindow(this).Closing += UserControl_Unloaded;
 		}
 
-		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		private void UserControl_Unloaded(object sender, EventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
-			SetBinding(null);
-			DeviceSubTypeComboBox.ItemsSource = null;
+			Console.WriteLine("UNLOAD!!!");
+			//Window.GetWindow(this).Closing -= UserControl_Unloaded;
+			//SetBinding(null);
+			//DeviceSubTypeComboBox.ItemsSource = null;
 		}
 
 	}

@@ -65,13 +65,22 @@ namespace x360ce.Net48Test
 		public void Test_ListView() =>
 			Test<System.Windows.Controls.ListView>();
 
-
 		/// <summary>
 		/// Simple DataGrid fails garbage collection and leaks memory.
 		/// </summary>
 		[TestMethod]
 		public void Test_DataGrid() =>
 			Test<System.Windows.Controls.DataGrid>();
+
+		[TestMethod]
+		public void Test_TextBox() =>
+			Test<System.Windows.Controls.TextBox>();
+
+		[TestMethod]
+		public void Test_StackPanel() =>
+			Test<System.Windows.Controls.StackPanel>();
+
+
 
 		#region TestMemoryLeak
 
@@ -205,14 +214,20 @@ namespace x360ce.Net48Test
 					if (o is Window ucw)
 					{
 					}
-					else if (o is System.Windows.Controls.Control uc1)
+					else if (o is System.Windows.FrameworkElement uc1)
 					{
 						var window = new System.Windows.Window();
-						window.Content = uc1;
-						window.Activate();
-						//window.Content = null;
-						window = null;
-						uc1 = null;
+						var sp = new StackPanel();
+						sp.Children.Add(uc1);
+						window.Content = sp;
+						window.Top = 100;
+						window.Left = 100;
+						window.IsHitTestVisible = false;
+						indow.SizeToContent = SizeToContent.WidthAndHeight;
+						window.Show(); // Show form will result in element dispose/garbage collection fail.
+						Task.Delay(100).Wait();
+						window.Close();
+						window.Content = null;
 					}
 					else if (o is System.Windows.Forms.UserControl uc2)
 					{
