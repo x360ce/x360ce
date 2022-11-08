@@ -223,7 +223,7 @@ namespace x360ce.Net48Test
 						window.Top = 100;
 						window.Left = 100;
 						window.IsHitTestVisible = false;
-						indow.SizeToContent = SizeToContent.WidthAndHeight;
+						window.SizeToContent = SizeToContent.WidthAndHeight;
 						window.Show(); // Show form will result in element dispose/garbage collection fail.
 						Task.Delay(100).Wait();
 						window.Close();
