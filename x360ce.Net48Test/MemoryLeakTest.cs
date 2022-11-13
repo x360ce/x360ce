@@ -1,18 +1,25 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
-using System;
-using System.Linq;
-using System.Runtime;
+﻿using System.Runtime;
 using System.Reflection;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using JocysCom.WebSites.Engine.Security.Data;
 using JocysCom.ClassLibrary.Web.Services;
 using x360ce.Engine.Data;
 using System.Windows.Controls;
 using System.Windows;
-
+#if NETCOREAPP
+#else
+using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
+#endif
+#if NETCOREAPP
+namespace x360ce.Net60Test
+#else
 namespace x360ce.Net48Test
+#endif
 {
 
 	/// <summary>
@@ -43,7 +50,7 @@ namespace x360ce.Net48Test
 				// Include types. null = Test all.
 				null,
 				// Exclude types.
-				new[] {
+				new Type[] {
 					typeof(SecurityEntities),
 					typeof(SoapHttpClientBase),
 					typeof(x360ceModelContainer),
@@ -90,22 +97,108 @@ namespace x360ce.Net48Test
 		static bool isDebug = false;
 #endif
 
+		/// <summary>
+		/// The main (main) application window never dispose until the application closes.
+		/// The secondary window must have the main window as owner in order to be disposed out correctly.
+		/// the secondary window will be used for dispose tests.
+		/// </summary>
+		private static System.Windows.Application MainApp;
+		private static System.Windows.Window MainWindow;
+		private static Thread MainThread;
+		private static object MainWindowLock = new object();
+		private static bool isMainWindowLoaded = false;
+		private static bool isMainWindowUnloaded = false;
+		private static bool isMainWindowClosed = false;
+
+		private static void CheckMainWindow()
+		{
+			lock (MainWindowLock)
+			{
+				if (MainWindow != null)
+					return;
+				Action isolator = () =>
+				{
+					MainApp = new System.Windows.Application();
+					var w = new System.Windows.Window();
+					w.Topmost = true;
+					w.Title = "Owner Window";
+					w.Width = 100;
+					w.Height = 32;
+					//w.IsHitTestVisible = false;
+					//w.ShowInTaskbar = false;
+					//w.WindowState = WindowState.Minimized;
+					w.SizeToContent = SizeToContent.WidthAndHeight;
+					// Use weak reference events.
+					RoutedEventHandler onLoaded = (sender, e) =>
+					{
+						//w.Dispatcher.BeginInvoke(new Action(() =>
+						//{
+						//	// Create control to add.
+						//	var sp = new StackPanel();
+						//	var label = new Label() { Content = "Main Window" };
+						//	sp.Children.Add(label);
+						//	w.Content = sp;
+						//}));
+						Console.WriteLine("Owner window loaded");
+						isMainWindowLoaded = true;
+					};
+					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(Window.Loaded), new EventHandler<RoutedEventArgs>(onLoaded));
+					// Use weak reference events.
+					RoutedEventHandler onUnloaded = (sender, e) =>
+					{
+						Console.WriteLine("Owner window unloaded");
+						isMainWindowUnloaded = true;
+					};
+					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(Window.Unloaded), new EventHandler<RoutedEventArgs>(onUnloaded));
+					// Use weak reference events.
+					EventHandler onClosed = (sender, e) =>
+					{
+						Console.WriteLine("Owner window closed");
+						isMainWindowClosed = true;
+					};
+					WeakEventManager<Window, EventArgs>.AddHandler(w, nameof(Window.Closed), new EventHandler<EventArgs>(onClosed));
+					w.Show();
+					MainWindow = w;
+					MainApp.Run(MainWindow);
+				};
+				var ts = new System.Threading.ThreadStart(isolator);
+				MainThread = new System.Threading.Thread(ts);
+				MainThread.IsBackground = false;
+				MainThread.SetApartmentState(ApartmentState.STA);
+				MainThread.Start();
+				// Wait until window is loaded.
+				while (!isMainWindowLoaded)
+					Task.Delay(100);
+			}
+		}
+
+		private static void W_Loaded(object sender, RoutedEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
 
 		private static void Test<T>()
 		{
-			Test(typeof(T).Assembly, new[] { typeof(T) });
+			Test(typeof(T).Assembly, new Type[] { typeof(T) });
 		}
 
 		public static void Test(Assembly assembly, Type[] includeTypes = null, Type[] excludeTypes = null)
 		{
+			// Make sure that owner window exists.
+			CheckMainWindow();
+
+
 			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes);
 			var errors = results.Where(x => x.Level == TraceLevel.Error).ToList();
 			var warnings = results.Where(x => x.Level == TraceLevel.Warning).ToList();
-			var infoPass = results.Where(x => x.Level == TraceLevel.Info && !x.IsAlive).ToList();
-			var infoFail = results.Where(x => x.Level == TraceLevel.Info && x.IsAlive).ToList();
+			var passed = results.Where(x => x.Level == TraceLevel.Info && !x.IsAlive).ToList();
+			var failed = results.Where(x => x.Level == TraceLevel.Info && x.IsAlive).ToList();
 			Console.WriteLine();
-			Console.WriteLine($"Disposed: {infoPass.Count}, Dispose Failed: {infoFail.Count}");
-			Console.WriteLine($"Warnings: {warnings.Count}, Dispose Errors: {errors.Count}");
+			Console.WriteLine($"Passed: {passed.Count}");
+			Console.WriteLine($"Failed: {failed.Count}");
+			Console.WriteLine($"Errors: {errors.Count}");
+			Console.WriteLine();
+			Console.WriteLine($"Warnings: {warnings.Count}");
 			if (results.Count == 1)
 				Console.WriteLine($"Duration: {results[0].Duration:#,##0} ms");
 			// If more than one control was tested then...
@@ -113,17 +206,24 @@ namespace x360ce.Net48Test
 			{
 				// Recommend fixing the smallest control next, because
 				// more likely that it does not contain other controls, but is used by other controls.
-				var nextToFix = infoFail.OrderBy(x => x.MemObjectSize).FirstOrDefault();
+				var nextToFix = failed.OrderBy(x => x.MemObjectSize).FirstOrDefault();
 				if (nextToFix != null)
 				{
 					Console.WriteLine();
 					Console.WriteLine($"Smallest recommended control to fix: {nextToFix.Type.FullName}");
 				}
 			}
-			Assert.IsTrue(infoPass.Count > 0);
-			Assert.IsTrue(infoFail.Count == 0);
-			//Assert.IsTrue(warnings.Count == 0);
+			Assert.IsTrue(passed.Count > 0);
+			Assert.IsTrue(failed.Count == 0);
 			Assert.IsTrue(errors.Count == 0);
+
+			MainApp.Dispatcher.Invoke(() =>
+			{
+				MainWindow.Close();
+			});
+			// Wait until window is unloaded and closed.
+			while (!isMainWindowClosed)
+				Task.Delay(100);
 		}
 
 
@@ -175,7 +275,9 @@ namespace x360ce.Net48Test
 			// Try to remove object from the memory.
 			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
 			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+			//GC.Collect();
 			GC.WaitForFullGCComplete();
+			GC.WaitForPendingFinalizers();
 		}
 
 		//[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
@@ -201,64 +303,108 @@ namespace x360ce.Net48Test
 				CollectGarbage();
 				try
 				{
-					var memBeforeCreate = GC.GetTotalMemory(false);
-					var o = Activator.CreateInstance(type);
-					result.MemObjectSize = GC.GetTotalMemory(false) - memBeforeCreate;
-					var wr = new WeakReference(o);
-					// If WeakReference point to the intended object instance then...
-					if (!wr.Target.Equals(o))
+					var controlWr = new WeakReference(null);
+					var testWindowWr = new WeakReference(null);
+					var mainWindowWr = new WeakReference(null);
+					long memBeforeCreate = 0;
+					Action isolator = () =>
 					{
-						result.Level = TraceLevel.Error;
-						result.Message += "Wrong Type!";
-					}
-					if (o is Window ucw)
-					{
-					}
-					else if (o is System.Windows.FrameworkElement uc1)
-					{
-						var window = new System.Windows.Window();
-						var sp = new StackPanel();
-						sp.Children.Add(uc1);
-						window.Content = sp;
-						window.Top = 100;
-						window.Left = 100;
-						window.IsHitTestVisible = false;
-						window.SizeToContent = SizeToContent.WidthAndHeight;
-						window.Show(); // Show form will result in element dispose/garbage collection fail.
-						Task.Delay(100).Wait();
-						window.Close();
-						window.Content = null;
-					}
-					else if (o is System.Windows.Forms.UserControl uc2)
-					{
-						uc2.Dispose();
-						uc2 = null;
-					}
-					else if (o is IDisposable uc3)
-					{
-						uc3.Dispose();
-						uc3 = null;
-					}
+						memBeforeCreate = GC.GetTotalMemory(false);
+						var o = Activator.CreateInstance(type);
+						result.MemObjectSize = GC.GetTotalMemory(false) - memBeforeCreate;
+						controlWr.Target = o;
+						// If WeakReference point to the intended object instance then...
+						if (!Equals(controlWr.Target, o))
+						{
+							result.Level = TraceLevel.Error;
+							result.Message += "Wrong Type!";
+						}
+						if (o is System.Windows.Window ucw)
+						{
+							Console.WriteLine("is Window");
+						}
+						else if (o is System.Windows.FrameworkElement uc1)
+						{
+							bool isTestLoaded = false;
+							bool isTestClosed = false;
+							Console.WriteLine("is FrameworkElement");
+							mainWindowWr.Target = MainWindow;
+							// Create control to add.
+							var sp = new StackPanel();
+							sp.Children.Add(uc1);
+							var window = new System.Windows.Window();
+							window.Owner = MainWindow;
+							window.Topmost = true;
+							window.Top = 100;
+							window.Left = 100;
+							window.Width = 100;
+							window.Height = 100;
+							//window.IsHitTestVisible = false;
+							//window.ShowInTaskbar = false;
+							//window.WindowState = WindowState.Minimized;
 
-					if (o is DataGrid dg)
-					{
+							window.Loaded += (sender, e) =>
+							{
+								Console.WriteLine("Test window loaded");
+								isTestLoaded = true;
+							};
+							window.Unloaded += (sender, e) =>
+							{
+								Console.WriteLine("Test window unloaded");
+							};
+							window.Closing += (sender, e) =>
+							{
+								Console.WriteLine("Test window closing");
+								isTestClosed = true;
+							};
+							window.Content = sp;
+							window.Show();
+							while (!isTestLoaded)
+								Task.Delay(100).Wait();
+							Task.Delay(1000).Wait();
+							window.Close();
+							while (!isTestClosed)
+								Task.Delay(100).Wait();
+							//window.Owner = null;
+							//window.Content = null;
+							Task.Delay(1000).Wait();
+						}
+						else if (o is System.Windows.Forms.UserControl uc2)
+						{
+							uc2.Dispose();
+							uc2 = null;
+						}
+						else if (o is IDisposable uc3)
+						{
+							uc3.Dispose();
+							uc3 = null;
+						}
 
-					}
+						if (o is DataGrid dg)
+						{
 
-					// Trigger object dispose.
-					o = null;
+						}
+						// Trigger object dispose.
+						o = null;
+					};
+					// Create new window on the same thread.
+					MainWindow.Dispatcher.Invoke(isolator);
 					// loop untill object allive, but no longer than  seconds.
-					while (wr.IsAlive && stopwatch.ElapsedMilliseconds < TestMaxDurationPerClassTest)
+					while (controlWr.IsAlive && stopwatch.ElapsedMilliseconds < TestMaxDurationPerClassTest)
 					{
-						Task.Delay(100);
+						Task.Delay(200).Wait();
 						CollectGarbage();
+						//Console.WriteLine("Collect Garbage");
 					}
 					result.MemDifference = GC.GetTotalMemory(true) - memBeforeCreate;
-					result.IsAlive = wr.IsAlive;
+					result.IsAlive = controlWr.IsAlive;
 					// if dispose failed. Strong references are left to the wr.Target.
-					result.Message += wr.IsAlive
+					result.Message += controlWr.IsAlive
 						? "Dispose Failed!"
 						: "Disposed";
+					Console.WriteLine($"Control IsAlive: {controlWr.IsAlive}");
+					Console.WriteLine($"Main Window IsAlive: {mainWindowWr.IsAlive}");
+					Console.WriteLine($"Test Window IsAlive: {testWindowWr.IsAlive}");
 				}
 				catch (Exception ex)
 				{
@@ -267,6 +413,7 @@ namespace x360ce.Net48Test
 					result.Level = TraceLevel.Error;
 					result.Message = ex.Message;
 					result.Exception = ex;
+					Console.WriteLine(ex.ToString());
 				}
 			}
 			result.Duration = stopwatch.ElapsedMilliseconds;
