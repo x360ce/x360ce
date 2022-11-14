@@ -6,6 +6,8 @@ using JocysCom.ClassLibrary.Web.Services;
 using x360ce.Engine.Data;
 using System.Windows.Controls;
 using System.Windows;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
 #if NETCOREAPP
 #else
 using System;
@@ -104,11 +106,18 @@ namespace x360ce.Net48Test
 		/// </summary>
 		private static System.Windows.Application MainApp;
 		private static System.Windows.Window MainWindow;
+		private static System.Windows.Controls.Label MainLabel;
 		private static Thread MainThread;
 		private static object MainWindowLock = new object();
 		private static bool isMainWindowLoaded = false;
-		private static bool isMainWindowUnloaded = false;
 		private static bool isMainWindowClosed = false;
+
+		private const int GWL_STYLE = -16;
+		private const int WS_SYSMENU = 0x80000;
+		[DllImport("user32.dll", SetLastError = true)]
+		private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+		[DllImport("user32.dll")]
+		private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
 		private static void CheckMainWindow()
 		{
@@ -120,36 +129,26 @@ namespace x360ce.Net48Test
 				{
 					MainApp = new System.Windows.Application();
 					var w = new System.Windows.Window();
+					w.Title = "Memory Leak Test";
+					w.Width = 200;
 					w.Topmost = true;
-					w.Title = "Owner Window";
-					w.Width = 100;
-					w.Height = 32;
-					//w.IsHitTestVisible = false;
-					//w.ShowInTaskbar = false;
-					//w.WindowState = WindowState.Minimized;
+					w.IsHitTestVisible = false;
 					w.SizeToContent = SizeToContent.WidthAndHeight;
+					// Create content control.
+					var sp = new StackPanel();
+					MainLabel = new Label() { Content = w.Title };
+					sp.Children.Add(MainLabel);
+					w.Content = sp;
 					// Use weak reference events.
 					RoutedEventHandler onLoaded = (sender, e) =>
 					{
-						//w.Dispatcher.BeginInvoke(new Action(() =>
-						//{
-						//	// Create control to add.
-						//	var sp = new StackPanel();
-						//	var label = new Label() { Content = "Main Window" };
-						//	sp.Children.Add(label);
-						//	w.Content = sp;
-						//}));
 						Console.WriteLine("Owner window loaded");
 						isMainWindowLoaded = true;
+						// Hide title buttons.
+						var hwnd = new WindowInteropHelper(MainWindow).Handle;
+						SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
 					};
 					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(Window.Loaded), new EventHandler<RoutedEventArgs>(onLoaded));
-					// Use weak reference events.
-					RoutedEventHandler onUnloaded = (sender, e) =>
-					{
-						Console.WriteLine("Owner window unloaded");
-						isMainWindowUnloaded = true;
-					};
-					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(Window.Unloaded), new EventHandler<RoutedEventArgs>(onUnloaded));
 					// Use weak reference events.
 					EventHandler onClosed = (sender, e) =>
 					{
@@ -157,7 +156,6 @@ namespace x360ce.Net48Test
 						isMainWindowClosed = true;
 					};
 					WeakEventManager<Window, EventArgs>.AddHandler(w, nameof(Window.Closed), new EventHandler<EventArgs>(onClosed));
-					w.Show();
 					MainWindow = w;
 					MainApp.Run(MainWindow);
 				};
@@ -186,8 +184,6 @@ namespace x360ce.Net48Test
 		{
 			// Make sure that owner window exists.
 			CheckMainWindow();
-
-
 			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes);
 			var errors = results.Where(x => x.Level == TraceLevel.Error).ToList();
 			var warnings = results.Where(x => x.Level == TraceLevel.Warning).ToList();
@@ -216,7 +212,6 @@ namespace x360ce.Net48Test
 			Assert.IsTrue(passed.Count > 0);
 			Assert.IsTrue(failed.Count == 0);
 			Assert.IsTrue(errors.Count == 0);
-
 			MainApp.Dispatcher.Invoke(() =>
 			{
 				MainWindow.Close();
@@ -242,8 +237,12 @@ namespace x360ce.Net48Test
 			var pad = "\r\n" + new string(' ', $"[----] {zeros}/{zeros}: ".Length);
 			for (int t = 0; t < types.Length; t++)
 			{
+				MainApp.Dispatcher.Invoke(() =>
+				{
+					MainLabel.Content = $"Test control: {t + 1}/{types.Length}";
+				});
 				var type = types[t];
-				var result = TestType(type);
+				var result = TestType(type, includeTypes?.Length == 1);
 				results.Add(result);
 				var isSuccess = !result.IsAlive && result.Level == TraceLevel.Info;
 				// If object was ddisposed without errors then continue
@@ -265,7 +264,6 @@ namespace x360ce.Net48Test
 					Debug.WriteLine(message);
 				else
 					Console.WriteLine(message);
-
 			}
 			return results;
 		}
@@ -281,7 +279,7 @@ namespace x360ce.Net48Test
 		}
 
 		//[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-		private static MemTestResult TestType(Type type)
+		private static MemTestResult TestType(Type type, bool logMoreDetails)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -303,7 +301,7 @@ namespace x360ce.Net48Test
 				CollectGarbage();
 				try
 				{
-					var controlWr = new WeakReference(null);
+					var testControlWr = new WeakReference(null);
 					var testWindowWr = new WeakReference(null);
 					var mainWindowWr = new WeakReference(null);
 					long memBeforeCreate = 0;
@@ -312,62 +310,57 @@ namespace x360ce.Net48Test
 						memBeforeCreate = GC.GetTotalMemory(false);
 						var o = Activator.CreateInstance(type);
 						result.MemObjectSize = GC.GetTotalMemory(false) - memBeforeCreate;
-						controlWr.Target = o;
+						testControlWr.Target = o;
 						// If WeakReference point to the intended object instance then...
-						if (!Equals(controlWr.Target, o))
+						if (!Equals(testControlWr.Target, o))
 						{
 							result.Level = TraceLevel.Error;
 							result.Message += "Wrong Type!";
 						}
 						if (o is System.Windows.Window ucw)
 						{
-							Console.WriteLine("is Window");
+							//Console.WriteLine("is Window");
 						}
 						else if (o is System.Windows.FrameworkElement uc1)
 						{
 							bool isTestLoaded = false;
 							bool isTestClosed = false;
-							Console.WriteLine("is FrameworkElement");
 							mainWindowWr.Target = MainWindow;
-							// Create control to add.
-							var sp = new StackPanel();
+							var testWindow = new System.Windows.Window();
+							testWindow.Title = "Test Window";
+							testWindow.Topmost = true;
+							testWindow.Top = MainWindow.Top + MainWindow.ActualHeight;
+							testWindow.Left = MainWindow.Left;
+							testWindow.IsHitTestVisible = false;
+							testWindow.SizeToContent = SizeToContent.WidthAndHeight;
+							// Create content control.
+							var sp = new StackPanel() { Orientation = Orientation.Vertical };
+							sp.Children.Add(new Label() { Content = "Test Control:" });
 							sp.Children.Add(uc1);
-							var window = new System.Windows.Window();
-							window.Owner = MainWindow;
-							window.Topmost = true;
-							window.Top = 100;
-							window.Left = 100;
-							window.Width = 100;
-							window.Height = 100;
-							//window.IsHitTestVisible = false;
-							//window.ShowInTaskbar = false;
-							//window.WindowState = WindowState.Minimized;
-
-							window.Loaded += (sender, e) =>
+							testWindow.Content = sp;
+							// Owner must be set to properly expose after closing.
+							testWindow.Owner = MainWindow;
+							testWindow.Loaded += (sender, e) =>
 							{
-								Console.WriteLine("Test window loaded");
+								//Console.WriteLine("Test window loaded");
 								isTestLoaded = true;
 							};
-							window.Unloaded += (sender, e) =>
+							testWindow.Unloaded += (sender, e) =>
 							{
-								Console.WriteLine("Test window unloaded");
+								//Console.WriteLine("Test window unloaded");
 							};
-							window.Closing += (sender, e) =>
+							testWindow.Closing += (sender, e) =>
 							{
-								Console.WriteLine("Test window closing");
+								//Console.WriteLine("Test window closing");
 								isTestClosed = true;
 							};
-							window.Content = sp;
-							window.Show();
+							testWindow.Show();
 							while (!isTestLoaded)
 								Task.Delay(100).Wait();
 							Task.Delay(1000).Wait();
-							window.Close();
+							testWindow.Close();
 							while (!isTestClosed)
 								Task.Delay(100).Wait();
-							//window.Owner = null;
-							//window.Content = null;
-							Task.Delay(1000).Wait();
 						}
 						else if (o is System.Windows.Forms.UserControl uc2)
 						{
@@ -390,21 +383,23 @@ namespace x360ce.Net48Test
 					// Create new window on the same thread.
 					MainWindow.Dispatcher.Invoke(isolator);
 					// loop untill object allive, but no longer than  seconds.
-					while (controlWr.IsAlive && stopwatch.ElapsedMilliseconds < TestMaxDurationPerClassTest)
+					while (testControlWr.IsAlive && stopwatch.ElapsedMilliseconds < TestMaxDurationPerClassTest)
 					{
 						Task.Delay(200).Wait();
 						CollectGarbage();
-						//Console.WriteLine("Collect Garbage");
 					}
 					result.MemDifference = GC.GetTotalMemory(true) - memBeforeCreate;
-					result.IsAlive = controlWr.IsAlive;
+					result.IsAlive = testControlWr.IsAlive;
 					// if dispose failed. Strong references are left to the wr.Target.
-					result.Message += controlWr.IsAlive
+					result.Message += testControlWr.IsAlive
 						? "Dispose Failed!"
 						: "Disposed";
-					Console.WriteLine($"Control IsAlive: {controlWr.IsAlive}");
-					Console.WriteLine($"Main Window IsAlive: {mainWindowWr.IsAlive}");
-					Console.WriteLine($"Test Window IsAlive: {testWindowWr.IsAlive}");
+					if (logMoreDetails)
+					{
+						Console.WriteLine($"Main Window  IsAlive: {mainWindowWr.IsAlive}");
+						Console.WriteLine($"Test Window  IsAlive: {testWindowWr.IsAlive}");
+						Console.WriteLine($"Test Control IsAlive: {testControlWr.IsAlive}");
+					}
 				}
 				catch (Exception ex)
 				{
