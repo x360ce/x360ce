@@ -109,8 +109,10 @@ namespace x360ce.Net48Test
 		private static System.Windows.Controls.Label MainLabel;
 		private static Thread MainThread;
 		private static object MainWindowLock = new object();
-		private static bool isMainWindowLoaded = false;
-		private static bool isMainWindowClosed = false;
+		private static int TestWindowDisplayDelay = 0;
+
+		private static SemaphoreSlim MainWindowLoadedSemaphore;
+		private static SemaphoreSlim ApplicationExitsSemaphore;
 
 		private const int GWL_STYLE = -16;
 		private const int WS_SYSMENU = 0x80000;
@@ -125,6 +127,9 @@ namespace x360ce.Net48Test
 			{
 				if (MainWindow != null)
 					return;
+				MainWindowLoadedSemaphore = new SemaphoreSlim(0);
+				ApplicationExitsSemaphore = new SemaphoreSlim(0);
+
 				Action isolator = () =>
 				{
 					MainApp = new System.Windows.Application();
@@ -140,22 +145,22 @@ namespace x360ce.Net48Test
 					sp.Children.Add(MainLabel);
 					w.Content = sp;
 					// Use weak reference events.
-					RoutedEventHandler onLoaded = (sender, e) =>
+					EventHandler<RoutedEventArgs> onLoaded = (sender, e) =>
 					{
 						Console.WriteLine("Owner window loaded");
-						isMainWindowLoaded = true;
+						MainWindowLoadedSemaphore.Release();
 						// Hide title buttons.
 						var hwnd = new WindowInteropHelper(MainWindow).Handle;
 						SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
 					};
-					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(Window.Loaded), new EventHandler<RoutedEventArgs>(onLoaded));
+					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(Window.Loaded), onLoaded);
 					// Use weak reference events.
-					EventHandler onClosed = (sender, e) =>
+					EventHandler<ExitEventArgs> onExit = (sender, e) =>
 					{
-						Console.WriteLine("Owner window closed");
-						isMainWindowClosed = true;
+						Console.WriteLine("Application Exit");
+						ApplicationExitsSemaphore.Release();
 					};
-					WeakEventManager<Window, EventArgs>.AddHandler(w, nameof(Window.Closed), new EventHandler<EventArgs>(onClosed));
+					WeakEventManager<System.Windows.Application, ExitEventArgs>.AddHandler(MainApp, nameof(MainApp.Exit), onExit);
 					MainWindow = w;
 					MainApp.Run(MainWindow);
 				};
@@ -164,9 +169,7 @@ namespace x360ce.Net48Test
 				MainThread.IsBackground = false;
 				MainThread.SetApartmentState(ApartmentState.STA);
 				MainThread.Start();
-				// Wait until window is loaded.
-				while (!isMainWindowLoaded)
-					Task.Delay(100);
+				MainWindowLoadedSemaphore.Wait();
 			}
 		}
 
@@ -214,17 +217,20 @@ namespace x360ce.Net48Test
 			Assert.IsTrue(errors.Count == 0);
 			MainApp.Dispatcher.Invoke(() =>
 			{
-				MainWindow.Close();
+				MainApp.Shutdown();
 			});
-			// Wait until window is unloaded and closed.
-			while (!isMainWindowClosed)
-				Task.Delay(100);
+			// Wait until application exits.
+			ApplicationExitsSemaphore.Wait();
+			// Make the test completing faster (immediately) by collecting garbage.
+			// Wait a bit to allow the application to remove the remaining references.
+			Task.Delay(100).Wait();
+			CollectGarbage();
 		}
 
 
-		public static List<MemTestResult> TestMemoryLeakByAssembly(Assembly assembly, Type[] includeTypes, Type[] excludeTypes)
+		public static List<MemoryTestResult> TestMemoryLeakByAssembly(Assembly assembly, Type[] includeTypes, Type[] excludeTypes)
 		{
-			var results = new List<MemTestResult>();
+			var results = new List<MemoryTestResult>();
 			// Test public non-abstracts classes only.
 			var types = assembly.GetTypes()
 				.Where(x => includeTypes == null || includeTypes.Length == 0 || includeTypes.Contains(x))
@@ -279,11 +285,11 @@ namespace x360ce.Net48Test
 		}
 
 		//[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-		private static MemTestResult TestType(Type type, bool logMoreDetails)
+		private static MemoryTestResult TestType(Type type, bool logMoreDetails)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
-			var result = new MemTestResult();
+			var result = new MemoryTestResult();
 			result.Type = type;
 			var constructor = type.GetConstructor(Type.EmptyTypes);
 			if (type.ContainsGenericParameters)
@@ -323,8 +329,8 @@ namespace x360ce.Net48Test
 						}
 						else if (o is System.Windows.FrameworkElement uc1)
 						{
-							bool isTestLoaded = false;
-							bool isTestClosed = false;
+							var testLoadedSemaphore = new SemaphoreSlim(0);
+							var testClosedSemaphore = new SemaphoreSlim(0);
 							mainWindowWr.Target = MainWindow;
 							var testWindow = new System.Windows.Window();
 							testWindow.Title = "Test Window";
@@ -343,7 +349,7 @@ namespace x360ce.Net48Test
 							testWindow.Loaded += (sender, e) =>
 							{
 								//Console.WriteLine("Test window loaded");
-								isTestLoaded = true;
+								testLoadedSemaphore.Release();
 							};
 							testWindow.Unloaded += (sender, e) =>
 							{
@@ -352,15 +358,13 @@ namespace x360ce.Net48Test
 							testWindow.Closing += (sender, e) =>
 							{
 								//Console.WriteLine("Test window closing");
-								isTestClosed = true;
+								testClosedSemaphore.Release();
 							};
 							testWindow.Show();
-							while (!isTestLoaded)
-								Task.Delay(100).Wait();
-							Task.Delay(1000).Wait();
+							testLoadedSemaphore.Wait();
+							Task.Delay(TestWindowDisplayDelay).Wait();
 							testWindow.Close();
-							while (!isTestClosed)
-								Task.Delay(100).Wait();
+							testClosedSemaphore.Wait();
 						}
 						else if (o is System.Windows.Forms.UserControl uc2)
 						{

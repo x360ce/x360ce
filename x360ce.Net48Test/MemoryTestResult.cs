@@ -7,7 +7,7 @@ namespace x360ce.Net60Test
 namespace x360ce.Net48Test
 #endif
 {
-	public class MemTestResult
+	public class MemoryTestResult
 	{
 		public Type Type { get; set; }
 		public long? MemObjectSize { get; set; }

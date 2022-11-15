@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="CustomWindow.cs" />
     <Compile Include="MemoryLeakTest.cs" />
-    <Compile Include="MemTestResult.cs" />
+    <Compile Include="MemoryTestResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
