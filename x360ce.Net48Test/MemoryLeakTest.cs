@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using System.ComponentModel;
 #if NETCOREAPP
 #else
 using System;
@@ -66,6 +67,13 @@ namespace x360ce.Net48Test
 		public void Test_x360ce_Engine_IssuesControl() =>
 			Test<JocysCom.ClassLibrary.Controls.IssuesControl.IssuesControl>();
 
+		[TestMethod]
+		public void Test_ClassLibrary_MessageBoxWindow() =>
+			Test<JocysCom.ClassLibrary.Controls.MessageBoxWindow>();
+
+		[TestMethod]
+		public void Test_ClassLibrary_ErrorReportControl() =>
+			Test<JocysCom.ClassLibrary.Controls.ErrorReportControl>();
 
 		/// <summary>
 		/// Simple ListView will be garbage collected successfully.
@@ -153,7 +161,17 @@ namespace x360ce.Net48Test
 						var hwnd = new WindowInteropHelper(MainWindow).Handle;
 						SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
 					};
-					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(Window.Loaded), onLoaded);
+					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Loaded), onLoaded);
+					EventHandler<RoutedEventArgs> onUnloaded = (sender, e) =>
+					{
+						Console.WriteLine("Owner window unloaded");
+					};
+					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Unloaded), onUnloaded);
+					EventHandler<EventArgs> onClosed = (sender, e) =>
+					{
+						Console.WriteLine("Owner window closed");
+					};
+					WeakEventManager<Window, EventArgs>.AddHandler(w, nameof(w.Closed), onClosed);
 					// Use weak reference events.
 					EventHandler<ExitEventArgs> onExit = (sender, e) =>
 					{
@@ -187,6 +205,8 @@ namespace x360ce.Net48Test
 		{
 			// Make sure that owner window exists.
 			CheckMainWindow();
+			var mainWindowWr = new WeakReference(null);
+			mainWindowWr.Target = MainWindow;
 			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes);
 			var errors = results.Where(x => x.Level == TraceLevel.Error).ToList();
 			var warnings = results.Where(x => x.Level == TraceLevel.Warning).ToList();
@@ -217,6 +237,7 @@ namespace x360ce.Net48Test
 			Assert.IsTrue(errors.Count == 0);
 			MainApp.Dispatcher.Invoke(() =>
 			{
+				//MainWindow.Close();
 				MainApp.Shutdown();
 			});
 			// Wait until application exits.
@@ -346,20 +367,40 @@ namespace x360ce.Net48Test
 							testWindow.Content = sp;
 							// Owner must be set to properly expose after closing.
 							testWindow.Owner = MainWindow;
-							testWindow.Loaded += (sender, e) =>
+							// Control events.
+							EventHandler<RoutedEventArgs> onControlLoaded = (sender, e) =>
 							{
-								//Console.WriteLine("Test window loaded");
+								if (logMoreDetails)
+									Console.WriteLine("    Test control loaded");
+							};
+							WeakEventManager<FrameworkElement, RoutedEventArgs>.AddHandler(uc1, nameof(uc1.Loaded), onControlLoaded);
+							EventHandler<RoutedEventArgs> onControlUnloaded = (sender, e) =>
+							{
+								if (logMoreDetails)
+									Console.WriteLine("    Test control unloaded");
+							};
+							WeakEventManager<FrameworkElement, RoutedEventArgs>.AddHandler(uc1, nameof(uc1.Loaded), onControlUnloaded);
+							// Window events
+							EventHandler<RoutedEventArgs> onLoaded = (sender, e) =>
+							{
+								if (logMoreDetails)
+									Console.WriteLine("  Test window loaded");
 								testLoadedSemaphore.Release();
 							};
-							testWindow.Unloaded += (sender, e) =>
+							WeakEventManager<Window, RoutedEventArgs>.AddHandler(testWindow, nameof(testWindow.Loaded), onLoaded);
+							EventHandler<RoutedEventArgs> onUnloaded = (sender, e) =>
 							{
-								//Console.WriteLine("Test window unloaded");
+								if (logMoreDetails)
+									Console.WriteLine("  Test window unloaded");
 							};
-							testWindow.Closing += (sender, e) =>
+							WeakEventManager<Window, RoutedEventArgs>.AddHandler(testWindow, nameof(testWindow.Unloaded), onUnloaded);
+							EventHandler<EventArgs> onClosed = (sender, e) =>
 							{
-								//Console.WriteLine("Test window closing");
+								if (logMoreDetails)
+									Console.WriteLine("  Test window closed");
 								testClosedSemaphore.Release();
 							};
+							WeakEventManager<Window, EventArgs>.AddHandler(testWindow, nameof(testWindow.Closed), onClosed);
 							testWindow.Show();
 							testLoadedSemaphore.Wait();
 							Task.Delay(TestWindowDisplayDelay).Wait();
