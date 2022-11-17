@@ -8,6 +8,7 @@
 	SizeToContent="WidthAndHeight"
 	Loaded="Window_Loaded"
 	Unloaded="Window_Unloaded"
+	Closed="Window_Closed"
 	mc:Ignorable="d">
 	<Window.Resources>
 		<ResourceDictionary>
