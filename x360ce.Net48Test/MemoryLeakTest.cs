@@ -8,16 +8,13 @@ using System.Windows.Controls;
 using System.Windows;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
-using System.ComponentModel;
-#if NETCOREAPP
-#else
+using System.Collections.Generic;
+using System.Linq;
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Collections.Generic;
-using System.Linq;
-#endif
+
 #if NETCOREAPP
 namespace x360ce.Net60Test
 #else
@@ -149,7 +146,7 @@ namespace x360ce.Net48Test
 					w.SizeToContent = SizeToContent.WidthAndHeight;
 					// Create content control.
 					var sp = new StackPanel();
-					MainLabel = new Label() { Content = w.Title };
+					MainLabel = new System.Windows.Controls.Label() { Content = w.Title };
 					sp.Children.Add(MainLabel);
 					w.Content = sp;
 					// Use weak reference events.

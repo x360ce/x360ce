@@ -22,13 +22,13 @@ namespace JocysCom.ClassLibrary.Controls
 	/// </summary>
 	public partial class ErrorReportControl : UserControl
 	{
+
 		public ErrorReportControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
 				return;
 			ErrorsFolderTextBox.Text = LogHelper.Current.LogsFolder;
-			MainBrowser.LoadCompleted += MainBrowser_LoadCompleted;
 			RefreshErrorsComboBox();
 			StatusLabel.Content = "";
 		}
@@ -170,6 +170,26 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public event EventHandler<EventArgs<List<MailMessage>>> SendMessages;
 		public event EventHandler ClearErrors;
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			MainBrowser.LoadCompleted += MainBrowser_LoadCompleted;
+			// Monitor parent Window closing for correct disposal of resources.
+			var window = ControlsHelper.GetParent<Window>(this);
+			window.Closing += (sender2, e2) => isWindowClosing = !e2.Cancel;
+		}
+
+		bool isWindowClosing = false;
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			MainBrowser.LoadCompleted -= MainBrowser_LoadCompleted;
+			// Dispose resources on parent Window closing.
+			if (isWindowClosing)
+			{
+				MainBrowser.Dispose();
+			}
+		}
 
 	}
 }

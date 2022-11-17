@@ -6,6 +6,8 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	Width="600"
 	Height="300"
+	Loaded="UserControl_Loaded"
+	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -84,6 +86,7 @@
 					Grid.Row="2"
 					Grid.Column="1"
 					VerticalAlignment="Center" />
+
 				<Label
 					Grid.Row="3"
 					Grid.Column="0"
@@ -105,7 +108,7 @@
 					VerticalAlignment="Center"
 					Click="OpenMailButton_Click"
 					Content="Open..." />
-
+				
 				<Label
 					Grid.Row="4"
 					Grid.Column="0"
@@ -118,7 +121,7 @@
 					VerticalAlignment="Center" />
 			</Grid>
 		</GroupBox>
-		<TabControl Grid.Row="1" Margin="4px,0,4px,4px">
+		<TabControl x:Name="MainTabControl" Grid.Row="1" Margin="4px,0,4px,4px">
 			<TabItem Header="Error Details">
 				<WebBrowser x:Name="MainBrowser" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 			</TabItem>

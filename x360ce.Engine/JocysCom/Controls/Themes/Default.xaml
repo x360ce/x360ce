@@ -221,6 +221,7 @@
 
 	<!--  TabControl  -->
 
+	<!--  This style is making control to fail garbage collection (leak memory)  -->
 	<Style x:Key="TabControl_Default" TargetType="TabControl">
 		<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
@@ -792,12 +793,15 @@
 	<Style BasedOn="{StaticResource UserControl_Default}" TargetType="UserControl" />
 	<Style BasedOn="{StaticResource Grid_Default}" TargetType="Grid" />
 	<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox" />
-	<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
 	<Style BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid" />
 	<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />
 	<Style BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox" />
 	<Style BasedOn="{StaticResource Button_Default}" TargetType="Button" />
 	<Style BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
 	<Style BasedOn="{StaticResource MenuItem_Default}" TargetType="MenuItem" />
+
+	<!--  TabControl_Default style is making control to fail garbage collection (leak memory)  -->
+	<!--<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />-->
+
 
 </ResourceDictionary>

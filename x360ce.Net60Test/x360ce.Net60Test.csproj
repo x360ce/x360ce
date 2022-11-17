@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0-windows</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<ImplicitUsings>false</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
@@ -16,7 +16,7 @@
 	<ItemGroup>
 		<Compile Include="..\x360ce.Net48Test\CustomWindow.cs" Link="CustomWindow.cs" />
 		<Compile Include="..\x360ce.Net48Test\MemoryLeakTest.cs" Link="MemoryLeakTest.cs" />
-		<Compile Include="..\x360ce.Net48Test\MemTestResult.cs" Link="MemTestResult.cs" />
+		<Compile Include="..\x360ce.Net48Test\MemoryTestResult.cs" Link="MemoryTestResult.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
