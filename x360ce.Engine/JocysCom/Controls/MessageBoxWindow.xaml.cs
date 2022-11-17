@@ -302,12 +302,23 @@ namespace JocysCom.ClassLibrary.Controls
 			// Center message box window in application.
 			if (Owner == null)
 				ControlsHelper.CenterWindowOnApplication(this);
+
+			// Monitor parent Window closing for correct disposal of resources.
+			var window = ControlsHelper.GetParent<Window>(this);
+			window.Closing += (sender2, e2) => isWindowClosing = !e2.Cancel;
 		}
+
+		bool isWindowClosing = false;
 
 		private void Window_Unloaded(object sender, RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			if (isWindowClosing)
+			{
+				Owner = null;
+			}
+
 		}
 	}
 }

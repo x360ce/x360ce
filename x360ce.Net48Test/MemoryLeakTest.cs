@@ -343,7 +343,45 @@ namespace x360ce.Net48Test
 						}
 						if (o is System.Windows.Window ucw)
 						{
-							//Console.WriteLine("is Window");
+							Console.Write($"Type: {o.GetType().Name}");
+							var testLoadedSemaphore = new SemaphoreSlim(0);
+							var testClosedSemaphore = new SemaphoreSlim(0);
+							mainWindowWr.Target = MainWindow;
+							var testWindow = new System.Windows.Window();
+							testWindow.Title = "Test Window";
+							testWindow.Topmost = true;
+							testWindow.Top = MainWindow.Top + MainWindow.ActualHeight;
+							testWindow.Left = MainWindow.Left;
+							testWindow.IsHitTestVisible = false;
+							testWindow.SizeToContent = SizeToContent.WidthAndHeight;
+							// Owner must be set to properly expose after closing.
+							testWindow.Owner = MainWindow;
+							// Window events
+							EventHandler<RoutedEventArgs> onLoaded = (sender, e) =>
+							{
+								if (logMoreDetails)
+									Console.WriteLine("  Test window loaded");
+								testLoadedSemaphore.Release();
+							};
+							WeakEventManager<Window, RoutedEventArgs>.AddHandler(testWindow, nameof(testWindow.Loaded), onLoaded);
+							EventHandler<RoutedEventArgs> onUnloaded = (sender, e) =>
+							{
+								if (logMoreDetails)
+									Console.WriteLine("  Test window unloaded");
+							};
+							WeakEventManager<Window, RoutedEventArgs>.AddHandler(testWindow, nameof(testWindow.Unloaded), onUnloaded);
+							EventHandler<EventArgs> onClosed = (sender, e) =>
+							{
+								if (logMoreDetails)
+									Console.WriteLine("  Test window closed");
+								testClosedSemaphore.Release();
+							};
+							WeakEventManager<Window, EventArgs>.AddHandler(testWindow, nameof(testWindow.Closed), onClosed);
+							testWindow.Show();
+							testLoadedSemaphore.Wait();
+							Task.Delay(TestWindowDisplayDelay).Wait();
+							testWindow.Close();
+							testClosedSemaphore.Wait();
 						}
 						else if (o is System.Windows.FrameworkElement uc1)
 						{
