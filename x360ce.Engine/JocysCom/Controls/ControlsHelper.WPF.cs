@@ -315,7 +315,10 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		/// <summary>
-		/// Get all child controls.
+		/// Get all child controls with path.
+		/// Use regex to make shorter tabbed path:
+		/// var rx = new Regex("[^.]+[.]+");
+		/// var tabbedPath = rx.Replace(item.Path, "\t");
 		/// </summary>
 		public static Dictionary<string, DependencyObject> GetAll(string path, DependencyObject control, Type type = null, bool includeTop = false)
 		{
@@ -382,37 +385,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static IEnumerable<DependencyObject> GetAll(DependencyObject control, Type type = null, bool includeTop = false)
 		{
-			if (control == null)
-				throw new ArgumentNullException(nameof(control));
-			// Create new list.
-			var controls = new List<DependencyObject>();
-			// Add top control if required.
-			if (includeTop && !controls.Contains(control))
-				controls.Add(control);
-			var visual = control as Visual;
-			if (visual != null)
-			{
-				// If control contains visual children then...
-				var childrenCount = VisualTreeHelper.GetChildrenCount(control);
-				for (int i = 0; i < childrenCount; i++)
-				{
-					var child = VisualTreeHelper.GetChild(control, i);
-					var children = GetAll(child, null, true);
-					controls.AddRange(children.Except(controls));
-				}
-			}
-			// Get logical children.
-			var logicalChildren = LogicalTreeHelper.GetChildren(control).OfType<DependencyObject>().ToList();
-			for (int i = 0; i < logicalChildren.Count; i++)
-			{
-				var child = logicalChildren[i];
-				var children = GetAll(child, null, true);
-				controls.AddRange(children.Except(controls));
-			}
-			// If type filter is not set then...
-			return (type == null)
-				? controls
-				: controls.Where(x => type.IsInterface ? x.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.GetType()));
+			return GetAll(null, control, type, includeTop).Values.ToList();
 		}
 
 		/// <summary>

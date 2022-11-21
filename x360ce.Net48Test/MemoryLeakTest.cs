@@ -16,6 +16,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using JocysCom.ClassLibrary.Controls;
 using System.Text.RegularExpressions;
+using System.Windows.Data;
+using System.Windows.Media;
+using System.ComponentModel;
 
 #if NETCOREAPP
 namespace x360ce.Net60Test
@@ -97,6 +100,28 @@ namespace x360ce.Net48Test
 			Test<System.Windows.Controls.StackPanel>();
 
 
+
+		private static Dictionary<Type, PropertyInfo[]> TypesWithContentProperty;
+
+		private static Dictionary<Type, PropertyInfo[]> GetTypesWithContentProperty()
+		{
+			var results = new Dictionary<Type, PropertyInfo[]>();
+			var types = typeof(Label).Assembly.GetTypes();
+			foreach (var t in types)
+			{
+				var all = t.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+				var props = all.Where(x =>
+						(x.CanWrite && x.Name == nameof(ContentControl.Content)) ||
+						(x.CanWrite && typeof(UIElement).IsAssignableFrom(x.PropertyType) && x.Name == "Child") ||
+						(typeof(UIElementCollection).IsAssignableFrom(x.PropertyType) && x.Name == "Children")
+					)
+					.OrderBy(x => x.Name)
+					.ToArray();
+				if (props.Any())
+					results.Add(t, props);
+			}
+			return results;
+		}
 
 		#region TestMemoryLeak
 
@@ -210,6 +235,8 @@ namespace x360ce.Net48Test
 		{
 			// Make sure that owner window exists.
 			CheckMainWindow();
+			TypesWithContentProperty = TypesWithContentProperty ?? GetTypesWithContentProperty();
+
 			var mainWindowWr = new WeakReference(null);
 			mainWindowWr.Target = MainWindow;
 			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes);
@@ -479,6 +506,8 @@ namespace x360ce.Net48Test
 								if (testControlWr.Target is DependencyObject dpo)
 								{
 									var controls = ControlsHelper.GetAll("", dpo);
+									DisposeObject(dpo);
+									ClearBindings(dpo);
 									references = controls.Select(x => new ReferenceResults()
 									{
 										Path = x.Key,
@@ -486,21 +515,44 @@ namespace x360ce.Net48Test
 									}).ToList();
 									foreach (var item in controls)
 									{
+
+
+										BindingOperations.ClearAllBindings(item.Value);
+										var dprops = GetAttachedProperties(item.Value);
+										foreach (var dprop in dprops)
+										{
+											if (!dprop.ReadOnly)
+												item.Value.ClearValue(dprop);
+										}
 										if (item.Value is FrameworkElement fe)
 										{
+											fe.Resources = null;
 											fe.Style = null;
 											fe.DataContext = null;
+											//if (fe.Parent != null)
+											//{
+											//	RemoveChild(fe.Parent, item);
+											//}
+											//if (dpo is FrameworkElement dpofe)
+											//{
+											//	if (!string.IsNullOrEmpty(fe.Name))
+											//		dpofe.UnregisterName(fe.Name);
+											//}
+
 										}
 										// Control : FrameworkElement
 										if (item.Value is Control control)
 										{
 											control.Template = null;
 										}
+
+										DisposeObject(item.Value);
+
 										// ContentControl: Control
-										if (item.Value is ContentControl cc)
-										{
-											cc.Content = null;
-										}
+										//if (item.Value is ContentControl cc)
+										//{
+										//	cc.Content = null;
+										//}
 										// Panel: FrameworkElement
 										if (item.Value is Panel panel)
 										{
@@ -512,7 +564,23 @@ namespace x360ce.Net48Test
 											grid.RowDefinitions.Clear();
 											grid.ColumnDefinitions.Clear();
 										}
-
+										// ItemsControl : Control
+										if (item.Value is ItemsControl ic)
+										{
+											ic.Items.Clear();
+											ic.ItemsSource = null;
+										}
+										// IDisposable
+										if (item.Value is IDisposable id)
+										{
+											id.Dispose();
+										}
+										if (item.Value is Label label)
+										{
+										}
+										if (item.Value is UserControl uc)
+										{
+										}
 									}
 								}
 							};
@@ -566,6 +634,59 @@ namespace x360ce.Net48Test
 			{
 				Task.Delay(200).Wait();
 				CollectGarbage();
+			}
+		}
+
+		public static IEnumerable<DependencyObject> EnumerateVisualChildren(DependencyObject dependencyObject)
+		{
+			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
+				yield return VisualTreeHelper.GetChild(dependencyObject, i);
+		}
+
+		public static IEnumerable<DependencyObject> EnumerateVisualDescendents(DependencyObject dependencyObject)
+		{
+			yield return dependencyObject;
+			foreach (DependencyObject child in EnumerateVisualChildren(dependencyObject))
+				foreach (DependencyObject descendent in EnumerateVisualChildren(child))
+					yield return descendent;
+		}
+
+		public static void ClearBindings(DependencyObject dependencyObject)
+		{
+			foreach (DependencyObject element in EnumerateVisualChildren(dependencyObject))
+				BindingOperations.ClearAllBindings(element);
+		}
+
+
+		public static IList<DependencyProperty> GetAttachedProperties(DependencyObject obj)
+		{
+			List<DependencyProperty> result = new List<DependencyProperty>();
+			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(obj,
+				new Attribute[] { new PropertyFilterAttribute(PropertyFilterOptions.All) }))
+			{
+				DependencyPropertyDescriptor dpd =
+					DependencyPropertyDescriptor.FromProperty(pd);
+				if (dpd != null)
+					result.Add(dpd.DependencyProperty);
+			}
+			return result;
+		}
+
+		public static void DisposeObject(object o)
+		{
+			var contentType = TypesWithContentProperty.Keys.FirstOrDefault(x => x.IsAssignableFrom(o.GetType()));
+			if (contentType != null)
+			{
+				var props = TypesWithContentProperty[contentType];
+				foreach (var prop in props)
+				{
+					if (typeof(UIElement).IsAssignableFrom(prop.PropertyType))
+						prop.SetValue(o, null);
+					else if (typeof(UIElementCollection).IsAssignableFrom(prop.PropertyType))
+						(prop.GetValue(o) as UIElementCollection)?.Clear();
+					else if (prop.Name == nameof(ContentControl.Content))
+						prop.SetValue(o, null);
+				}
 			}
 		}
 
