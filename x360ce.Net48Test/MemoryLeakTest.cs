@@ -15,6 +15,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using System.Threading;
 using JocysCom.ClassLibrary.Controls;
+using System.Text.RegularExpressions;
 
 #if NETCOREAPP
 namespace x360ce.Net60Test
@@ -468,6 +469,7 @@ namespace x360ce.Net48Test
 						Console.WriteLine($"Test Window  IsAlive: {testWindowWr.IsAlive}");
 						Console.WriteLine($"Test Control IsAlive: {testControlWr.IsAlive}");
 						// If control is still alive then...
+						// Note: seems like controls with "x:Names" fail to dispose.
 						if (testControlWr.IsAlive)
 						{
 							var references = new List<ReferenceResults>();
@@ -476,36 +478,36 @@ namespace x360ce.Net48Test
 								// If control is dependency object then...
 								if (testControlWr.Target is DependencyObject dpo)
 								{
-									var controls = ControlsHelper.GetAll(dpo);
+									var controls = ControlsHelper.GetAll("", dpo);
 									references = controls.Select(x => new ReferenceResults()
 									{
-										Path = x.GetType().Name + " " + (x as FrameworkElement)?.Name,
-										Reference = new WeakReference(x),
+										Path = x.Key,
+										Reference = new WeakReference(x.Value),
 									}).ToList();
 									foreach (var item in controls)
 									{
-										if (item is FrameworkElement fe)
+										if (item.Value is FrameworkElement fe)
 										{
 											fe.Style = null;
 											fe.DataContext = null;
 										}
 										// Control : FrameworkElement
-										if (item is Control control)
+										if (item.Value is Control control)
 										{
 											control.Template = null;
 										}
 										// ContentControl: Control
-										if (item is ContentControl cc)
+										if (item.Value is ContentControl cc)
 										{
 											cc.Content = null;
 										}
 										// Panel: FrameworkElement
-										if (item is Panel panel)
+										if (item.Value is Panel panel)
 										{
 											panel.Children.Clear();
 										}
 										// Grid : Panel
-										if (item is Grid grid)
+										if (item.Value is Grid grid)
 										{
 											grid.RowDefinitions.Clear();
 											grid.ColumnDefinitions.Clear();
@@ -520,9 +522,12 @@ namespace x360ce.Net48Test
 							var childFailCount = references.Count(x => x.Reference.IsAlive);
 							var childPassCount = references.Count(x => !x.Reference.IsAlive);
 							Console.WriteLine($"Child Controls: Count = {childCount}, Fail = {childFailCount}, Pass = {childPassCount}");
+							var rx = new Regex("[^.]+[.]+");
 							foreach (var item in references)
 							{
-								Console.WriteLine((item.Reference.IsAlive ? "Fail" : "----") + $" {item.Path}");
+								// Make control path smaller.
+								var path = rx.Replace(item.Path, "\t");
+								Console.WriteLine((item.Reference.IsAlive ? "Fail" : "----") + $" {path}");
 							}
 						}
 					}

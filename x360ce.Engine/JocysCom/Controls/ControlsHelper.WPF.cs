@@ -314,6 +314,68 @@ namespace JocysCom.ClassLibrary.Controls
 			return null;
 		}
 
+		/// <summary>
+		/// Get all child controls.
+		/// </summary>
+		public static Dictionary<string, DependencyObject> GetAll(string path, DependencyObject control, Type type = null, bool includeTop = false)
+		{
+			if (control == null)
+				throw new ArgumentNullException(nameof(control));
+			// Create new list.
+			var controls = new Dictionary<string, DependencyObject>();
+			if (string.IsNullOrEmpty(path))
+				path = $"{control.GetType().Name} {(control as FrameworkElement)?.Name}".TrimEnd();
+			// Add top control if required.
+			if (includeTop && !controls.Values.Contains(control))
+			{
+				controls.Add(path, control);
+			}
+			var visual = control as Visual;
+			if (visual != null)
+			{
+				// If control contains visual children then...
+				var childrenCount = VisualTreeHelper.GetChildrenCount(control);
+				for (int i = 0; i < childrenCount; i++)
+				{
+					var child = VisualTreeHelper.GetChild(control, i);
+					var childKey = $"{path}[{i}].{child.GetType().Name} {(child as FrameworkElement)?.Name}".TrimEnd();
+					//controls.Add(childKey, child);
+					// Get children of children.
+					var pairs = GetAll(childKey, child, null, true);
+					foreach (var pair in pairs)
+					{
+						if (!controls.ContainsValue(pair.Value))
+							controls.Add(pair.Key, pair.Value);
+					}
+				}
+			}
+			// Get logical children.
+			var logicalChildren = LogicalTreeHelper.GetChildren(control).OfType<DependencyObject>().ToList();
+			for (int i = 0; i < logicalChildren.Count; i++)
+			{
+				var child = logicalChildren[i];
+				var childKey = $"{path}[{i}].{child.GetType().Name} {(child as FrameworkElement)?.Name}".TrimEnd();
+				//controls.Add(childKey, child);
+				// Get children of children.
+				var pairs = GetAll(childKey, child, null, true);
+				foreach (var pair in pairs)
+				{
+					if (!controls.ContainsValue(pair.Value))
+						controls.Add(pair.Key, pair.Value);
+				}
+			}
+			// If type is set then...
+			if (type != null)
+			{
+				var keys = controls.Where(x => type.IsInterface ? x.Value.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.Value.GetType()));
+				foreach (var pair in keys)
+				{
+					if (controls.ContainsKey(pair.Key))
+						controls.Remove(pair.Key);
+				}
+			}
+			return controls;
+		}
 
 		/// <summary>
 		/// Get all child controls.
