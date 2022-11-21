@@ -14,6 +14,7 @@ using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading.Tasks;
 using System.Threading;
+using JocysCom.ClassLibrary.Controls;
 
 #if NETCOREAPP
 namespace x360ce.Net60Test
@@ -198,6 +199,12 @@ namespace x360ce.Net48Test
 			Test(typeof(T).Assembly, new Type[] { typeof(T) });
 		}
 
+		public class ReferenceResults
+		{
+			public string Path { get; set; }
+			public WeakReference Reference { get; set; }
+		}
+
 		public static void Test(Assembly assembly, Type[] includeTypes = null, Type[] excludeTypes = null)
 		{
 			// Make sure that owner window exists.
@@ -290,16 +297,6 @@ namespace x360ce.Net48Test
 					Console.WriteLine(message);
 			}
 			return results;
-		}
-
-		public static void CollectGarbage()
-		{
-			// Try to remove object from the memory.
-			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
-			//GC.Collect();
-			GC.WaitForFullGCComplete();
-			GC.WaitForPendingFinalizers();
 		}
 
 		//[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
@@ -452,22 +449,13 @@ namespace x360ce.Net48Test
 							uc3.Dispose();
 							uc3 = null;
 						}
-
-						if (o is DataGrid dg)
-						{
-
-						}
 						// Trigger object dispose.
 						o = null;
 					};
 					// Create new window on the same thread.
 					MainWindow.Dispatcher.Invoke(isolator);
-					// loop untill object allive, but no longer than  seconds.
-					while (testControlWr.IsAlive && stopwatch.ElapsedMilliseconds < TestMaxDurationPerClassTest)
-					{
-						Task.Delay(200).Wait();
-						CollectGarbage();
-					}
+					// Try to re-collect for some time if object is alive.
+					CollectGarbage(() => testControlWr.IsAlive);
 					result.MemDifference = GC.GetTotalMemory(true) - memBeforeCreate;
 					result.IsAlive = testControlWr.IsAlive;
 					// if dispose failed. Strong references are left to the wr.Target.
@@ -479,6 +467,64 @@ namespace x360ce.Net48Test
 						Console.WriteLine($"Main Window  IsAlive: {mainWindowWr.IsAlive}");
 						Console.WriteLine($"Test Window  IsAlive: {testWindowWr.IsAlive}");
 						Console.WriteLine($"Test Control IsAlive: {testControlWr.IsAlive}");
+						// If control is still alive then...
+						if (testControlWr.IsAlive)
+						{
+							var references = new List<ReferenceResults>();
+							Action isolator2 = () =>
+							{
+								// If control is dependency object then...
+								if (testControlWr.Target is DependencyObject dpo)
+								{
+									var controls = ControlsHelper.GetAll(dpo);
+									references = controls.Select(x => new ReferenceResults()
+									{
+										Path = x.GetType().Name + " " + (x as FrameworkElement)?.Name,
+										Reference = new WeakReference(x),
+									}).ToList();
+									foreach (var item in controls)
+									{
+										if (item is FrameworkElement fe)
+										{
+											fe.Style = null;
+											fe.DataContext = null;
+										}
+										// Control : FrameworkElement
+										if (item is Control control)
+										{
+											control.Template = null;
+										}
+										// ContentControl: Control
+										if (item is ContentControl cc)
+										{
+											cc.Content = null;
+										}
+										// Panel: FrameworkElement
+										if (item is Panel panel)
+										{
+											panel.Children.Clear();
+										}
+										// Grid : Panel
+										if (item is Grid grid)
+										{
+											grid.RowDefinitions.Clear();
+											grid.ColumnDefinitions.Clear();
+										}
+
+									}
+								}
+							};
+							MainWindow.Dispatcher.Invoke(isolator2);
+							CollectGarbage(() => references.Any(x => x.Reference.IsAlive));
+							var childCount = references.Count();
+							var childFailCount = references.Count(x => x.Reference.IsAlive);
+							var childPassCount = references.Count(x => !x.Reference.IsAlive);
+							Console.WriteLine($"Child Controls: Count = {childCount}, Fail = {childFailCount}, Pass = {childPassCount}");
+							foreach (var item in references)
+							{
+								Console.WriteLine((item.Reference.IsAlive ? "Fail" : "----") + $" {item.Path}");
+							}
+						}
 					}
 				}
 				catch (Exception ex)
@@ -493,6 +539,29 @@ namespace x360ce.Net48Test
 			}
 			result.Duration = stopwatch.ElapsedMilliseconds;
 			return result;
+		}
+
+
+		public static void CollectGarbage()
+		{
+			// Try to remove object from the memory.
+			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+			//GC.Collect();
+			GC.WaitForFullGCComplete();
+			GC.WaitForPendingFinalizers();
+		}
+
+		public static void CollectGarbage(Func<bool> whileCondition)
+		{
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+			// loop untill object allive, but no longer than  seconds.
+			while (whileCondition() && stopwatch.ElapsedMilliseconds < TestMaxDurationPerClassTest)
+			{
+				Task.Delay(200).Wait();
+				CollectGarbage();
+			}
 		}
 
 		#endregion
