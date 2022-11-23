@@ -1,7 +1,6 @@
 ﻿using System.Runtime;
 using System.Reflection;
 using System.Diagnostics;
-using JocysCom.WebSites.Engine.Security.Data;
 using JocysCom.ClassLibrary.Web.Services;
 using x360ce.Engine.Data;
 using System.Windows.Controls;
@@ -19,7 +18,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.ComponentModel;
-using System.Diagnostics.Eventing.Reader;
+using System.Windows.Navigation;
 
 #if NETCOREAPP
 namespace x360ce.Net60Test
@@ -58,7 +57,7 @@ namespace x360ce.Net48Test
 				null,
 				// Exclude types.
 				new Type[] {
-					typeof(SecurityEntities),
+					typeof(JocysCom.WebSites.Engine.Security.Data.SecurityEntities),
 					typeof(SoapHttpClientBase),
 					typeof(x360ceModelContainer),
 				});
@@ -175,12 +174,11 @@ namespace x360ce.Net48Test
 					sp.Children.Add(MainLabel);
 					w.Content = sp;
 					// Use weak reference events.
-					EventHandler<ExitEventArgs> onExit = (sender, e) =>
+					WeakEventManager<Application, ExitEventArgs>.AddHandler(MainApp, nameof(MainApp.Exit), (sender, e) =>
 					{
-						Console.WriteLine("Application Exit");
+						Console.WriteLine($"Application {nameof(Application.Exit)}");
 						ApplicationExitsSemaphore.Release();
-					};
-					WeakEventManager<System.Windows.Application, ExitEventArgs>.AddHandler(MainApp, nameof(MainApp.Exit), onExit);
+					});
 					MainWindow = w;
 					MainApp.Run(MainWindow);
 				};
@@ -218,6 +216,12 @@ namespace x360ce.Net48Test
 			var mainWindowWr = new WeakReference(null);
 			mainWindowWr.Target = MainWindow;
 			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes);
+			MainApp.Dispatcher.Invoke(() =>
+			{
+				MainApp.Shutdown();
+			});
+			// Wait until application exits.
+			ApplicationExitsSemaphore.Wait();
 			var errors = results.Where(x => x.Level == TraceLevel.Error).ToList();
 			var warnings = results.Where(x => x.Level == TraceLevel.Warning).ToList();
 			var passed = results.Where(x => x.Level == TraceLevel.Info && !x.IsAlive).ToList();
@@ -245,13 +249,6 @@ namespace x360ce.Net48Test
 			Assert.IsTrue(passed.Count > 0);
 			Assert.IsTrue(failed.Count == 0);
 			Assert.IsTrue(errors.Count == 0);
-			MainApp.Dispatcher.Invoke(() =>
-			{
-				//MainWindow.Close();
-				MainApp.Shutdown();
-			});
-			// Wait until application exits.
-			ApplicationExitsSemaphore.Wait();
 			// Make the test completing faster (immediately) by collecting garbage.
 			// Wait a bit to allow the application to remove the remaining references.
 			Task.Delay(100).Wait();
@@ -369,18 +366,16 @@ namespace x360ce.Net48Test
 							sp.Children.Add(uc1);
 							testWindow.Content = sp;
 							// Control events.
-							EventHandler<RoutedEventArgs> onControlLoaded = (sender, e) =>
+							WeakEventManager<FrameworkElement, RoutedEventArgs>.AddHandler(uc1, nameof(uc1.Loaded), (sender, e) =>
 							{
 								if (logMoreDetails)
 									Console.WriteLine("    Test control loaded");
-							};
-							WeakEventManager<FrameworkElement, RoutedEventArgs>.AddHandler(uc1, nameof(uc1.Loaded), onControlLoaded);
-							EventHandler<RoutedEventArgs> onControlUnloaded = (sender, e) =>
+							});
+							WeakEventManager<FrameworkElement, RoutedEventArgs>.AddHandler(uc1, nameof(uc1.Unloaded), (sender, e) =>
 							{
 								if (logMoreDetails)
 									Console.WriteLine("    Test control unloaded");
-							};
-							WeakEventManager<FrameworkElement, RoutedEventArgs>.AddHandler(uc1, nameof(uc1.Loaded), onControlUnloaded);
+							});
 							testWindow.Show();
 							testLoadedSemaphore.Wait();
 							Task.Delay(TestWindowDisplayDelay).Wait();
