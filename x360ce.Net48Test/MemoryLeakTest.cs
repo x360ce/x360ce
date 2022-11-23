@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 
 #if NETCOREAPP
 namespace x360ce.Net60Test
@@ -40,6 +41,7 @@ namespace x360ce.Net48Test
 	{
 
 		public const long TestMaxDurationPerClassTest = 5000;
+		private static int TestWindowDisplayDelay = 2000;
 
 		[TestMethod]
 		public void Test_x360ce_App() =>
@@ -112,6 +114,8 @@ namespace x360ce.Net48Test
 				var all = t.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 				var props = all.Where(x =>
 						(x.CanWrite && x.Name == nameof(ContentControl.Content)) ||
+						// Setting data cintext to null could result in failing to dispose.
+						//(x.CanWrite && x.Name == nameof(ContentControl.DataContext)) ||
 						(x.CanWrite && typeof(UIElement).IsAssignableFrom(x.PropertyType) && x.Name == "Child") ||
 						(typeof(UIElementCollection).IsAssignableFrom(x.PropertyType) && x.Name == "Children")
 					)
@@ -141,7 +145,6 @@ namespace x360ce.Net48Test
 		private static System.Windows.Controls.Label MainLabel;
 		private static Thread MainThread;
 		private static object MainWindowLock = new object();
-		private static int TestWindowDisplayDelay = 0;
 
 		private static SemaphoreSlim MainWindowLoadedSemaphore;
 		private static SemaphoreSlim ApplicationExitsSemaphore;
@@ -165,37 +168,12 @@ namespace x360ce.Net48Test
 				Action isolator = () =>
 				{
 					MainApp = new System.Windows.Application();
-					var w = new System.Windows.Window();
-					w.Title = "Memory Leak Test";
-					w.Width = 200;
-					w.Topmost = true;
-					w.IsHitTestVisible = false;
-					w.SizeToContent = SizeToContent.WidthAndHeight;
+					var w = GetWindow(null, true, MainWindowLoadedSemaphore);
 					// Create content control.
 					var sp = new StackPanel();
-					MainLabel = new System.Windows.Controls.Label() { Content = w.Title };
+					MainLabel = new System.Windows.Controls.Label() { Content = $"Test control: ..." };
 					sp.Children.Add(MainLabel);
 					w.Content = sp;
-					// Use weak reference events.
-					EventHandler<RoutedEventArgs> onLoaded = (sender, e) =>
-					{
-						Console.WriteLine("Owner window loaded");
-						MainWindowLoadedSemaphore.Release();
-						// Hide title buttons.
-						var hwnd = new WindowInteropHelper(MainWindow).Handle;
-						SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
-					};
-					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Loaded), onLoaded);
-					EventHandler<RoutedEventArgs> onUnloaded = (sender, e) =>
-					{
-						Console.WriteLine("Owner window unloaded");
-					};
-					WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Unloaded), onUnloaded);
-					EventHandler<EventArgs> onClosed = (sender, e) =>
-					{
-						Console.WriteLine("Owner window closed");
-					};
-					WeakEventManager<Window, EventArgs>.AddHandler(w, nameof(w.Closed), onClosed);
 					// Use weak reference events.
 					EventHandler<ExitEventArgs> onExit = (sender, e) =>
 					{
@@ -372,36 +350,7 @@ namespace x360ce.Net48Test
 							var testLoadedSemaphore = new SemaphoreSlim(0);
 							var testClosedSemaphore = new SemaphoreSlim(0);
 							mainWindowWr.Target = MainWindow;
-							var testWindow = new System.Windows.Window();
-							testWindow.Title = "Test Window";
-							testWindow.Topmost = true;
-							testWindow.Top = MainWindow.Top + MainWindow.ActualHeight;
-							testWindow.Left = MainWindow.Left;
-							testWindow.IsHitTestVisible = false;
-							testWindow.SizeToContent = SizeToContent.WidthAndHeight;
-							// Owner must be set to properly expose after closing.
-							testWindow.Owner = MainWindow;
-							// Window events
-							EventHandler<RoutedEventArgs> onLoaded = (sender, e) =>
-							{
-								if (logMoreDetails)
-									Console.WriteLine("  Test window loaded");
-								testLoadedSemaphore.Release();
-							};
-							WeakEventManager<Window, RoutedEventArgs>.AddHandler(testWindow, nameof(testWindow.Loaded), onLoaded);
-							EventHandler<RoutedEventArgs> onUnloaded = (sender, e) =>
-							{
-								if (logMoreDetails)
-									Console.WriteLine("  Test window unloaded");
-							};
-							WeakEventManager<Window, RoutedEventArgs>.AddHandler(testWindow, nameof(testWindow.Unloaded), onUnloaded);
-							EventHandler<EventArgs> onClosed = (sender, e) =>
-							{
-								if (logMoreDetails)
-									Console.WriteLine("  Test window closed");
-								testClosedSemaphore.Release();
-							};
-							WeakEventManager<Window, EventArgs>.AddHandler(testWindow, nameof(testWindow.Closed), onClosed);
+							var testWindow = GetWindow(MainWindow, logMoreDetails, testLoadedSemaphore, testClosedSemaphore);
 							testWindow.Show();
 							testLoadedSemaphore.Wait();
 							Task.Delay(TestWindowDisplayDelay).Wait();
@@ -413,20 +362,12 @@ namespace x360ce.Net48Test
 							var testLoadedSemaphore = new SemaphoreSlim(0);
 							var testClosedSemaphore = new SemaphoreSlim(0);
 							mainWindowWr.Target = MainWindow;
-							var testWindow = new System.Windows.Window();
-							testWindow.Title = "Test Window";
-							testWindow.Topmost = true;
-							testWindow.Top = MainWindow.Top + MainWindow.ActualHeight;
-							testWindow.Left = MainWindow.Left;
-							testWindow.IsHitTestVisible = false;
-							testWindow.SizeToContent = SizeToContent.WidthAndHeight;
+							var testWindow = GetWindow(MainWindow, logMoreDetails, testLoadedSemaphore, testClosedSemaphore);
 							// Create content control.
 							var sp = new StackPanel() { Orientation = Orientation.Vertical };
 							sp.Children.Add(new Label() { Content = "Test Control:" });
 							sp.Children.Add(uc1);
 							testWindow.Content = sp;
-							// Owner must be set to properly expose after closing.
-							testWindow.Owner = MainWindow;
 							// Control events.
 							EventHandler<RoutedEventArgs> onControlLoaded = (sender, e) =>
 							{
@@ -440,27 +381,6 @@ namespace x360ce.Net48Test
 									Console.WriteLine("    Test control unloaded");
 							};
 							WeakEventManager<FrameworkElement, RoutedEventArgs>.AddHandler(uc1, nameof(uc1.Loaded), onControlUnloaded);
-							// Window events
-							EventHandler<RoutedEventArgs> onLoaded = (sender, e) =>
-							{
-								if (logMoreDetails)
-									Console.WriteLine("  Test window loaded");
-								testLoadedSemaphore.Release();
-							};
-							WeakEventManager<Window, RoutedEventArgs>.AddHandler(testWindow, nameof(testWindow.Loaded), onLoaded);
-							EventHandler<RoutedEventArgs> onUnloaded = (sender, e) =>
-							{
-								if (logMoreDetails)
-									Console.WriteLine("  Test window unloaded");
-							};
-							WeakEventManager<Window, RoutedEventArgs>.AddHandler(testWindow, nameof(testWindow.Unloaded), onUnloaded);
-							EventHandler<EventArgs> onClosed = (sender, e) =>
-							{
-								if (logMoreDetails)
-									Console.WriteLine("  Test window closed");
-								testClosedSemaphore.Release();
-							};
-							WeakEventManager<Window, EventArgs>.AddHandler(testWindow, nameof(testWindow.Closed), onClosed);
 							testWindow.Show();
 							testLoadedSemaphore.Wait();
 							Task.Delay(TestWindowDisplayDelay).Wait();
@@ -515,8 +435,6 @@ namespace x360ce.Net48Test
 									}).ToList();
 									foreach (var item in controls)
 									{
-
-
 										BindingOperations.ClearAllBindings(item.Value);
 										var dprops = GetAttachedProperties(item.Value);
 										foreach (var dprop in dprops)
@@ -524,11 +442,34 @@ namespace x360ce.Net48Test
 											if (!dprop.ReadOnly)
 												item.Value.ClearValue(dprop);
 										}
+										DisposeObject(item.Value);
+										// Grid : Panel
+										if (item.Value is Grid grid)
+										{
+											grid.RowDefinitions.Clear();
+											grid.ColumnDefinitions.Clear();
+										}
+										// Panel: FrameworkElement
+										if (item.Value is Panel panel)
+										{
+											panel.Children.Clear();
+										}
+										// ItemsControl : Control
+										if (item.Value is ItemsControl ic)
+										{
+											ic.Items.Clear();
+											ic.ItemsSource = null;
+										}
+										// Control : FrameworkElement
+										if (item.Value is Control control)
+										{
+											control.Template = null;
+										}
 										if (item.Value is FrameworkElement fe)
 										{
-											fe.Resources = null;
 											fe.Style = null;
 											fe.DataContext = null;
+											fe.Resources?.Clear();
 											//if (fe.Parent != null)
 											//{
 											//	RemoveChild(fe.Parent, item);
@@ -538,48 +479,11 @@ namespace x360ce.Net48Test
 											//	if (!string.IsNullOrEmpty(fe.Name))
 											//		dpofe.UnregisterName(fe.Name);
 											//}
-
-										}
-										// Control : FrameworkElement
-										if (item.Value is Control control)
-										{
-											control.Template = null;
-										}
-
-										DisposeObject(item.Value);
-
-										// ContentControl: Control
-										//if (item.Value is ContentControl cc)
-										//{
-										//	cc.Content = null;
-										//}
-										// Panel: FrameworkElement
-										if (item.Value is Panel panel)
-										{
-											panel.Children.Clear();
-										}
-										// Grid : Panel
-										if (item.Value is Grid grid)
-										{
-											grid.RowDefinitions.Clear();
-											grid.ColumnDefinitions.Clear();
-										}
-										// ItemsControl : Control
-										if (item.Value is ItemsControl ic)
-										{
-											ic.Items.Clear();
-											ic.ItemsSource = null;
 										}
 										// IDisposable
 										if (item.Value is IDisposable id)
 										{
 											id.Dispose();
-										}
-										if (item.Value is Label label)
-										{
-										}
-										if (item.Value is UserControl uc)
-										{
 										}
 									}
 								}
@@ -595,7 +499,8 @@ namespace x360ce.Net48Test
 							{
 								// Make control path smaller.
 								var path = rx.Replace(item.Path, "\t");
-								Console.WriteLine((item.Reference.IsAlive ? "Fail" : "----") + $" {path}");
+								var id = path.Contains(" ") ? "+" : " ";
+								Console.WriteLine(id + " " + (item.Reference.IsAlive ? "Fail" : "----") + $" {path}");
 							}
 						}
 					}
@@ -686,8 +591,71 @@ namespace x360ce.Net48Test
 						(prop.GetValue(o) as UIElementCollection)?.Clear();
 					else if (prop.Name == nameof(ContentControl.Content))
 						prop.SetValue(o, null);
+					else if (prop.Name == nameof(ContentControl.DataContext))
+						prop.SetValue(o, null);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Get main app window or child test window.
+		/// </summary>
+		public static Window GetWindow(
+			Window parentWindow,
+			bool logMoreDetails,
+			SemaphoreSlim loadedSemaphore = null,
+			SemaphoreSlim closedSemaphore = null
+		)
+		{
+			var w = new System.Windows.Window();
+			w.Topmost = true;
+			w.IsHitTestVisible = false;
+			w.SizeToContent = SizeToContent.WidthAndHeight;
+			// If this is main window then...
+			if (parentWindow == null)
+			{
+				w.Title = "Main Window";
+			}
+			else
+			{
+				w.Title = "Test Window";
+				// Owner must be set to properly expose after closing.
+				w.Owner = parentWindow;
+				w.Top = parentWindow.Top + parentWindow.ActualHeight;
+				w.Left = parentWindow.Left;
+			}
+			var prefix = parentWindow == null ? "" : "  ";
+			// Window events
+			EventHandler<RoutedEventArgs> onLoaded = (sender, e) =>
+			{
+				// If main window.
+				if (w.Owner == null)
+				{
+					// Hide title buttons.
+					var hwnd = new WindowInteropHelper(w).Handle;
+					SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
+				}
+				if (logMoreDetails)
+					Console.WriteLine($"{prefix}{w.Title} loaded");
+				if (loadedSemaphore != null)
+					loadedSemaphore.Release();
+			};
+			WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Loaded), onLoaded);
+			EventHandler<RoutedEventArgs> onUnloaded = (sender, e) =>
+			{
+				if (logMoreDetails)
+					Console.WriteLine($"{prefix}{w.Title} unloaded");
+			};
+			WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Unloaded), onUnloaded);
+			EventHandler<EventArgs> onClosed = (sender, e) =>
+			{
+				if (logMoreDetails)
+					Console.WriteLine($"{prefix}{w.Title} closed");
+				if (closedSemaphore != null)
+					closedSemaphore.Release();
+			};
+			WeakEventManager<Window, EventArgs>.AddHandler(w, nameof(w.Closed), onClosed);
+			return w;
 		}
 
 		#endregion
