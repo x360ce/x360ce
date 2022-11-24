@@ -18,7 +18,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.ComponentModel;
-using System.Windows.Navigation;
 
 #if NETCOREAPP
 namespace x360ce.Net60Test
@@ -204,6 +203,7 @@ namespace x360ce.Net48Test
 		public class ReferenceResults
 		{
 			public string Path { get; set; }
+			public Type Type { get; set; }
 			public WeakReference Reference { get; set; }
 		}
 
@@ -412,55 +412,62 @@ namespace x360ce.Net48Test
 						Console.WriteLine($"Test Control IsAlive: {testControlWr.IsAlive}");
 						// If control is still alive then...
 						// Note: seems like controls with "x:Names" fail to dispose.
-						if (testControlWr.IsAlive)
+						// If control is dependency object then...
+						if (testControlWr.IsAlive && testControlWr.Target is DependencyObject dpo)
 						{
-							var references = new List<ReferenceResults>();
+							// Create list of weak references from all objects.
+							var references = GetAllWeakReferences(dpo);
 							Action isolator2 = () =>
 							{
-								// If control is dependency object then...
-								if (testControlWr.Target is DependencyObject dpo)
+								foreach (var item in references)
 								{
-									var controls = ControlsHelper.GetAll("", dpo);
-									DisposeObject(dpo);
-									ClearBindings(dpo);
-									references = controls.Select(x => new ReferenceResults()
+									// Get control.
+									DependencyObject control = item.Reference.Target as DependencyObject;
+									// Skip if object is gone or control is null
+									if (!item.Reference.IsAlive || control == null)
+										continue;
+
+									try
 									{
-										Path = x.Key,
-										Reference = new WeakReference(x.Value),
-									}).ToList();
-									foreach (var item in controls)
-									{
-										BindingOperations.ClearAllBindings(item.Value);
-										var dprops = GetAttachedProperties(item.Value);
+										try
+										{
+											ClearBindings(control);
+										}
+										catch (Exception ex3)
+										{
+											Console.WriteLine("!!!Error2: " + ex3.Message);
+										}
+										BindingOperations.ClearAllBindings(control);
+										var dprops = GetAttachedProperties(control);
 										foreach (var dprop in dprops)
 										{
 											if (!dprop.ReadOnly)
-												item.Value.ClearValue(dprop);
+												control.ClearValue(dprop);
 										}
-										DisposeObject(item.Value);
+										DisposeObject(control);
 										// Grid : Panel
-										if (item.Value is Grid grid)
+										if (control is Grid grid)
 										{
 											grid.RowDefinitions.Clear();
 											grid.ColumnDefinitions.Clear();
 										}
 										// Panel: FrameworkElement
-										if (item.Value is Panel panel)
+										if (control is Panel panel)
 										{
 											panel.Children.Clear();
 										}
 										// ItemsControl : Control
-										if (item.Value is ItemsControl ic)
+										if (control is ItemsControl ic)
 										{
 											ic.Items.Clear();
 											ic.ItemsSource = null;
 										}
 										// Control : FrameworkElement
-										if (item.Value is Control control)
+										if (control is Control c)
 										{
-											control.Template = null;
+											c.Template = null;
 										}
-										if (item.Value is FrameworkElement fe)
+										if (control is FrameworkElement fe)
 										{
 											fe.Style = null;
 											fe.DataContext = null;
@@ -476,11 +483,16 @@ namespace x360ce.Net48Test
 											//}
 										}
 										// IDisposable
-										if (item.Value is IDisposable id)
+										if (control is IDisposable id)
 										{
 											id.Dispose();
 										}
 									}
+									catch (Exception ex2)
+									{
+										Console.WriteLine("!!!Error: " + ex2.Message);
+									}
+
 								}
 							};
 							MainWindow.Dispatcher.Invoke(isolator2);
@@ -514,8 +526,7 @@ namespace x360ce.Net48Test
 			return result;
 		}
 
-
-		public static void CollectGarbage()
+		private static void _CollectGarbage()
 		{
 			// Try to remove object from the memory.
 			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
@@ -525,15 +536,20 @@ namespace x360ce.Net48Test
 			GC.WaitForPendingFinalizers();
 		}
 
-		public static void CollectGarbage(Func<bool> whileCondition)
+		public static void CollectGarbage(Func<bool> whileCondition = null)
 		{
+			if (whileCondition == null)
+			{
+				_CollectGarbage();
+				return;
+			}
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
 			// loop untill object allive, but no longer than  seconds.
 			while (whileCondition() && stopwatch.ElapsedMilliseconds < TestMaxDurationPerClassTest)
 			{
 				Task.Delay(200).Wait();
-				CollectGarbage();
+				_CollectGarbage();
 			}
 		}
 
@@ -556,7 +572,6 @@ namespace x360ce.Net48Test
 			foreach (DependencyObject element in EnumerateVisualChildren(dependencyObject))
 				BindingOperations.ClearAllBindings(element);
 		}
-
 
 		public static IList<DependencyProperty> GetAttachedProperties(DependencyObject obj)
 		{
@@ -593,6 +608,28 @@ namespace x360ce.Net48Test
 		}
 
 		/// <summary>
+		/// Get list of weak references pointing to all chidren of main control.
+		/// </summary>
+		public static List<ReferenceResults> GetAllWeakReferences(DependencyObject o)
+		{
+			List<ReferenceResults> list = new List<ReferenceResults>();
+			Action isolator = () =>
+			{
+				// Create list of weak references from all objects.
+				var controls = ControlsHelper.GetAll("", o, null, true);
+				list = controls.Select(x => new ReferenceResults()
+				{
+					Path = x.Key,
+					Type = x.Value.GetType(),
+					Reference = new WeakReference(x.Value),
+				}).ToList();
+				controls.Clear();
+			};
+			o.Dispatcher.Invoke(isolator);
+			return list;
+		}
+
+		/// <summary>
 		/// Get main app window or child test window.
 		/// </summary>
 		public static Window GetWindow(
@@ -602,7 +639,7 @@ namespace x360ce.Net48Test
 			SemaphoreSlim closedSemaphore = null
 		)
 		{
-			var w = new System.Windows.Window();
+			var w = new Window();
 			w.Topmost = true;
 			w.IsHitTestVisible = false;
 			w.SizeToContent = SizeToContent.WidthAndHeight;
@@ -620,8 +657,8 @@ namespace x360ce.Net48Test
 				w.Left = parentWindow.Left;
 			}
 			var prefix = parentWindow == null ? "" : "  ";
-			// Window events
-			EventHandler<RoutedEventArgs> onLoaded = (sender, e) =>
+			// Add weak handler to event.
+			WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Loaded), (sender, e) =>
 			{
 				// If main window.
 				if (w.Owner == null)
@@ -634,22 +671,21 @@ namespace x360ce.Net48Test
 					Console.WriteLine($"{prefix}{w.Title} loaded");
 				if (loadedSemaphore != null)
 					loadedSemaphore.Release();
-			};
-			WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Loaded), onLoaded);
-			EventHandler<RoutedEventArgs> onUnloaded = (sender, e) =>
+			});
+			// Add weak handler to event.
+			WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Unloaded), (sender, e) =>
 			{
 				if (logMoreDetails)
 					Console.WriteLine($"{prefix}{w.Title} unloaded");
-			};
-			WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Unloaded), onUnloaded);
-			EventHandler<EventArgs> onClosed = (sender, e) =>
+			});
+			// Add weak handler to event.
+			WeakEventManager<Window, EventArgs>.AddHandler(w, nameof(w.Closed), (sender, e) =>
 			{
 				if (logMoreDetails)
 					Console.WriteLine($"{prefix}{w.Title} closed");
 				if (closedSemaphore != null)
 					closedSemaphore.Release();
-			};
-			WeakEventManager<Window, EventArgs>.AddHandler(w, nameof(w.Closed), onClosed);
+			});
 			return w;
 		}
 
