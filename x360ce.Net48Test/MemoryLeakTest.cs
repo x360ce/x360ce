@@ -141,6 +141,7 @@ namespace x360ce.Net48Test
 		private static System.Windows.Application MainApp;
 		private static System.Windows.Window MainWindow;
 		private static System.Windows.Controls.Label MainLabel;
+		private static System.Windows.Controls.Label MainSubLabel;
 		private static Thread MainThread;
 		private static object MainWindowLock = new object();
 
@@ -170,7 +171,10 @@ namespace x360ce.Net48Test
 					// Create content control.
 					var sp = new StackPanel();
 					MainLabel = new System.Windows.Controls.Label() { Content = $"Test control: ..." };
+					MainSubLabel = new System.Windows.Controls.Label() { };
+					sp.Orientation = Orientation.Vertical;
 					sp.Children.Add(MainLabel);
+					sp.Children.Add(MainSubLabel);
 					w.Content = sp;
 					// Use weak reference events.
 					WeakEventManager<Application, ExitEventArgs>.AddHandler(MainApp, nameof(MainApp.Exit), (sender, e) =>
@@ -416,87 +420,107 @@ namespace x360ce.Net48Test
 						if (testControlWr.IsAlive && testControlWr.Target is DependencyObject dpo)
 						{
 							// Create list of weak references from all objects.
-							var references = GetAllWeakReferences(dpo);
-							Action isolator2 = () =>
+							List<ReferenceResults> references = null;
+							MainWindow.Dispatcher.Invoke(new Action(() =>
 							{
-								foreach (var item in references)
+								references = GetAllWeakReferences(dpo);
+							}));
+							ApplyDisposeCommand("Set FrameworkElement.Style to null", references, (x) =>
+							{
+								if (!(x.Reference.Target is FrameworkElement o))
+									return;
+								// Remove style.
+								o.Style = null;
+							});
+							ApplyDisposeCommand("Clear FrameworkElement.Resources", references, (x) =>
+							{
+								if (!(x.Reference.Target is FrameworkElement o))
+									return;
+								// Clear resources.
+								o.Resources.Clear();
+							});
+							ApplyDisposeCommand("Clear Bindings", references, (x) =>
+							{
+								if (!(x.Reference.Target is DependencyObject o))
+									return;
+								ClearBindings(o);
+							});
+							ApplyDisposeCommand("Clear All Bindings", references, (x) =>
+							{
+								if (!(x.Reference.Target is DependencyObject o))
+									return;
+								BindingOperations.ClearAllBindings(o);
+							});
+							ApplyDisposeCommand("Clear Dependency Property Values", references, (x) =>
+							{
+								if (!(x.Reference.Target is DependencyObject o))
+									return;
+								var dprops = GetAttachedProperties(o);
+								foreach (var dprop in dprops)
 								{
-									// Get control.
-									DependencyObject control = item.Reference.Target as DependencyObject;
-									// Skip if object is gone or control is null
-									if (!item.Reference.IsAlive || control == null)
-										continue;
-
-									try
-									{
-										try
-										{
-											ClearBindings(control);
-										}
-										catch (Exception ex3)
-										{
-											Console.WriteLine("!!!Error2: " + ex3.Message);
-										}
-										BindingOperations.ClearAllBindings(control);
-										var dprops = GetAttachedProperties(control);
-										foreach (var dprop in dprops)
-										{
-											if (!dprop.ReadOnly)
-												control.ClearValue(dprop);
-										}
-										DisposeObject(control);
-										// Grid : Panel
-										if (control is Grid grid)
-										{
-											grid.RowDefinitions.Clear();
-											grid.ColumnDefinitions.Clear();
-										}
-										// Panel: FrameworkElement
-										if (control is Panel panel)
-										{
-											panel.Children.Clear();
-										}
-										// ItemsControl : Control
-										if (control is ItemsControl ic)
-										{
-											ic.Items.Clear();
-											ic.ItemsSource = null;
-										}
-										// Control : FrameworkElement
-										if (control is Control c)
-										{
-											c.Template = null;
-										}
-										if (control is FrameworkElement fe)
-										{
-											fe.Style = null;
-											fe.DataContext = null;
-											fe.Resources?.Clear();
-											//if (fe.Parent != null)
-											//{
-											//	RemoveChild(fe.Parent, item);
-											//}
-											//if (dpo is FrameworkElement dpofe)
-											//{
-											//	if (!string.IsNullOrEmpty(fe.Name))
-											//		dpofe.UnregisterName(fe.Name);
-											//}
-										}
-										// IDisposable
-										if (control is IDisposable id)
-										{
-											id.Dispose();
-										}
-									}
-									catch (Exception ex2)
-									{
-										Console.WriteLine("!!!Error: " + ex2.Message);
-									}
-
+									if (!dprop.ReadOnly)
+										o.ClearValue(dprop);
 								}
-							};
-							MainWindow.Dispatcher.Invoke(isolator2);
-							CollectGarbage(() => references.Any(x => x.Reference.IsAlive));
+							});
+							ApplyDisposeCommand("Dispose Object", references, (x) =>
+							{
+								if (!(x.Reference.Target is DependencyObject o))
+									return;
+								DisposeObject(o);
+							});
+							ApplyDisposeCommand("Clear: Grid : Panel", references, (x) =>
+							{
+								if (!(x.Reference.Target is Grid o))
+									return;
+								o.RowDefinitions.Clear();
+								o.ColumnDefinitions.Clear();
+							});
+							ApplyDisposeCommand("Clear: Panel: FrameworkElement", references, (x) =>
+							{
+								if (!(x.Reference.Target is Panel o))
+									return;
+								o.Children.Clear();
+							});
+							ApplyDisposeCommand("Clear: ItemsControl : Control", references, (x) =>
+							{
+								if (!(x.Reference.Target is ItemsControl o))
+									return;
+								o.Items.Clear();
+								o.ItemsSource = null;
+							});
+							ApplyDisposeCommand("Clear: Control : FrameworkElement", references, (x) =>
+							{
+								if (!(x.Reference.Target is Control o))
+									return;
+								o.Template = null;
+							});
+							ApplyDisposeCommand("Clear: FrameworkElement", references, (x) =>
+							{
+								if (!(x.Reference.Target is FrameworkElement o))
+									return;
+								o.Style = null;
+								o.Resources?.Clear();
+								o.DataContext = null;
+								//if (fe.Parent != null)
+								//{
+								//	RemoveChild(fe.Parent, item);
+								//}
+								//if (dpo is FrameworkElement dpofe)
+								//{
+								//	if (!string.IsNullOrEmpty(fe.Name))
+								//		dpofe.UnregisterName(fe.Name);
+								//}
+							});
+							ApplyDisposeCommand("Dispose : IDisposable", references, (x) =>
+							{
+								if (!(x.Reference.Target is IDisposable o))
+									return;
+								o.Dispose();
+							});
+							MainWindow.Dispatcher.Invoke(new Action(() =>
+							{
+								MainSubLabel.Content = "";
+							}));
 							var childCount = references.Count();
 							var childFailCount = references.Count(x => x.Reference.IsAlive);
 							var childPassCount = references.Count(x => !x.Reference.IsAlive);
@@ -526,6 +550,48 @@ namespace x360ce.Net48Test
 			return result;
 		}
 
+		private static void ApplyDisposeCommand(string title, List<ReferenceResults> items, Action<ReferenceResults> action)
+		{
+			Console.WriteLine(title);
+			var error = "";
+			var aliveItems = items.Where(x => x.Reference.IsAlive).ToList();
+			MainWindow.Dispatcher.Invoke(new Action(() =>
+			{
+				MainSubLabel.Content = title;
+				foreach (var item in items)
+				{
+					// Get control.
+					DependencyObject control = item.Reference.Target as DependencyObject;
+					// Skip if object is gone or control is null
+					if (!item.Reference.IsAlive || control == null)
+						continue;
+					try
+					{
+
+						action(item);
+					}
+					catch (Exception ex2)
+					{
+						error = ex2.Message;
+					}
+					if (!string.IsNullOrEmpty(error))
+						Console.WriteLine("!!!Error: " + error);
+				}
+			}));
+			//CollectGarbage(() => items.Any(x => x.Reference.IsAlive));
+			CollectGarbage();
+			var disposedItems = aliveItems.Where(x => !x.Reference.IsAlive).ToList();
+			if (disposedItems.Count > 0)
+			{
+				for (int i = 0; i < disposedItems.Count; i++)
+				{
+					var item = disposedItems[i];
+					//Console.WriteLine($"  Disposed: {item.Path}");
+				}
+				Console.WriteLine($"  Disposed: {disposedItems.Count} control(s)");
+			}
+		}
+
 		private static void _CollectGarbage()
 		{
 			// Try to remove object from the memory.
@@ -553,10 +619,14 @@ namespace x360ce.Net48Test
 			}
 		}
 
-		public static IEnumerable<DependencyObject> EnumerateVisualChildren(DependencyObject dependencyObject)
+		public static IEnumerable<DependencyObject> EnumerateVisualChildren(DependencyObject d)
 		{
-			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(dependencyObject); i++)
-				yield return VisualTreeHelper.GetChild(dependencyObject, i);
+			if (d is Visual || d is System.Windows.Media.Media3D.Visual3D)
+				for (int i = 0; i < VisualTreeHelper.GetChildrenCount(d); i++)
+				{
+					if (d is Visual || d is System.Windows.Media.Media3D.Visual3D)
+						yield return VisualTreeHelper.GetChild(d, i);
+				}
 		}
 
 		public static IEnumerable<DependencyObject> EnumerateVisualDescendents(DependencyObject dependencyObject)
