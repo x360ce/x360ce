@@ -5,10 +5,10 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	MinWidth="240"
-	SizeToContent="WidthAndHeight"
-	Loaded="Window_Loaded"
-	Unloaded="Window_Unloaded"
 	Closed="Window_Closed"
+	Loaded="Window_Loaded"
+	SizeToContent="WidthAndHeight"
+	Unloaded="Window_Unloaded"
 	mc:Ignorable="d">
 	<Window.Resources>
 		<ResourceDictionary>
@@ -79,7 +79,7 @@
 					x:Name="MainHyperLink"
 					NavigateUri="http://localhost"
 					RequestNavigate="MainHyperLink_RequestNavigate"
-					TextDecorations="">
+					TextDecorations="None">
 					<TextBlock x:Name="LinkLabel">MainHyperLink</TextBlock>
 				</Hyperlink>
 				<TextBlock x:Name="SizeLabel" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">0</TextBlock>
