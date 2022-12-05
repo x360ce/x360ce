@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-#if NETCOREAPP
-namespace x360ce.Net60Test
-#else
-namespace x360ce.Net48Test
-#endif
+namespace x360ce.Tests
 {
 	public class MemoryTestResult
 	{

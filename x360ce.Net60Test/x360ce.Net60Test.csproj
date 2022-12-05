@@ -14,8 +14,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Compile Include="..\x360ce.Net48Test\MemoryLeakTest.cs" Link="MemoryLeakTest.cs" />
-		<Compile Include="..\x360ce.Net48Test\MemoryTestResult.cs" Link="MemoryTestResult.cs" />
+		<Compile Include="..\x360ce.Net48Test\*.cs">
+			<Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
+		<Compile Include="..\x360ce.Net48Test\Common\*.cs">
+			<Link>Common\%(RecursiveDir)%(Filename)%(Extension)</Link>
+		</Compile>
 	</ItemGroup>
 
 	<ItemGroup>

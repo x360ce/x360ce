@@ -1,8 +1,6 @@
 ﻿using System.Runtime;
 using System.Reflection;
 using System.Diagnostics;
-using JocysCom.ClassLibrary.Web.Services;
-using x360ce.Engine.Data;
 using System.Windows.Controls;
 using System.Windows;
 using System.Runtime.InteropServices;
@@ -18,11 +16,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.ComponentModel;
 
-#if NETCOREAPP
-namespace x360ce.Net60Test
-#else
-namespace x360ce.Net48Test
-#endif
+namespace x360ce.Tests
 {
 
 	/// <summary>
@@ -33,74 +27,11 @@ namespace x360ce.Net48Test
 	/// Note: Compiler is trying to be helpful and Debug build can keep values rooted even if
 	/// you set them to null i.e. 'wr.IsAlive' will always return 'true'.
 	/// </summary>
-	[TestClass]
-	public class MemoryLeakTest
+	public class MemoryLeakHelper
 	{
 
 		public const long TestMaxDurationPerClassTest = 5000;
 		private static int TestWindowDisplayDelay = 2000;
-
-		[TestMethod]
-		public void Test_x360ce_App() =>
-			Test(typeof(App.App).Assembly);
-
-		[TestMethod]
-		public void Test_x360ce_App_PadItem_AdvancedControl() =>
-			Test<App.Controls.PadItem_AdvancedControl>();
-
-		[TestMethod]
-		public void Test_x360ce_Engine() =>
-			Test(typeof(Engine.EngineHelper).Assembly,
-				// Include types. null = Test all.
-				null,
-				// Exclude types.
-				new Type[] {
-					typeof(JocysCom.WebSites.Engine.Security.Data.SecurityEntities),
-					typeof(SoapHttpClientBase),
-					typeof(x360ceModelContainer),
-				});
-
-		[TestMethod]
-		public void Test_x360ce_Engine_IssuesUserControl() =>
-			Test<JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl>();
-
-		[TestMethod]
-		public void Test_x360ce_Engine_IssuesControl() =>
-			Test<JocysCom.ClassLibrary.Controls.IssuesControl.IssuesControl>();
-
-		[TestMethod]
-		public void Test_ClassLibrary_MessageBoxWindow() =>
-			Test<JocysCom.ClassLibrary.Controls.MessageBoxWindow>();
-
-		[TestMethod]
-		public void Test_ClassLibrary_Widow() =>
-			Test<Window>();
-
-		[TestMethod]
-		public void Test_ClassLibrary_ErrorReportControl() =>
-			Test<JocysCom.ClassLibrary.Controls.ErrorReportControl>();
-
-		/// <summary>
-		/// Simple ListView will be garbage collected successfully.
-		/// </summary>
-		[TestMethod]
-		public void Test_ListView() =>
-			Test<System.Windows.Controls.ListView>();
-
-		/// <summary>
-		/// Simple DataGrid fails garbage collection and leaks memory.
-		/// </summary>
-		[TestMethod]
-		public void Test_DataGrid() =>
-			Test<System.Windows.Controls.DataGrid>();
-
-		[TestMethod]
-		public void Test_TextBox() =>
-			Test<System.Windows.Controls.TextBox>();
-
-		[TestMethod]
-		public void Test_StackPanel() =>
-			Test<System.Windows.Controls.StackPanel>();
 
 		private static Dictionary<Type, PropertyInfo[]> TypesWithContentProperty;
 
@@ -156,6 +87,8 @@ namespace x360ce.Net48Test
 		[DllImport("user32.dll")]
 		private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
+		private static System.Timers.Timer _unloadTimer = new System.Timers.Timer(1000);
+
 		private static void CheckMainWindow()
 		{
 			lock (MainWindowLock)
@@ -167,7 +100,9 @@ namespace x360ce.Net48Test
 
 				Action isolator = () =>
 				{
-					MainApp = new System.Windows.Application();
+					// One app per app domain.
+					if (MainApp == null)
+						MainApp = new System.Windows.Application();
 					var w = GetWindow(null, null, true, MainWindowLoadedSemaphore);
 					// Create content control.
 					var sp = new StackPanel();
@@ -200,7 +135,7 @@ namespace x360ce.Net48Test
 			throw new NotImplementedException();
 		}
 
-		private static void Test<T>()
+		public static void Test<T>()
 		{
 			Test(typeof(T).Assembly, new Type[] { typeof(T) });
 		}
@@ -214,6 +149,7 @@ namespace x360ce.Net48Test
 
 		public static void Test(Assembly assembly, Type[] includeTypes = null, Type[] excludeTypes = null)
 		{
+			_unloadTimer.Stop();
 			// Make sure that owner window exists.
 			CheckMainWindow();
 			TypesWithContentProperty = TypesWithContentProperty ?? GetTypesWithContentProperty();
@@ -221,12 +157,15 @@ namespace x360ce.Net48Test
 			var mainWindowWr = new WeakReference(null);
 			mainWindowWr.Target = MainWindow;
 			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes);
+			/*
+			// Shutdow will terminate multiple tests.
 			MainApp.Dispatcher.Invoke(() =>
 			{
 				MainApp.Shutdown();
 			});
 			// Wait until application exits.
 			ApplicationExitsSemaphore.Wait();
+			*/
 			var errors = results.Where(x => x.Level == TraceLevel.Error).ToList();
 			var warnings = results.Where(x => x.Level == TraceLevel.Warning).ToList();
 			var passed = results.Where(x => x.Level == TraceLevel.Info && !x.IsAlive).ToList();
@@ -260,6 +199,10 @@ namespace x360ce.Net48Test
 			CollectGarbage();
 		}
 
+		private static void MainApp_Exit(object sender, ExitEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
 
 		public static List<MemoryTestResult> TestMemoryLeakByAssembly(Assembly assembly, Type[] includeTypes, Type[] excludeTypes)
 		{
