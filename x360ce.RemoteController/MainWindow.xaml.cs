@@ -15,6 +15,7 @@ namespace JocysCom.x360ce.RemoteController
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
+	/// <remarks>Make sure to set the Owner property to be disposed properly after closing.</remarks>
 	public partial class MainWindow : Window
 	{
 		public MainWindow()

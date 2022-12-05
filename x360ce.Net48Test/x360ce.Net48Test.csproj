@@ -53,7 +53,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomWindow.cs" />
     <Compile Include="MemoryLeakTest.cs" />
     <Compile Include="MemoryTestResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -16,7 +16,6 @@ using System.Threading;
 using JocysCom.ClassLibrary.Controls;
 using System.Text.RegularExpressions;
 using System.Windows.Data;
-using System.Windows.Media;
 using System.ComponentModel;
 
 #if NETCOREAPP
@@ -74,6 +73,10 @@ namespace x360ce.Net48Test
 			Test<JocysCom.ClassLibrary.Controls.MessageBoxWindow>();
 
 		[TestMethod]
+		public void Test_ClassLibrary_Widow() =>
+			Test<Window>();
+
+		[TestMethod]
 		public void Test_ClassLibrary_ErrorReportControl() =>
 			Test<JocysCom.ClassLibrary.Controls.ErrorReportControl>();
 
@@ -98,8 +101,6 @@ namespace x360ce.Net48Test
 		[TestMethod]
 		public void Test_StackPanel() =>
 			Test<System.Windows.Controls.StackPanel>();
-
-
 
 		private static Dictionary<Type, PropertyInfo[]> TypesWithContentProperty;
 
@@ -167,7 +168,7 @@ namespace x360ce.Net48Test
 				Action isolator = () =>
 				{
 					MainApp = new System.Windows.Application();
-					var w = GetWindow(null, true, MainWindowLoadedSemaphore);
+					var w = GetWindow(null, null, true, MainWindowLoadedSemaphore);
 					// Create content control.
 					var sp = new StackPanel();
 					MainLabel = new System.Windows.Controls.Label() { Content = $"Test control: ..." };
@@ -351,7 +352,8 @@ namespace x360ce.Net48Test
 							var testLoadedSemaphore = new SemaphoreSlim(0);
 							var testClosedSemaphore = new SemaphoreSlim(0);
 							mainWindowWr.Target = MainWindow;
-							var testWindow = GetWindow(MainWindow, logMoreDetails, testLoadedSemaphore, testClosedSemaphore);
+							// MainWindow will be set as owner to properly dispose after closing.
+							var testWindow = GetWindow(ucw, MainWindow, logMoreDetails, testLoadedSemaphore, testClosedSemaphore);
 							testWindow.Show();
 							testLoadedSemaphore.Wait();
 							Task.Delay(TestWindowDisplayDelay).Wait();
@@ -363,7 +365,7 @@ namespace x360ce.Net48Test
 							var testLoadedSemaphore = new SemaphoreSlim(0);
 							var testClosedSemaphore = new SemaphoreSlim(0);
 							mainWindowWr.Target = MainWindow;
-							var testWindow = GetWindow(MainWindow, logMoreDetails, testLoadedSemaphore, testClosedSemaphore);
+							var testWindow = GetWindow(null, MainWindow, logMoreDetails, testLoadedSemaphore, testClosedSemaphore);
 							// Create content control.
 							var sp = new StackPanel() { Orientation = Orientation.Vertical };
 							sp.Children.Add(new Label() { Content = "Test Control:" });
@@ -423,8 +425,47 @@ namespace x360ce.Net48Test
 							List<ReferenceResults> references = null;
 							MainWindow.Dispatcher.Invoke(new Action(() =>
 							{
-								references = GetAllWeakReferences(dpo);
+								var arr = GetAllWeakReferences(dpo).ToArray();
+								arr.Reverse();
+								references = arr.ToList();
 							}));
+							ApplyDisposeCommand("Clear: FrameworkElement", references, (x) =>
+							{
+								if (!(x.Reference.Target is FrameworkElement o))
+									return;
+								o.Style = null;
+								o.Resources?.Clear();
+								o.DataContext = null;
+								if (!string.IsNullOrEmpty(o.Name) && o.Parent is FrameworkContentElement parentContent)
+								{
+									Console.WriteLine($"\tUnregisterName: {o.Name}");
+									parentContent.UnregisterName(o.Name);
+								}
+								if (!string.IsNullOrEmpty(o.Name) && o.Parent is FrameworkElement parent)
+								{
+									Console.WriteLine($"\tUnregisterName: {o.Name}");
+									parent.UnregisterName(o.Name);
+								}
+							});
+							ApplyDisposeCommand("Clear: FrameworkContentElement", references, (x) =>
+							{
+								if (!(x.Reference.Target is FrameworkContentElement o))
+									return;
+								o.Style = null;
+								o.Resources?.Clear();
+								o.DataContext = null;
+								if (!string.IsNullOrEmpty(o.Name) && o.Parent is FrameworkContentElement parentContent)
+								{
+									Console.WriteLine($"\tUnregisterName: {o.Name}");
+									parentContent.UnregisterName(o.Name);
+								}
+								if (!string.IsNullOrEmpty(o.Name) && o.Parent is FrameworkElement parent)
+								{
+									Console.WriteLine($"\tUnregisterName: {o.Name}");
+									parent.UnregisterName(o.Name);
+								}
+
+							});
 							ApplyDisposeCommand("Set FrameworkElement.Style to null", references, (x) =>
 							{
 								if (!(x.Reference.Target is FrameworkElement o))
@@ -438,12 +479,6 @@ namespace x360ce.Net48Test
 									return;
 								// Clear resources.
 								o.Resources.Clear();
-							});
-							ApplyDisposeCommand("Clear Bindings", references, (x) =>
-							{
-								if (!(x.Reference.Target is DependencyObject o))
-									return;
-								ClearBindings(o);
 							});
 							ApplyDisposeCommand("Clear All Bindings", references, (x) =>
 							{
@@ -493,23 +528,6 @@ namespace x360ce.Net48Test
 								if (!(x.Reference.Target is Control o))
 									return;
 								o.Template = null;
-							});
-							ApplyDisposeCommand("Clear: FrameworkElement", references, (x) =>
-							{
-								if (!(x.Reference.Target is FrameworkElement o))
-									return;
-								o.Style = null;
-								o.Resources?.Clear();
-								o.DataContext = null;
-								//if (fe.Parent != null)
-								//{
-								//	RemoveChild(fe.Parent, item);
-								//}
-								//if (dpo is FrameworkElement dpofe)
-								//{
-								//	if (!string.IsNullOrEmpty(fe.Name))
-								//		dpofe.UnregisterName(fe.Name);
-								//}
 							});
 							ApplyDisposeCommand("Dispose : IDisposable", references, (x) =>
 							{
@@ -619,33 +637,9 @@ namespace x360ce.Net48Test
 			}
 		}
 
-		public static IEnumerable<DependencyObject> EnumerateVisualChildren(DependencyObject d)
-		{
-			if (d is Visual || d is System.Windows.Media.Media3D.Visual3D)
-				for (int i = 0; i < VisualTreeHelper.GetChildrenCount(d); i++)
-				{
-					if (d is Visual || d is System.Windows.Media.Media3D.Visual3D)
-						yield return VisualTreeHelper.GetChild(d, i);
-				}
-		}
-
-		public static IEnumerable<DependencyObject> EnumerateVisualDescendents(DependencyObject dependencyObject)
-		{
-			yield return dependencyObject;
-			foreach (DependencyObject child in EnumerateVisualChildren(dependencyObject))
-				foreach (DependencyObject descendent in EnumerateVisualChildren(child))
-					yield return descendent;
-		}
-
-		public static void ClearBindings(DependencyObject dependencyObject)
-		{
-			foreach (DependencyObject element in EnumerateVisualChildren(dependencyObject))
-				BindingOperations.ClearAllBindings(element);
-		}
-
 		public static IList<DependencyProperty> GetAttachedProperties(DependencyObject obj)
 		{
-			List<DependencyProperty> result = new List<DependencyProperty>();
+			var result = new List<DependencyProperty>();
 			foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(obj,
 				new Attribute[] { new PropertyFilterAttribute(PropertyFilterOptions.All) }))
 			{
@@ -703,13 +697,14 @@ namespace x360ce.Net48Test
 		/// Get main app window or child test window.
 		/// </summary>
 		public static Window GetWindow(
+			Window w,
 			Window parentWindow,
 			bool logMoreDetails,
 			SemaphoreSlim loadedSemaphore = null,
 			SemaphoreSlim closedSemaphore = null
 		)
 		{
-			var w = new Window();
+			w = w ?? new Window();
 			w.Topmost = true;
 			w.IsHitTestVisible = false;
 			w.SizeToContent = SizeToContent.WidthAndHeight;
@@ -721,7 +716,7 @@ namespace x360ce.Net48Test
 			else
 			{
 				w.Title = "Test Window";
-				// Owner must be set to properly expose after closing.
+				// Owner must be set to properly dispose after closing.
 				w.Owner = parentWindow;
 				w.Top = parentWindow.Top + parentWindow.ActualHeight;
 				w.Left = parentWindow.Left;

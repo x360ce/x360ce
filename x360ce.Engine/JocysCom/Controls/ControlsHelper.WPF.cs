@@ -333,10 +333,9 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				controls.Add(path, control);
 			}
-			var visual = control as Visual;
-			if (visual != null)
+			// If control is Visual then then...
+			if (control is Visual || control is System.Windows.Media.Media3D.Visual3D)
 			{
-				// If control contains visual children then...
 				var childrenCount = VisualTreeHelper.GetChildrenCount(control);
 				for (int i = 0; i < childrenCount; i++)
 				{
@@ -352,19 +351,22 @@ namespace JocysCom.ClassLibrary.Controls
 					}
 				}
 			}
-			// Get logical children.
-			var logicalChildren = LogicalTreeHelper.GetChildren(control).OfType<DependencyObject>().ToList();
-			for (int i = 0; i < logicalChildren.Count; i++)
+			// If contorl is FrameworkElement then...
+			if (control is FrameworkElement || control is FrameworkContentElement)
 			{
-				var child = logicalChildren[i];
-				var childKey = $"{path}[{i}].{child.GetType().Name} {(child as FrameworkElement)?.Name}".TrimEnd();
-				//controls.Add(childKey, child);
-				// Get children of children.
-				var pairs = GetAll(childKey, child, null, true);
-				foreach (var pair in pairs)
+				var logicalChildren = LogicalTreeHelper.GetChildren(control).OfType<DependencyObject>().ToList();
+				for (int i = 0; i < logicalChildren.Count; i++)
 				{
-					if (!controls.ContainsValue(pair.Value))
-						controls.Add(pair.Key, pair.Value);
+					var child = logicalChildren[i];
+					var childKey = $"{path}[{i}].{child.GetType().Name} {(child as FrameworkElement)?.Name}".TrimEnd();
+					//controls.Add(childKey, child);
+					// Get children of children.
+					var pairs = GetAll(childKey, child, null, true);
+					foreach (var pair in pairs)
+					{
+						if (!controls.ContainsValue(pair.Value))
+							controls.Add(pair.Key, pair.Value);
+					}
 				}
 			}
 			// If type is set then...

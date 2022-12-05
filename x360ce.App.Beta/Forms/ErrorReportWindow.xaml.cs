@@ -12,6 +12,7 @@ namespace x360ce.App.Forms
 	/// <summary>
 	/// Interaction logic for ErrorReportWindow.xaml
 	/// </summary>
+	/// <remarks>Make sure to set the Owner property to be disposed properly after closing.</remarks>
 	public partial class ErrorReportWindow : Window
 	{
 		public ErrorReportWindow()

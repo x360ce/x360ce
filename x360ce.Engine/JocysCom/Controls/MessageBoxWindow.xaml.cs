@@ -9,8 +9,12 @@ namespace JocysCom.ClassLibrary.Controls
 	/// <summary>
 	/// Interaction logic for MessageBoxWindow.xaml
 	/// </summary>
+	/// <remarks>Make sure to set the Owner property to be disposed properly after closing.</remarks>
 	public partial class MessageBoxWindow : Window
 	{
+		/// <summary>
+		/// Make sure to set window Owner to properly dispose after closing.
+		/// </summary>
 		public MessageBoxWindow()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
