@@ -314,6 +314,14 @@ namespace JocysCom.ClassLibrary.Controls
 			return null;
 		}
 
+		public static void AddWeakHandlerOnWindowClosing(DependencyObject control, EventHandler<CancelEventArgs> handler)
+		{
+			var w = GetParent<Window>(control);
+			if (w == null)
+				return;
+			WeakEventManager<Window, CancelEventArgs>.AddHandler(w, nameof(Window.Closing), handler);
+		}
+
 		/// <summary>
 		/// Get all child controls with path.
 		/// Use regex to make shorter tabbed path:

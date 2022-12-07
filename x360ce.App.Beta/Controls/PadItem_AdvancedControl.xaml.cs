@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using SharpDX.XInput;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 using x360ce.Engine.Data;
 
@@ -18,6 +19,13 @@ namespace x360ce.App.Controls
 				return;
 			// Add GamePad typed to ComboBox.
 			DeviceSubTypeComboBox.ItemsSource = (DeviceSubType[])Enum.GetValues(typeof(DeviceSubType));
+			ControlsHelper.AddWeakHandlerOnWindowClosing(this, (sender, e) => {
+				if (e.Cancel)
+					return;
+				System.Diagnostics.Debug.WriteLine("!!!!!!!!!!!!!!!!!!");
+				SetBinding(null);
+				DeviceSubTypeComboBox.ItemsSource = null;
+			});
 		}
 
 		public void SetBinding(PadSetting ps)
@@ -39,16 +47,12 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowLoad(this))
 				return;
-			//Window.GetWindow(this).Closing += UserControl_Unloaded;
 		}
 
 		private void UserControl_Unloaded(object sender, EventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
-			//Window.GetWindow(this).Closing -= UserControl_Unloaded;
-			SetBinding(null);
-			DeviceSubTypeComboBox.ItemsSource = null;
 		}
 
 	}
