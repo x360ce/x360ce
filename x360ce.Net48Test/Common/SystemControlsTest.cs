@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows;
 using System.Windows.Controls;
+using x360ce.App.Controls;
 
 namespace x360ce.Tests
 {
@@ -8,19 +9,22 @@ namespace x360ce.Tests
 	public class SystemControlsTest
 	{
 		[TestMethod]
-		public void Test_ClassLibrary_Widow() =>
+		public void Test_ClassLibrary_Window() =>
 			MemoryLeakHelper.Test<Window>();
 
-		/// <summary>
-		/// Simple ListView will be garbage collected successfully.
-		/// </summary>
 		[TestMethod]
 		public void Test_ListView() =>
 			MemoryLeakHelper.Test<ListView>();
 
 		/// <summary>
-		/// Simple DataGrid fails garbage collection and leaks memory.
+		/// GroupBox fails to dispose.
 		/// </summary>
+		[TestMethod]
+		public void Test_GroupBox()
+		{
+			MemoryLeakHelper.Test<GroupBox, TestWindow>();
+		}
+
 		[TestMethod]
 		public void Test_DataGrid() =>
 			MemoryLeakHelper.Test<DataGrid>();
@@ -32,6 +36,11 @@ namespace x360ce.Tests
 		[TestMethod]
 		public void Test_StackPanel() =>
 			MemoryLeakHelper.Test<StackPanel>();
+
+		[TestMethod]
+		public void Test_TabControl() =>
+			MemoryLeakHelper.Test<TabControl>();
+
 
 	}
 }

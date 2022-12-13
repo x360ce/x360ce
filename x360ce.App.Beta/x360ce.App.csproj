@@ -312,6 +312,9 @@
     <Compile Include="Controls\ProgramListControl.xaml.cs">
       <DependentUpon>ProgramListControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\TestWindow.xaml.cs">
+      <DependentUpon>TestWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UserSettingListControl.xaml.cs">
       <DependentUpon>UserSettingListControl.xaml</DependentUpon>
     </Compile>
@@ -754,6 +757,10 @@
     <Page Include="Controls\ProgramListControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\TestWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\UserSettingListControl.xaml">
       <Generator>MSBuild:Compile</Generator>

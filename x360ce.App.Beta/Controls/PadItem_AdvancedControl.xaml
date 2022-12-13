@@ -8,7 +8,6 @@
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<Grid>
-		<!--  GroupBox - another WTF-XAML control which prevents disposing and leaks memory.  -->
 		<GroupBox HorizontalAlignment="Left" VerticalAlignment="Top" Header="Device">
 			<StackPanel>
 				<CheckBox Name="ForceFeedbackPassThroughCheckBox" Content="Force Feedback Pass Through" />

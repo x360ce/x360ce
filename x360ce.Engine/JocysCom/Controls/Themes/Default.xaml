@@ -4,6 +4,11 @@
 	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls"
 	xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
+	<!--
+		DynamicResource vs StaticResource: StaticResource could cause controls to be garbage collected.
+		Use DynamicResource, except for some properties like BasedOn or Converter.
+	-->
+
 	<!--  Colors  -->
 
 	<SolidColorBrush x:Key="SolidColorBrush_BFF">#ff000000</SolidColorBrush>
@@ -215,9 +220,6 @@
 
 
 	<Style x:Key="TabItem_Default" TargetType="TabItem" />
-
-	<!--<Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />-->
-
 
 	<!--  TabControl  -->
 
@@ -489,13 +491,13 @@
 	<Style x:Key="DataGridCell_D000" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_000L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_000D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_000D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_000L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_000D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_000D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_000L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_000L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_000L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_000L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -503,13 +505,13 @@
 	<Style x:Key="DataGridCell_D030" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_030L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_030D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_030D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_030L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_030D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_030D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_030L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_030L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_030L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_030L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -517,13 +519,13 @@
 	<Style x:Key="DataGridCell_D060" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_060L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_060D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_060D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_060L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_060D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_060D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_060L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_060L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_060L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_060L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -531,13 +533,13 @@
 	<Style x:Key="DataGridCell_D090" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_090L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_090D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_090D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_090L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_090D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_090D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_090L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_090L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_090L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_090L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -545,13 +547,13 @@
 	<Style x:Key="DataGridCell_D120" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_120L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_120D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_120D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_120L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_120D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_120D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_120L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_120L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_120L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_120L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -559,13 +561,13 @@
 	<Style x:Key="DataGridCell_D150" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_150L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_150D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_150D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_150L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_150D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_150D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_150L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_150L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_150L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_150L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -573,13 +575,13 @@
 	<Style x:Key="DataGridCell_D180" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_180L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_180D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_180D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_180L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_180D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_180D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_180L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_180L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_180L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_180L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -587,13 +589,13 @@
 	<Style x:Key="DataGridCell_D210" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_210L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_210D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_210D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_210L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_210D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_210D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_210L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_210L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_210L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_210L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -602,13 +604,13 @@
 	<Style x:Key="DataGridCell_D240" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_240L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_240D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_240D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_240L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_240D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_240D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_240L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_240L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_240L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_240L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -617,13 +619,13 @@
 	<Style x:Key="DataGridCell_D270" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_270L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_270D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_270D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_270L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_270D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_270D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_270L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_270L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_270L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_270L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -631,13 +633,13 @@
 	<Style x:Key="DataGridCell_D300" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_300L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_300D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_300D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_300L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_300D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_300D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_300L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_300L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_300L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_300L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -645,13 +647,13 @@
 	<Style x:Key="DataGridCell_D330" TargetType="DataGridCell">
 		<Style.Triggers>
 			<Trigger Property="DataGridCell.IsSelected" Value="True">
-				<Setter Property="Foreground" Value="{StaticResource SolidColorBrush_330L}" />
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_330D}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_330D}" />
+				<Setter Property="Foreground" Value="{DynamicResource SolidColorBrush_330L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_330D}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_330D}" />
 			</Trigger>
 			<Trigger Property="DataGridCell.IsSelected" Value="False">
-				<Setter Property="Background" Value="{StaticResource SolidColorBrush_330L}" />
-				<Setter Property="BorderBrush" Value="{StaticResource SolidColorBrush_330L}" />
+				<Setter Property="Background" Value="{DynamicResource SolidColorBrush_330L}" />
+				<Setter Property="BorderBrush" Value="{DynamicResource SolidColorBrush_330L}" />
 			</Trigger>
 		</Style.Triggers>
 	</Style>
@@ -662,7 +664,7 @@
 	<!--  DataGridTextColumn  -->
 	<!--
 
-	<Style BasedOn="{DynamicResource DataGridTextColumnDefault}" TargetType="DataGridTextColumn" />
+	<Style BasedOn="{StaticResource DataGridTextColumnDefault}" TargetType="DataGridTextColumn" />
 
 	-->
 	<!--  ComboBox  -->
@@ -775,14 +777,77 @@
 	</Style>
 
 	<!--  GroupBox  -->
+	<!--
+		Using default style in .NET 4.8 prevents GroupBox control from disposing.
+		Use modified style extracted from:
+		c:\Program Files\Microsoft Visual Studio\2022\Community\DesignTools\SystemThemes\Wpf\aero2.normalcolor.xaml
+		Removed static resource link to "<BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>" from style which caused memory leak.
+	-->
 
-	<Style x:Key="GroupBox_Default" TargetType="GroupBox">
-		<Setter Property="Margin" Value="3" />
+	<Style x:Name="GroupBox_Default" TargetType="GroupBox">
+		<Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ActiveBorderBrush}}" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="Margin" Value="3,3,3,3" />
 		<Setter Property="HeaderTemplate">
 			<Setter.Value>
 				<DataTemplate>
-					<TextBlock Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Style="{StaticResource TextBlock_Default}" Text="{Binding}" />
+					<TextBlock Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Style="{DynamicResource TextBlock_Default}" Text="{Binding}" />
 				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type GroupBox}">
+					<Grid SnapsToDevicePixels="true">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="6" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="6" />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="*" />
+							<RowDefinition Height="6" />
+						</Grid.RowDefinitions>
+						<Border
+							Grid.Row="1"
+							Grid.RowSpan="3"
+							Grid.Column="0"
+							Grid.ColumnSpan="4"
+							Background="{TemplateBinding Background}"
+							BorderBrush="Transparent"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							CornerRadius="4" />
+						<Border
+							Grid.Row="1"
+							Grid.RowSpan="3"
+							Grid.ColumnSpan="4"
+							BorderBrush="White"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							CornerRadius="4"
+							OpacityMask="{x:Null}">
+							<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
+								<Border BorderBrush="White" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2" />
+							</Border>
+						</Border>
+						<Border
+							x:Name="Header"
+							Grid.Row="0"
+							Grid.RowSpan="2"
+							Grid.Column="1"
+							Padding="3,1,3,0">
+							<ContentPresenter ContentSource="Header" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+						</Border>
+						<ContentPresenter
+							Grid.Row="2"
+							Grid.Column="1"
+							Grid.ColumnSpan="2"
+							Margin="{TemplateBinding Padding}"
+							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+					</Grid>
+				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
 	</Style>
@@ -792,7 +857,7 @@
 	<Style BasedOn="{StaticResource Window_Default}" TargetType="Window" />
 	<Style BasedOn="{StaticResource UserControl_Default}" TargetType="UserControl" />
 	<Style BasedOn="{StaticResource Grid_Default}" TargetType="Grid" />
-	<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox" />
+	<!--<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox" />-->
 	<Style BasedOn="{StaticResource DataGrid_Default}" TargetType="DataGrid" />
 	<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox" />
 	<Style BasedOn="{StaticResource ComboBox_Default}" TargetType="ComboBox" />
@@ -801,7 +866,8 @@
 	<Style BasedOn="{StaticResource MenuItem_Default}" TargetType="MenuItem" />
 
 	<!--  TabControl_Default style is making control to fail garbage collection (leak memory)  -->
-	<!--<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />-->
+	<Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />
+	<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
 
 
 </ResourceDictionary>

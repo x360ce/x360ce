@@ -15,6 +15,8 @@ using JocysCom.ClassLibrary.Controls;
 using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.ComponentModel;
+using System.Xml;
+using System.IO;
 
 namespace x360ce.Tests
 {
@@ -57,7 +59,6 @@ namespace x360ce.Tests
 			return results;
 		}
 
-		#region TestMemoryLeak
 
 #if DEBUG
 		static bool isDebug = true;
@@ -137,8 +138,14 @@ namespace x360ce.Tests
 
 		public static void Test<T>()
 		{
-			Test(typeof(T).Assembly, new Type[] { typeof(T) });
+			Test(typeof(T).Assembly, new Type[] { typeof(T) }, null, typeof(Window));
 		}
+
+		public static void Test<T, W>() where W: Window
+		{
+			Test(typeof(T).Assembly, new Type[] { typeof(T) }, null, typeof(W));
+		}
+
 
 		public class ReferenceResults
 		{
@@ -147,7 +154,7 @@ namespace x360ce.Tests
 			public WeakReference Reference { get; set; }
 		}
 
-		public static void Test(Assembly assembly, Type[] includeTypes = null, Type[] excludeTypes = null)
+		public static void Test(Assembly assembly, Type[] includeTypes = null, Type[] excludeTypes = null, Type parentWindowType = null)
 		{
 			_unloadTimer.Stop();
 			// Make sure that owner window exists.
@@ -156,7 +163,7 @@ namespace x360ce.Tests
 
 			var mainWindowWr = new WeakReference(null);
 			mainWindowWr.Target = MainWindow;
-			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes);
+			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes, parentWindowType);
 			/*
 			// Shutdow will terminate multiple tests.
 			MainApp.Dispatcher.Invoke(() =>
@@ -204,7 +211,7 @@ namespace x360ce.Tests
 			throw new NotImplementedException();
 		}
 
-		public static List<MemoryTestResult> TestMemoryLeakByAssembly(Assembly assembly, Type[] includeTypes, Type[] excludeTypes)
+		public static List<MemoryTestResult> TestMemoryLeakByAssembly(Assembly assembly, Type[] includeTypes, Type[] excludeTypes, Type parentWindowType = null)
 		{
 			var results = new List<MemoryTestResult>();
 			// Test public non-abstracts classes only.
@@ -224,7 +231,7 @@ namespace x360ce.Tests
 					MainLabel.Content = $"Test control: {t + 1}/{types.Length}";
 				});
 				var type = types[t];
-				var result = TestType(type, includeTypes?.Length == 1);
+				var result = TestType(type, parentWindowType, includeTypes?.Length == 1);
 				results.Add(result);
 				var isSuccess = !result.IsAlive && result.Level == TraceLevel.Info;
 				// If object was ddisposed without errors then continue
@@ -251,7 +258,7 @@ namespace x360ce.Tests
 		}
 
 		//[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-		private static MemoryTestResult TestType(Type type, bool logMoreDetails)
+		private static MemoryTestResult TestType(Type type, Type parentWindowType, bool logMoreDetails)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -308,9 +315,13 @@ namespace x360ce.Tests
 							var testLoadedSemaphore = new SemaphoreSlim(0);
 							var testClosedSemaphore = new SemaphoreSlim(0);
 							mainWindowWr.Target = MainWindow;
-							var testWindow = GetWindow(null, MainWindow, logMoreDetails, testLoadedSemaphore, testClosedSemaphore);
+							var parentWindow = Activator.CreateInstance(parentWindowType ?? typeof(Window)) as Window;
+							var testWindow = GetWindow(parentWindow, MainWindow, logMoreDetails, testLoadedSemaphore, testClosedSemaphore);
 							// Create content control.
-							var sp = new StackPanel() { Orientation = Orientation.Vertical };
+							var sp = new StackPanel() {
+								Orientation = Orientation.Vertical,
+								Margin = new Thickness(8),
+							};
 							sp.Children.Add(new Label() { Content = "Test Control:" });
 							sp.Children.Add(uc1);
 							testWindow.Content = sp;
@@ -648,6 +659,7 @@ namespace x360ce.Tests
 		)
 		{
 			w = w ?? new Window();
+			w.Background = SystemColors.ControlBrush;
 			w.Topmost = true;
 			w.IsHitTestVisible = false;
 			w.SizeToContent = SizeToContent.WidthAndHeight;
@@ -697,7 +709,16 @@ namespace x360ce.Tests
 			return w;
 		}
 
-		#endregion
+		public static void ExtractDefaultStyle<T>(string extractPath = null)
+		{
+			var control = Application.Current.FindResource(typeof(T));
+			var path = extractPath ?? $"\\Temp\\{typeof(T).Name}_DefaultStyleTemplate.xml";
+			using (var writer = new XmlTextWriter(path, System.Text.Encoding.UTF8))
+			{
+				writer.Formatting = Formatting.Indented;
+				System.Windows.Markup.XamlWriter.Save(control, writer);
+			}
+		}
 
 	}
 }
