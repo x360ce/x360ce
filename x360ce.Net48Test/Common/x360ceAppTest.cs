@@ -10,23 +10,16 @@ namespace x360ce.Tests
 		public void Test_All() =>
 		MemoryLeakHelper.Test(typeof(App.App).Assembly, null, null);
 
-		[TestMethod]
-		public void Test_All_with_Theme() =>
-		MemoryLeakHelper.Test(typeof(App.App).Assembly, null, null, typeof(TestWindow));
-
-		[TestMethod]
-		public void Test_TestWindow()
-		{
-			MemoryLeakHelper.Test<TestWindow>();
-		}
-
+		/// <summary>
+		/// Test fails without resources supplied in Application class.
+		/// </summary>
 		[TestMethod]
 		public void Test_AboutUserControl() =>
-			MemoryLeakHelper.Test<AboutUserControl, TestWindow>();
+			MemoryLeakHelper.Test<AboutUserControl>();
 
 		[TestMethod]
 		public void Test_PadItem_AdvancedControl() =>
-			MemoryLeakHelper.Test<PadItem_AdvancedControl, TestWindow>();
+			MemoryLeakHelper.Test<PadItem_AdvancedControl>();
 
 	}
 }

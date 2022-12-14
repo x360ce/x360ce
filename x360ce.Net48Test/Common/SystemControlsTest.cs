@@ -17,12 +17,12 @@ namespace x360ce.Tests
 			MemoryLeakHelper.Test<ListView>();
 
 		/// <summary>
-		/// GroupBox fails to dispose.
+		/// GroupBox fails to dispose without custom styling on NET 4.8.
 		/// </summary>
 		[TestMethod]
 		public void Test_GroupBox()
 		{
-			MemoryLeakHelper.Test<GroupBox, TestWindow>();
+			MemoryLeakHelper.Test<GroupBox>();
 		}
 
 		[TestMethod]

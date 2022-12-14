@@ -1,0 +1,17 @@
+﻿<Application
+	x:Class="x360ce.Tests.MemoryLeakApp"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Startup="Application_Startup">
+	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<!--  Add shared resources here  -->
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Default.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/JocysCom/Controls/Themes/Icons.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/Resources/Icons/Icons_Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Application.Resources>
+</Application>
+

@@ -16,7 +16,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Data;
 using System.ComponentModel;
 using System.Xml;
-using System.IO;
 
 namespace x360ce.Tests
 {
@@ -103,8 +102,14 @@ namespace x360ce.Tests
 				{
 					// One app per app domain.
 					if (MainApp == null)
+#if NETCOREAPP
 						MainApp = new System.Windows.Application();
-					var w = GetWindow(null, null, true, MainWindowLoadedSemaphore);
+#else
+						// Load styles from resources.
+						MainApp = new MemoryLeakApp();
+#endif
+					var mainWindow = new Window();
+					var w = GetWindow(mainWindow, null, true, MainWindowLoadedSemaphore);
 					// Create content control.
 					var sp = new StackPanel();
 					MainLabel = new System.Windows.Controls.Label() { Content = $"Test control: ..." };
@@ -138,14 +143,8 @@ namespace x360ce.Tests
 
 		public static void Test<T>()
 		{
-			Test(typeof(T).Assembly, new Type[] { typeof(T) }, null, typeof(Window));
+			Test(typeof(T).Assembly, new Type[] { typeof(T) }, null);
 		}
-
-		public static void Test<T, W>() where W: Window
-		{
-			Test(typeof(T).Assembly, new Type[] { typeof(T) }, null, typeof(W));
-		}
-
 
 		public class ReferenceResults
 		{
@@ -154,7 +153,7 @@ namespace x360ce.Tests
 			public WeakReference Reference { get; set; }
 		}
 
-		public static void Test(Assembly assembly, Type[] includeTypes = null, Type[] excludeTypes = null, Type parentWindowType = null)
+		public static void Test(Assembly assembly, Type[] includeTypes = null, Type[] excludeTypes = null)
 		{
 			_unloadTimer.Stop();
 			// Make sure that owner window exists.
@@ -163,7 +162,7 @@ namespace x360ce.Tests
 
 			var mainWindowWr = new WeakReference(null);
 			mainWindowWr.Target = MainWindow;
-			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes, parentWindowType);
+			var results = TestMemoryLeakByAssembly(assembly, includeTypes, excludeTypes);
 			/*
 			// Shutdow will terminate multiple tests.
 			MainApp.Dispatcher.Invoke(() =>
@@ -211,7 +210,7 @@ namespace x360ce.Tests
 			throw new NotImplementedException();
 		}
 
-		public static List<MemoryTestResult> TestMemoryLeakByAssembly(Assembly assembly, Type[] includeTypes, Type[] excludeTypes, Type parentWindowType = null)
+		public static List<MemoryTestResult> TestMemoryLeakByAssembly(Assembly assembly, Type[] includeTypes, Type[] excludeTypes)
 		{
 			var results = new List<MemoryTestResult>();
 			// Test public non-abstracts classes only.
@@ -231,7 +230,7 @@ namespace x360ce.Tests
 					MainLabel.Content = $"Test control: {t + 1}/{types.Length}";
 				});
 				var type = types[t];
-				var result = TestType(type, parentWindowType, includeTypes?.Length == 1);
+				var result = TestType(type, includeTypes?.Length == 1);
 				results.Add(result);
 				var isSuccess = !result.IsAlive && result.Level == TraceLevel.Info;
 				// If object was ddisposed without errors then continue
@@ -258,7 +257,7 @@ namespace x360ce.Tests
 		}
 
 		//[MethodImpl(MethodImplOptions.NoOptimization | MethodImplOptions.NoInlining)]
-		private static MemoryTestResult TestType(Type type, Type parentWindowType, bool logMoreDetails)
+		private static MemoryTestResult TestType(Type type, bool logMoreDetails)
 		{
 			var stopwatch = new Stopwatch();
 			stopwatch.Start();
@@ -315,10 +314,11 @@ namespace x360ce.Tests
 							var testLoadedSemaphore = new SemaphoreSlim(0);
 							var testClosedSemaphore = new SemaphoreSlim(0);
 							mainWindowWr.Target = MainWindow;
-							var parentWindow = Activator.CreateInstance(parentWindowType ?? typeof(Window)) as Window;
+							var parentWindow = new Window();
 							var testWindow = GetWindow(parentWindow, MainWindow, logMoreDetails, testLoadedSemaphore, testClosedSemaphore);
 							// Create content control.
-							var sp = new StackPanel() {
+							var sp = new StackPanel()
+							{
 								Orientation = Orientation.Vertical,
 								Margin = new Thickness(8),
 							};
@@ -677,8 +677,7 @@ namespace x360ce.Tests
 				w.Left = parentWindow.Left;
 			}
 			var prefix = parentWindow == null ? "" : "  ";
-			// Add weak handler to event.
-			WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Loaded), (sender, e) =>
+			w.Loaded  += (sender, e) =>
 			{
 				// If main window.
 				if (w.Owner == null)
@@ -691,21 +690,19 @@ namespace x360ce.Tests
 					Console.WriteLine($"{prefix}{w.Title} loaded");
 				if (loadedSemaphore != null)
 					loadedSemaphore.Release();
-			});
-			// Add weak handler to event.
-			WeakEventManager<Window, RoutedEventArgs>.AddHandler(w, nameof(w.Unloaded), (sender, e) =>
+			};
+			w.Unloaded += (sender, e) =>
 			{
 				if (logMoreDetails)
 					Console.WriteLine($"{prefix}{w.Title} unloaded");
-			});
-			// Add weak handler to event.
-			WeakEventManager<Window, EventArgs>.AddHandler(w, nameof(w.Closed), (sender, e) =>
+			};
+			w.Closed += (sender, e) =>
 			{
 				if (logMoreDetails)
 					Console.WriteLine($"{prefix}{w.Title} closed");
 				if (closedSemaphore != null)
 					closedSemaphore.Release();
-			});
+			};
 			return w;
 		}
 

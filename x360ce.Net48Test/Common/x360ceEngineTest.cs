@@ -27,17 +27,5 @@ namespace x360ce.Tests
 				excludeTypes);
 		}
 
-
-		[TestMethod]
-		public void Test_All_with_Theme()
-		{
-			MemoryLeakHelper.Test(typeof(Engine.EngineHelper).Assembly,
-				// Include types. null = Test all.
-				null,
-				// Exclude types.
-				excludeTypes,
-				typeof(TestWindow));
-		}
-
 	}
 }
