@@ -32,7 +32,7 @@ namespace x360ce.Tests
 	{
 
 		public const long TestMaxDurationPerClassTest = 5000;
-		private static int TestWindowDisplayDelay = 2000;
+		private static int TestWindowDisplayDelay = 1000;
 
 		private static Dictionary<Type, PropertyInfo[]> TypesWithContentProperty;
 

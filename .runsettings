@@ -1,0 +1,6 @@
+<!-- Disabling appdomains speed up the test discovery and execution -->
+<RunSettings>   
+	<RunConfiguration>  
+		<DisableAppDomain>True</DisableAppDomain>   
+	</RunConfiguration>  
+</RunSettings>
