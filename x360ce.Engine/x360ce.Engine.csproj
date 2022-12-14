@@ -497,6 +497,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Icons\Icons_Default.xaml.cs">
+      <DependentUpon>Icons_Default.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SharpDX.XInput\BatteryDeviceType.cs" />
     <Compile Include="SharpDX.XInput\BatteryInformation.cs" />
     <Compile Include="SharpDX.XInput\BatteryLevel.cs" />
@@ -567,6 +570,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="JocysCom\Extensions\ReadMe.txt" />
+    <EmbeddedResource Include="Resources\Icons\IconExperience.License.txt" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="JocysCom\Controls\ErrorReportControl.xaml">
@@ -601,6 +605,22 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="JocysCom\Controls\Themes\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Icons\Icons_Default.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Icons\NavActive.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Icons\NavNormal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Icons\NavRecord.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
