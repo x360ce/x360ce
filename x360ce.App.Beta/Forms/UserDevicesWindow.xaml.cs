@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System.Windows;
+using x360ce.Engine;
 
 namespace x360ce.App.Forms
 {

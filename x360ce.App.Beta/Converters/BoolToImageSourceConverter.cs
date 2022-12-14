@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Data;
+using x360ce.Engine;
 
 namespace x360ce.App.Converters
 {
