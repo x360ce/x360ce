@@ -1,0 +1,30 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>magnifying glass icon</title>
+    <desc>magnifying glass icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="144.5" y1="16" x2="384.5" y2="272.0005" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#91a0af"/>
+            <stop offset="1" stop-color="#717f8f"/>
+        </linearGradient>
+        <linearGradient x1="15.875" y1="295.25" x2="79.875" y2="359.25" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#dca264"/>
+            <stop offset="1" stop-color="#d08730"/>
+        </linearGradient>
+        <linearGradient x1="208" y1="48" x2="415.595" y2="265.6435" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#c5e7fb"/>
+            <stop offset="1" stop-color="#99d5f8"/>
+        </linearGradient>
+        <linearGradient x1="222" y1="62" x2="227.1435" y2="289.5565" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#cdeafb"/>
+            <stop offset="1" stop-color="#fdfefe"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M144.5,333.5l62.5,-62.5c-19.5,-27 -31,-59.5 -31,-95c0,-88.5 71.5,-160 160,-160c88.5,0 160,71.5 160,160c0,88.5 -71.5,160 -160,160c-35.5,0 -68.5,-11.5 -95,-31.5l-62.5,63z" id="curve3" fill="url(#color-1)"/>
+        <path d="M18.5,437l139.5,-139.5c3,-3 8.5,-3 11.5,0l45,45c3,3 3,8.5 0,11.5l-139.5,139.5c-3,3.5 -8.5,3.5 -11.5,0l-22.5,-22.5l-22.5,-22.5c-3.5,-3 -3.5,-8.5 0,-11.5z" id="curve2" fill="url(#color-2)"/>
+        <path d="M336,48c70.5,0 128,57.5 128,128c0,70.5 -57.5,128 -128,128c-70.5,0 -128,-57.5 -128,-128c0,-70.5 57.5,-128 128,-128z" id="curve1" fill="url(#color-3)"/>
+        <path d="M336,62c63,0 114,51 114,114c0,63 -51,114 -114,114c-63,0 -114,-51 -114,-114c0,-63 51,-114 114,-114z" id="curve0" fill="url(#color-4)"/>
+    </g>
+</svg>

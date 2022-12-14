@@ -1,0 +1,15 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>plus icon</title>
+    <desc>plus icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="32" y1="32" x2="323.36915" y2="461.212" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#98e957"/>
+            <stop offset="1" stop-color="#5ea821"/>
+        </linearGradient>
+    </defs>
+    <g fill="url(#color-1)" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M192,480l0,-160l-160,0l0,-128l160,0l0,-160l128,0l0,160l160,0l0,128l-160,0l0,160z" id="curve0"/>
+    </g>
+</svg>

@@ -1,0 +1,17 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>ok icon</title>
+    <desc>ok icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <radialGradient cx="206.0431" cy="326.94317" r="325.60929" fx="206.0431" fy="326.94317" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="0.45882" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#d8e0e8"/>
+        </radialGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M256,16c132.5,0 240,107.5 240,240c0,132.5 -107.5,240 -240,240c-132.5,0 -240,-107.5 -240,-240c0,-132.5 107.5,-240 240,-240z" id="curve1" fill="#59a31d"/>
+        <path d="M381,97.5l56.5,56.5l-237.5,238l-136,-136l56.5,-56.5l79.5,79z" id="curve0" fill="url(#color-1)"/>
+    </g>
+</svg>

@@ -1,0 +1,15 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>breakpoint icon</title>
+    <desc>breakpoint icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="32" y1="32" x2="438.1385" y2="370.1045" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#4eb6f2"/>
+            <stop offset="1" stop-color="#0e76b2"/>
+        </linearGradient>
+    </defs>
+    <g fill="url(#color-1)" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M64,32l384,0c17.5,0 32,14.5 32,32l0,384c0,17.5 -14.5,32 -32,32l-384,0c-17.5,0 -32,-14.5 -32,-32l0,-384c0,-17.5 14.5,-32 32,-32z" id="curve0"/>
+    </g>
+</svg>

@@ -1,0 +1,30 @@
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" width="512" height="512" viewBox="0 0 512 512">
+    <title>floppy disk icon</title>
+    <desc>floppy disk icon from the IconExperience.com G-Collection. Copyright by INCORS GmbH (www.incors.com).</desc>
+    <defs>
+        <linearGradient x1="32" y1="32" x2="430.221" y2="430.2205" gradientUnits="userSpaceOnUse" id="color-1">
+            <stop offset="0" stop-color="#717f8f"/>
+            <stop offset="1" stop-color="#51616f"/>
+        </linearGradient>
+        <linearGradient x1="96" y1="32" x2="185.6805" y2="272.00195" gradientUnits="userSpaceOnUse" id="color-2">
+            <stop offset="0" stop-color="#eaf6fe"/>
+            <stop offset="1" stop-color="#cbe9fb"/>
+        </linearGradient>
+        <linearGradient x1="416" y1="272" x2="415.4505" y2="270.8765" gradientUnits="userSpaceOnUse" id="color-3">
+            <stop offset="0" stop-color="#ff7901"/>
+            <stop offset="1" stop-color="#f77501"/>
+        </linearGradient>
+        <linearGradient x1="128" y1="320" x2="288.5545" y2="480.5555" gradientUnits="userSpaceOnUse" id="color-4">
+            <stop offset="0" stop-color="#ffffff"/>
+            <stop offset="1" stop-color="#e1e7ed"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+        <path d="M480,48l0,416c0,9 -7,16 -16,16l-400,0l-32,-32l0,-400c0,-9 7,-16 16,-16l416,0c9,0 16,7 16,16z" id="curve3" fill="url(#color-1)"/>
+        <path d="M96,32l320,0l0,224c0,9 -7,16 -16,16l-288,0c-9,0 -16,-7 -16,-16z" id="curve2" fill="url(#color-2)"/>
+        <path d="M416,208l0,48c0,9 -7,16 -16,16l-288,0c-9,0 -16,-7 -16,-16l0,-48z" id="curve1" fill="url(#color-3)"/>
+        <path d="M384,336l0,144l-256,0l0,-144c0,-9 7,-16 16,-16l224,0c9,0 16,7 16,16z M160,336l0,112l64,0l0,-112z" id="curve0" fill="url(#color-4)"/>
+    </g>
+</svg>
