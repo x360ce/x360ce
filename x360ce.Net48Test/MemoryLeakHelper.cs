@@ -31,8 +31,10 @@ namespace x360ce.Tests
 	public class MemoryLeakHelper
 	{
 
-		public const long TestMaxDurationPerClassTest = 5000;
+		private static long TestMaxDurationPerClassTest = 5000;
 		private static int TestWindowDisplayDelay = 1000;
+		private static bool ThrowExceptionIfDebug = false;
+		private static int SkipControls = 0; //70;
 
 		private static Dictionary<Type, PropertyInfo[]> TypesWithContentProperty;
 
@@ -223,7 +225,7 @@ namespace x360ce.Tests
 				.ToArray();
 			var zeros = new string('0', types.Length.ToString().Length);
 			var pad = "\r\n" + new string(' ', $"[----] {zeros}/{zeros}: ".Length);
-			for (int t = 0; t < types.Length; t++)
+			for (int t = SkipControls; t < types.Length; t++)
 			{
 				MainApp.Dispatcher.Invoke(() =>
 				{
@@ -297,7 +299,6 @@ namespace x360ce.Tests
 						}
 						if (o is System.Windows.Window ucw)
 						{
-							Console.Write($"Type: {o.GetType().Name}");
 							var testLoadedSemaphore = new SemaphoreSlim(0);
 							var testClosedSemaphore = new SemaphoreSlim(0);
 							mainWindowWr.Target = MainWindow;
@@ -510,7 +511,9 @@ namespace x360ce.Tests
 				}
 				catch (Exception ex)
 				{
-					if (isDebug)
+					//Debug.WriteLine($"Type: {type.FullName}");
+					//Console.WriteLine($"Type: {type.FullName}");
+					if (isDebug && ThrowExceptionIfDebug)
 						throw;
 					result.Level = TraceLevel.Error;
 					result.Message = ex.Message;

@@ -11,7 +11,7 @@
 	<UserControl.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/x360ce;component/Resources/Icons/NavActive.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/Resources/Icons/NavActive.xaml" />
 				<ResourceDictionary>
 					<Style x:Key="M" TargetType="{x:Type ContentControl}">
 						<Setter Property="Opacity" Value="0.6" />

@@ -17,40 +17,6 @@ namespace Nefarius.ViGEm.Client
 	partial class ViGEmClient
 	{
 
-		public ViGEmClient(out VIGEM_ERROR error)
-		{
-			try
-			{
-				NativeHandle = NativeMethods.vigem_alloc();
-				error = NativeMethods.vigem_connect(NativeHandle);
-			}
-			catch (DllNotFoundException ex)
-			{
-				// System.DllNotFoundException:
-				// Unable to load DLL 'vigemclient.dll':
-				// The specified module could not be found.
-				// (Exception from HRESULT: 0x8007007E)
-				if (ex.HResult == unchecked((int)0x8007007E))
-				{
-					// Probably "Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019" is missing.
-					// You can find official download links on Microsoft Page:
-					// https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads
-					// Direct links:
-					// 32-bit: https://aka.ms/vs/16/release/vc_redist.x86.exe
-					// 64-bit: https://aka.ms/vs/16/release/vc_redist.x64.exe
-					// You can also find it here:
-					// https://visualstudio.microsoft.com/downloads/
-					// Under "Other Tools and Frameworks", "Microsoft Visual C++ Redistributable for Visual Studio 2019"
-				}
-				throw;
-			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
-
-
 		public Xbox360Controller[] Targets;
 		public Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[] Feedbacks = new Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[4];
 		public bool[] connected = new bool[4];
@@ -163,7 +129,7 @@ namespace Nefarius.ViGEm.Client
 				if (!RuntimeInstalled.HasValue)
 				{
 					var issue = Environment.Is64BitProcess
-						? (IssueItem)new CppX64RuntimeInstallIssue()
+						? new CppX64RuntimeInstallIssue()
 						: (IssueItem)new CppX86RuntimeInstallIssue();
 					issue.Check();
 					RuntimeInstalled = issue.Severity == IssueSeverity.None;
@@ -179,10 +145,10 @@ namespace Nefarius.ViGEm.Client
 				// If client exists and it was not disposed then...
 				if (Current != null && !Current.Disposing && !Current.IsDisposed)
 					return true;
-				VIGEM_ERROR error;
 				if (!IsLoaded)
 					LoadLibrary();
-				var client = new ViGEmClient(out error);
+				var client = new ViGEmClient();
+				var error = client.Initialize();
 				if (error == VIGEM_ERROR.VIGEM_ERROR_NONE)
 				{
 					PendingError = null;

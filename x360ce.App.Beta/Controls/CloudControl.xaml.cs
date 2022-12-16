@@ -56,6 +56,8 @@ namespace x360ce.App.Controls
 
 		public void EnableDataSource(bool enable)
 		{
+			if (Global.CloudClient == null)
+				return;
 			MainDataGrid.ItemsSource = enable
 				? Global.CloudClient.TasksTimer.Queue
 				: null;
@@ -140,6 +142,8 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowLoad(this))
 				return;
+			if (Global.CloudClient == null)
+				return;
 			// Enable task timer.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
 			Global.CloudClient.StartServer(scheduler);
@@ -159,10 +163,13 @@ namespace x360ce.App.Controls
 				return;
 			// Disable in reverse order.
 			EnableDataSource(false);
-			QueueMonitorTimer.Elapsed -= QueueMonitorTimer_Elapsed;
-			QueueMonitorTimer.Stop();
-			QueueMonitorTimer.Dispose();
-			Global.CloudClient.StopServer();
+			if (QueueMonitorTimer != null)
+			{
+				QueueMonitorTimer.Elapsed -= QueueMonitorTimer_Elapsed;
+				QueueMonitorTimer.Stop();
+				QueueMonitorTimer.Dispose();
+			}
+			Global.CloudClient?.StopServer();
 		}
 	}
 }
