@@ -260,10 +260,13 @@ namespace x360ce.App.Controls
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
 			// Subscribe to parent control events.
 			PadControl = ControlsHelper.GetParent<PadControl>(this);
-			PadControl.OnSettingChanged += Parent_OnSettingChanged;
-			// Load parent setting.
-			var setting = PadControl.CurrentUserSetting;
-			LoadUserSetting(setting);
+			if (PadControl != null)
+			{
+				PadControl.OnSettingChanged += Parent_OnSettingChanged;
+				// Load parent setting.
+				var setting = PadControl.CurrentUserSetting;
+				LoadUserSetting(setting);
+			}
 		}
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)

@@ -34,7 +34,7 @@ namespace x360ce.Tests
 		private static long TestMaxDurationPerClassTest = 5000;
 		private static int TestWindowDisplayDelay = 1000;
 		private static bool ThrowExceptionIfDebug = false;
-		private static int SkipControls = 0; //70;
+		private static int SkipControls = 70; //70;
 
 		private static Dictionary<Type, PropertyInfo[]> TypesWithContentProperty;
 
@@ -225,7 +225,8 @@ namespace x360ce.Tests
 				.ToArray();
 			var zeros = new string('0', types.Length.ToString().Length);
 			var pad = "\r\n" + new string(' ', $"[----] {zeros}/{zeros}: ".Length);
-			for (int t = SkipControls; t < types.Length; t++)
+			var skip = includeTypes?.Length == 1 ? 0 : SkipControls;
+			for (int t = skip; t < types.Length; t++)
 			{
 				MainApp.Dispatcher.Invoke(() =>
 				{
@@ -680,7 +681,7 @@ namespace x360ce.Tests
 				w.Left = parentWindow.Left;
 			}
 			var prefix = parentWindow == null ? "" : "  ";
-			w.Loaded  += (sender, e) =>
+			w.Loaded += (sender, e) =>
 			{
 				// If main window.
 				if (w.Owner == null)

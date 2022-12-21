@@ -107,7 +107,7 @@ namespace x360ce.App
 		public static XSettingsData<Options> OptionsData = new XSettingsData<Options>("Options.xml", "x360ce Options");
 
 		/// <summary>Property can be used as shorter access to main options.</summary>
-		public static Options Options { get { return OptionsData.Items[0]; } }
+		public static Options Options { get { return OptionsData.Items.FirstOrDefault(); } }
 
 		// Global settings.
 

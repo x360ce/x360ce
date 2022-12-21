@@ -330,6 +330,19 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static Dictionary<string, DependencyObject> GetAll(string path, DependencyObject control, Type type = null, bool includeTop = false)
 		{
+			var controls = _GetAll(path, control, includeTop);
+			// If type is set then...
+			if (type == null)
+				return controls;
+			var filtered = type.IsInterface
+				? controls.Where(x => x.Value.GetType().GetInterfaces().Contains(type))
+				: controls.Where(x => type.IsAssignableFrom(x.Value.GetType()));
+			var results = filtered.ToDictionary(x => x.Key, y => y.Value);
+			return results;
+		}
+
+		private static Dictionary<string, DependencyObject> _GetAll(string path, DependencyObject control, bool includeTop = false)
+		{
 			if (control == null)
 				throw new ArgumentNullException(nameof(control));
 			// Create new list.
@@ -351,7 +364,7 @@ namespace JocysCom.ClassLibrary.Controls
 					var childKey = $"{path}[{i}].{child.GetType().Name} {(child as FrameworkElement)?.Name}".TrimEnd();
 					//controls.Add(childKey, child);
 					// Get children of children.
-					var pairs = GetAll(childKey, child, null, true);
+					var pairs = _GetAll(childKey, child, true);
 					foreach (var pair in pairs)
 					{
 						if (!controls.ContainsValue(pair.Value))
@@ -369,22 +382,12 @@ namespace JocysCom.ClassLibrary.Controls
 					var childKey = $"{path}[{i}].{child.GetType().Name} {(child as FrameworkElement)?.Name}".TrimEnd();
 					//controls.Add(childKey, child);
 					// Get children of children.
-					var pairs = GetAll(childKey, child, null, true);
+					var pairs = _GetAll(childKey, child, true);
 					foreach (var pair in pairs)
 					{
 						if (!controls.ContainsValue(pair.Value))
 							controls.Add(pair.Key, pair.Value);
 					}
-				}
-			}
-			// If type is set then...
-			if (type != null)
-			{
-				var keys = controls.Where(x => type.IsInterface ? x.Value.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.Value.GetType()));
-				foreach (var pair in keys)
-				{
-					if (controls.ContainsKey(pair.Key))
-						controls.Remove(pair.Key);
 				}
 			}
 			return controls;

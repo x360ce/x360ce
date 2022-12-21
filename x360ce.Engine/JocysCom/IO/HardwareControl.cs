@@ -2,7 +2,6 @@
 using JocysCom.ClassLibrary.Win32;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Threading;

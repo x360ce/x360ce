@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows;
 using System.Windows.Controls;
-using x360ce.App.Controls;
 
 namespace x360ce.Tests
 {

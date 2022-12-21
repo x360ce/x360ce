@@ -10,7 +10,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using System.Runtime.Serialization;
 using JocysCom.ClassLibrary.Runtime;
 
 namespace x360ce.Engine
@@ -139,54 +138,29 @@ namespace x360ce.Engine
 			return info;
 		}
 
-		public static Guid GetFileChecksum(string fileName)
+		private static Assembly GetAssembly()
 		{
-			var file = new FileStream(fileName, FileMode.Open);
-			var md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
-			byte[] retVal = md5.ComputeHash(file);
-			file.Close();
-			return new Guid(retVal);
-		}
-
-		public static x360ce.Engine.Data.Program[] GetLocalFiles(string path = ".")
-		{
-			var programs = new List<x360ce.Engine.Data.Program>();
-			//var files = new List<System.Diagnostics.FileVersionInfo>();
-			var fullNames = Directory.GetFiles(path, "*.exe");
-			var list = new List<FileInfo>();
-			foreach (var fullName in fullNames)
-			{
-				// Don't add x360ce Application.
-				if (fullName.EndsWith("\\x360ce.exe")) continue;
-				var program = x360ce.Engine.Data.Program.FromDisk(fullName);
-				if (program != null) programs.Add(program);
-			}
-			return programs.ToArray();
-		}
-
-		public static string GetXInputResoureceName(ProcessorArchitecture architecture = ProcessorArchitecture.None)
-		{
-			return GetResourcePath("xinput.dll");
+			return Assembly.GetEntryAssembly();
 		}
 
 		/// <summary>
 		/// Get 32-bit or 64-bit resource depending on x360ce.exe platform.
 		/// </summary>
-		public static Stream GetResourceStream(string name)
+		public static Stream GetResourceStream(string name, Assembly assembly = null)
 		{
-			var path = GetResourcePath(name);
+			var path = GetResourcePath(name, assembly);
 			if (path == null)
 				return null;
-			var assembly = Assembly.GetEntryAssembly();
-			if (assembly == null)
+			var asm = assembly ?? GetAssembly();
+			if (asm == null)
 				return null;
-			var sr = assembly.GetManifestResourceStream(path);
+			var sr = asm.GetManifestResourceStream(path);
 			return sr;
 		}
 
-		private static byte[] GetResourceBytes(string name)
+		private static byte[] GetResourceBytes(string name, Assembly assembly = null)
 		{
-			var stream = GetResourceStream(name);
+			var stream = GetResourceStream(name, assembly);
 			if (stream == null)
 				return null;
 			var bytes = new byte[stream.Length];
@@ -195,9 +169,9 @@ namespace x360ce.Engine
 			return bytes;
 		}
 
-		public static string GetResourceString(string name)
+		public static string GetResourceString(string name, Assembly assembly = null)
 		{
-			var stream = GetResourceStream(name);
+			var stream = GetResourceStream(name, assembly);
 			if (stream == null)
 				return null;
 			var sr = new StreamReader(stream);
@@ -209,12 +183,12 @@ namespace x360ce.Engine
 		/// <summary>
 		/// Get 32-bit or 64-bit resource depending on x360ce.exe platform.
 		/// </summary>
-		public static string GetResourcePath(string name)
+		public static string GetResourcePath(string name, Assembly assembly = null)
 		{
-			var assembly = Assembly.GetEntryAssembly();
-			if (assembly == null)
+			var asm = assembly ?? GetAssembly();
+			if (asm == null)
 				return null;
-			var names = assembly.GetManifestResourceNames()
+			var names = asm.GetManifestResourceNames()
 				.Where(x => x.EndsWith(name));
 			var a = Environment.Is64BitProcess ? ".x64." : ".x86.";
 			// Try to get by architecture first.
@@ -228,80 +202,8 @@ namespace x360ce.Engine
 		public static Dictionary<ProcessorArchitecture, Version> _embededVersions;
 		static object EmbededVersionsLock = new object();
 
-		public static Version GetEmbeddedDllVersion(ProcessorArchitecture architecture)
-		{
-			lock (EmbededVersionsLock)
-			{
-				if (_embededVersions == null)
-				{
-					_embededVersions = new Dictionary<ProcessorArchitecture, Version>();
-					ProcessorArchitecture[] archs = { ProcessorArchitecture.X86, ProcessorArchitecture.Amd64, ProcessorArchitecture.MSIL };
-					foreach (var a in archs)
-					{
-						string tempPath = Path.GetTempPath();
-						FileStream sw = null;
-						var tempFile = Path.Combine(Path.GetTempPath(), "xinput_" + a.ToString() + ".tmp.dll");
-						sw = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
-						var buffer = new byte[1024];
-						var assembly = Assembly.GetEntryAssembly();
-						var resourceName = GetXInputResoureceName(architecture);
-						var sr = assembly.GetManifestResourceStream(resourceName);
-						while (true)
-						{
-							var count = sr.Read(buffer, 0, buffer.Length);
-							if (count == 0) break;
-							sw.Write(buffer, 0, count);
-						}
-						sr.Close();
-						sw.Close();
-						var vi = FileVersionInfo.GetVersionInfo(tempFile);
-						var v = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-						File.Delete(tempFile);
-						_embededVersions.Add(a, v);
-					}
-				}
-			}
-			return _embededVersions[architecture];
-		}
-
-		public static Version GetDllVersion(string fileName, out bool byMicrosoft)
-		{
-			var dllInfo = new FileInfo(fileName);
-			byMicrosoft = false;
-			if (dllInfo.Exists)
-			{
-				var vi = FileVersionInfo.GetVersionInfo(dllInfo.FullName);
-				byMicrosoft = !string.IsNullOrEmpty(vi.CompanyName) && vi.CompanyName.Contains("Microsoft");
-				return new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-			}
-			return new Version(0, 0, 0, 0);
-		}
-
-		public static bool? IsCustomLibrarry(string fileName)
-		{
-			var fi = new FileInfo(fileName);
-			if (!fi.Exists)
-				return null;
-			var vi = FileVersionInfo.GetVersionInfo(fi.FullName);
-			if (string.IsNullOrEmpty(vi.InternalName))
-				return false;
-			return string.Compare(vi.InternalName, "X360CE", true) == 0;
-		}
 
 		#endregion
-
-		public static void CopyProperties<T>(T source, T dest)
-		{
-			Type t = typeof(T);
-			var pis = t.GetProperties().Where(p => Attribute.IsDefined(p, typeof(DataMemberAttribute))).ToArray();
-			foreach (PropertyInfo pi in pis)
-			{
-				if (pi.CanWrite && pi.CanRead)
-				{
-					pi.SetValue(dest, pi.GetValue(source, null), null);
-				}
-			}
-		}
 
 		public static void BrowsePath(string path)
 		{
@@ -388,14 +290,6 @@ namespace x360ce.Engine
 			catch { }
 		}
 
-		/// <summary>Enable double buffering to make redraw faster.</summary>
-		public static void EnableDoubleBuffering(DataGridView grid)
-		{
-			typeof(DataGridView).InvokeMember("DoubleBuffered",
-			BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.SetProperty,
-			null, grid, new object[] { true });
-		}
-
 
 		#region Comparisons
 
@@ -414,13 +308,6 @@ namespace x360ce.Engine
 				return _GuidRegex;
 			}
 
-		}
-
-		public static bool IsGuid(string s)
-		{
-			return string.IsNullOrEmpty(s)
-				? false
-				: GuidRegex.IsMatch(s);
 		}
 
 		/// <summary>
@@ -474,23 +361,6 @@ namespace x360ce.Engine
 			return ai.GetTitle(true, true, true, true, false, 4);
 		}
 
-		public static string GetProcessorArchitectureDescription(ProcessorArchitecture architecture)
-		{
-			switch (architecture)
-			{
-				case ProcessorArchitecture.Amd64:
-				case ProcessorArchitecture.IA64:
-					return "64-bit";
-				case ProcessorArchitecture.MSIL:
-					return "Any CPU";
-				case ProcessorArchitecture.X86:
-					return "32-bit";
-				default:
-					return "Unknown";
-
-			}
-		}
-
 		#endregion
 
 		#region Compression
@@ -533,57 +403,6 @@ namespace x360ce.Engine
 			return dstStream.ToArray();
 		}
 
-
-		#endregion
-
-		#region MD5
-
-		static System.Security.Cryptography.MD5 HashProvider;
-		static object HashProviderLock = new object();
-
-		/// <summary>
-		/// Computes the MD5 hash value for the specified text. Use UTF-8 encoding to get bytes.
-		/// </summary>
-		/// <param name="text">The input to compute the hash code for.</param>
-		/// <returns>The computed hash code as GUID.</returns>
-		public static Guid ComputeMd5Hash(string text)
-		{
-			byte[] bytes = System.Text.Encoding.UTF8.GetBytes(text);
-			return ComputeMd5Hash(bytes);
-		}
-
-		/// <summary>
-		/// Computes the MD5 hash value for the specified text.
-		/// </summary>
-		/// <param name="text">The input to compute the hash code for.</param>
-		/// <param name="encoding">Encoding to get bytes.</param>
-		/// <returns>The computed hash code as GUID.</returns>
-		public static Guid ComputeMd5Hash(string text, Encoding encoding)
-		{
-			byte[] bytes = encoding.GetBytes(text);
-			return ComputeMd5Hash(bytes);
-		}
-
-		/// <summary>
-		/// Computes the MD5 hash value for the specified byte array.
-		/// </summary>
-		/// <param name="bytes">The input to compute the hash code for.</param>
-		/// <returns>The computed hash code as GUID.</returns>
-		/// <remarks>
-		/// One instance of the MD5 Crypto Service Provider
-		/// can't operate properly with multiple simultaneous threads.
-		/// Use lock to solve this problem.
-		/// </remarks>
-		public static Guid ComputeMd5Hash(byte[] bytes)
-		{
-			byte[] hash;
-			lock (HashProviderLock)
-			{
-				HashProvider = HashProvider ?? new System.Security.Cryptography.MD5CryptoServiceProvider();
-				hash = HashProvider.ComputeHash(bytes);
-			}
-			return new Guid(hash);
-		}
 
 		#endregion
 

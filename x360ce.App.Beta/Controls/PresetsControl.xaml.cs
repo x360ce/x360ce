@@ -77,9 +77,6 @@ namespace x360ce.App.Controls
 
 		private void UpdateControls()
 		{
-			var tab = MainTabControl.SelectedItem as TabItem;
-			if (tab != null)
-				_ParentControl.InfoPanel.SetHead(tab.Header as string);
 			var selected = false;
 			if (MainTabControl.SelectedItem == SummariesTabPage)
 				selected = SummariesGridPanel.MainDataGrid.SelectedItems.Count > 0;
@@ -87,7 +84,14 @@ namespace x360ce.App.Controls
 				selected = SettingsGridPanel.MainDataGrid.SelectedItems.Count > 0;
 			if (MainTabControl.SelectedItem == PresetsTabPage)
 				selected = PresetsGridPanel.MainDataGrid.SelectedItems.Count > 0;
-			ControlsHelper.SetEnabled(_ParentControl.Button1, selected);
+			if (_ParentControl != null)
+			{
+				var tab = MainTabControl.SelectedItem as TabItem;
+				if (tab != null)
+					_ParentControl.InfoPanel.SetHead(tab.Header as string);
+
+				ControlsHelper.SetEnabled(_ParentControl.Button1, selected);
+			}
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)

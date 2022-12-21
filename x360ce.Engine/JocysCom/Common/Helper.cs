@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Linq;
 using System.IO;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -210,9 +209,11 @@ namespace JocysCom.ClassLibrary
 		public static async Task LongDelay(
 			long millisecondsDelay,
 			CancellationToken cancellationToken = default(CancellationToken)
-		) {
+		)
+		{
 			// Use 'do' to run Task.Delay at least once to reproduce the same behavior.
-			do {
+			do
+			{
 				var delay = (int)Math.Min(int.MaxValue, millisecondsDelay);
 				await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
 				millisecondsDelay -= delay;

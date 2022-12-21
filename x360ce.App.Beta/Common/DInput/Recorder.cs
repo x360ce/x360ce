@@ -15,7 +15,8 @@ namespace x360ce.App
 		{
 			if (horizontalResolution > 0 && verticalResolution > 0)
 			{
-				markR = new Bitmap(EngineHelper.GetResourceStream("Images.bullet_ball_glass_red_16x16.png"));
+				var a = GetType().Assembly;
+				markR = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.bullet_ball_glass_red_16x16.png", a);
 				markR.SetResolution(horizontalResolution, verticalResolution);
 			}
 		}

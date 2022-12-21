@@ -29,10 +29,10 @@ namespace x360ce.App.Controls
 			locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
 			lock (imagesLock)
 			{
+				var a = GetType().Assembly;
 				// Create images.
 				if (topImage == null)
 				{
-					var a = typeof(App).Assembly;
 					var keys = JocysCom.ClassLibrary.Helper.GetResourceKeys(a);
 					var ti = JocysCom.ClassLibrary.Helper.GetResourceValue("images/xboxcontrollertop.png", a);
 					topImage = new Bitmap(ti);
@@ -47,9 +47,9 @@ namespace x360ce.App.Controls
 					_FrontDisabledImage = ControlsHelper.GetImageSource(frontDisabledImage);
 				}
 				// Other.
-				markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
-				markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
-				markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
+				markB = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkButton.png", a);
+				markA = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkAxis.png", a);
+				markC = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkController.png", a);
 				float rH = topDisabledImage.HorizontalResolution;
 				float rV = topDisabledImage.VerticalResolution;
 				// Make sure resolution is same everywhere so images won't be resized.

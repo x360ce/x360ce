@@ -12,9 +12,9 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<!--  Make sure all Viewbox'es are marked with x:Shared="False" to prevent from images dissapearing on controls.  -->
-				<ResourceDictionary Source="/x360ce;component/Resources/Icons/NavNormal.xaml" />
-				<ResourceDictionary Source="/x360ce;component/Resources/Icons/NavActive.xaml" />
-				<ResourceDictionary Source="/x360ce;component/Resources/Icons/NavRecord.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/Resources/Icons/NavNormal.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/Resources/Icons/NavActive.xaml" />
+				<ResourceDictionary Source="/x360ce.Engine;component/Resources/Icons/NavRecord.xaml" />
 				<ResourceDictionary>
 					<Style x:Key="Base" TargetType="{x:Type Button}">
 						<Setter Property="Template">
