@@ -15,6 +15,18 @@ namespace x360ce.App.Service
 		public event EventHandler OnExitClick;
 		public event EventHandler OnWindowSizeChanged;
 
+
+		/// <summary>
+		/// The main (main) application window never dispose until the application closes.
+		/// </summary>
+		public Window _AppWindow;
+
+		/// <summary>
+		/// The secondary window must have the main window as owner in order to be disposed out correctly.
+		/// </summary>
+		/// <remarks>
+		/// Set window style as ToolWindow to avoid its icon in ALT+TAB.
+		/// </remarks>
 		public Window _Window;
 
 		private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
@@ -59,7 +71,6 @@ namespace x360ce.App.Service
 			var ms = new MemoryStream(iconBytes);
 			TrayNotifyIcon.Icon = new System.Drawing.Icon(ms);
 			TrayNotifyIcon.Visible = true;
-			_hiddenForm.ShowInTaskbar = false;
 			TrayNotifyIcon.Click += TrayNotifyIcon_Click;
 			TrayNotifyIcon.DoubleClick += TrayNotifyIcon_DoubleClick;
 		}
@@ -121,7 +132,6 @@ namespace x360ce.App.Service
 			}
 		}
 
-		Window _hiddenForm = new Window();
 		WindowState? oldWindowState;
 		object windowStateLock = new object();
 
@@ -178,17 +188,17 @@ namespace x360ce.App.Service
 			// NOTE: also it would be possible to track which direction mouse will move in or move out on TrayIcon.
 			// For example: open program if mouse moves in from left and moves out from top.
 			TrayNotifyIcon.Text = "X360CE: Double click - program, click - menu.";
-			if (minimizeToTray)
+			if (_Window != null)
 			{
-				// Set window style as ToolWindow to avoid its icon in ALT+TAB.
-				if (_Window.Owner != _hiddenForm)
-					_Window.Owner = _hiddenForm;
-				// Hide form bar from the TarkBar.
-				if (_Window.ShowInTaskbar)
+				// Hide form bar from the TaskBar.
+				if (minimizeToTray && _Window.ShowInTaskbar)
 					_Window.ShowInTaskbar = false;
+				if (_Window.WindowState != WindowState.Minimized)
+					_Window.WindowState = WindowState.Minimized;
+				// Dispose window here.
+				//_Window = null;
+				//Global._MainWindow = null;
 			}
-			if (_Window.WindowState != WindowState.Minimized)
-				_Window.WindowState = WindowState.Minimized;
 		}
 
 		/// <summary>
@@ -196,21 +206,33 @@ namespace x360ce.App.Service
 		/// </summary>
 		public void RestoreFromTray(bool activate = false, bool maximize = false)
 		{
-			// Initialize main window.
-			var w = new MainWindow();
-			Global._MainWindow = w;
-			Application.Current.MainWindow = w;
+			if (_AppWindow == null)
+			{
+				_AppWindow = new Window();
+				_AppWindow.ShowInTaskbar = false;
+				_AppWindow.Visibility = Visibility.Hidden;
+				_AppWindow.Opacity = 0;
+				_AppWindow.Width = 100;
+				_AppWindow.Height = 20;
+				_AppWindow.Show();
+				Application.Current.MainWindow = _AppWindow;
+				// Initialize main window.
+				var w = new MainWindow();
+				w.Owner = _AppWindow;
+				_Window = w;
+				Global._MainWindow = w;
+			}
 			// Finally show window.
-			SetWindow(w);
-			w.Show();
+			SetWindow(_Window);
+			_Window.Show();
 			// Closed will be executed first.
-			w.Closed += (sender, e) =>
+			_Window.Closed += (sender, e) =>
 			{
 				SetWindow(null);
 				Application.Current.MainWindow = null;
 			};
 			// Unloaded will be executed after 'Closed' event.
-			w.Unloaded += (sender, e) =>
+			_Window.Unloaded += (sender, e) =>
 			{
 				// Global._MainWindow will be used by other controls to detach events,
 				// therefore destroy reference by setting to null inside unloaded event.
