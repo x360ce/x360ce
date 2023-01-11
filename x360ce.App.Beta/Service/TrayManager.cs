@@ -213,24 +213,31 @@ namespace x360ce.App.Service
 				var loadedSemaphore = new SemaphoreSlim(0);
 				_AppWindow = new Window();
 				_AppWindow.ShowInTaskbar = false;
+				_AppWindow.ShowActivated = false;
 				_AppWindow.Visibility = Visibility.Hidden;
 				// Hide from task switcher (ALT+TAB) by setting to Tool Window style.
 				_AppWindow.WindowStyle = WindowStyle.ToolWindow;
+				_AppWindow.ResizeMode = ResizeMode.NoResize;
 				_AppWindow.Opacity = 0;
-				_AppWindow.Width = 100;
-				_AppWindow.Height = 20;
+				_AppWindow.Width = 0;
+				_AppWindow.Height = 0;
 				Application.Current.MainWindow = _AppWindow;
-				_AppWindow.Loaded += (sender, e) =>
-				{
-					loadedSemaphore.Release();
-				};
-				_AppWindow.Show();
-				_AppWindow.Hide();
+				//_AppWindow.Loaded += (sender, e) =>
+				//{
+				//	loadedSemaphore.Release();
+				//};
+				//_AppWindow.Show();
+				//_AppWindow.Hide();
 				// Wait until application window loads.
-				loadedSemaphore.Wait();
+				//loadedSemaphore.Wait();
+				// Create handle witout showing window.
+				var appWindowHelper = new WindowInteropHelper(_AppWindow);
+				appWindowHelper.EnsureHandle();
 				// Initialize main window.
 				var w = new MainWindow();
 				w.Owner = _AppWindow;
+				var mainWindowHandle = new WindowInteropHelper(w);
+				appWindowHelper.EnsureHandle();
 				_Window = w;
 				Global._MainWindow = w;
 			}
