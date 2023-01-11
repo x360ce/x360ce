@@ -5,7 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace x360ce.App.Service
 {
@@ -208,14 +210,24 @@ namespace x360ce.App.Service
 		{
 			if (_AppWindow == null)
 			{
+				var loadedSemaphore = new SemaphoreSlim(0);
 				_AppWindow = new Window();
 				_AppWindow.ShowInTaskbar = false;
 				_AppWindow.Visibility = Visibility.Hidden;
+				// Hide from task switcher (ALT+TAB) by setting to Tool Window style.
+				_AppWindow.WindowStyle = WindowStyle.ToolWindow;
 				_AppWindow.Opacity = 0;
 				_AppWindow.Width = 100;
 				_AppWindow.Height = 20;
-				_AppWindow.Show();
 				Application.Current.MainWindow = _AppWindow;
+				_AppWindow.Loaded += (sender, e) =>
+				{
+					loadedSemaphore.Release();
+				};
+				_AppWindow.Show();
+				_AppWindow.Hide();
+				// Wait until application window loads.
+				loadedSemaphore.Wait();
 				// Initialize main window.
 				var w = new MainWindow();
 				w.Owner = _AppWindow;
