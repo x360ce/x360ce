@@ -129,7 +129,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		// List of warnings to show.
 		public BindingListInvoked<IssueItem> Warnings;
-		BindingListInvoked<IssueItem> IssueList;
+		BindingListInvoked<IssueItem> IssueList = new BindingListInvoked<IssueItem>();
 
 		public void AddIssues(params IssueItem[] items)
 		{
@@ -324,7 +324,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		{
 			// List which contains all issues.
 			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-			IssueList = new BindingListInvoked<IssueItem>();
+			//IssueList = new BindingListInvoked<IssueItem>();
 			UpdateIgnoreAllButton();
 			// List which is bound to the grid and displays issues, which needs user attention.
 			Warnings = new BindingListInvoked<IssueItem>();

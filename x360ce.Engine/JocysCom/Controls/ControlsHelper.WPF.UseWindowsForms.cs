@@ -53,10 +53,14 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region Center Window
 
+		/// <summary>
+		/// Center window on Owner window.
+		/// </summary>
+		/// <param name="window"></param>
 		public static void CenterWindowOnApplication(Window window)
 		{
 			// Get WFF window first.
-			var win = System.Windows.Application.Current?.MainWindow;
+			var win = window.Owner;
 			System.Drawing.Rectangle? r = null;
 			var isNormal = false;
 			if (win != null)

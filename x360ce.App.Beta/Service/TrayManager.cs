@@ -5,9 +5,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Interop;
+using System.Windows.Controls;
+using x360ce.App.Controls;
 
 namespace x360ce.App.Service
 {
@@ -17,19 +20,12 @@ namespace x360ce.App.Service
 		public event EventHandler OnExitClick;
 		public event EventHandler OnWindowSizeChanged;
 
-
-		/// <summary>
-		/// The main (main) application window never dispose until the application closes.
-		/// </summary>
-		public Window _AppWindow;
-
 		/// <summary>
 		/// The secondary window must have the main window as owner in order to be disposed out correctly.
 		/// </summary>
-		/// <remarks>
-		/// Set window style as ToolWindow to avoid its icon in ALT+TAB.
-		/// </remarks>
 		public Window _Window;
+		private WeakReference _WindowReference;
+		private WeakReference _ContentReference;
 
 		private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
 		private System.Windows.Forms.ContextMenuStrip TrayMenuStrip;
@@ -57,6 +53,8 @@ namespace x360ce.App.Service
 			ShowLoadedControls.Click += (sender, e) =>
 			{
 				var names = string.Join("\r\n", InitHelper.LoadedControlNames);
+				CollectGarbage();
+				names += $"Window: {_WindowReference.IsAlive}, Control: {_ContentReference.IsAlive}";
 				Clipboard.SetText(names);
 				MessageBox.Show(names);
 			};
@@ -80,6 +78,7 @@ namespace x360ce.App.Service
 		public void SetWindow(Window window)
 		{
 			var o = SettingsManager.Options;
+			// If old window exists then...
 			if (_Window != null)
 			{
 				InfoForm.MonitorEnabled = false;
@@ -203,84 +202,101 @@ namespace x360ce.App.Service
 			}
 		}
 
+		public void RestoreFromTray(bool activate = false, bool maximize = false)
+		{
+			_WindowReference = new WeakReference(null);
+			_ContentReference = new WeakReference(null);
+			Task.Run(() => _RestoreFromTray(activate, maximize));
+		}
+
 		/// <summary>
 		/// Restores the window.
 		/// </summary>
-		public void RestoreFromTray(bool activate = false, bool maximize = false)
+		public void _RestoreFromTray(bool activate = false, bool maximize = false)
 		{
-			if (_AppWindow == null)
+			// Need isolator or app freeze.
+			Action isolator = () =>
 			{
-				var loadedSemaphore = new SemaphoreSlim(0);
-				_AppWindow = new Window();
-				_AppWindow.ShowInTaskbar = false;
-				_AppWindow.ShowActivated = false;
-				_AppWindow.Visibility = Visibility.Hidden;
-				// Hide from task switcher (ALT+TAB) by setting to Tool Window style.
-				_AppWindow.WindowStyle = WindowStyle.ToolWindow;
-				_AppWindow.ResizeMode = ResizeMode.NoResize;
-				_AppWindow.Opacity = 0;
-				_AppWindow.Width = 0;
-				_AppWindow.Height = 0;
-				Application.Current.MainWindow = _AppWindow;
-				//_AppWindow.Loaded += (sender, e) =>
-				//{
-				//	loadedSemaphore.Release();
-				//};
-				//_AppWindow.Show();
-				//_AppWindow.Hide();
-				// Wait until application window loads.
-				//loadedSemaphore.Wait();
-				// Create handle witout showing window.
-				var appWindowHelper = new WindowInteropHelper(_AppWindow);
-				appWindowHelper.EnsureHandle();
+				//var mw = new Window();
+				var mw = new MainWindow();
+				Global._MainWindow = mw;
+				// Set owner to properly dispose after closing.
+				mw.Owner = Application.Current.MainWindow;
+				//var mainWindowHandle = new WindowInteropHelper(tw);
+				//mainWindowHandle.EnsureHandle();
+				_WindowReference.Target = mw;
+				_ContentReference.Target = mw.Content;
 				// Initialize main window.
-				var w = new MainWindow();
-				w.Owner = _AppWindow;
-				var mainWindowHandle = new WindowInteropHelper(w);
-				appWindowHelper.EnsureHandle();
-				_Window = w;
-				Global._MainWindow = w;
-			}
-			// Finally show window.
-			SetWindow(_Window);
-			_Window.Show();
-			// Closed will be executed first.
-			_Window.Closed += (sender, e) =>
-			{
-				SetWindow(null);
-				Application.Current.MainWindow = null;
+				var loadedSemaphore = new SemaphoreSlim(0);
+				var closedSemaphore = new SemaphoreSlim(0);
+				mw.Loaded += (sender, e) => loadedSemaphore.Release();
+				mw.Closed += (sender, e) => SetWindow(null);
+				// Unloaded will be executed after 'Closed' event.
+				mw.Unloaded += (sender, e) =>
+				{
+					// Global._MainWindow will be used by other controls to detach events,
+					// therefore destroy reference by setting to null inside unloaded event.
+					Global._MainWindow = null;
+				};
+				SetWindow(mw);
+				// Show window.
+				mw.Show();
+				loadedSemaphore.Wait();
+				if (activate)
+				{
+					// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
+					// Windows NT 5.0 and later: An application cannot force a window to the foreground while the user is working with another window.
+					// Instead, SetForegroundWindow will activate the window (see SetActiveWindow) and call theFlashWindowEx function to notify the user.
+					if (_Window.WindowState != WindowState.Minimized)
+						_Window.WindowState = WindowState.Minimized;
+					_Window.Activate();
+				}
+				// Show in task bar before restoring windows state in order to prevent flickering.
+				if (!_Window.ShowInTaskbar)
+					_Window.ShowInTaskbar = true;
+				// Update window state.
+				var tagetState = maximize ? WindowState.Maximized : WindowState.Normal;
+				if (_Window.WindowState != tagetState)
+					_Window.WindowState = tagetState;
+				// Bring form to the front.
+				var tm = _Window.Topmost;
+				_Window.Topmost = true;
+				_Window.Topmost = tm;
+				_Window.BringIntoView();
 			};
-			// Unloaded will be executed after 'Closed' event.
-			_Window.Unloaded += (sender, e) =>
-			{
-				// Global._MainWindow will be used by other controls to detach events,
-				// therefore destroy reference by setting to null inside unloaded event.
-				Global._MainWindow = null;
-			};
-			//if (activate)
-			//{
-			//	// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
-			//	// Windows NT 5.0 and later: An application cannot force a window to the foreground while the user is working with another window.
-			//	// Instead, SetForegroundWindow will activate the window (see SetActiveWindow) and call theFlashWindowEx function to notify the user.
-			//	if (_Window.WindowState != WindowState.Minimized)
-			//		_Window.WindowState = WindowState.Minimized;
-			//	_Window.Activate();
-			//}
-			//// Show in task bar before restoring windows state in order to prevent flickering.
-			//if (!_Window.ShowInTaskbar)
-			//	_Window.ShowInTaskbar = true;
-			//var tagetState = maximize ? WindowState.Maximized : WindowState.Normal;
+			Application.Current.Dispatcher.BeginInvoke(isolator);
+		}
 
-			//if (_Window.WindowState != tagetState)
-			//	_Window.WindowState = tagetState;
-			//// Set window style as ToolWindow to show in ALT+TAB.
-			//if (_Window.Owner != null)
-			//	_Window.Owner = null;
-			//// Bring form to the front.
-			//var tm = _Window.Topmost;
-			//_Window.Topmost = true;
-			//_Window.Topmost = tm;
-			//_Window.BringIntoView();
+		private void Tw_Unloaded(object sender, RoutedEventArgs e)
+		{
+			throw new NotImplementedException();
+		}
+
+		private static void _CollectGarbage()
+		{
+			// Try to remove object from the memory.
+			GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+			GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true, true);
+			//GC.Collect();
+			GC.WaitForFullGCComplete();
+			GC.WaitForPendingFinalizers();
+		}
+
+		public static void CollectGarbage(Func<bool> whileCondition = null)
+		{
+			if (whileCondition == null)
+			{
+				_CollectGarbage();
+				return;
+			}
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+			// loop untill object allive, but no longer than  seconds.
+			while (whileCondition() && stopwatch.ElapsedMilliseconds < 4000)
+			{
+				Task.Delay(200).Wait();
+				_CollectGarbage();
+			}
 		}
 
 		#endregion

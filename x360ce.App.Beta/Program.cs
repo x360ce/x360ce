@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Interop;
 
 namespace x360ce.App
 {
@@ -150,6 +151,15 @@ namespace x360ce.App
 				//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
 				app.Startup += App_Startup;
 				app.InitializeComponent();
+				// Create the main application window which will take minimum amount of memory.
+				// Main application window is impossible to dispose until the application closes.
+				// Important: .Owner property must be set to Application.Current.MainWindow for sub-window to dispose.
+				var appWindow = new Window();
+				// Make sure it contains handle.
+				var awHelper = new WindowInteropHelper(appWindow);
+				awHelper.EnsureHandle();
+				Application.Current.MainWindow = appWindow;
+				// Now we can start the app.
 				app.Run();
 			}
 			Global.DisposeCloudClient();
