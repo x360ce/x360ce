@@ -16,6 +16,7 @@ namespace x360ce.Tests
 	public class x360ceAppUiTest
 	{
 		string exePath = "..\\..\\..\\x360ce.App.Beta\\bin\\Debug\\x360ce.exe";
+		string x360ceAppWinName = "x360ceAppWin";
 		string winName = "Jocys.com X360 Controller Emulator";
 
 		[TestMethod]
@@ -24,13 +25,16 @@ namespace x360ce.Tests
 			var di = new DirectoryInfo(".");
 			Console.WriteLine($"Current Path: {di.FullName}");
 			var p = Process.Start(exePath);
+			var appWindow = AutomationHelper.FindWindow(p, new Regex("^" + x360ceAppWinName, RegexOptions.IgnoreCase));
 			var window = AutomationHelper.FindWindow(p, new Regex("^" + winName, RegexOptions.IgnoreCase));
 			var info = window.Current;
+			var appWindowPattern = appWindow.GetCurrentPattern(WindowPattern.Pattern) as WindowPattern;
 			var windowPattern = window.GetCurrentPattern(WindowPattern.Pattern) as WindowPattern;
 			Task.Delay(1000).Wait();
-			windowPattern.Close();
+			appWindowPattern.Close();
+			//windowPattern.Close();
 			Task.Delay(1000).Wait();
-			p.Close();
+			//p.Close();
 			Assert.IsTrue(true);
 
 		}

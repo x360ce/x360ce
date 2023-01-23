@@ -155,6 +155,7 @@ namespace x360ce.App
 				// Main application window is impossible to dispose until the application closes.
 				// Important: .Owner property must be set to Application.Current.MainWindow for sub-window to dispose.
 				var appWindow = new Window();
+				appWindow.Title = "x360ceAppWindow";
 				// Make sure it contains handle.
 				var awHelper = new WindowInteropHelper(appWindow);
 				awHelper.EnsureHandle();
