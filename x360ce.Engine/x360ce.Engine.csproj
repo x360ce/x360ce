@@ -142,6 +142,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -231,6 +233,7 @@
     <Compile Include="JocysCom\Data\SqlHelper.Types.cs" />
     <Compile Include="JocysCom\Diagnostics\RollingWriterOptions.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
+    <Compile Include="JocysCom\Windows\AutomationHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
     <Compile Include="Data\UserSetting.cs" />
     <Compile Include="Data\Summary.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -288,7 +289,7 @@ namespace JocysCom.ClassLibrary.Text
 		/// <param name="s">String to ident.</param>
 		/// <param name="tabs">Positive - add ident, negative - remove ident.</param>
 		/// <param name="ident">Ident character</param>
-		public static string IdentText(string s, int tabs = 1, char ident = '\t')
+		public static string IdentText(string s, int tabs = 1, string ident = "\t")
 		{
 			if (tabs == 0)
 				return s;
@@ -296,23 +297,31 @@ namespace JocysCom.ClassLibrary.Text
 				return s;
 			var sb = new StringBuilder();
 			var tr = new StringReader(s);
-			var prefix = new string(ident, tabs);
+			var prefix = string.Concat(Enumerable.Repeat(ident, tabs));
 			string line;
-			while ((line = tr.ReadLine()) != null)
+			var lines = s.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+			for (int i = 0; i < lines.Length; i++)
 			{
+				line = lines[i];
 				if (line != "")
 				{
+					// If add idents then...
 					if (tabs > 0)
 						sb.Append(prefix);
-					else
+					// If remove idents then...
+					else if (tabs < 0)
 					{
-						var index = 0;
-						while (index < line.Length && line[index] == ident && index < tabs)
-							index++;
-						line = line.Substring(index);
+						var count = 0;
+						// Count how much idents could be removed
+						while (line.Substring(count * ident.Length, ident.Length) == ident && count < tabs)
+							count++;
+						line = line.Substring(count * ident.Length);
 					}
 				}
-				sb.AppendLine(line);
+				if (i < lines.Length - 1)
+					sb.AppendLine(line);
+				else
+					sb.Append(line);
 			}
 			tr.Dispose();
 			return sb.ToString();
