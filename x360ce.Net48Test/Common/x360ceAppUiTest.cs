@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -37,8 +38,15 @@ namespace x360ce.Tests
 			Assert.IsTrue(true);
 		}
 
+
 		[TestMethod]
 		public void Test_NotifyIcon()
+		{
+			AutomationHelper.FindNotificationIcon();
+		}
+
+			[TestMethod]
+		public void Test_NotifyIcon2()
 		{
 			var di = new DirectoryInfo(".");
 			Console.WriteLine($"Current Path: {di.FullName}");
@@ -50,7 +58,7 @@ namespace x360ce.Tests
 			foreach (var window in windows)
 			{
 				var el = AutomationElement.FromHandle(window);
-				var all = AutomationHelper.GetAll(el, el.Current.ControlType.ProgrammaticName, false);
+				var all = AutomationHelper.GetAll(el, el.Current.ControlType.ProgrammaticName.Split('.').Last(), false);
 				foreach (var child in all)
 					list.Add(ToString(child.Key, child.Value));
 			}

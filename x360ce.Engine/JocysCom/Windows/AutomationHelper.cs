@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace JocysCom.ClassLibrary.Windows
 {
@@ -102,99 +101,91 @@ namespace JocysCom.ClassLibrary.Windows
 			throw new Exception("Window not found");
 		}
 
+		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+		public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
 		public static void FindNotificationIcon()
 		{
-			/*
-			var arrText = new List<string>();
-			string tskBarClassName = "Shell_TrayWnd";
-			IntPtr tskBarHwnd = FindWindow(tskBarClassName, default);
-			AutomationElement window = AutomationElement.FromHandle(tskBarHwnd);
-			var condition = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.ToolBar);
-			AutomationElementCollection elementCollection = window.FindAll(TreeScope.Descendants, condition);
-			//(ToolbarWindow32, MSTaskListWClass),
-			// for fun get all we can...
-			foreach (AutomationElement aE in elementCollection)
-			{
-				if (aE.Current.Name.Equals("User Promoted Notification Area"))
-				{
-					foreach (AutomationElement ui in aE.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)))
-						arrText.Add("Notification Area - " + ui.Current.HelpText.Replace('\n', ' ')); // removed line break as when shown it would show some on a new line in messagebox
-				}
-				else if (aE.Current.Name.Equals("Running applications"))
-				{
-					foreach (AutomationElement ui in aE.FindAll(TreeScope.Descendants, new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Button)))
-						arrText.Add("Toolbar Area - " + ui.Current.Name.Replace('\n', ' ')); // removed line break as when shown it would show some on a new line in messagebox
-				}
-			}
-			if (arrText.Count > 0)
-				MessageBox.Show(string.Join(Environment.NewLine, arrText.ToArray()));
-			*/
+			// Find notification area on Windows 11.
+			var rootElement = AutomationElement.RootElement;
+			var trayWnd = FindFirstChild(rootElement, ControlType.Pane, "Shell_TrayWnd");
+			var trayNotifyWnd = FindFirstChild(trayWnd, ControlType.Pane, "TrayNotifyWnd");
+			var sysPager = FindFirstChild(trayNotifyWnd, ControlType.Pane, "SysPager");
+			var toolbarWindow = FindFirstChild(sysPager, ControlType.ToolBar, "ToolbarWindow32");
+			// Find all buttorns.
+			var buttonElements = FindAllChildren(toolbarWindow, ControlType.Button);
+			Console.WriteLine("Number of buttons in the notification area: " + buttonElements.Count);
+			foreach (AutomationElement buttonElement in buttonElements)
+				Console.WriteLine("Button name: " + buttonElement.Current.Name);
 		}
 
-
-
-		//public static IEnumerable<AutomationElement> EnumNotificationIcons()
-		//{
-		//	var userArea = AutomationElement.RootElement.FindFirst("Notification Area");
-		//	if (userArea != null)
-		//	{
-		//		// If there is a chevron, click it. There may not be a chevron if no
-		//		// icons are hidden.
-		//		var chevron = userArea.GetTopLevelElement().Find("NotificationChevron");
-		//		if (chevron != null)
-		//		{
-		//			chevron.InvokeButton();
-		//		}
-		//		foreach (var button in userArea.EnumChildButtons())
-		//		{
-		//			yield return button;
-		//		}
-		//	}
-		//}
-
-		/*
-
-		static IEnumerable<IntPtr> EnumerateProcessWindowHandles(int processId)
+		public static List<AutomationElement> FindAllChildren(AutomationElement parent, ControlType controlType = null)
 		{
-			var handles = new List<IntPtr>();
-			foreach (ProcessThread thread in Process.GetProcessById(processId).Threads)
-				EnumThreadWindows(thread.Id,
-					(hWnd, lParam) => { handles.Add(hWnd); return true; }, IntPtr.Zero);
-			return handles;
+			var conditions = new List<Condition>();
+			if (controlType != null)
+				conditions.Add(new PropertyCondition(AutomationElement.ControlTypeProperty, controlType));
+			var children = conditions.Count >= 2
+				? parent.FindAll(TreeScope.Children, new AndCondition(conditions.ToArray()))
+				: parent.FindAll(TreeScope.Children, conditions.FirstOrDefault() ?? Condition.TrueCondition);
+			if (children.Count == 0)
+				Console.WriteLine("Warn: Unable to find child element with conditions: " + conditions);
+			return children.Cast<AutomationElement>().ToList();
 		}
 
-		public AutomationElement FindElementBySubstring(AutomationElement element, ControlType controlType, string searchTerm)
+		public static AutomationElement FindFirstChild(AutomationElement parent, ControlType controlType = null, string className = null, object automationId = null)
 		{
-			AutomationElementCollection textDescendants = element.FindAll(
-				TreeScope.Descendants,
-				new PropertyCondition(AutomationElement.ControlTypeProperty, controlType));
-
-			foreach (AutomationElement el in textDescendants)
-			{
-				if (el.Current.Name.Contains(searchTerm))
-					return el;
-			}
-			return null;
+			var conditions = new List<Condition>();
+			if (controlType != null)
+				conditions.Add(new PropertyCondition(AutomationElement.ControlTypeProperty, controlType));
+			if (className != null)
+				conditions.Add(new PropertyCondition(AutomationElement.ClassNameProperty, className));
+			if (automationId != null)
+				conditions.Add(new PropertyCondition(AutomationElement.AutomationIdProperty, automationId));
+			var child = conditions.Count >= 2
+				? parent.FindFirst(TreeScope.Children, new AndCondition(conditions.ToArray()))
+				: parent.FindFirst(TreeScope.Children, conditions.FirstOrDefault() ?? Condition.TrueCondition);
+			if (child == null)
+				Console.WriteLine("Error: Unable to find child element with conditions: " + conditions);
+			return child;
 		}
 
 		/// <summary>
-		/// Returns the first automation element that is a child of the element you passed in and contains the string you passed in.
+		/// Waits for element to be ready for processing.
 		/// </summary>
-		public AutomationElement GetElementByName(AutomationElement aeElement, string sSearchTerm)
+		/// <param name="targetControl">The target control.</param>
+		/// <returns>The WindowPattern.</returns>
+		private static WindowPattern WaitForElement(AutomationElement targetControl)
 		{
-			AutomationElement aeFirstChild = TreeWalker.RawViewWalker.GetFirstChild(aeElement);
-			AutomationElement aeSibling = null;
-			while ((aeSibling = TreeWalker.RawViewWalker.GetNextSibling(aeFirstChild)) != null)
+			WindowPattern windowPattern = null;
+			try
 			{
-				if (aeSibling.Current.Name.Contains(sSearchTerm))
-				{
-					return aeSibling;
-				}
+				windowPattern = targetControl.GetCurrentPattern(WindowPattern.Pattern) as WindowPattern;
 			}
-			return aeSibling;
+			// If object doesn't support the WindowPattern control pattern
+			catch (InvalidOperationException)
+			{
+				return null;
+			}
+			// If object not responding in a timely manner then return
+			if (!windowPattern.WaitForInputIdle(10000))
+				return null;
+			// Element is usable.
+			return windowPattern;
 		}
 
-		*/
+		//public AutomationElement FindElementBySubstring(AutomationElement element, ControlType controlType, string searchTerm)
+		//{
+		//	AutomationElementCollection textDescendants = element.FindAll(
+		//		TreeScope.Descendants,
+		//		new PropertyCondition(AutomationElement.ControlTypeProperty, controlType));
+		//	foreach (AutomationElement el in textDescendants)
+		//	{
+		//		if (el.Current.Name.Contains(searchTerm))
+		//			return el;
+		//	}
+		//	return null;
+		//}
+
 
 		// <summary>
 		/// Finds all enabled buttons in the specified window element.
@@ -228,47 +219,16 @@ namespace JocysCom.ClassLibrary.Windows
 			if (includeTop && !controls.Keys.Contains(control))
 				controls.Add(control, path);
 			//var rawChildren = FindInRawView(control);
-			var rawChildren = GetChildren(control);
+			var rawChildren = FindAllChildren(control);
 			foreach (var child in rawChildren)
 			{
-				var children = GetAll(child, path + $".{child.Current.ControlType.ProgrammaticName}", true);
+				var children = GetAll(child, path + $".{child.Current.ControlType.ProgrammaticName.Split('.').Last()}", true);
 				var controlsToAdd = children.Where(x => !controls.ContainsKey(x.Key));
 				foreach (var cta in controlsToAdd)
 					controls.Add(cta.Key, cta.Value);
 			}
 			return controls;
 		}
-
-		public static List<AutomationElement> GetChildren(AutomationElement element)
-		{
-			//var condition = new AndCondition(
-			//  new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Pane)
-			//);
-			var list = element
-				.FindAll(TreeScope.Children, System.Windows.Automation.Condition.TrueCondition)
-				.Cast<AutomationElement>()
-				.ToList();
-			return list;
-		}
-
-		//public static IEnumerable<AutomationElement> FindInRawView(AutomationElement root)
-		//{
-		//	var rawViewWalker = TreeWalker.RawViewWalker;
-		//	var queue = new Queue<AutomationElement>();
-		//	queue.Enqueue(root);
-		//	while (queue.Count > 0)
-		//	{
-		//		var element = queue.Dequeue();
-		//		yield return element;
-		//		var sibling = rawViewWalker.GetNextSibling(element);
-		//		if (sibling != null)
-		//			queue.Enqueue(sibling);
-		//		var child = rawViewWalker.GetFirstChild(element);
-		//		if (child != null)
-		//			queue.Enqueue(child);
-		//	}
-		//}
-
 
 	}
 }
