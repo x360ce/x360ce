@@ -15,7 +15,8 @@ namespace x360ce.App.Service
 	public partial class TrayManager : IDisposable
 	{
 
-		public static string AutomationText = "x360ceTrayNotifyIcon";
+		public static string TrayNotifyIconText = "x360ceTrayNotifyIcon";
+		public static string TrayNotifyMenuText = "x360ceTrayNotifyMenu";
 
 		public event EventHandler OnExitClick;
 		public event EventHandler OnWindowSizeChanged;
@@ -60,8 +61,9 @@ namespace x360ce.App.Service
 			};
 			// Tray menu.
 			TrayMenuStrip = new System.Windows.Forms.ContextMenuStrip();
+			TrayMenuStrip.Text = TrayNotifyMenuText;
 			TrayNotifyIcon = new System.Windows.Forms.NotifyIcon();
-			TrayNotifyIcon.Text = AutomationText;
+			TrayNotifyIcon.Text = TrayNotifyIconText;
 			TrayNotifyIcon.ContextMenuStrip = TrayMenuStrip;
 			TrayMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
 				OpenApplicationMenu,

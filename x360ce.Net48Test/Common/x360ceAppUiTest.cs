@@ -9,15 +9,18 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation;
+using x360ce.App.Service;
 
 namespace x360ce.Tests
 {
 	[TestClass]
 	public class x360ceAppUiTest
 	{
+
+		string TrayManagerName = TrayManager.TrayNotifyIconText;
 		string exePath = "..\\..\\..\\x360ce.App.Beta\\bin\\Debug\\x360ce.exe";
-		string x360ceAppWinName = "x360ceAppWin";
-		string winName = "Jocys.com X360 Controller Emulator";
+		string mainWindow = "x360ceAppWin";
+		string configWindow = "Jocys.com X360 Controller Emulator";
 
 		[TestMethod]
 		public void Test_Start()
@@ -25,14 +28,15 @@ namespace x360ce.Tests
 			var di = new DirectoryInfo(".");
 			Console.WriteLine($"Current Path: {di.FullName}");
 			var p = Process.Start(exePath);
-			var appWindow = AutomationHelper.FindWindow(p, new Regex("^" + x360ceAppWinName, RegexOptions.IgnoreCase));
-			var window = AutomationHelper.FindWindow(p, new Regex("^" + winName, RegexOptions.IgnoreCase));
+			var appWindow = AutomationHelper.WaitForWindow(p, new Regex("^" + mainWindow, RegexOptions.IgnoreCase));
+			var window = AutomationHelper.WaitForWindow(p, new Regex("^" + configWindow, RegexOptions.IgnoreCase));
 			var info = window.Current;
 			var appWindowPattern = appWindow.GetCurrentPattern(WindowPattern.Pattern) as WindowPattern;
 			var windowPattern = window.GetCurrentPattern(WindowPattern.Pattern) as WindowPattern;
 			Task.Delay(1000).Wait();
 			appWindowPattern.Close();
 			//windowPattern.Close();
+			//p.WaitForExit();
 			Task.Delay(1000).Wait();
 			//p.Close();
 			Assert.IsTrue(true);
@@ -40,19 +44,31 @@ namespace x360ce.Tests
 
 
 		[TestMethod]
-		public void Test_NotifyIcon()
+		public void Test_StartAndExitViaToolBar()
 		{
-			AutomationHelper.FindNotificationIcon();
+			var p = Process.GetProcessesByName("x360ce").FirstOrDefault() ?? Process.Start(exePath);
+			var appWindow = AutomationHelper.WaitForWindow(p, new Regex("^" + mainWindow, RegexOptions.IgnoreCase));
+			var trayButtons = AutomationHelper.FindToolbarButtons();
+			var trayButton = trayButtons.FirstOrDefault(x => x.Current.Name == TrayManagerName);
+			AutomationHelper.ClickButton(trayButton);
+			Task.Delay(500).Wait();
+			var desktop = AutomationElement.RootElement;
+			// Find menu
+			var menu = AutomationHelper.FindFirstChild(desktop, ControlType.ToolBar, processId: p.Id);
+			var menuButtons = AutomationHelper.FindAllChildren(menu, ControlType.MenuItem);
+			var exitButton = menuButtons.First(x => x.Current.Name == "Exit");
+			AutomationHelper.ClickButton(exitButton);
+			p.WaitForExit();
 		}
 
-			[TestMethod]
+		[TestMethod]
 		public void Test_NotifyIcon2()
 		{
 			var di = new DirectoryInfo(".");
 			Console.WriteLine($"Current Path: {di.FullName}");
 			var p = Process.Start(exePath);
 			// Wait Application.Current.MainWindow.
-			var appWindow = AutomationHelper.FindWindow(p, new Regex("^" + x360ceAppWinName, RegexOptions.IgnoreCase));
+			var appWindow = AutomationHelper.WaitForWindow(p, new Regex("^" + mainWindow, RegexOptions.IgnoreCase));
 			var windows = AutomationHelper.EnumerateProcessWindowHandles(p);
 			var list = new List<string>();
 			foreach (var window in windows)

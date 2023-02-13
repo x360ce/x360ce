@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Security.Cryptography.X509Certificates;
 
 namespace JocysCom.ClassLibrary.Windows
 {
@@ -79,7 +81,7 @@ namespace JocysCom.ClassLibrary.Windows
 		/// <summary>
 		///  Find process window by regular expression.
 		/// </summary>
-		public static AutomationElement FindWindow(Process p, Regex rx, int timeoutMilliseconds = 30000)
+		public static AutomationElement WaitForWindow(Process p, Regex rx, int timeoutMilliseconds = 30000)
 		{
 			var watch = Stopwatch.StartNew();
 			AutomationElement windowElement = null;
@@ -104,7 +106,7 @@ namespace JocysCom.ClassLibrary.Windows
 		[DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-		public static void FindNotificationIcon()
+		public static AutomationElement FindToolbarWindow()
 		{
 			// Find notification area on Windows 11.
 			var rootElement = AutomationElement.RootElement;
@@ -112,11 +114,46 @@ namespace JocysCom.ClassLibrary.Windows
 			var trayNotifyWnd = FindFirstChild(trayWnd, ControlType.Pane, "TrayNotifyWnd");
 			var sysPager = FindFirstChild(trayNotifyWnd, ControlType.Pane, "SysPager");
 			var toolbarWindow = FindFirstChild(sysPager, ControlType.ToolBar, "ToolbarWindow32");
+			return toolbarWindow;
+		}
+
+		public static List<AutomationElement> FindToolbarButtons()
+		{
+			var toolbarWindow = FindToolbarWindow();
 			// Find all buttorns.
-			var buttonElements = FindAllChildren(toolbarWindow, ControlType.Button);
-			Console.WriteLine("Number of buttons in the notification area: " + buttonElements.Count);
-			foreach (AutomationElement buttonElement in buttonElements)
-				Console.WriteLine("Button name: " + buttonElement.Current.Name);
+			var buttons = FindAllChildren(toolbarWindow, ControlType.Button);
+			Console.WriteLine("Number of buttons in the notification area: " + buttons.Count);
+			return buttons;
+		}
+
+		//This is a replacement for Cursor.Position in WinForms
+		[DllImport("user32.dll")]
+		static extern bool SetCursorPos(int x, int y);
+
+		[DllImport("user32.dll")]
+		private static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
+
+		public const int MOUSEEVENTF_LEFTDOWN = 0x02;
+		public const int MOUSEEVENTF_LEFTUP = 0x04;
+
+
+		public static void ClickButton(AutomationElement button, bool native = true)
+		{
+			if (native)
+			{
+				// Get the bounding rectangle of the button
+				var rect = button.Current.BoundingRectangle;
+				// Simulate a mouse click on the button
+				var x = (int)rect.Left + (int)(rect.Width / 2);
+				var y = (int)rect.Top + (int)(rect.Height / 2);
+				SetCursorPos(x, y);
+				mouse_event(MOUSEEVENTF_LEFTDOWN, x, y, 0, 0);
+				mouse_event(MOUSEEVENTF_LEFTUP, x, y, 0, 0);
+			}
+			else
+			{
+				((InvokePattern)button.GetCurrentPattern(InvokePattern.Pattern)).Invoke();
+			}
 		}
 
 		public static List<AutomationElement> FindAllChildren(AutomationElement parent, ControlType controlType = null)
@@ -132,7 +169,7 @@ namespace JocysCom.ClassLibrary.Windows
 			return children.Cast<AutomationElement>().ToList();
 		}
 
-		public static AutomationElement FindFirstChild(AutomationElement parent, ControlType controlType = null, string className = null, object automationId = null)
+		public static AutomationElement FindFirstChild(AutomationElement parent, ControlType controlType = null, string className = null, object automationId = null, int? processId = null)
 		{
 			var conditions = new List<Condition>();
 			if (controlType != null)
@@ -141,6 +178,8 @@ namespace JocysCom.ClassLibrary.Windows
 				conditions.Add(new PropertyCondition(AutomationElement.ClassNameProperty, className));
 			if (automationId != null)
 				conditions.Add(new PropertyCondition(AutomationElement.AutomationIdProperty, automationId));
+			if (processId != null)
+				conditions.Add(new PropertyCondition(AutomationElement.ProcessIdProperty, processId));
 			var child = conditions.Count >= 2
 				? parent.FindFirst(TreeScope.Children, new AndCondition(conditions.ToArray()))
 				: parent.FindFirst(TreeScope.Children, conditions.FirstOrDefault() ?? Condition.TrueCondition);
@@ -154,7 +193,7 @@ namespace JocysCom.ClassLibrary.Windows
 		/// </summary>
 		/// <param name="targetControl">The target control.</param>
 		/// <returns>The WindowPattern.</returns>
-		private static WindowPattern WaitForElement(AutomationElement targetControl)
+		private static WindowPattern WaitForWindowToBeReady(AutomationElement targetControl)
 		{
 			WindowPattern windowPattern = null;
 			try
@@ -172,6 +211,13 @@ namespace JocysCom.ClassLibrary.Windows
 			// Element is usable.
 			return windowPattern;
 		}
+
+		//public static void WaitForWindowToClose(WindowPattern windowPattern)
+		//{
+		// Wait for the window to close
+		//while (windowPattern.Current.WindowInteractionState != WindowInteractionState.Closing)
+		//	Task.Delay(100).Wait();
+		//}
 
 		//public AutomationElement FindElementBySubstring(AutomationElement element, ControlType controlType, string searchTerm)
 		//{
