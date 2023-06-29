@@ -58,7 +58,8 @@ namespace JocysCom.ClassLibrary
 		/// </summary>
 		public static T FindResource<T>(string name, params Assembly[] assemblies)
 		{
-			name = name.Replace("/", ".").Replace(@"\", ".").Replace(' ', '_');
+			var name1 = name.Replace("/", ".").Replace(@"\", ".");
+			var name2 = name1.Replace(' ', '_');
 			if (assemblies.Length == 0)
 				assemblies = GetAssemblies();
 			foreach (var assembly in assemblies)
@@ -66,7 +67,7 @@ namespace JocysCom.ClassLibrary
 				var resourceNames = assembly.GetManifestResourceNames();
 				foreach (var resourceName in resourceNames)
 				{
-					if (!resourceName.EndsWith(name))
+					if (!resourceName.EndsWith(name1) && !resourceName.EndsWith(name2))
 						continue;
 					var stream = assembly.GetManifestResourceStream(resourceName);
 					return ConvertResource<T>(stream);
@@ -119,7 +120,8 @@ namespace JocysCom.ClassLibrary
 		/// </summary>
 		public static T GetResource<T>(string name, params Assembly[] assemblies)
 		{
-			name = name.Replace("/", ".").Replace(@"\", ".").Replace(' ', '_');
+			var name1 = name.Replace("/", ".").Replace(@"\", ".");
+			var name2 = name1.Replace(' ', '_');
 			if (assemblies.Length == 0)
 				assemblies = GetAssemblies();
 			foreach (var assembly in assemblies)
@@ -127,7 +129,7 @@ namespace JocysCom.ClassLibrary
 				var resourceNames = assembly.GetManifestResourceNames();
 				foreach (var resourceName in resourceNames)
 				{
-					if (resourceName != name)
+					if (resourceName != name1 && resourceName != name2)
 						continue;
 					var stream = assembly.GetManifestResourceStream(resourceName);
 					return ConvertResource<T>(stream);

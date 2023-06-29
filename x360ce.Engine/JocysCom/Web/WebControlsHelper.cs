@@ -12,7 +12,7 @@ namespace JocysCom.ClassLibrary.Web
 
 		public static System.Web.UI.Control FindControlRecursive(System.Web.UI.Control root, string id)
 		{
-			if (root == null)
+			if (root is null)
 				throw new ArgumentNullException(nameof(root));
 			if (root.ID == id)
 				return root;
@@ -30,7 +30,7 @@ namespace JocysCom.ClassLibrary.Web
 		/// </summary>
 		public static IEnumerable<System.Web.UI.Control> GetAll(System.Web.UI.Control control, Type type = null, bool includeTop = false)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			// Get all child controls.
 			var controls = control.Controls.Cast<System.Web.UI.Control>();
@@ -42,7 +42,7 @@ namespace JocysCom.ClassLibrary.Web
 				// Include top control if required.
 				.Concat(includeTop ? new[] { control } : new System.Web.UI.Control[0])
 				// Filter controls by type.
-				.Where(x => type == null || (type.IsInterface ? x.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.GetType())));
+				.Where(x => type is null || (type.IsInterface ? x.GetType().GetInterfaces().Contains(type) : type.IsAssignableFrom(x.GetType())));
 		}
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace JocysCom.ClassLibrary.Web
 		/// </summary>
 		public static T[] GetAll<T>(System.Web.UI.Control control, bool includeTop = false)
 		{
-			if (control == null) return new T[0];
+			if (control is null) return new T[0];
 			var type = typeof(T);
 			// Get all child controls.
 			var controls = control.Controls.Cast<System.Web.UI.Control>();
@@ -94,14 +94,14 @@ namespace JocysCom.ClassLibrary.Web
 			</Scripts>
 			</asp:ScriptManager>
 			*/
-			if (page == null)
+			if (page is null)
 				throw new ArgumentNullException(nameof(page));
 			if (page.Header != null)
 			{
 				foreach (var control in page.Header.Controls)
 				{
 					var link = control as System.Web.UI.HtmlControls.HtmlLink;
-					if (link == null)
+					if (link is null)
 						continue;
 					var isCss =
 						"text/css".Equals(link.Attributes["type"], StringComparison.CurrentCultureIgnoreCase) ||
@@ -114,7 +114,7 @@ namespace JocysCom.ClassLibrary.Web
 			}
 			// ScriptManager requires System.Web.Extensions.dll
 			var sm = System.Web.UI.ScriptManager.GetCurrent(page);
-			if (sm == null)
+			if (sm is null)
 				return;
 			sm.ResolveScriptReference += ScriptManager_ResolveScriptReference;
 		}
@@ -169,7 +169,7 @@ namespace JocysCom.ClassLibrary.Web
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			var t = typeof(TE);
 			if (Runtime.RuntimeHelper.IsNullable(t))
@@ -214,7 +214,7 @@ namespace JocysCom.ClassLibrary.Web
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			var stringValue = string.Format("{0}", value);
 			for (var i = 0; i < control.Items.Count; i++)
@@ -232,7 +232,7 @@ namespace JocysCom.ClassLibrary.Web
 
 		public static void BindData<T>(ListControl control, IEnumerable<T> data, bool addNull = false)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			var old = control.SelectedValue;
 			control.DataSource = data;

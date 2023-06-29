@@ -37,7 +37,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			{
 				lock (currentLock)
 				{
-					if (_Current == null)
+					if (_Current is null)
 					{
 						_Current = new LogHelper();
 						// Won't trigger application is closing by using the close button.
@@ -155,14 +155,14 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void AddParameters(ref string s, IDictionary parameters, TraceFormat tf = TraceFormat.Html)
 		{
-			if (parameters == null)
+			if (parameters is null)
 				return;
 			bool isHtml = (tf == TraceFormat.Html);
 			foreach (var key in parameters.Keys)
 			{
 				var pv = parameters[key];
 				var k = string.Format("{0}", key);
-				string v = pv == null
+				string v = pv is null
 					? "null"
 					: pv is DateTime
 						? string.Format("{0:yyyy-MM-dd HH:mm:ss.fff}", pv)
@@ -240,10 +240,10 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static void AddRow(ref string s, string key = null, string value = null)
 		{
 			// If empty row then...
-			if (key == null && value == null)
+			if (key is null && value is null)
 				s += "<tr><td colspan=\"2\"> </td></tr>";
 			// If head row then...
-			else if (key != null && value == null)
+			else if (key != null && value is null)
 				s += string.Format("<tr><th colspan=\"2\" class=\"Head\">{0}</th></tr>", key);
 			// if key anbd value specified.
 			else
@@ -343,7 +343,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		internal static void _WriteEvent(string message, TraceLevel type)
 		{
 			var li = AppEventLogInstaller;
-			if (li == null)
+			if (li is null)
 				return;
 			var ei = new EventInstance(0, 0, ConvertToEventLogEntryType(type));
 			var el = new EventLog();
@@ -405,7 +405,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void WriteError(Exception ex)
 		{
-			if (ex == null)
+			if (ex is null)
 				throw new ArgumentNullException(nameof(ex));
 			Current.WriteLog(ex.ToString(), TraceLevel.Error);
 		}
@@ -440,7 +440,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (!IsLive)
 			{
 				string rm = "(" + RunMode + ")";
-				if (s == null)
+				if (s is null)
 					s = rm;
 				s = s.TrimEnd();
 				if (!s.Contains(rm))
@@ -491,7 +491,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Group.
 			//------------------------------------------------------
 			var notifyNow =
-				ex == null ||
+				ex is null ||
 				!GroupingEnabled ||
 				GroupExceptions(group, ex, subject, body, action);
 			if (notifyNow)
@@ -506,7 +506,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		bool GroupExceptions(List<ExceptionGroup> group, Exception ex, string subject, string body, Action<Exception, string, string> action)
 		{
-			var value = ex.StackTrace == null
+			var value = ex.StackTrace is null
 				? string.Format("{0}: {1}", ex.GetType().Name, ex.Message)
 				: ex.StackTrace.ToString();
 			// Get checksum.
@@ -521,8 +521,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			lock (group)
 			{
 				var ei = group.FirstOrDefault(x => x.Checksum == checksum);
-				var notifyNow = ei == null;
-				if (ei == null)
+				var notifyNow = ei is null;
+				if (ei is null)
 				{
 					ei = new ExceptionGroup(group, GroupingDelay, ex, checksum, subject, body, action);
 					group.Add(ei);
@@ -608,7 +608,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			var asm = Assembly.GetEntryAssembly();
 			string s = "Unknown Entry Assembly";
-			if (asm == null && ex != null)
+			if (asm is null && ex != null)
 			{
 				var frames = new StackTrace(ex).GetFrames();
 				if (frames != null)
@@ -624,7 +624,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					}
 				}
 			}
-			if (asm == null)
+			if (asm is null)
 			{
 				asm = Assembly.GetCallingAssembly();
 			}
@@ -755,7 +755,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public void ExceptionInfoRecursive(ref string s, Exception ex)
 		{
-			if (ex == null)
+			if (ex is null)
 				return;
 			StackFrame frame = GetFormStackFrame(ex);
 			AddRow(ref s, string.Format("{0}: <span class=\"Grey\">{1}</span>", GetClassName(ex), ex.Message));
@@ -789,7 +789,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			return false;
 #else // .NET Framework
 			var ex2 = ex as SqlException;
-			if (ex2 == null)
+			if (ex2 is null)
 				return false;
 			for (int i = 0; i <= ex2.Errors.Count - 1; i++)
 			{
@@ -812,7 +812,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public bool FillLoaderException(ref string s, Exception ex)
 		{
 			var ex2 = ex as ReflectionTypeLoadException;
-			if (ex2 == null)
+			if (ex2 is null)
 				return false;
 			var i = 0;
 			foreach (var ex4 in ex2.LoaderExceptions)
@@ -827,7 +827,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void FillOther(ref string s, Exception ex)
 		{
-			if (ex == null)
+			if (ex is null)
 				return;
 			var parameters = new Dictionary<string, object>();
 			var pis = ex.GetType().GetProperties();
@@ -853,7 +853,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					value = pi.GetValue(ex);
 				}
 				catch (Exception) { }
-				if (value == null)
+				if (value is null)
 					continue;
 				var key = "." + pi.Name;
 				if (pi.Name == nameof(Exception.HResult) && value is int)
@@ -865,7 +865,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void Add(IDictionary data, object name, object value)
 		{
-			if (data == null)
+			if (data is null)
 				throw new ArgumentNullException(nameof(data));
 			var i = 0;
 			// Loop until success.
@@ -887,7 +887,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void Add(Exception ex, string name, object value)
 		{
-			if (ex == null)
+			if (ex is null)
 				throw new ArgumentNullException(nameof(ex));
 			var prefix = ex.GetType().Name;
 			var key = string.Format("{0}.{1}", prefix, name);

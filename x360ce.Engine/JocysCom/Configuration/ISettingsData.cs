@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.IO;
 
 namespace JocysCom.ClassLibrary.Configuration
@@ -12,6 +13,6 @@ namespace JocysCom.ClassLibrary.Configuration
 		void LoadFrom(string fileName);
 		FileInfo XmlFile { get; }
 		IList Items { get; }
-
+		event EventHandler FilesChanged;
 	}
 }

@@ -56,10 +56,10 @@ namespace JocysCom.ClassLibrary.Controls
 #else // .NET Framework
 
 			var doc = (IHTMLDocument3)MainBrowser.Document;
-			if (doc == null)
+			if (doc is null)
 				return;
 			var body = doc.getElementsByTagName("body").OfType<IHTMLElement>().First();
-			if (body == null)
+			if (body is null)
 				return;
 			//var doc2 = (IHTMLDocument2)MainBrowser.Document;
 			//doc2.charset = "utf-8";
@@ -82,7 +82,7 @@ namespace JocysCom.ClassLibrary.Controls
 		private void ErrorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var item = ErrorComboBox.SelectedItem as FileInfo;
-			if (item == null)
+			if (item is null)
 			{
 				MainBrowser.Navigate("about:blank");
 			}
@@ -119,10 +119,10 @@ namespace JocysCom.ClassLibrary.Controls
 			throw new NotImplementedException();
 #else // .NET Framework
 			var doc = (IHTMLDocument3)MainBrowser.Document;
-			if (doc == null)
+			if (doc is null)
 				return null;
 			var body = doc.getElementsByTagName("body").OfType<IHTMLElement>().First();
-			if (body == null)
+			if (body is null)
 				return null;
 			return body.innerHTML;
 #endif
@@ -136,10 +136,10 @@ namespace JocysCom.ClassLibrary.Controls
 			throw new NotImplementedException();
 #else // .NET Framework
 			var doc = (IHTMLDocument3)MainBrowser.Document;
-			if (doc == null)
+			if (doc is null)
 				return null;
 			var meta = doc.getElementsByName(name).OfType<IHTMLMetaElement>().FirstOrDefault();
-			if (meta == null)
+			if (meta is null)
 				return null;
 			return meta.content;
 #endif

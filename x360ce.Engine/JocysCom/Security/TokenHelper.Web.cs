@@ -20,7 +20,7 @@ namespace JocysCom.ClassLibrary.Security
 		public static Uri GetUrl(string keyName, string token, Uri url = null)
 		{
 			var u = url ?? GetRequestUrl();
-			if (u == null)
+			if (u is null)
 				return null;
 			var port = u.IsDefaultPort ? "" : ":" + u.Port;
 			var absoluteUri = string.Format("{0}://{1}{2}{3}?{4}={5}", u.Scheme, u.Host, port, u.AbsolutePath, keyName, token);
@@ -33,7 +33,7 @@ namespace JocysCom.ClassLibrary.Security
 		public static Uri GetFullUrl(string absolutePath)
 		{
 			var u = GetRequestUrl();
-			if (u == null)
+			if (u is null)
 				return null;
 			var port = u.IsDefaultPort ? "" : ":" + u.Port;
 			var absoluteUri = string.Format("{0}://{1}{2}{3}", u.Scheme, u.Host, port, absolutePath);
@@ -46,7 +46,7 @@ namespace JocysCom.ClassLibrary.Security
 		public static Uri GetApplicationUrl()
 		{
 			var path = GetApplicationPath();
-			if (path == null)
+			if (path is null)
 				return null;
 			return GetFullUrl(path);
 		}

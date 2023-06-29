@@ -94,7 +94,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			foreach (var p in ps)
 			{
 				var value = p.GetValue(item, null);
-				if (value == null)
+				if (value is null)
 					continue;
 				var defaultValue = p.PropertyType.IsValueType ? Activator.CreateInstance(p.PropertyType) : null;
 				if (Equals(defaultValue, value))
@@ -129,8 +129,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			state.State = EntityState.Unchanged;
 			if (oldValue != newValue)
 				state.State = EntityState.Modified;
-			var oldIsEmpty = oldValue == null || oldValue == Activator.CreateInstance(type);
-			var newIsEmpty = newValue == null || newValue == Activator.CreateInstance(type);
+			var oldIsEmpty = oldValue is null || oldValue == Activator.CreateInstance(type);
+			var newIsEmpty = newValue is null || newValue == Activator.CreateInstance(type);
 			if (oldIsEmpty && !newIsEmpty)
 				state.State = EntityState.Added;
 			if (newIsEmpty && !oldIsEmpty)
@@ -165,9 +165,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns></returns>
 		public static List<ChangeState> CompareProperties(object source, object dest)
 		{
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
-			if (dest == null)
+			if (dest is null)
 				throw new ArgumentNullException(nameof(dest));
 			object oldValue;
 			object newValue;

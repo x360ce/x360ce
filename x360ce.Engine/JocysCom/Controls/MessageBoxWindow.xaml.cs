@@ -304,7 +304,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (!ControlsHelper.AllowLoad(this))
 				return;
 			// Center message box window in application.
-			if (Owner == null)
+			if (Owner is null)
 				ControlsHelper.CenterWindowOnApplication(this);
 		}
 

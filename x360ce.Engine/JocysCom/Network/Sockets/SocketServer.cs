@@ -70,7 +70,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		{
 			// Assign core properties first.
 			Settings = settings;
-			if (writer == null)
+			if (writer is null)
 			{
 				writer = new SocketLogFileWriter(settings);
 				LogWriterDispose = true;
@@ -505,7 +505,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			lock (SendQueueLock)
 			{
 				int count = 0;
-				count = (predictate == null)
+				count = (predictate is null)
 					? SendQueue.Count
 					: SendQueue.Count(predictate);
 				return count;
@@ -517,7 +517,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		{
 			lock (SendQueueLock)
 			{
-				var list = (predictate == null)
+				var list = (predictate is null)
 					? SendQueue.ToArray()
 					: SendQueue.Where(predictate).ToArray();
 				return list;
@@ -544,7 +544,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		{
 			lock (keepAliveTimerLock)
 			{
-				if (keepAliveTimer == null)
+				if (keepAliveTimer is null)
 				{
 					keepAliveTimer = new System.Timers.Timer();
 					keepAliveTimer.Interval = Settings.KeepAliveInterval;
@@ -674,7 +674,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		/// <param name="delRE">Delivery remote endpoint. If specified, will be used as message delivery address.</param>
 		public void AddMessageToSend(ISocketMessage message, IPEndPoint oriRE = null, IPEndPoint delRE = null)
 		{
-			if (oriRE == null && delRE == null)
+			if (oriRE is null && delRE is null)
 				throw new ArgumentNullException("Original Remote Endpoint (oriRE) of Delivery Remote Endpoint (delRE) must be specified.");
 			var newHolder = new DataHolder();
 			newHolder.OriginalRemoteEndpoint = oriRE;
@@ -688,7 +688,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			else if (Settings.DefaultRemoteAddress != null || Settings.DefaultRemotePort != 0)
 			{
 				IPEndPoint defaultDelRE = new IPEndPoint(
-					oriRE.Address == null ? Settings.DefaultRemoteAddress : oriRE.Address,
+					oriRE.Address is null ? Settings.DefaultRemoteAddress : oriRE.Address,
 					oriRE.Port == 0 ? Settings.DefaultRemotePort : oriRE.Port
 				);
 				newHolder.DeliveryRemoteEndpoint = defaultDelRE;
@@ -728,7 +728,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 						if (m != null)
 						{
 							var er = ErrorReceived;
-							if (er == null)
+							if (er is null)
 							{
 								allow = m(holder, userState);
 							}
@@ -786,7 +786,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 				if (m != null)
 				{
 					var er = ErrorReceived;
-					if (er == null)
+					if (er is null)
 					{
 						allow = m(holder, userState);
 					}
@@ -873,7 +873,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			}
 			// Bind it to the port.
 			var localEndpoint = new IPEndPoint(Settings.ServerAddress, localPort);
-			if (args == null)
+			if (args is null)
 			{
 				LogWriter.WriteFlow("{0,-29}: LocalEndpoint = {1}.", logPrefix, localEndpoint);
 			}
@@ -939,12 +939,12 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			var token = (UserToken)args.UserToken;
 			IPEndPoint endpoint = null;
 			string prefix = "";
-			if (endpoint == null && connectSocket != null) //  && connectSocket.Connected
+			if (endpoint is null && connectSocket != null) //  && connectSocket.Connected
 			{
 				endpoint = (IPEndPoint)connectSocket.LocalEndPoint;
 				prefix = "connectSocket.";
 			}
-			if (endpoint == null && acceptSocket != null) // && acceptSocket.Connected
+			if (endpoint is null && acceptSocket != null) // && acceptSocket.Connected
 			{
 				endpoint = (IPEndPoint)acceptSocket.LocalEndPoint;
 				prefix = "acceptSocket.";
@@ -982,7 +982,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 				try
 				{
 					var localEndpoint = (acceptSocket != null && socketError != SocketError.OperationAborted) ? (IPEndPoint)acceptSocket.LocalEndPoint : null;
-					localEndpointString = localEndpoint == null ? "LocalEndpoint = null" : string.Format("LocalEndpoint = {0}", localEndpoint);
+					localEndpointString = localEndpoint is null ? "LocalEndpoint = null" : string.Format("LocalEndpoint = {0}", localEndpoint);
 					GetOriginalRemoteEndpoint(args, out remoteEndpointString);
 				}
 				catch (Exception ex2)
@@ -1118,7 +1118,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			{
 				lock (tcpListenSocketLock)
 				{
-					if (tcpListenSocket == null)
+					if (tcpListenSocket is null)
 					{
 						// Create the socket which listens for incoming connections.
 						tcpListenSocket = GetNewSocket("OpenListener: TCP", Settings.ServerPort, null);
@@ -1240,7 +1240,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 						// Send ACK messages first.
 						holder = SendQueue.FirstOrDefault(x => x.Available && x.MessageToSend.IsAck());
 						// if no ACK messages in the queue then...
-						if (holder == null)
+						if (holder is null)
 						{
 							// Get first item in the queue.
 							var item = SendQueue.FirstOrDefault();
@@ -1254,7 +1254,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 						holder = SendQueue.FirstOrDefault(x => x.Available);
 					}
 					// If queue is empty then...
-					if (holder == null)
+					if (holder is null)
 					{
 						// No messages to send. Exit function.
 						return;
@@ -1275,12 +1275,12 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 					if (args != null) queryResult = true;
 				}
 				// If item was not found then take any item.
-				if (args == null)
+				if (args is null)
 				{
 					args = FreeEventArgs.FirstOrDefault();
 				}
 				// If argument was not found then...
-				if (args == null)
+				if (args is null)
 				{
 					// No available Sockets. Exit function.
 					return;
@@ -1319,7 +1319,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 					//needs the info on the Remote Endpoint.
 					args.RemoteEndPoint = token.DataHolder.DeliveryRemoteEndpoint;
 					// If socket is missing or this is TCP connection then...
-					if (args.AcceptSocket == null)
+					if (args.AcceptSocket is null)
 					{
 						// Create new socket.
 						var socket = GetNewSocket("StartOutOperation", token.ClientPort, args);
@@ -1381,12 +1381,12 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 				if (IsTcp)
 				{
 					// Prefer unconnected sockets.
-					args = FreeEventArgs.FirstOrDefault(x => x.AcceptSocket == null || !x.AcceptSocket.Connected);
+					args = FreeEventArgs.FirstOrDefault(x => x.AcceptSocket is null || !x.AcceptSocket.Connected);
 					if (args != null) queryResult = true;
 				}
 				// Get arguments item from the pool.
 				// If item was not found then take any item.
-				if (args == null)
+				if (args is null)
 				{
 					args = FreeEventArgs.FirstOrDefault();
 				}
@@ -1398,7 +1398,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 					token.DataHolder = new DataHolder();
 					// Allow to reuse sockets on server side.
 					args.DisconnectReuseSocket = true;
-					if (!IsTcp && args.AcceptSocket == null)
+					if (!IsTcp && args.AcceptSocket is null)
 					{
 						// ShowToken will be called inside.
 						args.AcceptSocket = GetNewSocket("StartInOperation", Settings.ServerPort, args);
@@ -1712,7 +1712,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 					// If we have processed the head, we can work on the message now.
 					// We'll arrive here when we have received enough bytes to read
 					// the first byte after the head.
-					isBodyReady = token.HeadProcessError == null
+					isBodyReady = token.HeadProcessError is null
 						? HandleMessageBody(args)
 						: true;
 					if (isBodyReady)
@@ -1732,15 +1732,15 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 						token.MessageBytes = null;
 						holder.ReceivedDate = DateTime.Now;
 						// If no errors when processing header then...
-						if (token.HeadProcessError == null)
+						if (token.HeadProcessError is null)
 						{
 							RaiseOnData(SocketServerEventType.Received, SocketError.Success, holder);
 							// Process message.
 							var m = ProcessMessage;
 							// probably is disposing.
-							if (m == null) return;
+							if (m is null) return;
 							var er = ErrorReceived;
-							if (er == null)
+							if (er is null)
 							{
 								m(this, args);
 							}
@@ -1798,10 +1798,10 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 				// Do another receive operation.
 				StartReceive(args, true);
 			}
-			else if (IsTcp && isClient && token.DataHolder.MessageToSend == null)
+			else if (IsTcp && isClient && token.DataHolder.MessageToSend is null)
 			{
 				// Inform other side that no messages will be sent.
-				ShowToken("CompleteReceive", token.TokenId, "SocketShutdown.Send (MessageToSend == null)");
+				ShowToken("CompleteReceive", token.TokenId, "SocketShutdown.Send (MessageToSend is null)");
 				args.AcceptSocket.Shutdown(SocketShutdown.Send);
 				// TCP: Wait for SocketShutdown message.
 				StartReceive(args);
@@ -1926,7 +1926,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 					args.RemoteEndPoint = oriRE;
 				}
 				var argRE = (IPEndPoint)args.RemoteEndPoint;
-				var argReString = argRE == null ? "ArgRE is not set!" : string.Format("ArgRE = {0}", argRE);
+				var argReString = argRE is null ? "ArgRE is not set!" : string.Format("ArgRE = {0}", argRE);
 				var hex = (Settings.LogData) ? ":\r\n" + LogWriter.GetHexBlock(args.Buffer, token.BufferOffset, bytesToSend) : "";
 				ShowToken("StartSend", token.TokenId, "MessageType = {0}, {1}, Buffer[{2}]{3}",
 					token.DataHolder.MessageToSend.GetMessageType(), argReString, bytesToSend, hex);
@@ -2071,9 +2071,9 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			var cConnected = cSocket != null && cSocket.Connected;
 			var isClient = args.ConnectSocket != null;
 			var extraMessage = string.Format("[AcceptSocket: {0}]{1}[ConnectSocket: {2}]",
-					aSocket == null ? "null" : aSocket.Connected ? "Connected" : "Disconnected",
+					aSocket is null ? "null" : aSocket.Connected ? "Connected" : "Disconnected",
 					aSocket == cSocket ? " = " : ", ",
-					cSocket == null ? "null" : cSocket.Connected ? "Connected" : "Disconnected"
+					cSocket is null ? "null" : cSocket.Connected ? "Connected" : "Disconnected"
 				);
 			// Connect socket must be same as accept socket.
 			if (aSocket != null && cSocket != null && aSocket != cSocket)
@@ -2100,7 +2100,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 				ShowToken("StartDisconnect", token.TokenId, extraMessage);
 				PushArgsToPool(args);
 			}
-			//var noConnection = args.AcceptSocket == null ||
+			//var noConnection = args.AcceptSocket is null ||
 			//	socketError == SocketError.OperationAborted ||
 			//	socketError == SocketError.ConnectionReset;
 			//If there is no connection then...
@@ -2166,9 +2166,9 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			lock (token)
 			{
 				var acceptSocket = args.AcceptSocket;
-				if (acceptSocket == null)
+				if (acceptSocket is null)
 				{
-					ShowToken(funtion, token.TokenId, "close = args.AcceptSocket == null");
+					ShowToken(funtion, token.TokenId, "close = args.AcceptSocket is null");
 				}
 				else
 				{
@@ -2359,9 +2359,9 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 				// token.BodyBytesLength property will be set inside Process head method.
 				var m = ProcessHead;
 				// Probably is disposing.
-				if (m == null) return false;
+				if (m is null) return false;
 				var er = ErrorReceived;
-				if (er == null)
+				if (er is null)
 				{
 					m(this, args);
 				}
@@ -2378,7 +2378,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 						er(this, e);
 					}
 				}
-				if (token.HeadProcessError == null)
+				if (token.HeadProcessError is null)
 				{
 					ShowToken("HandleMessageHead", token.TokenId, "HeadBytesProcessed = {0}, bytesToHandle = {1}", token.HeadBytesProcessed, bytesToHandle);
 					Array.Resize(ref token.MessageBytes, Settings.MessageHeadLength + token.BodyBytesLength);

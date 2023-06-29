@@ -106,7 +106,7 @@ namespace JocysCom.ClassLibrary.Controls
 				{
 					box.AppendText(Environment.NewLine);
 				}
-				var text = args == null || args.Length == 0
+				var text = args is null || args.Length == 0
 					? format
 					: string.Format(format, args);
 				box.AppendText(text);

@@ -55,7 +55,7 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public static bool IsDifferent(string name, byte[] bytes)
 		{
-			if (bytes == null)
+			if (bytes is null)
 				throw new ArgumentNullException(nameof(bytes));
 			var fi = new FileInfo(name);
 			var isDifferent = false;

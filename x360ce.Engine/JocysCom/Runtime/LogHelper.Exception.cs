@@ -69,21 +69,21 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
-			if (e == null)
+			if (e is null)
 				return;
 			WriteException(e.Exception);
 		}
 
 		public void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			if (e == null)
+			if (e is null)
 				return;
 			WriteException((Exception)e.ExceptionObject);
 		}
 
 		public void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
 		{
-			if (e == null)
+			if (e is null)
 				return;
 			WriteException(e.Exception);
 		}
@@ -94,7 +94,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
 		{
-			if (e == null || e.Exception == null)
+			if (e is null || e.Exception is null)
 				return;
 			WriteException(e.Exception);
 		}
@@ -106,7 +106,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <summary>Get native error code.</summary>
 		public static int GetNativeErrorCode(Exception ex)
 		{
-			if (ex == null)
+			if (ex is null)
 				throw new ArgumentNullException(nameof(ex));
 			var code = 0;
 			Win32Exception w32Ex;
@@ -167,7 +167,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				{
 					// Get frame method.
 					var m = fullTrace.GetFrame(i).GetMethod();
-					if (m == null)
+					if (m is null)
 						continue;
 					// If same method was found then...
 					if (m.Equals(method))
@@ -208,7 +208,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static StackFrame GetFormStackFrame(Exception ex)
 		{
-			var trace = (ex == null)
+			var trace = (ex is null)
 				? new StackTrace(true)
 				: new StackTrace(ex, true);
 			for (var i = 0; i < trace.FrameCount; i++)
@@ -225,13 +225,13 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static bool IsFormStackFrame(StackFrame sf)
 		{
-			if (sf == null)
+			if (sf is null)
 				throw new ArgumentNullException(nameof(sf));
 			var method = sf.GetMethod();
-			if (method == null)
+			if (method is null)
 				return false;
 			var declaringType = method.DeclaringType;
-			if (declaringType == null)
+			if (declaringType is null)
 				return false;
 			var t = declaringType;
 			while (t != null)
@@ -247,7 +247,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static string TraceToString(StackTrace st, TraceFormat tf, int startFrameIndex, out bool containsFileAndLineNumber)
 		{
-			if (st == null)
+			if (st is null)
 				throw new ArgumentNullException(nameof(st));
 			containsFileAndLineNumber = false;
 			var isHtml = tf == TraceFormat.Html;
@@ -428,7 +428,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static string ExceptionToText(Exception ex)
 		{
 			var message = "";
-			if (ex == null)
+			if (ex is null)
 				throw new ArgumentNullException(nameof(ex));
 			AddExceptionMessage(ex, ref message);
 			if (ex.InnerException != null)

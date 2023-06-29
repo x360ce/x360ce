@@ -26,7 +26,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public virtual MailAddress GetMailAddress(Guid userId)
 		{
 			var user = System.Web.Security.Membership.GetUser(userId);
-			if (user == null)
+			if (user is null)
 				throw new Exception("User with Id '" + userId + "' doesn't exist!");
 			return new MailAddress(user.Email, user.UserName);
 		}
@@ -39,7 +39,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public virtual MailAddress GetMailAddress(string username)
 		{
 			var user = System.Web.Security.Membership.GetUser(username);
-			if (user == null)
+			if (user is null)
 				throw new Exception("User '" + username + "' doesn't exist!");
 			return new MailAddress(user.Email, user.UserName);
 		}
@@ -159,7 +159,7 @@ namespace JocysCom.ClassLibrary.Mail
 		public static void ApplyAttachments(MailMessage message, params string[] files)
 		{
 			var list = new List<Attachment>();
-			if (files == null)
+			if (files is null)
 				return;
 			for (var i = 0; i < files.Count(); i++)
 			{
@@ -175,7 +175,7 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public static void ApplyAttachments(MailMessage message, params Attachment[] files)
 		{
-			if (files == null)
+			if (files is null)
 				return;
 			for (var i = 0; i < files.Count(); i++)
 				message.Attachments.Add(files[i]);
@@ -320,7 +320,7 @@ namespace JocysCom.ClassLibrary.Mail
 			set { _emailRegex = value; }
 			get
 			{
-				if (_emailRegex == null)
+				if (_emailRegex is null)
 					_emailRegex = new Regex(emailRegexRFC5322, RegexOptions.IgnoreCase);
 				return _emailRegex;
 			}

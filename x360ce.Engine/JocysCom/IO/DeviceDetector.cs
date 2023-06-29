@@ -152,7 +152,7 @@ namespace JocysCom.ClassLibrary.IO
 		private void RaiseDeviceChanged(object sender, DeviceDetectorEventArgs e)
 		{
 			var ev = DeviceChanged;
-			if (ev == null)
+			if (ev is null)
 				return;
 			var eventListeners = ev.GetInvocationList();
 			for (var i = 0; i < eventListeners.Length; i++)
@@ -628,7 +628,7 @@ namespace JocysCom.ClassLibrary.IO
 			while (true)
 			{
 				di = source.FirstOrDefault(x => x.DeviceId == deviceId);
-				if (di == null)
+				if (di is null)
 					return;
 				if (destination.Contains(di))
 					return;

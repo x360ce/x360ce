@@ -47,7 +47,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		private int CompareValues(object xValue, object yValue, ListSortDirection direction)
 		{
 			int retValue;
-			if (xValue == null && yValue == null)
+			if (xValue is null && yValue is null)
 				retValue = 0;
 			else if (xValue is IComparable)
 				retValue = ((IComparable)xValue).CompareTo(yValue);

@@ -181,7 +181,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Id.</returns>
 		public static T GetData<T>(string token, string hmacHashKey = null)
 		{
-			if (token == null)
+			if (token is null)
 				throw new ArgumentNullException(nameof(token));
 			var tokenPrefix = token.Substring(checkSumSize, securityHashSize);
 			var tokenData = token.Substring(checkSumSize + securityHashSize);
@@ -216,9 +216,9 @@ namespace JocysCom.ClassLibrary.Security
 
 		public static byte[] ExclusiveOR(byte[] value, byte[] key)
 		{
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
-			if (key == null)
+			if (key is null)
 				throw new ArgumentNullException(nameof(key));
 			var result = new byte[value.Length];
 			for (var i = 0; i < value.Length; i++)
@@ -265,7 +265,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// </summary>
 		public static byte[] ObjectToBytes(object value, Type type = null)
 		{
-			if (value == null) return new byte[0];
+			if (value is null) return new byte[0];
 			var o = value;
 			var t = type ?? value.GetType();
 			var typeCode = Type.GetTypeCode(t);
@@ -332,7 +332,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <remarks>byte[0] is empty/default value.</remarks>
 		private static object BytesToObject(byte[] bytes, Type type, int? index = null, int? count = null)
 		{
-			if (bytes == null)
+			if (bytes is null)
 			{
 				return type.IsValueType ? Activator.CreateInstance(type) : null;
 			}
@@ -378,7 +378,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		private static object Deserialize(byte[] bytes, Type type)
 		{
-			if (bytes == null || bytes.Length == 0) return null;
+			if (bytes is null || bytes.Length == 0) return null;
 			var list = new List<PropertyInfo>();
 			var infos = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 			var stream = new MemoryStream(bytes);

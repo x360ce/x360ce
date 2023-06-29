@@ -16,7 +16,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			// Important: Don’t Use Encoding.Default, because it is different on different machines and send data may be decoded as as gibberish.
 			// Use UTF-8 or Unicode (UTF-16), used by SQL Server.
-			if (encoding == null)
+			if (encoding is null)
 				encoding = Encoding.UTF8;
 			byte[] keyBytes = encoding.GetBytes(key);
 			byte[] valueBytes = encoding.GetBytes(value);
@@ -27,7 +27,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			// Important: Don’t Use Encoding.Default, because it is different on different machines and send data may be decoded as as gibberish.
 			// Use UTF-8 or Unicode (UTF-16), used by SQL Server.
-			if (encoding == null)
+			if (encoding is null)
 				encoding = Encoding.UTF8;
 			byte[] keyBytes = encoding.GetBytes(key);
 			return GetGuid(algorithm, keyBytes, value);
@@ -47,7 +47,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			// Important: Don’t Use Encoding.Default, because it is different on different machines and send data may be decoded as as gibberish.
 			// Use UTF-8 or Unicode (UTF-16), used by SQL Server.
-			if (encoding == null)
+			if (encoding is null)
 				encoding = Encoding.UTF8;
 			byte[] bytes = encoding.GetBytes(value);
 			return GetGuid(algorithm, bytes);

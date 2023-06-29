@@ -189,7 +189,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		private void ProcessException(XmlSchemaException ex)
 		{
 			// If stack traces is empty then...
-			if (ex.StackTrace == null)
+			if (ex.StackTrace is null)
 			{
 				try
 				{

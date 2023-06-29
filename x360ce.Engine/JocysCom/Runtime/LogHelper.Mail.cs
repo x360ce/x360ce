@@ -20,7 +20,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="client"></param>
 		public virtual void SendMail(MailMessage message, SmtpClientEx client = null, bool forcePreview = false)
 		{
-			if (message == null)
+			if (message is null)
 				throw new ArgumentNullException(nameof(message));
 			var smtp = client ?? SmtpClientEx.Current;
 			// If non-live environment then send preview, except if all recipients are known.
@@ -42,7 +42,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static bool NonErrorRecipientsFound(MailMessage message, List<MailAddress> extraErrorRecipients = null)
 		{
-			if (message == null)
+			if (message is null)
 				throw new ArgumentNullException(nameof(message));
 			var list = MailHelper.ParseEmailAddress(SmtpClientEx.Current.ErrorRecipients);
 			// Add recipients who are allowed to receive original emails.
@@ -203,7 +203,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static string GetMailHeader(MailMessage message)
 		{
-			if (message == null)
+			if (message is null)
 				throw new ArgumentNullException(nameof(message));
 			var sb = new StringBuilder();
 			sb.AppendFormat("From: {0}\r\n", message.From);
@@ -254,7 +254,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns>Preview Message.</returns>
 		public static MailMessage GetMailPreview(MailMessage message, SmtpClientEx client = null)
 		{
-			if (message == null)
+			if (message is null)
 				throw new ArgumentNullException(nameof(message));
 			var smtp = SmtpClientEx.Current;
 			var mail = new MailMessage();
@@ -334,7 +334,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static bool SuspendError(Exception ex)
 		{
-			if (ex == null)
+			if (ex is null)
 				throw new ArgumentNullException(nameof(ex));
 			if (!ex.Data.Keys.Cast<object>().Contains(Mail.SmtpClientEx.ErrorCode))
 				return false;

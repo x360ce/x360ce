@@ -85,7 +85,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		public string GetClonedDataAsText(Encoding encoding = null)
 		{
-			var enc = encoding == null ? System.Text.Encoding.UTF8 : encoding;
+			var enc = encoding is null ? System.Text.Encoding.UTF8 : encoding;
 			string doc = null;
 			lock (clonedStreamLock)
 			{
@@ -132,11 +132,11 @@ namespace JocysCom.ClassLibrary.Web.Services
 			var charset = GetParameter(message.ContentType, "charset");
 			if (!string.IsNullOrEmpty(charset))
 				encoding = Encoding.GetEncoding(charset);
-			if (encoding == null && !(message.SoapVersion == SoapProtocolVersion.Soap12 && IsApplication(message.ContentType)))
+			if (encoding is null && !(message.SoapVersion == SoapProtocolVersion.Soap12 && IsApplication(message.ContentType)))
 				encoding = Encoding.ASCII;
 			if (bufferSize < 0x200)
 				bufferSize = 0x200;
-			var reader = encoding == null
+			var reader = encoding is null
 				? new XmlTextReader(readerStreamSpy)
 				: new XmlTextReader(new StreamReader(readerStreamSpy, encoding, true, bufferSize));
 			reader.DtdProcessing = DtdProcessing.Prohibit;
@@ -222,7 +222,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 			var list = new List<string>();
 			for (int i = 0; i < headers.Count; ++i)
 			{
-				if (headers[i] == null)
+				if (headers[i] is null)
 					continue;
 				var header = headers.GetKey(i);
 				foreach (string value in headers.GetValues(i))
@@ -233,7 +233,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		NameValueCollection ToCollection(HttpWebRequest message)
 		{
-			if (message == null)
+			if (message is null)
 				return null;
 			var nvc = new NameValueCollection();
 			nvc.Add("Type", message.GetType().FullName);
@@ -253,7 +253,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		NameValueCollection ToCollection(WebResponse message, int? requestHshCode = null)
 		{
-			if (message == null)
+			if (message is null)
 				return null;
 			var nvc = new NameValueCollection();
 			nvc.Add("Type", message.GetType().FullName);

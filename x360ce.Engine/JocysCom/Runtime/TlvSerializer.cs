@@ -113,7 +113,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public TlvSerializerError ReadTlv(Stream stream, out int tag, out byte[] value)
 		{
-			if (stream == null)
+			if (stream is null)
 				throw new ArgumentNullException(nameof(stream));
 			value = null;
 			TlvSerializerError error;
@@ -137,9 +137,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="o">The System.Object to serialize.</param>
 		public TlvSerializerError Serialize(Stream stream, object o)
 		{
-			if (o == null)
+			if (o is null)
 				return TlvSerializerError.None;
-			if (stream == null)
+			if (stream is null)
 				throw new ArgumentNullException(nameof(stream));
 			var typeT = o.GetType();
 			// Write Object Type.
@@ -177,7 +177,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				if (status2 != TlvSerializerError.None)
 					return status2;
 				// Do not serialize null objects.
-				if (mBytes == null)
+				if (mBytes is null)
 					continue;
 				// Write Member Tag.
 				Write7BitEncoded(membersStream, tag);
@@ -215,7 +215,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </remarks>
 		public static void Write7BitEncoded(Stream stream, int value)
 		{
-			if (stream == null)
+			if (stream is null)
 				throw new ArgumentNullException(nameof(stream));
 			int v = value;
 			byte b;
@@ -240,7 +240,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static TlvSerializerError Read7BitEncoded(Stream stream, out int result)
 		{
-			if (stream == null)
+			if (stream is null)
 				throw new ArgumentNullException(nameof(stream));
 			result = 0;
 			int v = 0;
@@ -272,7 +272,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static bool IsNullable(Type t)
 		{
 			// Throw exception if type not supplied.
-			if (t == null) throw new ArgumentNullException(nameof(t));
+			if (t is null) throw new ArgumentNullException(nameof(t));
 			// Special Handling - known cases where Exceptions would be thrown
 			else if (t == typeof(void)) throw new Exception("There is no Nullable version of void");
 			// If this is not a value type, it is a reference type, so it is automatically nullable.
@@ -387,7 +387,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <remarks>byte[0] is empty/default value.</remarks>
 		public TlvSerializerError BytesToObject(byte[] bytes, Type type, out object result)
 		{
-			if (bytes == null)
+			if (bytes is null)
 				throw new ArgumentNullException(nameof(bytes));
 			// Return empty values for nullable types.
 			if (bytes.Length == 0)
@@ -406,7 +406,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			// Return null or default value.
 			bool isNullable = IsNullable(type);
-			if (bytes == null)
+			if (bytes is null)
 			{
 				result = isNullable
 					? null
@@ -519,7 +519,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static bool IsNullOrDefault(object o)
 		{
-			if (o == null) return true;
+			if (o is null) return true;
 			Type type = o.GetType();
 			bool isNullable = IsNullable(type);
 			Type typeU1 = isNullable ? Nullable.GetUnderlyingType(type) ?? type : type;
@@ -539,7 +539,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public TlvSerializerError ObjectToBytes(object o, Type declaringType, out byte[] bytes)
 		{
 			bytes = null;
-			if (o == null)
+			if (o is null)
 				return TlvSerializerError.None;
 			var type = declaringType; //  o.GetType();
 			var isNullable = IsNullable(type);
@@ -622,7 +622,7 @@ namespace JocysCom.ClassLibrary.Runtime
 					return TlvSerializerError.UnknownType;
 					//throw new Exception("Unknown Type: " + type.Name);
 			}
-			var result = objectBytes == null
+			var result = objectBytes is null
 				? stream.ToArray()
 				: objectBytes;
 			// Binary Writer will close underlying MemoryStream automatically.

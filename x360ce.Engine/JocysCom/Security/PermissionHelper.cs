@@ -1,10 +1,13 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
 using System.IO;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
+
+// .NET Core: requires "System.IO.FileSystem.AccessControl" NuGet package.
 
 namespace JocysCom.ClassLibrary.Security
 {
@@ -49,7 +52,7 @@ namespace JocysCom.ClassLibrary.Security
 		public static List<GroupPrincipal> GetUserGroups(SecurityIdentifier sid)
 		{
 			var groups = new List<GroupPrincipal>();
-			if (sid == null)
+			if (sid is null)
 				return groups;
 			if (!sid.IsAccountSid())
 				return groups;
@@ -145,7 +148,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>True if user has rights, false if user don't have rights or rights not found.</returns>
 		public static bool HasRights(RegistryKey key, RegistryRights rights, WindowsIdentity identity = null, bool? isElevated = null)
 		{
-			if (identity == null)
+			if (identity is null)
 				identity = WindowsIdentity.GetCurrent();
 			var isAdmin = isElevated.HasValue
 						? isElevated.Value
@@ -163,9 +166,9 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>True if user has rights, false if user don't have rights or rights not found.</returns>
 		public static bool HasRights(RegistryKey key, RegistryRights rights, SecurityIdentifier sid, bool? isElevated = null)
 		{
-			if (key == null)
+			if (key is null)
 				return false;
-			if (sid == null)
+			if (sid is null)
 				return false;
 			var allowRights = GetRights(key, sid, true, AccessControlType.Allow);
 			var groups = GetUserGroups(sid);
@@ -205,9 +208,9 @@ namespace JocysCom.ClassLibrary.Security
 		public static RegistryRights GetRights(RegistryKey key, SecurityIdentifier sid, bool includeInherited = false, AccessControlType accessType = AccessControlType.Allow)
 		{
 			var rights = default(RegistryRights);
-			if (key == null)
+			if (key is null)
 				return rights;
-			if (sid == null)
+			if (sid is null)
 				return rights;
 			var security = key.GetAccessControl();
 			var rules = security.GetAccessRules(true, true, sid.GetType());
@@ -243,9 +246,9 @@ namespace JocysCom.ClassLibrary.Security
 		)
 		{
 			var key = baseKey.OpenSubKey(registryName, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.ChangePermissions | RegistryRights.ReadKey);
-			if (key == null)
+			if (key is null)
 				return false;
-			if (sid == null)
+			if (sid is null)
 				return false;
 			var security = key.GetAccessControl();
 			RegistryAccessRule sidRule = null;
@@ -261,7 +264,7 @@ namespace JocysCom.ClassLibrary.Security
 					break;
 				}
 			}
-			if (sidRule == null)
+			if (sidRule is null)
 			{
 				sidRule = new RegistryAccessRule(
 					sid,
@@ -317,7 +320,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>True if user has rights, false if user don't have rights or rights not found.</returns>
 		public static bool HasRights(string path, FileSystemRights rights, WindowsIdentity identity = null, bool? isElevated = null)
 		{
-			if (identity == null)
+			if (identity is null)
 				identity = WindowsIdentity.GetCurrent();
 			var isAdmin = isElevated.HasValue
 				? isElevated.Value
@@ -337,7 +340,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			if (string.IsNullOrEmpty(path))
 				return false;
-			if (sid == null)
+			if (sid is null)
 				return false;
 			if (!File.Exists(path) && !Directory.Exists(path))
 				return false;
@@ -384,15 +387,17 @@ namespace JocysCom.ClassLibrary.Security
 			var rights = default(FileSystemRights);
 			if (string.IsNullOrEmpty(path))
 				return rights;
-			if (sid == null)
+			if (sid is null)
 				return rights;
 			if (!File.Exists(path) && !Directory.Exists(path))
 				return rights;
 			var attributes = File.GetAttributes(path);
 			var isDirectory = attributes.HasFlag(FileAttributes.Directory);
 			var security = isDirectory
-				? Directory.GetAccessControl(path)
-				: (FileSystemSecurity)File.GetAccessControl(path);
+				? new DirectoryInfo(path).GetAccessControl()
+				: (FileSystemSecurity)new FileInfo(path).GetAccessControl();
+			Console.WriteLine($"Access control information for the directory '{path}':");
+			Console.WriteLine(security);
 			var rules = security.GetAccessRules(true, true, sid.GetType());
 			foreach (FileSystemAccessRule rule in rules)
 			{
@@ -425,15 +430,15 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			if (string.IsNullOrEmpty(path))
 				return false;
-			if (sid == null)
+			if (sid is null)
 				return false;
 			if (!File.Exists(path) && !Directory.Exists(path))
 				return false;
 			var attributes = File.GetAttributes(path);
 			var isDirectory = attributes.HasFlag(FileAttributes.Directory);
 			var security = isDirectory
-				? Directory.GetAccessControl(path)
-				: (FileSystemSecurity)File.GetAccessControl(path);
+				? new DirectoryInfo(path).GetAccessControl()
+				: (FileSystemSecurity)new FileInfo(path).GetAccessControl();
 			FileSystemAccessRule sidRule = null;
 			// Do not include inherited permissions, because.
 			var rules = security.GetAccessRules(true, false, sid.GetType());
@@ -447,7 +452,7 @@ namespace JocysCom.ClassLibrary.Security
 					break;
 				}
 			}
-			if (sidRule == null)
+			if (sidRule is null)
 			{
 				sidRule = new FileSystemAccessRule(
 					sid,
@@ -476,9 +481,9 @@ namespace JocysCom.ClassLibrary.Security
 				security.SetAccessRule(newRule);
 			}
 			if (isDirectory)
-				Directory.SetAccessControl(path, (DirectorySecurity)security);
+				new DirectoryInfo(path).SetAccessControl((DirectorySecurity)security);
 			else
-				File.SetAccessControl(path, (FileSecurity)security);
+				new FileInfo(path).SetAccessControl((FileSecurity)security);
 			return true;
 		}
 

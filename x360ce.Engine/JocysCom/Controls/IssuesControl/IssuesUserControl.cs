@@ -307,7 +307,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			}
 			else if (column == MoreColumn)
 			{
-				e.Value = item.MoreInfo == null ? "" : "More...";
+				e.Value = item.MoreInfo is null ? "" : "More...";
 			}
 		}
 

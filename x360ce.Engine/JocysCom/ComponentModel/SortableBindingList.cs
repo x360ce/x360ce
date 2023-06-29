@@ -96,7 +96,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			if (_OriginalCollection.Count == 0)
 				_OriginalCollection.AddRange(this);
 			var listRef = Items as List<T>;
-			if (listRef == null)
+			if (listRef is null)
 				return;
 			listRef.Sort(comparer);
 			_Sorted = true;

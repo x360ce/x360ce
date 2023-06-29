@@ -15,7 +15,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Clear text value.</returns>
 		public static string GetSecureStringValue(SecureString s)
 		{
-			if (s == null)
+			if (s is null)
 				return null;
 			// Convert encrypted string to plain text.
 			var pointer = IntPtr.Zero;
@@ -37,7 +37,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <param name="value">Clear text value to secure.</param>
 		public static void SetSecureStringValue(ref SecureString s, string value)
 		{
-			if (value == null)
+			if (value is null)
 			{
 				if (s != null)
 				{
@@ -47,7 +47,7 @@ namespace JocysCom.ClassLibrary.Security
 			}
 			else
 			{
-				if (s == null)
+				if (s is null)
 					s = new SecureString();
 				else
 					s.Clear();

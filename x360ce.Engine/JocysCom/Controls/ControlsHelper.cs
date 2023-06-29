@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -131,7 +130,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="action">The action delegate to execute synchronously.</param>
 		public static void Invoke(Action action)
 		{
-			if (action == null)
+			if (action is null)
 				throw new ArgumentNullException(nameof(action));
 			InitInvokeContext();
 			if (InvokeRequired)
@@ -149,7 +148,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="action">The delegate to execute synchronously.</param>
 		public static object Invoke(Delegate method, params object[] args)
 		{
-			if (method == null)
+			if (method is null)
 				throw new ArgumentNullException(nameof(method));
 			// Run method on main Graphical User Interface thread.
 			if (InvokeRequired)
@@ -228,7 +227,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static PropertyInfo GetPrimaryKeyPropertyInfo(object item)
 		{
-			if (item == null)
+			if (item is null)
 				return null;
 			var t = item.GetType();
 			PropertyInfo pi = null;
@@ -323,6 +322,25 @@ namespace JocysCom.ClassLibrary.Controls
 				ControlCooldowns.Add(control, now.Add(cooldown));
 				return false;
 			}
+		}
+
+		#endregion
+
+		#region Enums
+
+		public static string GetStringFromValue<T>(this T value) where T : Enum
+		{
+			return Regex.Replace(value.ToString(), "(\\B[A-Z])", " $1");
+		}
+
+		public static Dictionary<T, string> GetDictionary<T>(T[] values = null) where T : Enum
+		{
+			if (values == null)
+				values = (T[])Enum.GetValues(typeof(T));
+			var dict = new Dictionary<T, string>();
+			foreach (var value in values)
+				dict[value] = value.GetStringFromValue();
+			return dict;
 		}
 
 		#endregion

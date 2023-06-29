@@ -19,7 +19,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (!ControlsHelper.IsDesignMode(this))
 			{
 				// Get assemblies which will be used to select default (fists) and search for resources.
-				var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+				var assembly = Assembly.GetExecutingAssembly() ?? Assembly.GetEntryAssembly();
 				//var company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute))).Company;
 				var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
 				var description = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyDescriptionAttribute))).Description;

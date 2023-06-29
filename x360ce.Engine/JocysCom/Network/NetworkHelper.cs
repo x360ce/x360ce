@@ -286,7 +286,7 @@ namespace JocysCom.ClassLibrary.Network
 		{
 			var sb = new StringBuilder();
 			sb.Append(' ', 2);
-			sb.Append(ex == null ? "PASS" : "FAIL");
+			sb.Append(ex is null ? "PASS" : "FAIL");
 			sb.AppendFormat(": {0:0.000} sec.", DateTime.Now.Subtract(start).TotalSeconds);
 			if (ex != null)
 				sb.AppendFormat(": {0}", ex.Message);

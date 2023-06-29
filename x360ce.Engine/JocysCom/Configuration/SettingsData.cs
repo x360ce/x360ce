@@ -96,6 +96,21 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		[XmlIgnore]
+		public bool UseSeparateFiles { get; set; }
+
+		[XmlIgnore]
+		public string FileNamePropertyName
+		{
+			get => _FileNamePropertyName;
+			set { _FileNamePropertyName = value; FileNameProperty = typeof(T).GetProperty(value); }
+		}
+		string _FileNamePropertyName;
+
+
+		[XmlIgnore]
+		public PropertyInfo FileNameProperty { get; set; }
+
+		[XmlIgnore]
 		public FileInfo XmlFile { get { return _XmlFile; } set { _XmlFile = value; } }
 
 		[NonSerialized]
@@ -115,7 +130,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			get
 			{
-				if (_SyncRoot == null)
+				if (_SyncRoot is null)
 					System.Threading.Interlocked.CompareExchange<object>(ref _SyncRoot, new object(), null);
 				return _SyncRoot;
 			}
@@ -146,14 +161,16 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public event EventHandler Saving;
 
-		public void SaveAs(string fileName)
+		public void SaveAs(string path)
 		{
+			SetFileMonitoring(false);
 			var ev = Saving;
 			if (ev != null)
 				ev(this, new EventArgs());
 			var items = ItemsToArraySynchronized();
 			lock (saveReadFileLock)
 			{
+				// Remove unique primary keys.
 				var type = items.FirstOrDefault()?.GetType();
 				if (type != null && type.Name.EndsWith("EntityObject"))
 				{
@@ -161,15 +178,42 @@ namespace JocysCom.ClassLibrary.Configuration
 					for (int i = 0; i < items.Length; i++)
 						pi.SetValue(items[i], null);
 				}
-				var fi = new FileInfo(fileName);
-				if (!fi.Directory.Exists)
-					fi.Directory.Create();
-				byte[] bytes;
-				bytes = Serializer.SerializeToXmlBytes(this, Encoding.UTF8, true, _Comment);
-				if (fi.Name.EndsWith(".gz"))
-					bytes = SettingsHelper.Compress(bytes);
-				SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
+				var fi = new FileInfo(path);
+				var compress = fi.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
+				// If each item will be saved to a separate file.
+				if (UseSeparateFiles)
+				{
+					var di = GetCreateDirectory(fi);
+					if (!di.Exists)
+						di.Create();
+					for (int i = 0; i < items.Length; i++)
+					{
+						var item = items[i];
+						var bytes = Serializer.SerializeToXmlBytes(item, Encoding.UTF8, true, _Comment);
+						var fileName = GetFileNameWithoutExtension(item) + fi.Extension;
+						var fileFullName = Path.Combine(di.FullName, fileName);
+						if (compress)
+							bytes = SettingsHelper.Compress(bytes);
+						SettingsHelper.WriteIfDifferent(fileFullName, bytes);
+					}
+				}
+				else
+				{
+					if (!fi.Directory.Exists)
+						fi.Directory.Create();
+					var bytes = Serializer.SerializeToXmlBytes(this, Encoding.UTF8, true, _Comment);
+					if (compress)
+						bytes = SettingsHelper.Compress(bytes);
+					SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
+				}
 			}
+			SetFileMonitoring(true);
+		}
+
+		static string RemoveInvalidFileNameChars(string name)
+		{
+			var invalidChars = Path.GetInvalidFileNameChars();
+			return new string(name.Where(c => !invalidChars.Contains(c)).ToArray());
 		}
 
 		public void Save()
@@ -193,22 +237,46 @@ namespace JocysCom.ClassLibrary.Configuration
 					Items.Add(item);
 		}
 
+		public class SettingsDataEventArgs : EventArgs
+		{
+			public SettingsDataEventArgs(IList<T> items)
+			{
+				Items = items;
+			}
+			public IList<T> Items { get; }
+		}
+
 		public delegate IList<T> ValidateDataDelegate(IList<T> items);
 
 		[XmlIgnore, NonSerialized]
 		public ValidateDataDelegate ValidateData;
+
+		public event EventHandler<SettingsDataEventArgs> OnValidateData;
 
 		public void Load()
 		{
 			LoadFrom(_XmlFile.FullName);
 		}
 
+		static DirectoryInfo GetCreateDirectory(FileInfo fi)
+		{
+			var compress = fi.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
+			var dirName = Path.GetFileNameWithoutExtension(fi.FullName);
+			if (compress)
+				dirName = Path.GetFileNameWithoutExtension(dirName);
+			var dirPath = Path.Combine(fi.Directory.FullName, dirName);
+			var di = new DirectoryInfo(dirPath);
+			return di;
+		}
+
 		public void LoadFrom(string fileName)
 		{
 			var settingsLoaded = false;
 			var fi = new FileInfo(fileName);
+			var di = GetCreateDirectory(fi);
+			var compress = fi.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
 			// If configuration file exists then...
-			if (fi.Exists)
+			if (fi.Exists || di.Exists)
 			{
 				SettingsData<T> data = null;
 				// Try to read file until success.
@@ -219,8 +287,35 @@ namespace JocysCom.ClassLibrary.Configuration
 					{
 						try
 						{
-							var bytes = System.IO.File.ReadAllBytes(fi.FullName);
-							data = DeserializeData(bytes, fi.Name.EndsWith(".gz"));
+
+							// If each item will be saved to a separate file.
+							if (UseSeparateFiles)
+							{
+								data = new SettingsData<T>();
+								var files = di.GetFiles();
+								for (int i = 0; i < files.Length; i++)
+								{
+									var file = files[i];
+									var bytes = System.IO.File.ReadAllBytes(file.FullName);
+									try
+									{
+										var item = DeserializeItem(bytes, compress);
+										// Set Name property value to the same as the file.
+										var name = GetFileNameWithoutExtension(item);
+										var fileNamePropertyValue = (string)FileNameProperty.GetValue(item);
+										var fileBaseName = Path.GetFileNameWithoutExtension(file.Name);
+										if (fileNamePropertyValue != fileBaseName)
+											FileNameProperty.SetValue(item, fileBaseName);
+										data.Add(item);
+									}
+									catch { }
+								}
+							}
+							else
+							{
+								var bytes = System.IO.File.ReadAllBytes(fi.FullName);
+								data = DeserializeData(bytes, compress);
+							}
 							break;
 						}
 						catch (Exception ex)
@@ -292,17 +387,94 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
+		#region Use Separate Files
+
+		public string GetItemFileFullName(string fileNameWithoutExtension)
+		{
+			var fi = new FileInfo(_XmlFile.FullName);
+			var di = GetCreateDirectory(fi);
+			var path = Path.Combine(di.FullName, fileNameWithoutExtension + ".xml");
+			return path;
+		}
+
+		public string GetFileNameWithoutExtension(T item)
+		{
+			var name = (string)FileNameProperty.GetValue(item);
+			name = RemoveInvalidFileNameChars(name);
+			return name;
+		}
+
+		/// <summary>
+		/// Returns error.
+		/// </summary>
+		public string RenameItem(T item, string newName)
+		{
+			lock (saveReadFileLock)
+			{
+				var oldName = GetFileNameWithoutExtension(item);
+				// Case sensitive comparison.
+				if (string.Equals(oldName, newName, StringComparison.Ordinal))
+					return null;
+				if (string.IsNullOrEmpty(newName))
+					return "File name cannot be empty.";
+				//newName = RemoveInvalidFileNameChars(newName);
+				var invalidChars = newName.Intersect(Path.GetInvalidFileNameChars());
+				if (invalidChars.Any())
+					return $"File name cannot contain invalid characters: {string.Join("", invalidChars)}";
+				var oldPath = GetItemFileFullName(oldName);
+				var oldFile = new FileInfo(oldPath);
+				var newPath = GetItemFileFullName(newName);
+				// If only case changed then rename to temp file first.
+				if (string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+				{
+					var tempFilePath = Path.Combine(Path.GetDirectoryName(oldPath), Guid.NewGuid().ToString() + Path.GetExtension(oldPath));
+					oldFile.MoveTo(tempFilePath);
+				}
+				else if (File.Exists(newPath))
+				{
+					return "File with the same name already exists.";
+				}
+				if (oldFile.Exists)
+				{
+					oldFile.MoveTo(newPath);
+					FileNameProperty.SetValue(item, newName);
+				}
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Returns new name.
+		/// </summary>
+		public void DeleteItem(T item)
+		{
+			lock (saveReadFileLock)
+			{
+				var oldName = GetFileNameWithoutExtension(item);
+				var oldPath = GetItemFileFullName(oldName);
+				var fi = new FileInfo(oldPath);
+				if (fi.Exists)
+					fi.Delete();
+				Items.Remove(item);
+			}
+		}
+
+		#endregion
+
 		void LoadAndValidateData(IList<T> data)
 		{
 			// Clear original data.
 			Items.Clear();
-			if (data == null)
+			if (data is null)
 				data = new SortableBindingList<T>();
 			// Filter data if filter method exists.
 			var fl = ValidateData;
-			var items = (fl == null)
+			var items = (fl is null)
 				? data
 				: fl(data);
+			// Filter data if filter method exists.
+			var e = new SettingsDataEventArgs(items);
+			OnValidateData?.Invoke(this, e);
 			for (int i = 0; i < items.Count; i++)
 				Items.Add(items[i]);
 		}
@@ -341,7 +513,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					break;
 				}
 			}
-			LoadAndValidateData(data == null ? null : data.Items);
+			LoadAndValidateData(data is null ? null : data.Items);
 			return success;
 		}
 
@@ -352,5 +524,101 @@ namespace JocysCom.ClassLibrary.Configuration
 			var data = Serializer.DeserializeFromXmlBytes<SettingsData<T>>(bytes);
 			return data;
 		}
+
+		public T DeserializeItem(byte[] bytes, bool compressed)
+		{
+			if (compressed)
+				bytes = SettingsHelper.Decompress(bytes);
+			var item = Serializer.DeserializeFromXmlBytes<T>(bytes);
+			return item;
+		}
+
+		#region Folder Monitoring
+
+		public void SetFileMonitoring(bool enabled)
+		{
+			// Allow to monitor if items are in separate files.
+			if (!UseSeparateFiles)
+				return;
+			var fi = new FileInfo(XmlFile.FullName);
+			var di = GetCreateDirectory(fi);
+			SetFileMonitoring(enabled, di.FullName, "*.xml");
+		}
+
+		private FileSystemWatcher _folderWatcher;
+		private System.Timers.Timer _debounceTimer;
+		public event EventHandler FilesChanged;
+
+		public bool IsFolderMonitored { get; set; }
+
+		public void SetFileMonitoring(bool enabled, string folderPath, string filePattern)
+		{
+			IsFolderMonitored = enabled;
+
+			if (enabled)
+			{
+				if (_folderWatcher != null)
+				{
+					_folderWatcher.EnableRaisingEvents = false;
+					_folderWatcher.Dispose();
+				}
+
+				_folderWatcher = new FileSystemWatcher(folderPath, filePattern)
+				{
+					NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName
+				};
+
+				_folderWatcher.Changed += OnChanged;
+				_folderWatcher.Created += OnChanged;
+				_folderWatcher.Deleted += OnChanged;
+				_folderWatcher.Renamed += OnRenamed;
+
+				_folderWatcher.EnableRaisingEvents = true;
+
+				// Initialize the debounce timer with an interval of 500ms
+				_debounceTimer = new System.Timers.Timer(500) { AutoReset = false };
+				_debounceTimer.Elapsed += _debounceTimer_Elapsed;
+			}
+			else
+			{
+				if (_folderWatcher != null)
+				{
+					_folderWatcher.EnableRaisingEvents = false;
+					_folderWatcher.Dispose();
+					_folderWatcher = null;
+				}
+
+				if (_debounceTimer != null)
+				{
+					_debounceTimer.Stop();
+					_debounceTimer.Dispose();
+					_debounceTimer = null;
+				}
+			}
+		}
+
+		private void _debounceTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			FilesChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		private void OnChanged(object sender, FileSystemEventArgs e)
+		{
+			DebounceEvent();
+		}
+
+		private void OnRenamed(object sender, RenamedEventArgs e)
+		{
+			DebounceEvent();
+		}
+
+		private void DebounceEvent()
+		{
+			// Reset and start the debounce timer each time a file system event occurs
+			_debounceTimer.Stop();
+			_debounceTimer.Start();
+		}
+
+		#endregion
 	}
 }

@@ -12,7 +12,7 @@ namespace JocysCom.ClassLibrary.Controls
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var item = value as TabItem;
-            if (item == null)
+            if (item is null)
                 return "";
             var container = ItemsControl.ItemsControlFromItemContainer(item).ItemContainerGenerator;
             var items = container.Items.Cast<TabItem>().Where(x => x.Visibility == Visibility.Visible).ToList();

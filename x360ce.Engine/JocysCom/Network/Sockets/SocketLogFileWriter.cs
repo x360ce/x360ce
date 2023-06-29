@@ -59,7 +59,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 			bool newThreadChecker = false;
 			lock (threadHashSetLock)
 			{
-				if (theProcess == null) theProcess = Process.GetCurrentProcess();
+				if (theProcess is null) theProcess = Process.GetCurrentProcess();
 				if (managedThreadIds.Add(Thread.CurrentThread.ManagedThreadId))
 				{
 					managedThreads.Add(Thread.CurrentThread);
@@ -117,7 +117,7 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		static string IdentText(int tabs, string s, char ident = '\t')
 		{
 			if (tabs == 0) return s;
-			if (s == null) s = string.Empty;
+			if (s is null) s = string.Empty;
 			var sb = new System.Text.StringBuilder();
 			var tr = new System.IO.StringReader(s);
 			string prefix = string.Empty;

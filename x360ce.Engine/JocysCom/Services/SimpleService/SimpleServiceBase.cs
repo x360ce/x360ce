@@ -110,7 +110,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			{
 				lock (serviceLock)
 				{
-					if (_service == null)
+					if (_service is null)
 						_service = new T();
 				}
 				return _service;
@@ -196,7 +196,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			{
 				lock (controllerLock)
 				{
-					if (_controller == null)
+					if (_controller is null)
 						_controller = new ServiceController(_installer.AppServiceInstaller.ServiceName);
 				}
 				return _controller;

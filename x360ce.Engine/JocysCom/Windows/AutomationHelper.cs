@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 
 namespace JocysCom.ClassLibrary.Windows
 {
@@ -98,7 +99,8 @@ namespace JocysCom.ClassLibrary.Windows
 						return el;
 					}
 				}
-				Task.Delay(1000).Wait();
+				// Logical delay without blocking the current hardware thread.
+				var resetEvent = new ManualResetEventSlim(false); _ = Task.Run(async () => await Task.Delay(1000)); resetEvent.Wait();
 			} while (watch.ElapsedMilliseconds < timeoutMilliseconds);
 			throw new Exception("Window not found");
 		}
@@ -183,7 +185,7 @@ namespace JocysCom.ClassLibrary.Windows
 			var child = conditions.Count >= 2
 				? parent.FindFirst(TreeScope.Children, new AndCondition(conditions.ToArray()))
 				: parent.FindFirst(TreeScope.Children, conditions.FirstOrDefault() ?? Condition.TrueCondition);
-			if (child == null)
+			if (child is null)
 				Console.WriteLine("Error: Unable to find child element with conditions: " + conditions);
 			return child;
 		}
@@ -240,7 +242,7 @@ namespace JocysCom.ClassLibrary.Windows
 		/// <returns>A collection of elements that meet the conditions.</returns>
 		public static AutomationElementCollection FindByMultipleConditions(AutomationElement elementWindowElement)
 		{
-			if (elementWindowElement == null)
+			if (elementWindowElement is null)
 				throw new ArgumentException();
 			var conditions = new AndCondition(
 			  new PropertyCondition(AutomationElement.IsEnabledProperty, true),
@@ -257,7 +259,7 @@ namespace JocysCom.ClassLibrary.Windows
 		/// </summary>
 		public static Dictionary<AutomationElement, string> GetAll(AutomationElement control, string path, bool includeTop = false)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			// Create new list.
 			var controls = new Dictionary<AutomationElement, string>();

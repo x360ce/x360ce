@@ -74,7 +74,7 @@ namespace JocysCom.WebSites.Engine
 
 		public override bool Equals(object o)
 		{
-			if (o == null)
+			if (o is null)
 				return false;
 			return this == o as LinkItem;
 		}

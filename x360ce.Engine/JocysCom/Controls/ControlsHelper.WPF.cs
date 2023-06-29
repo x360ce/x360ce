@@ -70,7 +70,7 @@ namespace JocysCom.ClassLibrary.Controls
 			var stringReader = new StringReader(sb.ToString());
 			var xmlReader = XmlReader.Create(stringReader);
 			var item = System.Windows.Markup.XamlReader.Load(xmlReader);
-			if (item == null)
+			if (item is null)
 				throw new ArgumentNullException("Could not be cloned.");
 			return (T)item;
 		}
@@ -81,9 +81,9 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static void SetText(Label control, string format, params object[] args)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args == null)
+			var text = (args is null)
 				? format
 				: string.Format(format, args);
 			if (control.Content as string != text)
@@ -97,9 +97,9 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static void SetText(GroupBox control, string format, params object[] args)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args == null)
+			var text = (args is null)
 				? format
 				: string.Format(format, args);
 			if (control.Header as string != text)
@@ -112,9 +112,9 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static void SetText(TextBox control, string format, params object[] args)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args == null)
+			var text = (args is null)
 				? format ?? ""
 				: string.Format(format ?? "", args);
 			if (control.Text != text)
@@ -127,9 +127,9 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static void SetText(TextBlock control, string format, params object[] args)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args == null)
+			var text = (args is null)
 				? format ?? ""
 				: string.Format(format ?? "", args);
 			if (control.Text != text)
@@ -153,7 +153,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static void SetChecked(System.Windows.Controls.Primitives.ToggleButton control, bool check)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			if (control.IsChecked != check)
 				control.IsChecked = check;
@@ -164,7 +164,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// This helps not to trigger control events when doing frequent events.
 		public static void SetEnabled(UIElement control, bool enabled)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			if (control.IsEnabled != enabled)
 				control.IsEnabled = enabled;
@@ -175,7 +175,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// This helps not to trigger control events when doing frequent events.
 		public static void SetVisible(UIElement control, bool enabled)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			var visibility = enabled ? Visibility.Visible : Visibility.Collapsed;
 			if (control.Visibility != visibility)
@@ -184,7 +184,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void SetItemsSource(ItemsControl grid, IBindingList list)
 		{
-			if (list == null)
+			if (list is null)
 			{
 				if (grid.ItemsSource is System.Windows.Data.BindingListCollectionView view)
 				{
@@ -242,7 +242,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static Point[] GetPoints(Control control, bool relative = false)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			var pos = relative
 				? new Point(0, 0)
@@ -268,7 +268,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/*
 		public static bool IsControlVisibleToUser(Control control)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			var handle = (PresentationSource.FromVisual(control) as System.Windows.Interop.HwndSource)?.Handle;
 			if (!handle.HasValue)
@@ -282,12 +282,12 @@ namespace JocysCom.ClassLibrary.Controls
 				//if (hwnd == IntPtr.Zero)
 				//	continue;
 				var result = VisualTreeHelper.HitTest(control, p);
-				if (result == null)
+				if (result is null)
 					continue;
 				if (children.Contains(result.VisualHit))
 					return true;
 				//var other = Control.FromChildHandle(hwnd);
-				//if (other == null)
+				//if (other is null)
 				//	continue;
 				//if (GetAll(control, null, true).Contains(other))
 			}
@@ -299,7 +299,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static T GetParent<T>(DependencyObject control, bool includeTop = false) where T : class
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			var parent = control;
 			while (parent != null)
@@ -307,7 +307,7 @@ namespace JocysCom.ClassLibrary.Controls
 				if (parent is T && (includeTop || parent != control))
 					return (T)(object)parent;
 				var p = VisualTreeHelper.GetParent(parent);
-				if (p == null)
+				if (p is null)
 					p = LogicalTreeHelper.GetParent(parent);
 				parent = p;
 			}
@@ -317,7 +317,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public static void AddWeakHandlerOnWindowClosing(DependencyObject control, EventHandler<CancelEventArgs> handler)
 		{
 			var w = GetParent<Window>(control);
-			if (w == null)
+			if (w is null)
 				return;
 			WeakEventManager<Window, CancelEventArgs>.AddHandler(w, nameof(Window.Closing), handler);
 		}
@@ -332,7 +332,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			var controls = _GetAll(path, control, includeTop);
 			// If type is set then...
-			if (type == null)
+			if (type is null)
 				return controls;
 			var filtered = type.IsInterface
 				? controls.Where(x => x.Value.GetType().GetInterfaces().Contains(type))
@@ -343,7 +343,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private static Dictionary<string, DependencyObject> _GetAll(string path, DependencyObject control, bool includeTop = false)
 		{
-			if (control == null)
+			if (control is null)
 				throw new ArgumentNullException(nameof(control));
 			// Create new list.
 			var controls = new Dictionary<string, DependencyObject>();
@@ -406,7 +406,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static T[] GetAll<T>(Control control, bool includeTop = false)
 		{
-			if (control == null)
+			if (control is null)
 				return new T[0];
 			return GetAll(control, typeof(T), includeTop).Cast<T>().ToArray();
 		}
@@ -426,7 +426,7 @@ namespace JocysCom.ClassLibrary.Controls
 			while (container != null)
 			{
 				control = System.Windows.Input.FocusManager.GetFocusedElement(control) as FrameworkElement;
-				if (control == null)
+				if (control is null)
 					break;
 				Invoke(() =>
 				{
@@ -445,7 +445,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void ApplyBorderStyle(DataGrid grid)
 		{
-			if (grid == null)
+			if (grid is null)
 				throw new ArgumentNullException(nameof(grid));
 			grid.Background = new SolidColorBrush(Color.FromRgb(255, 255, 255));
 			//grid.BorderThickness = BorderStyle.None;
@@ -495,7 +495,7 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				var item = row.DataBoundItem;
 				// If grid is virtual then...
-				if (item == null)
+				if (item is null)
 				{
 					var list = grid.DataSource as IBindingList;
 					if (list != null)
@@ -539,7 +539,7 @@ namespace JocysCom.ClassLibrary.Controls
 		private static bool GetEnabled(object item)
 		{
 			var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
-			var enabled = enabledProperty == null ? true : (bool)enabledProperty.GetValue(item, null);
+			var enabled = enabledProperty is null ? true : (bool)enabledProperty.GetValue(item, null);
 			return enabled;
 		}
 
@@ -617,7 +617,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="primaryKeyPropertyName">Primary key name.</param>
 		public static List<T> GetSelection<T>(DataGrid grid, string keyPropertyName = null)
 		{
-			if (grid == null)
+			if (grid is null)
 				throw new ArgumentNullException(nameof(grid));
 			var list = new List<T>();
 			var items = grid.SelectedItems.Cast<object>().ToArray();
@@ -638,9 +638,9 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static void RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, bool selectFirst = true)
 		{
-			if (grid == null)
+			if (grid is null)
 				throw new ArgumentNullException(nameof(grid));
-			if (list == null)
+			if (list is null)
 				throw new ArgumentNullException(nameof(list));
 			var items = grid.Items.Cast<object>().ToArray();
 			// Return if grid is empty.
@@ -665,7 +665,7 @@ namespace JocysCom.ClassLibrary.Controls
 				else
 				{
 					// Remove items which should not be selected.
-					var itemsToUnselect = grid.SelectedItems.Cast<object>().Except(selectedItems);
+					var itemsToUnselect = grid.SelectedItems.Cast<object>().Except(selectedItems).ToArray();
 					foreach (var item in itemsToUnselect)
 						grid.SelectedItems.Remove(item);
 					var itemsToSelect = selectedItems.Except(grid.SelectedItems.Cast<object>());

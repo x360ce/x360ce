@@ -47,7 +47,7 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 			// Create top message.
 			var tc = e.TopProgressText;
-			if (tc == null)
+			if (tc is null)
 			{
 				tc += $"{e.TopIndex}";
 				if (e.TopCount > 0)
@@ -56,7 +56,7 @@ namespace JocysCom.ClassLibrary.Controls
 			ControlsHelper.SetText(ProgressLevelTopBarTextBlock, tc);
 			// Create sub message.
 			var sc = e.SubProgressText;
-			if (sc == null)
+			if (sc is null)
 			{
 				sc += $"{e.SubIndex}";
 				if (e.SubCount > 0)

@@ -187,7 +187,7 @@ namespace JocysCom.ClassLibrary.Controls
 				var relative = other.PointToClient(e.Location);
 				var c2 = other.GetChildAtPoint(relative, GetChildAtPointSkip.None);
 				var c0 = c2 ?? other;
-				if (c0 == null || c0 is InfoForm)
+				if (c0 is null || c0 is InfoForm)
 					return;
 				if (c0.GetType().IsNested && c0.Parent != null)
 					c0 = c0.Parent;

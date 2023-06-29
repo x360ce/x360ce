@@ -104,7 +104,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		public static void Configure(TraceSource source = null)
 		{
 			var sourcesSection = GetSection<TraceSource>();
-			var isDefault = source == null;
+			var isDefault = source is null;
 			var sourceName = isDefault ? "Default" : source.Name;
 			var sourceSection = sourcesSection.GetSection(sourceName);
 			// If source section configuration do not exists then return.
@@ -130,13 +130,13 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			listeners.Clear();
 			// Get listener names as string array.
 			var listenerNames = sourceSection.GetSection(nameof(TraceSource.Listeners)).Get<string[]>();
-			if (listenerNames == null)
+			if (listenerNames is null)
 				return;
 			foreach (var listenerName in listenerNames)
 			{
 				var listener = AllListeners.FirstOrDefault(x => x.Name == listenerName);
 				// If listener is was not created then...
-				if (listener == null)
+				if (listener is null)
 				{
 					// Create new listener from configuration.
 					var section = listenersSection.GetSection(listenerName);
@@ -183,9 +183,9 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		/// <param name="listener">The listener(s) to use</param>
 		public static void ExecuteWithEnabledSystemNetLogging(SourceLevels webTraceSourceLevel, SourceLevels httpListenerTraceSourceLevel, SourceLevels socketsTraceSourceLevel, SourceLevels cacheTraceSourceLevel, Action actionToExecute, params TraceListener[] listener)
 		{
-			if (listener == null)
+			if (listener is null)
 				throw new ArgumentNullException(nameof(listener));
-			if (actionToExecute == null)
+			if (actionToExecute is null)
 				throw new ArgumentNullException(nameof(actionToExecute));
 			var logging = typeof(System.Net.WebRequest).Assembly.GetType("System.Net.Logging");
 			var flags = BindingFlags.NonPublic | BindingFlags.Static;
@@ -347,7 +347,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 					(_ignoreOriginalSourceLevel && (modifiedTraceSourceLevel & level) == level);
 				if (should)
 				{
-					return _filter == null
+					return _filter is null
 						? true
 						: _filter.ShouldTrace(cache, source, eventType, id, formatOrMessage, args, data1, data);
 				}

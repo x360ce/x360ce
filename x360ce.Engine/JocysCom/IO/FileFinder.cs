@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -27,8 +29,10 @@ namespace JocysCom.ClassLibrary.IO
 			{
 				// Pause or Stop.
 				while (IsPaused && !IsStopping)
+				{
 					// Logical delay without blocking the current hardware thread.
-					System.Threading.Tasks.Task.Delay(500).Wait();
+					var resetEvent = new ManualResetEventSlim(false); _ = Task.Run(async () => await Task.Delay(500)); resetEvent.Wait();
+				}
 				if (IsStopping)
 					return fis;
 				// Do tasks.
@@ -65,8 +69,10 @@ namespace JocysCom.ClassLibrary.IO
 					{
 						// Pause or Stop.
 						while (IsPaused && !IsStopping)
+						{
 							// Logical delay without blocking the current hardware thread.
-							System.Threading.Tasks.Task.Delay(500).Wait();
+							var resetEvent = new ManualResetEventSlim(false); _ = Task.Run(async () => await Task.Delay(500)); resetEvent.Wait();
+						}
 						if (IsStopping)
 							return;
 						// Do tasks.
@@ -75,7 +81,7 @@ namespace JocysCom.ClassLibrary.IO
 						{
 							fileList.Add(files[i]);
 							var ev = FileFound;
-							if (ev == null)
+							if (ev is null)
 								continue;
 							// Report progress.
 							var e = new ProgressEventArgs();
@@ -110,8 +116,10 @@ namespace JocysCom.ClassLibrary.IO
 					{
 						// Pause or Stop.
 						while (IsPaused && !IsStopping)
+						{
 							// Logical delay without blocking the current hardware thread.
-							System.Threading.Tasks.Task.Delay(500).Wait();
+							var resetEvent = new ManualResetEventSlim(false); _ = Task.Run(async () => await Task.Delay(500)); resetEvent.Wait();
+						}
 						if (IsStopping)
 							return;
 						// Do tasks.

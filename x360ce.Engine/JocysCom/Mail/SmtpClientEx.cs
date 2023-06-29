@@ -33,7 +33,7 @@ namespace JocysCom.ClassLibrary.Mail
 			{
 				lock (currentLock)
 				{
-					if (_Current == null)
+					if (_Current is null)
 						_Current = new SmtpClientEx();
 					return _Current;
 				}
@@ -73,7 +73,7 @@ namespace JocysCom.ClassLibrary.Mail
 		{
 			get
 			{
-				if (localHostName == null)
+				if (localHostName is null)
 					return null;
 				return (string)localHostName.GetValue(this);
 			}
@@ -105,7 +105,7 @@ namespace JocysCom.ClassLibrary.Mail
 
 		public static void SetErrorCode(Exception ex, int errorCode)
 		{
-			if (ex == null)
+			if (ex is null)
 				throw new ArgumentNullException(nameof(ex));
 			if (errorCode == 0)
 				return;
@@ -191,7 +191,7 @@ namespace JocysCom.ClassLibrary.Mail
 		static System.Configuration.Configuration GetCurrentConfiguration()
 		{
 			// If executable then...
-			if (HttpRuntime.IISVersion == null)
+			if (HttpRuntime.IISVersion is null)
 				return System.Configuration.ConfigurationManager.OpenExeConfiguration(System.Configuration.ConfigurationUserLevel.None);
 			// If web request then...
 			if (HttpContext.Current != null
@@ -297,7 +297,7 @@ namespace JocysCom.ClassLibrary.Mail
 		/// <param name="message"></param>
 		public static void AddSmtpSendCopyToRecipients(MailMessage message, string recipients)
 		{
-			if (message == null)
+			if (message is null)
 				throw new ArgumentNullException(nameof(message));
 			var addresses = MailHelper.ParseEmailAddress(recipients);
 			var hosts = addresses.Select(x => x.Host.ToLower()).Distinct().ToArray();

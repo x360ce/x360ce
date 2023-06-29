@@ -44,7 +44,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		private static string FormatValue(object value)
 		{
-			if (value == null)
+			if (value is null)
 				return string.Empty;
 			else if (value.GetType() == typeof(DateTime))
 				return ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.ffffffzzz");
@@ -123,7 +123,7 @@ namespace JocysCom.ClassLibrary.Data
 					if (!a.CanBeNull)
 					{
 						var propertyValue = p.GetValue(instance, null);
-						if (propertyValue == null)
+						if (propertyValue is null)
 						{
 							if (convertToEmpty)
 							{

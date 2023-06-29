@@ -91,12 +91,12 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			lock (JsonSerializersLock)
 			{
-				if (JsonSerializers == null) JsonSerializers = new Dictionary<Type, DataContractJsonSerializer>();
+				if (JsonSerializers is null) JsonSerializers = new Dictionary<Type, DataContractJsonSerializer>();
 				if (!JsonSerializers.ContainsKey(type))
 				{
 					// Simple dictionary format looks like this: { "Key1": "Value1", "Key2": "Value2" }
 					// DataContractJsonSerializerSettings requires .NET 4.5
-					if (settings == null)
+					if (settings is null)
 					{
 						settings = new DataContractJsonSerializerSettings();
 						settings.IgnoreExtensionDataObject = true;
@@ -140,7 +140,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			if (_SerializeToJson != null)
 				return _SerializeToJson(o, encoding);
-			if (o == null)
+			if (o is null)
 				return null;
 #if NETCOREAPP
 			var options = GetJsonOptions();
@@ -150,7 +150,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var serializer = GetJsonSerializer(o.GetType());
 			var ms = new MemoryStream();
 			lock (serializer) { serializer.WriteObject(ms, o); }
-			if (encoding == null)
+			if (encoding is null)
 				encoding = Encoding.UTF8;
 			var json = encoding.GetString(ms.ToArray());
 			ms.Close();
@@ -169,7 +169,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			if (_DeserializeFromJson != null)
 				return _DeserializeFromJson(json, type, encoding);
-			if (json == null)
+			if (json is null)
 				return null;
 #if NETCOREAPP
 			var options = GetJsonOptions();
@@ -177,7 +177,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			return o;
 #else
 			var serializer = GetJsonSerializer(type);
-			if (encoding == null)
+			if (encoding is null)
 				encoding = Encoding.UTF8;
 			var bytes = encoding.GetBytes(json);
 			var ms = new MemoryStream(bytes);
@@ -264,7 +264,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			lock (XmlSerializersLock)
 			{
-				if (XmlSerializers == null)
+				if (XmlSerializers is null)
 					XmlSerializers = new Dictionary<Type, XmlSerializer>();
 				if (!XmlSerializers.ContainsKey(type))
 				{
@@ -286,7 +286,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns>XML document</returns>
 		public static XmlDocument SerializeToXml(object o)
 		{
-			if (o == null)
+			if (o is null)
 				return null;
 			var serializer = GetXmlSerializer(o.GetType());
 			var ms = new MemoryStream();
@@ -310,7 +310,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		static T SeriallizeToXml<T>(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, bool indent = true)
 		{
-			if (o == null)
+			if (o is null)
 				return default(T);
 			// Create serialization settings.
 			encoding = encoding ?? Encoding.UTF8;
@@ -405,7 +405,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="encoding">The encoding to use (default is UTF8).</param>
 		public static void SerializeToXmlFile(object o, string path, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null, int attempts = 2, int waitTime = 500)
 		{
-			var bytes = (o == null)
+			var bytes = (o is null)
 				? new byte[0]
 				: SeriallizeToXml<byte[]>(o, encoding, omitXmlDeclaration, comment);
 			// Write serialized data into file.
@@ -420,7 +420,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="encoding">The encoding to use (default is UTF8).</param>
 		public static byte[] SerializeToXmlBytes(object o, Encoding encoding = null, bool omitXmlDeclaration = false, string comment = null)
 		{
-			var bytes = (o == null)
+			var bytes = (o is null)
 				? new byte[0]
 				: SeriallizeToXml<byte[]>(o, encoding, omitXmlDeclaration, comment);
 			return bytes;
@@ -438,7 +438,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns>XML document</returns>
 		public static object DeserializeFromXml(XmlDocument doc, Type type)
 		{
-			if (doc == null)
+			if (doc is null)
 				return null;
 			return DeserializeFromXmlString(doc.OuterXml, type);
 		}
@@ -541,7 +541,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		{
 			// Read full file content first, so file will be locked for shorter period of time.
 			var bytes = ReadFile(filename, attempts, waitTime);
-			if (bytes == null || bytes.Length == 0)
+			if (bytes is null || bytes.Length == 0)
 				return null;
 			return DeserializeFromXmlBytes(bytes, type, encoding);
 		}
@@ -602,7 +602,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="encoding">The encoding to use (default is UTF8).</param>
 		public static void SerializeToXsdFile(object o, string path, Encoding encoding = null, bool omitXmlDeclaration = false, int attempts = 2, int waitTime = 500)
 		{
-			if (o == null)
+			if (o is null)
 			{
 				WriteFile(path, new byte[0], attempts, waitTime);
 				return;

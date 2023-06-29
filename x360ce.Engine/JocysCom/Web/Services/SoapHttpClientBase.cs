@@ -129,7 +129,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 		{
 			var invokeArgs = (InvokeCompletedEventArgs)arg;
 			var invokeUserState = (InvokeUserState)invokeArgs.UserState;
-			if (invokeUserState.Handler == null)
+			if (invokeUserState.Handler is null)
 				return;
 			var args = new SoapHttpClientEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeUserState.UserState);
 			invokeUserState.Handler(this, args);

@@ -35,7 +35,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <returns>Description, class name, or enumeration property name.</returns>
 		public static string GetDescription(object o, bool cache = true)
 		{
-			if (o == null)
+			if (o is null)
 				return null;
 			var type = o.GetType();
 			if (!cache)
@@ -49,14 +49,14 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		private static string _GetDescription(object o)
 		{
-			if (o == null)
+			if (o is null)
 				return null;
 			var type = o.GetType();
 			// If enumeration then get attribute from a field, otherwise from type.
 			var ap = type.IsEnum
 				? (ICustomAttributeProvider)type.GetField(Enum.GetName(type, o))
 				: type;
-			if (ap == null)
+			if (ap is null)
 			{
 				var attributes = ap.GetCustomAttributes(typeof(DescriptionAttribute), !type.IsEnum);
 				// If atribute is present then return value.
@@ -135,9 +135,9 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Check if MemberInfo/ICustomAttributeProvider.
 			var p = value as ICustomAttributeProvider;
 			// Assume it is enumeration value.
-			if (p == null)
+			if (p is null)
 			{
-				if (value == null)
+				if (value is null)
 					throw new ArgumentNullException(nameof(value));
 				p = value.GetType().GetField(value.ToString());
 			}
@@ -145,6 +145,31 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (attributes.Length > 0)
 				return (T)attributes[0].Value;
 			return default;
+		}
+
+
+		/// <summary>
+		/// Assign property values from their [DefaultValueAttribute] value.
+		/// </summary>
+		/// <param name="o">Object to reset properties on.</param>
+		public static void ResetPropertiesToDefault(object o, bool onlyIfNull = false)
+		{
+			if (o is null)
+				return;
+			var type = o.GetType();
+			var properties = type.GetProperties();
+			foreach (var p in properties)
+			{
+				if (p.CanRead && onlyIfNull && p.GetValue(o, null) != null)
+					continue;
+				if (!p.CanWrite)
+					continue;
+				var da = p.GetCustomAttributes(typeof(DefaultValueAttribute), false);
+				if (da.Length == 0)
+					continue;
+				var value = ((DefaultValueAttribute)da[0]).Value;
+				p.SetValue(o, value, null);
+			}
 		}
 
 		#endregion

@@ -34,7 +34,7 @@ namespace JocysCom.WebSites.Engine
 		{
 			get
 			{
-				if (_GuidRegex == null)
+				if (_GuidRegex is null)
 				{
 					_GuidRegex = new Regex(
 						"^[A-Fa-f0-9]{32}$|" +
@@ -64,7 +64,7 @@ namespace JocysCom.WebSites.Engine
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
 		{
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			return (TE)Enum.Parse(typeof(TE), value);
 		}
@@ -73,7 +73,7 @@ namespace JocysCom.WebSites.Engine
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
 		{
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			var results = defaultValue;
 			try
@@ -98,7 +98,7 @@ namespace JocysCom.WebSites.Engine
 			// Declare TE as same as Enum.
 			where TE : struct, IComparable, IFormattable, IConvertible
 		{
-			if (value == null)
+			if (value is null)
 				throw new ArgumentNullException(nameof(value));
 			return (TE)Enum.Parse(typeof(TE), value, ignoreCase);
 		}
@@ -147,11 +147,11 @@ namespace JocysCom.WebSites.Engine
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			var t = Type.GetType(typeName);
 			// Search for object in other assemblies.
-			for (var a = 0; a < assemblies.Length && t == null; a++)
+			for (var a = 0; a < assemblies.Length && t is null; a++)
 				t = assemblies[a].GetType(typeName);
 			if (resolve)
 			{
-				for (var a = 0; a < assemblies.Length && t == null; a++)
+				for (var a = 0; a < assemblies.Length && t is null; a++)
 				{
 					var types = assemblies[a].GetTypes();
 					for (var i = 0; i < types.Length; i++)
@@ -184,7 +184,7 @@ namespace JocysCom.WebSites.Engine
 		public static SortedDictionary<string, object> ToNameDictionary(Type type)
 		{
 			var list = new SortedDictionary<string, object>();
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			var names = Enum.GetNames(type);
 			foreach (string name in names)
@@ -202,7 +202,7 @@ namespace JocysCom.WebSites.Engine
 		{
 			Type enumType = FindType(typeName, resolve);
 			var list = new SortedDictionary<string, object>();
-			if (enumType == null)
+			if (enumType is null)
 				throw new ArgumentNullException(typeName);
 			var names = Enum.GetNames(enumType);
 			foreach (string name in names)
@@ -220,7 +220,7 @@ namespace JocysCom.WebSites.Engine
 		{
 			var enumType = FindType(typeName, resolve);
 			var list = new SortedDictionary<string, Guid>();
-			if (enumType == null)
+			if (enumType is null)
 				throw new ArgumentNullException(typeName);
 			var names = Enum.GetNames(enumType);
 			foreach (string name in names)

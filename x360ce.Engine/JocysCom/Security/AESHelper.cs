@@ -66,7 +66,7 @@ namespace JocysCom.ClassLibrary.Security
 			// Note: Set number of iterations to 10 in order for JavaScript example to work faster.
 			// Rfc2898DeriveBytes generator based on HMACSHA1 by default.
 			// Ability to specify HMAC algorithm is available since .NET 4.7.2
-			var secretKey = new Rfc2898DeriveBytes(password, salt, 10);
+			var secretKey = new Rfc2898DeriveBytes(password, salt, 10, HashAlgorithmName.SHA1);
 			// 32 bytes (256 bits) for the secret key and
 			// 16 bytes (128 bits) for the initialization vector (IV).
 			var key = secretKey.GetBytes(provider.KeySize / 8);
@@ -138,7 +138,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Encrypted bytes.</returns>
 		public static byte[] Encrypt(string password, byte[] bytes)
 		{
-			if (bytes == null)
+			if (bytes is null)
 				throw new ArgumentNullException(nameof(bytes));
 			var encryptor = GetTransform(password, true);
 			var encryptedBytes = CipherStreamWrite(encryptor, bytes);
@@ -176,7 +176,7 @@ namespace JocysCom.ClassLibrary.Security
 		/// <returns>Decrypted bytes.</returns>
 		public static byte[] Decrypt(string password, byte[] bytes)
 		{
-			if (bytes == null)
+			if (bytes is null)
 				throw new ArgumentNullException(nameof(bytes));
 			var decryptor = GetTransform(password, false);
 			var decryptedBytes = CipherStreamWrite(decryptor, bytes);

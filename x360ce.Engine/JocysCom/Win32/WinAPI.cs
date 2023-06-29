@@ -114,7 +114,7 @@ namespace JocysCom.ClassLibrary.Win32
 			uint BCM_FIRST = 0x1600; // Normal button
 			uint BCM_SETSHIELD = BCM_FIRST + 0x000C; // Shield button
 													 // Input validation
-			if (button == null) return;
+			if (button is null) return;
 			button.FlatStyle = FlatStyle.System;
 			// Send the BCM_SETSHIELD message to the control
 			NativeMethods.SendMessage(new HandleRef(button, button.Handle), BCM_SETSHIELD, new IntPtr(0), new IntPtr(1));
@@ -125,7 +125,7 @@ namespace JocysCom.ClassLibrary.Win32
 			uint BCM_FIRST = 0x1600; // Normal button
 			uint BCM_SETSHIELD = BCM_FIRST + 0x000C; // Shield button
 													 // Input validation
-			if (button == null) return;
+			if (button is null) return;
 			button.FlatStyle = FlatStyle.System;
 			// Send the BCM_SETSHIELD message to the control
 			NativeMethods.SendMessage(new HandleRef(button, button.Handle), BCM_SETSHIELD, new IntPtr(0), new IntPtr(0));

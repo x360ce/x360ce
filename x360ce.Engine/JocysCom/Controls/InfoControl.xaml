@@ -69,6 +69,30 @@
 				x:FieldModifier="public"
 				Content="{StaticResource Icon_Information}"
 				Style="{StaticResource ButtonContentControl}" />
+			<ContentControl
+				Name="BusyIcon"
+				Grid.Row="0"
+				Grid.RowSpan="2"
+				Grid.Column="2"
+				Width="48"
+				Height="48"
+				Margin="4,4,8,4"
+				Padding="0"
+				Content="{StaticResource Icon_ProcessRight}"
+				Style="{StaticResource ButtonContentControl}"
+				Visibility="Hidden" />
+			<Label
+				Name="BusyCount"
+				Grid.Row="0"
+				Grid.RowSpan="2"
+				Grid.Column="2"
+				Width="48"
+				Height="48"
+				Margin="4,4,8,4"
+				Padding="0"
+				HorizontalContentAlignment="Center"
+				VerticalContentAlignment="Center"
+				Opacity="0.5" />
 		</Grid>
 	</StackPanel>
 </UserControl>

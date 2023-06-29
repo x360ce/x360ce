@@ -59,10 +59,10 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		private void context_BeginRequest(object sender, EventArgs e)
 		{
 			var application = sender as HttpApplication;
-			if (application == null)
+			if (application is null)
 				return;
 			var request = application.Request;
-			if (request == null)
+			if (request is null)
 				return;
 			// Process.
 			var col = new NameValueCollection();
@@ -102,7 +102,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			var request = context.Request;
 			var response = context.Response;
 			var filter = response.Filter as ResponseCaptureStream;
-			if (filter == null)
+			if (filter is null)
 				return;
 			// Process.
 			var col = new NameValueCollection();

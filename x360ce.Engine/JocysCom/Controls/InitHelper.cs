@@ -123,7 +123,7 @@ namespace JocysCom.ClassLibrary.Controls
 			InitHelper ih = null;
 			lock (TimersLock)
 				ih = Timers.FirstOrDefault(x => Equals(x.Control, sender));
-			if (ih == null)
+			if (ih is null)
 				return;
 			ih._PropertyChangedCount++;
 			ih.EndDate = DateTime.Now;
@@ -141,7 +141,7 @@ namespace JocysCom.ClassLibrary.Controls
 			lock (TimersLock)
 			{
 				ih = Timers.FirstOrDefault(x => Equals(x._Timer, sender));
-				if (ih == null)
+				if (ih is null)
 					return;
 				Timers.Remove(ih);
 				_InitEndCount++;

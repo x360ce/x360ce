@@ -1,10 +1,9 @@
-﻿#if NETCOREAPP
-using Microsoft.EntityFrameworkCore;
-#elif NETSTANDARD
+﻿using System;
+#if NETFRAMEWORK
+using System.Data;
+#else
 using Microsoft.EntityFrameworkCore;
 #endif
-using System;
-using System.Data;
 using System.Linq;
 
 namespace JocysCom.ClassLibrary.Runtime

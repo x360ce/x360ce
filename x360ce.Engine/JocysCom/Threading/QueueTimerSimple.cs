@@ -153,7 +153,7 @@ namespace JocysCom.ClassLibrary.Threading
 		{
 			lock (delayTimerLock)
 			{
-				if (delayTimer == null)
+				if (delayTimer is null)
 					return;
 				delayTimerNextRunTime = DateTime.Now.AddMilliseconds(delayTimer.Interval);
 				delayTimer.Start();
@@ -270,7 +270,7 @@ namespace JocysCom.ClassLibrary.Threading
 				double delayTimerInterval = 0;
 				lock (delayTimerLock)
 				{
-					delayTimerInterval = delayTimer == null ? 0 : delayTimer.Interval;
+					delayTimerInterval = delayTimer is null ? 0 : delayTimer.Interval;
 				}
 				// If there is no delay between actions then...
 				if (delayTimerInterval == 0)
@@ -311,7 +311,7 @@ namespace JocysCom.ClassLibrary.Threading
 						double sleepTimerInterval = 0;
 						lock (sleepTimerLock)
 						{
-							sleepTimerInterval = sleepTimer == null ? 0 : sleepTimer.Interval;
+							sleepTimerInterval = sleepTimer is null ? 0 : sleepTimer.Interval;
 						}
 						// Check if sleep timer expired.
 						if (sleepTimerInterval <= _LastActionDoneTime.ElapsedMilliseconds)

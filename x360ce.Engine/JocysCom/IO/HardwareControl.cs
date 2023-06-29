@@ -156,7 +156,7 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			lock (RefreshTimerLock)
 			{
-				if (RefreshTimer == null)
+				if (RefreshTimer is null)
 				{
 					RefreshTimer = new System.Timers.Timer
 					{
@@ -319,7 +319,7 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			lock (FilterTimerLock)
 			{
-				if (FilterTimer == null)
+				if (FilterTimer is null)
 				{
 					FilterTimer = new System.Timers.Timer
 					{

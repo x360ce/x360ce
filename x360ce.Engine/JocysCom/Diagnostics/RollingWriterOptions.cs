@@ -84,7 +84,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 					// .NET Framework
 					options._WriterField = listener.GetType().GetField("writer", flags);
 						// .NET Core.
-					if (options._WriterField == null)
+					if (options._WriterField is null)
 						options._WriterField = listener.GetType().GetField("_writer", flags);
 					options.SettingsLoaded = true;
 				}
@@ -96,7 +96,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 				var path = string.Format(expandedPath, DateTime.Now);
 				var writer = (StreamWriter)options._WriterField.GetValue(listener);
 				// If file is missing or name changed then...
-				if (writer == null || !path.Equals(((FileStream)writer.BaseStream).Name, StringComparison.OrdinalIgnoreCase))
+				if (writer is null || !path.Equals(((FileStream)writer.BaseStream).Name, StringComparison.OrdinalIgnoreCase))
 				{
 					if (writer != null)
 						writer.Close();

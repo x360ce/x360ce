@@ -158,7 +158,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			get
 			{
-				if (_MacProvider == null)
+				if (_MacProvider is null)
 				{
 					// Create MD5HMAC hash provider.
 					if (string.IsNullOrEmpty(HmacHashKeyValue))
@@ -201,7 +201,7 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			byte[] hash;
 			// If HMAC hash key is not supplied then...
-			if (hashKeyBytes == null)
+			if (hashKeyBytes is null)
 			{
 				lock (MacProviderLock)
 					// Use default from config file.
@@ -243,7 +243,7 @@ namespace JocysCom.ClassLibrary.Security
 					cspParams.Flags = System.Security.Cryptography.CspProviderFlags.UseMachineKeyStore;
 					_RsaProvider = new System.Security.Cryptography.RSACryptoServiceProvider();
 					// If web.config data is not available then return.
-					if (RsaPublicKeyValue == null) return _RsaProvider;
+					if (RsaPublicKeyValue is null) return _RsaProvider;
 					byte[] privateKeyBytes = string.IsNullOrEmpty(RsaPrivateKeyValue)
 						? new byte[0] : System.Convert.FromBase64String(RsaPrivateKeyValue);
 					byte[] publicKeyBytes = string.IsNullOrEmpty(RsaPublicKeyValue)
@@ -390,7 +390,7 @@ namespace JocysCom.ClassLibrary.Security
 
 		public void UpsertKey(System.Configuration.Configuration config, string name, object value)
 		{
-			if (config.AppSettings.Settings[name] == null)
+			if (config.AppSettings.Settings[name] is null)
 				config.AppSettings.Settings.Add(name, string.Format("{0}", value));
 			else
 				config.AppSettings.Settings[name].Value = string.Format("{0}", value);
@@ -403,7 +403,7 @@ namespace JocysCom.ClassLibrary.Security
 #if NETFRAMEWORK
 
 			// Get the configuration file.
-			var config = System.Web.HttpRuntime.IISVersion == null
+			var config = System.Web.HttpRuntime.IISVersion is null
 				? ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
 				: System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~");
 #else

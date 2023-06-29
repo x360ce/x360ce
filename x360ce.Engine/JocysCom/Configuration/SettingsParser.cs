@@ -32,7 +32,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>Parse all IConvertible types, like value types, with one function.</summary>
 		public T Parse<T>(string name, T defaultValue = default(T))
 		{
-			if (_GetValue == null)
+			if (_GetValue is null)
 				return defaultValue;
 			var v = _GetValue(ConfigPrefix + name);
 			return ParseValue<T>(v, defaultValue);
@@ -40,9 +40,9 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public static object ParseValue(Type t, string v, object defaultValue = null)
 		{
-			if (t == null)
+			if (t is null)
 				throw new ArgumentNullException(nameof(t));
-			if (v == null)
+			if (v is null)
 				return defaultValue;
 			if (typeof(System.Drawing.Color).IsAssignableFrom(t))
 				return System.Drawing.Color.FromName(v);
@@ -91,7 +91,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			var key = ConfigPrefix + name;
 			if (!p.Keys.Contains(key))
 			{
-				if (EmbeddedAppSettings == null)
+				if (EmbeddedAppSettings is null)
 					ReadEmbeddedSettings();
 				if (EmbeddedAppSettings.Keys.Contains(key))
 					return EmbeddedAppSettings[key];

@@ -95,31 +95,31 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 		public bool ParseBool(string name, bool defaultValue)
 		{
 			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : bool.Parse(v);
+			return (v is null) ? defaultValue : bool.Parse(v);
 		}
 
 		public int ParseInt(string name, int defaultValue)
 		{
 			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : int.Parse(v);
+			return (v is null) ? defaultValue : int.Parse(v);
 		}
 
 		public TimeSpan ParseSpan(string name, TimeSpan defaultValue)
 		{
 			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : TimeSpan.Parse(v);
+			return (v is null) ? defaultValue : TimeSpan.Parse(v);
 		}
 
 		public T ParseEnum<T>(string name, T defaultValue)
 		{
 			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : (T)Enum.Parse(typeof(T), v);
+			return (v is null) ? defaultValue : (T)Enum.Parse(typeof(T), v);
 		}
 
 		public string ParseString(string name, string defaultValue)
 		{
 			var v = ConfigurationManager.AppSettings[_configPrefix + "_" + name];
-			return (v == null) ? defaultValue : v;
+			return (v is null) ? defaultValue : v;
 		}
 
 		#endregion
