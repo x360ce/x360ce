@@ -10,267 +10,213 @@
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
-	<UserControl.Resources>
-		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary>
-					<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
-						<Setter Property="MinWidth" Value="75" />
-					</Style>
-					<Style x:Key="MenuIcon" TargetType="ContentControl">
-						<Setter Property="Width" Value="12" />
-						<Setter Property="Height" Value="12" />
-						<Setter Property="Margin" Value="0,0,0,0" />
-						<Setter Property="Padding" Value="0,0,0,0" />
-						<Setter Property="Content" Value="{StaticResource Icon_navigate_close}" />
-					</Style>
-					<Style x:Key="TopItem" TargetType="MenuItem">
-						<Setter Property="Width" Value="24" />
-						<Setter Property="Height" Value="24" />
-						<Setter Property="Margin" Value="0,0,0,0" />
-						<Setter Property="Padding" Value="0,0,0,0" />
-						<Setter Property="HorizontalContentAlignment" Value="Left" />
-						<Setter Property="VerticalContentAlignment" Value="Center" />
-					</Style>
-					<Style x:Key="MapMenu" TargetType="Menu">
-						<Setter Property="HorizontalAlignment" Value="Left" />
-						<Setter Property="VerticalAlignment" Value="Center" />
-					</Style>
-				</ResourceDictionary>
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</UserControl.Resources>
-	<Grid Margin="3,3,3,3">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="Auto" />
-		</Grid.ColumnDefinitions>
-		<StackPanel
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <!--StackPanel-->
+                    <Style TargetType="StackPanel" x:Key="StackPanelRight">
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                        <Setter Property="Orientation" Value="Horizontal" />
+                    </Style>
+                    <Style TargetType="Label">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                    <!--TextBox-->
+                    <Style TargetType="TextBox" BasedOn="{StaticResource TextBox_Default}">
+                        <Setter Property="MinWidth" Value="75" />
+                    </Style>
+                    <!--Menu-->
+                    <Style TargetType="Menu" x:Key="MapMenu">
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                    </Style>
+                    <!--MenuItem-->
+                    <Style TargetType="MenuItem" x:Key="TopItem">
+                        <Setter Property="Width" Value="24" />
+                        <Setter Property="Height" Value="24" />
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Style.Resources>
+                            <Style TargetType="Grid">
+                                <Setter Property="Margin" Value="1" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="Transparent" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Style.Resources>
+                    </Style>
+                    <!--MenuIcon-->
+                    <Style TargetType="ContentControl" x:Key="MenuIcon">
+                        <Setter Property="Width" Value="12" />
+                        <Setter Property="Height" Value="12" />
+                        <Setter Property="Content" Value="{StaticResource Icon_navigate_close}" />
+                    </Style>
+                    <!--Menu template-->
+                    <ControlTemplate x:Key="ReusableMenuTemplate" TargetType="Control">
+                        <Menu Style="{StaticResource MapMenu}">
+                            <MenuItem Style="{StaticResource TopItem}" Click="MenuItem_Click">
+                                <MenuItem.Icon>
+                                    <ContentControl Style="{StaticResource MenuIcon}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                        </Menu>
+                    </ControlTemplate>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Margin="3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel
 			Grid.Row="0"
 			Grid.RowSpan="2"
 			Grid.Column="0"
-			VerticalAlignment="Top"
-			Orientation="Vertical">
-			<!--  LEFT  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label
+			VerticalAlignment="Top">
+            
+            <!-- LEFT -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label
 					x:Name="LeftLabel"
-					Margin="0,0,0,0"
-					VerticalAlignment="Center"
 					x:FieldModifier="public"
 					Content="LEFT"
 					Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
-				<TextBox
+                <TextBox
 					x:Name="LeftTextBox"
 					Margin="0,0,27,0"
 					HorizontalContentAlignment="Center"
 					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 					IsReadOnly="True"
 					Text="0" />
+            </StackPanel>
+            
+            <!-- LeftTrigger -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="LeftTriggerLabel" Content="Trigger" />
+                <TextBox x:Name="LeftTriggerTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=LeftTriggerTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 
-			</StackPanel>
-			<!--  LeftTrigger  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="LeftTriggerLabel" VerticalAlignment="Center" Content="Trigger" />
-				<TextBox x:Name="LeftTriggerTextBox" x:FieldModifier="public" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
+            </StackPanel>
+            <!-- LeftShoulder -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="LeftShoulderLabel" Content="Bumper" />
+                <TextBox x:Name="LeftShoulderTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=LeftShoulderTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 
-			</StackPanel>
-			<!--  LeftShoulder  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="LeftShoulderLabel" VerticalAlignment="Center" Content="Bumper" />
-				<TextBox x:Name="LeftShoulderTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  ButtonBack  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="ButtonBackLabel" VerticalAlignment="Center" Content="Back" />
-				<TextBox x:Name="ButtonBackTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  ButtonStart  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="ButtonStartLabel" VerticalAlignment="Center" Content="Start" />
-				<TextBox x:Name="ButtonStartTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  ButtonGuide  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="ButtonGuideLabel" VerticalAlignment="Center" Content="Guide" />
-				<TextBox x:Name="ButtonGuideTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  DPad  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="DPadLabel" VerticalAlignment="Center" Content="D-Pad" />
-				<TextBox x:Name="DPadTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  LeftThumb  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<TextBox
+            </StackPanel>
+            <!-- ButtonBack -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="ButtonBackLabel" Content="Back" />
+                <TextBox x:Name="ButtonBackTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=ButtonBackTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            
+            <!-- ButtonStart -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="ButtonStartLabel" Content="Start" />
+                <TextBox x:Name="ButtonStartTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=ButtonStartTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            
+            <!-- ButtonGuide -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="ButtonGuideLabel" Content="Guide" />
+                <TextBox x:Name="ButtonGuideTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=ButtonGuideTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            
+            <!-- DPad -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="DPadLabel" Content="D-Pad" />
+                <TextBox x:Name="DPadTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=DPadTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            
+            <!-- LeftThumb -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <TextBox
 					x:Name="LeftThumbTextBox"
 					Margin="0,0,27,0"
 					HorizontalContentAlignment="Center"
 					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 					IsReadOnly="True"
 					Text="0:0" />
-			</StackPanel>
-			<!--  LeftThumbAxisX  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="LeftThumbAxisXLabel" VerticalAlignment="Center" Content="Stick Axis X" />
-				<TextBox x:Name="LeftThumbAxisXTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
+            </StackPanel>
+            <!-- LeftThumbAxisX -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="LeftThumbAxisXLabel" Content="Stick Axis X" />
+                <TextBox x:Name="LeftThumbAxisXTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=LeftThumbAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- LeftThumbAxisY -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="LeftThumbAxisYLabel" Content="Stick Axis Y" />
+                <TextBox x:Name="LeftThumbAxisYTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=LeftThumbAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- LeftThumbButton -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="LeftThumbButtonLabel" Content="Stick Button" />
+                <TextBox x:Name="LeftThumbButtonTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=LeftThumbButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.Column="0">
+            <!-- LeftThumbUp -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="LeftThumbUpLabel" Content="Stick Up" />
+                <TextBox x:Name="LeftThumbUpTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=LeftThumbUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- LeftThumbLeft -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="LeftThumbLeftLabel" Content="Stick Left" />
+                <TextBox x:Name="LeftThumbLeftTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=LeftThumbLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- LeftThumbRight -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="LeftThumbRightLabel" Content="Stick Right" />
+                <TextBox x:Name="LeftThumbRightTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=LeftThumbRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- LeftThumbDown -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="LeftThumbDownLabel" Content="Stick Down" />
+                <TextBox x:Name="LeftThumbDownTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=LeftThumbDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+        </StackPanel>
 
-			</StackPanel>
-			<!--  LeftThumbAxisY  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="LeftThumbAxisYLabel" VerticalAlignment="Center" Content="Stick Axis Y" />
-				<TextBox x:Name="LeftThumbAxisYTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  LeftThumbButton  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="LeftThumbButtonLabel" VerticalAlignment="Center" Content="Stick Button" />
-				<TextBox x:Name="LeftThumbButtonTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-		</StackPanel>
-		<StackPanel Grid.Row="2" Grid.Column="0">
-			<!--  LeftThumbUp  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="LeftThumbUpLabel" VerticalAlignment="Center" Content="Stick Up" />
-				<TextBox x:Name="LeftThumbUpTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  LeftThumbLeft  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="LeftThumbLeftLabel" VerticalAlignment="Center" Content="Stick Left" />
-				<TextBox x:Name="LeftThumbLeftTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  LeftThumbRight  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="LeftThumbRightLabel" VerticalAlignment="Center" Content="Stick Right" />
-				<TextBox x:Name="LeftThumbRightTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  LeftThumbDown  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="LeftThumbDownLabel" VerticalAlignment="Center" Content="Stick Down" />
-				<TextBox x:Name="LeftThumbDownTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-		</StackPanel>
-		<StackPanel
+        <!-- Remap All -->
+        <StackPanel
 			Grid.Row="0"
 			Grid.Column="1"
 			HorizontalAlignment="Center"
 			Orientation="Horizontal">
-			<Button
+            <Button
 				Name="RemapAllButton"
 				VerticalAlignment="Center"
 				Click="RemapAllButton_Click"
 				Style="{StaticResource ToolBarButton}">
-				<StackPanel Style="{StaticResource ButtonStackPanel}">
-					<ContentControl Content="{StaticResource Icon_Record}" Style="{StaticResource ButtonContentControl}" />
-					<Label Content="Remap All" Style="{StaticResource ButtonLabel}" />
-				</StackPanel>
-			</Button>
-			<ComboBox x:Name="MapNameComboBox" DisplayMemberPath="Name" SelectionChanged="MapNameComboBox_SelectionChanged" />
-		</StackPanel>
-		<local:PadItem_General_XboxImageControl
+                <StackPanel Style="{StaticResource ButtonStackPanel}">
+                    <ContentControl Content="{StaticResource Icon_Record}" Style="{StaticResource ButtonContentControl}" />
+                    <Label Content="Remap All" Style="{StaticResource ButtonLabel}" />
+                </StackPanel>
+            </Button>
+            <ComboBox x:Name="MapNameComboBox" DisplayMemberPath="Name" SelectionChanged="MapNameComboBox_SelectionChanged" />
+        </StackPanel>
+        
+        <local:PadItem_General_XboxImageControl
 			x:Name="XboxImage"
 			Grid.Row="1"
 			Grid.Column="1"
@@ -278,259 +224,155 @@
 			Height="289"
 			HorizontalAlignment="Center"
 			VerticalAlignment="Top" />
-		<StackPanel
+        <StackPanel
 			Grid.Row="0"
 			Grid.RowSpan="2"
 			Grid.Column="2"
 			Orientation="Vertical">
-			<!--  LEFT  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label
+            
+            <!-- RIGHT -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label
 					x:Name="RightLabel"
 					VerticalAlignment="Center"
 					x:FieldModifier="public"
 					Content="RIGHT"
 					Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
-				<TextBox
+                <TextBox
 					x:Name="RightTextBox"
 					Margin="0,0,27,0"
 					HorizontalContentAlignment="Center"
 					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 					IsReadOnly="True"
 					Text="0" />
-			</StackPanel>
-			<!--  LeftTrigger  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="RightTriggerLabel" VerticalAlignment="Center" Content="Trigger" />
-				<TextBox x:Name="RightTriggerTextBox" x:FieldModifier="public" Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  LeftShoulder  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="RightShoulderLabel" VerticalAlignment="Center" Content="Bumper" />
-				<TextBox x:Name="RightShoulderTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  ButtonY  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="ButtonYLabel" VerticalAlignment="Center" Content="Y Button" />
-				<TextBox x:Name="ButtonYTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  ButtonX  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="ButtonXLabel" VerticalAlignment="Center" Content="X Button" />
-				<TextBox x:Name="ButtonXTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  ButtonB  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="ButtonBLabel" VerticalAlignment="Center" Content="B Button" />
-				<TextBox x:Name="ButtonBTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  ButtonA  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="ButtonALabel" VerticalAlignment="Center" Content="A Button" />
-				<TextBox x:Name="ButtonATextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  LeftThumb  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<TextBox
+            </StackPanel>
+            
+            <!-- RightTrigger -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="RightTriggerLabel" Content="Trigger" />
+                <TextBox x:Name="RightTriggerTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=RightTriggerTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            
+            <!-- RightShoulder -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="RightShoulderLabel" Content="Bumper" />
+                <TextBox x:Name="RightShoulderTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=RightShoulderTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            
+            <!-- ButtonY -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="ButtonYLabel" Content="Y Button" />
+                <TextBox x:Name="ButtonYTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=ButtonYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- ButtonX -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="ButtonXLabel" Content="X Button" />
+                <TextBox x:Name="ButtonXTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=ButtonXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- ButtonB -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="ButtonBLabel" Content="B Button" />
+                <TextBox x:Name="ButtonBTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=ButtonBTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- ButtonA -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="ButtonALabel" Content="A Button" />
+                <TextBox x:Name="ButtonATextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=ButtonATextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            
+            <!-- RightThumb -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <TextBox
 					x:Name="RightThumbTextBox"
 					Margin="0,0,27,0"
 					HorizontalContentAlignment="Center"
 					Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
 					IsReadOnly="True"
 					Text="0:0" />
-			</StackPanel>
-			<!--  LeftThumbAxisX  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="RightThumbAxisXLabel" VerticalAlignment="Center" Content="Stick Axis X" />
-				<TextBox x:Name="RightThumbAxisXTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  LeftThumbAxisY  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="RightThumbAxisYLabel" VerticalAlignment="Center" Content="Stick Axis Y" />
-				<TextBox x:Name="RightThumbAxisYTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-			<!--  LeftThumbButton  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="RightThumbButtonLabel" VerticalAlignment="Center" Content="Stick Button" />
-				<TextBox x:Name="RightThumbButtonTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-
-			</StackPanel>
-		</StackPanel>
-		<StackPanel
+            </StackPanel>
+            <!-- RightThumbAxisX -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="RightThumbAxisXLabel" Content="Stick Axis X" />
+                <TextBox x:Name="RightThumbAxisXTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=RightThumbAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- RightThumbAxisY -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="RightThumbAxisYLabel" Content="Stick Axis Y" />
+                <TextBox x:Name="RightThumbAxisYTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=RightThumbAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- RightThumbButton -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="RightThumbButtonLabel" Content="Stick Button" />
+                <TextBox x:Name="RightThumbButtonTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=RightThumbButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+        </StackPanel>
+        
+        <!-- DPad -->
+        <StackPanel
 			Grid.Row="2"
 			Grid.Column="1"
-			HorizontalAlignment="Center"
-			Orientation="Vertical">
-			<!--  DPadUp  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="DPadUpLabel" VerticalAlignment="Center" Content="D-Pad Up" />
-				<TextBox x:Name="DPadUpTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
+			HorizontalAlignment="Center">
+            <!-- DPadUp -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="DPadUpLabel" Content="D-Pad Up" />
+                <TextBox x:Name="DPadUpTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=DPadUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- DPadLeft -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="DPadLeftLabel" Content="D-Pad Left" />
+                <TextBox x:Name="DPadLeftTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=DPadLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- DPadRight -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="DPadRightLabel" Content="D-Pad Right" />
+                <TextBox x:Name="DPadRightTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=DPadRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- DPadDown -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="DPadDownLabel" Content="D-Pad Down" />
+                <TextBox x:Name="DPadDownTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=DPadDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+        </StackPanel>
 
-			</StackPanel>
-			<!--  DPadLeft  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="DPadLeftLabel" VerticalAlignment="Center" Content="D-Pad Left" />
-				<TextBox x:Name="DPadLeftTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  DPadRight  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="DPadRightLabel" VerticalAlignment="Center" Content="D-Pad Right" />
-				<TextBox x:Name="DPadRightTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  DPadDown  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="DPadDownLabel" VerticalAlignment="Center" Content="D-Pad Down" />
-				<TextBox x:Name="DPadDownTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-		</StackPanel>
-
-		<!--  Right Thumb Up/Left/Right/Down  -->
-		<StackPanel Grid.Row="2" Grid.Column="2">
-			<!--  LeftThumbUp  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="RightThumbUpLabel" VerticalAlignment="Center" Content="Stick Up" />
-				<TextBox x:Name="RightThumbUpTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  LeftThumbLeft  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="RightThumbLeftLabel" VerticalAlignment="Center" Content="Stick Left" />
-				<TextBox x:Name="RightThumbLeftTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  LeftThumbRight  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="RightThumbRightLabel" VerticalAlignment="Center" Content="Stick Right" />
-				<TextBox x:Name="RightThumbRightTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-			<!--  LeftThumbDown  -->
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Label x:Name="RightThumbDownLabel" VerticalAlignment="Center" Content="Stick Down" />
-				<TextBox x:Name="RightThumbDownTextBox" x:FieldModifier="public" />
-				<Menu Style="{StaticResource MapMenu}">
-					<MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-						<MenuItem.Icon>
-							<ContentControl Style="{StaticResource MenuIcon}" />
-						</MenuItem.Icon>
-					</MenuItem>
-				</Menu>
-			</StackPanel>
-		</StackPanel>
-	</Grid>
+        <!-- Right Thumb -->
+        <StackPanel Grid.Row="2" Grid.Column="2">
+            <!-- RightThumbUp -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="RightThumbUpLabel" Content="Stick Up" />
+                <TextBox x:Name="RightThumbUpTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=RightThumbUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- RightThumbLeft -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="RightThumbLeftLabel" Content="Stick Left" />
+                <TextBox x:Name="RightThumbLeftTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=RightThumbLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- RightThumbRight -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="RightThumbRightLabel" Content="Stick Right" />
+                <TextBox x:Name="RightThumbRightTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=RightThumbRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+            <!-- RighthumbDown -->
+            <StackPanel Style="{StaticResource StackPanelRight}">
+                <Label x:Name="RightThumbDownLabel" Content="Stick Down" />
+                <TextBox x:Name="RightThumbDownTextBox" x:FieldModifier="public" />
+                <Control Tag="{Binding ElementName=RightThumbDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
 </UserControl>
