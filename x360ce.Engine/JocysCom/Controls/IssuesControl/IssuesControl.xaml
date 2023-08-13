@@ -24,37 +24,31 @@
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
-			<ToolBar Style="{StaticResource MainToolBar}">
-				<Button Name="ExceptionInfoButton" Click="ExceptionInfoButton_Click" Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Name="ExceptionInfoContentControl" Content="{StaticResource Icon_Warning}" Style="{StaticResource ButtonContentControl}" />
-						<Label x:Name="ExceptionInfoLabel" Content="Exception Info" Style="{StaticResource ButtonLabel}" />
+		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+				<Button Name="ExceptionInfoButton" Click="ExceptionInfoButton_Click">
+					<StackPanel>
+						<ContentControl Name="ExceptionInfoContentControl" Content="{StaticResource Icon_Warning}" />
+						<Label x:Name="ExceptionInfoLabel" Content="Exception Info" />
 					</StackPanel>
 				</Button>
-				<StackPanel Style="{StaticResource ButtonStackPanel}">
-					<Label x:Name="StatusLabel" Content="Status:" />
-				</StackPanel>
-			</ToolBar>
-		</ToolBarPanel>
-		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
-			<ToolBar Style="{StaticResource MainToolBar}">
-				<Label x:Name="RunStateLabel" Content="[RunStateLabel]" Foreground="Gray" />
-				<Label x:Name="NextRunLabel" Content="Next Run: 00:00:00" Foreground="Gray" />
-				<CheckBox Name="IgnoreButton" HorizontalAlignment="Right" Click="IgnoreButton_Click">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Ignore}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Ignore" Style="{StaticResource ButtonLabel}" />
+				<Label x:Name="StatusLabel" Content="Status:" />
+		</StackPanel>
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+				<Label x:Name="RunStateLabel" Content="[RunStateLabel]" Opacity="0.5" />
+				<Label x:Name="NextRunLabel" Content="Next Run: 00:00:00" Opacity="0.5" />
+				<CheckBox Name="IgnoreButton" Click="IgnoreButton_Click">
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Ignore}" />
+						<Label Content="Ignore" />
 					</StackPanel>
 				</CheckBox>
-				<CheckBox Name="IgnoreAllButton" HorizontalAlignment="Right" Click="IgnoreAllButton_Click">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Ignore}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Ignore All" Style="{StaticResource ButtonLabel}" />
+				<CheckBox Name="IgnoreAllButton" Click="IgnoreAllButton_Click">
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Ignore}" />
+						<Label Content="Ignore All" />
 					</StackPanel>
 				</CheckBox>
-			</ToolBar>
-		</ToolBarPanel>
+		</StackPanel>
 		<Border
 			Grid.Row="1"
 			Height="1"

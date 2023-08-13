@@ -28,7 +28,7 @@
 				Click="CheckButton_Click"
 				Style="{StaticResource ToolBarButton}">
 				<StackPanel Style="{StaticResource ButtonStackPanel}">
-					<ContentControl Content="{StaticResource Icon_refresh}" Style="{StaticResource ButtonContentControl}" />
+					<ContentControl Content="{StaticResource Icon_refresh}" />
 					<Label Content="Check..." Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</Button>
@@ -42,7 +42,7 @@
 				Click="CloseButton_Click"
 				Style="{StaticResource ToolBarButton}">
 				<StackPanel Style="{StaticResource ButtonStackPanel}">
-					<ContentControl Content="{StaticResource Icon_door_exit}" Style="{StaticResource ButtonContentControl}" />
+					<ContentControl Content="{StaticResource Icon_door_exit}" />
 					<Label Content="Close" Style="{StaticResource ButtonLabel}" />
 				</StackPanel>
 			</Button>

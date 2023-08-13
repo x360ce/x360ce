@@ -56,13 +56,13 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			{
 				using (var key = arg.Key.OpenSubKey(arg.Path))
 				{
-					if (key == null)
+					if (key is null)
 						continue;
 					foreach (string subkey_name in key.GetSubKeyNames())
 					{
 						using (var subKey = key.OpenSubKey(subkey_name))
 						{
-							if (subKey == null)
+							if (subKey is null)
 								continue;
 							var displayName = (string)subKey.GetValue(arg.ProductKeyName, "");
 							// If product found then...
@@ -103,14 +103,14 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		/// </summary>
 		public static Version GetRealOSVersion()
 		{
-			if (OSVersion == null)
+			if (OSVersion is null)
 				OSVersion = GetFileVersion(Environment.SpecialFolder.System, "kernel32.dll");
 			return OSVersion;
 		}
 
 		public static Version GetFileVersion(Environment.SpecialFolder folder, string name)
 		{
-			if (OSVersion == null)
+			if (OSVersion is null)
 			{
 				var system = Environment.GetFolderPath(folder);
 				var file = Path.Combine(system, name);

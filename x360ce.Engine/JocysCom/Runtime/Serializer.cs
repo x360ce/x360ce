@@ -473,10 +473,6 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
-		
-
-
-
 		// Example how to add the missing namespaces.
 		// 
 		// Create a new NameTable

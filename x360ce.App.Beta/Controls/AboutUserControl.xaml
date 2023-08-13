@@ -40,33 +40,29 @@
 				Margin="4,4,8,4"
 				Padding="0"
 				VerticalAlignment="Top"
-				Content="{StaticResource Icon_gamepad}"
-				Style="{StaticResource ButtonContentControl}" />
+				Content="{StaticResource Icon_gamepad}" />
 			<Label
 				Name="AboutProductLabel"
 				Grid.Row="0"
 				Grid.Column="1"
 				Grid.ColumnSpan="5"
 				Padding="4,8,0,0"
-				FontWeight="Bold">
-				XBOX 360 Controller Emulator {0}
-			</Label>
-			<Label
+				FontWeight="Bold"
+                Content="XBOX 360 Controller Emulator {0}" />
+            <Label
 				Name="AboutDescriptionLabel"
 				Grid.Row="1"
 				Grid.Column="1"
 				Grid.ColumnSpan="5"
-				Padding="4,4,0,8">
-				Settings editor and test application for XBOX 360 Controller Emulator
-			</Label>
-			<Label
+				Padding="4,4,0,8"
+                Content="Settings editor and test application for XBOX 360 Controller Emulator" />
+            <Label
 				Grid.Row="3"
 				Grid.Column="1"
 				Padding="3,0,0,0"
-				VerticalAlignment="Center">
-				X360CE
-			</Label>
-			<TextBlock
+				VerticalAlignment="Center"
+                Content="X360CE" />
+            <TextBlock
 				Grid.Row="3"
 				Grid.Column="2"
 				Margin="0"
@@ -75,14 +71,13 @@
 					https://www.x360ce.com
 				</Hyperlink>
 			</TextBlock>
-			<Label
+            <Label
 				Grid.Row="4"
 				Grid.Column="1"
 				Padding="3,0,0,0"
-				VerticalAlignment="Center">
-				Jocys.com
-			</Label>
-			<TextBlock
+				VerticalAlignment="Center"
+                Content="Jocys.com" />
+            <TextBlock
 				Grid.Row="4"
 				Grid.Column="2"
 				Margin="0"
@@ -91,14 +86,13 @@
 					https://www.jocys.com
 				</Hyperlink>
 			</TextBlock>
-			<Label
+            <Label
 				Grid.Row="5"
 				Grid.Column="1"
 				Padding="3,0,0,0"
-				VerticalAlignment="Center">
-				ViGEm
-			</Label>
-			<TextBlock
+				VerticalAlignment="Center"
+                Content="ViGEm" />
+            <TextBlock
 				Grid.Row="5"
 				Grid.Column="2"
 				Margin="0"
@@ -107,14 +101,13 @@
 					https://vigem.org
 				</Hyperlink>
 			</TextBlock>
-			<Label
+            <Label
 				Grid.Row="3"
 				Grid.Column="4"
 				Padding="8,0,0,0"
-				VerticalAlignment="Center">
-				GitHub Project
-			</Label>
-			<TextBlock
+				VerticalAlignment="Center"
+                Content="GitHub Project"/>
+            <TextBlock
 				Grid.Row="3"
 				Grid.Column="5"
 				Margin="0"
@@ -123,15 +116,13 @@
 					https://github.com/x360ce/x360ce
 				</Hyperlink>
 			</TextBlock>
-
-			<Label
+            <Label
 				Grid.Row="4"
 				Grid.Column="4"
 				Padding="8,0,0,0"
-				VerticalAlignment="Center">
-				Nucleoprotein
-			</Label>
-			<TextBlock
+				VerticalAlignment="Center"
+                Content="Nucleoprotein"/>
+            <TextBlock
 				Grid.Row="4"
 				Grid.Column="5"
 				Margin="0"
@@ -140,15 +131,13 @@
 					https://github.com/nucleoprotein
 				</Hyperlink>
 			</TextBlock>
-
-			<Label
+            <Label
 				Grid.Row="5"
 				Grid.Column="4"
 				Padding="8,0,0,0"
-				VerticalAlignment="Center">
-				ToCA EDIT
-			</Label>
-			<TextBlock
+				VerticalAlignment="Center"
+                Content="ToCA EDIT"/>
+            <TextBlock
 				Grid.Row="5"
 				Grid.Column="5"
 				Margin="0"

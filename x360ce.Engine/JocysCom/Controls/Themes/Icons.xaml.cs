@@ -24,6 +24,8 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 		public const string Icon_Import = nameof(Icon_Import);
 		public const string Icon_Information = nameof(Icon_Information);
 		public const string Icon_InformationGrey = nameof(Icon_InformationGrey);
+		public const string Icon_MediaPlay = nameof(Icon_MediaPlay);
+		public const string Icon_MediaStop = nameof(Icon_MediaStop);
 		public const string Icon_OK = nameof(Icon_OK);
 		public const string Icon_Play = nameof(Icon_Play);
 		public const string Icon_ProcessLeft = nameof(Icon_ProcessLeft);

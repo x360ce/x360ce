@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -16,20 +17,37 @@ namespace JocysCom.ClassLibrary.Controls
 		public InfoControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
-			if (!ControlsHelper.IsDesignMode(this))
-			{
-				// Get assemblies which will be used to select default (fists) and search for resources.
-				var assembly = Assembly.GetExecutingAssembly() ?? Assembly.GetEntryAssembly();
-				//var company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute))).Company;
-				var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute))).Product;
-				var description = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyDescriptionAttribute))).Description;
-				DefaultHead = product;
-				DefaultBody = description;
-				SetHead(DefaultHead);
-				SetBodyInfo(DefaultBody);
-				InitRotation();
-			}
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			// Get assemblies which will be used to select default (fists) and search for resources.
+			var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
+			//var company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCompanyAttribute)))?.Company;
+			var product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyProductAttribute)))?.Product;
+			var description = ((AssemblyDescriptionAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyDescriptionAttribute)))?.Description;
+			DefaultHead = product;
+			DefaultBody = description;
+			Reset();
+			InitRotation();
+			HelpProvider.OnMouseEnter += HelpProvider_OnMouseEnter;
+			HelpProvider.OnMouseLeave += HelpProvider_OnMouseLeave;
 		}
+
+		private void HelpProvider_OnMouseEnter(object sender, EventArgs e)
+		{
+			var control = (Control)sender;
+			var head = HelpProvider.GetHelpHead(control);
+			var body = HelpProvider.GetHelpBody(control, 128, true);
+			var image = HelpProvider.GetHelpImage(control);
+			SetHead(head);
+			SetBody(image, body);
+		}
+
+		private void HelpProvider_OnMouseLeave(object sender, EventArgs e)
+		{
+			Reset();
+		}
+
+		public InfoHelpProvider HelpProvider { get; set; } = new InfoHelpProvider();
 
 		#region ■ Properties
 
@@ -54,10 +72,16 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region Set Text
 
+		public void Reset()
+		{
+			SetHead(DefaultHead);
+			SetBodyInfo(DefaultBody);
+		}
+
 		public void SetTitle(string format, params object[] args)
 		{
 			var win = System.Windows.Window.GetWindow(this);
-			if (win == null)
+			if (win is null)
 				return;
 			win.Title = (args.Length == 0)
 				? format
@@ -67,7 +91,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public void SetHead(string format, params object[] args)
 		{
 			// Apply format.
-			if (format == null)
+			if (format is null)
 				format = DefaultHead;
 			else if (args.Length > 0)
 				format = string.Format(format, args);
@@ -78,7 +102,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public void SetBodyError(string content, params object[] args)
 		{
 			// Apply format.
-			if (content == null)
+			if (content is null)
 				content = DefaultBody;
 			else if (args.Length > 0)
 				content = string.Format(content, args);
@@ -89,7 +113,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public void SetBodyInfo(string content, params object[] args)
 		{
 			// Apply format.
-			if (content == null)
+			if (content is null)
 				content = DefaultBody;
 			else if (args.Length > 0)
 				content = string.Format(content, args);
@@ -97,9 +121,23 @@ namespace JocysCom.ClassLibrary.Controls
 			SetBody(MessageBoxImage.Information, content);
 		}
 
+		public async void SetWithTimeout(MessageBoxImage image, string content = null, params object[] args)
+		{
+			SetBody(image, content, args);
+			var bodyText = BodyLabel.Text;
+			// The average minimal reading speed for adults is 16 characters per second.
+			// Add 4 extra seconds for realization and focus.
+			var waitSeconds = 4 + bodyText.Length / 16.0;
+			// Task code which waits for waitSeconds and executes code below.
+			await Task.Delay(TimeSpan.FromSeconds(waitSeconds));
+			if (bodyText == BodyLabel.Text)
+				Reset();
+		}
+
+
 		public void SetBody(MessageBoxImage image, string content = null, params object[] args)
 		{
-			if (content == null)
+			if (content is null)
 				content = DefaultBody;
 			else if (args.Length > 0)
 				content = string.Format(content, args);
@@ -130,7 +168,6 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region Task and Rotating Icon
 
-		object _RightIconOriginalContent;
 		private readonly object TasksLock = new object();
 		public readonly BindingList<object> Tasks = new BindingList<object>();
 
@@ -138,8 +175,8 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			// Initialize rotation
 			_RotateTransform = new RotateTransform();
-			RightIcon.RenderTransform = _RotateTransform;
-			RightIcon.RenderTransformOrigin = new Point(0.5, 0.5);
+			BusyIcon.RenderTransform = _RotateTransform;
+			BusyIcon.RenderTransformOrigin = new Point(0.5, 0.5);
 			RotateTimer = new System.Timers.Timer();
 			RotateTimer.Interval = 25;
 			RotateTimer.Elapsed += RotateTimer_Elapsed;
@@ -169,20 +206,20 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public void UpdateIcon()
 		{
+			BusyCount.Content = Tasks.Count > 1 ? $"{Tasks.Count}" : "";
 			if (Tasks.Count > 0)
 			{
-				_RightIconOriginalContent = RightIcon.Content;
-				RightIcon.Content = Icons.Current[Icons.Icon_ProcessRight];
-				RightIcon.RenderTransform = _RotateTransform;
+				BusyIcon.Visibility = Visibility.Visible;
+				RightIcon.Visibility = Visibility.Hidden;
 				RotateTimer.Start();
 			}
 			else
 			{
 				RotateTimer.Stop();
-				RightIcon.RenderTransform = null;
-				_RotateTransform.Angle = 0;
-				RightIcon.Content = _RightIconOriginalContent;
+				BusyIcon.Visibility = Visibility.Hidden;
+				RightIcon.Visibility = Visibility.Visible;
 			}
+			System.Diagnostics.Debug.WriteLine($"!!!!! {Tasks.Count}");
 		}
 
 		RotateTransform _RotateTransform;
@@ -190,6 +227,8 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private void RotateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+			if (RightIcon.Dispatcher.HasShutdownStarted)
+				return;
 #pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
 			RightIcon.Dispatcher.Invoke(() =>
 #pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs

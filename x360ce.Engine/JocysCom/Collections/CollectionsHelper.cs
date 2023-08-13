@@ -9,36 +9,32 @@ namespace JocysCom.ClassLibrary.Collections
 		/// <summary>
 		/// Synchronize source collection to destination.
 		/// </summary>
-		public static void Synchronize<T>(IList<T> source, IList<T> destination)
+		public static void Synchronize<T>(IList<T> source, IList<T> target)
 		{
+			// Convert to array to avoid modification of collection during processing.
 			var sList = source.ToArray();
+			var t = 0;
 			for (var s = 0; s < sList.Length; s++)
 			{
-				var sItem = sList[s];
-				var d = destination.IndexOf(sItem);
-				// If item is missing in destination then...
-				if (d < 0)
+				var item = sList[s];
+				// If item exists in destination and is in the correct position then continue
+				if (t < target.Count && target[t].Equals(item))
 				{
-					// Insert item at same position.
-					destination.Insert(s, sItem);
+					t++;
 					continue;
 				}
-				// Remove items which do not exists in source from current position.
-				while (!sList.Contains(destination[s]))
-					destination.Remove(destination[s]);
-				// Refresh destination index.
-				d = destination.IndexOf(sItem);
-				// If items are not at the same position then continue.
-				if (s != d)
-				{
-					// Move item to current position.
-					destination.Remove(sItem);
-					destination.Insert(s, sItem);
-				}
+				// If item is in destination but not at the correct position, remove it.
+				var indexInDestination = target.IndexOf(item);
+				if (indexInDestination != -1)
+					target.RemoveAt(indexInDestination);
+				// Insert item at the correct position.
+				target.Insert(s, item);
+				t = s + 1;
 			}
-			// Remove extra deleted records.
-			while (destination.Count() > sList.Count())
-				destination.RemoveAt(destination.Count - 1);
+			// Remove extra items.
+			while (target.Count > sList.Length)
+				target.RemoveAt(target.Count - 1);
 		}
+
 	}
 }

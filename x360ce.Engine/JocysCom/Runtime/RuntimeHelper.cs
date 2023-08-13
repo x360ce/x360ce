@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -15,7 +14,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static bool IsKnownType(Type type)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			return
 				type == typeof(string)
@@ -59,7 +58,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static string GetBuiltInTypeNameOrAlias(Type type)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			var elementType = type.IsArray
 				? type.GetElementType()
@@ -91,7 +90,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static bool IsNullableType(Type type)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			return type.IsGenericType
 				? type.GetGenericTypeDefinition() == typeof(Nullable<>)
@@ -118,9 +117,9 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void CopyFields(object source, object dest)
 		{
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
-			if (dest == null)
+			if (dest is null)
 				throw new ArgumentNullException(nameof(dest));
 			// Get type of the destination object.
 			var destType = dest.GetType();
@@ -196,9 +195,9 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		static PropertyInfo[] GetItersectingProperties(object source, object dest)
 		{
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
-			if (dest == null)
+			if (dest is null)
 				throw new ArgumentNullException(nameof(dest));
 			// Properties to read.
 			PropertyInfo[] sProperties;
@@ -243,9 +242,9 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void CopyProperties(object source, object dest)
 		{
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
-			if (dest == null)
+			if (dest is null)
 				throw new ArgumentNullException(nameof(dest));
 			// Get type of the destination object.
 			var destType = dest.GetType();
@@ -280,45 +279,6 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		#endregion
-
-		public static object CloneObject(object o)
-		{
-			if (o == null)
-				throw new ArgumentNullException(nameof(o));
-			var t = o.GetType();
-			var properties = t.GetProperties();
-			var dest = t.InvokeMember("", BindingFlags.CreateInstance, null, o, null);
-			foreach (var pi in properties)
-			{
-				if (pi.CanWrite)
-					pi.SetValue(dest, pi.GetValue(o, null), null);
-			}
-			return dest;
-		}
-
-		/// <summary>
-		/// Assign property values from their [DefaultValueAttribute] value.
-		/// </summary>
-		/// <param name="o">Object to reset properties on.</param>
-		public static void ResetPropertiesToDefault(object o, bool onlyIfNull = false)
-		{
-			if (o == null)
-				return;
-			var type = o.GetType();
-			var properties = type.GetProperties();
-			foreach (var p in properties)
-			{
-				if (p.CanRead && onlyIfNull && p.GetValue(o, null) != null)
-					continue;
-				if (!p.CanWrite)
-					continue;
-				var da = p.GetCustomAttributes(typeof(DefaultValueAttribute), false);
-				if (da.Length == 0)
-					continue;
-				var value = ((DefaultValueAttribute)da[0]).Value;
-				p.SetValue(o, value, null);
-			}
-		}
 
 		#region Convert: Object <-> Bytes
 
@@ -491,7 +451,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// </summary>
 		public static object BytesToStructure(byte[] bytes, Type type)
 		{
-			if (type == null)
+			if (type is null)
 				throw new ArgumentNullException(nameof(type));
 			var value = type.IsValueType ? Activator.CreateInstance(type) : null;
 			var handle = default(GCHandle);
@@ -539,7 +499,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			if (t.IsEnum)
 			{
-				var retValue = value == null ? false : Enum.IsDefined(t, value);
+				var retValue = value is null ? false : Enum.IsDefined(t, value);
 				result = retValue ? Enum.Parse(t, value) : default;
 				return retValue;
 			}
@@ -596,7 +556,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		public static bool IsNullable(Type t)
 		{
 			// Throw exception if type not supplied.
-			if (t == null)
+			if (t is null)
 				throw new ArgumentNullException(nameof(t));
 			// Special Handling - known cases where Exceptions would be thrown
 			else if (t == typeof(void))
@@ -715,9 +675,9 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		public static void DetectType(ref DetectTypeItem item, params string[] values)
 		{
-			if (values == null)
+			if (values is null)
 				throw new ArgumentNullException(nameof(values));
-			if (item == null)
+			if (item is null)
 				item = new DetectTypeItem();
 			// Order matters. Strictest on the top. First available type will be returned.
 			// If all values can be parsed to Int16 then it can be parsed to Int32 and Int64 too.

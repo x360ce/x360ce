@@ -17,44 +17,34 @@
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Left" Style="{StaticResource MainToolBarPanel}">
-			<ToolBar Style="{StaticResource MainToolBar}">
 				<Button
 					Name="EditButton"
-					HorizontalAlignment="Right"
-					Click="SettingsEditNoteButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Edit}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Edit Note" Style="{StaticResource ButtonLabel}" />
+					HorizontalAlignment="Left"
+					Click="SettingsEditNoteButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Edit}" />
+						<Label Content="Edit Note" />
 					</StackPanel>
 				</Button>
-			</ToolBar>
-		</ToolBarPanel>
-		<ToolBarPanel Grid.Row="0" HorizontalAlignment="Right" Style="{StaticResource MainToolBarPanel}">
-			<ToolBar Style="{StaticResource MainToolBar}">
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
 				<Button
 					Name="DeleteButton"
-					HorizontalAlignment="Right"
-					Click="DeleteButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Delete}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Delete" Style="{StaticResource ButtonLabel}" />
+					Click="DeleteButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Delete}" />
+						<Label Content="Delete" />
 					</StackPanel>
 				</Button>
-				<Button
-					Name="RefreshButton"
-					HorizontalAlignment="Right"
-					Click="RefreshButton_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Content="{StaticResource Icon_Refresh}" Style="{StaticResource ButtonContentControl}" />
-						<Label Content="Refresh" Style="{StaticResource ButtonLabel}" />
+            <Button
+					Margin="0,3,3,3"
+                    Name="RefreshButton"
+					Click="RefreshButton_Click">
+                <StackPanel>
+						<ContentControl Content="{StaticResource Icon_Refresh}" />
+						<Label Content="Refresh" />
 					</StackPanel>
 				</Button>
-			</ToolBar>
-		</ToolBarPanel>
+		</StackPanel>
 		<Border
 			Grid.Row="1"
 			Height="1"

@@ -45,9 +45,10 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
-			deadzoneLink.Dispose();
-			offsetLink.Dispose();
-			SetBinding(null);
+            // TODO: Lines below must be executed onbmly when main window close.
+            //deadzoneLink.Dispose();
+			//offsetLink.Dispose();
+			//SetBinding(null);
 		}
 
 	}

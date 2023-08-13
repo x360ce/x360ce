@@ -202,12 +202,15 @@
     <Compile Include="Data\IProgram.cs" />
     <Compile Include="Data\Layout.cs" />
     <Compile Include="Data\UserMacro.cs" />
+    <Compile Include="JocysCom\Collections\IKeyValue.cs" />
     <Compile Include="JocysCom\ComponentModel\ObservableCollectionInvoked.cs" />
     <Compile Include="JocysCom\Configuration\AssemblyInfo.Ext1.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsItemFile.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.WPF.UseWindowsForms.cs" />
     <Compile Include="JocysCom\Controls\InfoControl.xaml.cs">
       <DependentUpon>InfoControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\InfoHelpProvider.cs" />
     <Compile Include="JocysCom\Controls\InitHelper.cs" />
     <Compile Include="JocysCom\Controls\IssuesControl\IssuesControl.xaml.cs">
       <DependentUpon>IssuesControl.xaml</DependentUpon>

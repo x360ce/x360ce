@@ -46,7 +46,7 @@ namespace JocysCom.ClassLibrary
 		/// </summary>
 		public static T FindResource<T>(string name, object o)
 		{
-			if (o == null)
+			if (o is null)
 				throw new ArgumentNullException(nameof(o));
 			var resources = new System.ComponentModel.ComponentResourceManager(o.GetType());
 			return (T)(resources.GetObject(name));
@@ -268,7 +268,7 @@ namespace JocysCom.ClassLibrary
 		{
 			get
 			{
-				if (_GuidRegex == null)
+				if (_GuidRegex is null)
 				{
 					_GuidRegex = new Regex(
 				"^[A-Fa-f0-9]{32}$|" +
@@ -307,8 +307,74 @@ namespace JocysCom.ClassLibrary
 			// ---------|...|-----
 			// Null is treated as a full range.
 			return
-			(min1 == null || max2 == null || min1.Value.CompareTo(max2.Value) <= (inclusive ? 0 : -1)) &&
-			(min2 == null || max1 == null || min2.Value.CompareTo(max1.Value) <= (inclusive ? 0 : -1));
+			(min1 is null || max2 is null || min1.Value.CompareTo(max2.Value) <= (inclusive ? 0 : -1)) &&
+			(min2 is null || max1 is null || min2.Value.CompareTo(max1.Value) <= (inclusive ? 0 : -1));
+		}
+
+		#endregion
+
+		#region Run functions synchronously.
+
+		/// <summary>
+		/// Runs the specified asynchronous function synchronously.
+		/// </summary>
+		/// <param name="asyncFunc">The asynchronous function to run.</param>
+		/// <remarks>
+		/// This method avoids deadlocks by temporarily removing the current SynchronizationContext,
+		/// allowing the asynchronous function to execute without waiting for the context to be available.
+		/// The main disadvantage when compared to the Task.RunSynchronously() method is that
+		/// it bypasses the Task scheduler, which could lead to potential performance issues.
+		/// </remarks>
+		public static void RunSynchronously(Func<Task> asyncFunc)
+		{
+			// Save the current synchronization context
+			var context = SynchronizationContext.Current;
+
+			// Temporarily remove the current synchronization context
+			SynchronizationContext.SetSynchronizationContext(null);
+
+			try
+			{
+				// Execute the asynchronous function and wait for it to complete
+				asyncFunc().GetAwaiter().GetResult();
+			}
+			finally
+			{
+				// Restore the original synchronization context
+				SynchronizationContext.SetSynchronizationContext(context);
+			}
+		}
+
+		/// <summary>
+		/// Runs the specified asynchronous function synchronously and returns the result.
+		/// </summary>
+		/// <typeparam name="TResult">The type of the result.</typeparam>
+		/// <param name="asyncFunc">The asynchronous function to run.</param>
+		/// <returns>The result of the asynchronous function.</returns>
+		/// <remarks>
+		/// This method avoids deadlocks by temporarily removing the current SynchronizationContext,
+		/// allowing the asynchronous function to execute without waiting for the context to be available.
+		/// The main disadvantage when compared to the Task.RunSynchronously() method is that
+		/// it bypasses the Task scheduler, which could lead to potential performance issues.
+		/// </remarks>
+		public static TResult RunSynchronously<TResult>(Func<Task<TResult>> asyncFunc)
+		{
+			// Save the current synchronization context
+			var context = SynchronizationContext.Current;
+
+			// Temporarily remove the current synchronization context
+			SynchronizationContext.SetSynchronizationContext(null);
+
+			try
+			{
+				// Execute the asynchronous function and wait for it to complete, then return the result
+				return asyncFunc().GetAwaiter().GetResult();
+			}
+			finally
+			{
+				// Restore the original synchronization context
+				SynchronizationContext.SetSynchronizationContext(context);
+			}
 		}
 
 		#endregion

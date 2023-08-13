@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 
 namespace JocysCom.ClassLibrary.Runtime
@@ -146,13 +147,14 @@ namespace JocysCom.ClassLibrary.Runtime
 				return (T)attributes[0].Value;
 			return default;
 		}
-
+		
+		#endregion
 
 		/// <summary>
 		/// Assign property values from their [DefaultValueAttribute] value.
 		/// </summary>
 		/// <param name="o">Object to reset properties on.</param>
-		public static void ResetPropertiesToDefault(object o, bool onlyIfNull = false)
+		public static void ResetPropertiesToDefault(object o, bool onlyIfNull = false, string[] exclude = null)
 		{
 			if (o is null)
 				return;
@@ -160,6 +162,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			var properties = type.GetProperties();
 			foreach (var p in properties)
 			{
+				if (exclude?.Contains(p.Name) == true)
+					continue;
 				if (p.CanRead && onlyIfNull && p.GetValue(o, null) != null)
 					continue;
 				if (!p.CanWrite)
@@ -171,8 +175,6 @@ namespace JocysCom.ClassLibrary.Runtime
 				p.SetValue(o, value, null);
 			}
 		}
-
-		#endregion
 
 	}
 

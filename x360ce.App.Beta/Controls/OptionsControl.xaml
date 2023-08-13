@@ -1,54 +1,53 @@
 ﻿<UserControl
-	x:Class="x360ce.App.Controls.OptionsControl"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:local="clr-namespace:x360ce.App.Controls"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="500"
-	d:DesignWidth="800"
-	Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-	mc:Ignorable="d">
-	<TabControl
-		Name="MainTabControl"
-		Margin="0,0,0,0"
-		Padding="0,0,0,0"
-		x:FieldModifier="public"
-		TabStripPlacement="Top">
-		<TabItem Name="GeneralTabPage" Header="General">
-			<local:OptionsGeneralControl
-				x:Name="GeneralPanel"
-				Width="Auto"
-				Height="Auto"
-				x:FieldModifier="public" />
-		</TabItem>
-		<TabItem Name="InternetTabPage" Header="Internet">
-			<local:OptionsInternetControl
-				x:Name="InternetPanel"
-				Width="Auto"
-				Height="Auto"
-				x:FieldModifier="public" />
-		</TabItem>
-		<TabItem Name="RemoteControllerTabPage" Header="Remote Controller">
-			<local:OptionsRemoteControllerControl
-				x:Name="RemoteControllerPanel"
-				Width="Auto"
-				Height="Auto"
-				x:FieldModifier="public" />
-		</TabItem>
-		<TabItem Name="VirtualDeviceTabPage" Header="Virtual Device">
-			<local:OptionsVirtualDeviceControl
-				x:Name="VirtualDevicePanel"
-				Width="Auto"
-				Height="Auto"
-				x:FieldModifier="public" />
-		</TabItem>
-		<TabItem Name="HidGuardianTabPage" Header="HID Guardian">
-			<local:OptionsHidGuardianControl
-				x:Name="HidGuardianPanel"
-				Width="Auto"
-				Height="Auto"
-				x:FieldModifier="public" />
-		</TabItem>
-	</TabControl>
+    x:Class="x360ce.App.Controls.OptionsControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:x360ce.App.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="650"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <TabControl
+        Name="MainTabControl"
+        Margin="0,0,0,0"
+        Padding="0,0,0,0"
+        x:FieldModifier="public"
+        TabStripPlacement="Top">
+        <TabItem Name="GeneralTabPage" Header="General">
+            <local:OptionsGeneralControl
+                x:Name="GeneralPanel"
+                Width="Auto"
+                Height="Auto"
+                x:FieldModifier="public" />
+        </TabItem>
+        <TabItem Name="InternetTabPage" Header="Internet">
+            <local:OptionsInternetControl
+                x:Name="InternetPanel"
+                Width="Auto"
+                Height="Auto"
+                x:FieldModifier="public" />
+        </TabItem>
+        <TabItem Name="RemoteControllerTabPage" Header="Remote Controller">
+            <local:OptionsRemoteControllerControl
+                x:Name="RemoteControllerPanel"
+                Width="Auto"
+                Height="Auto"
+                x:FieldModifier="public" />
+        </TabItem>
+        <TabItem Name="VirtualDeviceTabPage" Header="Virtual Device">
+            <local:OptionsVirtualDeviceControl
+                x:Name="VirtualDevicePanel"
+                Width="Auto"
+                Height="Auto"
+                x:FieldModifier="public" />
+        </TabItem>
+        <TabItem Name="HidGuardianTabPage" Header="HID Guardian">
+            <local:OptionsHidGuardianControl
+                x:Name="HidGuardianPanel"
+                Width="Auto"
+                Height="Auto"
+                x:FieldModifier="public" />
+        </TabItem>
+    </TabControl>
 </UserControl>

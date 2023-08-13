@@ -210,17 +210,31 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			try
 			{
-				var fi = new System.IO.FileInfo(path);
-				// Brings up the "Windows cannot open this file" dialog if association not found.
-				var psi = new System.Diagnostics.ProcessStartInfo(path);
-				psi.UseShellExecute = true;
-				psi.WorkingDirectory = fi.Directory.FullName;
-				psi.ErrorDialog = true;
-				if (arguments != null)
-					psi.Arguments = arguments;
+
+				var psi = new System.Diagnostics.ProcessStartInfo();
+				if (Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && uri.Scheme != Uri.UriSchemeFile)
+				{
+					// Open URL
+					psi.UseShellExecute = true;
+					psi.FileName = uri.AbsoluteUri;
+					if (arguments != null)
+						psi.Arguments = arguments;
+					psi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+				}
+				else
+				{
+					// Open file/directory
+					psi.FileName = path;
+					if (arguments != null)
+						psi.Arguments = arguments;
+					var fi = new System.IO.FileInfo(path);
+					psi.UseShellExecute = true;
+					psi.ErrorDialog = true;
+					psi.WorkingDirectory = fi.Directory?.FullName ?? Environment.CurrentDirectory;
+				}
 				System.Diagnostics.Process.Start(psi);
 			}
-			catch (Exception) { }
+			catch { }
 		}
 
 		#endregion
@@ -309,7 +323,7 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				var now = DateTime.Now;
 				// Get expired controls.
-		        var keys = ControlCooldowns.Where(x => now > x.Value).Select(x => x.Key).ToList();
+				var keys = ControlCooldowns.Where(x => now > x.Value).Select(x => x.Key).ToList();
 				// Cleanup the list.
 				foreach (var key in keys)
 					ControlCooldowns.Remove(key);

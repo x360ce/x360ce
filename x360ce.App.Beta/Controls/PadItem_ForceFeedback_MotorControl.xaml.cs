@@ -63,13 +63,14 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
-			DirectionComboBox.ItemsSource = null;
-			deadzoneLink.Dispose();
-			offsetLink.Dispose();
-			testLink.Dispose();
-			// fill direction values.
-			SetBinding(null, 0);
-		}
+            // TODO: Lines below must be executed onbmly when main window close.
+            //DirectionComboBox.ItemsSource = null;
+            //deadzoneLink.Dispose();
+            //offsetLink.Dispose();
+            //testLink.Dispose();
+            // fill direction values.
+            //SetBinding(null, 0);
+        }
 
-	}
+    }
 }

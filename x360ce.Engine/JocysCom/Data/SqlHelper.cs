@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 // Requires "System.Data.SqlClient" NuGet Package on .NET Core/Standard
 using System.Data.SqlClient;
@@ -24,7 +24,7 @@ namespace JocysCom.ClassLibrary.Data
 			{
 				lock (_currentLock)
 				{
-					if (_Current == null) _Current = new SqlHelper();
+					if (_Current is null) _Current = new SqlHelper();
 					return _Current;
 				}
 			}
@@ -48,15 +48,15 @@ namespace JocysCom.ClassLibrary.Data
 			{
 				var hc = System.Web.HttpContext.Current;
 				// If application is not website.
-				if (hc == null)
+				if (hc is null)
 				{
 					sessionId = _SessionId;
 					userId = _UserId;
 				}
 				else
 				{
-					sessionId = hc.Session == null ? null : (int?)hc.Session["_SessionId"];
-					userId = hc.Session == null ? null : (int?)hc.Session["_UserId"];
+					sessionId = hc.Session is null ? null : (int?)hc.Session["_SessionId"];
+					userId = hc.Session is null ? null : (int?)hc.Session["_UserId"];
 				}
 			}
 		}
@@ -67,7 +67,7 @@ namespace JocysCom.ClassLibrary.Data
 			{
 				var hc = System.Web.HttpContext.Current;
 				// If application is not website.
-				if (hc == null)
+				if (hc is null)
 				{
 					_SessionId = sessionId;
 					_UserId = userId;
@@ -179,7 +179,7 @@ namespace JocysCom.ClassLibrary.Data
 		/// <returns>The number of rows affected.</returns>
 		public int SetSessionContext(IDbConnection connection, string key, object value, bool read_only = false)
 		{
-			if (connection == null)
+			if (connection is null)
 				throw new ArgumentNullException(nameof(connection));
 			var cmd = connection.CreateCommand();
 			cmd.CommandText = "sys.sp_set_session_context";
@@ -199,7 +199,7 @@ namespace JocysCom.ClassLibrary.Data
 		/// <returns>Value.</returns>
 		public object GetSessionContext(IDbConnection connection, string key)
 		{
-			if (connection == null)
+			if (connection is null)
 				throw new ArgumentNullException(nameof(connection));
 			var cmd = connection.CreateCommand();
 			cmd.CommandText = "SELECT SESSION_CONTEXT(@key);";
@@ -239,7 +239,7 @@ namespace JocysCom.ClassLibrary.Data
 			if (!builder.ContainsKey("Application Name") || ".Net SqlClient Data Provider".Equals(builder["Application Name"]))
 			{
 				var asm = Assembly.GetEntryAssembly();
-				if (asm == null)
+				if (asm is null)
 					asm = Assembly.GetExecutingAssembly();
 				var appPrefix = asm.GetName().Name.Replace(".", "");
 				var appName = string.Format("{0}", appPrefix);
@@ -275,13 +275,13 @@ namespace JocysCom.ClassLibrary.Data
 				isEntity = true;
 			}
 #endif
-			if (connectionString == null)
+			if (connectionString is null)
 				return null;
 			var builder = new SqlConnectionStringBuilder(connectionString);
 			if (!builder.ContainsKey("Application Name") || ".Net SqlClient Data Provider".Equals(builder["Application Name"]))
 			{
 				var asm = Assembly.GetEntryAssembly();
-				if (asm == null) asm = Assembly.GetExecutingAssembly();
+				if (asm is null) asm = Assembly.GetExecutingAssembly();
 				var appPrefix = asm.GetName().Name.Replace(".", "");
 				var appName = string.Format("{0}", appPrefix);
 				builder.Add("Application Name", appName);
@@ -306,6 +306,59 @@ namespace JocysCom.ClassLibrary.Data
 			cmd.CommandText = "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;";
 			cmd.CommandType = CommandType.Text;
 			cmd.ExecuteNonQuery();
+		}
+
+		public string GetSqlOptions(string connectionString)
+		{
+			var options = "";
+			using (var conn = new SqlConnection(connectionString))
+			{
+				var s = "";
+				s += "WITH OPTION_VALUES AS (;\r\n";
+				s += "\tSELECT;\r\n";
+				s += "\t\toptionValues.[Id],;\r\n";
+				s += "\t\toptionValues.[Name];\r\n";
+				s += "\tFROM (VALUES;\r\n";
+				s += "\t\t(1, 'DISABLE_DEF_CNST_CHK'),;\r\n";
+				s += "\t\t(2, 'IMPLICIT_TRANSACTIONS'),;\r\n";
+				s += "\t\t(4, 'CURSOR_CLOSE_ON_COMMIT'),;\r\n";
+				s += "\t\t(8, 'ANSI_WARNINGS'),;\r\n";
+				s += "\t\t(16, 'ANSI_PADDING'),;\r\n";
+				s += "\t\t(32, 'ANSI_NULLS'),;\r\n";
+				s += "\t\t(64, 'ARITHABORT'),;\r\n";
+				s += "\t\t(128, 'ARITHIGNORE'),;\r\n";
+				s += "\t\t(256, 'QUOTED_IDENTIFIER'),;\r\n";
+				s += "\t\t(512, 'NOCOUNT'),;\r\n";
+				s += "\t\t(1024, 'ANSI_NULL_DFLT_ON'),;\r\n";
+				s += "\t\t(2048, 'ANSI_NULL_DFLT_OFF'),;\r\n";
+				s += "\t\t(4096, 'CONCAT_NULL_YIELDS_NULL'),;\r\n";
+				s += "\t\t(8192, 'NUMERIC_ROUNDABORT'),;\r\n";
+				s += "\t\t(16384, 'XACT_ABORT');\r\n";
+				s += "\t) AS optionValues([Id], [name]);\r\n";
+				s += ");\r\n";
+				s += "SELECT [Name];\r\n";
+				s += "FROM OPTION_VALUES;\r\n";
+				s += "WHERE (@@OPTIONS & [Id]) = [Id]\r\n";
+				conn.Open();
+				using (var optionsSqlCommand = new SqlCommand(s, conn))
+				using (var sqlDataReader1 = optionsSqlCommand.ExecuteReader(CommandBehavior.SequentialAccess))
+					while (sqlDataReader1.Read())
+						options += $"{sqlDataReader1[0]}\r\n";
+				// Dispose calls conn.Close() internally.
+			}
+			return options;
+		}
+
+		/// <summary>Cache data for speed.</summary>
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<Type, PropertyInfo[]> Properties { get; } = new ConcurrentDictionary<Type, PropertyInfo[]>();
+
+		private static PropertyInfo[] GetProperties(Type t, bool cache = true)
+		{
+			var properties = cache
+				? Properties.GetOrAdd(t, x => t.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+				: t.GetProperties(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+			return properties;
 		}
 
 		#endregion
@@ -415,6 +468,95 @@ namespace JocysCom.ClassLibrary.Data
 			return null;
 		}
 
+		public List<T> ExecuteData<T>(string connectionString, SqlCommand cmd, string comment = null)
+		{
+			var list = new List<T>();
+			var props = typeof(T).GetProperties().ToDictionary(x => x.Name, x => x);
+			var reader = ExecuteReader(connectionString, cmd, comment);
+			while (reader.Read())
+			{
+				var item = Activator.CreateInstance<T>();
+				for (int i = 0; i < reader.FieldCount; i++)
+				{
+					var name = reader.GetName(i);
+					var value = reader.GetValue(i);
+					var property = props[name];
+					if (property != null)
+						property.SetValue(item, reader.IsDBNull(i) ? null : value, null);
+				}
+				list.Add(item);
+			}
+			return null;
+		}
+
+		#endregion
+
+		#region Optimize
+
+		public static bool Optimize = true;
+
+		/// <summary>
+		/// Optimize CommandBehavior for SqlDataReader.
+		/// SequentialAccess requires to read results in strict sequence.
+		/// var v0 = reader.GetString(0);
+		/// var v1 = reader.GetDateTime(1);
+		/// var v3 = reader.GetDouble(2);
+		/// var v4 = reader.GetDouble(3);
+		/// </summary>
+		public static CommandBehavior OptimizeBehavior(CommandBehavior behavior)
+		{
+			if (!Optimize)
+				return behavior;
+			// Automatically closes the associated SqlConnection when the SqlDataReader is closed, freeing up resources.
+			behavior |= CommandBehavior.CloseConnection;
+			// Enables the SqlDataReader to load data as a stream, improving performance when processing large amounts of data sequentially.
+			behavior |= CommandBehavior.SequentialAccess;
+			return behavior;
+		}
+
+		/// <summary>
+		/// Optimize SQL Query.
+		/// </summary>
+		public static string OptimizeQuery(string query)
+		{
+			if (!Optimize)
+				return query;
+			// Reduce the locking overhead for your query by allowing it to read uncommitted data.
+			// Achieves a similar result as using the (NOLOCK) hint in the query. 
+			query = "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED; " + query;
+			// Disable the tracking of time statistics for a query.
+			////query = "SET STATISTICS TIME OFF; " + query;
+			// Prevents sending row count messages to the client.
+			query = "SET NOCOUNT ON; " + query;
+			// Disable tracking of IO statistics for a query.
+			//query = "SET STATISTICS IO OFF; " + query;
+			// Force to recompile the execution plan each time the query is executed,
+			// which can improve performance for frequently changing data or varying input parameters.
+			//query += " OPTION (RECOMPILE)";
+			return query;
+		}
+
+		/// <summary>
+		/// Optimize SQL connection string for SqlDataReader.
+		/// </summary>
+		public static string OptimizeConnection(string connectionString)
+		{
+			if (!Optimize)
+				return connectionString;
+			var builder = new SqlConnectionStringBuilder(connectionString)
+			{
+				// Increase default packet size, potentially improving performance for queries
+				// that return large amounts of data by reducing the number of round-trips between client and server.
+				//PacketSize = 4096 * 2,
+				// Disable support for multiple active result sets, improving performance when only one result set is needed.
+				// Note: Setting `MultipleActiveResultSets = false` can have a significant impact on reducing random query delays.
+				MultipleActiveResultSets = false,
+				// Allow SQL Server to optimize for read-only queries.
+				ApplicationIntent = ApplicationIntent.ReadOnly,
+			};
+			return builder.ConnectionString;
+		}
+
 		#endregion
 
 		#region Error
@@ -451,7 +593,7 @@ namespace JocysCom.ClassLibrary.Data
 		/// </remarks>
 		public static SqlParameter[] AddArrayParameters<T>(SqlCommand cmd, string paramName, params T[] values)
 		{
-			if (cmd == null)
+			if (cmd is null)
 				throw new ArgumentNullException(nameof(cmd));
 			var parameters = new List<SqlParameter>();
 			for (int i = 0; i < values.Length; i++)
@@ -475,9 +617,9 @@ namespace JocysCom.ClassLibrary.Data
 		/// </summary>
 		public static List<T> ConvertToList<T>(DataTable table)
 		{
-			if (table == null) return null;
+			if (table is null) return null;
 			var list = new List<T>();
-			var props = typeof(T).GetProperties();
+			var props = GetProperties(typeof(T));
 			var columns = table.Columns.Cast<DataColumn>().ToArray();
 			foreach (DataRow row in table.Rows)
 			{
@@ -492,13 +634,13 @@ namespace JocysCom.ClassLibrary.Data
 		/// <param name="columnsCache">Optional for cache reasons.</param>
 		public static T Convert<T>(DataRow row, PropertyInfo[] propsCache = null, DataColumn[] columnsCache = null)
 		{
-			var props = propsCache ?? typeof(T).GetProperties();
+			var props = propsCache ?? GetProperties(typeof(T));
 			var columns = columnsCache ?? row.Table.Columns.Cast<DataColumn>().ToArray();
 			var item = Activator.CreateInstance<T>();
 			foreach (var prop in props)
 			{
 				var column = columns.FirstOrDefault(x => prop.Name.Equals(x.ColumnName, StringComparison.OrdinalIgnoreCase));
-				if (column == null)
+				if (column is null)
 					continue;
 				if (!prop.CanWrite)
 					continue;
@@ -532,7 +674,7 @@ namespace JocysCom.ClassLibrary.Data
 		/// </summary>
 		public static DataTable ConvertToTable<T>(IEnumerable<T> list)
 		{
-			if (list == null) return null;
+			if (list is null) return null;
 			var table = new DataTable();
 			var props = typeof(T).GetProperties().Where(x => x.CanRead).ToArray();
 			foreach (var prop in props)

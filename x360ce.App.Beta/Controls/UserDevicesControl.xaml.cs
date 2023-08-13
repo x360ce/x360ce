@@ -69,9 +69,9 @@ namespace x360ce.App.Controls
 		private void ShowSystemDevicesButton_Click(object sender, RoutedEventArgs e)
 		{
 			var newValue = ShowSystemDevicesButton.IsChecked ?? false;
-			ShowSystemDevicesContent.Content = newValue
-				? Icons_Default.Current[Icons_Default.Icon_checkbox]
-				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
+			//ShowSystemDevicesContent.Content = newValue
+			//	? Icons_Default.Current[Icons_Default.Icon_checkbox]
+			//	: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			ShowSystemDevices = newValue;
 			RefreshMapDeviceToList();
 		}
@@ -238,7 +238,7 @@ namespace x360ce.App.Controls
 			MainDataGrid.ItemsSource = _currentData;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
 			RefreshMapDeviceToList();
-			ControlsHelper.RestoreSelection<Guid>(MainDataGrid, nameof(UserDevice.InstanceGuid), gridSelection);
+			ControlsHelper.RestoreSelection<Guid>(MainDataGrid, nameof(UserDevice.InstanceGuid), gridSelection, true);
 		}
 
 		List<Guid> gridSelection = new List<Guid>();

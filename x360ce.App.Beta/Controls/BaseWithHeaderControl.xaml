@@ -32,32 +32,29 @@
 			Orientation="Horizontal">
 			<Button
 				Name="Button1"
-				Margin="0,0,0,0"
-				Click="Button1_Click"
-				Style="{StaticResource ToolBarButton}">
-				<StackPanel Style="{StaticResource ButtonStackPanel}">
-					<ContentControl Name="Button1Content" Content="{StaticResource Icon_ok}" Style="{StaticResource ButtonContentControl}" />
-					<Label Name="Button1Label" Content="Button 1" Style="{StaticResource ButtonLabel}" />
+				Margin="8,0,0,0"
+				Click="Button1_Click">
+				<StackPanel>
+					<ContentControl Name="Button1Content" Content="{StaticResource Icon_ok}" />
+					<Label Name="Button1Label" Content="Button 1" />
 				</StackPanel>
 			</Button>
 			<Button
 				Name="Button2"
 				Margin="8,0,0,0"
-				Click="Button2_Click"
-				Style="{StaticResource ToolBarButton}">
-				<StackPanel Style="{StaticResource ButtonStackPanel}">
-					<ContentControl Name="Button2Content" Content="{StaticResource Icon_Cancel}" Style="{StaticResource ButtonContentControl}" />
-					<Label Name="Button2Label" Content="Button 2" Style="{StaticResource ButtonLabel}" />
+				Click="Button2_Click">
+				<StackPanel>
+					<ContentControl Name="Button2Content" Content="{StaticResource Icon_Cancel}" />
+					<Label Name="Button2Label" Content="Button 2" />
 				</StackPanel>
 			</Button>
 			<Button
 				Name="Button3"
 				Margin="8,0,0,0"
-				Click="Button3_Click"
-				Style="{StaticResource ToolBarButton}">
-				<StackPanel Style="{StaticResource ButtonStackPanel}">
-					<ContentControl Name="Button3Content" Content="{StaticResource Icon_door_exit}" Style="{StaticResource ButtonContentControl}" />
-					<Label Name="Button3Label" Content="Button 3" Style="{StaticResource ButtonLabel}" />
+				Click="Button3_Click">
+				<StackPanel>
+					<ContentControl Name="Button3Content" Content="{StaticResource Icon_door_exit}" />
+					<Label Name="Button3Label" Content="Button 3" />
 				</StackPanel>
 			</Button>
 		</StackPanel>

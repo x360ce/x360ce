@@ -193,11 +193,12 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
-			controlsLink.ValueChanged -= controlsLink_ValueChanged;
-			controlsLink.Dispose();
-			controlsLink = null;
-			arrowEnabledImage = null;
-			arrowDisabledImage = null;
+			// TODO: Lines below must be executed onbmly when main window close.
+			//controlsLink.ValueChanged -= controlsLink_ValueChanged;
+			//controlsLink.Dispose();
+			//controlsLink = null;
+			//arrowEnabledImage = null;
+			//arrowDisabledImage = null;
 		}
 
 	}

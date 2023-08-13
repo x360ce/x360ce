@@ -10,6 +10,8 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+//using System.Xml.Linq;
+using JocysCom.ClassLibrary.Controls;
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
@@ -99,18 +101,6 @@ namespace JocysCom.ClassLibrary.Configuration
 		public bool UseSeparateFiles { get; set; }
 
 		[XmlIgnore]
-		public string FileNamePropertyName
-		{
-			get => _FileNamePropertyName;
-			set { _FileNamePropertyName = value; FileNameProperty = typeof(T).GetProperty(value); }
-		}
-		string _FileNamePropertyName;
-
-
-		[XmlIgnore]
-		public PropertyInfo FileNameProperty { get; set; }
-
-		[XmlIgnore]
 		public FileInfo XmlFile { get { return _XmlFile; } set { _XmlFile = value; } }
 
 		[NonSerialized]
@@ -188,20 +178,25 @@ namespace JocysCom.ClassLibrary.Configuration
 						di.Create();
 					for (int i = 0; i < items.Length; i++)
 					{
-						var item = items[i];
-						var bytes = Serializer.SerializeToXmlBytes(item, Encoding.UTF8, true, _Comment);
-						var fileName = GetFileNameWithoutExtension(item) + fi.Extension;
+						var fileItem = (ISettingsItemFile)items[i];
+						var bytes = Serialize(fileItem);
+						var fileName = RemoveInvalidFileNameChars(fileItem.BaseName) + fi.Extension;
 						var fileFullName = Path.Combine(di.FullName, fileName);
 						if (compress)
 							bytes = SettingsHelper.Compress(bytes);
-						SettingsHelper.WriteIfDifferent(fileFullName, bytes);
+						if (SettingsHelper.WriteIfDifferent(fileFullName, bytes))
+						{
+							fi.Refresh();
+							fileItem.WriteTime = new FileInfo(fileFullName).LastWriteTime;
+						}
+
 					}
 				}
 				else
 				{
 					if (!fi.Directory.Exists)
 						fi.Directory.Create();
-					var bytes = Serializer.SerializeToXmlBytes(this, Encoding.UTF8, true, _Comment);
+					var bytes = Serialize(this);
 					if (compress)
 						bytes = SettingsHelper.Compress(bytes);
 					SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
@@ -210,7 +205,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			SetFileMonitoring(true);
 		}
 
-		static string RemoveInvalidFileNameChars(string name)
+		public static string RemoveInvalidFileNameChars(string name)
 		{
 			var invalidChars = Path.GetInvalidFileNameChars();
 			return new string(name.Where(c => !invalidChars.Contains(c)).ToArray());
@@ -300,12 +295,13 @@ namespace JocysCom.ClassLibrary.Configuration
 									try
 									{
 										var item = DeserializeItem(bytes, compress);
+										var itemFile = (ISettingsItemFile)item;
+										itemFile.WriteTime = file.LastWriteTime;
 										// Set Name property value to the same as the file.
-										var name = GetFileNameWithoutExtension(item);
-										var fileNamePropertyValue = (string)FileNameProperty.GetValue(item);
+										var name = RemoveInvalidFileNameChars(file.Name);
 										var fileBaseName = Path.GetFileNameWithoutExtension(file.Name);
-										if (fileNamePropertyValue != fileBaseName)
-											FileNameProperty.SetValue(item, fileBaseName);
+										if (itemFile.BaseName != fileBaseName)
+											itemFile.BaseName = fileBaseName;
 										data.Add(item);
 									}
 									catch { }
@@ -397,21 +393,14 @@ namespace JocysCom.ClassLibrary.Configuration
 			return path;
 		}
 
-		public string GetFileNameWithoutExtension(T item)
-		{
-			var name = (string)FileNameProperty.GetValue(item);
-			name = RemoveInvalidFileNameChars(name);
-			return name;
-		}
-
 		/// <summary>
 		/// Returns error.
 		/// </summary>
-		public string RenameItem(T item, string newName)
+		public string RenameItem(ISettingsItemFile itemFile, string newName)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = GetFileNameWithoutExtension(item);
+				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
 				// Case sensitive comparison.
 				if (string.Equals(oldName, newName, StringComparison.Ordinal))
 					return null;
@@ -422,22 +411,36 @@ namespace JocysCom.ClassLibrary.Configuration
 				if (invalidChars.Any())
 					return $"File name cannot contain invalid characters: {string.Join("", invalidChars)}";
 				var oldPath = GetItemFileFullName(oldName);
-				var oldFile = new FileInfo(oldPath);
+				var file = new FileInfo(oldPath);
 				var newPath = GetItemFileFullName(newName);
-				// If only case changed then rename to temp file first.
-				if (string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+				// Disable monitoring in order not to trigger reloading.
+				SetFileMonitoring(false);
+				try
 				{
-					var tempFilePath = Path.Combine(Path.GetDirectoryName(oldPath), Guid.NewGuid().ToString() + Path.GetExtension(oldPath));
-					oldFile.MoveTo(tempFilePath);
+					// If only case changed then rename to temp file first.
+					if (string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
+					{
+						var tempFilePath = Path.Combine(Path.GetDirectoryName(oldPath), Guid.NewGuid().ToString() + Path.GetExtension(oldPath));
+						file.MoveTo(tempFilePath);
+					}
+					else if (File.Exists(newPath))
+					{
+						return "File with the same name already exists.";
+					}
+					if (file.Exists)
+					{
+						file.MoveTo(newPath);
+						itemFile.BaseName = newName;
+						itemFile.WriteTime = file.LastWriteTime;
+					}
 				}
-				else if (File.Exists(newPath))
+				catch (Exception)
 				{
-					return "File with the same name already exists.";
+					throw;
 				}
-				if (oldFile.Exists)
+				finally
 				{
-					oldFile.MoveTo(newPath);
-					FileNameProperty.SetValue(item, newName);
+					SetFileMonitoring(true);
 				}
 				return null;
 			}
@@ -446,25 +449,25 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Returns new name.
 		/// </summary>
-		public void DeleteItem(T item)
+		public void DeleteItem(ISettingsItemFile itemFile)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = GetFileNameWithoutExtension(item);
+				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
 				var oldPath = GetItemFileFullName(oldName);
 				var fi = new FileInfo(oldPath);
 				if (fi.Exists)
 					fi.Delete();
-				Items.Remove(item);
+				Items.Remove((T)itemFile);
 			}
 		}
 
 		#endregion
 
+		public bool ClearWhenLoading = false;
+
 		void LoadAndValidateData(IList<T> data)
 		{
-			// Clear original data.
-			Items.Clear();
 			if (data is null)
 				data = new SortableBindingList<T>();
 			// Filter data if filter method exists.
@@ -475,9 +478,93 @@ namespace JocysCom.ClassLibrary.Configuration
 			// Filter data if filter method exists.
 			var e = new SettingsDataEventArgs(items);
 			OnValidateData?.Invoke(this, e);
-			for (int i = 0; i < items.Count; i++)
-				Items.Add(items[i]);
+			if (ClearWhenLoading)
+			{
+				// Clear original data.
+				Items.Clear();
+				for (int i = 0; i < items.Count; i++)
+					Items.Add(items[i]);
+			}
+			else
+			{
+				var oldList = GetHashValues(Items);
+				var newList = GetHashValues(data).ToArray();
+				var newData = new List<T>();
+				// Step 1: Update new list with the old items if they are exactly the same.
+				for (int i = 0; i < newList.Length; i++)
+				{
+					var newItem = newList[i];
+					// Find same item from the old list.
+					var oldItem = oldList.FirstOrDefault(x => x.Value.SequenceEqual(newItem.Value));
+					// If same item found then use it...
+					if (oldItem.Key != null)
+					{
+						newData.Add(oldItem.Key);
+						oldList.Remove(oldItem.Key);
+					}
+					else
+					{
+						newData.Add(newItem.Key);
+					}
+				}
+				SettingsHelper.Synchronize(newData, Items);
+			}
 		}
+
+		#region Synchronize
+
+		/// <summary>
+		/// Synchronize source collection to destination.
+		/// </summary>
+		/// <remarks>
+		/// Same Code:
+		/// JocysCom\Controls\SearchHelper.cs
+		/// </remarks>
+		public static void Synchronize(IList<T> source, IList<T> target)
+		{
+			// Convert to array to avoid modification of collection during processing.
+			var sList = source.ToArray();
+			var t = 0;
+			for (var s = 0; s < sList.Length; s++)
+			{
+				var item = sList[s];
+				// If item exists in destination and is in the correct position then continue
+				if (t < target.Count && target[t].Equals(item))
+				{
+					t++;
+					continue;
+				}
+				// If item is in destination but not at the correct position, remove it.
+				var indexInDestination = target.IndexOf(item);
+				if (indexInDestination != -1)
+					target.RemoveAt(indexInDestination);
+				// Insert item at the correct position.
+				target.Insert(s, item);
+				t = s + 1;
+			}
+			// Remove extra items.
+			while (target.Count > sList.Length)
+				target.RemoveAt(target.Count - 1);
+		}
+
+
+		/// <summary>
+		/// Return list of items their SHA256 hash.
+		/// </summary>
+		Dictionary<T, byte[]> GetHashValues(IList<T> items)
+		{
+			var list = new Dictionary<T, byte[]>();
+			var algorithm = System.Security.Cryptography.SHA256.Create();
+			foreach (var item in items)
+			{
+				var bytes = Serialize(item);
+				var byteHash = algorithm.ComputeHash(bytes);
+				list.Add(item, byteHash);
+			}
+			return list;
+		}
+
+		#endregion
 
 		public bool ResetToDefault()
 		{
@@ -515,6 +602,11 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 			LoadAndValidateData(data is null ? null : data.Items);
 			return success;
+		}
+
+		byte[] Serialize(object fileItem)
+		{
+			return Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
 		}
 
 		SettingsData<T> DeserializeData(byte[] bytes, bool compressed)

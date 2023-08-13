@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -151,6 +152,51 @@ namespace JocysCom.ClassLibrary.Configuration
 			for (int i = 0; i < bytes.Length; ++i)
 				crc = (crc >> 8) ^ table[(byte)(((crc) & 0xff) ^ bytes[i])];
 			return ~crc;
+		}
+
+		#endregion
+
+		#region  Synchronizing
+
+		/// <summary>
+		/// Synchronize source collection to destination.
+		/// </summary>
+		/// <remarks>
+		/// Same Code:
+		/// JocysCom\Controls\SearchHelper.cs
+		/// JocysCom\Configuration\SettingsHelper.cs
+		/// </remarks>
+		public static void Synchronize<T>(IList<T> source, IList<T> target)
+		{
+			// Create a dictionary for fast lookup in source list
+			var sourceSet = new Dictionary<T, int>();
+			for (int i = 0; i < source.Count; i++)
+				sourceSet[source[i]] = i;
+			// Iterate over the target, remove items not in source
+			for (int i = target.Count - 1; i >= 0; i--)
+				if (!sourceSet.ContainsKey(target[i]))
+					target.RemoveAt(i);
+			// Iterate over source
+			for (int s = 0; s < source.Count; s++)
+			{
+				// If item is not present in target, insert it.
+				if (!target.Contains(source[s]))
+				{
+					target.Insert(s, source[s]);
+					continue;
+				}
+				// If item is present in target but not at the right position, move it.
+				int t = target.IndexOf(source[s]);
+				if (t != s)
+				{
+					T temp = target[s];
+					target[s] = target[t];
+					target[t] = temp;
+				}
+			}
+			// Remove items at the end of target that exceed source's length
+			while (target.Count > source.Count)
+				target.RemoveAt(target.Count - 1);
 		}
 
 		#endregion

@@ -112,7 +112,7 @@ namespace x360ce.App.Controls
 				var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
 				if (mappedUserSettings.Count(x => x.IsEnabled) > 1)
 					title += " (Combine)";
-				ControlsHelper.SetText(EnabledLabel, title);
+				EnabledCheckBox.Content = title;
 			}
 		}
 
@@ -139,15 +139,15 @@ namespace x360ce.App.Controls
 			// Update Virtual.
 			var virt = game != null && ((MapToMask)game.EnableMask).HasFlag(flag);
 			EnabledCheckBox.IsChecked = virt;
-			EnabledContentControl.Content = virt
-				? Icons_Default.Current[Icons_Default.Icon_checkbox]
-				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
+			//EnabledContentControl.Content = virt
+			//	? Icons_Default.Current[Icons_Default.Icon_checkbox]
+			//	: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			// Update AutoMap.
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
 			AutoMapCheckBox.IsChecked = auto;
-			AutoMapContentControl.Content = auto
-				? Icons_Default.Current[Icons_Default.Icon_checkbox]
-				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
+			//AutoMapContentControl.Content = auto
+			//	? Icons_Default.Current[Icons_Default.Icon_checkbox]
+			//	: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			MainDataGrid.IsEnabled = !auto;
 			MainDataGrid.Background = auto
 				? SystemColors.ControlBrush
@@ -181,9 +181,9 @@ namespace x360ce.App.Controls
 			var box = (CheckBox)sender;
 			var newValue = box.IsChecked ?? false;
 			// ShowSystemDevicesButton.IsChecked = newValue;
-			EnabledContentControl.Content = newValue
-				? Icons_Default.Current[Icons_Default.Icon_checkbox]
-				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
+			//EnabledContentControl.Content = newValue
+			//	? Icons_Default.Current[Icons_Default.Icon_checkbox]
+			//	: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			// Process.
 			var game = SettingsManager.CurrentGame;
 			// If no game selected then ignore click.
@@ -218,9 +218,9 @@ namespace x360ce.App.Controls
 			var box = (CheckBox)sender;
 			var newValue = box.IsChecked ?? false;
 			// ShowSystemDevicesButton.IsChecked = newValue;
-			AutoMapContentControl.Content = newValue
-				? Icons_Default.Current[Icons_Default.Icon_checkbox]
-				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
+			//AutoMapContentControl.Content = newValue
+			//	? Icons_Default.Current[Icons_Default.Icon_checkbox]
+			//	: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 			// Process.
 			var game = SettingsManager.CurrentGame;
 			// If no game selected then ignore click.
@@ -294,9 +294,9 @@ namespace x360ce.App.Controls
 			var box = (CheckBox)sender;
 			var newValue = box.IsChecked ?? false;
 			// ShowSystemDevicesButton.IsChecked = newValue;
-			UseXInputStateContentControl.Content = newValue
-				? Icons_Default.Current[Icons_Default.Icon_checkbox]
-				: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
+			//UseXInputStateContentControl.Content = newValue
+			//	? Icons_Default.Current[Icons_Default.Icon_checkbox]
+			//	: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
 
 			ControlsHelper.BeginInvoke(() =>
 			{
@@ -440,7 +440,7 @@ namespace x360ce.App.Controls
 			SetBinding(MapTo.None);
 			SettingsManager.UnLoadMonitor(EnabledCheckBox);
 			_MainDataGridFormattingConverter = null;
-			UseXInputStateContentControl.Content = null;
+			//UseXInputStateContentControl.Content = null;
 			mappedUserSettings.Clear();
 		}
 	}
