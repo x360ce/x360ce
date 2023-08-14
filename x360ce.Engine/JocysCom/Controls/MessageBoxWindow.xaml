@@ -35,8 +35,7 @@
 					Height="48"
 					Margin="8"
 					VerticalAlignment="Top"
-					Content="{StaticResource Icon_OK}"
-					Style="{StaticResource ButtonContentControl}" />
+					Content="{StaticResource Icon_OK}" />
 			</StackPanel>
 			<DockPanel
 				Grid.Column="1"
@@ -80,46 +79,31 @@
 					NavigateUri="http://localhost"
 					RequestNavigate="MainHyperLink_RequestNavigate"
 					TextDecorations="None">
-					<TextBlock x:Name="LinkLabel">MainHyperLink</TextBlock>
+					<TextBlock x:Name="LinkLabel" Text="MainHyperLink" />
 				</Hyperlink>
-				<TextBlock x:Name="SizeLabel" Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">0</TextBlock>
+				<TextBlock x:Name="SizeLabel" Opacity="0.5" Text="0"/>
 			</TextBlock>
 			<StackPanel
 				Grid.Column="1"
 				Margin="8,8,8,8"
 				HorizontalAlignment="Right"
 				Orientation="Horizontal">
-				<Button
-					Name="Button1"
-					MinWidth="75"
-					Margin="0,0,0,0"
-					Click="Button_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Name="Button1Content" Content="{StaticResource Icon_OK}" Style="{StaticResource ButtonContentControl}" />
-						<Label Name="Button1Label" Content="Button 1" Style="{StaticResource ButtonLabel}" />
+				<Button Name="Button1" Margin="0,0,0,0" Click="Button_Click">
+					<StackPanel>
+						<ContentControl Name="Button1Content" Content="{StaticResource Icon_OK}" />
+						<Label Name="Button1Label" Content="Button 1" />
 					</StackPanel>
 				</Button>
-				<Button
-					Name="Button2"
-					MinWidth="75"
-					Margin="8,0,0,0"
-					Click="Button_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Name="Button2Content" Content="{StaticResource Icon_Cancel}" Style="{StaticResource ButtonContentControl}" />
-						<Label Name="Button2Label" Content="Button 2" Style="{StaticResource ButtonLabel}" />
+				<Button Name="Button2" Margin="8,0,0,0" Click="Button_Click">
+					<StackPanel>
+						<ContentControl Name="Button2Content" Content="{StaticResource Icon_Cancel}" />
+						<Label Name="Button2Label" Content="Button 2" />
 					</StackPanel>
 				</Button>
-				<Button
-					Name="Button3"
-					Margin="8,0,0,0"
-					HorizontalContentAlignment="Stretch"
-					Click="Button_Click"
-					Style="{StaticResource ToolBarButton}">
-					<StackPanel HorizontalAlignment="Stretch" Style="{StaticResource ButtonStackPanel}">
-						<ContentControl Name="Button3Content" Content="{StaticResource Icon_Exit}" Style="{StaticResource ButtonContentControl}" />
-						<Label Name="Button3Label" Content="Button 3" Style="{StaticResource ButtonLabel}" />
+				<Button Name="Button3" Margin="8,0,0,0" Click="Button_Click">
+					<StackPanel>
+						<ContentControl Name="Button3Content" Content="{StaticResource Icon_Exit}" />
+						<Label Name="Button3Label" Content="Button 3" />
 					</StackPanel>
 				</Button>
 			</StackPanel>
