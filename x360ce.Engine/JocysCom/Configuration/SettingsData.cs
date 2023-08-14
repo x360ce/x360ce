@@ -189,7 +189,6 @@ namespace JocysCom.ClassLibrary.Configuration
 							fi.Refresh();
 							fileItem.WriteTime = new FileInfo(fileFullName).LastWriteTime;
 						}
-
 					}
 				}
 				else

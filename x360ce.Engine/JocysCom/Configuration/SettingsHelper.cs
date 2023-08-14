@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
@@ -166,32 +167,41 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// JocysCom\Controls\SearchHelper.cs
 		/// JocysCom\Configuration\SettingsHelper.cs
 		/// </remarks>
-		public static void Synchronize<T>(IList<T> source, IList<T> target)
+		public static void Synchronize<T>(IList<T> source, IList<T> target, IEqualityComparer<T> comparer = null)
 		{
+			comparer = comparer ?? EqualityComparer<T>.Default;
 			// Create a dictionary for fast lookup in source list
 			var sourceSet = new Dictionary<T, int>();
 			for (int i = 0; i < source.Count; i++)
 				sourceSet[source[i]] = i;
 			// Iterate over the target, remove items not in source
 			for (int i = target.Count - 1; i >= 0; i--)
-				if (!sourceSet.ContainsKey(target[i]))
+				if (!sourceSet.Keys.Contains(target[i], comparer))
 					target.RemoveAt(i);
 			// Iterate over source
-			for (int s = 0; s < source.Count; s++)
+			for (int si = 0; si < source.Count; si++)
 			{
 				// If item is not present in target, insert it.
-				if (!target.Contains(source[s]))
+				if (!target.Contains(source[si], comparer))
 				{
-					target.Insert(s, source[s]);
+					target.Insert(si, source[si]);
 					continue;
 				}
 				// If item is present in target but not at the right position, move it.
-				int t = target.IndexOf(source[s]);
-				if (t != s)
+				int ti = -1;
+				for (int i = 0; i < target.Count; i++)
 				{
-					T temp = target[s];
-					target[s] = target[t];
-					target[t] = temp;
+					if (comparer.Equals(target[i], source[si]))
+					{
+						ti = i;
+						break;
+					}
+				}
+				if (ti != si)
+				{
+					T temp = target[si];
+					target[si] = target[ti];
+					target[ti] = temp;
 				}
 			}
 			// Remove items at the end of target that exceed source's length

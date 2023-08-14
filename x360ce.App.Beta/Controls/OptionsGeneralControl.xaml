@@ -105,7 +105,19 @@
                                 Grid.Row="1"
                                 Width="480"
                                 Height="100"
-                                BorderThickness="0" />
+                                BorderThickness="0">
+                                <ListBox.OpacityMask>
+                                    <VisualBrush>
+                                        <VisualBrush.Visual>
+                                            <Border
+                                                Width="{Binding ActualWidth, ElementName=GameScanLocationsListBox}"
+                                                Height="{Binding ActualHeight, ElementName=GameScanLocationsListBox}"
+                                                Background="White"
+                                                CornerRadius="0,0,5,5" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </ListBox.OpacityMask>
+                            </ListBox>
                         </Grid>
                     </StackPanel>
                 </TabItem>

@@ -646,14 +646,12 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (grid is null)
 				throw new ArgumentNullException(nameof(grid));
-			if (list is null)
-				throw new ArgumentNullException(nameof(list));
 			var items = grid.Items.Cast<object>().ToArray();
 			// Return if grid is empty.
 			if (items.Length == 0)
 				return false;
 			// If something to restore then...
-			if (list.Count > 0)
+			if (list?.Count > 0)
 			{
 				var selectedItems = new List<object>();
 				var pi = GetPropertyInfo(keyPropertyName, items[0]);

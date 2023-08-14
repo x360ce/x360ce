@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <WrapPanel Orientation="Horizontal">
+        <WrapPanel Orientation="Horizontal" Margin="3">
             <GroupBox Header="Online Account - Login">
                 <Grid>
                     <Grid.RowDefinitions>

@@ -60,19 +60,21 @@
         <!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
     </Style>
 
-    <!--  UserControl  -->
+    <!--  StatusBar  -->
+    <Style x:Key="StatusBar_Default" TargetType="StatusBar">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Background" Value="{StaticResource BackgroundLight}" />
+    </Style>
 
+    <!--  UserControl  -->
     <Style x:Key="UserControl_Default" TargetType="UserControl">
-        <!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
         <Setter Property="Background" Value="{StaticResource BackgroundLight}" />
     </Style>
 
     <!--  Grid  -->
-
     <Style x:Key="Grid_Default" TargetType="Grid" />
 
     <!--  GridSplitter  -->
-
     <Style x:Key="GridSplitterHorizontal" TargetType="GridSplitter">
         <Setter Property="Padding" Value="0,0,0,0" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -364,7 +366,7 @@
                         </Grid.RowDefinitions>
                         <TabPanel x:Name="HeaderPanel" Panel.ZIndex="1" IsItemsHost="True" />
                         <Border
-                            x:Name="Border"
+                            x:Name="TabControlBorder"
                             Grid.Row="1"
                             BorderBrush="{StaticResource BorderDark}"
                             BorderThickness="1"
@@ -372,6 +374,18 @@
                             KeyboardNavigation.DirectionalNavigation="Contained"
                             KeyboardNavigation.TabIndex="2"
                             KeyboardNavigation.TabNavigation="Local">
+                            <!--<Border.OpacityMask>
+                                <VisualBrush>
+                                    <VisualBrush.Visual>
+                                        <Border
+                                            SnapsToDevicePixels="True"
+                                            Width="{Binding ActualWidth, ElementName=TabControlBorder}"
+                                            Height="{Binding ActualHeight, ElementName=TabControlBorder}"
+                                            Background="White"
+                                            CornerRadius="0,5,5,5" />
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </Border.OpacityMask>-->
                             <ContentPresenter ContentSource="SelectedContent" />
                         </Border>
                     </Grid>
@@ -1265,6 +1279,7 @@
     <!--  TabControl_Default style is making control to fail garbage collection (leak memory)  -->
     <Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />
     <Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
+    <Style BasedOn="{StaticResource StatusBar_Default}" TargetType="StatusBar" />
 
 
 </ResourceDictionary>
