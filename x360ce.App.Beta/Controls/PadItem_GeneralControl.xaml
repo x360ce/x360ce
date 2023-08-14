@@ -18,48 +18,46 @@
                         <Setter Property="HorizontalAlignment" Value="Right" />
                         <Setter Property="Orientation" Value="Horizontal" />
                     </Style>
-                    <Style TargetType="Label">
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                    </Style>
-                    <!--  TextBox  -->
                     <Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
                         <Setter Property="MinWidth" Value="75" />
                     </Style>
-                    <!--  Menu  -->
-                    <Style x:Key="MapMenu" TargetType="Menu">
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                    </Style>
-                    <!--  MenuItem  -->
-                    <Style x:Key="TopItem" TargetType="MenuItem">
-                        <Setter Property="Width" Value="24" />
-                        <Setter Property="Height" Value="24" />
-                        <Setter Property="BorderThickness" Value="0" />
-                        <Style.Resources>
-                            <Style TargetType="Grid">
-                                <Setter Property="Margin" Value="1" />
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="Transparent" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Style.Resources>
-                    </Style>
-                    <!--  MenuIcon  -->
-                    <Style x:Key="MenuIcon" TargetType="ContentControl">
-                        <Setter Property="Width" Value="12" />
-                        <Setter Property="Height" Value="12" />
-                        <Setter Property="Content" Value="{StaticResource Icon_navigate_close}" />
-                    </Style>
                     <!--  Menu template  -->
-                    <ControlTemplate x:Key="ReusableMenuTemplate" TargetType="Control">
-                        <Menu Style="{StaticResource MapMenu}">
-                            <MenuItem Click="MenuItem_Click" Style="{StaticResource TopItem}">
-                                <MenuItem.Icon>
-                                    <ContentControl Style="{StaticResource MenuIcon}" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                        </Menu>
+                    <ControlTemplate x:Key="ReusableMenuTemplate" TargetType="Menu">
+                        <Grid>
+                            <Border
+                                Name="MenuBorder"
+                                Width="26"
+                                Height="26"
+                                Padding="6"
+                                VerticalAlignment="Center"
+                                Background="{StaticResource BackgroundDark}"
+                                CornerRadius="5">
+                                <Viewbox>
+                                    <Path
+                                        Name="Arrow"
+                                        Width="10"
+                                        Height="5"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="M 0,0 L 10,0 L 5,5 Z"
+                                        Fill="Black"
+                                        RenderTransformOrigin="0.5,0.5" />
+                                </Viewbox>
+                            </Border>
+                            <Menu Background="Transparent" Tag="{TemplateBinding Tag}">
+                                <MenuItem
+                                    Width="26"
+                                    Height="26"
+                                    Click="MenuItem_Click"
+                                    Opacity="0"
+                                    Visibility="Visible" />
+                            </Menu>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="MenuBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
@@ -102,42 +100,42 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="LeftTriggerLabel" Content="Trigger" />
                 <TextBox x:Name="LeftTriggerTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=LeftTriggerTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=LeftTriggerTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 
             </StackPanel>
             <!--  LeftShoulder  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="LeftShoulderLabel" Content="Bumper" />
                 <TextBox x:Name="LeftShoulderTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=LeftShoulderTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=LeftShoulderTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 
             </StackPanel>
             <!--  ButtonBack  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="ButtonBackLabel" Content="Back" />
                 <TextBox x:Name="ButtonBackTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=ButtonBackTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=ButtonBackTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
 
             <!--  ButtonStart  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="ButtonStartLabel" Content="Start" />
                 <TextBox x:Name="ButtonStartTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=ButtonStartTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=ButtonStartTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
 
             <!--  ButtonGuide  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="ButtonGuideLabel" Content="Guide" />
                 <TextBox x:Name="ButtonGuideTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=ButtonGuideTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=ButtonGuideTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
 
             <!--  DPad  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="DPadLabel" Content="D-Pad" />
                 <TextBox x:Name="DPadTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=DPadTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=DPadTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
 
             <!--  LeftThumb  -->
@@ -154,19 +152,19 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="LeftThumbAxisXLabel" Content="Stick Axis X" />
                 <TextBox x:Name="LeftThumbAxisXTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=LeftThumbAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=LeftThumbAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  LeftThumbAxisY  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="LeftThumbAxisYLabel" Content="Stick Axis Y" />
                 <TextBox x:Name="LeftThumbAxisYTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=LeftThumbAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=LeftThumbAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  LeftThumbButton  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="LeftThumbButtonLabel" Content="Stick Button" />
                 <TextBox x:Name="LeftThumbButtonTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=LeftThumbButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=LeftThumbButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Row="2" Grid.Column="0">
@@ -174,25 +172,25 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="LeftThumbUpLabel" Content="Stick Up" />
                 <TextBox x:Name="LeftThumbUpTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=LeftThumbUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=LeftThumbUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  LeftThumbLeft  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="LeftThumbLeftLabel" Content="Stick Left" />
                 <TextBox x:Name="LeftThumbLeftTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=LeftThumbLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=LeftThumbLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  LeftThumbRight  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="LeftThumbRightLabel" Content="Stick Right" />
                 <TextBox x:Name="LeftThumbRightTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=LeftThumbRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=LeftThumbRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  LeftThumbDown  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="LeftThumbDownLabel" Content="Stick Down" />
                 <TextBox x:Name="LeftThumbDownTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=LeftThumbDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=LeftThumbDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
         </StackPanel>
 
@@ -250,39 +248,39 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="RightTriggerLabel" Content="Trigger" />
                 <TextBox x:Name="RightTriggerTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=RightTriggerTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=RightTriggerTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
 
             <!--  RightShoulder  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="RightShoulderLabel" Content="Bumper" />
                 <TextBox x:Name="RightShoulderTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=RightShoulderTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=RightShoulderTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
 
             <!--  ButtonY  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="ButtonYLabel" Content="Y Button" />
                 <TextBox x:Name="ButtonYTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=ButtonYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=ButtonYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  ButtonX  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="ButtonXLabel" Content="X Button" />
                 <TextBox x:Name="ButtonXTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=ButtonXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=ButtonXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  ButtonB  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="ButtonBLabel" Content="B Button" />
                 <TextBox x:Name="ButtonBTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=ButtonBTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=ButtonBTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  ButtonA  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="ButtonALabel" Content="A Button" />
                 <TextBox x:Name="ButtonATextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=ButtonATextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=ButtonATextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
 
             <!--  RightThumb  -->
@@ -299,19 +297,19 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="RightThumbAxisXLabel" Content="Stick Axis X" />
                 <TextBox x:Name="RightThumbAxisXTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=RightThumbAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=RightThumbAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  RightThumbAxisY  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="RightThumbAxisYLabel" Content="Stick Axis Y" />
                 <TextBox x:Name="RightThumbAxisYTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=RightThumbAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=RightThumbAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  RightThumbButton  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="RightThumbButtonLabel" Content="Stick Button" />
                 <TextBox x:Name="RightThumbButtonTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=RightThumbButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=RightThumbButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
         </StackPanel>
 
@@ -321,25 +319,25 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="DPadUpLabel" Content="D-Pad Up" />
                 <TextBox x:Name="DPadUpTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=DPadUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=DPadUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  DPadLeft  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="DPadLeftLabel" Content="D-Pad Left" />
                 <TextBox x:Name="DPadLeftTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=DPadLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=DPadLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  DPadRight  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="DPadRightLabel" Content="D-Pad Right" />
                 <TextBox x:Name="DPadRightTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=DPadRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=DPadRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  DPadDown  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="DPadDownLabel" Content="D-Pad Down" />
                 <TextBox x:Name="DPadDownTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=DPadDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=DPadDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
         </StackPanel>
 
@@ -349,25 +347,25 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="RightThumbUpLabel" Content="Stick Up" />
                 <TextBox x:Name="RightThumbUpTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=RightThumbUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=RightThumbUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  RightThumbLeft  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="RightThumbLeftLabel" Content="Stick Left" />
                 <TextBox x:Name="RightThumbLeftTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=RightThumbLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=RightThumbLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  RightThumbRight  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="RightThumbRightLabel" Content="Stick Right" />
                 <TextBox x:Name="RightThumbRightTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=RightThumbRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=RightThumbRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
             <!--  RighthumbDown  -->
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label x:Name="RightThumbDownLabel" Content="Stick Down" />
                 <TextBox x:Name="RightThumbDownTextBox" x:FieldModifier="public" />
-                <Control Tag="{Binding ElementName=RightThumbDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+                <Menu Tag="{Binding ElementName=RightThumbDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
             </StackPanel>
         </StackPanel>
     </Grid>

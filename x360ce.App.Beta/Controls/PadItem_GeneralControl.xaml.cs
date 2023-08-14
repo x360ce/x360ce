@@ -319,7 +319,7 @@ namespace x360ce.App.Controls
             foreach (var item in DiMenuStrip)
                 mi.Items.Add(item);
 
-            var control = (Control)mi.Parent;
+            var control = (Menu)mi.Parent;
             CurrentTextBox = (TextBox)control.Tag;
 
             ControlsHelper.BeginInvoke(() =>
