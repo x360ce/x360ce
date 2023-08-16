@@ -184,6 +184,94 @@
 
 	-->
 
+    <!--  Menu template  -->
+    <Style x:Key="Menu_Default" TargetType="Menu">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Menu">
+                    <Grid>
+                        <Border
+                            Name="MenuBorder"
+                            Height="26"
+                            MinWidth="26"
+                            Padding="6,0,6,0"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource BackgroundDark}"
+                            CornerRadius="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Label
+                                    Height="Auto"
+                                    Padding="0,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Content="{TemplateBinding Tag}" />
+                                <Viewbox Grid.Column="1" Width="14" Stretch="Uniform">
+                                    <Path
+                                        Name="Arrow"
+                                        Width="10"
+                                        Height="5"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="M 0,0 L 10,0 L 5,5 Z"
+                                        Fill="Black"
+                                        RenderTransformOrigin="0.5,0.5" />
+                                </Viewbox>
+                            </Grid>
+                        </Border>
+                        <Popup
+                            Name="PART_MenuPopup"
+                            AllowsTransparency="True"
+                            IsOpen="{Binding Path=IsMouseOver, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                            Placement="Bottom">
+                            <Border Background="{StaticResource BackgroundDark}" CornerRadius="5">
+                                <StackPanel IsItemsHost="True" />
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="MenuBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Resources>
+            <!--  MenuItem Template  -->
+            <Style TargetType="MenuItem">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="MenuItem">
+                            <Border Name="PART_Border" Padding="10,5,10,5" CornerRadius="5">
+                                <Grid>
+                                    <Popup
+                                        Name="PART_Popup"
+                                        AllowsTransparency="True"
+                                        IsOpen="{Binding Path=IsMouseOver, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                                        Placement="Bottom">
+                                        <Border Background="{StaticResource BackgroundDark}" CornerRadius="5">
+                                            <StackPanel IsItemsHost="True" />
+                                        </Border>
+                                    </Popup>
+                                    <ContentPresenter Content="{TemplateBinding Header}" />
+                                </Grid>
+                            </Border>
+                            <!--  Triggers  -->
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
+    </Style>
+
     <!--  Label  -->
     <Style x:Key="Label_Default" TargetType="Label">
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -1280,6 +1368,5 @@
     <Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />
     <Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
     <Style BasedOn="{StaticResource StatusBar_Default}" TargetType="StatusBar" />
-
 
 </ResourceDictionary>

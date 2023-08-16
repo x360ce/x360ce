@@ -51,7 +51,7 @@ namespace x360ce.App.Controls
 			name = name.Replace("Shoulder", " Bumper");
 			name = name.Replace("Thumb", " Stick Button");
 			if (name.Length == 1) name += " Button";
-			ButtonNameLabel.Content = name + ":";
+			ButtonNameLabel.Content = name;
 			System.Drawing.Bitmap image;
 			switch (GamepadButton)
 			{

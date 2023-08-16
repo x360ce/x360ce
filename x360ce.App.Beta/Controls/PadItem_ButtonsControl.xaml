@@ -9,11 +9,10 @@
     <Grid>
         <GroupBox
             x:Name="MainGroupBox"
-            Margin="3,0,3,3"
+            Margin="3"
             x:FieldModifier="public"
             Header="DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):">
             <StackPanel Orientation="Vertical">
-                <local:AxisToButtonControl x:Name="AxisToButtonADeadZonePanel" x:FieldModifier="public" GamepadButton="A" />
                 <local:AxisToButtonControl x:Name="AxisToButtonBDeadZonePanel" x:FieldModifier="public" GamepadButton="B" />
                 <local:AxisToButtonControl x:Name="AxisToButtonXDeadZonePanel" x:FieldModifier="public" GamepadButton="X" />
                 <local:AxisToButtonControl x:Name="AxisToButtonYDeadZonePanel" x:FieldModifier="public" GamepadButton="Y" />
@@ -23,6 +22,7 @@
                 <local:AxisToButtonControl x:Name="AxisToButtonStartDeadZonePanel" x:FieldModifier="public" GamepadButton="Start" />
                 <local:AxisToButtonControl x:Name="AxisToLeftThumbButtonDeadZonePanel" x:FieldModifier="public" GamepadButton="LeftThumb" />
                 <local:AxisToButtonControl x:Name="AxisToRightThumbButtonDeadZonePanel" x:FieldModifier="public" GamepadButton="RightThumb" />
+                <local:AxisToButtonControl x:Name="AxisToButtonADeadZonePanel" x:FieldModifier="public" GamepadButton="A" />
                 <local:AxisToButtonControl x:Name="AxisToDPadUpDeadZonePanel" x:FieldModifier="public" GamepadButton="DPadUp" />
                 <local:AxisToButtonControl x:Name="AxisToDPadDownDeadZonePanel" x:FieldModifier="public" GamepadButton="DPadDown" />
                 <local:AxisToButtonControl x:Name="AxisToDPadLeftDeadZonePanel" x:FieldModifier="public" GamepadButton="DPadLeft" />

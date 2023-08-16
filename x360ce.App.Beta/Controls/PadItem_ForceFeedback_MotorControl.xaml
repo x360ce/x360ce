@@ -10,11 +10,8 @@
 	mc:Ignorable="d">
 	<GroupBox
 		x:Name="MainGroupBox"
-		HorizontalAlignment="Left"
-		VerticalAlignment="Top"
-		Header="Motor">
-
-
+		Header="Motor"
+        Margin="3,3,0,3">
 
 		<StackPanel Orientation="Vertical">
 			<Grid>
