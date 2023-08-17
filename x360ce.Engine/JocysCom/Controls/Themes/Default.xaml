@@ -184,6 +184,110 @@
 
 	-->
 
+    <!--  First MenuItem, containing other MenuItems, as drop-down  -->
+    <Style x:Key="MenuItem_First" TargetType="MenuItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Grid>
+                        <Border
+                            Name="MenuBorder"
+                            Height="26"
+                            MinWidth="26"
+                            Padding="6,0,6,0"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource BackgroundDark}"
+                            CornerRadius="5">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Label
+                                    Name="MenuLabel"
+                                    Height="Auto"
+                                    Padding="0,0,10,0"
+                                    VerticalAlignment="Center"
+                                    Content="{TemplateBinding Header}" />
+                                <Viewbox Grid.Column="1" Width="14" Stretch="Uniform">
+                                    <Path
+                                        Name="Arrow"
+                                        Width="10"
+                                        Height="5"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="M 0,0 L 10,0 L 5,5 Z"
+                                        Fill="Black"
+                                        RenderTransformOrigin="0.5,0.5" />
+                                </Viewbox>
+                            </Grid>
+                        </Border>
+                        <Popup
+                            Name="PART_MenuPopup"
+                            AllowsTransparency="True"
+                            IsOpen="{Binding Path=IsMouseOver, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                            Placement="Bottom">
+                            <Border Background="{StaticResource BackgroundDark}" CornerRadius="5">
+                                <StackPanel IsItemsHost="True" />
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="MenuBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Header}" Value="">
+                            <Setter TargetName="MenuLabel" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  MenuItem  -->
+
+    <Style x:Key="MenuItem_Default" TargetType="MenuItem">
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <!--  Menu  -->
+    <Style x:Key="Menu_Default3" TargetType="Menu">
+        <Style.Resources>
+            <!--  MenuItem  -->
+            <Style TargetType="MenuItem">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="MenuItem">
+                            <Border Name="PART_Border" Padding="10,5,10,5" CornerRadius="5">
+                                <Grid>
+                                    <Popup
+                                        Name="PART_Popup"
+                                        AllowsTransparency="True"
+                                        IsOpen="{Binding Path=IsMouseOver, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                                        Placement="Bottom">
+                                        <Border Background="{StaticResource BackgroundDark}" CornerRadius="5">
+                                            <StackPanel IsItemsHost="True" />
+                                        </Border>
+                                    </Popup>
+                                    <ContentPresenter Content="{TemplateBinding Header}" />
+                                </Grid>
+                            </Border>
+                            <!--  Triggers  -->
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </Style.Resources>
+    </Style>
+
+
     <!--  Menu template  -->
     <Style x:Key="Menu_Default" TargetType="Menu">
         <Setter Property="Template">
@@ -272,18 +376,12 @@
         </Style.Resources>
     </Style>
 
+
     <!--  Label  -->
     <Style x:Key="Label_Default" TargetType="Label">
         <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
-
-    <!--  MenuItem  -->
-
-    <Style x:Key="MenuItem_Default" TargetType="MenuItem">
-        <Setter Property="HorizontalContentAlignment" Value="Left" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-    </Style>
 
     <!--  StackPanel  -->
 
@@ -1196,40 +1294,6 @@
 		</Setter>
 	</Style>-->
 
-    <!--  ComboBoxTogleButton (SelectedItem) and (Arrow)  -->
-    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="ToggleButton">
-                    <Border Name="Border" Background="{StaticResource BackgroundDark}" CornerRadius="5">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="25" />
-                            </Grid.ColumnDefinitions>
-                            <Path
-                                Name="Arrow"
-                                Grid.Column="1"
-                                Width="10"
-                                Height="5"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Data="M 0,0 L 10,0 L 5,5 Z"
-                                Fill="Black"
-                                RenderTransformOrigin="0.5,0.5" />
-                        </Grid>
-                    </Border>
-                    <!--  Triggers  -->
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <!--  ComboBoxItem  -->
     <Style TargetType="ComboBoxItem">
         <Setter Property="Template">
@@ -1237,7 +1301,7 @@
                 <ControlTemplate TargetType="ComboBoxItem">
                     <Border
                         Name="ComboBoxItemBorder"
-                        Padding="10,5,25,5"
+                        Padding="5,5,26,5"
                         CornerRadius="5"
                         SnapsToDevicePixels="True">
                         <ContentPresenter />
@@ -1253,13 +1317,54 @@
         </Setter>
     </Style>
 
-    <!--  ComboBoxTextBox  -->
-    <!--
-		<ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
-			<Border x:Name="PART_ContentHost" />
-		</ControlTemplate>-->
+    <!--  ComboBoxTogleButton (SelectedItem) and (Arrow)  -->
+    <Style x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                        Name="ComboBoxBorder"
+                        Height="26"
+                        MinWidth="26"
+                        Padding="5,0,5,0"
+                        VerticalAlignment="Center"
+                        Background="{StaticResource BackgroundDark}"
+                        CornerRadius="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="16" />
+                            </Grid.ColumnDefinitions>
+                            <Label
+                                Name="ComboBoxLabel"
+                                Height="Auto"
+                                Padding="0,0,5,0"
+                                VerticalAlignment="Center"
+                                Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Tag}" />
+                            <Viewbox Grid.Column="1" Stretch="Uniform" HorizontalAlignment="Center" Width="14">
+                                <Path
+                                    Name="Arrow"
+                                    Width="10"
+                                    Height="5"
+                                    VerticalAlignment="Center"
+                                    Data="M 0,0 L 10,0 L 5,5 Z"
+                                    Fill="Black"
+                                    RenderTransformOrigin="0.5,0.5" />
+                            </Viewbox>
+                        </Grid>
+                    </Border>
+                    <!--  Triggers  -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ComboBoxBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
-    <!--  ComboBox **********************************************************************  -->
+    <!--  ComboBox  -->
     <Style x:Key="ComboBox_Default" TargetType="ComboBox">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -1280,7 +1385,7 @@
                         <!--  Selected item settings  -->
                         <ContentPresenter
                             Name="ContentSite"
-                            Margin="10,5,25,5"
+                            Margin="5,5,26,5"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Content="{TemplateBinding SelectionBoxItem}"
@@ -1306,6 +1411,115 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!--  AS MENU  -->
+    <!--  ComboBoxTogleButton (SelectedItem) and (Arrow)  -->
+    <Style x:Key="ComboBoxToggleButton_AsMenu" TargetType="ToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border
+                        Name="ComboBoxBorder"
+                        Height="26"
+                        MinWidth="26"
+                        Padding="5,0,5,0"
+                        VerticalAlignment="Center"
+                        Background="{StaticResource BackgroundDark}"
+                        CornerRadius="5">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="16" />
+                            </Grid.ColumnDefinitions>
+                            <Label
+                                Name="ComboBoxLabel"
+                                Height="Auto"
+                                Padding="0,0,5,0"
+                                VerticalAlignment="Center"
+                                Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}" />
+                            <Viewbox Grid.Column="1" Stretch="Uniform" HorizontalAlignment="Center" Width="14">
+                                <Path
+                                    Name="Arrow"
+                                    Width="10"
+                                    Height="5"
+                                    VerticalAlignment="Center"
+                                    Data="M 0,0 L 10,0 L 5,5 Z"
+                                    Fill="Black"
+                                    RenderTransformOrigin="0.5,0.5" />
+                            </Viewbox>
+                        </Grid>
+                    </Border>
+                    <!--  Triggers  -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ComboBoxBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}" Value="">
+                            <Setter TargetName="ComboBoxLabel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="ComboBoxBorder" Property="Width" Value="26" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  ComboBox **********************************************************************  -->
+    <Style x:Key="ComboBox_AsMenu" TargetType="ComboBox">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="IsEditable" Value="True" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="Text" Value="" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <!--  Toggle Button settings  -->
+                        <ToggleButton
+                            Name="ToggleButton"
+                            ClickMode="Press"
+                            Focusable="false"
+                            IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                            Style="{StaticResource ComboBoxToggleButton_AsMenu}" />
+                        <!--  Selected item settings  -->
+                        <ContentPresenter
+                            Name="ContentSite"
+                            Margin="5,0,26,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding SelectionBoxItem}"
+                            ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                            IsHitTestVisible="False" />
+                        <!--  DropDown popup settings  -->
+                        <Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
+                            <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+                                <ScrollViewer Margin="0">
+                                    <VirtualizingStackPanel IsItemsHost="True" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+                    <!--  Triggers  -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  ComboBoxTextBox  -->
+    <!--
+		<ControlTemplate x:Key="ComboBoxTextBox" TargetType="TextBox">
+			<Border x:Name="PART_ContentHost" />
+		</ControlTemplate>-->
 
     <!--  ComboBox Default  -->
 

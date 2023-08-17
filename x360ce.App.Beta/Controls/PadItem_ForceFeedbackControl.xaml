@@ -60,10 +60,13 @@
             Margin="3"
             Header="Effects">
             <StackPanel>
-                <StackPanel Grid.Column="3" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Content="Type / Implementation" />
-                    <ComboBox x:Name="ForceTypeComboBox" SelectionChanged="ForceTypeComboBox_SelectionChanged" />
-                </StackPanel>
+                <ComboBox
+                    x:Name="ForceTypeComboBox"
+                    Grid.Column="3"
+                    HorizontalAlignment="Left"
+                    SelectionChanged="ForceTypeComboBox_SelectionChanged"
+                    Style="{StaticResource ComboBox_AsMenu}"
+                    Text="Implementation" />
                 <TextBlock
                     x:Name="ForceTypeDescriptionTextBlock"
                     Grid.Row="2"

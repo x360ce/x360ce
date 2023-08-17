@@ -37,11 +37,11 @@
                 <Border
                     Grid.Row="0"
                     Grid.Column="0"
+                    Padding="4,4,0,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    CornerRadius="5"
-                    Padding="4,4,0,0"
-                    Background="White">
+                    Background="White"
+                    CornerRadius="5">
                     <!--  This image uses a Drawing object for its source.  -->
                     <Grid Width="170" Height="170">
                         <Path Margin="6,10,0,0" Fill="Transparent">
@@ -177,8 +177,8 @@
                         Name="XInputValueLabel"
                         Grid.Row="1"
                         Grid.Column="1"
-                        Content="0"
                         Margin="18,0,0,0"
+                        Content="0"
                         Foreground="Blue" />
 
                     <Label
@@ -240,24 +240,30 @@
                             Value="0" />
                     </StackPanel>
 
-                    <Label Name="SensitivityTooltip" Grid.Row="5" Opacity="0.5" HorizontalAlignment="Left" Grid.ColumnSpan="2" />
+                    <Label
+                        Name="SensitivityTooltip"
+                        Grid.Row="5"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Left"
+                        Opacity="0.5" />
 
                     <Menu
-                        Margin="0,3,0,0"
                         Name="PresetMenuStrip"
                         Grid.Row="5"
                         Grid.Column="1"
+                        Margin="0,3,0,0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Style="{StaticResource Menu_Default}"
-                        Tag="Presets">
-                        <MenuItem Name="P_0_0_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="Clear" />
-                        <MenuItem Name="P_5_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="5% DeadZone, 100% Controller Anti-DeadZone" />
-                        <MenuItem Name="P_0_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="100% Controller Anti-DeadZone" />
-                        <MenuItem Name="P_0_80_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="80% Controller Anti-DeadZone" />
-                        <MenuItem Name="P_0_60_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="60% Controller Anti-DeadZone" />
-                        <MenuItem Name="P_0_40_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="40% Controller Anti-DeadZone" />
-                        <MenuItem Name="P_0_20_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="20% Controller Anti-DeadZone" />
+                        Style="{StaticResource Menu_Default3}">
+                        <MenuItem Name="Presets" Header="Presets" Style="{StaticResource MenuItem_First}">
+                            <MenuItem Name="P_0_0_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="Clear" />
+                            <MenuItem Name="P_5_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="5% DeadZone, 100% Controller Anti-DeadZone" />
+                            <MenuItem Name="P_0_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="100% Controller Anti-DeadZone" />
+                            <MenuItem Name="P_0_80_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="80% Controller Anti-DeadZone" />
+                            <MenuItem Name="P_0_60_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="60% Controller Anti-DeadZone" />
+                            <MenuItem Name="P_0_40_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="40% Controller Anti-DeadZone" />
+                            <MenuItem Name="P_0_20_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="20% Controller Anti-DeadZone" />
+                        </MenuItem>
                     </Menu>
                 </Grid>
 
