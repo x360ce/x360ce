@@ -9,47 +9,44 @@
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
     <GroupBox x:Name="MainGroupBox" Margin="3,3,0,3" Header="Motor">
-
         <StackPanel Orientation="Vertical">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="70" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="3" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Content="Direction" />
-                    <ComboBox x:Name="DirectionComboBox" />
-                </StackPanel>
-            </Grid>
-            <StackPanel Orientation="Vertical">
-                <Label Name="StrengthLabel" Content="Strength" />
-                <StackPanel Orientation="Horizontal">
-                    <Slider Name="StrengthTrackBar" Width="200" VerticalAlignment="Center" />
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <!--  Row 1  -->
+                <Label Content="Direction" />
+                <ComboBox x:Name="DirectionComboBox" Grid.Column="1" Margin="0,3,3,3" />
+
+                <!--  Row 2  -->
+                <Label Name="StrengthLabel" Grid.Row="1" Content="Strength" />
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                    <Slider Name="StrengthTrackBar" />
                     <TextBox
                         Name="StrengthTextBox"
                         Width="50"
-                        HorizontalAlignment="Left"
                         HorizontalContentAlignment="Right"
                         IsReadOnly="True"
                         IsTabStop="False"
                         Text="0 %" />
-                    <JcControls:NumericUpDown
-                        x:Name="StrengthUpDown"
-                        MinWidth="75"
-                        VerticalAlignment="Center"
-                        Value="0" />
+                    <JcControls:NumericUpDown x:Name="StrengthUpDown" VerticalAlignment="Center" Value="0" />
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Vertical">
-                <Label Name="PeriodLabel" Content="Period (ms)" />
-                <StackPanel Orientation="Horizontal">
-                    <Slider Name="PeriodTrackBar" Width="200" VerticalAlignment="Center" />
+
+                <!--  Row 3  -->
+                <Label Name="PeriodLabel" Grid.Row="2" Content="Period (ms)" />
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                    <Slider Name="PeriodTrackBar" />
                     <TextBox
                         Name="PeriodTextBox"
                         Width="50"
-                        HorizontalAlignment="Left"
                         HorizontalContentAlignment="Right"
                         IsReadOnly="True"
                         IsTabStop="False"
@@ -60,15 +57,14 @@
                         VerticalAlignment="Center"
                         Value="0" />
                 </StackPanel>
-            </StackPanel>
-            <StackPanel Orientation="Vertical">
-                <Label Name="TestLabel" Content="Test" />
-                <StackPanel Orientation="Horizontal">
-                    <Slider Name="TestTrackBar" Width="200" VerticalAlignment="Center" />
+
+                <!--  Row 4  -->
+                <Label Name="TestLabel" Grid.Row="3" Content="Test" />
+                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+                    <Slider Name="TestTrackBar" />
                     <TextBox
                         Name="TestTextBox"
                         Width="50"
-                        HorizontalAlignment="Left"
                         HorizontalContentAlignment="Right"
                         IsReadOnly="True"
                         IsTabStop="False"
@@ -79,7 +75,7 @@
                         VerticalAlignment="Center"
                         Value="0" />
                 </StackPanel>
-            </StackPanel>
+            </Grid>
         </StackPanel>
     </GroupBox>
 </UserControl>

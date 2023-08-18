@@ -6,8 +6,6 @@
     xmlns:controls="clr-namespace:x360ce.App.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="500"
-    d:DesignWidth="800"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
@@ -31,9 +29,14 @@
             <StackPanel>
                 <CheckBox x:Name="ForceEnabledCheckBox" Content="Enabled" />
                 <CheckBox x:Name="SwapMotorsCheckBox" Content="Swap Motors" />
-                <StackPanel Orientation="Vertical">
-                    <Label Name="StrengthLabel" Content="Overall Effects Strength" />
-                    <StackPanel Orientation="Horizontal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Name="StrengthLabel" Content="Strength" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Slider Name="StrengthTrackBar" Width="200" VerticalAlignment="Center" />
                         <TextBox
                             Name="StrengthTextBox"
@@ -49,8 +52,8 @@
                             VerticalAlignment="Center"
                             Value="0" />
                     </StackPanel>
-                </StackPanel>
 
+                </Grid>
             </StackPanel>
         </GroupBox>
 
@@ -58,22 +61,25 @@
             Grid.Row="0"
             Grid.Column="1"
             Margin="3"
-            Header="Effects">
+            Header="Effect Implementation Type">
             <StackPanel>
                 <ComboBox
                     x:Name="ForceTypeComboBox"
                     Grid.Column="3"
                     HorizontalAlignment="Left"
-                    SelectionChanged="ForceTypeComboBox_SelectionChanged"
-                    Style="{StaticResource ComboBox_AsMenu}"
-                    Text="Implementation" />
-                <TextBlock
+                    SelectionChanged="ForceTypeComboBox_SelectionChanged" />
+                <TextBox
                     x:Name="ForceTypeDescriptionTextBlock"
                     Grid.Row="2"
                     Grid.ColumnSpan="2"
-                    TextWrapping="Wrap">
-                    [ForceTypeDescriptionTextBlock]
-                </TextBlock>
+                    Width="320"
+                    Height="80"
+                    Padding="0,5,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalContentAlignment="Top"
+                    Background="Transparent"
+                    IsReadOnly="True"
+                    TextWrapping="Wrap" />
             </StackPanel>
         </GroupBox>
 

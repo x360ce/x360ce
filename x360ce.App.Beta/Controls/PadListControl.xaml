@@ -17,12 +17,8 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="1" />
         </Grid.RowDefinitions>
-        <StackPanel VerticalAlignment="Stretch" Orientation="Horizontal">
-            <CheckBox
-                Name="EnabledCheckBox"
-                Margin="2,0,0,0"
-                Click="EnabledCheckBox_Click"
-                Content="Enabled" />
+        <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+            <CheckBox Name="EnabledCheckBox" Click="EnabledCheckBox_Click" Content="Enabled" Margin="6,0,3,0" />
             <CheckBox Name="UseXInputStateCheckBox" Click="UseXInputStateCheckBox_Click" Content="Use XInput State" />
             <CheckBox Name="AutoMapCheckBox" Click="AutoMapCheckBox_Click" Content="Auto Map" />
         </StackPanel>

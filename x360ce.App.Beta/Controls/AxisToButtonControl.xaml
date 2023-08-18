@@ -64,12 +64,11 @@
             Maximum="100" />
         <JcControls:NumericUpDown
             x:Name="DeadZoneNumericUpDown"
-            MinWidth="75"
             VerticalAlignment="Center"
             Value="0" />
         <TextBox
             Name="DeadZoneTextBox"
-            Width="43"
+            Width="50"
             IsReadOnly="True"
             IsTabStop="False"
             Text="0 %"

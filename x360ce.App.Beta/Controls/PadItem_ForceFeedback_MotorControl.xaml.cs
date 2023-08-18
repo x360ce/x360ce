@@ -37,10 +37,10 @@ namespace x360ce.App.Controls
 			switch (motor)
 			{
 				case 0:
-					MainGroupBox.Header = "Left Motor(Big, Strong, Low-Frequency)";
+					MainGroupBox.Header = "Left Motor - Big, Strong, Low-Frequency";
 					break;
 				case 1:
-					MainGroupBox.Header = "Right Motor (Small, Gentle, High-Frequency)";
+					MainGroupBox.Header = "Right Motor - Small, Gentle, High-Frequency";
 					break;
 				default:
 					break;

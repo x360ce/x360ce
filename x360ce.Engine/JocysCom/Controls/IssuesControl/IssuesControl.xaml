@@ -56,6 +56,9 @@
 			BorderThickness="1"
 			SnapsToDevicePixels="True" />
 		<ListView
+            Margin="0"
+            BorderThickness="0,1,0,1"
+            BorderBrush="{StaticResource BorderDark}"
 			x:Name="MainDataGrid"
 			Grid.Row="1"
 			Height="Auto"
@@ -106,12 +109,10 @@
 				</GridView.Columns>
 			</GridView>
 		</ListView>
-		<Border
+        <Border
 			x:Name="LinePanel"
-			Grid.Row="2"
-			BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"
-			BorderThickness="0,1,0,0">
-			<StackPanel x:Name="NoIssuesPanel">
+			Grid.Row="2">
+            <StackPanel x:Name="NoIssuesPanel">
 				<Label
 					x:Name="NoIssuesLabel"
 					Margin="8,8,8,8"

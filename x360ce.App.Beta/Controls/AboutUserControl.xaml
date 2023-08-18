@@ -151,38 +151,92 @@
             <TabItem Name="ChangesTabPage" Header="Changes">
                 <TextBox
                     Name="ChangeLogTextBox"
+                    Margin="0"
+                    Padding="6"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Top"
-                    Background="Transparent"
+                    Background="White"
                     IsReadOnly="True"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    TextWrapping="Wrap" />
+                    TextWrapping="Wrap">
+                    <TextBox.Resources>
+                        <Style TargetType="Border" />
+                    </TextBox.Resources>
+                    <TextBox.OpacityMask>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Border
+                                    Width="{Binding ActualWidth, ElementName=ChangeLogTextBox}"
+                                    Height="{Binding ActualHeight, ElementName=ChangeLogTextBox}"
+                                    Background="White"
+                                    CornerRadius="0,5,5,5"
+                                    SnapsToDevicePixels="True" />
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </TextBox.OpacityMask>
+                </TextBox>
             </TabItem>
-            <TabItem Name="LicenseTabPage" Header="License">
+            <TabItem Name="LicenseTabPage" Background="White" Header="License">
                 <TextBox
                     Name="LicenseTextBox"
+                    Margin="0"
+                    Padding="6"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Top"
-                    Background="Transparent"
+                    Background="White"
                     IsReadOnly="True"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    TextWrapping="Wrap" />
+                    TextWrapping="Wrap">
+                    <TextBox.Resources>
+                        <Style TargetType="Border" />
+                    </TextBox.Resources>
+                    <TextBox.OpacityMask>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Border
+                                    Width="{Binding ActualWidth, ElementName=LicenseTextBox}"
+                                    Height="{Binding ActualHeight, ElementName=LicenseTextBox}"
+                                    Background="White"
+                                    CornerRadius="0,5,5,5"
+                                    SnapsToDevicePixels="True" />
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </TextBox.OpacityMask>
+                </TextBox>
             </TabItem>
             <TabItem Name="IconExperienceTabPage" Header="IconExperience License">
                 <TextBox
                     Name="IconExperienceTextBox"
+                    Margin="0"
+                    Padding="6"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Top"
-                    Background="Transparent"
+                    Background="White"
                     IsReadOnly="True"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    TextWrapping="Wrap" />
+                    TextWrapping="Wrap">
+                    <TextBox.Resources>
+                        <Style TargetType="Border" />
+                    </TextBox.Resources>
+                    <TextBox.OpacityMask>
+                        <VisualBrush>
+                            <VisualBrush.Visual>
+                                <Border
+                                    Width="{Binding ActualWidth, ElementName=IconExperienceTextBox}"
+                                    Height="{Binding ActualHeight, ElementName=IconExperienceTextBox}"
+                                    Background="White"
+                                    CornerRadius="0,5,5,5"
+                                    SnapsToDevicePixels="True" />
+                            </VisualBrush.Visual>
+                        </VisualBrush>
+                    </TextBox.OpacityMask>
+                </TextBox>
             </TabItem>
         </TabControl>
     </Grid>

@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <local:PadListControl x:Name="PadListPanel" Grid.Row="0" MinHeight="100" />
-        <local:PadItemControl x:Name="PadItemPanel" Grid.Row="1" Margin="3,3,3,3" />
-        <local:PadFootControl x:Name="PadFootPanel" Grid.Row="2" Margin="3,0,3,3" />
+        <local:PadItemControl x:Name="PadItemPanel" Grid.Row="1" />
+        <local:PadFootControl x:Name="PadFootPanel" Grid.Row="2" />
     </Grid>
 </UserControl>

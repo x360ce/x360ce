@@ -13,7 +13,7 @@
         <GroupBox.Header>
             <CheckBox
                 Name="EnabledCheckBox"
-                Margin="-4"
+                Margin="-4,-6,-4,-4"
                 VerticalAlignment="Center"
                 Content="Axis to D-Pad" />
         </GroupBox.Header>

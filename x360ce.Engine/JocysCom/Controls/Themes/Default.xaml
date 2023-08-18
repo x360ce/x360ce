@@ -54,7 +54,6 @@
     <SolidColorBrush x:Key="SolidColorBrush_330D">#D60067</SolidColorBrush>
 
     <!--  Window  -->
-
     <Style x:Key="Window_Default" TargetType="Window">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
@@ -69,6 +68,12 @@
     <!--  UserControl  -->
     <Style x:Key="UserControl_Default" TargetType="UserControl">
         <Setter Property="Background" Value="{StaticResource BackgroundLight}" />
+    </Style>
+
+    <Style x:Key="Slider_Default" TargetType="Slider">
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Width" Value="200" />
     </Style>
 
     <!--  Grid  -->
@@ -184,42 +189,52 @@
 
 	-->
 
+    <!--  DropDown Control Border  -->
+    <Style x:Key="DropDownControlBorder" TargetType="Border">
+        <Setter Property="Height" Value="26" />
+        <Setter Property="MinWidth" Value="26" />
+        <Setter Property="Padding" Value="5,0,5,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+        <Setter Property="CornerRadius" Value="5" />
+    </Style>
+
+    <!--  DropDown Control Triangle  -->
+    <Style x:Key="DropDownControlTriangle" TargetType="Path">
+        <Setter Property="Grid.Column" Value="1" />
+        <Setter Property="Width" Value="10" />
+        <Setter Property="Height" Value="5" />
+        <Setter Property="Margin" Value="1" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Data" Value="M 0,0 L 10,0 L 5,5 Z" />
+        <Setter Property="Fill" Value="Black" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="1.4" ScaleY="1.4" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--  First MenuItem, containing other MenuItems, as drop-down  -->
     <Style x:Key="MenuItem_First" TargetType="MenuItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuItem">
                     <Grid>
-                        <Border
-                            Name="MenuBorder"
-                            Height="26"
-                            MinWidth="26"
-                            Padding="6,0,6,0"
-                            VerticalAlignment="Center"
-                            Background="{StaticResource BackgroundDark}"
-                            CornerRadius="5">
+                        <Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
-                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="16" />
                                 </Grid.ColumnDefinitions>
                                 <Label
                                     Name="MenuLabel"
-                                    Height="Auto"
-                                    Padding="0,0,10,0"
+                                    Margin="0,0,5,0"
                                     VerticalAlignment="Center"
                                     Content="{TemplateBinding Header}" />
-                                <Viewbox Grid.Column="1" Width="14" Stretch="Uniform">
-                                    <Path
-                                        Name="Arrow"
-                                        Width="10"
-                                        Height="5"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Data="M 0,0 L 10,0 L 5,5 Z"
-                                        Fill="Black"
-                                        RenderTransformOrigin="0.5,0.5" />
-                                </Viewbox>
+                                <Path Style="{StaticResource DropDownControlTriangle}" />
                             </Grid>
                         </Border>
                         <Popup
@@ -234,7 +249,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="MenuBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                            <Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
                         </Trigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Header}" Value="">
                             <Setter TargetName="MenuLabel" Property="Visibility" Value="Collapsed" />
@@ -260,7 +275,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="MenuItem">
-                            <Border Name="PART_Border" Padding="10,5,10,5" CornerRadius="5">
+                            <Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
                                 <Grid>
                                     <Popup
                                         Name="PART_Popup"
@@ -277,7 +292,7 @@
                             <!--  Triggers  -->
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter TargetName="PART_Border" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                                    <Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -294,35 +309,14 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Menu">
                     <Grid>
-                        <Border
-                            Name="MenuBorder"
-                            Height="26"
-                            MinWidth="26"
-                            Padding="6,0,6,0"
-                            VerticalAlignment="Center"
-                            Background="{StaticResource BackgroundDark}"
-                            CornerRadius="5">
+                        <Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
-                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="16" />
                                 </Grid.ColumnDefinitions>
-                                <Label
-                                    Height="Auto"
-                                    Padding="0,0,10,0"
-                                    VerticalAlignment="Center"
-                                    Content="{TemplateBinding Tag}" />
-                                <Viewbox Grid.Column="1" Width="14" Stretch="Uniform">
-                                    <Path
-                                        Name="Arrow"
-                                        Width="10"
-                                        Height="5"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Data="M 0,0 L 10,0 L 5,5 Z"
-                                        Fill="Black"
-                                        RenderTransformOrigin="0.5,0.5" />
-                                </Viewbox>
+                                <Label Margin="0,0,5,0" VerticalAlignment="Center" Content="{TemplateBinding Tag}" />
+                                <Path Style="{StaticResource DropDownControlTriangle}" />
                             </Grid>
                         </Border>
                         <Popup
@@ -337,7 +331,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="MenuBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                            <Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1045,7 +1039,7 @@
                     <Rectangle
                         RadiusX="5"
                         RadiusY="5"
-                        Stroke="#11000000"
+                        Stroke="{StaticResource BorderDark}"
                         StrokeThickness="1" />
                 </ControlTemplate>
             </Setter.Value>
@@ -1053,83 +1047,97 @@
     </Style>
 
     <!--  CheckBox Template  -->
-    <ControlTemplate x:Key="CheckBox_Template" TargetType="CheckBox">
-        <StackPanel Margin="3" Orientation="Horizontal">
-            <Border
-                x:Name="checkBoxBorder"
-                Padding="1"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Background="White"
-                BorderBrush="#22000000"
-                BorderThickness="1"
-                CornerRadius="3">
-                <Grid x:Name="markGrid">
-                    <Path
-                        x:Name="optionMark"
-                        Margin="2"
-                        Data="F1M9.97498,1.22334L4.6983,9.09834 4.52164,9.09834 0,5.19331 1.27664,3.52165 4.255,6.08833 8.33331,1.52588E-05 9.97498,1.22334z"
-                        Fill="Black"
-                        Opacity="0"
-                        Stretch="None" />
-                    <Rectangle
-                        x:Name="indeterminateMark"
-                        Margin="2"
-                        Fill="Black"
-                        Opacity="0" />
-                </Grid>
-            </Border>
-            <ContentPresenter
-                x:Name="contentPresenter"
-                Margin="3,0,3,0"
-                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                VerticalAlignment="Center"
-                Content="{TemplateBinding Content}"
-                ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                ContentTemplate="{TemplateBinding ContentTemplate}"
-                Focusable="False"
-                RecognizesAccessKey="True"
-                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-        </StackPanel>
-        <ControlTemplate.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="checkBoxBorder" Property="Opacity" Value="0.5" />
-            </Trigger>
-            <Trigger Property="IsChecked" Value="True">
-                <Setter TargetName="optionMark" Property="Opacity" Value="1" />
-                <Setter TargetName="indeterminateMark" Property="Opacity" Value="0" />
-            </Trigger>
-            <Trigger Property="IsChecked" Value="{x:Null}">
-                <Setter TargetName="optionMark" Property="Opacity" Value="0" />
-                <Setter TargetName="indeterminateMark" Property="Opacity" Value="1" />
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Background" Value="#11000000" />
-            </Trigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="True" />
-                    <Condition Property="IsEnabled" Value="True" />
-                </MultiTrigger.Conditions>
-                <Setter TargetName="checkBoxBorder" Property="Background" Value="#f3f9ff" />
-                <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="#7eb4ea" />
-            </MultiTrigger>
-        </ControlTemplate.Triggers>
-    </ControlTemplate>
-
-    <!--  CheckBox  -->
     <Style x:Key="CheckBox_Default" TargetType="CheckBox">
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual_Checkbox}" />
         <Setter Property="Template" Value="{DynamicResource CheckBox_Template}" />
+        <Setter Property="Margin" Value="0,0,3,0" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel
+                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                        Background="Transparent"
+                        IsHitTestVisible="True"
+                        Orientation="Horizontal">
+                        <Border
+                            x:Name="checkBoxBorder"
+                            Margin="{TemplateBinding Padding}"
+                            Padding="1"
+                            VerticalAlignment="Center"
+                            Background="White"
+                            BorderBrush="{StaticResource BorderDark}"
+                            BorderThickness="1"
+                            CornerRadius="3">
+                            <Grid x:Name="markGrid">
+                                <Path
+                                    x:Name="optionMark"
+                                    Margin="2"
+                                    Data="F1M9.97498,1.22334L4.6983,9.09834 4.52164,9.09834 0,5.19331 1.27664,3.52165 4.255,6.08833 8.33331,1.52588E-05 9.97498,1.22334z"
+                                    Fill="Black"
+                                    Opacity="0"
+                                    Stretch="None" />
+                                <Rectangle
+                                    x:Name="indeterminateMark"
+                                    Margin="2"
+                                    Fill="Black"
+                                    Opacity="0" />
+                            </Grid>
+                        </Border>
+                        <ContentPresenter
+                            x:Name="contentPresenter"
+                            Margin="0,0,5,0"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding Content}"
+                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            Focusable="False"
+                            RecognizesAccessKey="True"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </StackPanel>
+                    <!--  Triggers  -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="checkBoxBorder" Property="Opacity" Value="0.5" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="optionMark" Property="Opacity" Value="1" />
+                            <Setter TargetName="indeterminateMark" Property="Opacity" Value="0" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="{x:Null}">
+                            <Setter TargetName="optionMark" Property="Opacity" Value="0" />
+                            <Setter TargetName="indeterminateMark" Property="Opacity" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsEnabled" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="{StaticResource BorderDarkSelected}" />
+                        </MultiTrigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}, Path=Content, Mode=OneTime}" Value="">
+                            <Setter TargetName="contentPresenter" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!--  CheckBox - Cell  -->
 
     <Style x:Key="CheckBoxCell" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox">
-        <Setter Property="Margin" Value="3,0,3,0" />
-        <Setter Property="Padding" Value="0,0,0,0" />
-        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
     <Style x:Key="LabelGrid" TargetType="Label">
@@ -1295,13 +1303,13 @@
 	</Style>-->
 
     <!--  ComboBoxItem  -->
-    <Style TargetType="ComboBoxItem">
+    <Style x:Key="ComboBoxItem_Default" TargetType="ComboBoxItem">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBoxItem">
                     <Border
                         Name="ComboBoxItemBorder"
-                        Padding="5,5,26,5"
+                        Padding="5"
                         CornerRadius="5"
                         SnapsToDevicePixels="True">
                         <ContentPresenter />
@@ -1322,14 +1330,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Border
-                        Name="ComboBoxBorder"
-                        Height="26"
-                        MinWidth="26"
-                        Padding="5,0,5,0"
-                        VerticalAlignment="Center"
-                        Background="{StaticResource BackgroundDark}"
-                        CornerRadius="5">
+                    <Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -1337,26 +1338,16 @@
                             </Grid.ColumnDefinitions>
                             <Label
                                 Name="ComboBoxLabel"
-                                Height="Auto"
-                                Padding="0,0,5,0"
+                                Margin="0,0,5,0"
                                 VerticalAlignment="Center"
                                 Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Tag}" />
-                            <Viewbox Grid.Column="1" Stretch="Uniform" HorizontalAlignment="Center" Width="14">
-                                <Path
-                                    Name="Arrow"
-                                    Width="10"
-                                    Height="5"
-                                    VerticalAlignment="Center"
-                                    Data="M 0,0 L 10,0 L 5,5 Z"
-                                    Fill="Black"
-                                    RenderTransformOrigin="0.5,0.5" />
-                            </Viewbox>
+                            <Path Style="{StaticResource DropDownControlTriangle}" />
                         </Grid>
                     </Border>
                     <!--  Triggers  -->
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ComboBoxBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                            <Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1366,6 +1357,7 @@
 
     <!--  ComboBox  -->
     <Style x:Key="ComboBox_Default" TargetType="ComboBox">
+        <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
@@ -1413,19 +1405,12 @@
     </Style>
 
     <!--  AS MENU  -->
-    <!--  ComboBoxTogleButton (SelectedItem) and (Arrow)  -->
+    <!--  ComboBox as Menu TogleButton (SelectedItem Triangle)  -->
     <Style x:Key="ComboBoxToggleButton_AsMenu" TargetType="ToggleButton">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Border
-                        Name="ComboBoxBorder"
-                        Height="26"
-                        MinWidth="26"
-                        Padding="5,0,5,0"
-                        VerticalAlignment="Center"
-                        Background="{StaticResource BackgroundDark}"
-                        CornerRadius="5">
+                    <Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
@@ -1433,30 +1418,20 @@
                             </Grid.ColumnDefinitions>
                             <Label
                                 Name="ComboBoxLabel"
-                                Height="Auto"
-                                Padding="0,0,5,0"
+                                Margin="0,0,5,0"
                                 VerticalAlignment="Center"
                                 Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}" />
-                            <Viewbox Grid.Column="1" Stretch="Uniform" HorizontalAlignment="Center" Width="14">
-                                <Path
-                                    Name="Arrow"
-                                    Width="10"
-                                    Height="5"
-                                    VerticalAlignment="Center"
-                                    Data="M 0,0 L 10,0 L 5,5 Z"
-                                    Fill="Black"
-                                    RenderTransformOrigin="0.5,0.5" />
-                            </Viewbox>
+                            <Path Style="{StaticResource DropDownControlTriangle}" />
                         </Grid>
                     </Border>
                     <!--  Triggers  -->
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ComboBoxBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                            <Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
                         </Trigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}" Value="">
                             <Setter TargetName="ComboBoxLabel" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="ComboBoxBorder" Property="Width" Value="26" />
+                            <Setter TargetName="DropDownControlBorder" Property="Width" Value="26" />
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1464,8 +1439,44 @@
         </Setter>
     </Style>
 
-    <!--  ComboBox **********************************************************************  -->
+
+    <!--  ComboBox as Menu TogleButton (SelectedItem Triangle)  -->
+    <Style x:Key="ComboBoxToggleButton_AsMenu2" TargetType="ToggleButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border Name="DropDownControlBorder" Style="{StaticResource DropDownControlBorder}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="16" />
+                            </Grid.ColumnDefinitions>
+                            <Label
+                                Name="ComboBoxLabel"
+                                Margin="0,0,5,0"
+                                VerticalAlignment="Center"
+                                Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text}" />
+                            <Path Style="{StaticResource DropDownControlTriangle}" />
+                        </Grid>
+                    </Border>
+                    <!--  Triggers  -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="DropDownControlBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text}" Value="">
+                            <Setter TargetName="ComboBoxLabel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="DropDownControlBorder" Property="Width" Value="26" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  ComboBox as Menu  -->
     <Style x:Key="ComboBox_AsMenu" TargetType="ComboBox">
+        <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
@@ -1485,6 +1496,58 @@
                             Focusable="false"
                             IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                             Style="{StaticResource ComboBoxToggleButton_AsMenu}" />
+                        <!--  Selected item settings  -->
+                        <ContentPresenter
+                            Name="ContentSite"
+                            Margin="5,0,26,0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding SelectionBoxItem}"
+                            ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                            IsHitTestVisible="False" />
+                        <!--  DropDown popup settings  -->
+                        <Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
+                            <Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+                                <ScrollViewer Margin="0">
+                                    <VirtualizingStackPanel IsItemsHost="True" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+                    <!--  Triggers  -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  ComboBox as Menu  -->
+    <Style x:Key="ComboBox_AsMenu2" TargetType="ComboBox">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="Margin" Value="3" />
+        <Setter Property="IsEditable" Value="True" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="Text" Value="" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <!--  Toggle Button settings  -->
+                        <ToggleButton
+                            Name="ToggleButton"
+                            ClickMode="Press"
+                            Focusable="false"
+                            IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                            Style="{StaticResource ComboBoxToggleButton_AsMenu2}" />
                         <!--  Selected item settings  -->
                         <ContentPresenter
                             Name="ContentSite"
@@ -1582,5 +1645,8 @@
     <Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />
     <Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
     <Style BasedOn="{StaticResource StatusBar_Default}" TargetType="StatusBar" />
+    <Style BasedOn="{StaticResource Slider_Default}" TargetType="Slider" />
+
+    <Style BasedOn="{StaticResource ComboBoxItem_Default}" TargetType="ComboBoxItem" />
 
 </ResourceDictionary>
