@@ -216,10 +216,6 @@ namespace JocysCom.ClassLibrary.Text
 			return v;
 		}
 
-#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
-
 		/// <summary>
 		/// Convert string value to an escaped C# string literal.
 		/// </summary>
@@ -241,8 +237,6 @@ namespace JocysCom.ClassLibrary.Text
 				}
 			}
 		}
-
-#endif
 
 		#region Word Wrap
 

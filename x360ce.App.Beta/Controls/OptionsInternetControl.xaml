@@ -65,7 +65,12 @@
             <GroupBox Header="Update Options">
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Name="CheckForUpdatesCheckBox" Content="Check for updates on startup" />
-                    <Button Name="CheckUpdatesButton" Click="CheckUpdatesButton_Click" Content="Check..." />
+                    <Button Name="CheckUpdatesButton" Click="CheckUpdatesButton_Click">
+                        <StackPanel>
+                            <ContentControl Content="{StaticResource Icon_Refresh}" />
+                            <Label Content="Check..." />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="Internet">
@@ -117,8 +122,12 @@
                             Name="OpenSettingsFolderButton"
                             Grid.Row="0"
                             Grid.Column="2"
-                            Click="OpenSettingsFolderButton_Click"
-                            Content="Open" />
+                            Click="OpenSettingsFolderButton_Click">
+                            <StackPanel>
+                                <ContentControl Content="{StaticResource Icon_FolderOpen}" />
+                                <Label Content="Open..." />
+                            </StackPanel>
+                        </Button>
                         <Label
                             Name="ProfileIdLabel"
                             Grid.Row="1"

@@ -53,6 +53,38 @@
 	<SolidColorBrush x:Key="SolidColorBrush_300D">#D600D6</SolidColorBrush>
 	<SolidColorBrush x:Key="SolidColorBrush_330D">#D60067</SolidColorBrush>
 
+	<!--  Focus Visual Style  -->
+	<Style x:Key="FocusVisualStyle_Default">
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Rectangle
+						RadiusX="5"
+						RadiusY="5"
+						Stroke="Black"
+						StrokeDashArray="1 2"
+						StrokeThickness="1" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="FocusVisualStyle_TabItem">
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Rectangle
+						Margin="0,0,3,-1"
+						RadiusX="5"
+						RadiusY="5"
+						Stroke="Black"
+						StrokeDashArray="1 2"
+						StrokeThickness="1" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<!--  Window  -->
 	<Style x:Key="Window_Default" TargetType="Window">
 		<Setter Property="SnapsToDevicePixels" Value="True" />
@@ -71,6 +103,7 @@
 	</Style>
 
 	<Style x:Key="Slider_Default" TargetType="Slider">
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
 		<Setter Property="Margin" Value="3" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="Width" Value="200" />
@@ -182,11 +215,9 @@
 
 	<!--  DockPanel  -->
 	<!--
-
 	<Style TargetType="DockPanel">
 		<Setter Property="Margin" Value="8" />
 	</Style>
-
 	-->
 
 	<!--  DropDown ContentPresenter  -->
@@ -447,25 +478,9 @@
 		<Setter Property="HorizontalContentAlignment" Value="Center" />
 	</Style>
 
-    <!--  CheckBox FocusVisualStyle  -->
-    <Style x:Key="FocusVisualStyle">
-        <Setter Property="Control.Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Rectangle
-						RadiusX="5"
-						RadiusY="5"
-						Stroke="Black"
-                        StrokeDashArray="1 2"
-						StrokeThickness="1" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <!--  Button  -->
+	<!--  Button  -->
 	<Style x:Key="Button_Default" TargetType="Button">
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
 		<Setter Property="HorizontalAlignment" Value="Left" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
@@ -476,13 +491,13 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="Button">
- 					<ControlTemplate.Resources>
-                        <Style TargetType="ContentControl">
-                            <Setter Property="Focusable" Value="False" />
-                            <Setter Property="Width" Value="16" />
-                            <Setter Property="Height" Value="16" />
-                        </Style>
-                        <Style TargetType="StackPanel">
+					<ControlTemplate.Resources>
+						<Style TargetType="ContentControl">
+							<Setter Property="Focusable" Value="False" />
+							<Setter Property="Width" Value="16" />
+							<Setter Property="Height" Value="16" />
+						</Style>
+						<Style TargetType="StackPanel">
 							<Setter Property="Orientation" Value="Horizontal" />
 							<Setter Property="HorizontalAlignment" Value="Center" />
 						</Style>
@@ -516,6 +531,7 @@
 						</MultiTrigger>
 						<Trigger Property="IsEnabled" Value="False">
 							<Setter Property="Opacity" Value="0.5" />
+							<Setter Property="Focusable" Value="False" />
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -550,7 +566,6 @@
     </Style>-->
 
 	<!--  Button -ToolBar  -->
-
 	<Style x:Key="ToolBarButton" TargetType="Button">
 		<Setter Property="Margin" Value="0" />
 		<Setter Property="Padding" Value="2" />
@@ -577,7 +592,7 @@
 	</Style>
 
 	<!--  TabItem  -->
-	<Style x:Key="TabItem_Default" TargetType="TabItem" />
+	<!--<Style x:Key="TabItem_Default" TargetType="TabItem" />-->
 
 	<!--  TabControl  -->
 	<!--  This style is making control to fail garbage collection (leak memory)  -->
@@ -610,15 +625,18 @@
 		<Style.Resources>
 			<JcControls:TabIndexConverter x:Key="_TabIndexConverter" />
 			<Style TargetType="TabItem">
-                <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
-                <Setter Property="Template">
+				<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_TabItem}" />
+				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="TabItem">
-                            <ControlTemplate.Resources>
+							<ControlTemplate.Resources>
 								<Style TargetType="Label">
 									<Setter Property="Padding" Value="0" />
 									<Setter Property="Margin" Value="3,0,0,0" />
 									<Setter Property="VerticalAlignment" Value="Center" />
+								</Style>
+								<Style TargetType="ContentControl">
+									<Setter Property="Focusable" Value="False" />
 								</Style>
 							</ControlTemplate.Resources>
 							<Grid Margin="0,0,3,-1">
@@ -677,6 +695,7 @@
 		<Setter Property="BorderBrush" Value="{StaticResource BorderDark}" />
 		<Setter Property="BorderThickness" Value="1" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
 		<Style.Resources>
 			<Style TargetType="Border">
 				<Setter Property="CornerRadius" Value="5" />
@@ -691,6 +710,7 @@
 			<Trigger Property="IsReadOnly" Value="True">
 				<Setter Property="BorderThickness" Value="0" />
 				<Setter Property="Padding" Value="6,4,6,4" />
+				<Setter Property="Focusable" Value="False" />
 				<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
 			</Trigger>
 		</Style.Triggers>
@@ -717,6 +737,7 @@
 			<Trigger Property="IsEnabled" Value="False">
 				<Setter Property="BorderThickness" Value="0" />
 				<Setter Property="Padding" Value="6,4,6,4" />
+				<Setter Property="Focusable" Value="False" />
 				<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
 			</Trigger>
 			<MultiTrigger>
@@ -1066,7 +1087,7 @@
 
 	<!--  CheckBox Template  -->
 	<Style x:Key="CheckBox_Default" TargetType="CheckBox">
-		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
 		<Setter Property="Template" Value="{DynamicResource CheckBox_Template}" />
 		<Setter Property="Margin" Value="0,0,3,0" />
 		<Setter Property="Padding" Value="3" />
@@ -1118,9 +1139,6 @@
 					</StackPanel>
 					<!--  Triggers  -->
 					<ControlTemplate.Triggers>
-						<Trigger Property="IsEnabled" Value="False">
-							<Setter TargetName="checkBoxBorder" Property="Opacity" Value="0.5" />
-						</Trigger>
 						<Trigger Property="IsChecked" Value="True">
 							<Setter TargetName="optionMark" Property="Opacity" Value="1" />
 							<Setter TargetName="indeterminateMark" Property="Opacity" Value="0" />
@@ -1130,8 +1148,12 @@
 							<Setter TargetName="indeterminateMark" Property="Opacity" Value="1" />
 						</Trigger>
 						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Focusable" Value="False" />
 							<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
 							<Setter Property="Opacity" Value="0.5" />
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter TargetName="checkBoxBorder" Property="Opacity" Value="0.5" />
 						</Trigger>
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
@@ -1371,7 +1393,7 @@
 
 	<!--  ComboBox  -->
 	<Style x:Key="ComboBox_Default" BasedOn="{StaticResource DropDownComboBox}" TargetType="ComboBox">
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ComboBox">
@@ -1486,7 +1508,7 @@
 
 	<!--  ComboBox as Menu  -->
 	<Style x:Key="ComboBox_AsMenu" BasedOn="{StaticResource DropDownComboBox}" TargetType="ComboBox">
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
 		<Setter Property="IsEditable" Value="True" />
 		<Setter Property="IsReadOnly" Value="True" />
 		<Setter Property="Text" Value="" />
@@ -1542,7 +1564,7 @@
 
 	<!--  ComboBox as Menu  -->
 	<Style x:Key="ComboBox_AsMenu2" BasedOn="{StaticResource DropDownComboBox}" TargetType="ComboBox">
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}" />
+		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
 		<Setter Property="IsEditable" Value="True" />
 		<Setter Property="IsReadOnly" Value="True" />
 		<Setter Property="Text" Value="" />
@@ -1661,7 +1683,7 @@
 	<!--<Style BasedOn="{StaticResource DataGridCellStyle}" TargetType="DataGridCell" />-->
 
 	<!--  TabControl_Default style is making control to fail garbage collection (leak memory)  -->
-	<Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />
+	<!--<Style BasedOn="{StaticResource TabItem_Default}" TargetType="TabItem" />-->
 	<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />
 	<Style BasedOn="{StaticResource StatusBar_Default}" TargetType="StatusBar" />
 	<Style BasedOn="{StaticResource Slider_Default}" TargetType="Slider" />

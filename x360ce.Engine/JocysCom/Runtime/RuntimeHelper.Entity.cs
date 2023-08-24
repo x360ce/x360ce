@@ -161,42 +161,44 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// Compare all properties of two objects and return change state for every property and field.
 		/// </summary>
 		/// <param name="source">item1</param>
-		/// <param name="dest">item2</param>
+		/// <param name="target">item2</param>
 		/// <returns></returns>
-		public static List<ChangeState> CompareProperties(object source, object dest)
+		public static List<ChangeState> CompareProperties(object source, object target)
 		{
 			if (source is null)
 				throw new ArgumentNullException(nameof(source));
-			if (dest is null)
-				throw new ArgumentNullException(nameof(dest));
+			if (target is null)
+				throw new ArgumentNullException(nameof(target));
 			object oldValue;
 			object newValue;
 			ChangeState state;
 			var list = new List<ChangeState>();
-			var dstType = dest.GetType();
-			var itersectingFields = GetItersectingFields(source, dest);
-			foreach (var fi in itersectingFields)
+			var dstType = target.GetType();
+			// Get Field Info.
+			var sourceFields = GetFields(source.GetType());
+			var targetFields = GetFields(target.GetType());
+			foreach (var sf in sourceFields)
 			{
-				var dp = dstType.GetField(fi.Name);
-				if (IsKnownType(fi.FieldType))
-				{
-					oldValue = fi.GetValue(source);
-					newValue = fi.GetValue(dest);
-					state = GetValueChangeSet(fi.FieldType, oldValue, newValue);
+				var tf = targetFields.FirstOrDefault(x => x.Name == sf.Name);
+				if (tf == null || !IsKnownType(sf.FieldType) || sf.FieldType != tf.FieldType)
+					continue;
+					oldValue = sf.GetValue(source);
+					newValue = tf.GetValue(target);
+					state = GetValueChangeSet(sf.FieldType, oldValue, newValue);
 					list.Add(state);
-				}
 			}
-			var itersectingProperties = GetItersectingProperties(source, dest);
-			foreach (var pi in itersectingProperties)
+			// Get Property Info.
+			var sourceProperties = GetProperties(source.GetType());
+			var targetProperties = GetProperties(target.GetType());
+			foreach (var sp in sourceProperties)
 			{
-				var dp = dstType.GetProperty(pi.Name);
-				if (IsKnownType(pi.PropertyType))
-				{
-					oldValue = pi.GetValue(source, null);
-					newValue = pi.GetValue(dest, null);
-					state = GetValueChangeSet(pi.PropertyType, oldValue, newValue);
-					list.Add(state);
-				}
+				var tp = targetProperties.FirstOrDefault(x => x.Name == sp.Name);
+				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
+					continue;
+				oldValue = sp.GetValue(source, null);
+				newValue = tp.GetValue(target, null);
+				state = GetValueChangeSet(sp.PropertyType, oldValue, newValue);
+				list.Add(state);
 			}
 			return list;
 		}
