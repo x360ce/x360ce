@@ -18,14 +18,6 @@
             <GradientStop Offset="0" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
             <GradientStop Offset="1" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
         </LinearGradientBrush>
-        <!--  DataGridCell Triggers  -->
-        <Style x:Key="DataGridCellStyle" TargetType="DataGridCell">
-            <Style.Triggers>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Background}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
         <!--  DataGridColumnHeader  -->
         <Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
             <Setter Property="Template">
@@ -83,63 +75,65 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal">
-                <Button Name="HardwareButton" Click="HardwareButton_Click">
-                    <StackPanel>
-                        <ContentControl Content="{StaticResource Icon_toolbox}" />
-                        <Label Content="Hardware" />
-                    </StackPanel>
-                </Button>
+            <Button Name="HardwareButton" Click="HardwareButton_Click">
+                <StackPanel>
+                    <ContentControl Content="{StaticResource Icon_toolbox}" />
+                    <Label Content="Hardware" />
+                </StackPanel>
+            </Button>
             <Button Name="AddDemoDeviceButton" Margin="0,3,3,3" Click="AddDemoDeviceButton_Click">
-                    <StackPanel>
-                        <ContentControl Content="{StaticResource Icon_joystick}" />
-                        <Label Content="Add Demo Device..." />
-                    </StackPanel>
-                </Button>
-                <Menu x:Name="HidGuardianMenu" VerticalAlignment="Center">
-                    <MenuItem Margin="3,3,3,3" Padding="3,3,3,3" Header="HID Guardian">
+                <StackPanel>
+                    <ContentControl Content="{StaticResource Icon_joystick}" />
+                    <Label Content="Add Demo Device..." />
+                </StackPanel>
+            </Button>
+            <Menu x:Name="HidGuardianMenu" VerticalAlignment="Center">
+                <MenuItem Margin="3,3,3,3" Padding="3,3,3,3" Header="HID Guardian">
+                    <MenuItem.Icon>
+                        <ContentControl Content="{StaticResource Icon_shield}" />
+                    </MenuItem.Icon>
+                    <MenuItem Click="ShowEnumeratedDevicesMenuItem_Click" Header="Show Enumerated Devices">
                         <MenuItem.Icon>
-                            <ContentControl Content="{StaticResource Icon_shield}" />
+                            <ContentControl Content="{StaticResource Icon_table}" />
                         </MenuItem.Icon>
-                        <MenuItem Click="ShowEnumeratedDevicesMenuItem_Click" Header="Show Enumerated Devices">
-                            <MenuItem.Icon>
-                                <ContentControl Content="{StaticResource Icon_table}" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Click="ShowHiddenDevicesMenuItem_Click" Header="Show Hidden Devices">
-                            <MenuItem.Icon>
-                                <ContentControl Content="{StaticResource Icon_table_selection_row}" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Click="UnhideAllDevicesMenuItem_Click" Header="Unhide All Devices">
-                            <MenuItem.Icon>
-                                <ContentControl Content="{StaticResource Icon_erase}" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Click="SynchronizeToHidGuardianMenuItem_Click" Header="Synchronize To HID Guardian">
-                            <MenuItem.Icon>
-                                <ContentControl Content="{StaticResource Icon_arrow_circle2}" />
-                            </MenuItem.Icon>
-                        </MenuItem>
                     </MenuItem>
-                </Menu>
-            <CheckBox Name="ShowSystemDevicesButton" Click="ShowSystemDevicesButton_Click" IsChecked="False" Content="Show System Devices" />
+                    <MenuItem Click="ShowHiddenDevicesMenuItem_Click" Header="Show Hidden Devices">
+                        <MenuItem.Icon>
+                            <ContentControl Content="{StaticResource Icon_table_selection_row}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Click="UnhideAllDevicesMenuItem_Click" Header="Unhide All Devices">
+                        <MenuItem.Icon>
+                            <ContentControl Content="{StaticResource Icon_erase}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Click="SynchronizeToHidGuardianMenuItem_Click" Header="Synchronize To HID Guardian">
+                        <MenuItem.Icon>
+                            <ContentControl Content="{StaticResource Icon_arrow_circle2}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+            <CheckBox
+                Name="ShowSystemDevicesButton"
+                Click="ShowSystemDevicesButton_Click"
+                Content="Show System Devices"
+                IsChecked="False" />
         </StackPanel>
 
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Name="DeleteButton" Click="DeleteButton_Click">
-                    <StackPanel>
-                        <ContentControl Content="{StaticResource Icon_Delete}" />
-                        <Label Content="Delete" />
-                    </StackPanel>
-                </Button>
-                <Button
-                    Name="RefreshButton"
-                    Click="RefreshButton_Click">
-                    <StackPanel>
-                        <ContentControl Content="{StaticResource Icon_Refresh}" />
-                        <Label Content="Refresh" />
-                    </StackPanel>
-                </Button>
+            <Button Name="DeleteButton" Click="DeleteButton_Click">
+                <StackPanel>
+                    <ContentControl Content="{StaticResource Icon_Delete}" />
+                    <Label Content="Delete" />
+                </StackPanel>
+            </Button>
+            <Button Name="RefreshButton" Click="RefreshButton_Click">
+                <StackPanel>
+                    <ContentControl Content="{StaticResource Icon_Refresh}" />
+                    <Label Content="Refresh" />
+                </StackPanel>
+            </Button>
         </StackPanel>
         <Border
             Grid.Row="1"
@@ -147,70 +141,70 @@
             BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
             BorderThickness="1"
             SnapsToDevicePixels="True" />
-        <Border Grid.Row="2" CornerRadius="0,0,5,5" Background="{StaticResource BackgroundWhite}">
-        <DataGrid
-            xmlns:local="clr-namespace:x360ce.App.Converters"
-            x:Name="MainDataGrid"
-            Height="Auto"
-            HorizontalAlignment="Stretch"
-            AutoGenerateColumns="False"
-            SelectionChanged="MainDataGrid_SelectionChanged">
-            <DataGrid.Resources>
-                <converters:MapTypeConverter x:Key="MapTypeConverter" />
-                <converters:MapEventTypeConverter x:Key="MapEventTypeConverter" />
-                <converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
-                <converters:ConnectionClassToImageConverter x:Key="ConnectionClassToImageConverter" />
-                <converters:MapRpmTypeConverter x:Key="MapRpmTypeConverter" />
-                <converters:BooleanToVisibilityConverter x:Key="_BooleanToVisibilityConverter" />
-            </DataGrid.Resources>
+        <Border Grid.Row="2" Background="{StaticResource BackgroundWhite}" CornerRadius="0,0,5,5">
+            <DataGrid
+                xmlns:local="clr-namespace:x360ce.App.Converters"
+                x:Name="MainDataGrid"
+                Height="Auto"
+                HorizontalAlignment="Stretch"
+                AutoGenerateColumns="False"
+                SelectionChanged="MainDataGrid_SelectionChanged">
+                <DataGrid.Resources>
+                    <converters:MapTypeConverter x:Key="MapTypeConverter" />
+                    <converters:MapEventTypeConverter x:Key="MapEventTypeConverter" />
+                    <converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
+                    <converters:ConnectionClassToImageConverter x:Key="ConnectionClassToImageConverter" />
+                    <converters:MapRpmTypeConverter x:Key="MapRpmTypeConverter" />
+                    <converters:BooleanToVisibilityConverter x:Key="_BooleanToVisibilityConverter" />
+                </DataGrid.Resources>
 
-            <!--  ColumnHeaderStyle  -->
-            <DataGrid.ColumnHeaderStyle>
-                <StaticResource ResourceKey="DataGridHeaderStyle" />
-            </DataGrid.ColumnHeaderStyle>
+                <!--  ColumnHeaderStyle  -->
+                <DataGrid.ColumnHeaderStyle>
+                    <StaticResource ResourceKey="DataGridHeaderStyle" />
+                </DataGrid.ColumnHeaderStyle>
 
-            <!--  Cell  -->
-            <DataGrid.CellStyle>
-                <Style BasedOn="{StaticResource DataGridCellStyle}" TargetType="DataGridCell">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsOnline}" Value="False">
-                            <Setter Property="Opacity" Value="0.2" />
-                            <Setter Property="IsHitTestVisible" Value="False" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding IsOnline}" Value="True">
-                            <Setter Property="Opacity" Value="1" />
-                            <Setter Property="IsHitTestVisible" Value="True" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.CellStyle>
+                <!--  Cell  -->
+                <DataGrid.CellStyle>
+                    <Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsOnline}" Value="False">
+                                <Setter Property="Opacity" Value="0.2" />
+                                <Setter Property="IsHitTestVisible" Value="False" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsOnline}" Value="True">
+                                <Setter Property="Opacity" Value="1" />
+                                <Setter Property="IsHitTestVisible" Value="True" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
 
-            <DataGrid.Columns>
-                <!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
-                <DataGridTemplateColumn
-                    MinWidth="55"
-                    Header="Active"
-                    IsReadOnly="True"
-                    SortMemberPath="IsOnline">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ContentControl Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn
-                    MinWidth="85"
-                    Header="Connection"
-                    IsReadOnly="True"
-                    SortMemberPath="ConnectionClass">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Image Height="20" Source="{Binding ConnectionClass, Converter={StaticResource ConnectionClassToImageConverter}}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGrid.Columns>
+                    <!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
+                    <DataGridTemplateColumn
+                        MinWidth="55"
+                        Header="Active"
+                        IsReadOnly="True"
+                        SortMemberPath="IsOnline">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn
+                        MinWidth="85"
+                        Header="Connection"
+                        IsReadOnly="True"
+                        SortMemberPath="ConnectionClass">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding ConnectionClass, Converter={StaticResource ConnectionClassToImageConverter}}" Style="{StaticResource ImageCell_Default}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                <!--<DataGridTemplateColumn
+                    <!--<DataGridTemplateColumn
                     MinWidth="60"
                     Header="On"
                     Width="SizeToHeader"
@@ -222,57 +216,60 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>-->
-                <DataGridCheckBoxColumn
-                    x:Name="IsEnabledColumn"
-                    Width="SizeToHeader"
-                    MinWidth="40"
-                    Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
-                    Header="On" />
-                <DataGridTextColumn
-                    Width="SizeToHeader"
-                    MinWidth="85"
-                    Binding="{Binding InstanceId}"
-                    EditingElementStyle="{StaticResource TextBoxCell}"
-                    ElementStyle="{StaticResource TextBlockCell}"
-                    Header="Instance ID"
-                    SortDirection="{x:Null}" />
-                <DataGridTextColumn
-                    MinWidth="100"
-                    Binding="{Binding HidManufacturer}"
-                    EditingElementStyle="{StaticResource TextBoxCell}"
-                    ElementStyle="{StaticResource TextBlockCell}"
-                    Header="Vendor Name" />
-                <DataGridTextColumn
-                    MinWidth="95"
-                    Binding="{Binding ProductName}"
-                    EditingElementStyle="{StaticResource TextBoxCell}"
-                    ElementStyle="{StaticResource TextBlockCell}"
-                    Header="Device Name" />
-                <DataGridTextColumn
-                    Width="*"
-                    MinWidth="180"
-                    Binding="{Binding HidDeviceId}"
-                    EditingElementStyle="{StaticResource TextBoxCell}"
-                    ElementStyle="{StaticResource TextBlockCell}"
-                    Header="HID Device ID (HID Guardian)" />
-                <DataGridTemplateColumn
-                    x:Name="IsHiddenColumn"
-                    Width="SizeToHeader"
-                    MinWidth="65"
-                    Header="Hidden"
-                    SortMemberPath="IsHidden">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <CheckBox
-                                HorizontalAlignment="Center"
-                                IsChecked="{Binding IsHidden}"
-                                Style="{StaticResource CheckBoxCell_Default}"
-                                Visibility="{Binding AllowHide, Converter={StaticResource _BooleanToVisibilityConverter}}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Border>
+                    <DataGridCheckBoxColumn
+                        x:Name="IsEnabledColumn"
+                        Width="SizeToHeader"
+                        MinWidth="40"
+                        Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
+                        EditingElementStyle="{StaticResource CheckBoxCell_Default}"
+                        ElementStyle="{StaticResource CheckBoxCell_Default}"
+                        Header="On" />
+                    <DataGridTextColumn
+                        Width="SizeToHeader"
+                        MinWidth="85"
+                        Binding="{Binding InstanceId}"
+                        EditingElementStyle="{StaticResource TextBoxCell}"
+                        ElementStyle="{StaticResource TextBlockCell}"
+                        Header="Instance ID"
+                        SortDirection="{x:Null}" />
+                    <DataGridTextColumn
+                        MinWidth="100"
+                        Binding="{Binding HidManufacturer}"
+                        EditingElementStyle="{StaticResource TextBoxCell}"
+                        ElementStyle="{StaticResource TextBlockCell}"
+                        Header="Vendor Name" />
+                    <DataGridTextColumn
+                        MinWidth="95"
+                        Binding="{Binding ProductName}"
+                        EditingElementStyle="{StaticResource TextBoxCell}"
+                        ElementStyle="{StaticResource TextBlockCell}"
+                        Header="Device Name" />
+                    <DataGridTextColumn
+                        Width="*"
+                        MinWidth="180"
+                        Binding="{Binding HidDeviceId}"
+                        CellStyle="{StaticResource DataGridCell_Default}"
+                        EditingElementStyle="{StaticResource TextBoxCell}"
+                        ElementStyle="{StaticResource TextBlockCell}"
+                        Header="HID Device ID (HID Guardian)" />
+                    <DataGridTemplateColumn
+                        x:Name="IsHiddenColumn"
+                        Width="SizeToHeader"
+                        MinWidth="65"
+                        Header="Hidden"
+                        SortMemberPath="IsHidden">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox
+                                    HorizontalAlignment="Center"
+                                    IsChecked="{Binding IsHidden}"
+                                    Style="{StaticResource CheckBoxCell_Default}"
+                                    Visibility="{Binding AllowHide, Converter={StaticResource _BooleanToVisibilityConverter}}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
     </Grid>
 </UserControl>

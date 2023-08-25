@@ -46,19 +46,13 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-        <StackPanel
+        <DataGrid
+
+            x:Name="MainDataGrid"
             Grid.Row="1"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}" />
-        <DataGrid
-            x:Name="MainDataGrid"
-            Grid.Row="1"
-            Height="Auto"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
             AutoGenerateColumns="False"
-            Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
             IsReadOnly="True"
             ScrollViewer.CanContentScroll="True"
             ScrollViewer.HorizontalScrollBarVisibility="Hidden"
@@ -81,6 +75,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
+                <!--Connection type-->
                 <DataGridTemplateColumn
                     x:Name="ConnectionClassColumn"
                     Width="SizeToCells"
@@ -101,12 +96,12 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridCheckBoxColumn
+                    ElementStyle="{StaticResource CheckBoxCell_Default}"
+                    EditingElementStyle="{StaticResource CheckBoxCell_Default}"
                     x:Name="IsEnabledColumn"
                     Width="Auto"
                     Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
-                    Header="On"
-                    ElementStyle="{StaticResource CheckBoxCell_Default }"
-                    EditingElementStyle="{StaticResource CheckBoxCell_Default}" />
+                    Header="On" />
                 <DataGridTextColumn
                     Width="Auto"
                     Binding="{Binding InstanceId}"
@@ -148,11 +143,6 @@
                     ElementStyle="{StaticResource TextBlockRightCell}"
                     Header="Comp" />
             </DataGrid.Columns>
-            <DataGrid.CellStyle>
-                <Style TargetType="DataGridCell">
-                    <Setter Property="Padding" Value="4" />
-                </Style>
-            </DataGrid.CellStyle>
         </DataGrid>
         <StackPanel
             Grid.Row="2"

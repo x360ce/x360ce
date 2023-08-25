@@ -83,35 +83,46 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-        <Border
+        <!--<Border
             Grid.Row="1"
             Height="1"
             BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
             BorderThickness="1"
-            SnapsToDevicePixels="True" />
+            SnapsToDevicePixels="True" />-->
         <DataGrid
             xmlns:local="clr-namespace:x360ce.App.Converters"
             x:Name="MainDataGrid"
             Grid.Row="1"
-            Height="Auto"
             HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
             AutoGenerateColumns="False"
-            Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
             IsReadOnly="True"
             KeyDown="MainDataGrid_KeyDown"
             SelectionChanged="MainDataGrid_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding IsEnabled}" />
-                <DataGridTextColumn Binding="{Binding FileName}" Header="File Name" />
-                <DataGridTextColumn Binding="{Binding FileProductName}" Header="Product Name" />
-                <DataGridTextColumn Binding="{Binding ProcessorArchitecture}" Header="Platform" />
-                <DataGridTextColumn Width="*" Binding="{Binding FullPath}" Header="File Folder" />
+                <DataGridCheckBoxColumn Binding="{Binding IsEnabled}" EditingElementStyle="{StaticResource CheckBoxCell_Default}" ElementStyle="{StaticResource CheckBoxCell_Default}" />
+                <DataGridTextColumn
+                    Binding="{Binding FileName}"
+                    EditingElementStyle="{StaticResource TextBoxCell}"
+                    ElementStyle="{StaticResource TextBlockCell}"
+                    Header="File Name" />
+                <DataGridTextColumn
+                    Binding="{Binding FileProductName}"
+                    EditingElementStyle="{StaticResource TextBoxCell}"
+                    ElementStyle="{StaticResource TextBlockCell}"
+                    Header="Product Name" />
+                <DataGridTextColumn
+                    Binding="{Binding ProcessorArchitecture}"
+                    EditingElementStyle="{StaticResource TextBoxCell}"
+                    ElementStyle="{StaticResource TextBlockCell}"
+                    Header="Platform" />
+                <DataGridTextColumn
+                    Width="*"
+                    Binding="{Binding FullPath}"
+                    EditingElementStyle="{StaticResource TextBoxCell}"
+                    ElementStyle="{StaticResource TextBlockCell}"
+                    Header="File Folder" />
             </DataGrid.Columns>
-            <DataGrid.CellStyle>
-                <Style TargetType="DataGridCell">
-                    <Setter Property="Padding" Value="4" />
-                </Style>
-            </DataGrid.CellStyle>
         </DataGrid>
         <StackPanel x:Name="ScanProgressPanel" Grid.Row="2">
             <TextBlock x:Name="ScanProgressLevel0Label" Text="[ScanProgressLevel0Label]" />
