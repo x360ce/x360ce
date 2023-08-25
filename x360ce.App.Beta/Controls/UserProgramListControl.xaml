@@ -101,28 +101,11 @@
             KeyDown="MainDataGrid_KeyDown"
             SelectionChanged="MainDataGrid_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridCheckBoxColumn Binding="{Binding IsEnabled}" EditingElementStyle="{StaticResource CheckBoxCell}" ElementStyle="{StaticResource CheckBoxCell}" />
-                <DataGridTextColumn
-                    Binding="{Binding FileName}"
-                    EditingElementStyle="{StaticResource TextBoxCell}"
-                    ElementStyle="{StaticResource TextBlockCell}"
-                    Header="File Name" />
-                <DataGridTextColumn
-                    Binding="{Binding FileProductName}"
-                    EditingElementStyle="{StaticResource TextBoxCell}"
-                    ElementStyle="{StaticResource TextBlockCell}"
-                    Header="Product Name" />
-                <DataGridTextColumn
-                    Binding="{Binding ProcessorArchitecture}"
-                    EditingElementStyle="{StaticResource TextBoxCell}"
-                    ElementStyle="{StaticResource TextBlockCell}"
-                    Header="Platform" />
-                <DataGridTextColumn
-                    Width="*"
-                    Binding="{Binding FullPath}"
-                    EditingElementStyle="{StaticResource TextBoxCell}"
-                    ElementStyle="{StaticResource TextBlockCell}"
-                    Header="File Folder" />
+                <DataGridCheckBoxColumn Binding="{Binding IsEnabled}" />
+                <DataGridTextColumn Binding="{Binding FileName}" Header="File Name" />
+                <DataGridTextColumn Binding="{Binding FileProductName}" Header="Product Name" />
+                <DataGridTextColumn Binding="{Binding ProcessorArchitecture}" Header="Platform" />
+                <DataGridTextColumn Width="*" Binding="{Binding FullPath}" Header="File Folder" />
             </DataGrid.Columns>
             <DataGrid.CellStyle>
                 <Style TargetType="DataGridCell">

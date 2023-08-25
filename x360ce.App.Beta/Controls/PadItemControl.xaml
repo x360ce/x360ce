@@ -9,7 +9,7 @@
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
-    <TabControl Name="PadTabControl" Grid.IsSharedSizeScope="True" Margin="3">
+    <TabControl Name="PadTabControl" Margin="3" Grid.IsSharedSizeScope="True">
         <TabItem Name="GeneralTabPage" Header="General">
             <local:PadItem_GeneralControl x:Name="GeneralPanel" />
         </TabItem>

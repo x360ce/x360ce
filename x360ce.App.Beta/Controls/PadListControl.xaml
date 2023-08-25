@@ -18,7 +18,11 @@
             <RowDefinition Height="1" />
         </Grid.RowDefinitions>
         <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-            <CheckBox Name="EnabledCheckBox" Click="EnabledCheckBox_Click" Content="Enabled" Margin="6,0,3,0" />
+            <CheckBox
+                Name="EnabledCheckBox"
+                Margin="6,0,3,0"
+                Click="EnabledCheckBox_Click"
+                Content="Enabled" />
             <CheckBox Name="UseXInputStateCheckBox" Click="UseXInputStateCheckBox_Click" Content="Use XInput State" />
             <CheckBox Name="AutoMapCheckBox" Click="AutoMapCheckBox_Click" Content="Auto Map" />
         </StackPanel>
@@ -84,7 +88,7 @@
                     IsReadOnly="True">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Image>
+                            <Image Style="{StaticResource ImageCell_Default}">
                                 <Image.Source>
                                     <MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
                                         <Binding RelativeSource="{RelativeSource Self}" />
@@ -100,9 +104,9 @@
                     x:Name="IsEnabledColumn"
                     Width="Auto"
                     Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
-                    EditingElementStyle="{StaticResource CheckBoxCell}"
-                    ElementStyle="{StaticResource CheckBoxCell}"
-                    Header="On" />
+                    Header="On"
+                    ElementStyle="{StaticResource CheckBoxCell_Default }"
+                    EditingElementStyle="{StaticResource CheckBoxCell_Default}" />
                 <DataGridTextColumn
                     Width="Auto"
                     Binding="{Binding InstanceId}"

@@ -227,8 +227,6 @@
                     Width="SizeToHeader"
                     MinWidth="40"
                     Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
-                    EditingElementStyle="{StaticResource CheckBoxCell}"
-                    ElementStyle="{StaticResource CheckBoxCell}"
                     Header="On" />
                 <DataGridTextColumn
                     Width="SizeToHeader"
@@ -268,7 +266,7 @@
                             <CheckBox
                                 HorizontalAlignment="Center"
                                 IsChecked="{Binding IsHidden}"
-                                Style="{StaticResource CheckBoxCell}"
+                                Style="{StaticResource CheckBoxCell_Default}"
                                 Visibility="{Binding AllowHide, Converter={StaticResource _BooleanToVisibilityConverter}}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

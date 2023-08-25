@@ -93,8 +93,8 @@
                         <DataGrid.Columns>
                             <DataGridCheckBoxColumn
                                 Binding="{Binding IsEnabled}"
-                                EditingElementStyle="{StaticResource CheckBoxCell}"
-                                ElementStyle="{StaticResource CheckBoxCell}"
+                                EditingElementStyle="{StaticResource CheckBoxCell_Default}"
+                                ElementStyle="{StaticResource CheckBoxCell_Default}"
                                 Header="On" />
                             <DataGridTextColumn
                                 Binding="{Binding Name}"
