@@ -5,18 +5,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:x360ce.App.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Width="600"
+    d:Height="900"
+    d:Width="900"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
-    <Grid>
-        <Grid.Resources>
-            <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
-                <Setter Property="Width" Value="295" />
-                <Setter Property="Margin" Value="3,3,0,0" />
-            </Style>
-        </Grid.Resources>
-        <WrapPanel>
+    <StackPanel Orientation="Vertical">
+        <UniformGrid Margin="0,0,3,0" Columns="3" Rows="2">
+            <UniformGrid.Resources>
+                <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+                    <Setter Property="Margin" Value="3,0,0,0" />
+                </Style>
+            </UniformGrid.Resources>
             <GroupBox Header="Operation">
                 <StackPanel>
                     <CheckBox Name="AllowOnlyOneCopyCheckBox" Content="Allow only one copy of Application at a time" />
@@ -75,56 +75,56 @@
 
                 </StackPanel>
             </GroupBox>
-            <TabControl x:Name="MainTabControl" Margin="3,3,3,3" Padding="0,0,0,0">
-                <TabItem x:Name="SettingsTabPage" Header="Game Scan Locations">
-                    <StackPanel>
-                        <Grid VerticalAlignment="Stretch">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                <Button Name="LocationAddButton" Click="LocationAddButton_Click">
-                                    <StackPanel>
-                                        <ContentControl Content="{StaticResource Icon_add}" />
-                                        <Label Content="Add..." />
-                                    </StackPanel>
-                                </Button>
-                                <Button Name="LocationRemoveButton" Click="LocationRemoveButton_Click">
-                                    <StackPanel>
-                                        <ContentControl Content="{StaticResource Icon_remove}" />
-                                        <Label Content="Remove" />
-                                    </StackPanel>
-                                </Button>
-                                <Button Name="LocationRefreshButton" Click="LocationRefreshButton_Click">
-                                    <StackPanel>
-                                        <ContentControl Content="{StaticResource Icon_Refresh}" />
-                                        <Label Content="Refresh" />
-                                    </StackPanel>
-                                </Button>
+            <!--</WrapPanel>-->
+            <!--</ItemsControl.Items>
+        </ItemsControl>-->
+        </UniformGrid>
+        <TabControl x:Name="MainTabControl" Margin="3">
+            <TabItem x:Name="SettingsTabPage" Header="Game Scan Locations">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button Name="LocationAddButton" Click="LocationAddButton_Click">
+                            <StackPanel>
+                                <ContentControl Content="{StaticResource Icon_add}" />
+                                <Label Content="Add..." />
                             </StackPanel>
-                            <ListBox
-                                Name="GameScanLocationsListBox"
-                                Grid.Row="1"
-                                Width="480"
-                                Height="100"
-                                BorderThickness="0">
-                                <ListBox.OpacityMask>
-                                    <VisualBrush>
-                                        <VisualBrush.Visual>
-                                            <Border
-                                                Width="{Binding ActualWidth, ElementName=GameScanLocationsListBox}"
-                                                Height="{Binding ActualHeight, ElementName=GameScanLocationsListBox}"
-                                                Background="White"
-                                                CornerRadius="0,0,5,5" />
-                                        </VisualBrush.Visual>
-                                    </VisualBrush>
-                                </ListBox.OpacityMask>
-                            </ListBox>
-                        </Grid>
+                        </Button>
+                        <Button Name="LocationRemoveButton" Click="LocationRemoveButton_Click">
+                            <StackPanel>
+                                <ContentControl Content="{StaticResource Icon_remove}" />
+                                <Label Content="Remove" />
+                            </StackPanel>
+                        </Button>
+                        <Button Name="LocationRefreshButton" Click="LocationRefreshButton_Click">
+                            <StackPanel>
+                                <ContentControl Content="{StaticResource Icon_Refresh}" />
+                                <Label Content="Refresh" />
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
-                </TabItem>
-            </TabControl>
-        </WrapPanel>
-    </Grid>
+                    <ListBox
+                        Name="GameScanLocationsListBox"
+                        Grid.Row="1"
+                        MinHeight="100"
+                        BorderThickness="0">
+                        <ListBox.OpacityMask>
+                            <VisualBrush>
+                                <VisualBrush.Visual>
+                                    <Border
+                                        Width="{Binding ActualWidth, ElementName=GameScanLocationsListBox}"
+                                        Height="{Binding ActualHeight, ElementName=GameScanLocationsListBox}"
+                                        Background="White"
+                                        CornerRadius="0,0,5,5" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </ListBox.OpacityMask>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </StackPanel>
 </UserControl>

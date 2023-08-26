@@ -239,7 +239,5 @@ namespace x360ce.App
 			Array.Clear(PadColors, 0, 4);
 			MainTabControl.Items.Clear();
 		}
-
-
 	}
 }

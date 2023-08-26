@@ -89,6 +89,16 @@
         <!--<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />-->
     </Style>
 
+    <!--  RichTextBox  -->
+    <Style x:Key="RichTextBox_Default" TargetType="RichTextBox">
+        <Setter Property="Padding" Value="3,6,3,6" />
+        <Setter Property="IsDocumentEnabled" Value="True" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+    </Style>
+
     <!--  StatusBar  -->
     <Style x:Key="StatusBar_Default" TargetType="StatusBar">
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -1554,6 +1564,7 @@
     <Style BasedOn="{StaticResource StatusBar_Default}" TargetType="StatusBar" />
     <Style BasedOn="{StaticResource Slider_Default}" TargetType="Slider" />
     <Style BasedOn="{StaticResource ComboBoxItem_Default}" TargetType="ComboBoxItem" />
+    <Style BasedOn="{StaticResource RichTextBox_Default}" TargetType="RichTextBox" />
 
     <!--  TabControl_Default style is making control to fail garbage collection (leak memory)  -->
     <Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />

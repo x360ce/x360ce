@@ -30,18 +30,17 @@
                     <Label Content="Download from Cloud" />
                 </StackPanel>
             </Button>
-            <Button Name="DeleteButton" Click="DeleteButton_Click" Margin="0,3,3,3">
+            <Button Name="DeleteButton" Margin="0,3,3,3" Click="DeleteButton_Click">
                 <StackPanel>
                     <ContentControl Content="{StaticResource Icon_delete}" />
                     <Label Content="Delete" />
                 </StackPanel>
             </Button>
         </StackPanel>
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,0,6,0">
             <Label Name="RunStateLabel" Content="*" Opacity="0.3" />
             <Label Name="NextRunLabel" Content="Next Run: 00:00:00" Opacity="0.3" />
-            <Separator Style="{StaticResource MainSeparator}" Visibility="Collapsed" />
-            <Button Name="RefreshButton" HorizontalAlignment="Right" Visibility="Collapsed">
+            <Button Name="RefreshButton" Visibility="Collapsed">
                 <StackPanel>
                     <ContentControl Content="{StaticResource Icon_Refresh}" />
                     <Label Content="Refresh" />
@@ -105,7 +104,7 @@
             </DataGrid.CellStyle>
         </DataGrid>
         <StackPanel x:Name="ItemDetailsPanel" Grid.Row="2">
-            <TextBlock x:Name="CommentLabel" Text="Note:" />
+            <TextBlock x:Name="CommentLabel" Margin="6,3,6,3" Text="Note:" />
         </StackPanel>
     </Grid>
 

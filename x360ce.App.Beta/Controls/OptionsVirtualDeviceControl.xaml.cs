@@ -108,6 +108,5 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(PollingRateComboBox);
 			PollingRateComboBox.ItemsSource = null;
 		}
-
-	}
+    }
 }

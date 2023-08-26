@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0" Margin="3,3,3,3">
+        <GroupBox Grid.Row="0" Margin="3,3,3,0">
             <GroupBox.Header>
                 <TextBlock Text="HID Guardian by Nefarius" />
             </GroupBox.Header>
@@ -39,6 +39,7 @@
                     Name="HidGuardianRefreshButton"
                     Grid.Row="0"
                     Grid.Column="3"
+                    Width="60"
                     Click="RefreshButton_Click"
                     Content="Refresh" />
                 <Label Name="HidGuardianLabel" Grid.Row="1" Grid.Column="0">HID Guardian</Label>
@@ -51,6 +52,7 @@
                     Name="InstallButton"
                     Grid.Row="1"
                     Grid.Column="2"
+                    Width="60"
                     Click="InstallButton_Click"
                     Content="Install"
                     IsEnabled="False" />
@@ -58,37 +60,25 @@
                     Name="UninstallButton"
                     Grid.Row="1"
                     Grid.Column="3"
+                    Width="60"
                     Click="UninstallButton_Click"
                     Content="Uninstall"
                     IsEnabled="False" />
             </Grid>
         </GroupBox>
-        <Border
-            Grid.Row="1"
-            Margin="3"
-            Background="White"
-            BorderBrush="{StaticResource BorderDark}"
-            BorderThickness="1"
-            CornerRadius="5">
-            <RichTextBox
-                Name="HelpRichTextBox"
-                Padding="3,6,3,6"
-                Background="Transparent"
-                BorderThickness="0"
-                VerticalScrollBarVisibility="Auto">
-                <RichTextBox.OpacityMask>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Border
-                                Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
-                                Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
-                                Background="White"
-                                CornerRadius="5"
-                                SnapsToDevicePixels="True" />
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </RichTextBox.OpacityMask>
-            </RichTextBox>
-        </Border>
+        <RichTextBox Name="HelpRichTextBox" Grid.Row="1" Margin="3" Background="{StaticResource BackgroundDark}">
+            <RichTextBox.OpacityMask>
+                <VisualBrush>
+                    <VisualBrush.Visual>
+                        <Border
+                            Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
+                            Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
+                            Background="White"
+                            CornerRadius="5"
+                            SnapsToDevicePixels="True" />
+                    </VisualBrush.Visual>
+                </VisualBrush>
+            </RichTextBox.OpacityMask>
+        </RichTextBox>
     </Grid>
 </UserControl>

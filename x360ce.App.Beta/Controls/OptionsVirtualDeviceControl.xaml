@@ -37,6 +37,7 @@
                     Name="RefreshButton"
                     Grid.Row="0"
                     Grid.Column="3"
+                    Width="60"
                     Click="RefreshButton_Click"
                     Content="Refresh" />
                 <Label
@@ -53,6 +54,7 @@
                     Name="InstallButton"
                     Grid.Row="1"
                     Grid.Column="2"
+                    Width="60"
                     Click="InstallButton_Click"
                     Content="Install"
                     IsEnabled="False" />
@@ -60,42 +62,25 @@
                     Name="UninstallButton"
                     Grid.Row="1"
                     Grid.Column="3"
+                    Width="60"
                     Click="UninstallButton_Click"
                     Content="Uninstall"
                     IsEnabled="False" />
             </Grid>
         </GroupBox>
-        <Border
-            Grid.Row="1"
-            Margin="3"
-            Background="White"
-            BorderBrush="{StaticResource BorderDark}"
-            BorderThickness="1"
-            CornerRadius="5">
-            <RichTextBox
-                x:Name="HelpRichTextBox"
-                Padding="3,6,3,6"
-                Background="Transparent"
-                BorderThickness="0"
-                VerticalScrollBarVisibility="Auto">
-                 <RichTextBox.OpacityMask>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Border
-                                Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
-                                Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
-                                Background="White"
-                                CornerRadius="5"
-                                SnapsToDevicePixels="True" />
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </RichTextBox.OpacityMask>
-                <!--<FlowDocument>
-                <Paragraph>
-                    <Run />
-                </Paragraph>
-            </FlowDocument>-->
-            </RichTextBox>
-        </Border>
+        <RichTextBox x:Name="HelpRichTextBox" Margin="3" Background="{StaticResource BackgroundDark}">
+            <RichTextBox.OpacityMask>
+                <VisualBrush>
+                    <VisualBrush.Visual>
+                        <Border
+                            Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
+                            Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
+                            Background="White"
+                            CornerRadius="5"
+                            SnapsToDevicePixels="True" />
+                    </VisualBrush.Visual>
+                </VisualBrush>
+            </RichTextBox.OpacityMask>
+        </RichTextBox>
     </Grid>
 </UserControl>

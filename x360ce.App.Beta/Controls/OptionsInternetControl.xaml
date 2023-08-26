@@ -5,20 +5,19 @@
     xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls;assembly=x360ce.Engine"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="440"
-    d:DesignWidth="640"
+    d:DesignHeight="900"
+    d:DesignWidth="900"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <WrapPanel Margin="3" Orientation="Horizontal">
-            <GroupBox Header="Online Account - Login">
+    <StackPanel Orientation="Vertical">
+        <UniformGrid Margin="0,0,3,0" Columns="2" Rows="2">
+            <UniformGrid.Resources>
+                <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+                    <Setter Property="Margin" Value="3,0,0,0" />
+                </Style>
+            </UniformGrid.Resources>
+            <GroupBox Header="Online Account">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -27,42 +26,55 @@
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Label
-                        Name="UsernameLabel"
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        Content="Username (E-mail)" />
+                    <Label Name="UsernameLabel" Content="Username · E-mail" />
                     <TextBox Name="UsernameTextBox" Grid.Row="0" Grid.Column="1" />
-                    <Label
-                        Name="PasswordLabel"
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Content="Password" />
+                    <Label Name="PasswordLabel" Grid.Row="1" Content="Password" />
                     <TextBox Name="PasswordTextBox" Grid.Row="1" Grid.Column="1" />
                     <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-                        <Button Name="ResetButton" Click="ResetButton_Click" Content="Reset..." />
-                        <Button Name="CreateButton" Click="CreateButton_Click" Content="Create..." />
-                        <Button Name="LoginButton" Click="LoginButton_Click" Content="Log In" />
+                        <Button
+                            Name="ResetButton"
+                            Width="70"
+                            Click="ResetButton_Click"
+                            Content="Reset..." />
+                        <Button
+                            Name="CreateButton"
+                            Width="70"
+                            Click="CreateButton_Click"
+                            Content="Create..." />
+                        <Button
+                            Name="LoginButton"
+                            Width="70"
+                            Click="LoginButton_Click"
+                            Content="Log In" />
                     </StackPanel>
                 </Grid>
             </GroupBox>
-            <GroupBox Header="Games / Cloud - Default Settings">
-                <StackPanel>
-                    <StackPanel />
-                    <Label Name="MinimumInstanceCountLabel">
-                        Default Settings Minimum Instances
-                    </Label>
-                    <StackPanel Orientation="Horizontal">
-                        <JcControls:NumericUpDown x:Name="GetProgramsMinInstancesUpDown" MinWidth="75" />
-                        <CheckBox Name="GetProgramsIncludeEnabledCheckBox">
-                            Include Enabled
-                        </CheckBox>
-                    </StackPanel>
-                </StackPanel>
+            <GroupBox Header="Games / Cloud">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label Name="MinimumInstanceCountLabel" Margin="3,0,3,0" Content="Minimum Instances" />
+                    <JcControls:NumericUpDown
+                        x:Name="GetProgramsMinInstancesUpDown"
+                        Grid.Column="1"
+                        Width="75"
+                        HorizontalAlignment="Left" />
+                    <CheckBox
+                        Name="GetProgramsIncludeEnabledCheckBox"
+                        Grid.Row="1"
+                        Grid.RowSpan="2"
+                        Content="Include" />
+                </Grid>
             </GroupBox>
-            <GroupBox Header="Update Options">
+            <GroupBox Header="Updates">
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Name="CheckForUpdatesCheckBox" Content="Check for updates on startup" />
                     <Button Name="CheckUpdatesButton" Click="CheckUpdatesButton_Click">
@@ -75,7 +87,7 @@
             </GroupBox>
             <GroupBox Header="Internet">
                 <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Vertical">
                         <CheckBox Name="InternetAutoSaveCheckBox" Content="Save Settings to Cloud" />
                         <CheckBox Name="InternetAutoLoadCheckBox" Content="Load Settings from Cloud" />
                         <CheckBox Name="InternetFeaturesCheckBox" Content="Enable Internet Features" />
@@ -94,74 +106,75 @@
                     </Grid>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Online Account - Anonymous Computer ID and Profile ID will be used by default">
-                <StackPanel>
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Label
-                            Name="ProfilePathLabel"
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Content="Profile Path" />
-                        <TextBox
-                            Name="ProfilePathTextBox"
-                            Grid.Row="0"
-                            Grid.Column="1"
-                            IsReadOnly="True" />
-                        <Button
-                            Name="OpenSettingsFolderButton"
-                            Grid.Row="0"
-                            Grid.Column="2"
-                            Click="OpenSettingsFolderButton_Click">
-                            <StackPanel>
-                                <ContentControl Content="{StaticResource Icon_FolderOpen}" />
-                                <Label Content="Open..." />
-                            </StackPanel>
-                        </Button>
-                        <Label
-                            Name="ProfileIdLabel"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Content="Profile ID" />
-                        <TextBox
-                            Name="ProfileIdTextBox"
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            IsReadOnly="True" />
+        </UniformGrid>
+        <GroupBox Margin="3,0,3,3" Header="Online Account - Anonymous Computer ID and Profile ID will be used by default">
+            <StackPanel>
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label
+                        Name="ProfilePathLabel"
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Content="Profile Path" />
+                    <TextBox
+                        Name="ProfilePathTextBox"
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        IsReadOnly="True" />
+                    <Button
+                        Name="OpenSettingsFolderButton"
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Click="OpenSettingsFolderButton_Click">
+                        <StackPanel>
+                            <ContentControl Content="{StaticResource Icon_FolderOpen}" />
+                            <Label Content="Open..." />
+                        </StackPanel>
+                    </Button>
+                    <Label
+                        Name="ProfileIdLabel"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Content="Profile ID" />
+                    <TextBox
+                        Name="ProfileIdTextBox"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        IsReadOnly="True" />
 
-                        <Label
-                            Name="ComputerIdLabel"
-                            Grid.Row="2"
-                            Grid.Column="0"
-                            Content="Computer ID" />
-                        <TextBox
-                            Name="ComputerIdTextBox"
-                            Grid.Row="2"
-                            Grid.Column="1"
-                            IsReadOnly="True" />
-                        <Label
-                            Name="ComputerDiskLabel"
-                            Grid.Row="3"
-                            Grid.Column="0"
-                            Content="Computer Disk" />
-                        <TextBox
-                            Name="ComputerDiskTextBox"
-                            Grid.Row="3"
-                            Grid.Column="1"
-                            IsReadOnly="True" />
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
-        </WrapPanel>
-    </Grid>
+                    <Label
+                        Name="ComputerIdLabel"
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Content="Computer ID" />
+                    <TextBox
+                        Name="ComputerIdTextBox"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        IsReadOnly="True" />
+                    <Label
+                        Name="ComputerDiskLabel"
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Content="Computer Disk" />
+                    <TextBox
+                        Name="ComputerDiskTextBox"
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        IsReadOnly="True" />
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+    </StackPanel>
+
 </UserControl>

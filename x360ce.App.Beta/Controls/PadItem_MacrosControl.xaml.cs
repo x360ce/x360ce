@@ -84,9 +84,9 @@ namespace x360ce.App.Controls
 			var xKeys = Enum.GetValues(typeof(MapCode)).Cast<MapCode>()
 				.Where(x => SettingsConverter.IsButtonOrDirection(x));
 			var sKeys = xKeys.Select(x => x.ToString()).Distinct().ToList();
-			sKeys.Insert(0, "XInput");
+			//sKeys.Insert(0, "XInput");
 			XButtonsComboBox.ItemsSource = sKeys;
-			XButtonsComboBox.SelectedIndex = alwaysSelectedIndex;
+			//XButtonsComboBox.SelectedIndex = alwaysSelectedIndex;
 			XButtonsComboBox.SelectionChanged += KeysComboBox_SelectionChanged;
 		}
 
@@ -102,9 +102,9 @@ namespace x360ce.App.Controls
 			var ks = keys.ToList();
 			AllKeys.RemoveAll(x => ks.Contains(x));
 			var sKeys = ks.Select(x => x.ToString()).Distinct().ToList();
-			sKeys.Insert(0, name);
+			//sKeys.Insert(0, name);
 			cb.ItemsSource = sKeys;
-			cb.SelectedIndex = alwaysSelectedIndex;
+			//cb.SelectedIndex = alwaysSelectedIndex;
 			cb.SelectionChanged += KeysComboBox_SelectionChanged;
 		}
 
@@ -116,7 +116,7 @@ namespace x360ce.App.Controls
 			if (cb.SelectedIndex <= alwaysSelectedIndex)
 				return;
 			var value = (string)cb.SelectedItem;
-			cb.SelectedIndex = alwaysSelectedIndex;
+			//cb.SelectedIndex = alwaysSelectedIndex;
 			MacroText.Text += "{" + value + "}";
 		}
 
