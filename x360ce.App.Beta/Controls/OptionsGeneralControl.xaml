@@ -23,8 +23,11 @@
                     <CheckBox Name="IsProcessDPIAwareCheckBox" Content="Make Application Process DPI Aware" />
                     <CheckBox Name="AlwaysOnTopCheckBox" Content="Always on Top" />
                     <CheckBox Name="MinimizeToTrayCheckBox" Content="Minimize to Tray" />
-                    <CheckBox Name="StartWithWindowsCheckBox" Content="Start with Windows:" />
-                    <ComboBox Name="StartWithWindowsStateComboBox" MinWidth="75" HorizontalAlignment="Left" />
+                    <CheckBox Name="MinimizeOnClose" Content="Minimize on Close" />
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Name="StartWithWindowsCheckBox" Content="Start with Windows" />
+                        <ComboBox Name="StartWithWindowsStateComboBox" MinWidth="75" HorizontalAlignment="Left" />
+                    </StackPanel>
                 </StackPanel>
             </GroupBox>
             <GroupBox Header="Testing and Logging">

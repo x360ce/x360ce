@@ -9,6 +9,7 @@ using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using x360ce.App.Properties;
 
 namespace x360ce.App.Service
 {
@@ -86,6 +87,7 @@ namespace x360ce.App.Service
 			{
 				InfoForm.MonitorEnabled = false;
 				_Window.SizeChanged -= MainWindow_SizeChanged;
+				_Window.Closing -= _Window_Closing;
 				o.PropertyChanged -= Options_PropertyChanged_Tray;
 			}
 			_Window = window;
@@ -97,13 +99,33 @@ namespace x360ce.App.Service
 			_Window.SizeChanged += MainWindow_SizeChanged;
 			// Run event once to apply settings.
 			MainWindow_SizeChanged(this, null);
+			_Window.Closing += _Window_Closing;
 			_Window.Topmost = o.AlwaysOnTop;
 			InfoForm.MonitorEnabled = o.EnableShowFormInfo;
 			// Start monitoring event.
 			o.PropertyChanged += Options_PropertyChanged_Tray;
 		}
 
-		void CollectGarbage()
+        private void _Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (SettingsManager.Options.MinimizeOnClose)
+            {
+				var window = (Window)sender;
+				// Cancel the close operation.
+				e.Cancel = true;
+				// Minimize the window.
+				window.WindowState = WindowState.Minimized;
+			}
+            else
+            {
+                //  Must shutdown application, because only main window will close and
+                //  Parent window will keep Application running.
+                if (TrayNotifyIcon != null) TrayNotifyIcon.Visible = false;
+                Application.Current.Shutdown();
+            }
+        }
+
+        void CollectGarbage()
 		{
 			for (int i = 0; i < 4; i++)
 			{
@@ -415,7 +437,8 @@ namespace x360ce.App.Service
 			if (disposing)
 			{
 				IsDisposing = true;
-				TrayNotifyIcon?.Dispose();
+                if (TrayNotifyIcon != null) TrayNotifyIcon.Visible = false;
+                TrayNotifyIcon?.Dispose();
 				TrayMenuStrip?.Dispose();
 				OpenApplicationMenu?.Dispose();
 				ExitMenu?.Dispose();

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
+//using System.Windows.Data;
 
 namespace x360ce.App.Controls
 {
@@ -55,8 +55,9 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(o, nameof(Options.AutoDetectForegroundWindow), AutoDetectForegroundWindowCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.IsProcessDPIAware), IsProcessDPIAwareCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.MinimizeToTray), MinimizeToTrayCheckBox);
-			// Direct Input
-			SettingsManager.LoadAndMonitor(o, nameof(Options.ExcludeVirtualDevices), ExcludeVirtualDevicesCheckBox);
+            SettingsManager.LoadAndMonitor(o, nameof(Options.MinimizeOnClose), MinimizeOnClose);
+            // Direct Input
+            SettingsManager.LoadAndMonitor(o, nameof(Options.ExcludeVirtualDevices), ExcludeVirtualDevicesCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.ExcludeSupplementalDevices), ExcludeSupplementalDevicesCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.UseDeviceBufferedData), UseDeviceBufferedDataCheckBox);
 			SettingsManager.LoadAndMonitor(o, nameof(Options.AcquireHiddenDevicesInExclusiveMode), AcquireHiddenDevicesInExclusiveModeCheckBox);

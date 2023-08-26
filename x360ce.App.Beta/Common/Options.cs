@@ -13,7 +13,8 @@ namespace x360ce.App
 			// Set default values.
 			AllowOnlyOneCopy = true;
 			MinimizeToTray = true;
-			StartWithWindowsState = FormWindowState.Minimized;
+            MinimizeOnClose = true;
+            StartWithWindowsState = FormWindowState.Minimized;
 			InternetFeatures = true;
 			InternetAutoLoad = true;
 			InternetAutoSave = true;
@@ -183,7 +184,9 @@ namespace x360ce.App
 
 		[DefaultValue(true)]
 		public bool MinimizeToTray { get; set; }
-		public bool ExcludeSupplementalDevices { get; set; }
+
+        public bool MinimizeOnClose { get; set; }
+        public bool ExcludeSupplementalDevices { get; set; }
 
 		#region ■ Direct Input
 
