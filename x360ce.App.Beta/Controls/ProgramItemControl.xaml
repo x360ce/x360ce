@@ -11,6 +11,7 @@
 	mc:Ignorable="d">
 	<Grid>
 		<WrapPanel>
+            <WrapPanel.Resources></WrapPanel.Resources>
 			<GroupBox Name="HookMaskGroupBox" Header="Hook Mask - 00000000">
 				<WrapPanel>
 					<WrapPanel Orientation="Vertical">
@@ -82,10 +83,6 @@
 					<Button Click="NGEmuThreadLinkButton_Click" Content="Open NGemu..." />
 				</WrapPanel>
 			</GroupBox>
-
-
-
-
 			<GroupBox Header="Other Options">
 				<WrapPanel>
 					<Grid>

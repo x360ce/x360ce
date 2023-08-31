@@ -83,19 +83,12 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-        <!--<Border
-            Grid.Row="1"
-            Height="1"
-            BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
-            BorderThickness="1"
-            SnapsToDevicePixels="True" />-->
         <DataGrid
             xmlns:local="clr-namespace:x360ce.App.Converters"
             x:Name="MainDataGrid"
             Grid.Row="1"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Top"
             AutoGenerateColumns="False"
+            Background="White"
             IsReadOnly="True"
             KeyDown="MainDataGrid_KeyDown"
             SelectionChanged="MainDataGrid_SelectionChanged">

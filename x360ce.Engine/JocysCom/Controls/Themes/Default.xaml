@@ -1207,6 +1207,7 @@
 
     <!--  GroupBox  -->
     <Style x:Key="GroupBox_Default" TargetType="GroupBox">
+        <Setter Property="Margin" Value="3,0,0,3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="GroupBox">
