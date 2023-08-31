@@ -110,10 +110,19 @@
         <Setter Property="Background" Value="{StaticResource BackgroundLight}" />
     </Style>
 
+
+    <!--  Slider  -->
+    <Style x:Key="TickBar_Default" TargetType="TickBar">
+        <Setter Property="Fill" Value="Red" />
+    </Style>
+
     <Style x:Key="Slider_Default" TargetType="Slider">
+        <Setter Property="TickPlacement" Value="BottomRight" />
+        <Setter Property="IsSnapToTickEnabled" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
         <Setter Property="Margin" Value="3" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{StaticResource BorderDark}" />
         <Setter Property="Width" Value="200" />
     </Style>
 
@@ -584,7 +593,20 @@
                             KeyboardNavigation.DirectionalNavigation="Contained"
                             KeyboardNavigation.TabIndex="2"
                             KeyboardNavigation.TabNavigation="Local">
-                            <ContentPresenter ContentSource="SelectedContent" />
+                            <ContentPresenter Name="ContentPresenter" ContentSource="SelectedContent">
+                                <ContentPresenter.OpacityMask>
+                                    <VisualBrush>
+                                        <VisualBrush.Visual>
+                                            <Border
+                                                Width="{Binding ActualWidth, ElementName=ContentPresenter}"
+                                                Height="{Binding ActualHeight, ElementName=ContentPresenter}"
+                                                Background="White"
+                                                CornerRadius="0,5,5,5"
+                                                SnapsToDevicePixels="True" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </ContentPresenter.OpacityMask>
+                            </ContentPresenter>
                         </Border>
                     </Grid>
                 </ControlTemplate>
@@ -1562,6 +1584,7 @@
     <Style BasedOn="{StaticResource Label_Default}" TargetType="Label" />
     <Style BasedOn="{StaticResource ContentControl_Default}" TargetType="ContentControl" />
     <Style BasedOn="{StaticResource StatusBar_Default}" TargetType="StatusBar" />
+    <Style BasedOn="{StaticResource TickBar_Default}" TargetType="TickBar" />
     <Style BasedOn="{StaticResource Slider_Default}" TargetType="Slider" />
     <Style BasedOn="{StaticResource ComboBoxItem_Default}" TargetType="ComboBoxItem" />
     <Style BasedOn="{StaticResource RichTextBox_Default}" TargetType="RichTextBox" />

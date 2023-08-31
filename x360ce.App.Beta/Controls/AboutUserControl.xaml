@@ -148,11 +148,12 @@
             </TextBlock>
         </Grid>
         <TabControl Name="AboutTabControl" Grid.Row="1" Margin="3">
-            <TabItem Name="ChangesTabPage" Header="Changes">
+            <TabItem Name="ChangesTabPage" Header="Changes" Background="White">
                 <TextBox
                     Name="ChangeLogTextBox"
                     Margin="0"
                     Padding="6"
+                    SnapsToDevicePixels="True"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     VerticalContentAlignment="Top"
@@ -162,20 +163,8 @@
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                     TextWrapping="Wrap">
                     <TextBox.Resources>
-                        <Style TargetType="Border" />
+                        <Style TargetType="Border"/>
                     </TextBox.Resources>
-                    <TextBox.OpacityMask>
-                        <VisualBrush>
-                            <VisualBrush.Visual>
-                                <Border
-                                    Width="{Binding ActualWidth, ElementName=ChangeLogTextBox}"
-                                    Height="{Binding ActualHeight, ElementName=ChangeLogTextBox}"
-                                    Background="White"
-                                    CornerRadius="0,5,5,5"
-                                    SnapsToDevicePixels="True" />
-                            </VisualBrush.Visual>
-                        </VisualBrush>
-                    </TextBox.OpacityMask>
                 </TextBox>
             </TabItem>
             <TabItem Name="LicenseTabPage" Background="White" Header="License">
