@@ -9,7 +9,7 @@
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
     <WrapPanel Margin="3">
-        <GroupBox Header="Allow Remote Controllers">
+        <GroupBox Margin="0,0,3,3" Header="Allow Remote Controllers">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />

@@ -146,7 +146,6 @@
                 xmlns:local="clr-namespace:x360ce.App.Converters"
                 x:Name="MainDataGrid"
                 Height="Auto"
-                HorizontalAlignment="Stretch"
                 AutoGenerateColumns="False"
                 SelectionChanged="MainDataGrid_SelectionChanged">
                 <DataGrid.Resources>
@@ -165,7 +164,7 @@
 
                 <!--  Cell  -->
                 <DataGrid.CellStyle>
-                    <Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCell_Default}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsOnline}" Value="False">
                                 <Setter Property="Opacity" Value="0.2" />
@@ -203,7 +202,6 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-
                     <!--<DataGridTemplateColumn
                     MinWidth="60"
                     Header="On"
@@ -248,7 +246,6 @@
                         Width="*"
                         MinWidth="180"
                         Binding="{Binding HidDeviceId}"
-                        CellStyle="{StaticResource DataGridCell_Default}"
                         EditingElementStyle="{StaticResource TextBoxCell}"
                         ElementStyle="{StaticResource TextBlockCell}"
                         Header="HID Device ID (HID Guardian)" />

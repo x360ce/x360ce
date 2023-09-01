@@ -4,18 +4,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="300"
-    d:DesignWidth="740"
+    d:DesignHeight="450"
+    d:DesignWidth="900"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
-    <Grid Margin="3,3,3,3">
+    <Grid Margin="3">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -34,15 +34,11 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Content="VN" />
-            <Label Grid.Row="1" Grid.Column="0" Content="PN" />
-            <Label Grid.Row="2" Grid.Column="0" Content="PG" />
-            <Label Grid.Row="3" Grid.Column="0" Content="IG" />
-            <TextBox
-                Name="DeviceVendorNameTextBox"
-                Grid.Row="0"
-                Grid.Column="1"
-                IsReadOnly="True" />
+            <Label Content="VN" />
+            <Label Grid.Row="1" Content="PN" />
+            <Label Grid.Row="2" Content="PG" />
+            <Label Grid.Row="3" Content="IG" />
+            <TextBox Name="DeviceVendorNameTextBox" Grid.Column="1" IsReadOnly="True" />
             <TextBox
                 Name="DeviceProductNameTextBox"
                 Grid.Row="1"
@@ -59,12 +55,8 @@
                 Grid.Column="1"
                 Width="Auto"
                 IsReadOnly="True" />
-            <Label
-                Name="DeviceVidLabel"
-                Grid.Row="0"
-                Grid.Column="2"
-                Content="VID" />
-            <ComboBox Name="MapToPadComboBox" Grid.Row="0" Grid.Column="5">
+            <Label Name="DeviceVidLabel" Grid.Column="2" Content="VID" />
+            <ComboBox Name="MapToPadComboBox" Grid.Column="5">
                 <ComboBoxItem>0</ComboBoxItem>
                 <ComboBoxItem>1</ComboBoxItem>
                 <ComboBoxItem>2</ComboBoxItem>
@@ -91,21 +83,9 @@
                 Grid.Row="3"
                 Grid.Column="6"
                 Content="Buttons" />
-            <Label
-                Name="AxeCountLabel"
-                Grid.Row="0"
-                Grid.Column="6"
-                Content="Axes" />
-            <Label
-                Name="DiCapFfLabel"
-                Grid.Row="0"
-                Grid.Column="8"
-                Content="FF State" />
-            <Label
-                Name="MapToControllerLabel"
-                Grid.Row="0"
-                Grid.Column="4"
-                Content="Map To" />
+            <Label Name="AxeCountLabel" Grid.Column="6" Content="Axes" />
+            <Label Name="DiCapFfLabel" Grid.Column="8" Content="FF State" />
+            <Label Name="MapToControllerLabel" Grid.Column="4" Content="Map To" />
             <TextBox
                 Name="DeviceRevTextBox"
                 Grid.Row="2"
@@ -116,11 +96,7 @@
                 Grid.Row="1"
                 Grid.Column="3"
                 IsReadOnly="True" />
-            <TextBox
-                Name="DeviceVidTextBox"
-                Grid.Row="0"
-                Grid.Column="3"
-                IsReadOnly="True" />
+            <TextBox Name="DeviceVidTextBox" Grid.Column="3" IsReadOnly="True" />
             <TextBox
                 Name="DiSlidersTextBox"
                 Grid.Row="1"
@@ -184,8 +160,30 @@
                 Grid.RowSpan="2"
                 Grid.Column="8"
                 Grid.ColumnSpan="2"
-                Margin="3,3,3,3"
-                Style="{StaticResource DataGridReadOnly}">
+                Margin="3"
+                Background="{StaticResource BackgroundDark}"
+                IsReadOnly="True">
+                <DataGrid.OpacityMask>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Border
+                                Width="{Binding ActualWidth, ElementName=DiButtonsDataGridView}"
+                                Height="{Binding ActualHeight, ElementName=DiButtonsDataGridView}"
+                                Margin="0"
+                                Padding="0"
+                                Background="Transparent"
+                                CornerRadius="0"
+                                SnapsToDevicePixels="True">
+                                <Border
+                                    Margin="0,0,1,1"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="White"
+                                    CornerRadius="5" />
+                            </Border>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </DataGrid.OpacityMask>
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         MinWidth="100"
@@ -195,92 +193,174 @@
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <DataGrid
-                Name="DiAxisDataGridView"
-                Width="Auto"
-                Height="Auto"
-                VerticalAlignment="Top"
-                GridLinesVisibility="All"
-                Style="{StaticResource DataGridReadOnly}">
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Width="Auto"
-                        Binding="{Binding Axis}"
-                        ElementStyle="{StaticResource TextBlockCenterCell}"
-                        Header="Axis" />
-                    <DataGridTextColumn
-                        MinWidth="50"
-                        Binding="{Binding M}"
-                        ElementStyle="{StaticResource TextBlockRightCell}"
-                        Header="M" />
-                    <DataGridTextColumn
-                        MinWidth="50"
-                        Binding="{Binding R}"
-                        ElementStyle="{StaticResource TextBlockRightCell}"
-                        Header="R" />
-                    <DataGridTextColumn
-                        MinWidth="50"
-                        Binding="{Binding A}"
-                        ElementStyle="{StaticResource TextBlockRightCell}"
-                        Header="A" />
-                    <DataGridTextColumn
-                        MinWidth="50"
-                        Binding="{Binding AR}"
-                        ElementStyle="{StaticResource TextBlockRightCell}"
-                        Header="AR" />
-                    <DataGridTextColumn
-                        Width="Auto"
-                        Binding="{Binding F}"
-                        ElementStyle="{StaticResource TextBlockRightCell}"
-                        Header="F" />
-                    <DataGridTextColumn
-                        Width="Auto"
-                        Binding="{Binding FR}"
-                        ElementStyle="{StaticResource TextBlockRightCell}"
-                        Header="FR" />
-                    <DataGridTextColumn
-                        Width="Auto"
-                        Binding="{Binding V}"
-                        ElementStyle="{StaticResource TextBlockRightCell}"
-                        Header="V" />
-                    <DataGridTextColumn
-                        Width="Auto"
-                        Binding="{Binding VR}"
-                        ElementStyle="{StaticResource TextBlockRightCell}"
-                        Header="VR" />
-                </DataGrid.Columns>
-            </DataGrid>
+        <Grid Grid.Row="1" Margin="0,3,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="9*" />
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <UserControl Name="UserControl_Rounded">
+                <UserControl.OpacityMask>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Border
+                                Width="{Binding ActualWidth, ElementName=UserControl_Rounded}"
+                                Height="{Binding ActualHeight, ElementName=UserControl_Rounded}"
+                                Margin="0"
+                                Padding="0"
+                                Background="Transparent"
+                                CornerRadius="0"
+                                SnapsToDevicePixels="True">
+                                <Border
+                                    Margin="0,0,1,1"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="White"
+                                    CornerRadius="5" />
+                            </Border>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </UserControl.OpacityMask>
+                <DataGrid
+                    Name="DiAxisDataGridView"
+                    VerticalAlignment="Top"
+                    Background="{StaticResource BackgroundDark}"
+                    GridLinesVisibility="All"
+                    IsHitTestVisible="False"
+                    IsReadOnly="True">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style BasedOn="{StaticResource DataGridColumnHeader_Default}" TargetType="DataGridColumnHeader">
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <!--<DataGrid.OpacityMask>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Border
+                                Width="{Binding ActualWidth, ElementName=DiAxisDataGridView}"
+                                Height="{Binding ActualHeight, ElementName=DiAxisDataGridView}"
+                                Margin="0"
+                                Padding="0"
+                                Background="Transparent"
+                                CornerRadius="0"
+                                SnapsToDevicePixels="True">
+                                <Border
+                                    Margin="0,0,1,1"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="White"
+                                    CornerRadius="5" />
+                            </Border>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </DataGrid.OpacityMask>-->
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding Axis}"
+                            ElementStyle="{StaticResource TextBlockCenterCell}"
+                            Header="Axis" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding M}"
+                            ElementStyle="{StaticResource TextBlockCenterCell}"
+                            Header="M" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding R}"
+                            ElementStyle="{StaticResource TextBlockCenterCell}"
+                            Header="R" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding A}"
+                            ElementStyle="{StaticResource TextBlockRightCell}"
+                            Header="A" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding AR}"
+                            ElementStyle="{StaticResource TextBlockRightCell}"
+                            Header="AR" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding F}"
+                            ElementStyle="{StaticResource TextBlockRightCell}"
+                            Header="F" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding FR}"
+                            ElementStyle="{StaticResource TextBlockRightCell}"
+                            Header="FR" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding V}"
+                            ElementStyle="{StaticResource TextBlockRightCell}"
+                            Header="V" />
+                        <DataGridTextColumn
+                            Width="*"
+                            Binding="{Binding VR}"
+                            ElementStyle="{StaticResource TextBlockRightCell}"
+                            Header="VR" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </UserControl>
             <DataGrid
                 Name="DiSlidersDataGridView"
-                Width="Auto"
-                Height="Auto"
-                Margin="8,0,0,0"
+                Grid.Column="1"
+                Margin="6,0,0,0"
                 VerticalAlignment="Top"
-                Style="{StaticResource DataGridReadOnly}">
+                Background="{StaticResource BackgroundDark}"
+                GridLinesVisibility="All"
+                IsHitTestVisible="False"
+                SnapsToDevicePixels="True">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style BasedOn="{StaticResource DataGridColumnHeader_Default}" TargetType="DataGridColumnHeader">
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.OpacityMask>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Border
+                                Width="{Binding ActualWidth, ElementName=DiSlidersDataGridView}"
+                                Height="{Binding ActualHeight, ElementName=DiSlidersDataGridView}"
+                                Margin="0"
+                                Padding="0"
+                                Background="Transparent"
+                                CornerRadius="0"
+                                SnapsToDevicePixels="True">
+                                <Border
+                                    Margin="0,0,1,1"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="White"
+                                    CornerRadius="5" />
+                            </Border>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </DataGrid.OpacityMask>
                 <DataGrid.Columns>
                     <DataGridTextColumn
-                        Width="Auto"
+                        Width="*"
                         Binding="{Binding Slider}"
-                        ElementStyle="{StaticResource TextBlockCenterCell}"
+                        ElementStyle="{StaticResource TextBlockRightCell}"
                         Header="Slider" />
                     <DataGridTextColumn
-                        MinWidth="50"
+                        Width="*"
                         Binding="{Binding M}"
                         ElementStyle="{StaticResource TextBlockRightCell}"
                         Header="M" />
                     <DataGridTextColumn
-                        MinWidth="50"
+                        Width="*"
                         Binding="{Binding A}"
                         ElementStyle="{StaticResource TextBlockRightCell}"
                         Header="A" />
                     <DataGridTextColumn
-                        MinWidth="50"
+                        Width="*"
                         Binding="{Binding F}"
                         ElementStyle="{StaticResource TextBlockRightCell}"
                         Header="F" />
                     <DataGridTextColumn
-                        MinWidth="50"
+                        Width="*"
                         Binding="{Binding V}"
                         ElementStyle="{StaticResource TextBlockRightCell}"
                         Header="V" />
@@ -288,30 +368,58 @@
             </DataGrid>
             <DataGrid
                 Name="DiPOVsDataGridView"
-                Width="Auto"
-                Height="Auto"
-                Margin="8,0,0,0"
+                Grid.Column="2"
+                Margin="6,0,0,0"
                 VerticalAlignment="Top"
-                Style="{StaticResource DataGridReadOnly}">
+                Background="{StaticResource BackgroundDark}"
+                GridLinesVisibility="All"
+                IsHitTestVisible="False"
+                IsReadOnly="True">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style BasedOn="{StaticResource DataGridColumnHeader_Default}" TargetType="DataGridColumnHeader">
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.OpacityMask>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Border
+                                Width="{Binding ActualWidth, ElementName=DiPOVsDataGridView}"
+                                Height="{Binding ActualHeight, ElementName=DiPOVsDataGridView}"
+                                Margin="0"
+                                Padding="0"
+                                Background="Transparent"
+                                CornerRadius="0"
+                                SnapsToDevicePixels="True">
+                                <Border
+                                    Margin="0,0,1,1"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="White"
+                                    CornerRadius="5" />
+                            </Border>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </DataGrid.OpacityMask>
                 <DataGrid.Columns>
                     <DataGridTextColumn
-                        Width="Auto"
+                        Width="*"
                         Binding="{Binding POV}"
-                        ElementStyle="{StaticResource TextBlockCenterCell}"
+                        ElementStyle="{StaticResource TextBlockRightCell}"
                         Header="POV" />
                     <DataGridTextColumn
-                        MinWidth="50"
+                        Width="*"
                         Binding="{Binding M}"
                         ElementStyle="{StaticResource TextBlockRightCell}"
                         Header="" />
                     <DataGridTextColumn
-                        MinWidth="50"
+                        Width="*"
                         Binding="{Binding A}"
                         ElementStyle="{StaticResource TextBlockRightCell}"
                         Header="" />
                 </DataGrid.Columns>
             </DataGrid>
-        </StackPanel>
+        </Grid>
         <TabControl
             Name="DeviceDetailsTabControl"
             Grid.Row="2"
@@ -320,20 +428,10 @@
             <TabItem Name="DiObjectsTabPage" Header="Device Objects">
                 <DataGrid
                     Name="DiObjectsDataGridView"
-                    Margin="0"
-                    Padding="0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    BorderThickness="0"
+                    IsReadOnly="True"
                     ScrollViewer.CanContentScroll="True"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    Style="{StaticResource DataGridReadOnly}">
-                    <DataGrid.RowStyle>
-                        <Style TargetType="DataGridRow">
-                            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
-                        </Style>
-                    </DataGrid.RowStyle>
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <DataGrid.Columns>
                         <DataGridTextColumn
                             Width="Auto"
@@ -397,15 +495,10 @@
             <TabItem Name="DiEffectsDataTabPage" Header="Force Feedback Effects">
                 <DataGrid
                     Name="DiEffectsDataGridView"
-                    Margin="0"
-                    Padding="0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    BorderThickness="0"
+                    IsReadOnly="True"
                     ScrollViewer.CanContentScroll="True"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    Style="{StaticResource DataGridReadOnly}">
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <DataGrid.Columns>
                         <DataGridTextColumn Width="Auto" Binding="{Binding Effect}" Header="FF Effect" />
                         <DataGridTextColumn Width="Auto" Binding="{Binding StaticParameters}" Header="Static Parameters" />

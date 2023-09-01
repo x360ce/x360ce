@@ -17,7 +17,7 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <TabControl
-            Margin="3"
+            Margin="3,3,3,0"
             Padding="0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch">
@@ -69,18 +69,10 @@
                             </StackPanel>
                         </Button>
                     </StackPanel>
-                    <Border
-                        Grid.Row="1"
-                        Height="1"
-                        BorderBrush="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}"
-                        BorderThickness="1"
-                        SnapsToDevicePixels="True" />
                     <DataGrid
                         xmlns:local="clr-namespace:x360ce.App.Converters"
                         x:Name="MainDataGrid"
                         Grid.Row="2"
-                        Height="Auto"
-                        HorizontalAlignment="Stretch"
                         AutoGenerateColumns="False"
                         IsReadOnly="True"
                         SelectionChanged="MainDataGrid_SelectionChanged">
@@ -121,13 +113,11 @@
                                 EditingElementStyle="{StaticResource TextBoxRightCell}"
                                 ElementStyle="{StaticResource TextBlockRightCell}"
                                 Header="Range Max" />
-
                             <DataGridTextColumn
                                 Binding="{Binding MapRpmType, Converter={StaticResource MapRpmTypeConverter}}"
                                 EditingElementStyle="{StaticResource TextBoxRightCell}"
                                 ElementStyle="{StaticResource TextBlockRightCell}"
                                 Header="RPM Type" />
-
                             <DataGridTextColumn
                                 Binding="{Binding MapRpmMin}"
                                 EditingElementStyle="{StaticResource TextBoxRightCell}"
@@ -150,18 +140,12 @@
                                 ElementStyle="{StaticResource TextBlockCell}"
                                 Header="Text" />
                         </DataGrid.Columns>
-                        <DataGrid.CellStyle>
-                            <Style TargetType="DataGridCell">
-                                <Setter Property="Padding" Value="4" />
-                            </Style>
-                        </DataGrid.CellStyle>
                     </DataGrid>
                 </Grid>
-
             </TabItem>
         </TabControl>
         <StackPanel Grid.Row="1">
-            <GroupBox Margin="3" Header="Edit Macro">
+            <GroupBox Margin="3,0,3,3" Header="Edit Macro">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
@@ -202,7 +186,7 @@
                         <ComboBox Name="Control2KeysComboBox" Text="Control" />
                         <ComboBox Name="FKeysComboBox" Text="F-Keys" />
                         <ComboBox Name="OtherKeysComboBox" Text="Other" />
-                        <ComboBox Name="MouseKeysComboBox" Text="Mouse" IsEnabled="False" />
+                        <ComboBox Name="MouseKeysComboBox" IsEnabled="False" Text="Mouse" />
                         <ComboBox Name="XButtonsComboBox" Text="XInput" />
                     </UniformGrid>
 
