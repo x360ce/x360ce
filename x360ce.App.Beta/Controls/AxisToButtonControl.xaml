@@ -60,12 +60,11 @@
             Name="DeadZoneTrackBar"
             Width="200"
             VerticalAlignment="Center"
+            IsSnapToTickEnabled="True"
             LargeChange="10"
-            Maximum="100" />
-        <JcControls:NumericUpDown
-            x:Name="DeadZoneNumericUpDown"
-            VerticalAlignment="Center"
-            Value="0" />
+            Maximum="100"
+            TickFrequency="327.67" />
+        <JcControls:NumericUpDown x:Name="DeadZoneNumericUpDown" VerticalAlignment="Center" Value="0" />
         <TextBox
             Name="DeadZoneTextBox"
             Width="50"
@@ -73,6 +72,5 @@
             IsTabStop="False"
             Text="0 %"
             TextAlignment="Right" />
-
     </StackPanel>
 </UserControl>

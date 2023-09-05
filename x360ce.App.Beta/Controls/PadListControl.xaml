@@ -47,7 +47,6 @@
             </Button>
         </StackPanel>
         <DataGrid
-
             x:Name="MainDataGrid"
             Grid.Row="1"
             HorizontalAlignment="Stretch"

@@ -10,11 +10,11 @@
     mc:Ignorable="d">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" MinHeight="100" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <local:PadListControl x:Name="PadListPanel" Grid.Row="0" MinHeight="100" />
+        <local:PadListControl x:Name="PadListPanel" Grid.Row="0" MinHeight="146" />
         <local:PadItemControl x:Name="PadItemPanel" Grid.Row="1" />
         <local:PadFootControl x:Name="PadFootPanel" Grid.Row="2" />
     </Grid>

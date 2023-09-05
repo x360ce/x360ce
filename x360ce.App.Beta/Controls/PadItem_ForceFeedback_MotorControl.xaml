@@ -24,7 +24,9 @@
 
                 <!--  Row 1  -->
                 <Label Content="Direction" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <ComboBox x:Name="DirectionComboBox" Grid.Column="1" Margin="0,3,3,3" />
+                <Label Name="DirectionLabel"/></StackPanel>
 
                 <!--  Row 2  -->
                 <Label Name="StrengthLabel" Grid.Row="1" Content="Strength" />
