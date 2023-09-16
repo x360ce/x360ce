@@ -607,24 +607,32 @@
                             BorderBrush="{StaticResource BorderDark}"
                             BorderThickness="1"
                             CornerRadius="0,5,5,5"
-                            KeyboardNavigation.DirectionalNavigation="Contained"
-                            KeyboardNavigation.TabIndex="2"
-                            KeyboardNavigation.TabNavigation="Local">
-                            <ContentPresenter Name="ContentPresenter" VerticalAlignment="Top" ContentSource="SelectedContent">
-                                <ContentPresenter.OpacityMask>
-                                    <VisualBrush>
-                                        <VisualBrush.Visual>
-                                            <Border
-                                                Width="{Binding ActualWidth, ElementName=ContentPresenter}"
-                                                Height="{Binding ActualHeight, ElementName=ContentPresenter}"
-                                                Background="White"
-                                                CornerRadius="0,5,5,5"
-                                                SnapsToDevicePixels="True" />
-                                        </VisualBrush.Visual>
-                                    </VisualBrush>
-                                </ContentPresenter.OpacityMask>
-                            </ContentPresenter>
+                            SnapsToDevicePixels="True">
+                            <!--
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabIndex="2"
+                                KeyboardNavigation.TabNavigation="Local"
+                            -->
                         </Border>
+                        <ContentPresenter
+                            Name="ContentPresenter"
+                            Grid.Row="1"
+                            Margin="1"
+                            VerticalAlignment="Top"
+                            ContentSource="SelectedContent">
+                            <ContentPresenter.OpacityMask>
+                                <VisualBrush>
+                                    <VisualBrush.Visual>
+                                        <Border
+                                            Width="{Binding ActualWidth, ElementName=ContentPresenter}"
+                                            Height="{Binding ActualHeight, ElementName=ContentPresenter}"
+                                            Background="White"
+                                            CornerRadius="0,5,5,5"
+                                            SnapsToDevicePixels="True" />
+                                    </VisualBrush.Visual>
+                                </VisualBrush>
+                            </ContentPresenter.OpacityMask>
+                        </ContentPresenter>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -632,6 +640,7 @@
         <Style.Resources>
             <JcControls:TabIndexConverter x:Key="_TabIndexConverter" />
             <Style TargetType="TabItem">
+                <Setter Property="SnapsToDevicePixels" Value="True" />
                 <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_TabItem}" />
                 <Setter Property="Template">
                     <Setter.Value>
