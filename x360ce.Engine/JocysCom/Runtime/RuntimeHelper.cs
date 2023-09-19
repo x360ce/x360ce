@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
@@ -19,7 +20,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				throw new ArgumentNullException(nameof(type));
 			return
 				type == typeof(string)
-				|| type.IsPrimitive
+				// Note: Every Primitive type (such as int, double, bool, char, etc.) is a ValueType. 
+				|| type.IsValueType
 				|| type.IsSerializable;
 		}
 
@@ -155,7 +157,18 @@ namespace JocysCom.ClassLibrary.Runtime
 				var tf = targetFields.FirstOrDefault(x => x.Name == sf.Name);
 				if (tf == null || !IsKnownType(sf.FieldType) || sf.FieldType != tf.FieldType)
 					continue;
-				tf.SetValue(target, sf.GetValue(source));
+				var useJson = sf.FieldType.IsSerializable && !sf.FieldType.IsValueType;
+				var value = sf.GetValue(source);
+				if (useJson)
+				{
+					var json = JsonSerializer.Serialize(value);
+					value = JsonSerializer.Deserialize(json, tf.FieldType);
+					tf.SetValue(target, value);
+				}
+				else
+				{
+					tf.SetValue(target, sf.GetValue(source));
+				}
 			}
 		}
 
@@ -223,23 +236,32 @@ namespace JocysCom.ClassLibrary.Runtime
 			{
 				// Get destination property and skip if not found.
 				var tp = targetProperties.FirstOrDefault(x => Equals(x.Name, sp.Name));
-				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
-					continue;
 				if (!sp.CanRead || !tp.CanWrite)
 					continue;
+				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
+					continue;
+				var useJson = sp.PropertyType.IsSerializable && !sp.PropertyType.IsValueType;
 				// Get source value.
 				var sValue = sp.GetValue(source, null);
+				if (useJson)
+					sValue = JsonSerializer.Serialize(sValue);
 				var update = true;
 				// If can read target value.
 				if (tp.CanRead)
 				{
 					// Get target value.
 					var dValue = tp.GetValue(target, null);
+					if (useJson)
+						dValue = JsonSerializer.Serialize(dValue);
 					// Update only if values are different.
 					update = !Equals(sValue, dValue);
 				}
 				if (update)
+				{
+					if (useJson)
+						sValue = JsonSerializer.Deserialize(sValue as string, tp.PropertyType);
 					tp.SetValue(target, sValue, null);
+				}
 			}
 		}
 

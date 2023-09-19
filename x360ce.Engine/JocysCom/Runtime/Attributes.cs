@@ -27,7 +27,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		/// <summary>Cache data for speed.</summary>
 		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
-		private static ConcurrentDictionary<object, string> Descriptions { get; } = new ConcurrentDictionary<object, string>();
+		private static ConcurrentDictionary<object, string> Descriptions = new ConcurrentDictionary<object, string>();
 
 		/// <summary>
 		/// Get DescriptionAttribute value from object or enumeration value.

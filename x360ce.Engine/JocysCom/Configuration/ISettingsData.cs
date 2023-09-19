@@ -14,5 +14,6 @@ namespace JocysCom.ClassLibrary.Configuration
 		FileInfo XmlFile { get; }
 		IList Items { get; }
 		event EventHandler FilesChanged;
+		bool IsSavePending { get; set; }
 	}
 }

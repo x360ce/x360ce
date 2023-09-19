@@ -6,6 +6,7 @@ using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace JocysCom.ClassLibrary
 {
@@ -222,6 +223,54 @@ namespace JocysCom.ClassLibrary
 			} while (millisecondsDelay > 0);
 		}
 
+		#region Delay Execution
+
+		/// <summary>
+		/// Contain CancellationTokenSource for each function.
+		/// </summary>
+		static ConcurrentDictionary<Delegate, CancellationTokenSource> DelayActions = new ConcurrentDictionary<Delegate, CancellationTokenSource>();
+
+
+		/// <summary>
+		/// Delay some frequently repeatable actions.
+		/// </summary>
+		public static async Task Delay(Action action, int? delay = null)
+		{
+			await _Delay(action, delay);
+		}
+
+		/// <summary>
+		/// Delay some frequently repeatable actions.
+		/// </summary>
+		private static async Task _Delay(Delegate action, int? delay = null, params object[] args)
+		{
+			var source = new CancellationTokenSource();
+			// Replace any previous CancellationTokenSource with a new one.
+			DelayActions.AddOrUpdate(
+				// Add token if action key do not exists.
+				action, source,
+				// Run this function if the action key already exists.
+				(key, oldSource) =>
+				{
+					System.Diagnostics.Debug.WriteLine("Cancel previous");
+					// Cancel previous delayed operation of the same action.
+					oldSource?.Cancel();
+					// Return new token.
+					return source;
+				}
+			);
+			await Task.Delay(delay ?? 500);
+			lock (action)
+			{
+				// If new delayed operation was started then return.
+				if (source.Token.IsCancellationRequested)
+					return;
+				System.Diagnostics.Debug.WriteLine("Invoke");
+				action.DynamicInvoke(args);
+			}
+		}
+
+		#endregion
 
 #if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard

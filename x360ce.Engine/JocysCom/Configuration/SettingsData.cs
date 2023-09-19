@@ -10,8 +10,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-//using System.Xml.Linq;
-using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Collections;
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
@@ -96,6 +95,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			var path = Path.Combine(folder, fileName);
 			_XmlFile = new FileInfo(path);
 		}
+
+
+		[XmlIgnore]
+		public bool IsSavePending { get; set; }
 
 		[XmlIgnore]
 		public bool UseSeparateFiles { get; set; }
@@ -201,6 +204,7 @@ namespace JocysCom.ClassLibrary.Configuration
 					SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
 				}
 			}
+			IsSavePending = false;
 			SetFileMonitoring(true);
 		}
 
@@ -463,6 +467,7 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#endregion
 
+		[XmlIgnore]
 		public bool ClearWhenLoading = false;
 
 		void LoadAndValidateData(IList<T> data)
@@ -506,7 +511,7 @@ namespace JocysCom.ClassLibrary.Configuration
 						newData.Add(newItem.Key);
 					}
 				}
-				SettingsHelper.Synchronize(newData, Items);
+				CollectionsHelper.Synchronize(newData, Items);
 			}
 		}
 
@@ -608,7 +613,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			return Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
 		}
 
-		SettingsData<T> DeserializeData(byte[] bytes, bool compressed)
+		public SettingsData<T> DeserializeData(byte[] bytes, bool compressed)
 		{
 			if (compressed)
 				bytes = SettingsHelper.Decompress(bytes);

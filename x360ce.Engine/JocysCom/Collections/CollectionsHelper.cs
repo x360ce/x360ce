@@ -9,30 +9,47 @@ namespace JocysCom.ClassLibrary.Collections
 		/// <summary>
 		/// Synchronize source collection to destination.
 		/// </summary>
-		public static void Synchronize<T>(IList<T> source, IList<T> target)
+		public static void Synchronize<T>(IList<T> source, IList<T> target, IEqualityComparer<T> comparer = null)
 		{
-			// Convert to array to avoid modification of collection during processing.
-			var sList = source.ToArray();
-			var t = 0;
-			for (var s = 0; s < sList.Length; s++)
+			comparer = comparer ?? EqualityComparer<T>.Default;
+			// Create a dictionary for fast lookup in source list
+			var sourceSet = new Dictionary<T, int>();
+			for (int i = 0; i < source.Count; i++)
+				sourceSet[source[i]] = i;
+			// Iterate over the target, remove items not in source
+			for (int i = target.Count - 1; i >= 0; i--)
+				if (!sourceSet.Keys.Contains(target[i], comparer))
+					target.RemoveAt(i);
+			// Iterate over source
+			for (int si = 0; si < source.Count; si++)
 			{
-				var item = sList[s];
-				// If item exists in destination and is in the correct position then continue
-				if (t < target.Count && target[t].Equals(item))
+				// If item is not present in target, insert it.
+				// Note: Only check items that have not been synchornized in the target.
+				if (!target.Skip(si).Contains(source[si], comparer))
 				{
-					t++;
+					target.Insert(si, source[si]);
 					continue;
 				}
-				// If item is in destination but not at the correct position, remove it.
-				var indexInDestination = target.IndexOf(item);
-				if (indexInDestination != -1)
-					target.RemoveAt(indexInDestination);
-				// Insert item at the correct position.
-				target.Insert(s, item);
-				t = s + 1;
+				// If item is present in target but not at the right position, move it.
+				int ti = -1;
+				// Note: Only check items that have not been synchornized in the target.
+				for (int i = si; i < target.Count; i++)
+				{
+					if (comparer.Equals(target[i], source[si]))
+					{
+						ti = i;
+						break;
+					}
+				}
+				if (ti != si)
+				{
+					T temp = target[si];
+					target[si] = target[ti];
+					target[ti] = temp;
+				}
 			}
-			// Remove extra items.
-			while (target.Count > sList.Length)
+			// Remove items at the end of target that exceed source's length
+			while (target.Count > source.Count)
 				target.RemoveAt(target.Count - 1);
 		}
 
