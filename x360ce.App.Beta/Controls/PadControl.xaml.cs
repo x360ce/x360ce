@@ -34,12 +34,12 @@ namespace x360ce.App.Controls
 			RemapName = GeneralPanel.RemapAllButton.Content as string;
 			MappedTo = mappedTo;
 			_Imager = new PadControlImager();
-			_Imager.Top = XboxImage.TopPictureImage;
-			_Imager.Front = XboxImage.FrontPictureImage;
-			_Imager.LeftThumbStatus = XboxImage.LeftThumbContentControl;
-			_Imager.RightThumbStatus = XboxImage.RightThumbContentControl;
-			_Imager.LeftTriggerStatus = XboxImage.LeftTriggerContentControl;
-			_Imager.RightTriggerStatus = XboxImage.RightTriggerContentControl;
+			//_Imager.Top = XboxImage.TopPictureImage;
+			//_Imager.Front = XboxImage.FrontPictureImage;
+			_Imager.LeftThumbAxisStatus = XboxImage.LeftThumbAxisBorder;
+			_Imager.RightThumbAxisStatus = XboxImage.RightThumbAxisBorder;
+			_Imager.LeftTriggerAxisStatus = XboxImage.LeftTriggerAxisBorder;
+			_Imager.RightTriggerAxisStatus = XboxImage.RightTriggerAxisBorder;
 			_Imager.ImageControl = XboxImage;
 			XboxImage.InitializeImages(imageInfos, _Imager, mappedTo);
 			XboxImage.StartRecording = StartRecording;
@@ -174,13 +174,13 @@ namespace x360ce.App.Controls
 			// If device disconnected then show disabled images.
 			if (!newConnected && oldConnected)
 			{
-				_Imager.SetImages(false);
+				//_Imager.SetImages(false);
 				GeneralPanel.RemapAllButton.IsEnabled = false;
 			}
 			// If device connected then show enabled images.
 			if (newConnected && !oldConnected)
 			{
-				_Imager.SetImages(true);
+				//_Imager.SetImages(true);
 				GeneralPanel.RemapAllButton.IsEnabled = true;
 			}
 			// Return if controller is not connected.
@@ -316,7 +316,7 @@ namespace x360ce.App.Controls
 		{
 			var dv = new System.Data.DataView();
 			// Show disabled images by default.
-			_Imager.SetImages(false);
+			//_Imager.SetImages(false);
 			// Add player index to combo boxes
 			var playerOptions = new List<KeyValuePair>();
 			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));

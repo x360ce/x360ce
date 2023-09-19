@@ -78,8 +78,8 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				enabledImage = ControlsHelper.GetImageSource(image);
-				disabledImage = ControlsHelper.GetImageSource(AppHelper.GetDisabledImage(image));
+				//enabledImage = ControlsHelper.GetImageSource(image);
+				//disabledImage = ControlsHelper.GetImageSource(AppHelper.GetDisabledImage(image));
 			}
 			// Set image.
 			ButtonImagePictureBox.Source = ButtonImagePictureBox.IsEnabled
@@ -185,8 +185,8 @@ namespace x360ce.App.Controls
 				return;
 			controlsLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, 0, short.MaxValue);
 			controlsLink.ValueChanged += controlsLink_ValueChanged;
-			arrowEnabledImage = ControlsHelper.GetImageSource(Properties.Resources.arrow_right_16x16);
-			arrowDisabledImage = ControlsHelper.GetImageSource(AppHelper.GetDisabledImage(Properties.Resources.arrow_right_16x16));
+			//arrowEnabledImage = ControlsHelper.GetImageSource(Properties.Resources.arrow_right_16x16);
+			//arrowDisabledImage = ControlsHelper.GetImageSource(AppHelper.GetDisabledImage(Properties.Resources.arrow_right_16x16));
 		}
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)

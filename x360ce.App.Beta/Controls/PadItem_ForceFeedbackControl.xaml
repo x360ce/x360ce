@@ -6,26 +6,22 @@
     xmlns:controls="clr-namespace:x360ce.App.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:Width="900"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
-        <GroupBox
-            Grid.Row="0"
-            Grid.Column="0"
-            Margin="3,3,0,3"
-            Header="General">
+        <GroupBox Margin="3,3,0,3" Header="General">
             <StackPanel>
                 <CheckBox x:Name="ForceEnabledCheckBox" Content="Enabled" />
                 <CheckBox x:Name="SwapMotorsCheckBox" Content="Swap Motors" />
@@ -56,12 +52,7 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
-
-        <GroupBox
-            Grid.Row="0"
-            Grid.Column="1"
-            Margin="3"
-            Header="Effect Implementation Type">
+        <GroupBox Grid.Column="1" Margin="3" Header="Effect Implementation Type">
             <StackPanel>
                 <ComboBox
                     x:Name="ForceTypeComboBox"
@@ -83,11 +74,7 @@
             </StackPanel>
         </GroupBox>
 
-        <controls:PadItem_ForceFeedback_MotorControl
-            x:Name="LeftForceFeedbackMotorPanel"
-            Grid.Row="1"
-            Grid.Column="0"
-            x:FieldModifier="public" />
+        <controls:PadItem_ForceFeedback_MotorControl x:Name="LeftForceFeedbackMotorPanel" Grid.Row="1" x:FieldModifier="public" />
         <controls:PadItem_ForceFeedback_MotorControl
             x:Name="RightForceFeedbackMotorPanel"
             Grid.Row="1"
@@ -95,18 +82,9 @@
             x:FieldModifier="public" />
         <TextBlock
             Grid.Row="2"
-            Grid.ColumnSpan="3"
+            Grid.ColumnSpan="2"
             Padding="3,3,3,3"
-            TextWrapping="Wrap">
-            If your controller have only one motor then force feedback effects will be merged automatically.
-            Values sent by the game to the Left Motor, which is used to simulate large explosions, crashes, gun fire, etc,
-            will be able to reach maximum vibration effect.
-            You can reduce strength of the Right Motor to simulate small force feedbacks effects like button responses,
-            small collision bumps, etc. GamePads must use Constant effect type.
-            Wheels must use Periodic effect type, which is perfect for simulating GamePad vibration effects.
-        </TextBlock>
-
-
-
+            Text="If your controller have only one motor then force feedback effects will be merged automatically. Values sent by the game to the Left Motor, which is used to simulate large explosions, crashes, gun fire, etc, will be able to reach maximum vibration effect. You can reduce strength of the Right Motor to simulate small force feedbacks effects like button responses, small collision bumps, etc. GamePads must use Constant effect type. Wheels must use Periodic effect type, which is perfect for simulating GamePad vibration effects."
+            TextWrapping="Wrap" />
     </Grid>
 </UserControl>

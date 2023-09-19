@@ -108,10 +108,10 @@ namespace x360ce.App.Controls
 			var description = Attributes.GetDescription(_MappedTo);
 			var form = new MessageBoxWindow();
 			var buttons = MessageBoxButton.YesNo;
-			var text = string.Format("Do you want to fill {0} settings automatically?", description);
+			var text = string.Format("Do you want to Fill {0} settings automatically?", description);
 			if (ud.Device == null && !TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
 			{
-				text = string.Format("Device is off-line. Please connect device to fill {0} settings automatically.", description);
+				text = string.Format("Device is off-line. Please connect device to Fill {0} settings automatically.", description);
 				buttons = MessageBoxButton.OK;
 			}
 			var result = form.ShowDialog(text, "Fill Controller Settings", buttons, MessageBoxImage.Question);

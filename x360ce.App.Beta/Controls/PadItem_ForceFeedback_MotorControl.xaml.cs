@@ -17,7 +17,7 @@ namespace x360ce.App.Controls
 			deadzoneLink = new TrackBarUpDownTextBoxLink(StrengthTrackBar, StrengthUpDown, StrengthTextBox, 0, 100);
 			offsetLink = new TrackBarUpDownTextBoxLink(PeriodTrackBar, PeriodUpDown, PeriodTextBox, 0, 100);
 			testLink = new TrackBarUpDownTextBoxLink(TestTrackBar, TestUpDown, TestTextBox, 0, 100);
-			// fill direction values.
+			// Fill direction values.
 			var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
 			DirectionComboBox.ItemsSource = effectDirections;
 		}
@@ -68,7 +68,7 @@ namespace x360ce.App.Controls
             //deadzoneLink.Dispose();
             //offsetLink.Dispose();
             //testLink.Dispose();
-            // fill direction values.
+            // Fill direction values.
             //SetBinding(null, 0);
         }
 

@@ -99,7 +99,7 @@ namespace x360ce.App.DInput
 				var device = updatedDevices[i];
 				var ud = uds.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
 				DeviceInfo hid;
-				// Will refresh device and fill more values with new x360ce app if available.
+				// Will refresh device and Fill more values with new x360ce app if available.
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
 			}
 			if (Program.IsClosing)

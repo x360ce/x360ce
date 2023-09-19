@@ -1,10 +1,15 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using x360ce.Engine;
 
 namespace x360ce.App.Controls
@@ -23,6 +28,7 @@ namespace x360ce.App.Controls
 		List<ImageInfo> Infos;
 		MapTo MappedTo;
 
+
 		public void InitializeImages(List<ImageInfo> imageInfos, PadControlImager imager, MapTo mappedTo)
 		{
 			Infos = imageInfos;
@@ -30,16 +36,14 @@ namespace x360ce.App.Controls
 			MappedTo = mappedTo;
 			foreach (var ii in imageInfos)
 			{
-				var nameCode = GetNameCode(ii.Code);
-				var button = FindName(nameCode.ToString()) as Button;
-				ii.ButtonControl = button;
-				SetImage(ii.Code, NavImageType.Normal, false);
+				ii.Path = FindName(GetNameCode(ii.Code).ToString()) as Path;
+				//SetImage(ii.Code, NavImageType.Normal, false);
 			}
 			SetHelpText();
-			MainGrid.MouseMove += MainGrid_MouseMove;
-		}
+			//MainGrid.MouseMove += MainGrid_MouseMove;
+        }
 
-		public MapCode GetNameCode(MapCode code)
+        public MapCode GetNameCode(MapCode code)
 		{
 			if (code == MapCode.LeftThumbAxisX)
 				return MapCode.LeftThumbRight;
@@ -49,41 +53,50 @@ namespace x360ce.App.Controls
 				return MapCode.RightThumbRight;
 			if (code == MapCode.RightThumbAxisY)
 				return MapCode.RightThumbUp;
-			return code;
+            return code;
 		}
 
-		public void SetImage(MapCode code, NavImageType type, bool show)
-		{
-			var nameCode = GetNameCode(code);
-			var ii = Infos.First(x => x.Code == nameCode);
-			var m = GetMiddleImageName(code);
-			var resourceName = string.Format("Nav{0}{1}", m, type);
-			var oldResourceName = ii.CurrentImageName;
-			var isNameSame = ii.CurrentImageName == resourceName;
-			var isShowSame = ii.CurrentImageShow == show;
-			// Return if no changes must be made.
-			// This will fix issue when click on image button is ignored.
-			if (isNameSame && isShowSame)
-				return;
-			ii.CurrentImageName = resourceName;
-			ii.CurrentImageShow = show;
-			var button = FindName(nameCode.ToString()) as Button;
-			if (button == null)
-				return;
-			var content = (ContentControl)button.Content;
-			if (!isNameSame)
-			{
-				var vb = FindResource(resourceName) as Viewbox;
-				content.Content = vb;
-			}
-			// Opacity must be re-applied if image changed.
-			if (!isShowSame || !isNameSame)
-				content.Opacity = type == NavImageType.Record
-					? (show ? 0.8F : 0.2f)
-					: (show ? 0.8F : 0.0f);
+        public void SetImage(MapCode code, NavImageType type, bool show)
+        {
+			//var nameCode = GetNameCode(code);
+			//var ii = Infos.First(x => x.Code == nameCode);
+			//var resourceName = string.Format("NavColor{0}", type);
+			//var path = FindName(nameCode.ToString()) as Path;
+			//path.Fill = FindResource(resourceName) as SolidColorBrush;
 		}
 
-		public string GetMiddleImageName(MapCode code)
+        //public void SetImage(MapCode code, NavImageType type, bool show)
+        //{
+        //	var nameCode = GetNameCode(code);
+        //	var ii = Infos.First(x => x.Code == nameCode);
+        //	var m = GetMiddleImageName(code);
+        //	var resourceName = string.Format("Nav{0}{1}", m, type);
+        //	var oldResourceName = ii.CurrentImageName;
+        //	var isNameSame = ii.CurrentImageName == resourceName;
+        //	var isShowSame = ii.CurrentImageShow == show;
+        //	// Return if no changes must be made.
+        //	// This will fix issue when click on image path is ignored.
+        //	if (isNameSame && isShowSame)
+        //		return;
+        //	ii.CurrentImageName = resourceName;
+        //	ii.CurrentImageShow = show;
+        //	var path = FindName(nameCode.ToString()) as Button;
+        //	if (path == null)
+        //		return;
+        //	var content = (ContentControl)path.Content;
+        //	if (!isNameSame)
+        //	{
+        //		var vb = FindResource(resourceName) as UIElement;
+        //		content.Content = vb;
+        //	}
+        //	// Opacity must be re-applied if image changed.
+        //	if (!isShowSame || !isNameSame)
+        //		content.Opacity = type == NavImageType.Record
+        //			? (show ? 0.8F : 0.2f)
+        //			: (show ? 0.8F : 0.0f);
+        //}
+
+        public string GetMiddleImageName(MapCode code)
 		{
 			if (code == MapCode.LeftTrigger || code == MapCode.RightTrigger)
 				return "Up";
@@ -129,7 +142,7 @@ namespace x360ce.App.Controls
 			{
 				var currentMap = Imager.Recorder.CurrentMap;
 				StopRecording();
-				// Record only if different button was clicked.
+				// Record only if different path was clicked.
 				record = map != currentMap;
 			}
 			if (record)
@@ -140,26 +153,27 @@ namespace x360ce.App.Controls
 		public Action<SettingsMapItem> StartRecording;
 		public Func<bool> StopRecording;
 
-		private void MainGrid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-		{
-			if (ControlsHelper.IsDesignMode(this))
-				return;
-			Imager.ShowLeftThumbButtons = InRange(e, LeftThumbGrid);
-			Imager.ShowRightThumbButtons = InRange(e, RightThumbGrid);
-			Imager.ShowDPadButtons = InRange(e, DPadGrid);
-			Imager.ShowMainButtons = InRange(e, MainButtonsGrid);
-			Imager.ShowMenuButtons = InRange(e, MenuButtonsGrid);
-			Imager.ShowTriggerButtons = InRange(e, TriggerButtonsGrid);
-			Imager.ShowShoulderButtons = InRange(e, ShoulderButtonsGrid);
-		}
+		//private void MainGrid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+		//{
+		//	if (ControlsHelper.IsDesignMode(this))
+		//		return;
 
-		bool InRange(System.Windows.Input.MouseEventArgs e, FrameworkElement control)
-		{
-			var p = e.GetPosition(control);
-			return
-				Math.Abs(p.X - (control.Width / 2F)) < control.Width / 2F &&
-				Math.Abs(p.Y - (control.Height / 2F)) < control.Height / 2F;
-		}
+		//	Imager.ShowLeftThumbButtons = InRange(e, LeftThumbGrid);
+		//	Imager.ShowRightThumbButtons = InRange(e, RightThumbGrid);
+		//	Imager.ShowDPadButtons = InRange(e, DPadGrid);
+		//	Imager.ShowMainButtons = InRange(e, MainButtonsGrid);
+		//	Imager.ShowMenuButtons = InRange(e, MenuButtonsGrid);
+		//	Imager.ShowTriggerButtons = InRange(e, TriggerButtonsGrid);
+		//	Imager.ShowShoulderButtons = InRange(e, ShoulderButtonsGrid);
+		//}
+
+		//bool InRange(System.Windows.Input.MouseEventArgs e, FrameworkElement control)
+		//{
+		//	var p = e.GetPosition(control);
+		//	return
+		//		Math.Abs(p.X - (control.Width / 2F)) < control.Width / 2F &&
+		//		Math.Abs(p.Y - (control.Height / 2F)) < control.Height / 2F;
+		//}
 
 		public string MappingDone = "Mapping Done";
 
@@ -184,12 +198,44 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
-			MainGrid.MouseMove -= MainGrid_MouseMove;
+			//MainGrid.MouseMove -= MainGrid_MouseMove;
 			Infos?.Clear();
 			Infos = null;
 			Imager = null;
 		}
 
-	}
+        SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
+        SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
+        SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
 
+        private void Mouse_Click(object sender, MouseButtonEventArgs e)
+        {
+            var p = sender as Path;
+            if ((p.Fill as SolidColorBrush).Color != colorRecord.Color)
+            {
+                p.Fill = colorRecord;
+            }
+            else
+            {
+                p.Fill = colorNormalPath;
+            }
+        }
+
+        private void Mouse_Enter(object sender, MouseEventArgs e)
+        {
+            var p = sender as Path;
+			if ((p.Fill as SolidColorBrush).Color == colorRecord.Color) return;
+            p.Fill = colorOver;
+        }
+
+        private void Mouse_Leave(object sender, MouseEventArgs e)
+        {
+            var p = sender as Path;
+			if ((p.Fill as SolidColorBrush).Color == colorRecord.Color) return;
+            p.Fill = colorNormalPath;
+        }
+
+
+
+    }
 }

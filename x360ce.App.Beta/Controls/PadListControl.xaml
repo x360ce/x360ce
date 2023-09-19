@@ -74,7 +74,7 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <!--Connection type-->
+                <!--  Connection type  -->
                 <DataGridTemplateColumn
                     x:Name="ConnectionClassColumn"
                     Width="SizeToCells"
@@ -95,11 +95,11 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridCheckBoxColumn
-                    ElementStyle="{StaticResource CheckBoxCell_Default}"
-                    EditingElementStyle="{StaticResource CheckBoxCell_Default}"
                     x:Name="IsEnabledColumn"
                     Width="Auto"
                     Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
+                    EditingElementStyle="{StaticResource CheckBoxCell_Default}"
+                    ElementStyle="{StaticResource CheckBoxCell_Default}"
                     Header="On" />
                 <DataGridTextColumn
                     Width="Auto"

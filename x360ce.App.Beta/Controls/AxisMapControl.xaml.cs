@@ -308,10 +308,11 @@ namespace x360ce.App.Controls
 			g.DrawEllipse(brush, null, new Point(x, h - y), 0.5f, 0.5f);
 		}
 
-        private async void P_X_Y_Z_MenuItem_Click(object sender, RoutedEventArgs e)
+        private async void P_X_Y_Z_MenuItem_Click(object sender, SelectionChangedEventArgs e)
         {
-            var c = (MenuItem)sender;
-            var values = c.Name.Split('_');
+            var c = (ComboBox)sender;
+            ComboBoxItem selectedItem = (ComboBoxItem)c.SelectedItem;
+            var values = selectedItem.Tag.ToString().Split('_'); // c.Name.Split('_');
             float xDeadZone = 0;
             switch (TargetType)
             {
@@ -337,28 +338,79 @@ namespace x360ce.App.Controls
             var deadZone = ConvertHelper.ConvertRangeF(0f, 100f, (float)DeadZoneUpDown.Minimum, (float)DeadZoneUpDown.Maximum, deadZonePercent);
             var antiDeadZone = ConvertHelper.ConvertRangeF(xDeadZone, antiDeadZonePercent, 0f, 100f, 0);
             var linear = ConvertHelper.ConvertRangeF(linearPercent, -100f, 100f, (float)LinearUpDown.Minimum, (float)LinearUpDown.Maximum);
+
             // Move focus away from below controls, so that their value can be changed.
             //PresetMenuStrip.Focus();
             DeadZoneUpDown.Value = (int)deadZone;
             AntiDeadZoneUpDown.Value = (int)antiDeadZone;
             LinearUpDown.Value = (int)linear;
 
-			var menuItem = sender as MenuItem;
-			var menu = menuItem.Parent as Menu;
+			// var menuItem = sender as MenuItem;
+			//var menu = c; // menuItem.Parent as Menu;
 
-            if (menu != null)
-            {
-                var popup = menu.Template.FindName("PART_MenuPopup", menu) as Popup;
-                if (popup != null)
-                {
-                    popup.IsOpen = false;
-                    await Task.Delay(100);
-                    popup.ClearValue(Popup.IsOpenProperty);
-                }
-            }
+   //         if (menu != null)
+   //         {
+   //             var popup = menu.Template.FindName("PART_MenuPopup", menu) as Popup;
+   //             if (popup != null)
+   //             {
+   //                 popup.IsOpen = false;
+   //                 await Task.Delay(100);
+   //                 popup.ClearValue(Popup.IsOpenProperty);
+   //             }
+   //         }
         }
 
-        private void LinearUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal?> e)
+		//private async void P_X_Y_Z_MenuItem_Click(object sender, RoutedEventArgs e)
+		//{
+		//	var c = (MenuItem)sender;
+		//	var values = c.Name.Split('_');
+		//	float xDeadZone = 0;
+		//	switch (TargetType)
+		//	{
+		//		case TargetType.LeftTrigger:
+		//		case TargetType.RightTrigger:
+		//			xDeadZone = Controller.XINPUT_GAMEPAD_TRIGGER_THRESHOLD;
+		//			break;
+		//		case TargetType.LeftThumbX:
+		//		case TargetType.LeftThumbY:
+		//			xDeadZone = Controller.XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
+		//			break;
+		//		case TargetType.RightThumbX:
+		//		case TargetType.RightThumbY:
+		//			xDeadZone = Controller.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
+		//			break;
+		//		default:
+		//			break;
+		//	}
+		//	var deadZonePercent = int.Parse(values[1]);
+		//	var antiDeadZonePercent = int.Parse(values[2]);
+		//	var linearPercent = int.Parse(values[3]);
+
+		//	var deadZone = ConvertHelper.ConvertRangeF(0f, 100f, (float)DeadZoneUpDown.Minimum, (float)DeadZoneUpDown.Maximum, deadZonePercent);
+		//	var antiDeadZone = ConvertHelper.ConvertRangeF(xDeadZone, antiDeadZonePercent, 0f, 100f, 0);
+		//	var linear = ConvertHelper.ConvertRangeF(linearPercent, -100f, 100f, (float)LinearUpDown.Minimum, (float)LinearUpDown.Maximum);
+		//	// Move focus away from below controls, so that their value can be changed.
+		//	//PresetMenuStrip.Focus();
+		//	DeadZoneUpDown.Value = (int)deadZone;
+		//	AntiDeadZoneUpDown.Value = (int)antiDeadZone;
+		//	LinearUpDown.Value = (int)linear;
+
+		//	var menuItem = sender as MenuItem;
+		//	var menu = menuItem.Parent as Menu;
+
+		//	if (menu != null)
+		//	{
+		//		var popup = menu.Template.FindName("PART_MenuPopup", menu) as Popup;
+		//		if (popup != null)
+		//		{
+		//			popup.IsOpen = false;
+		//			await Task.Delay(100);
+		//			popup.ClearValue(Popup.IsOpenProperty);
+		//		}
+		//	}
+		//}
+
+		private void LinearUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal?> e)
 		{
             var text = "";
             if ((int)(e.NewValue ?? 0) < 0)
@@ -399,6 +451,7 @@ namespace x360ce.App.Controls
 			linearLink?.Dispose();
 			linearLink = null;
 		}
+
     }
 }
 

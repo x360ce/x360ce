@@ -239,5 +239,10 @@ namespace x360ce.App
 			Array.Clear(PadColors, 0, 4);
 			MainTabControl.Items.Clear();
 		}
-	}
+
+        private void Pad1Panel_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+
+        }
+    }
 }

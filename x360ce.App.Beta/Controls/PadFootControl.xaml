@@ -23,7 +23,7 @@
                 Content="DX Tweak..." />
         </StackPanel>
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-            <Label Content="Preset: " />
+            <Label Content="Preset " />
             <Button Name="CopyButton" Click="CopyButton_Click">
                 <StackPanel>
                     <ContentControl Content="{StaticResource Icon_copy}" />

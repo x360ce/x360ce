@@ -183,25 +183,25 @@ namespace x360ce.App
 
 		// Use cache so same image won't processed multiple times.
 		public static Dictionary<Bitmap, Bitmap> DisabledImageCache = new Dictionary<Bitmap, Bitmap>();
-		static object DisabledImageLock = new object();
+		//static object DisabledImageLock = new object();
 
 		/// <summary>
 		/// Generates disabled Image. Images are cached so do not use method for random images.
 		/// </summary>
-		public static Bitmap GetDisabledImage(Bitmap image)
-		{
-			lock (DisabledImageLock)
-			{
-				if (!DisabledImageCache.ContainsKey(image))
-				{
-					var newImage = (Bitmap)image.Clone();
-					JocysCom.ClassLibrary.Drawing.Effects.GrayScale(newImage);
-					JocysCom.ClassLibrary.Drawing.Effects.Transparent(newImage, 50);
-					DisabledImageCache.Add(image, newImage);
-				}
-				return DisabledImageCache[image];
-			}
-		}
+		//public static Bitmap GetDisabledImage(Bitmap image)
+		//{
+		//	lock (DisabledImageLock)
+		//	{
+		//		if (!DisabledImageCache.ContainsKey(image))
+		//		{
+		//			var newImage = (Bitmap)image.Clone();
+		//			JocysCom.ClassLibrary.Drawing.Effects.GrayScale(newImage);
+		//			JocysCom.ClassLibrary.Drawing.Effects.Transparent(newImage, 50);
+		//			DisabledImageCache.Add(image, newImage);
+		//		}
+		//		return DisabledImageCache[image];
+		//	}
+		//}
 
 		/// <summary>
 		/// Remove explicit file rules and leave inherited rules only.

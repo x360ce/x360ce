@@ -247,7 +247,26 @@
                         HorizontalAlignment="Left"
                         Opacity="0.5" />
 
-                    <Menu
+                    <ComboBox
+                        Name="PresetMenuStrip"
+                        Grid.Row="5"
+                        Grid.Column="1"
+                        Width="75"
+                        Margin="0,3,0,0"
+                        HorizontalAlignment="Right"
+                        SelectionChanged="P_X_Y_Z_MenuItem_Click"
+                        Style="{StaticResource ComboBox_Static}"
+                        Text="Presets">
+                        <ComboBoxItem Content="Clear" Tag="P_0_0_0_MenuItem" />
+                        <ComboBoxItem Content="100% Controller Anti-DeadZone, 5% DeadZone" Tag="P_5_100_0_MenuItem" />
+                        <ComboBoxItem Content="100% Controller Anti-DeadZone" Tag="P_0_100_0_MenuItem" />
+                        <ComboBoxItem Content="80% Controller Anti-DeadZone" Tag="P_0_80_0_MenuItem" />
+                        <ComboBoxItem Content="60% Controller Anti-DeadZone" Tag="P_0_60_0_MenuItem" />
+                        <ComboBoxItem Content="40% Controller Anti-DeadZone" Tag="P_0_40_0_MenuItem" />
+                        <ComboBoxItem Content="20% Controller Anti-DeadZone" Tag="P_0_20_0_MenuItem" />
+                    </ComboBox>
+
+                    <!--<Menu
                         Name="PresetMenuStrip"
                         Grid.Row="5"
                         Grid.Column="1"
@@ -264,7 +283,7 @@
                             <MenuItem Name="P_0_40_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="40% Controller Anti-DeadZone" />
                             <MenuItem Name="P_0_20_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="20% Controller Anti-DeadZone" />
                         </MenuItem>
-                    </Menu>
+                    </Menu>-->
                 </Grid>
 
             </Grid>

@@ -124,7 +124,7 @@ namespace x360ce.Engine
 			if (newMin == newMax)
 				throw new ArgumentException($"The arguments {nameof(newMin)} and {nameof(newMax)} cannot be equal!");
 			if (LimitRange(oldValue, oldMin, oldMax) != oldValue)
-				throw new ArgumentOutOfRangeException(nameof(oldValue));
+				   throw new ArgumentOutOfRangeException(nameof(oldValue));
 			var oldSize = oldMax - oldMin;
 			var newSize = newMax - newMin;
 			var position = (oldValue - oldMin) / oldSize;

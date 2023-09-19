@@ -18,8 +18,8 @@
                         <Setter Property="HorizontalAlignment" Value="Right" />
                         <Setter Property="Orientation" Value="Horizontal" />
                     </Style>
-                    <Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
-                        <Setter Property="MinWidth" Value="75" />
+                    <Style BasedOn="{StaticResource TextBox_Default2}" TargetType="TextBox">
+                        <Setter Property="Width" Value="75" />
                     </Style>
                     <!--  Menu template  -->
                     <ControlTemplate x:Key="ReusableMenuTemplate" TargetType="Menu">
@@ -86,12 +86,12 @@
                     x:Name="LeftLabel"
                     x:FieldModifier="public"
                     Content="LEFT"
-                    Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
+                    Opacity="0.3" />
                 <TextBox
                     x:Name="LeftTextBox"
-                    Margin="0,0,27,0"
+                    Margin="0,0,29,0"
                     HorizontalContentAlignment="Center"
-                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                    Background="Transparent"
                     IsReadOnly="True"
                     Text="0" />
             </StackPanel>
@@ -142,9 +142,9 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <TextBox
                     x:Name="LeftThumbTextBox"
-                    Margin="0,0,27,0"
+                    Margin="0,0,29,0"
                     HorizontalContentAlignment="Center"
-                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                    Background="Transparent"
                     IsReadOnly="True"
                     Text="0:0" />
             </StackPanel>
@@ -217,8 +217,10 @@
             x:Name="XboxImage"
             Grid.Row="1"
             Grid.Column="1"
-            Width="256"
-            Height="289"
+            Width="Auto"
+            Height="Auto"
+            MaxWidth="400"
+            MaxHeight="600"
             HorizontalAlignment="Center"
             VerticalAlignment="Top" />
         <StackPanel
@@ -231,15 +233,14 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <Label
                     x:Name="RightLabel"
-                    VerticalAlignment="Center"
                     x:FieldModifier="public"
                     Content="RIGHT"
-                    Foreground="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" />
+                    Opacity="0.3" />
                 <TextBox
                     x:Name="RightTextBox"
-                    Margin="0,0,27,0"
+                    Margin="3,3,29,3"
                     HorizontalContentAlignment="Center"
-                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                    Background="Transparent"
                     IsReadOnly="True"
                     Text="0" />
             </StackPanel>
@@ -287,9 +288,9 @@
             <StackPanel Style="{StaticResource StackPanelRight}">
                 <TextBox
                     x:Name="RightThumbTextBox"
-                    Margin="0,0,27,0"
+                    Margin="0,0,29,0"
                     HorizontalContentAlignment="Center"
-                    Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                    Background="Transparent"
                     IsReadOnly="True"
                     Text="0:0" />
             </StackPanel>

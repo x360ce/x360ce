@@ -743,6 +743,82 @@
         </Style.Triggers>
     </Style>
 
+    <Style x:Key="TextBox_Default2" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Border
+                        x:Name="TextBoxBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <ScrollViewer
+                            x:Name="PART_ContentHost"
+                            Focusable="false"
+                            HorizontalScrollBarVisibility="Hidden"
+                            VerticalScrollBarVisibility="Hidden" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Padding" Value="6,4,6,4" />
+                            <Setter Property="Focusable" Value="False" />
+                            <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <!--  MouseOver  -->
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsEnabled" Value="True" />
+                                <Condition Property="IsReadOnly" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="TextBoxBorder" Property="Background" Value="#FFFFCC66" />
+                        </MultiTrigger>
+                        <Trigger Property="IsKeyboardFocused" Value="true">
+                            <Setter TargetName="TextBoxBorder" Property="BorderBrush" Value="{StaticResource BorderDark}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  PasswordBox  -->
+    <Style x:Key="PasswordBox_Default2" BasedOn="{StaticResource SharedTextBoxStyle}" TargetType="PasswordBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Border
+                        x:Name="PasswordBoxBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="5">
+                        <ScrollViewer x:Name="PART_ContentHost" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <!--  Disabled  -->
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="6,4,6,4" />
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+            </Trigger>
+            <MultiTrigger>
+                <!--  MouseOver  -->
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="IsEnabled" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter Property="BorderBrush" Value="{StaticResource BorderDarkSelected}" />
+            </MultiTrigger>
+        </Style.Triggers>
+    </Style>
+
     <!--  PasswordBox  -->
     <Style x:Key="PasswordBox_Default" BasedOn="{StaticResource SharedTextBoxStyle}" TargetType="PasswordBox">
         <Setter Property="Template">
