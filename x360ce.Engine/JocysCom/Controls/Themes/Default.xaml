@@ -8,20 +8,23 @@
         DynamicResource vs StaticResource: StaticResource could cause controls to be garbage collected.
         Use DynamicResource, except for some properties like BasedOn or Converter.
     -->
-
     <!--  Colors  -->
+
+
     <SolidColorBrush x:Key="BackgroundWhite" Color="#ffffff" />
-
     <SolidColorBrush x:Key="BackgroundLight" Color="#f0f0f0" />
-    <SolidColorBrush x:Key="BackgroundLightSelected" Color="#e4f4ff" />
-
     <SolidColorBrush x:Key="BackgroundDark" Color="#dedede" />
     <SolidColorBrush x:Key="BackgroundDarkSelected" Color="#c2e7ff" />
 
     <SolidColorBrush x:Key="BorderDark" Color="#cccccc" />
-    <SolidColorBrush x:Key="BorderDarkSelected" Color="#a4d8fa" />
+    <!--<SolidColorBrush x:Key="BorderDarkSelected" Color="#a4d8fa" />-->
 
     <SolidColorBrush x:Key="ForegroundBlack" Color="#000000" />
+
+    <SolidColorBrush x:Key="ColorNormal" Color="#FF6699FF" />
+    <SolidColorBrush x:Key="ColorActive" Color="#FF42C765" />
+    <SolidColorBrush x:Key="ColorOver" Color="#FFFFCC66" />
+    <SolidColorBrush x:Key="ColorRecord" Color="#FFFF6B66" />
 
     <SolidColorBrush x:Key="SolidColorBrush_BFF">#ff000000</SolidColorBrush>
 
@@ -139,7 +142,7 @@
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
         <Setter Property="Margin" Value="3" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="Foreground" Value="{StaticResource BorderDark}" />
+        <Setter Property="Foreground" Value="{StaticResource BackgroundDark}" />
         <Setter Property="Width" Value="200" />
     </Style>
 
@@ -719,7 +722,7 @@
         <Setter Property="MinHeight" Value="26" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderDark}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BackgroundDark}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
@@ -732,23 +735,11 @@
 
     <!--  TextBox  -->
     <Style x:Key="TextBox_Default" BasedOn="{StaticResource SharedTextBoxStyle}" TargetType="TextBox">
-        <Style.Triggers>
-            <!--  Disabled  -->
-            <Trigger Property="IsReadOnly" Value="True">
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Padding" Value="6,4,6,4" />
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="TextBox_Default2" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Border
-                        x:Name="TextBoxBorder"
+                        Name="TextBoxBorder"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
@@ -760,11 +751,23 @@
                             VerticalScrollBarVisibility="Hidden" />
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!--  IsEnabled  -->
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="BorderThickness" Value="0" />
                             <Setter Property="Padding" Value="6,4,6,4" />
                             <Setter Property="Focusable" Value="False" />
                             <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+                        </Trigger>
+                        <!--  IsReadOnly  -->
+                        <Trigger Property="IsReadOnly" Value="True">
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Padding" Value="6,4,6,4" />
+                            <Setter Property="Focusable" Value="False" />
+                            <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+                        </Trigger>
+                        <!--  IsKeyboardFocused  -->
+                        <Trigger Property="IsKeyboardFocused" Value="true">
+                            <Setter TargetName="TextBoxBorder" Property="BorderBrush" Value="{StaticResource BackgroundDarkSelected}" />
                         </Trigger>
                         <MultiTrigger>
                             <!--  MouseOver  -->
@@ -773,50 +776,12 @@
                                 <Condition Property="IsEnabled" Value="True" />
                                 <Condition Property="IsReadOnly" Value="False" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="TextBoxBorder" Property="Background" Value="#FFFFCC66" />
+                            <Setter TargetName="TextBoxBorder" Property="BorderBrush" Value="{StaticResource BackgroundDarkSelected}" />
                         </MultiTrigger>
-                        <Trigger Property="IsKeyboardFocused" Value="true">
-                            <Setter TargetName="TextBoxBorder" Property="BorderBrush" Value="{StaticResource BorderDark}" />
-                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
-
-    <!--  PasswordBox  -->
-    <Style x:Key="PasswordBox_Default2" BasedOn="{StaticResource SharedTextBoxStyle}" TargetType="PasswordBox">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="PasswordBox">
-                    <Border
-                        x:Name="PasswordBoxBorder"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="5">
-                        <ScrollViewer x:Name="PART_ContentHost" />
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-        <Style.Triggers>
-            <!--  Disabled  -->
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Padding" Value="6,4,6,4" />
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-            </Trigger>
-            <MultiTrigger>
-                <!--  MouseOver  -->
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="True" />
-                    <Condition Property="IsEnabled" Value="True" />
-                </MultiTrigger.Conditions>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderDarkSelected}" />
-            </MultiTrigger>
-        </Style.Triggers>
     </Style>
 
     <!--  PasswordBox  -->
@@ -825,33 +790,37 @@
             <Setter.Value>
                 <ControlTemplate TargetType="PasswordBox">
                     <Border
-                        x:Name="PasswordBoxBorder"
+                        Name="PasswordBoxBorder"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="5">
                         <ScrollViewer x:Name="PART_ContentHost" />
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <!--  IsEnabled  -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Padding" Value="6,4,6,4" />
+                            <Setter Property="Focusable" Value="False" />
+                            <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+                        </Trigger>
+                        <!--  IsKeyboardFocused  -->
+                        <Trigger Property="IsKeyboardFocused" Value="true">
+                            <Setter TargetName="PasswordBoxBorder" Property="BorderBrush" Value="{StaticResource BackgroundDarkSelected}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <!--  MouseOver  -->
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True" />
+                                <Condition Property="IsEnabled" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PasswordBoxBorder" Property="BorderBrush" Value="{StaticResource BackgroundDarkSelected}" />
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Style.Triggers>
-            <!--  Disabled  -->
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Padding" Value="6,4,6,4" />
-                <Setter Property="Focusable" Value="False" />
-                <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-            </Trigger>
-            <MultiTrigger>
-                <!--  MouseOver  -->
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsMouseOver" Value="True" />
-                    <Condition Property="IsEnabled" Value="True" />
-                </MultiTrigger.Conditions>
-                <Setter Property="BorderBrush" Value="{StaticResource BorderDarkSelected}" />
-            </MultiTrigger>
-        </Style.Triggers>
     </Style>
 
     <!--  TextBox - ResultsLog  -->
@@ -940,7 +909,7 @@
                             Padding="1"
                             VerticalAlignment="Center"
                             Background="White"
-                            BorderBrush="{StaticResource BorderDark}"
+                            BorderBrush="{StaticResource BackgroundDark}"
                             BorderThickness="1"
                             CornerRadius="3">
                             <Grid x:Name="markGrid">
@@ -993,7 +962,7 @@
                                 <Condition Property="IsMouseOver" Value="True" />
                                 <Condition Property="IsEnabled" Value="True" />
                             </MultiTrigger.Conditions>
-                            <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="{StaticResource BorderDarkSelected}" />
+                            <Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="{StaticResource BackgroundDarkSelected}" />
                         </MultiTrigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}, Path=Content, Mode=OneTime}" Value="">
                             <Setter TargetName="contentPresenter" Property="Visibility" Value="Collapsed" />

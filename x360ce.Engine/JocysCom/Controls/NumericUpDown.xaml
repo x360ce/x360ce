@@ -58,39 +58,42 @@
                 <RowDefinition Height="0" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Button
-                x:Name="UpButton"
-                MinWidth="0"
-                Margin="0,0,1,0"
-                Padding="3.5"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="#dedede"
-                BorderThickness="0"
-                Click="UpButton_Click"
-                Focusable="False"
-                IsTabStop="False"
-                SnapsToDevicePixels="True">
-                <Button.Style>
-                    <Style>
-                        <Style.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="0,4,0,0" />
-                            </Style>
-                        </Style.Resources>
+            <Grid.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="Background" Value="#DEDEDE" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="MinWidth" Value="0" />
+                    <Setter Property="Margin" Value="0,0,1,0" />
+                    <Setter Property="SnapsToDevicePixels" Value="True" />
+                    <Setter Property="Padding" Value="3" />
+                    <Setter Property="Focusable" Value="False" />
+                    <Setter Property="IsTabStop" Value="False" />
+                </Style>
+                <Style TargetType="Path">
+                    <Setter Property="Width" Value="10" />
+                    <Setter Property="Height" Value="5" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                    <Setter Property="Data" Value="M 0,0 L 10,0 L 5,5 Z" />
+                    <Setter Property="Fill" Value="Black" />
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+                </Style>
+                <Style TargetType="Viewbox">
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                </Style>
+            </Grid.Resources>
+            <Button Name="UpButton" Click="UpButton_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="0,4,0,0" />
                     </Style>
-                </Button.Style>
+                </Button.Resources>
                 <Button.Content>
-                    <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Path
-                            Grid.Column="1"
-                            Width="10"
-                            Height="5"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Data="M 0,0 L 10,0 L 5,5 Z"
-                            Fill="Black"
-                            RenderTransformOrigin="0.5,0.5">
+                    <Viewbox>
+                        <Path>
                             <Path.RenderTransform>
                                 <ScaleTransform ScaleY="-1" />
                             </Path.RenderTransform>
@@ -98,40 +101,15 @@
                     </Viewbox>
                 </Button.Content>
             </Button>
-            <Button
-                x:Name="DownButton"
-                Grid.Row="2"
-                MinWidth="0"
-                Margin="0,0,1,0"
-                Padding="3.5"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="#dedede"
-                BorderThickness="0"
-                Click="DownButton_Click"
-                Focusable="False"
-                IsTabStop="False"
-                SnapsToDevicePixels="True">
-                <Button.Style>
-                    <Style>
-                        <Style.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="0,0,4,0" />
-                            </Style>
-                        </Style.Resources>
+            <Button Name="DownButton" Grid.Row="2" Click="DownButton_Click">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="0,0,4,0" />
                     </Style>
-                </Button.Style>
+                </Button.Resources>
                 <Button.Content>
-                    <Viewbox HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <Path
-                            Grid.Column="1"
-                            Width="10"
-                            Height="5"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Data="M 0,0 L 10,0 L 5,5 Z"
-                            Fill="Black"
-                            RenderTransformOrigin="0.5,0.5" />
+                    <Viewbox>
+                        <Path />
                     </Viewbox>
                 </Button.Content>
             </Button>

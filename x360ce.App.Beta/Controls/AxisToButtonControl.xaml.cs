@@ -39,10 +39,10 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private ImageSource arrowEnabledImage;
-		private ImageSource arrowDisabledImage;
-		private ImageSource enabledImage;
-		private ImageSource disabledImage;
+		//private ImageSource arrowEnabledImage;
+		//private ImageSource arrowDisabledImage;
+		//private ImageSource enabledImage;
+		//private ImageSource disabledImage;
 
 		private void UpdateImage()
 		{
@@ -52,39 +52,64 @@ namespace x360ce.App.Controls
 			name = name.Replace("Thumb", " Stick Button");
 			if (name.Length == 1) name += " Button";
 			ButtonNameLabel.Content = name;
-			System.Drawing.Bitmap image;
+			//System.Drawing.Bitmap image;
+			//switch (GamepadButton)
+			//{
+			//	case GamepadButtonFlags.A: image = Properties.Resources.Button_A; break;
+			//	case GamepadButtonFlags.B: image = Properties.Resources.Button_B; break;
+   //             case GamepadButtonFlags.X: image = Properties.Resources.Button_X; break;
+			//	case GamepadButtonFlags.Y: image = Properties.Resources.Button_Y; break;
+			//	case GamepadButtonFlags.Start: image = Properties.Resources.Button_Start; break;
+			//	case GamepadButtonFlags.Back: image = Properties.Resources.Button_Back; break;
+			//	case GamepadButtonFlags.DPadDown: image = Properties.Resources.Button_DPadDown; break;
+			//	case GamepadButtonFlags.DPadLeft: image = Properties.Resources.Button_DPadLeft; break;
+			//	case GamepadButtonFlags.DPadRight: image = Properties.Resources.Button_DPadRight; break;
+			//	case GamepadButtonFlags.DPadUp: image = Properties.Resources.Button_DPadUp; break;
+			//	case GamepadButtonFlags.LeftShoulder: image = Properties.Resources.Button_LeftShoulder; break;
+			//	case GamepadButtonFlags.LeftThumb: image = Properties.Resources.Button_LeftThumb; break;
+			//	case GamepadButtonFlags.RightShoulder: image = Properties.Resources.Button_RightShoulder; break;
+			//	case GamepadButtonFlags.RightThumb: image = Properties.Resources.Button_RightThumb; break;
+			//	default: image = null; break;
+			//}
+			ControlTemplate template = null;
 			switch (GamepadButton)
 			{
-				case GamepadButtonFlags.A: image = Properties.Resources.Button_A; break;
-				case GamepadButtonFlags.B: image = Properties.Resources.Button_B; break;
-				case GamepadButtonFlags.X: image = Properties.Resources.Button_X; break;
-				case GamepadButtonFlags.Y: image = Properties.Resources.Button_Y; break;
-				case GamepadButtonFlags.Start: image = Properties.Resources.Button_Start; break;
-				case GamepadButtonFlags.Back: image = Properties.Resources.Button_Back; break;
-				case GamepadButtonFlags.DPadDown: image = Properties.Resources.Button_DPadDown; break;
-				case GamepadButtonFlags.DPadLeft: image = Properties.Resources.Button_DPadLeft; break;
-				case GamepadButtonFlags.DPadRight: image = Properties.Resources.Button_DPadRight; break;
-				case GamepadButtonFlags.DPadUp: image = Properties.Resources.Button_DPadUp; break;
-				case GamepadButtonFlags.LeftShoulder: image = Properties.Resources.Button_LeftShoulder; break;
-				case GamepadButtonFlags.LeftThumb: image = Properties.Resources.Button_LeftThumb; break;
-				case GamepadButtonFlags.RightShoulder: image = Properties.Resources.Button_RightShoulder; break;
-				case GamepadButtonFlags.RightThumb: image = Properties.Resources.Button_RightThumb; break;
-				default: image = null; break;
-			}
-			if (image == null)
-			{
-				enabledImage = null;
-				disabledImage = null;
-			}
-			else
-			{
-				//enabledImage = ControlsHelper.GetImageSource(image);
-				//disabledImage = ControlsHelper.GetImageSource(AppHelper.GetDisabledImage(image));
-			}
-			// Set image.
-			ButtonImagePictureBox.Source = ButtonImagePictureBox.IsEnabled
-				? enabledImage
-				: disabledImage;
+                case GamepadButtonFlags.A: template = (ControlTemplate)FindResource("Button_Action_A"); break;
+                case GamepadButtonFlags.B: template = (ControlTemplate)FindResource("Button_Action_B"); break;
+                case GamepadButtonFlags.X: template = (ControlTemplate)FindResource("Button_Action_X"); break;
+                case GamepadButtonFlags.Y: template = (ControlTemplate)FindResource("Button_Action_Y"); break;
+
+                case GamepadButtonFlags.LeftShoulder: template = (ControlTemplate)FindResource("Button_Bumper_Left"); break;
+                case GamepadButtonFlags.RightShoulder: template = (ControlTemplate)FindResource("Button_Bumper_Right"); break;
+
+                case GamepadButtonFlags.Back: template = (ControlTemplate)FindResource("Button_Options_Back"); break;
+                case GamepadButtonFlags.Start: template = (ControlTemplate)FindResource("Button_Options_Start"); break;
+
+                case GamepadButtonFlags.DPadUp: template = (ControlTemplate)FindResource("Button_DPad_Up"); break;
+                case GamepadButtonFlags.DPadDown: template = (ControlTemplate)FindResource("Button_DPad_Down"); break;
+                case GamepadButtonFlags.DPadLeft: template = (ControlTemplate)FindResource("Button_DPad_Left"); break;
+                case GamepadButtonFlags.DPadRight: template = (ControlTemplate)FindResource("Button_DPad_Right"); break;
+
+                case GamepadButtonFlags.LeftThumb: template = (ControlTemplate)FindResource("Button_Thumb_Left"); break;
+                case GamepadButtonFlags.RightThumb: template = (ControlTemplate)FindResource("Button_Thumb_Right"); break;
+            }
+
+			ButtonImageControl.Template = template;
+
+			//if (image == null)
+			//{
+			//	enabledImage = null;
+			//	disabledImage = null;
+			//}
+			//else
+			//{
+			//	enabledImage = ControlsHelper.GetImageSource(image);
+			//	disabledImage = ControlsHelper.GetImageSource(AppHelper.GetDisabledImage(image));
+			//}
+			////Set image.
+			//ButtonImagePictureBox.Source = ButtonImagePictureBox.IsEnabled
+			//	? enabledImage
+			//	: disabledImage;
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -154,29 +179,29 @@ namespace x360ce.App.Controls
 					DeadZoneNumericUpDown.Value = 8192;
 				else if (!en && DeadZoneNumericUpDown.Value > 0)
 					DeadZoneNumericUpDown.Value = 0;
-				ButtonImagePictureBox.IsEnabled = en;
-				ArrowPictureBox.IsEnabled = en;
+				//ButtonImagePictureBox.IsEnabled = en;
+				//ArrowPictureBox.IsEnabled = en;
 			}
 		}
 
 		private void ButtonImagePictureBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
 		{
-			ButtonImagePictureBox.Source = ButtonImagePictureBox.IsEnabled
-				? enabledImage
-				: disabledImage;
+			//ButtonImagePictureBox.Source = ButtonImagePictureBox.IsEnabled
+			//	? enabledImage
+			//	: disabledImage;
 		}
 
-		private void ArrowPictureBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
-		{
-			ArrowPictureBox.Source = ArrowPictureBox.IsEnabled
-				? arrowEnabledImage
-				: arrowDisabledImage;
-		}
+		//private void ArrowPictureBox_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+		//{
+		//	ArrowPictureBox.Source = ArrowPictureBox.IsEnabled
+		//		? arrowEnabledImage
+		//		: arrowDisabledImage;
+		//}
 
 		public void Refresh(State gamePadState)
 		{
 			var on = gamePadState.Gamepad.Buttons.HasFlag(_GamepadButton);
-			ControlsHelper.SetVisible(ButtonStatusImage, on);
+			//ControlsHelper.SetVisible(ButtonStatusImage, on);
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)

@@ -20,23 +20,12 @@
         <Grid Name="MainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="135*" />
-                <!--<RowDefinition Height="8*" />-->
             </Grid.RowDefinitions>
             <Viewbox>
                 <Grid Width="2150" Height="2380">
                     <Grid.Resources>
                         <Style TargetType="Path">
                             <Setter Property="Fill" Value="{StaticResource NavColorNormal}" />
-                            <!--<Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Fill" Value="{StaticResource NavColorAxis}" />
-                                </Trigger>
-
-                                <Trigger Property="IsMouseOver" Value="False">
-                                    <Setter Property="Fill" Value="{StaticResource NavColorNormal}" />
-                                </Trigger>
-
-                            </Style.Triggers>-->
                         </Style>
                     </Grid.Resources>
                     <Control Name="X360ControllerControl" Template="{StaticResource X360Controler}" />
@@ -275,7 +264,7 @@
                         <Border Name="RightThumbAxisBorder" Style="{StaticResource AxisActive}" />
                     </Grid>
                     <Viewbox Margin="850,0,850,250" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                        <Label Name="HelpTextLabel" Content="Mapping Done" Foreground="DarkGreen" />
+                        <Label Name="HelpTextLabel" Content="Mapping Done" Foreground="{StaticResource NavColorActive}" />
                     </Viewbox>
                 </Grid>
             </Viewbox>
