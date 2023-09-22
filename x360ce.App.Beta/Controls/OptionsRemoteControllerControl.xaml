@@ -8,62 +8,64 @@
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
-    <WrapPanel Margin="3">
-        <GroupBox Margin="0,0,3,3" Header="Allow Remote Controllers">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Label
-                    Name="AllowControlLabel"
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Content="Allow Control" />
-                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
-                    <CheckBox Name="AllowRemote1CheckBox" Content="Controller 1" />
-                    <CheckBox Name="AllowRemote2CheckBox" Content="Controller 2" />
-                    <CheckBox Name="AllowRemote3CheckBox" Content="Controller 3" />
-                    <CheckBox Name="AllowRemote4CheckBox" Content="Controller 4" />
-                </StackPanel>
-                <Label
-                    Name="RemotePasswordLabel"
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Content="Remote Password" />
-                <TextBox
-                    Name="RemotePasswordTextBox"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    MinWidth="150" />
-                <Label
-                    Name="RemotePortLabel"
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Content="UDP Server Port" />
-                <JcControls:NumericUpDown
-                    x:Name="RemotePortNumericUpDown"
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    MinWidth="75"
-                    Margin="4,2,4,2"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center"
-                    Maximum="49151"
-                    Minimum="1024"
-                    Value="26010" />
-                <CheckBox
-                    Name="RemoteEnabledCheckBox"
-                    Grid.Row="3"
-                    Grid.Column="1"
-                    Content="Enabled" />
-            </Grid>
-        </GroupBox>
-    </WrapPanel>
+    <GroupBox
+        Margin="3"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Top"
+        Header="Allow Remote Controllers">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Label
+                Name="AllowControlLabel"
+                Grid.Row="0"
+                Grid.Column="0"
+                Content="Allow Control" />
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+                <CheckBox Name="AllowRemote1CheckBox" Content="Controller 1" />
+                <CheckBox Name="AllowRemote2CheckBox" Content="Controller 2" />
+                <CheckBox Name="AllowRemote3CheckBox" Content="Controller 3" />
+                <CheckBox Name="AllowRemote4CheckBox" Content="Controller 4" />
+            </StackPanel>
+            <Label
+                Name="RemotePasswordLabel"
+                Grid.Row="1"
+                Grid.Column="0"
+                Content="Remote Password" />
+            <TextBox
+                Name="RemotePasswordTextBox"
+                Grid.Row="1"
+                Grid.Column="1"
+                MinWidth="150" />
+            <Label
+                Name="RemotePortLabel"
+                Grid.Row="2"
+                Grid.Column="0"
+                Content="UDP Server Port" />
+            <JcControls:NumericUpDown
+                x:Name="RemotePortNumericUpDown"
+                Grid.Row="2"
+                Grid.Column="1"
+                MinWidth="75"
+                Margin="4,2,4,2"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Maximum="49151"
+                Minimum="1024"
+                Value="26010" />
+            <CheckBox
+                Name="RemoteEnabledCheckBox"
+                Grid.Row="3"
+                Grid.Column="1"
+                Content="Enabled" />
+        </Grid>
+    </GroupBox>
 </UserControl>

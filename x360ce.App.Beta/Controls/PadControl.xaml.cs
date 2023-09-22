@@ -31,7 +31,9 @@ namespace x360ce.App.Controls
 			//PadItemPanel.PadTabControl.Items.Remove(PadItemPanel.XInputTabPage);
 			//PadItemPanel.XInputTabPage.Content = null;
 			//PadTabControl.TabPages.Remove(MacrosTabPage);
-			RemapName = GeneralPanel.RemapAllButton.Content as string;
+			RemapName = PadFootPanel.RemapAllButton.Content as string;
+			PadFootPanel.MapNameComboBox.SelectionChanged += GeneralPanel.MapNameComboBox_SelectionChanged;
+			PadFootPanel.RemapAllButton.Click += RemapAllButton_Click;
 			MappedTo = mappedTo;
 			_Imager = new PadControlImager();
 			//_Imager.Top = XboxImage.TopPictureImage;
@@ -117,7 +119,7 @@ namespace x360ce.App.Controls
 				var enable = ud != null;
 				if (enable)
 					instanceGuid = ud.InstanceGuid;
-				ControlsHelper.SetEnabled(GeneralPanel.RemapAllButton, enable && ud.DiState != null);
+				ControlsHelper.SetEnabled(PadFootPanel.RemapAllButton, enable && ud.DiState != null);
 				PadItemPanel.SetEnabled(enable);
 				// If device instance changed then...
 				if (!Equals(instanceGuid, _InstanceGuid))
@@ -144,7 +146,7 @@ namespace x360ce.App.Controls
 								XboxImage.SetHelpText(XboxImage.MappingDone);
 							else
 								XboxImage.HelpTextLabel.Content = "";
-							GeneralPanel.RemapAllButton.Content = RemapName;
+                            PadFootPanel.RemapAllButton.Content = RemapName;
 							return;
 						}
 						else
@@ -174,14 +176,14 @@ namespace x360ce.App.Controls
 			// If device disconnected then show disabled images.
 			if (!newConnected && oldConnected)
 			{
-				//_Imager.SetImages(false);
-				GeneralPanel.RemapAllButton.IsEnabled = false;
+                //_Imager.SetImages(false);
+                PadFootPanel.RemapAllButton.IsEnabled = false;
 			}
 			// If device connected then show enabled images.
 			if (newConnected && !oldConnected)
 			{
-				//_Imager.SetImages(true);
-				GeneralPanel.RemapAllButton.IsEnabled = true;
+                //_Imager.SetImages(true);
+                PadFootPanel.RemapAllButton.IsEnabled = true;
 			}
 			// Return if controller is not connected.
 			if (newConnected)
@@ -243,7 +245,7 @@ namespace x360ce.App.Controls
 		public bool StopRecording()
 		{
 			RecordAllMaps.Clear();
-			GeneralPanel.RemapAllButton.Content = RemapName;
+            PadFootPanel.RemapAllButton.Content = RemapName;
 			return _Imager.Recorder.StopRecording();
 		}
 
@@ -268,7 +270,7 @@ namespace x360ce.App.Controls
 					? "Move Axis"
 					: "Press Button";
 			XboxImage.HelpTextLabel.Content = helpText;
-			GeneralPanel.RemapAllButton.Content = RemapStopName;
+            PadFootPanel.RemapAllButton.Content = RemapStopName;
 		}
 
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
@@ -309,7 +311,7 @@ namespace x360ce.App.Controls
 
 		public void InitPadData()
 		{
-			GeneralPanel.InitPadData();
+			PadFootPanel.InitPadData();
 		}
 
 		public void InitPadControl()
@@ -534,7 +536,7 @@ namespace x360ce.App.Controls
 		private void RemapAllButton_Click(object sender, EventArgs e)
 		{
 			// If stop mode then...
-			if (GeneralPanel.RemapAllButton.Content as string != RemapName)
+			if (PadFootPanel.RemapAllButton.Content as string != RemapName)
 			{
 				StopRecording();
 				return;
@@ -584,7 +586,9 @@ namespace x360ce.App.Controls
 			SettingsManager.Current.SettingChanged -= Current_SettingChanged;
 			CurrentPadSetting.PropertyChanged -= CurrentPadSetting_PropertyChanged;
 			PadListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-			XboxImage.StartRecording = null;
+            PadFootPanel.MapNameComboBox.SelectionChanged -= GeneralPanel.MapNameComboBox_SelectionChanged;
+            PadFootPanel.RemapAllButton.Click -= RemapAllButton_Click;
+            XboxImage.StartRecording = null;
 			XboxImage.StopRecording = null;
 			RecordAllMaps.Clear();
 			imageInfos.Clear();

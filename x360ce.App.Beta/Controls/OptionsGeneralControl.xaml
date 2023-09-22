@@ -10,78 +10,93 @@
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
-    <StackPanel Orientation="Vertical">
-        <UniformGrid Margin="0,0,3,0" Columns="3" Rows="2">
-            <UniformGrid.Resources>
-                <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
-                    <Setter Property="Margin" Value="3,0,0,0" />
-                </Style>
-            </UniformGrid.Resources>
-            <GroupBox Header="Operation">
-                <StackPanel>
-                    <CheckBox Name="AllowOnlyOneCopyCheckBox" Content="Allow only one copy of Application at a time" />
-                    <CheckBox Name="IsProcessDPIAwareCheckBox" Content="Make Application Process DPI Aware" />
-                    <CheckBox Name="AlwaysOnTopCheckBox" Content="Always on Top" />
-                    <CheckBox Name="MinimizeToTrayCheckBox" Content="Minimize to Tray" />
-                    <CheckBox Name="MinimizeOnClose" Content="Minimize on Close" />
-                    <StackPanel Orientation="Horizontal">
-                        <CheckBox Name="StartWithWindowsCheckBox" Content="Start with Windows" />
-                        <ComboBox Name="StartWithWindowsStateComboBox" MinWidth="75" HorizontalAlignment="Left" />
-                    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <!--  Grid Resources  -->
+        <Grid.Resources>
+            <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+                <Setter Property="Margin" Value="3,0,0,0" />
+            </Style>
+        </Grid.Resources>
+        <!--  Options  -->
+        <GroupBox Header="Operation">
+            <StackPanel>
+                <CheckBox Name="AllowOnlyOneCopyCheckBox" Content="Allow only one copy of Application at a time" />
+                <CheckBox Name="IsProcessDPIAwareCheckBox" Content="Make Application Process DPI Aware" />
+                <CheckBox Name="AlwaysOnTopCheckBox" Content="Always on Top" />
+                <CheckBox Name="MinimizeToTrayCheckBox" Content="Minimize to Tray" />
+                <CheckBox Name="MinimizeOnClose" Content="Minimize on Close" />
+                <StackPanel Orientation="Horizontal">
+                    <CheckBox Name="StartWithWindowsCheckBox" Content="Start with Windows" />
+                    <ComboBox Name="StartWithWindowsStateComboBox" MinWidth="75" HorizontalAlignment="Left" />
                 </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Testing and Logging">
-                <StackPanel>
-                    <CheckBox Name="ShowSettingsTabCheckBox" Content="Show [Settings] Tab" />
-                    <CheckBox Name="ShowDevicesTabCheckBox" Content="Show [Devices] Tab" />
-                    <CheckBox Name="ShowProgramsTabCheckBox" Content="Show [Programs] Tab" />
-                    <CheckBox Name="XInputEnableCheckBox" Content="Enable XInput" />
-                    <CheckBox Name="DebugModeCheckBox" Content="Debug Mode" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Header="Testing and Logging">
+            <StackPanel>
+                <CheckBox Name="ShowSettingsTabCheckBox" Content="Show [Settings] Tab" />
+                <CheckBox Name="ShowDevicesTabCheckBox" Content="Show [Devices] Tab" />
+                <CheckBox Name="ShowProgramsTabCheckBox" Content="Show [Programs] Tab" />
+                <CheckBox Name="XInputEnableCheckBox" Content="Enable XInput" />
+                <CheckBox Name="DebugModeCheckBox" Content="Debug Mode" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Column="2" Margin="3,0,3,0" Header="Direct Input Devices">
+            <StackPanel>
+                <CheckBox Name="ExcludeVirtualDevicesCheckBox" Content="Exclude Virtual Devices" />
+                <CheckBox Name="ExcludeSupplementalDevicesCheckBox" Content="Exclude Supplemental Devices" />
+                <CheckBox Name="UseDeviceBufferedDataCheckBox" Content="Use Device Buffered Data" />
+                <CheckBox Name="AcquireHiddenDevicesInExclusiveModeCheckBox" Content="Acquire Hidden Devices in Exclusive Mode" />
+                <CheckBox Name="AcquireMappedDevicesInExclusiveModeCheckBox" Content="Acquire Mapped Devices in Exclusive Mode" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Header="Guide Button">
+            <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
+                <Label Name="GuideButtonActionLabel" VerticalAlignment="Center" Content="Action:" />
+                <TextBox Name="GuideButtonActionTextBox" MinWidth="150" VerticalAlignment="Center" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Grid.Column="1" Header="Developing">
+            <StackPanel>
+                <CheckBox Name="ShowTestButtonCheckBox" Content="Show [Test...] Button" />
+                <CheckBox Name="ShowFormInfoCheckBox" Content="Show Form Info on CTRL+SHIFT+RButton" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox
+            Grid.Row="1"
+            Grid.Column="2"
+            Margin="3,0,3,0"
+            Header="Configuration">
+            <StackPanel VerticalAlignment="Top">
+                <CheckBox Name="AutoDetectForegroundWindowCheckBox" Content="Auto switch configuration when game focused" />
+                <CheckBox Name="IncludeProductsCheckBox" Content="Include [Products]" />
+                <StackPanel Orientation="Horizontal">
+                    <Label Name="ConfigurationVersionLabel" VerticalAlignment="Center" Content="Version" />
+                    <TextBox
+                        Name="ConfigurationVersionTextBox"
+                        MinWidth="75"
+                        VerticalAlignment="Center"
+                        IsEnabled="False" />
                 </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Direct Input Devices">
-                <StackPanel>
-                    <CheckBox Name="ExcludeVirtualDevicesCheckBox" Content="Exclude Virtual Devices" />
-                    <CheckBox Name="ExcludeSupplementalDevicesCheckBox" Content="Exclude Supplemental Devices" />
-                    <CheckBox Name="UseDeviceBufferedDataCheckBox" Content="Use Device Buffered Data" />
-                    <CheckBox Name="AcquireHiddenDevicesInExclusiveModeCheckBox" Content="Acquire Hidden Devices in Exclusive Mode" />
-                    <CheckBox Name="AcquireMappedDevicesInExclusiveModeCheckBox" Content="Acquire Mapped Devices in Exclusive Mode" />
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Guide Button">
-                <StackPanel VerticalAlignment="Top" Orientation="Horizontal">
-                    <Label Name="GuideButtonActionLabel" VerticalAlignment="Center" Content="Action:" />
-                    <TextBox Name="GuideButtonActionTextBox" MinWidth="150" VerticalAlignment="Center" />
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Developing">
-                <StackPanel>
-                    <CheckBox Name="ShowTestButtonCheckBox" Content="Show [Test...] Button" />
-                    <CheckBox Name="ShowFormInfoCheckBox" Content="Show Form Info on CTRL+SHIFT+RButton" />
-                </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Configuration">
-                <StackPanel VerticalAlignment="Top">
-                    <CheckBox Name="AutoDetectForegroundWindowCheckBox" Content="Auto switch configuration when game focused" />
-                    <CheckBox Name="IncludeProductsCheckBox" Content="Include [Products]" />
-                    <StackPanel Orientation="Horizontal">
-                        <Label Name="ConfigurationVersionLabel" VerticalAlignment="Center" Content="Version:" />
-                        <TextBox
-                            Name="ConfigurationVersionTextBox"
-                            MinWidth="75"
-                            VerticalAlignment="Center"
-                            IsEnabled="False" />
-                    </StackPanel>
-
-                </StackPanel>
-            </GroupBox>
-            <!--</WrapPanel>-->
-            <!--</ItemsControl.Items>
-        </ItemsControl>-->
-        </UniformGrid>
-        <TabControl x:Name="MainTabControl" Margin="3">
-            <TabItem x:Name="SettingsTabPage" Header="Game Scan Locations">
-                <Grid>
+            </StackPanel>
+        </GroupBox>
+        <!--  List  -->
+        <TabControl
+            Name="MainTabControl"
+            Grid.Row="2"
+            Grid.ColumnSpan="3"
+            Margin="3">
+            <TabItem Name="SettingsTabPage" Header="Game Scan Locations">
+                <Grid VerticalAlignment="Stretch">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
@@ -109,7 +124,7 @@
                     <ListBox
                         Name="GameScanLocationsListBox"
                         Grid.Row="1"
-                        MinHeight="100"
+                        MinHeight="330"
                         BorderThickness="0">
                         <ListBox.OpacityMask>
                             <VisualBrush>
@@ -126,5 +141,5 @@
                 </Grid>
             </TabItem>
         </TabControl>
-    </StackPanel>
+    </Grid>
 </UserControl>

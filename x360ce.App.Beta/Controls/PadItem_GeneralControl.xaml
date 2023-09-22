@@ -112,7 +112,7 @@
                 <Label x:Name="LeftShoulderLabel" Content="Bumper" />
             </StackPanel>
             <!--  ButtonBack  -->
-            <StackPanel Style="{StaticResource StackPanelLeft}">
+            <StackPanel Margin="0,32,0,0" Style="{StaticResource StackPanelLeft}">
                 <Menu Tag="{Binding ElementName=ButtonBackTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
                 <TextBox x:Name="ButtonBackTextBox" x:FieldModifier="public" />
                 <Label x:Name="ButtonBackLabel" Content="Back" />
@@ -192,26 +192,7 @@
             </StackPanel>
         </StackPanel>
 
-        <!--  Remap All  -->
-        <StackPanel
-            Grid.Row="0"
-            Grid.Column="1"
-            HorizontalAlignment="Center"
-            Orientation="Horizontal">
-            <Button Name="RemapAllButton" Click="RemapAllButton_Click">
-                <StackPanel>
-                    <ContentControl Content="{StaticResource Icon_Record}" />
-                    <Label Content="Remap All" />
-                </StackPanel>
-            </Button>
-            <ComboBox
-                x:Name="MapNameComboBox"
-                Margin="0,3,3,3"
-                DisplayMemberPath="Name"
-                SelectionChanged="MapNameComboBox_SelectionChanged" />
-        </StackPanel>
-
-        <local:PadItem_General_XboxImageControl
+       <local:PadItem_General_XboxImageControl
             x:Name="XboxImage"
             Grid.Row="1"
             Grid.Column="1"
@@ -258,7 +239,7 @@
             </StackPanel>
 
             <!--  ButtonY  -->
-            <StackPanel Style="{StaticResource StackPanelRight}">
+            <StackPanel Margin="0,32,0,0" Style="{StaticResource StackPanelRight}">
                 <Label x:Name="ButtonYLabel" Content="Y Button" />
                 <TextBox x:Name="ButtonYTextBox" x:FieldModifier="public" />
                 <Menu Tag="{Binding ElementName=ButtonYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />

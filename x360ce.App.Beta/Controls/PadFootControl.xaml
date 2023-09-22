@@ -5,12 +5,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:x360ce.App.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    MinWidth="740"
+    d:Width="900"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
     <Grid>
-        <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Horizontal">
             <Button
                 Name="GameControllersButton"
                 Margin="3"
@@ -22,7 +28,23 @@
                 Click="DxTweakButton_Click"
                 Content="DX Tweak..." />
         </StackPanel>
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+            <!--  Remap All  -->
+            <StackPanel
+                Grid.Row="0"
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <Button Name="RemapAllButton">
+                    <StackPanel>
+                        <ContentControl Content="{StaticResource Icon_Record}" />
+                        <Label Content="Remap All" />
+                    </StackPanel>
+                </Button>
+                <ComboBox Name="MapNameComboBox" Margin="0,3,3,3" DisplayMemberPath="Name" />
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Column="2" Orientation="Horizontal">
             <Label Content="Preset " />
             <Button Name="CopyButton" Click="CopyButton_Click">
                 <StackPanel>

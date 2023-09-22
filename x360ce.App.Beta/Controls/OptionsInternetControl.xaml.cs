@@ -32,7 +32,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(o, nameof(o.CheckForUpdates), CheckForUpdatesCheckBox);
 			var internetDatabaseUrlsView = new BindingListCollectionView(o.InternetDatabaseUrls);
 			InternetDatabaseUrlComboBox.ItemsSource = internetDatabaseUrlsView;
-			SettingsManager.LoadAndMonitor(o, nameof(o.InternetDatabaseUrl), InternetDatabaseUrlComboBox);
+			SettingsManager.LoadAndMonitor(o, nameof(o.InternetDatabaseUrl), InternetDatabaseUrlTextBox);
 			// Load other settings manually.
 			LoadSettings();
 			// Attach event which will save form settings before Save().
@@ -50,7 +50,9 @@ namespace x360ce.App.Controls
 			ComputerIdTextBox.Text = o.ComputerId.ToString();
 			ProfilePathTextBox.Text = o.ProfilePath.ToString();
 			ProfileIdTextBox.Text = o.ProfileId.ToString();
-		}
+			InternetDatabaseUrlComboBox.Text = "Presets";
+
+        }
 
 		private void OptionsData_Saving(object sender, EventArgs e)
 		{
@@ -79,7 +81,7 @@ namespace x360ce.App.Controls
 				if (o.CheckAndFixUserRsaKeys())
 					SettingsManager.OptionsData.Save();
 				var ws = new WebServiceClient();
-				var url = InternetDatabaseUrlComboBox.Text;
+				var url = InternetDatabaseUrlTextBox.Text;
 				ws.Url = url;
 				CloudMessage results;
 				// If cloud RSA keys are missing then...

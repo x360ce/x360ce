@@ -23,7 +23,16 @@ namespace x360ce.App.Controls
 		PadSetting _PadSetting;
 		MapTo _MappedTo;
 
-		public void SetBinding(MapTo mappedTo, UserDevice ud, PadSetting ps)
+        public void InitPadData()
+        {
+            ControlsHelper.SetItemsSource(MapNameComboBox, SettingsManager.Layouts.Items);
+            //MapNameComboBox.ItemsSource = LayoutsItems;
+            //MapNameComboBox.DisplayMemberPath = "Name";
+            if (SettingsManager.Layouts.Items.Count > 0)
+                MapNameComboBox.SelectedIndex = 0;
+        }
+
+        public void SetBinding(MapTo mappedTo, UserDevice ud, PadSetting ps)
 		{
 			_MappedTo = mappedTo;
 			_UserDevice = ud;
@@ -156,7 +165,9 @@ namespace x360ce.App.Controls
 				return;
 			_UserDevice = null;
 			_PadSetting = null;
-		}
-
-	}
+            //MapNameComboBox.ItemsSource = null;
+            //MapNameComboBox.SelectedItem = null;
+            ControlsHelper.SetItemsSource(MapNameComboBox, null);
+        }
+    }
 }

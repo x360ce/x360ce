@@ -489,6 +489,8 @@ namespace x360ce.App
 		public UserDevice[] ShowDeviceForm()
 		{
 			var form = new Forms.UserDevicesWindow();
+			form.Width = 900;
+			form.Height = 900;
 			var result = form.ShowDialog();
 			return result.HasValue && result.Value
 				? form.MainControl.GetSelected()

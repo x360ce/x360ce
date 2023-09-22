@@ -19,14 +19,7 @@ namespace x360ce.App.Controls
             InitHelper.InitTimer(this, InitializeComponent);
         }
 
-        public void InitPadData()
-        {
-            ControlsHelper.SetItemsSource(MapNameComboBox, SettingsManager.Layouts.Items);
-            //MapNameComboBox.ItemsSource = LayoutsItems;
-            //MapNameComboBox.DisplayMemberPath = "Name";
-            if (SettingsManager.Layouts.Items.Count > 0)
-                MapNameComboBox.SelectedIndex = 0;
-        }
+        
 
         PadSetting _padSetting;
         MapTo _MappedTo;
@@ -124,9 +117,10 @@ namespace x360ce.App.Controls
 
         }
 
-        private void MapNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        public void MapNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var item = (Layout)MapNameComboBox.SelectedItem;
+            var box = (ComboBox)sender;
+            var item = (Layout)box.SelectedItem;
             if (item == null)
                 return;
             ButtonALabel.Content = item.ButtonA;
@@ -358,9 +352,6 @@ namespace x360ce.App.Controls
             if (!ControlsHelper.AllowUnload(this))
                 return;
             SetBinding(MapTo.None, null);
-            //MapNameComboBox.ItemsSource = null;
-            //MapNameComboBox.SelectedItem = null;
-            ControlsHelper.SetItemsSource(MapNameComboBox, null);
             DiMenuStrip.Clear();
         }
 

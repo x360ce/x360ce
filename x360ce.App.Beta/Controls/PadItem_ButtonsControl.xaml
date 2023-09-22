@@ -11,7 +11,7 @@
             x:Name="MainGroupBox"
             Margin="3"
             x:FieldModifier="public"
-            Header="DInput Axis To Virtual XInput Button DeadZones (Map on [General] Tab First):">
+            Header="DInput Axis to Virtual XInput Button DeadZones - Map on [General] Tab First">
             <StackPanel Orientation="Vertical">
                 <local:AxisToButtonControl x:Name="AxisToButtonADeadZonePanel" x:FieldModifier="public" GamepadButton="A" />
                 <local:AxisToButtonControl x:Name="AxisToButtonBDeadZonePanel" x:FieldModifier="public" GamepadButton="B" />

@@ -10,104 +10,65 @@
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
-    <StackPanel Orientation="Vertical">
-        <UniformGrid Margin="0,0,3,0" Columns="2" Rows="2">
-            <UniformGrid.Resources>
-                <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
-                    <Setter Property="Margin" Value="3,0,0,0" />
-                </Style>
-            </UniformGrid.Resources>
-            <GroupBox Header="Online Account">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Label Name="UsernameLabel" Content="Username · E-mail" />
-                    <TextBox Name="UsernameTextBox" Grid.Row="0" Grid.Column="1" />
-                    <Label Name="PasswordLabel" Grid.Row="1" Content="Password" />
-                    <TextBox Name="PasswordTextBox" Grid.Row="1" Grid.Column="1" />
-                    <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-                        <Button
-                            Name="ResetButton"
-                            Width="70"
-                            Click="ResetButton_Click"
-                            Content="Reset..." />
-                        <Button
-                            Name="CreateButton"
-                            Width="70"
-                            Click="CreateButton_Click"
-                            Content="Create..." />
-                        <Button
-                            Name="LoginButton"
-                            Width="70"
-                            Click="LoginButton_Click"
-                            Content="Log In" />
-                    </StackPanel>
-                </Grid>
-            </GroupBox>
-            <GroupBox Header="Games / Cloud">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Label Name="MinimumInstanceCountLabel" Margin="3,0,3,0" Content="Minimum Instances" />
-                    <JcControls:NumericUpDown
-                        x:Name="GetProgramsMinInstancesUpDown"
-                        Grid.Column="1"
-                        Width="75"
-                        HorizontalAlignment="Left" />
-                    <CheckBox
-                        Name="GetProgramsIncludeEnabledCheckBox"
-                        Grid.Row="1"
-                        Grid.RowSpan="2"
-                        Content="Include" />
-                </Grid>
-            </GroupBox>
-            <GroupBox Header="Updates">
-                <StackPanel Orientation="Horizontal">
-                    <CheckBox Name="CheckForUpdatesCheckBox" Content="Check for updates on startup" />
-                    <Button Name="CheckUpdatesButton" Click="CheckUpdatesButton_Click">
-                        <StackPanel>
-                            <ContentControl Content="{StaticResource Icon_Refresh}" />
-                            <Label Content="Check..." />
-                        </StackPanel>
-                    </Button>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <!--  Grid Resources  -->
+        <Grid.Resources>
+            <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+                <Setter Property="Margin" Value="3,0,0,0" />
+            </Style>
+        </Grid.Resources>
+        <!--  Online Account  -->
+        <GroupBox Grid.ColumnSpan="2" Header="Online Account">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{Binding Width, ElementName=OnlineAccountProfileColumn}" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Name="UsernameLabel" Content="E-mail" />
+                <TextBox Name="UsernameTextBox" Grid.Row="0" Grid.Column="1" />
+                <Label Name="PasswordLabel" Grid.Row="1" Content="Password" />
+                <TextBox Name="PasswordTextBox" Grid.Row="1" Grid.Column="1" />
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                    <Button
+                        Name="ResetButton"
+                        Width="70"
+                        Click="ResetButton_Click"
+                        Content="Reset..." />
+                    <Button
+                        Name="CreateButton"
+                        Width="70"
+                        Click="CreateButton_Click"
+                        Content="Create..." />
+                    <Button
+                        Name="LoginButton"
+                        Width="70"
+                        Click="LoginButton_Click"
+                        Content="Log In" />
                 </StackPanel>
-            </GroupBox>
-            <GroupBox Header="Internet">
-                <StackPanel Orientation="Vertical">
-                    <StackPanel Orientation="Vertical">
-                        <CheckBox Name="InternetAutoSaveCheckBox" Content="Save Settings to Cloud" />
-                        <CheckBox Name="InternetAutoLoadCheckBox" Content="Load Settings from Cloud" />
-                        <CheckBox Name="InternetFeaturesCheckBox" Content="Enable Internet Features" />
-                    </StackPanel>
-                    <Grid HorizontalAlignment="Stretch">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label
-                            Name="WebServiceUrlLabel"
-                            Grid.Column="0"
-                            HorizontalAlignment="Left"
-                            Content="Web Service URL" />
-                        <ComboBox Name="InternetDatabaseUrlComboBox" Grid.Column="1" IsEditable="True" />
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
-        </UniformGrid>
-        <GroupBox Margin="3,0,3,3" Header="Online Account - Anonymous Computer ID and Profile ID will be used by default">
+            </Grid>
+        </GroupBox>
+        <!--  Online Account Profile  -->
+        <GroupBox
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Margin="3,0,3,3"
+            Header="Online Account - Anonymous Computer ID and Profile ID will be used by default">
             <StackPanel>
                 <Grid HorizontalAlignment="Stretch">
                     <Grid.RowDefinitions>
@@ -117,7 +78,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Name="OnlineAccountProfileColumn" Width="88" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
@@ -150,6 +111,7 @@
                         Name="ProfileIdTextBox"
                         Grid.Row="1"
                         Grid.Column="1"
+                        Grid.ColumnSpan="2"
                         IsReadOnly="True" />
 
                     <Label
@@ -161,6 +123,7 @@
                         Name="ComputerIdTextBox"
                         Grid.Row="2"
                         Grid.Column="1"
+                        Grid.ColumnSpan="2"
                         IsReadOnly="True" />
                     <Label
                         Name="ComputerDiskLabel"
@@ -171,10 +134,77 @@
                         Name="ComputerDiskTextBox"
                         Grid.Row="3"
                         Grid.Column="1"
+                        Grid.ColumnSpan="2"
                         IsReadOnly="True" />
                 </Grid>
             </StackPanel>
         </GroupBox>
-    </StackPanel>
+        <!--  Other Options  -->
+        <GroupBox
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            Margin="3,0,3,0"
+            Header="Internet">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical">
+                    <CheckBox Name="InternetAutoSaveCheckBox" Content="Save Settings to Cloud" />
+                    <CheckBox Name="InternetAutoLoadCheckBox" Content="Load Settings from Cloud" />
+                    <CheckBox Name="InternetFeaturesCheckBox" Content="Enable Internet Features" />
+                </StackPanel>
+                <Grid HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Web Service URL" />
+                    <TextBox Name="InternetDatabaseUrlTextBox" Grid.Column="1" />
+                    <ComboBox
+                        Name="InternetDatabaseUrlComboBox"
+                        Grid.Column="2"
+                        Style="{StaticResource ComboBox_Static}"
+                        Text="Presets" />
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Row="3" Margin="3,0,0,3" Header="Updates">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox Name="CheckForUpdatesCheckBox" Content="Check for updates on startup" />
+                <Button Name="CheckUpdatesButton" Click="CheckUpdatesButton_Click">
+                    <StackPanel>
+                        <ContentControl Content="{StaticResource Icon_Refresh}" />
+                        <Label Content="Check..." />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox
+            Grid.Row="3"
+            Grid.Column="1"
+            Margin="3,0,3,3"
+            Header="Games · Cloud">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Name="MinimumInstanceCountLabel" Margin="3,0,3,0" Content="Minimum Instances" />
+                <JcControls:NumericUpDown
+                    x:Name="GetProgramsMinInstancesUpDown"
+                    Grid.Column="1"
+                    Width="75"
+                    HorizontalAlignment="Left" />
+                <CheckBox
+                    Name="GetProgramsIncludeEnabledCheckBox"
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Content="Include" />
+            </Grid>
+        </GroupBox>
 
+    </Grid>
 </UserControl>

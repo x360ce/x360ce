@@ -24,15 +24,15 @@
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="100" />
             </Grid.ColumnDefinitions>
             <Label Content="VN" />
             <Label Grid.Row="1" Content="PN" />
@@ -154,49 +154,12 @@
                 Grid.Row="3"
                 Grid.Column="2"
                 Content="Type" />
-            <DataGrid
-                Name="DiButtonsDataGridView"
-                Grid.Row="2"
-                Grid.RowSpan="2"
-                Grid.Column="8"
-                Grid.ColumnSpan="2"
-                Margin="3"
-                Background="{StaticResource BackgroundDark}"
-                IsReadOnly="True">
-                <DataGrid.OpacityMask>
-                    <VisualBrush>
-                        <VisualBrush.Visual>
-                            <Border
-                                Width="{Binding ActualWidth, ElementName=DiButtonsDataGridView}"
-                                Height="{Binding ActualHeight, ElementName=DiButtonsDataGridView}"
-                                Margin="0"
-                                Padding="0"
-                                Background="Transparent"
-                                CornerRadius="0"
-                                SnapsToDevicePixels="True">
-                                <Border
-                                    Margin="0,0,1,1"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    Background="White"
-                                    CornerRadius="5" />
-                            </Border>
-                        </VisualBrush.Visual>
-                    </VisualBrush>
-                </DataGrid.OpacityMask>
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        MinWidth="100"
-                        Binding="{Binding M}"
-                        ElementStyle="{StaticResource TextBlockCenterCell}"
-                        Header="Buttons" />
-                </DataGrid.Columns>
-            </DataGrid>
         </Grid>
         <Grid Grid.Row="1" Margin="0,3,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="9*" />
                 <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="3*" />
                 <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
             <UserControl Name="UserControl_Rounded">
@@ -417,6 +380,42 @@
                         Binding="{Binding A}"
                         ElementStyle="{StaticResource TextBlockRightCell}"
                         Header="" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <DataGrid
+                Name="DiButtonsDataGridView"
+                Grid.Column="3"
+                Margin="6,0,0,0"
+                VerticalAlignment="Top"
+                Background="{StaticResource BackgroundDark}"
+                IsReadOnly="True">
+                <DataGrid.OpacityMask>
+                    <VisualBrush>
+                        <VisualBrush.Visual>
+                            <Border
+                                Width="{Binding ActualWidth, ElementName=DiButtonsDataGridView}"
+                                Height="{Binding ActualHeight, ElementName=DiButtonsDataGridView}"
+                                Margin="0"
+                                Padding="0"
+                                Background="Transparent"
+                                CornerRadius="0"
+                                SnapsToDevicePixels="True">
+                                <Border
+                                    Margin="0,0,1,1"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="White"
+                                    CornerRadius="5" />
+                            </Border>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </DataGrid.OpacityMask>
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        MinWidth="100"
+                        Binding="{Binding M}"
+                        ElementStyle="{StaticResource TextBlockCenterCell}"
+                        Header="Buttons" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
