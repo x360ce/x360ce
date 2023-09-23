@@ -25,7 +25,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBox
-            x:Name="TBox"
+            Name="TBox"
             MinWidth="75"
             Margin="0"
             VerticalAlignment="Center"
@@ -47,6 +47,12 @@
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
+            <!--<TextBox.Triggers>
+                <Trigger Property="IsEnabled"  Value="True">
+                    <Setter TargetName="DownButton" Property="Background" Value="Transparent"/>
+                    <Setter TargetName="UpButton" Property="Background" Value="Transparent"/>
+                </Trigger>
+            </TextBox.Triggers>-->
         </TextBox>
         <Grid
             x:Name="ButtonsGrid"

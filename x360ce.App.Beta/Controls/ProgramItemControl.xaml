@@ -1,190 +1,172 @@
 ﻿<UserControl
-	x:Class="x360ce.App.Controls.ProgramItemControl"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls;assembly=x360ce.Engine"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignWidth="800"
-	Loaded="UserControl_Loaded"
-	Unloaded="UserControl_Unloaded"
-	mc:Ignorable="d">
-	<Grid>
-		<WrapPanel>
-            <WrapPanel.Resources></WrapPanel.Resources>
-			<GroupBox Name="HookMaskGroupBox" Header="Hook Mask - 00000000">
-				<WrapPanel>
-					<WrapPanel Orientation="Vertical">
-						<CheckBox Name="HookCOMCheckBox" Content="COM" />
-						<CheckBox Name="HookDICheckBox" Content="DI" />
-						<CheckBox Name="HookPIDVIDCheckBox" Checked="HookPIDVIDCheckBox_CheckedChanged" Content="PIDVID" />
-						<CheckBox Name="HookNAMECheckBox" Content="NAME" />
-						<CheckBox Name="HookSTOPCheckBox" Content="STOP" />
-					</WrapPanel>
-					<WrapPanel Orientation="Vertical">
-						<CheckBox Name="HookLLCheckBox" Content="LL (Load Library)" />
-						<CheckBox Name="HookSACheckBox" Content="SA (SetupAPI)" />
-						<CheckBox Name="HookWTCheckBox" Content="WT (WinVerifyTrust)" />
-						<CheckBox Name="HookDISABLECheckBox" Content="DISABLE" />
-					</WrapPanel>
-				</WrapPanel>
-			</GroupBox>
-			<GroupBox Name="XInputMaskGroupBox" Header="XInput Files - 00000000">
-				<WrapPanel>
-					<WrapPanel Orientation="Vertical">
-						<Label Content="v9.1:" />
-						<Label Content="v1.1:" />
-						<Label Content="v1.2:" />
-						<Label Content="v1.3:" />
-						<Label Content="v1.4:" />
-					</WrapPanel>
-					<WrapPanel Orientation="Vertical">
-						<CheckBox Name="XInput91_x86CheckBox" Content="32-bit" />
-						<CheckBox Name="XInput11_x86CheckBox" Content="32-bit" />
-						<CheckBox Name="XInput12_x86CheckBox" Content="32-bit" />
-						<CheckBox Name="XInput13_x86CheckBox" Content="32-bit" />
-						<CheckBox Name="XInput14_x86CheckBox" Content="32-bit" />
-					</WrapPanel>
-					<WrapPanel Orientation="Vertical">
-						<CheckBox Name="XInput91_x64CheckBox" Content="64-bit" />
-						<CheckBox Name="XInput11_x64CheckBox" Content="64-bit" />
-						<CheckBox Name="XInput12_x64CheckBox" Content="64-bit" />
-						<CheckBox Name="XInput13_x64CheckBox" Content="64-bit" />
-						<CheckBox Name="XInput14_x64CheckBox" Content="64-bit" />
-					</WrapPanel>
-				</WrapPanel>
-			</GroupBox>
-			<WrapPanel Orientation="Vertical">
-				<GroupBox Name="AutoMapMaskGroupBox" Header="Auto Map - 00000000">
-					<WrapPanel>
-						<WrapPanel Orientation="Vertical">
-							<CheckBox Name="Controller1CheckBox" Content="PAD 1" />
-							<CheckBox Name="Controller2CheckBox" Content="PAD 2" />
-						</WrapPanel>
-						<WrapPanel Orientation="Vertical">
-							<CheckBox Name="Controller3CheckBox" Content="PAD 3" />
-							<CheckBox Name="Controller4CheckBox" Content="PAD 4" />
-						</WrapPanel>
-					</WrapPanel>
-				</GroupBox>
-				<GroupBox Name="DInputMaskGroupBox" Header="DInput File - 00000000">
-					<WrapPanel>
-						<WrapPanel>
-							<CheckBox Name="DInput8_x86CheckBox" Checked="DInput8_x86CheckBox_CheckedChanged" Content="32-bit" />
-							<CheckBox Name="DInput8_x64CheckBox" Checked="DInput8_x64CheckBox_CheckedChanged" Content="64-bit" />
-						</WrapPanel>
-					</WrapPanel>
-				</GroupBox>
-			</WrapPanel>
-			<GroupBox Header="Help">
-				<WrapPanel Orientation="Vertical">
-					<Button Click="GoogleSearchButton_Click" Content="Search on Google..." />
-					<Button Click="NGEmuSearchLinkButton_Click" Content="Search on NGemu..." />
-					<Button Click="NGEmuThreadLinkButton_Click" Content="Open NGemu..." />
-				</WrapPanel>
-			</GroupBox>
-			<GroupBox Header="Other Options">
-				<WrapPanel>
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="Auto" />
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-							<ColumnDefinition Width="Auto" />
-						</Grid.ColumnDefinitions>
-						<Label
-							Name="HookModeFakeVidLabel"
-							Grid.Row="0"
-							Grid.Column="0"
-							Content="Fake VID" />
-						<Label
-							Name="XInputPathLabel"
-							Grid.Row="1"
-							Grid.Column="0"
-							Content="XInput Path" />
-						<Label
-							Name="DInputFileLabel"
-							Grid.Row="2"
-							Grid.Column="0"
-							Content="DInput File" />
-						<StackPanel
-							Grid.Row="0"
-							Grid.Column="1"
-							VerticalAlignment="Center"
-							Orientation="Horizontal">
-							<JcControls:NumericUpDown x:Name="HookModeFakeVidNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
-							<TextBox Name="HookModeFakeVidTextBox" MinWidth="75" IsReadOnly="True" />
-						</StackPanel>
-						<Label
-							Name="HookModeFakePidLabel"
-							Grid.Row="0"
-							Grid.Column="2"
-							Content="Fake PID" />
-						<StackPanel
-							Grid.Row="0"
-							Grid.Column="3"
-							VerticalAlignment="Center"
-							Orientation="Horizontal">
-							<JcControls:NumericUpDown x:Name="HookModeFakePidNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
-							<TextBox Name="HookModeFakePidTextBox" MinWidth="75" IsReadOnly="True" />
-						</StackPanel>
-						<TextBox
-							Name="XInputPathTextBox"
-							Grid.Row="1"
-							Grid.Column="1"
-							Grid.ColumnSpan="3"
-							TextChanged="XInputPathTextBox_TextChanged" />
-						<TextBox
-							Name="DInputFileTextBox"
-							Grid.Row="2"
-							Grid.Column="1"
-							Grid.ColumnSpan="3"
-							TextChanged="DInputFileTextBox_TextChanged" />
+    x:Class="x360ce.App.Controls.ProgramItemControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls;assembly=x360ce.Engine"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:Height="500"
+    d:Width="900"
+    Loaded="UserControl_Loaded"
+    Unloaded="UserControl_Unloaded"
+    mc:Ignorable="d">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+                <Setter Property="Margin" Value="3,0,0,0" />
+            </Style>
+        </Grid.Resources>
 
-						<Label
-							Name="TimeoutLabel"
-							Grid.Row="0"
-							Grid.Column="4"
-							Content="Timeout" />
-						<JcControls:NumericUpDown
-							x:Name="TimeoutNumericUpDown"
-							Grid.Row="0"
-							Grid.Column="5"
-							MinWidth="75"
-							VerticalAlignment="Center" />
-						<Label
-							Name="ProcessorArchitectureLabel"
-							Grid.Row="1"
-							Grid.Column="4"
-							Content="Architecture" />
-						<ComboBox
-							Name="ProcessorArchitectureComboBox"
-							Grid.Row="1"
-							Grid.Column="5"
-							IsEnabled="False" />
-						<Label
-							Name="EmulationTypeLabel"
-							Grid.Row="2"
-							Grid.Column="4"
-							Content="Emulation" />
-						<ComboBox Name="EmulationTypeComboBox" Grid.Row="2" Grid.Column="5" />
-					</Grid>
-				</WrapPanel>
-			</GroupBox>
-			<GroupBox Name="ActionGroupBox" Header="Action">
-				<Button
-					Name="ResetToDefaultButton"
-					VerticalAlignment="Top"
-					Click="ResetToDefaultButton_Click"
-					Content="Reset to Default" />
-			</GroupBox>
-		</WrapPanel>
-	</Grid>
+        <GroupBox Name="HookMaskGroupBox" Header="Hook Mask - 00000000">
+            <StackPanel>
+                <CheckBox Name="HookCOMCheckBox" Content="COM" />
+                <CheckBox Name="HookDICheckBox" Content="DI" />
+                <CheckBox Name="HookPIDVIDCheckBox" Checked="HookPIDVIDCheckBox_CheckedChanged" Content="PIDVID" />
+                <CheckBox Name="HookNAMECheckBox" Content="NAME" />
+                <CheckBox Name="HookSTOPCheckBox" Content="STOP" />
+                <CheckBox Name="HookLLCheckBox" Content="LL (Load Library)" />
+                <CheckBox Name="HookSACheckBox" Content="SA (SetupAPI)" />
+                <CheckBox Name="HookWTCheckBox" Content="WT (WinVerifyTrust)" />
+                <CheckBox Name="HookDISABLECheckBox" Content="DISABLE" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Name="XInputMaskGroupBox" Grid.Column="1" Header="XInput Files - 00000000">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="v9.1" />
+                    <CheckBox Name="XInput91_x86CheckBox" Content="32-bit" />
+                    <CheckBox Name="XInput91_x64CheckBox" Content="64-bit" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="v1.1" />
+                    <CheckBox Name="XInput11_x86CheckBox" Content="32-bit" />
+                    <CheckBox Name="XInput11_x64CheckBox" Content="64-bit" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="v1.2" />
+                    <CheckBox Name="XInput12_x86CheckBox" Content="32-bit" />
+                    <CheckBox Name="XInput12_x64CheckBox" Content="64-bit" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="v1.3" />
+                    <CheckBox Name="XInput13_x86CheckBox" Content="32-bit" />
+                    <CheckBox Name="XInput13_x64CheckBox" Content="64-bit" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="v1.4" />
+                    <CheckBox Name="XInput14_x86CheckBox" Content="32-bit" />
+                    <CheckBox Name="XInput14_x64CheckBox" Content="64-bit" />
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Name="DInputMaskGroupBox" Grid.Column="2" Header="DInput File - 00000000">
+            <StackPanel>
+                <CheckBox Name="DInput8_x86CheckBox" Checked="DInput8_x86CheckBox_CheckedChanged" Content="32-bit" />
+                <CheckBox Name="DInput8_x64CheckBox" Checked="DInput8_x64CheckBox_CheckedChanged" Content="64-bit" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Name="AutoMapMaskGroupBox" Grid.Column="3" Header="Auto Map - 00000000">
+            <StackPanel>
+                <CheckBox Name="Controller1CheckBox" Content="PAD 1" />
+                <CheckBox Name="Controller2CheckBox" Content="PAD 2" />
+                <CheckBox Name="Controller3CheckBox" Content="PAD 3" />
+                <CheckBox Name="Controller4CheckBox" Content="PAD 4" />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Column="4" Margin="3,0,3,0" Header="Help">
+            <StackPanel>
+                <Button Click="GoogleSearchButton_Click" Content="Search on Google..." />
+                <Button Click="NGEmuSearchLinkButton_Click" Content="Search on NGemu..." />
+                <Button Click="NGEmuThreadLinkButton_Click" Content="Open NGemu..." />
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Grid.ColumnSpan="4" Header="Other Options">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Label Name="HookModeFakeVidLabel" Content="Fake VID" />
+                <Label Name="XInputPathLabel" Grid.Row="1" Content="XInput Path" />
+                <Label Name="DInputFileLabel" Grid.Row="2" Content="DInput File" />
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
+                    <JcControls:NumericUpDown x:Name="HookModeFakeVidNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
+                    <TextBox Name="HookModeFakeVidTextBox" MinWidth="75" IsReadOnly="True" />
+                </StackPanel>
+                <Label
+                    Name="HookModeFakePidLabel"
+                    Grid.Column="2"
+                    HorizontalAlignment="Right"
+                    Content="Fake PID" />
+                <StackPanel Grid.Column="3" VerticalAlignment="Center" Orientation="Horizontal">
+                    <JcControls:NumericUpDown x:Name="HookModeFakePidNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
+                    <TextBox Name="HookModeFakePidTextBox" MinWidth="75" IsReadOnly="True" />
+                </StackPanel>
+                <TextBox
+                    Name="XInputPathTextBox"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="3"
+                    TextChanged="XInputPathTextBox_TextChanged" />
+                <TextBox
+                    Name="DInputFileTextBox"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="3"
+                    TextChanged="DInputFileTextBox_TextChanged" />
+
+                <Label Name="TimeoutLabel" Grid.Column="4" Content="Timeout" />
+                <JcControls:NumericUpDown
+                    x:Name="TimeoutNumericUpDown"
+                    Grid.Column="5"
+                    MinWidth="75"
+                    VerticalAlignment="Center" />
+                <Label
+                    Name="ProcessorArchitectureLabel"
+                    Grid.Row="1"
+                    Grid.Column="4"
+                    Content="Architecture" />
+                <ComboBox
+                    Name="ProcessorArchitectureComboBox"
+                    Grid.Row="1"
+                    Grid.Column="5"
+                    IsEnabled="False" />
+                <Label
+                    Name="EmulationTypeLabel"
+                    Grid.Row="2"
+                    Grid.Column="4"
+                    Content="Emulation" />
+                <ComboBox Name="EmulationTypeComboBox" Grid.Row="2" Grid.Column="5" />
+            </Grid>
+        </GroupBox>
+        <GroupBox
+            Name="ActionGroupBox"
+            Grid.Row="1"
+            Grid.Column="4"
+            Margin="3,0,3,0"
+            Header="Action">
+            <Button Name="ResetToDefaultButton" Click="ResetToDefaultButton_Click" Content="Reset to Default" />
+        </GroupBox>
+
+    </Grid>
 </UserControl>

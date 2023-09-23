@@ -6,8 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:x360ce.App.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="160"
-    d:DesignWidth="640"
+    d:Height="200"
+    d:Width="900"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
@@ -117,9 +117,11 @@
                     Header="File Folder" />
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel x:Name="ScanProgressPanel" Grid.Row="2">
-            <TextBlock x:Name="ScanProgressLevel0Label" Text="[ScanProgressLevel0Label]" />
-            <TextBlock x:Name="ScanProgressLevel1Label" Text="[ScanProgressLevel1Label]" />
-        </StackPanel>
+        <Border Grid.Row="2" Background="{StaticResource BackgroundDark}">
+            <StackPanel Name="ScanProgressPanel" Orientation="Horizontal" Margin="3">
+                <TextBlock Name="ScanProgressLevel0Label" Text="[ScanProgressLevel0Label]" />
+                <TextBlock Margin="20,0,0,0" Name="ScanProgressLevel1Label" Text="[ScanProgressLevel1Label]" />
+            </StackPanel>
+        </Border>
     </Grid>
 </UserControl>

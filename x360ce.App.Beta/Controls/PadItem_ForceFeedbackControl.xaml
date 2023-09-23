@@ -33,7 +33,7 @@
 
                     <Label Name="StrengthLabel" Content="Strength" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Slider Name="StrengthTrackBar" Width="200" VerticalAlignment="Center" />
+                        <Slider Name="StrengthTrackBar" TickPlacement="None" Width="200" VerticalAlignment="Center" />
                         <TextBox
                             Name="StrengthTextBox"
                             Width="50"
