@@ -21,18 +21,17 @@
                     <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-
                 <!--  Row 1  -->
                 <Label Content="Direction" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <ComboBox x:Name="DirectionComboBox" Grid.Column="1" Margin="0,3,3,3" />
+                    <ComboBox x:Name="DirectionComboBox" Grid.Column="1" />
                     <Label Name="DirectionLabel" />
                 </StackPanel>
-
                 <!--  Row 2  -->
                 <Label Name="StrengthLabel" Grid.Row="1" Content="Strength" />
                 <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
                     <Slider Name="StrengthTrackBar" />
+                    <JcControls:NumericUpDown x:Name="StrengthUpDown" Value="0" />
                     <TextBox
                         Name="StrengthTextBox"
                         Width="50"
@@ -40,13 +39,12 @@
                         IsReadOnly="True"
                         IsTabStop="False"
                         Text="0 %" />
-                    <JcControls:NumericUpDown x:Name="StrengthUpDown" VerticalAlignment="Center" Value="0" />
                 </StackPanel>
-
                 <!--  Row 3  -->
                 <Label Name="PeriodLabel" Grid.Row="2" Content="Period (ms)" />
                 <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
                     <Slider Name="PeriodTrackBar" />
+                    <JcControls:NumericUpDown x:Name="PeriodUpDown" Value="0" />
                     <TextBox
                         Name="PeriodTextBox"
                         Width="50"
@@ -54,17 +52,12 @@
                         IsReadOnly="True"
                         IsTabStop="False"
                         Text="0 %" />
-                    <JcControls:NumericUpDown
-                        x:Name="PeriodUpDown"
-                        MinWidth="75"
-                        VerticalAlignment="Center"
-                        Value="0" />
                 </StackPanel>
-
                 <!--  Row 4  -->
                 <Label Name="TestLabel" Grid.Row="3" Content="Test" />
                 <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
                     <Slider Name="TestTrackBar" />
+                    <JcControls:NumericUpDown x:Name="TestUpDown" Value="0" />
                     <TextBox
                         Name="TestTextBox"
                         Width="50"
@@ -72,11 +65,6 @@
                         IsReadOnly="True"
                         IsTabStop="False"
                         Text="0 %" />
-                    <JcControls:NumericUpDown
-                        x:Name="TestUpDown"
-                        MinWidth="75"
-                        VerticalAlignment="Center"
-                        Value="0" />
                 </StackPanel>
             </Grid>
         </StackPanel>

@@ -56,7 +56,7 @@
                 Width="Auto"
                 IsReadOnly="True" />
             <Label Name="DeviceVidLabel" Grid.Column="2" Content="VID" />
-            <ComboBox Name="MapToPadComboBox" Grid.Column="5">
+            <ComboBox Name="MapToPadComboBox" Grid.Column="5" HorizontalAlignment="Stretch">
                 <ComboBoxItem>0</ComboBoxItem>
                 <ComboBoxItem>1</ComboBoxItem>
                 <ComboBoxItem>2</ComboBoxItem>

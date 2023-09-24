@@ -20,7 +20,6 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-
         <GroupBox Margin="3,3,0,3" Header="General">
             <StackPanel>
                 <CheckBox x:Name="ForceEnabledCheckBox" Content="Enabled" />
@@ -30,25 +29,22 @@
                         <ColumnDefinition Width="70" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-
                     <Label Name="StrengthLabel" Content="Strength" />
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Slider Name="StrengthTrackBar" TickPlacement="None" Width="200" VerticalAlignment="Center" />
+                        <Slider
+                            Name="StrengthTrackBar"
+                            Width="200"
+                            VerticalAlignment="Center"
+                            TickPlacement="None" />
+                        <JcControls:NumericUpDown x:Name="StrengthUpDown" Value="0" />
                         <TextBox
                             Name="StrengthTextBox"
                             Width="50"
-                            HorizontalAlignment="Left"
                             HorizontalContentAlignment="Right"
                             IsReadOnly="True"
                             IsTabStop="False"
                             Text="0 %" />
-                        <JcControls:NumericUpDown
-                            x:Name="StrengthUpDown"
-                            MinWidth="75"
-                            VerticalAlignment="Center"
-                            Value="0" />
                     </StackPanel>
-
                 </Grid>
             </StackPanel>
         </GroupBox>
@@ -73,7 +69,6 @@
                     TextWrapping="Wrap" />
             </StackPanel>
         </GroupBox>
-
         <controls:PadItem_ForceFeedback_MotorControl x:Name="LeftForceFeedbackMotorPanel" Grid.Row="1" x:FieldModifier="public" />
         <controls:PadItem_ForceFeedback_MotorControl
             x:Name="RightForceFeedbackMotorPanel"
@@ -83,7 +78,7 @@
         <TextBlock
             Grid.Row="2"
             Grid.ColumnSpan="2"
-            Padding="3,3,3,3"
+            Padding="3"
             Text="If your controller have only one motor then force feedback effects will be merged automatically. Values sent by the game to the Left Motor, which is used to simulate large explosions, crashes, gun fire, etc, will be able to reach maximum vibration effect. You can reduce strength of the Right Motor to simulate small force feedbacks effects like button responses, small collision bumps, etc. GamePads must use Constant effect type. Wheels must use Periodic effect type, which is perfect for simulating GamePad vibration effects."
             TextWrapping="Wrap" />
     </Grid>

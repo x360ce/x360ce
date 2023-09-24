@@ -196,7 +196,6 @@
                 <JcControls:NumericUpDown
                     x:Name="GetProgramsMinInstancesUpDown"
                     Grid.Column="1"
-                    Width="75"
                     HorizontalAlignment="Left" />
                 <CheckBox
                     Name="GetProgramsIncludeEnabledCheckBox"

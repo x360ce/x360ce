@@ -26,10 +26,10 @@
                 <RowDefinition />
                 <RowDefinition />
             </Grid.RowDefinitions>
-
             <Label Name="DeadZoneLabel" Margin="0,0,5,0" Content="DeadZone" />
             <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <Slider Name="DeadZoneTrackBar" Width="200" VerticalAlignment="Center" />
+                <JcControls:NumericUpDown x:Name="DeadZoneUpDown" Value="0" />
                 <TextBox
                     Name="DeadZoneTextBox"
                     Width="50"
@@ -37,13 +37,7 @@
                     IsReadOnly="True"
                     IsTabStop="False"
                     Text="0 %" />
-                <JcControls:NumericUpDown
-                    x:Name="DeadZoneUpDown"
-                    MinWidth="75"
-                    VerticalAlignment="Center"
-                    Value="0" />
             </StackPanel>
-
             <Label
                 Name="OffsetLabel"
                 Grid.Row="1"
@@ -51,6 +45,7 @@
                 Content="Offset" />
             <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
                 <Slider Name="OffsetTrackBar" Width="200" VerticalAlignment="Center" />
+                <JcControls:NumericUpDown x:Name="OffsetUpDown" Value="0" />
                 <TextBox
                     Name="OffsetTextBox"
                     Width="50"
@@ -58,13 +53,7 @@
                     IsReadOnly="True"
                     IsTabStop="False"
                     Text="0 %" />
-                <JcControls:NumericUpDown
-                    x:Name="OffsetUpDown"
-                    MinWidth="75"
-                    VerticalAlignment="Center"
-                    Value="0" />
             </StackPanel>
         </Grid>
-
     </GroupBox>
 </UserControl>

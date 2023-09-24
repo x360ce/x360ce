@@ -188,24 +188,19 @@
                         Content="Anti-Dead Zone" />
                     <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
                         <Slider Name="AntiDeadZoneTrackBar" VerticalAlignment="Center" />
+                        <JcControls:NumericUpDown x:Name="AntiDeadZoneUpDown" Value="0" />
                         <TextBox
                             Name="AntiDeadZoneTextBox"
                             Width="50"
-                            HorizontalAlignment="Left"
                             HorizontalContentAlignment="Right"
                             IsReadOnly="True"
                             IsTabStop="False"
                             Text="0 %" />
-                        <JcControls:NumericUpDown
-                            x:Name="AntiDeadZoneUpDown"
-                            MinWidth="75"
-                            VerticalAlignment="Center"
-                            Value="0" />
                     </StackPanel>
-
                     <Label Name="DeadZoneLabel" Grid.Row="3" Content="Dead Zone" />
                     <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
                         <Slider Name="DeadZoneTrackBar" VerticalAlignment="Center" />
+                        <JcControls:NumericUpDown x:Name="DeadZoneUpDown" Value="0" />
                         <TextBox
                             Name="DeadZoneTextBox"
                             Width="50"
@@ -214,16 +209,11 @@
                             IsReadOnly="True"
                             IsTabStop="False"
                             Text="0 %" />
-                        <JcControls:NumericUpDown
-                            x:Name="DeadZoneUpDown"
-                            MinWidth="75"
-                            VerticalAlignment="Center"
-                            Value="0" />
                     </StackPanel>
-
                     <Label Name="SensitivityLabel" Grid.Row="4" Content="Sensitivity" />
                     <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
                         <Slider Name="LinearTrackBar" VerticalAlignment="Center" />
+                        <JcControls:NumericUpDown Name="LinearUpDown" ValueChanged="LinearUpDown_ValueChanged" Value="0" />
                         <TextBox
                             Name="LinearTextBox"
                             Width="50"
@@ -232,27 +222,19 @@
                             IsReadOnly="True"
                             IsTabStop="False"
                             Text="0 %" />
-                        <JcControls:NumericUpDown
-                            x:Name="LinearUpDown"
-                            MinWidth="75"
-                            VerticalAlignment="Center"
-                            ValueChanged="LinearUpDown_ValueChanged"
-                            Value="0" />
                     </StackPanel>
-
                     <Label
                         Name="SensitivityTooltip"
                         Grid.Row="5"
                         Grid.ColumnSpan="2"
                         HorizontalAlignment="Left"
                         Opacity="0.5" />
-
                     <ComboBox
                         Name="PresetMenuStrip"
                         Grid.Row="5"
                         Grid.Column="1"
                         Width="75"
-                        Margin="0,3,0,0"
+                        Margin="0,3,59,0"
                         HorizontalAlignment="Right"
                         SelectionChanged="P_X_Y_Z_MenuItem_Click"
                         Style="{StaticResource ComboBox_Static}"

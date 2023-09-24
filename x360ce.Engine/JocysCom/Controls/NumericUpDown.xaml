@@ -5,32 +5,22 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:JocysCom.ClassLibrary.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Name="This"
-    Margin="0"
-    Padding="0"
+    x:Name="NumericTextBoxControl"
+    Margin="3"
     Loaded="UserControl_Loaded"
     SnapsToDevicePixels="True"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
     <UserControl.Resources>
         <ResourceDictionary>
-            <!--  Existing resources  -->
             <local:NumericUpDownStyleConverter x:Key="_NumericUpDownStyleConverter" />
             <local:NumericUpDownValueConverter x:Key="_NumericUpDownValueConverter" />
-            <!--  Link external source  -->
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Themes/Default.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <StackPanel Orientation="Horizontal" SnapsToDevicePixels="True">
         <TextBox
             Name="TBox"
             MinWidth="75"
@@ -45,7 +35,7 @@
             <TextBox.Text>
                 <Binding
                     Converter="{StaticResource _NumericUpDownValueConverter}"
-                    ElementName="This"
+                    ElementName="NumericTextBoxControl"
                     Mode="TwoWay"
                     Path="Value">
                     <Binding.ValidationRules>
@@ -54,7 +44,7 @@
                 </Binding>
             </TextBox.Text>
         </TextBox>
-        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" SnapsToDevicePixels="True">
+        <StackPanel Margin="-26,1,1,1" HorizontalAlignment="Right" SnapsToDevicePixels="True">
             <StackPanel.Resources>
                 <Style BasedOn="{StaticResource Button_Default}" TargetType="Button">
                     <Setter Property="Padding" Value="4,3,3,3" />
@@ -63,6 +53,7 @@
                     <Setter Property="Width" Value="25" />
                     <Setter Property="MinWidth" Value="25" />
                     <Setter Property="Height" Value="12" />
+                    <Setter Property="Margin" Value="0" />
                     <Setter Property="SnapsToDevicePixels" Value="True" />
                 </Style>
                 <Style TargetType="Path">
@@ -79,7 +70,7 @@
                     <Setter Property="VerticalAlignment" Value="Stretch" />
                 </Style>
             </StackPanel.Resources>
-            <Button Name="UpButton" Margin="0,1,1,0" Click="UpButton_Click">
+            <Button Name="UpButton" VerticalAlignment="Top" Click="UpButton_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="0,4,0,0" />
@@ -95,7 +86,7 @@
                     </Viewbox>
                 </Button.Content>
             </Button>
-            <Button Name="DownButton" Margin="0,0,1,1" Click="DownButton_Click">
+            <Button Name="DownButton" VerticalAlignment="Bottom" Click="DownButton_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="0,0,4,0" />
@@ -108,5 +99,5 @@
                 </Button.Content>
             </Button>
         </StackPanel>
-    </Grid>
+    </StackPanel>
 </UserControl>

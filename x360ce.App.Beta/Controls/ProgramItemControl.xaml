@@ -85,7 +85,11 @@
         </GroupBox>
         <GroupBox Grid.Column="4" Margin="3,0,3,0" Header="Help">
             <StackPanel>
-                <Border Margin="3,0,3,3" Background="{StaticResource BackgroundDark}" CornerRadius="5" Padding="3">
+                <Border
+                    Margin="3,0,3,3"
+                    Padding="3"
+                    Background="{StaticResource BackgroundDark}"
+                    CornerRadius="5">
                     <StackPanel>
                         <TextBlock Padding="3">
                             <Hyperlink NavigateUri="https://www.google.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
@@ -128,7 +132,7 @@
                 <Label Name="XInputPathLabel" Grid.Row="1" Content="XInput Path" />
                 <Label Name="DInputFileLabel" Grid.Row="2" Content="DInput File" />
                 <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal">
-                    <JcControls:NumericUpDown x:Name="HookModeFakeVidNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
+                    <JcControls:NumericUpDown x:Name="HookModeFakeVidNumericUpDown" VerticalAlignment="Center" />
                     <TextBox Name="HookModeFakeVidTextBox" MinWidth="75" IsReadOnly="True" />
                 </StackPanel>
                 <Label
@@ -138,7 +142,7 @@
                     HorizontalAlignment="Right"
                     Content="Fake PID" />
                 <StackPanel Grid.Column="3" VerticalAlignment="Center" Orientation="Horizontal">
-                    <JcControls:NumericUpDown Name="HookModeFakePidNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
+                    <JcControls:NumericUpDown Name="HookModeFakePidNumericUpDown" VerticalAlignment="Center" />
                     <TextBox Name="HookModeFakePidTextBox" MinWidth="75" IsReadOnly="True" />
                 </StackPanel>
                 <TextBox
@@ -153,13 +157,8 @@
                     Grid.Column="1"
                     Grid.ColumnSpan="3"
                     TextChanged="DInputFileTextBox_TextChanged" />
-
                 <Label Name="TimeoutLabel" Grid.Column="4" Content="Timeout" />
-                <JcControls:NumericUpDown
-                    x:Name="TimeoutNumericUpDown"
-                    Grid.Column="5"
-                    MinWidth="75"
-                    VerticalAlignment="Center" />
+                <JcControls:NumericUpDown Name="TimeoutNumericUpDown" Grid.Column="5" VerticalAlignment="Center" />
                 <Label
                     Name="ProcessorArchitectureLabel"
                     Grid.Row="1"
@@ -169,13 +168,17 @@
                     Name="ProcessorArchitectureComboBox"
                     Grid.Row="1"
                     Grid.Column="5"
-                    IsEnabled="False" />
+                    Width="75" />
                 <Label
                     Name="EmulationTypeLabel"
                     Grid.Row="2"
                     Grid.Column="4"
                     Content="Emulation" />
-                <ComboBox Name="EmulationTypeComboBox" Grid.Row="2" Grid.Column="5" />
+                <ComboBox
+                    Name="EmulationTypeComboBox"
+                    Grid.Row="2"
+                    Grid.Column="5"
+                    Width="75" />
             </Grid>
         </GroupBox>
         <GroupBox
