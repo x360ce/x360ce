@@ -13,8 +13,15 @@
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <local:NumericUpDownStyleConverter x:Key="_NumericUpDownStyleConverter" />
-        <local:NumericUpDownValueConverter x:Key="_NumericUpDownValueConverter" />
+        <ResourceDictionary>
+            <!--  Existing resources  -->
+            <local:NumericUpDownStyleConverter x:Key="_NumericUpDownStyleConverter" />
+            <local:NumericUpDownValueConverter x:Key="_NumericUpDownValueConverter" />
+            <!--  Link external source  -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Default.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -28,7 +35,6 @@
             Name="TBox"
             MinWidth="75"
             Margin="0"
-            VerticalAlignment="Center"
             x:FieldModifier="public"
             MouseWheel="TBox_MouseWheel"
             PreviewKeyDown="TBox_PreviewKeyDown"
@@ -47,35 +53,17 @@
                     </Binding.ValidationRules>
                 </Binding>
             </TextBox.Text>
-            <!--<TextBox.Triggers>
-                <Trigger Property="IsEnabled"  Value="True">
-                    <Setter TargetName="DownButton" Property="Background" Value="Transparent"/>
-                    <Setter TargetName="UpButton" Property="Background" Value="Transparent"/>
-                </Trigger>
-            </TextBox.Triggers>-->
         </TextBox>
-        <Grid
-            x:Name="ButtonsGrid"
-            Width="{Binding ElementName=TBox, Path=ActualHeight, Mode=OneWay, Converter={StaticResource _NumericUpDownStyleConverter}, ConverterParameter=-2}"
-            Height="{Binding ElementName=TBox, Path=ActualHeight, Mode=OneWay, Converter={StaticResource _NumericUpDownStyleConverter}, ConverterParameter=-2}"
-            HorizontalAlignment="Right">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="0" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.Resources>
-                <Style TargetType="Button">
-                    <Setter Property="HorizontalAlignment" Value="Stretch" />
-                    <Setter Property="VerticalAlignment" Value="Stretch" />
-                    <Setter Property="Background" Value="#DEDEDE" />
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="MinWidth" Value="0" />
-                    <Setter Property="Margin" Value="0,0,1,0" />
-                    <Setter Property="SnapsToDevicePixels" Value="True" />
-                    <Setter Property="Padding" Value="3" />
+        <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" SnapsToDevicePixels="True">
+            <StackPanel.Resources>
+                <Style BasedOn="{StaticResource Button_Default}" TargetType="Button">
+                    <Setter Property="Padding" Value="4,3,3,3" />
                     <Setter Property="Focusable" Value="False" />
                     <Setter Property="IsTabStop" Value="False" />
+                    <Setter Property="Width" Value="25" />
+                    <Setter Property="MinWidth" Value="25" />
+                    <Setter Property="Height" Value="12" />
+                    <Setter Property="SnapsToDevicePixels" Value="True" />
                 </Style>
                 <Style TargetType="Path">
                     <Setter Property="Width" Value="10" />
@@ -90,8 +78,8 @@
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                     <Setter Property="VerticalAlignment" Value="Stretch" />
                 </Style>
-            </Grid.Resources>
-            <Button Name="UpButton" Click="UpButton_Click">
+            </StackPanel.Resources>
+            <Button Name="UpButton" Margin="0,1,1,0" Click="UpButton_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="0,4,0,0" />
@@ -107,7 +95,7 @@
                     </Viewbox>
                 </Button.Content>
             </Button>
-            <Button Name="DownButton" Grid.Row="2" Click="DownButton_Click">
+            <Button Name="DownButton" Margin="0,0,1,1" Click="DownButton_Click">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="0,0,4,0" />
@@ -119,6 +107,6 @@
                     </Viewbox>
                 </Button.Content>
             </Button>
-        </Grid>
+        </StackPanel>
     </Grid>
 </UserControl>

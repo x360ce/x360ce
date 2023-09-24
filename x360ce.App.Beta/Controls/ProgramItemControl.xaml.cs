@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -538,5 +539,20 @@ namespace x360ce.App.Controls
 			if (!ControlsHelper.AllowUnload(this))
 				return;
 		}
-	}
+
+        private void GoogleSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void NGEmuSearchLinkButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void HyperLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            ControlsHelper.OpenPath(e.Uri.AbsoluteUri);
+        }
+    }
 }

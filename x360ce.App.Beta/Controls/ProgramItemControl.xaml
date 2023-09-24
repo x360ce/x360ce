@@ -27,7 +27,6 @@
                 <Setter Property="Margin" Value="3,0,0,0" />
             </Style>
         </Grid.Resources>
-
         <GroupBox Name="HookMaskGroupBox" Header="Hook Mask - 00000000">
             <StackPanel>
                 <CheckBox Name="HookCOMCheckBox" Content="COM" />
@@ -86,6 +85,25 @@
         </GroupBox>
         <GroupBox Grid.Column="4" Margin="3,0,3,0" Header="Help">
             <StackPanel>
+                <Border Margin="3,0,3,3" Background="{StaticResource BackgroundDark}" CornerRadius="5" Padding="3">
+                    <StackPanel>
+                        <TextBlock Padding="3">
+                            <Hyperlink NavigateUri="https://www.google.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
+                                Search on Google...
+                            </Hyperlink>
+                        </TextBlock>
+                        <TextBlock Padding="3">
+                            <Hyperlink NavigateUri="https://www.ngemu.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
+                                Search on NGemu...
+                            </Hyperlink>
+                        </TextBlock>
+                        <TextBlock Padding="3">
+                            <Hyperlink NavigateUri="https://www.ngemu.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
+                                Open NGemu...
+                            </Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
                 <Button Click="GoogleSearchButton_Click" Content="Search on Google..." />
                 <Button Click="NGEmuSearchLinkButton_Click" Content="Search on NGemu..." />
                 <Button Click="NGEmuThreadLinkButton_Click" Content="Open NGemu..." />
@@ -116,10 +134,11 @@
                 <Label
                     Name="HookModeFakePidLabel"
                     Grid.Column="2"
+                    Margin="0,0,10,0"
                     HorizontalAlignment="Right"
                     Content="Fake PID" />
                 <StackPanel Grid.Column="3" VerticalAlignment="Center" Orientation="Horizontal">
-                    <JcControls:NumericUpDown x:Name="HookModeFakePidNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
+                    <JcControls:NumericUpDown Name="HookModeFakePidNumericUpDown" MinWidth="75" VerticalAlignment="Center" />
                     <TextBox Name="HookModeFakePidTextBox" MinWidth="75" IsReadOnly="True" />
                 </StackPanel>
                 <TextBox
