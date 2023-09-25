@@ -24,20 +24,25 @@ namespace x360ce.App.Controls
 
         //LeftTrigger		> TriggerLeftAxis
         //RightTrigger		> TriggerRightAxis
+
         //LeftShoulder		> BumperLeftButton
         //RightShoulder		> BumperRightButton
+
         //ButtonBack		> MenuBackButton
         //ButtonStart		> MenuStartButton
         //ButtonGuide		> MenuGuideButton
+
         //ButtonY			> ActionYButton
         //ButtonX			> ActionXButton
         //ButtonB			> ActionBButton
         //ButtonA			> ActionAButton
+
         //DPad				> DPadButton
         //DPadUp			> DPadUpButton
         //DPadLeft			> DPadLeftButton
         //DPadRight			> DPadRightButton
         //DPadDown			> DPadDownButton
+
         //LeftThumbButton	> StickLeftButton
         //LeftThumbAxisX	> StickLeftXAxis
         //LeftThumbAxisY	> StickLeftYAxis
@@ -45,6 +50,7 @@ namespace x360ce.App.Controls
         //LeftThumbLeft		> StickLeftLeftAxis
         //LeftThumbRight	> StickLeftRightAxis
         //LeftThumbDown		> StickLeftDownAxis
+
         //RightThumbButton	> StickRightButton
         //RightThumbAxisX	> StickRightXAxis
         //RightThumbAxisY	> StickRightYAxis
