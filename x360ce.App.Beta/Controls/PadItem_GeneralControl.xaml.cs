@@ -17,12 +17,41 @@ namespace x360ce.App.Controls
         public PadItem_GeneralControl()
         {
             InitHelper.InitTimer(this, InitializeComponent);
-        }
-
-        
+        }  
 
         PadSetting _padSetting;
         MapTo _MappedTo;
+
+        //LeftTrigger		> TriggerLeftAxis
+        //RightTrigger		> TriggerRightAxis
+        //LeftShoulder		> BumperLeftButton
+        //RightShoulder		> BumperRightButton
+        //ButtonBack		> MenuBackButton
+        //ButtonStart		> MenuStartButton
+        //ButtonGuide		> MenuGuideButton
+        //ButtonY			> ActionYButton
+        //ButtonX			> ActionXButton
+        //ButtonB			> ActionBButton
+        //ButtonA			> ActionAButton
+        //DPad				> DPadButton
+        //DPadUp			> DPadUpButton
+        //DPadLeft			> DPadLeftButton
+        //DPadRight			> DPadRightButton
+        //DPadDown			> DPadDownButton
+        //LeftThumbButton	> StickLeftButton
+        //LeftThumbAxisX	> StickLeftXAxis
+        //LeftThumbAxisY	> StickLeftYAxis
+        //LeftThumbUp		> StickLeftUpAxis
+        //LeftThumbLeft		> StickLeftLeftAxis
+        //LeftThumbRight	> StickLeftRightAxis
+        //LeftThumbDown		> StickLeftDownAxis
+        //RightThumbButton	> StickRightButton
+        //RightThumbAxisX	> StickRightXAxis
+        //RightThumbAxisY	> StickRightYAxis
+        //RightThumbUp		> StickRightUpAxis
+        //RightThumbRight	> StickRightLeftAxis
+        //RightThumbRight	> StickRightRightAxis
+        //RightThumbDown	> StickRightDownAxis
 
         public void SetBinding(MapTo mappedTo, PadSetting ps)
         {
@@ -59,7 +88,7 @@ namespace x360ce.App.Controls
             SettingsManager.UnLoadMonitor(RightThumbAxisYTextBox);
             SettingsManager.UnLoadMonitor(RightThumbButtonTextBox);
             SettingsManager.UnLoadMonitor(RightThumbUpTextBox);
-            SettingsManager.UnLoadMonitor(RightThumbRightTextBox);
+            SettingsManager.UnLoadMonitor(RightThumbLeftTextBox);
             SettingsManager.UnLoadMonitor(RightThumbRightTextBox);
             SettingsManager.UnLoadMonitor(RightThumbDownTextBox);
             if (ps == null)
@@ -96,7 +125,7 @@ namespace x360ce.App.Controls
             SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisY), RightThumbAxisYTextBox, null, converter);
             SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbButton), RightThumbButtonTextBox, null, converter);
             SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbUp), RightThumbUpTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), RightThumbRightTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbLeft), RightThumbLeftTextBox, null, converter);
             SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), RightThumbRightTextBox, null, converter);
             SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), RightThumbDownTextBox, null, converter);
             _padSetting.PropertyChanged += _padSetting_PropertyChanged;
