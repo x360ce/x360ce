@@ -1,15 +1,15 @@
-﻿using System.Threading.Tasks;
-using System.Windows;
-using System.Linq;
-using System.ComponentModel;
-using System.Windows.Controls;
-using System;
-using System.Windows.Media;
-using System.IO;
-using System.Windows.Documents;
+﻿using System;
 using System.Collections.Generic;
-using System.Xml;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
+using System.Windows.Media;
+using System.Xml;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -404,7 +404,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Get all child controls.
 		/// </summary>
-		public static T[] GetAll<T>(Control control, bool includeTop = false)
+		public static T[] GetAll<T>(FrameworkElement control, bool includeTop = false)
 		{
 			if (control is null)
 				return new T[0];
