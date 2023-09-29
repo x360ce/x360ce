@@ -10,7 +10,6 @@
 	-->
 	<!--  Colors  -->
 
-
 	<SolidColorBrush x:Key="BackgroundWhite" Color="#ffffff" />
 	<SolidColorBrush x:Key="BackgroundLight" Color="#f0f0f0" />
 	<SolidColorBrush x:Key="BackgroundDark" Color="#dedede" />
@@ -55,6 +54,10 @@
 	<SolidColorBrush x:Key="SolidColorBrush_270D">#6700D6</SolidColorBrush>
 	<SolidColorBrush x:Key="SolidColorBrush_300D">#D600D6</SolidColorBrush>
 	<SolidColorBrush x:Key="SolidColorBrush_330D">#D60067</SolidColorBrush>
+
+	<Style TargetType="Canvas">
+		<Setter Property="SnapsToDevicePixels" Value="False" />
+	</Style>
 
 	<!--  Focus Visual Style  -->
 	<Style x:Key="FocusVisualStyle_Default">
@@ -481,6 +484,7 @@
 		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
 		<Setter Property="HorizontalAlignment" Value="Left" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="HorizontalContentAlignment" Value="Center"/>
 		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="MinWidth" Value="26" />
 		<Setter Property="Margin" Value="3" />
@@ -490,14 +494,22 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="Button">
 					<ControlTemplate.Resources>
-						<Style TargetType="ContentControl">
-							<Setter Property="Focusable" Value="False" />
-							<Setter Property="Width" Value="16" />
-							<Setter Property="Height" Value="16" />
+						<Style TargetType="Border">
+							<Setter Property="Margin" Value="0" />
+							<Setter Property="CornerRadius" Value="5" />
+						</Style>
+						<Style TargetType="ContentPresenter">
+							<Setter Property="HorizontalAlignment" Value="Center" />
+							<Setter Property="VerticalAlignment" Value="Center" />
 						</Style>
 						<Style TargetType="StackPanel">
 							<Setter Property="Orientation" Value="Horizontal" />
 							<Setter Property="HorizontalAlignment" Value="Center" />
+						</Style>
+						<Style TargetType="ContentControl">
+							<Setter Property="Focusable" Value="False" />
+							<Setter Property="Width" Value="16" />
+							<Setter Property="Height" Value="16" />
 						</Style>
 						<Style TargetType="Image">
 							<Setter Property="Width" Value="16" />
@@ -508,14 +520,10 @@
 							<Setter Property="Margin" Value="5,0,0,0" />
 							<Setter Property="VerticalAlignment" Value="Center" />
 						</Style>
-						<Style TargetType="Border">
-							<Setter Property="Margin" Value="0" />
-							<Setter Property="CornerRadius" Value="5" />
-						</Style>
 					</ControlTemplate.Resources>
 					<!--  Template  -->
 					<Border Name="ButtonBorder" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
-						<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
 					</Border>
 					<!--  Triggers  -->
 					<ControlTemplate.Triggers>
@@ -934,7 +942,6 @@
 							<Setter TargetName="checkBoxBorder" Property="BorderBrush" Value="{StaticResource BackgroundDarkSelected}" />
 						</MultiTrigger>
 						<DataTrigger Binding="{Binding Path=Content, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=OneTime}" Value="">
-							<!--<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type CheckBox}}, Path=Content, Mode=OneTime}" Value="">-->
 							<Setter TargetName="contentPresenter" Property="Visibility" Value="Collapsed" />
 						</DataTrigger>
 					</ControlTemplate.Triggers>
