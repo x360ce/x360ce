@@ -74,24 +74,24 @@ namespace x360ce.App.Controls
 			ControlTemplate template = null;
 			switch (GamepadButton)
 			{
-                case GamepadButtonFlags.A: template = (ControlTemplate)FindResource("Button_Action_A"); break;
-                case GamepadButtonFlags.B: template = (ControlTemplate)FindResource("Button_Action_B"); break;
-                case GamepadButtonFlags.X: template = (ControlTemplate)FindResource("Button_Action_X"); break;
-                case GamepadButtonFlags.Y: template = (ControlTemplate)FindResource("Button_Action_Y"); break;
+                case GamepadButtonFlags.A: template = (ControlTemplate)FindResource("ControlTemplate_ActionA"); break;
+                case GamepadButtonFlags.B: template = (ControlTemplate)FindResource("ControlTemplate_ActionB"); break;
+                case GamepadButtonFlags.X: template = (ControlTemplate)FindResource("ControlTemplate_ActionX"); break;
+                case GamepadButtonFlags.Y: template = (ControlTemplate)FindResource("ControlTemplate_ActionY"); break;
 
-                case GamepadButtonFlags.LeftShoulder: template = (ControlTemplate)FindResource("Button_Bumper_Left"); break;
-                case GamepadButtonFlags.RightShoulder: template = (ControlTemplate)FindResource("Button_Bumper_Right"); break;
+                case GamepadButtonFlags.LeftShoulder: template = (ControlTemplate)FindResource("ControlTemplate_BumperLeft"); break;
+                case GamepadButtonFlags.RightShoulder: template = (ControlTemplate)FindResource("ControlTemplate_BumperRight"); break;
 
-                case GamepadButtonFlags.Back: template = (ControlTemplate)FindResource("Button_Options_Back"); break;
-                case GamepadButtonFlags.Start: template = (ControlTemplate)FindResource("Button_Options_Start"); break;
+                case GamepadButtonFlags.Back: template = (ControlTemplate)FindResource("ControlTemplate_MenuBack"); break;
+                case GamepadButtonFlags.Start: template = (ControlTemplate)FindResource("ControlTemplate_MenuStart"); break;
 
-                case GamepadButtonFlags.DPadUp: template = (ControlTemplate)FindResource("Button_DPad_Up"); break;
-                case GamepadButtonFlags.DPadDown: template = (ControlTemplate)FindResource("Button_DPad_Down"); break;
-                case GamepadButtonFlags.DPadLeft: template = (ControlTemplate)FindResource("Button_DPad_Left"); break;
-                case GamepadButtonFlags.DPadRight: template = (ControlTemplate)FindResource("Button_DPad_Right"); break;
+                case GamepadButtonFlags.DPadUp: template = (ControlTemplate)FindResource("ControlTemplate_DPadUp"); break;
+                case GamepadButtonFlags.DPadDown: template = (ControlTemplate)FindResource("ControlTemplate_DPadDown"); break;
+                case GamepadButtonFlags.DPadLeft: template = (ControlTemplate)FindResource("ControlTemplate_DPadLeft"); break;
+                case GamepadButtonFlags.DPadRight: template = (ControlTemplate)FindResource("ControlTemplate_DPadRight"); break;
 
-                case GamepadButtonFlags.LeftThumb: template = (ControlTemplate)FindResource("Button_Thumb_Left"); break;
-                case GamepadButtonFlags.RightThumb: template = (ControlTemplate)FindResource("Button_Thumb_Right"); break;
+                case GamepadButtonFlags.LeftThumb: template = (ControlTemplate)FindResource("ControlTemplate_StickLeft"); break;
+                case GamepadButtonFlags.RightThumb: template = (ControlTemplate)FindResource("ControlTemplate_StickRight"); break;
             }
 
 			ButtonImageControl.Template = template;

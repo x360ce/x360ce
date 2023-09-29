@@ -484,7 +484,7 @@
 		<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_Default}" />
 		<Setter Property="HorizontalAlignment" Value="Left" />
 		<Setter Property="VerticalAlignment" Value="Center" />
-		<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="MinWidth" Value="26" />
 		<Setter Property="Margin" Value="3" />

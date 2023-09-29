@@ -145,7 +145,7 @@
   <data name="error_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\error_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_LeftTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageTriggerLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_LeftTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="copy_16x161" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -154,10 +154,10 @@
   <data name="bullet_square_glass_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\bullet_square_glass_blue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_LeftThumb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageStickLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_LeftThumb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_DPadDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageDPadDown" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_DPadDown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="remove_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -169,7 +169,7 @@
   <data name="bullet_square_glass_red" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\bullet_square_glass_red.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_DPadLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageDPadLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_DPadLeft.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="edit_note_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -187,10 +187,10 @@
   <data name="exit_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\exit_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_Start" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageMenuStart" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_Start.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="xboxControllerDPad" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageControllerDPad" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\xboxControllerDPad.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="test_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -199,7 +199,7 @@
   <data name="folder_view_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\folder_view_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="xboxControllerLeftTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageControllerTriggerLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\xboxControllerLeftTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="add_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -211,13 +211,13 @@
   <data name="checkbox_undefined_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\checkbox_undefined_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="xboxControllerRightThumbstick" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageControllerStickRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\xboxControllerRightThumbstick.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_A" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageActionA" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_A.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_RightTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageTriggerRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_RightTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="app_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -235,13 +235,13 @@
   <data name="emulation_virtual_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\emulation_virtual_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_Back" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageMenuBack" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_Back.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="delete_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\delete_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="xboxControllerLeftThumbstick" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageControllerStickLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\xboxControllerLeftThumbstick.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="launch_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -256,25 +256,25 @@
   <data name="update_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\update_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="xboxControllerRightTrigger" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageControllerTriggerRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\xboxControllerRightTrigger.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\refresh_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_LeftShoulder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageBumperLeft" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_LeftShoulder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="checkbox_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\checkbox_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_DPadRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageDPadRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_DPadRight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_X" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageActionX" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_X.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_RightThumb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageStickRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_RightThumb.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="online_help_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -307,19 +307,19 @@
   <data name="save_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\save_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_B" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageActionB" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_B.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="cloud_computing_refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\cloud_computing_refresh_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_Y" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageActionY" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_Y.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="arrow_right_gray_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\arrow_right_gray_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_RightShoulder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageBumperRight" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_RightShoulder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="data_out_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
@@ -328,7 +328,7 @@
   <data name="copy_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\copy_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Button_DPadUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
+  <data name="ImageDPadUp" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_DPadUp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="hardware_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">

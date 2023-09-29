@@ -254,32 +254,26 @@ namespace x360ce.App.Controls
             //}
 
             if (ii.Label is System.Windows.Controls.ContentControl)
-                setColorNormaOrActiveRecord(recording, on, ii);
+                setColorNormaActiveRecord(recording, on, ii);
         }
 
         SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
-        SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
         SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
-        SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
-        SolidColorBrush colorNormalTextBox = System.Windows.Media.Brushes.White;
+		SolidColorBrush colorNormalTextBox = System.Windows.Media.Brushes.White;
+		SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
+		SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
-        void setColorNormaOrActiveRecord(bool record, bool on, ImageInfo ii)
+        void setColorNormaActiveRecord(bool record, bool on, ImageInfo ii)
         {
             System.Windows.Controls.TextBox textbox = (System.Windows.Controls.TextBox)ii.Control;
             System.Windows.Shapes.Path path = ii.Path;
             if ((path.Fill as SolidColorBrush).Color == colorRecord.Color) return;
             if ((path.Fill as SolidColorBrush).Color == colorOver.Color) return;
-
             // Active.
             if (on)
             {
                 textbox.Background = path.Fill = colorActive;
             }
-            //// Record.
-            //else if (record && on)
-            //{
-            //    textbox.Background = path.Fill = colorRecord;
-            //}
             // Normal.
             else
             {

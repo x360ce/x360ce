@@ -1,103 +1,103 @@
 ﻿<UserControl
-    x:Class="JocysCom.ClassLibrary.Controls.NumericUpDown"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:JocysCom.ClassLibrary.Controls"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Name="NumericTextBoxControl"
-    Margin="3"
-    Loaded="UserControl_Loaded"
-    SnapsToDevicePixels="True"
-    Unloaded="UserControl_Unloaded"
-    mc:Ignorable="d">
-    <UserControl.Resources>
-        <ResourceDictionary>
-            <local:NumericUpDownStyleConverter x:Key="_NumericUpDownStyleConverter" />
-            <local:NumericUpDownValueConverter x:Key="_NumericUpDownValueConverter" />
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Themes/Default.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </UserControl.Resources>
-    <StackPanel Orientation="Horizontal" SnapsToDevicePixels="True">
-        <TextBox
-            Name="TBox"
-            MinWidth="75"
-            Margin="0"
-            x:FieldModifier="public"
-            MouseWheel="TBox_MouseWheel"
-            PreviewKeyDown="TBox_PreviewKeyDown"
-            SizeChanged="TextBox_SizeChanged"
-            SnapsToDevicePixels="True"
-            TextAlignment="Right"
-            TextChanged="TBox_TextChanged">
-            <TextBox.Text>
-                <Binding
-                    Converter="{StaticResource _NumericUpDownValueConverter}"
-                    ElementName="NumericTextBoxControl"
-                    Mode="TwoWay"
-                    Path="Value">
-                    <Binding.ValidationRules>
-                        <local:NumericUpDownValidationRule />
-                    </Binding.ValidationRules>
-                </Binding>
-            </TextBox.Text>
-        </TextBox>
-        <StackPanel Margin="-26,1,1,1" HorizontalAlignment="Right" SnapsToDevicePixels="True">
-            <StackPanel.Resources>
-                <Style BasedOn="{StaticResource Button_Default}" TargetType="Button">
-                    <Setter Property="Padding" Value="4,3,3,3" />
-                    <Setter Property="Focusable" Value="False" />
-                    <Setter Property="IsTabStop" Value="False" />
-                    <Setter Property="Width" Value="25" />
-                    <Setter Property="MinWidth" Value="25" />
-                    <Setter Property="Height" Value="12" />
-                    <Setter Property="Margin" Value="0" />
-                    <Setter Property="SnapsToDevicePixels" Value="True" />
-                </Style>
-                <Style TargetType="Path">
-                    <Setter Property="Width" Value="10" />
-                    <Setter Property="Height" Value="5" />
-                    <Setter Property="HorizontalAlignment" Value="Center" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                    <Setter Property="Data" Value="M 0,0 L 10,0 L 5,5 Z" />
-                    <Setter Property="Fill" Value="Black" />
-                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-                </Style>
-                <Style TargetType="Viewbox">
-                    <Setter Property="HorizontalAlignment" Value="Stretch" />
-                    <Setter Property="VerticalAlignment" Value="Stretch" />
-                </Style>
-            </StackPanel.Resources>
-            <Button Name="UpButton" VerticalAlignment="Top" Click="UpButton_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="0,4,0,0" />
-                    </Style>
-                </Button.Resources>
-                <Button.Content>
-                    <Viewbox>
-                        <Path>
-                            <Path.RenderTransform>
-                                <ScaleTransform ScaleY="-1" />
-                            </Path.RenderTransform>
-                        </Path>
-                    </Viewbox>
-                </Button.Content>
-            </Button>
-            <Button Name="DownButton" VerticalAlignment="Bottom" Click="DownButton_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="0,0,4,0" />
-                    </Style>
-                </Button.Resources>
-                <Button.Content>
-                    <Viewbox>
-                        <Path />
-                    </Viewbox>
-                </Button.Content>
-            </Button>
-        </StackPanel>
-    </StackPanel>
+	x:Class="JocysCom.ClassLibrary.Controls.NumericUpDown"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:JocysCom.ClassLibrary.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	x:Name="NumericTextBoxControl"
+	Margin="3"
+	Loaded="UserControl_Loaded"
+	SnapsToDevicePixels="True"
+	Unloaded="UserControl_Unloaded"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<local:NumericUpDownStyleConverter x:Key="_NumericUpDownStyleConverter" />
+			<local:NumericUpDownValueConverter x:Key="_NumericUpDownValueConverter" />
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="Themes/Default.xaml" />
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</UserControl.Resources>
+	<StackPanel Orientation="Horizontal" SnapsToDevicePixels="True">
+		<TextBox
+			Name="TBox"
+			MinWidth="75"
+			Margin="0"
+			x:FieldModifier="public"
+			MouseWheel="TBox_MouseWheel"
+			PreviewKeyDown="TBox_PreviewKeyDown"
+			SizeChanged="TextBox_SizeChanged"
+			SnapsToDevicePixels="True"
+			TextAlignment="Right"
+			TextChanged="TBox_TextChanged">
+			<TextBox.Text>
+				<Binding
+					Converter="{StaticResource _NumericUpDownValueConverter}"
+					ElementName="NumericTextBoxControl"
+					Mode="TwoWay"
+					Path="Value">
+					<Binding.ValidationRules>
+						<local:NumericUpDownValidationRule />
+					</Binding.ValidationRules>
+				</Binding>
+			</TextBox.Text>
+		</TextBox>
+		<StackPanel Margin="-26,1,1,1" HorizontalAlignment="Right" SnapsToDevicePixels="True">
+			<StackPanel.Resources>
+				<Style BasedOn="{StaticResource Button_Default}" TargetType="Button">
+					<Setter Property="Padding" Value="4,3,3,3" />
+					<Setter Property="Focusable" Value="False" />
+					<Setter Property="IsTabStop" Value="False" />
+					<Setter Property="Width" Value="25" />
+					<Setter Property="MinWidth" Value="25" />
+					<Setter Property="Height" Value="12" />
+					<Setter Property="Margin" Value="0" />
+					<Setter Property="SnapsToDevicePixels" Value="True" />
+				</Style>
+				<Style TargetType="Path">
+					<Setter Property="Width" Value="10" />
+					<Setter Property="Height" Value="5" />
+					<Setter Property="HorizontalAlignment" Value="Center" />
+					<Setter Property="VerticalAlignment" Value="Center" />
+					<Setter Property="Data" Value="M 0,0 L 10,0 L 5,5 Z" />
+					<Setter Property="Fill" Value="Black" />
+					<Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+				</Style>
+				<Style TargetType="Viewbox">
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+					<Setter Property="VerticalAlignment" Value="Stretch" />
+				</Style>
+			</StackPanel.Resources>
+			<Button Name="UpButton" VerticalAlignment="Top" Click="UpButton_Click">
+				<Button.Resources>
+					<Style TargetType="Border">
+						<Setter Property="CornerRadius" Value="0,4,0,0" />
+					</Style>
+				</Button.Resources>
+				<Button.Content>
+					<Viewbox>
+						<Path>
+							<Path.RenderTransform>
+								<ScaleTransform ScaleY="-1" />
+							</Path.RenderTransform>
+						</Path>
+					</Viewbox>
+				</Button.Content>
+			</Button>
+			<Button Name="DownButton" VerticalAlignment="Bottom" Click="DownButton_Click">
+				<Button.Resources>
+					<Style TargetType="Border">
+						<Setter Property="CornerRadius" Value="0,0,4,0" />
+					</Style>
+				</Button.Resources>
+				<Button.Content>
+					<Viewbox>
+						<Path />
+					</Viewbox>
+				</Button.Content>
+			</Button>
+		</StackPanel>
+	</StackPanel>
 </UserControl>

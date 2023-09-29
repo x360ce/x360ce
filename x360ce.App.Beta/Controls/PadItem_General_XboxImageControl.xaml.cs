@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -36,14 +38,15 @@ namespace x360ce.App.Controls
 			MappedTo = mappedTo;
 			foreach (var ii in imageInfos)
 			{
-				ii.Path = FindName(GetNameCode(ii.Code).ToString()) as Path;
+				ii.Path = FindName(GetNameCode(ii.Code).ToString()) as System.Windows.Shapes.Path;
 				//SetImage(ii.Code, NavImageType.Normal, false);
 			}
 			SetHelpText();
 			//MainGrid.MouseMove += MainGrid_MouseMove;
-        }
+			AssignNavigationColorEventHandlers();
+		}
 
-        public MapCode GetNameCode(MapCode code)
+		public MapCode GetNameCode(MapCode code)
 		{
 			if (code == MapCode.LeftThumbAxisX)
 				return MapCode.LeftThumbRight;
@@ -53,11 +56,11 @@ namespace x360ce.App.Controls
 				return MapCode.RightThumbRight;
 			if (code == MapCode.RightThumbAxisY)
 				return MapCode.RightThumbUp;
-            return code;
+			return code;
 		}
 
-        public void SetImage(MapCode code, NavImageType type, bool show)
-        {
+		public void SetImage(MapCode code, NavImageType type, bool show)
+		{
 			//var nameCode = GetNameCode(code);
 			//var ii = Infos.First(x => x.Code == nameCode);
 			//var resourceName = string.Format("NavColor{0}", type);
@@ -65,38 +68,38 @@ namespace x360ce.App.Controls
 			//path.Fill = FindResource(resourceName) as SolidColorBrush;
 		}
 
-        //public void SetImage(MapCode code, NavImageType type, bool show)
-        //{
-        //	var nameCode = GetNameCode(code);
-        //	var ii = Infos.First(x => x.Code == nameCode);
-        //	var m = GetMiddleImageName(code);
-        //	var resourceName = string.Format("Nav{0}{1}", m, type);
-        //	var oldResourceName = ii.CurrentImageName;
-        //	var isNameSame = ii.CurrentImageName == resourceName;
-        //	var isShowSame = ii.CurrentImageShow == show;
-        //	// Return if no changes must be made.
-        //	// This will fix issue when click on image path is ignored.
-        //	if (isNameSame && isShowSame)
-        //		return;
-        //	ii.CurrentImageName = resourceName;
-        //	ii.CurrentImageShow = show;
-        //	var path = FindName(nameCode.ToString()) as Button;
-        //	if (path == null)
-        //		return;
-        //	var content = (ContentControl)path.Content;
-        //	if (!isNameSame)
-        //	{
-        //		var vb = FindResource(resourceName) as UIElement;
-        //		content.Content = vb;
-        //	}
-        //	// Opacity must be re-applied if image changed.
-        //	if (!isShowSame || !isNameSame)
-        //		content.Opacity = type == NavImageType.Record
-        //			? (show ? 0.8F : 0.2f)
-        //			: (show ? 0.8F : 0.0f);
-        //}
+		//public void SetImage(MapCode code, NavImageType type, bool show)
+		//{
+		//	var nameCode = GetNameCode(code);
+		//	var ii = Infos.First(x => x.Code == nameCode);
+		//	var m = GetMiddleImageName(code);
+		//	var resourceName = string.Format("Nav{0}{1}", m, type);
+		//	var oldResourceName = ii.CurrentImageName;
+		//	var isNameSame = ii.CurrentImageName == resourceName;
+		//	var isShowSame = ii.CurrentImageShow == show;
+		//	// Return if no changes must be made.
+		//	// This will fix issue when click on image path is ignored.
+		//	if (isNameSame && isShowSame)
+		//		return;
+		//	ii.CurrentImageName = resourceName;
+		//	ii.CurrentImageShow = show;
+		//	var path = FindName(nameCode.ToString()) as Button;
+		//	if (path == null)
+		//		return;
+		//	var content = (ContentControl)path.Content;
+		//	if (!isNameSame)
+		//	{
+		//		var vb = FindResource(resourceName) as UIElement;
+		//		content.Content = vb;
+		//	}
+		//	// Opacity must be re-applied if image changed.
+		//	if (!isShowSame || !isNameSame)
+		//		content.Opacity = type == NavImageType.Record
+		//			? (show ? 0.8F : 0.2f)
+		//			: (show ? 0.8F : 0.0f);
+		//}
 
-        public string GetMiddleImageName(MapCode code)
+		public string GetMiddleImageName(MapCode code)
 		{
 			if (code == MapCode.LeftTrigger || code == MapCode.RightTrigger)
 				return "Up";
@@ -169,10 +172,10 @@ namespace x360ce.App.Controls
 
 		//bool InRange(System.Windows.Input.MouseEventArgs e, FrameworkElement control)
 		//{
-		//	var p = e.GetPosition(control);
+		//	var path = e.GetPosition(control);
 		//	return
-		//		Math.Abs(p.X - (control.Width / 2F)) < control.Width / 2F &&
-		//		Math.Abs(p.Y - (control.Height / 2F)) < control.Height / 2F;
+		//		Math.Abs(path.X - (control.Width / 2F)) < control.Width / 2F &&
+		//		Math.Abs(path.Y - (control.Height / 2F)) < control.Height / 2F;
 		//}
 
 		public string MappingDone = "Mapping Done";
@@ -204,38 +207,83 @@ namespace x360ce.App.Controls
 			Imager = null;
 		}
 
-        SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
-        SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
-        SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
+		SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
+		SolidColorBrush colorNormalTextBox = System.Windows.Media.Brushes.White;
+		SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
+		SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
-        private void Mouse_Click(object sender, MouseButtonEventArgs e)
-        {
-            var p = sender as Path;
-            if ((p.Fill as SolidColorBrush).Color != colorRecord.Color)
-            {
-                p.Fill = colorRecord;
-            }
-            else
-            {
-                p.Fill = colorNormalPath;
-            }
-        }
+		private void AssignNavigationColorEventHandlers()
+		{
+			foreach (var ii in Infos)
+			{
+				TextBox textBox = ii.Control as TextBox;
+				textBox.MouseEnter += delegate (object sender, MouseEventArgs e) { Mouse_Enter(sender, null); };
+				textBox.MouseLeave += delegate (object sender, MouseEventArgs e) { Mouse_Leave(sender, null); };
+				textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { Mouse_Click(sender, null); };
 
-        private void Mouse_Enter(object sender, MouseEventArgs e)
-        {
-            var p = sender as Path;
-			if ((p.Fill as SolidColorBrush).Color == colorRecord.Color) return;
-            p.Fill = colorOver;
-        }
+				System.Windows.Shapes.Path path = ii.Path;
+				path.MouseEnter += delegate (object sender, MouseEventArgs e) { Mouse_Enter(sender, null); };
+				path.MouseLeave += delegate (object sender, MouseEventArgs e) { Mouse_Leave(sender, null); };
+				path.MouseUp += delegate (object sender, MouseButtonEventArgs e) { Mouse_Click(sender, null); };
+			}
+		}
 
-        private void Mouse_Leave(object sender, MouseEventArgs e)
-        {
-            var p = sender as Path;
-			if ((p.Fill as SolidColorBrush).Color == colorRecord.Color) return;
-            p.Fill = colorNormalPath;
-        }
+		// MouseClick.
+		private void Mouse_Click(object sender, MouseButtonEventArgs e)
+		{
+			if (sender is System.Windows.Shapes.Path)
+			{
+				if ((((System.Windows.Shapes.Path)sender).Fill as SolidColorBrush).Color != colorRecord.Color)
+				{ setNormalOverRecordColor(sender, colorRecord); }
+				else { setNormalOverRecordColor(sender, colorNormalPath); }
+			}
+			else
+			{
+				if ((((TextBox)sender).Background as SolidColorBrush).Color != colorRecord.Color)
+				{ setNormalOverRecordColor(sender, colorRecord); }
+				else { setNormalOverRecordColor(sender, colorNormalPath); }
+			}
+		}
 
+		// MouseEnter.
+		private void Mouse_Enter(object sender, MouseEventArgs e)
+		{
+			if (sender is TextBox)
+			{
+				if ((((TextBox)sender).Background as SolidColorBrush).Color == colorRecord.Color) return;
+			}
+			else
+			{
+				if ((((System.Windows.Shapes.Path)sender).Fill as SolidColorBrush).Color == colorRecord.Color) return;
+			}
+			setNormalOverRecordColor(sender, colorOver);
+		}
 
+		// MouseLeave.
+		private void Mouse_Leave(object sender, MouseEventArgs e)
+		{
+			if (sender is TextBox)
+			{
+				if ((((TextBox)sender).Background as SolidColorBrush).Color == colorRecord.Color) return;
+			}
+			else
+			{
+				if ((((System.Windows.Shapes.Path)sender).Fill as SolidColorBrush).Color == colorRecord.Color) return;
+			}
+			setNormalOverRecordColor(sender, colorNormalPath);
+		}
 
-    }
+		// Set color.
+		private void setNormalOverRecordColor(object sender, SolidColorBrush color)
+		{
+			foreach (var ii in Infos)
+			{
+				if (sender == ii.Path || sender == ii.Control as TextBox)
+				{
+					ii.Path.Fill = color;
+					((TextBox)ii.Control).Background = (color.Color == colorNormalPath.Color) ? colorNormalTextBox : color;
+				}
+			}
+		}
+	}
 }

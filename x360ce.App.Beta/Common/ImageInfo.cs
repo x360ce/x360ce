@@ -24,6 +24,7 @@ namespace x360ce.App
 		public object Label { get; set; }
 
 		public System.Windows.Shapes.Path Path { get; set; }
+
 		public object Control { get; set; }
 		public GamepadButtonFlags Button { get; set; }
 		public MapCode Code { get; set; }

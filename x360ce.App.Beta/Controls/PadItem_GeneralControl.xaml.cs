@@ -389,6 +389,5 @@ namespace x360ce.App.Controls
             SetBinding(MapTo.None, null);
             DiMenuStrip.Clear();
         }
-
-    }
+	}
 }
