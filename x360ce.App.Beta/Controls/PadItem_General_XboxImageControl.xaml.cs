@@ -217,71 +217,36 @@ namespace x360ce.App.Controls
 			foreach (var ii in Infos)
 			{
 				TextBox textBox = ii.Control as TextBox;
-				textBox.MouseEnter += delegate (object sender, MouseEventArgs e) { Mouse_Enter(sender, null); };
-				textBox.MouseLeave += delegate (object sender, MouseEventArgs e) { Mouse_Leave(sender, null); };
-				textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { Mouse_Click(sender, null); };
+				textBox.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorOver); };
+				textBox.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorNormalPath); };
+				textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverRecordColor(sender, colorRecord); };
 
 				System.Windows.Shapes.Path path = ii.Path;
-				path.MouseEnter += delegate (object sender, MouseEventArgs e) { Mouse_Enter(sender, null); };
-				path.MouseLeave += delegate (object sender, MouseEventArgs e) { Mouse_Leave(sender, null); };
-				path.MouseUp += delegate (object sender, MouseButtonEventArgs e) { Mouse_Click(sender, null); };
+				path.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorOver); };
+				path.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorNormalPath); };
+				path.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverRecordColor(sender, colorRecord); };
 			}
 		}
 
-		// MouseClick.
-		private void Mouse_Click(object sender, MouseButtonEventArgs e)
+		// Set setColor.
+		private void setNormalOverRecordColor(object sender, SolidColorBrush setColor)
 		{
-			if (sender is System.Windows.Shapes.Path)
-			{
-				if ((((System.Windows.Shapes.Path)sender).Fill as SolidColorBrush).Color != colorRecord.Color)
-				{ setNormalOverRecordColor(sender, colorRecord); }
-				else { setNormalOverRecordColor(sender, colorNormalPath); }
-			}
-			else
-			{
-				if ((((TextBox)sender).Background as SolidColorBrush).Color != colorRecord.Color)
-				{ setNormalOverRecordColor(sender, colorRecord); }
-				else { setNormalOverRecordColor(sender, colorNormalPath); }
-			}
-		}
+			var senderColor = sender is TextBox
+				? ((TextBox)sender).Background
+				: ((System.Windows.Shapes.Path)sender).Fill;
 
-		// MouseEnter.
-		private void Mouse_Enter(object sender, MouseEventArgs e)
-		{
-			if (sender is TextBox)
+			if (senderColor == colorRecord)
 			{
-				if ((((TextBox)sender).Background as SolidColorBrush).Color == colorRecord.Color) return;
+				if (setColor == colorRecord) setColor = colorNormalPath;
+				else return;
 			}
-			else
-			{
-				if ((((System.Windows.Shapes.Path)sender).Fill as SolidColorBrush).Color == colorRecord.Color) return;
-			}
-			setNormalOverRecordColor(sender, colorOver);
-		}
 
-		// MouseLeave.
-		private void Mouse_Leave(object sender, MouseEventArgs e)
-		{
-			if (sender is TextBox)
-			{
-				if ((((TextBox)sender).Background as SolidColorBrush).Color == colorRecord.Color) return;
-			}
-			else
-			{
-				if ((((System.Windows.Shapes.Path)sender).Fill as SolidColorBrush).Color == colorRecord.Color) return;
-			}
-			setNormalOverRecordColor(sender, colorNormalPath);
-		}
-
-		// Set color.
-		private void setNormalOverRecordColor(object sender, SolidColorBrush color)
-		{
 			foreach (var ii in Infos)
 			{
 				if (sender == ii.Path || sender == ii.Control as TextBox)
 				{
-					ii.Path.Fill = color;
-					((TextBox)ii.Control).Background = (color.Color == colorNormalPath.Color) ? colorNormalTextBox : color;
+					ii.Path.Fill = setColor;
+					((TextBox)ii.Control).Background = (setColor.Color == colorNormalPath.Color) ? colorNormalTextBox : setColor;
 				}
 			}
 		}
