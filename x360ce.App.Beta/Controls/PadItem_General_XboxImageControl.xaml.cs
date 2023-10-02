@@ -241,13 +241,10 @@ namespace x360ce.App.Controls
 				else return;
 			}
 
-			foreach (var ii in Infos)
+			foreach (var ii in Infos.Where(ii => sender == ii.Path || sender == ii.Control as TextBox))
 			{
-				if (sender == ii.Path || sender == ii.Control as TextBox)
-				{
-					ii.Path.Fill = setColor;
-					((TextBox)ii.Control).Background = (setColor.Color == colorNormalPath.Color) ? colorNormalTextBox : setColor;
-				}
+				ii.Path.Fill = setColor;
+				(ii.Control as TextBox).Background = (setColor.Color == colorNormalPath.Color) ? colorNormalTextBox : setColor;
 			}
 		}
 	}

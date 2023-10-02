@@ -122,7 +122,6 @@ namespace x360ce.App.Controls
         public bool ShowShoulderButtons;
 
         bool on = false;
-        bool recording = false;
 
         public void DrawState(ImageInfo ii, Gamepad gp)
         {
@@ -137,7 +136,6 @@ namespace x360ce.App.Controls
                 var m = control.Margin;
                 control.Margin = new System.Windows.Thickness(m.Left, m.Top, m.Right, b);
                 on = y > 0;
-                recording = false;
             }
             // Show stick axis state with "•" yellow circle.
             else if (ii.Code == MapCode.LeftThumbButton || ii.Code == MapCode.RightThumbButton)
@@ -160,8 +158,6 @@ namespace x360ce.App.Controls
                     gp.Buttons.HasFlag(GamepadButtonFlags.DPadLeft) ||
                     gp.Buttons.HasFlag(GamepadButtonFlags.DPadRight) ||
                     gp.Buttons.HasFlag(GamepadButtonFlags.DPadDown);
-                recording = false;
-
             }
             // If button is not specified then...
             else if (ii.Button == GamepadButtonFlags.None)
@@ -200,7 +196,6 @@ namespace x360ce.App.Controls
             {
                 // Check when value is on.
                 on = gp.Buttons.HasFlag(ii.Button);
-                recording = false;
             }
 
 
@@ -230,7 +225,6 @@ namespace x360ce.App.Controls
             if (isRecordingItem)
             {
                 // ImageControl.SetImage(recordingCode, NavImageType.Record, Recorder.DrawRecordingImage);
-                recording = true;
                 on = true;
             }
             //else if (
@@ -254,7 +248,7 @@ namespace x360ce.App.Controls
             //}
 
             if (ii.Label is System.Windows.Controls.ContentControl)
-                setColorNormaActiveRecord(recording, on, ii);
+                setColorNormaActiveRecord(on, ii);
         }
 
         SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
@@ -263,28 +257,20 @@ namespace x360ce.App.Controls
 		SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
 		SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
-        void setColorNormaActiveRecord(bool record, bool on, ImageInfo ii)
-        {
-            System.Windows.Controls.TextBox textbox = (System.Windows.Controls.TextBox)ii.Control;
-            System.Windows.Shapes.Path path = ii.Path;
-            if ((path.Fill as SolidColorBrush).Color == colorRecord.Color) return;
-            if ((path.Fill as SolidColorBrush).Color == colorOver.Color) return;
-            // Active.
-            if (on)
-            {
-                textbox.Background = path.Fill = colorActive;
-            }
-            // Normal.
-            else
-            {
-                textbox.Background = colorNormalTextBox;
-                path.Fill = colorNormalPath;
-            }
-        }
+		void setColorNormaActiveRecord(bool on, ImageInfo ii)
+		{
+			var pathFillColor = (ii.Path.Fill as SolidColorBrush).Color;
+			if (pathFillColor != colorRecord.Color && pathFillColor != colorOver.Color)
+			{
+				System.Windows.Controls.TextBox textBox = ii.Control as System.Windows.Controls.TextBox;
+				textBox.Background = on ? colorActive : colorNormalTextBox;
+				ii.Path.Fill = on ? colorActive : colorNormalPath;
+			}
+		}
 
-        #region ■ IDisposable
+		#region ■ IDisposable
 
-        public bool IsDisposing;
+		public bool IsDisposing;
         public void Dispose()
         {
             Dispose(true);

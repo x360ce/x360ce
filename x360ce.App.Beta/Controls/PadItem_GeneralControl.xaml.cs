@@ -64,76 +64,84 @@ namespace x360ce.App.Controls
             _MappedTo = mappedTo;
             if (_padSetting != null)
                 _padSetting.PropertyChanged -= _padSetting_PropertyChanged;
-            // Unbind right side controls.
-            SettingsManager.UnLoadMonitor(LeftTriggerTextBox);
-            SettingsManager.UnLoadMonitor(LeftShoulderTextBox);
-            SettingsManager.UnLoadMonitor(ButtonBackTextBox);
-            SettingsManager.UnLoadMonitor(ButtonStartTextBox);
-            SettingsManager.UnLoadMonitor(ButtonGuideTextBox);
-            SettingsManager.UnLoadMonitor(DPadTextBox);
-            SettingsManager.UnLoadMonitor(LeftThumbAxisXTextBox);
-            SettingsManager.UnLoadMonitor(LeftThumbAxisYTextBox);
-            SettingsManager.UnLoadMonitor(LeftThumbButtonTextBox);
-            SettingsManager.UnLoadMonitor(LeftThumbUpTextBox);
-            SettingsManager.UnLoadMonitor(LeftThumbLeftTextBox);
-            SettingsManager.UnLoadMonitor(LeftThumbRightTextBox);
-            SettingsManager.UnLoadMonitor(LeftThumbDownTextBox);
-            // Unbind middle controls.
-            SettingsManager.UnLoadMonitor(DPadUpTextBox);
-            SettingsManager.UnLoadMonitor(DPadLeftTextBox);
-            SettingsManager.UnLoadMonitor(DPadRightTextBox);
-            SettingsManager.UnLoadMonitor(DPadDownTextBox);
-            // Unbind right side controls.
-            SettingsManager.UnLoadMonitor(RightTriggerTextBox);
-            SettingsManager.UnLoadMonitor(RightShoulderTextBox);
-            SettingsManager.UnLoadMonitor(ButtonYTextBox);
-            SettingsManager.UnLoadMonitor(ButtonXTextBox);
-            SettingsManager.UnLoadMonitor(ButtonBTextBox);
-            SettingsManager.UnLoadMonitor(ButtonATextBox);
-            SettingsManager.UnLoadMonitor(RightThumbAxisXTextBox);
-            SettingsManager.UnLoadMonitor(RightThumbAxisYTextBox);
-            SettingsManager.UnLoadMonitor(RightThumbButtonTextBox);
-            SettingsManager.UnLoadMonitor(RightThumbUpTextBox);
-            SettingsManager.UnLoadMonitor(RightThumbLeftTextBox);
-            SettingsManager.UnLoadMonitor(RightThumbRightTextBox);
-            SettingsManager.UnLoadMonitor(RightThumbDownTextBox);
+            // Unbind controls.
+            SettingsManager.UnLoadMonitor(TriggerLeftTextBox);
+			SettingsManager.UnLoadMonitor(TriggerRightTextBox);
+
+            SettingsManager.UnLoadMonitor(BumperLeftTextBox);
+			SettingsManager.UnLoadMonitor(BumperRightTextBox);
+
+			SettingsManager.UnLoadMonitor(MenuBackTextBox);
+            SettingsManager.UnLoadMonitor(MenuStartTextBox);
+            SettingsManager.UnLoadMonitor(MenuGuideTextBox);
+
+			SettingsManager.UnLoadMonitor(ActionYTextBox);
+			SettingsManager.UnLoadMonitor(ActionXTextBox);
+			SettingsManager.UnLoadMonitor(ActionBTextBox);
+			SettingsManager.UnLoadMonitor(ActionATextBox);
+
+			SettingsManager.UnLoadMonitor(DPadTextBox);
+			SettingsManager.UnLoadMonitor(DPadUpTextBox);
+			SettingsManager.UnLoadMonitor(DPadLeftTextBox);
+			SettingsManager.UnLoadMonitor(DPadRightTextBox);
+			SettingsManager.UnLoadMonitor(DPadDownTextBox);
+
+			SettingsManager.UnLoadMonitor(StickLeftButtonTextBox);
+			SettingsManager.UnLoadMonitor(StickLeftXTextBox);
+            SettingsManager.UnLoadMonitor(StickLeftYTextBox);
+            SettingsManager.UnLoadMonitor(StickLeftUpTextBox);
+            SettingsManager.UnLoadMonitor(StickLeftLeftTextBox);
+            SettingsManager.UnLoadMonitor(StickLeftRightTextBox);
+            SettingsManager.UnLoadMonitor(StickLeftDownTextBox);
+
+			SettingsManager.UnLoadMonitor(StickRightButtonTextBox);
+			SettingsManager.UnLoadMonitor(StickRightXTextBox);
+            SettingsManager.UnLoadMonitor(StickRightYTextBox);
+            SettingsManager.UnLoadMonitor(StickRightUpTextBox);
+            SettingsManager.UnLoadMonitor(StickRightLeftTextBox);
+            SettingsManager.UnLoadMonitor(StickRightRightTextBox);
+            SettingsManager.UnLoadMonitor(StickRightDownTextBox);
             if (ps == null)
                 return;
             _padSetting = ps;
             var converter = new Converters.PaddSettingToText();
-            // Bind right side controls.
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftTrigger), LeftTriggerTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftShoulder), LeftShoulderTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonBack), ButtonBackTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonStart), ButtonStartTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonGuide), ButtonGuideTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.DPad), DPadTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisX), LeftThumbAxisXTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisY), LeftThumbAxisYTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbButton), LeftThumbButtonTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbUp), LeftThumbUpTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbLeft), LeftThumbLeftTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbRight), LeftThumbRightTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbDown), LeftThumbDownTextBox, null, converter);
-            // Bind middle controls.
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadUp), DPadUpTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadLeft), DPadLeftTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadRight), DPadRightTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadDown), DPadDownTextBox, null, converter);
-            // Bind right side controls.
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightTrigger), RightTriggerTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightShoulder), RightShoulderTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonY), ButtonYTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonX), ButtonXTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonB), ButtonBTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonA), ButtonATextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisX), RightThumbAxisXTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisY), RightThumbAxisYTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbButton), RightThumbButtonTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbUp), RightThumbUpTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbLeft), RightThumbLeftTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), RightThumbRightTextBox, null, converter);
-            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), RightThumbDownTextBox, null, converter);
+            // Bind controls.
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftTrigger), TriggerLeftTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightTrigger), TriggerRightTextBox, null, converter);
+
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftShoulder), BumperLeftTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightShoulder), BumperRightTextBox, null, converter);
+
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonBack), MenuBackTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonStart), MenuStartTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonGuide), MenuGuideTextBox, null, converter);
+
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonY), ActionYTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonX), ActionXTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonB), ActionBTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonA), ActionATextBox, null, converter);
+
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPad), DPadTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadUp), DPadUpTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadLeft), DPadLeftTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadRight), DPadRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadDown), DPadDownTextBox, null, converter);
+
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbButton), StickLeftButtonTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisX), StickLeftXTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisY), StickLeftYTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbUp), StickLeftUpTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbLeft), StickLeftLeftTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbRight), StickLeftRightTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbDown), StickLeftDownTextBox, null, converter);
+
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbButton), StickRightButtonTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisX), StickRightXTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisY), StickRightYTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbUp), StickRightUpTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbLeft), StickRightLeftTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), StickRightRightTextBox, null, converter);
+            SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), StickRightDownTextBox, null, converter);
             _padSetting.PropertyChanged += _padSetting_PropertyChanged;
         }
 
@@ -158,36 +166,43 @@ namespace x360ce.App.Controls
             var item = (Layout)box.SelectedItem;
             if (item == null)
                 return;
-            ButtonALabel.Content = item.ButtonA;
-            ButtonBLabel.Content = item.ButtonB;
-            ButtonBackLabel.Content = item.ButtonBack;
-            ButtonGuideLabel.Content = item.ButtonGuide;
-            ButtonStartLabel.Content = item.ButtonStart;
-            ButtonXLabel.Content = item.ButtonX;
-            ButtonYLabel.Content = item.ButtonY;
-            DPadLabel.Content = item.DPad;
+            // Triggers.
+			TriggerLeftLabel.Content = item.LeftTrigger;
+			TriggerRightLabel.Content = item.RightTrigger;
+			// Bumpers.
+			BumperLeftLabel.Content = item.LeftShoulder;
+			BumperRightLabel.Content = item.RightShoulder;
+			// Menu.
+			MenuBackLabel.Content = item.ButtonBack;
+            MenuGuideLabel.Content = item.ButtonGuide;
+            MenuStartLabel.Content = item.ButtonStart;
+			// Action.
+			ActionALabel.Content = item.ButtonA;
+			ActionBLabel.Content = item.ButtonB;
+			ActionXLabel.Content = item.ButtonX;
+			ActionYLabel.Content = item.ButtonY;
+			// D-Pad.
+			DPadLabel.Content = item.DPad;
             DPadDownLabel.Content = item.DPadDown;
             DPadLeftLabel.Content = item.DPadLeft;
             DPadRightLabel.Content = item.DPadRight;
             DPadUpLabel.Content = item.DPadUp;
-            LeftShoulderLabel.Content = item.LeftShoulder;
-            LeftThumbAxisXLabel.Content = item.LeftThumbAxisX;
-            LeftThumbAxisYLabel.Content = item.LeftThumbAxisY;
-            LeftThumbButtonLabel.Content = item.LeftThumbButton;
-            LeftThumbDownLabel.Content = item.LeftThumbDown;
-            LeftThumbLeftLabel.Content = item.LeftThumbLeft;
-            LeftThumbRightLabel.Content = item.LeftThumbRight;
-            LeftThumbUpLabel.Content = item.LeftThumbUp;
-            LeftTriggerLabel.Content = item.LeftTrigger;
-            RightShoulderLabel.Content = item.RightShoulder;
-            RightThumbAxisXLabel.Content = item.RightThumbAxisX;
-            RightThumbAxisYLabel.Content = item.RightThumbAxisY;
-            RightThumbButtonLabel.Content = item.RightThumbButton;
-            RightThumbDownLabel.Content = item.RightThumbDown;
-            RightThumbLeftLabel.Content = item.RightThumbLeft;
-            RightThumbRightLabel.Content = item.RightThumbRight;
-            RightThumbUpLabel.Content = item.RightThumbUp;
-            RightTriggerLabel.Content = item.RightTrigger;
+			// Stick Left.
+			StickLeftButtonLabel.Content = item.LeftThumbButton;
+			StickLeftXLabel.Content = item.LeftThumbAxisX;
+            StickLeftYLabel.Content = item.LeftThumbAxisY;
+            StickLeftDownLabel.Content = item.LeftThumbDown;
+            StickLeftLeftLabel.Content = item.LeftThumbLeft;
+            StickLeftRightLabel.Content = item.LeftThumbRight;
+            StickLeftUpLabel.Content = item.LeftThumbUp;
+			// Stick Right.
+			StickRightButtonLabel.Content = item.RightThumbButton;
+			StickRightXLabel.Content = item.RightThumbAxisX;
+            StickRightYLabel.Content = item.RightThumbAxisY;
+            StickRightDownLabel.Content = item.RightThumbDown;
+            StickRightLeftLabel.Content = item.RightThumbLeft;
+            StickRightRightLabel.Content = item.RightThumbRight;
+            StickRightUpLabel.Content = item.RightThumbUp;
         }
 
         #region ■ Direct Input Menu

@@ -47,16 +47,16 @@ namespace x360ce.App.Controls
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
 			// Axis to Button DeadZones
-			ButtonsPanel.AxisToButtonADeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonATextBox;
-			ButtonsPanel.AxisToButtonBDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonBTextBox;
-			ButtonsPanel.AxisToButtonXDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonXTextBox;
-			ButtonsPanel.AxisToButtonYDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonYTextBox;
-			ButtonsPanel.AxisToButtonStartDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonStartTextBox;
-			ButtonsPanel.AxisToButtonBackDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ButtonBackTextBox;
-			ButtonsPanel.AxisToLeftShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.LeftShoulderTextBox;
-			ButtonsPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.LeftThumbButtonTextBox;
-			ButtonsPanel.AxisToRightShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.RightShoulderTextBox;
-			ButtonsPanel.AxisToRightThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.RightThumbButtonTextBox;
+			ButtonsPanel.AxisToButtonADeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionATextBox;
+			ButtonsPanel.AxisToButtonBDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionBTextBox;
+			ButtonsPanel.AxisToButtonXDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionXTextBox;
+			ButtonsPanel.AxisToButtonYDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionYTextBox;
+			ButtonsPanel.AxisToButtonStartDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.MenuStartTextBox;
+			ButtonsPanel.AxisToButtonBackDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.MenuBackTextBox;
+			ButtonsPanel.AxisToLeftShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperLeftTextBox;
+			ButtonsPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickLeftButtonTextBox;
+			ButtonsPanel.AxisToRightShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperRightTextBox;
+			ButtonsPanel.AxisToRightThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickRightButtonTextBox;
 			ButtonsPanel.AxisToDPadDownDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadDownTextBox;
 			ButtonsPanel.AxisToDPadLeftDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadLeftTextBox;
 			ButtonsPanel.AxisToDPadRightDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadRightTextBox;
@@ -378,45 +378,45 @@ namespace x360ce.App.Controls
 			{
 				if (_imageInfos == null)
 				{
+					// Configure.
 					_imageInfos = new List<ImageInfo>();
-					// Configure Image 1.
-					AddImageInfo(1, MapCode.LeftTrigger, 63, 27, GeneralPanel.LeftTriggerLabel, GeneralPanel.LeftTriggerTextBox);
-					AddImageInfo(1, MapCode.RightTrigger, 193, 27, GeneralPanel.RightTriggerLabel, GeneralPanel.RightTriggerTextBox);
-					AddImageInfo(1, MapCode.LeftShoulder, 43, 66, GeneralPanel.LeftShoulderLabel, GeneralPanel.LeftShoulderTextBox, GamepadButtonFlags.LeftShoulder);
-					AddImageInfo(1, MapCode.RightShoulder, 213, 66, GeneralPanel.RightShoulderLabel, GeneralPanel.RightShoulderTextBox, GamepadButtonFlags.RightShoulder);
-					// Configure Image 2.
-					AddImageInfo(2, MapCode.ButtonY, 196, 29, GeneralPanel.ButtonYLabel, GeneralPanel.ButtonYTextBox, GamepadButtonFlags.Y);
-					AddImageInfo(2, MapCode.ButtonX, 178, 48, GeneralPanel.ButtonXLabel, GeneralPanel.ButtonXTextBox, GamepadButtonFlags.X);
-					AddImageInfo(2, MapCode.ButtonB, 215, 48, GeneralPanel.ButtonBLabel, GeneralPanel.ButtonBTextBox, GamepadButtonFlags.B);
-					AddImageInfo(2, MapCode.ButtonA, 196, 66, GeneralPanel.ButtonALabel, GeneralPanel.ButtonATextBox, GamepadButtonFlags.A);
-					AddImageInfo(2, MapCode.ButtonGuide, 127, 48, GeneralPanel.ButtonGuideLabel, GeneralPanel.ButtonGuideTextBox);
-					AddImageInfo(2, MapCode.ButtonBack, 103, 48, GeneralPanel.ButtonBackLabel, GeneralPanel.ButtonBackTextBox, GamepadButtonFlags.Back);
-					AddImageInfo(2, MapCode.ButtonStart, 152, 48, GeneralPanel.ButtonStartLabel, GeneralPanel.ButtonStartTextBox, GamepadButtonFlags.Start);
-					// D-Pad
+					// Triggers.
+					AddImageInfo(1, MapCode.LeftTrigger, 63, 27, GeneralPanel.TriggerLeftLabel, GeneralPanel.TriggerLeftTextBox);
+					AddImageInfo(1, MapCode.RightTrigger, 193, 27, GeneralPanel.TriggerRightLabel, GeneralPanel.TriggerRightTextBox);
+					// Bumpers.
+					AddImageInfo(1, MapCode.LeftShoulder, 43, 66, GeneralPanel.BumperLeftLabel, GeneralPanel.BumperLeftTextBox, GamepadButtonFlags.LeftShoulder);
+					AddImageInfo(1, MapCode.RightShoulder, 213, 66, GeneralPanel.BumperRightLabel, GeneralPanel.BumperRightTextBox, GamepadButtonFlags.RightShoulder);
+					// Action.
+					AddImageInfo(2, MapCode.ButtonY, 196, 29, GeneralPanel.ActionYLabel, GeneralPanel.ActionYTextBox, GamepadButtonFlags.Y);
+					AddImageInfo(2, MapCode.ButtonX, 178, 48, GeneralPanel.ActionXLabel, GeneralPanel.ActionXTextBox, GamepadButtonFlags.X);
+					AddImageInfo(2, MapCode.ButtonB, 215, 48, GeneralPanel.ActionBLabel, GeneralPanel.ActionBTextBox, GamepadButtonFlags.B);
+					AddImageInfo(2, MapCode.ButtonA, 196, 66, GeneralPanel.ActionALabel, GeneralPanel.ActionATextBox, GamepadButtonFlags.A);
+					// Menu.
+					AddImageInfo(2, MapCode.ButtonGuide, 127, 48, GeneralPanel.MenuGuideLabel, GeneralPanel.MenuGuideTextBox);
+					AddImageInfo(2, MapCode.ButtonBack, 103, 48, GeneralPanel.MenuBackLabel, GeneralPanel.MenuBackTextBox, GamepadButtonFlags.Back);
+					AddImageInfo(2, MapCode.ButtonStart, 152, 48, GeneralPanel.MenuStartLabel, GeneralPanel.MenuStartTextBox, GamepadButtonFlags.Start);
+					// D-Pad.
+					AddImageInfo(2, MapCode.DPad, 92, 88, GeneralPanel.DPadLabel, GeneralPanel.DPadTextBox);
 					AddImageInfo(2, MapCode.DPadUp, 92, 88 - 13, GeneralPanel.DPadUpLabel, GeneralPanel.DPadUpTextBox, GamepadButtonFlags.DPadUp);
 					AddImageInfo(2, MapCode.DPadLeft, 92 - 13, 88, GeneralPanel.DPadLeftLabel, GeneralPanel.DPadLeftTextBox, GamepadButtonFlags.DPadLeft);
 					AddImageInfo(2, MapCode.DPadRight, 92 + 13, 88, GeneralPanel.DPadRightLabel, GeneralPanel.DPadRightTextBox, GamepadButtonFlags.DPadRight);
 					AddImageInfo(2, MapCode.DPadDown, 92, 88 + 13, GeneralPanel.DPadDownLabel, GeneralPanel.DPadDownTextBox, GamepadButtonFlags.DPadDown);
-					// D-Pad (Extra Map)
-					AddImageInfo(2, MapCode.DPad, 92, 88, GeneralPanel.DPadLabel, GeneralPanel.DPadTextBox);
-					// Left Thumb.
-					AddImageInfo(2, MapCode.LeftThumbButton, 59, 47, GeneralPanel.LeftThumbButtonLabel, GeneralPanel.LeftThumbButtonTextBox, GamepadButtonFlags.LeftThumb);
-					AddImageInfo(2, MapCode.LeftThumbAxisX, 59 + 10, 47, GeneralPanel.LeftThumbAxisXLabel, GeneralPanel.LeftThumbAxisXTextBox);
-					AddImageInfo(2, MapCode.LeftThumbAxisY, 59, 47 - 10, GeneralPanel.LeftThumbAxisYLabel, GeneralPanel.LeftThumbAxisYTextBox);
-					// Left Thumb (Extra Map).
-					AddImageInfo(2, MapCode.LeftThumbUp, 59, 47 - 10, GeneralPanel.LeftThumbUpLabel, GeneralPanel.LeftThumbUpTextBox);
-					AddImageInfo(2, MapCode.LeftThumbLeft, 59 - 10, 47, GeneralPanel.LeftThumbLeftLabel, GeneralPanel.LeftThumbLeftTextBox);
-					AddImageInfo(2, MapCode.LeftThumbRight, 59 + 10, 47, GeneralPanel.LeftThumbRightLabel, GeneralPanel.LeftThumbRightTextBox);
-					AddImageInfo(2, MapCode.LeftThumbDown, 59, 47 + 10, GeneralPanel.LeftThumbDownLabel, GeneralPanel.LeftThumbDownTextBox);
-					// Right Thumb.
-					AddImageInfo(2, MapCode.RightThumbButton, 160, 88, GeneralPanel.RightThumbButtonLabel, GeneralPanel.RightThumbButtonTextBox, GamepadButtonFlags.RightThumb);
-					AddImageInfo(2, MapCode.RightThumbAxisX, 160 + 10, 88, GeneralPanel.RightThumbAxisXLabel, GeneralPanel.RightThumbAxisXTextBox);
-					AddImageInfo(2, MapCode.RightThumbAxisY, 160, 88 - 10, GeneralPanel.RightThumbAxisYLabel, GeneralPanel.RightThumbAxisYTextBox);
-					// Right Thumb (Extra Map).
-					AddImageInfo(2, MapCode.RightThumbUp, 160, 88 - 10, GeneralPanel.RightThumbUpLabel, GeneralPanel.RightThumbUpTextBox);
-					AddImageInfo(2, MapCode.RightThumbLeft, 160 - 10, 88, GeneralPanel.RightThumbLeftLabel, GeneralPanel.RightThumbLeftTextBox);
-					AddImageInfo(2, MapCode.RightThumbRight, 160 + 10, 88, GeneralPanel.RightThumbRightLabel, GeneralPanel.RightThumbRightTextBox);
-					AddImageInfo(2, MapCode.RightThumbDown, 160, 88 + 10, GeneralPanel.RightThumbDownLabel, GeneralPanel.RightThumbDownTextBox);
+					// Stick Left.
+					AddImageInfo(2, MapCode.LeftThumbButton, 59, 47, GeneralPanel.StickLeftButtonLabel, GeneralPanel.StickLeftButtonTextBox, GamepadButtonFlags.LeftThumb);
+					AddImageInfo(2, MapCode.LeftThumbAxisX, 59 + 10, 47, GeneralPanel.StickLeftXLabel, GeneralPanel.StickLeftXTextBox);
+					AddImageInfo(2, MapCode.LeftThumbAxisY, 59, 47 - 10, GeneralPanel.StickLeftYLabel, GeneralPanel.StickLeftYTextBox);
+					AddImageInfo(2, MapCode.LeftThumbUp, 59, 47 - 10, GeneralPanel.StickLeftUpLabel, GeneralPanel.StickLeftUpTextBox);
+					AddImageInfo(2, MapCode.LeftThumbLeft, 59 - 10, 47, GeneralPanel.StickLeftLeftLabel, GeneralPanel.StickLeftLeftTextBox);
+					AddImageInfo(2, MapCode.LeftThumbRight, 59 + 10, 47, GeneralPanel.StickLeftRightLabel, GeneralPanel.StickLeftRightTextBox);
+					AddImageInfo(2, MapCode.LeftThumbDown, 59, 47 + 10, GeneralPanel.StickLeftDownLabel, GeneralPanel.StickLeftDownTextBox);
+					// Stick Right.
+					AddImageInfo(2, MapCode.RightThumbButton, 160, 88, GeneralPanel.StickRightButtonLabel, GeneralPanel.StickRightButtonTextBox, GamepadButtonFlags.RightThumb);
+					AddImageInfo(2, MapCode.RightThumbAxisX, 160 + 10, 88, GeneralPanel.StickRightXLabel, GeneralPanel.StickRightXTextBox);
+					AddImageInfo(2, MapCode.RightThumbAxisY, 160, 88 - 10, GeneralPanel.StickRightYLabel, GeneralPanel.StickRightYTextBox);
+					AddImageInfo(2, MapCode.RightThumbUp, 160, 88 - 10, GeneralPanel.StickRightUpLabel, GeneralPanel.StickRightUpTextBox);
+					AddImageInfo(2, MapCode.RightThumbLeft, 160 - 10, 88, GeneralPanel.StickRightLeftLabel, GeneralPanel.StickRightLeftTextBox);
+					AddImageInfo(2, MapCode.RightThumbRight, 160 + 10, 88, GeneralPanel.StickRightRightLabel, GeneralPanel.StickRightRightTextBox);
+					AddImageInfo(2, MapCode.RightThumbDown, 160, 88 + 10, GeneralPanel.StickRightDownLabel, GeneralPanel.StickRightDownTextBox);
 				}
 				return _imageInfos;
 			}
