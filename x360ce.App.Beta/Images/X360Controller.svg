@@ -52,6 +52,13 @@
        height="6"
        x="0"
        y="0" />
+    <pattern
+       id="EMFhbasepattern-58"
+       patternUnits="userSpaceOnUse"
+       width="6"
+       height="6"
+       x="0"
+       y="0" />
   </defs>
   <g
      inkscape:label="Layer 1"
@@ -137,6 +144,10 @@
        style="fill:#919191;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.999998"
        d="m 1193.106,1207.05 c 6.52,0 11.82,-5.301 11.82,-11.792 0,-6.52 -5.301,-11.82 -11.82,-11.82 -6.491,0 -11.82,5.301 -11.82,11.82 0,6.491 5.329,11.792 11.82,11.792 z"
        id="path20" />
+    <path
+       style="fill:#7a7a7a;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.999998"
+       d="m 1075.014,1425.857 c 61.965,0 112.479,-50.542 112.479,-112.507 0,-61.965 -50.514,-112.507 -112.479,-112.507 -61.966,0 -112.507,50.542 -112.507,112.507 0,61.965 50.542,112.507 112.507,112.507 z"
+       id="path21" />
     <path
        style="fill:#353535;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.999998"
        d="m 1502.48,1370.95 c 39.033,0 70.866,-31.833 70.866,-70.866 0,-39.033 -31.833,-70.866 -70.866,-70.866 -39.033,0 -70.866,31.833 -70.866,70.866 0,39.033 31.833,70.866 70.866,70.866 z"
