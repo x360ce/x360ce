@@ -3,8 +3,9 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Security.Policy;
-using System.Windows.Forms;
+using System.Windows.Controls;
 using System.Windows.Media;
 using x360ce.Engine;
 
@@ -76,14 +77,14 @@ namespace x360ce.App.Controls
         Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
 
         // Background Images.
-        //public System.Windows.Controls.Image Top;
-        //public System.Windows.Controls.Image Front;
+        //public Image Top;
+        //public Image Front;
 
         // Axis status Borders.
-        public System.Windows.Controls.Border LeftThumbAxisStatus;
-        public System.Windows.Controls.Border RightThumbAxisStatus;
-        public System.Windows.Controls.Border LeftTriggerAxisStatus;
-        public System.Windows.Controls.Border RightTriggerAxisStatus;
+        public Border LeftThumbAxisStatus;
+        public Border RightThumbAxisStatus;
+        public Border LeftTriggerAxisStatus;
+        public Border RightTriggerAxisStatus;
 
         public System.Windows.Shapes.Path DPadUpStatus;
 
@@ -266,30 +267,17 @@ namespace x360ce.App.Controls
             //	ImageControl.SetImage(ii.Code, NavImageType.Active, on && !isAxisCode);
             //}
 
-            if (ii.Label is System.Windows.Controls.ContentControl)
-                setColorNormaActiveRecord(on, ii);
+            if (ii.Label is ContentControl)
+                padItem_General_XboxImageControl.setNormalOverRecordColor(ii, on ? padItem_General_XboxImageControl.colorActive : padItem_General_XboxImageControl.colorNormalPath);
+
         }
 
-        SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
-        SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
-		SolidColorBrush colorNormalTextBox = System.Windows.Media.Brushes.White;
-		SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
-		SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
+		PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
 
-		void setColorNormaActiveRecord(bool on, ImageInfo ii)
-		{
-			var pathFillColor = (ii.Path.Fill as SolidColorBrush).Color;
-			if (pathFillColor != colorRecord.Color && pathFillColor != colorOver.Color)
-			{
-				System.Windows.Controls.TextBox textBox = ii.Control as System.Windows.Controls.TextBox;
-				textBox.Background = on ? colorActive : colorNormalTextBox;
-				ii.Path.Fill = on ? colorActive : colorNormalPath;
-			}
-		}
 
-		#region ■ IDisposable
+        #region ■ IDisposable
 
-		public bool IsDisposing;
+        public bool IsDisposing;
         public void Dispose()
         {
             Dispose(true);

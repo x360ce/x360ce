@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
-using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,18 +28,18 @@ namespace x360ce.App.Controls
 		}
 
 		PadControlImager Imager;
-		List<ImageInfo> Infos;
+		public List<ImageInfo> Infos;
 		MapTo MappedTo;
-
 
 		public void InitializeImages(List<ImageInfo> imageInfos, PadControlImager imager, MapTo mappedTo)
 		{
+
 			Infos = imageInfos;
 			Imager = imager;
 			MappedTo = mappedTo;
 			foreach (var ii in imageInfos)
 			{
-				ii.Path = FindName(GetNameCode(ii.Code).ToString()) as System.Windows.Shapes.Path;
+				ii.Path = FindName(GetNameCode(ii.Code).ToString()) as Path;
 				//SetImage(ii.Code, NavImageType.Normal, false);
 			}
 			SetHelpText();
@@ -207,10 +208,11 @@ namespace x360ce.App.Controls
 			Imager = null;
 		}
 
-		SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
-		SolidColorBrush colorNormalTextBox = System.Windows.Media.Brushes.White;
-		SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
-		SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
+		public SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
+		public SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
+		public SolidColorBrush colorNormalTextBox = System.Windows.Media.Brushes.White;
+		public SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
+		public SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
 		private void AssignNavigationColorEventHandlers()
 		{
@@ -221,31 +223,48 @@ namespace x360ce.App.Controls
 				textBox.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorNormalPath); };
 				textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverRecordColor(sender, colorRecord); };
 
-				System.Windows.Shapes.Path path = ii.Path;
+				Path path = ii.Path;
 				path.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorOver); };
 				path.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorNormalPath); };
 				path.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverRecordColor(sender, colorRecord); };
 			}
 		}
 
-		// Set setColor.
-		private void setNormalOverRecordColor(object sender, SolidColorBrush setColor)
+		// Set navigation color.
+		public void setNormalOverRecordColor(object sender, SolidColorBrush setColor)
 		{
-			var senderColor = sender is TextBox
-				? ((TextBox)sender).Background
-				: ((System.Windows.Shapes.Path)sender).Fill;
-
+			SolidColorBrush senderColor = colorNormalPath;
+			if (sender is Path) { senderColor = ((Path)sender).Fill as SolidColorBrush; }
+			else if (sender is TextBox) { senderColor = ((TextBox)sender).Background as SolidColorBrush; }
+			else if (sender is ImageInfo) senderColor = (sender as ImageInfo).Path.Fill as SolidColorBrush;
+			// Only colorRecord can change colorRecord color.
 			if (senderColor == colorRecord)
 			{
 				if (setColor == colorRecord) setColor = colorNormalPath;
 				else return;
 			}
+			// Sender is ImageInfo. Set Active, Normal background color.
+			if (sender is ImageInfo)
+			{			
+				var senderPath = (sender as ImageInfo).Path;
+				var senderText = (sender as ImageInfo).Control as TextBox;
 
-			foreach (var ii in Infos.Where(ii => sender == ii.Path || sender == ii.Control as TextBox))
+				if (senderColor.Color != colorRecord.Color && senderColor.Color != colorOver.Color)
+				{
+					senderText.Background = setColor == colorNormalPath ? colorNormalTextBox : setColor;
+					senderPath.Fill = setColor;
+				}
+			}
+			// Sender is Path, TextBox. Set Normal, Over, Record background color.
+			else
 			{
-				ii.Path.Fill = setColor;
-				(ii.Control as TextBox).Background = (setColor.Color == colorNormalPath.Color) ? colorNormalTextBox : setColor;
+				foreach (var ii in Infos.Where(ii => sender == ii.Path || sender == ii.Control as TextBox))
+				{
+					ii.Path.Fill = setColor;
+					(ii.Control as TextBox).Background = (setColor.Color == colorNormalPath.Color) ? colorNormalTextBox : setColor;
+				}
 			}
 		}
+
 	}
 }
