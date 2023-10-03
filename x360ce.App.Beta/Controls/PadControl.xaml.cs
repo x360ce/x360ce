@@ -197,6 +197,14 @@ namespace x360ce.App.Controls
 			ControlsHelper.SetText(GeneralPanel.LeftTextBox, "{0}", newState.Gamepad.LeftTrigger);
 			ControlsHelper.SetText(GeneralPanel.RightTextBox, "{0}", newState.Gamepad.RightTrigger);
 			ControlsHelper.SetText(GeneralPanel.LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
+
+			ControlsHelper.SetText(GeneralPanel.LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
+
+			GeneralPanel.StickLeftAxisXLabel.Content = newState.Gamepad.LeftThumbX;
+			GeneralPanel.StickLeftAxisYLabel.Content = newState.Gamepad.LeftThumbY;
+			GeneralPanel.StickRightAxisXLabel.Content = newState.Gamepad.RightThumbX;
+			GeneralPanel.StickRightAxisYLabel.Content = newState.Gamepad.RightThumbY;
+
 			ControlsHelper.SetText(GeneralPanel.RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
 			// Process device.
 			var ud = CurrentUserDevice;

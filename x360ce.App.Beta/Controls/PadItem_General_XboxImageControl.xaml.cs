@@ -59,14 +59,14 @@ namespace x360ce.App.Controls
 			return code;
 		}
 
-		public void SetImage(MapCode code, NavImageType type, bool show)
-		{
-			//var nameCode = GetNameCode(code);
-			//var ii = Infos.First(x => x.Code == nameCode);
-			//var resourceName = string.Format("NavColor{0}", type);
-			//var path = FindName(nameCode.ToString()) as Path;
-			//path.Fill = FindResource(resourceName) as SolidColorBrush;
-		}
+		//public void SetImage(MapCode code, NavImageType type, bool show)
+		//{
+		//	var nameCode = GetNameCode(code);
+		//	var ii = Infos.First(x => x.Code == nameCode);
+		//	var resourceName = string.Format("NavColor{0}", type);
+		//	var path = FindName(nameCode.ToString()) as Path;
+		//	path.Fill = FindResource(resourceName) as SolidColorBrush;
+		//}
 
 		//public void SetImage(MapCode code, NavImageType type, bool show)
 		//{
@@ -99,35 +99,35 @@ namespace x360ce.App.Controls
 		//			: (show ? 0.8F : 0.0f);
 		//}
 
-		public string GetMiddleImageName(MapCode code)
-		{
-			if (code == MapCode.LeftTrigger || code == MapCode.RightTrigger)
-				return "Up";
-			var rx = new Regex("(Up|Left|Right|Down)$");
-			var ms = rx.Matches(code.ToString());
-			var m = ms.Count > 0 ? ms[0].Value : "";
-			return m;
-		}
+		//public string GetMiddleImageName(MapCode code)
+		//{
+		//	if (code == MapCode.LeftTrigger || code == MapCode.RightTrigger)
+		//		return "Up";
+		//	var rx = new Regex("(Up|Left|Right|Down)$");
+		//	var ms = rx.Matches(code.ToString());
+		//	var m = ms.Count > 0 ? ms[0].Value : "";
+		//	return m;
+		//}
 
-		public static System.Drawing.Bitmap CopyRegionIntoImage(System.Drawing.Bitmap source, int x, int y, int width, int height)
-		{
-			var region = new System.Drawing.Rectangle(x, y, width, height);
-			return source.Clone(region, source.PixelFormat);
-		}
+		//public static System.Drawing.Bitmap CopyRegionIntoImage(System.Drawing.Bitmap source, int x, int y, int width, int height)
+		//{
+		//	var region = new System.Drawing.Rectangle(x, y, width, height);
+		//	return source.Clone(region, source.PixelFormat);
+		//}
 
-		public System.Drawing.Bitmap ClipToCircle(System.Drawing.Bitmap original, float x, float y, float radius)
-		{
-			var copy = new System.Drawing.Bitmap(original);
-			using (var g = System.Drawing.Graphics.FromImage(copy))
-			{
-				var r = new System.Drawing.RectangleF(x - radius, y - radius, radius * 2, radius * 2);
-				var path = new System.Drawing.Drawing2D.GraphicsPath();
-				path.AddEllipse(r);
-				g.Clip = new System.Drawing.Region(path);
-				g.DrawImage(original, 0, 0);
-				return copy;
-			}
-		}
+		//public System.Drawing.Bitmap ClipToCircle(System.Drawing.Bitmap original, float x, float y, float radius)
+		//{
+		//	var copy = new System.Drawing.Bitmap(original);
+		//	using (var g = System.Drawing.Graphics.FromImage(copy))
+		//	{
+		//		var r = new System.Drawing.RectangleF(x - radius, y - radius, radius * 2, radius * 2);
+		//		var path = new System.Drawing.Drawing2D.GraphicsPath();
+		//		path.AddEllipse(r);
+		//		g.Clip = new System.Drawing.Region(path);
+		//		g.DrawImage(original, 0, 0);
+		//		return copy;
+		//	}
+		//}
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{

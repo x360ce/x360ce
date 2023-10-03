@@ -53,7 +53,7 @@ namespace x360ce.App.Controls
                 markC = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkController.png", a);
                 //float rH = topDisabledImage.HorizontalResolution;
                 //float rV = topDisabledImage.VerticalResolution;
-                // Make sure resolution is same everywhere so images won't be resized.
+                // Make sure resolution is same everywhere so images won'stickRDeadzone be resized.
                 //markB.SetResolution(rH, rV);
                 //markA.SetResolution(rH, rV);
                 //markC.SetResolution(rH, rV);
@@ -76,8 +76,8 @@ namespace x360ce.App.Controls
         Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
 
         // Background Images.
-        public System.Windows.Controls.Image Top;
-        public System.Windows.Controls.Image Front;
+        //public System.Windows.Controls.Image Top;
+        //public System.Windows.Controls.Image Front;
 
         // Axis status Borders.
         public System.Windows.Controls.Border LeftThumbAxisStatus;
@@ -98,28 +98,28 @@ namespace x360ce.App.Controls
         //	////RightTriggerAxisStatus.Visibility = show;
         //}
 
-        public void DrawController(PaintEventArgs e, MapTo mappedTo)
-        {
-            // Controller (Player) index indicator coordinates.
-            var pads = new Point[4];
-            pads[0] = new Point(116, 35);
-            pads[1] = new Point(139, 35);
-            pads[2] = new Point(116, 62);
-            pads[3] = new Point(139, 62);
-            // Display controller index light.
-            int mW = -markC.Width / 2;
-            int mH = -markC.Height / 2;
-            var index = (int)mappedTo - 1;
-            e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
-        }
+        //public void DrawController(PaintEventArgs e, MapTo mappedTo)
+        //{
+        //    // Controller (Player) index indicator coordinates.
+        //    var pads = new Point[4];
+        //    pads[0] = new Point(116, 35);
+        //    pads[1] = new Point(139, 35);
+        //    pads[2] = new Point(116, 62);
+        //    pads[3] = new Point(139, 62);
+        //    // Display controller index light.
+        //    int mW = -markC.Width / 2;
+        //    int mH = -markC.Height / 2;
+        //    var index = (int)mappedTo - 1;
+        //    e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
+        //}
 
-        public bool ShowRightThumbButtons;
-        public bool ShowLeftThumbButtons;
-        public bool ShowDPadButtons;
-        public bool ShowMainButtons;
-        public bool ShowMenuButtons;
-        public bool ShowTriggerButtons;
-        public bool ShowShoulderButtons;
+        //public bool ShowRightThumbButtons;
+        //public bool ShowLeftThumbButtons;
+        //public bool ShowDPadButtons;
+        //public bool ShowMainButtons;
+        //public bool ShowMenuButtons;
+        //public bool ShowTriggerButtons;
+        //public bool ShowShoulderButtons;
 
         bool on = false;
 
@@ -138,20 +138,39 @@ namespace x360ce.App.Controls
                 on = y > 0;
             }
             // Show stick axis state with "•" yellow circle.
-            else if (ii.Code == MapCode.LeftThumbButton || ii.Code == MapCode.RightThumbButton)
-            {
-                var isLeft = ii.Code == MapCode.LeftThumbButton;
-                var control = isLeft ? LeftThumbAxisStatus : RightThumbAxisStatus;
-                var w = (float)(((System.Windows.FrameworkElement)control.Parent).Width - control.Width);
-                var x = isLeft ? gp.LeftThumbX : gp.RightThumbX;
-                var y = isLeft ? gp.LeftThumbY : gp.RightThumbY;
-                var l = ConvertHelper.ConvertRangeF(x, short.MinValue, short.MaxValue, -w, w);
-                var t = ConvertHelper.ConvertRangeF(y, short.MinValue, short.MaxValue, w, -w);
-                var m = control.Margin;
-                control.Margin = new System.Windows.Thickness(l, t, m.Right, m.Bottom);
-            }
-            // If D-Pad.
-            else if (ii.Code == MapCode.DPad)
+            //else if (ii.Code == MapCode.LeftThumbButton || ii.Code == MapCode.RightThumbButton)
+            //{
+            //    var isLeft = ii.Code == MapCode.LeftThumbButton;
+            //    var control = isLeft ? LeftThumbAxisStatus : RightThumbAxisStatus;
+            //    var w = (float)(((System.Windows.FrameworkElement)control.Parent).Width - control.Width);
+            //    var x = isLeft ? gp.LeftThumbX : gp.RightThumbX;
+            //    var y = isLeft ? gp.LeftThumbY : gp.RightThumbY;
+            //    var l = ConvertHelper.ConvertRangeF(x, short.MinValue, short.MaxValue, -w, w);
+            //    var stickRDeadzone = ConvertHelper.ConvertRangeF(y, short.MinValue, short.MaxValue, w, -w);
+            //    var m = control.Margin;
+            //    control.Margin = new System.Windows.Thickness(l, stickRDeadzone, m.Right, m.Bottom);
+            //}
+
+			else if (ii.Code == MapCode.LeftThumbAxisX || ii.Code == MapCode.LeftThumbAxisY || ii.Code == MapCode.RightThumbAxisX || ii.Code == MapCode.RightThumbAxisY)
+			{
+				var isLeft = ii.Code == MapCode.LeftThumbAxisX || ii.Code == MapCode.LeftThumbAxisY;
+				var control = isLeft ? LeftThumbAxisStatus : RightThumbAxisStatus;
+				var w = (float)(((System.Windows.FrameworkElement)control.Parent).Width - control.Width);
+				var x = isLeft ? gp.LeftThumbX : gp.RightThumbX;
+				var y = isLeft ? gp.LeftThumbY : gp.RightThumbY;
+				var l = ConvertHelper.ConvertRangeF(x, short.MinValue, short.MaxValue, -w, w);
+				var t = ConvertHelper.ConvertRangeF(y, short.MinValue, short.MaxValue, w, -w);
+				var m = control.Margin;
+				control.Margin = new System.Windows.Thickness(l, t, m.Right, m.Bottom);
+                var stickLDeadzone = 2000;
+				var stickRDeadzone = 2000;
+				on = ((ii.Code == MapCode.LeftThumbAxisX && (x > stickLDeadzone || x < -stickLDeadzone)) ||
+					  (ii.Code == MapCode.LeftThumbAxisY && (y > stickLDeadzone || y < -stickLDeadzone)) ||
+					  (ii.Code == MapCode.RightThumbAxisX && (x > stickRDeadzone || x < -stickRDeadzone)) ||
+					  (ii.Code == MapCode.RightThumbAxisY && (y > stickRDeadzone || y < -stickRDeadzone)));
+			}
+			// If D-Pad.
+			else if (ii.Code == MapCode.DPad)
             {
                 on =
                     gp.Buttons.HasFlag(GamepadButtonFlags.DPadUp) ||
@@ -162,7 +181,7 @@ namespace x360ce.App.Controls
             // If button is not specified then...
             else if (ii.Button == GamepadButtonFlags.None)
             {
-                var t = 2000;
+                var deadzone = 2000;
                 // This is axis.
                 short value = 0;
                 if (ii.Code == MapCode.LeftThumbAxisX)
@@ -174,23 +193,23 @@ namespace x360ce.App.Controls
                 else if (ii.Code == MapCode.RightThumbAxisY)
                     value = gp.RightThumbY;
                 // Check when value is on.
-                on = value < -t || value > t;
+                on = value < -deadzone || value > deadzone;
                 if (ii.Code == MapCode.LeftThumbRight)
-                    on = gp.LeftThumbX > t;
+                    on = gp.LeftThumbX > deadzone;
                 if (ii.Code == MapCode.LeftThumbLeft)
-                    on = gp.LeftThumbX < -t;
+                    on = gp.LeftThumbX < -deadzone;
                 if (ii.Code == MapCode.LeftThumbUp)
-                    on = gp.LeftThumbY > t;
+                    on = gp.LeftThumbY > deadzone;
                 if (ii.Code == MapCode.LeftThumbDown)
-                    on = gp.LeftThumbY < -t;
+                    on = gp.LeftThumbY < -deadzone;
                 if (ii.Code == MapCode.RightThumbRight)
-                    on = gp.RightThumbX > t;
+                    on = gp.RightThumbX > deadzone;
                 if (ii.Code == MapCode.RightThumbLeft)
-                    on = gp.RightThumbX < -t;
+                    on = gp.RightThumbX < -deadzone;
                 if (ii.Code == MapCode.RightThumbUp)
-                    on = gp.RightThumbY > t;
+                    on = gp.RightThumbY > deadzone;
                 if (ii.Code == MapCode.RightThumbDown)
-                    on = gp.RightThumbY < -t;
+                    on = gp.RightThumbY < -deadzone;
             }
             else
             {
@@ -283,8 +302,8 @@ namespace x360ce.App.Controls
             if (disposing)
             {
                 IsDisposing = true;
-                Top = null;
-                Front = null;
+                //Top = null;
+                //Front = null;
                 LeftThumbAxisStatus = null;
                 RightThumbAxisStatus = null;
                 LeftTriggerAxisStatus = null;
