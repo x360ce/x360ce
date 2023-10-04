@@ -33,10 +33,10 @@ namespace x360ce.App.Controls
 
 		public void InitializeImages(List<ImageInfo> imageInfos, PadControlImager imager, MapTo mappedTo)
 		{
-
 			Infos = imageInfos;
 			Imager = imager;
 			MappedTo = mappedTo;
+
 			foreach (var ii in imageInfos)
 			{
 				ii.Path = FindName(GetNameCode(ii.Code).ToString()) as Path;

@@ -38,10 +38,12 @@ namespace x360ce.App.Controls
 			_Imager = new PadControlImager();
 			//_Imager.Top = XboxImage.TopPictureImage;
 			//_Imager.Front = XboxImage.FrontPictureImage;
-			_Imager.LeftThumbAxisStatus = XboxImage.LeftThumbAxisBorder;
-			_Imager.RightThumbAxisStatus = XboxImage.RightThumbAxisBorder;
+
 			_Imager.LeftTriggerAxisStatus = XboxImage.LeftTriggerAxisBorder;
 			_Imager.RightTriggerAxisStatus = XboxImage.RightTriggerAxisBorder;
+			_Imager.LeftThumbAxisStatus = XboxImage.LeftThumbAxisBorder;
+			_Imager.RightThumbAxisStatus = XboxImage.RightThumbAxisBorder;
+
 			_Imager.ImageControl = XboxImage;
 			XboxImage.InitializeImages(imageInfos, _Imager, mappedTo);
 			XboxImage.StartRecording = StartRecording;

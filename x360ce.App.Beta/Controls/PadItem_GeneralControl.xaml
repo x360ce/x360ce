@@ -83,18 +83,29 @@
 			Grid.RowSpan="2"
 			Grid.Column="0"
 			VerticalAlignment="Top">
-
 			<!--  LEFT  -->
 			<StackPanel Style="{StaticResource StackPanelLeft}">
-				<TextBox
-					Name="LeftTextBox"
-					Margin="29,3,3,3"
-					HorizontalContentAlignment="Center"
-					Background="Transparent"
-					IsReadOnly="True"
-					Text="0" />
+				<Grid
+					Width="75"
+					Height="32"
+					Margin="29,0,3,0"
+					HorizontalAlignment="Left">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+						<Label
+							Name="TriggerLeftDeadzoneLabel"
+							Margin="0,0,6,0"
+							Content="0"
+							Opacity="0.3"
+							ToolTip="Deadzone" />
+						<Label
+							Name="LeftTextBox"
+							Margin="0"
+							Content="0"
+							ToolTip="Y" />
+					</StackPanel>
+				</Grid>
 				<Label
-					x:Name="LeftLabel"
+					Name="LeftLabel"
 					x:FieldModifier="public"
 					Content="LEFT"
 					Opacity="0.3" />
@@ -143,20 +154,19 @@
 						Name="StickLeftAxisXLabel"
 						Margin="0"
 						Content="0"
-						FontSize="11" />
+						ToolTip="X" />
 					<Label
 						Name="StickLeftDeadzoneLabel"
-						Margin="3,0,3,0"
-						Content=" DZ±2000 "
-						FontSize="11"
-						Opacity="0.3" />
+						Margin="6,0,6,0"
+						Content="2000"
+						Opacity="0.3"
+						ToolTip="Deadzone" />
 					<Label
 						Name="StickLeftAxisYLabel"
 						Margin="0"
 						Content="0"
-						FontSize="11" />
+						ToolTip="Y" />
 				</StackPanel>
-
 				<TextBox
 					x:Name="LeftThumbTextBox"
 					Margin="29,0,0,0"
@@ -228,23 +238,33 @@
 			Grid.RowSpan="2"
 			Grid.Column="2"
 			Orientation="Vertical">
-
 			<!--  RIGHT  -->
 			<StackPanel Style="{StaticResource StackPanelRight}">
 				<Label
-					x:Name="RightLabel"
+					Name="RightLabel"
 					x:FieldModifier="public"
 					Content="RIGHT"
 					Opacity="0.3" />
-				<TextBox
-					x:Name="RightTextBox"
-					Margin="3,3,29,3"
-					HorizontalContentAlignment="Center"
-					Background="Transparent"
-					IsReadOnly="True"
-					Text="0" />
+				<Grid
+					Width="75"
+					Height="32"
+					Margin="3,0,29,0"
+					HorizontalAlignment="Right">
+					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+						<Label
+							Name="TriggerRightDeadzoneLabel"
+							Margin="0,0,6,0"
+							Content="0"
+							Opacity="0.3"
+							ToolTip="Deadzone" />
+						<Label
+							Name="RightTextBox"
+							Margin="0"
+							Content="0"
+							ToolTip="Y" />
+					</StackPanel>
+				</Grid>
 			</StackPanel>
-
 			<!--  RightTrigger  -->
 			<StackPanel Style="{StaticResource StackPanelRight}">
 				<Label x:Name="TriggerRightLabel" Content="Trigger" />
@@ -283,7 +303,6 @@
 				<TextBox x:Name="ActionATextBox" x:FieldModifier="public" />
 				<Menu Tag="{Binding ElementName=ButtonATextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 			</StackPanel>
-
 			<!--  RightThumb  -->
 			<Grid Width="133" Height="32" HorizontalAlignment="Right">
 				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
@@ -291,20 +310,19 @@
 						Name="StickRightAxisXLabel"
 						Margin="0"
 						Content="0"
-						FontSize="11" />
+						ToolTip="X" />
 					<Label
 						Name="StickRightDeadzoneLabel"
-						Margin="3,0,3,0"
-						Content="DZ±2000"
-						FontSize="11"
-						Opacity="0.3" />
+						Margin="6,0,6,0"
+						Content="2000"
+						Opacity="0.3"
+						ToolTip="Deadzone" />
 					<Label
 						Name="StickRightAxisYLabel"
 						Margin="0"
 						Content="0"
-						FontSize="11" />
+						ToolTip="Y" />
 				</StackPanel>
-
 				<TextBox
 					Name="RightThumbTextBox"
 					Margin="0,0,29,0"

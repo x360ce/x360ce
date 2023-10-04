@@ -76,99 +76,88 @@ namespace x360ce.App.Controls
 
         Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
 
-        // Background Images.
-        //public Image Top;
-        //public Image Front;
+		// Background Images.
+		//public Image Top;
+		//public Image Front;
 
-        // Axis status Borders.
-        public Border LeftThumbAxisStatus;
-        public Border RightThumbAxisStatus;
-        public Border LeftTriggerAxisStatus;
-        public Border RightTriggerAxisStatus;
+		//      public void SetImages(bool enabled)
+		//{
+		//	////Top.Source = enabled ? _TopImage : _TopDisabledImage;
+		//	////Front.Source = enabled ? _FrontImage : _FrontDisabledImage;
+		//	////var show = enabled ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+		//	////LeftThumbAxisStatus.Visibility = show;
+		//	////RightThumbAxisStatus.Visibility = show;
+		//	////LeftTriggerAxisStatus.Visibility = show;
+		//	////RightTriggerAxisStatus.Visibility = show;
+		//}
 
-        public System.Windows.Shapes.Path DPadUpStatus;
+		//public void DrawController(PaintEventArgs e, MapTo mappedTo)
+		//{
+		//    // Controller (Player) index indicator coordinates.
+		//    var pads = new Point[4];
+		//    pads[0] = new Point(116, 35);
+		//    pads[1] = new Point(139, 35);
+		//    pads[2] = new Point(116, 62);
+		//    pads[3] = new Point(139, 62);
+		//    // Display controller index light.
+		//    int mW = -markC.Width / 2;
+		//    int mH = -markC.Height / 2;
+		//    var index = (int)mappedTo - 1;
+		//    e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
+		//}
 
-        //      public void SetImages(bool enabled)
-        //{
-        //	////Top.Source = enabled ? _TopImage : _TopDisabledImage;
-        //	////Front.Source = enabled ? _FrontImage : _FrontDisabledImage;
-        //	////var show = enabled ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
-        //	////LeftThumbAxisStatus.Visibility = show;
-        //	////RightThumbAxisStatus.Visibility = show;
-        //	////LeftTriggerAxisStatus.Visibility = show;
-        //	////RightTriggerAxisStatus.Visibility = show;
-        //}
+		//public bool ShowRightThumbButtons;
+		//public bool ShowLeftThumbButtons;
+		//public bool ShowDPadButtons;
+		//public bool ShowMainButtons;
+		//public bool ShowMenuButtons;
+		//public bool ShowTriggerButtons;
+		//public bool ShowShoulderButtons;
 
-        //public void DrawController(PaintEventArgs e, MapTo mappedTo)
-        //{
-        //    // Controller (Player) index indicator coordinates.
-        //    var pads = new Point[4];
-        //    pads[0] = new Point(116, 35);
-        //    pads[1] = new Point(139, 35);
-        //    pads[2] = new Point(116, 62);
-        //    pads[3] = new Point(139, 62);
-        //    // Display controller index light.
-        //    int mW = -markC.Width / 2;
-        //    int mH = -markC.Height / 2;
-        //    var index = (int)mappedTo - 1;
-        //    e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
-        //}
+		// Axis status Borders.
+		public Border LeftThumbAxisStatus;
+		public Border RightThumbAxisStatus;
+		public Border LeftTriggerAxisStatus;
+		public Border RightTriggerAxisStatus;
 
-        //public bool ShowRightThumbButtons;
-        //public bool ShowLeftThumbButtons;
-        //public bool ShowDPadButtons;
-        //public bool ShowMainButtons;
-        //public bool ShowMenuButtons;
-        //public bool ShowTriggerButtons;
-        //public bool ShowShoulderButtons;
+		public System.Windows.Shapes.Path DPadUpStatus;
 
-        bool on = false;
+		bool on = false;
 
-        public void DrawState(ImageInfo ii, Gamepad gp)
+		public void DrawState(ImageInfo ii, Gamepad gp)
         {
-            // Trigger axis state with "•" yellow circle.
-            if (ii.Code == MapCode.LeftTrigger || ii.Code == MapCode.RightTrigger)
+			// Trigger axis state with "•" yellow circle.
+			if (ii.Code == MapCode.LeftTrigger || ii.Code == MapCode.RightTrigger)
             {
                 var isLeft = ii.Code == MapCode.LeftTrigger;
-                var control = isLeft ? LeftTriggerAxisStatus : RightTriggerAxisStatus;
-                var h = (float)(((System.Windows.FrameworkElement)control.Parent).Height - control.Height);
-                var y = isLeft ? gp.LeftTrigger : gp.RightTrigger;
+				var y = isLeft ? gp.LeftTrigger : gp.RightTrigger;
+				var control = isLeft ? LeftTriggerAxisStatus : RightTriggerAxisStatus;
+				var h = (float)(((System.Windows.FrameworkElement)control.Parent).Height - control.Height);
                 var b = ConvertHelper.ConvertRangeF(y, byte.MinValue, byte.MaxValue, 0, h);
                 var m = control.Margin;
                 control.Margin = new System.Windows.Thickness(m.Left, m.Top, m.Right, b);
-                on = y > 0;
-            }
+				var triggerLDeadzone = 0;
+				var triggerRDeadzone = 0;
+				on = (ii.Code == MapCode.LeftTrigger && y > triggerLDeadzone) || (ii.Code == MapCode.RightTrigger && y > triggerRDeadzone);
+			}
             // Show stick axis state with "•" yellow circle.
-            //else if (ii.Code == MapCode.LeftThumbButton || ii.Code == MapCode.RightThumbButton)
-            //{
-            //    var isLeft = ii.Code == MapCode.LeftThumbButton;
-            //    var control = isLeft ? LeftThumbAxisStatus : RightThumbAxisStatus;
-            //    var w = (float)(((System.Windows.FrameworkElement)control.Parent).Width - control.Width);
-            //    var x = isLeft ? gp.LeftThumbX : gp.RightThumbX;
-            //    var y = isLeft ? gp.LeftThumbY : gp.RightThumbY;
-            //    var l = ConvertHelper.ConvertRangeF(x, short.MinValue, short.MaxValue, -w, w);
-            //    var stickRDeadzone = ConvertHelper.ConvertRangeF(y, short.MinValue, short.MaxValue, w, -w);
-            //    var m = control.Margin;
-            //    control.Margin = new System.Windows.Thickness(l, stickRDeadzone, m.Right, m.Bottom);
-            //}
-
 			else if (ii.Code == MapCode.LeftThumbAxisX || ii.Code == MapCode.LeftThumbAxisY || ii.Code == MapCode.RightThumbAxisX || ii.Code == MapCode.RightThumbAxisY)
 			{
 				var isLeft = ii.Code == MapCode.LeftThumbAxisX || ii.Code == MapCode.LeftThumbAxisY;
-				var control = isLeft ? LeftThumbAxisStatus : RightThumbAxisStatus;
-				var w = (float)(((System.Windows.FrameworkElement)control.Parent).Width - control.Width);
 				var x = isLeft ? gp.LeftThumbX : gp.RightThumbX;
 				var y = isLeft ? gp.LeftThumbY : gp.RightThumbY;
+				var control = isLeft ? LeftThumbAxisStatus : RightThumbAxisStatus;
+				var w = (float)(((System.Windows.FrameworkElement)control.Parent).Width - control.Width);
 				var l = ConvertHelper.ConvertRangeF(x, short.MinValue, short.MaxValue, -w, w);
 				var t = ConvertHelper.ConvertRangeF(y, short.MinValue, short.MaxValue, w, -w);
 				var m = control.Margin;
 				control.Margin = new System.Windows.Thickness(l, t, m.Right, m.Bottom);
                 var stickLDeadzone = 2000;
 				var stickRDeadzone = 2000;
-				on = ((ii.Code == MapCode.LeftThumbAxisX && (x > stickLDeadzone || x < -stickLDeadzone)) ||
+				on = (ii.Code == MapCode.LeftThumbAxisX && (x > stickLDeadzone || x < -stickLDeadzone)) ||
 					  (ii.Code == MapCode.LeftThumbAxisY && (y > stickLDeadzone || y < -stickLDeadzone)) ||
 					  (ii.Code == MapCode.RightThumbAxisX && (x > stickRDeadzone || x < -stickRDeadzone)) ||
-					  (ii.Code == MapCode.RightThumbAxisY && (y > stickRDeadzone || y < -stickRDeadzone)));
+					  (ii.Code == MapCode.RightThumbAxisY && (y > stickRDeadzone || y < -stickRDeadzone));
 			}
 			// If D-Pad.
 			else if (ii.Code == MapCode.DPad)
@@ -218,8 +207,6 @@ namespace x360ce.App.Controls
                 on = gp.Buttons.HasFlag(ii.Button);
             }
 
-
-            var isRecordingItem = Recorder.Recording && ii.Code == Recorder.CurrentMap.Code;
             // If record then...
             if (Recorder.Recording)
             {
@@ -241,8 +228,9 @@ namespace x360ce.App.Controls
                         return;
                 }
             }
-            // If record is in progress then...
-            if (isRecordingItem)
+
+			// If record is in progress then...
+			if (Recorder.Recording && ii.Code == Recorder.CurrentMap.Code)
             {
                 // ImageControl.SetImage(recordingCode, NavImageType.Record, Recorder.DrawRecordingImage);
                 on = true;
@@ -269,11 +257,9 @@ namespace x360ce.App.Controls
 
             if (ii.Label is ContentControl)
                 padItem_General_XboxImageControl.setNormalOverRecordColor(ii, on ? padItem_General_XboxImageControl.colorActive : padItem_General_XboxImageControl.colorNormalPath);
-
         }
 
 		PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
-
 
         #region ■ IDisposable
 
