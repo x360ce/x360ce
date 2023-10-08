@@ -572,6 +572,8 @@
 	<!--  This style is making control to fail garbage collection (leak memory)  -->
 	<Style x:Key="TabControl_Default" TargetType="TabControl">
 		<Setter Property="SnapsToDevicePixels" Value="True" />
+		<Setter Property="VerticalAlignment" Value="Stretch" />
+		<Setter Property="VerticalContentAlignment" Value="Stretch" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="TabControl">
@@ -598,7 +600,7 @@
 							Name="ContentPresenter"
 							Grid.Row="1"
 							Margin="1"
-							VerticalAlignment="Top"
+							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 							ContentSource="SelectedContent">
 							<ContentPresenter.OpacityMask>
 								<VisualBrush>
@@ -1257,6 +1259,8 @@
 	<!--  GroupBox  -->
 	<Style x:Key="GroupBox_Default" TargetType="GroupBox">
 		<Setter Property="Margin" Value="3,0,0,3" />
+		<Setter Property="Padding" Value="5,0,5,5" />
+		<Setter Property="VerticalAlignment" Value="Top" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="GroupBox">
@@ -1283,7 +1287,7 @@
 								Background="{StaticResource BackgroundLight}">
 								<ContentPresenter Margin="5" ContentSource="Header" />
 							</Border>
-							<ContentPresenter Margin="5,0,5,5" ContentSource="Content" />
+							<ContentPresenter Margin="{TemplateBinding Padding}" ContentSource="Content" />
 						</StackPanel>
 					</Grid>
 				</ControlTemplate>

@@ -256,14 +256,17 @@ namespace x360ce.App.Controls
             //}
 
             if (ii.Label is ContentControl)
-                padItem_General_XboxImageControl.setNormalOverRecordColor(ii, on ? padItem_General_XboxImageControl.colorActive : padItem_General_XboxImageControl.colorNormalPath);
-        }
+                padItem_General_XboxImageControl.setNormalOverActiveRecordColor(ii, on ? padItem_General_XboxImageControl.colorActive : padItem_General_XboxImageControl.colorNormalPath);
+			    //padItem_GeneralControl.setNormalActiveColor(ii, on ? padItem_General_XboxImageControl.colorActive : padItem_General_XboxImageControl.colorNormalPath);
+		}
 
 		PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
+		// PadItem_GeneralControl padItem_GeneralControl = new PadItem_GeneralControl();
 
-        #region ■ IDisposable
 
-        public bool IsDisposing;
+		#region ■ IDisposable
+
+		public bool IsDisposing;
         public void Dispose()
         {
             Dispose(true);

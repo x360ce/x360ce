@@ -16,11 +16,6 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Viewbox Margin="0,4,0,-35">
-		<Grid Name="MainGrid">
-			<Grid.RowDefinitions>
-				<RowDefinition Height="135*" />
-			</Grid.RowDefinitions>
 			<Viewbox>
 				<Grid Width="2150" Height="2380">
 					<Grid.Resources>
@@ -140,6 +135,4 @@
 					</Viewbox>
 				</Grid>
 			</Viewbox>
-		</Grid>
-	</Viewbox>
 </UserControl>

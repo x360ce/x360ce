@@ -6,6 +6,8 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
+	d:Height="900"
+	d:Width="900"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
@@ -24,10 +26,13 @@
 					</Style>
 					<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
 						<Setter Property="Width" Value="75" />
+						<Setter Property="AllowDrop" Value="True" />
+						<!--<Setter Property="Focusable" Value="False" />-->
+						<EventSetter Event="PreviewDrop" Handler="DragAndDrop_Target_Drop" />
 					</Style>
 					<!--  Menu template  -->
 					<ControlTemplate x:Key="ReusableMenuTemplate" TargetType="Menu">
-						<Grid>
+						<Grid Visibility="Collapsed">
 							<Border
 								Name="MenuBorder"
 								Width="26"
@@ -74,26 +79,161 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" MinWidth="247" />
+			<ColumnDefinition Width="155" />
 			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="155" />
 		</Grid.ColumnDefinitions>
-		<StackPanel
-			Grid.Row="0"
-			Grid.RowSpan="2"
-			Grid.Column="0"
-			VerticalAlignment="Top">
-			<!--  LEFT  -->
+		<!--  Buttons and Axes  -->
+		<ScrollViewer Grid.RowSpan="3" Margin="0,0,9,0" VerticalScrollBarVisibility="Auto">
+			<StackPanel>
+				<Label
+					IsHitTestVisible="False"
+					Margin="0,5,0,0"
+					HorizontalAlignment="Center"
+					Content="Direct Input Drag and Drop Menu"
+					Opacity="0.3" />
+				<StackPanel Name="DragAndDropStackPanel" Margin="3,0,3,3">
+					<StackPanel.Resources>
+						<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+							<Setter Property="Margin" Value="0" />
+							<Setter Property="Padding" Value="5,0,2,3" />
+						</Style>
+						<Style TargetType="Label">
+							<Setter Property="IsHitTestVisible" Value="True" />
+							<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+							<Setter Property="Padding" Value="5,3,5,3" />
+							<Setter Property="Margin" Value="0,0,3,3" />
+							<Setter Property="Template">
+								<Setter.Value>
+									<ControlTemplate TargetType="Label">
+										<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
+											<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+										</Border>
+									</ControlTemplate>
+								</Setter.Value>
+							</Setter>
+							<EventSetter Event="PreviewMouseMove" Handler="DragAndDrop_Source_PreviewMouseMove" />
+							<!--<EventSetter Event="GiveFeedback" Handler="DragAndDrop_Source_GiveFeedback" />-->
+							<Style.Triggers>
+								<Trigger Property="IsMouseOver" Value="True">
+									<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+								</Trigger>
+							</Style.Triggers>
+						</Style>
+					</StackPanel.Resources>
+					<Label
+						Name="DragAndDropLoadingLabel"
+						Margin="0,20,0,0"
+						Padding="9,6,9,9"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Top"
+						Background="Transparent"
+						Content="Loading..."
+						IsHitTestVisible="False" />
+
+					<!--<StackPanel Visibility="Collapsed">
+						<GroupBox Header="BUTTONS">
+							<UniformGrid Columns="8">
+								<Label Content="1" ToolTip="Button 1" />
+								<Label Content="2" ToolTip="Button 2" />
+								<Label Content="3" ToolTip="Button 3" />
+								<Label Content="4" ToolTip="Button 4" />
+								<Label Content="5" ToolTip="Button 5" />
+								<Label Content="6" ToolTip="Button 6" />
+								<Label Content="7" ToolTip="Button 7" />
+								<Label Content="8" ToolTip="Button 8" />
+								<Label Content="9" ToolTip="Button 9" />
+								<Label Content="10" ToolTip="Button 10" />
+								<Label Content="11" ToolTip="Button 11" />
+								<Label Content="12" ToolTip="Button 12" />
+								<Label Content="13" ToolTip="Button 13" />
+								<Label Content="14" ToolTip="Button 14" />
+								<Label Content="15" ToolTip="Button 15" />
+								<Label Content="16" ToolTip="Button 16" />
+							</UniformGrid>
+						</GroupBox>
+						<GroupBox Header="INVERTED BUTTONS">
+							<UniformGrid Columns="8">
+								<Label Content="1" ToolTip="IButton 1" />
+								<Label Content="2" ToolTip="IButton 2" />
+								<Label Content="3" ToolTip="IButton 3" />
+								<Label Content="4" ToolTip="IButton 4" />
+								<Label Content="5" ToolTip="IButton 5" />
+								<Label Content="6" ToolTip="IButton 6" />
+								<Label Content="7" ToolTip="IButton 7" />
+								<Label Content="8" ToolTip="IButton 8" />
+								<Label Content="9" ToolTip="IButton 9" />
+								<Label Content="10" ToolTip="IButton 10" />
+								<Label Content="11" ToolTip="IButton 11" />
+								<Label Content="12" ToolTip="IButton 12" />
+								<Label Content="13" ToolTip="IButton 13" />
+								<Label Content="14" ToolTip="IButton 14" />
+								<Label Content="15" ToolTip="IButton 15" />
+								<Label Content="16" ToolTip="IButton 16" />
+							</UniformGrid>
+						</GroupBox>
+						<GroupBox Header="AXES">
+							<UniformGrid Columns="8">
+								<Label Content="1" ToolTip="Axis 1" />
+								<Label Content="2" ToolTip="Axis 2" />
+								<Label Content="3" ToolTip="Axis 3" />
+								<Label Content="4" ToolTip="Axis 4" />
+								<Label Content="5" ToolTip="Axis 5" />
+								<Label Content="6" ToolTip="Axis 6" />
+							</UniformGrid>
+						</GroupBox>
+						<GroupBox Header="HALF AXES">
+							<UniformGrid Columns="8">
+								<Label Content="1" ToolTip="HAxis 1" />
+								<Label Content="2" ToolTip="HAxis 2" />
+								<Label Content="3" ToolTip="HAxis 3" />
+								<Label Content="4" ToolTip="HAxis 4" />
+								<Label Content="5" ToolTip="HAxis 5" />
+								<Label Content="6" ToolTip="HAxis 6" />
+							</UniformGrid>
+						</GroupBox>
+						<GroupBox Header="INVERTED AXES">
+							<UniformGrid Columns="8">
+								<Label Content="1" ToolTip="IAxis 1" />
+								<Label Content="2" ToolTip="IAxis 2" />
+								<Label Content="3" ToolTip="IAxis 3" />
+								<Label Content="4" ToolTip="IAxis 4" />
+								<Label Content="5" ToolTip="IAxis 5" />
+								<Label Content="6" ToolTip="IAxis 6" />
+							</UniformGrid>
+						</GroupBox>
+						<GroupBox Header="INVERTED HALF AXES">
+							<UniformGrid Columns="8">
+								<Label Content="1" ToolTip="IHAxis 1" />
+								<Label Content="2" ToolTip="IHAxis 2" />
+								<Label Content="3" ToolTip="IHAxis 3" />
+								<Label Content="4" ToolTip="IHAxis 4" />
+								<Label Content="5" ToolTip="IHAxis 5" />
+								<Label Content="6" ToolTip="IHAxis 6" />
+							</UniformGrid>
+						</GroupBox>
+						<GroupBox Header="POWS">
+							<UniformGrid Columns="8">
+								<Label Content="1" ToolTip="POV 1" />
+							</UniformGrid>
+						</GroupBox>
+					</StackPanel>-->
+				</StackPanel>
+			</StackPanel>
+		</ScrollViewer>
+		<!--  LEFT  -->
+		<StackPanel Grid.Column="1">
 			<StackPanel Style="{StaticResource StackPanelLeft}">
 				<Grid
 					Width="75"
-					Height="32"
-					Margin="29,0,3,0"
+					Height="26"
+					Margin="3,0,3,0"
 					HorizontalAlignment="Left">
 					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
 						<Label
 							Name="TriggerLeftDeadzoneLabel"
-							Margin="0,0,6,0"
+							Margin="0,0,9,0"
 							Content="0"
 							Opacity="0.3"
 							ToolTip="Deadzone" />
@@ -111,11 +251,37 @@
 					Opacity="0.3" />
 			</StackPanel>
 			<!--  LeftTrigger  -->
-			<StackPanel Style="{StaticResource StackPanelLeft}">
-				<Menu Tag="{Binding ElementName=LeftTriggerTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
-				<TextBox x:Name="TriggerLeftTextBox" x:FieldModifier="public" />
-				<Label x:Name="TriggerLeftLabel" Content="Trigger" />
-			</StackPanel>
+			<Grid
+				Width="139"
+				HorizontalAlignment="Left"
+				Background="Transparent"
+				IsHitTestVisible="True"
+				MouseEnter="RecordClear_MouseEnter"
+				MouseLeave="RecordClear_MouseLeave">
+				<StackPanel Style="{StaticResource StackPanelLeft}">
+					<Menu Tag="{Binding ElementName=LeftTriggerTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<TextBox x:Name="TriggerLeftTextBox" x:FieldModifier="public" MouseEnter="RecordClear_MouseEnter" />
+					<Label x:Name="TriggerLeftLabel" Content="Trigger" IsHitTestVisible="False" />
+				</StackPanel>
+				<StackPanel
+					Name="RecordClearButtons"
+					HorizontalAlignment="Right"
+					Background="{StaticResource BackgroundLight}"
+					Orientation="Horizontal"
+					Visibility="Visible">
+					<Button>
+						<Border
+							Width="14"
+							Height="14"
+							Margin="1"
+							Background="{StaticResource ColorRecord}"
+							CornerRadius="8" />
+					</Button>
+					<Button Margin="0,3,3,3">
+						<ContentControl Content="{StaticResource Icon_broom}" />
+					</Button>
+				</StackPanel>
+			</Grid>
 			<!--  LeftShoulder  -->
 			<StackPanel Style="{StaticResource StackPanelLeft}">
 				<Menu Tag="{Binding ElementName=LeftShoulderTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
@@ -123,7 +289,7 @@
 				<Label x:Name="BumperLeftLabel" Content="Bumper" />
 			</StackPanel>
 			<!--  ButtonBack  -->
-			<StackPanel Margin="0,32,0,0" Style="{StaticResource StackPanelLeft}">
+			<StackPanel Margin="0,20,0,0" Style="{StaticResource StackPanelLeft}">
 				<Menu Tag="{Binding ElementName=ButtonBackTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 				<TextBox x:Name="MenuBackTextBox" x:FieldModifier="public" />
 				<Label x:Name="MenuBackLabel" Content="Back" />
@@ -134,7 +300,6 @@
 				<TextBox x:Name="MenuStartTextBox" x:FieldModifier="public" />
 				<Label x:Name="MenuStartLabel" Content="Start" />
 			</StackPanel>
-
 			<!--  ButtonGuide  -->
 			<StackPanel Style="{StaticResource StackPanelLeft}">
 				<Menu Tag="{Binding ElementName=ButtonGuideTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
@@ -148,19 +313,20 @@
 				<Label x:Name="DPadLabel" Content="D-Pad" />
 			</StackPanel>
 			<!--  LeftThumb  -->
-			<Grid Width="133" Height="32" HorizontalAlignment="Left">
+			<Grid Height="26" HorizontalAlignment="Left">
 				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+					<Label
+						Name="StickLeftDeadzoneLabel"
+						Margin="3,0,9,0"
+						Content="2000"
+						Opacity="0.3"
+						ToolTip="Deadzone" />
 					<Label
 						Name="StickLeftAxisXLabel"
 						Margin="0"
 						Content="0"
 						ToolTip="X" />
-					<Label
-						Name="StickLeftDeadzoneLabel"
-						Margin="6,0,6,0"
-						Content="2000"
-						Opacity="0.3"
-						ToolTip="Deadzone" />
+					<Label Margin="9,0,9,0" Content=":" />
 					<Label
 						Name="StickLeftAxisYLabel"
 						Margin="0"
@@ -196,7 +362,8 @@
 				<Label x:Name="StickLeftButtonLabel" Content="Stick Button" />
 			</StackPanel>
 		</StackPanel>
-		<StackPanel Grid.Row="2" Grid.Column="0">
+		<!--  Stick Left  -->
+		<StackPanel Grid.Row="2" Grid.Column="1">
 			<!--  LeftThumbUp  -->
 			<StackPanel Style="{StaticResource StackPanelLeft}">
 				<Menu Tag="{Binding ElementName=LeftThumbUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
@@ -222,22 +389,43 @@
 				<Label x:Name="StickLeftDownLabel" Content="Stick Down" />
 			</StackPanel>
 		</StackPanel>
-
-		<local:PadItem_General_XboxImageControl
-			x:Name="XboxImage"
-			Grid.Row="1"
-			Grid.Column="1"
-			Width="Auto"
-			Height="Auto"
-			MaxWidth="400"
-			MaxHeight="600"
-			HorizontalAlignment="Center"
-			VerticalAlignment="Top" />
-		<StackPanel
-			Grid.Row="0"
-			Grid.RowSpan="2"
+		<!--  Image  -->
+		<Viewbox
 			Grid.Column="2"
-			Orientation="Vertical">
+			Width="Auto"
+			Height="390"
+			Margin="0,0,0,-50">
+			<local:PadItem_General_XboxImageControl x:Name="XboxImage" VerticalAlignment="Top" />
+		</Viewbox>
+		<!--  DPad  -->
+		<StackPanel Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center">
+			<!--  DPadUp  -->
+			<StackPanel Style="{StaticResource StackPanelRight}">
+				<Label x:Name="DPadUpLabel" Content="D-Pad Up" />
+				<TextBox x:Name="DPadUpTextBox" x:FieldModifier="public" />
+				<Menu Tag="{Binding ElementName=DPadUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+			</StackPanel>
+			<!--  DPadLeft  -->
+			<StackPanel Style="{StaticResource StackPanelRight}">
+				<Label x:Name="DPadLeftLabel" Content="D-Pad Left" />
+				<TextBox x:Name="DPadLeftTextBox" x:FieldModifier="public" />
+				<Menu Tag="{Binding ElementName=DPadLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+			</StackPanel>
+			<!--  DPadRight  -->
+			<StackPanel Style="{StaticResource StackPanelRight}">
+				<Label x:Name="DPadRightLabel" Content="D-Pad Right" />
+				<TextBox x:Name="DPadRightTextBox" x:FieldModifier="public" />
+				<Menu Tag="{Binding ElementName=DPadRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+			</StackPanel>
+			<!--  DPadDown  -->
+			<StackPanel Style="{StaticResource StackPanelRight}">
+				<Label x:Name="DPadDownLabel" Content="D-Pad Down" />
+				<TextBox x:Name="DPadDownTextBox" x:FieldModifier="public" />
+				<Menu Tag="{Binding ElementName=DPadDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+			</StackPanel>
+		</StackPanel>
+		<!--  RIGHT  -->
+		<StackPanel Grid.Column="3">
 			<!--  RIGHT  -->
 			<StackPanel Style="{StaticResource StackPanelRight}">
 				<Label
@@ -247,21 +435,21 @@
 					Opacity="0.3" />
 				<Grid
 					Width="75"
-					Height="32"
-					Margin="3,0,29,0"
+					Height="26"
+					Margin="3,0,3,0"
 					HorizontalAlignment="Right">
 					<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-						<Label
-							Name="TriggerRightDeadzoneLabel"
-							Margin="0,0,6,0"
-							Content="0"
-							Opacity="0.3"
-							ToolTip="Deadzone" />
 						<Label
 							Name="RightTextBox"
 							Margin="0"
 							Content="0"
 							ToolTip="Y" />
+						<Label
+							Name="TriggerRightDeadzoneLabel"
+							Margin="9,0,0,0"
+							Content="0"
+							Opacity="0.3"
+							ToolTip="Deadzone" />
 					</StackPanel>
 				</Grid>
 			</StackPanel>
@@ -271,16 +459,14 @@
 				<TextBox x:Name="TriggerRightTextBox" x:FieldModifier="public" />
 				<Menu Tag="{Binding ElementName=RightTriggerTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 			</StackPanel>
-
 			<!--  RightShoulder  -->
 			<StackPanel Style="{StaticResource StackPanelRight}">
 				<Label x:Name="BumperRightLabel" Content="Bumper" />
 				<TextBox x:Name="BumperRightTextBox" x:FieldModifier="public" />
 				<Menu Tag="{Binding ElementName=RightShoulderTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 			</StackPanel>
-
 			<!--  ButtonY  -->
-			<StackPanel Margin="0,32,0,0" Style="{StaticResource StackPanelRight}">
+			<StackPanel Margin="0,20,0,0" Style="{StaticResource StackPanelRight}">
 				<Label x:Name="ActionYLabel" Content="Y Button" />
 				<TextBox x:Name="ActionYTextBox" x:FieldModifier="public" />
 				<Menu Tag="{Binding ElementName=ButtonYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
@@ -304,24 +490,25 @@
 				<Menu Tag="{Binding ElementName=ButtonATextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 			</StackPanel>
 			<!--  RightThumb  -->
-			<Grid Width="133" Height="32" HorizontalAlignment="Right">
+			<Grid Height="26" HorizontalAlignment="Right">
 				<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
 					<Label
 						Name="StickRightAxisXLabel"
 						Margin="0"
 						Content="0"
 						ToolTip="X" />
-					<Label
-						Name="StickRightDeadzoneLabel"
-						Margin="6,0,6,0"
-						Content="2000"
-						Opacity="0.3"
-						ToolTip="Deadzone" />
+					<Label Margin="9,0,9,0" Content=":" />
 					<Label
 						Name="StickRightAxisYLabel"
 						Margin="0"
 						Content="0"
 						ToolTip="Y" />
+					<Label
+						Name="StickRightDeadzoneLabel"
+						Margin="9,0,3,0"
+						Content="2000"
+						Opacity="0.3"
+						ToolTip="Deadzone" />
 				</StackPanel>
 				<TextBox
 					Name="RightThumbTextBox"
@@ -352,37 +539,8 @@
 				<Menu Tag="{Binding ElementName=RightThumbButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
 			</StackPanel>
 		</StackPanel>
-
-		<!--  DPad  -->
-		<StackPanel Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center">
-			<!--  DPadUp  -->
-			<StackPanel Style="{StaticResource StackPanelRight}">
-				<Label x:Name="DPadUpLabel" Content="D-Pad Up" />
-				<TextBox x:Name="DPadUpTextBox" x:FieldModifier="public" />
-				<Menu Tag="{Binding ElementName=DPadUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
-			</StackPanel>
-			<!--  DPadLeft  -->
-			<StackPanel Style="{StaticResource StackPanelRight}">
-				<Label x:Name="DPadLeftLabel" Content="D-Pad Left" />
-				<TextBox x:Name="DPadLeftTextBox" x:FieldModifier="public" />
-				<Menu Tag="{Binding ElementName=DPadLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
-			</StackPanel>
-			<!--  DPadRight  -->
-			<StackPanel Style="{StaticResource StackPanelRight}">
-				<Label x:Name="DPadRightLabel" Content="D-Pad Right" />
-				<TextBox x:Name="DPadRightTextBox" x:FieldModifier="public" />
-				<Menu Tag="{Binding ElementName=DPadRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
-			</StackPanel>
-			<!--  DPadDown  -->
-			<StackPanel Style="{StaticResource StackPanelRight}">
-				<Label x:Name="DPadDownLabel" Content="D-Pad Down" />
-				<TextBox x:Name="DPadDownTextBox" x:FieldModifier="public" />
-				<Menu Tag="{Binding ElementName=DPadDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
-			</StackPanel>
-		</StackPanel>
-
-		<!--  Right Thumb  -->
-		<StackPanel Grid.Row="2" Grid.Column="2">
+		<!--  Stick Right  -->
+		<StackPanel Grid.Row="2" Grid.Column="3">
 			<!--  RightThumbUp  -->
 			<StackPanel Style="{StaticResource StackPanelRight}">
 				<Label x:Name="StickRightUpLabel" Content="Stick Up" />

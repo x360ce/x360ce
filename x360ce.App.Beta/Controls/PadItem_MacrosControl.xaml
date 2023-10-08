@@ -28,7 +28,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                         <Button Name="AddButton" Click="AddButton_Click">
                             <StackPanel>
                                 <ContentControl Content="{StaticResource Icon_Add}" />
@@ -47,29 +47,26 @@
                                 <Label Content="Record Source" />
                             </StackPanel>
                         </Button>
-
-                        <Button Name="DeleteButton" Margin="0,3,3,3" Click="DeleteButton_Click">
-                            <StackPanel>
-                                <ContentControl Content="{StaticResource Icon_Delete}" />
-                                <Label Content="Delete" />
-                            </StackPanel>
-                        </Button>
-                        <Separator Style="{StaticResource MainSeparator}" />
-                        <Button Name="ResetButton" Click="ResetButton_Click">
+                        <Button Name="ResetButton" Click="ResetButton_Click" Margin="0,3,3,3">
                             <StackPanel>
                                 <ContentControl Content="{StaticResource Icon_Reset}" />
                                 <Label Content="Reset" />
                             </StackPanel>
                         </Button>
-                        <Separator Style="{StaticResource MainSeparator}" />
                         <Button Name="RefreshButton" Margin="0,3,3,3" Click="RefreshButton_Click">
                             <StackPanel>
                                 <ContentControl Content="{StaticResource Icon_Refresh}" />
                                 <Label Content="Refresh" />
                             </StackPanel>
                         </Button>
-                    </StackPanel>
-                    <DataGrid
+						<Button Name="DeleteButton" Margin="0,3,3,3" Click="DeleteButton_Click">
+							<StackPanel>
+								<ContentControl Content="{StaticResource Icon_Delete}" />
+								<Label Content="Delete" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
+					<DataGrid
                         xmlns:local="clr-namespace:x360ce.App.Converters"
                         x:Name="MainDataGrid"
                         Grid.Row="2"
@@ -86,7 +83,7 @@
                                 Binding="{Binding IsEnabled}"
                                 EditingElementStyle="{StaticResource CheckBoxCell_Default}"
                                 ElementStyle="{StaticResource CheckBoxCell_Default}"
-                                Header="On" />
+                                Header=" On" />
                             <DataGridTextColumn
                                 Binding="{Binding Name}"
                                 EditingElementStyle="{StaticResource TextBoxCell}"
@@ -138,7 +135,7 @@
                                 Binding="{Binding Text}"
                                 EditingElementStyle="{StaticResource TextBoxCell}"
                                 ElementStyle="{StaticResource TextBlockCell}"
-                                Header="Text" />
+                                Header="Text " />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

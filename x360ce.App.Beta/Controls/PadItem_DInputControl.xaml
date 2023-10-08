@@ -436,7 +436,7 @@
                             Width="Auto"
                             Binding="{Binding Offset}"
                             ElementStyle="{StaticResource TextBlockCenterCell}"
-                            Header="Offset" />
+                            Header=" Offset" />
                         <DataGridTextColumn
                             Width="Auto"
                             Binding="{Binding TypeName}"
@@ -486,7 +486,7 @@
                             Width="Auto"
                             Binding="{Binding PhysicalRange}"
                             ElementStyle="{StaticResource TextBlockLeftCell}"
-                            Header="Physical" />
+                            Header="Physical " />
                         <DataGridTextColumn Width="*" />
                     </DataGrid.Columns>
                 </DataGrid>

@@ -219,19 +219,19 @@ namespace x360ce.App.Controls
 			foreach (var ii in Infos)
 			{
 				TextBox textBox = ii.Control as TextBox;
-				textBox.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorOver); };
-				textBox.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorNormalPath); };
-				textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverRecordColor(sender, colorRecord); };
+				textBox.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorOver); };
+				textBox.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorNormalPath); };
+				textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverActiveRecordColor(sender, colorRecord); };
 
 				Path path = ii.Path;
-				path.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorOver); };
-				path.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverRecordColor(sender, colorNormalPath); };
-				path.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverRecordColor(sender, colorRecord); };
+				path.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorOver); };
+				path.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorNormalPath); };
+				path.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverActiveRecordColor(sender, colorRecord); };
 			}
 		}
 
 		// Set navigation color.
-		public void setNormalOverRecordColor(object sender, SolidColorBrush setColor)
+		public void setNormalOverActiveRecordColor(object sender, SolidColorBrush setColor)
 		{
 			SolidColorBrush senderColor = colorNormalPath;
 			if (sender is Path) { senderColor = ((Path)sender).Fill as SolidColorBrush; }
@@ -250,7 +250,7 @@ namespace x360ce.App.Controls
 				var senderText = (sender as ImageInfo).Control as TextBox;
 
 				if (senderColor.Color != colorRecord.Color && senderColor.Color != colorOver.Color)
-				{
+				{				
 					senderText.Background = setColor == colorNormalPath ? colorNormalTextBox : setColor;
 					senderPath.Fill = setColor;
 				}

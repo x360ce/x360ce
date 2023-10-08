@@ -6,8 +6,8 @@
     xmlns:issues="clr-namespace:JocysCom.ClassLibrary.Controls.IssuesControl;assembly=x360ce.Engine"
     xmlns:local="clr-namespace:x360ce.App.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="700"
-    d:DesignWidth="800"
+    d:DesignHeight="900"
+    d:DesignWidth="1000"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
@@ -19,7 +19,7 @@
                     <Label Content="PAD 1" />
                 </StackPanel>
             </TabItem.Header>
-            <local:PadControl x:Name="Pad1Panel" Loaded="Pad1Panel_Loaded" />
+			<local:PadControl x:Name="Pad1Panel" Loaded="Pad1Panel_Loaded" />
         </TabItem>
         <TabItem Name="Pad2TabPage">
             <TabItem.Header>

@@ -84,12 +84,16 @@ namespace x360ce.App.Controls
 		void UpdateButtonsTable(bool[] buttons)
 		{
 			var buttonsText = "";
+			var id = new List<int>();
 			if (buttons != null)
 			{
 				var ids = new List<string>();
 				for (int i = 0; i < buttons.Length; i++)
 					if (buttons[i])
+					{
 						ids.Add(i.ToString("00"));
+						id.Add(i);
+					}
 				buttonsText = string.Join(" ", ids);
 			}
 			DiButtonsTable[0].M = buttonsText;

@@ -6,15 +6,16 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="120"
-	d:DesignWidth="640"
+
+	d:DesignWidth="600"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
+
 	<Grid VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
+			<RowDefinition Height="100" />
 			<RowDefinition Height="1" />
 		</Grid.RowDefinitions>
 		<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
@@ -26,7 +27,7 @@
 			<CheckBox Name="UseXInputStateCheckBox" Click="UseXInputStateCheckBox_Click" Content="Use XInput State" />
 			<CheckBox Name="AutoMapCheckBox" Click="AutoMapCheckBox_Click" Content="Auto Map" />
 		</StackPanel>
-		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+		<StackPanel Margin="6,0,3,0" HorizontalAlignment="Right" Orientation="Horizontal">
 			<Button Name="AddButton" Margin="0,3,3,3" Click="AddButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_add}" />
@@ -39,7 +40,7 @@
 					<Label Content="Remove" />
 				</StackPanel>
 			</Button>
-			<Button Name="RefreshButton" Margin="0,3,3,3" Click="RefreshButton_Click">
+			<Button Name="RefreshButton" Margin="0,3,0,3" Click="RefreshButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_Refresh}" />
 					<Label Content="Refresh" />
@@ -47,14 +48,14 @@
 			</Button>
 		</StackPanel>
 		<DataGrid
-			x:Name="MainDataGrid"
+			Name="MainDataGrid"
 			Grid.Row="1"
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			AutoGenerateColumns="False"
 			IsReadOnly="True"
 			ScrollViewer.CanContentScroll="True"
-			ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+			ScrollViewer.HorizontalScrollBarVisibility="Auto"
 			ScrollViewer.VerticalScrollBarVisibility="Auto"
 			SelectionChanged="MainDataGrid_SelectionChanged"
 			SelectionMode="Single">
@@ -75,11 +76,7 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 				<!--  Connection type  -->
-				<DataGridTemplateColumn
-					x:Name="ConnectionClassColumn"
-					Width="SizeToCells"
-					Header=""
-					IsReadOnly="True">
+				<DataGridTemplateColumn x:Name="ConnectionClassColumn" Header="" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<Image Style="{StaticResource ImageCell_Default}">
@@ -96,13 +93,11 @@
 				</DataGridTemplateColumn>
 				<DataGridCheckBoxColumn
 					x:Name="IsEnabledColumn"
-					Width="Auto"
 					Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
 					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
 					ElementStyle="{StaticResource CheckBoxCell_Default}"
 					Header="On" />
 				<DataGridTextColumn
-					Width="Auto"
 					Binding="{Binding InstanceId}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
@@ -110,7 +105,6 @@
 					SortDirection="{x:Null}" />
 				<DataGridTextColumn
 					x:Name="VendorNameColumn"
-					Width="Auto"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Vendor Name">
@@ -129,25 +123,23 @@
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="Device Name" />
 				<DataGridTextColumn
-					Width="Auto"
 					Binding="{Binding PadSettingChecksum, Converter={StaticResource _ChecksumToIdConverter}}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
 					Header="SID"
 					SortDirection="{x:Null}" />
 				<DataGridTextColumn
-					Width="Auto"
 					Binding="{Binding Completion}"
 					EditingElementStyle="{StaticResource TextBoxRightCell}"
 					ElementStyle="{StaticResource TextBlockRightCell}"
-					Header="Comp" />
+					Header="Completion " />
 			</DataGrid.Columns>
 		</DataGrid>
-		<StackPanel
+		<Border
 			Grid.Row="2"
 			Height="1"
-			VerticalAlignment="Bottom"
-			Background="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}" />
-
+			Background="{StaticResource BorderDark}" />
 	</Grid>
+
+
 </UserControl>
