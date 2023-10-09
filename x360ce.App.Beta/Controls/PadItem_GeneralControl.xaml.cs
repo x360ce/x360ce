@@ -202,8 +202,10 @@ namespace x360ce.App.Controls
 
 		public List<Label> AxisList = new List<Label>();
 		public List<Label> HAxisList = new List<Label>();
+		public List<Label> FAxisList = new List<Label>();
 		public List<Label> IAxisList = new List<Label>();
 		public List<Label> IHAxisList = new List<Label>();
+		public List<Label> IFAxisList = new List<Label>();
 
 		public List<Label> SliderList = new List<Label>();
 		public List<Label> ISliderList = new List<Label>();
@@ -274,15 +276,16 @@ namespace x360ce.App.Controls
 				}
 				else if (headerName == "AXIS · HALF TO FULL")
 				{ 
-					headerGrid.Children.Add(new Path { Data = normalInactive, Fill = colorBlack, Opacity = 0.3 });
+					headerGrid.Children.Add(new Path { Data = normalInactive, Fill = colorBlack });
 					headerGrid.Children.Add(new Path { Data = normalActiveHalf1, Fill = colorActive } );
 					HAxisList.Add(buttonLabel);
 				}
-				//else if (headerName == "AXIS · HALF2")
-				//{
-				//	headerGrid.Children.Add(new Path { Data = normalInactive, Fill = colorBlack, Opacity = 0.3 });
-				//	headerGrid.Children.Add(new Path { Data = normalActiveHalf2, Fill = colorActive });
-				//}
+				else if (headerName == "AXIS · FULL TO HALF")
+				{
+					headerGrid.Children.Add(new Path { Data = normalInactive, Fill = colorBlack });
+					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					FAxisList.Add(buttonLabel);
+				}
 				else if (headerName == "AXIS · INVERTED")
 				{ 
 					headerGrid.Children.Add(new Path { Data = invertedActive, Fill = colorActive });
@@ -290,15 +293,16 @@ namespace x360ce.App.Controls
 				}
 				else if (headerName == "AXIS · INVERTED · HALF TO FULL")
 				{
-					headerGrid.Children.Add(new Path { Data = invertedInactive, Fill = colorBlack, Opacity = 0.3 });
+					headerGrid.Children.Add(new Path { Data = invertedInactive, Fill = colorBlack });
 					headerGrid.Children.Add(new Path { Data = invertedActiveHalf1, Fill = colorActive });
 					IHAxisList.Add(buttonLabel);
 				}
-				//else if (headerName == "AXIS · INVERTED · HALF2")
-				//{
-				//	headerGrid.Children.Add(new Path { Data = invertedInactive, Fill = colorBlack, Opacity = 0.3 });
-				//	headerGrid.Children.Add(new Path { Data = invertedActiveHalf2, Fill = colorActive });
-				//}
+				else if (headerName == "AXIS · INVERTED · FULL TO HALF")
+				{
+					headerGrid.Children.Add(new Path { Data = invertedInactive, Fill = colorBlack });
+					headerGrid.Children.Add(new Path { Data = invertedActive, Fill = colorActive });
+					IFAxisList.Add(buttonLabel);
+				}
 				else if (headerName == "SLIDER")
 				{
 					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
@@ -367,14 +371,18 @@ namespace x360ce.App.Controls
 				{
 					AxisList[index].Background =				
 					HAxisList[index].Background =
+					FAxisList[index].Background =
 					IAxisList[index].Background =
 					IHAxisList[index].Background =
+					IFAxisList[index].Background =
 						customDiState.Axis[index] > 32767 + 2000 || customDiState.Axis[index] < 32767 - 2000 ? colorActive : colorNormalLabel;
 
 					AxisList[index].ToolTip = customDiState.Axis[index].ToString();
 					IAxisList[index].ToolTip = Math.Abs(customDiState.Axis[index] - 65535).ToString();
 					HAxisList[index].ToolTip = Math.Abs((customDiState.Axis[index] - 32767) * 2).ToString();
+					FAxisList[index].ToolTip = Math.Round((double)customDiState.Axis[index] / 2).ToString();
 					IHAxisList[index].ToolTip = Math.Abs(Math.Abs((customDiState.Axis[index] - 32767) * 2) -65535).ToString();
+					IFAxisList[index].ToolTip = Math.Abs(Math.Round((double)customDiState.Axis[index] / 2 - 32767)).ToString();
 
 				}
 			}
@@ -419,8 +427,10 @@ namespace x360ce.App.Controls
 
 			AxisList.Clear();
 			HAxisList.Clear();
+			FAxisList.Clear();
 			IAxisList.Clear();
 			IHAxisList.Clear();
+			IFAxisList.Clear();
 
 			SliderList.Clear();
 			ISliderList.Clear();
@@ -463,11 +473,11 @@ namespace x360ce.App.Controls
 					// Add Drag and Drop menu axes.
 					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS", "Axis");
 					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · HALF TO FULL", "HAxis");
-					//CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · HALF2", "HAxis");
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · FULL TO HALF", "FAxis");
 
 					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · INVERTED", "IAxis");
 					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · INVERTED · HALF TO FULL", "IHAxis");
-					//CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · INVERTED · HALF2", "IHAxis");
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · INVERTED · FULL TO HALF", "IFAxis");
 
 					// Add Axes.
 					mi = new MenuItem() { Header = "Axes" };
@@ -486,7 +496,7 @@ namespace x360ce.App.Controls
 					//CreateDragAndDropMenuLabels(slidersCount, "SLIDER · HALF2", "HSlider");
 
 					CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED", "ISLider");
-					CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED · HALF TO FULL", "IHSLider");
+					//CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED · HALF TO FULL", "IHSLider");
 					//CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED · HALF2", "IHSlider");
 				}
 				if (ud.DiSliderMask > 0)
