@@ -131,8 +131,11 @@ namespace x360ce.App.Controls
 				}
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
+
 				PadItemPanel.DInputPanel.UpdateFrom(ud);
-				PadItemPanel.GeneralPanel.UpdateFrom(ud);
+				// DragAndDrop menu update.
+				PadItemPanel.GeneralPanel.DragAndDropMenuUpdate(ud);
+
 				if (enable && _Imager.Recorder.Recording)
 				{
 					// Stop recording if DInput value captured.

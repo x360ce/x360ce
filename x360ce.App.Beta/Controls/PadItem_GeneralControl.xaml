@@ -28,7 +28,7 @@
 						<Setter Property="Width" Value="75" />
 						<Setter Property="AllowDrop" Value="True" />
 						<!--<Setter Property="Focusable" Value="False" />-->
-						<EventSetter Event="PreviewDrop" Handler="DragAndDrop_Target_Drop" />
+						<EventSetter Event="PreviewDrop" Handler="DragAndDropMenu_Target_Drop" />
 					</Style>
 					<!--  Menu template  -->
 					<ControlTemplate x:Key="ReusableMenuTemplate" TargetType="Menu">
@@ -113,7 +113,7 @@
 									</ControlTemplate>
 								</Setter.Value>
 							</Setter>
-							<EventSetter Event="PreviewMouseMove" Handler="DragAndDrop_Source_PreviewMouseMove" />
+							<EventSetter Event="PreviewMouseMove" Handler="DragAndDropMenu_Source_PreviewMouseMove" />
 							<!--<EventSetter Event="GiveFeedback" Handler="DragAndDrop_Source_GiveFeedback" />-->
 							<Style.Triggers>
 								<Trigger Property="IsMouseOver" Value="True">

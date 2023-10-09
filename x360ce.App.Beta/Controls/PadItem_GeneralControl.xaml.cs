@@ -211,9 +211,9 @@ namespace x360ce.App.Controls
 			StickRightUpLabel.Content = item.RightThumbUp;
 		}
 
-		#region Direct Input Labels
+		#region Drag and Drop Menu
 
-		private void DragAndDrop_Source_PreviewMouseMove(object sender, MouseEventArgs e)
+		private void DragAndDropMenu_Source_PreviewMouseMove(object sender, MouseEventArgs e)
 		{
 			Label label = sender as Label;
 			if (label != null && e.LeftButton == MouseButtonState.Pressed)
@@ -222,7 +222,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void DragAndDrop_Target_Drop(object sender, DragEventArgs e)
+		private void DragAndDropMenu_Target_Drop(object sender, DragEventArgs e)
 		{
 			TextBox textbox = sender as TextBox;
 			if (e.Data.GetDataPresent(DataFormats.Text))
@@ -233,32 +233,7 @@ namespace x360ce.App.Controls
 			//e.Handled = true;
 		}
 
-		object updateLock = new object();
-		object oldState = null;
-
-		public void UpdateFrom(UserDevice ud)
-		{
-			CustomDiState customDiState = null;
-			var state = ud?.DeviceState;
-			if (state == null)
-				return;
-			if (state == oldState)
-				return;
-			lock (updateLock)
-			{
-				if (state is MouseState mState)
-					customDiState = new CustomDiState(mState);
-				if (state is KeyboardState kState)
-					customDiState = new CustomDiState(kState);
-				if (state is JoystickState jState)
-					customDiState = new CustomDiState(jState);
-			}
-			if (customDiState == null)
-				return;
-			setDInputNormalActiveColor(ud, customDiState);
-		}
-
-		private void CreateDirectInputIDragAndDropMenuLabels(int total, string headerName, string itemName)
+		private void CreateDragAndDropMenuLabels(int total, string headerName, string itemName)
 		{
 			// Create GroupBox.
 			GroupBox buttonsGroupBox = new GroupBox { Header = headerName, };
@@ -278,11 +253,11 @@ namespace x360ce.App.Controls
 					ToolTip = itemName + " " + i,
 					Tag = itemName + " " + i
 				};
-				buttonLabel.PreviewMouseMove += DragAndDrop_Source_PreviewMouseMove;
+				buttonLabel.PreviewMouseMove += DragAndDropMenu_Source_PreviewMouseMove;
 				// Add label to the UniformGrid
 				buttonsUniformGrid.Children.Add(buttonLabel);
-				// LabelList.Add(buttonLabel);
 
+				// Lists.
 				if (headerName.Contains("BUTTONS")) { ButtonsList.Add(buttonLabel); }
 				else if (headerName.Contains("AXES")) { AxesList.Add(buttonLabel); }
 				else if (headerName.Contains("SLIDERS")) { SlidersList.Add(buttonLabel); }
@@ -307,6 +282,31 @@ namespace x360ce.App.Controls
 		int[] sliderValueList;
 		int[] povValueList;
 
+		object updateLock = new object();
+		object oldState = null;
+
+		public void DragAndDropMenuUpdate(UserDevice ud)
+		{
+			CustomDiState customDiState = null;
+			var state = ud?.DeviceState;
+			if (state == null)
+				return;
+			if (state == oldState)
+				return;
+			lock (updateLock)
+			{
+				if (state is MouseState mState)
+					customDiState = new CustomDiState(mState);
+				if (state is KeyboardState kState)
+					customDiState = new CustomDiState(kState);
+				if (state is JoystickState jState)
+					customDiState = new CustomDiState(jState);
+			}
+			if (customDiState == null)
+				return;
+			setDInputNormalActiveColor(ud, customDiState);
+		}
+
 		public void setDInputNormalActiveColor(UserDevice ud, CustomDiState customDiState)
 		{
 			buttonValueList = customDiState.Buttons;
@@ -323,7 +323,7 @@ namespace x360ce.App.Controls
 					ButtonsList[index].ToolTip = customDiState.Buttons[index].ToString();
 				}
 			}
-			// Axis1Label, HAxis1Label, IAxis1Label, IHAxisLabel1. 
+			// Axis1Label, HAxis1Label, IAxis1Label, IHAxis1Label. 
 			if (AxesList.Count > 0)
 			{
 				for (int index = 0; index < ud.CapAxeCount; index++)
@@ -332,7 +332,7 @@ namespace x360ce.App.Controls
 					AxesList[index].ToolTip = customDiState.Axis[index].ToString();
 				}
 			}
-			// Slider1Label, HSlider1Label, ISlider1Label, IHSliderLabel1.
+			// Slider1Label, HSlider1Label, ISlider1Label, IHSlider1Label.
 			if (SlidersList.Count > 0)
 			{
 				for (int index = 0; index < SlidersList.Count; index++)
@@ -364,8 +364,13 @@ namespace x360ce.App.Controls
 		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
-			// Delete all Drag and Drop menu children.
+			// Delete all DragAndDrop menu children.
 			DragAndDropStackPanel.Children.Clear();
+			// Clear all DragAndDrop menu lists.
+			ButtonsList.Clear();
+			AxesList.Clear();
+			SlidersList.Clear();
+			POVsList.Clear();
 
 			DiMenuStrip.Clear();
 			MenuItem mi;
@@ -389,8 +394,8 @@ namespace x360ce.App.Controls
 			if (!ud.IsKeyboard)
 			{
 				// Add Drag and Drop menu buttons.
-				CreateDirectInputIDragAndDropMenuLabels(ud.CapButtonCount, "BUTTONS", "Button");
-				CreateDirectInputIDragAndDropMenuLabels(ud.CapButtonCount, "INVERTED BUTTONS", "IButton");
+				CreateDragAndDropMenuLabels(ud.CapButtonCount, "BUTTONS", "Button");
+				CreateDragAndDropMenuLabels(ud.CapButtonCount, "INVERTED BUTTONS", "IButton");
 
 				// Add Buttons.
 				mi = new MenuItem() { Header = "Buttons" };
@@ -401,10 +406,10 @@ namespace x360ce.App.Controls
 				if (ud.DiAxeMask > 0)
 				{
 					// Add Drag and Drop menu axes.
-					CreateDirectInputIDragAndDropMenuLabels(ud.CapAxeCount, "AXES", "Axis");
-					CreateDirectInputIDragAndDropMenuLabels(ud.CapAxeCount, "HALF AXES", "HAxis");
-					CreateDirectInputIDragAndDropMenuLabels(ud.CapAxeCount, "INVERTED AXES", "IAxis");
-					CreateDirectInputIDragAndDropMenuLabels(ud.CapAxeCount, "INVERTED HALF AXES", "IHAxis");
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXES", "Axis");
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "HALF AXES", "HAxis");
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "INVERTED AXES", "IAxis");
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "INVERTED HALF AXES", "IHAxis");
 
 					// Add Axes.
 					mi = new MenuItem() { Header = "Axes" };
@@ -417,10 +422,10 @@ namespace x360ce.App.Controls
 				if (slidersCount > 0)
 				{
 					// Add Drag and Drop menu sliders.
-					CreateDirectInputIDragAndDropMenuLabels(slidersCount, "SLIDERS", "Slider");
-					CreateDirectInputIDragAndDropMenuLabels(slidersCount, "HALF SLIDERS", "HSlider");
-					CreateDirectInputIDragAndDropMenuLabels(slidersCount, "INVERTED SLIDERS", "ISLider");
-					CreateDirectInputIDragAndDropMenuLabels(slidersCount, "INVERTED HALF SLIDERS", "IHSlider");
+					CreateDragAndDropMenuLabels(slidersCount, "SLIDERS", "Slider");
+					CreateDragAndDropMenuLabels(slidersCount, "HALF SLIDERS", "HSlider");
+					CreateDragAndDropMenuLabels(slidersCount, "INVERTED SLIDERS", "ISLider");
+					CreateDragAndDropMenuLabels(slidersCount, "INVERTED HALF SLIDERS", "IHSlider");
 				}
 				if (ud.DiSliderMask > 0)
 				{
@@ -438,7 +443,7 @@ namespace x360ce.App.Controls
 				if (ud.CapPovCount > 0)
 				{
 					// Add Drag and Drop menu POVs.
-					CreateDirectInputIDragAndDropMenuLabels(ud.CapPovCount, "POVS", "POV");
+					CreateDragAndDropMenuLabels(ud.CapPovCount, "POVS", "POV");
 
 					// Add POVs.
 					mi = new MenuItem() { Header = cPOVs };
