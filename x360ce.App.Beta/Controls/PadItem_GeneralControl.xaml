@@ -85,143 +85,125 @@
 			<ColumnDefinition Width="155" />
 		</Grid.ColumnDefinitions>
 		<!--  Buttons and Axes  -->
-		<ScrollViewer Grid.RowSpan="3" Margin="0,0,9,0" VerticalScrollBarVisibility="Auto">
-			<StackPanel>
-				<Label
-					IsHitTestVisible="False"
-					Margin="0,5,0,0"
-					HorizontalAlignment="Center"
-					Content="Direct Input Drag and Drop Menu"
-					Opacity="0.3" />
-				<StackPanel Name="DragAndDropStackPanel" Margin="3,0,3,3">
-					<StackPanel.Resources>
-						<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
-							<Setter Property="Margin" Value="0" />
-							<Setter Property="Padding" Value="5,0,2,3" />
-						</Style>
-						<Style TargetType="Label">
-							<Setter Property="IsHitTestVisible" Value="True" />
-							<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-							<Setter Property="Padding" Value="5,3,5,3" />
-							<Setter Property="Margin" Value="0,0,3,3" />
-							<Setter Property="Template">
-								<Setter.Value>
-									<ControlTemplate TargetType="Label">
-										<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
-											<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-										</Border>
-									</ControlTemplate>
-								</Setter.Value>
-							</Setter>
-							<EventSetter Event="PreviewMouseMove" Handler="DragAndDropMenu_Source_PreviewMouseMove" />
-							<!--<EventSetter Event="GiveFeedback" Handler="DragAndDrop_Source_GiveFeedback" />-->
-							<Style.Triggers>
-								<Trigger Property="IsMouseOver" Value="True">
-									<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
-								</Trigger>
-							</Style.Triggers>
-						</Style>
-					</StackPanel.Resources>
-					<Label
-						Name="DragAndDropLoadingLabel"
-						Margin="0,20,0,0"
-						Padding="9,6,9,9"
-						HorizontalAlignment="Center"
-						VerticalAlignment="Top"
-						Background="Transparent"
-						Content="Loading..."
-						IsHitTestVisible="False" />
 
-					<!--<StackPanel Visibility="Collapsed">
-						<GroupBox Header="BUTTONS">
-							<UniformGrid Columns="8">
-								<Label Content="1" ToolTip="Button 1" />
-								<Label Content="2" ToolTip="Button 2" />
-								<Label Content="3" ToolTip="Button 3" />
-								<Label Content="4" ToolTip="Button 4" />
-								<Label Content="5" ToolTip="Button 5" />
-								<Label Content="6" ToolTip="Button 6" />
-								<Label Content="7" ToolTip="Button 7" />
-								<Label Content="8" ToolTip="Button 8" />
-								<Label Content="9" ToolTip="Button 9" />
-								<Label Content="10" ToolTip="Button 10" />
-								<Label Content="11" ToolTip="Button 11" />
-								<Label Content="12" ToolTip="Button 12" />
-								<Label Content="13" ToolTip="Button 13" />
-								<Label Content="14" ToolTip="Button 14" />
-								<Label Content="15" ToolTip="Button 15" />
-								<Label Content="16" ToolTip="Button 16" />
-							</UniformGrid>
-						</GroupBox>
-						<GroupBox Header="INVERTED BUTTONS">
-							<UniformGrid Columns="8">
-								<Label Content="1" ToolTip="IButton 1" />
-								<Label Content="2" ToolTip="IButton 2" />
-								<Label Content="3" ToolTip="IButton 3" />
-								<Label Content="4" ToolTip="IButton 4" />
-								<Label Content="5" ToolTip="IButton 5" />
-								<Label Content="6" ToolTip="IButton 6" />
-								<Label Content="7" ToolTip="IButton 7" />
-								<Label Content="8" ToolTip="IButton 8" />
-								<Label Content="9" ToolTip="IButton 9" />
-								<Label Content="10" ToolTip="IButton 10" />
-								<Label Content="11" ToolTip="IButton 11" />
-								<Label Content="12" ToolTip="IButton 12" />
-								<Label Content="13" ToolTip="IButton 13" />
-								<Label Content="14" ToolTip="IButton 14" />
-								<Label Content="15" ToolTip="IButton 15" />
-								<Label Content="16" ToolTip="IButton 16" />
-							</UniformGrid>
-						</GroupBox>
-						<GroupBox Header="AXES">
-							<UniformGrid Columns="8">
-								<Label Content="1" ToolTip="Axis 1" />
-								<Label Content="2" ToolTip="Axis 2" />
-								<Label Content="3" ToolTip="Axis 3" />
-								<Label Content="4" ToolTip="Axis 4" />
-								<Label Content="5" ToolTip="Axis 5" />
-								<Label Content="6" ToolTip="Axis 6" />
-							</UniformGrid>
-						</GroupBox>
-						<GroupBox Header="HALF AXES">
-							<UniformGrid Columns="8">
-								<Label Content="1" ToolTip="HAxis 1" />
-								<Label Content="2" ToolTip="HAxis 2" />
-								<Label Content="3" ToolTip="HAxis 3" />
-								<Label Content="4" ToolTip="HAxis 4" />
-								<Label Content="5" ToolTip="HAxis 5" />
-								<Label Content="6" ToolTip="HAxis 6" />
-							</UniformGrid>
-						</GroupBox>
-						<GroupBox Header="INVERTED AXES">
-							<UniformGrid Columns="8">
-								<Label Content="1" ToolTip="IAxis 1" />
-								<Label Content="2" ToolTip="IAxis 2" />
-								<Label Content="3" ToolTip="IAxis 3" />
-								<Label Content="4" ToolTip="IAxis 4" />
-								<Label Content="5" ToolTip="IAxis 5" />
-								<Label Content="6" ToolTip="IAxis 6" />
-							</UniformGrid>
-						</GroupBox>
-						<GroupBox Header="INVERTED HALF AXES">
-							<UniformGrid Columns="8">
-								<Label Content="1" ToolTip="IHAxis 1" />
-								<Label Content="2" ToolTip="IHAxis 2" />
-								<Label Content="3" ToolTip="IHAxis 3" />
-								<Label Content="4" ToolTip="IHAxis 4" />
-								<Label Content="5" ToolTip="IHAxis 5" />
-								<Label Content="6" ToolTip="IHAxis 6" />
-							</UniformGrid>
-						</GroupBox>
-						<GroupBox Header="POWS">
-							<UniformGrid Columns="8">
-								<Label Content="1" ToolTip="POV 1" />
-							</UniformGrid>
-						</GroupBox>
-					</StackPanel>-->
-				</StackPanel>
-			</StackPanel>
-		</ScrollViewer>
+		<TabControl Grid.RowSpan="3">
+			<TabItem>
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<Grid Margin="0,0,3,0">
+							<Path Data="M 16,16 0,8 16,0 Z" Fill="{StaticResource ColorActive}" />
+						</Grid>
+						<TextBlock Text="NORMAL" />
+					</StackPanel>
+				</TabItem.Header>
+
+				<ScrollViewer Margin="0,0,9,0" VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<Label
+							Margin="0,5,0,0"
+							HorizontalAlignment="Center"
+							Content="Device Input Drag and Drop Menu"
+							IsHitTestVisible="False"
+							Opacity="0.3" />
+						<StackPanel Name="DragAndDropStackPanelNormal" Margin="3,0,3,3">
+							<StackPanel.Resources>
+								<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+									<Setter Property="Margin" Value="0" />
+									<Setter Property="Padding" Value="5,0,2,3" />
+								</Style>
+								<Style TargetType="Label">
+									<Setter Property="IsHitTestVisible" Value="True" />
+									<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+									<Setter Property="Padding" Value="5,3,5,3" />
+									<Setter Property="Margin" Value="0,0,3,3" />
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate TargetType="Label">
+												<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
+													<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+												</Border>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+									<EventSetter Event="PreviewMouseMove" Handler="DragAndDropMenu_Source_PreviewMouseMove" />
+									<Style.Triggers>
+										<Trigger Property="IsMouseOver" Value="True">
+											<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+										</Trigger>
+									</Style.Triggers>
+								</Style>
+							</StackPanel.Resources>
+							<Label
+								Margin="0,20,0,0"
+								Padding="9,3,9,6"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Top"
+								Content="Loading..."
+								IsHitTestVisible="False" />
+						</StackPanel>
+					</StackPanel>
+				</ScrollViewer>
+
+			</TabItem>
+			<TabItem>
+				<TabItem.Header>
+					<StackPanel Orientation="Horizontal">
+						<Grid Margin="0,0,3,0">
+							<Path Data="M 0,16 16,8 0,0 Z" Fill="{StaticResource ColorActive}" />
+						</Grid>
+						<TextBlock Text="INVERTED" />
+					</StackPanel>
+				</TabItem.Header>
+
+				<ScrollViewer Margin="0,0,9,0" VerticalScrollBarVisibility="Auto">
+					<StackPanel>
+						<Label
+							Margin="0,5,0,0"
+							HorizontalAlignment="Center"
+							Content="Device Input Drag and Drop Menu"
+							IsHitTestVisible="False"
+							Opacity="0.3" />
+						<StackPanel Name="DragAndDropStackPanelInverted" Margin="3,0,3,3">
+							<StackPanel.Resources>
+								<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+									<Setter Property="Margin" Value="0" />
+									<Setter Property="Padding" Value="5,0,2,3" />
+								</Style>
+								<Style TargetType="Label">
+									<Setter Property="IsHitTestVisible" Value="True" />
+									<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+									<Setter Property="Padding" Value="5,3,5,3" />
+									<Setter Property="Margin" Value="0,0,3,3" />
+									<Setter Property="Template">
+										<Setter.Value>
+											<ControlTemplate TargetType="Label">
+												<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
+													<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+												</Border>
+											</ControlTemplate>
+										</Setter.Value>
+									</Setter>
+									<EventSetter Event="PreviewMouseMove" Handler="DragAndDropMenu_Source_PreviewMouseMove" />
+									<Style.Triggers>
+										<Trigger Property="IsMouseOver" Value="True">
+											<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+										</Trigger>
+									</Style.Triggers>
+								</Style>
+							</StackPanel.Resources>
+							<Label
+								Margin="0,20,0,0"
+								Padding="9,3,9,6"
+								HorizontalAlignment="Center"
+								VerticalAlignment="Top"
+								Content="Loading..."
+								IsHitTestVisible="False" />
+						</StackPanel>
+					</StackPanel>
+				</ScrollViewer>
+			</TabItem>
+		</TabControl>
+
 		<!--  LEFT  -->
 		<StackPanel Grid.Column="1">
 			<StackPanel Style="{StaticResource StackPanelLeft}">

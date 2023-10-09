@@ -28,43 +28,6 @@ namespace x360ce.App.Controls
 		PadSetting _padSetting;
 		MapTo _MappedTo;
 
-		//LeftTrigger		> TriggerLeftAxis
-		//RightTrigger		> TriggerRightAxis
-
-		//LeftShoulder		> BumperLeftButton
-		//RightShoulder		> BumperRightButton
-
-		//ButtonBack		> MenuBackButton
-		//ButtonStart		> MenuStartButton
-		//ButtonGuide		> MenuGuideButton
-
-		//ButtonY			> ActionYButton
-		//ButtonX			> ActionXButton
-		//ButtonB			> ActionBButton
-		//ButtonA			> ActionAButton
-
-		//DPad				> DPadButton
-		//DPadUp			> DPadUpButton
-		//DPadLeft			> DPadLeftButton
-		//DPadRight			> DPadRightButton
-		//DPadDown			> DPadDownButton
-
-		//LeftThumbButton	> StickLeftButton
-		//LeftThumbAxisX	> StickLeftXAxis
-		//LeftThumbAxisY	> StickLeftYAxis
-		//LeftThumbUp		> StickLeftUpAxis
-		//LeftThumbLeft		> StickLeftLeftAxis
-		//LeftThumbRight	> StickLeftRightAxis
-		//LeftThumbDown		> StickLeftDownAxis
-
-		//RightThumbButton	> StickRightButton
-		//RightThumbAxisX	> StickRightXAxis
-		//RightThumbAxisY	> StickRightYAxis
-		//RightThumbUp		> StickRightUpAxis
-		//RightThumbRight	> StickRightLeftAxis
-		//RightThumbRight	> StickRightRightAxis
-		//RightThumbDown	> StickRightDownAxis
-
 		public void SetBinding(MapTo mappedTo, PadSetting ps)
 		{
 			_MappedTo = mappedTo;
@@ -151,20 +114,9 @@ namespace x360ce.App.Controls
 			_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 		}
 
-		private void _padSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-
-		}
-
-		private void SetPresetButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-
-		}
-
-		private void RemapAllButton_Click(object sender, System.Windows.RoutedEventArgs e)
-		{
-
-		}
+		private void _padSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) { }
+		private void SetPresetButton_Click(object sender, System.Windows.RoutedEventArgs e) { }
+		private void RemapAllButton_Click(object sender, System.Windows.RoutedEventArgs e) { }
 
 		public void MapNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -213,6 +165,7 @@ namespace x360ce.App.Controls
 
 		#region Drag and Drop Menu
 
+		// Drag and Drop Menu PreviewMouseMove event.
 		private void DragAndDropMenu_Source_PreviewMouseMove(object sender, MouseEventArgs e)
 		{
 			Label label = sender as Label;
@@ -222,6 +175,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		// Drag and Drop Menu Drop event.
 		private void DragAndDropMenu_Target_Drop(object sender, DragEventArgs e)
 		{
 			TextBox textbox = sender as TextBox;
@@ -233,15 +187,59 @@ namespace x360ce.App.Controls
 			//e.Handled = true;
 		}
 
+		// Colors.
+		public SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
+		public SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
+		public SolidColorBrush colorNormalTextBox = Brushes.White;
+		public SolidColorBrush colorBlack = (SolidColorBrush)new BrushConverter().ConvertFrom("#11000000");
+		public SolidColorBrush colorNormalLabel = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDEDEDE");
+		public SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
+		public SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
+
+		// Lists.
+		public List<Label> ButtonList = new List<Label>();
+		public List<Label> IButtonList = new List<Label>();
+
+		public List<Label> AxisList = new List<Label>();
+		public List<Label> HAxisList = new List<Label>();
+		public List<Label> IAxisList = new List<Label>();
+		public List<Label> IHAxisList = new List<Label>();
+
+		public List<Label> SliderList = new List<Label>();
+		public List<Label> ISliderList = new List<Label>();
+
+		public List<Label> POVList = new List<Label>();
+		public List<Label> IPOVList = new List<Label>();
+
+		public List<Label> POVButtonList = new List<Label>();
+
+		// Group icon Path Data.
+		Geometry normalInactive = Geometry.Parse("M 16,16 0,8 16,0 Z");
+		Geometry normalActive = Geometry.Parse("M 16,16 0,8 16,0 Z");
+		Geometry normalActiveHalf1 = Geometry.Parse("M 8,12 0,8 8,4 Z");
+		//Geometry normalActiveHalf2 = Geometry.Parse("M 16,16 8,12 V 4 L 16,0 Z");
+		Geometry invertedInactive = Geometry.Parse("M 0,16 16,8 0,0 Z");
+		Geometry invertedActive = Geometry.Parse("M 0,16 16,8 0,0 Z");
+		Geometry invertedActiveHalf1 = Geometry.Parse("M 0,16 8,12 V 4 L 0,0 Z");
+		//Geometry invertedActiveHalf2 = Geometry.Parse("M 8,12 16,8 8,4 Z");
+
 		private void CreateDragAndDropMenuLabels(int total, string headerName, string itemName)
 		{
-			// Create GroupBox.
-			GroupBox buttonsGroupBox = new GroupBox { Header = headerName, };
-			DragAndDropStackPanel.Children.Add(buttonsGroupBox);
-
-			// Create UniformGrid.
+			// GroupBox Header.
+			Grid headerGrid = new Grid();
+			TextBlock headerLabel = new TextBlock { Text = headerName, Margin = new Thickness(3, 0, 0, 0) };
+			// StackPanel
+			StackPanel headerStackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+			headerStackPanel.Children.Add(headerGrid);
+			headerStackPanel.Children.Add(headerLabel);
+			// UniformGrid.
 			UniformGrid buttonsUniformGrid = new UniformGrid { Columns = 8 };
-			buttonsGroupBox.Content = buttonsUniformGrid;
+			// GroupBox.
+			GroupBox buttonsGroupBox = new GroupBox { Header = headerStackPanel, Content = buttonsUniformGrid };
+
+			// Put GroupBoxes into NORMAL and INVERTED tabs.
+			if (headerName.Contains("INVERTED")) { DragAndDropStackPanelInverted.Children.Add(buttonsGroupBox); }
+			else { DragAndDropStackPanelNormal.Children.Add(buttonsGroupBox); }
 
 			// Create labels.
 			for (int i = 1; i <= total; i++)
@@ -253,34 +251,76 @@ namespace x360ce.App.Controls
 					ToolTip = itemName + " " + i,
 					Tag = itemName + " " + i
 				};
+				// Assign mouse event.
 				buttonLabel.PreviewMouseMove += DragAndDropMenu_Source_PreviewMouseMove;
-				// Add label to the UniformGrid
+				// Add label to UniformGrid.
 				buttonsUniformGrid.Children.Add(buttonLabel);
 
-				// Lists.
-				if (headerName.Contains("BUTTONS")) { ButtonsList.Add(buttonLabel); }
-				else if (headerName.Contains("AXES")) { AxesList.Add(buttonLabel); }
-				else if (headerName.Contains("SLIDERS")) { SlidersList.Add(buttonLabel); }
-				else if (headerName.Contains("POVS")) { POVsList.Add(buttonLabel); }
+				// Assign GroupBox header icons and put into lists.
+				if (headerName == "BUTTON")
+				{ 
+					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					ButtonList.Add(buttonLabel);
+				}
+				else if (headerName == "BUTTON · INVERTED")
+				{
+					headerGrid.Children.Add(new Path { Data = invertedActive, Fill = colorActive });
+					IButtonList.Add(buttonLabel);
+				}
+				else if (headerName == "AXIS")
+				{
+					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					AxisList.Add(buttonLabel);
+				}
+				else if (headerName == "AXIS · HALF TO FULL")
+				{ 
+					headerGrid.Children.Add(new Path { Data = normalInactive, Fill = colorBlack, Opacity = 0.3 });
+					headerGrid.Children.Add(new Path { Data = normalActiveHalf1, Fill = colorActive } );
+					HAxisList.Add(buttonLabel);
+				}
+				//else if (headerName == "AXIS · HALF2")
+				//{
+				//	headerGrid.Children.Add(new Path { Data = normalInactive, Fill = colorBlack, Opacity = 0.3 });
+				//	headerGrid.Children.Add(new Path { Data = normalActiveHalf2, Fill = colorActive });
+				//}
+				else if (headerName == "AXIS · INVERTED")
+				{ 
+					headerGrid.Children.Add(new Path { Data = invertedActive, Fill = colorActive });
+					IAxisList.Add(buttonLabel);
+				}
+				else if (headerName == "AXIS · INVERTED · HALF TO FULL")
+				{
+					headerGrid.Children.Add(new Path { Data = invertedInactive, Fill = colorBlack, Opacity = 0.3 });
+					headerGrid.Children.Add(new Path { Data = invertedActiveHalf1, Fill = colorActive });
+					IHAxisList.Add(buttonLabel);
+				}
+				//else if (headerName == "AXIS · INVERTED · HALF2")
+				//{
+				//	headerGrid.Children.Add(new Path { Data = invertedInactive, Fill = colorBlack, Opacity = 0.3 });
+				//	headerGrid.Children.Add(new Path { Data = invertedActiveHalf2, Fill = colorActive });
+				//}
+				else if (headerName == "SLIDER")
+				{
+					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					SliderList.Add(buttonLabel);
+				}
+				else if (headerName == "SLIDER · INVERTED")
+				{
+					headerGrid.Children.Add(new Path { Data = invertedActive, Fill = colorActive });
+					SliderList.Add(buttonLabel);
+				}
+				else if (headerName == "POV")
+				{
+					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					POVList.Add(buttonLabel);
+				}
+				else if (headerName == "POV · BUTTON")
+				{
+					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					POVButtonList.Add(buttonLabel);
+				}
 			}
 		}
-
-		public SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
-		public SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
-		public SolidColorBrush colorNormalTextBox = System.Windows.Media.Brushes.White;
-		public SolidColorBrush colorNormalLabel = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDEDEDE");
-		public SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
-		public SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
-
-		public List<Label> ButtonsList = new List<Label>();
-		public List<Label> AxesList = new List<Label>();
-		public List<Label> SlidersList = new List<Label>();
-		public List<Label> POVsList = new List<Label>();
-
-		bool[] buttonValueList;
-		int[] axisValueList;
-		int[] sliderValueList;
-		int[] povValueList;
 
 		object updateLock = new object();
 		object oldState = null;
@@ -304,50 +344,56 @@ namespace x360ce.App.Controls
 			}
 			if (customDiState == null)
 				return;
-			setDInputNormalActiveColor(ud, customDiState);
+			SetInputNormalActiveColor(ud, customDiState);
 		}
 
-		public void setDInputNormalActiveColor(UserDevice ud, CustomDiState customDiState)
+		public void SetInputNormalActiveColor(UserDevice ud, CustomDiState customDiState)
 		{
-			buttonValueList = customDiState.Buttons;
-			axisValueList = customDiState.Axis;
-			sliderValueList = customDiState.Sliders;
-			povValueList = customDiState.POVs;
-
 			// Button1Label, IButton1Label.
-			if (ButtonsList.Count > 0)
+			if (ud.CapButtonCount > 0)
 			{
-				for (int index = 0; index < ButtonsList.Count; index++)
+				for (int index = 0; index < ud.CapButtonCount; index++)
 				{
-					ButtonsList[index].Background = customDiState.Buttons[index] ? colorActive : colorNormalLabel;
-					ButtonsList[index].ToolTip = customDiState.Buttons[index].ToString();
+					ButtonList[index].Background = customDiState.Buttons[index] ? colorActive : colorNormalLabel;
+					ButtonList[index].ToolTip = customDiState.Buttons[index].ToString();
+					IButtonList[index].Background = customDiState.Buttons[index] ? colorNormalLabel : colorActive;
+					IButtonList[index].ToolTip = (!customDiState.Buttons[index]).ToString();
 				}
 			}
 			// Axis1Label, HAxis1Label, IAxis1Label, IHAxis1Label. 
-			if (AxesList.Count > 0)
+			if (ud.CapAxeCount > 0)
 			{
 				for (int index = 0; index < ud.CapAxeCount; index++)
 				{
-					AxesList[index].Background = customDiState.Axis[index] > 32767 + 2000 || customDiState.Axis[index] < 32767 - 2000 ? colorActive : colorNormalLabel;
-					AxesList[index].ToolTip = customDiState.Axis[index].ToString();
+					AxisList[index].Background =				
+					HAxisList[index].Background =
+					IAxisList[index].Background =
+					IHAxisList[index].Background =
+						customDiState.Axis[index] > 32767 + 2000 || customDiState.Axis[index] < 32767 - 2000 ? colorActive : colorNormalLabel;
+
+					AxisList[index].ToolTip = customDiState.Axis[index].ToString();
+					IAxisList[index].ToolTip = Math.Abs(customDiState.Axis[index] - 65535).ToString();
+					HAxisList[index].ToolTip = Math.Abs((customDiState.Axis[index] - 32767) * 2).ToString();
+					IHAxisList[index].ToolTip = Math.Abs(Math.Abs((customDiState.Axis[index] - 32767) * 2) -65535).ToString();
+
 				}
 			}
 			// Slider1Label, HSlider1Label, ISlider1Label, IHSlider1Label.
-			if (SlidersList.Count > 0)
+			if (SliderList.Count > 0)
 			{
-				for (int index = 0; index < SlidersList.Count; index++)
+				for (int index = 0; index < SliderList.Count; index++)
 				{
-					SlidersList[index].Background = customDiState.Sliders[index] > 2000 ? colorActive : colorNormalLabel;
-					SlidersList[index].ToolTip = customDiState.Sliders[index].ToString();
+					SliderList[index].Background = customDiState.Sliders[index] > 2000 ? colorActive : colorNormalLabel;
+					SliderList[index].ToolTip = customDiState.Sliders[index].ToString();
 				}
 			}
 			// POV1Label.
-			if (POVsList.Count > 0)
+			if (POVList.Count > 0)
 			{
-				for (int index = 0; index < POVsList.Count; index++)
+				for (int index = 0; index < POVList.Count; index++)
 				{
-					POVsList[index].Background = customDiState.POVs[index] > -1 ? colorActive : colorNormalLabel;
-					POVsList[index].ToolTip = customDiState.POVs[index].ToString();
+					POVList[index].Background = customDiState.POVs[index] > -1 ? colorActive : colorNormalLabel;
+					POVList[index].ToolTip = customDiState.POVs[index].ToString();
 				}
 			}
 		}
@@ -365,12 +411,21 @@ namespace x360ce.App.Controls
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
 			// Delete all DragAndDrop menu children.
-			DragAndDropStackPanel.Children.Clear();
+			DragAndDropStackPanelNormal.Children.Clear();
+			DragAndDropStackPanelInverted.Children.Clear();
 			// Clear all DragAndDrop menu lists.
-			ButtonsList.Clear();
-			AxesList.Clear();
-			SlidersList.Clear();
-			POVsList.Clear();
+			ButtonList.Clear();
+			IButtonList.Clear();
+
+			AxisList.Clear();
+			HAxisList.Clear();
+			IAxisList.Clear();
+			IHAxisList.Clear();
+
+			SliderList.Clear();
+			ISliderList.Clear();
+
+			POVList.Clear();
 
 			DiMenuStrip.Clear();
 			MenuItem mi;
@@ -387,15 +442,15 @@ namespace x360ce.App.Controls
 			mi.Click += DiMenuStrip_Click;
 			DiMenuStrip.Add(mi);
 
-			var slidersCount = ud.DeviceObjects.Where(x => x.Type.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
+			
 
 			// Do not add menu items for keyboard, because user interface will become too sluggish.
 			// Recording feature is preferred way to map keyboard label.
 			if (!ud.IsKeyboard)
 			{
 				// Add Drag and Drop menu buttons.
-				CreateDragAndDropMenuLabels(ud.CapButtonCount, "BUTTONS", "Button");
-				CreateDragAndDropMenuLabels(ud.CapButtonCount, "INVERTED BUTTONS", "IButton");
+				CreateDragAndDropMenuLabels(ud.CapButtonCount, "BUTTON", "Button");
+				CreateDragAndDropMenuLabels(ud.CapButtonCount, "BUTTON · INVERTED", "IButton");
 
 				// Add Buttons.
 				mi = new MenuItem() { Header = "Buttons" };
@@ -406,10 +461,13 @@ namespace x360ce.App.Controls
 				if (ud.DiAxeMask > 0)
 				{
 					// Add Drag and Drop menu axes.
-					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXES", "Axis");
-					CreateDragAndDropMenuLabels(ud.CapAxeCount, "HALF AXES", "HAxis");
-					CreateDragAndDropMenuLabels(ud.CapAxeCount, "INVERTED AXES", "IAxis");
-					CreateDragAndDropMenuLabels(ud.CapAxeCount, "INVERTED HALF AXES", "IHAxis");
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS", "Axis");
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · HALF TO FULL", "HAxis");
+					//CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · HALF2", "HAxis");
+
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · INVERTED", "IAxis");
+					CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · INVERTED · HALF TO FULL", "IHAxis");
+					//CreateDragAndDropMenuLabels(ud.CapAxeCount, "AXIS · INVERTED · HALF2", "IHAxis");
 
 					// Add Axes.
 					mi = new MenuItem() { Header = "Axes" };
@@ -419,13 +477,17 @@ namespace x360ce.App.Controls
 					CreateItems(mi, "Half", "HAxis {0}", "x{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
 					CreateItems(mi, "Axis {0}", "a{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
 				}
+				var slidersCount = ud.DeviceObjects.Where(x => x.Type.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count();
 				if (slidersCount > 0)
 				{
 					// Add Drag and Drop menu sliders.
-					CreateDragAndDropMenuLabels(slidersCount, "SLIDERS", "Slider");
-					CreateDragAndDropMenuLabels(slidersCount, "HALF SLIDERS", "HSlider");
-					CreateDragAndDropMenuLabels(slidersCount, "INVERTED SLIDERS", "ISLider");
-					CreateDragAndDropMenuLabels(slidersCount, "INVERTED HALF SLIDERS", "IHSlider");
+					CreateDragAndDropMenuLabels(slidersCount, "SLIDER", "Slider");
+					CreateDragAndDropMenuLabels(slidersCount, "SLIDER · HALF", "HSlider");
+					//CreateDragAndDropMenuLabels(slidersCount, "SLIDER · HALF2", "HSlider");
+
+					CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED", "ISLider");
+					CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED · HALF TO FULL", "IHSLider");
+					//CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED · HALF2", "IHSlider");
 				}
 				if (ud.DiSliderMask > 0)
 				{
@@ -443,7 +505,8 @@ namespace x360ce.App.Controls
 				if (ud.CapPovCount > 0)
 				{
 					// Add Drag and Drop menu POVs.
-					CreateDragAndDropMenuLabels(ud.CapPovCount, "POVS", "POV");
+					CreateDragAndDropMenuLabels(ud.CapPovCount, "POV", "POV1");
+					CreateDragAndDropMenuLabels(4, "POV · BUTTON", "POV1");
 
 					// Add POVs.
 					mi = new MenuItem() { Header = cPOVs };
