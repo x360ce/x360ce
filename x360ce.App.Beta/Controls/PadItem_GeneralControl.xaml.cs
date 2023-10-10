@@ -509,7 +509,7 @@ namespace x360ce.App.Controls
 				{
 					// Add Drag and Drop menu POVs.
 					CreateDragAndDropMenuLabels(ud.CapPovCount, "POV", "POV1");
-					CreateDragAndDropMenuLabels(4, "POV · BUTTON", "POV1");
+					CreateDragAndDropMenuLabels(ud.CapPovCount * 4, "POV · BUTTON", "POV1");
 
 					// Add POVs.
 					mi = new MenuItem() { Header = cPOVs };
