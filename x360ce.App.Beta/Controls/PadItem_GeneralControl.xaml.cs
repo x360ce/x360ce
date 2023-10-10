@@ -215,24 +215,15 @@ namespace x360ce.App.Controls
 
 		public List<Label> POVButtonList = new List<Label>();
 
-		// Group icon Path Data.
-		Geometry normalInactive = Geometry.Parse("M 16,16 0,8 16,0 Z");
-		Geometry normalActive = Geometry.Parse("M 16,16 0,8 16,0 Z");
-		Geometry normalActiveHalf1 = Geometry.Parse("M 8,12 0,8 8,4 Z");
-		//Geometry normalActiveHalf2 = Geometry.Parse("M 16,16 8,12 V 4 L 16,0 Z");
-		Geometry invertedInactive = Geometry.Parse("M 0,16 16,8 0,0 Z");
-		Geometry invertedActive = Geometry.Parse("M 0,16 16,8 0,0 Z");
-		Geometry invertedActiveHalf1 = Geometry.Parse("M 0,16 8,12 V 4 L 0,0 Z");
-		//Geometry invertedActiveHalf2 = Geometry.Parse("M 8,12 16,8 8,4 Z");
-
 		private void CreateDragAndDropMenuLabels(int total, string headerName, string itemName)
 		{
 			// GroupBox Header.
-			Grid headerGrid = new Grid();
+			ContentControl headerContentControl = new ContentControl();		
+			//Grid headerGrid = new Grid();
 			TextBlock headerLabel = new TextBlock { Text = headerName, Margin = new Thickness(3, 0, 0, 0) };
 			// StackPanel
 			StackPanel headerStackPanel = new StackPanel { Orientation = Orientation.Horizontal };
-			headerStackPanel.Children.Add(headerGrid);
+			headerStackPanel.Children.Add(headerContentControl);
 			headerStackPanel.Children.Add(headerLabel);
 			// UniformGrid.
 			UniformGrid buttonsUniformGrid = new UniformGrid { Columns = 8 };
@@ -260,67 +251,63 @@ namespace x360ce.App.Controls
 
 				// Assign GroupBox header icons and put into lists.
 				if (headerName == "BUTTON")
-				{ 
-					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+				{
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Button"];
 					ButtonList.Add(buttonLabel);
 				}
 				else if (headerName == "BUTTON · INVERTED")
 				{
-					headerGrid.Children.Add(new Path { Data = invertedActive, Fill = colorActive });
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Button_Inverted"];
 					IButtonList.Add(buttonLabel);
 				}
 				else if (headerName == "AXIS")
 				{
-					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Axis"];
 					AxisList.Add(buttonLabel);
 				}
 				else if (headerName == "AXIS · HALF TO FULL")
-				{ 
-					headerGrid.Children.Add(new Path { Data = normalInactive, Fill = colorBlack });
-					headerGrid.Children.Add(new Path { Data = normalActiveHalf1, Fill = colorActive } );
+				{
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Axis_Half_to_Full"];
 					HAxisList.Add(buttonLabel);
 				}
 				else if (headerName == "AXIS · FULL TO HALF")
 				{
-					headerGrid.Children.Add(new Path { Data = normalInactive, Fill = colorBlack });
-					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Axis_Full_to_Half"];
 					FAxisList.Add(buttonLabel);
 				}
 				else if (headerName == "AXIS · INVERTED")
-				{ 
-					headerGrid.Children.Add(new Path { Data = invertedActive, Fill = colorActive });
+				{
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Axis_Inverted"];
 					IAxisList.Add(buttonLabel);
 				}
 				else if (headerName == "AXIS · INVERTED · HALF TO FULL")
 				{
-					headerGrid.Children.Add(new Path { Data = invertedInactive, Fill = colorBlack });
-					headerGrid.Children.Add(new Path { Data = invertedActiveHalf1, Fill = colorActive });
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Axis_Half_to_Full_Inverted"];
 					IHAxisList.Add(buttonLabel);
 				}
 				else if (headerName == "AXIS · INVERTED · FULL TO HALF")
 				{
-					headerGrid.Children.Add(new Path { Data = invertedInactive, Fill = colorBlack });
-					headerGrid.Children.Add(new Path { Data = invertedActive, Fill = colorActive });
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Axis_Full_to_Half_Inverted"];
 					IFAxisList.Add(buttonLabel);
 				}
 				else if (headerName == "SLIDER")
 				{
-					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Axis"];
 					SliderList.Add(buttonLabel);
 				}
 				else if (headerName == "SLIDER · INVERTED")
 				{
-					headerGrid.Children.Add(new Path { Data = invertedActive, Fill = colorActive });
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_Axis_Inverted"];
 					SliderList.Add(buttonLabel);
 				}
 				else if (headerName == "POV")
 				{
-					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_POV"];
 					POVList.Add(buttonLabel);
 				}
 				else if (headerName == "POV · BUTTON")
 				{
-					headerGrid.Children.Add(new Path { Data = normalActive, Fill = colorActive });
+					headerContentControl.Content = Application.Current.Resources["Icon_DragAndDrop_POV"];
 					POVButtonList.Add(buttonLabel);
 				}
 			}
@@ -384,6 +371,7 @@ namespace x360ce.App.Controls
 					IHAxisList[index].ToolTip = Math.Abs(Math.Abs((customDiState.Axis[index] - 32767) * 2) -65535).ToString();
 					IFAxisList[index].ToolTip = Math.Abs(Math.Round((double)customDiState.Axis[index] / 2 - 32767)).ToString();
 
+					if (index == 2) LeftTextBox2.Content = Math.Abs((customDiState.Axis[2] - 32767) * 2).ToString();
 				}
 			}
 			// Slider1Label, HSlider1Label, ISlider1Label, IHSlider1Label.
@@ -402,6 +390,15 @@ namespace x360ce.App.Controls
 				{
 					POVList[index].Background = customDiState.POVs[index] > -1 ? colorActive : colorNormalLabel;
 					POVList[index].ToolTip = customDiState.POVs[index].ToString();
+
+					POVButtonList[0].Background = customDiState.POVs[index] == 0 ? colorActive : colorNormalLabel;
+					POVButtonList[0].ToolTip = customDiState.POVs[index] == 0 ? customDiState.POVs[index].ToString() : "-1";
+					POVButtonList[1].Background = customDiState.POVs[index] == 9000 ? colorActive : colorNormalLabel;
+					POVButtonList[1].ToolTip = customDiState.POVs[index] == 9000 ? customDiState.POVs[index].ToString() : "-1";
+					POVButtonList[2].Background = customDiState.POVs[index] == 18000 ? colorActive : colorNormalLabel;
+					POVButtonList[2].ToolTip = customDiState.POVs[index] == 18000 ? customDiState.POVs[index].ToString() : "-1";
+					POVButtonList[3].Background = customDiState.POVs[index] == 27000 ? colorActive : colorNormalLabel;
+					POVButtonList[3].ToolTip = customDiState.POVs[index] == 27000 ? customDiState.POVs[index].ToString() : "-1";
 				}
 			}
 		}
@@ -493,11 +490,7 @@ namespace x360ce.App.Controls
 					// Add Drag and Drop menu sliders.
 					CreateDragAndDropMenuLabels(slidersCount, "SLIDER", "Slider");
 					CreateDragAndDropMenuLabels(slidersCount, "SLIDER · HALF", "HSlider");
-					//CreateDragAndDropMenuLabels(slidersCount, "SLIDER · HALF2", "HSlider");
-
 					CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED", "ISLider");
-					//CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED · HALF TO FULL", "IHSLider");
-					//CreateDragAndDropMenuLabels(slidersCount, "SLIDER · INVERTED · HALF2", "IHSlider");
 				}
 				if (ud.DiSliderMask > 0)
 				{

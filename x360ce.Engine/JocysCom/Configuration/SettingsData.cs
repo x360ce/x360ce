@@ -11,6 +11,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using JocysCom.ClassLibrary.Collections;
+using System.ComponentModel;
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
 using System.Windows;
@@ -645,6 +646,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		private System.Timers.Timer _debounceTimer;
 		public event EventHandler FilesChanged;
 
+		[DefaultValue(false)]
 		public bool IsFolderMonitored { get; set; }
 
 		public void SetFileMonitoring(bool enabled, string folderPath, string filePattern)
