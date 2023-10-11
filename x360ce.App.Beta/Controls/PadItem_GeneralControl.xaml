@@ -53,14 +53,14 @@
 										RenderTransformOrigin="0.5,0.5" />
 								</Viewbox>
 							</Border>
-							<Menu Background="Transparent" Tag="{TemplateBinding Tag}">
+							<!--<Menu Background="Transparent" Tag="{TemplateBinding Tag}">
 								<MenuItem
 									Width="26"
 									Height="26"
 									Click="MenuItem_Click"
 									Opacity="0"
 									Visibility="Visible" />
-							</Menu>
+							</Menu>-->
 						</Grid>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsMouseOver" Value="True">
@@ -79,14 +79,14 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" MinWidth="247" />
+			<ColumnDefinition Width="Auto" />
 			<ColumnDefinition Width="155" />
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="155" />
 		</Grid.ColumnDefinitions>
 		<!--  Buttons and Axes  -->
 
-		<TabControl Grid.RowSpan="3">
+		<TabControl Grid.RowSpan="3" Margin="0,0,9,0" Width="240">
 			<TabItem>
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
@@ -95,7 +95,7 @@
 					</StackPanel>
 				</TabItem.Header>
 
-				<ScrollViewer Margin="0,0,9,0" VerticalScrollBarVisibility="Auto">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
 						<Label
 							Margin="0,5,0,0"
@@ -152,7 +152,7 @@
 					</StackPanel>
 				</TabItem.Header>
 
-				<ScrollViewer Margin="0,0,9,0" VerticalScrollBarVisibility="Auto">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
 						<Label
 							Margin="0,5,0,0"

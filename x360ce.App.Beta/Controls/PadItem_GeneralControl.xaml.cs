@@ -348,13 +348,7 @@ namespace x360ce.App.Controls
 
 		#region ■ Direct Input Menu
 
-		List<MenuItem> DiMenuStrip = new List<MenuItem>();
-		string cRecord = "[Record]";
-		string cEmpty = "<empty>";
-		// string cPOVs = "POVs";
-
 		// Function is recreated as soon as new DirectInput Device is available.
-
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
 			// DragAndDrop menu children.
@@ -410,9 +404,7 @@ namespace x360ce.App.Controls
 					DragAndDropMenuLabels_Create(slidersCount, IHSliderList, "IHSlider", "SLIDER · INVERTED · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
 					DragAndDropMenuLabels_Create(slidersCount, IFSliderList, "IFSlider", "SLIDER · INVERTED · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
 				}
-				//if (ud.DiSliderMask > 0)
-				//{
-				//}
+				//if (ud.DiSliderMask > 0) { }
 				// Add D-Pads.
 				if (ud.CapPovCount > 0)
 				{
@@ -422,6 +414,13 @@ namespace x360ce.App.Controls
 				}
 			}
 		}
+
+		//List<MenuItem> DiMenuStrip = new List<MenuItem>();
+		//string cRecord = "[Record]";
+		//string cEmpty = "<empty>";
+		// string cPOVs = "POVs";
+
+		// Function is recreated as soon as new DirectInput Device is available.
 
 		//public void ResetDiMenuStrip2(UserDevice ud)
 		//{
@@ -614,49 +613,49 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		MenuItem LastItem;
+		//MenuItem LastItem;
 
-		private TextBox CurrentTextBox;
+		//private TextBox CurrentTextBox;
 
-		private void MenuItem_Click(object sender, RoutedEventArgs e)
-		{
-			var mi = (MenuItem)sender;
-			var smi = (MenuItem)e.Source;
-			if (mi != smi)
-				return;
+		//private void MenuItem_Click(object sender, RoutedEventArgs e)
+		//{
+		//	var mi = (MenuItem)sender;
+		//	var smi = (MenuItem)e.Source;
+		//	if (mi != smi)
+		//		return;
 
-			LastItem?.Items.Clear();
-			LastItem = mi;
-			foreach (var item in DiMenuStrip)
-				mi.Items.Add(item);
+		//	LastItem?.Items.Clear();
+		//	LastItem = mi;
+		//	foreach (var item in DiMenuStrip)
+		//		mi.Items.Add(item);
 
-			var control = (Menu)mi.Parent;
-			CurrentTextBox = (TextBox)control.Tag;
+		//	var control = (Menu)mi.Parent;
+		//	CurrentTextBox = (TextBox)control.Tag;
 
-			ControlsHelper.BeginInvoke(() =>
-			{
-				mi.IsSubmenuOpen = true;
-			});
+		//	ControlsHelper.BeginInvoke(() =>
+		//	{
+		//		mi.IsSubmenuOpen = true;
+		//	});
 
-		}
+		//}
 
-		void DiMenuStrip_Click(object sender, RoutedEventArgs e)
-		{
-			var item = (MenuItem)sender;
-			var fullValue = (string)item.Header;
-			// If this DPad parent menu.
-			if (fullValue == cRecord)
-			{
-				//var map = SettingsManager.Current.SettingsMap.First(x => x.Control == CurrentCbx);
-				//StartRecording(map);
-			}
-			else
-			{
-				CurrentTextBox.Text = fullValue == cEmpty
-					? ""
-					: fullValue;
-			}
-		}
+		//void DiMenuStrip_Click(object sender, RoutedEventArgs e)
+		//{
+		//	var item = (MenuItem)sender;
+		//	var fullValue = (string)item.Header;
+		//	// If this DPad parent menu.
+		//	if (fullValue == cRecord)
+		//	{
+		//		//var map = SettingsManager.Current.SettingsMap.First(x => x.Control == CurrentCbx);
+		//		//StartRecording(map);
+		//	}
+		//	else
+		//	{
+		//		CurrentTextBox.Text = fullValue == cEmpty
+		//			? ""
+		//			: fullValue;
+		//	}
+		//}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
@@ -669,7 +668,7 @@ namespace x360ce.App.Controls
 			if (!ControlsHelper.AllowUnload(this))
 				return;
 			SetBinding(MapTo.None, null);
-			DiMenuStrip.Clear();
+			// DiMenuStrip.Clear();
 		}
 
 		private void RecordClear_MouseEnter(object sender, MouseEventArgs e)
