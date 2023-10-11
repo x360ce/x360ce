@@ -134,7 +134,7 @@ namespace x360ce.App.Controls
 
 				PadItemPanel.DInputPanel.UpdateFrom(ud);
 				// DragAndDrop menu update.
-				PadItemPanel.GeneralPanel.DragAndDropMenuUpdate(ud);
+				PadItemPanel.GeneralPanel.DragAndDropMenuLabels_Update(ud);
 
 				if (enable && _Imager.Recorder.Recording)
 				{

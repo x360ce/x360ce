@@ -90,9 +90,6 @@
 			<TabItem>
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<!--<Grid Margin="0,0,3,0">
-							<Path Data="M 16,16 0,8 16,0 Z" Fill="{StaticResource ColorActive}" />
-						</Grid>-->
 						<ContentControl Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis}" />
 						<TextBlock Text="NORMAL" />
 					</StackPanel>
@@ -120,18 +117,19 @@
 									<Setter Property="Template">
 										<Setter.Value>
 											<ControlTemplate TargetType="Label">
-												<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
-													<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+												<Border Name="MouseOverBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5">
+													<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
+														<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+													</Border>
 												</Border>
+												<ControlTemplate.Triggers>
+													<Trigger Property="IsMouseOver" Value="True">
+														<Setter TargetName="MouseOverBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+													</Trigger>
+												</ControlTemplate.Triggers>
 											</ControlTemplate>
 										</Setter.Value>
 									</Setter>
-									<EventSetter Event="PreviewMouseMove" Handler="DragAndDropMenu_Source_PreviewMouseMove" />
-									<Style.Triggers>
-										<Trigger Property="IsMouseOver" Value="True">
-											<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
-										</Trigger>
-									</Style.Triggers>
 								</Style>
 							</StackPanel.Resources>
 							<Label
@@ -150,9 +148,6 @@
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
 						<ContentControl Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
-						<!--<Grid Margin="0,0,3,0">
-							<Path Data="M 0,16 16,8 0,0 Z" Fill="{StaticResource ColorActive}" />
-						</Grid>-->
 						<TextBlock Text="INVERTED" />
 					</StackPanel>
 				</TabItem.Header>
@@ -185,7 +180,6 @@
 											</ControlTemplate>
 										</Setter.Value>
 									</Setter>
-									<EventSetter Event="PreviewMouseMove" Handler="DragAndDropMenu_Source_PreviewMouseMove" />
 									<Style.Triggers>
 										<Trigger Property="IsMouseOver" Value="True">
 											<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
