@@ -75,12 +75,15 @@ namespace x360ce.App.Controls
 			if (!ControlsHelper.IsLoaded(this))
 				return;
 			var maxValue = isThumb ? short.MaxValue : byte.MaxValue;
+
 			deadzoneLink = new TrackBarUpDownTextBoxLink(DeadZoneTrackBar, DeadZoneUpDown, DeadZoneTextBox, 0, maxValue);
 			deadzoneLink.ValueChanged -= deadzoneLink_ValueChanged;
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+
 			antiDeadzoneLink = new TrackBarUpDownTextBoxLink(AntiDeadZoneTrackBar, AntiDeadZoneUpDown, AntiDeadZoneTextBox, 0, maxValue);
 			antiDeadzoneLink.ValueChanged -= deadzoneLink_ValueChanged;
 			antiDeadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
+
 			linearLink = new TrackBarUpDownTextBoxLink(LinearTrackBar, LinearUpDown, LinearTextBox, -100, 100);
 			linearLink.ValueChanged -= deadzoneLink_ValueChanged;
 			linearLink.ValueChanged += deadzoneLink_ValueChanged;
@@ -382,6 +385,7 @@ namespace x360ce.App.Controls
 		//		default:
 		//			break;
 		//	}
+
 		//	var deadZonePercent = int.Parse(values[1]);
 		//	var antiDeadZonePercent = int.Parse(values[2]);
 		//	var linearPercent = int.Parse(values[3]);
@@ -412,14 +416,13 @@ namespace x360ce.App.Controls
 
 		private void LinearUpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<decimal?> e)
 		{
-            var text = "";
-            if ((int)(e.NewValue ?? 0) < 0)
-                text = "More sensitive in the center.";
-            if ((int)(e.NewValue ?? 0) > 0)
-                text = "Less sensitive in the center.";
-            SensitivityTooltip.Content = text;
+			int sensitivity = (int)(e.NewValue ?? 0);
+			SensitivityTooltip.Content =
+				sensitivity < 0 ? "Center is more sensitive." :
+				sensitivity > 0 ? "Center is less sensitive." :
+				string.Empty;
 
-   //         var text = "Sensitivity";
+			// var text = "Sensitivity";
 			//if ((int)(e.NewValue ?? 0) < 0)
 			//	text = "Sensitivity - more sensitive in the center:";
 			//if ((int)(e.NewValue ?? 0) > 0)

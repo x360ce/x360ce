@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -36,25 +38,38 @@ namespace x360ce.App
 		/// </summary>
 		public void CleanupPadSettings()
 		{
-			// Get all records used by Settings.
-			var usedPadSettings = UserSettings.ItemsToArraySynchronized()
-				.Select(x => x.PadSettingChecksum).Distinct().ToList();
-			// Get all records used by Summaries.
-			var usedPadSettings2 = Summaries.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
-			// Get all records used by Presets.
-			var usedPadSettings3 = Presets.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
-			// Combine all pad settings.
-			usedPadSettings.AddRange(usedPadSettings2);
-			usedPadSettings.AddRange(usedPadSettings3);
+			//// Get all records used by Settings.
+			//var usedPadSettings = UserSettings.ItemsToArraySynchronized()
+			//	.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			//// Get all records used by Summaries.
+			//var usedPadSettings2 = Summaries.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			//// Get all records used by Presets.
+			//var usedPadSettings3 = Presets.Items.Select(x => x.PadSettingChecksum).Distinct().ToList();
+			//// Combine all pad settings.
+			//usedPadSettings.AddRange(usedPadSettings2);
+			//usedPadSettings.AddRange(usedPadSettings3);
+			//// Get all stored padSettings.
+			//var allPadSettings = PadSettings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
+			//// Wipe all not used pad settings.
+			//var notUsed = allPadSettings.Except(usedPadSettings);
+			//foreach (var nu in notUsed)
+			//{
+			//	var notUsedItems = PadSettings.Items.Where(x => x.PadSettingChecksum == nu).ToArray();
+			//	PadSettings.Remove(notUsedItems);
+			//}
+
+			// Get all records used by Settings, Summaries, and Presets.
+			var usedPadSettings = UserSettings.ItemsToArraySynchronized().Select(x => x.PadSettingChecksum).Distinct().ToList();
+			usedPadSettings.AddRange(Summaries.Items.Select(x => x.PadSettingChecksum).Distinct());
+			usedPadSettings.AddRange(Presets.Items.Select(x => x.PadSettingChecksum).Distinct());
+			// Create a HashSet from the usedPadSettings list to optimize lookup performance.
+			var usedPadSettingsHashSet = new HashSet<Guid>(usedPadSettings);
 			// Get all stored padSettings.
-			var allPadSettings = PadSettings.Items.Select(x => x.PadSettingChecksum).Distinct().ToArray();
-			// Wipe all not used pad settings.
-			var notUsed = allPadSettings.Except(usedPadSettings);
-			foreach (var nu in notUsed)
-			{
-				var notUsedItems = PadSettings.Items.Where(x => x.PadSettingChecksum == nu).ToArray();
-				PadSettings.Remove(notUsedItems);
-			}
+			var allPadSettings = PadSettings.Items.ToList();
+			// Find all not used pad settings.
+			var notUsedItems = allPadSettings.Where(x => !usedPadSettingsHashSet.Contains(x.PadSettingChecksum)).ToList();
+			// Wipe all not used pad settings. 
+			foreach (var item in notUsedItems) { PadSettings.Remove(item); }
 		}
 
 		/// <summary>

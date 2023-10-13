@@ -15,6 +15,43 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary>
+					<!--  Drag and Drop menu GroupBox  -->
+					<Style x:Key="DragAndDropGroupBox" BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+						<Setter Property="Margin" Value="0" />
+						<Setter Property="Padding" Value="5,0,2,3" />
+					</Style>
+					<!--  Drag and Drop menu "Loading..." Label  -->
+					<Style x:Key="DragAndDropLoadingLabel" TargetType="Label">
+						<Setter Property="Margin" Value="0,20,0,0" />
+						<Setter Property="Padding" Value="9,3,9,6" />
+						<Setter Property="HorizontalAlignment" Value="Center" />
+						<Setter Property="VerticalAlignment" Value="Top" />
+						<Setter Property="IsHitTestVisible" Value="False" />
+						<Setter Property="Content" Value="Loading..." />
+					</Style>
+					<!--  Drag and Drop menu Label  -->
+					<Style x:Key="DragAndDropLabel" TargetType="Label">
+						<Setter Property="IsHitTestVisible" Value="True" />
+						<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+						<Setter Property="Padding" Value="5,3,5,3" />
+						<Setter Property="Margin" Value="0,0,3,3" />
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate TargetType="Label">
+									<Border Name="MouseOverBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5">
+										<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
+											<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+										</Border>
+									</Border>
+									<ControlTemplate.Triggers>
+										<Trigger Property="IsMouseOver" Value="True">
+											<Setter TargetName="MouseOverBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+										</Trigger>
+									</ControlTemplate.Triggers>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
 					<!--  StackPanel  -->
 					<Style x:Key="StackPanelRight" TargetType="StackPanel">
 						<Setter Property="HorizontalAlignment" Value="Right" />
@@ -24,10 +61,10 @@
 						<Setter Property="HorizontalAlignment" Value="Left" />
 						<Setter Property="Orientation" Value="Horizontal" />
 					</Style>
+					<!--  TextBox  -->
 					<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
 						<Setter Property="Width" Value="75" />
 						<Setter Property="AllowDrop" Value="True" />
-						<!--<Setter Property="Focusable" Value="False" />-->
 						<EventSetter Event="PreviewDrop" Handler="DragAndDropMenu_Target_Drop" />
 					</Style>
 					<!--  Menu template  -->
@@ -84,17 +121,16 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="155" />
 		</Grid.ColumnDefinitions>
-		<!--  Buttons and Axes  -->
 
-		<TabControl Grid.RowSpan="3" Margin="0,0,9,0" Width="240">
+		<!--  Buttons and Axes  -->
+		<TabControl Grid.RowSpan="3" Width="240" Margin="0,0,9,0">
 			<TabItem>
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
-						<ContentControl Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis}" />
+						<ContentControl Name="NormalTab" Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis}" />
 						<TextBlock Text="NORMAL" />
 					</StackPanel>
 				</TabItem.Header>
-
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
 						<Label
@@ -105,44 +141,13 @@
 							Opacity="0.3" />
 						<StackPanel Name="DragAndDropStackPanelNormal" Margin="3,0,3,3">
 							<StackPanel.Resources>
-								<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
-									<Setter Property="Margin" Value="0" />
-									<Setter Property="Padding" Value="5,0,2,3" />
-								</Style>
-								<Style TargetType="Label">
-									<Setter Property="IsHitTestVisible" Value="True" />
-									<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-									<Setter Property="Padding" Value="5,3,5,3" />
-									<Setter Property="Margin" Value="0,0,3,3" />
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="Label">
-												<Border Name="MouseOverBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5">
-													<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
-														<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-													</Border>
-												</Border>
-												<ControlTemplate.Triggers>
-													<Trigger Property="IsMouseOver" Value="True">
-														<Setter TargetName="MouseOverBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
-													</Trigger>
-												</ControlTemplate.Triggers>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-								</Style>
+								<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
+								<Style BasedOn="{StaticResource DragAndDropLabel}" TargetType="Label" />
 							</StackPanel.Resources>
-							<Label
-								Margin="0,20,0,0"
-								Padding="9,3,9,6"
-								HorizontalAlignment="Center"
-								VerticalAlignment="Top"
-								Content="Loading..."
-								IsHitTestVisible="False" />
+							<Label Style="{StaticResource DragAndDropLoadingLabel}" />
 						</StackPanel>
 					</StackPanel>
 				</ScrollViewer>
-
 			</TabItem>
 			<TabItem>
 				<TabItem.Header>
@@ -151,7 +156,6 @@
 						<TextBlock Text="INVERTED" />
 					</StackPanel>
 				</TabItem.Header>
-
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
 						<Label
@@ -162,38 +166,10 @@
 							Opacity="0.3" />
 						<StackPanel Name="DragAndDropStackPanelInverted" Margin="3,0,3,3">
 							<StackPanel.Resources>
-								<Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
-									<Setter Property="Margin" Value="0" />
-									<Setter Property="Padding" Value="5,0,2,3" />
-								</Style>
-								<Style TargetType="Label">
-									<Setter Property="IsHitTestVisible" Value="True" />
-									<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-									<Setter Property="Padding" Value="5,3,5,3" />
-									<Setter Property="Margin" Value="0,0,3,3" />
-									<Setter Property="Template">
-										<Setter.Value>
-											<ControlTemplate TargetType="Label">
-												<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
-													<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-												</Border>
-											</ControlTemplate>
-										</Setter.Value>
-									</Setter>
-									<Style.Triggers>
-										<Trigger Property="IsMouseOver" Value="True">
-											<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
-										</Trigger>
-									</Style.Triggers>
-								</Style>
+								<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
+								<Style BasedOn="{StaticResource DragAndDropLabel}" TargetType="Label" />
 							</StackPanel.Resources>
-							<Label
-								Margin="0,20,0,0"
-								Padding="9,3,9,6"
-								HorizontalAlignment="Center"
-								VerticalAlignment="Top"
-								Content="Loading..."
-								IsHitTestVisible="False" />
+							<Label Style="{StaticResource DragAndDropLoadingLabel}" />
 						</StackPanel>
 					</StackPanel>
 				</ScrollViewer>

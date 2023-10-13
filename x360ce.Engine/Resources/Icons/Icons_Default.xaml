@@ -807,7 +807,7 @@
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Axis" p1:Shared="False" Tag="SHA256_BDE5CAE20944A2C217ABF04090A2BFA15FDFDC35D03B08E9D019383F46CDC31A" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Axis" p1:Shared="False" Tag="SHA256_C9B0094BA998E55E9DA0560BBE97F8BAB0B42D57DFB06E830FCA346128CBD40C" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -816,22 +816,17 @@
       <!--Unknown tag: sodipodi:namedview-->
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="m 100.00752 0 h 312.0133 C 467.01362 0 512 45.014731 512 100.00752 V 412.02081 C 512 467.01362 467.01362 512 412.02081 512 H 100.00752 C 45.014726 512 0 467.01362 0 412.02081 V 100.00752 C 0 45.014731 45.014726 0 100.00752 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 0 512 H 512 V 0 H 0 Z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 471.88926 491.95881 0 256 471.88926 20.069538 C 496.21082 38.353227 512 67.408703 512 100.00752 v 312.01329 c 0 32.57048 -15.78918 61.65431 -40.11074 79.938 z" FillRule="EvenOdd" />
-        </Path.Data>
-      </Path>
-      <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-        <Path.Data>
-          <PathGeometry Figures="m 0 192 h 11.990702 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.990702 V 320 H 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 512 512 H 0 L 512 0 Z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Axis_Full_to_Half" p1:Shared="False" Tag="SHA256_C43AC5646F9711A46782B2F13AEA2C454C353ACB1E88AA4250319763A7CFC0F6" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_DragAndDrop_Axis_Full_to_Half" x:Shared="False" Tag="SHA256_F97D0A1767F6D2CDEB5DBA8803080E066B333AE75D45DAF7A2F0C1400E5CF808">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -840,22 +835,17 @@
       <!--Unknown tag: sodipodi:namedview-->
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 100.00753 0 H 412.02082 C 467.01362 0 512 45.014721 512 100.00752 V 412.02081 C 512 467.01362 467.01362 512 412.02082 512 H 100.00753 C 45.014727 512 0 467.01362 0 412.02081 V 100.00752 C 0 45.014721 45.014727 0 100.00753 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 512 512 H 0 V 0 h 512 z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 512 384.01417 0 256 512 128.01417 Z" FillRule="EvenOdd" />
-        </Path.Data>
-      </Path>
-      <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-        <Path.Data>
-          <PathGeometry Figures="m 0 192 h 11.9907 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.9907 V 320 H 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 512 256 V 512 H 0 Z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Axis_Full_to_Half_Inverted" p1:Shared="False" Tag="SHA256_41D49E925F39BD3CA73181CB0236F9022984969081F2017EA27A662B05F7D360" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_DragAndDrop_Axis_Full_to_Half_Inverted" x:Shared="False" Tag="SHA256_0A3A6D02EF02736DDA32FBD8F7F54670F754DC603F06C4E27CEC57B3E73F752D">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -864,22 +854,17 @@
       <!--Unknown tag: sodipodi:namedview-->
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 411.99247 0 H 99.97918 C 44.98638 0 0 45.014721 0 100.00752 V 412.02081 C 0 467.01362 44.98638 512 99.97918 512 H 411.99247 C 466.98527 512 512 467.01362 512 412.02081 V 100.00752 C 512 45.014721 466.98527 0 411.99247 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 0 512 H 512 V 0 H 0 Z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 0 384.01417 512 256 0 128.01417 Z" FillRule="EvenOdd" />
-        </Path.Data>
-      </Path>
-      <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-        <Path.Data>
-          <PathGeometry Figures="m 0 192 h 11.9907 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.9907 V 320 H 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 0 256 V 512 H 512 Z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Axis_Half_to_Full" p1:Shared="False" Tag="SHA256_4A6566CF3DD4E6C4CF5F5EEB4D47551D5043B076CD2C7AC0C813B35DC7C9B02E" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_DragAndDrop_Axis_Half_to_Full" x:Shared="False" Tag="SHA256_818285CDE264BB60F27926E52DF2F0913C82861F3BF6A6817D1C37E3C03D0D7A">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -888,22 +873,17 @@
       <!--Unknown tag: sodipodi:namedview-->
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 412.02082 0 H 100.00752 C 45.014726 0 0 45.014731 0 100.00752 V 412.02081 C 0 467.01362 45.014726 512 100.00752 512 h 312.0133 C 467.01362 512 512 467.01362 512 412.02081 V 100.00752 C 512 45.014731 467.01362 0 412.02082 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 512 512 H 0 V 0 h 512 z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 29.36729 482.63271 255.99999 256 482.63271 482.63271 C 500.74631 464.5191 512 439.51722 512 412.02081 V 100.00752 C 512 72.511129 500.74631 47.50925 482.63271 29.36729 L 255.99999 256 29.36729 29.36729 C 11.253681 47.509242 0 72.511129 0 100.00752 v 312.01329 c 0 27.49641 11.253681 52.49829 29.36729 70.6119 z" FillRule="EvenOdd" />
-        </Path.Data>
-      </Path>
-      <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-        <Path.Data>
-          <PathGeometry Figures="m 0 192 h 11.9907 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.9907 V 320 H 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 512 0 V 512 H 0 V 0 l 256 512 z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Axis_Half_to_Full_Inverted" p1:Shared="False" Tag="SHA256_61F5B2A47E7283A1D895F15767BF71A972B1A6B044A22B1F623D09F2E1ABA2DB" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_DragAndDrop_Axis_Half_to_Full_Inverted" x:Shared="False" Tag="SHA256_B4F0E44D72C7805199F637A45D7EF7A6B176E95C3D571F283A87779379E16420">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -912,22 +892,17 @@
       <!--Unknown tag: sodipodi:namedview-->
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="m 100.00752 0 h 312.0133 C 467.01362 0 512 45.014731 512 100.00752 V 412.02081 C 512 467.01362 467.01362 512 412.02081 512 H 100.00752 C 45.014726 512 0 467.01362 0 412.02081 V 100.00752 C 0 45.014731 45.014726 0 100.00752 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 512 512 H 0 V 0 h 512 z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 255.99999 512 0 256 255.99999 0 512 256 Z" FillRule="EvenOdd" />
-        </Path.Data>
-      </Path>
-      <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-        <Path.Data>
-          <PathGeometry Figures="m 0 192 h 11.9907 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.9907 V 320 H 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 512 512 H 0 L 256 0 Z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Axis_Inverted" p1:Shared="False" Tag="SHA256_5347A6DD64FBBB7286131389CCBD29C193D3A12E869D58B536F98C310D780113" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Axis_Inverted" p1:Shared="False" Tag="SHA256_C39C05BAFAC122068639691247B16684293B1B7104DF7E3371DBB64F99EA00E8" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -936,22 +911,17 @@
       <!--Unknown tag: sodipodi:namedview-->
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 411.99248 0 H 99.97918 C 44.98638 0 0 45.014731 0 100.00752 V 412.02081 C 0 467.01362 44.98638 512 99.97919 512 H 411.99248 C 466.98527 512 512 467.01362 512 412.02081 V 100.00752 C 512 45.014731 466.98527 0 411.99248 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 512 512 H 0 V 0 h 512 z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 40.11074 491.95881 512 256 40.11074 20.069538 C 15.78918 38.353227 0 67.408703 0 100.00752 v 312.01329 c 0 32.57048 15.78918 61.65431 40.11074 79.938 z" FillRule="EvenOdd" />
-        </Path.Data>
-      </Path>
-      <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-        <Path.Data>
-          <PathGeometry Figures="m 0 192 h 11.9907 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.9907 V 320 H 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 0 512 H 512 L 0 0 Z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Button" p1:Shared="False" Tag="SHA256_91D72369E9FA9E5D1FA769046A79C0EB01AD1DFFA0A48E4E099F941A9CB395A2" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_DragAndDrop_Button" x:Shared="False" Tag="SHA256_E77F35D62C56A75EEAEADB9E008C289E05CDDFA1C466247290C0CA33689CCF5B">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -961,23 +931,18 @@
       <Canvas>
         <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
           <Path.Data>
-            <PathGeometry Figures="m 100.00752 0 h 312.0133 C 467.01362 0 512 45.014721 512 100.00752 V 412.02081 C 512 467.01362 467.01362 512 412.02082 512 H 100.00752 C 45.014723 512 0 467.01362 0 412.02081 V 100.00752 C 0 45.014721 45.014723 0 100.00752 0 Z" FillRule="EvenOdd" />
+            <PathGeometry Figures="M 512 512 H 0 V 0 h 512 z" FillRule="EvenOdd" />
           </Path.Data>
         </Path>
         <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
           <Path.Data>
-            <PathGeometry Figures="M 412.02081 512 H 255.99999 V 0 H 412.02082 C 467.09866 0 512 44.929686 512 100.00752 V 412.02081 C 512 467.09866 467.09866 512 412.02081 512 Z" FillRule="EvenOdd" />
-          </Path.Data>
-        </Path>
-        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-          <Path.Data>
-            <PathGeometry Figures="m 0 192 h 11.9907 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.9907 V 320 H 0 Z" FillRule="EvenOdd" />
+            <PathGeometry Figures="M 512 0 V 512 H 256 V 0 Z" FillRule="EvenOdd" />
           </Path.Data>
         </Path>
       </Canvas>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_Button_Inverted" p1:Shared="False" Tag="SHA256_2326E3580558DBDFC3EE32C3AEB393E08A1626FF92FE517C9FFF768AD7DA81EE" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_DragAndDrop_Button_Inverted" x:Shared="False" Tag="SHA256_A5F5EC59D13734C2CF8BC630B546FF0112F38FEB4F96B6C5EC0A128F569BEB9B">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -986,22 +951,17 @@
       <!--Unknown tag: sodipodi:namedview-->
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="m 100.00752 0 h 312.0133 C 467.01362 0 512 45.014731 512 100.00752 V 412.02081 C 512 467.01362 467.01362 512 412.02081 512 H 100.00752 C 45.014726 512 0 467.01362 0 412.02081 V 100.00752 C 0 45.014731 45.014726 0 100.00752 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 0 512 H 512 V 0 H 0 Z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="M 100.00752 512 H 255.99999 V 0 H 100.00752 C 44.929686 0 0 44.929688 0 100.00752 V 412.02081 C 0 467.09866 44.929686 512 100.00752 512 Z" FillRule="EvenOdd" />
-        </Path.Data>
-      </Path>
-      <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-        <Path.Data>
-          <PathGeometry Figures="m 0 192 h 11.9907 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.9907 V 320 H 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 0 0 V 512 H 256 V 0 Z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_POV" p1:Shared="False" Tag="SHA256_277600B85B2E5CAFE3A52608B18C6DF8F021CD9BE8D685519F0DA09C3FEAC921" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_POV" p1:Shared="False" Tag="SHA256_60697AB30D2FFF61AB36EC33377562F0D9ADD38D2A5D744DCAAF0150322D17A2" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -1010,22 +970,17 @@
       <!--Unknown tag: sodipodi:namedview-->
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="m 100.00752 0 h 312.0133 C 467.01362 0 512 45.014731 512 100.00752 V 412.02081 C 512 467.01362 467.01362 512 412.02081 512 H 100.00752 C 45.014726 512 0 467.01362 0 412.02081 V 100.00752 C 0 45.014731 45.014726 0 100.00752 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 512 512 H 0 V 0 h 512 z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
       <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
         <Path.Data>
-          <PathGeometry Figures="m 384.01416 0 h 28.00666 C 467.09866 0 512 44.929688 512 100.00752 V 412.02081 C 512 467.09866 467.09866 512 412.02081 512 H 384.01416 V 426.67612 H 255.99999 V 341.35223 H 128.01417 V 170.67612 H 255.99999 V 85.323885 h 128.01417 z" FillRule="EvenOdd" />
-        </Path.Data>
-      </Path>
-      <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-        <Path.Data>
-          <PathGeometry Figures="m 0 192 h 11.9907 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.9907 V 320 H 0 Z" FillRule="EvenOdd" />
+          <PathGeometry Figures="M 384 0 H 512 V 512 H 128 V 341 H 256 V 171 h 128 z" FillRule="EvenOdd" />
         </Path.Data>
       </Path>
     </Canvas>
   </Viewbox>
-  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" p1:Key="Icon_DragAndDrop_POV_Inverted" p1:Shared="False" Tag="SHA256_EA11FFCB4C58882147E700547DCBA6BBC2AB44525812DA433B12CFE4AD40F34A" xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Viewbox xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" x:Key="Icon_DragAndDrop_POV_Inverted" x:Shared="False" Tag="SHA256_B21AE08FCCAA51E9FBA38E8A235BB0A4E1186C054475060890A4395F2DC8C411">
     <Canvas Width="512" Height="512">
       <Canvas.RenderTransform>
         <TranslateTransform X="0" Y="0" />
@@ -1035,17 +990,12 @@
       <Canvas>
         <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#1A000000" StrokeThickness="0.999995">
           <Path.Data>
-            <PathGeometry Figures="M 411.99248 0 H 99.97918 C 44.98638 0 0 45.014731 0 100.00752 V 412.02081 C 0 467.01362 44.98638 512 99.97919 512 H 411.99248 C 466.98527 512 512 467.01362 512 412.02081 V 100.00752 C 512 45.014731 466.98527 0 411.99248 0 Z" FillRule="EvenOdd" />
+            <PathGeometry Figures="M 0 512 H 512 V 0 H 0 Z" FillRule="EvenOdd" />
           </Path.Data>
         </Path>
         <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF42C765" StrokeThickness="0.999995">
           <Path.Data>
-            <PathGeometry Figures="M 127.98584 0 H 99.97918 C 44.90134 0 0 44.929688 0 100.00752 V 412.02081 C 0 467.09866 44.90134 512 99.97919 512 h 28.00665 V 426.67612 H 256.00001 V 341.35223 H 383.98583 V 170.67612 H 256.00001 V 85.323885 H 127.98584 Z" FillRule="EvenOdd" />
-          </Path.Data>
-        </Path>
-        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF000000" StrokeThickness="1">
-          <Path.Data>
-            <PathGeometry Figures="m 0 192 h 11.9907 v 56.91408 H 384.01417 V 192 L 512 256 384.01417 320 V 263.08592 H 11.9907 V 320 H 0 Z" FillRule="EvenOdd" />
+            <PathGeometry Figures="M 128 0 H 0 V 512 H 384 V 341 H 256 V 171 H 128 Z" FillRule="EvenOdd" />
           </Path.Data>
         </Path>
       </Canvas>

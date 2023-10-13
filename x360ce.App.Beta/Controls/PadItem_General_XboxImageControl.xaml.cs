@@ -232,11 +232,12 @@ namespace x360ce.App.Controls
 
 		// Set navigation color.
 		public void setNormalOverActiveRecordColor(object sender, SolidColorBrush setColor)
-		{
+		{	
 			SolidColorBrush senderColor = colorNormalPath;
 			if (sender is Path) { senderColor = ((Path)sender).Fill as SolidColorBrush; }
 			else if (sender is TextBox) { senderColor = ((TextBox)sender).Background as SolidColorBrush; }
 			else if (sender is ImageInfo) senderColor = (sender as ImageInfo).Path.Fill as SolidColorBrush;
+
 			// Only colorRecord can change colorRecord color.
 			if (senderColor == colorRecord)
 			{
@@ -258,10 +259,22 @@ namespace x360ce.App.Controls
 			// Sender is Path, TextBox. Set Normal, Over, Record background color.
 			else
 			{
-				foreach (var ii in Infos.Where(ii => sender == ii.Path || sender == ii.Control as TextBox))
+				if (Infos == null)
 				{
-					ii.Path.Fill = setColor;
-					(ii.Control as TextBox).Background = (setColor.Color == colorNormalPath.Color) ? colorNormalTextBox : setColor;
+					X360ControllerControl_Viewbox.Opacity = 0.3;
+					X360ControllerControl_Viewbox.IsHitTestVisible = false;
+					return;
+				}
+				else
+				{
+					X360ControllerControl_Viewbox.Opacity = 1;
+					X360ControllerControl_Viewbox.IsHitTestVisible = true;
+
+					foreach (var ii in Infos.Where(ii => sender == ii.Path || sender == ii.Control as TextBox))
+					{
+						ii.Path.Fill = setColor;
+						(ii.Control as TextBox).Background = (setColor.Color == colorNormalPath.Color) ? colorNormalTextBox : setColor;
+					}
 				}
 			}
 		}

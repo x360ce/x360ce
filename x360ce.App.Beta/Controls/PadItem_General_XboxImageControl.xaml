@@ -16,7 +16,7 @@
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
 	</UserControl.Resources>
-	<Viewbox>
+	<Viewbox Name="X360ControllerControl_Viewbox">
 		<Grid Width="2150" Height="2380">
 			<Grid.Resources>
 				<Style TargetType="Path">

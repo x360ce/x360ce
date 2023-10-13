@@ -335,7 +335,7 @@ namespace x360ce.App.Controls
 					POVList[i].Background = povState > -1 ? colorActive : Brushes.Transparent;
 					POVList[i].ToolTip = povState;
 					// Up, Right, Down, Left.
-					for (int b = 0; b < POVList.Count * 4; b++)
+					for (int b = 0; b < POVList.Count * 4 && b < povButtonValues.Length; b++)
 					{
 						POVButtonList[b].Background = povState == povButtonValues[b] ? colorActive : Brushes.Transparent;
 						POVButtonList[b].ToolTip = povState == povButtonValues[b] ? povState : -1;
@@ -393,7 +393,7 @@ namespace x360ce.App.Controls
 					DragAndDropMenuLabels_Create(ud.CapAxeCount, IHAxisList, "IHAxis", "AXIS · INVERTED · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
 					DragAndDropMenuLabels_Create(ud.CapAxeCount, IFAxisList, "IFAxis", "AXIS · INVERTED · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
 				}
-				var slidersCount = ud.DeviceObjects.Where(x => x.Type.Equals(ObjectGuid.Slider)).Count();
+				var slidersCount = ud.DeviceObjects?.Count(x => x.Type.Equals(ObjectGuid.Slider)) ?? 0;
 				if (slidersCount > 0)
 				{
 					// Add Drag and Drop menu sliders.
