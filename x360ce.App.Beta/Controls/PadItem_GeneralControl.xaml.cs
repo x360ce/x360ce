@@ -197,6 +197,9 @@ namespace x360ce.App.Controls
 		public SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
 		// Lists.
+		private List<bool> axisStateList = new List<bool>();
+		private List<bool> slidersStateList = new List<bool>();
+
 		public List<Label> ButtonList = new List<Label>();
 		public List<Label> IButtonList = new List<Label>();
 
@@ -250,17 +253,55 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		private void DragAndDropMenuLabels_Create(List<bool> total, List<Label> list, string itemName, string headerName, string iconName)
+		{
+			// GroupBox Header (icon and text).
+			StackPanel headerStackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+			headerStackPanel.Children.Add(new ContentControl { Content = Application.Current.Resources[iconName] });
+			headerStackPanel.Children.Add(new TextBlock { Text = headerName, Margin = new Thickness(3, 0, 0, 0) });
+			// GroupBox Content (UniformGrid for Labels).
+			UniformGrid buttonsUniformGrid = new UniformGrid { Columns = 8 };
+			// GroupBox.
+			GroupBox buttonsGroupBox = new GroupBox { Header = headerStackPanel, Content = buttonsUniformGrid };
+
+			//if (total == slidersStateList) {
+			//	buttonsGroupBox.Visibility = (slidersCount1 > 0) ? Visibility.Visible : Visibility.Collapsed;
+			//}
+
+			// Put GroupBoxes into NORMAL and INVERTED tabs.
+			if (headerName.Contains("INVERTED")) { DragAndDropStackPanelInverted.Children.Add(buttonsGroupBox); }
+			else { DragAndDropStackPanelNormal.Children.Add(buttonsGroupBox); }
+
+			// Create labels.
+			for (int i = 0; i < total.Count(); i++)
+			{
+				string number = (i + 1).ToString();
+				Label buttonLabel = new Label();
+				buttonLabel.Name = itemName + number + "Label";
+				buttonLabel.Content = number;
+				buttonLabel.ToolTip = itemName + " " + number;
+				buttonLabel.Tag = itemName + " " + number;
+				buttonLabel.Visibility = total[i] ? Visibility.Visible : Visibility.Collapsed;
+				buttonLabel.PreviewMouseMove += DragAndDropMenuLabel_Source_PreviewMouseMove;
+				// Add label to group UniformGrid.
+				buttonsUniformGrid.Children.Add(buttonLabel);
+				// Add label to group list.
+				list.Add(buttonLabel);
+			}
+		}
+
+
 		object updateLock = new object();
 		object oldState = null;
 
-		public void DragAndDropMenuLabels_Update(UserDevice ud)
+		CustomDiState GetCustomDiState(UserDevice ud)
 		{
 			CustomDiState customDiState = null;
 			var state = ud?.DeviceState;
 			if (state == null)
-				return;
+				return null;
 			if (state == oldState)
-				return;
+				return null;
 			lock (updateLock)
 			{
 				if (state is MouseState mState)
@@ -270,12 +311,20 @@ namespace x360ce.App.Controls
 				if (state is JoystickState jState)
 					customDiState = new CustomDiState(jState);
 			}
-			if (customDiState == null)
-				return;
+			return customDiState == null ? null : customDiState;
+		}
 
-			if (ButtonList.Any())
+
+		public void DragAndDropMenuLabels_Update(UserDevice ud)
+		{
+
+		var customDiState = GetCustomDiState(ud);
+		if (customDiState == null) return;
+
+			var buttonCount = ud.CapButtonCount;
+			if (buttonCount > 0)
 			{
-				for (int i = 0; i < ud.CapButtonCount; i++)
+				for (int i = 0; i < buttonCount; i++)
 				{
 					bool buttonState = customDiState.Buttons[i];
 					ButtonList[i].Background = buttonState ? colorActive : Brushes.Transparent;
@@ -284,9 +333,10 @@ namespace x360ce.App.Controls
 					IButtonList[i].ToolTip = (!buttonState).ToString();
 				}
 			}
-			if (AxisList.Any())
+			var axisCount = axisStateList.Count();
+			if (axisCount > 0)
 			{
-				for (int i = 0; i < ud.CapAxeCount; i++)
+				for (int i = 0; i < axisCount; i++)
 				{
 					var axisState = customDiState.Axis[i];
 					AxisList[i].Background =
@@ -306,10 +356,15 @@ namespace x360ce.App.Controls
 					if (i == 2) LeftTextBox2.Content = Math.Abs((customDiState.Axis[2] - 32767) * 2);
 				}
 			}
-			// var slidersCount = ud.DeviceObjects.Where(x => x.Type.Equals(ObjectGuid.Slider)).Count();
-			if (SliderList.Any())
+			//var slidersCount = ud.DeviceObjects?.Count(x => x.Type.Equals(ObjectGuid.Slider)) ?? 0;
+			//var slidersCount = ud.DiSliderMask;
+			//var objects = ud.DeviceObjects;
+			//var slidersCount = objects?.Where(x => x.Type.Equals(SharpDX.DirectInput.ObjectGuid.Slider)).Count() ?? 0;
+
+			var slidersCount = slidersStateList.Count();
+			if (slidersCount > 0)
 			{
-				for (int i = 0; i < SliderList.Count; i++)
+				for (int i = 0; i < slidersCount; i++)
 				{
 					var sliderState = customDiState.Sliders[i];
 					SliderList[i].Background =
@@ -318,6 +373,17 @@ namespace x360ce.App.Controls
 					ISliderList[i].Background =
 					IHSliderList[i].Background =
 					IFSliderList[i].Background = sliderState > 2000 ? colorActive : Brushes.Transparent;
+
+					if (sliderState > 0)
+					{
+						SliderList[i].Visibility = Visibility.Visible;
+						HSliderList[i].Visibility = Visibility.Visible;
+						FSliderList[i].Visibility = Visibility.Visible;
+						ISliderList[i].Visibility = Visibility.Visible;
+						IHSliderList[i].Visibility = Visibility.Visible;
+						IFSliderList[i].Visibility = Visibility.Visible;
+					}
+
 					SliderList[i].ToolTip = sliderState;
 					ISliderList[i].ToolTip = Math.Abs(sliderState - 65535);
 					HSliderList[i].ToolTip = Math.Abs((sliderState - 32767) * 2);
@@ -326,16 +392,17 @@ namespace x360ce.App.Controls
 					IFSliderList[i].ToolTip = Math.Abs(Math.Round(sliderState / 2.0) - 32767);
 				}
 			}
-			if (POVList.Any())
+			var povCount = ud.CapPovCount;
+			if (povCount > 0)
 			{
 				var povButtonValues = new[] { 0, 9000, 18000, 27000, 0, 9000, 18000, 27000 };
-				for (int i = 0; i < POVList.Count; i++)
+				for (int i = 0; i < povCount; i++)
 				{
 					var povState = customDiState.POVs[i];
 					POVList[i].Background = povState > -1 ? colorActive : Brushes.Transparent;
 					POVList[i].ToolTip = povState;
 					// Up, Right, Down, Left.
-					for (int b = 0; b < POVList.Count * 4 && b < povButtonValues.Length; b++)
+					for (int b = 0; b < povCount * 4 && b < povButtonValues.Length; b++)
 					{
 						POVButtonList[b].Background = povState == povButtonValues[b] ? colorActive : Brushes.Transparent;
 						POVButtonList[b].ToolTip = povState == povButtonValues[b] ? povState : -1;
@@ -344,6 +411,8 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		int slidersCount1 = 0;
+
 		#endregion
 
 		#region ■ Direct Input Menu
@@ -351,6 +420,9 @@ namespace x360ce.App.Controls
 		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
+			var customDiState = GetCustomDiState(ud);
+			if (customDiState == null) return;
+
 			// DragAndDrop menu children.
 			DragAndDropStackPanelNormal.Children.Clear();
 			DragAndDropStackPanelInverted.Children.Clear();
@@ -377,40 +449,51 @@ namespace x360ce.App.Controls
 			IPOVList.Clear();
 			IPOVButtonList.Clear();
 
+			// Add Drag and Drop menu
 			if (!ud.IsKeyboard)
 			{
-				// Add Drag and Drop menu buttons.
-				DragAndDropMenuLabels_Create(ud.CapButtonCount, ButtonList, "Button", "BUTTON", "Icon_DragAndDrop_Button");
-				DragAndDropMenuLabels_Create(ud.CapButtonCount, IButtonList, "IButton", "BUTTON · INVERTED", "Icon_DragAndDrop_Button_Inverted");
-
-				if (ud.DiAxeMask > 0)
+				var buttonsCount = ud.CapButtonCount;
+				if (buttonsCount > 0)
 				{
-					// Add Drag and Drop menu axes.
-					DragAndDropMenuLabels_Create(ud.CapAxeCount, AxisList, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(ud.CapAxeCount, HAxisList, "HAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
-					DragAndDropMenuLabels_Create(ud.CapAxeCount, FAxisList, "FAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
-					DragAndDropMenuLabels_Create(ud.CapAxeCount, IAxisList, "IAxis", "AXIS · INVERTED", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(ud.CapAxeCount, IHAxisList, "IHAxis", "AXIS · INVERTED · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
-					DragAndDropMenuLabels_Create(ud.CapAxeCount, IFAxisList, "IFAxis", "AXIS · INVERTED · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+					// Add Drag and Drop menu buttons.
+					DragAndDropMenuLabels_Create(buttonsCount, ButtonList, "Button", "BUTTON", "Icon_DragAndDrop_Button");
+					DragAndDropMenuLabels_Create(buttonsCount, IButtonList, "IButton", "BUTTON · INVERTED", "Icon_DragAndDrop_Button_Inverted");
 				}
-				var slidersCount = ud.DeviceObjects?.Count(x => x.Type.Equals(ObjectGuid.Slider)) ?? 0;
+				axisStateList.Clear();
+				for (int i = 0; i < customDiState.Axis.Count(); i++) { axisStateList.Add(customDiState.Axis[i] > (65535 / 4) && customDiState.Axis[i] < 65535 - (65535 / 4)); }
+				var axisCount = axisStateList.Count();
+				if (axisCount > 0)
+				{
+					DragAndDropMenuLabels_Create(axisStateList, AxisList, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
+					DragAndDropMenuLabels_Create(axisStateList, HAxisList, "HAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
+					DragAndDropMenuLabels_Create(axisStateList, FAxisList, "FAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
+					DragAndDropMenuLabels_Create(axisStateList, IAxisList, "IAxis", "AXIS · INVERTED", "Icon_DragAndDrop_Axis_Inverted");
+					DragAndDropMenuLabels_Create(axisStateList, IHAxisList, "IHAxis", "AXIS · INVERTED · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
+					DragAndDropMenuLabels_Create(axisStateList, IFAxisList, "IFAxis", "AXIS · INVERTED · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+				}
+				slidersStateList.Clear();
+				for (int i = 0; i < customDiState.Sliders.Count(); i++) { slidersStateList.Add(customDiState.Sliders[i] < (65535 / 4) && customDiState.Sliders[i] > 65535 - (65535 / 4)); }
+				var slidersCount = slidersStateList.Count();
 				if (slidersCount > 0)
 				{
 					// Add Drag and Drop menu sliders.
-					DragAndDropMenuLabels_Create(slidersCount, SliderList, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(slidersCount, HSliderList, "HSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
-					DragAndDropMenuLabels_Create(slidersCount, FSliderList, "FSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
-					DragAndDropMenuLabels_Create(slidersCount, ISliderList, "ISlider", "SLIDER · INVERTED", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(slidersCount, IHSliderList, "IHSlider", "SLIDER · INVERTED · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
-					DragAndDropMenuLabels_Create(slidersCount, IFSliderList, "IFSlider", "SLIDER · INVERTED · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+					DragAndDropMenuLabels_Create(slidersStateList, SliderList, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
+					DragAndDropMenuLabels_Create(slidersStateList, HSliderList, "HSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
+					DragAndDropMenuLabels_Create(slidersStateList, FSliderList, "FSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
+					DragAndDropMenuLabels_Create(slidersStateList, ISliderList, "ISlider", "SLIDER · INVERTED", "Icon_DragAndDrop_Axis_Inverted");
+					DragAndDropMenuLabels_Create(slidersStateList, IHSliderList, "IHSlider", "SLIDER · INVERTED · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
+					DragAndDropMenuLabels_Create(slidersStateList, IFSliderList, "IFSlider", "SLIDER · INVERTED · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+
+					var objects = ud.DeviceObjects;
+					slidersCount1 = objects?.Where(x => x.Type.Equals(ObjectGuid.Slider)).Count() ?? 0;
+
 				}
-				//if (ud.DiSliderMask > 0) { }
-				// Add D-Pads.
-				if (ud.CapPovCount > 0)
+				var povCount = ud.CapPovCount;
+				if (povCount > 0)
 				{
 					// Add Drag and Drop menu POVs.
-					DragAndDropMenuLabels_Create(ud.CapPovCount, POVList, "POV", "POV", "Icon_DragAndDrop_POV");
-					DragAndDropMenuLabels_Create(ud.CapPovCount * 4, POVButtonList, "POVB", "POV · BUTTON", "Icon_DragAndDrop_POV");
+					DragAndDropMenuLabels_Create(povCount, POVList, "POV", "POV", "Icon_DragAndDrop_POV");
+					DragAndDropMenuLabels_Create(povCount * 4, POVButtonList, "POVB", "POV · BUTTON", "Icon_DragAndDrop_POV");
 				}
 			}
 		}
