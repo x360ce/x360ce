@@ -454,7 +454,6 @@ namespace x360ce.App.Controls
 			linearLink?.Dispose();
 			linearLink = null;
 		}
-
     }
 }
 

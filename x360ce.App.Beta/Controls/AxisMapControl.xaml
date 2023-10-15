@@ -179,21 +179,21 @@
 					Margin="18,0,0,0"
 					Content="0"
 					Foreground="Blue" />
-				<Label
-					Name="AntiDeadZoneLabel"
-					Grid.Row="2"
-					VerticalAlignment="Center"
-					Content="Anti-Dead Zone" />
+				<Label Name="DeadZoneLabel" Grid.Row="2" Content="Dead Zone" />
 				<StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
-					<Slider Name="AntiDeadZoneTrackBar" />
-					<JcControls:NumericUpDown Name="AntiDeadZoneUpDown" Value="0" />
-					<TextBox Name="AntiDeadZoneTextBox" />
-				</StackPanel>
-				<Label Name="DeadZoneLabel" Grid.Row="3" Content="Dead Zone" />
-				<StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
 					<Slider Name="DeadZoneTrackBar" />
 					<JcControls:NumericUpDown Name="DeadZoneUpDown" Value="0" />
 					<TextBox Name="DeadZoneTextBox" />
+				</StackPanel>
+				<Label
+					Name="AntiDeadZoneLabel"
+					Grid.Row="3"
+					VerticalAlignment="Center"
+					Content="Anti-Dead Zone" />
+				<StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+					<Slider Name="AntiDeadZoneTrackBar" />
+					<JcControls:NumericUpDown Name="AntiDeadZoneUpDown" Value="0" />
+					<TextBox Name="AntiDeadZoneTextBox" />
 				</StackPanel>
 				<Label Name="SensitivityLabel" Grid.Row="4" Content="Sensitivity" />
 				<StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
