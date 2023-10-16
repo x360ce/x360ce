@@ -6,7 +6,6 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-
 	d:DesignWidth="600"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
@@ -107,7 +106,7 @@
 					x:Name="VendorNameColumn"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Vendor Name">
+					Header="Vendor">
 					<DataGridTextColumn.Binding>
 						<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
 							<Binding RelativeSource="{RelativeSource Self}" />
@@ -121,7 +120,7 @@
 					Binding="{Binding ProductName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Device Name" />
+					Header="Device" />
 				<DataGridTextColumn
 					Binding="{Binding PadSettingChecksum, Converter={StaticResource _ChecksumToIdConverter}}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
@@ -135,10 +134,7 @@
 					Header="Completion " />
 			</DataGrid.Columns>
 		</DataGrid>
-		<Border
-			Grid.Row="2"
-			Height="1"
-			Background="{StaticResource BorderDark}" />
+		<Border Grid.Row="2" Height="1" Background="{StaticResource BorderDark}" />
 	</Grid>
 
 

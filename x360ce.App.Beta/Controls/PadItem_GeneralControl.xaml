@@ -20,12 +20,19 @@
 						<Setter Property="Margin" Value="0" />
 						<Setter Property="Padding" Value="5,0,2,3" />
 					</Style>
+					<!--  Drag and Drop menu Title Label  -->
+					<Style x:Key="DragAndDropTitleLabel" TargetType="Label">
+						<Setter Property="Margin" Value="0,5,0,0" />
+						<Setter Property="HorizontalAlignment" Value="Center" />
+						<Setter Property="Opacity" Value="0.3" />
+						<Setter Property="IsHitTestVisible" Value="False" />
+						<Setter Property="Content" Value="Selected Device · Drag and Drop Menu" />
+					</Style>
 					<!--  Drag and Drop menu "Loading..." Label  -->
 					<Style x:Key="DragAndDropLoadingLabel" TargetType="Label">
 						<Setter Property="Margin" Value="0,20,0,0" />
 						<Setter Property="Padding" Value="9,3,9,6" />
 						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="VerticalAlignment" Value="Top" />
 						<Setter Property="IsHitTestVisible" Value="False" />
 						<Setter Property="Content" Value="Loading..." />
 					</Style>
@@ -133,12 +140,7 @@
 				</TabItem.Header>
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
-						<Label
-							Margin="0,5,0,0"
-							HorizontalAlignment="Center"
-							Content="Device Input Drag and Drop Menu"
-							IsHitTestVisible="False"
-							Opacity="0.3" />
+						<Label Style="{StaticResource DragAndDropTitleLabel}" />
 						<StackPanel Name="DragAndDropStackPanelNormal" Margin="3,0,3,3">
 							<StackPanel.Resources>
 								<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
@@ -158,12 +160,7 @@
 				</TabItem.Header>
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
-						<Label
-							Margin="0,5,0,0"
-							HorizontalAlignment="Center"
-							Content="Device Input Drag and Drop Menu"
-							IsHitTestVisible="False"
-							Opacity="0.3" />
+						<Label Style="{StaticResource DragAndDropTitleLabel}" />
 						<StackPanel Name="DragAndDropStackPanelInverted" Margin="3,0,3,3">
 							<StackPanel.Resources>
 								<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
