@@ -221,7 +221,7 @@ namespace x360ce.App.Controls
 				TextBox textBox = ii.Control as TextBox;
 				textBox.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorOver); };
 				textBox.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorNormalPath); };
-				textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverActiveRecordColor(sender, colorRecord); };
+				// textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverActiveRecordColor(sender, colorRecord); };
 
 				Path path = ii.Path;
 				path.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorOver); };
@@ -237,6 +237,7 @@ namespace x360ce.App.Controls
 			if (sender is Path) { senderColor = ((Path)sender).Fill as SolidColorBrush; }
 			else if (sender is TextBox) { senderColor = ((TextBox)sender).Background as SolidColorBrush; }
 			else if (sender is ImageInfo) senderColor = (sender as ImageInfo).Path.Fill as SolidColorBrush;
+			else if (sender is Button) { senderColor = colorRecord; sender = (sender as Button).Tag as TextBox; }
 
 			// Only colorRecord can change colorRecord color.
 			if (senderColor == colorRecord)

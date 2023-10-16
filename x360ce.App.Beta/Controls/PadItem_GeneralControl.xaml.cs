@@ -11,6 +11,7 @@ using System.Windows.Converters;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Xml;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -189,42 +190,42 @@ namespace x360ce.App.Controls
 		}
 
 		// Colors.
-		public SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
-		public SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
-		public SolidColorBrush colorNormalTextBox = Brushes.White;
-		public SolidColorBrush colorBlack = (SolidColorBrush)new BrushConverter().ConvertFrom("#11000000");
-		public SolidColorBrush colorNormalLabel = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDEDEDE");
-		public SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
-		public SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
+		SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
+		//SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
+		//SolidColorBrush colorNormalTextBox = Brushes.White;
+		//SolidColorBrush colorBlack = (SolidColorBrush)new BrushConverter().ConvertFrom("#11000000");
+		//SolidColorBrush colorNormalLabel = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDEDEDE");
+		//SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
+		//SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
 		// Lists.
-		private List<bool> buttonsStateList = new List<bool>();
-		private List<bool> povsStateList = new List<bool>();
-		private List<bool> povsBStateList = new List<bool>();
-		private List<bool> axesStateList = new List<bool>();
-		private List<bool> slidersStateList = new List<bool>();
+		List<bool> ButtonStateList = new List<bool>();
+		List<bool> POVStateList = new List<bool>();
+		List<bool> POVBStateList = new List<bool>();
+		List<bool> StickAxisStateList = new List<bool>();
+		List<bool> SliderAxisStateList = new List<bool>();
 
-		public List<Label> ButtonList = new List<Label>();
-		public List<Label> IButtonList = new List<Label>();
+		List<Label> ButtonList = new List<Label>();
+		List<Label> IButtonList = new List<Label>();
 
-		public List<Label> AxisList = new List<Label>();
-		public List<Label> HAxisList = new List<Label>();
-		public List<Label> FAxisList = new List<Label>();
-		public List<Label> IAxisList = new List<Label>();
-		public List<Label> IHAxisList = new List<Label>();
-		public List<Label> IFAxisList = new List<Label>();
+		List<Label> AxisList = new List<Label>();
+		List<Label> HAxisList = new List<Label>();
+		List<Label> FAxisList = new List<Label>();
+		List<Label> IAxisList = new List<Label>();
+		List<Label> IHAxisList = new List<Label>();
+		List<Label> IFAxisList = new List<Label>();
 
-		public List<Label> SliderList = new List<Label>();
-		public List<Label> HSliderList = new List<Label>();
-		public List<Label> FSliderList = new List<Label>();
-		public List<Label> ISliderList = new List<Label>();
-		public List<Label> IHSliderList = new List<Label>();
-		public List<Label> IFSliderList = new List<Label>();
+		List<Label> SliderList = new List<Label>();
+		List<Label> HSliderList = new List<Label>();
+		List<Label> FSliderList = new List<Label>();
+		List<Label> ISliderList = new List<Label>();
+		List<Label> IHSliderList = new List<Label>();
+		List<Label> IFSliderList = new List<Label>();
 
-		public List<Label> POVList = new List<Label>();
-		public List<Label> IPOVList = new List<Label>();
-		public List<Label> POVButtonList = new List<Label>();
-		public List<Label> IPOVButtonList = new List<Label>();
+		List<Label> POVList = new List<Label>();
+		List<Label> IPOVList = new List<Label>();
+		List<Label> POVButtonList = new List<Label>();
+		List<Label> IPOVButtonList = new List<Label>();
 
 		object updateLock = new object();
 		object oldState = null;
@@ -233,9 +234,7 @@ namespace x360ce.App.Controls
 		{
 			CustomDiState customDiState = null;
 			var state = ud?.DeviceState;
-			if (state == null)
-				return null;
-			if (state == oldState)
+			if (state == null || state == oldState)
 				return null;
 			lock (updateLock)
 			{
@@ -299,14 +298,12 @@ namespace x360ce.App.Controls
 				// Clear StackPanel children in XAML page.
 				DragAndDropStackPanelNormal.Children.Clear();
 				DragAndDropStackPanelInverted.Children.Clear();
-
 				// Clear Label lists.
-				buttonsStateList.Clear();
-				povsStateList.Clear();
-				povsBStateList.Clear();
-				axesStateList.Clear();
-				slidersStateList.Clear();
-
+				ButtonStateList.Clear();
+				POVStateList.Clear();
+				POVBStateList.Clear();
+				StickAxisStateList.Clear();
+				SliderAxisStateList.Clear();
 				// Buttons.
 				ButtonList.Clear();
 				IButtonList.Clear();
@@ -331,47 +328,47 @@ namespace x360ce.App.Controls
 				IFSliderList.Clear();
 
 				// Create button, POV, stick axis, slider axis bool lists (true = exists).
-				for (int i = 0; i < ud.CapButtonCount; i++) { buttonsStateList.Add(true); }
-				for (int i = 0; i < ud.CapPovCount; i++) { povsStateList.Add(true); }
-				for (int i = 0; i < ud.CapPovCount * 4; i++) { povsBStateList.Add(true); }
+				for (int i = 0; i < ud.CapButtonCount; i++) { ButtonStateList.Add(true); }
+				for (int i = 0; i < ud.CapPovCount; i++) { POVStateList.Add(true); }
+				for (int i = 0; i < ud.CapPovCount * 4; i++) { POVBStateList.Add(true); }
 				// Create bool list, based on axis default position: (~0, ~65535) or (~32767).
-				for (int i = 0; i < customDiState.Axis.Count(); i++) { axesStateList.Add(customDiState.Axis[i] > (65535 / 4) && customDiState.Axis[i] < 65535 - (65535 / 4)); }
-				for (int i = 0; i < customDiState.Sliders.Count(); i++) { slidersStateList.Add(customDiState.Sliders[i] < (65535 / 4) && customDiState.Sliders[i] > 65535 - (65535 / 4)); }
+				for (int i = 0; i < customDiState.Axis.Count(); i++) { StickAxisStateList.Add(customDiState.Axis[i] > (65535 / 4) && customDiState.Axis[i] < 65535 - (65535 / 4)); }
+				for (int i = 0; i < customDiState.Sliders.Count(); i++) { SliderAxisStateList.Add(customDiState.Sliders[i] < (65535 / 4) && customDiState.Sliders[i] > 65535 - (65535 / 4)); }
 
-				buttons = buttonsStateList.Count(b => b);
-				povs = povsStateList.Count(b => b);
-				stickAxes = axesStateList.Count(b => b);
+				buttons = ButtonStateList.Count(b => b);
+				povs = POVStateList.Count(b => b);
+				stickAxes = StickAxisStateList.Count(b => b);
 				// Number of sliders: all controller axes - axes with default-initial position ~32767.
-				sliderAxes = ud.CapAxeCount - axesStateList.Count(b => b);
+				sliderAxes = ud.CapAxeCount - StickAxisStateList.Count(b => b);
 				// var slidersCount = ud.DeviceObjects?.Count(x => x.Type.Equals(ObjectGuid.Slider)) ?? 0;
 
 				if (buttons > 0)
 				{
-					DragAndDropMenuLabels_Create(buttonsStateList, ButtonList, "Button", "BUTTON", "Icon_DragAndDrop_Button");
-					DragAndDropMenuLabels_Create(buttonsStateList, IButtonList, "IButton", "BUTTON", "Icon_DragAndDrop_Button_Inverted");
+					DragAndDropMenuLabels_Create(ButtonStateList, ButtonList, "Button", "BUTTON", "Icon_DragAndDrop_Button");
+					DragAndDropMenuLabels_Create(ButtonStateList, IButtonList, "IButton", "BUTTON", "Icon_DragAndDrop_Button_Inverted");
 				}
 				if (povs > 0)
 				{
-					DragAndDropMenuLabels_Create(povsStateList, POVList, "POV", "POV", "Icon_DragAndDrop_POV");
-					DragAndDropMenuLabels_Create(povsBStateList, POVButtonList, "POVB", "POV · BUTTON", "Icon_DragAndDrop_POV");
+					DragAndDropMenuLabels_Create(POVStateList, POVList, "POV", "POV", "Icon_DragAndDrop_POV");
+					DragAndDropMenuLabels_Create(POVBStateList, POVButtonList, "POVB", "POV · BUTTON", "Icon_DragAndDrop_POV");
 				}
 				if (stickAxes > 0)
 				{
-					DragAndDropMenuLabels_Create(axesStateList, AxisList, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(axesStateList, HAxisList, "HAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
-					DragAndDropMenuLabels_Create(axesStateList, FAxisList, "FAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
-					DragAndDropMenuLabels_Create(axesStateList, IAxisList, "IAxis", "AXIS", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(axesStateList, IHAxisList, "IHAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
-					DragAndDropMenuLabels_Create(axesStateList, IFAxisList, "IFAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+					DragAndDropMenuLabels_Create(StickAxisStateList, AxisList, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
+					DragAndDropMenuLabels_Create(StickAxisStateList, HAxisList, "HAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
+					DragAndDropMenuLabels_Create(StickAxisStateList, FAxisList, "FAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
+					DragAndDropMenuLabels_Create(StickAxisStateList, IAxisList, "IAxis", "AXIS", "Icon_DragAndDrop_Axis_Inverted");
+					DragAndDropMenuLabels_Create(StickAxisStateList, IHAxisList, "IHAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
+					DragAndDropMenuLabels_Create(StickAxisStateList, IFAxisList, "IFAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
 				}
 				if (sliderAxes > 0)
 				{
-					DragAndDropMenuLabels_Create(slidersStateList, SliderList, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(slidersStateList, HSliderList, "HSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
-					DragAndDropMenuLabels_Create(slidersStateList, FSliderList, "FSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
-					DragAndDropMenuLabels_Create(slidersStateList, ISliderList, "ISlider", "SLIDER", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(slidersStateList, IHSliderList, "IHSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
-					DragAndDropMenuLabels_Create(slidersStateList, IFSliderList, "IFSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, SliderList, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, HSliderList, "HSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, FSliderList, "FSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, ISliderList, "ISlider", "SLIDER", "Icon_DragAndDrop_Axis_Inverted");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, IHSliderList, "IHSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, IFSliderList, "IFSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
 				}
 			}
 		}
@@ -671,14 +668,59 @@ namespace x360ce.App.Controls
 			// DiMenuStrip.Clear();
 		}
 
+		private void RecordClear_MouseEnterTextBox(object sender, MouseEventArgs e)
+		{
+			var g1 = RecordClearGrid.Parent as Grid;
+			g1.Children.Remove(RecordClearGrid);
+
+			var t2 = sender as TextBox;
+			var s2 = t2.Parent as StackPanel;
+			var g2 = s2.Parent as Grid;
+
+			if (g2.HorizontalAlignment == HorizontalAlignment.Left)
+			{
+				Grid.SetColumn(RCBorder, 1);
+				Grid.SetColumn(RCStackPanel, 1);
+				RecordClearColumn0.Width = new GridLength(77);
+				RecordClearColumn1.Width = new GridLength(1, GridUnitType.Star);
+				RCStackPanel.FlowDirection = FlowDirection.LeftToRight;
+			}
+			else
+			{
+				Grid.SetColumn(RCBorder, 0);
+				Grid.SetColumn(RCStackPanel, 0);
+				RecordClearColumn0.Width = new GridLength(1, GridUnitType.Star);
+				RecordClearColumn1.Width = new GridLength(77);
+				RCStackPanel.FlowDirection = FlowDirection.RightToLeft;
+			}
+
+			RCStackPanel.HorizontalAlignment = g2.HorizontalAlignment;
+			RecordButton.Tag = t2;
+			ClearButton.Tag = t2;
+			g2.Children.Add(RecordClearGrid);
+			RecordClearGrid.Visibility = Visibility.Visible;
+		}
+
+		private void ClearButton_Click(object sender, RoutedEventArgs e)
+		{
+			((sender as Button).Tag as TextBox).Text = "";
+		}
+
+		PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
+		private void RecordButton_Click(object sender, RoutedEventArgs e)
+		{
+			//var textBox = (sender as Button).Tag as TextBox;
+			padItem_General_XboxImageControl.setNormalOverActiveRecordColor(sender as Button, padItem_General_XboxImageControl.colorRecord);
+		}
+
 		private void RecordClear_MouseEnter(object sender, MouseEventArgs e)
 		{
-			RecordClearButtons.Visibility = Visibility.Visible;
+			RecordClearGrid.Visibility = Visibility.Visible;
 		}
 
 		private void RecordClear_MouseLeave(object sender, MouseEventArgs e)
 		{
-			RecordClearButtons.Visibility = Visibility.Collapsed;
+			RecordClearGrid.Visibility = Visibility.Collapsed;
 		}
 	}
 }
