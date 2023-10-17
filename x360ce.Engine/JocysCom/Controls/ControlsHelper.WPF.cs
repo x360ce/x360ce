@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
 
@@ -805,6 +806,61 @@ namespace JocysCom.ClassLibrary.Controls
 			var code = control.GetHashCode();
 			return LoadedControls.Contains(code);
 		}
+
+		#region File Explorer Behaviour
+
+		/*
+		Behavior:
+
+		1. Selecting a row by clicking on the row (excluding the checkbox) should select the row and check its box.
+		2. Deselecting a row by clicking on the selected row (excluding the checkbox) should deselect the row and uncheck its box.
+		3. Checking the box should only affect its associated row, selecting it. All other rows and checkboxes should remain unaffected.
+		4. Unchecking the box should only deselect its associated row. All other rows and checkboxes should remain unaffected.
+
+		In summary, both selection and multi-selection operate normally and mirrored on checkboxes.
+		Checking or unchecking a box affects the selection of its associated row only.
+		
+
+		<!--  Used for File Explorer selection behaviour  -->
+		<DataGridTemplateColumn x:Name="IsCheckedColumn" Width="Auto" CanUserSort="False">
+			<DataGridTemplateColumn.CellTemplate>
+				<DataTemplate>
+					<CheckBox x:Name="IsCheckedCheckBox" IsChecked="{Binding IsSelected, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=DataGridRow}}" PreviewMouseDown="CheckBox_PreviewMouseDown" />
+				</DataTemplate>
+			</DataGridTemplateColumn.CellTemplate>
+			<DataGridTemplateColumn.Header>
+				<CheckBox
+					x:Name="IsCheckedColumnCheckBox"
+					Margin="0"
+					Padding="0"
+					IsEnabled="False" />
+			</DataGridTemplateColumn.Header>
+		</DataGridTemplateColumn>
+		 
+		 */
+
+		static T GetParent<T>(DependencyObject source) where T : class
+		{
+			while (source != null && !(source is T))
+				source = VisualTreeHelper.GetParent(source);
+			return source as T;
+		}
+
+		/// <summary>
+		/// Workaround: Without this event, "mouse down" will select the checkbox, but "mouse up" will deselect it immediately.
+		/// </summary>
+		public static void FileExplorer_DataGrid_CheckBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+		{
+			var checkBox = (CheckBox)sender;
+			var dataGridRow = GetParent<DataGridRow>((DependencyObject)e.OriginalSource);
+			if (dataGridRow != null)
+			{
+				dataGridRow.IsSelected = !(checkBox.IsChecked == true);
+				e.Handled = true;
+			}
+		}
+
+		#endregion
 
 	}
 }

@@ -849,7 +849,7 @@
 
 	<!--  TextBlock - Cell  -->
 	<Style x:Key="TextBlockCell" BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock">
-		<Setter Property="Padding" Value="0,0,0,0" />
+		<Setter Property="Padding" Value="0" />
 		<Setter Property="Margin" Value="3,0,16,0" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
@@ -981,15 +981,14 @@
 		<Setter Property="MinHeight" Value="24" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
-		<Setter Property="BorderThickness" Value="0" />
-
+		<!--<Setter Property="BorderThickness" Value="0" />-->
 		<Setter Property="Background" Value="{DynamicResource GradientBrushStyle}" />
-		<Style.Triggers>
-			<!--  Apply style to first column only  -->
-			<Trigger Property="DisplayIndex" Value="0">
+		<!--<Style.Triggers> -->
+		<!--  Apply style to first column only  -->
+		<!-- <Trigger Property="DisplayIndex" Value="0">
 				<Setter Property="Margin" Value="0" />
 			</Trigger>
-		</Style.Triggers>
+		</Style.Triggers>-->
 	</Style>
 
 	<Style x:Key="DataGridHeader_Sorting" BasedOn="{StaticResource DataGridColumnHeader_Default}" TargetType="DataGridColumnHeader">
@@ -1043,7 +1042,7 @@
 
 	<!--  Cell  -->
 	<Style x:Key="DataGridCell_Default" TargetType="DataGridCell">
-		<Setter Property="Padding" Value="3,0,16,0" />
+		<Setter Property="Padding" Value="3,0,3,0" />
 		<Setter Property="Margin" Value="0" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="MinHeight" Value="25" />
@@ -1056,9 +1055,9 @@
 				<Setter Property="BorderBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Background}" />
 			</Trigger>
 			<!--  First column only  -->
-			<DataTrigger Binding="{Binding Column.DisplayIndex, RelativeSource={RelativeSource Self}}" Value="0">
+			<!--<DataTrigger Binding="{Binding Column.DisplayIndex, RelativeSource={RelativeSource Self}}" Value="0">
 				<Setter Property="BorderThickness" Value="0" />
-			</DataTrigger>
+			</DataTrigger>-->
 			<!--  IsReadOnly and IsSelected  -->
 			<!--<MultiDataTrigger>
                 <MultiDataTrigger.Conditions>
