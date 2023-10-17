@@ -85,15 +85,18 @@
 		</StackPanel>
 		<DataGrid
 			xmlns:local="clr-namespace:x360ce.App.Converters"
-			x:Name="MainDataGrid"
+			Name="MainDataGrid"
 			Grid.Row="1"
 			AutoGenerateColumns="False"
-			Background="White"
 			IsReadOnly="True"
 			KeyDown="MainDataGrid_KeyDown"
 			SelectionChanged="MainDataGrid_SelectionChanged">
 			<DataGrid.Columns>
-				<DataGridCheckBoxColumn Binding="{Binding IsEnabled}" EditingElementStyle="{StaticResource CheckBoxCell_Default}" ElementStyle="{StaticResource CheckBoxCell_Default}" />
+				<DataGridCheckBoxColumn
+					Binding="{Binding IsEnabled}"
+					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
+					ElementStyle="{StaticResource CheckBoxCell_Default}"
+					Header="On" />
 				<DataGridTextColumn
 					Binding="{Binding FileName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"

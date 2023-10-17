@@ -55,6 +55,12 @@
 	<SolidColorBrush x:Key="SolidColorBrush_300D">#D600D6</SolidColorBrush>
 	<SolidColorBrush x:Key="SolidColorBrush_330D">#D60067</SolidColorBrush>
 
+	<!--  GradientBrush  -->
+	<LinearGradientBrush x:Key="GradientBrushStyle" StartPoint="1,0" EndPoint="1,1">
+		<GradientStop Offset="0" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
+		<GradientStop Offset="1" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
+	</LinearGradientBrush>
+
 	<Style TargetType="Canvas">
 		<Setter Property="SnapsToDevicePixels" Value="False" />
 	</Style>
@@ -843,8 +849,8 @@
 
 	<!--  TextBlock - Cell  -->
 	<Style x:Key="TextBlockCell" BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock">
-		<Setter Property="Padding" Value="3,0,3,0" />
-		<Setter Property="Margin" Value="0" />
+		<Setter Property="Padding" Value="0,0,0,0" />
+		<Setter Property="Margin" Value="3,0,16,0" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
@@ -953,31 +959,31 @@
 	</Style>
 
 	<Style x:Key="ImageCell_Default" TargetType="Image">
-		<Setter Property="Margin" Value="3,0,3,0" />
+		<Setter Property="Margin" Value="3,0,16,0" />
 		<Setter Property="Width" Value="21" />
 		<Setter Property="Height" Value="21" />
 		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="HorizontalAlignment" Value="Left" />
 	</Style>
 
-	<Style x:Key="CheckBoxCell_Default" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox">
-		<Setter Property="Margin" Value="3,0,3,0" />
-		<Setter Property="Padding" Value="0" />
-		<Setter Property="HorizontalAlignment" Value="Center" />
+	<Style x:Key="ContentControlCell_Default" BasedOn="{StaticResource ContentControl_Default}" TargetType="ContentControl">
+		<Setter Property="Margin" Value="3,0,16,0" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="HorizontalAlignment" Value="Left" />
 	</Style>
 
+	<Style x:Key="CheckBoxCell_Default" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
+
+	<!--  Column Header  -->
 	<Style x:Key="DataGridColumnHeader_Default" TargetType="DataGridColumnHeader">
-		<Setter Property="Padding" Value="3" />
+		<Setter Property="Padding" Value="3,0,16,0" />
+		<Setter Property="Margin" Value="0" />
+		<Setter Property="MinHeight" Value="24" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="BorderThickness" Value="0" />
-		<Setter Property="Margin" Value="1,0,0,0" />
-		<Setter Property="Background">
-			<Setter.Value>
-				<LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
-					<GradientStop Offset="0" Color="{DynamicResource {x:Static SystemColors.WindowColorKey}}" />
-					<GradientStop Offset="1" Color="{DynamicResource {x:Static SystemColors.ControlColorKey}}" />
-				</LinearGradientBrush>
-			</Setter.Value>
-		</Setter>
+
+		<Setter Property="Background" Value="{DynamicResource GradientBrushStyle}" />
 		<Style.Triggers>
 			<!--  Apply style to first column only  -->
 			<Trigger Property="DisplayIndex" Value="0">
@@ -986,11 +992,62 @@
 		</Style.Triggers>
 	</Style>
 
+	<Style x:Key="DataGridHeader_Sorting" BasedOn="{StaticResource DataGridColumnHeader_Default}" TargetType="DataGridColumnHeader">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="DataGridColumnHeader">
+					<Grid Background="{DynamicResource GradientBrushStyle}">
+						<!--  Title  -->
+						<ContentPresenter Margin="3,0,16,0" VerticalAlignment="Center" Content="{TemplateBinding Content}" />
+						<!--  Sorting Triangle  -->
+						<Path
+							x:Name="SortingIndicator"
+							Width="10"
+							Height="5"
+							Margin="0,0,3,0"
+							HorizontalAlignment="Right"
+							VerticalAlignment="Center"
+							Data="M 5,0 L 0,5 L 10,5 Z"
+							Fill="Black"
+							Opacity="1"
+							RenderTransformOrigin="0.5,0.5"
+							Visibility="Hidden" />
+					</Grid>
+					<!--  Header Triggers  -->
+					<ControlTemplate.Triggers>
+						<Trigger Property="SortDirection" Value="Ascending">
+							<Setter TargetName="SortingIndicator" Property="Visibility" Value="Visible" />
+							<Setter TargetName="SortingIndicator" Property="RenderTransform">
+								<Setter.Value>
+									<TransformGroup>
+										<ScaleTransform ScaleY="-1" />
+									</TransformGroup>
+								</Setter.Value>
+							</Setter>
+						</Trigger>
+						<Trigger Property="SortDirection" Value="Descending">
+							<Setter TargetName="SortingIndicator" Property="Visibility" Value="Visible" />
+							<Setter TargetName="SortingIndicator" Property="RenderTransform">
+								<Setter.Value>
+									<TransformGroup>
+										<ScaleTransform ScaleY="1" />
+									</TransformGroup>
+								</Setter.Value>
+							</Setter>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  Cell  -->
 	<Style x:Key="DataGridCell_Default" TargetType="DataGridCell">
+		<Setter Property="Padding" Value="3,0,16,0" />
+		<Setter Property="Margin" Value="0" />
 		<Setter Property="SnapsToDevicePixels" Value="True" />
 		<Setter Property="MinHeight" Value="25" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
-		<Setter Property="Padding" Value="3,1,3,1" />
 		<Setter Property="BorderBrush" Value="Transparent" />
 		<Setter Property="BorderThickness" Value="0" />
 		<Style.Triggers>
@@ -1031,6 +1088,9 @@
 			<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{x:Static SystemColors.HighlightTextColor}" />
 			<!--  DataGridColumnHeader  -->
 			<Style BasedOn="{StaticResource DataGridColumnHeader_Default}" TargetType="DataGridColumnHeader" />
+			<!--<Style TargetType="DataGridRowHeader">
+				<Setter Property="Background" Value="Green" />
+			</Style>-->
 			<!--  DataGridRow  -->
 			<Style TargetType="DataGridRow">
 				<Setter Property="Background" Value="Transparent" />

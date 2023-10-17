@@ -19,42 +19,32 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-				<Button
-					Name="ImportButton"
-					Click="ImportButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_import}" />
-						<Label Content="Import..." />
-					</StackPanel>
-				</Button>
-				<Button
-					Margin="0,3,3,3"
-                    Name="ExportButton"
-					Click="ExportButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_export}" />
-						<Label Content="Export..." />
-					</StackPanel>
-				</Button>
+			<Button Name="ImportButton" Click="ImportButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_import}" />
+					<Label Content="Import..." />
+				</StackPanel>
+			</Button>
+			<Button Name="ExportButton" Margin="0,3,3,3" Click="ExportButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_export}" />
+					<Label Content="Export..." />
+				</StackPanel>
+			</Button>
 		</StackPanel>
 		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Button
-					Name="DeleteButton"
-					Click="DeleteButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_Delete}" />
-						<Label Content="Delete" />
-					</StackPanel>
-				</Button>
-				<Button
-					Margin="0,3,3,3"
-                    Name="RefreshButton"
-					Click="RefreshButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_Refresh}" />
-						<Label Content="Refresh" />
-					</StackPanel>
-				</Button>
+			<Button Name="DeleteButton" Click="DeleteButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Delete}" />
+					<Label Content="Delete" />
+				</StackPanel>
+			</Button>
+			<Button Name="RefreshButton" Margin="0,3,3,3" Click="RefreshButton_Click">
+				<StackPanel>
+					<ContentControl Content="{StaticResource Icon_Refresh}" />
+					<Label Content="Refresh" />
+				</StackPanel>
+			</Button>
 		</StackPanel>
 		<Border
 			Grid.Row="1"
@@ -77,13 +67,13 @@
 					Binding="{Binding FileName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="File Name" />
+					Header="File" />
 				<DataGridTextColumn
 					Width="*"
 					Binding="{Binding FileProductName}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Product Name" />
+					Header="Product" />
 			</DataGrid.Columns>
 			<DataGrid.CellStyle>
 				<Style TargetType="DataGridCell">

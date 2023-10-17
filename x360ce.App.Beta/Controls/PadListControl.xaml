@@ -65,17 +65,34 @@
 				<converters:ConnectionClassToImageConverter x:Key="ConnectionClassToImageConverter" />
 				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
 			</DataGrid.Resources>
+
+			<!--  Cell - Rows of ofline controllers are transparent.  -->
+			<DataGrid.CellStyle>
+				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding IsOnline}" Value="False">
+							<Setter Property="Opacity" Value="0.2" />
+							<!--<Setter Property="IsHitTestVisible" Value="False" />-->
+						</DataTrigger>
+						<DataTrigger Binding="{Binding IsOnline}" Value="True">
+							<Setter Property="Opacity" Value="1" />
+							<!--<Setter Property="IsHitTestVisible" Value="True" />-->
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</DataGrid.CellStyle>
+			
 			<DataGrid.Columns>
 				<!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
-				<DataGridTemplateColumn Width="SizeToCells" IsReadOnly="True">
+				<DataGridTemplateColumn IsReadOnly="True" Header="Active">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<ContentControl Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}" />
+							<ContentControl Style="{StaticResource ContentControlCell_Default}" Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 				<!--  Connection type  -->
-				<DataGridTemplateColumn x:Name="ConnectionClassColumn" Header="" IsReadOnly="True">
+				<DataGridTemplateColumn x:Name="ConnectionClassColumn" Header="Connection" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<Image Style="{StaticResource ImageCell_Default}">
@@ -131,7 +148,7 @@
 					Binding="{Binding Completion}"
 					EditingElementStyle="{StaticResource TextBoxRightCell}"
 					ElementStyle="{StaticResource TextBlockRightCell}"
-					Header="Completion " />
+					Header="Completion" />
 			</DataGrid.Columns>
 		</DataGrid>
 		<Border Grid.Row="2" Height="1" Background="{StaticResource BorderDark}" />
