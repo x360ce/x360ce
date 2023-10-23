@@ -136,8 +136,9 @@ namespace x360ce.App.Controls
                 var b = ConvertHelper.ConvertRangeF(y, byte.MinValue, byte.MaxValue, 0, h);
                 var m = control.Margin;
                 control.Margin = new System.Windows.Thickness(m.Left, m.Top, m.Right, b);
-				var triggerLDeadzone = 0;
-				var triggerRDeadzone = 0;
+                // Deadzone.
+				var triggerLDeadzone = Gamepad.TriggerThreshold;
+				var triggerRDeadzone = Gamepad.TriggerThreshold;
 				on = (ii.Code == MapCode.LeftTrigger && y > triggerLDeadzone) || (ii.Code == MapCode.RightTrigger && y > triggerRDeadzone);
 			}
             // Show stick axis state with "•" yellow circle.
@@ -152,12 +153,13 @@ namespace x360ce.App.Controls
 				var t = ConvertHelper.ConvertRangeF(y, short.MinValue, short.MaxValue, w, -w);
 				var m = control.Margin;
 				control.Margin = new System.Windows.Thickness(l, t, m.Right, m.Bottom);
-                var stickLDeadzone = 2000;
-				var stickRDeadzone = 2000;
+                // Deadzone.
+                var stickLDeadzone = Gamepad.LeftThumbDeadZone;
+				var stickRDeadzone = Gamepad.RightThumbDeadZone;
 				on = (ii.Code == MapCode.LeftThumbAxisX && (x > stickLDeadzone || x < -stickLDeadzone)) ||
-					  (ii.Code == MapCode.LeftThumbAxisY && (y > stickLDeadzone || y < -stickLDeadzone)) ||
-					  (ii.Code == MapCode.RightThumbAxisX && (x > stickRDeadzone || x < -stickRDeadzone)) ||
-					  (ii.Code == MapCode.RightThumbAxisY && (y > stickRDeadzone || y < -stickRDeadzone));
+					 (ii.Code == MapCode.LeftThumbAxisY && (y > stickLDeadzone || y < -stickLDeadzone)) ||
+					 (ii.Code == MapCode.RightThumbAxisX && (x > stickRDeadzone || x < -stickRDeadzone)) ||
+					 (ii.Code == MapCode.RightThumbAxisY && (y > stickRDeadzone || y < -stickRDeadzone));
 			}
 			// If D-Pad.
 			else if (ii.Code == MapCode.DPad)
@@ -171,36 +173,74 @@ namespace x360ce.App.Controls
             // If button is not specified then...
             else if (ii.Button == GamepadButtonFlags.None)
             {
-                var deadzone = 2000;
-                // This is axis.
-                short value = 0;
-                if (ii.Code == MapCode.LeftThumbAxisX)
-                    value = gp.LeftThumbX;
-                else if (ii.Code == MapCode.LeftThumbAxisY)
-                    value = gp.LeftThumbY;
-                else if (ii.Code == MapCode.RightThumbAxisX)
-                    value = gp.RightThumbX;
-                else if (ii.Code == MapCode.RightThumbAxisY)
-                    value = gp.RightThumbY;
-                // Check when value is on.
-                on = value < -deadzone || value > deadzone;
-                if (ii.Code == MapCode.LeftThumbRight)
-                    on = gp.LeftThumbX > deadzone;
-                if (ii.Code == MapCode.LeftThumbLeft)
-                    on = gp.LeftThumbX < -deadzone;
-                if (ii.Code == MapCode.LeftThumbUp)
-                    on = gp.LeftThumbY > deadzone;
-                if (ii.Code == MapCode.LeftThumbDown)
-                    on = gp.LeftThumbY < -deadzone;
-                if (ii.Code == MapCode.RightThumbRight)
-                    on = gp.RightThumbX > deadzone;
-                if (ii.Code == MapCode.RightThumbLeft)
-                    on = gp.RightThumbX < -deadzone;
-                if (ii.Code == MapCode.RightThumbUp)
-                    on = gp.RightThumbY > deadzone;
-                if (ii.Code == MapCode.RightThumbDown)
-                    on = gp.RightThumbY < -deadzone;
-            }
+				// Deadzone.
+				// Deadzone.
+				short value = 0;
+				short stickLDeadzone = Gamepad.LeftThumbDeadZone;
+				short stickRDeadzone = Gamepad.RightThumbDeadZone;
+				switch (ii.Code)
+				{
+					case MapCode.LeftThumbAxisX:
+					case MapCode.LeftThumbAxisY:
+						on = Math.Abs(value) > stickLDeadzone;
+						break;
+					case MapCode.RightThumbAxisX:
+					case MapCode.RightThumbAxisY:
+						on = Math.Abs(value) > stickRDeadzone;
+						break;
+					case MapCode.LeftThumbRight:
+						on = gp.LeftThumbX > stickLDeadzone;
+						break;
+					case MapCode.LeftThumbLeft:
+						on = gp.LeftThumbX < -stickLDeadzone;
+						break;
+					case MapCode.LeftThumbUp:
+						on = gp.LeftThumbY > stickLDeadzone;
+						break;
+					case MapCode.LeftThumbDown:
+						on = gp.LeftThumbY < -stickLDeadzone;
+						break;
+					case MapCode.RightThumbRight:
+						on = gp.RightThumbX > stickRDeadzone;
+						break;
+					case MapCode.RightThumbLeft:
+						on = gp.RightThumbX < -stickRDeadzone;
+						break;
+					case MapCode.RightThumbUp:
+						on = gp.RightThumbY > stickRDeadzone;
+						break;
+					case MapCode.RightThumbDown:
+						on = gp.RightThumbY < -stickRDeadzone;
+						break;
+				}
+				//short value = 0;
+				//var stickLDeadzone = Gamepad.LeftThumbDeadZone;
+				//var stickRDeadzone = Gamepad.RightThumbDeadZone;
+				//            if (ii.Code == MapCode.LeftThumbAxisX)
+				//	on = value < -stickLDeadzone || value > stickLDeadzone;
+				//else if (ii.Code == MapCode.LeftThumbAxisY)
+				//	on = value < -stickLDeadzone || value > stickLDeadzone;
+				//            else if (ii.Code == MapCode.RightThumbAxisX)
+				//	on = value < -stickRDeadzone || value > stickRDeadzone;
+				//            else if (ii.Code == MapCode.RightThumbAxisY)
+				//	on = value < -stickRDeadzone || value > stickRDeadzone;
+				//            if (ii.Code == MapCode.LeftThumbRight)
+				//                on = gp.LeftThumbX > stickLDeadzone;
+				//            if (ii.Code == MapCode.LeftThumbLeft)
+				//                on = gp.LeftThumbX < -stickLDeadzone;
+				//            if (ii.Code == MapCode.LeftThumbUp)
+				//                on = gp.LeftThumbY > stickLDeadzone;
+				//            if (ii.Code == MapCode.LeftThumbDown)
+				//                on = gp.LeftThumbY < -stickLDeadzone;
+				//            if (ii.Code == MapCode.RightThumbRight)
+				//                on = gp.RightThumbX > stickRDeadzone;
+				//            if (ii.Code == MapCode.RightThumbLeft)
+				//                on = gp.RightThumbX < -stickRDeadzone;
+				//            if (ii.Code == MapCode.RightThumbUp)
+				//                on = gp.RightThumbY > stickRDeadzone;
+				//            if (ii.Code == MapCode.RightThumbDown)
+				//                on = gp.RightThumbY < -stickRDeadzone;
+			}
             else
             {
                 // Check when value is on.

@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using SharpDX.DirectInput;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Data.Objects;
@@ -411,6 +412,11 @@ namespace x360ce.App.Controls
 			// Stick axes.
 			if (stickAxes > 0)
 			{
+				StickRightDeadzoneLabel.Content = Gamepad.RightThumbDeadZone;
+				StickLeftDeadzoneLabel.Content = Gamepad.LeftThumbDeadZone;
+				TriggerRightDeadzoneLabel.Content = Gamepad.TriggerThreshold;
+				TriggerLeftDeadzoneLabel.Content = Gamepad.TriggerThreshold;
+
 				for (int i = 0; i < customDiState.Axis.Count(); i++)
 				{
 					var axisState = customDiState.Axis[i];
@@ -419,7 +425,7 @@ namespace x360ce.App.Controls
 					FAxisList[i].Background =
 					IAxisList[i].Background =
 					IHAxisList[i].Background =
-					IFAxisList[i].Background = axisState < 32767 - 2000 || axisState > 32767 + 2000 ? colorActive : Brushes.Transparent;
+					IFAxisList[i].Background = axisState < 32767 - Gamepad.LeftThumbDeadZone || axisState > 32767 + Gamepad.LeftThumbDeadZone ? colorActive : Brushes.Transparent;
 					AxisList[i].ToolTip = axisState;
 					IAxisList[i].ToolTip = Math.Abs(axisState - 65535);
 					HAxisList[i].ToolTip = Math.Abs((axisState - 32767) * 2);
@@ -442,7 +448,7 @@ namespace x360ce.App.Controls
 					FSliderList[i].Background =
 					ISliderList[i].Background =
 					IHSliderList[i].Background =
-					IFSliderList[i].Background = sliderState > 2000 ? colorActive : Brushes.Transparent;
+					IFSliderList[i].Background = sliderState > Gamepad.LeftThumbDeadZone ? colorActive : Brushes.Transparent;
 
 					if (sliderState > 0)
 					{
