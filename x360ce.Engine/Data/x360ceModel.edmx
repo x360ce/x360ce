@@ -375,102 +375,103 @@
 		<edmx:ConceptualModels>
 			<Schema Namespace="x360ce.Engine.Data" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
 				<EntityContainer Name="x360ceModelContainer" annotation:LazyLoadingEnabled="true" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
-					<EntitySet Name="PadSettings" EntityType="x360ce.Engine.Data.PadSetting" />
-					<EntitySet Name="UserSettings" EntityType="x360ce.Engine.Data.UserSetting" />
-					<EntitySet Name="Summaries" EntityType="x360ce.Engine.Data.Summary" />
-					<EntitySet Name="Vendors" EntityType="x360ce.Engine.Data.Vendor" />
-          <EntitySet Name="Products" EntityType="x360ce.Engine.Data.Product" />
-          <EntitySet Name="UserInstances" EntityType="x360ce.Engine.Data.UserInstance" />
-          <EntitySet Name="UserComputers" EntityType="x360ce.Engine.Data.UserComputer" />
-          <EntitySet Name="UserDevices" EntityType="x360ce.Engine.Data.UserDevice" />
-          <EntitySet Name="UserGames" EntityType="x360ce.Engine.Data.UserGame" />
-          <EntitySet Name="Programs" EntityType="x360ce.Engine.Data.Program" />
-          <EntitySet Name="Layouts" EntityType="x360ce.Engine.Data.Layout" />
-          <EntitySet Name="UserProfiles" EntityType="x360ce.Engine.Data.UserProfile" />
-          <EntitySet Name="UserMacros" EntityType="x360ce.Engine.Data.UserMacro" />
+                    <EntitySet Name="PadSettings" EntityType="x360ce.Engine.Data.PadSetting" />
+                    <EntitySet Name="UserSettings" EntityType="x360ce.Engine.Data.UserSetting" />
+                    <EntitySet Name="Summaries" EntityType="x360ce.Engine.Data.Summary" />
+                    <EntitySet Name="Vendors" EntityType="x360ce.Engine.Data.Vendor" />
+                    <EntitySet Name="Products" EntityType="x360ce.Engine.Data.Product" />
+                    <EntitySet Name="UserInstances" EntityType="x360ce.Engine.Data.UserInstance" />
+                    <EntitySet Name="UserComputers" EntityType="x360ce.Engine.Data.UserComputer" />
+                    <EntitySet Name="UserDevices" EntityType="x360ce.Engine.Data.UserDevice" />
+                    <EntitySet Name="UserGames" EntityType="x360ce.Engine.Data.UserGame" />
+                    <EntitySet Name="Programs" EntityType="x360ce.Engine.Data.Program" />
+                    <EntitySet Name="Layouts" EntityType="x360ce.Engine.Data.Layout" />
+                    <EntitySet Name="UserProfiles" EntityType="x360ce.Engine.Data.UserProfile" />
+                    <EntitySet Name="UserMacros" EntityType="x360ce.Engine.Data.UserMacro" />
 				</EntityContainer>
 				<EntityType Name="PadSetting">
-					<Key>
-						<PropertyRef Name="PadSettingChecksum" />
-					</Key>
-					<Property Type="Guid" Name="PadSettingChecksum" Nullable="false" />
-					<Property Type="String" Name="AxisToDPadDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="AxisToDPadEnabled" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="AxisToDPadOffset" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ButtonA" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ButtonB" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ButtonBack" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ButtonGuide" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ButtonStart" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ButtonX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ButtonY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="DPad" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="DPadDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="DPadLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="DPadRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="DPadUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ForceEnable" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ForceOverall" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ForceSwapMotor" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="ForceType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="GamePadType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftMotorPeriod" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftShoulder" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbAntiDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbAntiDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbAxisX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbAxisY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftThumbUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftTrigger" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="LeftTriggerDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="PassThrough" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightMotorPeriod" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightShoulder" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbAntiDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbAntiDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbAxisX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbAxisY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightThumbUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightTrigger" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-					<Property Type="String" Name="RightTriggerDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="LeftThumbLinearX" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="LeftThumbLinearY" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="RightThumbLinearX" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="RightThumbLinearY" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="LeftMotorStrength" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="RightMotorStrength" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="LeftMotorDirection" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="RightMotorDirection" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="ButtonADeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="ButtonBDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="ButtonBackDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="ButtonStartDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="ButtonXDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="ButtonYDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="LeftThumbButtonDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="RightThumbButtonDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="LeftShoulderDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="RightShoulderDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="DPadDownDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="DPadLeftDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="DPadRightDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="DPadUpDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="LeftTriggerAntiDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="LeftTriggerLinear" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="RightTriggerAntiDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
-          <Property Name="RightTriggerLinear" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Key>
+                        <PropertyRef Name="PadSettingChecksum" />
+                    </Key>
+                    <Property Type="Guid" Name="PadSettingChecksum" Nullable="false" />
+                    <Property Type="String" Name="AxisToDPadDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="AxisToDPadEnabled" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="AxisToDPadOffset" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ButtonA" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ButtonB" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ButtonBack" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ButtonGuide" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ButtonStart" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ButtonX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ButtonY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="DPad" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="DPadDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="DPadLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="DPadRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="DPadUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ForceEnable" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ForceOverall" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ForceSwapMotor" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="ForceType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="GamePadType" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftMotorPeriod" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftShoulder" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbAntiDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbAntiDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbAxisX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbAxisY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftThumbUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftTrigger" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="LeftTriggerDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="PassThrough" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightMotorPeriod" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightShoulder" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbAntiDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbAntiDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbAxisX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbAxisY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbButton" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbDeadZoneY" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbDown" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbLeft" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbRight" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightThumbUp" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightTrigger" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Type="String" Name="RightTriggerDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="LeftThumbLinearX" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="LeftThumbLinearY" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="RightThumbLinearX" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="RightThumbLinearY" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="LeftMotorStrength" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="RightMotorStrength" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="LeftMotorDirection" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="RightMotorDirection" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="ButtonADeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="ButtonBDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="ButtonBackDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="ButtonStartDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="ButtonGuideDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="ButtonXDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="ButtonYDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="LeftThumbButtonDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="RightThumbButtonDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="LeftShoulderDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="RightShoulderDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="DPadDownDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="DPadLeftDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="DPadRightDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="DPadUpDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="LeftTriggerAntiDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="LeftTriggerLinear" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="RightTriggerAntiDeadZone" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+                    <Property Name="RightTriggerLinear" Type="String" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 				</EntityType>
 				<EntityType Name="UserSetting">
 					<Key>
@@ -509,7 +510,7 @@
 					<Property Type="String" Name="FileProductName" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
 					<Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
 					<Property Type="DateTime" Name="DateUpdated" Nullable="false" Precision="3" />
-          <Property Name="Weight" Type="Int32" Nullable="false" />
+                    <Property Name="Weight" Type="Int32" Nullable="false" />
 				</EntityType>
 				<EntityType Name="Vendor">
 					<Key>
@@ -750,33 +751,34 @@
 					<EntitySetMapping Name="PadSettings">
 						<EntityTypeMapping TypeName="x360ce.Engine.Data.PadSetting">
 							<MappingFragment StoreEntitySet="x360ce_PadSettings">
-                <ScalarProperty Name="RightTriggerLinear" ColumnName="RightTriggerLinear" />
-                <ScalarProperty Name="RightTriggerAntiDeadZone" ColumnName="RightTriggerAntiDeadZone" />
-                <ScalarProperty Name="LeftTriggerLinear" ColumnName="LeftTriggerLinear" />
-                <ScalarProperty Name="LeftTriggerAntiDeadZone" ColumnName="LeftTriggerAntiDeadZone" />
-                <ScalarProperty Name="DPadUpDeadZone" ColumnName="DPadUpDeadZone" />
-                <ScalarProperty Name="DPadRightDeadZone" ColumnName="DPadRightDeadZone" />
-                <ScalarProperty Name="DPadLeftDeadZone" ColumnName="DPadLeftDeadZone" />
-                <ScalarProperty Name="DPadDownDeadZone" ColumnName="DPadDownDeadZone" />
-                <ScalarProperty Name="RightShoulderDeadZone" ColumnName="RightShoulderDeadZone" />
-                <ScalarProperty Name="LeftShoulderDeadZone" ColumnName="LeftShoulderDeadZone" />
-                <ScalarProperty Name="RightThumbButtonDeadZone" ColumnName="RightThumbButtonDeadZone" />
-                <ScalarProperty Name="LeftThumbButtonDeadZone" ColumnName="LeftThumbButtonDeadZone" />
-                <ScalarProperty Name="ButtonYDeadZone" ColumnName="ButtonYDeadZone" />
-                <ScalarProperty Name="ButtonXDeadZone" ColumnName="ButtonXDeadZone" />
-                <ScalarProperty Name="ButtonStartDeadZone" ColumnName="ButtonStartDeadZone" />
-                <ScalarProperty Name="ButtonBackDeadZone" ColumnName="ButtonBackDeadZone" />
-                <ScalarProperty Name="ButtonBDeadZone" ColumnName="ButtonBDeadZone" />
-                <ScalarProperty Name="ButtonADeadZone" ColumnName="ButtonADeadZone" />
-                <ScalarProperty Name="RightMotorDirection" ColumnName="RightMotorDirection" />
-                <ScalarProperty Name="LeftMotorDirection" ColumnName="LeftMotorDirection" />
-                <ScalarProperty Name="RightMotorStrength" ColumnName="RightMotorStrength" />
-                <ScalarProperty Name="LeftMotorStrength" ColumnName="LeftMotorStrength" />
-                <ScalarProperty Name="RightThumbLinearY" ColumnName="RightThumbLinearY" />
-                <ScalarProperty Name="RightThumbLinearX" ColumnName="RightThumbLinearX" />
-                <ScalarProperty Name="LeftThumbLinearY" ColumnName="LeftThumbLinearY" />
-                <ScalarProperty Name="LeftThumbLinearX" ColumnName="LeftThumbLinearX" />
-                <ScalarProperty Name="RightTriggerDeadZone" ColumnName="RightTriggerDeadZone" />
+                                <ScalarProperty Name="RightTriggerLinear" ColumnName="RightTriggerLinear" />
+                                <ScalarProperty Name="RightTriggerAntiDeadZone" ColumnName="RightTriggerAntiDeadZone" />
+                                <ScalarProperty Name="LeftTriggerLinear" ColumnName="LeftTriggerLinear" />
+                                <ScalarProperty Name="LeftTriggerAntiDeadZone" ColumnName="LeftTriggerAntiDeadZone" />
+                                <ScalarProperty Name="DPadUpDeadZone" ColumnName="DPadUpDeadZone" />
+                                <ScalarProperty Name="DPadRightDeadZone" ColumnName="DPadRightDeadZone" />
+                                <ScalarProperty Name="DPadLeftDeadZone" ColumnName="DPadLeftDeadZone" />
+                                <ScalarProperty Name="DPadDownDeadZone" ColumnName="DPadDownDeadZone" />
+                                <ScalarProperty Name="RightShoulderDeadZone" ColumnName="RightShoulderDeadZone" />
+                                <ScalarProperty Name="LeftShoulderDeadZone" ColumnName="LeftShoulderDeadZone" />
+                                <ScalarProperty Name="RightThumbButtonDeadZone" ColumnName="RightThumbButtonDeadZone" />
+                                <ScalarProperty Name="LeftThumbButtonDeadZone" ColumnName="LeftThumbButtonDeadZone" />
+                                <ScalarProperty Name="ButtonYDeadZone" ColumnName="ButtonYDeadZone" />
+                                <ScalarProperty Name="ButtonXDeadZone" ColumnName="ButtonXDeadZone" />
+                                <ScalarProperty Name="ButtonStartDeadZone" ColumnName="ButtonStartDeadZone" />
+                                <ScalarProperty Name="ButtonGuideDeadZone" ColumnName="ButtonGuideDeadZone" />
+                                <ScalarProperty Name="ButtonBackDeadZone" ColumnName="ButtonBackDeadZone" />
+                                <ScalarProperty Name="ButtonBDeadZone" ColumnName="ButtonBDeadZone" />
+                                <ScalarProperty Name="ButtonADeadZone" ColumnName="ButtonADeadZone" />
+                                <ScalarProperty Name="RightMotorDirection" ColumnName="RightMotorDirection" />
+                                <ScalarProperty Name="LeftMotorDirection" ColumnName="LeftMotorDirection" />
+                                <ScalarProperty Name="RightMotorStrength" ColumnName="RightMotorStrength" />
+                                <ScalarProperty Name="LeftMotorStrength" ColumnName="LeftMotorStrength" />
+                                <ScalarProperty Name="RightThumbLinearY" ColumnName="RightThumbLinearY" />
+                                <ScalarProperty Name="RightThumbLinearX" ColumnName="RightThumbLinearX" />
+                                <ScalarProperty Name="LeftThumbLinearY" ColumnName="LeftThumbLinearY" />
+                                <ScalarProperty Name="LeftThumbLinearX" ColumnName="LeftThumbLinearX" />
+                                <ScalarProperty Name="RightTriggerDeadZone" ColumnName="RightTriggerDeadZone" />
 								<ScalarProperty Name="RightTrigger" ColumnName="RightTrigger" />
 								<ScalarProperty Name="RightThumbUp" ColumnName="RightThumbUp" />
 								<ScalarProperty Name="RightThumbRight" ColumnName="RightThumbRight" />
@@ -834,12 +836,12 @@
 					<EntitySetMapping Name="UserSettings">
 						<EntityTypeMapping TypeName="x360ce.Engine.Data.UserSetting">
 							<MappingFragment StoreEntitySet="x360ce_Settings">
-                <ScalarProperty Name="Checksum" ColumnName="Checksum" />
-                <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
-                <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
-                <ScalarProperty Name="Completion" ColumnName="Completion" />
-                <ScalarProperty Name="MapTo" ColumnName="MapTo" />
-                <ScalarProperty Name="DateSelected" ColumnName="DateSelected" />
+                                <ScalarProperty Name="Checksum" ColumnName="Checksum" />
+                                <ScalarProperty Name="ProfileId" ColumnName="ProfileId" />
+                                <ScalarProperty Name="ComputerId" ColumnName="ComputerId" />
+                                <ScalarProperty Name="Completion" ColumnName="Completion" />
+                                <ScalarProperty Name="MapTo" ColumnName="MapTo" />
+                                <ScalarProperty Name="DateSelected" ColumnName="DateSelected" />
 								<ScalarProperty Name="PadSettingChecksum" ColumnName="PadSettingChecksum" />
 								<ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
 								<ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
@@ -860,7 +862,7 @@
 						<EntityTypeMapping TypeName="x360ce.Engine.Data.Summary">
 							<MappingFragment StoreEntitySet="x360ce_Summaries">
 								<ScalarProperty Name="Weight" ColumnName="Weight" />
-                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
+                                <ScalarProperty Name="DateUpdated" ColumnName="DateUpdated" />
 								<ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
 								<ScalarProperty Name="FileProductName" ColumnName="FileProductName" />
 								<ScalarProperty Name="FileName" ColumnName="FileName" />
@@ -1137,15 +1139,15 @@
 				<EntityTypeShape EntityType="x360ce.Engine.Data.UserSetting" Width="1.5" PointX="4.125" PointY="0.5" Height="3.5186979166666656" />
 				<EntityTypeShape EntityType="x360ce.Engine.Data.Summary" Width="1.5" PointX="9.75" PointY="0.5" Height="2.7494921874999996" />
 				<EntityTypeShape EntityType="x360ce.Engine.Data.Vendor" Width="1.5" PointX="9.75" PointY="3.625" Height="1.7879850260416674" />
-        <EntityTypeShape EntityType="x360ce.Engine.Data.Product" Width="1.5" PointX="9.75" PointY="5.75" />
-        <EntityTypeShape EntityType="x360ce.Engine.Data.UserInstance" Width="1.5" PointX="4.25" PointY="5.25" />
-        <EntityTypeShape EntityType="x360ce.Engine.Data.UserComputer" Width="1.5" PointX="7.625" PointY="6.875" />
-        <EntityTypeShape EntityType="x360ce.Engine.Data.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ce.Engine.Data.UserGame" Width="1.5" PointX="7.75" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ce.Engine.Data.Program" Width="1.5" PointX="6" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ce.Engine.Data.Layout" Width="1.5" PointX="13.375" PointY="0.5" />
-        <EntityTypeShape EntityType="x360ce.Engine.Data.UserProfile" Width="1.5" PointX="4.25" PointY="7.875" />
-        <EntityTypeShape EntityType="x360ce.Engine.Data.UserMacro" Width="1.5" PointX="15.25" PointY="0.5" />
+                <EntityTypeShape EntityType="x360ce.Engine.Data.Product" Width="1.5" PointX="9.75" PointY="5.75" />
+                <EntityTypeShape EntityType="x360ce.Engine.Data.UserInstance" Width="1.5" PointX="4.25" PointY="5.25" />
+                <EntityTypeShape EntityType="x360ce.Engine.Data.UserComputer" Width="1.5" PointX="7.625" PointY="6.875" />
+                <EntityTypeShape EntityType="x360ce.Engine.Data.UserDevice" Width="1.5" PointX="11.5" PointY="0.5" />
+                <EntityTypeShape EntityType="x360ce.Engine.Data.UserGame" Width="1.5" PointX="7.75" PointY="0.5" />
+                <EntityTypeShape EntityType="x360ce.Engine.Data.Program" Width="1.5" PointX="6" PointY="0.5" />
+                <EntityTypeShape EntityType="x360ce.Engine.Data.Layout" Width="1.5" PointX="13.375" PointY="0.5" />
+                <EntityTypeShape EntityType="x360ce.Engine.Data.UserProfile" Width="1.5" PointX="4.25" PointY="7.875" />
+                <EntityTypeShape EntityType="x360ce.Engine.Data.UserMacro" Width="1.5" PointX="15.25" PointY="0.5" />
 			</Diagram>
 		</edmx:Diagrams>
 	</edmx:Designer>

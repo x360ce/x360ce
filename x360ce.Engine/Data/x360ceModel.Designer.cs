@@ -1342,7 +1342,7 @@ namespace x360ce.Engine.Data
         /// <param name="leftTriggerLinear">Initial value of the LeftTriggerLinear property.</param>
         /// <param name="rightTriggerAntiDeadZone">Initial value of the RightTriggerAntiDeadZone property.</param>
         /// <param name="rightTriggerLinear">Initial value of the RightTriggerLinear property.</param>
-        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBack, global::System.String buttonGuide, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone, global::System.String leftThumbLinearX, global::System.String leftThumbLinearY, global::System.String rightThumbLinearX, global::System.String rightThumbLinearY, global::System.String leftMotorStrength, global::System.String rightMotorStrength, global::System.String leftMotorDirection, global::System.String rightMotorDirection, global::System.String buttonADeadZone, global::System.String buttonBDeadZone, global::System.String buttonBackDeadZone, global::System.String buttonStartDeadZone, global::System.String buttonXDeadZone, global::System.String buttonYDeadZone, global::System.String leftThumbButtonDeadZone, global::System.String rightThumbButtonDeadZone, global::System.String leftShoulderDeadZone, global::System.String rightShoulderDeadZone, global::System.String dPadDownDeadZone, global::System.String dPadLeftDeadZone, global::System.String dPadRightDeadZone, global::System.String dPadUpDeadZone, global::System.String leftTriggerAntiDeadZone, global::System.String leftTriggerLinear, global::System.String rightTriggerAntiDeadZone, global::System.String rightTriggerLinear)
+        public static PadSetting CreatePadSetting(global::System.Guid padSettingChecksum, global::System.String axisToDPadDeadZone, global::System.String axisToDPadEnabled, global::System.String axisToDPadOffset, global::System.String buttonA, global::System.String buttonB, global::System.String buttonBack, global::System.String buttonGuide, global::System.String buttonStart, global::System.String buttonX, global::System.String buttonY, global::System.String dPad, global::System.String dPadDown, global::System.String dPadLeft, global::System.String dPadRight, global::System.String dPadUp, global::System.String forceEnable, global::System.String forceOverall, global::System.String forceSwapMotor, global::System.String forceType, global::System.String gamePadType, global::System.String leftMotorPeriod, global::System.String leftShoulder, global::System.String leftThumbAntiDeadZoneX, global::System.String leftThumbAntiDeadZoneY, global::System.String leftThumbAxisX, global::System.String leftThumbAxisY, global::System.String leftThumbButton, global::System.String leftThumbDeadZoneX, global::System.String leftThumbDeadZoneY, global::System.String leftThumbDown, global::System.String leftThumbLeft, global::System.String leftThumbRight, global::System.String leftThumbUp, global::System.String leftTrigger, global::System.String leftTriggerDeadZone, global::System.String passThrough, global::System.String rightMotorPeriod, global::System.String rightShoulder, global::System.String rightThumbAntiDeadZoneX, global::System.String rightThumbAntiDeadZoneY, global::System.String rightThumbAxisX, global::System.String rightThumbAxisY, global::System.String rightThumbButton, global::System.String rightThumbDeadZoneX, global::System.String rightThumbDeadZoneY, global::System.String rightThumbDown, global::System.String rightThumbLeft, global::System.String rightThumbRight, global::System.String rightThumbUp, global::System.String rightTrigger, global::System.String rightTriggerDeadZone, global::System.String leftThumbLinearX, global::System.String leftThumbLinearY, global::System.String rightThumbLinearX, global::System.String rightThumbLinearY, global::System.String leftMotorStrength, global::System.String rightMotorStrength, global::System.String leftMotorDirection, global::System.String rightMotorDirection, global::System.String buttonADeadZone, global::System.String buttonBDeadZone, global::System.String buttonBackDeadZone, global::System.String buttonStartDeadZone, global::System.String buttonGuideDeadZone, global::System.String buttonXDeadZone, global::System.String buttonYDeadZone, global::System.String leftThumbButtonDeadZone, global::System.String rightThumbButtonDeadZone, global::System.String leftShoulderDeadZone, global::System.String rightShoulderDeadZone, global::System.String dPadDownDeadZone, global::System.String dPadLeftDeadZone, global::System.String dPadRightDeadZone, global::System.String dPadUpDeadZone, global::System.String leftTriggerAntiDeadZone, global::System.String leftTriggerLinear, global::System.String rightTriggerAntiDeadZone, global::System.String rightTriggerLinear)
         {
             PadSetting padSetting = new PadSetting();
             padSetting.PadSettingChecksum = padSettingChecksum;
@@ -1409,6 +1409,7 @@ namespace x360ce.Engine.Data
             padSetting.ButtonBDeadZone = buttonBDeadZone;
             padSetting.ButtonBackDeadZone = buttonBackDeadZone;
             padSetting.ButtonStartDeadZone = buttonStartDeadZone;
+            padSetting.ButtonGuideDeadZone = buttonGuideDeadZone;
             padSetting.ButtonXDeadZone = buttonXDeadZone;
             padSetting.ButtonYDeadZone = buttonYDeadZone;
             padSetting.LeftThumbButtonDeadZone = leftThumbButtonDeadZone;
@@ -2969,6 +2970,30 @@ namespace x360ce.Engine.Data
         partial void OnButtonStartDeadZoneChanging(global::System.String value);
         partial void OnButtonStartDeadZoneChanged();
     
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ButtonGuideDeadZone
+        {
+            get
+            {
+                return _ButtonGuideDeadZone;
+            }
+            set
+            {
+                OnButtonGuideDeadZoneChanging(value);
+                ReportPropertyChanging("ButtonGuideDeadZone");
+                _ButtonGuideDeadZone = StructuralObject.SetValidValue(value, false, "ButtonGuideDeadZone");
+                ReportPropertyChanged("ButtonGuideDeadZone");
+                OnButtonGuideDeadZoneChanged();
+            }
+        }
+        private global::System.String _ButtonGuideDeadZone;
+        partial void OnButtonGuideDeadZoneChanging(global::System.String value);
+        partial void OnButtonGuideDeadZoneChanged();
+        
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>

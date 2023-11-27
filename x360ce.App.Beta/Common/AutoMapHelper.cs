@@ -47,6 +47,7 @@ namespace x360ce.App
 				ps.ButtonStart = GetButtonValue(list, 7, true, "Button 7");
 				ps.LeftThumbButton = GetButtonValue(list, 8, true, "Button 8");
 				ps.RightThumbButton = GetButtonValue(list, 9, true, "Button 9");
+				ps.ButtonGuide = GetButtonValue(list, 10, true, "Button 10");
 				// Left Thumb (Look).
 				ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "X-Axis");
 				ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true, "Y-Axis");

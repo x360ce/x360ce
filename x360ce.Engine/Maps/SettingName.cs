@@ -230,6 +230,9 @@ namespace x360ce.Engine
 
 		[DefaultValue("8192"), Description("Axis to Start Button Dead Zone.")]
 		static public string ButtonStartDeadZone { get { return "Start DeadZone"; } }
+		
+		[DefaultValue("8192"), Description("Axis to Guide Button Dead Zone.")]
+		static public string ButtonGuideDeadZone { get { return "Guide DeadZone"; } }
 
 		[DefaultValue("8192"), Description("Axis to Back Button Dead Zone.")]
 		static public string ButtonBackDeadZone { get { return "Back DeadZone"; } }

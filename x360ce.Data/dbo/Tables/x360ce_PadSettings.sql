@@ -67,6 +67,7 @@
     [ButtonBDeadZone]          VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonBDeadZone] DEFAULT ('') NOT NULL,
     [ButtonBackDeadZone]       VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonBackDeadZone] DEFAULT ('') NOT NULL,
     [ButtonStartDeadZone]      VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonStartDeadZone] DEFAULT ('') NOT NULL,
+    [ButtonGuideDeadZone]      VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonGuideDeadZone] DEFAULT ('') NOT NULL,
     [ButtonXDeadZone]          VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonXDeadZone] DEFAULT ('') NOT NULL,
     [ButtonYDeadZone]          VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ButtonYDeadZone] DEFAULT ('') NOT NULL,
     [LeftThumbButtonDeadZone]  VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_LeftThumbButtonDeadZone] DEFAULT ('') NOT NULL,

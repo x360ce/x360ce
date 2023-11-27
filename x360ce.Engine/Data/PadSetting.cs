@@ -30,7 +30,7 @@ namespace x360ce.Engine.Data
 					{
 						var maps = new List<Map>();
 						// Add buttons.
-						maps.Add(new Map(MapCode.ButtonGuide, ButtonGuide, GamepadButtonFlags.Guide, ""));
+						maps.Add(new Map(MapCode.ButtonGuide, ButtonGuide, GamepadButtonFlags.Guide, ButtonGuideDeadZone));
 						maps.Add(new Map(MapCode.ButtonA, ButtonA, GamepadButtonFlags.A, ButtonADeadZone));
 						maps.Add(new Map(MapCode.ButtonB, ButtonB, GamepadButtonFlags.B, ButtonBDeadZone));
 						maps.Add(new Map(MapCode.ButtonX, ButtonX, GamepadButtonFlags.X, ButtonXDeadZone));
@@ -163,6 +163,7 @@ namespace x360ce.Engine.Data
 				nameof(ButtonBDeadZone),
 				nameof(ButtonBackDeadZone),
 				nameof(ButtonStartDeadZone),
+				nameof(ButtonGuideDeadZone),
 				nameof(ButtonXDeadZone),
 				nameof(ButtonYDeadZone),
 				nameof(LeftThumbButtonDeadZone),
@@ -279,6 +280,7 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.ButtonBDeadZone);
 			AddValue(ref list, x => x.ButtonBackDeadZone);
 			AddValue(ref list, x => x.ButtonStartDeadZone);
+			AddValue(ref list, x => x.ButtonGuideDeadZone);
 			AddValue(ref list, x => x.ButtonXDeadZone);
 			AddValue(ref list, x => x.ButtonYDeadZone);
 			AddValue(ref list, x => x.LeftThumbButtonDeadZone);
@@ -412,6 +414,7 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeButtonBDeadZone() { return !isDefault(ButtonBDeadZone); }
 		public bool ShouldSerializeButtonBackDeadZone() { return !isDefault(ButtonBackDeadZone); }
 		public bool ShouldSerializeButtonStartDeadZone() { return !isDefault(ButtonStartDeadZone); }
+		public bool ShouldSerializeButtonGuideDeadZone() { return !isDefault(ButtonGuideDeadZone); }
 		public bool ShouldSerializeButtonXDeadZone() { return !isDefault(ButtonXDeadZone); }
 		public bool ShouldSerializeButtonYDeadZone() { return !isDefault(ButtonYDeadZone); }
 		public bool ShouldSerializeLeftThumbButtonDeadZone() { return !isDefault(LeftThumbButtonDeadZone); }
