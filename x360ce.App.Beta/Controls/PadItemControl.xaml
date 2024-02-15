@@ -23,7 +23,7 @@
 		<TabItem Name="DPadTabPage" Header="D-Pad">
 			<local:PadItem_DPadControl x:Name="DPadPanel" />
 		</TabItem>
-		<TabItem Name="TRiggersTabPage" Header="Triggers">
+		<TabItem Name="TriggersTabPage" Header="Triggers">
 			<StackPanel>
 				<local:AxisMapControl x:Name="LeftTriggerPanel" x:FieldModifier="public" />
 				<local:AxisMapControl x:Name="RightTriggerPanel" x:FieldModifier="public" />

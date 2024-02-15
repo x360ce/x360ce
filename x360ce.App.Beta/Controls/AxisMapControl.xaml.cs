@@ -3,10 +3,8 @@ using SharpDX.XInput;
 using System;
 using System.ComponentModel;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using x360ce.Engine;
@@ -159,6 +157,9 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		private float DInputMax = 65535f;
+
+
 		public void DrawPoint(int dInput, int xInput, bool invert, bool half)
 		{
 			// If properties affecting curve changed then...
@@ -186,6 +187,39 @@ namespace x360ce.App.Controls
 			// Draw dots.
 			XInputEllipse.Center = new Point(di, h - xi);
 			DInputEllipse.Center = new Point(di, h - di);
+
+			// Canvas (65535 x 65535).
+			var deadZone = DeadZoneUpDown.Value;
+			var antiDeadZone = AntiDeadZoneUpDown.Value;
+			var sensitivity = LinearUpDown.Value;
+			var xInputValue = ConvertHelper.GetThumbValue(dInput, (float)deadZone, (float)antiDeadZone, (float)sensitivity, _invert, _half, isThumb);
+			var di2 = ConvertDInputToCanvasPosition(dInput);
+			var xi2 = ConvertXInputToCanvasPosition(xInputValue);
+			di2 = di2 >= DInputMax ? DInputMax - 1f : di2;
+			xi2 = xi2 >= DInputMax ? DInputMax - 1f : xi2;
+			// Current position dot.
+			Canvas.SetLeft(XInputEllipse1, di2);
+			Canvas.SetTop(XInputEllipse1, xi2);
+			// DInput axis.
+			DInputPolylineGeometry.StartPoint = new Point(di2, 0);
+			DInputPolylineGeometry.EndPoint = new Point(di2, DInputMax);
+			// XInput axis.
+			XInputPolylineGeometry.StartPoint = new Point(0, xi2);
+			XInputPolylineGeometry.EndPoint = new Point(DInputMax, xi2);
+		}
+
+		public float ConvertDInputToCanvasPosition(float v)
+		{
+			var di = ConvertHelper.ConvertRangeF(v, 0f, ushort.MaxValue, 0f, DInputMax);
+			return di;
+		}
+
+		public float ConvertXInputToCanvasPosition(float v)
+		{
+			var min = isThumb ? -32768f : 0f;
+			var max = isThumb ? 32767f : 255f;
+			var xi = ConvertHelper.ConvertRangeF(v, min, max, 0f, DInputMax);
+			return xi;
 		}
 
 		public float ConvertDInputToImagePosition(float v)
@@ -202,6 +236,8 @@ namespace x360ce.App.Controls
 			return xi;
 		}
 
+
+
 		public void InitPaintObjects()
 		{
 			xInputPath = new SolidColorBrush(Colors.Red);
@@ -217,6 +253,7 @@ namespace x360ce.App.Controls
 			nInputLine = new Pen(nInputLineBrush, 1f);
 		}
 
+		PointCollection SensitivityPolylinePointCollection = new PointCollection();
 		private SolidColorBrush xInputPath;
 		private Pen xInputLine;
 		private Pen dInputLine;
@@ -232,6 +269,9 @@ namespace x360ce.App.Controls
 			var deadZone = DeadZoneUpDown.Value;
 			var antiDeadZone = AntiDeadZoneUpDown.Value;
 			var sensitivity = LinearUpDown.Value;
+			SensitivityPolyline.Points = SensitivityPolylinePointCollection;
+			SensitivityPolylinePointCollection.Clear();
+
 			var visual = new DrawingVisual();
 			// Retrieve the DrawingContext in order to create new drawing content.
 			var g = visual.RenderOpen();
@@ -245,6 +285,7 @@ namespace x360ce.App.Controls
 			//g.DrawLine(xInputLine, new Point(0, xim), new Point(w, xim));
 			// Draw grey line from bottom-left to top-right.
 			//g.DrawLine(nInputLine, new Point(0f, h - 1f), new Point(w - 1f, 0f));
+
 			for (var i = 0f; i <= w; i += 0.125f)
 			{
 				// Convert Image X position [0;w] to DInput position [0;65535].
@@ -255,7 +296,14 @@ namespace x360ce.App.Controls
 				var xi = ConvertXInputToImagePosition(xInputValue);
 				// Put red dot where XInput dot must travel. Use radius to fix eclipse position.
 				DrawDot(g, di, xi, xInputPath);
+
+				// Canvas (65535 x 65535).
+				var dI2 = ConvertDInputToCanvasPosition(dInputValue);
+				var xI2 = ConvertXInputToCanvasPosition(xInputValue);
+				SensitivityPolylinePointCollection.Add(new Point(dI2, xI2));
 			}
+
+
 			// Finish rendering.
 			g.Close();
 			var bmp = new RenderTargetBitmap((int)w, (int)h, 96, 96, PixelFormats.Pbgra32);
@@ -311,12 +359,9 @@ namespace x360ce.App.Controls
 			g.DrawEllipse(brush, null, new Point(x, h - y), 0.5f, 0.5f);
 		}
 
-        private async void P_X_Y_Z_MenuItem_Click(object sender, SelectionChangedEventArgs e)
+		private async void P_X_Y_Z_MenuItem_Click(object sender, SelectionChangedEventArgs e)
         {
-            var c = (ComboBox)sender;
-            ComboBoxItem selectedItem = (ComboBoxItem)c.SelectedItem;
-            var values = selectedItem.Tag.ToString().Split('_'); // c.Name.Split('_');
-            float xDeadZone = 0;
+			float xDeadZone = 0;
             switch (TargetType)
             {
                 case TargetType.LeftTrigger:
@@ -334,34 +379,14 @@ namespace x360ce.App.Controls
                 default:
                     break;
             }
-            var deadZonePercent = int.Parse(values[1]);
-            var antiDeadZonePercent = int.Parse(values[2]);
-            var linearPercent = int.Parse(values[3]);
 
-            var deadZone = ConvertHelper.ConvertRangeF(0f, 100f, (float)DeadZoneUpDown.Minimum, (float)DeadZoneUpDown.Maximum, deadZonePercent);
-            var antiDeadZone = ConvertHelper.ConvertRangeF(xDeadZone, antiDeadZonePercent, 0f, 100f, 0);
-            var linear = ConvertHelper.ConvertRangeF(linearPercent, -100f, 100f, (float)LinearUpDown.Minimum, (float)LinearUpDown.Maximum);
-
-            // Move focus away from below controls, so that their value can be changed.
-            //PresetMenuStrip.Focus();
-            DeadZoneUpDown.Value = (int)deadZone;
-            AntiDeadZoneUpDown.Value = (int)antiDeadZone;
-            LinearUpDown.Value = (int)linear;
-
-			// var menuItem = sender as MenuItem;
-			//var menu = c; // menuItem.Parent as Menu;
-
-   //         if (menu != null)
-   //         {
-   //             var popup = menu.Template.FindName("PART_MenuPopup", menu) as Popup;
-   //             if (popup != null)
-   //             {
-   //                 popup.IsOpen = false;
-   //                 await Task.Delay(100);
-   //                 popup.ClearValue(Popup.IsOpenProperty);
-   //             }
-   //         }
-        }
+			// P_0_0_0_MenuItem > ConvertRangeF(oldValue, oldMin, oldMax, newMin, newMax).
+			var selectedItem = (ComboBoxItem)((ComboBox)sender).SelectedItem;
+			var values = selectedItem.Tag.ToString().Split('_');
+			DeadZoneUpDown.Value = (int)ConvertHelper.ConvertRangeF(0f, 100f, (float)DeadZoneUpDown.Minimum, (float)DeadZoneUpDown.Maximum, int.Parse(values[1]));
+			AntiDeadZoneUpDown.Value = (int)((float)xDeadZone * int.Parse(values[2]) / 100f); //var antiDeadZone = ConvertHelper.ConvertRangeF(xDeadZone, antiDeadZonePercent, 0f, 100f, 0);
+			LinearUpDown.Value = (int)ConvertHelper.ConvertRangeF(int.Parse(values[3]), -100f, 100f, (float)LinearUpDown.Minimum, (float)LinearUpDown.Maximum);
+		}
 
 		//private async void P_X_Y_Z_MenuItem_Click(object sender, RoutedEventArgs e)
 		//{
@@ -421,6 +446,7 @@ namespace x360ce.App.Controls
 				sensitivity < 0 ? "Center is more sensitive." :
 				sensitivity > 0 ? "Center is less sensitive." :
 				string.Empty;
+			CreateBackgroundPicture();
 
 			// var text = "Sensitivity";
 			//if ((int)(e.NewValue ?? 0) < 0)

@@ -191,8 +191,16 @@
 				<ColumnDefinition Name="RecordClearColumn0" />
 				<ColumnDefinition Name="RecordClearColumn1" />
 			</Grid.ColumnDefinitions>
-			<Border Name="RCBorder" Grid.Column="1" HorizontalAlignment="Stretch" Background="{StaticResource BackgroundLight}" />
-			<StackPanel Name="RCStackPanel" Grid.Column="1" HorizontalAlignment="Left" Orientation="Horizontal">
+			<Border
+				Name="RCBorder"
+				Grid.Column="1"
+				HorizontalAlignment="Stretch"
+				Background="{StaticResource BackgroundLight}" />
+			<StackPanel
+				Name="RCStackPanel"
+				Grid.Column="1"
+				HorizontalAlignment="Left"
+				Orientation="Horizontal">
 				<Button Name="RecordButton" Click="RecordButton_Click">
 					<!--<ContentControl Content="{StaticResource Icon_Record}" />-->
 					<Border

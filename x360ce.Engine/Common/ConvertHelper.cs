@@ -8,6 +8,7 @@ namespace x360ce.Engine
 
 		/// <summary>Get XInput thumb value by DInput value</summary>
 		/// <remarks>Used to create graphs pictures.</remarks>
+		
 		public static float GetThumbValue(float dInputValue, float deadZone, float antiDeadZone, float linear, bool isInverted, bool isHalf, bool isThumb = true)
 		{
 			// Check DInputValue.
@@ -102,7 +103,7 @@ namespace x360ce.Engine
 			// Return value.
 			return xInput;
 		}
-
+		
 		/// <summary>Convert float [-1.0f;1.0f] to short range [-32768;32767].</summary>
 		public static short ConvertToShort(float value)
 		{
@@ -123,8 +124,10 @@ namespace x360ce.Engine
 				throw new ArgumentException($"The arguments {nameof(oldMin)} and {nameof(oldMax)} cannot be equal!");
 			if (newMin == newMax)
 				throw new ArgumentException($"The arguments {nameof(newMin)} and {nameof(newMax)} cannot be equal!");
+
 			if (LimitRange(oldValue, oldMin, oldMax) != oldValue)
-				   throw new ArgumentOutOfRangeException(nameof(oldValue));
+				throw new ArgumentOutOfRangeException($"Value {nameof(oldValue)} is out of {nameof(oldMin)} - {nameof(oldMax)} range!");
+
 			var oldSize = oldMax - oldMin;
 			var newSize = newMax - newMin;
 			var position = (oldValue - oldMin) / oldSize;
@@ -149,13 +152,18 @@ namespace x360ce.Engine
 		public static float LimitRange(float value, float min, float max)
 		{
 			// If inverted then swap.
-			if (min > max)
-				(min, max) = (max, min);
-			if (value > max)
-				return max;
-			if (value < min)
-				return min;
-			return value;
+			if (min > max) (min, max) = (max, min);
+			// Limit value between min and max.
+			return Math.Max(min, Math.Min(max, value));
+
+			// If inverted then swap.
+			//if (min > max)
+			//	(min, max) = (max, min);
+			//if (value > max)
+			//	return max;
+			//if (value < min)
+			//	return min;
+			//return value;
 		}
 
 		public static int DeadZone(int value, int min, int max, int lowerDZ, int upperDZ)

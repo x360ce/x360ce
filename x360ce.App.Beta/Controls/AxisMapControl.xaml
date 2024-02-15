@@ -36,106 +36,115 @@
 			<!--  Graph  -->
 			<Border
 				Margin="3"
-				Padding="4,4,0,0"
-				HorizontalAlignment="Left"
-				VerticalAlignment="Top"
+				Padding="10"
 				Background="White"
 				CornerRadius="5">
 				<!--  This image uses a Drawing object for its source.  -->
-				<Grid Width="170" Height="170">
-					<Path Margin="6,10,0,0" Fill="Transparent">
-						<Path.Data>
-							<RectangleGeometry x:Name="BackgroundGeometry" Rect="0,0,150,150" />
-						</Path.Data>
-					</Path>
-					<!--  DInput Arrow  -->
-					<Path Margin="6,159,0,0" Fill="Green">
-						<Path.Data>
-							<RectangleGeometry Rect="0,0,150,2" />
-						</Path.Data>
-					</Path>
-					<Polygon Margin="156,155,0,0" Fill="Green" Points="0,0 10,5 0,10" />
-					<!--  XInput Arrow  -->
-					<Path Margin="5,10,0,0" Fill="Blue">
-						<Path.Data>
-							<RectangleGeometry Rect="0,0,2,150" />
-						</Path.Data>
-					</Path>
-					<Polygon Margin="1,0,0,0" Fill="Blue" Points="0,10 5,0 10,10" />
-					<!--  XInput/DInput corner.  -->
-					<Path Margin="5,159,0,0" Fill="Black">
-						<Path.Data>
-							<RectangleGeometry Rect="0,0,2,2" />
-						</Path.Data>
-					</Path>
-					<Image
-						x:Name="MainPictureBox"
-						Width="150"
-						Height="150"
-						Margin="6,10,0,0"
-						HorizontalAlignment="Left"
-						VerticalAlignment="Top" />
-					<!--  Center line  -->
-					<Path
-						Margin="6,10,0,0"
-						Opacity="0.05"
-						Stroke="Black"
-						StrokeThickness="1">
-						<Path.Data>
-							<LineGeometry StartPoint="75,0" EndPoint="75,150" />
-						</Path.Data>
-					</Path>
-					<Path
-						Margin="6,10,0,0"
-						Opacity="0.25"
-						Stroke="Green"
-						StrokeThickness="1">
-						<Path.Data>
-							<LineGeometry x:Name="DInputLineGeometry" StartPoint="75,0" EndPoint="75,150" />
-						</Path.Data>
-					</Path>
-					<Path
-						Margin="6,10,0,0"
-						Fill="Green"
-						StrokeThickness="1"
-						Visibility="Collapsed">
-						<Path.Data>
-							<EllipseGeometry
-								x:Name="DInputEllipse"
-								Center="75,75"
-								RadiusX="3"
-								RadiusY="3" />
-						</Path.Data>
-					</Path>
-					<!--  Center line.  -->
-					<Path
-						Margin="6,10,0,0"
-						Opacity="0.05"
-						Stroke="Black"
-						StrokeThickness="1">
-						<Path.Data>
-							<LineGeometry StartPoint="0,75" EndPoint="150,75" />
-						</Path.Data>
-					</Path>
+				<Grid>
 
-					<Path
-						Margin="6,10,0,0"
-						Opacity="0.25"
-						Stroke="Blue"
-						StrokeThickness="1">
-						<Path.Data>
-							<LineGeometry x:Name="XInputLineGeometry" StartPoint="0,75" EndPoint="150,75" />
-						</Path.Data>
-					</Path>
-					<Path Margin="6,10,0,0" Fill="DarkRed" StrokeThickness="1">
-						<Path.Data>
-							<EllipseGeometry
-								x:Name="XInputEllipse"
-								Center="75,75"
-								RadiusX="3"
-								RadiusY="3" />
-						</Path.Data>
-					</Path>
+					<!--  Old Image Graph  -->
+					<Grid Visibility="Collapsed">
+						<!--  Image  -->
+						<Image
+							x:Name="MainPictureBox"
+							Width="150"
+							Height="150"
+							Margin="6,10,0,0"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Top" />
+						<!--  DInput Geometry  -->
+						<Path
+							Margin="6,10,0,0"
+							Opacity="0.25"
+							Stroke="Green"
+							StrokeThickness="1">
+							<Path.Data>
+								<LineGeometry x:Name="DInputLineGeometry" StartPoint="75,0" EndPoint="75,150" />
+							</Path.Data>
+						</Path>
+						<Path Margin="6,10,0,0" Fill="Green">
+							<Path.Data>
+								<EllipseGeometry
+									x:Name="DInputEllipse"
+									Center="75,75"
+									RadiusX="3"
+									RadiusY="3" />
+							</Path.Data>
+						</Path>
+						<!--  XInput Geometry  -->
+						<Path
+							Margin="6,10,0,0"
+							Opacity="0.25"
+							Stroke="Blue"
+							StrokeThickness="1">
+							<Path.Data>
+								<LineGeometry x:Name="XInputLineGeometry" StartPoint="0,75" EndPoint="150,75" />
+							</Path.Data>
+						</Path>
+						<Path Margin="6,10,0,0" Fill="DarkRed" StrokeThickness="1">
+							<Path.Data>
+								<EllipseGeometry
+									x:Name="XInputEllipse"
+									Center="75,75"
+									RadiusX="3"
+									RadiusY="3" />
+							</Path.Data>
+						</Path>
+					</Grid>
+
+					<!--  Graph  -->
+					<Viewbox Width="150" Height="150">
+						<Viewbox.LayoutTransform>
+							<ScaleTransform ScaleY="-1" />
+						</Viewbox.LayoutTransform>
+						<!--  Canvas  -->
+						<Canvas Width="65535" Height="65535">
+							<!--  Grid  -->
+							<Rectangle
+								Width="65535"
+								Height="65535"
+								Stroke="LightGray"
+								StrokeThickness="60" />
+							<Polyline Points="0,32767 65535,32767" Stroke="LightGray" StrokeThickness="60" />
+							<Polyline Points="32767,0 32767,65535" Stroke="LightGray" StrokeThickness="60" />
+							<Polyline Points="0,0 65535,65535" Stroke="LightGray" StrokeThickness="60" />
+							<Polyline Points="65535,0 0,65535" Stroke="LightGray" StrokeThickness="60" />
+							<!--  XInput (sensitivity)  -->
+							<Polyline
+								Name="SensitivityPolyline"
+								HorizontalAlignment="Left"
+								VerticalAlignment="Bottom"
+								Points="0,0 32767,32767 65535,65535"
+								Stroke="#dd0000"
+								StrokeEndLineCap="Round"
+								StrokeStartLineCap="Round"
+								StrokeThickness="300" />
+							<!--  DInput vertical  -->
+							<Path SnapsToDevicePixels="True" Stroke="Blue" StrokeThickness="400">
+								<Path.Data>
+									<LineGeometry x:Name="DInputPolylineGeometry" StartPoint="32767,0" EndPoint="32767,65535" />
+								</Path.Data>
+							</Path>
+							<!--  XInput horizontal  -->
+							<Path SnapsToDevicePixels="True" Stroke="Green" StrokeThickness="400">
+								<Path.Data>
+									<LineGeometry x:Name="XInputPolylineGeometry" StartPoint="0,32767" EndPoint="65535,32767" />
+								</Path.Data>
+							</Path>
+							<!--  XInput dot  -->
+							<Ellipse
+								Name="XInputEllipse1"
+								Canvas.Left="32767"
+								Canvas.Top="32767"
+								Width="2400"
+								Height="2400"
+								Fill="#dd0000">
+								<Ellipse.RenderTransform>
+									<TranslateTransform X="-1200" Y="-1200" />
+								</Ellipse.RenderTransform>
+							</Ellipse>
+						</Canvas>
+					</Viewbox>
 				</Grid>
 			</Border>
 			<!--  Settings  -->
