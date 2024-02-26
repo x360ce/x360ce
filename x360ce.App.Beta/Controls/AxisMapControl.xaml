@@ -6,6 +6,8 @@
 	xmlns:controls="clr-namespace:x360ce.App.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:Height="Auto"
+	d:Width="Auto"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
@@ -43,8 +45,10 @@
 				<Grid>
 
 					<!--  Old Image Graph  -->
-					<Grid Visibility="Collapsed">
-						<!--  Image  -->
+					<!--<Grid Visibility="Collapsed">
+						-->
+					<!--  Image  -->
+					<!--
 						<Image
 							x:Name="MainPictureBox"
 							Width="150"
@@ -52,7 +56,9 @@
 							Margin="6,10,0,0"
 							HorizontalAlignment="Left"
 							VerticalAlignment="Top" />
-						<!--  DInput Geometry  -->
+						-->
+					<!--  DInput Geometry  -->
+					<!--
 						<Path
 							Margin="6,10,0,0"
 							Opacity="0.25"
@@ -71,7 +77,9 @@
 									RadiusY="3" />
 							</Path.Data>
 						</Path>
-						<!--  XInput Geometry  -->
+						-->
+					<!--  XInput Geometry  -->
+					<!--
 						<Path
 							Margin="6,10,0,0"
 							Opacity="0.25"
@@ -90,7 +98,7 @@
 									RadiusY="3" />
 							</Path.Data>
 						</Path>
-					</Grid>
+					</Grid>-->
 
 					<!--  Graph  -->
 					<Viewbox Width="150" Height="150">
@@ -111,7 +119,7 @@
 							<Polyline Points="65535,0 0,65535" Stroke="LightGray" StrokeThickness="60" />
 							<!--  XInput (sensitivity)  -->
 							<Polyline
-								Name="SensitivityPolyline"
+								Name="BackgroundPolyline"
 								HorizontalAlignment="Left"
 								VerticalAlignment="Bottom"
 								Points="0,0 32767,32767 65535,65535"
@@ -207,7 +215,7 @@
 				<Label Name="SensitivityLabel" Grid.Row="4" Content="Sensitivity" />
 				<StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
 					<Slider Name="LinearTrackBar" />
-					<JcControls:NumericUpDown Name="LinearUpDown" ValueChanged="LinearUpDown_ValueChanged" Value="0" />
+					<JcControls:NumericUpDown Name="LinearUpDown" Value="0" />
 					<TextBox Name="LinearTextBox" />
 				</StackPanel>
 				<Label
@@ -217,13 +225,13 @@
 					HorizontalAlignment="Left"
 					Opacity="0.5" />
 				<ComboBox
-					Name="PresetMenuStrip"
+					Name="PresetMenu"
 					Grid.Row="5"
 					Grid.Column="1"
 					Width="75"
 					Margin="0,3,59,0"
 					HorizontalAlignment="Right"
-					SelectionChanged="P_X_Y_Z_MenuItem_Click"
+					SelectionChanged="P_X_Y_Z_PresetMenu_SelectionChanged"
 					Style="{StaticResource ComboBox_Static}"
 					Text="Presets">
 					<ComboBoxItem Content="Clear" Tag="P_0_0_0_MenuItem" />

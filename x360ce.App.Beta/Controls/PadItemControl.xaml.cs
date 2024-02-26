@@ -69,9 +69,9 @@ namespace x360ce.App.Controls
 			_oldEnabled = enabled;
 
 			//var pages = PadTabControl.Items.Cast<TabItem>().ToArray();
-			//for (int p = 0; p < pages.Length; p++)
+			//for (int dInputPolylineStepSize = 0; dInputPolylineStepSize < pages.Length; dInputPolylineStepSize++)
 			//{
-			//	var child = (UIElement)pages[p].Content;
+			//	var child = (UIElement)pages[dInputPolylineStepSize].Content;
 			//	ControlsHelper.SetEnabled(child, enabled);
 			//	child.Opacity = enabled ? 1.0 : 0.5;
 			//}

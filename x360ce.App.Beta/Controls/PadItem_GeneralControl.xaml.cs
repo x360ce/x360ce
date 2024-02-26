@@ -535,14 +535,14 @@ namespace x360ce.App.Controls
 		//			DiMenuStrip.Add(mi);
 		//			// Add D-Pad Top, Right, Bottom, Left label.
 		//			var dPadNames = Enum.GetNames(typeof(DPadEnum));
-		//			for (int p = 0; p < ud.CapPovCount; p++)
+		//			for (int dInputPolylineStepSize = 0; dInputPolylineStepSize < ud.CapPovCount; dInputPolylineStepSize++)
 		//			{
-		//				var dPadItem = CreateItem("POV {0}", "{1}{0}", p + 1, SettingName.SType.POV);
+		//				var dPadItem = CreateItem("POV {0}", "{1}{0}", dInputPolylineStepSize + 1, SettingName.SType.POV);
 		//				mi.Items.Add(dPadItem);
 		//				for (int d = 0; d < dPadNames.Length; d++)
 		//				{
-		//					var dPadButtonIndex = p * 4 + d + 1;
-		//					var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
+		//					var dPadButtonIndex = dInputPolylineStepSize * 4 + d + 1;
+		//					var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", dInputPolylineStepSize + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
 		//					dPadItem.Items.Add(dPadButtonItem);
 		//				}
 		//			}

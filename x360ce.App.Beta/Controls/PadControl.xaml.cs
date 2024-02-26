@@ -462,15 +462,15 @@ namespace x360ce.App.Controls
 		//	if (!SettingsManager.ValidatePropertyNames(maps, out properties))
 		//		return null;
 		//	var ps = new PadSetting();
-		//	foreach (var p in properties)
+		//	foreach (var dInputPolylineStepSize in properties)
 		//	{
-		//		var map = maps.FirstOrDefault(x => x.PropertyName == p.Name);
+		//		var map = maps.FirstOrDefault(x => x.PropertyName == dInputPolylineStepSize.Name);
 		//		if (map == null)
 		//			continue;
 		//		// Get setting value from the form.
 		//		var v = SettingsManager.Current.GetSettingValue(map.Control);
 		//		// Set value onto padSetting.
-		//		p.SetValue(ps, v ?? "", null);
+		//		dInputPolylineStepSize.SetValue(ps, v ?? "", null);
 		//	}
 		//	ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
 		//	return ps;
