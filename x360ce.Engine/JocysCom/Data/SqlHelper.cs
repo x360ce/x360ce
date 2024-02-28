@@ -672,11 +672,13 @@ namespace JocysCom.ClassLibrary.Data
 		/// <summary>
 		/// Convert List to DataTable. Can be used to pass data into stored procedures. 
 		/// </summary>
-		public static DataTable ConvertToTable<T>(IEnumerable<T> list)
+		public static DataTable ConvertToTable<T>(IEnumerable<T> list, params string[] columns)
 		{
 			if (list is null) return null;
 			var table = new DataTable();
 			var props = typeof(T).GetProperties().Where(x => x.CanRead).ToArray();
+			if (columns.Any())
+				props = props.Where(x => columns.Contains(x.Name)).ToArray();
 			foreach (var prop in props)
 			{
 				var underType = Nullable.GetUnderlyingType(prop.PropertyType);

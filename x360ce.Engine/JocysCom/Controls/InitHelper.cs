@@ -43,7 +43,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static List<string> LoadedControlNames = new List<string>();
 
-		private static bool IsDebug
+		public static bool IsDebug
 		{
 			get
 			{

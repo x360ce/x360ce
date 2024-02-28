@@ -5,6 +5,11 @@ namespace JocysCom.ClassLibrary.Configuration
 	public interface ISettingsItemFile
 	{
 		/// <summary>
+		/// File name.
+		/// </summary>
+		string Name { get; set; }
+
+		/// <summary>
 		/// Map to property which contains base file name.
 		/// </summary>
 		string BaseName { get; set; }

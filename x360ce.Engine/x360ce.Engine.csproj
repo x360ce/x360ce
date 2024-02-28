@@ -229,6 +229,7 @@
     <Compile Include="Data\Layout.cs" />
     <Compile Include="Data\UserMacro.cs" />
     <Compile Include="JocysCom\Collections\IKeyValue.cs" />
+    <Compile Include="JocysCom\Common\ProgressStatus.cs" />
     <Compile Include="JocysCom\ComponentModel\ObservableCollectionInvoked.cs" />
     <Compile Include="JocysCom\Configuration\AssemblyInfo.Ext1.cs" />
     <Compile Include="JocysCom\Configuration\ISettingsItemFile.cs" />
@@ -252,8 +253,7 @@
     <Compile Include="JocysCom\Controls\ProgressBarControl.xaml.cs">
       <DependentUpon>ProgressBarControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JocysCom\Controls\ProgressEventArgs.cs" />
-    <Compile Include="JocysCom\Controls\ProgressStatus.cs" />
+    <Compile Include="JocysCom\Common\ProgressEventArgs.cs" />
     <Compile Include="JocysCom\Controls\TabIndexConverter.cs" />
     <Compile Include="JocysCom\Controls\Themes\Icons.xaml.cs">
       <DependentUpon>Icons.xaml</DependentUpon>

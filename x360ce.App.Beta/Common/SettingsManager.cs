@@ -745,7 +745,7 @@ namespace x360ce.App
 				{
 					if (p == nameof(PadSetting.AxisToDPadDeadZone) && value == "")
 						n = 256;
-					n = System.Convert.ToInt32(n / 256F * 100F);
+						n = System.Convert.ToInt32(n / 256F * 100F);
 				}
 				// Convert 500 to 100%
 				else if (p == nameof(PadSetting.LeftMotorPeriod) || p == nameof(PadSetting.RightMotorPeriod))
@@ -754,9 +754,9 @@ namespace x360ce.App
 				}
 				// Convert 32767 to 100%
 				else if (p == nameof(PadSetting.LeftThumbDeadZoneX) ||
-					p == nameof(PadSetting.LeftThumbDeadZoneY) ||
-					p == nameof(PadSetting.RightThumbDeadZoneX) ||
-					p == nameof(PadSetting.RightThumbDeadZoneY))
+						 p == nameof(PadSetting.LeftThumbDeadZoneY) ||
+						 p == nameof(PadSetting.RightThumbDeadZoneX) ||
+						 p == nameof(PadSetting.RightThumbDeadZoneY))
 				{
 					n = System.Convert.ToInt32(n / ((float)Int16.MaxValue) * 100F);
 				}
@@ -839,15 +839,15 @@ namespace x360ce.App
 				}
 				// convert 100%  to 500
 				else if (p == nameof(PadSetting.LeftMotorPeriod) ||
-					p == nameof(PadSetting.RightMotorPeriod))
+						 p == nameof(PadSetting.RightMotorPeriod))
 				{
 					v = System.Convert.ToInt32(tc.Value / 100F * 500F).ToString();
 				}
 				// Convert 100% to 32767
 				else if (p == nameof(PadSetting.LeftThumbDeadZoneX) ||
-					p == nameof(PadSetting.LeftThumbDeadZoneY) ||
-					p == nameof(PadSetting.RightThumbDeadZoneX) ||
-					p == nameof(PadSetting.RightThumbDeadZoneY))
+						 p == nameof(PadSetting.LeftThumbDeadZoneY) ||
+						 p == nameof(PadSetting.RightThumbDeadZoneX) ||
+						 p == nameof(PadSetting.RightThumbDeadZoneY))
 				{
 					v = System.Convert.ToInt32(tc.Value / 100F * short.MaxValue).ToString();
 				}

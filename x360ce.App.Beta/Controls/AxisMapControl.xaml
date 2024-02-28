@@ -6,8 +6,6 @@
 	xmlns:controls="clr-namespace:x360ce.App.Controls"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:Height="Auto"
-	d:Width="Auto"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
@@ -41,119 +39,59 @@
 				Padding="10"
 				Background="White"
 				CornerRadius="5">
-				<!--  This image uses a Drawing object for its source.  -->
-				<Grid>
-
-					<!--  Old Image Graph  -->
-					<!--<Grid Visibility="Collapsed">
-						-->
-					<!--  Image  -->
-					<!--
-						<Image
-							x:Name="MainPictureBox"
-							Width="150"
-							Height="150"
-							Margin="6,10,0,0"
+				<!--  Graph  -->
+				<Viewbox Width="150" Height="150">
+					<Viewbox.LayoutTransform>
+						<ScaleTransform ScaleY="-1" />
+					</Viewbox.LayoutTransform>
+					<!--  Canvas  -->
+					<Canvas Width="65535" Height="65535">
+						<!--  Grid  -->
+						<Rectangle
+							Width="65535"
+							Height="65535"
+							Stroke="LightGray"
+							StrokeThickness="60" />
+						<Polyline Points="0,32767 65535,32767" Stroke="LightGray" StrokeThickness="60" />
+						<Polyline Points="32767,0 32767,65535" Stroke="LightGray" StrokeThickness="60" />
+						<Polyline Points="0,0 65535,65535" Stroke="LightGray" StrokeThickness="60" />
+						<Polyline Points="65535,0 0,65535" Stroke="LightGray" StrokeThickness="60" />
+						<!--  XInput (sensitivity)  -->
+						<Polyline
+							Name="BackgroundPolyline"
 							HorizontalAlignment="Left"
-							VerticalAlignment="Top" />
-						-->
-					<!--  DInput Geometry  -->
-					<!--
-						<Path
-							Margin="6,10,0,0"
-							Opacity="0.25"
-							Stroke="Green"
-							StrokeThickness="1">
+							VerticalAlignment="Bottom"
+							Points="0,0 32767,32767 65535,65535"
+							Stroke="#dd0000"
+							StrokeEndLineCap="Round"
+							StrokeStartLineCap="Round"
+							StrokeThickness="300" />
+						<!--  DInput vertical  -->
+						<Path SnapsToDevicePixels="True" Stroke="Blue" StrokeThickness="400">
 							<Path.Data>
-								<LineGeometry x:Name="DInputLineGeometry" StartPoint="75,0" EndPoint="75,150" />
+								<LineGeometry x:Name="DInputPolylineGeometry" StartPoint="32767,0" EndPoint="32767,65535" />
 							</Path.Data>
 						</Path>
-						<Path Margin="6,10,0,0" Fill="Green">
+						<!--  XInput horizontal  -->
+						<Path SnapsToDevicePixels="True" Stroke="Green" StrokeThickness="400">
 							<Path.Data>
-								<EllipseGeometry
-									x:Name="DInputEllipse"
-									Center="75,75"
-									RadiusX="3"
-									RadiusY="3" />
+								<LineGeometry x:Name="XInputPolylineGeometry" StartPoint="0,32767" EndPoint="65535,32767" />
 							</Path.Data>
 						</Path>
-						-->
-					<!--  XInput Geometry  -->
-					<!--
-						<Path
-							Margin="6,10,0,0"
-							Opacity="0.25"
-							Stroke="Blue"
-							StrokeThickness="1">
-							<Path.Data>
-								<LineGeometry x:Name="XInputLineGeometry" StartPoint="0,75" EndPoint="150,75" />
-							</Path.Data>
-						</Path>
-						<Path Margin="6,10,0,0" Fill="DarkRed" StrokeThickness="1">
-							<Path.Data>
-								<EllipseGeometry
-									x:Name="XInputEllipse"
-									Center="75,75"
-									RadiusX="3"
-									RadiusY="3" />
-							</Path.Data>
-						</Path>
-					</Grid>-->
-
-					<!--  Graph  -->
-					<Viewbox Width="150" Height="150">
-						<Viewbox.LayoutTransform>
-							<ScaleTransform ScaleY="-1" />
-						</Viewbox.LayoutTransform>
-						<!--  Canvas  -->
-						<Canvas Width="65535" Height="65535">
-							<!--  Grid  -->
-							<Rectangle
-								Width="65535"
-								Height="65535"
-								Stroke="LightGray"
-								StrokeThickness="60" />
-							<Polyline Points="0,32767 65535,32767" Stroke="LightGray" StrokeThickness="60" />
-							<Polyline Points="32767,0 32767,65535" Stroke="LightGray" StrokeThickness="60" />
-							<Polyline Points="0,0 65535,65535" Stroke="LightGray" StrokeThickness="60" />
-							<Polyline Points="65535,0 0,65535" Stroke="LightGray" StrokeThickness="60" />
-							<!--  XInput (sensitivity)  -->
-							<Polyline
-								Name="BackgroundPolyline"
-								HorizontalAlignment="Left"
-								VerticalAlignment="Bottom"
-								Points="0,0 32767,32767 65535,65535"
-								Stroke="#dd0000"
-								StrokeEndLineCap="Round"
-								StrokeStartLineCap="Round"
-								StrokeThickness="300" />
-							<!--  DInput vertical  -->
-							<Path SnapsToDevicePixels="True" Stroke="Blue" StrokeThickness="400">
-								<Path.Data>
-									<LineGeometry x:Name="DInputPolylineGeometry" StartPoint="32767,0" EndPoint="32767,65535" />
-								</Path.Data>
-							</Path>
-							<!--  XInput horizontal  -->
-							<Path SnapsToDevicePixels="True" Stroke="Green" StrokeThickness="400">
-								<Path.Data>
-									<LineGeometry x:Name="XInputPolylineGeometry" StartPoint="0,32767" EndPoint="65535,32767" />
-								</Path.Data>
-							</Path>
-							<!--  XInput dot  -->
-							<Ellipse
-								Name="XInputEllipse1"
-								Canvas.Left="32767"
-								Canvas.Top="32767"
-								Width="2400"
-								Height="2400"
-								Fill="#dd0000">
-								<Ellipse.RenderTransform>
-									<TranslateTransform X="-1200" Y="-1200" />
-								</Ellipse.RenderTransform>
-							</Ellipse>
-						</Canvas>
-					</Viewbox>
-				</Grid>
+						<!--  XInput dot  -->
+						<Ellipse
+							Name="DXInputPointEllipse"
+							Canvas.Left="32767"
+							Canvas.Top="32767"
+							Width="2400"
+							Height="2400"
+							Fill="#dd0000">
+							<Ellipse.RenderTransform>
+								<TranslateTransform X="-1200" Y="-1200" />
+							</Ellipse.RenderTransform>
+						</Ellipse>
+					</Canvas>
+				</Viewbox>
 			</Border>
 			<!--  Settings  -->
 			<Grid Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Top">
@@ -242,27 +180,7 @@
 					<ComboBoxItem Content="40% Controller Anti-DeadZone" Tag="P_0_40_0_MenuItem" />
 					<ComboBoxItem Content="20% Controller Anti-DeadZone" Tag="P_0_20_0_MenuItem" />
 				</ComboBox>
-
-				<!--<Menu
-                        Name="PresetMenuStrip"
-                        Grid.Row="5"
-                        Grid.Column="1"
-                        Margin="0,3,0,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource Menu_Default3}">
-                        <MenuItem Name="Presets" Header="Presets" Style="{StaticResource MenuItem_First}">
-                            <MenuItem Name="P_0_0_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="Clear" />
-                            <MenuItem Name="P_5_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="5% DeadZone, 100% Controller Anti-DeadZone" />
-                            <MenuItem Name="P_0_100_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="100% Controller Anti-DeadZone" />
-                            <MenuItem Name="P_0_80_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="80% Controller Anti-DeadZone" />
-                            <MenuItem Name="P_0_60_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="60% Controller Anti-DeadZone" />
-                            <MenuItem Name="P_0_40_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="40% Controller Anti-DeadZone" />
-                            <MenuItem Name="P_0_20_0_MenuItem" Click="P_X_Y_Z_MenuItem_Click" Header="20% Controller Anti-DeadZone" />
-                        </MenuItem>
-                    </Menu>-->
 			</Grid>
-
 		</Grid>
 	</GroupBox>
 </UserControl>

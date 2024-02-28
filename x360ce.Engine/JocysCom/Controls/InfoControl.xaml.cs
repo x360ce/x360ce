@@ -219,7 +219,6 @@ namespace JocysCom.ClassLibrary.Controls
 				BusyIcon.Visibility = Visibility.Hidden;
 				RightIcon.Visibility = Visibility.Visible;
 			}
-			System.Diagnostics.Debug.WriteLine($"!!!!! {Tasks.Count}");
 		}
 
 		RotateTransform _RotateTransform;

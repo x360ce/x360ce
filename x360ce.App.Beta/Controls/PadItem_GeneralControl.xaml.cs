@@ -3,16 +3,12 @@ using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Data.Objects;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Converters;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Xml;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -37,11 +33,11 @@ namespace x360ce.App.Controls
 			if (_padSetting != null)
 				_padSetting.PropertyChanged -= _padSetting_PropertyChanged;
 			// Unbind controls.
-			SettingsManager.UnLoadMonitor(TriggerLeftTextBox);
-			SettingsManager.UnLoadMonitor(TriggerRightTextBox);
+			SettingsManager.UnLoadMonitor(TriggerLTextBox);
+			SettingsManager.UnLoadMonitor(TriggerRTextBox);
 
-			SettingsManager.UnLoadMonitor(BumperLeftTextBox);
-			SettingsManager.UnLoadMonitor(BumperRightTextBox);
+			SettingsManager.UnLoadMonitor(BumperLTextBox);
+			SettingsManager.UnLoadMonitor(BumperRTextBox);
 
 			SettingsManager.UnLoadMonitor(MenuBackTextBox);
 			SettingsManager.UnLoadMonitor(MenuStartTextBox);
@@ -58,31 +54,31 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(DPadRightTextBox);
 			SettingsManager.UnLoadMonitor(DPadDownTextBox);
 
-			SettingsManager.UnLoadMonitor(StickLeftButtonTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftXTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftYTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftUpTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftLeftTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftRightTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftDownTextBox);
+			SettingsManager.UnLoadMonitor(StickLButtonTextBox);
+			SettingsManager.UnLoadMonitor(StickLAxisXTextBox);
+			SettingsManager.UnLoadMonitor(StickLAxisYTextBox);
+			SettingsManager.UnLoadMonitor(StickLUpTextBox);
+			SettingsManager.UnLoadMonitor(StickLLeftTextBox);
+			SettingsManager.UnLoadMonitor(StickLRightTextBox);
+			SettingsManager.UnLoadMonitor(StickLDownTextBox);
 
-			SettingsManager.UnLoadMonitor(StickRightButtonTextBox);
-			SettingsManager.UnLoadMonitor(StickRightXTextBox);
-			SettingsManager.UnLoadMonitor(StickRightYTextBox);
-			SettingsManager.UnLoadMonitor(StickRightUpTextBox);
-			SettingsManager.UnLoadMonitor(StickRightLeftTextBox);
-			SettingsManager.UnLoadMonitor(StickRightRightTextBox);
-			SettingsManager.UnLoadMonitor(StickRightDownTextBox);
+			SettingsManager.UnLoadMonitor(StickRButtonTextBox);
+			SettingsManager.UnLoadMonitor(StickRAxisXTextBox);
+			SettingsManager.UnLoadMonitor(StickRAxisYTextBox);
+			SettingsManager.UnLoadMonitor(StickRUpTextBox);
+			SettingsManager.UnLoadMonitor(StickRLeftTextBox);
+			SettingsManager.UnLoadMonitor(StickRRightTextBox);
+			SettingsManager.UnLoadMonitor(StickRDownTextBox);
 			if (ps == null)
 				return;
 			_padSetting = ps;
 			var converter = new Converters.PaddSettingToText();
 			// Bind controls.
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftTrigger), TriggerLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightTrigger), TriggerRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftTrigger), TriggerLTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightTrigger), TriggerRTextBox, null, converter);
 
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftShoulder), BumperLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightShoulder), BumperRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftShoulder), BumperLTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightShoulder), BumperRTextBox, null, converter);
 
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonBack), MenuBackTextBox, null, converter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonStart), MenuStartTextBox, null, converter);
@@ -99,21 +95,31 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadRight), DPadRightTextBox, null, converter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadDown), DPadDownTextBox, null, converter);
 
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbButton), StickLeftButtonTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisX), StickLeftXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisY), StickLeftYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbUp), StickLeftUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbLeft), StickLeftLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbRight), StickLeftRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbDown), StickLeftDownTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbButton), StickLButtonTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisX), StickLAxisXTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisY), StickLAxisYTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbUp), StickLUpTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbLeft), StickLLeftTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbRight), StickLRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbDown), StickLDownTextBox, null, converter);
 
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbButton), StickRightButtonTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisX), StickRightXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisY), StickRightYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbUp), StickRightUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbLeft), StickRightLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), StickRightRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), StickRightDownTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbButton), StickRButtonTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisX), StickRAxisXTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisY), StickRAxisYTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbUp), StickRUpTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbLeft), StickRLeftTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), StickRRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), StickRDownTextBox, null, converter);
+
+			TriggerLDeadzoneLabel.Content = ps.LeftTriggerDeadZone;
+			TriggerRDeadzoneLabel.Content = ps.RightTriggerDeadZone;
+
+			StickLDeadzoneXLabel.Content = ps.LeftThumbDeadZoneX;
+			StickLDeadzoneYLabel.Content = ps.LeftThumbDeadZoneY;
+
+			StickRDeadzoneXLabel.Content = ps.RightThumbDeadZoneX;
+			StickRDeadzoneYLabel.Content = ps.RightThumbDeadZoneY;
+
 			_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 		}
 
@@ -128,11 +134,11 @@ namespace x360ce.App.Controls
 			if (item == null)
 				return;
 			// Triggers.
-			TriggerLeftLabel.Content = item.LeftTrigger;
-			TriggerRightLabel.Content = item.RightTrigger;
+			TriggerLLabel.Content = item.LeftTrigger;
+			TriggerRLabel.Content = item.RightTrigger;
 			// Bumpers.
-			BumperLeftLabel.Content = item.LeftShoulder;
-			BumperRightLabel.Content = item.RightShoulder;
+			BumperLLabel.Content = item.LeftShoulder;
+			BumperRLabel.Content = item.RightShoulder;
 			// Menu.
 			MenuBackLabel.Content = item.ButtonBack;
 			MenuGuideLabel.Content = item.ButtonGuide;
@@ -149,21 +155,21 @@ namespace x360ce.App.Controls
 			DPadRightLabel.Content = item.DPadRight;
 			DPadUpLabel.Content = item.DPadUp;
 			// Stick Left.
-			StickLeftButtonLabel.Content = item.LeftThumbButton;
-			StickLeftXLabel.Content = item.LeftThumbAxisX;
-			StickLeftYLabel.Content = item.LeftThumbAxisY;
-			StickLeftDownLabel.Content = item.LeftThumbDown;
-			StickLeftLeftLabel.Content = item.LeftThumbLeft;
-			StickLeftRightLabel.Content = item.LeftThumbRight;
-			StickLeftUpLabel.Content = item.LeftThumbUp;
+			StickLButtonLabel.Content = item.LeftThumbButton;
+			StickLAxisXLabel.Content = item.LeftThumbAxisX;
+			StickLAxisYLabel.Content = item.LeftThumbAxisY;
+			StickLDownLabel.Content = item.LeftThumbDown;
+			StickLLeftLabel.Content = item.LeftThumbLeft;
+			StickLRightLabel.Content = item.LeftThumbRight;
+			StickLUpLabel.Content = item.LeftThumbUp;
 			// Stick Right.
-			StickRightButtonLabel.Content = item.RightThumbButton;
-			StickRightXLabel.Content = item.RightThumbAxisX;
-			StickRightYLabel.Content = item.RightThumbAxisY;
-			StickRightDownLabel.Content = item.RightThumbDown;
-			StickRightLeftLabel.Content = item.RightThumbLeft;
-			StickRightRightLabel.Content = item.RightThumbRight;
-			StickRightUpLabel.Content = item.RightThumbUp;
+			StickRButtonLabel.Content = item.RightThumbButton;
+			StickRAxisXLabel.Content = item.RightThumbAxisX;
+			StickRAxisYLabel.Content = item.RightThumbAxisY;
+			StickRDownLabel.Content = item.RightThumbDown;
+			StickRLeftLabel.Content = item.RightThumbLeft;
+			StickRRightLabel.Content = item.RightThumbRight;
+			StickRUpLabel.Content = item.RightThumbUp;
 		}
 
 		#region Drag and Drop Menu
@@ -412,11 +418,6 @@ namespace x360ce.App.Controls
 			// Stick axes.
 			if (stickAxes > 0)
 			{
-				StickRightDeadzoneLabel.Content = Gamepad.RightThumbDeadZone;
-				StickLeftDeadzoneLabel.Content = Gamepad.LeftThumbDeadZone;
-				TriggerRightDeadzoneLabel.Content = Gamepad.TriggerThreshold;
-				TriggerLeftDeadzoneLabel.Content = Gamepad.TriggerThreshold;
-
 				for (int i = 0; i < customDiState.Axis.Count(); i++)
 				{
 					var axisState = customDiState.Axis[i];
@@ -433,8 +434,15 @@ namespace x360ce.App.Controls
 					IHAxisList[i].ToolTip = Math.Abs(Math.Abs((axisState - 32767) * 2) - 65535);
 					IFAxisList[i].ToolTip = Math.Abs(Math.Round(axisState / 2.0) - 32767);
 
-					// Trigger Left test.
-					if (i == 2) LeftTextBox2.Content = Math.Abs((customDiState.Axis[2] - 32767) * 2);
+					// Triggers.
+					if (i == 2) { TriggerLDInputLabel.Content = TriggerRDInputLabel.Content = customDiState.Axis[2]; }
+					// Stick Left.
+					else if (i == 0) { StickLAxisXDinputLabel.Content = axisState; }
+					else if (i == 1) { StickLAxisYDInputLabel.Content = axisState; }
+					// Stick Right.
+					else if (i == 3) { StickRAxisXDInputLabel.Content = axisState; }
+					else if (i == 4) { StickRAxisYDInputLabel.Content = axisState; }
+
 				}
 			}
 			// Slider axes.

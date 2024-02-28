@@ -135,8 +135,9 @@ namespace x360ce.App.Controls
 		}
 
 		private float dInputMax = 65535f;
-		private float dInputPolylineStepSize = 65535f / 1000;
+		private float dInputPolylineStepSize = 65535f / 257; // = 255
 
+		// When Tab is loaded and settings changed.
 		private void CreateBackgroundPolyline()
 		{
 			if (ControlsHelper.InvokeRequired)
@@ -149,8 +150,8 @@ namespace x360ce.App.Controls
 			for (var i = 0f; i <= dInputMax; i += dInputPolylineStepSize)
 			{
 				// var dInputValue = ConvertHelper.ConvertRangeF(i, 0f, dInputMax, ushort.MinValue, ushort.MaxValue);
-				var xInputValue = ConvertHelper.GetThumbValue(i, (float)DeadZoneUpDown.Value, (float)AntiDeadZoneUpDown.Value, (float)LinearUpDown.Value, _invert, _half, isThumb);
-				SensitivityPolylinePointCollection.Add(new Point(i, ConvertXInputToCanvasPosition(xInputValue)));
+				var xI = ConvertHelper.GetThumbValue(i, (float)DeadZoneUpDown.Value, (float)AntiDeadZoneUpDown.Value, (float)LinearUpDown.Value, _invert, _half, isThumb);
+				SensitivityPolylinePointCollection.Add(new Point(i, ConvertXInputToCanvasPosition(xI)));
 			}
 
 			// Sensitivity tooltip.
@@ -158,14 +159,15 @@ namespace x360ce.App.Controls
 			SensitivityTooltip.Content =
 				sensitivity < 0 ? "Center is more sensitive" :
 				sensitivity > 0 ? "Center is less sensitive" :
-				string.Empty;
+				string.Empty;			
 		}
 
 		// Half and Invert values are only in creating XInput path - red line.
 		private bool _invert;
 		private bool _half;
 
-		public void DrawPoint(int dInput, int xInput, bool invert, bool half)
+		// When XInput or DInput value changes.
+		public void UpdateGraph(int dInput, int xInput, bool invert, bool half)
 		{
 			// If properties affecting curve changed then set invert and half properties.
 			if (_invert != invert || _half != half)
@@ -179,34 +181,32 @@ namespace x360ce.App.Controls
 			XInputValueLabel.Content = xInput.ToString();
 
 			// Canvas (65535 x 65535).
-			var xInputValue = ConvertHelper.GetThumbValue(dInput, (float)DeadZoneUpDown.Value, (float)AntiDeadZoneUpDown.Value, (float)LinearUpDown.Value, _invert, _half, isThumb);
-			var di2 = (float)dInput; //ConvertDInputToCanvasPosition(dInput);
-			var xi2 = ConvertXInputToCanvasPosition(xInputValue);
-			di2 = di2 >= dInputMax ? dInputMax - 1f : di2;
-			xi2 = xi2 >= dInputMax ? dInputMax - 1f : xi2;
+			// var dI = ConvertDInputToCanvasPosition(dInput);
+			var xI = ConvertHelper.GetThumbValue(dInput, (float)DeadZoneUpDown.Value, (float)AntiDeadZoneUpDown.Value, (float)LinearUpDown.Value, _invert, _half, isThumb);
+			xI = Math.Min(ConvertXInputToCanvasPosition(xI), dInputMax);
 			// Current position dot.
-			Canvas.SetLeft(XInputEllipse1, di2);
-			Canvas.SetTop(XInputEllipse1, xi2);
+			Canvas.SetLeft(DXInputPointEllipse, dInput);
+			Canvas.SetTop(DXInputPointEllipse, xI);
 			// DInput axis.
-			DInputPolylineGeometry.StartPoint = new Point(di2, 0);
-			DInputPolylineGeometry.EndPoint = new Point(di2, dInputMax);
+			DInputPolylineGeometry.StartPoint = new Point(dInput, 0);
+			DInputPolylineGeometry.EndPoint = new Point(dInput, dInputMax);
 			// XInput axis.
-			XInputPolylineGeometry.StartPoint = new Point(0, xi2);
-			XInputPolylineGeometry.EndPoint = new Point(dInputMax, xi2);
+			XInputPolylineGeometry.StartPoint = new Point(0, xI);
+			XInputPolylineGeometry.EndPoint = new Point(dInputMax, xI);
 		}
 
 		public float ConvertDInputToCanvasPosition(float v)
 		{
-			var di = ConvertHelper.ConvertRangeF(v, 0f, ushort.MaxValue, 0f, dInputMax);
-			return di;
+			var dI = ConvertHelper.ConvertRangeF(v, 0f, ushort.MaxValue, 0f, dInputMax);
+			return dI;
 		}
 
 		public float ConvertXInputToCanvasPosition(float v)
 		{
 			var min = isThumb ? -32768f : 0f;
 			var max = isThumb ? 32767f : 255f;
-			var xi = ConvertHelper.ConvertRangeF(v, min, max, 0f, dInputMax);
-			return xi;
+			var xI = ConvertHelper.ConvertRangeF(v, min, max, 0f, dInputMax);
+			return xI;
 		}
 
 		private async void P_X_Y_Z_PresetMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -250,13 +250,13 @@ namespace x360ce.App.Controls
 			if (!ControlsHelper.AllowUnload(this))
 				return;
 
-			SetBinding(null);
-			deadzoneLink?.Dispose();
-			deadzoneLink = null;
-			antiDeadzoneLink?.Dispose();
-			antiDeadzoneLink = null;
-			linearLink?.Dispose();
-			linearLink = null;
+			//SetBinding(null);
+			//deadzoneLink?.Dispose();
+			//deadzoneLink = null;
+			//antiDeadzoneLink?.Dispose();
+			//antiDeadzoneLink = null;
+			//linearLink?.Dispose();
+			//linearLink = null;
 		}
 	}
 }

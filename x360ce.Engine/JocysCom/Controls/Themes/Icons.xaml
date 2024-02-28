@@ -10,7 +10,7 @@
 		p1:Key="Icon_Add"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_BDBA76DEB9FB945F0A111B76ECBCE5AF484F69D8337E2EF39213ADC8FA8348FC">
+		Tag="SHA256_ACD07674E66A4AC5C0131D45700172CA8F3F592B11254039D1E5C38D4ED78E95">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -25,6 +25,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -49,7 +50,7 @@
 		p1:Key="Icon_Cancel"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_9314768444B09F88C5B9371A36F8F277919E444F5E18F5010C99A3FAE7AC5BC2">
+		Tag="SHA256_60288D29D3CF3980F259C3AE429B98A3BA14F5B49DC3BF57AB53090C1545B608">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -73,6 +74,7 @@
 					</RadialGradientBrush.GradientStops>
 				</RadialGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -110,7 +112,7 @@
 		p1:Key="Icon_Delete"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_F73D2B8BBC273A5A05EDEE7229AD57BB8E44FF3FC998EC8166C62B591D1B93CF">
+		Tag="SHA256_F4B79BB9FFA1CCD7578374D96A82B1CCAEA2C07B3E4371EA1CBFB476AB64DA73">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -125,6 +127,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -149,7 +152,7 @@
 		p1:Key="Icon_Edit"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_CC2586D159919B341446CC3DC91AF087369860D1B6E30535DA80CCAAD710FC85">
+		Tag="SHA256_A44F5D52DF97023CE4DAEA35680A5E89A5F93C9B3D709ADA9ADD0B828DC624E4">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -199,6 +202,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -275,7 +279,7 @@
 		p1:Key="Icon_Error"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_A646381CE94DDF364F956A26393D2D08E57468C996820DC338AA696EB78DD915">
+		Tag="SHA256_04518F79ED1189F76700A3225670E5F822BC46C64BC1C6C2E5332CFF84F21C99">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -299,6 +303,7 @@
 					</RadialGradientBrush.GradientStops>
 				</RadialGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -336,7 +341,7 @@
 		p1:Key="Icon_Exit"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_6FCC85D7009FB48F09D43FF967B66CD3C20D6D2BAB17E2B973607446AFCF0762">
+		Tag="SHA256_6BF141867927FE9DCA09DB6F47F31BA859C8633BEE1C313B8D0D8D592CF3D80C">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -383,6 +388,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -472,7 +478,7 @@
 		p1:Key="Icon_Export"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_236894207ED15111CA3F6BFB5B8B2387BD6F913C2A2AB7F45F131A06DB20A542">
+		Tag="SHA256_F9E794CF99BE4B4EB0A2D56CF8E7E62B40529F9C7BBEDBFBD81D2EF59F858F7B">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -503,6 +509,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -553,7 +560,7 @@
 		p1:Key="Icon_FolderOpen"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_A0977E3A45585BB9BB05BAE22B0EFAFCCEF648FB553092081F6B6F1688A2CA73">
+		Tag="SHA256_F7B3374D5957C5DE2318B051918B7D3648C81B6F4834466FB10844516C8D3EC3">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -578,6 +585,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -615,7 +623,7 @@
 		p1:Key="Icon_Ignore"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_DF81E26DD9AF4970D57724A43B448A4B461B3DC5850F74FB32383FDCE0BA6632">
+		Tag="SHA256_ECD2D51B8F62BA5293F57FEDE6EDC5B71D2C019B363B527C4A11ED082ACA3F2B">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -655,6 +663,7 @@
 					</RadialGradientBrush.GradientStops>
 				</RadialGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -718,7 +727,7 @@
 		p1:Key="Icon_Import"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_A618BC161D8B1C50C5A4634544B2EB06452F4B1023CD87745090DE75B5DCA945">
+		Tag="SHA256_20DC58A6BA80A8A82C3C292811016A6979994D3D6B0611048E6843F147230417">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -749,6 +758,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -799,7 +809,7 @@
 		p1:Key="Icon_Information"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_32B4CDD57CBF549F8FA80243A7D097F97E9F9D60EE2BA4ECB27E02887E3C0DFC">
+		Tag="SHA256_786D3006E008A58AA75D218FB4E9F1140ACE398E2C59E725C7A1C2855FEC063C">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -823,6 +833,7 @@
 					</RadialGradientBrush.GradientStops>
 				</RadialGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -856,9 +867,8 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
-		p1:Key="Icon_InformationGrey"
-		p1:Shared="False"
+		x:Key="Icon_InformationGrey"
+		x:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_0DE51757DD8F0CA962BB1460C6B2E6436AB967B301715FFAADA6F0EC4103C57D">
 		<Canvas Width="512" Height="512">
@@ -879,6 +889,7 @@
 					</RadialGradientBrush.Transform>
 				</RadialGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -904,8 +915,113 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_MediaPlay"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_Maximize"
+		p1:Shared="False"
+		Stretch="Uniform"
+		Tag="SHA256_61CCD8E6CE9761D2F2497F10DA23783A50EDDE47539EAD93E0CB2831C47CEEDC">
+		<Canvas Width="512" Height="512">
+			<Canvas.RenderTransform>
+				<TranslateTransform X="0" Y="0" />
+			</Canvas.RenderTransform>
+			<Canvas.Resources>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" StartPoint="32,32" EndPoint="466,480">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#4AB4F2" />
+							<GradientStop Offset="0.47843" Color="#129EEE" />
+							<GradientStop Offset="1" Color="#0E7AB7" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-2" MappingMode="Absolute" StartPoint="64,64" EndPoint="448,438">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#EEF8FE" />
+							<GradientStop Offset="1" Color="#C6E7FB" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-3" MappingMode="Absolute" StartPoint="144,96" EndPoint="288,240">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#129EEE" />
+							<GradientStop Offset="1" Color="#0E76B2" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-4" MappingMode="Absolute" StartPoint="32,320" EndPoint="192,480">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#B3C0CD" />
+							<GradientStop Offset="1" Color="#91A0AF" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
+			<!--  Unknown tag: sodipodi:namedview  -->
+			<Canvas>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-1}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M32 32l448 0l0 448l-448 0z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-2}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M64 64l384 0l0 384l-384 0z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-3}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M192 365.5l178.5 -179l45.5 45.5l0 -136l-136 0l45.5 45.5l-179 178.5l-2.5 48z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-4}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M32 320l160 0l0 160l-160 0z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+			</Canvas>
+		</Canvas>
+	</Viewbox>
+	<Viewbox
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_MediaPlay"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_6350D9BADE111BC4E64CF281A8B253051545623D47C75123226C752A74A7468D">
 		<Canvas Width="24" Height="24">
@@ -913,6 +1029,7 @@
 				<TranslateTransform X="0" Y="0" />
 			</Canvas.RenderTransform>
 			<Canvas.Resources />
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Canvas.RenderTransform>
@@ -934,8 +1051,9 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		x:Key="Icon_MediaStop"
-		x:Shared="False"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_MediaStop"
+		p1:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_F5CACA7A7169E0D43CE3B6D9BDCEE0D8B46FA2C818CDF944D917893D7CC7390D">
 		<Canvas Width="24" Height="24">
@@ -943,6 +1061,7 @@
 				<TranslateTransform X="0" Y="0" />
 			</Canvas.RenderTransform>
 			<Canvas.Resources />
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Canvas.RenderTransform>
@@ -965,10 +1084,114 @@
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
+		p1:Key="Icon_Minimize"
+		p1:Shared="False"
+		Stretch="Uniform"
+		Tag="SHA256_F1ADF1DD4793E8F9E60E34B70F8FC4BF72D06B783959F259FF5CF7F4F9811D21">
+		<Canvas Width="512" Height="512">
+			<Canvas.RenderTransform>
+				<TranslateTransform X="0" Y="0" />
+			</Canvas.RenderTransform>
+			<Canvas.Resources>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" StartPoint="32,32" EndPoint="480,480">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#B3C0CD" />
+							<GradientStop Offset="1" Color="#91A0AF" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-2" MappingMode="Absolute" StartPoint="64,64" EndPoint="448,438">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#EEF8FE" />
+							<GradientStop Offset="1" Color="#C6E7FB" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-3" MappingMode="Absolute" StartPoint="32,320" EndPoint="188,480">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#4AB5F2" />
+							<GradientStop Offset="0.54902" Color="#129EEE" />
+							<GradientStop Offset="1" Color="#1089CF" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-4" MappingMode="Absolute" StartPoint="192,64" EndPoint="328,200">
+					<LinearGradientBrush.GradientStops>
+						<GradientStopCollection>
+							<GradientStop Offset="0" Color="#129EEE" />
+							<GradientStop Offset="1" Color="#0E76B2" />
+						</GradientStopCollection>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
+			<!--  Unknown tag: sodipodi:namedview  -->
+			<Canvas>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-1}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M32 32l448 0l0 448l-448 0z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-2}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M64 64l384 0l0 384l-384 0z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-3}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M32 320l160 0l0 160l-160 0z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+				<Path
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					Fill="{StaticResource color-4}"
+					StrokeDashArray=""
+					StrokeEndLineCap="Flat"
+					StrokeLineJoin="Miter"
+					StrokeMiterLimit="10"
+					StrokeStartLineCap="Flat"
+					StrokeThickness="1">
+					<Path.Data>
+						<PathGeometry Figures="M448 109.5l-165.5 165l45.5 45.5l-136 0l0 -136l45.5 45.5l165 -165.5l45.5 0z" FillRule="EvenOdd" />
+					</Path.Data>
+				</Path>
+			</Canvas>
+		</Canvas>
+	</Viewbox>
+	<Viewbox
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
 		p1:Key="Icon_OK"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_46327409C158F11A7FE7C9F90AD7A325E393E9813E8ABCCC0DB5E349119E9A95">
+		Tag="SHA256_A3D5DABADBFB954A13CBF81EF88CCF0E588E61D2B9B300F73A439FE918646BF1">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -984,6 +1207,7 @@
 					</RadialGradientBrush.GradientStops>
 				</RadialGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1021,7 +1245,7 @@
 		p1:Key="Icon_Play"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_FB108FF0C746FA4DE456F200BF48CF58B977A143B21239EB80FA6992FB5B1413">
+		Tag="SHA256_98E24DAB9344906BD16A3D0C0989EC738DB69222FA95725DF876C5BAA28E8F3E">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1037,6 +1261,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1057,9 +1282,8 @@
 	</Viewbox>
 	<Viewbox
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-		xmlns:p1="http://schemas.microsoft.com/winfx/2006/xaml"
-		p1:Key="Icon_ProcessLeft"
-		p1:Shared="False"
+		x:Key="Icon_ProcessLeft"
+		x:Shared="False"
 		Stretch="Uniform"
 		Tag="SHA256_E72C9FA22F7EB60AFC3BBA4374882AFBE6F06A2097D0A1EDE7AC0BBB00C090AF">
 		<Canvas Width="512" Height="512">
@@ -1093,6 +1317,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1143,7 +1368,7 @@
 		p1:Key="Icon_ProcessRight"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_C6E934FEBCE8EB4F49E6F2A53BB85EE3624DE5169AC7FCB573786AACAEB2965B">
+		Tag="SHA256_E4A7FD54E74EA79FCD5BC6694CF7B01835E0B7B3B8A9C2854CD237D8CDD5786E">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1184,6 +1409,7 @@
 					</LinearGradientBrush.Transform>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Canvas.RenderTransform>
@@ -1225,7 +1451,7 @@
 		p1:Key="Icon_Question"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_45D66829ADAA39B930B69069FB9D4219BB87632F41B9CA8CF78703A1F1DE4C80">
+		Tag="SHA256_8BAB2B1121975E67E9B709E8702C331DAC00E8752132F6ABDE8C1A424BDA3232">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1249,6 +1475,7 @@
 					</RadialGradientBrush.GradientStops>
 				</RadialGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1286,77 +1513,34 @@
 		p1:Key="Icon_Record"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_847FC08A874C184A6AC9CC856194F7A78A0ABE45129DA52AB558F6A4529644BF">
+		Tag="SHA256_1B73DA5CF3BF7377C6AB53B6714C4E6DCD25D78780CAA0734F92521794FECE49">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
 			</Canvas.RenderTransform>
 			<Canvas.Resources>
-				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-1" MappingMode="Absolute" StartPoint="32,32" EndPoint="496,480">
+				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="_Linear1" MappingMode="Absolute" StartPoint="0,0" EndPoint="1,0">
 					<LinearGradientBrush.GradientStops>
 						<GradientStopCollection>
-							<GradientStop Offset="0" Color="#4EB6F2" />
-							<GradientStop Offset="0.5098" Color="#129EEE" />
-							<GradientStop Offset="1" Color="#0E76B2" />
+							<GradientStop Offset="0" Color="#FFEF5C51" />
+							<GradientStop Offset="1" Color="#FFC22F24" />
 						</GradientStopCollection>
 					</LinearGradientBrush.GradientStops>
-				</LinearGradientBrush>
-				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-2" MappingMode="Absolute" StartPoint="112,112" EndPoint="464,448">
-					<LinearGradientBrush.GradientStops>
-						<GradientStopCollection>
-							<GradientStop Offset="0" Color="#FFFFFF" />
-							<GradientStop Offset="1" Color="#C5E7FB" />
-						</GradientStopCollection>
-					</LinearGradientBrush.GradientStops>
-				</LinearGradientBrush>
-				<LinearGradientBrush xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" x:Key="color-3" MappingMode="Absolute" StartPoint="144,144" EndPoint="384,416">
-					<LinearGradientBrush.GradientStops>
-						<GradientStopCollection>
-							<GradientStop Offset="0" Color="#EF5C51" />
-							<GradientStop Offset="1" Color="#AF1C11" />
-						</GradientStopCollection>
-					</LinearGradientBrush.GradientStops>
+					<LinearGradientBrush.Transform>
+						<MatrixTransform Matrix="435.147 362.254 -362.254 435.147 16 16" />
+					</LinearGradientBrush.Transform>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
 					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					Fill="{StaticResource color-1}"
-					StrokeDashArray=""
-					StrokeEndLineCap="Flat"
-					StrokeLineJoin="Miter"
-					StrokeMiterLimit="10"
-					StrokeStartLineCap="Flat"
-					StrokeThickness="1">
+					Fill="{StaticResource _Linear1}"
+					StrokeLineJoin="Round"
+					StrokeMiterLimit="2">
 					<Path.Data>
-						<PathGeometry Figures="M48 32l416 0c9 0 16 7 16 16l0 416c0 9 -7 16 -16 16l-416 0c-9 0 -16 -7 -16 -16l0 -416c0 -9 7 -16 16 -16z" FillRule="EvenOdd" />
-					</Path.Data>
-				</Path>
-				<Path
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					Fill="{StaticResource color-2}"
-					StrokeDashArray=""
-					StrokeEndLineCap="Flat"
-					StrokeLineJoin="Miter"
-					StrokeMiterLimit="10"
-					StrokeStartLineCap="Flat"
-					StrokeThickness="1">
-					<Path.Data>
-						<PathGeometry Figures="M256 112c79.5 0 144 64.5 144 144c0 79.5 -64.5 144 -144 144c-79.5 0 -144 -64.5 -144 -144c0 -79.5 64.5 -144 144 -144z" FillRule="EvenOdd" />
-					</Path.Data>
-				</Path>
-				<Path
-					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-					Fill="{StaticResource color-3}"
-					StrokeDashArray=""
-					StrokeEndLineCap="Flat"
-					StrokeLineJoin="Miter"
-					StrokeMiterLimit="10"
-					StrokeStartLineCap="Flat"
-					StrokeThickness="1">
-					<Path.Data>
-						<PathGeometry Figures="M256 144c62 0 112 50 112 112c0 62 -50 112 -112 112c-62 0 -112 -50 -112 -112c0 -62 50 -112 112 -112z" FillRule="EvenOdd" />
+						<PathGeometry Figures="M256 16C388.5 16 496 123.5 496 256C496 388.5 388.5 496 256 496C123.5 496 16 388.5 16 256C16 123.5 123.5 16 256 16Z" FillRule="NonZero" />
 					</Path.Data>
 				</Path>
 			</Canvas>
@@ -1368,7 +1552,7 @@
 		p1:Key="Icon_Refresh"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_5E09F6483847D1A96640F4CE2C59D8A65238B8C3BA266026F5A6524015C929C6">
+		Tag="SHA256_6A9A2101F331624D84C4A448CCA29EAF9EF36AAE9C2FD7AE997693259298FAD4">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1391,6 +1575,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1428,7 +1613,7 @@
 		p1:Key="Icon_Remove"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_59BF68536A1A373660F3B17FD70621E391FD6B2EA18F53AA20DDA0B4444454F1">
+		Tag="SHA256_D066D4EBCD0E99127111E10AB471EC2D589F3566717792740F24BEB60C50E2EA">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1443,6 +1628,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1467,7 +1653,7 @@
 		p1:Key="Icon_Reset"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_CB4040C933EC929A4371E0288E90ECE5BF17ADCF8F8F91DEC84E4589DC5E4441">
+		Tag="SHA256_DC63D3C5A3E5ACEA5E848822477E808734B3FD3C0426710184C8BE301FB49B02">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1514,6 +1700,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1603,7 +1790,7 @@
 		p1:Key="Icon_Save"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_BBBA9C2A073BF2625422AFAEF13D0B45AB5103D873F1ECB265118FECFF20EFEE">
+		Tag="SHA256_759E181789D0456B262C6799B891C2F357C883222B4347ED9839C611A0D9CEAB">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1642,6 +1829,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1705,7 +1893,7 @@
 		p1:Key="Icon_SelectAll"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_D9ACE1158FA215A650A400CFD7D3892AD8096E5DD1F2E5EF0789CE4E74A488EB">
+		Tag="SHA256_D1971AC412FC6A4B653167F504C56333881D26FD6E755B8B5423A54F98113A24">
 		<Canvas
 			Canvas.Left="0"
 			Canvas.Top="0"
@@ -1715,6 +1903,7 @@
 				<TranslateTransform X="0" Y="0" />
 			</Canvas.RenderTransform>
 			<Canvas.Resources />
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FF5D9CEC">
@@ -1736,7 +1925,7 @@
 		p1:Key="Icon_SelectInverse"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_3CA0018F6BB5AEFF40C9F9F942D3E1109EF5B0C2E3AC38043BB3B144E56EB8EE">
+		Tag="SHA256_5EB87DC9B46C7DA280F1741FFBA82CBC655FC317C038C6F5DADDC51AB24B497B">
 		<Canvas
 			Canvas.Left="0"
 			Canvas.Top="0"
@@ -1746,6 +1935,7 @@
 				<TranslateTransform X="0" Y="0" />
 			</Canvas.RenderTransform>
 			<Canvas.Resources />
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FFE6E9EE">
@@ -1777,7 +1967,7 @@
 		p1:Key="Icon_SelectNone"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_D3E912F29481244E5661AF14F868F79BA8C48FC29ED33C1F374ED304519BAB77">
+		Tag="SHA256_51348C9FA6E577E44521305523227F16178877EF5E89E8E5A50925FBE1505318">
 		<Canvas
 			Canvas.Left="0"
 			Canvas.Top="0"
@@ -1787,6 +1977,7 @@
 				<TranslateTransform X="0" Y="0" />
 			</Canvas.RenderTransform>
 			<Canvas.Resources />
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Fill="#FFE6E9EE">
@@ -1808,7 +1999,7 @@
 		p1:Key="Icon_Stop"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_622597E6E80D8CF5F32E2CF180B8FA416AEA09BEBC95773C06B0570938E76840">
+		Tag="SHA256_55A9E125F34D9BCA4020558F768CCF19720EE8673E6C117C4A7230F48D2E6351">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1824,6 +2015,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1848,7 +2040,7 @@
 		p1:Key="Icon_ToggleOff"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_D6828CA16815E6C6B536D28BD66B1420E9BEC819DD168D776883690BC3E1F546">
+		Tag="SHA256_C0E6E916EFBBFF44FBAB9270154D7B1BE7B56A2CD8187147650FF43150C246E9">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1879,6 +2071,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -1955,7 +2148,7 @@
 		p1:Key="Icon_ToggleOn"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_160437D4F9A0D76B6631B5647A761970BD55DD188C467F985746B5DDB35A3959">
+		Tag="SHA256_11B264CBEF6A05C54582124AE7E1EB497A3F250E11BD6DEE9C4968CDF08A8FC5">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -1986,6 +2179,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path
@@ -2062,7 +2256,7 @@
 		p1:Key="Icon_Warning"
 		p1:Shared="False"
 		Stretch="Uniform"
-		Tag="SHA256_AC3B51EC4950A4C2831AABAC500B9B12E757855D71C901A23B3EF49F5C66FC7F">
+		Tag="SHA256_CAC0E9723D380AB62A52C2B59F779388CBA13FB4FFDC04AF7F531FF1B689AB54">
 		<Canvas Width="512" Height="512">
 			<Canvas.RenderTransform>
 				<TranslateTransform X="0" Y="0" />
@@ -2085,6 +2279,7 @@
 					</LinearGradientBrush.GradientStops>
 				</LinearGradientBrush>
 			</Canvas.Resources>
+			<!--  Unknown tag: metadata  -->
 			<!--  Unknown tag: sodipodi:namedview  -->
 			<Canvas>
 				<Path

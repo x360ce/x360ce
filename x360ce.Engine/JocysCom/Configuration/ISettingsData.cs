@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.ComponentModel;
 using System.IO;
 
 namespace JocysCom.ClassLibrary.Configuration
@@ -12,8 +12,10 @@ namespace JocysCom.ClassLibrary.Configuration
 		void Load();
 		void LoadFrom(string fileName);
 		FileInfo XmlFile { get; }
-		IList Items { get; }
+		IBindingList Items { get; }
 		event EventHandler FilesChanged;
 		bool IsSavePending { get; set; }
+		string DeleteItem(ISettingsItemFile itemFile);
+		string RenameItem(ISettingsItemFile itemFile, string newName);
 	}
 }

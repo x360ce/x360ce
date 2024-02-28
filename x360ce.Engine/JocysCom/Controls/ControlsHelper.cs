@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -336,25 +335,6 @@ namespace JocysCom.ClassLibrary.Controls
 				ControlCooldowns.Add(control, now.Add(cooldown));
 				return false;
 			}
-		}
-
-		#endregion
-
-		#region Enums
-
-		public static string GetStringFromValue<T>(this T value) where T : Enum
-		{
-			return Regex.Replace(value.ToString(), "(\\B[A-Z])", " $1");
-		}
-
-		public static Dictionary<T, string> GetDictionary<T>(T[] values = null) where T : Enum
-		{
-			if (values == null)
-				values = (T[])Enum.GetValues(typeof(T));
-			var dict = new Dictionary<T, string>();
-			foreach (var value in values)
-				dict[value] = value.GetStringFromValue();
-			return dict;
 		}
 
 		#endregion

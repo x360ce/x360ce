@@ -75,19 +75,25 @@ namespace JocysCom.ClassLibrary.Configuration
 			_Product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyProductAttribute))).Product;
 			string folder;
 			string fileName;
+			// Check if there is a folder with the same name as executable.
+			folder = GetLocalSettingsDirectory();
 			if (userLevel.HasValue)
 			{
-				// Get writable application folder.
-				var specialFolder = userLevel.Value
-					? Environment.SpecialFolder.ApplicationData
-					: Environment.SpecialFolder.CommonApplicationData;
-				folder = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
+				if (string.IsNullOrEmpty(folder))
+				{
+					// Get writable application folder.
+					var specialFolder = userLevel.Value
+						? Environment.SpecialFolder.ApplicationData
+						: Environment.SpecialFolder.CommonApplicationData;
+					folder = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
+				}
 				fileName = typeof(T).Name + ".xml";
 			}
 			else
 			{
 				var fullName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
-				folder = System.IO.Path.GetDirectoryName(fullName);
+				if (string.IsNullOrEmpty(folder))
+					folder = System.IO.Path.GetDirectoryName(fullName);
 				fileName = System.IO.Path.GetFileNameWithoutExtension(fullName) + ".xml";
 			}
 			// If override file name is set then override the file name.
@@ -97,9 +103,23 @@ namespace JocysCom.ClassLibrary.Configuration
 			_XmlFile = new FileInfo(path);
 		}
 
+		public string GetLocalSettingsDirectory()
+		{
+			var moduleFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+			var fi = new FileInfo(moduleFileName);
+			var path = Path.Combine(fi.Directory.FullName, System.IO.Path.GetFileNameWithoutExtension(fi.Name));
+			var di = new DirectoryInfo(path);
+			return di.Exists
+				? di.FullName
+				: null;
+		}
+
 
 		[XmlIgnore]
 		public bool IsSavePending { get; set; }
+
+		[XmlIgnore]
+		public bool IsLoadPending { get; set; }
 
 		[XmlIgnore]
 		public bool UseSeparateFiles { get; set; }
@@ -137,7 +157,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		[XmlIgnore]
-		System.Collections.IList ISettingsData.Items { get { return Items; } }
+		IBindingList ISettingsData.Items { get { return Items; } }
 
 		public delegate void ApplyOrderDelegate(SettingsData<T> source);
 
@@ -188,11 +208,16 @@ namespace JocysCom.ClassLibrary.Configuration
 						var fileFullName = Path.Combine(di.FullName, fileName);
 						if (compress)
 							bytes = SettingsHelper.Compress(bytes);
-						if (SettingsHelper.WriteIfDifferent(fileFullName, bytes))
-						{
-							fi.Refresh();
-							fileItem.WriteTime = new FileInfo(fileFullName).LastWriteTime;
-						}
+						var fiItem = new FileInfo(fileFullName);
+						if (!AllowWriteFile(fiItem))
+							continue;
+						if (!SettingsHelper.WriteIfDifferent(fileFullName, bytes))
+							continue;
+						fi.Refresh();
+						fileItem.WriteTime = new FileInfo(fileFullName).LastWriteTime;
+						// Update last write time.
+						fiItem.Refresh();
+						SetLastWriteTime(fiItem);
 					}
 				}
 				else
@@ -202,7 +227,15 @@ namespace JocysCom.ClassLibrary.Configuration
 					var bytes = Serialize(this);
 					if (compress)
 						bytes = SettingsHelper.Compress(bytes);
-					SettingsHelper.WriteIfDifferent(fi.FullName, bytes);
+					if (AllowWriteFile(fi))
+					{
+						if (SettingsHelper.WriteIfDifferent(fi.FullName, bytes))
+						{
+							// Update last write time.
+							fi.Refresh();
+							SetLastWriteTime(fi);
+						}
+					}
 				}
 			}
 			IsSavePending = false;
@@ -252,6 +285,52 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public event EventHandler<SettingsDataEventArgs> OnValidateData;
 
+		#region Last Write Time
+
+		[XmlIgnore]
+		public bool PreventWriteToNewerFiles { get; set; } = true;
+
+		[XmlIgnore, NonSerialized]
+		private Dictionary<string, DateTime> LastWriteTimes = new Dictionary<string, DateTime>();
+
+		/// <summary>
+		/// Record the LastWriteTime when loading for later comparison when saving.
+		/// </summary>
+		private void SetLastWriteTime(FileInfo fi)
+		{
+			// If file was deleted or don't exists.
+			if (!fi.Exists)
+				return;
+			if (LastWriteTimes.ContainsKey(fi.FullName))
+				LastWriteTimes[fi.FullName] = fi.LastWriteTime;
+			else
+				LastWriteTimes.Add(fi.FullName, fi.LastWriteTime);
+		}
+
+		private bool IsNewerOnDisk(FileInfo fi)
+		{
+			fi.Refresh();
+			// If file was deleted or don't exists.
+			if (!fi.Exists)
+				return false;
+			if (!LastWriteTimes.ContainsKey(fi.FullName))
+				return false;
+			return fi.Exists && fi.LastWriteTime > LastWriteTimes[fi.FullName];
+		}
+
+		private bool AllowWriteFile(FileInfo fi)
+		{
+			fi.Refresh();
+			// If file was deleted or don't exists.
+			if (!fi.Exists)
+				return true;
+			if (!PreventWriteToNewerFiles)
+				return true;
+			return !IsNewerOnDisk(fi);
+		}
+
+		#endregion
+
 		public void Load()
 		{
 			LoadFrom(_XmlFile.FullName);
@@ -291,10 +370,12 @@ namespace JocysCom.ClassLibrary.Configuration
 							if (UseSeparateFiles)
 							{
 								data = new SettingsData<T>();
-								var files = di.GetFiles();
+								var files = di.GetFiles("*" + fi.Extension);
 								for (int i = 0; i < files.Length; i++)
 								{
 									var file = files[i];
+									// Record the LastWriteTime for later comparison.
+									SetLastWriteTime(file);
 									var bytes = System.IO.File.ReadAllBytes(file.FullName);
 									try
 									{
@@ -313,6 +394,8 @@ namespace JocysCom.ClassLibrary.Configuration
 							}
 							else
 							{
+								// Record the LastWriteTime for later comparison.
+								SetLastWriteTime(fi);
 								var bytes = System.IO.File.ReadAllBytes(fi.FullName);
 								data = DeserializeData(bytes, compress);
 							}
@@ -397,6 +480,36 @@ namespace JocysCom.ClassLibrary.Configuration
 			return path;
 		}
 
+		public string RenameFolder(string currentPath, string newFolderName)
+		{
+			try
+			{
+				// If directory don't exists
+				if (!Directory.Exists(currentPath))
+					return null;
+				var directoryInfo = new DirectoryInfo(currentPath);
+				var parentDirectory = directoryInfo.Parent.FullName;
+				var newPath = Path.Combine(parentDirectory, newFolderName);
+				// check if the new folder name is different from the current one (ignoring the case)
+				if (string.Equals(directoryInfo.Name, newFolderName, StringComparison.OrdinalIgnoreCase))
+				{
+					// rename to temp folder first if only the casing is changed
+					var tempPath = Path.Combine(parentDirectory, Guid.NewGuid().ToString());
+					directoryInfo.MoveTo(tempPath);
+				}
+				else if (Directory.Exists(newPath))
+				{
+					return "File with the same name already exists.";
+				}
+				directoryInfo.MoveTo(newPath);
+			}
+			catch (Exception ex)
+			{
+				return "An error occurred: " + ex.Message;
+			}
+			return null;
+		}
+
 		/// <summary>
 		/// Returns error.
 		/// </summary>
@@ -421,9 +534,16 @@ namespace JocysCom.ClassLibrary.Configuration
 				SetFileMonitoring(false);
 				try
 				{
-					// If only case changed then rename to temp file first.
+					// Rename folder if folder with the same name exists.
+					var folderPath = Path.Combine(file.Directory.FullName, oldName);
+					var error = RenameFolder(folderPath, newName);
+					if (!string.IsNullOrEmpty(error))
+						return error;
+					// Rename file.
+					// If only case changed then...
 					if (string.Equals(oldName, newName, StringComparison.OrdinalIgnoreCase))
 					{
+						// rename to temp file first.
 						var tempFilePath = Path.Combine(Path.GetDirectoryName(oldPath), Guid.NewGuid().ToString() + Path.GetExtension(oldPath));
 						file.MoveTo(tempFilePath);
 					}
@@ -453,16 +573,36 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Returns new name.
 		/// </summary>
-		public void DeleteItem(ISettingsItemFile itemFile)
+		public string DeleteItem(ISettingsItemFile itemFile)
 		{
 			lock (saveReadFileLock)
 			{
 				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
 				var oldPath = GetItemFileFullName(oldName);
 				var fi = new FileInfo(oldPath);
-				if (fi.Exists)
-					fi.Delete();
+				// Rename folder if folder with the same name exists.
+				var folderPath = Path.Combine(fi.Directory.FullName, oldName);
+
+				try
+				{
+					if (Directory.Exists(folderPath))
+						Directory.Delete(folderPath, true);
+				}
+				catch (Exception ex)
+				{
+					return ex.Message;
+				}
+				try
+				{
+					if (fi.Exists)
+						fi.Delete();
+				}
+				catch (Exception ex)
+				{
+					return ex.Message;
+				}
 				Items.Remove((T)itemFile);
+				return null;
 			}
 		}
 
