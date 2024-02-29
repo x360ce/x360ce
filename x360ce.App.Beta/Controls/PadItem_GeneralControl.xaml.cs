@@ -216,18 +216,14 @@ namespace x360ce.App.Controls
 		List<Label> IButtonList = new List<Label>();
 
 		List<Label> AxisList = new List<Label>();
-		List<Label> HAxisList = new List<Label>();
-		List<Label> FAxisList = new List<Label>();
 		List<Label> IAxisList = new List<Label>();
+		List<Label> HAxisList = new List<Label>();
 		List<Label> IHAxisList = new List<Label>();
-		List<Label> IFAxisList = new List<Label>();
 
 		List<Label> SliderList = new List<Label>();
-		List<Label> HSliderList = new List<Label>();
-		List<Label> FSliderList = new List<Label>();
 		List<Label> ISliderList = new List<Label>();
+		List<Label> HSliderList = new List<Label>();
 		List<Label> IHSliderList = new List<Label>();
-		List<Label> IFSliderList = new List<Label>();
 
 		List<Label> POVList = new List<Label>();
 		List<Label> IPOVList = new List<Label>();
@@ -321,18 +317,14 @@ namespace x360ce.App.Controls
 				IPOVButtonList.Clear();
 				// Axes.
 				AxisList.Clear();
-				HAxisList.Clear();
-				FAxisList.Clear();
 				IAxisList.Clear();
+				HAxisList.Clear();
 				IHAxisList.Clear();
-				IFAxisList.Clear();
 				// Sliders.
 				SliderList.Clear();
 				HSliderList.Clear();
-				FSliderList.Clear();
 				ISliderList.Clear();
 				IHSliderList.Clear();
-				IFSliderList.Clear();
 
 				// Create button, POV, stick axis, slider axis bool lists (true = exists).
 				for (int i = 0; i < ud.CapButtonCount; i++) { ButtonStateList.Add(true); }
@@ -362,20 +354,16 @@ namespace x360ce.App.Controls
 				if (stickAxes > 0)
 				{
 					DragAndDropMenuLabels_Create(StickAxisStateList, AxisList, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(StickAxisStateList, HAxisList, "HAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
-					DragAndDropMenuLabels_Create(StickAxisStateList, FAxisList, "FAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
 					DragAndDropMenuLabels_Create(StickAxisStateList, IAxisList, "IAxis", "AXIS", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(StickAxisStateList, IHAxisList, "IHAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
-					DragAndDropMenuLabels_Create(StickAxisStateList, IFAxisList, "IFAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+					DragAndDropMenuLabels_Create(StickAxisStateList, HAxisList, "HAxis", "AXIS · HALF", "Icon_DragAndDrop_Axis_Half");
+					DragAndDropMenuLabels_Create(StickAxisStateList, IHAxisList, "IHAxis", "AXIS · HALF INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 				}
 				if (sliderAxes > 0)
 				{
 					DragAndDropMenuLabels_Create(SliderAxisStateList, SliderList, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, HSliderList, "HSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, FSliderList, "FSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
 					DragAndDropMenuLabels_Create(SliderAxisStateList, ISliderList, "ISlider", "SLIDER", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, IHSliderList, "IHSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, IFSliderList, "IFSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, HSliderList, "HSlider", "SLIDER · HALF", "Icon_DragAndDrop_Axis_Half");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, IHSliderList, "IHSlider", "SLIDER · HALF INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 				}
 			}
 		}
@@ -385,17 +373,20 @@ namespace x360ce.App.Controls
 		{
 			var customDiState = GetCustomDiState(ud);
 			if (customDiState == null) return;
+			// Deadzone for Drag and Drop Background color change.
+			var DragAndDropAxisDeadzone = 8000;
+			var DragAndDropSliderDeadzone = 16000;
 
 			// Buttons.
 			if (buttons > 0)
 			{
 				for (int i = 0; i < buttons; i++)
 				{
-					bool buttonState = customDiState.Buttons[i];
-					ButtonList[i].Background = buttonState ? colorActive : Brushes.Transparent;
-					IButtonList[i].Background = !buttonState ? colorActive : Brushes.Transparent;
-					ButtonList[i].ToolTip = buttonState.ToString();
-					IButtonList[i].ToolTip = (!buttonState).ToString();
+					var bDS = customDiState.Buttons[i];
+					ButtonList[i].ToolTip =
+					IButtonList[i].ToolTip = bDS.ToString();
+					ButtonList[i].Background = bDS ? colorActive : Brushes.Transparent;
+					IButtonList[i].Background = bDS ? Brushes.Transparent : colorActive;
 				}
 			}
 			// POVs.
@@ -404,14 +395,14 @@ namespace x360ce.App.Controls
 				var povButtonValues = new[] { 0, 9000, 18000, 27000, 0, 9000, 18000, 27000 };
 				for (int i = 0; i < povs; i++)
 				{
-					var povState = customDiState.POVs[i];
-					POVList[i].Background = povState > -1 ? colorActive : Brushes.Transparent;
-					POVList[i].ToolTip = povState;
+					var pDS = customDiState.POVs[i];
+					POVList[i].Background = pDS > -1 ? colorActive : Brushes.Transparent;
+					POVList[i].ToolTip = pDS;
 					// Up, Right, Down, Left.
 					for (int b = 0; b < povs * 4 && b < povButtonValues.Length; b++)
 					{
-						POVButtonList[b].Background = povState == povButtonValues[b] ? colorActive : Brushes.Transparent;
-						POVButtonList[b].ToolTip = povState == povButtonValues[b] ? povState : -1;
+						POVButtonList[b].Background = pDS == povButtonValues[b] ? colorActive : Brushes.Transparent;
+						POVButtonList[b].ToolTip = pDS == povButtonValues[b] ? pDS : -1;
 					}
 				}
 			}
@@ -420,29 +411,25 @@ namespace x360ce.App.Controls
 			{
 				for (int i = 0; i < customDiState.Axis.Count(); i++)
 				{
-					var axisState = customDiState.Axis[i];
+					var aDS = customDiState.Axis[i];
+					// Background.
 					AxisList[i].Background =
-					HAxisList[i].Background =
-					FAxisList[i].Background =
+					HAxisList[i].Background = aDS < 32767 - DragAndDropAxisDeadzone || aDS > 32767 + DragAndDropAxisDeadzone ? colorActive : Brushes.Transparent;
 					IAxisList[i].Background =
-					IHAxisList[i].Background =
-					IFAxisList[i].Background = axisState < 32767 - Gamepad.LeftThumbDeadZone || axisState > 32767 + Gamepad.LeftThumbDeadZone ? colorActive : Brushes.Transparent;
-					AxisList[i].ToolTip = axisState;
-					IAxisList[i].ToolTip = Math.Abs(axisState - 65535);
-					HAxisList[i].ToolTip = Math.Abs((axisState - 32767) * 2);
-					FAxisList[i].ToolTip = Math.Round(axisState / 2.0);
-					IHAxisList[i].ToolTip = Math.Abs(Math.Abs((axisState - 32767) * 2) - 65535);
-					IFAxisList[i].ToolTip = Math.Abs(Math.Round(axisState / 2.0) - 32767);
-
+					IHAxisList[i].Background = aDS < 32767 - DragAndDropAxisDeadzone || aDS > 32767 + DragAndDropAxisDeadzone ? Brushes.Transparent : colorActive;
+					// Tooltip.
+					AxisList[i].ToolTip =
+					IAxisList[i].ToolTip =
+					HAxisList[i].ToolTip =
+					IHAxisList[i].ToolTip = aDS;
 					// Triggers.
-					if (i == 2) { TriggerLDInputLabel.Content = TriggerRDInputLabel.Content = customDiState.Axis[2]; }
+					if (i == 2) { TriggerLDInputLabel.Content = TriggerRDInputLabel.Content = aDS; }
 					// Stick Left.
-					else if (i == 0) { StickLAxisXDinputLabel.Content = axisState; }
-					else if (i == 1) { StickLAxisYDInputLabel.Content = axisState; }
+					else if (i == 0) { StickLAxisXDinputLabel.Content = aDS; }
+					else if (i == 1) { StickLAxisYDInputLabel.Content = aDS; }
 					// Stick Right.
-					else if (i == 3) { StickRAxisXDInputLabel.Content = axisState; }
-					else if (i == 4) { StickRAxisYDInputLabel.Content = axisState; }
-
+					else if (i == 3) { StickRAxisXDInputLabel.Content = aDS; }
+					else if (i == 4) { StickRAxisYDInputLabel.Content = aDS; }
 				}
 			}
 			// Slider axes.
@@ -450,30 +437,25 @@ namespace x360ce.App.Controls
 			{
 				for (int i = 0; i < customDiState.Sliders.Count(); i++)
 				{
-					var sliderState = customDiState.Sliders[i];
-					SliderList[i].Background =
-					HSliderList[i].Background =
-					FSliderList[i].Background =
-					ISliderList[i].Background =
-					IHSliderList[i].Background =
-					IFSliderList[i].Background = sliderState > Gamepad.LeftThumbDeadZone ? colorActive : Brushes.Transparent;
-
-					if (sliderState > 0)
+					var sDS = customDiState.Sliders[i];
+					if (sDS > 0)
 					{
-						SliderList[i].Visibility = Visibility.Visible;
-						HSliderList[i].Visibility = Visibility.Visible;
-						FSliderList[i].Visibility = Visibility.Visible;
-						ISliderList[i].Visibility = Visibility.Visible;
+						// Visibility.
+						SliderList[i].Visibility = 
+						HSliderList[i].Visibility = 
+						ISliderList[i].Visibility = 
 						IHSliderList[i].Visibility = Visibility.Visible;
-						IFSliderList[i].Visibility = Visibility.Visible;
+						// Background.
+						SliderList[i].Background =
+						HSliderList[i].Background = sDS > DragAndDropSliderDeadzone ? colorActive : Brushes.Transparent;
+						ISliderList[i].Background =
+						IHSliderList[i].Background = sDS > DragAndDropSliderDeadzone ? Brushes.Transparent : colorActive;
+						// Tooltip.
+						SliderList[i].ToolTip =
+						ISliderList[i].ToolTip =
+						HSliderList[i].ToolTip =
+						IHSliderList[i].ToolTip = sDS;
 					}
-
-					SliderList[i].ToolTip = sliderState;
-					ISliderList[i].ToolTip = Math.Abs(sliderState - 65535);
-					HSliderList[i].ToolTip = Math.Abs((sliderState - 32767) * 2);
-					FSliderList[i].ToolTip = Math.Round(sliderState / 2.0);
-					IHSliderList[i].ToolTip = Math.Abs(Math.Abs((sliderState - 32767) * 2) - 65535);
-					IFSliderList[i].ToolTip = Math.Abs(Math.Round(sliderState / 2.0) - 32767);
 				}
 			}
 		}
@@ -529,7 +511,7 @@ namespace x360ce.App.Controls
 		//		{
 		//			mi = new MenuItem() { Header = "Sliders" };
 		//			DiMenuStrip.Add(mi);
-		//			// 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
+		//			// 2 x Sliders, 2 x AccelerationSliders, 2 x bDS.ForceSliders, 2 x VelocitySliders
 		//			CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
 		//			CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
 		//			CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
