@@ -20,13 +20,49 @@
 						<Setter Property="Margin" Value="0" />
 						<Setter Property="Padding" Value="5,0,2,3" />
 					</Style>
+					<!--  Drag and Drop menu Input Label  -->
+					<Style x:Key="DragAndDropDInputBorder" TargetType="Border">
+						<Setter Property="Margin" Value="3" />
+						<Setter Property="VerticalAlignment" Value="Top" />
+						<Setter Property="IsHitTestVisible" Value="False" />
+						<Setter Property="CornerRadius" Value="5" />
+						<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+					</Style>
+					<Style x:Key="DragAndDropDInputLabel1" TargetType="Label">
+						<Setter Property="HorizontalAlignment" Value="Center" />
+						<Setter Property="Padding" Value="0,2,0,0" />
+						<Setter Property="IsHitTestVisible" Value="False" />
+						<Setter Property="Content" Value="Selected Device · Direct Input" />
+					</Style>
+					<Style x:Key="DragAndDropDInputLabel2" TargetType="Label">
+						<Setter Property="HorizontalAlignment" Value="Center" />
+						<Setter Property="Padding" Value="0,0,0,4" />
+						<Setter Property="IsHitTestVisible" Value="False" />
+						<Setter Property="Content" Value="Drag and drop into right-side text boxes" />
+					</Style>
+					<Style x:Key="DragAndDropXInputBorder" TargetType="Border">
+						<Setter Property="Margin" Value="0,2,0,0" />
+						<Setter Property="HorizontalAlignment" Value="Center" />
+						<Setter Property="VerticalAlignment" Value="Top" />
+						<Setter Property="IsHitTestVisible" Value="False" />
+						<Setter Property="CornerRadius" Value="5" />
+						<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+					</Style>
+					<Style x:Key="DragAndDropXInputLabel" TargetType="Label">
+						<Setter Property="HorizontalAlignment" Value="Center" />
+						<Setter Property="Padding" Value="7,2,8,3" />
+						<Setter Property="IsHitTestVisible" Value="False" />
+						<Setter Property="Content" Value="Virtual Xbox Input" />
+					</Style>
 					<!--  Drag and Drop menu Title Label  -->
-					<Style x:Key="DragAndDropTitleLabel" TargetType="Label">
-						<Setter Property="Margin" Value="0,5,0,0" />
+					<Style x:Key="DragAndDropDInputTitleLabel" TargetType="Label">
+						<Setter Property="Margin" Value="0" />
+						<Setter Property="Padding" Value="0" />
 						<Setter Property="HorizontalAlignment" Value="Center" />
 						<Setter Property="Opacity" Value="0.3" />
 						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Selected Device · Drag and Drop Menu" />
+						<Setter Property="Content" Value="Drag and Drop Menu" />
+						<Setter Property="Visibility" Value="Collapsed" />
 					</Style>
 					<!--  Drag and Drop menu "Loading..." Label  -->
 					<Style x:Key="DragAndDropLoadingLabel" TargetType="Label">
@@ -140,6 +176,9 @@
 			<ColumnDefinition Width="*" />
 			<ColumnDefinition Width="155" />
 		</Grid.ColumnDefinitions>
+		<Border Grid.Column="2" Style="{StaticResource DragAndDropXInputBorder}">
+			<Label Style="{StaticResource DragAndDropXInputLabel}" />
+		</Border>
 		<!--  Buttons and Axes  -->
 		<TabControl Grid.RowSpan="3" Width="240" Margin="0,0,9,0">
 			<TabItem>
@@ -151,7 +190,13 @@
 				</TabItem.Header>
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
-						<Label Style="{StaticResource DragAndDropTitleLabel}" />
+						<Border Style="{StaticResource DragAndDropDInputBorder}">
+							<StackPanel>
+								<Label Style="{StaticResource DragAndDropDInputLabel1}" />
+								<Label Style="{StaticResource DragAndDropDInputLabel2}" />
+							</StackPanel>
+						</Border>
+						<Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
 						<StackPanel Name="DragAndDropStackPanelNormal" Margin="3,0,3,3">
 							<StackPanel.Resources>
 								<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
@@ -171,7 +216,13 @@
 				</TabItem.Header>
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
-						<Label Style="{StaticResource DragAndDropTitleLabel}" />
+						<Border Style="{StaticResource DragAndDropDInputBorder}">
+							<StackPanel>
+								<Label Style="{StaticResource DragAndDropDInputLabel1}" />
+								<Label Style="{StaticResource DragAndDropDInputLabel2}" />
+							</StackPanel>
+						</Border>
+						<Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
 						<StackPanel Name="DragAndDropStackPanelInverted" Margin="3,0,3,3">
 							<StackPanel.Resources>
 								<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
