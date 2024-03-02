@@ -402,7 +402,7 @@ namespace x360ce.App.Controls
 					AddImageInfo(2, MapCode.ButtonB, 215, 48, GeneralPanel.ActionBLabel, GeneralPanel.ActionBTextBox, GamepadButtonFlags.B);
 					AddImageInfo(2, MapCode.ButtonA, 196, 66, GeneralPanel.ActionALabel, GeneralPanel.ActionATextBox, GamepadButtonFlags.A);
 					// Menu.
-					AddImageInfo(2, MapCode.ButtonGuide, 127, 48, GeneralPanel.MenuGuideLabel, GeneralPanel.MenuGuideTextBox);
+					AddImageInfo(2, MapCode.ButtonGuide, 127, 48, GeneralPanel.MenuGuideLabel, GeneralPanel.MenuGuideTextBox, GamepadButtonFlags.Guide);
 					AddImageInfo(2, MapCode.ButtonBack, 103, 48, GeneralPanel.MenuBackLabel, GeneralPanel.MenuBackTextBox, GamepadButtonFlags.Back);
 					AddImageInfo(2, MapCode.ButtonStart, 152, 48, GeneralPanel.MenuStartLabel, GeneralPanel.MenuStartTextBox, GamepadButtonFlags.Start);
 					// D-Pad.

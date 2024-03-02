@@ -102,13 +102,13 @@ namespace x360ce.Engine.Data
 				nameof(AxisToDPadEnabled),
 				nameof(AxisToDPadOffset),
 				// Buttons.
+				nameof(ButtonGuide),
 				nameof(ButtonA),
 				nameof(ButtonB),
-				nameof(ButtonGuide),
-				nameof(ButtonBack),
-				nameof(ButtonStart),
 				nameof(ButtonX),
 				nameof(ButtonY),
+				nameof(ButtonBack),
+				nameof(ButtonStart),
 				nameof(DPad),
 				nameof(DPadDown),
 				nameof(DPadLeft),
@@ -218,13 +218,13 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.AxisToDPadEnabled);
 			AddValue(ref list, x => x.AxisToDPadOffset);
 			// Buttons.
+			AddValue(ref list, x => x.ButtonGuide);
 			AddValue(ref list, x => x.ButtonA);
 			AddValue(ref list, x => x.ButtonB);
-			AddValue(ref list, x => x.ButtonGuide);
-			AddValue(ref list, x => x.ButtonBack);
-			AddValue(ref list, x => x.ButtonStart);
 			AddValue(ref list, x => x.ButtonX);
 			AddValue(ref list, x => x.ButtonY);
+			AddValue(ref list, x => x.ButtonBack);
+			AddValue(ref list, x => x.ButtonStart);
 			AddValue(ref list, x => x.DPad);
 			AddValue(ref list, x => x.DPadDown);
 			AddValue(ref list, x => x.DPadLeft);
@@ -348,13 +348,13 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeAxisToDPadDeadZone() { return !isDefault(AxisToDPadDeadZone, "256"); }
 		public bool ShouldSerializeAxisToDPadEnabled() { return !isDefault(AxisToDPadEnabled); }
 		public bool ShouldSerializeAxisToDPadOffset() { return !isDefault(AxisToDPadOffset); }
+		public bool ShouldSerializeButtonGuide() { return !isDefault(ButtonGuide); }
 		public bool ShouldSerializeButtonA() { return !isDefault(ButtonA); }
 		public bool ShouldSerializeButtonB() { return !isDefault(ButtonB); }
-		public bool ShouldSerializeButtonBack() { return !isDefault(ButtonBack); }
-		public bool ShouldSerializeButtonGuide() { return !isDefault(ButtonGuide); }
-		public bool ShouldSerializeButtonStart() { return !isDefault(ButtonStart); }
 		public bool ShouldSerializeButtonX() { return !isDefault(ButtonX); }
 		public bool ShouldSerializeButtonY() { return !isDefault(ButtonY); }
+		public bool ShouldSerializeButtonBack() { return !isDefault(ButtonBack); }
+		public bool ShouldSerializeButtonStart() { return !isDefault(ButtonStart); }
 		public bool ShouldSerializeDPad() { return !isDefault(DPad); }
 		public bool ShouldSerializeDPadDown() { return !isDefault(DPadDown); }
 		public bool ShouldSerializeDPadLeft() { return !isDefault(DPadLeft); }

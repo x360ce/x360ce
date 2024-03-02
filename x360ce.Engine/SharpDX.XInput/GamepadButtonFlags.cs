@@ -4,14 +4,14 @@
     using System.ComponentModel;
 
     [Flags]
-    public enum GamepadButtonFlags : short
+    public enum GamepadButtonFlags : ushort // short
     {
         [Description("")]
         A = 0x1000,
         B = 0x2000,
         X = 0x4000,
-        Y = -32768,
-        Back = 0x20,
+        Y = 0x8000, // -32768 (short)
+		Back = 0x20,
         DPadDown = 2,
         DPadLeft = 4,
         DPadRight = 8,

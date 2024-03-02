@@ -342,7 +342,7 @@
 			<!--  LeftThumb  -->
 			<StackPanel Margin="0,3,0,0" Style="{StaticResource StackPanelLeft}">
 				<Label
-					Name="StickLAxisXDinputLabel"
+					Name="StickLAxisXDInputLabel"
 					Width="34"
 					Margin="6,0,0,0"
 					Content="0"

@@ -11,13 +11,13 @@ namespace x360ce.Engine.Data
 		public Layout()
 		{
 			Name = "";
+			ButtonGuide = "";
 			ButtonA = "";
 			ButtonB = "";
-			ButtonBack = "";
-			ButtonGuide = "";
-			ButtonStart = "";
 			ButtonX = "";
 			ButtonY = "";
+			ButtonBack = "";
+			ButtonStart = "";
 			DPad = "";
 			DPadDown = "";
 			DPadLeft = "";

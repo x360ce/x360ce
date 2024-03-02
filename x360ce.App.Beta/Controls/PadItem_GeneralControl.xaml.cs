@@ -1,7 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -110,15 +109,6 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbLeft), StickRLeftTextBox, null, converter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), StickRRightTextBox, null, converter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), StickRDownTextBox, null, converter);
-
-			TriggerLDeadzoneLabel.Content = ps.LeftTriggerDeadZone;
-			TriggerRDeadzoneLabel.Content = ps.RightTriggerDeadZone;
-
-			StickLDeadzoneXLabel.Content = ps.LeftThumbDeadZoneX;
-			StickLDeadzoneYLabel.Content = ps.LeftThumbDeadZoneY;
-
-			StickRDeadzoneXLabel.Content = ps.RightThumbDeadZoneX;
-			StickRDeadzoneYLabel.Content = ps.RightThumbDeadZoneY;
 
 			_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 		}
@@ -368,6 +358,22 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		private void SetDInputLabelContent(UserDevice ud, TargetType targetType, Label label)
+		{
+			Map map = _padSetting.Maps.FirstOrDefault(x => x.Target == targetType);
+			if (map == null || map.Index <= 0) return;
+
+			var customDiState = GetCustomDiState(ud);
+			var i = map.Index - 1;
+
+			if (map.Index <= ud.DiState.Axis.Length)
+			{
+				if (map.IsAxis || map.IsHalf || map.IsInverted) label.Content = customDiState.Axis[i];
+				else if (map.IsButton) label.Content = customDiState.Buttons[i] ? 1 : 0;
+				else if (map.IsSlider) label.Content = customDiState.Sliders[i];
+			}
+		}
+
 		// Update DragAndDrop menu labels.
 		public void DragAndDropMenuLabels_Update(UserDevice ud)
 		{
@@ -376,6 +382,22 @@ namespace x360ce.App.Controls
 			// Deadzone for Drag and Drop Background color change.
 			var DragAndDropAxisDeadzone = 8000;
 			var DragAndDropSliderDeadzone = 16000;
+
+			// Trigger.
+			SetDInputLabelContent(ud, TargetType.LeftTrigger, TriggerLDInputLabel);
+			SetDInputLabelContent(ud, TargetType.RightTrigger, TriggerRDInputLabel);
+			TriggerLDeadzoneLabel.Content = _padSetting.LeftTriggerDeadZone;
+			TriggerRDeadzoneLabel.Content = _padSetting.RightTriggerDeadZone;
+			// Stick Left.
+			SetDInputLabelContent(ud, TargetType.LeftThumbX, StickLAxisXDInputLabel);
+			SetDInputLabelContent(ud, TargetType.LeftThumbY, StickLAxisYDInputLabel);
+			StickLDeadzoneXLabel.Content = _padSetting.LeftThumbDeadZoneX;
+			StickLDeadzoneYLabel.Content = _padSetting.LeftThumbDeadZoneY;
+			// Stick Right.
+			SetDInputLabelContent(ud, TargetType.RightThumbX, StickRAxisXDInputLabel);
+			SetDInputLabelContent(ud, TargetType.RightThumbY, StickRAxisYDInputLabel);
+			StickRDeadzoneXLabel.Content = _padSetting.RightThumbDeadZoneX;
+			StickRDeadzoneYLabel.Content = _padSetting.RightThumbDeadZoneY;
 
 			// Buttons.
 			if (buttons > 0)
@@ -411,25 +433,17 @@ namespace x360ce.App.Controls
 			{
 				for (int i = 0; i < customDiState.Axis.Count(); i++)
 				{
-					var aDS = customDiState.Axis[i];
+					var aDSValue = customDiState.Axis[i];
 					// Background.
 					AxisList[i].Background =
-					HAxisList[i].Background = aDS < 32767 - DragAndDropAxisDeadzone || aDS > 32767 + DragAndDropAxisDeadzone ? colorActive : Brushes.Transparent;
+					HAxisList[i].Background = aDSValue < 32767 - DragAndDropAxisDeadzone || aDSValue > 32767 + DragAndDropAxisDeadzone ? colorActive : Brushes.Transparent;
 					IAxisList[i].Background =
-					IHAxisList[i].Background = aDS < 32767 - DragAndDropAxisDeadzone || aDS > 32767 + DragAndDropAxisDeadzone ? Brushes.Transparent : colorActive;
+					IHAxisList[i].Background = aDSValue < 32767 - DragAndDropAxisDeadzone || aDSValue > 32767 + DragAndDropAxisDeadzone ? Brushes.Transparent : colorActive;
 					// Tooltip.
 					AxisList[i].ToolTip =
 					IAxisList[i].ToolTip =
 					HAxisList[i].ToolTip =
-					IHAxisList[i].ToolTip = aDS;
-					// Triggers.
-					if (i == 2) { TriggerLDInputLabel.Content = TriggerRDInputLabel.Content = aDS; }
-					// Stick Left.
-					else if (i == 0) { StickLAxisXDinputLabel.Content = aDS; }
-					else if (i == 1) { StickLAxisYDInputLabel.Content = aDS; }
-					// Stick Right.
-					else if (i == 3) { StickRAxisXDInputLabel.Content = aDS; }
-					else if (i == 4) { StickRAxisYDInputLabel.Content = aDS; }
+					IHAxisList[i].ToolTip = aDSValue;
 				}
 			}
 			// Slider axes.
