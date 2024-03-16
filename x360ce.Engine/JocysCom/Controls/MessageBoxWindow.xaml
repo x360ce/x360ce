@@ -81,7 +81,7 @@
 					TextDecorations="None">
 					<TextBlock x:Name="LinkLabel" Text="MainHyperLink" />
 				</Hyperlink>
-				<TextBlock x:Name="SizeLabel" Opacity="0.5" Text="0"/>
+				<TextBlock x:Name="SizeLabel" Opacity="0.5" Text="0" />
 			</TextBlock>
 			<StackPanel
 				Grid.Column="1"

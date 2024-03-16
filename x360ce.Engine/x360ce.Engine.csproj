@@ -232,7 +232,8 @@
     <Compile Include="JocysCom\Common\ProgressStatus.cs" />
     <Compile Include="JocysCom\ComponentModel\ObservableCollectionInvoked.cs" />
     <Compile Include="JocysCom\Configuration\AssemblyInfo.Ext1.cs" />
-    <Compile Include="JocysCom\Configuration\ISettingsItemFile.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsFileItem.cs" />
+    <Compile Include="JocysCom\Configuration\ISettingsItem.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.WPF.UseWindowsForms.cs" />
     <Compile Include="JocysCom\Controls\InfoControl.xaml.cs">
       <DependentUpon>InfoControl.xaml</DependentUpon>
@@ -261,6 +262,7 @@
     <Compile Include="JocysCom\Data\BindableItem.cs" />
     <Compile Include="JocysCom\Data\SqlHelper.Types.cs" />
     <Compile Include="JocysCom\Diagnostics\RollingWriterOptions.cs" />
+    <Compile Include="JocysCom\IO\PathHelper.cs" />
     <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
     <Compile Include="JocysCom\Windows\AutomationHelper.cs" />
     <Compile Include="Maps\MapCode.cs" />
