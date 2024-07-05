@@ -16,9 +16,23 @@ namespace JocysCom.ClassLibrary.Configuration
 			return path;
 		}
 
+		public string AppUserData
+		{
+			get => _AppUserData ?? Entry.GetAppDataPath(true);
+			set => _AppUserData = value;
+		}
+		string _AppUserData;
+
+		public string AppCommonData
+		{
+			get => _AppCommonData ?? Entry.GetAppDataPath(false);
+			set => _AppCommonData = value;
+		}
+		string _AppCommonData;
+
 		public static string ParameterizePath(string path, bool useEnvironmentVariables = false)
 		{
-			// Variables are quoted with '{' and '}' sign.
+			// Variables are quoted with '{' and '}' sign
 			path = JocysCom.ClassLibrary.Text.Helper.Replace(Entry, path, false);
 			if (useEnvironmentVariables)
 				path = ReplaceWithEnvironmentVariables(path);
@@ -29,7 +43,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			var envVars = Environment.GetEnvironmentVariables()
 				.Cast<DictionaryEntry>()
-				 .Where(env => Path.IsPathRooted(env.Value.ToString()))
+				.Where(env => Path.IsPathRooted(env.Value.ToString()))
 				.OrderByDescending(env => env.Value.ToString().Length)
 				.ToList();
 			foreach (var envVar in envVars)

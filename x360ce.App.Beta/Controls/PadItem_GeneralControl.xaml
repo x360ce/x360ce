@@ -6,7 +6,7 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	x:Name="This"
-	d:Height="500"
+	d:Height="600"
 	d:Width="900"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"

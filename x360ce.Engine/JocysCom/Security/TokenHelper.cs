@@ -23,10 +23,10 @@ namespace JocysCom.ClassLibrary.Security
 			var d = date.HasValue ? date.Value : DateTime.Now;
 			switch (unit)
 			{
-				case TimeUnitType.Seconds: return (long)d.Subtract(DateTime.MinValue).TotalSeconds;
-				case TimeUnitType.Minutes: return (long)d.Subtract(DateTime.MinValue).TotalMinutes;
-				case TimeUnitType.Hours: return (long)d.Subtract(DateTime.MinValue).TotalHours;
-				case TimeUnitType.Days: return (long)d.Subtract(DateTime.MinValue).TotalDays;
+				case TimeUnitType.Second: return (long)d.Subtract(DateTime.MinValue).TotalSeconds;
+				case TimeUnitType.Minute: return (long)d.Subtract(DateTime.MinValue).TotalMinutes;
+				case TimeUnitType.Hour: return (long)d.Subtract(DateTime.MinValue).TotalHours;
+				case TimeUnitType.Day: return (long)d.Subtract(DateTime.MinValue).TotalDays;
 			}
 			return 0;
 		}
@@ -117,7 +117,7 @@ namespace JocysCom.ClassLibrary.Security
 			// If there is no expiry then...
 			if (u == 0) return (token == GetSecurityToken(id, password, u));
 			// Use bias to solve the issue when token generator time is inaccurate and is set up to 5 [seconds] or 1 [minute|hour|day] in future).
-			var bias = unit == TimeUnitType.Seconds ? 5 : 1;
+			var bias = unit == TimeUnitType.Second ? 5 : 1;
 			for (var i = -bias; i < count; i++)
 			{
 				// If resetKey matches to key for given day then...
@@ -418,7 +418,7 @@ namespace JocysCom.ClassLibrary.Security
 			// If there is no expiry then...
 			if (u == 0) return (token == GetSecurityTokenOld(id, password, u));
 			// Use bias to solve the issue when token generator time is inaccurate and is set up to 5 [seconds] or 1 [minute|hour|day] in future).
-			var bias = unit == TimeUnitType.Seconds ? 5 : 1;
+			var bias = unit == TimeUnitType.Second ? 5 : 1;
 			for (var i = -bias; i < count; i++)
 			{
 				// If resetKey matches to key for given day then...

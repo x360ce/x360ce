@@ -180,12 +180,12 @@ namespace JocysCom.ClassLibrary.Runtime
 			foreach (var sf in sourceFields)
 			{
 				var tf = targetFields.FirstOrDefault(x => x.Name == sf.Name);
-				if (tf == null || !IsKnownType(sf.FieldType) || sf.FieldType != tf.FieldType)
+				if (tf == null || sf.FieldType != tf.FieldType)
 					continue;
-					oldValue = sf.GetValue(source);
-					newValue = tf.GetValue(target);
-					state = GetValueChangeSet(sf.FieldType, oldValue, newValue);
-					list.Add(state);
+				oldValue = sf.GetValue(source);
+				newValue = tf.GetValue(target);
+				state = GetValueChangeSet(sf.FieldType, oldValue, newValue);
+				list.Add(state);
 			}
 			// Get Property Info.
 			var sourceProperties = GetProperties(source.GetType());
@@ -193,7 +193,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			foreach (var sp in sourceProperties)
 			{
 				var tp = targetProperties.FirstOrDefault(x => x.Name == sp.Name);
-				if (tp == null || !IsKnownType(sp.PropertyType) || sp.PropertyType != tp.PropertyType)
+				if (tp == null || sp.PropertyType != tp.PropertyType)
 					continue;
 				oldValue = sp.GetValue(source, null);
 				newValue = tp.GetValue(target, null);

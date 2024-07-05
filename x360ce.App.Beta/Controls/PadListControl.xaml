@@ -87,7 +87,7 @@
 				<DataGridTemplateColumn IsReadOnly="True" Header="Active">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<ContentControl Style="{StaticResource ContentControlCell_Default}" Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}" />
+							<ContentControl Style="{StaticResource ContentControlCell_Default}" Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}" Width="16" Height="16" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>

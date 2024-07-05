@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace JocysCom.ClassLibrary.Collections
@@ -9,6 +10,7 @@ namespace JocysCom.ClassLibrary.Collections
 		/// <summary>
 		/// Synchronize source collection to destination.
 		/// </summary>
+		/// <remarks>Try to use quick sort algorithm by using uniqueSortName/index.</remarks>
 		public static void Synchronize<T>(IList<T> source, IList<T> target, IEqualityComparer<T> comparer = null)
 		{
 			comparer = comparer ?? EqualityComparer<T>.Default;
@@ -43,9 +45,21 @@ namespace JocysCom.ClassLibrary.Collections
 				}
 				if (ti != si)
 				{
-					T temp = target[si];
-					target[si] = target[ti];
-					target[ti] = temp;
+					var oc = target as ObservableCollection<T>;
+					// If observable collection then
+					if (oc != null)
+					{
+						// Move item without triggering remove and insert events.
+						oc.Move(si, ti);
+					}
+					else
+					{
+						// Removes and inserts item and
+						// can disrupt data binding in WPF controls.
+						var item = target[ti];
+						target.RemoveAt(ti);
+						target.Insert(si, item);
+					}
 				}
 			}
 			// Remove items at the end of target that exceed source's length

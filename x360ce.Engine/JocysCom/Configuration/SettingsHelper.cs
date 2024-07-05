@@ -7,10 +7,19 @@ using System.Text;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
+	/// <summary>
+	/// Provides utilities for managing application settings, including file comparisons,
+	/// data compression/decompression, and content transformation.
+	/// </summary>
 	public static partial class SettingsHelper
 	{
 		#region Compression
 
+		/// <summary>
+		/// Compresses the given byte array using GZip compression.
+		/// </summary>
+		/// <param name="bytes">The byte array to compress.</param>
+		/// <returns>The compressed byte array.</returns>
 		public static byte[] Compress(byte[] bytes)
 		{
 			int numRead;
@@ -30,6 +39,11 @@ namespace JocysCom.ClassLibrary.Configuration
 			return dstStream.ToArray();
 		}
 
+		/// <summary>
+		/// Decompresses a previously compressed byte array using GZip.
+		/// </summary>
+		/// <param name="bytes">The compressed byte array to decompress.</param>
+		/// <returns>The original byte array.</returns>
 		public static byte[] Decompress(byte[] bytes)
 		{
 			int numRead;
@@ -54,10 +68,11 @@ namespace JocysCom.ClassLibrary.Configuration
 		#region Writing
 
 		/// <summary>
-		/// Returns true if the file does not exist, the file size is different, or the file contents are different.
+		/// Determines if the file specified by the path is different based on its size or content checksum compared to the provided byte array.
 		/// </summary>
-		/// <param name="path">File path.</param>
-		/// <param name="bytes">Contents to compare with the contents of the file.</param>
+		/// <param name="path">The path to the file to compare.</param>
+		/// <param name="bytes">The byte array to compare against the file's contents.</param>
+		/// <returns>True if the file is considered different; otherwise, false.</returns>
 		public static bool IsDifferent(string path, byte[] bytes)
 		{
 			if (bytes is null)
@@ -78,10 +93,11 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Writes the file contents if they are different from the existing file and returns a boolean indicating if the file was written.
+		/// Writes the specified byte array to a file at the given path if the current content of the file is different from the byte array. This comparison takes into account file size and checksum.
 		/// </summary>
-		/// <param name="path">File path.</param>
-		/// <param name="bytes">File contents to be written.</param>
+		/// <param name="path">The path where the file will be written.</param>
+		/// <param name="bytes">The byte array to write.</param>
+		/// <returns>True if the file was written; false if the contents were the same and no write occurred.</returns>
 		public static bool WriteIfDifferent(string path, byte[] bytes)
 		{
 			var isDifferent = IsDifferent(path, bytes);
@@ -90,6 +106,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			return isDifferent;
 		}
 
+		/// <summary>
+		/// Reads the content of a file into a string using the detected encoding of the file.
+		/// </summary>
+		/// <param name="name">The path to the file to read.</param>
+		/// <param name="encoding">The encoding used to read the file. Detected automatically if left null.</param>
+		/// <returns>The content of the file as a string.</returns>
 		public static string ReadFileContent(string name, out Encoding encoding)
 		{
 			using (var reader = new System.IO.StreamReader(name, true))
@@ -100,8 +122,11 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Get file content with encoding header.
+		/// Converts a string content into a byte array with an optional encoding header.
 		/// </summary>
+		/// <param name="content">The string content to convert.</param>
+		/// <param name="encoding">The encoding to use for the byte array. If null, the default encoding is used.</param>
+		/// <returns>The byte array representation of the content, including the encoding header if specified.</returns>
 		public static byte[] GetFileContentBytes(string content, Encoding encoding = null)
 		{
 			var ms = new MemoryStream();
@@ -119,6 +144,13 @@ namespace JocysCom.ClassLibrary.Configuration
 		#region Saving 
 
 
+		/// <summary>
+		/// Saves the byte array to a file and appends a CRC32 checksum to the filename for integrity verification.
+		/// This ensures that file contents are not tampered with and remain consistent between operations.
+		/// </summary>
+		/// <param name="name">The name of the file to save, without the checksum.</param>
+		/// <param name="bytes">The byte array containing the data to be saved to the file.</param>
+		/// <returns>FileInfo object representing the saved file, including its checksum in the filename.</returns>
 		public static FileInfo SaveFileWithChecksum(string name, byte[] bytes)
 		{
 			var assembly = Assembly.GetEntryAssembly();
@@ -141,6 +173,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			return fi;
 		}
 
+
+		/// <summary>
+		/// Calculates a CRC32 checksum for the given byte array.
+		/// </summary>
+		/// <param name="bytes">The byte array to calculate the checksum for.</param>
+		/// <returns>The calculated CRC32 checksum as an unsigned 32-bit integer.</returns>
 		public static uint ComputeCRC32Checksum(byte[] bytes)
 		{
 			uint poly = 0xedb88320;

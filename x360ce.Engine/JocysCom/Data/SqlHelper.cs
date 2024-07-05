@@ -294,6 +294,8 @@ namespace JocysCom.ClassLibrary.Data
 		/// <param name="text"></param>
 		public static string FilterConnectionString(string text)
 		{
+			if (string.IsNullOrWhiteSpace(text))
+				return text;
 			System.Text.RegularExpressions.Regex regex;
 			regex = new System.Text.RegularExpressions.Regex("(Password|PWD)\\s*=([^;]*)([;]*)", System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 			return regex.Replace(text, "$1=<hidden>$3");

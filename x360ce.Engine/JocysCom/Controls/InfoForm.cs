@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Processes;
 using System;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Controls
@@ -44,7 +45,7 @@ namespace JocysCom.ClassLibrary.Controls
 			dtControls.Columns.Add(typeColumn);
 			DataRow dr = null;
 			dr = dtControls.NewRow();
-			this.Text = c.Name + "Form Info";
+			Text = c.Name + "Form Info";
 			dr["name"] = c.Name;
 			dr["type"] = c.GetType().ToString();
 			dtControls.Rows.Add(dr);
@@ -65,7 +66,7 @@ namespace JocysCom.ClassLibrary.Controls
 				ControlsDataGridView.SelectionChanged += ControlsDataGridView_SelectionChanged;
 				ControlsDataGridView_SelectionChanged(ControlsDataGridView, new EventArgs());
 			});
-			foreach (Control lbl in this.Controls)
+			foreach (Control lbl in Controls)
 			{
 				if ((lbl) is Label)
 				{
@@ -94,7 +95,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public void InfoForm_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Escape)
-				this.Close();
+				Close();
 		}
 
 		public void ControlsDataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -182,8 +183,10 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (ModifierKeys.HasFlag(Keys.Control) && ModifierKeys.HasFlag(Keys.Shift) && e.Button == System.Windows.Forms.MouseButtons.Right)
 			{
-				var hwnd = JocysCom.ClassLibrary.Win32.NativeMethods.WindowFromPoint(e.Location);
+				var hwnd = NativeMethods.WindowFromPoint(e.Location);
 				var other = FromChildHandle(hwnd);
+				if (other is null)
+					return;
 				var relative = other.PointToClient(e.Location);
 				var c2 = other.GetChildAtPoint(relative, GetChildAtPointSkip.None);
 				var c0 = c2 ?? other;
@@ -200,6 +203,27 @@ namespace JocysCom.ClassLibrary.Controls
 				ShowFormInfo(c0);
 			}
 		}
+
+		public static partial class NativeMethods
+		{
+
+			#region user32
+
+			/// <summary>
+			/// Retrieves a handle to the window that contains the specified point. 
+			/// </summary>
+			/// <param name="Point">The point to be checked. </param>
+			/// <returns>
+			/// The return value is a handle to the window that contains the point.
+			/// If no window exists at the given point, the return value is NULL.
+			/// If the point is over a static text control, the return value is a handle to the window under the static text control. </returns>
+			[DllImport("user32.dll", SetLastError = true)]
+			public static extern IntPtr WindowFromPoint(System.Drawing.Point point);
+
+			#endregion
+
+		}
+
 
 	}
 }

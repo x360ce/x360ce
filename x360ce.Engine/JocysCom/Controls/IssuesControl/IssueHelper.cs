@@ -279,9 +279,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			if (localFile.Exists)
 				localFile.Delete();
 			using (var client = new HttpClient())
-				using (var s = await client.GetStreamAsync(uri))
-					using (var fs = new FileStream(localFile.FullName, FileMode.CreateNew))
-						await s.CopyToAsync(fs);
+			using (var s = await client.GetStreamAsync(uri))
+			using (var fs = new FileStream(localFile.FullName, FileMode.CreateNew))
+				await s.CopyToAsync(fs);
 			//AddLog("Downloading File: {0}", MoreInfo.AbsoluteUri);
 			localFile.Refresh();
 			// AddLog("Done");

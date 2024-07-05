@@ -160,7 +160,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (o is null)
 				return;
 			var type = o.GetType();
-			var properties = type.GetProperties();
+			var properties = type.GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Public);
 			foreach (var p in properties)
 			{
 				if (exclude?.Contains(p.Name) == true)

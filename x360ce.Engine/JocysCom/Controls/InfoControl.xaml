@@ -47,14 +47,18 @@
 				Padding="0"
 				Content="{StaticResource Icon_Information}"
 				Focusable="False" />
-			<TextBlock
+			<TextBox
 				Name="BodyLabel"
 				Grid.Row="1"
 				Grid.Column="1"
 				Margin="3,0,3,3"
 				Padding="0"
-				VerticalAlignment="Top"
+				VerticalAlignment="Center"
 				x:FieldModifier="public"
+				Background="Transparent"
+				Focusable="False"
+				IsReadOnly="True"
+				MaxLines="2"
 				Text="[BodyLabel]"
 				TextWrapping="Wrap" />
 			<ContentControl
@@ -70,7 +74,6 @@
 				Content="{StaticResource Icon_Information}" />
 			<ContentControl
 				Name="BusyIcon"
-				Grid.Row="0"
 				Grid.RowSpan="2"
 				Grid.Column="2"
 				Width="48"
@@ -78,7 +81,14 @@
 				Margin="4,4,8,4"
 				Padding="0"
 				Content="{StaticResource Icon_ProcessRight}"
-				Visibility="Hidden" />
+				Visibility="Hidden">
+				<ContentControl.RenderTransformOrigin>
+					<Point X="0.5" Y="0.5" />
+				</ContentControl.RenderTransformOrigin>
+				<ContentControl.RenderTransform>
+					<RotateTransform Angle="0" />
+				</ContentControl.RenderTransform>
+			</ContentControl>
 			<Label
 				Name="BusyCount"
 				Grid.Row="0"

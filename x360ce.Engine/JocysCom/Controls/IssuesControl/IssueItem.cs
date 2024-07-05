@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using System.Xml.Serialization;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
@@ -27,7 +28,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public event EventHandler<EventArgs> Fixing;
 		public event EventHandler<EventArgs> Fixed;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public Exception LastException;
 
 		public IssueStatus Status { get => _Status; set => SetProperty(ref _Status, value); }
@@ -45,7 +46,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 		public string Description { get => _Description; set => SetProperty(ref _Description, value); }
 		string _Description;
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public Uri MoreInfo { get => _MoreInfo; set => SetProperty(ref _MoreInfo, value); }
 		private Uri _MoreInfo;
 

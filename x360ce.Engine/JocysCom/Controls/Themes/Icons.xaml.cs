@@ -14,6 +14,7 @@ namespace JocysCom.ClassLibrary.Controls.Themes
 
 		public const string Icon_Add = nameof(Icon_Add);
 		public const string Icon_Cancel = nameof(Icon_Cancel);
+		public const string Icon_Cleanup = nameof(Icon_Cleanup);
 		public const string Icon_Delete = nameof(Icon_Delete);
 		public const string Icon_Edit = nameof(Icon_Edit);
 		public const string Icon_Error = nameof(Icon_Error);

@@ -1,49 +1,52 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
-using JocysCom.ClassLibrary.Collections;
-using System.ComponentModel;
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-using System.Windows;
-#else // .NET Framework
-using System.Windows.Forms;
-#endif
 
 namespace JocysCom.ClassLibrary.Configuration
 {
+	/// <summary>
+	/// Represents a container for managing settings data T.
+	/// Enables saving and loading of settings either as a single or multiple XML files.
+	/// </summary>
+	/// <typeparam name="T">The type of settings data this container will manage.</typeparam>
 	[Serializable, XmlRoot("Data"), DataContract]
 	public class SettingsData<T> : ISettingsData
 	{
 		/// <summary>
-		/// Initialize class. Use 'Environment.SpecialFolder.CommonApplicationData' folder, same for all users, to store settings.
+		/// Initializes a new instance of the SettingsData class with default settings.
 		/// </summary>
 		public SettingsData()
 		{
 			Initialize(null, false, null, null);
 		}
 
+
 		/// <summary>
-		/// Initialize class
+		/// Initializes a new instance of the SettingsData class with specific settings.
 		/// </summary>
-		/// <param name="overrideFileName"></param>
-		/// <param name="userLevel">
-		/// Defines where to store XML settings file:
+		/// <param name="overrideFileName">Specifies a custom file name for the settings file. If null, a default name based on the type T is used.</param>
+		/// <param name="userLevel">Determines the storage location of the XML settings file. True to use user-specific storage, False for common storage, Null for executable directory.</param>
+		/// <param name="comment">A comment to include within the XML settings file.</param>
+		/// <param name="assembly">The assembly to use for retrieving default company and product name for folder path generation.</param>
+		/// <remarks>
+		/// userLevel param defines where to store XML settings file:
 		///   True  - Environment.SpecialFolder.ApplicationData
 		///   False - Environment.SpecialFolder.CommonApplicationData
 		///   Null  - Use ./{ExecutableBaseName}.xml settings file
-		/// </param>
-		/// <param name="comment"></param>
-		/// <param name="assembly">Used to get company and product name.</param>
+		/// </remarks>
 		public SettingsData(string overrideFileName = null, bool? userLevel = false, string comment = null, Assembly assembly = null)
 		{
 			Initialize(overrideFileName, userLevel, comment, assembly);
@@ -52,6 +55,19 @@ namespace JocysCom.ClassLibrary.Configuration
 		private List<Assembly> _Assemblies;
 		private string _Company;
 		private string _Product;
+
+		private string GetAppDataPath(bool userLevel = false)
+		{
+			var mainAssembly = _Assemblies.First();
+			_Company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyCompanyAttribute))).Company;
+			_Product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyProductAttribute))).Product;
+			// Get writable application folder.
+			var specialFolder = userLevel
+				? Environment.SpecialFolder.ApplicationData
+				: Environment.SpecialFolder.CommonApplicationData;
+			var path = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
+			return path;
+		}
 
 		/// <summary>
 		/// Initialize class.
@@ -70,32 +86,24 @@ namespace JocysCom.ClassLibrary.Configuration
 			}.Where(x => x != null)
 			.Distinct()
 			.ToList();
-			var mainAssembly = _Assemblies.First();
-			_Company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyCompanyAttribute))).Company;
-			_Product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyProductAttribute))).Product;
 			string folder;
-			string fileName;
+			string fileBaseName;
 			// Check if there is a folder with the same name as executable.
 			folder = GetLocalSettingsDirectory();
 			if (userLevel.HasValue)
 			{
 				if (string.IsNullOrEmpty(folder))
-				{
-					// Get writable application folder.
-					var specialFolder = userLevel.Value
-						? Environment.SpecialFolder.ApplicationData
-						: Environment.SpecialFolder.CommonApplicationData;
-					folder = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
-				}
-				fileName = typeof(T).Name + ".xml";
+					folder = GetAppDataPath(userLevel.Value);
+				fileBaseName = typeof(T).Name;
 			}
 			else
 			{
 				var fullName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 				if (string.IsNullOrEmpty(folder))
 					folder = System.IO.Path.GetDirectoryName(fullName);
-				fileName = System.IO.Path.GetFileNameWithoutExtension(fullName) + ".xml";
+				fileBaseName = System.IO.Path.GetFileNameWithoutExtension(fullName);
 			}
+			string fileName = fileBaseName + ".xml";
 			// If override file name is set then override the file name.
 			if (!string.IsNullOrEmpty(overrideFileName))
 				fileName = overrideFileName;
@@ -103,6 +111,10 @@ namespace JocysCom.ClassLibrary.Configuration
 			_XmlFile = new FileInfo(path);
 		}
 
+		/// <summary>
+		/// Retrieves the directory path used for storing local settings, typically named after the executable.
+		/// </summary>
+		/// <returns>The directory path or null if the directory does not exist.</returns>
 		public string GetLocalSettingsDirectory()
 		{
 			var moduleFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
@@ -115,16 +127,28 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 
-		[XmlIgnore]
+		/// <summary>
+		/// Indicates whether saving the settings is pending. This can be used to optimize write operations by delaying them until necessary.
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
 		public bool IsSavePending { get; set; }
 
-		[XmlIgnore]
+		/// <summary>
+		/// Indicates whether loading the settings is pending. Useful for deferring the loading operation until it's required.
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
 		public bool IsLoadPending { get; set; }
 
-		[XmlIgnore]
+		/// <summary>
+		/// Determines whether settings are stored in separate files.
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
 		public bool UseSeparateFiles { get; set; }
 
-		[XmlIgnore]
+		/// <summary>
+		/// Gets or sets the FileInfo object for the XML file that stores the settings data.
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
 		public FileInfo XmlFile { get { return _XmlFile; } set { _XmlFile = value; } }
 
 		[NonSerialized]
@@ -133,13 +157,18 @@ namespace JocysCom.ClassLibrary.Configuration
 		[NonSerialized]
 		protected string _Comment;
 
+		/// <summary>
+		/// A list of settings items managed by this instance.
+		/// </summary>
 		[DataMember]
 		public SortableBindingList<T> Items { get; set; }
 
 		[NonSerialized]
 		private object _SyncRoot;
 
-		// Synchronization root for this object.
+		/// <summary>
+		/// Synchronization root object for thread-safe operations.
+		/// </summary>
 		public virtual object SyncRoot
 		{
 			get
@@ -150,18 +179,23 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
+		/// <summary>
+		/// Converts the items in the collection to an array and returns it.
+		/// This operation is synchronized to prevent data inconsistency during the conversion.
+		/// </summary>
+		/// <returns>An array of items.</returns>
 		public T[] ItemsToArraySynchronized()
 		{
 			lock (SyncRoot)
 				return Items.ToArray();
 		}
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		IBindingList ISettingsData.Items { get { return Items; } }
 
 		public delegate void ApplyOrderDelegate(SettingsData<T> source);
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		public ApplyOrderDelegate ApplyOrder;
 
 		/// <summary>
@@ -170,11 +204,18 @@ namespace JocysCom.ClassLibrary.Configuration
 		[XmlAttribute]
 		public int Version { get; set; }
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		object saveReadFileLock = new object();
 
+		/// <summary>
+		/// Occurs when the settings data is about to be saved to the XML file, allowing for pre-save operations or validation.
+		/// </summary>
 		public event EventHandler Saving;
 
+		/// <summary>
+		/// Saves the current settings into an XML file at the specified path. Compresses the file if the file extension is .gz.
+		/// </summary>
+		/// <param name="path">The file path where the settings will be saved.</param>
 		public void SaveAs(string path)
 		{
 			SetFileMonitoring(false);
@@ -197,18 +238,19 @@ namespace JocysCom.ClassLibrary.Configuration
 				// If each item will be saved to a separate file.
 				if (UseSeparateFiles)
 				{
-					var di = GetCreateDirectory(fi);
+					var di = GetRootDirectory(fi);
 					if (!di.Exists)
 						di.Create();
 					for (int i = 0; i < items.Length; i++)
 					{
-						var fileItem = (ISettingsItemFile)items[i];
+						var fileItem = (ISettingsFileItem)items[i];
+						var fileFullName = GetFileItemFullName(path, fileItem);
+						var fiItem = new FileInfo(fileFullName);
+						if (!fiItem.Directory.Exists)
+							fiItem.Directory.Create();
 						var bytes = Serialize(fileItem);
-						var fileName = RemoveInvalidFileNameChars(fileItem.BaseName) + fi.Extension;
-						var fileFullName = Path.Combine(di.FullName, fileName);
 						if (compress)
 							bytes = SettingsHelper.Compress(bytes);
-						var fiItem = new FileInfo(fileFullName);
 						if (!AllowWriteFile(fiItem))
 							continue;
 						if (!SettingsHelper.WriteIfDifferent(fileFullName, bytes))
@@ -242,6 +284,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			SetFileMonitoring(true);
 		}
 
+		public static string RemoveInvalidPathChars(string name)
+		{
+			var invalidChars = Path.GetInvalidPathChars();
+			return new string(name.Where(c => !invalidChars.Contains(c)).ToArray());
+		}
+
 		public static string RemoveInvalidFileNameChars(string name)
 		{
 			var invalidChars = Path.GetInvalidFileNameChars();
@@ -253,20 +301,34 @@ namespace JocysCom.ClassLibrary.Configuration
 			SaveAs(_XmlFile.FullName);
 		}
 
-		/// <summary>Remove with SyncRoot lock.</summary>
-		public void Remove(params T[] items)
-		{
-			lock (SyncRoot)
-				foreach (var item in items)
-					Items.Remove(item);
-		}
+		/// <summary>
+		/// Settings root directory.
+		/// </summary>
+		public DirectoryInfo RootDirectory =>
+			UseSeparateFiles
+				? GetRootDirectory(_XmlFile)
+				: _XmlFile.Directory;
 
-		/// <summary>Add with SyncRoot lock.</summary>
+		/// <summary>
+		/// Adds an array of items to the current collection of settings data.
+		/// </summary>
+		/// <param name="items">The array of items to add.</param>
 		public void Add(params T[] items)
 		{
 			lock (SyncRoot)
 				foreach (var item in items)
 					Items.Add(item);
+		}
+
+		/// <summary>
+		/// Removes an array of items from the current collection of settings data.
+		/// </summary>
+		/// <param name="items">The array of items to remove.</param>
+		public void Remove(params T[] items)
+		{
+			lock (SyncRoot)
+				foreach (var item in items)
+					Items.Remove(item);
 		}
 
 		public class SettingsDataEventArgs : EventArgs
@@ -276,21 +338,39 @@ namespace JocysCom.ClassLibrary.Configuration
 				Items = items;
 			}
 			public IList<T> Items { get; }
+			public bool Handled { get; set; }
+		}
+
+		public class ItemPropertyChangedEventArgs : PropertyChangedEventArgs
+		{
+			/// <summary>The old value of the property.</summary>
+			public object OldValue { get; }
+			/// <summary>The new value of the property.</summary>
+			public object NewValue { get; }
+			public ItemPropertyChangedEventArgs(string propertyName, object oldValue, object newValue)
+				: base(propertyName)
+			{
+				OldValue = oldValue;
+				NewValue = newValue;
+			}
 		}
 
 		public delegate IList<T> ValidateDataDelegate(IList<T> items);
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		public ValidateDataDelegate ValidateData;
 
+		/// <summary>
+		/// Occurs when data validation is required, providing an opportunity to perform custom validation logic on settings data.
+		/// </summary>
 		public event EventHandler<SettingsDataEventArgs> OnValidateData;
 
 		#region Last Write Time
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool PreventWriteToNewerFiles { get; set; } = true;
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		private Dictionary<string, DateTime> LastWriteTimes = new Dictionary<string, DateTime>();
 
 		/// <summary>
@@ -336,7 +416,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			LoadFrom(_XmlFile.FullName);
 		}
 
-		static DirectoryInfo GetCreateDirectory(FileInfo fi)
+		static DirectoryInfo GetRootDirectory(FileInfo fi)
 		{
 			var compress = fi.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
 			var dirName = Path.GetFileNameWithoutExtension(fi.FullName);
@@ -347,11 +427,15 @@ namespace JocysCom.ClassLibrary.Configuration
 			return di;
 		}
 
+		/// <summary>
+		/// Loads settings data from an XML file specified by the fileName.
+		/// </summary>
+		/// <param name="fileName">The file name/path from which to load settings data.</param>
 		public void LoadFrom(string fileName)
 		{
 			var settingsLoaded = false;
 			var fi = new FileInfo(fileName);
-			var di = GetCreateDirectory(fi);
+			var di = GetRootDirectory(fi);
 			var compress = fi.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
 			// If configuration file exists then...
 			if (fi.Exists || di.Exists)
@@ -370,7 +454,8 @@ namespace JocysCom.ClassLibrary.Configuration
 							if (UseSeparateFiles)
 							{
 								data = new SettingsData<T>();
-								var files = di.GetFiles("*" + fi.Extension);
+								var files = di.GetFiles("*" + fi.Extension, SearchOption.AllDirectories);
+								var fileItems = new List<ISettingsFileItem>();
 								for (int i = 0; i < files.Length; i++)
 								{
 									var file = files[i];
@@ -380,17 +465,34 @@ namespace JocysCom.ClassLibrary.Configuration
 									try
 									{
 										var item = DeserializeItem(bytes, compress);
-										var itemFile = (ISettingsItemFile)item;
-										itemFile.WriteTime = file.LastWriteTime;
+										var fileItem = (ISettingsFileItem)item;
+										fileItem.WriteTime = file.LastWriteTime;
 										// Set Name property value to the same as the file.
 										var name = RemoveInvalidFileNameChars(file.Name);
 										var fileBaseName = Path.GetFileNameWithoutExtension(file.Name);
-										if (itemFile.BaseName != fileBaseName)
-											itemFile.BaseName = fileBaseName;
-										data.Add(item);
+										var path = IO.PathHelper.GetRelativePath(di.FullName + "\\", file.Directory.FullName + "\\");
+										path = path.TrimEnd('.', '\\', '/');
+										fileItem.Path = string.IsNullOrWhiteSpace(path) ? null : path;
+										if (fileItem.BaseName != fileBaseName)
+											fileItem.BaseName = fileBaseName;
+										fileItems.Add(fileItem);
+										var listItem = fileItem as ISettingsListFileItem;
+										if (listItem != null)
+										{
+											// Created can be later than file creation.
+											if (listItem.Created == DateTime.MinValue || listItem.Created > file.CreationTime)
+												listItem.Created = file.CreationTime;
+											// Modified can be earlier than Created.
+											if (listItem.Modified < listItem.Created)
+												listItem.Modified = listItem.Created;
+
+										}
 									}
 									catch { }
 								}
+								SortList(fileItems);
+								foreach (var fileItem1 in fileItems)
+									data.Add((T)fileItem1);
 							}
 							else
 							{
@@ -420,14 +522,8 @@ namespace JocysCom.ClassLibrary.Configuration
 							//form.StartPosition = FormStartPosition.CenterParent;
 							var text = sb.ToString();
 							bool reset;
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
 							var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Error);
 							reset = result == MessageBoxResult.Yes;
-#else // .NET Framework
-							var result = MessageBox.Show(text, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-							reset = result == DialogResult.Yes;
-#endif
 							if (reset)
 							{
 								if (System.IO.File.Exists(backupFile))
@@ -470,16 +566,69 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		#region Use Separate Files
-
-		public string GetItemFileFullName(string fileNameWithoutExtension)
+		public void SortList<T1>(IList<T1> items) where T1 : ISettingsFileItem
 		{
-			var fi = new FileInfo(_XmlFile.FullName);
-			var di = GetCreateDirectory(fi);
-			var path = Path.Combine(di.FullName, fileNameWithoutExtension + ".xml");
-			return path;
+			// Move works with special characters to the end.
+			var newItems = items
+				.OrderBy(x => x.Path)
+				.ThenBy(x => x.Name.StartsWith("®"))
+				.ThenBy(x => x.Name)
+				.ToList();
+			CollectionsHelper.Synchronize(newItems, items);
 		}
 
+		#region Use Separate Files
+
+		/// <summary>
+		/// Get the full path for a file based on a filename with extension.
+		/// </summary>
+		public string GetFileItemFullName(ISettingsFileItem fileItem, string overrideBaseName = null)
+		{
+			var fileFullName = GetFileItemFullName(_XmlFile.FullName, fileItem, overrideBaseName);
+			var fiItem = new FileInfo(fileFullName);
+			if (!fiItem.Directory.Exists)
+				fiItem.Directory.Create();
+			return fileFullName;
+		}
+
+		public string GetFileItemFullBaseName(ISettingsFileItem fileItem)
+		{
+			var fi = new FileInfo(_XmlFile.FullName);
+			var di = GetRootDirectory(fi);
+			var fileName = RemoveInvalidFileNameChars(fileItem.BaseName);
+			var itemPath = fileItem.Path;
+			if (!string.IsNullOrEmpty(itemPath))
+				itemPath = RemoveInvalidPathChars(itemPath);
+			var fileFullName = string.IsNullOrEmpty(itemPath)
+				? Path.Combine(di.FullName, fileName)
+				: Path.Combine(di.FullName, itemPath, fileName);
+			return fileFullName;
+		}
+
+		/// <summary>
+		/// Get item path when using separte files.
+		/// </summary>
+		public static string GetFileItemFullName(string rootPath, ISettingsFileItem fileItem, string overrideBaseName = null)
+		{
+			var fi = new FileInfo(rootPath);
+			var di = GetRootDirectory(fi);
+			var fileName = RemoveInvalidFileNameChars(overrideBaseName ?? fileItem.BaseName) + fi.Extension;
+			var itemPath = fileItem.Path;
+			if (!string.IsNullOrEmpty(itemPath))
+				itemPath = RemoveInvalidPathChars(itemPath);
+			var fileFullName = string.IsNullOrEmpty(itemPath)
+				? Path.Combine(di.FullName, fileName)
+				: Path.Combine(di.FullName, itemPath, fileName);
+			return fileFullName;
+		}
+
+
+		/// <summary>
+		/// Renames the specified folder to a new name, managing potential case-sensitivity issues on certain file systems by temporarily renaming to a GUID-based name.
+		/// </summary>
+		/// <param name="currentPath">The current path of the folder to be renamed.</param>
+		/// <param name="newFolderName">The new name for the folder.</param>
+		/// <returns>A message indicating success, error, or null if the operation is successful.</returns>
 		public string RenameFolder(string currentPath, string newFolderName)
 		{
 			try
@@ -511,13 +660,21 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Returns error.
+		/// Occurs when item was renamed.
 		/// </summary>
-		public string RenameItem(ISettingsItemFile itemFile, string newName)
+		public event EventHandler<ItemPropertyChangedEventArgs> ItemRenamed;
+
+		/// <summary>
+		/// Renames a settings item file to a new name, ensuring file system consistency and updating internal metadata accordingly.
+		/// </summary>
+		/// <param name="fileItem">The settings item file object to be renamed.</param>
+		/// <param name="newName">The new name for the settings item file.</param>
+		/// <returns>A message indicating the outcome of the operation or null if the operation is successful.</returns>
+		public string RenameItem(ISettingsFileItem fileItem, string newName)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
+				var oldName = RemoveInvalidFileNameChars(fileItem.BaseName);
 				// Case sensitive comparison.
 				if (string.Equals(oldName, newName, StringComparison.Ordinal))
 					return null;
@@ -527,9 +684,9 @@ namespace JocysCom.ClassLibrary.Configuration
 				var invalidChars = newName.Intersect(Path.GetInvalidFileNameChars());
 				if (invalidChars.Any())
 					return $"File name cannot contain invalid characters: {string.Join("", invalidChars)}";
-				var oldPath = GetItemFileFullName(oldName);
+				var oldPath = GetFileItemFullName(fileItem, oldName);
 				var file = new FileInfo(oldPath);
-				var newPath = GetItemFileFullName(newName);
+				var newPath = GetFileItemFullName(fileItem, newName);
 				// Disable monitoring in order not to trigger reloading.
 				SetFileMonitoring(false);
 				try
@@ -553,9 +710,12 @@ namespace JocysCom.ClassLibrary.Configuration
 					}
 					if (file.Exists)
 					{
+						var oldBaseName = fileItem.BaseName;
 						file.MoveTo(newPath);
-						itemFile.BaseName = newName;
-						itemFile.WriteTime = file.LastWriteTime;
+						fileItem.BaseName = newName;
+						fileItem.WriteTime = file.LastWriteTime;
+						var e = new ItemPropertyChangedEventArgs(nameof(fileItem.BaseName), oldBaseName, newName);
+						ItemRenamed?.Invoke(fileItem, e);
 					}
 				}
 				catch (Exception)
@@ -571,14 +731,16 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Returns new name.
+		/// Deletes the file associated with a settings item and removes the item from the internal collection, ensuring data integrity and freeing up resources.
 		/// </summary>
-		public string DeleteItem(ISettingsItemFile itemFile)
+		/// <param name="fileItem">The settings item file object to be deleted.</param>
+		/// <returns>A message indicating the result of the delete operation, or null if successful.</returns>
+		public string DeleteItem(ISettingsFileItem fileItem)
 		{
 			lock (saveReadFileLock)
 			{
-				var oldName = RemoveInvalidFileNameChars(itemFile.BaseName);
-				var oldPath = GetItemFileFullName(oldName);
+				var oldName = RemoveInvalidFileNameChars(fileItem.BaseName);
+				var oldPath = GetFileItemFullName(fileItem, oldName);
 				var fi = new FileInfo(oldPath);
 				// Rename folder if folder with the same name exists.
 				var folderPath = Path.Combine(fi.Directory.FullName, oldName);
@@ -601,14 +763,17 @@ namespace JocysCom.ClassLibrary.Configuration
 				{
 					return ex.Message;
 				}
-				Items.Remove((T)itemFile);
+				Items.Remove((T)fileItem);
 				return null;
 			}
 		}
 
 		#endregion
 
-		[XmlIgnore]
+		/// <summary>
+		/// Indicates whether the items collection should be cleared when loading new data.
+		/// </summary>
+		[XmlIgnore, JsonIgnore]
 		public bool ClearWhenLoading = false;
 
 		void LoadAndValidateData(IList<T> data)
@@ -630,7 +795,7 @@ namespace JocysCom.ClassLibrary.Configuration
 				for (int i = 0; i < items.Count; i++)
 					Items.Add(items[i]);
 			}
-			else
+			else if (!(e?.Handled == true))
 			{
 				var oldList = GetHashValues(Items);
 				var newList = GetHashValues(data).ToArray();
@@ -659,8 +824,10 @@ namespace JocysCom.ClassLibrary.Configuration
 		#region Synchronize
 
 		/// <summary>
-		/// Synchronize source collection to destination.
+		/// Synchronizes the content of the source collection with the target collection.
 		/// </summary>
+		/// <param name="source">The source collection to sync from.</param>
+		/// <param name="target">The target collection to sync to.</param>
 		/// <remarks>
 		/// Same Code:
 		/// JocysCom\Controls\SearchHelper.cs
@@ -711,6 +878,10 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#endregion
 
+		/// <summary>
+		/// Resets settings to default values defined within the resource files of the specified assemblies.
+		/// </summary>
+		/// <returns>True if default settings were successfully loaded; otherwise, False.</returns>
 		public bool ResetToDefault()
 		{
 			// Clear original data.
@@ -749,11 +920,19 @@ namespace JocysCom.ClassLibrary.Configuration
 			return success;
 		}
 
+		#region Serialization
+
 		byte[] Serialize(object fileItem)
 		{
 			return Serializer.SerializeToXmlBytes(fileItem, Encoding.UTF8, true, _Comment);
 		}
 
+		/// <summary>
+		/// Deserializes settings data from a byte array, potentially decompressing it first if indicated.
+		/// </summary>
+		/// <param name="bytes">The byte array containing serialized settings data.</param>
+		/// <param name="compressed">Indicates whether the byte array is compressed and requires decompression.</param>
+		/// <returns>A <see cref="SettingsData{T}"/> instance deserialized from the byte array.</returns>
 		public SettingsData<T> DeserializeData(byte[] bytes, bool compressed)
 		{
 			if (compressed)
@@ -762,6 +941,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			return data;
 		}
 
+		/// <summary>
+		/// Deserializes a single settings item from a byte array, optionally decompressing it. This method facilitates the reconstruction of individual settings from file storage.
+		/// </summary>
+		/// <param name="bytes">The byte array containing the serialized settings item.</param>
+		/// <param name="compressed">Indicates whether the byte array is compressed.</param>
+		/// <returns>The deserialized settings item.</returns>
 		public T DeserializeItem(byte[] bytes, bool compressed)
 		{
 			if (compressed)
@@ -770,25 +955,45 @@ namespace JocysCom.ClassLibrary.Configuration
 			return item;
 		}
 
+		#endregion
+
 		#region Folder Monitoring
 
+		/// <summary>
+		/// Enables or disables monitoring on the settings file directory. When enabled, changes to the files are detected, allowing for the application to respond accordingly.
+		/// </summary>
+		/// <param name="enabled">true to enable monitoring; false to disable it.</param>
+		/// <param name="folderPath">The path to the folder to monitor.</param>
+		/// <param name="filePattern">The pattern of the file names to monitor within the folder.</param>
 		public void SetFileMonitoring(bool enabled)
 		{
 			// Allow to monitor if items are in separate files.
 			if (!UseSeparateFiles)
 				return;
 			var fi = new FileInfo(XmlFile.FullName);
-			var di = GetCreateDirectory(fi);
+			var di = GetRootDirectory(fi);
 			SetFileMonitoring(enabled, di.FullName, "*.xml");
 		}
 
 		private FileSystemWatcher _folderWatcher;
 		private System.Timers.Timer _debounceTimer;
+
+		/// <summary>
+		/// Raises an event when files in the monitored settings directory change, ensuring settings are reloaded or updated accordingly.
+		/// </summary>
 		public event EventHandler FilesChanged;
 
 		[DefaultValue(false)]
 		public bool IsFolderMonitored { get; set; }
 
+
+		/// <summary>
+		/// Enables or disables file monitoring for changes to settings files. When enabled, changes to the settings file on disk will trigger a reload of settings to reflect the new state.
+		/// </summary>
+		/// <param name="enabled">Indicates whether file monitoring should be enabled (true) or disabled (false).</param>
+		/// <remarks>
+		/// Monitoring settings files is crucial in scenarios where settings might be changed externally or by different instances, ensuring the application operates with the most up-to-date configuration.
+		/// </remarks>
 		public void SetFileMonitoring(bool enabled, string folderPath, string filePattern)
 		{
 			IsFolderMonitored = enabled;
@@ -803,7 +1008,8 @@ namespace JocysCom.ClassLibrary.Configuration
 
 				_folderWatcher = new FileSystemWatcher(folderPath, filePattern)
 				{
-					NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName
+					NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName,
+					IncludeSubdirectories = true,
 				};
 
 				_folderWatcher.Changed += OnChanged;

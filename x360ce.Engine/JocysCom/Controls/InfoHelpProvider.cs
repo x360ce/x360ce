@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -11,7 +10,7 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <summary>
 		/// Dictionary to hold controls and their corresponding help texts.
 		/// </summary>
-		public Dictionary<Control, object[]> Controls { get; set; } = new Dictionary<Control, object[]>();
+		public Dictionary<UIElement, object[]> Controls { get; set; } = new Dictionary<UIElement, object[]>();
 
 		/// <summary>
 		/// Event to trigger when mouse enters any control from `Controls`.
@@ -23,21 +22,21 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public event EventHandler OnMouseLeave;
 
-		public string GetHelpHead(Control control)
+		public string GetHelpHead(UIElement control)
 		{
 			if (!Controls.ContainsKey(control))
 				return "";
 			return (string)Controls[control][0];
 		}
 
-		public MessageBoxImage GetHelpImage(Control control)
+		public MessageBoxImage GetHelpImage(UIElement control)
 		{
 			if (!Controls.ContainsKey(control))
 				return MessageBoxImage.Information;
 			return (MessageBoxImage)Controls[control][2];
 		}
 
-		public string GetHelpBody(Control control, int? maxLength = null, bool removeMultispace = false)
+		public string GetHelpBody(UIElement control, int? maxLength = null, bool removeMultispace = false)
 		{
 			if (!Controls.ContainsKey(control))
 				return "";
@@ -50,7 +49,7 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		// Method to add control and its help text to HelpControls and attach MouseEnter and MouseLeave events
-		public void Add(Control control, string helpHead, string helpBody = "", MessageBoxImage image = MessageBoxImage.Information)
+		public void Add(UIElement control, string helpHead, string helpBody = "", MessageBoxImage image = MessageBoxImage.Information)
 		{
 			if (Controls.ContainsKey(control))
 				Controls.Remove(control);
@@ -72,7 +71,7 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		// Method to remove control from HelpControls and detach MouseEnter and MouseLeave events
-		public void Remove(Control control)
+		public void Remove(UIElement control)
 		{
 			if (!Controls.ContainsKey(control))
 				return;

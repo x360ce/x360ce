@@ -56,11 +56,11 @@ namespace x360ce.App.DInput
 			var osString = JocysCom.ClassLibrary.Controls.IssuesControl.IssueHelper.GetRealOSVersion().Major >= 10
 				? "Win10" : "WinVS";
 			var infFile = string.Format("{0}\\{1}", osString, "ViGEmBus.inf");
-			UacHelper.RunElevated(
+			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 				exePath,
 				// Use last ID.
 				"install " + infFile + " " + ViGEmBusHardwareIds.Last(),
-				style, true);
+				isElevated: true);
 		}
 
 		/// <summary>
@@ -76,10 +76,10 @@ namespace x360ce.App.DInput
 			// Remove all old instances.
 			foreach (var ViGEmBusHardwareId in ViGEmBusHardwareIds)
 			{
-				JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
+				JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 					exePath,
 					"remove " + ViGEmBusHardwareId,
-					style, true);
+					isElevated: true);
 			}
 		}
 
@@ -111,14 +111,14 @@ namespace x360ce.App.DInput
 			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
 			var infFile = string.Format("{0}\\{1}", paString, "HidGuardian.inf");
 			var exePath = Path.Combine(folder, GetDevConPath());
-			UacHelper.RunElevated(
+			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 				exePath,
 				"install " + infFile + " " + HidGuardianHardwareId,
-				style, true);
-			UacHelper.RunElevated(
+				isElevated: true);
+			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 				exePath,
 				"classfilter HIDClass upper -HidGuardian",
-				style, true);
+				isElevated: true);
 			// Fix registry permissions. 
 			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
 			// Fix missing white list key.
@@ -137,14 +137,14 @@ namespace x360ce.App.DInput
 			ExtractHidGuardianFiles();
 			var folder = GetHidGuardianPath();
 			var exePath = Path.Combine(folder, GetDevConPath());
-			UacHelper.RunElevated(
+			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 				exePath,
 				"remove " + HidGuardianHardwareId,
-				style, true);
-			UacHelper.RunElevated(
+				isElevated: true);
+			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 				exePath,
 				"classfilter HIDClass upper !HidGuardian",
-				style, true);
+				isElevated: true);
 		}
 
 
@@ -164,10 +164,10 @@ namespace x360ce.App.DInput
 			ExtractHidGuardianFiles();
 			var folder = GetHidGuardianPath();
 			var exePath = Path.Combine(folder, GetDevConPath());
-			UacHelper.RunElevated(
+			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 				exePath,
 				"remove \"" + deviceId + "\"",
-				style, true);
+				isElevated: true);
 			// Make sure that device is re-inserted.
 			DeviceDetector.ScanForHardwareChanges();
 		}

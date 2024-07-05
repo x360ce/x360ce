@@ -1,106 +1,110 @@
 <UserControl
-    x:Class="x360ce.App.MainControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls;assembly=x360ce.Engine"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:x360ce.App"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    HorizontalAlignment="Stretch"
-    VerticalAlignment="Stretch"
-    d:DesignHeight="780"
-    d:DesignWidth="800"
-    Loaded="UserControl_Loaded"
-    Unloaded="UserControl_Unloaded"
-    mc:Ignorable="d">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <JcControls:InfoControl
-            x:Name="InfoPanel"
-            Grid.Row="0"
-            x:FieldModifier="public"
-            RightIconContent="{StaticResource Icon_gamepad}" />
-        <DockPanel Grid.Row="1" Margin="0,0,0,-3">
-            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="Game:" />
-                <ComboBox x:Name="GameToCustomizeComboBox" MinWidth="320" />
-            </StackPanel>
-            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Name="AddGameButton" Margin="0,3,3,3" Click="AddGameButton_Click">
-                    <StackPanel>
-                        <ContentControl Content="{StaticResource Icon_Add}" />
-                        <Label Content="Add Game..." />
-                    </StackPanel>
-                </Button>
-                <Button Name="TestButton" Margin="0,3,3,3" Click="TestButton_Click">
-                    <StackPanel>
-                        <ContentControl Content="{StaticResource Icon_test}" />
-                        <Label Content="Test..." />
-                    </StackPanel>
-                </Button>
-                <Button Name="SaveAllButton" Margin="0,3,3,3" Click="SaveAllButton_Click">
-                    <StackPanel>
-                        <ContentControl Content="{StaticResource Icon_save}" />
-                        <Label Content="Save All" />
-                    </StackPanel>
-                </Button>
-            </StackPanel>
-        </DockPanel>
-        <local:MainBodyControl x:Name="MainBodyPanel" Grid.Row="2" Margin="3,3,3,3" />
-        <StatusBar Grid.Row="3" HorizontalAlignment="Left">
-            <StatusBarItem>
-                <Label x:Name="StatusTimerLabel" Padding="0,0,0,0" Content="StatusTimerLabel" />
-            </StatusBarItem>
-        </StatusBar>
-        <StatusBar Grid.Row="3" HorizontalAlignment="Right">
-            <StatusBarItem>
-                <Label x:Name="UpdateFrequencyLabel" Padding="0,0,0,0" Content="Hz:0" />
-            </StatusBarItem>
-            <Separator />
-            <StatusBarItem>
-                <Label x:Name="FormUpdateFrequencyLabel" Padding="0,0,0,0" Content="Hz:0" />
-            </StatusBarItem>
-            <Separator />
-            <StatusBarItem>
-                <Label x:Name="UpdateDevicesStatusLabel" Padding="0,0,0,0" Content="D:0" />
-            </StatusBarItem>
-            <Separator />
-            <StatusBarItem>
-                <Label x:Name="CloudMessagesLabel" Padding="0,0,0,0" Content="M:0" />
-            </StatusBarItem>
-            <Separator />
-            <StatusBarItem>
-                <Label x:Name="StatusEventsLabel" Padding="0,0,0,0" Content="StatusEventsLabel" />
-            </StatusBarItem>
-            <Separator />
-            <StatusBarItem>
-                <Label x:Name="StatusSaveLabel" Padding="0,0,0,0" Content="StatusSaveLabel" />
-            </StatusBarItem>
-            <Separator />
-            <StatusBarItem>
-                <Label x:Name="StatusIsAdminLabel" Padding="0,0,0,0" Content="StatusIsAdminLabel" />
-            </StatusBarItem>
-            <Separator />
-            <StatusBarItem>
-                <StackPanel Orientation="Horizontal">
-                    <ContentControl x:Name="StatusErrorsIcon" Content="{StaticResource Icon_error}" />
-                    <Label
-                        x:Name="StatusErrorsLabel"
-                        Margin="3,0,0,0"
-                        Padding="0,0,0,0"
-                        Content="StatusErrorsLabel"
-                        PreviewMouseDown="StatusErrorsLabel_PreviewMouseDown" />
-                </StackPanel>
-            </StatusBarItem>
-            <Separator />
-            <StatusBarItem>
-                <Label x:Name="StatusDllLabel" Padding="0,0,0,0" Content="StatusDllLabel" />
-            </StatusBarItem>
-        </StatusBar>
-    </Grid>
+	x:Class="x360ce.App.MainControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:JcControls="clr-namespace:JocysCom.ClassLibrary.Controls;assembly=x360ce.Engine"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:x360ce.App"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	HorizontalAlignment="Stretch"
+	VerticalAlignment="Stretch"
+	d:DesignHeight="780"
+	d:DesignWidth="800"
+	Loaded="UserControl_Loaded"
+	Unloaded="UserControl_Unloaded"
+	mc:Ignorable="d">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<JcControls:InfoControl
+			x:Name="InfoPanel"
+			Grid.Row="0"
+			x:FieldModifier="public"
+			RightIconContent="{StaticResource Icon_gamepad}" />
+		<DockPanel Grid.Row="1" Margin="0,0,0,-3">
+			<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+				<Label VerticalAlignment="Center" Content="Game:" />
+				<ComboBox x:Name="GameToCustomizeComboBox" MinWidth="320" />
+			</StackPanel>
+			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+				<Button Name="AddGameButton" Margin="0,3,3,3" Click="AddGameButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_Add}" />
+						<Label Content="Add Game..." />
+					</StackPanel>
+				</Button>
+				<Button Name="TestButton" Margin="0,3,3,3" Click="TestButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_test}" />
+						<Label Content="Test..." />
+					</StackPanel>
+				</Button>
+				<Button Name="SaveAllButton" Margin="0,3,3,3" Click="SaveAllButton_Click">
+					<StackPanel>
+						<ContentControl Content="{StaticResource Icon_save}" />
+						<Label Content="Save All" />
+					</StackPanel>
+				</Button>
+			</StackPanel>
+		</DockPanel>
+		<local:MainBodyControl x:Name="MainBodyPanel" Grid.Row="2" Margin="3,3,3,3" />
+		<StatusBar Grid.Row="3" HorizontalAlignment="Left">
+			<StatusBarItem>
+				<Label x:Name="StatusTimerLabel" Padding="0,0,0,0" Content="StatusTimerLabel" />
+			</StatusBarItem>
+		</StatusBar>
+		<StatusBar Grid.Row="3" HorizontalAlignment="Right">
+			<StatusBarItem>
+				<Label x:Name="UpdateFrequencyLabel" Padding="0,0,0,0" Content="Hz:0" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="FormUpdateFrequencyLabel" Padding="0,0,0,0" Content="Hz:0" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="UpdateDevicesStatusLabel" Padding="0,0,0,0" Content="D:0" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="CloudMessagesLabel" Padding="0,0,0,0" Content="M:0" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="StatusEventsLabel" Padding="0,0,0,0" Content="StatusEventsLabel" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="StatusSaveLabel" Padding="0,0,0,0" Content="StatusSaveLabel" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="StatusIsAdminLabel" Padding="0,0,0,0" Content="StatusIsAdminLabel" />
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<StackPanel Orientation="Horizontal">
+					<ContentControl
+						x:Name="StatusErrorsIcon"
+						Width="16"
+						Height="16"
+						Content="{StaticResource Icon_error}" />
+					<Label
+						x:Name="StatusErrorsLabel"
+						Margin="3,0,0,0"
+						Padding="0,0,0,0"
+						Content="StatusErrorsLabel"
+						PreviewMouseDown="StatusErrorsLabel_PreviewMouseDown" />
+				</StackPanel>
+			</StatusBarItem>
+			<Separator />
+			<StatusBarItem>
+				<Label x:Name="StatusDllLabel" Padding="0,0,0,0" Content="StatusDllLabel" />
+			</StatusBarItem>
+		</StatusBar>
+	</Grid>
 </UserControl>
