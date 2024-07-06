@@ -234,7 +234,7 @@ namespace x360ce.App
 			if (!ControlsHelper.AllowUnload(this))
 				return;
 
-			// Clear child UserControls:
+			// Dispose managed resources of child UserControls:
 			_PadListControl?.MainBodyControl_Unloaded();
 			_PadItem_GeneralControl?.MainBodyControl_Unloaded();
 
