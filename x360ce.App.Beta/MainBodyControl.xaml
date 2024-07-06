@@ -19,7 +19,7 @@
                     <Label Content="PAD 1" />
                 </StackPanel>
             </TabItem.Header>
-			<local:PadControl x:Name="Pad1Panel" Loaded="Pad1Panel_Loaded" />
+			<local:PadControl x:Name="Pad1Panel" />
         </TabItem>
         <TabItem Name="Pad2TabPage">
             <TabItem.Header>

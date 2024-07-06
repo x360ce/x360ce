@@ -436,6 +436,12 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+
+		}
+
+		public void MainBodyControl_Unloaded()
+		{
 			UnInitScrollFix();
 			SetBinding(MapTo.None);
 			SettingsManager.UnLoadMonitor(EnabledCheckBox);

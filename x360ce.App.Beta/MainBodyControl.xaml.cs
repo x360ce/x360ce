@@ -226,10 +226,19 @@ namespace x360ce.App
 			Global.AddGame += Global_AddGame;
 		}
 
+		private PadListControl _PadListControl;
+		private PadItem_GeneralControl _PadItem_GeneralControl;
+
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
-				return; 
+				return;
+
+			// Clear child UserControls:
+			_PadListControl?.MainBodyControl_Unloaded();
+			_PadItem_GeneralControl?.MainBodyControl_Unloaded();
+
+			// MainBodyControl:
 			Global.AddGame -= Global_AddGame;
 			// Dispose managed resources.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
@@ -239,10 +248,5 @@ namespace x360ce.App
 			Array.Clear(PadColors, 0, 4);
 			MainTabControl.Items.Clear();
 		}
-
-        private void Pad1Panel_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
     }
 }

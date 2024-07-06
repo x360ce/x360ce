@@ -664,20 +664,6 @@ namespace x360ce.App.Controls
 		//	}
 		//}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowLoad(this))
-				return;
-		}
-
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowUnload(this))
-				return;
-			SetBinding(MapTo.None, null);
-			// DiMenuStrip.Clear();
-		}
-
 		private void RecordClear_MouseEnterTextBox(object sender, MouseEventArgs e)
 		{
 			var g1 = RecordClearGrid.Parent as Grid;
@@ -731,6 +717,25 @@ namespace x360ce.App.Controls
 		private void RecordClear_MouseLeave(object sender, MouseEventArgs e)
 		{
 			RecordClearGrid.Visibility = Visibility.Collapsed;
+		}
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void MainBodyControl_Unloaded()
+		{
+			SetBinding(MapTo.None, null);
+			// DiMenuStrip.Clear();
 		}
 	}
 }
