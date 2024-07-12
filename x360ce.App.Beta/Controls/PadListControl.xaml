@@ -81,13 +81,17 @@
 					</Style.Triggers>
 				</Style>
 			</DataGrid.CellStyle>
-			
+
 			<DataGrid.Columns>
 				<!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
-				<DataGridTemplateColumn IsReadOnly="True" Header="Active">
+				<DataGridTemplateColumn Header="Active" IsReadOnly="True">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
-							<ContentControl Style="{StaticResource ContentControlCell_Default}" Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}" Width="16" Height="16" />
+							<ContentControl
+								Width="16"
+								Height="16"
+								Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}"
+								Style="{StaticResource ContentControlCell_Default}" />
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>

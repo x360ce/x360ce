@@ -247,13 +247,16 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			gridSelection = ControlsHelper.GetSelection<Guid>(MainDataGrid, nameof(UserDevice.InstanceGuid));
 			SettingsManager.UserDevices.Items.ListChanged -= Items_ListChanged;
 			MainDataGrid.ItemsSource = null;
 			_currentData.Clear();
 			_currentData = null;
 		}
-
-
 	}
 }

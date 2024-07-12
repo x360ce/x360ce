@@ -1,6 +1,8 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
+//using System.Drawing;
 using System.Linq;
+//using System.Reflection.Emit;
 using System.Windows.Controls;
 using System.Windows.Media;
 using x360ce.App.Controls;
@@ -226,19 +228,15 @@ namespace x360ce.App
 			Global.AddGame += Global_AddGame;
 		}
 
-		private PadListControl _PadListControl;
-		private PadItem_GeneralControl _PadItem_GeneralControl;
-
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
 
-			// Dispose managed resources of child UserControls:
-			_PadListControl?.MainBodyControl_Unloaded();
-			_PadItem_GeneralControl?.MainBodyControl_Unloaded();
-
-			// MainBodyControl:
+		public void ParentWindow_Unloaded()
+		{
 			Global.AddGame -= Global_AddGame;
 			// Dispose managed resources.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
@@ -248,5 +246,6 @@ namespace x360ce.App
 			Array.Clear(PadColors, 0, 4);
 			MainTabControl.Items.Clear();
 		}
-    }
+
+	}
 }

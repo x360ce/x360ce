@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using x360ce.App.Controls;
 using x360ce.App.Properties;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -198,6 +199,11 @@ namespace x360ce.App
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			// Cleanup references which prevents disposal.
 			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
@@ -205,6 +211,5 @@ namespace x360ce.App
 			GameToCustomizeComboBox.SelectedItem = null;
 			((BindingListCollectionView)GameToCustomizeComboBox.ItemsSource)?.DetachFromSourceCollection();
 		}
-
 	}
 }

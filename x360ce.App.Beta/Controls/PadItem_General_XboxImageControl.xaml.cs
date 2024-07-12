@@ -192,22 +192,6 @@ namespace x360ce.App.Controls
 			}, 4000);
 		}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowLoad(this))
-				return;
-		}
-
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowUnload(this))
-				return;
-			//MainGrid.MouseMove -= MainGrid_MouseMove;
-			Infos?.Clear();
-			Infos = null;
-			Imager = null;
-		}
-
 		public SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
 		public SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
 		public SolidColorBrush colorNormalTextBox = System.Windows.Media.Brushes.White;
@@ -278,6 +262,27 @@ namespace x360ce.App.Controls
 					}
 				}
 			}
+		}
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
+			// MainGrid.MouseMove -= MainGrid_MouseMove;
+			Infos?.Clear();
+			Infos = null;
+			Imager = null;
 		}
 
 	}

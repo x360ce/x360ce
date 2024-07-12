@@ -104,11 +104,15 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			SettingsGridPanel._ParentControl = null;
 			SummariesGridPanel._ParentControl = null;
 			PresetsGridPanel._ParentControl = null;
 			SelectedItem = null;
 		}
-
 	}
 }

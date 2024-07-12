@@ -440,7 +440,7 @@ namespace x360ce.App.Controls
 
 		}
 
-		public void MainBodyControl_Unloaded()
+		public void ParentWindow_Unloaded()
 		{
 			UnInitScrollFix();
 			SetBinding(MapTo.None);

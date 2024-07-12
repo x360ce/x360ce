@@ -98,6 +98,11 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return; 
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			TabControl tc;
 			tc = Global._MainWindow?.MainBodyPanel?.MainTabControl;
 			if (tc != null)
@@ -108,5 +113,5 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(PollingRateComboBox);
 			PollingRateComboBox.ItemsSource = null;
 		}
-    }
+	}
 }

@@ -258,14 +258,18 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
 
-			//SetBinding(null);
-			//deadzoneLink?.Dispose();
-			//deadzoneLink = null;
-			//antiDeadzoneLink?.Dispose();
-			//antiDeadzoneLink = null;
-			//linearLink?.Dispose();
-			//linearLink = null;
+		public void ParentWindow_Unloaded()
+		{
+			SetBinding(null);
+			deadzoneLink?.Dispose();
+			deadzoneLink = null;
+			antiDeadzoneLink?.Dispose();
+			antiDeadzoneLink = null;
+			linearLink?.Dispose();
+			linearLink = null;
 		}
 	}
 }

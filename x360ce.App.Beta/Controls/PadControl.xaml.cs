@@ -636,14 +636,19 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			// Cleanup references which prevents disposal.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			SettingsManager.Current.SettingChanged -= Current_SettingChanged;
 			CurrentPadSetting.PropertyChanged -= CurrentPadSetting_PropertyChanged;
 			PadListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-            PadFootPanel.MapNameComboBox.SelectionChanged -= GeneralPanel.MapNameComboBox_SelectionChanged;
-            PadFootPanel.RemapAllButton.Click -= RemapAllButton_Click;
-            XboxImage.StartRecording = null;
+			PadFootPanel.MapNameComboBox.SelectionChanged -= GeneralPanel.MapNameComboBox_SelectionChanged;
+			PadFootPanel.RemapAllButton.Click -= RemapAllButton_Click;
+			XboxImage.StartRecording = null;
 			XboxImage.StopRecording = null;
 			RecordAllMaps.Clear();
 			imageInfos.Clear();

@@ -20,7 +20,7 @@ namespace x360ce.App
 				return ps;
 			var list = objects.ToList();
 			// Get information about device.
-			var deviceType = (SharpDX.DirectInput.DeviceType)ud.CapType;
+			var deviceType = (DeviceType)ud.CapType;
 			if (deviceType == DeviceType.Mouse)
 			{
 				// Offset  Type    Aspect    Flags         Instance  Name    

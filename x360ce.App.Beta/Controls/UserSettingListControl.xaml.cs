@@ -226,8 +226,12 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
-			UnInitPanel();
+			// Moved to MainBodyControl_Unloaded().
 		}
 
+		public void ParentWindow_Unloaded()
+		{
+			UnInitPanel();
+		}
 	}
 }

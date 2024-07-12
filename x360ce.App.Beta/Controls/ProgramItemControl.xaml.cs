@@ -528,18 +528,6 @@ namespace x360ce.App.Controls
 
 		#endregion
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowLoad(this))
-				return;
-		}
-
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowUnload(this))
-				return;
-		}
-
         private void GoogleSearchButton_Click(object sender, RoutedEventArgs e)
         {
 
@@ -554,5 +542,17 @@ namespace x360ce.App.Controls
         {
             ControlsHelper.OpenPath(e.Uri.AbsoluteUri);
         }
-    }
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
+		}
+	}
 }

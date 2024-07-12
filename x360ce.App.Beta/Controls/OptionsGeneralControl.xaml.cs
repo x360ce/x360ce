@@ -174,6 +174,11 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			SettingsManager.UnLoadMonitor(DebugModeCheckBox);
 			ControlsHelper.SetItemsSource(GameScanLocationsListBox, null);
 			SettingsManager.UnLoadMonitor(GameScanLocationsListBox);

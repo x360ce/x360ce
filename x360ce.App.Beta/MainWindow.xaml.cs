@@ -826,10 +826,83 @@ namespace x360ce.App
 			}
 		}
 
+		// PadControl:
+		private PadControl _PadControl;
+		private PadListControl _PadListControl;
+		private PadItemControl _PadItemControl;
+		private PadFootControl _PadFootControl;
+		// PadItemControl:
+		private PadItem_GeneralControl _PadItem_GeneralControl;
+		private PadItem_DPadControl _PadItem_DPadControl;
+		private AxisMapControl _AxisMapControl;
+		private PadItem_ForceFeedbackControl _PadItem_ForceFeedbackControl;
+		private PadItem_MacrosControl _PadItem_MacrosControl;
+		private PadItem_DInputControl _PadItem_DInputControl;
+		private PadItem_ForceFeedback_MotorControl _PadItem_ForceFeedback_MotorControl;
+		private PadItem_General_XboxImageControl _PadItem_General_XboxImageControl;
+		// Other:
+		private UserProgramsControl _UserProgramsControl;
+		private ProgramsControl _ProgramsControl;
+		private UserDevicesControl _UserDevicesControl;
+		private UserSettingListControl _UserSettingListControl;
+		private AxisToButtonControl _AxisToButtonControl;
+		private CloudControl _CloudControl;
+		private DebugControl _DebugControl;
+		private LogControl _LogControl;
+		private OptionsGeneralControl _OptionsGeneralControl;
+		private OptionsHidGuardianControl _OptionsHidGuardianControl;
+		private OptionsInternetControl _OptionsInternetControl;
+		private OptionsRemoteControllerControl _OptionsRemoteControllerControl;
+		private OptionsVirtualDeviceControl _OptionsVirtualDeviceControl;
+		private PresetsControl _PresetsControl;
+		private PresetsListControl _PresetsListControl;
+		private ProgramListControl _ProgramListControl;
+		private SummariesListControl _SummariesListControl;
+		private MainBodyControl _MainBodyControl;
+		private MainControl _MainControl;
+
 		private void Window_Unloaded(object sender, RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+
+			// Dispose managed resources of child UserControls:
+			// PadControl:
+			_PadListControl?.ParentWindow_Unloaded();
+			_PadItemControl?.ParentWindow_Unloaded();
+			_PadFootControl?.ParentWindow_Unloaded();
+			_PadControl?.ParentWindow_Unloaded();
+			// PadItemControl:
+			_PadItem_GeneralControl?.ParentWindow_Unloaded();
+			_PadItem_DPadControl?.ParentWindow_Unloaded();
+			_AxisMapControl?.ParentWindow_Unloaded();
+			_PadItem_ForceFeedbackControl?.ParentWindow_Unloaded();
+			_PadItem_MacrosControl?.ParentWindow_Unloaded();
+			_PadItem_DInputControl?.ParentWindow_Unloaded();
+			_PadItem_ForceFeedback_MotorControl?.ParentWindow_Unloaded();
+			_PadItem_General_XboxImageControl?.ParentWindow_Unloaded();
+			// Other:
+			_UserProgramsControl?.ParentWindow_Unloaded();
+			_ProgramsControl?.ParentWindow_Unloaded();
+			_UserDevicesControl?.ParentWindow_Unloaded();
+			_UserSettingListControl?.ParentWindow_Unloaded();
+			_AxisToButtonControl?.ParentWindow_Unloaded();
+			_CloudControl?.ParentWindow_Unloaded();
+			_DebugControl?.ParentWindow_Unloaded();
+			_LogControl?.ParentWindow_Unloaded();
+			_OptionsGeneralControl?.ParentWindow_Unloaded();
+			_OptionsHidGuardianControl?.ParentWindow_Unloaded();
+			_OptionsInternetControl?.ParentWindow_Unloaded();
+			_OptionsRemoteControllerControl?.ParentWindow_Unloaded();
+			_OptionsVirtualDeviceControl?.ParentWindow_Unloaded();
+			_PresetsControl?.ParentWindow_Unloaded();
+			_PresetsListControl?.ParentWindow_Unloaded();
+			_ProgramListControl?.ParentWindow_Unloaded();
+			_SummariesListControl?.ParentWindow_Unloaded();
+			// Main:
+			_MainBodyControl?.ParentWindow_Unloaded();
+			_MainControl?.ParentWindow_Unloaded();
+
 			// Cleanup references which prevents disposal.
 			StartHelper.OnClose -= StartHelper_OnClose;
 			StartHelper.OnRestore -= StartHelper_OnRestore;

@@ -497,6 +497,26 @@ namespace x360ce.App.Controls
 			//Clipboard.SetDataObject(sb.ToString());
 			return sb.ToString();
 		}
+		/*
+
+		#region ■ Copy Data
+
+		private void CopyWithHeadersMenuItem_Click(object sender, EventArgs e)
+		{
+			var menuItem = sender as MenuItem;
+			var toolItem = sender as ToolStripItem;
+			var sourceControl = menuItem == null
+				? (toolItem.Owner as ContextMenuStrip).SourceControl
+				: menuItem.GetContextMenu().SourceControl;
+			// Get the control that is displaying this context menu
+			if (sourceControl == DiObjectsDataGridView)
+				CopyDiObjectsInformation();
+			if (sourceControl == DiEffectsDataGridView)
+				CopyDiEffectsInformation();
+		}
+		#endregion
+		*/
+
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowLoad(this))
@@ -507,6 +527,11 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			DiEffectsDataGridView.ItemsSource = null;
 			DiButtonsDataGridView.ItemsSource = null;
 			DiAxisDataGridView.ItemsSource = null;
@@ -526,30 +551,6 @@ namespace x360ce.App.Controls
 			oldKState = null;
 			oldJState = null;
 		}
-
-		/*
-
-		#region ■ Copy Data
-
-		private void CopyWithHeadersMenuItem_Click(object sender, EventArgs e)
-		{
-			var menuItem = sender as MenuItem;
-			var toolItem = sender as ToolStripItem;
-			var sourceControl = menuItem == null
-				? (toolItem.Owner as ContextMenuStrip).SourceControl
-				: menuItem.GetContextMenu().SourceControl;
-			// Get the control that is displaying this context menu
-			if (sourceControl == DiObjectsDataGridView)
-				CopyDiObjectsInformation();
-			if (sourceControl == DiEffectsDataGridView)
-				CopyDiEffectsInformation();
-		}
-
-		
-
-		#endregion
-
-		*/
 	}
 
 }

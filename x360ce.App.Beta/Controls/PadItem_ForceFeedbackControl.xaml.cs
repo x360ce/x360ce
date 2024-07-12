@@ -161,9 +161,14 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
-            // TODO: Lines below must be executed onbmly when main window close.
-            //overallStrengthLink.Dispose();
-			//SetBinding(_MappedTo, null);
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
+			// TODO: Lines below must be executed onbmly when main window close.
+			overallStrengthLink.Dispose();
+			SetBinding(_MappedTo, null);
 		}
 
 	}

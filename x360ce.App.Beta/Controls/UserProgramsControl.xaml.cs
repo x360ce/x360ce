@@ -46,6 +46,11 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			var grid = ListPanel.MainDataGrid;
 			gridSelection = ControlsHelper.GetSelection<string>(grid, nameof(UserGame.FileName));
 			grid.SelectionChanged -= MainDataGrid_SelectionChanged;
