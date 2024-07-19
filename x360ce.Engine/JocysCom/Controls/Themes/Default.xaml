@@ -472,7 +472,10 @@
 
 	<!--  Label  -->
 	<Style x:Key="Label_Default" TargetType="Label">
+		<Setter Property="SnapsToDevicePixels" Value="False" />
 		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="Padding" Value="0" />
+		<Setter Property="Margin" Value="0" />
 	</Style>
 
 	<!--  StackPanel  -->
@@ -929,7 +932,7 @@
 						</Border>
 						<ContentPresenter
 							x:Name="contentPresenter"
-							Margin="0,0,5,0"
+							Margin="0,1,5,0"
 							HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
 							VerticalAlignment="Center"
 							Content="{TemplateBinding Content}"
@@ -1461,7 +1464,7 @@
 
 	<!--  ComboBox ContentPresenter  -->
 	<Style x:Key="ComboBoxContentPresenter" TargetType="ContentPresenter">
-		<Setter Property="Margin" Value="0,0,5,0" />
+		<Setter Property="Margin" Value="0,0,5,1" />
 		<Setter Property="HorizontalAlignment" Value="Left" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 		<Setter Property="IsHitTestVisible" Value="False" />

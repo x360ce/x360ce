@@ -4,11 +4,15 @@ using SharpDX.DirectInput;
 using System;
 // using System.Collections;
 using System.Collections.Generic;
+using System.Data.Objects;
+
 //using System.Data.Objects;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
+
 // using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -313,40 +317,31 @@ namespace x360ce.App.Controls
 				// POVs.
 				if (ud.CapPovCount > 0)
 				{
+					var povs = ud.DiState.POVs;
 					var objects = ud.DeviceObjects.Where(x => x.Type.Equals(ObjectGuid.PovController)).ToList().OrderBy(x => x.Instance);
 					var list = new List<int>();
-					var listB = new List<int>();
 					foreach (var deviceObjectItem in objects) { list.Add(deviceObjectItem.Instance); }
 					DragAndDropMenuLabels_Create(PovDictionary, list, "POV", "POV", "Icon_DragAndDrop_POV");
 					// POV Up, Right, Down, Left.
+					var listB = new List<int>();
 					for (int i = 0; i < PovDictionary.Count() * 4; i++) { listB.Add(i); }
 					DragAndDropMenuLabels_Create(PovBDictionary, listB, "POVB", "POV · BUTTON", "Icon_DragAndDrop_POV");
 				}
 				// Axes.
-				if (ud.CapAxeCount > 0)
+				if (ud.DiState.Axis.Where(x => x > 0).Count() > 0)
 				{
-					var objects = ud.DeviceObjects.Where(x =>
-					x.Type.Equals(ObjectGuid.XAxis) ||
-					x.Type.Equals(ObjectGuid.YAxis) ||
-					x.Type.Equals(ObjectGuid.ZAxis) ||
-					x.Type.Equals(ObjectGuid.RxAxis) ||
-					x.Type.Equals(ObjectGuid.RyAxis) ||
-					x.Type.Equals(ObjectGuid.RzAxis)).ToList().OrderBy(x => x.Instance);
 					var list = new List<int>();
-					foreach (var deviceObjectItem in objects) { list.Add(deviceObjectItem.Instance); }
+					for (int i = 0; i < ud.DiState.Axis.Count(); i++) { if (ud.DiState.Axis[i] > 0) { list.Add(i); } }
 					DragAndDropMenuLabels_Create(AxisDictionary, list, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
 					DragAndDropMenuLabels_Create(IAxisDictionary, list, "IAxis", "AXIS", "Icon_DragAndDrop_Axis_Inverted");
 					DragAndDropMenuLabels_Create(HAxisDictionary, list, "HAxis", "AXIS · HALF", "Icon_DragAndDrop_Axis_Half");
 					DragAndDropMenuLabels_Create(IHAxisDictionary, list, "IHAxis", "AXIS · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 				}
 				// Sliders.
-				if (ud.DeviceObjects.Where(x => x.Type.Equals(ObjectGuid.Slider)).Count() > 0)
+				if (ud.DiState.Sliders.Where(x => x > 0).Count() > 0)
 				{
-					var objects = ud.DeviceObjects.Where(x =>
-					x.Type.Equals(ObjectGuid.Slider) ||
-					x.Type.Equals(ObjectGuid.Unknown)).ToList().OrderBy(x => x.Instance);
 					var list = new List<int>();
-					foreach (var deviceObjectItem in objects) { list.Add(deviceObjectItem.Instance); }
+					for (int i = 0; i < ud.DiState.Sliders.Count(); i++) { if (ud.DiState.Sliders[i] > 0) { list.Add(i); } }
 					DragAndDropMenuLabels_Create(SliderDictionary, list, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
 					DragAndDropMenuLabels_Create(ISliderDictionary, list, "ISlider", "SLIDER", "Icon_DragAndDrop_Axis_Inverted");
 					DragAndDropMenuLabels_Create(HSliderDictionary, list, "HSlider", "SLIDER · HALF", "Icon_DragAndDrop_Axis_Half");
