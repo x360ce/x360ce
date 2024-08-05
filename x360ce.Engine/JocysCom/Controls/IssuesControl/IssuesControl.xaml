@@ -25,29 +25,29 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 		<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-			<Button Name="ExceptionInfoButton" Click="ExceptionInfoButton_Click">
-				<StackPanel>
-					<ContentControl Name="ExceptionInfoContentControl" Content="{StaticResource Icon_Warning}" />
-					<Label x:Name="ExceptionInfoLabel" Content="Exception Info" />
-				</StackPanel>
-			</Button>
-			<Label x:Name="StatusLabel" Content="Status:" />
+				<Button Name="ExceptionInfoButton" Click="ExceptionInfoButton_Click">
+					<StackPanel>
+						<ContentControl Name="ExceptionInfoContentControl" Content="{StaticResource Icon_Warning}" />
+						<Label x:Name="ExceptionInfoLabel" Content="Exception Info" />
+					</StackPanel>
+				</Button>
+				<Label x:Name="StatusLabel" Content="Status:" />
 		</StackPanel>
 		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-			<Label x:Name="RunStateLabel" Content="[RunStateLabel]" Opacity="0.5" />
-			<Label x:Name="NextRunLabel" Content="Next Run: 00:00:00" Opacity="0.5" />
-			<CheckBox Name="IgnoreButton" Click="IgnoreButton_Click">
-				<StackPanel Orientation="Horizontal">
-					<ContentControl Content="{StaticResource Icon_Ignore}" Style="{StaticResource ContentControlCell_Default}" />
-					<Label Content="Ignore" />
-				</StackPanel>
-			</CheckBox>
-			<CheckBox Name="IgnoreAllButton" Click="IgnoreAllButton_Click">
-				<StackPanel Orientation="Horizontal">
-					<ContentControl Content="{StaticResource Icon_Ignore}" Style="{StaticResource ContentControlCell_Default}" />
-					<Label Content="Ignore All" />
-				</StackPanel>
-			</CheckBox>
+				<Label x:Name="RunStateLabel" Content="[RunStateLabel]" Opacity="0.5" />
+				<Label x:Name="NextRunLabel" Content="Next Run: 00:00:00" Opacity="0.5" />
+				<CheckBox Name="IgnoreButton" Click="IgnoreButton_Click">
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Ignore}" />
+						<Label Content="Ignore" />
+					</StackPanel>
+				</CheckBox>
+				<CheckBox Name="IgnoreAllButton" Click="IgnoreAllButton_Click">
+					<StackPanel Orientation="Horizontal">
+						<ContentControl Content="{StaticResource Icon_Ignore}" />
+						<Label Content="Ignore All" />
+					</StackPanel>
+				</CheckBox>
 		</StackPanel>
 		<Border
 			Grid.Row="1"
@@ -56,14 +56,14 @@
 			BorderThickness="1"
 			SnapsToDevicePixels="True" />
 		<ListView
+            Margin="0"
+            BorderThickness="0,1,0,1"
+            BorderBrush="{StaticResource BorderDark}"
 			x:Name="MainDataGrid"
 			Grid.Row="1"
 			Height="Auto"
-			Margin="0"
 			HorizontalAlignment="Stretch"
 			Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"
-			BorderBrush="{StaticResource BorderDark}"
-			BorderThickness="0,1,0,1"
 			SelectionChanged="MainDataGrid_SelectionChanged">
 			<ListView.Resources>
 				<local:SeverityToImageConverter x:Key="_SeverityToImageConverter" />
@@ -109,8 +109,10 @@
 				</GridView.Columns>
 			</GridView>
 		</ListView>
-		<Border x:Name="LinePanel" Grid.Row="2">
-			<StackPanel x:Name="NoIssuesPanel">
+        <Border
+			x:Name="LinePanel"
+			Grid.Row="2">
+            <StackPanel x:Name="NoIssuesPanel">
 				<Label
 					x:Name="NoIssuesLabel"
 					Margin="8,8,8,8"

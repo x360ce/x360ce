@@ -538,8 +538,8 @@ namespace System.IO.Compression
 			var fullList = _zip.ReadCentralDir();
 
 			//In order to delete we need to create a copy of the zip file excluding the selected items
-			var tempZipName = Path.GetTempFileName();
-			var tempEntryName = Path.GetTempFileName();
+			var tempZipName = Path.GetRandomFileName();
+			var tempEntryName = Path.GetRandomFileName();
 
 			try
 			{
