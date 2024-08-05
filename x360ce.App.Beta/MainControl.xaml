@@ -20,11 +20,7 @@
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<JcControls:InfoControl
-			x:Name="InfoPanel"
-			Grid.Row="0"
-			x:FieldModifier="public"
-			RightIconContent="{StaticResource Icon_gamepad}" />
+		<JcControls:InfoControl x:Name="InfoPanel" x:FieldModifier="public" RightIconContent="{StaticResource Icon_gamepad}" />
 		<DockPanel Grid.Row="1" Margin="0,0,0,-3">
 			<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
 				<Label Margin="3,0,0,0" VerticalAlignment="Center" Content="Game" />
