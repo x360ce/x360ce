@@ -27,7 +27,7 @@
 			RightIconContent="{StaticResource Icon_gamepad}" />
 		<DockPanel Grid.Row="1" Margin="0,0,0,-3">
 			<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-				<Label VerticalAlignment="Center" Content="Game:" />
+				<Label Margin="3,0,0,0" VerticalAlignment="Center" Content="Game" />
 				<ComboBox x:Name="GameToCustomizeComboBox" MinWidth="320" />
 			</StackPanel>
 			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
