@@ -132,7 +132,7 @@ namespace x360ce.App
 				{
 					// Shift busy value by half so movement starts from the centre.
 					var value = (time + busy / 2) % busy;
-					if (time <= half)
+					if (value < half)
 					{
 						// Convert [   0-1999] to [0-35999].
 						degree = ConvertHelper.ConvertRange(value, 0, half - 1, 0, 35999);
