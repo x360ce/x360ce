@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using x360ce.App.Converters;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -266,6 +267,7 @@ namespace x360ce.App.Controls
 		private void RemoveButton_Click(object sender, RoutedEventArgs e)
 		{
 			var win = new MessageBoxWindow();
+			win.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFf0f0f0");
 			var text = "Do you really want to remove selected user setting?";
 			var result = win.ShowDialog(text,
 				"X360CE - Remove?", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question, System.Windows.MessageBoxResult.No);

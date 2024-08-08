@@ -202,7 +202,7 @@ namespace x360ce.App.Controls
 		//SolidColorBrush colorBlack = (SolidColorBrush)new BrushConverter().ConvertFrom("#11000000");
 		//SolidColorBrush colorNormalLabel = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDEDEDE");
 		//SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
-		//SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
+		SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
 		Dictionary<int, (Label, Label)> ButtonDictionary = new Dictionary<int, (Label, Label)>();
 		Dictionary<int, (Label, Label)> IButtonDictionary = new Dictionary<int, (Label, Label)>();
@@ -263,6 +263,7 @@ namespace x360ce.App.Controls
 			{
 				Label buttonLabel = new Label();
 				buttonLabel.Content = (i + 1).ToString();
+				buttonLabel.Tag = itemName + buttonLabel.Content;
 				buttonLabel.PreviewMouseMove += DragAndDropMenuLabel_Source_PreviewMouseMove;
 
 				Label valueLabel = new Label();
@@ -396,6 +397,14 @@ namespace x360ce.App.Controls
 			{
 				var bDS = ud.DiState.Buttons[i.Key]; // customDiState.Buttons[i.Key];
 				IButtonDictionary[i.Key].Item1.Background = bDS ? Brushes.Transparent : colorActive;
+
+				// Record button.
+				if (recordTextBox != null && ButtonDictionary[i.Key].Item1.Background == colorActive) { 
+					recordTextBox.Text = ButtonDictionary[i.Key].Item1.Tag.ToString();
+					recordTextBox.Background = Brushes.Transparent;
+					recordTextBox = null;
+				}
+
 				ButtonDictionary[i.Key].Item1.Background = bDS ? colorActive : Brushes.Transparent;
 				ButtonDictionary[i.Key].Item2.Content = bDS.ToString();
 				IButtonDictionary[i.Key].Item2.Content = bDS.ToString() == "True" ? "False" : "True";
@@ -667,11 +676,23 @@ namespace x360ce.App.Controls
 			((sender as Button).Tag as TextBox).Text = "";
 		}
 
+		TextBox recordTextBox;
+		
 		PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
 		private void RecordButton_Click(object sender, RoutedEventArgs e)
 		{
-			//var textBox = (sender as Button).Tag as TextBox;
-			padItem_General_XboxImageControl.setNormalOverActiveRecordColor(sender as Button, padItem_General_XboxImageControl.colorRecord);
+			if (recordTextBox == null)
+			{
+				recordTextBox = (sender as Button).Tag as TextBox;
+				recordTextBox.Background = colorRecord;
+				recordTextBox.Text = "";
+				// padItem_General_XboxImageControl.setNormalOverActiveRecordColor(sender as Button, padItem_General_XboxImageControl.colorRecord);
+			}
+			else
+			{
+				recordTextBox.Background = Brushes.Transparent;
+				recordTextBox = null;
+			}
 		}
 
 		private void RecordClear_MouseEnter(object sender, MouseEventArgs e)
