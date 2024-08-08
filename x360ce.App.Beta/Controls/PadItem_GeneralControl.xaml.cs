@@ -197,6 +197,7 @@ namespace x360ce.App.Controls
 		// Colors.
 		SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
 		SolidColorBrush colorLight = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFF0F0F0");
+		SolidColorBrush colorBackgroundDark = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDEDEDE");
 		//SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
 		//SolidColorBrush colorNormalTextBox = Brushes.White;
 		//SolidColorBrush colorBlack = (SolidColorBrush)new BrushConverter().ConvertFrom("#11000000");
@@ -397,17 +398,17 @@ namespace x360ce.App.Controls
 			{
 				var bDS = ud.DiState.Buttons[i.Key]; // customDiState.Buttons[i.Key];
 				IButtonDictionary[i.Key].Item1.Background = bDS ? Brushes.Transparent : colorActive;
-
-				// Record button.
-				if (recordTextBox != null && ButtonDictionary[i.Key].Item1.Background == colorActive) { 
-					recordTextBox.Text = ButtonDictionary[i.Key].Item1.Tag.ToString();
-					recordTextBox.Background = Brushes.Transparent;
-					recordTextBox = null;
-				}
-
 				ButtonDictionary[i.Key].Item1.Background = bDS ? colorActive : Brushes.Transparent;
 				ButtonDictionary[i.Key].Item2.Content = bDS.ToString();
 				IButtonDictionary[i.Key].Item2.Content = bDS.ToString() == "True" ? "False" : "True";
+
+				// Record button.
+				if (recordTextBox != null && bDS)
+				{
+					recordTextBox.Text = ButtonDictionary[i.Key].Item1.Tag.ToString();
+					recordTextBox.BorderBrush = colorBackgroundDark;
+					recordTextBox = null;
+				}
 			}
 			// POVs.
 			var povButtonValues = new[] { 0, 9000, 18000, 27000, 0, 9000, 18000, 27000, 0, 9000, 18000, 27000, 0, 9000, 18000, 27000 };
@@ -649,7 +650,6 @@ namespace x360ce.App.Controls
 
 			if (g2.HorizontalAlignment == HorizontalAlignment.Left)
 			{
-				Grid.SetColumn(RCBorder, 1);
 				Grid.SetColumn(RCStackPanel, 1);
 				RecordClearColumn0.Width = new GridLength(77);
 				RecordClearColumn1.Width = new GridLength(1, GridUnitType.Star);
@@ -657,7 +657,6 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				Grid.SetColumn(RCBorder, 0);
 				Grid.SetColumn(RCStackPanel, 0);
 				RecordClearColumn0.Width = new GridLength(1, GridUnitType.Star);
 				RecordClearColumn1.Width = new GridLength(77);
@@ -684,13 +683,13 @@ namespace x360ce.App.Controls
 			if (recordTextBox == null)
 			{
 				recordTextBox = (sender as Button).Tag as TextBox;
-				recordTextBox.Background = colorRecord;
+				recordTextBox.BorderBrush = colorRecord;
 				recordTextBox.Text = "";
 				// padItem_General_XboxImageControl.setNormalOverActiveRecordColor(sender as Button, padItem_General_XboxImageControl.colorRecord);
 			}
 			else
 			{
-				recordTextBox.Background = Brushes.Transparent;
+				recordTextBox.BorderBrush = colorBackgroundDark;
 				recordTextBox = null;
 			}
 		}

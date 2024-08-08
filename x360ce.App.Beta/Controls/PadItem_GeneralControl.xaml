@@ -237,20 +237,17 @@
 
 		<!--  Record or Clear mini menu.  -->
 
-		<Grid Name="RecordClearGrid" Visibility="Collapsed">
+		<Grid Name="RecordClearGrid" VerticalAlignment="Center" Visibility="Collapsed">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Name="RecordClearColumn0" />
 				<ColumnDefinition Name="RecordClearColumn1" />
 			</Grid.ColumnDefinitions>
-			<Border
-				Name="RCBorder"
-				Grid.Column="1"
-				HorizontalAlignment="Stretch"
-				Background="{StaticResource BackgroundLight}" />
 			<StackPanel
+				Margin="1,0,1,0"
 				Name="RCStackPanel"
 				Grid.Column="1"
 				HorizontalAlignment="Left"
+				Background="{StaticResource BackgroundLight}"
 				Orientation="Horizontal">
 				<Button Name="RecordButton" Click="RecordButton_Click">
 					<!--<ContentControl Content="{StaticResource Icon_Record}" />-->
