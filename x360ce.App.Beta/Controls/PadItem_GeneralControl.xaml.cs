@@ -244,6 +244,8 @@ namespace x360ce.App.Controls
 			return customDiState == null ? null : customDiState;
 		}
 
+		UniformGrid PovUnifromGrid;
+
 		// Create DragAndDrop menu labels.
 		private void DragAndDropMenuLabels_Create(Dictionary<int, (Label, Label)> dictionary, List<int> list, string itemName, string headerName, string iconName)
 		{
@@ -254,11 +256,14 @@ namespace x360ce.App.Controls
 			// GroupBox Content (UniformGrid for Labels).
 			UniformGrid buttonsUniformGrid = new UniformGrid { Columns = 8 };
 			// GroupBox.
-			GroupBox buttonsGroupBox = new GroupBox { Header = headerStackPanel, Content = buttonsUniformGrid };
-
+			GroupBox buttonsGroupBox = new GroupBox { Header = headerStackPanel, Content = buttonsUniformGrid };		
 			// Put GroupBoxes into NORMAL and INVERTED tabs.
 			if (iconName.Contains("Inverted")) { DragAndDropStackPanelInverted.Children.Add(buttonsGroupBox); }
 			else { DragAndDropStackPanelNormal.Children.Add(buttonsGroupBox); }
+
+			// Put POVB buttons inside POV GroupBox.
+			if (itemName == "POV") { PovUnifromGrid = buttonsUniformGrid; }
+			if (itemName == "POVB") { buttonsGroupBox.Visibility = Visibility.Collapsed; }
 
 			// Create drag and drop buttons.
 			dictionary.Clear();
@@ -292,7 +297,10 @@ namespace x360ce.App.Controls
 				StackPanel stackPanel = new StackPanel();
 				stackPanel.Children.Add(buttonLabel);
 				stackPanel.Children.Add(valueLabel);
-				buttonsUniformGrid.Children.Add(stackPanel);
+
+				// Put POVB buttons inside POV GroupBox.
+				if (itemName == "POVB") { PovUnifromGrid.Children.Add(stackPanel); }
+				else { buttonsUniformGrid.Children.Add(stackPanel); }
 
 				dictionary.Add(i, (buttonLabel, valueLabel));
 			}
