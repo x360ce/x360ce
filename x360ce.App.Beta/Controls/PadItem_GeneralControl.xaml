@@ -32,13 +32,13 @@
 						<Setter Property="HorizontalAlignment" Value="Center" />
 						<Setter Property="Padding" Value="0,2,0,0" />
 						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Selected Device · Direct Input" />
+						<Setter Property="Content" Value="Selected Device Input" />
 					</Style>
 					<Style x:Key="DragAndDropDInputLabel2" TargetType="Label">
 						<Setter Property="HorizontalAlignment" Value="Center" />
 						<Setter Property="Padding" Value="0,0,0,4" />
 						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Drag and drop into right-side text boxes" />
+						<Setter Property="Content" Value="Drag and drop into text boxes" />
 					</Style>
 					<Style x:Key="DragAndDropXInputBorder" TargetType="Border">
 						<Setter Property="Margin" Value="0,2,0,0" />

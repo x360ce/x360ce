@@ -5,6 +5,8 @@ using System;
 // using System.Collections;
 using System.Collections.Generic;
 using System.Data.Objects;
+using System.Diagnostics.Eventing.Reader;
+
 
 //using System.Data.Objects;
 using System.Linq;
@@ -263,8 +265,15 @@ namespace x360ce.App.Controls
 			foreach (var i in list)
 			{
 				Label buttonLabel = new Label();
-				buttonLabel.Content = (i + 1).ToString();
-				buttonLabel.Tag = itemName + buttonLabel.Content;
+				buttonLabel.Content = (i + 1).ToString();		
+				if (itemName == "POVB")
+				{
+					var povNumber = (i / 4) + 1;
+					var povNumberB = new[] { "Up", "Right", "Down", "Left" }[i % 4];
+					buttonLabel.Tag = "POV " + povNumber + " " + povNumberB;
+				}
+				else { buttonLabel.Tag = itemName + " " + buttonLabel.Content; }
+
 				buttonLabel.PreviewMouseMove += DragAndDropMenuLabel_Source_PreviewMouseMove;
 
 				Label valueLabel = new Label();
@@ -431,7 +440,7 @@ namespace x360ce.App.Controls
 				AxisDictionary[i.Key].Item2.Content = aDS;
 				HAxisDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((aDS - 32767) * 2, 65535));
 				IAxisDictionary[i.Key].Item2.Content = Math.Abs(65535 - aDS);
-				IHAxisDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((Math.Abs(65535 - aDS) - 32767) * 2, 65535)); ;
+				IHAxisDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((Math.Abs(65535 - aDS) - 32767) * 2, 65535));
 				// Background.
 				var active = aDS < 32767 - DragAndDropAxisDeadzone || aDS > 32767 + DragAndDropAxisDeadzone;
 				AxisDictionary[i.Key].Item1.Background = HAxisDictionary[i.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
@@ -442,7 +451,9 @@ namespace x360ce.App.Controls
 			{
 				var sDS = ud.DiState.Sliders[i.Key]; // customDiState.Sliders[i.Key];
 				SliderDictionary[i.Key].Item2.Content = sDS;
-				ISliderDictionary[i.Key].Item2.Content = sDS;
+				HSliderDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((sDS - 32767) * 2, 65535));
+				ISliderDictionary[i.Key].Item2.Content = Math.Abs(65535 - sDS);
+				IHSliderDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((Math.Abs(65535 - sDS) - 32767) * 2, 65535));
 				// Background.
 				SliderDictionary[i.Key].Item1.Background = HSliderDictionary[i.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? colorActive : Brushes.Transparent;
 				ISliderDictionary[i.Key].Item1.Background = IHSliderDictionary[i.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? Brushes.Transparent : colorActive;
