@@ -38,7 +38,7 @@
 						<Setter Property="HorizontalAlignment" Value="Center" />
 						<Setter Property="Padding" Value="0,0,0,4" />
 						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Drag and drop into text boxes" />
+						<Setter Property="Content" Value="Drag and drop labels into text boxes" />
 					</Style>
 					<Style x:Key="DragAndDropXInputBorder" TargetType="Border">
 						<Setter Property="Margin" Value="0,2,0,0" />

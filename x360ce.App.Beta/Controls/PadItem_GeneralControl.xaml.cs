@@ -265,14 +265,21 @@ namespace x360ce.App.Controls
 			foreach (var i in list)
 			{
 				Label buttonLabel = new Label();
-				buttonLabel.Content = (i + 1).ToString();		
 				if (itemName == "POVB")
 				{
 					var povNumber = (i / 4) + 1;
+					// Name.
+					var povNumberN = new[] { "U", "R", "D", "L" }[i % 4];
+					buttonLabel.Content = povNumberN;
+					// Drag and drop text.
 					var povNumberB = new[] { "Up", "Right", "Down", "Left" }[i % 4];
 					buttonLabel.Tag = "POV " + povNumber + " " + povNumberB;
 				}
-				else { buttonLabel.Tag = itemName + " " + buttonLabel.Content; }
+				else
+				{
+					buttonLabel.Content = (i + 1).ToString();
+					buttonLabel.Tag = itemName + " " + buttonLabel.Content;
+				}
 
 				buttonLabel.PreviewMouseMove += DragAndDropMenuLabel_Source_PreviewMouseMove;
 
