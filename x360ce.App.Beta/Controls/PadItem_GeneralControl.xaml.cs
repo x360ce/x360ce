@@ -703,7 +703,7 @@ namespace x360ce.App.Controls
 
 		TextBox recordTextBox;
 		
-		PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
+		//PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
 		private void RecordButton_Click(object sender, RoutedEventArgs e)
 		{
 			if (recordTextBox == null)
@@ -711,7 +711,7 @@ namespace x360ce.App.Controls
 				recordTextBox = (sender as Button).Tag as TextBox;
 				recordTextBox.BorderBrush = colorRecord;
 				recordTextBox.Text = "";
-				// padItem_General_XboxImageControl.setNormalOverActiveRecordColor(sender as Button, padItem_General_XboxImageControl.colorRecord);
+				//padItem_General_XboxImageControl.setNormalOverActiveRecordColor(sender as Button, padItem_General_XboxImageControl.colorRecord);
 			}
 			else
 			{
