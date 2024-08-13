@@ -14,7 +14,5 @@ namespace x360ce.App.DInput
 
 		public FileInfo XInputFileInfo { get; set; }
 		public FileVersionInfo XInputVersionInfo { get; set; }
-
-
 	}
 }
