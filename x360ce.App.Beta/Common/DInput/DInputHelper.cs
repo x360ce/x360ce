@@ -8,22 +8,23 @@ namespace x360ce.App.DInput
 {
 	public partial class DInputHelper : IDisposable
 	{
-
+		// Constructor.
 		public DInputHelper()
 		{
 			CombinedXiConencted = new bool[4];
-			CombinedXiStates = new State[4];
-			LiveXiControllers = new Controller[4];
 			LiveXiConnected = new bool[4];
+
+			CombinedXiStates = new State[4];
 			LiveXiStates = new State[4];
+			LiveXiControllers = new Controller[4];
 			for (int i = 0; i < 4; i++)
 			{
 				CombinedXiStates[i] = new State();
-				LiveXiControllers[i] = new Controller((UserIndex)i);
 				LiveXiStates[i] = new State();
+				LiveXiControllers[i] = new Controller((UserIndex)i);
 			}
-			watch = new System.Diagnostics.Stopwatch();
-			_ResetEvent = new ManualResetEvent(false);
+
+			// Set and Start Timer counting DInput updates per second to show in app's status bar as Hz: #.
 		}
 
 		// Where current DInput device state is stored:
@@ -51,52 +52,58 @@ namespace x360ce.App.DInput
 		//	  Update DInput and XInput forms.
 		// }
 
-		public event EventHandler<DInputEventArgs> FrequencyUpdated;
-		public event EventHandler<DInputEventArgs> DevicesUpdated;
-		public event EventHandler<DInputEventArgs> StatesUpdated;
-		public event EventHandler<DInputEventArgs> StatesRetrieved;
-		public event EventHandler<DInputEventArgs> UpdateCompleted;
-		public event EventHandler<DInputEventArgs> XInputReloaded;
+		/// <summary>
+		/// _Timer (HiResTimer) with _ResetEvent (ManualResetEvent) is used to limit update refresh frequency.
+		/// </summary>
+		JocysCom.ClassLibrary.HiResTimer _Timer;
+		ManualResetEvent _ResetEvent = new ManualResetEvent(false);
+
+		public UpdateFrequency Frequency
+		{
+			get { return _Frequency; }
+			set
+			{
+				_Frequency = value;
+				var t = _Timer;
+				if (t != null && t.Interval != (int)value)
+					t.Interval = (int)value;
+			}
+		}
+		UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
 
 		/// <summary>
-		/// Timer which will be used together with ManualResetEvent to limit update refresh frequency.
+		/// _Stopwatch to monitor update frequency.
 		/// </summary>
-		JocysCom.ClassLibrary.HiResTimer _timer;
-
-		// Control when event can continue.
-		ManualResetEvent _ResetEvent;
-		ThreadStart _ThreadStart;
-		Thread _Thread;
-		bool _AllowThreadToRun;
+		System.Diagnostics.Stopwatch _Stopwatch = new System.Diagnostics.Stopwatch();
 		object timerLock = new object();
+		bool _AllowThreadToRun;
 
-		// Suspended is used during re-loading of XInput library.
-		public bool Suspended;
-
+		// Start DInput Service.
 		public void Start()
 		{
 			lock (timerLock)
 			{
-				if (_timer != null)
+				if (_Timer != null)
 					return;
-				watch.Restart();
-				_timer = new JocysCom.ClassLibrary.HiResTimer((int)Frequency, "DInputHelperTimer");
-				_timer.Elapsed += Timer_Elapsed;
-				_timer.Start();
+				_Stopwatch.Restart();
+				_Timer = new JocysCom.ClassLibrary.HiResTimer((int)Frequency, "DInputHelperTimer");
+				_Timer.Elapsed += Timer_Elapsed;
+				_Timer.Start();
 				_AllowThreadToRun = true;
 				RefreshAllAsync();
 			}
 		}
 
+		// Stop DInput Service.
 		public void Stop()
 		{
 			lock (timerLock)
 			{
-				if (_timer == null)
+				if (_Timer == null)
 					return;
-				_timer.Stop();
-				_timer.Dispose();
-				_timer = null;
+				_Timer.Stop();
+				_Timer.Dispose();
+				_Timer = null;
 				_AllowThreadToRun = false;
 				_ResetEvent.Set();
 				// Wait for thread to stop.
@@ -120,7 +127,9 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		object DiUpdatesLock = new object();
+		// Control when event can continue.
+		ThreadStart _ThreadStart;
+		Thread _Thread;
 
 		/// <summary>
 		/// Method which will create separate thread which will do all DInput and XInput updates.
@@ -136,6 +145,8 @@ namespace x360ce.App.DInput
 			_Thread.Start();
 		}
 
+		// Suspended is used during re-loading of XInput library.
+		public bool Suspended;
 		void ThreadAction()
 		{
 			// Set name of the thread.
@@ -164,6 +175,14 @@ namespace x360ce.App.DInput
 			manager.Dispose();
 		}
 
+		// Events.
+		public event EventHandler<DInputEventArgs> DevicesUpdated;
+		public event EventHandler<DInputEventArgs> StatesUpdated;
+		public event EventHandler<DInputEventArgs> StatesRetrieved;
+		public event EventHandler<DInputEventArgs> XInputReloaded;
+
+		public event EventHandler<DInputEventArgs> UpdateCompleted;
+		object DiUpdatesLock = new object();
 		void RefreshAll(DirectInput manager, DeviceDetector detector)
 		{
 			lock (DiUpdatesLock)
@@ -193,51 +212,29 @@ namespace x360ce.App.DInput
 					// Retrieve XInput states from XInput controllers.
 					RetrieveXiStates(getXInputStates);
 				}
-				// Update pool frequency value every second.
+				// Counts DInput updates per second to show in app's status bar as Hz: #.
 				UpdateDelayFrequency();
 				// Fire event.
-				var ev = UpdateCompleted;
-				if (ev != null)
-					ev(this, new DInputEventArgs());
+				UpdateCompleted?.Invoke(this, new DInputEventArgs());
 			}
 		}
 
-		/// <summary>
-		/// Watch to monitor update frequency.
-		/// </summary>
-		System.Diagnostics.Stopwatch watch;
-		long lastTime;
-		long currentTick;
+		// Count DInput updates per second to show in app's status bar as Hz: #.
+		public event EventHandler<DInputEventArgs> FrequencyUpdated;
+		int executionCount = 0;
+		long lastTime = 0;
 		public long CurrentUpdateFrequency;
-
-		public UpdateFrequency Frequency
-		{
-			get { return _Frequency; }
-			set
-			{
-				_Frequency = value;
-				var t = _timer;
-				if (t != null && t.Interval != (int)value)
-					t.Interval = (int)value;
-			}
-		}
-		UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
-
 		void UpdateDelayFrequency()
 		{
-			// Calculate update frequency.
-			currentTick++;
-			var currentTime = watch.ElapsedMilliseconds;
+			var currentTime = _Stopwatch.ElapsedMilliseconds;
 			// If one second elapsed then...
 			if ((currentTime - lastTime) > 1000)
 			{
-				CurrentUpdateFrequency = currentTick;
-				currentTick = 0;
+				CurrentUpdateFrequency = Interlocked.Exchange(ref executionCount, 0);
+				FrequencyUpdated?.Invoke(this, new DInputEventArgs());
 				lastTime = currentTime;
-				var ev = FrequencyUpdated;
-				if (ev != null)
-					ev(this, new DInputEventArgs());
 			}
+			Interlocked.Increment(ref executionCount);
 		}
 
 		#region ■ IDisposable

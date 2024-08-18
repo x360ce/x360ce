@@ -276,7 +276,7 @@ namespace x360ce.App.DInput
 							}
 						}
 					}
-					var newTime = watch.ElapsedTicks;
+					var newTime = _Stopwatch.ElapsedTicks;
 					// Remember old state.
 					ud.OldDiState = ud.DiState;
 					ud.OldDiUpdates = ud.DiUpdates;
