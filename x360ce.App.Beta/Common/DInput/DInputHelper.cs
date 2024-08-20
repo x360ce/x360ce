@@ -23,8 +23,6 @@ namespace x360ce.App.DInput
 				LiveXiStates[i] = new State();
 				LiveXiControllers[i] = new Controller((UserIndex)i);
 			}
-
-			// Set and Start Timer counting DInput updates per second to show in app's status bar as Hz: #.
 		}
 
 		// Where current DInput device state is stored:
@@ -65,7 +63,7 @@ namespace x360ce.App.DInput
 			{
 				_Frequency = value;
 				var t = _Timer;
-				if (t != null && t.Interval != (int)value)
+				if (t?.Interval != (int)value)
 					t.Interval = (int)value;
 			}
 		}
@@ -101,10 +99,10 @@ namespace x360ce.App.DInput
 			{
 				if (_Timer == null)
 					return;
+				_AllowThreadToRun = false;
 				_Timer.Stop();
 				_Timer.Dispose();
 				_Timer = null;
-				_AllowThreadToRun = false;
 				_ResetEvent.Set();
 				// Wait for thread to stop.
 				_Thread.Join();
@@ -112,7 +110,6 @@ namespace x360ce.App.DInput
 		}
 
 		public Exception LastException = null;
-
 		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			try
@@ -136,11 +133,11 @@ namespace x360ce.App.DInput
 		/// </summary>
 		void RefreshAllAsync()
 		{
-			_ThreadStart = new ThreadStart(ThreadAction);
-			_Thread = new Thread(_ThreadStart);
 			// This thread will run function which will update BindingList, which will use synchronous Invoke() on main form running on main thread.
 			// It can freeze, because Main thread is not getting attention to process Invoke() (because attention is on this thread)
 			// and this thread is frozen because it is waiting for Invoke() to finish.
+			_ThreadStart = new ThreadStart(ThreadAction);
+			_Thread = new Thread(_ThreadStart);
 			_Thread.IsBackground = true;
 			_Thread.Start();
 		}
