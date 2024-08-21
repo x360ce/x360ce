@@ -51,10 +51,12 @@ namespace x360ce.App.DInput
 		// }
 
 		/// <summary>
-		/// _Timer (HiResTimer) with _ResetEvent (ManualResetEvent) is used to limit update refresh frequency.
+		/// _ResetEvent with _Timer is used to limit update refresh frequency.
+		/// ms1_1000Hz = 1, ms2_500Hz = 2, ms4_250Hz = 4, ms8_125Hz = 8.
 		/// </summary>
-		JocysCom.ClassLibrary.HiResTimer _Timer;
 		ManualResetEvent _ResetEvent = new ManualResetEvent(false);
+		JocysCom.ClassLibrary.HiResTimer _Timer;
+		UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
 
 		public UpdateFrequency Frequency
 		{
@@ -67,7 +69,6 @@ namespace x360ce.App.DInput
 					t.Interval = (int)value;
 			}
 		}
-		UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
 
 		/// <summary>
 		/// _Stopwatch to monitor update frequency.
@@ -101,6 +102,7 @@ namespace x360ce.App.DInput
 					return;
 				_AllowThreadToRun = false;
 				_Timer.Stop();
+				_Timer.Elapsed -= Timer_Elapsed;
 				_Timer.Dispose();
 				_Timer = null;
 				_ResetEvent.Set();
@@ -124,18 +126,17 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		// Control when event can continue.
-		ThreadStart _ThreadStart;
-		Thread _Thread;
-
 		/// <summary>
 		/// Method which will create separate thread which will do all DInput and XInput updates.
+		/// This thread will run function which will update BindingList, which will use synchronous Invoke() on main form running on main thread.
+		/// It can freeze, because Main thread is not getting attention to process Invoke() (because attention is on this thread)
+		/// and this thread is frozen because it is waiting for Invoke() to finish.
+		/// Control when event can continue.
 		/// </summary>
+		ThreadStart _ThreadStart;
+		Thread _Thread;
 		void RefreshAllAsync()
 		{
-			// This thread will run function which will update BindingList, which will use synchronous Invoke() on main form running on main thread.
-			// It can freeze, because Main thread is not getting attention to process Invoke() (because attention is on this thread)
-			// and this thread is frozen because it is waiting for Invoke() to finish.
 			_ThreadStart = new ThreadStart(ThreadAction);
 			_Thread = new Thread(_ThreadStart);
 			_Thread.IsBackground = true;
@@ -146,12 +147,11 @@ namespace x360ce.App.DInput
 		public bool Suspended;
 		void ThreadAction()
 		{
-			// Set name of the thread.
 			Thread.CurrentThread.Name = "RefreshAllThread";
 			// DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
 			// separate windows form must be created on the same thread as the process which will access and update device.
 			// detector.DetectorForm will be used to acquire devices.
-			/// Main job of detector is to fire event on device connection (power on) and removal (power off).
+			// Main job of detector is to fire event on device connection (power on) and removal (power off).
 			var manager = new DirectInput();
 			var detector = new DeviceDetector(false);
 			do
@@ -162,8 +162,7 @@ namespace x360ce.App.DInput
 				if (!Suspended)
 					RefreshAll(manager, detector);
 				// Blocks the current thread until the current WaitHandle receives a signal.
-				// Thread will be release by the timer.
-				// Do not wait longer than 50ms.
+				// Thread will be release by the timer. Do not wait longer than 50ms.
 				_ResetEvent.WaitOne(50);
 			}
 			// Loop until suspended.
