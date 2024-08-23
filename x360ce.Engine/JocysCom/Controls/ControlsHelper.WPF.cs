@@ -193,6 +193,27 @@ namespace JocysCom.ClassLibrary.Controls
 				control.Visibility = visibility;
 		}
 
+
+		public static void SetItemsSource(DataGridComboBoxColumn grid, IBindingList list)
+		{
+			if (list is null)
+			{
+				if (grid.ItemsSource is System.Windows.Data.BindingListCollectionView view)
+				{
+					grid.ItemsSource = null;
+					view.DetachFromSourceCollection();
+				}
+				return;
+			}
+			var currentView = (System.Windows.Data.BindingListCollectionView)grid.ItemsSource;
+			// If same list then...
+			if (currentView?.SourceCollection == list)
+				return;
+			var newView = new System.Windows.Data.BindingListCollectionView(list);
+			grid.ItemsSource = newView;
+		}
+
+
 		public static void SetItemsSource(ItemsControl grid, IBindingList list)
 		{
 			if (list is null)

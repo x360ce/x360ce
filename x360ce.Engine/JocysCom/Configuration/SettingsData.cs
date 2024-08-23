@@ -119,11 +119,27 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			var moduleFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 			var fi = new FileInfo(moduleFileName);
-			var path = Path.Combine(fi.Directory.FullName, System.IO.Path.GetFileNameWithoutExtension(fi.Name));
+			var settingsFolderName = System.IO.Path.GetFileNameWithoutExtension(fi.Name);
+			// Parse command line settings.
+			var args = Environment.GetCommandLineArgs();
+			var ic = new JocysCom.ClassLibrary.Configuration.Arguments(args);
+			// ------------------------------------------------
+			if (ic.ContainsKey("SettingsPath"))
+			{
+				var settingsPath = ic["SettingsPath"];
+				if (!string.IsNullOrEmpty(settingsPath))
+				{
+					var sdi = new DirectoryInfo(settingsPath);
+					if (sdi.Exists)
+						return sdi.FullName;
+				}
+			}
+			// Check if folder with settings exists in the same folder as executable.
+			var path = Path.Combine(fi.Directory.FullName, settingsFolderName);
 			var di = new DirectoryInfo(path);
-			return di.Exists
-				? di.FullName
-				: null;
+			if (di.Exists)
+				return di.FullName;
+			return null;
 		}
 
 
@@ -244,6 +260,8 @@ namespace JocysCom.ClassLibrary.Configuration
 					for (int i = 0; i < items.Length; i++)
 					{
 						var fileItem = (ISettingsFileItem)items[i];
+						if (fileItem.IsReadOnlyFile)
+							continue;
 						var fileFullName = GetFileItemFullName(path, fileItem);
 						var fiItem = new FileInfo(fileFullName);
 						if (!fiItem.Directory.Exists)

@@ -607,6 +607,52 @@
 		</Style.Triggers>
 	</Style>
 
+	<!--  ListBox  -->
+	<Style x:Key="ListBox_Default" TargetType="ListBox">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ListBox">
+					<Border BorderBrush="{StaticResource BorderDark}" BorderThickness="1" CornerRadius="5">
+						<Grid>
+							<Grid.OpacityMask>
+								<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
+							</Grid.OpacityMask>
+							<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+							<ScrollViewer Margin="0" Background="{StaticResource BackgroundDark}" Focusable="false">
+								<StackPanel IsItemsHost="True" />
+							</ScrollViewer>
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  ListBoxItem  -->
+	<Style x:Key="ListBoxItem_Default" TargetType="ListBoxItem">
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ListBoxItem">
+					<Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsSelected" Value="True">
+							<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+						</Trigger>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Opacity" Value="0.5" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<!--  TabControl  -->
 	<!--  This style is making control to fail garbage collection (leak memory)  -->
 	<Style x:Key="TabControl_Default" TargetType="TabControl">
@@ -1749,6 +1795,8 @@
 	<Style BasedOn="{StaticResource Slider_Default}" TargetType="Slider" />
 	<Style BasedOn="{StaticResource ComboBoxItem_Default}" TargetType="ComboBoxItem" />
 	<Style BasedOn="{StaticResource RichTextBox_Default}" TargetType="RichTextBox" />
+	<Style BasedOn="{StaticResource ListBox_Default}" TargetType="ListBox" />
+	<Style BasedOn="{StaticResource ListBoxItem_Default}" TargetType="ListBoxItem" />
 
 	<!--  TabControl_Default style is making control to fail garbage collection (leak memory)  -->
 	<Style BasedOn="{StaticResource TabControl_Default}" TargetType="TabControl" />

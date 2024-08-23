@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
@@ -11,17 +13,20 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// Parent Directory of the file associated with this settings item.
 		/// This represents the actual relative directory path of the file on the file system.
 		/// </summary>
+		[DefaultValue(null)]
 		string Path { get; set; }
 
 		/// <summary>
 		/// File name associated with this settings item.
 		/// This represents the actual name of the file on the file system without extension.
 		/// </summary>
+		[DefaultValue(null)]
 		string Name { get; set; }
 
 		/// <summary>
 		/// Base name of the file without extension, used for internal identification of the file within the settings management context.
 		/// </summary>
+		[DefaultValue(null)]
 		string BaseName { get; set; }
 
 		/// <summary>
@@ -29,6 +34,12 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// This is used for tracking changes to the file over time.
 		/// </summary>
 		DateTime WriteTime { get; set; }
+
+		/// <summary>
+		/// Indicate that item should not be saved into a separate file.
+		/// </summary>
+		[XmlIgnore, DefaultValue(false)]
+		bool IsReadOnlyFile { get; set; }
 
 		/* Example:
  

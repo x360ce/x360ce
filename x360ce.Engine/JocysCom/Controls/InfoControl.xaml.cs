@@ -147,8 +147,9 @@ namespace JocysCom.ClassLibrary.Controls
 			SetBody(image, content, args);
 			var bodyText = BodyLabel.Text;
 			// The average minimal reading speed for adults is 16 characters per second.
+			// Use reading speed for adults as 14 characters per second.
 			// Add 4 extra seconds for realization and focus.
-			var waitSeconds = 4 + bodyText.Length / 16.0;
+			var waitSeconds = 4 + bodyText.Length / 14.0;
 			// Task code which waits for waitSeconds and executes code below.
 			await Task.Delay(TimeSpan.FromSeconds(waitSeconds));
 			if (bodyText == BodyLabel.Text)

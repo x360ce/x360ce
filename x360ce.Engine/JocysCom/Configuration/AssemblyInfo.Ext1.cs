@@ -7,15 +7,6 @@ namespace JocysCom.ClassLibrary.Configuration
 {
 	public partial class AssemblyInfo
 	{
-		public static string ExpandPath(string path)
-		{
-			// Variables are quoted with '%' (percent) sign.
-			path = Environment.ExpandEnvironmentVariables(path);
-			// Variables are quoted with '{' and '}' sign.
-			path = JocysCom.ClassLibrary.Text.Helper.Replace(path, Entry, false);
-			return path;
-		}
-
 		public string AppUserData
 		{
 			get => _AppUserData ?? Entry.GetAppDataPath(true);
@@ -29,6 +20,34 @@ namespace JocysCom.ClassLibrary.Configuration
 			set => _AppCommonData = value;
 		}
 		string _AppCommonData;
+
+		public string ModuleFileName
+		{
+			get => _ModuleFileName ?? System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+			set => _ModuleFileName = value;
+		}
+		string _ModuleFileName;
+
+		public string ModuleDirectory
+			=> string.IsNullOrEmpty(ModuleFileName) ? null : Path.GetDirectoryName(ModuleFileName);
+
+		public string ModuleBaseName
+			=> string.IsNullOrEmpty(ModuleFileName) ? null : Path.GetFileNameWithoutExtension(ModuleFileName);
+
+		public string ModuleBasePath
+			=> string.IsNullOrEmpty(ModuleFileName) ? null : Path.Combine(ModuleDirectory, ModuleBaseName);
+
+
+		#region Parametrize and Expand
+
+		public static string ExpandPath(string path)
+		{
+			// Variables are quoted with '%' (percent) sign.
+			path = Environment.ExpandEnvironmentVariables(path);
+			// Variables are quoted with '{' and '}' sign.
+			path = JocysCom.ClassLibrary.Text.Helper.Replace(path, Entry, false);
+			return path;
+		}
 
 		public static string ParameterizePath(string path, bool useEnvironmentVariables = false)
 		{
@@ -52,6 +71,8 @@ namespace JocysCom.ClassLibrary.Configuration
 			return input;
 		}
 
+
+
 		//public static string GetExpandedPath(string path)
 		//{
 		//	path = ExpandPath(path);
@@ -65,6 +86,8 @@ namespace JocysCom.ClassLibrary.Configuration
 		//	path = ParameterizePath(path);
 		//	return path;
 		//}
+
+		#endregion
 
 	}
 }

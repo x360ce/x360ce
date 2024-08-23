@@ -30,8 +30,7 @@ namespace x360ce.App.DInput
 		//    UserDevice.Device - DirectInput Device (Joystick)
 		//    UserDevice.State - DirectInput Device (JoystickState)
 		//
-		// Process 1
-		// limited to [125, 250, 500, 1000Hz]
+		// Process 1 limited to [125, 250, 500, 1000Hz]
 		// Lock
 		// {
 		//    Acquire:
@@ -42,8 +41,7 @@ namespace x360ce.App.DInput
 		//	  XiStates - from converted DiStates
 		// }
 		//
-		// Process 2
-		// limited to [30Hz] (only when visible).
+		// Process 2 limited to [30Hz] (only when visible).
 		// Lock
 		// {
 		//	  DiDevices, DiCapabilities, DiStates, XiStates
@@ -111,21 +109,6 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		public Exception LastException = null;
-		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			try
-			{
-				//Sets the state of the event to signaled, allowing one or more waiting threads to proceed.
-				_ResetEvent.Set();
-			}
-			catch (Exception ex)
-			{
-				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-				LastException = ex;
-			}
-		}
-
 		/// <summary>
 		/// Method which will create separate thread which will do all DInput and XInput updates.
 		/// This thread will run function which will update BindingList, which will use synchronous Invoke() on main form running on main thread.
@@ -141,6 +124,21 @@ namespace x360ce.App.DInput
 			_Thread = new Thread(_ThreadStart);
 			_Thread.IsBackground = true;
 			_Thread.Start();
+		}
+
+		public Exception LastException = null;
+		private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+		{
+			try
+			{
+				//Sets the state of the event to signaled, allowing one or more waiting threads to proceed.
+				_ResetEvent.Set();
+			}
+			catch (Exception ex)
+			{
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				LastException = ex;
+			}
 		}
 
 		// Suspended is used during re-loading of XInput library.

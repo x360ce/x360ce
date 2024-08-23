@@ -243,9 +243,9 @@
 				<ColumnDefinition Name="RecordClearColumn1" />
 			</Grid.ColumnDefinitions>
 			<StackPanel
-				Margin="1,0,1,0"
 				Name="RCStackPanel"
 				Grid.Column="1"
+				Margin="1,0,1,0"
 				HorizontalAlignment="Left"
 				Background="{StaticResource BackgroundLight}"
 				Orientation="Horizontal">
