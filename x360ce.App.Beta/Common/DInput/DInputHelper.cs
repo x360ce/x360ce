@@ -25,23 +25,23 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		// Where current DInput device state is stored:
+		// Where the current DInput device state is stored:
 		//
 		//    UserDevice.Device - DirectInput Device (Joystick)
 		//    UserDevice.State - DirectInput Device (JoystickState)
 		//
-		// Process 1 limited to [125, 250, 500, 1000Hz]
+		// Process 1 is limited to [125, 250, 500, 1000Hz]
 		// Lock
 		// {
 		//    Acquire:
-		//    DiDevices - when device is detected.
-		//	  DiCapabilities - when device is detected.
+		//    DiDevices - when a device is detected.
+		//	  DiCapabilities - when a device is detected.
 		//	  JoStates - from mapped devices.
 		//	  DiStates - from converted JoStates.
 		//	  XiStates - from converted DiStates
 		// }
 		//
-		// Process 2 limited to [30Hz] (only when visible).
+		// Process 2 is limited to [30Hz] (only when visible).
 		// Lock
 		// {
 		//	  DiDevices, DiCapabilities, DiStates, XiStates
@@ -69,7 +69,7 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>
-		/// _Stopwatch to monitor update frequency.
+		/// _Stopwatch time is used to calculate the actual update frequency in Hz per second.
 		/// </summary>
 		System.Diagnostics.Stopwatch _Stopwatch = new System.Diagnostics.Stopwatch();
 		object timerLock = new object();
@@ -104,17 +104,17 @@ namespace x360ce.App.DInput
 				_Timer.Dispose();
 				_Timer = null;
 				_ResetEvent.Set();
-				// Wait for thread to stop.
+				// Wait for the thread to stop.
 				_Thread.Join();
 			}
 		}
 
 		/// <summary>
-		/// Method which will create separate thread which will do all DInput and XInput updates.
-		/// This thread will run function which will update BindingList, which will use synchronous Invoke() on main form running on main thread.
-		/// It can freeze, because Main thread is not getting attention to process Invoke() (because attention is on this thread)
+		/// Method which will create a separate thread for all DInput and XInput updates.
+		/// This thread will run a function which will update the BindingList, which will use synchronous Invoke() on the main form running on the main thread.
+		/// It can freeze because the main thread is not getting attention to process Invoke() (because attention is on this thread)
 		/// and this thread is frozen because it is waiting for Invoke() to finish.
-		/// Control when event can continue.
+		/// Control when the event can continue.
 		/// </summary>
 		ThreadStart _ThreadStart;
 		Thread _Thread;
@@ -131,7 +131,7 @@ namespace x360ce.App.DInput
 		{
 			try
 			{
-				//Sets the state of the event to signaled, allowing one or more waiting threads to proceed.
+				// Sets the state of the event to signaled, allowing one or more waiting threads to proceed.
 				_ResetEvent.Set();
 			}
 			catch (Exception ex)
@@ -141,15 +141,15 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		// Suspended is used during re-loading of XInput library.
+		// Suspended is used during re-loading of the XInput library.
 		public bool Suspended;
 		void ThreadAction()
 		{
 			Thread.CurrentThread.Name = "RefreshAllThread";
-			// DIrect input device querying and force feedback updated will run on a separate thread from MainForm therefore
-			// separate windows form must be created on the same thread as the process which will access and update device.
+			// DIrect input device querying and force feedback updates will run on a separate thread from MainForm, therefore
+			// a separate windows form must be created on the same thread as the process which will access and update the device.
 			// detector.DetectorForm will be used to acquire devices.
-			// Main job of detector is to fire event on device connection (power on) and removal (power off).
+			// Main job of the detector is to fire an event on device connection (power on) and removal (power off).
 			var manager = new DirectInput();
 			var detector = new DeviceDetector(false);
 			do
@@ -160,7 +160,7 @@ namespace x360ce.App.DInput
 				if (!Suspended)
 					RefreshAll(manager, detector);
 				// Blocks the current thread until the current WaitHandle receives a signal.
-				// Thread will be release by the timer. Do not wait longer than 50ms.
+				// The thread will be released by the timer. Do not wait longer than 50ms.
 				_ResetEvent.WaitOne(50);
 			}
 			// Loop until suspended.
@@ -182,13 +182,13 @@ namespace x360ce.App.DInput
 			lock (DiUpdatesLock)
 			{
 				var game = SettingsManager.CurrentGame;
-				// If game is not selected.
+				// If the game is not selected.
 				if (game != null)
 				{
-					// Note: Getting XInput states are not required in order to do emulation.
-					// Get states only when form is maximized in order to reduce CPU usage.
+					// Note: Getting XInput states is not required in order to do emulation.
+					// Get states only when the form is maximized in order to reduce CPU usage.
 					var getXInputStates = SettingsManager.Options.GetXInputStates && Global._MainWindow.FormEventsEnabled;
-					// Best place to unload XInput DLL is at the start, because
+					// The best place to unload the XInput DLL is at the start, because
 					// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
 					CheckAndUnloadXInputLibrary(game, getXInputStates);
 					// Update information about connected devices.
@@ -201,19 +201,19 @@ namespace x360ce.App.DInput
 					CombineXiStates();
 					// Update virtual devices from combined states.
 					UpdateVirtualDevices(game);
-					// Load XInput library before retrieving XInput states.
+					// Load the XInput library before retrieving XInput states.
 					CheckAndLoadXInputLibrary(game, getXInputStates);
 					// Retrieve XInput states from XInput controllers.
 					RetrieveXiStates(getXInputStates);
 				}
-				// Counts DInput updates per second to show in app's status bar as Hz: #.
+				// Count DInput updates per second to show in the app's status bar as Hz: #.
 				UpdateDelayFrequency();
 				// Fire event.
 				UpdateCompleted?.Invoke(this, new DInputEventArgs());
 			}
 		}
 
-		// Count DInput updates per second to show in app's status bar as Hz: #.
+		// Count DInput updates per second to show in the app's status bar as Hz: #.
 		public event EventHandler<DInputEventArgs> FrequencyUpdated;
 		int executionCount = 0;
 		long lastTime = 0;
@@ -221,7 +221,7 @@ namespace x360ce.App.DInput
 		void UpdateDelayFrequency()
 		{
 			var currentTime = _Stopwatch.ElapsedMilliseconds;
-			// If one second elapsed then...
+			// If one second has elapsed then...
 			if ((currentTime - lastTime) > 1000)
 			{
 				CurrentUpdateFrequency = Interlocked.Exchange(ref executionCount, 0);

@@ -49,9 +49,9 @@ namespace x360ce.App.Controls
                 //    _FrontDisabledImage = ControlsHelper.GetImageSource(frontDisabledImage);
                 //}
                 // Other.
-                markB = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkButton.png", a);
-                markA = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkAxis.png", a);
-                markC = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkController.png", a);
+                //markB = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkButton.png", a);
+                //markA = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkAxis.png", a);
+                //markC = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkController.png", a);
                 //float rH = topDisabledImage.HorizontalResolution;
                 //float rV = topDisabledImage.VerticalResolution;
                 // Make sure resolution is same everywhere so images won'stickRDeadzone be resized.
@@ -66,11 +66,11 @@ namespace x360ce.App.Controls
         public Recorder Recorder;
 
         // Green round button image.
-        public Bitmap markB;
+        // public Bitmap markB;
         // Green cross axis image.
-        public Bitmap markA;
+        // public Bitmap markA;
         // Green round controller/player number image.
-        public Bitmap markC;
+        // public Bitmap markC;
 
         public PadItem_General_XboxImageControl ImageControl;
 
@@ -325,12 +325,12 @@ namespace x360ce.App.Controls
                 RightTriggerAxisStatus = null;
                 ImageControl = null;
                 // Dispose other.
-                markA.Dispose();
-                markB.Dispose();
-                markC.Dispose();
-                markB = null;
-                markA = null;
-                markC = null;
+                // markA.Dispose();
+                // markB.Dispose();
+                // markC.Dispose();
+                // markB = null;
+                // markA = null;
+                // markC = null;
                 Recorder.Dispose();
                 Recorder = null;
                 locations.Clear();

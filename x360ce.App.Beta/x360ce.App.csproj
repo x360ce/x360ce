@@ -1,226 +1,214 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-	  <OutputType>WinExe</OutputType>
-    <AssemblyName>x360ce</AssemblyName>
-    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <ApplicationIcon>app.ico</ApplicationIcon>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>bin\Debug_x86\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\Release_x86\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <OutputPath>bin\Debug_x64\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\Release_x64\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="SharpDX">
-      <HintPath>Resources\SharpDX\SharpDX.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="SharpDX.DirectInput">
-      <HintPath>Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Services" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Controls\JcDataGridView.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog_Mod.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power_Mod.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_G27_Racing_Wheel_USB.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_WingMan_Formula_Force_GP_USB.ini" />
-    <EmbeddedResource Include="Presets\x360ce.SL_6555_SBK.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Philips_Wireless_PC_Controller.ini" />
-    <EmbeddedResource Include="Documents\Help.rtf" />
-    <EmbeddedResource Include="Documents\Help_HidGuardian.rtf" />
-    <EmbeddedResource Include="Documents\Help_ViGEmBus.rtf" />
-    <Resource Include="Images\xboxControllerFront.png" />
-    <Resource Include="Images\xboxControllerTop.png" />
-    <EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
-    <EmbeddedResource Include="Resources\x360ce.Layouts.xml.gz" />
-    <EmbeddedResource Include="Resources\x360ce.Programs.xml.gz" />
-    <EmbeddedResource Include="Resources\ViGEmBus.zip" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Images\MarkButton.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0,KB2468871">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29 and Update for .NET Framework 4 %28KB2468871%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client,KB2468871">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29 and Update for .NET Framework 4 %28KB2468871%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="app.ico" />
-    <EmbeddedResource Include="Resources\DXTweak\DXTweak2.exe" />
-    <EmbeddedResource Include="Resources\ViGEmClient\x64\ViGEmClient.dll" />
-    <EmbeddedResource Include="Resources\ViGEmClient\x86\ViGEmClient.dll" />
-    <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
-    <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
-    <EmbeddedResource Include="Documents\License.txt" />
-    <Content Include="Images\app_48x48.png" />
-    <EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
-    <EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
-    <EmbeddedResource Include="Resources\HidGuardian.zip" />
-    <None Update="Resources\SharpDX\SharpDX.xml">
-      <SubType>Designer</SubType>
-    </None>
-    <Content Include="Images\tip_24x24.png" />
-    <Resource Include="Images\X360Controller.svg" />
-    <Content Include="Presets\ReadMe.txt" />
-    <EmbeddedResource Include="Images\MarkController.png" />
-    <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
-    <Content Include="Documents\x360ce.App.source-Exclude.txt" />
-    <Content Include="Documents\x360ce.App.source-Include.txt" />
-    <EmbeddedResource Include="Images\bullet_square_glass_blue.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_green.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_grey.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_red.png" />
-    <EmbeddedResource Include="Images\bullet_square_glass_yellow.png" />
-    <Content Include="Images\xboxControllerDPad.png" />
-    <Content Include="Images\xboxControllerLeftThumbstick.png" />
-    <Content Include="Images\xboxControllerRightThumbstick.png" />
-    <Content Include="Images\xboxControllerSpriteFont.png" />
-    <EmbeddedResource Include="Images\MarkAxis.png" />
-    <EmbeddedResource Include="Documents\ChangeLog.txt" />
-    <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad_%28Separate_Triggers%29.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_Cordless_RumblePad_2.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Trigger_3_in_1_Rumble_Force.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Controller_%28Xbox_360_Wireless_Receiver_for_Windows%29.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Clear.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_USB.ini" />
-    <EmbeddedResource Include="Presets\x360ce.ini" />
-    <EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_GT_USB.ini" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Controls\LoadingCircle.cs" />
-    <Compile Remove="Controls\LoadingCircle.Designer.cs" />
-    <Compile Remove="Controls\LoadingCircleToolStripMenuItem.cs" />
-  </ItemGroup>
-  <Target Name="PopulateEmbeddedFiles" AfterTargets="BeforeCompile" BeforeTargets="CoreCompile">
-    <ItemGroup>
-      <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
-    </ItemGroup>
-  </Target>
-  <PropertyGroup>
-    <PostBuildEvent>::SET netz=$(SolutionDir)$(ProjectName)\Resources\NetZ\netz.exe
-::if $(ConfigurationName) == Release (
-::if $(PlatformName) == x86 "%25netz%25" -pl x86 -s -so -z "$(TargetPath)"
-::if $(PlatformName) == x64 "%25netz%25" -pl x64 -s -so -z "$(TargetPath)"
-::if $(PlatformName) == AnyCPU "%25netz%25" -s -so -z "$(TargetPath)"
-::)
-::if $(PlatformName) == x86 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin\$(ConfigurationName)"
-::if $(PlatformName) == x64 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin64\$(ConfigurationName)"</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>:: Copy Engine.
-SET src=$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.dll
-echo copy x360ce.Engine.dll to $(ProjectDir)Resources
-copy /y "%25src%25" "$(ProjectDir)Resources"
-::
-:: Copy XML Serializer.
-SET src=$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll
-IF EXIST "%25src%25" (
-echo copy x360ce.Engine.XmlSerializers.dll to $(ProjectDir)Resources
-copy /y "%25src%25" "$(ProjectDir)Resources"
-)
-</PreBuildEvent>
-    <StartupObject>x360ce.App.Program</StartupObject>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<OutputType>WinExe</OutputType>
+		<AssemblyName>x360ce</AssemblyName>
+		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+		<IsWebBootstrapper>false</IsWebBootstrapper>
+		<ApplicationIcon>app.ico</ApplicationIcon>
+		<PublishUrl>publish\</PublishUrl>
+		<Install>true</Install>
+		<InstallFrom>Disk</InstallFrom>
+		<UpdateEnabled>false</UpdateEnabled>
+		<UpdateMode>Foreground</UpdateMode>
+		<UpdateInterval>7</UpdateInterval>
+		<UpdateIntervalUnits>Days</UpdateIntervalUnits>
+		<UpdatePeriodically>false</UpdatePeriodically>
+		<UpdateRequired>false</UpdateRequired>
+		<MapFileExtensions>true</MapFileExtensions>
+		<ApplicationRevision>0</ApplicationRevision>
+		<ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+		<UseApplicationTrust>false</UseApplicationTrust>
+		<BootstrapperEnabled>true</BootstrapperEnabled>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+		<OutputPath>bin\Debug_x86\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<UseVSHostingProcess>true</UseVSHostingProcess>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+		<OutputPath>bin\Release_x86\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<OutputPath>bin\Debug_x64\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<OutputPath>bin\Release_x64\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DebugType>embedded</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="SharpDX">
+			<HintPath>Resources\SharpDX\SharpDX.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="SharpDX.DirectInput">
+			<HintPath>Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="System.configuration" />
+		<Reference Include="System.Configuration.Install" />
+		<Reference Include="System.Data.Entity" />
+		<Reference Include="System.Web" />
+		<Reference Include="System.Web.Services" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Controls\JcDataGridView.cs">
+			<SubType>Component</SubType>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<BootstrapperPackage Include=".NETFramework,Version=v4.0">
+			<Visible>False</Visible>
+			<ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+			<Install>true</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include=".NETFramework,Version=v4.0,KB2468871">
+			<Visible>False</Visible>
+			<ProductName>Microsoft .NET Framework 4 %28x86 and x64%29 and Update for .NET Framework 4 %28KB2468871%29</ProductName>
+			<Install>true</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+			<Visible>False</Visible>
+			<ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+			<Install>true</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client,KB2468871">
+			<Visible>False</Visible>
+			<ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29 and Update for .NET Framework 4 %28KB2468871%29</ProductName>
+			<Install>true</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+			<Visible>False</Visible>
+			<ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+			<Install>false</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+			<Visible>False</Visible>
+			<ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+			<Install>false</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+			<Visible>False</Visible>
+			<ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+			<Install>false</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+			<Visible>False</Visible>
+			<ProductName>.NET Framework 3.5</ProductName>
+			<Install>false</Install>
+		</BootstrapperPackage>
+		<BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+			<Visible>False</Visible>
+			<ProductName>.NET Framework 3.5 SP1</ProductName>
+			<Install>false</Install>
+		</BootstrapperPackage>
+	</ItemGroup>
+	<ItemGroup>
+		<None Update="Resources\SharpDX\SharpDX.xml">
+			<SubType>Designer</SubType>
+		</None>
+		<EmbeddedResource Include="app.ico" />
+		<Content Include="Presets\ReadMe.txt" />
+		
+		<EmbeddedResource Include="Documents\ChangeLog.txt" />		
+		<EmbeddedResource Include="Documents\License.txt" />
+
+		<EmbeddedResource Include="Resources\ViGEmClient\x64\ViGEmClient.dll" />
+		<EmbeddedResource Include="Resources\ViGEmClient\x86\ViGEmClient.dll" />
+		<EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
+		<EmbeddedResource Include="Resources\x360ce.Engine.dll" />
+		<EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
+		<EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
+
+		<EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog_Mod.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Power_Mod.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Trigger_3_in_1_Rumble_Force.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Logitech_G27_Racing_Wheel_USB.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Logitech_WingMan_Formula_Force_GP_USB.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_USB.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Logitech_Driving_Force_GT_USB.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Logitech_Cordless_RumblePad_2.ini" />
+		<EmbeddedResource Include="Presets\x360ce.SL_6555_SBK.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Philips_Wireless_PC_Controller.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Saitek_Cyborg_Rumble_Pad_%28Separate_Triggers%29.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Controller_%28Xbox_360_Wireless_Receiver_for_Windows%29.ini" />
+		<EmbeddedResource Include="Presets\x360ce.Clear.ini" />
+		<EmbeddedResource Include="Presets\x360ce.ini" />
+		
+		<EmbeddedResource Include="Documents\Help.rtf" />
+		<EmbeddedResource Include="Documents\Help_HidGuardian.rtf" />
+		<EmbeddedResource Include="Documents\Help_ViGEmBus.rtf" />
+
+		<EmbeddedResource Include="Resources\x360ce_Games.xml.gz" />
+		<EmbeddedResource Include="Resources\x360ce.Layouts.xml.gz" />
+		<EmbeddedResource Include="Resources\x360ce.Programs.xml.gz" />
+		
+		<EmbeddedResource Include="Resources\ViGEmBus.zip" />
+		<EmbeddedResource Include="Resources\HidGuardian.zip" />
+
+		<EmbeddedResource Include="Resources\DXTweak\DXTweak2.exe" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Controls\LoadingCircle.cs" />
+		<Compile Remove="Controls\LoadingCircle.Designer.cs" />
+		<Compile Remove="Controls\LoadingCircleToolStripMenuItem.cs" />
+	</ItemGroup>
+	<Target Name="PopulateEmbeddedFiles" AfterTargets="BeforeCompile" BeforeTargets="CoreCompile">
+		<ItemGroup>
+			<EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
+		</ItemGroup>
+	</Target>
+	<PropertyGroup>
+		<PostBuildEvent>
+			::SET netz=$(SolutionDir)$(ProjectName)\Resources\NetZ\netz.exe
+			::if $(ConfigurationName) == Release (
+			::if $(PlatformName) == x86 "%25netz%25" -pl x86 -s -so -z "$(TargetPath)"
+			::if $(PlatformName) == x64 "%25netz%25" -pl x64 -s -so -z "$(TargetPath)"
+			::if $(PlatformName) == AnyCPU "%25netz%25" -s -so -z "$(TargetPath)"
+			::)
+			::if $(PlatformName) == x86 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin\$(ConfigurationName)"
+			::if $(PlatformName) == x64 COPY /Y "$(TargetPath)" "$(SolutionDir)x360ce\x360ce\bin64\$(ConfigurationName)"
+		</PostBuildEvent>
+	</PropertyGroup>
+	<PropertyGroup>
+		<PreBuildEvent>
+			:: Copy Engine.
+			SET src=$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.dll
+			echo copy x360ce.Engine.dll to $(ProjectDir)Resources
+			copy /y "%25src%25" "$(ProjectDir)Resources"
+			::
+			:: Copy XML Serializer.
+			SET src=$(SolutionDir)x360ce.Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll
+			IF EXIST "%25src%25" (
+			echo copy x360ce.Engine.XmlSerializers.dll to $(ProjectDir)Resources
+			copy /y "%25src%25" "$(ProjectDir)Resources"
+			)
+		</PreBuildEvent>
+		<StartupObject>x360ce.App.Program</StartupObject>
+	</PropertyGroup>
 </Project>

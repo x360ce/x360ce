@@ -3,6 +3,7 @@ using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
@@ -17,7 +18,7 @@ namespace x360ce.App.DInput
 
 		#endregion
 
-		public int RefreshDevicesCount;
+		public int RefreshDevicesCount = 0;
 
 		void UpdateDiDevices(DirectInput manager)
 		{
@@ -25,33 +26,28 @@ namespace x360ce.App.DInput
 				return;
 			UpdateDevicesPending = false;
 			// Make sure that interface handle is created, before starting device updates.
-			UserDevice[] deleteDevices;
 			// Add connected devices.
 			var insertDevices = new List<UserDevice>();
+
 			// List of connected devices (can be a very long operation).
-			var devices = new List<DeviceInstance>();
-			// Controllers.
-			var controllerInstances = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
-			foreach (var item in controllerInstances)
-				devices.Add(item);
-			// Pointers.
-			var pointerInstances = manager.GetDevices(DeviceClass.Pointer, DeviceEnumerationFlags.AllDevices).ToList();
-			foreach (var item in pointerInstances)
-				devices.Add(item);
-			// Keyboards.
-			var keyboardInstances = manager.GetDevices(DeviceClass.Keyboard, DeviceEnumerationFlags.AllDevices).ToList();
-			foreach (var item in keyboardInstances)
-				devices.Add(item);
+			var connectedDevices = new List<DeviceInstance>();
+			foreach (var deviceClass in new[] { DeviceClass.GameControl, DeviceClass.Pointer, DeviceClass.Keyboard })
+			{
+				var instances = manager.GetDevices(deviceClass, DeviceEnumerationFlags.AllDevices).ToList();
+				connectedDevices.AddRange(instances);
+			}
+
 			if (Program.IsClosing)
 				return;
-			// List of connected devices.
-			var deviceInstanceGuid = devices.Select(x => x.InstanceGuid).ToList();
-			// List of current devices.
-			var uds = SettingsManager.UserDevices.ItemsToArraySynchronized();
-			var currentInstanceGuids = uds.Select(x => x.InstanceGuid).ToArray();
-			deleteDevices = uds.Where(x => !deviceInstanceGuid.Contains(x.InstanceGuid)).ToArray();
-			var addedDevices = devices.Where(x => !currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
-			var updatedDevices = devices.Where(x => currentInstanceGuids.Contains(x.InstanceGuid)).ToArray();
+			// Update listed devices.
+			var listedDevices = SettingsManager.UserDevices.ItemsToArraySynchronized();
+			var listedInstanceGuids = listedDevices.Select(x => x.InstanceGuid).ToArray();
+			var connectedInstanceGuids = connectedDevices.Select(x => x.InstanceGuid).ToArray();
+			// Group devices into (removed, added, updated) categories.
+			var removedDevices = listedDevices.Where(x => !connectedInstanceGuids.Contains(x.InstanceGuid)).ToArray();
+			var addedDevices = connectedDevices.Where(x => !listedInstanceGuids.Contains(x.InstanceGuid)).ToArray();
+			var updatedDevices = connectedDevices.Where(x => listedInstanceGuids.Contains(x.InstanceGuid)).ToArray();
+
 			// Must find better way to find Device than by Vendor ID and Product ID.
 			DeviceInfo[] devInfos = null;
 			DeviceInfo[] intInfos = null;
@@ -97,7 +93,7 @@ namespace x360ce.App.DInput
 			for (int i = 0; i < updatedDevices.Length; i++)
 			{
 				var device = updatedDevices[i];
-				var ud = uds.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
+				var ud = listedDevices.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
 				DeviceInfo hid;
 				// Will refresh device and Fill more values with new x360ce app if available.
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
@@ -105,10 +101,10 @@ namespace x360ce.App.DInput
 			if (Program.IsClosing)
 				return;
 			// Remove disconnected devices.
-			for (int i = 0; i < deleteDevices.Length; i++)
+			for (int i = 0; i < removedDevices.Length; i++)
 			{
 				lock (SettingsManager.UserDevices.SyncRoot)
-					deleteDevices[i].IsOnline = false;
+					removedDevices[i].IsOnline = false;
 			}
 			for (int i = 0; i < insertDevices.Count; i++)
 			{
@@ -118,7 +114,7 @@ namespace x360ce.App.DInput
 			}
 			// Enable Test instances.
 			TestDeviceHelper.EnableTestInstances();
-			RefreshDevicesCount++;
+			Interlocked.Increment(ref RefreshDevicesCount);
 			var ev = DevicesUpdated;
 			if (ev != null)
 				ev(this, new DInputEventArgs());
