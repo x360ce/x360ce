@@ -10,12 +10,9 @@ namespace x360ce.App.DInput
 {
 	public partial class DInputHelper
 	{
-
 		#region ■ Device Detector
-
 		// True, update device list as soon as possible.
 		public bool UpdateDevicesEnabled = true;
-
 		#endregion
 
 		public int RefreshDevicesCount = 0;
@@ -25,28 +22,28 @@ namespace x360ce.App.DInput
 			if (!UpdateDevicesPending)
 				return;
 			UpdateDevicesPending = false;
-			// Make sure that interface handle is created, before starting device updates.
-			// Add connected devices.
-			var insertDevices = new List<UserDevice>();
 
-			// List of connected devices (can be a very long operation).
+			// Make sure that interface handle is created, before starting device updates.
+
+			// Get connected devices (can be a very long operation).
 			var connectedDevices = new List<DeviceInstance>();
 			foreach (var deviceClass in new[] { DeviceClass.GameControl, DeviceClass.Pointer, DeviceClass.Keyboard })
 			{
 				var instances = manager.GetDevices(deviceClass, DeviceEnumerationFlags.AllDevices).ToList();
 				connectedDevices.AddRange(instances);
 			}
+			var connectedInstanceGuids = connectedDevices.Select(x => x.InstanceGuid).ToArray();
 
 			if (Program.IsClosing)
 				return;
-			// Update listed devices.
+
+			// Get listed devices.
 			var listedDevices = SettingsManager.UserDevices.ItemsToArraySynchronized();
 			var listedInstanceGuids = listedDevices.Select(x => x.InstanceGuid).ToArray();
-			var connectedInstanceGuids = connectedDevices.Select(x => x.InstanceGuid).ToArray();
-			// Group devices into (removed, added, updated) categories.
-			var removedDevices = listedDevices.Where(x => !connectedInstanceGuids.Contains(x.InstanceGuid)).ToArray();
+			// Group devices into categories (removed, added, updated) using GUIDs of connected and listed devices.
 			var addedDevices = connectedDevices.Where(x => !listedInstanceGuids.Contains(x.InstanceGuid)).ToArray();
 			var updatedDevices = connectedDevices.Where(x => listedInstanceGuids.Contains(x.InstanceGuid)).ToArray();
+			var removedDevices = listedDevices.Where(x => !connectedInstanceGuids.Contains(x.InstanceGuid)).ToArray();
 
 			// Must find better way to find Device than by Vendor ID and Product ID.
 			DeviceInfo[] devInfos = null;
@@ -54,19 +51,22 @@ namespace x360ce.App.DInput
 			if (addedDevices.Length > 0 || updatedDevices.Length > 0)
 			{
 				devInfos = DeviceDetector.GetDevices();
-				//var classes = devInfos.Select(x=>x.ClassDescription).Distinct().ToArray();
 				intInfos = DeviceDetector.GetInterfaces();
+				//var classes = devInfos.Select(x=>x.ClassDescription).Distinct().ToArray();
 				//var intclasses = intInfos.Select(x => x.ClassDescription).Distinct().ToArray();
 			}
 			//Joystick    = new Guid("6f1d2b70-d5a0-11cf-bfc7-444553540000");
 			//SysMouse    = new Guid("6f1d2b60-d5a0-11cf-bfc7-444553540000");
 			//SysKeyboard = new Guid("6f1d2b61-d5a0-11cf-bfc7-444553540000");
-			for (int i = 0; i < addedDevices.Length; i++)
+
+			// Added devices.
+			var insertDevices = new List<UserDevice>();
+			foreach (var device in addedDevices)
 			{
-				var device = addedDevices[i];
 				var ud = new UserDevice();
 				DeviceInfo hid;
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
+
 				var isVirtual = false;
 				if (hid != null)
 				{
@@ -85,39 +85,43 @@ namespace x360ce.App.DInput
 				}
 				if (!isVirtual)
 					insertDevices.Add(ud);
+			}		
+			// Insert devices.
+			foreach (var device in insertDevices)
+			{
+				lock (SettingsManager.UserDevices.SyncRoot)
+					SettingsManager.UserDevices.Items.Add(device);
 			}
+
 			//if (insertDevices.Count > 0)
 			//{
 			//	CloudPanel.Add(CloudAction.Insert, insertDevices.ToArray(), true);
 			//}
-			for (int i = 0; i < updatedDevices.Length; i++)
+
+			// Updated devices.
+			foreach (var device in updatedDevices)
 			{
-				var device = updatedDevices[i];
 				var ud = listedDevices.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
 				DeviceInfo hid;
 				// Will refresh device and Fill more values with new x360ce app if available.
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
 			}
+
 			if (Program.IsClosing)
 				return;
-			// Remove disconnected devices.
-			for (int i = 0; i < removedDevices.Length; i++)
+
+			// Removed devices.
+			foreach (var device in removedDevices)
 			{
 				lock (SettingsManager.UserDevices.SyncRoot)
-					removedDevices[i].IsOnline = false;
+					device.IsOnline = false;
 			}
-			for (int i = 0; i < insertDevices.Count; i++)
-			{
-				var ud = insertDevices[i];
-				lock (SettingsManager.UserDevices.SyncRoot)
-					SettingsManager.UserDevices.Items.Add(ud);
-			}
+
 			// Enable Test instances.
 			TestDeviceHelper.EnableTestInstances();
 			Interlocked.Increment(ref RefreshDevicesCount);
-			var ev = DevicesUpdated;
-			if (ev != null)
-				ev(this, new DInputEventArgs());
+			DevicesUpdated?.Invoke(this, new DInputEventArgs());
+
 			//	var game = CurrentGame;
 			//	if (game != null)
 			//	{
@@ -171,8 +175,9 @@ namespace x360ce.App.DInput
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
 				ud.LoadDevDeviceInfo(dev);
-				if (dev != null)
-					ud.ConnectionClass = DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
+				ud.ConnectionClass = dev is null
+					? Guid.Empty
+					: DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
 			}
 			// InterfacePath is available for HID devices.
 			if (instance.IsHumanInterfaceDevice && ud.Device != null)
@@ -184,8 +189,9 @@ namespace x360ce.App.DInput
 				lock (SettingsManager.UserDevices.SyncRoot)
 				{
 					ud.LoadHidDeviceInfo(hid);
-					if (hid != null)
-						ud.ConnectionClass = DeviceDetector.GetConnectionDevice(hid, allDevices)?.ClassGuid ?? Guid.Empty;
+					ud.ConnectionClass = dev is null
+						? Guid.Empty
+						: DeviceDetector.GetConnectionDevice(hid, allDevices)?.ClassGuid ?? Guid.Empty;
 					// Workaround: 
 					// Override Device values and description from the Interface, 
 					// because it is more accurate and present.
