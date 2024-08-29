@@ -17,12 +17,12 @@
 				<ResourceDictionary>
 					<!--  Drag and Drop menu GroupBox  -->
 					<Style x:Key="DragAndDropGroupBox" BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
-						<Setter Property="Margin" Value="0" />
+						<Setter Property="Margin" Value="0,-1,0,0" />
 						<Setter Property="Padding" Value="5,0,2,3" />
 					</Style>
 					<!--  Drag and Drop menu Input Label  -->
 					<Style x:Key="DragAndDropDInputBorder" TargetType="Border">
-						<Setter Property="Margin" Value="3" />
+						<Setter Property="Margin" Value="3,3,3,0" />
 						<Setter Property="VerticalAlignment" Value="Top" />
 						<Setter Property="IsHitTestVisible" Value="False" />
 						<Setter Property="CornerRadius" Value="5" />
