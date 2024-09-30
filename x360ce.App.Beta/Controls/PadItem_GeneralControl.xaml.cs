@@ -1,18 +1,13 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
-using System;
 using System.Collections.Generic;
-using System.Data.Objects;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Converters;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Shapes;
-using System.Xml;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -37,11 +32,11 @@ namespace x360ce.App.Controls
 			if (_padSetting != null)
 				_padSetting.PropertyChanged -= _padSetting_PropertyChanged;
 			// Unbind controls.
-			SettingsManager.UnLoadMonitor(TriggerLeftTextBox);
-			SettingsManager.UnLoadMonitor(TriggerRightTextBox);
+			SettingsManager.UnLoadMonitor(TriggerLTextBox);
+			SettingsManager.UnLoadMonitor(TriggerRTextBox);
 
-			SettingsManager.UnLoadMonitor(BumperLeftTextBox);
-			SettingsManager.UnLoadMonitor(BumperRightTextBox);
+			SettingsManager.UnLoadMonitor(BumperLTextBox);
+			SettingsManager.UnLoadMonitor(BumperRTextBox);
 
 			SettingsManager.UnLoadMonitor(MenuBackTextBox);
 			SettingsManager.UnLoadMonitor(MenuStartTextBox);
@@ -58,31 +53,31 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(DPadRightTextBox);
 			SettingsManager.UnLoadMonitor(DPadDownTextBox);
 
-			SettingsManager.UnLoadMonitor(StickLeftButtonTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftXTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftYTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftUpTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftLeftTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftRightTextBox);
-			SettingsManager.UnLoadMonitor(StickLeftDownTextBox);
+			SettingsManager.UnLoadMonitor(StickLButtonTextBox);
+			SettingsManager.UnLoadMonitor(StickLAxisXTextBox);
+			SettingsManager.UnLoadMonitor(StickLAxisYTextBox);
+			SettingsManager.UnLoadMonitor(StickLUpTextBox);
+			SettingsManager.UnLoadMonitor(StickLLeftTextBox);
+			SettingsManager.UnLoadMonitor(StickLRightTextBox);
+			SettingsManager.UnLoadMonitor(StickLDownTextBox);
 
-			SettingsManager.UnLoadMonitor(StickRightButtonTextBox);
-			SettingsManager.UnLoadMonitor(StickRightXTextBox);
-			SettingsManager.UnLoadMonitor(StickRightYTextBox);
-			SettingsManager.UnLoadMonitor(StickRightUpTextBox);
-			SettingsManager.UnLoadMonitor(StickRightLeftTextBox);
-			SettingsManager.UnLoadMonitor(StickRightRightTextBox);
-			SettingsManager.UnLoadMonitor(StickRightDownTextBox);
+			SettingsManager.UnLoadMonitor(StickRButtonTextBox);
+			SettingsManager.UnLoadMonitor(StickRAxisXTextBox);
+			SettingsManager.UnLoadMonitor(StickRAxisYTextBox);
+			SettingsManager.UnLoadMonitor(StickRUpTextBox);
+			SettingsManager.UnLoadMonitor(StickRLeftTextBox);
+			SettingsManager.UnLoadMonitor(StickRRightTextBox);
+			SettingsManager.UnLoadMonitor(StickRDownTextBox);
 			if (ps == null)
 				return;
 			_padSetting = ps;
 			var converter = new Converters.PaddSettingToText();
 			// Bind controls.
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftTrigger), TriggerLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightTrigger), TriggerRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftTrigger), TriggerLTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightTrigger), TriggerRTextBox, null, converter);
 
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftShoulder), BumperLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightShoulder), BumperRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftShoulder), BumperLTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightShoulder), BumperRTextBox, null, converter);
 
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonBack), MenuBackTextBox, null, converter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonStart), MenuStartTextBox, null, converter);
@@ -99,21 +94,22 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadRight), DPadRightTextBox, null, converter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadDown), DPadDownTextBox, null, converter);
 
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbButton), StickLeftButtonTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisX), StickLeftXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisY), StickLeftYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbUp), StickLeftUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbLeft), StickLeftLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbRight), StickLeftRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbDown), StickLeftDownTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbButton), StickLButtonTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisX), StickLAxisXTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisY), StickLAxisYTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbUp), StickLUpTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbLeft), StickLLeftTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbRight), StickLRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbDown), StickLDownTextBox, null, converter);
 
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbButton), StickRightButtonTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisX), StickRightXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisY), StickRightYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbUp), StickRightUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbLeft), StickRightLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), StickRightRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), StickRightDownTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbButton), StickRButtonTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisX), StickRAxisXTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisY), StickRAxisYTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbUp), StickRUpTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbLeft), StickRLeftTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), StickRRightTextBox, null, converter);
+			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), StickRDownTextBox, null, converter);
+
 			_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 		}
 
@@ -128,11 +124,11 @@ namespace x360ce.App.Controls
 			if (item == null)
 				return;
 			// Triggers.
-			TriggerLeftLabel.Content = item.LeftTrigger;
-			TriggerRightLabel.Content = item.RightTrigger;
+			TriggerLLabel.Content = item.LeftTrigger;
+			TriggerRLabel.Content = item.RightTrigger;
 			// Bumpers.
-			BumperLeftLabel.Content = item.LeftShoulder;
-			BumperRightLabel.Content = item.RightShoulder;
+			BumperLLabel.Content = item.LeftShoulder;
+			BumperRLabel.Content = item.RightShoulder;
 			// Menu.
 			MenuBackLabel.Content = item.ButtonBack;
 			MenuGuideLabel.Content = item.ButtonGuide;
@@ -149,21 +145,21 @@ namespace x360ce.App.Controls
 			DPadRightLabel.Content = item.DPadRight;
 			DPadUpLabel.Content = item.DPadUp;
 			// Stick Left.
-			StickLeftButtonLabel.Content = item.LeftThumbButton;
-			StickLeftXLabel.Content = item.LeftThumbAxisX;
-			StickLeftYLabel.Content = item.LeftThumbAxisY;
-			StickLeftDownLabel.Content = item.LeftThumbDown;
-			StickLeftLeftLabel.Content = item.LeftThumbLeft;
-			StickLeftRightLabel.Content = item.LeftThumbRight;
-			StickLeftUpLabel.Content = item.LeftThumbUp;
+			StickLButtonLabel.Content = item.LeftThumbButton;
+			StickLAxisXLabel.Content = item.LeftThumbAxisX;
+			StickLAxisYLabel.Content = item.LeftThumbAxisY;
+			StickLDownLabel.Content = item.LeftThumbDown;
+			StickLLeftLabel.Content = item.LeftThumbLeft;
+			StickLRightLabel.Content = item.LeftThumbRight;
+			StickLUpLabel.Content = item.LeftThumbUp;
 			// Stick Right.
-			StickRightButtonLabel.Content = item.RightThumbButton;
-			StickRightXLabel.Content = item.RightThumbAxisX;
-			StickRightYLabel.Content = item.RightThumbAxisY;
-			StickRightDownLabel.Content = item.RightThumbDown;
-			StickRightLeftLabel.Content = item.RightThumbLeft;
-			StickRightRightLabel.Content = item.RightThumbRight;
-			StickRightUpLabel.Content = item.RightThumbUp;
+			StickRButtonLabel.Content = item.RightThumbButton;
+			StickRAxisXLabel.Content = item.RightThumbAxisX;
+			StickRAxisYLabel.Content = item.RightThumbAxisY;
+			StickRDownLabel.Content = item.RightThumbDown;
+			StickRLeftLabel.Content = item.RightThumbLeft;
+			StickRRightLabel.Content = item.RightThumbRight;
+			StickRUpLabel.Content = item.RightThumbUp;
 		}
 
 		#region Drag and Drop Menu
@@ -210,18 +206,14 @@ namespace x360ce.App.Controls
 		List<Label> IButtonList = new List<Label>();
 
 		List<Label> AxisList = new List<Label>();
-		List<Label> HAxisList = new List<Label>();
-		List<Label> FAxisList = new List<Label>();
 		List<Label> IAxisList = new List<Label>();
+		List<Label> HAxisList = new List<Label>();
 		List<Label> IHAxisList = new List<Label>();
-		List<Label> IFAxisList = new List<Label>();
 
 		List<Label> SliderList = new List<Label>();
-		List<Label> HSliderList = new List<Label>();
-		List<Label> FSliderList = new List<Label>();
 		List<Label> ISliderList = new List<Label>();
+		List<Label> HSliderList = new List<Label>();
 		List<Label> IHSliderList = new List<Label>();
-		List<Label> IFSliderList = new List<Label>();
 
 		List<Label> POVList = new List<Label>();
 		List<Label> IPOVList = new List<Label>();
@@ -315,18 +307,14 @@ namespace x360ce.App.Controls
 				IPOVButtonList.Clear();
 				// Axes.
 				AxisList.Clear();
-				HAxisList.Clear();
-				FAxisList.Clear();
 				IAxisList.Clear();
+				HAxisList.Clear();
 				IHAxisList.Clear();
-				IFAxisList.Clear();
 				// Sliders.
 				SliderList.Clear();
 				HSliderList.Clear();
-				FSliderList.Clear();
 				ISliderList.Clear();
 				IHSliderList.Clear();
-				IFSliderList.Clear();
 
 				// Create button, POV, stick axis, slider axis bool lists (true = exists).
 				for (int i = 0; i < ud.CapButtonCount; i++) { ButtonStateList.Add(true); }
@@ -356,21 +344,33 @@ namespace x360ce.App.Controls
 				if (stickAxes > 0)
 				{
 					DragAndDropMenuLabels_Create(StickAxisStateList, AxisList, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(StickAxisStateList, HAxisList, "HAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
-					DragAndDropMenuLabels_Create(StickAxisStateList, FAxisList, "FAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
 					DragAndDropMenuLabels_Create(StickAxisStateList, IAxisList, "IAxis", "AXIS", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(StickAxisStateList, IHAxisList, "IHAxis", "AXIS · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
-					DragAndDropMenuLabels_Create(StickAxisStateList, IFAxisList, "IFAxis", "AXIS · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+					DragAndDropMenuLabels_Create(StickAxisStateList, HAxisList, "HAxis", "AXIS · HALF", "Icon_DragAndDrop_Axis_Half");
+					DragAndDropMenuLabels_Create(StickAxisStateList, IHAxisList, "IHAxis", "AXIS · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 				}
 				if (sliderAxes > 0)
 				{
 					DragAndDropMenuLabels_Create(SliderAxisStateList, SliderList, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, HSliderList, "HSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, FSliderList, "FSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half");
 					DragAndDropMenuLabels_Create(SliderAxisStateList, ISliderList, "ISlider", "SLIDER", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, IHSliderList, "IHSlider", "SLIDER · HALF TO FULL", "Icon_DragAndDrop_Axis_Half_to_Full_Inverted");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, IFSliderList, "IFSlider", "SLIDER · FULL TO HALF", "Icon_DragAndDrop_Axis_Full_to_Half_Inverted");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, HSliderList, "HSlider", "SLIDER · HALF", "Icon_DragAndDrop_Axis_Half");
+					DragAndDropMenuLabels_Create(SliderAxisStateList, IHSliderList, "IHSlider", "SLIDER · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 				}
+			}
+		}
+
+		private void SetDInputLabelContent(UserDevice ud, TargetType targetType, Label label)
+		{
+			Map map = _padSetting.Maps.FirstOrDefault(x => x.Target == targetType);
+			if (map == null || map.Index <= 0) return;
+
+			var customDiState = GetCustomDiState(ud);
+			var i = map.Index - 1;
+
+			if (map.Index <= ud.DiState.Axis.Length)
+			{
+				if (map.IsAxis || map.IsHalf || map.IsInverted) label.Content = customDiState.Axis[i];
+				else if (map.IsButton) label.Content = customDiState.Buttons[i] ? 1 : 0;
+				else if (map.IsSlider) label.Content = customDiState.Sliders[i];
 			}
 		}
 
@@ -379,17 +379,36 @@ namespace x360ce.App.Controls
 		{
 			var customDiState = GetCustomDiState(ud);
 			if (customDiState == null) return;
+			// Deadzone for Drag and Drop Background color change.
+			var DragAndDropAxisDeadzone = 8000;
+			var DragAndDropSliderDeadzone = 16000;
+
+			// Trigger.
+			SetDInputLabelContent(ud, TargetType.LeftTrigger, TriggerLDInputLabel);
+			SetDInputLabelContent(ud, TargetType.RightTrigger, TriggerRDInputLabel);
+			TriggerLDeadzoneLabel.Content = _padSetting.LeftTriggerDeadZone;
+			TriggerRDeadzoneLabel.Content = _padSetting.RightTriggerDeadZone;
+			// Stick Left.
+			SetDInputLabelContent(ud, TargetType.LeftThumbX, StickLAxisXDInputLabel);
+			SetDInputLabelContent(ud, TargetType.LeftThumbY, StickLAxisYDInputLabel);
+			StickLDeadzoneXLabel.Content = _padSetting.LeftThumbDeadZoneX;
+			StickLDeadzoneYLabel.Content = _padSetting.LeftThumbDeadZoneY;
+			// Stick Right.
+			SetDInputLabelContent(ud, TargetType.RightThumbX, StickRAxisXDInputLabel);
+			SetDInputLabelContent(ud, TargetType.RightThumbY, StickRAxisYDInputLabel);
+			StickRDeadzoneXLabel.Content = _padSetting.RightThumbDeadZoneX;
+			StickRDeadzoneYLabel.Content = _padSetting.RightThumbDeadZoneY;
 
 			// Buttons.
 			if (buttons > 0)
 			{
 				for (int i = 0; i < buttons; i++)
 				{
-					bool buttonState = customDiState.Buttons[i];
-					ButtonList[i].Background = buttonState ? colorActive : Brushes.Transparent;
-					IButtonList[i].Background = !buttonState ? colorActive : Brushes.Transparent;
-					ButtonList[i].ToolTip = buttonState.ToString();
-					IButtonList[i].ToolTip = (!buttonState).ToString();
+					var bDS = customDiState.Buttons[i];
+					ButtonList[i].ToolTip =
+					IButtonList[i].ToolTip = bDS.ToString();
+					ButtonList[i].Background = bDS ? colorActive : Brushes.Transparent;
+					IButtonList[i].Background = bDS ? Brushes.Transparent : colorActive;
 				}
 			}
 			// POVs.
@@ -398,43 +417,33 @@ namespace x360ce.App.Controls
 				var povButtonValues = new[] { 0, 9000, 18000, 27000, 0, 9000, 18000, 27000 };
 				for (int i = 0; i < povs; i++)
 				{
-					var povState = customDiState.POVs[i];
-					POVList[i].Background = povState > -1 ? colorActive : Brushes.Transparent;
-					POVList[i].ToolTip = povState;
+					var pDS = customDiState.POVs[i];
+					POVList[i].Background = pDS > -1 ? colorActive : Brushes.Transparent;
+					POVList[i].ToolTip = pDS;
 					// Up, Right, Down, Left.
 					for (int b = 0; b < povs * 4 && b < povButtonValues.Length; b++)
 					{
-						POVButtonList[b].Background = povState == povButtonValues[b] ? colorActive : Brushes.Transparent;
-						POVButtonList[b].ToolTip = povState == povButtonValues[b] ? povState : -1;
+						POVButtonList[b].Background = pDS == povButtonValues[b] ? colorActive : Brushes.Transparent;
+						POVButtonList[b].ToolTip = pDS == povButtonValues[b] ? pDS : -1;
 					}
 				}
 			}
 			// Stick axes.
 			if (stickAxes > 0)
 			{
-				StickRightDeadzoneLabel.Content = Gamepad.RightThumbDeadZone;
-				StickLeftDeadzoneLabel.Content = Gamepad.LeftThumbDeadZone;
-				TriggerRightDeadzoneLabel.Content = Gamepad.TriggerThreshold;
-				TriggerLeftDeadzoneLabel.Content = Gamepad.TriggerThreshold;
-
 				for (int i = 0; i < customDiState.Axis.Count(); i++)
 				{
-					var axisState = customDiState.Axis[i];
+					var aDSValue = customDiState.Axis[i];
+					// Background.
 					AxisList[i].Background =
-					HAxisList[i].Background =
-					FAxisList[i].Background =
+					HAxisList[i].Background = aDSValue < 32767 - DragAndDropAxisDeadzone || aDSValue > 32767 + DragAndDropAxisDeadzone ? colorActive : Brushes.Transparent;
 					IAxisList[i].Background =
-					IHAxisList[i].Background =
-					IFAxisList[i].Background = axisState < 32767 - Gamepad.LeftThumbDeadZone || axisState > 32767 + Gamepad.LeftThumbDeadZone ? colorActive : Brushes.Transparent;
-					AxisList[i].ToolTip = axisState;
-					IAxisList[i].ToolTip = Math.Abs(axisState - 65535);
-					HAxisList[i].ToolTip = Math.Abs((axisState - 32767) * 2);
-					FAxisList[i].ToolTip = Math.Round(axisState / 2.0);
-					IHAxisList[i].ToolTip = Math.Abs(Math.Abs((axisState - 32767) * 2) - 65535);
-					IFAxisList[i].ToolTip = Math.Abs(Math.Round(axisState / 2.0) - 32767);
-
-					// Trigger Left test.
-					if (i == 2) LeftTextBox2.Content = Math.Abs((customDiState.Axis[2] - 32767) * 2);
+					IHAxisList[i].Background = aDSValue < 32767 - DragAndDropAxisDeadzone || aDSValue > 32767 + DragAndDropAxisDeadzone ? Brushes.Transparent : colorActive;
+					// Tooltip.
+					AxisList[i].ToolTip =
+					IAxisList[i].ToolTip =
+					HAxisList[i].ToolTip =
+					IHAxisList[i].ToolTip = aDSValue;
 				}
 			}
 			// Slider axes.
@@ -442,30 +451,25 @@ namespace x360ce.App.Controls
 			{
 				for (int i = 0; i < customDiState.Sliders.Count(); i++)
 				{
-					var sliderState = customDiState.Sliders[i];
-					SliderList[i].Background =
-					HSliderList[i].Background =
-					FSliderList[i].Background =
-					ISliderList[i].Background =
-					IHSliderList[i].Background =
-					IFSliderList[i].Background = sliderState > Gamepad.LeftThumbDeadZone ? colorActive : Brushes.Transparent;
-
-					if (sliderState > 0)
+					var sDS = customDiState.Sliders[i];
+					if (sDS > 0)
 					{
-						SliderList[i].Visibility = Visibility.Visible;
-						HSliderList[i].Visibility = Visibility.Visible;
-						FSliderList[i].Visibility = Visibility.Visible;
-						ISliderList[i].Visibility = Visibility.Visible;
+						// Visibility.
+						SliderList[i].Visibility = 
+						HSliderList[i].Visibility = 
+						ISliderList[i].Visibility = 
 						IHSliderList[i].Visibility = Visibility.Visible;
-						IFSliderList[i].Visibility = Visibility.Visible;
+						// Background.
+						SliderList[i].Background =
+						HSliderList[i].Background = sDS > DragAndDropSliderDeadzone ? colorActive : Brushes.Transparent;
+						ISliderList[i].Background =
+						IHSliderList[i].Background = sDS > DragAndDropSliderDeadzone ? Brushes.Transparent : colorActive;
+						// Tooltip.
+						SliderList[i].ToolTip =
+						ISliderList[i].ToolTip =
+						HSliderList[i].ToolTip =
+						IHSliderList[i].ToolTip = sDS;
 					}
-
-					SliderList[i].ToolTip = sliderState;
-					ISliderList[i].ToolTip = Math.Abs(sliderState - 65535);
-					HSliderList[i].ToolTip = Math.Abs((sliderState - 32767) * 2);
-					FSliderList[i].ToolTip = Math.Round(sliderState / 2.0);
-					IHSliderList[i].ToolTip = Math.Abs(Math.Abs((sliderState - 32767) * 2) - 65535);
-					IFSliderList[i].ToolTip = Math.Abs(Math.Round(sliderState / 2.0) - 32767);
 				}
 			}
 		}
@@ -521,7 +525,7 @@ namespace x360ce.App.Controls
 		//		{
 		//			mi = new MenuItem() { Header = "Sliders" };
 		//			DiMenuStrip.Add(mi);
-		//			// 2 x Sliders, 2 x AccelerationSliders, 2 x state.ForceSliders, 2 x VelocitySliders
+		//			// 2 x Sliders, 2 x AccelerationSliders, 2 x bDS.ForceSliders, 2 x VelocitySliders
 		//			CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
 		//			CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
 		//			CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
@@ -535,14 +539,14 @@ namespace x360ce.App.Controls
 		//			DiMenuStrip.Add(mi);
 		//			// Add D-Pad Top, Right, Bottom, Left label.
 		//			var dPadNames = Enum.GetNames(typeof(DPadEnum));
-		//			for (int p = 0; p < ud.CapPovCount; p++)
+		//			for (int dInputPolylineStepSize = 0; dInputPolylineStepSize < ud.CapPovCount; dInputPolylineStepSize++)
 		//			{
-		//				var dPadItem = CreateItem("POV {0}", "{1}{0}", p + 1, SettingName.SType.POV);
+		//				var dPadItem = CreateItem("POV {0}", "{1}{0}", dInputPolylineStepSize + 1, SettingName.SType.POV);
 		//				mi.Items.Add(dPadItem);
 		//				for (int d = 0; d < dPadNames.Length; d++)
 		//				{
-		//					var dPadButtonIndex = p * 4 + d + 1;
-		//					var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", p + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
+		//					var dPadButtonIndex = dInputPolylineStepSize * 4 + d + 1;
+		//					var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", dInputPolylineStepSize + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
 		//					dPadItem.Items.Add(dPadButtonItem);
 		//				}
 		//			}

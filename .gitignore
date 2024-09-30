@@ -243,3 +243,5 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/x360ce.Data/x360ce.Data.jfm
+/x360ce.App.Beta/x360ce.App_2uwxxrii_wpftmp.csproj

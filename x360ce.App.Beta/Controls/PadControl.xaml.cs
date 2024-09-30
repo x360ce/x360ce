@@ -55,10 +55,10 @@ namespace x360ce.App.Controls
 			ButtonsPanel.AxisToButtonYDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionYTextBox;
 			ButtonsPanel.AxisToButtonStartDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.MenuStartTextBox;
 			ButtonsPanel.AxisToButtonBackDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.MenuBackTextBox;
-			ButtonsPanel.AxisToLeftShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperLeftTextBox;
-			ButtonsPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickLeftButtonTextBox;
-			ButtonsPanel.AxisToRightShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperRightTextBox;
-			ButtonsPanel.AxisToRightThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickRightButtonTextBox;
+			ButtonsPanel.AxisToLeftShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperLTextBox;
+			ButtonsPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickLButtonTextBox;
+			ButtonsPanel.AxisToRightShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperRTextBox;
+			ButtonsPanel.AxisToRightThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickRButtonTextBox;
 			ButtonsPanel.AxisToDPadDownDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadDownTextBox;
 			ButtonsPanel.AxisToDPadLeftDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadLeftTextBox;
 			ButtonsPanel.AxisToDPadRightDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadRightTextBox;
@@ -200,18 +200,14 @@ namespace x360ce.App.Controls
 					_Imager.DrawState(ii, newState.Gamepad);
 			}
 			// Set values.
-			ControlsHelper.SetText(GeneralPanel.LeftTextBox, "{0}", newState.Gamepad.LeftTrigger);
-			ControlsHelper.SetText(GeneralPanel.RightTextBox, "{0}", newState.Gamepad.RightTrigger);
-			ControlsHelper.SetText(GeneralPanel.LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
+			ControlsHelper.SetText(GeneralPanel.TriggerLeftXInputLabel, "{0}", newState.Gamepad.LeftTrigger);
+			ControlsHelper.SetText(GeneralPanel.TriggerRightXInputLabel, "{0}", newState.Gamepad.RightTrigger);
 
-			ControlsHelper.SetText(GeneralPanel.LeftThumbTextBox, "{0}:{1}", newState.Gamepad.LeftThumbX, newState.Gamepad.LeftThumbY);
+			GeneralPanel.StickLXInputAxisXLabel.Content = newState.Gamepad.LeftThumbX;
+			GeneralPanel.StickLXInputAxisYLabel.Content = newState.Gamepad.LeftThumbY;
+			GeneralPanel.StickRXInputAxisXLabel.Content = newState.Gamepad.RightThumbX;
+			GeneralPanel.StickRXInputAxisYLabel.Content = newState.Gamepad.RightThumbY;
 
-			GeneralPanel.StickLeftAxisXLabel.Content = newState.Gamepad.LeftThumbX;
-			GeneralPanel.StickLeftAxisYLabel.Content = newState.Gamepad.LeftThumbY;
-			GeneralPanel.StickRightAxisXLabel.Content = newState.Gamepad.RightThumbX;
-			GeneralPanel.StickRightAxisYLabel.Content = newState.Gamepad.RightThumbY;
-
-			ControlsHelper.SetText(GeneralPanel.RightThumbTextBox, "{0}:{1}", newState.Gamepad.RightThumbX, newState.Gamepad.RightThumbY);
 			// Process device.
 			var ud = CurrentUserDevice;
 			var ps = CurrentPadSetting;
@@ -223,27 +219,27 @@ namespace x360ce.App.Controls
 				var axis = ud.DiState.Axis;
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
+					LeftThumbXPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
 				// LeftThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbYPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
+					LeftThumbYPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
 				// RightThumbX
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbXPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
+					RightThumbXPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
 				// RightThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbYPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
+					RightThumbYPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
 				// LeftTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
+					LeftTriggerPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
 				// RightTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
 				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightTriggerPanel.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
+					RightTriggerPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
 			}
 			// Update Axis to Button Images.
 			if (_AxisToButtonControls == null)
@@ -395,11 +391,11 @@ namespace x360ce.App.Controls
 					// Configure.
 					_imageInfos = new List<ImageInfo>();
 					// Triggers.
-					AddImageInfo(1, MapCode.LeftTrigger, 63, 27, GeneralPanel.TriggerLeftLabel, GeneralPanel.TriggerLeftTextBox);
-					AddImageInfo(1, MapCode.RightTrigger, 193, 27, GeneralPanel.TriggerRightLabel, GeneralPanel.TriggerRightTextBox);
+					AddImageInfo(1, MapCode.LeftTrigger, 63, 27, GeneralPanel.TriggerLLabel, GeneralPanel.TriggerLTextBox);
+					AddImageInfo(1, MapCode.RightTrigger, 193, 27, GeneralPanel.TriggerRLabel, GeneralPanel.TriggerRTextBox);
 					// Bumpers.
-					AddImageInfo(1, MapCode.LeftShoulder, 43, 66, GeneralPanel.BumperLeftLabel, GeneralPanel.BumperLeftTextBox, GamepadButtonFlags.LeftShoulder);
-					AddImageInfo(1, MapCode.RightShoulder, 213, 66, GeneralPanel.BumperRightLabel, GeneralPanel.BumperRightTextBox, GamepadButtonFlags.RightShoulder);
+					AddImageInfo(1, MapCode.LeftShoulder, 43, 66, GeneralPanel.BumperLLabel, GeneralPanel.BumperLTextBox, GamepadButtonFlags.LeftShoulder);
+					AddImageInfo(1, MapCode.RightShoulder, 213, 66, GeneralPanel.BumperRLabel, GeneralPanel.BumperRTextBox, GamepadButtonFlags.RightShoulder);
 					// Action.
 					AddImageInfo(2, MapCode.ButtonY, 196, 29, GeneralPanel.ActionYLabel, GeneralPanel.ActionYTextBox, GamepadButtonFlags.Y);
 					AddImageInfo(2, MapCode.ButtonX, 178, 48, GeneralPanel.ActionXLabel, GeneralPanel.ActionXTextBox, GamepadButtonFlags.X);
@@ -416,21 +412,21 @@ namespace x360ce.App.Controls
 					AddImageInfo(2, MapCode.DPadRight, 92 + 13, 88, GeneralPanel.DPadRightLabel, GeneralPanel.DPadRightTextBox, GamepadButtonFlags.DPadRight);
 					AddImageInfo(2, MapCode.DPadDown, 92, 88 + 13, GeneralPanel.DPadDownLabel, GeneralPanel.DPadDownTextBox, GamepadButtonFlags.DPadDown);
 					// Stick Left.
-					AddImageInfo(2, MapCode.LeftThumbButton, 59, 47, GeneralPanel.StickLeftButtonLabel, GeneralPanel.StickLeftButtonTextBox, GamepadButtonFlags.LeftThumb);
-					AddImageInfo(2, MapCode.LeftThumbAxisX, 59 + 10, 47, GeneralPanel.StickLeftXLabel, GeneralPanel.StickLeftXTextBox);
-					AddImageInfo(2, MapCode.LeftThumbAxisY, 59, 47 - 10, GeneralPanel.StickLeftYLabel, GeneralPanel.StickLeftYTextBox);
-					AddImageInfo(2, MapCode.LeftThumbUp, 59, 47 - 10, GeneralPanel.StickLeftUpLabel, GeneralPanel.StickLeftUpTextBox);
-					AddImageInfo(2, MapCode.LeftThumbLeft, 59 - 10, 47, GeneralPanel.StickLeftLeftLabel, GeneralPanel.StickLeftLeftTextBox);
-					AddImageInfo(2, MapCode.LeftThumbRight, 59 + 10, 47, GeneralPanel.StickLeftRightLabel, GeneralPanel.StickLeftRightTextBox);
-					AddImageInfo(2, MapCode.LeftThumbDown, 59, 47 + 10, GeneralPanel.StickLeftDownLabel, GeneralPanel.StickLeftDownTextBox);
+					AddImageInfo(2, MapCode.LeftThumbButton, 59, 47, GeneralPanel.StickLButtonLabel, GeneralPanel.StickLButtonTextBox, GamepadButtonFlags.LeftThumb);
+					AddImageInfo(2, MapCode.LeftThumbAxisX, 59 + 10, 47, GeneralPanel.StickLAxisXLabel, GeneralPanel.StickLAxisXTextBox);
+					AddImageInfo(2, MapCode.LeftThumbAxisY, 59, 47 - 10, GeneralPanel.StickLAxisYLabel, GeneralPanel.StickLAxisYTextBox);
+					AddImageInfo(2, MapCode.LeftThumbUp, 59, 47 - 10, GeneralPanel.StickLUpLabel, GeneralPanel.StickLUpTextBox);
+					AddImageInfo(2, MapCode.LeftThumbLeft, 59 - 10, 47, GeneralPanel.StickLLeftLabel, GeneralPanel.StickLLeftTextBox);
+					AddImageInfo(2, MapCode.LeftThumbRight, 59 + 10, 47, GeneralPanel.StickLRightLabel, GeneralPanel.StickLRightTextBox);
+					AddImageInfo(2, MapCode.LeftThumbDown, 59, 47 + 10, GeneralPanel.StickLDownLabel, GeneralPanel.StickLDownTextBox);
 					// Stick Right.
-					AddImageInfo(2, MapCode.RightThumbButton, 160, 88, GeneralPanel.StickRightButtonLabel, GeneralPanel.StickRightButtonTextBox, GamepadButtonFlags.RightThumb);
-					AddImageInfo(2, MapCode.RightThumbAxisX, 160 + 10, 88, GeneralPanel.StickRightXLabel, GeneralPanel.StickRightXTextBox);
-					AddImageInfo(2, MapCode.RightThumbAxisY, 160, 88 - 10, GeneralPanel.StickRightYLabel, GeneralPanel.StickRightYTextBox);
-					AddImageInfo(2, MapCode.RightThumbUp, 160, 88 - 10, GeneralPanel.StickRightUpLabel, GeneralPanel.StickRightUpTextBox);
-					AddImageInfo(2, MapCode.RightThumbLeft, 160 - 10, 88, GeneralPanel.StickRightLeftLabel, GeneralPanel.StickRightLeftTextBox);
-					AddImageInfo(2, MapCode.RightThumbRight, 160 + 10, 88, GeneralPanel.StickRightRightLabel, GeneralPanel.StickRightRightTextBox);
-					AddImageInfo(2, MapCode.RightThumbDown, 160, 88 + 10, GeneralPanel.StickRightDownLabel, GeneralPanel.StickRightDownTextBox);
+					AddImageInfo(2, MapCode.RightThumbButton, 160, 88, GeneralPanel.StickRButtonLabel, GeneralPanel.StickRButtonTextBox, GamepadButtonFlags.RightThumb);
+					AddImageInfo(2, MapCode.RightThumbAxisX, 160 + 10, 88, GeneralPanel.StickRAxisXLabel, GeneralPanel.StickRAxisXTextBox);
+					AddImageInfo(2, MapCode.RightThumbAxisY, 160, 88 - 10, GeneralPanel.StickRAxisYLabel, GeneralPanel.StickRAxisYTextBox);
+					AddImageInfo(2, MapCode.RightThumbUp, 160, 88 - 10, GeneralPanel.StickRUpLabel, GeneralPanel.StickRUpTextBox);
+					AddImageInfo(2, MapCode.RightThumbLeft, 160 - 10, 88, GeneralPanel.StickRLeftLabel, GeneralPanel.StickRLeftTextBox);
+					AddImageInfo(2, MapCode.RightThumbRight, 160 + 10, 88, GeneralPanel.StickRRightLabel, GeneralPanel.StickRRightTextBox);
+					AddImageInfo(2, MapCode.RightThumbDown, 160, 88 + 10, GeneralPanel.StickRDownLabel, GeneralPanel.StickRDownTextBox);
 				}
 				return _imageInfos;
 			}
@@ -462,15 +458,15 @@ namespace x360ce.App.Controls
 		//	if (!SettingsManager.ValidatePropertyNames(maps, out properties))
 		//		return null;
 		//	var ps = new PadSetting();
-		//	foreach (var p in properties)
+		//	foreach (var dInputPolylineStepSize in properties)
 		//	{
-		//		var map = maps.FirstOrDefault(x => x.PropertyName == p.Name);
+		//		var map = maps.FirstOrDefault(x => x.PropertyName == dInputPolylineStepSize.Name);
 		//		if (map == null)
 		//			continue;
 		//		// Get setting value from the form.
 		//		var v = SettingsManager.Current.GetSettingValue(map.Control);
 		//		// Set value onto padSetting.
-		//		p.SetValue(ps, v ?? "", null);
+		//		dInputPolylineStepSize.SetValue(ps, v ?? "", null);
 		//	}
 		//	ps.PadSettingChecksum = ps.CleanAndGetCheckSum();
 		//	return ps;
@@ -549,6 +545,8 @@ namespace x360ce.App.Controls
 			// Start monitoring changes.
 			CurrentPadSetting.PropertyChanged += CurrentPadSetting_PropertyChanged;
 			//SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, CurrentPadSetting);
+
+
 		}
 
 		public void SavePadSetting(PadSetting ps)
@@ -626,6 +624,8 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowLoad(this))
 				return;
+
+
 		}
 
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)

@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Runtime;
 using System;

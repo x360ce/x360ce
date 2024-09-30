@@ -639,11 +639,13 @@ namespace JocysCom.ClassLibrary.Controls
 
 		[Obsolete]
 		public static void RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, bool selectFirst = true)
-		{
-			RestoreSelection(grid, keyPropertyName, list, selectFirst ? 0 : -1);
-		}
+			=> SetSelection(grid, keyPropertyName, list, selectFirst ? 0 : -1);
 
-		public static bool RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)
+		[Obsolete]
+		public static void RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)
+			=> SetSelection(grid, keyPropertyName, list, selectIndex);
+
+		public static bool SetSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)
 		{
 			if (grid is null)
 				throw new ArgumentNullException(nameof(grid));
@@ -861,6 +863,30 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		#endregion
+
+		public static void EnsureTabItemSelected(FrameworkElement control)
+		{
+			var parent = control.Parent as FrameworkElement;
+			while (parent != null)
+			{
+				if (parent is TabItem tabItem)
+				{
+					tabItem.IsSelected = true;
+				}
+				else if (parent is TabControl tabControl)
+				{
+					foreach (TabItem item in tabControl.Items)
+					{
+						if (item.Content == control)
+						{
+							item.IsSelected = true;
+							break;
+						}
+					}
+				}
+				parent = parent.Parent as FrameworkElement;
+			}
+		}
 
 	}
 }

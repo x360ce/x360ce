@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -57,7 +58,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var ap = type.IsEnum
 				? (ICustomAttributeProvider)type.GetField(Enum.GetName(type, o))
 				: type;
-			if (ap is null)
+			if (!(ap is null))
 			{
 				var attributes = ap.GetCustomAttributes(typeof(DescriptionAttribute), !type.IsEnum);
 				// If atribute is present then return value.
@@ -147,7 +148,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				return (T)attributes[0].Value;
 			return default;
 		}
-		
+
 		#endregion
 
 		/// <summary>
@@ -159,7 +160,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (o is null)
 				return;
 			var type = o.GetType();
-			var properties = type.GetProperties();
+			var properties = type.GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Public);
 			foreach (var p in properties)
 			{
 				if (exclude?.Contains(p.Name) == true)
@@ -176,6 +177,49 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
+		/// <summary>
+		/// Get a dictionary where the key is an enum and the value is the value of the description attribute.
+		/// </summary>
+		public static Dictionary<T, string> GetDictionary<T>(T[] keys = null) where T : Enum
+		{
+			if (keys == null)
+				keys = (T[])Enum.GetValues(typeof(T));
+			var dict = new Dictionary<T, string>();
+			foreach (var key in keys)
+				dict[key] = GetDescription(key);
+			return dict;
+		}
+
+		/// <summary>
+		/// Find attribute including interfaces.
+		/// </summary>
+		/// <typeparam name="T">Attribute type.</typeparam>
+		/// <param name="methodInfo">Method info.</param>
+		/// <returns></returns>
+		public static T FindCustomAttribute<T>(MethodInfo methodInfo) where T : Attribute
+		{
+			// First, try to get the attribute from the method directly.
+			var attribute = methodInfo.GetCustomAttribute<T>(true);
+			if (attribute != null)
+				return attribute;
+			// If the attribute is not found, search on the interfaces.
+			foreach (var iface in methodInfo.DeclaringType.GetInterfaces())
+			{
+				// Get the interface map for the current interface.
+				var map = methodInfo.DeclaringType.GetInterfaceMap(iface);
+				for (int i = 0; i < map.TargetMethods.Length; i++)
+				{
+					// Check if the current method in the map matches the methodInfo.
+					if (map.TargetMethods[i] != methodInfo)
+						continue;
+					// If it matches, try to get the attribute from the corresponding interface method.
+					attribute = map.InterfaceMethods[i].GetCustomAttribute<T>(true);
+					if (attribute != null)
+						return attribute;
+				}
+			}
+			return null;
+		}
 	}
 
 }

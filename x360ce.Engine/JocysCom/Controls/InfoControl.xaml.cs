@@ -36,11 +36,12 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			var control = (Control)sender;
 			var head = HelpProvider.GetHelpHead(control);
-			var body = HelpProvider.GetHelpBody(control, 128, true);
+			var body = HelpProvider.GetHelpBody(control, BodyMaxLength, true);
 			var image = HelpProvider.GetHelpImage(control);
 			SetHead(head);
 			SetBody(image, body);
 		}
+		public int BodyMaxLength { get; set; } = int.MaxValue;
 
 		private void HelpProvider_OnMouseLeave(object sender, EventArgs e)
 		{
@@ -219,7 +220,6 @@ namespace JocysCom.ClassLibrary.Controls
 				BusyIcon.Visibility = Visibility.Hidden;
 				RightIcon.Visibility = Visibility.Visible;
 			}
-			System.Diagnostics.Debug.WriteLine($"!!!!! {Tasks.Count}");
 		}
 
 		RotateTransform _RotateTransform;

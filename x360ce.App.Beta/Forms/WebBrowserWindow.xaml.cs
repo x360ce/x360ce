@@ -41,7 +41,7 @@ namespace x360ce.App.Forms
 			var w = MainWebBrowser.Width;
 			var h = MainWebBrowser.Height;
 			//var size = MainWebBrowser.Document.Window.Size;
-			//var wd = size.Width - w;
+			//var wd = size.Width - graphWidth;
 			//var hd = size.Height - h;
 			//var newSize = new Size(Size.Width + wd, Size.Height + hd);
 			//Size =  newSize;

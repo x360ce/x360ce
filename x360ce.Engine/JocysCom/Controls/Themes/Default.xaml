@@ -602,23 +602,19 @@
 								KeyboardNavigation.TabNavigation="Local"
 							-->
 						</Border>
+						<Border
+							Name="OpacityMaskBorder"
+							Grid.Row="1"
+							Margin="1"
+							Background="{StaticResource BackgroundLight}"
+							CornerRadius="0,5,5,5" />
 						<ContentPresenter
-							Name="ContentPresenter"
 							Grid.Row="1"
 							Margin="1"
 							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 							ContentSource="SelectedContent">
 							<ContentPresenter.OpacityMask>
-								<VisualBrush>
-									<VisualBrush.Visual>
-										<Border
-											Width="{Binding ActualWidth, ElementName=ContentPresenter}"
-											Height="{Binding ActualHeight, ElementName=ContentPresenter}"
-											Background="White"
-											CornerRadius="0,5,5,5"
-											SnapsToDevicePixels="True" />
-									</VisualBrush.Visual>
-								</VisualBrush>
+								<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 							</ContentPresenter.OpacityMask>
 						</ContentPresenter>
 					</Grid>
@@ -1340,11 +1336,11 @@
 							CornerRadius="5" />
 						<StackPanel>
 							<Border
-								Margin="10,0,10,0"
+								Margin="10,2,10,2"
 								HorizontalAlignment="Left"
 								VerticalAlignment="Top"
 								Background="{StaticResource BackgroundLight}">
-								<ContentPresenter Margin="5" ContentSource="Header" />
+								<ContentPresenter Margin="5,3,5,3" ContentSource="Header" />
 							</Border>
 							<ContentPresenter Margin="{TemplateBinding Padding}" ContentSource="Content" />
 						</StackPanel>
@@ -1446,21 +1442,12 @@
 						<!--  DropDown popup settings  -->
 						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-								<Border Background="{StaticResource BackgroundDark}" CornerRadius="5" />
-								<ScrollViewer Name="ScrollViewerRounded" Margin="0">
-									<VirtualizingStackPanel IsItemsHost="True" />
+								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+								<ScrollViewer Margin="0">
 									<ScrollViewer.OpacityMask>
-										<VisualBrush>
-											<VisualBrush.Visual>
-												<Border
-													Width="{Binding ActualWidth, ElementName=ScrollViewerRounded}"
-													Height="{Binding ActualHeight, ElementName=ScrollViewerRounded}"
-													Background="White"
-													CornerRadius="5"
-													SnapsToDevicePixels="True" />
-											</VisualBrush.Visual>
-										</VisualBrush>
+										<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 									</ScrollViewer.OpacityMask>
+									<VirtualizingStackPanel IsItemsHost="True" />
 								</ScrollViewer>
 							</Grid>
 						</Popup>
@@ -1520,21 +1507,12 @@
 						<!--  DropDown popup settings  -->
 						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-								<Border Background="{StaticResource BackgroundDark}" CornerRadius="5" />
-								<ScrollViewer Name="ScrollViewerRounded" Margin="0">
-									<VirtualizingStackPanel IsItemsHost="True" />
+								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+								<ScrollViewer Margin="0">
 									<ScrollViewer.OpacityMask>
-										<VisualBrush>
-											<VisualBrush.Visual>
-												<Border
-													Width="{Binding ActualWidth, ElementName=ScrollViewerRounded}"
-													Height="{Binding ActualHeight, ElementName=ScrollViewerRounded}"
-													Background="White"
-													CornerRadius="5"
-													SnapsToDevicePixels="True" />
-											</VisualBrush.Visual>
-										</VisualBrush>
+										<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 									</ScrollViewer.OpacityMask>
+									<VirtualizingStackPanel IsItemsHost="True" />
 								</ScrollViewer>
 							</Grid>
 						</Popup>
@@ -1594,21 +1572,12 @@
 						<!--  DropDown popup settings  -->
 						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-								<Border Background="{StaticResource BackgroundDark}" CornerRadius="5" />
-								<ScrollViewer Name="ScrollViewerRounded" Margin="0">
-									<VirtualizingStackPanel IsItemsHost="True" />
+								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+								<ScrollViewer Margin="0">
 									<ScrollViewer.OpacityMask>
-										<VisualBrush>
-											<VisualBrush.Visual>
-												<Border
-													Width="{Binding ActualWidth, ElementName=ScrollViewerRounded}"
-													Height="{Binding ActualHeight, ElementName=ScrollViewerRounded}"
-													Background="White"
-													CornerRadius="5"
-													SnapsToDevicePixels="True" />
-											</VisualBrush.Visual>
-										</VisualBrush>
+										<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 									</ScrollViewer.OpacityMask>
+									<VirtualizingStackPanel IsItemsHost="True" />
 								</ScrollViewer>
 							</Grid>
 						</Popup>
