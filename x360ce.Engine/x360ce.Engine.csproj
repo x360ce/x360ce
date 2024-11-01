@@ -123,7 +123,7 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
 	  <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
 	  <PackageReference Include="System.Management" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <PackageReference Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
   </ItemGroup>
   <ItemGroup>
