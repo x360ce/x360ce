@@ -1,9 +1,11 @@
-﻿using JocysCom.ClassLibrary.IO;
+﻿//using JocysCom.ClassLibrary;
+using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+//using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using x360ce.Engine.Data;
@@ -12,45 +14,25 @@ namespace x360ce.App.DInput
 {
 	public partial class DInputHelper
 	{
-		#region ■ Device Detector
-		// True, update device list as soon as possible.
-		public bool UpdateDevicesEnabled = true;
-		#endregion
 
 		public int RefreshDevicesCount = 0;
 
-		public string message = "";
-		Stopwatch stopwatch = new Stopwatch();
-		void FormMessage(string m)
-		{	
-			message = message + stopwatch.ElapsedMilliseconds + " " + m + "\n";
-		}
 
-		//public bool devicesUpdating = false;
-
-		void UpdateDiDevices(DirectInput manager)
+		Task UpdateDiDevices(DirectInput directInput)
 		{
-			// if (devicesUpdating) return;
-			// devicesUpdating = true;
-
-			if (!UpdateDevicesPending || Program.IsClosing)
-				return;
 			try
 			{
 				// Make sure that interface handle is created, before starting device updates.
-				UpdateDevicesPending = false;
-				// Get connected devices (can be a very long operation).
-				stopwatch.Restart();
-				var connectedDevices = GetConnectedDevices(manager); // 1 second.
-				FormMessage("connectedDevices");
+				// Get connected devices.
+				var connectedDevices = GetConnectedDiDevices(directInput).Item1.Select(devices => devices.Device).ToList();
 				var listedDevices = SettingsManager.UserDevices.ItemsToArraySynchronized();
 				// Group devices into categories (added, updated, removed) using GUIDs of connected and listed devices.
 				CategorizeDevices(connectedDevices, listedDevices, out var addedDevices, out var updatedDevices, out var removedDevices);
 				// Process devices (must find better way to find Device than by Vendor ID and Product ID).
-				var (devInfos, intInfos) = UpdateDeviceInfoCaches(addedDevices, updatedDevices); // 13 seconds.
+				var (devInfos, intInfos) = UpdateDeviceInfoCaches(addedDevices, updatedDevices);
 				// Update device list.
-				InsertNewDevices(manager, addedDevices, devInfos, intInfos);
-				UpdateExistingDevices(manager, listedDevices, updatedDevices, devInfos, intInfos);
+				InsertNewDevices(directInput, addedDevices, devInfos, intInfos);
+				UpdateExistingDevices(directInput, listedDevices, updatedDevices, devInfos, intInfos);
 				HandleRemovedDevices(removedDevices);
 
 				// Enable Test instances.
@@ -64,9 +46,6 @@ namespace x360ce.App.DInput
 				//		// Auto-configure new devices.
 				//		AutoConfigure(game);
 				//	}
-
-				System.Diagnostics.Debug.WriteLine("DInputHelper.Step1.UpdateDevices.cs " + message);
-				message = message + "\n";
 			}
 			catch (Exception ex)
 			{
@@ -74,23 +53,70 @@ namespace x360ce.App.DInput
 				LastException = ex;
 			}
 
-			// devicesUpdating = false;
+			return Task.CompletedTask;
 		}
 
-		// Get connected devices (can be a very long operation).
-		private List<DeviceInstance> GetConnectedDevices(DirectInput manager)
+		// For comparison of connected DiDevice.InstanceGuid new and old list. 
+		private HashSet<Guid> DiDevicesGuidsOld = new HashSet<Guid>();
+		private List<DeviceClass> DiDeviceClassList = new List<DeviceClass> { DeviceClass.Device, DeviceClass.Pointer, DeviceClass.Keyboard, DeviceClass.GameControl };
+		private (IEnumerable<(DeviceInstance Device, DeviceClass Class, int Usage, string DiDeviceID)>, bool) GetConnectedDiDevices(DirectInput directInput)
 		{
-			var deviceClasses = new[] { DeviceClass.GameControl, DeviceClass.Pointer, DeviceClass.Keyboard };
-			var tasks = deviceClasses.Select(deviceClass => Task.Run(() =>
-			manager.GetDevices(deviceClass, DeviceEnumerationFlags.AllDevices).ToList())).ToArray();
-			Task.WaitAll(tasks);
-			var connectedDevices = tasks.SelectMany(t => t.Result).ToList();
-			return connectedDevices;
+			var stopwatchDi = Stopwatch.StartNew();
+			var DiDevicesNew = DiDeviceClassList.AsParallel().SelectMany(diDeviceClass =>
+					directInput.GetDevices(diDeviceClass, DeviceEnumerationFlags.AttachedOnly)
+					.Where(diDevice =>
+						diDeviceClass != DeviceClass.Device
+						|| (int)diDevice.Usage == 2
+						|| (int)diDevice.Usage == 6
+						)
+					.Select(diDevice => (
+						Device: diDevice,
+						Class: diDeviceClass,
+						Usage: (int)diDevice.Usage,
+						DiDeviceID: ConvertProductGuidToDeviceID(diDevice.ProductGuid, diDeviceClass)
+					)))
+					.ToList().OrderBy(x => x.DiDeviceID);
+
+			var DiDevicesGuidsNew = new HashSet<Guid>(DiDevicesNew.Select(item => item.Device.InstanceGuid));
+			var deviceListChanged = !DiDevicesGuidsNew.SetEquals(DiDevicesGuidsOld);
+			if (deviceListChanged)
+			{
+				DeviceDetector.DiDevices = DiDevicesNew;
+				DiDevicesGuidsOld = DiDevicesGuidsNew;
+				Debug.WriteLine($"\n");
+				foreach (var item in DiDevicesNew)
+				{
+					Debug.WriteLine($"DiDevice:" +
+						$" InstanceGuid {item.Device.InstanceGuid}." +
+						$" ProductGuid {item.Device.ProductGuid} ({item.DiDeviceID})." +
+						$" InstanceName {item.Device.InstanceName}." +
+						$" UsagePage {(int)item.Device.UsagePage}." +
+						$" Usage {item.Device.Usage}." +
+						$" DeviceClass {item.Class}." +
+						$" Type-Subtype {item.Device.Type}-{item.Device.Subtype}.");
+				}
+			}
+
+			stopwatchDi.Stop();
+			Debug.WriteLine($"StopwatchDi: {stopwatchDi.Elapsed.TotalMilliseconds} ms\n");
+			return (DeviceDetector.DiDevices, deviceListChanged);
+		}
+
+		private string ConvertProductGuidToDeviceID(Guid DiDeviceProductGuid, DeviceClass DiDeviceClass)
+		{
+			// Create PnPDeviceID fragment from DiDevice.ProductGuid to find PnP device later.
+			var bar = DiDeviceProductGuid.ToByteArray();
+			int vid = bar[1] << 8 | bar[0];
+			int pid = bar[3] << 8 | bar[2];
+			var PnPDeviceID = $"HID\\VID_{vid:X4}&PID_{pid:X4}";
+			return PnPDeviceID;
 		}
 
 		// Group devices into categories (added, updated, removed) using GUIDs of connected and listed devices.
 		private void CategorizeDevices(List<DeviceInstance> connectedDevices, UserDevice[] listedDevices,
-		out DeviceInstance[] addedDevices, out DeviceInstance[] updatedDevices, out UserDevice[] removedDevices)
+		out DeviceInstance[] addedDevices,
+		out DeviceInstance[] updatedDevices,
+		out UserDevice[] removedDevices)
 		{
 			var listedInstanceGuids = listedDevices.Select(x => x.InstanceGuid).ToArray();
 			var connectedInstanceGuids = connectedDevices.Select(x => x.InstanceGuid).ToArray();
@@ -105,12 +131,8 @@ namespace x360ce.App.DInput
 			DeviceInfo[] intInfos = null;
 			if (addedDevices.Length > 0 || updatedDevices.Length > 0)
 			{
-				stopwatch.Restart();
-				devInfos = DeviceDetector.GetDevices(); // 10 seconds.
-				FormMessage("DeviceDetector.GetDevices()");
-				stopwatch.Restart();
-				intInfos = DeviceDetector.GetInterfaces(); // 3 seconds.
-				FormMessage("DeviceDetector.GetInterfaces()");
+				devInfos = DeviceDetector.GetDevices(DiDevicesOnly: true);
+				intInfos = DeviceDetector.GetInterfaces(DiDevicesOnly: true);
 				//var classes = devInfos.Select(x=>x.ClassDescription).Distinct().ToArray();
 				//var intclasses = intInfos.Select(x => x.ClassDescription).Distinct().ToArray();
 			}

@@ -192,7 +192,7 @@ namespace x360ce.App
 			if (o == null && dIndex.HasValue)
 				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.DiIndex == dIndex.Value);
 			// Use instance number which is same as X360CE button index.
-			return o == null ? "" : string.Format("{0}{1}", SettingName.SType.Button, o.DiIndex + 1);
+			return o == null ? "" : string.Format($"{SettingName.SType.Button}{o.DiIndex}");
 		}
 
 		/// <summary>Return axis setting value if axis exists.</summary>
@@ -224,7 +224,7 @@ namespace x360ce.App
 					// Set invert.
 					invert ? "-" : "",
 					// Use X360CE axis index.
-					o.DiIndex + 1
+					o.DiIndex
 				);
 		}
 

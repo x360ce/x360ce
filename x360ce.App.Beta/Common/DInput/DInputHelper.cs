@@ -3,58 +3,72 @@ using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
+using System.Diagnostics;
+using System.Linq;
+
+//using System.Linq;
 using System.Management;
 using System.Threading;
+//using static JocysCom.ClassLibrary.Processes.MouseHelper;
+//using System.Windows.Input;
 
 namespace x360ce.App.DInput
 {
 	public partial class DInputHelper : IDisposable
 	{
-		// Device is connected or disconnected.
-		private ManagementEventWatcher usbInsertWatcher;
-		private ManagementEventWatcher usbRemoveWatcher;
-
-		private bool devicesChanged = true;
-		private bool devicesUpdating = false;
-		private void DeviceIsConnectedOrDisconnected(int type)
-		{
-			string t = (type == 2) ? " connected." : " disconnected.";
-			//MessageBox.Show("Device is" + t, "DInputHelper.cs", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			_ = Helper.Delay(OnDevicesChanged);
-		}
-
-		void OnDevicesChanged() {
-			devicesChanged = true;
-			System.Diagnostics.Debug.WriteLine("DInputHelper.cs OnDevicesChanged");
-		}
-
-		// Constructor.
+		// Constructor
 		public DInputHelper()
 		{
-			// Device is connected or disconnected.
-			usbInsertWatcher = new ManagementEventWatcher();
-			usbInsertWatcher.EventArrived += (o, args) => DeviceIsConnectedOrDisconnected(2);
-			usbInsertWatcher.Query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2");
-			usbInsertWatcher.Start();
-
-			usbRemoveWatcher = new ManagementEventWatcher();
-			usbRemoveWatcher.EventArrived += (o, args) => DeviceIsConnectedOrDisconnected(3);
-			usbRemoveWatcher.Query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 3");
-			usbRemoveWatcher.Start();
-
 			CombinedXiConencted = new bool[4];
 			LiveXiConnected = new bool[4];
-
 			CombinedXiStates = new State[4];
 			LiveXiStates = new State[4];
 			LiveXiControllers = new Controller[4];
+
 			for (int i = 0; i < 4; i++)
 			{
 				CombinedXiStates[i] = new State();
 				LiveXiStates[i] = new State();
 				LiveXiControllers[i] = new Controller((UserIndex)i);
 			}
+
+			// Devices are updated on USB connection event and on UpdateDiStates() method device InputLost error in DInputHelper.Step2.UpdateDiStates.cs 
+			PnPDeviceWatcher.EventArrived += new EventArrivedEventHandler(PnPDeviceWatcherUSBEvent);
+			var keys = DeviceDetector.PnPDeviceClassGuids.Keys.ToList();
+			PnPDeviceWatcher.Query = new WqlEventQuery(
+					"SELECT * FROM __InstanceOperationEvent " +
+					"WITHIN 1 " +
+					"WHERE TargetInstance ISA 'Win32_PnPEntity' " +
+					"AND (__Class = '__InstanceCreationEvent') " +
+					"AND (TargetInstance.ClassGuid = '" + keys[0] + "' " +
+					"OR TargetInstance.ClassGuid = '" + keys[1] + "' " +
+					"OR TargetInstance.ClassGuid = '" + keys[2] + "') " +
+  					"AND TargetInstance.DeviceID LIKE 'HID%' " +
+					"AND TargetInstance.DeviceID LIKE '%0' " // +
+					//"AND NOT TargetInstance.DeviceID LIKE '%MI_02%'"
+					);
+			//PnPDeviceWatcher.Query = new WqlEventQuery("SELECT * FROM __InstanceOperationEvent WITHIN 1 WHERE TargetInstance ISA 'Win32_PnPEntity' AND (__Class = '__InstanceCreationEvent' OR __Class = '__InstanceDeletionEvent')");
+			PnPDeviceWatcher.Start();
 		}
+
+		#region ■ Device Detector
+		// DevicesNeedUpdating property can be set to true (update device list as soon as possible) from multiple threads.
+		public bool DevicesNeedUpdating = false;
+		// DevicesAreUpdating property ensures parameter remains unchanged during RefreshAll(manager, detector) action.
+		private bool DevicesAreUpdating = false; // CheckAndUnloadXInputLibrary(*) > UpdateDiDevices(*) > CheckAndLoadXInputLibrary(*).
+		#endregion
+
+		private ManagementEventWatcher PnPDeviceWatcher = new ManagementEventWatcher();
+		// Device Manager > Control Panel > Plug and Play devices.
+		private async void PnPDeviceWatcherUSBEvent(object sender, EventArrivedEventArgs e)
+		{
+			if (e.NewEvent["TargetInstance"] is ManagementBaseObject targetInstance)
+			{
+				Debug.WriteLine($"\nWin32_PnPEntity USB Event: ClassGuid {targetInstance["ClassGuid"]} ({DeviceDetector.PnPDeviceClassGuids[targetInstance["ClassGuid"].ToString()]}). DeviceId {targetInstance["DeviceID"]}.\n");
+				await Helper.Delay(OnDevicesChanged);
+			}
+		}
+		private void OnDevicesChanged() => DevicesNeedUpdating = true;
 
 		// Where the current DInput device state is stored:
 		//
@@ -172,6 +186,7 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		DirectInput directInput = new DirectInput();
 		// Suspended is used during re-loading of the XInput library.
 		public bool Suspended;
 		void ThreadAction()
@@ -181,7 +196,7 @@ namespace x360ce.App.DInput
 			// a separate windows form must be created on the same thread as the process which will access and update the device.
 			// detector.DetectorForm will be used to acquire devices.
 			// Main job of the detector is to fire an event on device connection (power on) and removal (power off).
-			var manager = new DirectInput();
+			directInput = new DirectInput();
 			var detector = new DeviceDetector(false);
 			do
 			{
@@ -189,7 +204,7 @@ namespace x360ce.App.DInput
 				_ResetEvent.Reset();
 				// Perform all updates if not suspended.
 				if (!Suspended)
-					RefreshAll(manager, detector);
+					RefreshAll(directInput, detector);
 				// Blocks the current thread until the current WaitHandle receives a signal.
 				// The thread will be released by the timer. Do not wait longer than 50ms.
 				_ResetEvent.WaitOne(50);
@@ -197,7 +212,7 @@ namespace x360ce.App.DInput
 			// Loop until suspended.
 			while (_AllowThreadToRun);
 			detector.Dispose();
-			manager.Dispose();
+			directInput.Dispose();
 		}
 
 		// Events.
@@ -209,44 +224,56 @@ namespace x360ce.App.DInput
 		public event EventHandler<DInputEventArgs> UpdateCompleted;
 		object DiUpdatesLock = new object();
 
-		DirectInput managerOut;
-
 		void RefreshAll(DirectInput manager, DeviceDetector detector)
 		{
 			lock (DiUpdatesLock)
 			{
 				var game = SettingsManager.CurrentGame;
 				// If the game is not selected.
-				if (game != null)
+				if (game != null || !Program.IsClosing)
 				{
-					managerOut = manager;
-					
+					var getXInputStates = SettingsManager.Options.GetXInputStates && Global._MainWindow.FormEventsEnabled;
 					// Note: Getting XInput states is not required in order to do emulation.
 					// Get states only when the form is maximized in order to reduce CPU usage.
-					var getXInputStates = SettingsManager.Options.GetXInputStates && Global._MainWindow.FormEventsEnabled;
-					// The best place to unload the XInput DLL is at the start, because
-					// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
-					CheckAndUnloadXInputLibrary(game, getXInputStates);
-					// Update information about connected devices.
-					if (devicesChanged && !devicesUpdating)
+					// Update hardware.
+					if (DevicesNeedUpdating && !DevicesAreUpdating || DeviceDetector.DiDevices == null)
 					{
-						devicesChanged = false;
-						devicesUpdating = true;
-						UpdateDiDevices(manager);
-						devicesUpdating = false;
-					};
-					// Update JoystickStates from devices.
-					UpdateDiStates(game, detector);
-					// Update XInput states from Custom DirectInput states.
-					UpdateXiStates(game);
-					// Combine XInput states of controllers.
-					CombineXiStates();
-					// Update virtual devices from combined states.
-					UpdateVirtualDevices(game);
-					// Load the XInput library before retrieving XInput states.
-					CheckAndLoadXInputLibrary(game, getXInputStates);
-					// Retrieve XInput states from XInput controllers.
-					RetrieveXiStates(getXInputStates);
+						DevicesAreUpdating = true;
+						try
+						{
+							// The best place to unload the XInput DLL is at the start, because
+							// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
+							CheckAndUnloadXInputLibrary(game, getXInputStates);
+							// Update information about connected devices.
+							_ = UpdateDiDevices(manager);
+							// Load the XInput library before retrieving XInput states.
+							CheckAndLoadXInputLibrary(game, getXInputStates);
+						}
+						finally
+						{
+							DevicesNeedUpdating = false;
+							DevicesAreUpdating = false;
+						}
+					}
+					else
+					{
+						// Debug.WriteLine("1.");
+						// Update JoystickStates from devices.
+						UpdateDiStates(game, detector);
+						// Debug.WriteLine("2.");
+						// Update XInput states from Custom DirectInput states.
+						UpdateXiStates(game);
+						// Debug.WriteLine("3.");
+						// Combine XInput states of controllers.
+						CombineXiStates();
+						// Debug.WriteLine("4.");
+						// Update virtual devices from combined states.
+						UpdateVirtualDevices(game);
+						// Debug.WriteLine("5.");
+						// Retrieve XInput states from XInput controllers.
+						RetrieveXiStates(getXInputStates);
+						// Debug.WriteLine("6.");
+					}
 				}
 				// Count DInput updates per second to show in the app's status bar as Hz: #.
 				UpdateDelayFrequency();
@@ -277,31 +304,46 @@ namespace x360ce.App.DInput
 
 		bool IsDisposing;
 
+		private bool disposed = false;
+
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
+			PnPDeviceWatcher?.Dispose();
+			directInput?.Dispose();
+
 		}
 
 		protected virtual void Dispose(bool disposing)
 		{
+			if (disposed)
+				return;
+
 			if (disposing)
 			{
 				// Do not dispose twice.
 				if (IsDisposing)
 					return;
 				IsDisposing = true;
+
 				Stop();
 				Nefarius.ViGEm.Client.ViGEmClient.DisposeCurrent();
-				_ResetEvent.Dispose();
+				_ResetEvent?.Dispose();
 
-				// Device is connected or disconnected.
-				usbInsertWatcher.Stop();
-				usbInsertWatcher.Dispose();
-				usbRemoveWatcher.Stop();
-				usbRemoveWatcher.Dispose();
+				// Nullify managed resources after disposal.
+				_Timer = null;
+				_Thread = null;
+				_ResetEvent = null;
 
 			}
+
+			disposed = true;
+		}
+
+		~DInputHelper()
+		{
+			Dispose(false);
 		}
 
 		#endregion

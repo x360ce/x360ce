@@ -91,7 +91,7 @@ namespace x360ce.App
 			}
 			if (msg == DeviceDetector.WM_DEVICECHANGE)
 			{
-				Global.DHelper.UpdateDevicesEnabled = true;
+				Global.DHelper.DevicesNeedUpdating = true;
 			}
 			// If message value was found then...
 			else if (msg == _WindowMessage)

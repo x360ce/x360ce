@@ -433,50 +433,17 @@
 					ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 					ScrollViewer.VerticalScrollBarVisibility="Auto">
 					<DataGrid.Columns>
-						<DataGridTextColumn
-							Binding="{Binding Offset}"
-							ElementStyle="{StaticResource TextBlockCenterCell}"
-							Header=" Offset" />
-						<DataGridTextColumn
-							Binding="{Binding TypeName}"
-							ElementStyle="{StaticResource TextBlockLeftCell}"
-							Header="Type" />
-						<DataGridTextColumn
-							Binding="{Binding AspectName}"
-							ElementStyle="{StaticResource TextBlockLeftCell}"
-							Header="Aspect" />
-						<DataGridTextColumn
-							Binding="{Binding Flags}"
-							ElementStyle="{StaticResource TextBlockLeftCell}"
-							Header="Flags" />
-						<DataGridTextColumn
-							Binding="{Binding Instance}"
-							ElementStyle="{StaticResource TextBlockCenterCell}"
-							Header="Instance" />
-						<DataGridTextColumn
-							Binding="{Binding Name}"
-							ElementStyle="{StaticResource TextBlockLeftCell}"
-							Header="Name" />
-						<DataGridTextColumn
-							Binding="{Binding Granularity}"
-							ElementStyle="{StaticResource TextBlockLeftCell}"
-							Header="Granularity" />
-						<DataGridTextColumn
-							Binding="{Binding Saturation}"
-							ElementStyle="{StaticResource TextBlockLeftCell}"
-							Header="Saturation" />
-						<DataGridTextColumn
-							Binding="{Binding Range}"
-							ElementStyle="{StaticResource TextBlockLeftCell}"
-							Header="Range" />
-						<DataGridTextColumn
-							Binding="{Binding LogicalRange}"
-							ElementStyle="{StaticResource TextBlockLeftCell}"
-							Header="Logical" />
-						<DataGridTextColumn
-							Binding="{Binding PhysicalRange}"
-							ElementStyle="{StaticResource TextBlockLeftCell}"
-							Header="Physical" />
+						<DataGridTextColumn Binding="{Binding Offset}" ElementStyle="{StaticResource TextBlockCenterCell}" Header=" Offset" />
+						<DataGridTextColumn Binding="{Binding TypeName}" ElementStyle="{StaticResource TextBlockLeftCell}" Header="Type" />
+						<DataGridTextColumn Binding="{Binding AspectName}" ElementStyle="{StaticResource TextBlockLeftCell}" Header="Aspect" />
+						<DataGridTextColumn Binding="{Binding Flags}" ElementStyle="{StaticResource TextBlockLeftCell}" Header="Flags" />
+						<DataGridTextColumn Binding="{Binding Instance}" ElementStyle="{StaticResource TextBlockCenterCell}" Header="Instance" />
+						<DataGridTextColumn Binding="{Binding Name}" ElementStyle="{StaticResource TextBlockLeftCell}" Header="Name" />
+						<DataGridTextColumn Binding="{Binding Granularity}" ElementStyle="{StaticResource TextBlockLeftCell}" Header="Granularity" />
+						<DataGridTextColumn Binding="{Binding Saturation}" ElementStyle="{StaticResource TextBlockLeftCell}" Header="Saturation" />
+						<DataGridTextColumn Binding="{Binding Range}" ElementStyle="{StaticResource TextBlockLeftCell}" Header="Range" />
+						<DataGridTextColumn Binding="{Binding LogicalRange}" ElementStyle="{StaticResource TextBlockLeftCell}" Header="Logical" />
+						<DataGridTextColumn Binding="{Binding PhysicalRange}" ElementStyle="{StaticResource TextBlockLeftCell}" Header="Physical" />
 					</DataGrid.Columns>
 				</DataGrid>
 			</TabItem>

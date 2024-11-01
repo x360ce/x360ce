@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Controls;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+// using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using x360ce.Engine;
@@ -117,18 +118,16 @@ namespace x360ce.App.Controls
 			lock (updateFromDirectInputLock)
 			{
 				var ud = CurrentUserDevice;
-				var instanceGuid = Guid.Empty;
 				var enable = ud != null;
-				if (enable)
-					instanceGuid = ud.InstanceGuid;
+				var instanceGuid = enable ? ud.InstanceGuid:  Guid.Empty;
 				ControlsHelper.SetEnabled(PadFootPanel.RemapAllButton, enable && ud.DiState != null);
 				PadItemPanel.SetEnabled(enable);
 				// If device instance changed then...
-				if (!Equals(instanceGuid, _InstanceGuid))
-				{
+				if (!Equals(instanceGuid, _InstanceGuid) && instanceGuid != Guid.Empty && ud?.DeviceState != null)
+				{	
 					_InstanceGuid = instanceGuid;
 					GeneralPanel.ResetDiMenuStrip(enable ? ud : null);
-				}
+				} 
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
 

@@ -28,14 +28,13 @@ namespace x360ce.App.DInput
 					var timeout = false;
 					if (Controller.IsLoaded && getXInputStates)
 					{
-						IAsyncResult result;
 						Action action = () =>
 						{
 							// This can hit CPU hard and used for display only.
 							// Do not use when application is minimized. 
 							success = gamePad.GetState(out state);
 						};
-						result = action.BeginInvoke(null, null);
+						var result = action.BeginInvoke(null, null);
 						timeout = !result.AsyncWaitHandle.WaitOne(1000);
 					}
 					if (timeout)
@@ -46,9 +45,7 @@ namespace x360ce.App.DInput
 					LiveXiStates[i] = state;
 				}
 			}
-			var ev = StatesRetrieved;
-			if (ev != null)
-				ev(this, new DInputEventArgs(error));
+			StatesRetrieved?.Invoke(this, new DInputEventArgs(error));
 		}
 
 	}

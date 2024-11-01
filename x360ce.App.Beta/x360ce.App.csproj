@@ -52,26 +52,6 @@
 		<DebugSymbols>true</DebugSymbols>
 	</PropertyGroup>
 	<ItemGroup>
-		<Reference Include="SharpDX">
-			<HintPath>Resources\SharpDX\SharpDX.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="SharpDX.DirectInput">
-			<HintPath>Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="System.configuration" />
-		<Reference Include="System.Configuration.Install" />
-		<Reference Include="System.Data.Entity" />
-		<Reference Include="System.Web" />
-		<Reference Include="System.Web.Services" />
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Update="Controls\JcDataGridView.cs">
-			<SubType>Component</SubType>
-		</Compile>
-	</ItemGroup>
-	<ItemGroup>
 		<BootstrapperPackage Include=".NETFramework,Version=v4.0">
 			<Visible>False</Visible>
 			<ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
@@ -119,6 +99,26 @@
 		</BootstrapperPackage>
 	</ItemGroup>
 	<ItemGroup>
+		<Compile Update="Controls\JcDataGridView.cs">
+			<SubType>Component</SubType>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="SharpDX">
+			<HintPath>Resources\SharpDX\SharpDX.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="SharpDX.DirectInput">
+			<HintPath>Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
+			<Private>False</Private>
+		</Reference>
+		<Reference Include="System.configuration" />
+		<Reference Include="System.Configuration.Install" />
+		<Reference Include="System.Data.Entity" />
+		<Reference Include="System.Web" />
+		<Reference Include="System.Web.Services" />
+	</ItemGroup>
+	<ItemGroup>
 		<None Update="Resources\SharpDX\SharpDX.xml">
 			<SubType>Designer</SubType>
 		</None>
@@ -128,12 +128,12 @@
 		<EmbeddedResource Include="Documents\ChangeLog.txt" />		
 		<EmbeddedResource Include="Documents\License.txt" />
 
+		<EmbeddedResource Include="Resources\x360ce.Engine.dll" />
 		<EmbeddedResource Include="Resources\ViGEmClient\x64\ViGEmClient.dll" />
 		<EmbeddedResource Include="Resources\ViGEmClient\x86\ViGEmClient.dll" />
-		<EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
-		<EmbeddedResource Include="Resources\x360ce.Engine.dll" />
-		<EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
 		<EmbeddedResource Include="Resources\SharpDX\SharpDX.dll" />
+		<EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
+		<EmbeddedResource Include="Resources\SharpDX\SharpDX.DirectInput.dll" />
 
 		<EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog.ini" />
 		<EmbeddedResource Include="Presets\x360ce.Thrustmaster_Dual_Analog_Mod.ini" />

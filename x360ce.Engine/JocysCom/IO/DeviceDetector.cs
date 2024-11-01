@@ -1,15 +1,20 @@
 ﻿using JocysCom.ClassLibrary.Win32;
+using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Management;
+using System.Reflection;
 using System.Runtime.InteropServices;
 // using System.Runtime.Serialization.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using x360ce.Engine;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -417,8 +422,11 @@ namespace JocysCom.ClassLibrary.IO
 			}
 		}
 
-		public static DeviceInfo[] GetInterfaces()
+		// INTERFACES.
+		public static DeviceInfo[] GetInterfaces(bool DiDevicesOnly = false)
 		{
+			var stopwatchInt = Stopwatch.StartNew();
+
 			var list = new List<DeviceInfo>();
 			var hidGuid = Guid.Empty;
 			NativeMethods.HidD_GetHidGuid(ref hidGuid);
@@ -431,71 +439,93 @@ namespace JocysCom.ClassLibrary.IO
 				bool success;
 				var deviceInfoData = new SP_DEVINFO_DATA();
 				deviceInfoData.Initialize();
-		// Call 1: Retrieve data size. Note: Returns ERROR_INSUFFICIENT_BUFFER = 122, which is normal.
-		success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, ref deviceInfoData);
-		// Allocate memory for results. 
-		var ptrDetails = Marshal.AllocHGlobal(requiredSize3);
+				// Call 1: Retrieve data size. Note: Returns ERROR_INSUFFICIENT_BUFFER = 122, which is normal.
+				success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, IntPtr.Zero, 0, ref requiredSize3, ref deviceInfoData);
+
+				// Filter devices.
+				if (DiDevicesOnly && !PnPDeviceIDs.Contains(GetDeviceId(deviceInfoData.DevInst))) { return true; }
+
+				// Allocate memory for results. 
+				var ptrDetails = Marshal.AllocHGlobal(requiredSize3);
 				Marshal.WriteInt32(ptrDetails, IntPtr.Size == 4 ? 4 + Marshal.SystemDefaultCharSize : 8);
-		// Call 2: Retrieve data.
-		success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref deviceInfoData);
+				// Call 2: Retrieve data.
+				success = NativeMethods.SetupDiGetDeviceInterfaceDetail(deviceInfoSet, ref interfaceData, ptrDetails, requiredSize3, ref requiredSize3, ref deviceInfoData);
 				var interfaceDetail = (SP_DEVICE_INTERFACE_DETAIL_DATA)Marshal.PtrToStructure(ptrDetails, typeof(SP_DEVICE_INTERFACE_DETAIL_DATA));
 				var di = GetDeviceInfo(deviceInfoSet, deviceInfoData);
 				di.DevicePath = interfaceDetail.DevicePath;
 				Marshal.FreeHGlobal(ptrDetails);
-		// Note: Interfaces don't have vendor or product, therefore must get from parent device.
-		// Open the device as a file so that we can query it with HID and read/write to it.
-		var devHandle = NativeMethods.CreateFile(
-		interfaceDetail.DevicePath,
-		0,
-		FileShare.ReadWrite,
-		IntPtr.Zero,
-		FileMode.Open,
-		0, //WinNT.Overlapped
-		IntPtr.Zero
-	);
+				// Note: Interfaces don't have vendor or product, therefore must get from parent device.
+				// Open the device as a file so that we can query it with HID and read/write to it.
+				var devHandle = NativeMethods.CreateFile(
+					interfaceDetail.DevicePath,
+					0,
+					FileShare.ReadWrite,
+					IntPtr.Zero,
+					FileMode.Open,
+					0,
+					/*WinNT.Overlapped,*/
+					IntPtr.Zero);
+
 				if (devHandle.IsInvalid)
 					return true;
-		// Get vendor product and version from device.
-		var ha = new HIDD_ATTRIBUTES();
+				// Get vendor product and version from device.
+				var ha = new HIDD_ATTRIBUTES();
 				ha.Size = Marshal.SizeOf(ha);
 				var success2 = NativeMethods.HidD_GetAttributes(devHandle, ref ha);
 				di.VendorId = ha.VendorID;
 				di.ProductId = ha.ProductID;
 				di.Revision = ha.VersionNumber;
-		// Get other options.
-		if (success2)
+				// Get other options.
+				if (success2)
 				{
 					var preparsedDataPtr = new IntPtr();
 					var caps = new HIDP_CAPS();
-			// Read out the 'pre-parsed data'.
-			NativeMethods.HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
-			// feed that to GetCaps.
-			NativeMethods.HidP_GetCaps(preparsedDataPtr, ref caps);
-			// Free the 'pre-parsed data'.
-			NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
-			// This could fail if the device was recently attached.
-			// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
-			var capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);
+					// Read out the 'pre-parsed data'.
+					NativeMethods.HidD_GetPreparsedData(devHandle, ref preparsedDataPtr);
+					// feed that to GetCaps.
+					NativeMethods.HidP_GetCaps(preparsedDataPtr, ref caps);
+					// Free the 'pre-parsed data'.
+					NativeMethods.HidD_FreePreparsedData(ref preparsedDataPtr);
+					// This could fail if the device was recently attached.
+					// Maximum string length is 126 wide characters (2 bytes each) (not including the terminating NULL character).
+					var capacity = (uint)(126 * Marshal.SystemDefaultCharSize + 2);
 					var sb = new StringBuilder((int)capacity, (int)capacity);
-			// Override manufacturer if found.
-			if (NativeMethods.HidD_GetManufacturerString(devHandle, sb, sb.Capacity) && sb.Length > 0)
+					// Override manufacturer if found.
+					if (NativeMethods.HidD_GetManufacturerString(devHandle, sb, sb.Capacity) && sb.Length > 0)
 						di.Manufacturer = sb.ToString();
-			// Override ProductName if Found.
-			if (NativeMethods.HidD_GetProductString(devHandle, sb, sb.Capacity) && sb.Length > 0)
+					// Override ProductName if Found.
+					if (NativeMethods.HidD_GetProductString(devHandle, sb, sb.Capacity) && sb.Length > 0)
 						di.Description = sb.ToString();
-			// Get Serial number.
-			var serialNumber = NativeMethods.HidD_GetSerialNumberString(devHandle, sb, sb.Capacity)
-			? sb.ToString() : "";
+					// Get Serial number.
+					var serialNumber = NativeMethods.HidD_GetSerialNumberString(devHandle, sb, sb.Capacity)
+					? sb.ToString() : "";
 					serialNumbers.Add(serialNumber);
-			// Get physical descriptor.
-			var physicalDescriptor = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, sb, sb.Capacity)
-			? sb.ToString() : "";
+					// Get physical descriptor.
+					var physicalDescriptor = NativeMethods.HidD_GetPhysicalDescriptor(devHandle, sb, sb.Capacity)
+					? sb.ToString() : "";
 					physicalDescriptors.Add(physicalDescriptor);
 				}
 				list.Add(di);
 				devHandle.Close();
 				return true;
 			});
+
+			var listOrdered = list.OrderBy(x => x.DeviceId).ToArray();
+			Debug.WriteLine($"\n");
+			foreach (var device in listOrdered)
+			{
+				Debug.WriteLine($"PnPInterface:" +
+					$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
+					$" ProductId {device.ProductId}." +
+					$" Revision {device.Revision}." +
+					$" DeviceId {device.DeviceId}." +
+					$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
+					$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid.ToString("B")).Item2})." +
+					$" Description {device.Description}." +
+					$" ClassDescription {device.ClassDescription}.");
+			}
+			stopwatchInt.Stop();
+			Debug.WriteLine($"stopwatchInt: {stopwatchInt.Elapsed.TotalMilliseconds} ms\n");
 			return list.ToArray();
 		}
 
@@ -520,26 +550,120 @@ namespace JocysCom.ClassLibrary.IO
 		///           Failed to enumerate device tree!
 		///           Invalid handle!
 		/// </remarks>		
-		public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF? flags = null, string deviceId = null, int vid = 0, int pid = 0, int rev = 0)
+
+		// Connected PnP Device Id list.
+		private static List<string> PnPDeviceIDs = new List<string>();
+		public static IEnumerable<(DeviceInstance Device, DeviceClass Class, int Usage, string DiDeviceID)> DiDevices = null;
+		// DEVICES.
+		public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF? flags = null, string parentDeviceId = null, int vid = 0, int pid = 0, int rev = 0, bool DiDevicesOnly = false)
 		{
+			var stopwatchPnP = Stopwatch.StartNew();
 			var list = new List<DeviceInfo>();
+
 			_EnumDeviceInfo(classGuid, flags, null, (infoSet, infoData) =>
 			{
 				var currentDeviceId = GetDeviceId(infoData.DevInst);
-				if (!string.IsNullOrEmpty(deviceId) && deviceId != currentDeviceId)
+
+				if (string.IsNullOrEmpty(currentDeviceId))
 					return true;
-				var device = GetDeviceInfo(infoSet, infoData);
-				if (vid > 0 && device.VendorId != vid)
+
+				// If parent device is requested.
+				if (!string.IsNullOrEmpty(parentDeviceId))
+				{
+					if (currentDeviceId == parentDeviceId)
+					{
+						var device = GetDeviceInfo(infoSet, infoData);
+						list.Add(device);
+						return true;
+					}
 					return true;
-				if (pid > 0 && device.ProductId != pid)
+				}
+				// if devices are requested.
+				else
+				{
+					// MI_00 = Keyboard, MI_01 = Mouse, MI_02 = HID.
+					if (DiDevicesOnly && !PnPDeviceIsInDiDevicesList(currentDeviceId.ToString()).Item1 || !currentDeviceId.EndsWith("0")) return true;
+
+					var device = GetDeviceInfo(infoSet, infoData);
+					if (device.IsRemovable
+						|| (vid > 0 && device.VendorId != vid)
+						|| (pid > 0 && device.ProductId != pid)
+						|| (rev > 0 && device.Revision != rev))
 					return true;
-				if (rev > 0 && device.Revision != rev)
+
+					list.Add(device);
 					return true;
-				list.Add(device);
-				return true;
+				}
 			});
-			return list.OrderBy(x => x.ClassDescription).ThenBy(x => x.Description).ToArray();
+
+			var listOrdered = list.OrderBy(x => x.DeviceId).ToArray();
+			Debug.WriteLine($"\n");
+			PnPDeviceIDs.Clear();
+			foreach (var device in listOrdered)
+			{
+				Debug.WriteLine($"PnPDevice:" +
+					$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
+					$" ProductId {device.ProductId}." +
+					$" Revision {device.Revision}." +
+					$" DeviceId {device.DeviceId}." +
+					$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
+					$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid.ToString("B")).Item2})." +
+					$" Description {device.Description}." +
+					$" ClassDescription {device.ClassDescription}.");
+				PnPDeviceIDs.Add(device.DeviceId);
+			}
+			stopwatchPnP.Stop();
+			Debug.WriteLine($"StopwatchPnP: {stopwatchPnP.Elapsed.TotalMilliseconds} ms\n");
+			return listOrdered;
 		}
+
+		// PnP DeviceClass GUIDs: Keyboard, Mouse, Human Interface Device (HID)
+		public static Dictionary<string, string> PnPDeviceClassGuids = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+		{
+			{ "{4d36e96b-e325-11ce-bfc1-08002be10318}", "Keyboard" },
+			{ "{4d36e96f-e325-11ce-bfc1-08002be10318}", "Mouse" },
+			{ "{745a17a0-74d3-11d0-b6fe-00a0c90f57da}", "HID" },
+		};
+		static (bool, string) ContainsGuid(string PnPDeviceClassGuid) 
+		{ 
+			return PnPDeviceClassGuids.TryGetValue(PnPDeviceClassGuid, out string deviceType) ? (true, deviceType) : (false, "NoGuid");
+		}
+
+		static (bool, string, Guid) PnPDeviceIsInDiDevicesList(string PnPDeviceID)
+		{
+			foreach (var item in DiDevices)
+			{
+				if (PnPDeviceID.StartsWith(item.DiDeviceID, StringComparison.OrdinalIgnoreCase))
+				{
+					return (true, item.Device.ProductName, item.Device.InstanceGuid);
+				}
+			}
+			return (false, string.Empty, Guid.Empty);
+		}
+
+		//public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF? flags = null, string deviceId = null, int vid = 0, int pid = 0, int rev = 0)
+		//{
+		//	var list = new List<DeviceInfo>();
+		//	_EnumDeviceInfo(classGuid, flags, null, (infoSet, infoData) =>
+		//	{
+		//		var currentDeviceId = GetDeviceId(infoData.DevInst);
+		//		if (!string.IsNullOrEmpty(deviceId) && deviceId != currentDeviceId)
+		//			return true;
+		//		var device = GetDeviceInfo(infoSet, infoData);
+		//			if (vid > 0 && device.VendorId != vid)
+		//			return true;
+		//		if (pid > 0 && device.ProductId != pid)
+		//			return true;
+		//		if (rev > 0 && device.Revision != rev)
+		//			return true;
+		//		Debug.WriteLine($"ClassGuidOld {device.ClassGuid}. ProductId {device.ProductId}. HardwareId {device.HardwareIds}. DeviceId {device.DeviceId}. Removable {device.IsRemovable} Name {device.FriendlyName}. Description {device.Description}. ClassDescription {device.ClassDescription} ");
+		//		list.Add(device);
+
+		//		return true;
+		//	});
+
+		//	return list.OrderBy(x => x.ClassDescription).ThenBy(x => x.Description).ToArray();
+		//}
 
 		public static string GetAllDeviceProperties(string deviceId)
 		{
