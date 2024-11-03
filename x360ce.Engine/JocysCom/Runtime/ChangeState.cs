@@ -6,6 +6,7 @@ using System.Data;
 using Microsoft.EntityFrameworkCore;
 #endif
 using System.Linq;
+using EntityState = System.Data.EntityState;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
