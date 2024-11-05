@@ -5,11 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+//using System.Xml.Linq;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -305,10 +307,16 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		List<int> buttons = new List<int>();
+		List<int> povs = new List<int>();
+		List<int> axes = new List<int>();
+		List<int> sliders = new List<int>();
+
 		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
-			if (GetCustomDiState(ud) == null || ud.IsKeyboard) return;
+
+			if (GetCustomDiState(ud) == null) return;
 
 			// Clear StackPanel children in XAML page.
 			DragAndDropStackPanelNormal.Children.Clear();
@@ -327,29 +335,19 @@ namespace x360ce.App.Controls
 			ISliderDictionary.Clear();
 			IHSliderDictionary.Clear();
 			// Lists with InstanceNumber's.
-			var buttons = new List<int>();
-			var povs = new List<int>();
-			var axes = new List<int>();
-			var sliders = new List<int>();
+			buttons.Clear();
+			povs.Clear();
+			axes.Clear();
+			sliders.Clear();
 
-			if (ud.Device is Joystick)
-			{
-				Debug.WriteLine($"INFO: ProductName {ud.Device.Properties.ProductName}.");
-				// Get by unique Usage value.
-				buttons = GetDeviceObjectsByUsageAndInstanceNumber(ud, CustomDiHelper.ButtonUsageDictionary, new List<DeviceObjectTypeFlags> { DeviceObjectTypeFlags.Button, DeviceObjectTypeFlags.PushButton, DeviceObjectTypeFlags.ToggleButton });
-				axes = GetDeviceObjectsByUsageAndInstanceNumber(ud, CustomDiHelper.AxisUsageDictionary, new List<DeviceObjectTypeFlags> { DeviceObjectTypeFlags.Axis, DeviceObjectTypeFlags.AbsoluteAxis, DeviceObjectTypeFlags.RelativeAxis });
-				// Get by Usage value (povs usage value 57, sliders are axes with usage value 54) and then by unique InstanceNumber.
-				povs = GetDeviceObjectsByUsageAndInstanceNumber(ud, CustomDiHelper.POVIndexDictionary, new List<DeviceObjectTypeFlags> { DeviceObjectTypeFlags.PointOfViewController, }, 57);
-				sliders = GetDeviceObjectsByUsageAndInstanceNumber(ud, CustomDiHelper.SliderIndexDictionary, new List<DeviceObjectTypeFlags> { DeviceObjectTypeFlags.Axis, DeviceObjectTypeFlags.AbsoluteAxis, DeviceObjectTypeFlags.RelativeAxis }, 54);
+			GetDeviceObjectInstancesByObjectTypeGuid(ud);
 
-			}
-			else if (ud.Device is SharpDX.DirectInput.Mouse)
-			{
-				Debug.WriteLine($"INFO: ProductName {ud.Device.Properties.ProductName}.");
-				// axes = GetItems(ud.Device, CustomDiHelper.MouseAxisOffsets.Select(offset => (int)offset).ToList());
-				axes = GetDeviceObjectsByUsageAndInstanceNumber(ud, CustomDiHelper.MouseAxisUsageDictionary, new List<DeviceObjectTypeFlags> { DeviceObjectTypeFlags.Axis, DeviceObjectTypeFlags.AbsoluteAxis, DeviceObjectTypeFlags.RelativeAxis });
-			}
-			// Buttons.
+			buttons.Sort();
+			povs.Sort();
+			axes.Sort();
+			sliders.Sort();
+
+			// Buttons and keys.
 			if (buttons.Count() > 0)
 			{
 				DragAndDropMenuLabels_Create(ButtonDictionary, buttons, "Button", "BUTTON", "Icon_DragAndDrop_Button");
@@ -379,81 +377,53 @@ namespace x360ce.App.Controls
 				DragAndDropMenuLabels_Create(HSliderDictionary, sliders, "HSlider", "SLIDER · HALF", "Icon_DragAndDrop_Axis_Half");
 				DragAndDropMenuLabels_Create(IHSliderDictionary, sliders, "IHSlider", "SLIDER · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 			}
-			// Debug.
-			// GetAllDeviceObjectsByUsageDebug(ud);
-			// GetDeviceObjectsByOffsetDebug(ud);
-
 		}
 
-		private List<int> GetDeviceObjectsByUsageAndInstanceNumber(UserDevice ud, Dictionary<int, (int, int, Guid, string, JoystickOffset)> dictionary, List<DeviceObjectTypeFlags> flags, int usage = 0)
-		{
-			var list = new List<int>();
-			if (usage == 54)
+		private void GetDeviceObjectInstancesByObjectTypeGuid(UserDevice ud, int usage = 0)
+		{		
+			var device = ud.Device as Joystick;
+			var deviceObjects = device?.GetObjects();
+			StringBuilder stringBuilder = new StringBuilder();
+
+			// Sliders.
+			var state = device.GetCurrentState();
+			if (state.Sliders[0] != 0) sliders.Add(0);
+			if (state.Sliders[1] != 0) sliders.Add(1);
+			if (state.AccelerationSliders[0] != 0) sliders.Add(2);
+			if (state.AccelerationSliders[1] != 0) sliders.Add(3);
+			if (state.ForceSliders[0] != 0) sliders.Add(4);
+			if (state.ForceSliders[1] != 0) sliders.Add(5);
+			if (state.VelocitySliders[0] != 0) sliders.Add(6);
+			if (state.VelocitySliders[1] != 0) sliders.Add(7);
+
+			// Axes, Buttons, Keys, POVs.
+			foreach (DeviceObjectInstance item in deviceObjects.Where(x => x.ObjectType != ObjectGuid.Unknown).OrderBy(x => x.UsagePage).ThenBy(x => x.Usage).ThenBy(x => x.ObjectId.InstanceNumber))
 			{
-				var device = ud.Device as Joystick;
-				var deviceObjects = device?.GetObjects();
-				device.Acquire();
-				var state = device.GetCurrentState();
-
-				//var slidersS = state.Sliders.Length;
-				//var slidersA = state.AccelerationSliders.Length;
-				//var slidersF = state.ForceSliders.Length;
-				//var slidersV = state.VelocitySliders.Length;
-
-				if (state.Sliders[0] != 0) list.Add(0);
-				if (state.Sliders[1] != 0) list.Add(1);
-				if (state.AccelerationSliders[0] != 0) list.Add(2);
-				if (state.AccelerationSliders[1] != 0) list.Add(3);
-				if (state.ForceSliders[0] != 0) list.Add(4);
-				if (state.ForceSliders[1] != 0) list.Add(5);
-				if (state.VelocitySliders[0] != 0) list.Add(6);
-				if (state.VelocitySliders[1] != 0) list.Add(7);
-
-				foreach (var i in list)
-				{
-				var slider = device.GetObjectInfoByOffset((int)dictionary[i].Item5);
-				Debug.WriteLine($"INFO: " +
-								$"Guid {slider.ObjectType} ({GetObjectTypeName(slider.ObjectType)}). " +
-								$"Usage {slider.Usage} ({dictionary[i].Item2}). " + 
-								$"InstanceNumber {slider.ObjectId.InstanceNumber}. " +
-								$"Name {slider.Name} ({dictionary[i].Item4}). " + 
-								$"Aspect {slider.Aspect}. " +
-								$"Offset {slider.Offset}. " +
-								$"Flags {slider.ObjectId.Flags}.");
+				// if (item.ObjectType == ObjectGuid.Slider) { sliders.Add(item.Usage); }
+				if (item.ObjectType == ObjectGuid.PovController) { povs.Add(item.ObjectId.InstanceNumber); }
+				if (item.ObjectType == ObjectGuid.Button)
+				{	
+					if (ud.IsMouse) { buttons.Add(item.ObjectId.InstanceNumber - 3); }
+					else { buttons.Add(item.ObjectId.InstanceNumber); }
 				}
-				return list;
-			}
-			else
-			{
-				var deviceObjects = (ud.Device as Joystick)?.GetObjects() ?? (ud.Device as SharpDX.DirectInput.Mouse)?.GetObjects();
-				if (deviceObjects == null) return list;
-
-				foreach (var oInstance in deviceObjects
-				.Where(x => flags.Any(flag => x.ObjectId.Flags.HasFlag(flag)))
-				.OrderBy(x => x.ObjectType)
-				.ThenBy(x => x.Usage)
-				.ThenBy(x => x.ObjectId.InstanceNumber))
+				if (item.ObjectType == ObjectGuid.Key) { buttons.Add(item.ObjectId.InstanceNumber - 1); }
+				// Axes.
+				if (new[] { ObjectGuid.XAxis, ObjectGuid.YAxis, ObjectGuid.ZAxis, ObjectGuid.RxAxis, ObjectGuid.RyAxis, ObjectGuid.RzAxis }.Contains(item.ObjectType))
 				{
-					var i = oInstance.ObjectId.InstanceNumber;
-					var u = oInstance.Usage;
-					var condition = usage > 0 ? dictionary.ContainsKey(i)/* && u == usage*/ : dictionary.ContainsKey(u);
-
-					if (condition)
-					{
-						list.Add(i);
-						var key = usage > 0 ? i : u;
-						Debug.WriteLine($"INFO: " +
-										$"Guid {oInstance.ObjectType} ({GetObjectTypeName(oInstance.ObjectType)}). " +
-										$"Usage {u} ({dictionary[key].Item2}). " +
-										$"InstanceNumber {i}. " +
-										$"Name {oInstance.Name} ({dictionary[key].Item4}). " +
-										$"Aspect {oInstance.Aspect}. " +
-										$"Offset {oInstance.Offset}. " +
-										$"Flags {oInstance.ObjectId.Flags}.");
-					}
+					if (ud.IsMouse) { axes.Add(item.ObjectId.InstanceNumber); }
+					else { if (CustomDiHelper.AxisUsageDictionary.TryGetValue(item.Usage, out var value)) axes.Add(value.Item2); }
 				}
-				return list;
+
+				stringBuilder.Append($"INFO: " +
+						$"UsagePage {item.UsagePage}. " +
+						$"Usage {item.Usage.ToString().PadLeft(2, ' ')}. " +
+						$"InstanceNumber {item.ObjectId.InstanceNumber.ToString().PadLeft(2, ' ')}. " +
+						$"Offset {item.Offset.ToString().PadLeft(2, ' ')}. " +
+						$"ObjectType {item.ObjectType} ({GetObjectTypeName(item.ObjectType)}). " +
+						$"Name {item.Name}. " +
+						$"Flags {item.ObjectId.Flags}.\n");
 			}
+			Debug.WriteLine($"\nINFO: ProductName {ud.InstanceName}.\n{stringBuilder}\n");
 		}
 
 		public static string GetObjectTypeName(Guid guid)
@@ -471,26 +441,6 @@ namespace x360ce.App.Controls
 			}
 			return "Unknown";
 		}
-
-		//private void GetAllDeviceObjectsByUsageDebug(UserDevice ud)
-		//{
-		//	Debug.WriteLine($"\n");
-		//	Debug.WriteLine($"INFO-ALL: ProductName {ud.Device.Properties.ProductName}.");
-		//	var deviceObjects = (ud.Device as Joystick)?.GetObjects() ?? (ud.Device as SharpDX.DirectInput.Mouse)?.GetObjects();
-		//	foreach (SharpDX.DirectInput.DeviceObjectInstance item in deviceObjects.OrderBy(x => x.ObjectType).ThenBy(x => x.ObjectId.InstanceNumber))
-		//	{
-		//		Debug.WriteLine($"INFO-ALL: " +
-		//			$"Guid {item.ObjectType} ({GetObjectTypeName(item.ObjectType)}). " +
-		//			$"Usage {item.Usage}. " +
-		//			$"InstanceNumber {item.ObjectId.InstanceNumber}. " +
-		//			$"Name {item.Name}. " +
-		//			$"Collection {item.CollectionNumber}. " +
-		//			$"Aspect {item.Aspect}. " +
-		//			$"Offset {item.Offset}. " +
-		//			$"Flags {item.ObjectId.Flags}.");
-		//	}
-		//	Debug.WriteLine($"\n");
-		//}
 
 		//private void GetDeviceObjectsByOffsetDebug(UserDevice ud)
 		//{
@@ -593,27 +543,11 @@ namespace x360ce.App.Controls
 				AxisDictionary[i.Key].Item1.Background = HAxisDictionary[i.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
 				IAxisDictionary[i.Key].Item1.Background = IHAxisDictionary[i.Key].Item1.Background = active ? Brushes.Transparent : colorActive;
 			}
+
 			// Slider axes.
 			foreach (var i in SliderDictionary)
 			{
-				// Sliders are Axes with Usage value 54.
-				// ud.Device.DeviceObjectInstance.Usage=54 (Slider)
-				// ud.Device.DeviceObjectInstance.ObjectId.InstanceNumber=2 (AccelerationSliders0)
-				// ud.DiState.Sliders[0].
-
-				// var sDS = ud.DiState.Sliders[i.Key];
-				var sDS = 0;
-
-				JoystickState jState = ud.DeviceState as JoystickState;
-				if (i.Key == 0) { sDS = jState.Sliders[0]; }
-				else if (i.Key == 1) { sDS = jState.Sliders[1]; }
-				else if (i.Key == 2) { sDS = jState.AccelerationSliders[0]; }
-				else if (i.Key == 3) { sDS = jState.AccelerationSliders[1]; }
-				else if (i.Key == 4) { sDS = jState.ForceSliders[0]; }
-				else if (i.Key == 5) { sDS = jState.ForceSliders[1]; }
-				else if (i.Key == 6) { sDS = jState.VelocitySliders[0]; }
-				else if (i.Key == 7) { sDS = jState.VelocitySliders[1]; }
-
+				var sDS = ud.DiState.Sliders[i.Key];
 				SliderDictionary[i.Key].Item2.Content = sDS;
 				HSliderDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((sDS - 32767) * 2, 65535));
 				ISliderDictionary[i.Key].Item2.Content = Math.Abs(65535 - sDS);
@@ -623,22 +557,6 @@ namespace x360ce.App.Controls
 				ISliderDictionary[i.Key].Item1.Background = IHSliderDictionary[i.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? Brushes.Transparent : colorActive;
 			}
 		}
-
-
-		//public JoystickState()
-		//{
-		//	Sliders = new int[2];
-		//	PointOfViewControllers = new int[4];
-		//	Buttons = new bool[128];
-		//	VelocitySliders = new int[2];
-		//	AccelerationSliders = new int[2];
-		//	ForceSliders = new int[2];
-		//}
-
-		// case JoystickOffset.AccelerationSliders0:
-		// AccelerationSliders[0] = value;
-		// return;
-
 		#endregion
 
 		#region ■ Direct Input Menu

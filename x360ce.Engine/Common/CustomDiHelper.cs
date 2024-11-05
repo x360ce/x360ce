@@ -350,13 +350,35 @@ namespace x360ce.Engine
 			{ 128, (0x20, 127, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button127", JoystickOffset.Buttons127 /*175*/) },
 		};
 
-		public static Dictionary<int, (int, int, Guid, string, JoystickOffset)> MouseAxisUsageDictionary = new Dictionary<int, (int, int, Guid, string, JoystickOffset)>
+		public static Dictionary<int, (int, int, Guid, string, JoystickOffset)> MouseAxisIndexDictionary = new Dictionary<int, (int, int, Guid, string, JoystickOffset)>
 		{
-			// Axes.
-			{ 48, (0x30, 0, new Guid("a36d02e0-c9f3-11cf-bfc7-444553540000"), "X", JoystickOffset.X /*0*/) },
-			{ 49, (0x31, 1, new Guid("a36d02e1-c9f3-11cf-bfc7-444553540000"), "Y", JoystickOffset.Y /*4*/) },
-			{ 50, (0x32, 2, new Guid("a36d02e2-c9f3-11cf-bfc7-444553540000"), "Z", JoystickOffset.Z /*8*/) },
+			{ 0, (0x30, 0, new Guid("a36d02e0-c9f3-11cf-bfc7-444553540000"), "X", JoystickOffset.X /*0*/) },
+			{ 1, (0x30, 0, new Guid("a36d02e1-c9f3-11cf-bfc7-444553540000"), "Y", JoystickOffset.Y /*4*/) },
+			{ 2, (0x30, 0, new Guid("a36d02e2-c9f3-11cf-bfc7-444553540000"), "Z", JoystickOffset.Z /*8*/) },
 		};
+
+		public static Dictionary<int, (int, int, Guid, string, JoystickOffset)> MouseButtonIndexDictionary = new Dictionary<int, (int, int, Guid, string, JoystickOffset)>
+		{
+			// Buttons.
+			{ 3, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button0", JoystickOffset.Buttons0 /*48*/) },
+			{ 4, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button1", JoystickOffset.Buttons1 /*49*/) },
+			{ 5, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button2", JoystickOffset.Buttons2 /*50*/) },
+			{ 6, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button3", JoystickOffset.Buttons3 /*51*/) },
+			{ 7, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button4", JoystickOffset.Buttons4 /*52*/) },
+			{ 8, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button5", JoystickOffset.Buttons5 /*53*/) },
+			{ 9, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button6", JoystickOffset.Buttons6 /*54*/) },
+			{ 10, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button7", JoystickOffset.Buttons7 /*55*/) },
+			{ 11, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button8", JoystickOffset.Buttons8 /*56*/) },
+			{ 12, (0x30, 0, new Guid("a36d02f0-c9f3-11cf-bfc7-444553540000"), "Button9", JoystickOffset.Buttons9 /*57*/) },
+		};
+
+		//public static Dictionary<int, (int, int, Guid, string, JoystickOffset)> MouseAxisUsageDictionary = new Dictionary<int, (int, int, Guid, string, JoystickOffset)>
+		//{
+		//	// Axes.
+		//	{ 48, (0x30, 0, new Guid("a36d02e0-c9f3-11cf-bfc7-444553540000"), "X", JoystickOffset.X /*0*/) },
+		//	{ 49, (0x31, 1, new Guid("a36d02e1-c9f3-11cf-bfc7-444553540000"), "Y", JoystickOffset.Y /*4*/) },
+		//	{ 50, (0x32, 2, new Guid("a36d02e2-c9f3-11cf-bfc7-444553540000"), "Z", JoystickOffset.Z /*8*/) },
+		//};
 
 		public static Dictionary<int, (int, int, Guid, string, JoystickOffset)> AxisUsageDictionary = new Dictionary<int, (int, int, Guid, string, JoystickOffset)>
 		{
