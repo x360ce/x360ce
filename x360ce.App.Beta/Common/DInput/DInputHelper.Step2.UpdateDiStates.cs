@@ -39,7 +39,6 @@ namespace x360ce.App.DInput
 
 				var options = SettingsManager.Options;
 				// Note: && manager.IsDeviceAttached(ud.InstanceGuid) use a lot of CPU resources. 
-
 				// Allow if not testing or testing with option enabled.
 				if (ud != null && ud.IsOnline && (!options.TestEnabled || options.TestGetDInputStates))
 				{	
@@ -116,7 +115,7 @@ namespace x360ce.App.DInput
 							if (ud.DeviceObjects == null)
 							{
 								exceptionData.AppendFormat($"AppHelper.GetDeviceObjectsByUsageAndInstanceNumber(device) // ud.IsExclusiveMode = {ud.IsExclusiveMode}").AppendLine();
-								var item = AppHelper.GetDeviceObjects(ud, device);
+								// var item = AppHelper.GetDeviceObjects(ud, device);
 								// ud.DeviceObjects = item;
 								//// Update masks.
 								//int axisMask = 0;
@@ -222,7 +221,6 @@ namespace x360ce.App.DInput
 							ud.IsExclusiveMode = null;
 						}
 					}
-
 					// If this is test device then...
 					else if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
 					{

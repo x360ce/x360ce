@@ -241,38 +241,45 @@ namespace x360ce.App.DInput
 						DevicesAreUpdating = true;
 						try
 						{
+
+							//Debug.WriteLine("1");
 							// The best place to unload the XInput DLL is at the start, because
 							// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
 							CheckAndUnloadXInputLibrary(game, getXInputStates);
+							//Debug.WriteLine("2");
 							// Update information about connected devices.
 							_ = UpdateDiDevices(manager);
+							//Debug.WriteLine("3");
 							// Load the XInput library before retrieving XInput states.
 							CheckAndLoadXInputLibrary(game, getXInputStates);
+							//Debug.WriteLine("4");
 						}
 						finally
 						{
+							//Debug.WriteLine("5");
 							DevicesNeedUpdating = false;
 							DevicesAreUpdating = false;
+							//Debug.WriteLine("6");
 						}
 					}
 					else
 					{
-						// Debug.WriteLine("1.");
+						// Debug.WriteLine("7.");
 						// Update JoystickStates from devices.
 						UpdateDiStates(game, detector);
-						// Debug.WriteLine("2.");
+						// Debug.WriteLine("8.");
 						// Update XInput states from Custom DirectInput states.
 						UpdateXiStates(game);
-						// Debug.WriteLine("3.");
+						 //Debug.WriteLine("9.");
 						// Combine XInput states of controllers.
 						CombineXiStates();
-						// Debug.WriteLine("4.");
+						 //Debug.WriteLine("10.");
 						// Update virtual devices from combined states.
 						UpdateVirtualDevices(game);
-						// Debug.WriteLine("5.");
+						// Debug.WriteLine("11.");
 						// Retrieve XInput states from XInput controllers.
 						RetrieveXiStates(getXInputStates);
-						// Debug.WriteLine("6.");
+						// Debug.WriteLine("12.");
 					}
 				}
 				// Count DInput updates per second to show in the app's status bar as Hz: #.

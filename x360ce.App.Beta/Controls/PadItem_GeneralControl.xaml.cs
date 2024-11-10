@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+
 //using System.Xml.Linq;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -334,6 +335,7 @@ namespace x360ce.App.Controls
 			HSliderDictionary.Clear();
 			ISliderDictionary.Clear();
 			IHSliderDictionary.Clear();
+
 			// Lists with InstanceNumber's.
 			buttons.Clear();
 			povs.Clear();
@@ -347,7 +349,7 @@ namespace x360ce.App.Controls
 			axes.Sort();
 			sliders.Sort();
 
-			// Buttons and keys.
+			// Buttons and Keys.
 			if (buttons.Count() > 0)
 			{
 				DragAndDropMenuLabels_Create(ButtonDictionary, buttons, "Button", "BUTTON", "Icon_DragAndDrop_Button");
@@ -399,16 +401,27 @@ namespace x360ce.App.Controls
 			// Axes, Buttons, Keys, POVs.
 			foreach (DeviceObjectInstance item in deviceObjects.Where(x => x.ObjectType != ObjectGuid.Unknown).OrderBy(x => x.UsagePage).ThenBy(x => x.Usage).ThenBy(x => x.ObjectId.InstanceNumber))
 			{
-				// if (item.ObjectType == ObjectGuid.Slider) { sliders.Add(item.Usage); }
+
+				//try { device.GetObjectInfoByOffset((int)JoystickOffset.Sliders1); }
+				//catch (Exception ex) { Debug.WriteLine($"OffsetError: {ex}"); }
+
+				//if (item.ObjectType == ObjectGuid.Slider)
+				//{
+				//	var slider = item;
+				//	var offset = item.Offset;
+				//	sliders.Add(item.Usage);
+				//}
+
 				if (item.ObjectType == ObjectGuid.PovController) { povs.Add(item.ObjectId.InstanceNumber); }
-				if (item.ObjectType == ObjectGuid.Button)
+				else if (item.ObjectType == ObjectGuid.Key) { buttons.Add(item.ObjectId.InstanceNumber - 1); }
+				else if (item.ObjectType == ObjectGuid.Button)
 				{	
+					
 					if (ud.IsMouse) { buttons.Add(item.ObjectId.InstanceNumber - 3); }
 					else { buttons.Add(item.ObjectId.InstanceNumber); }
 				}
-				if (item.ObjectType == ObjectGuid.Key) { buttons.Add(item.ObjectId.InstanceNumber - 1); }
 				// Axes.
-				if (new[] { ObjectGuid.XAxis, ObjectGuid.YAxis, ObjectGuid.ZAxis, ObjectGuid.RxAxis, ObjectGuid.RyAxis, ObjectGuid.RzAxis }.Contains(item.ObjectType))
+				else if (new[] { ObjectGuid.XAxis, ObjectGuid.YAxis, ObjectGuid.ZAxis, ObjectGuid.RxAxis, ObjectGuid.RyAxis, ObjectGuid.RzAxis }.Contains(item.ObjectType))
 				{
 					if (ud.IsMouse) { axes.Add(item.ObjectId.InstanceNumber); }
 					else { if (CustomDiHelper.AxisUsageDictionary.TryGetValue(item.Usage, out var value)) axes.Add(value.Item2); }
