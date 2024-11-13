@@ -34,6 +34,7 @@ namespace x360ce.App.DInput
 
 			// Devices are updated on USB connection event and on UpdateDiStates() method device InputLost error in DInputHelper.Step2.UpdateDiStates.cs 
 			PnPDeviceWatcher.EventArrived += new EventArrivedEventHandler(PnPDeviceWatcherUSBEvent);
+			// Keyboard, Mouse, HID.
 			var keys = DeviceDetector.PnPDeviceClassGuids.Keys.ToList();
 			PnPDeviceWatcher.Query = new WqlEventQuery(
 					"SELECT * FROM __InstanceOperationEvent " +
@@ -44,9 +45,7 @@ namespace x360ce.App.DInput
 					"OR TargetInstance.ClassGuid = '" + keys[1] + "' " +
 					"OR TargetInstance.ClassGuid = '" + keys[2] + "') " +
   					"AND TargetInstance.DeviceID LIKE 'HID%' " +
-					"AND TargetInstance.DeviceID LIKE '%0' " // +
-					//"AND NOT TargetInstance.DeviceID LIKE '%MI_02%'"
-					);
+					"AND TargetInstance.DeviceID LIKE '%0' ");
 			//PnPDeviceWatcher.Query = new WqlEventQuery("SELECT * FROM __InstanceOperationEvent WITHIN 1 WHERE TargetInstance ISA 'Win32_PnPEntity' AND (__Class = '__InstanceCreationEvent' OR __Class = '__InstanceDeletionEvent')");
 			PnPDeviceWatcher.Start();
 		}

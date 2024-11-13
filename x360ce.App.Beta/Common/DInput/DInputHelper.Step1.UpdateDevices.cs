@@ -58,7 +58,7 @@ namespace x360ce.App.DInput
 
 		// For comparison of connected DiDevice.InstanceGuid new and old list. 
 		private HashSet<Guid> DiDevicesGuidsOld = new HashSet<Guid>();
-		private List<DeviceClass> DiDeviceClassList = new List<DeviceClass> { DeviceClass.Device, DeviceClass.Pointer, DeviceClass.Keyboard, DeviceClass.GameControl };
+		private List<DeviceClass> DiDeviceClassList = new List<DeviceClass> { DeviceClass.GameControl, DeviceClass.Pointer, DeviceClass.Keyboard /*, DeviceClass.Device, DeviceClass.All*/ };
 		private (IEnumerable<(DeviceInstance Device, DeviceClass Class, int Usage, string DiDeviceID)>, bool) GetConnectedDiDevices(DirectInput directInput)
 		{
 			var stopwatchDi = Stopwatch.StartNew();

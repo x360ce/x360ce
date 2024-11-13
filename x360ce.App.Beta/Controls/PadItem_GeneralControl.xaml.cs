@@ -251,7 +251,7 @@ namespace x360ce.App.Controls
 				headerStackPanel.Children.Add(new ContentControl { Content = Application.Current.Resources[iconName] });
 				headerStackPanel.Children.Add(new TextBlock { Text = headerName, Margin = new Thickness(3, 0, 0, 0) });
 				// GroupBox Content (UniformGrid for Labels).
-				UniformGrid buttonsUniformGrid = new UniformGrid { Columns = 8 };
+				UniformGrid buttonsUniformGrid = new UniformGrid { Columns = list.Last().ToString().Length > 2 ? 6 : 8 };
 				// GroupBox.
 				GroupBox buttonsGroupBox = new GroupBox { Header = headerStackPanel, Content = buttonsUniformGrid };
 				// Put GroupBoxes into NORMAL and INVERTED tabs.
@@ -382,8 +382,8 @@ namespace x360ce.App.Controls
 		}
 
 		private void GetDeviceObjectInstancesByObjectTypeGuid(UserDevice ud, int usage = 0)
-		{		
-			var device = ud.Device as Joystick;
+		{
+			var device = ud.Device as Joystick;		
 			var deviceObjects = device?.GetObjects();
 			StringBuilder stringBuilder = new StringBuilder();
 
@@ -398,30 +398,22 @@ namespace x360ce.App.Controls
 			if (state.VelocitySliders[0] != 0) sliders.Add(6);
 			if (state.VelocitySliders[1] != 0) sliders.Add(7);
 
-			// Axes, Buttons, Keys, POVs.
+			// POVs.
+			// var povsCount = deviceObjects.Where(x => x.ObjectType == ObjectGuid.PovController).Count();
+			for (int i = 0; i < ud.CapPovCount; i++) { povs.Add(i); }
+
+			// Buttons, Keys. 
+			// var buttonCount = deviceObjects.Where(x => x.ObjectType == ObjectGuid.Button || x.ObjectType == ObjectGuid.Key).Count();
+			for (int i = 0; i < ud.CapButtonCount; i++) { buttons.Add(i); }
+
+			// Axes.
 			foreach (DeviceObjectInstance item in deviceObjects.Where(x => x.ObjectType != ObjectGuid.Unknown).OrderBy(x => x.UsagePage).ThenBy(x => x.Usage).ThenBy(x => x.ObjectId.InstanceNumber))
 			{
-
-				//try { device.GetObjectInfoByOffset((int)JoystickOffset.Sliders1); }
-				//catch (Exception ex) { Debug.WriteLine($"OffsetError: {ex}"); }
-
-				//if (item.ObjectType == ObjectGuid.Slider)
-				//{
-				//	var slider = item;
-				//	var offset = item.Offset;
-				//	sliders.Add(item.Usage);
-				//}
-
-				if (item.ObjectType == ObjectGuid.PovController) { povs.Add(item.ObjectId.InstanceNumber); }
-				else if (item.ObjectType == ObjectGuid.Key) { buttons.Add(item.ObjectId.InstanceNumber - 1); }
-				else if (item.ObjectType == ObjectGuid.Button)
-				{	
-					
-					if (ud.IsMouse) { buttons.Add(item.ObjectId.InstanceNumber - 3); }
-					else { buttons.Add(item.ObjectId.InstanceNumber); }
-				}
+				// if (item.ObjectType == ObjectGuid.PovController) { povs.Add(item.ObjectId.InstanceNumber); }
+				// else if (item.ObjectType == ObjectGuid.Key) { buttons.Add(item.ObjectId.InstanceNumber); }
+				// else if (item.ObjectType == ObjectGuid.Button) { buttons.Add(item.Offset); }
 				// Axes.
-				else if (new[] { ObjectGuid.XAxis, ObjectGuid.YAxis, ObjectGuid.ZAxis, ObjectGuid.RxAxis, ObjectGuid.RyAxis, ObjectGuid.RzAxis }.Contains(item.ObjectType))
+				if (new[] { ObjectGuid.XAxis, ObjectGuid.YAxis, ObjectGuid.ZAxis, ObjectGuid.RxAxis, ObjectGuid.RyAxis, ObjectGuid.RzAxis }.Contains(item.ObjectType))
 				{
 					if (ud.IsMouse) { axes.Add(item.ObjectId.InstanceNumber); }
 					else { if (CustomDiHelper.AxisUsageDictionary.TryGetValue(item.Usage, out var value)) axes.Add(value.Item2); }
@@ -436,40 +428,25 @@ namespace x360ce.App.Controls
 						$"Name {item.Name}. " +
 						$"Flags {item.ObjectId.Flags}.\n");
 			}
-			Debug.WriteLine($"\nINFO: ProductName {ud.InstanceName}.\n{stringBuilder}\n");
+
+			Debug.WriteLine($"\nINFO: InstanceName {ud.InstanceName}.\n{stringBuilder}");
+			//if (ud.InstanceGuid == new Guid("2c6612a0-d772-11e7-8003-444553540000") ||
+			//	ud.InstanceGuid == new Guid("dff18ef0-139b-11ea-8001-444553540000") ||
+			//	ud.InstanceGuid == new Guid("1a36a500-7535-11ef-8001-444553540000") ||
+			//	ud.InstanceGuid == new Guid("db208ce0-e8ce-11e7-8002-444553540000"))
+			//{
+			//	var ins = ud.Device;
+			//}
 		}
 
 		public static string GetObjectTypeName(Guid guid)
 		{
 			foreach (FieldInfo field in typeof(ObjectGuid).GetFields(BindingFlags.Public | BindingFlags.Static))
 			{
-				if (field.FieldType == typeof(Guid))
-				{
-					Guid fieldGuid = (Guid)field.GetValue(null);
-					if (fieldGuid == guid)
-					{
-						return field.Name;
-					}
-				}
+				if (field.FieldType == typeof(Guid) && (Guid)field.GetValue(null) == guid) return field.Name;
 			}
 			return "Unknown";
 		}
-
-		//private void GetDeviceObjectsByOffsetDebug(UserDevice ud)
-		//{
-		//	Debug.WriteLine($"\n");
-		//	var deviceObjects = (ud.Device as Joystick)?.GetObjects() ?? (ud.Device as SharpDX.DirectInput.Mouse)?.GetObjects();
-		//	foreach (JoystickOffset offset in CustomDiHelper.SliderOffsets)
-		//	{
-		//		try
-		//		{
-		//			var item = (ud.Device as Joystick)?.GetObjectInfoByOffset((int)offset);
-		//			Debug.WriteLine($"DEBUG: {item.ObjectType}. Name {item.Name}. Usage {item.Usage}. Collection {item.CollectionNumber}. InstanceNumber {item.ObjectId.InstanceNumber}. Aspect {item.Aspect}. Offset {item.Offset}. Flags {item.ObjectId.Flags}");
-		//		}
-		//		catch { }
-		//	}
-		//	Debug.WriteLine($"\n");
-		//}
 
 		private void SetDInputLabelContent(UserDevice ud, TargetType targetType, Label label)
 		{
