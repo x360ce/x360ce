@@ -19,9 +19,8 @@ namespace x360ce.App.DInput
 			   // Get only mapped and enabled settings.
 			   .Where(x => x.MapTo > (int)MapTo.None && x.IsEnabled)
 			   .ToArray();
-			for (int i = 0; i < settings.Length; i++)
+			foreach (var setting in settings)
 			{
-				var setting = settings[i];
 				var ud = SettingsManager.GetDevice(setting.InstanceGuid);
 				// If device was not found then continue.
 				if (ud == null)
@@ -350,9 +349,7 @@ namespace x360ce.App.DInput
 				//   To Triger:      0   -    255    scale: 255
 				//   To   Axis: -32768   -  32767    shift: -32768
 			}
-			var ev = StatesUpdated;
-			if (ev != null)
-				ev(this, new DInputEventArgs());
+			StatesUpdated?.Invoke(this, new DInputEventArgs());
 		}
 
 	}

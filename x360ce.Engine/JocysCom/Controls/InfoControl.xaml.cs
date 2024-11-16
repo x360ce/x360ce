@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace JocysCom.ClassLibrary.Controls
 {
@@ -14,6 +15,8 @@ namespace JocysCom.ClassLibrary.Controls
 	/// </summary>
 	public partial class InfoControl : UserControl
 	{
+
+
 		public InfoControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
@@ -27,9 +30,26 @@ namespace JocysCom.ClassLibrary.Controls
 			DefaultHead = product;
 			DefaultBody = description;
 			Reset();
-			InitRotation();
+			CreateBusyIconAnimation();
+			// InitRotation();
 			HelpProvider.OnMouseEnter += HelpProvider_OnMouseEnter;
 			HelpProvider.OnMouseLeave += HelpProvider_OnMouseLeave;
+
+		}
+
+		public DoubleAnimationUsingKeyFrames animationBusyIcon = new DoubleAnimationUsingKeyFrames();
+		public Storyboard storyboardBusyIcon = new Storyboard();
+		private void CreateBusyIconAnimation()
+		{
+			// Animation properties.
+			Storyboard.SetTarget(animationBusyIcon, BusyIcon);
+			Storyboard.SetTargetProperty(animationBusyIcon, new PropertyPath("(UIElement.RenderTransform).(RotateTransform.Angle)"));
+			animationBusyIcon.KeyFrames.Add(new DiscreteDoubleKeyFrame(0, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(0))));
+			animationBusyIcon.KeyFrames.Add(new LinearDoubleKeyFrame(360, KeyTime.FromTimeSpan(TimeSpan.FromSeconds(6))));
+			// Storyboard properties.
+			storyboardBusyIcon.RepeatBehavior = RepeatBehavior.Forever;
+			storyboardBusyIcon.Children.Add(animationBusyIcon);
+			storyboardBusyIcon.Begin();
 		}
 
 		private void HelpProvider_OnMouseEnter(object sender, EventArgs e)
@@ -127,8 +147,9 @@ namespace JocysCom.ClassLibrary.Controls
 			SetBody(image, content, args);
 			var bodyText = BodyLabel.Text;
 			// The average minimal reading speed for adults is 16 characters per second.
+			// Use reading speed for adults as 14 characters per second.
 			// Add 4 extra seconds for realization and focus.
-			var waitSeconds = 4 + bodyText.Length / 16.0;
+			var waitSeconds = 4 + bodyText.Length / 14.0;
 			// Task code which waits for waitSeconds and executes code below.
 			await Task.Delay(TimeSpan.FromSeconds(waitSeconds));
 			if (bodyText == BodyLabel.Text)
@@ -143,7 +164,7 @@ namespace JocysCom.ClassLibrary.Controls
 			else if (args.Length > 0)
 				content = string.Format(content, args);
 			BodyLabel.Text = content;
-			// Update body colors.
+			// Set body color and icon.
 			switch (image)
 			{
 				case MessageBoxImage.Error:
@@ -171,17 +192,6 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private readonly object TasksLock = new object();
 		public readonly BindingList<object> Tasks = new BindingList<object>();
-
-		private void InitRotation()
-		{
-			// Initialize rotation
-			_RotateTransform = new RotateTransform();
-			BusyIcon.RenderTransform = _RotateTransform;
-			BusyIcon.RenderTransformOrigin = new Point(0.5, 0.5);
-			RotateTimer = new System.Timers.Timer();
-			RotateTimer.Interval = 25;
-			RotateTimer.Elapsed += RotateTimer_Elapsed;
-		}
 
 		/// <summary>Activate busy spinner.</summary>
 		public void AddTask(object name)
@@ -212,30 +222,14 @@ namespace JocysCom.ClassLibrary.Controls
 			{
 				BusyIcon.Visibility = Visibility.Visible;
 				RightIcon.Visibility = Visibility.Hidden;
-				RotateTimer.Start();
+				storyboardBusyIcon.Begin();
 			}
 			else
 			{
-				RotateTimer.Stop();
+				storyboardBusyIcon.Pause();
 				BusyIcon.Visibility = Visibility.Hidden;
 				RightIcon.Visibility = Visibility.Visible;
 			}
-		}
-
-		RotateTransform _RotateTransform;
-		System.Timers.Timer RotateTimer;
-
-		private void RotateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-		{
-			if (RightIcon.Dispatcher.HasShutdownStarted)
-				return;
-#pragma warning disable VSTHRD001 // Avoid legacy thread switching APIs
-			RightIcon.Dispatcher.Invoke(() =>
-#pragma warning restore VSTHRD001 // Avoid legacy thread switching APIs
-			{
-				var angle = (_RotateTransform.Angle + 2) % 360;
-				_RotateTransform.Angle = angle;
-			});
 		}
 
 		#endregion

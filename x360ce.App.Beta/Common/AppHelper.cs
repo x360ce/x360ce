@@ -12,8 +12,10 @@ using x360ce.Engine.Data;
 using SharpDX.XInput;
 using JocysCom.ClassLibrary.Win32;
 using x360ce.App.ViGEm;
-using System.Windows.Controls;
-using System.Windows.Data;
+// using System.Diagnostics;
+//using System.CodeDom;
+//using System.Windows.Controls;
+//using System.Windows.Data;
 
 namespace x360ce.App
 {
@@ -69,34 +71,54 @@ namespace x360ce.App
 			return true;
 		}
 
-		public static DeviceObjectItem[] GetDeviceObjects(Device device)
+		public static DeviceObjectItem[] GetDeviceObjects(UserDevice ud, Device device)
 		{
 			var items = new List<DeviceObjectItem>();
 			if (device == null)
+			{
+				ud.DeviceObjects = items.ToArray();
 				return items.ToArray();
-			var og = typeof(SharpDX.DirectInput.ObjectGuid);
-			var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
-			List<Guid> typeGuids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
-			List<string> typeName = guidFileds.Select(x => x.Name).ToList();
+			}
+
+			// UserDevice force feedback actuators.
+			ud.DiAxeMask = 0;
+			ud.DiActuatorMask = 0;
+			ud.DiActuatorCount = 0;
+
+			// var og = typeof(ObjectGuid);
+			// var guidFileds = og.GetFields().Where(x => x.FieldType == typeof(Guid));
+			// List<Guid> typeGuids = guidFileds.Select(x => (Guid)x.GetValue(og)).ToList();
+			// List<string> typeName = guidFileds.Select(x => x.Name).ToList();
 			var objects = device.GetObjects(DeviceObjectTypeFlags.All).OrderBy(x => x.ObjectId.Flags).ThenBy(x => x.ObjectId.InstanceNumber).ToArray();
+
 			foreach (var o in objects)
 			{
-				var item = new DeviceObjectItem()
-				{
-					Name = o.Name,
-					Offset = o.Offset,
-					Aspect = o.Aspect,
-					Flags = o.ObjectId.Flags,
-					ObjectId = (int)o.ObjectId,
-					Instance = o.ObjectId.InstanceNumber,
-					Type = o.ObjectType,
-					DiIndex = o.ObjectId.InstanceNumber - 1,
-				};
-				var isAxis = o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.Axis);
-				isAxis |= o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis);
-				isAxis |= o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis);
+				var item = new DeviceObjectItem();
+
+				item.Name = o.Name;
+				item.Offset = o.Offset;
+				item.Aspect = o.Aspect;
+				item.Flags = o.ObjectId.Flags;
+				item.ObjectId = (int)o.ObjectId;
+				item.Instance = o.ObjectId.InstanceNumber;
+				item.Type = o.ObjectType;
+				item.DiIndex = o.ObjectId.InstanceNumber;
+
+				// Axes.
+				var isAxis = o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.Axis)
+				|| o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.AbsoluteAxis)
+				|| o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.RelativeAxis);
+
 				if (isAxis)
 				{
+					ud.DiAxeMask |= (int)Math.Pow(2, item.Instance);
+					if ((device is Joystick || device is Mouse) && o.ObjectId.Flags.HasFlag(DeviceObjectTypeFlags.ForceFeedbackActuator))
+					{
+						ud.DiActuatorMask |= (int)Math.Pow(2, item.Instance);
+						ud.DiActuatorCount = ud.DiActuatorCount++;
+					}
+
+					// Axis properties.
 					try
 					{
 						var p = device.GetObjectPropertiesById(o.ObjectId);
@@ -112,7 +134,6 @@ namespace x360ce.App
 							item.RangeMax = p.Range.Maximum;
 							item.Saturation = p.Saturation;
 						}
-
 					}
 					catch (Exception ex)
 					{
@@ -122,11 +143,12 @@ namespace x360ce.App
 				items.Add(item);
 			}
 			// Update Button DIndexes.
-			var buttons = items.Where(x => x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key).OrderBy(x => x.Instance).ToArray();
-			for (int i = 0; i < buttons.Length; i++)
-			{
-				buttons[i].DiIndex = i;
-			}
+			//var buttons = items.Where(x => x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key).OrderBy(x => x.Instance).ToArray();
+			//for (int i = 0; i < buttons.Length; i++)
+			//{
+			//	buttons[i].DiIndex = i;
+			//}
+			ud.DeviceObjects = items.ToArray();
 			return items.ToArray();
 		}
 

@@ -2,6 +2,7 @@
 using SharpDX.XInput;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -77,8 +78,12 @@ namespace x360ce.App.Controls
 			linearLink.ValueChanged += deadzoneLink_ValueChanged;
 		}
 
+		PadSetting _ps;
+
+
 		public void SetBinding(PadSetting ps)
 		{
+			if (_ps != null) { _ps = ps; }
 			// Unbind first.
 			SettingsManager.UnLoadMonitor(DeadZoneUpDown);
 			SettingsManager.UnLoadMonitor(AntiDeadZoneUpDown);
@@ -159,7 +164,7 @@ namespace x360ce.App.Controls
 			SensitivityTooltip.Content =
 				sensitivity < 0 ? "Center is more sensitive" :
 				sensitivity > 0 ? "Center is less sensitive" :
-				string.Empty;			
+				string.Empty;
 		}
 
 		// Half and Invert values are only in creating XInput path - red line.
@@ -209,8 +214,10 @@ namespace x360ce.App.Controls
 			return xI;
 		}
 
-		private async void P_X_Y_Z_PresetMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private /*async*/ void P_X_Y_Z_PresetMenu_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
+			// await Task.Yield(); // Placeholder to make the method awaitable.
+
 			float xDeadZone = 0;
 			switch (TargetType)
 			{
@@ -226,8 +233,8 @@ namespace x360ce.App.Controls
 				case TargetType.RightThumbY:
 					xDeadZone = Controller.XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
 					break;
-				default:
-					break;
+				//default:
+				//	break;
 			}
 
 			// P_0_0_0_MenuItem > ConvertRangeF(oldValue, oldMin, oldMax, newMin, newMax).
@@ -241,6 +248,8 @@ namespace x360ce.App.Controls
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
 		{
 			CreateBackgroundPolyline();
+			//SetBinding(_ps);
+			//UpdateTargetType();
 			if (!ControlsHelper.AllowLoad(this))
 				return;
 		}
@@ -249,14 +258,18 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
 
-			//SetBinding(null);
-			//deadzoneLink?.Dispose();
-			//deadzoneLink = null;
-			//antiDeadzoneLink?.Dispose();
-			//antiDeadzoneLink = null;
-			//linearLink?.Dispose();
-			//linearLink = null;
+		public void ParentWindow_Unloaded()
+		{
+			SetBinding(null);
+			deadzoneLink?.Dispose();
+			deadzoneLink = null;
+			antiDeadzoneLink?.Dispose();
+			antiDeadzoneLink = null;
+			linearLink?.Dispose();
+			linearLink = null;
 		}
 	}
 }

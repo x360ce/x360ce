@@ -1,26 +1,19 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+﻿using JocysCom.ClassLibrary.Collections;
+using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json.Serialization;
+using System.Windows;
 using System.Xml;
 using System.Xml.Serialization;
-using JocysCom.ClassLibrary.Collections;
-using System.ComponentModel;
-
-
-
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
-using System.Windows;
-#else // .NET Framework
-using System.Windows.Forms;
-#endif
 
 namespace JocysCom.ClassLibrary.Configuration
 {
@@ -63,6 +56,19 @@ namespace JocysCom.ClassLibrary.Configuration
 		private string _Company;
 		private string _Product;
 
+		private string GetAppDataPath(bool userLevel = false)
+		{
+			var mainAssembly = _Assemblies.First();
+			_Company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyCompanyAttribute))).Company;
+			_Product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyProductAttribute))).Product;
+			// Get writable application folder.
+			var specialFolder = userLevel
+				? Environment.SpecialFolder.ApplicationData
+				: Environment.SpecialFolder.CommonApplicationData;
+			var path = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
+			return path;
+		}
+
 		/// <summary>
 		/// Initialize class.
 		/// </summary>
@@ -80,32 +86,24 @@ namespace JocysCom.ClassLibrary.Configuration
 			}.Where(x => x != null)
 			.Distinct()
 			.ToList();
-			var mainAssembly = _Assemblies.First();
-			_Company = ((AssemblyCompanyAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyCompanyAttribute))).Company;
-			_Product = ((AssemblyProductAttribute)Attribute.GetCustomAttribute(mainAssembly, typeof(AssemblyProductAttribute))).Product;
 			string folder;
-			string fileName;
+			string fileBaseName;
 			// Check if there is a folder with the same name as executable.
 			folder = GetLocalSettingsDirectory();
 			if (userLevel.HasValue)
 			{
 				if (string.IsNullOrEmpty(folder))
-				{
-					// Get writable application folder.
-					var specialFolder = userLevel.Value
-						? Environment.SpecialFolder.ApplicationData
-						: Environment.SpecialFolder.CommonApplicationData;
-					folder = string.Format("{0}\\{1}\\{2}", Environment.GetFolderPath(specialFolder), _Company, _Product);
-				}
-				fileName = typeof(T).Name + ".xml";
+					folder = GetAppDataPath(userLevel.Value);
+				fileBaseName = typeof(T).Name;
 			}
 			else
 			{
 				var fullName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 				if (string.IsNullOrEmpty(folder))
 					folder = System.IO.Path.GetDirectoryName(fullName);
-				fileName = System.IO.Path.GetFileNameWithoutExtension(fullName) + ".xml";
+				fileBaseName = System.IO.Path.GetFileNameWithoutExtension(fullName);
 			}
+			string fileName = fileBaseName + ".xml";
 			// If override file name is set then override the file name.
 			if (!string.IsNullOrEmpty(overrideFileName))
 				fileName = overrideFileName;
@@ -121,36 +119,52 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			var moduleFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
 			var fi = new FileInfo(moduleFileName);
-			var path = Path.Combine(fi.Directory.FullName, System.IO.Path.GetFileNameWithoutExtension(fi.Name));
+			var settingsFolderName = System.IO.Path.GetFileNameWithoutExtension(fi.Name);
+			// Parse command line settings.
+			var args = Environment.GetCommandLineArgs();
+			var ic = new JocysCom.ClassLibrary.Configuration.Arguments(args);
+			// ------------------------------------------------
+			if (ic.ContainsKey("SettingsPath"))
+			{
+				var settingsPath = ic["SettingsPath"];
+				if (!string.IsNullOrEmpty(settingsPath))
+				{
+					var sdi = new DirectoryInfo(settingsPath);
+					if (sdi.Exists)
+						return sdi.FullName;
+				}
+			}
+			// Check if folder with settings exists in the same folder as executable.
+			var path = Path.Combine(fi.Directory.FullName, settingsFolderName);
 			var di = new DirectoryInfo(path);
-			return di.Exists
-				? di.FullName
-				: null;
+			if (di.Exists)
+				return di.FullName;
+			return null;
 		}
 
 
 		/// <summary>
 		/// Indicates whether saving the settings is pending. This can be used to optimize write operations by delaying them until necessary.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool IsSavePending { get; set; }
 
 		/// <summary>
 		/// Indicates whether loading the settings is pending. Useful for deferring the loading operation until it's required.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool IsLoadPending { get; set; }
 
 		/// <summary>
 		/// Determines whether settings are stored in separate files.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool UseSeparateFiles { get; set; }
 
 		/// <summary>
 		/// Gets or sets the FileInfo object for the XML file that stores the settings data.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public FileInfo XmlFile { get { return _XmlFile; } set { _XmlFile = value; } }
 
 		[NonSerialized]
@@ -192,12 +206,12 @@ namespace JocysCom.ClassLibrary.Configuration
 				return Items.ToArray();
 		}
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		IBindingList ISettingsData.Items { get { return Items; } }
 
 		public delegate void ApplyOrderDelegate(SettingsData<T> source);
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		public ApplyOrderDelegate ApplyOrder;
 
 		/// <summary>
@@ -206,7 +220,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		[XmlAttribute]
 		public int Version { get; set; }
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		object saveReadFileLock = new object();
 
 		/// <summary>
@@ -240,12 +254,14 @@ namespace JocysCom.ClassLibrary.Configuration
 				// If each item will be saved to a separate file.
 				if (UseSeparateFiles)
 				{
-					var di = GetCreateDirectory(fi);
+					var di = GetRootDirectory(fi);
 					if (!di.Exists)
 						di.Create();
 					for (int i = 0; i < items.Length; i++)
 					{
 						var fileItem = (ISettingsFileItem)items[i];
+						if (fileItem.IsReadOnlyFile)
+							continue;
 						var fileFullName = GetFileItemFullName(path, fileItem);
 						var fiItem = new FileInfo(fileFullName);
 						if (!fiItem.Directory.Exists)
@@ -308,7 +324,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// </summary>
 		public DirectoryInfo RootDirectory =>
 			UseSeparateFiles
-				? GetCreateDirectory(_XmlFile)
+				? GetRootDirectory(_XmlFile)
 				: _XmlFile.Directory;
 
 		/// <summary>
@@ -343,9 +359,23 @@ namespace JocysCom.ClassLibrary.Configuration
 			public bool Handled { get; set; }
 		}
 
+		public class ItemPropertyChangedEventArgs : PropertyChangedEventArgs
+		{
+			/// <summary>The old value of the property.</summary>
+			public object OldValue { get; }
+			/// <summary>The new value of the property.</summary>
+			public object NewValue { get; }
+			public ItemPropertyChangedEventArgs(string propertyName, object oldValue, object newValue)
+				: base(propertyName)
+			{
+				OldValue = oldValue;
+				NewValue = newValue;
+			}
+		}
+
 		public delegate IList<T> ValidateDataDelegate(IList<T> items);
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		public ValidateDataDelegate ValidateData;
 
 		/// <summary>
@@ -355,10 +385,10 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		#region Last Write Time
 
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool PreventWriteToNewerFiles { get; set; } = true;
 
-		[XmlIgnore, NonSerialized]
+		[XmlIgnore, JsonIgnore, NonSerialized]
 		private Dictionary<string, DateTime> LastWriteTimes = new Dictionary<string, DateTime>();
 
 		/// <summary>
@@ -404,7 +434,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			LoadFrom(_XmlFile.FullName);
 		}
 
-		static DirectoryInfo GetCreateDirectory(FileInfo fi)
+		static DirectoryInfo GetRootDirectory(FileInfo fi)
 		{
 			var compress = fi.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
 			var dirName = Path.GetFileNameWithoutExtension(fi.FullName);
@@ -423,7 +453,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			var settingsLoaded = false;
 			var fi = new FileInfo(fileName);
-			var di = GetCreateDirectory(fi);
+			var di = GetRootDirectory(fi);
 			var compress = fi.Name.EndsWith(".gz", StringComparison.OrdinalIgnoreCase);
 			// If configuration file exists then...
 			if (fi.Exists || di.Exists)
@@ -464,6 +494,17 @@ namespace JocysCom.ClassLibrary.Configuration
 										if (fileItem.BaseName != fileBaseName)
 											fileItem.BaseName = fileBaseName;
 										fileItems.Add(fileItem);
+										var listItem = fileItem as ISettingsListFileItem;
+										if (listItem != null)
+										{
+											// Created can be later than file creation.
+											if (listItem.Created == DateTime.MinValue || listItem.Created > file.CreationTime)
+												listItem.Created = file.CreationTime;
+											// Modified can be earlier than Created.
+											if (listItem.Modified < listItem.Created)
+												listItem.Modified = listItem.Created;
+
+										}
 									}
 									catch { }
 								}
@@ -499,14 +540,8 @@ namespace JocysCom.ClassLibrary.Configuration
 							//form.StartPosition = FormStartPosition.CenterParent;
 							var text = sb.ToString();
 							bool reset;
-#if NETSTANDARD // .NET Standard
-#elif NETCOREAPP // .NET Core
 							var result = MessageBox.Show(text, caption, MessageBoxButton.YesNo, MessageBoxImage.Error);
 							reset = result == MessageBoxResult.Yes;
-#else // .NET Framework
-							var result = MessageBox.Show(text, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-							reset = result == DialogResult.Yes;
-#endif
 							if (reset)
 							{
 								if (System.IO.File.Exists(backupFile))
@@ -549,12 +584,12 @@ namespace JocysCom.ClassLibrary.Configuration
 			}
 		}
 
-		public static void SortList<T1>(IList<T1> items) where T1 : ISettingsFileItem
+		public void SortList<T1>(IList<T1> items) where T1 : ISettingsFileItem
 		{
 			// Move works with special characters to the end.
 			var newItems = items
-				.OrderBy(x => x.Name.StartsWith("®"))
-				.ThenBy(x => x.Path)
+				.OrderBy(x => x.Path)
+				.ThenBy(x => x.Name.StartsWith("®"))
 				.ThenBy(x => x.Name)
 				.ToList();
 			CollectionsHelper.Synchronize(newItems, items);
@@ -563,9 +598,8 @@ namespace JocysCom.ClassLibrary.Configuration
 		#region Use Separate Files
 
 		/// <summary>
-		/// Generates the full path for a file based on a filename without an extension.
+		/// Get the full path for a file based on a filename with extension.
 		/// </summary>
-		/// <returns>The full path of the file with its extension.</returns>
 		public string GetFileItemFullName(ISettingsFileItem fileItem, string overrideBaseName = null)
 		{
 			var fileFullName = GetFileItemFullName(_XmlFile.FullName, fileItem, overrideBaseName);
@@ -575,13 +609,27 @@ namespace JocysCom.ClassLibrary.Configuration
 			return fileFullName;
 		}
 
+		public string GetFileItemFullBaseName(ISettingsFileItem fileItem)
+		{
+			var fi = new FileInfo(_XmlFile.FullName);
+			var di = GetRootDirectory(fi);
+			var fileName = RemoveInvalidFileNameChars(fileItem.BaseName);
+			var itemPath = fileItem.Path;
+			if (!string.IsNullOrEmpty(itemPath))
+				itemPath = RemoveInvalidPathChars(itemPath);
+			var fileFullName = string.IsNullOrEmpty(itemPath)
+				? Path.Combine(di.FullName, fileName)
+				: Path.Combine(di.FullName, itemPath, fileName);
+			return fileFullName;
+		}
+
 		/// <summary>
 		/// Get item path when using separte files.
 		/// </summary>
 		public static string GetFileItemFullName(string rootPath, ISettingsFileItem fileItem, string overrideBaseName = null)
 		{
 			var fi = new FileInfo(rootPath);
-			var di = GetCreateDirectory(fi);
+			var di = GetRootDirectory(fi);
 			var fileName = RemoveInvalidFileNameChars(overrideBaseName ?? fileItem.BaseName) + fi.Extension;
 			var itemPath = fileItem.Path;
 			if (!string.IsNullOrEmpty(itemPath))
@@ -630,6 +678,11 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
+		/// Occurs when item was renamed.
+		/// </summary>
+		public event EventHandler<ItemPropertyChangedEventArgs> ItemRenamed;
+
+		/// <summary>
 		/// Renames a settings item file to a new name, ensuring file system consistency and updating internal metadata accordingly.
 		/// </summary>
 		/// <param name="fileItem">The settings item file object to be renamed.</param>
@@ -675,9 +728,12 @@ namespace JocysCom.ClassLibrary.Configuration
 					}
 					if (file.Exists)
 					{
+						var oldBaseName = fileItem.BaseName;
 						file.MoveTo(newPath);
 						fileItem.BaseName = newName;
 						fileItem.WriteTime = file.LastWriteTime;
+						var e = new ItemPropertyChangedEventArgs(nameof(fileItem.BaseName), oldBaseName, newName);
+						ItemRenamed?.Invoke(fileItem, e);
 					}
 				}
 				catch (Exception)
@@ -735,7 +791,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Indicates whether the items collection should be cleared when loading new data.
 		/// </summary>
-		[XmlIgnore]
+		[XmlIgnore, JsonIgnore]
 		public bool ClearWhenLoading = false;
 
 		void LoadAndValidateData(IList<T> data)
@@ -933,7 +989,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			if (!UseSeparateFiles)
 				return;
 			var fi = new FileInfo(XmlFile.FullName);
-			var di = GetCreateDirectory(fi);
+			var di = GetRootDirectory(fi);
 			SetFileMonitoring(enabled, di.FullName, "*.xml");
 		}
 

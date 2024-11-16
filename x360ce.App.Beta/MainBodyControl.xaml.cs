@@ -1,6 +1,8 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
+//using System.Drawing;
 using System.Linq;
+//using System.Reflection.Emit;
 using System.Windows.Controls;
 using System.Windows.Media;
 using x360ce.App.Controls;
@@ -229,7 +231,12 @@ namespace x360ce.App
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
-				return; 
+				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			Global.AddGame -= Global_AddGame;
 			// Dispose managed resources.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
@@ -240,9 +247,5 @@ namespace x360ce.App
 			MainTabControl.Items.Clear();
 		}
 
-        private void Pad1Panel_Loaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-
-        }
-    }
+	}
 }

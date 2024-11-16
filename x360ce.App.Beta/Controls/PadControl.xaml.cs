@@ -3,6 +3,7 @@ using JocysCom.ClassLibrary.Controls;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
+// using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using x360ce.Engine;
@@ -117,18 +118,16 @@ namespace x360ce.App.Controls
 			lock (updateFromDirectInputLock)
 			{
 				var ud = CurrentUserDevice;
-				var instanceGuid = Guid.Empty;
 				var enable = ud != null;
-				if (enable)
-					instanceGuid = ud.InstanceGuid;
+				var instanceGuid = enable ? ud.InstanceGuid:  Guid.Empty;
 				ControlsHelper.SetEnabled(PadFootPanel.RemapAllButton, enable && ud.DiState != null);
 				PadItemPanel.SetEnabled(enable);
 				// If device instance changed then...
-				if (!Equals(instanceGuid, _InstanceGuid))
-				{
+				if (!Equals(instanceGuid, _InstanceGuid) && instanceGuid != Guid.Empty && ud?.DeviceState != null)
+				{	
 					_InstanceGuid = instanceGuid;
 					GeneralPanel.ResetDiMenuStrip(enable ? ud : null);
-				}
+				} 
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
 
@@ -603,9 +602,13 @@ namespace x360ce.App.Controls
 				MapCode.ButtonStart,
 				MapCode.DPad,
 				MapCode.LeftThumbUp,
+				MapCode.LeftThumbDown,
+				MapCode.LeftThumbLeft,
 				MapCode.LeftThumbRight,
 				MapCode.LeftThumbButton,
 				MapCode.RightThumbUp,
+				MapCode.RightThumbDown,
+				MapCode.RightThumbLeft,
 				MapCode.RightThumbRight,
 				MapCode.RightThumbButton,
 				MapCode.ButtonY,
@@ -632,14 +635,19 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			// Cleanup references which prevents disposal.
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			SettingsManager.Current.SettingChanged -= Current_SettingChanged;
 			CurrentPadSetting.PropertyChanged -= CurrentPadSetting_PropertyChanged;
 			PadListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
-            PadFootPanel.MapNameComboBox.SelectionChanged -= GeneralPanel.MapNameComboBox_SelectionChanged;
-            PadFootPanel.RemapAllButton.Click -= RemapAllButton_Click;
-            XboxImage.StartRecording = null;
+			PadFootPanel.MapNameComboBox.SelectionChanged -= GeneralPanel.MapNameComboBox_SelectionChanged;
+			PadFootPanel.RemapAllButton.Click -= RemapAllButton_Click;
+			XboxImage.StartRecording = null;
 			XboxImage.StopRecording = null;
 			RecordAllMaps.Clear();
 			imageInfos.Clear();

@@ -94,8 +94,13 @@ namespace x360ce.App.Controls
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
-				return;
-			//PadTabControl.Items.Clear();
+				return;		
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
+			PadTabControl.Items.Clear();
 		}
 	}
 }

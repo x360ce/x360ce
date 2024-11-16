@@ -7,6 +7,39 @@ namespace JocysCom.ClassLibrary.Configuration
 {
 	public partial class AssemblyInfo
 	{
+		public string AppUserData
+		{
+			get => _AppUserData ?? Entry.GetAppDataPath(true);
+			set => _AppUserData = value;
+		}
+		string _AppUserData;
+
+		public string AppCommonData
+		{
+			get => _AppCommonData ?? Entry.GetAppDataPath(false);
+			set => _AppCommonData = value;
+		}
+		string _AppCommonData;
+
+		public string ModuleFileName
+		{
+			get => _ModuleFileName ?? System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+			set => _ModuleFileName = value;
+		}
+		string _ModuleFileName;
+
+		public string ModuleDirectory
+			=> string.IsNullOrEmpty(ModuleFileName) ? null : Path.GetDirectoryName(ModuleFileName);
+
+		public string ModuleBaseName
+			=> string.IsNullOrEmpty(ModuleFileName) ? null : Path.GetFileNameWithoutExtension(ModuleFileName);
+
+		public string ModuleBasePath
+			=> string.IsNullOrEmpty(ModuleFileName) ? null : Path.Combine(ModuleDirectory, ModuleBaseName);
+
+
+		#region Parametrize and Expand
+
 		public static string ExpandPath(string path)
 		{
 			// Variables are quoted with '%' (percent) sign.
@@ -18,7 +51,7 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public static string ParameterizePath(string path, bool useEnvironmentVariables = false)
 		{
-			// Variables are quoted with '{' and '}' sign.
+			// Variables are quoted with '{' and '}' sign
 			path = JocysCom.ClassLibrary.Text.Helper.Replace(Entry, path, false);
 			if (useEnvironmentVariables)
 				path = ReplaceWithEnvironmentVariables(path);
@@ -29,7 +62,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		{
 			var envVars = Environment.GetEnvironmentVariables()
 				.Cast<DictionaryEntry>()
-				 .Where(env => Path.IsPathRooted(env.Value.ToString()))
+				.Where(env => Path.IsPathRooted(env.Value.ToString()))
 				.OrderByDescending(env => env.Value.ToString().Length)
 				.ToList();
 			foreach (var envVar in envVars)
@@ -37,6 +70,8 @@ namespace JocysCom.ClassLibrary.Configuration
 					input = input.Replace(envVar.Value.ToString(), $"%{envVar.Key}%");
 			return input;
 		}
+
+
 
 		//public static string GetExpandedPath(string path)
 		//{
@@ -51,6 +86,8 @@ namespace JocysCom.ClassLibrary.Configuration
 		//	path = ParameterizePath(path);
 		//	return path;
 		//}
+
+		#endregion
 
 	}
 }

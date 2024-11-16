@@ -6,6 +6,7 @@ namespace JocysCom.ClassLibrary
 	{
 
 		public ProgressStatus State { get; set; }
+		public ProgressStatus ProcessItemState { get; set; }
 		public Exception Exception;
 
 		// --------------------------

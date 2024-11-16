@@ -69,6 +69,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 
 		public static void AddLog(string sourceName, TraceEventType eventType, params object[] data)
 		{
+
 			var source = new TraceSource(sourceName);
 #if NETCOREAPP
 			// Web.config is not available in .NET Core, therefore must manually config.
@@ -76,6 +77,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 #endif
 			source.TraceData(eventType, 0, data);
 			source.Flush();
+			source.Listeners.Clear();
 			source.Close();
 		}
 
@@ -92,7 +94,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		}
 
 		private static IConfigurationSection GetSection<T>()
-			=> _Configuration.GetSection(typeof(T).FullName.Replace('.', ':'));
+			=> _Configuration?.GetSection(typeof(T).FullName.Replace('.', ':'));
 
 
 		public static List<TraceListener> AllListeners = new List<TraceListener>();
@@ -103,10 +105,20 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		/// <param name="source">Trace source to configure. Configure default if null.</param>
 		public static void Configure(TraceSource source = null)
 		{
-			var sourcesSection = GetSection<TraceSource>();
+			var section = GetSection<TraceSource>();
 			var isDefault = source is null;
+			// If trace configuration do not exists then...
+			if (section == null)
+			{
+				// Just use existing listeners.
+				source.Listeners.Clear();
+				source.Switch = new SourceSwitch("sourceSwitch", "All");
+				foreach (TraceListener item in Trace.Listeners)
+					source.Listeners.Add(item);
+				return;
+			}
 			var sourceName = isDefault ? "Default" : source.Name;
-			var sourceSection = sourcesSection.GetSection(sourceName);
+			var sourceSection = section.GetSection(sourceName);
 			// If source section configuration do not exists then return.
 			if (!sourceSection.Exists())
 				return;
@@ -139,16 +151,16 @@ namespace JocysCom.ClassLibrary.Diagnostics
 				if (listener is null)
 				{
 					// Create new listener from configuration.
-					var section = listenersSection.GetSection(listenerName);
-					var typeName = section.GetValue<string>(nameof(System.Type));
+					var lSection = listenersSection.GetSection(listenerName);
+					var typeName = lSection.GetValue<string>(nameof(System.Type));
 					var t = System.Type.GetType(typeName, true);
 					object[] args = null;
-				
-					var initializeData = section.GetValue<string>("InitializeData");
+
+					var initializeData = lSection.GetValue<string>("InitializeData");
 					if (initializeData != null)
 						args = new object[] { initializeData };
 					listener = (TraceListener)System.Activator.CreateInstance(t, args);
-					var attributes = section.GetSection(nameof(TraceListener.Attributes)).GetChildren();
+					var attributes = lSection.GetSection(nameof(TraceListener.Attributes)).GetChildren();
 					listener.Attributes.Clear();
 					foreach (var a in attributes)
 						listener.Attributes.Add(a.Key, a.Value);

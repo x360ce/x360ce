@@ -51,13 +51,15 @@ namespace JocysCom.WebSites.Engine.Security.Data
 
 		public System.Web.Security.MembershipUser CreateUser(string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, out System.Web.Security.MembershipCreateStatus status)
 		{
+			// TODO ASP.NET membership should be replaced with ASP.NET Core identity. For more details see https://docs.microsoft.com/aspnet/core/migration/proper-to-2x/membership-to-core-identity.
 			return System.Web.Security.Membership.CreateUser(username, password, email, passwordQuestion, passwordAnswer, isApproved, out status);
 		}
 
 		public bool DeleteUser(string username, bool deleteAllRelatedData)
 		{
 			// Perform pre-delete actions here.
-			return System.Web.Security.Membership.DeleteUser(username, deleteAllRelatedData);
+			// TODO ASP.NET membership should be replaced with ASP.NET Core identity. For more details see https://docs.microsoft.com/aspnet/core/migration/proper-to-2x/membership-to-core-identity.
+						return System.Web.Security.Membership.DeleteUser(username, deleteAllRelatedData);
 		}
 	}
 }

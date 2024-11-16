@@ -163,11 +163,16 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			_UserDevice = null;
 			_PadSetting = null;
-            //MapNameComboBox.ItemsSource = null;
-            //MapNameComboBox.SelectedItem = null;
-            ControlsHelper.SetItemsSource(MapNameComboBox, null);
-        }
-    }
+			MapNameComboBox.ItemsSource = null;
+			MapNameComboBox.SelectedItem = null;
+			ControlsHelper.SetItemsSource(MapNameComboBox, null);
+		}
+	}
 }

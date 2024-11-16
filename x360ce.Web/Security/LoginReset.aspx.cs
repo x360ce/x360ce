@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Text.RegularExpressions;
-using JocysCom.ClassLibrary;
+﻿using JocysCom.ClassLibrary;
 using JocysCom.WebSites.Engine.Security.Data;
+using System;
+using System.Text.RegularExpressions;
 
 namespace JocysCom.Web.Security
 {
@@ -39,7 +34,7 @@ namespace JocysCom.Web.Security
 					return;
 				}
 				// Key will expire after 5 minutes.
-				if (!JocysCom.ClassLibrary.Security.TokenHelper.CheckSecurityToken(key, user.UserId, user.Membership.Password, TimeUnitType.Minutes, 5))
+				if (!JocysCom.ClassLibrary.Security.TokenHelper.CheckSecurityToken(key, user.UserId, user.Membership.Password, TimeUnitType.Minute, 5))
 				{
 					ErrorLabel.Text = "Error 3: Password reset key expired!";
 					ErrorLabel.Visible = true;
@@ -50,7 +45,7 @@ namespace JocysCom.Web.Security
 				ChangePasswordPanel.Visible = true;
 			}
 		}
-		
+
 		protected void ChangePasswordPushButton_Click(object sender, EventArgs e)
 		{
 			Guid userId = JocysCom.ClassLibrary.Security.TokenHelper.GetData<Guid>(ResetKeyLabel.Text);

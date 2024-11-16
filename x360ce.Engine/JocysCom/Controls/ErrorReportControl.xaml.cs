@@ -1,5 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Runtime;
+using mshtml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,12 +9,6 @@ using System.Net.Mail;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-#if NETCOREAPP // .NET Core
-#elif NETSTANDARD // .NET Standard
-#else // .NET Framework
-using mshtml;
-#endif
-
 
 namespace JocysCom.ClassLibrary.Controls
 {

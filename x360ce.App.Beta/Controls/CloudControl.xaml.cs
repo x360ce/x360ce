@@ -161,6 +161,11 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			// Disable in reverse order.
 			EnableDataSource(false);
 			if (QueueMonitorTimer != null)

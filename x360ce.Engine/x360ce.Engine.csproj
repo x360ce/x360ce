@@ -1,119 +1,51 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\build\Microsoft.CodeAnalysis.NetAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisLevel>latest</AnalysisLevel>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F980D78A-9448-4834-A6FE-84797077D309}</ProjectGuid>
+    <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>x360ce.Engine</RootNamespace>
-    <AssemblyName>x360ce.Engine</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>embedded</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS,NETFRAMEWORK</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DefineConstants>TRACE;DEBUG;NETFRAMEWORK</DefineConstants>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>embedded</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\Debug_x64\</OutputPath>
     <DefineConstants>TRACE;DEBUG;WIN64</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
-    <DebugType>full</DebugType>
     <WarningLevel>1</WarningLevel>
-    <DebugSymbols>true</DebugSymbols>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\Release_x64\</OutputPath>
-    <Optimize>true</Optimize>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>TRACE</DefineConstants>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
-    <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\Debug_x86\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
-    <DebugType>full</DebugType>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
-    <Prefer32Bit>false</Prefer32Bit>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\Release_x86\</OutputPath>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <CodeAnalysisRuleSet>
-    </CodeAnalysisRuleSet>
-    <DebugType>pdbonly</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\x360ce.App.Beta\Resources\SharpDX\SharpDX.dll</HintPath>
@@ -121,447 +53,42 @@
     <Reference Include="SharpDX.DirectInput">
       <HintPath>..\x360ce.App.Beta\Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Linq" />
-    <Reference Include="System.DirectoryServices.AccountManagement" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Text.Encodings.Web, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encodings.Web.7.0.0\lib\net462\System.Text.Encodings.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Json, Version=7.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
     <Reference Include="System.Transactions" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-    <Reference Include="UIAutomationClient" />
-    <Reference Include="UIAutomationTypes" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\BoardInfo.cs" />
-    <Compile Include="Common\CloudAction.cs" />
-    <Compile Include="Common\CloudErrorCode.cs" />
-    <Compile Include="Common\CloudMessage.cs" />
-    <Compile Include="Common\CloudHelper.Security.cs" />
-    <Compile Include="Common\ConvertHelper.cs" />
-    <Compile Include="Common\CustomDiHelper.cs" />
-    <Compile Include="Common\CustomDiState.cs" />
-    <Compile Include="Common\CustomDiState.Masks.cs" />
-    <Compile Include="Common\CustomDiUpdate.cs" />
-    <Compile Include="Common\CustomDiUpdate.Ex.cs" />
-    <Compile Include="Common\DatabaseHelper.cs" />
-    <Compile Include="Common\DeviceEffectItem.cs" />
-    <Compile Include="Common\DeviceObjectItem.cs" />
-    <Compile Include="Common\EngineHelper.Data.cs" />
-    <Compile Include="Common\CloudKey.cs" />
-    <Compile Include="Common\Enum\DInputMask.cs" />
-    <Compile Include="Common\Enum\DPadEnum.cs" />
-    <Compile Include="Common\Enum\EffectDirection.cs" />
-    <Compile Include="Common\Enum\EmulationType.cs" />
-    <Compile Include="Common\Enum\EnabledState.cs" />
-    <Compile Include="Common\Enum\ForceEffectType.cs" />
-    <Compile Include="Common\Enum\GameRefreshStatus.cs" />
-    <Compile Include="Common\Enum\HookMask.cs" />
-    <Compile Include="Common\Enum\MapTo.cs" />
-    <Compile Include="Common\Enum\MapToMask.cs" />
-    <Compile Include="Common\Enum\XInputMask.cs" />
-    <Compile Include="Common\EngineHelper.cs" />
-    <Compile Include="Common\ForceFeedbackState.cs" />
-    <Compile Include="Common\ForegroundWindowHook.cs" />
-    <Compile Include="Common\GamepadOffset.cs" />
-    <Compile Include="Common\IChecksum.cs" />
-    <Compile Include="Common\IDateTime.cs" />
-    <Compile Include="Common\IDisplayName.cs" />
-    <Compile Include="Common\Ini.cs" />
-    <Compile Include="Common\IWebService.cs" />
-    <Compile Include="Common\KeyValue.cs" />
-    <Compile Include="Common\KeyValueList.cs" />
-    <Compile Include="Common\Preset.cs" />
-    <Compile Include="Common\SearchParameter.cs" />
-    <Compile Include="Common\SearchParameterCollection.cs" />
-    <Compile Include="Common\SearchResult.cs" />
-    <Compile Include="Common\SettingsData.cs" />
-    <Compile Include="Common\WebServiceClient.cs">
+    <Compile Update="Common\WebServiceClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Common\XInputMaskFileInfo.cs" />
-    <Compile Include="Common\XInputMaskScannerEventArgs.cs" />
-    <Compile Include="Common\XInputMaskScannerState.cs" />
-    <Compile Include="Common\XSettingsData.cs" />
-    <Compile Include="Data\IComputer.cs" />
-    <Compile Include="Data\IUserRecord.cs" />
-    <Compile Include="Data\IProgram.cs" />
-    <Compile Include="Data\Layout.cs" />
-    <Compile Include="Data\UserMacro.cs" />
-    <Compile Include="JocysCom\Collections\IKeyValue.cs" />
-    <Compile Include="JocysCom\Common\ProgressStatus.cs" />
-    <Compile Include="JocysCom\ComponentModel\ObservableCollectionInvoked.cs" />
-    <Compile Include="JocysCom\Configuration\AssemblyInfo.Ext1.cs" />
-    <Compile Include="JocysCom\Configuration\ISettingsFileItem.cs" />
-    <Compile Include="JocysCom\Configuration\ISettingsItem.cs" />
-    <Compile Include="JocysCom\Controls\ControlsHelper.WPF.UseWindowsForms.cs" />
-    <Compile Include="JocysCom\Controls\InfoControl.xaml.cs">
-      <DependentUpon>InfoControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\InfoHelpProvider.cs" />
-    <Compile Include="JocysCom\Controls\InitHelper.cs" />
-    <Compile Include="JocysCom\Controls\IssuesControl\IssuesControl.xaml.cs">
-      <DependentUpon>IssuesControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\IssuesControl\SeverityToImageConverter.cs" />
-    <Compile Include="JocysCom\Controls\MessageBoxWindow.xaml.cs">
-      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\NumericUpDown.xaml.cs">
-      <DependentUpon>NumericUpDown.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\NumericUpDownConverter.cs" />
-    <Compile Include="JocysCom\Controls\ProgressBarControl.xaml.cs">
-      <DependentUpon>ProgressBarControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Common\ProgressEventArgs.cs" />
-    <Compile Include="JocysCom\Controls\TabIndexConverter.cs" />
-    <Compile Include="JocysCom\Controls\Themes\Icons.xaml.cs">
-      <DependentUpon>Icons.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Data\BindableItem.cs" />
-    <Compile Include="JocysCom\Data\SqlHelper.Types.cs" />
-    <Compile Include="JocysCom\Diagnostics\RollingWriterOptions.cs" />
-    <Compile Include="JocysCom\IO\PathHelper.cs" />
-    <Compile Include="JocysCom\Processes\KeyboardHelper.cs" />
-    <Compile Include="JocysCom\Windows\AutomationHelper.cs" />
-    <Compile Include="Maps\MapCode.cs" />
-    <Compile Include="Data\UserSetting.cs" />
-    <Compile Include="Data\Summary.cs" />
-    <Compile Include="Data\UserComputer.cs" />
-    <Compile Include="Data\UserGame.cs" />
-    <Compile Include="Data\PadSetting.cs" />
-    <Compile Include="Data\Program.cs" />
-    <Compile Include="Data\UserDevice.cs" />
-    <Compile Include="Data\UserInstance.cs" />
-    <Compile Include="Data\UserProfile.cs" />
-    <Compile Include="Data\Vendor.cs" />
-    <Compile Include="Data\x360ceModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>x360ceModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Common\XInputMaskScanner.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="JocysCom\Collections\CollectionsHelper.cs" />
-    <Compile Include="JocysCom\Collections\KeyValue.cs" />
-    <Compile Include="JocysCom\Common\EventArgs.cs" />
-    <Compile Include="JocysCom\Common\GuidEnum.cs" />
-    <Compile Include="JocysCom\Common\GuidValueAttribute.cs" />
-    <Compile Include="JocysCom\Common\Helper.cs" />
-    <Compile Include="JocysCom\Common\HiResDateTime.cs" />
-    <Compile Include="JocysCom\Common\HiResTimer.cs" />
-    <Compile Include="JocysCom\Common\ItemType.cs" />
-    <Compile Include="JocysCom\Common\LinkItem.cs" />
-    <Compile Include="JocysCom\Common\TimeUnitType.cs" />
-    <Compile Include="JocysCom\ComponentModel\BindingListInvoked.cs" />
-    <Compile Include="JocysCom\ComponentModel\PropertyComparer.cs" />
-    <Compile Include="JocysCom\ComponentModel\SortableBindingList.cs" />
-    <Compile Include="JocysCom\Configuration\AssemblyInfo.cs" />
-    <Compile Include="JocysCom\Configuration\ISettingsData.cs" />
-    <Compile Include="JocysCom\Configuration\SettingsData.cs" />
-    <Compile Include="JocysCom\Configuration\SettingsHelper.cs" />
-    <Compile Include="JocysCom\Configuration\SettingsParser.cs" />
-    <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
-    <Compile Include="JocysCom\Controls\ControlsHelper.Windows.cs" />
-    <Compile Include="JocysCom\Controls\ControlsHelper.WPF.cs" />
-    <Compile Include="JocysCom\Controls\ErrorReportControl.xaml.cs">
-      <DependentUpon>ErrorReportControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\InfoForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="JocysCom\Controls\InfoForm.Designer.cs">
-      <DependentUpon>InfoForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\IssuesControl\IssueHelper.cs" />
-    <Compile Include="JocysCom\Controls\IssuesControl\IssueItem.cs" />
-    <Compile Include="JocysCom\Controls\IssuesControl\IssueSeverity.cs" />
-    <Compile Include="JocysCom\Controls\IssuesControl\IssueStatus.cs" />
-    <Compile Include="JocysCom\Controls\IssuesControl\IssuesUserControl.cs">
+    <Compile Update="JocysCom\Controls\IssuesControl\IssuesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="JocysCom\Controls\IssuesControl\IssuesUserControl.Designer.cs">
-      <DependentUpon>IssuesUserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\LogTextBoxUserControl.cs">
+    <Compile Update="JocysCom\Controls\LogTextBoxUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="JocysCom\Controls\LogTextBoxUserControl.Designer.cs">
-      <DependentUpon>LogTextBoxUserControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\ToolStripBorderlessRenderer.cs" />
-    <Compile Include="JocysCom\Data\Linq.cs" />
-    <Compile Include="JocysCom\Data\SqlHelper.cs" />
-    <Compile Include="JocysCom\Diagnostics\RawDataLogHttpModule.cs" />
-    <Compile Include="JocysCom\Diagnostics\RollingXmlWriterTraceListener.cs" />
-    <Compile Include="JocysCom\Diagnostics\TraceHelper.cs" />
-    <Compile Include="JocysCom\Drawing\Basic.cs" />
-    <Compile Include="JocysCom\Drawing\Effects\Common.cs" />
-    <Compile Include="JocysCom\Drawing\Effects\Resize.cs" />
-    <Compile Include="JocysCom\Extensions\IQueryable.cs" />
-    <Compile Include="JocysCom\Files\Zip.cs" />
-    <Compile Include="JocysCom\Files\ZipStorer.cs" />
-    <Compile Include="JocysCom\IO\DeviceDetector.cs" />
-    <Compile Include="JocysCom\IO\DeviceDetector.Drivers.cs" />
-    <Compile Include="JocysCom\IO\DeviceDetectorEventArgs.cs" />
-    <Compile Include="JocysCom\IO\DeviceDetectorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="JocysCom\IO\DeviceDetectorForm.Designer.cs">
-      <DependentUpon>DeviceDetectorForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\IO\DeviceInfo.cs" />
-    <Compile Include="JocysCom\IO\FileFinder.cs" />
-    <Compile Include="JocysCom\IO\HardwareControl.cs">
+    <Compile Update="JocysCom\IO\HardwareControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="JocysCom\IO\HardwareControl.Designer.cs">
-      <DependentUpon>HardwareControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\HardwareControl\HardwareDeviceControl.xaml.cs">
-      <DependentUpon>HardwareDeviceControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\IO\LogFileWriter.cs" />
-    <Compile Include="JocysCom\Mail\EmailResult.cs" />
-    <Compile Include="JocysCom\Mail\MailFromUser.cs" />
-    <Compile Include="JocysCom\Mail\MailHelper.cs" />
-    <Compile Include="JocysCom\Mail\MailMessageSerializable.cs" />
-    <Compile Include="JocysCom\Mail\MailTextType.cs" />
-    <Compile Include="JocysCom\Mail\SmtpClientEx.cs" />
-    <Compile Include="JocysCom\Network\CheckNetworkState.cs" />
-    <Compile Include="JocysCom\Network\NetStatInfo.cs" />
-    <Compile Include="JocysCom\Network\NetworkHelper.cs" />
-    <Compile Include="JocysCom\Network\Sockets\DataHolder.cs" />
-    <Compile Include="JocysCom\Network\Sockets\ISocketMessage.cs" />
-    <Compile Include="JocysCom\Network\Sockets\SocketDataEventArgs.cs" />
-    <Compile Include="JocysCom\Network\Sockets\SocketLogFileWriter.cs" />
-    <Compile Include="JocysCom\Network\Sockets\SocketServer.cs" />
-    <Compile Include="JocysCom\Network\Sockets\SocketServerEventType.cs" />
-    <Compile Include="JocysCom\Network\Sockets\SocketServerState.cs" />
-    <Compile Include="JocysCom\Network\Sockets\SocketSettings.cs" />
-    <Compile Include="JocysCom\Network\Sockets\SocketState.cs" />
-    <Compile Include="JocysCom\Network\Sockets\UserToken.cs" />
-    <Compile Include="JocysCom\Processes\BaseHook.cs" />
-    <Compile Include="JocysCom\Processes\CURSORINFO.cs" />
-    <Compile Include="JocysCom\Processes\HookType.cs" />
-    <Compile Include="JocysCom\Processes\MouseHelper.cs" />
-    <Compile Include="JocysCom\Processes\MouseHook.cs" />
-    <Compile Include="JocysCom\Processes\MouseHookEventArgs.cs" />
-    <Compile Include="JocysCom\Processes\MouseKey.cs" />
-    <Compile Include="JocysCom\Processes\MouseTouchEventArgs.cs" />
-    <Compile Include="JocysCom\Processes\MSLLHOOKSTRUCT.cs" />
-    <Compile Include="JocysCom\Processes\TestUnion.cs" />
-    <Compile Include="JocysCom\Processes\TOUCHINPUT.cs" />
-    <Compile Include="JocysCom\Resources\DataPriority.cs" />
-    <Compile Include="JocysCom\Resources\ResourceSection.cs" />
-    <Compile Include="JocysCom\Runtime\Attributes.cs" />
-    <Compile Include="JocysCom\Runtime\ChangeState.cs" />
-    <Compile Include="JocysCom\Runtime\LogHelper.cs" />
-    <Compile Include="JocysCom\Runtime\LogHelper.Exception.cs" />
-    <Compile Include="JocysCom\Runtime\LogHelper.File.cs" />
-    <Compile Include="JocysCom\Runtime\LogHelper.Mail.cs" />
-    <Compile Include="JocysCom\Runtime\RuntimeHelper.cs" />
-    <Compile Include="JocysCom\Runtime\RuntimeHelper.Entity.cs" />
-    <Compile Include="JocysCom\Runtime\Serializer.cs" />
-    <Compile Include="JocysCom\Runtime\TraceFormat.cs" />
-    <Compile Include="JocysCom\Runtime\XmlValidator.cs" />
-    <Compile Include="JocysCom\Security\AESHelper.cs" />
-    <Compile Include="JocysCom\Security\BuildInRoles.cs" />
-    <Compile Include="JocysCom\Security\BuiltInUsers.cs" />
-    <Compile Include="JocysCom\Security\Check.cs" />
-    <Compile Include="JocysCom\Security\CRC32.cs" />
-    <Compile Include="JocysCom\Security\Data\Membership.cs" />
-    <Compile Include="JocysCom\Security\Data\Role.cs" />
-    <Compile Include="JocysCom\Security\Data\SecurityEntities.cs" />
-    <Compile Include="JocysCom\Security\Data\SecurityModel.Designer.cs">
-      <DependentUpon>SecurityModel.edmx</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Include="JocysCom\Security\Data\User.cs" />
-    <Compile Include="JocysCom\Security\HashHelper.cs" />
-    <Compile Include="JocysCom\Security\MD5Helper.cs" />
-    <Compile Include="JocysCom\Security\PermissionHelper.cs" />
-    <Compile Include="JocysCom\Security\SecurityHelper.cs" />
-    <Compile Include="JocysCom\Security\SHA256Helper.cs" />
-    <Compile Include="JocysCom\Security\TokenHelper.cs" />
-    <Compile Include="JocysCom\Security\TokenHelper.Web.cs" />
-    <Compile Include="JocysCom\Security\ValidationField.cs" />
-    <Compile Include="JocysCom\Security\Encryption.cs" />
-    <Compile Include="JocysCom\Security\RoleQueryName.cs" />
-    <Compile Include="JocysCom\Security\UserFieldName.cs" />
-    <Compile Include="JocysCom\Security\UserQueryName.cs" />
-    <Compile Include="JocysCom\Services\SimpleService\CtrlTypes.cs" />
-    <Compile Include="JocysCom\Services\SimpleService\ISimpleService.cs" />
-    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceBase.cs">
+    <Compile Update="JocysCom\Services\SimpleService\SimpleServiceBase.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceBase.Designer.cs">
-      <DependentUpon>SimpleServiceBase.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceHandler.cs" />
-    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceInstaller.cs">
+    <Compile Update="JocysCom\Services\SimpleService\SimpleServiceInstaller.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="JocysCom\Services\SimpleService\SimpleServiceInstaller.Designer.cs">
-      <DependentUpon>SimpleServiceInstaller.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Text\Helper.cs" />
-    <Compile Include="JocysCom\Threading\QueueTimer.cs" />
-    <Compile Include="JocysCom\Threading\QueueTimerEventArgs.cs" />
-    <Compile Include="JocysCom\Threading\QueueTimerSimple.cs" />
-    <Compile Include="JocysCom\Web\Services\SoapHttpClientBase.cs">
+    <Compile Update="JocysCom\Web\Services\SoapHttpClientBase.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="JocysCom\Web\Services\SoapHttpClientEventArgs.cs" />
-    <Compile Include="JocysCom\Web\Services\SoapHttpClientSpy.cs" />
-    <Compile Include="JocysCom\Web\WebControlsHelper.cs" />
-    <Compile Include="JocysCom\Win32\ABE.cs" />
-    <Compile Include="JocysCom\Win32\ABM.cs" />
-    <Compile Include="JocysCom\Win32\ABS.cs" />
-    <Compile Include="JocysCom\Win32\APPBARDATA.cs" />
-    <Compile Include="JocysCom\Win32\BIND_OPTS3.cs" />
-    <Compile Include="JocysCom\Win32\BSF.cs" />
-    <Compile Include="JocysCom\Win32\BSM.cs" />
-    <Compile Include="JocysCom\Win32\CLSCTX.cs" />
-    <Compile Include="JocysCom\Win32\CR.cs" />
-    <Compile Include="JocysCom\Win32\DBCH_DEVICETYPE.cs" />
-    <Compile Include="JocysCom\Win32\DBT.cs" />
-    <Compile Include="JocysCom\Win32\DEVCLASS.cs" />
-    <Compile Include="JocysCom\Win32\DeviceNodeStatus.cs" />
-    <Compile Include="JocysCom\Win32\DEV_BROADCAST_DEVICEINTERFACE.cs" />
-    <Compile Include="JocysCom\Win32\DEV_BROADCAST_HANDLE.cs" />
-    <Compile Include="JocysCom\Win32\DEV_BROADCAST_HDR.cs" />
-    <Compile Include="JocysCom\Win32\DEV_BROADCAST_OEM.cs" />
-    <Compile Include="JocysCom\Win32\DEV_BROADCAST_PORT.cs" />
-    <Compile Include="JocysCom\Win32\DEV_BROADCAST_VOLUME.cs" />
-    <Compile Include="JocysCom\Win32\DIGCF.cs" />
-    <Compile Include="JocysCom\Win32\HIDD_ATTRIBUTES.cs" />
-    <Compile Include="JocysCom\Win32\HIDP_CAPS.cs" />
-    <Compile Include="JocysCom\Win32\ICONINFO.cs" />
-    <Compile Include="JocysCom\Win32\NativeMethods.advapi32.cs" />
-    <Compile Include="JocysCom\Win32\NativeMethods.cfgmgr32.cs" />
-    <Compile Include="JocysCom\Win32\NativeMethods.cs" />
-    <Compile Include="JocysCom\Win32\NativeMethods.hid.cs" />
-    <Compile Include="JocysCom\Win32\NativeMethods.kernel32.cs" />
-    <Compile Include="JocysCom\Win32\NativeMethods.ole32.cs" />
-    <Compile Include="JocysCom\Win32\NativeMethods.setupapi.cs" />
-    <Compile Include="JocysCom\Win32\NativeMethods.shell32.cs" />
-    <Compile Include="JocysCom\Win32\NativeMethods.user32.cs" />
-    <Compile Include="JocysCom\Win32\PEReader.cs" />
-    <Compile Include="JocysCom\Win32\POINT.cs" />
-    <Compile Include="JocysCom\Win32\RECT.cs" />
-    <Compile Include="JocysCom\Win32\REG.cs" />
-    <Compile Include="JocysCom\Win32\SafeLibraryHandle.cs" />
-    <Compile Include="JocysCom\Win32\SafeTokenHandle.cs" />
-    <Compile Include="JocysCom\Win32\SID_AND_ATTRIBUTES.cs" />
-    <Compile Include="JocysCom\Win32\SPDIT.cs" />
-    <Compile Include="JocysCom\Win32\SPDRP.cs" />
-    <Compile Include="JocysCom\Win32\SP_CLASSINSTALL_HEADER.cs" />
-    <Compile Include="JocysCom\Win32\SP_DEVINFO_DATA.cs" />
-    <Compile Include="JocysCom\Win32\SP_DEVICE_INTERFACE_DATA.cs" />
-    <Compile Include="JocysCom\Win32\SP_DEVICE_INTERFACE_DETAIL_DATA.cs" />
-    <Compile Include="JocysCom\Win32\SP_DEVINSTALL_PARAMS.cs" />
-    <Compile Include="JocysCom\Win32\SP_DRVINFO_DATA.cs" />
-    <Compile Include="JocysCom\Win32\SP_DRVINFO_DETAIL_DATA.cs" />
-    <Compile Include="JocysCom\Win32\SP_DRVINSTALL_PARAMS.cs" />
-    <Compile Include="JocysCom\Win32\SP_PROPCHANGE_PARAMS.cs" />
-    <Compile Include="JocysCom\Win32\SP_REMOVEDEVICE_PARAMS.cs" />
-    <Compile Include="JocysCom\Win32\SW.cs" />
-    <Compile Include="JocysCom\Win32\SYSTEMTIME.cs" />
-    <Compile Include="JocysCom\Win32\TOKEN_ELEVATION.cs" />
-    <Compile Include="JocysCom\Win32\TOKEN_ELEVATION_TYPE.cs" />
-    <Compile Include="JocysCom\Win32\TOKEN_INFORMATION_CLASS.cs" />
-    <Compile Include="JocysCom\Win32\TOKEN_MANDATORY_LABEL.cs" />
-    <Compile Include="JocysCom\Win32\UacHelper.cs" />
-    <Compile Include="JocysCom\Win32\WIN32_FIND_DATA.cs" />
-    <Compile Include="JocysCom\Win32\WinAPI.cs" />
-    <Compile Include="JocysCom\Win32\WinNT.cs" />
-    <Compile Include="Maps\Map.cs" />
-    <Compile Include="Maps\MapEventType.cs" />
-    <Compile Include="Maps\MapRpmType.cs" />
-    <Compile Include="Maps\TargetType.cs" />
-    <Compile Include="Maps\SettingName.cs" />
-    <Compile Include="Maps\SettingsConverter.cs" />
-    <Compile Include="Maps\MapType.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Resources\Icons\Icons_Default.xaml.cs">
-      <DependentUpon>Icons_Default.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="SharpDX.XInput\BatteryDeviceType.cs" />
-    <Compile Include="SharpDX.XInput\BatteryInformation.cs" />
-    <Compile Include="SharpDX.XInput\BatteryLevel.cs" />
-    <Compile Include="SharpDX.XInput\BatteryType.cs" />
-    <Compile Include="SharpDX.XInput\Capabilities.cs" />
-    <Compile Include="SharpDX.XInput\CapabilityFlags.cs" />
-    <Compile Include="SharpDX.XInput\DeviceQueryType.cs" />
-    <Compile Include="SharpDX.XInput\DeviceSubType.cs" />
-    <Compile Include="SharpDX.XInput\DeviceType.cs" />
-    <Compile Include="SharpDX.XInput\Gamepad.cs" />
-    <Compile Include="SharpDX.XInput\GamepadButtonFlags.cs" />
-    <Compile Include="SharpDX.XInput\GamepadKeyCode.cs" />
-    <Compile Include="SharpDX.XInput\IXInput.cs" />
-    <Compile Include="SharpDX.XInput\IXinput.x360ce.cs" />
-    <Compile Include="SharpDX.XInput\Keystroke.cs" />
-    <Compile Include="SharpDX.XInput\KeyStrokeFlags.cs" />
-    <Compile Include="SharpDX.XInput\ResultCode.cs" />
-    <Compile Include="SharpDX.XInput\State.cs" />
-    <Compile Include="SharpDX.XInput\ThumbIndex.cs" />
-    <Compile Include="SharpDX.XInput\UserIndex.cs" />
-    <Compile Include="SharpDX.XInput\Vibration.cs" />
-    <Compile Include="SharpDX.XInput\Controller.x360ce.All.cs" />
-    <Compile Include="SharpDX.XInput\XInput13.cs" />
-    <Compile Include="SharpDX.XInput\XInput13.x360ce.cs" />
-    <Compile Include="SharpDX.XInput\XInput14.cs" />
-    <Compile Include="SharpDX.XInput\XInput14.x360ce.cs" />
-    <Compile Include="SharpDX.XInput\XInput910.cs" />
-    <Compile Include="SharpDX.XInput\XInput910.x360ce.cs" />
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="Data\x360ceModel.edmx">
@@ -578,134 +105,40 @@
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.Config" />
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="JocysCom\Controls\InfoForm.resx">
-      <DependentUpon>InfoForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="JocysCom\Controls\IssuesControl\IssuesUserControl.resx">
-      <DependentUpon>IssuesUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="JocysCom\Controls\LogTextBoxUserControl.resx">
-      <DependentUpon>LogTextBoxUserControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="JocysCom\IO\HardwareControl.resx">
-      <DependentUpon>HardwareControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="JocysCom\Extensions\ReadMe.txt" />
     <EmbeddedResource Include="Resources\Icons\IconExperience.License.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="JocysCom\Controls\ErrorReportControl.xaml">
+    <Page Update="JocysCom\Controls\Themes\Default.xaml">
       <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="JocysCom\Controls\InfoControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="JocysCom\Controls\IssuesControl\IssuesControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="JocysCom\Controls\MessageBoxWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="JocysCom\Controls\NumericUpDown.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="JocysCom\Controls\ProgressBarControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="JocysCom\Controls\Themes\Default.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="JocysCom\Controls\HardwareControl\HardwareDeviceControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="JocysCom\Controls\Themes\Icons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Icons\Icons_Default.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Icons\NavActive.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Icons\NavNormal.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Icons\NavRecord.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.NetAnalyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\analyzers\dotnet\cs\Microsoft.CodeAnalysis.NetAnalyzers.dll" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+	  <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
+	  <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.4" />
+    <PackageReference Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="7.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.32" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.32" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.32">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
-    <PackageReference Include="System.Memory" Version="4.5.5" />
-    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="7.0.0" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <Compile Remove="JocysCom\Controls\ItemFormattingConverter.cs" />
+    <Compile Remove="JocysCom\Controls\MessageBoxForm.cs" />
+    <Compile Remove="JocysCom\Controls\MessageBoxForm.Designer.cs" />
+    <Compile Remove="JocysCom\MakeLinks.ps1.cs" />
+    <Compile Remove="JocysCom\Runtime\TlvSerializer.cs" />
+    <Compile Remove="JocysCom\Runtime\TlvSerializerError.cs" />
+    <EmbeddedResource Remove="JocysCom\Controls\MessageBoxForm.resx" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <PropertyGroup />
   <Target Name="PopulateEmbeddedFiles" AfterTargets="BeforeCompile" BeforeTargets="CoreCompile">
     <ItemGroup>
       <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
     </ItemGroup>
   </Target>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\build\Microsoft.CodeAnalysis.NetAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\build\Microsoft.CodeAnalysis.NetAnalyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\build\Microsoft.CodeAnalysis.NetAnalyzers.targets'))" />
-  </Target>
-  <Import Project="..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\build\Microsoft.CodeAnalysis.NetAnalyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.NetAnalyzers.7.0.4\build\Microsoft.CodeAnalysis.NetAnalyzers.targets')" />
 </Project>

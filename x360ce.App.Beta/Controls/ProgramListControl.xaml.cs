@@ -267,6 +267,11 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			var selectedItems = ControlsHelper.GetSelection<string>(MainDataGrid, nameof(Engine.Data.Program.FileName));
 			MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
 			SettingsManager.Programs.Items.ListChanged -= Programs_ListChanged;

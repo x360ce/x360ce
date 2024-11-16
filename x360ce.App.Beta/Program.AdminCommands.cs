@@ -33,10 +33,9 @@ namespace x360ce.App
 			else
 			{
 				// Run copy of x360ce as Administrator.
-				JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
+				JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
 					Application.ExecutablePath,
-					argument,
-					System.Diagnostics.ProcessWindowStyle.Hidden
+					argument, isElevated: true		
 				);
 				return false;
 			}

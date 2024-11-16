@@ -154,6 +154,11 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			SettingsManager.OptionsData.Saving -= OptionsData_Saving;
 			SettingsManager.UnLoadMonitor(GetProgramsMinInstancesUpDown);
 			SettingsManager.UnLoadMonitor(InternetAutoLoadCheckBox);

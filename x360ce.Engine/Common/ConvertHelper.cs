@@ -11,6 +11,12 @@ namespace x360ce.Engine
 		
 		public static float GetThumbValue(float dInputValue, float deadZone, float antiDeadZone, float linear, bool isInverted, bool isHalf, bool isThumb = true)
 		{
+			// Limit values.
+			dInputValue = Math.Max(ushort.MinValue, Math.Min(dInputValue, ushort.MaxValue));
+			deadZone = Math.Max(0, Math.Min(deadZone, ushort.MaxValue));
+			antiDeadZone = Math.Max(0, Math.Min(antiDeadZone, ushort.MaxValue));
+			linear = Math.Max(-100f, Math.Min(linear, 100f));
+
 			// Check DInputValue.
 			if (dInputValue < ushort.MinValue)
 				throw new ArgumentOutOfRangeException(nameof(linear), $"DInputValue can't be less than {ushort.MinValue}!");

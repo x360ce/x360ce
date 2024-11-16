@@ -1,13 +1,18 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using SharpDX.DirectInput;
-using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+
+//using System.Xml.Linq;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -114,8 +119,8 @@ namespace x360ce.App.Controls
 		}
 
 		private void _padSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) { }
-		private void SetPresetButton_Click(object sender, System.Windows.RoutedEventArgs e) { }
-		private void RemapAllButton_Click(object sender, System.Windows.RoutedEventArgs e) { }
+		private void SetPresetButton_Click(object sender, RoutedEventArgs e) { }
+		private void RemapAllButton_Click(object sender, RoutedEventArgs e) { }
 
 		public void MapNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
@@ -188,37 +193,30 @@ namespace x360ce.App.Controls
 
 		// Colors.
 		SolidColorBrush colorActive = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF42C765");
+		SolidColorBrush colorLight = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFF0F0F0");
+		SolidColorBrush colorBackgroundDark = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDEDEDE");
 		//SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
 		//SolidColorBrush colorNormalTextBox = Brushes.White;
 		//SolidColorBrush colorBlack = (SolidColorBrush)new BrushConverter().ConvertFrom("#11000000");
 		//SolidColorBrush colorNormalLabel = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDEDEDE");
 		//SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
-		//SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
+		SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
-		// Lists.
-		List<bool> ButtonStateList = new List<bool>();
-		List<bool> POVStateList = new List<bool>();
-		List<bool> POVBStateList = new List<bool>();
-		List<bool> StickAxisStateList = new List<bool>();
-		List<bool> SliderAxisStateList = new List<bool>();
+		Dictionary<int, (Label, Label)> ButtonDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label)> IButtonDictionary = new Dictionary<int, (Label, Label)>();
 
-		List<Label> ButtonList = new List<Label>();
-		List<Label> IButtonList = new List<Label>();
+		Dictionary<int, (Label, Label)> PovDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label)> PovBDictionary = new Dictionary<int, (Label, Label)>();
 
-		List<Label> AxisList = new List<Label>();
-		List<Label> IAxisList = new List<Label>();
-		List<Label> HAxisList = new List<Label>();
-		List<Label> IHAxisList = new List<Label>();
+		Dictionary<int, (Label, Label)> AxisDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label)> IAxisDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label)> HAxisDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label)> IHAxisDictionary = new Dictionary<int, (Label, Label)>();
 
-		List<Label> SliderList = new List<Label>();
-		List<Label> ISliderList = new List<Label>();
-		List<Label> HSliderList = new List<Label>();
-		List<Label> IHSliderList = new List<Label>();
-
-		List<Label> POVList = new List<Label>();
-		List<Label> IPOVList = new List<Label>();
-		List<Label> POVButtonList = new List<Label>();
-		List<Label> IPOVButtonList = new List<Label>();
+		Dictionary<int, (Label, Label)> SliderDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label)> ISliderDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label)> HSliderDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label)> IHSliderDictionary = new Dictionary<int, (Label, Label)>();
 
 		object updateLock = new object();
 		object oldState = null;
@@ -241,121 +239,213 @@ namespace x360ce.App.Controls
 			return customDiState == null ? null : customDiState;
 		}
 
+		UniformGrid PovUnifromGrid;
+
 		// Create DragAndDrop menu labels.
-		private void DragAndDropMenuLabels_Create(List<bool> total, List<Label> list, string itemName, string headerName, string iconName)
+		private void DragAndDropMenuLabels_Create(Dictionary<int, (Label, Label)> dictionary, List<int> list, string itemName, string headerName, string iconName)
 		{
-			// GroupBox Header (icon and text).
-			StackPanel headerStackPanel = new StackPanel { Orientation = Orientation.Horizontal };
-			headerStackPanel.Children.Add(new ContentControl { Content = Application.Current.Resources[iconName] });
-			headerStackPanel.Children.Add(new TextBlock { Text = headerName, Margin = new Thickness(3, 0, 0, 0) });
-			// GroupBox Content (UniformGrid for Labels).
-			UniformGrid buttonsUniformGrid = new UniformGrid { Columns = 8 };
-			// GroupBox.
-			GroupBox buttonsGroupBox = new GroupBox { Header = headerStackPanel, Content = buttonsUniformGrid };
-
-			// Put GroupBoxes into NORMAL and INVERTED tabs.
-			if (iconName.Contains("Inverted")) { DragAndDropStackPanelInverted.Children.Add(buttonsGroupBox); }
-			else { DragAndDropStackPanelNormal.Children.Add(buttonsGroupBox); }
-
-			// Create labels.
-			for (int i = 0; i < total.Count(); i++)
+			try
 			{
-				string number = (i + 1).ToString();
-				Label buttonLabel = new Label();
-				buttonLabel.Name = itemName + number + "Label";
-				buttonLabel.Content = number;
-				buttonLabel.ToolTip = itemName + " " + number;
-				buttonLabel.Tag = itemName + " " + number;
-				buttonLabel.Visibility = total[i] ? Visibility.Visible : Visibility.Collapsed;
-				buttonLabel.PreviewMouseMove += DragAndDropMenuLabel_Source_PreviewMouseMove;
-				// Add label to group UniformGrid.
-				buttonsUniformGrid.Children.Add(buttonLabel);
-				// Add label to group list.
-				list.Add(buttonLabel);
+				// GroupBox Header (icon and text).
+				StackPanel headerStackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+				headerStackPanel.Children.Add(new ContentControl { Content = Application.Current.Resources[iconName] });
+				headerStackPanel.Children.Add(new TextBlock { Text = headerName, Margin = new Thickness(3, 0, 0, 0) });
+				// GroupBox Content (UniformGrid for Labels).
+				UniformGrid buttonsUniformGrid = new UniformGrid { Columns = list.Last().ToString().Length > 2 ? 6 : 8 };
+				// GroupBox.
+				GroupBox buttonsGroupBox = new GroupBox { Header = headerStackPanel, Content = buttonsUniformGrid };
+				// Put GroupBoxes into NORMAL and INVERTED tabs.
+				if (iconName.Contains("Inverted")) { DragAndDropStackPanelInverted.Children.Add(buttonsGroupBox); }
+				else { DragAndDropStackPanelNormal.Children.Add(buttonsGroupBox); }
+
+				// Put POVB buttons inside POV GroupBox.
+				if (itemName == "POV") { PovUnifromGrid = buttonsUniformGrid; }
+				if (itemName == "POVB") { buttonsGroupBox.Visibility = Visibility.Collapsed; }
+
+				// Create drag and drop buttons.
+				dictionary.Clear();
+				foreach (var i in list)
+				{
+					Label buttonLabel = new Label();
+					if (itemName == "POVB")
+					{
+						var povNumber = (i / 4) + 1;
+						// Name.
+						var povNumberN = new[] { "U", "R", "D", "L" }[i % 4];
+						buttonLabel.Content = povNumberN;
+						// Drag and drop text.
+						var povNumberB = new[] { "Up", "Right", "Down", "Left" }[i % 4];
+						buttonLabel.Tag = "POV " + povNumber + " " + povNumberB;
+					}
+					else
+					{
+						buttonLabel.Content = (i + 1).ToString();
+						buttonLabel.Tag = itemName + " " + buttonLabel.Content;
+					}
+
+					buttonLabel.PreviewMouseMove += DragAndDropMenuLabel_Source_PreviewMouseMove;
+
+					Label valueLabel = new Label();
+					valueLabel.IsHitTestVisible = false;
+					valueLabel.FontSize = 8;
+					valueLabel.Padding = new Thickness(0);
+					valueLabel.Background = colorLight;
+
+					StackPanel stackPanel = new StackPanel();
+					stackPanel.Children.Add(buttonLabel);
+					stackPanel.Children.Add(valueLabel);
+
+					// Put POVB buttons inside POV GroupBox.
+					if (itemName == "POVB") { PovUnifromGrid.Children.Add(stackPanel); }
+					else { buttonsUniformGrid.Children.Add(stackPanel); }
+
+					dictionary.Add(i, (buttonLabel, valueLabel));
+				}
+			}
+			catch (Exception ex)
+			{
+				_ = ex.Message;
 			}
 		}
 
-		int buttons = 0;
-		int povs = 0;
-		int stickAxes = 0;
-		int sliderAxes = 0;
+		List<int> buttons = new List<int>();
+		List<int> povs = new List<int>();
+		List<int> axes = new List<int>();
+		List<int> sliders = new List<int>();
 
 		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
-			var customDiState = GetCustomDiState(ud);
-			if (customDiState == null) return;
 
-			if (!ud.IsKeyboard)
+			if (GetCustomDiState(ud) == null) return;
+
+			// Clear StackPanel children in XAML page.
+			DragAndDropStackPanelNormal.Children.Clear();
+			DragAndDropStackPanelInverted.Children.Clear();
+			// Clear dictionaries.
+			ButtonDictionary.Clear();
+			IButtonDictionary.Clear();
+			PovDictionary.Clear();
+			PovBDictionary.Clear();
+			AxisDictionary.Clear();
+			HAxisDictionary.Clear();
+			IAxisDictionary.Clear();
+			IHAxisDictionary.Clear();
+			SliderDictionary.Clear();
+			HSliderDictionary.Clear();
+			ISliderDictionary.Clear();
+			IHSliderDictionary.Clear();
+
+			// Lists with InstanceNumber's.
+			buttons.Clear();
+			povs.Clear();
+			axes.Clear();
+			sliders.Clear();
+
+			GetDeviceObjectInstancesByObjectTypeGuid(ud);
+
+			buttons.Sort();
+			povs.Sort();
+			axes.Sort();
+			sliders.Sort();
+
+			// Buttons and Keys.
+			if (buttons.Count() > 0)
 			{
-				// Clear StackPanel children in XAML page.
-				DragAndDropStackPanelNormal.Children.Clear();
-				DragAndDropStackPanelInverted.Children.Clear();
-				// Clear Label lists.
-				ButtonStateList.Clear();
-				POVStateList.Clear();
-				POVBStateList.Clear();
-				StickAxisStateList.Clear();
-				SliderAxisStateList.Clear();
-				// Buttons.
-				ButtonList.Clear();
-				IButtonList.Clear();
-				// POVs.
-				POVList.Clear();
-				POVButtonList.Clear();
-				IPOVList.Clear();
-				IPOVButtonList.Clear();
-				// Axes.
-				AxisList.Clear();
-				IAxisList.Clear();
-				HAxisList.Clear();
-				IHAxisList.Clear();
-				// Sliders.
-				SliderList.Clear();
-				HSliderList.Clear();
-				ISliderList.Clear();
-				IHSliderList.Clear();
-
-				// Create button, POV, stick axis, slider axis bool lists (true = exists).
-				for (int i = 0; i < ud.CapButtonCount; i++) { ButtonStateList.Add(true); }
-				for (int i = 0; i < ud.CapPovCount; i++) { POVStateList.Add(true); }
-				for (int i = 0; i < ud.CapPovCount * 4; i++) { POVBStateList.Add(true); }
-				// Create bool list, based on axis default position: (~0, ~65535) or (~32767).
-				for (int i = 0; i < customDiState.Axis.Count(); i++) { StickAxisStateList.Add(customDiState.Axis[i] > (65535 / 4) && customDiState.Axis[i] < 65535 - (65535 / 4)); }
-				for (int i = 0; i < customDiState.Sliders.Count(); i++) { SliderAxisStateList.Add(customDiState.Sliders[i] < (65535 / 4) && customDiState.Sliders[i] > 65535 - (65535 / 4)); }
-
-				buttons = ButtonStateList.Count(b => b);
-				povs = POVStateList.Count(b => b);
-				stickAxes = StickAxisStateList.Count(b => b);
-				// Number of sliders: all controller axes - axes with default-initial position ~32767.
-				sliderAxes = ud.CapAxeCount - StickAxisStateList.Count(b => b);
-				// var slidersCount = ud.DeviceObjects?.Count(x => x.Type.Equals(ObjectGuid.Slider)) ?? 0;
-
-				if (buttons > 0)
-				{
-					DragAndDropMenuLabels_Create(ButtonStateList, ButtonList, "Button", "BUTTON", "Icon_DragAndDrop_Button");
-					DragAndDropMenuLabels_Create(ButtonStateList, IButtonList, "IButton", "BUTTON", "Icon_DragAndDrop_Button_Inverted");
-				}
-				if (povs > 0)
-				{
-					DragAndDropMenuLabels_Create(POVStateList, POVList, "POV", "POV", "Icon_DragAndDrop_POV");
-					DragAndDropMenuLabels_Create(POVBStateList, POVButtonList, "POVB", "POV · BUTTON", "Icon_DragAndDrop_POV");
-				}
-				if (stickAxes > 0)
-				{
-					DragAndDropMenuLabels_Create(StickAxisStateList, AxisList, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(StickAxisStateList, IAxisList, "IAxis", "AXIS", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(StickAxisStateList, HAxisList, "HAxis", "AXIS · HALF", "Icon_DragAndDrop_Axis_Half");
-					DragAndDropMenuLabels_Create(StickAxisStateList, IHAxisList, "IHAxis", "AXIS · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
-				}
-				if (sliderAxes > 0)
-				{
-					DragAndDropMenuLabels_Create(SliderAxisStateList, SliderList, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, ISliderList, "ISlider", "SLIDER", "Icon_DragAndDrop_Axis_Inverted");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, HSliderList, "HSlider", "SLIDER · HALF", "Icon_DragAndDrop_Axis_Half");
-					DragAndDropMenuLabels_Create(SliderAxisStateList, IHSliderList, "IHSlider", "SLIDER · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
-				}
+				DragAndDropMenuLabels_Create(ButtonDictionary, buttons, "Button", "BUTTON", "Icon_DragAndDrop_Button");
+				DragAndDropMenuLabels_Create(IButtonDictionary, buttons, "IButton", "BUTTON", "Icon_DragAndDrop_Button_Inverted");
 			}
+			// POVs.
+			if (povs.Count() > 0)
+			{
+				DragAndDropMenuLabels_Create(PovDictionary, povs, "POV", "POV", "Icon_DragAndDrop_POV");
+				var povButtons = new List<int>();
+				for (int i = 0; i < povs.Count() * 4; i++) { povButtons.Add(i); }
+				DragAndDropMenuLabels_Create(PovBDictionary, povButtons, "POVB", "POV · BUTTON", "Icon_DragAndDrop_POV");
+			}
+			// Axes.
+			if (axes.Count() > 0)
+			{
+				DragAndDropMenuLabels_Create(AxisDictionary, axes, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
+				DragAndDropMenuLabels_Create(IAxisDictionary, axes, "IAxis", "AXIS", "Icon_DragAndDrop_Axis_Inverted");
+				DragAndDropMenuLabels_Create(HAxisDictionary, axes, "HAxis", "AXIS · HALF", "Icon_DragAndDrop_Axis_Half");
+				DragAndDropMenuLabels_Create(IHAxisDictionary, axes, "IHAxis", "AXIS · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
+			}
+			// Sliders.
+			if (sliders.Count() > 0)
+			{
+				DragAndDropMenuLabels_Create(SliderDictionary, sliders, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
+				DragAndDropMenuLabels_Create(ISliderDictionary, sliders, "ISlider", "SLIDER", "Icon_DragAndDrop_Axis_Inverted");
+				DragAndDropMenuLabels_Create(HSliderDictionary, sliders, "HSlider", "SLIDER · HALF", "Icon_DragAndDrop_Axis_Half");
+				DragAndDropMenuLabels_Create(IHSliderDictionary, sliders, "IHSlider", "SLIDER · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
+			}
+		}
+
+		private void GetDeviceObjectInstancesByObjectTypeGuid(UserDevice ud, int usage = 0)
+		{
+			var device = ud.Device as Joystick;		
+			var deviceObjects = device?.GetObjects();
+			StringBuilder stringBuilder = new StringBuilder();
+
+			// Sliders.
+			var state = device.GetCurrentState();
+			if (state.Sliders[0] != 0) sliders.Add(0);
+			if (state.Sliders[1] != 0) sliders.Add(1);
+			if (state.AccelerationSliders[0] != 0) sliders.Add(2);
+			if (state.AccelerationSliders[1] != 0) sliders.Add(3);
+			if (state.ForceSliders[0] != 0) sliders.Add(4);
+			if (state.ForceSliders[1] != 0) sliders.Add(5);
+			if (state.VelocitySliders[0] != 0) sliders.Add(6);
+			if (state.VelocitySliders[1] != 0) sliders.Add(7);
+
+			// POVs.
+			// var povsCount = deviceObjects.Where(x => x.ObjectType == ObjectGuid.PovController).Count();
+			for (int i = 0; i < ud.CapPovCount; i++) { povs.Add(i); }
+
+			// Buttons, Keys. 
+			// var buttonCount = deviceObjects.Where(x => x.ObjectType == ObjectGuid.Button || x.ObjectType == ObjectGuid.Key).Count();
+			for (int i = 0; i < ud.CapButtonCount; i++) { buttons.Add(i); }
+
+			// Axes.
+			foreach (DeviceObjectInstance item in deviceObjects.Where(x => x.ObjectType != ObjectGuid.Unknown).OrderBy(x => x.UsagePage).ThenBy(x => x.Usage).ThenBy(x => x.ObjectId.InstanceNumber))
+			{
+				// if (item.ObjectType == ObjectGuid.PovController) { povs.Add(item.ObjectId.InstanceNumber); }
+				// else if (item.ObjectType == ObjectGuid.Key) { buttons.Add(item.ObjectId.InstanceNumber); }
+				// else if (item.ObjectType == ObjectGuid.Button) { buttons.Add(item.Offset); }
+				// Axes.
+				if (new[] { ObjectGuid.XAxis, ObjectGuid.YAxis, ObjectGuid.ZAxis, ObjectGuid.RxAxis, ObjectGuid.RyAxis, ObjectGuid.RzAxis }.Contains(item.ObjectType))
+				{
+					if (ud.IsMouse) { axes.Add(item.ObjectId.InstanceNumber); }
+					else { if (CustomDiHelper.AxisUsageDictionary.TryGetValue(item.Usage, out var value)) axes.Add(value.Item2); }
+				}
+
+				stringBuilder.Append($"INFO: " +
+						$"UsagePage {item.UsagePage}. " +
+						$"Usage {item.Usage.ToString().PadLeft(2, ' ')}. " +
+						$"InstanceNumber {item.ObjectId.InstanceNumber.ToString().PadLeft(2, ' ')}. " +
+						$"Offset {item.Offset.ToString().PadLeft(2, ' ')}. " +
+						$"ObjectType {item.ObjectType} ({GetObjectTypeName(item.ObjectType)}). " +
+						$"Name {item.Name}. " +
+						$"Flags {item.ObjectId.Flags}.\n");
+			}
+
+			Debug.WriteLine($"\nINFO: InstanceName {ud.InstanceName}.\n{stringBuilder}");
+			//if (ud.InstanceGuid == new Guid("2c6612a0-d772-11e7-8003-444553540000") ||
+			//	ud.InstanceGuid == new Guid("dff18ef0-139b-11ea-8001-444553540000") ||
+			//	ud.InstanceGuid == new Guid("1a36a500-7535-11ef-8001-444553540000") ||
+			//	ud.InstanceGuid == new Guid("db208ce0-e8ce-11e7-8002-444553540000"))
+			//{
+			//	var ins = ud.Device;
+			//}
+		}
+
+		public static string GetObjectTypeName(Guid guid)
+		{
+			foreach (FieldInfo field in typeof(ObjectGuid).GetFields(BindingFlags.Public | BindingFlags.Static))
+			{
+				if (field.FieldType == typeof(Guid) && (Guid)field.GetValue(null) == guid) return field.Name;
+			}
+			return "Unknown";
 		}
 
 		private void SetDInputLabelContent(UserDevice ud, TargetType targetType, Label label)
@@ -366,7 +456,7 @@ namespace x360ce.App.Controls
 			var customDiState = GetCustomDiState(ud);
 			var i = map.Index - 1;
 
-			if (map.Index <= ud.DiState.Axis.Length)
+			if (map.Index <= ud.DiState.Axis.Length/* || map.Index <= ud.DiState.Sliders.Length*/)
 			{
 				if (map.IsAxis || map.IsHalf || map.IsInverted) label.Content = customDiState.Axis[i];
 				else if (map.IsButton) label.Content = customDiState.Buttons[i] ? 1 : 0;
@@ -400,80 +490,63 @@ namespace x360ce.App.Controls
 			StickRDeadzoneYLabel.Content = _padSetting.RightThumbDeadZoneY;
 
 			// Buttons.
-			if (buttons > 0)
+			foreach (var i in ButtonDictionary)
 			{
-				for (int i = 0; i < buttons; i++)
+				var bDS = ud.DiState.Buttons[i.Key]; // customDiState.Buttons[i.Key];
+				IButtonDictionary[i.Key].Item1.Background = bDS ? Brushes.Transparent : colorActive;
+				ButtonDictionary[i.Key].Item1.Background = bDS ? colorActive : Brushes.Transparent;
+				ButtonDictionary[i.Key].Item2.Content = bDS.ToString();
+				IButtonDictionary[i.Key].Item2.Content = bDS.ToString() == "True" ? "False" : "True";
+
+				// Record button.
+				if (recordTextBox != null && bDS)
 				{
-					var bDS = customDiState.Buttons[i];
-					ButtonList[i].ToolTip =
-					IButtonList[i].ToolTip = bDS.ToString();
-					ButtonList[i].Background = bDS ? colorActive : Brushes.Transparent;
-					IButtonList[i].Background = bDS ? Brushes.Transparent : colorActive;
+					recordTextBox.Text = ButtonDictionary[i.Key].Item1.Tag.ToString();
+					recordTextBox.BorderBrush = colorBackgroundDark;
+					recordTextBox = null;
 				}
 			}
 			// POVs.
-			if (povs > 0)
+			var povButtonValues = new[] { 0, 9000, 18000, 27000, 0, 9000, 18000, 27000, 0, 9000, 18000, 27000, 0, 9000, 18000, 27000 };
+			foreach (var i in PovDictionary)
 			{
-				var povButtonValues = new[] { 0, 9000, 18000, 27000, 0, 9000, 18000, 27000 };
-				for (int i = 0; i < povs; i++)
+				var pDS = ud.DiState.POVs[i.Key]; // customDiState.POVs[i.Key];
+				PovDictionary[i.Key].Item1.Background = pDS > -1 ? colorActive : Brushes.Transparent;
+				PovDictionary[i.Key].Item2.Content = pDS;
+				// Up, Right, Down, Left.
+				for (int b = 0; b < PovDictionary.Count() * 4 && b < povButtonValues.Length; b++)
 				{
-					var pDS = customDiState.POVs[i];
-					POVList[i].Background = pDS > -1 ? colorActive : Brushes.Transparent;
-					POVList[i].ToolTip = pDS;
-					// Up, Right, Down, Left.
-					for (int b = 0; b < povs * 4 && b < povButtonValues.Length; b++)
-					{
-						POVButtonList[b].Background = pDS == povButtonValues[b] ? colorActive : Brushes.Transparent;
-						POVButtonList[b].ToolTip = pDS == povButtonValues[b] ? pDS : -1;
-					}
+					PovBDictionary[b].Item1.Background = pDS == povButtonValues[b] ? colorActive : Brushes.Transparent;
+					PovBDictionary[b].Item2.Content = pDS == povButtonValues[b] ? pDS : -1;
 				}
 			}
 			// Stick axes.
-			if (stickAxes > 0)
+			foreach (var i in AxisDictionary)
 			{
-				for (int i = 0; i < customDiState.Axis.Count(); i++)
-				{
-					var aDSValue = customDiState.Axis[i];
-					// Background.
-					AxisList[i].Background =
-					HAxisList[i].Background = aDSValue < 32767 - DragAndDropAxisDeadzone || aDSValue > 32767 + DragAndDropAxisDeadzone ? colorActive : Brushes.Transparent;
-					IAxisList[i].Background =
-					IHAxisList[i].Background = aDSValue < 32767 - DragAndDropAxisDeadzone || aDSValue > 32767 + DragAndDropAxisDeadzone ? Brushes.Transparent : colorActive;
-					// Tooltip.
-					AxisList[i].ToolTip =
-					IAxisList[i].ToolTip =
-					HAxisList[i].ToolTip =
-					IHAxisList[i].ToolTip = aDSValue;
-				}
+				var aDS = ud.DiState.Axis[i.Key]; //customDiState.Axis[i.Key];
+				AxisDictionary[i.Key].Item2.Content = aDS;
+				HAxisDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((aDS - 32767) * 2, 65535));
+				IAxisDictionary[i.Key].Item2.Content = Math.Abs(65535 - aDS);
+				IHAxisDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((Math.Abs(65535 - aDS) - 32767) * 2, 65535));
+				// Background.
+				var active = aDS < 32767 - DragAndDropAxisDeadzone || aDS > 32767 + DragAndDropAxisDeadzone;
+				AxisDictionary[i.Key].Item1.Background = HAxisDictionary[i.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
+				IAxisDictionary[i.Key].Item1.Background = IHAxisDictionary[i.Key].Item1.Background = active ? Brushes.Transparent : colorActive;
 			}
+
 			// Slider axes.
-			if (sliderAxes > 0)
+			foreach (var i in SliderDictionary)
 			{
-				for (int i = 0; i < customDiState.Sliders.Count(); i++)
-				{
-					var sDS = customDiState.Sliders[i];
-					if (sDS > 0)
-					{
-						// Visibility.
-						SliderList[i].Visibility = 
-						HSliderList[i].Visibility = 
-						ISliderList[i].Visibility = 
-						IHSliderList[i].Visibility = Visibility.Visible;
-						// Background.
-						SliderList[i].Background =
-						HSliderList[i].Background = sDS > DragAndDropSliderDeadzone ? colorActive : Brushes.Transparent;
-						ISliderList[i].Background =
-						IHSliderList[i].Background = sDS > DragAndDropSliderDeadzone ? Brushes.Transparent : colorActive;
-						// Tooltip.
-						SliderList[i].ToolTip =
-						ISliderList[i].ToolTip =
-						HSliderList[i].ToolTip =
-						IHSliderList[i].ToolTip = sDS;
-					}
-				}
+				var sDS = ud.DiState.Sliders[i.Key];
+				SliderDictionary[i.Key].Item2.Content = sDS;
+				HSliderDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((sDS - 32767) * 2, 65535));
+				ISliderDictionary[i.Key].Item2.Content = Math.Abs(65535 - sDS);
+				IHSliderDictionary[i.Key].Item2.Content = Math.Max(0, Math.Min((Math.Abs(65535 - sDS) - 32767) * 2, 65535));
+				// Background.
+				SliderDictionary[i.Key].Item1.Background = HSliderDictionary[i.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? colorActive : Brushes.Transparent;
+				ISliderDictionary[i.Key].Item1.Background = IHSliderDictionary[i.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? Brushes.Transparent : colorActive;
 			}
 		}
-
 		#endregion
 
 		#region ■ Direct Input Menu
@@ -664,20 +737,6 @@ namespace x360ce.App.Controls
 		//	}
 		//}
 
-		private void UserControl_Loaded(object sender, RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowLoad(this))
-				return;
-		}
-
-		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowUnload(this))
-				return;
-			SetBinding(MapTo.None, null);
-			// DiMenuStrip.Clear();
-		}
-
 		private void RecordClear_MouseEnterTextBox(object sender, MouseEventArgs e)
 		{
 			var g1 = RecordClearGrid.Parent as Grid;
@@ -689,7 +748,6 @@ namespace x360ce.App.Controls
 
 			if (g2.HorizontalAlignment == HorizontalAlignment.Left)
 			{
-				Grid.SetColumn(RCBorder, 1);
 				Grid.SetColumn(RCStackPanel, 1);
 				RecordClearColumn0.Width = new GridLength(77);
 				RecordClearColumn1.Width = new GridLength(1, GridUnitType.Star);
@@ -697,7 +755,6 @@ namespace x360ce.App.Controls
 			}
 			else
 			{
-				Grid.SetColumn(RCBorder, 0);
 				Grid.SetColumn(RCStackPanel, 0);
 				RecordClearColumn0.Width = new GridLength(1, GridUnitType.Star);
 				RecordClearColumn1.Width = new GridLength(77);
@@ -716,11 +773,23 @@ namespace x360ce.App.Controls
 			((sender as Button).Tag as TextBox).Text = "";
 		}
 
-		PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
+		TextBox recordTextBox;
+
+		//PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
 		private void RecordButton_Click(object sender, RoutedEventArgs e)
 		{
-			//var textBox = (sender as Button).Tag as TextBox;
-			padItem_General_XboxImageControl.setNormalOverActiveRecordColor(sender as Button, padItem_General_XboxImageControl.colorRecord);
+			if (recordTextBox == null)
+			{
+				recordTextBox = (sender as Button).Tag as TextBox;
+				recordTextBox.BorderBrush = colorRecord;
+				recordTextBox.Text = "";
+				//padItem_General_XboxImageControl.setNormalOverActiveRecordColor(sender as Button, padItem_General_XboxImageControl.colorRecord);
+			}
+			else
+			{
+				recordTextBox.BorderBrush = colorBackgroundDark;
+				recordTextBox = null;
+			}
 		}
 
 		private void RecordClear_MouseEnter(object sender, MouseEventArgs e)
@@ -731,6 +800,25 @@ namespace x360ce.App.Controls
 		private void RecordClear_MouseLeave(object sender, MouseEventArgs e)
 		{
 			RecordClearGrid.Visibility = Visibility.Collapsed;
+		}
+
+		private void UserControl_Loaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
+		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
+			SetBinding(MapTo.None, null);
+			// DiMenuStrip.Clear();
 		}
 	}
 }

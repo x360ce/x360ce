@@ -18,7 +18,6 @@ namespace JocysCom.ClassLibrary.Configuration
 				Assembly.GetExecutingAssembly();
 		}
 
-		public static AssemblyInfo _Entry;
 		public static object _EntryLock = new object();
 		public static AssemblyInfo Entry
 		{
@@ -31,7 +30,15 @@ namespace JocysCom.ClassLibrary.Configuration
 					return _Entry;
 				}
 			}
+			set
+			{
+				lock (_EntryLock)
+				{
+					_Entry = value;
+				}
+			}
 		}
+		static AssemblyInfo _Entry;
 
 		public AssemblyInfo(string strValFile)
 		{
@@ -392,8 +399,6 @@ namespace JocysCom.ClassLibrary.Configuration
 				? ""
 				: value.Invoke(attribute);
 		}
-
-
 
 		public string GetAppDataPath(bool userLevel = false, string format = "", params object[] args)
 		{

@@ -84,13 +84,23 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args is null)
-				? format
-				: string.Format(format, args);
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
 			if (control.Content as string != text)
 				control.Content = text;
 		}
 
+		public static void SetText(PasswordBox control, string format, params object[] args)
+		{
+			if (control is null)
+				throw new ArgumentNullException(nameof(control));
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
+			if (control.Password != text)
+				control.Password = text;
+		}
 
 		/// <summary>
 		/// Change value if it is different only.
@@ -100,9 +110,9 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args is null)
-				? format
-				: string.Format(format, args);
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
 			if (control.Header as string != text)
 				control.Header = text;
 		}
@@ -115,9 +125,9 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args is null)
-				? format ?? ""
-				: string.Format(format ?? "", args);
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
 			if (control.Text != text)
 				control.Text = text;
 		}
@@ -130,9 +140,9 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (control is null)
 				throw new ArgumentNullException(nameof(control));
-			var text = (args is null)
-				? format ?? ""
-				: string.Format(format ?? "", args);
+			var text = args?.Count() > 0
+				? string.Format(format ?? "", args)
+				: format;
 			if (control.Text != text)
 				control.Text = text;
 		}
@@ -182,6 +192,27 @@ namespace JocysCom.ClassLibrary.Controls
 			if (control.Visibility != visibility)
 				control.Visibility = visibility;
 		}
+
+
+		public static void SetItemsSource(DataGridComboBoxColumn grid, IBindingList list)
+		{
+			if (list is null)
+			{
+				if (grid.ItemsSource is System.Windows.Data.BindingListCollectionView view)
+				{
+					grid.ItemsSource = null;
+					view.DetachFromSourceCollection();
+				}
+				return;
+			}
+			var currentView = (System.Windows.Data.BindingListCollectionView)grid.ItemsSource;
+			// If same list then...
+			if (currentView?.SourceCollection == list)
+				return;
+			var newView = new System.Windows.Data.BindingListCollectionView(list);
+			grid.ItemsSource = newView;
+		}
+
 
 		public static void SetItemsSource(ItemsControl grid, IBindingList list)
 		{
@@ -321,6 +352,33 @@ namespace JocysCom.ClassLibrary.Controls
 			if (w is null)
 				return;
 			WeakEventManager<Window, CancelEventArgs>.AddHandler(w, nameof(Window.Closing), handler);
+		}
+
+		public static void RemoveFromParent(FrameworkElement element)
+		{
+			if (element == null)
+				return;
+			var lParent = LogicalTreeHelper.GetParent(element);
+			var vParent = VisualTreeHelper.GetParent(element);
+
+			if (vParent is ItemsControl items)
+				items.Items.Remove(element);
+			if (vParent is ContentPresenter window)
+				window.Content = null;
+			if (vParent is Decorator border)
+				border.Child = null;
+			// Remove visual and logical children.
+			var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+			if (vParent is FrameworkElement)
+			{
+				var methodInfo = vParent.GetType().GetMethod("RemoveVisualChild", flags);
+				methodInfo.Invoke(vParent, new object[] { element });
+			}
+			if (lParent is FrameworkElement)
+			{
+				var methodInfo = lParent.GetType().GetMethod("RemoveLogicalChild", flags);
+				methodInfo.Invoke(lParent, new object[] { element });
+			}
 		}
 
 		/// <summary>
@@ -688,7 +746,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		#region TextBoxBase
+		#region TextBoxBase - EnableAutoScroll
 
 		public static VerticalAlignment GetScrollVerticalAlignment(ScrollViewer control)
 		{
@@ -698,7 +756,6 @@ namespace JocysCom.ClassLibrary.Controls
 			var height = control.ExtentHeight;
 			// Vertical size of the visible content area.
 			var visibleView = control.ViewportHeight;
-			//var scrollBarHeight = control.ActualHeight - control.ViewportHeight;
 			// Allow flexibility of 2 pixels.
 			var flex = 2;
 			if (height - offset - visibleView < flex)
@@ -719,11 +776,6 @@ namespace JocysCom.ClassLibrary.Controls
 					.Where(x => x.ComputedVerticalScrollBarVisibility == Visibility.Visible)
 					.FirstOrDefault() ?? all.FirstOrDefault();
 			}
-			//if (control is TextBoxBase tb)
-			//{
-			//	var border = (Border)VisualTreeHelper.GetChild(control, 0);
-			//	sv = (ScrollViewer)VisualTreeHelper.GetChild(border, 0);
-			//}
 			if (sv != null)
 			{
 				var scrollPosition = GetScrollVerticalAlignment(sv);
@@ -731,14 +783,6 @@ namespace JocysCom.ClassLibrary.Controls
 					sv.ScrollToEnd();
 			}
 		}
-
-		//public static void Measure(Control control)
-		//{
-		//	var available = LayoutInformation.GetLayoutSlot(control);
-		//	Size s = new Size(available.Width, available.Height);
-		//	control.Measure(s);
-		//	control.Arrange(available);
-		//}
 
 		public static void EnableAutoScroll(TextBoxBase control, bool enable = true)
 		{
@@ -763,6 +807,76 @@ namespace JocysCom.ClassLibrary.Controls
 			=> AutoScroll((TextBox)sender);
 
 		#endregion
+
+		#region TextBoxBase - AppendText - Logging
+
+		public static void AppendText(TextBox control, string text, int maxSize = 65535)
+		{
+			// Check for a null control
+			if (control == null) throw new ArgumentNullException(nameof(control));
+
+			// Invoke UI thread if necessary, to perform UI updates
+			AppInvoke(() =>
+			{
+				// Calculate new text size
+				var newTextSize = System.Text.Encoding.UTF8.GetByteCount(control.Text + text);
+				// Ensure the final text size does not exceed maxSize
+				if (newTextSize > maxSize)
+				{
+					var lines = control.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+					int linesToRemove = 0;
+					int sizeRemoved = 0;
+
+					// Determine how many lines to remove from the start to stay within maxSize
+					while (sizeRemoved < newTextSize - maxSize && linesToRemove < lines.Length)
+					{
+						sizeRemoved += System.Text.Encoding.UTF8.GetByteCount(lines[linesToRemove] + Environment.NewLine);
+						linesToRemove++;
+					}
+					// Rebuild the remaining text after removing oldest lines
+					var remainingText = string.Join(Environment.NewLine, lines, linesToRemove, lines.Length - linesToRemove);
+					control.Text = remainingText;
+				}
+				// Append the new text
+				if (control.Text.Length > 0)
+					control.AppendText(Environment.NewLine + text);
+				else
+					control.AppendText(text);
+			});
+		}
+
+		#endregion
+
+		public static void AppInvoke(Action action)
+		{
+			// Check if we are on the UI thread
+			if (Application.Current.Dispatcher.CheckAccess())
+			{
+				// If on UI thread, update the UI elements directly
+				action.Invoke();
+			}
+			else
+			{
+				// If not on UI thread, invoke on the UI thread
+				Application.Current.Dispatcher.Invoke(action);
+			}
+		}
+
+		public static void AppBeginInvoke(Action action)
+		{
+			// Check if we are on the UI thread
+			if (Application.Current.Dispatcher.CheckAccess())
+			{
+				// If on UI thread, update the UI elements directly
+				//_ = action.BeginInvoke(action.EndInvoke, null);
+				Application.Current.Dispatcher.BeginInvoke(action);
+			}
+			else
+			{
+				// If not on UI thread, invoke on the UI thread
+				Application.Current.Dispatcher.BeginInvoke(action);
+			}
+		}
 
 		// Contains unique list of control IDs for the applicaiton.
 		private static SortedSet<int> LoadedControls = new SortedSet<int>();
@@ -864,14 +978,25 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#endregion
 
-		public static void EnsureTabItemSelected(FrameworkElement control)
+		/// <summary>
+		/// Checks if the specified control within its parent TabControls is selected.
+		/// </summary>
+		/// <param name="control">The control to check for selection.</param>
+		/// <returns>True if the TabItem is selected, otherwise false.</returns>
+		/// <summary>
+		/// Checks if the specified control within its parent TabControls is selected.
+		/// </summary>
+		/// <param name="control">The control to check for selection.</param>
+		/// <returns>True if the TabItem is selected, otherwise false.</returns>
+		public static bool IsTabItemSelected(FrameworkElement control)
 		{
 			var parent = control.Parent as FrameworkElement;
 			while (parent != null)
 			{
 				if (parent is TabItem tabItem)
 				{
-					tabItem.IsSelected = true;
+					if (!tabItem.IsSelected)
+						return false;
 				}
 				else if (parent is TabControl tabControl)
 				{
@@ -879,7 +1004,41 @@ namespace JocysCom.ClassLibrary.Controls
 					{
 						if (item.Content == control)
 						{
-							item.IsSelected = true;
+							if (!item.IsSelected)
+								return false;
+							break;
+						}
+					}
+				}
+				parent = parent.Parent as FrameworkElement;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Ensures that the specified control is selected within its parent TabControls.
+		/// </summary>
+		/// <param name="control">The control to be selected.</param>
+		public static void EnsureTabItemSelected(FrameworkElement control)
+		{
+			if (IsTabItemSelected(control))
+				return;
+			var parent = control.Parent as FrameworkElement;
+			while (parent != null)
+			{
+				if (parent is TabItem tabItem)
+				{
+					if (!tabItem.IsSelected)
+						tabItem.IsSelected = true;
+				}
+				else if (parent is TabControl tabControl)
+				{
+					foreach (TabItem item in tabControl.Items)
+					{
+						if (item.Content == control)
+						{
+							if (!item.IsSelected)
+								item.IsSelected = true;
 							break;
 						}
 					}

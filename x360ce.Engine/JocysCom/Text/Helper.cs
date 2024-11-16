@@ -128,17 +128,24 @@ namespace JocysCom.ClassLibrary.Text
 			var t = typeof(T);
 			var properties = t.GetProperties();
 			var prefix = string.IsNullOrEmpty(customPrefix) ? t.Name : customPrefix;
+			var replacement = new List<(string Param, string Value)>();
 			foreach (var p in properties)
 			{
 				var value = $"{p.GetValue(o, null)}";
 				if (string.IsNullOrEmpty(value))
 					continue;
-				var text = "{";
+				var param = "{";
 				if (usePrefix && !string.IsNullOrEmpty(prefix))
-					text += prefix;
-				text += p.Name + "}";
-				s = Replace(s, value, text, StringComparison.OrdinalIgnoreCase);
+					param += prefix;
+				param += p.Name + "}";
+				replacement.Add((param, value));
 			}
+			replacement = replacement
+				.OrderByDescending(x => x.Value.Length)
+				.ThenBy(x => x.Param.Length)
+				.ToList();
+			foreach (var item in replacement)
+				s = Replace(s, item.Value, item.Param, StringComparison.OrdinalIgnoreCase);
 			return s;
 		}
 

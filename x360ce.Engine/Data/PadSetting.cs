@@ -29,35 +29,40 @@ namespace x360ce.Engine.Data
 					if (MapsChanged || true)
 					{
 						var maps = new List<Map>();
-						// Add buttons.
-						maps.Add(new Map(MapCode.ButtonGuide, ButtonGuide, GamepadButtonFlags.Guide, ButtonGuideDeadZone));
+						// Add Menu buttons.
+						maps.Add(new Map(MapCode.ButtonGuide, ButtonGuide, GamepadButtonFlags.Guide, ""));
+						maps.Add(new Map(MapCode.ButtonBack, ButtonBack, GamepadButtonFlags.Back, ButtonBackDeadZone));
+						maps.Add(new Map(MapCode.ButtonStart, ButtonStart, GamepadButtonFlags.Start, ButtonStartDeadZone));
+						// Add Action buttons.
 						maps.Add(new Map(MapCode.ButtonA, ButtonA, GamepadButtonFlags.A, ButtonADeadZone));
 						maps.Add(new Map(MapCode.ButtonB, ButtonB, GamepadButtonFlags.B, ButtonBDeadZone));
 						maps.Add(new Map(MapCode.ButtonX, ButtonX, GamepadButtonFlags.X, ButtonXDeadZone));
 						maps.Add(new Map(MapCode.ButtonY, ButtonY, GamepadButtonFlags.Y, ButtonYDeadZone));
-						maps.Add(new Map(MapCode.ButtonBack, ButtonBack, GamepadButtonFlags.Back, ButtonBackDeadZone));
-						maps.Add(new Map(MapCode.ButtonStart, ButtonStart, GamepadButtonFlags.Start, ButtonStartDeadZone));
+						// Add D-Pad buttons
 						maps.Add(new Map(MapCode.DPadUp, DPadUp, GamepadButtonFlags.DPadUp, DPadUpDeadZone));
 						maps.Add(new Map(MapCode.DPadDown, DPadDown, GamepadButtonFlags.DPadDown, DPadDownDeadZone));
 						maps.Add(new Map(MapCode.DPadLeft, DPadLeft, GamepadButtonFlags.DPadLeft, DPadLeftDeadZone));
 						maps.Add(new Map(MapCode.DPadRight, DPadRight, GamepadButtonFlags.DPadRight, DPadRightDeadZone));
+						// Add Bumper buttons.
 						maps.Add(new Map(MapCode.LeftShoulder, LeftShoulder, GamepadButtonFlags.LeftShoulder, LeftShoulderDeadZone));
 						maps.Add(new Map(MapCode.RightShoulder, RightShoulder, GamepadButtonFlags.RightShoulder, RightShoulderDeadZone));
+						// Add Stick buttons.
 						maps.Add(new Map(MapCode.LeftThumbButton, LeftThumbButton, GamepadButtonFlags.LeftThumb, LeftThumbButtonDeadZone));
 						maps.Add(new Map(MapCode.RightThumbButton, RightThumbButton, GamepadButtonFlags.RightThumb, RightThumbButtonDeadZone));
-						// Add triggers.
+						// Add Trigger buttons.
 						maps.Add(new Map(MapCode.LeftTrigger, LeftTrigger, TargetType.LeftTrigger, LeftTriggerDeadZone, LeftTriggerAntiDeadZone, LeftTriggerLinear));
 						maps.Add(new Map(MapCode.RightTrigger, RightTrigger, TargetType.RightTrigger, RightTriggerDeadZone, RightTriggerAntiDeadZone, RightTriggerLinear));
-						// Add thumbs.
+						// Add Stick axes.
 						maps.Add(new Map(MapCode.LeftThumbAxisX, LeftThumbAxisX, TargetType.LeftThumbX, LeftThumbDeadZoneX, LeftThumbAntiDeadZoneX, LeftThumbLinearX));
 						maps.Add(new Map(MapCode.LeftThumbAxisY, LeftThumbAxisY, TargetType.LeftThumbY, LeftThumbDeadZoneY, LeftThumbAntiDeadZoneY, LeftThumbLinearY));
 						maps.Add(new Map(MapCode.RightThumbAxisX, RightThumbAxisX, TargetType.RightThumbX, RightThumbDeadZoneX, RightThumbAntiDeadZoneX, RightThumbLinearX));
 						maps.Add(new Map(MapCode.RightThumbAxisY, RightThumbAxisY, TargetType.RightThumbY, RightThumbDeadZoneY, RightThumbAntiDeadZoneY, RightThumbLinearY));
-						// Add thumbs positive max and negative max map.
+						// Add Stick Left max positive and max negative maps.
 						maps.Add(new Map(MapCode.LeftThumbUp, LeftThumbUp, TargetType.LeftThumbY, short.MaxValue));
 						maps.Add(new Map(MapCode.LeftThumbDown, LeftThumbDown, TargetType.LeftThumbY, short.MinValue));
 						maps.Add(new Map(MapCode.LeftThumbLeft, LeftThumbLeft, TargetType.LeftThumbX, short.MinValue));
 						maps.Add(new Map(MapCode.LeftThumbRight, LeftThumbRight, TargetType.LeftThumbX, short.MaxValue));
+						// Add Stick Right max positive and max negative maps.
 						maps.Add(new Map(MapCode.RightThumbUp, RightThumbUp, TargetType.RightThumbY, short.MaxValue));
 						maps.Add(new Map(MapCode.RightThumbDown, RightThumbDown, TargetType.RightThumbY, short.MinValue));
 						maps.Add(new Map(MapCode.RightThumbLeft, RightThumbLeft, TargetType.RightThumbX, short.MinValue));

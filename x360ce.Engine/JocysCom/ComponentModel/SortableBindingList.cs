@@ -197,6 +197,10 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index));
 		}
 
+		public void RemoveAll(Func<object, bool> value)
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 }

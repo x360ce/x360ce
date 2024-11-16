@@ -40,12 +40,14 @@ namespace JocysCom.ClassLibrary.IO
 				// Skip folders if don't exists.
 				if (!di.Exists)
 					continue;
-				AddFiles(di, ref fis, searchPattern, allDirectories);
+				AddFiles(di.FullName, di, ref fis, searchPattern, allDirectories);
 			}
 			return fis;
 		}
 
-		public void AddFiles(DirectoryInfo di, ref List<FileInfo> fileList, string searchPattern, bool allDirectories)
+		public Func<string, string, long, bool> IsIgnored;
+
+		public void AddFiles(string rootPath, DirectoryInfo di, ref List<FileInfo> fileList, string searchPattern, bool allDirectories)
 		{
 			try
 			{
@@ -76,6 +78,8 @@ namespace JocysCom.ClassLibrary.IO
 							return;
 						// Do tasks.
 						var fullName = files[i].FullName;
+						if (IsIgnored?.Invoke(rootPath, fullName, files[i].Length) == true)
+							continue;
 						if (!fileList.Any(x => x.FullName == fullName))
 						{
 							fileList.Add(files[i]);
@@ -121,8 +125,10 @@ namespace JocysCom.ClassLibrary.IO
 						}
 						if (IsStopping)
 							return;
+						if (IsIgnored?.Invoke(rootPath, subDi.FullName, 0) == true)
+							continue;
 						// Do tasks.
-						AddFiles(subDi, ref fileList, searchPattern, allDirectories);
+						AddFiles(rootPath, subDi, ref fileList, searchPattern, allDirectories);
 					}
 				}
 			}
@@ -138,6 +144,8 @@ namespace JocysCom.ClassLibrary.IO
 			// Suffixes: Kilo, Mega, Giga, Tera, Peta, Exa.
 			string[] suffix = { "", "K", "M", "G", "T", "P", "E" };
 			var absolute = Math.Abs(value);
+			if (value == 0)
+				return string.Format(format, value, suffix[0]);
 			var index = (int)Math.Floor(Math.Log(absolute, newBase));
 			var number = Math.Round(absolute / Math.Pow(newBase, index), 1);
 			var signed = Math.Sign(value) * number;

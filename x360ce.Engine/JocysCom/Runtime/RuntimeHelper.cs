@@ -342,6 +342,49 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
+		/// <summary>
+		/// Returns true if all properties with the same name are equal.
+		/// </summary>
+		public static bool EqualProperties(object source, object target, bool onlyNonByRef = false)
+		{
+			if (source is null)
+				throw new ArgumentNullException(nameof(source));
+			if (target is null)
+				throw new ArgumentNullException(nameof(target));
+			// Get type of the destination object.
+			var sourceProperties = GetProperties(source.GetType());
+			var targetProperties = GetProperties(target.GetType());
+			foreach (var sm in sourceProperties)
+			{
+				// Get destination property and skip if not found.
+				var tm = targetProperties.FirstOrDefault(x => Equals(x.Name, sm.Name));
+				if (!sm.CanRead)
+					continue;
+				bool useJson;
+				if (!CanCopy(sm.PropertyType, tm.PropertyType, onlyNonByRef, out useJson))
+					continue;
+				// Get source value.
+				var sValue = sm.GetValue(source, null);
+				if (useJson)
+					sValue = Serialize(sValue);
+				var update = true;
+				// If can read target value.
+				if (tm.CanRead)
+				{
+					// Get target value.
+					var dValue = tm.GetValue(target, null);
+					if (useJson)
+						dValue = Serialize(dValue);
+					// Update only if values are different.
+					update = !Equals(sValue, dValue);
+				}
+				// If update needed then not equal.
+				if (update)
+					return false;
+			}
+			return true;
+		}
+
 		#endregion
 
 		#region Convert: Object <-> Bytes
@@ -546,7 +589,7 @@ namespace JocysCom.ClassLibrary.Runtime
 		/// <param name="type">target type</param>
 		/// <param name="result">If the conversion was successful, the converted value of type T.</param>
 		/// <returns>If value was converted successfully, true; otherwise false.</returns>
-		public static bool TryParse(string value, Type t, out object result)
+		public static bool TryParse(object value, Type t, out object result)
 		{
 			if (IsNullable(t))
 				t = Nullable.GetUnderlyingType(t) ?? t;
@@ -563,8 +606,8 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			if (t.IsEnum)
 			{
-				var retValue = value is null ? false : Enum.IsDefined(t, value);
-				result = retValue ? Enum.Parse(t, value) : default;
+				var retValue = value is null ? false : Enum.IsDefined(t, value?.ToString());
+				result = retValue ? Enum.Parse(t, value?.ToString()) : default;
 				return retValue;
 			}
 			var tryParseMethod = t.GetMethod("TryParse",

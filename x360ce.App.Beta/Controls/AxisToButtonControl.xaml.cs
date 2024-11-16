@@ -218,10 +218,15 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowUnload(this))
 				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		public void ParentWindow_Unloaded()
+		{
 			// TODO: Lines below must be executed onbmly when main window close.
-			//controlsLink.ValueChanged -= controlsLink_ValueChanged;
-			//controlsLink.Dispose();
-			//controlsLink = null;
+			controlsLink.ValueChanged -= controlsLink_ValueChanged;
+			controlsLink.Dispose();
+			controlsLink = null;
 			//arrowEnabledImage = null;
 			//arrowDisabledImage = null;
 		}

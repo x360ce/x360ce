@@ -174,17 +174,18 @@ namespace x360ce.App
 
 		public static UserDevice[] GetMappedDevices(string fileName, bool includeOffline = false)
 		{
-			// Get all mapped user instances.
+			// Get all mapped user device instance GUIDs for the specified game.
 			var instanceGuids = UserSettings.ItemsToArraySynchronized()
-				// Filter by game.
-				.Where(x => string.Compare(x.FileName, fileName, true) == 0)
+				// Filter by game name.
+				.Where(x => string.Equals(x.FileName, fileName, StringComparison.OrdinalIgnoreCase))
 				// Include only mapped devices.
 				.Where(x => x.MapTo > (int)MapTo.None)
 				// Select device instances only.
 				.Select(x => x.InstanceGuid)
 				.ToArray();
+
+			// Get all connected devices using the filtered instance GUIDs.
 			UserDevice[] userDevices;
-			// Get all connected devices.
 			lock (UserDevices.SyncRoot)
 			{
 				userDevices = UserDevices.Items

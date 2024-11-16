@@ -1,12 +1,12 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿//using JocysCom.ClassLibrary.Controls;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Security.Policy;
+//using System.IO;
+//using System.Security.Policy;
 using System.Windows.Controls;
-using System.Windows.Media;
+//using System.Windows.Media;
 using x360ce.Engine;
 
 namespace x360ce.App.Controls
@@ -16,7 +16,7 @@ namespace x360ce.App.Controls
 
         public static object imagesLock = new object();
 
-        static Bitmap topImage;
+        //static Bitmap topImage;
         //static Bitmap frontImage;
         //static Bitmap topDisabledImage;
         //static Bitmap frontDisabledImage;
@@ -33,25 +33,25 @@ namespace x360ce.App.Controls
             {
                 var a = GetType().Assembly;
                 // Create images.
-                if (topImage == null)
-                {
-                    var keys = JocysCom.ClassLibrary.Helper.GetResourceKeys(a);
-                    //var ti = JocysCom.ClassLibrary.Helper.GetResourceValue("images/xboxcontrollertop.png", a);
-                    //topImage = new Bitmap(ti);
-                    //var ti2 = JocysCom.ClassLibrary.Helper.GetResourceValue("images/xboxcontrollerfront.png", a);
-                    //frontImage = new Bitmap(ti2);
-                    //topDisabledImage = AppHelper.GetDisabledImage(topImage);
-                    //frontDisabledImage = AppHelper.GetDisabledImage(frontImage);
-                    // WPF.
-                    //_TopImage = ControlsHelper.GetImageSource(topImage);
-                    //_FrontImage = ControlsHelper.GetImageSource(frontImage);
-                    //_TopDisabledImage = ControlsHelper.GetImageSource(topDisabledImage);
-                    //_FrontDisabledImage = ControlsHelper.GetImageSource(frontDisabledImage);
-                }
+                //if (topImage == null)
+                //{
+                //    var keys = JocysCom.ClassLibrary.Helper.GetResourceKeys(a);
+                //    var ti = JocysCom.ClassLibrary.Helper.GetResourceValue("images/xboxcontrollertop.png", a);
+                //    topImage = new Bitmap(ti);
+                //    var ti2 = JocysCom.ClassLibrary.Helper.GetResourceValue("images/xboxcontrollerfront.png", a);
+                //    frontImage = new Bitmap(ti2);
+                //    topDisabledImage = AppHelper.GetDisabledImage(topImage);
+                //    frontDisabledImage = AppHelper.GetDisabledImage(frontImage);
+                //    //WPF.
+                //   _TopImage = ControlsHelper.GetImageSource(topImage);
+                //    _FrontImage = ControlsHelper.GetImageSource(frontImage);
+                //    _TopDisabledImage = ControlsHelper.GetImageSource(topDisabledImage);
+                //    _FrontDisabledImage = ControlsHelper.GetImageSource(frontDisabledImage);
+                //}
                 // Other.
-                markB = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkButton.png", a);
-                markA = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkAxis.png", a);
-                markC = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkController.png", a);
+                //markB = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkButton.png", a);
+                //markA = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkAxis.png", a);
+                //markC = JocysCom.ClassLibrary.Helper.FindResource<Bitmap>("Images.MarkController.png", a);
                 //float rH = topDisabledImage.HorizontalResolution;
                 //float rV = topDisabledImage.VerticalResolution;
                 // Make sure resolution is same everywhere so images won'stickRDeadzone be resized.
@@ -66,11 +66,11 @@ namespace x360ce.App.Controls
         public Recorder Recorder;
 
         // Green round button image.
-        public Bitmap markB;
+        // public Bitmap markB;
         // Green cross axis image.
-        public Bitmap markA;
+        // public Bitmap markA;
         // Green round controller/player number image.
-        public Bitmap markC;
+        // public Bitmap markC;
 
         public PadItem_General_XboxImageControl ImageControl;
 
@@ -173,7 +173,6 @@ namespace x360ce.App.Controls
             // If button is not specified then...
             else if (ii.Button == GamepadButtonFlags.None)
             {
-				// Deadzone.
 				// Deadzone.
 				short value = 0;
 				short stickLDeadzone = Gamepad.LeftThumbDeadZone;
@@ -297,7 +296,6 @@ namespace x360ce.App.Controls
 
             if (ii.Label is ContentControl)
                 padItem_General_XboxImageControl.setNormalOverActiveRecordColor(ii, on ? padItem_General_XboxImageControl.colorActive : padItem_General_XboxImageControl.colorNormalPath);
-			    //padItem_GeneralControl.setNormalActiveColor(ii, on ? padItem_General_XboxImageControl.colorActive : padItem_General_XboxImageControl.colorNormalPath);
 		}
 
 		PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
@@ -327,12 +325,12 @@ namespace x360ce.App.Controls
                 RightTriggerAxisStatus = null;
                 ImageControl = null;
                 // Dispose other.
-                markA.Dispose();
-                markB.Dispose();
-                markC.Dispose();
-                markB = null;
-                markA = null;
-                markC = null;
+                // markA.Dispose();
+                // markB.Dispose();
+                // markC.Dispose();
+                // markB = null;
+                // markA = null;
+                // markC = null;
                 Recorder.Dispose();
                 Recorder = null;
                 locations.Clear();

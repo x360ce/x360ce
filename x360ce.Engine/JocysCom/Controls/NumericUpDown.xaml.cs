@@ -72,9 +72,9 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public static readonly DependencyProperty LargeChangeProperty =
 			DependencyProperty.Register(nameof(LargeChange), typeof(decimal?), typeof(NumericUpDown),
-			new FrameworkPropertyMetadata((decimal?)10, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+			new FrameworkPropertyMetadata((decimal?)5, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
-		[DefaultValue(typeof(decimal?), "10")]
+		[DefaultValue(typeof(decimal?), "5")]
 		public decimal? LargeChange
 		{
 			get => (decimal?)GetValue(LargeChangeProperty);
@@ -195,7 +195,7 @@ namespace JocysCom.ClassLibrary.Controls
 		public void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{
 			if (!ControlsHelper.AllowUnload(this))
-				return; 
+				return;
 			ValueChanged = null;
 			if (_NumericUpDownStyleConverter != null)
 			{
