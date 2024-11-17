@@ -203,7 +203,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			public override void Write(byte[] buffer, int offset, int count)
 			{
 				_streamContent += _responseEncoding.GetString(buffer);
-				// CWE-201: Information Exposure Through Sent Data
+				// SUPPRESS: CWE-201: Information Exposure Through Sent Data
 				// Note: Data being logged and not exposed to end user.
 				_streamToCapture.Write(buffer, offset, count);
 			}

@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Automation;
 using x360ce.App.Service;
 
@@ -69,12 +68,11 @@ namespace x360ce.Tests
 			var p = Process.Start(exePath);
 			// Wait Application.Current.MainWindow.
 			var appWindow = AutomationHelper.WaitForWindow(p, new Regex("^" + mainWindow, RegexOptions.IgnoreCase));
-			var windows = AutomationHelper.EnumerateProcessWindowHandles(p);
+			var windows = AutomationHelper.FindWindowsByProcessId(p.Id);
 			var list = new List<string>();
 			foreach (var window in windows)
 			{
-				var el = AutomationElement.FromHandle(window);
-				var all = AutomationHelper.GetAll(el, el.Current.ControlType.ProgrammaticName.Split('.').Last(), false);
+				var all = AutomationHelper.GetAll(window, window.Current.ControlType.ProgrammaticName.Split('.').Last(), false);
 				foreach (var child in all)
 					list.Add(ToString(child.Key, child.Value));
 			}

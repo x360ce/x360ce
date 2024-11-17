@@ -269,7 +269,7 @@ namespace JocysCom.ClassLibrary.Security
 			var o = value;
 			var t = type ?? value.GetType();
 			var typeCode = Type.GetTypeCode(t);
-			// CWE-404: Improper Resource Shutdown or Release
+			// SUPPRESS: CWE-404: Improper Resource Shutdown or Release
 			// Note: Binary Writer will close underlying MemoryStream automatically.
 			var stream = new MemoryStream();
 			var writer = new BinaryWriter(stream, Encoding.UTF8, false);

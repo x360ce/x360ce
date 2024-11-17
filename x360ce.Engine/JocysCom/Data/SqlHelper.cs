@@ -1,17 +1,27 @@
-﻿using System;
+﻿#if MSSQLCLIENT
+// Requires "Microsoft.Data.SqlClient" NuGet Package on .NET Core/Standard
+// Add to `*.csproj` or `Directory.Build.props`:
+// <PropertyGroup>
+//	<DefineConstants>$(DefineConstants);MSSQLCLIENT</DefineConstants>
+// </PropertyGroup>
+using Microsoft.Data.SqlClient;
+#else
+// Requires "System.Data.SqlClient" NuGet Package on .NET Core/Standard
+using System.Data.SqlClient;
+#endif
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-// Requires "System.Data.SqlClient" NuGet Package on .NET Core/Standard
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 
 namespace JocysCom.ClassLibrary.Data
 {
+
 	public partial class SqlHelper
 	{
 
@@ -84,7 +94,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		/*
 			// CONTEXT_INFO Example:
-			var conn = new System.Data.SqlClient.SqlConnection(cn);
+			var conn = new Microsoft.Data.SqlClient.SqlConnection(cn);
 			conn.Open();
 			var mw = new System.IO.MemoryStream(128);
 			var bw = new System.IO.BinaryWriter(mw);
@@ -163,7 +173,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		/*
 			// SESSION_CONTEXT Example:
-			var conn = new System.Data.SqlClient.SqlConnection(cn);
+			var conn = new Microsoft.Data.SqlClient.SqlConnection(cn);
 			conn.Open();
 			ClassLibrary.Data.SqlHelper.Current.SetSessionContext(conn, "Key1", 174);
 			var value = (int)ClassLibrary.Data.SqlHelper.Current.GetSessionContext(conn, "Key1");

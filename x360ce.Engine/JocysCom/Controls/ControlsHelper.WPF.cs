@@ -363,6 +363,10 @@ namespace JocysCom.ClassLibrary.Controls
 
 			if (vParent is ItemsControl items)
 				items.Items.Remove(element);
+			if (vParent is StackPanel panel)
+				panel.Children.Remove(element);
+			if (vParent is Panel grid)
+				grid.Children.Remove(element);
 			if (vParent is ContentPresenter window)
 				window.Content = null;
 			if (vParent is Decorator border)
@@ -695,11 +699,11 @@ namespace JocysCom.ClassLibrary.Controls
 			return list;
 		}
 
-		[Obsolete]
+		[Obsolete("Use `bool SetSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0) instead.`")]
 		public static void RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, bool selectFirst = true)
 			=> SetSelection(grid, keyPropertyName, list, selectFirst ? 0 : -1);
 
-		[Obsolete]
+		[Obsolete("Use `bool SetSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)` instead.")]
 		public static void RestoreSelection<T>(DataGrid grid, string keyPropertyName, List<T> list, int selectIndex = 0)
 			=> SetSelection(grid, keyPropertyName, list, selectIndex);
 

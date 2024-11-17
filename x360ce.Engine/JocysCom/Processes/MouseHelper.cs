@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Processes
@@ -54,6 +55,9 @@ namespace JocysCom.ClassLibrary.Processes
 
 			[DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
 			internal static extern int DeleteObject(IntPtr hObject);
+
+			[DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+			internal static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 		}
 
 		public static void MoveMouse(int x, int y)
@@ -62,6 +66,32 @@ namespace JocysCom.ClassLibrary.Processes
 			LastX = x;
 			LastY = y;
 		}
+
+		public static void MoveMouse(int startX, int startY, int endX, int endY, double stepSize, int millisecondsDelay, CancellationToken cancellationToken = default)
+		{
+			double deltaX = endX - startX;
+			double deltaY = endY - startY;
+			double distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+			double steps = distance / stepSize;
+			double stepX = deltaX / steps;
+			double stepY = deltaY / steps;
+			double currentX = startX;
+			double currentY = startY;
+			int stepsInt = (int)Math.Ceiling(steps);
+
+			for (int i = 0; i < stepsInt; i++)
+			{
+				if (cancellationToken.IsCancellationRequested)
+					return;
+				NativeMethods.SetCursorPos((int)Math.Round(currentX), (int)Math.Round(currentY));
+				Thread.Sleep(millisecondsDelay);
+				currentX += stepX;
+				currentY += stepY;
+			}
+			// Ensure the cursor ends at the exact end position
+			NativeMethods.SetCursorPos(endX, endY);
+		}
+
 
 		public const uint WM_LBUTTONUP = 0x202;
 		public const uint WM_RBUTTONUP = 0x205;
@@ -227,6 +257,51 @@ namespace JocysCom.ClassLibrary.Processes
 			}
 		}
 
+		private static (MouseEventFlags flags, int buttons) GetMouseEventArgs(MouseButtons button, bool isDown)
+		{
+			switch (button)
+			{
+				case MouseButtons.Left:
+					return (isDown
+						? MouseEventFlags.MOUSEEVENTF_LEFTDOWN
+						: MouseEventFlags.MOUSEEVENTF_LEFTUP, 0);
+				case MouseButtons.Right:
+					return (isDown
+						? MouseEventFlags.MOUSEEVENTF_RIGHTDOWN
+						: MouseEventFlags.MOUSEEVENTF_RIGHTUP, 0);
+				case MouseButtons.Middle:
+					return (isDown
+						? MouseEventFlags.MOUSEEVENTF_MIDDLEDOWN
+						: MouseEventFlags.MOUSEEVENTF_MIDDLEUP, 0);
+				case MouseButtons.XButton1:
+					return (isDown
+						? MouseEventFlags.MOUSEEVENTF_XDOWN
+						: MouseEventFlags.MOUSEEVENTF_XUP, 1);
+				case MouseButtons.XButton2:
+					return (isDown
+						? MouseEventFlags.MOUSEEVENTF_XDOWN
+						: MouseEventFlags.MOUSEEVENTF_XUP, 2);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(button), button, null);
+			}
+		}
+
+		public static void MouseDown(MouseButtons button)
+		{
+			var args = GetMouseEventArgs(button, true);
+			NativeMethods.mouse_event((int)args.flags, 0, 0, args.buttons, 0);
+		}
+
+		public static void MouseUp(MouseButtons button)
+		{
+			var args = GetMouseEventArgs(button, false);
+			NativeMethods.mouse_event((int)args.flags, 0, 0, args.buttons, 0);
+		}
+
+		public static void Scroll(int delta)
+		{
+			NativeMethods.mouse_event((int)MouseEventFlags.MOUSEEVENTF_WHEEL, 0, 0, delta, 0);
+		}
 
 	}
 }

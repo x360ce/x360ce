@@ -37,7 +37,7 @@ namespace x360ce.App.Controls
 				return;
 			grid.SelectionChanged += MainDataGrid_SelectionChanged;
 			ControlsHelper.SetItemsSource(grid, SettingsManager.UserGames.Items);
-			ControlsHelper.RestoreSelection<string>(grid, nameof(UserGame.FileName), gridSelection, true);
+			ControlsHelper.SetSelection(grid, nameof(UserGame.FileName), gridSelection, 0);
 		}
 
 		List<string> gridSelection = new List<string>();

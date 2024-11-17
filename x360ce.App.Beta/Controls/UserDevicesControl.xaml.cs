@@ -238,7 +238,7 @@ namespace x360ce.App.Controls
 			MainDataGrid.ItemsSource = _currentData;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
 			RefreshMapDeviceToList();
-			ControlsHelper.RestoreSelection<Guid>(MainDataGrid, nameof(UserDevice.InstanceGuid), gridSelection, true);
+			ControlsHelper.SetSelection(MainDataGrid, nameof(UserDevice.InstanceGuid), gridSelection, 0);
 		}
 
 		List<Guid> gridSelection = new List<Guid>();

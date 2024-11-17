@@ -256,8 +256,8 @@ namespace JocysCom.ClassLibrary.Mail
 				return;
 			}
 			// Send Email.
-			// CWE-201: Information Exposure Through Send Data
-			// CWE-209: Information Exposure Through an Error Message
+			// SUPPRESS: CWE-201: Information Exposure Through Send Data
+			// SUPPRESS: CWE-209: Information Exposure Through an Error Message
 			// Note: Mitigated by design. Generic shared method.
 			Send(message);
 		}

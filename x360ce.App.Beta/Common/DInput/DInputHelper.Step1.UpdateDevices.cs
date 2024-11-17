@@ -59,6 +59,7 @@ namespace x360ce.App.DInput
 		// For comparison of connected DiDevice.InstanceGuid new and old list. 
 		private HashSet<Guid> DiDevicesGuidsOld = new HashSet<Guid>();
 		private List<DeviceClass> DiDeviceClassList = new List<DeviceClass> { DeviceClass.GameControl, DeviceClass.Pointer, DeviceClass.Keyboard /*, DeviceClass.Device, DeviceClass.All*/ };
+
 		private (IEnumerable<(DeviceInstance Device, DeviceClass Class, int Usage, string DiDeviceID)>, bool) GetConnectedDiDevices(DirectInput directInput)
 		{
 			var stopwatchDi = Stopwatch.StartNew();
@@ -70,14 +71,16 @@ namespace x360ce.App.DInput
 						|| (int)diDevice.Usage == 6
 						)
 					.Select(diDevice => (
-						Device: diDevice,
-						Class: diDeviceClass,
+						DeviceInstance: (object)diDevice,
+						DeviceClass: (object)diDeviceClass,
 						Usage: (int)diDevice.Usage,
-						DiDeviceID: ConvertProductGuidToDeviceID(diDevice.ProductGuid, diDeviceClass)
+						DiDeviceID: ConvertProductGuidToDeviceID(diDevice.ProductGuid, diDeviceClass),
+						ProductName: diDevice.ProductName,
+						InstanceGuid: diDevice.InstanceGuid
 					)))
 					.ToList().OrderBy(x => x.DiDeviceID);
 
-			var DiDevicesGuidsNew = new HashSet<Guid>(DiDevicesNew.Select(item => item.Device.InstanceGuid));
+			var DiDevicesGuidsNew = new HashSet<Guid>(DiDevicesNew.Select(item => item.InstanceGuid));
 			var deviceListChanged = !DiDevicesGuidsNew.SetEquals(DiDevicesGuidsOld);
 			if (deviceListChanged)
 			{
@@ -86,20 +89,28 @@ namespace x360ce.App.DInput
 				Debug.WriteLine($"\n");
 				foreach (var item in DiDevicesNew)
 				{
+					var device = (DeviceInstance)item.DeviceInstance;
 					Debug.WriteLine($"DiDevice:" +
-						$" InstanceGuid {item.Device.InstanceGuid}." +
-						$" ProductGuid {item.Device.ProductGuid} ({item.DiDeviceID})." +
-						$" InstanceName {item.Device.InstanceName}." +
-						$" UsagePage {(int)item.Device.UsagePage}." +
-						$" Usage {item.Device.Usage}." +
-						$" DeviceClass {item.Class}." +
-						$" Type-Subtype {item.Device.Type}-{item.Device.Subtype}.");
+						$" InstanceGuid {device.InstanceGuid}." +
+						$" ProductGuid {device.ProductGuid} ({item.DiDeviceID})." +
+						$" InstanceName {device.InstanceName}." +
+						$" UsagePage {(int)device.UsagePage}." +
+						$" Usage {device.Usage}." +
+						$" DeviceClass {item.DeviceClass}." +
+						$" Type-Subtype {device.Type}-{device.Subtype}.");
 				}
 			}
 
 			stopwatchDi.Stop();
 			Debug.WriteLine($"StopwatchDi: {stopwatchDi.Elapsed.TotalMilliseconds} ms\n");
-			return (DeviceDetector.DiDevices, deviceListChanged);
+
+			var devices = DeviceDetector.DiDevices.Select(x =>
+				((DeviceInstance)x.DeviceInstance,
+				(DeviceClass)x.DeviceClass,
+				(int)x.Usage,
+				(string)x.DiDeviceID
+			)).ToList();
+			return (devices, deviceListChanged);
 		}
 
 		private string ConvertProductGuidToDeviceID(Guid DiDeviceProductGuid, DeviceClass DiDeviceClass)

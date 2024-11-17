@@ -91,7 +91,7 @@ namespace JocysCom.ClassLibrary.Security
 			// Copy data bytes to input buffer.
 			System.Buffer.BlockCopy(input, 0, inputBuffer, 0, inputBuffer.Length);
 			// Create a MemoryStream to hold the output bytes.
-			// CWE-404: Improper Resource Shutdown or Release
+			// SUPPRESS: CWE-404: Improper Resource Shutdown or Release
 			// Note: False Positive: cryptoStream.Close() will close underlying MemoryStream automatically.
 			var stream = new MemoryStream();
 			// Create a CryptoStream through which we are going to be processing our data.
@@ -238,10 +238,10 @@ namespace JocysCom.ClassLibrary.Security
 		{
 			var encryptor = GetTransform(password, true);
 			// Open the file streams.
-			// CWE-73: External Control of File Name or Path
+			// SUPPRESS: CWE-73: External Control of File Name or Path
 			// Note: False Positive. File path is not externally controlled by the user.
 			var input = new FileStream(inputFile, FileMode.Open, FileAccess.Read);
-			// CWE-73: External Control of File Name or Path
+			// SUPPRESS: CWE-73: External Control of File Name or Path
 			// Note: False Positive. File path is not externally controlled by the user.
 			var output = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
 			try
@@ -286,16 +286,16 @@ namespace JocysCom.ClassLibrary.Security
 		/// <param name="inputFile">Encrypted input file.</param>
 		/// <param name="outputFile">Decrypted output file.</param>
 		/// <param name="decompress">Decompress file after decryption</param>
-		// CWE-73: External Control of File Name or Path
+		// SUPPRESS: CWE-73: External Control of File Name or Path
 		// Note: False Positive. File path is not externally controlled by the user.
 		public static void DecryptFile(string password, string inputFile, string outputFile, bool decompress = false)
 		{
 			var decryptor = GetTransform(password, false);
 			// Open the file streams.
-			// CWE-73: External Control of File Name or Path
+			// SUPPRESS: CWE-73: External Control of File Name or Path
 			// Note: False Positive. File path is not externally controlled by the user.
 			var input = new FileStream(inputFile, FileMode.Open, FileAccess.Read);
-			// CWE-73: External Control of File Name or Path
+			// SUPPRESS: CWE-73: External Control of File Name or Path
 			// Note: False Positive. File path is not externally controlled by the user.
 			var output = new FileStream(outputFile, FileMode.Create, FileAccess.Write);
 			try
