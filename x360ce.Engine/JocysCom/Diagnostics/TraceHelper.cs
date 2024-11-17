@@ -53,7 +53,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			using (var tr = new XmlTextReader(sr))
 			{
 				// Settings used to protect from
-				// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+				// SUPPRESS: CWE-611: Improper Restriction of XML External Entity Reference('XXE')
 				// https://cwe.mitre.org/data/definitions/611.html
 				var settings = new XmlReaderSettings();
 				settings.DtdProcessing = DtdProcessing.Ignore;

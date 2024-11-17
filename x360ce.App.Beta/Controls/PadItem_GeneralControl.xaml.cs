@@ -383,7 +383,11 @@ namespace x360ce.App.Controls
 
 		private void GetDeviceObjectInstancesByObjectTypeGuid(UserDevice ud, int usage = 0)
 		{
-			var device = ud.Device as Joystick;		
+			var device = ud.Device as Joystick;
+
+			if (device == null)
+				return;
+
 			var deviceObjects = device?.GetObjects();
 			StringBuilder stringBuilder = new StringBuilder();
 

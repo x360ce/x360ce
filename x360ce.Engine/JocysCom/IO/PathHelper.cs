@@ -23,7 +23,7 @@ namespace JocysCom.ClassLibrary.IO
 
 		/// <summary>
 		/// Method used to protect from
-		/// CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+		/// SUPPRESS: CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
 		/// https://cwe.mitre.org/data/definitions/78.html
 		/// </summary>
 		/// <param name="path"></param>

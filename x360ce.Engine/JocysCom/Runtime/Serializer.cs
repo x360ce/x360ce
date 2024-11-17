@@ -31,7 +31,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				attempts -= 1;
 				try
 				{
-					// CWE-73: External Control of File Name or Path
+					// SUPPRESS: CWE-73: External Control of File Name or Path
 					// Note: False Positive. File path is not externally controlled by the user.
 					return System.IO.File.ReadAllBytes(path);
 				}
@@ -62,7 +62,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				try
 				{
 					// WriteAllBytes will lock file for writing and reading.
-					// CWE-73: External Control of File Name or Path
+					// SUPPRESS: CWE-73: External Control of File Name or Path
 					// Note: False Positive. File path is not externally controlled by the user.
 					System.IO.File.WriteAllBytes(path, bytes);
 					return;
@@ -288,7 +288,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			var doc = new XmlDocument();
 			doc.XmlResolver = null;
 			// Settings used to protect from:
-			// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+			// SUPPRESS: CWE-611: Improper Restriction of XML External Entity Reference('XXE')
 			// https://cwe.mitre.org/data/definitions/611.html
 			var settings = new XmlReaderSettings();
 			settings.DtdProcessing = DtdProcessing.Ignore;
@@ -450,7 +450,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			// Use specified encoding if Byte Order Mark (BOM) is missing.
 			var sr = new StreamReader(ms, encoding ?? Encoding.UTF8, true);
 			// Settings used to protect from
-			// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+			// SUPPRESS: CWE-611: Improper Restriction of XML External Entity Reference('XXE')
 			// https://cwe.mitre.org/data/definitions/611.html
 			var settings = new XmlReaderSettings();
 			settings.DtdProcessing = DtdProcessing.Ignore;
@@ -492,7 +492,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			// You should use "StreamReader" on file content, because this method will strip BOM properly
 			// when converting bytes to string.
 			// Settings used to protect from
-			// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+			// SUPPRESS: CWE-611: Improper Restriction of XML External Entity Reference('XXE')
 			// https://cwe.mitre.org/data/definitions/611.html
 			var settings = new XmlReaderSettings();
 			settings.DtdProcessing = DtdProcessing.Ignore;

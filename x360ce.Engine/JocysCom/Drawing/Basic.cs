@@ -243,7 +243,7 @@ namespace JocysCom.ClassLibrary.Drawing
 					break;
 				case ".png":
 					// Png is special. You can't use the Bitmap Save() method with a "non-seekable" stream. Some image formats require that the stream can seek.
-					// CWE-73: External Control of File Name or Path
+					// SUPPRESS: CWE-73: External Control of File Name or Path
 					// Note: False Positive. File path is not externally controlled by the user.
 					var fs = System.IO.File.OpenWrite(file.FullName);
 					image.Save(fs, ImageFormat.Png);

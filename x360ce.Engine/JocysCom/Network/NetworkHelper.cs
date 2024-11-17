@@ -115,7 +115,7 @@ namespace JocysCom.ClassLibrary.Network
 					// UDP is connectionless by design, therefore method below is not 100 % reliable.
 					// Firewall and network setups might influence the result.
 					//
-					// CWE-772: Missing Release of Resource after Effective Lifetime
+					// SUPPRESS: CWE-772: Missing Release of Resource after Effective Lifetime
 					// Note: False Positive. Resources will be cleaned up, because finally block always runs.
 					// The only case when finally clause don't run is when program immediately stopped.
 					// More: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/try-finally
@@ -154,7 +154,7 @@ namespace JocysCom.ClassLibrary.Network
 				}
 				else
 				{
-					// CWE-772: Missing Release of Resource after Effective Lifetime
+					// SUPPRESS: CWE-772: Missing Release of Resource after Effective Lifetime
 					// Note: False Positive. Resources will be cleaned up, because finally block always runs.
 					// The only case when finally clause don't run is when program immediately stopped.
 					// More: https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/try-finally
@@ -266,7 +266,7 @@ namespace JocysCom.ClassLibrary.Network
 				// Check if web service page works.
 				log.Add(string.Format("Test URL - requesting {0} URL...", u.AbsoluteUri));
 				var client = new HttpClient();
-				// CWE-918: Server-Side Request Forgery (SSRF).
+				// SUPPRESS: CWE-918: Server-Side Request Forgery (SSRF).
 				// Note: External users do not have control over request URL.
 				var response = Task.Run(() => client.GetAsync(u)).Result;
 				var statusCode = (int)response.StatusCode;

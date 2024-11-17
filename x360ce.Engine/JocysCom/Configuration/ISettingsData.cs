@@ -18,13 +18,13 @@ namespace JocysCom.ClassLibrary.Configuration
 		/// <summary>
 		/// Saves the current settings data to the default file location.
 		/// </summary>
-		void Save();
+		void Save(object[] items = null);
 
 		/// <summary>
 		/// Saves the current settings data to a specified file.
 		/// </summary>
 		/// <param name="fileName">The file name/path where the settings will be saved.</param>
-		void SaveAs(string fileName);
+		void SaveAs(string fileName, object[] items = null);
 
 		/// <summary>
 		/// Loads the settings data from the default file location.

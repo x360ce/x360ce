@@ -64,7 +64,7 @@ namespace x360ce.App.DInput
 			if (e.NewEvent["TargetInstance"] is ManagementBaseObject targetInstance)
 			{
 				Debug.WriteLine($"\nWin32_PnPEntity USB Event: ClassGuid {targetInstance["ClassGuid"]} ({DeviceDetector.PnPDeviceClassGuids[targetInstance["ClassGuid"].ToString()]}). DeviceId {targetInstance["DeviceID"]}.\n");
-				await Helper.Delay(OnDevicesChanged);
+				await Helper.Debounce(OnDevicesChanged);
 			}
 		}
 		private void OnDevicesChanged() => DevicesNeedUpdating = true;
@@ -269,10 +269,10 @@ namespace x360ce.App.DInput
 						// Debug.WriteLine("8.");
 						// Update XInput states from Custom DirectInput states.
 						UpdateXiStates(game);
-						 //Debug.WriteLine("9.");
+						//Debug.WriteLine("9.");
 						// Combine XInput states of controllers.
 						CombineXiStates();
-						 //Debug.WriteLine("10.");
+						//Debug.WriteLine("10.");
 						// Update virtual devices from combined states.
 						UpdateVirtualDevices(game);
 						// Debug.WriteLine("11.");

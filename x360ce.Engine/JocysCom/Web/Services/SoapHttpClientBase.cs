@@ -10,7 +10,7 @@ namespace JocysCom.ClassLibrary.Web.Services
 	/// Adds the ability to retrieve the SOAP request/response, Specify IP address to send from.
 	/// </summary>
 	/// <remarks>
-	/// Declare custom spy service as public class ServiceSpy : OriginalService
+	/// Declare custom logger service as public class ServiceLogger : OriginalService
 	/// {
 	/// }
 	///
@@ -139,10 +139,10 @@ namespace JocysCom.ClassLibrary.Web.Services
 
 		#region Copy Reader and Writer Streams
 
-		/// <summary>Stream Spy for Request</summary>
-		public SoapHttpClientSpy WriterStreamSpy;
-		/// <summary>Stream Spy for Response</summary>
-		public SoapHttpClientSpy ReaderStreamSpy;
+		/// <summary>Stream Logger for Request</summary>
+		public SoapHttpClientLogger WriterStreamLogger;
+		/// <summary>Stream Logger for Response</summary>
+		public SoapHttpClientLogger ReaderStreamLogger;
 
 		/// <summary>Web Request</summary>
 		public HttpWebRequest CurrentWebRequest;
@@ -151,18 +151,18 @@ namespace JocysCom.ClassLibrary.Web.Services
 		/// <summary>Get Writer for Request</summary>
 		protected override XmlWriter GetWriterForMessage(SoapClientMessage message, int bufferSize)
 		{
-			DisposeWriterStreamSpy();
+			DisposeWriterStreamLogger();
 			// Dispose reader too in case it was created by previous call.
-			DisposeReaderStreamSpy();
-			var writer = SoapHttpClientSpy.GetWriterForMessage(message, bufferSize, base.RequestEncoding, CurrentWebRequest, out WriterStreamSpy);
+			DisposeReaderStreamLogger();
+			var writer = SoapHttpClientLogger.GetWriterForMessage(message, bufferSize, base.RequestEncoding, CurrentWebRequest, out WriterStreamLogger);
 			return writer;
 		}
 
 		/// <summary>Get Reader for Response</summary>
 		protected override XmlReader GetReaderForMessage(SoapClientMessage message, int bufferSize)
 		{
-			DisposeReaderStreamSpy();
-			var reader = SoapHttpClientSpy.GetReaderForMessage(message, bufferSize, CurrentWebRequest, out ReaderStreamSpy);
+			DisposeReaderStreamLogger();
+			var reader = SoapHttpClientLogger.GetReaderForMessage(message, bufferSize, CurrentWebRequest, out ReaderStreamLogger);
 			return reader;
 		}
 
@@ -171,25 +171,25 @@ namespace JocysCom.ClassLibrary.Web.Services
 			base.Dispose(disposing);
 			// Remove all events.
 			WebRequestCreated = null;
-			DisposeWriterStreamSpy();
-			DisposeReaderStreamSpy();
+			DisposeWriterStreamLogger();
+			DisposeReaderStreamLogger();
 		}
 
-		public void DisposeWriterStreamSpy()
+		public void DisposeWriterStreamLogger()
 		{
-			if (WriterStreamSpy != null)
+			if (WriterStreamLogger != null)
 			{
-				WriterStreamSpy.Dispose();
-				WriterStreamSpy = null;
+				WriterStreamLogger.Dispose();
+				WriterStreamLogger = null;
 			}
 		}
 
-		public void DisposeReaderStreamSpy()
+		public void DisposeReaderStreamLogger()
 		{
-			if (ReaderStreamSpy != null)
+			if (ReaderStreamLogger != null)
 			{
-				ReaderStreamSpy.Dispose();
-				ReaderStreamSpy = null;
+				ReaderStreamLogger.Dispose();
+				ReaderStreamLogger = null;
 			}
 		}
 

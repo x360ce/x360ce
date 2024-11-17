@@ -223,62 +223,87 @@ namespace JocysCom.ClassLibrary
 			} while (millisecondsDelay > 0);
 		}
 
-		#region Delay Execution
+		#region Debounce Execution
 
 		/// <summary>
-		/// Contain CancellationTokenSource for each function.
+		/// Contains the CancellationTokenSource for each delegate to manage debouncing.
 		/// </summary>
-		static ConcurrentDictionary<Delegate, CancellationTokenSource> DelayActions = new ConcurrentDictionary<Delegate, CancellationTokenSource>();
-
+		static ConcurrentDictionary<Delegate, DebounceData> DebounceActions = new ConcurrentDictionary<Delegate, DebounceData>();
 
 		/// <summary>
-		/// Delay some frequently repeatable actions.
+		/// Holds debouncing information for a specific delegate.
 		/// </summary>
-		public static async Task Delay(Func<Task> action, int? delay = null)
+		class DebounceData
 		{
-			await _Delay(action, delay);
+			public int Counter = 0;
+			public object LockObject = new object();
 		}
 
-		/// <summary>
-		/// Delay some frequently repeatable actions.
-		/// </summary>
-		public static async Task Delay(Action action, int? delay = null)
-		{
-			await _Delay(action, delay);
-		}
+		[Obsolete("Use `async Task Debounce(Action action, int? delay = null, params object[] args)` instead.")]
+		public static async Task Delay(Action action, int? delay = null, params object[] args)
+			=> await _Debounce(action, delay, args);
+
+		[Obsolete("Use `async Task Debounce(Func<Task> action, int? delay = null, params object[] args)` instead.")]
+		public static async Task Delay(Func<Task> action, int? delay = null, params object[] args)
+			=> await _Debounce(action, delay, args);
 
 		/// <summary>
-		/// Delay some frequently repeatable actions.
+		/// Executes an action after a delay, canceling any previous pending executions of the same action.
+		/// This method ensures that the action is invoked only after the specified delay has elapsed since the last invocation request.
 		/// </summary>
-		public static async Task _Delay(Delegate action, int? delay = null, params object[] args)
+		/// <param name="action">The action to debounce.</param>
+		/// <param name="delay">The delay in milliseconds to wait before invoking the action. Defaults to 500 milliseconds if not specified.</param>
+		/// <returns>A Task representing the asynchronous debounced operation.</returns>
+		public static async Task Debounce(Action action, int? delay = null)
+			=> await _Debounce(action, delay);
+
+
+		/// <summary>
+		/// Executes an action after a delay, canceling any previous pending executions of the same action.
+		/// This method ensures that the action is invoked only after the specified delay has elapsed since the last invocation request.
+		/// </summary>
+		/// <param name="action">The action to debounce.</param>
+		/// <param name="delay">The delay in milliseconds to wait before invoking the action. Defaults to 500 milliseconds if not specified.</param>
+		/// <returns>A Task representing the asynchronous debounced operation.</returns>
+		public static async Task Debounce<T>(Action<T> action, T arg, int? delay = null)
+			=> await _Debounce(action, delay, new object[] { arg });
+
+		/// <summary>
+		/// Executes an asynchronous function after a delay, canceling any previous pending executions of the same function.
+		/// This method ensures that the action is invoked only after the specified delay has elapsed since the last invocation request.
+		/// </summary>
+		/// <param name="action">The asynchronous function to debounce.</param>
+		/// <param name="delay">The delay in milliseconds to wait before invoking the function. Defaults to 500 milliseconds if not specified.</param>
+		/// <returns>A Task representing the asynchronous debounced operation.</returns>
+		public static async Task Debounce(Func<Task> action, int? delay = null)
+			=> await _Debounce(action, delay);
+
+		/// <summary>
+		/// Debounces the specified action, ensuring it's only invoked after a specified delay since the last call.
+		/// Subsequent calls within the delay period reset the timer.
+		/// </summary>
+		/// <param name="action">The delegate to debounce.</param>
+		/// <param name="delay">The delay in milliseconds before the delegate is invoked. Defaults to 500 milliseconds if not specified.</param>
+		/// <param name="args">Optional arguments to pass to the delegate when invoked.</param>
+		/// <returns>A Task representing the asynchronous debounced operation.</returns>
+		public static async Task _Debounce(Delegate action, int? delay = null, params object[] args)
 		{
 			if (action == null)
 				return;
-			var className = action.Method.DeclaringType;
-			var methodName = action.Method.Name;
-			var source = new CancellationTokenSource();
-			// Replace any previous CancellationTokenSource with a new one.
-			DelayActions.AddOrUpdate(
-				// Add token if action key do not exists.
-				action, source,
-				// Run this function if the action key already exists.
-				(key, oldSource) =>
-				{
-					System.Diagnostics.Debug.WriteLine($"Cancel previous `{className}.{methodName}`");
-					// Cancel previous delayed operation of the same action.
-					oldSource?.Cancel();
-					// Return new token.
-					return source;
-				}
-			);
-			await Task.Delay(delay ?? 500);
-			lock (action)
+			int delayValue = delay ?? 500;
+			var debounceData = DebounceActions.GetOrAdd(action, new DebounceData());
+			int currentCount;
+			lock (debounceData.LockObject)
 			{
-				// If new delayed operation was started then return.
-				if (source.Token.IsCancellationRequested)
-					return;
-				System.Diagnostics.Debug.WriteLine($"Invoke `{className}.{methodName}`");
-				action.DynamicInvoke(args);
+				debounceData.Counter++;
+				currentCount = debounceData.Counter;
+			}
+			await Task.Delay(delayValue);
+			lock (debounceData.LockObject)
+			{
+				// This is the latest scheduled call; invoke the action
+				if (currentCount == debounceData.Counter)
+					action.DynamicInvoke(args);
 			}
 		}
 
