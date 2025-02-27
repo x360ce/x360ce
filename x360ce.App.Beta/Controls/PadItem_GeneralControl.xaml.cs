@@ -11,8 +11,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-
-//using System.Xml.Linq;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -26,108 +24,66 @@ namespace x360ce.App.Controls
 		public PadItem_GeneralControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
+			InitializeBindings();
 		}
 
 		PadSetting _padSetting;
 		MapTo _MappedTo;
-
+		private readonly Dictionary<TextBox, string> setBindingDictionary = new Dictionary<TextBox, string>();
+		private void InitializeBindings()
+		{
+			setBindingDictionary.Add(TriggerLTextBox, nameof(PadSetting.LeftTrigger));
+			setBindingDictionary.Add(TriggerRTextBox, nameof(PadSetting.RightTrigger));
+			setBindingDictionary.Add(BumperLTextBox, nameof(PadSetting.LeftShoulder));
+			setBindingDictionary.Add(BumperRTextBox, nameof(PadSetting.RightShoulder));
+			setBindingDictionary.Add(MenuBackTextBox, nameof(PadSetting.ButtonBack));
+			setBindingDictionary.Add(MenuStartTextBox, nameof(PadSetting.ButtonStart));
+			setBindingDictionary.Add(MenuGuideTextBox, nameof(PadSetting.ButtonGuide));
+			setBindingDictionary.Add(ActionYTextBox, nameof(PadSetting.ButtonY));
+			setBindingDictionary.Add(ActionXTextBox, nameof(PadSetting.ButtonX));
+			setBindingDictionary.Add(ActionBTextBox, nameof(PadSetting.ButtonB));
+			setBindingDictionary.Add(ActionATextBox, nameof(PadSetting.ButtonA));
+			setBindingDictionary.Add(DPadTextBox, nameof(PadSetting.DPad));
+			setBindingDictionary.Add(DPadUpTextBox, nameof(PadSetting.DPadUp));
+			setBindingDictionary.Add(DPadLeftTextBox, nameof(PadSetting.DPadLeft));
+			setBindingDictionary.Add(DPadRightTextBox, nameof(PadSetting.DPadRight));
+			setBindingDictionary.Add(DPadDownTextBox, nameof(PadSetting.DPadDown));
+			setBindingDictionary.Add(StickLButtonTextBox, nameof(PadSetting.LeftThumbButton));
+			setBindingDictionary.Add(StickLAxisXTextBox, nameof(PadSetting.LeftThumbAxisX));
+			setBindingDictionary.Add(StickLAxisYTextBox, nameof(PadSetting.LeftThumbAxisY));
+			setBindingDictionary.Add(StickLUpTextBox, nameof(PadSetting.LeftThumbUp));
+			setBindingDictionary.Add(StickLLeftTextBox, nameof(PadSetting.LeftThumbLeft));
+			setBindingDictionary.Add(StickLRightTextBox, nameof(PadSetting.LeftThumbRight));
+			setBindingDictionary.Add(StickLDownTextBox, nameof(PadSetting.LeftThumbDown));
+			setBindingDictionary.Add(StickRButtonTextBox, nameof(PadSetting.RightThumbButton));
+			setBindingDictionary.Add(StickRAxisXTextBox, nameof(PadSetting.RightThumbAxisX));
+			setBindingDictionary.Add(StickRAxisYTextBox, nameof(PadSetting.RightThumbAxisY));
+			setBindingDictionary.Add(StickRUpTextBox, nameof(PadSetting.RightThumbUp));
+			setBindingDictionary.Add(StickRLeftTextBox, nameof(PadSetting.RightThumbLeft));
+			setBindingDictionary.Add(StickRRightTextBox, nameof(PadSetting.RightThumbRight));
+			setBindingDictionary.Add(StickRDownTextBox, nameof(PadSetting.RightThumbDown));
+		}
 		public void SetBinding(MapTo mappedTo, PadSetting ps)
 		{
 			_MappedTo = mappedTo;
-			if (_padSetting != null)
-				_padSetting.PropertyChanged -= _padSetting_PropertyChanged;
+			if (_padSetting != null) { _padSetting.PropertyChanged -= _padSetting_PropertyChanged; }
 			// Unbind controls.
-			SettingsManager.UnLoadMonitor(TriggerLTextBox);
-			SettingsManager.UnLoadMonitor(TriggerRTextBox);
-
-			SettingsManager.UnLoadMonitor(BumperLTextBox);
-			SettingsManager.UnLoadMonitor(BumperRTextBox);
-
-			SettingsManager.UnLoadMonitor(MenuBackTextBox);
-			SettingsManager.UnLoadMonitor(MenuStartTextBox);
-			SettingsManager.UnLoadMonitor(MenuGuideTextBox);
-
-			SettingsManager.UnLoadMonitor(ActionYTextBox);
-			SettingsManager.UnLoadMonitor(ActionXTextBox);
-			SettingsManager.UnLoadMonitor(ActionBTextBox);
-			SettingsManager.UnLoadMonitor(ActionATextBox);
-
-			SettingsManager.UnLoadMonitor(DPadTextBox);
-			SettingsManager.UnLoadMonitor(DPadUpTextBox);
-			SettingsManager.UnLoadMonitor(DPadLeftTextBox);
-			SettingsManager.UnLoadMonitor(DPadRightTextBox);
-			SettingsManager.UnLoadMonitor(DPadDownTextBox);
-
-			SettingsManager.UnLoadMonitor(StickLButtonTextBox);
-			SettingsManager.UnLoadMonitor(StickLAxisXTextBox);
-			SettingsManager.UnLoadMonitor(StickLAxisYTextBox);
-			SettingsManager.UnLoadMonitor(StickLUpTextBox);
-			SettingsManager.UnLoadMonitor(StickLLeftTextBox);
-			SettingsManager.UnLoadMonitor(StickLRightTextBox);
-			SettingsManager.UnLoadMonitor(StickLDownTextBox);
-
-			SettingsManager.UnLoadMonitor(StickRButtonTextBox);
-			SettingsManager.UnLoadMonitor(StickRAxisXTextBox);
-			SettingsManager.UnLoadMonitor(StickRAxisYTextBox);
-			SettingsManager.UnLoadMonitor(StickRUpTextBox);
-			SettingsManager.UnLoadMonitor(StickRLeftTextBox);
-			SettingsManager.UnLoadMonitor(StickRRightTextBox);
-			SettingsManager.UnLoadMonitor(StickRDownTextBox);
-			if (ps == null)
-				return;
+			foreach (var key in setBindingDictionary.Keys) { SettingsManager.UnLoadMonitor(key); }
+			// Bind controls.
+			if (ps == null) return;
 			_padSetting = ps;
 			var converter = new Converters.PaddSettingToText();
-			// Bind controls.
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftTrigger), TriggerLTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightTrigger), TriggerRTextBox, null, converter);
-
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftShoulder), BumperLTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightShoulder), BumperRTextBox, null, converter);
-
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonBack), MenuBackTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonStart), MenuStartTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonGuide), MenuGuideTextBox, null, converter);
-
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonY), ActionYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonX), ActionXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonB), ActionBTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.ButtonA), ActionATextBox, null, converter);
-
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPad), DPadTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadUp), DPadUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadLeft), DPadLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadRight), DPadRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.DPadDown), DPadDownTextBox, null, converter);
-
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbButton), StickLButtonTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisX), StickLAxisXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbAxisY), StickLAxisYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbUp), StickLUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbLeft), StickLLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbRight), StickLRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftThumbDown), StickLDownTextBox, null, converter);
-
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbButton), StickRButtonTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisX), StickRAxisXTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbAxisY), StickRAxisYTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbUp), StickRUpTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbLeft), StickRLeftTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbRight), StickRRightTextBox, null, converter);
-			SettingsManager.LoadAndMonitor(ps, nameof(ps.RightThumbDown), StickRDownTextBox, null, converter);
-
+			foreach (var item in setBindingDictionary) { SettingsManager.LoadAndMonitor(ps, item.Value, item.Key, null, converter); }
 			_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 		}
-
 		private void _padSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) { }
+
 		private void SetPresetButton_Click(object sender, RoutedEventArgs e) { }
 		private void RemapAllButton_Click(object sender, RoutedEventArgs e) { }
 
 		public void MapNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var box = (ComboBox)sender;
-			var item = (Layout)box.SelectedItem;
-			if (item == null)
-				return;
+			if (!(sender is ComboBox box) || !(box.SelectedItem is Layout item)) return;
 			// Triggers.
 			TriggerLLabel.Content = item.LeftTrigger;
 			TriggerRLabel.Content = item.RightTrigger;
@@ -316,7 +272,6 @@ namespace x360ce.App.Controls
 		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
-
 			if (GetCustomDiState(ud) == null) return;
 
 			// Clear StackPanel children in XAML page.
@@ -384,9 +339,7 @@ namespace x360ce.App.Controls
 		private void GetDeviceObjectInstancesByObjectTypeGuid(UserDevice ud, int usage = 0)
 		{
 			var device = ud.Device as Joystick;
-
-			if (device == null)
-				return;
+			if (device == null) return;
 
 			var deviceObjects = device?.GetObjects();
 			StringBuilder stringBuilder = new StringBuilder();
@@ -452,20 +405,15 @@ namespace x360ce.App.Controls
 			return "Unknown";
 		}
 
-		private void SetDInputLabelContent(UserDevice ud, TargetType targetType, Label label)
+		private void SetDInputLabelContent(int axisLenght, CustomDiState customDiState, TargetType targetType, Label label)
 		{
 			Map map = _padSetting.Maps.FirstOrDefault(x => x.Target == targetType);
-			if (map == null || map.Index <= 0) return;
+			if (map?.Index <= 0 || map.Index > axisLenght) return;
 
-			var customDiState = GetCustomDiState(ud);
 			var i = map.Index - 1;
-
-			if (map.Index <= ud.DiState.Axis.Length/* || map.Index <= ud.DiState.Sliders.Length*/)
-			{
-				if (map.IsAxis || map.IsHalf || map.IsInverted) label.Content = customDiState.Axis[i];
-				else if (map.IsButton) label.Content = customDiState.Buttons[i] ? 1 : 0;
-				else if (map.IsSlider) label.Content = customDiState.Sliders[i];
-			}
+			if (map.IsAxis || map.IsHalf || map.IsInverted) { label.Content = customDiState.Axis[i]; }
+			else if (map.IsButton) { label.Content = customDiState.Buttons[i] ? 1 : 0; }
+			else if (map.IsSlider) { label.Content = customDiState.Sliders[i]; }
 		}
 
 		// Update DragAndDrop menu labels.
@@ -473,23 +421,22 @@ namespace x360ce.App.Controls
 		{
 			var customDiState = GetCustomDiState(ud);
 			if (customDiState == null) return;
-			// Deadzone for Drag and Drop Background color change.
-			var DragAndDropAxisDeadzone = 8000;
-			var DragAndDropSliderDeadzone = 16000;
+
+			var axisLenght = ud.DiState.Axis.Length;
 
 			// Trigger.
-			SetDInputLabelContent(ud, TargetType.LeftTrigger, TriggerLDInputLabel);
-			SetDInputLabelContent(ud, TargetType.RightTrigger, TriggerRDInputLabel);
+			SetDInputLabelContent(axisLenght, customDiState, TargetType.LeftTrigger, TriggerLDInputLabel);
+			SetDInputLabelContent(axisLenght, customDiState, TargetType.RightTrigger, TriggerRDInputLabel);
 			TriggerLDeadzoneLabel.Content = _padSetting.LeftTriggerDeadZone;
 			TriggerRDeadzoneLabel.Content = _padSetting.RightTriggerDeadZone;
 			// Stick Left.
-			SetDInputLabelContent(ud, TargetType.LeftThumbX, StickLAxisXDInputLabel);
-			SetDInputLabelContent(ud, TargetType.LeftThumbY, StickLAxisYDInputLabel);
+			SetDInputLabelContent(axisLenght, customDiState, TargetType.LeftThumbX, StickLAxisXDInputLabel);
+			SetDInputLabelContent(axisLenght, customDiState, TargetType.LeftThumbY, StickLAxisYDInputLabel);
 			StickLDeadzoneXLabel.Content = _padSetting.LeftThumbDeadZoneX;
 			StickLDeadzoneYLabel.Content = _padSetting.LeftThumbDeadZoneY;
 			// Stick Right.
-			SetDInputLabelContent(ud, TargetType.RightThumbX, StickRAxisXDInputLabel);
-			SetDInputLabelContent(ud, TargetType.RightThumbY, StickRAxisYDInputLabel);
+			SetDInputLabelContent(axisLenght, customDiState, TargetType.RightThumbX, StickRAxisXDInputLabel);
+			SetDInputLabelContent(axisLenght, customDiState, TargetType.RightThumbY, StickRAxisYDInputLabel);
 			StickRDeadzoneXLabel.Content = _padSetting.RightThumbDeadZoneX;
 			StickRDeadzoneYLabel.Content = _padSetting.RightThumbDeadZoneY;
 
@@ -525,6 +472,8 @@ namespace x360ce.App.Controls
 				}
 			}
 			// Stick axes.
+			// Deadzone for Drag and Drop Background color change.
+			var DragAndDropAxisDeadzone = 8000;
 			foreach (var i in AxisDictionary)
 			{
 				var aDS = ud.DiState.Axis[i.Key]; //customDiState.Axis[i.Key];
@@ -539,6 +488,7 @@ namespace x360ce.App.Controls
 			}
 
 			// Slider axes.
+			var DragAndDropSliderDeadzone = 16000;
 			foreach (var i in SliderDictionary)
 			{
 				var sDS = ud.DiState.Sliders[i.Key];

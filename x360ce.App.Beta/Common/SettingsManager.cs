@@ -65,7 +65,7 @@ namespace x360ce.App
 				if (game != null)
 					game.PropertyChanged += CurrentGame_PropertyChanged;
 				// Assign new game.
-				CurrentGame = game;
+				cccCurrentGame = game;
 				Global.DHelper.SettingsChanged = true;
 				CurrentGame_PropertyChanged?.Invoke(null, null);
 				//// If pad controls not initializes yet then return.

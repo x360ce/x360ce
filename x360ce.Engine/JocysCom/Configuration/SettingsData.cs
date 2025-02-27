@@ -812,7 +812,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			// Filter data if filter method exists.
 			var e = new SettingsDataEventArgs(items);
 			OnValidateData?.Invoke(this, e);
-			if (ClearWhenLoading)
+			if (ClearWhenLoading || !Items.Any())
 			{
 				// Clear original data.
 				Items.Clear();

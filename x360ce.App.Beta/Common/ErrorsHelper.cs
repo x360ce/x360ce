@@ -152,9 +152,11 @@ namespace x360ce.App
 				}
 				// If another DInput errors
 			}
+
+			// C:\WINDOWS\system32\xinput1_3.dll C:\WINDOWS\system32\xinput1_4.dll
 			var fex = e.Exception as FileNotFoundException;
 			// If serializer warning then...
-			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))
+			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName?.Contains(".XmlSerializers") == true)
 				// Cancel reporting error.
 				e.Cancel = true;
 			ControlsHelper.GetActiveControl(_TopControl, out var activeControl, out var activePath);

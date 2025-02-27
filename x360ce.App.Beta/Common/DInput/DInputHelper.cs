@@ -223,6 +223,8 @@ namespace x360ce.App.DInput
 		public event EventHandler<DInputEventArgs> UpdateCompleted;
 		object DiUpdatesLock = new object();
 
+		private
+
 		void RefreshAll(DirectInput manager, DeviceDetector detector)
 		{
 			lock (DiUpdatesLock)
@@ -240,7 +242,6 @@ namespace x360ce.App.DInput
 						DevicesAreUpdating = true;
 						try
 						{
-
 							//Debug.WriteLine("1");
 							// The best place to unload the XInput DLL is at the start, because
 							// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
