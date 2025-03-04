@@ -14,18 +14,49 @@ namespace x360ce.App.Controls
 	/// </summary>
 	public partial class PadItem_ForceFeedbackControl : UserControl
 	{
+		#region Fields
+
+		private System.Timers.Timer updateTimer;
+		private readonly TrackBarUpDownTextBoxLink overallStrengthLink;
+		private PadSetting _padSetting;
+		private MapTo _MappedTo;
+
+		// Contains property names which, if changed, trigger a force update.
+		public static List<string> ForceProperties = new List<string>()
+		{
+			nameof(PadSetting.ForceEnable),
+			nameof(PadSetting.ForceOverall),
+			nameof(PadSetting.ForceSwapMotor),
+			nameof(PadSetting.ForceType),
+			nameof(PadSetting.LeftMotorDirection),
+			nameof(PadSetting.LeftMotorPeriod),
+			nameof(PadSetting.LeftMotorStrength),
+			nameof(PadSetting.RightMotorDirection),
+			nameof(PadSetting.RightMotorPeriod),
+			nameof(PadSetting.RightMotorStrength),
+		};
+
+		#endregion
+
+		#region Constructor
+
 		public PadItem_ForceFeedbackControl()
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
-			var effectsTypes = Enum.GetValues(typeof(ForceEffectType)).Cast<ForceEffectType>().Distinct().ToArray();
+			var effectsTypes = Enum.GetValues(typeof(ForceEffectType))
+				.Cast<ForceEffectType>()
+				.Distinct()
+				.ToArray();
 			ForceTypeComboBox.ItemsSource = effectsTypes;
 			overallStrengthLink = new TrackBarUpDownTextBoxLink(StrengthTrackBar, StrengthUpDown, StrengthTextBox, 0, 100);
 			InitUpdateTimer();
 		}
 
-		System.Timers.Timer updateTimer;
+		#endregion
 
-		void InitUpdateTimer()
+		#region Timer Methods
+
+		private void InitUpdateTimer()
 		{
 			updateTimer = new System.Timers.Timer();
 			updateTimer.AutoReset = false;
@@ -33,7 +64,7 @@ namespace x360ce.App.Controls
 			updateTimer.Elapsed += UpdateTimer_Elapsed;
 		}
 
-		void UpdateTimerReset()
+		private void UpdateTimerReset()
 		{
 			updateTimer.Stop();
 			updateTimer.Start();
@@ -44,10 +75,9 @@ namespace x360ce.App.Controls
 			ControlsHelper.BeginInvoke(SendVibration);
 		}
 
-		TrackBarUpDownTextBoxLink overallStrengthLink;
+		#endregion
 
-		PadSetting _padSetting;
-		MapTo _MappedTo;
+		#region Binding Methods
 
 		public void SetBinding(MapTo mappedTo, PadSetting ps)
 		{
@@ -77,6 +107,10 @@ namespace x360ce.App.Controls
 			RightForceFeedbackMotorPanel.TestUpDown.ValueChanged += TestUpDown_ValueChanged;
 		}
 
+		#endregion
+
+		#region Event Handlers
+
 		private void ForceTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var type = (ForceEffectType)ForceTypeComboBox.SelectedItem;
@@ -92,20 +126,6 @@ namespace x360ce.App.Controls
 			ForceTypeDescriptionTextBlock.Text = string.Format("{0} ({1}) - {2}", type, (int)type, string.Join(" ", list));
 		}
 
-		public static List<string> ForceProperties = new List<string>()
-		{
-			nameof(PadSetting.ForceEnable),
-			nameof(PadSetting.ForceOverall),
-			nameof(PadSetting.ForceSwapMotor),
-			nameof(PadSetting.ForceType),
-			nameof(PadSetting.LeftMotorDirection),
-			nameof(PadSetting.LeftMotorPeriod),
-			nameof(PadSetting.LeftMotorStrength),
-			nameof(PadSetting.RightMotorDirection),
-			nameof(PadSetting.RightMotorPeriod),
-			nameof(PadSetting.RightMotorStrength),
-		};
-
 		private void _padSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			// If property changed, which can affect force then...
@@ -118,7 +138,24 @@ namespace x360ce.App.Controls
 			UpdateTimerReset();
 		}
 
-		void SendVibration()
+		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowLoad(this))
+				return;
+		}
+
+		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+		{
+			if (!ControlsHelper.AllowUnload(this))
+				return;
+			// Moved to MainBodyControl_Unloaded().
+		}
+
+		#endregion
+
+		#region Private Methods
+
+		private void SendVibration()
 		{
 			var index = (int)_MappedTo - 1;
 			var game = SettingsManager.CurrentGame;
@@ -151,18 +188,9 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowLoad(this))
-				return;
-		}
+		#endregion
 
-		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
-		{
-			if (!ControlsHelper.AllowUnload(this))
-				return;
-			// Moved to MainBodyControl_Unloaded().
-		}
+		#region Public Methods
 
 		public void ParentWindow_Unloaded()
 		{
@@ -171,5 +199,6 @@ namespace x360ce.App.Controls
 			SetBinding(_MappedTo, null);
 		}
 
+		#endregion
 	}
 }

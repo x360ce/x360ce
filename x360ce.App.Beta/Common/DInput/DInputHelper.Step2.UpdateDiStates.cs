@@ -13,6 +13,8 @@ namespace x360ce.App.DInput
 {
 	public partial class DInputHelper
 	{
+		#region Device Acquisition Methods
+
 		private void DeviceExclusiveMode(UserDevice ud, DeviceDetector detector, Device device, StringBuilder exceptionData, CooperativeLevel cooperationLevel)
 		{
 			string Non = cooperationLevel == CooperativeLevel.Exclusive ? "" : "Non";
@@ -25,12 +27,20 @@ namespace x360ce.App.DInput
 			ud.IsExclusiveMode = cooperationLevel == CooperativeLevel.Exclusive;
 		}
 
+		#endregion
+
+		#region Fields
+
 		UserDevice[] mappedDevices = new UserDevice[0];
 		UserGame currentGame = SettingsManager.CurrentGame;
 		CustomDiState newState = null;
 		CustomDiUpdate[] newUpdates = null;
 		Options options = SettingsManager.Options;
 		Boolean isVirtual = false;
+
+		#endregion
+
+		#region UpdateDiStates Method
 
 		void UpdateDiStates(UserGame game, DeviceDetector detector)
 		{
@@ -39,7 +49,9 @@ namespace x360ce.App.DInput
 			{
 				currentGame = game;
 				options = SettingsManager.Options;
-				mappedDevices = SettingsManager.GetMappedDevices(game?.FileName).Where(x => x != null && x.IsOnline && x.Device != null).ToArray();
+				mappedDevices = SettingsManager.GetMappedDevices(game?.FileName)
+					.Where(x => x != null && x.IsOnline && x.Device != null)
+					.ToArray();
 				isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 			}
 
@@ -60,7 +72,7 @@ namespace x360ce.App.DInput
 					var exceptionData = new StringBuilder();
 					try
 					{
-						var useData = false;
+						bool useData = false;
 						if (options.UseDeviceBufferedData && device.Properties.BufferSize == 0)
 						{
 							// Set BufferSize in order to use buffered data.
@@ -70,13 +82,14 @@ namespace x360ce.App.DInput
 						var deviceType = device.Information.Type;
 						// Original device will be hidden from the game when acquired in exclusive mode.
 						// If device is not keyboard or mouse then apply AcquireMappedDevicesInExclusiveMode option.
-						var acquireMappedDevicesInExclusiveMode
-							= (deviceType != SharpDX.DirectInput.DeviceType.Keyboard && deviceType != SharpDX.DirectInput.DeviceType.Mouse)
+						var acquireMappedDevicesInExclusiveMode =
+							(deviceType != SharpDX.DirectInput.DeviceType.Keyboard && deviceType != SharpDX.DirectInput.DeviceType.Mouse)
 							? options.AcquireMappedDevicesInExclusiveMode
 							: false;
-						// Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
+						// Exclusive mode required only if force feedback is available and device is virtual or there is no info about effects.
 						var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
-						var exclusiveRequired = acquireMappedDevicesInExclusiveMode || hasForceFeedback && (isVirtual || ud.DeviceEffects == null);
+						var exclusiveRequired = acquireMappedDevicesInExclusiveMode ||
+							(hasForceFeedback && (isVirtual || ud.DeviceEffects == null));
 						// Check if the current mode is unknown or differs from the desired, then reacquire the device.
 						if (!ud.IsExclusiveMode.HasValue || ud.IsExclusiveMode.Value != exclusiveRequired)
 						{
@@ -92,32 +105,38 @@ namespace x360ce.App.DInput
 						// Calling this method causes DirectInput to update the device state, generate input
 						// events (if buffered data is enabled), and set notification events (if notification is enabled).
 						device.Poll();
-						// Get device states as buffered data.
-						if (device is Mouse mDevice)
+
+						// Use switch based on pattern matching for supported device types.
+						switch (device)
 						{
-							newUpdates = useData ? mDevice.GetBufferedData()?.Select(x => new CustomDiUpdate(x)).ToArray() : null;
-							var state = mDevice.GetCurrentState();
-							newState = new CustomDiState(state);
-							ud.DeviceState = state;
+							case Mouse mDevice:
+								newUpdates = useData ? mDevice.GetBufferedData()?.Select(x => new CustomDiUpdate(x)).ToArray() : null;
+								{
+									var state = mDevice.GetCurrentState();
+									newState = new CustomDiState(state);
+									ud.DeviceState = state;
+								}
+								break;
+							case Keyboard kDevice:
+								newUpdates = useData ? kDevice.GetBufferedData()?.Select(x => new CustomDiUpdate(x)).ToArray() : null;
+								{
+									var state = kDevice.GetCurrentState();
+									newState = new CustomDiState(state);
+									ud.DeviceState = state;
+								}
+								break;
+							case Joystick jDevice:
+								newUpdates = useData ? jDevice.GetBufferedData()?.Select(x => new CustomDiUpdate(x)).ToArray() : null;
+								{
+									var state = jDevice.GetCurrentState();
+									newState = new CustomDiState(state);
+									ud.DeviceState = state;
+								}
+								break;
+							default:
+								throw new Exception($"Unknown device: {device}");
 						}
-						else if (device is Keyboard kDevice)
-						{
-							newUpdates = useData ? kDevice.GetBufferedData()?.Select(x => new CustomDiUpdate(x)).ToArray() : null;
-							var state = kDevice.GetCurrentState();
-							newState = new CustomDiState(state);
-							ud.DeviceState = state;
-						}
-						else if (device is Joystick jDevice)
-						{
-							newUpdates = useData ? jDevice.GetBufferedData()?.Select(x => new CustomDiUpdate(x)).ToArray() : null;
-							var state = jDevice.GetCurrentState();
-							newState = new CustomDiState(state);
-							ud.DeviceState = state;
-						}
-						else
-						{
-							throw new Exception(string.Format($"Unknown device: {device}"));
-						}
+
 						// Fill device objects force feedback actuator masks.
 						if (ud.DeviceObjects == null)
 						{
@@ -146,19 +165,19 @@ namespace x360ce.App.DInput
 							exceptionData.AppendFormat($"AppHelper.GetDeviceEffects(device) // ud.IsExclusiveMode = {ud.IsExclusiveMode}").AppendLine();
 							ud.DeviceEffects = AppHelper.GetDeviceEffects(device);
 						}
-						// If device support force feedback then...
+
+						// Handle force feedback if supported.
 						if (hasForceFeedback)
 						{
 							// Get setting related to user device.
-							var setting = SettingsManager.UserSettings.ItemsToArraySynchronized().FirstOrDefault(x => x.InstanceGuid == ud.InstanceGuid);
-							// If device is mapped to controller then...
+							var setting = SettingsManager.UserSettings.ItemsToArraySynchronized()
+								.FirstOrDefault(x => x.InstanceGuid == ud.InstanceGuid);
 							if (setting != null && setting.MapTo > (int)MapTo.None)
 							{
 								// Get pad setting attached to device.
 								var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 								if (ps != null)
 								{
-									// If force is enabled then...
 									if (ps.ForceEnable == "1")
 									{
 										ud.FFState = ud.FFState ?? new Engine.ForceFeedbackState();
@@ -166,9 +185,11 @@ namespace x360ce.App.DInput
 										var force = CopyAndClearFeedbacks()[setting.MapTo - 1];
 										if (force != null || ud.FFState.Changed(ps))
 										{
-											var vibration = new Vibration();
-											vibration.LeftMotorSpeed = (force == null) ? short.MinValue : (short)ConvertHelper.ConvertRange(force.LargeMotor, byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
-											vibration.RightMotorSpeed = (force == null) ? short.MinValue : (short)ConvertHelper.ConvertRange(force.SmallMotor, byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue);
+											var vibration = new Vibration
+											{
+												LeftMotorSpeed = (force == null) ? short.MinValue : (short)ConvertHelper.ConvertRange(force.LargeMotor, byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue),
+												RightMotorSpeed = (force == null) ? short.MinValue : (short)ConvertHelper.ConvertRange(force.SmallMotor, byte.MinValue, byte.MaxValue, short.MinValue, short.MaxValue)
+											};
 											// For the future: Investigate device states if force feedback is not working. 
 											// var st = ud.Device.GetForceFeedbackState();
 											// st == SharpDX.DirectInput.ForceFeedbackState
@@ -177,7 +198,6 @@ namespace x360ce.App.DInput
 											ud.FFState.SetDeviceForces(ud, device, ps, vibration);
 										}
 									}
-									// If force state was created then...
 									else if (ud.FFState != null)
 									{
 										// Stop device forces.
@@ -192,12 +212,13 @@ namespace x360ce.App.DInput
 					catch (Exception ex)
 					{
 						var dex = ex as SharpDXException;
-						if (dex != null && (dex.ResultCode == SharpDX.DirectInput.ResultCode.InputLost)
-										|| dex.ResultCode == SharpDX.DirectInput.ResultCode.NotAcquired
-										|| dex.ResultCode == SharpDX.DirectInput.ResultCode.Unplugged)
+						if (dex != null &&
+							(dex.ResultCode == SharpDX.DirectInput.ResultCode.InputLost ||
+							 dex.ResultCode == SharpDX.DirectInput.ResultCode.NotAcquired ||
+							 dex.ResultCode == SharpDX.DirectInput.ResultCode.Unplugged))
 						{
-								Debug.WriteLine($"Device {dex.Descriptor.ApiCode}. DisplayName {ud.DisplayName}. ProductId {ud.DevProductId}. ProductName {ud.ProductName}. InstanceName {ud.InstanceName}.");
-								DevicesNeedUpdating = true;
+							Debug.WriteLine($"Device {dex.Descriptor.ApiCode}. DisplayName {ud.DisplayName}. ProductId {ud.DevProductId}. ProductName {ud.ProductName}. InstanceName {ud.InstanceName}.");
+							DevicesNeedUpdating = true;
 						}
 						else
 						{
@@ -208,7 +229,6 @@ namespace x360ce.App.DInput
 						ud.IsExclusiveMode = null;
 					}
 				}
-
 				// If this is test device then...
 				else if (TestDeviceHelper.ProductGuid.Equals(ud.ProductGuid))
 				{
@@ -293,12 +313,17 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		#endregion
+
+		#region Helper Methods
+
 		void Calc(int[] orgRange, int[] newState, int[] mouseState)
 		{
+			// Sensitivity factor for mouse movement conversion.
 			var sensitivity = 16;
 			for (int a = 0; a < newState.Length; a++)
 			{
-				// Get delta from original state.
+				// Get delta from original state and apply sensitivity.
 				var value = (newState[a] - orgRange[a]) * sensitivity;
 				if (value < ushort.MinValue)
 				{
@@ -313,6 +338,7 @@ namespace x360ce.App.DInput
 				mouseState[a] = value;
 			}
 		}
+
+		#endregion
 	}
 }
-

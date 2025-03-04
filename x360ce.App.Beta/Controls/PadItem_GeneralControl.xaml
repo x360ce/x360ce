@@ -30,15 +30,15 @@
 					</Style>
 					<Style x:Key="DragAndDropDInputLabel1" TargetType="Label">
 						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="Padding" Value="0,2,0,0" />
+						<Setter Property="Padding" Value="4,2,4,4" />
 						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Selected Device Input" />
+						<Setter Property="Content" Value="Drag and drop labels ( selected device input ) into text boxes ( virtual Xbox input )" />
 					</Style>
 					<Style x:Key="DragAndDropDInputLabel2" TargetType="Label">
 						<Setter Property="HorizontalAlignment" Value="Center" />
 						<Setter Property="Padding" Value="0,0,0,4" />
 						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Drag and drop labels into text boxes" />
+						<Setter Property="Content" Value="Selected Device Input • Drag and drop labels into text boxes" />
 					</Style>
 					<Style x:Key="DragAndDropXInputBorder" TargetType="Border">
 						<Setter Property="Margin" Value="0,2,0,0" />
@@ -180,33 +180,48 @@
 			<Label Style="{StaticResource DragAndDropXInputLabel}" />
 		</Border>
 		<!--  Buttons and Axes  -->
-		<TabControl Grid.RowSpan="3" Width="240" Margin="0,0,9,0">
-			<TabItem>
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Name="NormalTab" Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis}" />
-						<TextBlock Text="NORMAL" />
-					</StackPanel>
-				</TabItem.Header>
-				<ScrollViewer VerticalScrollBarVisibility="Auto">
-					<StackPanel>
-						<Border Style="{StaticResource DragAndDropDInputBorder}">
-							<StackPanel>
-								<Label Style="{StaticResource DragAndDropDInputLabel1}" />
-								<Label Style="{StaticResource DragAndDropDInputLabel2}" />
-							</StackPanel>
-						</Border>
-						<Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
-						<StackPanel Name="DragAndDropStackPanelNormal" Margin="3,0,3,3">
-							<StackPanel.Resources>
-								<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
-								<Style BasedOn="{StaticResource DragAndDropLabel}" TargetType="Label" />
-							</StackPanel.Resources>
-							<Label Style="{StaticResource DragAndDropLoadingLabel}" />
+
+		<StackPanel Grid.RowSpan="3" >
+
+			<Border Style="{StaticResource BorderDescriptionNormal}" Margin="0,0,9,3"> <!--DragAndDropDInputBorder-->
+				<StackPanel>
+					<Label Style="{StaticResource DragAndDropDInputLabel1}" HorizontalAlignment="Center" />
+					<!--<Label Style="{StaticResource DragAndDropDInputLabel2}" />-->
+				</StackPanel>
+			</Border>
+
+			<StackPanel Orientation="Horizontal">
+
+			<TabControl Width="240" Margin="0,0,3,0">
+				<TabItem>
+					<TabItem.Header>
+						<StackPanel Orientation="Horizontal">
+							<ContentControl Name="NormalTab" Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis}" />
+							<TextBlock Text="NORMAL" />
 						</StackPanel>
-					</StackPanel>
-				</ScrollViewer>
-			</TabItem>
+					</TabItem.Header>
+					<ScrollViewer VerticalScrollBarVisibility="Auto">
+						<StackPanel>
+							<!--<Border Style="{StaticResource DragAndDropDInputBorder}">
+								<StackPanel>
+									<Label Style="{StaticResource DragAndDropDInputLabel1}" />
+									<Label Style="{StaticResource DragAndDropDInputLabel2}" />
+								</StackPanel>
+							</Border>-->
+							<Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
+							<StackPanel Name="DragAndDropStackPanelNormal" Margin="3,0,3,3">
+								<StackPanel.Resources>
+									<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
+									<Style BasedOn="{StaticResource DragAndDropLabel}" TargetType="Label" />
+								</StackPanel.Resources>
+								<Label Style="{StaticResource DragAndDropLoadingLabel}" />
+							</StackPanel>
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+			</TabControl>
+
+			<TabControl Grid.RowSpan="3" Width="240" Margin="0,0,9,0">
 			<TabItem>
 				<TabItem.Header>
 					<StackPanel Orientation="Horizontal">
@@ -216,12 +231,12 @@
 				</TabItem.Header>
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<StackPanel>
-						<Border Style="{StaticResource DragAndDropDInputBorder}">
+						<!--<Border Style="{StaticResource DragAndDropDInputBorder}">
 							<StackPanel>
 								<Label Style="{StaticResource DragAndDropDInputLabel1}" />
 								<Label Style="{StaticResource DragAndDropDInputLabel2}" />
 							</StackPanel>
-						</Border>
+						</Border>-->
 						<Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
 						<StackPanel Name="DragAndDropStackPanelInverted" Margin="3,0,3,3">
 							<StackPanel.Resources>
@@ -234,6 +249,10 @@
 				</ScrollViewer>
 			</TabItem>
 		</TabControl>
+
+		</StackPanel>
+		
+		</StackPanel>
 
 		<!--  Record or Clear mini menu.  -->
 
