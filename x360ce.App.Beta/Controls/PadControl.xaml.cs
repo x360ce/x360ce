@@ -174,7 +174,7 @@ namespace x360ce.App.Controls
 				: Global.DHelper.CombinedXiStates[i];
 			newConnected = useXiStates
 				? Global.DHelper.LiveXiConnected[i]
-				: Global.DHelper.CombinedXiConencted[i];
+				: Global.DHelper.CombinedXiConnected[i];
 			// If device is not connected and was not connected then return.
 			if (!newConnected && !oldConnected)
 				return;

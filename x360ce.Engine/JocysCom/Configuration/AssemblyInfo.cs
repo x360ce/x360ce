@@ -276,7 +276,7 @@ namespace JocysCom.ClassLibrary.Configuration
 			try
 			{
 				s = new FileStream(filePath, FileMode.Open, FileAccess.Read);
-				s.Read(b, 0, 2048);
+				_ = s.Read(b, 0, 2048);
 			}
 			finally
 			{

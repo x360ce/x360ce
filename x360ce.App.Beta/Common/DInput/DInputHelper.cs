@@ -19,7 +19,7 @@ namespace x360ce.App.DInput
 		// Constructor
 		public DInputHelper()
 		{
-			CombinedXiConencted = new bool[4];
+			CombinedXiConnected = new bool[4];
 			LiveXiConnected = new bool[4];
 			CombinedXiStates = new State[4];
 			LiveXiStates = new State[4];
@@ -36,16 +36,18 @@ namespace x360ce.App.DInput
 			PnPDeviceWatcher.EventArrived += new EventArrivedEventHandler(PnPDeviceWatcherUSBEvent);
 			// Keyboard, Mouse, HID.
 			var keys = DeviceDetector.PnPDeviceClassGuids.Keys.ToList();
-			PnPDeviceWatcher.Query = new WqlEventQuery(
-					"SELECT * FROM __InstanceOperationEvent " +
-					"WITHIN 1 " +
-					"WHERE TargetInstance ISA 'Win32_PnPEntity' " +
-					"AND (__Class = '__InstanceCreationEvent') " +
-					"AND (TargetInstance.ClassGuid = '" + keys[0] + "' " +
-					"OR TargetInstance.ClassGuid = '" + keys[1] + "' " +
-					"OR TargetInstance.ClassGuid = '" + keys[2] + "') " +
-  					"AND TargetInstance.DeviceID LIKE 'HID%' " +
-					"AND TargetInstance.DeviceID LIKE '%0' ");
+			// Build query string for improved readability.
+			string queryString =
+				"SELECT * FROM __InstanceOperationEvent " +
+				"WITHIN 1 " +
+				"WHERE TargetInstance ISA 'Win32_PnPEntity' " +
+				"AND (__Class = '__InstanceCreationEvent') " +
+				"AND (TargetInstance.ClassGuid = '" + keys[0] + "' " +
+				"OR TargetInstance.ClassGuid = '" + keys[1] + "' " +
+				"OR TargetInstance.ClassGuid = '" + keys[2] + "') " +
+				"AND TargetInstance.DeviceID LIKE 'HID%' " +
+				"AND TargetInstance.DeviceID LIKE '%0' ";
+			PnPDeviceWatcher.Query = new WqlEventQuery(queryString);
 			//PnPDeviceWatcher.Query = new WqlEventQuery("SELECT * FROM __InstanceOperationEvent WITHIN 1 WHERE TargetInstance ISA 'Win32_PnPEntity' AND (__Class = '__InstanceCreationEvent' OR __Class = '__InstanceDeletionEvent')");
 			PnPDeviceWatcher.Start();
 		}
@@ -67,6 +69,8 @@ namespace x360ce.App.DInput
 				await Helper.Debounce(OnDevicesChanged);
 			}
 		}
+
+		// Use an expression-bodied method for clarity:
 		private void OnDevicesChanged() => DevicesNeedUpdating = true;
 
 		// Where the current DInput device state is stored:
@@ -102,22 +106,21 @@ namespace x360ce.App.DInput
 
 		public UpdateFrequency Frequency
 		{
-			get { return _Frequency; }
+			get => _Frequency;
 			set
 			{
 				_Frequency = value;
-				var t = _Timer;
-				if (t?.Interval != (int)value)
-					t.Interval = (int)value;
+				if (_Timer?.Interval != (int)value)
+					_Timer.Interval = (int)value;
 			}
 		}
 
 		/// <summary>
 		/// _Stopwatch time is used to calculate the actual update frequency in Hz per second.
 		/// </summary>
-		System.Diagnostics.Stopwatch _Stopwatch = new System.Diagnostics.Stopwatch();
-		object timerLock = new object();
-		bool _AllowThreadToRun;
+		private Stopwatch _Stopwatch = new Stopwatch();
+		private object timerLock = new object();
+		private bool _AllowThreadToRun;
 
 		// Start DInput Service.
 		public void Start()
@@ -165,8 +168,10 @@ namespace x360ce.App.DInput
 		void RefreshAllAsync()
 		{
 			_ThreadStart = new ThreadStart(ThreadAction);
-			_Thread = new Thread(_ThreadStart);
-			_Thread.IsBackground = true;
+			_Thread = new Thread(_ThreadStart)
+			{
+				IsBackground = true
+			};
 			_Thread.Start();
 		}
 
@@ -208,7 +213,7 @@ namespace x360ce.App.DInput
 				// The thread will be released by the timer. Do not wait longer than 50ms.
 				_ResetEvent.WaitOne(50);
 			}
-			// Loop until suspended.
+			// Loop until allowed to run.
 			while (_AllowThreadToRun);
 			detector.Dispose();
 			directInput.Dispose();
@@ -221,9 +226,9 @@ namespace x360ce.App.DInput
 		public event EventHandler<DInputEventArgs> XInputReloaded;
 
 		public event EventHandler<DInputEventArgs> UpdateCompleted;
-		object DiUpdatesLock = new object();
+		private readonly object DiUpdatesLock = new object();
 
-		void RefreshAll(DirectInput manager, DeviceDetector detector)
+		private void RefreshAll(DirectInput manager, DeviceDetector detector)
 		{
 			lock (DiUpdatesLock)
 			{
@@ -235,12 +240,11 @@ namespace x360ce.App.DInput
 					// Note: Getting XInput states is not required in order to do emulation.
 					// Get states only when the form is maximized in order to reduce CPU usage.
 					// Update hardware.
-					if (DevicesNeedUpdating && !DevicesAreUpdating || DeviceDetector.DiDevices == null)
+					if (((DevicesNeedUpdating && !DevicesAreUpdating) || DeviceDetector.DiDevices == null))
 					{
 						DevicesAreUpdating = true;
 						try
 						{
-
 							//Debug.WriteLine("1");
 							// The best place to unload the XInput DLL is at the start, because
 							// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
@@ -283,17 +287,17 @@ namespace x360ce.App.DInput
 				}
 				// Count DInput updates per second to show in the app's status bar as Hz: #.
 				UpdateDelayFrequency();
-				// Fire event.
+				// Fire update completed event.
 				UpdateCompleted?.Invoke(this, new DInputEventArgs());
 			}
 		}
 
 		// Count DInput updates per second to show in the app's status bar as Hz: #.
 		public event EventHandler<DInputEventArgs> FrequencyUpdated;
-		int executionCount = 0;
-		long lastTime = 0;
+		private int executionCount = 0;
+		private long lastTime = 0;
 		public long CurrentUpdateFrequency;
-		void UpdateDelayFrequency()
+		private void UpdateDelayFrequency()
 		{
 			var currentTime = _Stopwatch.ElapsedMilliseconds;
 			// If one second has elapsed then...
@@ -308,8 +312,7 @@ namespace x360ce.App.DInput
 
 		#region ■ IDisposable
 
-		bool IsDisposing;
-
+		private bool IsDisposing;
 		private bool disposed = false;
 
 		public void Dispose()
@@ -318,7 +321,6 @@ namespace x360ce.App.DInput
 			GC.SuppressFinalize(this);
 			PnPDeviceWatcher?.Dispose();
 			directInput?.Dispose();
-
 		}
 
 		protected virtual void Dispose(bool disposing)
@@ -341,7 +343,6 @@ namespace x360ce.App.DInput
 				_Timer = null;
 				_Thread = null;
 				_ResetEvent = null;
-
 			}
 
 			disposed = true;

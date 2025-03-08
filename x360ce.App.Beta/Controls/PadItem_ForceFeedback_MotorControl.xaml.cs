@@ -11,20 +11,35 @@ namespace x360ce.App.Controls
 	/// </summary>
 	public partial class PadItem_ForceFeedback_MotorControl : UserControl
 	{
+		#region Fields
+
+		// Made fields explicitly private and readonly.
+		private readonly TrackBarUpDownTextBoxLink deadzoneLink;
+		private readonly TrackBarUpDownTextBoxLink offsetLink;
+		private readonly TrackBarUpDownTextBoxLink testLink;
+
+		#endregion
+
+		#region Constructor
+
 		public PadItem_ForceFeedback_MotorControl()
 		{
+			// Initialize timer before initializing the component.
 			InitHelper.InitTimer(this, InitializeComponent);
+
+			// Initialize links binding the trackbar, updown and textbox controls.
 			deadzoneLink = new TrackBarUpDownTextBoxLink(StrengthTrackBar, StrengthUpDown, StrengthTextBox, 0, 100);
 			offsetLink = new TrackBarUpDownTextBoxLink(PeriodTrackBar, PeriodUpDown, PeriodTextBox, 0, 100);
 			testLink = new TrackBarUpDownTextBoxLink(TestTrackBar, TestUpDown, TestTextBox, 0, 100);
+
 			// Fill direction values.
 			var effectDirections = (ForceEffectDirection[])Enum.GetValues(typeof(ForceEffectDirection));
 			DirectionComboBox.ItemsSource = effectDirections;
 		}
 
-		TrackBarUpDownTextBoxLink deadzoneLink;
-		TrackBarUpDownTextBoxLink offsetLink;
-		TrackBarUpDownTextBoxLink testLink;
+		#endregion
+
+		#region Public Methods
 
 		public void SetBinding(PadSetting ps, int motor)
 		{
@@ -32,8 +47,10 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(DirectionComboBox);
 			SettingsManager.UnLoadMonitor(StrengthUpDown);
 			SettingsManager.UnLoadMonitor(PeriodUpDown);
+
 			if (ps == null)
 				return;
+
 			switch (motor)
 			{
 				case 0:
@@ -45,13 +62,32 @@ namespace x360ce.App.Controls
 				default:
 					break;
 			}
+
 			var converter = new Converters.PadSettingToNumericConverter<decimal>();
 			var enumConverter = new Converters.PadSettingToEnumConverter<ForceEffectDirection>();
+
 			// Set binding.
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorDirection), DirectionComboBox, null, enumConverter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorStrength), StrengthUpDown, null, converter);
 			SettingsManager.LoadAndMonitor(ps, nameof(ps.LeftMotorPeriod), PeriodUpDown, null, converter);
 		}
+
+		public void ParentWindow_Unloaded()
+		{
+			// TODO: Lines below must be executed only when main window closes.
+			DirectionComboBox.ItemsSource = null;
+			// Dispose links if not null.
+			deadzoneLink?.Dispose();
+			offsetLink?.Dispose();
+			testLink?.Dispose();
+
+			// Fill direction values.
+			SetBinding(null, 0);
+		}
+
+		#endregion
+
+		#region Event Handlers
 
 		private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
@@ -66,16 +102,6 @@ namespace x360ce.App.Controls
 			// Moved to MainBodyControl_Unloaded().
 		}
 
-		public void ParentWindow_Unloaded()
-		{
-			// TODO: Lines below must be executed onbmly when main window close.
-			DirectionComboBox.ItemsSource = null;
-			deadzoneLink.Dispose();
-			offsetLink.Dispose();
-			testLink.Dispose();
-			// Fill direction values.
-		   SetBinding(null, 0);
-		}
-
+		#endregion
 	}
 }
