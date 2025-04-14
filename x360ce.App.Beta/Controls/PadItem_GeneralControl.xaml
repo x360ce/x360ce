@@ -5,16 +5,73 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:conv="clr-namespace:x360ce.App.Controls"
 	x:Name="This"
 	d:Height="600"
 	d:Width="900"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
+
 	<UserControl.Resources>
 		<ResourceDictionary>
-			<ResourceDictionary.MergedDictionaries>
+				<!-- MergedDictionaries -->
+				<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary>
+					<!-- Converter -->
+					<conv:ContainsKeywordConverterType x:Key="ContainsKeywordConverterType" />
+					<!--  Invert Button -->
+					<Style x:Key="Button_Invert" TargetType="Button" BasedOn="{StaticResource Button_Default}">
+						<Setter Property="Width" Value="25" />
+						<Setter Property="Height" Value="25" />
+						<Setter Property="Margin" Value="0,3,3,3" />
+						<Setter Property="ToolTip" Value="Invert" />
+						<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+						<Setter Property="Visibility" Value="Visible" />
+						<Setter Property="Content" Value="{x:Null}" />
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="Button">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Button}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IButton">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Button_Inverted}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="Axis">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IAxis">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="HAxis">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IHAxis">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half_Inverted}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="Slider">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="ISlider">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="HSlider">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IHSlider">
+								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half_Inverted}" />
+								<Setter Property="Visibility" Value="Visible" />
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
 					<!--  Drag and Drop menu GroupBox  -->
 					<Style x:Key="DragAndDropGroupBox" BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
 						<Setter Property="Margin" Value="0,-1,0,0" />
@@ -32,7 +89,7 @@
 						<Setter Property="HorizontalAlignment" Value="Center" />
 						<Setter Property="Padding" Value="4,2,4,4" />
 						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Drag and drop labels ( selected device input ) into text boxes ( virtual Xbox input )" />
+						<Setter Property="Content" Value="STEP 3 - Drag and drop labels into text boxes." />
 					</Style>
 					<Style x:Key="DragAndDropDInputLabel2" TargetType="Label">
 						<Setter Property="HorizontalAlignment" Value="Center" />
@@ -123,7 +180,7 @@
 						<EventSetter Event="MouseEnter" Handler="RecordClear_MouseEnterTextBox" />
 					</Style>
 					<!--  Menu template  -->
-					<ControlTemplate x:Key="ReusableMenuTemplate" TargetType="Menu">
+					<!--<ControlTemplate x:Key="ReusableMenuTemplate" TargetType="Menu">
 						<Grid Visibility="Collapsed">
 							<Border
 								Name="MenuBorder"
@@ -145,21 +202,21 @@
 										RenderTransformOrigin="0.5,0.5" />
 								</Viewbox>
 							</Border>
-							<!--<Menu Background="Transparent" Tag="{TemplateBinding Tag}">
+							--><!--<Menu Background="Transparent" Tag="{TemplateBinding Tag}">
 								<MenuItem
 									Width="26"
 									Height="26"
 									Click="MenuItem_Click"
 									Opacity="0"
 									Visibility="Visible" />
-							</Menu>-->
+							</Menu>--><!--
 						</Grid>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsMouseOver" Value="True">
 								<Setter TargetName="MenuBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
 							</Trigger>
 						</ControlTemplate.Triggers>
-					</ControlTemplate>
+					</ControlTemplate>-->
 				</ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 		</ResourceDictionary>
@@ -172,42 +229,32 @@
 		</Grid.RowDefinitions>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="155" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="155" />
+			<ColumnDefinition Width="200" />
+			<ColumnDefinition MinWidth="320" Width="*" />
+			<ColumnDefinition Width="200" />
 		</Grid.ColumnDefinitions>
 		<Border Grid.Column="2" Style="{StaticResource DragAndDropXInputBorder}">
 			<Label Style="{StaticResource DragAndDropXInputLabel}" />
 		</Border>
+		
 		<!--  Buttons and Axes  -->
-
 		<StackPanel Grid.RowSpan="3" >
-
-			<Border Style="{StaticResource BorderDescriptionNormal}" Margin="0,0,9,3"> <!--DragAndDropDInputBorder-->
-				<StackPanel>
-					<Label Style="{StaticResource DragAndDropDInputLabel1}" HorizontalAlignment="Center" />
-					<!--<Label Style="{StaticResource DragAndDropDInputLabel2}" />-->
-				</StackPanel>
+			<!-- Drag and Drop Help -->
+			<Border Style="{StaticResource BorderDescriptionNormal}" Margin="0,0,9,3">
+				<Label Style="{StaticResource DragAndDropDInputLabel1}" HorizontalAlignment="Center" />
 			</Border>
-
-			<StackPanel Orientation="Horizontal">
-
 			<TabControl Width="240" Margin="0,0,3,0">
 				<TabItem>
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
 							<ContentControl Name="NormalTab" Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis}" />
 							<TextBlock Text="NORMAL" />
-						</StackPanel>
+							<ContentControl Name="InvertedTab" Margin="20,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
+							<TextBlock Text="INVERTED" />
+							</StackPanel>
 					</TabItem.Header>
 					<ScrollViewer VerticalScrollBarVisibility="Auto">
 						<StackPanel>
-							<!--<Border Style="{StaticResource DragAndDropDInputBorder}">
-								<StackPanel>
-									<Label Style="{StaticResource DragAndDropDInputLabel1}" />
-									<Label Style="{StaticResource DragAndDropDInputLabel2}" />
-								</StackPanel>
-							</Border>-->
 							<Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
 							<StackPanel Name="DragAndDropStackPanelNormal" Margin="3,0,3,3">
 								<StackPanel.Resources>
@@ -220,68 +267,17 @@
 					</ScrollViewer>
 				</TabItem>
 			</TabControl>
-
-			<TabControl Grid.RowSpan="3" Width="240" Margin="0,0,9,0">
-			<TabItem>
-				<TabItem.Header>
-					<StackPanel Orientation="Horizontal">
-						<ContentControl Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
-						<TextBlock Text="INVERTED" />
-					</StackPanel>
-				</TabItem.Header>
-				<ScrollViewer VerticalScrollBarVisibility="Auto">
-					<StackPanel>
-						<!--<Border Style="{StaticResource DragAndDropDInputBorder}">
-							<StackPanel>
-								<Label Style="{StaticResource DragAndDropDInputLabel1}" />
-								<Label Style="{StaticResource DragAndDropDInputLabel2}" />
-							</StackPanel>
-						</Border>-->
-						<Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
-						<StackPanel Name="DragAndDropStackPanelInverted" Margin="3,0,3,3">
-							<StackPanel.Resources>
-								<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
-								<Style BasedOn="{StaticResource DragAndDropLabel}" TargetType="Label" />
-							</StackPanel.Resources>
-							<Label Style="{StaticResource DragAndDropLoadingLabel}" />
-						</StackPanel>
-					</StackPanel>
-				</ScrollViewer>
-			</TabItem>
-		</TabControl>
-
-		</StackPanel>
-		
 		</StackPanel>
 
-		<!--  Record or Clear mini menu.  -->
-
-		<Grid Name="RecordClearGrid" VerticalAlignment="Center" Visibility="Collapsed">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Name="RecordClearColumn0" />
-				<ColumnDefinition Name="RecordClearColumn1" />
-			</Grid.ColumnDefinitions>
-			<StackPanel
-				Name="RCStackPanel"
-				Grid.Column="1"
-				Margin="1,0,1,0"
-				HorizontalAlignment="Left"
-				Background="{StaticResource BackgroundLight}"
-				Orientation="Horizontal">
-				<Button Name="RecordButton" Click="RecordButton_Click">
-					<!--<ContentControl Content="{StaticResource Icon_Record}" />-->
-					<Border
-						Width="14"
-						Height="14"
-						Margin="1"
-						Background="{StaticResource ColorRecord}"
-						CornerRadius="8" />
-				</Button>
-				<Button Name="ClearButton" Margin="0,3,3,3" Click="ClearButton_Click">
-					<ContentControl Content="{StaticResource Icon_broom}" />
-				</Button>
-			</StackPanel>
-		</Grid>
+		<!--  Image  -->
+		<Viewbox
+			Grid.Column="1"
+			Grid.ColumnSpan="3"
+			Width="Auto"
+			Height="400"
+			Margin="0,20,0,0">
+			<local:PadItem_General_XboxImageControl x:Name="XboxImage" VerticalAlignment="Top" />
+		</Viewbox>
 
 		<!--  LEFT  -->
 		<StackPanel Grid.Column="1">
@@ -310,47 +306,81 @@
 			<!--  LeftTrigger  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=TriggerLTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
-					<TextBox Name="TriggerLTextBox" x:FieldModifier="public" MouseEnter="RecordClear_MouseEnterTextBox" />
+					<!--<Menu Tag="{Binding ElementName=TriggerLTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
+					<TextBox Name="TriggerLTextBox" x:FieldModifier="public"/>
+					<Button Name="TriggerLInvertButton" Tag="{Binding ElementName=TriggerLTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="TriggerLLabel" Content="Trigger" IsHitTestVisible="False" />
 				</StackPanel>
+
+				<!--  Record or Clear mini menu.  -->
+				<Grid Name="RecordClearGrid" VerticalAlignment="Center" Visibility="Hidden">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Name="RecordClearColumn0" />
+						<ColumnDefinition Name="RecordClearColumn1" />
+					</Grid.ColumnDefinitions>
+					<StackPanel
+					Name="RCStackPanel"
+					Grid.Column="1"
+					Margin="30,0,30,0"
+					HorizontalAlignment="Right"
+					Background="{StaticResource BackgroundLight}"
+					Orientation="Horizontal">
+						<Button Name="RecordButton" Click="RecordButton_Click" ToolTip="Record">
+							<!--<ContentControl Content="{StaticResource Icon_Record}" />-->
+							<Border
+							Width="14"
+							Height="14"
+							Margin="1"
+							Background="{StaticResource ColorRecord}"
+							CornerRadius="8" />
+						</Button>
+						<Button Name="ClearButton" Margin="0,3,3,3" Click="ClearButton_Click" ToolTip="Clear">
+							<ContentControl Content="{StaticResource Icon_broom}" />
+						</Button>
+					</StackPanel>
+				</Grid>
+
 			</Grid>
 			<!--  LeftShoulder  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=BumperLTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=BumperLTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="BumperLTextBox" x:FieldModifier="public" />
+					<Button Name="BumperLInvertButton" Tag="{Binding ElementName=BumperLTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="BumperLLabel" Content="Bumper" />
 				</StackPanel>
 			</Grid>
 			<!--  ButtonBack  -->
 			<Grid Margin="0,15,0,0" Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=MenuBackTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=MenuBackTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="MenuBackTextBox" x:FieldModifier="public" />
+					<Button Name="MenuBackInvertButton" Tag="{Binding ElementName=MenuBackTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="MenuBackLabel" Content="Back" />
 				</StackPanel>
 			</Grid>
 			<!--  ButtonStart  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=MenuStartTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=MenuStartTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="MenuStartTextBox" x:FieldModifier="public" />
+					<Button Name="MenuStartInvertButton" Tag="{Binding ElementName=MenuStartTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="MenuStartLabel" Content="Start" />
 				</StackPanel>
 			</Grid>
 			<!--  ButtonGuide  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=MenuGuideTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=MenuGuideTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="MenuGuideTextBox" x:FieldModifier="public" />
+					<Button Name="MenuGuideInvertButton" Tag="{Binding ElementName=MenuGuideTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="MenuGuideLabel" Content="Guide" />
 				</StackPanel>
 			</Grid>
 			<!--  DPad  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=DPadTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=DPadTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="DPadTextBox" x:FieldModifier="public" />
 					<Label Name="DPadLabel" Content="D-Pad" />
 				</StackPanel>
@@ -403,24 +433,27 @@
 			<!--  LeftThumbAxisX  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=StickLAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickLAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="StickLAxisXTextBox" x:FieldModifier="public" />
+					<Button Name="StickLAxisXInvertButton" Tag="{Binding ElementName=StickLAxisXTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLAxisXLabel" Content="Stick Axis X" />
 				</StackPanel>
 			</Grid>
 			<!--  LeftThumbAxisY  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=StickLAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickLAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="StickLAxisYTextBox" x:FieldModifier="public" />
+					<Button Name="StickLAxisYInvertButton" Tag="{Binding ElementName=StickLAxisYTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLAxisYLabel" Content="Stick Axis Y" />
 				</StackPanel>
 			</Grid>
 			<!--  LeftThumbButton  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=StickLButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickLButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="StickLButtonTextBox" x:FieldModifier="public" />
+					<Button Name="StickLButtonInvertButton" Tag="{Binding ElementName=StickLButtonTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLButtonLabel" Content="Stick Button" />
 				</StackPanel>
 			</Grid>
@@ -430,76 +463,72 @@
 			<!--  LeftThumbUp  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=StickLUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickLUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="StickLUpTextBox" x:FieldModifier="public" />
+					<Button Name="StickLUpInvertButton" Tag="{Binding ElementName=StickLUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLUpLabel" Content="Stick Up" />
 				</StackPanel>
 			</Grid>
 			<!--  LeftThumbLeft  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=StickLLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickLLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="StickLLeftTextBox" x:FieldModifier="public" />
+					<Button Name="StickLLeftInvertButton" Tag="{Binding ElementName=StickLLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLLeftLabel" Content="Stick Left" />
 				</StackPanel>
 			</Grid>
 			<!--  LeftThumbRight  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=StickLRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickLRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="StickLRightTextBox" x:FieldModifier="public" />
+					<Button Name="StickLRightInvertButton" Tag="{Binding ElementName=StickLRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLRightLabel" Content="Stick Right" />
 				</StackPanel>
 			</Grid>
 			<!--  LeftThumbDown  -->
 			<Grid Style="{StaticResource RecordClearGridLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<Menu Tag="{Binding ElementName=StickLDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickLDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 					<TextBox Name="StickLDownTextBox" x:FieldModifier="public" />
+					<Button Name="StickLDownInvertButton" Tag="{Binding ElementName=StickLDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLDownLabel" Content="Stick Down" />
 				</StackPanel>
 			</Grid>
 		</StackPanel>
-		<!--  Image  -->
-		<Viewbox
-			Grid.Column="2"
-			Width="Auto"
-			Height="390"
-			Margin="0,0,0,-50">
-			<local:PadItem_General_XboxImageControl x:Name="XboxImage" VerticalAlignment="Top" />
-		</Viewbox>
 		<!--  DPad  -->
-		<StackPanel Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center">
+		<StackPanel Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" Width="200" Margin="70,0,0,0">
 			<!--  DPadUp  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="DPadUpLabel" Content="D-Pad Up" />
+			<Grid Style="{StaticResource RecordClearGridLeft}">
+				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="DPadUpTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=DPadUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<Label Name="DPadUpLabel" Content="D-Pad Up" />
+					<!--<Menu Tag="{Binding ElementName=DPadUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  DPadLeft  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="DPadLeftLabel" Content="D-Pad Left" />
+			<Grid Style="{StaticResource RecordClearGridLeft}">
+				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="DPadLeftTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=DPadLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<Label Name="DPadLeftLabel" Content="D-Pad Left" />
+					<!--<Menu Tag="{Binding ElementName=DPadLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  DPadRight  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="DPadRightLabel" Content="D-Pad Right" />
+			<Grid Style="{StaticResource RecordClearGridLeft}">
+				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="DPadRightTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=DPadRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<Label Name="DPadRightLabel" Content="D-Pad Right" />
+					<!--<Menu Tag="{Binding ElementName=DPadRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  DPadDown  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="DPadDownLabel" Content="D-Pad Down" />
+			<Grid Style="{StaticResource RecordClearGridLeft}">
+				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="DPadDownTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=DPadDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<Label Name="DPadDownLabel" Content="D-Pad Down" />
+					<!--<Menu Tag="{Binding ElementName=DPadDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 		</StackPanel>
@@ -532,8 +561,9 @@
 			<Grid Style="{StaticResource RecordClearGridRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="TriggerRLabel" Content="Trigger" />
+					<Button Name="TriggerRInvertButton" Tag="{Binding ElementName=TriggerRTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="0,0,0,0" />
 					<TextBox Name="TriggerRTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=TriggerRTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=TriggerRTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  RightShoulder  -->
@@ -541,7 +571,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="BumperRLabel" Content="Bumper" />
 					<TextBox Name="BumperRTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=BumperRTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=BumperRTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  ButtonY  -->
@@ -549,7 +579,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="ActionYLabel" Content="Y Button" />
 					<TextBox Name="ActionYTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=ActionYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=ActionYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  ButtonX  -->
@@ -557,7 +587,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="ActionXLabel" Content="X Button" />
 					<TextBox Name="ActionXTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=ActionXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=ActionXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  ButtonB  -->
@@ -565,7 +595,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="ActionBLabel" Content="B Button" />
 					<TextBox Name="ActionBTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=ActionBTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=ActionBTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  ButtonA  -->
@@ -573,7 +603,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="ActionALabel" Content="A Button" />
 					<TextBox Name="ActionATextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=ActionATextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=ActionATextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  RightThumb  -->
@@ -626,7 +656,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRAxisXLabel" Content="Stick Axis X" />
 					<TextBox Name="StickRAxisXTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=StickRAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickRAxisXTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  RightThumbAxisY  -->
@@ -634,7 +664,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRAxisYLabel" Content="Stick Axis Y" />
 					<TextBox Name="StickRAxisYTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=StickRAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickRAxisYTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  RightThumbButton  -->
@@ -642,7 +672,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRButtonLabel" Content="Stick Button" />
 					<TextBox Name="StickRButtonTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=StickRButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickRButtonTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 		</StackPanel>
@@ -653,7 +683,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRUpLabel" Content="Stick Up" />
 					<TextBox Name="StickRUpTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=StickRUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickRUpTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  RightThumbLeft  -->
@@ -661,7 +691,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRLeftLabel" Content="Stick Left" />
 					<TextBox Name="StickRLeftTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=StickRLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickRLeftTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  RightThumbRight  -->
@@ -669,7 +699,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRRightLabel" Content="Stick Right" />
 					<TextBox Name="StickRRightTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=StickRRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickRRightTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 			<!--  RighthumbDown  -->
@@ -677,7 +707,7 @@
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRDownLabel" Content="Stick Down" />
 					<TextBox Name="StickRDownTextBox" x:FieldModifier="public" />
-					<Menu Tag="{Binding ElementName=StickRDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />
+					<!--<Menu Tag="{Binding ElementName=StickRDownTextBox}" Template="{StaticResource ReusableMenuTemplate}" />-->
 				</StackPanel>
 			</Grid>
 		</StackPanel>

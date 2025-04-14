@@ -243,7 +243,7 @@ namespace x360ce.App.DInput
 						//// --------------------------------------------------------
 						//if (map.Target == TargetType.LeftThumbX)
 						//{
-						//	var success2 = SettingsConverter.TryParseIniValue(padSetting.LeftThumbUp, out type, out index);
+						//	vaxr success2 = SettingsConverter.TryParseIniValue(padSetting.LeftThumbUp, out type, out index);
 						//	if (success2 && index > 0 && type == SettingType.Button)
 						//	{
 						//	}

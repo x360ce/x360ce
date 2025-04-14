@@ -6,7 +6,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignWidth="600"
+	d:DesignWidth="300"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
@@ -14,19 +14,15 @@
 	<Grid VerticalAlignment="Stretch">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="100" />
-			<RowDefinition Height="1" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="1*" />
+			<RowDefinition Height="1*" />
 		</Grid.RowDefinitions>
-		<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-			<CheckBox
-				Name="EnabledCheckBox"
-				Margin="6,0,3,0"
-				Click="EnabledCheckBox_Click"
-				Content="Enabled" />
-			<CheckBox Name="UseXInputStateCheckBox" Click="UseXInputStateCheckBox_Click" Content="Use XInput State" />
-			<CheckBox Name="AutoMapCheckBox" Click="AutoMapCheckBox_Click" Content="Auto Map" />
-		</StackPanel>
-		<StackPanel Margin="6,0,3,0" HorizontalAlignment="Right" Orientation="Horizontal">
+		<Border Style="{StaticResource BorderDescriptionNormal}" Padding="3" Margin="3,3,0,0">
+			<Label HorizontalAlignment="Center">STEP 2 - Add and select controller to configure.</Label>
+		</Border>
+		<StackPanel Margin="6,0,3,0" Orientation="Horizontal" Grid.Row="1">
 			<Button Name="AddButton" Margin="0,3,3,3" Click="AddButton_Click">
 				<StackPanel>
 					<ContentControl Content="{StaticResource Icon_add}" />
@@ -46,11 +42,18 @@
 				</StackPanel>
 			</Button>
 		</StackPanel>
+		<StackPanel Grid.Row="2" Margin="3">
+			<CheckBox
+				Name="EnabledCheckBox"
+				Click="EnabledCheckBox_Click"
+				Content="Enabled" />
+			<CheckBox Name="UseXInputStateCheckBox" Click="UseXInputStateCheckBox_Click" Content="Use XInput State" />
+			<CheckBox Name="AutoMapCheckBox" Click="AutoMapCheckBox_Click" Content="Auto Map" />
+		</StackPanel>
 		<DataGrid
+			Grid.Row="3"
+			MaxWidth="250"
 			Name="MainDataGrid"
-			Grid.Row="1"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch"
 			AutoGenerateColumns="False"
 			IsReadOnly="True"
 			ScrollViewer.CanContentScroll="True"
@@ -96,7 +99,7 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 				<!--  Connection type  -->
-				<DataGridTemplateColumn x:Name="ConnectionClassColumn" Header="Connection" IsReadOnly="True">
+				<DataGridTemplateColumn x:Name="ConnectionClassColumn" Header="C" IsReadOnly="True" Width="40">
 					<DataGridTemplateColumn.CellTemplate>
 						<DataTemplate>
 							<Image Style="{StaticResource ImageCell_Default}">
@@ -111,12 +114,19 @@
 						</DataTemplate>
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
+				<!--Enabled-->
 				<DataGridCheckBoxColumn
 					x:Name="IsEnabledColumn"
 					Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
 					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
 					ElementStyle="{StaticResource CheckBoxCell_Default}"
 					Header="On" />
+				<DataGridTextColumn
+					Width="Auto"
+					Binding="{Binding ProductName}"
+					EditingElementStyle="{StaticResource TextBoxCell}"
+					ElementStyle="{StaticResource TextBlockCell}"
+					Header="Device" />
 				<DataGridTextColumn
 					Binding="{Binding InstanceId}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
@@ -137,12 +147,6 @@
 					</DataGridTextColumn.Binding>
 				</DataGridTextColumn>
 				<DataGridTextColumn
-					Width="*"
-					Binding="{Binding ProductName}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Device" />
-				<DataGridTextColumn
 					Binding="{Binding PadSettingChecksum, Converter={StaticResource _ChecksumToIdConverter}}"
 					EditingElementStyle="{StaticResource TextBoxCell}"
 					ElementStyle="{StaticResource TextBlockCell}"
@@ -155,7 +159,8 @@
 					Header="Completion" />
 			</DataGrid.Columns>
 		</DataGrid>
-		<Border Grid.Row="2" Height="1" Background="{StaticResource BorderDark}" />
+		<Label Grid.Row="4" VerticalAlignment="Top" Margin="6" >Controller Information:</Label>
+		
 	</Grid>
 
 

@@ -5,18 +5,25 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:Height="1000"
+	d:Height="900"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
-	<Grid VerticalAlignment="Stretch">
+	<Grid>
 		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<local:PadListControl x:Name="PadListPanel" />
-		<local:PadItemControl x:Name="PadItemPanel" Grid.Row="1" />
-		<local:PadFootControl x:Name="PadFootPanel" Grid.Row="2" />
+
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+				<local:PadListControl x:Name="PadListPanel" />
+				<local:PadItemControl x:Name="PadItemPanel" Grid.Column="1" />
+			</Grid>
+
+		<local:PadFootControl x:Name="PadFootPanel" Grid.Row="1" />
 	</Grid>
 </UserControl>
