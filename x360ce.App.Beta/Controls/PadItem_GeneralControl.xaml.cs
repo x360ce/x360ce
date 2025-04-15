@@ -392,8 +392,6 @@ namespace x360ce.App.Controls
 		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
-			if (GetCustomDiState(ud) == null) return;
-
 			// Clear StackPanel children in XAML page.
 			DragAndDropStackPanelNormal.Children.Clear();
 			// DragAndDropStackPanelInverted.Children.Clear();
@@ -417,6 +415,8 @@ namespace x360ce.App.Controls
 			axes.Clear();
 			sliders.Clear();
 
+			if (ud == null || GetCustomDiState(ud) == null) return;
+
 			GetDeviceObjectInstancesByObjectTypeGuid(ud);
 
 			buttons.Sort();
@@ -428,23 +428,18 @@ namespace x360ce.App.Controls
 			if (buttons.Any())
 			{
 				DragAndDropMenuLabels_Create(ButtonDictionary, buttons, "Button", "BUTTON", "Icon_DragAndDrop_Button");
-				//DragAndDropMenuLabels_Create(IButtonDictionary, buttons, "IButton", "BUTTON", "Icon_DragAndDrop_Button_Inverted");
 			}
 			// Axes.
 			if (axes.Any())
 			{
 				DragAndDropMenuLabels_Create(AxisDictionary, axes, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
-				//DragAndDropMenuLabels_Create(IAxisDictionary, axes, "IAxis", "AXIS", "Icon_DragAndDrop_Axis_Inverted");
 				DragAndDropMenuLabels_Create(HAxisDictionary, axes, "HAxis", "AXIS · HALF", "Icon_DragAndDrop_Axis_Half");
-				//DragAndDropMenuLabels_Create(IHAxisDictionary, axes, "IHAxis", "AXIS · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 			}
 			// Sliders.
 			if (sliders.Any())
 			{
 				DragAndDropMenuLabels_Create(SliderDictionary, sliders, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
-				//DragAndDropMenuLabels_Create(ISliderDictionary, sliders, "ISlider", "SLIDER", "Icon_DragAndDrop_Axis_Inverted");
 				DragAndDropMenuLabels_Create(HSliderDictionary, sliders, "HSlider", "SLIDER · HALF", "Icon_DragAndDrop_Axis_Half");
-				//DragAndDropMenuLabels_Create(IHSliderDictionary, sliders, "IHSlider", "SLIDER · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 			}
 			// POVs.
 			if (povs.Any())

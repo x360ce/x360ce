@@ -19,54 +19,108 @@
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		
+		<!--Info-->
 		<JcControls:InfoControl x:Name="InfoPanel" x:FieldModifier="public" RightIconContent="{StaticResource Icon_gamepad}" />
-		<StackPanel Orientation="Horizontal" Grid.Row="1">
 
-		<!--Add Game Program-->
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="Auto" />
-				<RowDefinition Height="*" />
-			</Grid.RowDefinitions>
-				<Border Style="{StaticResource BorderDescriptionNormal}" Padding="6,3,6,3" Margin="3,3,0,0">
-					<Label HorizontalAlignment="Center">STEP 1 - Add and select application to configure.</Label>
-				</Border>
-				<StackPanel Orientation="Horizontal" Grid.Row="1">
-					<Button Name="AddGameButton" Click="AddGameButton_Click">
-						<StackPanel>
-							<ContentControl Content="{StaticResource Icon_Add}" />
-							<Label Content="Add..." />
-						</StackPanel>
-					</Button>
-					<Button Name="TestButton" Click="TestButton_Click" Margin="0,3,3,3">
-						<StackPanel>
-							<ContentControl Content="{StaticResource Icon_test}" />
-							<Label Content="Test..." />
-						</StackPanel>
-					</Button>
-					<Button Name="SaveAllButton" Click="SaveAllButton_Click"  Margin="0,3,0,3">
-						<StackPanel>
-							<ContentControl Content="{StaticResource Icon_save}" />
-							<Label Content="Save All Settings" />
-						</StackPanel>
-					</Button>
-				</StackPanel>
-				<ListBox Grid.Row="2" x:Name="GameToCustomizeComboBox" Margin="3,0,0,3">
-					<ListBox.ItemContainerStyle>
-						<Style TargetType="ListBoxItem" BasedOn="{StaticResource ListBoxItem_Default}">
-							<Setter Property="Padding" Value="6"/>
-							<Setter Property="Background" Value="White"/>
-							<Setter Property="Margin" Value="0,0,0,1" />
-						</Style>
-					</ListBox.ItemContainerStyle>
-				</ListBox>
-			</Grid>
-			
-		<local:MainBodyControl x:Name="MainBodyPanel" Margin="3" />
+		<StackPanel Orientation="Horizontal" Grid.Row="1">
+			<!--Add Game Program-->
+			<TabControl Margin="3,3,0,3" Width="280">
+					<TabItem>
+						<TabItem.Header>
+							<StackPanel Orientation="Horizontal">
+								<ContentControl Name="NormalTab" Margin="0,0,3,0" Content="{StaticResource Icon_document_gear}" />
+								<TextBlock Text="GAMES and PROGRAMS" />
+							</StackPanel>
+						</TabItem.Header>
+						<ScrollViewer VerticalScrollBarVisibility="Auto">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="*" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Border Style="{StaticResource BorderDescriptionNormal}" Padding="3,3,3,4" Margin="3,3,3,0">
+								<Label HorizontalAlignment="Center">STEP 1 - Add and select game to configure.</Label>
+							</Border>
+							<StackPanel Orientation="Horizontal" Grid.Row="1">
+								<Button Name="AddGameButton" Click="AddGameButton_Click">
+									<StackPanel>
+										<ContentControl Content="{StaticResource Icon_Add}" />
+										<Label Content="Add..." />
+									</StackPanel>
+								</Button>
+								<Button Name="TestButton" Click="TestButton_Click" Margin="0,3,3,3">
+									<StackPanel>
+										<ContentControl Content="{StaticResource Icon_test}" />
+										<Label Content="Test..." />
+									</StackPanel>
+								</Button>
+								<Button Name="SaveAllButton" Click="SaveAllButton_Click"  Margin="0,3,0,3">
+									<StackPanel>
+										<ContentControl Content="{StaticResource Icon_save}" />
+										<Label Content="Save All Settings" />
+									</StackPanel>
+								</Button>
+							</StackPanel>
+
+							<!-- Game Listed in DataGrid-->
+							<DataGrid
+							Grid.Row="2"
+							Name="GameToCustomizeDataGrid"
+							AutoGenerateColumns="False"
+							IsReadOnly="True"
+							ScrollViewer.CanContentScroll="True"
+							ScrollViewer.HorizontalScrollBarVisibility="Auto"
+							ScrollViewer.VerticalScrollBarVisibility="Auto"
+							SelectionMode="Single"
+							SelectionChanged="GameToCustomizeDataGrid_SelectionChanged">
+									<DataGrid.CellStyle>
+										<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
+											<Style.Triggers>
+												<DataTrigger Binding="{Binding IsOnline}" Value="False">
+													<Setter Property="Opacity" Value="0.2" />
+												</DataTrigger>
+												<DataTrigger Binding="{Binding IsOnline}" Value="True">
+													<Setter Property="Opacity" Value="1" />
+												</DataTrigger>
+											</Style.Triggers>
+										</Style>
+									</DataGrid.CellStyle>
+								<DataGrid.Columns>
+									<DataGridTextColumn
+										Width="*"
+										Binding="{Binding FileProductName}"
+										EditingElementStyle="{StaticResource TextBoxCell}"
+										ElementStyle="{StaticResource TextBlockCell}"
+										Header="Name"
+										SortDirection="{x:Null}" />
+									</DataGrid.Columns>
+							</DataGrid>
+							<StackPanel Name="GameDetails" Grid.Row="3" Margin="3">
+								<StackPanel Orientation="Horizontal">
+									<Label>File Name </Label>
+									<Label Opacity="0.5" Name="FileProductName"/>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<Label>File </Label>
+									<Label Opacity="0.5" Name="FileName"/>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<Label>Id </Label>
+									<Label Opacity="0.5" Name="GameId"/>
+								</StackPanel>
+							</StackPanel>
+
+						</Grid>
+					</ScrollViewer>
+					</TabItem>
+				</TabControl>
+			<!--Settings-->
+			<local:MainBodyControl x:Name="MainBodyPanel" Margin="3" />
 		</StackPanel>
-		
+
+		<!--Status Bar-->
 		<StatusBar Grid.Row="2" HorizontalAlignment="Left">
 			<StatusBarItem>
 				<Label x:Name="StatusTimerLabel" Content="StatusTimerLabel" />

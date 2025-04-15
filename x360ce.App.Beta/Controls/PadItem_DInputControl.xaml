@@ -5,11 +5,11 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="450"
-	d:DesignWidth="900"
+	d:DesignWidth="1200"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
-	<Grid Margin="3">
+	<Grid Margin="3" HorizontalAlignment="Stretch">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -24,7 +24,7 @@
 			</Grid.RowDefinitions>
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="300" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="100" />
 				<ColumnDefinition Width="Auto" />
@@ -219,56 +219,49 @@
                 </DataGrid.OpacityMask>-->
 					<DataGrid.Columns>
 						<DataGridTextColumn
-							Width="*"
 							Binding="{Binding Axis}"
 							ElementStyle="{StaticResource TextBlockCenterCell}"
 							Header="Axis" />
 						<DataGridTextColumn
-							Width="*"
 							Binding="{Binding M}"
 							ElementStyle="{StaticResource TextBlockCenterCell}"
 							Header="M" />
 						<DataGridTextColumn
-							Width="*"
 							Binding="{Binding R}"
 							ElementStyle="{StaticResource TextBlockCenterCell}"
 							Header="R" />
 						<DataGridTextColumn
-							Width="*"
 							Binding="{Binding A}"
 							ElementStyle="{StaticResource TextBlockRightCell}"
 							Header="A" />
 						<DataGridTextColumn
-							Width="*"
 							Binding="{Binding AR}"
 							ElementStyle="{StaticResource TextBlockRightCell}"
 							Header="AR" />
 						<DataGridTextColumn
-							Width="*"
 							Binding="{Binding F}"
 							ElementStyle="{StaticResource TextBlockRightCell}"
 							Header="F" />
 						<DataGridTextColumn
-							Width="*"
 							Binding="{Binding FR}"
 							ElementStyle="{StaticResource TextBlockRightCell}"
 							Header="FR" />
 						<DataGridTextColumn
-							Width="*"
 							Binding="{Binding V}"
 							ElementStyle="{StaticResource TextBlockRightCell}"
 							Header="V" />
 						<DataGridTextColumn
-							Width="*"
 							Binding="{Binding VR}"
 							ElementStyle="{StaticResource TextBlockRightCell}"
 							Header="VR" />
 					</DataGrid.Columns>
 				</DataGrid>
 			</UserControl>
+			
 			<DataGrid
 				Name="DiSlidersDataGridView"
 				Grid.Column="1"
+				HorizontalAlignment="Stretch"
 				Margin="6,0,0,0"
 				VerticalAlignment="Top"
 				Background="{StaticResource BackgroundDark}"
@@ -303,32 +296,28 @@
 				</DataGrid.OpacityMask>
 				<DataGrid.Columns>
 					<DataGridTextColumn
-						Width="*"
 						Binding="{Binding Slider}"
 						ElementStyle="{StaticResource TextBlockRightCell}"
 						Header="Slider" />
 					<DataGridTextColumn
-						Width="*"
 						Binding="{Binding M}"
 						ElementStyle="{StaticResource TextBlockRightCell}"
 						Header="M" />
 					<DataGridTextColumn
-						Width="*"
 						Binding="{Binding A}"
 						ElementStyle="{StaticResource TextBlockRightCell}"
 						Header="A" />
 					<DataGridTextColumn
-						Width="*"
 						Binding="{Binding F}"
 						ElementStyle="{StaticResource TextBlockRightCell}"
 						Header="F" />
 					<DataGridTextColumn
-						Width="*"
 						Binding="{Binding V}"
 						ElementStyle="{StaticResource TextBlockRightCell}"
 						Header="V" />
 				</DataGrid.Columns>
 			</DataGrid>
+			
 			<DataGrid
 				Name="DiPOVsDataGridView"
 				Grid.Column="2"
@@ -366,22 +355,20 @@
 				</DataGrid.OpacityMask>
 				<DataGrid.Columns>
 					<DataGridTextColumn
-						Width="*"
 						Binding="{Binding POV}"
 						ElementStyle="{StaticResource TextBlockRightCell}"
 						Header="POV" />
 					<DataGridTextColumn
-						Width="*"
 						Binding="{Binding M}"
 						ElementStyle="{StaticResource TextBlockRightCell}"
-						Header="" />
+						Header="M" />
 					<DataGridTextColumn
-						Width="*"
 						Binding="{Binding A}"
 						ElementStyle="{StaticResource TextBlockRightCell}"
-						Header="" />
+						Header="A" />
 				</DataGrid.Columns>
 			</DataGrid>
+			
 			<DataGrid
 				Name="DiButtonsDataGridView"
 				Grid.Column="3"

@@ -239,11 +239,8 @@
 		
 		<!--  Buttons and Axes  -->
 		<StackPanel Grid.RowSpan="3" >
-			<!-- Drag and Drop Help -->
-			<Border Style="{StaticResource BorderDescriptionNormal}" Margin="0,0,9,3">
-				<Label Style="{StaticResource DragAndDropDInputLabel1}" HorizontalAlignment="Center" />
-			</Border>
-			<TabControl Width="240" Margin="0,0,3,0">
+
+			<TabControl Width="260" Margin="0,0,3,0">
 				<TabItem>
 					<TabItem.Header>
 						<StackPanel Orientation="Horizontal">
@@ -256,6 +253,12 @@
 					<ScrollViewer VerticalScrollBarVisibility="Auto">
 						<StackPanel>
 							<Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
+
+							<!-- Drag and Drop Help -->
+							<Border Style="{StaticResource BorderDescriptionNormal}" Margin="3,3,3,0">
+								<Label Style="{StaticResource DragAndDropDInputLabel1}" HorizontalAlignment="Center" />
+							</Border>
+
 							<StackPanel Name="DragAndDropStackPanelNormal" Margin="3,0,3,3">
 								<StackPanel.Resources>
 									<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
