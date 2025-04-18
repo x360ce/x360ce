@@ -836,33 +836,36 @@ namespace x360ce.App.Controls
 
 		private void RecordClear_MouseEnterTextBox(object sender, MouseEventArgs e)
 		{
-			if (RecordClearGrid.Parent is Grid g1)
-			{
-				g1.Children.Remove(RecordClearGrid);
-			}
+			// If it was already hosted somewhere else, remove it first,
+			if (RCStackPanel.Parent is StackPanel s1) { s1.Children.Remove(RCStackPanel); }
 
-			if (sender is TextBox t2 && t2.Parent is StackPanel s2 && s2.Parent is Grid g2)
+			// Act on TextBoxes inside a StackPanel.
+			if (sender is TextBox t2 && t2.Parent is StackPanel s2)
 			{
-				if (g2.HorizontalAlignment == HorizontalAlignment.Left)
+				if (s2.HorizontalAlignment == HorizontalAlignment.Left)
 				{
-					Grid.SetColumn(RCStackPanel, 1);
-					RecordClearColumn0.Width = new GridLength(77);
-					RecordClearColumn1.Width = new GridLength(1, GridUnitType.Star);
 					RCStackPanel.FlowDirection = FlowDirection.LeftToRight;
+					ClearButton.FlowDirection = FlowDirection.LeftToRight;
+					// Calculate the insertion index = just before the last element.
+					int insertIndex = Math.Max(0, s2.Children.Count - 1);
+					s2.Children.Insert(insertIndex, RCStackPanel);
+
 				}
 				else
 				{
-					Grid.SetColumn(RCStackPanel, 0);
-					RecordClearColumn0.Width = new GridLength(1, GridUnitType.Star);
-					RecordClearColumn1.Width = new GridLength(77);
 					RCStackPanel.FlowDirection = FlowDirection.RightToLeft;
+					ClearButton.FlowDirection= FlowDirection.LeftToRight;
+					// Calculate the insertion index = just before the last element.
+					s2.Children.Insert(1, RCStackPanel);
 				}
 
-				RCStackPanel.HorizontalAlignment = g2.HorizontalAlignment;
 				RecordButton.Tag = t2;
 				ClearButton.Tag = t2;
-				g2.Children.Add(RecordClearGrid);
-				RecordClearGrid.Visibility = Visibility.Visible;
+
+
+
+				ClearButton.Visibility = (t2.Text.Length > 0) ? Visibility.Visible : Visibility.Collapsed;
+				RCStackPanel.Visibility = Visibility.Visible;
 			}
 		}
 
@@ -896,12 +899,12 @@ namespace x360ce.App.Controls
 
 		private void RecordClear_MouseEnter(object sender, MouseEventArgs e)
 		{
-			RecordClearGrid.Visibility = Visibility.Visible;
+			RCStackPanel.Visibility = Visibility.Visible;
 		}
 
 		private void RecordClear_MouseLeave(object sender, MouseEventArgs e)
 		{
-			RecordClearGrid.Visibility = Visibility.Collapsed;
+			RCStackPanel.Visibility = Visibility.Collapsed;
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
