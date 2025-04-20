@@ -80,6 +80,7 @@ namespace x360ce.App.Controls
 					.Where(x => x.MapTo == (int)_MappedTo)
 					// Filter devices by selected game (no items will be shown if game is not selected).
 					.Where(x => game != null && x.FileName == game.FileName && x.FileProductName == game.FileProductName)
+					.OrderByDescending(x => x.IsOnline)
 					.ToList();
 				var itemsToRemove = mappedUserSettings.Except(itemsToShow).ToArray();
 				var itemsToInsert = itemsToShow.Except(mappedUserSettings).ToArray();

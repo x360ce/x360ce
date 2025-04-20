@@ -66,19 +66,8 @@
                     IsEnabled="False" />
             </Grid>
         </GroupBox>
-        <RichTextBox Name="HelpRichTextBox" Grid.Row="1" Margin="3" Background="{StaticResource BackgroundDark}">
-            <RichTextBox.OpacityMask>
-                <VisualBrush>
-                    <VisualBrush.Visual>
-                        <Border
-                            Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
-                            Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
-                            Background="White"
-                            CornerRadius="5"
-                            SnapsToDevicePixels="True" />
-                    </VisualBrush.Visual>
-                </VisualBrush>
-            </RichTextBox.OpacityMask>
-        </RichTextBox>
+
+		<RichTextBox Grid.Row="1" Name="HelpRichTextBox" Background="Transparent"  Padding="5"/>
+
     </Grid>
 </UserControl>

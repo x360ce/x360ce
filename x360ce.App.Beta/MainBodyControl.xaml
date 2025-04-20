@@ -72,20 +72,7 @@
 			<local:CloudControl x:Name="CloudPanel" />
 		</TabItem>
 		<TabItem Name="HelpTabPage" Header="Help">
-			<RichTextBox x:Name="HelpRichTextBox">
-				<RichTextBox.OpacityMask>
-					<VisualBrush>
-						<VisualBrush.Visual>
-							<Border
-								Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
-								Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
-								Background="White"
-								CornerRadius="0,5,5,5"
-								SnapsToDevicePixels="True" />
-						</VisualBrush.Visual>
-					</VisualBrush>
-				</RichTextBox.OpacityMask>
-			</RichTextBox>
+			<RichTextBox Name="HelpRichTextBox" Background="Transparent" Padding="5,8,5,8"/>
 		</TabItem>
 		<TabItem Name="AboutTabPage" Header="About">
 			<local:AboutUserControl x:Name="AboutPanel" />

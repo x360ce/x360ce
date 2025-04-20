@@ -89,7 +89,6 @@
 			<DataGrid
 				xmlns:local="clr-namespace:x360ce.App.Converters"
 				x:Name="MainDataGrid"
-				Height="Auto"
 				AutoGenerateColumns="False"
 				SelectionChanged="MainDataGrid_SelectionChanged">
 				<DataGrid.Resources>
@@ -169,12 +168,14 @@
 						Header="Device" />
 					<DataGridTextColumn
 						Width="*"
-						MinWidth="150"
 						Binding="{Binding HidDeviceId}"
 						EditingElementStyle="{StaticResource TextBoxCell}"
 						ElementStyle="{StaticResource TextBlockCell}"
 						Header="HID Guardian Device ID" />
-					<DataGridTemplateColumn x:Name="IsHiddenColumn" Header="Hidden" SortMemberPath="IsHidden">
+					<DataGridTemplateColumn
+						x:Name="IsHiddenColumn"
+						Header="Hidden"
+						SortMemberPath="IsHidden">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>
 								<CheckBox IsChecked="{Binding IsHidden}" Style="{StaticResource CheckBoxCell_Default}" Visibility="{Binding AllowHide, Converter={StaticResource _BooleanToVisibilityConverter}}" />

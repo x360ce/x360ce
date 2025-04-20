@@ -15,15 +15,13 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<Grid>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-				<local:PadListControl x:Name="PadListPanel" />
-				<local:PadItemControl x:Name="PadItemPanel" Grid.Column="1" />
-			</Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 
-		<local:PadFootControl x:Name="PadFootPanel" Grid.Row="1" />
-	</Grid>
-</UserControl>
+		<local:PadListControl x:Name="PadListPanel" />
+		<local:PadItemControl x:Name="PadItemPanel" Grid.Column="1" />
+		<local:PadFootControl x:Name="PadFootPanel" Grid.Row="1" Grid.ColumnSpan="2" />
+		
+	</Grid></UserControl>

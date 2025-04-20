@@ -57,7 +57,6 @@
             xmlns:local="clr-namespace:x360ce.App.Converters"
             x:Name="MainDataGrid"
             Grid.Row="1"
-            Height="Auto"
             HorizontalAlignment="Stretch"
             AutoGenerateColumns="False"
             Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"

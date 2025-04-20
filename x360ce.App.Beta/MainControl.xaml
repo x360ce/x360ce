@@ -9,7 +9,7 @@
 	HorizontalAlignment="Stretch"
 	VerticalAlignment="Stretch"
 	d:DesignHeight="900"
-	d:DesignWidth="1600"
+	d:DesignWidth="2000"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
@@ -19,12 +19,17 @@
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<!--Info-->
-		<JcControls:InfoControl x:Name="InfoPanel" x:FieldModifier="public" RightIconContent="{StaticResource Icon_gamepad}" />
 
-		<StackPanel Orientation="Horizontal" Grid.Row="1">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="280"/>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		
+		<!--Info-->
+		<JcControls:InfoControl x:Name="InfoPanel" x:FieldModifier="public" RightIconContent="{StaticResource Icon_gamepad}" Grid.ColumnSpan="2" />
+
 			<!--Add Game Program-->
-			<TabControl Margin="3,3,0,3" Width="280">
+			<TabControl Margin="3,3,0,3" Grid.Row="1">
 					<TabItem>
 						<TabItem.Header>
 							<StackPanel Orientation="Horizontal">
@@ -115,18 +120,17 @@
 						</Grid>
 					</ScrollViewer>
 					</TabItem>
-				</TabControl>
+			</TabControl>
 			<!--Settings-->
-			<local:MainBodyControl x:Name="MainBodyPanel" Margin="3" />
-		</StackPanel>
+		<local:MainBodyControl x:Name="MainBodyPanel" Margin="3" Grid.Row="1" Grid.Column="1" />
 
 		<!--Status Bar-->
-		<StatusBar Grid.Row="2" HorizontalAlignment="Left">
+		<StatusBar Grid.Row="2" HorizontalAlignment="Left" Grid.ColumnSpan="2">
 			<StatusBarItem>
 				<Label x:Name="StatusTimerLabel" Content="StatusTimerLabel" />
 			</StatusBarItem>
 		</StatusBar>
-		<StatusBar Grid.Row="2" HorizontalAlignment="Right">
+		<StatusBar Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2">
 			<StatusBarItem>
 				<Label x:Name="UpdateFrequencyLabel" Content="Hz:0" />
 			</StatusBarItem>

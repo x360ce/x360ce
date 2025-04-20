@@ -25,7 +25,7 @@
         <!--  Grid Resources  -->
         <Grid.Resources>
             <Style BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
-                <Setter Property="Margin" Value="3,0,0,0" />
+				<Setter Property="Margin" Value="3,0,3,3" />
             </Style>
         </Grid.Resources>
         <!--  Online Account  -->
@@ -67,7 +67,6 @@
         <GroupBox
             Grid.Row="1"
             Grid.ColumnSpan="2"
-            Margin="3,0,3,3"
             Header="Online Account - Anonymous Computer ID and Profile ID will be used by default">
             <StackPanel>
                 <Grid HorizontalAlignment="Stretch">
@@ -143,7 +142,6 @@
         <GroupBox
             Grid.Row="2"
             Grid.ColumnSpan="2"
-            Margin="3,0,3,0"
             Header="Internet">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Vertical">

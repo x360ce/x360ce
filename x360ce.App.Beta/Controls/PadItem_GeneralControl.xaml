@@ -8,7 +8,7 @@
 	xmlns:conv="clr-namespace:x360ce.App.Controls"
 	x:Name="This"
 	d:Height="600"
-	d:Width="1200"
+	d:Width="1000"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
@@ -275,7 +275,7 @@
 					<Button Name="TriggerLInvertButton" Tag="{Binding ElementName=TriggerLTextBox}" Margin="0,0,3,0" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 
 					<!--  Record and Clear Buttons.  -->
-					<StackPanel Name="RCStackPanel" Background="{StaticResource BackgroundLight}" Orientation="Horizontal">
+					<StackPanel Name="RCStackPanel" Background="{StaticResource BackgroundLight}" Orientation="Horizontal" d:Visibility="Visible" Visibility="Collapsed">
 						<Button Name="RecordButton" Click="RecordButton_Click" ToolTip="Record" Margin="0,0,3,0">
 							<!--<ContentControl Content="{StaticResource Icon_Record}" />-->
 							<Border
@@ -285,7 +285,7 @@
 									Background="{StaticResource ColorRecord}"
 									CornerRadius="8" />
 						</Button>
-						<Button Name="ClearButton" Margin="0,0,3,0" Click="ClearButton_Click" ToolTip="Clear" Visibility="Visible">
+						<Button Name="ClearButton" Margin="0,0,3,0" Click="ClearButton_Click" ToolTip="Clear">
 							<ContentControl Content="{StaticResource Icon_broom}" />
 						</Button>
 					</StackPanel>

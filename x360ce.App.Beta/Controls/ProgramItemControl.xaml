@@ -113,7 +113,7 @@
                 <Button Click="NGEmuThreadLinkButton_Click" Content="Open NGemu..." />
             </StackPanel>
         </GroupBox>
-        <GroupBox Grid.Row="1" Grid.ColumnSpan="4" Header="Other Options">
+        <GroupBox Grid.Row="1" Grid.ColumnSpan="4" Header="Other Options" Margin="3,0,0,2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
