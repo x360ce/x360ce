@@ -78,19 +78,22 @@ namespace x360ce.App.DInput
 			var stopwatch = Stopwatch.StartNew();
 
 			// Query each device class in parallel, filter and transform results.
-			var connectedDevices = _deviceClasses.AsParallel()
-				.SelectMany(deviceClass => directInput.GetDevices(deviceClass, DeviceEnumerationFlags.AttachedOnly)
-					.Where(d => deviceClass != DeviceClass.Device ||
-							   ((int)d.Usage == 2 || (int)d.Usage == 6))
+
+			var connectedDevices = new List<(object DeviceInstance, object DeviceClass, int Usage, string DiDeviceID, string ProductName, Guid InstanceGuid)>();
+			foreach (var deviceClass in _deviceClasses)
+			{
+				var devices = directInput.GetDevices(deviceClass, DeviceEnumerationFlags.AttachedOnly)
+					.Where(d => deviceClass != DeviceClass.Device || ((int)d.Usage == 2 || (int)d.Usage == 6))
 					.Select(d => (
 						DeviceInstance: (object)d,
 						DeviceClass: (object)deviceClass,
 						Usage: (int)d.Usage,
 						DiDeviceID: ConvertProductGuidToDeviceID(d.ProductGuid, deviceClass),
 						ProductName: d.InstanceName,
-						InstanceGuid: d.InstanceGuid)))
-				.OrderBy(x => x.DiDeviceID)
-				.ToList();
+						InstanceGuid: d.InstanceGuid));
+				connectedDevices.AddRange(devices);
+			}
+			connectedDevices = connectedDevices.OrderBy(x => x.DiDeviceID).ToList();
 
 			// Check for changes in the set of device GUIDs.
 			var newDeviceGuidSet = new HashSet<Guid>(connectedDevices.Select(item => item.InstanceGuid));
@@ -148,8 +151,8 @@ namespace x360ce.App.DInput
 			out DeviceInstance[] updatedDevices,
 			out UserDevice[] removedDevices)
 		{
-			var listedGuids = listedDevices.Select(x => x.InstanceGuid).ToHashSet();
-			var connectedGuids = connectedDevices.Select(x => x.InstanceGuid).ToHashSet();
+			var listedGuids = new HashSet<Guid>(listedDevices.Select(x => x.InstanceGuid));
+			var connectedGuids = new HashSet<Guid>(connectedDevices.Select(x => x.InstanceGuid));
 
 			addedDevices = connectedDevices.Where(x => !listedGuids.Contains(x.InstanceGuid)).ToArray();
 			updatedDevices = connectedDevices.Where(x => listedGuids.Contains(x.InstanceGuid)).ToArray();
@@ -260,6 +263,8 @@ namespace x360ce.App.DInput
 				LoadHidDeviceData(userDevice, instance, allInterfaces, out hid);
 			}
 		}
+
+
 
 		/// <summary>
 		/// Initializes the device if it has not been initialized.

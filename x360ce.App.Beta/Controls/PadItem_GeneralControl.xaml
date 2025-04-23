@@ -109,7 +109,7 @@
 						<Setter Property="HorizontalAlignment" Value="Center" />
 						<Setter Property="Padding" Value="7,2,8,3" />
 						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Virtual Xbox Input" />
+						<Setter Property="Content" Value="Virtual Xbox Controller" />
 					</Style>
 					<!--  Drag and Drop menu Title Label  -->
 					<Style x:Key="DragAndDropDInputTitleLabel" TargetType="Label">

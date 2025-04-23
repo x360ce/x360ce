@@ -14,9 +14,10 @@ namespace x360ce.App.DInput
 		{
 			// Get mapped and enabled game settings.
 			var settings = SettingsManager.UserSettings.ItemsToArraySynchronized()
-			   // Get only settings mapped to the game.
+				.Where(s => s.FileName == game?.FileName && s.MapTo > (int)MapTo.None && s.IsEnabled)
+			   // Get mapped to the game settings.
 			   .Where(x => x.FileName == game?.FileName)
-			   // Get only mapped and enabled settings.
+			   // Get mapped and enabled settings.
 			   .Where(x => x.MapTo > (int)MapTo.None && x.IsEnabled)
 			   .ToArray();
 			foreach (var setting in settings)
@@ -120,46 +121,43 @@ namespace x360ce.App.DInput
 					// --------------------------------------------------------
 					if (map.IsButton)
 					{
-						// If mapped index is in range then...
-						if (map.Index < diState.Buttons.Length)
+						// If mapped index is in range and pressed...
+						if (map.Index < diState.Buttons.Length && diState.Buttons[map.Index - 1])
 						{
-							var pressed = diState.Buttons[map.Index - 1];
-							if (pressed)
+							switch (map.Target)
 							{
 								// --------------------------------------------------------
 								// Target: Button.
 								// --------------------------------------------------------
-								if (map.Target == TargetType.Button)
-									gp.Buttons |= map.ButtonFlag;
+								case TargetType.Button: gp.Buttons |= map.ButtonFlag; break;
 								// --------------------------------------------------------
 								// Target: Trigger.
 								// --------------------------------------------------------
-								else if (map.Target == TargetType.LeftTrigger)
-									gp.LeftTrigger = byte.MaxValue;
-								else if (map.Target == TargetType.RightTrigger)
-									gp.RightTrigger = byte.MaxValue;
+								case TargetType.LeftTrigger: gp.LeftTrigger = byte.MaxValue; break;
+								case TargetType.RightTrigger: gp.RightTrigger = byte.MaxValue; break;
 								// --------------------------------------------------------
 								// Target: Thumb.
 								// --------------------------------------------------------
-								else if (map.Target == TargetType.LeftThumbX)
+								case TargetType.LeftThumbX:
 									gp.LeftThumbX = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								else if (map.Target == TargetType.LeftThumbY)
+										? (map.IsInverted ? (short)0 : map.AxisValue.Value)
+										: (map.IsInverted ? short.MinValue : short.MaxValue);
+									break;
+								case TargetType.LeftThumbY:
 									gp.LeftThumbY = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								else if (map.Target == TargetType.RightThumbX)
+										? (map.IsInverted ? (short)0 : map.AxisValue.Value)
+										: (map.IsInverted ? short.MinValue : short.MaxValue);
+									break;
+								case TargetType.RightThumbX:
 									gp.RightThumbX = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								else if (map.Target == TargetType.RightThumbY)
+										? (map.IsInverted ? (short)0 : map.AxisValue.Value)
+										: (map.IsInverted ? short.MinValue : short.MaxValue);
+									break;
+								case TargetType.RightThumbY:
 									gp.RightThumbY = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								// --------------------------------------------------------
-								// Target: Max.
-								// --------------------------------------------------------
+										? (map.IsInverted ? (short)0 : map.AxisValue.Value)
+										: (map.IsInverted ? short.MinValue : short.MaxValue);
+									break;
 							}
 						}
 					}
@@ -181,43 +179,43 @@ namespace x360ce.App.DInput
 					// --------------------------------------------------------
 					else if (map.Type == MapType.DPOVButton)
 					{
-						// If mapped index is in range then...
-						if (map.Index < dPadButtons.Length)
+						// If mapped index is in range and pressed...
+						if (map.Index < dPadButtons.Length && dPadButtons[map.Index - 1])
 						{
-							var pressed = dPadButtons[map.Index - 1];
-							if (pressed)
+							switch (map.Target)
 							{
 								// --------------------------------------------------------
 								// Target: Button.
 								// --------------------------------------------------------
-								if (map.Target == TargetType.Button)
-									gp.Buttons |= map.ButtonFlag;
+								case TargetType.Button: gp.Buttons |= map.ButtonFlag; break;
 								// --------------------------------------------------------
 								// Target: Trigger.
 								// --------------------------------------------------------
-								else if (map.Target == TargetType.LeftTrigger)
-									gp.LeftTrigger = byte.MaxValue;
-								else if (map.Target == TargetType.RightTrigger)
-									gp.RightTrigger = byte.MaxValue;
+								case TargetType.LeftTrigger: gp.LeftTrigger = byte.MaxValue; break;
+								case TargetType.RightTrigger: gp.RightTrigger = byte.MaxValue; break;
 								// --------------------------------------------------------
 								// Target: Thumb.
 								// --------------------------------------------------------
-								else if (map.Target == TargetType.LeftThumbX)
+								case TargetType.LeftThumbX:
 									gp.LeftThumbX = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								else if (map.Target == TargetType.LeftThumbY)
+										? (map.IsInverted ? (short)0 : map.AxisValue.Value)
+										: (map.IsInverted ? short.MinValue : short.MaxValue);
+									break;
+								case TargetType.LeftThumbY:
 									gp.LeftThumbY = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								else if (map.Target == TargetType.RightThumbX)
+										? (map.IsInverted ? (short)0 : map.AxisValue.Value)
+										: (map.IsInverted ? short.MinValue : short.MaxValue);
+									break;
+								case TargetType.RightThumbX:
 									gp.RightThumbX = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
-								else if (map.Target == TargetType.RightThumbY)
+										? (map.IsInverted ? (short)0 : map.AxisValue.Value)
+										: (map.IsInverted ? short.MinValue : short.MaxValue);
+									break;
+								case TargetType.RightThumbY:
 									gp.RightThumbY = map.AxisValue.HasValue
-										? map.IsInverted ? (short)0 : map.AxisValue.Value
-										: map.IsInverted ? short.MinValue : short.MaxValue;
+										? (map.IsInverted ? (short)0 : map.AxisValue.Value)
+										: (map.IsInverted ? short.MinValue : short.MaxValue);
+									break;
 							}
 						}
 					}
@@ -306,10 +304,11 @@ namespace x360ce.App.DInput
 						else if (map.Target == TargetType.LeftTrigger || map.Target == TargetType.RightTrigger)
 						{
 							var triggerValue = (byte)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf, false);
-							if (map.Target == TargetType.LeftTrigger)
-								gp.LeftTrigger = triggerValue;
-							if (map.Target == TargetType.RightTrigger)
-								gp.RightTrigger = triggerValue;
+							switch (map.Target)
+							{
+								case TargetType.LeftTrigger: gp.LeftTrigger = triggerValue; break;
+								case TargetType.RightTrigger: gp.RightTrigger = triggerValue; break;
+							}
 						}
 						// --------------------------------------------------------
 						// Target: Thumb.
@@ -317,14 +316,13 @@ namespace x360ce.App.DInput
 						else if (map.Target != TargetType.None)
 						{
 							var thumbValue = (short)ConvertHelper.GetThumbValue(v, map.DeadZone, map.AntiDeadZone, map.Linear, map.IsInverted, map.IsHalf);
-							if (map.Target == TargetType.LeftThumbX)
-								gp.LeftThumbX = thumbValue;
-							if (map.Target == TargetType.LeftThumbY)
-								gp.LeftThumbY = thumbValue;
-							if (map.Target == TargetType.RightThumbX)
-								gp.RightThumbX = thumbValue;
-							if (map.Target == TargetType.RightThumbY)
-								gp.RightThumbY = thumbValue;
+							switch (map.Target)
+							{
+								case TargetType.LeftThumbX: gp.LeftThumbX = thumbValue; break;
+								case TargetType.LeftThumbY: gp.LeftThumbY = thumbValue; break;
+								case TargetType.RightThumbX: gp.RightThumbX = thumbValue; break;
+								case TargetType.RightThumbY: gp.RightThumbY = thumbValue; break;
+							}
 						}
 					}
 				}
