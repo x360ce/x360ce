@@ -50,20 +50,20 @@ namespace x360ce.App.Controls
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
 			// Axis to Button DeadZones
-			ButtonsPanel.AxisToButtonADeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionATextBox;
-			ButtonsPanel.AxisToButtonBDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionBTextBox;
-			ButtonsPanel.AxisToButtonXDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionXTextBox;
-			ButtonsPanel.AxisToButtonYDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionYTextBox;
-			ButtonsPanel.AxisToButtonStartDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.MenuStartTextBox;
-			ButtonsPanel.AxisToButtonBackDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.MenuBackTextBox;
-			ButtonsPanel.AxisToLeftShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperLTextBox;
-			ButtonsPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickLButtonTextBox;
-			ButtonsPanel.AxisToRightShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperRTextBox;
-			ButtonsPanel.AxisToRightThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickRButtonTextBox;
-			ButtonsPanel.AxisToDPadDownDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadDownTextBox;
-			ButtonsPanel.AxisToDPadLeftDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadLeftTextBox;
-			ButtonsPanel.AxisToDPadRightDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadRightTextBox;
-			ButtonsPanel.AxisToDPadUpDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadUpTextBox;
+			ButtonsPanel.AxisToButtonADeadZonePanel.MonitorTextBox = GeneralPanel.ActionATextBox;
+			ButtonsPanel.AxisToButtonBDeadZonePanel.MonitorTextBox = GeneralPanel.ActionBTextBox;
+			ButtonsPanel.AxisToButtonXDeadZonePanel.MonitorTextBox = GeneralPanel.ActionXTextBox;
+			ButtonsPanel.AxisToButtonYDeadZonePanel.MonitorTextBox = GeneralPanel.ActionYTextBox;
+			ButtonsPanel.AxisToButtonStartDeadZonePanel.MonitorTextBox = GeneralPanel.MenuStartTextBox;
+			ButtonsPanel.AxisToButtonBackDeadZonePanel.MonitorTextBox = GeneralPanel.MenuBackTextBox;
+			ButtonsPanel.AxisToLeftShoulderDeadZonePanel.MonitorTextBox = GeneralPanel.BumperLTextBox;
+			ButtonsPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorTextBox = GeneralPanel.StickLButtonTextBox;
+			ButtonsPanel.AxisToRightShoulderDeadZonePanel.MonitorTextBox = GeneralPanel.BumperRTextBox;
+			ButtonsPanel.AxisToRightThumbButtonDeadZonePanel.MonitorTextBox = GeneralPanel.StickRButtonTextBox;
+			ButtonsPanel.AxisToDPadDownDeadZonePanel.MonitorTextBox = GeneralPanel.DPadDownTextBox;
+			ButtonsPanel.AxisToDPadLeftDeadZonePanel.MonitorTextBox = GeneralPanel.DPadLeftTextBox;
+			ButtonsPanel.AxisToDPadRightDeadZonePanel.MonitorTextBox = GeneralPanel.DPadRightTextBox;
+			ButtonsPanel.AxisToDPadUpDeadZonePanel.MonitorTextBox = GeneralPanel.DPadUpTextBox;
 			// Monitor setting changes.
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 			PadListPanel.SetBinding(MappedTo);
