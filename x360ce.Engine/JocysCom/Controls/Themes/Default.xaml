@@ -531,6 +531,7 @@
 		<Setter Property="MinWidth" Value="26" />
 		<Setter Property="Margin" Value="3" />
 		<Setter Property="Padding" Value="5" />
+		<Setter Property="BorderThickness" Value="0" />
 		<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
 		<Setter Property="Template">
 			<Setter.Value>
@@ -564,7 +565,7 @@
 						</Style>
 					</ControlTemplate.Resources>
 					<!--  Template  -->
-					<Border Name="ButtonBorder" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+					<Border Name="ButtonBorder" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
 						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
 					</Border>
 					<!--  Triggers  -->
@@ -649,10 +650,11 @@
 	<!--  ListBoxItem  -->
 	<Style x:Key="ListBoxItem_Default" TargetType="ListBoxItem">
 		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Padding" Value="0" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ListBoxItem">
-					<Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+					<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
 						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 					</Border>
 					<ControlTemplate.Triggers>

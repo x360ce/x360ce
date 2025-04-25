@@ -8,78 +8,155 @@
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	HorizontalAlignment="Stretch"
 	VerticalAlignment="Stretch"
-	d:DesignHeight="780"
-	d:DesignWidth="800"
+	d:DesignHeight="900"
+	d:DesignWidth="2000"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
 			<RowDefinition Height="*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
-		<JcControls:InfoControl x:Name="InfoPanel" x:FieldModifier="public" RightIconContent="{StaticResource Icon_gamepad}" />
-		<DockPanel Grid.Row="1" Margin="0,0,0,-3">
-			<StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-				<Label Margin="3,0,0,0" VerticalAlignment="Center" Content="Game" />
-				<ComboBox x:Name="GameToCustomizeComboBox" MinWidth="320" />
-			</StackPanel>
-			<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-				<Button Name="AddGameButton" Margin="0,3,3,3" Click="AddGameButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_Add}" />
-						<Label Content="Add Game..." />
-					</StackPanel>
-				</Button>
-				<Button Name="TestButton" Margin="0,3,3,3" Click="TestButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_test}" />
-						<Label Content="Test..." />
-					</StackPanel>
-				</Button>
-				<Button Name="SaveAllButton" Margin="0,3,3,3" Click="SaveAllButton_Click">
-					<StackPanel>
-						<ContentControl Content="{StaticResource Icon_save}" />
-						<Label Content="Save All" />
-					</StackPanel>
-				</Button>
-			</StackPanel>
-		</DockPanel>
-		<local:MainBodyControl x:Name="MainBodyPanel" Grid.Row="2" Margin="3,3,3,3" />
-		<StatusBar Grid.Row="3" HorizontalAlignment="Left">
+
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="280"/>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		
+		<!--Info-->
+		<JcControls:InfoControl x:Name="InfoPanel" x:FieldModifier="public" RightIconContent="{StaticResource Icon_gamepad}" Grid.ColumnSpan="2" />
+
+			<!--Add Game Program-->
+			<TabControl Margin="3,3,0,3" Grid.Row="1">
+					<TabItem>
+						<TabItem.Header>
+							<StackPanel Orientation="Horizontal">
+								<ContentControl Name="NormalTab" Margin="0,0,3,0" Content="{StaticResource Icon_document_gear}" />
+								<TextBlock Text="GAMES and PROGRAMS" />
+							</StackPanel>
+						</TabItem.Header>
+						<ScrollViewer VerticalScrollBarVisibility="Auto">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="*" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Border Style="{StaticResource BorderDescriptionNormal}" Padding="3,3,3,4" Margin="3,3,3,0">
+								<Label HorizontalAlignment="Center">STEP 1 - Add and select game to configure.</Label>
+							</Border>
+							<StackPanel Orientation="Horizontal" Grid.Row="1">
+								<Button Name="AddGameButton" Click="AddGameButton_Click">
+									<StackPanel>
+										<ContentControl Content="{StaticResource Icon_Add}" />
+										<Label Content="Add..." />
+									</StackPanel>
+								</Button>
+								<Button Name="TestButton" Click="TestButton_Click" Margin="0,3,3,3">
+									<StackPanel>
+										<ContentControl Content="{StaticResource Icon_test}" />
+										<Label Content="Test..." />
+									</StackPanel>
+								</Button>
+								<Button Name="SaveAllButton" Click="SaveAllButton_Click"  Margin="0,3,0,3">
+									<StackPanel>
+										<ContentControl Content="{StaticResource Icon_save}" />
+										<Label Content="Save All Settings" />
+									</StackPanel>
+								</Button>
+							</StackPanel>
+
+							<!-- Game Listed in DataGrid-->
+							<DataGrid
+							Grid.Row="2"
+							Name="GameToCustomizeDataGrid"
+							AutoGenerateColumns="False"
+							IsReadOnly="True"
+							ScrollViewer.CanContentScroll="True"
+							ScrollViewer.HorizontalScrollBarVisibility="Auto"
+							ScrollViewer.VerticalScrollBarVisibility="Auto"
+							SelectionMode="Single"
+							SelectionChanged="GameToCustomizeDataGrid_SelectionChanged">
+									<DataGrid.CellStyle>
+										<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
+											<Style.Triggers>
+												<DataTrigger Binding="{Binding IsOnline}" Value="False">
+													<Setter Property="Opacity" Value="0.2" />
+												</DataTrigger>
+												<DataTrigger Binding="{Binding IsOnline}" Value="True">
+													<Setter Property="Opacity" Value="1" />
+												</DataTrigger>
+											</Style.Triggers>
+										</Style>
+									</DataGrid.CellStyle>
+								<DataGrid.Columns>
+									<DataGridTextColumn
+										Width="*"
+										Binding="{Binding FileProductName}"
+										EditingElementStyle="{StaticResource TextBoxCell}"
+										ElementStyle="{StaticResource TextBlockCell}"
+										Header="Name"
+										SortDirection="{x:Null}" />
+									</DataGrid.Columns>
+							</DataGrid>
+							<StackPanel Name="GameDetails" Grid.Row="3" Margin="3">
+								<StackPanel Orientation="Horizontal">
+									<Label>File Name </Label>
+									<Label Opacity="0.5" Name="FileProductName"/>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<Label>File </Label>
+									<Label Opacity="0.5" Name="FileName"/>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<Label>Id </Label>
+									<Label Opacity="0.5" Name="GameId"/>
+								</StackPanel>
+							</StackPanel>
+
+						</Grid>
+					</ScrollViewer>
+					</TabItem>
+			</TabControl>
+			<!--Settings-->
+		<local:MainBodyControl x:Name="MainBodyPanel" Margin="3" Grid.Row="1" Grid.Column="1" />
+
+		<!--Status Bar-->
+		<StatusBar Grid.Row="2" HorizontalAlignment="Left" Grid.ColumnSpan="2">
 			<StatusBarItem>
-				<Label x:Name="StatusTimerLabel" Padding="0,0,0,0" Content="StatusTimerLabel" />
+				<Label x:Name="StatusTimerLabel" Content="StatusTimerLabel" />
 			</StatusBarItem>
 		</StatusBar>
-		<StatusBar Grid.Row="3" HorizontalAlignment="Right">
+		<StatusBar Grid.Row="2" HorizontalAlignment="Right" Grid.ColumnSpan="2">
 			<StatusBarItem>
-				<Label x:Name="UpdateFrequencyLabel" Padding="0,0,0,0" Content="Hz:0" />
+				<Label x:Name="UpdateFrequencyLabel" Content="Hz:0" />
 			</StatusBarItem>
 			<Separator />
 			<StatusBarItem>
-				<Label x:Name="FormUpdateFrequencyLabel" Padding="0,0,0,0" Content="Hz:0" />
+				<Label x:Name="FormUpdateFrequencyLabel" Content="Hz:0" />
 			</StatusBarItem>
 			<Separator />
 			<StatusBarItem>
-				<Label x:Name="UpdateDevicesStatusLabel" Padding="0,0,0,0" Content="D:0" />
+				<Label x:Name="UpdateDevicesStatusLabel" Content="D:0" />
 			</StatusBarItem>
 			<Separator />
 			<StatusBarItem>
-				<Label x:Name="CloudMessagesLabel" Padding="0,0,0,0" Content="M:0" />
+				<Label x:Name="CloudMessagesLabel" Content="M:0" />
 			</StatusBarItem>
 			<Separator />
 			<StatusBarItem>
-				<Label x:Name="StatusEventsLabel" Padding="0,0,0,0" Content="StatusEventsLabel" />
+				<Label x:Name="StatusEventsLabel" Content="StatusEventsLabel" />
 			</StatusBarItem>
 			<Separator />
 			<StatusBarItem>
-				<Label x:Name="StatusSaveLabel" Padding="0,0,0,0" Content="StatusSaveLabel" />
+				<Label x:Name="StatusSaveLabel" Content="StatusSaveLabel" />
 			</StatusBarItem>
 			<Separator />
 			<StatusBarItem>
-				<Label x:Name="StatusIsAdminLabel" Padding="0,0,0,0" Content="StatusIsAdminLabel" />
+				<Label x:Name="StatusIsAdminLabel" Content="StatusIsAdminLabel" />
 			</StatusBarItem>
 			<Separator />
 			<StatusBarItem>
@@ -92,14 +169,13 @@
 					<Label
 						x:Name="StatusErrorsLabel"
 						Margin="3,0,0,0"
-						Padding="0,0,0,0"
 						Content="StatusErrorsLabel"
 						PreviewMouseDown="StatusErrorsLabel_PreviewMouseDown" />
 				</StackPanel>
 			</StatusBarItem>
 			<Separator />
 			<StatusBarItem>
-				<Label x:Name="StatusDllLabel" Padding="0,0,0,0" Content="StatusDllLabel" />
+				<Label x:Name="StatusDllLabel" Content="StatusDllLabel" />
 			</StatusBarItem>
 		</StatusBar>
 	</Grid>

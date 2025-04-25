@@ -50,24 +50,24 @@ namespace x360ce.App.Controls
 			XboxImage.StartRecording = StartRecording;
 			XboxImage.StopRecording = StopRecording;
 			// Axis to Button DeadZones
-			ButtonsPanel.AxisToButtonADeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionATextBox;
-			ButtonsPanel.AxisToButtonBDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionBTextBox;
-			ButtonsPanel.AxisToButtonXDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionXTextBox;
-			ButtonsPanel.AxisToButtonYDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.ActionYTextBox;
-			ButtonsPanel.AxisToButtonStartDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.MenuStartTextBox;
-			ButtonsPanel.AxisToButtonBackDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.MenuBackTextBox;
-			ButtonsPanel.AxisToLeftShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperLTextBox;
-			ButtonsPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickLButtonTextBox;
-			ButtonsPanel.AxisToRightShoulderDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.BumperRTextBox;
-			ButtonsPanel.AxisToRightThumbButtonDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.StickRButtonTextBox;
-			ButtonsPanel.AxisToDPadDownDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadDownTextBox;
-			ButtonsPanel.AxisToDPadLeftDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadLeftTextBox;
-			ButtonsPanel.AxisToDPadRightDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadRightTextBox;
-			ButtonsPanel.AxisToDPadUpDeadZonePanel.MonitorComboBoxWpf = GeneralPanel.DPadUpTextBox;
+			ButtonsPanel.AxisToButtonADeadZonePanel.MonitorTextBox = GeneralPanel.ActionATextBox;
+			ButtonsPanel.AxisToButtonBDeadZonePanel.MonitorTextBox = GeneralPanel.ActionBTextBox;
+			ButtonsPanel.AxisToButtonXDeadZonePanel.MonitorTextBox = GeneralPanel.ActionXTextBox;
+			ButtonsPanel.AxisToButtonYDeadZonePanel.MonitorTextBox = GeneralPanel.ActionYTextBox;
+			ButtonsPanel.AxisToButtonStartDeadZonePanel.MonitorTextBox = GeneralPanel.MenuStartTextBox;
+			ButtonsPanel.AxisToButtonBackDeadZonePanel.MonitorTextBox = GeneralPanel.MenuBackTextBox;
+			ButtonsPanel.AxisToLeftShoulderDeadZonePanel.MonitorTextBox = GeneralPanel.BumperLTextBox;
+			ButtonsPanel.AxisToLeftThumbButtonDeadZonePanel.MonitorTextBox = GeneralPanel.StickLButtonTextBox;
+			ButtonsPanel.AxisToRightShoulderDeadZonePanel.MonitorTextBox = GeneralPanel.BumperRTextBox;
+			ButtonsPanel.AxisToRightThumbButtonDeadZonePanel.MonitorTextBox = GeneralPanel.StickRButtonTextBox;
+			ButtonsPanel.AxisToDPadDownDeadZonePanel.MonitorTextBox = GeneralPanel.DPadDownTextBox;
+			ButtonsPanel.AxisToDPadLeftDeadZonePanel.MonitorTextBox = GeneralPanel.DPadLeftTextBox;
+			ButtonsPanel.AxisToDPadRightDeadZonePanel.MonitorTextBox = GeneralPanel.DPadRightTextBox;
+			ButtonsPanel.AxisToDPadUpDeadZonePanel.MonitorTextBox = GeneralPanel.DPadUpTextBox;
 			// Monitor setting changes.
 			SettingsManager.Current.SettingChanged += Current_SettingChanged;
 			PadListPanel.SetBinding(MappedTo);
-			PadListPanel.MainDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
+			PadListPanel.DevicesDataGrid.SelectionChanged += MainDataGrid_SelectionChanged;
 		}
 
 		private void CurrentPadSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -119,15 +119,18 @@ namespace x360ce.App.Controls
 			{
 				var ud = CurrentUserDevice;
 				var enable = ud != null;
-				var instanceGuid = enable ? ud.InstanceGuid:  Guid.Empty;
+				var instanceGuid = enable ? ud.InstanceGuid : Guid.Empty;
 				ControlsHelper.SetEnabled(PadFootPanel.RemapAllButton, enable && ud.DiState != null);
 				PadItemPanel.SetEnabled(enable);
 				// If device instance changed then...
-				if (!Equals(instanceGuid, _InstanceGuid) && instanceGuid != Guid.Empty && ud?.DeviceState != null)
-				{	
-					_InstanceGuid = instanceGuid;
-					GeneralPanel.ResetDiMenuStrip(enable ? ud : null);
-				} 
+				if (!Equals(instanceGuid, _InstanceGuid))
+				{
+					//if (instanceGuid != Guid.Empty && ud?.DeviceState != null)
+					//{
+						_InstanceGuid = instanceGuid;
+						GeneralPanel.ResetDiMenuStrip(enable ? ud : null);
+					//}
+				}
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
 
@@ -151,7 +154,7 @@ namespace x360ce.App.Controls
 								XboxImage.SetHelpText(XboxImage.MappingDone);
 							else
 								XboxImage.HelpTextLabel.Content = "";
-                            PadFootPanel.RemapAllButton.Content = RemapName;
+							PadFootPanel.RemapAllButton.Content = RemapName;
 							return;
 						}
 						else
@@ -181,14 +184,14 @@ namespace x360ce.App.Controls
 			// If device disconnected then show disabled images.
 			if (!newConnected && oldConnected)
 			{
-                //_Imager.SetImages(false);
-                PadFootPanel.RemapAllButton.IsEnabled = false;
+				//_Imager.SetImages(false);
+				PadFootPanel.RemapAllButton.IsEnabled = false;
 			}
 			// If device connected then show enabled images.
 			if (newConnected && !oldConnected)
 			{
-                //_Imager.SetImages(true);
-                PadFootPanel.RemapAllButton.IsEnabled = true;
+				//_Imager.SetImages(true);
+				PadFootPanel.RemapAllButton.IsEnabled = true;
 			}
 			// Return if controller is not connected.
 			if (newConnected)
@@ -254,7 +257,7 @@ namespace x360ce.App.Controls
 		public bool StopRecording()
 		{
 			RecordAllMaps.Clear();
-            PadFootPanel.RemapAllButton.Content = RemapName;
+			PadFootPanel.RemapAllButton.Content = RemapName;
 			return _Imager.Recorder.StopRecording();
 		}
 
@@ -279,7 +282,7 @@ namespace x360ce.App.Controls
 					? "Move Axis"
 					: "Press Button";
 			XboxImage.HelpTextLabel.Content = helpText;
-            PadFootPanel.RemapAllButton.Content = RemapStopName;
+			PadFootPanel.RemapAllButton.Content = RemapStopName;
 		}
 
 		private void Current_SettingChanged(object sender, SettingChangedEventArgs e)
@@ -344,44 +347,44 @@ namespace x360ce.App.Controls
 
 		public PadControlImager _Imager;
 
-        //LeftTrigger		> TriggerLeftAxis
-        //RightTrigger		> TriggerRightAxis
+		//LeftTrigger		> TriggerLeftAxis
+		//RightTrigger		> TriggerRightAxis
 
-        //LeftShoulder		> BumperLeftButton
-        //RightShoulder		> BumperRightButton
+		//LeftShoulder		> BumperLeftButton
+		//RightShoulder		> BumperRightButton
 
-        //ButtonBack		> MenuBackButton
-        //ButtonStart		> MenuStartButton
-        //ButtonGuide		> MenuGuideButton
+		//ButtonBack		> MenuBackButton
+		//ButtonStart		> MenuStartButton
+		//ButtonGuide		> MenuGuideButton
 
-        //ButtonY			> ActionYButton
-        //ButtonX			> ActionXButton
-        //ButtonB			> ActionBButton
-        //ButtonA			> ActionAButton
+		//ButtonY			> ActionYButton
+		//ButtonX			> ActionXButton
+		//ButtonB			> ActionBButton
+		//ButtonA			> ActionAButton
 
-        //DPad				> DPadButton
-        //DPadUp			> DPadUpButton
-        //DPadLeft			> DPadLeftButton
-        //DPadRight			> DPadRightButton
-        //DPadDown			> DPadDownButton
+		//DPad				> DPadButton
+		//DPadUp			> DPadUpButton
+		//DPadLeft			> DPadLeftButton
+		//DPadRight			> DPadRightButton
+		//DPadDown			> DPadDownButton
 
-        //LeftThumbButton	> StickLeftButton
-        //LeftThumbAxisX	> StickLeftXAxis
-        //LeftThumbAxisY	> StickLeftYAxis
-        //LeftThumbUp		> StickLeftUpAxis
-        //LeftThumbLeft		> StickLeftLeftAxis
-        //LeftThumbRight	> StickLeftRightAxis
-        //LeftThumbDown		> StickLeftDownAxis
+		//LeftThumbButton	> StickLeftButton
+		//LeftThumbAxisX	> StickLeftXAxis
+		//LeftThumbAxisY	> StickLeftYAxis
+		//LeftThumbUp		> StickLeftUpAxis
+		//LeftThumbLeft		> StickLeftLeftAxis
+		//LeftThumbRight	> StickLeftRightAxis
+		//LeftThumbDown		> StickLeftDownAxis
 
-        //RightThumbButton	> StickRightButton
-        //RightThumbAxisX	> StickRightXAxis
-        //RightThumbAxisY	> StickRightYAxis
-        //RightThumbUp		> StickRightUpAxis
-        //RightThumbRight	> StickRightLeftAxis
-        //RightThumbRight	> StickRightRightAxis
-        //RightThumbDown	> StickRightDownAxis
+		//RightThumbButton	> StickRightButton
+		//RightThumbAxisX	> StickRightXAxis
+		//RightThumbAxisY	> StickRightYAxis
+		//RightThumbUp		> StickRightUpAxis
+		//RightThumbRight	> StickRightLeftAxis
+		//RightThumbRight	> StickRightRightAxis
+		//RightThumbDown	> StickRightDownAxis
 
-        List<ImageInfo> imageInfos
+		List<ImageInfo> imageInfos
 		{
 			get
 			{
@@ -644,7 +647,7 @@ namespace x360ce.App.Controls
 			Global.UpdateControlFromStates -= Global_UpdateControlFromStates;
 			SettingsManager.Current.SettingChanged -= Current_SettingChanged;
 			CurrentPadSetting.PropertyChanged -= CurrentPadSetting_PropertyChanged;
-			PadListPanel.MainDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
+			PadListPanel.DevicesDataGrid.SelectionChanged -= MainDataGrid_SelectionChanged;
 			PadFootPanel.MapNameComboBox.SelectionChanged -= GeneralPanel.MapNameComboBox_SelectionChanged;
 			PadFootPanel.RemapAllButton.Click -= RemapAllButton_Click;
 			XboxImage.StartRecording = null;

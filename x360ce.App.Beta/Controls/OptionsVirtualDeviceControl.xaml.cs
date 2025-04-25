@@ -1,7 +1,9 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using x360ce.Engine;
 
 namespace x360ce.App.Controls
@@ -85,8 +87,10 @@ namespace x360ce.App.Controls
 				return;
 			Global._MainWindow.MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
 			Global._MainWindow.OptionsPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
+
 			var bytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("Documents.Help_ViGEmBus.rtf");
 			ControlsHelper.SetTextFromResource(HelpRichTextBox, bytes);
+
 			// Bind Controls.
 			var o = SettingsManager.Options;
 			PollingRateComboBox.ItemsSource = Enum.GetValues(typeof(UpdateFrequency));

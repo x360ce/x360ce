@@ -6,157 +6,162 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignWidth="600"
+	d:Width="270"
+	d:Height="400"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 
-	<Grid VerticalAlignment="Stretch">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="100" />
-			<RowDefinition Height="1" />
-		</Grid.RowDefinitions>
-		<StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-			<CheckBox
-				Name="EnabledCheckBox"
-				Margin="6,0,3,0"
-				Click="EnabledCheckBox_Click"
-				Content="Enabled" />
-			<CheckBox Name="UseXInputStateCheckBox" Click="UseXInputStateCheckBox_Click" Content="Use XInput State" />
-			<CheckBox Name="AutoMapCheckBox" Click="AutoMapCheckBox_Click" Content="Auto Map" />
-		</StackPanel>
-		<StackPanel Margin="6,0,3,0" HorizontalAlignment="Right" Orientation="Horizontal">
-			<Button Name="AddButton" Margin="0,3,3,3" Click="AddButton_Click">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_add}" />
-					<Label Content="Add..." />
+	<!--  Buttons and Axes  -->
+	<TabControl Width="280" Margin="3,3,0,0">
+		<TabItem>
+			<TabItem.Header>
+				<StackPanel Orientation="Horizontal">
+					<ContentControl Name="NormalTab" Margin="0,0,3,0" Content="{StaticResource Icon_gamepad}" />
+					<TextBlock Text="CONTROLLERS" />
 				</StackPanel>
-			</Button>
-			<Button Name="RemoveButton" Margin="0,3,3,3" Click="RemoveButton_Click">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_remove}" />
-					<Label Content="Remove" />
-				</StackPanel>
-			</Button>
-			<Button Name="RefreshButton" Margin="0,3,0,3" Click="RefreshButton_Click">
-				<StackPanel>
-					<ContentControl Content="{StaticResource Icon_Refresh}" />
-					<Label Content="Refresh" />
-				</StackPanel>
-			</Button>
-		</StackPanel>
-		<DataGrid
-			Name="MainDataGrid"
-			Grid.Row="1"
-			HorizontalAlignment="Stretch"
-			VerticalAlignment="Stretch"
-			AutoGenerateColumns="False"
-			IsReadOnly="True"
-			ScrollViewer.CanContentScroll="True"
-			ScrollViewer.HorizontalScrollBarVisibility="Auto"
-			ScrollViewer.VerticalScrollBarVisibility="Auto"
-			SelectionChanged="MainDataGrid_SelectionChanged"
-			SelectionMode="Single">
-			<DataGrid.Resources>
-				<converters:ChecksumToIdConverter x:Key="_ChecksumToIdConverter" />
-				<converters:MapToIntToDescription x:Key="_MapToIntToDescription" />
-				<converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
-				<converters:ConnectionClassToImageConverter x:Key="ConnectionClassToImageConverter" />
-				<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />
-			</DataGrid.Resources>
+			</TabItem.Header>
+			<ScrollViewer VerticalScrollBarVisibility="Auto">
+				<Grid VerticalAlignment="Stretch">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<!--Help-->
+					<Border Style="{StaticResource BorderDescriptionNormal}" Padding="3,3,3,4" Margin="3,3,3,0">
+						<Label HorizontalAlignment="Center">STEP 2 - Add and select device to configure.</Label>
+					</Border>
+					<!--Buttons-->
+					<StackPanel Grid.Row="1" Margin="6,0,3,0" Orientation="Horizontal">
+						<Button Name="AddButton" Margin="0,3,3,3" Click="AddButton_Click">
+							<StackPanel>
+								<ContentControl Content="{StaticResource Icon_add}" />
+								<Label Content="Add..." />
+							</StackPanel>
+						</Button>
+						<Button Name="RemoveButton" Margin="0,3,3,3" Click="RemoveButton_Click">
+							<StackPanel>
+								<ContentControl Content="{StaticResource Icon_remove}" />
+								<Label Content="Remove" />
+							</StackPanel>
+						</Button>
+						<Button Name="RefreshButton" Margin="0,3,0,3" Click="RefreshButton_Click">
+							<StackPanel>
+								<ContentControl Content="{StaticResource Icon_Refresh}" />
+								<Label Content="Refresh" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
+					<!--Check-boxes-->
+					<StackPanel Grid.Row="2" Margin="3">
+						<CheckBox
+						Name="EnabledCheckBox"
+						Click="EnabledCheckBox_Click"
+						Content="Enabled" />
+						<CheckBox Name="UseXInputStateCheckBox" Click="UseXInputStateCheckBox_Click" Content="Use XInput State" />
+						<CheckBox Name="AutoMapCheckBox" Click="AutoMapCheckBox_Click" Content="Auto Map" />
+					</StackPanel>
+					<!--Controller List-->
+					<DataGrid
+					Grid.Row="3"
+					Name="DevicesDataGrid"
+					AutoGenerateColumns="False"
+					IsReadOnly="True"
+					ScrollViewer.CanContentScroll="True"
+					ScrollViewer.HorizontalScrollBarVisibility="Auto"
+					ScrollViewer.VerticalScrollBarVisibility="Auto"
+					SelectionChanged="MainDataGrid_SelectionChanged"
+					SelectionMode="Single">
+						<DataGrid.Resources>
+							<!--<converters:ChecksumToIdConverter x:Key="_ChecksumToIdConverter" />-->
+							<converters:MapToIntToDescription x:Key="_MapToIntToDescription" />
+							<converters:BoolToImageSourceConverter x:Key="BoolToImageSourceConverter" />
+							<converters:ConnectionClassToImageConverter x:Key="ConnectionClassToImageConverter" />
+							<!--<converters:ItemFormattingConverter x:Key="_MainDataGridFormattingConverter" />-->
+							<Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource DataGridColumnHeader_Default}">
+								<Setter Property="Padding" Value="3,0,0,0"/>
+								<!-- Change these numbers for desired padding -->
+							</Style>
+						</DataGrid.Resources>
 
-			<!--  Cell - Rows of ofline controllers are transparent.  -->
-			<DataGrid.CellStyle>
-				<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
-					<Style.Triggers>
-						<DataTrigger Binding="{Binding IsOnline}" Value="False">
-							<Setter Property="Opacity" Value="0.2" />
-							<!--<Setter Property="IsHitTestVisible" Value="False" />-->
-						</DataTrigger>
-						<DataTrigger Binding="{Binding IsOnline}" Value="True">
-							<Setter Property="Opacity" Value="1" />
-							<!--<Setter Property="IsHitTestVisible" Value="True" />-->
-						</DataTrigger>
-					</Style.Triggers>
-				</Style>
-			</DataGrid.CellStyle>
+						<!--  Cell - Rows of ofline controllers are transparent.  -->
+						<DataGrid.CellStyle>
+							<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
 
-			<DataGrid.Columns>
-				<!--  First 6 columns are same on: UserSettingMapListControl, UserDevicesControl  -->
-				<DataGridTemplateColumn Header="Active" IsReadOnly="True">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<ContentControl
-								Width="16"
-								Height="16"
-								Content="{Binding IsOnline, Converter={StaticResource BoolToImageSourceConverter}}"
-								Style="{StaticResource ContentControlCell_Default}" />
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<!--  Connection type  -->
-				<DataGridTemplateColumn x:Name="ConnectionClassColumn" Header="Connection" IsReadOnly="True">
-					<DataGridTemplateColumn.CellTemplate>
-						<DataTemplate>
-							<Image Style="{StaticResource ImageCell_Default}">
-								<Image.Source>
-									<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
-										<Binding RelativeSource="{RelativeSource Self}" />
-										<Binding RelativeSource="{RelativeSource TemplatedParent}" />
-										<Binding Path="InstanceGuid" />
-									</MultiBinding>
-								</Image.Source>
-							</Image>
-						</DataTemplate>
-					</DataGridTemplateColumn.CellTemplate>
-				</DataGridTemplateColumn>
-				<DataGridCheckBoxColumn
-					x:Name="IsEnabledColumn"
-					Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
-					EditingElementStyle="{StaticResource CheckBoxCell_Default}"
-					ElementStyle="{StaticResource CheckBoxCell_Default}"
-					Header="On" />
-				<DataGridTextColumn
-					Binding="{Binding InstanceId}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Instance ID"
-					SortDirection="{x:Null}" />
-				<DataGridTextColumn
-					x:Name="VendorNameColumn"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Vendor">
-					<DataGridTextColumn.Binding>
-						<MultiBinding Converter="{StaticResource _MainDataGridFormattingConverter}">
-							<Binding RelativeSource="{RelativeSource Self}" />
-							<Binding RelativeSource="{RelativeSource TemplatedParent}" />
-							<Binding Path="InstanceGuid" />
-						</MultiBinding>
-					</DataGridTextColumn.Binding>
-				</DataGridTextColumn>
-				<DataGridTextColumn
-					Width="*"
-					Binding="{Binding ProductName}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="Device" />
-				<DataGridTextColumn
-					Binding="{Binding PadSettingChecksum, Converter={StaticResource _ChecksumToIdConverter}}"
-					EditingElementStyle="{StaticResource TextBoxCell}"
-					ElementStyle="{StaticResource TextBlockCell}"
-					Header="SID"
-					SortDirection="{x:Null}" />
-				<DataGridTextColumn
-					Binding="{Binding Completion}"
-					EditingElementStyle="{StaticResource TextBoxRightCell}"
-					ElementStyle="{StaticResource TextBlockRightCell}"
-					Header="Completion" />
-			</DataGrid.Columns>
-		</DataGrid>
-		<Border Grid.Row="2" Height="1" Background="{StaticResource BorderDark}" />
-	</Grid>
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding IsOnline}" Value="False">
+										<Setter Property="Opacity" Value="0.2" />
+										<!--<Setter Property="IsHitTestVisible" Value="False" />-->
+									</DataTrigger>
+									<DataTrigger Binding="{Binding IsOnline}" Value="True">
+										<Setter Property="Opacity" Value="1" />
+										<!--<Setter Property="IsHitTestVisible" Value="True" />-->
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</DataGrid.CellStyle>
 
+						<DataGrid.Columns>
+							<!--Enabled-->
+							<DataGridCheckBoxColumn
+							Width="25"
+							x:Name="IsEnabledColumn"
+							Binding="{Binding IsEnabled, IsAsync=True, Mode=TwoWay}"
+							EditingElementStyle="{StaticResource CheckBoxCell_Default}"
+							ElementStyle="{StaticResource CheckBoxCell_Default}"
+							Header="On" />
+
+							<DataGridTextColumn
+							Width="*"
+							Binding="{Binding ProductName}"
+							EditingElementStyle="{StaticResource TextBoxCell}"
+							ElementStyle="{StaticResource TextBlockCell}"
+							Header="Device" />
+																	
+						</DataGrid.Columns>
+					</DataGrid>
+
+					<StackPanel Name="DeviceDetails" Grid.Row="4" Margin="3" DataContext="{Binding SelectedDevice, ElementName=YourUserControlName}">
+						<StackPanel Orientation="Horizontal">
+							<Label>Vendor</Label>
+							<Label Opacity="0.5" Name="VendorName"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<Label>ProductName</Label>
+							<Label Opacity="0.5" Name="ProductName"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<Label>InstanceId</Label>
+							<Label Opacity="0.5" Name="InstanceId"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<Label>SID</Label>
+							<Label Opacity="0.5" Name="PadSettingChecksum"/>
+						</StackPanel>
+						<StackPanel Orientation="Horizontal">
+							<Label>Connection</Label>
+							<Image Name="ConnectionClassImage" Style="{StaticResource ImageCell_Default}" />
+						</StackPanel>
+						<!--<StackPanel Orientation="Horizontal">
+							<Label>Active</Label>
+							<Label Opacity="0.5" Name="Active"/>
+						</StackPanel>-->
+						<!--<StackPanel Orientation="Horizontal">
+							<Label>IsEnabled</Label>
+							<Label Opacity="0.5" Name="IsEnabled"/>
+						</StackPanel>-->
+						<StackPanel Orientation="Horizontal">
+							<Label>Completion</Label>
+							<Label Opacity="0.5" Name="Completion"/>
+						</StackPanel>
+					</StackPanel>
+
+				</Grid>
+			</ScrollViewer>
+		</TabItem>
+	</TabControl>
 
 </UserControl>

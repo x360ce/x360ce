@@ -3,12 +3,14 @@ using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using x360ce.Engine;
@@ -16,6 +18,67 @@ using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
+	// Half.
+	public class ContainsKeywordConverterType : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			string text = value as string;
+			if (!string.IsNullOrEmpty(text))
+			{
+				if (text.StartsWith("IButton"))
+					return "IButton";
+				else if (text.StartsWith("Button"))
+					return "Button";
+				else if (text.StartsWith("IAxis"))
+					return "IAxis";
+				else if (text.StartsWith("Axis"))
+					return "Axis";
+				else if (text.StartsWith("IHAxis"))
+					return "IHAxis";
+				else if (text.StartsWith("HAxis"))
+					return "HAxis";
+				else if (text.StartsWith("ISlider"))
+					return "ISlider";
+				else if (text.StartsWith("Slider"))
+					return "Slider";
+				else if (text.StartsWith("IHSlider"))
+					return "IHSlider";
+				else if (text.StartsWith("HSlider"))
+					return "HSlider";
+				else
+					return "Empty";
+			}
+			return DependencyProperty.UnsetValue;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+	}
+
+	public static class InversionHelper
+	{
+		public static readonly DependencyProperty InversionTargetProperty =
+			DependencyProperty.RegisterAttached(
+				"InversionTarget",
+				typeof(TextBox),
+				typeof(InversionHelper),
+				new PropertyMetadata(null));
+
+		public static void SetInversionTarget(UIElement element, TextBox value)
+		{
+			element.SetValue(InversionTargetProperty, value);
+		}
+
+		public static TextBox GetInversionTarget(UIElement element)
+		{
+			return (TextBox)element.GetValue(InversionTargetProperty);
+		}
+	}
+
+
 	/// <summary>
 	/// Interaction logic for PadControl_GeneralControl.xaml
 	/// </summary>
@@ -168,25 +231,25 @@ namespace x360ce.App.Controls
 		//SolidColorBrush colorNormalPath = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
 		//SolidColorBrush colorNormalTextBox = Brushes.White;
 		//SolidColorBrush colorBlack = (SolidColorBrush)new BrushConverter().ConvertFrom("#11000000");
-		//SolidColorBrush colorNormalLabel = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFDEDEDE");
+		SolidColorBrush colorNormal = (SolidColorBrush)new BrushConverter().ConvertFrom("#FF6699FF");
 		//SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
 		SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
-		Dictionary<int, (Label, Label)> ButtonDictionary = new Dictionary<int, (Label, Label)>();
-		Dictionary<int, (Label, Label)> IButtonDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> ButtonDictionary = new Dictionary<int, (Label, Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> IButtonDictionary = new Dictionary<int, (Label, Label, Label)>();
 
-		Dictionary<int, (Label, Label)> PovDictionary = new Dictionary<int, (Label, Label)>();
-		Dictionary<int, (Label, Label)> PovBDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> PovDictionary = new Dictionary<int, (Label, Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> PovBDictionary = new Dictionary<int, (Label, Label, Label)>();
 
-		Dictionary<int, (Label, Label)> AxisDictionary = new Dictionary<int, (Label, Label)>();
-		Dictionary<int, (Label, Label)> IAxisDictionary = new Dictionary<int, (Label, Label)>();
-		Dictionary<int, (Label, Label)> HAxisDictionary = new Dictionary<int, (Label, Label)>();
-		Dictionary<int, (Label, Label)> IHAxisDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> AxisDictionary = new Dictionary<int, (Label, Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> IAxisDictionary = new Dictionary<int, (Label, Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> HAxisDictionary = new Dictionary<int, (Label, Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> IHAxisDictionary = new Dictionary<int, (Label, Label, Label)>();
 
-		Dictionary<int, (Label, Label)> SliderDictionary = new Dictionary<int, (Label, Label)>();
-		Dictionary<int, (Label, Label)> ISliderDictionary = new Dictionary<int, (Label, Label)>();
-		Dictionary<int, (Label, Label)> HSliderDictionary = new Dictionary<int, (Label, Label)>();
-		Dictionary<int, (Label, Label)> IHSliderDictionary = new Dictionary<int, (Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> SliderDictionary = new Dictionary<int, (Label, Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> ISliderDictionary = new Dictionary<int, (Label, Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> HSliderDictionary = new Dictionary<int, (Label, Label, Label)>();
+		Dictionary<int, (Label, Label, Label)> IHSliderDictionary = new Dictionary<int, (Label, Label, Label)>();
 
 		object updateLock = new object();
 		object oldState = null;
@@ -212,14 +275,25 @@ namespace x360ce.App.Controls
 		UniformGrid PovUnifromGrid;
 
 		// Create DragAndDrop menu labels.
-		private void DragAndDropMenuLabels_Create(Dictionary<int, (Label, Label)> dictionary, List<int> list, string itemName, string headerName, string iconName)
+		private void DragAndDropMenuLabels_Create(Dictionary<int, (Label, Label, Label)> dictionary, List<int> list, string itemName, string headerName, string iconName)
 		{
 			try
 			{
 				// GroupBox Header (icon and text).
 				StackPanel headerStackPanel = new StackPanel { Orientation = Orientation.Horizontal };
+				// Group icons.
 				headerStackPanel.Children.Add(new ContentControl { Content = Application.Current.Resources[iconName] });
+				if (!headerName.Contains("POV"))
+				{
+					headerStackPanel.Children.Add(new ContentControl { Content = Application.Current.Resources[iconName + "_Inverted"], Margin = new Thickness(3, 0, 0, 0) });
+				}
+				// Group title.
 				headerStackPanel.Children.Add(new TextBlock { Text = headerName, Margin = new Thickness(3, 0, 0, 0) });
+				if (headerName.Contains("HALF"))
+				{
+					headerStackPanel.Children.Add(new ContentControl { Content = Application.Current.Resources[iconName + "_2"], Margin = new Thickness(3, 0, 3, 0) });
+					headerStackPanel.Children.Add(new ContentControl { Content = Application.Current.Resources[iconName + "_2"] });
+				}
 				// GroupBox Content (UniformGrid for Labels).
 				UniformGrid buttonsUniformGrid = new UniformGrid { Columns = list.Last().ToString().Length > 2 ? 6 : 8 };
 				// GroupBox.
@@ -228,7 +302,7 @@ namespace x360ce.App.Controls
 				// Put GroupBoxes into NORMAL and INVERTED tabs.
 				if (iconName.Contains("Inverted"))
 				{
-					DragAndDropStackPanelInverted.Children.Add(buttonsGroupBox);
+					// DragAndDropStackPanelInverted.Children.Add(buttonsGroupBox);
 				}
 				else
 				{
@@ -276,9 +350,19 @@ namespace x360ce.App.Controls
 						Background = colorLight
 					};
 
+					Label valueLabelInverted = new Label
+					{
+						IsHitTestVisible = false,
+						FontSize = 8,
+						Foreground = colorNormal,
+						Padding = new Thickness(0),
+						Background = colorLight
+					};
+
 					StackPanel stackPanel = new StackPanel();
 					stackPanel.Children.Add(buttonLabel);
 					stackPanel.Children.Add(valueLabel);
+					stackPanel.Children.Add(valueLabelInverted);
 
 					// Put POVB buttons inside POV GroupBox.
 					if (itemName == "POVB")
@@ -290,7 +374,7 @@ namespace x360ce.App.Controls
 						buttonsUniformGrid.Children.Add(stackPanel);
 					}
 
-					dictionary.Add(i, (buttonLabel, valueLabel));
+					dictionary.Add(i, (buttonLabel, valueLabel, valueLabelInverted));
 				}
 			}
 			catch (Exception ex)
@@ -308,11 +392,9 @@ namespace x360ce.App.Controls
 		// Function is recreated as soon as new DirectInput Device is available.
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
-			if (GetCustomDiState(ud) == null) return;
-
 			// Clear StackPanel children in XAML page.
 			DragAndDropStackPanelNormal.Children.Clear();
-			DragAndDropStackPanelInverted.Children.Clear();
+			// DragAndDropStackPanelInverted.Children.Clear();
 			// Clear dictionaries.
 			ButtonDictionary.Clear();
 			IButtonDictionary.Clear();
@@ -333,6 +415,8 @@ namespace x360ce.App.Controls
 			axes.Clear();
 			sliders.Clear();
 
+			if (ud == null || GetCustomDiState(ud) == null) return;
+
 			GetDeviceObjectInstancesByObjectTypeGuid(ud);
 
 			buttons.Sort();
@@ -344,23 +428,18 @@ namespace x360ce.App.Controls
 			if (buttons.Any())
 			{
 				DragAndDropMenuLabels_Create(ButtonDictionary, buttons, "Button", "BUTTON", "Icon_DragAndDrop_Button");
-				DragAndDropMenuLabels_Create(IButtonDictionary, buttons, "IButton", "BUTTON", "Icon_DragAndDrop_Button_Inverted");
 			}
 			// Axes.
 			if (axes.Any())
 			{
 				DragAndDropMenuLabels_Create(AxisDictionary, axes, "Axis", "AXIS", "Icon_DragAndDrop_Axis");
-				DragAndDropMenuLabels_Create(IAxisDictionary, axes, "IAxis", "AXIS", "Icon_DragAndDrop_Axis_Inverted");
 				DragAndDropMenuLabels_Create(HAxisDictionary, axes, "HAxis", "AXIS · HALF", "Icon_DragAndDrop_Axis_Half");
-				DragAndDropMenuLabels_Create(IHAxisDictionary, axes, "IHAxis", "AXIS · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 			}
 			// Sliders.
 			if (sliders.Any())
 			{
 				DragAndDropMenuLabels_Create(SliderDictionary, sliders, "Slider", "SLIDER", "Icon_DragAndDrop_Axis");
-				DragAndDropMenuLabels_Create(ISliderDictionary, sliders, "ISlider", "SLIDER", "Icon_DragAndDrop_Axis_Inverted");
 				DragAndDropMenuLabels_Create(HSliderDictionary, sliders, "HSlider", "SLIDER · HALF", "Icon_DragAndDrop_Axis_Half");
-				DragAndDropMenuLabels_Create(IHSliderDictionary, sliders, "IHSlider", "SLIDER · HALF · INVERTED", "Icon_DragAndDrop_Axis_Half_Inverted");
 			}
 			// POVs.
 			if (povs.Any())
@@ -502,10 +581,11 @@ namespace x360ce.App.Controls
 			foreach (var kvp in ButtonDictionary)
 			{
 				bool bDS = ud.DiState.Buttons[kvp.Key];
-				IButtonDictionary[kvp.Key].Item1.Background = bDS ? Brushes.Transparent : colorActive;
+				//IButtonDictionary[kvp.Key].Item1.Background = bDS ? Brushes.Transparent : colorActive;
 				ButtonDictionary[kvp.Key].Item1.Background = bDS ? colorActive : Brushes.Transparent;
+
 				ButtonDictionary[kvp.Key].Item2.Content = bDS.ToString();
-				IButtonDictionary[kvp.Key].Item2.Content = (bDS ? "True" : "False") == "True" ? "False" : "True";
+				/*IButtonDictionary[kvp.Key].Item2.Content = */ButtonDictionary[kvp.Key].Item3.Content = (bDS ? "True" : "False") == "True" ? "False" : "True";
 
 				// Record button.
 				if (recordTextBox != null && bDS)
@@ -538,13 +618,13 @@ namespace x360ce.App.Controls
 				int aDS = ud.DiState.Axis[kvp.Key];
 				AxisDictionary[kvp.Key].Item2.Content = aDS;
 				HAxisDictionary[kvp.Key].Item2.Content = Math.Max(0, Math.Min((aDS - 32767) * 2, 65535));
-				IAxisDictionary[kvp.Key].Item2.Content = Math.Abs(65535 - aDS);
-				IHAxisDictionary[kvp.Key].Item2.Content = Math.Max(0, Math.Min((Math.Abs(65535 - aDS) - 32767) * 2, 65535));
+				/*IAxisDictionary[kvp.Key].Item2.Content = */AxisDictionary[kvp.Key].Item3.Content = Math.Abs(65535 - aDS);
+				/*IHAxisDictionary[kvp.Key].Item2.Content = */HAxisDictionary[kvp.Key].Item3.Content = Math.Max(0, Math.Min((Math.Abs(65535 - aDS) - 32767) * 2, 65535));
 				bool active = aDS < 32767 - DragAndDropAxisDeadzone || aDS > 32767 + DragAndDropAxisDeadzone;
 				AxisDictionary[kvp.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
 				HAxisDictionary[kvp.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
-				IAxisDictionary[kvp.Key].Item1.Background = active ? Brushes.Transparent : colorActive;
-				IHAxisDictionary[kvp.Key].Item1.Background = active ? Brushes.Transparent : colorActive;
+				//IAxisDictionary[kvp.Key].Item1.Background = active ? Brushes.Transparent : colorActive;
+				//IHAxisDictionary[kvp.Key].Item1.Background = active ? Brushes.Transparent : colorActive;
 			}
 
 			// Slider axes.
@@ -552,14 +632,15 @@ namespace x360ce.App.Controls
 			foreach (var kvp in SliderDictionary)
 			{
 				int sDS = ud.DiState.Sliders[kvp.Key];
-				SliderDictionary[kvp.Key].Item2.Content = sDS;
-				HSliderDictionary[kvp.Key].Item2.Content = Math.Max(0, Math.Min((sDS - 32767) * 2, 65535));
-				ISliderDictionary[kvp.Key].Item2.Content = Math.Abs(65535 - sDS);
-				IHSliderDictionary[kvp.Key].Item2.Content = Math.Max(0, Math.Min((Math.Abs(65535 - sDS) - 32767) * 2, 65535));
+
 				SliderDictionary[kvp.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? colorActive : Brushes.Transparent;
 				HSliderDictionary[kvp.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? colorActive : Brushes.Transparent;
-				ISliderDictionary[kvp.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? Brushes.Transparent : colorActive;
-				IHSliderDictionary[kvp.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? Brushes.Transparent : colorActive;
+
+				SliderDictionary[kvp.Key].Item2.Content = sDS;
+				HSliderDictionary[kvp.Key].Item2.Content = Math.Max(0, Math.Min((sDS - 32767) * 2, 65535));
+
+				SliderDictionary[kvp.Key].Item3.Content = Math.Abs(65535 - sDS);
+				HSliderDictionary[kvp.Key].Item3.Content = Math.Max(0, Math.Min((Math.Abs(65535 - sDS) - 32767) * 2, 65535));
 			}
 		}
 		#endregion
@@ -755,33 +836,36 @@ namespace x360ce.App.Controls
 
 		private void RecordClear_MouseEnterTextBox(object sender, MouseEventArgs e)
 		{
-			if (RecordClearGrid.Parent is Grid g1)
-			{
-				g1.Children.Remove(RecordClearGrid);
-			}
+			// If it was already hosted somewhere else, remove it first,
+			if (RCStackPanel.Parent is StackPanel s1) { s1.Children.Remove(RCStackPanel); }
 
-			if (sender is TextBox t2 && t2.Parent is StackPanel s2 && s2.Parent is Grid g2)
+			// Act on TextBoxes inside a StackPanel.
+			if (sender is TextBox t2 && t2.Parent is StackPanel s2)
 			{
-				if (g2.HorizontalAlignment == HorizontalAlignment.Left)
+				if (s2.HorizontalAlignment == HorizontalAlignment.Left)
 				{
-					Grid.SetColumn(RCStackPanel, 1);
-					RecordClearColumn0.Width = new GridLength(77);
-					RecordClearColumn1.Width = new GridLength(1, GridUnitType.Star);
 					RCStackPanel.FlowDirection = FlowDirection.LeftToRight;
+					ClearButton.FlowDirection = FlowDirection.LeftToRight;
+					// Calculate the insertion index = just before the last element.
+					int insertIndex = Math.Max(0, s2.Children.Count - 1);
+					s2.Children.Insert(insertIndex, RCStackPanel);
+
 				}
 				else
 				{
-					Grid.SetColumn(RCStackPanel, 0);
-					RecordClearColumn0.Width = new GridLength(1, GridUnitType.Star);
-					RecordClearColumn1.Width = new GridLength(77);
 					RCStackPanel.FlowDirection = FlowDirection.RightToLeft;
+					ClearButton.FlowDirection= FlowDirection.LeftToRight;
+					// Calculate the insertion index = just before the last element.
+					s2.Children.Insert(1, RCStackPanel);
 				}
 
-				RCStackPanel.HorizontalAlignment = g2.HorizontalAlignment;
 				RecordButton.Tag = t2;
 				ClearButton.Tag = t2;
-				g2.Children.Add(RecordClearGrid);
-				RecordClearGrid.Visibility = Visibility.Visible;
+
+
+
+				ClearButton.Visibility = (t2.Text.Length > 0) ? Visibility.Visible : Visibility.Collapsed;
+				RCStackPanel.Visibility = Visibility.Visible;
 			}
 		}
 
@@ -815,12 +899,12 @@ namespace x360ce.App.Controls
 
 		private void RecordClear_MouseEnter(object sender, MouseEventArgs e)
 		{
-			RecordClearGrid.Visibility = Visibility.Visible;
+			RCStackPanel.Visibility = Visibility.Visible;
 		}
 
 		private void RecordClear_MouseLeave(object sender, MouseEventArgs e)
 		{
-			RecordClearGrid.Visibility = Visibility.Collapsed;
+			RCStackPanel.Visibility = Visibility.Collapsed;
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -841,5 +925,24 @@ namespace x360ce.App.Controls
 			SetBinding(MapTo.None, null);
 			// DiMenuStrip.Clear();
 		}
+
+		private void InvertButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (sender is Button button && button.Tag is TextBox textBox)
+			{
+				// Force a re-evaluation of the button’s data trigger by reassigning its Tag.
+				// This tricks the DataTrigger that binds to Tag.Text into refreshing immediately.
+				button.Tag = null;
+				button.Tag = textBox;
+
+				if (!string.IsNullOrEmpty(textBox.Text))
+				{
+					textBox.Text = textBox.Text.StartsWith("I")
+						? textBox.Text.Substring(1)
+						: "I" + textBox.Text;
+				}
+			}
+		}
 	}
 }
+

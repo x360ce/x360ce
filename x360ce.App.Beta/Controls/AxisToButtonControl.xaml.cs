@@ -112,48 +112,49 @@ namespace x360ce.App.Controls
 			//	: disabledImage;
 		}
 
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public System.Windows.Forms.ComboBox MonitorComboBox
-		{
-			get => _MonitorComboBox;
-			set
-			{
-				lock (monitorComboBoxLock)
-				{
-					if (_MonitorComboBox != null)
-					{
-						_MonitorComboBox.SelectedIndexChanged -= _MonitorComboBox_TextChanged;
-						_MonitorComboBox.TextChanged -= _MonitorComboBox_TextChanged;
-					}
-					_MonitorComboBox = value;
-					if (_MonitorComboBox != null)
-					{
-						_MonitorComboBox.SelectedIndexChanged += _MonitorComboBox_TextChanged;
-						_MonitorComboBox.TextChanged += _MonitorComboBox_TextChanged;
-					}
-				}
-			}
-		}
+		//[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		//public System.Windows.Forms.ComboBox MonitorComboBox
+		//{
+		//	get => _MonitorComboBox;
+		//	set
+		//	{
+		//		lock (monitorComboBoxLock)
+		//		{
+		//			if (_MonitorComboBox != null)
+		//			{
+		//				_MonitorComboBox.SelectedIndexChanged -= _MonitorComboBox_TextChanged;
+		//				_MonitorComboBox.TextChanged -= _MonitorComboBox_TextChanged;
+		//			}
+		//			_MonitorComboBox = value;
+		//			if (_MonitorComboBox != null)
+		//			{
+		//				_MonitorComboBox.SelectedIndexChanged += _MonitorComboBox_TextChanged;
+		//				_MonitorComboBox.TextChanged += _MonitorComboBox_TextChanged;
+		//			}
+		//		}
+		//	}
+		//}
+		//private System.Windows.Forms.ComboBox _MonitorComboBox;
+
 		private readonly object monitorComboBoxLock = new object();
-		private System.Windows.Forms.ComboBox _MonitorComboBox;
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public TextBox MonitorComboBoxWpf
+		public TextBox MonitorTextBox
 		{
-			get => _MonitorComboBoxWpf;
+			get => _MonitorTextBox;
 			set
 			{
 				lock (monitorComboBoxLock)
 				{
-					if (_MonitorComboBox != null)
-						_MonitorComboBox.TextChanged -= _MonitorComboBox_TextChanged;
-					_MonitorComboBoxWpf = value;
-					if (_MonitorComboBox != null)
-						_MonitorComboBox.TextChanged += _MonitorComboBox_TextChanged;
+					if (_MonitorTextBox != null)
+						_MonitorTextBox.TextChanged -= _MonitorComboBox_TextChanged;
+					_MonitorTextBox = value;
+					if (_MonitorTextBox != null)
+						_MonitorTextBox.TextChanged += _MonitorComboBox_TextChanged;
 				}
 			}
 		}
-		TextBox _MonitorComboBoxWpf;
+		TextBox _MonitorTextBox;
 
 
 		private void _MonitorComboBox_TextChanged(object sender, EventArgs e)
@@ -162,15 +163,15 @@ namespace x360ce.App.Controls
 			{
 				var en = false;
 				var text = "";
-				if (_MonitorComboBox != null)
+				if (_MonitorTextBox != null)
 				{
-					en = _MonitorComboBox.Text.Contains("Axis") || _MonitorComboBox.Text.Contains("Slider");
-					text = en ? _MonitorComboBox.Text : "";
+					en = _MonitorTextBox.Text.Contains("Axis") || _MonitorTextBox.Text.Contains("Slider");
+					text = en ? _MonitorTextBox.Text : "";
 				}
-				if (_MonitorComboBoxWpf != null)
+				if (_MonitorTextBox != null)
 				{
-					en = _MonitorComboBoxWpf.Text.Contains("Axis") || _MonitorComboBoxWpf.Text.Contains("Slider");
-					text = en ? _MonitorComboBoxWpf.Text : "";
+					en = _MonitorTextBox.Text.Contains("Axis") || _MonitorTextBox.Text.Contains("Slider");
+					text = en ? _MonitorTextBox.Text : "";
 				}
 				MappedAxisTextBox.Text = text;
 				IsEnabled = en;
