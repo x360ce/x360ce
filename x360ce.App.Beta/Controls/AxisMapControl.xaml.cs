@@ -2,7 +2,6 @@
 using SharpDX.XInput;
 using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;

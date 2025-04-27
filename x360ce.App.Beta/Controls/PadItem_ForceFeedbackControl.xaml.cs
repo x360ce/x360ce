@@ -82,8 +82,7 @@ namespace x360ce.App.Controls
 		public void SetBinding(MapTo mappedTo, PadSetting ps)
 		{
 			_MappedTo = mappedTo;
-			if (_padSetting != null)
-				_padSetting.PropertyChanged -= _padSetting_PropertyChanged;
+			if (_padSetting != null) _padSetting.PropertyChanged -= _padSetting_PropertyChanged;
 			LeftForceFeedbackMotorPanel.TestUpDown.ValueChanged -= TestUpDown_ValueChanged;
 			RightForceFeedbackMotorPanel.TestUpDown.ValueChanged -= TestUpDown_ValueChanged;
 			// Unbind first.
@@ -111,6 +110,13 @@ namespace x360ce.App.Controls
 
 		#region Event Handlers
 
+		private void _padSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			// If property changed, which can affect force then...
+			if (ForceProperties.Contains(e.PropertyName))
+				UpdateTimerReset();
+		}
+
 		private void ForceTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			var type = (ForceEffectType)ForceTypeComboBox.SelectedItem;
@@ -124,13 +130,6 @@ namespace x360ce.App.Controls
 			if (type.HasFlag(ForceEffectType._Type2))
 				list.Add("Alternative implementation - two motors / actuators per effect.");
 			ForceTypeDescriptionTextBlock.Text = string.Format("{0} ({1}) - {2}", type, (int)type, string.Join(" ", list));
-		}
-
-		private void _padSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			// If property changed, which can affect force then...
-			if (ForceProperties.Contains(e.PropertyName))
-				UpdateTimerReset();
 		}
 
 		private void TestUpDown_ValueChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<decimal?> e)

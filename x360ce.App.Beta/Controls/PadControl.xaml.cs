@@ -202,13 +202,18 @@ namespace x360ce.App.Controls
 					_Imager.DrawState(ii, newState.Gamepad);
 			}
 			// Set values.
-			ControlsHelper.SetText(GeneralPanel.TriggerLeftXInputLabel, "{0}", newState.Gamepad.LeftTrigger);
-			ControlsHelper.SetText(GeneralPanel.TriggerRightXInputLabel, "{0}", newState.Gamepad.RightTrigger);
+			//ControlsHelper.SetText(GeneralPanel.TriggerLLabelXI, "{0}", newState.Gamepad.LeftTrigger);
+			//ControlsHelper.SetText(GeneralPanel.TriggerRLabelXI, "{0}", newState.Gamepad.RightTrigger);
+			
+			GeneralPanel.TriggerLLabelXI.Content = newState.Gamepad.LeftTrigger;
+			GeneralPanel.TriggerRLabelXI.Content = newState.Gamepad.RightTrigger;
 
-			GeneralPanel.StickLXInputAxisXLabel.Content = newState.Gamepad.LeftThumbX;
-			GeneralPanel.StickLXInputAxisYLabel.Content = newState.Gamepad.LeftThumbY;
-			GeneralPanel.StickRXInputAxisXLabel.Content = newState.Gamepad.RightThumbX;
-			GeneralPanel.StickRXInputAxisYLabel.Content = newState.Gamepad.RightThumbY;
+			GeneralPanel.BumperLLabelXI.Content = newState.Gamepad.Buttons;
+
+			GeneralPanel.StickLAxisXLabelXI.Content = newState.Gamepad.LeftThumbX;
+			GeneralPanel.StickLAxisYLabelXI.Content = newState.Gamepad.LeftThumbY;
+			GeneralPanel.StickRAxisXLabelXI.Content = newState.Gamepad.RightThumbX;
+			GeneralPanel.StickRAxisYLabelXI.Content = newState.Gamepad.RightThumbY;
 
 			// Process device.
 			var ud = CurrentUserDevice;
@@ -384,7 +389,7 @@ namespace x360ce.App.Controls
 		//RightThumbRight	> StickRightRightAxis
 		//RightThumbDown	> StickRightDownAxis
 
-		List<ImageInfo> imageInfos
+		public List<ImageInfo> imageInfos
 		{
 			get
 			{
@@ -532,7 +537,7 @@ namespace x360ce.App.Controls
 			CurrentPadSetting.Load(ps);
 			// Rebind pad setting to controls.
 			DPadPanel.SetBinding(CurrentPadSetting);
-			GeneralPanel.SetBinding(MappedTo, CurrentPadSetting);
+			GeneralPanel.SetBinding(MappedTo, CurrentPadSetting, imageInfos);
 			AdvancedPanel.SetBinding(CurrentPadSetting);
 			LeftTriggerPanel.SetBinding(CurrentPadSetting);
 			RightTriggerPanel.SetBinding(CurrentPadSetting);
