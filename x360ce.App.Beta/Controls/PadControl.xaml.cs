@@ -216,37 +216,26 @@ namespace x360ce.App.Controls
 			GeneralPanel.StickRAxisYLabelXI.Content = newState.Gamepad.RightThumbY;
 
 			// Process device.
-			var ud = CurrentUserDevice;
-			var ps = CurrentPadSetting;
-			if (ud?.DiState != null && ps != null)
+			if (CurrentUserDevice?.DiState != null && CurrentPadSetting != null)
 			{
-				// Get current pad setting.
-				Map map;
-				// LeftThumbX
-				var axis = ud.DiState.Axis;
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbXPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
-				// LeftThumbY
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbYPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
-				// RightThumbX
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbXPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
-				// RightThumbY
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbYPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
-				// LeftTrigger
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftTriggerPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
-				// RightTrigger
-				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightTriggerPanel.UpdateGraph(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
+				var axis = CurrentUserDevice.DiState.Axis;
+				foreach (var (target, panel, value) in new (TargetType Target, AxisMapControl Panel, short Value)[]
+				{
+					(TargetType.LeftThumbX, LeftThumbXPanel, newState.Gamepad.LeftThumbX),
+					(TargetType.LeftThumbY, LeftThumbYPanel, newState.Gamepad.LeftThumbY),
+					(TargetType.RightThumbX, RightThumbXPanel, newState.Gamepad.RightThumbX),
+					(TargetType.RightThumbY, RightThumbYPanel, newState.Gamepad.RightThumbY),
+					(TargetType.LeftTrigger, LeftTriggerPanel, newState.Gamepad.LeftTrigger),
+					(TargetType.RightTrigger, RightTriggerPanel, newState.Gamepad.RightTrigger),
+				})
+				{
+					// Get current pad setting.
+					Map map = CurrentPadSetting.Maps.FirstOrDefault(x => x.Target == target);
+					if (map != null && map.Index > 0 && map.Index <= axis.Length)
+					{
+						panel.UpdateGraph(axis[map.Index - 1], value, map.IsInverted, map.IsHalf);
+					}
+				}
 			}
 			// Update Axis to Button Images.
 			if (_AxisToButtonControls == null)
@@ -552,8 +541,6 @@ namespace x360ce.App.Controls
 			// Start monitoring changes.
 			CurrentPadSetting.PropertyChanged += CurrentPadSetting_PropertyChanged;
 			//SettingsManager.Current.LoadPadSettingsIntoSelectedDevice(MappedTo, CurrentPadSetting);
-
-
 		}
 
 		public void SavePadSetting(PadSetting ps)
@@ -635,8 +622,6 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowLoad(this))
 				return;
-
-
 		}
 
 		private void UserControl_Unloaded(object sender, System.Windows.RoutedEventArgs e)
@@ -664,6 +649,5 @@ namespace x360ce.App.Controls
 			_CurrentUserSetting = null;
 			_CurrentUserDevice = null;
 		}
-
 	}
 }
