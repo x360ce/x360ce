@@ -161,17 +161,6 @@
 						<Setter Property="HorizontalAlignment" Value="Left" />
 						<Setter Property="Orientation" Value="Horizontal" />
 					</Style>
-					<!--  Grid  -->
-					<Style x:Key="RecordClearGridLeft" TargetType="Grid">
-						<Setter Property="HorizontalAlignment" Value="Left" />
-						<Setter Property="Background" Value="Transparent" />
-						<Setter Property="IsHitTestVisible" Value="True" />
-						<EventSetter Event="MouseEnter" Handler="RecordClear_MouseEnter" />
-						<EventSetter Event="MouseLeave" Handler="RecordClear_MouseLeave" />
-					</Style>
-					<Style x:Key="RecordClearGridRight" BasedOn="{StaticResource RecordClearGridLeft}" TargetType="Grid">
-						<Setter Property="HorizontalAlignment" Value="Right" />
-					</Style>
 					<!--  StackPanel  -->
 					<Style x:Key="RecordClearStackPanelLeft" TargetType="StackPanel">
 						<Setter Property="HorizontalAlignment" Value="Left" />
@@ -345,36 +334,92 @@
 				</StackPanel>
 			</StackPanel>
 			<!--  ButtonBack  -->
-			<Grid Margin="0,15,0,0" Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Margin="0,15,0,0" Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="MenuBackTextBox" x:FieldModifier="public" />
 					<Button Name="MenuBackInvertButton" Tag="{Binding ElementName=MenuBackTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="MenuBackLabel" Content="Back" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="MenuBackLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="MenuBackLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="MenuBackLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="MenuBackLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  ButtonStart  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="MenuStartTextBox" x:FieldModifier="public" />
 					<Button Name="MenuStartInvertButton" Tag="{Binding ElementName=MenuStartTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="MenuStartLabel" Content="Start" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="MenuStartLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="MenuStartLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="MenuStartLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="MenuStartLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  ButtonGuide  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="MenuGuideTextBox" x:FieldModifier="public" />
 					<Button Name="MenuGuideInvertButton" Tag="{Binding ElementName=MenuGuideTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="MenuGuideLabel" Content="Guide" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="MenuGuideLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="MenuGuideLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="MenuGuideLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="MenuGuideLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  DPad  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="DPadTextBox" x:FieldModifier="public" />
 					<Label Name="DPadLabel" Content="D-Pad" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="DPadLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="DPadLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="DPadLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="DPadLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  LeftThumbAxisX  -->
 			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}" Margin="0,20,0,0">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
@@ -420,83 +465,209 @@
 				</StackPanel>
 			</StackPanel>
 			<!--  LeftThumbButton  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="StickLButtonTextBox" x:FieldModifier="public" />
 					<Button Name="StickLButtonInvertButton" Tag="{Binding ElementName=StickLButtonTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLButtonLabel" Content="Stick Button" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickLButtonLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickLButtonLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickLButtonLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickLButtonLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 		</StackPanel>
 		<!--  Stick Left  -->
 		<StackPanel Grid.Row="2" Grid.Column="1">
 			<!--  LeftThumbUp  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="StickLUpTextBox" x:FieldModifier="public" />
 					<Button Name="StickLUpInvertButton" Tag="{Binding ElementName=StickLUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLUpLabel" Content="Stick Up" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickLUpLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickLUpLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickLUpLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickLUpLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  LeftThumbLeft  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="StickLLeftTextBox" x:FieldModifier="public" />
 					<Button Name="StickLLeftInvertButton" Tag="{Binding ElementName=StickLLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLLeftLabel" Content="Stick Left" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickLLeftLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickLLeftLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickLLeftLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickLLeftLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  LeftThumbRight  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="StickLRightTextBox" x:FieldModifier="public" />
 					<Button Name="StickLRightInvertButton" Tag="{Binding ElementName=StickLRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLRightLabel" Content="Stick Right" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickLRightLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickLRightLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickLRightLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickLRightLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  LeftThumbDown  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="StickLDownTextBox" x:FieldModifier="public" />
 					<Button Name="StickLDownInvertButton" Tag="{Binding ElementName=StickLDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="StickLDownLabel" Content="Stick Down" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickLDownLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickLDownLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickLDownLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickLDownLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 		</StackPanel>
 		<!--  DPad  -->
 		<StackPanel Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" Width="200" Margin="70,0,0,0">
 			<!--  DPadUp  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="DPadUpTextBox" x:FieldModifier="public" />
 					<Button Name="DPadUpInvertButton" Tag="{Binding ElementName=DPadUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="DPadUpLabel" Content="D-Pad Up" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="DPadUpLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="DPadUpLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="DPadUpLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="DPadUpLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  DPadLeft  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="DPadLeftTextBox" x:FieldModifier="public" />
 					<Button Name="DPadLeftInvertButton" Tag="{Binding ElementName=DPadLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="DPadLeftLabel" Content="D-Pad Left" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="DPadLeftLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="DPadLeftLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="DPadLeftLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="DPadLeftLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  DPadRight  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="DPadRightTextBox" x:FieldModifier="public" />
 					<Button Name="DPadRightInvertButton" Tag="{Binding ElementName=DPadRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="DPadRightLabel" Content="D-Pad Right" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="DPadRightLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="DPadRightLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="DPadRightLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="DPadRightLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  DPadDown  -->
-			<Grid Style="{StaticResource RecordClearGridLeft}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
 				<StackPanel Style="{StaticResource StackPanelLeft}">
 					<TextBox Name="DPadDownTextBox" x:FieldModifier="public" />
 					<Button Name="DPadDownInvertButton" Tag="{Binding ElementName=DPadDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 					<Label Name="DPadDownLabel" Content="D-Pad Down" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="DPadDownLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="DPadDownLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="DPadDownLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="DPadDownLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 		</StackPanel>
 		<!--  RIGHT  -->
 		<StackPanel Grid.Column="3">
@@ -524,45 +695,115 @@
 
 			</StackPanel>
 			<!--  RightShoulder  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="BumperRLabel" Content="Bumper" />
 					<Button Name="BumperRInvertButton" Tag="{Binding ElementName=BumperRTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="BumperRTextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="BumperRLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="BumperRLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="BumperRLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="BumperRLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  ButtonY  -->
-			<Grid Margin="0,15,0,0" Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Margin="0,15,0,0" Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="ActionYLabel" Content="Y Button" />
 					<Button Name="ActionYInvertButton" Tag="{Binding ElementName=ActionYTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="ActionYTextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="ActionYLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="ActionYLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="ActionYLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="ActionYLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  ButtonX  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="ActionXLabel" Content="X Button" />
 					<Button Name="ActionXInvertButton" Tag="{Binding ElementName=ActionXTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="ActionXTextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="ActionXLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="ActionXLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="ActionXLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="ActionXLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  ButtonB  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="ActionBLabel" Content="B Button" />
 					<Button Name="ActionBInvertButton" Tag="{Binding ElementName=ActionBTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="ActionBTextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="ActionBLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="ActionBLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="ActionBLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="ActionBLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  ButtonA  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="ActionALabel" Content="A Button" />
 					<Button Name="ActionAInvertButton" Tag="{Binding ElementName=ActionATextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="ActionATextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="ActionALabelDI"
+					Foreground="Green" />
+					<Label
+					Name="ActionALabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="ActionALabelXI"
+					Foreground="Red" />
+					<Label
+					Name="ActionALabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  RightThumbAxisX  -->
 			<StackPanel Style="{StaticResource RecordClearStackPanelRight}" Margin="0,20,0,0">
 				<StackPanel Style="{StaticResource StackPanelRight}">
@@ -609,48 +850,118 @@
 			</StackPanel>
 
 			<!--  RightThumbButton  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRButtonLabel" Content="Stick Button" />
 					<Button Name="StickRButtonInvertButton" Tag="{Binding ElementName=StickRButtonTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="StickRButtonTextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickRButtonLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickRButtonLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickRButtonLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickRButtonLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 		</StackPanel>
 		<!--  Stick Right  -->
 		<StackPanel Grid.Row="2" Grid.Column="3">
 			<!--  RightThumbUp  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRUpLabel" Content="Stick Up" />
 					<Button Name="StickRUpInvertButton" Tag="{Binding ElementName=StickRUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="StickRUpTextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickRUpLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickRUpLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickRUpLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickRUpLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  RightThumbLeft  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRLeftLabel" Content="Stick Left" />
 					<Button Name="StickRLeftInvertButton" Tag="{Binding ElementName=StickRLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="StickRLeftTextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickRLeftLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickRLeftLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickRLeftLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickRLeftLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  RightThumbRight  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRRightLabel" Content="Stick Right" />
 					<Button Name="StickRRightInvertButton" Tag="{Binding ElementName=StickRRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="StickRRightTextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickRRightLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickRRightLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickRRightLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickRRightLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 			<!--  RighthumbDown  -->
-			<Grid Style="{StaticResource RecordClearGridRight}">
+			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
 				<StackPanel Style="{StaticResource StackPanelRight}">
 					<Label Name="StickRDownLabel" Content="Stick Down" />
 					<Button Name="StickRDownInvertButton" Tag="{Binding ElementName=StickRDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
 					<TextBox Name="StickRDownTextBox" x:FieldModifier="public" />
 				</StackPanel>
-			</Grid>
+				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
+					<Label
+					Name="StickRDownLabelDI"
+					Foreground="Green" />
+					<Label
+					Name="StickRDownLabelDII"
+					Foreground="Blue" />
+					<Label
+					Name="StickRDownLabelXI"
+					Foreground="Red" />
+					<Label
+					Name="StickRDownLabelDZ"
+					Foreground="Gray" />
+				</StackPanel>
+			</StackPanel>
 		</StackPanel>
 	</Grid>
 </UserControl>
