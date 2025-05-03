@@ -1,0 +1,55 @@
+name: Build
+
+env:
+  Branch: ${{github.ref_name}}
+  Configuration: Release
+  Artifacts: x360ce.App.Beta/bin/Release/net48
+  Solution: ${{github.event.repository.name}}.sln
+  GH_TOKEN: ${{github.token}}
+
+on:
+  push:
+    Branches: $Branch
+  pull_request:
+    Branches: $Branch
+  workflow_dispatch:
+
+jobs:
+  Windows:
+    runs-on: windows-latest
+    steps:
+
+    - name: Clone repo and submodules
+      run: git clone --recurse-submodules https://github.com/${{github.repository}}.git . --branch ${{env.Branch}}
+
+    - name: Get current date, commit hash and count
+      run: |
+        echo "CommitDate=$(git show -s --date=format:'%Y-%m-%d' --format=%cd)" >> $env:GITHUB_ENV
+        echo "CommitHash=$(git rev-parse HEAD)" >> $env:GITHUB_ENV
+        echo "CommitHashShort=$(git rev-parse --short=7 HEAD)" >> $env:GITHUB_ENV
+        echo "CommitCount=$(git rev-list --count HEAD)" >> $env:GITHUB_ENV
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Restore NuGet packages
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: nuget restore ${{env.Solution}}
+
+    - name: Build
+      run: msbuild /m ${{env.Solution}} /p:Configuration="${{env.Configuration}}"
+
+    - name: Upload Installer Artifact to GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: "${{github.event.repository.name}}_r${{env.CommitCount}}-${{env.CommitHashShort}}"
+        path: "${{github.workspace}}/${{env.Artifacts}}"
+
+    - name: Compress artifacts
+      run: 7z a "./build/${{github.event.repository.name}}.zip" "./${{env.Artifacts}}/*" -m0=lzma -mx=9
+
+    - name: Release
+      run: |
+        gh release delete latest --cleanup-tag --yes || true
+        gh release create latest --target ${{env.CommitHash}} --generate-notes --latest=true --prerelease --title "Xbox 360 Controller Emulator (X360CE) r${{env.CommitCount}}-${{env.CommitHashShort}}"
+        gh release upload latest --clobber "build/${{github.event.repository.name}}.zip"
