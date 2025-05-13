@@ -98,13 +98,13 @@ namespace x360ce.App.Controls
 			//if (_padSetting != null) _padSetting.PropertyChanged -= _padSetting_PropertyChanged;
 
 			// Unbind controls.
-			foreach (var item in imageInfo) { SettingsManager.UnLoadMonitor(item.Control as Control); }
+			foreach (var item in imageInfo) { SettingsManager.UnLoadMonitor(item.ControlBindedName as Control); }
 
 			// Bind controls.
 			if (ps == null) return;
 			_padSetting = ps;
 			var converter = new Converters.PaddSettingToText();
-			foreach (var item in imageInfo) { SettingsManager.LoadAndMonitor(ps, item.Code.ToString(), item.Control as Control, null, converter); }
+			foreach (var item in imageInfo) { SettingsManager.LoadAndMonitor(ps, item.Code.ToString(), item.ControlBindedName as Control, null, converter); }
 
 			//_padSetting.PropertyChanged += _padSetting_PropertyChanged;
 		}

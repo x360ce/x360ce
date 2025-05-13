@@ -1,13 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Design;
-using System.Drawing;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -41,23 +35,35 @@ namespace x360ce.App.Controls
 			{
 				ii.Path = FindName(GetNameCode(ii.Code).ToString()) as Path;
 				//SetImage(ii.Code, NavImageType.Normal, false);
+
+				TextBox textBox = ii.ControlBindedName as TextBox;
+				textBox.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorOver); };
+				textBox.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorNormalPath); };
+				// textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverActiveRecordColor(sender, colorRecord); };
+
+				Path path = ii.Path;
+				path.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorOver); };
+				path.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorNormalPath); };
+				path.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverActiveRecordColor(sender, colorRecord); };
 			}
 			SetHelpText();
-			//MainGrid.MouseMove += MainGrid_MouseMove;
-			AssignNavigationColorEventHandlers();
 		}
 
 		public MapCode GetNameCode(MapCode code)
 		{
-			if (code == MapCode.LeftThumbAxisX)
-				return MapCode.LeftThumbRight;
-			if (code == MapCode.LeftThumbAxisY)
-				return MapCode.LeftThumbUp;
-			if (code == MapCode.RightThumbAxisX)
-				return MapCode.RightThumbRight;
-			if (code == MapCode.RightThumbAxisY)
-				return MapCode.RightThumbUp;
-			return code;
+			switch (code)
+			{
+				case MapCode.LeftThumbAxisX:
+					return MapCode.LeftThumbRight;
+				case MapCode.LeftThumbAxisY:
+					return MapCode.LeftThumbUp;
+				case MapCode.RightThumbAxisX:
+					return MapCode.RightThumbRight;
+				case MapCode.RightThumbAxisY:
+					return MapCode.RightThumbUp;
+				default:
+					return code;
+			}
 		}
 
 		//public void SetImage(MapCode code, NavImageType type, bool show)
@@ -198,22 +204,6 @@ namespace x360ce.App.Controls
 		public SolidColorBrush colorOver = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFFCC66");
 		public SolidColorBrush colorRecord = (SolidColorBrush)new BrushConverter().ConvertFrom("#FFFF6B66");
 
-		private void AssignNavigationColorEventHandlers()
-		{
-			foreach (var ii in Infos)
-			{
-				TextBox textBox = ii.Control as TextBox;
-				textBox.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorOver); };
-				textBox.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorNormalPath); };
-				// textBox.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverActiveRecordColor(sender, colorRecord); };
-
-				Path path = ii.Path;
-				path.MouseEnter += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorOver); };
-				path.MouseLeave += delegate (object sender, MouseEventArgs e) { setNormalOverActiveRecordColor(sender, colorNormalPath); };
-				path.MouseUp += delegate (object sender, MouseButtonEventArgs e) { setNormalOverActiveRecordColor(sender, colorRecord); };
-			}
-		}
-
 		// Set navigation color.
 		public void setNormalOverActiveRecordColor(object sender, SolidColorBrush setColor)
 		{	
@@ -233,7 +223,7 @@ namespace x360ce.App.Controls
 			if (sender is ImageInfo)
 			{			
 				var senderPath = (sender as ImageInfo).Path;
-				var senderText = (sender as ImageInfo).Control as TextBox;
+				var senderText = (sender as ImageInfo).ControlBindedName as TextBox;
 
 				if (senderColor.Color != colorRecord.Color && senderColor.Color != colorOver.Color)
 				{				
@@ -255,10 +245,10 @@ namespace x360ce.App.Controls
 					X360ControllerControl_Viewbox.Opacity = 1;
 					X360ControllerControl_Viewbox.IsHitTestVisible = true;
 
-					foreach (var ii in Infos.Where(ii => sender == ii.Path || sender == ii.Control as TextBox))
+					foreach (var ii in Infos.Where(ii => sender == ii.Path || sender == ii.ControlBindedName as TextBox))
 					{
 						ii.Path.Fill = setColor;
-						(ii.Control as TextBox).Background = (setColor.Color == colorNormalPath.Color) ? colorNormalTextBox : setColor;
+						(ii.ControlBindedName as TextBox).Background = (setColor.Color == colorNormalPath.Color) ? colorNormalTextBox : setColor;
 					}
 				}
 			}
