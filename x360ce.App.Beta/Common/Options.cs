@@ -80,7 +80,7 @@ namespace x360ce.App
 		public bool AlwaysOnTop { get { return _AlwaysOnTop; } set { _AlwaysOnTop = value; OnPropertyChanged(); } }
 		bool _AlwaysOnTop;
 
-		[DefaultValue(false), Description("Start with Windows.")]
+		[DefaultValue(false), Description("StartDInputService with Windows.")]
 		public bool StartWithWindows { get { return _StartWithWindows; } set { _StartWithWindows = value; OnPropertyChanged(); } }
 		bool _StartWithWindows;
 

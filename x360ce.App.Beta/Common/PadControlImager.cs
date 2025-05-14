@@ -3,6 +3,8 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+
 //using System.IO;
 //using System.Security.Policy;
 using System.Windows.Controls;
@@ -28,10 +30,10 @@ namespace x360ce.App.Controls
 
 		public PadControlImager()
 		{
-			locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
+			//locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
 			lock (imagesLock)
 			{
-				var a = GetType().Assembly;
+				// var a = GetType().Assembly;
 				// Create images.
 				//if (topImage == null)
 				//{
@@ -120,17 +122,28 @@ namespace x360ce.App.Controls
 		public Border LeftTriggerAxisStatus;
 		public Border RightTriggerAxisStatus;
 
+		static int GetNumber(string input)
+		{
+			string digits = new string(input.Where(char.IsDigit).ToArray());
+			if (digits.Length > 0)
+			{
+				int number = int.Parse(digits);
+				return number;
+			}
+			return -1;
+		}
+
 		public System.Windows.Shapes.Path DPadUpStatus;
 
 		bool on = false;
 
-		public void DrawState(ImageInfo ii, Gamepad gp)
+		public void DrawState(ImageInfo ii, Gamepad gp, CustomDiState ds)
 		{
 			short stickLDeadzone = Gamepad.LeftThumbDeadZone;
 			short stickRDeadzone = Gamepad.RightThumbDeadZone;
-			//Trigger axis state with "•" yellow circle.
 			switch (ii.Code)
 			{
+				// Trigger axis state with "•" yellow circle.
 				case MapCode.LeftTrigger:
 				case MapCode.RightTrigger:
 					var isLeft = ii.Code == MapCode.LeftTrigger;
@@ -143,8 +156,39 @@ namespace x360ce.App.Controls
 					// Deadzone.
 					on = (ii.Code == MapCode.LeftTrigger && y > Gamepad.TriggerThreshold) || (ii.Code == MapCode.RightTrigger && y > Gamepad.TriggerThreshold);
 					// XInput value.
-					((Label)ii.ControlXI).Content = ii.Code == MapCode.LeftTrigger ? gp.LeftTrigger : gp.RightTrigger;
-				break;
+					((Label)ii.ControlStackPanel).Content = ii.Code == MapCode.LeftTrigger ? gp.LeftTrigger : gp.RightTrigger;
+
+					var bindedName = ii.ControlBindedName;
+
+					// InstanceGuid.UserDevice.Axis.1:
+					// InstanceGuid.UserDevice.HAxis.1:
+					// InstanceGuid.UserDevice.IAxis.1:
+					// InstanceGuid.UserDevice.IHAxis.1:
+					//				PAD1.LeftTrigger,
+					//				PAD1.ButtonA,
+					//				PAD2.LeftThumbX,
+					// InstanceGuid.UserDevice.Slider.1.Up
+					// InstanceGuid.UserDevice.Button.1
+					// InstanceGuid.UserDevice.POV.1
+					// InstanceGuid.UserDevice.POV.1.Up
+
+					if (bindedName != null)
+					{
+					//var bindedName = ((TextBox)ii.ControlBindedName).Text;
+				// var axis = ds.Axis;
+					//var buttons = ds.Buttons;
+					//var numberTrigger = GetNumber(bindedName);
+					//if (numberTrigger > -1)
+					//{
+					//	if (bindedName.Contains("Axis")) { ((Label)((StackPanel)ii.ControlStackPanel).Children[1]).Content = ds.Axis[numberTrigger - 1]; }
+					//	else if (bindedName.Contains("Button")) { ((Label)((StackPanel)ii.ControlStackPanel).Children[1]).Content = ds.Buttons[numberTrigger - 1]; }
+					//}
+					}
+					
+
+					
+					break;
+				// Stick axis state with "•" yellow circle.
 				case MapCode.LeftThumbAxisX:
 				case MapCode.LeftThumbAxisY:
 				case MapCode.RightThumbAxisX:
@@ -166,13 +210,14 @@ namespace x360ce.App.Controls
 					// XInput value.
 					switch (ii.Code)
 					{
-						case MapCode.LeftThumbAxisX: ((Label)ii.ControlXI).Content = gp.LeftThumbX; break;
-						case MapCode.LeftThumbAxisY: ((Label)ii.ControlXI).Content = gp.LeftThumbY; break;
-						case MapCode.RightThumbAxisX: ((Label)ii.ControlXI).Content = gp.RightThumbX; break;
-						case MapCode.RightThumbAxisY: ((Label)ii.ControlXI).Content = gp.RightThumbY; break;
+						case MapCode.LeftThumbAxisX: ((Label)ii.ControlStackPanel).Content = gp.LeftThumbX; break;
+						case MapCode.LeftThumbAxisY: ((Label)ii.ControlStackPanel).Content = gp.LeftThumbY; break;
+						case MapCode.RightThumbAxisX: ((Label)ii.ControlStackPanel).Content = gp.RightThumbX; break;
+						case MapCode.RightThumbAxisY: ((Label)ii.ControlStackPanel).Content = gp.RightThumbY; break;
 					}
-				break;
-				// Axis detailed deadzones...
+					var numberAxis = GetNumber(((TextBox)ii.ControlBindedName).Text);
+					break;
+				// Stick axis detailed deadzones.
 				case MapCode.LeftThumbRight:
 					on = gp.LeftThumbX > stickLDeadzone;
 					break;
@@ -214,7 +259,9 @@ namespace x360ce.App.Controls
 				case MapCode.DPadDown:	
 				case MapCode.DPadRight:
 					on = gp.Buttons.HasFlag(ii.Button);
-					((Label)ii.ControlXI).Content = on ? 1 : 0;
+                    // XInput value.
+                    ((Label)ii.ControlStackPanel).Content = on ? 1 : 0;
+					var numberButton = GetNumber(((TextBox)ii.ControlBindedName).Text);
 					break;
 				// D-Pad.
 				case MapCode.DPad:
@@ -227,31 +274,31 @@ namespace x360ce.App.Controls
 			}
 
 			// If record then...
-			if (Recorder.Recording)
-			{
-				MapCode? redirect = null;
-				if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisX)
-					redirect = MapCode.RightThumbRight;
-				if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisY)
-					redirect = MapCode.RightThumbUp;
-				if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisX)
-					redirect = MapCode.LeftThumbRight;
-				if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisY)
-					redirect = MapCode.LeftThumbUp;
-				if (redirect.HasValue)
-				{
-					MapCode recordingCode = ii.Code;
-					recordingCode = redirect.Value;
-					// Skip if redirected control.
-					if (ii.Code == recordingCode)
-						return;
-				}
-				// If record is in progress then...
-				if (ii.Code == Recorder.CurrentMap.Code)
-				{
-					on = true;
-				}
-			}
+			//if (Recorder.Recording)
+			//{
+			//	MapCode? redirect = null;
+			//	if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisX)
+			//		redirect = MapCode.RightThumbRight;
+			//	if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisY)
+			//		redirect = MapCode.RightThumbUp;
+			//	if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisX)
+			//		redirect = MapCode.LeftThumbRight;
+			//	if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisY)
+			//		redirect = MapCode.LeftThumbUp;
+			//	if (redirect.HasValue)
+			//	{
+			//		MapCode recordingCode = ii.Code;
+			//		recordingCode = redirect.Value;
+			//		// Skip if redirected control.
+			//		if (ii.Code == recordingCode)
+			//			return;
+			//	}
+			//	// If record is in progress then...
+			//	if (ii.Code == Recorder.CurrentMap.Code)
+			//	{
+			//		on = true;
+			//	}
+			//}
 
 			//else if (
 			//	 ShowLeftThumbButtons && SettingsConverter.LeftThumbCodes.Contains(ii.Code) ||

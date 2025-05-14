@@ -124,7 +124,7 @@
 						</DataGrid.Columns>
 					</DataGrid>
 
-					<StackPanel Name="DeviceDetails" Grid.Row="4" Margin="3" DataContext="{Binding SelectedDevice, ElementName=YourUserControlName}">
+					<StackPanel Name="DeviceDetails" Grid.Row="4" Margin="3"> <!--DataContext="{Binding SelectedDevice, ElementName=PadListControl}"-->
 						<StackPanel Orientation="Horizontal">
 							<Label>Vendor</Label>
 							<Label Opacity="0.5" Name="VendorName"/>

@@ -1,77 +1,36 @@
-﻿using JocysCom.ClassLibrary;
+﻿//using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.IO;
+//using JocysCom.ClassLibrary.Win32;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
-using System.Diagnostics;
-using System.Linq;
+//using System.Collections.Generic;
 
+//using System.ComponentModel;
+using System.Diagnostics;
 //using System.Linq;
-using System.Management;
+//using System.Management;
+//using System.Runtime.InteropServices;
 using System.Threading;
+//using x360ce.App.Common.DInput;
 //using static JocysCom.ClassLibrary.Processes.MouseHelper;
+//using System.Windows.Interop;
 //using System.Windows.Input;
 
 namespace x360ce.App.DInput
 {
 	public partial class DInputHelper : IDisposable
 	{
-		// Constructor
-		public DInputHelper()
-		{
-			CombinedXiConnected = new bool[4];
-			LiveXiConnected = new bool[4];
-			CombinedXiStates = new State[4];
-			LiveXiStates = new State[4];
-			LiveXiControllers = new Controller[4];
 
-			for (int i = 0; i < 4; i++)
-			{
-				CombinedXiStates[i] = new State();
-				LiveXiStates[i] = new State();
-				LiveXiControllers[i] = new Controller((UserIndex)i);
-			}
-
-			// Devices are updated on USB connection event and on UpdateDiStates() method device InputLost error in DInputHelper.Step2.UpdateDiStates.cs 
-			PnPDeviceWatcher.EventArrived += new EventArrivedEventHandler(PnPDeviceWatcherUSBEvent);
-			// Keyboard, Mouse, HID.
-			var keys = DeviceDetector.PnPDeviceClassGuids.Keys.ToList();
-			// Build query string for improved readability.
-			string queryString =
-				"SELECT * FROM __InstanceOperationEvent " +
-				"WITHIN 1 " +
-				"WHERE TargetInstance ISA 'Win32_PnPEntity' " +
-				"AND (__Class = '__InstanceCreationEvent') " +
-				"AND (TargetInstance.ClassGuid = '" + keys[0] + "' " +
-				"OR TargetInstance.ClassGuid = '" + keys[1] + "' " +
-				"OR TargetInstance.ClassGuid = '" + keys[2] + "') " +
-				"AND TargetInstance.DeviceID LIKE 'HID%' " +
-				"AND TargetInstance.DeviceID LIKE '%0' ";
-			PnPDeviceWatcher.Query = new WqlEventQuery(queryString);
-			//PnPDeviceWatcher.Query = new WqlEventQuery("SELECT * FROM __InstanceOperationEvent WITHIN 1 WHERE TargetInstance ISA 'Win32_PnPEntity' AND (__Class = '__InstanceCreationEvent' OR __Class = '__InstanceDeletionEvent')");
-			PnPDeviceWatcher.Start();
-		}
-
-		#region ■ Device Detector
-		// DevicesNeedUpdating property can be set to true (update device list as soon as possible) from multiple threads.
-		public bool DevicesNeedUpdating = false;
-		// DevicesAreUpdating property ensures parameter remains unchanged during RefreshAll(manager, detector) action.
-		private bool DevicesAreUpdating = false; // CheckAndUnloadXInputLibrary(*) > UpdateDiDevices(*) > CheckAndLoadXInputLibrary(*).
-		#endregion
-
-		private ManagementEventWatcher PnPDeviceWatcher = new ManagementEventWatcher();
-		// Device Manager > Control Panel > Plug and Play devices.
-		private async void PnPDeviceWatcherUSBEvent(object sender, EventArrivedEventArgs e)
-		{
-			if (e.NewEvent["TargetInstance"] is ManagementBaseObject targetInstance)
-			{
-				Debug.WriteLine($"\nWin32_PnPEntity USB Event: ClassGuid {targetInstance["ClassGuid"]} ({DeviceDetector.PnPDeviceClassGuids[targetInstance["ClassGuid"].ToString()]}). DeviceId {targetInstance["DeviceID"]}.\n");
-				await Helper.Debounce(OnDevicesChanged);
-			}
-		}
-
-		// Use an expression-bodied method for clarity:
-		private void OnDevicesChanged() => DevicesNeedUpdating = true;
+		// --------------------------------------------------------------------------------------------
+		// DESCRIPTION
+		// --------------------------------------------------------------------------------------------
+		// Monitor (WM_DEVICECHANGE) device (HID, Keyboard, Mouse) interface events (DEV_BROADCAST_DEVICEINTERFACE).
+		// On detection, set DevicesNeedUpdating = true (also, set 'true' on 'InputLost' error in 'DInputHelper.Step2.UpdateDiStates.cs' > UpdateDiStates()).
+		// Build a list of SharpDX.DirectInput.DeviceInstance objects (DeviceClass.GameControl, DeviceClass.Keyboard, DeviceClass.Pointer).
+		// The list holds each Win32_PnPEntity.DeviceID prefix, created from SharpDX.DirectInput.DeviceInstance.ProductGuid.
+		// For example: 6f1d2b60-d5a0-11cf-bfc7-444553540000 > HID\VID_2B60&PID_6F1D.
+		// Win32_PnPEntity.DeviceID prefix'es are used to select Win32_PnPEntity entities existing as SharpDX.DirectInput.DeviceInstance's.
 
 		// Where the current DInput device state is stored:
 		//
@@ -96,10 +55,41 @@ namespace x360ce.App.DInput
 		//	  Update DInput and XInput forms.
 		// }
 
+
+		// Constructor
+		public DInputHelper()
+		{
+			CombinedXiConnected = new bool[4];
+			LiveXiConnected = new bool[4];
+			CombinedXiStates = new State[4];
+			LiveXiStates = new State[4];
+			LiveXiControllers = new Controller[4];
+
+			for (int i = 0; i < 4; i++)
+			{
+				CombinedXiStates[i] = new State();
+				LiveXiStates[i] = new State();
+				LiveXiControllers[i] = new Controller((UserIndex)i);
+			}
+		}
+
+		//===============================================================================================
+
+		#region ■ Device Detector
+
+		// DevicesNeedUpdating can be set (true = update device list as soon as possible) from multiple threads.
+		public bool DevicesNeedUpdating = false;
+		// DevicesAreUpdating property ensures parameter remains unchanged during RefreshAll(manager, detector) action.
+		// CheckAndUnloadXInputLibrary(*) > UpdateDiDevices(*) > CheckAndLoadXInputLibrary(*).
+		private bool DevicesAreUpdating = false;
+
+		#endregion
+
 		/// <summary>
 		/// _ResetEvent with _Timer is used to limit update refresh frequency.
 		/// ms1_1000Hz = 1, ms2_500Hz = 2, ms4_250Hz = 4, ms8_125Hz = 8.
 		/// </summary>
+		/// 
 		ManualResetEvent _ResetEvent = new ManualResetEvent(false);
 		JocysCom.ClassLibrary.HiResTimer _Timer;
 		UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
@@ -123,7 +113,7 @@ namespace x360ce.App.DInput
 		private bool _AllowThreadToRun;
 
 		// Start DInput Service.
-		public void Start()
+		public void StartDInputService()
 		{
 			lock (timerLock)
 			{
@@ -139,7 +129,7 @@ namespace x360ce.App.DInput
 		}
 
 		// Stop DInput Service.
-		public void Stop()
+		public void StopDInputService()
 		{
 			lock (timerLock)
 			{
@@ -224,8 +214,8 @@ namespace x360ce.App.DInput
 		public event EventHandler<DInputEventArgs> StatesUpdated;
 		public event EventHandler<DInputEventArgs> StatesRetrieved;
 		public event EventHandler<DInputEventArgs> XInputReloaded;
-
 		public event EventHandler<DInputEventArgs> UpdateCompleted;
+
 		private readonly object DiUpdatesLock = new object();
 
 		private void RefreshAll(DirectInput manager, DeviceDetector detector)
@@ -236,53 +226,41 @@ namespace x360ce.App.DInput
 				// If the game is not selected.
 				if (game != null || !Program.IsClosing)
 				{
-					var getXInputStates = SettingsManager.Options.GetXInputStates && Global._MainWindow.FormEventsEnabled;
 					// Note: Getting XInput states is not required in order to do emulation.
 					// Get states only when the form is maximized in order to reduce CPU usage.
+					var getXInputStates = SettingsManager.Options.GetXInputStates && Global._MainWindow.FormEventsEnabled;
 					// Update hardware.
-					if (((DevicesNeedUpdating && !DevicesAreUpdating) || DeviceDetector.DiDevices == null))
+					if ((DevicesNeedUpdating && !DevicesAreUpdating) || DeviceDetector.DiDevices == null)
 					{
 						DevicesAreUpdating = true;
 						try
 						{
-							//Debug.WriteLine("1");
-							// The best place to unload the XInput DLL is at the start, because
-							// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
+							// The best place to unload the XInput DLL is at the start, because UpdateDiStates(...) function
+							// will try to acquire new devices exclusively for force feedback information and control.
 							CheckAndUnloadXInputLibrary(game, getXInputStates);
-							//Debug.WriteLine("2");
 							// Update information about connected devices.
 							_ = UpdateDiDevices(manager);
-							//Debug.WriteLine("3");
 							// Load the XInput library before retrieving XInput states.
 							CheckAndLoadXInputLibrary(game, getXInputStates);
-							//Debug.WriteLine("4");
 						}
 						finally
 						{
-							//Debug.WriteLine("5");
 							DevicesNeedUpdating = false;
 							DevicesAreUpdating = false;
-							//Debug.WriteLine("6");
 						}
 					}
 					else
 					{
-						// Debug.WriteLine("7.");
 						// Update JoystickStates from devices.
 						UpdateDiStates(game, detector);
-						// Debug.WriteLine("8.");
 						// Update XInput states from Custom DirectInput states.
 						UpdateXiStates(game);
-						//Debug.WriteLine("9.");
 						// Combine XInput states of controllers.
 						CombineXiStates();
-						//Debug.WriteLine("10.");
 						// Update virtual devices from combined states.
 						UpdateVirtualDevices(game);
-						// Debug.WriteLine("11.");
 						// Retrieve XInput states from XInput controllers.
 						RetrieveXiStates(getXInputStates);
-						// Debug.WriteLine("12.");
 					}
 				}
 				// Count DInput updates per second to show in the app's status bar as Hz: #.
@@ -319,7 +297,7 @@ namespace x360ce.App.DInput
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
-			PnPDeviceWatcher?.Dispose();
+			// PnPDeviceWatcher?.Dispose();
 			directInput?.Dispose();
 		}
 
@@ -335,7 +313,7 @@ namespace x360ce.App.DInput
 					return;
 				IsDisposing = true;
 
-				Stop();
+				StopDInputService();
 				Nefarius.ViGEm.Client.ViGEmClient.DisposeCurrent();
 				_ResetEvent?.Dispose();
 

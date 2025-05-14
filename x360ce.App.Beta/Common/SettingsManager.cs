@@ -180,7 +180,7 @@ namespace x360ce.App
 				.Where(x => string.Equals(x.FileName, fileName, StringComparison.OrdinalIgnoreCase))
 				// Include only mapped devices.
 				.Where(x => x.MapTo > (int)MapTo.None)
-				// Select device instances only.
+				// Select device instance GUIDs only.
 				.Select(x => x.InstanceGuid)
 				.ToArray();
 
@@ -342,7 +342,7 @@ namespace x360ce.App
 				item.ButtonB = "B Button";
 				item.ButtonBack = "Back";
 				item.ButtonGuide = "Guide";
-				item.ButtonStart = "Start";
+				item.ButtonStart = "StartDInputService";
 				item.ButtonX = "X Button";
 				item.ButtonY = "Y Button";
 				item.DPad = "D-Pad";
