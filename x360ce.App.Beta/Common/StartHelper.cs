@@ -75,12 +75,15 @@ namespace x360ce.App
 		// ----------------------------------------------------------
 
 		private const int WM_DEVICECHANGE = DeviceDetector.WM_DEVICECHANGE; // 0x0219;
-		private const int DBT_DEVICEARRIVAL = 0x8000;
+
+        private const int DBT_DEVNODES_CHANGED = 0x0007;
+        private const int DBT_DEVICEARRIVAL = 0x8000;
 		private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
+
 		private const int DBT_DEVTYP_DEVICEINTERFACE = 0x00000005;
 		private const uint DEVICE_NOTIFY_WINDOW_HANDLE = 0;
 
-		[DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
 		private static extern IntPtr RegisterDeviceNotification(
 			IntPtr hRecipient,
 			ref DEV_BROADCAST_DEVICEINTERFACE notificationFilter,
@@ -116,13 +119,15 @@ namespace x360ce.App
 		internal static readonly Guid GUID_DEVINTERFACE_HID = new Guid("4D1E55B2-F16F-11CF-88CB-001111000030");
 		internal static readonly Guid GUID_DEVINTERFACE_KEYBOARD = new Guid("884B96C3-56EF-11D1-BC8C-00A0C91405DD");
 		internal static readonly Guid GUID_DEVINTERFACE_MOUSE = new Guid("378DE44C-56EF-11D1-BC8C-00A0C91405DD");
+        internal static readonly Guid GUID_DEVINTERFACE_USB_DEVICE = new Guid("A5DCBF10-6530-11D2-901F-00C04FB951ED");
 
-		private static readonly Guid[] _interestedGuids =
+        private static readonly Guid[] _interestedGuids =
 		{
 			GUID_DEVINTERFACE_HID,
 			GUID_DEVINTERFACE_KEYBOARD,
-			GUID_DEVINTERFACE_MOUSE
-		};
+			GUID_DEVINTERFACE_MOUSE,
+            GUID_DEVINTERFACE_USB_DEVICE
+        };
 
 		// ----------------------------------------------------------
 		//  Public API
@@ -204,7 +209,7 @@ namespace x360ce.App
 		{
 			// 1) Only care about arrival or removal.
 			var evt = wParam.ToInt32();
-			if (evt != DBT_DEVICEARRIVAL && evt != DBT_DEVICEREMOVECOMPLETE)
+			if (evt != DBT_DEVICEARRIVAL && evt != DBT_DEVICEREMOVECOMPLETE/* && evt != DBT_DEVNODES_CHANGED*/)
 				return;
 
 			// 2) Only care about device‐interface notifications.
@@ -238,11 +243,14 @@ namespace x360ce.App
 			if (string.IsNullOrEmpty(path))
 				return false;
 
-			// All four interfaces must have “&0&0000”
-			if (path.IndexOf("&0&0000", StringComparison.OrdinalIgnoreCase) < 0)
-				return false;
+			//All four interfaces must have “&0&0000”
+			//if (path.IndexOf("&0&0000", StringComparison.OrdinalIgnoreCase) < 0)
+			//return false;
 
-			if (guid == GUID_DEVINTERFACE_KEYBOARD)
+            if (guid == GUID_DEVINTERFACE_USB_DEVICE)
+                return true;
+
+            if (guid == GUID_DEVINTERFACE_KEYBOARD)
 				return path.IndexOf("&MI_00", StringComparison.OrdinalIgnoreCase) >= 0;
 
 			if (guid == GUID_DEVINTERFACE_MOUSE)
@@ -261,7 +269,8 @@ namespace x360ce.App
 			g == GUID_DEVINTERFACE_KEYBOARD ? "Keyboard" :
 			g == GUID_DEVINTERFACE_MOUSE ? "Mouse" :
 			g == GUID_DEVINTERFACE_HID ? "HID" :
-			g.ToString();
+            g == GUID_DEVINTERFACE_USB_DEVICE ? "USB" :
+            g.ToString();
 
 		//-----------------------------------------------------------------------
 
