@@ -1,9 +1,9 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
-using System.IO;
+//using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
+//using System.Windows.Documents;
 using x360ce.Engine;
 
 namespace x360ce.App.Controls

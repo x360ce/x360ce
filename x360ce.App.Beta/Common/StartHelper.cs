@@ -76,7 +76,7 @@ namespace x360ce.App
 
 		private const int WM_DEVICECHANGE = DeviceDetector.WM_DEVICECHANGE; // 0x0219;
 
-        private const int DBT_DEVNODES_CHANGED = 0x0007;
+        //private const int DBT_DEVNODES_CHANGED = 0x0007;
         private const int DBT_DEVICEARRIVAL = 0x8000;
 		private const int DBT_DEVICEREMOVECOMPLETE = 0x8004;
 
@@ -243,12 +243,12 @@ namespace x360ce.App
 			if (string.IsNullOrEmpty(path))
 				return false;
 
-			//All four interfaces must have “&0&0000”
-			//if (path.IndexOf("&0&0000", StringComparison.OrdinalIgnoreCase) < 0)
-			//return false;
-
             if (guid == GUID_DEVINTERFACE_USB_DEVICE)
                 return true;
+
+            // All four interfaces must have “&0&0000”
+            // if (path.IndexOf("&0&0000", StringComparison.OrdinalIgnoreCase) < 0)
+            // return false;
 
             if (guid == GUID_DEVINTERFACE_KEYBOARD)
 				return path.IndexOf("&MI_00", StringComparison.OrdinalIgnoreCase) >= 0;
@@ -258,7 +258,7 @@ namespace x360ce.App
 
 			if (guid == GUID_DEVINTERFACE_HID)
 				return path.IndexOf("&MI_02", StringComparison.OrdinalIgnoreCase) >= 0 ||
-						path.IndexOf("&IG_00", StringComparison.OrdinalIgnoreCase) >= 0;
+					   path.IndexOf("&IG_00", StringComparison.OrdinalIgnoreCase) >= 0;
 
 			return false;
 		}

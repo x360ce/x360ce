@@ -53,16 +53,18 @@ namespace x360ce.App.Controls
 			}
 			// Synchronize list.
 			CollectionsHelper.Synchronize(list, _currentData);
-		}
+            MainDataGrid.ItemsSource = _currentData;
+            ControlsHelper.SetSelection(MainDataGrid, nameof(UserDevice.InstanceGuid), gridSelection, 0);
+        }
 
 		private void Items_ListChanged(object sender, ListChangedEventArgs e)
 		{
-			// If device added removed then...
-			var changes = new[] { ListChangedType.ItemAdded, ListChangedType.ItemDeleted };
-			// If item added or deleted from original list then...
-			if (changes.Contains(e.ListChangedType))
-				RefreshMapDeviceToList();
-		}
+            // If device added removed then...
+            if (e.ListChangedType == ListChangedType.ItemAdded || e.ListChangedType == ListChangedType.ItemDeleted)
+            {
+                RefreshMapDeviceToList();
+            }
+        }
 
 		bool ShowSystemDevices = false;
 
@@ -238,7 +240,6 @@ namespace x360ce.App.Controls
 			MainDataGrid.ItemsSource = _currentData;
 			SettingsManager.UserDevices.Items.ListChanged += Items_ListChanged;
 			RefreshMapDeviceToList();
-			ControlsHelper.SetSelection(MainDataGrid, nameof(UserDevice.InstanceGuid), gridSelection, 0);
 		}
 
 		List<Guid> gridSelection = new List<Guid>();
