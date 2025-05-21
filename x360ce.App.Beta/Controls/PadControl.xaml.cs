@@ -437,18 +437,20 @@ namespace x360ce.App.Controls
 					AddImageInfo(2, TargetType.Button, MapCode.LeftThumbButton, 59, 47, GeneralPanel.StickLButtonLabel, GeneralPanel.StickLButtonXILabel, GeneralPanel.StickLButtonTextBox, GamepadButtonFlags.LeftThumb);
 					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbAxisX, 59 + 10, 47, GeneralPanel.StickLAxisXLabel, GeneralPanel.StickLAxisXXILabel, GeneralPanel.StickLAxisXTextBox);
 					AddImageInfo(2, TargetType.LeftThumbY, MapCode.LeftThumbAxisY, 59, 47 - 10, GeneralPanel.StickLAxisYLabel, GeneralPanel.StickLAxisYXILabel, GeneralPanel.StickLAxisYTextBox);
-					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbUp, 59, 47 - 10, GeneralPanel.StickLUpLabel, GeneralPanel.StickLUpXILabel, GeneralPanel.StickLUpTextBox);
+
+					AddImageInfo(2, TargetType.LeftThumbY, MapCode.LeftThumbUp, 59, 47 - 10, GeneralPanel.StickLUpLabel, GeneralPanel.StickLUpXILabel, GeneralPanel.StickLUpTextBox);
 					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbLeft, 59 - 10, 47, GeneralPanel.StickLLeftLabel, GeneralPanel.StickLLeftXILabel, GeneralPanel.StickLLeftTextBox);
 					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbRight, 59 + 10, 47, GeneralPanel.StickLRightLabel, GeneralPanel.StickLRightXILabel, GeneralPanel.StickLRightTextBox);
-					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbDown, 59, 47 + 10, GeneralPanel.StickLDownLabel, GeneralPanel.StickLDownXILabel, GeneralPanel.StickLDownTextBox);
+					AddImageInfo(2, TargetType.LeftThumbY, MapCode.LeftThumbDown, 59, 47 + 10, GeneralPanel.StickLDownLabel, GeneralPanel.StickLDownXILabel, GeneralPanel.StickLDownTextBox);
 					// Stick Right.
 					AddImageInfo(2, TargetType.Button, MapCode.RightThumbButton, 160, 88, GeneralPanel.StickRButtonLabel, GeneralPanel.StickRButtonXILabel, GeneralPanel.StickRButtonTextBox, GamepadButtonFlags.RightThumb);
 					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbAxisX, 160 + 10, 88, GeneralPanel.StickRAxisXLabel, GeneralPanel.StickRAxisXXILabel, GeneralPanel.StickRAxisXTextBox);
 					AddImageInfo(2, TargetType.RightThumbY, MapCode.RightThumbAxisY, 160, 88 - 10, GeneralPanel.StickRAxisYLabel, GeneralPanel.StickRAxisYXILabel, GeneralPanel.StickRAxisYTextBox);
-					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbUp, 160, 88 - 10, GeneralPanel.StickRUpLabel, GeneralPanel.StickRUpXILabel, GeneralPanel.StickRUpTextBox);
+
+					AddImageInfo(2, TargetType.RightThumbY, MapCode.RightThumbUp, 160, 88 - 10, GeneralPanel.StickRUpLabel, GeneralPanel.StickRUpXILabel, GeneralPanel.StickRUpTextBox);
 					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbLeft, 160 - 10, 88, GeneralPanel.StickRLeftLabel, GeneralPanel.StickRLeftXILabel, GeneralPanel.StickRLeftTextBox);
 					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbRight, 160 + 10, 88, GeneralPanel.StickRRightLabel, GeneralPanel.StickRRightXILabel, GeneralPanel.StickRRightTextBox);
-					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbDown, 160, 88 + 10, GeneralPanel.StickRDownLabel, GeneralPanel.StickRDownXILabel, GeneralPanel.StickRDownTextBox);
+					AddImageInfo(2, TargetType.RightThumbY, MapCode.RightThumbDown, 160, 88 + 10, GeneralPanel.StickRDownLabel, GeneralPanel.StickRDownXILabel, GeneralPanel.StickRDownTextBox);
 				}
 				return _imageInfos;
 			}

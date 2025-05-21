@@ -1,5 +1,5 @@
 ﻿using JocysCom.ClassLibrary.Controls;
-using System.Linq;
+//using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using x360ce.Engine;
@@ -28,9 +28,9 @@ namespace x360ce.App.Controls
 			LeftThumbYPanel.HeaderText = "Y - Vertical Axis";
 			LeftThumbYPanel.TargetType = TargetType.LeftThumbY;
 			RightThumbXPanel.HeaderText = "X - Horizontal Axis";
-			RightThumbXPanel.TargetType = TargetType.RightThumbY;
+			RightThumbXPanel.TargetType = TargetType.RightThumbX;
 			RightThumbYPanel.HeaderText = "Y - Vertical Axis";
-			RightThumbYPanel.TargetType = TargetType.LeftThumbY;
+			RightThumbYPanel.TargetType = TargetType.RightThumbY;
 		}
 
 		public void ShowTab(bool show, TabItem page)

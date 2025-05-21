@@ -140,10 +140,10 @@ namespace x360ce.App.Controls
             var position = ConvertHelper.ConvertRangeF(triggerValue, byte.MinValue, byte.MaxValue, 0, height);
             // Set circle [•] position.
             circleBorder.RenderTransform = new TranslateTransform { Y = -position };
-            // Check if trigger value exceeds deadzone value (will set green background color).
-            on = triggerValue > Gamepad.TriggerThreshold;
             // Set XInput value below TextBox name.
             valueLabel.Content = triggerValue;
+            // Check if trigger value exceeds deadzone value (will set green background color).
+            on = triggerValue > Gamepad.TriggerThreshold;
         }
 
         private void UpdateXAMLStickElements(short axisValue, Label valueLabel, Border circleBorder, MapCode mapCode, short deadzone)
@@ -161,10 +161,29 @@ namespace x360ce.App.Controls
             circleBorder.Margin = isX
                 ? new System.Windows.Thickness(newMargin, margin.Top, margin.Right, margin.Bottom)
                 : new System.Windows.Thickness(margin.Left, newMargin, margin.Right, margin.Bottom);
-            // Check if stick value exceeds deadzone value (will set green background color).
-            on = axisValue > deadzone || axisValue < -deadzone;
             // Set XInput value below TextBox name.
             valueLabel.Content = axisValue;
+            // Check if stick value exceeds deadzone value (will set green background color).
+            on = axisValue > deadzone || axisValue < -deadzone;
+        }
+
+        private void UpdateXAMLStickElementsDetailed(short axisValue, Label valueLabel, MapCode mapCode, short deadzone)
+        {
+			switch (mapCode) { 
+				case MapCode.LeftThumbRight:
+                case MapCode.LeftThumbUp:
+                case MapCode.RightThumbRight:
+                case MapCode.RightThumbUp:
+                    on = axisValue > deadzone;
+                    break;
+                case MapCode.LeftThumbLeft:
+                case MapCode.LeftThumbDown:
+                case MapCode.RightThumbLeft:
+                case MapCode.RightThumbDown:
+                    on = axisValue < -deadzone;
+                    break;
+            }
+            valueLabel.Content = on ? axisValue : 0;
         }
 
         private Dictionary<MapCode, object> previousGpValues = new Dictionary<MapCode, object>();
@@ -187,57 +206,49 @@ namespace x360ce.App.Controls
 			{
                 // Trigger axis state visual representation with yellow circle position [•].
                 case MapCode.LeftTrigger:
-                    if (!IsValueChanged(MapCode.LeftTrigger, gp.LeftTrigger)) break;
+                    //if (!IsValueChanged(MapCode.LeftTrigger, gp.LeftTrigger)) break;
                     UpdateXAMLTriggerElements(gp.LeftTrigger, (Label)ii.ControlStackPanel, LeftTriggerAxisStatus);
 					break;
                 case MapCode.RightTrigger:
-                    if (!IsValueChanged(MapCode.RightTrigger, gp.RightTrigger)) break;
+                    //if (!IsValueChanged(MapCode.RightTrigger, gp.RightTrigger)) break;
                     UpdateXAMLTriggerElements(gp.RightTrigger, (Label)ii.ControlStackPanel, RightTriggerAxisStatus);
                     break;
                 // Trigger axis state visual representation with yellow circle position (•).
                 case MapCode.LeftThumbAxisX:
-                    if (!IsValueChanged(MapCode.LeftThumbAxisX, gp.LeftThumbX)) break;
+                    //if (!IsValueChanged(MapCode.LeftThumbAxisX, gp.LeftThumbX)) break;
                     UpdateXAMLStickElements(gp.LeftThumbX, (Label)ii.ControlStackPanel, LeftThumbAxisStatus, ii.Code, stickLDeadzone);
 					break;
                 case MapCode.LeftThumbAxisY:
-                    if (!IsValueChanged(MapCode.LeftThumbAxisY, gp.LeftThumbY)) break;
+                    //if (!IsValueChanged(MapCode.LeftThumbAxisY, gp.LeftThumbY)) break;
                     UpdateXAMLStickElements(gp.LeftThumbY, (Label)ii.ControlStackPanel, LeftThumbAxisStatus, ii.Code, stickLDeadzone);
 					break;
                 case MapCode.RightThumbAxisX:
-                    if (!IsValueChanged(MapCode.RightThumbAxisX, gp.RightThumbX)) break;
+                    //if (!IsValueChanged(MapCode.RightThumbAxisX, gp.RightThumbX)) break;
                     UpdateXAMLStickElements(gp.RightThumbX, (Label)ii.ControlStackPanel, RightThumbAxisStatus, ii.Code, stickRDeadzone);
                     break;
                 case MapCode.RightThumbAxisY:
-                    if (!IsValueChanged(MapCode.RightThumbAxisY, gp.RightThumbY)) break;
+                    //if (!IsValueChanged(MapCode.RightThumbAxisY, gp.RightThumbY)) break;
                     UpdateXAMLStickElements(gp.RightThumbY, (Label)ii.ControlStackPanel, RightThumbAxisStatus, ii.Code, stickRDeadzone);
                     break;
-				// Stick axis detailed deadzones.
-				case MapCode.LeftThumbRight:
-					on = gp.LeftThumbX > stickLDeadzone;
-					break;
-				case MapCode.LeftThumbLeft:
-					on = gp.LeftThumbX < -stickLDeadzone;
-					break;
-				case MapCode.LeftThumbUp:
-					on = gp.LeftThumbY > stickLDeadzone;
-					break;
-				case MapCode.LeftThumbDown:
-					on = gp.LeftThumbY < -stickLDeadzone;
-					break;
-				case MapCode.RightThumbRight:
-					on = gp.RightThumbX > stickRDeadzone;
-					break;
-				case MapCode.RightThumbLeft:
-					on = gp.RightThumbX < -stickRDeadzone;
-					break;
-				case MapCode.RightThumbUp:
-					on = gp.RightThumbY > stickRDeadzone;
-					break;
-				case MapCode.RightThumbDown:
-					on = gp.RightThumbY < -stickRDeadzone;
-					break;
-				// Buttons.
-				case MapCode.ButtonA:
+                // Stick axis detailed deadzones.
+                case MapCode.LeftThumbRight:
+                case MapCode.LeftThumbLeft:
+                    UpdateXAMLStickElementsDetailed(gp.LeftThumbX, (Label)ii.ControlStackPanel, ii.Code, stickLDeadzone);
+                    break;
+                case MapCode.LeftThumbUp:
+                case MapCode.LeftThumbDown:
+                    UpdateXAMLStickElementsDetailed(gp.LeftThumbY, (Label)ii.ControlStackPanel, ii.Code, stickLDeadzone);
+                    break;
+                case MapCode.RightThumbRight:
+                case MapCode.RightThumbLeft:
+                    UpdateXAMLStickElementsDetailed(gp.RightThumbX, (Label)ii.ControlStackPanel, ii.Code, stickRDeadzone);
+                    break;
+                case MapCode.RightThumbUp:
+                case MapCode.RightThumbDown:
+                    UpdateXAMLStickElementsDetailed(gp.RightThumbY, (Label)ii.ControlStackPanel, ii.Code, stickRDeadzone);
+                    break;
+                // Buttons.
+                case MapCode.ButtonA:
 				case MapCode.ButtonB:
 				case MapCode.ButtonX:
 				case MapCode.ButtonY:
