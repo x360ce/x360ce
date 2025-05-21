@@ -82,14 +82,14 @@
 							SelectionChanged="GameToCustomizeDataGrid_SelectionChanged">
 									<DataGrid.CellStyle>
 										<Style BasedOn="{StaticResource DataGridCell_Default}" TargetType="DataGridCell">
-											<Style.Triggers>
+											<!--<Style.Triggers>
 												<DataTrigger Binding="{Binding IsOnline}" Value="False">
 													<Setter Property="Opacity" Value="0.2" />
 												</DataTrigger>
 												<DataTrigger Binding="{Binding IsOnline}" Value="True">
 													<Setter Property="Opacity" Value="1" />
 												</DataTrigger>
-											</Style.Triggers>
+											</Style.Triggers>-->
 										</Style>
 									</DataGrid.CellStyle>
 								<DataGrid.Columns>

@@ -13,955 +13,548 @@
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
 
-	<UserControl.Resources>
-		<ResourceDictionary>
-				<!-- MergedDictionaries -->
-				<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary>
-					<!-- Converter -->
-					<conv:ContainsKeywordConverterType x:Key="ContainsKeywordConverterType" />
-					<!--  Invert Button -->
-					<Style x:Key="Button_Invert" TargetType="Button" BasedOn="{StaticResource Button_Default}">
-						<Setter Property="Width" Value="25" />
-						<Setter Property="Height" Value="25" />
-						<Setter Property="Margin" Value="0,3,3,3" />
-						<Setter Property="ToolTip" Value="Invert" />
-						<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-						<Setter Property="Visibility" Value="Collapsed" />
-						<Setter Property="Content" Value="{x:Null}" />
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="Button">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Button}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IButton">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Button_Inverted}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="Axis">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IAxis">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="HAxis">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IHAxis">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half_Inverted}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="Slider">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="ISlider">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="HSlider">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-							<DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IHSlider">
-								<Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half_Inverted}" />
-								<Setter Property="Visibility" Value="Visible" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-					<!--  Drag and Drop menu GroupBox  -->
-					<Style x:Key="DragAndDropGroupBox" BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
-						<Setter Property="Margin" Value="0,-1,0,0" />
-						<Setter Property="Padding" Value="5,0,2,3" />
-					</Style>
-					<!--  Drag and Drop menu Input Label  -->
-					<Style x:Key="DragAndDropDInputBorder" TargetType="Border">
-						<Setter Property="Margin" Value="3,3,3,0" />
-						<Setter Property="VerticalAlignment" Value="Top" />
-						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="CornerRadius" Value="5" />
-						<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-					</Style>
-					<Style x:Key="DragAndDropDInputLabel1" TargetType="Label">
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="Padding" Value="4,2,4,4" />
-						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="STEP 3 - Drag and drop labels into text boxes." />
-					</Style>
-					<Style x:Key="DragAndDropDInputLabel2" TargetType="Label">
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="Padding" Value="0,0,0,4" />
-						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Selected Device Input • Drag and drop labels into text boxes" />
-					</Style>
-					<Style x:Key="DragAndDropXInputBorder" TargetType="Border">
-						<Setter Property="Margin" Value="0,2,0,0" />
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="VerticalAlignment" Value="Top" />
-						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="CornerRadius" Value="5" />
-						<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-					</Style>
-					<Style x:Key="DragAndDropXInputLabel" TargetType="Label">
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="Padding" Value="7,2,8,3" />
-						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Virtual Xbox Controller" />
-					</Style>
-					<!--  Drag and Drop menu Title Label  -->
-					<Style x:Key="DragAndDropDInputTitleLabel" TargetType="Label">
-						<Setter Property="Margin" Value="0" />
-						<Setter Property="Padding" Value="0" />
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="Opacity" Value="0.3" />
-						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Drag and Drop Menu" />
-						<Setter Property="Visibility" Value="Collapsed" />
-					</Style>
-					<!--  Drag and Drop menu "Loading..." Label  -->
-					<Style x:Key="DragAndDropLoadingLabel" TargetType="Label">
-						<Setter Property="Margin" Value="0,20,0,0" />
-						<Setter Property="Padding" Value="9,3,9,6" />
-						<Setter Property="HorizontalAlignment" Value="Center" />
-						<Setter Property="IsHitTestVisible" Value="False" />
-						<Setter Property="Content" Value="Loading..." />
-					</Style>
-					<!--  Drag and Drop menu Label  -->
-					<Style x:Key="DragAndDropLabel" TargetType="Label">
-						<Setter Property="IsHitTestVisible" Value="True" />
-						<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
-						<Setter Property="Padding" Value="5,3,5,3" />
-						<Setter Property="Margin" Value="0,0,3,3" />
-						<Setter Property="Template">
-							<Setter.Value>
-								<ControlTemplate TargetType="Label">
-									<Border Name="MouseOverBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5">
-										<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
-											<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-										</Border>
-									</Border>
-									<ControlTemplate.Triggers>
-										<Trigger Property="IsMouseOver" Value="True">
-											<Setter TargetName="MouseOverBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
-										</Trigger>
-									</ControlTemplate.Triggers>
-								</ControlTemplate>
-							</Setter.Value>
-						</Setter>
-					</Style>
-					<!--  StackPanel  -->
-					<Style x:Key="StackPanelRight" TargetType="StackPanel">
-						<Setter Property="HorizontalAlignment" Value="Right" />
-						<Setter Property="Orientation" Value="Horizontal" />
-					</Style>
-					<Style x:Key="StackPanelLeft" TargetType="StackPanel">
-						<Setter Property="HorizontalAlignment" Value="Left" />
-						<Setter Property="Orientation" Value="Horizontal" />
-					</Style>
-					<!--  StackPanel  -->
-					<Style x:Key="RecordClearStackPanelLeft" TargetType="StackPanel">
-						<Setter Property="HorizontalAlignment" Value="Left" />
-						<Setter Property="Background" Value="Transparent" />
-						<Setter Property="IsHitTestVisible" Value="True" />
-						<EventSetter Event="MouseEnter" Handler="RecordClear_MouseEnter" />
-						<EventSetter Event="MouseLeave" Handler="RecordClear_MouseLeave" />
-					</Style>
-					<Style x:Key="RecordClearStackPanelRight" BasedOn="{StaticResource RecordClearStackPanelLeft}" TargetType="StackPanel">
-						<Setter Property="HorizontalAlignment" Value="Right" />
-					</Style>
-					<Style x:Key="ValuesStackPanelLeft" TargetType="StackPanel">
-						<Setter Property="HorizontalAlignment" Value="Left" />
-						<Setter Property="Margin" Value="6,0,0,0" />
-						<Style.Resources>
-							<Style TargetType="Label">
-								<Setter Property="Width" Value="40" />
-								<Setter Property="Padding" Value="0"/>
-								<Setter Property="FontSize" Value="8"/>
-								<Setter Property="Content" Value="0"/>
-							</Style>
-						</Style.Resources>
-					</Style>
-					<Style x:Key="ValuesStackPanelRight" BasedOn="{StaticResource ValuesStackPanelLeft}" TargetType="StackPanel">
-						<Setter Property="HorizontalAlignment" Value="Right"  />
-						<Setter Property="Margin" Value="0,0,6,0" />
-						<Setter Property="FlowDirection" Value="RightToLeft"/>
-						<!--<Style.Resources>
-							<Style TargetType="Label">
-								<Setter Property="Width" Value="40" />
-								<Setter Property="Padding" Value="0"/>
-								<Setter Property="FontSize" Value="8"/>
-								<Setter Property="Content" Value="0"/>
-							</Style>
-						</Style.Resources>-->
-					</Style>
-					<!--  TextBox  -->
-					<Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
-						<Setter Property="Width" Value="75" />
-						<Setter Property="AllowDrop" Value="True" />
-						<EventSetter Event="PreviewDrop" Handler="DragAndDropMenu_Target_Drop" />
-						<EventSetter Event="MouseEnter" Handler="RecordClear_MouseEnterTextBox" />
-					</Style>
-				</ResourceDictionary>
-			</ResourceDictionary.MergedDictionaries>
-		</ResourceDictionary>
-	</UserControl.Resources>
-	<Grid Margin="3">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="220" />
-			<ColumnDefinition MinWidth="280" Width="*" />
-			<ColumnDefinition Width="220" />
-		</Grid.ColumnDefinitions>
-		<Border Grid.Column="2" Style="{StaticResource DragAndDropXInputBorder}">
-			<Label Style="{StaticResource DragAndDropXInputLabel}" />
-		</Border>
-		
-		<!--  Buttons and Axes  -->
-		<StackPanel Grid.RowSpan="3" >
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <!-- MergedDictionaries -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <!-- Converter -->
+                    <conv:ContainsKeywordConverterType x:Key="ContainsKeywordConverterType" />
+                    <!--  Invert Button -->
+                    <Style x:Key="Button_Invert" TargetType="Button" BasedOn="{StaticResource Button_Default}">
+                        <Setter Property="Width" Value="25" />
+                        <Setter Property="Height" Value="25" />
+                        <Setter Property="Margin" Value="0,3,3,3" />
+                        <Setter Property="ToolTip" Value="Invert" />
+                        <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Setter Property="Content" Value="{x:Null}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="Button">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Button}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IButton">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Button_Inverted}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="Axis">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IAxis">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="HAxis">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IHAxis">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half_Inverted}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="Slider">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="ISlider">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="HSlider">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Tag.Text, RelativeSource={RelativeSource Self}, Converter={StaticResource ContainsKeywordConverterType}}" Value="IHSlider">
+                                <Setter Property="Content" Value="{StaticResource Icon_DragAndDrop_Axis_Half_Inverted}" />
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                    <!--  Drag and Drop menu GroupBox  -->
+                    <Style x:Key="DragAndDropGroupBox" BasedOn="{StaticResource GroupBox_Default}" TargetType="GroupBox">
+                        <Setter Property="Margin" Value="0,-1,0,0" />
+                        <Setter Property="Padding" Value="5,0,2,3" />
+                    </Style>
+                    <!--  Drag and Drop menu Input Label  -->
+                    <Style x:Key="DragAndDropDInputLabel" TargetType="Label">
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="4,2,4,4" />
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                        <Setter Property="Content" Value="STEP 3 - Drag and drop labels into text boxes." />
+                    </Style>
+                    <Style x:Key="DragAndDropXInputBorder" TargetType="Border">
+                        <Setter Property="Margin" Value="0,2,0,0" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="VerticalAlignment" Value="Top" />
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                        <Setter Property="CornerRadius" Value="5" />
+                        <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+                    </Style>
+                    <Style x:Key="DragAndDropXInputLabel" TargetType="Label">
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="7,2,8,3" />
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                        <Setter Property="Content" Value="Virtual Xbox Controller" />
+                    </Style>
+                    <!--  Drag and Drop menu Title Label  -->
+                    <Style x:Key="DragAndDropDInputTitleLabel" TargetType="Label">
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="Opacity" Value="0.3" />
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                        <Setter Property="Content" Value="Drag and Drop Menu" />
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Style>
+                    <!--  Drag and Drop menu "Loading..." Label  -->
+                    <Style x:Key="DragAndDropLoadingLabel" TargetType="Label">
+                        <Setter Property="Margin" Value="0,20,0,0" />
+                        <Setter Property="Padding" Value="9,3,9,6" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                        <Setter Property="Content" Value="Loading..." />
+                    </Style>
+                    <!--  Drag and Drop menu Label  -->
+                    <Style x:Key="DragAndDropLabel" TargetType="Label">
+                        <Setter Property="IsHitTestVisible" Value="True" />
+                        <Setter Property="Background" Value="{StaticResource BackgroundDark}" />
+                        <Setter Property="Padding" Value="5,3,5,3" />
+                        <Setter Property="Margin" Value="0,0,3,3" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Label">
+                                    <Border Name="MouseOverBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5">
+                                        <Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" CornerRadius="5">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="MouseOverBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <!--  StackPanel -->
+                    <Style x:Key="RecordClearStackPanelLeft" TargetType="StackPanel">
+                        <Setter Property="Orientation" Value="Horizontal" />
+                        <Setter Property="HorizontalAlignment" Value="Left" />
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="IsHitTestVisible" Value="True" />
+                        <EventSetter Event="MouseEnter" Handler="RecordClear_MouseEnter" />
+                        <EventSetter Event="MouseLeave" Handler="RecordClear_MouseLeave" />
+                        <!--  StackPanel (Name and XI value) -->
+                        <Style.Resources>
+                            <Style TargetType="StackPanel">
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                                <Style.Resources>
+                                    <Style TargetType="Label">
+                                        <Setter Property="Padding" Value="0,0,0,0" />
+                                        <Setter Property="Margin" Value="2,0,2,0" />
+                                    </Style>
+                                </Style.Resources>
+                            </Style>
+                        </Style.Resources>
+                    </Style>
+                    <Style x:Key="RecordClearStackPanelRight" BasedOn="{StaticResource RecordClearStackPanelLeft}" TargetType="StackPanel">
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                    </Style>
+                    <!--  XInput value Label  -->
+                    <Style x:Key="ValuesLeftLabel" TargetType="Label">
+                        <Setter Property="HorizontalAlignment" Value="Left" />
+                        <Setter Property="Foreground" Value="Green"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="FontSize" Value="8"/>
+                        <Setter Property="Content" Value="0"/>
+                        <Setter Property="Margin" Value="3,-1,3,0"/>
+                    </Style>
+                    <Style x:Key="ValuesRightLabel" TargetType="Label" BasedOn="{StaticResource ValuesLeftLabel}">
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                    </Style>
+                    <!--  TextBox  -->
+                    <Style BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
+                        <Setter Property="Width" Value="75" />
+                        <Setter Property="AllowDrop" Value="True" />
+                        <EventSetter Event="PreviewDrop" Handler="DragAndDropMenu_Target_Drop" />
+                        <EventSetter Event="MouseEnter" Handler="RecordClear_MouseEnterTextBox" />
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid Margin="3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="220" />
+            <ColumnDefinition MinWidth="280" Width="*" />
+            <ColumnDefinition Width="220" />
+        </Grid.ColumnDefinitions>
+        <Border Grid.Column="2" Style="{StaticResource DragAndDropXInputBorder}">
+            <Label Style="{StaticResource DragAndDropXInputLabel}" />
+        </Border>
 
-			<TabControl Width="260" Margin="0,0,3,0">
-				<TabItem>
-					<TabItem.Header>
-						<StackPanel Orientation="Horizontal">
-							<ContentControl Name="NormalTab" Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis}" />
-							<TextBlock Text="NORMAL" />
-							<ContentControl Name="InvertedTab" Margin="20,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
-							<TextBlock Text="INVERTED" />
-							</StackPanel>
-					</TabItem.Header>
-					<ScrollViewer VerticalScrollBarVisibility="Auto">
-						<StackPanel>
-							<Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
+        <!--  Buttons and Axes  -->
+        <StackPanel Grid.RowSpan="3" >
 
-							<!-- Drag and Drop Help -->
-							<Border Style="{StaticResource BorderDescriptionNormal}" Margin="3,3,3,0">
-								<Label Style="{StaticResource DragAndDropDInputLabel1}" HorizontalAlignment="Center" />
-							</Border>
+            <TabControl Width="260" Margin="0,0,3,0">
+                <TabItem>
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Name="NormalTab" Margin="0,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis}" />
+                            <TextBlock Text="NORMAL" />
+                            <ContentControl Name="InvertedTab" Margin="20,0,3,0" Content="{StaticResource Icon_DragAndDrop_Axis_Inverted}" />
+                            <TextBlock Text="INVERTED" />
+                        </StackPanel>
+                    </TabItem.Header>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <Label Style="{StaticResource DragAndDropDInputTitleLabel}" />
 
-							<StackPanel Name="DragAndDropStackPanelNormal" Margin="3,0,3,3">
-								<StackPanel.Resources>
-									<Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
-									<Style BasedOn="{StaticResource DragAndDropLabel}" TargetType="Label" />
-								</StackPanel.Resources>
-								<Label Style="{StaticResource DragAndDropLoadingLabel}" />
-							</StackPanel>
-						</StackPanel>
-					</ScrollViewer>
-				</TabItem>
-			</TabControl>
-		</StackPanel>
+                            <!-- Drag and Drop Help -->
+                            <Border Style="{StaticResource BorderDescriptionNormal}" Margin="3,3,3,0">
+                                <Label Style="{StaticResource DragAndDropDInputLabel}" HorizontalAlignment="Center" />
+                            </Border>
 
-		<!--  Image  -->
-		<Viewbox
+                            <StackPanel Name="DragAndDropStackPanel" Margin="3,0,3,3">
+                                <StackPanel.Resources>
+                                    <Style BasedOn="{StaticResource DragAndDropGroupBox}" TargetType="GroupBox" />
+                                    <Style BasedOn="{StaticResource DragAndDropLabel}" TargetType="Label" />
+                                </StackPanel.Resources>
+                                <Label Style="{StaticResource DragAndDropLoadingLabel}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+            </TabControl>
+        </StackPanel>
+
+        <!--  Image  -->
+        <Viewbox
 			Grid.Column="1"
 			Grid.ColumnSpan="3"
 			Width="Auto"
 			Height="400"
 			Margin="0,20,0,0">
-			<local:PadItem_General_XboxImageControl x:Name="XboxImage" VerticalAlignment="Top" />
-		</Viewbox>
+            <local:PadItem_General_XboxImageControl x:Name="XboxImage" VerticalAlignment="Top" />
+        </Viewbox>
 
-		<!--  LEFT  -->
-		<StackPanel Grid.Column="1">
-			<!--  LeftTrigger  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="TriggerLTextBox" x:FieldModifier="public" Margin="3,3,3,3"/>
-					<Button Name="TriggerLInvertButton" Tag="{Binding ElementName=TriggerLTextBox}" Margin="0,0,3,0" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+        <!--  LEFT  -->
+        <StackPanel Grid.Column="1">
+            <!--  LeftTrigger  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="TriggerLTextBox" x:FieldModifier="public" Margin="3,3,3,3"/>
+                <Button Name="TriggerLInvertButton" Tag="{Binding ElementName=TriggerLTextBox}" Margin="0,0,3,0" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
 
-					<!--  Record and Clear Buttons.  -->
-					<StackPanel Name="RCStackPanel" Background="{StaticResource BackgroundLight}" Orientation="Horizontal" d:Visibility="Visible" Visibility="Collapsed">
-						<Button Name="RecordButton" Click="RecordButton_Click" ToolTip="Record" Margin="0,0,3,0">
-							<!--<ContentControl Content="{StaticResource Icon_Record}" />-->
-							<Border
+                <!--  Record and Clear Buttons.  -->
+                <StackPanel Name="RCStackPanel" Background="{StaticResource BackgroundLight}" Orientation="Horizontal" d:Visibility="Visible" Visibility="Collapsed">
+                    <Button Name="RecordButton" Click="RecordButton_Click" ToolTip="Record" Margin="0,0,3,0">
+                        <!--<ContentControl Content="{StaticResource Icon_Record}" />-->
+                        <Border
 									Width="14"
 									Height="14"
 									Margin="1"
 									Background="{StaticResource ColorRecord}"
 									CornerRadius="8" />
-						</Button>
-						<Button Name="ClearButton" Margin="0,0,3,0" Click="ClearButton_Click" ToolTip="Clear">
-							<ContentControl Content="{StaticResource Icon_broom}" />
-						</Button>
-					</StackPanel>
-					
-					<!--Label-->
-					<Label Name="TriggerLLabel" Content="Trigger" IsHitTestVisible="False" Margin="0" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="TriggerLLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="TriggerLLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="TriggerLLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="TriggerLLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  LeftShoulder  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="BumperLTextBox" x:FieldModifier="public" />
-					<Button Name="BumperLInvertButton" Tag="{Binding ElementName=BumperLTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="BumperLLabel" Content="Bumper" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="BumperLLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="BumperLLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="BumperLLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="BumperLLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  ButtonBack  -->
-			<StackPanel Margin="0,15,0,0" Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="MenuBackTextBox" x:FieldModifier="public" />
-					<Button Name="MenuBackInvertButton" Tag="{Binding ElementName=MenuBackTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="MenuBackLabel" Content="Back" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="MenuBackLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="MenuBackLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="MenuBackLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="MenuBackLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  ButtonStart  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="MenuStartTextBox" x:FieldModifier="public" />
-					<Button Name="MenuStartInvertButton" Tag="{Binding ElementName=MenuStartTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="MenuStartLabel" Content="Start" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="MenuStartLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="MenuStartLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="MenuStartLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="MenuStartLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  ButtonGuide  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="MenuGuideTextBox" x:FieldModifier="public" />
-					<Button Name="MenuGuideInvertButton" Tag="{Binding ElementName=MenuGuideTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="MenuGuideLabel" Content="Guide" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="MenuGuideLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="MenuGuideLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="MenuGuideLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="MenuGuideLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  DPad  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="DPadTextBox" x:FieldModifier="public" />
-					<Label Name="DPadLabel" Content="D-Pad" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="DPadLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="DPadLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="DPadLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="DPadLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  LeftThumbAxisX  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}" Margin="0,20,0,0">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="StickLAxisXTextBox" x:FieldModifier="public" />
-					<Button Name="StickLAxisXInvertButton" Tag="{Binding ElementName=StickLAxisXTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="StickLAxisXLabel" Content="Stick Axis X" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickLAxisXLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickLAxisXLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickLAxisXLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickLAxisXLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  LeftThumbAxisY  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="StickLAxisYTextBox" x:FieldModifier="public" />
-					<Button Name="StickLAxisYInvertButton" Tag="{Binding ElementName=StickLAxisYTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="StickLAxisYLabel" Content="Stick Axis Y" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-				Name="StickLAxisYLabelDI"
-				Foreground="Green" />
-					<Label
-				Name="StickLAxisYLabelDII"
-				Foreground="Blue" />
-					<Label
-				Name="StickLAxisYLabelXI"
-				Foreground="Red" />
-					<Label
-				Name="StickLAxisYLabelDZ"
-				Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  LeftThumbButton  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="StickLButtonTextBox" x:FieldModifier="public" />
-					<Button Name="StickLButtonInvertButton" Tag="{Binding ElementName=StickLButtonTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="StickLButtonLabel" Content="Stick Button" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickLButtonLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickLButtonLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickLButtonLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickLButtonLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-		</StackPanel>
-		<!--  Stick Left  -->
-		<StackPanel Grid.Row="2" Grid.Column="1">
-			<!--  LeftThumbUp  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="StickLUpTextBox" x:FieldModifier="public" />
-					<Button Name="StickLUpInvertButton" Tag="{Binding ElementName=StickLUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="StickLUpLabel" Content="Stick Up" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickLUpLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickLUpLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickLUpLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickLUpLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  LeftThumbLeft  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="StickLLeftTextBox" x:FieldModifier="public" />
-					<Button Name="StickLLeftInvertButton" Tag="{Binding ElementName=StickLLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="StickLLeftLabel" Content="Stick Left" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickLLeftLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickLLeftLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickLLeftLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickLLeftLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  LeftThumbRight  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="StickLRightTextBox" x:FieldModifier="public" />
-					<Button Name="StickLRightInvertButton" Tag="{Binding ElementName=StickLRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="StickLRightLabel" Content="Stick Right" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickLRightLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickLRightLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickLRightLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickLRightLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  LeftThumbDown  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="StickLDownTextBox" x:FieldModifier="public" />
-					<Button Name="StickLDownInvertButton" Tag="{Binding ElementName=StickLDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="StickLDownLabel" Content="Stick Down" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickLDownLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickLDownLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickLDownLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickLDownLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-		</StackPanel>
-		<!--  DPad  -->
-		<StackPanel Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" Width="200" Margin="70,0,0,0">
-			<!--  DPadUp  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="DPadUpTextBox" x:FieldModifier="public" />
-					<Button Name="DPadUpInvertButton" Tag="{Binding ElementName=DPadUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="DPadUpLabel" Content="D-Pad Up" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="DPadUpLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="DPadUpLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="DPadUpLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="DPadUpLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  DPadLeft  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="DPadLeftTextBox" x:FieldModifier="public" />
-					<Button Name="DPadLeftInvertButton" Tag="{Binding ElementName=DPadLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="DPadLeftLabel" Content="D-Pad Left" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="DPadLeftLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="DPadLeftLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="DPadLeftLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="DPadLeftLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  DPadRight  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="DPadRightTextBox" x:FieldModifier="public" />
-					<Button Name="DPadRightInvertButton" Tag="{Binding ElementName=DPadRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="DPadRightLabel" Content="D-Pad Right" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="DPadRightLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="DPadRightLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="DPadRightLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="DPadRightLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  DPadDown  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
-				<StackPanel Style="{StaticResource StackPanelLeft}">
-					<TextBox Name="DPadDownTextBox" x:FieldModifier="public" />
-					<Button Name="DPadDownInvertButton" Tag="{Binding ElementName=DPadDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
-					<Label Name="DPadDownLabel" Content="D-Pad Down" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="DPadDownLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="DPadDownLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="DPadDownLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="DPadDownLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-		</StackPanel>
-		<!--  RIGHT  -->
-		<StackPanel Grid.Column="3">
-			<!--  RightTrigger  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="TriggerRLabel" Content="Trigger" />
-					<Button Name="TriggerRInvertButton" Tag="{Binding ElementName=TriggerRTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="TriggerRTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelRight}">
-					<Label
-					Name="TriggerRLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="TriggerRLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="TriggerRLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="TriggerRLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
+                    </Button>
+                    <Button Name="ClearButton" Margin="0,0,3,0" Click="ClearButton_Click" ToolTip="Clear">
+                        <ContentControl Content="{StaticResource Icon_broom}" />
+                    </Button>
+                </StackPanel>
 
-			</StackPanel>
-			<!--  RightShoulder  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="BumperRLabel" Content="Bumper" />
-					<Button Name="BumperRInvertButton" Tag="{Binding ElementName=BumperRTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="BumperRTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="BumperRLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="BumperRLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="BumperRLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="BumperRLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  ButtonY  -->
-			<StackPanel Margin="0,15,0,0" Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="ActionYLabel" Content="Y Button" />
-					<Button Name="ActionYInvertButton" Tag="{Binding ElementName=ActionYTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="ActionYTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="ActionYLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="ActionYLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="ActionYLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="ActionYLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  ButtonX  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="ActionXLabel" Content="X Button" />
-					<Button Name="ActionXInvertButton" Tag="{Binding ElementName=ActionXTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="ActionXTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="ActionXLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="ActionXLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="ActionXLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="ActionXLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  ButtonB  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="ActionBLabel" Content="B Button" />
-					<Button Name="ActionBInvertButton" Tag="{Binding ElementName=ActionBTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="ActionBTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="ActionBLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="ActionBLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="ActionBLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="ActionBLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  ButtonA  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="ActionALabel" Content="A Button" />
-					<Button Name="ActionAInvertButton" Tag="{Binding ElementName=ActionATextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="ActionATextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="ActionALabelDI"
-					Foreground="Green" />
-					<Label
-					Name="ActionALabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="ActionALabelXI"
-					Foreground="Red" />
-					<Label
-					Name="ActionALabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  RightThumbAxisX  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}" Margin="0,20,0,0">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="StickRAxisXLabel" Content="Stick Axis X" />
-					<Button Name="StickRAxisXInvertButton" Tag="{Binding ElementName=StickRAxisXTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="StickRAxisXTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelRight}">
-					<Label
-				Name="StickRAxisXLabelDI"
-				Foreground="Green" />
-					<Label
-				Name="StickRAxisXLabelDII"
-				Foreground="Blue" />
-					<Label
-				Name="StickRAxisXLabelXI"
-				Foreground="Red" />
-					<Label
-				Name="StickRAxisXLabelDZ"
-				Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  RightThumbAxisY  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="StickRAxisYLabel" Content="Stick Axis Y" />
-					<Button Name="StickRAxisYInvertButton" Tag="{Binding ElementName=StickRAxisYTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="StickRAxisYTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelRight}">
-					<Label
-				Name="StickRAxisYLabelDI"
-				Foreground="Green" />
-					<Label
-				Name="StickRAxisYLabelDII"
-				Foreground="Blue" />
-					<Label
-				Name="StickRAxisYLabelXI"
-				Foreground="Red" />
-					<Label
-				Name="StickRAxisYLabelDZ"
-				Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
+                <!-- Name and XInput Value Label-->
+                <StackPanel>
+                    <Label Name="TriggerLLabel" Content="Trigger" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="TriggerLXILabel" />
+                </StackPanel>
+            </StackPanel>
+            
+            <!--  LeftShoulder  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="BumperLTextBox" x:FieldModifier="public" />
+                <Button Name="BumperLInvertButton" Tag="{Binding ElementName=BumperLTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="BumperLLabel" Content="Bumper"/>
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="BumperLXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  ButtonBack  -->
+            <StackPanel Margin="0,15,0,0" Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="MenuBackTextBox" x:FieldModifier="public" />
+                <Button Name="MenuBackInvertButton" Tag="{Binding ElementName=MenuBackTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="MenuBackLabel" Content="Back" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="MenuBackXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  ButtonStart  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="MenuStartTextBox" x:FieldModifier="public" />
+                <Button Name="MenuStartInvertButton" Tag="{Binding ElementName=MenuStartTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="MenuStartLabel" Content="Start" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="MenuStartXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  ButtonGuide  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="MenuGuideTextBox" x:FieldModifier="public" />
+                <Button Name="MenuGuideInvertButton" Tag="{Binding ElementName=MenuGuideTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="MenuGuideLabel" Content="Guide" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="MenuGuideXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  DPad  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="DPadTextBox" x:FieldModifier="public" />
+                <StackPanel>
+                    <Label Name="DPadLabel" Content="D-Pad" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="DPadXILabel" />
+                </StackPanel>
+            </StackPanel>
+            
+            <!--  LeftThumbAxisX  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}" Margin="0,20,0,0">
+                <TextBox Name="StickLAxisXTextBox" x:FieldModifier="public" />
+                <Button Name="StickLAxisXInvertButton" Tag="{Binding ElementName=StickLAxisXTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="StickLAxisXLabel" Content="Stick Axis X"/>
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="StickLAxisXXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  LeftThumbAxisY  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="StickLAxisYTextBox" x:FieldModifier="public" />
+                <Button Name="StickLAxisYInvertButton" Tag="{Binding ElementName=StickLAxisYTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="StickLAxisYLabel" Content="Stick Axis Y"/>
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="StickLAxisYXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  LeftThumbButton  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="StickLButtonTextBox" x:FieldModifier="public" />
+                <Button Name="StickLButtonInvertButton" Tag="{Binding ElementName=StickLButtonTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="StickLButtonLabel" Content="Stick Button" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="StickLButtonXILabel" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
 
-			<!--  RightThumbButton  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="StickRButtonLabel" Content="Stick Button" />
-					<Button Name="StickRButtonInvertButton" Tag="{Binding ElementName=StickRButtonTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="StickRButtonTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickRButtonLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickRButtonLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickRButtonLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickRButtonLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-		</StackPanel>
-		<!--  Stick Right  -->
-		<StackPanel Grid.Row="2" Grid.Column="3">
-			<!--  RightThumbUp  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="StickRUpLabel" Content="Stick Up" />
-					<Button Name="StickRUpInvertButton" Tag="{Binding ElementName=StickRUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="StickRUpTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickRUpLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickRUpLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickRUpLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickRUpLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  RightThumbLeft  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="StickRLeftLabel" Content="Stick Left" />
-					<Button Name="StickRLeftInvertButton" Tag="{Binding ElementName=StickRLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="StickRLeftTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickRLeftLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickRLeftLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickRLeftLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickRLeftLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  RightThumbRight  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="StickRRightLabel" Content="Stick Right" />
-					<Button Name="StickRRightInvertButton" Tag="{Binding ElementName=StickRRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="StickRRightTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickRRightLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickRRightLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickRRightLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickRRightLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-			<!--  RighthumbDown  -->
-			<StackPanel Style="{StaticResource RecordClearStackPanelRight}">
-				<StackPanel Style="{StaticResource StackPanelRight}">
-					<Label Name="StickRDownLabel" Content="Stick Down" />
-					<Button Name="StickRDownInvertButton" Tag="{Binding ElementName=StickRDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
-					<TextBox Name="StickRDownTextBox" x:FieldModifier="public" />
-				</StackPanel>
-				<StackPanel Orientation="Horizontal" Style="{StaticResource ValuesStackPanelLeft}">
-					<Label
-					Name="StickRDownLabelDI"
-					Foreground="Green" />
-					<Label
-					Name="StickRDownLabelDII"
-					Foreground="Blue" />
-					<Label
-					Name="StickRDownLabelXI"
-					Foreground="Red" />
-					<Label
-					Name="StickRDownLabelDZ"
-					Foreground="Gray" />
-				</StackPanel>
-			</StackPanel>
-		</StackPanel>
-	</Grid>
+        <!--  Stick Left  -->
+        <StackPanel Grid.Row="2" Grid.Column="1">
+            <!--  LeftThumbUp  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="StickLUpTextBox" x:FieldModifier="public" />
+                <Button Name="StickLUpInvertButton" Tag="{Binding ElementName=StickLUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="StickLUpLabel" Content="Stick Up" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="StickLUpXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  LeftThumbLeft  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="StickLLeftTextBox" x:FieldModifier="public" />
+                <Button Name="StickLLeftInvertButton" Tag="{Binding ElementName=StickLLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="StickLLeftLabel" Content="Stick Left" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="StickLLeftXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  LeftThumbRight  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="StickLRightTextBox" x:FieldModifier="public" />
+                <Button Name="StickLRightInvertButton" Tag="{Binding ElementName=StickLRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="StickLRightLabel" Content="Stick Right" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="StickLRightXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  LeftThumbDown  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="StickLDownTextBox" x:FieldModifier="public" />
+                <Button Name="StickLDownInvertButton" Tag="{Binding ElementName=StickLDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="StickLDownLabel" Content="Stick Down" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="StickLDownXILabel" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+        
+        <!--  DPad  -->
+        <StackPanel Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" Width="200" Margin="70,0,0,0">
+            <!--  DPadUp  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="DPadUpTextBox" x:FieldModifier="public" />
+                <Button Name="DPadUpInvertButton" Tag="{Binding ElementName=DPadUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="DPadUpLabel" Content="D-Pad Up" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="DPadUpXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  DPadLeft  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="DPadLeftTextBox" x:FieldModifier="public" />
+                <Button Name="DPadLeftInvertButton" Tag="{Binding ElementName=DPadLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="DPadLeftLabel" Content="D-Pad Left" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="DPadLeftXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  DPadRight  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="DPadRightTextBox" x:FieldModifier="public" />
+                <Button Name="DPadRightInvertButton" Tag="{Binding ElementName=DPadRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="DPadRightLabel" Content="D-Pad Right" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="DPadRightXILabel" />
+                </StackPanel>
+            </StackPanel>
+            <!--  DPadDown  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelLeft}">
+                <TextBox Name="DPadDownTextBox" x:FieldModifier="public" />
+                <Button Name="DPadDownInvertButton" Tag="{Binding ElementName=DPadDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" />
+                <StackPanel>
+                    <Label Name="DPadDownLabel" Content="D-Pad Down" />
+                    <Label Style="{StaticResource ValuesLeftLabel}" Name="DPadDownXILabel" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+        
+        <!--  RIGHT  -->
+        <StackPanel Grid.Column="3">
+            <!--  RightTrigger  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="TriggerRLabel" Content="Trigger" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="TriggerRXILabel" />
+                </StackPanel>
+                <Button Name="TriggerRInvertButton" Tag="{Binding ElementName=TriggerRTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="TriggerRTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  RightShoulder  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="BumperRLabel" Content="Bumper" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="BumperRXILabel" />
+                </StackPanel>
+                <Button Name="BumperRInvertButton" Tag="{Binding ElementName=BumperRTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="BumperRTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  ButtonY  -->
+            <StackPanel Margin="0,15,0,0" Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="ActionYLabel" Content="Y Button" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="ActionYXILabel" />
+                </StackPanel>
+                <Button Name="ActionYInvertButton" Tag="{Binding ElementName=ActionYTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="ActionYTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  ButtonX  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="ActionXLabel" Content="X Button" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="ActionXXILabel" />
+                </StackPanel>
+                <Button Name="ActionXInvertButton" Tag="{Binding ElementName=ActionXTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="ActionXTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  ButtonB  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="ActionBLabel" Content="B Button" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="ActionBXILabel" />
+                </StackPanel>
+                <Button Name="ActionBInvertButton" Tag="{Binding ElementName=ActionBTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="ActionBTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  ButtonA  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="ActionALabel" Content="A Button" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="ActionAXILabel" />
+                </StackPanel>
+                <Button Name="ActionAInvertButton" Tag="{Binding ElementName=ActionATextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="ActionATextBox" x:FieldModifier="public" />
+            </StackPanel>
+            
+            <!--  RightThumbAxisX  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}" Margin="0,20,0,0">
+                <StackPanel>
+                    <Label Name="StickRAxisXLabel" Content="Stick Axis X" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="StickRAxisXXILabel" />
+                </StackPanel>
+                <Button Name="StickRAxisXInvertButton" Tag="{Binding ElementName=StickRAxisXTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="StickRAxisXTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  RightThumbAxisY  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="StickRAxisYLabel" Content="Stick Axis Y" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="StickRAxisYXILabel" />
+                </StackPanel>
+                <Button Name="StickRAxisYInvertButton" Tag="{Binding ElementName=StickRAxisYTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="StickRAxisYTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  RightThumbButton  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="StickRButtonLabel" Content="Stick Button" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="StickRButtonXILabel" />
+                </StackPanel>
+                <Button Name="StickRButtonInvertButton" Tag="{Binding ElementName=StickRButtonTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="StickRButtonTextBox" x:FieldModifier="public" />
+            </StackPanel>
+        </StackPanel>
+        
+        <!--  Stick Right  -->
+        <StackPanel Grid.Row="2" Grid.Column="3">
+            <!--  RightThumbUp  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="StickRUpLabel" Content="Stick Up" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="StickRUpXILabel" />
+                </StackPanel>
+                <Button Name="StickRUpInvertButton" Tag="{Binding ElementName=StickRUpTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="StickRUpTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  RightThumbLeft  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="StickRLeftLabel" Content="Stick Left" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="StickRLeftXILabel" />
+                </StackPanel>
+                <Button Name="StickRLeftInvertButton" Tag="{Binding ElementName=StickRLeftTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="StickRLeftTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  RightThumbRight  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="StickRRightLabel" Content="Stick Right" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="StickRRightXILabel" />
+                </StackPanel>
+                <Button Name="StickRRightInvertButton" Tag="{Binding ElementName=StickRRightTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="StickRRightTextBox" x:FieldModifier="public" />
+            </StackPanel>
+            <!--  RighthumbDown  -->
+            <StackPanel Style="{StaticResource RecordClearStackPanelRight}">
+                <StackPanel>
+                    <Label Name="StickRDownLabel" Content="Stick Down" />
+                    <Label Style="{StaticResource ValuesRightLabel}" Name="StickRDownXILabel" />
+                </StackPanel>
+                <Button Name="StickRDownInvertButton" Tag="{Binding ElementName=StickRDownTextBox}" Click="InvertButton_Click" Style="{StaticResource Button_Invert}" Margin="3,0,0,0" />
+                <TextBox Name="StickRDownTextBox" x:FieldModifier="public" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
 </UserControl>

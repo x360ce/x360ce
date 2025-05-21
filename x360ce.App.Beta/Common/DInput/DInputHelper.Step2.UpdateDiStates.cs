@@ -217,6 +217,7 @@ namespace x360ce.App.DInput
 							 dex.ResultCode == SharpDX.DirectInput.ResultCode.NotAcquired ||
 							 dex.ResultCode == SharpDX.DirectInput.ResultCode.Unplugged))
 						{
+							Debug.WriteLine($"InputLost {DateTime.Now:HH: mm: ss.fff}");
 							Debug.WriteLine($"Device {dex.Descriptor.ApiCode}. DisplayName {ud.DisplayName}. ProductId {ud.DevProductId}. ProductName {ud.ProductName}. InstanceName {ud.InstanceName}.");
 							DevicesNeedUpdating = true;
 						}

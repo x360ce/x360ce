@@ -104,6 +104,8 @@ namespace x360ce.App.Controls
 			if (ps == null) return;
 			_padSetting = ps;
 			var converter = new Converters.PaddSettingToText();
+
+
 			foreach (var item in imageInfo) { SettingsManager.LoadAndMonitor(ps, item.Code.ToString(), item.ControlBindedName as Control, null, converter); }
 
 			//_padSetting.PropertyChanged += _padSetting_PropertyChanged;
@@ -111,7 +113,7 @@ namespace x360ce.App.Controls
 
 		//private void _padSetting_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		//{
-			// This event handler was originally empty.
+		// This event handler was originally empty.
 		//}
 
 		private void SetPresetButton_Click(object sender, RoutedEventArgs e) { }
@@ -204,7 +206,7 @@ namespace x360ce.App.Controls
 		object updateLock = new object();
 		object oldState = null;
 
-		CustomDiState GetCustomDiState(UserDevice ud)
+		public CustomDiState GetCustomDiState(UserDevice ud)
 		{
 			CustomDiState customDiState = null;
 			var state = ud?.DeviceState;
@@ -256,7 +258,7 @@ namespace x360ce.App.Controls
 				}
 				else
 				{
-					DragAndDropStackPanelNormal.Children.Add(buttonsGroupBox);
+					DragAndDropStackPanel.Children.Add(buttonsGroupBox);
 				}
 
 				// Put POVB buttons inside POV GroupBox.
@@ -339,12 +341,12 @@ namespace x360ce.App.Controls
 		List<int> axes = new List<int>();
 		List<int> sliders = new List<int>();
 
-		// Function is recreated as soon as new DirectInput Device is available.
+		// Runs every time a new DirectInput device becomes available / unaivalble.
 		public void ResetDiMenuStrip(UserDevice ud)
 		{
-			// Clear StackPanel children in XAML page.
-			DragAndDropStackPanelNormal.Children.Clear();
-			// Clear dictionaries.
+			// Clear drag and drop StackPanel children elements in XAML page.
+			DragAndDropStackPanel.Children.Clear();
+			// Clear dictionaries used to create drag and drop StackPanel content.
 			ButtonDictionary.Clear();
 			PovDictionary.Clear();
 			PovBDictionary.Clear();
@@ -353,7 +355,7 @@ namespace x360ce.App.Controls
 			SliderDictionary.Clear();
 			HSliderDictionary.Clear();
 
-			// Clear lists with InstanceNumber's.
+			// Clear lists with DirectInput device InstanceNumber's.
 			buttons.Clear();
 			povs.Clear();
 			axes.Clear();
@@ -390,10 +392,8 @@ namespace x360ce.App.Controls
 			{
 				DragAndDropMenuLabels_Create(PovDictionary, povs, "POV", "POV", "Icon_DragAndDrop_POV");
 				var povButtons = new List<int>();
-				for (int i = 0; i < povs.Count * 4; i++)
-				{
-					povButtons.Add(i);
-				}
+				// Add 4 buttons (Up, Right, Bottom, Left) for each POV. 
+				for (int i = 0; i < povs.Count * 4; i++) { povButtons.Add(i); }
 				DragAndDropMenuLabels_Create(PovBDictionary, povButtons, "POVB", "POV · BUTTON", "Icon_DragAndDrop_POV");
 			}
 		}
@@ -474,74 +474,70 @@ namespace x360ce.App.Controls
 			return "Unknown";
 		}
 
-		private void SetDInputLabelContent(int axisLength, CustomDiState customDiState, TargetType targetType, Label label)
-		{
-			Map map = _padSetting.Maps.FirstOrDefault(x => x.Target == targetType);
-			if (map?.Index <= 0 || map.Index > axisLength)
-				return;
+		//private void SetLabelDIContent(int axisLength, CustomDiState customDiState, TargetType targetType, Label label)
+		//{
+		//	Map map = _padSetting.Maps.FirstOrDefault(x => x.Target == targetType);
 
-			var i = map.Index - 1;
-			if (map.IsAxis || map.IsHalf || map.IsInverted)
-			{
-				label.Content = customDiState.Axis[i];
-			}
-			else if (map.IsButton)
-			{
-				label.Content = customDiState.Buttons[i] ? 1 : 0;
-			}
-			else if (map.IsSlider)
-			{
-				label.Content = customDiState.Sliders[i];
-			}
-		}
+		//	if (map?.Index <= 0 || map.Index > axisLength)
+		//		return;
+
+		//	var i = map.Index - 1;
+		//	if (map.IsAxis || map.IsHalf || map.IsInverted)
+		//	{
+		//		label.Content = customDiState.Axis[i];
+		//	}
+		//	else if (map.IsButton)
+		//	{
+		//		label.Content = customDiState.Buttons[i] ? 1 : 0;
+		//	}
+		//	else if (map.IsSlider)
+		//	{
+		//		label.Content = customDiState.Sliders[i];
+		//	}
+		//}
 
 		// Update DragAndDrop menu labels.
 		public void DragAndDropMenuLabels_Update(UserDevice ud)
 		{
-			var customDiState = GetCustomDiState(ud);
-			if (customDiState == null) return;
+			// var customDiState = GetCustomDiState(ud);
+			// if (customDiState == null) return;
 
-			int axisLength = ud.DiState.Axis.Length;
+			// int axisLength = ud.DiState.Axis.Length;
 
-			// Trigger.
-			SetDInputLabelContent(axisLength, customDiState, TargetType.LeftTrigger, TriggerLLabelDI);
-			SetDInputLabelContent(axisLength, customDiState, TargetType.RightTrigger, TriggerRLabelDI);
-			TriggerLLabelDZ.Content = _padSetting.LeftTriggerDeadZone;
-			TriggerRLabelDZ.Content = _padSetting.RightTriggerDeadZone;
+			//// Trigger.
+			// SetLabelDIContent(axisLength, customDiState, TargetType.LeftTrigger, TriggerLLabelDI);
+			// SetLabelDIContent(axisLength, customDiState, TargetType.RightTrigger, TriggerRLabelDI);
+			// TriggerLLabelDZ.Content = _padSetting.LeftTriggerDeadZone;
+			// TriggerRLabelDZ.Content = _padSetting.RightTriggerDeadZone;
 
-			// Bumper.
-			SetDInputLabelContent(axisLength, customDiState, TargetType.Button, BumperLLabelDI);
-			//SetDInputLabelContent(axisLength, customDiState, TargetType.RightTrigger, TriggerRLabelDI);
-			//TriggerLLabelDZ.Content = _padSetting.LeftTriggerDeadZone;
-			//TriggerRLabelDZ.Content = _padSetting.RightTriggerDeadZone;
+			//// Buttons.
+			// SetLabelDIContent(axisLength, customDiState, TargetType.Button, BumperLLabelDI);
 
-			// Stick Left.
-			SetDInputLabelContent(axisLength, customDiState, TargetType.LeftThumbX, StickLAxisXLabelDI);
-			SetDInputLabelContent(axisLength, customDiState, TargetType.LeftThumbY, StickLAxisYLabelDI);
-			StickLAxisXLabelDZ.Content = _padSetting.LeftThumbDeadZoneX;
-			StickLAxisYLabelDZ.Content = _padSetting.LeftThumbDeadZoneY;
+			//// Stick Left.
+			// SetLabelDIContent(axisLength, customDiState, TargetType.LeftThumbX, StickLAxisXLabelDI);
+			// SetLabelDIContent(axisLength, customDiState, TargetType.LeftThumbY, StickLAxisYLabelDI);
+			// StickLAxisXLabelDZ.Content = _padSetting.LeftThumbDeadZoneX;
+			// StickLAxisYLabelDZ.Content = _padSetting.LeftThumbDeadZoneY;
 
-			// Stick Right.
-			SetDInputLabelContent(axisLength, customDiState, TargetType.RightThumbX, StickRAxisXLabelDI);
-			SetDInputLabelContent(axisLength, customDiState, TargetType.RightThumbY, StickRAxisYLabelDI);
-			StickRAxisXLabelDZ.Content = _padSetting.RightThumbDeadZoneX;
-			StickRAxisYLabelDZ.Content = _padSetting.RightThumbDeadZoneY;
+			//// Stick Right.
+			// SetLabelDIContent(axisLength, customDiState, TargetType.RightThumbX, StickRAxisXLabelDI);
+			// SetLabelDIContent(axisLength, customDiState, TargetType.RightThumbY, StickRAxisYLabelDI);
+			// StickRAxisXLabelDZ.Content = _padSetting.RightThumbDeadZoneX;
+			// StickRAxisYLabelDZ.Content = _padSetting.RightThumbDeadZoneY;
 
 			// Buttons.
 			foreach (var kvp in ButtonDictionary)
 			{
 				bool bDS = ud.DiState.Buttons[kvp.Key];
-				
+
 				ButtonDictionary[kvp.Key].Item1.Background = bDS ? colorActive : Brushes.Transparent;
 				ButtonDictionary[kvp.Key].Item2.Content = bDS.ToString();
 				ButtonDictionary[kvp.Key].Item3.Content = (bDS ? "True" : "False") == "True" ? "False" : "True";
 
-				// Record button.
+				// Record active button.
 				if (recordTextBox != null && bDS)
 				{
-					recordTextBox.Text = ButtonDictionary[kvp.Key].Item1.Tag.ToString();
-					recordTextBox.BorderBrush = colorBackgroundDark;
-					recordTextBox = null;
+					RecordAxisOrButton(ButtonDictionary[kvp.Key].Item1.Tag.ToString());
 				}
 			}
 
@@ -558,6 +554,24 @@ namespace x360ce.App.Controls
 					PovBDictionary[b].Item1.Background = pDS == povButtonValues[b] ? colorActive : Brushes.Transparent;
 					PovBDictionary[b].Item2.Content = pDS == povButtonValues[b] ? pDS : -1;
 				}
+
+				// Record active POV.
+				if (recordTextBox != null && pDS > -1)
+				{
+					var povName = PovDictionary[kvp.Key].Item1.Tag.ToString(); // "POV 1".
+					var povDirection = povName;
+					if (recordTextBox != DPadTextBox)
+					{
+						switch (pDS)
+						{
+							case 0: povName = povName + " Up"; break;
+							case 9000: povName = povName + " Right"; break;
+							case 18000: povName = povName + " Down"; break;
+							case 27000: povName = povName + " Left"; break;
+						}
+					}
+					RecordAxisOrButton(povName);
+				}
 			}
 
 			// Stick axes.
@@ -565,13 +579,20 @@ namespace x360ce.App.Controls
 			foreach (var kvp in AxisDictionary)
 			{
 				int aDS = ud.DiState.Axis[kvp.Key];
+				bool active = aDS < 32767 - DragAndDropAxisDeadzone || aDS > 32767 + DragAndDropAxisDeadzone;
+				AxisDictionary[kvp.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
+				HAxisDictionary[kvp.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
+
 				AxisDictionary[kvp.Key].Item2.Content = aDS;
 				HAxisDictionary[kvp.Key].Item2.Content = Math.Max(0, Math.Min((aDS - 32767) * 2, 65535));
 				AxisDictionary[kvp.Key].Item3.Content = Math.Abs(65535 - aDS);
 				HAxisDictionary[kvp.Key].Item3.Content = Math.Max(0, Math.Min((Math.Abs(65535 - aDS) - 32767) * 2, 65535));
-				bool active = aDS < 32767 - DragAndDropAxisDeadzone || aDS > 32767 + DragAndDropAxisDeadzone;
-				AxisDictionary[kvp.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
-				HAxisDictionary[kvp.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
+
+				// Record active axis.
+				if (recordTextBox != null && active)
+				{
+					RecordAxisOrButton(AxisDictionary[kvp.Key].Item1.Tag.ToString());
+				}
 			}
 
 			// Slider axes.
@@ -579,15 +600,21 @@ namespace x360ce.App.Controls
 			foreach (var kvp in SliderDictionary)
 			{
 				int sDS = ud.DiState.Sliders[kvp.Key];
-
-				SliderDictionary[kvp.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? colorActive : Brushes.Transparent;
-				HSliderDictionary[kvp.Key].Item1.Background = sDS > DragAndDropSliderDeadzone ? colorActive : Brushes.Transparent;
+				bool active = sDS > DragAndDropSliderDeadzone;
+				SliderDictionary[kvp.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
+				HSliderDictionary[kvp.Key].Item1.Background = active ? colorActive : Brushes.Transparent;
 
 				SliderDictionary[kvp.Key].Item2.Content = sDS;
 				HSliderDictionary[kvp.Key].Item2.Content = Math.Max(0, Math.Min((sDS - 32767) * 2, 65535));
 
 				SliderDictionary[kvp.Key].Item3.Content = Math.Abs(65535 - sDS);
 				HSliderDictionary[kvp.Key].Item3.Content = Math.Max(0, Math.Min((Math.Abs(65535 - sDS) - 32767) * 2, 65535));
+
+				// Record active axis.
+				if (recordTextBox != null && active)
+				{
+					RecordAxisOrButton(SliderDictionary[kvp.Key].Item1.Tag.ToString());
+				}
 			}
 		}
 		#endregion
@@ -800,7 +827,7 @@ namespace x360ce.App.Controls
 				else
 				{
 					RCStackPanel.FlowDirection = FlowDirection.RightToLeft;
-					ClearButton.FlowDirection= FlowDirection.LeftToRight;
+					ClearButton.FlowDirection = FlowDirection.LeftToRight;
 					// Calculate the insertion index = just before the last element.
 					s2.Children.Insert(1, RCStackPanel);
 				}
@@ -825,6 +852,7 @@ namespace x360ce.App.Controls
 		{
 			if (recordTextBox == null)
 			{
+				// Get TextBox from sender Tag value and set it as recordTextBox. If recordTextBox is not null (recording state) it will be filled with first detected button or axis.
 				recordTextBox = (sender as Button)?.Tag as TextBox;
 				if (recordTextBox != null)
 				{
@@ -837,6 +865,13 @@ namespace x360ce.App.Controls
 				recordTextBox.BorderBrush = colorBackgroundDark;
 				recordTextBox = null;
 			}
+		}
+
+		private void RecordAxisOrButton(string axisOrButtonName)
+		{
+			recordTextBox.Text = axisOrButtonName;
+			recordTextBox.BorderBrush = colorBackgroundDark;
+			recordTextBox = null;
 		}
 
 		private void RecordClear_MouseEnter(object sender, MouseEventArgs e)

@@ -507,21 +507,29 @@ namespace JocysCom.ClassLibrary.IO
 			});
 
 			var listOrdered = list.OrderBy(x => x.DeviceId).ToArray();
-			Debug.WriteLine($"\n");
-			foreach (var device in listOrdered)
+			Debug.WriteLine($"");
+			if (listOrdered.Count() > 0)
 			{
-				Debug.WriteLine($"PnPInterface:" +
-					$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
-					$" ProductId {device.ProductId}." +
-					$" Revision {device.Revision}." +
-					$" DeviceId {device.DeviceId}." +
-					$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
-					$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid.ToString("B")).Item2})." +
-					$" Description {device.Description}." +
-					$" ClassDescription {device.ClassDescription}.");
+				foreach (var device in listOrdered)
+				{
+					Debug.WriteLine($"PnPDeviceInterface:" +
+						$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
+						$" ProductId {device.ProductId}." +
+						$" Revision {device.Revision}." +
+						$" DeviceId {device.DeviceId}." +
+						$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
+						$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid).Item2})." +
+						$" Description {device.Description}." +
+						$" ClassDescription {device.ClassDescription}.");
+				}
 			}
-			stopwatchInt.Stop();
-			Debug.WriteLine($"stopwatchInt: {stopwatchInt.Elapsed.TotalMilliseconds} ms\n");
+			else
+			{
+				Debug.WriteLine($"No PnPDevice.");
+			}
+				stopwatchInt.Stop();
+			Debug.WriteLine($"PnPDeviceInterface: Stopwatch: {stopwatchInt.Elapsed.TotalMilliseconds} ms\n");
+
 			return list.ToArray();
 		}
 
@@ -559,6 +567,7 @@ namespace JocysCom.ClassLibrary.IO
 		)> DiDevices = null;
 
 		//public static IEnumerable<(DeviceInstance Device, DeviceClass Class, int Usage, string DiDeviceID)> DiDevices = null;
+
 		// DEVICES.
 
 		static (bool, string, Guid) PnPDeviceIsInDiDevicesList(string PnPDeviceID)
@@ -572,7 +581,6 @@ namespace JocysCom.ClassLibrary.IO
 			}
 			return (false, string.Empty, Guid.Empty);
 		}
-
 
 		public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF? flags = null, string parentDeviceId = null, int vid = 0, int pid = 0, int rev = 0, bool DiDevicesOnly = false)
 		{
@@ -616,34 +624,44 @@ namespace JocysCom.ClassLibrary.IO
 			});
 
 			var listOrdered = list.OrderBy(x => x.DeviceId).ToArray();
-			Debug.WriteLine($"\n");
 			PnPDeviceIDs.Clear();
-			foreach (var device in listOrdered)
+			Debug.WriteLine($"\n");
+
+			if (listOrdered.Count() > 0)
 			{
-				Debug.WriteLine($"PnPDevice:" +
-					$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
-					$" ProductId {device.ProductId}." +
-					$" Revision {device.Revision}." +
-					$" DeviceId {device.DeviceId}." +
-					$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
-					$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid.ToString("B")).Item2})." +
-					$" Description {device.Description}." +
-					$" ClassDescription {device.ClassDescription}.");
-				PnPDeviceIDs.Add(device.DeviceId);
+				foreach (var device in listOrdered)
+				{
+					Debug.WriteLine($"PnPDeviceInfo:" +
+						$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
+						$" ProductId {device.ProductId}." +
+						$" Revision {device.Revision}." +
+						$" DeviceId {device.DeviceId}." +
+						$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
+						$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid).Item2})." +
+						$" Description {device.Description}." +
+						$" ClassDescription {device.ClassDescription}.");
+					PnPDeviceIDs.Add(device.DeviceId);
+				}
 			}
-			stopwatchPnP.Stop();
-			Debug.WriteLine($"StopwatchPnP: {stopwatchPnP.Elapsed.TotalMilliseconds} ms\n");
+			else
+			{
+				Debug.WriteLine($"No PnPDevice.");
+			}
+
+				stopwatchPnP.Stop();
+			Debug.WriteLine($"PnPDeviceInfo: Stopwatch {stopwatchPnP.Elapsed.TotalMilliseconds} ms\n");
+
 			return listOrdered;
 		}
 
-		// PnP DeviceClass GUIDs: Keyboard, Mouse, Human Interface Device (HID)
-		public static Dictionary<string, string> PnPDeviceClassGuids = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+		public static Dictionary<Guid, string> PnPDeviceClassGuids = new Dictionary<Guid, string>
 		{
-			{ "{4d36e96b-e325-11ce-bfc1-08002be10318}", "Keyboard" },
-			{ "{4d36e96f-e325-11ce-bfc1-08002be10318}", "Mouse" },
-			{ "{745a17a0-74d3-11d0-b6fe-00a0c90f57da}", "HID" },
+			{ DEVCLASS.KEYBOARD, "Keyboard" },
+			{ DEVCLASS.MOUSE, "Mouse" },
+			{ DEVCLASS.HIDCLASS, "HID" },
 		};
-		static (bool, string) ContainsGuid(string PnPDeviceClassGuid)
+
+		static (bool, string) ContainsGuid(Guid PnPDeviceClassGuid)
 		{
 			return PnPDeviceClassGuids.TryGetValue(PnPDeviceClassGuid, out string deviceType) ? (true, deviceType) : (false, "NoGuid");
 		}

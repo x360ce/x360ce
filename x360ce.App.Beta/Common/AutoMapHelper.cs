@@ -112,7 +112,7 @@ namespace x360ce.App
 					ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
 					ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
 					ps.ButtonBack = GetButtonValue(list, 8, true, "Select", "Back");
-					ps.ButtonStart = GetButtonValue(list, 9, true, "Start");
+					ps.ButtonStart = GetButtonValue(list, 9, true, "StartDInputService");
 					ps.LeftThumbButton = GetButtonValue(list, 10, true, "Left Paddle");
 					ps.RightThumbButton = GetButtonValue(list, 11, true, "Right Paddle");
 					// Map triggers from two different axis.
@@ -136,7 +136,7 @@ namespace x360ce.App
 					ps.LeftShoulder = GetButtonValue(list, 4, true, "L1");
 					ps.RightShoulder = GetButtonValue(list, 5, true, "R1");
 					ps.ButtonBack = GetButtonValue(list, 6, true, "Select", "Back");
-					ps.ButtonStart = GetButtonValue(list, 7, true, "Start");
+					ps.ButtonStart = GetButtonValue(list, 7, true, "StartDInputService");
 					ps.LeftThumbButton = GetButtonValue(list, 8, true, "Left Paddle");
 					ps.RightThumbButton = GetButtonValue(list, 9, true, "Right Paddle");
 					// Triggers.

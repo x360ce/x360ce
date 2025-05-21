@@ -3,9 +3,15 @@ using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+//using System.Linq;
+//using System.Windows;
+
+
 //using System.IO;
 //using System.Security.Policy;
 using System.Windows.Controls;
+using System.Windows.Media;
+
 //using System.Windows.Media;
 using x360ce.Engine;
 
@@ -28,10 +34,10 @@ namespace x360ce.App.Controls
 
 		public PadControlImager()
 		{
-			locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
+			//locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
 			lock (imagesLock)
 			{
-				var a = GetType().Assembly;
+				// var a = GetType().Assembly;
 				// Create images.
 				//if (topImage == null)
 				//{
@@ -117,62 +123,95 @@ namespace x360ce.App.Controls
 		// Axis status Borders.
 		public Border LeftThumbAxisStatus;
 		public Border RightThumbAxisStatus;
-		public Border LeftTriggerAxisStatus;
-		public Border RightTriggerAxisStatus;
 
 		public System.Windows.Shapes.Path DPadUpStatus;
 
+		// Set green background if axis or button exceeds deadzone value.
 		bool on = false;
 
-		public void DrawState(ImageInfo ii, Gamepad gp)
+        public Border LeftTriggerAxisStatus;
+        public Border RightTriggerAxisStatus;
+
+        private void UpdateXAMLTriggerElements(byte triggerValue, Label valueLabel, Border circleBorder)
+		{
+            // Get circle's [•] parent available heigh.
+            var height = (float)(((System.Windows.FrameworkElement)circleBorder.Parent).Height - circleBorder.Height);
+            // Convert trigger value to circle's [•] position.
+            var position = ConvertHelper.ConvertRangeF(triggerValue, byte.MinValue, byte.MaxValue, 0, height);
+            // Set circle [•] position.
+            circleBorder.RenderTransform = new TranslateTransform { Y = -position };
+            // Check if trigger value exceeds deadzone value (will set green background color).
+            on = triggerValue > Gamepad.TriggerThreshold;
+            // Set XInput value below TextBox name.
+            valueLabel.Content = triggerValue;
+        }
+
+        private void UpdateXAMLStickElements(short axisValue, Label valueLabel, Border circleBorder, MapCode mapCode, short deadzone)
+        {
+            // Get circle's (•) parent available heigh.
+            var height = (float)(((System.Windows.FrameworkElement)circleBorder.Parent).Height - circleBorder.Height);
+            // Range depending on axis X or Y.
+            bool isX = mapCode == MapCode.LeftThumbAxisX || mapCode == MapCode.RightThumbAxisX;
+            float from = isX ? -height : height;
+            float to = isX ? height : -height;
+            // Convert stick value to circle's (•) position.
+            var newMargin = ConvertHelper.ConvertRangeF(axisValue, short.MinValue, short.MaxValue, from, to);
+            // Current circle margin.
+            var margin = circleBorder.Margin;
+            circleBorder.Margin = isX
+                ? new System.Windows.Thickness(newMargin, margin.Top, margin.Right, margin.Bottom)
+                : new System.Windows.Thickness(margin.Left, newMargin, margin.Right, margin.Bottom);
+            // Check if stick value exceeds deadzone value (will set green background color).
+            on = axisValue > deadzone || axisValue < -deadzone;
+            // Set XInput value below TextBox name.
+            valueLabel.Content = axisValue;
+        }
+
+        private Dictionary<MapCode, object> previousGpValues = new Dictionary<MapCode, object>();
+        private bool IsValueChanged<T>(MapCode code, T currentValue)
+        {
+            if (previousGpValues.TryGetValue(code, out var prevValue) && EqualityComparer<T>.Default.Equals((T)prevValue, currentValue))
+            {
+                return false; // No change.
+            }
+            previousGpValues[code] = currentValue;
+            return true; // Value has changed.
+        }
+
+        public void DrawState(ImageInfo ii, Gamepad gp, CustomDiState ds)
 		{
 			short stickLDeadzone = Gamepad.LeftThumbDeadZone;
 			short stickRDeadzone = Gamepad.RightThumbDeadZone;
-			//Trigger axis state with "•" yellow circle.
-			switch (ii.Code)
+
+            switch (ii.Code)
 			{
-				case MapCode.LeftTrigger:
-				case MapCode.RightTrigger:
-					var isLeft = ii.Code == MapCode.LeftTrigger;
-					var y = isLeft ? gp.LeftTrigger : gp.RightTrigger;
-					var control = isLeft ? LeftTriggerAxisStatus : RightTriggerAxisStatus;
-					var h = (float)(((System.Windows.FrameworkElement)control.Parent).Height - control.Height);
-					var b = ConvertHelper.ConvertRangeF(y, byte.MinValue, byte.MaxValue, 0, h);
-					var m = control.Margin;
-					control.Margin = new System.Windows.Thickness(m.Left, m.Top, m.Right, b);
-					// Deadzone.
-					on = (ii.Code == MapCode.LeftTrigger && y > Gamepad.TriggerThreshold) || (ii.Code == MapCode.RightTrigger && y > Gamepad.TriggerThreshold);
-					// XInput value.
-					((Label)ii.ControlXI).Content = ii.Code == MapCode.LeftTrigger ? gp.LeftTrigger : gp.RightTrigger;
-				break;
-				case MapCode.LeftThumbAxisX:
-				case MapCode.LeftThumbAxisY:
-				case MapCode.RightThumbAxisX:
-				case MapCode.RightThumbAxisY:
-					var isLeft2 = ii.Code == MapCode.LeftThumbAxisX || ii.Code == MapCode.LeftThumbAxisY;
-					var x2 = isLeft2 ? gp.LeftThumbX : gp.RightThumbX;
-					var y2 = isLeft2 ? gp.LeftThumbY : gp.RightThumbY;
-					var control2 = isLeft2 ? LeftThumbAxisStatus : RightThumbAxisStatus;
-					var w = (float)(((System.Windows.FrameworkElement)control2.Parent).Width - control2.Width);
-					var l = ConvertHelper.ConvertRangeF(x2, short.MinValue, short.MaxValue, -w, w);
-					var t = ConvertHelper.ConvertRangeF(y2, short.MinValue, short.MaxValue, w, -w);
-					var m2 = control2.Margin;
-					control2.Margin = new System.Windows.Thickness(l, t, m2.Right, m2.Bottom);
-					// Deadzone.
-					on = (ii.Code == MapCode.LeftThumbAxisX && (x2 > stickLDeadzone || x2 < -stickLDeadzone)) ||
-						 (ii.Code == MapCode.LeftThumbAxisY && (y2 > stickLDeadzone || y2 < -stickLDeadzone)) ||
-						 (ii.Code == MapCode.RightThumbAxisX && (x2 > stickRDeadzone || x2 < -stickRDeadzone)) ||
-						 (ii.Code == MapCode.RightThumbAxisY && (y2 > stickRDeadzone || y2 < -stickRDeadzone));
-					// XInput value.
-					switch (ii.Code)
-					{
-						case MapCode.LeftThumbAxisX: ((Label)ii.ControlXI).Content = gp.LeftThumbX; break;
-						case MapCode.LeftThumbAxisY: ((Label)ii.ControlXI).Content = gp.LeftThumbY; break;
-						case MapCode.RightThumbAxisX: ((Label)ii.ControlXI).Content = gp.RightThumbX; break;
-						case MapCode.RightThumbAxisY: ((Label)ii.ControlXI).Content = gp.RightThumbY; break;
-					}
-				break;
-				// Axis detailed deadzones...
+                // Trigger axis state visual representation with yellow circle position [•].
+                case MapCode.LeftTrigger:
+                    if (!IsValueChanged(MapCode.LeftTrigger, gp.LeftTrigger)) break;
+                    UpdateXAMLTriggerElements(gp.LeftTrigger, (Label)ii.ControlStackPanel, LeftTriggerAxisStatus);
+					break;
+                case MapCode.RightTrigger:
+                    if (!IsValueChanged(MapCode.RightTrigger, gp.RightTrigger)) break;
+                    UpdateXAMLTriggerElements(gp.RightTrigger, (Label)ii.ControlStackPanel, RightTriggerAxisStatus);
+                    break;
+                // Trigger axis state visual representation with yellow circle position (•).
+                case MapCode.LeftThumbAxisX:
+                    if (!IsValueChanged(MapCode.LeftThumbAxisX, gp.LeftThumbX)) break;
+                    UpdateXAMLStickElements(gp.LeftThumbX, (Label)ii.ControlStackPanel, LeftThumbAxisStatus, ii.Code, stickLDeadzone);
+					break;
+                case MapCode.LeftThumbAxisY:
+                    if (!IsValueChanged(MapCode.LeftThumbAxisY, gp.LeftThumbY)) break;
+                    UpdateXAMLStickElements(gp.LeftThumbY, (Label)ii.ControlStackPanel, LeftThumbAxisStatus, ii.Code, stickLDeadzone);
+					break;
+                case MapCode.RightThumbAxisX:
+                    if (!IsValueChanged(MapCode.RightThumbAxisX, gp.RightThumbX)) break;
+                    UpdateXAMLStickElements(gp.RightThumbX, (Label)ii.ControlStackPanel, RightThumbAxisStatus, ii.Code, stickRDeadzone);
+                    break;
+                case MapCode.RightThumbAxisY:
+                    if (!IsValueChanged(MapCode.RightThumbAxisY, gp.RightThumbY)) break;
+                    UpdateXAMLStickElements(gp.RightThumbY, (Label)ii.ControlStackPanel, RightThumbAxisStatus, ii.Code, stickRDeadzone);
+                    break;
+				// Stick axis detailed deadzones.
 				case MapCode.LeftThumbRight:
 					on = gp.LeftThumbX > stickLDeadzone;
 					break;
@@ -213,8 +252,9 @@ namespace x360ce.App.Controls
 				case MapCode.DPadLeft:
 				case MapCode.DPadDown:	
 				case MapCode.DPadRight:
-					on = gp.Buttons.HasFlag(ii.Button);
-					((Label)ii.ControlXI).Content = on ? 1 : 0;
+                    on = gp.Buttons.HasFlag(ii.Button);
+                    // Set XInput value below TextBox name.
+                    ((Label)ii.ControlStackPanel).Content = on ? 1 : 0;
 					break;
 				// D-Pad.
 				case MapCode.DPad:
@@ -223,59 +263,60 @@ namespace x360ce.App.Controls
 					gp.Buttons.HasFlag(GamepadButtonFlags.DPadLeft) ||
 					gp.Buttons.HasFlag(GamepadButtonFlags.DPadRight) ||
 					gp.Buttons.HasFlag(GamepadButtonFlags.DPadDown);
-					break;
+                    ((Label)ii.ControlStackPanel).Content = on ? 1 : 0;
+                    break;
 			}
 
-			// If record then...
-			if (Recorder.Recording)
-			{
-				MapCode? redirect = null;
-				if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisX)
-					redirect = MapCode.RightThumbRight;
-				if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisY)
-					redirect = MapCode.RightThumbUp;
-				if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisX)
-					redirect = MapCode.LeftThumbRight;
-				if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisY)
-					redirect = MapCode.LeftThumbUp;
-				if (redirect.HasValue)
-				{
-					MapCode recordingCode = ii.Code;
-					recordingCode = redirect.Value;
-					// Skip if redirected control.
-					if (ii.Code == recordingCode)
-						return;
-				}
-				// If record is in progress then...
-				if (ii.Code == Recorder.CurrentMap.Code)
-				{
-					on = true;
-				}
-			}
+            if (ii.ControlName is ContentControl)
+                padItem_General_XboxImageControl.setNormalOverActiveRecordColor(ii, on ? padItem_General_XboxImageControl.colorActive : padItem_General_XboxImageControl.colorNormalPath);
 
-			//else if (
-			//	 ShowLeftThumbButtons && SettingsConverter.LeftThumbCodes.Contains(ii.Code) ||
-			//	 ShowRightThumbButtons && SettingsConverter.RightThumbCodes.Contains(ii.Code) ||
-			//	 ShowDPadButtons && SettingsConverter.DPadCodes.Contains(ii.Code) ||
-			//	 ShowMainButtons && SettingsConverter.MainButtonCodes.Contains(ii.Code) ||
-			//	 ShowMenuButtons && SettingsConverter.MenuButtonCodes.Contains(ii.Code) ||
-			//	 ShowTriggerButtons && SettingsConverter.TriggerButtonCodes.Contains(ii.Code) ||
-			//	 ShowShoulderButtons && SettingsConverter.ShoulderButtonCodes.Contains(ii.Code)
-			//)
-			//{
-			//	var nit = on ? NavImageType.Active : NavImageType.Normal;
-			//	ImageControl.SetImage(ii.Code, nit, true);
-			//}
-			//else
-			//{
-			//	var isAxisCode = SettingsConverter.AxisCodes.Contains(ii.Code);
-			//	// Axis status will be displayed as image therefore can hide active button indicator.
-			//	ImageControl.SetImage(ii.Code, NavImageType.Active, on && !isAxisCode);
-			//}
+            // If record then...
+            //if (Recorder.Recording)
+            //{
+            //	MapCode? redirect = null;
+            //	if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisX)
+            //		redirect = MapCode.RightThumbRight;
+            //	if (Recorder.CurrentMap.Code == MapCode.RightThumbAxisY)
+            //		redirect = MapCode.RightThumbUp;
+            //	if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisX)
+            //		redirect = MapCode.LeftThumbRight;
+            //	if (Recorder.CurrentMap.Code == MapCode.LeftThumbAxisY)
+            //		redirect = MapCode.LeftThumbUp;
+            //	if (redirect.HasValue)
+            //	{
+            //		MapCode recordingCode = ii.Code;
+            //		recordingCode = redirect.Value;
+            //		// Skip if redirected control.
+            //		if (ii.Code == recordingCode)
+            //			return;
+            //	}
+            //	// If record is in progress then...
+            //	if (ii.Code == Recorder.CurrentMap.Code)
+            //	{
+            //		on = true;
+            //	}
+            //}
 
-			if (ii.ControlName is ContentControl)
-				padItem_General_XboxImageControl.setNormalOverActiveRecordColor(ii, on ? padItem_General_XboxImageControl.colorActive : padItem_General_XboxImageControl.colorNormalPath);
-		}
+            //else if (
+            //	 ShowLeftThumbButtons && SettingsConverter.LeftThumbCodes.Contains(ii.Code) ||
+            //	 ShowRightThumbButtons && SettingsConverter.RightThumbCodes.Contains(ii.Code) ||
+            //	 ShowDPadButtons && SettingsConverter.DPadCodes.Contains(ii.Code) ||
+            //	 ShowMainButtons && SettingsConverter.MainButtonCodes.Contains(ii.Code) ||
+            //	 ShowMenuButtons && SettingsConverter.MenuButtonCodes.Contains(ii.Code) ||
+            //	 ShowTriggerButtons && SettingsConverter.TriggerButtonCodes.Contains(ii.Code) ||
+            //	 ShowShoulderButtons && SettingsConverter.ShoulderButtonCodes.Contains(ii.Code)
+            //)
+            //{
+            //	var nit = on ? NavImageType.Active : NavImageType.Normal;
+            //	ImageControl.SetImage(ii.Code, nit, true);
+            //}
+            //else
+            //{
+            //	var isAxisCode = SettingsConverter.AxisCodes.Contains(ii.Code);
+            //	// Axis status will be displayed as image therefore can hide active button indicator.
+            //	ImageControl.SetImage(ii.Code, NavImageType.Active, on && !isAxisCode);
+            //}
+        }
 
 		PadItem_General_XboxImageControl padItem_General_XboxImageControl = new PadItem_General_XboxImageControl();
 		// PadItem_GeneralControl padItem_GeneralControl = new PadItem_GeneralControl();

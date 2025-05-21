@@ -3,9 +3,10 @@ using JocysCom.ClassLibrary.Controls;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-// using System.Diagnostics;
+//using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
+//using System.Windows.Documents;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -113,32 +114,42 @@ namespace x360ce.App.Controls
 			UpdateControlFromXInput();
 		}
 
+		bool _isOnline = false;
+
 		private void UpdateControlFromDInput()
 		{
 			lock (updateFromDirectInputLock)
 			{
 				var ud = CurrentUserDevice;
-				var enable = ud != null;
-				var instanceGuid = enable ? ud.InstanceGuid : Guid.Empty;
-				ControlsHelper.SetEnabled(PadFootPanel.RemapAllButton, enable && ud.DiState != null);
-				PadItemPanel.SetEnabled(enable);
+				var udNotNull = ud != null;
+				var instanceGuid = udNotNull ? ud.InstanceGuid : Guid.Empty;
+				var isOnline = udNotNull ? ud.IsOnline : false;
+
+				ControlsHelper.SetEnabled(PadFootPanel.RemapAllButton, udNotNull && ud.DiState != null);
+				PadItemPanel.SetEnabled(udNotNull);
 				// If device instance changed then...
-				if (!Equals(instanceGuid, _InstanceGuid))
+				if (!Equals(_InstanceGuid, instanceGuid))
 				{
 					//if (instanceGuid != Guid.Empty && ud?.DeviceState != null)
 					//{
-						_InstanceGuid = instanceGuid;
-						GeneralPanel.ResetDiMenuStrip(enable ? ud : null);
+					_InstanceGuid = instanceGuid;
+					GeneralPanel.ResetDiMenuStrip(udNotNull && ud.IsOnline ? ud : null);
 					//}
+				}
+
+				if (!Equals(_isOnline, isOnline))
+				{
+					_isOnline = isOnline;
+					GeneralPanel.ResetDiMenuStrip(udNotNull && ud.IsOnline ? ud : null);
 				}
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				UpdateDirectInputTabPage(ud);
 
 				PadItemPanel.DInputPanel.UpdateFrom(ud);
-				// DragAndDrop menu update.
+				// DragAndDrop menu update. ---------------------------------------------------------------------------------------------------------------------------
 				PadItemPanel.GeneralPanel.DragAndDropMenuLabels_Update(ud);
 
-				if (enable && _Imager.Recorder.Recording)
+				if (udNotNull && _Imager.Recorder.Recording)
 				{
 					// Stop recording if DInput value captured.
 					var stopped = _Imager.Recorder.StopRecording(ud.DiState);
@@ -171,11 +182,11 @@ namespace x360ce.App.Controls
 		void UpdateControlFromXInput()
 		{
 			var i = (int)MappedTo - 1;
-			var useXiStates = SettingsManager.Options.GetXInputStates;
-			newState = useXiStates
+			var getXInputStates = SettingsManager.Options.GetXInputStates;
+			newState = getXInputStates
 				? Global.DHelper.LiveXiStates[i]
 				: Global.DHelper.CombinedXiStates[i];
-			newConnected = useXiStates
+			newConnected = getXInputStates
 				? Global.DHelper.LiveXiConnected[i]
 				: Global.DHelper.CombinedXiConnected[i];
 			// If device is not connected and was not connected then return.
@@ -196,16 +207,20 @@ namespace x360ce.App.Controls
 			// Return if controller is not connected.
 			if (newConnected)
 			{
-				// Process all buttons and axis.
+				var customDiState = GeneralPanel.GetCustomDiState(CurrentUserDevice);
+				
+				// Process all buttons and axis. ------------------------------------------------------------------------------------------------------
 				foreach (var ii in imageInfos)
 				{
-					_Imager.DrawState(ii, newState.Gamepad);
+					//SetLabelDIContent(customDiState, ii.Type, (StackPanel)ii.ControlStackPanel);
+					_Imager.DrawState(ii, newState.Gamepad, customDiState);
 				}
 			}
 
 			// Process device.
 			if (CurrentUserDevice?.DiState != null && CurrentPadSetting != null)
 			{
+				// Update graphs.
 				var axis = CurrentUserDevice.DiState.Axis;
 				foreach (var (target, panel, value) in new (TargetType Target, AxisMapControl Panel, short Value)[]
 				{
@@ -233,6 +248,29 @@ namespace x360ce.App.Controls
 			// Store old state.
 			oldConnected = newConnected;
 		}
+
+		//private void SetLabelDIContent(CustomDiState customDiState, TargetType targetType, StackPanel sp)
+		//{
+			
+		//	Map map = CurrentPadSetting.Maps.FirstOrDefault(x => x.Target == targetType);
+
+		//	if (map?.Index <= 0/* || map.Index > axisLength*/)
+		//		return;
+
+		//	var i = map.Index - 1;
+		//	if (map.IsAxis || map.IsHalf || map.IsInverted)
+		//	{
+		//		((Label)sp.Children[1]).Content = customDiState.Axis[i];
+		//	}
+		//	else if (map.IsButton)
+		//	{
+		//		((Label)sp.Children[1]).Content = customDiState.Buttons[i] ? 1 : 0;
+		//	}
+		//	else if (map.IsSlider)
+		//	{
+		//		((Label)sp.Children[1]).Content = customDiState.Sliders[i];
+		//	}
+		//}
 
 		private AxisToButtonControl[] _AxisToButtonControls;
 
@@ -375,50 +413,50 @@ namespace x360ce.App.Controls
 					// Configure.
 					_imageInfos = new List<ImageInfo>();
 					// Triggers.
-					AddImageInfo(1, MapCode.LeftTrigger, 63, 27, GeneralPanel.TriggerLLabel, GeneralPanel.TriggerLLabelXI, GeneralPanel.TriggerLTextBox);
-					AddImageInfo(1, MapCode.RightTrigger, 193, 27, GeneralPanel.TriggerRLabel, GeneralPanel.TriggerRLabelXI, GeneralPanel.TriggerRTextBox);
+					AddImageInfo(1, TargetType.LeftTrigger, MapCode.LeftTrigger, 63, 27, GeneralPanel.TriggerLLabel, GeneralPanel.TriggerLXILabel, GeneralPanel.TriggerLTextBox);
+					AddImageInfo(1, TargetType.RightTrigger, MapCode.RightTrigger, 193, 27, GeneralPanel.TriggerRLabel, GeneralPanel.TriggerRXILabel, GeneralPanel.TriggerRTextBox);
 					// Bumpers.
-					AddImageInfo(1, MapCode.LeftShoulder, 43, 66, GeneralPanel.BumperLLabel, GeneralPanel.BumperLLabelXI, GeneralPanel.BumperLTextBox, GamepadButtonFlags.LeftShoulder);
-					AddImageInfo(1, MapCode.RightShoulder, 213, 66, GeneralPanel.BumperRLabel, GeneralPanel.BumperRLabelXI, GeneralPanel.BumperRTextBox, GamepadButtonFlags.RightShoulder);
+					AddImageInfo(1, TargetType.Button, MapCode.LeftShoulder, 43, 66, GeneralPanel.BumperLLabel, GeneralPanel.BumperLXILabel, GeneralPanel.BumperLTextBox, GamepadButtonFlags.LeftShoulder);
+					AddImageInfo(1, TargetType.Button, MapCode.RightShoulder, 213, 66, GeneralPanel.BumperRLabel, GeneralPanel.BumperRXILabel, GeneralPanel.BumperRTextBox, GamepadButtonFlags.RightShoulder);
 					// Action.
-					AddImageInfo(2, MapCode.ButtonY, 196, 29, GeneralPanel.ActionYLabel, GeneralPanel.ActionYLabelXI, GeneralPanel.ActionYTextBox, GamepadButtonFlags.Y);
-					AddImageInfo(2, MapCode.ButtonX, 178, 48, GeneralPanel.ActionXLabel, GeneralPanel.ActionXLabelXI, GeneralPanel.ActionXTextBox, GamepadButtonFlags.X);
-					AddImageInfo(2, MapCode.ButtonB, 215, 48, GeneralPanel.ActionBLabel, GeneralPanel.ActionBLabelXI, GeneralPanel.ActionBTextBox, GamepadButtonFlags.B);
-					AddImageInfo(2, MapCode.ButtonA, 196, 66, GeneralPanel.ActionALabel, GeneralPanel.ActionALabelXI, GeneralPanel.ActionATextBox, GamepadButtonFlags.A);
+					AddImageInfo(2, TargetType.Button, MapCode.ButtonY, 196, 29, GeneralPanel.ActionYLabel, GeneralPanel.ActionYXILabel, GeneralPanel.ActionYTextBox, GamepadButtonFlags.Y);
+					AddImageInfo(2, TargetType.Button, MapCode.ButtonX, 178, 48, GeneralPanel.ActionXLabel, GeneralPanel.ActionXXILabel, GeneralPanel.ActionXTextBox, GamepadButtonFlags.X);
+					AddImageInfo(2, TargetType.Button, MapCode.ButtonB, 215, 48, GeneralPanel.ActionBLabel, GeneralPanel.ActionBXILabel, GeneralPanel.ActionBTextBox, GamepadButtonFlags.B);
+					AddImageInfo(2, TargetType.Button, MapCode.ButtonA, 196, 66, GeneralPanel.ActionALabel, GeneralPanel.ActionAXILabel, GeneralPanel.ActionATextBox, GamepadButtonFlags.A);
 					// Menu.
-					AddImageInfo(2, MapCode.ButtonGuide, 127, 48, GeneralPanel.MenuGuideLabel, GeneralPanel.MenuGuideLabelXI, GeneralPanel.MenuGuideTextBox, GamepadButtonFlags.Guide);
-					AddImageInfo(2, MapCode.ButtonBack, 103, 48, GeneralPanel.MenuBackLabel, GeneralPanel.MenuBackLabelXI, GeneralPanel.MenuBackTextBox, GamepadButtonFlags.Back);
-					AddImageInfo(2, MapCode.ButtonStart, 152, 48, GeneralPanel.MenuStartLabel, GeneralPanel.MenuStartLabelXI, GeneralPanel.MenuStartTextBox, GamepadButtonFlags.Start);
+					AddImageInfo(2, TargetType.Button, MapCode.ButtonGuide, 127, 48, GeneralPanel.MenuGuideLabel, GeneralPanel.MenuGuideXILabel, GeneralPanel.MenuGuideTextBox, GamepadButtonFlags.Guide);
+					AddImageInfo(2, TargetType.Button, MapCode.ButtonBack, 103, 48, GeneralPanel.MenuBackLabel, GeneralPanel.MenuBackXILabel, GeneralPanel.MenuBackTextBox, GamepadButtonFlags.Back);
+					AddImageInfo(2, TargetType.Button, MapCode.ButtonStart, 152, 48, GeneralPanel.MenuStartLabel, GeneralPanel.MenuStartXILabel, GeneralPanel.MenuStartTextBox, GamepadButtonFlags.Start);
 					// D-Pad.
-					AddImageInfo(2, MapCode.DPad, 92, 88, GeneralPanel.DPadLabel, GeneralPanel.DPadLabelXI, GeneralPanel.DPadTextBox);
-					AddImageInfo(2, MapCode.DPadUp, 92, 88 - 13, GeneralPanel.DPadUpLabel, GeneralPanel.DPadUpLabelXI, GeneralPanel.DPadUpTextBox, GamepadButtonFlags.DPadUp);
-					AddImageInfo(2, MapCode.DPadLeft, 92 - 13, 88, GeneralPanel.DPadLeftLabel, GeneralPanel.DPadLeftLabelXI, GeneralPanel.DPadLeftTextBox, GamepadButtonFlags.DPadLeft);
-					AddImageInfo(2, MapCode.DPadRight, 92 + 13, 88, GeneralPanel.DPadRightLabel, GeneralPanel.DPadRightLabelXI, GeneralPanel.DPadRightTextBox, GamepadButtonFlags.DPadRight);
-					AddImageInfo(2, MapCode.DPadDown, 92, 88 + 13, GeneralPanel.DPadDownLabel, GeneralPanel.DPadDownLabelXI, GeneralPanel.DPadDownTextBox, GamepadButtonFlags.DPadDown);
+					AddImageInfo(2, TargetType.Button, MapCode.DPad, 92, 88, GeneralPanel.DPadLabel, GeneralPanel.DPadXILabel, GeneralPanel.DPadTextBox);
+					AddImageInfo(2, TargetType.Button, MapCode.DPadUp, 92, 88 - 13, GeneralPanel.DPadUpLabel, GeneralPanel.DPadUpXILabel, GeneralPanel.DPadUpTextBox, GamepadButtonFlags.DPadUp);
+					AddImageInfo(2, TargetType.Button, MapCode.DPadLeft, 92 - 13, 88, GeneralPanel.DPadLeftLabel, GeneralPanel.DPadLeftXILabel, GeneralPanel.DPadLeftTextBox, GamepadButtonFlags.DPadLeft);
+					AddImageInfo(2, TargetType.Button, MapCode.DPadRight, 92 + 13, 88, GeneralPanel.DPadRightLabel, GeneralPanel.DPadRightXILabel, GeneralPanel.DPadRightTextBox, GamepadButtonFlags.DPadRight);
+					AddImageInfo(2, TargetType.Button, MapCode.DPadDown, 92, 88 + 13, GeneralPanel.DPadDownLabel, GeneralPanel.DPadDownXILabel, GeneralPanel.DPadDownTextBox, GamepadButtonFlags.DPadDown);
 					// Stick Left.
-					AddImageInfo(2, MapCode.LeftThumbButton, 59, 47, GeneralPanel.StickLButtonLabel, GeneralPanel.StickLButtonLabelXI, GeneralPanel.StickLButtonTextBox, GamepadButtonFlags.LeftThumb);
-					AddImageInfo(2, MapCode.LeftThumbAxisX, 59 + 10, 47, GeneralPanel.StickLAxisXLabel, GeneralPanel.StickLAxisXLabelXI, GeneralPanel.StickLAxisXTextBox);
-					AddImageInfo(2, MapCode.LeftThumbAxisY, 59, 47 - 10, GeneralPanel.StickLAxisYLabel, GeneralPanel.StickLAxisYLabelXI, GeneralPanel.StickLAxisYTextBox);
-					AddImageInfo(2, MapCode.LeftThumbUp, 59, 47 - 10, GeneralPanel.StickLUpLabel, GeneralPanel.StickLUpLabelXI, GeneralPanel.StickLUpTextBox);
-					AddImageInfo(2, MapCode.LeftThumbLeft, 59 - 10, 47, GeneralPanel.StickLLeftLabel, GeneralPanel.StickLLeftLabelXI, GeneralPanel.StickLLeftTextBox);
-					AddImageInfo(2, MapCode.LeftThumbRight, 59 + 10, 47, GeneralPanel.StickLRightLabel, GeneralPanel.StickLRightLabelXI, GeneralPanel.StickLRightTextBox);
-					AddImageInfo(2, MapCode.LeftThumbDown, 59, 47 + 10, GeneralPanel.StickLDownLabel, GeneralPanel.StickLDownLabelXI, GeneralPanel.StickLDownTextBox);
+					AddImageInfo(2, TargetType.Button, MapCode.LeftThumbButton, 59, 47, GeneralPanel.StickLButtonLabel, GeneralPanel.StickLButtonXILabel, GeneralPanel.StickLButtonTextBox, GamepadButtonFlags.LeftThumb);
+					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbAxisX, 59 + 10, 47, GeneralPanel.StickLAxisXLabel, GeneralPanel.StickLAxisXXILabel, GeneralPanel.StickLAxisXTextBox);
+					AddImageInfo(2, TargetType.LeftThumbY, MapCode.LeftThumbAxisY, 59, 47 - 10, GeneralPanel.StickLAxisYLabel, GeneralPanel.StickLAxisYXILabel, GeneralPanel.StickLAxisYTextBox);
+					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbUp, 59, 47 - 10, GeneralPanel.StickLUpLabel, GeneralPanel.StickLUpXILabel, GeneralPanel.StickLUpTextBox);
+					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbLeft, 59 - 10, 47, GeneralPanel.StickLLeftLabel, GeneralPanel.StickLLeftXILabel, GeneralPanel.StickLLeftTextBox);
+					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbRight, 59 + 10, 47, GeneralPanel.StickLRightLabel, GeneralPanel.StickLRightXILabel, GeneralPanel.StickLRightTextBox);
+					AddImageInfo(2, TargetType.LeftThumbX, MapCode.LeftThumbDown, 59, 47 + 10, GeneralPanel.StickLDownLabel, GeneralPanel.StickLDownXILabel, GeneralPanel.StickLDownTextBox);
 					// Stick Right.
-					AddImageInfo(2, MapCode.RightThumbButton, 160, 88, GeneralPanel.StickRButtonLabel, GeneralPanel.StickRButtonLabelXI, GeneralPanel.StickRButtonTextBox, GamepadButtonFlags.RightThumb);
-					AddImageInfo(2, MapCode.RightThumbAxisX, 160 + 10, 88, GeneralPanel.StickRAxisXLabel, GeneralPanel.StickRAxisXLabelXI, GeneralPanel.StickRAxisXTextBox);
-					AddImageInfo(2, MapCode.RightThumbAxisY, 160, 88 - 10, GeneralPanel.StickRAxisYLabel, GeneralPanel.StickRAxisYLabelXI, GeneralPanel.StickRAxisYTextBox);
-					AddImageInfo(2, MapCode.RightThumbUp, 160, 88 - 10, GeneralPanel.StickRUpLabel, GeneralPanel.StickRUpLabelXI, GeneralPanel.StickRUpTextBox);
-					AddImageInfo(2, MapCode.RightThumbLeft, 160 - 10, 88, GeneralPanel.StickRLeftLabel, GeneralPanel.StickRLeftLabelXI, GeneralPanel.StickRLeftTextBox);
-					AddImageInfo(2, MapCode.RightThumbRight, 160 + 10, 88, GeneralPanel.StickRRightLabel, GeneralPanel.StickRRightLabelXI, GeneralPanel.StickRRightTextBox);
-					AddImageInfo(2, MapCode.RightThumbDown, 160, 88 + 10, GeneralPanel.StickRDownLabel, GeneralPanel.StickRDownLabelXI, GeneralPanel.StickRDownTextBox);
+					AddImageInfo(2, TargetType.Button, MapCode.RightThumbButton, 160, 88, GeneralPanel.StickRButtonLabel, GeneralPanel.StickRButtonXILabel, GeneralPanel.StickRButtonTextBox, GamepadButtonFlags.RightThumb);
+					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbAxisX, 160 + 10, 88, GeneralPanel.StickRAxisXLabel, GeneralPanel.StickRAxisXXILabel, GeneralPanel.StickRAxisXTextBox);
+					AddImageInfo(2, TargetType.RightThumbY, MapCode.RightThumbAxisY, 160, 88 - 10, GeneralPanel.StickRAxisYLabel, GeneralPanel.StickRAxisYXILabel, GeneralPanel.StickRAxisYTextBox);
+					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbUp, 160, 88 - 10, GeneralPanel.StickRUpLabel, GeneralPanel.StickRUpXILabel, GeneralPanel.StickRUpTextBox);
+					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbLeft, 160 - 10, 88, GeneralPanel.StickRLeftLabel, GeneralPanel.StickRLeftXILabel, GeneralPanel.StickRLeftTextBox);
+					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbRight, 160 + 10, 88, GeneralPanel.StickRRightLabel, GeneralPanel.StickRRightXILabel, GeneralPanel.StickRRightTextBox);
+					AddImageInfo(2, TargetType.RightThumbX, MapCode.RightThumbDown, 160, 88 + 10, GeneralPanel.StickRDownLabel, GeneralPanel.StickRDownXILabel, GeneralPanel.StickRDownTextBox);
 				}
 				return _imageInfos;
 			}
 		}
 		List<ImageInfo> _imageInfos;
 
-		public void AddImageInfo(int image, MapCode code, double x, double y, object controlName, object controlXI, object controlBindingName, GamepadButtonFlags button = GamepadButtonFlags.None)
-			=> _imageInfos.Add(new ImageInfo(image, code, x, y, controlName, controlXI, controlBindingName, button));
+		public void AddImageInfo(int image, TargetType type, MapCode code, double x, double y, object controlName, object controlValue, object controlBindingName, GamepadButtonFlags button = GamepadButtonFlags.None)
+			=> _imageInfos.Add(new ImageInfo(image, type, code, x, y, controlName, controlValue, controlBindingName, button));
 
 		#endregion
 

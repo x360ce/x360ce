@@ -187,7 +187,7 @@ namespace x360ce.App.Controls
 			else
 			{
 				// Suspend DInput Service.
-				Global.DHelper.Stop();
+				Global.DHelper.StopDInputService();
 				MainDataGrid.ItemsSource = null;
 				var result = (SearchResult)e.Result;
 				// Reorder Settings.
@@ -205,7 +205,7 @@ namespace x360ce.App.Controls
 				MainDataGrid.ItemsSource = SettingsManager.UserSettings.Items;
 				// Resume DInput Service.
 				if (Global.AllowDHelperStart)
-					Global.DHelper.Start();
+					Global.DHelper.StartDInputService();
 			}
 			_ParentControl.InfoPanel.RemoveTask(TaskName.SearchSettings);
 			RefreshButton.IsEnabled = true;

@@ -8,28 +8,15 @@ namespace x360ce.App.DInput
 {
 	public partial class DInputHelper
 	{
-
-		//public bool UpdateDevicesPending;
 		EmulationType CurrentEmulation;
 
 		public void CheckAndUnloadXInputLibrary(UserGame game, bool getXInputStates)
 		{
 			lock (Controller.XInputLock)
 			{
-				// UpdateDevicesEnabled property could be set to true from separate multiple threads.
-				// UpdateDevicesPending property is needed to make sure that parameter stays same
-				// during RefreshAll(...) action.
-				//if (UpdateDevicesEnabled)
-				//{
-				//	UpdateDevicesEnabled = false;
-				//	UpdateDevicesPending = true;
-				//}
-
 				var (unloadLoad, emType) = UnloadLoad(game, getXInputStates);
-
 				if (!Controller.IsLoaded || !unloadLoad || emType != CurrentEmulation)
 					return;
-
 				Controller.FreeLibrary();
 				XInputReloaded?.Invoke(this, new DInputEventArgs());
 			}
@@ -45,7 +32,7 @@ namespace x360ce.App.DInput
 				emType == EmulationType.Virtual && !getXInputStates ||
 				// New device was detected so exclusive lock is necessary to retrieve force feedback information.
 				// Don't load until device list was not refreshed.
-				//UpdateDevicesPending ||
+				// DevicesAreUpdating ||
 				// This will also release exclusive lock if another game/application must use it.
 				// No actual XInput states are required for Library emulation when minimized.
 				emType == EmulationType.Library && !Global._MainWindow.FormEventsEnabled;

@@ -316,10 +316,6 @@ namespace x360ce.App.Controls
 		{
 			UpdateGridButtons();
 
-
-
-			
-
 			// Get the currently selected item
 			var selected = DevicesDataGrid.SelectedItem as UserSetting;
 
@@ -466,8 +462,7 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowLoad(this))
 				return;
-			var o = SettingsManager.Options;
-			SettingsManager.LoadAndMonitor(o, nameof(o.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
+			SettingsManager.LoadAndMonitor(SettingsManager.Options, nameof(Options.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
 			UpdateGridButtons();
 		}
 
