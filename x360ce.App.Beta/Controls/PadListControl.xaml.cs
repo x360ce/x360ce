@@ -191,26 +191,30 @@ namespace x360ce.App.Controls
 			// If no game selected then ignore click.
 			if (game == null)
 				return;
-			var flag = AppHelper.GetMapFlag(_MappedTo);
-			var value = (MapToMask)game.EnableMask;
-			var type = game.EmulationType;
-			var autoMap = value.HasFlag(flag);
-			// Invert flag value.
-			var enableMask = autoMap
-				// Remove AUTO.
-				? (int)(value & ~flag)
-				// Add AUTO.	
-				: (int)(value | flag);
+			var currentPad = AppHelper.GetMapFlag(_MappedTo);
+			var enabledPads = (MapToMask)game.EnableMask;
+			// If current controller is enabled then...
+			if (enabledPads.HasFlag(currentPad))
+			{
+				// Remove controller from enabled list.
+				enabledPads &= ~currentPad;
+			}
+			else
+			{
+                // Add controllers to enabled list.
+                enabledPads |= currentPad;
+			}
 			// Update emulation type.
 			EmulationType? newType = null;
-			// If emulation enabled and game is not using virtual type then...
-			if (enableMask > 0 && type != (int)EmulationType.Virtual)
+            var type = game.EmulationType;
+            // If emulation enabled and game is not using virtual type then...
+            if (enabledPads != MapToMask.None && type != (int)EmulationType.Virtual)
 				newType = EmulationType.Virtual;
 			// If emulation disabled, but game use virtual emulation then...
-			if (enableMask == 0 && type == (int)EmulationType.Virtual)
+			if (enabledPads == MapToMask.None && type == (int)EmulationType.Virtual)
 				newType = EmulationType.None;
 			// Set values.
-			game.EnableMask = enableMask;
+			game.EnableMask = (int)enabledPads;
 			if (newType.HasValue)
 				game.EmulationType = (int)newType.Value;
 		}
@@ -462,7 +466,7 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowLoad(this))
 				return;
-			SettingsManager.LoadAndMonitor(SettingsManager.Options, nameof(Options.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
+			//SettingsManager.LoadAndMonitor(SettingsManager.Options, nameof(Options.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
 			UpdateGridButtons();
 		}
 
@@ -478,7 +482,7 @@ namespace x360ce.App.Controls
 		{
 			UnInitScrollFix();
 			SetBinding(MapTo.None);
-			SettingsManager.UnLoadMonitor(EnabledCheckBox);
+			//SettingsManager.UnLoadMonitor(EnabledCheckBox);
 			_MainDataGridFormattingConverter = null;
 			//UseXInputStateContentControl.Content = null;
 			mappedUserSettings.Clear();

@@ -23,6 +23,8 @@ namespace x360ce.App.Controls
 			InitHelper.InitTimer(this, InitializeComponent);
 		}
 
+
+
 		public void InitControls(MapTo mappedTo)
 		{
 			if (ControlsHelper.IsDesignMode(this))
@@ -37,21 +39,22 @@ namespace x360ce.App.Controls
 			PadFootPanel.MapNameComboBox.SelectionChanged += GeneralPanel.MapNameComboBox_SelectionChanged;
 			PadFootPanel.RemapAllButton.Click += RemapAllButton_Click;
 			MappedTo = mappedTo;
-			_Imager = new PadControlImager();
-			//_Imager.Top = XboxImage.TopPictureImage;
-			//_Imager.Front = XboxImage.FrontPictureImage;
 
-			_Imager.LeftTriggerAxisStatus = XboxImage.LeftTriggerAxisBorder;
-			_Imager.RightTriggerAxisStatus = XboxImage.RightTriggerAxisBorder;
-			_Imager.LeftThumbAxisStatus = XboxImage.LeftThumbAxisBorder;
-			_Imager.RightThumbAxisStatus = XboxImage.RightThumbAxisBorder;
+            _PadControlImager = new PadControlImager();
+            //_PadControlImager.Top = XboxImage.TopPictureImage;
+            //_PadControlImager.Front = XboxImage.FrontPictureImage;
+            _PadControlImager.LeftTriggerAxisStatus = XboxImage.LeftTriggerAxisBorder;
+			_PadControlImager.RightTriggerAxisStatus = XboxImage.RightTriggerAxisBorder;
+			_PadControlImager.LeftThumbAxisStatus = XboxImage.LeftThumbAxisBorder;
+			_PadControlImager.RightThumbAxisStatus = XboxImage.RightThumbAxisBorder;
+            _PadControlImager.ImageControl = XboxImage;
 
-			_Imager.ImageControl = XboxImage;
-			XboxImage.InitializeImages(imageInfos, _Imager, mappedTo);
-			XboxImage.StartRecording = StartRecording;
-			XboxImage.StopRecording = StopRecording;
-			// Axis to Button DeadZones
-			ButtonsPanel.AxisToButtonADeadZonePanel.MonitorTextBox = GeneralPanel.ActionATextBox;
+            XboxImage.InitializeImages(imageInfos, _PadControlImager, mappedTo);
+            XboxImage.StartRecording = StartRecording;
+            XboxImage.StopRecording = StopRecording;
+
+            // Axis to Button DeadZones
+            ButtonsPanel.AxisToButtonADeadZonePanel.MonitorTextBox = GeneralPanel.ActionATextBox;
 			ButtonsPanel.AxisToButtonBDeadZonePanel.MonitorTextBox = GeneralPanel.ActionBTextBox;
 			ButtonsPanel.AxisToButtonXDeadZonePanel.MonitorTextBox = GeneralPanel.ActionXTextBox;
 			ButtonsPanel.AxisToButtonYDeadZonePanel.MonitorTextBox = GeneralPanel.ActionYTextBox;
@@ -90,9 +93,9 @@ namespace x360ce.App.Controls
 		}
 
 		#region ■ Control Links
-
 		private PadItem_GeneralControl GeneralPanel => PadItemPanel.GeneralPanel;
-		private PadItem_AdvancedControl AdvancedPanel => PadItemPanel.AdvancedPanel;
+        private PadItem_General_XboxImageControl XboxImage => GeneralPanel.XboxImage;
+        private PadItem_AdvancedControl AdvancedPanel => PadItemPanel.AdvancedPanel;
 		private PadItem_ButtonsControl ButtonsPanel => PadItemPanel.ButtonsPanel;
 		private PadItem_DPadControl DPadPanel => PadItemPanel.DPadPanel;
 		private AxisMapControl LeftTriggerPanel => PadItemPanel.LeftTriggerPanel;
@@ -103,9 +106,6 @@ namespace x360ce.App.Controls
 		private AxisMapControl RightThumbYPanel => PadItemPanel.RightThumbYPanel;
 		private PadItem_ForceFeedbackControl ForceFeedbackPanel => PadItemPanel.ForceFeedbackPanel;
 		//private XInputUserControl XInputPanel => PadItemPanel.XInputPanel;
-
-		private PadItem_General_XboxImageControl XboxImage => GeneralPanel.XboxImage;
-
 		#endregion
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
@@ -149,10 +149,10 @@ namespace x360ce.App.Controls
 				// DragAndDrop menu update. ---------------------------------------------------------------------------------------------------------------------------
 				PadItemPanel.GeneralPanel.DragAndDropMenuLabels_Update(ud);
 
-				if (udNotNull && _Imager.Recorder.Recording)
+				if (udNotNull && _PadControlImager.Recorder.Recording)
 				{
 					// Stop recording if DInput value captured.
-					var stopped = _Imager.Recorder.StopRecording(ud.DiState);
+					var stopped = _PadControlImager.Recorder.StopRecording(ud.DiState);
 					// If value was found and recording stopped then...
 					if (stopped)
 					{
@@ -195,14 +195,14 @@ namespace x360ce.App.Controls
 			// If device disconnected then show disabled images.
 			if (!newConnected && oldConnected)
 			{
-				//_Imager.SetImages(false);
-				PadFootPanel.RemapAllButton.IsEnabled = false;
+                //_PadControlImager.SetImages(false);
+                PadFootPanel.RemapAllButton.IsEnabled = false;
 			}
 			// If device connected then show enabled images.
 			if (newConnected && !oldConnected)
 			{
-				//_Imager.SetImages(true);
-				PadFootPanel.RemapAllButton.IsEnabled = true;
+                //_PadControlImager.SetImages(true);
+                PadFootPanel.RemapAllButton.IsEnabled = true;
 			}
 			// Return if controller is not connected.
 			if (newConnected)
@@ -213,7 +213,7 @@ namespace x360ce.App.Controls
 				foreach (var ii in imageInfos)
 				{
 					//SetLabelDIContent(customDiState, ii.Type, (StackPanel)ii.ControlStackPanel);
-					_Imager.DrawState(ii, newState.Gamepad, customDiState);
+					_PadControlImager.DrawState(ii, newState.Gamepad, customDiState);
 				}
 			}
 
@@ -278,7 +278,7 @@ namespace x360ce.App.Controls
 		{
 			RecordAllMaps.Clear();
 			PadFootPanel.RemapAllButton.Content = RemapName;
-			return _Imager.Recorder.StopRecording();
+			return _PadControlImager.Recorder.StopRecording();
 		}
 
 		void StartRecording(SettingsMapItem map = null)
@@ -295,7 +295,7 @@ namespace x360ce.App.Controls
 				if (_CurrentCbx != cbx)
 					_CurrentCbx = cbx;
 			*/
-			_Imager.Recorder.StartRecording(map);
+			_PadControlImager.Recorder.StartRecording(map);
 			var helpText =
 				SettingsConverter.ThumbDirections.Contains(map.Code) ||
 				SettingsConverter.TriggerButtonCodes.Contains(map.Code)
@@ -349,10 +349,10 @@ namespace x360ce.App.Controls
 		public void InitPadControl()
 		{
 			var dv = new System.Data.DataView();
-			// Show disabled images by default.
-			//_Imager.SetImages(false);
-			// Add player index to combo boxes
-			var playerOptions = new List<KeyValuePair>();
+            // Show disabled images by default.
+            //_PadControlImager.SetImages(false);
+            // Add player index to combo boxes
+            var playerOptions = new List<KeyValuePair>();
 			var playerTypes = (UserIndex[])Enum.GetValues(typeof(UserIndex));
 			foreach (var item in playerTypes)
 				playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
@@ -365,7 +365,7 @@ namespace x360ce.App.Controls
 
 		#region ■ Images
 
-		public PadControlImager _Imager;
+		public PadControlImager _PadControlImager;
 
 		//LeftTrigger		> TriggerLeftAxis
 		//RightTrigger		> TriggerRightAxis
@@ -672,8 +672,8 @@ namespace x360ce.App.Controls
 			XboxImage.StopRecording = null;
 			RecordAllMaps.Clear();
 			imageInfos.Clear();
-			_Imager?.Dispose();
-			_Imager = null;
+			_PadControlImager?.Dispose();
+			_PadControlImager = null;
 			_CurrentUserSetting = null;
 			_CurrentUserDevice = null;
 		}

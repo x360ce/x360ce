@@ -1,38 +1,35 @@
-﻿//using JocysCom.ClassLibrary.Controls;
-using SharpDX.XInput;
+﻿using SharpDX.XInput;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-//using System.Linq;
-//using System.Windows;
-
-
-//using System.IO;
-//using System.Security.Policy;
+//using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Media;
-
-//using System.Windows.Media;
 using x360ce.Engine;
+//using System.Drawing;
+//using System.Linq;
+//using System.Windows;
+//using System.Windows.Media;
+//using System.IO;
+//using System.Security.Policy;
+//using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.App.Controls
 {
 	public partial class PadControlImager : IDisposable
 	{
+        //static Bitmap topImage;
+        //static Bitmap frontImage;
+        //static Bitmap topDisabledImage;
+        //static Bitmap frontDisabledImage;
 
-		public static object imagesLock = new object();
+        //static ImageSource _TopImage;
+        //static ImageSource _FrontImage;
+        //static ImageSource _TopDisabledImage;
+        //static ImageSource _FrontDisabledImage;
 
-		//static Bitmap topImage;
-		//static Bitmap frontImage;
-		//static Bitmap topDisabledImage;
-		//static Bitmap frontDisabledImage;
+        // Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
+        public static object imagesLock = new object();
 
-		//static ImageSource _TopImage;
-		//static ImageSource _FrontImage;
-		//static ImageSource _TopDisabledImage;
-		//static ImageSource _FrontDisabledImage;
-
-		public PadControlImager()
+        public PadControlImager()
 		{
 			//locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
 			lock (imagesLock)
@@ -71,66 +68,63 @@ namespace x360ce.App.Controls
 
 		public Recorder Recorder;
 
-		// Green round button image.
-		// public Bitmap markB;
-		// Green cross axis image.
-		// public Bitmap markA;
-		// Green round controller/player number image.
-		// public Bitmap markC;
+        // Green round button image.
+        // public Bitmap markB;
+        // Green cross axis image.
+        // public Bitmap markA;
+        // Green round controller/player number image.
+        // public Bitmap markC;
 
-		public PadItem_General_XboxImageControl ImageControl;
+        public PadItem_General_XboxImageControl ImageControl;
 
-		Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
+        // Background Images.
+        //public Image Top;
+        //public Image Front;
 
-		// Background Images.
-		//public Image Top;
-		//public Image Front;
+        //      public void SetImages(bool enabled)
+        //{
+        //	////Top.Source = enabled ? _TopImage : _TopDisabledImage;
+        //	////Front.Source = enabled ? _FrontImage : _FrontDisabledImage;
+        //	////var show = enabled ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
+        //	////LeftThumbAxisStatus.Visibility = show;
+        //	////RightThumbAxisStatus.Visibility = show;
+        //	////LeftTriggerAxisStatus.Visibility = show;
+        //	////RightTriggerAxisStatus.Visibility = show;
+        //}
 
-		//      public void SetImages(bool enabled)
-		//{
-		//	////Top.Source = enabled ? _TopImage : _TopDisabledImage;
-		//	////Front.Source = enabled ? _FrontImage : _FrontDisabledImage;
-		//	////var show = enabled ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
-		//	////LeftThumbAxisStatus.Visibility = show;
-		//	////RightThumbAxisStatus.Visibility = show;
-		//	////LeftTriggerAxisStatus.Visibility = show;
-		//	////RightTriggerAxisStatus.Visibility = show;
-		//}
+        //public void DrawController(PaintEventArgs e, MapTo mappedTo)
+        //{
+        //    // Controller (Player) index indicator coordinates.
+        //    var pads = new Point[4];
+        //    pads[0] = new Point(116, 35);
+        //    pads[1] = new Point(139, 35);
+        //    pads[2] = new Point(116, 62);
+        //    pads[3] = new Point(139, 62);
+        //    // Display controller index light.
+        //    int mW = -markC.Width / 2;
+        //    int mH = -markC.Height / 2;
+        //    var index = (int)mappedTo - 1;
+        //    e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
+        //}
 
-		//public void DrawController(PaintEventArgs e, MapTo mappedTo)
-		//{
-		//    // Controller (Player) index indicator coordinates.
-		//    var pads = new Point[4];
-		//    pads[0] = new Point(116, 35);
-		//    pads[1] = new Point(139, 35);
-		//    pads[2] = new Point(116, 62);
-		//    pads[3] = new Point(139, 62);
-		//    // Display controller index light.
-		//    int mW = -markC.Width / 2;
-		//    int mH = -markC.Height / 2;
-		//    var index = (int)mappedTo - 1;
-		//    e.Graphics.DrawImage(markC, pads[index].X + mW, pads[index].Y + mH);
-		//}
+        //public bool ShowRightThumbButtons;
+        //public bool ShowLeftThumbButtons;
+        //public bool ShowDPadButtons;
+        //public bool ShowMainButtons;
+        //public bool ShowMenuButtons;
+        //public bool ShowTriggerButtons;
+        //public bool ShowShoulderButtons;
 
-		//public bool ShowRightThumbButtons;
-		//public bool ShowLeftThumbButtons;
-		//public bool ShowDPadButtons;
-		//public bool ShowMainButtons;
-		//public bool ShowMenuButtons;
-		//public bool ShowTriggerButtons;
-		//public bool ShowShoulderButtons;
-
-		// Axis status Borders.
-		public Border LeftThumbAxisStatus;
+        // Axis status Borders.
+        public Border LeftTriggerAxisStatus;
+        public Border RightTriggerAxisStatus;
+        public Border LeftThumbAxisStatus;
 		public Border RightThumbAxisStatus;
 
-		public System.Windows.Shapes.Path DPadUpStatus;
+        // public System.Windows.Shapes.Path DPadUpStatus;
 
 		// Set green background if axis or button exceeds deadzone value.
 		bool on = false;
-
-        public Border LeftTriggerAxisStatus;
-        public Border RightTriggerAxisStatus;
 
         private void UpdateXAMLTriggerElements(byte triggerValue, Label valueLabel, Border circleBorder)
 		{
@@ -186,16 +180,16 @@ namespace x360ce.App.Controls
             valueLabel.Content = on ? axisValue : 0;
         }
 
-        private Dictionary<MapCode, object> previousGpValues = new Dictionary<MapCode, object>();
-        private bool IsValueChanged<T>(MapCode code, T currentValue)
-        {
-            if (previousGpValues.TryGetValue(code, out var prevValue) && EqualityComparer<T>.Default.Equals((T)prevValue, currentValue))
-            {
-                return false; // No change.
-            }
-            previousGpValues[code] = currentValue;
-            return true; // Value has changed.
-        }
+        //private Dictionary<MapCode, object> previousGpValues = new Dictionary<MapCode, object>();
+        //private bool IsValueChanged<T>(MapCode code, T currentValue)
+        //{
+        //    if (previousGpValues.TryGetValue(code, out var prevValue) && EqualityComparer<T>.Default.Equals((T)prevValue, currentValue))
+        //    {
+        //        return false; // No change.
+        //    }
+        //    previousGpValues[code] = currentValue;
+        //    return true; // Value has changed.
+        //}
 
         public void DrawState(ImageInfo ii, Gamepad gp, CustomDiState ds)
 		{
@@ -354,7 +348,7 @@ namespace x360ce.App.Controls
 				RightThumbAxisStatus = null;
 				LeftTriggerAxisStatus = null;
 				RightTriggerAxisStatus = null;
-				ImageControl = null;
+				//ImageControl = null;
 				// Dispose other.
 				// markA.Dispose();
 				// markB.Dispose();
@@ -364,8 +358,8 @@ namespace x360ce.App.Controls
 				// markC = null;
 				Recorder.Dispose();
 				Recorder = null;
-				locations.Clear();
-				locations = null;
+				//locations.Clear();
+				//locations = null;
 			}
 		}
 
