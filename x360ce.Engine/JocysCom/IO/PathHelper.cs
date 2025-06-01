@@ -16,7 +16,7 @@ namespace JocysCom.ClassLibrary.IO
 		{
 			if (name is null)
 				throw new ArgumentNullException(nameof(name));
-			var invalid = name.ToCharArray().Intersect(System.IO.Path.GetInvalidFileNameChars());
+			var invalid = name.Intersect(System.IO.Path.GetInvalidFileNameChars());
 			if (invalid.Any())
 				throw new ArgumentException(string.Format("Invalid file name chars found: {0}", string.Join(", ", invalid)), nameof(name));
 		}
@@ -30,7 +30,7 @@ namespace JocysCom.ClassLibrary.IO
 		public static void ValidatePath(string path)
 		{
 			var d = System.IO.Path.GetDirectoryName(path);
-			var invalid = d.ToCharArray().Intersect(System.IO.Path.GetInvalidPathChars());
+			var invalid = d.Intersect(System.IO.Path.GetInvalidPathChars());
 			if (invalid.Any())
 				throw new ArgumentException(string.Format("Invalid path chars found: {0}", string.Join(", ", invalid)), nameof(path));
 			var name = System.IO.Path.GetFileName(path);

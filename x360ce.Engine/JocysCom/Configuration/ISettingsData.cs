@@ -1,74 +1,50 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.IO;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
-	/// <summary>
-	/// Defines an interface for managing settings data, with methods for persistence, defaults reset, and file operations.
-	/// </summary>
+	/// <summary>Contract for managing settings data persisted as XML, including reset, load, save, and individual file operations.</summary>
 	public interface ISettingsData
 	{
-		/// <summary>
-		/// Resets the settings data to default values.
-		/// </summary>
+		/// <summary>Reset settings data to default values.</summary>
 		/// <returns>True if operation was successful; otherwise, False.</returns>
 		bool ResetToDefault();
 
-		/// <summary>
-		/// Saves the current settings data to the default file location.
-		/// </summary>
+		/// <summary>Save current settings data via XML serialization to the default file location.</summary>
 		void Save(object[] items = null);
 
-		/// <summary>
-		/// Saves the current settings data to a specified file.
-		/// </summary>
-		/// <param name="fileName">The file name/path where the settings will be saved.</param>
+		/// <summary>Save current settings data via XML serialization to the specified file.</summary>
+		/// <param name="fileName">Destination file name or path.</param>
 		void SaveAs(string fileName, object[] items = null);
 
-		/// <summary>
-		/// Loads the settings data from the default file location.
-		/// </summary>
+		/// <summary>Load settings data from the default XML file.</summary>
 		void Load();
 
-		/// <summary>
-		/// Loads the settings data from a specified file.
-		/// </summary>
-		/// <param name="fileName">The file name/path from which to load settings.</param>
+		/// <summary>Load settings data from the specified XML file.</summary>
+		/// <param name="fileName">Source file name or path.</param>
 		void LoadFrom(string fileName);
 
-		/// <summary>
-		/// Gets the FileInfo object for the XML file that stores the settings data.
-		/// </summary>
+		/// <summary>FileInfo for the XML file that stores settings data.</summary>
 		FileInfo XmlFile { get; }
 
-		/// <summary>
-		/// Gets the collection of settings items.
-		/// </summary>
+		/// <summary>Collection of settings items for data binding.</summary>
 		IBindingList Items { get; }
 
-		/// <summary>
-		/// Occurs when a file associated with the settings data changes.
-		/// </summary>
+		/// <summary>Raised when a file associated with the settings data changes.</summary>
 		event EventHandler FilesChanged;
 
-		/// <summary>
-		/// Gets or sets a value indicating whether there are pending save operations for the settings data.
-		/// </summary>
+		/// <summary>Indicates whether there are pending save operations.</summary>
 		bool IsSavePending { get; set; }
 
-		/// <summary>
-		/// Deletes a specified settings item file and updates the settings data accordingly.
-		/// </summary>
-		/// <param name="itemFile">The settings item file to delete.</param>
+		/// <summary>Delete the specified settings item file and update settings data accordingly.</summary>
+		/// <param name="itemFile">Settings item file to delete.</param>
 		/// <returns>A message indicating the result of the delete operation.</returns>
 		string DeleteItem(ISettingsFileItem itemFile);
 
-		/// <summary>
-		/// Renames a specified settings item file and updates the settings data and file system.
-		/// </summary>
-		/// <param name="itemFile">The settings item file to rename.</param>
-		/// <param name="newName">The new name for the settings item file.</param>
+		/// <summary>Rename the specified settings item file and update settings data and file system accordingly.</summary>
+		/// <param name="itemFile">Settings item file to rename.</param>
+		/// <param name="newName">New name for the settings item file.</param>
 		/// <returns>A message indicating the outcome of the rename operation.</returns>
 		string RenameItem(ISettingsFileItem itemFile, string newName);
 	}

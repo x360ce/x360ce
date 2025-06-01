@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
@@ -139,6 +139,7 @@ namespace JocysCom.ClassLibrary
 			throw new Exception("Resource not found");
 		}
 
+		/// <summary>Converts a resource Stream to the specified type T: returns Stream, string (BOM-aware), System.Drawing.Image (.NET Framework), or byte[].</summary>
 		static T ConvertResource<T>(Stream stream)
 		{
 			if (typeof(T) == typeof(Stream))
@@ -168,6 +169,7 @@ namespace JocysCom.ClassLibrary
 			return results;
 		}
 
+		/// <summary>Retrieves all loaded assemblies, prioritizing the executing, calling, and entry assemblies for resource lookup.</summary>
 		static Assembly[] GetAssemblies()
 		{
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
@@ -257,7 +259,6 @@ namespace JocysCom.ClassLibrary
 		public static async Task Debounce(Action action, int? delay = null)
 			=> await _Debounce(action, delay);
 
-
 		/// <summary>
 		/// Executes an action after a delay, canceling any previous pending executions of the same action.
 		/// This method ensures that the action is invoked only after the specified delay has elapsed since the last invocation request.
@@ -321,6 +322,7 @@ namespace JocysCom.ClassLibrary
 		private PerformanceCounter _diskReadCounter = new PerformanceCounter();
 		private PerformanceCounter _diskWriteCounter = new PerformanceCounter();
 
+		/// <summary>Reads the specified PerformanceCounter (category, counter, instance) and returns its next value.</summary>
 		private static double GetCounterValue(PerformanceCounter pc, string categoryName, string counterName, string instanceName)
 		{
 			pc.CategoryName = categoryName;
@@ -329,17 +331,19 @@ namespace JocysCom.ClassLibrary
 			return pc.NextValue();
 		}
 
+		/// <summary>Specifies disk I/O metric types: ReadAndWrite, Read-only, or Write-only operations.</summary>
 		public enum DiskData { ReadAndWrite, Read, Write };
 
+		/// <summary>Gets disk I/O bytes per second using the specified DiskData metric via PhysicalDisk _Total counters.</summary>
 		public double GetDiskData(DiskData dd)
 		{
 			return dd == DiskData.Read ?
-						GetCounterValue(_diskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") :
-						dd == DiskData.Write ?
-						GetCounterValue(_diskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") :
-						dd == DiskData.ReadAndWrite ?
-						GetCounterValue(_diskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") +
-						GetCounterValue(_diskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") :
+					GetCounterValue(_diskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") :
+					dd == DiskData.Write ?
+					GetCounterValue(_diskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") :
+					dd == DiskData.ReadAndWrite ?
+					GetCounterValue(_diskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") +
+					GetCounterValue(_diskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") :
 					0;
 		}
 
@@ -350,6 +354,8 @@ namespace JocysCom.ClassLibrary
 		#region Comparisons
 
 		private static Regex _GuidRegex;
+
+		/// <summary>Regex matching GUID strings in various formats: 32 digits, hyphenated, with braces or parentheses, or hex-coded lists.</summary>
 		public static Regex GuidRegex
 		{
 			get
@@ -363,16 +369,15 @@ namespace JocysCom.ClassLibrary
 				}
 				return _GuidRegex;
 			}
-
 		}
 
+		/// <summary>Determines whether the specified string is a valid GUID format; returns false if null or empty.</summary>
 		public static bool IsGuid(string s)
 		{
 			return string.IsNullOrEmpty(s)
 				? false
 				: GuidRegex.IsMatch(s);
 		}
-
 
 		/// <summary>
 		/// Returns true if two ranges overlap.

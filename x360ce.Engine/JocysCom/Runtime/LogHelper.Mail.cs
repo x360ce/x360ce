@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Mail;
+using JocysCom.ClassLibrary.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +15,11 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		/// <summary>
 		/// This is the main function. All other methods in this class must call it and all emails must be sent trough it.
+		/// Central mail-sending entry point: Validates inputs, selects an <see cref="SmtpClientEx"/> instance (defaulting to Current), applies non-live environment preview logic (overridable via <paramref name="forcePreview"/>), sends the preview or original message, and disposes any preview message.
 		/// </summary>
-		/// <param name="message"></param>
-		/// <param name="client"></param>
+		/// <param name="message">The <see cref="MailMessage"/> to send. Throws <see cref="ArgumentNullException"/> if null.</param>
+		/// <param name="client">Optional <see cref="SmtpClientEx"/> instance; if null, uses <see cref="SmtpClientEx.Current"/>.</param>
+		/// <param name="forcePreview">Force preview on LIVE system. If true, forces sending as a preview even in live environments.</param>
 		public virtual void SendMail(MailMessage message, SmtpClientEx client = null, bool forcePreview = false)
 		{
 			if (message is null)
@@ -39,7 +41,11 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		/// <summary>
 		/// Returns true of only error recipients found.
+		/// Determines whether the message has any recipients outside the configured error recipients, optionally including extraErrorRecipients in the error list.
 		/// </summary>
+		/// <param name="message">The <see cref="MailMessage"/> to inspect. Throws <see cref="ArgumentNullException"/> if null.</param>
+		/// <param name="extraErrorRecipients">Additional <see cref="MailAddress"/> entries treated as error recipients.</param>
+		/// <returns>True if at least one non-error recipient is found; otherwise false.</returns>
 		public static bool NonErrorRecipientsFound(MailMessage message, List<MailAddress> extraErrorRecipients = null)
 		{
 			if (message is null)
@@ -56,6 +62,14 @@ namespace JocysCom.ClassLibrary.Runtime
 				.Except(addresses).Any();
 		}
 
+		/// <summary>
+		/// Convenience method to send an email from the default sender to a single recipient.
+		/// </summary>
+		/// <param name="to">Recipient email address(es) for the To field.</param>
+		/// <param name="subject">Email subject text.</param>
+		/// <param name="body">Email body content.</param>
+		/// <param name="isBodyHtml">True to send the body as HTML; false for plain text.</param>
+		/// <returns>Any exception encountered during send, or null if successful.</returns>
 		public Exception SendMail(string to, string subject, string body, bool isBodyHtml = false)
 		{
 			return SendMailFrom(SmtpClientEx.Current.SmtpFrom, @to, null, null, subject, body, isBodyHtml);
@@ -63,17 +77,20 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		/// <summary>
 		/// Mail will be sent to error recipient if not LIVE.
+		/// Constructs and sends an email with full settings: sender, recipients, attachments, HTML flag, optional delivery method override, and preview. On exception, enriches the exception Data with delivery context, disposes resources, and either rethrows or returns the exception based on rethrow flag.
 		/// </summary>
-		/// <param name="from"></param>
-		/// <param name="to"></param>
-		/// <param name="cc"></param>
-		/// <param name="bcc"></param>
-		/// <param name="subject"></param>
-		/// <param name="body"></param>
-		/// <param name="isBodyHtml"></param>
-		/// <param name="preview">Force preview on LIVE system.</param>
+		/// <param name="from">Sender address.</param>
+		/// <param name="to">Comma-separated recipient addresses for the To field.</param>
+		/// <param name="cc">Comma-separated addresses for the CC field.</param>
+		/// <param name="bcc">Comma-separated addresses for the BCC field.</param>
+		/// <param name="subject">Email subject line.</param>
+		/// <param name="body">Email body content.</param>
+		/// <param name="isBodyHtml">True to send the body as HTML; false for plain text.</param>
 		/// <param name="rethrow">Throw exception if sending fails. Must be set to false when sending exceptions.</param>
-		/// <param name="attachments"></param>
+		/// <param name="attachments">Array of file paths to attach to the email.</param>
+		/// <param name="overrideDeliveryMethod">Optional override for the SMTP delivery method.</param>
+		/// <param name="forcePreview">Force preview on LIVE system.</param>
+		/// <returns>The exception encountered during send, or null if successful.</returns>
 		public Exception SendMailFrom(string @from, string @to, string cc, string bcc, string subject, string body, bool isBodyHtml, bool rethrow = false, string[] attachments = null, SmtpDeliveryMethod? overrideDeliveryMethod = null, bool forcePreview = false)
 		{
 			Exception error = null;
@@ -122,6 +139,7 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		/// <summary>
 		/// Send exception details as HTML e-mail.
+		/// Formats exception details into an HTML email and sends it based on configured error notification settings. Returns immediately if notifications are disabled or <see cref="LogToMail"/> is false.
 		/// </summary>
 		/// <param name="ex">Exception to generate email from.</param>
 		/// <param name="subject">Use custom subject instead of generated from exception</param>
@@ -135,9 +153,11 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		/// <summary>
 		/// Send exception details as HTML e-mail.
+		/// Internal helper to apply headers for server-side grouping (ErrorSource, ErrorType, ErrorCode) and invoke the main <see cref="SendMail"/> logic.
 		/// </summary>
 		/// <param name="ex">Exception to generate email from.</param>
 		/// <param name="subject">Use custom subject instead of generated from exception</param>
+		/// <param name="body">Extra body text above exception.</param>
 		void _SendMail(Exception ex, string subject, string body)
 		{
 			var smtp = SmtpClientEx.Current;
@@ -163,8 +183,14 @@ namespace JocysCom.ClassLibrary.Runtime
 		public ProcessExceptionDelegate ProcessExceptionMailFailed;
 
 		/// <summary>
-		/// Send email to developers and show the exception box (optional)
+		/// Send email to developers and show the exception box (optional).
+		/// Executes configured extra exception actions, emails error information with guards, and returns the formatted exception message.
 		/// </summary>
+		/// <param name="ex">The exception to process.</param>
+		/// <param name="subject">Optional custom email subject for notification.</param>
+		/// <param name="body">Optional additional message text appended to the notification.</param>
+		/// <param name="processExtraAction">If true, invokes extra exception actions; otherwise skips them.</param>
+		/// <returns>The formatted exception message returned by <see cref="ExceptionInfo"/>.</returns>
 		public string ProcessException(Exception ex, string subject = null, string body = null, bool processExtraAction = true)
 		{
 			// Process global (there is a chance that app settings are not available yet.
@@ -201,6 +227,12 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Mail Format and Preview
 
+		/// <summary>
+		/// Builds a plain-text header block for a <see cref="MailMessage"/>, including From, To, CC, Bcc,
+		/// attachments, alternate views, subject, body size, and custom headers.
+		/// </summary>
+		/// <param name="message">The <see cref="MailMessage"/> to generate headers for; throws <see cref="ArgumentNullException"/> if null.</param>
+		/// <returns>A formatted string of mail headers suitable for preview or logging.</returns>
 		public static string GetMailHeader(MailMessage message)
 		{
 			if (message is null)
@@ -249,8 +281,10 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		/// <summary>
 		/// Create preview email message from original email message.
+		/// Generates an HTML preview containing headers, live-mode notice, original body content, and re-attaches calendar items as attachments.
 		/// </summary>
 		/// <param name="message">original email message.</param>
+		/// <param name="client">Optional <see cref="SmtpClientEx"/> instance for pickup directory info; ignored if null.</param>
 		/// <returns>Preview Message.</returns>
 		public static MailMessage GetMailPreview(MailMessage message, SmtpClientEx client = null)
 		{
@@ -326,9 +360,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			return mail;
 		}
-
 		#endregion
-
 		/// <summary>
 		/// Suspend error if error code (int) value is found inside ex.Data["ErrorCode"].
 		/// </summary>
@@ -356,7 +388,5 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 			return false;
 		}
-
-
 	}
 }

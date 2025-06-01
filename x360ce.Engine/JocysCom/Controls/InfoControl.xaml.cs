@@ -217,19 +217,22 @@ namespace JocysCom.ClassLibrary.Controls
 
 		public void UpdateIcon()
 		{
-			BusyCount.Content = Tasks.Count > 1 ? $"{Tasks.Count}" : "";
-			if (Tasks.Count > 0)
+			Dispatcher.Invoke(() =>
 			{
-				BusyIcon.Visibility = Visibility.Visible;
-				RightIcon.Visibility = Visibility.Hidden;
-				storyboardBusyIcon.Begin();
-			}
-			else
-			{
-				storyboardBusyIcon.Pause();
-				BusyIcon.Visibility = Visibility.Hidden;
-				RightIcon.Visibility = Visibility.Visible;
-			}
+				BusyCount.Content = Tasks.Count > 1 ? $"{Tasks.Count}" : "";
+				if (Tasks.Count > 0)
+				{
+					BusyIcon.Visibility = Visibility.Visible;
+					RightIcon.Visibility = Visibility.Hidden;
+					storyboardBusyIcon.Begin();
+				}
+				else
+				{
+					storyboardBusyIcon.Pause();
+					BusyIcon.Visibility = Visibility.Hidden;
+					RightIcon.Visibility = Visibility.Visible;
+				}
+			});
 		}
 
 		#endregion

@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP // .NET Core
+#if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard
 #else // .NET Framework
 using System;
@@ -7,6 +7,9 @@ using System.Diagnostics;
 namespace JocysCom.ClassLibrary
 {
 
+	/// <summary>
+	/// Provides data for the <see cref="HiResDateTime.Reset"/> event, indicating how far the high resolution clock was adjusted due to system clock changes.
+	/// </summary>
 	public class HiResDateTimeEvetnArgs : EventArgs
 	{
 		public HiResDateTimeEvetnArgs(TimeSpan adjustedBy)
@@ -14,11 +17,15 @@ namespace JocysCom.ClassLibrary
 			AdjustedBy = adjustedBy;
 		}
 		/// <summary>
-		/// Time in seconds.
+		/// TimeSpan representing how far the clock was adjusted, in seconds.
 		/// </summary>
 		public TimeSpan AdjustedBy { get; set; }
 	}
 
+	/// <summary>
+	/// Provides monotonically increasing high-resolution timestamps synchronized with system time.
+	/// Raises <see cref="Reset"/> when the system clock changes beyond the allowable threshold.
+	/// </summary>
 	public class HiResDateTime
 	{
 
@@ -39,10 +46,20 @@ namespace JocysCom.ClassLibrary
 
 		static object _currentLock = new object();
 		static HiResDateTime _Current;
+		/// <summary>
+		/// Gets a singleton instance providing high-resolution timestamp generation.
+		/// </summary>
 		public static HiResDateTime Current { get { lock (_currentLock) { return _Current = _Current ?? new HiResDateTime(); } } }
 
+		/// <summary>
+		/// Gets the current local time based on the high-resolution clock.
+		/// </summary>
 		public DateTime Now { get { return UtcNow.ToLocalTime(); } }
 
+		/// <summary>
+		/// Gets the current UTC time based on a monotonic high-resolution timer resynchronized with <see cref="DateTime.UtcNow"/>.
+		/// Ensures unique millisecond values by spinning until the timestamp advances.
+		/// </summary>
 		public DateTime UtcNow
 		{
 			get

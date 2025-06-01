@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -68,7 +68,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		#region Writing
 
 		/// <summary>
-		/// Determines if the file specified by the path is different based on its size or content checksum compared to the provided byte array.
+		/// Returns true if the file at the specified path differs from the provided byte array (by existence, size, or SHA-256 checksum); otherwise false.
 		/// </summary>
 		/// <param name="path">The path to the file to compare.</param>
 		/// <param name="bytes">The byte array to compare against the file's contents.</param>
@@ -93,17 +93,45 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		/// <summary>
-		/// Writes the specified byte array to a file at the given path if the current content of the file is different from the byte array. This comparison takes into account file size and checksum.
+		/// Writes the byte array to the specified path only if its content differs (comparing size and SHA-256 checksum).
+		/// To avoid truncating the file on disk-full or other IO errors, writes to a temporary file first and then renames it.
 		/// </summary>
 		/// <param name="path">The path where the file will be written.</param>
 		/// <param name="bytes">The byte array to write.</param>
 		/// <returns>True if the file was written; false if the contents were the same and no write occurred.</returns>
 		public static bool WriteIfDifferent(string path, byte[] bytes)
 		{
-			var isDifferent = IsDifferent(path, bytes);
-			if (isDifferent)
+			if (!IsDifferent(path, bytes))
+				return false;
+			if (IsEnoughSpaceAvailable(path, bytes.Length))
+			{
 				File.WriteAllBytes(path, bytes);
-			return isDifferent;
+				return true;
+			}
+			// Generate a temporary filename in the same directory for an atomic-like replacement.
+			// Writing to the same directory helps avoid cross-volume moves.
+			var directory = Path.GetDirectoryName(path) ?? throw new InvalidOperationException("Directory not found.");
+			var tempFileName = Path.Combine(directory, Path.GetRandomFileName());
+			try
+			{
+				// Write all bytes to the temporary file first.
+				File.WriteAllBytes(tempFileName, bytes);
+				// If we have .NET 6 or later, we could do: File.Move(tempFileName, path, overwrite: true);
+				// Otherwise, we can delete the existing file (if any) and then rename the temp file.
+				if (File.Exists(path))
+					File.Delete(path);
+				// Rename the temp file to the final path (nearly atomic on Windows).
+				File.Move(tempFileName, path);
+				return true;
+			}
+			catch
+			{
+				// Clean up the temp file if something goes wrong.
+				if (File.Exists(tempFileName))
+					File.Delete(tempFileName);
+				// Rethrow the exception or handle it as needed.
+				throw;
+			}
 		}
 
 		/// <summary>
@@ -139,14 +167,34 @@ namespace JocysCom.ClassLibrary.Configuration
 			return bytes;
 		}
 
+		/// <summary>
+		/// Determines if the drive containing the specified path has enough free space to accommodate required bytes plus a buffer (10 MB or 5% of required size).
+		/// </summary>
+		/// <param name="path">The file path whose drive to check.</param>
+		/// <param name="requiredBytes">The number of bytes intended to be written.</param>
+		/// <returns>True if available free space exceeds requiredBytes plus buffer; otherwise, false.</returns>
+		public static bool IsEnoughSpaceAvailable(string path, long requiredBytes)
+		{
+			// Convert a relative path to an absolute path
+			var fullPath = Path.GetFullPath(path);
+			// Extract the drive from the full path
+			var driveRoot = Path.GetPathRoot(fullPath);
+			if (string.IsNullOrEmpty(driveRoot))
+				return false;
+			var drive = new DriveInfo(driveRoot);
+			// A rule of thumb buffer: 10 MB or 5% of file size, whichever is greater.
+			long buffer = Math.Max(10 * 1024 * 1024, (long)(requiredBytes * 0.05));
+			long totalNeeded = requiredBytes + buffer;
+			return drive.AvailableFreeSpace > totalNeeded;
+		}
+
 		#endregion
 
 		#region Saving 
 
-
 		/// <summary>
-		/// Saves the byte array to a file and appends a CRC32 checksum to the filename for integrity verification.
-		/// This ensures that file contents are not tampered with and remain consistent between operations.
+		/// Saves the byte array to a file and appends a CRC32 (Cyclic Redundancy Check) checksum to the filename for integrity verification.
+		/// Ensures file contents are not tampered with and remain consistent across operations.
 		/// </summary>
 		/// <param name="name">The name of the file to save, without the checksum.</param>
 		/// <param name="bytes">The byte array containing the data to be saved to the file.</param>
@@ -173,9 +221,8 @@ namespace JocysCom.ClassLibrary.Configuration
 			return fi;
 		}
 
-
 		/// <summary>
-		/// Calculates a CRC32 checksum for the given byte array.
+		/// Calculates the 32-bit Cyclic Redundancy Check (CRC32) checksum for the given byte array.
 		/// </summary>
 		/// <param name="bytes">The byte array to calculate the checksum for.</param>
 		/// <returns>The calculated CRC32 checksum as an unsigned 32-bit integer.</returns>
