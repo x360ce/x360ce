@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,6 +8,13 @@ using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.ComponentModel
 {
+	/// <summary>
+	/// ObservableCollection<T> that marshals collection changes and notifications to a specified synchronization context.
+	/// </summary>
+	/// <remarks>
+	/// Uses a TaskScheduler (SynchronizingObject) and ControlsHelper.InvokeRequired to detect UI thread synchronization needs.
+	/// Operations can be posted asynchronously or run synchronously based on AsynchronousInvoke.
+	/// </remarks>
 	public class ObservableCollectionInvoked<T> : ObservableCollection<T>
 	{
 		public ObservableCollectionInvoked() : base() { }
@@ -18,6 +25,10 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		public ObservableCollectionInvoked(IEnumerable<T> enumeration)
 			: base(new List<T>(enumeration)) { }
 
+		/// <summary>
+		/// Adds the specified items to the collection, invoking per-item synchronization.
+		/// </summary>
+		/// <param name="list">Items to add.</param>
 		public void AddRange(IEnumerable<T> list)
 		{
 			foreach (T item in list)
@@ -26,12 +37,25 @@ namespace JocysCom.ClassLibrary.ComponentModel
 
 		#region ISynchronizeInvoker
 
+		/// <summary>
+		/// TaskScheduler used to marshal collection operations to a specific synchronization context (e.g., UI thread).
+		/// </summary>
 		public TaskScheduler SynchronizingObject { get; set; }
 
 		delegate void ItemDelegate(int index, T item);
 
+		/// <summary>
+		/// If true, operations are posted asynchronously to the SynchronizingObject; otherwise they block until completion.
+		/// </summary>
 		public bool AsynchronousInvoke { get; set; }
 
+		/// <summary>
+		/// Marshals method invocation to the UI thread via SynchronizingObject.
+		/// </summary>
+		/// <remarks>
+		/// If AsynchronousInvoke is true, posts asynchronously; otherwise runs synchronously.
+		/// Bypasses marshaling when SynchronizingObject is null or ControlsHelper.InvokeRequired is false.
+		/// </remarks>
 		void Invoke(Delegate method, params object[] args)
 		{
 			var so = SynchronizingObject;
@@ -66,6 +90,12 @@ namespace JocysCom.ClassLibrary.ComponentModel
 
 		object OneChangeAtTheTime = new object();
 
+		/// <summary>
+		/// Executes the delegate under a lock for thread safety, adding debugging data on exceptions.
+		/// </summary>
+		/// <remarks>
+		/// Catches exceptions to enrich ex.Data with T, SynchronizingObject type, and AsynchronousInvoke state.
+		/// </remarks>
 		void DynamicInvoke(Delegate method, params object[] args)
 		{
 			try

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -14,6 +14,10 @@ namespace JocysCom.ClassLibrary.Collections
 		public KeyValue(string key, string value) : base(key, value) { }
 	}
 
+	/// <summary>
+	/// Generic serializable key/value pair container implementing IKeyValue&lt;TKey, TValue&gt; and INotifyPropertyChanged.
+	/// Raises PropertyChanged events on value updates.
+	/// </summary>
 	[Serializable, StructLayout(LayoutKind.Sequential)]
 	public class KeyValue<TKey, TValue> : IKeyValue<TKey, TValue>, INotifyPropertyChanged
 	{

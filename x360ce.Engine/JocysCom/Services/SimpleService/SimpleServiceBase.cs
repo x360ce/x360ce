@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP // .NET Core
+#if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard
 #else // .NET Framework
 using JocysCom.ClassLibrary.Runtime;
@@ -15,8 +15,15 @@ using System.Threading;
 
 namespace JocysCom.ClassLibrary.Services.SimpleService
 {
+	/// <summary>
+	/// Base class for hosting an ISimpleService implementation as either a Windows Service or console application.
+	/// Manages installation, event logging, lifecycle (start, stop, pause, continue), and execution loop with configurable sleep.
+	/// </summary>
 	public partial class SimpleServiceBase<T> : ServiceBase where T : ISimpleService, new()
 	{
+		/// <summary>
+		/// Configures service and event log installer components based on assembly metadata (company, product, run mode) and command-line parameters (UserName, Password).
+		/// </summary>
 		public SimpleServiceBase()
 		{
 			InitializeComponent();
@@ -56,8 +63,11 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			return value.Invoke(attribute);
 		}
 
-#region "Service"
+		#region "Service"
 
+		/// <summary>
+		/// Invoked by Service Control Manager to start the service: initializes environment and launches the worker thread asynchronously.
+		/// </summary>
 		protected override void OnStart(string[] args)
 		{
 			InitOnStart();
@@ -72,10 +82,20 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			IsSessionEnded = true;
 		}
 
+		/// <summary>
+		/// True if a Windows session end event (shutdown or logoff) has been detected.
+		/// </summary>
 		public bool IsSessionEnded { get; private set; } = false;
 
+		/// <summary>
+		/// Maximum wait time in seconds to allow graceful worker thread shutdown before aborting (default 5 minutes).
+		/// </summary>
 		public int TerminateTimeout = 5 * 60;
 
+		/// <summary>
+		/// Requests service stop, signals worker thread to terminate, waits up to TerminateTimeout seconds for a graceful shutdown,
+		/// aborts the thread on timeout, and removes session end event subscription.
+		/// </summary>
 		protected override void OnStop()
 		{
 			Service.IsStopping = true;
@@ -129,6 +149,10 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 		}
 
 		Thread _thread;
+
+		/// <summary>
+		/// Starts the service execution asynchronously on a new thread, aborting any existing worker thread first.
+		/// </summary>
 		public void StartServiceAsync(object parameter)
 		{
 			// Clean up previous
@@ -139,8 +163,12 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			_thread.Start(parameter);
 		}
 
-#endregion
+		#endregion
 
+		/// <summary>
+		/// Core execution loop: initializes service, optionally hosts it via WCF if T derives from MarshalByRefObject, then
+		/// repeatedly calls Service.DoAction until stopping, respecting pause and session-end flags, and enforces configured sleep interval.
+		/// </summary>
 		void StartService(object parameter)
 		{
 			Service.InitStart();
@@ -183,7 +211,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			Service.InitEnd();
 		}
 
-#region "Helper Functions"
+		#region "Helper Functions"
 
 		public ServiceProcessInstaller AppServiceProcessInstaller;
 
@@ -387,9 +415,9 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			return sb.ToString();
 		}
 
-#endregion
+		#endregion
 
-#region "Console - Unmanaged"
+		#region "Console - Unmanaged"
 
 
 		SimpleServiceBase<T> srv;
@@ -449,7 +477,7 @@ namespace JocysCom.ClassLibrary.Services.SimpleService
 			return true;
 		}
 
-#endregion
+		#endregion
 
 	}
 }

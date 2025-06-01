@@ -1,31 +1,44 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
 namespace JocysCom.ClassLibrary.Runtime
 {
+	/// <summary>
+	/// Partial LogHelper implementation for file-based exception logging
+	/// with grouping by exception type and HResult code, configurable file count and deletion age.
+	/// </summary>
 	public partial class LogHelper
 	{
+		/// <summary>
+		/// Cache of exception groups for file-based logging, keyed by exception type and HResult.
+		/// </summary>
 		static List<ExceptionGroup> fileExceptions = new List<ExceptionGroup>();
 
 		/// <summary>
-		/// Maximum number of files per error type and ex.HResult code.
+		/// Maximum number of log files to retain per exception type and HResult code; default 10.
 		/// </summary>
 		public int MaxFiles { get { return _SP.Parse("MaxFiles", 10); } }
 
 		/// <summary>
-		/// If Maximum count of error files reached then allow remove only files older than specified by this property.
+		/// Time span that determines file deletion eligibility when MaxFiles limit is exceeded; default 00:00:10.
 		/// </summary>
 		public TimeSpan MaxFilesDeleteAge { get { return _SP.Parse("MaxFilesRemoveAge", new TimeSpan(0, 0, 10) ); } }
 
+		/// <summary>
+		/// Thread-safe count of exceptions processed for file logging, excluding those cancelled by WritingException event.
+		/// </summary>
 		public long ExceptionsCount;
 
 		/// <summary>
-		/// Write exception details to file.
+		/// Logs an exception to file.
+		/// Raises the WritingException event allowing cancellation, increments the thread-safe ExceptionsCount,
+		/// and groups duplicates by exception type and HResult.
 		/// </summary>
 		/// <param name="ex">Exception to write.</param>
-		/// <param name="subject">Use custom subject instead of generated from exception</param>
+		/// <param name="subject">Custom subject instead of the default generated from the exception.</param>
+		/// <param name="body">Optional additional information to include in the log entry.</param>
 		public void WriteException(Exception ex, string subject = null, string body = null)
 		{
 			// Check if exception can be ignored.
@@ -40,11 +53,18 @@ namespace JocysCom.ClassLibrary.Runtime
 			_GroupException(fileExceptions, ex, subject, body, _WriteFile);
 		}
 
+		/// <summary>
+		/// Search pattern for exception log files matching the current extension (.htm or .txt).
+		/// </summary>
 		public string FilePattern
 		{
 			get { return string.Format("FCE_*{0}", WriteAsHtml ? ".htm" : ".txt"); }
 		}
 
+		/// <summary>
+		/// Writes exception details to a file in LogsFolder.
+		/// Enforces the MaxFiles limit and MaxFilesDeleteAge retention policy under a concurrency lock.
+		/// </summary>
 		void _WriteFile(Exception ex, string subject, string body)
 		{
 			// Must wrap into lock so that process won't attempt to delete/write same file twice from different threads.

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Configuration;
 using System.Globalization;
@@ -9,14 +9,18 @@ using System.Text.RegularExpressions;
 
 namespace JocysCom.ClassLibrary.IO
 {
-
-	// Create a log file writer, so you can see the flow easily.
-	// It can be printed. Makes it easier to figure out complex program flow.
-	// The log StreamWriter uses a buffer. So it will only work right if you close
-	// the server console properly at the end of the test.
+	
+	/// <summary>
+	/// Provides buffered file-based logging for tracing program flow.
+	/// Supports file naming templates, automatic file rolling, and retention policies via SettingsParser.
+	/// Output is written via a StreamWriter buffer; ensure proper disposal (e.g., closing the server console) to flush entries and produce printable logs.
+	/// </summary>
 	public class LogFileWriter : IDisposable
 	{
 
+		/// <summary>
+		/// Sets configuration prefix (defaulting to the runtime type name with '_' or '-' suffix if missing) and initializes settings.
+		/// </summary>
 		public LogFileWriter(string configPrefix = null)
 		{
 			// This class can be inherited therefore use type to make sure that prefix is different.
@@ -30,14 +34,26 @@ namespace JocysCom.ClassLibrary.IO
 			_Init();
 		}
 
+		/// <summary>
+		/// Template for the log file path, using {0} date/time format placeholders for rolling or timestamp-based naming.
+		/// </summary>
 		public string LogFileName { get; set; }
+
+		/// <summary>
+		/// Full path to the currently open log file.
+		/// </summary>
 		public string CurrentFileFileName { get; private set; }
+
 		public bool LogFileEnabled { get; set; }
 		public DateTime LogFileDate { get; set; }
 
 		/// <summary>Time when new log file must be created.</summary>
 		[DefaultValue(0)]
 		public TimeSpan LogFileTimeout { get; set; }
+
+		/// <summary>
+		/// Enables rolling log files based on the date/time pattern in <see cref="LogFileName"/> (e.g., daily rolling).
+		/// </summary>
 		public bool LogFileRolling { get; set; }
 
 		public StreamWriter BaseStream { get; private set; }
@@ -46,6 +62,9 @@ namespace JocysCom.ClassLibrary.IO
 
 		object streamWriterLock = new object();
 
+		/// <summary>
+		/// Controls automatic flushing of the underlying <see cref="StreamWriter"/> after each write; thread-safe.
+		/// </summary>
 		public bool LogFileAutoFlush
 		{
 			get { return _LogFileAutoFlush; }
@@ -62,6 +81,7 @@ namespace JocysCom.ClassLibrary.IO
 
 		Configuration.SettingsParser _SP;
 
+		/// <summary>Returns the entry assembly's simple name (substring before the first comma).</summary>
 		public static string GetAssemblyName()
 		{
 			string fullName = Assembly.GetEntryAssembly().FullName;
@@ -81,6 +101,7 @@ namespace JocysCom.ClassLibrary.IO
 			return value.Invoke(attribute);
 		}
 
+		/// <summary>Gets the path to the log folder in ApplicationData (user-level) or CommonApplicationData (machine-level), based on company and product names.</summary>
 		public string GetLogFolder(bool userLevel = false)
 		{
 			// Get folder.
@@ -119,11 +140,14 @@ namespace JocysCom.ClassLibrary.IO
 				var fileName =
 					string.Format(CultureInfo.InvariantCulture, "{0}\\{1}{2}",
 						GetLogFolder(), defaultPrefix, defautlSuffix
-					);
+				);
 				LogFileName = fileName;
 			}
 		}
 
+		/// <summary>Writes a formatted line to the log if enabled and not disposing.</summary>
+		/// <param name="format">Composite format string for the log message.</param>
+		/// <param name="args">Format arguments.</param>
 		public void WriteLine(string format, params object[] args)
 		{
 			if (!LogFileEnabled || IsDisposing)
@@ -198,6 +222,9 @@ namespace JocysCom.ClassLibrary.IO
 			BaseStream.Write(value);
 		}
 
+		/// <summary>
+		/// Flushes any buffered log entries to the file, ensuring they are written to disk.
+		/// </summary>
 		public void Flush()
 		{
 			lock (streamWriterLock)
@@ -210,9 +237,10 @@ namespace JocysCom.ClassLibrary.IO
 		#region Clean-Up
 
 		/// <summary>
-		/// Wipe old files.
+		/// Deletes log files matching the date pattern in the expanded path based on configured maximum file count or total byte size.
 		/// </summary>
-		/// <param name="expandedPath">File which contains date pattern.</param>
+		/// <param name="expandedPath">Expanded file path template containing date placeholders.</param>
+		/// <returns>The number of deleted files.</returns>
 		public int WipeOldLogFiles(string expandedPath)
 		{
 			// If file is not specified then return.
@@ -264,6 +292,9 @@ namespace JocysCom.ClassLibrary.IO
 
 		#region IDisposable
 
+		/// <summary>
+		/// Releases resources used by the log writer, writes an end marker if open, and closes the current log file.
+		/// </summary>
 		// Dispose() calls Dispose(true)
 		public void Dispose()
 		{
@@ -298,5 +329,3 @@ namespace JocysCom.ClassLibrary.IO
 
 	}
 }
-
-
