@@ -61,6 +61,7 @@ DECLARE
 			CASE LEN(ps.ButtonY) WHEN 0 THEN 0 ELSE 1 END +
 			CASE LEN(ps.ButtonBack) WHEN 0 THEN 0 ELSE 1 END +
 			CASE LEN(ps.ButtonStart) WHEN 0 THEN 0 ELSE 1 END +
+            CASE LEN(ps.ButtonGuide) WHEN 0 THEN 0 ELSE 1 END +
 			CASE LEN(ps.LeftThumbButton) WHEN 0 THEN 0 ELSE 1 END +
 			CASE LEN(ps.RightThumbButton) WHEN 0 THEN 0 ELSE 1 END +
 			CASE LEN(ps.LeftShoulder) WHEN 0 THEN 0 ELSE 1 END +

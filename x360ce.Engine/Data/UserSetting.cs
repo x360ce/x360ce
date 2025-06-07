@@ -65,6 +65,7 @@ namespace x360ce.Engine.Data
 			if (SettingsConverter.TryParseIniValue(ps.ButtonY, out type, out index)) buttonPoints += 1m;
 			if (SettingsConverter.TryParseIniValue(ps.ButtonBack, out type, out index)) buttonPoints += 1m;
 			if (SettingsConverter.TryParseIniValue(ps.ButtonStart, out type, out index)) buttonPoints += 1m;
+			if (SettingsConverter.TryParseIniValue(ps.ButtonGuide, out type, out index)) buttonPoints += 1m;
 			// If DPad is properly mapped to POV then...
 			if (SettingsConverter.TryParseIniValue(ps.DPadDown, out type, out index) && type == MapType.POV)
 			{

@@ -112,7 +112,7 @@ v4.12.23.0 (2020-08-08)
 - Updated: Make developer feature "Show Form Info on CTRL+SHIFT+RMB" optional.
 
 v4.12.18.0 (2020-08-05)
-- Updated: Version of .NET Framework increased to 4.7.2
+- Updated: Version of .NET Framework increased to 4.8
 - Updated: Debug files are now embedded.
 - Updated: No need for separate debug version. Exception reports will contain exact code line.
 - New: [Copy Preset] to clipboard and [Paste Preset] from clipboard buttons.
