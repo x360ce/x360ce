@@ -1,10 +1,8 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary
 {
-	/// <summary>
-	/// Represents different units of time
-	/// </summary>
+	/// <summary>Specifies time units for interval and date-time sequence calculations, as used by TimeUnitHelper.</summary>
 	public enum TimeUnitType
 	{
 		/// <summary>None</summary>

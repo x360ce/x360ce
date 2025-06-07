@@ -1,144 +1,144 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>embedded</DebugType>
-    <DefineConstants>TRACE;DEBUG;NETFRAMEWORK</DefineConstants>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>embedded</DebugType>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <OutputPath>bin\Debug_x64\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WIN64</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <WarningLevel>1</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\Release_x64\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>bin\Debug_x86\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <DocumentationFile></DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\Release_x86\</OutputPath>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\x360ce.App.Beta\Resources\SharpDX\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.DirectInput">
-      <HintPath>..\x360ce.App.Beta\Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
-    </Reference>
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.ApplicationServices" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Services" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Common\WebServiceClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="JocysCom\Controls\IssuesControl\IssuesUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="JocysCom\Controls\LogTextBoxUserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="JocysCom\IO\HardwareControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="JocysCom\Services\SimpleService\SimpleServiceBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="JocysCom\Services\SimpleService\SimpleServiceInstaller.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="JocysCom\Web\Services\SoapHttpClientBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EntityDeploy Include="Data\x360ceModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>x360ceModel.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>x360ce.Engine.Data</CustomToolNamespace>
-    </EntityDeploy>
-  </ItemGroup>
-  <ItemGroup>
-    <EntityDeploy Include="JocysCom\Security\Data\SecurityModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>SecurityModel.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>JocysCom.WebSites.Engine.Security.Data</CustomToolNamespace>
-    </EntityDeploy>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="JocysCom\Extensions\ReadMe.txt" />
-    <EmbeddedResource Include="Resources\Icons\IconExperience.License.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Update="JocysCom\Controls\Themes\Default.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-	  <PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
-	  <PackageReference Include="System.Management" Version="8.0.0" />
-    <PackageReference Include="System.Text.Json" Version="8.0.4" />
-    <PackageReference Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="JocysCom\Controls\ItemFormattingConverter.cs" />
-    <Compile Remove="JocysCom\Controls\MessageBoxForm.cs" />
-    <Compile Remove="JocysCom\Controls\MessageBoxForm.Designer.cs" />
-    <Compile Remove="JocysCom\MakeLinks.ps1.cs" />
-    <Compile Remove="JocysCom\Runtime\TlvSerializer.cs" />
-    <Compile Remove="JocysCom\Runtime\TlvSerializerError.cs" />
-    <EmbeddedResource Remove="JocysCom\Controls\MessageBoxForm.resx" />
-  </ItemGroup>
-  <PropertyGroup />
-  <Target Name="PopulateEmbeddedFiles" AfterTargets="BeforeCompile" BeforeTargets="CoreCompile">
-    <ItemGroup>
-      <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
-    </ItemGroup>
-  </Target>
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<OutputType>Library</OutputType>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<UseWindowsForms>true</UseWindowsForms>
+		<UseWPF>true</UseWPF>
+		<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugType>embedded</DebugType>
+		<DefineConstants>TRACE;DEBUG;NETFRAMEWORK</DefineConstants>
+		<UseVSHostingProcess>false</UseVSHostingProcess>
+		<GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>embedded</DebugType>
+		<GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<OutputPath>bin\Debug_x64\</OutputPath>
+		<DefineConstants>TRACE;DEBUG;WIN64</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+		<WarningLevel>1</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<OutputPath>bin\Release_x64\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+		<OutputPath>bin\Debug_x86\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+		<DocumentationFile></DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+		<OutputPath>bin\Release_x86\</OutputPath>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="SharpDX, Version=2.6.2.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
+			<SpecificVersion>False</SpecificVersion>
+			<HintPath>..\x360ce.App.Beta\Resources\SharpDX\SharpDX.dll</HintPath>
+		</Reference>
+		<Reference Include="SharpDX.DirectInput">
+			<HintPath>..\x360ce.App.Beta\Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
+		</Reference>
+		<Reference Include="System.configuration" />
+		<Reference Include="System.Configuration.Install" />
+		<Reference Include="System.Data.Entity" />
+		<Reference Include="System.Data.Linq" />
+		<Reference Include="System.Net" />
+		<Reference Include="System.Net.Http" />
+		<Reference Include="System.ServiceModel" />
+		<Reference Include="System.ServiceProcess" />
+		<Reference Include="System.Transactions" />
+		<Reference Include="System.Web" />
+		<Reference Include="System.Web.ApplicationServices" />
+		<Reference Include="System.Web.Extensions" />
+		<Reference Include="System.Web.Services" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Common\WebServiceClient.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="JocysCom\Controls\IssuesControl\IssuesUserControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="JocysCom\Controls\LogTextBoxUserControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="JocysCom\IO\HardwareControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="JocysCom\Services\SimpleService\SimpleServiceBase.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="JocysCom\Services\SimpleService\SimpleServiceInstaller.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="JocysCom\Web\Services\SoapHttpClientBase.cs">
+			<SubType>Component</SubType>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EntityDeploy Include="Data\x360ceModel.edmx">
+			<Generator>EntityModelCodeGenerator</Generator>
+			<LastGenOutput>x360ceModel.Designer.cs</LastGenOutput>
+			<CustomToolNamespace>x360ce.Engine.Data</CustomToolNamespace>
+		</EntityDeploy>
+	</ItemGroup>
+	<ItemGroup>
+		<EntityDeploy Include="JocysCom\Security\Data\SecurityModel.edmx">
+			<Generator>EntityModelCodeGenerator</Generator>
+			<LastGenOutput>SecurityModel.Designer.cs</LastGenOutput>
+			<CustomToolNamespace>JocysCom.WebSites.Engine.Security.Data</CustomToolNamespace>
+		</EntityDeploy>
+	</ItemGroup>
+	<ItemGroup>
+		<Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="JocysCom\Extensions\ReadMe.txt" />
+		<EmbeddedResource Include="Resources\Icons\IconExperience.License.txt" />
+	</ItemGroup>
+	<ItemGroup>
+		<Page Update="JocysCom\Controls\Themes\Default.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+		<PackageReference Include="System.DirectoryServices.AccountManagement" Version="8.0.0" />
+		<PackageReference Include="System.Management" Version="8.0.0" />
+		<PackageReference Include="System.Text.Json" Version="8.0.5" />
+		<PackageReference Include="Unofficial.Microsoft.mshtml" Version="7.0.3300" />
+		<PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Remove="JocysCom\Controls\ItemFormattingConverter.cs" />
+		<Compile Remove="JocysCom\Controls\MessageBoxForm.cs" />
+		<Compile Remove="JocysCom\Controls\MessageBoxForm.Designer.cs" />
+		<Compile Remove="JocysCom\MakeLinks.ps1.cs" />
+		<Compile Remove="JocysCom\Runtime\TlvSerializer.cs" />
+		<Compile Remove="JocysCom\Runtime\TlvSerializerError.cs" />
+		<EmbeddedResource Remove="JocysCom\Controls\MessageBoxForm.resx" />
+	</ItemGroup>
+	<PropertyGroup />
+	<Target Name="PopulateEmbeddedFiles" AfterTargets="BeforeCompile" BeforeTargets="CoreCompile">
+		<ItemGroup>
+			<EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
+		</ItemGroup>
+	</Target>
 </Project>

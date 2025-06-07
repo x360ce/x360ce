@@ -170,10 +170,6 @@
 		<ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" />
-		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-	</ItemGroup>
-	<ItemGroup>
 		<Compile Remove="Controls\LoadingCircle.cs" />
 		<Compile Remove="Controls\LoadingCircle.Designer.cs" />
 		<Compile Remove="Controls\LoadingCircleToolStripMenuItem.cs" />

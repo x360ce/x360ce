@@ -31,6 +31,8 @@ namespace x360ce.Engine
 		public const string Icon_DragAndDrop_Axis = nameof(Icon_DragAndDrop_Axis);
 		public const string Icon_DragAndDrop_Axis_Half = nameof(Icon_DragAndDrop_Axis_Half);
 		public const string Icon_DragAndDrop_Axis_Half_Inverted = nameof(Icon_DragAndDrop_Axis_Half_Inverted);
+		public const string Icon_DragAndDrop_Axis_Half_2 = nameof(Icon_DragAndDrop_Axis_Half_2);
+		public const string Icon_DragAndDrop_Axis_Half_2_Inverted = nameof(Icon_DragAndDrop_Axis_Half_2_Inverted);
 		public const string Icon_DragAndDrop_Axis_Inverted = nameof(Icon_DragAndDrop_Axis_Inverted);
 		public const string Icon_DragAndDrop_Button = nameof(Icon_DragAndDrop_Button);
 		public const string Icon_DragAndDrop_Button_Inverted = nameof(Icon_DragAndDrop_Button_Inverted);

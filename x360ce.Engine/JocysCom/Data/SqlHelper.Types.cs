@@ -1,22 +1,25 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 
 namespace JocysCom.ClassLibrary.Data
 {
 	public partial class SqlHelper
 	{
+		/// <summary>Determines whether the given SQL type string supports a size specification (e.g. CHAR, VARCHAR, BINARY).</summary>
 		public static bool HaveSize(string sqlType)
 		{
 			var name = sqlType.ToLower();
 			return name.Contains("char") || name.Contains("binary");
 		}
 
+		/// <summary>Determines whether the given SQL type string represents a Unicode type (e.g. NCHAR, NVARCHAR).</summary>
 		public static bool IsUnicode(string sqlType)
 		{
 			var name = sqlType.ToLower();
 			return name.Contains("nchar") || name.Contains("nvarchar");
 		}
 
+		/// <summary>Maps a SQL Server type name to its Visual Basic built-in type alias (e.g. Date, Integer) or returns the CLR type name if no VB alias exists.</summary>
 		public static string ToSystemTypeVB(string sqlType)
 		{
 			var t = ToSystemType(sqlType);
@@ -30,6 +33,7 @@ namespace JocysCom.ClassLibrary.Data
 			return t.Name;
 		}
 
+		/// <summary>Maps a SQL Server type name to its C# built-in type alias (e.g. int, string) or returns the CLR type name if no alias exists.</summary>
 		public static string ToSystemTypeCS(string sqlType)
 		{
 			var t = ToSystemType(sqlType);
@@ -37,6 +41,7 @@ namespace JocysCom.ClassLibrary.Data
 			return name;
 		}
 
+		/// <summary>Infers the CLR System.Type for the specified SQL Server data type name.</summary>
 		public static Type ToSystemType(string sqlTypeSring)
 		{
 			var sqlType = (SqlDataType)Enum.Parse(typeof(SqlDataType), sqlTypeSring, true);
@@ -112,6 +117,11 @@ namespace JocysCom.ClassLibrary.Data
 			return t;
 		}
 
+		/// <summary>Infers the SqlDataType for a given CLR TypeCode.</summary>
+		/// <remarks>
+		/// Chooses VarBinary or VarChar when min != max to indicate variable-length;
+		/// uses NChar/NVarChar instead of Char/VarChar when isUnicode is true.
+		/// </remarks>
 		public static SqlDataType GetSqlDataType(TypeCode code, int min = 0, int max = 0, bool isUnicode = false)
 		{
 			var v = min != max;
@@ -135,8 +145,8 @@ namespace JocysCom.ClassLibrary.Data
 				case TypeCode.Decimal: return SqlDataType.Money;
 				case TypeCode.DateTime: return SqlDataType.DateTime;
 				case TypeCode.String: return v
-						? isUnicode ? SqlDataType.NVarChar : SqlDataType.VarChar 
-						: isUnicode ? SqlDataType.NChar : SqlDataType.Char;
+					? isUnicode ? SqlDataType.NVarChar : SqlDataType.VarChar 
+					: isUnicode ? SqlDataType.NChar : SqlDataType.Char;
 				default: return SqlDataType.None;
 			}
 		}
@@ -153,6 +163,7 @@ namespace JocysCom.ClassLibrary.Data
 		//	return GetSqlDataType(typeof(T));
 		//}
 
+		/// <summary>Enumerates SQL Server data types used for mapping between SQL and CLR types.</summary>
 		public enum SqlDataType
 		{
 			BigInt = 1,
@@ -197,8 +208,5 @@ namespace JocysCom.ClassLibrary.Data
 			Variant = 32,
 			Xml = 33
 		}
-
-
 	}
-
 }

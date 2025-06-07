@@ -86,6 +86,8 @@ namespace JocysCom.ClassLibrary.Security
 			else
 			{
 				context = new PrincipalContext(contextType);
+				if (string.IsNullOrEmpty(context.UserName))
+					return Array.Empty<GroupPrincipal>();
 			}
 			var gp = new GroupPrincipal(context, samAccountName);
 			var ps = new PrincipalSearcher(gp);

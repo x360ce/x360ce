@@ -1,17 +1,22 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+using System.Data.SqlClient;
+#else
+using Microsoft.Data.SqlClient;
+#endif
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-// Requires "System.Data.SqlClient" NuGet Package on .NET Core/Standard
-using System.Data.SqlClient;
+using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 
 namespace JocysCom.ClassLibrary.Data
 {
+
 	public partial class SqlHelper
 	{
 
@@ -84,7 +89,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		/*
 			// CONTEXT_INFO Example:
-			var conn = new System.Data.SqlClient.SqlConnection(cn);
+			var conn = new Microsoft.Data.SqlClient.SqlConnection(cn);
 			conn.Open();
 			var mw = new System.IO.MemoryStream(128);
 			var bw = new System.IO.BinaryWriter(mw);
@@ -163,7 +168,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		/*
 			// SESSION_CONTEXT Example:
-			var conn = new System.Data.SqlClient.SqlConnection(cn);
+			var conn = new Microsoft.Data.SqlClient.SqlConnection(cn);
 			conn.Open();
 			ClassLibrary.Data.SqlHelper.Current.SetSessionContext(conn, "Key1", 174);
 			var value = (int)ClassLibrary.Data.SqlHelper.Current.GetSessionContext(conn, "Key1");
@@ -315,6 +320,7 @@ namespace JocysCom.ClassLibrary.Data
 		public string GetSqlOptions(string connectionString)
 		{
 			var options = "";
+			// Dispose calls conn.Close() internally.
 			using (var conn = new SqlConnection(connectionString))
 			{
 				var s = "";
@@ -348,7 +354,6 @@ namespace JocysCom.ClassLibrary.Data
 				using (var sqlDataReader1 = optionsSqlCommand.ExecuteReader(CommandBehavior.SequentialAccess))
 					while (sqlDataReader1.Read())
 						options += $"{sqlDataReader1[0]}\r\n";
-				// Dispose calls conn.Close() internally.
 			}
 			return options;
 		}
@@ -365,79 +370,83 @@ namespace JocysCom.ClassLibrary.Data
 			return properties;
 		}
 
+		public static DbParameter AddParameter(DbCommand command, string parameterName, object value)
+		{
+			if (value is null)
+				return null;
+			var parameter = command.CreateParameter();
+			parameter.ParameterName = parameterName;
+			parameter.Value = value;
+			command.Parameters.Add(parameter);
+			return parameter;
+		}
+
 		#endregion
 
 		#region Execute Methods
 
-		public int ExecuteNonQuery(string connectionString, SqlCommand cmd, string comment = null, int? timeout = null)
+		public int ExecuteNonQuery(string connectionString, DbCommand cmd, string comment = null, int? timeout = null)
 		{
-			//var sql = ToSqlCommandString(cmd);
 			var cb = new SqlConnectionStringBuilder(connectionString);
 			if (timeout.HasValue)
 			{
 				cmd.CommandTimeout = timeout.Value;
 				cb.ConnectTimeout = timeout.Value;
 			}
-			var conn = new SqlConnection(cb.ConnectionString);
+			var conn = CreateConnection(cmd, cb.ConnectionString);
 			cmd.Connection = conn;
-			conn.Open();
-			SetSessionUserCommentContext(conn, comment);
-			int rv = cmd.ExecuteNonQuery();
-			cmd.Dispose();
-			// Dispose calls conn.Close() internally.
-			conn.Dispose();
-			return rv;
+			try
+			{
+				conn.Open();
+				SetSessionUserCommentContext(conn, comment);
+				int rv = cmd.ExecuteNonQuery();
+				return rv;
+			}
+			finally
+			{
+				cmd.Dispose();
+				conn.Dispose();
+			}
 		}
 
-		//[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-		//public int ExecuteNonQuery(string connectionString, string cmdText, string comment = null, int? timeout = null)
-		//{
-		//	var cmd = new SqlCommand(cmdText);
-		//	cmd.CommandType = CommandType.Text;
-		//	return ExecuteNonQuery(connectionString, cmd, comment, timeout);
-		//}
-
-		public object ExecuteScalar(string connectionString, SqlCommand cmd, string comment = null)
+		public object ExecuteScalar(string connectionString, DbCommand cmd, string comment = null)
 		{
-			//var sql = ToSqlCommandString(cmd);
-			var conn = new SqlConnection(connectionString);
+			var conn = CreateConnection(cmd, connectionString);
 			cmd.Connection = conn;
-			conn.Open();
-			SetSessionUserCommentContext(conn, comment);
-			// Returns first column of the first row.
-			var returnValue = cmd.ExecuteScalar();
-			cmd.Dispose();
-			// Dispose calls conn.Close() internally.
-			conn.Dispose();
-			return returnValue;
+			try
+			{
+				conn.Open();
+				SetSessionUserCommentContext(conn, comment);
+				// Returns first column of the first row.
+				var returnValue = cmd.ExecuteScalar();
+				return returnValue;
+			}
+			finally
+			{
+				cmd.Dispose();
+				conn.Dispose(); // Dispose calls conn.Close() internally
+			}
 		}
 
-		public IDataReader ExecuteReader(string connectionString, SqlCommand cmd, string comment = null)
+		public T ExecuteDataSet<T>(string connectionString, DbCommand cmd, string comment = null) where T : DataSet, new()
 		{
-			//var sql = ToSqlCommandString(cmd);
-			var conn = new SqlConnection(connectionString);
-			cmd.Connection = conn;
-			conn.Open();
-			SetSessionUserCommentContext(conn, comment);
-			return cmd.ExecuteReader();
-		}
-
-		public T ExecuteDataSet<T>(string connectionString, SqlCommand cmd, string comment = null) where T : DataSet
-		{
-			//var sql = ToSqlCommandString(cmd);
-			var conn = new SqlConnection(connectionString);
-			cmd.Connection = conn;
-			conn.Open();
-			SetSessionUserCommentContext(conn, comment);
-			var adapter = new SqlDataAdapter(cmd);
-			var ds = Activator.CreateInstance<T>();
-			int rowsAffected = ds.GetType() == typeof(DataSet)
-				? adapter.Fill(ds)
-				: adapter.Fill(ds, ds.Tables[0].TableName);
-			adapter.Dispose();
-			cmd.Dispose();
-			// Dispose calls conn.Close() internally.
-			conn.Dispose();
+			var ds = new T();
+			using (var conn = CreateConnection(cmd, connectionString))
+			{
+				cmd.Connection = conn;
+				conn.Open();
+				SetSessionUserCommentContext(conn, comment);
+				using (var reader = cmd.ExecuteReader())
+				{
+					do
+					{
+						var dataTable = new DataTable();
+						dataTable.Load(reader);
+						ds.Tables.Add(dataTable);
+					}
+					while (!reader.IsClosed && reader.NextResult());
+				}
+			}
 			return ds;
 		}
 
@@ -453,44 +462,51 @@ namespace JocysCom.ClassLibrary.Data
 			return ExecuteDataSet<DataSet>(connectionString, cmd, comment);
 		}
 
-		public DataSet ExecuteDataSet(string connectionString, SqlCommand cmd, string comment = null)
+		public DataSet ExecuteDataSet(string connectionString, DbCommand cmd, string comment = null)
 		{
 			return ExecuteDataSet<DataSet>(connectionString, cmd, comment);
 		}
 
-		public DataTable ExecuteDataTable(string connectionString, SqlCommand cmd, string comment = null)
+		public DataTable ExecuteDataTable(string connectionString, DbCommand cmd, string comment = null)
 		{
 			var ds = ExecuteDataSet(connectionString, cmd, comment);
 			if (ds != null && ds.Tables.Count > 0) return ds.Tables[0];
 			return null;
 		}
 
-		public DataRow ExecuteDataRow(string connectionString, SqlCommand cmd, string comment = null)
+		public DataRow ExecuteDataRow(string connectionString, DbCommand cmd, string comment = null)
 		{
 			var table = ExecuteDataTable(connectionString, cmd, comment);
 			if (table != null && table.Rows.Count > 0) return table.Rows[0];
 			return null;
 		}
 
-		public List<T> ExecuteData<T>(string connectionString, SqlCommand cmd, string comment = null)
+		public List<T> ExecuteData<T>(string connectionString, DbCommand cmd, string comment = null)
 		{
 			var list = new List<T>();
 			var props = typeof(T).GetProperties().ToDictionary(x => x.Name, x => x);
-			var reader = ExecuteReader(connectionString, cmd, comment);
-			while (reader.Read())
+			using (var conn = CreateConnection(cmd, connectionString))
 			{
-				var item = Activator.CreateInstance<T>();
-				for (int i = 0; i < reader.FieldCount; i++)
+				cmd.Connection = conn;
+				conn.Open();
+				SetSessionUserCommentContext(conn, comment);
+				using (var reader = cmd.ExecuteReader())
 				{
-					var name = reader.GetName(i);
-					var value = reader.GetValue(i);
-					var property = props[name];
-					if (property != null)
-						property.SetValue(item, reader.IsDBNull(i) ? null : value, null);
+					while (reader.Read())
+					{
+						var item = Activator.CreateInstance<T>();
+						for (int i = 0; i < reader.FieldCount; i++)
+						{
+							var name = reader.GetName(i);
+							var value = reader.GetValue(i);
+							if (props.TryGetValue(name, out var property))
+								property.SetValue(item, reader.IsDBNull(i) ? null : value, null);
+						}
+						list.Add(item);
+					}
 				}
-				list.Add(item);
 			}
-			return null;
+			return list;
 		}
 
 		#endregion
@@ -937,5 +953,106 @@ namespace JocysCom.ClassLibrary.Data
 
 		#endregion
 
+		#region Helper Methods
+
+		/// <summary>Cache data for speed.</summary>
+		/// <remarks>Cache allows for this class to work 20 times faster.</remarks>
+		private static ConcurrentDictionary<Type, DbProviderFactory> DbProviderFactoryCache
+			= new ConcurrentDictionary<Type, DbProviderFactory>();
+
+		public static DbConnection CreateConnection(DbCommand cmd, string connectionString = null)
+		{
+			var factory = GetProviderFactory(cmd);
+			var conn = factory.CreateConnection();
+			if (!string.IsNullOrEmpty(connectionString))
+				conn.ConnectionString = connectionString;
+			return conn;
+		}
+
+		public static DbDataAdapter CreateDataAdapter(DbCommand cmd)
+		{
+			var factory = GetProviderFactory(cmd);
+			var adapter = factory.CreateDataAdapter();
+			adapter.SelectCommand = cmd;
+			return adapter;
+		}
+
+		/// <summary>
+		/// Get DescriptionAttribute value from object or enumeration value.
+		/// </summary>
+		/// <param name="o">Enumeration value or object</param>
+		/// <returns>Description, class name, or enumeration property name.</returns>
+		private static DbProviderFactory GetProviderFactory(DbCommand cmd)
+		{
+			var key = cmd.GetType();
+			return DbProviderFactoryCache.GetOrAdd(key, x => _GetProviderFactory(cmd));
+		}
+
+		private static DbProviderFactory _GetProviderFactory(DbCommand cmd)
+		{
+			var cmdType = cmd.GetType();
+			// Attempt to get the factory type directly
+			var factoryTypeName = cmdType.Namespace + ".DbProviderFactory";
+			var factoryType = Type.GetType(factoryTypeName);
+			// Common factory type names for known providers
+			var namespaceParts = cmdType.Namespace.Split('.');
+			var lastNamespacePart = namespaceParts[namespaceParts.Length - 1];
+			factoryTypeName = cmdType.Namespace + "." + lastNamespacePart + "Factory";
+			if (factoryType == null)
+				factoryType = Type.GetType(factoryTypeName);
+			if (factoryType == null)
+			{
+				var assembly = cmdType.Assembly;
+				factoryType = assembly.GetType(factoryTypeName);
+			}
+			if (factoryType == null)
+			{
+				// Search all loaded assemblies if still not found
+				foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+				{
+					factoryType = assembly.GetType(factoryTypeName);
+					if (factoryType != null)
+						break;
+				}
+			}
+
+			if (factoryType == null)
+				throw new InvalidOperationException("Unable to determine provider factory.");
+
+			//var instanceProperty = factoryType.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static);
+			var instanceProperty = factoryType.GetField("Instance", BindingFlags.Public | BindingFlags.Static);
+			if (instanceProperty == null)
+				throw new InvalidOperationException("Provider factory does not have an 'Instance' property.");
+
+			return instanceProperty.GetValue(null) as DbProviderFactory;
+		}
+
+		public static string[] PortableExt = new string[] { ".sqlite", ".sqlite3", ".db", ".db3", ".s3db", ".sl3" };
+
+		public static bool IsPortable(string connectionStringOrPath)
+		=> PortableExt.Any(x => connectionStringOrPath?.IndexOf(x, StringComparison.OrdinalIgnoreCase) >= 0);
+
+		public static bool ContainsTable(string name, DbConnection connection)
+		{
+			var isPortable = IsPortable(connection.ConnectionString);
+			var commandText = isPortable
+				? $"SELECT name FROM sqlite_master WHERE type='table' AND name=@name"
+				: $"SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'Embedding' AND TABLE_NAME = @name";
+			var exist = Exist(commandText, name, connection);
+			return exist;
+		}
+		public static bool Exist(string commandText, string name, DbConnection connection)
+		{
+			var command = connection.CreateCommand();
+			command.CommandText = commandText;
+			AddParameter(command, "@name", name);
+			var result = command.ExecuteScalar();
+			var exists = result?.ToString() == name;
+			return exists;
+		}
+
+		#endregion
 	}
+
 }
+

@@ -10,10 +10,13 @@
 	-->
 	<!--  Colors  -->
 
+	<SolidColorBrush x:Key="BackgroundTransparent" Color="Transparent" />
 	<SolidColorBrush x:Key="BackgroundWhite" Color="#ffffff" />
 	<SolidColorBrush x:Key="BackgroundLight" Color="#f0f0f0" />
 	<SolidColorBrush x:Key="BackgroundDark" Color="#dedede" />
 	<SolidColorBrush x:Key="BackgroundDarkSelected" Color="#c2e7ff" />
+	<SolidColorBrush x:Key="BackgroundDarkPressed" Color="#c2ffe7" />
+
 	<SolidColorBrush x:Key="BackgroundWarning" Color="#ffe0e0" />
 	<SolidColorBrush x:Key="BackgroundHelp" Color="#ffffe1" />
 	<SolidColorBrush x:Key="BorderDark" Color="#cccccc" />
@@ -528,6 +531,7 @@
 		<Setter Property="MinWidth" Value="26" />
 		<Setter Property="Margin" Value="3" />
 		<Setter Property="Padding" Value="5" />
+		<Setter Property="BorderThickness" Value="0" />
 		<Setter Property="Background" Value="{StaticResource BackgroundDark}" />
 		<Setter Property="Template">
 			<Setter.Value>
@@ -561,23 +565,38 @@
 						</Style>
 					</ControlTemplate.Resources>
 					<!--  Template  -->
-					<Border Name="ButtonBorder" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}">
+					<Border Name="ButtonBorder" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
 						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
 					</Border>
 					<!--  Triggers  -->
 					<ControlTemplate.Triggers>
+						<!--  New MultiTrigger for IsMouseOver and IsPressed  -->
 						<MultiTrigger>
 							<MultiTrigger.Conditions>
 								<Condition Property="IsMouseOver" Value="True" />
 								<Condition Property="IsEnabled" Value="True" />
+								<Condition Property="IsPressed" Value="True" />
+							</MultiTrigger.Conditions>
+							<Setter TargetName="ButtonBorder" Property="Background" Value="{StaticResource BackgroundDarkPressed}" />
+						</MultiTrigger>
+
+						<!--  Existing MultiTrigger for IsMouseOver  -->
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsMouseOver" Value="True" />
+								<Condition Property="IsEnabled" Value="True" />
+								<Condition Property="IsPressed" Value="False" />
 							</MultiTrigger.Conditions>
 							<Setter TargetName="ButtonBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
 						</MultiTrigger>
+
+						<!--  Existing Trigger for IsEnabled  -->
 						<Trigger Property="IsEnabled" Value="False">
 							<Setter Property="Opacity" Value="0.5" />
 							<Setter Property="Focusable" Value="False" />
 						</Trigger>
 					</ControlTemplate.Triggers>
+
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
@@ -631,10 +650,11 @@
 	<!--  ListBoxItem  -->
 	<Style x:Key="ListBoxItem_Default" TargetType="ListBoxItem">
 		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Padding" Value="0" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ListBoxItem">
-					<Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+					<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
 						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 					</Border>
 					<ControlTemplate.Triggers>
@@ -661,20 +681,31 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="TabControl">
-					<Grid KeyboardNavigation.TabNavigation="Local">
+					<Grid x:Name="templateRoot" KeyboardNavigation.TabNavigation="Local">
+						<!--  Define RowDefinitions with names for use in triggers  -->
 						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto" />
-							<RowDefinition Height="*" />
+							<RowDefinition x:Name="RowDefinition0" Height="Auto" />
+							<RowDefinition x:Name="RowDefinition1" Height="*" />
 						</Grid.RowDefinitions>
-						<TabPanel x:Name="HeaderPanel" Panel.ZIndex="1" IsItemsHost="True" />
-						<!--  Only the Border is set to SnapsToDevicePixels="True" (without affecting the contents of the Border), to avoid visual artifacts.  -->
+
+						<!--  TabPanel for tab headers  -->
+						<TabPanel
+							x:Name="HeaderPanel"
+							Grid.Row="0"
+							Panel.ZIndex="1"
+							IsItemsHost="True" />
+
+						<!--  Border around the content area  -->
 						<Border
+							x:Name="MainBorder"
 							Grid.Row="1"
 							BorderBrush="{StaticResource BorderDark}"
 							BorderThickness="1"
 							CornerRadius="0,5,5,5"
 							SnapsToDevicePixels="True" />
-						<Grid Grid.Row="1" Margin="1">
+
+						<!--  Content area  -->
+						<Grid x:Name="ContentPanel" Grid.Row="1" Margin="1">
 							<Grid.OpacityMask>
 								<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 							</Grid.OpacityMask>
@@ -682,14 +713,40 @@
 							<ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" ClipToBounds="True" ContentSource="SelectedContent" />
 						</Grid>
 					</Grid>
+
+					<!--  ControlTemplate Triggers to respond to TabStripPlacement  -->
+					<ControlTemplate.Triggers>
+						<!--  Trigger for TabStripPlacement="Bottom"  -->
+						<Trigger Property="TabStripPlacement" Value="Bottom">
+							<!--  Swap the positions of the HeaderPanel and ContentPanel  -->
+							<Setter TargetName="HeaderPanel" Property="Grid.Row" Value="1" />
+							<Setter TargetName="MainBorder" Property="Grid.Row" Value="0" />
+							<Setter TargetName="ContentPanel" Property="Grid.Row" Value="0" />
+
+							<!--  Swap the heights of the RowDefinitions  -->
+							<Setter TargetName="RowDefinition0" Property="Height" Value="*" />
+							<Setter TargetName="RowDefinition1" Property="Height" Value="Auto" />
+
+							<!--  Adjust CornerRadius for the borders  -->
+							<Setter TargetName="MainBorder" Property="CornerRadius" Value="5,5,5,0" />
+							<Setter TargetName="OpacityMaskBorder" Property="CornerRadius" Value="5,5,5,0" />
+						</Trigger>
+						<!--  You can add triggers for Left and Right placements if needed  -->
+					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
+
+		<!--  Style Resources for TabItems  -->
 		<Style.Resources>
+			<!--  Convertor used in your original style (ensure it's defined in your namespace)  -->
 			<JcControls:TabIndexConverter x:Key="_TabIndexConverter" />
+
+			<!--  Style for TabItem  -->
 			<Style TargetType="TabItem">
 				<Setter Property="SnapsToDevicePixels" Value="True" />
 				<Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle_TabItem}" />
+				<Setter Property="Background" Value="{StaticResource BackgroundWhite}" />
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="TabItem">
@@ -706,7 +763,7 @@
 									<Setter Property="Focusable" Value="False" />
 								</Style>
 							</ControlTemplate.Resources>
-							<Grid Margin="0,0,3,-1">
+							<Grid Name="TiGrid" Margin="0,0,3,-1">
 								<Border
 									Name="TiBorder"
 									Margin="0,0,0,1"
@@ -727,11 +784,13 @@
 									BorderBrush="{StaticResource BorderDark}"
 									BorderThickness="0,0,0,1" />
 							</Grid>
+							<!--  Triggers for TabItem  -->
 							<ControlTemplate.Triggers>
 								<Trigger Property="IsSelected" Value="True">
-									<Setter TargetName="TiBorder" Property="Background" Value="{StaticResource BackgroundWhite}" />
+									<!--  Use Binding instead of TemplateBinding  -->
+									<Setter TargetName="TiBorder" Property="Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
 									<Setter TargetName="TiBorder" Property="BorderBrush" Value="{StaticResource BorderDark}" />
-									<Setter TargetName="BoBorder" Property="BorderBrush" Value="{StaticResource BackgroundWhite}" />
+									<Setter TargetName="BoBorder" Property="BorderBrush" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
 								</Trigger>
 								<MultiTrigger>
 									<MultiTrigger.Conditions>
@@ -743,6 +802,16 @@
 										<Setter TargetName="TiBorder" Property="Background" Value="{StaticResource BackgroundDarkSelected}" />
 									</MultiTrigger.Setters>
 								</MultiTrigger>
+
+								<!--  DataTrigger to adjust CornerRadius when TabStripPlacement is Bottom  -->
+								<DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=TabControl}, Path=TabStripPlacement}" Value="Bottom">
+									<Setter TargetName="TiBorder" Property="CornerRadius" Value="0,0,5,5" />
+									<Setter TargetName="TiBorder" Property="Margin" Value="0,1,0,0" />
+									<Setter TargetName="TiBorder" Property="BorderThickness" Value="1,0,1,1" />
+									<Setter TargetName="BoBorder" Property="BorderThickness" Value="0,1,0,0" />
+									<Setter TargetName="TiGrid" Property="Margin" Value="0,-1,3,0" />
+								</DataTrigger>
+
 							</ControlTemplate.Triggers>
 						</ControlTemplate>
 					</Setter.Value>
@@ -1774,6 +1843,23 @@
         <Setter Property="EditingElementStyle" Value="{StaticResource TextBoxCell}" />
         <Setter Property="ElementStyle" Value="{StaticResource TextBoxCell}" />
     </Style>-->
+
+	<!--  Style for icons  -->
+	<Style x:Key="IconTextStyle" TargetType="TextBlock">
+		<Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+		<Setter Property="FontSize" Value="16" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="HorizontalAlignment" Value="Center" />
+		<Setter Property="Margin" Value="0,0,5,0" />
+	</Style>
+
+	<Style x:Key="IconEmojiTextStyle" TargetType="TextBlock">
+		<Setter Property="FontFamily" Value="Segoe UI Emoji" />
+		<Setter Property="FontSize" Value="16" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="HorizontalAlignment" Value="Center" />
+		<Setter Property="Margin" Value="0,0,5,0" />
+	</Style>
 
 	<!--  Default Styles  -->
 	<Style BasedOn="{StaticResource Window_Default}" TargetType="Window" />

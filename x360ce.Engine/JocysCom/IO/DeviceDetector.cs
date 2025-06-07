@@ -1,5 +1,4 @@
 ﻿using JocysCom.ClassLibrary.Win32;
-using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,14 +6,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Management;
-using System.Reflection;
 using System.Runtime.InteropServices;
 // using System.Runtime.Serialization.Configuration;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using x360ce.Engine;
 
 namespace JocysCom.ClassLibrary.IO
 {
@@ -511,21 +507,29 @@ namespace JocysCom.ClassLibrary.IO
 			});
 
 			var listOrdered = list.OrderBy(x => x.DeviceId).ToArray();
-			Debug.WriteLine($"\n");
-			foreach (var device in listOrdered)
+			Debug.WriteLine($"");
+			if (listOrdered.Count() > 0)
 			{
-				Debug.WriteLine($"PnPInterface:" +
-					$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
-					$" ProductId {device.ProductId}." +
-					$" Revision {device.Revision}." +
-					$" DeviceId {device.DeviceId}." +
-					$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
-					$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid.ToString("B")).Item2})." +
-					$" Description {device.Description}." +
-					$" ClassDescription {device.ClassDescription}.");
+				foreach (var device in listOrdered)
+				{
+					Debug.WriteLine($"PnPDeviceInterface:" +
+						$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
+						$" ProductId {device.ProductId}." +
+						$" Revision {device.Revision}." +
+						$" DeviceId {device.DeviceId}." +
+						$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
+						$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid).Item2})." +
+						$" Description {device.Description}." +
+						$" ClassDescription {device.ClassDescription}.");
+				}
 			}
-			stopwatchInt.Stop();
-			Debug.WriteLine($"stopwatchInt: {stopwatchInt.Elapsed.TotalMilliseconds} ms\n");
+			else
+			{
+				Debug.WriteLine($"No PnPDevice.");
+			}
+				stopwatchInt.Stop();
+			Debug.WriteLine($"PnPDeviceInterface: Stopwatch: {stopwatchInt.Elapsed.TotalMilliseconds} ms\n");
+
 			return list.ToArray();
 		}
 
@@ -553,8 +557,31 @@ namespace JocysCom.ClassLibrary.IO
 
 		// Connected PnP Device Id list.
 		private static List<string> PnPDeviceIDs = new List<string>();
-		public static IEnumerable<(DeviceInstance Device, DeviceClass Class, int Usage, string DiDeviceID)> DiDevices = null;
+		public static IEnumerable<(
+			object DeviceInstance, // (DeviceInstance)DeviceInstance
+			object DeviceClass, // (DeviceInstance)DeviceClass
+			int Usage,
+			string DiDeviceID,
+			string ProductName,
+			Guid InstanceGuid
+		)> DiDevices = null;
+
+		//public static IEnumerable<(DeviceInstance Device, DeviceClass Class, int Usage, string DiDeviceID)> DiDevices = null;
+
 		// DEVICES.
+
+		static (bool, string, Guid) PnPDeviceIsInDiDevicesList(string PnPDeviceID)
+		{
+			foreach (var item in DiDevices)
+			{
+				if (PnPDeviceID.StartsWith(item.DiDeviceID, StringComparison.OrdinalIgnoreCase))
+				{
+					return (true, item.ProductName, item.InstanceGuid);
+				}
+			}
+			return (false, string.Empty, Guid.Empty);
+		}
+
 		public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF? flags = null, string parentDeviceId = null, int vid = 0, int pid = 0, int rev = 0, bool DiDevicesOnly = false)
 		{
 			var stopwatchPnP = Stopwatch.StartNew();
@@ -589,7 +616,7 @@ namespace JocysCom.ClassLibrary.IO
 						|| (vid > 0 && device.VendorId != vid)
 						|| (pid > 0 && device.ProductId != pid)
 						|| (rev > 0 && device.Revision != rev))
-					return true;
+						return true;
 
 					list.Add(device);
 					return true;
@@ -597,48 +624,46 @@ namespace JocysCom.ClassLibrary.IO
 			});
 
 			var listOrdered = list.OrderBy(x => x.DeviceId).ToArray();
-			Debug.WriteLine($"\n");
 			PnPDeviceIDs.Clear();
-			foreach (var device in listOrdered)
+			Debug.WriteLine($"\n");
+
+			if (listOrdered.Count() > 0)
 			{
-				Debug.WriteLine($"PnPDevice:" +
-					$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
-					$" ProductId {device.ProductId}." +
-					$" Revision {device.Revision}." +
-					$" DeviceId {device.DeviceId}." +
-					$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
-					$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid.ToString("B")).Item2})." +
-					$" Description {device.Description}." +
-					$" ClassDescription {device.ClassDescription}.");
-				PnPDeviceIDs.Add(device.DeviceId);
+				foreach (var device in listOrdered)
+				{
+					Debug.WriteLine($"PnPDeviceInfo:" +
+						$" InstanceGuid ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item3})." +
+						$" ProductId {device.ProductId}." +
+						$" Revision {device.Revision}." +
+						$" DeviceId {device.DeviceId}." +
+						$" InstanceName ({PnPDeviceIsInDiDevicesList(device.DeviceId).Item2})." +
+						$" ClassGuid: {device.ClassGuid} ({ContainsGuid(device.ClassGuid).Item2})." +
+						$" Description {device.Description}." +
+						$" ClassDescription {device.ClassDescription}.");
+					PnPDeviceIDs.Add(device.DeviceId);
+				}
 			}
-			stopwatchPnP.Stop();
-			Debug.WriteLine($"StopwatchPnP: {stopwatchPnP.Elapsed.TotalMilliseconds} ms\n");
+			else
+			{
+				Debug.WriteLine($"No PnPDevice.");
+			}
+
+				stopwatchPnP.Stop();
+			Debug.WriteLine($"PnPDeviceInfo: Stopwatch {stopwatchPnP.Elapsed.TotalMilliseconds} ms\n");
+
 			return listOrdered;
 		}
 
-		// PnP DeviceClass GUIDs: Keyboard, Mouse, Human Interface Device (HID)
-		public static Dictionary<string, string> PnPDeviceClassGuids = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+		public static Dictionary<Guid, string> PnPDeviceClassGuids = new Dictionary<Guid, string>
 		{
-			{ "{4d36e96b-e325-11ce-bfc1-08002be10318}", "Keyboard" },
-			{ "{4d36e96f-e325-11ce-bfc1-08002be10318}", "Mouse" },
-			{ "{745a17a0-74d3-11d0-b6fe-00a0c90f57da}", "HID" },
+			{ DEVCLASS.KEYBOARD, "Keyboard" },
+			{ DEVCLASS.MOUSE, "Mouse" },
+			{ DEVCLASS.HIDCLASS, "HID" },
 		};
-		static (bool, string) ContainsGuid(string PnPDeviceClassGuid) 
-		{ 
-			return PnPDeviceClassGuids.TryGetValue(PnPDeviceClassGuid, out string deviceType) ? (true, deviceType) : (false, "NoGuid");
-		}
 
-		static (bool, string, Guid) PnPDeviceIsInDiDevicesList(string PnPDeviceID)
+		static (bool, string) ContainsGuid(Guid PnPDeviceClassGuid)
 		{
-			foreach (var item in DiDevices)
-			{
-				if (PnPDeviceID.StartsWith(item.DiDeviceID, StringComparison.OrdinalIgnoreCase))
-				{
-					return (true, item.Device.ProductName, item.Device.InstanceGuid);
-				}
-			}
-			return (false, string.Empty, Guid.Empty);
+			return PnPDeviceClassGuids.TryGetValue(PnPDeviceClassGuid, out string deviceType) ? (true, deviceType) : (false, "NoGuid");
 		}
 
 		//public static DeviceInfo[] GetDevices(Guid? classGuid = null, DIGCF? flags = null, string deviceId = null, int vid = 0, int pid = 0, int rev = 0)
@@ -785,8 +810,8 @@ namespace JocysCom.ClassLibrary.IO
 			string parentDeviceId = null;
 			_EnumDeviceInfo(null, null, deviceId, (infoSet, infoData) =>
 			{
-		// If current device found then.
-		if (GetDeviceId(infoData.DevInst) == deviceId)
+				// If current device found then.
+				if (GetDeviceId(infoData.DevInst) == deviceId)
 				{
 					uint parentDeviceInstance;
 					var CRResult = NativeMethods.CM_Get_Parent(out parentDeviceInstance, infoData.DevInst, 0);
@@ -861,11 +886,11 @@ namespace JocysCom.ClassLibrary.IO
 					if (deviceId == currentDeviceId)
 					{
 						SetDeviceState(infoSet, infoData, enable);
-				// Job done. Stop.
-				return false;
+						// Job done. Stop.
+						return false;
 					}
-			// Continue.
-			return true;
+					// Continue.
+					return true;
 				});
 			}
 			catch (Exception ex)
@@ -885,8 +910,8 @@ namespace JocysCom.ClassLibrary.IO
 				{
 					uint status = 0;
 					uint problem = 0;
-			//after the call 'problem' variable will have the problem code
-			var cr = NativeMethods.CM_Get_DevNode_Status(out status, out problem, infoData.DevInst, 0);
+					//after the call 'problem' variable will have the problem code
+					var cr = NativeMethods.CM_Get_DevNode_Status(out status, out problem, infoData.DevInst, 0);
 					if (cr == CR.CR_SUCCESS)
 						isDisabled = problem == CM_PROB_DISABLED;
 					return true;
@@ -988,9 +1013,9 @@ namespace JocysCom.ClassLibrary.IO
 								if (success)
 								{
 									success = NativeMethods.SetupDiCallClassInstaller(DIF_REMOVE, infoSet, ref infoData);
-							// ex.ErrorCode = 0xE0000235: SetupDiCallClassInstaller throws ERROR_IN_WOW64 when compiled for 32 bit on a 64 bit machine.
-							// Most of the SetupDi APIs run fine in a WOW64 process, but co-installer have to run from 64-bit process.
-							if (!success)
+									// ex.ErrorCode = 0xE0000235: SetupDiCallClassInstaller throws ERROR_IN_WOW64 when compiled for 32 bit on a 64 bit machine.
+									// Most of the SetupDi APIs run fine in a WOW64 process, but co-installer have to run from 64-bit process.
+									if (!success)
 										ex = new Win32Exception();
 								}
 								else

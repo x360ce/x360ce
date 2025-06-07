@@ -15,6 +15,5 @@ namespace x360ce.App.Converters
 
 		public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
 			=> ConvertBackFunction?.Invoke(value, targetTypes, parameter, culture);
-
 	}
 }

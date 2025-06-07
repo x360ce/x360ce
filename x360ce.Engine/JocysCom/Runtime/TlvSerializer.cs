@@ -549,7 +549,7 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (!isNullable && typeU2.IsValueType && Activator.CreateInstance(typeU1).Equals(o))
 				return TlvSerializerError.None;
 			var typeCode = Type.GetTypeCode(typeU2);
-			// CWE-404: Improper Resource Shutdown or Release
+			// SUPPRESS: CWE-404: Improper Resource Shutdown or Release
 			// Note: Binary Writer will close underlying MemoryStream automatically.
 			var stream = new MemoryStream();
 			var writer = new BinaryWriter(stream);

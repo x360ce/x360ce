@@ -8,10 +8,10 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
-using System.Reflection;
 
 namespace JocysCom.ClassLibrary.Diagnostics
 {
@@ -21,24 +21,89 @@ namespace JocysCom.ClassLibrary.Diagnostics
 		public static string GetAsString(NameValueCollection collection)
 		{
 			// Write Data.
-			var settings = new XmlWriterSettings();
-			settings.Indent = true;
-			settings.IndentChars = ("\t");
-			settings.OmitXmlDeclaration = true;
+			var settings = new XmlWriterSettings
+			{
+				Indent = true,
+				IndentChars = "\t",
+				OmitXmlDeclaration = true,
+				Encoding = Encoding.UTF8
+			};
 			var sb = new StringBuilder();
 			// Create the XmlWriter object and write some content.
-			var writer = XmlWriter.Create(sb, settings);
-			writer.WriteStartElement("Data");
-			foreach (var key in collection.AllKeys)
+			using (var writer = XmlWriter.Create(sb, settings))
 			{
-				var keyString = string.Format("{0}", key);
-				var valString = string.Format("{0}", collection[key]);
-				writer.WriteElementString(keyString, valString);
+				writer.WriteStartElement("Data");
+				foreach (var key in collection.AllKeys)
+				{
+					var keyString = key.ToString();
+					var valString = collection[key] ?? string.Empty;
+
+					writer.WriteStartElement(keyString);
+
+					if (ContainsInvalidXmlChars(valString))
+					{
+						// Encode the data using WriteBase64
+						byte[] bytes = Encoding.UTF8.GetBytes(valString);
+						writer.WriteAttributeString("encoding", "base64");
+						writer.WriteBase64(bytes, 0, bytes.Length);
+					}
+					else
+					{
+						// Write the string normally
+						writer.WriteString(valString);
+					}
+					writer.WriteEndElement();
+				}
+				writer.WriteEndElement();
+				writer.Flush();
 			}
-			writer.WriteEndElement();
-			writer.Flush();
-			writer.Close();
 			return sb.ToString();
+		}
+
+		// Helper method to check for invalid XML characters
+		public static bool ContainsInvalidXmlChars(string text)
+		{
+			foreach (char c in text)
+			{
+				if (!XmlConvert.IsXmlChar(c))
+					return true;
+			}
+			return false;
+		}
+
+
+		public static NameValueCollection ParseFromString(string xml)
+		{
+			var collection = new NameValueCollection();
+			using (var reader = XmlReader.Create(new StringReader(xml)))
+			{
+				reader.ReadToFollowing("Data");
+				if (reader.IsEmptyElement)
+					return collection;
+				while (reader.Read())
+				{
+					if (reader.NodeType == XmlNodeType.Element)
+					{
+						var key = reader.Name;
+						var encoding = reader.GetAttribute("encoding");
+						string value = null;
+
+						if (encoding == "base64")
+						{
+							var base64Content = reader.ReadElementContentAsString();
+							byte[] bytes = System.Convert.FromBase64String(base64Content);
+							value = Encoding.UTF8.GetString(bytes);
+						}
+						else
+						{
+							value = reader.ReadElementContentAsString();
+						}
+
+						collection.Add(key, value);
+					}
+				}
+			}
+			return collection;
 		}
 
 		public static void AddLog(string sourceName, TraceEventType eventType, NameValueCollection collection)
@@ -53,7 +118,7 @@ namespace JocysCom.ClassLibrary.Diagnostics
 			using (var tr = new XmlTextReader(sr))
 			{
 				// Settings used to protect from
-				// CWE-611: Improper Restriction of XML External Entity Reference('XXE')
+				// SUPPRESS: CWE-611: Improper Restriction of XML External Entity Reference('XXE')
 				// https://cwe.mitre.org/data/definitions/611.html
 				var settings = new XmlReaderSettings();
 				settings.DtdProcessing = DtdProcessing.Ignore;

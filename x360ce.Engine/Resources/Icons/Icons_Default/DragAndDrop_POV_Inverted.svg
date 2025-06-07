@@ -47,7 +47,7 @@
        d="M 0,512 H 512 V 0 H 0 Z"
        id="path1" />
     <path
-       style="fill:#42c765;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.999995"
+       style="fill:#6699FF;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.999995"
        d="M 128,0 H 0 V 512 H 384 V 341 H 256 V 171 H 128 Z"
        id="path2" />
   </g>

@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 
 namespace JocysCom.ClassLibrary
 {
+	/// <summary>Provides structured progress reporting data including overall (top) and per-item (sub) metrics, status, and error details.</summary>
 	public class ProgressEventArgs
 	{
 
 		public ProgressStatus State { get; set; }
 		public ProgressStatus ProcessItemState { get; set; }
+		/// <summary>Exception encountered during the operation, if any.</summary>
 		public Exception Exception;
 
 		// --------------------------

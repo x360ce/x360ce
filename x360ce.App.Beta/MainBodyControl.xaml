@@ -7,7 +7,7 @@
 	xmlns:local="clr-namespace:x360ce.App.Controls"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	d:DesignHeight="900"
-	d:DesignWidth="1000"
+	d:DesignWidth="1270"
 	Loaded="UserControl_Loaded"
 	Unloaded="UserControl_Unloaded"
 	mc:Ignorable="d">
@@ -72,20 +72,7 @@
 			<local:CloudControl x:Name="CloudPanel" />
 		</TabItem>
 		<TabItem Name="HelpTabPage" Header="Help">
-			<RichTextBox x:Name="HelpRichTextBox">
-				<RichTextBox.OpacityMask>
-					<VisualBrush>
-						<VisualBrush.Visual>
-							<Border
-								Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
-								Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
-								Background="White"
-								CornerRadius="0,5,5,5"
-								SnapsToDevicePixels="True" />
-						</VisualBrush.Visual>
-					</VisualBrush>
-				</RichTextBox.OpacityMask>
-			</RichTextBox>
+			<RichTextBox Name="HelpRichTextBox" Background="Transparent" Padding="5,8,5,8"/>
 		</TabItem>
 		<TabItem Name="AboutTabPage" Header="About">
 			<local:AboutUserControl x:Name="AboutPanel" />

@@ -5,8 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:x360ce.App.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    d:DesignHeight="250"
-    d:DesignWidth="800"
+    d:Height="250"
+    d:Width="800"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded"
     mc:Ignorable="d">
@@ -15,42 +15,42 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0" Margin="3,3,3,3" Header="Virtual Device Emulation by Nefarius">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="8" />
-                    <ColumnDefinition Width="*" MinWidth="8" />
-                    <ColumnDefinition Width="Auto" MinWidth="8" />
-                    <ColumnDefinition Width="Auto" MinWidth="8" />
-                </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Content="Polling Rate" />
-                <ComboBox
+        <GroupBox Margin="3" Header="Virtual Device Emulation by Nefarius">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" MinWidth="8" />
+					<ColumnDefinition Width="*" MinWidth="8" />
+					<ColumnDefinition Width="Auto" MinWidth="8" />
+					<ColumnDefinition Width="Auto" MinWidth="8" />
+				</Grid.ColumnDefinitions>
+				<Label Grid.Row="0" Grid.Column="0" Content="Polling Rate" />
+				<ComboBox
                     Name="PollingRateComboBox"
                     Grid.Row="0"
                     Grid.Column="1"
                     Width="Auto" />
-                <Button
+				<Button
                     Name="RefreshButton"
                     Grid.Row="0"
                     Grid.Column="3"
                     Width="60"
                     Click="RefreshButton_Click"
                     Content="Refresh" />
-                <Label
+				<Label
                     Name="VirtualDeviceLabel"
                     Grid.Row="1"
                     Grid.Column="0"
                     Content="ViGEm Bus" />
-                <TextBox
+				<TextBox
                     Name="StatusTextBox"
                     Grid.Row="1"
                     Grid.Column="1"
                     IsReadOnly="True" />
-                <Button
+				<Button
                     Name="InstallButton"
                     Grid.Row="1"
                     Grid.Column="2"
@@ -58,7 +58,7 @@
                     Click="InstallButton_Click"
                     Content="Install"
                     IsEnabled="False" />
-                <Button
+				<Button
                     Name="UninstallButton"
                     Grid.Row="1"
                     Grid.Column="3"
@@ -66,21 +66,8 @@
                     Click="UninstallButton_Click"
                     Content="Uninstall"
                     IsEnabled="False" />
-            </Grid>
-        </GroupBox>
-        <RichTextBox x:Name="HelpRichTextBox" Margin="3" Background="{StaticResource BackgroundDark}">
-            <RichTextBox.OpacityMask>
-                <VisualBrush>
-                    <VisualBrush.Visual>
-                        <Border
-                            Width="{Binding ActualWidth, ElementName=HelpRichTextBox}"
-                            Height="{Binding ActualHeight, ElementName=HelpRichTextBox}"
-                            Background="White"
-                            CornerRadius="5"
-                            SnapsToDevicePixels="True" />
-                    </VisualBrush.Visual>
-                </VisualBrush>
-            </RichTextBox.OpacityMask>
-        </RichTextBox>
-    </Grid>
+			</Grid>
+		</GroupBox>
+		<RichTextBox Grid.Row="1" Name="HelpRichTextBox" Background="Transparent" Padding="5"/>
+	</Grid>
 </UserControl>

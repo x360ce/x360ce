@@ -1,5 +1,7 @@
 ﻿using SharpDX.XInput;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace x360ce.App.DInput
 {
@@ -16,37 +18,75 @@ namespace x360ce.App.DInput
 
 		void RetrieveXiStates(bool getXInputStates)
 		{
-			// Allow if not testing or testing with option enabled.
 			Exception error = null;
-			lock (Controller.XInputLock)
+
+			if (Controller.IsLoaded && getXInputStates)
 			{
-				for (uint i = 0; i < 4; i++)
+				Parallel.For(0, 4, i =>
 				{
 					var gamePad = LiveXiControllers[i];
 					State state = new State();
 					var success = false;
-					var timeout = false;
-					if (Controller.IsLoaded && getXInputStates)
+
+					try
 					{
-						Action action = () =>
-						{
-							// This can hit CPU hard and used for display only.
-							// Do not use when application is minimized. 
-							success = gamePad.GetState(out state);
-						};
-						var result = action.BeginInvoke(null, null);
-						timeout = !result.AsyncWaitHandle.WaitOne(1000);
+						success = gamePad.GetState(out state);
 					}
-					if (timeout)
+					catch (Exception ex)
 					{
-						error = new Exception("gamePad.GetState(out state) timed out.");
+						// Capture the first encountered exception
+						Interlocked.CompareExchange(ref error, ex, null);
 					}
-					LiveXiConnected[i] = success && !timeout;
+
+					LiveXiConnected[i] = success;
 					LiveXiStates[i] = state;
+				});
+			}
+			else
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					LiveXiConnected[i] = false;
+					LiveXiStates[i] = new State();
 				}
 			}
+
 			StatesRetrieved?.Invoke(this, new DInputEventArgs(error));
 		}
+
+		//void RetrieveXiStates(bool getXInputStates)
+		//{
+		//	// Allow if not testing or testing with option enabled.
+		//	Exception error = null;
+		//	lock (Controller.XInputLock)
+		//	{
+		//		for (uint i = 0; i < 4; i++)
+		//		{
+		//			var gamePad = LiveXiControllers[i];
+		//			State state = new State();
+		//			var success = false;
+		//			var timeout = false;
+		//			if (Controller.IsLoaded && getXInputStates)
+		//			{
+		//				Action action = () =>
+		//				{
+		//					// This can hit CPU hard and used for display only.
+		//					// Do not use when application is minimized. 
+		//					success = gamePad.GetState(out state);
+		//				};
+		//				var result = action.BeginInvoke(null, null);
+		//				timeout = !result.AsyncWaitHandle.WaitOne(1000);
+		//			}
+		//			if (timeout)
+		//			{
+		//				error = new Exception("gamePad.GetState(out state) timed out.");
+		//			}
+		//			LiveXiConnected[i] = success && !timeout;
+		//			LiveXiStates[i] = state;
+		//		}
+		//	}
+		//	StatesRetrieved?.Invoke(this, new DInputEventArgs(error));
+		//}
 
 	}
 }

@@ -4,10 +4,14 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Interop;
+//using x360ce.App.Common.DInput;
 using x360ce.App.Controls;
+//using x360ce.App.DInput;
 using x360ce.App.Issues;
 using x360ce.Engine;
 using x360ce.Engine.Data;
+//using static JocysCom.ClassLibrary.Processes.MouseHelper;
 
 namespace x360ce.App
 {
@@ -48,7 +52,8 @@ namespace x360ce.App
 		protected override void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);
-			var source = (System.Windows.Interop.HwndSource)PresentationSource.FromVisual(this);
+			StartHelper.Register(new WindowInteropHelper(this).Handle);
+			var source = (HwndSource)PresentationSource.FromVisual(this);
 			source.AddHook(StartHelper.CustomWndProc);
 			IsHandleCreated = true;
 		}
@@ -358,7 +363,7 @@ namespace x360ce.App
 					update3Enabled = false;
 					// Use this property to make sure that DHelper never starts unless all steps are fully initialized.
 					Global.AllowDHelperStart = true;
-					Global.DHelper.Start();
+					Global.DHelper.StartDInputService();
 				}
 			}
 			UpdateTimer.Start();
@@ -719,7 +724,7 @@ namespace x360ce.App
 			ControlsHelper.AutoSizeByOpenForms(win);
 			win.Width = Math.Min(1450, SystemParameters.WorkArea.Width - 200);
 			// Suspend displaying cloud queue results, because ShowDialog locks UI updates in the back.
-			Global.DHelper.Stop();
+			Global.DHelper.StopDInputService();
 			FormEventsEnabled = false;
 			MainBodyPanel.CloudPanel.EnableDataSource(false);
 			win.ErrorReportPanel.SendMessages += win.ErrorReportPanel_SendMessages;
@@ -733,7 +738,7 @@ namespace x360ce.App
 			if (Global.AllowDHelperStart)
 			{
 				FormEventsEnabled = true;
-				Global.DHelper.Start();
+				Global.DHelper.StartDInputService();
 			}
 		}
 

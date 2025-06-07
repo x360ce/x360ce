@@ -133,8 +133,9 @@ namespace x360ce.Engine
 				? Environment.SpecialFolder.SystemX86
 				: Environment.SpecialFolder.System;
 			var sysFolder = System.Environment.GetFolderPath(sp);
-			var msx = System.IO.Path.Combine(sysFolder, "xinput1_3.dll");
-			var info = new FileInfo(msx);
+			var file = Directory.GetFiles(sysFolder, "xinput1_?.dll")
+				.OrderByDescending(x => x).First();
+			var info = new FileInfo(file);
 			return info;
 		}
 

@@ -44,8 +44,8 @@ namespace JocysCom.ClassLibrary.Controls
 			MessageBoxOptions options = MessageBoxOptions.None
 		)
 		{
-			var win = new MessageBoxWindow();
-			return win.ShowDialog(message, caption, button, icon, defaultResult, options);
+			var box = new MessageBoxWindow();
+			return box.ShowDialog(message, caption, button, icon, defaultResult, options);
 		}
 
 		/// <summary>Displays a message box that has a message, title bar caption, button, and icon; and that accepts a default message box result, complies with the specified options, and returns a result.</summary>

@@ -122,10 +122,10 @@
                         </Button>
                     </StackPanel>
                     <ListBox
+						Margin="3,0,3,3"
                         Name="GameScanLocationsListBox"
                         Grid.Row="1"
-                        MinHeight="330"
-                        BorderThickness="0">
+                        MinHeight="330">
                         <ListBox.OpacityMask>
                             <VisualBrush>
                                 <VisualBrush.Visual>

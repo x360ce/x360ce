@@ -1,12 +1,10 @@
-﻿using System;
-using System.Data;
+using System;
 #if NETFRAMEWORK
 using System.Data;
 #else
 using Microsoft.EntityFrameworkCore;
 #endif
 using System.Linq;
-using EntityState = System.Data.EntityState;
 
 namespace JocysCom.ClassLibrary.Runtime
 {

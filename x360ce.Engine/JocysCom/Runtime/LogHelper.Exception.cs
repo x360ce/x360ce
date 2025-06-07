@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
@@ -13,6 +13,9 @@ namespace JocysCom.ClassLibrary.Runtime
 	//    Full     - Stack Trace will have line numbers even when exception is thrown inside non main threads.
 	//    Embedded - Stack Trace will have missing line numbers when thrown inside non-main threads.
 
+	/// <summary>
+	/// Provides data for the WritingException event, including the exception and support for cancellation.
+	/// </summary>
 	public class LogHelperEventArgs : CancelEventArgs
 	{
 		public Exception Exception { get; set; }
@@ -24,6 +27,10 @@ namespace JocysCom.ClassLibrary.Runtime
 	public partial class LogHelper
 	{
 
+		/// <summary>
+		/// Path to the directory for exception log files.
+		/// Returns OverrideLogFolder if set; otherwise the application data 'Logs' folder.
+		/// </summary>
 		public string LogsFolder
 		{
 			get
@@ -36,10 +43,16 @@ namespace JocysCom.ClassLibrary.Runtime
 			}
 		}
 
+		/// <summary>Optional override for LogsFolder; when set, logs are written to this folder.</summary>
 		public string OverrideLogFolder = null;
 
 		#region Handling
 
+		/// <summary>
+		/// Registers exception event handlers (unhandled, first-chance, unobserved task exceptions).
+		/// Optionally accepts a custom log folder path.
+		/// </summary>
+		/// <param name="overrideLogsFolder">Custom folder path to override the default LogsFolder.</param>
 		public void InitExceptionHandlers(string overrideLogsFolder = null)
 		{
 			OverrideLogFolder = overrideLogsFolder;
@@ -65,6 +78,10 @@ namespace JocysCom.ClassLibrary.Runtime
 				TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
 		}
 
+		/// <summary>
+		/// Occurs before writing an exception to log.
+		/// Subscribers can inspect the exception and cancel the write by setting Cancel on the event args.
+		/// </summary>
 		public event EventHandler<LogHelperEventArgs> WritingException;
 
 		public void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
@@ -103,7 +120,11 @@ namespace JocysCom.ClassLibrary.Runtime
 
 		#region Exception
 
-		/// <summary>Get native error code.</summary>
+		/// <summary>
+		/// Get native error code. Walks through inner exceptions to return the first non-zero Win32Exception.NativeErrorCode.
+		/// </summary>
+		/// <param name="ex">Exception to inspect.</param>
+		/// <returns>The first non-zero native error code found; 0 if none found.</returns>
 		public static int GetNativeErrorCode(Exception ex)
 		{
 			if (ex is null)
@@ -121,17 +142,40 @@ namespace JocysCom.ClassLibrary.Runtime
 			return code;
 		}
 
+		/// <summary>
+		/// Invokes the non-public Exception.GetClassName method via reflection to retrieve the exception's internal class name.
+		/// </summary>
+		/// <param name="ex">Exception instance.</param>
+		/// <returns>The exception class name.</returns>
 		private static string GetClassName(Exception ex)
 		{
 			var method = typeof(Exception).GetMethod("GetClassName", BindingFlags.NonPublic | BindingFlags.Instance);
 			return (string)method.Invoke(ex, null);
 		}
 
+		/// <summary>
+		/// HTML-encodes text if isHtml is true; otherwise returns original text.
+		/// </summary>
+		/// <param name="isHtml">Whether to HTML-encode the text.</param>
+		/// <param name="text">Text to process.</param>
+		/// <returns>Encoded text for HTML or original text.</returns>
 		private static string getText(bool isHtml, string text)
 		{
 			return (isHtml) ? System.Net.WebUtility.HtmlEncode(text) : text;
 		}
 
+		/// <summary>
+		/// Converts an exception to a formatted string, optionally including file/line information and HTML encoding.
+		/// </summary>
+		/// <param name="ex">Exception to convert.</param>
+		/// <param name="needFileLineInfo">Whether to include file and line number information.</param>
+		/// <param name="tf">TraceFormat specifying plain text or HTML formatting.</param>
+		/// <param name="containsFileAndLineNumber">Outputs true if file and line number were included in the formatted string.</param>
+		/// <returns>Formatted exception string with message and stack trace.</returns>
+		/// <remarks>
+		/// When TraceFormat.Html, output is HTML-encoded and wrapped in <span class="Mono">.
+		/// If ErrorUseNewStackTrace is true, includes a full stack trace from the root and skips frames in LogHelper to preserve original exception location.
+		/// </remarks>
 		private string ExceptionToString(Exception ex, bool needFileLineInfo, TraceFormat tf, out bool containsFileAndLineNumber)
 		{
 			containsFileAndLineNumber = false;
@@ -245,6 +289,18 @@ namespace JocysCom.ClassLibrary.Runtime
 			return false;
 		}
 
+		/// <summary>
+		/// Formats the specified StackTrace into a string from startFrameIndex, using TraceFormat for text or HTML output.
+		/// </summary>
+		/// <param name="st">StackTrace to format.</param>
+		/// <param name="tf">TraceFormat specifying plain text, HTML, or trailing newline.</param>
+		/// <param name="startFrameIndex">Index of the first frame to include.</param>
+		/// <param name="containsFileAndLineNumber">Outputs true if any frame includes file and line number.</param>
+		/// <returns>String representation of the stack trace.</returns>
+		/// <remarks>
+		/// When TraceFormat.Html, frames are wrapped in <span class="Mono"> and include HTML styling.
+		/// The output includes 'at' prefixes and encodes namespaces, types, and method names, with optional file/line details.
+		/// </remarks>
 		public static string TraceToString(StackTrace st, TraceFormat tf, int startFrameIndex, out bool containsFileAndLineNumber)
 		{
 			if (st is null)
@@ -420,11 +476,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				builder.Append("</span>");
 			return builder.ToString();
 		}
-
 		#endregion
-
 		#region ExceptionToText
-
 		public static string ExceptionToText(Exception ex)
 		{
 			var message = "";
@@ -435,7 +488,6 @@ namespace JocysCom.ClassLibrary.Runtime
 				AddExceptionMessage(ex.InnerException, ref message);
 			return message;
 		}
-
 		/// <summary>Add information about missing libraries and DLLs</summary>
 		private static void AddExceptionMessage(Exception ex, ref string message)
 		{
@@ -469,10 +521,7 @@ namespace JocysCom.ClassLibrary.Runtime
 				message += "===============================================================\r\n";
 				message += s;
 			}
-
 		}
-
 		#endregion
-
 	}
 }

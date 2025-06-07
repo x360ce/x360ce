@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP // .NET Core
+#if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard
 #else // .NET Framework
 using System;
@@ -17,6 +17,7 @@ namespace JocysCom.ClassLibrary.Data
 
 		/// <summary>
 		/// After dataContext.SubmitChanges() fails you can check details on which elements failed.
+		/// Lists optimistic concurrency conflicts from a ChangeConflictCollection, showing original, current, and database values.
 		/// </summary>
 		/// <param name="ccc">Conflict collection (dataContext.ChangeConflicts).</param>
 		/// <returns>String representation of conflicts.</returns>
@@ -52,6 +53,9 @@ namespace JocysCom.ClassLibrary.Data
 				return value.ToString();
 		}
 
+		/// <summary>Serializes a ChangeSet into a string listing inserted, updated, and deleted entities.</summary>
+		/// <param name="cs">The ChangeSet containing inserts, updates, and deletes.</param>
+		/// <returns>A string representation of the change set.</returns>
 		public static string ChangesToString(ChangeSet cs)
 		{
 			var sb = new StringBuilder();
@@ -72,6 +76,8 @@ namespace JocysCom.ClassLibrary.Data
 		/// Validate instance values. Useful before submitting data to SQL server with dataContext.SubmitChanges().
 		/// </summary>
 		/// <param name="cs">Changes which can be retrieved with context.GetChangeSet() method.</param>
+		/// <exception cref="NullReferenceException">Thrown when a non-nullable property is null or string fields exceed database-defined length.</exception>
+		/// <remarks>Validates ChangeSet entities against ColumnAttribute: throws if non-nullable props are null or strings exceed length constraints.</remarks>
 		public static void ValidateChanges(ChangeSet cs)
 		{
 			for (var i = 0; i < cs.Inserts.Count; i++)
@@ -109,6 +115,8 @@ namespace JocysCom.ClassLibrary.Data
 		/// </summary>
 		/// <param name="instance"></param>
 		/// <param name="convertToEmpty">Convert null value to empty string</param>
+		/// <exception cref="NullReferenceException">Thrown when a non-nullable property is null or string fields exceed database-defined length.</exception>
+		/// <remarks>Validates ColumnAttribute.CanBeNull and string length, throwing exceptions on violations.</remarks>
 		public static void CheckParams(object instance, bool convertToEmpty)
 		{
 			var properties = instance.GetType().GetProperties();
@@ -158,6 +166,12 @@ namespace JocysCom.ClassLibrary.Data
 			}
 		}
 
+		/// <summary>Filters a sequence by search terms in a query string, supporting quoted phrases and exclusion with leading '-'.</summary>
+		/// <typeparam name="T">Type of elements.</typeparam>
+		/// <param name="data">Sequence of items to search.</param>
+		/// <param name="query">Search string containing terms optionally in quotes; terms prefixed with '-' exclude matches.</param>
+		/// <param name="getText">Function to project an item to searchable text.</param>
+		/// <returns>Filtered sequence containing items matching all include terms and none of the exclude terms.</returns>
 		public static IEnumerable<T> ApplySearch<T>(IEnumerable<T> data, string query, Func<T, string> getText)
 		{
 			query = (query ?? "").Trim().ToUpper();
@@ -182,18 +196,35 @@ namespace JocysCom.ClassLibrary.Data
 			return data;
 		}
 
+		/// <summary>Applies paging to an ordered query by skipping pageIndex * pageSize records and taking pageSize records.</summary>
+		/// <typeparam name="T">Type of query elements.</typeparam>
+		/// <param name="query">An IOrderedQueryable to page. Must be ordered to guarantee stable results.</param>
+		/// <param name="pageSize">Number of records per page.</param>
+		/// <param name="pageIndex">Zero-based page index.</param>
+		/// <returns>IQueryable containing the specified page of results.</returns>
 		public static IQueryable<T> ApplyPaging<T>(IOrderedQueryable<T> query, int pageSize, int pageIndex)
 		{
 			var max = pageSize * pageIndex;
 			return query.Skip(max).Take(pageSize);
 		}
 
+		/// <summary>Applies paging to a query by skipping pageIndex * pageSize records and taking pageSize records.</summary>
+		/// <typeparam name="T">Type of query elements.</typeparam>
+		/// <param name="query">The queryable sequence to page.</param>
+		/// <param name="pageSize">Number of records per page.</param>
+		/// <param name="pageIndex">Zero-based page index.</param>
+		/// <returns>IQueryable containing the specified page of results.</returns>
 		public static IQueryable<T> ApplyPaging<T>(IQueryable<T> query, int pageSize, int pageIndex)
 		{
 			var max = pageSize * pageIndex;
 			return query.Skip(max).Take(pageSize);
 		}
 
+		/// <summary>Applies paging to a query using an OrderedDictionary with optional 'RowsSkip', 'RowsTake', 'PageSize', and 'PageIndex' keys.</summary>
+		/// <typeparam name="T">Type of query elements.</typeparam>
+		/// <param name="query">The queryable sequence to page.</param>
+		/// <param name="parameters">OrderedDictionary containing paging parameters.</param>
+		/// <returns>IQueryable with Skip and Take applied based on present parameters.</returns>
 		public static IQueryable<T> ApplyPaging<T>(IQueryable<T> query, OrderedDictionary parameters)
 		{
 			if (parameters.Contains("RowsSkip"))
@@ -219,6 +250,7 @@ namespace JocysCom.ClassLibrary.Data
 		/// <param name="rowsTake">Number of row per page (page size).</param>
 		/// <param name="rowsCount">Total number of rows: query.Count()</param>
 		/// <returns></returns>
+		/// <remarks>Calculates the total page count including any partial page.</remarks>
 		public static int GetPageCount(int rowsTake, int rowsCount)
 		{
 			var pageCount = 0;
@@ -251,6 +283,7 @@ namespace JocysCom.ClassLibrary.Data
 		/// </summary>
 		/// <param name="dt"></param>
 		/// <returns></returns>
+		/// <remarks>true if dt is between SqlDateTime.MinValue and SqlDateTime.MaxValue; otherwise false.</remarks>
 		public static bool SqlDateTimeIsValid(DateTime dt)
 		{
 			if (dt > System.Data.SqlTypes.SqlDateTime.MaxValue.Value)

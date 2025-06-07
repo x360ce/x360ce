@@ -2,7 +2,7 @@
 using JocysCom.ClassLibrary.Controls;
 using System;
 using System.ComponentModel;
-using System.Globalization;
+//using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,34 +22,34 @@ namespace x360ce.App.Controls
 		{
 			InitHelper.InitTimer(this, InitializeComponent);
 			InitScrollFix();
-			MainDataGrid.ItemsSource = mappedUserSettings;
-			_MainDataGridFormattingConverter = (ItemFormattingConverter)MainDataGrid.Resources[nameof(_MainDataGridFormattingConverter)];
-			_MainDataGridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
+			DevicesDataGrid.ItemsSource = mappedUserSettings;
+			_MainDataGridFormattingConverter = (ItemFormattingConverter)DevicesDataGrid.Resources[nameof(_MainDataGridFormattingConverter)];
+//			_MainDataGridFormattingConverter.ConvertFunction = _MainDataGridFormattingConverter_Convert;
 		}
 
 		ItemFormattingConverter _MainDataGridFormattingConverter;
 
-		object _MainDataGridFormattingConverter_Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-		{
-			var sender = (FrameworkElement)values[0];
-			var template = (FrameworkElement)values[1];
-			var cell = (DataGridCell)(template ?? sender).Parent;
-			var value = values[2];
-			var item = (UserSetting)cell.DataContext;
-			// Format ConnectionClassColumn value.
-			if (cell.Column == ConnectionClassColumn)
-			{
-				var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == item.InstanceGuid);
-				var imageSource = ConnectionClassToImageConverter.Convert(ud?.ConnectionClass ?? Guid.Empty);
-				return imageSource;
-			}
-			else if (cell.Column == VendorNameColumn)
-			{
-				var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == item.InstanceGuid);
-				return ud?.HidManufacturer;
-			}
-			return value;
-		}
+		//object _MainDataGridFormattingConverter_Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+		//{
+		//	var sender = (FrameworkElement)values[0];
+		//	var template = (FrameworkElement)values[1];
+		//	var cell = (DataGridCell)(template ?? sender).Parent;
+		//	var value = values[2];
+		//	var item = (UserSetting)cell.DataContext;
+		//	// Format ConnectionClassColumn value.
+		//	if (cell.Column == ConnectionClassColumn)
+		//	{
+		//		var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == item.InstanceGuid);
+		//		var imageSource = ConnectionClassToImageConverter.Convert(ud?.ConnectionClass ?? Guid.Empty);
+		//		return imageSource;
+		//	}
+		//	else if (cell.Column == VendorNameColumn)
+		//	{
+		//		var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == item.InstanceGuid);
+		//		return ud?.HidManufacturer;
+		//	}
+		//	return value;
+		//}
 
 		MapTo _MappedTo;
 		SortableBindingList<Engine.Data.UserSetting> mappedUserSettings = new SortableBindingList<Engine.Data.UserSetting>();
@@ -72,7 +72,7 @@ namespace x360ce.App.Controls
 				// If list not linked to any controller then return.
 				if (_MappedTo == MapTo.None)
 					return;
-				var grid = MainDataGrid;
+				var grid = DevicesDataGrid;
 				var game = SettingsManager.CurrentGame;
 				// Get rows which must be displayed on the list.
 				var itemsToShow = SettingsManager.UserSettings.ItemsToArraySynchronized()
@@ -80,6 +80,7 @@ namespace x360ce.App.Controls
 					.Where(x => x.MapTo == (int)_MappedTo)
 					// Filter devices by selected game (no items will be shown if game is not selected).
 					.Where(x => game != null && x.FileName == game.FileName && x.FileProductName == game.FileProductName)
+					.OrderByDescending(x => x.IsOnline)
 					.ToList();
 				var itemsToRemove = mappedUserSettings.Except(itemsToShow).ToArray();
 				var itemsToInsert = itemsToShow.Except(mappedUserSettings).ToArray();
@@ -149,8 +150,8 @@ namespace x360ce.App.Controls
 			//AutoMapContentControl.Content = auto
 			//	? Icons_Default.Current[Icons_Default.Icon_checkbox]
 			//	: Icons_Default.Current[Icons_Default.Icon_checkbox_unchecked];
-			MainDataGrid.IsEnabled = !auto;
-			MainDataGrid.Background = auto
+			DevicesDataGrid.IsEnabled = !auto;
+			DevicesDataGrid.Background = auto
 				? SystemColors.ControlBrush
 				: SystemColors.WindowBrush;
 			//MainDataGrid.DefaultCellStyle.BackColor = auto
@@ -168,7 +169,7 @@ namespace x360ce.App.Controls
 
 		void UpdateGridButtons()
 		{
-			var grid = MainDataGrid;
+			var grid = DevicesDataGrid;
 			var game = SettingsManager.CurrentGame;
 			var flag = AppHelper.GetMapFlag(_MappedTo);
 			var auto = game != null && ((MapToMask)game.AutoMapMask).HasFlag(flag);
@@ -190,26 +191,30 @@ namespace x360ce.App.Controls
 			// If no game selected then ignore click.
 			if (game == null)
 				return;
-			var flag = AppHelper.GetMapFlag(_MappedTo);
-			var value = (MapToMask)game.EnableMask;
-			var type = game.EmulationType;
-			var autoMap = value.HasFlag(flag);
-			// Invert flag value.
-			var enableMask = autoMap
-				// Remove AUTO.
-				? (int)(value & ~flag)
-				// Add AUTO.	
-				: (int)(value | flag);
+			var currentPad = AppHelper.GetMapFlag(_MappedTo);
+			var enabledPads = (MapToMask)game.EnableMask;
+			// If current controller is enabled then...
+			if (enabledPads.HasFlag(currentPad))
+			{
+				// Remove controller from enabled list.
+				enabledPads &= ~currentPad;
+			}
+			else
+			{
+                // Add controllers to enabled list.
+                enabledPads |= currentPad;
+			}
 			// Update emulation type.
 			EmulationType? newType = null;
-			// If emulation enabled and game is not using virtual type then...
-			if (enableMask > 0 && type != (int)EmulationType.Virtual)
+            var type = game.EmulationType;
+            // If emulation enabled and game is not using virtual type then...
+            if (enabledPads != MapToMask.None && type != (int)EmulationType.Virtual)
 				newType = EmulationType.Virtual;
 			// If emulation disabled, but game use virtual emulation then...
-			if (enableMask == 0 && type == (int)EmulationType.Virtual)
+			if (enabledPads == MapToMask.None && type == (int)EmulationType.Virtual)
 				newType = EmulationType.None;
 			// Set values.
-			game.EnableMask = enableMask;
+			game.EnableMask = (int)enabledPads;
 			if (newType.HasValue)
 				game.EmulationType = (int)newType.Value;
 		}
@@ -278,7 +283,7 @@ namespace x360ce.App.Controls
 			if (game == null)
 				return;
 			var settingsOld = SettingsManager.GetSettings(game.FileName, _MappedTo);
-			var userSetting = (UserSetting)MainDataGrid.SelectedItem;
+			var userSetting = (UserSetting)DevicesDataGrid.SelectedItem;
 			SettingsManager.UnMapGamePadDevices(game, userSetting,
 				SettingsManager.Options.HidGuardianConfigureAutomatically);
 			var settingsNew = SettingsManager.GetSettings(game.FileName, _MappedTo);
@@ -314,6 +319,38 @@ namespace x360ce.App.Controls
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			UpdateGridButtons();
+
+			// Get the currently selected item
+			var selected = DevicesDataGrid.SelectedItem as UserSetting;
+
+			if (selected != null)
+			{
+				//Active.Content = selected.IsOnline.ToString();
+				//IsEnabled.Content = selected.IsEnabled.ToString();
+				ProductName.Content = selected.ProductName;
+				InstanceId.Content = selected.InstanceId;
+				Completion.Content = selected.Completion;
+				PadSettingChecksum.Content = EngineHelper.GetID(selected.PadSettingChecksum); ;
+
+				var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == selected.InstanceGuid);
+				VendorName.Content = ud?.HidManufacturer.ToString();
+
+				var imageSource = ConnectionClassToImageConverter.Convert(selected.InstanceGuid);
+				ConnectionClassImage.Source = imageSource;
+				ConnectionClassImage.ToolTip = imageSource.ToString();
+			}
+			else
+			{
+				// Clear the labels when nothing is selected
+				//Active.Content = "";
+				//IsEnabled.Content = "";
+				ProductName.Content = "";
+				InstanceId.Content = "";
+				VendorName.Content = "";
+				PadSettingChecksum.Content = "";
+				ConnectionClassImage.Source = null;
+				Completion.Content = "";
+			}
 		}
 
 		/*
@@ -381,7 +418,7 @@ namespace x360ce.App.Controls
 
 		void InitScrollFix()
 		{
-			var grid = MainDataGrid;
+			var grid = DevicesDataGrid;
 			_Timer = new System.Timers.Timer();
 			_Timer.AutoReset = false;
 			_Timer.Interval = 200;
@@ -399,7 +436,7 @@ namespace x360ce.App.Controls
 
 		void UnInitScrollFix()
 		{
-			var grid = MainDataGrid;
+			var grid = DevicesDataGrid;
 			grid.LoadingRow -= MainDataGrid_LoadingRow;
 			if (_Timer != null)
 			{
@@ -411,7 +448,7 @@ namespace x360ce.App.Controls
 
 		private void _Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			var grid = MainDataGrid;
+			var grid = DevicesDataGrid;
 			Dispatcher.BeginInvoke(new Action(() =>
 			{
 				var widths = grid.Columns.Select(x => x.Width).ToArray();
@@ -429,8 +466,7 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowLoad(this))
 				return;
-			var o = SettingsManager.Options;
-			SettingsManager.LoadAndMonitor(o, nameof(o.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
+			//SettingsManager.LoadAndMonitor(SettingsManager.Options, nameof(Options.GetXInputStates), EnabledCheckBox, null, null, System.Windows.Data.BindingMode.OneWay);
 			UpdateGridButtons();
 		}
 
@@ -446,7 +482,7 @@ namespace x360ce.App.Controls
 		{
 			UnInitScrollFix();
 			SetBinding(MapTo.None);
-			SettingsManager.UnLoadMonitor(EnabledCheckBox);
+			//SettingsManager.UnLoadMonitor(EnabledCheckBox);
 			_MainDataGridFormattingConverter = null;
 			//UseXInputStateContentControl.Content = null;
 			mappedUserSettings.Clear();

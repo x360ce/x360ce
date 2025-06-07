@@ -61,9 +61,8 @@ namespace x360ce.App.Controls
 			var pd = e.PropertyDescriptor;
 			if (pd != null)
 			{
-				var o = SettingsManager.Options;
-				// Update values only if different.
-				if (e.PropertyDescriptor.Name == nameof(Options.GetXInputStates))
+				// If GetXInputStates property value changed.
+				if (pd.Name == nameof(Options.GetXInputStates))
 				{
 					UpdateGetXInputStatesWithNoEvents();
 				}
@@ -78,8 +77,7 @@ namespace x360ce.App.Controls
 			{
 				// Disable events.
 				GetXInputStatesCheckBox.Checked -= GetXInputStatesCheckBox_CheckedChanged;
-				var o = SettingsManager.Options;
-				ControlsHelper.SetChecked(GetXInputStatesCheckBox, o.GetXInputStates);
+				ControlsHelper.SetChecked(GetXInputStatesCheckBox, SettingsManager.Options.GetXInputStates);
 				// Enable events.
 				GetXInputStatesCheckBox.Checked += GetXInputStatesCheckBox_CheckedChanged;
 			}

@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using x360ce.App.Controls;
 using x360ce.App.Properties;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -34,7 +33,8 @@ namespace x360ce.App
 				if (SettingsManager.Options.ShowDebugPanel)
 					DebugPanel.ShowPanel();
 			});
-			InitGameToCustomizeComboBox();
+			InitGameToCustomizeDataGrid();
+
 			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 			LoadSettings();
 		}
@@ -131,54 +131,71 @@ namespace x360ce.App
 		}
 		#region ■ Current Game
 
-		private void InitGameToCustomizeComboBox()
+		public BindingListCollectionView GameToCustomizeDataGridItemsSource { get; set; }
+
+		private void InitGameToCustomizeDataGrid()
 		{
-			var userGamesView = new BindingListCollectionView(SettingsManager.UserGames.Items);
-			GameToCustomizeComboBox.ItemsSource = userGamesView;
-			// Make sure that X360CE.exe is on top.
-			GameToCustomizeComboBox.DisplayMemberPath = "DisplayName";
-			GameToCustomizeComboBox.SelectionChanged += GameToCustomizeComboBox_SelectionChanged;
+			GameToCustomizeDataGridItemsSource = new BindingListCollectionView(SettingsManager.UserGames.Items);
+			GameToCustomizeDataGrid.ItemsSource = GameToCustomizeDataGridItemsSource;
+			GameToCustomizeDataGrid.SelectionChanged += GameToCustomizeDataGrid_SelectionChanged;
 			// Set open game or 
 			Global.FindAndSetOpenGame();
 			// Assign selected game.
-			GameToCustomizeComboBox.SelectedItem = SettingsManager.CurrentGame;
-			// Enabled event handler.
+			GameToCustomizeDataGrid.SelectedItem = SettingsManager.CurrentGame;
+			UpdateGameDetails(SettingsManager.CurrentGame);
 			SettingsManager.CurrentGame_PropertyChanged += CurrentGame_PropertyChanged;
 		}
 
-		private void GameToCustomizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		private void GameToCustomizeDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			var game = (UserGame)GameToCustomizeComboBox.SelectedItem;
+			var game = (UserGame)GameToCustomizeDataGrid.SelectedItem;
 			SettingsManager.UpdateCurrentGame(game);
+			UpdateGameDetails(game);
 		}
 
 		private void CurrentGame_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			// If pad controls not initializes yet then return.
 			if (MainBodyPanel.PadControls == null)
 				return;
 			var game = SettingsManager.CurrentGame;
+			UpdateGameDetails(game);
 			if (game == null)
 				return;
-			// Update PAD Control.
 			foreach (var ps in MainBodyPanel.PadControls)
 			{
 				if (ps != null)
 				{
 					ps.PadListPanel.UpdateFromCurrentGame();
-					// Update emulation type.
 					var showAdvanced = game != null && game.EmulationType == (int)EmulationType.Library;
 					ps.PadItemPanel.ShowTab(showAdvanced, ps.PadItemPanel.AdvancedTabPage);
 				}
 			}
-			var selectedGame = (UserGame)GameToCustomizeComboBox.SelectedItem;
+			var selectedGame = (UserGame)GameToCustomizeDataGrid.SelectedItem;
 			if (selectedGame != game)
 			{
-				GameToCustomizeComboBox.SelectionChanged -= GameToCustomizeComboBox_SelectionChanged;
-				GameToCustomizeComboBox.SelectedItem = game;
-				GameToCustomizeComboBox.SelectionChanged += GameToCustomizeComboBox_SelectionChanged;
+				GameToCustomizeDataGrid.SelectionChanged -= GameToCustomizeDataGrid_SelectionChanged;
+				GameToCustomizeDataGrid.SelectedItem = game;
+				GameToCustomizeDataGrid.SelectionChanged += GameToCustomizeDataGrid_SelectionChanged;
 			}
 			SettingsManager.Current.RaiseSettingsChanged(null);
+		}
+
+		private void UpdateGameDetails(UserGame game)
+		{
+			if (FileProductName == null || FileName == null || GameId == null)
+				return;
+			if (game == null)
+			{
+				FileProductName.Content = "";
+				FileName.Content = "";
+				GameId.Content = "";
+			}
+			else
+			{
+				FileProductName.Content = game.FileProductName;
+				FileName.Content = game.FileName;
+				GameId.Content = game.GameId.ToString();
+			}
 		}
 
 
@@ -207,9 +224,9 @@ namespace x360ce.App
 			// Cleanup references which prevents disposal.
 			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
-			GameToCustomizeComboBox.SelectionChanged -= GameToCustomizeComboBox_SelectionChanged;
-			GameToCustomizeComboBox.SelectedItem = null;
-			((BindingListCollectionView)GameToCustomizeComboBox.ItemsSource)?.DetachFromSourceCollection();
+			GameToCustomizeDataGrid.SelectionChanged -= GameToCustomizeDataGrid_SelectionChanged;
+			GameToCustomizeDataGrid.SelectedItem = null;
+			((BindingListCollectionView)GameToCustomizeDataGrid.ItemsSource)?.DetachFromSourceCollection();
 		}
 	}
 }

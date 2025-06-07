@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
@@ -139,6 +139,7 @@ namespace JocysCom.ClassLibrary
 			throw new Exception("Resource not found");
 		}
 
+		/// <summary>Converts a resource Stream to the specified type T: returns Stream, string (BOM-aware), System.Drawing.Image (.NET Framework), or byte[].</summary>
 		static T ConvertResource<T>(Stream stream)
 		{
 			if (typeof(T) == typeof(Stream))
@@ -168,6 +169,7 @@ namespace JocysCom.ClassLibrary
 			return results;
 		}
 
+		/// <summary>Retrieves all loaded assemblies, prioritizing the executing, calling, and entry assemblies for resource lookup.</summary>
 		static Assembly[] GetAssemblies()
 		{
 			var assemblies = AppDomain.CurrentDomain.GetAssemblies().ToList();
@@ -223,62 +225,86 @@ namespace JocysCom.ClassLibrary
 			} while (millisecondsDelay > 0);
 		}
 
-		#region Delay Execution
+		#region Debounce Execution
 
 		/// <summary>
-		/// Contain CancellationTokenSource for each function.
+		/// Contains the CancellationTokenSource for each delegate to manage debouncing.
 		/// </summary>
-		static ConcurrentDictionary<Delegate, CancellationTokenSource> DelayActions = new ConcurrentDictionary<Delegate, CancellationTokenSource>();
-
+		static ConcurrentDictionary<Delegate, DebounceData> DebounceActions = new ConcurrentDictionary<Delegate, DebounceData>();
 
 		/// <summary>
-		/// Delay some frequently repeatable actions.
+		/// Holds debouncing information for a specific delegate.
 		/// </summary>
-		public static async Task Delay(Func<Task> action, int? delay = null)
+		class DebounceData
 		{
-			await _Delay(action, delay);
+			public int Counter = 0;
+			public object LockObject = new object();
 		}
 
-		/// <summary>
-		/// Delay some frequently repeatable actions.
-		/// </summary>
-		public static async Task Delay(Action action, int? delay = null)
-		{
-			await _Delay(action, delay);
-		}
+		[Obsolete("Use `async Task Debounce(Action action, int? delay = null, params object[] args)` instead.")]
+		public static async Task Delay(Action action, int? delay = null, params object[] args)
+			=> await _Debounce(action, delay, args);
+
+		[Obsolete("Use `async Task Debounce(Func<Task> action, int? delay = null, params object[] args)` instead.")]
+		public static async Task Delay(Func<Task> action, int? delay = null, params object[] args)
+			=> await _Debounce(action, delay, args);
 
 		/// <summary>
-		/// Delay some frequently repeatable actions.
+		/// Executes an action after a delay, canceling any previous pending executions of the same action.
+		/// This method ensures that the action is invoked only after the specified delay has elapsed since the last invocation request.
 		/// </summary>
-		public static async Task _Delay(Delegate action, int? delay = null, params object[] args)
+		/// <param name="action">The action to debounce.</param>
+		/// <param name="delay">The delay in milliseconds to wait before invoking the action. Defaults to 500 milliseconds if not specified.</param>
+		/// <returns>A Task representing the asynchronous debounced operation.</returns>
+		public static async Task Debounce(Action action, int? delay = null)
+			=> await _Debounce(action, delay);
+
+		/// <summary>
+		/// Executes an action after a delay, canceling any previous pending executions of the same action.
+		/// This method ensures that the action is invoked only after the specified delay has elapsed since the last invocation request.
+		/// </summary>
+		/// <param name="action">The action to debounce.</param>
+		/// <param name="delay">The delay in milliseconds to wait before invoking the action. Defaults to 500 milliseconds if not specified.</param>
+		/// <returns>A Task representing the asynchronous debounced operation.</returns>
+		public static async Task Debounce<T>(Action<T> action, T arg, int? delay = null)
+			=> await _Debounce(action, delay, new object[] { arg });
+
+		/// <summary>
+		/// Executes an asynchronous function after a delay, canceling any previous pending executions of the same function.
+		/// This method ensures that the action is invoked only after the specified delay has elapsed since the last invocation request.
+		/// </summary>
+		/// <param name="action">The asynchronous function to debounce.</param>
+		/// <param name="delay">The delay in milliseconds to wait before invoking the function. Defaults to 500 milliseconds if not specified.</param>
+		/// <returns>A Task representing the asynchronous debounced operation.</returns>
+		public static async Task Debounce(Func<Task> action, int? delay = null)
+			=> await _Debounce(action, delay);
+
+		/// <summary>
+		/// Debounces the specified action, ensuring it's only invoked after a specified delay since the last call.
+		/// Subsequent calls within the delay period reset the timer.
+		/// </summary>
+		/// <param name="action">The delegate to debounce.</param>
+		/// <param name="delay">The delay in milliseconds before the delegate is invoked. Defaults to 500 milliseconds if not specified.</param>
+		/// <param name="args">Optional arguments to pass to the delegate when invoked.</param>
+		/// <returns>A Task representing the asynchronous debounced operation.</returns>
+		public static async Task _Debounce(Delegate action, int? delay = null, params object[] args)
 		{
 			if (action == null)
 				return;
-			var className = action.Method.DeclaringType;
-			var methodName = action.Method.Name;
-			var source = new CancellationTokenSource();
-			// Replace any previous CancellationTokenSource with a new one.
-			DelayActions.AddOrUpdate(
-				// Add token if action key do not exists.
-				action, source,
-				// Run this function if the action key already exists.
-				(key, oldSource) =>
-				{
-					System.Diagnostics.Debug.WriteLine($"Cancel previous `{className}.{methodName}`");
-					// Cancel previous delayed operation of the same action.
-					oldSource?.Cancel();
-					// Return new token.
-					return source;
-				}
-			);
-			await Task.Delay(delay ?? 500);
-			lock (action)
+			int delayValue = delay ?? 500;
+			var debounceData = DebounceActions.GetOrAdd(action, new DebounceData());
+			int currentCount;
+			lock (debounceData.LockObject)
 			{
-				// If new delayed operation was started then return.
-				if (source.Token.IsCancellationRequested)
-					return;
-				System.Diagnostics.Debug.WriteLine($"Invoke `{className}.{methodName}`");
-				action.DynamicInvoke(args);
+				debounceData.Counter++;
+				currentCount = debounceData.Counter;
+			}
+			await Task.Delay(delayValue);
+			lock (debounceData.LockObject)
+			{
+				// This is the latest scheduled call; invoke the action
+				if (currentCount == debounceData.Counter)
+					action.DynamicInvoke(args);
 			}
 		}
 
@@ -296,6 +322,7 @@ namespace JocysCom.ClassLibrary
 		private PerformanceCounter _diskReadCounter = new PerformanceCounter();
 		private PerformanceCounter _diskWriteCounter = new PerformanceCounter();
 
+		/// <summary>Reads the specified PerformanceCounter (category, counter, instance) and returns its next value.</summary>
 		private static double GetCounterValue(PerformanceCounter pc, string categoryName, string counterName, string instanceName)
 		{
 			pc.CategoryName = categoryName;
@@ -304,17 +331,19 @@ namespace JocysCom.ClassLibrary
 			return pc.NextValue();
 		}
 
+		/// <summary>Specifies disk I/O metric types: ReadAndWrite, Read-only, or Write-only operations.</summary>
 		public enum DiskData { ReadAndWrite, Read, Write };
 
+		/// <summary>Gets disk I/O bytes per second using the specified DiskData metric via PhysicalDisk _Total counters.</summary>
 		public double GetDiskData(DiskData dd)
 		{
 			return dd == DiskData.Read ?
-						GetCounterValue(_diskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") :
-						dd == DiskData.Write ?
-						GetCounterValue(_diskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") :
-						dd == DiskData.ReadAndWrite ?
-						GetCounterValue(_diskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") +
-						GetCounterValue(_diskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") :
+					GetCounterValue(_diskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") :
+					dd == DiskData.Write ?
+					GetCounterValue(_diskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") :
+					dd == DiskData.ReadAndWrite ?
+					GetCounterValue(_diskReadCounter, "PhysicalDisk", "Disk Read Bytes/sec", "_Total") +
+					GetCounterValue(_diskWriteCounter, "PhysicalDisk", "Disk Write Bytes/sec", "_Total") :
 					0;
 		}
 
@@ -325,6 +354,8 @@ namespace JocysCom.ClassLibrary
 		#region Comparisons
 
 		private static Regex _GuidRegex;
+
+		/// <summary>Regex matching GUID strings in various formats: 32 digits, hyphenated, with braces or parentheses, or hex-coded lists.</summary>
 		public static Regex GuidRegex
 		{
 			get
@@ -338,16 +369,15 @@ namespace JocysCom.ClassLibrary
 				}
 				return _GuidRegex;
 			}
-
 		}
 
+		/// <summary>Determines whether the specified string is a valid GUID format; returns false if null or empty.</summary>
 		public static bool IsGuid(string s)
 		{
 			return string.IsNullOrEmpty(s)
 				? false
 				: GuidRegex.IsMatch(s);
 		}
-
 
 		/// <summary>
 		/// Returns true if two ranges overlap.

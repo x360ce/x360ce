@@ -71,7 +71,7 @@ namespace x360ce.App.Controls
 			AddKeys(CharKeysComboBox, "Key", AllKeys.Where(x => x >= Key.A && x <= Key.Z || x == Key.Space));
 			AddKeys(NumPadKeysComboBox, "NumPad", AllKeys.Where(x => x >= Key.NumPad0 && x <= Key.NumPad9));
 			AddKeys(FKeysComboBox, "F-Key", AllKeys.Where(x => x >= Key.F1 && x <= Key.F24));
-			AddKeys(Control2KeysComboBox, "Control", new Key[] {
+			AddKeys(Control2KeysComboBox, "ControlBindedName", new Key[] {
 				Key.Escape, Key.Tab, Key.CapsLock, Key.Back, Key.Enter,
 				Key.Insert, Key.Delete, Key.Home, Key.End, Key.PageUp, Key.PageDown, Key.NumLock });
 			// Add remaining keys

@@ -9,7 +9,7 @@ namespace x360ce.App.DInput
 	{
 
 		public State[] CombinedXiStates;
-		public bool[] CombinedXiConencted;
+		public bool[] CombinedXiConnected;
 		public int PacketNumber;
 
 		void CombineXiStates()
@@ -48,7 +48,7 @@ namespace x360ce.App.DInput
 				combinedState.PacketNumber = PacketNumber;
 				combinedState.Gamepad = gp;
 				CombinedXiStates[m] = combinedState;
-				CombinedXiConencted[m] = states.Length > 0;
+				CombinedXiConnected[m] = states.Length > 0;
 			}
 		}
 
