@@ -196,7 +196,7 @@ namespace x360ce.App.Controls
                 Global.DHelper.SetVibration(index, leftMotor, rightMotor, 0);
 
                 // [TEST] --------------------------------------------------------------------------------
-                SetVibration(index, leftTestValue, rightTestValue);
+                //SetVibration(index, leftTestValue, rightTestValue);
                 // [TEST] --------------------------------------------------------------------------------
             }
             else
