@@ -1,8 +1,15 @@
 ﻿using JocysCom.ClassLibrary.Controls;
+//using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+//using System.Security.Cryptography;
+//using System.Web.UI.WebControls;
+
+
+//using System.Threading;
 using System.Windows.Controls;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -150,42 +157,67 @@ namespace x360ce.App.Controls
 			// Moved to MainBodyControl_Unloaded().
 		}
 
-		#endregion
+        #endregion
 
-		#region Private Methods
+        // [TEST] --------------------------------------------------------------------------------
+        [StructLayout(LayoutKind.Sequential)]
+        public struct XINPUT_VIBRATION
+        {
+            public ushort LeftMotorSpeed;
+            public ushort RightMotorSpeed;
+        }
+        [DllImport("xinput1_4.dll", EntryPoint = "XInputSetState", CallingConvention = CallingConvention.StdCall)]
+        static extern int XInputSetState_Native(int index, ref XINPUT_VIBRATION vibration);
+        private void SetVibration(int index, int leftTestValue, int rightTestValue)
+        {
+			// Convert TrackBar value (0-100) to MotorSpeed (0-65535).
+			var leftMotorSpeed = (ushort)ConvertHelper.ConvertRange(leftTestValue, 0, 100, ushort.MinValue, ushort.MaxValue);
+			var rightMotorSpeed = (ushort)ConvertHelper.ConvertRange(rightTestValue, 0, 100, ushort.MinValue, ushort.MaxValue);
+			var vibration = new XINPUT_VIBRATION { LeftMotorSpeed = leftMotorSpeed, RightMotorSpeed = rightMotorSpeed };
+			XInputSetState_Native(index, ref vibration);
+         }
+        // [TEST] --------------------------------------------------------------------------------
 
-		private void SendVibration()
+        #region Private Methods
+
+        private void SendVibration()
 		{
-			var index = (int)_MappedTo - 1;
+            var index = (int)_MappedTo - 1;
 			var game = SettingsManager.CurrentGame;
 			var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 			int leftTestValue = (int)LeftForceFeedbackMotorPanel.TestUpDown.Value;
 			int rightTestValue = (int)RightForceFeedbackMotorPanel.TestUpDown.Value;
-			if (isVirtual)
+
+            if (isVirtual)
 			{
-				var largeMotor = (byte)ConvertHelper.ConvertRange(leftTestValue, 0, 100, byte.MinValue, byte.MaxValue);
-				var smallMotor = (byte)ConvertHelper.ConvertRange(rightTestValue, 0, 100, byte.MinValue, byte.MaxValue);
-				Global.DHelper.SetVibration(_MappedTo, largeMotor, smallMotor, 0);
-			}
-			else
+                // Convert TrackBar value (0-100) to MotorSpeed (0-255).
+                var leftMotor = (byte)ConvertHelper.ConvertRange(leftTestValue, 0, 100, byte.MinValue, byte.MaxValue);
+                var rightMotor = (byte)ConvertHelper.ConvertRange(rightTestValue, 0, 100, byte.MinValue, byte.MaxValue);
+                Global.DHelper.SetVibration(index, leftMotor, rightMotor, 0);
+
+                // [TEST] --------------------------------------------------------------------------------
+                SetVibration(index, leftTestValue, rightTestValue);
+                // [TEST] --------------------------------------------------------------------------------
+            }
+            else
 			{
 				lock (Controller.XInputLock)
 				{
-					// Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
-					var leftMotor = (short)ConvertHelper.ConvertRange(leftTestValue, 0, 100, short.MinValue, short.MaxValue);
-					var rightMotor = (short)ConvertHelper.ConvertRange(rightTestValue, 0, 100, short.MinValue, short.MaxValue);
-					var gamePad = Global.DHelper.LiveXiControllers[index];
 					var isConnected = Global.DHelper.LiveXiConnected[index];
 					if (Controller.IsLoaded && isConnected)
 					{
-						var vibration = new Vibration();
-						vibration.LeftMotorSpeed = leftMotor;
-						vibration.RightMotorSpeed = rightMotor;
-						gamePad.SetVibration(vibration);
+                        // Convert TrackBar value (0-100) to MotorSpeed (-32768-32767).
+                        var leftMotor = (short)ConvertHelper.ConvertRange(leftTestValue, 0, 100, short.MinValue, short.MaxValue);
+                        var rightMotor = (short)ConvertHelper.ConvertRange(rightTestValue, 0, 100, short.MinValue, short.MaxValue);
+                        var gamePad = Global.DHelper.LiveXiControllers[index];
+                        var vibration = new Vibration();
+                        vibration.LeftMotorSpeed = leftMotor;
+                        vibration.RightMotorSpeed = rightMotor;
+                        gamePad.SetVibration(vibration);
 					}
 				}
 			}
-		}
+        }
 
 		#endregion
 
