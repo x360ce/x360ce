@@ -17,7 +17,6 @@ namespace JocysCom.ClassLibrary.IO
 
 	public partial class DeviceDetector : IDisposable
 	{
-
 		private const int ERROR_INSUFFICIENT_BUFFER = 122;
 		private const int ERROR_INVALID_DATA = 13;
 		private const int ERROR_NO_MORE_ITEMS = 259;
