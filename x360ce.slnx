@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="TODO.md" />
+    <File Path="x360ce.sln.vsspell" />
+  </Folder>
+  <Project Path="x360ce.App.Beta/x360ce.App.csproj" />
+  <Project Path="x360ce.Data/x360ce.Data.sqlproj" Id="2db521f4-e49d-4e7a-b1b9-52a8acd37415">
+    <Build Solution="Release|*" />
+    <Deploy Solution="Release|*" />
+  </Project>
+  <Project Path="x360ce.Engine/x360ce.Engine.csproj" />
+  <Project Path="x360ce.Net48Test/x360ce.Net48Test.csproj" Id="e89bbcff-f4f9-44f9-b3aa-98c62ca8dac8" />
+  <Project Path="x360ce.Net60Test/x360ce.Net60Test.csproj" />
+  <Project Path="x360ce.RemoteController/x360ce.RemoteController.csproj" />
+  <Project Path="x360ce.Web/x360ce.Web.csproj" />
+  <Properties Name="Performance">
+    <Property Name="HasPerformanceSessions" Value="true" />
+  </Properties>
+</Solution>
