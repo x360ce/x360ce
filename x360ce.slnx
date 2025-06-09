@@ -2,9 +2,9 @@
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="TODO.md" />
-    <File Path="x360ce.sln.vsspell" />
+    <File Path="x360ce.slnx.vsspell" />
   </Folder>
-  <Project Path="x360ce.App.Beta/x360ce.App.csproj" />
+  <Project Path="x360ce.App/x360ce.App.csproj" />
   <Project Path="x360ce.Data/x360ce.Data.sqlproj" Id="2db521f4-e49d-4e7a-b1b9-52a8acd37415">
     <Build Solution="Release|*" />
     <Deploy Solution="Release|*" />
