@@ -1,3 +1,0 @@
-.NETZ Copyright (c) 2004-2011 by Vasian Cepa. All rights reserved.
-
-See complete license at http://madebits.com/netz/download.php#license
