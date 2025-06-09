@@ -63,8 +63,8 @@
     <Compile Include="Common\x360ceAppTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\x360ce.App.Beta\x360ce.App.csproj">
-      <Project>{00a8380d-72cb-4ad3-a8c4-0af44ba2aee0}</Project>
+    <ProjectReference Include="..\x360ce.App\x360ce.App.csproj">
+      <Project>{3c547d6d-6dd9-b189-3366-5287015026d4}</Project>
       <Name>x360ce.App</Name>
     </ProjectReference>
     <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj">
