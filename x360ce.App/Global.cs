@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Linq;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Controls;
+using x360ce.Engine.Data;
 
 namespace x360ce.App
 {
@@ -59,6 +60,11 @@ namespace x360ce.App
 
 		public static string LastActivePath;
 
+		public static bool IsCurrentApp(UserGame ug)
+		{
+			return string.Compare(System.Windows.Forms.Application.ExecutablePath, ug.FullPath, true) == 0;
+		}
+
 		public static void FindAndSetOpenGame()
 		{
 			// Get selected process.
@@ -69,7 +75,7 @@ namespace x360ce.App
 				.ToArray();
 			// Get list of all configured user games.
 			var userGames = SettingsManager.UserGames.ItemsToArraySynchronized().ToList();
-			var currentApp = userGames.FirstOrDefault(x => x.IsCurrentApp());
+			var currentApp = userGames.FirstOrDefault(x => IsCurrentApp(x));
 			if (currentApp != null)
 				userGames.Remove(currentApp);
 			// Select all games which are running (except current app).
@@ -88,7 +94,7 @@ namespace x360ce.App
 			// If not found then...
 			if (game == null)
 				// Try to get first currently running game (except current app).
-				game = runningGames.FirstOrDefault(x => !x.IsCurrentApp());
+				game = runningGames.FirstOrDefault(x => !IsCurrentApp(x));
 			// If not found then...
 			if (game == null)
 				// Select current app.

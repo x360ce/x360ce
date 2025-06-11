@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using JocysCom.WebSites.Engine.Security;
+using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.ComponentModel;
-using JocysCom.WebSites.Engine;
 using System.Web.Security;
-using User = JocysCom.WebSites.Engine.Security.Data.User;
-using SecurityClassesDataContext = JocysCom.WebSites.Engine.Security.Data.SecurityEntities;
-using JocysCom.WebSites.Engine.Security;
+using System.Web.UI;
 using System.Web.UI.HtmlControls;
-using System.Security.Cryptography;
+using System.Web.UI.WebControls;
+using SecurityClassesDataContext = JocysCom.WebSites.Engine.Security.Data.SecurityEntities;
+using User = JocysCom.WebSites.Engine.Security.Data.User;
 
 namespace JocysCom.Web.Security.Controls
 {

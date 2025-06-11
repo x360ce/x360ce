@@ -8,8 +8,6 @@ using x360ce.Engine.Data;
 using x360ce.Engine;
 using JocysCom.ClassLibrary.Runtime;
 using JocysCom.ClassLibrary.Mail;
-using System.Net;
-using System.Runtime.CompilerServices;
 
 namespace x360ce.Web.WebServices
 {
@@ -101,12 +99,12 @@ namespace x360ce.Web.WebServices
 			var db = new x360ceModelContainer();
 			var q = db.Vendors.ToList()
 				.Select(x => new Vendor
-			{
-				VendorId = x.VendorId,
-				VendorName = x.VendorName,
-				ShortName = x.ShortName,
-				WebSite = x.WebSite
-			});
+				{
+					VendorId = x.VendorId,
+					VendorName = x.VendorName,
+					ShortName = x.ShortName,
+					WebSite = x.WebSite
+				});
 			var vendors = q.ToList();
 			db.Dispose();
 			db = null;

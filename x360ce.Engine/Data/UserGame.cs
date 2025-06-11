@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace x360ce.Engine.Data
@@ -96,10 +95,6 @@ namespace x360ce.Engine.Data
 			return new DirectoryInfo(path);
 		}
 
-		public bool IsCurrentApp()
-		{
-			return string.Compare(Application.ExecutablePath, FullPath, true) == 0;
-		}
 		//#region Do not serialize default values
 
 		//bool notDefault<T>(T value, T defaultValue = default(T))

@@ -15,8 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>x360ce.Web</RootNamespace>
     <AssemblyName>x360ce.Web</AssemblyName>
-    <TargetFrameworks>net48</TargetFrameworks>
-	<TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -36,7 +35,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFRAMEWORK</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
@@ -59,6 +58,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SharpDX">
+      <HintPath>..\x360ce.Engine\Resources\SharpDX\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DirectInput">
+      <HintPath>..\x360ce.Engine\Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DataVisualization" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data.Entity" />
@@ -69,7 +76,11 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Common\JsClasses\System.Web.UI.Interface.debug.css" />
@@ -133,6 +144,273 @@
     <Content Include="WebServices\x360ce.asmx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\x360ce.Engine\Common\CloudAction.cs">
+      <Link>Engine\CloudAction.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\CloudErrorCode.cs">
+      <Link>Engine\CloudErrorCode.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\CloudHelper.Security.cs">
+      <Link>Engine\CloudHelper.Security.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\CloudKey.cs">
+      <Link>Engine\CloudKey.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\CloudMessage.cs">
+      <Link>Engine\CloudMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\ConvertHelper.cs">
+      <Link>Engine\ConvertHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\CustomDiState.cs">
+      <Link>Engine\CustomDiState.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\CustomDiUpdate.cs">
+      <Link>Engine\CustomDiUpdate.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\DatabaseHelper.cs">
+      <Link>Engine\DatabaseHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\DeviceEffectItem.cs">
+      <Link>Engine\DeviceEffectItem.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\DeviceObjectItem.cs">
+      <Link>Engine\DeviceObjectItem.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\EngineHelper.Basic.cs">
+      <Link>Engine\EngineHelper.Basic.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\EngineHelper.Data.cs">
+      <Link>Engine\EngineHelper.Data.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\Enum\DPadEnum.cs">
+      <Link>Engine\DPadEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\Enum\EmulationType.cs">
+      <Link>Engine\EmulationType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\Enum\EnabledState.cs">
+      <Link>Engine\EnabledState.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\Enum\ForceEffectType.cs">
+      <Link>Engine\ForceEffectType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\ForceFeedbackState.cs">
+      <Link>Engine\ForceFeedbackState.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\IChecksum.cs">
+      <Link>Engine\IChecksum.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\IDateTime.cs">
+      <Link>Engine\IDateTime.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\IDisplayName.cs">
+      <Link>Engine\IDisplayName.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\IWebService.cs">
+      <Link>Engine\IWebService.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\KeyValue.cs">
+      <Link>Engine\KeyValue.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\KeyValueList.cs">
+      <Link>Engine\KeyValueList.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\Preset.cs">
+      <Link>Engine\Preset.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\SearchParameter.cs">
+      <Link>Engine\SearchParameter.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\SearchParameterCollection.cs">
+      <Link>Engine\SearchParameterCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\SearchResult.cs">
+      <Link>Engine\SearchResult.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Common\SettingsData.cs">
+      <Link>Engine\SettingsData.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Data\IComputer.cs">
+      <Link>Engine\IComputer.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Data\IProgram.cs">
+      <Link>Engine\IProgram.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Data\IUserRecord.cs">
+      <Link>Engine\IUserRecord.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Data\PadSetting.cs">
+      <Link>Engine\PadSetting.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Data\UserDevice.cs">
+      <Link>Engine\UserDevice.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Data\UserGame.cs">
+      <Link>Engine\UserGame.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Data\UserInstance.cs">
+      <Link>Engine\UserInstance.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Data\UserSetting.cs">
+      <Link>Engine\UserSetting.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Data\x360ceModel.Designer.cs">
+      <Link>Engine\x360ceModel.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Common\GuidEnum.cs">
+      <Link>JocysCom\GuidEnum.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Common\GuidValueAttribute.cs">
+      <Link>JocysCom\GuidValueAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Common\HiResDateTime.cs">
+      <Link>JocysCom\HiResDateTime.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Common\ItemType.cs">
+      <Link>JocysCom\ItemType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Common\LinkItem.cs">
+      <Link>JocysCom\LinkItem.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Common\TimeUnitType.cs">
+      <Link>JocysCom\TimeUnitType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Configuration\AssemblyInfo.cs">
+      <Link>JocysCom\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Configuration\AssemblyInfo.Ext1.cs">
+      <Link>JocysCom\AssemblyInfo.Ext1.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Configuration\SettingsParser.cs">
+      <Link>JocysCom\SettingsParser.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Data\SqlHelper.cs">
+      <Link>JocysCom\SqlHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\IO\DeviceInfo.cs">
+      <Link>JocysCom\DeviceInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\IO\LogFileWriter.cs">
+      <Link>JocysCom\LogFileWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Mail\EmailResult.cs">
+      <Link>JocysCom\EmailResult.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Mail\MailHelper.cs">
+      <Link>JocysCom\MailHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Mail\MailMessageSerializable.cs">
+      <Link>JocysCom\MailMessageSerializable.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Mail\MailTextType.cs">
+      <Link>JocysCom\MailTextType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Mail\SmtpClientEx.cs">
+      <Link>JocysCom\SmtpClientEx.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\Attributes.cs">
+      <Link>JocysCom\Attributes.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\ChangeState.cs">
+      <Link>JocysCom\ChangeState.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\LogHelper.cs">
+      <Link>JocysCom\LogHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\LogHelper.Exception.cs">
+      <Link>JocysCom\LogHelper.Exception.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\LogHelper.File.cs">
+      <Link>JocysCom\LogHelper.File.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\LogHelper.Mail.cs">
+      <Link>JocysCom\LogHelper.Mail.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\RuntimeHelper.cs">
+      <Link>Engine\RuntimeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\RuntimeHelper.Entity.cs">
+      <Link>Engine\RuntimeHelper.Entity.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\Serializer.cs">
+      <Link>JocysCom\Serializer.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Runtime\TraceFormat.cs">
+      <Link>JocysCom\TraceFormat.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\AESHelper.cs">
+      <Link>JocysCom\AESHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\Check.cs">
+      <Link>JocysCom\Check.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\Data\Membership.cs">
+      <Link>JocysCom\Membership.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\Data\Role.cs">
+      <Link>JocysCom\Role.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\Data\SecurityEntities.cs">
+      <Link>JocysCom\SecurityEntities.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\Data\SecurityModel.Designer.cs">
+      <Link>JocysCom\SecurityModel.Designer.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\Data\User.cs">
+      <Link>JocysCom\User.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\Encryption.cs">
+      <Link>JocysCom\Encryption.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\RoleQueryName.cs">
+      <Link>JocysCom\RoleQueryName.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\TokenHelper.cs">
+      <Link>JocysCom\TokenHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\TokenHelper.Web.cs">
+      <Link>JocysCom\TokenHelper.Web.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\UserFieldName.cs">
+      <Link>JocysCom\UserFieldName.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Security\ValidationField.cs">
+      <Link>JocysCom\ValidationField.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Text\Helper.cs">
+      <Link>JocysCom\Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\JocysCom\Win32\DeviceNodeStatus.cs">
+      <Link>JocysCom\DeviceNodeStatus.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Maps\Map.cs">
+      <Link>Engine\Map.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Maps\MapCode.cs">
+      <Link>Engine\MapCode.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Maps\MapType.cs">
+      <Link>Engine\MapType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Maps\SettingName.cs">
+      <Link>Engine\SettingName.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Maps\SettingsConverter.cs">
+      <Link>Engine\SettingsConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\Maps\TargetType.cs">
+      <Link>Engine\TargetType.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\SharpDX.XInput\Gamepad.cs">
+      <Link>Engine\Gamepad.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\SharpDX.XInput\GamepadButtonFlags.cs">
+      <Link>Engine\GamepadButtonFlags.cs</Link>
+    </Compile>
+    <Compile Include="..\x360ce.Engine\SharpDX.XInput\Vibration.cs">
+      <Link>Engine\Vibration.cs</Link>
+    </Compile>
     <Compile Include="Controls\ControllersChartControl.ascx.cs">
       <DependentUpon>ControllersChartControl.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -297,10 +575,7 @@
     <Content Include="Security\Site.Master" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\x360ce.Engine\x360ce.Engine.csproj">
-      <Project>{f980d78a-9448-4834-a6fe-84797077d309}</Project>
-      <Name>x360ce.Engine</Name>
-    </ProjectReference>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -310,14 +585,21 @@
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
     <CodeAnalysisRuleSet />
     <Prefer32Bit>false</Prefer32Bit>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
     <CodeAnalysisRuleSet />
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -325,14 +607,21 @@
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
     <CodeAnalysisRuleSet />
     <Prefer32Bit>false</Prefer32Bit>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <PlatformTarget>x86</PlatformTarget>
     <OutputPath>bin\</OutputPath>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
     <CodeAnalysisRuleSet />
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>

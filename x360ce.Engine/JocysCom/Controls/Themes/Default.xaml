@@ -163,7 +163,10 @@
 		</Style.Resources>
 	</Style>
 	<!--  Border Description Warning  -->
-	<Style x:Key="BorderDescriptionWarning" BasedOn="{StaticResource BorderDescriptionNormal}" TargetType="Border">
+	<Style
+		x:Key="BorderDescriptionWarning"
+		BasedOn="{StaticResource BorderDescriptionNormal}"
+		TargetType="Border">
 		<Setter Property="Background" Value="{StaticResource BackgroundWarning}" />
 		<Style.Resources>
 			<Style TargetType="TextBlock">
@@ -204,7 +207,10 @@
 				<ControlTemplate TargetType="{x:Type GridSplitter}">
 					<!--  The "Transparent" background is necessary for the resize icon to be visible beneath the mouse correctly.  -->
 					<Grid Background="Transparent">
-						<StackPanel Margin="3" VerticalAlignment="Center" Orientation="Vertical">
+						<StackPanel
+							Margin="3"
+							VerticalAlignment="Center"
+							Orientation="Vertical">
 							<StackPanel.LayoutTransform>
 								<RotateTransform Angle="0" />
 							</StackPanel.LayoutTransform>
@@ -236,8 +242,14 @@
 									Fill="LightGray" />
 							</Canvas>
 						</StackPanel>
-						<StackPanel Height="1" VerticalAlignment="Top" Background="{StaticResource BorderDark}" />
-						<StackPanel Height="1" VerticalAlignment="Bottom" Background="{StaticResource BorderDark}" />
+						<StackPanel
+							Height="1"
+							VerticalAlignment="Top"
+							Background="{StaticResource BorderDark}" />
+						<StackPanel
+							Height="1"
+							VerticalAlignment="Bottom"
+							Background="{StaticResource BorderDark}" />
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>
@@ -254,7 +266,10 @@
 				<ControlTemplate TargetType="{x:Type GridSplitter}">
 					<!--  The "Transparent" background is necessary for the resize icon to be visible beneath the mouse correctly.  -->
 					<Grid Background="Transparent">
-						<StackPanel Margin="3" VerticalAlignment="Center" Orientation="Vertical">
+						<StackPanel
+							Margin="3"
+							VerticalAlignment="Center"
+							Orientation="Vertical">
 							<StackPanel.LayoutTransform>
 								<RotateTransform Angle="90" />
 							</StackPanel.LayoutTransform>
@@ -286,8 +301,14 @@
 									Fill="LightGray" />
 							</Canvas>
 						</StackPanel>
-						<StackPanel Width="1" HorizontalAlignment="Left" Background="{StaticResource BorderDark}" />
-						<StackPanel Width="1" HorizontalAlignment="Right" Background="{StaticResource BorderDark}" />
+						<StackPanel
+							Width="1"
+							HorizontalAlignment="Left"
+							Background="{StaticResource BorderDark}" />
+						<StackPanel
+							Width="1"
+							HorizontalAlignment="Right"
+							Background="{StaticResource BorderDark}" />
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>
@@ -418,7 +439,10 @@
 									<ColumnDefinition />
 									<ColumnDefinition Width="16" />
 								</Grid.ColumnDefinitions>
-								<Label Margin="0,0,5,0" VerticalAlignment="Center" Content="{TemplateBinding Tag}" />
+								<Label
+									Margin="0,0,5,0"
+									VerticalAlignment="Center"
+									Content="{TemplateBinding Tag}" />
 								<Path Style="{StaticResource DropDownControlTriangle}" />
 							</Grid>
 						</Border>
@@ -446,7 +470,10 @@
 				<Setter Property="Template">
 					<Setter.Value>
 						<ControlTemplate TargetType="MenuItem">
-							<Border Name="PART_Border" Padding="10,5,10,5" CornerRadius="5">
+							<Border
+								Name="PART_Border"
+								Padding="10,5,10,5"
+								CornerRadius="5">
 								<Grid>
 									<Popup
 										Name="PART_Popup"
@@ -565,7 +592,12 @@
 						</Style>
 					</ControlTemplate.Resources>
 					<!--  Template  -->
-					<Border Name="ButtonBorder" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+					<Border
+						Name="ButtonBorder"
+						Padding="{TemplateBinding Padding}"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}">
 						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
 					</Border>
 					<!--  Triggers  -->
@@ -631,13 +663,22 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ListBox">
-					<Border BorderBrush="{StaticResource BorderDark}" BorderThickness="1" CornerRadius="5">
+					<Border
+						BorderBrush="{StaticResource BorderDark}"
+						BorderThickness="1"
+						CornerRadius="5">
 						<Grid>
 							<Grid.OpacityMask>
 								<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 							</Grid.OpacityMask>
-							<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
-							<ScrollViewer Margin="0" Background="{StaticResource BackgroundDark}" Focusable="false">
+							<Border
+								Name="OpacityMaskBorder"
+								Background="{StaticResource BackgroundDark}"
+								CornerRadius="5" />
+							<ScrollViewer
+								Margin="0"
+								Background="{StaticResource BackgroundDark}"
+								Focusable="false">
 								<StackPanel IsItemsHost="True" />
 							</ScrollViewer>
 						</Grid>
@@ -654,8 +695,15 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ListBoxItem">
-					<Border Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+					<Border
+						Padding="{TemplateBinding Padding}"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}">
+						<ContentPresenter
+							HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+							SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 					</Border>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsSelected" Value="True">
@@ -705,12 +753,21 @@
 							SnapsToDevicePixels="True" />
 
 						<!--  Content area  -->
-						<Grid x:Name="ContentPanel" Grid.Row="1" Margin="1">
+						<Grid
+							x:Name="ContentPanel"
+							Grid.Row="1"
+							Margin="1">
 							<Grid.OpacityMask>
 								<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 							</Grid.OpacityMask>
-							<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundLight}" CornerRadius="0,5,5,5" />
-							<ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" ClipToBounds="True" ContentSource="SelectedContent" />
+							<Border
+								Name="OpacityMaskBorder"
+								Background="{StaticResource BackgroundLight}"
+								CornerRadius="0,5,5,5" />
+							<ContentPresenter
+								VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+								ClipToBounds="True"
+								ContentSource="SelectedContent" />
 						</Grid>
 					</Grid>
 
@@ -848,7 +905,10 @@
 	</Style>
 
 	<!--  TextBox  -->
-	<Style x:Key="TextBox_Default" BasedOn="{StaticResource SharedTextBoxStyle}" TargetType="TextBox">
+	<Style
+		x:Key="TextBox_Default"
+		BasedOn="{StaticResource SharedTextBoxStyle}"
+		TargetType="TextBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="TextBox">
@@ -899,7 +959,10 @@
 	</Style>
 
 	<!--  PasswordBox  -->
-	<Style x:Key="PasswordBox_Default" BasedOn="{StaticResource SharedTextBoxStyle}" TargetType="PasswordBox">
+	<Style
+		x:Key="PasswordBox_Default"
+		BasedOn="{StaticResource SharedTextBoxStyle}"
+		TargetType="PasswordBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="PasswordBox">
@@ -938,7 +1001,10 @@
 	</Style>
 
 	<!--  TextBox - ResultsLog  -->
-	<Style x:Key="TextBoxResultsLog" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
+	<Style
+		x:Key="TextBoxResultsLog"
+		BasedOn="{StaticResource TextBox_Default}"
+		TargetType="TextBox">
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="VerticalAlignment" Value="Stretch" />
 		<Setter Property="VerticalContentAlignment" Value="Top" />
@@ -953,7 +1019,10 @@
 	</Style>
 
 	<!--  TextBox - Cell  -->
-	<Style x:Key="TextBoxCell" BasedOn="{StaticResource TextBox_Default}" TargetType="TextBox">
+	<Style
+		x:Key="TextBoxCell"
+		BasedOn="{StaticResource TextBox_Default}"
+		TargetType="TextBox">
 		<Setter Property="BorderThickness" Value="0" />
 		<Setter Property="Padding" Value="0" />
 		<Setter Property="Margin" Value="1" />
@@ -968,40 +1037,64 @@
 		</Style.Resources>
 	</Style>
 
-	<Style x:Key="TextBoxRightCell" BasedOn="{StaticResource TextBoxCell}" TargetType="TextBox">
+	<Style
+		x:Key="TextBoxRightCell"
+		BasedOn="{StaticResource TextBoxCell}"
+		TargetType="TextBox">
 		<Setter Property="TextAlignment" Value="Right" />
 	</Style>
 
-	<Style x:Key="TextBoxCenterCell" BasedOn="{StaticResource TextBoxCell}" TargetType="TextBox">
+	<Style
+		x:Key="TextBoxCenterCell"
+		BasedOn="{StaticResource TextBoxCell}"
+		TargetType="TextBox">
 		<Setter Property="TextAlignment" Value="Center" />
 	</Style>
 
 	<!--  TextBlock - Cell  -->
-	<Style x:Key="TextBlockCell" BasedOn="{StaticResource TextBlock_Default}" TargetType="TextBlock">
+	<Style
+		x:Key="TextBlockCell"
+		BasedOn="{StaticResource TextBlock_Default}"
+		TargetType="TextBlock">
 		<Setter Property="Padding" Value="0" />
 		<Setter Property="HorizontalAlignment" Value="Stretch" />
 		<Setter Property="Margin" Value="3,0,16,0" />
 		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 
-	<Style x:Key="TextBlockCellM3" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+	<Style
+		x:Key="TextBlockCellM3"
+		BasedOn="{StaticResource TextBlockCell}"
+		TargetType="TextBlock">
 		<Setter Property="Margin" Value="3,0,3,0" />
 	</Style>
 
-	<Style x:Key="TextBlockCellM3W500" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+	<Style
+		x:Key="TextBlockCellM3W500"
+		BasedOn="{StaticResource TextBlockCell}"
+		TargetType="TextBlock">
 		<Setter Property="Margin" Value="3,0,3,0" />
 		<Setter Property="MinWidth" Value="500" />
 	</Style>
 
-	<Style x:Key="TextBlockLeftCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+	<Style
+		x:Key="TextBlockLeftCell"
+		BasedOn="{StaticResource TextBlockCell}"
+		TargetType="TextBlock">
 		<Setter Property="TextAlignment" Value="Left" />
 	</Style>
 
-	<Style x:Key="TextBlockRightCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+	<Style
+		x:Key="TextBlockRightCell"
+		BasedOn="{StaticResource TextBlockCell}"
+		TargetType="TextBlock">
 		<Setter Property="TextAlignment" Value="Right" />
 	</Style>
 
-	<Style x:Key="TextBlockCenterCell" BasedOn="{StaticResource TextBlockCell}" TargetType="TextBlock">
+	<Style
+		x:Key="TextBlockCenterCell"
+		BasedOn="{StaticResource TextBlockCell}"
+		TargetType="TextBlock">
 		<Setter Property="TextAlignment" Value="Center" />
 	</Style>
 
@@ -1099,7 +1192,10 @@
 		<Setter Property="HorizontalAlignment" Value="Left" />
 	</Style>
 
-	<Style x:Key="ContentControlCell_Default" BasedOn="{StaticResource ContentControl_Default}" TargetType="ContentControl">
+	<Style
+		x:Key="ContentControlCell_Default"
+		BasedOn="{StaticResource ContentControl_Default}"
+		TargetType="ContentControl">
 		<Setter Property="Margin" Value="3,0,3,0" />
 		<Setter Property="Width" Value="16" />
 		<Setter Property="Height" Value="16" />
@@ -1107,7 +1203,10 @@
 		<Setter Property="HorizontalAlignment" Value="Left" />
 	</Style>
 
-	<Style x:Key="CheckBoxCell_Default" BasedOn="{StaticResource CheckBox_Default}" TargetType="CheckBox" />
+	<Style
+		x:Key="CheckBoxCell_Default"
+		BasedOn="{StaticResource CheckBox_Default}"
+		TargetType="CheckBox" />
 
 	<!--  Column Header  -->
 	<Style x:Key="DataGridColumnHeader_Default" TargetType="DataGridColumnHeader">
@@ -1126,13 +1225,19 @@
 		</Style.Triggers>-->
 	</Style>
 
-	<Style x:Key="DataGridHeader_Sorting" BasedOn="{StaticResource DataGridColumnHeader_Default}" TargetType="DataGridColumnHeader">
+	<Style
+		x:Key="DataGridHeader_Sorting"
+		BasedOn="{StaticResource DataGridColumnHeader_Default}"
+		TargetType="DataGridColumnHeader">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="DataGridColumnHeader">
 					<Grid Background="{DynamicResource GradientBrushStyle}">
 						<!--  Title  -->
-						<ContentPresenter Margin="3,0,16,0" VerticalAlignment="Center" Content="{TemplateBinding Content}" />
+						<ContentPresenter
+							Margin="3,0,16,0"
+							VerticalAlignment="Center"
+							Content="{TemplateBinding Content}" />
 						<!--  Sorting Triangle  -->
 						<Path
 							x:Name="SortingIndicator"
@@ -1609,7 +1714,10 @@
 	</Style>
 
 	<!--  ComboBox  -->
-	<Style x:Key="ComboBox_Default" BasedOn="{StaticResource ComboBox_Style}" TargetType="ComboBox">
+	<Style
+		x:Key="ComboBox_Default"
+		BasedOn="{StaticResource ComboBox_Style}"
+		TargetType="ComboBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ComboBox">
@@ -1649,12 +1757,18 @@
 							</ToggleButton.Template>
 						</ToggleButton>
 						<!--  DropDown popup settings  -->
-						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
+						<Popup
+							Name="Popup"
+							AllowsTransparency="True"
+							IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
 								<Grid.OpacityMask>
 									<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 								</Grid.OpacityMask>
-								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+								<Border
+									Name="OpacityMaskBorder"
+									Background="{StaticResource BackgroundDark}"
+									CornerRadius="5" />
 								<ScrollViewer Margin="0" ClipToBounds="True">
 									<ItemsPresenter />
 									<!--<VirtualizingStackPanel IsItemsHost="True" />-->
@@ -1674,7 +1788,10 @@
 	</Style>
 
 	<!--  ComboBox Static - Text="Value" or Text=""  -->
-	<Style x:Key="ComboBox_Static" BasedOn="{StaticResource ComboBox_Style}" TargetType="ComboBox">
+	<Style
+		x:Key="ComboBox_Static"
+		BasedOn="{StaticResource ComboBox_Style}"
+		TargetType="ComboBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ComboBox">
@@ -1695,7 +1812,10 @@
 												<ColumnDefinition Width="16" />
 											</Grid.ColumnDefinitions>
 											<!--  Static Selected Item  -->
-											<ContentPresenter Name="ContentSite" Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}" Style="{StaticResource ComboBoxContentPresenter}" />
+											<ContentPresenter
+												Name="ContentSite"
+												Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text, Mode=OneTime}"
+												Style="{StaticResource ComboBoxContentPresenter}" />
 											<!--  Triangle  -->
 											<Path Style="{StaticResource DropDownControlTriangle}" />
 										</Grid>
@@ -1715,12 +1835,18 @@
 							</ToggleButton.Template>
 						</ToggleButton>
 						<!--  DropDown popup settings  -->
-						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
+						<Popup
+							Name="Popup"
+							AllowsTransparency="True"
+							IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
 								<Grid.OpacityMask>
 									<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 								</Grid.OpacityMask>
-								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+								<Border
+									Name="OpacityMaskBorder"
+									Background="{StaticResource BackgroundDark}"
+									CornerRadius="5" />
 								<ScrollViewer Margin="0" ClipToBounds="True">
 									<ItemsPresenter />
 									<!--<VirtualizingStackPanel IsItemsHost="True" />-->
@@ -1740,7 +1866,10 @@
 	</Style>
 
 	<!--  ComboBox Dynamic - Text="Value" or Text=""  -->
-	<Style x:Key="ComboBox_Dynamic" BasedOn="{StaticResource ComboBox_Style}" TargetType="ComboBox">
+	<Style
+		x:Key="ComboBox_Dynamic"
+		BasedOn="{StaticResource ComboBox_Style}"
+		TargetType="ComboBox">
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="ComboBox">
@@ -1761,7 +1890,10 @@
 												<ColumnDefinition Width="16" />
 											</Grid.ColumnDefinitions>
 											<!--  Dynamic Selected Item  -->
-											<ContentPresenter Name="ContentSite" Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text}" Style="{StaticResource ComboBoxContentPresenter}" />
+											<ContentPresenter
+												Name="ContentSite"
+												Content="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ComboBox}}, Path=Text}"
+												Style="{StaticResource ComboBoxContentPresenter}" />
 											<!--  Triangle  -->
 											<Path Style="{StaticResource DropDownControlTriangle}" />
 										</Grid>
@@ -1781,12 +1913,18 @@
 							</ToggleButton.Template>
 						</ToggleButton>
 						<!--  DropDown popup settings  -->
-						<Popup Name="Popup" AllowsTransparency="True" IsOpen="{TemplateBinding IsDropDownOpen}">
+						<Popup
+							Name="Popup"
+							AllowsTransparency="True"
+							IsOpen="{TemplateBinding IsDropDownOpen}">
 							<Grid MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
 								<Grid.OpacityMask>
 									<VisualBrush Visual="{Binding ElementName=OpacityMaskBorder}" />
 								</Grid.OpacityMask>
-								<Border Name="OpacityMaskBorder" Background="{StaticResource BackgroundDark}" CornerRadius="5" />
+								<Border
+									Name="OpacityMaskBorder"
+									Background="{StaticResource BackgroundDark}"
+									CornerRadius="5" />
 								<ScrollViewer Margin="0" ClipToBounds="True">
 									<ItemsPresenter />
 									<!--<VirtualizingStackPanel IsItemsHost="True" />-->

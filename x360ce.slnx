@@ -13,7 +13,7 @@
   <Project Path="x360ce.Net48Test/x360ce.Net48Test.csproj" Id="e89bbcff-f4f9-44f9-b3aa-98c62ca8dac8" />
   <Project Path="x360ce.Net60Test/x360ce.Net60Test.csproj" />
   <Project Path="x360ce.RemoteController/x360ce.RemoteController.csproj" />
-  <Project Path="x360ce.Web/x360ce.Web.csproj" />
+  <Project Path="x360ce.Web/x360ce.Web.csproj" Id="ee2589b6-b2f3-44f9-a95c-17ebf74788fb" />
   <Properties Name="Performance">
     <Property Name="HasPerformanceSessions" Value="true" />
   </Properties>
