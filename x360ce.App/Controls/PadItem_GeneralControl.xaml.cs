@@ -164,17 +164,34 @@ namespace x360ce.App.Controls
 
 		#region Drag and Drop Menu
 
-		// Drag and Drop Menu PreviewMouseMove event.
-		private void DragAndDropMenuLabel_Source_PreviewMouseMove(object sender, MouseEventArgs e)
-		{
+		bool isDragging = false;
+
+        private void DragAndDropMenuLabel_Source_MouseDown(object sender, MouseEventArgs e)
+        {
 			if (sender is Label label && e.LeftButton == MouseButtonState.Pressed)
 			{
-				DragDrop.DoDragDrop(label, label.Tag?.ToString() ?? string.Empty, DragDropEffects.Copy);
-			}
-		}
+                // Change dragging status.
+                isDragging = true;
+                Global.DHelper.StopDInputService();
+				label.Background = colorRecord;
 
-		// Drag and Drop Menu Drop event.
-		private void DragAndDropMenu_Target_Drop(object sender, DragEventArgs e)
+                try
+				{
+					// Start DragDrop with Label content.
+					DragDrop.DoDragDrop(label, label.Tag?.ToString() ?? string.Empty, DragDropEffects.Copy);
+				}
+				finally
+				{
+                    // In any case, dragging ended or stopped (successful or not).
+                    isDragging = false;
+                    Global.DHelper.StartDInputService();
+					label.Background = Brushes.Transparent;
+                }
+			}
+        }
+
+        // Drag and Drop Menu Drop event.
+        private void DragAndDropMenu_Target_Drop(object sender, DragEventArgs e)
 		{
 			if (sender is TextBox textbox && e.Data.GetDataPresent(DataFormats.Text))
 			{
@@ -292,9 +309,9 @@ namespace x360ce.App.Controls
 						buttonLabel.Tag = $"{itemName} {buttonLabel.Content}";
 					}
 
-					buttonLabel.PreviewMouseMove += DragAndDropMenuLabel_Source_PreviewMouseMove;
+                    buttonLabel.MouseDown += DragAndDropMenuLabel_Source_MouseDown;
 
-					Label valueLabel = new Label
+                    Label valueLabel = new Label
 					{
 						IsHitTestVisible = false,
 						FontSize = 8,
