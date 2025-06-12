@@ -634,198 +634,209 @@ namespace x360ce.App.Controls
 				}
 			}
 		}
-		#endregion
+        #endregion
 
-		#region ■ Direct Input Menu
+        #region ■ Direct Input Menu
 
-		// Drag and Drop related commented code is preserved.
-		//List<MenuItem> DiMenuStrip = new List<MenuItem>();
-		//string cRecord = "[Record]";
-		//string cEmpty = "<empty>";
-		//string cPOVs = "povs";
+        // Drag and Drop related commented code is preserved.
+        //List<MenuItem> DiMenuStrip = new List<MenuItem>();
+        //string cRecord = "[Record]";
+        //string cEmpty = "<empty>";
+        //string cPOVs = "povs";
 
-		// Function is recreated as soon as new DirectInput Device is available.
-		//public void ResetDiMenuStrip2(UserDevice ud)
-		//{
-		//	DiMenuStrip.Clear();
-		//	MenuItem mi;
-		//	mi = new MenuItem() { Header = cEmpty };
-		//	mi.Foreground = SystemColors.ControlDarkBrush;
-		//	mi.Click += DiMenuStrip_Click;
-		//	DiMenuStrip.Add(mi);
-		//	// Return if direct input device is not available.
-		//	if (ud == null)
-		//		return;
-		//	// Add [Record] label.
-		//	mi = new MenuItem() { Header = cRecord };
-		//	//mi.Icon = new ContentControl();
-		//	mi.Click += DiMenuStrip_Click;
-		//	DiMenuStrip.Add(mi);
+        // Function is recreated as soon as new DirectInput Device is available.
+        //public void ResetDiMenuStrip2(UserDevice ud)
+        //{
+        //	DiMenuStrip.Clear();
+        //	MenuItem mi;
+        //	mi = new MenuItem() { Header = cEmpty };
+        //	mi.Foreground = SystemColors.ControlDarkBrush;
+        //	mi.Click += DiMenuStrip_Click;
+        //	DiMenuStrip.Add(mi);
+        //	// Return if direct input device is not available.
+        //	if (ud == null)
+        //		return;
+        //	// Add [Record] label.
+        //	mi = new MenuItem() { Header = cRecord };
+        //	//mi.Icon = new ContentControl();
+        //	mi.Click += DiMenuStrip_Click;
+        //	DiMenuStrip.Add(mi);
 
-		//	// Do not add menu items for keyboard, because user interface will become too sluggish.
-		//	// Recording feature is preferred way to map keyboard label.
-		//	if (!ud.IsKeyboard)
-		//	{
-		//		// Add Buttons.
-		//		mi = new MenuItem() { Header = "Buttons" };
-		//		DiMenuStrip.Add(mi);
-		//		CreateItems(mi, "Inverted", "IButton {0}", "-{0}", ud.CapButtonCount);
-		//		CreateItems(mi, "Button {0}", "{0}", ud.CapButtonCount);
-		// Add Axes.
-		//		if (ud.DiAxeMask > 0)
-		//		{
-		//			mi = new MenuItem() { Header = "Axes" };
-		//			DiMenuStrip.Add(mi);
-		//			CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-		//			CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-		//			CreateItems(mi, "Half", "HAxis {0}", "x{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-		//			CreateItems(mi, "Axis {0}", "a{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
-		//		}
-		//		Add Sliders. 
-		//		if (ud.DiSliderMask > 0)
-		//		{
-		//			mi = new MenuItem() { Header = "Sliders" };
-		//			DiMenuStrip.Add(mi);
-		//			// 2 x Sliders, 2 x AccelerationSliders, 2 x bDS.ForceSliders, 2 x VelocitySliders
-		//			CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-		//			CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-		//			CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-		//			CreateItems(mi, "Slider {0}", "s{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
-		//		}
-		//		// Add D-Pads.
-		//		if (ud.CapPovCount > 0)
-		//		{
-		//			// Add povs.
-		//			mi = new MenuItem() { Header = cPOVs };
-		//			DiMenuStrip.Add(mi);
-		//			// Add D-Pad Top, Right, Bottom, Left label.
-		//			var dPadNames = Enum.GetNames(typeof(DPadEnum));
-		//			for (int dInputPolylineStepSize = 0; dInputPolylineStepSize < ud.CapPovCount; dInputPolylineStepSize++)
-		//			{
-		//				var dPadItem = CreateItem("POV {0}", "{1}{0}", dInputPolylineStepSize + 1, SettingName.SType.POV);
-		//				mi.Items.Add(dPadItem);
-		//				for (int d = 0; d < dPadNames.Length; d++)
-		//				{
-		//					var dPadButtonIndex = dInputPolylineStepSize * 4 + d + 1;
-		//					var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", dInputPolylineStepSize + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
-		//					dPadItem.Items.Add(dPadButtonItem);
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
+        //	// Do not add menu items for keyboard, because user interface will become too sluggish.
+        //	// Recording feature is preferred way to map keyboard label.
+        //	if (!ud.IsKeyboard)
+        //	{
+        //		// Add Buttons.
+        //		mi = new MenuItem() { Header = "Buttons" };
+        //		DiMenuStrip.Add(mi);
+        //		CreateItems(mi, "Inverted", "IButton {0}", "-{0}", ud.CapButtonCount);
+        //		CreateItems(mi, "Button {0}", "{0}", ud.CapButtonCount);
+        // Add Axes.
+        //		if (ud.DiAxeMask > 0)
+        //		{
+        //			mi = new MenuItem() { Header = "Axes" };
+        //			DiMenuStrip.Add(mi);
+        //			CreateItems(mi, "Inverted", "IAxis {0}", "a-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+        //			CreateItems(mi, "Inverted Half", "IHAxis {0}", "x-{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+        //			CreateItems(mi, "Half", "HAxis {0}", "x{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+        //			CreateItems(mi, "Axis {0}", "a{0}", CustomDiState.MaxAxis, ud.DiAxeMask);
+        //		}
+        //		Add Sliders. 
+        //		if (ud.DiSliderMask > 0)
+        //		{
+        //			mi = new MenuItem() { Header = "Sliders" };
+        //			DiMenuStrip.Add(mi);
+        //			// 2 x Sliders, 2 x AccelerationSliders, 2 x bDS.ForceSliders, 2 x VelocitySliders
+        //			CreateItems(mi, "Inverted", "ISlider {0}", "s-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+        //			CreateItems(mi, "Inverted Half", "IHSlider {0}", "h-{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+        //			CreateItems(mi, "Half", "HSlider {0}", "h{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+        //			CreateItems(mi, "Slider {0}", "s{0}", CustomDiState.MaxSliders, ud.DiSliderMask);
+        //		}
+        //		// Add D-Pads.
+        //		if (ud.CapPovCount > 0)
+        //		{
+        //			// Add povs.
+        //			mi = new MenuItem() { Header = cPOVs };
+        //			DiMenuStrip.Add(mi);
+        //			// Add D-Pad Top, Right, Bottom, Left label.
+        //			var dPadNames = Enum.GetNames(typeof(DPadEnum));
+        //			for (int dInputPolylineStepSize = 0; dInputPolylineStepSize < ud.CapPovCount; dInputPolylineStepSize++)
+        //			{
+        //				var dPadItem = CreateItem("POV {0}", "{1}{0}", dInputPolylineStepSize + 1, SettingName.SType.POV);
+        //				mi.Items.Add(dPadItem);
+        //				for (int d = 0; d < dPadNames.Length; d++)
+        //				{
+        //					var dPadButtonIndex = dInputPolylineStepSize * 4 + d + 1;
+        //					var dPadButtonItem = CreateItem("POV {0} {1}", "{2}{3}", dInputPolylineStepSize + 1, dPadNames[d], SettingName.SType.POVButton, dPadButtonIndex);
+        //					dPadItem.Items.Add(dPadButtonItem);
+        //				}
+        //			}
+        //		}
+        //	}
+        //}
 
-		//void CreateItems(MenuItem parent, string subMenu, string text, string tag, int count, int? mask = null)
-		//{
-		//	var smi = new MenuItem() { Header = subMenu };
-		//	parent.Items.Add(smi);
-		//	CreateItems(smi, text, tag, count, mask);
-		//}
+        //void CreateItems(MenuItem parent, string subMenu, string text, string tag, int count, int? mask = null)
+        //{
+        //	var smi = new MenuItem() { Header = subMenu };
+        //	parent.Items.Add(smi);
+        //	CreateItems(smi, text, tag, count, mask);
+        //}
 
-		/// <summary>Create menu item.</summary>
-		/// <param name="mask">Mask contains information if item is present.</param>
-		//void CreateItems(MenuItem parent, string text, string tag, int count, int? mask = null)
-		//{
-		//	var items = new List<MenuItem>();
-		//	for (int i = 0; i < count; i++)
-		//	{
-		//		// If mask specified and item is not present then...
-		//		if (mask.HasValue && i < 32 && (((int)Math.Pow(2, i) & mask) == 0))
-		//			continue;
-		//		var item = CreateItem(text, tag, i + 1);
-		//		items.Add(item);
-		//	}
-		//	foreach (var item in items)
-		//		parent.Items.Add(item);
-		//}
+        /// <summary>Create menu item.</summary>
+        /// <param name="mask">Mask contains information if item is present.</param>
+        //void CreateItems(MenuItem parent, string text, string tag, int count, int? mask = null)
+        //{
+        //	var items = new List<MenuItem>();
+        //	for (int i = 0; i < count; i++)
+        //	{
+        //		// If mask specified and item is not present then...
+        //		if (mask.HasValue && i < 32 && (((int)Math.Pow(2, i) & mask) == 0))
+        //			continue;
+        //		var item = CreateItem(text, tag, i + 1);
+        //		items.Add(item);
+        //	}
+        //	foreach (var item in items)
+        //		parent.Items.Add(item);
+        //}
 
-		//MenuItem CreateItem(string text, string tag, params object[] args)
-		//{
-		//	var item = new MenuItem();
-		//	item.Header = string.Format(text, args);
-		//	item.Tag = string.Format(tag, args);
-		//	item.Padding = new Thickness(0);
-		//	item.Margin = new Thickness(0);
-		//	item.Click += DiMenuStrip_Click;
-		//	return item;
-		//}
+        //MenuItem CreateItem(string text, string tag, params object[] args)
+        //{
+        //	var item = new MenuItem();
+        //	item.Header = string.Format(text, args);
+        //	item.Tag = string.Format(tag, args);
+        //	item.Padding = new Thickness(0);
+        //	item.Margin = new Thickness(0);
+        //	item.Click += DiMenuStrip_Click;
+        //	return item;
+        //}
 
-		//void DiMenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
-		//{
-		//	EnableDPadMenu(false);
-		//}
+        //void DiMenuStrip_Closed(object sender, ToolStripDropDownClosedEventArgs e)
+        //{
+        //	EnableDPadMenu(false);
+        //}
 
-		//public void EnableDPadMenu(bool enable)
-		//{
-		//	foreach (ToolStripMenuItem item in DiMenuStrip.Items)
-		//	{
-		//		if (!item.Text.StartsWith(cRecord)
-		//			&& !item.Text.StartsWith(cEmpty)
-		//			&& !item.Text.StartsWith(cPOVs))
-		//		{
-		//			item.Visible = !enable;
-		//		}
-		//		if (item.Text.StartsWith(cPOVs))
-		//		{
-		//			if (item.HasDropDownItems)
-		//			{
-		//				foreach (ToolStripMenuItem l1 in item.DropDownItems)
-		//				{
-		//					foreach (ToolStripMenuItem l2 in l1.DropDownItems)
-		//						l2.Visible = !enable;
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
+        //public void EnableDPadMenu(bool enable)
+        //{
+        //	foreach (ToolStripMenuItem item in DiMenuStrip.Items)
+        //	{
+        //		if (!item.Text.StartsWith(cRecord)
+        //			&& !item.Text.StartsWith(cEmpty)
+        //			&& !item.Text.StartsWith(cPOVs))
+        //		{
+        //			item.Visible = !enable;
+        //		}
+        //		if (item.Text.StartsWith(cPOVs))
+        //		{
+        //			if (item.HasDropDownItems)
+        //			{
+        //				foreach (ToolStripMenuItem l1 in item.DropDownItems)
+        //				{
+        //					foreach (ToolStripMenuItem l2 in l1.DropDownItems)
+        //						l2.Visible = !enable;
+        //				}
+        //			}
+        //		}
+        //	}
+        //}
 
-		#endregion
+        #endregion
 
-		//MenuItem LastItem;
+        //MenuItem LastItem;
 
-		//private TextBox CurrentTextBox;
+        //private TextBox CurrentTextBox;
 
-		//private void MenuItem_Click(object sender, RoutedEventArgs e)
-		//{
-		//	var mi = (MenuItem)sender;
-		//	var smi = (MenuItem)e.Source;
-		//	if (mi != smi)
-		//		return;
+        //private void MenuItem_Click(object sender, RoutedEventArgs e)
+        //{
+        //	var mi = (MenuItem)sender;
+        //	var smi = (MenuItem)e.Source;
+        //	if (mi != smi)
+        //		return;
 
-		//	LastItem?.Items.Clear();
-		//	LastItem = mi;
-		//	foreach (var item in DiMenuStrip)
-		//		mi.Items.Add(item);
+        //	LastItem?.Items.Clear();
+        //	LastItem = mi;
+        //	foreach (var item in DiMenuStrip)
+        //		mi.Items.Add(item);
 
-		//	var control = (Menu)mi.Parent;
-		//	CurrentTextBox = (TextBox)control.Tag;
+        //	var control = (Menu)mi.Parent;
+        //	CurrentTextBox = (TextBox)control.Tag;
 
-		//	ControlsHelper.BeginInvoke(() =>
-		//	{
-		//		mi.IsSubmenuOpen = true;
-		//	});
+        //	ControlsHelper.BeginInvoke(() =>
+        //	{
+        //		mi.IsSubmenuOpen = true;
+        //	});
 
-		//}
+        //}
 
-		//void DiMenuStrip_Click(object sender, RoutedEventArgs e)
-		//{
-		//	var item = (MenuItem)sender;
-		//	var fullValue = (string)item.Header;
-		//	// If this DPad parent menu.
-		//	if (fullValue == cRecord)
-		//	{
-		//		//var map = SettingsManager.Current.SettingsMap.First(x => x.Control == CurrentCbx);
-		//		//StartRecording(map);
-		//	}
-		//	else
-		//	{
-		//		CurrentTextBox.Text = fullValue == cEmpty
-		//			? ""
-		//			: fullValue;
-		//	}
-		//}
+        //void DiMenuStrip_Click(object sender, RoutedEventArgs e)
+        //{
+        //	var item = (MenuItem)sender;
+        //	var fullValue = (string)item.Header;
+        //	// If this DPad parent menu.
+        //	if (fullValue == cRecord)
+        //	{
+        //		//var map = SettingsManager.Current.SettingsMap.First(x => x.Control == CurrentCbx);
+        //		//StartRecording(map);
+        //	}
+        //	else
+        //	{
+        //		CurrentTextBox.Text = fullValue == cEmpty
+        //			? ""
+        //			: fullValue;
+        //	}
+        //}
 
-		private void RecordClear_MouseEnterTextBox(object sender, MouseEventArgs e)
+        private void RecordClear_MouseEnterStackPanel(object sender, MouseEventArgs e)
+        {
+			var child = ((StackPanel)sender).Children.OfType<TextBox>().FirstOrDefault();
+			if (child != null) { RecordClear_MouseEnterTextBox(child, null); };
+        }
+
+        private void RecordClear_MouseLeaveStackPanel(object sender, MouseEventArgs e)
+        {
+            RCStackPanel.Visibility = Visibility.Collapsed;
+        }
+
+        private void RecordClear_MouseEnterTextBox(object sender, MouseEventArgs e)
 		{
 			// If it was already hosted somewhere else, remove it first,
 			if (RCStackPanel.Parent is StackPanel s1) { s1.Children.Remove(RCStackPanel); }
@@ -889,16 +900,6 @@ namespace x360ce.App.Controls
 			recordTextBox.Text = axisOrButtonName;
 			recordTextBox.BorderBrush = colorBackgroundDark;
 			recordTextBox = null;
-		}
-
-		private void RecordClear_MouseEnter(object sender, MouseEventArgs e)
-		{
-			RCStackPanel.Visibility = Visibility.Visible;
-		}
-
-		private void RecordClear_MouseLeave(object sender, MouseEventArgs e)
-		{
-			RCStackPanel.Visibility = Visibility.Collapsed;
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
