@@ -13,9 +13,15 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <GroupBox Grid.Row="0" Margin="3,3,3,0">
+
+        <RichTextBox Grid.Row="0" Name="HidHideRichTextBox" Background="Transparent"  Padding="5"/>
+
+        <RichTextBox Margin="0,50,0,0" Opacity="0.5" Grid.Row="1" Name="HidGuardianRichTextBox" Background="Transparent"  Padding="5"/>
+
+        <GroupBox Grid.Row="2" Margin="3,3,3,0" Opacity="0.5">
             <GroupBox.Header>
                 <TextBlock Text="HID Guardian by Nefarius" />
             </GroupBox.Header>
@@ -66,8 +72,6 @@
                     IsEnabled="False" />
             </Grid>
         </GroupBox>
-
-		<RichTextBox Grid.Row="1" Name="HelpRichTextBox" Background="Transparent"  Padding="5"/>
 
     </Grid>
 </UserControl>

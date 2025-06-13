@@ -125,7 +125,9 @@
 		<EmbeddedResource Include="app.ico" />
 		<Content Include="Presets\ReadMe.txt" />
 		
-		<EmbeddedResource Include="Documents\ChangeLog.txt" />		
+		<EmbeddedResource Include="Documents\ChangeLog.txt" />
+		
+		<EmbeddedResource Include="Documents\Help_HidHide.rtf" />		
 		<EmbeddedResource Include="Documents\License.txt" />
 
 		<EmbeddedResource Include="Resources\x360ce.Engine.dll" />
