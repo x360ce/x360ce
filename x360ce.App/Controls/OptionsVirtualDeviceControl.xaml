@@ -15,17 +15,17 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <GroupBox Margin="3" Header="Virtual Device Emulation by Nefarius">
+        <GroupBox Margin="3" Header="Virtual Gamepad Emulation Bus by Nefarius">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition />
 					<RowDefinition />
 				</Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" MinWidth="8" />
-					<ColumnDefinition Width="*" MinWidth="8" />
-					<ColumnDefinition Width="Auto" MinWidth="8" />
-					<ColumnDefinition Width="Auto" MinWidth="8" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 				<Label Grid.Row="0" Grid.Column="0" Content="Polling Rate" />
 				<ComboBox

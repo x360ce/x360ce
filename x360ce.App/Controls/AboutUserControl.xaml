@@ -12,40 +12,30 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="auto" />
-                <RowDefinition Height="*" />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+            <!--Icon-->
             <ContentControl
                 Name="RightIcon"
-                Grid.Row="0"
-                Grid.RowSpan="6"
-                Grid.Column="0"
+                Grid.RowSpan="3"
                 Width="48"
                 Height="48"
-                Margin="4,4,8,4"
-                Padding="0"
+                Margin="8,2,4,4"
                 VerticalAlignment="Top"
                 Content="{StaticResource Icon_gamepad}" />
+            <!--Title and Description-->
             <Label
                 Name="AboutProductLabel"
-                Grid.Row="0"
                 Grid.Column="1"
-                Grid.ColumnSpan="5"
                 Padding="4,8,0,0"
                 Content="XBOX 360 Controller Emulator {0}"
                 FontWeight="Bold" />
@@ -53,100 +43,70 @@
                 Name="AboutDescriptionLabel"
                 Grid.Row="1"
                 Grid.Column="1"
-                Grid.ColumnSpan="5"
-                Padding="4,4,0,8"
+                Padding="4,0,0,0"
                 Content="Settings editor and test application for XBOX 360 Controller Emulator" />
-            <Label
-                Grid.Row="3"
-                Grid.Column="1"
-                Padding="3,0,0,0"
-                VerticalAlignment="Center"
-                Content="X360CE" />
-            <TextBlock
-                Grid.Row="3"
-                Grid.Column="2"
-                Margin="0"
-                Padding="4,2,2,2">
-                <Hyperlink NavigateUri="https://www.x360ce.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
-                    https://www.x360ce.com
-                </Hyperlink>
-            </TextBlock>
-            <Label
-                Grid.Row="4"
-                Grid.Column="1"
-                Padding="3,0,0,0"
-                VerticalAlignment="Center"
-                Content="Jocys.com" />
-            <TextBlock
-                Grid.Row="4"
-                Grid.Column="2"
-                Margin="0"
-                Padding="4,2,2,2">
-                <Hyperlink NavigateUri="https://www.jocys.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
-                    https://www.jocys.com
-                </Hyperlink>
-            </TextBlock>
-            <Label
-                Grid.Row="5"
-                Grid.Column="1"
-                Padding="3,0,0,0"
-                VerticalAlignment="Center"
-                Content="ViGEm" />
-            <TextBlock
-                Grid.Row="5"
-                Grid.Column="2"
-                Margin="0"
-                Padding="4,2,2,2">
-                <Hyperlink NavigateUri="https://vigem.org" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
-                    https://vigem.org
-                </Hyperlink>
-            </TextBlock>
-            <Label
-                Grid.Row="3"
-                Grid.Column="4"
-                Padding="8,0,0,0"
-                VerticalAlignment="Center"
-                Content="GitHub Project" />
-            <TextBlock
-                Grid.Row="3"
-                Grid.Column="5"
-                Margin="0"
-                Padding="4,2,2,2">
-                <Hyperlink NavigateUri="https://github.com/x360ce/x360ce" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
-                    https://github.com/x360ce/x360ce
-                </Hyperlink>
-            </TextBlock>
-            <Label
-                Grid.Row="4"
-                Grid.Column="4"
-                Padding="8,0,0,0"
-                VerticalAlignment="Center"
-                Content="Nucleoprotein" />
-            <TextBlock
-                Grid.Row="4"
-                Grid.Column="5"
-                Margin="0"
-                Padding="4,2,2,2">
-                <Hyperlink NavigateUri="https://github.com/nucleoprotein" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
-                    github.com/nucleoprotein
-                </Hyperlink>
-            </TextBlock>
-            <Label
-                Grid.Row="5"
-                Grid.Column="4"
-                Padding="8,0,0,0"
-                VerticalAlignment="Center"
-                Content="ToCA EDIT" />
-            <TextBlock
-                Grid.Row="5"
-                Grid.Column="5"
-                Margin="0"
-                Padding="4,2,2,2">
-                <Hyperlink NavigateUri="http://www.tocaedit.com" RequestNavigate="HyperLink_RequestNavigate" TextDecorations="None">
-                    http://www.tocaedit.com
-                </Hyperlink>
-            </TextBlock>
+
+            <StackPanel Orientation="Horizontal" Grid.Row="3" Grid.Column="1">
+                <StackPanel.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="Padding" Value="8,0,4,0"/>
+                    </Style>
+                    <Style TargetType="Hyperlink">
+                        <Setter Property="TextDecorations" Value="None"/>
+                        <EventSetter Event="RequestNavigate" Handler="HyperLink_RequestNavigate"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <!--x360ce Homepage-->
+                <Label Content="Homepage"/>
+                <TextBlock>
+                    <Hyperlink NavigateUri="https://www.x360ce.com">
+                        x360ce.com
+                    </Hyperlink>
+                </TextBlock>
+
+                <!--GitHub Project-->
+                <Label Content="GitHub" />
+                <TextBlock>
+                   <Hyperlink NavigateUri="https://github.com/x360ce/x360ce">
+                      github.com/x360ce/x360ce
+                   </Hyperlink>
+                </TextBlock>
+
+                <!--ViGEm-->
+                <Label  Content="ViGEm" />
+                <TextBlock>
+                    <Hyperlink NavigateUri="https://vigembusdriver.com">
+                        vigembusdriver.com
+                    </Hyperlink>
+                </TextBlock>
+
+                <!--ToCA EDIT-->
+                <Label Content="ToCA EDIT" />
+                <TextBlock>
+                    <Hyperlink NavigateUri="http://www.tocaedit.com">
+                        tocaedit.com
+                    </Hyperlink>
+                </TextBlock>
+
+                <!--Jocys.com-->
+                <Label Content="Jocys.com" />
+                <TextBlock>
+                    <Hyperlink NavigateUri="https://www.jocys.com">
+                        jocys.com
+                    </Hyperlink>
+                </TextBlock>
+
+                <!--Nucleoprotein-->
+                <Label Content="Nucleoprotein" />
+                <TextBlock>
+                    <Hyperlink NavigateUri="https://github.com/nucleoprotein">
+                        github.com/nucleoprotein
+                    </Hyperlink>
+                </TextBlock>
+            </StackPanel>
         </Grid>
+
         <TabControl Name="AboutTabControl" Grid.Row="1" Margin="3">
             <TabItem Name="ChangesTabPage" Header="Changes" Background="White">
                 <TextBox

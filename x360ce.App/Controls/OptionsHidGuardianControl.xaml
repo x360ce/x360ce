@@ -13,48 +13,51 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <RichTextBox Grid.Row="0" Name="HidHideRichTextBox" Background="Transparent"  Padding="5"/>
-
-        <RichTextBox Margin="0,50,0,0" Opacity="0.5" Grid.Row="1" Name="HidGuardianRichTextBox" Background="Transparent"  Padding="5"/>
-
-        <GroupBox Grid.Row="2" Margin="3,3,3,0" Opacity="0.5">
+        <GroupBox Margin="3,3,3,0">
             <GroupBox.Header>
-                <TextBlock Text="HID Guardian by Nefarius" />
+                <TextBlock Text="HidHide by Nefarius" />
             </GroupBox.Header>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MinWidth="8" />
-                    <ColumnDefinition Width="*" MinWidth="8" />
-                    <ColumnDefinition Width="Auto" MinWidth="8" />
-                    <ColumnDefinition Width="Auto" MinWidth="8" />
-                </Grid.ColumnDefinitions>
-                <CheckBox
+            <RichTextBox Grid.Row="0" Name="HidHideRichTextBox" Background="Transparent" RenderOptions.BitmapScalingMode="HighQuality"/>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Margin="3,3,3,0" Opacity="0.5">
+            <GroupBox.Header>
+                <TextBlock Text="HidGuardian by Nefarius · Discontinued" />
+            </GroupBox.Header>
+            <StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox
                     Name="HidGuardianConfigureAutomaticallyCheckBox"
                     Grid.Row="0"
                     Grid.Column="1"
                     Content="Configure automatically - auto-hide Direct Input device when emulated." />
-                <Button
+                    <Button
                     Name="HidGuardianRefreshButton"
                     Grid.Row="0"
                     Grid.Column="3"
                     Width="60"
                     Click="RefreshButton_Click"
                     Content="Refresh" />
-                <Label Name="HidGuardianLabel" Grid.Row="1" Grid.Column="0">HID Guardian</Label>
-                <TextBox
+                    <Label Name="HidGuardianLabel" Grid.Row="1" Grid.Column="0">HID Guardian</Label>
+                    <TextBox
                     Name="StatusTextBox"
                     Grid.Row="1"
                     Grid.Column="1"
                     IsReadOnly="True" />
-                <Button
+                    <Button
                     Name="InstallButton"
                     Grid.Row="1"
                     Grid.Column="2"
@@ -62,7 +65,7 @@
                     Click="InstallButton_Click"
                     Content="Install"
                     IsEnabled="False" />
-                <Button
+                    <Button
                     Name="UninstallButton"
                     Grid.Row="1"
                     Grid.Column="3"
@@ -70,7 +73,9 @@
                     Click="UninstallButton_Click"
                     Content="Uninstall"
                     IsEnabled="False" />
-            </Grid>
+                </Grid>
+                <RichTextBox Grid.Row="1" Name="HidGuardianRichTextBox" Background="Transparent"/>
+            </StackPanel>
         </GroupBox>
 
     </Grid>
