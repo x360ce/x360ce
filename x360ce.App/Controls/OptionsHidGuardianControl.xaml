@@ -31,7 +31,7 @@
                 <TextBlock Text="HidHide by Nefarius" />
             </GroupBox.Header>
 
-                <StackPanel Orientation="Horizontal" Margin="8,0,4,4">
+                <StackPanel Orientation="Horizontal" Margin="7,0,4,4">
                 <Label Content="Download" />
                 <TextBlock Margin="8,0,0,0">
                         <Hyperlink NavigateUri="https://github.com/nefarius/HidHide/releases" TextDecorations="None" RequestNavigate="HyperLink_RequestNavigate">github.com/nefarius/HidHide/releases</Hyperlink>
