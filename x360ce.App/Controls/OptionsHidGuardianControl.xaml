@@ -16,11 +16,28 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <GroupBox Margin="3,3,3,0">
+        <StackPanel>
+
+            <!-- ViGEm Bus Help -->
+            <Border Style="{StaticResource BorderDescriptionNormal}" Margin="3,3,3,0">
+                <StackPanel Orientation="Horizontal" Margin="6">
+                    <Label Content="Purpose of HidHide is to hide original controllers from games, so that only virtual controllers are visible." />
+                    <Label Content="Install HidHide only if original controller prevents virtual controller functioning properly in the game." />
+                </StackPanel>
+            </Border>
+
+            <GroupBox Margin="3,3,3,0">
             <GroupBox.Header>
                 <TextBlock Text="HidHide by Nefarius" />
             </GroupBox.Header>
-            <RichTextBox Grid.Row="0" Name="HidHideRichTextBox" Background="Transparent">
+
+                <StackPanel Orientation="Horizontal" Margin="8,0,4,4">
+                <Label Content="Download" />
+                <TextBlock Margin="8,0,0,0">
+                        <Hyperlink NavigateUri="https://github.com/nefarius/HidHide/releases" TextDecorations="None" RequestNavigate="HyperLink_RequestNavigate">github.com/nefarius/HidHide/releases</Hyperlink>
+                </TextBlock>
+</StackPanel>
+                <!--<RichTextBox Name="HidHideRichTextBox" Background="Transparent">
                 <RichTextBox.Style>
                     <Style TargetType="RichTextBox" BasedOn="{StaticResource RichTextBox_Default}">
                         <Setter Property="LayoutTransform">
@@ -30,8 +47,10 @@
                         </Setter>
                     </Style>
                 </RichTextBox.Style>
-            </RichTextBox>
+            </RichTextBox>-->
         </GroupBox>
+        
+        </StackPanel>
 
         <GroupBox Grid.Row="1" Margin="3,3,3,0" Opacity="0.5">
             <GroupBox.Header>

@@ -1,6 +1,7 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Navigation;
 
 namespace x360ce.App.Controls
 {
@@ -82,8 +83,8 @@ namespace x360ce.App.Controls
 				return;
 			Global._MainWindow.MainBodyPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
 			Global._MainWindow.OptionsPanel.MainTabControl.SelectionChanged += MainTabControl_SelectionChanged;
-            var bytes1 = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("Documents.Help_HidHide.rtf");
-            ControlsHelper.SetTextFromResource(HidHideRichTextBox, bytes1);
+            //var bytes1 = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("Documents.Help_HidHide.rtf");
+            //ControlsHelper.SetTextFromResource(HidHideRichTextBox, bytes1);
             var bytes2 = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("Documents.Help_HidGuardian.rtf");
 			ControlsHelper.SetTextFromResource(HidGuardianRichTextBox, bytes2);
 			// Bind Controls.
@@ -110,5 +111,27 @@ namespace x360ce.App.Controls
 				tc.SelectionChanged -= MainTabControl_SelectionChanged;
 			SettingsManager.UnLoadMonitor(HidGuardianConfigureAutomaticallyCheckBox);
 		}
-	}
+
+        private void HyperLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            OpenUrl(e.Uri.AbsoluteUri);
+        }
+
+        public void OpenUrl(string url)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (System.ComponentModel.Win32Exception noBrowser)
+            {
+                if (noBrowser.ErrorCode == -2147467259)
+                    MessageBox.Show(noBrowser.Message);
+            }
+            catch (System.Exception other)
+            {
+                MessageBox.Show(other.Message);
+            }
+        }
+    }
 }

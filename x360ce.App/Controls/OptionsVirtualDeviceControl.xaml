@@ -15,12 +15,28 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+
+        <StackPanel>
+        
+        <!-- ViGEm Bus Help -->
+            <Border Style="{StaticResource BorderDescriptionNormal}" Margin="3,3,3,0">
+                <StackPanel Orientation="Horizontal" Margin="6,0,6,0">
+                    <Label Content="Purpose of ViGEm Bus is to create virtual Xbox 360 Controller, which can be mapped to one or multiple DirectInput devices, keyboard or mouse." />
+                    <TextBlock Margin="8,0,0,0">
+                        <Hyperlink NavigateUri="https://vigembusdriver.com" TextDecorations="None" RequestNavigate="HyperLink_RequestNavigate">vigembusdriver.com</Hyperlink>
+                    </TextBlock>
+                    <TextBlock Margin="8,0,0,0">
+                        <Hyperlink NavigateUri="https://github.com/nefarius/ViGEmBus/releases" TextDecorations="None" RequestNavigate="HyperLink_RequestNavigate">github.com/nefarius/ViGEmBus/releases</Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
         <GroupBox Margin="3" Header="Virtual Gamepad Emulation Bus by Nefarius">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition />
 					<RowDefinition />
-				</Grid.RowDefinitions>
+                </Grid.RowDefinitions>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="Auto" />
 					<ColumnDefinition Width="*" />
@@ -68,7 +84,10 @@
                     IsEnabled="False" />
 			</Grid>
 		</GroupBox>
-		<RichTextBox Grid.Row="1" Name="HelpRichTextBox" Background="Transparent" Padding="5">
+        
+        </StackPanel>
+        
+		<!--<RichTextBox Grid.Row="1" Name="HelpRichTextBox" Background="Transparent" Padding="5">
                 <RichTextBox.Style>
                     <Style TargetType="RichTextBox" BasedOn="{StaticResource RichTextBox_Default}">
                         <Setter Property="LayoutTransform">
@@ -78,6 +97,6 @@
                         </Setter>
                     </Style>
                 </RichTextBox.Style>
-            </RichTextBox>
+            </RichTextBox>-->
     </Grid>
 </UserControl>

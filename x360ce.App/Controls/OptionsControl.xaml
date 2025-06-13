@@ -42,7 +42,7 @@
                 Height="Auto"
                 x:FieldModifier="public" />
         </TabItem>
-        <TabItem Name="HidGuardianTabPage" Header="HidHide · HID Guardian">
+        <TabItem Name="HidGuardianTabPage" Header="Hide Device">
             <local:OptionsHidGuardianControl
                 x:Name="HidGuardianPanel"
                 Width="Auto"
