@@ -49,7 +49,10 @@ namespace x360ce.App.Controls
 			LicenseTextBox.Text = EngineHelper.GetResourceString("Documents.License.txt");
 			LicenseTabPage.Header = string.Format("{0} {1} License", ai.Product, ai.Version.ToString(2));
 			IconExperienceTextBox.Text = EngineHelper.GetResourceString("IconExperience.License.txt");
-		}
+
+            var bytes = JocysCom.ClassLibrary.Helper.FindResource<byte[]>("Documents.Help_About.rtf");
+            ControlsHelper.SetTextFromResource(ProgramRichTextBox, bytes);
+        }
 
 		private void UserControl_Unloaded(object sender, RoutedEventArgs e)
 		{

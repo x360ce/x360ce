@@ -127,6 +127,8 @@
 		
 		<EmbeddedResource Include="Documents\ChangeLog.txt" />
 		
+		<EmbeddedResource Include="Documents\Help_About.rtf" />
+		
 		<EmbeddedResource Include="Documents\Help_HidHide.rtf" />		
 		<EmbeddedResource Include="Documents\License.txt" />
 
@@ -175,6 +177,9 @@
 		<Compile Remove="Controls\LoadingCircle.cs" />
 		<Compile Remove="Controls\LoadingCircle.Designer.cs" />
 		<Compile Remove="Controls\LoadingCircleToolStripMenuItem.cs" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Remove="Documents\Help_About.rtf" />
 	</ItemGroup>
 	<Target Name="PopulateEmbeddedFiles" AfterTargets="BeforeCompile" BeforeTargets="CoreCompile">
 		<ItemGroup>

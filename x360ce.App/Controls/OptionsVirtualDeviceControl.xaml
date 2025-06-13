@@ -68,6 +68,16 @@
                     IsEnabled="False" />
 			</Grid>
 		</GroupBox>
-		<RichTextBox Grid.Row="1" Name="HelpRichTextBox" Background="Transparent" Padding="5"/>
-	</Grid>
+		<RichTextBox Grid.Row="1" Name="HelpRichTextBox" Background="Transparent" Padding="5">
+                <RichTextBox.Style>
+                    <Style TargetType="RichTextBox" BasedOn="{StaticResource RichTextBox_Default}">
+                        <Setter Property="LayoutTransform">
+                            <Setter.Value>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </RichTextBox.Style>
+            </RichTextBox>
+    </Grid>
 </UserControl>

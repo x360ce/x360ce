@@ -20,7 +20,17 @@
             <GroupBox.Header>
                 <TextBlock Text="HidHide by Nefarius" />
             </GroupBox.Header>
-            <RichTextBox Grid.Row="0" Name="HidHideRichTextBox" Background="Transparent" RenderOptions.BitmapScalingMode="HighQuality"/>
+            <RichTextBox Grid.Row="0" Name="HidHideRichTextBox" Background="Transparent">
+                <RichTextBox.Style>
+                    <Style TargetType="RichTextBox" BasedOn="{StaticResource RichTextBox_Default}">
+                        <Setter Property="LayoutTransform">
+                            <Setter.Value>
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </RichTextBox.Style>
+            </RichTextBox>
         </GroupBox>
 
         <GroupBox Grid.Row="1" Margin="3,3,3,0" Opacity="0.5">
@@ -74,7 +84,17 @@
                     Content="Uninstall"
                     IsEnabled="False" />
                 </Grid>
-                <RichTextBox Grid.Row="1" Name="HidGuardianRichTextBox" Background="Transparent"/>
+                <RichTextBox Grid.Row="1" Name="HidGuardianRichTextBox" Background="Transparent">
+                        <RichTextBox.Style>
+                            <Style TargetType="RichTextBox" BasedOn="{StaticResource RichTextBox_Default}">
+                                <Setter Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="1" ScaleY="1" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </RichTextBox.Style>
+                    </RichTextBox>
             </StackPanel>
         </GroupBox>
 
