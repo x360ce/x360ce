@@ -1,0 +1,13 @@
+node_modules/
+dist/
+vendor/
+cache/
+.*/
+*.min.*
+*.test.*
+*.spec.*
+*.bundle.*
+*.bundle-min.*
+*.*.js
+*.*.ts
+*.log

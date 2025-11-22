@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDataSourceStorage">
+    <option name="dataSources">
+      <list>
+        <State>
+          <option name="id" value="20e2fee2-63d7-40b1-b454-0b597595e2e4" />
+          <option name="name" value="x360ce.Data" />
+          <option name="dbmsName" value="MSSQL" />
+          <option name="urls">
+            <array>
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_Programs.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_Vendors.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_Summaries.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_Settings.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_Products.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_PadSettings.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/aspnet_UsersInRoles.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/aspnet_Users.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/aspnet_SchemaVersions.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/aspnet_Roles.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/aspnet_Membership.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/aspnet_Applications.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_UserGames.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_WebsiteLogs.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_UserInstances.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_UserDevices.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_UserComputers.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_Layouts.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_UserProfiles.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_ChangeLogs.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/Tools_Obsolete_Objects.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_NewDeviceStats.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Tables/x360ce_UserMacros.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_UpdateSummariesTable.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_UpdateProgramsTable.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_UpdateProductsTable.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_AnyDataInTables.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Applications_CreateApplication.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_CheckSchemaVersion.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_ChangePasswordQuestionAndAnswer.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_CreateUser.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_FindUsersByEmail.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_FindUsersByName.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_GetAllUsers.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_GetNumberOfUsersOnline.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_GetPassword.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_GetPasswordWithFormat.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_GetUserByEmail.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_GetUserByName.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_GetUserByUserId.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_ResetPassword.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_SetPassword.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_UnlockUser.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_UpdateUser.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Membership_UpdateUserInfo.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_RegisterSchemaVersion.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Roles_CreateRole.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Roles_DeleteRole.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Roles_GetAllRoles.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Roles_RoleExists.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Setup_RemoveAllRoleMembers.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Setup_RestorePermissions.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_UnRegisterSchemaVersion.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Users_CreateUser.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_Users_DeleteUser.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_UsersInRoles_AddUsersToRoles.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_UsersInRoles_FindUsersInRole.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_UsersInRoles_GetRolesForUser.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_UsersInRoles_GetUsersInRoles.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_UsersInRoles_IsUserInRole.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/aspnet_UsersInRoles_RemoveUsersFromRoles.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_GetNewDeviceStats.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_GetAlternativeNames.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_GetPresets.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_GetUserInstances.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_GetTopGames.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_GetTopControllers.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/Tools_FixLoginAndUser.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/Tools_FixDatabaseOwner.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_Tools_UpdateCompletionPoints.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_Cleanup_Settings_NoPadSettings.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_Cleanup_PadSettings.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/Tools_Info_UnmachedUsers.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/Tools_Info_GetProcessUtilization.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/Tools_Info_GetObjects.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/Tools_Info_GetConnections.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/Tools_Fill_Obsolete_Objects.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Stored Procedures/x360ce_Cleanup_Keyboards_and_Mouse.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/User Defined Types/x360ce_SummariesTableType.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/User Defined Types/x360ce_ProgramsTableType.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/User Defined Types/x360ce_SearchParameterTableType.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Views/vw_aspnet_UsersInRoles.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Views/vw_aspnet_Users.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Views/vw_aspnet_Roles.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Views/vw_aspnet_MembershipUsers.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Views/vw_aspnet_Applications.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Functions/x360ce_GetUserGameSettingChecksum.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Functions/x360ce_FixProductName.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Functions/x360ce_GetCompletionPointsForAxis.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/dbo/Functions/x360ce_GetCompletionPoints.sql" />
+              <option value="file://$PROJECT_DIR$/x360ce.Data/Permissions.sql" />
+            </array>
+          </option>
+          <option name="remarks" value="Database Project" />
+          <option name="outPath" value="$PROJECT_DIR$/x360ce.Data" />
+          <option name="codeStyleName" value="Visual Studio Database Project" />
+          <option name="outLayout" value="File per object by schema.groovy" />
+          <option name="scriptOptions">
+            <map>
+              <entry key="ConstraintContext" value="CONSTRAINT_IN_TABLE" />
+              <entry key="MsVsDdlCompatibility" value="1" />
+              <entry key="QualifyWithSchema" value="ALWAYS" />
+              <entry key="Reformat" value="1" />
+              <entry key="UseSemicolon" value="1" />
+            </map>
+          </option>
+        </State>
+      </list>
+    </option>
+  </component>
+</project>
