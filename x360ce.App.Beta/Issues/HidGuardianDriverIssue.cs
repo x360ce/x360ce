@@ -9,38 +9,30 @@ namespace x360ce.App.Issues
 	{
 		public HidGuardianDriverIssue() : base()
 		{
-			Name = "HID Guardian Driver";
-			FixName = "Install";
+			Name = "HidHide (Recommended)";
+			FixName = "Install HidHide";
 		}
 
 		public override void CheckTask()
 		{
 			var haveVirtual = SettingsManager.UserGames.Items.Any(x => x.EmulationType == (int)EmulationType.Virtual && x.EnableMask > 0);
 			var haveHidden = SettingsManager.UserDevices.Items.Any(x => x.IsHidden);
-			// HID Guardian is required if virtual emulation is enabled and some devices must be hidden.
+			// HidHide is recommended if virtual emulation is enabled and some devices must be hidden.
 			var required = haveVirtual && haveHidden;
 			if (!required)
 			{
 				SetSeverity(IssueSeverity.None);
 				return;
 			}
-			var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
-			if (hid.DriverVersion == 0)
-			{
-				SetSeverity(IssueSeverity.Moderate, 0, "Optional: Install HID Guardian if you want to hide DirectInput controllers.");
-				return;
-			}
-			SetSeverity(IssueSeverity.None);
+			// Don’t rely on HidGuardian presence; simply recommend HidHide.
+			SetSeverity(IssueSeverity.Moderate, 0, "Optional: Install HidHide to hide DirectInput controllers when using virtual emulation.");
 		}
 		public override void FixTask()
 		{
 			ControlsHelper.BeginInvoke(() =>
 			{
-				Global._MainWindow.MainBodyPanel.MainTabControl.SelectedItem = Global._MainWindow.MainBodyPanel.OptionsTabPage;
-				Global._MainWindow.OptionsPanel.MainTabControl.SelectedItem = Global._MainWindow.OptionsPanel.HidGuardianTabPage;
+				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(DInput.VirtualDriverInstaller.HidHideDownloadUrl) { UseShellExecute = true });
 			});
-			//Program.RunElevated(AdminCommand.InstallHidGuardian);
-			//ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
 		}
 
 	}

@@ -17,7 +17,7 @@
         </Grid.RowDefinitions>
         <GroupBox Grid.Row="0" Margin="3,3,3,0">
             <GroupBox.Header>
-                <TextBlock Text="HID Guardian by Nefarius" />
+                <TextBlock Text="HidHide by Nefarius" />
             </GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
@@ -34,7 +34,7 @@
                     Name="HidGuardianConfigureAutomaticallyCheckBox"
                     Grid.Row="0"
                     Grid.Column="1"
-                    Content="Configure automatically - auto-hide Direct Input device when emulated." />
+                    Content="Auto-hide DirectInput devices when virtual emulation is active (requires HidHide)." />
                 <Button
                     Name="HidGuardianRefreshButton"
                     Grid.Row="0"
@@ -42,7 +42,7 @@
                     Width="60"
                     Click="RefreshButton_Click"
                     Content="Refresh" />
-                <Label Name="HidGuardianLabel" Grid.Row="1" Grid.Column="0">HID Guardian</Label>
+                <Label Name="HidGuardianLabel" Grid.Row="1" Grid.Column="0">HidHide</Label>
                 <TextBox
                     Name="StatusTextBox"
                     Grid.Row="1"
@@ -52,10 +52,10 @@
                     Name="InstallButton"
                     Grid.Row="1"
                     Grid.Column="2"
-                    Width="60"
+                    Width="100"
                     Click="InstallButton_Click"
-                    Content="Install"
-                    IsEnabled="False" />
+                    Content="Install HidHide"
+                    IsEnabled="True" />
                 <Button
                     Name="UninstallButton"
                     Grid.Row="1"
@@ -67,7 +67,7 @@
             </Grid>
         </GroupBox>
 
-		<RichTextBox Grid.Row="1" Name="HelpRichTextBox" Background="Transparent"  Padding="5"/>
+        <RichTextBox Grid.Row="1" Name="HelpRichTextBox" Background="Transparent"  Padding="5"/>
 
     </Grid>
 </UserControl>

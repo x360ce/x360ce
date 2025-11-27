@@ -43,6 +43,9 @@ namespace x360ce.App.DInput
 		public static string[] ViGEmBusHardwareIds = { "Root\\ViGEmBus", "Nefarius\\ViGEmBus\\Gen1" };
 		public const string HidGuardianHardwareId = "Root\\HidGuardian";
 
+		// New preferred driver download URL (HidGuardian deprecated; use HidHide instead).
+		public const string HidHideDownloadUrl = "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe";
+
 		/// <summary>
 		/// Install Virtual driver.
 		/// </summary>
@@ -103,27 +106,18 @@ namespace x360ce.App.DInput
 		/// Install HID Guardian
 		/// </summary>
 		/// <remarks>Must be executed in administrative mode.</remarks>
+		[Obsolete("HidGuardian deprecated. Use HidHide instead.")]
 		public static void InstallHidGuardian(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
-			// Extract files first.
-			ExtractHidGuardianFiles();
-			var folder = GetHidGuardianPath();
-			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
-			var infFile = string.Format("{0}\\{1}", paString, "HidGuardian.inf");
-			var exePath = Path.Combine(folder, GetDevConPath());
-			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
-				exePath,
-				"install " + infFile + " " + HidGuardianHardwareId,
-				isElevated: true);
-			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
-				exePath,
-				"classfilter HIDClass upper -HidGuardian",
-				isElevated: true);
-			// Fix registry permissions. 
-			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
-			// Fix missing white list key.
-			if (canModify)
-				ViGEm.HidGuardianHelper.FixWhiteListRegistryKey();
+			// Deprecated: launch HidHide download page instead.
+			try
+			{
+				Process.Start(new ProcessStartInfo(HidHideDownloadUrl) { UseShellExecute = true });
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine("Failed to open HidHide URL: " + ex.Message);
+			}
 		}
 
 
@@ -131,20 +125,10 @@ namespace x360ce.App.DInput
 		/// Uninstall HID Guardian.
 		/// </summary>
 		/// <remarks>Must be executed in administrative mode.</remarks>
+		[Obsolete("HidGuardian deprecated. Use HidHide instead.")]
 		public static void UninstallHidGuardian(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
-			// Extract files first.
-			ExtractHidGuardianFiles();
-			var folder = GetHidGuardianPath();
-			var exePath = Path.Combine(folder, GetDevConPath());
-			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
-				exePath,
-				"remove " + HidGuardianHardwareId,
-				isElevated: true);
-			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
-				exePath,
-				"classfilter HIDClass upper !HidGuardian",
-				isElevated: true);
+			// Deprecated: no action.
 		}
 
 

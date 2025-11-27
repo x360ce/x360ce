@@ -60,12 +60,13 @@ namespace x360ce.App
 			}
 			if (ic.Parameters.ContainsKey(AdminCommand.InstallHidGuardian.ToString()))
 			{
+				// Deprecated: just open HidHide download URL.
 				DInput.VirtualDriverInstaller.InstallHidGuardian();
 				return true;
 			}
 			if (ic.Parameters.ContainsKey(AdminCommand.UninstallHidGuardian.ToString()))
 			{
-				DInput.VirtualDriverInstaller.UninstallHidGuardian();
+				// Deprecated: no operation for uninstall.
 				return true;
 			}
 			if (ic.Parameters.ContainsKey(AdminCommand.UninstallDevice.ToString()))

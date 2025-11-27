@@ -1,4 +1,6 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿// HidGuardian removed: use HidHide instead.
+using System;
+using JocysCom.ClassLibrary.Controls;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -31,9 +33,10 @@ namespace x360ce.App.Controls
 		{
 			ControlsHelper.BeginInvoke(() =>
 			{
-				StatusTextBox.Text = "Installing. Please Wait...";
-				Program.RunElevated(AdminCommand.InstallHidGuardian);
-				ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
+				StatusTextBox.Text = "Opening HidHide installer...";
+				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(DInput.VirtualDriverInstaller.HidHideDownloadUrl) { UseShellExecute = true });
+				StatusTextBox.Text = "If installer didn't appear, open URL manually: " + DInput.VirtualDriverInstaller.HidHideDownloadUrl;
+				//ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList(); // Deprecated.
 				RefreshStatus();
 			});
 		}
@@ -47,29 +50,24 @@ namespace x360ce.App.Controls
 		{
 			ControlsHelper.BeginInvoke(() =>
 			{
-				StatusTextBox.Text = "Uninstalling. Please Wait...";
-				Program.RunElevated(AdminCommand.UninstallHidGuardian);
+				StatusTextBox.Text = "HidGuardian deprecated. Use Apps & Features to uninstall HidHide if needed.";
+				//Program.RunElevated(AdminCommand.UninstallHidGuardian); // Deprecated.
 				RefreshStatus();
 			});
 		}
 
 		void RefreshStatus()
 		{
-			ControlsHelper.SetText(StatusTextBox, "Please wait...");
+			ControlsHelper.SetText(StatusTextBox, "Checking status (HidGuardian deprecated)...");
 			// run in another thread, to make sure it is not freezing interface.
 			var ts = new System.Threading.ThreadStart(delegate ()
 			{
-				// Get Virtual Bus and HID Guardian status.
-				var hid = DInput.VirtualDriverInstaller.GetHidGuardianDriverInfo();
+				// HidGuardian deprecated; simply reflect that.
 				ControlsHelper.BeginInvoke(() =>
 				{
-					// Update HID status.
-					var hidStatus = hid.DriverVersion == 0
-						? "Not installed"
-						: string.Format("{0} {1}", hid.Description, hid.GetVersion());
-					ControlsHelper.SetText(StatusTextBox, hidStatus);
-					InstallButton.IsEnabled = hid.DriverVersion == 0;
-					UninstallButton.IsEnabled = hid.DriverVersion != 0;
+					ControlsHelper.SetText(StatusTextBox, "HidGuardian deprecated. Please install HidHide instead.");
+					InstallButton.IsEnabled = true;
+					UninstallButton.IsEnabled = false;
 				});
 			});
 			var t = new System.Threading.Thread(ts);
