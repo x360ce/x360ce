@@ -1,15 +1,11 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace JocysCom.ClassLibrary.Services.SimpleService
 {
-	/// <summary>
-	/// Platform Invocation (P/Invoke) wrapper for Windows kernel32.dll SetConsoleCtrlHandler API,
-	/// providing PHANDLER_ROUTINE delegate for handling console control events.
-	/// </summary>
 	public class SimpleServiceHandler
 	{
 		/// <summary>
-		/// Delegate for console control event callbacks used with SetConsoleCtrlHandler via P/Invoke.
+		/// A delegate type to be used as the handler routine for SetConsoleCtrlHandler.
 		/// </summary>
 		/// <param name="CtrlType">The type of control signal received by the handler.</param>
 		/// <returns>If the function handles the control signal, it should return TRUE. If it returns FALSE, the next handler function in the list of handlers for this process is used.</returns>

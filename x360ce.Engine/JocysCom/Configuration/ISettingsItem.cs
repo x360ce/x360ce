@@ -1,15 +1,21 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
-	
-	/// <summary>Defines a settings item that notifies on property changes and indicates whether it is enabled or empty.</summary>
+
+	/// <summary>
+	/// Defines an interface for a settings item, including properties for enabled state and emptiness check.
+	/// </summary>
 	public interface ISettingsItem : INotifyPropertyChanged
 	{
-		/// <summary>Indicates whether the item is enabled. Implementers must raise PropertyChanged when this value changes.</summary>
+		/// <summary>
+		/// Gets or sets a value indicating whether this settings item is enabled.
+		/// </summary>
 		bool IsEnabled { get; set; }
 
-		/// <summary>Indicates whether the item is uninitialized or contains no data.</summary>
+		/// <summary>
+		/// Gets a value indicating whether this settings item is empty or uninitialized.
+		/// </summary>
 		bool IsEmpty { get; }
 	}
 }

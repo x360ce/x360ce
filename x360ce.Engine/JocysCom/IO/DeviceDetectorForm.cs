@@ -1,9 +1,11 @@
-using JocysCom.ClassLibrary.Controls;
+﻿using JocysCom.ClassLibrary.Controls;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.IO
 {
-	/// <summary>Hidden form that receives Windows messages about device insertion and removal.</summary>
+	/// <summary>
+	/// Hidden Form which will receive Windows messages about device insertion and removal.
+	/// </summary>
 	public partial class DeviceDetectorForm : Form
 	{
 		public DeviceDetectorForm()
@@ -30,7 +32,11 @@ namespace JocysCom.ClassLibrary.IO
 
 		DeviceDetector _Detector = null;
 
-		/// <summary>Forwards all window messages to the DeviceDetector so it can detect drive arrival and removal.</summary>
+		/// <summary>
+		/// This function receives all the windows messages for this window (form).
+		/// We call the DeviceDetector from here so that is can pick up the messages about
+		/// drives arrived and removed.
+		/// </summary>
 		protected override void WndProc(ref Message m)
 		{
 			base.WndProc(ref m);

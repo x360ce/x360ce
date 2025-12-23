@@ -1,28 +1,43 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace JocysCom.ClassLibrary.Configuration
 {
-	/// <summary>File-based ISettingsItem: exposes Path, Name, BaseName, WriteTime, and IsReadOnlyFile.</summary>
+	/// <summary>
+	/// Defines an interface for a settings item that represents or interacts with a file. Includes properties for managing file names and tracking write timestamps.
+	/// </summary>
 	public interface ISettingsFileItem : ISettingsItem
 	{
-		/// <summary>Relative directory path of the settings file.</summary>
+		/// <summary>
+		/// Parent Directory of the file associated with this settings item.
+		/// This represents the actual relative directory path of the file on the file system.
+		/// </summary>
 		[DefaultValue(null)]
 		string Path { get; set; }
 
-		/// <summary>File name of the settings file without extension.</summary>
+		/// <summary>
+		/// File name associated with this settings item.
+		/// This represents the actual name of the file on the file system without extension.
+		/// </summary>
 		[DefaultValue(null)]
 		string Name { get; set; }
 
-		/// <summary>Internal base name (without extension) for identifying the settings file.</summary>
+		/// <summary>
+		/// Base name of the file without extension, used for internal identification of the file within the settings management context.
+		/// </summary>
 		[DefaultValue(null)]
 		string BaseName { get; set; }
 
-		/// <summary>Timestamp of the last write to the settings file, for change tracking.</summary>
+		/// <summary>
+		/// Timestamp indicating the last time the file was written to.
+		/// This is used for tracking changes to the file over time.
+		/// </summary>
 		DateTime WriteTime { get; set; }
 
-		/// <summary>Excludes this item from being saved to a separate file when true.</summary>
+		/// <summary>
+		/// Indicate that item should not be saved into a separate file.
+		/// </summary>
 		[XmlIgnore, DefaultValue(false)]
 		bool IsReadOnlyFile { get; set; }
 
@@ -44,5 +59,7 @@ namespace JocysCom.ClassLibrary.Configuration
 		}
 
 		*/
+
 	}
 }
+

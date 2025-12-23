@@ -1,15 +1,11 @@
-using System;
+﻿using System;
 
 namespace JocysCom.ClassLibrary
 {
 	/// <summary>
-	/// Bitmask representing the task status as flags.
 	/// Universal state that describes a task, including its progress and data processing status.
 	/// </summary>
-	/// <remarks>
-	/// Uses two-bit spacing between flag values to reserve gaps for future intermediate states without renumbering.
-	/// Enum allows for the insertion of an additional state between the current states in the future.
-	/// </remarks>
+	/// <remarks>Enum allows for the insertion of an additional state between the current states in the future.</remarks>
 	[Flags]
 	public enum ProgressStatus
 	{
@@ -35,11 +31,8 @@ namespace JocysCom.ClassLibrary
 		/// <summary>The task or the data item has been updated.</summary>
 		Updated = Processing << 2,
 
-		/// <summary>Processing ignored the item.</summary>
-		Ignored = Updated << 2,
-
-		/// <summary>Processing skipped the item.</summary>
-		Skipped = Ignored << 2,
+		/// <summary>Processing has resumed after a pause.</summary>
+		Skipped = Updated << 2,
 
 		/// <summary>The processing has been paused.</summary>
 		Paused = Skipped << 2,
