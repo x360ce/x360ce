@@ -14,6 +14,7 @@
     <RootNamespace>x360ce.App</RootNamespace>
     <AssemblyName>x360ce</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <LangVersion>7.1</LangVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>
@@ -131,7 +132,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin\Release\</OutputPath>
     <CodeAnalysisLogFile>bin\Release\x360ce.exe.CodeAnalysisLog.xml</CodeAnalysisLogFile>
     <CodeAnalysisRuleSet>

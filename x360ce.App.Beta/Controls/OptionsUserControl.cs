@@ -100,7 +100,7 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.HidGuardianConfigureAutomatically, HidGuardianConfigureAutomaticallyCheckBox);
-			SettingsManager.LoadAndMonitor(x => x.GuideButtonAction, GuideButtonActionTextBox);
+			SettingsManager.LoadAndMonitor(x => x.ShareButtonAction, ShareButtonActionTextBox);
 			SettingsManager.LoadAndMonitor(x => x.AutoDetectForegroundWindow, AutoDetectForegroundWindowCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.IsProcessDPIAware, IsProcessDPIAwareCheckBox);
 			// Load other settings manually.

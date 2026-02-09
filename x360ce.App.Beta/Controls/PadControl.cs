@@ -593,7 +593,7 @@ namespace x360ce.App.Controls
 					_imageInfos.Add(2, MapCode.ButtonX, 178, 48, ButtonXLabel, ButtonXComboBox, GamepadButtonFlags.X);
 					_imageInfos.Add(2, MapCode.ButtonB, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
 					_imageInfos.Add(2, MapCode.ButtonA, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
-					_imageInfos.Add(2, MapCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox);
+					_imageInfos.Add(2, MapCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox, GamepadButtonFlags.Guide);
 					_imageInfos.Add(2, MapCode.ButtonBack, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
 					_imageInfos.Add(2, MapCode.ButtonStart, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
 					// D-Pad
@@ -633,11 +633,11 @@ namespace x360ce.App.Controls
 
 		public MapTo MappedTo;
 
-		/// <summary>
-		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
-		/// </summary>
-		public void UpdateSettingsMap()
-		{
+        /// <summary>
+        /// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
+        /// </summary>
+        public void UpdateSettingsMap()
+        {
 			// FakeAPI
 			AddMap(() => SettingName.ProductName, DirectInputPanel.DeviceProductNameTextBox);
 			AddMap(() => SettingName.ProductGuid, DirectInputPanel.DeviceProductGuidTextBox);
@@ -1049,9 +1049,9 @@ namespace x360ce.App.Controls
 			LeftMotorTestTextBox.Text = string.Format("{0} % ", LeftMotorTestTrackBar.Value);
 			RightMotorTestTextBox.Text = string.Format("{0} % ", RightMotorTestTrackBar.Value);
 			SendVibration();
-			//UnsafeNativeMethods.Enable(false);
-			//UnsafeNativeMethods.Enable(true);
-		}
+            //UnsafeNativeMethods.Enable(false);
+            //UnsafeNativeMethods.Enable(true);
+        }
 
 		void SendVibration()
 		{
@@ -1063,7 +1063,7 @@ namespace x360ce.App.Controls
 				var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, LeftMotorTestTrackBar.Value);
 				var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, RightMotorTestTrackBar.Value);
 				Global.DHelper.SetVibration(MappedTo, largeMotor, smallMotor, 0);
-			}
+            }
 			else
 			{
 				lock (Controller.XInputLock)
@@ -1084,7 +1084,7 @@ namespace x360ce.App.Controls
 			}
 		}
 
-		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
+        void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
 		{
 			TrackBar control = (TrackBar)sender;
 			AxisToDPadOffsetTextBox.Text = string.Format("{0} % ", control.Value);
@@ -1547,8 +1547,9 @@ namespace x360ce.App.Controls
 				MapCode.LeftShoulder,
 				MapCode.RightShoulder,
 				MapCode.ButtonBack,
-				MapCode.ButtonStart,
-				MapCode.DPad,
+                MapCode.ButtonStart,
+                MapCode.ButtonGuide,
+                MapCode.DPad,
 				MapCode.LeftThumbUp,
 				MapCode.LeftThumbRight,
 				MapCode.LeftThumbButton,

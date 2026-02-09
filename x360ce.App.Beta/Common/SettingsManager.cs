@@ -1069,9 +1069,9 @@ namespace x360ce.App
 				return;
 			item = new UserMacro();
 			item.SettingId = userSetting.SettingId;
-			item.LoadGuideButton();
-			UserMacros.Add(item);
-		}
+            item.LoadShareButton();
+            UserMacros.Add(item);
+        }
 
 	}
 }

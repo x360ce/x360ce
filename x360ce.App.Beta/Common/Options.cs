@@ -141,15 +141,16 @@ namespace x360ce.App
 		}
 		bool _HidGuardianConfigureAutomatically = false;
 
-		[DefaultValue("{7}")]
-		public string GuideButtonAction
-		{
-			get { return _GuideButtonAction; }
-			set { _GuideButtonAction = value; OnPropertyChanged(); }
-		}
-		string _GuideButtonAction = "{7}";
 
-		public BindingList<string> InternetDatabaseUrls { get; set; }
+        [DefaultValue("{LWin}{LShiftKey}{S}")]
+        public string ShareButtonAction
+        {
+            get { return _ShareButtonAction; }
+            set { _ShareButtonAction = value; OnPropertyChanged(); }
+        }
+        string _ShareButtonAction = "{LWin}{LShiftKey}{S}";
+
+        public BindingList<string> InternetDatabaseUrls { get; set; }
 
 		[DefaultValue(null), Description("The locations to scan for games.")]
 		public BindingList<string> GameScanLocations { get; set; }
@@ -177,7 +178,7 @@ namespace x360ce.App
 		public bool ExcludeSupplementalDevices { get; set; }
 		public bool ExcludeVirtualDevices { get; set; }
 
-		[DefaultValue(true), Description("Auto-detect currently focused game.")]
+		[DefaultValue(true), Description("Autodetect currently focussed game.")]
 		public bool AutoDetectForegroundWindow
 		{
 			get { return _AutoDetectForegroundWindow; }

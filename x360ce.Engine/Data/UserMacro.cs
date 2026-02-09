@@ -13,14 +13,14 @@ namespace x360ce.Engine.Data
 			MapRangeMax = 1;
 		}
 
-		public void LoadGuideButton()
-		{
-			Text = "{7}";
-			MapType = (int)Engine.MapType.Button;
-			MapRangeMin = 1;
-			MapRangeMax = 1;
-			Name = "Guide Button Map";
-		}
+        public void LoadShareButton()
+        {
+            Text = "{LWin}{LShiftKey}{S}";
+            MapType = (int)Engine.MapType.Button;
+            MapRangeMin = 1;
+            MapRangeMax = 1;
+            Name = "Share Button Map";
+        }
 
 		#region Interface: IDisplayName
 

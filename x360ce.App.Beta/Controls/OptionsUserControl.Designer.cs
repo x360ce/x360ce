@@ -88,10 +88,10 @@
 			this.DevelopingGroupBox = new System.Windows.Forms.GroupBox();
 			this.ShowTestButtonCheckBox = new System.Windows.Forms.CheckBox();
 			this.ShowFormInfoCheckBox = new System.Windows.Forms.CheckBox();
-			this.GuideButtonGroupBox = new System.Windows.Forms.GroupBox();
-			this.GuideButtonActionLabel = new System.Windows.Forms.Label();
-			this.GuideButtonActionTextBox = new System.Windows.Forms.TextBox();
-			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
+            this.ShareButtonGroupBox = new System.Windows.Forms.GroupBox();
+            this.ShareButtonActionLabel = new System.Windows.Forms.Label();
+            this.ShareButtonActionTextBox = new System.Windows.Forms.TextBox();
+            this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
@@ -119,8 +119,8 @@
 			this.GeneralTabPage.SuspendLayout();
 			this.GeneralPanel.SuspendLayout();
 			this.DevelopingGroupBox.SuspendLayout();
-			this.GuideButtonGroupBox.SuspendLayout();
-			this.InternetOptionsTabPage.SuspendLayout();
+            this.ShareButtonGroupBox.SuspendLayout();
+            this.InternetOptionsTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
 			this.HidGuardianTabPage.SuspendLayout();
@@ -755,8 +755,8 @@
 			this.GeneralPanel.Controls.Add(this.TestingAndLoggingGroupBox);
 			this.GeneralPanel.Controls.Add(this.DevelopingGroupBox);
 			this.GeneralPanel.Controls.Add(this.DirectInputDevicesGroupBox);
-			this.GeneralPanel.Controls.Add(this.GuideButtonGroupBox);
-			this.GeneralPanel.Controls.Add(this.ConfigurationGroupBox);
+            this.GeneralPanel.Controls.Add(this.ShareButtonGroupBox);
+            this.GeneralPanel.Controls.Add(this.ConfigurationGroupBox);
 			this.GeneralPanel.Controls.Add(this.ProgramScanLocationsTabControl);
 			this.GeneralPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.GeneralPanel.Location = new System.Drawing.Point(3, 3);
@@ -797,37 +797,37 @@
 			this.ShowFormInfoCheckBox.Text = "Show Form Info on CTRL+SHIFT+RButton";
 			this.ShowFormInfoCheckBox.UseVisualStyleBackColor = true;
 			this.ShowFormInfoCheckBox.CheckedChanged += new System.EventHandler(this.ShowSettingsTabCheckBox_CheckedChanged);
-			// 
-			// GuideButtonGroupBox
-			// 
-			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionLabel);
-			this.GuideButtonGroupBox.Controls.Add(this.GuideButtonActionTextBox);
-			this.GuideButtonGroupBox.Location = new System.Drawing.Point(3, 351);
-			this.GuideButtonGroupBox.Name = "GuideButtonGroupBox";
-			this.GuideButtonGroupBox.Size = new System.Drawing.Size(254, 47);
-			this.GuideButtonGroupBox.TabIndex = 31;
-			this.GuideButtonGroupBox.TabStop = false;
-			this.GuideButtonGroupBox.Text = "Guide Button";
-			// 
-			// GuideButtonActionLabel
-			// 
-			this.GuideButtonActionLabel.AutoSize = true;
-			this.GuideButtonActionLabel.Location = new System.Drawing.Point(4, 22);
-			this.GuideButtonActionLabel.Name = "GuideButtonActionLabel";
-			this.GuideButtonActionLabel.Size = new System.Drawing.Size(40, 13);
-			this.GuideButtonActionLabel.TabIndex = 0;
-			this.GuideButtonActionLabel.Text = "Action:";
-			// 
-			// GuideButtonActionTextBox
-			// 
-			this.GuideButtonActionTextBox.Location = new System.Drawing.Point(50, 19);
-			this.GuideButtonActionTextBox.Name = "GuideButtonActionTextBox";
-			this.GuideButtonActionTextBox.Size = new System.Drawing.Size(129, 20);
-			this.GuideButtonActionTextBox.TabIndex = 0;
-			// 
-			// InternetOptionsTabPage
-			// 
-			this.InternetOptionsTabPage.BackColor = System.Drawing.SystemColors.Control;
+            // 
+            // ShareButtonGroupBox
+            // 
+            this.ShareButtonGroupBox.Controls.Add(this.ShareButtonActionLabel);
+            this.ShareButtonGroupBox.Controls.Add(this.ShareButtonActionTextBox);
+            this.ShareButtonGroupBox.Location = new System.Drawing.Point(3, 337);
+            this.ShareButtonGroupBox.Name = "ShareButtonGroupBox";
+            this.ShareButtonGroupBox.Size = new System.Drawing.Size(254, 47);
+            this.ShareButtonGroupBox.TabIndex = 31;
+            this.ShareButtonGroupBox.TabStop = false;
+            this.ShareButtonGroupBox.Text = "Share Button";
+            // 
+            // ShareButtonActionLabel
+            // 
+            this.ShareButtonActionLabel.AutoSize = true;
+            this.ShareButtonActionLabel.Location = new System.Drawing.Point(4, 22);
+            this.ShareButtonActionLabel.Name = "ShareButtonActionLabel";
+            this.ShareButtonActionLabel.Size = new System.Drawing.Size(40, 13);
+            this.ShareButtonActionLabel.TabIndex = 0;
+            this.ShareButtonActionLabel.Text = "Action:";
+            // 
+            // ShareButtonActionTextBox
+            // 
+            this.ShareButtonActionTextBox.Location = new System.Drawing.Point(50, 19);
+            this.ShareButtonActionTextBox.Name = "ShareButtonActionTextBox";
+            this.ShareButtonActionTextBox.Size = new System.Drawing.Size(129, 20);
+            this.ShareButtonActionTextBox.TabIndex = 0;
+            // 
+            // InternetOptionsTabPage
+            // 
+            this.InternetOptionsTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.InternetOptionsTabPage.Controls.Add(this.InternetPanel);
 			this.InternetOptionsTabPage.Location = new System.Drawing.Point(4, 22);
 			this.InternetOptionsTabPage.Name = "InternetOptionsTabPage";
@@ -1010,9 +1010,9 @@
 			this.GeneralPanel.ResumeLayout(false);
 			this.DevelopingGroupBox.ResumeLayout(false);
 			this.DevelopingGroupBox.PerformLayout();
-			this.GuideButtonGroupBox.ResumeLayout(false);
-			this.GuideButtonGroupBox.PerformLayout();
-			this.InternetOptionsTabPage.ResumeLayout(false);
+            this.ShareButtonGroupBox.ResumeLayout(false);
+            this.ShareButtonGroupBox.PerformLayout();
+            this.InternetOptionsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
 			this.HidGuardianTabPage.ResumeLayout(false);
@@ -1097,10 +1097,10 @@
 		private System.Windows.Forms.Panel HidGuardianPanel;
 		public System.Windows.Forms.Button HidGuardianRefreshButton;
 		private System.Windows.Forms.RichTextBox HelpRichTextBox;
-		private System.Windows.Forms.GroupBox GuideButtonGroupBox;
-		private System.Windows.Forms.Label GuideButtonActionLabel;
-		private System.Windows.Forms.TextBox GuideButtonActionTextBox;
-		public System.Windows.Forms.CheckBox AutoDetectForegroundWindowCheckBox;
+        	private System.Windows.Forms.GroupBox ShareButtonGroupBox;
+        	private System.Windows.Forms.Label ShareButtonActionLabel;
+        	private System.Windows.Forms.TextBox ShareButtonActionTextBox;
+        	public System.Windows.Forms.CheckBox AutoDetectForegroundWindowCheckBox;
 		public System.Windows.Forms.CheckBox IsProcessDPIAwareCheckBox;
 	}
 }
