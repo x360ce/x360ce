@@ -21,7 +21,8 @@
         RightThumb = 0x80,
         Start = 0x10,
         Guide = 0x400,
-        X = 0x4000,
+		Share = 0x800,
+		X = 0x4000,
         Y = -32768
     }
 }

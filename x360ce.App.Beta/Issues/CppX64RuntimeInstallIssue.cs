@@ -12,12 +12,12 @@ namespace x360ce.App.Issues
 		{
 			Name = "Software";
 			FixName = "Download and Install";
-			MoreInfo = new Uri("https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads");
+			MoreInfo = new Uri("https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist");
 		}
 
 		// Use ignore case modifier.
-        string program1Rx = "(?i)(Visual C\\+\\+).*(2015|2017|2019).*(Redistributable).*(x64)";
-		string program1 = "Microsoft Visual C++ 2015-2019 Redistributable (x64)";
+        string program1Rx = "(?i)(Visual C\\+\\+).*(2015|2017|2019|2022|v14).*(Redistributable).*(x64)";
+		string program1 = "Microsoft Visual C++ 2015-2022 (v14) Redistributable (x64)";
 
 		public override void CheckTask()
 		{
@@ -41,8 +41,8 @@ namespace x360ce.App.Issues
 
 		public override void FixTask()
 		{
-			// Microsoft Visual C++ 2015, 2017, 2019 Redistributable
-			var uri = new Uri("https://aka.ms/vs/16/release/vc_redist.x64.exe");
+			// Microsoft Visual C++ 2015-2022 (v14) Redistributable
+			var uri = new Uri("https://aka.ms/vc14/vc_redist.x64.exe");
 			var localPath = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", uri.Segments.Last());
 			IssueHelper.DownloadAndInstall(uri, localPath, MoreInfo);
 		}

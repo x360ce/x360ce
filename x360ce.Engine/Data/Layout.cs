@@ -16,6 +16,7 @@ namespace x360ce.Engine.Data
 			ButtonBack = "";
 			ButtonGuide = "";
 			ButtonStart = "";
+			ButtonShare = "";
 			ButtonX = "";
 			ButtonY = "";
 			DPad = "";

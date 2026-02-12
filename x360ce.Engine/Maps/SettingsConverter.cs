@@ -315,6 +315,7 @@ namespace x360ce.Engine
 		{
 			MapCode.ButtonBack,
 			MapCode.ButtonGuide,
+			MapCode.ButtonShare,
 			MapCode.ButtonStart,
 		};
 

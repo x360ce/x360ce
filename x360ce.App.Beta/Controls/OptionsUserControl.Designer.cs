@@ -802,7 +802,7 @@
             // 
             this.ShareButtonGroupBox.Controls.Add(this.ShareButtonActionLabel);
             this.ShareButtonGroupBox.Controls.Add(this.ShareButtonActionTextBox);
-            this.ShareButtonGroupBox.Location = new System.Drawing.Point(3, 337);
+            this.ShareButtonGroupBox.Location = new System.Drawing.Point(3, 357);
             this.ShareButtonGroupBox.Name = "ShareButtonGroupBox";
             this.ShareButtonGroupBox.Size = new System.Drawing.Size(254, 47);
             this.ShareButtonGroupBox.TabIndex = 31;

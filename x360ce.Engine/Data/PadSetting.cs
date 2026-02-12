@@ -31,6 +31,7 @@ namespace x360ce.Engine.Data
 						var maps = new List<Map>();
 						// Add buttons.
 						maps.Add(new Map(MapCode.ButtonGuide, ButtonGuide, GamepadButtonFlags.Guide, ""));
+						maps.Add(new Map(MapCode.ButtonShare, ButtonShare, GamepadButtonFlags.Share, ""));
 						maps.Add(new Map(MapCode.ButtonA, ButtonA, GamepadButtonFlags.A, ButtonADeadZone));
 						maps.Add(new Map(MapCode.ButtonB, ButtonB, GamepadButtonFlags.B, ButtonBDeadZone));
 						maps.Add(new Map(MapCode.ButtonX, ButtonX, GamepadButtonFlags.X, ButtonXDeadZone));
@@ -106,6 +107,7 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.ButtonA);
 			AddValue(ref list, x => x.ButtonB);
 			AddValue(ref list, x => x.ButtonGuide);
+			AddValue(ref list, x => x.ButtonShare);
 			AddValue(ref list, x => x.ButtonBack);
 			AddValue(ref list, x => x.ButtonStart);
 			AddValue(ref list, x => x.ButtonX);
@@ -237,6 +239,7 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeButtonB() { return !isDefault(ButtonB); }
 		public bool ShouldSerializeButtonBack() { return !isDefault(ButtonBack); }
 		public bool ShouldSerializeButtonGuide() { return !isDefault(ButtonGuide); }
+		public bool ShouldSerializeButtonShare() { return !isDefault(ButtonShare); }
 		public bool ShouldSerializeButtonStart() { return !isDefault(ButtonStart); }
 		public bool ShouldSerializeButtonX() { return !isDefault(ButtonX); }
 		public bool ShouldSerializeButtonY() { return !isDefault(ButtonY); }

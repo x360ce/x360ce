@@ -594,6 +594,7 @@ namespace x360ce.App.Controls
 					_imageInfos.Add(2, MapCode.ButtonB, 215, 48, ButtonBLabel, ButtonBComboBox, GamepadButtonFlags.B);
 					_imageInfos.Add(2, MapCode.ButtonA, 196, 66, ButtonALabel, ButtonAComboBox, GamepadButtonFlags.A);
 					_imageInfos.Add(2, MapCode.ButtonGuide, 127, 48, ButtonGuideLabel, ButtonGuideComboBox, GamepadButtonFlags.Guide);
+					_imageInfos.Add(2, MapCode.ButtonShare, 127, 48, ButtonShareLabel, ButtonShareComboBox, GamepadButtonFlags.Share);
 					_imageInfos.Add(2, MapCode.ButtonBack, 103, 48, ButtonBackLabel, ButtonBackComboBox, GamepadButtonFlags.Back);
 					_imageInfos.Add(2, MapCode.ButtonStart, 152, 48, ButtonStartLabel, ButtonStartComboBox, GamepadButtonFlags.Start);
 					// D-Pad
@@ -689,8 +690,10 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.AxisToDPadOffset, AxisToDPadOffsetTrackBar);
 			// Buttons
 			AddMap(() => SettingName.ButtonGuide, ButtonGuideComboBox, MapCode.ButtonGuide);
+			AddMap(() => SettingName.ButtonShare, ButtonShareComboBox, MapCode.ButtonShare);
 			AddMap(() => SettingName.ButtonBack, ButtonBackComboBox, MapCode.ButtonBack);
 			AddMap(() => SettingName.ButtonStart, ButtonStartComboBox, MapCode.ButtonStart);
+			AddMap(() => SettingName.ButtonShare, ButtonShareComboBox, MapCode.ButtonShare);
 			AddMap(() => SettingName.ButtonA, ButtonAComboBox, MapCode.ButtonA);
 			AddMap(() => SettingName.ButtonB, ButtonBComboBox, MapCode.ButtonB);
 			AddMap(() => SettingName.ButtonX, ButtonXComboBox, MapCode.ButtonX);
@@ -1443,6 +1446,7 @@ namespace x360ce.App.Controls
 			ButtonBLabel.Text = item.ButtonB;
 			ButtonBackLabel.Text = item.ButtonBack;
 			ButtonGuideLabel.Text = item.ButtonGuide;
+			ButtonShareLabel.Text = item.ButtnoShare;
 			ButtonStartLabel.Text = item.ButtonStart;
 			ButtonXLabel.Text = item.ButtonX;
 			ButtonYLabel.Text = item.ButtonY;

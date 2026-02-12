@@ -3,6 +3,7 @@ using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
 using SharpDX.XInput;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -129,11 +130,70 @@ namespace x360ce.App.DInput
 
 		Gamepad[] oldGamepadStates = new Gamepad[4];
 
-		bool IsGuideDown;
-		object guideLock = new object();
+		private int _sharePressCount;
+		private bool[] oldSharePressed = new bool[4];
+		object shareLock = new object();
 
 		public void FeedDevice(uint i)
 		{
+			// Find the UserSetting mapped to this index.
+			var setting = SettingsManager.UserSettings.Items.FirstOrDefault(x => x.MapTo == (int)i);
+			if (setting == null)
+				return; // No setting for this pad.
+
+			// Find the corresponding UserDevice that is online.
+			var device = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == setting.InstanceGuid && x.IsOnline);
+			bool isSharePressed = false;
+			if (device != null)
+			{
+				var padSetting = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+				if (padSetting != null)
+				{
+					var shareMap = padSetting.ButtonShare; // Assuming ButtonShare is the new field in PadSetting.
+					if (!string.IsNullOrEmpty(shareMap))
+					{
+						var match = Regex.Match(shareMap, @"^(?<index>\d+)$");
+						if (match.Success)
+						{
+							var index = int.Parse(match.Groups["index"].Value);
+							var diState = device.DiState;
+							if (diState != null && index > 0 && index <= diState.Buttons.Length)
+							{
+								isSharePressed = diState.Buttons[index - 1];
+							}
+						}
+						// TODO: Handle other mapping types if needed (e.g., axes as buttons via half/full, POVs, etc.).
+					}
+				}
+			}
+			var wasSharePressed = oldSharePressed[i - 1];
+			if (isSharePressed != wasSharePressed)
+			{
+				lock (shareLock)
+				{
+					if (isSharePressed)
+					{
+						_sharePressCount++;
+						if (_sharePressCount == 1)
+						{
+							var keys = GetShareKeys();
+							if (keys.Any())
+								JocysCom.ClassLibrary.Processes.KeyboardHelper.SendDown(keys);
+						}
+					}
+					else
+					{
+						_sharePressCount = Math.Max(0, _sharePressCount - 1);
+						if (_sharePressCount == 0)
+						{
+							var keys = GetShareKeys();
+							if (keys.Any())
+								JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(keys);
+						}
+					}
+				}
+				oldSharePressed[i - 1] = isSharePressed;
+			}
 			// Get old and new game pad values.
 			var n = CombinedXiStates[i - 1].Gamepad;
 			var report = new Xbox360Report();
@@ -174,33 +234,15 @@ namespace x360ce.App.DInput
 			{
 				// Update controller.
 				ViGEmClient.Current.Targets[i - 1].SendReport(report);
-				lock (guideLock)
-				{
-					var isGuidePressed = n.Buttons.HasFlag(GamepadButtonFlags.Guide);
-					if (isGuidePressed && !IsGuideDown)
-					{
-						var keys = GetGuideKeys();
-						if (keys.Count() > 0)
-							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendDown(keys);
-						IsGuideDown = true;
-					}
-					if (!isGuidePressed && IsGuideDown)
-					{
-						var keys = GetGuideKeys();
-						if (keys.Count() > 0)
-							JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(keys);
-						IsGuideDown = false;
-					}
-				}
 				// Update old state.
 				oldGamepadStates[i - 1] = n;
 			}
 		}
 
-		private static Keys[] GetGuideKeys()
+		private static Keys[] GetShareKeys()
 		{
 			var list = new List<Keys>();
-			var keys = SettingsManager.Options.GuideButtonAction;
+			var keys = SettingsManager.Options.ShareButtonAction;
 			var matches = rxKeys.Matches(keys);
 			foreach (Match m in matches)
 			{
@@ -270,7 +312,22 @@ namespace x360ce.App.DInput
 				return VirtualError.None;
 			if (!ViGEmClient.Current.IsControllerConnected(userIndex))
 				return VirtualError.None;
-			success = ViGEmClient.Current.UnPlug(userIndex);
+            // Clean up Share press if active for this pad.
+            if (oldSharePressed[userIndex - 1])
+            {
+                lock (shareLock)
+                {
+                    _sharePressCount = Math.Max(0, _sharePressCount - 1);
+                    if (_sharePressCount == 0)
+                    {
+                        var keys = GetShareKeys();
+                        if (keys.Any())
+                            JocysCom.ClassLibrary.Processes.KeyboardHelper.SendUp(keys);
+                    }
+                }
+                oldSharePressed[userIndex - 1] = false;
+            }
+            success = ViGEmClient.Current.UnPlug(userIndex);
 			return success
 				? VirtualError.None
 				: VirtualError.Other;

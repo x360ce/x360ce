@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28922.388
+# Visual Studio 15
+VisualStudioVersion = 15.0.36617.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "x360ce.Data", "x360ce.Data\x360ce.Data.sqlproj", "{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}"
 EndProject
@@ -28,8 +28,8 @@ Global
 		{EE2589B6-B2F3-44F9-A95C-17EBF74788FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F980D78A-9448-4834-A6FE-84797077D309}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{00A8380D-72CB-4AD3-A8C4-0AF44BA2AEE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{00A8380D-72CB-4AD3-A8C4-0AF44BA2AEE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00A8380D-72CB-4AD3-A8C4-0AF44BA2AEE0}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{00A8380D-72CB-4AD3-A8C4-0AF44BA2AEE0}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{2A231FCE-E900-4031-9A5E-AE73A54516FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A231FCE-E900-4031-9A5E-AE73A54516FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection

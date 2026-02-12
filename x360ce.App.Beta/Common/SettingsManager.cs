@@ -310,6 +310,7 @@ namespace x360ce.App
 				item.ButtonBack = "Back";
 				item.ButtonGuide = "Guide";
 				item.ButtonStart = "Start";
+				item.ButtonShare = "Share";
 				item.ButtonX = "X Button";
 				item.ButtonY = "Y Button";
 				item.DPad = "D-Pad";

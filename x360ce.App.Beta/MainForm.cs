@@ -531,8 +531,8 @@ namespace x360ce.App
 					if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
 					{
 						var gamePad = Global.DHelper.LiveXiControllers[i];
-						var isConected = Global.DHelper.LiveXiConnected[i];
-						if (Controller.IsLoaded && isConected)
+						var isConnected = Global.DHelper.LiveXiConnected[i];
+						if (Controller.IsLoaded && isConnected)
 						{
 							// Stop vibration.
 							gamePad.SetVibration(new Vibration());

@@ -290,6 +290,9 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Guide button.")]
 		static public string ButtonGuide { get { return "GuideButton"; } }
 
+		[DefaultValue("0"), Description("Share button.")]
+		static public string ButtonShare { get { return "ShareButton"; } }
+
 		[DefaultValue("0"), Description("Back button.")]
 		static public string ButtonBack { get { return "Back"; } }
 
