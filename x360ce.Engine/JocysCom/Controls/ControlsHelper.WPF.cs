@@ -488,12 +488,12 @@ namespace JocysCom.ClassLibrary.Controls
 			var container = control as DependencyObject;
 			while (container != null)
 			{
-				FrameworkElement _nextControl = null;
+				FrameworkElement nextControl = null;
 				Invoke(() =>
 				{
-					_nextControl = System.Windows.Input.FocusManager.GetFocusedElement(control) as FrameworkElement;
+					nextControl = System.Windows.Input.FocusManager.GetFocusedElement(control) as FrameworkElement;
 				});
-				control = _nextControl;
+				control = nextControl;
 				if (control is null)
 					break;
 				Invoke(() =>
