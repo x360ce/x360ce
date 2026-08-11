@@ -13,6 +13,8 @@ namespace x360ce.App.DInput
 {
 	public partial class DInputHelper
 	{
+		bool virtualModeActive;
+		bool virtualBusFailureDisposed;
 
 		/// <summary>
 		/// Enable or disable virtual controllers depending on game settings.
@@ -30,22 +32,33 @@ namespace x360ce.App.DInput
 			// If game does not use virtual emulation then...
 			if (!isVirtual)
 			{
-				ViGEmClient.DisposeCurrent();
+				if (virtualModeActive)
+					ViGEmClient.DisposeCurrent();
+				virtualModeActive = false;
+				virtualBusFailureDisposed = false;
 				for (var healthIndex = 0; healthIndex < 4; healthIndex++)
-					SetControllerHealth(healthIndex, x =>
-					{
-						x.MappingOk = false;
-						x.VirtualTargetConnected = false;
-						x.StateSubmitOk = false;
-					});
+					SetControllerHealth(healthIndex, mappingOk: false,
+						virtualTargetConnected: false, stateSubmitOk: false);
 				return;
 			}
+			virtualModeActive = true;
 			var busHealth = ViGEmClient.GetCachedBusHealth();
 			for (var healthIndex = 0; healthIndex < 4; healthIndex++)
-				SetControllerHealth(healthIndex, x => x.VirtualBusOk = busHealth.IsUsable);
+				SetControllerHealth(healthIndex, virtualBusOk: busHealth.IsUsable);
 			// If virtual driver is missing then return.
 			if (!busHealth.IsUsable)
+			{
+				for (var healthIndex = 0; healthIndex < 4; healthIndex++)
+					SetControllerHealth(healthIndex, virtualTargetConnected: false,
+						stateSubmitOk: false, setLastError: true, lastError: busHealth.ErrorMessage);
+				if (!virtualBusFailureDisposed)
+				{
+					ViGEmClient.DisposeCurrent();
+					virtualBusFailureDisposed = true;
+				}
 				return;
+			}
+			virtualBusFailureDisposed = false;
 			var client = ViGEmClient.Current;
 			if (client.Targets == null)
 			{
@@ -64,16 +77,11 @@ namespace x360ce.App.DInput
 				var value = (MapToMask)(game?.EnableMask ?? (int)MapToMask.None);
 				var virtualEnabled = value.HasFlag(flag);
 				var healthSlot = (int)i - 1;
-				SetControllerHealth(healthSlot, x =>
-				{
-					x.PhysicalInputOk = CombinedXiConnected[healthSlot];
-					x.MappingOk = virtualEnabled;
-					if (!virtualEnabled)
-					{
-						x.VirtualTargetConnected = false;
-						x.StateSubmitOk = false;
-					}
-				});
+				SetControllerHealth(healthSlot,
+					physicalInputOk: CombinedXiConnected[healthSlot],
+					mappingOk: virtualEnabled,
+					virtualTargetConnected: virtualEnabled ? (bool?)null : false,
+					stateSubmitOk: virtualEnabled ? (bool?)null : false);
 				var feedingState = FeedingState[i - 1];
 				if (virtualEnabled)
 				{
@@ -199,20 +207,13 @@ namespace x360ce.App.DInput
 				try
 				{
 					ViGEmClient.Current.Targets[i - 1].SendReport(report);
-					SetControllerHealth((int)i - 1, x =>
-					{
-						x.VirtualTargetConnected = true;
-						x.StateSubmitOk = true;
-						x.LastError = null;
-					});
+					SetControllerHealth((int)i - 1, virtualTargetConnected: true,
+						stateSubmitOk: true, setLastError: true);
 				}
 				catch (System.Exception ex)
 				{
-					SetControllerHealth((int)i - 1, x =>
-					{
-						x.StateSubmitOk = false;
-						x.LastError = ex.Message;
-					});
+					SetControllerHealth((int)i - 1, stateSubmitOk: false,
+						setLastError: true, lastError: ex.Message);
 					x360ce.App.Diagnostics.OperationalLog.Current?.WriteException(
 						"virtual_state_submit_failed", ex,
 						new Dictionary<string, object> { ["slot"] = i });
@@ -292,33 +293,36 @@ namespace x360ce.App.DInput
 			if (!ViGEmClient.isVBusExists())
 				return VirtualError.Missing;
 			if (!ViGEmClient.Current.isControllerExists(userIndex))
+			{
+				SetControllerHealth((int)userIndex - 1, virtualTargetConnected: false,
+					stateSubmitOk: false, setLastError: true, lastError: "Virtual target is unavailable.");
 				return VirtualError.Other;
+			}
 			if (ViGEmClient.Current.IsControllerConnected(userIndex))
 				return VirtualError.None;
 			var success = ViGEmClient.Current.PlugIn(userIndex);
 			if (!success)
+			{
+				SetControllerHealth((int)userIndex - 1, virtualTargetConnected: false,
+					stateSubmitOk: false, setLastError: true, lastError: "ViGEm target connection failed.");
+				x360ce.App.Diagnostics.OperationalLog.Current?.Write(
+					"virtual_target_connect_failed", "error",
+					new Dictionary<string, object> { ["slot"] = userIndex });
 				return VirtualError.Other;
+			}
 			try
 			{
 				// A target is healthy only after the bus accepts an actual report.
 				ViGEmClient.Current.Targets[userIndex - 1].SendReport(new Xbox360Report());
-				SetControllerHealth((int)userIndex - 1, x =>
-				{
-					x.VirtualTargetConnected = true;
-					x.StateSubmitOk = true;
-					x.LastError = null;
-				});
+				SetControllerHealth((int)userIndex - 1, virtualTargetConnected: true,
+					stateSubmitOk: true, setLastError: true);
 				return VirtualError.None;
 			}
 			catch (System.Exception ex)
 			{
 				ViGEmClient.Current.UnPlug(userIndex);
-				SetControllerHealth((int)userIndex - 1, x =>
-				{
-					x.VirtualTargetConnected = false;
-					x.StateSubmitOk = false;
-					x.LastError = ex.Message;
-				});
+				SetControllerHealth((int)userIndex - 1, virtualTargetConnected: false,
+					stateSubmitOk: false, setLastError: true, lastError: ex.Message);
 				x360ce.App.Diagnostics.OperationalLog.Current?.WriteException(
 					"virtual_neutral_submit_failed", ex,
 					new Dictionary<string, object> { ["slot"] = userIndex });
@@ -339,11 +343,12 @@ namespace x360ce.App.DInput
 				return VirtualError.None;
 			success = ViGEmClient.Current.UnPlug(userIndex);
 			if (success)
-				SetControllerHealth((int)userIndex - 1, x =>
-				{
-					x.VirtualTargetConnected = false;
-					x.StateSubmitOk = false;
-				});
+				SetControllerHealth((int)userIndex - 1,
+					virtualTargetConnected: false, stateSubmitOk: false);
+			else
+				x360ce.App.Diagnostics.OperationalLog.Current?.Write(
+					"virtual_target_disconnect_failed", "warn",
+					new Dictionary<string, object> { ["slot"] = userIndex });
 			return success
 				? VirtualError.None
 				: VirtualError.Other;

@@ -77,7 +77,18 @@ namespace x360ce.App.DInput
 
 		readonly object controllerHealthLock = new object();
 		readonly HashSet<Guid> forceFeedbackDisabledDevices = new HashSet<Guid>();
+		readonly Dictionary<Guid, DateTime> deviceFailureLogTimes = new Dictionary<Guid, DateTime>();
 		public ControllerPipelineHealth[] ControllerHealth { get; }
+
+		bool ShouldLogDeviceFailure(Guid instanceGuid)
+		{
+			var now = DateTime.UtcNow;
+			if (deviceFailureLogTimes.TryGetValue(instanceGuid, out var previous) &&
+				now.Subtract(previous).TotalSeconds < 10)
+				return false;
+			deviceFailureLogTimes[instanceGuid] = now;
+			return true;
+		}
 
 		public ControllerPipelineHealth[] GetControllerHealth()
 		{
@@ -90,12 +101,50 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		void SetControllerHealth(int index, Action<ControllerPipelineHealth> update)
+		void SetControllerHealth(
+			int index,
+			bool? physicalInputOk = null,
+			bool? mappingOk = null,
+			bool? virtualBusOk = null,
+			bool? virtualTargetConnected = null,
+			bool? stateSubmitOk = null,
+			bool setLastError = false,
+			string lastError = null)
 		{
 			lock (controllerHealthLock)
 			{
-				update(ControllerHealth[index]);
-				ControllerHealth[index].UpdatedUtc = DateTime.UtcNow;
+				var after = ControllerHealth[index];
+				var previousPhysicalInputOk = after.PhysicalInputOk;
+				var previousMappingOk = after.MappingOk;
+				var previousVirtualBusOk = after.VirtualBusOk;
+				var previousVirtualTargetConnected = after.VirtualTargetConnected;
+				var previousStateSubmitOk = after.StateSubmitOk;
+				var previousLastError = after.LastError;
+				if (physicalInputOk.HasValue) after.PhysicalInputOk = physicalInputOk.Value;
+				if (mappingOk.HasValue) after.MappingOk = mappingOk.Value;
+				if (virtualBusOk.HasValue) after.VirtualBusOk = virtualBusOk.Value;
+				if (virtualTargetConnected.HasValue) after.VirtualTargetConnected = virtualTargetConnected.Value;
+				if (stateSubmitOk.HasValue) after.StateSubmitOk = stateSubmitOk.Value;
+				if (setLastError) after.LastError = lastError;
+				if (previousPhysicalInputOk == after.PhysicalInputOk &&
+					previousMappingOk == after.MappingOk &&
+					previousVirtualBusOk == after.VirtualBusOk &&
+					previousVirtualTargetConnected == after.VirtualTargetConnected &&
+					previousStateSubmitOk == after.StateSubmitOk &&
+					string.Equals(previousLastError, after.LastError, StringComparison.Ordinal))
+					return;
+				after.UpdatedUtc = DateTime.UtcNow;
+				x360ce.App.Diagnostics.OperationalLog.Current?.Write(
+					"controller_pipeline_health_changed", fields:
+					new Dictionary<string, object>
+					{
+						["slot"] = index + 1,
+						["physicalInputOk"] = after.PhysicalInputOk,
+						["mappingOk"] = after.MappingOk,
+						["virtualBusOk"] = after.VirtualBusOk,
+						["virtualTargetConnected"] = after.VirtualTargetConnected,
+						["stateSubmitOk"] = after.StateSubmitOk,
+					});
 			}
 		}
 
@@ -224,7 +273,7 @@ namespace x360ce.App.DInput
 		// the dedicated refresh thread, never while constructing startup services.
 		DirectInput directInput;
 		// Suspended is used during re-loading of the XInput library.
-		public bool Suspended;
+		public volatile bool Suspended;
 		void ThreadAction()
 		{
 			Thread.CurrentThread.Name = "RefreshAllThread";
@@ -303,7 +352,7 @@ namespace x360ce.App.DInput
 							// will try to acquire new devices exclusively for force feedback information and control.
 							CheckAndUnloadXInputLibrary(game, getXInputStates);
 							// Update information about connected devices.
-							_ = UpdateDiDevices(manager);
+							UpdateDiDevices(manager);
 							// Load the XInput library before retrieving XInput states.
 							CheckAndLoadXInputLibrary(game, getXInputStates);
 						}

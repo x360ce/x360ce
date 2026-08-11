@@ -301,29 +301,35 @@ namespace x360ce.App
 			Global._TrayManager.RestoreFromTray(false, maximize);
 		}
 
-		static async Task RunBackgroundStartupStage(string stage, Action action)
+		static async Task<bool> RunBackgroundStartupStage(string stage, Action<CancellationToken> action)
 		{
 			using (MeasureStartup(stage))
 			{
-				var work = Task.Run(action, startupCancellation.Token);
-				var completed = await Task.WhenAny(work, Task.Delay(TimeSpan.FromSeconds(5), startupCancellation.Token));
-				if (completed != work)
+				var completed = await StartupStageRunner.RunAsync(
+					action, TimeSpan.FromSeconds(5), startupCancellation.Token);
+				if (!completed)
 				{
 					OperationalLog.Current?.Write("startup_stage_slow", "warn",
 						new System.Collections.Generic.Dictionary<string, object> { ["stage"] = stage });
-					startupStatus.Text = "Still loading " + stage.Replace('_', ' ') + "…";
+					startupStatus.Text = "Continuing without " + stage.Replace('_', ' ') + "…";
 				}
-				await work;
+				return completed;
 			}
 		}
 
 		#region Service, TrayIcon and UI
 
-		static void InitializeServices()
+		static void InitializeServices(CancellationToken cancellationToken)
 		{
 			// Initialize non-UI service first.
-			Global._LocalService = new Service.LocalService();
-			Global._LocalService.Start();
+			var localService = new Service.LocalService();
+			localService.Start();
+			if (cancellationToken.IsCancellationRequested)
+			{
+				localService.Stop();
+				cancellationToken.ThrowIfCancellationRequested();
+			}
+			Global._LocalService = localService;
 		}
 
 		static void InitializeTrayIcon()

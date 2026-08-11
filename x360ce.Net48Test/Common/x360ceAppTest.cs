@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Win32;
 using x360ce.App;
 using x360ce.App.Controls;
@@ -313,13 +316,35 @@ namespace x360ce.Tests
             };
 
             var text = DiagnosticReport.Build("5.1", "Windows", x86, x64, bus,
-                new[] { controller }, new[] { "{\"event\":\"test\"}" });
+                new[] { controller }, new[]
+                {
+                    "{\"event\":\"startup_stage_completed\",\"durationMs\":12}",
+                    "{\"event\":\"unhandled_exception\",\"stackTrace\":\"C:\\\\Users\\\\private\"}",
+                });
 
             StringAssert.Contains(text, "VC++ x86: Installed, 14.51.36247");
             StringAssert.Contains(text, "ViGEm API/client: Successful");
             StringAssert.Contains(text, "Physical input OK: Yes");
             StringAssert.Contains(text, "State submit OK: Yes");
-            StringAssert.Contains(text, "Recent operational events");
+            StringAssert.Contains(text, "Recent sanitized operational events");
+            StringAssert.Contains(text, "startup_stage_completed");
+            Assert.IsFalse(text.Contains("C:\\Users\\private"));
+            Assert.IsFalse(text.Contains("stackTrace"));
+        }
+
+        [TestMethod]
+        public async Task StartupStageRunner_DeadlineReturnsWithoutWaitingForHungWork()
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            var completed = await StartupStageRunner.RunAsync(
+                token => Thread.Sleep(1000),
+                TimeSpan.FromMilliseconds(50),
+                CancellationToken.None);
+
+            Assert.IsFalse(completed);
+            Assert.IsTrue(stopwatch.ElapsedMilliseconds < 500,
+                "A timed-out startup stage must not hold the UI startup path.");
         }
 
         private sealed class FakeCppRuntimeRegistry : ICppRuntimeRegistry

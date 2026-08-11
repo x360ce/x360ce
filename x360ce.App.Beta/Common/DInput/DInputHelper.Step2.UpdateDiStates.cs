@@ -229,14 +229,16 @@ namespace x360ce.App.DInput
 							ud.DeviceEffects = new DeviceEffectItem[0];
 							ud.FFState = null;
 						}
-						OperationalLog.Current?.WriteException("dinput_device_operation_failed", ex,
-							new Dictionary<string, object>
-							{
-								["backend"] = "DirectInput",
-								["vid"] = ud.DevVendorId,
-								["pid"] = ud.DevProductId,
-								["forceFeedbackDisabled"] = forceFeedbackFailure,
-							});
+						var shouldLog = ShouldLogDeviceFailure(ud.InstanceGuid);
+						if (shouldLog)
+							OperationalLog.Current?.WriteException("dinput_device_operation_failed", ex,
+								new Dictionary<string, object>
+								{
+									["backend"] = "DirectInput",
+									["vid"] = ud.DevVendorId,
+									["pid"] = ud.DevProductId,
+									["forceFeedbackDisabled"] = forceFeedbackFailure,
+								});
 						var dex = ex as SharpDXException;
 						if (dex != null &&
 							(dex.ResultCode == SharpDX.DirectInput.ResultCode.InputLost ||
@@ -244,14 +246,15 @@ namespace x360ce.App.DInput
 							 dex.ResultCode == SharpDX.DirectInput.ResultCode.Unplugged))
 						{
 							Debug.WriteLine($"InputLost {DateTime.Now:HH: mm: ss.fff}");
-							Debug.WriteLine($"Device {dex.Descriptor.ApiCode}. DisplayName {ud.DisplayName}. ProductId {ud.DevProductId}. ProductName {ud.ProductName}. InstanceName {ud.InstanceName}.");
+							Debug.WriteLine($"DirectInput device lost: VID={ud.DevVendorId:X4}, PID={ud.DevProductId:X4}.");
 							DevicesNeedUpdating = true;
 						}
 						else
 						{
 							var cx = new DInputException("UpdateDiStates Exception", ex);
 							cx.Data.Add("FFInfo", failureContext);
-							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(cx);
+							if (shouldLog)
+								JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(cx);
 						}
 						ud.IsExclusiveMode = null;
 					}

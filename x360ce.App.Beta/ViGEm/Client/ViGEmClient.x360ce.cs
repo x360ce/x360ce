@@ -32,7 +32,7 @@ namespace Nefarius.ViGEm.Client
 		{
 			// Not properly implemented yet.
 			var t = Targets;
-			if (t == null)
+			if (t == null || i < 1 || i > connected.Length || i > t.Length)
 				return false;
 			try
 			{
@@ -42,6 +42,8 @@ namespace Nefarius.ViGEm.Client
 			catch (Exception ex)
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				connected[i - 1] = false;
+				return false;
 			}
 			return true;
 		}
@@ -49,12 +51,12 @@ namespace Nefarius.ViGEm.Client
 		public bool PlugIn(uint userIndex)
 		{
 			var t = Targets;
-			if (t == null)
+			if (t == null || userIndex < 1 || userIndex > connected.Length || userIndex > t.Length)
 				return false;
+			var tempDevices = new bool[4];
 			try
 			{
 				// In order to assign virtual device at specific XInput position, must connect all devices with lower position first.
-				var tempDevices = new bool[4];
 				for (int i = 0; i < userIndex - 1; i++)
 				{
 					if (!connected[i])
@@ -66,18 +68,31 @@ namespace Nefarius.ViGEm.Client
 				// Connect specified device.
 				t[userIndex - 1].Connect();
 				connected[userIndex - 1] = true;
-				// Disconnect temporary connected devices.
-				for (int i = 0; i < 4; i++)
-				{
-					if (tempDevices[i])
-						t[i].Disconnect();
-				}
 				return true;
 			}
 			catch (Exception ex)
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				connected[userIndex - 1] = false;
 				return false;
+			}
+			finally
+			{
+				// Never leave placeholder targets attached when a later connect fails.
+				for (int i = 0; i < tempDevices.Length; i++)
+				{
+					if (!tempDevices[i])
+						continue;
+					try
+					{
+						t[i].Disconnect();
+					}
+					catch (Exception ex)
+					{
+						JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+					}
+					connected[i] = false;
+				}
 			}
 		}
 
@@ -94,7 +109,7 @@ namespace Nefarius.ViGEm.Client
 		public bool IsControllerConnected(uint i)
 		{
 			// Not properly implemented yet.
-			return connected[i - 1];
+			return i >= 1 && i <= connected.Length && connected[i - 1];
 		}
 
 		#region ■ Static Members

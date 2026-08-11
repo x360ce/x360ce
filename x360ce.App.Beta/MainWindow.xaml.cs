@@ -290,7 +290,11 @@ namespace x360ce.App
 			{
 				OnCloseAction(e);
 			}
-			catch (Exception) { }
+			catch (Exception ex)
+			{
+				x360ce.App.Diagnostics.OperationalLog.Current?.WriteException(
+					"main_window_close_failed", ex);
+			}
 		}
 
 		private void OnCloseAction(CancelEventArgs e)
@@ -318,8 +322,6 @@ namespace x360ce.App
 				//	XInput.FreeLibrary();    
 				//});
 			}
-			// Logical delay without blocking the current thread.
-			System.Threading.Tasks.Task.Delay(100).Wait();
 			SettingsManager.SaveAll();
 			AppHelper.UnInitializeHidGuardian();
 		}
@@ -378,7 +380,6 @@ namespace x360ce.App
 			ControlsHelper.SetVisible(MainPanel.StatusEventsLabel, false);
 			// Check for various issues.
 			InitIssuesPanel();
-			InitUpdateForm();
 		}
 
 		private void UpdateForm2()
@@ -504,50 +505,24 @@ namespace x360ce.App
 
 		#endregion
 
-		#region ■ Update Form
-
-		private Forms.UpdateWindow _UpdateWindow;
-		private readonly object UpdateFormLock = new object();
-
-		private void InitUpdateForm()
-		{
-			lock (UpdateFormLock)
-				_UpdateWindow = new Forms.UpdateWindow();
-		}
-
-		private void DisposeUpdateForm()
-		{
-			lock (UpdateFormLock)
-				_UpdateWindow = null;
-		}
+		#region ■ Releases
 
 		public bool? ShowUpdateForm()
 		{
-			lock (UpdateFormLock)
+			try
 			{
-				if (_UpdateWindow == null)
-					return null;
-				var oldTab = MainBodyPanel.MainTabControl.SelectedItem;
-				MainBodyPanel.MainTabControl.SelectedItem = MainBodyPanel.CloudTabPage;
-
-				ControlsHelper.CenterWindowOnApplication(_UpdateWindow);
-				_UpdateWindow.OpenDialog();
-				ControlsHelper.CheckTopMost(_UpdateWindow);
-				var result = _UpdateWindow.ShowDialog();
-				_UpdateWindow.CloseDialog();
-				MainBodyPanel.MainTabControl.SelectedItem = oldTab;
-				return null;
+				System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+				{
+					FileName = "https://github.com/x360ce/x360ce/releases",
+					UseShellExecute = true,
+				});
 			}
-		}
-
-		public void ProcessUpdateResults(CloudMessage results)
-		{
-			lock (UpdateFormLock)
+			catch (Exception ex)
 			{
-				if (_UpdateWindow == null)
-					return;
-				_UpdateWindow.Step2ProcessUpdateResults(results);
+				x360ce.App.Diagnostics.OperationalLog.Current?.WriteException(
+					"open_releases_failed", ex);
 			}
+			return null;
 		}
 
 		#endregion
@@ -930,7 +905,6 @@ namespace x360ce.App
 			CleanStatusTimer.Elapsed -= CleanStatusTimer_Elapsed;
 			CleanStatusTimer.Dispose();
 			StartHelper.Dispose();
-			DisposeUpdateForm();
 			DisposeInterfaceUpdate();
 			CollectGarbage();
 		}

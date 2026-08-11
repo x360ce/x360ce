@@ -220,7 +220,8 @@ namespace x360ce.App
 					}
 					break;
 				case CloudAction.CheckUpdates:
-					Global._MainWindow.ProcessUpdateResults(result);
+					// The self-update/download flow is retired. Releases are distributed
+					// independently and no startup or cloud response may execute binaries.
 					break;
 			}
 		}

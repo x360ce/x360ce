@@ -69,9 +69,12 @@ namespace x360ce.App.Diagnostics
 			}
 
 			text.AppendLine();
-			text.AppendLine("Recent operational events (JSON lines):");
+			text.AppendLine("Recent sanitized operational events (JSON lines):");
 			foreach (var line in recentEvents ?? Enumerable.Empty<string>())
-				text.AppendLine(line);
+			{
+				if (IsSafeOperationalEvent(line))
+					text.AppendLine(line);
+			}
 			return text.ToString();
 		}
 
@@ -112,5 +115,35 @@ namespace x360ce.App.Diagnostics
 		}
 
 		static string YesNo(bool value) => value ? "Yes" : "No";
+
+		static bool IsSafeOperationalEvent(string line)
+		{
+			if (string.IsNullOrWhiteSpace(line))
+				return false;
+			// Copy only events whose schemas contain allowlisted stage/status data.
+			// Exception messages/stacks and raw device identifiers remain in the local
+			// rotating file and are deliberately excluded from the clipboard report.
+			var safeEvents = new[]
+			{
+				"application_session_started",
+				"startup_stage_started",
+				"startup_stage_completed",
+				"startup_stage_slow",
+				"startup_window_shown",
+				"ui_dispatcher_started",
+				"main_window_loaded",
+				"main_window_shown",
+				"cpp_runtime_detected",
+				"vigem_health_detected",
+				"dinput_worker_started",
+				"dinput_worker_stopped",
+				"dinput_enumeration_completed",
+				"device_notification",
+				"controller_poll_frequency",
+				"controller_pipeline_health_changed",
+			};
+			return safeEvents.Any(name =>
+				line.IndexOf("\"event\":\"" + name + "\"", StringComparison.Ordinal) >= 0);
+		}
 	}
 }

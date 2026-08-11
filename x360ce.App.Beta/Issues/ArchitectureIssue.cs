@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 using x360ce.Engine;
 using System.Linq;
-using System.Windows.Forms;
 using JocysCom.ClassLibrary.Win32;
-using JocysCom.ClassLibrary.Controls.IssuesControl;
 using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls.IssuesControl;
 
 namespace x360ce.App.Issues
 {
@@ -15,7 +13,7 @@ namespace x360ce.App.Issues
 		public ArchitectureIssue() : base()
 		{
 			Name = "Architecture";
-			FixName = "Download";
+			FixName = "Open Releases";
 		}
 
 		// Check file only once.
@@ -49,7 +47,6 @@ namespace x360ce.App.Issues
 				var pa = PEReader.GetProcessorArchitecture(exe);
 				architectures.Add(exe, pa);
 			}
-			var fi = new FileInfo(Application.ExecutablePath);
 			// Select all architectures of executables.
 			var archs = architectures.Select(x => x.Value).ToArray();
 			var x86Count = archs.Count(x => x == ProcessorArchitecture.X86);
@@ -59,8 +56,7 @@ namespace x360ce.App.Issues
 			{
 				SetSeverity(
 					IssueSeverity.Moderate, 1,
-					"This folder contains 32-bit game. You should use 32-bit X360CE Application:\r\n" +
-					"http://www.x360ce.com/Files/x360ce.zip"
+					"This folder contains a 32-bit game. Select a maintained 32-bit build from the releases page."
 				);
 				return;
 			}
@@ -69,8 +65,7 @@ namespace x360ce.App.Issues
 			{
 				SetSeverity(
 					IssueSeverity.Moderate, 2,
-					"This folder contains 64-bit game. You should use 64-bit X360CE Application:\r\n" +
-					"http://www.x360ce.com/Files/x360ce_x64.zip"
+					"This folder contains a 64-bit game. Select a maintained 64-bit build from the releases page."
 				);
 				return;
 			}
@@ -79,14 +74,7 @@ namespace x360ce.App.Issues
 
 		public override void FixTask()
 		{
-			if (FixType == 1)
-			{
-				ControlsHelper.OpenUrl("http://www.x360ce.com/Files/x360ce.zip");
-			}
-			else if (FixType == 2)
-			{
-				ControlsHelper.OpenUrl("http://www.x360ce.com/Files/x360ce_x64.zip");
-			}
+			ControlsHelper.OpenUrl("https://github.com/x360ce/x360ce/releases");
 		}
 
 	}

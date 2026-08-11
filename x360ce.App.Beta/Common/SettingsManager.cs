@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Forms;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -88,6 +89,15 @@ namespace x360ce.App
 		{
 			Properties.Settings.Default.Save();
 			OptionsData.Save();
+			if (!RemainingSettingsLoaded)
+			{
+				// Startup may deliberately continue with empty in-memory collections
+				// after a load deadline. Never overwrite the user's mapping files with
+				// those fallback collections.
+				x360ce.App.Diagnostics.OperationalLog.Current?.Write(
+					"settings_save_skipped", "warn");
+				return;
+			}
 			UserSettings.Save();
 			Summaries.Save();
 			Programs.Save();
@@ -248,7 +258,8 @@ namespace x360ce.App
 
 		static readonly object loadLock = new object();
 		static bool optionsLoaded;
-		static bool remainingSettingsLoaded;
+		static volatile bool remainingSettingsLoaded;
+		public static bool RemainingSettingsLoaded => remainingSettingsLoaded;
 
 		public static void Load()
 		{
@@ -270,35 +281,95 @@ namespace x360ce.App
 
 		public static void LoadRemainingSettings()
 		{
+			LoadRemainingSettings(CancellationToken.None);
+		}
+
+		public static void LoadRemainingSettings(CancellationToken cancellationToken)
+		{
 			lock (loadLock)
 			{
 				if (remainingSettingsLoaded)
 					return;
-			// Load main application options first.
+				cancellationToken.ThrowIfCancellationRequested();
+				// Load main application options first.
 				if (!optionsLoaded)
 					LoadOptions();
-			// Load user settings second.
-				UserSettings.ValidateData = UserSettings_ValidateData;
-				UserSettings.Load();
-			// Load settings which do not require validation.
-			Presets.Load();
-			Summaries.Load();
-			PadSettings.Load();
-			UserMacros.Load();
-			UserInstances.Load();
-			// Load settings which must be validated.
-			Programs.ValidateData = Programs_ValidateData;
-			Programs.Load();
-			UserGames.ValidateData = Games_ValidateData;
-			UserGames.Load();
-			Layouts.ValidateData = Layouts_ValidateData;
-			Layouts.Load();
-			// Load user devices and attach event which will hide them with HID Guardian when IsHidden property modified.
-				UserDevices.Load();
+				Options.InitializeMachineIdentity(cancellationToken);
+				cancellationToken.ThrowIfCancellationRequested();
+
+				// Build an isolated snapshot. If a filesystem call ignores cancellation
+				// and outlives the startup deadline, it can only mutate this private
+				// snapshot; the UI continues against the safe, empty global collections.
+				var userSettings = new XSettingsData<Engine.Data.UserSetting>("UserSettings.xml", "User Settings.");
+				var presets = new XSettingsData<Preset>("Presets.xml", "Default PadSettings for most popular Devices (Products).");
+				var summaries = new XSettingsData<Engine.Data.Summary>("Summaries.xml", "Default PadSettings for most popular Game, Device and Controller combination.");
+				var padSettings = new XSettingsData<Engine.Data.PadSetting>("PadSettings.xml", "User and Preset PadSettings.");
+				var userMacros = new XSettingsData<Engine.Data.UserMacro>("UserMacros.xml", "Keyboard, mouse and XInput macro maps.");
+				var userInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
+				var programs = new XSettingsData<Engine.Data.Program>("Programs.xml", "Default settings for most popular Games.");
+				var userGames = new XSettingsData<Engine.Data.UserGame>("UserGames.xml", "User Games.");
+				var layouts = new XSettingsData<Layout>("Layouts.xml", "Most popular layouts for Games.");
+				var userDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices.xml", "User Devices (Direct Input).");
+
+				userSettings.ValidateData = UserSettings_ValidateData;
+				programs.ValidateData = Programs_ValidateData;
+				userGames.ValidateData = items => Games_ValidateData(items, programs);
+				layouts.ValidateData = Layouts_ValidateData;
+
+				LoadData(userSettings, cancellationToken);
+				LoadData(presets, cancellationToken);
+				LoadData(summaries, cancellationToken);
+				LoadData(padSettings, cancellationToken);
+				LoadData(userMacros, cancellationToken);
+				LoadData(userInstances, cancellationToken);
+				LoadData(programs, cancellationToken);
+				LoadData(userGames, cancellationToken);
+				LoadData(layouts, cancellationToken);
+				LoadData(userDevices, cancellationToken);
+				cancellationToken.ThrowIfCancellationRequested();
+
+				UserSettings = userSettings;
+				Presets = presets;
+				Summaries = summaries;
+				PadSettings = padSettings;
+				UserMacros = userMacros;
+				UserInstances = userInstances;
+				Programs = programs;
+				UserGames = userGames;
+				Layouts = layouts;
+				UserDevices = userDevices;
 				UserDevices.Items.ListChanged += UserDevices_Items_ListChanged;
-				UserDevices.Items.RaiseListChangedEvents = true;
 				remainingSettingsLoaded = true;
 			}
+		}
+
+		static void LoadData<T>(XSettingsData<T> data, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			data.Items.RaiseListChangedEvents = false;
+			try
+			{
+				data.Load();
+			}
+			catch (OperationCanceledException)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				x360ce.App.Diagnostics.OperationalLog.Current?.WriteException(
+					"settings_data_load_failed", ex,
+					new Dictionary<string, object> { ["dataType"] = typeof(T).Name });
+			}
+			finally
+			{
+				// If the deadline expired inside an uncooperative file read, leave
+				// notifications disabled so a late completion cannot update WPF
+				// bindings from this background thread.
+				if (!cancellationToken.IsCancellationRequested)
+					data.Items.RaiseListChangedEvents = true;
+			}
+			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		public static void SetSynchronizingObject(TaskScheduler so = null)
@@ -410,11 +481,23 @@ namespace x360ce.App
 				items.Add(o);
 			}
 			// Set missing values to defaults.
-			items[0].InitializeDefaults();
+			// Pre-dispatcher option loading must not query WMI/firmware identity.
+			items[0].InitializeDefaults(includeMachineIdentity: false);
+			// Retire automatic traffic to the legacy HTTP cloud/update endpoint,
+			// including for profiles created by older x360ce versions.
+			items[0].InternetFeatures = false;
+			items[0].InternetAutoLoad = false;
+			items[0].InternetAutoSave = false;
+			items[0].CheckForUpdates = false;
 			return items;
 		}
 
-		static IList<Engine.Data.UserGame> Games_ValidateData(IList<Engine.Data.UserGame> items)
+		static IList<Engine.Data.UserGame> Games_ValidateData(IList<Engine.Data.UserGame> items) =>
+			Games_ValidateData(items, Programs);
+
+		static IList<Engine.Data.UserGame> Games_ValidateData(
+			IList<Engine.Data.UserGame> items,
+			XSettingsData<Engine.Data.Program> programs)
 		{
 			// Make sure default settings have unique by file name.
 			var distinctItems = items
@@ -430,7 +513,7 @@ namespace x360ce.App
 				// Add x360ce.exe
 				var scanner = new XInputMaskScanner();
 				var item = scanner.FromDisk(appFile.FullName);
-				var program = Programs.Items.FirstOrDefault(x => string.Compare(x.FileName, appFile.Name, true) == 0);
+				var program = programs.Items.FirstOrDefault(x => string.Compare(x.FileName, appFile.Name, true) == 0);
 				item.LoadDefault(program);
 				// Append to top.
 				distinctItems.Insert(0, item);

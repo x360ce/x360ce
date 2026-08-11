@@ -1,7 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Controls.IssuesControl;
 using System;
-using System.Linq;
 
 namespace x360ce.App.Issues
 {
@@ -11,7 +10,7 @@ namespace x360ce.App.Issues
 		public CppX64RuntimeInstallIssue() : base()
 		{
 			Name = "Software";
-			FixName = "Download and Install";
+			FixName = "Open Microsoft Download";
 			MoreInfo = new Uri("https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist");
 		}
 
@@ -52,9 +51,9 @@ namespace x360ce.App.Issues
 
 		public override void FixTask()
 		{
-			var uri = new Uri("https://aka.ms/vc14/vc_redist.x64.exe");
-			var localPath = System.IO.Path.Combine(x360ce.Engine.EngineHelper.AppDataPath, "Temp", uri.Segments.Last());
-			IssueHelper.DownloadAndInstall(uri, localPath, MoreInfo);
+			x360ce.App.Diagnostics.OperationalLog.Current?.Write("cpp_runtime_download_opened", fields:
+				new System.Collections.Generic.Dictionary<string, object> { ["architecture"] = "x64" });
+			ControlsHelper.OpenUrl("https://aka.ms/vc14/vc_redist.x64.exe");
 		}
     }
 }

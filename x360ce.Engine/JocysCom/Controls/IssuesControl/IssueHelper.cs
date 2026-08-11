@@ -5,10 +5,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace JocysCom.ClassLibrary.Controls.IssuesControl
@@ -237,59 +235,6 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			timer.Dispose();
 		}
 
-
-		public static bool DownloadAndInstall(Uri uri, string localPath, Uri infoPage, bool runElevated = false)
-		{
-			try
-			{
-				// Run DownloadFile synchronously and without locking.
-				var file = Task.Run(() => DownloadFile(uri, localPath)).GetAwaiter().GetResult();
-				if (runElevated)
-				{
-					var proc = new ProcessStartInfo();
-					proc.UseShellExecute = true;
-					proc.WorkingDirectory = Environment.CurrentDirectory;
-					proc.FileName = file.FullName;
-					proc.Verb = "runas";
-					Process.Start(proc);
-					//Win32.UacHelper.RunElevatedAsync(file.FullName, null);
-				}
-				else
-				{
-					ControlsHelper.OpenPath(file.FullName);
-				}
-				return true;
-			}
-			catch (Exception ex)
-			{
-				var text = string.Format("Unable to download {0} file:\r\n\r\n{1}\r\n\r\nOpen source web page?",
-					uri.AbsoluteUri, ex.Message);
-				var result = System.Windows.MessageBox.Show(text, "Download Error", System.Windows.MessageBoxButton.YesNo, System.Windows.MessageBoxImage.Question);
-				if (result == System.Windows.MessageBoxResult.Yes)
-				{
-					ControlsHelper.OpenUrl("https://support.microsoft.com/en-gb/help/2977003/the-latest-supported-visual-c-downloads");
-				}
-			}
-			return false;
-		}
-
-		public static async Task<FileInfo> DownloadFile(Uri uri, string localPath)
-		{
-			var localFile = new FileInfo(localPath);
-			if (localFile.Exists)
-				localFile.Delete();
-			using (var client = new HttpClient())
-			{
-			client.Timeout = TimeSpan.FromSeconds(30);
-			using (var s = await client.GetStreamAsync(uri))
-			using (var fs = new FileStream(localFile.FullName, FileMode.CreateNew))
-				await s.CopyToAsync(fs);
-			}
-			//AddLog("Downloading File: {0}", MoreInfo.AbsoluteUri);
-			localFile.Refresh();
-			// AddLog("Done");
-			return localFile;
-		}
 
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows.Forms;
 using x360ce.Engine;
 
@@ -15,36 +16,55 @@ namespace x360ce.App
 			MinimizeToTray = true;
             MinimizeOnClose = true;
             StartWithWindowsState = FormWindowState.Minimized;
-			InternetFeatures = true;
-			InternetAutoLoad = true;
-			InternetAutoSave = true;
+			// The legacy HTTP cloud/update service is retired. Local controller
+			// mapping must never depend on network availability.
+			InternetFeatures = false;
+			InternetAutoLoad = false;
+			InternetAutoSave = false;
 			ShowDevicesTab = true;
 			EnableShowFormInfo = false;
 		}
 		/// <summary>
 		/// Avoid de-serialization duplicates by using separate method.
 		/// </summary>
-		public void InitializeDefaults()
+		public void InitializeDefaults(bool includeMachineIdentity = true)
 		{
 			if (string.IsNullOrEmpty(InternetDatabaseUrl))
-				InternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
+				InternetDatabaseUrl = string.Empty;
 			if (InternetDatabaseUrls == null)
 				InternetDatabaseUrls = new BindingList<string>();
-			if (InternetDatabaseUrls.Count == 0)
-			{
-				InternetDatabaseUrls.Add("http://www.x360ce.com/webservices/x360ce.asmx");
-				InternetDatabaseUrls.Add("http://localhost:20360/webservices/x360ce.asmx");
-			}
 			if (GameScanLocations == null)
 				GameScanLocations = new BindingList<string>();
-			if (string.IsNullOrEmpty(ComputerDisk))
-				ComputerDisk = Engine.BoardInfo.GetDiskId();
-			if (ComputerId == Guid.Empty)
-				ComputerId = Engine.BoardInfo.GetHashedDiskId(ComputerDisk);
-			if (string.IsNullOrEmpty(ProfilePath))
-				ProfilePath = EngineHelper.AppDataPath;
-			if (ProfileId == Guid.Empty)
-				ProfileId = Engine.Data.UserProfile.GenerateProfileId(ComputerId, EngineHelper.AppDataPath);
+			if (includeMachineIdentity)
+				InitializeMachineIdentity();
+		}
+
+		/// <summary>
+		/// Machine identity can involve slow firmware/WMI queries and therefore is
+		/// initialized only by the deadline-bounded background startup stage.
+		/// </summary>
+		public void InitializeMachineIdentity(CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var computerDisk = ComputerDisk;
+			if (string.IsNullOrEmpty(computerDisk))
+				computerDisk = Engine.BoardInfo.GetDiskId();
+			cancellationToken.ThrowIfCancellationRequested();
+			var computerId = ComputerId == Guid.Empty
+				? Engine.BoardInfo.GetHashedDiskId(computerDisk)
+				: ComputerId;
+			var profilePath = string.IsNullOrEmpty(ProfilePath)
+				? EngineHelper.AppDataPath
+				: ProfilePath;
+			var profileId = ProfileId == Guid.Empty
+				? Engine.Data.UserProfile.GenerateProfileId(computerId, EngineHelper.AppDataPath)
+				: ProfileId;
+			cancellationToken.ThrowIfCancellationRequested();
+
+			// Commit the identity atomically only after all slow queries have completed.
+			ComputerDisk = computerDisk;
+			ComputerId = computerId;
+			ProfilePath = profilePath;
+			ProfileId = profileId;
 		}
 
 		public bool CheckAndFixUserRsaKeys()
@@ -93,19 +113,19 @@ namespace x360ce.App
 		public bool ShowDevicesTab { get; set; }
 		public bool ShowIniTab { get; set; }
 
-		[DefaultValue(true), Description("Enable the use of Internet features like the settings database.")]
+		[DefaultValue(false), Description("Legacy Internet settings service (retired).")]
 		public bool InternetFeatures { get { return _InternetFeatures; } set { _InternetFeatures = value; OnPropertyChanged(); } }
 		bool _InternetFeatures;
 
-		[DefaultValue(true), Description("Auto load settings from Internet Database.")]
+		[DefaultValue(false), Description("Auto load from the retired Internet Database.")]
 		public bool InternetAutoLoad { get { return _InternetAutoLoad; } set { _InternetAutoLoad = value; OnPropertyChanged(); } }
 		bool _InternetAutoLoad;
 
-		[DefaultValue(true), Description("Auto save settings to Internet Database.")]
+		[DefaultValue(false), Description("Auto save to the retired Internet Database.")]
 		public bool InternetAutoSave { get { return _InternetAutoSave; } set { _InternetAutoSave = value; OnPropertyChanged(); } }
 		bool _InternetAutoSave;
 
-		public const string DefaultInternetDatabaseUrl = "http://www.x360ce.com/webservices/x360ce.asmx";
+		public const string DefaultInternetDatabaseUrl = "";
 
 		[DefaultValue(DefaultInternetDatabaseUrl), Description("Internet settings database URL.")]
 		public string InternetDatabaseUrl

@@ -142,6 +142,10 @@ namespace x360ce.App.Controls
 		{
 			if (!ControlsHelper.AllowLoad(this))
 				return;
+			// The original SOAP cloud backend is retired. Do not attach network
+			// monitoring or start a queue merely because this control was loaded.
+			if (SettingsManager.Options?.InternetFeatures != true)
+				return;
 			if (Global.CloudClient == null)
 				return;
 			// Enable task timer.

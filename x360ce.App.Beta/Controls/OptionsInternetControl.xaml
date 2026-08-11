@@ -145,11 +145,12 @@
             Header="Internet">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Vertical">
-                    <CheckBox Name="InternetAutoSaveCheckBox" Content="Save Settings to Cloud" />
-                    <CheckBox Name="InternetAutoLoadCheckBox" Content="Load Settings from Cloud" />
-                    <CheckBox Name="InternetFeaturesCheckBox" Content="Enable Internet Features" />
+                    <TextBlock Margin="4" TextWrapping="Wrap" Text="The legacy x360ce cloud service is retired. Controller mappings are stored locally." />
+                    <CheckBox Name="InternetAutoSaveCheckBox" Visibility="Collapsed" />
+                    <CheckBox Name="InternetAutoLoadCheckBox" Visibility="Collapsed" />
+                    <CheckBox Name="InternetFeaturesCheckBox" Visibility="Collapsed" />
                 </StackPanel>
-                <Grid HorizontalAlignment="Stretch">
+                <Grid HorizontalAlignment="Stretch" Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -165,13 +166,12 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
-        <GroupBox Grid.Row="3" Margin="3,0,0,3" Header="Updates">
+        <GroupBox Grid.Row="3" Margin="3,0,0,3" Header="Releases">
             <StackPanel Orientation="Horizontal">
-                <CheckBox Name="CheckForUpdatesCheckBox" Content="Check for updates on startup" />
                 <Button Name="CheckUpdatesButton" Click="CheckUpdatesButton_Click">
                     <StackPanel>
                         <ContentControl Content="{StaticResource Icon_Refresh}" />
-                        <Label Content="Check..." />
+                        <Label Content="Open release page" />
                     </StackPanel>
                 </Button>
             </StackPanel>

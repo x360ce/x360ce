@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using x360ce.Engine.Data;
 
 namespace x360ce.App.DInput
@@ -17,11 +16,10 @@ namespace x360ce.App.DInput
 		private HashSet<Guid> _previousDeviceGuids = new HashSet<Guid>();
 
 		/// <summary>
-		/// Asynchronously updates DirectInput devices.
+		/// Updates DirectInput devices on the dedicated controller worker.
 		/// </summary>
 		/// <param name="directInput">The DirectInput instance.</param>
-		/// <returns>A completed task.</returns>
-		Task UpdateDiDevices(DirectInput directInput)
+		void UpdateDiDevices(DirectInput directInput)
 		{
 			try
 			{
@@ -59,8 +57,6 @@ namespace x360ce.App.DInput
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 				LastException = ex;
 			}
-
-			return Task.CompletedTask;
 		}
 
 		/// <summary>

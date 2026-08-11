@@ -182,6 +182,8 @@ namespace x360ce.App
 
 		private static void _ResumeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+			if (Global.DHelper != null)
+				Global.DHelper.Suspended = false;
 			if (Global.AllowDHelperStart)
 				Global.DHelper.StartDInputService();
 		}
@@ -192,15 +194,25 @@ namespace x360ce.App
 		{
 			if (msg == WM_SETTINGCHANGE)
 			{
-				// Must stop all updates or interface will freeze during screen updates.
-				Global.DHelper.StopDInputService();
+				// Pause the worker without joining it from the WPF message pump.
+				// A slow native controller call must never block a display-settings event.
+				if (Global.DHelper != null)
+					Global.DHelper.Suspended = true;
 				_ResumeTimer.Stop();
 				_ResumeTimer.Start();
 			}
 			// Device connected or removed.
 			else if (msg == WM_DEVICECHANGE)
 			{
-				HandleDeviceChange(wParam, lParam);
+				try
+				{
+					HandleDeviceChange(wParam, lParam);
+				}
+				catch (Exception ex)
+				{
+					x360ce.App.Diagnostics.OperationalLog.Current?.WriteException(
+						"device_notification_failed", ex);
+				}
 			}
 			// If message value was found then...
 			else if (msg == _WindowMessage)
@@ -240,16 +252,15 @@ namespace x360ce.App
 			if (!IsKeyboardMouseHID(guid, path))
 				return;
 
-			// 5) Write information to debug output.
-			Debug.WriteLine(
-				$"DEV_BROADCAST_DEVICEINTERFACE: " +
-				$"{(evt == DBT_DEVICEARRIVAL ? "Attached" : "Removed")} " +
-				$"{DateTime.Now:HH:mm:ss.fff} {guid} {CleanPath(path, guid)} ({GetInterfaceClassName(guid)})");
+			var match = System.Text.RegularExpressions.Regex.Match(path,
+				@"VID_(?<vid>[0-9A-Fa-f]{4}).*PID_(?<pid>[0-9A-Fa-f]{4})");
+			// 5) Write only allowlisted identifiers; interface paths may contain a
+			// device serial and are intentionally excluded.
+			Debug.WriteLine($"Device {(evt == DBT_DEVICEARRIVAL ? "attached" : "removed")}: " +
+				$"VID={match.Groups["vid"].Value}, PID={match.Groups["pid"].Value}, class={GetInterfaceClassName(guid)}");
 
 			// 6) Coalesce notification storms before the worker refreshes devices.
 			_DeviceRefreshTimer?.Change(250, System.Threading.Timeout.Infinite);
-			var match = System.Text.RegularExpressions.Regex.Match(path,
-				@"VID_(?<vid>[0-9A-Fa-f]{4}).*PID_(?<pid>[0-9A-Fa-f]{4})");
 			x360ce.App.Diagnostics.OperationalLog.Current?.Write("device_notification", fields:
 				new System.Collections.Generic.Dictionary<string, object>
 				{
