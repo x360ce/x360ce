@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Interop;
+using x360ce.App.Diagnostics;
 
 namespace x360ce.App
 {
@@ -32,12 +33,24 @@ namespace x360ce.App
 		{
 			//TestMemoryLeak(typeof(JocysCom.ClassLibrary.Controls.IssuesControl.IssuesControl));
 			//return;
+			try
+			{
+				OperationalLog.InitializeDefault();
+			}
+			catch (Exception)
+			{
+				// A read-only or malformed profile must not prevent startup.
+			}
 			CaptureExceptions();
 			// Fix: System.TimeoutException: The operation has timed out. at System.Windows.Threading.Dispatcher.InvokeImpl
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotInvokeInWeakEventTableShutdownListener", true);
 			// First: Set working folder to the path of executable.
-			var fi = new FileInfo(System.Windows.Forms.Application.ExecutablePath);
-			Directory.SetCurrentDirectory(fi.Directory.FullName);
+			FileInfo fi;
+			using (MeasureStartup("working_directory"))
+			{
+				fi = new FileInfo(System.Windows.Forms.Application.ExecutablePath);
+				Directory.SetCurrentDirectory(fi.Directory.FullName);
+			}
 			// Prevent brave users from running this application from Windows folder.
 			var winFolder = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
 			if (fi.FullName.StartsWith(winFolder, StringComparison.OrdinalIgnoreCase))
@@ -51,10 +64,12 @@ namespace x360ce.App
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(CurrentDomain_AssemblyResolve);
 			try
 			{
-				StartApp(args);
+				using (MeasureStartup("start_app"))
+					StartApp(args);
 			}
 			catch (Exception ex)
 			{
+				OperationalLog.Current?.WriteException("startup_unhandled_exception", ex);
 				if (IsDebug)
 					throw;
 				var message = ExceptionToText(ex);
@@ -78,7 +93,9 @@ namespace x360ce.App
 		}
 
 		private static void TaskScheduler_UnobservedTaskException(object sender, System.Threading.Tasks.UnobservedTaskExceptionEventArgs e)
-		{ // <- Put breakpoint here to capture exceptions during debug.
+		{
+			OperationalLog.Current?.WriteException("unobserved_task_exception", e.Exception);
+			e.SetObserved();
 		}
 
 		private static void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
@@ -86,7 +103,8 @@ namespace x360ce.App
 		}
 
 		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-		{ // <- Put breakpoint here to capture exceptions during debug.
+		{
+			OperationalLog.Current?.WriteException("process_unhandled_exception", e.ExceptionObject as Exception);
 		}
 
 		public const string arg_WindowState = nameof(WindowState);
@@ -108,7 +126,9 @@ namespace x360ce.App
 			// ------------------------------------------------
 			// Administrator commands.
 			// ------------------------------------------------
-			var executed = ProcessAdminCommands(args);
+			bool executed;
+			using (MeasureStartup("admin_commands"))
+				executed = ProcessAdminCommands(args);
 			// If valid command was executed then...
 			if (executed)
 				return;
@@ -122,18 +142,25 @@ namespace x360ce.App
 				return;
 			}
 			// If default application settings failed to load then... 
-			if (!CheckDefaultSettings())
-				return;
+			using (MeasureStartup("default_settings"))
+			{
+				if (!CheckDefaultSettings())
+					return;
+			}
 			// Load all settings.
-			SettingsManager.Load();
+			using (MeasureStartup("settings_load"))
+				SettingsManager.Load();
 			var o = SettingsManager.Options;
 			// DPI aware property must be set before application window is created.
 			if (Environment.OSVersion.Version.Major >= 6 && o.IsProcessDPIAware)
 				NativeMethods.SetProcessDPIAware();
-			Global.InitializeServices();
-			Global.InitializeCloudClient();
+			using (MeasureStartup("global_services"))
+				Global.InitializeServices();
+			using (MeasureStartup("cloud_client"))
+				Global.InitializeCloudClient();
 			// Initialize DInput Helper.
-			Global.DHelper = new DInput.DInputHelper();
+			using (MeasureStartup("dinput_helper_construct"))
+				Global.DHelper = new DInput.DInputHelper();
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
 				// Close all x360ce apps.
@@ -145,26 +172,49 @@ namespace x360ce.App
 			// If one copy is already opened then...
 			if (allowToRun)
 			{
-				InitializeServices();
-				InitializeTrayIcon();
-				app = new App();
+				using (MeasureStartup("local_service"))
+					InitializeServices();
+				using (MeasureStartup("tray_icon"))
+					InitializeTrayIcon();
+				using (MeasureStartup("wpf_application"))
+					app = new App();
 				//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
 				app.Startup += App_Startup;
-				app.InitializeComponent();
+				app.DispatcherUnhandledException += App_DispatcherUnhandledException;
+				using (MeasureStartup("wpf_resources"))
+					app.InitializeComponent();
 				// Create the main application window which will take minimum amount of memory.
 				// Main application window is impossible to dispose until the application closes.
 				// Important: .Owner property must be set to Application.Current.MainWindow for sub-window to dispose.
-				var appWindow = new Window();
-				appWindow.Title = "x360ceAppWindow";
-				// Make sure it contains handle.
-				var awHelper = new WindowInteropHelper(appWindow);
-				awHelper.EnsureHandle();
-				Application.Current.MainWindow = appWindow;
+				using (MeasureStartup("bootstrap_window"))
+				{
+					var appWindow = new Window();
+					appWindow.Title = "x360ceAppWindow";
+					// Make sure it contains handle.
+					var awHelper = new WindowInteropHelper(appWindow);
+					awHelper.EnsureHandle();
+					Application.Current.MainWindow = appWindow;
+				}
 				// Now we can start the app.
+				OperationalLog.Current?.Write("ui_dispatcher_started");
 				app.Run();
 			}
 			Global.DisposeCloudClient();
 			Global.DisposeServices();
+		}
+
+		static void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+		{
+			OperationalLog.Current?.WriteException("ui_unhandled_exception", e.Exception);
+		}
+
+		static IDisposable MeasureStartup(string stage) =>
+			OperationalLog.Current?.Measure(stage) ?? EmptyDisposable.Instance;
+
+		sealed class EmptyDisposable : IDisposable
+		{
+			public static readonly EmptyDisposable Instance = new EmptyDisposable();
+			public void Dispose() { }
 		}
 
 		// Application starts first time.

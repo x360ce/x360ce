@@ -1,9 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Microsoft.Win32;
 using x360ce.App;
 using x360ce.App.Controls;
+using x360ce.App.Diagnostics;
 using x360ce.App.Issues;
 
 namespace x360ce.Tests
@@ -208,6 +211,55 @@ namespace x360ce.Tests
 
             Assert.IsFalse(result.Installed);
             StringAssert.Contains(result.ErrorMessage, "bad device");
+        }
+
+        [TestMethod]
+        public void OperationalLog_WritesStructuredStageDuration()
+        {
+            var folder = Path.Combine(Path.GetTempPath(), "x360ce-log-test-" + Guid.NewGuid());
+            try
+            {
+                string file;
+                using (var log = new OperationalLog(folder, 10))
+                {
+                    using (log.Measure("settings_load"))
+                    {
+                    }
+                    file = log.CurrentFilePath;
+                }
+
+                var text = File.ReadAllText(file);
+                StringAssert.Contains(text, "\"event\":\"startup_stage_started\"");
+                StringAssert.Contains(text, "\"event\":\"startup_stage_completed\"");
+                StringAssert.Contains(text, "\"durationMs\":");
+                StringAssert.Contains(text, "\"sessionId\":");
+            }
+            finally
+            {
+                if (Directory.Exists(folder))
+                    Directory.Delete(folder, true);
+            }
+        }
+
+        [TestMethod]
+        public void OperationalLog_RetainsConfiguredFileCount()
+        {
+            var folder = Path.Combine(Path.GetTempPath(), "x360ce-log-test-" + Guid.NewGuid());
+            try
+            {
+                for (var i = 0; i < 5; i++)
+                {
+                    using (var log = new OperationalLog(folder, 3))
+                        log.Write("test_launch");
+                }
+
+                Assert.AreEqual(3, Directory.GetFiles(folder, "x360ce-*.jsonl").Count());
+            }
+            finally
+            {
+                if (Directory.Exists(folder))
+                    Directory.Delete(folder, true);
+            }
         }
 
         private sealed class FakeCppRuntimeRegistry : ICppRuntimeRegistry

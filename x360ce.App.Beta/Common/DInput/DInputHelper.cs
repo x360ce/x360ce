@@ -180,7 +180,9 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		DirectInput directInput = new DirectInput();
+		// DirectInput can block while loading a broken HID stack. Create it only on
+		// the dedicated refresh thread, never while constructing startup services.
+		DirectInput directInput;
 		// Suspended is used during re-loading of the XInput library.
 		public bool Suspended;
 		void ThreadAction()

@@ -9,6 +9,7 @@ using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using x360ce.App.Diagnostics;
 using x360ce.App.Properties;
 
 namespace x360ce.App.Service
@@ -243,7 +244,9 @@ namespace x360ce.App.Service
 			Action isolator = () =>
 			{
 				//var mw = new Window();
-				var mw = new MainWindow();
+				MainWindow mw;
+				using (OperationalLog.Current?.Measure("main_window_construct"))
+					mw = new MainWindow();
 				Global._MainWindow = mw;
 				// Set owner to properly dispose after closing.
 				mw.Owner = Application.Current.MainWindow;
@@ -252,9 +255,7 @@ namespace x360ce.App.Service
 				_WindowReference.Target = mw;
 				_ContentReference.Target = mw.Content;
 				// Initialize main window.
-				var loadedSemaphore = new SemaphoreSlim(0);
-				var closedSemaphore = new SemaphoreSlim(0);
-				mw.Loaded += (sender, e) => loadedSemaphore.Release();
+				mw.Loaded += (sender, e) => OperationalLog.Current?.Write("main_window_loaded");
 				mw.Closed += (sender, e) => SetWindow(null);
 				// Unloaded will be executed after 'Closed' event.
 				mw.Unloaded += (sender, e) =>
@@ -265,8 +266,8 @@ namespace x360ce.App.Service
 				};
 				SetWindow(mw);
 				// Show window.
-				mw.Show();
-				loadedSemaphore.Wait();
+				using (OperationalLog.Current?.Measure("main_window_show"))
+					mw.Show();
 				if (activate)
 				{
 					// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:

@@ -5,7 +5,7 @@
 - [x] Test and implement VC++ v14 component detection.
 - [x] Model ViGEm installed/service/running/client/compatibility stages.
 - [x] Drive issue and options UI from staged dependency health.
-- [ ] Configure rotating operational logs and startup timings.
+- [x] Configure rotating operational logs and startup timings.
 - [ ] Remove device/dependency work from the pre-dispatcher path.
 - [ ] Add cancellable, deadline-bounded startup operations.
 - [ ] Add and pass the 50-cold-launch smoke harness.
