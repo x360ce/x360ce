@@ -246,14 +246,40 @@ namespace x360ce.App
 
 		#region ■ Load and Validate Data
 
+		static readonly object loadLock = new object();
+		static bool optionsLoaded;
+		static bool remainingSettingsLoaded;
+
 		public static void Load()
 		{
+			LoadOptions();
+			LoadRemainingSettings();
+		}
+
+		public static void LoadOptions()
+		{
+			lock (loadLock)
+			{
+				if (optionsLoaded)
+					return;
+				OptionsData.ValidateData = Options_ValidateData;
+				OptionsData.Load();
+				optionsLoaded = true;
+			}
+		}
+
+		public static void LoadRemainingSettings()
+		{
+			lock (loadLock)
+			{
+				if (remainingSettingsLoaded)
+					return;
 			// Load main application options first.
-			OptionsData.ValidateData = Options_ValidateData;
-			OptionsData.Load();
+				if (!optionsLoaded)
+					LoadOptions();
 			// Load user settings second.
-			UserSettings.ValidateData = UserSettings_ValidateData;
-			UserSettings.Load();
+				UserSettings.ValidateData = UserSettings_ValidateData;
+				UserSettings.Load();
 			// Load settings which do not require validation.
 			Presets.Load();
 			Summaries.Load();
@@ -268,9 +294,11 @@ namespace x360ce.App
 			Layouts.ValidateData = Layouts_ValidateData;
 			Layouts.Load();
 			// Load user devices and attach event which will hide them with HID Guardian when IsHidden property modified.
-			UserDevices.Load();
-			UserDevices.Items.ListChanged += UserDevices_Items_ListChanged;
-			UserDevices.Items.RaiseListChangedEvents = true;
+				UserDevices.Load();
+				UserDevices.Items.ListChanged += UserDevices_Items_ListChanged;
+				UserDevices.Items.RaiseListChangedEvents = true;
+				remainingSettingsLoaded = true;
+			}
 		}
 
 		public static void SetSynchronizingObject(TaskScheduler so = null)

@@ -31,7 +31,8 @@ namespace x360ce.App
 
 		public static void DisposeCloudClient()
 		{
-			CloudClient.Dispose();
+			CloudClient?.Dispose();
+			CloudClient = null;
 			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
 		}
 
@@ -99,6 +100,8 @@ namespace x360ce.App
 
 		public static void DisposeServices()
 		{
+			if (RemoteServer == null || WindowHook == null || SettingsManager.Options == null)
+				return;
 			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
 			Trace.TraceInformation("{0}", MethodBase.GetCurrentMethod().Name);
 			RemoteServer.StopServer();

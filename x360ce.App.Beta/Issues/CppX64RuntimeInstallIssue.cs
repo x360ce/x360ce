@@ -16,11 +16,24 @@ namespace x360ce.App.Issues
 		}
 
 		const string RuntimeName = "Microsoft Visual C++ v14 Redistributable (x64)";
+		string lastLoggedDetection;
 		public CppRuntimeDetectionResult DetectionResult { get; private set; }
 
 		public override void CheckTask()
 		{
 			DetectionResult = new CppRuntimeDetector().Detect(CppRuntimeArchitecture.X64);
+			var signature = $"{DetectionResult.IsInstalled}|{DetectionResult.Version}|{DetectionResult.RegistryView}|{DetectionResult.ErrorMessage}";
+			if (!string.Equals(signature, lastLoggedDetection, StringComparison.Ordinal))
+				x360ce.App.Diagnostics.OperationalLog.Current?.Write("cpp_runtime_detected", fields:
+				new System.Collections.Generic.Dictionary<string, object>
+				{
+					["architecture"] = "x64",
+					["installed"] = DetectionResult.IsInstalled,
+					["version"] = DetectionResult.Version,
+					["registryView"] = DetectionResult.RegistryView,
+					["error"] = DetectionResult.ErrorMessage,
+				});
+			lastLoggedDetection = signature;
 			if (!DetectionResult.IsApplicable)
 			{
 				SetSeverity(IssueSeverity.None);

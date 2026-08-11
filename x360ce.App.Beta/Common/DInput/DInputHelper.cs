@@ -4,7 +4,7 @@ using JocysCom.ClassLibrary.IO;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
 using System;
-//using System.Collections.Generic;
+using System.Collections.Generic;
 
 //using System.ComponentModel;
 using System.Diagnostics;
@@ -64,12 +64,38 @@ namespace x360ce.App.DInput
 			CombinedXiStates = new State[4];
 			LiveXiStates = new State[4];
 			LiveXiControllers = new Controller[4];
+			ControllerHealth = new ControllerPipelineHealth[4];
 
 			for (int i = 0; i < 4; i++)
 			{
 				CombinedXiStates[i] = new State();
 				LiveXiStates[i] = new State();
 				LiveXiControllers[i] = new Controller((UserIndex)i);
+				ControllerHealth[i] = new ControllerPipelineHealth();
+			}
+		}
+
+		readonly object controllerHealthLock = new object();
+		readonly HashSet<Guid> forceFeedbackDisabledDevices = new HashSet<Guid>();
+		public ControllerPipelineHealth[] ControllerHealth { get; }
+
+		public ControllerPipelineHealth[] GetControllerHealth()
+		{
+			lock (controllerHealthLock)
+			{
+				var result = new ControllerPipelineHealth[ControllerHealth.Length];
+				for (var i = 0; i < result.Length; i++)
+					result[i] = ControllerHealth[i].Clone();
+				return result;
+			}
+		}
+
+		void SetControllerHealth(int index, Action<ControllerPipelineHealth> update)
+		{
+			lock (controllerHealthLock)
+			{
+				update(ControllerHealth[index]);
+				ControllerHealth[index].UpdatedUtc = DateTime.UtcNow;
 			}
 		}
 
@@ -110,7 +136,7 @@ namespace x360ce.App.DInput
 		/// </summary>
 		private Stopwatch _Stopwatch = new Stopwatch();
 		private object timerLock = new object();
-		private bool _AllowThreadToRun;
+		private volatile bool _AllowThreadToRun;
 
 		// Start DInput Service.
 		public void StartDInputService()
@@ -119,6 +145,12 @@ namespace x360ce.App.DInput
 			{
 				if (_Timer != null)
 					return;
+				if (_Thread != null && _Thread.IsAlive)
+				{
+					x360ce.App.Diagnostics.OperationalLog.Current?.Write(
+						"dinput_restart_skipped", "warn");
+					return;
+				}
 				_Stopwatch.Restart();
 				_Timer = new JocysCom.ClassLibrary.HiResTimer((int)Frequency, "DInputHelperTimer");
 				_Timer.Elapsed += Timer_Elapsed;
@@ -141,8 +173,16 @@ namespace x360ce.App.DInput
 				_Timer.Dispose();
 				_Timer = null;
 				_ResetEvent.Set();
-				// Wait for the thread to stop.
-				_Thread.Join();
+				// Never let a broken driver make a UI caller wait indefinitely.
+				var thread = _Thread;
+				if (thread != null && thread != Thread.CurrentThread)
+				{
+					if (!thread.Join(TimeSpan.FromSeconds(2)))
+						x360ce.App.Diagnostics.OperationalLog.Current?.Write(
+							"dinput_stop_timeout", "warn");
+					else
+						_Thread = null;
+				}
 			}
 		}
 
@@ -188,27 +228,49 @@ namespace x360ce.App.DInput
 		void ThreadAction()
 		{
 			Thread.CurrentThread.Name = "RefreshAllThread";
-			// DIrect input device querying and force feedback updates will run on a separate thread from MainForm, therefore
-			// a separate windows form must be created on the same thread as the process which will access and update the device.
-			// detector.DetectorForm will be used to acquire devices.
-			// Main job of the detector is to fire an event on device connection (power on) and removal (power off).
-			directInput = new DirectInput();
-			var detector = new DeviceDetector(false);
-			do
+			DeviceDetector detector = null;
+			try
 			{
-				// Sets the state of the event to non-signaled, causing threads to block.
-				_ResetEvent.Reset();
-				// Perform all updates if not suspended.
-				if (!Suspended)
-					RefreshAll(directInput, detector);
-				// Blocks the current thread until the current WaitHandle receives a signal.
-				// The thread will be released by the timer. Do not wait longer than 50ms.
-				_ResetEvent.WaitOne(50);
+				x360ce.App.Diagnostics.OperationalLog.Current?.Write("dinput_worker_started");
+				// Native DirectInput and detector objects are created only on this worker.
+				directInput = new DirectInput();
+				detector = new DeviceDetector(false);
+				do
+				{
+					_ResetEvent.Reset();
+					if (!Suspended)
+					{
+						try
+						{
+							RefreshAll(directInput, detector);
+						}
+						catch (Exception ex)
+						{
+							LastException = ex;
+							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+							x360ce.App.Diagnostics.OperationalLog.Current?.WriteException(
+								"dinput_refresh_failed", ex);
+						}
+					}
+					_ResetEvent.WaitOne(50);
+				}
+				while (_AllowThreadToRun);
 			}
-			// Loop until allowed to run.
-			while (_AllowThreadToRun);
-			detector.Dispose();
-			directInput.Dispose();
+			catch (Exception ex)
+			{
+				LastException = ex;
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				x360ce.App.Diagnostics.OperationalLog.Current?.WriteException(
+					"dinput_worker_failed", ex);
+			}
+			finally
+			{
+				try { detector?.Dispose(); } catch (Exception) { }
+				try { directInput?.Dispose(); } catch (Exception) { }
+				detector = null;
+				directInput = null;
+				x360ce.App.Diagnostics.OperationalLog.Current?.Write("dinput_worker_stopped");
+			}
 		}
 
 		// Events.
@@ -276,6 +338,7 @@ namespace x360ce.App.DInput
 		public event EventHandler<DInputEventArgs> FrequencyUpdated;
 		private int executionCount = 0;
 		private long lastTime = 0;
+		private long lastFrequencyLogTime = 0;
 		public long CurrentUpdateFrequency;
 		private void UpdateDelayFrequency()
 		{
@@ -286,6 +349,20 @@ namespace x360ce.App.DInput
 				CurrentUpdateFrequency = Interlocked.Exchange(ref executionCount, 0);
 				FrequencyUpdated?.Invoke(this, new DInputEventArgs());
 				lastTime = currentTime;
+				if (currentTime - lastFrequencyLogTime >= 10000)
+				{
+					var requested = 1000 / Math.Max(1, (int)Frequency);
+					var level = CurrentUpdateFrequency < requested / 2 ? "warn" : "info";
+					x360ce.App.Diagnostics.OperationalLog.Current?.Write(
+						"controller_poll_frequency", level,
+						new Dictionary<string, object>
+						{
+							["requestedHz"] = requested,
+							["actualHz"] = CurrentUpdateFrequency,
+							["mappedDeviceCount"] = mappedDevices?.Length ?? 0,
+						});
+					lastFrequencyLogTime = currentTime;
+				}
 			}
 			Interlocked.Increment(ref executionCount);
 		}

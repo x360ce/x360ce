@@ -56,12 +56,8 @@ namespace Nefarius.ViGEm.Client.Targets
 
             var error = ViGEmClient.NativeMethods.vigem_target_x360_update(Client.NativeHandle, NativeHandle, submit);
 
-            switch (error)
-            {
-                case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
-                case VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET:
-                    throw new ViGEmException(error);
-            }
+			if (error != VIGEM_ERROR.VIGEM_ERROR_NONE)
+				throw new ViGEmException(error);
         }
 
         public override void Connect()

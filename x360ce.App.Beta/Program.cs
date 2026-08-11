@@ -4,8 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Interop;
+using System.Windows.Controls;
+using System.Windows.Media;
 using x360ce.App.Diagnostics;
 
 namespace x360ce.App
@@ -81,7 +84,11 @@ namespace x360ce.App
 				}
 				var result = MessageBox.Show(message, "Exception!", MessageBoxButton.OKCancel, MessageBoxImage.Error, MessageBoxResult.OK);
 				if (result == MessageBoxResult.Cancel)
-					app.Shutdown();
+					app?.Shutdown();
+			}
+			finally
+			{
+				OperationalLog.Current?.Dispose();
 			}
 		}
 
@@ -147,9 +154,10 @@ namespace x360ce.App
 				if (!CheckDefaultSettings())
 					return;
 			}
-			// Load all settings.
-			using (MeasureStartup("settings_load"))
-				SettingsManager.Load();
+			// Options are small and required to establish process/window behavior.
+			// All larger settings collections load after the first window is painted.
+			using (MeasureStartup("options_load"))
+				SettingsManager.LoadOptions();
 			var o = SettingsManager.Options;
 			// DPI aware property must be set before application window is created.
 			if (Environment.OSVersion.Version.Major >= 6 && o.IsProcessDPIAware)
@@ -172,28 +180,17 @@ namespace x360ce.App
 			// If one copy is already opened then...
 			if (allowToRun)
 			{
-				using (MeasureStartup("local_service"))
-					InitializeServices();
-				using (MeasureStartup("tray_icon"))
-					InitializeTrayIcon();
 				using (MeasureStartup("wpf_application"))
 					app = new App();
-				//app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
+				app.ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown;
 				app.Startup += App_Startup;
 				app.DispatcherUnhandledException += App_DispatcherUnhandledException;
 				using (MeasureStartup("wpf_resources"))
 					app.InitializeComponent();
-				// Create the main application window which will take minimum amount of memory.
-				// Main application window is impossible to dispose until the application closes.
-				// Important: .Owner property must be set to Application.Current.MainWindow for sub-window to dispose.
+				// Paint a dependency-free window before loading databases, permissions or devices.
 				using (MeasureStartup("bootstrap_window"))
 				{
-					var appWindow = new Window();
-					appWindow.Title = "x360ceAppWindow";
-					// Make sure it contains handle.
-					var awHelper = new WindowInteropHelper(appWindow);
-					awHelper.EnsureHandle();
-					Application.Current.MainWindow = appWindow;
+					CreateStartupWindow();
 				}
 				// Now we can start the app.
 				OperationalLog.Current?.Write("ui_dispatcher_started");
@@ -201,6 +198,38 @@ namespace x360ce.App
 			}
 			Global.DisposeCloudClient();
 			Global.DisposeServices();
+		}
+
+		static Window startupWindow;
+		static TextBlock startupStatus;
+		static readonly CancellationTokenSource startupCancellation = new CancellationTokenSource();
+
+		static void CreateStartupWindow()
+		{
+			startupStatus = new TextBlock
+			{
+				Text = "Opening controller settings…",
+				FontSize = 16,
+				Foreground = Brushes.White,
+				HorizontalAlignment = HorizontalAlignment.Center,
+				VerticalAlignment = VerticalAlignment.Center,
+				TextWrapping = TextWrapping.Wrap,
+				TextAlignment = TextAlignment.Center,
+			};
+			startupWindow = new Window
+			{
+				Title = "x360ce",
+				Width = 440,
+				Height = 150,
+				ResizeMode = ResizeMode.NoResize,
+				WindowStartupLocation = WindowStartupLocation.CenterScreen,
+				Background = new SolidColorBrush(Color.FromRgb(31, 41, 55)),
+				Content = startupStatus,
+			};
+			startupWindow.Closing += (sender, e) => startupCancellation.Cancel();
+			Application.Current.MainWindow = startupWindow;
+			startupWindow.Show();
+			OperationalLog.Current?.Write("startup_window_shown");
 		}
 
 		static void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
@@ -218,27 +247,73 @@ namespace x360ce.App
 		}
 
 		// Application starts first time.
-		private static void App_Startup(object sender, StartupEventArgs e)
+		private static async void App_Startup(object sender, StartupEventArgs e)
 		{
-			var o = SettingsManager.Options;
-			var args = System.Environment.GetCommandLineArgs();
-			var ic = new System.Configuration.Install.InstallContext(null, args);
-			// If windows state parameter was passed then...
-			if (ic.Parameters.ContainsKey(arg_WindowState))
+			try
 			{
-				switch (ic.Parameters[arg_WindowState])
+				startupStatus.Text = "Loading mappings and controller settings…";
+				await RunBackgroundStartupStage("settings_load", SettingsManager.LoadRemainingSettings);
+				startupStatus.Text = "Preparing diagnostics…";
+				await RunBackgroundStartupStage("local_service", InitializeServices);
+				using (MeasureStartup("tray_icon"))
+					InitializeTrayIcon();
+
+				var o = SettingsManager.Options;
+				var args = System.Environment.GetCommandLineArgs();
+				var ic = new System.Configuration.Install.InstallContext(null, args);
+				if (ic.Parameters.ContainsKey(arg_WindowState))
 				{
-					case nameof(WindowState.Maximized):
-						Global._TrayManager.RestoreFromTray(false, true);
-						break;
-					case nameof(WindowState.Minimized):
-						Global._TrayManager.MinimizeToTray(false, o.MinimizeToTray);
-						break;
+					switch (ic.Parameters[arg_WindowState])
+					{
+						case nameof(WindowState.Maximized):
+							RestoreMainWindow(true);
+							break;
+						case nameof(WindowState.Minimized):
+							startupWindow.Hide();
+							break;
+						default:
+							RestoreMainWindow(false);
+							break;
+					}
+				}
+				else
+				{
+					RestoreMainWindow(false);
 				}
 			}
-			else
+			catch (OperationCanceledException)
 			{
-				Global._TrayManager.RestoreFromTray(false, false);
+				app.Shutdown();
+			}
+			catch (Exception ex)
+			{
+				OperationalLog.Current?.WriteException("background_startup_failed", ex);
+				startupStatus.Text = "Some settings could not be loaded. Opening with available data…";
+				InitializeTrayIcon();
+				RestoreMainWindow(false);
+			}
+		}
+
+		static void RestoreMainWindow(bool maximize)
+		{
+			Global._TrayManager.MainWindowShown += (sender, e) => startupWindow.Hide();
+			startupStatus.Text = "Opening mapping window…";
+			Global._TrayManager.RestoreFromTray(false, maximize);
+		}
+
+		static async Task RunBackgroundStartupStage(string stage, Action action)
+		{
+			using (MeasureStartup(stage))
+			{
+				var work = Task.Run(action, startupCancellation.Token);
+				var completed = await Task.WhenAny(work, Task.Delay(TimeSpan.FromSeconds(5), startupCancellation.Token));
+				if (completed != work)
+				{
+					OperationalLog.Current?.Write("startup_stage_slow", "warn",
+						new System.Collections.Generic.Dictionary<string, object> { ["stage"] = stage });
+					startupStatus.Text = "Still loading " + stage.Replace('_', ' ') + "…";
+				}
+				await work;
 			}
 		}
 
@@ -253,6 +328,8 @@ namespace x360ce.App
 
 		static void InitializeTrayIcon()
 		{
+			if (Global._TrayManager != null)
+				return;
 			// Initialize Tray Icon which will manage main window.
 			Global._TrayManager = new Service.TrayManager();
 			Global._TrayManager.OnExitClick += _TrayManager_OnExitClick;

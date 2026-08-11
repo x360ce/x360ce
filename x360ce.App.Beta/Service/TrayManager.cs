@@ -235,6 +235,8 @@ namespace x360ce.App.Service
 			Task.Run(() => _RestoreFromTray(activate, maximize));
 		}
 
+		public event EventHandler MainWindowShown;
+
 		/// <summary>
 		/// Restores the window.
 		/// </summary>
@@ -268,6 +270,10 @@ namespace x360ce.App.Service
 				// Show window.
 				using (OperationalLog.Current?.Measure("main_window_show"))
 					mw.Show();
+				// The startup window is only a responsive bootstrap surface. Detach the
+				// real window before the bootstrap is hidden so WPF owner visibility does
+				// not hide or minimize the mapping window as a side effect.
+				mw.Owner = null;
 				if (activate)
 				{
 					// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
@@ -289,6 +295,8 @@ namespace x360ce.App.Service
 				_Window.Topmost = true;
 				_Window.Topmost = tm;
 				_Window.BringIntoView();
+				OperationalLog.Current?.Write("main_window_shown");
+				MainWindowShown?.Invoke(this, EventArgs.Empty);
 			};
 			Application.Current.Dispatcher.BeginInvoke(isolator);
 		}

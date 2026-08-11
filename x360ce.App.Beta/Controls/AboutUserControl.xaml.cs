@@ -3,6 +3,8 @@ using JocysCom.ClassLibrary.Controls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using System.Threading.Tasks;
+using x360ce.App.Diagnostics;
 using x360ce.Engine;
 
 namespace x360ce.App.Controls
@@ -36,6 +38,29 @@ namespace x360ce.App.Controls
 			catch (System.Exception other)
 			{
 				MessageBox.Show(other.Message);
+			}
+		}
+
+		private async void CopyDiagnosticsButton_Click(object sender, RoutedEventArgs e)
+		{
+			CopyDiagnosticsButton.IsEnabled = false;
+			CopyDiagnosticsButton.Content = "Collecting…";
+			try
+			{
+				var report = await Task.Run(() => DiagnosticReport.CreateCurrent());
+				Clipboard.SetText(report);
+				CopyDiagnosticsButton.Content = "Diagnostics copied";
+				OperationalLog.Current?.Write("diagnostics_copied");
+			}
+			catch (System.Exception ex)
+			{
+				OperationalLog.Current?.WriteException("diagnostics_copy_failed", ex);
+				CopyDiagnosticsButton.Content = "Copy failed";
+				MessageBox.Show("Could not copy diagnostics: " + ex.Message);
+			}
+			finally
+			{
+				CopyDiagnosticsButton.IsEnabled = true;
 			}
 		}
 

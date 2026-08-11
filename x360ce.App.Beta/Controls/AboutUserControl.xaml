@@ -56,6 +56,16 @@
                 Grid.ColumnSpan="5"
                 Padding="4,4,0,8"
                 Content="Settings editor and test application for XBOX 360 Controller Emulator" />
+            <Button
+                Name="CopyDiagnosticsButton"
+                Grid.Row="2"
+                Grid.Column="1"
+                Grid.ColumnSpan="2"
+                Margin="4,0,4,4"
+                Padding="10,3"
+                HorizontalAlignment="Left"
+                Click="CopyDiagnosticsButton_Click"
+                Content="Copy diagnostics" />
             <Label
                 Grid.Row="3"
                 Grid.Column="1"

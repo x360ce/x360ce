@@ -29,10 +29,21 @@ namespace x360ce.App
 		{
 			var asm = new JocysCom.ClassLibrary.Configuration.AssemblyInfo();
 			uid = asm.Product;
-			_ResumeTimer = new System.Timers.Timer();
-			_ResumeTimer.AutoReset = false;
-			_ResumeTimer.Interval = 1000;
-			_ResumeTimer.Elapsed += _ResumeTimer_Elapsed;
+			if (_ResumeTimer == null)
+			{
+				_ResumeTimer = new System.Timers.Timer();
+				_ResumeTimer.AutoReset = false;
+				_ResumeTimer.Interval = 1000;
+				_ResumeTimer.Elapsed += _ResumeTimer_Elapsed;
+			}
+			if (_DeviceRefreshTimer == null)
+			{
+				_DeviceRefreshTimer = new System.Threading.Timer(_ =>
+				{
+					if (Global.DHelper != null)
+						Global.DHelper.DevicesNeedUpdating = true;
+				}, null, System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+			}
 		}
 
 		public static void Dispose()
@@ -41,6 +52,8 @@ namespace x360ce.App
 				_Mutex.Dispose();
 			if (_ResumeTimer != null)
 				_ResumeTimer.Dispose();
+			if (_DeviceRefreshTimer != null)
+				_DeviceRefreshTimer.Dispose();
 		}
 
 		/// <summary>
@@ -165,6 +178,7 @@ namespace x360ce.App
 		private const int WM_SETTINGCHANGE = WM_WININICHANGE;
 
 		private static System.Timers.Timer _ResumeTimer;
+		private static System.Threading.Timer _DeviceRefreshTimer;
 
 		private static void _ResumeTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
@@ -232,8 +246,18 @@ namespace x360ce.App
 				$"{(evt == DBT_DEVICEARRIVAL ? "Attached" : "Removed")} " +
 				$"{DateTime.Now:HH:mm:ss.fff} {guid} {CleanPath(path, guid)} ({GetInterfaceClassName(guid)})");
 
-			// 6) Update devices.
-			Global.DHelper.DevicesNeedUpdating = true;
+			// 6) Coalesce notification storms before the worker refreshes devices.
+			_DeviceRefreshTimer?.Change(250, System.Threading.Timeout.Infinite);
+			var match = System.Text.RegularExpressions.Regex.Match(path,
+				@"VID_(?<vid>[0-9A-Fa-f]{4}).*PID_(?<pid>[0-9A-Fa-f]{4})");
+			x360ce.App.Diagnostics.OperationalLog.Current?.Write("device_notification", fields:
+				new System.Collections.Generic.Dictionary<string, object>
+				{
+					["backend"] = "WindowsDeviceNotification",
+					["action"] = evt == DBT_DEVICEARRIVAL ? "connected" : "disconnected",
+					["vid"] = match.Success ? match.Groups["vid"].Value.ToUpperInvariant() : null,
+					["pid"] = match.Success ? match.Groups["pid"].Value.ToUpperInvariant() : null,
+				});
 		}
 
 		//-----------------------------------------------------------------------

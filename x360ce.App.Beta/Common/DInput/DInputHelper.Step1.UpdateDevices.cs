@@ -77,22 +77,42 @@ namespace x360ce.App.DInput
 			var connectedDevices = new List<(object DeviceInstance, object DeviceClass, int Usage, string DiDeviceID, string ProductName, Guid InstanceGuid)>();
 			foreach (var deviceClass in new DeviceClass[]{DeviceClass.GameControl, DeviceClass.Pointer, DeviceClass.Keyboard})
 			{
-				var devices = directInput.GetDevices(deviceClass, DeviceEnumerationFlags.AttachedOnly)
-					//.Where(d => deviceClass != DeviceClass.Device || d.Usage == UsageId.GenericMouse || d.Usage == UsageId.GenericKeyboard)
-					.Select(d => (
-						DeviceInstance: (object)d,
-						DeviceClass: (object)deviceClass,
-						Usage: (int)d.Usage,
-						DiDeviceID: ConvertProductGuidToDeviceID(d.ProductGuid, deviceClass),
-						ProductName: d.InstanceName,
-						InstanceGuid: d.InstanceGuid));
-				connectedDevices.AddRange(devices);
+				DeviceInstance[] devices;
+				try
+				{
+					devices = directInput.GetDevices(deviceClass, DeviceEnumerationFlags.AttachedOnly).ToArray();
+				}
+				catch (Exception ex)
+				{
+					LogDeviceFailure(null, "enumerate_" + deviceClass, ex);
+					continue;
+				}
+				foreach (var device in devices)
+				{
+					try
+					{
+						connectedDevices.Add((
+							device,
+							deviceClass,
+							(int)device.Usage,
+							ConvertProductGuidToDeviceID(device.ProductGuid, deviceClass),
+							device.InstanceName,
+							device.InstanceGuid));
+					}
+					catch (Exception ex)
+					{
+						LogDeviceFailure(device, "read_descriptor", ex);
+					}
+				}
 			}
 			connectedDevices = connectedDevices.OrderBy(x => x.DiDeviceID).ToList();
 
 			// Check for changes in the set of device GUIDs.
 			var newDeviceGuidHashSet = new HashSet<Guid>(connectedDevices.Select(item => item.InstanceGuid));
-			bool listChanged = !newDeviceGuidHashSet.SetEquals(_previousDeviceGuids);
+			// The first successful empty scan is still a meaningful result. Without this
+			// check, a machine with no controllers repeats full DirectInput enumeration
+			// on every worker iteration because DiDevices remains null forever.
+			bool listChanged = DeviceDetector.DiDevices == null || !newDeviceGuidHashSet.SetEquals(_previousDeviceGuids);
 			if (listChanged)
 			{
 				DeviceDetector.DiDevices = connectedDevices;
@@ -115,6 +135,14 @@ namespace x360ce.App.DInput
 				Debug.WriteLine($"SharpDX.DirectInput.DeviceInstance: Stopwatch {stopwatch.Elapsed.TotalMilliseconds} ms");
 			}
 
+			stopwatch.Stop();
+			x360ce.App.Diagnostics.OperationalLog.Current?.Write("dinput_enumeration_completed", fields:
+				new Dictionary<string, object>
+				{
+					["durationMs"] = stopwatch.Elapsed.TotalMilliseconds,
+					["deviceCount"] = connectedDevices.Count,
+					["listChanged"] = listChanged,
+				});
 			return (connectedDevices, listChanged);
 		}
 
@@ -152,8 +180,12 @@ namespace x360ce.App.DInput
 		{
 			if (addedDevices.Length > 0 || updatedDevices.Length > 0)
 			{
-				var devInfos = DeviceDetector.GetDevices(DiDevicesOnly: true);
-				var intInfos = DeviceDetector.GetInterfaces(DiDevicesOnly: true);
+				var devInfos = Array.Empty<DeviceInfo>();
+				var intInfos = Array.Empty<DeviceInfo>();
+				try { devInfos = DeviceDetector.GetDevices(DiDevicesOnly: true) ?? devInfos; }
+				catch (Exception ex) { LogDeviceFailure(null, "device_metadata", ex); }
+				try { intInfos = DeviceDetector.GetInterfaces(DiDevicesOnly: true) ?? intInfos; }
+				catch (Exception ex) { LogDeviceFailure(null, "interface_metadata", ex); }
 				return (devInfos, intInfos);
 			}
 			return (null, null);
@@ -168,13 +200,17 @@ namespace x360ce.App.DInput
 
 			foreach (var device in addedDevices)
 			{
-				UserDevice userDevice = new UserDevice();
-				DeviceInfo hid;
-				RefreshDevice(manager, userDevice, device, devInfos, intInfos, out hid);
-
-				// Only add if the device is not virtual.
-				if (!IsDeviceVirtual(devInfos, hid))
-					newUserDevices.Add(userDevice);
+				try
+				{
+					UserDevice userDevice = new UserDevice();
+					RefreshDevice(manager, userDevice, device, devInfos, intInfos, out var hid);
+					if (!IsDeviceVirtual(devInfos, hid))
+						newUserDevices.Add(userDevice);
+				}
+				catch (Exception ex)
+				{
+					LogDeviceFailure(device, "add_device", ex);
+				}
 			}
 
 			lock (SettingsManager.UserDevices.SyncRoot)
@@ -197,7 +233,7 @@ namespace x360ce.App.DInput
 			DeviceInfo current = hid;
 			do
 			{
-				current = devInfos.FirstOrDefault(x => x.DeviceId == current.ParentDeviceId);
+				current = (devInfos ?? Array.Empty<DeviceInfo>()).FirstOrDefault(x => x.DeviceId == current.ParentDeviceId);
 				if (current != null && VirtualDriverInstaller.ViGEmBusHardwareIds.Any(
 					id => string.Equals(current.HardwareIds, id, StringComparison.OrdinalIgnoreCase)))
 				{
@@ -226,9 +262,17 @@ namespace x360ce.App.DInput
 		{
 			foreach (var device in updatedDevices)
 			{
-				var userDevice = listedDevices.First(x => x.InstanceGuid.Equals(device.InstanceGuid));
-				DeviceInfo hid;
-				RefreshDevice(manager, userDevice, device, devInfos, intInfos, out hid);
+				try
+				{
+					var userDevice = listedDevices.FirstOrDefault(x => x.InstanceGuid.Equals(device.InstanceGuid));
+					if (userDevice == null)
+						continue;
+					RefreshDevice(manager, userDevice, device, devInfos, intInfos, out _);
+				}
+				catch (Exception ex)
+				{
+					LogDeviceFailure(device, "update_device", ex);
+				}
 			}
 		}
 
@@ -241,13 +285,31 @@ namespace x360ce.App.DInput
 			if (Program.IsClosing)
 				return;
 
-			// Lock to avoid modifications during enumeration.
-			lock (SettingsManager.UserDevices.SyncRoot)
+			InitializeDevice(manager, userDevice, instance);
+			UpdateDeviceState(userDevice, instance, allDevices ?? Array.Empty<DeviceInfo>());
+			LoadHidDeviceData(userDevice, instance, allInterfaces ?? Array.Empty<DeviceInfo>(), out hid);
+		}
+
+		private void LogDeviceFailure(DeviceInstance device, string stage, Exception ex)
+		{
+			var fields = new Dictionary<string, object>
 			{
-				InitializeDevice(manager, userDevice, instance);
-				UpdateDeviceState(userDevice, instance, allDevices);
-				LoadHidDeviceData(userDevice, instance, allInterfaces, out hid);
+				["backend"] = "DirectInput",
+				["stage"] = stage,
+			};
+			if (device != null)
+			{
+				try
+				{
+					var bytes = device.ProductGuid.ToByteArray();
+					fields["vid"] = (bytes[1] << 8 | bytes[0]).ToString("X4");
+					fields["pid"] = (bytes[3] << 8 | bytes[2]).ToString("X4");
+				}
+				catch (Exception) { }
 			}
+			x360ce.App.Diagnostics.OperationalLog.Current?.WriteException("device_probe_failed", ex, fields);
+			JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+			LastException = ex;
 		}
 
 

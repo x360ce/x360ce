@@ -7,6 +7,7 @@ using Microsoft.Win32;
 using x360ce.App;
 using x360ce.App.Controls;
 using x360ce.App.Diagnostics;
+using x360ce.App.DInput;
 using x360ce.App.Issues;
 
 namespace x360ce.Tests
@@ -260,6 +261,65 @@ namespace x360ce.Tests
                 if (Directory.Exists(folder))
                     Directory.Delete(folder, true);
             }
+        }
+
+        [TestMethod]
+        public void ControllerPipelineHealth_RequiresSuccessfulStateSubmit()
+        {
+            var health = new x360ce.App.DInput.ControllerPipelineHealth
+            {
+                PhysicalInputOk = true,
+                MappingOk = true,
+                VirtualBusOk = true,
+                VirtualTargetConnected = true,
+                StateSubmitOk = false,
+            };
+
+            Assert.IsFalse(health.IsHealthy);
+            health.StateSubmitOk = true;
+            Assert.IsTrue(health.IsHealthy);
+        }
+
+        [TestMethod]
+        public void DiagnosticReport_ContainsDependencyAndPipelineStages()
+        {
+            var runtimeRegistry = new FakeCppRuntimeRegistry();
+            runtimeRegistry.Values[RegistryView.Registry32] = new CppRuntimeRegistryValue
+            {
+                Installed = 1,
+                Version = "14.51.36247",
+            };
+            runtimeRegistry.Values[RegistryView.Registry64] = new CppRuntimeRegistryValue
+            {
+                Installed = 1,
+                Version = "14.51.36247",
+            };
+            var runtimeDetector = new CppRuntimeDetector(runtimeRegistry, true);
+            var x86 = runtimeDetector.Detect(CppRuntimeArchitecture.X86);
+            var x64 = runtimeDetector.Detect(CppRuntimeArchitecture.X64);
+            var bus = new ViGEmBusHealthDetector(new FakeViGEmBusProbe
+            {
+                Driver = new ViGEmDriverInfo(true, new Version(1, 22), "ViGEm Bus Driver"),
+                ServiceState = ViGEmServiceState.Running,
+                Client = new ViGEmClientProbeResult(ViGEmClientConnectionState.Successful),
+            }).Detect();
+            var controller = new ControllerPipelineHealth
+            {
+                PhysicalInputOk = true,
+                MappingOk = true,
+                VirtualBusOk = true,
+                VirtualTargetConnected = true,
+                StateSubmitOk = true,
+            };
+
+            var text = DiagnosticReport.Build("5.1", "Windows", x86, x64, bus,
+                new[] { controller }, new[] { "{\"event\":\"test\"}" });
+
+            StringAssert.Contains(text, "VC++ x86: Installed, 14.51.36247");
+            StringAssert.Contains(text, "ViGEm API/client: Successful");
+            StringAssert.Contains(text, "Physical input OK: Yes");
+            StringAssert.Contains(text, "State submit OK: Yes");
+            StringAssert.Contains(text, "Recent operational events");
         }
 
         private sealed class FakeCppRuntimeRegistry : ICppRuntimeRegistry

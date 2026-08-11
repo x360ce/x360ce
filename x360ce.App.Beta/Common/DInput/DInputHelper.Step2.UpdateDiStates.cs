@@ -6,6 +6,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
+using x360ce.App.Diagnostics;
 using x360ce.Engine;
 using x360ce.Engine.Data;
 
@@ -59,6 +61,10 @@ namespace x360ce.App.DInput
 
 			foreach (var ud in mappedDevices)
 			{
+				// State scratch variables must never leak from a healthy controller into a
+				// malformed controller that throws before returning its own state.
+				newState = null;
+				newUpdates = null;
 				//if (/*ud == null || !ud.IsOnline || ud.Device == null || */(options.TestEnabled && !options.TestGetDInputStates)) continue;
 				// Update direct input form and return actions (pressed Buttons/DPads, turned Axis/Sliders).
 				//JoystickState state = null;
@@ -167,7 +173,7 @@ namespace x360ce.App.DInput
 						}
 
 						// Handle force feedback if supported.
-						if (hasForceFeedback)
+						if (hasForceFeedback && !forceFeedbackDisabledDevices.Contains(ud.InstanceGuid))
 						{
 							// Get setting related to user device.
 							var setting = SettingsManager.UserSettings.ItemsToArraySynchronized()
@@ -211,6 +217,26 @@ namespace x360ce.App.DInput
 					}
 					catch (Exception ex)
 					{
+						var failureContext = exceptionData.ToString();
+						var forceFeedbackFailure =
+							failureContext.IndexOf("DeviceForces", StringComparison.OrdinalIgnoreCase) >= 0 ||
+							failureContext.IndexOf("GetDeviceEffects", StringComparison.OrdinalIgnoreCase) >= 0;
+						if (forceFeedbackFailure)
+						{
+							// Some HID PID implementations throw repeatedly or load a broken vendor
+							// component. Keep input/mapping alive and disable FFB only for this device.
+							forceFeedbackDisabledDevices.Add(ud.InstanceGuid);
+							ud.DeviceEffects = new DeviceEffectItem[0];
+							ud.FFState = null;
+						}
+						OperationalLog.Current?.WriteException("dinput_device_operation_failed", ex,
+							new Dictionary<string, object>
+							{
+								["backend"] = "DirectInput",
+								["vid"] = ud.DevVendorId,
+								["pid"] = ud.DevProductId,
+								["forceFeedbackDisabled"] = forceFeedbackFailure,
+							});
 						var dex = ex as SharpDXException;
 						if (dex != null &&
 							(dex.ResultCode == SharpDX.DirectInput.ResultCode.InputLost ||
@@ -224,7 +250,7 @@ namespace x360ce.App.DInput
 						else
 						{
 							var cx = new DInputException("UpdateDiStates Exception", ex);
-							cx.Data.Add("FFInfo", exceptionData.ToString());
+							cx.Data.Add("FFInfo", failureContext);
 							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(cx);
 						}
 						ud.IsExclusiveMode = null;

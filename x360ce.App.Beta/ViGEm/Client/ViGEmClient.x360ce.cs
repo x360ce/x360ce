@@ -103,6 +103,7 @@ namespace Nefarius.ViGEm.Client
 		public static object ClientLock = new object();
 		static ViGEmBusHealthResult CachedHealth;
 		static DateTime CachedHealthTime;
+		static string LastLoggedHealth;
 
 		public static void DisposeCurrent()
 		{
@@ -139,12 +140,42 @@ namespace Nefarius.ViGEm.Client
 			}
 
 			var health = new ViGEmBusHealthDetector(new WindowsViGEmBusProbe()).Detect();
+			var healthSignature = $"{health.Installed}|{health.DriverVersion}|{health.ServiceState}|{health.ClientConnectionState}|{health.ErrorMessage}";
+			if (!string.Equals(healthSignature, LastLoggedHealth, StringComparison.Ordinal))
+				x360ce.App.Diagnostics.OperationalLog.Current?.Write("vigem_health_detected", fields:
+				new Dictionary<string, object>
+				{
+					["installed"] = health.Installed,
+					["driverVersion"] = health.DriverVersion,
+					["servicePresent"] = health.ServicePresent,
+					["serviceState"] = health.ServiceState,
+					["clientConnection"] = health.ClientConnectionState,
+					["versionIncompatible"] = health.VersionIncompatible,
+					["usable"] = health.IsUsable,
+					["error"] = health.ErrorMessage,
+				});
 			lock (ClientLock)
 			{
 				CachedHealth = health;
 				CachedHealthTime = DateTime.UtcNow;
+				LastLoggedHealth = healthSignature;
 			}
 			return health;
+		}
+
+		/// <summary>
+		/// Return the last probe result without ever performing native driver work.
+		/// The high-frequency controller path uses this accessor; issue/UI checks own
+		/// refreshes and failed target submissions force a fresh probe.
+		/// </summary>
+		public static ViGEmBusHealthResult GetCachedBusHealth()
+		{
+			lock (ClientLock)
+			{
+				if (CachedHealth != null)
+					return CachedHealth;
+			}
+			return GetBusHealth();
 		}
 
 		/// <summary>Compatibility shim for existing callers.</summary>
