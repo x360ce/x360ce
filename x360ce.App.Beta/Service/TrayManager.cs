@@ -92,14 +92,10 @@ namespace x360ce.App.Service
 				o.PropertyChanged -= Options_PropertyChanged_Tray;
 			}
 			_Window = window;
+			oldWindowState = null;
 			if (window == null)
-			{
-				CollectGarbage();
 				return;
-			}
 			_Window.SizeChanged += MainWindow_SizeChanged;
-			// Run event once to apply settings.
-			MainWindow_SizeChanged(this, null);
 			_Window.Closing += _Window_Closing;
 			_Window.Topmost = o.AlwaysOnTop;
 			InfoForm.MonitorEnabled = o.EnableShowFormInfo;
@@ -107,24 +103,30 @@ namespace x360ce.App.Service
 			o.PropertyChanged += Options_PropertyChanged_Tray;
 		}
 
-        private void _Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (SettingsManager.Options.MinimizeOnClose)
-            {
-				var window = (Window)sender;
-				// Cancel the close operation.
+		private void _Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			var action = WindowLifecyclePolicy.DecideClose(
+				Program.IsClosing, SettingsManager.Options.MinimizeOnClose);
+			if (action == WindowCloseAction.MinimizeToTray)
+			{
 				e.Cancel = true;
-				// Minimize the window.
-				window.WindowState = WindowState.Minimized;
+				MinimizeToTray(false, SettingsManager.Options.MinimizeToTray);
+				OperationalLog.Current?.Write("main_window_close_minimized");
+				return;
 			}
-            else
-            {
-                //  Must shutdown application, because only main window will close and
-                //  Parent window will keep Application running.
-                if (TrayNotifyIcon != null) TrayNotifyIcon.Visible = false;
-                Application.Current.Shutdown();
-            }
-        }
+
+			var exitAlreadyRequested = Program.IsClosing;
+			Program.IsClosing = true;
+			if (TrayNotifyIcon != null)
+				TrayNotifyIcon.Visible = false;
+			OperationalLog.Current?.Write("main_window_close_exit");
+			// The bootstrap window remains Application.MainWindow, so closing the
+			// mapping window must explicitly stop the application. Queue shutdown to
+			// avoid re-entering WPF's current Closing event.
+			if (!exitAlreadyRequested)
+				Application.Current.Dispatcher.BeginInvoke(
+					new Action(() => Application.Current.Shutdown()));
+		}
 
         void CollectGarbage()
 		{
@@ -217,22 +219,30 @@ namespace x360ce.App.Service
 			TrayNotifyIcon.Text = "X360CE: Double click - program, click - menu.";
 			if (_Window != null)
 			{
-				// Hide form bar from the TaskBar.
-				if (minimizeToTray && _Window.ShowInTaskbar)
-					_Window.ShowInTaskbar = false;
 				if (_Window.WindowState != WindowState.Minimized)
 					_Window.WindowState = WindowState.Minimized;
-				// Dispose window here.
-				//_Window = null;
-				//Global._MainWindow = null;
+				if (minimizeToTray)
+				{
+					// Hide() reliably removes the WPF window from Alt-Tab and the
+					// taskbar. ShowInTaskbar alone can leave a stale taskbar button.
+					_Window.ShowInTaskbar = false;
+					_Window.Hide();
+				}
+				else
+				{
+					_Window.ShowInTaskbar = true;
+				}
+				OperationalLog.Current?.Write("main_window_minimized", fields:
+					new System.Collections.Generic.Dictionary<string, object>
+					{
+						["hiddenFromTaskbar"] = minimizeToTray,
+					});
 			}
 		}
 
 		public void RestoreFromTray(bool activate = false, bool maximize = false)
 		{
-			_WindowReference = new WeakReference(null);
-			_ContentReference = new WeakReference(null);
-			Task.Run(() => _RestoreFromTray(activate, maximize));
+			_RestoreFromTray(activate, maximize);
 		}
 
 		public event EventHandler MainWindowShown;
@@ -245,35 +255,29 @@ namespace x360ce.App.Service
 			// Need isolator or app freeze.
 			Action isolator = () =>
 			{
-				//var mw = new Window();
-				MainWindow mw;
-				using (OperationalLog.Current?.Measure("main_window_construct"))
-					mw = new MainWindow();
-				Global._MainWindow = mw;
-				// Set owner to properly dispose after closing.
-				mw.Owner = Application.Current.MainWindow;
-				//var mainWindowHandle = new WindowInteropHelper(tw);
-				//mainWindowHandle.EnsureHandle();
-				_WindowReference.Target = mw;
-				_ContentReference.Target = mw.Content;
-				// Initialize main window.
-				mw.Loaded += (sender, e) => OperationalLog.Current?.Write("main_window_loaded");
-				mw.Closed += (sender, e) => SetWindow(null);
-				// Unloaded will be executed after 'Closed' event.
-				mw.Unloaded += (sender, e) =>
+				if (_Window == null)
 				{
-					// Global._MainWindow will be used by other controls to detach events,
-					// therefore destroy reference by setting to null inside unloaded event.
-					Global._MainWindow = null;
-				};
-				SetWindow(mw);
-				// Show window.
+					_WindowReference = new WeakReference(null);
+					_ContentReference = new WeakReference(null);
+					MainWindow mw;
+					using (OperationalLog.Current?.Measure("main_window_construct"))
+						mw = new MainWindow();
+					Global._MainWindow = mw;
+					mw.Owner = Application.Current.MainWindow;
+					_WindowReference.Target = mw;
+					_ContentReference.Target = mw.Content;
+					mw.Loaded += (sender, e) => OperationalLog.Current?.Write("main_window_loaded");
+					mw.Closed += (sender, e) => SetWindow(null);
+					mw.Unloaded += (sender, e) => Global._MainWindow = null;
+					SetWindow(mw);
+				}
+
 				using (OperationalLog.Current?.Measure("main_window_show"))
-					mw.Show();
-				// The startup window is only a responsive bootstrap surface. Detach the
-				// real window before the bootstrap is hidden so WPF owner visibility does
-				// not hide or minimize the mapping window as a side effect.
-				mw.Owner = null;
+					if (!_Window.IsVisible)
+						_Window.Show();
+				// Detach the bootstrap owner after the first Show so hiding the
+				// bootstrap cannot hide the mapping window as a side effect.
+				_Window.Owner = null;
 				if (activate)
 				{
 					// Note: FormWindowState.Minimized and FormWindowState.Normal was used to make sure that Activate() wont fail because of this:
@@ -290,6 +294,9 @@ namespace x360ce.App.Service
 				var tagetState = maximize ? WindowState.Maximized : WindowState.Normal;
 				if (_Window.WindowState != tagetState)
 					_Window.WindowState = tagetState;
+				// Apply visibility-dependent update policy after Show(), including the
+				// first window where no SizeChanged event is otherwise guaranteed.
+				MainWindow_SizeChanged(this, null);
 				// Bring form to the front.
 				var tm = _Window.Topmost;
 				_Window.Topmost = true;

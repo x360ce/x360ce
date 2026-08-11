@@ -12,6 +12,7 @@ using x360ce.App.Controls;
 using x360ce.App.Diagnostics;
 using x360ce.App.DInput;
 using x360ce.App.Issues;
+using x360ce.App.Service;
 
 namespace x360ce.Tests
 {
@@ -319,6 +320,7 @@ namespace x360ce.Tests
                 new[] { controller }, new[]
                 {
                     "{\"event\":\"startup_stage_completed\",\"durationMs\":12}",
+					"{\"event\":\"main_window_minimized\",\"hiddenFromTaskbar\":true}",
                     "{\"event\":\"unhandled_exception\",\"stackTrace\":\"C:\\\\Users\\\\private\"}",
                 });
 
@@ -328,6 +330,7 @@ namespace x360ce.Tests
             StringAssert.Contains(text, "State submit OK: Yes");
             StringAssert.Contains(text, "Recent sanitized operational events");
             StringAssert.Contains(text, "startup_stage_completed");
+			StringAssert.Contains(text, "main_window_minimized");
             Assert.IsFalse(text.Contains("C:\\Users\\private"));
             Assert.IsFalse(text.Contains("stackTrace"));
         }
@@ -345,6 +348,22 @@ namespace x360ce.Tests
             Assert.IsFalse(completed);
             Assert.IsTrue(stopwatch.ElapsedMilliseconds < 500,
                 "A timed-out startup stage must not hold the UI startup path.");
+        }
+
+        [TestMethod]
+        public void WindowLifecyclePolicy_UserCloseMinimizesOnlyWhenConfigured()
+        {
+            Assert.AreEqual(WindowCloseAction.MinimizeToTray,
+                WindowLifecyclePolicy.DecideClose(false, true));
+            Assert.AreEqual(WindowCloseAction.Exit,
+                WindowLifecyclePolicy.DecideClose(false, false));
+        }
+
+        [TestMethod]
+        public void WindowLifecyclePolicy_ExplicitExitAlwaysCloses()
+        {
+            Assert.AreEqual(WindowCloseAction.Exit,
+                WindowLifecyclePolicy.DecideClose(true, true));
         }
 
         private sealed class FakeCppRuntimeRegistry : ICppRuntimeRegistry

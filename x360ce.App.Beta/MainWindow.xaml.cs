@@ -31,7 +31,7 @@ namespace x360ce.App
 			if (!ControlsHelper.IsDesignMode(this))
 			{
 				PreviewKeyDown += MainWindow_PreviewKeyDown;
-				Closing += MainWindow_Closing;
+				Closed += MainWindow_Closed;
 			}
 			InitHelper.InitTimer(this, InitializeComponent);
 			if (ControlsHelper.IsDesignMode(this))
@@ -88,6 +88,7 @@ namespace x360ce.App
 
 		private void StartHelper_OnClose(object sender, EventArgs e)
 		{
+			Program.IsClosing = true;
 			Close();
 		}
 
@@ -280,15 +281,15 @@ namespace x360ce.App
 
 		#endregion
 
-		private void MainWindow_Closing(object sender, CancelEventArgs e)
+		private void MainWindow_Closed(object sender, EventArgs e)
 		{
 			Program.IsClosing = true;
-			ErrorsHelper.DisposeErrorsHelper();
 			// Wrap into try catch so that the form will always close and
 			// there will be no need to kill it by using task manager if exception is thrown.
 			try
 			{
-				OnCloseAction(e);
+				ErrorsHelper.DisposeErrorsHelper();
+				OnCloseAction();
 			}
 			catch (Exception ex)
 			{
@@ -297,31 +298,13 @@ namespace x360ce.App
 			}
 		}
 
-		private void OnCloseAction(CancelEventArgs e)
+		private void OnCloseAction()
 		{
-			// Disable force feedback effect before closing application.
 			if (UpdateTimer != null)
 				UpdateTimer.Stop();
-			lock (Controller.XInputLock)
-			{
-				for (var i = 0; i < 4; i++)
-				{
-					//if (PadControls[i].LeftMotorTestTrackBar.Value > 0 || PadControls[i].RightMotorTestTrackBar.Value > 0)
-					//{
-					var gamePad = Global.DHelper.LiveXiControllers[i];
-					var isConected = Global.DHelper.LiveXiConnected[i];
-					if (Controller.IsLoaded && isConected)
-					{
-						// Stop vibration.
-						gamePad.SetVibration(new Vibration());
-					}
-					//}
-				}
-				//BeginInvoke((Action)delegate()
-				//{
-				//	XInput.FreeLibrary();    
-				//});
-			}
+			// Do not issue synchronous native controller calls while the WPF close
+			// event is completing. Process/target teardown stops vibration without
+			// allowing a broken device to hold the window open.
 			SettingsManager.SaveAll();
 			AppHelper.UnInitializeHidGuardian();
 		}

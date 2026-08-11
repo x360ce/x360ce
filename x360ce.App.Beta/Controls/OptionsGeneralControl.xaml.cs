@@ -193,6 +193,7 @@ namespace x360ce.App.Controls
 			SettingsManager.UnLoadMonitor(AutoDetectForegroundWindowCheckBox);
 			SettingsManager.UnLoadMonitor(IsProcessDPIAwareCheckBox);
 			SettingsManager.UnLoadMonitor(MinimizeToTrayCheckBox);
+			SettingsManager.UnLoadMonitor(MinimizeOnClose);
 			// Direct Input
 			SettingsManager.UnLoadMonitor(ExcludeVirtualDevicesCheckBox);
 			SettingsManager.UnLoadMonitor(ExcludeSupplementalDevicesCheckBox);

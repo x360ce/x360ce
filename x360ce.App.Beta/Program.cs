@@ -349,12 +349,15 @@ namespace x360ce.App
 				return;
 			// Form GUI update is very heavy on CPU.
 			// Enable form GUI update only if form is not minimized.
-			var enableUpdates = app.MainWindow.WindowState != WindowState.Minimized && !Program.IsClosing;
+			var enableUpdates = Global._MainWindow.IsVisible &&
+				Global._MainWindow.WindowState != WindowState.Minimized &&
+				!Program.IsClosing;
 			Global._MainWindow.EnableFormUpdates(enableUpdates);
 		}
 
 		static void _TrayManager_OnExitClick(object sender, System.EventArgs e)
 		{
+			IsClosing = true;
 			// Remove tray icon first.
 			Global._TrayManager.Dispose();
 			app.Shutdown();
