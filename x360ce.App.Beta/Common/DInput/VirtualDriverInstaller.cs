@@ -28,60 +28,8 @@ namespace x360ce.App.DInput
 			return driver;
 		}
 
-		public static string GetViGEmBusPath()
-		{
-			string baseDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System));
-			return Path.Combine(baseDirectory, "Program Files", "ViGEm ViGEmBus");
-		}
-
-		static void ExtractViGemBusFiles()
-		{
-			var target = GetViGEmBusPath();
-			ExtractViGemFiles("ViGEmBus", target);
-		}
-
 		public static string[] ViGEmBusHardwareIds = { "Root\\ViGEmBus", "Nefarius\\ViGEmBus\\Gen1" };
 		public const string HidGuardianHardwareId = "Root\\HidGuardian";
-
-		/// <summary>
-		/// Install Virtual driver.
-		/// </summary>
-		/// <remarks>Must be executed in administrative mode.</remarks>
-		public static void InstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
-		{
-			// Extract files first.
-			ExtractViGemBusFiles();
-			var folder = GetViGEmBusPath();
-			var exePath = Path.Combine(folder, GetDevConPath());
-			var osString = JocysCom.ClassLibrary.Controls.IssuesControl.IssueHelper.GetRealOSVersion().Major >= 10
-				? "Win10" : "WinVS";
-			var infFile = string.Format("{0}\\{1}", osString, "ViGEmBus.inf");
-			JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
-				exePath,
-				// Use last ID.
-				"install " + infFile + " " + ViGEmBusHardwareIds.Last(),
-				isElevated: true);
-		}
-
-		/// <summary>
-		/// UnInstall Virtual driver here.
-		/// </summary>
-		/// <remarks>Must be executed in administrative mode.</remarks>
-		public static void UninstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
-		{
-			// Extract files first.
-			ExtractViGemBusFiles();
-			var folder = GetViGEmBusPath();
-			var exePath = Path.Combine(folder, GetDevConPath());
-			// Remove all old instances.
-			foreach (var ViGEmBusHardwareId in ViGEmBusHardwareIds)
-			{
-				JocysCom.ClassLibrary.Windows.UacHelper.RunProcess(
-					exePath,
-					"remove " + ViGEmBusHardwareId,
-					isElevated: true);
-			}
-		}
 
 		#endregion
 

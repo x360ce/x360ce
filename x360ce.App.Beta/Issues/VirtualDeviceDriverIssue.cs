@@ -9,7 +9,8 @@ namespace x360ce.App.Issues
 		public VirtualDeviceDriverIssue() : base()
 		{
 			Name = "Virtual Device Driver";
-			FixName = "Install";
+			FixName = "Driver help";
+			MoreInfo = new System.Uri(ViGEmBusSupport.DriverHelpUrl);
 		}
 
 		public override void CheckTask()
@@ -20,16 +21,22 @@ namespace x360ce.App.Issues
 				SetSeverity(IssueSeverity.None);
 				return;
 			}
-			if (!Nefarius.ViGEm.Client.ViGEmClient.isVBusExists())
+			var health = Nefarius.ViGEm.Client.ViGEmClient.GetBusHealth();
+			if (!health.IsUsable)
 			{
-				SetSeverity(IssueSeverity.Moderate, 0, "You need to install Virtual Driver for emulation to work.");
+				var message = health.VersionIncompatible
+					? "ViGEmBus is installed, but its client API version is incompatible."
+					: health.ServicePresent
+						? "ViGEmBus is present but unavailable (service: " + health.ServiceState + ")."
+						: "ViGEmBus is not available. Mapping can still be configured without it.";
+				SetSeverity(IssueSeverity.Moderate, 0, message);
 				return;
 			}
 			SetSeverity(IssueSeverity.None);
 		}
 		public override void FixTask()
 		{
-            DInput.DInputHelper.CheckInstallVirtualDriver();
+			ViGEmBusSupport.OpenDriverHelp(out _);
 		}
 
 	}

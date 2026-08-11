@@ -48,16 +48,6 @@ namespace x360ce.App
 			// ------------------------------------------------
 			// Virtual Drivers
 			// ------------------------------------------------
-			if (ic.Parameters.ContainsKey(AdminCommand.InstallViGEmBus.ToString()))
-			{
-				DInput.VirtualDriverInstaller.InstallViGEmBus();
-				return true;
-			}
-			if (ic.Parameters.ContainsKey(AdminCommand.UninstallViGEmBus.ToString()))
-			{
-				DInput.VirtualDriverInstaller.UninstallViGEmBus();
-				return true;
-			}
 			if (ic.Parameters.ContainsKey(AdminCommand.InstallHidGuardian.ToString()))
 			{
 				DInput.VirtualDriverInstaller.InstallHidGuardian();

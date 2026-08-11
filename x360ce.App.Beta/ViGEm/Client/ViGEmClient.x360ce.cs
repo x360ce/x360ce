@@ -101,8 +101,8 @@ namespace Nefarius.ViGEm.Client
 
 		public static ViGEmClient Current;
 		public static object ClientLock = new object();
-		static VIGEM_ERROR? PendingError;
-		static DateTime PendingErrorTime;
+		static ViGEmBusHealthResult CachedHealth;
+		static DateTime CachedHealthTime;
 
 		public static void DisposeCurrent()
 		{
@@ -110,58 +110,121 @@ namespace Nefarius.ViGEm.Client
 			{
 				// If virtual client is initialized then...
 				if (Current != null)
-					Current.Dispose();
+				{
+					try
+					{
+						Current.Dispose();
+					}
+					catch (Exception ex)
+					{
+						JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+					}
+					Current = null;
+				}
+				CachedHealth = null;
 				return;
 			}
 		}
 
-		static bool? RuntimeInstalled;
-
 		/// <summary>
-		/// Check ViGEm client. Create if not exists.
+		/// Return the most recent staged ViGEm health result.
 		/// </summary>
-		/// <returns></returns>
-		public static bool isVBusExists()
+		public static ViGEmBusHealthResult GetBusHealth(bool forceRefresh = false)
 		{
 			lock (ClientLock)
 			{
-				// If Visual Studio C++ 2015 Redistributable installation unknown then...
-				if (!RuntimeInstalled.HasValue)
-				{
-					var issue = Environment.Is64BitProcess
-						? new CppX64RuntimeInstallIssue()
-						: (IssueItem)new CppX86RuntimeInstallIssue();
-					issue.Check();
-					RuntimeInstalled = issue.Severity == IssueSeverity.None;
-				}
-				if (!RuntimeInstalled.Value)
-					return false;
-				// Keep error for 5 seconds.
-				if (DateTime.Now.Subtract(PendingErrorTime).TotalSeconds > 5)
-					PendingError = null;
-				// Do not process until user dealt with the error.
-				if (PendingError.HasValue)
-					return PendingError.Value == VIGEM_ERROR.VIGEM_ERROR_NONE;
-				// If client exists and it was not disposed then...
+				if (!forceRefresh && CachedHealth != null &&
+					DateTime.UtcNow.Subtract(CachedHealthTime).TotalSeconds < 5)
+					return CachedHealth;
+			}
+
+			var health = new ViGEmBusHealthDetector(new WindowsViGEmBusProbe()).Detect();
+			lock (ClientLock)
+			{
+				CachedHealth = health;
+				CachedHealthTime = DateTime.UtcNow;
+			}
+			return health;
+		}
+
+		/// <summary>Compatibility shim for existing callers.</summary>
+		public static bool isVBusExists() => GetBusHealth().IsUsable;
+
+		public static ViGEmClientProbeResult ProbeConnection()
+		{
+			lock (ClientLock)
+			{
 				if (Current != null && !Current.Disposing && !Current.IsDisposed)
-					return true;
+					return new ViGEmClientProbeResult(ViGEmClientConnectionState.Successful);
+
 				if (!IsLoaded)
 					LoadLibrary();
-				var client = new ViGEmClient();
-				var error = client.Initialize();
-				if (error == VIGEM_ERROR.VIGEM_ERROR_NONE)
+				if (!IsLoaded)
+					return new ViGEmClientProbeResult(
+						ViGEmClientConnectionState.ClientUnavailable,
+						LastLoadException?.Message ?? "ViGEm client library could not be loaded.");
+
+				ViGEmClient client = null;
+				try
 				{
-					PendingError = null;
-					Current = client;
+					client = new ViGEmClient();
+					var error = client.Initialize();
+					if (error == VIGEM_ERROR.VIGEM_ERROR_NONE)
+					{
+						Current = client;
+						return new ViGEmClientProbeResult(ViGEmClientConnectionState.Successful);
+					}
+
+					DisposeFailedClient(client);
+					return MapConnectionError(error);
 				}
-				else
+				catch (DllNotFoundException ex)
 				{
-					PendingError = error;
-					PendingErrorTime = DateTime.Now;
-					client.Dispose();
-					FreeLibrary();
+					DisposeFailedClient(client);
+					return new ViGEmClientProbeResult(ViGEmClientConnectionState.ClientUnavailable, ex.Message);
 				}
-				return error == VIGEM_ERROR.VIGEM_ERROR_NONE;
+				catch (BadImageFormatException ex)
+				{
+					DisposeFailedClient(client);
+					return new ViGEmClientProbeResult(ViGEmClientConnectionState.ClientUnavailable, ex.Message);
+				}
+				catch (Exception ex)
+				{
+					DisposeFailedClient(client);
+					return new ViGEmClientProbeResult(ViGEmClientConnectionState.Failed, ex.Message);
+				}
+			}
+		}
+
+		static ViGEmClientProbeResult MapConnectionError(VIGEM_ERROR error)
+		{
+			var state = ViGEmClientConnectionState.Failed;
+			switch (error)
+			{
+				case VIGEM_ERROR.VIGEM_ERROR_BUS_NOT_FOUND:
+					state = ViGEmClientConnectionState.BusNotFound;
+					break;
+				case VIGEM_ERROR.VIGEM_ERROR_BUS_ACCESS_FAILED:
+					state = ViGEmClientConnectionState.AccessDenied;
+					break;
+				case VIGEM_ERROR.VIGEM_ERROR_BUS_VERSION_MISMATCH:
+					state = ViGEmClientConnectionState.VersionIncompatible;
+					break;
+			}
+			return new ViGEmClientProbeResult(state, error.ToString());
+		}
+
+		static void DisposeFailedClient(ViGEmClient client)
+		{
+			if (client == null)
+				return;
+			try
+			{
+				client.Dispose();
+			}
+			catch (Exception ex)
+			{
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 			}
 		}
 

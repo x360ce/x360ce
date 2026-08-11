@@ -226,20 +226,17 @@ namespace x360ce.App.DInput
 
 		public static VirtualError CheckInstallVirtualDriver()
 		{
-			// If driver is installed already then return.
-			if (ViGEmClient.isVBusExists())
+			var health = ViGEmClient.GetBusHealth(true);
+			if (health.IsUsable)
 				return VirtualError.None;
-			Program.RunElevated(AdminCommand.InstallViGEmBus);
-			return VirtualError.None;
+			Issues.ViGEmBusSupport.OpenDriverHelp(out _);
+			return VirtualError.Missing;
 		}
 
 		public static VirtualError CheckUnInstallVirtualDriver()
 		{
-			// If driver is installed already then return.
-			if (!ViGEmClient.isVBusExists())
-				return VirtualError.None;
-			Program.RunElevated(AdminCommand.UninstallViGEmBus);
-			return VirtualError.None;
+			// ViGEmBus may be shared by other applications. Never remove it here.
+			return VirtualError.Other;
 		}
 
 		public VirtualError EnableFeeding(uint userIndex)

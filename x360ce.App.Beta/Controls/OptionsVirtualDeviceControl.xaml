@@ -54,17 +54,17 @@
                     Name="InstallButton"
                     Grid.Row="1"
                     Grid.Column="2"
-                    Width="60"
+                    Width="90"
                     Click="InstallButton_Click"
-                    Content="Install"
+                    Content="Driver help"
                     IsEnabled="False" />
 				<Button
                     Name="UninstallButton"
                     Grid.Row="1"
                     Grid.Column="3"
-                    Width="60"
+                    Width="90"
                     Click="UninstallButton_Click"
-                    Content="Uninstall"
+                    Content="Managed externally"
                     IsEnabled="False" />
 			</Grid>
 		</GroupBox>

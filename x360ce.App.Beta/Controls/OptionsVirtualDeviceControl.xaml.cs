@@ -1,10 +1,14 @@
 ﻿using JocysCom.ClassLibrary.Controls;
 using System;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 //using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 //using System.Windows.Documents;
 using x360ce.Engine;
+using x360ce.App.Issues;
 
 namespace x360ce.App.Controls
 {
@@ -33,12 +37,8 @@ namespace x360ce.App.Controls
 
 		private void InstallButton_Click(object sender, RoutedEventArgs e)
 		{
-			ControlsHelper.BeginInvoke(() =>
-			{
-				StatusTextBox.Text = "Installing. Please Wait...";
-				DInput.DInputHelper.CheckInstallVirtualDriver();
-				RefreshStatus();
-			});
+			if (!ViGEmBusSupport.OpenDriverHelp(out var error))
+				StatusTextBox.Text = "Could not open driver help: " + error;
 		}
 
 		private void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -48,37 +48,58 @@ namespace x360ce.App.Controls
 
 		private void UninstallButton_Click(object sender, RoutedEventArgs e)
 		{
-			ControlsHelper.BeginInvoke(() =>
-			{
-				StatusTextBox.Text = "Uninstalling. Please Wait...";
-				// Disable Virtual mode first.
-				Global._MainWindow.ChangeCurrentGameEmulationType(EmulationType.None);
-				DInput.DInputHelper.CheckUnInstallVirtualDriver();
-				RefreshStatus();
-			});
+			StatusTextBox.Text = "ViGEmBus is managed by Windows and its external installer.";
 		}
 
-		void RefreshStatus()
+		CancellationTokenSource healthCancellation;
+
+		async void RefreshStatus()
 		{
+			healthCancellation?.Cancel();
+			healthCancellation?.Dispose();
+			healthCancellation = new CancellationTokenSource();
+			var token = healthCancellation.Token;
 			ControlsHelper.SetText(StatusTextBox, "Please wait...");
-			// run in another thread, to make sure it is not freezing interface.
-			var ts = new System.Threading.ThreadStart(delegate ()
+			try
 			{
-				// Get Virtual Bus and HID Guardian status.
-				var bus = DInput.VirtualDriverInstaller.GetViGemBusDriverInfo();
-				ControlsHelper.BeginInvoke(() =>
+				var probeTask = Task.Run(
+					() => Nefarius.ViGEm.Client.ViGEmClient.GetBusHealth(true), token);
+				var completed = await Task.WhenAny(probeTask, Task.Delay(TimeSpan.FromSeconds(5), token));
+				if (completed != probeTask)
 				{
-					// Update Bus status.
-					var busStatus = bus.DriverVersion == 0
-						? "Not installed"
-						: string.Format("{0} {1}", bus.Description, bus.GetVersion());
-					ControlsHelper.SetText(StatusTextBox, busStatus);
-					InstallButton.IsEnabled = bus.DriverVersion == 0;
-					UninstallButton.IsEnabled = bus.DriverVersion != 0;
-				});
-			});
-			var t = new System.Threading.Thread(ts);
-			t.Start();
+					ControlsHelper.SetText(StatusTextBox, "ViGEmBus health check timed out. Mapping remains available.");
+					InstallButton.IsEnabled = true;
+					return;
+				}
+
+				var health = await probeTask;
+				token.ThrowIfCancellationRequested();
+				ControlsHelper.SetText(StatusTextBox, FormatHealth(health));
+				InstallButton.IsEnabled = !health.IsUsable;
+				UninstallButton.IsEnabled = false;
+			}
+			catch (OperationCanceledException)
+			{
+			}
+			catch (Exception ex)
+			{
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				ControlsHelper.SetText(StatusTextBox, "ViGEmBus check failed: " + ex.Message);
+				InstallButton.IsEnabled = true;
+			}
+		}
+
+		static string FormatHealth(ViGEmBusHealthResult health)
+		{
+			var text = new StringBuilder();
+			text.Append("Installed: ").Append(health.Installed ? "Yes" : "No");
+			if (health.DriverVersion != null)
+				text.Append(" (").Append(health.DriverVersion).Append(")");
+			text.Append(" | Service: ").Append(health.ServiceState);
+			text.Append(" | Client API: ").Append(health.ClientConnectionState);
+			if (!string.IsNullOrWhiteSpace(health.ErrorMessage))
+				text.Append(" | ").Append(health.ErrorMessage);
+			return text.ToString();
 		}
 
 		private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -107,6 +128,9 @@ namespace x360ce.App.Controls
 
 		public void ParentWindow_Unloaded()
 		{
+			healthCancellation?.Cancel();
+			healthCancellation?.Dispose();
+			healthCancellation = null;
 			TabControl tc;
 			tc = Global._MainWindow?.MainBodyPanel?.MainTabControl;
 			if (tc != null)

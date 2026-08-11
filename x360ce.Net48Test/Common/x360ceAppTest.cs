@@ -143,6 +143,73 @@ namespace x360ce.Tests
             Assert.IsFalse(result.IsInstalled);
         }
 
+        [TestMethod]
+        public void ViGEmHealth_WorkingExternalBusIsUsableWithoutInstallAction()
+        {
+            var probe = new FakeViGEmBusProbe
+            {
+                Driver = new ViGEmDriverInfo(true, new Version(1, 22, 0), "ViGEm Bus Driver"),
+                ServiceState = ViGEmServiceState.Running,
+                Client = new ViGEmClientProbeResult(ViGEmClientConnectionState.Successful),
+            };
+
+            var result = new ViGEmBusHealthDetector(probe).Detect();
+
+            Assert.IsTrue(result.Installed);
+            Assert.IsTrue(result.ServicePresent);
+            Assert.IsTrue(result.DriverRunning);
+            Assert.IsTrue(result.ApiConnectionSuccessful);
+            Assert.IsTrue(result.IsUsable);
+            Assert.IsFalse(result.ShouldOfferInstall);
+        }
+
+        [TestMethod]
+        public void ViGEmHealth_SeparatesStoppedServiceFromMissingDriver()
+        {
+            var probe = new FakeViGEmBusProbe
+            {
+                Driver = new ViGEmDriverInfo(true, new Version(1, 22, 0), "ViGEm Bus Driver"),
+                ServiceState = ViGEmServiceState.Stopped,
+                Client = new ViGEmClientProbeResult(ViGEmClientConnectionState.BusNotFound),
+            };
+
+            var result = new ViGEmBusHealthDetector(probe).Detect();
+
+            Assert.IsTrue(result.Installed);
+            Assert.IsTrue(result.ServicePresent);
+            Assert.IsFalse(result.DriverRunning);
+            Assert.IsFalse(result.ApiConnectionSuccessful);
+            Assert.IsFalse(result.ShouldOfferInstall);
+        }
+
+        [TestMethod]
+        public void ViGEmHealth_ReportsVersionMismatchExplicitly()
+        {
+            var probe = new FakeViGEmBusProbe
+            {
+                Driver = new ViGEmDriverInfo(true, new Version(1, 14, 3), "ViGEm Bus Driver"),
+                ServiceState = ViGEmServiceState.Running,
+                Client = new ViGEmClientProbeResult(ViGEmClientConnectionState.VersionIncompatible, "bus version mismatch"),
+            };
+
+            var result = new ViGEmBusHealthDetector(probe).Detect();
+
+            Assert.IsTrue(result.VersionIncompatible);
+            Assert.IsFalse(result.IsUsable);
+            StringAssert.Contains(result.ErrorMessage, "version mismatch");
+        }
+
+        [TestMethod]
+        public void ViGEmHealth_IsolatesProbeExceptions()
+        {
+            var probe = new FakeViGEmBusProbe { DriverException = new InvalidOperationException("bad device") };
+
+            var result = new ViGEmBusHealthDetector(probe).Detect();
+
+            Assert.IsFalse(result.Installed);
+            StringAssert.Contains(result.ErrorMessage, "bad device");
+        }
+
         private sealed class FakeCppRuntimeRegistry : ICppRuntimeRegistry
         {
             public readonly Dictionary<RegistryView, CppRuntimeRegistryValue> Values =
@@ -157,6 +224,26 @@ namespace x360ce.Tests
                 Values.TryGetValue(view, out var value);
                 return value;
             }
+        }
+
+        private sealed class FakeViGEmBusProbe : IViGEmBusProbe
+        {
+            public ViGEmDriverInfo Driver { get; set; } = new ViGEmDriverInfo(false, null, null);
+            public ViGEmServiceState ServiceState { get; set; } = ViGEmServiceState.Missing;
+            public ViGEmClientProbeResult Client { get; set; } =
+                new ViGEmClientProbeResult(ViGEmClientConnectionState.NotAttempted);
+            public Exception DriverException { get; set; }
+
+            public ViGEmDriverInfo GetDriverInfo()
+            {
+                if (DriverException != null)
+                    throw DriverException;
+                return Driver;
+            }
+
+            public ViGEmServiceState GetServiceState() => ServiceState;
+
+            public ViGEmClientProbeResult ConnectClient() => Client;
         }
 
     }

@@ -115,6 +115,7 @@
 		<Reference Include="System.configuration" />
 		<Reference Include="System.Configuration.Install" />
 		<Reference Include="System.Data.Entity" />
+		<Reference Include="System.ServiceProcess" />
 		<Reference Include="System.Web" />
 		<Reference Include="System.Web.Services" />
 	</ItemGroup>

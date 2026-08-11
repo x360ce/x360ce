@@ -5,8 +5,6 @@
     /// </summary>
     public enum AdminCommand
     {
-        InstallViGEmBus,
-		UninstallViGEmBus,
         InstallHidGuardian,
         UninstallHidGuardian,
 		UninstallDevice,
