@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls;
 using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
@@ -179,7 +179,14 @@ namespace x360ce.App.Controls
 			if (sender is TextBox textbox && e.Data.GetDataPresent(DataFormats.Text))
 			{
 				textbox.Clear();
-				textbox.Text = (string)e.Data.GetData(DataFormats.Text);
+				var text = (string)e.Data.GetData(DataFormats.Text);
+				// If dropped on Stick Axis Y without Invert prefix, auto-prefix 'I' so Up is Up and Down is Down
+				if ((textbox.Name == "StickLAxisYTextBox" || textbox.Name == "StickRAxisYTextBox") && !string.IsNullOrEmpty(text))
+				{
+					if (text.StartsWith("Axis ") || text.StartsWith("HAxis "))
+						text = "I" + text;
+				}
+				textbox.Text = text;
 			}
 			e.Handled = true;
 		}

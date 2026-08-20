@@ -1,4 +1,4 @@
-﻿using SharpDX.DirectInput;
+using SharpDX.DirectInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,10 +122,56 @@ namespace x360ce.App
 					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true);
 					// Y is inverted by default.
 					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true);
-					// Right Thumb.
+					// Left Thumb.
 					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel axis");
 					// Y is inverted by default.
 					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true);
+				}
+				// If DragonRise / Generic USB Gamepad / Twin USB Joystick (VID 0x0079) then...
+				else if (ud.DevVendorId == 0x0079 || (ud.InstanceName != null && (ud.InstanceName.Contains("DragonRise") || ud.InstanceName.Contains("Generic USB Joystick") || ud.InstanceName.Contains("Twin USB"))))
+				{
+					ps.ButtonA = GetButtonValue(list, 2, true, "Button 3", "Cross");
+					if (string.IsNullOrEmpty(ps.ButtonA)) ps.ButtonA = "b3";
+					ps.ButtonB = GetButtonValue(list, 1, true, "Button 2", "Circle");
+					if (string.IsNullOrEmpty(ps.ButtonB)) ps.ButtonB = "b2";
+					ps.ButtonX = GetButtonValue(list, 3, true, "Button 4", "Square");
+					if (string.IsNullOrEmpty(ps.ButtonX)) ps.ButtonX = "b4";
+					ps.ButtonY = GetButtonValue(list, 0, true, "Button 1", "Triangle");
+					if (string.IsNullOrEmpty(ps.ButtonY)) ps.ButtonY = "b1";
+					ps.LeftShoulder = GetButtonValue(list, 4, true, "Button 5", "L1");
+					if (string.IsNullOrEmpty(ps.LeftShoulder)) ps.LeftShoulder = "b5";
+					ps.RightShoulder = GetButtonValue(list, 5, true, "Button 6", "R1");
+					if (string.IsNullOrEmpty(ps.RightShoulder)) ps.RightShoulder = "b6";
+					ps.LeftTrigger = GetButtonValue(list, 6, true, "Button 7", "L2");
+					if (string.IsNullOrEmpty(ps.LeftTrigger)) ps.LeftTrigger = "b7";
+					ps.RightTrigger = GetButtonValue(list, 7, true, "Button 8", "R2");
+					if (string.IsNullOrEmpty(ps.RightTrigger)) ps.RightTrigger = "b8";
+					ps.ButtonBack = GetButtonValue(list, 8, true, "Button 9", "Select", "Back");
+					if (string.IsNullOrEmpty(ps.ButtonBack)) ps.ButtonBack = "b9";
+					ps.ButtonStart = GetButtonValue(list, 9, true, "Button 10", "Start");
+					if (string.IsNullOrEmpty(ps.ButtonStart)) ps.ButtonStart = "b10";
+					ps.LeftThumbButton = GetButtonValue(list, 10, true, "Button 11");
+					if (string.IsNullOrEmpty(ps.LeftThumbButton)) ps.LeftThumbButton = "b11";
+					ps.RightThumbButton = GetButtonValue(list, 11, true, "Button 12");
+					if (string.IsNullOrEmpty(ps.RightThumbButton)) ps.RightThumbButton = "b12";
+
+					// Left Thumb (X = Axis 1, Y = Inverted Axis 2 [a-2]):
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "X-Axis");
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisX)) ps.LeftThumbAxisX = "a1";
+					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true, "Y-Axis");
+					if (string.IsNullOrEmpty(ps.LeftThumbAxisY)) ps.LeftThumbAxisY = "a-2";
+
+					// Right Thumb (X = Axis 3 [Z-Axis], Y = Inverted Axis 6 [a-6, Rz-Axis] or Slider):
+					var rtx = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true, "Z-Axis");
+					if (string.IsNullOrEmpty(rtx)) rtx = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true, "X Rotation");
+					if (string.IsNullOrEmpty(rtx)) rtx = "a3";
+					ps.RightThumbAxisX = rtx;
+
+					var rty = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true, "Z Rotation");
+					if (string.IsNullOrEmpty(rty)) rty = GetAxisValue(list, true, false, ObjectGuid.RyAxis, true, "Y Rotation");
+					if (string.IsNullOrEmpty(rty)) rty = GetAxisValue(list, true, false, ObjectGuid.Slider, true, "Slider");
+					if (string.IsNullOrEmpty(rty)) rty = "a-6";
+					ps.RightThumbAxisY = rty;
 				}
 				else
 				{
@@ -144,9 +190,11 @@ namespace x360ce.App
 					// If RzAxis or "R2" name is missing then...
 					if (string.IsNullOrEmpty(rightTrigger))
 					{
-						// Map triggers form single combinex axis.
+						// Map triggers form single combined axis or buttons.
 						ps.LeftTrigger = GetAxisValue(list, false, true, ObjectGuid.ZAxis, true, "L2");
 						ps.RightTrigger = GetAxisValue(list, true, true, ObjectGuid.ZAxis, true, "L2");
+						if (string.IsNullOrEmpty(ps.LeftTrigger)) ps.LeftTrigger = GetButtonValue(list, 6, true, "Button 7", "L2");
+						if (string.IsNullOrEmpty(ps.RightTrigger)) ps.RightTrigger = GetButtonValue(list, 7, true, "Button 8", "R2");
 					}
 					else
 					{
@@ -154,14 +202,19 @@ namespace x360ce.App
 						ps.LeftTrigger = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true, "L2");
 						ps.RightTrigger = GetAxisValue(list, false, false, ObjectGuid.RzAxis, true, "R2");
 					}
-					// Right Thumb.
-					ps.RightThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true);
+					// Left Thumb.
+					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel axis", "X-Axis");
 					// Y is inverted by default.
-					ps.RightThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.RyAxis, true);
+					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true, "Y-Axis");
 					// Right Thumb.
-					ps.LeftThumbAxisX = GetAxisValue(list, false, false, ObjectGuid.XAxis, true, "Wheel axis");
-					// Y is inverted by default.
-					ps.LeftThumbAxisY = GetAxisValue(list, true, false, ObjectGuid.YAxis, true);
+					var rx = GetAxisValue(list, false, false, ObjectGuid.RxAxis, true, "X Rotation");
+					if (string.IsNullOrEmpty(rx)) rx = GetAxisValue(list, false, false, ObjectGuid.ZAxis, true, "Z-Axis");
+					ps.RightThumbAxisX = rx;
+
+					var ry = GetAxisValue(list, true, false, ObjectGuid.RyAxis, true, "Y Rotation");
+					if (string.IsNullOrEmpty(ry)) ry = GetAxisValue(list, true, false, ObjectGuid.RzAxis, true, "Z Rotation");
+					if (string.IsNullOrEmpty(ry)) ry = GetAxisValue(list, true, false, ObjectGuid.Slider, true, "Slider");
+					ps.RightThumbAxisY = ry;
 				}
 				// D-Pad
 				var o = list.FirstOrDefault(x => x.Type == ObjectGuid.PovController);
@@ -190,7 +243,11 @@ namespace x360ce.App
 			}
 			// Try to find by Custom DIndex.
 			if (o == null && dIndex.HasValue)
+			{
 				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.DiIndex == dIndex.Value);
+				if (o != null && removeIfFound)
+					objects.Remove(o);
+			}
 			// Use instance number which is same as X360CE button index.
 			return o == null ? "" : string.Format($"{SettingName.SType.Button}{o.DiIndex}");
 		}
@@ -202,10 +259,10 @@ namespace x360ce.App
 			// Try to find by name.
 			foreach (var name in names)
 			{
-				// Try exact match first.
-				o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && string.Compare(x.Name, name, true) == 0);
+				// Try exact match first on axis/slider objects.
+				o = objects.FirstOrDefault(x => (x.Type != ObjectGuid.Button && x.Type != ObjectGuid.Key && x.Type != ObjectGuid.PovController) && string.Compare(x.Name, name, true) == 0);
 				if (o == null)
-					o = objects.FirstOrDefault(x => (x.Type == ObjectGuid.Button || x.Type == ObjectGuid.Key) && x.Name.Contains(name));
+					o = objects.FirstOrDefault(x => (x.Type != ObjectGuid.Button && x.Type != ObjectGuid.Key && x.Type != ObjectGuid.PovController) && x.Name != null && x.Name.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0);
 				if (o != null)
 				{
 					if (removeIfFound)
@@ -215,7 +272,11 @@ namespace x360ce.App
 			}
 			// Try to find by type.
 			if (o == null)
+			{
 				o = objects.FirstOrDefault(x => x.Type == type);
+				if (o != null && removeIfFound)
+					objects.Remove(o);
+			}
 			return o == null
 				? ""
 				: string.Format("{0}{1}{2}",

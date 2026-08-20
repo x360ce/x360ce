@@ -1,4 +1,4 @@
-﻿<UserControl
+<UserControl
 	x:Class="x360ce.App.Controls.PadItemControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,46 +12,68 @@
 	mc:Ignorable="d">
 	<TabControl Name="PadTabControl" Margin="3,3,3,0">
 		<TabItem Name="GeneralTabPage" Header="General">
-			<local:PadItem_GeneralControl x:Name="GeneralPanel" />
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<local:PadItem_GeneralControl x:Name="GeneralPanel" />
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="AdvancedTabPage" Header="Advanced">
-			<local:PadItem_AdvancedControl x:Name="AdvancedPanel" />
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<local:PadItem_AdvancedControl x:Name="AdvancedPanel" />
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="ButtonsTabPage" Header="Buttons">
-			<local:PadItem_ButtonsControl x:Name="ButtonsPanel" />
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<local:PadItem_ButtonsControl x:Name="ButtonsPanel" />
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="DPadTabPage" Header="D-Pad">
-			<local:PadItem_DPadControl x:Name="DPadPanel" />
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<local:PadItem_DPadControl x:Name="DPadPanel" />
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="TriggersTabPage" Header="Triggers">
-			<StackPanel>
-				<local:AxisMapControl x:Name="LeftTriggerPanel" x:FieldModifier="public" />
-				<local:AxisMapControl x:Name="RightTriggerPanel" x:FieldModifier="public" />
-			</StackPanel>
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<StackPanel>
+					<local:AxisMapControl x:Name="LeftTriggerPanel" x:FieldModifier="public" />
+					<local:AxisMapControl x:Name="RightTriggerPanel" x:FieldModifier="public" />
+				</StackPanel>
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="LeftThumbTabPage" Header="Left Stick">
-			<StackPanel>
-				<local:AxisMapControl x:Name="LeftThumbXPanel" x:FieldModifier="public" />
-				<local:AxisMapControl x:Name="LeftThumbYPanel" x:FieldModifier="public" />
-			</StackPanel>
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<StackPanel>
+					<local:AxisMapControl x:Name="LeftThumbXPanel" x:FieldModifier="public" />
+					<local:AxisMapControl x:Name="LeftThumbYPanel" x:FieldModifier="public" />
+				</StackPanel>
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="RightThumbTabPage" Header="Right Stick">
-			<StackPanel>
-				<local:AxisMapControl x:Name="RightThumbXPanel" x:FieldModifier="public" />
-				<local:AxisMapControl x:Name="RightThumbYPanel" x:FieldModifier="public" />
-			</StackPanel>
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<StackPanel>
+					<local:AxisMapControl x:Name="RightThumbXPanel" x:FieldModifier="public" />
+					<local:AxisMapControl x:Name="RightThumbYPanel" x:FieldModifier="public" />
+				</StackPanel>
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="ForceFeedbackTabPage" Header="Force Feedback">
-			<local:PadItem_ForceFeedbackControl x:Name="ForceFeedbackPanel" />
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<local:PadItem_ForceFeedbackControl x:Name="ForceFeedbackPanel" />
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="MacrosTabPage" Header="Macros">
-			<local:PadItem_MacrosControl x:Name="MacrosPanel" />
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<local:PadItem_MacrosControl x:Name="MacrosPanel" />
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="XInputTabPage" Header="XInput">
-			<local:PadItem_XInputControl x:Name="XInputPanel" />
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<local:PadItem_XInputControl x:Name="XInputPanel" />
+			</ScrollViewer>
 		</TabItem>
 		<TabItem Name="DInputTabPage" Header="DInput">
-			<local:PadItem_DInputControl x:Name="DInputPanel" />
+			<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+				<local:PadItem_DInputControl x:Name="DInputPanel" />
+			</ScrollViewer>
 		</TabItem>
 	</TabControl>
 </UserControl>

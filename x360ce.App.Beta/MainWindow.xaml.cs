@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls;
 using SharpDX.XInput;
 using System;
 using System.ComponentModel;
@@ -155,61 +155,39 @@ namespace x360ce.App
 			}
 		}
 
-		//private void AutoConfigure(Engine.Data.UserGame game)
-		//{
-		//	var list = SettingsManager.UserDevices.Items.ToList();
-		//	// Filter devices.
-		//	if (SettingsManager.Options.ExcludeSupplementalDevices)
-		//	{
-		//		// Supplemental devices are specialized device with functionality unsuitable for the main control of an application,
-		//		// such as pedals used with a wheel.The following subtypes are defined.
-		//		var supplementals = list.Where(x => x.CapType == (int)SharpDX.DirectInput.DeviceType.Supplemental).ToArray();
-		//		foreach (var supplemental in supplementals)
-		//			list.Remove(supplemental);
-		//	}
-		//	if (SettingsManager.Options.ExcludeVirtualDevices)
-		//	{
-		//		// Exclude virtual devices so application could feed them.
-		//		var virtualDevices = list.Where(x => x.InstanceName.Contains("vJoy")).ToArray();
-		//		foreach (var virtualDevice in virtualDevices)
-		//			list.Remove(virtualDevice);
-		//	}
-		//	// Move gaming wheels to the top index position by default.
-		//	// Games like GTA need wheel to be first device to work properly.
-		//	var wheels = list.Where(x =>
-		//		x.CapType == (int)SharpDX.DirectInput.DeviceType.Driving ||
-		//		x.CapSubtype == (int)DeviceSubType.Wheel
-		//	).ToArray();
-		//	foreach (var wheel in wheels)
-		//	{
-		//		list.Remove(wheel);
-		//		list.Insert(0, wheel);
-		//	}
-		//	// Get configuration of devices for the game.
-		//	var settings = SettingsManager.GetSettings(game.FileName);
-		//	var knownDevices = settings.Select(x => x.InstanceGuid).ToList();
-		//	var newSettingsToProcess = new List<Engine.Data.UserSetting>();
-		//	var i = 0;
-		//	while (true)
-		//	{
-		//		i++;
-		//		// If there are devices which occupies current position then do nothing.
-		//		if (settings.Any(x => x.MapTo == i))
-		//			continue;
-		//		// Try to select first unknown device.
-		//		var newDevice = list.FirstOrDefault(x => !knownDevices.Contains(x.InstanceGuid));
-		//		// If no device found then break.
-		//		if (newDevice == null)
-		//			break;
-		//		// Create new setting for game/device.
-		//		var newSetting = AppHelper.GetNewSetting(newDevice, game, i <= 4 ? (MapTo)i : MapTo.Disabled);
-		//		newSettingsToProcess.Add(newSetting);
-		//		// Add device to known list.
-		//		knownDevices.Add(newDevice.InstanceGuid);
-		//	}
-		//	foreach (var item in newSettingsToProcess)
-		//		SettingsManager.UserSettings.Items.Add(item);
-		//}
+		public void AutoConfigure(Engine.Data.UserGame game)
+		{
+			if (game == null)
+				return;
+			if (ControlsHelper.InvokeRequired)
+			{
+				ControlsHelper.BeginInvoke(() => AutoConfigure(game));
+				return;
+			}
+			var list = SettingsManager.UserDevices.ItemsToArraySynchronized().Where(x => x.IsOnline).ToList();
+			if (list.Count == 0)
+				return;
+			var settings = SettingsManager.GetSettings(game.FileName);
+			for (int i = 1; i <= 4; i++)
+			{
+				var mapTo = (MapTo)i;
+				// If PAD already has a mapped online device, keep it.
+				if (settings.Any(x => x.MapTo == i && x.IsEnabled))
+					continue;
+				// Find first online device not yet mapped to any PAD for this game.
+				var mappedGuids = settings.Where(x => x.MapTo > 0 && x.IsEnabled).Select(x => x.InstanceGuid).ToList();
+				var deviceToMap = list.FirstOrDefault(x => !mappedGuids.Contains(x.InstanceGuid) && (x.CapType == (int)SharpDX.DirectInput.DeviceType.Gamepad || x.CapType == (int)SharpDX.DirectInput.DeviceType.Joystick || x.CapType == (int)SharpDX.DirectInput.DeviceType.Driving || x.CapType == (int)SharpDX.DirectInput.DeviceType.Flight || x.CapType == (int)SharpDX.DirectInput.DeviceType.FirstPerson));
+				if (deviceToMap == null)
+				{
+					// Fallback: any unmapped online device.
+					deviceToMap = list.FirstOrDefault(x => !mappedGuids.Contains(x.InstanceGuid));
+				}
+				if (deviceToMap != null)
+				{
+					SettingsManager.MapGamePadDevices(game, mapTo, new[] { deviceToMap }, false);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
@@ -291,6 +269,11 @@ namespace x360ce.App
 				OnCloseAction(e);
 			}
 			catch (Exception) { }
+			if (Global._TrayManager != null)
+			{
+				Global._TrayManager.Dispose();
+			}
+			Environment.Exit(0);
 		}
 
 		private void OnCloseAction(CancelEventArgs e)
@@ -344,29 +327,39 @@ namespace x360ce.App
 				return;
 			}
 			Program.TimerCount++;
-			lock (formLoadLock)
+			try
 			{
-				if (update1Enabled)
+				lock (formLoadLock)
 				{
-					update1Enabled = false;
-					UpdateForm1();
-					// Update 2 part will be enabled after all issues are checked.
-				}
-				if (update2Enabled == true)
-				{
-					update2Enabled = false;
-					UpdateForm2();
-					update3Enabled = true;
-				}
-				if (update3Enabled && IsHandleCreated)
-				{
-					update3Enabled = false;
-					// Use this property to make sure that DHelper never starts unless all steps are fully initialized.
-					Global.AllowDHelperStart = true;
-					Global.DHelper.StartDInputService();
+					if (update1Enabled)
+					{
+						update1Enabled = false;
+						UpdateForm1();
+						// Update 2 part will be enabled after all issues are checked.
+					}
+					if (update2Enabled == true)
+					{
+						update2Enabled = false;
+						UpdateForm2();
+						update3Enabled = true;
+					}
+					if (update3Enabled && IsHandleCreated)
+					{
+						update3Enabled = false;
+						// Use this property to make sure that DHelper never starts unless all steps are fully initialized.
+						Global.AllowDHelperStart = true;
+						Global.DHelper.StartDInputService();
+					}
 				}
 			}
-			UpdateTimer.Start();
+			catch (Exception ex)
+			{
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+			}
+			finally
+			{
+				UpdateTimer.Start();
+			}
 		}
 
 		private void UpdateForm1()
@@ -396,6 +389,10 @@ namespace x360ce.App
 			}
 			for (var i = 0; i < MainPanel.MainBodyPanel.PadControls.Length; i++)
 				MainPanel.MainBodyPanel.PadControls[i].InitPadData();
+			// Auto configure connected controllers on startup.
+			var game = SettingsManager.CurrentGame;
+			if (game != null)
+				AutoConfigure(game);
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}
@@ -604,6 +601,9 @@ namespace x360ce.App
 				return;
 			}
 			SettingsManager.RefreshDeviceIsOnlineValueOnSettings(SettingsManager.UserSettings.Items.ToArray());
+			var game = SettingsManager.CurrentGame;
+			if (game != null)
+				AutoConfigure(game);
 			ControlsHelper.SetText(MainPanel.UpdateDevicesStatusLabel, "D: {0}", Global.DHelper.RefreshDevicesCount);
 		}
 

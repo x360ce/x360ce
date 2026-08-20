@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.ComponentModel;
+using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using System;
 using System.ComponentModel;
@@ -318,38 +318,46 @@ namespace x360ce.App.Controls
 
 		private void MainDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			UpdateGridButtons();
-
-			// Get the currently selected item
-			var selected = DevicesDataGrid.SelectedItem as UserSetting;
-
-			if (selected != null)
+			try
 			{
-				//Active.Content = selected.IsOnline.ToString();
-				//IsEnabled.Content = selected.IsEnabled.ToString();
-				ProductName.Content = selected.ProductName;
-				InstanceId.Content = selected.InstanceId;
-				Completion.Content = selected.Completion;
-				PadSettingChecksum.Content = EngineHelper.GetID(selected.PadSettingChecksum); ;
+				UpdateGridButtons();
 
-				var ud = SettingsManager.UserDevices.Items.FirstOrDefault(x => x.InstanceGuid == selected.InstanceGuid);
-				VendorName.Content = ud?.HidManufacturer.ToString();
+				// Get the currently selected item
+				var selected = DevicesDataGrid.SelectedItem as UserSetting;
 
-				var imageSource = ConnectionClassToImageConverter.Convert(selected.InstanceGuid);
-				ConnectionClassImage.Source = imageSource;
-				ConnectionClassImage.ToolTip = imageSource.ToString();
+				if (selected != null)
+				{
+					//Active.Content = selected.IsOnline.ToString();
+					//IsEnabled.Content = selected.IsEnabled.ToString();
+					ProductName.Content = selected.ProductName ?? "";
+					InstanceId.Content = selected.InstanceId ?? "";
+					Completion.Content = selected.Completion.ToString();
+					PadSettingChecksum.Content = EngineHelper.GetID(selected.PadSettingChecksum);
+
+					var ud = SettingsManager.UserDevices.ItemsToArraySynchronized().FirstOrDefault(x => x.InstanceGuid == selected.InstanceGuid);
+					VendorName.Content = ud?.HidManufacturer ?? "";
+
+					var imageSource = ConnectionClassToImageConverter.Convert(selected.InstanceGuid);
+					ConnectionClassImage.Source = imageSource;
+					ConnectionClassImage.ToolTip = imageSource?.ToString() ?? "";
+				}
+				else
+				{
+					// Clear the labels when nothing is selected
+					//Active.Content = "";
+					//IsEnabled.Content = "";
+					ProductName.Content = "";
+					InstanceId.Content = "";
+					VendorName.Content = "";
+					PadSettingChecksum.Content = "";
+					ConnectionClassImage.Source = null;
+					ConnectionClassImage.ToolTip = null;
+					Completion.Content = "";
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				// Clear the labels when nothing is selected
-				//Active.Content = "";
-				//IsEnabled.Content = "";
-				ProductName.Content = "";
-				InstanceId.Content = "";
-				VendorName.Content = "";
-				PadSettingChecksum.Content = "";
-				ConnectionClassImage.Source = null;
-				Completion.Content = "";
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 			}
 		}
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -78,7 +78,8 @@ namespace x360ce.App
 		}
 
 		private static void TaskScheduler_UnobservedTaskException(object sender, System.Threading.Tasks.UnobservedTaskExceptionEventArgs e)
-		{ // <- Put breakpoint here to capture exceptions during debug.
+		{
+			e.SetObserved();
 		}
 
 		private static void CurrentDomain_FirstChanceException(object sender, System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs e)
@@ -383,9 +384,12 @@ namespace x360ce.App
 				message += "===============================================================\r\n";
 			}
 			message += ex.ToString() + "\r\n";
-			foreach (var key in ex.Data.Keys)
+			if (ex.Data != null)
 			{
-				m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
+				foreach (var key in ex.Data.Keys)
+				{
+					m += string.Format("{0}: {1}\r\n", key, ex.Data[key]);
+				}
 			}
 			if (m.Length > 0)
 			{

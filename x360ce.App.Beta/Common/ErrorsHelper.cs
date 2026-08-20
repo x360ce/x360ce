@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Controls;
+using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
 using System;
 using System.IO;
@@ -134,34 +134,51 @@ namespace x360ce.App
 
 		public static void LogHelper_Current_WritingException(object sender, LogHelperEventArgs e)
 		{
-			if (!enabled)
-				e.Cancel = true;
-			var ex = e.Exception as SharpDX.SharpDXException;
-			var d = ex?.Descriptor;
-			if (d != null)
+			try
 			{
-				// If exception when getting Joystick properties in
-				// CustomDiState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
-				if (d.ApiCode == "NotFound" && d.Code == -2147024894 &&
-					d.Module == "SharpDX.DirectInput" &&
-					d.NativeApiCode == "DIERR_NOTFOUND"
-				)
+				if (!enabled)
 				{
+					e.Cancel = true;
+					return;
+				}
+				var ex = e.Exception as SharpDX.SharpDXException;
+				var d = ex?.Descriptor;
+				if (d != null)
+				{
+					// If exception when getting Joystick properties in
+					// CustomDiState.cs class: var o = device.GetObjectInfoByOffset((int)list[i]);
+					if (d.ApiCode == "NotFound" && d.Code == -2147024894 &&
+						d.Module == "SharpDX.DirectInput" &&
+						d.NativeApiCode == "DIERR_NOTFOUND"
+					)
+					{
+						// Cancel reporting error.
+						e.Cancel = true;
+					}
+					// If another DInput errors
+				}
+
+				// C:\WINDOWS\system32\xinput1_3.dll C:\WINDOWS\system32\xinput1_4.dll
+				var fex = e.Exception as FileNotFoundException;
+				// If serializer warning then...
+				if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName?.Contains(".XmlSerializers") == true)
 					// Cancel reporting error.
 					e.Cancel = true;
-				}
-				// If another DInput errors
-			}
 
-			// C:\WINDOWS\system32\xinput1_3.dll C:\WINDOWS\system32\xinput1_4.dll
-			var fex = e.Exception as FileNotFoundException;
-			// If serializer warning then...
-			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName?.Contains(".XmlSerializers") == true)
-				// Cancel reporting error.
-				e.Cancel = true;
-			ControlsHelper.GetActiveControl(_TopControl, out var activeControl, out var activePath);
-			// Add path to current control to help with error fixing.
-			e.Exception.Data.Add("ActiveControlPath", activePath);
+				string activePath = null;
+				if (_TopControl != null && _TopControl.Dispatcher.CheckAccess())
+				{
+					ControlsHelper.GetActiveControl(_TopControl, out var activeControl, out activePath);
+				}
+				if (!string.IsNullOrEmpty(activePath) && e.Exception != null && e.Exception.Data != null && !e.Exception.Data.Contains("ActiveControlPath"))
+				{
+					e.Exception.Data.Add("ActiveControlPath", activePath);
+				}
+			}
+			catch
+			{
+				// Ignore any logging errors to prevent crashing application
+			}
 		}
 
 
