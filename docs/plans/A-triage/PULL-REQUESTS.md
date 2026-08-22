@@ -356,9 +356,21 @@ by-index paths in `AutoMapHelper` (PR 1605).
 Optional, non-fix: dead CodePlex link in `App.v3/Issues/LeakDetectorIssue.cs`
 (observed in PR 959).
 
+## Versioning
+
+Each application is versioned `Major.Minor.Patch.0`, independently:
+
+- The fourth number is always **0**.
+- **Patch** counts bug fixes. It increases by the number of fixes in the batch
+  that affect that application.
+- **Minor** increases when a feature or major work is added.
+
+A fix in shared `Engine/` code only counts for an application that actually
+reaches the changed code, so the two applications move at different rates.
+
 ## Implementation status
 
-Applied on the branch (v4 `4.17.46.0`, v3 `3.3.6.3`):
+Applied on the branch (v4 `4.17.46.0`, v3 `3.3.8.0`):
 
 | Fix | From | Apps |
 |---|---|---|
