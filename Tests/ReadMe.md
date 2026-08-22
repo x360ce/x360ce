@@ -16,9 +16,11 @@ Tests/
   Common/
     EngineTest.cs              mapping value parser
     CrashReportTest.cs         crash reporting and Release symbols
+    MemoryLeakTest.cs          disposal and the memory ceiling
     AppUiTest.cs               launch smoke for App.v3 and App.v4
   TestInfrastructure/
     Ui.cs                      the only place polling lives
+    MemoryLeak.cs              weak-reference disposal checks
 ```
 
 ## Why one project rather than several
@@ -76,3 +78,35 @@ Mirror the product path and append `Tests` to the file name, then declare what i
 
 No `Thread.Sleep` in a test body — polling belongs in `Ui.WaitFor`. Tests that launch an
 application must be tagged `ui-interactive` and must clean up their process.
+
+## The memory tests
+
+A window that closes but is still referenced keeps its whole control tree, its images and
+its event subscriptions alive. The process then holds hundreds of megabytes while doing
+nothing but polling devices. App.v4 measures around 200 MB private once settled, so there
+is not much headroom before that becomes a complaint.
+
+**Optimisation is mandatory, and this is the trap.** In an unoptimised build the compiler
+keeps locals rooted for the debugger even after they are set to null, so a weak reference
+never dies and *every* disposal test passes regardless of the truth. The project sets
+`Optimize=true` in all configurations, and `Disposal_tests_run_against_an_optimised_build`
+fails the suite if that is ever undone. The 5.x `MemoryLeakHelper` carries the same warning.
+
+`MemoryLeak.CreateUseAndRelease` builds the object inside a non-inlined helper so it never
+occupies a local of the calling frame — a local would root it for the whole method and the
+result would be meaningless. It then collects fully, including the large object heap, and
+polls until the weak reference dies or the timeout expires.
+
+Two tests validate the helper itself, one positive and one negative, so the suite cannot
+pass simply because the helper never fails. Two more document the defect class behind the
+"Fixing Unloading/Disposing" work: subscribing to a publisher that outlives the control
+keeps that control alive, and detaching the handler is what actually frees it. Disposing
+alone does not.
+
+### Not yet covered
+
+Proving that App.v4's own main form is released when it minimises to tray needs one of two
+things: the option enabled plus a settings sandbox so a test run cannot disturb real user
+settings, or an in-process reference to App.v4 — which conflicts with App.v3 because both
+produce `x360ce.exe` in the namespace `x360ce.App`. `V4_memory_stays_within_a_sane_ceiling`
+is the interim guard: it catches a footprint that doubles, not a single leaked form.

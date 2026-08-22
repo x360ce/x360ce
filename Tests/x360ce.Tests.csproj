@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
 	One test project covers the whole solution, per the qa-tester rule that the test tree
@@ -20,6 +20,13 @@
 		<Platforms>AnyCPU</Platforms>
 		<!-- Line numbers in stack traces are the subject of CrashReportTest. -->
 		<DebugType>full</DebugType>
+		<!--
+		Optimisation is required in every configuration, not just Release. Without it the
+		compiler keeps locals rooted for the debugger even after they are set to null, so a
+		weak reference never dies and every disposal test passes whether or not the object
+		was actually released. The 5.x MemoryLeakHelper carries the same warning.
+		-->
+		<Optimize>true</Optimize>
 	</PropertyGroup>
 
 	<ItemGroup>
