@@ -113,12 +113,7 @@ namespace x360ce.Engine
 			}
 			// If custom XInput DLL was not found then...
 			if (defaultDll == null)
-			{
-				var info = GetMsXInputLocation();
-				var vi = FileVersionInfo.GetVersionInfo(info.FullName);
-				var ver = new Version(vi.FileMajorPart, vi.FileMinorPart, vi.FileBuildPart, vi.FilePrivatePart);
-				defaultDll = info;
-			}
+				defaultDll = GetMsXInputLocation();
 			// Return newest file.
 			return defaultDll;
 		}
@@ -134,7 +129,14 @@ namespace x360ce.Engine
 				? Environment.SpecialFolder.SystemX86
 				: Environment.SpecialFolder.System;
 			var sysFolder = System.Environment.GetFolderPath(sp);
-			var msx = System.IO.Path.Combine(sysFolder, "xinput1_3.dll");
+			// Windows 8 and newer ship "xinput1_4.dll" only. "xinput1_3.dll" is present
+			// when the DirectX 9 redistributable is installed. Pick the newest available.
+			var files = Directory.Exists(sysFolder)
+				? Directory.GetFiles(sysFolder, "xinput1_?.dll").OrderByDescending(x => x).ToArray()
+				: new string[0];
+			var msx = files.Length > 0
+				? files[0]
+				: System.IO.Path.Combine(sysFolder, "xinput1_3.dll");
 			var info = new FileInfo(msx);
 			return info;
 		}

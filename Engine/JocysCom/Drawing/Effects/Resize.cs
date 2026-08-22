@@ -11,7 +11,7 @@ namespace JocysCom.ClassLibrary.Drawing
 			int height = image.Height;
 			if (preserveAspect)
 			{
-				height = width * (image.Height / image.Width);
+				height = image.Height * width / image.Width;
 			}
 			return Resize(image, width, height);
 		}
@@ -22,7 +22,7 @@ namespace JocysCom.ClassLibrary.Drawing
 			int width = image.Width;
 			if (preserveAspect)
 			{
-				width = height * (image.Width / image.Height);
+				width = image.Width * height / image.Height;
 			}
 			return Resize(image, width, height);
 		}

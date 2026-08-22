@@ -78,7 +78,9 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			if (IsSuspended())
 				return;
 			CheckAll();
-			UpdateDisplayedList();
+			// UpdateDisplayedList() writes to the Warnings list bound to the grid and to
+			// the status controls, therefore run it on the same thread as the interface.
+			ControlsHelper.Invoke(() => UpdateDisplayedList());
 		}
 
 		private void UpdateDisplayedList()

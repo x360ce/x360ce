@@ -253,3 +253,6 @@ __pycache__
 # AI review tooling outputs (regenerable / evidence)
 docs/plans/A-triage/diffs/
 scripts/ui/captures/
+docs/plans/A-triage/audit-applicable-hunks.txt
+docs/plans/A-triage/audit-moved-files.txt
+docs/plans/A-triage/audit-lineage-hunks.txt

@@ -581,6 +581,8 @@ namespace JocysCom.ClassLibrary.Network.Sockets
 					}
 					else if (e.PropertyName == nameof(Settings.KeepAliveInterval))
 					{
+						// Call Close() to prevent timer auto-restart when Interval changed.
+						keepAliveTimer.Close();
 						keepAliveTimer.Interval = Settings.KeepAliveInterval;
 					}
 				}

@@ -298,6 +298,9 @@ namespace System.IO.Compression
 		/// <remarks>This is a required step, unless automatic dispose is used</remarks>
 		public void Close()
 		{
+			// Stream is already closed by a previous Close() or Dispose() call.
+			if (this.ZipFileStream == null)
+				return;
 			if (this.Access != FileAccess.Read)
 			{
 				uint centralOffset = (uint)this.ZipFileStream.Position;

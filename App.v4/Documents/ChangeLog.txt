@@ -1,3 +1,13 @@
+v4.17.33.0 (2026-08-22)
+- Fixed: Crash on Windows 8 and newer when Microsoft's XInput library was used (only xinput1_3.dll was looked for; now the newest installed xinput1_?.dll is used).
+- Fixed: Issues panel updated grid and status controls from a background thread.
+- Fixed: Crash when opening the error report window before any error was logged (missing Logs folder).
+- Fixed: Crash when a ZIP archive was closed twice.
+- Fixed: Download retry timer restarted its countdown when the retry interval changed.
+- Fixed: Remote controller server keep-alive timer restarted its countdown when the interval changed.
+- Fixed: Image resize by width or height lost the aspect ratio (integer division produced zero).
+- Fixed: Serialization of key/value and link items failed when a change handler was attached.
+
 v4.17.25.0 (2026-08-22)
 - Fixed: Virtual test controller POV sweep crash (wrong variable in range check).
 - Fixed: Web service GetVendors failed at runtime (entity projection inside LINQ-to-Entities query).

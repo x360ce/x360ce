@@ -83,6 +83,9 @@ namespace JocysCom.WebSites.Engine
 
 		#region INotifyPropertyChanged
 
+		// CWE-502: Deserialization of Untrusted Data
+		// Fix: Apply [field: NonSerialized] attribute to an event inside class with [Serializable] attribute.
+		[field: NonSerialized]
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
