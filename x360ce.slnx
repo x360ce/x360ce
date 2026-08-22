@@ -1,4 +1,4 @@
-<Solution>
+﻿<Solution>
   <Configurations>
     <Platform Name="APP_Any_v4" />
     <Platform Name="APP_x64_v3" />
@@ -93,6 +93,12 @@
     <Platform Solution="*|APP_x86_v3" Project="x86" />
     <Platform Solution="*|DLL_x64_v3" Project="x64" />
     <Platform Solution="*|DLL_x86_v3" Project="x86" />
+    <Build Solution="*|DLL_x64_v3" Project="false" />
+    <Build Solution="*|DLL_x86_v3" Project="false" />
+  </Project>
+  <Project Path="Tests/x360ce.Tests.csproj" Id="9c1f4b1a-2d7e-4a55-9f10-3b6c8d2e5a41">
+    <Build Solution="*|APP_x64_v3" Project="false" />
+    <Build Solution="*|APP_x86_v3" Project="false" />
     <Build Solution="*|DLL_x64_v3" Project="false" />
     <Build Solution="*|DLL_x86_v3" Project="false" />
   </Project>

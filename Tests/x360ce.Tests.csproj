@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--
+	One test project covers the whole solution, per the qa-tester rule that the test tree
+	must not be more fractured than the product tree. A split is only justified by a
+	different target framework, headless CI, or scale, and none apply here: App.v3,
+	App.v4 and Engine all target .NET Framework 4.6.2.
+
+	App.v3 and App.v4 both produce x360ce.exe with the namespace x360ce.App, so they
+	cannot both be referenced from one assembly. They are driven as processes through
+	System.Windows.Automation instead, which is how a user meets them anyway.
+	-->
+
+	<PropertyGroup>
+		<TargetFramework>net462</TargetFramework>
+		<IsTestProject>true</IsTestProject>
+		<IsPackable>false</IsPackable>
+		<RootNamespace>x360ce.Tests</RootNamespace>
+		<AssemblyName>x360ce.Tests</AssemblyName>
+		<Platforms>AnyCPU</Platforms>
+		<!-- Line numbers in stack traces are the subject of CrashReportTest. -->
+		<DebugType>full</DebugType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- UI automation is in-box; no driver process and no extra package. -->
+		<Reference Include="UIAutomationClient" />
+		<Reference Include="UIAutomationTypes" />
+		<Reference Include="WindowsBase" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.Configuration" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.9.3" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.9.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Engine\x360ce.Engine.csproj" />
+	</ItemGroup>
+
+</Project>
