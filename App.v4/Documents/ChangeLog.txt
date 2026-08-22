@@ -1,3 +1,16 @@
+﻿v4.17.44.0 (2026-08-22)
+- Fixed: Virtual gamepad bus client was created and destroyed on every controller update when the selected game did not use virtual emulation, opening and closing a driver handle hundreds of times per second (PR #1604, ykondury).
+- Fixed: Controller update thread stopped on the first unhandled error, which silently ended device polling and virtual controller feeding while the window kept running (PR #1604, ykondury).
+- Fixed: Failure to send a state to a virtual controller is now handled and the controller is replugged, instead of ending the update thread (PR #1604, ykondury).
+- Fixed: Failed virtual controller connect left placeholder controllers plugged in (PR #1604, ykondury).
+- Fixed: Failed virtual controller disconnect was reported as success and left the slot marked connected (PR #1604, ykondury).
+- Fixed: Virtual controller slot number outside 1-4 threw instead of returning a result (PR #1604, ykondury).
+- Fixed: Closing or reloading waited for the controller thread forever if it was blocked in a driver call; it now waits up to two seconds (PR #1604, ykondury).
+- Fixed: Application hung while writing an error report when no control had focus (PR #1596, mNandhu).
+- Fixed: Error report failed to build when the exception carried extra data (PR #1605, Rislantrs).
+- Fixed: Guide button was not passed to the virtual controller (PR #1473, OmarIskandarani-KSO).
+- Fixed: Visual C++ runtime is detected by registry version instead of the installed program name, which changes with every release and with the display language (PR #1576, Glitchtest51).
+
 v4.17.33.0 (2026-08-22)
 - Fixed: Crash on Windows 8 and newer when Microsoft's XInput library was used (only xinput1_3.dll was looked for; now the newest installed xinput1_?.dll is used).
 - Fixed: Issues panel updated grid and status controls from a background thread.

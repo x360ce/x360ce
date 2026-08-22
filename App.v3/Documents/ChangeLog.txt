@@ -1,4 +1,8 @@
-﻿v3.2.10.82 (2015-10-20)
+﻿v3.3.6.3 (2026-08-22)
+- Fix: Crash on Windows 8 and newer when Microsoft's XInput library was used. Only xinput1_3.dll was looked for, which ships with the DirectX 9 redistributable rather than with Windows; the newest installed xinput1_?.dll is now used.
+- Fix: Error report failed to build when the exception carried extra data (PR #1605, Rislantrs).
+
+v3.2.10.82 (2015-10-20)
 - New: GDB file issue (windows permissions) solver added.
 
 v3.2.9.81 (2015-10-04)

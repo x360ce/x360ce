@@ -1736,12 +1736,14 @@ namespace x360ce.App
 			while (container != null)
 			{
 				control = container.ActiveControl;
-				if (control != null)
-				{
-					activePath += string.Format("/{0}", control.Name);
-					activeControl = control;
-					container = control as ContainerControl;
-				}
+				// Container without an active child ends the walk. Without this the loop
+				// never reassigns the container and spins forever, which hangs the thread
+				// that is writing an error report.
+				if (control == null)
+					break;
+				activePath += string.Format("/{0}", control.Name);
+				activeControl = control;
+				container = control as ContainerControl;
 			}
 		}
 

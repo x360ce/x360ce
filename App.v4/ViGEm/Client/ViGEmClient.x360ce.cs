@@ -66,29 +66,33 @@ namespace Nefarius.ViGEm.Client
 		{
 			// Not properly implemented yet.
 			var t = Targets;
-			if (t == null)
+			if (t == null || !IsValidIndex(i) || i > t.Length)
 				return false;
 			try
 			{
 				t[i - 1].Disconnect();
-				connected[i - 1] = false;
 			}
 			catch (Exception ex)
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				// Target state is unknown after a failed disconnect. Treat it as not
+				// connected so the next update can plug it in again.
+				connected[i - 1] = false;
+				return false;
 			}
+			connected[i - 1] = false;
 			return true;
 		}
 
 		public bool PlugIn(uint userIndex)
 		{
 			var t = Targets;
-			if (t == null)
+			if (t == null || !IsValidIndex(userIndex) || userIndex > t.Length)
 				return false;
+			// In order to assign virtual device at specific XInput position, must connect all devices with lower position first.
+			var tempDevices = new bool[connected.Length];
 			try
 			{
-				// In order to assign virtual device at specific XInput position, must connect all devices with lower position first.
-				var tempDevices = new bool[4];
 				for (int i = 0; i < userIndex - 1; i++)
 				{
 					if (!connected[i])
@@ -100,18 +104,32 @@ namespace Nefarius.ViGEm.Client
 				// Connect specified device.
 				t[userIndex - 1].Connect();
 				connected[userIndex - 1] = true;
-				// Disconnect temporary connected devices.
-				for (int i = 0; i < 4; i++)
-				{
-					if (tempDevices[i])
-						t[i].Disconnect();
-				}
 				return true;
 			}
 			catch (Exception ex)
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				connected[userIndex - 1] = false;
 				return false;
+			}
+			finally
+			{
+				// Disconnect temporary connected devices. Must run when connecting the
+				// requested position failed too, or placeholder controllers stay plugged in.
+				for (int i = 0; i < tempDevices.Length; i++)
+				{
+					if (!tempDevices[i])
+						continue;
+					try
+					{
+						t[i].Disconnect();
+					}
+					catch (Exception ex)
+					{
+						JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+					}
+					connected[i] = false;
+				}
 			}
 		}
 
@@ -128,8 +146,12 @@ namespace Nefarius.ViGEm.Client
 		public bool IsControllerConnected(uint i)
 		{
 			// Not properly implemented yet.
-			return connected[i - 1];
+			return IsValidIndex(i) && connected[i - 1];
 		}
+
+		/// <summary>Controller positions are 1-4. Index outside the range must not throw.</summary>
+		bool IsValidIndex(uint i)
+			=> i >= 1 && i <= connected.Length;
 
 		#region Static Members
 
@@ -143,9 +165,19 @@ namespace Nefarius.ViGEm.Client
 			lock (ClientLock)
 			{
 				// If virtual client is initialized then...
-				if (Current != null)
+				if (Current == null)
+					return;
+				try
+				{
 					Current.Dispose();
-				return;
+				}
+				catch (Exception ex)
+				{
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				}
+				// Clear the reference. A disposed instance left here makes every later
+				// isVBusExists() call allocate and connect a brand new native client.
+				Current = null;
 			}
 		}
 

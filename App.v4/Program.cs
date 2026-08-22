@@ -299,7 +299,7 @@ namespace x360ce.App
 			message += ex.ToString() + "\r\n";
 			foreach (var key in ex.Data.Keys)
 			{
-				m += string.Format("{0}: {1}\r\n", key, ex1.Data[key]);
+				m += string.Format("{0}: {1}\r\n", key, ex.Data[key]);
 			}
 			if (m.Length > 0)
 			{

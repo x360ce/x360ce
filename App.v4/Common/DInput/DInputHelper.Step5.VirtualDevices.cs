@@ -15,6 +15,9 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
+		/// <summary>True while the virtual bus client is in use by the current game.</summary>
+		bool virtualModeActive;
+
 		/// <summary>
 		/// Enable or disable virtual controllers depending on game settings.
 		/// </summary>
@@ -27,16 +30,22 @@ namespace x360ce.App.DInput
 			var allow = !o.TestEnabled || o.TestSetXInputStates;
 			if (!allow)
 				return;
-			// If virtual driver is missing then return.
-			if (!ViGEmClient.isVBusExists(true))
-				return;
 			var isVirtual = game != null && ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 			// If game does not use virtual emulation then...
 			if (!isVirtual)
 			{
-				ViGEmClient.DisposeCurrent();
+				// Dispose once when leaving virtual mode. This method runs on every update,
+				// so disposing unconditionally made the next call allocate and connect a new
+				// native client, repeating the whole cycle at the polling frequency.
+				if (virtualModeActive)
+					ViGEmClient.DisposeCurrent();
+				virtualModeActive = false;
 				return;
 			}
+			// If virtual driver is missing then return.
+			if (!ViGEmClient.isVBusExists(true))
+				return;
+			virtualModeActive = true;
 			var client = ViGEmClient.Current;
 			if (client.Targets == null)
 			{
@@ -65,7 +74,13 @@ namespace x360ce.App.DInput
 							return;
 						FeedingState[i - 1] = true;
 					}
-					FeedDevice(i);
+					// If the virtual target stopped accepting reports then unplug it, so the
+					// next update can plug it in again instead of failing on every frame.
+					if (!FeedDevice(i))
+					{
+						FeedingState[i - 1] = false;
+						client.UnPlug(i);
+					}
 				}
 				else
 				{
@@ -132,7 +147,9 @@ namespace x360ce.App.DInput
 		bool IsGuideDown;
 		object guideLock = new object();
 
-		public void FeedDevice(uint i)
+		/// <summary>Send the combined state to the virtual controller.</summary>
+		/// <returns>False when the report could not be delivered to the virtual bus.</returns>
+		public bool FeedDevice(uint i)
 		{
 			// Get old and new game pad values.
 			var n = CombinedXiStates[i - 1].Gamepad;
@@ -152,6 +169,7 @@ namespace x360ce.App.DInput
 			report.SetButtonState(Xbox360Buttons.Right, n.Buttons.HasFlag(GamepadButtonFlags.DPadRight));
 			report.SetButtonState(Xbox360Buttons.Down, n.Buttons.HasFlag(GamepadButtonFlags.DPadDown));
 			report.SetButtonState(Xbox360Buttons.Left, n.Buttons.HasFlag(GamepadButtonFlags.DPadLeft));
+			report.SetButtonState(Xbox360Buttons.Guide, n.Buttons.HasFlag(GamepadButtonFlags.Guide));
 			report.SetAxis(Xbox360Axes.LeftTrigger, n.LeftTrigger);
 			report.SetAxis(Xbox360Axes.RightTrigger, n.RightTrigger);
 			report.SetAxis(Xbox360Axes.LeftThumbX, n.LeftThumbX);
@@ -172,7 +190,18 @@ namespace x360ce.App.DInput
 			if (changed)
 			{
 				// Update controller.
-				ViGEmClient.Current.Targets[i - 1].SendReport(report);
+				try
+				{
+					ViGEmClient.Current.Targets[i - 1].SendReport(report);
+				}
+				catch (System.Exception ex)
+				{
+					// The virtual bus can drop a target while a game is running, for example
+					// when the driver is updated. Report the failure instead of letting it
+					// escape into the update loop and stop the controller thread.
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+					return false;
+				}
 				lock (guideLock)
 				{
 					var isGuidePressed = n.Buttons.HasFlag(GamepadButtonFlags.Guide);
@@ -194,6 +223,7 @@ namespace x360ce.App.DInput
 				// Update old state.
 				oldGamepadStates[i - 1] = n;
 			}
+			return true;
 		}
 
 		private static Keys[] GetGuideKeys()

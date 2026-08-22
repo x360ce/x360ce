@@ -67,11 +67,12 @@ namespace x360ce.App.DInput
 		ManualResetEvent _ResetEvent;
 		ThreadStart _ThreadStart;
 		Thread _Thread;
-		bool _AllowThreadToRun;
+		// Written by the interface thread and read by the update thread.
+		volatile bool _AllowThreadToRun;
 		object timerLock = new object();
 
 		// Suspended is used during re-loading of XInput library.
-		public bool Suspended;
+		public volatile bool Suspended;
 
 		public void Start()
 		{
@@ -99,8 +100,12 @@ namespace x360ce.App.DInput
 				_timer = null;
 				_AllowThreadToRun = false;
 				_ResetEvent.Set();
-				// Wait for thread to stop.
-				_Thread.Join();
+				// Wait for thread to stop. Use a timeout, because this runs on the interface
+				// thread and the worker can be blocked inside a native DirectInput call.
+				var thread = _Thread;
+				if (thread != null && thread != Thread.CurrentThread && !thread.Join(TimeSpan.FromSeconds(2)))
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(
+						new TimeoutException("DirectInput update thread did not stop within 2 seconds."));
 			}
 		}
 
@@ -144,24 +149,52 @@ namespace x360ce.App.DInput
 			// separate windows form must be created on the same thread as the process which will access and update device.
 			// detector.DetectorForm will be used to acquire devices.
 			/// Main job of detector is to fire event on device connection (power on) and removal (power off).
-			var manager = new DirectInput();
-			var detector = new DeviceDetector(false);
-			do
+			DirectInput manager = null;
+			DeviceDetector detector = null;
+			try
 			{
-				// Sets the state of the event to non-signaled, causing threads to block.
-				_ResetEvent.Reset();
-				// Perform all updates if not suspended.
-				if (!Suspended)
-					RefreshAll(manager, detector);
-				// Blocks the current thread until the current WaitHandle receives a signal.
-				// Thread will be release by the timer.
-				// Do not wait longer than 50ms.
-				_ResetEvent.WaitOne(50);
+				manager = new DirectInput();
+				detector = new DeviceDetector(false);
+				do
+				{
+					// Sets the state of the event to non-signaled, causing threads to block.
+					_ResetEvent.Reset();
+					// Perform all updates if not suspended.
+					if (!Suspended)
+					{
+						try
+						{
+							RefreshAll(manager, detector);
+						}
+						catch (Exception ex)
+						{
+							// One failed update must not end the thread. Losing it stops all
+							// device polling and virtual feeding while the window stays alive.
+							LastException = ex;
+							JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+						}
+					}
+					// Blocks the current thread until the current WaitHandle receives a signal.
+					// Thread will be release by the timer.
+					// Do not wait longer than 50ms.
+					_ResetEvent.WaitOne(50);
+				}
+				// Loop until suspended.
+				while (_AllowThreadToRun);
 			}
-			// Loop until suspended.
-			while (_AllowThreadToRun);
-			detector.Dispose();
-			manager.Dispose();
+			catch (Exception ex)
+			{
+				LastException = ex;
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+			}
+			finally
+			{
+				// Native objects must be released even when the loop ended with an error.
+				if (detector != null)
+					detector.Dispose();
+				if (manager != null)
+					manager.Dispose();
+			}
 		}
 
 		void RefreshAll(DirectInput manager, DeviceDetector detector)
