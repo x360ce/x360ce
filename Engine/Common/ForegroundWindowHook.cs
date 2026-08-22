@@ -83,13 +83,35 @@ namespace x360ce.Engine
 
 		public event EventHandler<EventArgs<Process>> OnActivate;
 
+		/// <summary>Process which owns the window, or null when it can no longer be resolved.</summary>
+		/// <remarks>
+		/// The window can be closed between reading it and resolving its process, so
+		/// GetProcessById throws for a process id which was valid moments earlier. This is
+		/// reached from a system hook callback, where an escaping exception takes the
+		/// application down, so failure is reported as null instead.
+		/// </remarks>
 		public static Process GetActiveProcess(IntPtr? hWnd = null)
 		{
 			if (!hWnd.HasValue)
 				hWnd = JocysCom.ClassLibrary.Win32.NativeMethods.GetForegroundWindow();
+			if (hWnd.Value == IntPtr.Zero)
+				return null;
 			var _ = NativeMethods.GetWindowThreadProcessId(hWnd.Value, out var processId);
-			var process = Process.GetProcessById((int)processId);
-			return process;
+			if (processId == 0)
+				return null;
+			try
+			{
+				return Process.GetProcessById((int)processId);
+			}
+			catch (ArgumentException)
+			{
+				// Process exited between the window lookup and this call.
+				return null;
+			}
+			catch (InvalidOperationException)
+			{
+				return null;
+			}
 		}
 
 		[Flags]
@@ -98,14 +120,39 @@ namespace x360ce.Engine
 			QueryLimitedInformation = 0x00001000
 		}
 
+		/// <summary>Full path of the process image, or an empty string when unavailable.</summary>
+		/// <remarks>
+		/// The handle from OpenProcess is always released. This runs for every process on the
+		/// machine each time the foreground window changes, so leaking one handle per call
+		/// exhausts the handle table over a session.
+		/// </remarks>
 		public static string GetProcessFileName(Process p)
 		{
+			if (p == null)
+				return string.Empty;
 			var capacity = 2048;
 			var builder = new StringBuilder(capacity);
-			var ptr = NativeMethod.OpenProcess(ProcessAccessFlags.QueryLimitedInformation, false, p.Id);
-			if (!NativeMethod.QueryFullProcessImageName(ptr, 0, builder, ref capacity))
+			var ptr = IntPtr.Zero;
+			try
+			{
+				ptr = NativeMethod.OpenProcess(ProcessAccessFlags.QueryLimitedInformation, false, p.Id);
+				// Access is denied for protected and elevated processes.
+				if (ptr == IntPtr.Zero)
+					return string.Empty;
+				if (!NativeMethod.QueryFullProcessImageName(ptr, 0, builder, ref capacity))
+					return string.Empty;
+				return builder.ToString();
+			}
+			catch (InvalidOperationException)
+			{
+				// Process exited while its identifier was being read.
 				return string.Empty;
-			return builder.ToString();
+			}
+			finally
+			{
+				if (ptr != IntPtr.Zero)
+					JocysCom.ClassLibrary.Win32.NativeMethods.CloseHandle(ptr);
+			}
 		}
 
 		internal static class NativeMethod

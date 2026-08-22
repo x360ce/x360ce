@@ -381,29 +381,47 @@ namespace x360ce.App.Controls
 			grid.CurrentCell = null;
 			// Suspend Layout and CurrencyManager to avoid exceptions.
 			grid.SuspendLayout();
-			var cm = (CurrencyManager)BindingContext[grid.DataSource];
-			cm.SuspendBinding();
-			var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
-			// Reverse order to hide/show bottom records first..
-			Array.Reverse(rows);
-			var showEnabled = ShowGamesDropDownButton.Text.Contains("Enabled");
-			var showDisabled = ShowGamesDropDownButton.Text.Contains("Disabled");
-			for (int i = 0; i < rows.Length; i++)
+			// BindingContext is null until the control belongs to a form, and the manager is
+			// absent when the grid is not bound.
+			var cm = grid.DataSource == null ? null : BindingContext?[grid.DataSource] as CurrencyManager;
+			cm?.SuspendBinding();
+			try
 			{
-				var item = (x360ce.Engine.Data.UserGame)rows[i].DataBoundItem;
-				var show = true;
-				if (showEnabled) show = (item.IsEnabled == true);
-				if (showDisabled) show = (item.IsEnabled == false);
-				if (rows[i].Visible != show)
+				var rows = grid.Rows.Cast<DataGridViewRow>().ToArray();
+				// Reverse order to hide/show bottom records first..
+				Array.Reverse(rows);
+				var showEnabled = ShowGamesDropDownButton.Text.Contains("Enabled");
+				var showDisabled = ShowGamesDropDownButton.Text.Contains("Disabled");
+				for (int i = 0; i < rows.Length; i++)
 				{
-					rows[i].Visible = show;
+					var item = (x360ce.Engine.Data.UserGame)rows[i].DataBoundItem;
+					var show = true;
+					if (showEnabled) show = (item.IsEnabled == true);
+					if (showDisabled) show = (item.IsEnabled == false);
+					if (rows[i].Visible != show)
+					{
+						rows[i].Visible = show;
+					}
 				}
 			}
-			// Resume CurrencyManager and Layout.
-			cm.ResumeBinding();
-			grid.ResumeLayout();
-			// Restore selection.
-			JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserGame.FileName), selection);
+			finally
+			{
+				// Resume CurrencyManager and Layout. This must run even when the update above
+				// failed: a grid left suspended throws on every later operation, so one error
+				// would turn into a permanently broken control.
+				cm?.ResumeBinding();
+				grid.ResumeLayout();
+			}
+			// Restore selection. Losing the selected row is cosmetic, so a failure here must
+			// not reach the caller. The grid reports a reentrant call when selection is set
+			// while it is still settling after rows changed visibility.
+			try
+			{
+				JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserGame.FileName), selection);
+			}
+			catch (InvalidOperationException)
+			{
+			}
 		}
 
 		private void GamesDataGridView_KeyDown(object sender, KeyEventArgs e)

@@ -12,6 +12,20 @@ namespace x360ce.App.DInput
 	public partial class DInputHelper
 	{
 
+		/// <summary>Device results which mean a state change rather than a fault.</summary>
+		/// <remarks>
+		/// Raw HRESULTs, because SharpDX does not name the Win32 device errors. Measured from
+		/// support reports: these five accounted for most of the mail sent by this handler.
+		/// </remarks>
+		static readonly int[] BenignDeviceResults = new int[]
+		{
+			unchecked((int)0x800700AA), // DIERR_ACQUIRED, device already acquired
+			unchecked((int)0x8007048F), // ERROR_DEVICE_NOT_CONNECTED
+			unchecked((int)0x80070016), // ERROR_BAD_UNIT, device does not recognise the command
+			unchecked((int)0x80040203), // DIERR_NOTDOWNLOADED, effect not on the device
+			unchecked((int)0x80070005), // E_ACCESSDENIED, another application holds the device
+		};
+
 		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector)
 		{
 			// Get all mapped user devices.
@@ -173,19 +187,16 @@ namespace x360ce.App.DInput
 						catch (Exception ex)
 						{
 							var dex = ex as SharpDXException;
-							if (dex != null && dex.ResultCode == SharpDX.DirectInput.ResultCode.InputLost)
-							{
-								// Ignore error.
-							}
-							else if (dex != null && dex.ResultCode == SharpDX.DirectInput.ResultCode.NotAcquired)
-							{
-								// Ignore error
-							}
-							else if (dex != null && dex.ResultCode == SharpDX.DirectInput.ResultCode.Unplugged)
-							{
-								// Ignore error
-							}
-							else
+							// Device conditions which are not defects: the device was unplugged, is already
+							// acquired, refuses the command, or has no force feedback effect downloaded. These
+							// occur routinely while switching cooperative level, and every one that is treated
+							// as a fault is emailed to support, so the noise buries real reports.
+							var benign = dex != null && (
+								dex.ResultCode == SharpDX.DirectInput.ResultCode.InputLost ||
+								dex.ResultCode == SharpDX.DirectInput.ResultCode.NotAcquired ||
+								dex.ResultCode == SharpDX.DirectInput.ResultCode.Unplugged ||
+								BenignDeviceResults.Contains(dex.ResultCode.Code));
+							if (!benign)
 							{
 								var cx = new DInputException("UpdateDiStates Exception", ex);
 								cx.Data.Add("FFInfo", exceptionData.ToString());

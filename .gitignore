@@ -256,3 +256,6 @@ scripts/ui/captures/
 docs/plans/A-triage/audit-applicable-hunks.txt
 docs/plans/A-triage/audit-moved-files.txt
 docs/plans/A-triage/audit-lineage-hunks.txt
+
+# Local scratch: fetched support mail, analysis working files. Never committed.
+/.tmp/

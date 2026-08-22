@@ -445,7 +445,7 @@ namespace x360ce.App.Controls
 				var game = SettingsManager.CurrentGame;
 				// Get rows which must be displayed on the list.
 				var itemsToShow = SettingsManager.UserSettings.ItemsToArraySyncronized()
-					// Filter devices by controller.	
+					// Filter devices by controller.
 					.Where(x => x.MapTo == (int)MappedTo)
 					// Filter devices by selected game (no items will be shown if game is not selected).
 					.Where(x => game != null && x.FileName == game.FileName && x.FileProductName == game.FileProductName)
@@ -462,26 +462,37 @@ namespace x360ce.App.Controls
 					grid.CurrentCell = null;
 					// Suspend Layout.
 					grid.SuspendLayout();
-					var bound = grid.DataSource != null;
-					CurrencyManager cm = null;
-					if (bound)
+					// BindingContext is null until the control belongs to a form, and the manager
+					// is absent when the grid is not bound.
+					var cm = grid.DataSource == null ? null : BindingContext?[grid.DataSource] as CurrencyManager;
+					cm?.SuspendBinding();
+					try
 					{
-						// Suspend CurrencyManager to avoid exceptions.
-						cm = (CurrencyManager)BindingContext[grid.DataSource];
-						cm.SuspendBinding();
+						// Do removal.
+						foreach (var item in itemsToRemove)
+							mappedItems.Remove(item);
+						// Do adding.
+						foreach (var item in itemsToInsert)
+							mappedItems.Add(item);
 					}
-					// Do removal.
-					foreach (var item in itemsToRemove)
-						mappedItems.Remove(item);
-					// Do adding.
-					foreach (var item in itemsToInsert)
-						mappedItems.Add(item);
-					if (bound)
-						// Resume CurrencyManager and Layout.
-						cm.ResumeBinding();
-					grid.ResumeLayout();
-					// Restore selection.
-					JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserSetting.InstanceGuid), selection);
+					finally
+					{
+						// Resume CurrencyManager and Layout. This must run even when the update
+						// above failed: a grid left suspended throws on every later operation, so
+						// one error would turn into a permanently broken control.
+						cm?.ResumeBinding();
+						grid.ResumeLayout();
+					}
+					// Restore selection. Losing the selected row is cosmetic, so a failure here
+					// must not reach the caller. The grid reports a reentrant call when selection
+					// is set while it is still settling after rows were added or removed.
+					try
+					{
+						JocysCom.ClassLibrary.Controls.ControlsHelper.RestoreSelection(grid, nameof(UserSetting.InstanceGuid), selection);
+					}
+					catch (InvalidOperationException)
+					{
+					}
 				}
 				var visibleCount = mappedItems.Count();
 				var title = string.Format("Enable {0} Mapped Device{1}", visibleCount, visibleCount == 1 ? "" : "s");
