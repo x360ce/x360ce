@@ -20,6 +20,9 @@ namespace x360ce.App.Controls
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			LocationsToolStrip.Font = Font;
 			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help_HidGuardian.rtf");
+			// HID Guardian install is not supported: a misconfigured HID filter driver
+			// can lock the user out of keyboard and mouse. Only uninstall is available.
+			HidGuardianInstallButton.Visible = false;
 		}
 
 		public void InitOptions()
@@ -335,10 +338,8 @@ namespace x360ce.App.Controls
 
 		private void HidGuardianInstallButton_Click(object sender, EventArgs e)
 		{
-			HidGuardianTextBox.Text = "Installing. Please Wait...";
-			Program.RunElevated(AdminCommand.InstallHidGuardian);
-			ViGEm.HidGuardianHelper.InsertCurrentProcessToWhiteList();
-			RefreshHidGuardianStatus();
+			// Install is not supported. Only uninstall is available.
+			HidGuardianTextBox.Text = "Install is not supported by this version. Only uninstall is available.";
 		}
 
 		private void HidGuardianRefreshButton_Click(object sender, EventArgs e)
@@ -368,7 +369,7 @@ namespace x360ce.App.Controls
 						? "Not installed"
 						: string.Format("{0} {1}", hid.Description, hid.GetVersion());
 					ControlsHelper.SetText(HidGuardianTextBox, hidStatus);
-					HidGuardianInstallButton.Enabled = hid.DriverVersion == 0;
+					HidGuardianInstallButton.Enabled = false;
 					HidGuardianUninstallButton.Enabled = hid.DriverVersion != 0;
 				});
 			});

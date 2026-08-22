@@ -199,11 +199,17 @@ namespace x360ce.Engine
 		public static string GetResourcePath(string name)
 		{
 			var assembly = Assembly.GetEntryAssembly();
-			var names = assembly.GetManifestResourceNames()
-				.Where(x => x.EndsWith(name));
-			var a = Environment.Is64BitProcess ? ".x64." : ".x86.";
-			// Try to get by architecture first.
-			var path = names.FirstOrDefault(x => x.Contains(a));
+			var all = assembly.GetManifestResourceNames();
+			var suffix = Environment.Is64BitProcess ? "x64" : "x86";
+			// "Name_x64.ext" style: architecture inserted into the file name
+			// (e.g. embedded "xinput_x64.dll" requested as "xinput.dll").
+			var archName = Path.GetFileNameWithoutExtension(name) + "_" + suffix + Path.GetExtension(name);
+			var path = all.FirstOrDefault(x => x.EndsWith(archName));
+			if (!string.IsNullOrEmpty(path))
+				return path;
+			var names = all.Where(x => x.EndsWith(name));
+			// "Folder.x64.Name.ext" style: architecture folder in the resource path.
+			path = names.FirstOrDefault(x => x.Contains("." + suffix + "."));
 			if (!string.IsNullOrEmpty(path))
 				return path;
 			// Return first found.

@@ -16,8 +16,8 @@ namespace x360ce.App.Issues
 		}
 
 		// Use ignore case modifier.
-        string program1Rx = "(?i)(Visual C\\+\\+).*(2015|2017|2019).*(Redistributable).*(x64)";
-		string program1 = "Microsoft Visual C++ 2015-2019 Redistributable (x64)";
+        string program1Rx = "(?i)(Visual C\\+\\+).*(2015|2017|2019|2022|v14).*(Redistributable).*(x64)";
+		string program1 = "Microsoft Visual C++ 2015-2022 Redistributable (x64)";
 
 		public override void CheckTask()
 		{

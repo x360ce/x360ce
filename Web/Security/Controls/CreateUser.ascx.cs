@@ -11,6 +11,7 @@ using User = JocysCom.WebSites.Engine.Security.Data.User;
 using SecurityClassesDataContext = JocysCom.WebSites.Engine.Security.Data.SecurityEntities;
 using JocysCom.WebSites.Engine.Security;
 using System.Web.UI.HtmlControls;
+using System.Security.Cryptography;
 
 namespace JocysCom.Web.Security.Controls
 {
@@ -131,24 +132,40 @@ namespace JocysCom.Web.Security.Controls
 		}
 
 		/// <summary>
-		/// Generate easy to remember password.
+		/// Generates a pseudorandom password that cannot be predicted.
 		/// </summary>
-		/// <returns></returns>
-		public string NewPassword()
+		/// <param name="length">Password length. Zero generates a random length from 12 to 32 characters.</param>
+		/// <param name="charlist">Characters to pick from.</param>
+		/// <returns>A string representing a securely-generated password.</returns>
+		public string NewPassword(int length = 0, string charlist = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"£$%^&*()_+=-{}[]:@~;'#/,.<>?\\")
 		{
-			var rnd = new Random();
-			string chars = "qwxzQWZX";
-			;
-			string volves = "aeiouyAEIOUY".Replace(chars, "");
-			string consonants = "bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ".Replace(chars, "");
-			string password = string.Empty;
-
-			for (int i = 0; i < 8; i++)
+			using (var rng = new RNGCryptoServiceProvider())
 			{
-				string choice = (i % 2 == 0) ? consonants : volves;
-				password += choice[rnd.Next(choice.Length)].ToString();
+				if (length == 0)
+					length = 12 + GetRandomInt(rng, 21);
+				string password = string.Empty;
+				for (int i = 0; i < length; i++)
+					password += charlist[GetRandomInt(rng, charlist.Length)].ToString();
+				return password;
 			}
-			return password;
+		}
+
+		/// <summary>
+		/// Returns a uniformly distributed cryptographically-strong random integer in the [0, maxExclusive) range.
+		/// </summary>
+		private static int GetRandomInt(RandomNumberGenerator rng, int maxExclusive)
+		{
+			var bytes = new byte[4];
+			// Rejection sampling avoids modulo bias.
+			var limit = uint.MaxValue - (uint.MaxValue % (uint)maxExclusive);
+			uint value;
+			do
+			{
+				rng.GetBytes(bytes);
+				value = BitConverter.ToUInt32(bytes, 0);
+			}
+			while (value >= limit);
+			return (int)(value % (uint)maxExclusive);
 		}
 
 		private User RegisterMember()

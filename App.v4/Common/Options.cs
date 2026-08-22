@@ -141,13 +141,13 @@ namespace x360ce.App
 		}
 		bool _HidGuardianConfigureAutomatically = false;
 
-		[DefaultValue("{LWin}{G}")]
+		[DefaultValue("{7}")]
 		public string GuideButtonAction
 		{
 			get { return _GuideButtonAction; }
 			set { _GuideButtonAction = value; OnPropertyChanged(); }
 		}
-		string _GuideButtonAction = "{LWin}{G}";
+		string _GuideButtonAction = "{7}";
 
 		public BindingList<string> InternetDatabaseUrls { get; set; }
 

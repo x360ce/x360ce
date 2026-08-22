@@ -8,24 +8,26 @@
 
 Any commit that changes any of the above is excluded. UI changes are tolerated only if isolated and clearly bug-fix in intent.
 
-## Decomposition (A → B → C → D)
+## Decomposition (A → E → B → C → D)
 
-The work is decomposed into four sub-projects, each with its own design doc and implementation plan:
+The work is decomposed into five sub-projects, each with its own design doc and implementation plan:
 
-| # | Sub-project | Purpose | Design |
-|---|---|---|---|
-| **A** | Commit Triage | Enumerate the 371 commits, auto-classify by path-bucket + risk, then (gated on C) sub-agent verdict per commit | [A-triage/design.md](A-triage/design.md) |
-| **B** | Test DB Scaffolding | PowerShell scripts that build/deploy/refresh/drop `x360ce_Tests` on local SQL Server Developer Edition. DACPAC built from `Data/x360ce.Data.sqlproj` (canonical SSOT). Hard guardrail allow-list prevents writing to live `x360ce` | [B-db/design.md](B-db/design.md) |
-| **C** | Test Harness | Engine.Tests + Web.Tests + App.v4.Tests + App.v3.Tests (qa-tester framework). Baselines current behaviour AND gates cherry-picks. Web.Tests depends on B; the others don't | [C-tests/design.md](C-tests/design.md) |
-| **D** | First 10-fix PR | Pick 10 low-risk backwards-compatible bug fixes from A's output, cherry-pick onto current branch, validate against C, open PR | (TBD — written after C's design is approved) |
+| # | Sub-project | Purpose | Where code lives | Design |
+|---|---|---|---|---|
+| **A** | Commit Triage | Enumerate the 371 commits, auto-classify by path-bucket + risk, then (gated on C) sub-agent verdict per commit | x360ce | [A-triage/design.md](A-triage/design.md) |
+| **E** | DataPorter Enhancement | Add DAT (BCP native binary) and JSON data formats to DataPorter; upgrade per-table schema scripting to include indexes/FKs/triggers/constraints. Makes DataPorter a complete per-table backup tool, retiring the legacy `Data/Change Scripts/Backup/` | **`D:\Projects\Jocys.com\Sql\DataPorter\`** (separate repo) | [E-dataporter/design.md](E-dataporter/design.md) |
+| **B** | Test DB Scaffolding | PowerShell scripts that build/deploy/refresh/drop `x360ce_Tests` on local SQL Server Developer Edition. Schema via SqlPackage from sqlproj. After E lands: uses DataPorter for synthetic seed AND for x360ce_Tests backup/restore. Hard guardrail allow-list prevents writing to live `x360ce` | x360ce | [B-db/design.md](B-db/design.md) |
+| **C** | Test Harness | Engine.Tests + Web.Tests + App.v4.Tests + App.v3.Tests (qa-tester framework). Baselines current behaviour AND gates cherry-picks. Web.Tests depends on B; the others don't | x360ce | [C-tests/design.md](C-tests/design.md) |
+| **D** | First 10-fix PR | Read each candidate commit individually, mentally translate via small rename map to current paths, propose change to user, apply manually with test validation. **No cherry-pick automation, no path-rewrite scripts.** Trust earned per-commit | x360ce | [D-cherry-pick/design.md](D-cherry-pick/design.md) (stub — postponed until B + C are complete) |
 
 ## Ordering principle
 
 - **A.1** (heuristic triage): non-destructive, can be done any time.
-- **B**: prerequisite for any DB-touching test. Implemented first because "you can't test without a database."
-- **C-M1** (Engine.Tests): non-destructive AND teaches us the code. No DB dependency — can run in parallel with B.
+- **E** (DataPorter enhancement): in a separate repo. Can be implemented in parallel with B-current. B can ship using DataPorter-current (CSV-only) and be revised after E lands; or B can wait for E.
+- **B**: prerequisite for any DB-touching test. After E: B uses DataPorter for seed AND backup/restore.
+- **C-M1** (Engine.Tests): non-destructive AND teaches us the code. No DB dependency — can run in parallel with B / E.
 - **C-M2** (Web.Tests): gated on B being complete (needs `x360ce_Tests` to exist).
-- **C-M3 / C-M4** (App tests): no DB dependency, can run after B+C-M1.
+- **C-M3 / C-M4** (App tests): no DB dependency, can run after B + C-M1.
 - **A.2** (sub-agent verdicts on all 371 commits): gated on C being green.
 - **D** (cherry-pick PR): gated on C being green for the relevant surface:
   - D may pick Engine-only fixes after **C-M1**.
@@ -35,23 +37,25 @@ The work is decomposed into four sub-projects, each with its own design doc and 
 ## Status
 
 - [x] A design — drafted, user-reviewed
-- [x] B design — drafted, awaiting review
+- [x] B design — drafted, awaiting review (revisions pending after E lands)
 - [x] C design — drafted, awaiting review
-- [ ] B writing-plans → `B-db/plan.md`
-- [ ] C writing-plans → `C-tests/plan.md`
-- [ ] B implementation (scripts + first deploy of `x360ce_Tests`)
-- [ ] C-M1 (Engine.Tests) — can begin in parallel with B
-- [ ] C-M2 (Web.Tests) — after B
-- [ ] C-M3 (App.v4.Tests)
-- [ ] C-M4 (App.v3.Tests + full coverage + perf piggyback)
-- [ ] A.1 implementation (heuristic script) — can run any time
-- [ ] A.2 implementation (sub-agent verdicts) — after C green
-- [ ] D design + first PR
+- [x] D design — stub (postponed)
+- [x] E design — drafted, awaiting review
+- [x] B plan — written (interim version; revise after E)
+- [ ] E plan — writing-plans next
+- [ ] B revision — revise after E lands (DataPorter-based seed; delete `Data/Change Scripts/Backup/`)
+- [ ] C plan — writing-plans
+- [x] A.1 plan — written ([A-triage/plan.md](A-triage/plan.md))
+- [x] A.1 implemented — `triage_commits.py` + unit tests green; `commits.json` generated (371 commits: 111 HIGH / 107 MEDIUM / 137 LOW / 16 SKIP)
+- [ ] A.2 review — in progress via [A-triage/REVIEW.md](A-triage/REVIEW.md) (160/371 processed; decisions come only from actual diffs, never subjects — three merge commits were mis-SKIPped by the numstat heuristic and are now reclassified). Second fix batch applied 2026-08-22: test-device POV crash (84550a9b), GetVendors entity query (bbf81063), secure sign-up passwords (2ef1fb5b, net462-adapted) - version 4.17.25.0. 13 fixes total; 211 rows remain in the manual queue (shared-file overlap with WPF-era commits)
+- [x] First fixes APPLIED on branch (2026-08-22, per user direction, ahead of the C gate): 5 ported commits (1088022a, 2c6a14fe, 545fed1d, d4a3c79a, f295e72e-Step5-hunk) + branch-only fixes: HID Guardian uninstall-only; VC++ 2015-2022 runtime detection; **DPI-unaware locked via `app.manifest` in App.v4 AND App.v3** (asInvoker + `dpiAware=false`, wired via `<ApplicationManifest>`) so Windows scales the whole UI at high DPI, layout keeps its designed proportions, and the hosted WPF content can no longer flip the process DPI-aware mid-run (which caused a tiny unscaled UI and an intermittent empty title); AutoScale Font declarations added to all App.v4 WinForms user controls + MainForm (inert at locked 96 DPI; correct for the VS designer and any future crisp-DPI work). App.v4 verified by screenshots at 150% (window 1230x1170 physical, all labels/buttons/gaps correct, Logitech F710 detected and mapped); App.v3 builds via `msbuild x360ce.slnx -p:Platform=APP_x64_v3` (or per-csproj with `-p:SolutionDir=` supplied) and works end-to-end: the empty Controller tab body and the failing "Create" fix in the DLL-architecture warning shared one root cause — `EngineHelper.GetResourcePath` matched `.x64.` folder-style resource names while the embedded DLLs are named `xinput_x64.dll` underscore-style, so the arch-specific resource was never selected and Create always re-extracted the generic 32-bit DLL; additionally `DllFileIssue` compared the assembly architecture (MSIL for Any CPU builds) against the native DLL's, which can never match. Fixed both (GetResourcePath now resolves underscore-style names — also fixes `dinput.dll` siblings; DllFileIssue normalizes MSIL to the real process architecture). Verified end-to-end: Create now writes an x64 `xinput1_3.dll`, the app loads it (status bar `xinput1_3.dll 3.4.1.1357`), the New Device wizard for the Logitech F710 (Cordless RumblePad 2) completes with internet settings, and the mapping saves to `x360ce.ini` (`PAD1=IG_...`). The 347427e9 conditional-DPI port was tested and reverted (WPF-era design, wrong for the WinForms line); crisp-DPI via 81ee19e2 + 11c47449 relayouts stays queued
+- [ ] D plan — written after C is green
 
 ## Key constraints baked into all sub-projects
 
-- **`Data/x360ce.Data.sqlproj` is the canonical schema SSOT.** Any drift discovered against live is a sqlproj defect to fix; do not work around in test scripts.
+- **`Data/x360ce.Data.sqlproj` is the canonical schema SSOT.** Any drift discovered against live is a sqlproj defect to fix; do not work around in test scripts. DataPorter does *not* compete with this — DataPorter handles per-table backup/restore + seed; sqlproj handles forward schema deploy.
 - **Live `x360ce` is never written to.** All B scripts use an allow-list guardrail (`^x360ce_Tests(_\w+)?$`). The C harness re-verifies at `[AssemblyInitialize]`.
 - **No real captured data in git.** Fixtures are synthetic; user-supplied real fixtures (if any) go into `Engine.Tests/Fixtures/Real/` which is initially empty.
 - **Settings XML wire format is frozen.** `[XmlType("Setting")]` on `UserSetting` is a hard contract for v3.x clients still in the wild.
 - **net462 reality.** EventPipe / `Microsoft.Diagnostics.NETCore.Client` don't work on .NET Framework. Use ETW (`wpr.exe`) + BenchmarkDotNet for perf instead. Microsoft.Testing.Platform is not available — VSTest only.
+- **One tool per concern.** SqlPackage = schema deploy (DACPAC). DataPorter = per-table backup/restore + seed (CSV/DAT/JSON after E). No overlap. `BackupAndRestoreData.ps1` is retired by E.

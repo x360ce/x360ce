@@ -100,34 +100,6 @@ namespace x360ce.App.DInput
 		}
 
 		/// <summary>
-		/// Install HID Guardian
-		/// </summary>
-		/// <remarks>Must be executed in administrative mode.</remarks>
-		public static void InstallHidGuardian(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
-		{
-			// Extract files first.
-			ExtractHidGuardianFiles(true);
-			var folder = GetHidGuardianPath();
-			var paString = Environment.Is64BitOperatingSystem ? "x64" : "x86";
-			var infFile = string.Format("{0}\\{1}", paString, "HidGuardian.inf");
-			var exePath = Path.Combine(folder, GetDevConPath());
-			UacHelper.RunElevated(
-				exePath,
-				"install " + infFile + " " + HidGuardianHardwareId,
-				style, true);
-			UacHelper.RunElevated(
-				exePath,
-				"classfilter HIDClass upper -HidGuardian",
-				style, true);
-			// Fix registry permissions. 
-			var canModify = ViGEm.HidGuardianHelper.CanModifyParameters(true);
-			// Fix missing white list key.
-			if (canModify)
-				ViGEm.HidGuardianHelper.FixWhiteListRegistryKey();
-		}
-
-
-		/// <summary>
 		/// Uninstall HID Guardian.
 		/// </summary>
 		/// <remarks>Must be executed in administrative mode.</remarks>

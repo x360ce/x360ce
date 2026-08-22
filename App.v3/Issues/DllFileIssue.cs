@@ -23,7 +23,7 @@ namespace x360ce.App.Issues
 				: IssueSeverity.Critical;
 
 			// If XInput file doesn't exists.
-			var appArchitecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
+			var appArchitecture = GetAppArchitecture();
 			embeddedDllVersion = EngineHelper.GetEmbeddedDllVersion(appArchitecture);
 			var file = EngineHelper.GetDefaultDll();
 			// If XInput DLL was not found then...
@@ -64,11 +64,24 @@ namespace x360ce.App.Issues
 		Version dllVersion;
 		Version embeddedDllVersion;
 
+		/// <summary>
+		/// Architecture the process actually runs as. "Any CPU" (MSIL) assemblies
+		/// resolve to the real process architecture, so the check can compare
+		/// against the native XInput DLL and the fix can pick the right resource.
+		/// </summary>
+		static ProcessorArchitecture GetAppArchitecture()
+		{
+			var a = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
+			if (a == ProcessorArchitecture.MSIL || a == ProcessorArchitecture.None)
+				a = Environment.Is64BitProcess ? ProcessorArchitecture.Amd64 : ProcessorArchitecture.X86;
+			return a;
+		}
+
 		public override void Fix()
 		{
 			if (FixType > 0)
 			{
-				var appArchitecture = Assembly.GetExecutingAssembly().GetName().ProcessorArchitecture;
+				var appArchitecture = GetAppArchitecture();
 				var resourceName = EngineHelper.GetXInputResoureceName(appArchitecture);
 				var file = EngineHelper.GetDefaultDll();
 				var fileName = file == null

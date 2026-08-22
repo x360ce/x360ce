@@ -249,3 +249,7 @@ ModelManifest.xml
 /.ai/temp
 __pycache__
 /MinHook
+
+# AI review tooling outputs (regenerable / evidence)
+docs/plans/A-triage/diffs/
+scripts/ui/captures/

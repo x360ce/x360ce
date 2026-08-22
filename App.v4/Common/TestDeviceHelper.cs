@@ -22,7 +22,8 @@ namespace x360ce.App
 			{
 				if (item.IsOnline)
 					return;
-				item.IsOnline = true;
+				lock (SettingsManager.UserDevices.SyncRoot)
+					item.IsOnline = true;
 			}
 		}
 
@@ -131,7 +132,7 @@ namespace x360ce.App
 				{
 					// Shift busy value by half so movement starts from the centre.
 					var value = (time + busy / 2) % busy;
-					if (time <= half)
+					if (value < half)
 					{
 						// Convert [   0-1999] to [0-35999].
 						degree = ConvertHelper.ConvertRange(0, half - 1, 0, 35999, value);

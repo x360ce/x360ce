@@ -1,3 +1,19 @@
+v4.17.25.0 (2026-08-22)
+- Fixed: Virtual test controller POV sweep crash (wrong variable in range check).
+- Fixed: Web service GetVendors failed at runtime (entity projection inside LINQ-to-Entities query).
+- Fixed: Web sign-up generated predictable passwords; now cryptographically random, 12-32 characters.
+
+v4.17.22.0 (2026-08-22)
+- Fixed: Crash when selecting unavailable game.
+- Fixed: Crash when loading user device capabilities.
+- Fixed: Thread-safety of device online/offline state changes.
+- Fixed: Guide button sends correct virtual key code; action configurable.
+- Fixed: Guide button key names parse case-insensitively.
+- Fixed: Visual C++ 2015-2022 runtime detection on Windows 11.
+- Fixed: High-DPI rendering - whole UI scales with monitor zoom; also fixes intermittent empty window title.
+- Fixed: Architecture-specific embedded DLL resolution (32/64-bit XInput and DInput files).
+- Changed: HID Guardian install disabled for safety; only uninstall is available.
+
 v4.17.12.0 (2020-11-15)
 - Fixed: Issue when mappings from other games would merge into currently selected game.
 - Fixed: Sometimes crashing when generating exception info.
