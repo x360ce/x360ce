@@ -64,6 +64,14 @@ namespace x360ce.App
 				DInput.VirtualDriverInstaller.UninstallHidGuardian();
 				return true;
 			}
+#if DEBUG
+			// Development builds only. The caller verifies the resulting driver state.
+			if (ic.Parameters.ContainsKey(AdminCommand.InstallHidGuardian.ToString()))
+			{
+				DInput.VirtualDriverInstaller.InstallHidGuardian();
+				return true;
+			}
+#endif
 			if (ic.Parameters.ContainsKey(AdminCommand.UninstallDevice.ToString()))
 			{
 				var hwid = ic.Parameters[AdminCommand.UninstallDevice.ToString()];

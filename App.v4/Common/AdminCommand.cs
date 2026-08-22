@@ -9,5 +9,9 @@
 		UninstallViGEmBus,
         UninstallHidGuardian,
 		UninstallDevice,
+#if DEBUG
+		/// <summary>Development builds only. Install is not offered in a release.</summary>
+		InstallHidGuardian,
+#endif
     }
 }

@@ -20,9 +20,14 @@ namespace x360ce.App.Controls
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			LocationsToolStrip.Font = Font;
 			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help_HidGuardian.rtf");
+#if DEBUG
+			// Install stays available in development builds so that the removal path can
+			// be tested. The confirmation dialog states that this is a development build.
+#else
 			// HID Guardian install is not supported: a misconfigured HID filter driver
 			// can lock the user out of keyboard and mouse. Only uninstall is available.
 			HidGuardianInstallButton.Visible = false;
+#endif
 		}
 
 		public void InitOptions()
@@ -296,10 +301,47 @@ namespace x360ce.App.Controls
 
 		private void ViGEmBusUninstallButton_Click(object sender, EventArgs e)
 		{
+			var installed = DInput.VirtualDriverInstaller.GetInstalledViGEmBusVersion();
+			if (installed == null)
+			{
+				ViGEmBusTextBox.Text = "Not installed. Nothing to remove.";
+				return;
+			}
+			var embedded = DInput.VirtualDriverInstaller.EmbeddedViGEmBusVersion;
+			// A different version was installed by something else. Removing it here would
+			// leave that installer's own records pointing at a driver which is gone.
+			if (!Equals(installed, embedded))
+			{
+				MessageBoxForm.Show(
+					string.Format(
+						"Installed version {0} does not match the version supplied with this " +
+						"application ({1}), so it was installed by something else.\r\n\r\n" +
+						"Remove it through the installer that put it there, or through " +
+						"Apps & Features. This application will not touch it.",
+						installed, embedded),
+					"Remove Virtual Gamepad Bus", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+			var text =
+				string.Format("Remove the virtual gamepad bus driver (version {0})?\r\n\r\n", installed) +
+				"This driver is shared. Other applications that create virtual controllers, " +
+				"for example DS4Windows, stop working until it is installed again.\r\n\r\n" +
+				"The driver package stays in the Windows driver store, so Windows may " +
+				"recreate the device. Use the official installer to remove it completely.";
+			if (!Confirm(text, "Remove Virtual Gamepad Bus"))
+				return;
 			ViGEmBusTextBox.Text = "Uninstalling. Please Wait...";
 			// Disable Virtual mode first.
 			MainForm.Current.ChangeCurrentGameEmulationType(EmulationType.None);
 			DInput.DInputHelper.CheckUnInstallVirtualDriver();
+			// Report the state reached, measured here rather than trusted.
+			var remaining = DInput.VirtualDriverInstaller.GetInstalledViGEmBusVersion();
+			MessageBoxForm.Show(
+				remaining == null
+					? "Virtual gamepad bus removed."
+					: string.Format("Virtual gamepad bus is still present (version {0}).", remaining),
+				"Uninstall result", MessageBoxButtons.OK,
+				remaining == null ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
 			RefreshViGEmBusStatus();
 		}
 
@@ -338,8 +380,24 @@ namespace x360ce.App.Controls
 
 		private void HidGuardianInstallButton_Click(object sender, EventArgs e)
 		{
+#if DEBUG
+			var text =
+				"Install HID Guardian?\r\n\r\n" +
+				"DEVELOPMENT BUILD ONLY. HID Guardian is a filter on every HID device. " +
+				"If it is left registered while its driver is missing, keyboard and mouse " +
+				"can stop working and recovery needs safe mode and a registry edit.\r\n\r\n" +
+				"The driver is installed first and the class filter is added only after the " +
+				"driver is confirmed present.";
+			if (!Confirm(text, "Install HID Guardian"))
+				return;
+			HidGuardianTextBox.Text = "Installing. Please Wait...";
+			Program.RunElevated(AdminCommand.InstallHidGuardian);
+			ReportHidGuardianState("Install");
+			RefreshHidGuardianStatus();
+#else
 			// Install is not supported. Only uninstall is available.
 			HidGuardianTextBox.Text = "Install is not supported by this version. Only uninstall is available.";
+#endif
 		}
 
 		private void HidGuardianRefreshButton_Click(object sender, EventArgs e)
@@ -349,9 +407,60 @@ namespace x360ce.App.Controls
 
 		private void HidGuardianUninstallButton_Click(object sender, EventArgs e)
 		{
+			var filter = DInput.VirtualDriverInstaller.IsHidGuardianClassFilterPresent();
+			var device = DInput.VirtualDriverInstaller.IsHidGuardianDevicePresent();
+			if (!filter && !device)
+			{
+				HidGuardianTextBox.Text = "Not installed. Nothing to remove.";
+				return;
+			}
+			var text =
+				"Remove HID Guardian?\r\n\r\n" +
+				string.Format("HID class filter: {0}\r\nDriver: {1}\r\n\r\n", filter ? "present" : "not present", device ? "present" : "not present") +
+				"The class filter is removed first and checked, and the driver is removed " +
+				"only after the filter is confirmed gone. Nothing else is touched. If the " +
+				"filter cannot be removed the driver is left in place, because a filter that " +
+				"names a missing driver can stop keyboard and mouse from working.";
+			if (!Confirm(text, "Remove HID Guardian"))
+				return;
 			HidGuardianTextBox.Text = "Uninstalling. Please Wait...";
 			Program.RunElevated(AdminCommand.UninstallHidGuardian);
+			ReportHidGuardianState("Uninstall");
 			RefreshHidGuardianStatus();
+		}
+
+		/// <summary>Report the driver state reached, measured here rather than trusted.</summary>
+		void ReportHidGuardianState(string action)
+		{
+			var filter = DInput.VirtualDriverInstaller.IsHidGuardianClassFilterPresent();
+			var device = DInput.VirtualDriverInstaller.IsHidGuardianDevicePresent();
+			// The unsafe combination: filter registered while the driver is gone.
+			if (filter && !device)
+			{
+				var script = DInput.VirtualDriverInstaller.GetHidGuardianRemoveScript();
+				MessageBoxForm.Show(
+					"HID Guardian is still registered as a HID class filter but its driver is not " +
+					"installed. Devices may fail to start after a restart.\r\n\r\n" +
+					"Run the recovery script from an administrative command prompt before " +
+					"restarting:\r\n\r\n" + (script ?? "HidGuardian_Remove.ps1 could not be extracted."),
+					action + " incomplete", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
+			MessageBoxForm.Show(
+				string.Format("HID class filter: {0}\r\nDriver: {1}",
+					filter ? "present" : "not present", device ? "present" : "not present"),
+				action + " result", MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+
+		/// <summary>Ask before changing driver state. Cancel is the default answer.</summary>
+		static bool Confirm(string text, string caption)
+		{
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			ControlsHelper.CheckTopMost(form);
+			var result = form.ShowForm(text, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+			form.Dispose();
+			return result == DialogResult.Yes;
 		}
 
 		void RefreshHidGuardianStatus()
@@ -369,8 +478,15 @@ namespace x360ce.App.Controls
 						? "Not installed"
 						: string.Format("{0} {1}", hid.Description, hid.GetVersion());
 					ControlsHelper.SetText(HidGuardianTextBox, hidStatus);
+#if DEBUG
+					// Development builds can install, so that removal can be tested.
+					HidGuardianInstallButton.Enabled = hid.DriverVersion == 0;
+#else
 					HidGuardianInstallButton.Enabled = false;
-					HidGuardianUninstallButton.Enabled = hid.DriverVersion != 0;
+#endif
+					// Offer removal while either the driver or the class filter is present.
+					HidGuardianUninstallButton.Enabled = hid.DriverVersion != 0
+						|| DInput.VirtualDriverInstaller.IsHidGuardianClassFilterPresent();
 				});
 			});
 			var t = new System.Threading.Thread(ts);
