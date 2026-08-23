@@ -28,6 +28,7 @@
 			this.GetDInputStatesCheckBox = new System.Windows.Forms.CheckBox();
 			this.UpdateInterfaceCheckBox = new System.Windows.Forms.CheckBox();
 			this.ThrowExceptionButton = new System.Windows.Forms.Button();
+			this.ShowNavImagesButton = new System.Windows.Forms.Button();
 			this.MainGroupBox.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -35,6 +36,7 @@
 			// 
 			this.MainGroupBox.Controls.Add(this.LogTextBox);
 			this.MainGroupBox.Controls.Add(this.ThrowExceptionButton);
+			this.MainGroupBox.Controls.Add(this.ShowNavImagesButton);
 			this.MainGroupBox.Controls.Add(this.CleanupDevicesButton);
 			this.MainGroupBox.Controls.Add(this.TestButton);
 			this.MainGroupBox.Controls.Add(this.CpuLabel);
@@ -169,6 +171,17 @@
 			this.ThrowExceptionButton.UseVisualStyleBackColor = true;
 			this.ThrowExceptionButton.Click += new System.EventHandler(this.ThrowExceptionButton_Click);
 			// 
+			// ShowNavImagesButton
+			// 
+			this.ShowNavImagesButton.AutoSize = true;
+			this.ShowNavImagesButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ShowNavImagesButton.Location = new System.Drawing.Point(118, 111);
+			this.ShowNavImagesButton.Name = "ShowNavImagesButton";
+			this.ShowNavImagesButton.TabIndex = 5;
+			this.ShowNavImagesButton.Text = "Show All Pad Images";
+			this.ShowNavImagesButton.UseVisualStyleBackColor = true;
+			this.ShowNavImagesButton.Click += new System.EventHandler(this.ShowNavImagesButton_Click);
+			// 
 			// PerformanceTestUserControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -197,5 +210,6 @@
         private System.Windows.Forms.TextBox LogTextBox;
         private System.Windows.Forms.Button CleanupDevicesButton;
 		private System.Windows.Forms.Button ThrowExceptionButton;
+		private System.Windows.Forms.Button ShowNavImagesButton;
 	}
 }

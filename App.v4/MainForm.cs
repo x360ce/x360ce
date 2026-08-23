@@ -1267,7 +1267,6 @@ namespace x360ce.App
 			SettingsManager.Presets.Save();
 			SettingsManager.Layouts.Save();
 			SettingsManager.UserDevices.Save();
-			SettingsManager.UserMacros.Save();
 			SettingsManager.PadSettings.Save();
 			SettingsManager.UserInstances.Save();
 			XInputMaskScanner.FileInfoCache.Save();
@@ -1535,13 +1534,12 @@ namespace x360ce.App
 			});
 		}
 
-		private Forms.ErrorReportWindow win;
+		private Forms.ErrorReportForm win;
 
 		private void StatusErrorLabel_Click(object sender, EventArgs e)
 		{
-			win = new Forms.ErrorReportWindow();
+			win = new Forms.ErrorReportForm();
 			ControlsHelper.CheckTopMost(win);
-			ControlsHelper.AutoSizeByOpenForms(win);
 			win.Width = Math.Min(1450, Screen.FromControl(this).WorkingArea.Width - 200);
 			// Suspend displaying cloud queue results, because ShowDialog locks UI upates in the back.
 			Global.DHelper.Stop();
@@ -1576,17 +1574,15 @@ namespace x360ce.App
 				var item = q.FirstOrDefault(x => x.Action == CloudAction.SendMailMessage);
 				Invoke(new Action(() =>
 				{
-					win.ErrorReportPanel.StatusLabel.Content = item == null ? "Message Delivered" : "Sending...";
+					win.ErrorReportPanel.StatusLabel.Text = item == null ? "Message Delivered" : "Sending...";
 				}));
 			}
 		}
 
 		private void ErrorReportPanel_SendMessages(object sender, JocysCom.ClassLibrary.EventArgs<List<System.Net.Mail.MailMessage>> e)
 		{
-			var control = (ErrorReportControl)sender;
-			// Create mail message.
-			var win = (Forms.ErrorReportWindow)control.Parent;
-			control.StatusLabel.Content = "Sending...";
+			var control = (ErrorReportUserControl)sender;
+			control.StatusLabel.Text = "Sending...";
 			// Run cloud operation on a separate thread so that it won't freeze the app.
 			Task.Run(new Action(() =>
 			{

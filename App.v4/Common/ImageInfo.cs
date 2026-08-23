@@ -23,7 +23,6 @@ namespace x360ce.App
 		public int Image { get; set; }
 		public Control Label { get; set; }
 
-		public System.Windows.Controls.Button ButtonControl { get; set; }
 		public Control Control { get; set; }
 		public GamepadButtonFlags Button { get; set; }
 		public MapCode Code { get; set; }

@@ -998,6 +998,55 @@ namespace JocysCom.ClassLibrary.Controls
 		}
 
 		/// <summary>
+		/// Draw an image at a given opacity.
+		/// </summary>
+		/// <param name="opacity">0 is invisible, 1 is fully opaque.</param>
+		/// <remarks>
+		/// Scales the alpha channel through a colour matrix, which is the only way GDI+ applies
+		/// opacity while drawing. The image itself is left untouched, so one master bitmap serves
+		/// every state a control needs to show.
+		/// </remarks>
+		public static void DrawImageWithOpacity(Graphics g, Image image, Rectangle bounds, float opacity)
+		{
+			if (g == null || image == null)
+				return;
+			if (opacity <= 0f)
+				return;
+			if (opacity > 1f)
+				opacity = 1f;
+			var matrix = new System.Drawing.Imaging.ColorMatrix();
+			matrix.Matrix33 = opacity;
+			using (var attributes = new System.Drawing.Imaging.ImageAttributes())
+			{
+				attributes.SetColorMatrix(matrix);
+				// The glyphs are scaled down from a master several times their drawn size, so the
+				// interpolation quality is what keeps their edges smooth.
+				var oldMode = g.InterpolationMode;
+				g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+				g.DrawImage(image, bounds, 0, 0, image.Width, image.Height,
+					GraphicsUnit.Pixel, attributes);
+				g.InterpolationMode = oldMode;
+			}
+		}
+
+		/// <summary>
+		/// Convert any mix of line endings to the carriage return and line feed pair.
+		/// </summary>
+		/// <remarks>
+		/// A multiline TextBox only breaks the line on a carriage return and line feed pair. Text
+		/// saved with Unix or classic Mac endings arrives as one unbroken run, which is how a
+		/// change log full of separate entries can render as a single paragraph.
+		/// </remarks>
+		public static string NormalizeLineBreaks(string text)
+		{
+			if (string.IsNullOrEmpty(text))
+				return text;
+			// Reduce every form to a lone line feed first so that existing pairs are not doubled.
+			var lines = text.Replace("\r\n", "\n").Replace('\r', '\n');
+			return lines.Replace("\n", "\r\n");
+		}
+
+		/// <summary>
 		/// Open file with associated program.
 		/// </summary>
 		/// <param name="path">file to open.</param>

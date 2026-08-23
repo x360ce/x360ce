@@ -114,8 +114,6 @@ namespace x360ce.App
 		/// <summary>User Devices. Contains hardware details about Direct Input Instances (Devices).</summary>
 		public static XSettingsData<Engine.Data.UserDevice> UserDevices = new XSettingsData<Engine.Data.UserDevice>("UserDevices.xml", "User Devices (Direct Input).");
 
-		/// <summary>User Macro Maps. Advanced maps to keyboard, mouse and xinput.</summary>
-		public static XSettingsData<Engine.Data.UserMacro> UserMacros = new XSettingsData<Engine.Data.UserMacro>("UserMacros.xml", "Keyboard, mouse and xinput macro maps.");
 
 		/// <summary>User Instances. Map different Instance IDs to a single physical controller.</summary>
 		public static XSettingsData<Engine.Data.UserInstance> UserInstances = new XSettingsData<Engine.Data.UserInstance>("UserInstances.xml", "User Controller Instances. Maps same device to multiple instance GUIDs it has on multiple PCs.");
@@ -240,7 +238,6 @@ namespace x360ce.App
 			UserSettings.Items.SynchronizingObject = so;
 			Summaries.Items.SynchronizingObject = so;
 			UserDevices.Items.SynchronizingObject = so;
-			UserMacros.Items.SynchronizingObject = so;
 			UserGames.Items.SynchronizingObject = so;
 			UserInstances.Items.SynchronizingObject = so;
 			Layouts.Items.SynchronizingObject = so;
@@ -259,8 +256,6 @@ namespace x360ce.App
 			UserGames.ValidateData = Games_ValidateData;
 			UserGames.Load();
 			Presets.Load();
-			UserMacros.ValidateData = UserKeyboardMaps_ValidateData;
-			UserMacros.Load();
 			// Make sure that data will be filtered before loading.
 			Layouts.ValidateData = Layouts_ValidateData;
 			Layouts.Load();
@@ -279,7 +274,7 @@ namespace x360ce.App
 				var item = items[i];
 				// If setting is not set then...
 				if (item.SettingId == Guid.Empty)
-					// Assign unique id because it must be linked with UserMacro and other records.
+					// Assign unique id because it must be linked with other records.
 					item.SettingId = Guid.NewGuid();
 			}
 			return items;
@@ -337,11 +332,6 @@ namespace x360ce.App
 				item.RightTrigger = "Trigger";
 				items.Add(item);
 			}
-			return items;
-		}
-
-		static IList<Engine.Data.UserMacro> UserKeyboardMaps_ValidateData(IList<Engine.Data.UserMacro> items)
-		{
 			return items;
 		}
 
@@ -1058,19 +1048,6 @@ namespace x360ce.App
 				}
 			}
 			return changed;
-		}
-
-		public void InitNewUserKeyboardMapForGame(UserSetting userSetting)
-		{
-			if (userSetting == null)
-				return;
-			var item = UserMacros.Items.FirstOrDefault(x => x.SettingId == userSetting.SettingId);
-			if (item != null)
-				return;
-			item = new UserMacro();
-			item.SettingId = userSetting.SettingId;
-			item.LoadGuideButton();
-			UserMacros.Add(item);
 		}
 
 	}

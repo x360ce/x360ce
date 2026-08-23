@@ -29,8 +29,8 @@ namespace x360ce.Tests
 		[TestInitialize]
 		public void Setup()
 		{
-			// Redirect reports into the test's own folder. Without this the run would write
-			// into the real application data folder and mix test noise into genuine reports.
+			// Give this test its own folder inside the run folder that TestRun already
+			// redirected to, so reports from one test cannot be seen by another.
 			_logs = Path.Combine(Path.GetTempPath(), "x360ce.Tests", Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(_logs);
 			_originalOverride = LogHelper.Current.OverrideLogFolder;

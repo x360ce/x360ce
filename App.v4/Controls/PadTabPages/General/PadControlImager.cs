@@ -2,11 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Windows.Forms;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using x360ce.Engine;
 
 namespace x360ce.App.Controls
@@ -20,19 +16,11 @@ namespace x360ce.App.Controls
 			// Create images.
 			var topImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
 			var frontImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
-			var topDisabledImage = AppHelper.GetDisabledImage(topImage);
-			var frontDisabledImage = AppHelper.GetDisabledImage(frontImage);
-			// WPF.
-			_TopImage = GetImageSource(topImage);
-			_FrontImage = GetImageSource(frontImage);
-			_TopDisabledImage = GetImageSource(topDisabledImage);
-			_FrontDisabledImage = GetImageSource(frontDisabledImage);
-			// Other.
 			markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
 			markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
 			markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
-			float rH = topDisabledImage.HorizontalResolution;
-			float rV = topDisabledImage.VerticalResolution;
+			float rH = topImage.HorizontalResolution;
+			float rV = topImage.VerticalResolution;
 			// Make sure resolution is same everywhere so images won't be resized.
 			markB.SetResolution(rH, rV);
 			markA.SetResolution(rH, rV);
@@ -49,47 +37,14 @@ namespace x360ce.App.Controls
 		// Green round controller/player number image.
 		public Bitmap markC;
 
-		ImageSource _TopImage;
-		ImageSource _FrontImage;
-		ImageSource _TopDisabledImage;
-		ImageSource _FrontDisabledImage;
-
-		public XboxImageControl ImageControl;
+		public XboxImageUserControl ImageControl;
 
 		Dictionary<GamepadButtonFlags, Point> locations = new Dictionary<GamepadButtonFlags, Point>();
 
-		// Background images.
-		public System.Windows.Controls.Image Top;
-		public System.Windows.Controls.Image Front;
-
-		// Axis status Images.
-		public System.Windows.Controls.ContentControl LeftThumbStatus;
-		public System.Windows.Controls.ContentControl RightThumbStatus;
-		public System.Windows.Controls.ContentControl LeftTriggerStatus;
-		public System.Windows.Controls.ContentControl RightTriggerStatus;
-
 		public void SetImages(bool enabled)
 		{
-			Top.Source = enabled ? _TopImage : _TopDisabledImage;
-			Front.Source = enabled ? _FrontImage : _FrontDisabledImage;
-			var show = enabled ? System.Windows.Visibility.Visible : System.Windows.Visibility.Hidden;
-			LeftThumbStatus.Visibility = show;
-			RightThumbStatus.Visibility = show;
-			LeftTriggerStatus.Visibility = show;
-			RightTriggerStatus.Visibility = show;
-		}
-
-		public ImageSource GetImageSource(Bitmap bitmap)
-		{
-			var photo = new BitmapImage();
-			var stream = new MemoryStream();
-			bitmap.Save(stream, ImageFormat.Png);
-			photo.BeginInit();
-			photo.CacheOption = BitmapCacheOption.OnLoad;
-			photo.StreamSource = stream;
-			photo.EndInit();
-			stream.Dispose();
-			return photo;
+			if (ImageControl != null)
+				ImageControl.SetEnabled(enabled);
 		}
 
 		public void DrawController(PaintEventArgs e, MapTo mappedTo)
@@ -122,26 +77,17 @@ namespace x360ce.App.Controls
 			if (ii.Code == MapCode.LeftTrigger || ii.Code == MapCode.RightTrigger)
 			{
 				var isLeft = ii.Code == MapCode.LeftTrigger;
-				var control = isLeft ? LeftTriggerStatus : RightTriggerStatus;
-				var h = (float)(((System.Windows.FrameworkElement)control.Parent).Height - control.Height);
 				var y = isLeft ? gp.LeftTrigger : gp.RightTrigger;
-				var b = ConvertHelper.ConvertRangeF(byte.MinValue, byte.MaxValue, 0, h, y);
-				var m = control.Margin;
 				on = y > 0;
-				control.Margin = new System.Windows.Thickness(m.Left, m.Top, m.Right, b);
+				ImageControl.SetTriggerLevel(isLeft, y / (float)byte.MaxValue);
 			}
 			// Draw thumb axis state - green cross image.
 			if (ii.Code == MapCode.LeftThumbButton || ii.Code == MapCode.RightThumbButton)
 			{
 				var isLeft = ii.Code == MapCode.LeftThumbButton;
-				var control = isLeft ? LeftThumbStatus : RightThumbStatus;
-				var w = (float)((System.Windows.FrameworkElement)control.Parent).Width / 2F;
 				var x = isLeft ? gp.LeftThumbX : gp.RightThumbX;
 				var y = isLeft ? gp.LeftThumbY : gp.RightThumbY;
-				var l = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, -w, w, x);
-				var t = ConvertHelper.ConvertRangeF(short.MinValue, short.MaxValue, w, -w, y);
-				var m = control.Margin;
-				control.Margin = new System.Windows.Thickness(l, t, m.Right, m.Bottom);
+				ImageControl.SetThumbPosition(isLeft, x / (float)short.MaxValue, y / (float)short.MaxValue);
 			}
 			// If D-Pad.
 			if (ii.Code == MapCode.DPad)

@@ -26,22 +26,11 @@ namespace x360ce.App.Controls
 			InitializeComponent();
 			if (ControlsHelper.IsDesignMode(this))
 				return;
-			// Add controls which must be notified on setting selection change.
-			UserMacrosPanel.PadControl = this;
 			Global.UpdateControlFromStates += Global_UpdateControlFromStates;
-			// Hide for this version.
-			PadTabControl.TabPages.Remove(XInputTabPage);
-			PadTabControl.TabPages.Remove(MacrosTabPage);
 
 			RemapName = RemapAllButton.Text;
 			MappedTo = controllerIndex;
 			_Imager = new PadControlImager();
-			_Imager.Top = XboxImage.TopPictureImage;
-			_Imager.Front = XboxImage.FrontPictureImage;
-			_Imager.LeftThumbStatus = XboxImage.LeftThumbContentControl;
-			_Imager.RightThumbStatus = XboxImage.RightThumbContentControl;
-			_Imager.LeftTriggerStatus = XboxImage.LeftTriggerContentControl;
-			_Imager.RightTriggerStatus = XboxImage.RightTriggerContentControl;
 			_Imager.ImageControl = XboxImage;
 			XboxImage.InitializeImages(imageInfos, _Imager, controllerIndex);
 			XboxImage.StartRecording = StartRecording;
@@ -127,13 +116,13 @@ namespace x360ce.App.Controls
 							if (ud.DiState != null)
 								XboxImage.SetHelpText(XboxImage.MappingDone);
 							else
-								XboxImage.HelpTextLabel.Content = "";
+								XboxImage.SetHelpText("");
 							RemapAllButton.Text = RemapName;
 							return;
 						}
 						else
 						{
-							XboxImage.HelpTextLabel.Content = "";
+							XboxImage.SetHelpText("");
 						}
 						// Try to record next available control from the list.
 						ControlsHelper.BeginInvoke(() => StartRecording(), 1000);
@@ -247,7 +236,7 @@ namespace x360ce.App.Controls
 				SettingsConverter.TriggerButtonCodes.Contains(map.Code)
 					? "Move Axis"
 					: "Press Button";
-			XboxImage.HelpTextLabel.Content = helpText;
+			XboxImage.SetHelpText(helpText);
 			RemapAllButton.Text = RemapStopName;
 		}
 
@@ -590,7 +579,7 @@ namespace x360ce.App.Controls
 				{
 
 					var triggerLeft = new Point(63, 27);
-					var triggerRight = new Point((int)XboxImage.Width - triggerLeft.X - 1, triggerLeft.Y);
+					var triggerRight = new Point(XboxImageUserControl.CanvasWidth - triggerLeft.X - 1, triggerLeft.Y);
 					_imageInfos = new ImageInfos();
 					// Configure Image 1.
 					_imageInfos.Add(1, MapCode.LeftTrigger, 63, 27, LeftTriggerLabel, LeftTriggerComboBox);
@@ -1169,10 +1158,27 @@ namespace x360ce.App.Controls
 			if (disposing && (components != null))
 			{
 				_Imager.Dispose();
-				UserMacrosPanel.Dispose();
 				components.Dispose();
 			}
 			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// Show or hide every navigation glyph on this controller picture at once.
+		/// </summary>
+		/// <returns>How many glyphs were switched.</returns>
+		/// <remarks>Used by the debug panel to check glyph placement in a single look.</remarks>
+		public int ShowAllNavImages(bool show)
+		{
+			if (XboxImage == null)
+				return 0;
+			var count = 0;
+			foreach (var info in imageInfos)
+			{
+				XboxImage.SetImage(info.Code, NavImageType.Normal, show);
+				count++;
+			}
+			return count;
 		}
 
 		private void LeftMotorStrengthTrackBar_ValueChanged(object sender, EventArgs e)

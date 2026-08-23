@@ -39,13 +39,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.9.3" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.9.3" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
+		<PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
+		<PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Engine\x360ce.Engine.csproj" />
+		<!--
+		App.v4 only. Referencing App.v3 as well is what is impossible, because both build
+		x360ce.exe in the namespace x360ce.App. One of them can be referenced, and that is
+		what makes the controller picture geometry testable.
+		-->
+		<ProjectReference Include="..\App.v4\x360ce.App.v4.csproj" />
 	</ItemGroup>
 
 </Project>

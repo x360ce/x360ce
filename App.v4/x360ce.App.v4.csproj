@@ -110,8 +110,6 @@
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="SharpDX">
       <HintPath>Resources\SharpDX\SharpDX.dll</HintPath>
       <Private>False</Private>
@@ -124,6 +122,10 @@
       <HintPath>Resources\SharpDX\SharpDX.RawInput.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -138,11 +140,8 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="UIAutomationProvider" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\AdminCommand.cs" />
@@ -210,6 +209,10 @@
     <Compile Include="Controls\DebugUserControl.Designer.cs">
       <DependentUpon>DebugUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\PadTabPages\General\NavImages.cs" />
+    <Compile Include="Controls\PadTabPages\General\XboxImageUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
     <Compile Include="Controls\PadTabPages\IPadControl.cs" />
     <Compile Include="Controls\PresetsGridUserControl.cs">
@@ -254,15 +257,6 @@
     <Compile Include="Controls\AxisToButtonUserControl.Designer.cs">
       <DependentUpon>AxisToButtonUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\PadTabPages\MacrosControl.xaml.cs">
-      <DependentUpon>MacrosControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PadTabPages\General\XboxImageControl.xaml.cs">
-      <DependentUpon>XboxImageControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\PadTabPages\XInputControl.xaml.cs">
-      <DependentUpon>XInputControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Forms\BaseFormWithHeader.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -299,8 +293,11 @@
     <Compile Include="Forms\DeveloperToolsForm.Designer.cs">
       <DependentUpon>DeveloperToolsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ErrorReportWindow.xaml.cs">
-      <DependentUpon>ErrorReportWindow.xaml</DependentUpon>
+    <Compile Include="Forms\ErrorReportForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ErrorReportForm.Designer.cs">
+      <DependentUpon>ErrorReportForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\HardwareForm.cs">
       <SubType>Form</SubType>
@@ -520,6 +517,23 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <EmbeddedResource Include="Images\Nav\NavActive.png" />
+    <EmbeddedResource Include="Images\Nav\NavAxisActive.png" />
+    <EmbeddedResource Include="Images\Nav\NavDownActive.png" />
+    <EmbeddedResource Include="Images\Nav\NavDownNormal.png" />
+    <EmbeddedResource Include="Images\Nav\NavDownRecord.png" />
+    <EmbeddedResource Include="Images\Nav\NavLeftActive.png" />
+    <EmbeddedResource Include="Images\Nav\NavLeftNormal.png" />
+    <EmbeddedResource Include="Images\Nav\NavLeftRecord.png" />
+    <EmbeddedResource Include="Images\Nav\NavNormal.png" />
+    <EmbeddedResource Include="Images\Nav\NavRecord.png" />
+    <EmbeddedResource Include="Images\Nav\NavRightActive.png" />
+    <EmbeddedResource Include="Images\Nav\NavRightNormal.png" />
+    <EmbeddedResource Include="Images\Nav\NavRightRecord.png" />
+    <EmbeddedResource Include="Images\Nav\NavTriggerActive.png" />
+    <EmbeddedResource Include="Images\Nav\NavUpActive.png" />
+    <EmbeddedResource Include="Images\Nav\NavUpNormal.png" />
+    <EmbeddedResource Include="Images\Nav\NavUpRecord.png" />
     <EmbeddedResource Include="Images\xboxControllerFront.png" />
     <EmbeddedResource Include="Images\xboxControllerTop.png" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -724,34 +738,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Controls\PadTabPages\MacrosControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\PadTabPages\General\XboxImageControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\PadTabPages\XInputControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Forms\ErrorReportWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\Icons\NavActive.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Icons\NavNormal.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Icons\NavRecord.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

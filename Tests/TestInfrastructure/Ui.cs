@@ -1,3 +1,4 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -14,17 +15,42 @@ namespace x360ce.Tests
 	{
 
 		/// <summary>Repository root, found by walking up from the test assembly.</summary>
+		/// <remarks>
+		/// Several starting points are tried because the base directory of the application domain
+		/// is not dependable: it becomes the test platform's own folder as soon as a referenced
+		/// project brings a configuration file along, which has nothing to do with where the tests
+		/// were built. The assembly's own path does not move.
+		/// </remarks>
 		public static DirectoryInfo RepoRoot
 		{
 			get
 			{
-				var dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-				while (dir != null && !File.Exists(Path.Combine(dir.FullName, "x360ce.slnx")))
-					dir = dir.Parent;
-				if (dir == null)
-					throw new InvalidOperationException("Repository root not found above " + AppDomain.CurrentDomain.BaseDirectory);
-				return dir;
+				foreach (var start in StartingPoints())
+				{
+					var dir = string.IsNullOrEmpty(start) ? null : new DirectoryInfo(start);
+					while (dir != null && !File.Exists(Path.Combine(dir.FullName, "x360ce.slnx")))
+						dir = dir.Parent;
+					if (dir != null)
+						return dir;
+				}
+				throw new InvalidOperationException(
+					"Repository root not found above any of: " + string.Join(", ", StartingPoints()));
 			}
+		}
+
+		static string[] StartingPoints()
+		{
+			var assembly = typeof(Ui).Assembly;
+			string fromCodeBase = null;
+			try { fromCodeBase = Path.GetDirectoryName(new Uri(assembly.CodeBase).LocalPath); }
+			catch (UriFormatException) { }
+			return new[]
+			{
+				string.IsNullOrEmpty(assembly.Location) ? null : Path.GetDirectoryName(assembly.Location),
+				fromCodeBase,
+				AppDomain.CurrentDomain.BaseDirectory,
+				Directory.GetCurrentDirectory(),
+			}.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 		}
 
 		/// <summary>
@@ -69,7 +95,15 @@ namespace x360ce.Tests
 			{
 				p.Refresh();
 				if (p.HasExited)
+				{
+					// x360ce allows one instance. A second launch hands off to the running one and
+					// exits at once, which otherwise surfaces as an unexplained one-second failure.
+					if (AnotherInstanceIsRunning(p))
+						Assert.Inconclusive(
+							"Another x360ce instance is already running, so this test could not drive its own. " +
+							"Close it and run again.");
 					throw new InvalidOperationException($"Process exited with code {p.ExitCode} before a window appeared.");
+				}
 				if (p.MainWindowHandle == IntPtr.Zero)
 					return null;
 				var element = AutomationElement.FromHandle(p.MainWindowHandle);
@@ -100,6 +134,33 @@ namespace x360ce.Tests
 			{
 				p.Dispose();
 			}
+		}
+
+		/// <summary>Minimise the main window, the way a user sends the application to the tray.</summary>
+		public static void Minimize(Process p)
+		{
+			NativeMethods.ShowWindow(p.MainWindowHandle, NativeMethods.SW_MINIMIZE);
+		}
+
+		/// <summary>Restore the main window from minimised.</summary>
+		public static void Restore(Process p)
+		{
+			NativeMethods.ShowWindow(p.MainWindowHandle, NativeMethods.SW_RESTORE);
+		}
+
+		private static class NativeMethods
+		{
+			public const int SW_MINIMIZE = 6;
+			public const int SW_RESTORE = 9;
+
+			[System.Runtime.InteropServices.DllImport("user32.dll")]
+			public static extern bool ShowWindow(IntPtr window, int command);
+		}
+
+		/// <summary>True when an x360ce process other than this one is alive.</summary>
+		private static bool AnotherInstanceIsRunning(Process launched)
+		{
+			return Process.GetProcessesByName("x360ce").Any(x => x.Id != launched.Id);
 		}
 
 	}

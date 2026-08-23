@@ -366,6 +366,7 @@ namespace x360ce.App
 			// 
 			this.TrayNotifyIcon.ContextMenuStrip = this.TrayContextMenuStrip;
 			this.TrayNotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("TrayNotifyIcon.Icon")));
+			this.TrayNotifyIcon.Text = "X360CE 3 Controller Emulator";
 			this.TrayNotifyIcon.Visible = true;
 			this.TrayNotifyIcon.DoubleClick += new System.EventHandler(this.TrayNotifyIcon_DoubleClick);
 			// 

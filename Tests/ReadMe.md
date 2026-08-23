@@ -103,10 +103,49 @@ pass simply because the helper never fails. Two more document the defect class b
 keeps that control alive, and detaching the handler is what actually frees it. Disposing
 alone does not.
 
+### Where App.v4's memory went
+
+Measured, so nobody re-litigates it from intuition.
+
+| | Before | After |
+|---|---|---|
+| App.v4, window open | 198 MB | **85 MB** |
+| App.v4, in tray | 164 MB | **85 MB** |
+| App.v3 for reference | 47 MB | 47 MB |
+
+The cost was WPF, not the windows. Its managed heap was only 24 MB; the rest was the WPF
+runtime, committed the first time any WPF element was created and never returned. Three
+teardown routes were measured before the fix was chosen:
+
+| Approach | Result |
+|---|---|
+| Dispose every control, then the form, then force compacting collections | returns **1.2 MB** |
+| Run WPF on its own thread and shut that Dispatcher down | returns **33 MB**, unreachable from `ElementHost`, which must share the interface thread |
+| Retarget to .NET 8 | same architecture, about 10 percent leaner, and it drops Windows 7 and 8.1 |
+| **Remove WPF** | **the whole charge, about 90 MB** |
+
+The cost was also fixed rather than proportional: a test application with one WPF island and
+the same application with sixty both cost about 90 MB. That is why partial removal was worth
+nothing and only the last control mattered.
+
+App.v4 now loads **no WPF modules at all**, confirmed by reading the module list of the running
+process. `WpfSurfaceTest` fails if any XAML reappears anywhere in the repository, and
+`V4_memory_stays_within_a_sane_ceiling` is set to 120 MB, below the 198 MB the WPF build used.
+
+The remaining gap to App.v3 is not WPF. App.v4 carries features v3 does not, including the
+cloud client and a larger interface.
+
 ### Not yet covered
 
 Proving that App.v4's own main form is released when it minimises to tray needs one of two
 things: the option enabled plus a settings sandbox so a test run cannot disturb real user
 settings, or an in-process reference to App.v4 — which conflicts with App.v3 because both
-produce `x360ce.exe` in the namespace `x360ce.App`. `V4_memory_stays_within_a_sane_ceiling`
-is the interim guard: it catches a footprint that doubles, not a single leaked form.
+produce `x360ce.exe` in the namespace `x360ce.App`.
+
+`V4_does_not_grow_across_minimize_restore_cycles` is the guard that matters here, and it is
+the stronger of the two: it drives the real application through minimise and restore and
+asserts that private bytes, GDI handles and USER handles all hold steady. Handle
+counts are the sharper signal — an undisposed control costs a window and a device context
+long before it costs measurable memory. Currently all three are flat to the megabyte and the
+handle across six cycles. `V4_memory_stays_within_a_sane_ceiling` covers the other direction: the
+absolute figure, which is what a return to hardware rendering would move.

@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace x360ce.Tests
@@ -122,9 +123,9 @@ namespace x360ce.Tests
 		public void V4_memory_stays_within_a_sane_ceiling()
 		{
 			// A ceiling rather than a tight number: exact usage varies with the machine and the
-			// devices attached. This catches a leak that doubles or triples the footprint, which
-			// is what users notice, without failing on ordinary variation.
-			const long ceilingMb = 400;
+			// devices attached. Without WPF this settles around 85 MB; it measured 198 MB when the
+			// controller picture was still WPF, so this also fails if WPF ever returns.
+			const long ceilingMb = 120;
 
 			var exe = Ui.FindApp("App.v4");
 			if (exe == null)
@@ -157,6 +158,97 @@ namespace x360ce.Tests
 			{
 				Ui.CloseApp(process);
 			}
+		}
+
+		/// <summary>
+		/// The footprint must be steady, not small. App.v4 hosts WPF islands inside Windows
+		/// Forms, and initialising WPF in a process costs around 70 MB of unmanaged memory that
+		/// is never returned while the process lives. That baseline is not a leak and no amount
+		/// of disposal reclaims it, so a test asserting a small number would only ever be
+		/// measuring WPF. What a leak does look like is growth per open and close, which this
+		/// test measures directly.
+		/// </summary>
+		[TestMethod, TestCategory("memory"), TestCategory("ui-interactive")]
+		[Description("Sending App.v4 to the tray and back repeatedly does not grow the process")]
+		public void V4_does_not_grow_across_minimize_restore_cycles()
+		{
+			// The first cycles legitimately allocate: the tray icon, the hidden owner window and
+			// one-time caches all appear the first time the window is minimised. Growth is only
+			// meaningful once that has happened, so those cycles set the baseline instead of
+			// being measured against it.
+			const int warmupCycles = 2;
+			const int measuredCycles = 6;
+			const long allowedGrowthMb = 20;
+			// Menus and tooltips can hold a handful of handles between cycles. A real control
+			// leak grows by dozens per cycle, so this tolerance separates them cleanly.
+			const int allowedHandleGrowth = 10;
+
+			var exe = Ui.FindApp("App.v4");
+			if (exe == null)
+				Assert.Inconclusive("App.v4 is not built. Build the solution before running UI tests.");
+
+			Process process = null;
+			try
+			{
+				process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = System.IO.Path.GetDirectoryName(exe) });
+				Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(45));
+
+				for (var i = 0; i < warmupCycles; i++)
+					Cycle(process);
+				var baseline = MemoryLeak.Measure(process);
+				Console.WriteLine("baseline : " + baseline);
+
+				var worst = baseline;
+				for (var i = 1; i <= measuredCycles; i++)
+				{
+					Cycle(process);
+					var now = MemoryLeak.Measure(process);
+					Console.WriteLine("cycle " + i + "  : " + now);
+					if (now.PrivateBytes > worst.PrivateBytes) worst.PrivateBytes = now.PrivateBytes;
+					if (now.GdiHandles > worst.GdiHandles) worst.GdiHandles = now.GdiHandles;
+					if (now.UserHandles > worst.UserHandles) worst.UserHandles = now.UserHandles;
+				}
+
+				var grewMb = (long)Math.Round(worst.PrivateMb - baseline.PrivateMb);
+				Assert.IsTrue(grewMb <= allowedGrowthMb,
+					"Private memory grew " + grewMb + " MB over " + measuredCycles +
+					" minimise and restore cycles, above the " + allowedGrowthMb + " MB allowance.");
+				Assert.IsTrue(worst.GdiHandles - baseline.GdiHandles <= allowedHandleGrowth,
+					"GDI handles grew from " + baseline.GdiHandles + " to " + worst.GdiHandles +
+					", which means controls are being created and not disposed.");
+				Assert.IsTrue(worst.UserHandles - baseline.UserHandles <= allowedHandleGrowth,
+					"USER handles grew from " + baseline.UserHandles + " to " + worst.UserHandles +
+					", which means windows are being created and not destroyed.");
+			}
+			finally
+			{
+				Ui.CloseApp(process);
+			}
+		}
+
+		private static void Cycle(Process process)
+		{
+			Ui.Minimize(process);
+			SettleAfterWindowStateChange(process);
+			Ui.Restore(process);
+			SettleAfterWindowStateChange(process);
+		}
+
+		// Minimising and restoring is asynchronous: the state change is posted to the
+		// application, which then releases or rebuilds its render surfaces. Sampling before
+		// that finishes reads a value mid-transition. The condition waited on is the process
+		// footprint holding still, which is what the caller is about to measure. CPU time
+		// would not work here: the device polling thread never goes idle.
+		private static void SettleAfterWindowStateChange(Process process)
+		{
+			const long stillMb = 2;
+			Ui.WaitFor(() =>
+			{
+				var before = MemoryLeak.Measure(process).PrivateMb;
+				Thread.Sleep(400);
+				var after = MemoryLeak.Measure(process).PrivateMb;
+				return Math.Abs(after - before) < stillMb ? (object)true : null;
+			}, TimeSpan.FromSeconds(15), "the window state change to settle");
 		}
 
 	}

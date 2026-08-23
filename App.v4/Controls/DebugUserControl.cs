@@ -389,6 +389,36 @@ namespace x360ce.App.Controls
 
 		#endregion
 
+		/// <summary>
+		/// Light every navigation glyph on all four controller pictures at once.
+		/// </summary>
+		/// <remarks>
+		/// Checking glyph placement one button at a time means pressing twenty six of them per
+		/// controller. Showing them together makes a misplaced or missing glyph obvious in one
+		/// look, which is what this is for while the picture is being rebuilt.
+		/// </remarks>
+		private void ShowNavImagesButton_Click(object sender, EventArgs e)
+		{
+			var form = MainForm.Current;
+			if (form == null || form.PadControls == null)
+				return;
+			_NavImagesShown = !_NavImagesShown;
+			ShowNavImagesButton.Text = _NavImagesShown
+				? "Hide All Pad Images"
+				: "Show All Pad Images";
+			var shown = 0;
+			foreach (var pad in form.PadControls)
+			{
+				if (pad == null)
+					continue;
+				shown += pad.ShowAllNavImages(_NavImagesShown);
+			}
+			LogTextBox.Text = string.Format("{0} navigation glyphs {1}",
+				shown, _NavImagesShown ? "shown" : "hidden");
+		}
+
+		bool _NavImagesShown;
+
 		private void ThrowExceptionButton_Click(object sender, EventArgs e)
 		{
 			ExceptionMethod();

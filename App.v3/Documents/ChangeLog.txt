@@ -1,8 +1,12 @@
-﻿v3.3.9.0 (2026-08-22)
-- Fix: Crash while filtering the games list. The grid was left permanently suspended when an update failed, so one error broke the control for the rest of the session; restoring the selected row can no longer bring the application down.
+﻿v3.3.10.0 (2026-08-22)
+- Fix: Changes and License text on the About screen ran together as one paragraph.
+- Fix: Tray icon registered without a name, so it could not be identified in Windows taskbar settings.
+
+v3.3.9.0 (2026-08-22)
+- Fix: Crash while filtering the games list.
 
 v3.3.8.0 (2026-08-22)
-- Fix: Crash on Windows 8 and newer when Microsoft's XInput library was used. Only xinput1_3.dll was looked for, which ships with the DirectX 9 redistributable rather than with Windows; the newest installed xinput1_?.dll is now used.
+- Fix: Crash on Windows 8 and newer when Microsoft's XInput library was used.
 - Fix: Error report failed to build when the exception carried extra data (PR #1605, Rislantrs).
 
 v3.2.10.82 (2015-10-20)

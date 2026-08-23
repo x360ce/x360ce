@@ -466,6 +466,7 @@ namespace x360ce.App
 			// 
 			this.TrayNotifyIcon.ContextMenuStrip = this.TrayContextMenuStrip;
 			this.TrayNotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("TrayNotifyIcon.Icon")));
+			this.TrayNotifyIcon.Text = "X360CE 4 Controller Emulator";
 			this.TrayNotifyIcon.Visible = true;
 			// 
 			// TrayContextMenuStrip

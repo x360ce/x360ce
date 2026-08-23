@@ -49,8 +49,7 @@
 			this.GeneralCenterPanel = new System.Windows.Forms.Panel();
 			this.RemapAllButton = new System.Windows.Forms.Button();
 			this.MapNameComboBox = new System.Windows.Forms.ComboBox();
-			this.XboxImageHost = new System.Windows.Forms.Integration.ElementHost();
-			this.XboxImage = new x360ce.App.Controls.XboxImageControl();
+			this.XboxImage = new x360ce.App.Controls.XboxImageUserControl();
 			this.DPadUpLabel = new System.Windows.Forms.Label();
 			this.DPadUpComboBox = new System.Windows.Forms.ComboBox();
 			this.DPadDownLabel = new System.Windows.Forms.Label();
@@ -189,12 +188,6 @@
 			this.RightMotorTestTrackBar = new System.Windows.Forms.TrackBar();
 			this.RightMotorTestTextBox = new System.Windows.Forms.TextBox();
 			this.RightMotorPeriodTextBox = new System.Windows.Forms.TextBox();
-			this.MacrosTabPage = new System.Windows.Forms.TabPage();
-			this.UserMacrosHost = new System.Windows.Forms.Integration.ElementHost();
-			this.UserMacrosPanel = new x360ce.App.Controls.UserMacrosControl();
-			this.XInputTabPage = new System.Windows.Forms.TabPage();
-			this.XInputHost = new System.Windows.Forms.Integration.ElementHost();
-			this.xInputUserControl1 = new x360ce.App.Controls.XInputUserControl();
 			this.DiMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.MainToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.PastePresetButton = new System.Windows.Forms.Button();
@@ -257,8 +250,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).BeginInit();
-			this.MacrosTabPage.SuspendLayout();
-			this.XInputTabPage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).BeginInit();
 			this.GamesToolStrip.SuspendLayout();
 			this.SuspendLayout();
@@ -548,7 +539,7 @@
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.GeneralCenterPanel.Controls.Add(this.RemapAllButton);
 			this.GeneralCenterPanel.Controls.Add(this.MapNameComboBox);
-			this.GeneralCenterPanel.Controls.Add(this.XboxImageHost);
+			this.GeneralCenterPanel.Controls.Add(this.XboxImage);
 			this.GeneralCenterPanel.Controls.Add(this.DPadUpLabel);
 			this.GeneralCenterPanel.Controls.Add(this.DPadUpComboBox);
 			this.GeneralCenterPanel.Controls.Add(this.DPadDownLabel);
@@ -588,14 +579,12 @@
 			this.MapNameComboBox.TabIndex = 47;
 			this.MapNameComboBox.SelectedIndexChanged += new System.EventHandler(this.MapNameComboBox_SelectedIndexChanged);
 			// 
-			// XboxImageHost
+			// XboxImage
 			// 
-			this.XboxImageHost.Location = new System.Drawing.Point(3, 30);
-			this.XboxImageHost.Name = "XboxImageHost";
-			this.XboxImageHost.Size = new System.Drawing.Size(256, 289);
-			this.XboxImageHost.TabIndex = 28;
-			this.XboxImageHost.Text = "XboxImageHost";
-			this.XboxImageHost.Child = this.XboxImage;
+			this.XboxImage.Location = new System.Drawing.Point(3, 30);
+			this.XboxImage.Name = "XboxImage";
+			this.XboxImage.Size = new System.Drawing.Size(256, 289);
+			this.XboxImage.TabIndex = 28;
 			// 
 			// DPadUpLabel
 			// 
@@ -1372,8 +1361,6 @@
 			this.PadTabControl.Controls.Add(this.LeftThumbTabPage);
 			this.PadTabControl.Controls.Add(this.RightThumbTabPage);
 			this.PadTabControl.Controls.Add(this.ForceFeedbackTabPage);
-			this.PadTabControl.Controls.Add(this.MacrosTabPage);
-			this.PadTabControl.Controls.Add(this.XInputTabPage);
 			this.PadTabControl.Controls.Add(this.DirectInputTabPage);
 			this.PadTabControl.Location = new System.Drawing.Point(3, 116);
 			this.PadTabControl.Multiline = true;
@@ -2110,46 +2097,6 @@
 			this.RightMotorPeriodTextBox.Text = "0 ";
 			this.RightMotorPeriodTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
-			// MacrosTabPage
-			// 
-			this.MacrosTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.MacrosTabPage.Controls.Add(this.UserMacrosHost);
-			this.MacrosTabPage.Location = new System.Drawing.Point(4, 76);
-			this.MacrosTabPage.Name = "MacrosTabPage";
-			this.MacrosTabPage.Padding = new System.Windows.Forms.Padding(3);
-			this.MacrosTabPage.Size = new System.Drawing.Size(192, 20);
-			this.MacrosTabPage.TabIndex = 7;
-			this.MacrosTabPage.Text = "Macros";
-			// 
-			// UserMacrosHost
-			// 
-			this.UserMacrosHost.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.UserMacrosHost.Location = new System.Drawing.Point(3, 3);
-			this.UserMacrosHost.Name = "UserMacrosHost";
-			this.UserMacrosHost.Size = new System.Drawing.Size(186, 14);
-			this.UserMacrosHost.TabIndex = 0;
-			this.UserMacrosHost.Child = this.UserMacrosPanel;
-			// 
-			// XInputTabPage
-			// 
-			this.XInputTabPage.BackColor = System.Drawing.SystemColors.Control;
-			this.XInputTabPage.Controls.Add(this.XInputHost);
-			this.XInputTabPage.Location = new System.Drawing.Point(4, 76);
-			this.XInputTabPage.Name = "XInputTabPage";
-			this.XInputTabPage.Size = new System.Drawing.Size(192, 20);
-			this.XInputTabPage.TabIndex = 6;
-			this.XInputTabPage.Text = "XInput";
-			// 
-			// XInputHost
-			// 
-			this.XInputHost.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.XInputHost.Location = new System.Drawing.Point(0, 0);
-			this.XInputHost.Name = "XInputHost";
-			this.XInputHost.Size = new System.Drawing.Size(192, 20);
-			this.XInputHost.TabIndex = 0;
-			this.XInputHost.Text = "elementHost1";
-			this.XInputHost.Child = this.xInputUserControl1;
-			// 
 			// DiMenuStrip
 			// 
 			this.DiMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -2529,8 +2476,6 @@
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorStrengthTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorPeriodTrackBar)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.RightMotorTestTrackBar)).EndInit();
-			this.MacrosTabPage.ResumeLayout(false);
-			this.XInputTabPage.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.MappedDevicesDataGridView)).EndInit();
 			this.GamesToolStrip.ResumeLayout(false);
 			this.GamesToolStrip.PerformLayout();
@@ -2731,14 +2676,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
 		private System.Windows.Forms.Button CopyPresetButton;
 		private System.Windows.Forms.Button PastePresetButton;
-		private System.Windows.Forms.Integration.ElementHost XboxImageHost;
-		private XboxImageControl XboxImage;
+		private XboxImageUserControl XboxImage;
 		private System.Windows.Forms.Button RemapAllButton;
-		private System.Windows.Forms.TabPage XInputTabPage;
-		private System.Windows.Forms.Integration.ElementHost XInputHost;
-		private XInputUserControl xInputUserControl1;
-		private System.Windows.Forms.TabPage MacrosTabPage;
-		private System.Windows.Forms.Integration.ElementHost UserMacrosHost;
-		private UserMacrosControl UserMacrosPanel;
 	}
 }

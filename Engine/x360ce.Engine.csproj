@@ -221,8 +221,11 @@
     <Compile Include="JocysCom\Controls\ControlsHelper.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.Windows.cs" />
     <Compile Include="JocysCom\Controls\ControlsHelper.WPF.cs" />
-    <Compile Include="JocysCom\Controls\ErrorReportControl.xaml.cs">
-      <DependentUpon>ErrorReportControl.xaml</DependentUpon>
+    <Compile Include="JocysCom\Controls\ErrorReportUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JocysCom\Controls\ErrorReportUserControl.Designer.cs">
+      <DependentUpon>ErrorReportUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\Controls\InfoForm.cs">
       <SubType>Form</SubType>
@@ -283,9 +286,6 @@
     </Compile>
     <Compile Include="JocysCom\IO\HardwareControl.Designer.cs">
       <DependentUpon>HardwareControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JocysCom\Controls\HardwareControl\HardwareDeviceControl.xaml.cs">
-      <DependentUpon>HardwareDeviceControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="JocysCom\IO\LogFileWriter.cs" />
     <Compile Include="JocysCom\Mail\EmailResult.cs" />
@@ -529,21 +529,6 @@
     <Content Include="JocysCom\Extensions\ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="JocysCom\Controls\ErrorReportControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="JocysCom\Controls\Themes\Default.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="JocysCom\Controls\HardwareControl\HardwareDeviceControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="JocysCom\Controls\Themes\Icons.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

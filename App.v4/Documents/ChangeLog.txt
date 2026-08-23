@@ -1,24 +1,36 @@
-﻿v4.17.49.0 (2026-08-22)
-- Fixed: Crash while refreshing the mapped device list. The grid was left permanently suspended when an update failed, so one error broke the control for the rest of the session; restoring the selected row can no longer bring the application down. Most reported crash in support mail.
-- Fixed: Crash when the active window closed while its process was being identified, which could take the application down from a system hook.
-- Fixed: A process handle was leaked for every running process each time the active window changed.
-- Changed: Normal DirectInput device conditions - already acquired, not connected, command not recognised, effect not downloaded, held by another application - are no longer reported as faults. They occur routinely while switching a device to exclusive mode.
+﻿v4.17.50.0 (2026-08-22)
+- Changed: Controller picture drawn with Windows Forms; last WPF use removed. Memory drops from 198 MB to 85 MB.
+- Fixed: D-pad and thumbstick markers overlapped each other on the controller picture.
+- Changed: Navigation glyphs are now bitmaps at full artwork resolution.
+- Changed: Error report window rebuilt in Windows Forms. It no longer clips its buttons and fills the window.
+- Fixed: Changes and License text on the About screen ran together as one paragraph.
+- Fixed: Tray icon registered without a name, so it could not be identified in Windows taskbar settings.
+- Removed: Macros tab. Never finished and hidden at start-up.
+- Removed: XInput tab. Never finished and hidden at start-up.
+- Removed: Interface files left unused by the rewrites above.
+- Added: Debug panel button to show all controller glyphs at once.
+
+v4.17.49.0 (2026-08-22)
+- Fixed: Crash while refreshing the mapped device list. Most reported crash in support mail.
+- Fixed: Crash when the active window closed while its process was being identified.
+- Fixed: Process handle leaked for every running process each time the active window changed.
+- Changed: Normal DirectInput device conditions are no longer reported as faults.
 
 v4.17.46.0 (2026-08-22)
-- Fixed: Virtual gamepad bus client was created and destroyed on every controller update when the selected game did not use virtual emulation, opening and closing a driver handle hundreds of times per second (PR #1604, ykondury).
-- Fixed: Controller update thread stopped on the first unhandled error, which silently ended device polling and virtual controller feeding while the window kept running (PR #1604, ykondury).
-- Fixed: Failure to send a state to a virtual controller is now handled and the controller is replugged, instead of ending the update thread (PR #1604, ykondury).
+- Fixed: Virtual gamepad bus client opened and closed a driver handle hundreds of times per second (PR #1604, ykondury).
+- Fixed: Controller update thread stopped on the first unhandled error, silently ending device polling (PR #1604, ykondury).
+- Fixed: Failed state send to a virtual controller now replugs it instead of ending the update thread (PR #1604, ykondury).
 - Fixed: Failed virtual controller connect left placeholder controllers plugged in (PR #1604, ykondury).
-- Fixed: Failed virtual controller disconnect was reported as success and left the slot marked connected (PR #1604, ykondury).
-- Fixed: Virtual controller slot number outside 1-4 threw instead of returning a result (PR #1604, ykondury).
-- Fixed: Closing or reloading waited for the controller thread forever if it was blocked in a driver call; it now waits up to two seconds (PR #1604, ykondury).
+- Fixed: Failed virtual controller disconnect was reported as success (PR #1604, ykondury).
+- Fixed: Virtual controller slot outside 1-4 threw instead of returning a result (PR #1604, ykondury).
+- Fixed: Closing waited forever if the controller thread was blocked in a driver call (PR #1604, ykondury).
 - Fixed: Application hung while writing an error report when no control had focus (PR #1596, mNandhu).
 - Fixed: Error report failed to build when the exception carried extra data (PR #1605, Rislantrs).
 - Fixed: Guide button was not passed to the virtual controller (PR #1473, OmarIskandarani-KSO).
-- Fixed: Visual C++ runtime is detected by registry version instead of the installed program name, which changes with every release and with the display language (PR #1576, Glitchtest51).
-- Changed: Removing the virtual gamepad bus now checks how it was installed, asks for confirmation, and verifies the result. A bus installed by another installer is left alone.
-- Changed: Removing HID Guardian now clears the HID class filter first and verifies it, before removing the driver. Reverse order could leave the machine without keyboard and mouse.
-- Added: HID Guardian install button in development builds only, so the removal path can be tested.
+- Fixed: Visual C++ runtime is detected by registry version instead of program name (PR #1576, Glitchtest51).
+- Changed: Removing the virtual gamepad bus checks how it was installed, confirms, and verifies the result.
+- Changed: Removing HID Guardian clears the HID class filter first and verifies it before removing the driver.
+- Added: HID Guardian install button in development builds only, so removal can be tested.
 
 v4.17.33.0 (2026-08-22)
 - Fixed: Crash on Windows 8 and newer when Microsoft's XInput library was used (only xinput1_3.dll was looked for; now the newest installed xinput1_?.dll is used).
