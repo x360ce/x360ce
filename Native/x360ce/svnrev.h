@@ -2,10 +2,10 @@
 #ifndef SVN_REV_H
 #define SVN_REV_H
 
-#define SVN_REV         2590
-#define SVN_REVSTR      "2590"
-#define SVN_REVDATE     "2026-05-09"
-#define SVN_REVSTAMP    20260509L
+#define SVN_REV         2613
+#define SVN_REVSTR      "2613"
+#define SVN_REVDATE     "2026-08-23"
+#define SVN_REVSTAMP    20260823L
 #define SVN_REVMODIFIED 1
 
 #endif /* SVN_REV_H */
