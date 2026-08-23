@@ -182,6 +182,11 @@ namespace x360ce.App
 		public static void LoadHelp(System.Windows.Forms.RichTextBox box, string resourceName)
 		{
 			var stream = EngineHelper.GetResourceStream(resourceName);
+			// A help document that is missing or renamed leaves the box empty. It used to throw
+			// from the constructor of whatever control asked for it, which took the whole screen
+			// down over text nobody had read yet.
+			if (stream == null)
+				return;
 			var sr = new StreamReader(stream);
 			//NameValueCollection list = new NameValueCollection();
 			//list.Add("font-name-default", "'Microsoft Sans Serif'");

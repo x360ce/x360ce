@@ -30,6 +30,40 @@ namespace x360ce.App.Controls
 #endif
 		}
 
+		/// <summary>
+		/// Read driver status when its own tab is opened.
+		/// </summary>
+		/// <remarks>
+		/// This used to happen only when the main window switched to the options page, so the
+		/// control could not tell whether it was visible without asking the main form. Watching its
+		/// own tabs means the status is right whoever is hosting it, and the checks stay off the
+		/// start-up path because they enumerate devices.
+		/// </remarks>
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			MainTabControl.SelectedIndexChanged += DriverTab_SelectedIndexChanged;
+			RefreshSelectedDriverTab();
+		}
+
+		private void DriverTab_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			RefreshSelectedDriverTab();
+		}
+
+		void RefreshSelectedDriverTab()
+		{
+			var tab = MainTabControl.SelectedTab;
+			if (tab == VirtualDeviceTabPage)
+				RefreshViGEmBusStatus();
+			else if (tab == HidGuardianTabPage)
+				RefreshHidGuardianStatus();
+			else if (tab == HidHideTabPage)
+				RefreshHidHideStatus();
+		}
+
 		public void InitOptions()
 		{
 			DebugModeCheckBox_CheckedChanged(DebugModeCheckBox, null);

@@ -176,12 +176,41 @@ namespace x360ce.Engine
 		/// </summary>
 		public static Stream GetResourceStream(string name)
 		{
-			var path = GetResourcePath(name);
-			if (path == null)
-				return null;
-			var assembly = Assembly.GetEntryAssembly();
-			var sr = assembly.GetManifestResourceStream(path);
-			return sr;
+			foreach (var assembly in GetResourceAssemblies())
+			{
+				var path = GetResourcePath(assembly, name);
+				if (path != null)
+					return assembly.GetManifestResourceStream(path);
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Assemblies that may carry embedded resources, in the order they are searched.
+		/// </summary>
+		/// <remarks>
+		/// The assembly that started the process comes first, because that is where the resource
+		/// normally lives. It is not the only candidate though: it is null when something else hosts
+		/// the code, and it is the wrong assembly when a control is loaded outside the application,
+		/// which is what a test harness does. Looking wider costs one array scan and makes the
+		/// difference between a control that can be examined on its own and one that cannot.
+		/// </remarks>
+		static IEnumerable<Assembly> GetResourceAssemblies()
+		{
+			var seen = new List<Assembly>();
+			var entry = Assembly.GetEntryAssembly();
+			if (entry != null)
+				seen.Add(entry);
+			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				if (seen.Contains(assembly) || assembly.IsDynamic)
+					continue;
+				// Only this product ships the resources being looked for.
+				if (!assembly.GetName().Name.StartsWith("x360ce", StringComparison.OrdinalIgnoreCase))
+					continue;
+				seen.Add(assembly);
+			}
+			return seen;
 		}
 
 		public static byte[] GetResourceBytes(string name)
@@ -200,7 +229,18 @@ namespace x360ce.Engine
 		/// </summary>
 		public static string GetResourcePath(string name)
 		{
-			var assembly = Assembly.GetEntryAssembly();
+			foreach (var assembly in GetResourceAssemblies())
+			{
+				var path = GetResourcePath(assembly, name);
+				if (path != null)
+					return path;
+			}
+			return null;
+		}
+
+		/// <summary>Resource name inside one assembly, or null when it does not carry it.</summary>
+		static string GetResourcePath(Assembly assembly, string name)
+		{
 			var all = assembly.GetManifestResourceNames();
 			var suffix = Environment.Is64BitProcess ? "x64" : "x86";
 			// "Name_x64.ext" style: architecture inserted into the file name
