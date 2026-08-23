@@ -200,7 +200,7 @@ namespace x360ce.App.Controls
 			if (target.Type == type && target.Show == show)
 				return;
 			_States[code] = new GlyphState { Type = type, Show = show };
-			if (NavImages.GetMaster(name) != null)
+			if (NavImages.Exists(name))
 				Invalidate();
 		}
 
@@ -344,36 +344,61 @@ namespace x360ce.App.Controls
 		}
 
 		/// <summary>Travel of a thumbstick indicator from its centre, in canvas units.</summary>
-		const int ThumbTravel = 14;
+		public const int ThumbTravel = 14;
+
+		/// <summary>
+		/// Where a thumbstick mark sits, each axis from -1 to 1.
+		/// </summary>
+		/// <remarks>Pure, so the travel can be checked without drawing anything.</remarks>
+		public static Point ThumbMarkPoint(Point centre, PointF position)
+		{
+			// Screen coordinates run down the way, so up on the stick is negative here.
+			return new Point(
+				centre.X + (int)Math.Round(Clamp(position.X) * ThumbTravel),
+				centre.Y - (int)Math.Round(Clamp(position.Y) * ThumbTravel));
+		}
 
 		void DrawThumb(Graphics g, MapCode code, PointF position)
 		{
 			var info = _Infos.FirstOrDefault(x => x.Code == code);
 			if (info == null)
 				return;
-			var centre = CanvasPoint(info);
-			// Screen coordinates run down the way, so up on the stick is negative here.
-			centre.X += (int)Math.Round(position.X * ThumbTravel);
-			centre.Y -= (int)Math.Round(position.Y * ThumbTravel);
-			var bounds = ToScreen(centre, IndicatorSize);
+			var bounds = ToScreen(ThumbMarkPoint(CanvasPoint(info), position), IndicatorSize);
 			ControlsHelper.DrawImageWithOpacity(g,
 				NavImages.Get("NavAxisActive", bounds.Width), bounds, ShownOpacity);
 		}
 
-		/// <summary>Travel of a trigger indicator, in canvas units.</summary>
-		const int TriggerTravel = 20;
+		/// <summary>Where a trigger bar rests, below its arrow, in canvas units.</summary>
+		public const int TriggerRestOffset = 24;
 
+		/// <summary>How far a trigger bar rises when the trigger is fully pressed.</summary>
+		public const int TriggerTravel = 26;
+
+		/// <summary>
+		/// Where a trigger bar sits for a given amount of travel, from 0 released to 1 pressed.
+		/// </summary>
+		/// <remarks>Pure, so the travel can be checked without drawing anything.</remarks>
+		public static Point TriggerBarPoint(Point buttonCentre, float level)
+		{
+			level = level < 0f ? 0f : level > 1f ? 1f : level;
+			// Rest is below the arrow; pressing lifts the bar towards the top of the shoulder.
+			return new Point(buttonCentre.X,
+				buttonCentre.Y + TriggerRestOffset - (int)Math.Round(level * TriggerTravel));
+		}
+
+		/// <summary>
+		/// Draw a trigger bar at the height its trigger is pressed to.
+		/// </summary>
+		/// <remarks>
+		/// The bar is always on screen and slides, which is what makes it read as travel. Hiding
+		/// it while the trigger is released turns the same thing into a blink.
+		/// </remarks>
 		void DrawTrigger(Graphics g, MapCode code, float level)
 		{
-			if (level <= 0f)
-				return;
 			var info = _Infos.FirstOrDefault(x => x.Code == code);
 			if (info == null)
 				return;
-			var centre = CanvasPoint(info);
-			// A pressed trigger draws its bar further down the shoulder.
-			centre.Y += (int)Math.Round(level * TriggerTravel);
-			var bounds = ToScreen(centre, IndicatorSize);
+			var bounds = ToScreen(TriggerBarPoint(CanvasPoint(info), level), IndicatorSize);
 			ControlsHelper.DrawImageWithOpacity(g,
 				NavImages.Get("NavTriggerActive", bounds.Width), bounds, ShownOpacity);
 		}

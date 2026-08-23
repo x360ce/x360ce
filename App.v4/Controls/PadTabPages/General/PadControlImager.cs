@@ -14,13 +14,17 @@ namespace x360ce.App.Controls
 		{
 			locations.Add(GamepadButtonFlags.Y, new Point(196, 29));
 			// Create images.
-			var topImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png"));
-			var frontImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerFront.png"));
 			markB = new Bitmap(EngineHelper.GetResourceStream("Images.MarkButton.png"));
 			markA = new Bitmap(EngineHelper.GetResourceStream("Images.MarkAxis.png"));
 			markC = new Bitmap(EngineHelper.GetResourceStream("Images.MarkController.png"));
-			float rH = topImage.HorizontalResolution;
-			float rV = topImage.VerticalResolution;
+			// Only the resolution of the controller picture is wanted here. The picture itself
+			// belongs to the control that draws it, so this copy is released straight away.
+			float rH, rV;
+			using (var topImage = new Bitmap(EngineHelper.GetResourceStream("Images.xboxControllerTop.png")))
+			{
+				rH = topImage.HorizontalResolution;
+				rV = topImage.VerticalResolution;
+			}
 			// Make sure resolution is same everywhere so images won't be resized.
 			markB.SetResolution(rH, rV);
 			markA.SetResolution(rH, rV);

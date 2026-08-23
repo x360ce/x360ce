@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text.RegularExpressions;
 using x360ce.Engine;
 
@@ -19,7 +20,6 @@ namespace x360ce.App.Controls
 	{
 
 		static readonly object LoadLock = new object();
-		static readonly Dictionary<string, Bitmap> Masters = new Dictionary<string, Bitmap>();
 		static readonly Dictionary<string, Bitmap> Scaled = new Dictionary<string, Bitmap>();
 
 		/// <summary>Every glyph name that ships, in the order they read on screen.</summary>
@@ -73,33 +73,25 @@ namespace x360ce.App.Controls
 			return code;
 		}
 
-		/// <summary>Full size glyph, or null when the name does not ship.</summary>
-		public static Bitmap GetMaster(string name)
+		/// <summary>True when a glyph of this name ships.</summary>
+		/// <remarks>Answered from the list rather than by decoding the image.</remarks>
+		public static bool Exists(string name)
 		{
-			if (string.IsNullOrEmpty(name))
-				return null;
-			lock (LoadLock)
-			{
-				Bitmap master;
-				if (Masters.TryGetValue(name, out master))
-					return master;
-				// A missing glyph must not take the interface down: the caller draws nothing.
-				var stream = EngineHelper.GetResourceStream("Nav." + name + ".png");
-				master = stream == null ? null : new Bitmap(stream);
-				Masters.Add(name, master);
-				return master;
-			}
+			return !string.IsNullOrEmpty(name) && Names.Contains(name);
 		}
 
 		/// <summary>
 		/// Glyph scaled to a square of the given size, cached for reuse.
 		/// </summary>
+		/// <remarks>
+		/// The 512 pixel master is decoded, scaled and released again. Keeping all seventeen
+		/// resident would hold about 18 MB of image memory to draw squares of roughly 18 pixels;
+		/// the scaled copies cost a few kilobytes together. A size that has not been seen before
+		/// decodes once more, which happens only when the window or the display scaling changes.
+		/// </remarks>
 		public static Bitmap Get(string name, int size)
 		{
-			if (size < 1)
-				return null;
-			var master = GetMaster(name);
-			if (master == null)
+			if (size < 1 || !Exists(name))
 				return null;
 			var key = name + ":" + size;
 			lock (LoadLock)
@@ -107,12 +99,18 @@ namespace x360ce.App.Controls
 				Bitmap scaled;
 				if (Scaled.TryGetValue(key, out scaled))
 					return scaled;
-				scaled = new Bitmap(size, size);
-				using (var g = Graphics.FromImage(scaled))
+				var stream = EngineHelper.GetResourceStream("Nav." + name + ".png");
+				if (stream == null)
+					return null;
+				using (var master = new Bitmap(stream))
 				{
-					g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-					g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-					g.DrawImage(master, new Rectangle(0, 0, size, size));
+					scaled = new Bitmap(size, size);
+					using (var g = Graphics.FromImage(scaled))
+					{
+						g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+						g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+						g.DrawImage(master, new Rectangle(0, 0, size, size));
+					}
 				}
 				Scaled.Add(key, scaled);
 				return scaled;

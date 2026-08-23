@@ -1,7 +1,8 @@
 ﻿v4.17.50.0 (2026-08-22)
 - Changed: Controller picture drawn with Windows Forms; last WPF use removed. Memory drops from 198 MB to 85 MB.
 - Fixed: D-pad and thumbstick markers overlapped each other on the controller picture.
-- Changed: Navigation glyphs are now bitmaps at full artwork resolution.
+- Fixed: Trigger markers blinked instead of sliding. They now rest below the trigger and rise as it is pressed.
+- Changed: Navigation glyphs are now bitmaps at full artwork resolution, kept only while being scaled. Saves about 7 MB.
 - Changed: Error report window rebuilt in Windows Forms. It no longer clips its buttons and fills the window.
 - Fixed: Changes and License text on the About screen ran together as one paragraph.
 - Fixed: Tray icon registered without a name, so it could not be identified in Windows taskbar settings.

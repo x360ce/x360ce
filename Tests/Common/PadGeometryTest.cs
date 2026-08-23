@@ -136,6 +136,68 @@ namespace x360ce.Tests
 			Assert.AreEqual(MapCode.ButtonA, NavImages.GetNameCode(MapCode.ButtonA));
 		}
 
+		[TestMethod, TestCategory("pad-images"), TestCategory("smoke")]
+		[Description("A trigger bar travels a visible distance as the trigger is pressed")]
+		public void Trigger_bar_travels_as_the_trigger_is_pressed()
+		{
+			var button = new Point(63, 27);
+			var released = XboxImageUserControl.TriggerBarPoint(button, 0f);
+			var pressed = XboxImageUserControl.TriggerBarPoint(button, 1f);
+
+			// Pressing lifts the bar up the shoulder, so the screen coordinate falls.
+			Assert.IsTrue(pressed.Y < released.Y,
+				"The bar moved from " + released.Y + " to " + pressed.Y + ", which is not upwards.");
+			Assert.AreEqual(XboxImageUserControl.TriggerTravel, released.Y - pressed.Y,
+				"Full travel should move the bar by the whole trigger range.");
+			Assert.AreEqual(released.X, pressed.X, "The bar drifted sideways.");
+
+			// Every step in between must move it, or it reads as a blink rather than travel.
+			var previous = released.Y;
+			foreach (var level in new[] { 0.25f, 0.5f, 0.75f, 1f })
+			{
+				var y = XboxImageUserControl.TriggerBarPoint(button, level).Y;
+				Assert.IsTrue(y < previous,
+					"The bar stopped moving at " + level + ": still at " + y + ".");
+				previous = y;
+			}
+		}
+
+		[TestMethod, TestCategory("pad-images"), TestCategory("smoke")]
+		[Description("A released trigger still shows its bar, at rest below the arrow")]
+		public void Released_trigger_still_shows_its_bar()
+		{
+			var button = new Point(63, 27);
+			var released = XboxImageUserControl.TriggerBarPoint(button, 0f);
+			// Resting below the arrow is what makes the bar readable as a level rather than a light.
+			Assert.AreEqual(button.Y + XboxImageUserControl.TriggerRestOffset, released.Y,
+				"A released trigger must rest below its arrow, not sit on it or vanish.");
+			Assert.IsTrue(released.Y > button.Y, "The resting bar overlaps the arrow.");
+		}
+
+		[TestMethod, TestCategory("pad-images"), TestCategory("smoke")]
+		[Description("A thumbstick mark follows the stick in both axes")]
+		public void Thumb_mark_follows_the_stick()
+		{
+			var centre = new Point(59, 160);
+			Assert.AreEqual(centre, XboxImageUserControl.ThumbMarkPoint(centre, new PointF(0f, 0f)),
+				"A centred stick should leave the mark in the middle.");
+
+			var right = XboxImageUserControl.ThumbMarkPoint(centre, new PointF(1f, 0f));
+			var left = XboxImageUserControl.ThumbMarkPoint(centre, new PointF(-1f, 0f));
+			var up = XboxImageUserControl.ThumbMarkPoint(centre, new PointF(0f, 1f));
+			var down = XboxImageUserControl.ThumbMarkPoint(centre, new PointF(0f, -1f));
+
+			Assert.IsTrue(right.X > centre.X && left.X < centre.X, "Left and right are swapped.");
+			// Up on the stick must raise the mark, which lowers the screen coordinate.
+			Assert.IsTrue(up.Y < centre.Y && down.Y > centre.Y, "Up and down are swapped.");
+			Assert.AreEqual(XboxImageUserControl.ThumbTravel, right.X - centre.X, "Sideways travel is wrong.");
+			Assert.AreEqual(XboxImageUserControl.ThumbTravel, centre.Y - up.Y, "Vertical travel is wrong.");
+
+			// Beyond the ends of the stick the mark must stop rather than run off the picture.
+			Assert.AreEqual(right, XboxImageUserControl.ThumbMarkPoint(centre, new PointF(9f, 0f)),
+				"An out of range value moved the mark past the edge of its travel.");
+		}
+
 		static double Distance(Point a, Point b)
 		{
 			double dx = a.X - b.X, dy = a.Y - b.Y;
