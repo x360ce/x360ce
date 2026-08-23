@@ -82,6 +82,16 @@
 			this.AllowRemote2CheckBox = new System.Windows.Forms.CheckBox();
 			this.AllowRemote1CheckBox = new System.Windows.Forms.CheckBox();
 			this.MainTabControl = new System.Windows.Forms.TabControl();
+			this.HidHideTabPage = new System.Windows.Forms.TabPage();
+			this.HidHideGroupBox = new System.Windows.Forms.GroupBox();
+			this.HidHideLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.HidHideStatusLabel = new System.Windows.Forms.Label();
+			this.HidHideStatusTextBox = new System.Windows.Forms.TextBox();
+			this.HidHideRefreshButton = new System.Windows.Forms.Button();
+			this.HidHideButtonsPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.HidHideDownloadButton = new System.Windows.Forms.Button();
+			this.HidHideConfigureButton = new System.Windows.Forms.Button();
+			this.HidHideInfoLabel = new System.Windows.Forms.Label();
 			this.GeneralTabPage = new System.Windows.Forms.TabPage();
 			this.GeneralPanel = new System.Windows.Forms.Panel();
 			this.DevelopingGroupBox = new System.Windows.Forms.GroupBox();
@@ -123,6 +133,10 @@
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
 			this.HidGuardianTabPage.SuspendLayout();
+			this.HidHideTabPage.SuspendLayout();
+			this.HidHideGroupBox.SuspendLayout();
+			this.HidHideLayoutPanel.SuspendLayout();
+			this.HidHideButtonsPanel.SuspendLayout();
 			this.HidGuardianPanel.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -723,6 +737,7 @@
 			this.MainTabControl.Controls.Add(this.GeneralTabPage);
 			this.MainTabControl.Controls.Add(this.InternetOptionsTabPage);
 			this.MainTabControl.Controls.Add(this.VirtualDeviceTabPage);
+			this.MainTabControl.Controls.Add(this.HidHideTabPage);
 			this.MainTabControl.Controls.Add(this.HidGuardianTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.Location = new System.Drawing.Point(0, 0);
@@ -858,6 +873,116 @@
 			this.VirtualDevicePanel.Size = new System.Drawing.Size(192, 74);
 			this.VirtualDevicePanel.TabIndex = 72;
 			// 
+			// HidHideTabPage
+			// 
+			this.HidHideTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.HidHideTabPage.Controls.Add(this.HidHideInfoLabel);
+			this.HidHideTabPage.Controls.Add(this.HidHideGroupBox);
+			this.HidHideTabPage.Location = new System.Drawing.Point(4, 22);
+			this.HidHideTabPage.Name = "HidHideTabPage";
+			this.HidHideTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.HidHideTabPage.Size = new System.Drawing.Size(192, 74);
+			this.HidHideTabPage.TabIndex = 4;
+			this.HidHideTabPage.Text = "HID Hide";
+			// 
+			// HidHideGroupBox
+			// 
+			this.HidHideGroupBox.AutoSize = true;
+			this.HidHideGroupBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidHideGroupBox.Controls.Add(this.HidHideLayoutPanel);
+			this.HidHideGroupBox.Dock = System.Windows.Forms.DockStyle.Top;
+			this.HidHideGroupBox.Name = "HidHideGroupBox";
+			this.HidHideGroupBox.Padding = new System.Windows.Forms.Padding(6, 3, 6, 6);
+			this.HidHideGroupBox.TabIndex = 0;
+			this.HidHideGroupBox.TabStop = false;
+			this.HidHideGroupBox.Text = "HID Hide by Nefarius";
+			// 
+			// HidHideLayoutPanel
+			// 
+			this.HidHideLayoutPanel.AutoSize = true;
+			this.HidHideLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidHideLayoutPanel.ColumnCount = 3;
+			this.HidHideLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.HidHideLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.HidHideLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.HidHideLayoutPanel.Controls.Add(this.HidHideStatusLabel, 0, 0);
+			this.HidHideLayoutPanel.Controls.Add(this.HidHideStatusTextBox, 1, 0);
+			this.HidHideLayoutPanel.Controls.Add(this.HidHideRefreshButton, 2, 0);
+			this.HidHideLayoutPanel.Controls.Add(this.HidHideButtonsPanel, 1, 1);
+			this.HidHideLayoutPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.HidHideLayoutPanel.Name = "HidHideLayoutPanel";
+			this.HidHideLayoutPanel.RowCount = 2;
+			this.HidHideLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.HidHideLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.HidHideLayoutPanel.TabIndex = 0;
+			// 
+			// HidHideStatusLabel
+			// 
+			this.HidHideStatusLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.HidHideStatusLabel.AutoSize = true;
+			this.HidHideStatusLabel.Margin = new System.Windows.Forms.Padding(3, 3, 6, 3);
+			this.HidHideStatusLabel.Name = "HidHideStatusLabel";
+			this.HidHideStatusLabel.TabIndex = 0;
+			this.HidHideStatusLabel.Text = "HID Hide";
+			// 
+			// HidHideStatusTextBox
+			// 
+			this.HidHideStatusTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.HidHideStatusTextBox.BackColor = System.Drawing.SystemColors.Control;
+			this.HidHideStatusTextBox.Name = "HidHideStatusTextBox";
+			this.HidHideStatusTextBox.ReadOnly = true;
+			this.HidHideStatusTextBox.TabStop = false;
+			this.HidHideStatusTextBox.TabIndex = 1;
+			// 
+			// HidHideRefreshButton
+			// 
+			this.HidHideRefreshButton.AutoSize = true;
+			this.HidHideRefreshButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidHideRefreshButton.Name = "HidHideRefreshButton";
+			this.HidHideRefreshButton.TabIndex = 2;
+			this.HidHideRefreshButton.Text = "Refresh";
+			this.HidHideRefreshButton.UseVisualStyleBackColor = true;
+			this.HidHideRefreshButton.Click += new System.EventHandler(this.HidHideRefreshButton_Click);
+			// 
+			// HidHideButtonsPanel
+			// 
+			this.HidHideButtonsPanel.AutoSize = true;
+			this.HidHideButtonsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidHideButtonsPanel.Controls.Add(this.HidHideDownloadButton);
+			this.HidHideButtonsPanel.Controls.Add(this.HidHideConfigureButton);
+			this.HidHideButtonsPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.HidHideButtonsPanel.Name = "HidHideButtonsPanel";
+			this.HidHideButtonsPanel.TabIndex = 3;
+			this.HidHideButtonsPanel.WrapContents = false;
+			// 
+			// HidHideDownloadButton
+			// 
+			this.HidHideDownloadButton.AutoSize = true;
+			this.HidHideDownloadButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidHideDownloadButton.Name = "HidHideDownloadButton";
+			this.HidHideDownloadButton.TabIndex = 0;
+			this.HidHideDownloadButton.Text = "Download HID Hide...";
+			this.HidHideDownloadButton.UseVisualStyleBackColor = true;
+			this.HidHideDownloadButton.Click += new System.EventHandler(this.HidHideDownloadButton_Click);
+			// 
+			// HidHideConfigureButton
+			// 
+			this.HidHideConfigureButton.AutoSize = true;
+			this.HidHideConfigureButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HidHideConfigureButton.Name = "HidHideConfigureButton";
+			this.HidHideConfigureButton.TabIndex = 1;
+			this.HidHideConfigureButton.Text = "Open Configuration";
+			this.HidHideConfigureButton.UseVisualStyleBackColor = true;
+			this.HidHideConfigureButton.Click += new System.EventHandler(this.HidHideConfigureButton_Click);
+			// 
+			// HidHideInfoLabel
+			// 
+			this.HidHideInfoLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.HidHideInfoLabel.Name = "HidHideInfoLabel";
+			this.HidHideInfoLabel.Padding = new System.Windows.Forms.Padding(6, 8, 6, 6);
+			this.HidHideInfoLabel.TabIndex = 1;
+			this.HidHideInfoLabel.Text = "HID Hide stops games from seeing the original controller, so only the emulated one is used. It is installed and updated separately, and configured in its own program rather than here.\r\n\r\nAfter installing, open the configuration once: the driver stays inactive until you do.";
+			// 
 			// HidGuardianTabPage
 			// 
 			this.HidGuardianTabPage.BackColor = System.Drawing.SystemColors.Control;
@@ -866,7 +991,7 @@
 			this.HidGuardianTabPage.Name = "HidGuardianTabPage";
 			this.HidGuardianTabPage.Size = new System.Drawing.Size(192, 74);
 			this.HidGuardianTabPage.TabIndex = 3;
-			this.HidGuardianTabPage.Text = "HID Guardian";
+			this.HidGuardianTabPage.Text = "HID Guardian (obsolete)";
 			// 
 			// HidGuardianPanel
 			// 
@@ -908,7 +1033,7 @@
 			this.groupBox1.Size = new System.Drawing.Size(186, 80);
 			this.groupBox1.TabIndex = 71;
 			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "HID Guardian by Nefarius";
+			this.groupBox1.Text = "HID Guardian by Nefarius - discontinued, replaced by HID Hide";
 			// 
 			// HidGuardianRefreshButton
 			// 
@@ -1009,6 +1134,14 @@
 			this.InternetOptionsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
+			this.HidHideButtonsPanel.ResumeLayout(false);
+			this.HidHideButtonsPanel.PerformLayout();
+			this.HidHideLayoutPanel.ResumeLayout(false);
+			this.HidHideLayoutPanel.PerformLayout();
+			this.HidHideGroupBox.ResumeLayout(false);
+			this.HidHideGroupBox.PerformLayout();
+			this.HidHideTabPage.ResumeLayout(false);
+			this.HidHideTabPage.PerformLayout();
 			this.HidGuardianTabPage.ResumeLayout(false);
 			this.HidGuardianPanel.ResumeLayout(false);
 			this.groupBox1.ResumeLayout(false);
@@ -1088,6 +1221,16 @@
 		private System.Windows.Forms.Button HidGuardianInstallButton;
 		private System.Windows.Forms.TextBox HidGuardianTextBox;
 		public System.Windows.Forms.TabPage HidGuardianTabPage;
+		public System.Windows.Forms.TabPage HidHideTabPage;
+		private System.Windows.Forms.GroupBox HidHideGroupBox;
+		private System.Windows.Forms.TableLayoutPanel HidHideLayoutPanel;
+		private System.Windows.Forms.Label HidHideStatusLabel;
+		private System.Windows.Forms.TextBox HidHideStatusTextBox;
+		private System.Windows.Forms.Button HidHideRefreshButton;
+		private System.Windows.Forms.FlowLayoutPanel HidHideButtonsPanel;
+		private System.Windows.Forms.Button HidHideDownloadButton;
+		private System.Windows.Forms.Button HidHideConfigureButton;
+		private System.Windows.Forms.Label HidHideInfoLabel;
 		private System.Windows.Forms.Panel HidGuardianPanel;
 		public System.Windows.Forms.Button HidGuardianRefreshButton;
 		private System.Windows.Forms.RichTextBox HelpRichTextBox;

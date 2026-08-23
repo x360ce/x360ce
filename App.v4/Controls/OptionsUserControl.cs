@@ -42,6 +42,7 @@ namespace x360ce.App.Controls
 			{
 				RefreshViGEmBusStatus();
 				RefreshHidGuardianStatus();
+				RefreshHidHideStatus();
 			}
 		}
 
@@ -377,6 +378,63 @@ namespace x360ce.App.Controls
 		#endregion
 
 		#region HID Guardian
+
+
+		#region HID Hide
+
+		/// <summary>
+		/// Show whether HID Hide is installed, and offer only what makes sense from here.
+		/// </summary>
+		/// <remarks>
+		/// HID Hide is a separate product with its own installer and its own configuration
+		/// program. This application only reports what it finds and opens the right place;
+		/// installing or configuring somebody else's driver behind the user's back would be
+		/// the wrong thing to do with a kernel driver.
+		/// </remarks>
+		void RefreshHidHideStatus()
+		{
+			var installed = DInput.VirtualDriverInstaller.IsHidHideDevicePresent();
+			var version = DInput.VirtualDriverInstaller.GetHidHideVersion();
+			var client = DInput.VirtualDriverInstaller.GetHidHideClientPath();
+			if (installed)
+			{
+				HidHideStatusTextBox.Text = string.IsNullOrEmpty(version)
+					? "Installed."
+					: string.Format("Installed. Version {0}.", version);
+			}
+			else
+			{
+				HidHideStatusTextBox.Text = Environment.Is64BitOperatingSystem
+					? "Not installed."
+					: "Not installed. HID Hide requires 64-bit Windows 10 or 11.";
+			}
+			// Nothing to open until its own setup has put the program on disk.
+			HidHideConfigureButton.Enabled = !string.IsNullOrEmpty(client);
+			HidHideDownloadButton.Text = installed ? "Check for Updates..." : "Download HID Hide...";
+		}
+
+		private void HidHideRefreshButton_Click(object sender, EventArgs e)
+		{
+			RefreshHidHideStatus();
+		}
+
+		private void HidHideDownloadButton_Click(object sender, EventArgs e)
+		{
+			ControlsHelper.OpenUrl(DInput.VirtualDriverInstaller.HidHideDownloadUrl);
+		}
+
+		private void HidHideConfigureButton_Click(object sender, EventArgs e)
+		{
+			var client = DInput.VirtualDriverInstaller.GetHidHideClientPath();
+			if (string.IsNullOrEmpty(client))
+			{
+				HidHideStatusTextBox.Text = "Configuration program not found. Install HID Hide first.";
+				return;
+			}
+			ControlsHelper.OpenPath(client);
+		}
+
+		#endregion
 
 		private void HidGuardianInstallButton_Click(object sender, EventArgs e)
 		{

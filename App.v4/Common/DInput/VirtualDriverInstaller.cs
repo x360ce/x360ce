@@ -322,6 +322,80 @@ namespace x360ce.App.DInput
 		}
 
 		#endregion
+		#region HidHide
+
+		// HidHide is the maintained successor to HID Guardian, which its author archived in 2023.
+		// It ships as its own signed installer and carries its own configuration program, so this
+		// application only detects it and opens its tools; it never installs or configures it.
+
+		/// <summary>Root device the HidHide driver installs under.</summary>
+		public const string HidHideHardwareId = "Root\\HidHide";
+
+		/// <summary>Where the driver package is published.</summary>
+		public const string HidHideDownloadUrl = "https://github.com/nefarius/HidHide/releases/latest";
+
+		/// <summary>True when the HidHide driver is present on this machine.</summary>
+		public static bool IsHidHideDevicePresent()
+		{
+			var driver = DeviceDetector.GetDrivers(DEVCLASS.SYSTEM, DIGCF.DIGCF_PRESENT,
+				SPDIT.SPDIT_COMPATDRIVER, null, HidHideHardwareId).FirstOrDefault();
+			return driver.DriverVersion != 0;
+		}
+
+		/// <summary>Installed version, or null when HidHide is not installed.</summary>
+		public static string GetHidHideVersion()
+		{
+			foreach (var root in new[] { Registry.LocalMachine, Registry.CurrentUser })
+			{
+				using (var key = root.OpenSubKey(@"SOFTWARE\Nefarius Software Solutions e.U.\HidHide"))
+				{
+					var value = key?.GetValue("Version") as string;
+					if (!string.IsNullOrEmpty(value))
+						return value;
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Full path of the HidHide configuration program, or null when it cannot be found.
+		/// </summary>
+		/// <remarks>
+		/// The install location is read from the registry where possible, because the setup lets
+		/// the user choose it. The usual folder is only a fallback for when that key is missing.
+		/// </remarks>
+		public static string GetHidHideClientPath()
+		{
+			foreach (var folder in GetHidHideFolders())
+			{
+				if (string.IsNullOrEmpty(folder))
+					continue;
+				// The setup places the programs in an architecture sub folder.
+				foreach (var relative in new[] { "HidHideClient.exe", @"x64\HidHideClient.exe" })
+				{
+					var path = Path.Combine(folder, relative);
+					if (File.Exists(path))
+						return path;
+				}
+			}
+			return null;
+		}
+
+		static string[] GetHidHideFolders()
+		{
+			string fromRegistry = null;
+			using (var key = Registry.LocalMachine.OpenSubKey(
+				@"SOFTWARE\Nefarius Software Solutions e.U.\Nefarius Software Solutions e.U. HidHide"))
+				fromRegistry = key?.GetValue("Path") as string;
+			return new[]
+			{
+				fromRegistry,
+				Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+					"Nefarius Software Solutions", "HidHide"),
+			};
+		}
+
+		#endregion
 
 	}
 }

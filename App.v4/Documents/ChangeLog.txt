@@ -1,4 +1,6 @@
 ﻿v4.17.50.0 (2026-08-22)
+- Added: HID Hide tab. Shows whether the driver is installed, links to its download page, and opens its configuration program.
+- Changed: HID Guardian tab marked obsolete. It was discontinued by its author in 2023; uninstall stays available and users are pointed to HID Hide.
 - Changed: Controller picture drawn with Windows Forms; last WPF use removed. Memory drops from 198 MB to 85 MB.
 - Fixed: D-pad and thumbstick markers overlapped each other on the controller picture.
 - Fixed: Trigger markers blinked instead of sliding. They now rest below the trigger and rise as it is pressed.
