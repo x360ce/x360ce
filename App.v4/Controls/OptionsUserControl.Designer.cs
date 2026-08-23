@@ -503,7 +503,7 @@
 			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
 			this.AboutViGEmLinkLabel.TabIndex = 45;
 			this.AboutViGEmLinkLabel.TabStop = true;
-			this.AboutViGEmLinkLabel.Text = "https://vigem.org";
+			this.AboutViGEmLinkLabel.Text = "https://github.com/nefarius";
 			this.AboutViGEmLinkLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.AboutViGEmLinkLabel_LinkClicked);
 			// 
 			// ViGEmBusLabel
