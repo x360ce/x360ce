@@ -54,21 +54,41 @@ namespace x360ce.Tests
 		}
 
 		/// <summary>
-		/// Locate a built application, preferring Release so the tests exercise what ships.
+		/// Locate a built application to drive.
 		/// </summary>
 		/// <param name="appFolder">App.v3 or App.v4.</param>
-		/// <returns>Path of the newest matching x360ce.exe, or null when none is built.</returns>
+		/// <returns>Path of the matching x360ce.exe, or null when none is built.</returns>
+		/// <remarks>
+		/// The build matching this test assembly's own configuration wins, and the most recently
+		/// written build after that. Preferring Release unconditionally is what this used to do,
+		/// and it meant a test run could drive a binary built days earlier while reporting success
+		/// on source that had never been compiled.
+		/// </remarks>
 		public static string FindApp(string appFolder)
 		{
 			var bin = new DirectoryInfo(Path.Combine(RepoRoot.FullName, appFolder, "bin"));
 			if (!bin.Exists)
 				return null;
+			var configuration = TestConfiguration;
 			var exe = bin.GetDirectories()
 				.SelectMany(d => d.GetFiles("x360ce.exe"))
-				.OrderByDescending(f => f.Directory.Name.StartsWith("Release", StringComparison.OrdinalIgnoreCase))
+				.OrderByDescending(f => f.Directory.Name.StartsWith(configuration, StringComparison.OrdinalIgnoreCase))
 				.ThenByDescending(f => f.LastWriteTimeUtc)
 				.FirstOrDefault();
+			if (exe != null)
+				Console.WriteLine("Driving " + exe.FullName + " (built " + exe.LastWriteTime + ")");
 			return exe?.FullName;
+		}
+
+		/// <summary>Configuration this test assembly was built in, read from its own path.</summary>
+		static string TestConfiguration
+		{
+			get
+			{
+				var location = typeof(Ui).Assembly.Location ?? "";
+				return location.IndexOf(@"\bin\Release\", StringComparison.OrdinalIgnoreCase) >= 0
+					? "Release" : "Debug";
+			}
 		}
 
 		/// <summary>Poll until the probe returns a value, or fail with a useful message.</summary>

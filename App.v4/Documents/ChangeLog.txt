@@ -1,4 +1,5 @@
 ﻿v4.17.50.0 (2026-08-22)
+- Changed: About screen credits Nefarius by name.
 - Fixed: Dead link to vigem.org on the About and Options pages. Project links now point at the author on GitHub.
 - Added: HID Hide tab. Shows whether the driver is installed, links to its download page, and opens its configuration program.
 - Changed: HID Guardian tab marked obsolete. It was discontinued by its author in 2023; uninstall stays available and users are pointed to HID Hide.

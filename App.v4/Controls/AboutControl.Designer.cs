@@ -82,7 +82,7 @@
 			this.AboutWikiLabel.Name = "AboutWikiLabel";
 			this.AboutWikiLabel.Size = new System.Drawing.Size(39, 13);
 			this.AboutWikiLabel.TabIndex = 0;
-			this.AboutWikiLabel.Text = "ViGEm";
+			this.AboutWikiLabel.Text = "Nefarius";
 			// 
 			// AboutTocaEditLinkLabel
 			// 
