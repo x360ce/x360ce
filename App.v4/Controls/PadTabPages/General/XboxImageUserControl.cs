@@ -268,7 +268,7 @@ namespace x360ce.App.Controls
 		#region Painting
 
 		/// <summary>Canvas units to control pixels, keeping the artwork's proportions.</summary>
-		float Scale
+		float CanvasScale
 		{
 			get
 			{
@@ -280,7 +280,7 @@ namespace x360ce.App.Controls
 
 		Rectangle ToScreen(Point centre, int sizeInCanvasUnits)
 		{
-			var scale = Scale;
+			var scale = CanvasScale;
 			var size = Math.Max(1, (int)Math.Round(sizeInCanvasUnits * scale));
 			var x = (int)Math.Round(centre.X * scale) - size / 2;
 			var y = (int)Math.Round(centre.Y * scale) - size / 2;
@@ -292,7 +292,7 @@ namespace x360ce.App.Controls
 			base.OnPaint(e);
 			if (_Top == null || _Front == null)
 				return;
-			var scale = Scale;
+			var scale = CanvasScale;
 			e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 			e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 
@@ -421,7 +421,7 @@ namespace x360ce.App.Controls
 			base.OnMouseMove(e);
 			if (_Imager == null || ControlsHelper.IsDesignMode(this))
 				return;
-			var scale = Scale;
+			var scale = CanvasScale;
 			var point = new Point((int)Math.Round(e.X / scale), (int)Math.Round(e.Y / scale));
 			var before = HoverSignature();
 			_Imager.ShowLeftThumbButtons = InGroup(nameof(SettingsConverter.LeftThumbCodes), point);
