@@ -2221,7 +2221,7 @@
 			// 
 			this.IsOnlineColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.IsOnlineColumn.DataPropertyName = "IsOnline";
-			this.IsOnlineColumn.HeaderText = "";
+			this.IsOnlineColumn.HeaderText = "Online";
 			this.IsOnlineColumn.MinimumWidth = 24;
 			this.IsOnlineColumn.Name = "IsOnlineColumn";
 			this.IsOnlineColumn.ReadOnly = true;
@@ -2231,8 +2231,9 @@
 			// 
 			// ConnectionClassColumn
 			// 
+			this.ConnectionClassColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.ConnectionClassColumn.DataPropertyName = "ConnectionClass";
-			this.ConnectionClassColumn.HeaderText = "";
+			this.ConnectionClassColumn.HeaderText = "Connection";
 			this.ConnectionClassColumn.MinimumWidth = 24;
 			this.ConnectionClassColumn.Name = "ConnectionClassColumn";
 			this.ConnectionClassColumn.ReadOnly = true;
@@ -2241,8 +2242,9 @@
 			// 
 			// IsEnabledColumn
 			// 
+			this.IsEnabledColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
 			this.IsEnabledColumn.DataPropertyName = "IsEnabled";
-			this.IsEnabledColumn.HeaderText = "";
+			this.IsEnabledColumn.HeaderText = "Enabled";
 			this.IsEnabledColumn.MinimumWidth = 6;
 			this.IsEnabledColumn.Name = "IsEnabledColumn";
 			this.IsEnabledColumn.ReadOnly = true;

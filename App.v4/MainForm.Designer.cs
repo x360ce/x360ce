@@ -104,6 +104,7 @@ namespace x360ce.App
 			this.MainTabControl.Controls.Add(this.HelpTabPage);
 			this.MainTabControl.Controls.Add(this.AboutTabPage);
 			this.MainTabControl.Controls.Add(this.IssuesTabPage);
+			this.MainTabControl.AccessibleName = "Main";
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.ImageList = this.BuletImageList;
 			this.MainTabControl.Location = new System.Drawing.Point(3, 3);
@@ -587,6 +588,7 @@ namespace x360ce.App
 			// panel1
 			// 
 			this.panel1.Controls.Add(this.MainTabControl);
+			this.panel1.AccessibleName = "";
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel1.Location = new System.Drawing.Point(0, 90);
 			this.panel1.Name = "panel1";
