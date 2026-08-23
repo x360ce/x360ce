@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Copies, signs and zips application release files.
 .DESCRIPTION
@@ -6,10 +6,22 @@
     name as this script, so the script itself is copied between projects
     unchanged. Only the JSON file is edited.
 
-    The JSON file holds an array of applications, each with its own signature
-    name, output folder and list of files:
+    The JSON file holds the solution to build, the build stages and an array of
+    applications. An older file which is just the array of applications is read
+    the same way, without the build information.
+
+      Solution      - the solution built by the release script.
+      Configuration - the build configuration, usually "Release".
+      Stages        - the build stages, in the order they run. Each names the
+                      platforms built before the files of that stage are signed.
+      Apps          - the applications below.
+
+    Each application has its own signature name, output folder and list of files:
 
       AppName    - the name written into the signature.
+      Stage      - the build stage this application belongs to. Files embedded
+                   into another application are signed in an earlier stage than
+                   the application embedding them.
       AppLink    - the link written into the signature.
       SignModule - the shared signing module.
       ZipScript  - the shared zip script.
@@ -45,12 +57,23 @@
     separate "Zip" step keeps the existing zip when nothing changed.
 .PARAMETER Action
     Runs one action over every file and exits instead of showing the menu.
+.PARAMETER Force
+    Signs a file even when it already carries a trusted signature. Without it a file
+    which is already signed is left alone, so a rerun only asks for the token once per
+    file that actually changed, and a signature applied by somebody else is not
+    overwritten.
+.PARAMETER Stage
+    Limits the run to the applications of one build stage. Without it every
+    application is offered, which is what the menu does.
 .EXAMPLE
     PS> .\App_1_Sign_and_Zip.ps1
     Shows the menu.
 .EXAMPLE
     PS> .\App_1_Sign_and_Zip.ps1 All
     Signs and zips without asking. Used when another script drives the release.
+.EXAMPLE
+    PS> .\App_1_Sign_and_Zip.ps1 Sign -Stage Library
+    Signs only the files embedded into the applications, before they are built.
 .NOTES
     Paths inside the JSON file can use forward or back slashes. Signing requires
     the USB token or card reader supported by the signing module.
@@ -58,7 +81,9 @@
 param(
     [Parameter(Position = 0)]
     [ValidateSet("Sign", "Zip", "Copy", "All")]
-    [string]$Action
+    [string]$Action,
+    [switch]$Force,
+    [string]$Stage
 )
 
 $ErrorActionPreference = "Stop"
@@ -68,7 +93,15 @@ $ErrorActionPreference = "Stop"
 #------------------------------------------------------------------------------
 
 $configPath = [System.IO.Path]::ChangeExtension($PSCommandPath, ".json")
-$config = @(Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json)
+$json = Get-Content -LiteralPath $configPath -Raw | ConvertFrom-Json
+$config = @(if ($json.PSObject.Properties.Name -contains "Apps") { $json.Apps } else { $json })
+if ($Stage) {
+    $config = @($config | Where-Object { $_.Stage -eq $Stage })
+    if ($config.Count -eq 0) {
+        Write-Host "No applications in stage: $Stage"
+        return
+    }
+}
 
 # Importing the module changes the current folder to the folder of this script,
 # so keep the import here rather than inside a function.
@@ -149,7 +182,11 @@ function Copy-Sources {
 
 function Invoke-Sign {
     param($Targets)
-    if (-not (Get-Command Sign-File -ErrorAction SilentlyContinue)) {
+    # A module which can take several files signs them in one run of the signing
+    # tool, which asks for the card PIN once instead of once per file. An older
+    # module without it still works, one file at a time.
+    $batch = [bool](Get-Command Sign-Files -ErrorAction SilentlyContinue)
+    if (-not $batch -and -not (Get-Command Sign-File -ErrorAction SilentlyContinue)) {
         Write-Host "Signing module not found: $($config.SignModule | Select-Object -Unique)"
         return
     }
@@ -157,21 +194,48 @@ function Invoke-Sign {
     # Detect the signing hardware once per run.
     $global:SignProfileCache = $null
     $done = @{}
-    foreach ($item in $Targets) {
-        if ($done.ContainsKey($item.Target)) {
+    # The description and the link written into a signature belong to one
+    # application, so each application's files are signed together and no two
+    # applications share a run.
+    foreach ($app in $config) {
+        $paths = New-Object System.Collections.Generic.List[string]
+        foreach ($item in $Targets | Where-Object { $_.App -eq $app }) {
+            if ($done.ContainsKey($item.Target)) {
+                continue
+            }
+            $done[$item.Target] = $true
+            if (-not (Test-Path -LiteralPath $item.Target)) {
+                Write-Host "Nothing to sign: $($item.Target)"
+                continue
+            }
+            # Every signature costs a prompt on the token, so a file which is already
+            # trusted is left as it is. Anything the build has just produced is unsigned
+            # and so is always signed. It also keeps a signature applied by somebody else,
+            # such as the supplier of a redistributed file, from being replaced.
+            if (-not $Force -and (Get-AuthenticodeSignature -LiteralPath $item.Target).Status -eq "Valid") {
+                Write-Host "Already signed: $($item.Target)"
+                continue
+            }
+            $paths.Add($item.Target)
+        }
+        if ($paths.Count -eq 0) {
             continue
         }
-        $done[$item.Target] = $true
-        if (-not (Test-Path -LiteralPath $item.Target)) {
-            Write-Host "Nothing to sign: $($item.Target)"
-            continue
+        $global:AppName = $app.AppName
+        $global:AppLink = $app.AppLink
+        foreach ($path in $paths) {
+            Write-Host "Signing file: $path"
         }
-        $global:AppName = $item.App.AppName
-        $global:AppLink = $item.App.AppLink
-        Write-Host "Signing file: $($item.Target)"
-        Sign-File -FilePath $item.Target
-        # Brief delay so the USB token can process the next request.
-        Start-Sleep -Seconds 2
+        if ($batch) {
+            Sign-Files -FilePath $paths.ToArray()
+        }
+        else {
+            foreach ($path in $paths) {
+                Sign-File -FilePath $path
+                # Brief delay so the USB token can process the next request.
+                Start-Sleep -Seconds 2
+            }
+        }
     }
 }
 
