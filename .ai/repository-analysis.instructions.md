@@ -375,13 +375,16 @@ graph TD
         README[README.MD<br/>Download links + system reqs + troubleshooting]
     end
 
+    subgraph "Documents"
+        RelScript["App_1_Sign_and_Zip.ps1 + .json — sign, zip and copy every release artifact"]
+        RelOut["Files.v3/ + Files.v4/ — signed executables and release zips"]
+    end
+
     subgraph "App.v3/Documents"
         V3Help[Help.htm — User help, HTML]
         V3HowTo[HowToBuild.odt — Build instructions]
         V3Change[ChangeLog.txt]
         V3License[License.txt]
-        V3Sign["Step1_xinput_sign.bat / Step1_dinput_sign.bat / Step4_ditool_sign.bat — module signing"]
-        V3Pkg["Step2_app_sign.bat / Step3_app_zip.bat — app sign + zip"]
         V3IIS[IIS_ResetSiteConfig.bat]
     end
 
@@ -390,9 +393,7 @@ graph TD
         V4HowTo[HowToBuild.odt]
         V4Change[ChangeLog.txt]
         V4License[License.txt]
-        V4Sign["Step1_sign_module.{XInput,DInput,DITool,SharpDX,ViGEmClient,devcon}.bat"]
-        V4Pkg["Step2_app_sign.bat / Step3_app_zip.bat"]
-        V4Tools["Install_BuildTools.ps1 + TocaEdit_clone_as_*.bat"]
+        V4Tools[Install_BuildTools.ps1]
     end
 
     subgraph "Native/Support"
@@ -428,17 +429,17 @@ graph TD
 
 ### Build / signing / packaging scripts
 
-Both apps follow a parallel `Step1 → Step2 → Step3 → Step4` workflow under their respective `Documents/` folder:
+Signing, zipping and copying for both apps run from one script at the repository root: **`Documents/App_1_Sign_and_Zip.ps1`**, driven by **`Documents/App_1_Sign_and_Zip.json`**. It replaced the per-app `Step1`–`Step4` batch files.
 
-- **Step1 — module sign**: code-sign each redistributed DLL (`SharpDX.*`, `ViGEmClient`, `devcon`, the native `xinput1_*`/`dinput8` DLLs, `ditool.exe`).
-- **Step2 — app sign**: code-sign the application executable.
-- **Step3 — app zip**: package the signed binaries plus presets/resources into the release zip.
-- **Step4** (v3 only): `Step4_ditool_sign.bat` — sign the diagnostic tool.
+The JSON lists every file to process, grouped by the name written into the signature. Each file names its `Source`, the `Target` it is signed as, and the `Zip` it is packed into; a file with no `Zip` is signed in place. Release output goes to `Documents/Files.v3/` and `Documents/Files.v4/`.
+
+Run it with no arguments for a menu (sign and zip / sign / zip / copy, over one file or all of them), or `.\App_1_Sign_and_Zip.ps1 All` to process everything unattended. Zipping is delegated to `Resources/ZipFiles.ps1`; signing to the shared signing module, which auto-detects the code-signing card or token.
+
+Order matters: the v3 native modules are embedded resources of `App.v3.csproj`, so they must be signed **before** v3 is built, while the application zips are produced **after**.
 
 The `App.v4/Documents/` folder additionally contains:
 
 - `Install_BuildTools.ps1` — bootstraps the build toolchain.
-- `TocaEdit_clone_as_GIT.bat` / `TocaEdit_clone_as_SVN.bat` — historical mirroring helpers.
 - `IIS_ResetSiteConfig.bat` — resets the IIS Express site configuration for the Web project.
 
 ## Development Environment Requirements
@@ -543,13 +544,13 @@ This section covers signing, driver dependencies, and distribution mechanics tha
 
 ### Code signing
 
-The project ships only signed binaries. Each app has a 3–4 step signing pipeline under `App.{v3|v4}/Documents/`:
+The project ships only signed binaries. One script at the repository root, `Documents/App_1_Sign_and_Zip.ps1`, signs everything:
 
-- **Module signing** (`Step1_*`) — every redistributed binary (`xinput1_*`, `dinput8`, `SharpDX.*`, `ViGEmClient.dll`, `devcon.exe`, `ditool.exe`) is signed individually before the application embed step.
-- **Application signing** (`Step2_app_sign.bat`) — signs the final `x360ce.exe`.
-- **Distribution packaging** (`Step3_app_zip.bat`) — produces the release zip from the signed tree.
+- **Module signing** — every redistributed binary (`xinput1_*`, `dinput8`, `SharpDX.*`, `ViGEmClient.dll`, `ditool.exe`) is signed before the application embed step. The v3 `dinput*` / `xinput*` DLLs are copied into `App.v3/Resources/` and embedded by `App.v3.csproj`, so they must be signed first.
+- **Application signing** — the built `x360ce.exe` is copied into `Documents/Files.v3/` or `Documents/Files.v4/` and signed there, leaving the build output untouched.
+- **Distribution packaging** — the signed copy is packed into its release zip in the same folder.
 
-Publishing unsigned builds is explicitly discouraged in `Documents/Help.*`.
+Publishing unsigned builds is explicitly discouraged in `App.{v3|v4}/Documents/Help.*`.
 
 ### Driver dependencies
 
@@ -559,7 +560,7 @@ Publishing unsigned builds is explicitly discouraged in `Documents/Help.*`.
 ### Distribution channels
 
 - **GitHub Releases** is the only published distribution channel (URLs are in `README.MD`).
-- v3 ships separate `x360ce_x86.zip` and `x360ce_x64.zip` archives.
+- v3 ships separate `x360ce_x86.zip` and `x360ce_x64.zip` archives, plus `x360ce.zip` (the same 32-bit build under its legacy name, still linked from the app's own download prompts).
 - v4 ships a single `x360ce.zip` plus the ViGEm Bus driver installer.
 
 ### Web service security

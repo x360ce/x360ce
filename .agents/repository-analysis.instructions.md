@@ -433,14 +433,12 @@ graph TD
     end
     
     subgraph "Build Automation"
-        G[Step1_sign_module.*.bat - Code Signing]
-        H[Step2_app_sign.bat - Application Signing]
-        I[Step3_app_zip.bat - Distribution Packaging]
+        G[Documents/App_1_Sign_and_Zip.ps1 - Sign, Zip and Copy]
+        H[Documents/App_1_Sign_and_Zip.json - Release Artifact List]
+        I[Resources/ZipFiles.ps1 - Archive Builder]
     end
     
     subgraph "Repository Management"
-        J[TocaEdit_clone_as_GIT.bat - Git Integration]
-        K[x360ce.App.source.bat - Source Management]
         L[IIS_ResetSiteConfig.bat - Web Config Reset]
     end
     
@@ -462,9 +460,9 @@ graph TD
 - **Help_HidGuardian.rtf**: HID Guardian setup for controller hiding
 
 ### Build and Deployment Scripts
-- **Code Signing Scripts**: Step1_sign_module.*.bat files for module signing
-- **Application Packaging**: Step2_app_sign.bat and Step3_app_zip.bat for release preparation
-- **Source Management**: x360ce.App.source.bat with include/exclude file lists
+- **Sign, Zip and Copy**: `Documents/App_1_Sign_and_Zip.ps1` handles module signing, application signing and release packaging for both apps, driven by `Documents/App_1_Sign_and_Zip.json`
+- **Archive Builder**: `Resources/ZipFiles.ps1` creates each release zip
+- **Release Output**: `Documents/Files.v3/` and `Documents/Files.v4/`
 
 ## Key Technical Decisions
 

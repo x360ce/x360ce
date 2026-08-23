@@ -452,8 +452,6 @@
     <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
     <EmbeddedResource Include="Documents\Help.htm" />
     <EmbeddedResource Include="Html2Rtf\xhtml2rtf.xsl" />
-    <Content Include="Documents\x360ce.App.source-Exclude.txt" />
-    <Content Include="Documents\x360ce.App.source-Include.txt" />
     <Content Include="Html2Rtf\Readme.htm" />
     <Content Include="Html2Rtf\xhtml2rtf.txt" />
     <EmbeddedResource Include="Images\bullet_square_glass_blue.png" />
@@ -463,7 +461,6 @@
     <EmbeddedResource Include="Images\bullet_square_glass_yellow.png" />
     <Content Include="Images\xboxControllerDPad.png" />
     <Content Include="Images\xboxControllerLeftThumbstick.png" />
-    <None Include="Documents\x360ce.App.source.bat" />
     <None Include="Images\xboxControllerLeftTrigger.png" />
     <Content Include="Images\xboxControllerRightThumbstick.png" />
     <None Include="Images\xboxControllerRightTrigger.png" />

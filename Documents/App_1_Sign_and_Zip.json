@@ -1,0 +1,116 @@
+[
+  {
+    "AppName": "X360CE - DirectInput Library",
+    "AppLink": "https://www.x360ce.com",
+    "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+    "ZipScript": "../Resources/ZipFiles.ps1",
+    "Files": [
+      {
+        "Source": "../Native/dinput8/bin/Release/dinput8.dll",
+        "Target": "../App.v3/Resources/dinput.dll"
+      },
+      {
+        "Source": "../Native/dinput8/bin/Release/dinput8.dll",
+        "Target": "../App.v3/Resources/dinput_x86.dll"
+      },
+      {
+        "Source": "../Native/dinput8/bin64/Release/dinput8.dll",
+        "Target": "../App.v3/Resources/dinput_x64.dll"
+      }
+    ]
+  },
+  {
+    "AppName": "X360CE - TocaEdit XBOX 360 Controller Emulator Library",
+    "AppLink": "https://www.x360ce.com",
+    "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+    "ZipScript": "../Resources/ZipFiles.ps1",
+    "Files": [
+      {
+        "Source": "../Native/x360ce/bin/Release/xinput1_3.dll",
+        "Target": "../App.v3/Resources/xinput.dll"
+      },
+      {
+        "Source": "../Native/x360ce/bin/Release/xinput1_3.dll",
+        "Target": "../App.v3/Resources/xinput_x86.dll"
+      },
+      {
+        "Source": "../Native/x360ce/bin64/Release/xinput1_3.dll",
+        "Target": "../App.v3/Resources/xinput_x64.dll"
+      }
+    ]
+  },
+  {
+    "AppName": "X360CE - SharpDX DirectInput Library",
+    "AppLink": "https://www.x360ce.com",
+    "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+    "ZipScript": "../Resources/ZipFiles.ps1",
+    "Files": [
+      {
+        "Target": "../App.v4/Resources/SharpDX/SharpDX.dll"
+      },
+      {
+        "Target": "../App.v4/Resources/SharpDX/SharpDX.DirectInput.dll"
+      }
+    ]
+  },
+  {
+    "AppName": "X360CE - Shauleiz Virtual Xbox Interface",
+    "AppLink": "https://www.x360ce.com",
+    "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+    "ZipScript": "../Resources/ZipFiles.ps1",
+    "Files": [
+      {
+        "Target": "../App.v4/Resources/ViGEmClient/x86/ViGEmClient.dll"
+      },
+      {
+        "Target": "../App.v4/Resources/ViGEmClient/x64/ViGEmClient.dll"
+      }
+    ]
+  },
+  {
+    "AppName": "X360CE - DirectInput Tool",
+    "AppLink": "https://www.x360ce.com",
+    "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+    "ZipScript": "../Resources/ZipFiles.ps1",
+    "Files": [
+      {
+        "Target": "../Native/ditool/bin/Release/ditool.exe"
+      }
+    ]
+  },
+  {
+    "AppName": "XBOX 360 Controller Emulator",
+    "AppLink": "https://www.x360ce.com",
+    "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+    "ZipScript": "../Resources/ZipFiles.ps1",
+    "FilesDir": "Files.v3",
+    "Files": [
+      {
+        "Source": "../App.v3/bin/Release_x86/x360ce.exe",
+        "Zip": "x360ce.zip"
+      },
+      {
+        "Source": "../App.v3/bin/Release_x86/x360ce.exe",
+        "Zip": "x360ce_x86.zip"
+      },
+      {
+        "Source": "../App.v3/bin/Release_x64/x360ce.exe",
+        "Target": "Files.v3/x360ce_x64.exe",
+        "Zip": "x360ce_x64.zip"
+      }
+    ]
+  },
+  {
+    "AppName": "XBOX 360 Controller Emulator",
+    "AppLink": "https://www.x360ce.com",
+    "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+    "ZipScript": "../Resources/ZipFiles.ps1",
+    "FilesDir": "Files.v4",
+    "Files": [
+      {
+        "Source": "../App.v4/bin/Release/x360ce.exe",
+        "Zip": "x360ce.zip"
+      }
+    ]
+  }
+]
