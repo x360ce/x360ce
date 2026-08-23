@@ -621,7 +621,6 @@
     <EmbeddedResource Include="Resources\ViGEmClient\x64\ViGEmClient.dll" />
     <EmbeddedResource Include="Resources\ViGEmClient\x86\ViGEmClient.dll" />
     <EmbeddedResource Include="Resources\SharpDX\SharpDX.RawInput.dll" />
-    <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
     <None Include="Images\add_16x16.png" />
     <EmbeddedResource Include="Documents\License.txt" />
     <None Include="Images\app_16x16.png" />
@@ -749,18 +748,27 @@
       <EmbeddedFiles Include="@(Compile);@(AdditionalFiles)" />
     </ItemGroup>
   </Target>
-  <PropertyGroup>
-    <PreBuildEvent>:: Copy Engine.
-SET src=$(SolutionDir)Engine\$(OutDir)x360ce.Engine.dll
-echo copy x360ce.Engine.dll to $(ProjectDir)Resources
-copy /y "%25src%25" "$(ProjectDir)Resources"
-::
-:: Copy XML Serializer.
-SET src=$(SolutionDir)Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll
-IF EXIST "%25src%25" (
-echo copy x360ce.Engine.XmlSerializers.dll to $(ProjectDir)Resources
-copy /y "%25src%25" "$(ProjectDir)Resources"
-)
-</PreBuildEvent>
-  </PropertyGroup>
+  <!--
+    Files produced by the build and embedded into this application. They are staged in
+    the intermediate folder, which MSBuild already keeps separate per configuration and
+    per platform, so a Debug build and a Release build cannot overwrite each other's
+    copy the way a single folder shared by every build did. LogicalName fixes the name
+    each file carries inside the assembly, so where a file is staged no longer decides
+    what the running application looks it up by.
+  -->
+  <Target Name="StageGeneratedResources" AfterTargets="ResolveReferences" BeforeTargets="PrepareResources">
+    <ItemGroup>
+      <!-- Taken from the resolved reference rather than a second copy of the path. -->
+      <GeneratedResource Include="@(ReferencePath)" Condition="'%(Filename)%(Extension)' == 'x360ce.Engine.dll'">
+        <EmbeddedName>x360ce.Engine.dll</EmbeddedName>
+      </GeneratedResource>
+    </ItemGroup>
+    <Error Condition="!Exists('%(GeneratedResource.FullPath)')" Text="Missing build output: %(GeneratedResource.FullPath)$(MissingResourceHint)" />
+    <Copy SourceFiles="@(GeneratedResource)" DestinationFiles="@(GeneratedResource->'$(IntermediateOutputPath)Embedded\%(EmbeddedName)')" />
+    <ItemGroup>
+      <EmbeddedResource Include="@(GeneratedResource->'$(IntermediateOutputPath)Embedded\%(EmbeddedName)')">
+        <LogicalName>$(RootNamespace).Resources.%(GeneratedResource.EmbeddedName)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
 </Project>

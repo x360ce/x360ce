@@ -268,3 +268,11 @@ Data/Schema Comparisons/*.Live.scmp
 # Test project build output.
 /Tests/bin/
 /Tests/obj/
+
+# Build output that used to be staged here and committed. The applications now embed
+# it straight from the build, staged per configuration under obj, so these names only
+# reappear if something writes to the old location.
+App.v3/Resources/dinput*.dll
+App.v3/Resources/xinput*.dll
+App.v3/Resources/x360ce.Engine*.dll
+App.v4/Resources/x360ce.Engine*.dll

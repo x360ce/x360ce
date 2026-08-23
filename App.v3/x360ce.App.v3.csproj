@@ -379,13 +379,6 @@
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Question_32x32.png" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning.ico" />
     <Content Include="Controls\MessageBoxFormImages\MessageBoxIcon_Warning_32x32.png" />
-    <EmbeddedResource Include="Resources\dinput.dll" />
-    <EmbeddedResource Include="Resources\dinput_x64.dll" />
-    <EmbeddedResource Include="Resources\dinput_x86.dll" />
-    <EmbeddedResource Include="Resources\xinput.dll" />
-    <EmbeddedResource Include="Resources\xinput_x86.dll" />
-    <EmbeddedResource Include="Resources\xinput_x64.dll" />
-    <EmbeddedResource Include="Resources\x360ce.Engine.dll" />
     <None Include="Images\add_16x16.png" />
     <EmbeddedResource Include="Documents\License.txt" />
     <None Include="Images\app_16x16.png" />
@@ -500,29 +493,69 @@
     </ItemGroup>
   </Target>
   <PropertyGroup>
-    <PreBuildEvent>:: Copy Engine.
-SET src=$(SolutionDir)Engine\$(OutDir)x360ce.Engine.dll
-echo copy x360ce.Engine.dll to $(ProjectDir)Resources
-copy /y "%25src%25" "$(ProjectDir)Resources"
-::
-:: Copy XML Serializer.
-SET src=$(SolutionDir)Engine\$(OutDir)x360ce.Engine.XmlSerializers.dll
-IF EXIST "%25src%25" (
-echo copy x360ce.Engine.XmlSerializers.dll to $(ProjectDir)Resources
-copy /y "%25src%25" "$(ProjectDir)Resources"
-)
-::
-ECHO PlatformName = $(PlatformName)
+    <PreBuildEvent>ECHO PlatformName = $(PlatformName)
 :: Copy x360ce binaries.
 if $(ConfigurationName) == Debug (
 if $(PlatformName) == x86 (
-copy /y "$(SolutionDir)Native\x360ce\bin\Debug\*.dll" "$(TargetDir)"
-copy /y "$(SolutionDir)Native\x360ce\bin\Debug\*.pdb" "$(TargetDir)"
+copy /y "$(MSBuildThisFileDirectory)..\Native\x360ce\bin\Debug\*.dll" "$(TargetDir)"
+copy /y "$(MSBuildThisFileDirectory)..\Native\x360ce\bin\Debug\*.pdb" "$(TargetDir)"
 )
 if $(PlatformName) == x64 (
-copy /y "$(SolutionDir)Native\x360ce\bin64\Debug\*.dll" "$(TargetDir)"
-copy /y "$(SolutionDir)Native\x360ce\bin64\Debug\*.pdb" "$(TargetDir)"
+copy /y "$(MSBuildThisFileDirectory)..\Native\x360ce\bin64\Debug\*.dll" "$(TargetDir)"
+copy /y "$(MSBuildThisFileDirectory)..\Native\x360ce\bin64\Debug\*.pdb" "$(TargetDir)"
 )
 )</PreBuildEvent>
   </PropertyGroup>
+  <!--
+    Files produced by the build and embedded into this application. They are staged in
+    the intermediate folder, which MSBuild already keeps separate per configuration and
+    per platform, so a Debug build and a Release build cannot overwrite each other's
+    copy the way a single folder shared by every build did. LogicalName fixes the name
+    each file carries inside the assembly, so where a file is staged no longer decides
+    what the running application looks it up by.
+  -->
+  <PropertyGroup>
+    <MissingResourceHint>. Build the DLL_x86_v3 and DLL_x64_v3 solution platforms first; Documents\App_0_Release.ps1 builds them in order.</MissingResourceHint>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--
+      Both bitnesses are embedded whatever this application is built as, because it
+      extracts the one matching the game into the game folder and the one matching
+      itself into its own folder. The unsuffixed name is the 32 bit file under a
+      second name, which is why one built file appears here twice.
+    -->
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\dinput8\bin\Release\dinput8.dll">
+      <EmbeddedName>dinput.dll</EmbeddedName>
+    </GeneratedResource>
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\dinput8\bin\Release\dinput8.dll">
+      <EmbeddedName>dinput_x86.dll</EmbeddedName>
+    </GeneratedResource>
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\dinput8\bin64\Release\dinput8.dll">
+      <EmbeddedName>dinput_x64.dll</EmbeddedName>
+    </GeneratedResource>
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\x360ce\bin\Release\xinput1_3.dll">
+      <EmbeddedName>xinput.dll</EmbeddedName>
+    </GeneratedResource>
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\x360ce\bin\Release\xinput1_3.dll">
+      <EmbeddedName>xinput_x86.dll</EmbeddedName>
+    </GeneratedResource>
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\x360ce\bin64\Release\xinput1_3.dll">
+      <EmbeddedName>xinput_x64.dll</EmbeddedName>
+    </GeneratedResource>
+  </ItemGroup>
+  <Target Name="StageGeneratedResources" AfterTargets="ResolveReferences" BeforeTargets="PrepareResources">
+    <ItemGroup>
+      <!-- Taken from the resolved reference rather than a second copy of the path. -->
+      <GeneratedResource Include="@(ReferencePath)" Condition="'%(Filename)%(Extension)' == 'x360ce.Engine.dll'">
+        <EmbeddedName>x360ce.Engine.dll</EmbeddedName>
+      </GeneratedResource>
+    </ItemGroup>
+    <Error Condition="!Exists('%(GeneratedResource.FullPath)')" Text="Missing build output: %(GeneratedResource.FullPath)$(MissingResourceHint)" />
+    <Copy SourceFiles="@(GeneratedResource)" DestinationFiles="@(GeneratedResource->'$(IntermediateOutputPath)Embedded\%(EmbeddedName)')" />
+    <ItemGroup>
+      <EmbeddedResource Include="@(GeneratedResource->'$(IntermediateOutputPath)Embedded\%(EmbeddedName)')">
+        <LogicalName>$(RootNamespace).Resources.%(GeneratedResource.EmbeddedName)</LogicalName>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
 </Project>
