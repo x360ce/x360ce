@@ -48,7 +48,7 @@
     and then stops, so nothing is built or signed.
 
     Signing needs the USB token or card reader supported by the signing module,
-    and X360CE_SIGN_MODULE set to the path of that module. The release stops before
+    and SIGN_MODULE_PATH set to the path of that module. The release stops before
     it builds anything when the module is not there.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -87,7 +87,7 @@ $root = [System.IO.Path]::GetDirectoryName($solution)
 
 # The signing module lives outside the repository and its path differs per machine,
 # so the configuration names an environment variable rather than one maintainer's
-# folder. Set X360CE_SIGN_MODULE to the full path of the signing module.
+# folder. Set SIGN_MODULE_PATH to the full path of the signing module.
 #
 # The signing module reports a missing token by carrying on unsigned, which would
 # produce a release that looks finished and is not. Stop before building instead.
@@ -95,7 +95,7 @@ if (-not $SkipSign) {
     foreach ($module in ($config.Apps.SignModule | Select-Object -Unique)) {
         $module = [System.Environment]::ExpandEnvironmentVariables($module)
         if (-not (Test-Path -LiteralPath $module)) {
-            throw "Signing module not found: $module`nSet X360CE_SIGN_MODULE to the signing module path, or run with -SkipSign to build without signing."
+            throw "Signing module not found: $module`nSet SIGN_MODULE_PATH to the signing module path, or run with -SkipSign to build without signing."
         }
     }
 }
