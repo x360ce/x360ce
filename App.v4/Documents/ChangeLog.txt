@@ -1,4 +1,7 @@
-﻿v4.18.6.0 (2026-08-25)
+﻿v4.18.7.0 (2026-08-26)
+- Fixed: Crash while refreshing devices when the device list changed at the same time. Reading a device list on the refresh thread now takes a snapshot instead of walking the live collection.
+
+v4.18.6.0 (2026-08-25)
 - Fixed: Crash when a controller was unplugged and plugged back in. The hidden window that receives device messages was written to from the wrong thread.
 - Fixed: Interface stopped refreshing for the rest of the session if a redraw failed.
 - Changed: Device detection lists attached devices only, instead of every device ever installed. Devices that are unplugged still keep their settings and show as offline.
