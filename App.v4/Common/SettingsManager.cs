@@ -201,7 +201,7 @@ namespace x360ce.App
 
 		public static UserDevice GetDevice(Guid instanceGuid)
 		{
-			return UserDevices.Items.FirstOrDefault(x =>
+			return UserDevices.ItemsToArraySyncronized().FirstOrDefault(x =>
 				x.InstanceGuid.Equals(instanceGuid));
 		}
 
@@ -220,7 +220,7 @@ namespace x360ce.App
 			var instances = settings
 				.Where(x => x.MapTo == (int)mapTo)
 				.Select(x => x.InstanceGuid).ToArray();
-			var devices = UserDevices.Items
+			var devices = UserDevices.ItemsToArraySyncronized()
 				.Where(x => instances.Contains(x.InstanceGuid))
 				.ToList();
 			// Return available devices.

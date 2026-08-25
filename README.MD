@@ -6,7 +6,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.18.6.0 and Virtual Gamepad Emulation Bus 1.16.112.0
+Digitally Signed Application v4.18.7.0 and Virtual Gamepad Emulation Bus 1.16.112.0
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -14,7 +14,7 @@ Note: version 4.x use Virtual Gamepad Emulation. Instructions can be found here:
 
 # Download v3.x
 
-Digitally Signed Application v3.2.9.82 and Libraries 3.4.1
+Digitally Signed Application v3.3.11.0 and Libraries 3.4.1
 
 Download `x360ce_x86.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases#release-3.2.9.82) - for 32-bit games
 

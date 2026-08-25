@@ -16,8 +16,11 @@ namespace x360ce.App
 		public static void EnableTestInstances()
 		{
 			// Add Test Devices (Make them appear connected online).
-			var items = SettingsManager.UserDevices
-				.Items.Where(x => x.ProductGuid == ProductGuid).ToArray();
+			// Snapshot under the collection lock. This runs on the device refresh thread
+			// while the interface thread can add or remove devices, and enumerating the
+			// live list throws "Collection was modified".
+			var items = SettingsManager.UserDevices.ItemsToArraySyncronized()
+				.Where(x => x.ProductGuid == ProductGuid).ToArray();
 			foreach (var item in items)
 			{
 				if (item.IsOnline)
@@ -60,11 +63,13 @@ namespace x360ce.App
 		{
 			var instanceName = "";
 			var productName = "Test Device";
+			// Snapshot once, for the same reason as above.
+			var existing = SettingsManager.UserDevices.ItemsToArraySyncronized();
 			for (int i = 1; ; i++)
 			{
 				instanceName = string.Format("{0} {1}", productName, i);
 				// If device with same name found then continue.
-				if (SettingsManager.UserDevices.Items.Any(x => x.InstanceName == instanceName))
+				if (existing.Any(x => x.InstanceName == instanceName))
 					continue;
 				break;
 			}
