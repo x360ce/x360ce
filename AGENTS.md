@@ -1,3 +1,17 @@
+==== START OF INSTRUCTIONS FROM: developer.instructions.md ====
+
+# Instructions from: developer.instructions.md
+
+# Developer-Provided Context
+
+Use only C# language features up to and including version 7.3; do not use any features introduced in C# 8.0 or later.
+
+==== END OF INSTRUCTIONS FROM: developer.instructions.md ====
+
+==== START OF INSTRUCTIONS FROM: repository-analysis.instructions.md ====
+
+# Instructions from: repository-analysis.instructions.md
+
 # x360ce Repository Analysis
 
 ## Project Overview
@@ -9,7 +23,7 @@ The repository ships two parallel desktop applications, a shared engine library,
 The product targets PC gamers running games that only support XInput. Two product lines ship from the same repo:
 
 - **v3.x line** — the legacy DLL-only XInput replacement (`xinput1_3.dll` + Win32 `dinput8.dll` plugin), x86 and x64 distributions.
-- **v4.x line** — the modern ViGEm-bus-driver-based virtual gamepad approach with optional HID Guardian filtering (the app can only uninstall HID Guardian; the in-app installer is disabled for safety).
+- **v4.x line** — the modern ViGEm-bus-driver-based virtual gamepad approach with optional HID Guardian filtering.
 
 ## Developer-Provided Context
 
@@ -167,8 +181,6 @@ x360ce/
 │   ├── ditool/             # Application — Win32 x86 console diagnostic tool
 │   └── Support/            # Support assets (ReadMe.RTF, x360ce.gdb, etc.)
 ├── MinHook/                # Git submodule — bundled as source into InputHook
-├── docs/
-│   └── plans/              # Reapply-bugfixes workflow: A-triage/REVIEW.md decision table + per-commit analyses
 ├── .agents/                # Agent-related scratch / configuration
 ├── .ai/                    # AI agent instructions (this folder)
 ├── .claude/                # Claude Code project settings
@@ -557,7 +569,7 @@ Publishing unsigned builds is explicitly discouraged in `App.{v3|v4}/Documents/H
 ### Driver dependencies
 
 - **ViGEm Bus** (kernel-mode virtual gamepad driver) — required by the v4 application. Bundled installer at `App.v4/Resources/ViGEmBus.zip`. Installation requires admin privileges.
-- **HID Guardian** — optional v4 component for hiding physical controllers from games that double-enumerate. The v4 app **cannot install it** — the Options page offers Refresh and Uninstall only, because a misconfigured HID filter driver can lock the user out of mouse/keyboard input. The bundle at `App.v4/Resources/HidGuardian.zip` is retained solely so uninstall can extract `devcon`. Manual-recovery procedure is linked from `README.MD`.
+- **HID Guardian** — optional v4 component for hiding physical controllers from games that double-enumerate. Bundled installer at `App.v4/Resources/HidGuardian.zip`. Removing HID Guardian incorrectly can lock the user out of mouse/keyboard input — follow the procedure linked from `README.MD`.
 
 ### Distribution channels
 
@@ -572,3 +584,5 @@ The `Web` project uses ASP.NET Membership for authentication and role-based auth
 ### Game database (`x360ce.gdb`)
 
 `Native/Support/x360ce.gdb` is a binary game database keyed by executable name + checksum that supplies per-game `HookMask` overrides to the native DLL. It is not personally identifying and may be redistributed; the v4 app also embeds a compressed copy at `App.v4/Resources/x360ce_Games.xml.gz`.
+
+==== END OF INSTRUCTIONS FROM: repository-analysis.instructions.md ====
