@@ -11,6 +11,7 @@ namespace x360ce.Tests
 	/// The About screen shows the change log and licence in a multiline TextBox, which breaks a
 	/// line only on a carriage return and line feed pair. A document saved with Unix endings
 	/// renders as one unbroken paragraph, so both the documents and the loader are covered here.
+	/// The front page is covered too, because it is where users are sent to download the build.
 	/// </summary>
 	[TestClass]
 	public class DocumentTest
@@ -89,6 +90,25 @@ namespace x360ce.Tests
 				Assert.IsTrue(lines[0].TrimStart('﻿').StartsWith("v"),
 					relative + " starts with '" + lines[0] + "' rather than a version heading.");
 			}
+		}
+
+		[TestMethod, TestCategory("about"), TestCategory("smoke")]
+		[Description("The front page sends users to the Releases page, not to a pinned asset")]
+		public void Readme_links_the_releases_page_rather_than_a_release_asset()
+		{
+			// A link to releases/download/{tag}/{file} is only good while that exact tag is
+			// published. Written before the release, or kept after the tag is renamed, it
+			// answers 404 - and a dead official download is what sends this project's users
+			// to repackaged copies from mirrors. The Releases page is correct either way.
+			var path = Path.Combine(Ui.RepoRoot.FullName, "README.MD");
+			Assert.IsTrue(File.Exists(path), "README.MD not found at the repository root.");
+			var text = File.ReadAllText(path);
+			Assert.IsFalse(text.Contains("/releases/download/"),
+				"README.MD deep-links a release asset by tag. Link " +
+				"https://github.com/x360ce/x360ce/releases instead, which is right before and " +
+				"after the release is published.");
+			Assert.IsTrue(text.Contains("https://github.com/x360ce/x360ce/releases"),
+				"README.MD no longer tells users where the signed builds are published.");
 		}
 
 	}

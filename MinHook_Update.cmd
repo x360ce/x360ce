@@ -1,2 +1,2 @@
-git submodule update --init --remote MinHook
+git submodule update --init MinHook
 pause

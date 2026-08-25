@@ -47,10 +47,9 @@
     Supports -WhatIf, which reports the build output the clean step would remove
     and then stops, so nothing is built or signed.
 
-    Signing needs the USB token or card reader supported by the signing module.
-
-    The applications copy the freshly built engine into their Resources folder
-    before compiling, so a release build leaves that tracked file modified.
+    Signing needs the USB token or card reader supported by the signing module,
+    and X360CE_SIGN_MODULE set to the path of that module. The release stops before
+    it builds anything when the module is not there.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -86,12 +85,17 @@ $solution = Resolve-Path2 $config.Solution
 if (-not (Test-Path -LiteralPath $solution)) { throw "Solution not found: $solution" }
 $root = [System.IO.Path]::GetDirectoryName($solution)
 
+# The signing module lives outside the repository and its path differs per machine,
+# so the configuration names an environment variable rather than one maintainer's
+# folder. Set X360CE_SIGN_MODULE to the full path of the signing module.
+#
 # The signing module reports a missing token by carrying on unsigned, which would
 # produce a release that looks finished and is not. Stop before building instead.
 if (-not $SkipSign) {
     foreach ($module in ($config.Apps.SignModule | Select-Object -Unique)) {
+        $module = [System.Environment]::ExpandEnvironmentVariables($module)
         if (-not (Test-Path -LiteralPath $module)) {
-            throw "Signing module not found: $module`nRun with -SkipSign to build without signing."
+            throw "Signing module not found: $module`nSet X360CE_SIGN_MODULE to the signing module path, or run with -SkipSign to build without signing."
         }
     }
 }
@@ -130,8 +134,11 @@ function Remove-BuildOutput {
     }
     foreach ($path in $paths) {
         if (-not (Test-Path -LiteralPath $path)) { continue }
-        # Never step outside the repository, whatever the configuration says.
-        if (-not $path.StartsWith($root, [StringComparison]::OrdinalIgnoreCase)) {
+        # Never step outside the repository, whatever the configuration says. The
+        # separator is part of the test so a sibling folder whose name merely starts
+        # with the repository name, such as "repo-backup" beside "repo", is outside.
+        $inside = $root + [System.IO.Path]::DirectorySeparatorChar
+        if (-not $path.StartsWith($inside, [StringComparison]::OrdinalIgnoreCase)) {
             Write-Host "Skipped, outside the repository: $path"
             continue
         }
@@ -293,7 +300,15 @@ function Write-Result {
             $missing++
             continue
         }
-        foreach ($file in Get-ChildItem -LiteralPath $full -File | Sort-Object Name) {
+        $files = @(Get-ChildItem -LiteralPath $full -File | Sort-Object Name)
+        if ($files.Count -eq 0) {
+            # A zip step that creates its folder and then produces nothing would
+            # otherwise report a finished release holding no files.
+            Write-Host "    nothing produced" -ForegroundColor Red
+            $missing++
+            continue
+        }
+        foreach ($file in $files) {
             $size = "{0,9:N0} KB" -f [math]::Ceiling($file.Length / 1KB)
             $state = ""
             if ($file.Extension -in ".exe", ".dll") {

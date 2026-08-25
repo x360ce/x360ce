@@ -14,13 +14,21 @@ Tests/
   x360ce.Tests.csproj          project name follows the repo convention: x360ce.{FolderName}
   Run-Tests.ps1                the only supported way to run the suite
   Common/
-    EngineTest.cs              mapping value parser
-    CrashReportTest.cs         crash reporting and Release symbols
-    MemoryLeakTest.cs          disposal and the memory ceiling
+    AboutTabTest.cs            the About tab's contents
+    AccessibilityTest.cs       names and descriptions on the mapping controls
     AppUiTest.cs               launch smoke for App.v3 and App.v4
+    CrashReportTest.cs         crash reporting and Release symbols
+    DocumentTest.cs            the shipped documents and the changelog heading
+    EngineTest.cs              mapping value parser
+    ErrorReportTest.cs         the body the error report window sends
+    MemoryLeakTest.cs          disposal and the memory ceiling
+    NavImageTest.cs            the navigation glyphs and their scaling
+    PadGeometryTest.cs         the redrawn controller picture
+    WpfSurfaceTest.cs          no XAML survives anywhere in the repository
   TestInfrastructure/
     Ui.cs                      the only place polling lives
     MemoryLeak.cs              weak-reference disposal checks
+    TestRun.cs                 assembly setup: crash reports go to a temporary folder
 ```
 
 ## Why one project rather than several

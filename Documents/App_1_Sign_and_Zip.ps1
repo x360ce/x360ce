@@ -23,7 +23,9 @@
                    into another application are signed in an earlier stage than
                    the application embedding them.
       AppLink    - the link written into the signature.
-      SignModule - the shared signing module.
+      SignModule - the shared signing module. Environment variables are expanded,
+                   so the path is written as %X360CE_SIGN_MODULE% rather than one
+                   maintainer's folder.
       ZipScript  - the shared zip script.
       FilesDir   - the folder receiving the signed copies and the zips.
                    Optional, defaults to "Files".
@@ -106,6 +108,7 @@ if ($Stage) {
 # Importing the module changes the current folder to the folder of this script,
 # so keep the import here rather than inside a function.
 foreach ($module in ($config.SignModule | Select-Object -Unique)) {
+    $module = [System.Environment]::ExpandEnvironmentVariables($module)
     if (Test-Path -LiteralPath $module) {
         Import-Module $module -Force
     }
@@ -187,7 +190,7 @@ function Invoke-Sign {
     # module without it still works, one file at a time.
     $batch = [bool](Get-Command Sign-Files -ErrorAction SilentlyContinue)
     if (-not $batch -and -not (Get-Command Sign-File -ErrorAction SilentlyContinue)) {
-        Write-Host "Signing module not found: $($config.SignModule | Select-Object -Unique)"
+        Write-Host "Signing module not found: $([System.Environment]::ExpandEnvironmentVariables(($config.SignModule | Select-Object -Unique)))"
         return
     }
     Copy-Sources $Targets

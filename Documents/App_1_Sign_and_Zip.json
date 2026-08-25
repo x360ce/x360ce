@@ -59,7 +59,7 @@
       "AppName": "X360CE - DirectInput Library",
       "Stage": "Library",
       "AppLink": "https://www.x360ce.com",
-      "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+      "SignModule": "%X360CE_SIGN_MODULE%",
       "ZipScript": "../Resources/ZipFiles.ps1",
       "Files": [
         {
@@ -74,7 +74,7 @@
       "AppName": "X360CE - TocaEdit XBOX 360 Controller Emulator Library",
       "Stage": "Library",
       "AppLink": "https://www.x360ce.com",
-      "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+      "SignModule": "%X360CE_SIGN_MODULE%",
       "ZipScript": "../Resources/ZipFiles.ps1",
       "Files": [
         {
@@ -89,7 +89,7 @@
       "AppName": "X360CE - SharpDX DirectInput Library",
       "Stage": "Library",
       "AppLink": "https://www.x360ce.com",
-      "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+      "SignModule": "%X360CE_SIGN_MODULE%",
       "ZipScript": "../Resources/ZipFiles.ps1",
       "Files": [
         {
@@ -113,7 +113,7 @@
       "AppName": "X360CE - Shauleiz Virtual Xbox Interface",
       "Stage": "Library",
       "AppLink": "https://www.x360ce.com",
-      "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+      "SignModule": "%X360CE_SIGN_MODULE%",
       "ZipScript": "../Resources/ZipFiles.ps1",
       "Files": [
         {
@@ -128,7 +128,7 @@
       "AppName": "X360CE - DirectInput Tool",
       "Stage": "Library",
       "AppLink": "https://www.x360ce.com",
-      "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+      "SignModule": "%X360CE_SIGN_MODULE%",
       "ZipScript": "../Resources/ZipFiles.ps1",
       "Files": [
         {
@@ -140,7 +140,7 @@
       "AppName": "X360CE - Engine Library",
       "Stage": "Engine",
       "AppLink": "https://www.x360ce.com",
-      "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+      "SignModule": "%X360CE_SIGN_MODULE%",
       "ZipScript": "../Resources/ZipFiles.ps1",
       "Files": [
         {
@@ -158,7 +158,7 @@
       "AppName": "XBOX 360 Controller Emulator",
       "Stage": "App",
       "AppLink": "https://www.x360ce.com",
-      "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+      "SignModule": "%X360CE_SIGN_MODULE%",
       "ZipScript": "../Resources/ZipFiles.ps1",
       "FilesDir": "Files.v3",
       "Files": [
@@ -181,7 +181,7 @@
       "AppName": "XBOX 360 Controller Emulator",
       "Stage": "App",
       "AppLink": "https://www.x360ce.com",
-      "SignModule": "d:/_Backup/Configuration/SSL/Tools/app_signModule.ps1",
+      "SignModule": "%X360CE_SIGN_MODULE%",
       "ZipScript": "../Resources/ZipFiles.ps1",
       "FilesDir": "Files.v4",
       "Files": [
