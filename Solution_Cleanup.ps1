@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 		Removes temporary bin and obj folders.
 		Kill and clear IIS Express configuration.
@@ -14,12 +14,12 @@ using namespace System.IO
 
 # ----------------------------------------------------------------------------
 # Run as administrator.
-If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {   
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
 	# Pass arguments: script path, original user profile path and local app data path.
 	$argumentList = "& '" + $MyInvocation.MyCommand.Path + "' '$($env:USERNAME)' '$($env:USERPROFILE)' '$($env:LOCALAPPDATA)'"
 	Start-Process PowerShell.exe -Verb Runas -ArgumentList $argumentList
 	return
-}	
+}
 
 # Add original user profile path and optionally admin user profile path to process.
 $userNames = @( $args[0])
@@ -73,7 +73,84 @@ Function KillProcess {
 				Stop-Process $proc
 			}
 		}
-	}	
+	}
+}
+# ----------------------------------------------------------------------------
+function Invoke-WithRetry {
+	param(
+		[scriptblock]$action,
+		[string]$activity,
+		[int]$maxRetries = 6,
+		[double]$delaySeconds = 0.25
+	)
+	for ($i = 1; $i -le $maxRetries; $i++) {
+		try {
+			& $action
+			return
+		}
+		catch {
+			if ($i -eq $maxRetries) {
+				throw
+			}
+			Write-Host "  Retry ${i}/${maxRetries}: $activity" -ForegroundColor Yellow
+			Start-Sleep -Seconds $delaySeconds
+			$delaySeconds = [Math]::Min($delaySeconds * 2.0, 3.0)
+		}
+	}
+}
+# ----------------------------------------------------------------------------
+function Resolve-LockingProcesses {
+	param([string]$path)
+
+	# Best-effort: SysInternals 'handle64.exe' (if installed) gives exact locking PID(s).
+	# If missing or errors, return empty list (caller can fall back to known process kill list).
+	$handleCandidates = @(
+		"$env:ProgramFiles\\Sysinternals\\handle64.exe",
+		"$env:ProgramFiles (x86)\\Sysinternals\\handle64.exe",
+		"c:\\Program Files (EJocys)\\Sysinternals\\handle64.exe"
+	)
+	$handleExe = $handleCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+	if (-not $handleExe) {
+		return @()
+	}
+
+	try {
+		$out = & $handleExe -accepteula -nobanner $path 2>$null
+	}
+	catch {
+		return @()
+	}
+
+	$processIds = @()
+	foreach ($line in $out) {
+		# Example:
+		# Illuminate.Setup.exe pid: 52872  type: File   ...: C:\...\AutoMapper.dll
+		if ($line -match "\\bpid:\\s*(\\d+)") {
+			$processIds += [int]$matches[1]
+		}
+	}
+	return $processIds | Select-Object -Unique
+}
+# ----------------------------------------------------------------------------
+function Remove-ItemRobust {
+	[CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
+	param(
+		[string]$literalPath,
+		[switch]$isDirectory
+	)
+
+	$activity = "Remove '$literalPath'"
+	Invoke-WithRetry -activity $activity -action {
+		if (-not $PSCmdlet.ShouldProcess($literalPath, 'Remove')) {
+			return
+		}
+		if ($isDirectory) {
+			Remove-Item -LiteralPath $literalPath -Force -Recurse -ErrorAction Stop
+		}
+		else {
+			Remove-Item -LiteralPath $literalPath -Force -ErrorAction Stop
+		}
+	}
 }
 # ----------------------------------------------------------------------------
 Function RemoveDirectories {
@@ -102,9 +179,39 @@ Function RemoveDirectories {
 			$global:skipCount += 1
 			continue
 		}
+
 		Write-Output "  Remove: $($item.FullName)"
 		$global:removeCount += 1
-		Remove-Item -LiteralPath $item.FullName -Force -Recurse
+
+		try {
+			Remove-ItemRobust -literalPath $item.FullName -isDirectory
+		}
+		catch {
+			# Try to find exact process locking something inside this folder.
+			# We probe a few common lock targets (dll/exe/pdb) if present.
+			$lockTargets = @()
+			$lockTargets += Get-ChildItem -LiteralPath $item.FullName -Recurse -Force -ErrorAction SilentlyContinue -Include *.dll,*.exe,*.pdb | Select-Object -First 5
+			foreach ($t in $lockTargets) {
+				$lockingProcessIds = Resolve-LockingProcesses -path $t.FullName
+				foreach ($lockingProcessId in $lockingProcessIds) {
+					try {
+						$proc = Get-Process -Id $lockingProcessId -ErrorAction SilentlyContinue
+						if ($proc) {
+							Write-Host "  Stopping locking process: $($proc.ProcessName) (PID: $lockingProcessId)" -ForegroundColor Yellow
+							Stop-Process -Id $lockingProcessId -Force -ErrorAction SilentlyContinue
+						}
+					}
+					catch {
+						Write-Host "  Failed to stop locking process PID: $lockingProcessId" -ForegroundColor Yellow
+					}
+				}
+			}
+
+			# Fall back to known developer process kill list, then retry delete.
+			KillDeveloperProcesses
+			Start-Sleep -Seconds 1.0
+			Remove-ItemRobust -literalPath $item.FullName -isDirectory
+		}
 	}
 }
 # ----------------------------------------------------------------------------
@@ -121,7 +228,7 @@ function RemoveSubFoldersAndFiles {
 		}
 		foreach ($item in $items) {
 			Write-Output "  - $($item.Name)"
-			Remove-Item -LiteralPath $item.FullName -Force -Recurse
+			Remove-ItemRobust -literalPath $item.FullName -isDirectory:($item -is [DirectoryInfo])
 		}
 	}
 }
@@ -133,7 +240,7 @@ Function RemoveFiles {
 	$items = Get-ChildItem $wdir -Filter $pattern -Recurse -Force | Where-Object { $_ -is [FileInfo] }
 	foreach ($item in $items) {
 		Write-Output "  $($item.FullName)"
-		Remove-Item -LiteralPath $item.FullName -Force
+		Remove-ItemRobust -literalPath $item.FullName
 	}
 }
 # ----------------------------------------------------------------------------
@@ -154,6 +261,10 @@ function KillDeveloperProcesses {
 	# 1. Open SysInternals Process Explorer.
 	# 2. Go to the Menu and click on "Find". Then, choose "Find Handle or DLL...(CTRL+SHIFT+F)".
 	#
+	# List of services to stop.
+    $serviceNames = @(
+        "VSStandardCollectorService150" # Visual Studio Data Collection Service. When running, this service collects real-time ETW events and processes them.
+    )
 	# List of process names to kill (without the .exe extension), with comments.
 	$processNames = @(
 		"MsBuild", # Microsoft Build Engine.
@@ -169,7 +280,15 @@ function KillDeveloperProcesses {
 		"TGitCache", # GIT Cache.
 		"TSVNCache"         # SVN Cache.
 	)
-	Write-Host "Kill Developer Processes"
+    Write-Host "Stopping developer services"
+    foreach ($service in $serviceNames) {
+        $svc = Get-Service -Name $service -ErrorAction SilentlyContinue
+        if ($svc -and $svc.Status -ne 'Stopped') {
+            Write-Host "  Stopping service: $service"
+            Stop-Service -Name $service -Force -ErrorAction SilentlyContinue
+        }
+    }
+	Write-Host "Stopping developer processes"
 	foreach ($name in $processNames) {
 		# Attempt to get the running processes by name.
 		$processes = Get-Process -Name $name -ErrorAction SilentlyContinue
@@ -222,7 +341,7 @@ function ResetPermissions {
 }
 # ----------------------------------------------------------------------------
 function ClearCacheVS {
-	# Fix Visual Studio "Windows Form Designer: Could not load file or assembly" designer error by 
+	# Fix Visual Studio "Windows Form Designer: Could not load file or assembly" designer error by
 	# clearing temporary compiled assemblies inside dynamically created folders by Visual Studio.
 	# Visual studio must be closed for this batch script to succeed.
 	#
@@ -248,7 +367,7 @@ function ClearCacheVS {
 				}
 			}
 		}
-	}	
+	}
 	return
 	Write-Host "Clear IIS Express Cache"
 	foreach ($p in $localAppDataPaths) {
