@@ -1314,10 +1314,12 @@ namespace x360ce.App.Controls
 			}
 			else if (column == ConnectionClassColumn)
 			{
-				var device = SettingsManager.GetDevice(item.InstanceGuid);
-				e.Value = device.ConnectionClass == Guid.Empty
+				// A setting can outlive the device it maps to, so the lookup returns null for
+				// a mapping whose device is gone. Treat it as an unknown connection class.
+				var connectionClass = SettingsManager.GetDevice(item.InstanceGuid)?.ConnectionClass ?? Guid.Empty;
+				e.Value = connectionClass == Guid.Empty
 					? new Bitmap(16, 16)
-					: JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(device.ConnectionClass, 16)?.ToBitmap();
+					: JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(connectionClass, 16)?.ToBitmap();
 			}
 			else if (column == InstanceIdColumn)
 			{

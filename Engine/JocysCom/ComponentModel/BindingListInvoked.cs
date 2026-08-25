@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace JocysCom.ClassLibrary.ComponentModel
 {
+	/// <summary>Marshals list modifications and notifications to a TaskScheduler (e.g., UI thread) to prevent cross-thread errors.</summary>
+	/// <remarks>
+	/// Provides AddRange for bulk addition and overrides to dispatch operations via SynchronizingObject, with optional async invocation.
+	/// </remarks>
 	public class BindingListInvoked<T> : BindingList<T>
 	{
 		public BindingListInvoked() : base() { }
@@ -24,16 +28,19 @@ namespace JocysCom.ClassLibrary.ComponentModel
 
 		#region ISynchronizeInvoker
 
+		/// <summary>TaskScheduler used to marshal list operations; null disables synchronization, executing operations on the calling thread.</summary>
 		public TaskScheduler SynchronizingObject { get; set; }
 
 		delegate void ItemDelegate(int index, T item);
 
+		/// <summary>When true, invocation uses Task.Factory.StartNew to queue asynchronously; when false, runs synchronously on the TaskScheduler.</summary>
 		public bool AsynchronousInvoke { get; set; }
 
+		// Dispatches the delegate to SynchronizingObject's TaskScheduler when required; respects AsynchronousInvoke for async vs sync execution.
 		void Invoke(Delegate method, params object[] args)
 		{
 			var so = SynchronizingObject;
-			if (so == null)
+			if (so is null || !JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired)
 			{
 				DynamicInvoke(method, args);
 			}
@@ -67,8 +74,10 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			}
 		}
 
+		// Lock to serialize concurrent list modifications.
 		object OneChangeAtTheTime = new object();
 
+		// Executes the delegate under a lock and enriches exceptions with type and SynchronizingObject context data.
 		void DynamicInvoke(Delegate method, params object[] args)
 		{
 			try
@@ -80,7 +89,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			}
 			catch (Exception ex)
 			{
-				// Add data to help with debuging.
+				// Add data to help with debugging.
 				var prefix = string.Format("{0}<T>", nameof(BindingListInvoked<T>)) + ".";
 				ex.Data.Add(prefix + "T", typeof(T).FullName);
 				ex.Data.Add(prefix + "SynchronizingObject", SynchronizingObject?.GetType().FullName);
@@ -88,7 +97,6 @@ namespace JocysCom.ClassLibrary.ComponentModel
 				throw;
 			}
 		}
-
 
 		protected override void RemoveItem(int index)
 		{
@@ -114,6 +122,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		{
 			Invoke((Action<AddingNewEventArgs>)base.OnAddingNew, e);
 		}
+
 
 		#endregion
 	}

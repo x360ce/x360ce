@@ -17,7 +17,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (MainTaskScheduler != null)
 				return;
-			MainThreadId = Thread.CurrentThread.ManagedThreadId;
+			_MainThreadId = Thread.CurrentThread.ManagedThreadId;
 			// Create a TaskScheduler that wraps the SynchronizationContext returned from
 			// System.Threading.SynchronizationContext.Current
 			MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -28,12 +28,11 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </summary>
 		public static TaskScheduler MainTaskScheduler { get; private set; }
 
-		private static int MainThreadId;
+		public static int MainThreadId => _MainThreadId;
+		private static int _MainThreadId;
 
-		public static bool InvokeRequired()
-		{
-			return MainThreadId != Thread.CurrentThread.ManagedThreadId;
-		}
+		public static bool InvokeRequired
+			=> _MainThreadId != Thread.CurrentThread.ManagedThreadId;
 
 		/*
 
@@ -128,7 +127,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (action == null)
 				throw new ArgumentNullException(nameof(action));
 			InitInvokeContext();
-			if (InvokeRequired())
+			if (InvokeRequired)
 			{
 				var t = new Task(action);
 				t.RunSynchronously(MainTaskScheduler);
@@ -146,7 +145,7 @@ namespace JocysCom.ClassLibrary.Controls
 			if (method == null)
 				throw new ArgumentNullException(nameof(method));
 			// Run method on main Graphical User Interface thread.
-			if (InvokeRequired())
+			if (InvokeRequired)
 			{
 				var t = new Task<object>(() => method.DynamicInvoke(args));
 				t.RunSynchronously(MainTaskScheduler);

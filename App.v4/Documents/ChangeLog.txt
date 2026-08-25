@@ -1,4 +1,8 @@
-﻿v4.17.50.0 (2026-08-22)
+﻿v4.17.51.0 (2026-08-25)
+- Fixed: Program stopped responding after pressing Add Demo Device on the Devices tab. A list change made on the interface thread was queued back onto that same thread and then waited for.
+- Fixed: Crash when opening a controller tab while one of its mappings pointed at a device that is no longer present.
+
+v4.17.50.0 (2026-08-22)
 - Changed: About screen credits Nefarius by name.
 - Fixed: Dead link to vigem.org on the About and Options pages. Project links now point at the author on GitHub.
 - Added: HID Hide tab. Shows whether the driver is installed, links to its download page, and opens its configuration program.
