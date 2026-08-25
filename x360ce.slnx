@@ -7,7 +7,7 @@
     <Platform Name="DLL_x86_v3" />
   </Configurations>
   <Folder Name="/Solution Items/">
-    <File Path="x360ce.sln.vsspell" />
+    <File Path="x360ce.slnx.vsspell" />
   </Folder>
   <Folder Name="/Support/">
     <File Path="Native/Support/changelog.txt" />

@@ -1,22 +1,24 @@
 "Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, etc.) to function as an Xbox 360 controller. For example, it lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using a Logitech Wheel.
 
+IMPORTANT: Please download and run digitally signed files only! If someone asks to disable antivirus or exclude X360CE app from anti-virus - DON'T! Report any suspicion in [Issues](https://github.com/x360ce/x360ce/issues) and we will try to resolve any false positive with anti-virus developers.
+
 Every signed build is published on the [Releases page](https://github.com/x360ce/x360ce/releases).
 
 # Download v4.x
 
-Digitally Signed Application v4.17.50.0 (2026-08-22) and Virtual Gamepad Emulation Bus 1.16.112.0
+Digitally Signed Application v4.17.50.0 and Virtual Gamepad Emulation Bus 1.16.112.0
 
-[Download - x360ce.zip](https://github.com/x360ce/x360ce/releases/download/4.17.50.0/x360ce.zip) - for All games
+Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
 Note: version 4.x use Virtual Gamepad Emulation. Instructions can be found here: https://github.com/x360ce/x360ce/wiki/Beta-Testing
 
 # Download v3.x
 
-Digitally Signed Application v3.3.10.0 (2026-08-22) and Libraries 3.4.1
+Digitally Signed Application v3.3.10.0 and Libraries 3.4.1
 
-[32-bit Download - x360ce_x86.zip](https://github.com/x360ce/x360ce/releases/download/3.3.10.0/x360ce_x86.zip) - for 32-bit games
+Download `x360ce_x86.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases) - for 32-bit games
 
-[64-bit Download - x360ce_x64.zip](https://github.com/x360ce/x360ce/releases/download/3.3.10.0/x360ce_x64.zip) - for 64-bit games
+Download `x360ce_x64.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases) - for 64-bit games
 
 DInput.dll Plugin (required for some games):
 

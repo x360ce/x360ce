@@ -13,7 +13,6 @@ setlocal EnableExtensions
 set "CONFIG=%~1"
 if "%CONFIG%"=="" set "CONFIG=Release"
 
-set "TOOLSET=v141"
 set "SLN=%~dp0x360ce.slnx"
 
 :: ---------------------------------------------------------------------------
@@ -22,7 +21,9 @@ set "SLN=%~dp0x360ce.slnx"
 set "VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
 if not exist "%VSWHERE%" (
     echo ERROR: vswhere.exe not found at "%VSWHERE%".
-    echo        Install Visual Studio 2022+ or VS 2026 Build Tools.
+    echo        Install Visual Studio 2022+ or VS 2026 Build Tools, including the
+    echo        "MSVC v141 - VS 2017 C++ build tools" individual component, which a
+    echo        default installation does not carry.
     exit /b 1
 )
 
@@ -49,15 +50,17 @@ echo ============================================================
 echo MSBuild         : %MSBUILD%
 echo Solution        : %SLN%
 echo Configuration   : %CONFIG%
-echo PlatformToolset : %TOOLSET%
 echo ============================================================
 echo.
 
 set "FAILED="
 
+:: Both native bitnesses are embedded into each application, whichever bitness the
+:: application itself is, so every DLL platform is built before any APP platform.
+:: This is the order Documents\App_0_Release.ps1 uses for the same reason.
 call :BuildPlatform "DLL_x86_v3" || goto :Failure
-call :BuildPlatform "APP_x86_v3" || goto :Failure
 call :BuildPlatform "DLL_x64_v3" || goto :Failure
+call :BuildPlatform "APP_x86_v3" || goto :Failure
 call :BuildPlatform "APP_x64_v3" || goto :Failure
 call :BuildPlatform "APP_Any_v4" || goto :Failure
 
@@ -80,7 +83,10 @@ exit /b 1
 :BuildPlatform
 set "PLAT=%~1"
 echo --- %CONFIG% ^| %PLAT% ---
-"%MSBUILD%" "%SLN%" /p:Configuration=%CONFIG% "/p:Platform=%PLAT%" /p:PlatformToolset=%TOOLSET% /m /v:m /nologo
+:: The toolset is stated once, by each .vcxproj. Passing it here as well would be a
+:: second source of truth that Documents\App_0_Release.ps1 does not pass, letting the
+:: two entry points build with different tools without anyone choosing that.
+"%MSBUILD%" "%SLN%" /p:Configuration=%CONFIG% "/p:Platform=%PLAT%" /m /v:m /nologo
 if errorlevel 1 (
     set "FAILED=%PLAT%"
     exit /b 1

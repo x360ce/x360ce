@@ -524,22 +524,22 @@ copy /y "$(MSBuildThisFileDirectory)..\Native\x360ce\bin64\Debug\*.pdb" "$(Targe
       itself into its own folder. The unsuffixed name is the 32 bit file under a
       second name, which is why one built file appears here twice.
     -->
-    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\dinput8\bin\Release\dinput8.dll">
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\dinput8\bin\$(Configuration)\dinput8.dll">
       <EmbeddedName>dinput.dll</EmbeddedName>
     </GeneratedResource>
-    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\dinput8\bin\Release\dinput8.dll">
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\dinput8\bin\$(Configuration)\dinput8.dll">
       <EmbeddedName>dinput_x86.dll</EmbeddedName>
     </GeneratedResource>
-    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\dinput8\bin64\Release\dinput8.dll">
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\dinput8\bin64\$(Configuration)\dinput8.dll">
       <EmbeddedName>dinput_x64.dll</EmbeddedName>
     </GeneratedResource>
-    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\x360ce\bin\Release\xinput1_3.dll">
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\x360ce\bin\$(Configuration)\xinput1_3.dll">
       <EmbeddedName>xinput.dll</EmbeddedName>
     </GeneratedResource>
-    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\x360ce\bin\Release\xinput1_3.dll">
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\x360ce\bin\$(Configuration)\xinput1_3.dll">
       <EmbeddedName>xinput_x86.dll</EmbeddedName>
     </GeneratedResource>
-    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\x360ce\bin64\Release\xinput1_3.dll">
+    <GeneratedResource Include="$(MSBuildThisFileDirectory)..\Native\x360ce\bin64\$(Configuration)\xinput1_3.dll">
       <EmbeddedName>xinput_x64.dll</EmbeddedName>
     </GeneratedResource>
   </ItemGroup>
