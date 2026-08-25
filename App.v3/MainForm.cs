@@ -243,6 +243,9 @@ namespace x360ce.App
 
 		void MainForm_KeyDown(object sender, KeyEventArgs e)
 		{
+			// If pad controls not initializes yet then return.
+			if (ControlPads == null)
+				return;
 			for (int i = 0; i < ControlPads.Length; i++)
 			{
 				// If Escape key was pressed while recording then...

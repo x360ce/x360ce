@@ -16,14 +16,18 @@ Tests/
   Common/
     AboutTabTest.cs            the About tab's contents
     AccessibilityTest.cs       names and descriptions on the mapping controls
+    AgentInstructionsTest.cs   the AI instruction files against the tree they describe
     AppUiTest.cs               launch smoke for App.v3 and App.v4
+    BuildOutputTest.cs         which build output each application embeds
     CrashReportTest.cs         crash reporting and Release symbols
     DocumentTest.cs            the shipped documents and the changelog heading
     EngineTest.cs              mapping value parser
     ErrorReportTest.cs         the body the error report window sends
     MemoryLeakTest.cs          disposal and the memory ceiling
     NavImageTest.cs            the navigation glyphs and their scaling
+    OptionsLayoutTest.cs       controls on the Options page that paint over each other
     PadGeometryTest.cs         the redrawn controller picture
+    StartupInputTest.cs        keys pressed before the window has finished building
     WpfSurfaceTest.cs          no XAML survives anywhere in the repository
   TestInfrastructure/
     Ui.cs                      the only place polling lives

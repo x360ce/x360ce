@@ -497,10 +497,10 @@
 			// 
 			this.AboutViGEmLinkLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.AboutViGEmLinkLabel.AutoSize = true;
-			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(10, 24);
+			this.AboutViGEmLinkLabel.Location = new System.Drawing.Point(-38, 24);
 			this.AboutViGEmLinkLabel.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
 			this.AboutViGEmLinkLabel.Name = "AboutViGEmLinkLabel";
-			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(89, 13);
+			this.AboutViGEmLinkLabel.Size = new System.Drawing.Size(137, 13);
 			this.AboutViGEmLinkLabel.TabIndex = 45;
 			this.AboutViGEmLinkLabel.TabStop = true;
 			this.AboutViGEmLinkLabel.Text = "https://github.com/nefarius";
@@ -519,10 +519,10 @@
 			// 
 			this.VigemLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.VigemLabel.AutoSize = true;
-			this.VigemLabel.Location = new System.Drawing.Point(-131, 24);
+			this.VigemLabel.Location = new System.Drawing.Point(-198, 24);
 			this.VigemLabel.Margin = new System.Windows.Forms.Padding(3, 0, 0, 0);
 			this.VigemLabel.Name = "VigemLabel";
-			this.VigemLabel.Size = new System.Drawing.Size(143, 13);
+			this.VigemLabel.Size = new System.Drawing.Size(150, 13);
 			this.VigemLabel.TabIndex = 29;
 			this.VigemLabel.Text = "Download latest version from";
 			// 
