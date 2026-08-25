@@ -32,15 +32,15 @@ namespace x360ce.App.DInput
 			// List of connected devices (can be a very long operation).
 			var devices = new List<DeviceInstance>();
 			// Controllers.
-			var controllerInstances = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+			var controllerInstances = manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly).ToList();
 			foreach (var item in controllerInstances)
 				devices.Add(item);
 			// Pointers.
-			var pointerInstances = manager.GetDevices(DeviceClass.Pointer, DeviceEnumerationFlags.AllDevices).ToList();
+			var pointerInstances = manager.GetDevices(DeviceClass.Pointer, DeviceEnumerationFlags.AttachedOnly).ToList();
 			foreach (var item in pointerInstances)
 				devices.Add(item);
 			// Keyboards.
-			var keyboardInstances = manager.GetDevices(DeviceClass.Keyboard, DeviceEnumerationFlags.AllDevices).ToList();
+			var keyboardInstances = manager.GetDevices(DeviceClass.Keyboard, DeviceEnumerationFlags.AttachedOnly).ToList();
 			foreach (var item in keyboardInstances)
 				devices.Add(item);
 			if (Program.IsClosing)

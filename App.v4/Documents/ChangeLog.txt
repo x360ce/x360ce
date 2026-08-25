@@ -1,4 +1,10 @@
-﻿v4.17.51.0 (2026-08-25)
+﻿v4.17.52.0 (2026-08-25)
+- Fixed: Crash when a controller was unplugged and plugged back in. The hidden window that receives device messages was written to from the wrong thread.
+- Fixed: Interface stopped refreshing for the rest of the session if a redraw failed.
+- Changed: Device detection lists attached devices only, instead of every device ever installed. Devices that are unplugged still keep their settings and show as offline.
+- Changed: Interface redraws up to 10 times per second instead of 20. A redraw that runs long skips frames rather than delaying controller input.
+
+v4.17.51.0 (2026-08-25)
 - Fixed: Program stopped responding after pressing Add Demo Device on the Devices tab. A list change made on the interface thread was queued back onto that same thread and then waited for.
 - Fixed: Crash when opening a controller tab while one of its mappings pointed at a device that is no longer present.
 - Fixed: Trigger dead zone and anti-dead zone ran to the thumb range instead of 0-255. Any setting above 255 flattened the trigger curve or pushed it off the chart.

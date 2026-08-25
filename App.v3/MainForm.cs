@@ -62,7 +62,7 @@ namespace x360ce.App
 		public System.Timers.Timer UpdateTimer;
 		public System.Timers.Timer SettingsTimer;
 		public System.Timers.Timer CleanStatusTimer;
-		public int DefaultPoolingInterval = 50;
+		public int DefaultPoolingInterval = 100;
 
 		public Controller[] GamePads = new Controller[4];
 
@@ -539,7 +539,7 @@ namespace x360ce.App
 		/// </summary>
 		DeviceInstance[] GetDevices()
 		{
-			var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AllDevices).ToList();
+			var devices = Manager.GetDevices(DeviceClass.GameControl, DeviceEnumerationFlags.AttachedOnly).ToList();
 			if (SettingManager.Current.ExcludeSuplementalDevices)
 			{
 				// Supplemental devices are specialized device with functionality unsuitable for the main control of an application,

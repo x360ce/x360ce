@@ -1392,10 +1392,18 @@ namespace x360ce.App
 					// Make sure method is executed on the same thread as this control.
 					ControlsHelper.BeginInvoke(() =>
 					{
-						// Check again.
-						if (!Program.IsClosing)
-							UpdateForm3();
-						UpdateCompletedBusy = false;
+						try
+						{
+							// Check again.
+							if (!Program.IsClosing)
+								UpdateForm3();
+						}
+						finally
+						{
+							// Release the gate even if the update throws. Leaving it held would
+							// block every later frame and stop the interface updating for good.
+							UpdateCompletedBusy = false;
+						}
 					});
 				}
 			}
@@ -1425,8 +1433,9 @@ namespace x360ce.App
 
 		private bool interfaceIsForeground;
 
-		// Allow no more than 20 frames per second in foreground (make it look smooth and responsive).
-		private readonly int interfaceUpdateForegroundFps = 20;
+		// Allow no more than 10 frames per second in foreground. Enough to read values
+		// changing, and half the interface work of the 20 it replaced.
+		private readonly int interfaceUpdateForegroundFps = 10;
 
 		// Allow no more than  5 frames per second in background (save CPU resources).
 		private readonly int interfaceUpdateBackgroundFps = 5;

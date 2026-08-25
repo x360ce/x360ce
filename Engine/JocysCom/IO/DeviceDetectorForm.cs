@@ -19,15 +19,9 @@ namespace JocysCom.ClassLibrary.IO
 			ControlsHelper.InitInvokeContext();
 			InitializeComponent();
 			_Detector = detector;
-			_Detector.DeviceChanged += new DeviceDetector.DeviceDetectorEventHandler(_Detector_DeviceChanged);
-		}
-
-		void _Detector_DeviceChanged(object sender, DeviceDetectorEventArgs e)
-		{
-			ControlsHelper.BeginInvoke(() =>
-			{
-				InfoLabel.Text = e.ChangeType.ToString();
-			});
+			// This form is never shown and is owned by whichever thread built it, which for
+			// device polling is a worker thread with no message loop. Nothing here may touch
+			// its controls: the form exists only to own a window handle for WndProc.
 		}
 
 		DeviceDetector _Detector = null;
