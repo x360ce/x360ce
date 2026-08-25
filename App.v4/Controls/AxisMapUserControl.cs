@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Threading;
 using SharpDX.XInput;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
@@ -21,8 +22,9 @@ namespace x360ce.App.Controls
 			// inside DeadZoneControlsLink(...).
 			updateTimer = new QueueTimer(500, 0);
 			updateTimer.DoWork += updateTimer_DoWork;
-			var maxValue = TargetType == TargetType.LeftTrigger || TargetType == TargetType.RightTrigger
-				? byte.MaxValue : short.MaxValue;
+			// TargetType is still unset here, so the links start at the wider thumb range
+			// and UpdateTargetType() narrows it once the designer assigns the target.
+			var maxValue = (int)short.MaxValue;
 			deadzoneLink = new DeadZoneControlsLink(DeadZoneTrackBar, DeadZoneNumericUpDown, DeadZoneTextBox, maxValue);
 			deadzoneLink.ValueChanged += deadzoneLink_ValueChanged;
 			antiDeadzoneLink = new DeadZoneControlsLink(AntiDeadZoneTrackBar, AntiDeadZoneNumericUpDown, AntiDeadZoneTextBox, maxValue);
@@ -59,7 +61,30 @@ namespace x360ce.App.Controls
 			set
 			{
 				_TargetType = value;
+				UpdateTargetType();
 			}
+		}
+
+		/// <summary>True when the target is a thumb axis, false for a trigger.</summary>
+		bool IsThumb =>
+			TargetType == TargetType.LeftThumbX ||
+			TargetType == TargetType.LeftThumbY ||
+			TargetType == TargetType.RightThumbX ||
+			TargetType == TargetType.RightThumbY;
+
+		/// <summary>
+		/// Apply the value range the target uses: a trigger is [0;255], a thumb is
+		/// [-32768;32767]. The designer assigns TargetType after the constructor has
+		/// run, so the range cannot be settled there.
+		/// </summary>
+		void UpdateTargetType()
+		{
+			if (ControlsHelper.IsDesignMode(this))
+				return;
+			var maxValue = IsThumb ? short.MaxValue : byte.MaxValue;
+			DeadZoneNumericUpDown.Maximum = maxValue;
+			AntiDeadZoneNumericUpDown.Maximum = maxValue;
+			RefreshBackgroundImageAsync();
 		}
 
 		Bitmap LastBackgroundImage = null;
@@ -98,8 +123,6 @@ namespace x360ce.App.Controls
 					components.Dispose();
 				if (dInputLine != null)
 					dInputLine.Dispose();
-				if (dInputPoint != null)
-					dInputPoint.Dispose();
 				if (nInputLine != null)
 					nInputLine.Dispose();
 				if (xInputPoint != null)
@@ -129,30 +152,38 @@ namespace x360ce.App.Controls
 		{
 			DInputValueLabel.Text = dInput.ToString();
 			XInputValueLabel.Text = xInput.ToString();
+			// The red path is part of the background image and is
+			// built from these two values, so the image has to be rebuilt when the map
+			// supplies different ones. Only on change: this runs on every state update.
+			var pathChanged = _invert != invert || _half != half;
 			_invert = invert;
 			_half = half;
 			_dInput = dInput;
 			_xInput = xInput;
+			if (pathChanged)
+				RefreshBackgroundImageAsync();
 			MainPictureBox.Refresh();
 		}
 
 		public void InitPaintObjects()
 		{
-			xInputPath = new SolidBrush(System.Drawing.Color.FromArgb(255, Color.Red));
-			xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, Color.Blue));
-			dInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, Color.Green));
-			// Create thin lines.
-			var xInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Blue));
-			xInputLine = new Pen(xInputLineBrush, 1f);
-			var dInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Green));
-			dInputLine = new Pen(dInputLineBrush, 1f);
+			xInputPath = new Pen(Color.Red, 1f);
+			// Dead zones turn the path into near-right angles. Round the joins so those
+			// corners do not grow mitre spikes.
+			xInputPath.LineJoin = System.Drawing.Drawing2D.LineJoin.Round;
+			// The dot is black: it marks a DInput and an XInput value at once, so it
+			// belongs to neither axis colour. The thin lines carry the per-axis colour.
+			xInputPoint = new SolidBrush(System.Drawing.Color.FromArgb(255, Color.Black));
+			// Create thin lines. Each marker line uses the same colour as the value label
+			// it belongs to, so XI is blue and DI is green.
+			xInputLine = new Pen(Color.Blue, 1f);
+			dInputLine = new Pen(Color.Green, 1f);
 			var nInputLineBrush = new SolidBrush(System.Drawing.Color.FromArgb(32, Color.Gray));
 			nInputLine = new Pen(nInputLineBrush, 1f);
 		}
 
-		SolidBrush xInputPath;
+		Pen xInputPath;
 		SolidBrush xInputPoint;
-		SolidBrush dInputPoint;
 		Pen xInputLine;
 		Pen dInputLine;
 		Pen nInputLine;
@@ -183,25 +214,26 @@ namespace x360ce.App.Controls
 			//DrawDot(g, 74.5f, 74.5f, 0.5f, xInputPath);
 			// Draw grey line from bottom-left to top-right.
 			g.DrawLine(nInputLine, 0f, (float)h - 1f, (float)w - 1f, 0f);
+			// The mapping is not continuous: dead zone and anti-dead zone make it jump,
+			// so stamped dots leave gaps. Collect the samples and stroke them as one
+			// path, which bridges every jump with a segment of the same line.
+			var path = new List<PointF>();
 			for (float i = 0; i <= wF; i += 0.5f)
 			{
-				var thumb =
-					TargetType == TargetType.LeftThumbX ||
-					TargetType == TargetType.LeftThumbY ||
-					TargetType == TargetType.RightThumbX ||
-					TargetType == TargetType.RightThumbY;
-				var min = thumb ? -32768f : 0f;
-				var max = thumb ? 32767f : 255f;
+				var min = IsThumb ? -32768f : 0f;
+				var max = IsThumb ? 32767f : 255f;
 				// Convert Image X position [0;w] to DInput position [0;65535].
 				var dInputValue = ConvertHelper.ConvertRangeF(0f, wF, ushort.MinValue, ushort.MaxValue, i);
-				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half, thumb);
-				var rounded = result >= -1f && result <= 1f;
+				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half, IsThumb);
 				// Convert XInput Y position [min;max] to image size [0;h].
 				var y = ConvertHelper.ConvertRangeF(min, max, 0f, hF, result);
-				// Put red dot where XInput dot must travel. Use radius to fix exlipse position.
-				var radius = 0.5f;
-				DrawDot(g, i, y, radius, xInputPath);
+				// An inverted axis is mirrored left to right, so its DInput minimum sits
+				// on the right and the path rises like every other chart. Image Y grows
+				// downward, so flip the value.
+				path.Add(new PointF(_invert ? wF - i : i, hF - y));
 			}
+			if (path.Count > 1)
+				g.DrawLines(xInputPath, path.ToArray());
 			Invoke(new Action(() =>
 			{
 				LastBackgroundImage = bmp;
@@ -282,25 +314,21 @@ namespace x360ce.App.Controls
 			// Convert DInput to image position.
 			var di = ConvertHelper.ConvertRangeF(0f, ushort.MaxValue, 0f, w, _dInput);
 
-			var thumb =
-					TargetType == TargetType.LeftThumbX ||
-					TargetType == TargetType.LeftThumbY ||
-					TargetType == TargetType.RightThumbX ||
-					TargetType == TargetType.RightThumbY;
-			var min = thumb ? -32768f : 0f;
-			var max = thumb ? 32767f : 255f;
+			var min = IsThumb ? -32768f : 0f;
+			var max = IsThumb ? 32767f : 255f;
 			// Convert XInput to image position.
 			var xi = ConvertHelper.ConvertRangeF(min, max, 0f, h, _xInput);
 			var g = e.Graphics;
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-			DrawDLineLine(g, di);
+			// Mirror an inverted axis left to right so it matches the red path.
+			var dx = _invert ? w - di : di;
+			DrawDLineLine(g, dx);
 			DrawXLineLine(g, xi);
-			// Draw dots.
+			// Draw dot.
 			var radius = 2.5f;
-			DrawDot(g, di, di, radius, dInputPoint, true);
-			DrawDot(g, di, xi, radius, xInputPoint, true);
+			DrawDot(g, dx, xi, radius, xInputPoint, true);
 		}
 
 		#region Sensitivity Controls

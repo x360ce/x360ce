@@ -1,6 +1,10 @@
 ﻿v4.17.51.0 (2026-08-25)
 - Fixed: Program stopped responding after pressing Add Demo Device on the Devices tab. A list change made on the interface thread was queued back onto that same thread and then waited for.
 - Fixed: Crash when opening a controller tab while one of its mappings pointed at a device that is no longer present.
+- Fixed: Trigger dead zone and anti-dead zone ran to the thumb range instead of 0-255. Any setting above 255 flattened the trigger curve or pushed it off the chart.
+- Fixed: Mapping curve on an inverted axis was drawn rising while its values fell, so the marker sat away from the line.
+- Fixed: Mapping curve broke into gaps wherever a dead zone made it jump. It is now stroked as one connected line.
+- Changed: Axis charts show a single black marker for the mapped value, and each guide line matches the colour of the value it reports.
 
 v4.17.50.0 (2026-08-22)
 - Changed: About screen credits Nefarius by name.
