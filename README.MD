@@ -1,33 +1,28 @@
-"Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, etc.) to function as an Xbox 360 controller. For example, it lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using a Logitech Wheel.
-
-# Download
+﻿"Xbox 360 Controller Emulator" allows your controller (gamepad, joystick, wheel, etc.) to function as an Xbox 360 controller. For example, it lets you play games such as "Grand Theft Auto" (GTA) or "Mafia II" using a Logitech Wheel.
 
 IMPORTANT: Please download and run digitally signed files only! If someone asks to disable antivirus or exclude X360CE app from anti-virus - DON'T! Report any suspicion in [Issues](https://github.com/x360ce/x360ce/issues) and we will try to resolve any false positive with anti-virus developers.
 
-On 2022-07-14 some malicious people updated the "Beta Testing" WIKI page with a link to a file which was not signed by developers of X360CE.
-The "Beta Testing" WIKI page has been restored and all WIKI pages have been locked for project contributors only, to ensure this does not happen again.
+Every signed build is published on the [Releases page](https://github.com/x360ce/x360ce/releases).
 
-## Download v4.x
+# Download v4.x
 
-Digitally Signed Application v4.17.15.0 (2020-11-15) and Virtual Gamepad Emulation Bus 1.16.112.0
+Digitally Signed Application v4.17.52.0 and Virtual Gamepad Emulation Bus 1.16.112.0
 
-[Download - x360ce.zip](https://github.com/x360ce/x360ce/releases/download/4.17.0.0/x360ce.zip) - for All games
+Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
 Note: version 4.x use Virtual Gamepad Emulation. Instructions can be found here: https://github.com/x360ce/x360ce/wiki/Beta-Testing
 
-## Download v3.x
+# Download v3.x
 
-Digitally Signed Application v3.3.6.0 (2018-07-06) and Libraries 3.4.1.1357 (2015-08-27)
+Digitally Signed Application v3.3.11.0 and Libraries 3.4.1
 
-[32-bit Download - x360ce_x86.zip](https://github.com/x360ce/x360ce/releases/download/3.2.9.82/x360ce_x86.zip) - for 32-bit games
+Download `x360ce_x86.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases) - for 32-bit games
 
-[64-bit Download - x360ce_x64.zip](https://github.com/x360ce/x360ce/releases/download/3.2.9.82/x360ce_x64.zip) - for 64-bit games 
+Download `x360ce_x64.zip` from the [latest v3 release](https://github.com/x360ce/x360ce/releases) - for 64-bit games
 
 DInput.dll Plugin (required for some games):
 
-[32-bit Download - dinput_x86.dll](https://github.com/x360ce/x360ce/raw/master/x360ce.App/Resources/dinput_x86.dll) - for 32-bit games 
-
-[64-bit Download - dinput_x64.dll](https://github.com/x360ce/x360ce/raw/master/x360ce.App/Resources/dinput_x64.dll) - for 64-bit games 
+The 32-bit and 64-bit plugin is built from `Native/dinput8` and embedded in `x360ce.exe`. It is no longer kept as a committed binary, so there is no separate file to download for it.
 
 # Reporting Issues
 
@@ -54,18 +49,13 @@ Games that work with x360ce can be found on the [Compatibility List](https://git
 
 # System Requirements
 
-  1. Windows Vista or newer.
-  1. [.NET 3.5 (also installs 2.0 and 3.0)](http://www.microsoft.com/en-us/download/details.aspx?id=22) (included in Windows 7)
-  1. [.NET 4.0 (link to 4.6, also installs 4.0)](http://www.microsoft.com/en-us/download/details.aspx?id=48130) (included in Windows 8 and 10)
+  1. Windows 10 or newer.
+  1. [.NET Framework 4.x](http://www.microsoft.com/en-us/download/details.aspx?id=48130) (included in Windows 10 and 11)
   1. [DirectX End-User Runtime (June 2010)](http://www.microsoft.com/en-us/download/details.aspx?id=8109) (required regardless of OS)
-  1. [Visual C++ Redistributable for Visual Studio 2013](http://www.microsoft.com/en-us/download/details.aspx?id=40784) (**for x64 systems install both x86 and x64 redistributables**)
-  1. If you upgraded to Windows 10, you must Uninstall and Reinstall the Visual C++ Redistributable
+  1. [Visual C++ Redistributable 2015-2022](https://aka.ms/vs/17/release/vc_redist.x86.exe) (**for x64 systems install both x86 and x64 redistributables**)
 
 Notes:
   * Most game's executables are 32-bit and require x86 x360ce and also the x86 redistributable.
-  * Vista users can obtain .NET 3.5 from the above link, and Windows 8 users can enable it in [Programs and Features - Turn Windows Features on and off.](http://msdn.microsoft.com/en-us/library/hh506443.aspx)
-  * **.NET MUST be installed prior to the DirectX webupdate as it checks that .NET 2.0/3.0/3.5 is installed and skips the Managed DirectX framework if it is not.**
-  * The full DirectX Redistributable will always install the file, however it's best to have .NET 3.5 installed anyhow as quite a few XInput titles utilize .NET for internal dependencies.
 
 # Files
 

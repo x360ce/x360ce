@@ -1,0 +1,7 @@
+// https://github.com/DavidAnson/markdownlint
+{
+    "default": true,
+    "MD013": false, // There are lines that are longer than the configured line_length (default: 80 characters).
+    "MD033": false, // Raw HTML is used in a markdown document.
+    "MD041": false, // The first line in a document is not a top-level heading.
+}

@@ -243,5 +243,39 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
-/x360ce.Data/x360ce.Data.jfm
+/Data/x360ce.Data.jfm
 /x360ce.App.Beta/x360ce.App_2uwxxrii_wpftmp.csproj
+/.vscode
+/.ai/temp
+__pycache__
+/MinHook
+
+# AI review tooling outputs (regenerable / evidence)
+docs/plans/A-triage/diffs/
+scripts/ui/captures/
+docs/plans/A-triage/audit-applicable-hunks.txt
+docs/plans/A-triage/audit-moved-files.txt
+docs/plans/A-triage/audit-lineage-hunks.txt
+
+# Schema Compare against a real server: each developer points these at their own
+# machine with their own login, so the file is per-developer state rather than
+# project content. The .Test variants use localhost and stay under source control.
+Data/Schema Comparisons/*.Live.scmp
+
+# Local scratch: fetched support mail, analysis working files. Never committed.
+/.tmp/
+
+# Test project build output.
+/Tests/bin/
+/Tests/obj/
+
+# Build output that used to be staged here and committed. The applications now embed
+# it straight from the build, staged per configuration under obj, so these names only
+# reappear if something writes to the old location.
+App.v3/Resources/dinput*.dll
+App.v3/Resources/xinput*.dll
+App.v3/Resources/x360ce.Engine*.dll
+App.v4/Resources/x360ce.Engine*.dll
+
+# Stamped from git history by Native/x360ce/genrev.cmd in the native pre-build event.
+Native/x360ce/svnrev.h

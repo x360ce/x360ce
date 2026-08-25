@@ -1,0 +1,9 @@
+﻿xhtml2rtf.xsl source by Emmanuel Kartmann:
+http://www.codeproject.com/KB/HTML/XHTML2RTF.aspx
+
+Fixed:
+
+Line 488 From
+    <xsl:when test="$normalize-space = '1'"><xsl:value-of select="xhtml2rtf:RTFEncode(., string(normalize-space(.)))"/></xsl:when>
+To
+    <xsl:when test="$normalize-space = '1'"><xsl:value-of select="xhtml2rtf:RTFEncode(., string(normalize-space(.)), -1)"/></xsl:when>

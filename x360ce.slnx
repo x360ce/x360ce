@@ -1,0 +1,114 @@
+﻿<Solution>
+  <Configurations>
+    <Platform Name="APP_Any_v4" />
+    <Platform Name="APP_x64_v3" />
+    <Platform Name="APP_x86_v3" />
+    <Platform Name="DLL_x64_v3" />
+    <Platform Name="DLL_x86_v3" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="x360ce.slnx.vsspell" />
+  </Folder>
+  <Folder Name="/Support/">
+    <File Path="Native/Support/changelog.txt" />
+    <File Path="Native/Support/ReadMe.RTF" />
+    <File Path="Native/Support/usb-detection.pdf" />
+  </Folder>
+  <Folder Name="/Native/">
+    <Project Path="Native/Common/Common.vcxproj" Id="0caee158-51e4-4c81-8cac-f39f744daf2d">
+      <Platform Solution="*|APP_Any_v4" Project="Win32" />
+      <Platform Solution="*|APP_x64_v3" Project="x64" />
+      <Platform Solution="*|APP_x86_v3" Project="Win32" />
+      <Platform Solution="*|DLL_x64_v3" Project="x64" />
+      <Platform Solution="*|DLL_x86_v3" Project="Win32" />
+      <Build Solution="*|APP_Any_v4" Project="false" />
+      <Build Solution="*|APP_x64_v3" Project="false" />
+      <Build Solution="*|APP_x86_v3" Project="false" />
+    </Project>
+    <Project Path="Native/dinput8/dinput8.vcxproj" Id="fe3bc27d-9b4f-4063-a6a5-04b38f79ad64">
+      <Platform Solution="*|APP_Any_v4" Project="Win32" />
+      <Platform Solution="*|APP_x64_v3" Project="x64" />
+      <Platform Solution="*|APP_x86_v3" Project="Win32" />
+      <Platform Solution="*|DLL_x64_v3" Project="x64" />
+      <Platform Solution="*|DLL_x86_v3" Project="Win32" />
+      <Build Solution="*|APP_Any_v4" Project="false" />
+      <Build Solution="*|APP_x64_v3" Project="false" />
+      <Build Solution="*|APP_x86_v3" Project="false" />
+    </Project>
+    <Project Path="Native/ditool/ditool.vcxproj" Id="7bc57d19-1819-42d7-8f3b-dff5ed66c750">
+      <Platform Project="Win32" />
+      <Build Solution="*|APP_Any_v4" Project="false" />
+      <Build Solution="*|APP_x64_v3" Project="false" />
+      <Build Solution="*|APP_x86_v3" Project="false" />
+      <Build Solution="*|DLL_x64_v3" Project="false" />
+    </Project>
+    <Project Path="Native/InputHook/InputHook.vcxproj" Id="4cf76641-c60b-4a26-8f44-daa67b30512a">
+      <Platform Solution="*|APP_Any_v4" Project="Win32" />
+      <Platform Solution="*|APP_x64_v3" Project="x64" />
+      <Platform Solution="*|APP_x86_v3" Project="Win32" />
+      <Platform Solution="*|DLL_x64_v3" Project="x64" />
+      <Platform Solution="*|DLL_x86_v3" Project="Win32" />
+      <Build Solution="*|APP_Any_v4" Project="false" />
+      <Build Solution="*|APP_x64_v3" Project="false" />
+      <Build Solution="*|APP_x86_v3" Project="false" />
+    </Project>
+    <Project Path="Native/x360ce/x360ce.vcxproj" Id="303d4435-7541-4357-91b1-cc9da7e0e926">
+      <Platform Solution="*|APP_Any_v4" Project="Win32" />
+      <Platform Solution="*|APP_x64_v3" Project="x64" />
+      <Platform Solution="*|APP_x86_v3" Project="Win32" />
+      <Platform Solution="*|DLL_x64_v3" Project="x64" />
+      <Platform Solution="*|DLL_x86_v3" Project="Win32" />
+      <Build Solution="*|APP_Any_v4" Project="false" />
+      <Build Solution="*|APP_x64_v3" Project="false" />
+      <Build Solution="*|APP_x86_v3" Project="false" />
+    </Project>
+  </Folder>
+  <Project Path="App.v3/x360ce.App.v3.csproj" Id="737b79b1-5d5c-46d8-9d2b-beab460e42f0">
+    <Platform Solution="*|APP_x64_v3" Project="x64" />
+    <Platform Solution="*|APP_x86_v3" Project="x86" />
+    <Build Solution="*|APP_Any_v4" Project="false" />
+    <Build Solution="*|DLL_x64_v3" Project="false" />
+    <Build Solution="*|DLL_x86_v3" Project="false" />
+  </Project>
+  <Project Path="App.v4/x360ce.App.v4.csproj" Id="00a8380d-72cb-4ad3-a8c4-0af44ba2aee0">
+    <Build Solution="*|APP_x64_v3" Project="false" />
+    <Build Solution="*|APP_x86_v3" Project="false" />
+    <Build Solution="*|DLL_x64_v3" Project="false" />
+    <Build Solution="*|DLL_x86_v3" Project="false" />
+  </Project>
+  <Project Path="Data/x360ce.Data.sqlproj" Id="2db521f4-e49d-4e7a-b1b9-52a8acd37415">
+    <Platform Solution="*|APP_Any_v4" Project="AnyCPU" />
+    <Platform Solution="Debug|APP_x64_v3" Project="x64" />
+    <Platform Solution="Debug|APP_x86_v3" Project="x86" />
+    <Platform Solution="Debug|DLL_x64_v3" Project="x64" />
+    <Platform Solution="Debug|DLL_x86_v3" Project="x86" />
+    <Platform Solution="Release|APP_x64_v3" Project="Any CPU" />
+    <Platform Solution="Release|APP_x86_v3" Project="Any CPU" />
+    <Platform Solution="Release|DLL_x64_v3" Project="Any CPU" />
+    <Platform Solution="Release|DLL_x86_v3" Project="Any CPU" />
+    <Build Solution="Debug|APP_Any_v4" />
+  </Project>
+  <Project Path="Engine/x360ce.Engine.csproj" Id="f980d78a-9448-4834-a6fe-84797077d309">
+    <Platform Solution="*|APP_x64_v3" Project="x64" />
+    <Platform Solution="*|APP_x86_v3" Project="x86" />
+    <Platform Solution="*|DLL_x64_v3" Project="x64" />
+    <Platform Solution="*|DLL_x86_v3" Project="x86" />
+    <Build Solution="*|DLL_x64_v3" Project="false" />
+    <Build Solution="*|DLL_x86_v3" Project="false" />
+  </Project>
+  <Project Path="Tests/x360ce.Tests.csproj" Id="9c1f4b1a-2d7e-4a55-9f10-3b6c8d2e5a41">
+    <Build Solution="*|APP_x64_v3" Project="false" />
+    <Build Solution="*|APP_x86_v3" Project="false" />
+    <Build Solution="*|DLL_x64_v3" Project="false" />
+    <Build Solution="*|DLL_x86_v3" Project="false" />
+  </Project>
+  <Project Path="Web/x360ce.Web.csproj" Id="ee2589b6-b2f3-44f9-a95c-17ebf74788fb">
+    <Build Solution="*|APP_x64_v3" Project="false" />
+    <Build Solution="*|APP_x86_v3" Project="false" />
+    <Build Solution="*|DLL_x64_v3" Project="false" />
+    <Build Solution="*|DLL_x86_v3" Project="false" />
+  </Project>
+  <Properties Name="Performance">
+    <Property Name="HasPerformanceSessions" Value="true" />
+  </Properties>
+</Solution>

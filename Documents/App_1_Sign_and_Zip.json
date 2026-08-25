@@ -1,0 +1,195 @@
+{
+  "Solution": "../x360ce.slnx",
+  "Configuration": "Release",
+  "Stages": [
+    {
+      "Name": "Library",
+      "Comment": "Native and redistributed files, built and signed first. They are embedded into the applications, so they have to carry their signature before the application embedding them is compiled.",
+      "Builds": [
+        {
+          "Platform": "DLL_x86_v3"
+        },
+        {
+          "Platform": "DLL_x64_v3"
+        }
+      ]
+    },
+    {
+      "Name": "Engine",
+      "Comment": "The engine, built on its own and signed before the applications embed it. Building it as part of an application would embed it in the same step that produced it, leaving it unsigned inside a signed application.",
+      "Builds": [
+        {
+          "Project": "../Engine/x360ce.Engine.csproj",
+          "Platform": "x86"
+        },
+        {
+          "Project": "../Engine/x360ce.Engine.csproj",
+          "Platform": "x64"
+        },
+        {
+          "Project": "../Engine/x360ce.Engine.csproj",
+          "Platform": "AnyCPU"
+        }
+      ]
+    },
+    {
+      "Name": "App",
+      "Comment": "The applications, built once everything they embed is signed, then signed and zipped. BuildProjectReferences is off because a build of the engine restores it from the intermediate folder, replacing the signed copy with the unsigned one it was made from.",
+      "Properties": {
+        "BuildProjectReferences": "false"
+      },
+      "Builds": [
+        {
+          "Project": "../App.v3/x360ce.App.v3.csproj",
+          "Platform": "x86"
+        },
+        {
+          "Project": "../App.v3/x360ce.App.v3.csproj",
+          "Platform": "x64"
+        },
+        {
+          "Project": "../App.v4/x360ce.App.v4.csproj",
+          "Platform": "AnyCPU"
+        }
+      ]
+    }
+  ],
+  "Apps": [
+    {
+      "AppName": "X360CE - DirectInput Library",
+      "Stage": "Library",
+      "AppLink": "https://www.x360ce.com",
+      "SignModule": "%SIGN_MODULE_PATH%",
+      "ZipScript": "../Resources/ZipFiles.ps1",
+      "Files": [
+        {
+          "Target": "../Native/dinput8/bin/Release/dinput8.dll"
+        },
+        {
+          "Target": "../Native/dinput8/bin64/Release/dinput8.dll"
+        }
+      ]
+    },
+    {
+      "AppName": "X360CE - TocaEdit XBOX 360 Controller Emulator Library",
+      "Stage": "Library",
+      "AppLink": "https://www.x360ce.com",
+      "SignModule": "%SIGN_MODULE_PATH%",
+      "ZipScript": "../Resources/ZipFiles.ps1",
+      "Files": [
+        {
+          "Target": "../Native/x360ce/bin/Release/xinput1_3.dll"
+        },
+        {
+          "Target": "../Native/x360ce/bin64/Release/xinput1_3.dll"
+        }
+      ]
+    },
+    {
+      "AppName": "X360CE - SharpDX DirectInput Library",
+      "Stage": "Library",
+      "AppLink": "https://www.x360ce.com",
+      "SignModule": "%SIGN_MODULE_PATH%",
+      "ZipScript": "../Resources/ZipFiles.ps1",
+      "Files": [
+        {
+          "Target": "../App.v4/Resources/SharpDX/SharpDX.dll"
+        },
+        {
+          "Target": "../App.v4/Resources/SharpDX/SharpDX.DirectInput.dll"
+        },
+        {
+          "Target": "../App.v4/Resources/SharpDX/SharpDX.RawInput.dll"
+        },
+        {
+          "Target": "../App.v3/Resources/SharpDX/SharpDX.dll"
+        },
+        {
+          "Target": "../App.v3/Resources/SharpDX/SharpDX.DirectInput.dll"
+        }
+      ]
+    },
+    {
+      "AppName": "X360CE - Shauleiz Virtual Xbox Interface",
+      "Stage": "Library",
+      "AppLink": "https://www.x360ce.com",
+      "SignModule": "%SIGN_MODULE_PATH%",
+      "ZipScript": "../Resources/ZipFiles.ps1",
+      "Files": [
+        {
+          "Target": "../App.v4/Resources/ViGEmClient/x86/ViGEmClient.dll"
+        },
+        {
+          "Target": "../App.v4/Resources/ViGEmClient/x64/ViGEmClient.dll"
+        }
+      ]
+    },
+    {
+      "AppName": "X360CE - DirectInput Tool",
+      "Stage": "Library",
+      "AppLink": "https://www.x360ce.com",
+      "SignModule": "%SIGN_MODULE_PATH%",
+      "ZipScript": "../Resources/ZipFiles.ps1",
+      "Files": [
+        {
+          "Target": "../Native/ditool/bin/Release/ditool.exe"
+        }
+      ]
+    },
+    {
+      "AppName": "X360CE - Engine Library",
+      "Stage": "Engine",
+      "AppLink": "https://www.x360ce.com",
+      "SignModule": "%SIGN_MODULE_PATH%",
+      "ZipScript": "../Resources/ZipFiles.ps1",
+      "Files": [
+        {
+          "Target": "../Engine/bin/Release/x360ce.Engine.dll"
+        },
+        {
+          "Target": "../Engine/bin/Release_x86/x360ce.Engine.dll"
+        },
+        {
+          "Target": "../Engine/bin/Release_x64/x360ce.Engine.dll"
+        }
+      ]
+    },
+    {
+      "AppName": "XBOX 360 Controller Emulator",
+      "Stage": "App",
+      "AppLink": "https://www.x360ce.com",
+      "SignModule": "%SIGN_MODULE_PATH%",
+      "ZipScript": "../Resources/ZipFiles.ps1",
+      "FilesDir": "Files.v3",
+      "Files": [
+        {
+          "Source": "../App.v3/bin/Release_x86/x360ce.exe",
+          "Zip": "x360ce.zip"
+        },
+        {
+          "Source": "../App.v3/bin/Release_x86/x360ce.exe",
+          "Zip": "x360ce_x86.zip"
+        },
+        {
+          "Source": "../App.v3/bin/Release_x64/x360ce.exe",
+          "Target": "Files.v3/x360ce_x64.exe",
+          "Zip": "x360ce_x64.zip"
+        }
+      ]
+    },
+    {
+      "AppName": "XBOX 360 Controller Emulator",
+      "Stage": "App",
+      "AppLink": "https://www.x360ce.com",
+      "SignModule": "%SIGN_MODULE_PATH%",
+      "ZipScript": "../Resources/ZipFiles.ps1",
+      "FilesDir": "Files.v4",
+      "Files": [
+        {
+          "Source": "../App.v4/bin/Release/x360ce.exe",
+          "Zip": "x360ce.zip"
+        }
+      ]
+    }
+  ]
+}

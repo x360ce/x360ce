@@ -1,0 +1,371 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EE2589B6-B2F3-44F9-A95C-17EBF74788FB}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>x360ce.Web</RootNamespace>
+    <AssemblyName>x360ce.Web</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <Use64BitIISExpress />
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <PublishDatabases>false</PublishDatabases>
+    <PackageAsSingleFile>false</PackageAsSingleFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.DataVisualization" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Common\JsClasses\System.Web.UI.Interface.debug.css" />
+    <Content Include="Controls\ControllersChartControl.ascx" />
+    <Content Include="Controls\ControllersControl.ascx" />
+    <Content Include="Controls\GamesControl.ascx" />
+    <Content Include="Default.aspx" />
+    <Content Include="Global.asax" />
+    <Content Include="Security\Controls\CreateUser.ascx" />
+    <Content Include="Security\Controls\LoginUser.ascx" />
+    <Content Include="Security\Controls\ResetPassword.ascx" />
+    <Content Include="Security\Controls\RoleEdit.ascx" />
+    <Content Include="Security\Controls\RoleList.ascx" />
+    <Content Include="Security\Controls\UserAdvancedEdit.ascx" />
+    <Content Include="Security\Controls\UserEdit.ascx" />
+    <Content Include="Security\Controls\UserList.ascx" />
+    <Content Include="Security\Images\Icons\Checks-16x16.png" />
+    <Content Include="Security\Images\Icons\Data_Gear-16x16.png" />
+    <Content Include="Security\Images\Icons\Data_Lock-16x16.png" />
+    <Content Include="Security\Images\Icons\Form-Apply-16x16.png" />
+    <Content Include="Security\Images\Icons\Form-Cancel-16x16.png" />
+    <Content Include="Security\Images\Icons\Form-Ok-16x16.png" />
+    <Content Include="Security\Images\Icons\gear_delete-16x16.png" />
+    <Content Include="Security\Images\Icons\Id-Cards-48x48.png" />
+    <Content Include="Security\Images\Icons\Key_Delete-16x16.png" />
+    <Content Include="Security\Images\Icons\Lock_Closed-16x16.png" />
+    <Content Include="Security\Images\Icons\Lock_Open-16x16.png" />
+    <Content Include="Security\Images\Icons\Role-16x16.png" />
+    <Content Include="Security\Images\Icons\Role-Add-16x16.png" />
+    <Content Include="Security\Images\Icons\Role-Create-16x16.png" />
+    <Content Include="Security\Images\Icons\Role-Create-48x48.png" />
+    <Content Include="Security\Images\Icons\Role-Delete-16x16.png" />
+    <Content Include="Security\Images\Icons\Role-Preferences-16x16.png" />
+    <Content Include="Security\Images\Icons\Role-Preferences-48x48.png" />
+    <Content Include="Security\Images\Icons\Role-Remove-16x16.png" />
+    <Content Include="Security\Images\Icons\Role-Update-16x16.png" />
+    <Content Include="Security\Images\Icons\Signpost-16x16.png" />
+    <Content Include="Security\Images\Icons\User-16x16.png" />
+    <Content Include="Security\Images\Icons\User-Add-16x16.png" />
+    <Content Include="Security\Images\Icons\User-Create-16x16.png" />
+    <Content Include="Security\Images\Icons\User-Create-48x48.png" />
+    <Content Include="Security\Images\Icons\User-Delete-16x16.png" />
+    <Content Include="Security\Images\Icons\User-Preferences-16x16.png" />
+    <Content Include="Security\Images\Icons\User-Preferences-48x48.png" />
+    <Content Include="Security\Images\Icons\User-Remove-16x16.png" />
+    <Content Include="Security\Images\Icons\User-Update-16x16.png" />
+    <Content Include="Security\Images\Website_Management_System.gif" />
+    <Content Include="Security\Login.aspx" />
+    <Content Include="Security\LoginReset.aspx" />
+    <Content Include="Security\Admin\Roles.aspx" />
+    <Content Include="Security\Scripts\Security.js" />
+    <Content Include="Security\Scripts\Security.PrincipalsSearch.js" />
+    <Content Include="Security\ServerInfo.asmx" />
+    <Content Include="Security\Styles\Default.css" />
+    <Content Include="Security\Styles\Security.css" />
+    <Content Include="Security\Styles\Security.IE.css" />
+    <Content Include="Security\Admin\Users.aspx" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="WebServices\x360ce.asmx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\ControllersChartControl.ascx.cs">
+      <DependentUpon>ControllersChartControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ControllersChartControl.ascx.designer.cs">
+      <DependentUpon>ControllersChartControl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ControllersControl.ascx.cs">
+      <DependentUpon>ControllersControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ControllersControl.ascx.designer.cs">
+      <DependentUpon>ControllersControl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\GamesControl.ascx.cs">
+      <DependentUpon>GamesControl.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GamesControl.ascx.designer.cs">
+      <DependentUpon>GamesControl.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\Common\Authentication.cs" />
+    <Compile Include="Security\Common\BuildInRoles.cs" />
+    <Compile Include="Security\Common\BuiltInUsers.cs" />
+    <Compile Include="Security\Common\Check.cs" />
+    <Compile Include="Security\Common\ConnectionStrings.cs" />
+    <Compile Include="Security\Common\SecurityContext.cs" />
+    <Compile Include="Security\Common\RoleQueryName.cs" />
+    <Compile Include="Security\Common\SessionList.cs" />
+    <Compile Include="Security\Common\SqlStoredProcedureProfileProvider.cs" />
+    <Compile Include="Security\Common\UserQueryName.cs" />
+    <Compile Include="Security\Controls\CreateUser.ascx.cs">
+      <DependentUpon>CreateUser.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Controls\CreateUser.ascx.designer.cs">
+      <DependentUpon>CreateUser.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Controls\LoginUser.ascx.cs">
+      <DependentUpon>LoginUser.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Controls\LoginUser.ascx.designer.cs">
+      <DependentUpon>LoginUser.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Controls\ResetPassword.ascx.cs">
+      <DependentUpon>ResetPassword.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Controls\ResetPassword.ascx.designer.cs">
+      <DependentUpon>ResetPassword.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Controls\RoleEdit.ascx.cs">
+      <DependentUpon>RoleEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Controls\RoleEdit.ascx.designer.cs">
+      <DependentUpon>RoleEdit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Controls\RoleList.ascx.cs">
+      <DependentUpon>RoleList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Controls\RoleList.ascx.designer.cs">
+      <DependentUpon>RoleList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Controls\UserAdvancedEdit.ascx.cs">
+      <DependentUpon>UserAdvancedEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Controls\UserAdvancedEdit.ascx.designer.cs">
+      <DependentUpon>UserAdvancedEdit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Controls\UserEdit.ascx.cs">
+      <DependentUpon>UserEdit.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Controls\UserEdit.ascx.designer.cs">
+      <DependentUpon>UserEdit.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Controls\UserList.ascx.cs">
+      <DependentUpon>UserList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Controls\UserList.ascx.designer.cs">
+      <DependentUpon>UserList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Common\HelperFunctions.cs" />
+    <Compile Include="Security\Common\ItemActionsEnum.cs" />
+    <Compile Include="Security\Common\ItemActionsEventArgs.cs" />
+    <Compile Include="Security\Login.aspx.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\LoginReset.aspx.cs">
+      <DependentUpon>LoginReset.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\LoginReset.aspx.designer.cs">
+      <DependentUpon>LoginReset.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Common\PostCreateModeEnum.cs" />
+    <Compile Include="Security\Common\RoleColumnsEnum.cs" />
+    <Compile Include="Security\Common\RoleEditEventArgs.cs" />
+    <Compile Include="Security\Admin\Roles.aspx.cs">
+      <DependentUpon>Roles.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Admin\Roles.aspx.designer.cs">
+      <DependentUpon>Roles.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Security\ServerInfo.asmx.cs">
+      <DependentUpon>ServerInfo.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Security\Site.Master.cs">
+      <DependentUpon>Site.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Site.Master.designer.cs">
+      <DependentUpon>Site.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Security\Common\UserColumnsEnum.cs" />
+    <Compile Include="Security\Common\UserEditEventArgs.cs" />
+    <Compile Include="Security\Admin\Users.aspx.cs">
+      <DependentUpon>Users.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Security\Admin\Users.aspx.designer.cs">
+      <DependentUpon>Users.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="WebServices\x360ce.asmx.cs">
+      <DependentUpon>x360ce.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WebServices\x360ce.asmx.v3.cs">
+      <DependentUpon>x360ce.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WebServices\x360ce.asmx.v4.cs">
+      <DependentUpon>x360ce.asmx</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Files\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Security\Site.Master" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine\x360ce.Engine.csproj">
+      <Project>{f980d78a-9448-4834-a6fe-84797077d309}</Project>
+      <Name>x360ce.Engine</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>x86</PlatformTarget>
+    <OutputPath>bin\</OutputPath>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>False</AutoAssignPort>
+          <DevelopmentServerPort>20360</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:20360</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
