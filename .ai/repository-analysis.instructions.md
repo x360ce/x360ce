@@ -1,572 +1,118 @@
-# x360ce Repository Analysis
+> Repository: x360ce/x360ce · generated from f0ec5a67 on 2026-08-25 by the `repository-analysis` skill. Regenerate rather than hand-edit.
 
-## Project Overview
+# x360ce — Repository Analysis
 
-This section orients new contributors to what the repository actually ships and to whom. The Xbox 360 Controller Emulator (x360ce) is a Windows desktop tool plus a drop-in `xinput1_3.dll` that lets non-Xbox controllers (gamepads, joysticks, racing wheels, etc.) appear to games as Xbox 360 (XInput) controllers.
+## 1. Repository Overview
 
-The repository ships two parallel desktop applications, a shared engine library, a database project, an ASP.NET web app for cloud features, and a set of native C++ projects that build the actual XInput-replacement DLL and a DirectInput shim.
+x360ce is a Windows XInput (Xbox 360 controller) emulator: it makes non-XInput game controllers appear to games as Xbox 360 pads. The repository holds **two independent, coexisting emulation strategies** plus a shared library and a cloud site:
 
-The product targets PC gamers running games that only support XInput. Two product lines ship from the same repo:
+- **v3 line** (`3.3.10.0`) — a native **DLL wrapper**. `xinput1_3.dll` is dropped next to the game executable; the game loads it instead of the system XInput DLL. The app is only a configurator and does not need to run while playing.
+- **v4 line** (`4.17.50.0`, current) — a managed app that drives the **ViGEm virtual bus** driver. Nothing is copied into the game folder, but the app *is* the emulator and must stay running.
 
-- **v3.x line** — the legacy DLL-only XInput replacement (`xinput1_3.dll` + Win32 `dinput8.dll` plugin), x86 and x64 distributions.
-- **v4.x line** — the modern ViGEm-bus-driver-based virtual gamepad approach with optional HID Guardian filtering (the app can only uninstall HID Guardian; the in-app installer is disabled for safety).
+Both application projects set `AssemblyName` to `x360ce` and `RootNamespace` to `x360ce.App`, so they produce the same `x360ce.exe` in the same namespace — nothing can reference both.
 
-## Developer-Provided Context
+Working branch context: `revert-to-4.17.0.0-reapply-bugfixes` is a revert-and-reapply effort whose own project management lives (mostly untracked) under `docs/plans/`.
 
-This section comes from `.ai/developer.instructions.md` and is authoritative — it overrides any conflicting findings derived from code analysis.
+## 2. Top-Level Structure
 
-- **C# language version**: Use only C# language features up to and including version 7.3; do not use any features introduced in C# 8.0 or later.
+| Path | Contents |
+|---|---|
+| `App.v3/` | v3 configurator (WinForms, .NET Framework), embeds the native DLLs |
+| `App.v4/` | v4 emulator app (ViGEm, DirectInput pipeline, UI) |
+| `Engine/` | `x360ce.Engine.dll` — shared model, settings, cloud client, XInput shim |
+| `Native/` | C++ sources: `x360ce`, `dinput8`, `InputHook`, `Common`, `ditool` |
+| `MinHook/` | git submodule (TsudaKageyu/minhook) used by `InputHook` |
+| `Web/` | ASP.NET Web Forms cloud site + ASMX settings service |
+| `Data/` | SQL Server database project (`x360ce.Data.sqlproj`) — schema SSOT |
+| `Tests/` | the single test project (SDK-style, MSTest) |
+| `Documents/` | release pipeline scripts + signing manifest |
+| `Resources/` | one file: `ZipFiles.ps1` |
+| `scripts/ui/` | `Invoke-AppUiCapture.ps1` — screenshot evidence tooling |
+| `docs/` | almost entirely git-ignored (`docs/.gitignore` ignores `plans/*`) |
+| `.ai/` | two instruction files (see §8) |
 
-## Technology Stack
+## 3. Technology Stack & Key Dependencies
 
-This section documents specific framework and library versions so that build-environment and dependency decisions can be made without re-reading every project file.
+- **Solution:** `x360ce.slnx` (XML solution format — there is no `.sln`). Its five *platforms* are build profiles, not CPU targets: `DLL_x86_v3`, `DLL_x64_v3`, `APP_x86_v3`, `APP_x64_v3`, `APP_Any_v4`. Each project maps solution platform to project platform and disables itself outside its own profiles.
+- **Managed:** `App.v3`, `App.v4`, `Engine`, `Web` are **legacy non-SDK** MSBuild projects on `<TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>`. Only `Tests/x360ce.Tests.csproj` is SDK-style (`Microsoft.NET.Sdk`, `net462`).
+- **Native:** all five `Native/**/*.vcxproj` pin `<PlatformToolset>v141</PlatformToolset>` (VS 2017 C++ build tools) with `<WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>`.
+- **No shared build props.** There is no `Directory.Build.props`/`.targets` and no `.props`/`.targets` of any kind, and `LangVersion` is set nowhere (see §9).
+- **Dependencies:** no `packages.config` anywhere; the only `PackageReference`s in the repo are the three in `Tests/x360ce.Tests.csproj` (`Microsoft.NET.Test.Sdk`, `MSTest.TestAdapter`, `MSTest.TestFramework` — read versions there). Everything else is a GAC/framework `<Reference>` or a **checked-in DLL by `HintPath`**: SharpDX under `App.v4/Resources/SharpDX/` and `App.v3/Resources/SharpDX/`, with `Engine` reaching across into `..\App.v4\Resources\SharpDX\`. ViGEm's native client ships as `App.v4/Resources/ViGEmClient/{x86,x64}/ViGEmClient.dll`.
+- **Project graph:** `App.v3 → Engine`, `App.v4 → Engine`, `Web → Engine`, `Tests → Engine` **and** `App.v4` (App.v3 is exercised as a launched process instead).
 
-### Managed (.NET) frameworks
+## 4. Projects & Responsibilities
 
-All managed projects target the same framework:
+**`Native/x360ce`** → the emulator DLL. `TargetName` renames the output to **`xinput1_3.dll`**; `x360ce.def` exports the full XInput surface, the undocumented ordinals, and a private `Reset @256` used everywhere as the "this is our DLL" probe. Links `dxguid/dinput8/psapi/wintrust/Shlwapi`, project-references `Common` and `InputHook`. Config parsing is `Native/x360ce/Config.cpp` (`x360ce.ini`, searched in the exe folder then `%ALLUSERSPROFILE%\X360CE`).
 
-- **.NET Framework v4.6.2** — `App.v3`, `App.v4`, `Engine`, `Web`, `Data` (sqlproj `TargetFrameworkVersion`).
+**`Native/InputHook`** (static lib) — MinHook detours so the game believes an XInput pad is attached and does not also see the physical device. Detours are a bitmask (`HOOK_LL/COM/DI/PIDVID/NAME/SA/WT/STOP` in `Native/InputHook/InputHook.h`), resolved per game from `x360ce.gdb` keyed by process file name, falling back to `[InputHook] HookMask`. One file per bit (`HookCOM.cpp` = the WMI "is this XInput" probe, `HookDI.cpp` = DirectInput8, `HookLL.cpp` = LoadLibrary, `HookSA.cpp`, `HookWT.cpp`).
 
-There are no .NET (Core / 5+ / 8) projects in the current solution. There is no Directory.Build.props or Directory.Packages.props at the repo root; each project file is self-contained.
+**`Native/dinput8`** — thin proxy DLL for the system `dinput8.dll`; each export forwards through `DirectInputModuleManager` and first calls `LoadEmulator()` (`Native/dinput8/dllmain.cpp`), which probes the module folder for `xinput1_4/1_3/1_2/1_1/9_1_0.dll` and identifies ours by the exported `Reset`. Exists only to force the emulator to load in games that never load an XInput DLL by name.
 
-### Native (C++) toolchain
+**`Native/ditool`** — 48-line console diagnostic dumping DirectInput devices to `ditool.txt`. **`Native/Common`** — shared static lib (`IniFile`, `Logger`, `Utils`, `WindowsVersion`).
 
-- **Platform toolset**: `v140` (Release) / `v141` (Debug) — selectable from `Build_All.cmd` via the `TOOLSET` env var (default `v141`).
-- **Windows target platform version**: `10.0.26100.0` across all `.vcxproj` files.
-- **`_WIN32_WINNT`**: pinned at `_WIN32_WINNT_WIN8` to preserve legacy XInput exports (`XInputEnable`, etc.). Bumping this macro breaks drop-in compatibility with old games.
-- **MinHook**: bundled as a git submodule at `MinHook/` (build outputs not used directly — InputHook compiles MinHook sources in-tree).
-- **DirectX SDK** (June 2010): referenced via `$(DXSDK_DIR)` for Win32 Debug builds.
+**`App.v3`** — configurator only. It embeds **both bitnesses of both native DLLs** plus `x360ce.Engine.dll` as managed resources and writes the matching DLL into the game folder via `AppHelper.WriteFile` (`App.v3/Common/AppHelper.cs`), elevating if the write is denied; while testing it calls the DLL's `Reset` export to force an INI re-read.
 
-### Key managed libraries
+**`App.v4`** — the v4 emulator. Creates up to four Xbox 360 targets on the ViGEm bus and feeds them reports. Managed wrapper: `App.v4/ViGEm/Client/ViGEmClient.cs`; `App.v4/ViGEm/HidGuardianHelper.cs` hides the physical device so the game does not see both. Bus install/uninstall requires elevation (`Program.RunElevated(AdminCommand.InstallViGEmBus)`). `App.v4/Service/RemoteService.cs` is an optional UDP receiver for controller state from another machine.
 
-- **SharpDX 2.6.2** — DirectInput / XInput / RawInput wrappers. Referenced by `HintPath` from `App.v4/Resources/SharpDX/*.dll`.
-- **ViGEm Client** — virtual gamepad driver client; managed wrapper code lives under `App.v4/ViGEm/Client/`.
-- **System.Data.Entity** — Entity Framework (the older System.Data.Entity flavor, not EF Core).
-- **JocysCom.ClassLibrary** — internal shared library; sources are copied into `Engine/JocysCom/`.
+**`Engine`** — mapping model and settings conversion (`Engine/Maps/SettingsConverter.cs`, `Engine/Data/PadSetting.cs`), an EDMX data layer (`Engine/Data/x360ceModel.edmx`), cloud client (`Engine/Common/WebServiceClient.cs`), a scanner that reads XInput import masks out of game binaries (`Engine/Common/XInputMaskScanner.cs`), a vendored JocysCom class library, and a hand-maintained SharpDX.XInput shim. `Engine/SharpDX.XInput/Controller.x360ce.All.cs` is the runtime loader both apps use — `LoadLibrary` + `GetProcAddress` delegates, with `Reset` as the emulator-detection probe.
 
-### Database
+**`Web`** — outside the emulation path: Web Forms pages (`Web/Default.aspx`, `.ascx` controls) over the frozen SOAP surface `Web/WebServices/x360ce.asmx.cs` (partials `.v3.cs` = save/delete settings, `.v4.cs` = users, games, vendors, presets, search), an ASP.NET Membership area under `Web/Security/`, and the shipped game list `Web/Files/x360ce_Games.xml`.
 
-- **SQL Server**, compatibility level 100, code-first via SSDT.
-- The `Data/x360ce.Data.sqlproj` schema project compiles only for the `APP_Any_v4` solution platform; other platforms have `Build` disabled.
+## 5. Runtime Architecture
 
-### Web
+**v3 request path.** Game calls `XInputGetState` → lands in `Native/x360ce/x360ce.cpp` → `ControllerManager::DeviceInitialize` returns a controller → the controller reads a **DirectInput** device and maps it to an Xbox 360 report per `x360ce.ini`. Pads flagged `PassThrough` are forwarded to the real system XInput DLL, loaded by name from the system directory (`Native/x360ce/XInputModuleManager.h`). `InputHook` runs alongside to suppress the physical device from the game's own enumeration.
 
-- **ASP.NET Web Forms** on .NET Framework 4.6.2.
-- Default IISExpress development port (refer to `Web/x360ce.Web.csproj` and `Web/Web.config`).
+**v4 request path.** A background thread (`RefreshAllThread`), gated by a `HiResTimer` in `App.v4/Common/DInput/DInputHelper.cs`, runs six ordered steps living in sibling partial files `DInputHelper.Step1.UpdateDevices.cs` … `Step6.RetrieveXiStates.cs`: enumerate devices → poll DirectInput states → apply the per-pad map to build an XInput state → combine pads → `SendReport` to the ViGEm target (rumble returns as `Xbox360FeedbackReceivedEventArgs`) → read the state back through XInput for the UI.
 
-### Build tools
+**Native ↔ managed link.** Native output paths are split by bitness as `bin\$(Configuration)\` (Win32) and `bin64\$(Configuration)\` (x64); the managed side hardcodes those folder names. Two MSBuild targets, **duplicated in both application projects**, do the embedding — `PopulateEmbeddedFiles` and `StageGeneratedResources` (see `App.v3/x360ce.App.v3.csproj` ~lines 490–560). `StageGeneratedResources` runs `AfterTargets="ResolveReferences"`, copies each `GeneratedResource` into `$(IntermediateOutputPath)Embedded\`, re-adds it as an `EmbeddedResource` with `LogicalName` `$(RootNamespace).Resources.<name>`, and errors with a `MissingResourceHint` when the file is absent. App.v3 embeds `dinput8.dll` as `dinput.dll`/`dinput_x86.dll`/`dinput_x64.dll`, `xinput1_3.dll` as `xinput.dll`/`xinput_x86.dll`/`xinput_x64.dll`, plus `x360ce.Engine.dll` from `@(ReferencePath)`. App.v4 routes only `x360ce.Engine.dll` through that target; its other payloads are statically listed checked-in files (ViGEmClient, SharpDX, `Resources/DXTweak/DXTweak2.exe`, `Resources/*.zip`, `Resources/*.xml.gz`).
 
-- **MSBuild** via Visual Studio 2022+ or VS 2026 Build Tools (located through `vswhere.exe`).
-- **PowerShell 7+** (pwsh) for repo automation scripts (`Solution_Cleanup.ps1`).
-- **Batch (`cmd /c`)** for distribution and signing scripts under each app's `Documents/` folder.
+## 6. Developer Workflows
 
-## Architecture Overview
+**There is no CI** — no `.github/`, `azure-pipelines.yml`, or `appveyor.yml`. Every step is manual on a Windows machine with Visual Studio.
 
-This section captures the runtime topology so that contributors know which component to touch when changing controller mapping, persistence, cloud sync, or virtual-device behavior.
+**Build.** `Build_All.cmd` at the repo root is the supported entry point (`Build_All.cmd` = Release, `Build_All.cmd Debug`). It locates MSBuild via `vswhere` (`-latest -find MSBuild\**\Bin\MSBuild.exe`), then builds `x360ce.slnx` once per solution platform in dependency order — `DLL_x86_v3 → DLL_x64_v3 → APP_x86_v3 → APP_x64_v3 → APP_Any_v4` — stopping at the first failure with exit code 1. DLL platforms come first because both native bitnesses are embedded into the apps. It deliberately passes **no** platform toolset; an in-file comment states the `.vcxproj` is the single source of truth so the script and the release script cannot diverge. Single-project builds target the solution with a platform: `msbuild x360ce.slnx -p:Platform=APP_x64_v3`. `dotnet build` is not a supported path for the non-SDK projects.
 
-```mermaid
-graph TB
-    subgraph "Desktop UI"
-        AppV3[App.v3 — x360ce.App.v3.csproj<br/>Legacy 3.x app]
-        AppV4[App.v4 — x360ce.App.v4.csproj<br/>Modern 4.x ViGEm app]
-    end
+Supporting pieces: `MinHook_Update.cmd` (`git submodule update --init MinHook`); `Native/x360ce/genrev.cmd`, a `PreBuildEvent` writing `svnrev.h` from `git rev-list --count HEAD` + last commit date + dirty flag; `App.v3` has a `PreBuildEvent` copying native `*.dll`/`*.pdb` into `$(TargetDir)` for Debug; `App.v4` has a `PreBuildEvent` copying `x360ce.Engine.dll` into `App.v4/Resources/`; `Engine`'s `PostBuildEvent` is empty. `App.v4/Documents/Install_BuildTools.ps1` verifies the v141 component (`Microsoft.VisualStudio.Component.VC.v141.x86.x64`), falling back to winget `Microsoft.VisualStudio.2022.BuildTools` — but it still references `x360ce.sln` and platforms `Win32`/`x64`, none of which exist in the current tree.
 
-    subgraph "Shared business logic"
-        Engine[Engine — x360ce.Engine.csproj<br/>Mapping, settings, cloud client]
-    end
+**UI evidence.** `scripts/ui/Invoke-AppUiCapture.ps1` drives an already-running `x360ce.exe`: it selects tabs by posting `TCM_SETCURFOCUS` to native `SysTabControl32` children and captures with `PrintWindow(PW_RENDERFULLCONTENT)`, so it neither steals focus nor needs the window unoccluded (`-NoResize -Capture pad1.png`, `-SelectTabs 0,6 …`). Output goes to the git-ignored `scripts/ui/captures/`. Each invocation needs a fresh PowerShell process — `Add-Type` types cannot be redefined in-session.
 
-    subgraph "Native drop-in DLLs"
-        XInputDLL[Native/x360ce<br/>→ xinput1_3.dll]
-        DInputDLL[Native/dinput8<br/>→ dinput8.dll]
-        InputHook[Native/InputHook<br/>static lib — MinHook-based]
-        Common[Native/Common<br/>static lib]
-    end
+**Release.** Three numbered scripts in `Documents/`, run in order. `App_0_Release.ps1` goes from a clean tree to signed zips, reading everything project-specific from the declarative `App_1_Sign_and_Zip.json` (solution, configuration, and the ordered `Library → Engine → App` stages — files embedded into an application must be signed *before* the application embedding them is compiled, so the App stage sets `BuildProjectReferences=false` to avoid overwriting the signed engine). Flags: `-NoClean`, `-SkipSign`, `-WhatIf`; requires `X360CE_SIGN_MODULE` pointing at the USB-token signing module. `App_1_Sign_and_Zip.ps1` performs Sign/Zip/Copy per file, skipping already-trusted signatures and delegating compression to `Resources/ZipFiles.ps1`. `App_2_VirusTotal.ps1` is the publish gate: SHA-256 lookup of every shipped file (`VIRUSTOTAL_API_KEY`, `-Upload`, `-ListOnly`, `-UpdateBaseline`), exiting non-zero on an unknown file or a detection outside the baseline. Output lands in `Documents/Files.v3/` and `Files.v4/`. `Solution_Cleanup.ps1` self-elevates and removes `bin`/`obj`, IIS Express config, and user-specific solution files.
 
-    subgraph "Cloud / Web"
-        Web[Web — x360ce.Web<br/>ASP.NET Web Forms]
-        Data[(Data — x360ce.Data.sqlproj<br/>SQL Server schema)]
-    end
+## 7. Testing
 
-    subgraph "External system components"
-        ViGEm[ViGEm Bus Driver]
-        HidGuardian[HID Guardian]
-        XInput[Microsoft XInput / DirectInput]
-    end
+One test project covers the whole solution: `Tests/x360ce.Tests.csproj` (SDK-style, `net462`, MSTest + `Microsoft.NET.Test.Sdk`, project references to `Engine` and `App.v4`). Root `.runsettings` disables app domains. Runs deposit `Deploy_*` folders under `TestResults/`.
 
-    AppV3 --> Engine
-    AppV4 --> Engine
-    AppV4 --> ViGEm
-    AppV4 --> HidGuardian
-    Web --> Engine
-    Web --> Data
-    Engine --> XInput
-
-    XInputDLL --> InputHook
-    XInputDLL --> Common
-    DInputDLL --> Common
-    InputHook --> Common
-
-    style Engine fill:#ffecb3
-    style XInputDLL fill:#e1f5fe
-    style Data fill:#c8e6c9
-```
-
-### Primary architectural pattern
-
-A **layered architecture** with `Engine` as the central business-logic library shared by the two desktop apps and the web app. The native C++ projects are independent and run inside the host game's process; they communicate with the engine only by reading the on-disk INI files and the `x360ce.gdb` game database.
-
-### Project dependency graph
-
-```mermaid
-graph LR
-    AppV3[App.v3] --> Engine
-    AppV4[App.v4] --> Engine
-    Web --> Engine
-    Native_x360ce[Native/x360ce] --> Native_InputHook[Native/InputHook]
-    Native_x360ce --> Native_Common[Native/Common]
-    Native_dinput8[Native/dinput8] --> Native_Common
-    Native_InputHook --> Native_Common
-
-    Engine -.HintPath only.-> SharpDXDlls[App.v4/Resources/SharpDX/*.dll]
-
-    style Engine fill:#ffecb3
-    style Native_Common fill:#c8e6c9
-```
-
-Notes:
-
-- `Engine` references its SharpDX dependencies via `HintPath` into `App.v4/Resources/SharpDX/` rather than as NuGet packages — this is a recent post-rename adjustment.
-- `App.v4` has a `PreBuildEvent` that copies `x360ce.Engine.dll` (and optional `x360ce.Engine.XmlSerializers.dll`) from `Engine\bin\$(Configuration)\` into `App.v4\Resources\` for embedding as resources.
-
-### Configuration approach
-
-- **Desktop apps**: `app.config` per app (App.v3, App.v4) for `ConnectionStrings` and `appSettings`.
-- **Web app**: `Web.config` with ASP.NET membership and database connection strings.
-- **Native DLLs**: read settings from `x360ce.ini` placed alongside the host game executable (or under `%ALLUSERSPROFILE%\X360CE`).
-
-## Project Structure
-
-This section maps the on-disk layout to project identities so that a new contributor can locate the right `.csproj`/`.vcxproj` from a folder name.
-
-After the May 2026 folder rename refactor, all projects keep the dotted `x360ce.*` filename for the project file but live in a parent folder that has the prefix stripped.
-
-### Top-level layout
-
-```
-x360ce/
-├── App.v3/                 # Legacy x360ce 3.x desktop app
-├── App.v4/                 # Modern x360ce 4.x (ViGEm) desktop app
-├── Engine/                 # Shared business-logic library
-├── Web/                    # ASP.NET Web Forms cloud site
-├── Data/                   # SQL Server schema project (sqlproj)
-├── Native/
-│   ├── Common/             # Static lib — shared C++ utilities
-│   ├── InputHook/          # Static lib — MinHook-based hooks (HookCOM/DI/LL/SA/WT)
-│   ├── x360ce/             # DynamicLibrary → xinput1_3.dll
-│   ├── dinput8/            # DynamicLibrary → dinput8.dll
-│   ├── ditool/             # Application — Win32 x86 console diagnostic tool
-│   └── Support/            # Support assets (ReadMe.RTF, x360ce.gdb, etc.)
-├── MinHook/                # Git submodule — bundled as source into InputHook
-├── .agents/                # Agent-related scratch / configuration
-├── .ai/                    # AI agent instructions (this folder)
-├── .claude/                # Claude Code project settings
-├── Build_All.cmd           # Builds all 5 solution platforms (vswhere → MSBuild)
-├── MinHook_Update.cmd      # Submodule refresh helper
-├── Solution_Cleanup.ps1    # bin/obj/.vs cleanup script
-├── x360ce.slnx             # Solution file (XML .slnx format)
-└── README.MD
-```
-
-### Managed projects
-
-#### App.v3 (`App.v3/x360ce.App.v3.csproj`)
-
-- **Project type**: `WinExe` (hybrid WinForms + WPF)
-- **AssemblyName**: `x360ce`
-- **RootNamespace**: `x360ce.App`
-- **TargetFrameworkVersion**: `v4.6.2`
-- **Project GUID**: `{737B79B1-5D5C-46D8-9D2B-BEAB460E42F0}`
-- **Description**: Legacy x360ce 3.x desktop application — DLL-based XInput replacement workflow, ships as `x360ce.exe`. Builds for `APP_x86_v3` (x86) and `APP_x64_v3` (x64) solution platforms; not built for v4 or DLL platforms.
-
-#### App.v4 (`App.v4/x360ce.App.v4.csproj`)
+`.\Tests\Run-Tests.ps1` is documented in `Tests/ReadMe.md` as the **only** supported way to run the suite. It resolves `MSBuild.exe` and `vstest.console.exe` via `vswhere -latest -prerelease`, runs `msbuild Tests\x360ce.Tests.csproj -t:restore,build`, then invokes `vstest.console.exe` on `Tests\bin\<Config>\net462\x360ce.Tests.dll`, propagating vstest's exit code. It passes `/TestAdapterPath` explicitly to `%USERPROFILE%\.nuget\packages\mstest.testadapter\<version>\buildTransitive\net462` — version parsed out of the csproj — because the package does not copy the adapter into a `net462` output folder. Switches: `-Interactive` (adds tests tagged `ui-interactive`, which launch the applications and need a desktop session; without it the script appends `/TestCaseFilter:TestCategory!=ui-interactive`) and `-Configuration Debug|Release`.
 
-- **Project type**: `WinExe` (hybrid WinForms + WPF)
-- **AssemblyName**: `x360ce`
-- **RootNamespace**: `x360ce.App`
-- **TargetFrameworkVersion**: `v4.6.2`
-- **Project GUID**: `{00A8380D-72CB-4AD3-A8C4-0AF44BA2AEE0}`
-- **Description**: Modern x360ce 4.x desktop application — ViGEm-based virtual gamepad workflow with optional HID Guardian. Builds only for the `APP_Any_v4` solution platform. Embeds the engine assembly and resources via a `PreBuildEvent` that copies from `Engine/bin/$(Configuration)/`.
-
-#### Engine (`Engine/x360ce.Engine.csproj`)
-
-- **Project type**: `Library`
-- **AssemblyName**: `x360ce.Engine`
-- **RootNamespace**: `x360ce.Engine`
-- **TargetFrameworkVersion**: `v4.6.2`
-- **Project GUID**: `{F980D78A-9448-4834-A6FE-84797077D309}`
-- **Description**: Shared business-logic library used by both desktop apps and the web app. Houses controller mapping, settings persistence, cloud client, the JocysCom shared utilities (`Engine/JocysCom/`), and the EDMX/data layer in `Engine/Data/`. SharpDX assemblies are referenced via `HintPath` into `App.v4/Resources/SharpDX/`.
-
-#### Web (`Web/x360ce.Web.csproj`)
-
-- **Project type**: ASP.NET Web Application (Web Forms)
-- **AssemblyName**: `x360ce.Web`
-- **RootNamespace**: `x360ce.Web`
-- **TargetFrameworkVersion**: `v4.6.2`
-- **Project GUID**: `{EE2589B6-B2F3-44F9-A95C-17EBF74788FB}`
-- **Description**: Cloud-side ASP.NET Web Forms application for sharing controller configurations, programs and presets. Provides ASP.NET Membership-based admin/user roles. Builds only for the `APP_Any_v4` solution platform.
-
-#### Data (`Data/x360ce.Data.sqlproj`)
-
-- **Project type**: SSDT Database project (`OutputType=Database`)
-- **Name**: `x360ce.Data`
-- **RootNamespace**: `x360ce.Data`
-- **DSP**: `Sql100DatabaseSchemaProvider` (compatibility level 100)
-- **Project GUID**: `{2DB521F4-E49D-4E7A-B1B9-52A8ACD37415}`
-- **Description**: SQL Server schema project containing tables, stored procedures, and seed data for the x360ce cloud features. Builds only for the `APP_Any_v4` solution platform (other platforms map to AnyCPU but have build disabled in `x360ce.slnx`).
-
-### Native projects
-
-All `.vcxproj` files target `WindowsTargetPlatformVersion=10.0.26100.0` and use platform toolset `v140` for Release and `v141` for Debug.
-
-#### Native/x360ce (`Native/x360ce/x360ce.vcxproj`)
-
-- **ConfigurationType**: `DynamicLibrary`
-- **TargetName**: `xinput1_3` (produces `xinput1_3.dll`)
-- **CharacterSet**: `MultiByte`
-- **Project GUID**: `{303D4435-7541-4357-91B1-CC9DA7E0E926}`
-- **Output**: `bin\$(Configuration)\` for Win32; `bin64\$(Configuration)\` for x64.
-- **PreBuildEvent**: Generates a build revision via `genrev.cmd`. Path is fully qualified (`$(MSBuildProjectDirectory)\genrev.cmd`) — required by MSBuild 18 / VS 2026, which no longer resolves bare command names in PreBuildEvent.
-- **AddressSanitizer**: enabled for Debug builds (`<EnableASAN>true</EnableASAN>`).
-- **Description**: The drop-in XInput replacement DLL that games load. Translates XInput API calls to DirectInput, applies the user's mapping from `x360ce.ini`, and reads game-specific hook masks from `x360ce.gdb`.
+Two traps: **`dotnet test` fails at compile time** because `x360ce.Engine` carries a `Microsoft.mshtml` COM reference the .NET SDK cannot resolve; and the project sets `Optimize=true` in *every* configuration, with a test asserting it, because the memory-leak checks are meaningless in an unoptimised build.
 
-#### Native/dinput8 (`Native/dinput8/dinput8.vcxproj`)
+## 8. Documentation & Data
 
-- **ConfigurationType**: `DynamicLibrary`
-- **TargetName**: `dinput8` (produces `dinput8.dll`)
-- **CharacterSet**: `Unicode`
-- **Project GUID**: `{FE3BC27D-9B4F-4063-A6A5-04B38F79AD64}`
-- **Description**: Optional DirectInput 8 spoof/wrapper DLL used to improve x360ce compatibility for games that bypass standard XInput loading.
+Tracked prose is tiny — **9 `.md` files repo-wide**. `README.MD` is the only user-facing document (download links for both lines, system requirements, troubleshooting) and delegates the real end-user knowledge base to the GitHub **wiki**, which is not in this repo. `SECURITY.md` is four lines pointing at support@x360ce.com.
 
-#### Native/InputHook (`Native/InputHook/InputHook.vcxproj`)
+`.ai/` holds exactly two files: `developer.instructions.md` (151 bytes — the C# ≤ 7.3 rule and nothing else) and `repository-analysis.instructions.md` (~32 KB, 13 sections with Mermaid diagrams). Root `CLAUDE.md` is a one-line `@AGENTS.md`; `AGENTS.md` is those two files concatenated. **Open `.ai/repository-analysis.instructions.md` first** — it is the densest orientation document in the tree.
 
-- **ConfigurationType**: `StaticLibrary`
-- **CharacterSet**: `MultiByte`
-- **Project GUID**: `{4CF76641-C60B-4A26-8F44-DAA67B30512A}`
-- **Description**: Static library that owns the in-process function hooks used by `xinput1_3.dll` and `dinput8.dll`. Built on top of MinHook (sources compiled in-tree) and split into `HookCOM`, `HookDI`, `HookLL`, `HookSA`, and `HookWT` units.
+⚠ **`AGENTS.md`'s "Build, CI/CD & Testing" section is stale in three checkable places:** it claims the toolset is overridable via a `TOOLSET` environment variable (`Build_All.cmd` has no such variable), that there are "no test projects in `x360ce.slnx`" (`Tests/x360ce.Tests.csproj` is declared at `x360ce.slnx` line 99), and that release artifacts come from `Step*_*.bat` scripts under `App.v3/Documents` and `App.v4/Documents` (no such files exist; signing lives in `Documents/App_0..2*.ps1`).
 
-#### Native/Common (`Native/Common/Common.vcxproj`)
+`docs/` is almost entirely **untracked** — `docs/.gitignore` contains `plans/*`, so only `docs/TODO.md` is committed. The working tree's `docs/plans/README.md` (the A→E decomposition and status of the 4.17.0.0 revert-and-reapply effort) is the best entry point for this branch's own work; beneath it `A-triage/` carries `commits.json` (371 triaged commits), `REVIEW.md` (decision table), per-commit analyses under `commits/<sha>.md`, Python tooling, and `SUPPORT-MAIL-FINDINGS.md`; `B-db`, `C-tests`, `D-cherry-pick`, `E-dataporter` each hold a `design.md`.
 
-- **ConfigurationType**: `StaticLibrary`
-- **CharacterSet**: `MultiByte`
-- **Project GUID**: `{0CAEE158-51E4-4C81-8CAC-F39F744DAF2D}`
-- **Description**: Shared C++ utilities: `IniFile`, `Logger`, `Mutex`, `Timer`, `WindowsVersion`, `StringUtils`, `Utils`. Linked into all of the dynamic native DLLs and the InputHook lib.
+Per-app end-user docs: `App.v4/Documents/` (`Help.rtf` and `Help_HidGuardian.rtf`, both embedded into the v4 binary, plus `ChangeLog.txt`, `License.txt`, `HowToBuild.odt`), `App.v3/Documents/Help.htm`, and `Native/Support/` (`ReadMe.RTF`, `changelog.txt`, the `x360ce.gdb` game database, `usb-detection.pdf`).
 
-#### Native/ditool (`Native/ditool/ditool.vcxproj`)
-
-- **ConfigurationType**: `Application` (Win32 console)
-- **Platforms**: Win32 only (no x64 configuration)
-- **PlatformToolset**: `v141` (Debug) / `v140_xp` (Release — XP-compatible build for diagnostic use)
-- **Project GUID**: `{7BC57D19-1819-42D7-8F3B-DFF5ED66C750}`
-- **Description**: Standalone DirectInput diagnostic tool (`ditool.exe`) used to enumerate and dump DirectInput device data; ships under `Native/Support/` as a precompiled artifact.
-
-### Solution platform configurations
-
-`x360ce.slnx` defines five solution-level platforms (combined with Debug/Release configurations):
-
-| Solution Platform | Builds                                       | Purpose                                  |
-|-------------------|----------------------------------------------|------------------------------------------|
-| `DLL_x86_v3`      | Engine (x86) + native vcxproj projects (Win32) | v3 native 32-bit DLL release             |
-| `DLL_x64_v3`      | Engine (x64) + native vcxproj projects (x64)   | v3 native 64-bit DLL release             |
-| `APP_x86_v3`      | Engine + App.v3 (x86)                          | v3 desktop app, 32-bit                   |
-| `APP_x64_v3`      | Engine + App.v3 (x64)                          | v3 desktop app, 64-bit                   |
-| `APP_Any_v4`      | Engine + App.v4 + Web + Data                   | v4 desktop app + cloud + database schema |
-
-The native vcxproj projects are listed under all platforms but have `Build="false"` on the APP_* platforms, so they only build for the DLL_* platforms.
-
-## Input Pipeline (App.v4)
-
-This section is included because controller-mapping changes are the most common reason to touch `App.v4`, and the input pipeline is where most regressions originate.
-
-The actual input pipeline in this repository is a **6-step `DInputHelper`** (not an `InputOrchestrator`). The class lives in [App.v4/Common/DInput/DInputHelper.cs](App.v4/Common/DInput/DInputHelper.cs) and is split across partial files:
-
-```
-App.v4/Common/DInput/
-├── DInputHelper.cs                       # Coordination, threading, frequency control
-├── DInputHelper.XInputLibrarry.cs        # XInput library load/swap (typo preserved)
-├── DInputHelper.Step1.UpdateDevices.cs   # Device enumeration and capability load
-├── DInputHelper.Step2.UpdateDiStates.cs  # Read DirectInput JoystickState → CustomDiState
-├── DInputHelper.Step3.UpdateXiStates.cs  # Convert CustomDiState → XInput state per mapping
-├── DInputHelper.Step4.CombineXiStates.cs # Combine multi-controller states (Combine Into)
-├── DInputHelper.Step5.VirtualDevices.cs  # Push state to ViGEm virtual gamepads
-├── DInputHelper.Step6.RetrieveXiStates.cs# Read live XInput state for UI display
-├── DInputEventArgs.cs / DInputException.cs
-├── Recorder.cs                           # Input recording for macros
-├── VirtualDriverInstaller.cs / VirtualError.cs
-```
-
-Frequencies (configured at runtime, not compile-time):
-
-- **Process 1** (input update loop): `[125, 250, 500, 1000] Hz` — runs continuously.
-- **Process 2** (UI refresh): `30 Hz` — only when a window is visible.
-
-The high-frequency loop has hard performance constraints — see the warning section below.
-
-### Performance warning — high-frequency loops
-
-Code reached from the `DInputHelper` 1000 Hz loop runs >1,000,000 times per minute. Avoid:
-
-- `Debug.WriteLine` / `Console.WriteLine` in hot paths.
-- `String.Format`, string interpolation, or `StringBuilder` allocations per tick.
-- File I/O, network calls, EF/SQL access, exception logging with formatting.
-- `Thread.Sleep` or any blocking call.
-- Allocating new objects per tick (boxes / `new` / large arrays).
-
-Prefer:
-
-- `#if DEBUG` for any diagnostic logging.
-- Pre-allocate arrays/buffers outside the loop.
-- Use primitives and `ref`/`out` to avoid copies.
-- Cache expensive computations in the device-detection path (`Step1.UpdateDevices`), which only runs when devices arrive/leave.
-
-## Build, CI/CD & Testing
-
-This section documents how to build the repository and what (limited) automated test surface currently exists.
-
-### Building
-
-The supported entry point is the repo-root [`Build_All.cmd`](Build_All.cmd):
-
-```cmd
-:: Default = Release
-Build_All.cmd
-
-:: Or explicitly
-Build_All.cmd Debug
-Build_All.cmd Release
-```
-
-It locates MSBuild via `vswhere.exe` (fails fast if Visual Studio 2022+ or VS 2026 Build Tools are not installed) and builds all five solution platforms in sequence:
-
-1. `DLL_x86_v3`
-2. `APP_x86_v3`
-3. `DLL_x64_v3`
-4. `APP_x64_v3`
-5. `APP_Any_v4`
-
-Stops on the first failure. The platform toolset can be overridden via `set TOOLSET=v142` etc. before invoking the script.
-
-To build a single project from PowerShell, target it through the solution and pass the relevant solution platform; building the .csproj directly with `dotnet build` is not supported because these are .NET Framework projects, not SDK-style.
-
-### Tests
-
-There are currently **no test projects** in `x360ce.slnx`. The `x360ce.Net48Test` and `x360ce.Net60Test` projects referenced in earlier versions of this document are no longer part of the repository. A future re-introduction would naturally live alongside the consumer it tests (e.g. `Engine/Engine.Tests/` or similar) and would be added to the solution explicitly.
-
-### CI / CD
-
-There is no committed CI/CD pipeline definition in the repository (no `.github/workflows/`, no `azure-pipelines.yml`). Release artifacts are produced manually using the `Step*_*.bat` signing and packaging scripts in `App.v4/Documents/` and `App.v3/Documents/`.
-
-## Documentation Structure
-
-This section indexes the documentation surface so that contributors know where end-user help, build instructions, and signing workflows live.
-
-```mermaid
-graph TD
-    subgraph "Repo root"
-        README[README.MD<br/>Download links + system reqs + troubleshooting]
-    end
-
-    subgraph "Documents"
-        RelScript["App_1_Sign_and_Zip.ps1 + .json — sign, zip and copy every release artifact"]
-        RelOut["Files.v3/ + Files.v4/ — signed executables and release zips"]
-    end
-
-    subgraph "App.v3/Documents"
-        V3Help[Help.htm — User help, HTML]
-        V3HowTo[HowToBuild.odt — Build instructions]
-        V3Change[ChangeLog.txt]
-        V3License[License.txt]
-        V3IIS[IIS_ResetSiteConfig.bat]
-    end
-
-    subgraph "App.v4/Documents"
-        V4Help[Help.rtf + Help_HidGuardian.rtf]
-        V4HowTo[HowToBuild.odt]
-        V4Change[ChangeLog.txt]
-        V4License[License.txt]
-        V4Tools[Install_BuildTools.ps1]
-    end
-
-    subgraph "Native/Support"
-        NSReadMe[ReadMe.RTF]
-        NSChange[changelog.txt]
-        NSGdb[x360ce.gdb — game database]
-        NSIni[x360ce.sample.ini]
-        NSPdf[usb-detection.pdf]
-        NSDitool[ditool.exe]
-        NSSvn[svnrev.exe / svnrev.txt]
-    end
-
-    subgraph ".ai"
-        AiInstr[instructions.md / coding.instructions.md / developer.instructions.md / ...]
-        AiThis[repository-analysis.instructions.md ← THIS FILE]
-    end
-
-    style README fill:#e3f2fd
-    style V4Help fill:#fff3e0
-    style NSGdb fill:#e8f5e8
-    style AiThis fill:#f3e5f5
-```
-
-### Primary documentation files
-
-- **`README.MD`** — User-facing entry point: download links for v3 and v4, system requirements (Windows 10+, .NET Framework 4.x, DirectX June 2010 runtime, VC++ Redistributable 2015–2022), troubleshooting recipes, screenshots.
-- **`App.v3/Documents/Help.htm`** — End-user help for the v3 application.
-- **`App.v4/Documents/Help.rtf`** — End-user help for the v4 application; **embedded as a resource** into the v4 binary via `<EmbeddedResource Include="Documents\Help.rtf" />`.
-- **`App.v4/Documents/Help_HidGuardian.rtf`** — HID Guardian setup; **also embedded** into the v4 binary.
-- **`App.v3/Documents/HowToBuild.odt` / `App.v4/Documents/HowToBuild.odt`** — Per-app build instructions in OpenDocument format.
-- **`Native/Support/ReadMe.RTF`** — Native-layer integration notes; referenced from the solution under the `/Support/` solution folder.
-- **`Native/Support/usb-detection.pdf`** — USB controller detection technical reference.
-
-### Build / signing / packaging scripts
-
-Signing, zipping and copying for both apps run from one script at the repository root: **`Documents/App_1_Sign_and_Zip.ps1`**, driven by **`Documents/App_1_Sign_and_Zip.json`**. It replaced the per-app `Step1`–`Step4` batch files.
-
-The JSON lists every file to process, grouped by the name written into the signature. Each file names its `Source`, the `Target` it is signed as, and the `Zip` it is packed into; a file with no `Zip` is signed in place. Release output goes to `Documents/Files.v3/` and `Documents/Files.v4/`.
-
-Run it with no arguments for a menu (sign and zip / sign / zip / copy, over one file or all of them), or `.\App_1_Sign_and_Zip.ps1 All` to process everything unattended. Zipping is delegated to `Resources/ZipFiles.ps1`; signing to the shared signing module, which auto-detects the code-signing card or token.
-
-Order matters: the v3 native modules are embedded resources of `App.v3.csproj`, so they must be signed **before** v3 is built, while the application zips are produced **after**.
-
-The `App.v4/Documents/` folder additionally contains:
-
-- `Install_BuildTools.ps1` — bootstraps the build toolchain.
-- `IIS_ResetSiteConfig.bat` — resets the IIS Express site configuration for the Web project.
-
-## Development Environment Requirements
-
-This section lists the actual prerequisites needed to build the repo today, post-rename.
-
-### Required
-
-- **Visual Studio 2022 17.x or VS 2026 Build Tools** — `Build_All.cmd` discovers MSBuild via `vswhere.exe` and aborts if neither is installed.
-- **Workloads / components**:
-  - .NET desktop development (provides .NET Framework 4.6.2 targeting pack).
-  - Desktop development with C++ (provides MSVC v140 / v141 toolsets).
-  - Windows 10 / 11 SDK matching `WindowsTargetPlatformVersion=10.0.26100.0`.
-  - SQL Server Data Tools (SSDT) for the `Data/x360ce.Data.sqlproj` project.
-- **DirectX SDK (June 2010)** — referenced via `$(DXSDK_DIR)` for Win32 Debug builds of `Native/x360ce`.
-- **MinHook submodule** — initialized via `git submodule update --init` (or refreshed by `MinHook_Update.cmd`).
-
-### Runtime (for the produced binaries)
-
-- **Windows 10 or newer**.
-- **.NET Framework 4.x** (shipped with Windows 10/11).
-- **DirectX End-User Runtime (June 2010)** — required by SharpDX.
-- **Visual C++ Redistributable 2015–2022** — both x86 and x64 on 64-bit systems.
-- **ViGEm Bus Driver** — required by the v4 application (bundled in `App.v4/Resources/ViGEmBus.zip`).
-- **HID Guardian** (optional, v4 only) — bundled in `App.v4/Resources/HidGuardian.zip`.
-
-### Optional development tools
-
-- **PowerShell 7+** (pwsh) — already the VS Code default terminal in this workspace; do not wrap scripts with `powershell -File`.
-- **IIS Express** (bundled with Visual Studio) — for the `Web` project.
-
-## Terminal Environment & Command Syntax
-
-This section is here because shell choice changes how every script in this repository must be invoked.
-
-### PowerShell (default)
-
-The VS Code integrated terminal in this workspace is **PowerShell 7+ Core (pwsh)**. Invoke `.ps1` files directly:
-
-```powershell
-./Solution_Cleanup.ps1
-```
-
-Do **not** wrap with `powershell -File ...` — that adds friction for no benefit.
-
-PowerShell 7+ supports `&&` and `||` pipeline-chain operators just like bash, so prefer:
-
-```powershell
-cd Engine && dotnet build x360ce.Engine.csproj
-```
-
-over the older `;` form. (`;` runs the right side regardless of left-side success.)
-
-### Batch scripts
-
-All `Step*_*.bat`, `Build_All.cmd`, and `MinHook_Update.cmd` are CMD batch files. They run fine when invoked directly from pwsh, e.g. `./Build_All.cmd Release`.
-
-### `dotnet build` and these projects
-
-These are non-SDK-style .NET Framework 4.6.2 projects. `dotnet build` does work for them but is not the supported entry point — `Build_All.cmd` driving full MSBuild is. If you do invoke `dotnet build`/`msbuild` directly on a single project, pass the right solution platform (`/p:Platform=APP_Any_v4` etc.) or you'll hit "The OutputPath property is not set" errors.
-
-## Key Technical Decisions
-
-This section captures decisions that look surprising on first contact with the codebase, so contributors don't try to "fix" them.
-
-### Two parallel desktop apps (App.v3 and App.v4)
-
-Both apps share the same `AssemblyName=x360ce`, the same `RootNamespace=x360ce.App`, and the same `TargetFrameworkVersion=v4.6.2`. They diverge in feature set and runtime model:
-
-- **App.v3** corresponds to the v3.x release line — DLL-replacement workflow, libusb-era device handling, x86/x64 desktop targets.
-- **App.v4** corresponds to the v4.x release line — ViGEm-bus virtual gamepad workflow, AnyCPU, additional cloud features.
-
-Keeping them as two projects with shared `Engine` allows each release line to evolve independently without forking history. The tradeoff (declared technical debt as of May 2026) is that the namespace `x360ce.App` is identical in both — the version distinction lives in the project filename and folder, not in code.
-
-### Hybrid WPF + WinForms UI
-
-Both desktop apps reference `PresentationCore`, `PresentationFramework`, `WindowsBase`, `WindowsFormsIntegration` and `System.Windows.Forms`. WPF `<Page>` items (e.g. `Controls/PadTabPages/MacrosControl.xaml`, `Controls/PadTabPages/General/XboxImageControl.xaml`) coexist with WinForms designer files (`*.Designer.cs` with embedded `.resx`). New UI prefers WPF; existing WinForms surfaces are kept as-is.
-
-### `_WIN32_WINNT` pinned to WIN8
-
-The native `xinput1_3.dll` is a drop-in for old games that may load it into very old hosts. Bumping `_WIN32_WINNT` past WIN8 breaks legacy XInput exports such as `XInputEnable`. This constraint is recorded in user memory and must not be raised without a release-line decision.
-
-### Engine references SharpDX via HintPath into App.v4/Resources
-
-`Engine/x360ce.Engine.csproj` does not consume SharpDX as a NuGet package; it points `HintPath` at `..\App.v4\Resources\SharpDX\*.dll`. This means a clean repo can compile `Engine` only after the SharpDX DLLs exist under `App.v4/Resources/SharpDX/` (they are checked in). Do not delete those binaries — there is no NuGet fallback.
-
-### Native projects skip build on APP_* platforms
-
-In `x360ce.slnx`, every native `.vcxproj` has `<Build Solution="*|APP_*v3" Project="false" />` and `<Build Solution="*|APP_Any_v4" Project="false" />`. The native DLLs are only built under `DLL_x86_v3` / `DLL_x64_v3`. A "build the app" workflow does not rebuild the native DLLs — packaged binaries from a prior `DLL_*_v3` build are expected.
-
-### `ditool` is Win32-only and uses `v140_xp`
-
-`Native/ditool/ditool.vcxproj` defines no x64 configuration and uses the `v140_xp` toolset for Release. It is a standalone diagnostic tool that ships compiled under `Native/Support/ditool.exe`; the source tree allows rebuilding it but it is not part of any DLL or APP solution-platform output.
-
-### MSBuild 18 PreBuildEvent path requirement
-
-`Native/x360ce/x360ce.vcxproj` uses an explicit `$(MSBuildProjectDirectory)\genrev.cmd` path in its `PreBuildEvent`. MSBuild 18 (VS 2026) does not resolve bare command names in PreBuildEvent the way earlier versions did, so any new pre/post-build script must use `$(MSBuildProjectDirectory)` (or another fully-qualified macro) explicitly.
-
-## Security and Deployment
-
-This section covers signing, driver dependencies, and distribution mechanics that are easy to overlook when first contributing release-side work.
-
-### Code signing
-
-The project ships only signed binaries. One script at the repository root, `Documents/App_1_Sign_and_Zip.ps1`, signs everything:
-
-- **Module signing** — every redistributed binary (`xinput1_*`, `dinput8`, `SharpDX.*`, `ViGEmClient.dll`, `ditool.exe`) is signed before the application embed step. The v3 `dinput*` / `xinput*` DLLs are copied into `App.v3/Resources/` and embedded by `App.v3.csproj`, so they must be signed first.
-- **Application signing** — the built `x360ce.exe` is copied into `Documents/Files.v3/` or `Documents/Files.v4/` and signed there, leaving the build output untouched.
-- **Distribution packaging** — the signed copy is packed into its release zip in the same folder.
-
-Publishing unsigned builds is explicitly discouraged in `App.{v3|v4}/Documents/Help.*`.
-
-### Driver dependencies
-
-- **ViGEm Bus** (kernel-mode virtual gamepad driver) — required by the v4 application. Bundled installer at `App.v4/Resources/ViGEmBus.zip`. Installation requires admin privileges.
-- **HID Guardian** — optional v4 component for hiding physical controllers from games that double-enumerate. The v4 app **cannot install it** — the Options page offers Refresh and Uninstall only, because a misconfigured HID filter driver can lock the user out of mouse/keyboard input. The bundle at `App.v4/Resources/HidGuardian.zip` is retained solely so uninstall can extract `devcon`. Manual-recovery procedure is linked from `README.MD`.
-
-### Distribution channels
-
-- **GitHub Releases** is the only published distribution channel (URLs are in `README.MD`).
-- v3 ships separate `x360ce_x86.zip` and `x360ce_x64.zip` archives, plus `x360ce.zip` (the same 32-bit build under its legacy name, still linked from the app's own download prompts).
-- v4 ships a single `x360ce.zip` plus the ViGEm Bus driver installer.
-
-### Web service security
-
-The `Web` project uses ASP.NET Membership for authentication and role-based authorization (admin / user). Database connection strings live in `Web.config` and should be injected at deploy time — never committed.
-
-### Game database (`x360ce.gdb`)
-
-`Native/Support/x360ce.gdb` is a binary game database keyed by executable name + checksum that supplies per-game `HookMask` overrides to the native DLL. It is not personally identifying and may be redistributed; the v4 app also embeds a compressed copy at `App.v4/Resources/x360ce_Games.xml.gz`.
+`Data/x360ce.Data.sqlproj` is the declared schema source of truth: `dbo/Tables` (25 scripts — `x360ce_*` product tables plus `aspnet_*` membership), stored procedures, functions, views, UDTs, pre/post-deployment scripts, `Permissions.sql`, and `Change Scripts/Backup/` (`Backup-Data.ps1`, `Restore-Data.ps1`, `x360ce-DataPorter.json`).
+
+## 9. Constraints That Matter When Changing Code
+
+1. **C# 7.3 only.** `.ai/developer.instructions.md` states "Use only C# language features up to and including version 7.3". This is a **documented convention, not an enforced build property** — `LangVersion` is set in no project file, `.editorconfig`, or props file, and there is no `Directory.Build.props`/`.targets`. The non-SDK projects get 7.3 as MSBuild's default for .NET Framework; the SDK-style `Tests` project defaults to `latest`, so newer syntax will compile there and violate the convention silently.
+2. **Legacy non-SDK projects.** `App.v3`, `App.v4`, `Engine`, `Web` are old-format `.csproj` on .NET Framework 4.6.2 — new files must be added to the `<Compile>` item list explicitly; `dotnet build`/`dotnet test` are not supported paths.
+3. **Build order is load-bearing.** Native DLLs are embedded into the apps, so `DLL_*` platforms must build before `APP_*`. `StageGeneratedResources` hard-errors when an expected native binary is missing, and it hardcodes the `bin\`/`bin64\` output folder names.
+4. **Both apps produce `x360ce.exe` in namespace `x360ce.App`** — they can never reference each other, and shared code must go through `Engine`.
+5. **v141 toolset required.** All native projects pin `PlatformToolset v141`; the `.vcxproj` is the declared single source for it — do not add a toolset override to `Build_All.cmd` or the release script.
+6. **`Reset @256` is a public contract.** `Native/dinput8`, `App.v3`, and `Engine/SharpDX.XInput/Controller.x360ce.All.cs` all use the exported `Reset` to detect the emulator and to force an INI re-read. Removing or renaming it breaks emulator discovery across three components.
+7. **Duplicated MSBuild targets.** `PopulateEmbeddedFiles` / `StageGeneratedResources` exist in both app `.csproj` files with different item sets; a change to one does not propagate.
+8. **Vendored binaries, not packages.** SharpDX, ViGEmClient, and the JocysCom library are checked in and referenced by path (`Engine` reaches into `..\App.v4\Resources\SharpDX\`). `MinHook/` is a submodule and must be initialised.
+9. **`Microsoft.mshtml` COM reference in `Engine`** blocks any SDK-based build/test of the graph — use `Tests\Run-Tests.ps1`.
+10. **`Optimize=true` in every test configuration** is asserted by a test; do not "fix" the Debug configuration.
+11. **Signing order.** Anything embedded into an application must be signed before that application is compiled — the `Library → Engine → App` stage order in `Documents/App_1_Sign_and_Zip.json` encodes this, and `App_2_VirusTotal.ps1` gates publication.
+12. **Elevation is intrinsic.** Writing the DLL into a game folder (v3) and installing/uninstalling the ViGEm bus or HidGuardian (v4) require administrator rights; both apps re-launch themselves elevated.
+13. **`docs/plans/*` is git-ignored** — work-in-progress notes there are not shared through the repository.
+14. **Trust `Build_All.cmd`, `Tests/Run-Tests.ps1`, and `Documents/App_0_Release.ps1` over `AGENTS.md`** when they disagree (see §8).
