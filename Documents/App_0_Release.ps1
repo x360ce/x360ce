@@ -39,7 +39,8 @@
     the signing token. The zips it produces are not releasable.
 .EXAMPLE
     PS> .\App_0_Release.ps1
-    Full release: clean, build, sign, zip.
+    Asks whether to sign, then runs the full release: clean, build, sign, zip.
+    The question is skipped when -SkipSign is given or nobody can answer.
 .EXAMPLE
     PS> .\App_0_Release.ps1 -SkipSign -NoClean
     Rebuilds and repacks without the token, keeping existing output.
@@ -89,6 +90,38 @@ $root = [System.IO.Path]::GetDirectoryName($solution)
 # so the configuration names an environment variable rather than one maintainer's
 # folder. Set SIGN_MODULE_PATH to the full path of the signing module.
 #
+#------------------------------------------------------------------------------
+# Menu.
+#------------------------------------------------------------------------------
+
+# Asked only when the caller did not already say, and only when there is somebody
+# to answer. Passing -SkipSign either way keeps the script silent for scripted
+# builds, and so does a redirected input stream, which is how build agents run it.
+$canAsk = [Environment]::UserInteractive -and -not [Console]::IsInputRedirected
+if (-not $PSBoundParameters.ContainsKey("SkipSign") -and -not $WhatIfPreference -and $canAsk) {
+    Write-Host ""
+    Write-Host "  Release build" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "    1. Build everything and sign it"
+    Write-Host "       Needs the signing token. This is what a release is built with."
+    Write-Host ""
+    Write-Host "    2. Build everything without signing"
+    Write-Host "       No token needed. The zips it produces are not releasable."
+    Write-Host ""
+    Write-Host "    Q. Quit"
+    Write-Host ""
+    $chosen = $false
+    while (-not $chosen) {
+        switch ((Read-Host "Choose").Trim().ToUpperInvariant()) {
+            "1" { $SkipSign = $false; $chosen = $true }
+            "2" { $SkipSign = $true;  $chosen = $true }
+            "Q" { Write-Host "Cancelled. Nothing was built."; return }
+            default { Write-Host "Enter 1, 2 or Q." -ForegroundColor Yellow }
+        }
+    }
+    Write-Host ""
+}
+
 # The signing module reports a missing token by carrying on unsigned, which would
 # produce a release that looks finished and is not. Stop before building instead.
 if (-not $SkipSign) {
@@ -320,6 +353,62 @@ function Write-Result {
     if ($missing -gt 0) { throw "$missing output folder(s) are empty." }
 }
 
+# A release that a scanner objects to is worse than a release that is late, because the
+# objection reaches users as a virus warning and the download stops. Defender ships a
+# command line scanner, so the release checks its own output before it is published
+# rather than finding out from a user report.
+#
+# A detection here is almost always a false positive: the same bytes pass everywhere else,
+# and the machine-learning families that fire on this kind of program (Wacatac and
+# relatives) are known for it. Treat it as a signal to report the file to Microsoft, not
+# as evidence that the build is unsafe.
+function Test-Detections {
+    Write-Step "Scan"
+    $scanner = "$env:ProgramFiles\Windows Defender\MpCmdRun.exe"
+    if (-not (Test-Path -LiteralPath $scanner)) {
+        $platform = Get-ChildItem "$env:ProgramData\Microsoft\Windows Defender\Platform" -Directory -ErrorAction SilentlyContinue |
+            Sort-Object Name -Descending | Select-Object -First 1
+        if ($platform) { $scanner = Join-Path $platform.FullName "MpCmdRun.exe" }
+    }
+    if (-not (Test-Path -LiteralPath $scanner)) {
+        Write-Host "  Defender not present, nothing scanned." -ForegroundColor Yellow
+        return
+    }
+    $flagged = @()
+    foreach ($dir in ($config.Apps.FilesDir | Where-Object { $_ } | Select-Object -Unique)) {
+        $full = Resolve-Path2 $dir
+        if (-not (Test-Path -LiteralPath $full)) { continue }
+        foreach ($file in Get-ChildItem -LiteralPath $full -File) {
+            # Remediation off: a detection must not quarantine the build that just ran.
+            $output = & $scanner -Scan -ScanType 3 -File $file.FullName -DisableRemediation 2>&1 | Out-String
+            # The scanner exits 0 when a file is clean, but it exits 2 both for a detection
+            # and for a scan it could not run at all - a missing file exits 2 as well. The
+            # two are told apart by whether the scan ran to the end: an error stops before
+            # "Scan finished" and says so. Reading the code alone would report a broken
+            # scan as a detection and send a clean build to Microsoft as a false positive.
+            $ran = $output -match "Scan finished"
+            switch ($true) {
+                ($LASTEXITCODE -eq 0) { Write-Host "  clean    $($file.Name)"; break }
+                ($LASTEXITCODE -eq 2 -and $ran) {
+                    Write-Host "  FLAGGED  $($file.Name)" -ForegroundColor Red
+                    $output.Trim() -split "`r?`n" | ForEach-Object { Write-Host "           $_" }
+                    $flagged += $file.Name
+                    break
+                }
+                default {
+                    Write-Host "  NOT SCANNED  $($file.Name) (scanner exit $LASTEXITCODE)" -ForegroundColor Yellow
+                    $output.Trim() -split "`r?`n" | ForEach-Object { Write-Host "               $_" }
+                }
+            }
+        }
+    }
+    if ($flagged.Count -gt 0) {
+        Write-Host ""
+        Write-Host "  Report these at https://www.microsoft.com/wdsi/filesubmission before publishing:" -ForegroundColor Yellow
+        Write-Host "    $($flagged -join ", ")" -ForegroundColor Yellow
+    }
+}
+
 #------------------------------------------------------------------------------
 # Release.
 #------------------------------------------------------------------------------
@@ -360,6 +449,7 @@ foreach ($stage in $config.Stages) {
 }
 
 Test-EmbeddedSignatures
+Test-Detections
 Write-Result
 Write-Host ""
 Write-Host "Done in $([int]((Get-Date) - $started).TotalMinutes) min $((((Get-Date) - $started).Seconds)) sec."

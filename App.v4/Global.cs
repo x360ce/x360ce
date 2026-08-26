@@ -112,6 +112,12 @@ namespace x360ce.App
 					else
 						RemoteServer.StopServer();
 					break;
+				case nameof(Options.PollingRate):
+					// Applied here rather than from the options page, because the rate belongs to
+					// the device loop and not to the control that happens to set it.
+					if (DHelper != null)
+						DHelper.Frequency = o.PollingRate;
+					break;
 				case nameof(Options.AutoDetectForegroundWindow):
 					WindowHook.IsEnabled = o.AutoDetectForegroundWindow;
 					break;
@@ -128,6 +134,9 @@ namespace x360ce.App
 		{
 			// Initialize DInput Helper.
 			DHelper = new DInput.DInputHelper();
+			// The saved rate is applied here as well as on change: a change raised before the
+			// loop exists cannot reach it, so without this the choice is forgotten on restart.
+			DHelper.Frequency = SettingsManager.Options.PollingRate;
 		}
 
 		#endregion

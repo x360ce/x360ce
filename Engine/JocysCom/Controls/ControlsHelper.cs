@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -106,7 +108,7 @@ namespace JocysCom.ClassLibrary.Controls
 				});
 			}
 			InitInvokeContext();
-			return Task.Factory.StartNew(action,
+			return Task.Factory.StartNew(() => Run(action),
 				CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
 		}
 
@@ -116,8 +118,45 @@ namespace JocysCom.ClassLibrary.Controls
 		public static Task BeginInvoke(Delegate method, params object[] args)
 		{
 			InitInvokeContext();
-			return Task.Factory.StartNew(() => { method.DynamicInvoke(args); },
-				CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
+			return Task.Factory.StartNew(() => Run(() =>
+			{
+				try
+				{
+					method.DynamicInvoke(args);
+				}
+				catch (TargetInvocationException ex)
+				{
+					// DynamicInvoke wraps what the method threw. The wrapper says only that a
+					// call failed, so the failure itself is let through instead.
+					ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+				}
+			}), CancellationToken.None, TaskCreationOptions.DenyChildAttach, MainTaskScheduler);
+		}
+
+		/// <summary>
+		/// Runs work posted to the interface thread so that a failure inside it is reported.
+		/// </summary>
+		/// <remarks>
+		/// Left to the task, a failure is stored on a task nobody waits for. It then surfaces
+		/// whenever the finalizer happens to notice, wrapped in a second exception, far from
+		/// what caused it. Raising it again on the message loop hands it to the program's error
+		/// handler at once and with its original stack, which is what makes a crash report say
+		/// which line failed. Costs one try block on work that does not fail.
+		/// </remarks>
+		static void Run(Action action)
+		{
+			try
+			{
+				action();
+			}
+			catch (Exception ex)
+			{
+				var context = SynchronizationContext.Current;
+				if (context == null)
+					throw;
+				var failure = ExceptionDispatchInfo.Capture(ex);
+				context.Post(_ => failure.Throw(), null);
+			}
 		}
 
 		/// <summary>Executes the specified action delegate synchronously on main Graphical User Interface (GUI) Thread.</summary>

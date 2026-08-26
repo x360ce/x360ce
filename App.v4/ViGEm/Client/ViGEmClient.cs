@@ -43,8 +43,17 @@ namespace Nefarius.ViGEm.Client
             {
                 UnplugAllControllers();
             }
-            NativeMethods.vigem_disconnect(NativeHandle);
-            NativeMethods.vigem_free(NativeHandle);
+            // The driver library can be gone before this runs. The application is often
+            // started from a temporary folder that is cleaned while it is still open, and
+            // the finalizer runs later still. A library that cannot be loaded means there is
+            // nothing left to release, and the exception would end the process, because
+            // nothing catches what escapes the finalizer thread.
+            try
+            {
+                NativeMethods.vigem_disconnect(NativeHandle);
+                NativeMethods.vigem_free(NativeHandle);
+            }
+            catch (DllNotFoundException) { }
             IsDisposed = true;
         }
 

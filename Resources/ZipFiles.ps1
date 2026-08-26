@@ -1,4 +1,4 @@
-param (
+﻿param (
     [Parameter(Mandatory = $true, Position = 0)]
     [string] $sourceDir,
 
@@ -32,29 +32,70 @@ if (!(Test-Path -Path $sourceDir)) {
 
 Add-Type -Assembly "System.IO.Compression.FileSystem"
 
+function Get-StreamChecksum {
+    <#
+    .SYNOPSIS
+        SHA256 of whatever a stream yields.
+    .DESCRIPTION
+        Written against a stream rather than a path so the same hashing serves a file on disk
+        and an entry being expanded out of an archive. Comparing those two is what proves an
+        archive holds what it was asked to hold.
+    #>
+    param (
+        [System.IO.Stream] $stream
+    )
+    $hashAlgorithm = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $hashBytes = $hashAlgorithm.ComputeHash($stream)
+        return -join ($hashBytes | ForEach-Object { $_.ToString("x2") })
+    }
+    finally {
+        $hashAlgorithm.Dispose()
+    }
+}
+
+function Wait-FileUnlocked {
+    <#
+    .SYNOPSIS
+        Waits until nothing else holds the file open.
+    .DESCRIPTION
+        Explorer keeps the archive open while it is still writing, and an entry can be listed
+        before its data has been flushed. Asking for the file exclusively is a direct answer to
+        "has it finished", where counting entries is only an inference.
+    #>
+    param (
+        [string] $path,
+        [int] $timeoutSeconds = 600
+    )
+    $deadline = (Get-Date).AddSeconds($timeoutSeconds)
+    while ((Get-Date) -lt $deadline) {
+        try {
+            $stream = [System.IO.File]::Open($path, "Open", "ReadWrite", "None")
+            $stream.Dispose()
+            return $true
+        }
+        catch [System.IO.IOException] {
+            Start-Sleep -Milliseconds 200
+        }
+    }
+    return $false
+}
+
 function Get-FileChecksum {
     param (
         [string] $filePath
     )
-    $checksum = $null
-    if (Test-Path -Path $filePath -PathType Leaf) {
-        $hashAlgorithm = [System.Security.Cryptography.SHA256]::Create()
-        try {
-            $stream = [System.IO.File]::OpenRead($filePath)
-            $hashBytes = $hashAlgorithm.ComputeHash($stream)
-            $stream.Close()
-            $checksum = -join ($hashBytes | ForEach-Object { $_.ToString("x2") })
-        }
-        finally {
-            $hashAlgorithm.Dispose()
-            if ($stream) {
-                $stream.Dispose()
-            }
-        }
-    } else {
+    if (-not (Test-Path -Path $filePath -PathType Leaf)) {
         Write-Host "File does not exist: $filePath"
+        return $null
     }
-    return $checksum
+    $stream = [System.IO.File]::OpenRead($filePath)
+    try {
+        return Get-StreamChecksum -stream $stream
+    }
+    finally {
+        $stream.Dispose()
+    }
 }
 
 function Get-FileChecksums {
@@ -221,6 +262,19 @@ function Compress-ZipFileUsingCSharp {
 }
 
 function Compress-ZipFileUsingShell {
+    <#
+    .SYNOPSIS
+        Builds a zip with the compressor built into Windows Explorer.
+    .DESCRIPTION
+        Explorer and .NET compress the same bytes differently, and a scanner judges the
+        compressed stream rather than the files inside it. Releases packed this way have not
+        been flagged; releases packed by .NET have. Which stream a scanner will object to
+        cannot be known in advance, so the one with the better record is the one used.
+
+        Copying into a zip folder is asynchronous: the call returns immediately and Explorer
+        keeps working in the background. The archive is therefore not finished when the call
+        returns, and a caller that does not wait can publish a truncated file.
+    #>
     param (
         [string] $sourceDir,
         [string] $destFile,
@@ -228,88 +282,133 @@ function Compress-ZipFileUsingShell {
         [string] $excludePattern,
         $ignoreEmptyFolders = $false
     )
-    
-    # Ensure the destination directory exists
+
     $destDir = [System.IO.Path]::GetDirectoryName($destFile)
     if (-not (Test-Path $destDir)) {
         New-Item -ItemType Directory -Path $destDir | Out-Null
     }
-
-    # Create an empty zip if it doesn't exist
-    if (-not (Test-Path $destFile)) {
-        $null = Set-Content -Path $destFile -Value ("PK" + [char]5 + [char]6 + ("$([char]0)" * 18))
+    if (Test-Path $destFile) {
+        Remove-Item -LiteralPath $destFile -Force
     }
 
-    # Use Shell Application to manipulate the zip file
+    # An empty archive is exactly the end-of-central-directory record: "PK", 5, 6, then 18
+    # zero bytes. Written as bytes because a text write would add an encoding preamble or a
+    # trailing newline, and Explorer would refuse the result.
+    $empty = [byte[]](0x50, 0x4B, 0x05, 0x06) + (New-Object byte[] 18)
+    [System.IO.File]::WriteAllBytes($destFile, $empty)
+
     $shellApplication = New-Object -ComObject Shell.Application
     $zipPackage = $shellApplication.NameSpace($destFile)
-
     if (-not $zipPackage) {
-        Write-Error "$($logPrefix)Failed to create a zip package COM object for the destination file. Check the path and permissions."
-        return
+        throw "$($logPrefix)Explorer would not open $destFile as an archive."
     }
 
-    # Get files first
     $files = Get-ChildItem -Path $sourceDir -Recurse -File
-    
-    # Apply search pattern if specified
     if (![string]::IsNullOrEmpty($searchPattern)) {
         $files = $files | Where-Object { $_.Name -like $searchPattern }
     }
-    
-    # Apply exclude pattern if specified
     if (![string]::IsNullOrEmpty($excludePattern)) {
         $files = $files | Where-Object { $_.Name -notlike $excludePattern }
     }
+    $files = @($files)
 
-    # Process files
-    foreach ($file in $files) {
-        $path = $file.FullName
-        $zipPackage.CopyHere($path)
-        
-        $maxRetries = 4
-        $retryCount = 0
-        Do {
-            Start-Sleep -Seconds 2
-            $retryCount++
-            if ($retryCount -gt $maxRetries) {
-                Write-Host "$($logPrefix)Max retries reached. Moving to next file..."
-                break
-            }
-        } While (($shellApplication.NameSpace($destFile).Items() | Where-Object { $_.Path -eq $path }).Count -eq 0)
-    }
-
-    # Process directories if not ignoring empty folders
+    $items = @($files)
     if (-not $ignoreEmptyFolders) {
-        $directories = Get-ChildItem -Path $sourceDir -Recurse -Directory
-        
-        # Filter directories to only include empty ones (since non-empty ones will be created when adding files)
-        $emptyDirectories = $directories | Where-Object {
-            (Get-ChildItem -Path $_.FullName -File -Recurse).Count -eq 0
+        # Explorer cannot put an empty folder into an archive. Handed one it stops, says so
+        # in a message box, and adds nothing at all - not even the files that were fine. On a
+        # build nobody is watching, that is a wait for a button press that never comes, so the
+        # folders are named here instead and the caller is told plainly.
+        $empty = @(Get-ChildItem -Path $sourceDir -Recurse -Directory |
+            Where-Object { (Get-ChildItem -Path $_.FullName -File -Recurse).Count -eq 0 })
+        if ($empty.Count -gt 0) {
+            throw ("$($logPrefix)Explorer cannot store empty folders, and these are empty: " +
+                (($empty | ForEach-Object { $_.FullName }) -join ", ") +
+                ". Pass -IgnoreEmptyFolders `$true to leave them out.")
         }
-        
-        foreach ($dir in $emptyDirectories) {
-            $path = $dir.FullName
-            $zipPackage.CopyHere($path)
-            
-            $maxRetries = 4
-            $retryCount = 0
-            Do {
-                Start-Sleep -Seconds 2
-                $retryCount++
-                if ($retryCount -gt $maxRetries) {
-                    Write-Host "$($logPrefix)Max retries reached. Moving to next directory..."
-                    break
+    }
+    if ($items.Count -eq 0) {
+        Write-Host "$($logPrefix)Nothing to add to $destFile."
+        return
+    }
+
+    # Worked out before anything is copied. Explorer stores a file added on its own under its
+    # own name with no folder in front of it, so two files with the same name from different
+    # folders land on each other. Offered that, Explorer stops and asks which one to keep -
+    # a question nobody is there to answer on a build machine. The checksums are needed for
+    # the check at the end anyway, so they are taken here.
+    $expected = @{}
+    foreach ($file in $files) {
+        if ($expected.ContainsKey($file.Name)) {
+            throw ("$($logPrefix)Two files are named $($file.Name), and an archive built this " +
+                "way keeps only one of them.")
+        }
+        $expected[$file.Name] = Get-FileChecksum -filePath $file.FullName
+    }
+
+    # Copied one at a time, each waited for before the next is offered. CopyHere returns
+    # immediately and Explorer keeps working in the background, so a second call made while
+    # the first is still running is refused - it reports a missing file or a permission it
+    # does not have, stops, and leaves a part-built archive behind.
+    $added = 0
+    foreach ($item in $items) {
+        $zipPackage.CopyHere($item.FullName)
+        $added++
+        $lastSize = -1
+        $stalledFor = 0
+        while ($true) {
+            Start-Sleep -Milliseconds 500
+            $count = @($shellApplication.NameSpace($destFile).Items()).Count
+            if ($count -ge $added) { break }
+            # Explorer reports no percentage, so growth of the archive is the only sign it is
+            # still working. Waiting a fixed number of seconds would abandon a large file that
+            # was progressing perfectly well.
+            $size = (Get-Item -LiteralPath $destFile).Length
+            if ($size -eq $lastSize) {
+                $stalledFor++
+                if ($stalledFor -ge 120) {
+                    throw ("$($logPrefix)Explorer stopped while adding $($item.FullName): " +
+                        "$count of $added entries are in $destFile.")
                 }
-            } While (($shellApplication.NameSpace($destFile).Items() | Where-Object { $_.Path -eq $path }).Count -eq 0)
+            }
+            else { $lastSize = $size; $stalledFor = 0 }
         }
     }
 
-    # Release COM objects
-    [System.Runtime.InteropServices.Marshal]::ReleaseComObject($zipPackage) | Out-Null
-    [System.Runtime.InteropServices.Marshal]::ReleaseComObject($shellApplication) | Out-Null
-    [GC]::Collect()
-    [GC]::WaitForPendingFinalizers()
+    # Nothing may still hold the archive open. An entry can be listed before its data has
+    # been flushed, so reading it while Explorer is still writing would compare half a file.
+    if (-not (Wait-FileUnlocked -path $destFile)) {
+        throw "$($logPrefix)Explorer still has $destFile open."
+    }
+
+    Add-Type -Assembly "System.IO.Compression.FileSystem"
+    $archive = [System.IO.Compression.ZipFile]::OpenRead($destFile)
+    try {
+        foreach ($name in $expected.Keys) {
+            $entry = $archive.Entries | Where-Object {
+                [System.IO.Path]::GetFileName($_.FullName) -eq $name
+            } | Select-Object -First 1
+            if (-not $entry) {
+                throw "$($logPrefix)$destFile does not contain $name."
+            }
+            $stream = $entry.Open()
+            try {
+                $actual = Get-StreamChecksum -stream $stream
+            }
+            finally {
+                $stream.Dispose()
+            }
+            if ($actual -ne $expected[$name]) {
+                throw ("$($logPrefix)$name comes back out of $destFile with different " +
+                    "contents than it went in with.")
+            }
+        }
+        $written = $archive.Entries.Count
+    }
+    finally {
+        $archive.Dispose()
+    }
+    Write-Host ("$($logPrefix)Packed $written file(s) into $destFile with Explorer, " +
+        "contents verified.")
 }
 
 $destName = [System.IO.Path]::GetFileName($destFile)

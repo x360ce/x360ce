@@ -25,8 +25,9 @@ namespace x360ce.App
 			{
 				if (item.IsOnline)
 					return;
-				lock (SettingsManager.UserDevices.SyncRoot)
-					item.IsOnline = true;
+				// No lock: this runs on the device refresh thread and the change is
+				// marshalled to the thread that owns the list, which locks it there.
+				item.IsOnline = true;
 			}
 		}
 

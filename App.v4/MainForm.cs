@@ -181,6 +181,7 @@ namespace x360ce.App
 				return;
 			AppHelper.InitializeHidGuardian();
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
+			ArmFaultInjection();
 			// Initialize Debug panel.
 			DebugPanel = new Forms.DebugForm();
 			Global.InitDHelperHelper();
@@ -510,9 +511,49 @@ namespace x360ce.App
 
 		#endregion
 
+		/// <summary>Faults this build can be told to raise, so a report can be reproduced.</summary>
+		/// <remarks>
+		/// A report can arrive describing the failure to report a failure: something throws on this
+		/// thread, the framework tries to build its error window, and building it fails as well, so
+		/// the original fault is never named. Waiting for that to happen again teaches nothing.
+		/// Set X360CE_THROW_AFTER to a number of seconds to raise one while running, or
+		/// X360CE_THROW_ON_CLOSE to raise one while closing, which is when the framework can no
+		/// longer create a window. Nothing is armed unless the variable is set.
+		/// </remarks>
+		System.Windows.Forms.Timer _faultTimer;
+
+		void ArmFaultInjection()
+		{
+			var after = Environment.GetEnvironmentVariable("X360CE_THROW_AFTER");
+			if (string.IsNullOrEmpty(after) || !int.TryParse(after, out var seconds) || seconds <= 0)
+				return;
+			// Held in a field. A timer that only a local variable refers to is collected before
+			// it ever ticks, and its finaliser stops it, so the fault silently never happens.
+			_faultTimer = new System.Windows.Forms.Timer { Interval = seconds * 1000 };
+			_faultTimer.Tick += (s, e) =>
+			{
+				_faultTimer.Stop();
+				// Raised through the form's own message loop rather than straight out of the tick.
+				// A timer's window discards what its tick throws, so a fault raised there is lost
+				// and reaches neither the handler nor the report - which is not how application
+				// code fails.
+				// Raised through the form's own message loop rather than straight out of the tick.
+				// A timer's window discards what its tick throws, so a fault raised there is lost
+				// and reaches neither the handler nor the report - which is not how application
+				// code fails.
+				BeginInvoke((MethodInvoker)(() =>
+				{
+					throw new InvalidOperationException("Injected fault: X360CE_THROW_AFTER.");
+				}));
+			};
+			_faultTimer.Start();
+		}
+
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
+			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("X360CE_THROW_ON_CLOSE")))
+				throw new InvalidOperationException("Injected fault: X360CE_THROW_ON_CLOSE.");
 			MonitorErrors(false);
 			// Wrap into try catch so that the form will always close and
 			// there will be no need to kill it by using task manager if exception is thrown.
@@ -969,7 +1010,15 @@ namespace x360ce.App
 			}
 			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
 			{
-				Global.DHelper.UpdateDevicesEnabled = true;
+				// Windows broadcasts this for any device node change on the machine, repeatedly
+				// and for devices which have nothing to do with controllers. Reading every device
+				// again costs about a second on the update thread, and controller processing stops
+				// for that long, so the rate falls from a thousand a second to one or two. Only a
+				// device arriving or leaving can change the list.
+				var change = (JocysCom.ClassLibrary.Win32.DBT)m.WParam.ToInt32();
+				if (change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEARRIVAL ||
+					change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEREMOVECOMPLETE)
+					Global.DHelper.UpdateDevicesEnabled = true;
 			}
 			// If message value was found then...
 			else if (m.Msg == _WindowMessage)
@@ -1424,7 +1473,7 @@ namespace x360ce.App
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
-			ControlsHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", Global.DHelper.CurrentUpdateFrequency);
+			ControlsHelper.SetText(UpdateFrequencyLabel, "HW Hz: {0}", Global.DHelper.CurrentUpdateFrequency);
 		}
 
 		#endregion
@@ -1455,13 +1504,13 @@ namespace x360ce.App
 		private void MainForm_Deactivate(object sender, EventArgs e)
 		{
 			interfaceIsForeground = false;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "Hz: {0}", interfaceUpdateBackgroundFps);
+			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", interfaceUpdateBackgroundFps);
 		}
 
 		private void MainForm_Activated(object sender, EventArgs e)
 		{
 			interfaceIsForeground = true;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "Hz: {0}", interfaceUpdateForegroundFps);
+			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", interfaceUpdateForegroundFps);
 		}
 
 		#endregion
@@ -1687,9 +1736,20 @@ namespace x360ce.App
 		private void UpdateStatusErrorsLabel()
 		{
 			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
-			StatusErrorsLabel.ForeColor = ErrorFilesCount > 0
-						? System.Drawing.Color.DarkRed
-						: System.Drawing.SystemColors.ControlDark;
+			var colour = ErrorFilesCount > 0
+				? System.Drawing.Color.DarkRed
+				: System.Drawing.SystemColors.ControlDark;
+			StatusErrorsLabel.ForeColor = colour;
+			// The count is a link so that it can be clicked at all, which also means its colour
+			// comes from LinkColor rather than ForeColor.
+			StatusErrorsLabel.LinkColor = colour;
+			StatusErrorsLabel.ActiveLinkColor = colour;
+			// Said in full for anyone who cannot see the count or the icon beside it.
+			StatusErrorsLabel.AccessibleName = ErrorFilesCount > 0
+				? string.Format("{0} error reports waiting to be sent", ErrorFilesCount)
+				: "No error reports";
+			StatusErrorsLabel.AccessibleDescription = "Opens the error report window";
+			StatusErrorsLabel.AccessibleRole = AccessibleRole.PushButton;
 			StatusErrorsLabel.Image = ErrorFilesCount > 0
 				? Resources.error_16x16
 				: AppHelper.GetDisabledImage(Resources.error_16x16);

@@ -113,12 +113,14 @@ namespace x360ce.App.Controls
 
 		void DebugModeCheckBox_CheckedChanged(object sender, EventArgs e)
 		{
-			var cbx = (CheckBox)sender;
-			// If debug mode then don't catch exceptions.
-			if (cbx.Checked)
-				Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
-			else
-				Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
+			// Recording a failure is not the same as swallowing it, so debug mode does not turn
+			// reporting off. It used to: this runs once at start while the box still carries the
+			// value it was designed with, which detached the handler for everyone. The framework
+			// then had to build its own error window, and a failure that happened when no window
+			// could be created was reported as that failure instead of the one that caused it.
+			// A debugger still stops at the throw, long before this is reached.
+			Application.ThreadException -= new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
+			Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Program.Application_ThreadException);
 		}
 
 		public void UpdateSettingsMap()
@@ -149,6 +151,11 @@ namespace x360ce.App.Controls
 			LoadSettings();
 			// Attach event which will save form settings before Save().
 			SettingsManager.OptionsData.Saving += OptionsData_Saving;
+			// This was never attached, so none of the settings it applies ever took effect:
+			// always on top, start with Windows, the remote port box and the info window.
+			// Detached first so a second call cannot apply everything twice.
+			SettingsManager.Options.PropertyChanged -= Options_PropertyChanged;
+			SettingsManager.Options.PropertyChanged += Options_PropertyChanged;
 		}
 
 		private void Options_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -159,9 +166,6 @@ namespace x360ce.App.Controls
 			{
 				case nameof(Options.AlwaysOnTop):
 					MainForm.Current.TopMost = o.AlwaysOnTop;
-					break;
-				case nameof(Options.PollingRate):
-					Global.DHelper.Frequency = o.PollingRate;
 					break;
 				case nameof(Options.StartWithWindows):
 				case nameof(Options.StartWithWindowsState):

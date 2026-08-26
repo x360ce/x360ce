@@ -77,6 +77,23 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		// Lock to serialize concurrent list modifications.
 		object OneChangeAtTheTime = new object();
 
+		/// <summary>Copy of the items, taken under the lock this list uses for its changes.</summary>
+		/// <remarks>
+		/// A plain ToArray can run while a change is resizing the list, which fails as
+		/// "Collection was modified" or as a destination array that is no longer long enough.
+		/// Only the copy is guarded. Changes are marshalled before the lock is taken, so the
+		/// caller never waits for another thread while holding it.
+		/// </remarks>
+		public T[] ToArraySynchronized()
+		{
+			lock (OneChangeAtTheTime)
+			{
+				var copy = new T[Count];
+				CopyTo(copy, 0);
+				return copy;
+			}
+		}
+
 		// Executes the delegate under a lock and enriches exceptions with type and SynchronizingObject context data.
 		void DynamicInvoke(Delegate method, params object[] args)
 		{
@@ -113,9 +130,41 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			Invoke((ItemDelegate)base.SetItem, index, item);
 		}
 
+		// Set while a notification is on its way to the owning thread, and raised to 2 when
+		// further changes arrive before it is delivered.
+		int _notifyState;
+
+		/// <summary>Raises the change notification without waiting for the thread that owns the list.</summary>
+		/// <remarks>
+		/// A notification exists for whoever displays the list. Waiting for that thread puts the
+		/// thread which changed the list behind whatever is being drawn, which is how a device
+		/// loop ends up running at a fraction of its rate while a window is busy.
+		/// Only one notification is in flight at a time. Changes that arrive while it is pending
+		/// are delivered as a single reset, so a fast writer cannot queue work without bound on a
+		/// thread that cannot keep up. A writer that is not outpacing the reader still gets its
+		/// exact notification.
+		/// </remarks>
 		protected override void OnListChanged(ListChangedEventArgs e)
 		{
-			Invoke((Action<ListChangedEventArgs>)base.OnListChanged, e);
+			var so = SynchronizingObject;
+			if (so is null || !JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired)
+			{
+				DynamicInvoke((Action<ListChangedEventArgs>)base.OnListChanged, e);
+				return;
+			}
+			// Already one on its way: mark it so the pending one covers this change too.
+			if (System.Threading.Interlocked.CompareExchange(ref _notifyState, 2, 1) != 0)
+				return;
+			if (System.Threading.Interlocked.CompareExchange(ref _notifyState, 1, 0) != 0)
+				return;
+			var first = e;
+			Task.Factory.StartNew(() =>
+			{
+				// Anything that arrived while this was queued is covered by a reset.
+				var coalesced = System.Threading.Interlocked.Exchange(ref _notifyState, 0) == 2;
+				var args = coalesced ? new ListChangedEventArgs(ListChangedType.Reset, -1) : first;
+				DynamicInvoke((Action<ListChangedEventArgs>)base.OnListChanged, args);
+			}, CancellationToken.None, TaskCreationOptions.None, so);
 		}
 
 		protected override void OnAddingNew(AddingNewEventArgs e)

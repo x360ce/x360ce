@@ -265,10 +265,17 @@ function Invoke-Zip {
             New-Item -ItemType Directory -Path $zipDir | Out-Null
         }
         $zipScript = Resolve-Path2 $item.App.ZipScript
+        # Packed by Explorer rather than by .NET. A scanner judges the compressed stream,
+        # not the files inside it, and the two compressors produce entirely different
+        # streams from the same input. Releases packed this way have not been flagged;
+        # releases packed by .NET have, months after they shipped clean, when a new
+        # signature happened to match their stream. Explorer also packs the same input to
+        # the same bytes every time, so a release can be reproduced.
         & $zipScript `
             -sourceDir ([System.IO.Path]::GetDirectoryName($item.Target)) `
             -destFile $item.Zip `
             -searchPattern ([System.IO.Path]::GetFileName($item.Target)) `
+            -UseShellToZipFiles $true `
             -IgnoreEmptyFolders $true
     }
 }

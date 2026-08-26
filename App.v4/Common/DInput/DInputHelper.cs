@@ -104,8 +104,15 @@ namespace x360ce.App.DInput
 				// thread and the worker can be blocked inside a native DirectInput call.
 				var thread = _Thread;
 				if (thread != null && thread != Thread.CurrentThread && !thread.Join(TimeSpan.FromSeconds(2)))
-					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(
-						new TimeoutException("DirectInput update thread did not stop within 2 seconds."));
+				{
+					// Record it, but not as a fault. The worker is a background thread which
+					// stops on its own once the native call returns, and the runtime ends it at
+					// exit. Stop() also runs on a settings change and before the error window,
+					// so reporting turned an ordinary delay into an error report for the user.
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
+						"DirectInput update thread did not stop within 2 seconds.",
+						System.Diagnostics.EventLogEntryType.Warning);
+				}
 			}
 		}
 
@@ -210,21 +217,21 @@ namespace x360ce.App.DInput
 					var getXInputStates = SettingsManager.Options.GetXInputStates && MainForm.Current.FormEventsEnabled;
 					// Best place to unload XInput DLL is at the start, because
 					// UpdateDiStates(...) function will try to acquire new devices exclusively for force feedback information and control.
-					CheckAndUnloadXInputLibrarry(game, getXInputStates);
+					StepWatch(0, () => CheckAndUnloadXInputLibrarry(game, getXInputStates));
 					// Update information about connected devices.
-					UpdateDiDevices(manager);
+					StepWatch(1, () => UpdateDiDevices(manager));
 					// Update JoystickStates from devices.
-					UpdateDiStates(manager, game, detector);
+					StepWatch(2, () => UpdateDiStates(manager, game, detector));
 					// Update XInput states from Custom DirectInput states.
-					UpdateXiStates(game);
+					StepWatch(3, () => UpdateXiStates(game));
 					// Combine XInput states of controllers.
-					CombineXiStates();
+					StepWatch(4, () => CombineXiStates());
 					// Update virtual devices from combined states.
-					UpdateVirtualDevices(game);
+					StepWatch(5, () => UpdateVirtualDevices(game));
 					// Load XInput library before retrieving XInput states.
-					CheckAndLoadXInputLibrary(game, getXInputStates);
+					StepWatch(6, () => CheckAndLoadXInputLibrary(game, getXInputStates));
 					// Retrieve XInput states from XInput controllers.
-					RetrieveXiStates(game, getXInputStates);
+					StepWatch(7, () => RetrieveXiStates(game, getXInputStates));
 				}
 				// Update pool frequency value every second.
 				UpdateDelayFrequency();
@@ -256,6 +263,63 @@ namespace x360ce.App.DInput
 		}
 		UpdateFrequency _Frequency = UpdateFrequency.ms1_1000Hz;
 
+		/// <summary>Names of the steps of one update, in the order they run.</summary>
+		static readonly string[] StepNames = {
+			"UnloadXInput", "UpdateDiDevices", "UpdateDiStates", "UpdateXiStates",
+			"CombineXiStates", "UpdateVirtualDevices", "LoadXInput", "RetrieveXiStates" };
+
+		/// <summary>Total microseconds spent in each step since the last rate sample.</summary>
+		static readonly long[] StepTicks = new long[8];
+
+		/// <summary>Times one step of the update when engine logging is on.</summary>
+		/// <remarks>
+		/// The rate alone says the loop is slow without saying where. Timing each step says which
+		/// one is holding it, which is the difference between reading a number and knowing what to
+		/// change. Costs a delegate call per step and nothing else when logging is off.
+		/// </remarks>
+		static void StepWatch(int index, Action step)
+		{
+			if (string.IsNullOrEmpty(EngineLogPath))
+			{
+				step();
+				return;
+			}
+			var started = System.Diagnostics.Stopwatch.GetTimestamp();
+			try { step(); }
+			finally { StepTicks[index] += System.Diagnostics.Stopwatch.GetTimestamp() - started; }
+		}
+
+		/// <summary>File the update rate is written to, one sample per second, or null.</summary>
+		/// <remarks>
+		/// Set X360CE_ENGINE_LOG to a file path to record how the engine actually runs. Reading
+		/// the rate off the window one glance at a time says nothing: the number moves between
+		/// full speed and almost nothing from one second to the next, so any single reading can
+		/// be made to say whatever the reader hoped. A run of samples can be counted.
+		/// Nothing is opened and nothing is written unless the variable is set.
+		/// </remarks>
+		static readonly string EngineLogPath = Environment.GetEnvironmentVariable("X360CE_ENGINE_LOG");
+
+		static void LogFrequency(long elapsedMilliseconds, long frequency)
+		{
+			if (string.IsNullOrEmpty(EngineLogPath))
+				return;
+			try
+			{
+				var line = new System.Text.StringBuilder();
+				line.Append(elapsedMilliseconds).Append(',').Append(frequency);
+				for (int i = 0; i < StepTicks.Length; i++)
+				{
+					// Milliseconds spent in this step during the second just measured.
+					var ms = StepTicks[i] * 1000L / System.Diagnostics.Stopwatch.Frequency;
+					line.Append(',').Append(StepNames[i]).Append('=').Append(ms);
+					StepTicks[i] = 0;
+				}
+				System.IO.File.AppendAllText(EngineLogPath, line.ToString() + Environment.NewLine);
+			}
+			catch (System.IO.IOException) { }
+			catch (UnauthorizedAccessException) { }
+		}
+
 		void UpdateDelayFrequency()
 		{
 			// Calculate update frequency.
@@ -267,6 +331,7 @@ namespace x360ce.App.DInput
 				CurrentUpdateFrequency = currentTick;
 				currentTick = 0;
 				lastTime = currentTime;
+				LogFrequency(currentTime, CurrentUpdateFrequency);
 				var ev = FrequencyUpdated;
 				if (ev != null)
 					ev(this, new DInputEventArgs());
