@@ -39,7 +39,8 @@
     the signing token. The zips it produces are not releasable.
 .EXAMPLE
     PS> .\App_0_Release.ps1
-    Full release: clean, build, sign, zip.
+    Asks whether to sign, then runs the full release: clean, build, sign, zip.
+    The question is skipped when -SkipSign is given or nobody can answer.
 .EXAMPLE
     PS> .\App_0_Release.ps1 -SkipSign -NoClean
     Rebuilds and repacks without the token, keeping existing output.
@@ -89,6 +90,38 @@ $root = [System.IO.Path]::GetDirectoryName($solution)
 # so the configuration names an environment variable rather than one maintainer's
 # folder. Set SIGN_MODULE_PATH to the full path of the signing module.
 #
+#------------------------------------------------------------------------------
+# Menu.
+#------------------------------------------------------------------------------
+
+# Asked only when the caller did not already say, and only when there is somebody
+# to answer. Passing -SkipSign either way keeps the script silent for scripted
+# builds, and so does a redirected input stream, which is how build agents run it.
+$canAsk = [Environment]::UserInteractive -and -not [Console]::IsInputRedirected
+if (-not $PSBoundParameters.ContainsKey("SkipSign") -and -not $WhatIfPreference -and $canAsk) {
+    Write-Host ""
+    Write-Host "  Release build" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "    1. Build everything and sign it"
+    Write-Host "       Needs the signing token. This is what a release is built with."
+    Write-Host ""
+    Write-Host "    2. Build everything without signing"
+    Write-Host "       No token needed. The zips it produces are not releasable."
+    Write-Host ""
+    Write-Host "    Q. Quit"
+    Write-Host ""
+    $chosen = $false
+    while (-not $chosen) {
+        switch ((Read-Host "Choose").Trim().ToUpperInvariant()) {
+            "1" { $SkipSign = $false; $chosen = $true }
+            "2" { $SkipSign = $true;  $chosen = $true }
+            "Q" { Write-Host "Cancelled. Nothing was built."; return }
+            default { Write-Host "Enter 1, 2 or Q." -ForegroundColor Yellow }
+        }
+    }
+    Write-Host ""
+}
+
 # The signing module reports a missing token by carrying on unsigned, which would
 # produce a release that looks finished and is not. Stop before building instead.
 if (-not $SkipSign) {
