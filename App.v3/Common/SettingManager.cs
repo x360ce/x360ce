@@ -379,6 +379,11 @@ namespace x360ce.App
 				Control control = SettingsMap[path];
 				string key = path.Split('\\')[1];
 				string v = ini2.GetValue(section, key);
+				// A tick box the file says nothing about keeps the value it was designed with.
+				// Without this an absent line reads as zero, so a setting meant to start on
+				// turns itself off the first time the program runs.
+				if (string.IsNullOrEmpty(v) && control is CheckBox)
+					continue;
 				ReadSettingTo(control, key, v);
 			}
 			loadCount++;
