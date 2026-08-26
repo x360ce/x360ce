@@ -105,17 +105,18 @@ namespace x360ce.App.DInput
 			}
 			if (Program.IsClosing)
 				return;
+			// No lock around the changes below. They run on the device refresh thread and
+			// are marshalled to the thread that owns the list, which takes the collection
+			// lock itself. Holding it here would make that thread wait for this one.
 			// Remove disconnected devices.
 			for (int i = 0; i < deleteDevices.Length; i++)
 			{
-				lock (SettingsManager.UserDevices.SyncRoot)
-					deleteDevices[i].IsOnline = false;
+				deleteDevices[i].IsOnline = false;
 			}
 			for (int i = 0; i < insertDevices.Count; i++)
 			{
 				var ud = insertDevices[i];
-				lock (SettingsManager.UserDevices.SyncRoot)
-					SettingsManager.UserDevices.Items.Add(ud);
+				SettingsManager.UserDevices.Items.Add(ud);
 			}
 			// Enable Test instances.
 			TestDeviceHelper.EnableTestInstances();
@@ -145,35 +146,25 @@ namespace x360ce.App.DInput
 				try
 				{
 					// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
-					lock (SettingsManager.UserDevices.SyncRoot)
-					{
-						// Getting state can fail.
-						var joystick = new Joystick(manager, device.InstanceGuid);
-						ud.Device = joystick;
-						ud.IsExclusiveMode = null;
-						ud.LoadCapabilities(joystick.Capabilities);
-					}
+					// Getting state can fail.
+					var joystick = new Joystick(manager, device.InstanceGuid);
+					ud.Device = joystick;
+					ud.IsExclusiveMode = null;
+					ud.LoadCapabilities(joystick.Capabilities);
 				}
 				catch (Exception) { }
 			}
 			// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
-			lock (SettingsManager.UserDevices.SyncRoot)
-			{
-				ud.LoadInstance(device);
-			}
+			ud.LoadInstance(device);
 			// If device is set as offline then make it online.
 			if (!ud.IsOnline)
-				lock (SettingsManager.UserDevices.SyncRoot)
-					ud.IsOnline = true;
+				ud.IsOnline = true;
 			// Get device info for added devices.
 			var dev = allDevices.FirstOrDefault(x => x.DeviceId == ud.HidDeviceId);
 			// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
-			lock (SettingsManager.UserDevices.SyncRoot)
-			{
-				ud.LoadDevDeviceInfo(dev);
-				if (dev != null)
-					ud.ConnectionClass = DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
-			}
+			ud.LoadDevDeviceInfo(dev);
+			if (dev != null)
+				ud.ConnectionClass = DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
 			// InterfacePath is available for HID devices.
 			if (device.IsHumanInterfaceDevice && ud.Device != null)
 			{
@@ -181,22 +172,19 @@ namespace x360ce.App.DInput
 				// Get interface info for added devices.
 				hid = allInterfaces.FirstOrDefault(x => x.DevicePath == interfacePath);
 				// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
-				lock (SettingsManager.UserDevices.SyncRoot)
-				{
-					ud.LoadHidDeviceInfo(hid);
-					if (hid != null)
-						ud.ConnectionClass = DeviceDetector.GetConnectionDevice(hid, allDevices)?.ClassGuid ?? Guid.Empty;
-					// Workaround: 
-					// Override Device values and description from the Interface, 
-					// because it is more accurate and present.
-					// Note 1: Device fields below, probably, should not be used.
-					// Note 2: Available when device is online.
-					ud.DevManufacturer = ud.HidManufacturer;
-					ud.DevDescription = ud.HidDescription;
-					ud.DevVendorId = ud.HidVendorId;
-					ud.DevProductId = ud.HidProductId;
-					ud.DevRevision = ud.HidRevision;
-				}
+				ud.LoadHidDeviceInfo(hid);
+				if (hid != null)
+					ud.ConnectionClass = DeviceDetector.GetConnectionDevice(hid, allDevices)?.ClassGuid ?? Guid.Empty;
+				// Workaround: 
+				// Override Device values and description from the Interface, 
+				// because it is more accurate and present.
+				// Note 1: Device fields below, probably, should not be used.
+				// Note 2: Available when device is online.
+				ud.DevManufacturer = ud.HidManufacturer;
+				ud.DevDescription = ud.HidDescription;
+				ud.DevVendorId = ud.HidVendorId;
+				ud.DevProductId = ud.HidProductId;
+				ud.DevRevision = ud.HidRevision;
 			}
 		}
 

@@ -59,7 +59,20 @@ namespace JocysCom.ClassLibrary.Configuration
 		protected string _Comment;
 
 		[DataMember]
-		public SortableBindingList<T> Items { get; set; }
+		public SortableBindingList<T> Items
+		{
+			get { return _Items; }
+			set
+			{
+				// Readers here and changes made through the list must share one lock.
+				if (value != null)
+					value.SyncRoot = SyncRoot;
+				_Items = value;
+			}
+		}
+
+		[NonSerialized]
+		private SortableBindingList<T> _Items;
 
 		[NonSerialized]
 		private object _SyncRoot;
