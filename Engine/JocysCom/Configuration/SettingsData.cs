@@ -77,8 +77,9 @@ namespace JocysCom.ClassLibrary.Configuration
 
 		public T[] ItemsToArraySyncronized()
 		{
-			lock (SyncRoot)
-				return Items.ToArray();
+			// The list guards its own changes, so the copy is taken there. Locking SyncRoot
+			// instead would not exclude a change arriving through the list itself.
+			return Items.ToArraySynchronized();
 		}
 
 		[XmlIgnore]
