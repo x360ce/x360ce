@@ -45,19 +45,44 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("diagnostics")]
-		[Description("Every program asks the runtime to read the symbols it carries")]
-		public void Programs_ask_for_the_symbols_they_carry()
+		[Description("Every program asks the runtime for what it needs, from code rather than a file")]
+		public void Programs_ask_for_what_they_need_in_code()
 		{
-			// One switch, easy to leave out of a new configuration file, and nothing fails when
-			// it is missing except that every crash report stops naming lines.
-			foreach (var config in new[] { @"App.v4\app.config", @"App.v3\app.config", @"Tests\app.config" })
+			// These were once set in app.config, which put them in a file the build writes beside
+			// the program. The programs ship as one file, so that file never reaches anyone who
+			// downloads them, and every switch silently did nothing. Nothing failed: the tests ran
+			// against a build folder, where the file is present, and passed while the shipped
+			// program had no symbols and no accessibility at all.
+			var required = new[]
+			{
+				"Switch.System.Diagnostics.IgnorePortablePDBsInStackTraces",
+				"Switch.UseLegacyAccessibilityFeatures",
+			};
+			foreach (var program in new[] { @"App.v4\Program.cs", @"App.v3\Program.cs" })
+			{
+				var path = Path.Combine(Ui.RepoRoot.FullName, program);
+				Assert.IsTrue(File.Exists(path), program + " is missing.");
+				var code = File.ReadAllText(path);
+				foreach (var name in required)
+				{
+					// Checked with Contains rather than StringAssert, which prints the whole file
+					// when it fails and buries the one line that matters.
+					Assert.IsTrue(code.Contains("AppContext.SetSwitch(\"" + name + "\", false)"),
+						program + " does not ask for " + name + " at start-up, so it will do nothing "
+						+ "for anyone running the shipped single file.");
+				}
+			}
+
+			// One place only. A switch in both a file and the code is two answers to one question,
+			// and the file is the one that will be believed while being absent where it matters.
+			foreach (var config in new[] { @"App.v4\app.config", @"App.v3\app.config" })
 			{
 				var path = Path.Combine(Ui.RepoRoot.FullName, config);
-				Assert.IsTrue(File.Exists(path), config + " is missing.");
-				StringAssert.Contains(File.ReadAllText(path),
-					"Switch.System.Diagnostics.IgnorePortablePDBsInStackTraces=false",
-					config + " does not ask the runtime to read the symbols carried inside its "
-					+ "binaries, so its crash reports will name no line.");
+				if (!File.Exists(path))
+					continue;
+				Assert.IsFalse(File.ReadAllText(path).Contains("AppContextSwitchOverrides"),
+					config + " still sets switches. They belong in code, because this file does not "
+					+ "travel with the program.");
 			}
 		}
 
