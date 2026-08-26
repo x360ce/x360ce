@@ -535,6 +535,37 @@ namespace x360ce.App
 		public DirectInput Manager = new DirectInput();
 
 		/// <summary>
+		/// Vendor and product identifier of every XInput device attached to the machine.
+		/// </summary>
+		/// <remarks>
+		/// A device is an XInput device when its hardware identifier carries the IG_ marker,
+		/// which is how Microsoft documents telling XInput devices apart during DirectInput
+		/// enumeration. Both real controllers and the virtual pads a driver creates carry it.
+		/// </remarks>
+		static HashSet<uint> GetXInputIds()
+		{
+			var ids = new HashSet<uint>();
+			foreach (var info in DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT))
+			{
+				if (string.IsNullOrEmpty(info.HardwareIds))
+					continue;
+				if (info.HardwareIds.IndexOf("IG_", StringComparison.OrdinalIgnoreCase) == -1)
+					continue;
+				ids.Add((info.ProductId << 16) | info.VendorId);
+			}
+			return ids;
+		}
+
+		/// <summary>
+		/// Vendor and product identifier a DirectInput device was built from.
+		/// </summary>
+		static uint GetVendorProductId(Guid productGuid)
+		{
+			// DirectInput places the same two numbers in the first four bytes of the identifier.
+			return BitConverter.ToUInt32(productGuid.ToByteArray(), 0);
+		}
+
+		/// <summary>
 		/// Get array[4] of direct input devices.
 		/// </summary>
 		DeviceInstance[] GetDevices()
@@ -557,6 +588,15 @@ namespace x360ce.App
 				foreach (var virtualDevice in virtualDevices)
 				{
 					devices.Remove(virtualDevice);
+				}
+				// The pads this program feeds are XInput devices, and XInput devices appear in
+				// DirectInput enumeration too. Reading one back would make the program take its
+				// own output as an input, add it as a new device, and repeat.
+				var xInputIds = GetXInputIds();
+				var xInputDevices = devices.Where(x => xInputIds.Contains(GetVendorProductId(x.ProductGuid))).ToArray();
+				foreach (var xInputDevice in xInputDevices)
+				{
+					devices.Remove(xInputDevice);
 				}
 			}
 			// Move gaming wheels to the top index position by default.
