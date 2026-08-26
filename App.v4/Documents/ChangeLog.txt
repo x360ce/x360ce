@@ -4,7 +4,7 @@
 - Changed: A device thread that takes more than two seconds to stop is recorded in the log instead of being reported as an error. It stops on its own once the device call it is waiting on returns.
 
 v4.18.7.0 (2026-08-26)
-- Changed: Reading a device list on the refresh thread takes a snapshot instead of walking the live collection. This was not enough on its own; see 4.18.8.0.
+- Changed: Reading a device list on the refresh thread takes a snapshot instead of walking the live collection. This was not enough on its own; see 4.18.10.0.
 
 v4.18.6.0 (2026-08-25)
 - Fixed: Crash when a controller was unplugged and plugged back in. The hidden window that receives device messages was written to from the wrong thread.
