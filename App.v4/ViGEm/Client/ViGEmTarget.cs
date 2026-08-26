@@ -84,9 +84,13 @@ namespace Nefarius.ViGEm.Client
                 if (disposing)
                     try { Disconnect(); } catch { }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-                // TODO: set large fields to null.
-                ViGEmClient.NativeMethods.vigem_target_free(NativeHandle);
+                // The driver library can be gone before this runs. The application is often
+                // started from a temporary folder that is cleaned while it is still open, and
+                // the finalizer runs later still. A library that cannot be loaded means there is
+                // nothing left to release, and the exception would end the process, because
+                // nothing catches what escapes the finalizer thread.
+                try { ViGEmClient.NativeMethods.vigem_target_free(NativeHandle); }
+                catch (DllNotFoundException) { }
 
                 disposedValue = true;
             }
