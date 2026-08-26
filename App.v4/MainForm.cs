@@ -181,6 +181,7 @@ namespace x360ce.App
 				return;
 			AppHelper.InitializeHidGuardian();
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
+			ArmFaultInjection();
 			// Initialize Debug panel.
 			DebugPanel = new Forms.DebugForm();
 			Global.InitDHelperHelper();
@@ -510,9 +511,34 @@ namespace x360ce.App
 
 		#endregion
 
+		/// <summary>Faults this build can be told to raise, so a report can be reproduced.</summary>
+		/// <remarks>
+		/// A report can arrive describing the failure to report a failure: something throws on this
+		/// thread, the framework tries to build its error window, and building it fails as well, so
+		/// the original fault is never named. Waiting for that to happen again teaches nothing.
+		/// Set X360CE_THROW_AFTER to a number of seconds to raise one while running, or
+		/// X360CE_THROW_ON_CLOSE to raise one while closing, which is when the framework can no
+		/// longer create a window. Nothing is armed unless the variable is set.
+		/// </remarks>
+		void ArmFaultInjection()
+		{
+			var after = Environment.GetEnvironmentVariable("X360CE_THROW_AFTER");
+			if (string.IsNullOrEmpty(after) || !int.TryParse(after, out var seconds) || seconds <= 0)
+				return;
+			var timer = new System.Windows.Forms.Timer { Interval = seconds * 1000 };
+			timer.Tick += (s, e) =>
+			{
+				timer.Stop();
+				throw new InvalidOperationException("Injected fault: X360CE_THROW_AFTER.");
+			};
+			timer.Start();
+		}
+
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
+			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("X360CE_THROW_ON_CLOSE")))
+				throw new InvalidOperationException("Injected fault: X360CE_THROW_ON_CLOSE.");
 			MonitorErrors(false);
 			// Wrap into try catch so that the form will always close and
 			// there will be no need to kill it by using task manager if exception is thrown.
