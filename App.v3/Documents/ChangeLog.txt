@@ -2,6 +2,7 @@
 - Fix: Crash when a controller was unplugged and plugged back in. The hidden window that receives device messages was written to from the wrong thread.
 - Update: Device detection lists attached devices only, instead of every device ever installed.
 - Update: Interface refreshes up to 10 times per second instead of 20.
+- Fix: Startup warned that a leak detector was missing whenever a debug symbol file sat beside the program, and offered to download it from a site that closed years ago. No part of the program uses it.
 
 v3.3.10.0 (2026-08-22)
 - Fix: Changes and License text on the About screen ran together as one paragraph.

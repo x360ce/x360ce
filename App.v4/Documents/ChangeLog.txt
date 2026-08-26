@@ -1,5 +1,10 @@
-﻿v4.18.7.0 (2026-08-26)
-- Fixed: Crash while refreshing devices when the device list changed at the same time. Reading a device list on the refresh thread now takes a snapshot instead of walking the live collection.
+﻿v4.18.10.0 (2026-08-26)
+- Fixed: Crash while refreshing devices when the device list changed at the same time. One lock now guards each list, so reading it and changing it can no longer overlap.
+- Fixed: Closing the program could end it with an error when the virtual gamepad driver library was no longer reachable, which happens when it runs from a temporary folder that Windows has cleaned.
+- Changed: A device thread that takes more than two seconds to stop is recorded in the log instead of being reported as an error. It stops on its own once the device call it is waiting on returns.
+
+v4.18.7.0 (2026-08-26)
+- Changed: Reading a device list on the refresh thread takes a snapshot instead of walking the live collection. This was not enough on its own; see 4.18.8.0.
 
 v4.18.6.0 (2026-08-25)
 - Fixed: Crash when a controller was unplugged and plugged back in. The hidden window that receives device messages was written to from the wrong thread.
