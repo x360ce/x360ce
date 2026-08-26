@@ -85,6 +85,12 @@ Note:
 
 Delete x360ce.exe, x360ce.ini and all XInput DLLs from the game's executable directory.
 
+## Important for version 4.x
+
+Close the program from its own window. It removes the virtual controller while it shuts down. If the program is ended from Task Manager or crashes, the virtual controller is left behind, and Windows can be left unsure which controllers you have.
+
+HID Guardian can no longer be installed. If an older version installed it, remove it from within the program rather than deleting its files by hand.
+
 ### How to remove HID Guardian if access to your Mouse and Keyboard is lost (X360CE v4.x)
 
 Instructions: https://github.com/x360ce/x360ce/wiki/HID-Guardian
