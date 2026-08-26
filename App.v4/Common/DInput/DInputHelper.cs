@@ -104,8 +104,15 @@ namespace x360ce.App.DInput
 				// thread and the worker can be blocked inside a native DirectInput call.
 				var thread = _Thread;
 				if (thread != null && thread != Thread.CurrentThread && !thread.Join(TimeSpan.FromSeconds(2)))
-					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(
-						new TimeoutException("DirectInput update thread did not stop within 2 seconds."));
+				{
+					// Record it, but not as a fault. The worker is a background thread which
+					// stops on its own once the native call returns, and the runtime ends it at
+					// exit. Stop() also runs on a settings change and before the error window,
+					// so reporting turned an ordinary delay into an error report for the user.
+					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
+						"DirectInput update thread did not stop within 2 seconds.",
+						System.Diagnostics.EventLogEntryType.Warning);
+				}
 			}
 		}
 
