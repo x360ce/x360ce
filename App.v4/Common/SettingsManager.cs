@@ -151,10 +151,8 @@ namespace x360ce.App
 
 		public static Engine.Data.UserSetting GetSetting(Guid instanceGuid, string fileName)
 		{
-			// Read a snapshot. Locking here would not exclude a change arriving through
-			// the list itself, and holding a lock across a query puts the interface behind
-			// the device thread.
-			return UserSettings.ItemsToArraySyncronized().FirstOrDefault(x =>
+			lock (UserSettings.SyncRoot)
+				return UserSettings.Items.FirstOrDefault(x =>
 					x.InstanceGuid.Equals(instanceGuid) &&
 					string.Compare(x.FileName, fileName, true) == 0
 				);
@@ -171,13 +169,17 @@ namespace x360ce.App
 				// Select device instances only.
 				.Select(x => x.InstanceGuid)
 				.ToArray();
+			UserDevice[] userDevices;
 			// Get all connected devices.
-			var userDevices = UserDevices.ItemsToArraySyncronized()
+			lock (UserDevices.SyncRoot)
+			{
+				userDevices = UserDevices.Items
 				// Filter by instance.
 				.Where(x => instanceGuids.Contains(x.InstanceGuid))
 				// Include only currently connected devices.
 				.Where(x => includeOffline || x.IsOnline)
 				.ToArray();
+			}
 			return userDevices;
 		}
 
@@ -186,24 +188,28 @@ namespace x360ce.App
 		/// </summary>
 		public static List<UserSetting> GetSettings(string fileName, MapTo? mapTo = null)
 		{
-			return UserSettings.ItemsToArraySyncronized()
-				// Filter by game.
-				.Where(x => string.Compare(x.FileName, fileName, true) == 0)
-				// Filter by map.
-				.Where(x => !mapTo.HasValue || x.MapTo == (int)mapTo.Value)
-				.ToList();
+			lock (UserSettings.SyncRoot)
+			{
+				return UserSettings.Items
+					// Filter by game.
+					.Where(x => string.Compare(x.FileName, fileName, true) == 0)
+					// Filter by map.
+					.Where(x => !mapTo.HasValue || x.MapTo == (int)mapTo.Value)
+					.ToList();
+			}
 		}
 
 		public static UserDevice GetDevice(Guid instanceGuid)
 		{
-			return UserDevices.ItemsToArraySyncronized().FirstOrDefault(x =>
+			return UserDevices.Items.FirstOrDefault(x =>
 				x.InstanceGuid.Equals(instanceGuid));
 		}
 
 		public static PadSetting GetPadSetting(Guid padSettingChecksum)
 		{
 			// Convert to array in order to prevent selection while modified.
-			return PadSettings.ItemsToArraySyncronized()
+			lock (PadSettings.SyncRoot)
+				return PadSettings.Items
 				.FirstOrDefault(x => x.PadSettingChecksum.Equals(padSettingChecksum));
 		}
 
@@ -214,7 +220,7 @@ namespace x360ce.App
 			var instances = settings
 				.Where(x => x.MapTo == (int)mapTo)
 				.Select(x => x.InstanceGuid).ToArray();
-			var devices = UserDevices.ItemsToArraySyncronized()
+			var devices = UserDevices.Items
 				.Where(x => instances.Contains(x.InstanceGuid))
 				.ToList();
 			// Return available devices.

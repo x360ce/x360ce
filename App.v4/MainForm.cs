@@ -969,7 +969,15 @@ namespace x360ce.App
 			}
 			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
 			{
-				Global.DHelper.UpdateDevicesEnabled = true;
+				// Windows broadcasts this for any device node change on the machine, repeatedly
+				// and for devices which have nothing to do with controllers. Reading every device
+				// again costs about a second on the update thread, and controller processing stops
+				// for that long, so the rate falls from a thousand a second to one or two. Only a
+				// device arriving or leaving can change the list.
+				var change = (JocysCom.ClassLibrary.Win32.DBT)m.WParam.ToInt32();
+				if (change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEARRIVAL ||
+					change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEREMOVECOMPLETE)
+					Global.DHelper.UpdateDevicesEnabled = true;
 			}
 			// If message value was found then...
 			else if (m.Msg == _WindowMessage)
