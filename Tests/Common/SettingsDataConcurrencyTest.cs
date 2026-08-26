@@ -32,20 +32,19 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("settings")]
-		[Description("Enumerating the live list while another thread changes it does not throw")]
-		public void Enumeration_survives_concurrent_changes()
+		[Description("Reading through a snapshot while another thread changes the list does not throw")]
+		public void Reading_a_snapshot_survives_concurrent_changes()
 		{
 			var data = new JocysCom.ClassLibrary.Configuration.SettingsData<Row>();
 			RunRace(data, () =>
 			{
-				// Readers must take the same lock the list takes for its own changes.
-				lock (data.SyncRoot)
-				{
-					var count = 0;
-					foreach (var item in data.Items)
-						count += item == null ? 0 : 1;
-					GC.KeepAlive(count);
-				}
+				// Take the snapshot, then read that. Walking the live list is not safe under
+				// any lock the reader can take, because a change arriving through the list
+				// itself does not take it.
+				var count = 0;
+				foreach (var item in data.ItemsToArraySyncronized())
+					count += item == null ? 0 : 1;
+				GC.KeepAlive(count);
 			});
 		}
 

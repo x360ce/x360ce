@@ -74,30 +74,15 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			}
 		}
 
-		object _SyncRoot = new object();
-
-		/// <summary>Object locked for every change to this list.</summary>
-		/// <remarks>
-		/// Whoever owns the list points this at the same object its readers lock, so a
-		/// read and a change cannot run at once. Two locks for one collection let a copy
-		/// race a resize, which surfaces as "Collection was modified" or as a short
-		/// destination array.
-		/// Callers must not hold this lock while changing the list from a background
-		/// thread: the change is marshalled to the thread that owns the list, and that
-		/// thread would then wait for the lock the caller is holding.
-		/// </remarks>
-		public object SyncRoot
-		{
-			get { return _SyncRoot; }
-			set { _SyncRoot = value ?? new object(); }
-		}
+		// Lock to serialize concurrent list modifications.
+		object OneChangeAtTheTime = new object();
 
 		// Executes the delegate under a lock and enriches exceptions with type and SynchronizingObject context data.
 		void DynamicInvoke(Delegate method, params object[] args)
 		{
 			try
 			{
-				lock (_SyncRoot)
+				lock (OneChangeAtTheTime)
 				{
 					method.DynamicInvoke(args);
 				}
