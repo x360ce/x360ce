@@ -89,6 +89,12 @@ namespace x360ce.App
 			if (Environment.OSVersion.Version.Major >= 6)
 				NativeMethods.SetProcessDPIAware();
 			Application.EnableVisualStyles();
+			// Handle exceptions from this thread here. Left to the framework it builds an error
+			// window instead, which cannot be created once the application is closing, so the
+			// crash a user sees is the framework failing rather than the fault that caused it.
+			// This was only attached when the options page was built, so anyone who never opened
+			// that page had no handler at all. Debug mode still detaches it.
+			Application.ThreadException += Application_ThreadException;
 			Application.SetCompatibleTextRenderingDefault(false);
 			// Requires System.Configuration.Installl reference.
 			var ic = new System.Configuration.Install.InstallContext(null, args);
@@ -156,6 +162,10 @@ namespace x360ce.App
 
 		public static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
 		{
+			// Record it before anything decides to ignore it. Dropping it while closing is why a
+			// report could arrive naming only the framework's failure to build an error window,
+			// with nothing in it about what actually threw.
+			JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(e.Exception);
 			if (IsClosing)
 				return;
 			ErrorCount++;
@@ -230,14 +240,33 @@ namespace x360ce.App
 				return null;
 			var bytes = new byte[sr.Length];
 			sr.Read(bytes, 0, bytes.Length);
-			var asm = Assembly.Load(bytes);
 			sr.Dispose();
+			// Loaded with its symbols when they are carried too. A library loaded from bytes has
+			// no file on disk for the runtime to find symbols beside, so without this every frame
+			// inside it reaches a crash report naming no file and no line.
+			var symbols = GetResourceBytes(dllName + ".pdb");
+			var asm = symbols == null
+				? Assembly.Load(bytes)
+				: Assembly.Load(bytes, symbols);
 			return asm;
 		}
 
 		/// <summary>
 		/// Get 32-bit or 64-bit resource depending on x360ce.exe platform.
 		/// </summary>
+		/// <summary>Contents of an embedded file, or null when it is not carried.</summary>
+		public static byte[] GetResourceBytes(string name)
+		{
+			using (var sr = GetResourceStream(name))
+			{
+				if (sr == null)
+					return null;
+				var bytes = new byte[sr.Length];
+				sr.Read(bytes, 0, bytes.Length);
+				return bytes;
+			}
+		}
+
 		public static Stream GetResourceStream(string name)
 		{
 			var path = GetResourcePath(name);

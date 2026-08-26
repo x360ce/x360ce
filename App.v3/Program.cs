@@ -238,13 +238,32 @@ namespace x360ce.App
 				return null;
 			byte[] bytes = new byte[sr.Length];
 			sr.Read(bytes, 0, bytes.Length);
-			var asm = Assembly.Load(bytes);
+			// Loaded with its symbols when they are carried too. A library loaded from bytes has
+			// no file on disk for the runtime to find symbols beside, so without this every frame
+			// inside it is reported with no file and no line.
+			var symbols = GetResourceBytes(dllName + ".pdb");
+			var asm = symbols == null
+				? Assembly.Load(bytes)
+				: Assembly.Load(bytes, symbols);
 			return asm;
 		}
 
 		/// <summary>
 		/// Get 32-bit or 64-bit resource depending on x360ce.exe platform.
 		/// </summary>
+		/// <summary>Contents of an embedded file, or null when it is not carried.</summary>
+		public static byte[] GetResourceBytes(string name)
+		{
+			using (var sr = GetResourceStream(name))
+			{
+				if (sr == null)
+					return null;
+				var bytes = new byte[sr.Length];
+				sr.Read(bytes, 0, bytes.Length);
+				return bytes;
+			}
+		}
+
 		public static Stream GetResourceStream(string name)
 		{
 			var path = GetResourcePath(name);

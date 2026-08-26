@@ -520,18 +520,33 @@ namespace x360ce.App
 		/// X360CE_THROW_ON_CLOSE to raise one while closing, which is when the framework can no
 		/// longer create a window. Nothing is armed unless the variable is set.
 		/// </remarks>
+		System.Windows.Forms.Timer _faultTimer;
+
 		void ArmFaultInjection()
 		{
 			var after = Environment.GetEnvironmentVariable("X360CE_THROW_AFTER");
 			if (string.IsNullOrEmpty(after) || !int.TryParse(after, out var seconds) || seconds <= 0)
 				return;
-			var timer = new System.Windows.Forms.Timer { Interval = seconds * 1000 };
-			timer.Tick += (s, e) =>
+			// Held in a field. A timer that only a local variable refers to is collected before
+			// it ever ticks, and its finaliser stops it, so the fault silently never happens.
+			_faultTimer = new System.Windows.Forms.Timer { Interval = seconds * 1000 };
+			_faultTimer.Tick += (s, e) =>
 			{
-				timer.Stop();
-				throw new InvalidOperationException("Injected fault: X360CE_THROW_AFTER.");
+				_faultTimer.Stop();
+				// Raised through the form's own message loop rather than straight out of the tick.
+				// A timer's window discards what its tick throws, so a fault raised there is lost
+				// and reaches neither the handler nor the report - which is not how application
+				// code fails.
+				// Raised through the form's own message loop rather than straight out of the tick.
+				// A timer's window discards what its tick throws, so a fault raised there is lost
+				// and reaches neither the handler nor the report - which is not how application
+				// code fails.
+				BeginInvoke((MethodInvoker)(() =>
+				{
+					throw new InvalidOperationException("Injected fault: X360CE_THROW_AFTER.");
+				}));
 			};
-			timer.Start();
+			_faultTimer.Start();
 		}
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -1458,7 +1473,7 @@ namespace x360ce.App
 				BeginInvoke(method, new object[] { sender, e });
 				return;
 			}
-			ControlsHelper.SetText(UpdateFrequencyLabel, "Hz: {0}", Global.DHelper.CurrentUpdateFrequency);
+			ControlsHelper.SetText(UpdateFrequencyLabel, "HW Hz: {0}", Global.DHelper.CurrentUpdateFrequency);
 		}
 
 		#endregion
@@ -1489,13 +1504,13 @@ namespace x360ce.App
 		private void MainForm_Deactivate(object sender, EventArgs e)
 		{
 			interfaceIsForeground = false;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "Hz: {0}", interfaceUpdateBackgroundFps);
+			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", interfaceUpdateBackgroundFps);
 		}
 
 		private void MainForm_Activated(object sender, EventArgs e)
 		{
 			interfaceIsForeground = true;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "Hz: {0}", interfaceUpdateForegroundFps);
+			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", interfaceUpdateForegroundFps);
 		}
 
 		#endregion
@@ -1721,9 +1736,20 @@ namespace x360ce.App
 		private void UpdateStatusErrorsLabel()
 		{
 			StatusErrorsLabel.Text = string.Format("Errors: {0} | {1}", ErrorFilesCount, LogHelper.Current.ExceptionsCount);
-			StatusErrorsLabel.ForeColor = ErrorFilesCount > 0
-						? System.Drawing.Color.DarkRed
-						: System.Drawing.SystemColors.ControlDark;
+			var colour = ErrorFilesCount > 0
+				? System.Drawing.Color.DarkRed
+				: System.Drawing.SystemColors.ControlDark;
+			StatusErrorsLabel.ForeColor = colour;
+			// The count is a link so that it can be clicked at all, which also means its colour
+			// comes from LinkColor rather than ForeColor.
+			StatusErrorsLabel.LinkColor = colour;
+			StatusErrorsLabel.ActiveLinkColor = colour;
+			// Said in full for anyone who cannot see the count or the icon beside it.
+			StatusErrorsLabel.AccessibleName = ErrorFilesCount > 0
+				? string.Format("{0} error reports waiting to be sent", ErrorFilesCount)
+				: "No error reports";
+			StatusErrorsLabel.AccessibleDescription = "Opens the error report window";
+			StatusErrorsLabel.AccessibleRole = AccessibleRole.PushButton;
 			StatusErrorsLabel.Image = ErrorFilesCount > 0
 				? Resources.error_16x16
 				: AppHelper.GetDisabledImage(Resources.error_16x16);

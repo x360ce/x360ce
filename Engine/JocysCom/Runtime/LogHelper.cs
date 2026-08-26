@@ -666,8 +666,8 @@ namespace JocysCom.ClassLibrary.Runtime
 				ApplyRunModeSuffix(ref name);
 				AddRow(ref s, "Name", name);
 			}
-			AddRow(ref s, "Machine", System.Environment.MachineName);
-			AddRow(ref s, "Username", System.Environment.UserName);
+			// The machine name and the user name were reported here. They identify a person and
+			// their computer without helping to find a fault, so they are not collected.
 
 #if NETSTANDARD // .NET Standard
 #elif NETCOREAPP // .NET Core
@@ -697,7 +697,10 @@ namespace JocysCom.ClassLibrary.Runtime
 			if (asm != null)
 			{
 				var bd = Configuration.AssemblyInfo.GetBuildDateTime(asm.Location);
-				AddRow(ref s, "Executable", asm.Location);
+				// The file name only. The folder says where on a person's own computer they keep
+				// the application, which names them when it sits under their profile, and tells us
+				// nothing about the fault.
+				AddRow(ref s, "Executable", System.IO.Path.GetFileName(asm.Location));
 				AddRow(ref s, "Build Date", bd.ToString("yyyy-MM-dd HH:mm:ss"));
 				//AddRow(ref s, "SVN LastCheckIn", "svn log -q \"%file%\" -r {"+ bd.ToString("yyyy-MM-ddTHH:mm:ss") + "}:{1970-01-01} -l 1");
 				//AddRow(ref s, "SVN GetCodeFile", "svn cat -r %rev% \"%file%\" > \"%TEMP%\\code.cs\" && \"%TEMP%\\code.cs\"");

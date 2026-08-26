@@ -1,8 +1,9 @@
-// @under-test: Engine/JocysCom/Controls/ErrorReportUserControl.cs
+﻿// @under-test: Engine/JocysCom/Controls/ErrorReportUserControl.cs
 // @area: diagnostics   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -52,6 +53,40 @@ namespace x360ce.Tests
 					form.Close();
 				}
 			});
+		}
+
+		[TestMethod, TestCategory("diagnostics"), TestCategory("ui-interactive")]
+		[Description("Every control a person acts on says what it is")]
+		public void Controls_say_what_they_are()
+		{
+			// This is the window a user has to operate before a report ever reaches us, so it has
+			// to be usable without seeing it. A control that announces nothing is a dead end for
+			// anyone using a screen reader, and a report that is never sent.
+			WithControl((form, control) =>
+			{
+				var unnamed = new List<string>();
+				foreach (var c in Interactive(control))
+				{
+					var name = !string.IsNullOrWhiteSpace(c.AccessibleName) ? c.AccessibleName : c.Text;
+					if (string.IsNullOrWhiteSpace(name))
+						unnamed.Add(c.GetType().Name + " " + c.Name);
+				}
+				Assert.AreEqual(0, unnamed.Count,
+					"These controls announce nothing to a screen reader: " + string.Join(", ", unnamed));
+			});
+		}
+
+		/// <summary>Every control a person can act on, anywhere under the given one.</summary>
+		static List<Control> Interactive(Control parent)
+		{
+			var found = new List<Control>();
+			foreach (Control c in parent.Controls)
+			{
+				if (c is Button || c is CheckBox || c is RadioButton || c is TextBox || c is ComboBox)
+					found.Add(c);
+				found.AddRange(Interactive(c));
+			}
+			return found;
 		}
 
 		[TestMethod, TestCategory("diagnostics"), TestCategory("ui-interactive")]

@@ -1,4 +1,4 @@
-namespace JocysCom.ClassLibrary.Controls
+﻿namespace JocysCom.ClassLibrary.Controls
 {
 	partial class ErrorReportUserControl
 	{
@@ -162,6 +162,7 @@ namespace JocysCom.ClassLibrary.Controls
 			this.ErrorComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.ErrorComboBox.FormattingEnabled = true;
 			this.ErrorComboBox.Name = "ErrorComboBox";
+			this.ErrorComboBox.AccessibleName = "Which error to report";
 			this.ErrorComboBox.TabIndex = 4;
 			this.ErrorComboBox.SelectedIndexChanged += new System.EventHandler(this.ErrorComboBox_SelectedIndexChanged);
 			//
@@ -178,6 +179,7 @@ namespace JocysCom.ClassLibrary.Controls
 			//
 			this.FromEmailTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.FromEmailTextBox.Name = "FromEmailTextBox";
+			this.FromEmailTextBox.AccessibleName = "Your email address, so we can reply";
 			this.FromEmailTextBox.TabIndex = 6;
 			//
 			// ToEmailLabel
@@ -194,6 +196,7 @@ namespace JocysCom.ClassLibrary.Controls
 			this.ToEmailTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.ToEmailTextBox.BackColor = System.Drawing.SystemColors.Control;
 			this.ToEmailTextBox.Name = "ToEmailTextBox";
+			this.ToEmailTextBox.AccessibleName = "Address the report is sent to";
 			this.ToEmailTextBox.ReadOnly = true;
 			this.ToEmailTextBox.TabStop = false;
 			this.ToEmailTextBox.TabIndex = 8;

@@ -360,13 +360,13 @@ namespace x360ce.App
 			// 
 			this.UpdateFrequencyLabel.Name = "UpdateFrequencyLabel";
 			this.UpdateFrequencyLabel.Size = new System.Drawing.Size(33, 20);
-			this.UpdateFrequencyLabel.Text = "Hz: 0";
+			this.UpdateFrequencyLabel.Text = "HW Hz: 0";
 			// 
 			// FormUpdateFrequencyLabel
 			// 
 			this.FormUpdateFrequencyLabel.Name = "FormUpdateFrequencyLabel";
 			this.FormUpdateFrequencyLabel.Size = new System.Drawing.Size(33, 20);
-			this.FormUpdateFrequencyLabel.Text = "Hz: 0";
+			this.FormUpdateFrequencyLabel.Text = "UI Hz: 0";
 			// 
 			// UpdateDevicesStatusLabel
 			// 
@@ -408,6 +408,8 @@ namespace x360ce.App
 			this.StatusErrorsLabel.Image = global::x360ce.App.Properties.Resources.error_16x16;
 			this.StatusErrorsLabel.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.StatusErrorsLabel.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+			this.StatusErrorsLabel.IsLink = true;
+			this.StatusErrorsLabel.LinkBehavior = System.Windows.Forms.LinkBehavior.HoverUnderline;
 			this.StatusErrorsLabel.Name = "StatusErrorsLabel";
 			this.StatusErrorsLabel.Padding = new System.Windows.Forms.Padding(4, 0, 0, 0);
 			this.StatusErrorsLabel.Size = new System.Drawing.Size(73, 20);

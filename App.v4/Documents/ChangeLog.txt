@@ -1,41 +1,54 @@
-﻿v4.18.12.0 (2026-08-26)
-- Fixed: Crash while refreshing devices when the device list changed at the same time. Reading a device list now takes a copy the list guards itself, instead of walking it while it changes.
-- Fixed: Closing the program could end it with an error when the virtual gamepad driver library was no longer reachable, which happens when it runs from a temporary folder that Windows has cleaned.
-- Changed: A device thread that takes more than two seconds to stop is recorded in the log instead of being reported as an error. It stops on its own once the device call it is waiting on returns.
-- Changed: The device loop no longer waits for the window to take a change notification before carrying on.
-- Fixed: Controller processing fell from a thousand updates a second to one or two whenever Windows announced any device change on the machine, including changes to devices that are not controllers. The device list is read again only when a device actually arrives or leaves.
+﻿v4.18.23.0 (2026-08-26)
+- Fixed: Crash reports named no file or line, so a failure could not be traced to code.
+- Fixed: A failure in work sent to the interface was reported late and without a stack.
+- Fixed: Errors were never recorded, so problems could not be reported.
+- Fixed: Clicking the error count in the status bar did nothing.
+- Fixed: Polling rate setting had no effect.
+- Fixed: Always on top, start with Windows, remote port and info window settings had no effect.
+- Fixed: Buttons, lists and boxes were invisible to screen readers.
+- Changed: Error reports no longer include computer name or user name.
+- Changed: Error reports show the program name instead of its folder.
+- Changed: Error report window says what each box is for.
+- Changed: Status bar shows HW Hz and UI Hz instead of two labels named Hz.
+
+v4.18.12.0 (2026-08-26)
+- Fixed: Crash while refreshing devices when the device list changed at the same time.
+- Fixed: Closing the program could end it with an error about a missing driver file.
+- Changed: A device thread that is slow to stop is logged instead of reported as an error.
+- Changed: The device loop no longer waits for the window before carrying on.
+- Fixed: Controller processing dropped to a crawl whenever any device changed on the machine.
 
 v4.18.7.0 (2026-08-26)
-- Changed: Reading a device list on the refresh thread takes a snapshot instead of walking the live collection. This was not enough on its own; see 4.18.10.0.
+- Changed: Device list is read from a snapshot on the refresh thread.
 
 v4.18.6.0 (2026-08-25)
-- Fixed: Crash when a controller was unplugged and plugged back in. The hidden window that receives device messages was written to from the wrong thread.
+- Fixed: Crash when a controller was unplugged and plugged back in.
 - Fixed: Interface stopped refreshing for the rest of the session if a redraw failed.
-- Changed: Device detection lists attached devices only, instead of every device ever installed. Devices that are unplugged still keep their settings and show as offline.
-- Changed: Interface redraws up to 10 times per second instead of 20. A redraw that runs long skips frames rather than delaying controller input.
+- Changed: Device list shows attached devices only; unplugged ones show as offline.
+- Changed: Interface redraws up to 10 times per second instead of 20.
 
 v4.17.51.0 (2026-08-25)
-- Fixed: Program stopped responding after pressing Add Demo Device on the Devices tab. A list change made on the interface thread was queued back onto that same thread and then waited for.
-- Fixed: Crash when opening a controller tab while one of its mappings pointed at a device that is no longer present.
-- Fixed: Trigger dead zone and anti-dead zone ran to the thumb range instead of 0-255. Any setting above 255 flattened the trigger curve or pushed it off the chart.
-- Fixed: Mapping curve on an inverted axis was drawn rising while its values fell, so the marker sat away from the line.
-- Fixed: Mapping curve broke into gaps wherever a dead zone made it jump. It is now stroked as one connected line.
-- Changed: Axis charts show a single black marker for the mapped value, and each guide line matches the colour of the value it reports.
+- Fixed: Program stopped responding after pressing Add Demo Device on the Devices tab.
+- Fixed: Crash when opening a controller tab mapped to a device that is no longer present.
+- Fixed: Trigger dead zone and anti-dead zone used the wrong range, flattening the curve.
+- Fixed: Mapping curve on an inverted axis was drawn upside down.
+- Fixed: Mapping curve broke into gaps at dead zones.
+- Changed: Axis charts show one black marker, and guide lines match their axis colour.
 
 v4.17.50.0 (2026-08-22)
 - Changed: About screen credits Nefarius by name.
-- Fixed: Dead link to vigem.org on the About and Options pages. Project links now point at the author on GitHub.
-- Added: HID Hide tab. Shows whether the driver is installed, links to its download page, and opens its configuration program.
-- Changed: HID Guardian tab marked obsolete. It was discontinued by its author in 2023; uninstall stays available and users are pointed to HID Hide.
-- Changed: Controller picture drawn with Windows Forms; last WPF use removed. Memory drops from 198 MB to 85 MB.
-- Fixed: D-pad and thumbstick markers overlapped each other on the controller picture.
-- Fixed: Trigger markers blinked instead of sliding. They now rest below the trigger and rise as it is pressed.
-- Changed: Navigation glyphs are now bitmaps at full artwork resolution, kept only while being scaled. Saves about 7 MB.
-- Changed: Error report window rebuilt in Windows Forms. It no longer clips its buttons and fills the window.
+- Fixed: Dead link to vigem.org on the About and Options pages.
+- Added: HID Hide tab, showing driver status and hidden devices.
+- Changed: HID Guardian tab marked obsolete; it was discontinued in 2023.
+- Changed: Controller picture drawn with Windows Forms; memory use drops.
+- Fixed: D-pad and thumbstick markers overlapped on the controller picture.
+- Fixed: Trigger markers blinked instead of sliding.
+- Changed: Navigation glyphs are now bitmaps at full artwork resolution.
+- Changed: Error report window rebuilt in Windows Forms; buttons are no longer clipped.
 - Fixed: Changes and License text on the About screen ran together as one paragraph.
-- Fixed: Tray icon registered without a name, so it could not be identified in Windows taskbar settings.
-- Removed: Macros tab. Never finished and hidden at start-up.
-- Removed: XInput tab. Never finished and hidden at start-up.
+- Fixed: Tray icon registered without a name, so Windows could not identify it.
+- Removed: Macros tab, which was never finished and hidden at start-up.
+- Removed: XInput tab, which was never finished and hidden at start-up.
 - Removed: Interface files left unused by the rewrites above.
 - Added: Debug panel button to show all controller glyphs at once.
 
