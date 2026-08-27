@@ -27,6 +27,10 @@ slider 1. An axis reads from -1 to 1 when it drives a stick and from 0 to 1 when
 trigger, matching what the row already did. `now` reads the milliseconds since the program
 started; divide it by 1000 for seconds or by 60000 for minutes.
 
+The formula takes effect as it is typed, so a number can be adjusted and the difference felt at
+once. The `fx` button says whether it works: green while the formula is understood and driving
+the row, red while it is written down and not. Point at a red one to read what is wrong with it.
+
 A formula replaces the dead zone, anti dead zone and sensitivity for its row rather than being
 applied on top of them.
 
