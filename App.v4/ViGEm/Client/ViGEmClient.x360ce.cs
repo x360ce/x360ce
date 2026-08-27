@@ -214,6 +214,12 @@ namespace Nefarius.ViGEm.Client
 				VIGEM_ERROR error;
 				if (!IsLoaded)
 					LoadLibrary();
+				// Without the native library there is nothing to allocate against, and the call
+				// below would throw DllNotFoundException on the input thread and take the whole
+				// program down. A missing library is reported the same way a missing C++ runtime
+				// is: no bus, which the Issues tab already explains and offers to fix.
+				if (!IsLoaded)
+					return false;
 				var client = new ViGEmClient(out error);
 				if (error == VIGEM_ERROR.VIGEM_ERROR_NONE)
 				{

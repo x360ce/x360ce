@@ -371,6 +371,8 @@
 			// ExcludeVirtualDevicesCheckBox
 			// 
 			this.ExcludeVirtualDevicesCheckBox.AutoSize = true;
+			this.ExcludeVirtualDevicesCheckBox.Checked = true;
+			this.ExcludeVirtualDevicesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this.ExcludeVirtualDevicesCheckBox.Location = new System.Drawing.Point(6, 42);
 			this.ExcludeVirtualDevicesCheckBox.Name = "ExcludeVirtualDevicesCheckBox";
 			this.ExcludeVirtualDevicesCheckBox.Size = new System.Drawing.Size(138, 17);

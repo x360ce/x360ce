@@ -175,6 +175,7 @@ namespace x360ce.App
 		[DefaultValue(true)]
 		public bool MinimizeToTray { get; set; }
 		public bool ExcludeSupplementalDevices { get; set; }
+		[DefaultValue(true), Description("Hide devices this program or another driver created, so it never reads its own output back as an input.")]
 		public bool ExcludeVirtualDevices { get; set; }
 
 		[DefaultValue(true), Description("Autodetect currently focussed game.")]

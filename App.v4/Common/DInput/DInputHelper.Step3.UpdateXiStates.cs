@@ -118,6 +118,13 @@ namespace x360ce.App.DInput
 
 				foreach (var map in maps)
 				{
+					// A row driven by a formula names no single control, so it is worked out here and
+					// the rest of this loop, which is entirely about one control, is skipped.
+					if (map.Expression != null)
+					{
+						ApplyExpression(map, diState, ref gp);
+						continue;
+					}
 					// If not mapped then continue.
 					if (map.Index == 0)
 						continue;
@@ -362,6 +369,67 @@ namespace x360ce.App.DInput
 			var ev = StatesUpdated;
 			if (ev != null)
 				ev(this, new DInputEventArgs());
+		}
+
+		/// <summary>
+		/// Buffer for a formula's source values, reused rather than allocated on every poll.
+		/// </summary>
+		/// <remarks>
+		/// This runs for every mapped row of every controller, up to a thousand times a second. A
+		/// fresh array each time would hand the collector a steady stream of rubbish to clear up, and
+		/// a collection at the wrong moment is a stutter a player feels.
+		/// </remarks>
+		readonly float[] _expressionValues = new float[MapExpression.MaxReferences];
+
+		/// <summary>
+		/// Works out a formula against the controller as it is now, and puts the answer where the row
+		/// points.
+		/// </summary>
+		/// <remarks>
+		/// A formula answers in plain units: -1 to 1 for something that rests in the middle, 0 to 1
+		/// for something that rests at one end. Those are turned into what the destination expects
+		/// here, so the same formula can drive a stick, a trigger or a button and mean the same thing
+		/// in each.
+		///
+		/// A row driven by a formula ignores its dead zone, anti dead zone and sensitivity. Those
+		/// three shape a value on the way through, and so does the formula; applying both would give
+		/// a result neither of them describes. Switching a row over writes the settings out as part
+		/// of the formula, so nothing is lost by them no longer being read.
+		/// </remarks>
+		void ApplyExpression(Map map, CustomDiState diState, ref Gamepad gp)
+		{
+			// A stick is read from the middle, a trigger and a button from one end, exactly as the
+			// ordinary mapping path already does through GetThumbValue's own thumb flag.
+			var isThumb = map.Target == TargetType.LeftThumbX || map.Target == TargetType.LeftThumbY
+				|| map.Target == TargetType.RightThumbX || map.Target == TargetType.RightThumbY;
+			if (!MapExpressionUnits.TryFill(map.Expression, diState, _expressionValues, isThumb))
+				return;
+			var value = map.Expression.Evaluate(_expressionValues);
+			switch (map.Target)
+			{
+				case TargetType.LeftTrigger:
+					gp.LeftTrigger = MapExpressionUnits.ToTrigger(value);
+					break;
+				case TargetType.RightTrigger:
+					gp.RightTrigger = MapExpressionUnits.ToTrigger(value);
+					break;
+				case TargetType.LeftThumbX:
+					gp.LeftThumbX = MapExpressionUnits.ToThumb(value);
+					break;
+				case TargetType.LeftThumbY:
+					gp.LeftThumbY = MapExpressionUnits.ToThumb(value);
+					break;
+				case TargetType.RightThumbX:
+					gp.RightThumbX = MapExpressionUnits.ToThumb(value);
+					break;
+				case TargetType.RightThumbY:
+					gp.RightThumbY = MapExpressionUnits.ToThumb(value);
+					break;
+				case TargetType.Button:
+					if (MapExpressionUnits.IsPressed(value))
+						gp.Buttons |= map.ButtonFlag;
+					break;
+			}
 		}
 
 	}

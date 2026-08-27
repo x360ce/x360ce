@@ -133,6 +133,10 @@
     <Compile Include="Common\CloudMessage.cs" />
     <Compile Include="Common\CloudHelper.Security.cs" />
     <Compile Include="Common\ConvertHelper.cs" />
+    <Compile Include="Common\MapExpression.cs" />
+    <Compile Include="Common\MapExpressionUnits.cs" />
+    <Compile Include="Common\MapExpressionHelp.cs" />
+    <Compile Include="Common\MapExpressionSeed.cs" />
     <Compile Include="Common\CustomDiHelper.cs" />
     <Compile Include="Common\CustomDiState.cs" />
     <Compile Include="Common\CustomDiUpdate.cs" />

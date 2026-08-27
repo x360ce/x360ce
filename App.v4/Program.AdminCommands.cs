@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace x360ce.App
 {
@@ -57,6 +58,30 @@ namespace x360ce.App
 			if (ic.Parameters.ContainsKey(AdminCommand.UninstallViGEmBus.ToString()))
 			{
 				DInput.VirtualDriverInstaller.UninstallViGEmBus();
+				return true;
+			}
+			if (ic.Parameters.ContainsKey(AdminCommand.RepairViGEmBus.ToString()))
+			{
+				var repaired = DInput.VirtualDriverInstaller.RepairViGEmBus();
+				Console.WriteLine(repaired
+					? "Virtual bus removed and put back."
+					: "Virtual bus could not be put back. Restart Windows and try again.");
+				Environment.ExitCode = repaired ? 0 : 1;
+				return true;
+			}
+			if (ic.Parameters.ContainsKey(AdminCommand.RemoveLeftoverPads.ToString()))
+			{
+				bool rebootNeeded;
+				Exception error;
+				var removed = DInput.VirtualDriverInstaller.RemoveLeftoverVirtualPads(out rebootNeeded, out error);
+				// Windows reports needing a restart with a failure code even though the device has
+				// gone, so the exit code says only whether anything went wrong that was not that.
+				Console.WriteLine("Removed {0} leftover virtual pad(s).", removed);
+				if (rebootNeeded)
+					Console.WriteLine("Restart Windows to finish removing them.");
+				if (error != null)
+					Console.WriteLine("Last failure: {0}", error.Message);
+				Environment.ExitCode = error == null ? 0 : 1;
 				return true;
 			}
 			if (ic.Parameters.ContainsKey(AdminCommand.UninstallHidGuardian.ToString()))

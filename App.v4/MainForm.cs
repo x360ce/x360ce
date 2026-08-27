@@ -353,6 +353,16 @@ namespace x360ce.App
 				{
 					list.Remove(virtualDevice);
 				}
+				// The pads this program feeds are XInput devices, and XInput devices appear in
+				// DirectInput enumeration as well. Reading one back makes the program take its own
+				// output as an input, add it as a new device, and repeat. A device whose hardware
+				// identifier carries the IG_ marker is an XInput device, which is how Microsoft
+				// documents telling the two apart.
+				var xInputDevices = list.Where(IsXInputDevice).ToArray();
+				foreach (var xInputDevice in xInputDevices)
+				{
+					list.Remove(xInputDevice);
+				}
 			}
 			// Move gaming wheels to the top index position by default.
 			// Games like GTA need wheel to be first device to work properly.
@@ -392,6 +402,21 @@ namespace x360ce.App
 				SettingsManager.UserSettings.Items.Add(item);
 			}
 		}
+
+		/// <summary>True when a device is an XInput device, real or created by a driver.</summary>
+		/// <remarks>
+		/// Read from the identifiers the device already carries, so this costs nothing and needs no
+		/// second enumeration of the system.
+		/// </remarks>
+		static bool IsXInputDevice(UserDevice device)
+		{
+			// The identifiers are included because a pad created moments ago has no hardware list yet.
+			return DInput.VirtualDriverInstaller.CarriesInputGroup(device.HidHardwareIds)
+				|| DInput.VirtualDriverInstaller.CarriesInputGroup(device.DevHardwareIds)
+				|| DInput.VirtualDriverInstaller.CarriesInputGroup(device.HidDeviceId)
+				|| DInput.VirtualDriverInstaller.CarriesInputGroup(device.DevDeviceId);
+		}
+
 
 		/// <summary>
 		/// Link control with INI key. Value/Text of control will be automatically tracked and INI file updated.
@@ -1055,7 +1080,8 @@ namespace x360ce.App
 					new CppX64RuntimeInstallIssue(),
 					new HotfixIssue(),
 					new XboxDriversIssue(),
-					new VirtualDeviceDriverIssue()
+					new VirtualDeviceDriverIssue(),
+					new LeftoverVirtualPadsIssue()
 				);
 				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
 				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
@@ -1274,6 +1300,22 @@ namespace x360ce.App
 				GameToCustomizeComboBox.SelectedIndexChanged += GameToCustomizeComboBox_SelectedIndexChanged;
 			}
 			SettingsManager.Current.RaiseSettingsChanged(null);
+		}
+
+		/// <summary>
+		/// Stop listening for the current game once this window is gone.
+		/// </summary>
+		/// <remarks>
+		/// The event is static, so nothing else lets go of this form. The window this program
+		/// watches keeps changing while the process shuts down, and each change asks which game is
+		/// in front; the answer arrives here and reads controls which have already been disposed.
+		/// A disposed ToolStripComboBox returns null for its ComboBox, so the read fails rather
+		/// than doing nothing.
+		/// </remarks>
+		protected override void OnFormClosed(FormClosedEventArgs e)
+		{
+			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
+			base.OnFormClosed(e);
 		}
 
 		private void GamesToolStrip_Resize(object sender, EventArgs e)
@@ -1580,6 +1622,9 @@ namespace x360ce.App
 			{
 				DebugPanel.ShowPanel();
 			}
+			// Counted at the moment the window opens, before this program has plugged anything in, so
+			// that everything found is by definition somebody else's. Shown a little later, because
+			// loading the settings restores the tip in the header and would wipe it.
 		}
 
 		private void AddGameButton_Click(object sender, EventArgs e)

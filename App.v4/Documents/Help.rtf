@@ -46,5 +46,73 @@ Solution 2: If you \ul can't separate pedals\ulnone :\par
 1\f1\lang1063 .\lang39  Open \cf1 X360\lang1063 CE\cf0 .\lang39\line 2\lang1063 .\lang39  Set LEFT "Trigger" \cf4\lang1063 [\lang39 drop\lang1063 -\lang39 down\lang1063 ]\cf0  \lang39 value to\lang1063 : \lang39 Sliders \f2\u8594?\f0\lang39  Half \f2\u8594?\f0\lang39  \cf1 HSlider 1\cf0\f1\lang1063 .\line\lang39 3\lang1063 .\lang39  Set RIGHT "Trigger" \cf4\lang1063 [\lang39 drop\lang1063 -\lang39 down\lang1063 ] \cf0\lang39 value to\lang1063 :\lang39  Sliders \f2\u8594?\f0\lang39  Inverted Half \f2\u8594?\f0\lang39  \cf1 IHSlider 1\cf0\f1\lang1063 .\line\lang39 4\lang1063 .\lang39  Test pedals.\par
 \b What are real life steering wheel degrees?\b0\par
 1080\'b0 (3.0 x 360\'b0) - Heavy cars, trucks.\line   900\'b0 (2.5 x 360\'b0) - Average road cars, sports cars.\line   720\'b0 (2.0 x 360\'b0) - Drift cars. Multiple classes of Rally cars (group N).\line   540\'b0 (1.5 x 360\'b0) - GT1 and 3 spec race cars, WRC Rally cars.\line   360\'b0 (1.0 x 360\'b0) - Formula 1 cars.\par
+\pard\nowidctlpar\sb120\sa200\sl276\slmult1\b\f0\fs18\lang39 Expressions: working out a value from other controls\b0\par
+\pard\nowidctlpar\sa200\sl276\slmult1\f0\fs18\lang39 A mapping normally names one control. It can instead work one out, by starting the value with an equals sign. For example \cf1 =a1*abs(a1)\cf0  gives fine control near the centre of a stick and full speed at its edge, which is the response curve most games offer as an aim setting.\par
+\pard\nowidctlpar\sa200\sl276\slmult1\f0\fs18\lang39 Values are scaled for you before the sum and fitted to whatever they drive afterwards, so you write plain numbers and never have to know a device\rquote s range. Going past the limit is safe: it simply reaches full travel.\par
+\pard\nowidctlpar\sb120\sa200\sl276\slmult1\b\f0\fs18\lang39 Controls you can read\b0\par
+\pard\nowidctlpar\sa200\sl276\slmult1\f0\fs18\lang39 A control is written as a letter and a number, the same way mappings are stored. Inside an expression the letter is always required, because a bare number means the number itself.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 a1\cf0  Axis, -1 to 1. A stick or wheel that rests in the middle and moves both ways.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 b1\cf0  Button, 0 or 1. 0 while released, 1 while held.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 s1\cf0  Slider, 0 to 1. A throttle, pedal or dial that rests at one end.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 x1\cf0  Half axis, 0 to 1. One half of an axis on its own, so the two halves can drive different things.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 h1\cf0  Half slider, 0 to 1. One half of a slider on its own.\par\par now \endash  Clock, counts up. Milliseconds since the program started. Divide by 1000 for seconds, or by 60000 for minutes. The only source that is not a control.\par Counting minutes: =now/60000
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 p1\cf0  D-pad, 0 to 1. The hat switch read as a direction rather than as separate buttons.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 d1\cf0  D-pad button, 0 or 1. One direction of the hat switch.\par
+\pard\nowidctlpar\sb120\sa200\sl276\slmult1\b\f0\fs18\lang39 Operators that combine two values\b0\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 +\cf0  Add. =a1+a2 - both controls move the same output.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 -\cf0  Subtract. =a1-a2 - one control opposes the other, as two pedals on one axis.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 *\cf0  Multiply. =a1*1.5 - makes a control travel further for the same movement.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 /\cf0  Divide. =a1/2 - makes a control travel less, for finer control.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 %\cf0  Remainder. =a1%0.25 - what is left after dividing, useful for repeating steps.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 ^\cf0  Power. =a1^2 - raises to a power. 2^3^2 is 2^9, and -2^2 is -4.\par
+\pard\nowidctlpar\sb120\sa200\sl276\slmult1\b\f0\fs18\lang39 Operators that act on one value\b0\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 -\cf0  Negate. =-a1 - reverses the direction of a control.\par
+\pard\nowidctlpar\sa200\sl276\slmult1\f0\fs18\lang39 Brackets group a part of the sum, as in =(a1+a2)*0.5, and a comma separates the values a function takes, as in =min(a1,a2).\par
+\pard\nowidctlpar\sb120\sa200\sl276\slmult1\b\f0\fs18\lang39 Functions\b0\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 abs (1) - size of a value, ignoring its direction.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 sign (1) - direction alone: -1, 0 or 1.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 sqrt (1) - square root.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 exp (1) - the number e raised to this power.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 floor (1) - rounds down to a whole number.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 ceil (1) - rounds up to a whole number.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 round (1) - rounds to a whole number. A half goes to the even neighbour, so round(2.5) is 2 and round(3.5) is 4.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 sin (1) - sine. Angles are in degrees, so sin(90) is 1.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 cos (1) - cosine. Angles are in degrees.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 tan (1) - tangent. Angles are in degrees.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 asin (1) - the angle, in degrees, whose sine is this value.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 acos (1) - the angle, in degrees, whose cosine is this value.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 atan (1) - the angle, in degrees, whose tangent is this value.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 min (2) - the smaller of two values.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 max (2) - the larger of two values.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 pow (2) - the first value raised to the power of the second, the same as ^.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 log (2) - logarithm of the first value in the base given by the second.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 clamp (3) - holds a value between a low and a high limit.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 deadzone (2) - Ignores the first part of a movement, then stretches what is left over the full travel.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 antideadzone (2) - Lifts any movement above a floor, so a game that ignores small values still notices. Nothing is lifted at rest.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 curve (2) - Bends the middle of the travel and leaves both ends alone, the same as the Sensitivity setting.\par
+\pard\nowidctlpar\sb120\sa200\sl276\slmult1\b\f0\fs18\lang39 Turning a tuned row into a formula\b0\par
+\pard\nowidctlpar\sa200\sl276\slmult1\f0\fs18\lang39 The dead zone, anti dead zone and sensitivity on a row are replaced by its formula, not applied on top of it, so what you write is what the game receives. Nothing is lost when you switch: the box is filled with the formula that produces exactly what those settings were already doing. Hover the fx button to see that formula before you switch.\par
+\pard\nowidctlpar\sb120\sa200\sl276\slmult1\b\f0\fs18\lang39 Buttons and logic\b0\par
+\pard\nowidctlpar\sa200\sl276\slmult1\f0\fs18\lang39 A button is 0 or 1, so ordinary arithmetic already does the work of and, or and not. There is nothing extra to learn.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =b1*b2\cf0  - and, true only while both are held.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =max(b1,b2)\cf0  - or, true while either is held.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =1-b1\cf0  - not, true while it is released.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =abs(b1-b2)\cf0  - either one but not both.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =a1*b1\cf0  - full speed only while the button is held.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =a1*(0.5+b1*0.5)\cf0  - half speed until the button is held.\par
+\pard\nowidctlpar\sb120\sa200\sl276\slmult1\b\f0\fs18\lang39 Examples\b0\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =a1*abs(a1)\cf0  - fine control near the centre, full speed at the edge.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =sign(a1)*sqrt(abs(a1))\cf0  - quick to respond, gentler at the edge.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =a1*1.5\cf0  - more sensitive everywhere.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =a1*0.5\cf0  - less sensitive, for aiming through a scope.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =a1*(0.5+a2*0.5)\cf0  - walk slowly, run when the trigger is held.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =a1-0.05\cf0  - correct a stick that drifts off centre.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =max(a1,0)\cf0  - one pedal axis split into the accelerator.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =-min(a1,0)\cf0  - the same axis, its braking half.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 \cf1 =a1-a2\cf0  - separate accelerator and brake onto one axis.\par
+\pard\nowidctlpar\sb120\sa200\sl276\slmult1\b\f0\fs18\lang39 Things worth knowing\b0\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 Anything that is not a real number, such as dividing by zero, becomes 0.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 A decimal point is always a dot, whatever language Windows is set to.\par
+\pard\nowidctlpar\sl276\slmult1\f0\fs18\lang39 Older versions of this program ignore expressions, so a configuration using one loses that mapping when it is opened in them.\par
 }
  

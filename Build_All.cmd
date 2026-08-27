@@ -16,28 +16,36 @@ if "%CONFIG%"=="" set "CONFIG=Release"
 set "SLN=%~dp0x360ce.slnx"
 
 :: ---------------------------------------------------------------------------
-:: Locate MSBuild via vswhere.
+:: Locate MSBuild. vswhere is asked first because it is the supported way, but it
+:: reports nothing when the installer's instance record is missing, which happens
+:: after some upgrades and after the package cache is cleaned even though Visual
+:: Studio itself works. The install folders are then searched directly rather than
+:: giving up on a machine which can build perfectly well. The search is handed to
+:: PowerShell so it picks the same file Documents\App_0_Release.ps1 picks, and it
+:: runs outside an if block because the paths it names contain brackets.
 :: ---------------------------------------------------------------------------
+set "MSBUILD="
+set "_TMP=%TEMP%\x360ce_msbuild_path.txt"
 set "VSWHERE=%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe"
-if not exist "%VSWHERE%" (
-    echo ERROR: vswhere.exe not found at "%VSWHERE%".
+if exist "%VSWHERE%" (
+    "%VSWHERE%" -latest -prerelease -find "MSBuild\**\Bin\MSBuild.exe" > "%_TMP%" 2>nul
+    set /p MSBUILD=<"%_TMP%"
+    del "%_TMP%" >nul 2>&1
+)
+if defined MSBUILD goto :HaveMSBuild
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$roots=@(); foreach ($base in [Environment]::GetFolderPath('ProgramFiles'), [Environment]::GetFolderPath('ProgramFilesX86')) { $dir = Join-Path $base 'Microsoft Visual Studio'; if (Test-Path $dir) { $roots += $dir } }; if ($roots.Count) { $found = Get-ChildItem -Path $roots -Filter MSBuild.exe -Recurse -File -ErrorAction SilentlyContinue | Where-Object { $_.DirectoryName -notmatch 'amd64|arm64' } | Sort-Object FullName -Descending | Select-Object -First 1; if ($found) { $found.FullName } }" > "%_TMP%" 2>nul
+set /p MSBUILD=<"%_TMP%"
+del "%_TMP%" >nul 2>&1
+:HaveMSBuild
+if not defined MSBUILD (
+    echo ERROR: MSBuild.exe not found.
     echo        Install Visual Studio 2022+ or VS 2026 Build Tools, including the
     echo        "MSVC v141 - VS 2017 C++ build tools" individual component, which a
     echo        default installation does not carry.
     exit /b 1
 )
-
-set "_TMP=%TEMP%\x360ce_msbuild_path.txt"
-"%VSWHERE%" -latest -find "MSBuild\**\Bin\MSBuild.exe" > "%_TMP%"
-set "MSBUILD="
-set /p MSBUILD=<"%_TMP%"
-del "%_TMP%" >nul 2>&1
-if not defined MSBUILD (
-    echo ERROR: MSBuild.exe not found via vswhere.
-    exit /b 1
-)
 if not exist "%MSBUILD%" (
-    echo ERROR: MSBuild.exe path returned by vswhere does not exist: "%MSBUILD%"
+    echo ERROR: MSBuild.exe path does not exist: "%MSBUILD%"
     exit /b 1
 )
 

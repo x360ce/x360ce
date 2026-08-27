@@ -59,7 +59,7 @@ namespace Nefarius.ViGEm.Client
             static extern ushort vigem_target_get_pid(PVIGEM_TARGET target);
 
             [DllImport("vigemclient.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
-            static extern uint vigem_target_get_index(PVIGEM_TARGET target);
+            internal static extern uint vigem_target_get_index(PVIGEM_TARGET target);
 
             [DllImport("vigemclient.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
             static extern VIGEM_TARGET_TYPE vigem_target_get_type(PVIGEM_TARGET target);

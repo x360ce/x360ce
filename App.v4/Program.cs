@@ -34,6 +34,20 @@ namespace x360ce.App
 		{
 			// Fix: System.TimeoutException: The operation has timed out. at System.Windows.Threading.Dispatcher.InvokeImpl
 			AppContext.SetSwitch("Switch.MS.Internal.DoNotInvokeInWeakEventTableShutdownListener", true);
+			// Set here rather than in a configuration file, because the program ships as one file
+			// and no configuration file travels with it. Left in app.config alone, none of these
+			// take effect for anyone who downloads it.
+			//
+			// Symbols are built into the program rather than shipped beside it, and the runtime
+			// ignores symbols in that form for a program built against a framework older than
+			// 4.7.2 unless it is asked. Without this a crash report names no file and no line.
+			AppContext.SetSwitch("Switch.System.Diagnostics.IgnorePortablePDBsInStackTraces", false);
+			// Without these every control reaches a screen reader as an unnamed blank area, and
+			// the items of a tool strip are not reachable at all.
+			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures", false);
+			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures.2", false);
+			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures.3", false);
+			AppContext.SetSwitch("Switch.UseLegacyAccessibilityFeatures.4", false);
 			// First: Set working folder to the path of executable.
 			var fi = new FileInfo(Application.ExecutablePath);
 			Directory.SetCurrentDirectory(fi.Directory.FullName);

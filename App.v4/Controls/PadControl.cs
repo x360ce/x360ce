@@ -135,6 +135,16 @@ namespace x360ce.App.Controls
 		{
 			var i = (int)MappedTo - 1;
 			var useXiStates = SettingsManager.Options.GetXInputStates;
+			if (useXiStates)
+			{
+				// Windows decides which of the four places a new controller goes into and does not say,
+				// so the place is looked up rather than assumed to match the controller number. On a
+				// computer with all four places empty this program's first controller was put in the
+				// third; reading the first place showed a controller that was never there.
+				var place = Global.DHelper.XiPlaceForPad[i];
+				if (place >= 0)
+					i = place;
+			}
 			newState = useXiStates
 				? Global.DHelper.LiveXiStates[i]
 				: Global.DHelper.CombinedXiStates[i];
@@ -527,6 +537,16 @@ namespace x360ce.App.Controls
 		}
 		ComboBox _CurrentCbx;
 
+		/// <summary>Box the mapping menu was last opened for.</summary>
+		/// <remarks>
+		/// One menu serves every box on the pad, and a click on one of its items is handled after
+		/// the menu has closed - so after anything else that happened in between. CurrentCbx is
+		/// cleared by opening the same list a second time, by recording, and by the previous click,
+		/// any of which can happen first, leaving the click with nothing to write into. Keeping the
+		/// target here means the menu and the box it belongs to cannot disagree.
+		/// </remarks>
+		ComboBox MenuTargetCbx;
+
 		void ComboBox_DropDown(object sender, EventArgs e)
 		{
 			var cbx = (ComboBox)sender;
@@ -559,7 +579,8 @@ namespace x360ce.App.Controls
 			{
 				if (cbx == DPadComboBox)
 					EnableDPadMenu(true);
-				cbx.ContextMenuStrip.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
+				MenuTargetCbx = cbx;
+				menu.Show(cbx, new Point(0, cbx.Height), ToolStripDropDownDirection.Default);
 			}
 			if (cbx.Items.Count > 0)
 				cbx.SelectedIndex = 0;
@@ -742,6 +763,11 @@ namespace x360ce.App.Controls
 			var section = string.Format(@"PAD{0}", (int)MappedTo);
 			var item = SettingsManager.AddMap(section, setting, control, MappedTo, code);
 			item.Code = code;
+			// A box that names a control can hold an expression instead, so it gets the switch that
+			// turns one into the other. Every mapping box carries a code and nothing else does, so
+			// this needs no list of its own to fall out of step.
+			if (control is ComboBox && code != default(MapCode))
+				MapExpressionToggle.AttachTo((ComboBox)control);
 		}
 
 		#endregion
@@ -964,13 +990,18 @@ namespace x360ce.App.Controls
 		void DiMenuStrip_Click(object sender, EventArgs e)
 		{
 			ToolStripMenuItem item = (ToolStripMenuItem)sender;
+			// The box this menu was opened for. Nothing else can be asked: by now the menu has
+			// closed and CurrentCbx may already have been cleared.
+			var cbx = MenuTargetCbx;
+			if (cbx == null || cbx.IsDisposed)
+				return;
 			Regex rx = new Regex("^(DPad [0-9]+)$");
 			// If this DPad parent menu.
 			if (rx.IsMatch(item.Text))
 			{
-				if (CurrentCbx == DPadComboBox)
+				if (cbx == DPadComboBox)
 				{
-					SettingsManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
+					SettingsManager.Current.SetComboBoxValue(cbx, item.Text);
 					CurrentCbx = null;
 					//DiMenuStrip.Close();
 				}
@@ -979,17 +1010,20 @@ namespace x360ce.App.Controls
 			{
 				if (item.Text == cRecord)
 				{
-					var map = SettingsManager.Current.SettingsMap.First(x => x.Control == CurrentCbx);
-					StartRecording(map);
+					// Swapping the device rebuilds the map while the menu is open, so the row this
+					// box belongs to can be gone by the time [Record] is picked.
+					var map = SettingsManager.Current.SettingsMap.FirstOrDefault(x => x.Control == cbx);
+					if (map != null)
+						StartRecording(map);
 				}
 				else if (item.Text == cEmpty)
 				{
-					SettingsManager.Current.SetComboBoxValue(CurrentCbx, string.Empty);
+					SettingsManager.Current.SetComboBoxValue(cbx, string.Empty);
 					CurrentCbx = null;
 				}
 				else
 				{
-					SettingsManager.Current.SetComboBoxValue(CurrentCbx, item.Text);
+					SettingsManager.Current.SetComboBoxValue(cbx, item.Text);
 					CurrentCbx = null;
 				}
 			}

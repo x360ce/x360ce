@@ -189,7 +189,7 @@ void Config::ParsePrefix(const std::string& input, MappingType* pMappingType, s8
 	}
 }
 
-void Config::ReadConfig()
+void Config::ReadConfig(std::vector<std::shared_ptr<ControllerBase>>& controllers)
 {
 	IniFile ini;
 	std::string inipath("x360ce.ini");
@@ -265,19 +265,15 @@ void Config::ReadConfig()
 			controller->m_combined = true;
 			controller->m_combinedIndex = combinedIndex;
 
-			// Get Controllers
-			// auto controllers = ControllerManager::Get().GetControllers();
-
 			// Attempt to find an existing combiner for the index
-			// auto found = std::find_if(controllers.begin(), controllers.end(), 
-			auto found = std::find_if(ControllerManager::Get().GetControllers().begin(), ControllerManager::Get().GetControllers().end(),
+			auto found = std::find_if(controllers.begin(), controllers.end(),
 				[combinedIndex](std::shared_ptr<ControllerBase> c)
 			{
 				return (c->m_combined) && (c->m_combinedIndex == combinedIndex);
 			});
 
 			// If not found, create it
-			if (found == ControllerManager::Get().GetControllers().end())
+			if (found == controllers.end())
 			{
 				// Create combiner
 				std::shared_ptr<ControllerCombiner> combiner(new ControllerCombiner(combinedIndex));
@@ -289,7 +285,7 @@ void Config::ReadConfig()
 				combiner->GetControllers().push_back(controller);
 
 				// Add the combiner to the controllers collection
-				ControllerManager::Get().GetControllers().push_back(combiner);
+				controllers.push_back(combiner);
 			}
 			else
 			{
@@ -303,7 +299,7 @@ void Config::ReadConfig()
 		else
 		{
 			// Not a combined device. Just add like normal.
-			ControllerManager::Get().GetControllers().push_back(controller);
+			controllers.push_back(controller);
 		}
 	}
 }

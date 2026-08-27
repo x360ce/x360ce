@@ -28,7 +28,9 @@ public:
 		if (GetWindowsVersionName(&windows_name))
 			PrintLog("OS: \"%s\"", windows_name.c_str());
 
-		m_config.ReadConfig();
+		// Pass the list rather than letting ReadConfig reach back through Get(),
+		// which would re-enter the static initialisation still running on this thread.
+		m_config.ReadConfig(m_controllers);
 
 		bool bHookDI = InputHookManager::Get().GetInputHook().GetState(InputHook::HOOK_DI);
 		if (bHookDI) InputHookManager::Get().GetInputHook().DisableHook(InputHook::HOOK_DI);

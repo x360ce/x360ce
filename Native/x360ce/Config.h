@@ -1,6 +1,10 @@
 #pragma once
 
+#include <memory>
+#include <vector>
+
 class Controller;
+class ControllerBase;
 
 class Config
 {
@@ -122,7 +126,7 @@ public:
 	static const char* const triggerDZNames[];
 	static const char* const triggerBNames[];
 
-	void ReadConfig();
+	void ReadConfig(std::vector<std::shared_ptr<ControllerBase>>& controllers);
 
 private:
 	bool ReadPadConfig(Controller* pController, const std::string& section, IniFile* pIniFile);

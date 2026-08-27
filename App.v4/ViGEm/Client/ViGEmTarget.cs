@@ -26,6 +26,25 @@ namespace Nefarius.ViGEm.Client
         protected PVIGEM_TARGET NativeHandle { get; set; }
 
         /// <summary>
+        /// The number the bus knows this controller by, which also appears in its name in Windows.
+        /// </summary>
+        /// <remarks>
+        /// This is the clear reference to a controller this program created. The bus does not record
+        /// which program created what, and Windows has no field saying so either, so without this
+        /// there is no way to tell this program's own controller from one left behind by a run that
+        /// died. Getting that wrong means offering to remove the controller currently in use.
+        /// </remarks>
+        public uint Serial
+        {
+            get
+            {
+                return NativeHandle == IntPtr.Zero
+                    ? 0
+                    : ViGEmClient.NativeMethods.vigem_target_get_index(NativeHandle);
+            }
+        }
+
+        /// <summary>
         ///     Gets the Vendor ID this device will present to the system.
         /// </summary>
         public ushort VendorId { get; protected set; }
