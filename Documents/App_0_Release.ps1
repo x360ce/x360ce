@@ -163,6 +163,20 @@ function Find-VsTool {
 
 $msbuild = Find-VsTool -Pattern '**\Bin\MSBuild.exe' -Name 'MSBuild.exe'
 
+# The installation which owns the MSBuild being used. Derived from that path rather
+# than looked up separately, so the tools checked here are certain to be the tools
+# the build then runs with.
+function Get-VsRoot {
+    param([Parameter(Mandatory = $true)][string]$MsBuildPath)
+    $dir = Split-Path -Parent $MsBuildPath
+    while ($dir) {
+        $parent = Split-Path -Parent $dir
+        if ((Split-Path -Leaf $dir) -eq 'MSBuild') { return $parent }
+        $dir = $parent
+    }
+    return $null
+}
+
 #------------------------------------------------------------------------------
 # Steps.
 #------------------------------------------------------------------------------
@@ -210,7 +224,7 @@ function Remove-BuildOutput {
 # previous output before it fails, and the native output is not in source
 # control, so missing tools have to be found before the clean, not after it.
 function Assert-Toolsets {
-    $vsRoot = & $vswhere -latest -prerelease -property installationPath | Select-Object -First 1
+    $vsRoot = Get-VsRoot $msbuild
     $installed = New-Object System.Collections.Generic.List[string]
     $vcDir = if ($vsRoot) { Join-Path $vsRoot "MSBuild\Microsoft\VC" } else { $null }
     if ($vcDir -and (Test-Path -LiteralPath $vcDir)) {
