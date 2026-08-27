@@ -1,4 +1,9 @@
-﻿v4.18.35.0 (2026-08-27)
+﻿v4.18.38.0 (2026-08-27)
+- Fixed: Choosing a mapping from the list could crash the program.
+- Fixed: Program could crash while closing, after its window had gone.
+- Fixed: Program crashed instead of saying the virtual bus driver was missing.
+
+v4.18.35.0 (2026-08-27)
 - Added: A mapping row can hold a formula instead of a single control.
 - Added: An fx button on each mapping row turns it into a formula.
 - Added: Formulas can read the clock, in milliseconds since the program started.

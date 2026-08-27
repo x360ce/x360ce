@@ -1302,6 +1302,22 @@ namespace x360ce.App
 			SettingsManager.Current.RaiseSettingsChanged(null);
 		}
 
+		/// <summary>
+		/// Stop listening for the current game once this window is gone.
+		/// </summary>
+		/// <remarks>
+		/// The event is static, so nothing else lets go of this form. The window this program
+		/// watches keeps changing while the process shuts down, and each change asks which game is
+		/// in front; the answer arrives here and reads controls which have already been disposed.
+		/// A disposed ToolStripComboBox returns null for its ComboBox, so the read fails rather
+		/// than doing nothing.
+		/// </remarks>
+		protected override void OnFormClosed(FormClosedEventArgs e)
+		{
+			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
+			base.OnFormClosed(e);
+		}
+
 		private void GamesToolStrip_Resize(object sender, EventArgs e)
 		{
 			GameToCustomizeComboBox.AutoSize = false;
