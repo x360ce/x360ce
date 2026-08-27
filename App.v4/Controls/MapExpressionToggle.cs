@@ -132,6 +132,24 @@ namespace x360ce.App.Controls
 
 		private bool _hovered;
 
+		/// <summary>Whether what the box holds is a formula the program can run.</summary>
+		public enum FormulaState
+		{
+			/// <summary>Not a formula, so there is nothing to say about it.</summary>
+			None,
+			/// <summary>Understood, compiled, and driving the row now.</summary>
+			Working,
+			/// <summary>Written down but not understood, so the row is doing nothing.</summary>
+			Broken,
+		}
+
+		private FormulaState _state;
+		private string _problem;
+
+		/// <summary>Whether the formula in the box works, as this switch is currently showing it.</summary>
+		public FormulaState State { get { return _state; } }
+
+
 		protected override void OnMouseEnter(EventArgs e)
 		{
 			_hovered = true;
@@ -164,8 +182,11 @@ namespace x360ce.App.Controls
 				e.Graphics.FillRectangle(brush, ClientRectangle);
 			// Faint until it is wanted. Blending towards the background rather than using a fixed grey
 			// keeps it faint under any theme, including a dark one.
+			// While it is on, the colour answers the one question somebody writing a formula has and
+			// cannot see anywhere else: is this working? Green while the row is being driven by it, red
+			// while it is written down but not understood.
 			var colour = Checked
-				? SystemColors.WindowText
+				? StateColour(_state)
 				: Blend(background, SystemColors.WindowText, _hovered ? 0.55 : 0.22);
 			if (Checked)
 			{
@@ -175,6 +196,17 @@ namespace x360ce.App.Controls
 			}
 			TextRenderer.DrawText(e.Graphics, Label, Font, ClientRectangle, colour,
 				TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.NoPadding);
+		}
+
+		/// <summary>Colour saying whether the formula works, readable on a light or a dark theme.</summary>
+		private static Color StateColour(FormulaState state)
+		{
+			switch (state)
+			{
+				case FormulaState.Working: return Color.FromArgb(0x2E, 0x9E, 0x2E);
+				case FormulaState.Broken: return Color.FromArgb(0xD1, 0x34, 0x38);
+				default: return SystemColors.WindowText;
+			}
 		}
 
 		private static Color Blend(Color from, Color to, double amount)
@@ -258,15 +290,14 @@ namespace x360ce.App.Controls
 			toggle.BringToFront();
 			Attached.Add(box, toggle);
 			toggle.CheckedChanged += (sender, e) => Switch(box, toggle.Checked);
-			// A row that chose from the list already tells the program the moment the choice is made.
-			// A row being typed into has nothing that says when the typing is finished, so leaving the
-			// box is taken as finished. Without this the formula stays on screen, looking saved, and
-			// is thrown away because nothing ever asked the box what it now held.
-			box.Leave += (sender, e) => Commit(box);
+			// Every keystroke is checked, so the switch says whether the formula works while it is
+			// being written. Applying it is not done here: the box reports its own typing once it has
+			// been switched over, the same way every other box that is typed into does.
+			box.TextChanged += (sender, e) => ShowValidity(box);
 			// Hovering shows the formula this row's settings already amount to, before anything is
 			// switched. That is where somebody first learns the feature exists, and what their own dead
 			// zone and sensitivity actually do, without having to commit to anything.
-			toggle.MouseEnter += (sender, e) => ShowWhatTheSettingsAmountTo(toggle, box);
+			toggle.MouseEnter += (sender, e) => ShowHint(toggle, box);
 			return toggle;
 		}
 
@@ -393,16 +424,52 @@ namespace x360ce.App.Controls
 				? parsed : 0f;
 		}
 
-		/// <summary>Tells the program a typed formula is finished, so that it reaches storage.</summary>
+		/// <summary>Reads what the box now holds and shows on the switch whether it works.</summary>
 		/// <remarks>
-		/// Deliberately narrow. Only a box holding a formula does this, so no other row changes when
-		/// it gains or loses focus, and nothing that already worked starts behaving differently.
+		/// Run on every keystroke. Reading a formula this short is far cheaper than the poll it feeds,
+		/// and it is the only way the person can be told which of the two states they are in while they
+		/// are still typing.
 		/// </remarks>
-		private static void Commit(ComboBox box)
+		private static void ShowValidity(ComboBox box)
 		{
-			if (box == null || !MapExpression.IsExpression(box.Text))
+			var toggle = For(box);
+			if (toggle == null)
 				return;
-			SettingsManager.Current.RaiseSettingsChanged(box);
+			var state = FormulaState.None;
+			string problem = null;
+			if (MapExpression.IsExpression(box.Text))
+			{
+				MapExpression parsed;
+				string error;
+				int position;
+				if (MapExpression.TryParse(box.Text, out parsed, out error, out position))
+				{
+					state = FormulaState.Working;
+				}
+				else
+				{
+					state = FormulaState.Broken;
+					problem = error;
+				}
+			}
+			if (toggle._state == state && toggle._problem == problem)
+				return;
+			toggle._state = state;
+			toggle._problem = problem;
+			toggle.Invalidate();
+		}
+
+		/// <summary>What the switch says when it is pointed at, which depends on the state it is in.</summary>
+		private static void ShowHint(MapExpressionToggle toggle, ComboBox box)
+		{
+			if (!toggle.Checked)
+			{
+				ShowWhatTheSettingsAmountTo(toggle, box);
+				return;
+			}
+			Hint.SetToolTip(toggle, toggle._state == FormulaState.Broken
+				? "This formula is not understood, so the row is doing nothing: " + toggle._problem
+				: "This formula is understood and is driving the row.");
 		}
 
 		/// <summary>Turns writing an expression on or off for one mapping box.</summary>
@@ -413,6 +480,12 @@ namespace x360ce.App.Controls
 				// Editable, because an expression is typed. The list still works, and now inserts a
 				// control name where the cursor is rather than replacing everything.
 				box.DropDownStyle = ComboBoxStyle.DropDown;
+				// A box being typed into announces itself through different events than a list, and the
+				// program chose which to listen to when it first attached, long before this. Without
+				// asking it to listen again, a formula reports nothing while it is written and the row
+				// keeps doing whatever it did before. Done before the text is put in, so the formula it
+				// starts with is applied rather than sitting there unused.
+				SettingsManager.Current.RewireControl(box);
 				if (!MapExpression.IsExpression(box.Text))
 					// Seeded from what the row already does, so switching over changes nothing until
 					// the person edits it, and they are shown their own tuning in the new syntax.
@@ -424,11 +497,14 @@ namespace x360ce.App.Controls
 			else
 			{
 				// Leaving expression mode discards the expression: a half-written one is not a mapping,
-				// and keeping it while the box says otherwise would be worse than losing it.
+				// and keeping it while the box says otherwise would be worse than losing it. Cleared
+				// before the shape changes, so the clearing is reported and the row stops at once.
 				if (MapExpression.IsExpression(box.Text))
 					box.Text = "";
 				box.DropDownStyle = ComboBoxStyle.DropDownList;
+				SettingsManager.Current.RewireControl(box);
 			}
+			ShowValidity(box);
 		}
 
 		/// <summary>

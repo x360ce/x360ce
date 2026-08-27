@@ -1,4 +1,8 @@
-﻿v4.18.38.0 (2026-08-27)
+﻿v4.18.40.0 (2026-08-27)
+- Fixed: A formula had no effect until the box was left.
+- Added: The fx button turns green when the formula works and red when it does not.
+
+v4.18.38.0 (2026-08-27)
 - Fixed: Choosing a mapping from the list could crash the program.
 - Fixed: Program could crash while closing, after its window had gone.
 - Fixed: Program crashed instead of saying the virtual bus driver was missing.

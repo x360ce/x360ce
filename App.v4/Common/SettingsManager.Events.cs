@@ -29,29 +29,7 @@ namespace x360ce.App
 				// Don't allow controls to fire events.
 				var controls = Current.SettingsMap.Select(x => x.Control).ToArray();
 				foreach (var control in controls)
-				{
-					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged -= new EventHandler(Control_ValueChanged);
-					if (control is ListBox) ((ListBox)control).SelectedIndexChanged -= new EventHandler(Control_SelectedIndexChanged);
-					if (control is TrackBar) ((TrackBar)control).ValueChanged -= new EventHandler(Control_ValueChanged);
-					if (control is CheckBox) ((CheckBox)control).CheckedChanged -= new EventHandler(Control_CheckedChanged);
-					if (control is ComboBox)
-					{
-						var cbx = (ComboBox)control;
-						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
-						{
-							cbx.SelectedIndexChanged -= new EventHandler(Control_TextChanged);
-						}
-						else
-						{
-							cbx.TextChanged -= new EventHandler(Control_TextChanged);
-						}
-					}
-					if (control is DataGridView)
-					{
-						var grid = (DataGridView)control;
-						grid.CellClick -= DataGridView_CellClick;
-					}
-				}
+					SetControlEvents(control, false);
 			}
 		}
 
@@ -77,31 +55,86 @@ namespace x360ce.App
 				if (eventsSuspendCount < 0)
 					throw new Exception("ResumeEvents() executed multiple times.");
 				// Allow controls to fire events.
-				var controls = SettingsManager.Current.SettingsMap.Select(x => x.Control);
+				var controls = SettingsManager.Current.SettingsMap.Select(x => x.Control).ToArray();
 				foreach (var control in controls)
+					SetControlEvents(control, true);
+			}
+		}
+
+		/// <summary>
+		/// Attaches or detaches the events one control reports its own changes through.
+		/// </summary>
+		/// <remarks>
+		/// Which events those are depends on the shape the control is in. A list reports a choice, a
+		/// box being typed into reports the typing, and the two are not interchangeable.
+		///
+		/// Detaching removes both of a combo box's events whatever shape it is in now. A box which
+		/// changed shape after it was attached would otherwise keep the event it was given and lose one
+		/// it never had, and would then report twice, or not at all.
+		/// </remarks>
+		void SetControlEvents(Control control, bool attach)
+		{
+			var upDown = control as NumericUpDown;
+			if (upDown != null)
+			{
+				upDown.ValueChanged -= Control_ValueChanged;
+				if (attach) upDown.ValueChanged += Control_ValueChanged;
+			}
+			var listBox = control as ListBox;
+			if (listBox != null)
+			{
+				listBox.SelectedIndexChanged -= Control_SelectedIndexChanged;
+				if (attach) listBox.SelectedIndexChanged += Control_SelectedIndexChanged;
+			}
+			var trackBar = control as TrackBar;
+			if (trackBar != null)
+			{
+				trackBar.ValueChanged -= Control_ValueChanged;
+				if (attach) trackBar.ValueChanged += Control_ValueChanged;
+			}
+			var checkBox = control as CheckBox;
+			if (checkBox != null)
+			{
+				checkBox.CheckedChanged -= Control_CheckedChanged;
+				if (attach) checkBox.CheckedChanged += Control_CheckedChanged;
+			}
+			var comboBox = control as ComboBox;
+			if (comboBox != null)
+			{
+				comboBox.SelectedIndexChanged -= Control_TextChanged;
+				comboBox.TextChanged -= Control_TextChanged;
+				if (attach)
 				{
-					if (control is NumericUpDown) ((NumericUpDown)control).ValueChanged += new EventHandler(Control_ValueChanged);
-					if (control is ListBox) ((ListBox)control).SelectedIndexChanged += new EventHandler(Control_SelectedIndexChanged);
-					if (control is TrackBar) ((TrackBar)control).ValueChanged += new EventHandler(Control_ValueChanged);
-					if (control is CheckBox) ((CheckBox)control).CheckedChanged += new EventHandler(Control_CheckedChanged);
-					if (control is ComboBox)
-					{
-						var cbx = (ComboBox)control;
-						if (cbx.DropDownStyle == ComboBoxStyle.DropDownList)
-						{
-							cbx.SelectedIndexChanged += new EventHandler(Control_TextChanged);
-						}
-						else
-						{
-							cbx.TextChanged += new EventHandler(Control_TextChanged);
-						}
-					}
-					if (control is DataGridView)
-					{
-						var grid = (DataGridView)control;
-						grid.CellClick += DataGridView_CellClick;
-					}
+					if (comboBox.DropDownStyle == ComboBoxStyle.DropDownList)
+						comboBox.SelectedIndexChanged += Control_TextChanged;
+					else
+						comboBox.TextChanged += Control_TextChanged;
 				}
+			}
+			var grid = control as DataGridView;
+			if (grid != null)
+			{
+				grid.CellClick -= DataGridView_CellClick;
+				if (attach) grid.CellClick += DataGridView_CellClick;
+			}
+		}
+
+		/// <summary>
+		/// Listens to one control again after its shape has changed.
+		/// </summary>
+		/// <remarks>
+		/// A mapping box becomes a box that is typed into when it is switched to a formula, and back to
+		/// a list when it is switched off. The events were chosen when it was attached, long before
+		/// that, so without this a formula being typed reports nothing and only reaches the controller
+		/// when something else happens to save.
+		/// </remarks>
+		public void RewireControl(Control control)
+		{
+			if (control == null)
+				return;
+			lock (eventsLock)
+			{
+				SetControlEvents(control, eventsSuspendCount == 0);
 			}
 		}
 
