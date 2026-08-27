@@ -26,10 +26,11 @@ param(
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 
-# vswhere is asked first because it is the supported way to find an installation. It reports
-# nothing when the installer's instance record is missing, which happens after some upgrades
-# even though Visual Studio itself works, so the folders it would have pointed at are searched
-# directly rather than failing.
+# vswhere is asked first because it is the supported way to find an installation. It
+# reports nothing when the installer's instance record is missing, which happens after
+# some upgrades and after the package cache is cleaned, even though Visual Studio itself
+# works. The folders it would have pointed at are then searched directly rather than
+# failing on a machine which can build perfectly well.
 function Find-VsTool {
     param(
         [Parameter(Mandatory = $true)][string]$Pattern,

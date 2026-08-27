@@ -133,10 +133,35 @@ if (-not $SkipSign) {
     }
 }
 
-$vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-if (-not (Test-Path $vswhere)) { throw "vswhere.exe not found. Visual Studio is required." }
-$msbuild = & $vswhere -latest -prerelease -find '**\Bin\MSBuild.exe' | Select-Object -First 1
-if (-not $msbuild) { throw "MSBuild.exe not found." }
+# vswhere is asked first because it is the supported way to find an installation. It
+# reports nothing when the installer's instance record is missing, which happens after
+# some upgrades and after the package cache is cleaned, even though Visual Studio itself
+# works. The folders it would have pointed at are then searched directly rather than
+# failing on a machine which can build perfectly well.
+function Find-VsTool {
+    param(
+        [Parameter(Mandatory = $true)][string]$Pattern,
+        [Parameter(Mandatory = $true)][string]$Name
+    )
+    $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+    if (Test-Path $vswhere) {
+        $found = & $vswhere -latest -prerelease -find $Pattern | Select-Object -First 1
+        if ($found) { return $found }
+    }
+    $roots = @(
+        "${env:ProgramFiles}\Microsoft Visual Studio",
+        "${env:ProgramFiles(x86)}\Microsoft Visual Studio"
+    ) | Where-Object { Test-Path $_ }
+    # Newest edition first, so a side by side install picks the same one vswhere would,
+    # and the processor specific copies are left out because they are not what it reports.
+    $found = Get-ChildItem -Path $roots -Filter (Split-Path -Leaf $Pattern) -Recurse -File -ErrorAction SilentlyContinue |
+        Where-Object { $_.DirectoryName -notmatch 'amd64|arm64' } |
+        Sort-Object FullName -Descending | Select-Object -First 1
+    if (-not $found) { throw "$Name not found. Visual Studio is required." }
+    return $found.FullName
+}
+
+$msbuild = Find-VsTool -Pattern '**\Bin\MSBuild.exe' -Name 'MSBuild.exe'
 
 #------------------------------------------------------------------------------
 # Steps.
