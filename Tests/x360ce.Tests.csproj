@@ -36,6 +36,13 @@
 		<Reference Include="WindowsBase" />
 		<Reference Include="System.Windows.Forms" />
 		<Reference Include="System.Configuration" />
+		<!-- The test controller reports a DirectInput state, so the type has to resolve here too. -->
+		<Reference Include="SharpDX">
+			<HintPath>..\App.v4\Resources\SharpDX\SharpDX.dll</HintPath>
+		</Reference>
+		<Reference Include="SharpDX.DirectInput">
+			<HintPath>..\App.v4\Resources\SharpDX\SharpDX.DirectInput.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>

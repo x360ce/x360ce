@@ -49,6 +49,7 @@
 			this.ControllerDeleteButton = new System.Windows.Forms.ToolStripButton();
 			this.HardwareButton = new System.Windows.Forms.ToolStripButton();
 			this.AddDemoDevice = new System.Windows.Forms.ToolStripButton();
+			this.CleanupVirtualPadsButton = new System.Windows.Forms.ToolStripButton();
 			this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
 			this.EnumeratedDevicesButton = new System.Windows.Forms.ToolStripMenuItem();
 			this.HiddenDevicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -198,6 +199,7 @@
             this.ControllerDeleteButton,
             this.HardwareButton,
             this.AddDemoDevice,
+            this.CleanupVirtualPadsButton,
             this.toolStripDropDownButton1});
 			this.ControllersToolStrip.Location = new System.Drawing.Point(0, 0);
 			this.ControllersToolStrip.Name = "ControllersToolStrip";
@@ -237,23 +239,30 @@
 			// 
 			// AddDemoDevice
 			// 
-			this.AddDemoDevice.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-			this.AddDemoDevice.Image = ((System.Drawing.Image)(resources.GetObject("AddDemoDevice.Image")));
+			this.AddDemoDevice.Image = global::x360ce.App.Properties.Resources.test_16x16;
 			this.AddDemoDevice.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.AddDemoDevice.Name = "AddDemoDevice";
 			this.AddDemoDevice.Size = new System.Drawing.Size(106, 22);
 			this.AddDemoDevice.Text = "Add Demo Device";
 			this.AddDemoDevice.Click += new System.EventHandler(this.AddDemoDevice_Click);
 			// 
+			// CleanupVirtualPadsButton
+			// 
+			this.CleanupVirtualPadsButton.Image = global::x360ce.App.Properties.Resources.remove_16x16;
+			this.CleanupVirtualPadsButton.Name = "CleanupVirtualPadsButton";
+			this.CleanupVirtualPadsButton.Size = new System.Drawing.Size(132, 22);
+			this.CleanupVirtualPadsButton.Text = "Remove Leftover Pads";
+			this.CleanupVirtualPadsButton.ToolTipText = "Remove virtual controllers left behind by earlier runs, which take up the four XInput places.";
+			this.CleanupVirtualPadsButton.Click += new System.EventHandler(this.CleanupVirtualPadsButton_Click);
+			// 
 			// toolStripDropDownButton1
 			// 
-			this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
 			this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.EnumeratedDevicesButton,
             this.HiddenDevicesMenuItem,
             this.UnhideAllDevicesMenuItem,
             this.synchronizeToHidGuardianToolStripMenuItem});
-			this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+			this.toolStripDropDownButton1.Image = global::x360ce.App.Properties.Resources.enable_16x16;
 			this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
 			this.toolStripDropDownButton1.Size = new System.Drawing.Size(100, 22);
@@ -261,6 +270,7 @@
 			// 
 			// EnumeratedDevicesButton
 			// 
+			this.EnumeratedDevicesButton.Image = global::x360ce.App.Properties.Resources.hardware_16x16;
 			this.EnumeratedDevicesButton.Name = "EnumeratedDevicesButton";
 			this.EnumeratedDevicesButton.Size = new System.Drawing.Size(227, 22);
 			this.EnumeratedDevicesButton.Text = "Show Enumerated Devices";
@@ -268,6 +278,7 @@
 			// 
 			// HiddenDevicesMenuItem
 			// 
+			this.HiddenDevicesMenuItem.Image = global::x360ce.App.Properties.Resources.folder_view_16x16;
 			this.HiddenDevicesMenuItem.Name = "HiddenDevicesMenuItem";
 			this.HiddenDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.HiddenDevicesMenuItem.Text = "Show Hidden Devices";
@@ -275,6 +286,7 @@
 			// 
 			// UnhideAllDevicesMenuItem
 			// 
+			this.UnhideAllDevicesMenuItem.Image = global::x360ce.App.Properties.Resources.ok_16x16;
 			this.UnhideAllDevicesMenuItem.Name = "UnhideAllDevicesMenuItem";
 			this.UnhideAllDevicesMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.UnhideAllDevicesMenuItem.Text = "Unhide All Devices";
@@ -282,6 +294,7 @@
 			// 
 			// synchronizeToHidGuardianToolStripMenuItem
 			// 
+			this.synchronizeToHidGuardianToolStripMenuItem.Image = global::x360ce.App.Properties.Resources.refresh_16x16;
 			this.synchronizeToHidGuardianToolStripMenuItem.Name = "synchronizeToHidGuardianToolStripMenuItem";
 			this.synchronizeToHidGuardianToolStripMenuItem.Size = new System.Drawing.Size(227, 22);
 			this.synchronizeToHidGuardianToolStripMenuItem.Text = "Synchronize To HID Guardian";
@@ -311,6 +324,7 @@
 		private System.Windows.Forms.ToolStripButton RefreshButton;
 		private System.Windows.Forms.ToolStripButton HardwareButton;
 		private System.Windows.Forms.ToolStripButton AddDemoDevice;
+		private System.Windows.Forms.ToolStripButton CleanupVirtualPadsButton;
         private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
         private System.Windows.Forms.ToolStripMenuItem EnumeratedDevicesButton;
         private System.Windows.Forms.ToolStripMenuItem HiddenDevicesMenuItem;

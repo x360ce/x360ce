@@ -26,7 +26,14 @@ namespace x360ce.Engine.Data
 			{
 				lock (MapsLock)
 				{
-					if (MapsChanged || true)
+					// Rebuilt only when something actually changed. Every property of this object reports
+					// its own change, and that is what sets the flag, so the answer here cannot go stale.
+					//
+					// This used to rebuild every time it was asked, which is once per poll, about a
+					// thousand times a second: thirty thousand of these objects a second, each reading
+					// its text again, and all of them thrown away. It was the largest single cost the
+					// program had while sitting doing nothing.
+					if (MapsChanged)
 					{
 						var maps = new List<Map>();
 						// Add buttons.

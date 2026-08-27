@@ -333,8 +333,20 @@ namespace x360ce.App.Controls
 
 		private void ViGEmBusInstallButton_Click(object sender, EventArgs e)
 		{
-			ViGEmBusTextBox.Text = "Installing. Please Wait...";
-			DInput.DInputHelper.CheckInstallVirtualDriver();
+			// The same button installs a driver that is missing and repairs one that is there. A bus
+			// can stop working while still reporting itself healthy, and the moment somebody wants
+			// that put right is the moment this button used to be greyed out.
+			var present = DInput.VirtualDriverInstaller.GetInstalledViGEmBusVersion() != null;
+			if (present)
+			{
+				ViGEmBusTextBox.Text = "Repairing. Please Wait...";
+				Program.RunElevated(AdminCommand.RepairViGEmBus);
+			}
+			else
+			{
+				ViGEmBusTextBox.Text = "Installing. Please Wait...";
+				DInput.DInputHelper.CheckInstallVirtualDriver();
+			}
 			RefreshViGEmBusStatus();
 		}
 
@@ -405,7 +417,10 @@ namespace x360ce.App.Controls
 						? "Not installed"
 						: string.Format("{0} {1}", bus.Description, bus.GetVersion());
 					ControlsHelper.SetText(ViGEmBusTextBox, busStatus);
-					ViGEmBusInstallButton.Enabled = bus.DriverVersion == 0;
+					// Always available, because a bus that is present is exactly the one that might
+					// need putting right. The word changes so it is clear which of the two it will do.
+					ViGEmBusInstallButton.Enabled = true;
+					ViGEmBusInstallButton.Text = bus.DriverVersion == 0 ? "Install" : "Repair";
 					ViGEmBusUninstallButton.Enabled = bus.DriverVersion != 0;
 				});
 			});

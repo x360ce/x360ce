@@ -215,6 +215,9 @@
     </Compile>
     <Compile Include="Controls\PadTabPages\General\PadControlImager.cs" />
     <Compile Include="Controls\PadTabPages\IPadControl.cs" />
+    <Compile Include="Controls\MapExpressionToggle.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\PresetsGridUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -382,6 +385,7 @@
     <Compile Include="Issues\ExeFileIssue.cs" />
     <Compile Include="Issues\HotfixIssue.cs" />
     <Compile Include="Issues\VirtualDeviceDriverIssue.cs" />
+    <Compile Include="Issues\LeftoverVirtualPadsIssue.cs" />
     <Compile Include="Issues\XboxDriversIssue.cs" />
     <Compile Include="MainForm.Tray.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -406,6 +410,7 @@
     <Compile Include="ViGEm\Client\ViGEmClient.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.Native.cs" />
     <Compile Include="ViGEm\Client\ViGEmClient.x360ce.cs" />
+
     <Compile Include="ViGEm\Client\ViGEmTarget.cs" />
     <Compile Include="ViGEm\Client\Enums\VIGEM_ERROR.cs" />
     <Compile Include="ViGEm\HidGuardianHelper.cs" />

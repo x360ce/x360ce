@@ -66,29 +66,17 @@ namespace x360ce.App.DInput
 			//Joystick    = new Guid("6f1d2b70-d5a0-11cf-bfc7-444553540000");
 			//SysMouse    = new Guid("6f1d2b60-d5a0-11cf-bfc7-444553540000");
 			//SysKeyboard = new Guid("6f1d2b61-d5a0-11cf-bfc7-444553540000");
+			var devInfosById = VirtualDriverInstaller.IndexById(devInfos);
 			for (int i = 0; i < addedDevices.Length; i++)
 			{
 				var device = addedDevices[i];
 				var ud = new UserDevice();
 				DeviceInfo hid;
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
-				var isVirtual = false;
-				if (hid != null)
-				{
-					DeviceInfo p = hid;
-					do
-					{
-						p = devInfos.FirstOrDefault(x => x.DeviceId == p.ParentDeviceId);
-						// If ViGEm hardware found then...
-						if (p != null && VirtualDriverInstaller.ViGEmBusHardwareIds.Any(x => string.Compare(p.HardwareIds, x, true) == 0))
-						{
-							isVirtual = true;
-							break;
-						}
-
-					} while (p != null);
-				}
-				if (!isVirtual)
+				// Pads this program feeds are never taken back in as devices somebody could map, or it
+				// would read its own output as an input. The rule lives in one place so that the device
+				// list and the clean-up button can never disagree about what a leftover is.
+				if (!VirtualDriverInstaller.IsVirtualPad(hid, devInfosById))
 					insertDevices.Add(ud);
 			}
 			//if (insertDevices.Count > 0)
@@ -103,6 +91,12 @@ namespace x360ce.App.DInput
 				// Will refresh device and fill more values with new x360ce app if available.
 				RefreshDevice(manager, ud, device, devInfos, intInfos, out hid);
 			}
+			// Pads of ours written down before this was recognised. Every stored device is judged, not
+			// only those this pass enumerated, because the scan otherwise only ever marks a device
+			// offline and nothing once written down is ever taken out again.
+			var evictDevices = uds
+				.Where(x => VirtualDriverInstaller.IsVirtualPad(x, devInfosById))
+				.ToList();
 			if (Program.IsClosing)
 				return;
 			// Remove disconnected devices.
@@ -110,6 +104,25 @@ namespace x360ce.App.DInput
 			{
 				lock (SettingsManager.UserDevices.SyncRoot)
 					deleteDevices[i].IsOnline = false;
+			}
+			if (evictDevices.Count > 0)
+			{
+				// All of them removed in one step, on the thread that owns the list.
+				//
+				// Removing them one at a time from here does not work: the list works out a row's
+				// position now and hands that number to the window later, so the second removal names
+				// a row that the first has already moved. The window is then given a position that is
+				// no longer there and the removal fails, out of sight, on a thread nobody is watching.
+				//
+				// Sent rather than waited for, because waiting would put this loop behind whatever the
+				// window happens to be drawing, which is the thing this list was written to avoid.
+				var evicted = evictDevices.ToArray();
+				JocysCom.ClassLibrary.Controls.ControlsHelper.BeginInvoke(() =>
+				{
+					lock (SettingsManager.UserDevices.SyncRoot)
+						foreach (var ud in evicted)
+							SettingsManager.UserDevices.Items.Remove(ud);
+				});
 			}
 			for (int i = 0; i < insertDevices.Count; i++)
 			{

@@ -6,11 +6,35 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.18.23.0 and Virtual Gamepad Emulation Bus 1.16.112.0
+Digitally Signed Application v4.18.35.0 and Virtual Gamepad Emulation Bus 1.16.112.0
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
 Note: version 4.x use Virtual Gamepad Emulation. Instructions can be found here: https://github.com/x360ce/x360ce/wiki/Beta-Testing
+
+## Mapping formulas (v4.x)
+
+A mapping row can hold a formula instead of a single control. Press the small `fx` button beside
+the row and type one, starting with `=`.
+
+    =a5*2        double the trigger, so it reaches full at a half press
+    =a1*0.5      halve the stick, for aiming through a scope
+    =a1*abs(a1)  fine control near the centre, full speed at the edge
+    =max(a1,0)   use only one half of a pedal axis
+
+Sources are written the way mappings are stored: `a1` is axis 1, `b2` is button 2, `s1` is
+slider 1. An axis reads from -1 to 1 when it drives a stick and from 0 to 1 when it drives a
+trigger, matching what the row already did. `now` reads the milliseconds since the program
+started; divide it by 1000 for seconds or by 60000 for minutes.
+
+A formula replaces the dead zone, anti dead zone and sensitivity for its row rather than being
+applied on top of them.
+
+**A formula is limited to 16 characters**, which is the width a mapping is stored in. That is
+enough for the examples above and not enough to write a dead zone or a curve out in full. The
+limit is raised in a later release.
+
+The Help page lists every operator, function and source.
 
 # Download v3.x
 

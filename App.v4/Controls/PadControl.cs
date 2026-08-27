@@ -135,6 +135,16 @@ namespace x360ce.App.Controls
 		{
 			var i = (int)MappedTo - 1;
 			var useXiStates = SettingsManager.Options.GetXInputStates;
+			if (useXiStates)
+			{
+				// Windows decides which of the four places a new controller goes into and does not say,
+				// so the place is looked up rather than assumed to match the controller number. On a
+				// computer with all four places empty this program's first controller was put in the
+				// third; reading the first place showed a controller that was never there.
+				var place = Global.DHelper.XiPlaceForPad[i];
+				if (place >= 0)
+					i = place;
+			}
 			newState = useXiStates
 				? Global.DHelper.LiveXiStates[i]
 				: Global.DHelper.CombinedXiStates[i];
@@ -742,6 +752,11 @@ namespace x360ce.App.Controls
 			var section = string.Format(@"PAD{0}", (int)MappedTo);
 			var item = SettingsManager.AddMap(section, setting, control, MappedTo, code);
 			item.Code = code;
+			// A box that names a control can hold an expression instead, so it gets the switch that
+			// turns one into the other. Every mapping box carries a code and nothing else does, so
+			// this needs no list of its own to fall out of step.
+			if (control is ComboBox && code != default(MapCode))
+				MapExpressionToggle.AttachTo((ComboBox)control);
 		}
 
 		#endregion

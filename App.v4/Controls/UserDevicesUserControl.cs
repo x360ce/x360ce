@@ -10,6 +10,7 @@ using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
 using JocysCom.ClassLibrary.IO;
 using System.Drawing;
+using x360ce.App.DInput;
 using System.Threading.Tasks;
 using JocysCom.ClassLibrary.Win32;
 using JocysCom.ClassLibrary.Collections;
@@ -220,6 +221,63 @@ namespace x360ce.App.Controls
 			ControlsHelper.CheckTopMost(form);
 			form.ShowDialog();
 			form.Dispose();
+		}
+
+		private void CleanupVirtualPadsButton_Click(object sender, EventArgs e)
+		{
+			var pads = VirtualDriverInstaller.GetLeftoverVirtualPads();
+			if (pads.Length == 0)
+			{
+				MessageBoxForm.Show("No virtual controllers have been left behind.",
+					"Remove Leftover Pads", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return;
+			}
+			// Say what the trouble is before asking, because the number on its own means nothing to
+			// somebody who does not know that only four XInput places exist.
+			var question = string.Format(
+				"{0} virtual controllers from earlier runs are still present.\r\n\r\n" +
+				"Windows offers only four XInput places, so these take the places this program needs " +
+				"and a controller can appear to move on its own.\r\n\r\n" +
+				"Remove them? Real controllers are not touched.", pads.Length);
+			var answer = MessageBoxForm.Show(question, "Remove Leftover Pads",
+				MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+			if (answer != DialogResult.Yes)
+				return;
+			// Windows does not let an ordinary program remove a device, so this takes the same route
+			// every other administrative action here takes: a second copy of this program starts as
+			// Administrator with the one argument and does the work. Called directly it simply failed,
+			// without saying so, and the pads stayed exactly where they were.
+			var doneHere = Program.RunElevated(AdminCommand.RemoveLeftoverPads);
+			if (doneHere)
+			{
+				// Already running as Administrator, so the work happened in this program and the
+				// outcome is known exactly.
+				bool rebootNeeded;
+				Exception error;
+				var removed = VirtualDriverInstaller.RemoveLeftoverVirtualPads(out rebootNeeded, out error);
+				var result = string.Format("Removed {0} of {1}.", removed, pads.Length);
+				if (rebootNeeded)
+					result += "\r\n\r\nRestart Windows to finish removing them.";
+				if (error != null)
+					result += "\r\n\r\nThe last one that could not be removed reported: " + error.Message;
+				MessageBoxForm.Show(result, "Remove Leftover Pads", MessageBoxButtons.OK,
+					error == null ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+			}
+			else
+			{
+				// The elevated copy runs on its own and this one cannot see what it did, so the count
+				// is simply taken again once it has had time to finish.
+				var left = VirtualDriverInstaller.GetLeftoverVirtualPads().Length;
+				var removed = pads.Length - left;
+				var result = removed > 0
+					? string.Format("Removed {0} of {1}.", removed, pads.Length)
+					: "Nothing was removed. The request to run as Administrator may have been refused.";
+				if (removed > 0 && left > 0)
+					result += "\r\n\r\nRestart Windows to finish removing the rest.";
+				MessageBoxForm.Show(result, "Remove Leftover Pads", MessageBoxButtons.OK,
+					removed > 0 ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+			}
+			Global.DHelper.UpdateDevicesEnabled = true;
 		}
 
 		private void AddDemoDevice_Click(object sender, EventArgs e)

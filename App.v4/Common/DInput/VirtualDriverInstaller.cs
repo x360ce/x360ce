@@ -2,6 +2,7 @@
 using JocysCom.ClassLibrary.Win32;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -43,6 +44,246 @@ namespace x360ce.App.DInput
 
 		public static string[] ViGEmBusHardwareIds = { "Root\\ViGEmBus", "Nefarius\\ViGEmBus\\Gen1" };
 		public const string HidGuardianHardwareId = "Root\\HidGuardian";
+
+		#region Pads left behind
+
+		/// <summary>
+		/// Pads created by the virtual bus and never removed, from a run that ended without shutting
+		/// down cleanly.
+		/// </summary>
+		/// <remarks>
+		/// The existing device clean-up looks for devices that are offline, flagged with a problem, or
+		/// unknown. A pad left behind is none of those: it is present, healthy, and simply nobody's.
+		/// It matters because only four XInput places exist, so a handful of these fill every one and
+		/// the pad this program creates is pushed out of reach. What a player sees then is a controller
+		/// that moves on its own, because the state on show belongs to somebody else's leftover.
+		/// </remarks>
+		public static DeviceInfo[] GetLeftoverVirtualPads()
+		{
+			var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+			var byId = IndexById(all);
+			return all
+				.Where(x => IsVirtualPad(x, byId))
+				// Not the ones this program is using right now. Offering to remove those would break
+				// the very thing somebody pressing the button is trying to repair.
+				.Where(x => !IsOneOfOurs(x, byId))
+				.OrderBy(x => x.DeviceId)
+				.ToArray();
+		}
+
+		/// <summary>
+		/// Whether a controller is one this program currently has plugged in.
+		/// </summary>
+		/// <remarks>
+		/// This program adds and removes controllers while it runs, so which ones are its own changes
+		/// from moment to moment. Anything decided once, at start-up, is wrong shortly afterwards: it
+		/// would miss one this program abandoned during the run, and would call one it created later
+		/// somebody else's.
+		///
+		/// The bus knows each controller by a number, and Windows puts that same number at the end of
+		/// the controller's name, as "&amp;01" for one and "&amp;02" for two. So the numbers of the
+		/// controllers this program is holding are asked for directly and matched against the name.
+		/// That is a clear reference to its own, rather than a guess from timing.
+		///
+		/// If the numbers cannot be read, nothing is claimed. Being wrong that way mentions a
+		/// controller that need not be mentioned; being wrong the other way offers to remove the one
+		/// in use.
+		/// </remarks>
+		public static bool IsOneOfOurs(DeviceInfo device, Dictionary<string, DeviceInfo> byId)
+		{
+			if (device == null || byId == null || string.IsNullOrEmpty(device.DeviceId))
+				return false;
+			var serials = OurSerials();
+			if (serials.Count == 0)
+				return false;
+			// A controller is not one device but a small family: the one the bus creates and the two
+			// beneath it that Windows adds. Only the top one carries the number, so the question is
+			// asked of the whole line of ancestors. Matching the name alone catches the top and misses
+			// the rest, and the ones missed are then reported as somebody's leftovers.
+			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var current = device;
+			while (current != null)
+			{
+				foreach (var serial in serials)
+					if (current.DeviceId != null &&
+						current.DeviceId.EndsWith("&" + serial.ToString("X2"), StringComparison.OrdinalIgnoreCase))
+						return true;
+				var parentId = current.ParentDeviceId;
+				if (string.IsNullOrEmpty(parentId) || !seen.Add(parentId))
+					return false;
+				DeviceInfo parent;
+				if (!byId.TryGetValue(parentId, out parent))
+					return false;
+				current = parent;
+			}
+			return false;
+		}
+
+		/// <summary>The bus numbers of the controllers this program is holding.</summary>
+		private static List<uint> OurSerials()
+		{
+			var serials = new List<uint>();
+			try
+			{
+				var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
+				var targets = client == null ? null : client.Targets;
+				if (targets == null)
+					return serials;
+				for (uint i = 1; i <= targets.Length; i++)
+				{
+					var target = targets[i - 1];
+					if (target == null || !client.IsControllerConnected(i))
+						continue;
+					var serial = target.Serial;
+					if (serial != 0)
+						serials.Add(serial);
+				}
+			}
+			catch (Exception)
+			{
+				// Nothing claimed as ours, which is the safe way to be wrong.
+				return new List<uint>();
+			}
+			return serials;
+		}
+
+		/// <summary>Devices arranged for walking upwards, since a walk asks for a parent by name.</summary>
+		public static Dictionary<string, DeviceInfo> IndexById(IEnumerable<DeviceInfo> devices)
+		{
+			var byId = new Dictionary<string, DeviceInfo>(StringComparer.OrdinalIgnoreCase);
+			if (devices == null)
+				return byId;
+			foreach (var device in devices)
+				if (!string.IsNullOrEmpty(device.DeviceId))
+					byId[device.DeviceId] = device;
+			return byId;
+		}
+
+		/// <summary>
+		/// True when a device is one of the pads this program feeds, rather than something a player holds.
+		/// </summary>
+		/// <param name="device">Device to judge.</param>
+		/// <param name="byId">Every known device, from <see cref="IndexById"/>.</param>
+		/// <remarks>
+		/// A pad the bus is still holding descends from the bus, and walking up to it says so. A pad left
+		/// behind by a run that ended badly does not: the node its chain points at has gone, so the walk
+		/// arrives nowhere. That broken chain is itself the answer, because real hardware hangs off a real
+		/// bus and always reaches the top of the tree.
+		///
+		/// A broken chain only counts against a device that carries the XInput marker, which is what the
+		/// pads this program creates carry. Keeping the rule that narrow means a wheel or a stick with an
+		/// odd chain is still shown to its owner, and only the shape this program itself produces can be
+		/// judged missing.
+		/// </remarks>
+		public static bool IsVirtualPad(DeviceInfo device, Dictionary<string, DeviceInfo> byId)
+		{
+			if (device == null || byId == null)
+				return false;
+			// Read from the identifier as well as the hardware list. A pad created moments ago has an
+			// empty hardware list, and reading only that let three freshly leaked pads through while
+			// catching the older ones. The identifier carries the marker from the moment the device
+			// exists, so it is the dependable half.
+			var couldBeOurs = CarriesInputGroup(device.HardwareIds) || CarriesInputGroup(device.DeviceId);
+			// The bus is what makes the pads; it is not one of them. Answering otherwise would put the
+			// virtual driver itself on a list whose whole purpose is to be deleted, and taking the bus
+			// away removes the ability to emulate anything at all.
+			if (IsViGEmBus(device))
+				return false;
+			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var current = device;
+			while (true)
+			{
+				var parentId = current.ParentDeviceId;
+				// The top of the tree, reached through devices that all exist: real hardware.
+				if (string.IsNullOrEmpty(parentId))
+					return false;
+				DeviceInfo parent;
+				if (!byId.TryGetValue(parentId, out parent))
+					// The chain ends at a device that is not there. For one of our pads that means it
+					// was left behind; for anything else it means nothing, and it is left alone.
+					return couldBeOurs;
+				// Descended from the bus, so the bus made it, so it is ours.
+				if (IsViGEmBus(parent))
+					return true;
+				// A chain that returns somewhere it has already been is not a chain. Stop, rather than
+				// walk it forever and take the window down with it.
+				if (!seen.Add(parentId))
+					return couldBeOurs;
+				current = parent;
+			}
+		}
+
+		/// <summary>
+		/// The same judgement applied to a device already written down, from what was written down.
+		/// </summary>
+		/// <remarks>
+		/// A scan only looks at devices it happens to enumerate on that pass, so a leftover that is not
+		/// enumerated stays in the list for ever, marked offline but never taken out. This reads the
+		/// identifiers already stored against the device and puts them through the same rule, so a list
+		/// is cleaned up whether or not the device turned up again.
+		/// </remarks>
+		public static bool IsVirtualPad(x360ce.Engine.Data.UserDevice device, Dictionary<string, DeviceInfo> byId)
+		{
+			if (device == null)
+				return false;
+			return IsVirtualPad(Described(device.HidDeviceId, device.HidParentDeviceId, device.HidHardwareIds), byId)
+				|| IsVirtualPad(Described(device.DevDeviceId, device.DevParentDeviceId, device.DevHardwareIds), byId);
+		}
+
+		private static DeviceInfo Described(string deviceId, string parentId, string hardwareIds)
+		{
+			return string.IsNullOrEmpty(deviceId)
+				? null
+				: new DeviceInfo { DeviceId = deviceId, ParentDeviceId = parentId, HardwareIds = hardwareIds };
+		}
+
+		/// <summary>True when a device is the virtual bus itself.</summary>
+		public static bool IsViGEmBus(DeviceInfo device)
+		{
+			return device != null
+				&& ViGEmBusHardwareIds.Any(x => string.Compare(device.HardwareIds, x, true) == 0);
+		}
+
+		/// <summary>
+		/// True when an identifier carries the XInput marker, which is how Microsoft documents telling an
+		/// XInput device from an ordinary one.
+		/// </summary>
+		public static bool CarriesInputGroup(string hardwareIds)
+		{
+			return !string.IsNullOrEmpty(hardwareIds)
+				&& hardwareIds.IndexOf("IG_", StringComparison.OrdinalIgnoreCase) >= 0;
+		}
+
+		/// <summary>
+		/// Removes pads left behind by earlier runs.
+		/// </summary>
+		/// <param name="rebootNeeded">True when Windows asked for a restart to finish the work.</param>
+		/// <returns>How many were removed.</returns>
+		/// <remarks>
+		/// Windows reports needing a restart as a failure code even though the device has gone. Reading
+		/// it as a failure is why a clean-up can look as though it did nothing while emptying the list.
+		/// </remarks>
+		public static int RemoveLeftoverVirtualPads(out bool rebootNeeded, out Exception error)
+		{
+			rebootNeeded = false;
+			error = null;
+			var removed = 0;
+			foreach (var pad in GetLeftoverVirtualPads())
+			{
+				bool restart;
+				var failure = DeviceDetector.RemoveDevice(pad.DeviceId, 1, out restart);
+				if (failure != null)
+				{
+					error = failure;
+					continue;
+				}
+				removed++;
+				rebootNeeded |= restart;
+			}
+			return removed;
+		}
+
+		#endregion
 
 		#region Driver state
 
@@ -104,20 +345,94 @@ namespace x360ce.App.DInput
 		/// Install Virtual driver.
 		/// </summary>
 		/// <remarks>Must be executed in administrative mode.</remarks>
-		public static void InstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
+		/// <summary>
+		/// Which driver command adds a bus and which one changes the bus already there.
+		/// </summary>
+		/// <param name="busCount">How many buses are on the computer now.</param>
+		/// <remarks>
+		/// Named and separated because the difference is invisible from the outside and costs nothing
+		/// until it has been paid many times over. "install" always makes a new bus and never looks at
+		/// what exists, so a computer asked to install ten times ends up with ten buses, none of which
+		/// looks wrong on its own.
+		/// </remarks>
+		public static string GetInstallCommand(int busCount)
+		{
+			return busCount > 0 ? "update" : "install";
+		}
+
+		/// <summary>Every virtual bus currently on this computer.</summary>
+		/// <remarks>
+		/// There is meant to be exactly one. More than one is the result of installing over an
+		/// existing bus, which is a thing this program used to do every time it was asked to install.
+		/// </remarks>
+		public static DeviceInfo[] GetViGEmBusInstances()
+		{
+			return DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT)
+				.Where(IsViGEmBus)
+				.ToArray();
+		}
+
+		/// <summary>
+		/// The driver package for the version of Windows this is running on, as a path inside the
+		/// folder the files are unpacked into.
+		/// </summary>
+		/// <remarks>
+		/// The two packages hold the same driver and differ in how they are signed, which is what
+		/// decides whether Windows will accept them. Windows 10 and later take the one signed for
+		/// Windows 10; everything older takes the other.
+		/// </remarks>
+		static string GetViGEmBusInfPath()
+		{
+			var forWindows10 = JocysCom.ClassLibrary.Controls.IssuesControl.IssueHelper
+				.GetRealOSVersion().Major >= 10;
+			return (forWindows10 ? "Win10" : "WinVS") + "\\ViGEmBus.inf";
+		}
+
+		/// <summary>
+		/// Installs the virtual bus driver, or updates the one already there.
+		/// </summary>
+		/// <returns>True when a bus is present afterwards.</returns>
+		/// <remarks>
+		/// Must be executed in administrative mode.
+		///
+		/// Installing and updating are different commands and picking the wrong one is what left
+		/// this computer with more than one bus. "install" makes a new bus every time it is run and
+		/// never looks at what is already there, so asking twice leaves two, asking ten times leaves
+		/// ten. "update" changes the driver on the bus that exists and makes nothing new.
+		///
+		/// So a bus is made only when there is none, and from then on it is updated in place.
+		/// </remarks>
+		public static bool InstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
 			// Extract files first.
 			ExtractViGemBusFiles(true);
 			var folder = GetViGEmBusPath();
-			var exePath = Path.Combine(folder, GetDevConPath());
-			var osString = JocysCom.ClassLibrary.Controls.IssuesControl.IssueHelper.GetRealOSVersion().Major >= 10
-				? "Win10" : "WinVS";
-			var infFile = string.Format("{0}\\{1}", osString, "ViGEmBus.inf");
-			UacHelper.RunElevated(
-				exePath,
-				// Use last ID.
-				"install " + infFile + " " + ViGEmBusHardwareIds.Last(),
-				style, true);
+			var infFile = GetViGEmBusInfPath();
+			// Use last ID.
+			var hardwareId = ViGEmBusHardwareIds.Last();
+			var command = GetInstallCommand(GetViGEmBusInstances().Length);
+			RunDevCon(folder, command + " " + infFile + " " + hardwareId, style);
+			// Report the state that was actually reached, not the command result.
+			return GetViGEmBusInstances().Any();
+		}
+
+		/// <summary>
+		/// Removes the virtual bus and puts it back, which is what recovers one that has stopped
+		/// working.
+		/// </summary>
+		/// <returns>True when a working bus is present afterwards.</returns>
+		/// <remarks>
+		/// Must be executed in administrative mode.
+		///
+		/// A bus can reach a state where it still answers, still reports itself healthy, and still
+		/// accepts a controller being plugged in, yet never brings that controller up. Nothing about
+		/// it looks wrong from outside, so there is nothing to detect and nothing to repair in place.
+		/// Taking it away and putting it back is what clears it.
+		/// </remarks>
+		public static bool RepairViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
+		{
+			UninstallViGEmBus(style);
+			return InstallViGEmBus(style);
 		}
 
 		/// <summary>
@@ -146,8 +461,17 @@ namespace x360ce.App.DInput
 			// Remove all old instances.
 			foreach (var ViGEmBusHardwareId in ViGEmBusHardwareIds)
 				RunDevCon(folder, "remove " + ViGEmBusHardwareId, style);
+			// Whatever is still there is removed one at a time. Removing by hardware identifier only
+			// reaches a bus that still answers to one, and a computer that has had a bus installed
+			// over an existing one can be left holding a node that no longer does. Leaving even one
+			// behind means the next install updates that one instead of making a working bus.
+			foreach (var bus in GetViGEmBusInstances())
+			{
+				bool restart;
+				DeviceDetector.RemoveDevice(bus.DeviceId, 1, out restart);
+			}
 			// Report the state that was actually reached, not the command result.
-			return GetInstalledViGEmBusVersion() == null;
+			return !GetViGEmBusInstances().Any();
 		}
 
 		#endregion

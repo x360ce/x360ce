@@ -91,6 +91,13 @@ namespace x360ce.App
 			ud.HidDescription = instanceName;
 			ud.HidClassGuid = new Guid("4d1e55b2-f16f-11cf-88cb-001111000030");
 			ud.IsEnabled = true;
+			// Describe the controls here rather than leaving it to whoever asks for a state. Reading a
+			// state from a device without them fails inside the reading, which reads as a fault in the
+			// device rather than as a step the caller was expected to know about.
+			ud.DeviceObjects = GetDeviceObjects();
+			ud.DiAxeMask = 0x1 | 0x2 | 0x4 | 0x8;
+			ud.DiSliderMask = 0;
+			ud.DeviceEffects = new DeviceEffectItem[0];
 			return ud;
 		}
 

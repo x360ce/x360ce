@@ -1,4 +1,18 @@
-﻿v4.18.23.0 (2026-08-26)
+﻿v4.18.35.0 (2026-08-27)
+- Added: A mapping row can hold a formula instead of a single control.
+- Added: An fx button on each mapping row turns it into a formula.
+- Added: Formulas can read the clock, in milliseconds since the program started.
+- Added: Issues tab lists virtual controllers left behind by earlier runs and removes them.
+- Fixed: Controller picture stayed grey, or moved while nothing was touched.
+- Fixed: Virtual controllers left behind by earlier runs appeared as real devices and returned after every restart.
+- Fixed: Removing leftover virtual controllers did nothing unless already running as Administrator.
+- Fixed: Installing the virtual bus driver added another one each time.
+- Fixed: Program used a whole processor core while doing nothing.
+- Fixed: Devices tab buttons and the HID Guardian menu had no icons.
+- Changed: Mapping rows can be reached by name by a screen reader.
+- Known: A formula is limited to 16 characters, which is what a mapping is stored in.
+
+v4.18.23.0 (2026-08-26)
 - Fixed: Crash reports named no file or line, so a failure could not be traced to code.
 - Fixed: A failure in work sent to the interface was reported late and without a stack.
 - Fixed: Errors were never recorded, so problems could not be reported.

@@ -583,6 +583,11 @@ namespace x360ce.App
 
 		public void SetComboBoxValue(ComboBox cbx, string text)
 		{
+			// While a box is holding an expression, a control name is written into it at the cursor
+			// rather than replacing what is there. Both the list and the recorder arrive here, so both
+			// keep working while an expression is being typed, and neither needed changing.
+			if (Controls.MapExpressionToggle.InsertControlName(cbx, text))
+				return;
 			// Remove value from other box.
 			var controls = SettingsMap.Select(x => x.Control).ToArray();
 			foreach (Control control in controls)
@@ -654,6 +659,11 @@ namespace x360ce.App
 			else if (control is ComboBox)
 			{
 				var cbx = (ComboBox)control;
+				// A stored expression puts its row into expression mode, so what a person sees matches
+				// what is saved. Without this, a mapping written as a function would open showing an
+				// empty dropdown and the next save would replace it with nothing.
+				if (Controls.MapExpressionToggle.ShowExpression(cbx, value))
+					return;
 				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
 				if (map != null && map.Code != default)
 				{
@@ -762,6 +772,12 @@ namespace x360ce.App
 				var map = SettingsMap.FirstOrDefault(x => x.Control == control);
 				if (map != null && map.Code != default)
 				{
+					// A formula is stored exactly as it was typed. What follows translates the name of
+					// one control into how that control is stored, and a formula is not the name of a
+					// control, so putting it through that turns it into nothing and the row silently
+					// reverts to whatever it was mapped to before.
+					if (MapExpression.IsExpression(control.Text))
+						return control.Text.Trim();
 					v = SettingsConverter.ToIniValue(control.Text);
 					// make sure that disabled button value is "0".
 					if (SettingName.IsButton(key) && string.IsNullOrEmpty(v))

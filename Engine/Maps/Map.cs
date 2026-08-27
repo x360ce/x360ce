@@ -46,6 +46,16 @@ namespace x360ce.Engine
 
 		void Load(string value)
 		{
+			// A formula is compiled once here, where a mapping is read, rather than every time the
+			// controller is polled. What follows describes a single control and cannot describe a
+			// formula, so the two are kept apart and only one of them is ever set.
+			if (MapExpression.IsExpression(value))
+			{
+				string error;
+				int position;
+				MapExpression.TryParse(value, out Expression, out error, out position);
+				return;
+			}
 			SettingsConverter.TryParseIniValue(value, out Type, out Index);
 			IsButton = SettingsConverter.IsButton(Type);
 			IsAxis = SettingsConverter.IsAxis(Type);
@@ -53,6 +63,16 @@ namespace x360ce.Engine
 			IsHalf = SettingsConverter.IsHalf(Type);
 			IsInverted = SettingsConverter.IsInverted(Type);
 		}
+
+		/// <summary>
+		/// The formula this row is driven by, or null when it is mapped to a single control.
+		/// </summary>
+		/// <remarks>
+		/// Null also covers a formula that would not compile. A mapping that cannot be read does
+		/// nothing, which is the same as one that was never set, and is what stops a mistyped formula
+		/// from taking a controller down mid-game.
+		/// </remarks>
+		public MapExpression Expression;
 
 		// Source Parameters.
 		public MapType Type;
