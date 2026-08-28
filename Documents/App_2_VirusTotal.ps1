@@ -197,19 +197,40 @@ function Invoke-VirusTotal {
         Method             = $Method
         Headers            = $headers
         SkipHttpErrorCheck = $true
-        StatusCodeVariable = "status"
         TimeoutSec         = 300
     }
     if ($Body) { $arguments.Body = $Body }
     if ($Form) { $arguments.Form = $Form }
-    $response = Invoke-RestMethod @arguments
-    return [PSCustomObject]@{ Status = $status; Body = $response }
+    $response = Invoke-WebRequest @arguments
+    # Read as a hash table rather than letting the answer be turned into an object.
+    #
+    # A VirusTotal report can carry a property whose name is an empty string, and
+    # ConvertFrom-Json refuses one of those unless it is building a hash table.
+    # Invoke-RestMethod, which converts for you, does not report that: it hands back
+    # the raw text instead, every property reads as empty, and a file VirusTotal
+    # knows all about is reported as never seen. A wrong answer nobody can see is
+    # worse than an error, and it invites an upload the file did not need.
+    $body = $null
+    if ($response.Content) {
+        $body = $response.Content | ConvertFrom-Json -AsHashtable
+    }
+    return [PSCustomObject]@{ Status = [int]$response.StatusCode; Body = $body }
 }
 
 function Get-Report {
     param([string]$Sha256, [string]$Name)
     $response = Invoke-VirusTotal "files/$Sha256"
-    if ($response.Status -eq 200) { return $response.Body.data }
+    if ($response.Status -eq 200) {
+        # An answer that arrived but cannot be read is not the same as a file
+        # VirusTotal has never seen, and must never be reported as one. Saying so
+        # here is what turns the next parsing surprise into a message instead of a
+        # file wrongly called unknown and needlessly offered for submission.
+        if ($null -eq $response.Body -or $null -eq $response.Body.data) {
+            throw ("VirusTotal answered 200 for $Name but the report could not be read. " +
+                "Treating it as unseen would be wrong, so the run stops here.")
+        }
+        return $response.Body.data
+    }
     # Not seen before, which is normal for a file which has just been built.
     if ($response.Status -eq 404) { return $null }
     # The two answers worth naming, because the fix for each is a different one.
@@ -269,9 +290,18 @@ function Get-Detection {
     param($Report)
     $results = $Report.attributes.last_analysis_results
     if (-not $results) { return @() }
-    return @($results.PSObject.Properties |
-        Where-Object { $_.Value.category -in @("malicious", "suspicious") } |
-        ForEach-Object { $_.Name } | Sort-Object)
+    return @($results.Keys |
+        Where-Object { $results[$_].category -in @("malicious", "suspicious") } |
+        Sort-Object)
+}
+
+# How many engines answered at all, which is the number a count of detections is
+# out of. Zero when the file has been seen but not yet analysed.
+function Get-EngineCount {
+    param($Report)
+    $results = $Report.attributes.last_analysis_results
+    if (-not $results) { return 0 }
+    return $results.Count
 }
 
 #------------------------------------------------------------------------------
@@ -324,17 +354,20 @@ function Send-ForAnalysis {
 function Add-Result {
     param($File, $Report)
     $detections = Get-Detection $Report
-    $total = @($Report.attributes.last_analysis_results.PSObject.Properties).Count
+    $total = Get-EngineCount $Report
     $known = @(if ($baseline.ContainsKey($File.Name)) { $baseline[$File.Name] } else { @() })
     $accepted[$File.Name] = $detections
     if ($detections.Count -eq 0) {
         Write-Host ("  {0,-10}  {1}  (0 of {2})" -f "clean", $File.Name, $total)
+        # Under every file, whatever the verdict. A clean answer is the one most
+        # worth being able to show somebody else, and what each engine actually
+        # said is on that page while the count here is not.
+        Write-Host ("              {0}" -f (Get-VirusTotalLink $File.Hash))
         return
     }
     $unexpected = @($detections | Where-Object { $_ -notin $known })
     $state = if ($unexpected.Count -gt 0) { "FLAGGED" } else { "known" }
     Write-Host ("  {0,-10}  {1}  ({2} of {3}: {4})" -f $state, $File.Name, $detections.Count, $total, ($detections -join ", "))
-    # What each engine actually says is on the page, and the counts here are not.
     Write-Host ("              {0}" -f (Get-VirusTotalLink $File.Hash))
     if ($unexpected.Count -gt 0) {
         $problems.Add("$($File.Name) is flagged by $($unexpected -join ', '), which the baseline does not accept." +
