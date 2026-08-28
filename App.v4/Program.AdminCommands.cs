@@ -16,6 +16,24 @@ namespace x360ce.App
 		/// <summary>
 		/// Returns true if command was executed locally.
 		/// </summary>
+		/// <summary>Result the elevated copy reports back.</summary>
+		/// <remarks>
+		/// Windows refuses to remove a device anything still holds open and says so, but the work is
+		/// done by a second copy of this program running as Administrator, and what it learned used to
+		/// go to a console window that flashes and closes. So the refusal was invisible: the person
+		/// pressed a button, nothing happened, and nothing said anything.
+		/// </remarks>
+		public enum AdminResult
+		{
+			Done = 0,
+			Failed = 1,
+			RestartNeeded = 2,
+			Unknown = -1,
+		}
+
+		/// <summary>What the last elevated command reported.</summary>
+		public static AdminResult LastAdminResult = AdminResult.Unknown;
+
 		public static bool RunElevated(AdminCommand command, string param = null)
 		{
 			// If program is running as Administrator already.
@@ -33,12 +51,15 @@ namespace x360ce.App
 			}
 			else
 			{
-				// Run copy of x360ce as Administrator.
-				JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
+				// Run copy of x360ce as Administrator. It waits, so what Windows said is available.
+				var exitCode = JocysCom.ClassLibrary.Win32.UacHelper.RunElevated(
 					Application.ExecutablePath,
 					argument,
 					System.Diagnostics.ProcessWindowStyle.Hidden
 				);
+				LastAdminResult = System.Enum.IsDefined(typeof(AdminResult), exitCode)
+					? (AdminResult)exitCode
+					: AdminResult.Unknown;
 				return false;
 			}
 		}
@@ -81,7 +102,11 @@ namespace x360ce.App
 					Console.WriteLine("Restart Windows to finish removing them.");
 				if (error != null)
 					Console.WriteLine("Last failure: {0}", error.Message);
-				Environment.ExitCode = error == null ? 0 : 1;
+				// Needing a restart is not a failure and must not be reported as one. It is the ordinary
+				// outcome when something else holds the controller open, and Windows' own shell does.
+				Environment.ExitCode = rebootNeeded
+					? (int)AdminResult.RestartNeeded
+					: error == null ? (int)AdminResult.Done : (int)AdminResult.Failed;
 				return true;
 			}
 			if (ic.Parameters.ContainsKey(AdminCommand.UninstallHidGuardian.ToString()))

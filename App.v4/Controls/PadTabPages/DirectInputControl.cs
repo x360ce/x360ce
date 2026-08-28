@@ -501,7 +501,7 @@ namespace x360ce.App.Controls
 				sb.AppendFormat(format, o.Offset, o.TypeName, o.AspectName, o.Flags, o.Instance, o.Name);
 				sb.AppendLine();
 			}
-			Clipboard.SetDataObject(sb.ToString());
+			ControlsHelper.CopyToClipboardOrWarn(sb.ToString());
 		}
 
 		void CopyDiEffectsInformation()
@@ -537,7 +537,7 @@ namespace x360ce.App.Controls
 				sb.AppendFormat(format, o.Name, o.StaticParameters, o.DynamicParameters);
 				sb.AppendLine();
 			}
-			Clipboard.SetDataObject(sb.ToString());
+			ControlsHelper.CopyToClipboardOrWarn(sb.ToString());
 		}
 
 

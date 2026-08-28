@@ -8,7 +8,6 @@ using x360ce.App.Forms;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using System.ComponentModel;
-using JocysCom.ClassLibrary.IO;
 using System.Drawing;
 using x360ce.App.DInput;
 using System.Threading.Tasks;
@@ -111,15 +110,11 @@ namespace x360ce.App.Controls
 			var item = (UserDevice)row.DataBoundItem;
 			if (column == IsOnlineColumn)
 			{
-				e.Value = item.IsOnline
-					? Properties.Resources.bullet_square_glass_green
-					: Properties.Resources.bullet_square_glass_grey;
+				e.Value = AppHelper.GetOnlineIcon(item.IsOnline);
 			}
 			else if (column == ConnectionClassColumn)
 			{
-				e.Value = item.ConnectionClass == Guid.Empty
-					? new Bitmap(16, 16)
-					: DeviceDetector.GetClassIcon(item.ConnectionClass, 16)?.ToBitmap();
+				e.Value = AppHelper.GetConnectionClassIcon(item.ConnectionClass);
 			}
 			else if (column == IsHiddenColumn)
 			{

@@ -13,6 +13,7 @@ namespace x360ce.App.DInput
 		{
 			CombinedXiConencted = new bool[4];
 			CombinedXiStates = new State[4];
+			VirtualErrors = new VirtualError[4];
 			LiveXiControllers = new Controller[4];
 			LiveXiConnected = new bool[4];
 			LiveXiStates = new State[4];
@@ -115,6 +116,14 @@ namespace x360ce.App.DInput
 				}
 			}
 		}
+
+		/// <summary>What the virtual bus last said about each of the four places.</summary>
+		/// <remarks>
+		/// Kept because it used to be thrown away. A controller that could not be made left the light
+		/// showing whatever it showed before, no message anywhere, and nothing to look at: the person
+		/// is told the emulator is on and the game receives nothing.
+		/// </remarks>
+		public VirtualError[] VirtualErrors;
 
 		public Exception LastException = null;
 

@@ -1,4 +1,29 @@
-﻿v4.18.40.0 (2026-08-27)
+﻿v4.18.63.0 (2026-08-28)
+- Added: Lists dim the rows of controllers that are switched off or unplugged.
+- Added: Controller tabs explain what their light means.
+- Added: Issues tab reports a virtual controller Windows did not finish building.
+- Added: Issues tab says when a restart is needed to finish removing controllers.
+- Added: Buttons that ask for Administrator show the shield before they are pressed.
+- Fixed: Controller tab showed a green light when no virtual controller existed.
+- Fixed: Chart stopped updating on the Triggers and Thumb pages for a row using a formula.
+- Fixed: Chart line ignored the formula and drew the dead zone settings instead.
+- Fixed: Controllers this program created were listed as left behind by earlier runs.
+- Fixed: Removing leftover controllers was refused because the program still held them.
+- Fixed: Removing leftover controllers reported failures for ones that were not plugged in.
+- Fixed: One controller that could not be created stopped the other three being tried.
+- Fixed: A controller plugged in while running was not noticed until the program restarted.
+- Fixed: A controller just plugged in showed blank or wrong details in the lists.
+- Fixed: Crash report subject did not say which program and version it came from.
+- Fixed: Opening a window in the Visual Studio designer failed.
+- Changed: Auto button on a controller page is now named Auto Preset.
+- Changed: Buttons at the bottom of a controller page size themselves to their labels.
+- Changed: Help pages come from one document each, so both versions show the same text.
+- Fixed: Help page put the indent after a bullet or number instead of before it.
+- Fixed: Add button on a controller page could close the program.
+- Fixed: Cancelling the add device window added the devices chosen the time before.
+- Fixed: Copying a preset could close the program while another program held the clipboard.
+
+v4.18.40.0 (2026-08-27)
 - Fixed: A formula had no effect until the box was left.
 - Added: The fx button turns green when the formula works and red when it does not.
 

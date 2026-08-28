@@ -57,7 +57,9 @@ namespace JocysCom.ClassLibrary.Controls
 				return;
 			var asm = new AssemblyInfo();
 			var errors = dir.GetFiles("*.htm").OrderByDescending(x => x.CreationTime).ToArray();
-			SubjectTextBox.Text = string.Format("Problem with {0}", asm.Product);
+			// Company, product and version, so a report can be sorted without opening it. The version
+			// matters most: the same fault arrives for months from people still on an older build.
+			SubjectTextBox.Text = string.Format("Issue with {0} {1} {2}", asm.Company, asm.Product, asm.Version);
 			ErrorComboBox.DisplayMember = nameof(FileInfo.Name);
 			ErrorComboBox.DataSource = errors;
 			if (errors.Length > 0)

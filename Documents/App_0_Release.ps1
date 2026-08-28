@@ -383,7 +383,9 @@ function Write-Result {
         foreach ($file in $files) {
             $size = "{0,9:N0} KB" -f [math]::Ceiling($file.Length / 1KB)
             $state = ""
-            if ($file.Extension -in ".exe", ".dll") {
+            # A cabinet carries a signature of its own, which is the reason it is
+            # built, so the report says whether it actually got one.
+            if ($file.Extension -in ".exe", ".dll", ".cab") {
                 $state = (Get-AuthenticodeSignature -LiteralPath $file.FullName).Status
             }
             Write-Host "    $size  $($file.Name)  $state"

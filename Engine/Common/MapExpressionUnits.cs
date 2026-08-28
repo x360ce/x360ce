@@ -47,6 +47,81 @@ namespace x360ce.Engine
 			return true;
 		}
 
+		/// <summary>What a formula answers for one reading of its sources.</summary>
+		/// <remarks>
+		/// The device loop and the chart on the mapping page both need this and used to work it out
+		/// separately: the loop through the formula, the chart through the dead zone settings the
+		/// formula replaces. So the chart drew the wrong shape, and drew nothing at all once a formula
+		/// was switched on. Asking the same question in one place is the point.
+		/// </remarks>
+		/// <param name="buffer">Room for the sources, at least MaxReferences long.</param>
+		public static bool TryEvaluate(MapExpression expression, CustomDiState state, bool isThumb, float[] buffer, out float value)
+		{
+			value = 0f;
+			if (!TryFill(expression, state, buffer, isThumb))
+				return false;
+			value = expression.Evaluate(buffer);
+			return true;
+		}
+
+		/// <summary>What a formula answers when one named source is at a given reading.</summary>
+		/// <remarks>
+		/// Used to draw the line on the mapping page, which shows what this control alone produces
+		/// across its whole travel. Everything else the formula names is left at rest, which is what
+		/// the line has always meant: the response to this control and nothing else.
+		/// </remarks>
+		/// <param name="raw">Reading of the swept source, in DirectInput units.</param>
+		public static bool TrySweep(MapExpression expression, MapReference swept, int raw, bool isThumb, float[] buffer, out float value)
+		{
+			value = 0f;
+			if (expression == null || buffer == null)
+				return false;
+			var references = expression.References;
+			if (buffer.Length < references.Count)
+				return false;
+			for (int i = 0; i < references.Count; i++)
+				buffer[i] = Equals(references[i], swept)
+					? Convert(references[i], raw, isThumb)
+					: 0f;
+			value = expression.Evaluate(buffer);
+			return true;
+		}
+
+		/// <summary>One reading turned into the units a formula is written in.</summary>
+		/// <remarks>Split out of Read so a reading can come from a sweep instead of a device.</remarks>
+		public static float Convert(MapReference reference, int raw, bool isThumb)
+		{
+			switch (reference.Type)
+			{
+				case 'a':
+					return isThumb ? Centred(raw) : Whole(raw);
+				case 'x':
+					return Positive(raw);
+				case 's':
+					return Whole(raw);
+				case 'h':
+					return Positive(raw);
+				default:
+					// A button, a hat direction or the clock: not something a sweep moves.
+					return 0f;
+			}
+		}
+
+		/// <summary>The source a chart sweeps for this formula, or null when it has none.</summary>
+		/// <remarks>
+		/// The first source that moves through a range. A formula naming only buttons has no line to
+		/// draw, because a button has two readings rather than a travel.
+		/// </remarks>
+		public static MapReference? GetSweptSource(MapExpression expression)
+		{
+			if (expression == null)
+				return null;
+			foreach (var reference in expression.References)
+				if (reference.Type == 'a' || reference.Type == 'x' || reference.Type == 's' || reference.Type == 'h')
+					return reference;
+			return null;
+		}
+
 		/// <summary>One control's value, in the units a formula is written in.</summary>
 		/// <remarks>
 		/// A control the device does not have reads as nought rather than failing. A formula naming

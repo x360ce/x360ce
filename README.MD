@@ -6,7 +6,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.18.35.0 and Virtual Gamepad Emulation Bus 1.16.112.0
+Digitally Signed Application v4.18.63.0 and Virtual Gamepad Emulation Bus 1.16.112.0
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -185,4 +185,12 @@ This can occur for a number of reasons:
 
 # Screenshots
 
-![http://www.jocys.com/projects/x360ce/Images/x360ce_General.png](http://www.jocys.com/projects/x360ce/Images/x360ce_General.png)
+Mapping a controller. Each Xbox control on the right names the button or axis on your own
+controller that drives it, and the fx button beside it turns that mapping into a formula.
+
+![Controller 1 General tab, mapping a Logitech Cordless RumblePad 2 to an Xbox controller](docs/.attachments/x360ce-v4-general.png)
+
+Tuning a thumb stick. The curve shows what the game receives for how far you push, so a dead
+zone, an anti-dead zone and a sensitivity change can be seen before the game is started.
+
+![Right Thumb tab, showing the response curve of each axis with its dead zone settings](docs/.attachments/x360ce-v4-rthumb.png)

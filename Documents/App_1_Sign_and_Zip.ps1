@@ -40,23 +40,29 @@
                source file inside "FilesDir".
       Zip    - the zip built from Target, named inside "FilesDir". Optional,
                leave it out to sign without zipping.
+      Cab    - the cabinet built from Target, named inside "FilesDir". Optional.
+               A cabinet holds an Authenticode signature of its own, which a zip
+               cannot, so the download itself can be checked before anything is
+               unpacked. It is built after the file inside it is signed, and is
+               then signed as well.
 
     Paths are relative to the folder of this script, except "Zip" which is a
     plain name inside "FilesDir". Two files may name the same Target, which
     packs one signed file into more than one zip. It is copied and signed once.
 
-    Three steps are offered:
+    Four steps are offered:
 
       Sign - copy every source over its target and sign the target.
       Zip  - build the zip of every file which names one.
+      Cab  - build the cabinet of every file which names one, and sign it.
       Copy - copy every source over its target without signing.
 
     When more than one file is configured the step asks which one to work on,
     or all of them.
 
-    The full release, menu item 1 and the "All" action, deletes the zip before
-    compressing so it never holds a file left over from an earlier release. The
-    separate "Zip" step keeps the existing zip when nothing changed.
+    The full release, menu item 1 and the "All" action, deletes the zip and the
+    cabinet before packing so neither holds a file left over from an earlier
+    release. The separate "Zip" step keeps the existing zip when nothing changed.
 .PARAMETER Action
     Runs one action over every file and exits instead of showing the menu.
 .PARAMETER Force
@@ -82,7 +88,7 @@
 #>
 param(
     [Parameter(Position = 0)]
-    [ValidateSet("Sign", "Zip", "Copy", "All")]
+    [ValidateSet("Sign", "Zip", "Cab", "Copy", "All")]
     [string]$Action,
     [switch]$Force,
     [string]$Stage
@@ -146,6 +152,10 @@ function Get-Targets {
                 $label = "$dir/$($file.Zip)"
                 $zip = Resolve-Path2 $label
             }
+            $cab = ""
+            if ($file.Cab) {
+                $cab = Resolve-Path2 "$dir/$($file.Cab)"
+            }
             [PSCustomObject]@{
                 App        = $app
                 SourceText = $sourceText
@@ -153,6 +163,7 @@ function Get-Targets {
                 Target     = Resolve-Path2 $targetText
                 Label      = $label
                 Zip        = $zip
+                Cab        = $cab
             }
         }
     }
@@ -183,23 +194,46 @@ function Copy-Sources {
     }
 }
 
+function Test-SignModule {
+    if ((Get-Command Sign-Files -ErrorAction SilentlyContinue) -or (Get-Command Sign-File -ErrorAction SilentlyContinue)) {
+        return $true
+    }
+    Write-Host "Signing module not found: $([System.Environment]::ExpandEnvironmentVariables(($config.SignModule | Select-Object -Unique)))"
+    return $false
+}
+
+# One run of the signing tool for the files of one application. A module which can
+# take several files signs them in that one run, which asks for the card PIN once
+# instead of once per file. An older module without it still works, one at a time.
+# The description and the link written into a signature belong to one application,
+# which is why the caller groups the files by application before calling here.
+function Invoke-SignModule {
+    param($App, $Paths)
+    $global:AppName = $App.AppName
+    $global:AppLink = $App.AppLink
+    foreach ($path in $Paths) {
+        Write-Host "Signing file: $path"
+    }
+    if (Get-Command Sign-Files -ErrorAction SilentlyContinue) {
+        Sign-Files -FilePath $Paths
+        return
+    }
+    foreach ($path in $Paths) {
+        Sign-File -FilePath $path
+        # Brief delay so the USB token can process the next request.
+        Start-Sleep -Seconds 2
+    }
+}
+
 function Invoke-Sign {
     param($Targets)
-    # A module which can take several files signs them in one run of the signing
-    # tool, which asks for the card PIN once instead of once per file. An older
-    # module without it still works, one file at a time.
-    $batch = [bool](Get-Command Sign-Files -ErrorAction SilentlyContinue)
-    if (-not $batch -and -not (Get-Command Sign-File -ErrorAction SilentlyContinue)) {
-        Write-Host "Signing module not found: $([System.Environment]::ExpandEnvironmentVariables(($config.SignModule | Select-Object -Unique)))"
+    if (-not (Test-SignModule)) {
         return
     }
     Copy-Sources $Targets
     # Detect the signing hardware once per run.
     $global:SignProfileCache = $null
     $done = @{}
-    # The description and the link written into a signature belong to one
-    # application, so each application's files are signed together and no two
-    # applications share a run.
     foreach ($app in $config) {
         $paths = New-Object System.Collections.Generic.List[string]
         foreach ($item in $Targets | Where-Object { $_.App -eq $app }) {
@@ -224,21 +258,99 @@ function Invoke-Sign {
         if ($paths.Count -eq 0) {
             continue
         }
-        $global:AppName = $app.AppName
-        $global:AppLink = $app.AppLink
-        foreach ($path in $paths) {
-            Write-Host "Signing file: $path"
+        Invoke-SignModule -App $app -Paths $paths.ToArray()
+    }
+}
+
+# One cabinet holding one file, under the name that file already has.
+#
+# Driven by a directive file rather than by "makecab source destination", because
+# that short form stores the file under the name of the cabinet: the download then
+# unpacks to x360ce.cab instead of x360ce.exe. The directive file names the entry
+# explicitly, and it is the only way to say so.
+#
+# LZX with the largest window packs the executables well under the size of the zip
+# of the same file. MaxDiskSize=0 keeps the result to one cabinet: the default
+# splits at a media size, and half a release is not a download.
+#
+# makecab writes a report and an inf beside itself, so it runs in a folder of its
+# own which is removed afterwards, and only the cabinet reaches the output folder.
+function New-Cabinet {
+    param([string]$Target, [string]$Cab)
+    $work = Join-Path ([System.IO.Path]::GetTempPath()) ("makecab_" + [System.Guid]::NewGuid().ToString("N"))
+    New-Item -ItemType Directory -Path $work | Out-Null
+    try {
+        $directives = Join-Path $work "cabinet.ddf"
+        Set-Content -LiteralPath $directives -Encoding ASCII -Value @(
+            ".OPTION EXPLICIT",
+            ".Set CabinetNameTemplate=$([System.IO.Path]::GetFileName($Cab))",
+            ".Set DiskDirectory1=$([System.IO.Path]::GetDirectoryName($Cab))",
+            ".Set CompressionType=LZX",
+            ".Set CompressionMemory=21",
+            ".Set MaxDiskSize=0",
+            ".Set Cabinet=on",
+            ".Set Compress=on",
+            "`"$Target`" `"$([System.IO.Path]::GetFileName($Target))`""
+        )
+        # Its progress is a percentage repainted hundreds of times, which is noise in
+        # a release log, so it goes to a file inside the folder that is thrown away.
+        $log = Join-Path $work "makecab.log"
+        $process = Start-Process makecab.exe -ArgumentList "/F", "`"$directives`"" `
+            -WorkingDirectory $work -NoNewWindow -Wait -PassThru -RedirectStandardOutput $log
+        if ($process.ExitCode -ne 0) {
+            Get-Content -LiteralPath $log -Tail 5 -ErrorAction SilentlyContinue | ForEach-Object { Write-Host "  $_" }
+            throw "makecab failed ($($process.ExitCode)) for: $Cab"
         }
-        if ($batch) {
-            Sign-Files -FilePath $paths.ToArray()
+        if (-not (Test-Path -LiteralPath $Cab)) {
+            throw "makecab reported success but wrote no cabinet: $Cab"
         }
-        else {
-            foreach ($path in $paths) {
-                Sign-File -FilePath $path
-                # Brief delay so the USB token can process the next request.
-                Start-Sleep -Seconds 2
+    }
+    finally {
+        Remove-Item -LiteralPath $work -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
+# A cabinet is the archive Windows itself can check. Authenticode has nowhere to
+# put a signature in a zip, so a zip can only be trusted after it is unpacked and
+# the file inside it is examined; a cabinet carries the signature, so the download
+# is verifiable as it stands, from its Properties page, with nothing installed.
+#
+# It is packed after the signing step because the file it holds has to carry its
+# own signature first, and it is signed itself once it exists, which is a second
+# request to the token.
+function Invoke-Cab {
+    param($Targets, [switch]$Fresh)
+    $wanted = @($Targets | Where-Object { $_.Cab })
+    if ($wanted.Count -eq 0) {
+        return
+    }
+    if (-not (Test-SignModule)) {
+        return
+    }
+    Copy-Sources $Targets -OnlyIfMissing
+    foreach ($app in $config) {
+        $paths = New-Object System.Collections.Generic.List[string]
+        foreach ($item in $wanted | Where-Object { $_.App -eq $app }) {
+            if (-not (Test-Path -LiteralPath $item.Target)) {
+                Write-Host "Nothing to pack: $($item.Target)"
+                continue
             }
+            if ($Fresh -and (Test-Path -LiteralPath $item.Cab)) {
+                Remove-Item -LiteralPath $item.Cab -Force
+                Write-Host "Removed: $($item.Cab)"
+            }
+            $cabDir = [System.IO.Path]::GetDirectoryName($item.Cab)
+            if (-not (Test-Path -LiteralPath $cabDir)) {
+                New-Item -ItemType Directory -Path $cabDir | Out-Null
+            }
+            New-Cabinet -Target $item.Target -Cab $item.Cab
+            Write-Host "Packed: $($item.Cab)"
+            $paths.Add($item.Cab)
         }
+        if ($paths.Count -eq 0) {
+            continue
+        }
+        Invoke-SignModule -App $app -Paths $paths.ToArray()
     }
 }
 
@@ -285,8 +397,9 @@ function Invoke-Action {
     switch ($Name) {
         "Sign" { Invoke-Sign $Targets }
         "Zip" { Invoke-Zip $Targets }
+        "Cab" { Invoke-Cab $Targets }
         "Copy" { Copy-Sources $Targets }
-        "All" { Invoke-Sign $Targets; Invoke-Zip $Targets -Fresh }
+        "All" { Invoke-Sign $Targets; Invoke-Zip $Targets -Fresh; Invoke-Cab $Targets -Fresh }
     }
 }
 
@@ -340,10 +453,11 @@ while ($true) {
         }
     }
     Write-Host ""
-    Write-Host "  1 - Sign and zip.  Sign, then build the zip from scratch."
+    Write-Host "  1 - Full release.  Sign, then build the zip and the cabinet from scratch."
     Write-Host "  2 - Sign only.     Copy over the target and sign it."
     Write-Host "  3 - Zip only.      Rebuild the zip when the content changed."
-    Write-Host "  4 - Copy only.     Copy over the target without signing."
+    Write-Host "  4 - Cab only.      Rebuild the cabinet and sign it."
+    Write-Host "  5 - Copy only.     Copy over the target without signing."
     Write-Host "  Q - Quit"
     Write-Host ""
     $choice = Read-Host "  Choice"
@@ -354,7 +468,8 @@ while ($true) {
         "1" { "All" }
         "2" { "Sign" }
         "3" { "Zip" }
-        "4" { "Copy" }
+        "4" { "Cab" }
+        "5" { "Copy" }
         default { "" }
     }
     if (-not $name) {

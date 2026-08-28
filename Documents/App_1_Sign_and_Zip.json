@@ -1,4 +1,4 @@
-{
+﻿{
   "Solution": "../x360ce.slnx",
   "Configuration": "Release",
   "Stages": [
@@ -164,16 +164,19 @@
       "Files": [
         {
           "Source": "../App.v3/bin/Release_x86/x360ce.exe",
-          "Zip": "x360ce.zip"
+          "Zip": "x360ce.zip",
+          "Cab": "x360ce.cab"
         },
         {
           "Source": "../App.v3/bin/Release_x86/x360ce.exe",
-          "Zip": "x360ce_x86.zip"
+          "Zip": "x360ce_x86.zip",
+          "Cab": "x360ce_x86.cab"
         },
         {
           "Source": "../App.v3/bin/Release_x64/x360ce.exe",
           "Target": "Files.v3/x360ce_x64.exe",
-          "Zip": "x360ce_x64.zip"
+          "Zip": "x360ce_x64.zip",
+          "Cab": "x360ce_x64.cab"
         }
       ]
     },
@@ -187,7 +190,8 @@
       "Files": [
         {
           "Source": "../App.v4/bin/Release/x360ce.exe",
-          "Zip": "x360ce.zip"
+          "Zip": "x360ce.zip",
+          "Cab": "x360ce.cab"
         }
       ]
     }

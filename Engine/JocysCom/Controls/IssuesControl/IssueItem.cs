@@ -63,6 +63,14 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 
 		public int FixType;
 
+		/// <summary>Whether pressing the fix asks Windows for Administrator.</summary>
+		/// <remarks>
+		/// Shown as the shield Windows puts on any control that raises that question, so the person
+		/// knows a prompt is coming before they press rather than after. Windows uses the same mark
+		/// everywhere for this, and a prompt nobody expected reads as something having gone wrong.
+		/// </remarks>
+		public bool FixNeedsAdmin;
+
 		public string FixName
 		{
 			get { return _FixName; }

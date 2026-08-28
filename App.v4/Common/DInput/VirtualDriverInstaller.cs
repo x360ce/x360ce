@@ -104,10 +104,8 @@ namespace x360ce.App.DInput
 			var current = device;
 			while (current != null)
 			{
-				foreach (var serial in serials)
-					if (current.DeviceId != null &&
-						current.DeviceId.EndsWith("&" + serial.ToString("X2"), StringComparison.OrdinalIgnoreCase))
-						return true;
+				if (serials.Contains(TrailingNumber(current.DeviceId)))
+					return true;
 				var parentId = current.ParentDeviceId;
 				if (string.IsNullOrEmpty(parentId) || !seen.Add(parentId))
 					return false;
@@ -119,10 +117,36 @@ namespace x360ce.App.DInput
 			return false;
 		}
 
-		/// <summary>The bus numbers of the controllers this program is holding.</summary>
+		/// <summary>The number Windows put at the end of a device's name, or zero.</summary>
+		/// <remarks>
+		/// Windows writes the bus number in ordinary digits. This once compared it against the same
+		/// number written in hexadecimal, which agrees only while the number is below ten. A fresh bus
+		/// starts there, so it worked; a few rounds of switching emulation on and off carried it past,
+		/// and from then on the program did not recognise its own controllers and offered to remove the
+		/// one it was using. Reading the number instead of writing it out leaves nothing to disagree.
+		/// </remarks>
+		/// <param name="deviceId">Full device name, whose last part after an ampersand is read.</param>
+		public static uint TrailingNumber(string deviceId)
+		{
+			if (string.IsNullOrEmpty(deviceId))
+				return 0;
+			var at = deviceId.LastIndexOf('&');
+			if (at < 0 || at + 1 >= deviceId.Length)
+				return 0;
+			uint value;
+			return uint.TryParse(deviceId.Substring(at + 1), out value) ? value : 0;
+		}
+
+		/// <summary>The bus numbers of the controllers this program is holding, or has held.</summary>
+		/// <remarks>
+		/// Both, because a controller is ours before the bus reports it connected and stays ours while
+		/// Windows is still removing it after we let go. Asking only what is connected right now names
+		/// our own controller a stranger's leftover for as long as those moments last, which is exactly
+		/// when the list is read: switching emulation on or off is what makes the list be read again.
+		/// </remarks>
 		private static List<uint> OurSerials()
 		{
-			var serials = new List<uint>();
+			var serials = new List<uint>(Nefarius.ViGEm.Client.ViGEmClient.UsedSerials);
 			try
 			{
 				var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
@@ -141,8 +165,7 @@ namespace x360ce.App.DInput
 			}
 			catch (Exception)
 			{
-				// Nothing claimed as ours, which is the safe way to be wrong.
-				return new List<uint>();
+				// The ones already recorded are still ours; only what the bus was asked is unknown.
 			}
 			return serials;
 		}
@@ -263,6 +286,74 @@ namespace x360ce.App.DInput
 		/// Windows reports needing a restart as a failure code even though the device has gone. Reading
 		/// it as a failure is why a clean-up can look as though it did nothing while emptying the list.
 		/// </remarks>
+		/// <summary>Controllers this program made that Windows never finished building.</summary>
+		/// <remarks>
+		/// A working controller is two devices: the one the bus makes, and the part underneath it that
+		/// XInput reads, which carries the input-group marker. Windows sometimes builds the first and
+		/// never the second. What is left reports no problem, sits in Device Manager looking healthy,
+		/// and is useless: absent from Windows' own Game Controllers list, invisible to every game.
+		///
+		/// Nothing else notices. The bus is asked whether it accepted the controller and says yes, so
+		/// this compares what the bus made against what Windows finished, which is the only way to see
+		/// the difference.
+		/// </remarks>
+		/// <summary>True once Windows has said a removal can only finish at the next restart.</summary>
+		public static bool RestartNeededToFinishRemoval;
+
+		/// <summary>Controllers held at the last look, so the same question is not asked twice.</summary>
+		/// <remarks>
+		/// Answering means reading every device on the machine, which takes about a second. The check
+		/// behind this runs on a timer, so answering afresh each time would spend a second of the
+		/// machine every few seconds for an answer that only changes when a controller is made or let
+		/// go of. Which controllers are held is free to ask, so that is asked instead, and the
+		/// expensive question only when it has changed.
+		/// </remarks>
+		static string LastJudgedSerials;
+		static DeviceInfo[] LastUnfinished = new DeviceInfo[0];
+
+		public static DeviceInfo[] GetUnfinishedVirtualPads()
+		{
+			var held = string.Join(",", OurSerials().OrderBy(x => x).Select(x => x.ToString()).ToArray());
+			if (held == LastJudgedSerials)
+				return LastUnfinished;
+			LastJudgedSerials = held;
+			LastUnfinished = ReadUnfinishedVirtualPads();
+			return LastUnfinished;
+		}
+
+		static DeviceInfo[] ReadUnfinishedVirtualPads()
+		{
+			var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+			var byId = IndexById(all);
+			// Only this program's own. Somebody else's half-built controller is not its business.
+			var ours = all
+				.Where(x => IsVirtualPad(x, byId) && IsOneOfOurs(x, byId))
+				.ToArray();
+			if (ours.Length == 0)
+				return new DeviceInfo[0];
+			// A finished one has a descendant carrying the input-group marker.
+			var finished = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var device in all)
+			{
+				if (!CarriesInputGroup(device.DeviceId))
+					continue;
+				var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				var current = device;
+				while (current != null && !string.IsNullOrEmpty(current.ParentDeviceId) && seen.Add(current.ParentDeviceId))
+				{
+					finished.Add(current.ParentDeviceId);
+					DeviceInfo parent;
+					if (!byId.TryGetValue(current.ParentDeviceId, out parent))
+						break;
+					current = parent;
+				}
+			}
+			return ours
+				.Where(x => !finished.Contains(x.DeviceId) && !CarriesInputGroup(x.DeviceId))
+				.OrderBy(x => x.DeviceId)
+				.ToArray();
+		}
+
 		public static int RemoveLeftoverVirtualPads(out bool rebootNeeded, out Exception error)
 		{
 			rebootNeeded = false;

@@ -30,6 +30,7 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			Warnings.SynchronizingObject = scheduler;
 			// Configure data grid.
 			ControlsHelper.ApplyBorderStyle(WarningsDataGridView);
+			WarningsDataGridView.CellPainting += WarningsDataGridView_CellPainting;
 			WarningsDataGridView.AutoGenerateColumns = false;
 			WarningsDataGridView.DataSource = Warnings;
 			UpdateIgnoreButton();
@@ -267,6 +268,60 @@ namespace JocysCom.ClassLibrary.Controls.IssuesControl
 			foreach (var item in items)
 				item.IsEnabled = false;
 			TasksTimer.DoActionNow();
+		}
+
+		/// <summary>Side of the shield, which is drawn rather than scaled.</summary>
+		const int ShieldSize = 16;
+
+		/// <summary>Space between the shield and the label it belongs to.</summary>
+		const int ShieldGap = 3;
+
+		/// <summary>Where the shield goes on a button whose label is centred.</summary>
+		/// <remarks>
+		/// Worked out from where the label actually lands, not from the edge of the cell. The button
+		/// centres its own label, so the only place certain to be free is immediately beside it: an icon
+		/// at a fixed distance from the left is under the label as soon as the label grows or the column
+		/// narrows, which is what happened.
+		///
+		/// Empty when the label leaves no room. Losing the warning in a column too narrow to hold it is
+		/// better than drawing it over the word it is warning about.
+		/// </remarks>
+		/// <param name="cell">The cell being drawn.</param>
+		/// <param name="textWidth">Width of the label, as it will be drawn.</param>
+		public static System.Drawing.Rectangle ShieldBounds(System.Drawing.Rectangle cell, int textWidth)
+		{
+			var textLeft = cell.Left + (cell.Width - textWidth) / 2;
+			var left = textLeft - ShieldSize - ShieldGap;
+			if (left < cell.Left + ShieldGap)
+				return System.Drawing.Rectangle.Empty;
+			return new System.Drawing.Rectangle(
+				left,
+				cell.Top + (cell.Height - ShieldSize) / 2,
+				ShieldSize, ShieldSize);
+		}
+
+		/// <summary>Puts the Windows shield on a fix that will ask for Administrator.</summary>
+		/// <remarks>
+		/// Drawn rather than described, because this is the one mark Windows uses everywhere for the
+		/// same thing, and a person reads it without being taught. Without it the prompt arrives after
+		/// the press, which reads as something having gone wrong rather than as the expected question.
+		/// </remarks>
+		private void WarningsDataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+		{
+			if (e.RowIndex < 0 || e.ColumnIndex < 0)
+				return;
+			var grid = (DataGridView)sender;
+			if (grid.Columns[e.ColumnIndex] != SolutionColumn)
+				return;
+			var item = grid.Rows[e.RowIndex].DataBoundItem as IssueItem;
+			if (item == null || !item.FixNeedsAdmin || item.Severity == IssueSeverity.None)
+				return;
+			var text = e.FormattedValue as string ?? string.Empty;
+			var width = TextRenderer.MeasureText(text, e.CellStyle.Font).Width;
+			var bounds = ShieldBounds(e.CellBounds, width);
+			if (bounds.IsEmpty)
+				return;
+			e.Graphics.DrawIcon(System.Drawing.SystemIcons.Shield, bounds);
 		}
 
 		private void WarningsDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

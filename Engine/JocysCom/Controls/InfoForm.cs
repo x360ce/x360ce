@@ -102,12 +102,12 @@ namespace JocysCom.ClassLibrary.Controls
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			string sClip = ControlsDataGridView[e.ColumnIndex, e.RowIndex].Value.ToString();
-			Clipboard.SetText(sClip);
+			ControlsHelper.CopyToClipboardOrWarn(sClip);
 		}
 
 		public void Label_DoubleClick(object sender, EventArgs e)
 		{
-			Clipboard.SetText(((Label)sender).Text);
+			ControlsHelper.CopyToClipboardOrWarn(((Label)sender).Text);
 		}
 
 		public void ResetFormButton_Click(object sender, EventArgs e)

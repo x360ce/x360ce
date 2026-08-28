@@ -27,7 +27,11 @@ namespace x360ce.Tests
 		Process _process;
 
 		[TestCleanup]
-		public void Cleanup() => Ui.CloseApp(_process);
+		public void Cleanup()
+		{
+			Ui.CloseApp(_process);
+			Ui.RemoveInjectedFaultReports(Ui.FindApp("App.v4"));
+		}
 
 		[TestMethod, TestCategory("diagnostics"), TestCategory("ui-interactive")]
 		[Description("A fault can be raised while the application is closing")]

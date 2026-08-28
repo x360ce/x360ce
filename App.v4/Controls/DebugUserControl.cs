@@ -436,7 +436,12 @@ namespace x360ce.App.Controls
 		{
 			try
 			{
-				throw new Exception("Test Exception");
+				// Named so it is obvious in a report that somebody pressed a button to make it
+				// happen. A report titled "Test Exception" is indistinguishable from a real crash
+				// until it is opened, and these arrive by mail beside genuine ones.
+				throw new Exception(
+					"Test Exception: raised on purpose by the Throw Exception button on the Debug tab. " +
+					"Nothing is wrong with the program.");
 			}
 			catch (Exception ex)
 			{

@@ -51,9 +51,47 @@ namespace Nefarius.ViGEm.Client
 		}
 
 
+		/// <summary>Bus numbers this program has put on the bus, connected now or not.</summary>
+		/// <remarks>
+		/// Asking the bus what is connected right now answers a different question. A controller is
+		/// ours from the moment we create it and stays ours while Windows is still taking it away after
+		/// we have let go. In the gap between those two moments the bus says no and Windows says yes,
+		/// and reading that gap as somebody else's leftover made the program offer to remove the very
+		/// controller it had just made.
+		///
+		/// Putting a controller in a chosen XInput place also means connecting the places below it and
+		/// letting them go again, so those brief ones are recorded too. They have the same shape as a
+		/// leftover and were reported as one every time emulation was switched on.
+		/// </remarks>
+		static readonly HashSet<uint> UsedSerialSet = new HashSet<uint>();
+
+		/// <summary>Copy of the bus numbers this program has used.</summary>
+		public static uint[] UsedSerials
+		{
+			get { lock (UsedSerialSet) return UsedSerialSet.ToArray(); }
+		}
+
+		/// <summary>Records a controller as ours, while its number can still be read.</summary>
+		/// <remarks>
+		/// The number comes from the handle the bus gives out, so it is readable only while connected.
+		/// Asked for after the controller has gone it answers nothing, which is why it is taken here
+		/// rather than when the question is later asked.
+		/// </remarks>
+		static void RememberSerial(ViGEmTarget target)
+		{
+			if (target == null)
+				return;
+			var serial = target.Serial;
+			if (serial == 0)
+				return;
+			lock (UsedSerialSet)
+				UsedSerialSet.Add(serial);
+		}
+
 		public Xbox360Controller[] Targets;
 		public Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[] Feedbacks = new Targets.Xbox360.Xbox360FeedbackReceivedEventArgs[4];
-		public bool[] connected = new bool[4];
+		/// <summary>How many places for controllers of this kind Windows offers.</summary>
+		public const int PlaceCount = 4;
 
 		public bool isControllerExists(uint userIndex)
 		{
@@ -75,12 +113,10 @@ namespace Nefarius.ViGEm.Client
 			catch (Exception ex)
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-				// Target state is unknown after a failed disconnect. Treat it as not
-				// connected so the next update can plug it in again.
-				connected[i - 1] = false;
+				// The bus is asked what happened rather than told; a failed disconnect leaves the
+				// controller in whatever state it is really in, and the next pass reads that.
 				return false;
 			}
-			connected[i - 1] = false;
 			return true;
 		}
 
@@ -90,26 +126,26 @@ namespace Nefarius.ViGEm.Client
 			if (t == null || !IsValidIndex(userIndex) || userIndex > t.Length)
 				return false;
 			// In order to assign virtual device at specific XInput position, must connect all devices with lower position first.
-			var tempDevices = new bool[connected.Length];
+			var tempDevices = new bool[PlaceCount];
 			try
 			{
 				for (int i = 0; i < userIndex - 1; i++)
 				{
-					if (!connected[i])
+					if (!t[i].IsAttached)
 					{
 						tempDevices[i] = true;
 						t[i].Connect();
+						RememberSerial(t[i]);
 					}
 				}
 				// Connect specified device.
 				t[userIndex - 1].Connect();
-				connected[userIndex - 1] = true;
+				RememberSerial(t[userIndex - 1]);
 				return true;
 			}
 			catch (Exception ex)
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
-				connected[userIndex - 1] = false;
 				return false;
 			}
 			finally
@@ -128,7 +164,6 @@ namespace Nefarius.ViGEm.Client
 					{
 						JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
 					}
-					connected[i] = false;
 				}
 			}
 		}
@@ -143,15 +178,28 @@ namespace Nefarius.ViGEm.Client
 			}
 		}
 
+		/// <summary>Whether the bus is holding the controller in this place.</summary>
+		/// <remarks>
+		/// This used to answer from a flag the program set when it plugged one in. A flag cannot know
+		/// that the controller was taken away afterwards, so it went on saying yes: the tab showed a
+		/// green light for a controller that no longer existed, and the update loop skipped making a
+		/// new one because it read the same flag and believed there already was one. Two faults, one
+		/// cause, and the light was the part that lied.
+		/// </remarks>
 		public bool IsControllerConnected(uint i)
 		{
-			// Not properly implemented yet.
-			return IsValidIndex(i) && connected[i - 1];
+			if (!IsValidIndex(i))
+				return false;
+			var t = Targets;
+			if (t == null || i - 1 >= t.Length)
+				return false;
+			var target = t[i - 1];
+			return target != null && target.IsAttached;
 		}
 
 		/// <summary>Controller positions are 1-4. Index outside the range must not throw.</summary>
 		bool IsValidIndex(uint i)
-			=> i >= 1 && i <= connected.Length;
+			=> i >= 1 && i <= PlaceCount;
 
 		#region Static Members
 

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Diagnostics;
 using System.Data.Objects.DataClasses;
 using System.Windows.Forms;
 
@@ -252,6 +253,63 @@ namespace JocysCom.ClassLibrary.Controls
 			// Make this dialog form TopMost too or user won't be able to access it.
 			if (!form.TopMost && Application.OpenForms.Cast<Form>().Any(x => x.TopMost))
 				form.TopMost = true;
+		}
+
+		/// <summary>
+		/// Put text on the clipboard. Returns false when Windows refused, and shows nothing.
+		/// </summary>
+		/// <remarks>
+		/// Only one process owns the clipboard at a time, and Windows refuses the operation while
+		/// another program holds it. Remote desktop clients, clipboard managers and office suites
+		/// all take it briefly and often, so the refusal is ordinary rather than exceptional. The
+		/// framework already retries for about a second before giving up; what it then does is
+		/// throw, and a copy that did not happen is no reason to lose the program along with
+		/// everything unsaved in it.
+		///
+		/// This says whether it worked and nothing more, so it can be called from anywhere,
+		/// including a thread with no window to be modal to. Telling the user is the caller's
+		/// business, and <see cref="CopyToClipboardOrWarn"/> is how a button does it.
+		/// </remarks>
+		public static bool CopyToClipboard(string text)
+		{
+			try
+			{
+				// SetText refuses an empty string, and clearing is what an empty copy means.
+				if (string.IsNullOrEmpty(text))
+					Clipboard.Clear();
+				else
+					Clipboard.SetText(text);
+				return true;
+			}
+			catch (ExternalException)
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Put text on the clipboard for somebody who pressed a button, and say so when it failed.
+		/// </summary>
+		/// <remarks>
+		/// A copy that quietly does nothing is worse than one that fails loudly: the reader walks
+		/// away believing they have the text. Every copy button goes through here, so what a busy
+		/// clipboard looks like is decided once rather than at each button.
+		/// </remarks>
+		public static bool CopyToClipboardOrWarn(string text)
+		{
+			if (CopyToClipboard(text))
+				return true;
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			CheckTopMost(form);
+			form.ShowForm(
+				"Windows would not hand over the clipboard, because another program is holding it." +
+				Environment.NewLine + Environment.NewLine +
+				"Nothing was copied. Try again in a moment.",
+				"Clipboard is busy",
+				MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			form.Dispose();
+			return false;
 		}
 
 		#region "UserControl is Visible"
@@ -618,6 +676,26 @@ namespace JocysCom.ClassLibrary.Controls
 			}
 		}
 
+		/// <summary>True when the row's item is switched on and its hardware is present.</summary>
+		/// <remarks>
+		/// Two reasons a row is not usable, answered in one place so a list cannot show one of them
+		/// and miss the other. An item which says nothing about either is taken to be usable, so a
+		/// list of something other than devices is unaffected.
+		/// </remarks>
+		public static bool IsItemAvailable(object item)
+		{
+			return item == null || (GetEnabled(item) && GetOnline(item));
+		}
+
+		/// <summary>Dims every cell of a row while its item is unavailable, and undims it after.</summary>
+		/// <remarks>
+		/// Called once per cell, as each is formatted, and it writes only when the colour actually
+		/// differs. That matters more than it looks: writing a style outside a write of this kind asks
+		/// the grid to paint the row again, and a write on every paint is a repaint that never ends.
+		/// Holding the colour on the row rather than its cells reads better and does exactly that -
+		/// measured at an eighth of the device polling rate, because the device thread hands its list
+		/// changes to this thread and waits for them.
+		/// </remarks>
 		private static void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
@@ -627,35 +705,29 @@ namespace JocysCom.ClassLibrary.Controls
 			if (grid.AllowUserToAddRows && e.RowIndex + 1 == grid.Rows.Count)
 				return;
 			var row = grid.Rows[e.RowIndex];
-			if (e.RowIndex > -1 && e.ColumnIndex > -1)
+			var item = row.DataBoundItem;
+			// If grid is virtual then...
+			if (item == null)
 			{
-				var item = row.DataBoundItem;
-				// If grid is virtual then...
-				if (item == null)
-				{
-					var list = grid.DataSource as IBindingList;
-					if (list != null)
-						item = list[e.RowIndex];
-				}
-				var enabled = true;
-				if (item != null)
-					enabled = GetEnabled(item);
-				var fore = enabled ? grid.DefaultCellStyle.ForeColor : SystemColors.ControlDark;
-				var selectedBack = enabled ? grid.DefaultCellStyle.SelectionBackColor : SystemColors.ControlDark;
-				// Apply style to row header.
-				if (row.HeaderCell.Style.ForeColor != fore)
-					row.HeaderCell.Style.ForeColor = fore;
-				if (row.HeaderCell.Style.SelectionBackColor != selectedBack)
-					row.HeaderCell.Style.SelectionBackColor = selectedBack;
-				// Apply style to cell
-				var cell = grid.Rows[e.RowIndex].Cells[e.ColumnIndex];
-				if (cell.Style.ForeColor != fore)
-					cell.Style.ForeColor = fore;
-				if (cell.Style.SelectionBackColor != selectedBack)
-					cell.Style.SelectionBackColor = selectedBack;
+				var list = grid.DataSource as IBindingList;
+				if (list != null)
+					item = list[e.RowIndex];
 			}
+			var available = IsItemAvailable(item);
+			var fore = available ? grid.DefaultCellStyle.ForeColor : SystemColors.ControlDark;
+			var selectedBack = available ? grid.DefaultCellStyle.SelectionBackColor : SystemColors.ControlDark;
+			// Apply style to row header.
+			if (row.HeaderCell.Style.ForeColor != fore)
+				row.HeaderCell.Style.ForeColor = fore;
+			if (row.HeaderCell.Style.SelectionBackColor != selectedBack)
+				row.HeaderCell.Style.SelectionBackColor = selectedBack;
+			// Apply style to cell.
+			var cell = row.Cells[e.ColumnIndex];
+			if (cell.Style.ForeColor != fore)
+				cell.Style.ForeColor = fore;
+			if (cell.Style.SelectionBackColor != selectedBack)
+				cell.Style.SelectionBackColor = selectedBack;
 		}
-
 		private static void Grid_SelectionChanged(object sender, EventArgs e)
 		{
 			// Sort issue with paint artifcats.
@@ -663,9 +735,44 @@ namespace JocysCom.ClassLibrary.Controls
 			grid.Invalidate();
 		}
 
+		/// <summary>The two properties a row's item may use to say it is not usable.</summary>
+		/// <remarks>
+		/// Read once per type and kept. These are asked for every cell of every row on every paint, and
+		/// the device thread hands its list changes to this thread and waits for them, so reading a
+		/// type's whole property list here is paid for in device polling rate: adding one such read
+		/// took the measured rate from a thousand a second to a hundred and thirty.
+		/// </remarks>
+		class ItemStateProperties
+		{
+			public PropertyInfo Enabled;
+			public PropertyInfo Online;
+		}
+
+		static readonly Dictionary<Type, ItemStateProperties> ItemStateByType = new Dictionary<Type, ItemStateProperties>();
+
+		static ItemStateProperties GetItemState(object item)
+		{
+			var type = item.GetType();
+			lock (ItemStateByType)
+			{
+				ItemStateProperties state;
+				if (!ItemStateByType.TryGetValue(type, out state))
+				{
+					var all = type.GetProperties();
+					state = new ItemStateProperties
+					{
+						Enabled = all.FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled"),
+						Online = all.FirstOrDefault(x => x.Name == "IsOnline" || x.Name == "Online"),
+					};
+					ItemStateByType.Add(type, state);
+				}
+				return state;
+			}
+		}
+
 		private static void SetEnabled(object item, bool enabled)
 		{
-			var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
+			var enabledProperty = GetItemState(item).Enabled;
 			if (enabledProperty != null)
 			{
 				enabledProperty.SetValue(item, enabled, null);
@@ -674,9 +781,17 @@ namespace JocysCom.ClassLibrary.Controls
 
 		private static bool GetEnabled(object item)
 		{
-			var enabledProperty = item.GetType().GetProperties().FirstOrDefault(x => x.Name == "Enabled" || x.Name == "IsEnabled");
+			var enabledProperty = GetItemState(item).Enabled;
 			var enabled = enabledProperty == null ? true : (bool)enabledProperty.GetValue(item, null);
 			return enabled;
+		}
+
+		/// <summary>Items without the property are always treated as present.</summary>
+		private static bool GetOnline(object item)
+		{
+			var onlineProperty = GetItemState(item).Online;
+			var online = onlineProperty == null ? true : (bool)onlineProperty.GetValue(item, null);
+			return online;
 		}
 
 		private static void Grid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
@@ -816,8 +931,45 @@ namespace JocysCom.ClassLibrary.Controls
 
 		#region IsDesignMode
 
+		/// <summary>True when this code is being run by a designer rather than by the application.</summary>
+		/// <remarks>
+		/// Asked of the process, because none of the other three questions can be answered from inside a
+		/// constructor, which is where a guard has to be written.
+		///
+		/// UsageMode is Designtime only while the designer builds the one type it was asked to open, and
+		/// Runtime for every control that type then creates. Site stays null until the designer has
+		/// finished adding a component, so it is always null in a constructor. Parent is null there too.
+		/// A guard in a nested control's constructor therefore asked all three, was told "running" every
+		/// time, and did the work anyway, which is what brings a form down while it is being opened.
+		///
+		/// Which process is hosting the code has no such gap. The designer for this framework loads into
+		/// Visual Studio itself, and the newer out of process designer into its own server. Neither is
+		/// ever the application, and the answer cannot change while the process lives, so it is asked once.
+		/// </remarks>
+		public static bool IsDesignerProcess
+		{
+			get
+			{
+				if (!_IsDesignerProcess.HasValue)
+				{
+					string name;
+					try { name = Process.GetCurrentProcess().ProcessName; }
+					catch (Exception) { name = string.Empty; }
+					_IsDesignerProcess =
+						string.Equals(name, "devenv", StringComparison.OrdinalIgnoreCase) ||
+						string.Equals(name, "DesignToolsServer", StringComparison.OrdinalIgnoreCase);
+				}
+				return _IsDesignerProcess.Value;
+			}
+		}
+
+		static bool? _IsDesignerProcess;
+
 		public static bool _IsDesignMode(IComponent component, IComponent parent)
 		{
+			// Check 0. The only one which answers for a control nested inside the designed type.
+			if (IsDesignerProcess)
+				return true;
 			// Check 1.
 			if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
 				return true;

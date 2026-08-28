@@ -79,6 +79,60 @@ namespace JocysCom.ClassLibrary.IO
 			//NativeMethods.RegisterDeviceNotification(_RecipientHandle, devBroadcastDeviceInterfaceBuffer, DEVICE_NOTIFY_WINDOW_HANDLE);
 		}
 
+		#region Device interface notifications
+
+		/// <summary>The interface class a game controller, mouse or keyboard belongs to.</summary>
+		public static Guid HidInterfaceClass
+		{
+			get
+			{
+				var guid = Guid.Empty;
+				NativeMethods.HidD_GetHidGuid(ref guid);
+				return guid;
+			}
+		}
+
+		/// <summary>Asks Windows to report devices of one interface class arriving and being removed.</summary>
+		/// <remarks>
+		/// A window is sent device node changes without asking for them, but those say only that
+		/// something on the machine changed, never what. The only way to answer them is to read every
+		/// device again, which takes about a second and stops whatever else was running. Asking for one
+		/// interface class instead brings an arrival and a removal for that class alone, which is the
+		/// question actually being asked, at no cost while nothing is plugged in or out.
+		/// </remarks>
+		/// <param name="windowHandle">Window which is to receive the messages.</param>
+		/// <param name="interfaceClass">Interface class to be told about.</param>
+		/// <returns>Registration to be passed to <see cref="UnregisterDeviceInterface"/>.</returns>
+		public static IntPtr RegisterDeviceInterface(IntPtr windowHandle, Guid interfaceClass)
+		{
+			var filter = new DEV_BROADCAST_DEVICEINTERFACE();
+			filter.Initialize();
+			filter.dbch_devicetype = DBCH_DEVICETYPE.DBT_DEVTYP_DEVICEINTERFACE;
+			filter.dbch_classguid = interfaceClass;
+			filter.dbcc_name = new char[1];
+			var buffer = Marshal.AllocHGlobal(filter.dbch_size);
+			try
+			{
+				Marshal.StructureToPtr(filter, buffer, false);
+				// Windows takes its own copy, so the buffer is ours to release either way.
+				return NativeMethods.RegisterDeviceNotification(windowHandle, buffer, (uint)DEVICE_NOTIFY_WINDOW_HANDLE);
+			}
+			finally
+			{
+				Marshal.FreeHGlobal(buffer);
+			}
+		}
+
+		/// <summary>Stops the messages asked for by <see cref="RegisterDeviceInterface"/>.</summary>
+		/// <param name="registration">What the registration returned.</param>
+		public static void UnregisterDeviceInterface(IntPtr registration)
+		{
+			if (registration != IntPtr.Zero)
+				NativeMethods.UnregisterDeviceNotification(registration);
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Message handler which must be called from client form. Processes Windows messages and calls event handlers. 
 		/// </summary>
