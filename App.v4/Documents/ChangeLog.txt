@@ -1,4 +1,4 @@
-﻿v4.18.41.0 (2026-08-28)
+﻿v4.18.58.0 (2026-08-28)
 - Added: Lists dim the rows of controllers that are switched off or unplugged.
 - Added: Controller tabs explain what their light means.
 - Added: Issues tab reports a virtual controller Windows did not finish building.
