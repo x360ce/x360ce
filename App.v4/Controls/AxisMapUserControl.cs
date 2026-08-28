@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using x360ce.Engine;
+using x360ce.Engine.Data;
 
 namespace x360ce.App.Controls
 {
@@ -41,6 +42,30 @@ namespace x360ce.App.Controls
 		DeadZoneControlsLink antiDeadzoneLink;
 
 		QueueTimer updateTimer;
+
+		/// <summary>Formula that decides this row's value, or null when the dead zones decide it.</summary>
+		/// <remarks>
+		/// A row driven by a formula ignores its dead zone, anti dead zone and sensitivity, so a line
+		/// drawn from those three describes something the row no longer does. The line is drawn from
+		/// the formula instead, through the same code the device loop runs, so the two cannot describe
+		/// different things.
+		/// </remarks>
+		MapExpression _Expression;
+		MapReference? _SweptSource;
+		readonly float[] _ExpressionValues = new float[MapExpression.MaxReferences];
+
+		/// <summary>Sets the formula this row follows, or clears it.</summary>
+		public void SetExpression(MapExpression expression)
+		{
+			// Compared by the text so that the picture is not rebuilt on every pass of the device loop.
+			var oldText = _Expression == null ? null : _Expression.Text;
+			var newText = expression == null ? null : expression.Text;
+			if (oldText == newText)
+				return;
+			_Expression = expression;
+			_SweptSource = MapExpressionUnits.GetSweptSource(expression);
+			RefreshBackgroundImageAsync();
+		}
 
 		[Category("Appearance"), DefaultValue(0)]
 		public string HeaderText
@@ -224,7 +249,21 @@ namespace x360ce.App.Controls
 				var max = IsThumb ? 32767f : 255f;
 				// Convert Image X position [0;w] to DInput position [0;65535].
 				var dInputValue = ConvertHelper.ConvertRangeF(0f, wF, ushort.MinValue, ushort.MaxValue, i);
-				var result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half, IsThumb);
+				float result;
+				float formula;
+				if (_SweptSource.HasValue && MapExpressionUnits.TrySweep(
+					_Expression, _SweptSource.Value, (int)dInputValue, IsThumb, _ExpressionValues, out formula))
+				{
+					// Turned into the destination's own units by the same pair the device loop uses, so
+					// the line and the controller picture agree about what the formula produces.
+					result = IsThumb
+						? MapExpressionUnits.ToThumb(formula)
+						: MapExpressionUnits.ToTrigger(formula);
+				}
+				else
+				{
+					result = ConvertHelper.GetThumbValue(dInputValue, deadZone, antiDeadZone, sensitivity, _invert, _half, IsThumb);
+				}
 				// Convert XInput Y position [min;max] to image size [0;h].
 				var y = ConvertHelper.ConvertRangeF(min, max, 0f, hF, result);
 				// An inverted axis is mirrored left to right, so its DInput minimum sits

@@ -189,28 +189,22 @@ namespace x360ce.App.Controls
 				// LeftThumbX
 				var axis = ud.DiState.Axis;
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbX);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbX, map.IsInverted, map.IsHalf);
+				DrawMappedPoint(LeftThumbXUserControl, map, axis, newState.Gamepad.LeftThumbX);
 				// LeftThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftThumbY);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftThumbY, map.IsInverted, map.IsHalf);
+				DrawMappedPoint(LeftThumbYUserControl, map, axis, newState.Gamepad.LeftThumbY);
 				// RightThumbX
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbX);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbXUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbX, map.IsInverted, map.IsHalf);
+				DrawMappedPoint(RightThumbXUserControl, map, axis, newState.Gamepad.RightThumbX);
 				// RightThumbY
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightThumbY);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightThumbYUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightThumbY, map.IsInverted, map.IsHalf);
+				DrawMappedPoint(RightThumbYUserControl, map, axis, newState.Gamepad.RightThumbY);
 				// LeftTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.LeftTrigger);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					LeftTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.LeftTrigger, map.IsInverted, map.IsHalf);
+				DrawMappedPoint(LeftTriggerUserControl, map, axis, newState.Gamepad.LeftTrigger);
 				// RightTrigger
 				map = ps.Maps.FirstOrDefault(x => x.Target == TargetType.RightTrigger);
-				if (map != null && map.Index > 0 && map.Index <= axis.Length)
-					RightTriggerUserControl.DrawPoint(axis[map.Index - 1], newState.Gamepad.RightTrigger, map.IsInverted, map.IsHalf);
+				DrawMappedPoint(RightTriggerUserControl, map, axis, newState.Gamepad.RightTrigger);
 			}
 			// Update Axis to Button Images.
 			var AxisToButtonControls = AxisToButtonGroupBox.Controls.OfType<AxisToButtonUserControl>();
@@ -220,6 +214,38 @@ namespace x360ce.App.Controls
 			oldState = newState;
 			oldConnected = newConnected;
 		}
+
+		/// <summary>Puts a row's live reading on its chart, whichever way the row is driven.</summary>
+		/// <remarks>
+		/// A row driven by a formula names no single control, so it has no source number, and the
+		/// chart used to be skipped entirely for one: the picture froze at whatever it last showed
+		/// while the controller picture beside it kept moving. The formula is asked which control it
+		/// reads, and that control's travel is the across of the chart, exactly as a plain mapping's
+		/// own control is.
+		/// </remarks>
+		/// <param name="chart">Chart for this row.</param>
+		/// <param name="map">Row being drawn, or null when the row is unmapped.</param>
+		/// <param name="axis">Readings of the device's axes.</param>
+		/// <param name="produced">What the row produced, in its destination's units.</param>
+		static void DrawMappedPoint(AxisMapUserControl chart, Map map, int[] axis, int produced)
+		{
+			chart.SetExpression(map == null ? null : map.Expression);
+			if (map == null)
+				return;
+			var index = map.Index;
+			if (map.Expression != null)
+			{
+				var swept = MapExpressionUnits.GetSweptSource(map.Expression);
+				// A formula of buttons alone has no travel to show, so there is nothing to place.
+				if (!swept.HasValue || swept.Value.Type == 'b' || swept.Value.Type == 'd' || swept.Value.Type == 'p')
+					return;
+				index = swept.Value.Index;
+			}
+			if (index <= 0 || index > axis.Length)
+				return;
+			chart.DrawPoint(axis[index - 1], produced, map.IsInverted, map.IsHalf);
+		}
+
 
 		public bool StopRecording()
 		{

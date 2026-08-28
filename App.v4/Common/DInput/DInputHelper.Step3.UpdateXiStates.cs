@@ -402,9 +402,9 @@ namespace x360ce.App.DInput
 			// ordinary mapping path already does through GetThumbValue's own thumb flag.
 			var isThumb = map.Target == TargetType.LeftThumbX || map.Target == TargetType.LeftThumbY
 				|| map.Target == TargetType.RightThumbX || map.Target == TargetType.RightThumbY;
-			if (!MapExpressionUnits.TryFill(map.Expression, diState, _expressionValues, isThumb))
+			float value;
+			if (!MapExpressionUnits.TryEvaluate(map.Expression, diState, isThumb, _expressionValues, out value))
 				return;
-			var value = map.Expression.Evaluate(_expressionValues);
 			switch (map.Target)
 			{
 				case TargetType.LeftTrigger:
