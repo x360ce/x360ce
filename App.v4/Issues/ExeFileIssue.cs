@@ -12,6 +12,8 @@ namespace x360ce.App.Issues
 		{
 			Name = "EXE File";
 			FixName = "Fix";
+			// Copying into a protected folder raises a prompt. Marked, so it is expected.
+			FixNeedsAdmin = true;
 		}
 
 		public override void CheckTask()

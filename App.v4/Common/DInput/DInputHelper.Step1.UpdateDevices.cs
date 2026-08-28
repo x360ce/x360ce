@@ -15,6 +15,23 @@ namespace x360ce.App.DInput
 		// True, update device list as soon as possible.
 		public bool UpdateDevicesEnabled = true;
 
+		/// <summary>Whether a device change message means the device list has to be read again.</summary>
+		/// <remarks>
+		/// Windows broadcasts a device change for any device node change on the machine, repeatedly and
+		/// for devices which have nothing to do with controllers. Reading every device again costs about
+		/// a second on this thread, and controller processing stops for that long, so the rate falls from
+		/// a thousand a second to one or two. Only a device arriving or leaving can change the list.
+		///
+		/// The rule is kept here, next to the work it decides to pay for, because a second copy of it
+		/// elsewhere has already let the noisy case back in and taken the rate down with it.
+		/// </remarks>
+		/// <param name="change">What Windows says happened.</param>
+		public static bool IsDeviceListChange(JocysCom.ClassLibrary.Win32.DBT change)
+		{
+			return change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEARRIVAL
+				|| change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEREMOVECOMPLETE;
+		}
+
 		#endregion
 
 		object UpdateDevicesLock = new object();
@@ -178,37 +195,39 @@ namespace x360ce.App.DInput
 			if (!ud.IsOnline)
 				lock (SettingsManager.UserDevices.SyncRoot)
 					ud.IsOnline = true;
-			// Get device info for added devices.
+			// The interface is read first, because the device is then found by the identifier the
+			// interface supplies. Read the other way round, a controller which had just been plugged in
+			// was looked up by an identifier nothing had filled in yet: the lookup found nothing, the
+			// device fields were cleared, and the row showed blanks or the plain DirectInput name until
+			// some later pass happened to run. Which pass that was decided what the row said, so the
+			// same controller could arrive named, unnamed, or named differently in each list.
+			if (device.IsHumanInterfaceDevice && ud.Device != null)
+			{
+				var interfacePath = ud.Device.Properties.InterfacePath;
+				hid = allInterfaces.FirstOrDefault(x => x.DevicePath == interfacePath);
+				// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
+				lock (SettingsManager.UserDevices.SyncRoot)
+					ud.LoadHidDeviceInfo(hid);
+			}
 			var dev = allDevices.FirstOrDefault(x => x.DeviceId == ud.HidDeviceId);
 			// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
 			lock (SettingsManager.UserDevices.SyncRoot)
 			{
 				ud.LoadDevDeviceInfo(dev);
-				if (dev != null)
-					ud.ConnectionClass = DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
-			}
-			// InterfacePath is available for HID devices.
-			if (device.IsHumanInterfaceDevice && ud.Device != null)
-			{
-				var interfacePath = ud.Device.Properties.InterfacePath;
-				// Get interface info for added devices.
-				hid = allInterfaces.FirstOrDefault(x => x.DevicePath == interfacePath);
-				// Lock to avoid Exception: Collection was modified; enumeration operation may not execute.
-				lock (SettingsManager.UserDevices.SyncRoot)
+				// The interface describes the device more accurately than the device node does, and is
+				// present whenever it is connected, so it wins wherever both have something to say.
+				if (hid != null)
 				{
-					ud.LoadHidDeviceInfo(hid);
-					if (hid != null)
-						ud.ConnectionClass = DeviceDetector.GetConnectionDevice(hid, allDevices)?.ClassGuid ?? Guid.Empty;
-					// Workaround: 
-					// Override Device values and description from the Interface, 
-					// because it is more accurate and present.
-					// Note 1: Device fields below, probably, should not be used.
-					// Note 2: Available when device is online.
+					ud.ConnectionClass = DeviceDetector.GetConnectionDevice(hid, allDevices)?.ClassGuid ?? Guid.Empty;
 					ud.DevManufacturer = ud.HidManufacturer;
 					ud.DevDescription = ud.HidDescription;
 					ud.DevVendorId = ud.HidVendorId;
 					ud.DevProductId = ud.HidProductId;
 					ud.DevRevision = ud.HidRevision;
+				}
+				else if (dev != null)
+				{
+					ud.ConnectionClass = DeviceDetector.GetConnectionDevice(dev, allDevices)?.ClassGuid ?? Guid.Empty;
 				}
 			}
 		}

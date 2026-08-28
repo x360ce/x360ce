@@ -12,7 +12,13 @@ namespace x360ce.App.DInput
 		public bool[] CombinedXiConencted;
 		public int PacketNumber;
 
-		void CombineXiStates()
+		/// <summary>Gathers every mapped device onto the controller it is mapped to.</summary>
+		/// <remarks>
+		/// This is where a person's controller becomes controller one, two, three or four. Sending it
+		/// to the wrong one, or to more than one, is invisible from inside the program and shows up only
+		/// as a game answering a control nobody touched.
+		/// </remarks>
+		public void CombineXiStates()
 		{
 			for (int m = 0; m < 4; m++)
 			{

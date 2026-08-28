@@ -69,9 +69,13 @@ namespace x360ce.App.DInput
 					// If feeding status unknown or not enabled then...
 					if (!feedingState.HasValue || !feedingState.Value || !client.IsControllerConnected(i))
 					{
-						var success = EnableFeeding(i) == VirtualError.None;
-						if (!success)
-							return;
+						var result = EnableFeeding(i);
+						VirtualErrors[i - 1] = result;
+						if (result != VirtualError.None)
+							// Kept and moved on from. Giving up on the whole pass here meant that one
+							// controller which could not be made stopped the other three from being tried,
+							// and said nothing about any of it.
+							continue;
 						FeedingState[i - 1] = true;
 					}
 					// If the virtual target stopped accepting reports then unplug it, so the
@@ -87,9 +91,10 @@ namespace x360ce.App.DInput
 					// If feeding status unknown or enabled then...
 					if (!feedingState.HasValue || feedingState.Value || client.IsControllerConnected(i))
 					{
-						var success = DisableFeeding(i) == VirtualError.None;
-						if (!success)
-							return;
+						var result = DisableFeeding(i);
+						VirtualErrors[i - 1] = result;
+						if (result != VirtualError.None)
+							continue;
 						FeedingState[i - 1] = false;
 					}
 				}
@@ -141,6 +146,39 @@ namespace x360ce.App.DInput
 		}
 
 		bool?[] FeedingState = new bool?[4];
+
+		/// <summary>Lets go of every controller, so Windows is able to remove one.</summary>
+		/// <remarks>
+		/// Windows will not remove a device that anything still holds open, and this program is the
+		/// thing holding them: reading the states asks XInput for all four places, over and over. The
+		/// removal was therefore refused every time, and each refusal left Windows needing a restart
+		/// before it would finish building any new controller - so pressing Remove broke the very
+		/// thing it was meant to repair, and said nothing.
+		/// </remarks>
+		public void ReleaseForDeviceRemoval()
+		{
+			Suspended = true;
+			lock (SharpDX.XInput.Controller.XInputLock)
+				if (SharpDX.XInput.Controller.IsLoaded)
+					SharpDX.XInput.Controller.FreeLibrary();
+			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
+			if (client != null && client.Targets != null)
+				for (uint i = 1; i <= 4; i++)
+					// Asked first. Letting go of a controller that is not held throws, and the throw is
+					// written out as a fault report, so pressing one button filed three of them.
+					if (client.IsControllerConnected(i))
+						client.UnPlug(i);
+		}
+
+		/// <summary>Picks the controllers back up after a removal.</summary>
+		public void ResumeAfterDeviceRemoval()
+		{
+			// Forgotten rather than assumed, so the next pass plugs in whatever is wanted now.
+			for (var i = 0; i < FeedingState.Length; i++)
+				FeedingState[i] = null;
+			UpdateDevicesEnabled = true;
+			Suspended = false;
+		}
 
 		Gamepad[] oldGamepadStates = new Gamepad[4];
 

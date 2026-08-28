@@ -65,7 +65,7 @@ namespace Nefarius.ViGEm.Client
             static extern VIGEM_TARGET_TYPE vigem_target_get_type(PVIGEM_TARGET target);
 
             [DllImport("vigemclient.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
-            static extern bool vigem_target_is_attached(PVIGEM_TARGET target);
+            internal static extern bool vigem_target_is_attached(PVIGEM_TARGET target);
 
             [DllImport("vigemclient.dll", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
             internal static extern VIGEM_ERROR vigem_target_x360_update(PVIGEM_CLIENT vigem, PVIGEM_TARGET target, XUSB_REPORT report);

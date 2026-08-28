@@ -104,7 +104,11 @@ namespace x360ce.App
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
 			var currentGameFileName = SettingsManager.CurrentGame?.FileName;
-			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
+			var helper = Global.DHelper;
+			// Whether the states are being read back from XInput at all. Without that there is no
+			// evidence either way, and a light which says everything is well on no evidence is the
+			// thing being fixed here.
+			var checking = SettingsManager.Options.GetXInputStates;
 			for (var i = 0; i < 4; i++)
 			{
 				var padControl = PadControls[i];
@@ -112,8 +116,13 @@ namespace x360ce.App
 				var devices = SettingsManager.GetDevices(currentGameFileName, (MapTo)(i + 1));
 				// DInput instance is ON if active devices found.
 				var diOn = devices.Count(x => x.IsOnline) > 0;
-				// XInput instance is ON.
-				var xiOn = client != null && client.IsControllerConnected((uint)i + 1);
+				// The same answer the controller panel draws itself from: a controller Windows hands
+				// back through XInput. Asking the virtual bus instead says yes as soon as the bus accepts
+				// the controller, which it does even when Windows never finishes building one - no entry
+				// in Game Controllers, nothing for XInput to read, and a green light over the top of it.
+				// The panel was right and the light was wrong, from two sources for one fact.
+				var place = helper == null ? -1 : helper.XiPlaceForPad[i];
+				var xiOn = checking && helper != null && place >= 0 && helper.LiveXiConnected[place];
 				// Update LED of GamePad state.
 				var image = diOn
 					// DInput ON, XInput ON 
@@ -127,8 +136,51 @@ namespace x360ce.App
 				var bullet = string.Format("bullet_square_glass_{0}.png", image);
 				if (ControlPages[i].ImageKey != bullet)
 					ControlPages[i].ImageKey = bullet;
+				// The colour alone cannot say which half is missing, nor why. A person looking at a light
+				// that is not green needs to be told what is absent and what the bus said about it.
+				var hint = ControllerStateHint(i + 1, diOn, xiOn, checking);
+				if (ControlPages[i].ToolTipText != hint)
+					ControlPages[i].ToolTipText = hint;
 			}
 
+		}
+
+		/// <summary>What the light on a controller tab means, in words.</summary>
+		/// <param name="place">Controller number, 1 to 4.</param>
+		/// <param name="diOn">Whether a mapped device is connected.</param>
+		/// <param name="xiOn">Whether XInput hands back a controller for this place.</param>
+		/// <param name="checking">Whether the states are being read back from XInput at all.</param>
+		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool checking)
+		{
+			string state;
+			if (diOn && xiOn)
+				state = "A mapped device is connected and Windows hands back a virtual controller.";
+			else if (diOn && !checking)
+				// Not the same as knowing it is missing, and it must not be said as if it were.
+				state = "A mapped device is connected. Whether a virtual controller exists has not " +
+					"been checked: turn on Get XInput State to find out.";
+			else if (diOn)
+				state = "A mapped device is connected, but XInput hands back no virtual controller, " +
+					"so a game receives nothing. Look for it in Windows Game Controllers: if it is " +
+					"not listed there, it was never finished being built.";
+			else if (xiOn)
+				state = "A virtual controller exists, but no mapped device is connected, so it " +
+					"reports nothing.";
+			else if (!checking)
+				state = "No mapped device. Whether a virtual controller exists has not been checked.";
+			else
+				state = "No mapped device and no virtual controller.";
+			var text = string.Format("Controller {0}: {1}", place, state);
+			// What the bus said, when it said anything. Without this the missing half is named and the
+			// reason for it is not, which leaves nowhere to go.
+			var errors = Global.DHelper?.VirtualErrors;
+			var error = errors == null || place < 1 || place > errors.Length
+				? VirtualError.None
+				: errors[place - 1];
+			if (error != VirtualError.None)
+				text += "\r\n" + string.Format(
+					JocysCom.ClassLibrary.Runtime.Attributes.GetDescription(error), place);
+			return text;
 		}
 
 		private readonly bool AppVersionChanged;
@@ -180,6 +232,16 @@ namespace x360ce.App
 			if (IsDesignMode)
 				return;
 			AppHelper.InitializeHidGuardian();
+			// A controller arriving is only reported to a window which asked about that interface class.
+			// Without asking, the sole word of it is the machine-wide node change, which says nothing
+			// about what moved and costs a full device read to answer, so it is ignored - and a newly
+			// plugged controller went unnoticed until the program was started again.
+			//
+			// The pads this program plugs in are controllers too, so starting emulation is heard the same
+			// way and costs one device read of about a second. Measured at start-up, and left alone: they
+			// cannot be told apart by name from the real controller they imitate, only by walking the
+			// device tree, and a guess from timing would cost more than the second it saves.
+			_DeviceNotification = DeviceDetector.RegisterDeviceInterface(Handle, DeviceDetector.HidInterfaceClass);
 			System.Threading.Thread.CurrentThread.Name = "MainFormThread";
 			ArmFaultInjection();
 			// Initialize Debug panel.
@@ -558,10 +620,6 @@ namespace x360ce.App
 			_faultTimer.Tick += (s, e) =>
 			{
 				_faultTimer.Stop();
-				// Raised through the form's own message loop rather than straight out of the tick.
-				// A timer's window discards what its tick throws, so a fault raised there is lost
-				// and reaches neither the handler nor the report - which is not how application
-				// code fails.
 				// Raised through the form's own message loop rather than straight out of the tick.
 				// A timer's window discards what its tick throws, so a fault raised there is lost
 				// and reaches neither the handler nor the report - which is not how application
@@ -1035,14 +1093,11 @@ namespace x360ce.App
 			}
 			if (m.Msg == DeviceDetector.WM_DEVICECHANGE)
 			{
-				// Windows broadcasts this for any device node change on the machine, repeatedly
-				// and for devices which have nothing to do with controllers. Reading every device
-				// again costs about a second on the update thread, and controller processing stops
-				// for that long, so the rate falls from a thousand a second to one or two. Only a
-				// device arriving or leaving can change the list.
+				// Reading the message is interface work; deciding whether it is worth a device read is
+				// not, so the rule is asked for rather than restated here. All this does is raise a flag
+				// which the device thread reads once per pass.
 				var change = (JocysCom.ClassLibrary.Win32.DBT)m.WParam.ToInt32();
-				if (change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEARRIVAL ||
-					change == JocysCom.ClassLibrary.Win32.DBT.DBT_DEVICEREMOVECOMPLETE)
+				if (DInput.DInputHelper.IsDeviceListChange(change))
 					Global.DHelper.UpdateDevicesEnabled = true;
 			}
 			// If message value was found then...
@@ -1081,7 +1136,9 @@ namespace x360ce.App
 					new HotfixIssue(),
 					new XboxDriversIssue(),
 					new VirtualDeviceDriverIssue(),
-					new LeftoverVirtualPadsIssue()
+					new LeftoverVirtualPadsIssue(),
+					new UnfinishedVirtualPadsIssue(),
+					new RestartToFinishRemovalIssue()
 				);
 				IssuesPanel.IsSuspended = new Func<bool>(IssuesPanel_IsSuspended);
 				IssuesPanel.CheckCompleted += IssuesPanel_CheckCompleted;
@@ -1315,8 +1372,13 @@ namespace x360ce.App
 		protected override void OnFormClosed(FormClosedEventArgs e)
 		{
 			SettingsManager.CurrentGame_PropertyChanged -= CurrentGame_PropertyChanged;
+			DeviceDetector.UnregisterDeviceInterface(_DeviceNotification);
+			_DeviceNotification = IntPtr.Zero;
 			base.OnFormClosed(e);
 		}
+
+		/// <summary>What Windows recorded when this window asked to hear about controllers.</summary>
+		IntPtr _DeviceNotification;
 
 		private void GamesToolStrip_Resize(object sender, EventArgs e)
 		{

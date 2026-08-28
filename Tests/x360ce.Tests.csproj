@@ -34,8 +34,13 @@
 		<Reference Include="UIAutomationClient" />
 		<Reference Include="UIAutomationTypes" />
 		<Reference Include="WindowsBase" />
+		<!-- The shared control helpers cover both toolkits, so both have to resolve here. -->
+		<Reference Include="PresentationCore" />
+		<Reference Include="PresentationFramework" />
 		<Reference Include="System.Windows.Forms" />
 		<Reference Include="System.Configuration" />
+		<!-- Settings rows are entity objects, so their base type has to resolve here. -->
+		<Reference Include="System.Data.Entity" />
 		<!-- The test controller reports a DirectInput state, so the type has to resolve here too. -->
 		<Reference Include="SharpDX">
 			<HintPath>..\App.v4\Resources\SharpDX\SharpDX.dll</HintPath>

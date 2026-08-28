@@ -195,6 +195,9 @@
 			this.ClearPresetButton = new System.Windows.Forms.Button();
 			this.GameControllersButton = new System.Windows.Forms.Button();
 			this.AutoPresetButton = new System.Windows.Forms.Button();
+			this.ButtonsPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.ButtonsLeftPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.ButtonsRightPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this.MappedDevicesDataGridView = new System.Windows.Forms.DataGridView();
 			this.IsOnlineColumn = new System.Windows.Forms.DataGridViewImageColumn();
 			this.ConnectionClassColumn = new System.Windows.Forms.DataGridViewImageColumn();
@@ -1340,10 +1343,10 @@
 			// 
 			// ResetPresetButton
 			// 
-			this.ResetPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ResetPresetButton.Location = new System.Drawing.Point(688, 584);
+			this.ResetPresetButton.AutoSize = true;
+			this.ResetPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ResetPresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.ResetPresetButton.Name = "ResetPresetButton";
-			this.ResetPresetButton.Size = new System.Drawing.Size(75, 23);
 			this.ResetPresetButton.TabIndex = 66;
 			this.ResetPresetButton.Text = "&Reset";
 			this.ResetPresetButton.UseVisualStyleBackColor = true;
@@ -2106,11 +2109,11 @@
 			// 
 			// PastePresetButton
 			// 
-			this.PastePresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.PastePresetButton.AutoSize = true;
+			this.PastePresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.PastePresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.PastePresetButton.Image = global::x360ce.App.Properties.Resources.paste_16x16;
-			this.PastePresetButton.Location = new System.Drawing.Point(316, 584);
 			this.PastePresetButton.Name = "PastePresetButton";
-			this.PastePresetButton.Size = new System.Drawing.Size(100, 23);
 			this.PastePresetButton.TabIndex = 72;
 			this.PastePresetButton.Text = "Paste Preset";
 			this.PastePresetButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -2120,11 +2123,11 @@
 			// 
 			// CopyPresetButton
 			// 
-			this.CopyPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this.CopyPresetButton.AutoSize = true;
+			this.CopyPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.CopyPresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.CopyPresetButton.Image = global::x360ce.App.Properties.Resources.copy_16x16;
-			this.CopyPresetButton.Location = new System.Drawing.Point(210, 584);
 			this.CopyPresetButton.Name = "CopyPresetButton";
-			this.CopyPresetButton.Size = new System.Drawing.Size(100, 23);
 			this.CopyPresetButton.TabIndex = 71;
 			this.CopyPresetButton.Text = "Copy Preset";
 			this.CopyPresetButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -2134,10 +2137,10 @@
 			// 
 			// ClearPresetButton
 			// 
-			this.ClearPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.ClearPresetButton.Location = new System.Drawing.Point(607, 584);
+			this.ClearPresetButton.AutoSize = true;
+			this.ClearPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ClearPresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.ClearPresetButton.Name = "ClearPresetButton";
-			this.ClearPresetButton.Size = new System.Drawing.Size(75, 23);
 			this.ClearPresetButton.TabIndex = 66;
 			this.ClearPresetButton.Text = "&Clear";
 			this.ClearPresetButton.UseVisualStyleBackColor = true;
@@ -2145,10 +2148,10 @@
 			// 
 			// GameControllersButton
 			// 
-			this.GameControllersButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.GameControllersButton.Location = new System.Drawing.Point(3, 584);
+			this.GameControllersButton.AutoSize = true;
+			this.GameControllersButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.GameControllersButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.GameControllersButton.Name = "GameControllersButton";
-			this.GameControllersButton.Size = new System.Drawing.Size(106, 23);
 			this.GameControllersButton.TabIndex = 66;
 			this.GameControllersButton.Text = "&Game Controllers...";
 			this.GameControllersButton.UseVisualStyleBackColor = true;
@@ -2156,12 +2159,12 @@
 			// 
 			// AutoPresetButton
 			// 
-			this.AutoPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.AutoPresetButton.Location = new System.Drawing.Point(528, 584);
+			this.AutoPresetButton.AutoSize = true;
+			this.AutoPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.AutoPresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.AutoPresetButton.Name = "AutoPresetButton";
-			this.AutoPresetButton.Size = new System.Drawing.Size(75, 23);
 			this.AutoPresetButton.TabIndex = 66;
-			this.AutoPresetButton.Text = "&Auto";
+			this.AutoPresetButton.Text = "&Auto Preset";
 			this.AutoPresetButton.UseVisualStyleBackColor = true;
 			this.AutoPresetButton.Click += new System.EventHandler(this.AutoPresetButton_Click);
 			// 
@@ -2321,10 +2324,10 @@
 			// 
 			// LoadPresetButton
 			// 
-			this.LoadPresetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.LoadPresetButton.Location = new System.Drawing.Point(422, 584);
+			this.LoadPresetButton.AutoSize = true;
+			this.LoadPresetButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.LoadPresetButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.LoadPresetButton.Name = "LoadPresetButton";
-			this.LoadPresetButton.Size = new System.Drawing.Size(100, 23);
 			this.LoadPresetButton.TabIndex = 66;
 			this.LoadPresetButton.Text = "&Load Preset...";
 			this.LoadPresetButton.UseVisualStyleBackColor = true;
@@ -2404,33 +2407,83 @@
 			// 
 			// DxTweakButton
 			// 
-			this.DxTweakButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.DxTweakButton.Location = new System.Drawing.Point(115, 584);
+			this.DxTweakButton.AutoSize = true;
+			this.DxTweakButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.DxTweakButton.MinimumSize = new System.Drawing.Size(75, 23);
 			this.DxTweakButton.Name = "DxTweakButton";
-			this.DxTweakButton.Size = new System.Drawing.Size(79, 23);
 			this.DxTweakButton.TabIndex = 70;
 			this.DxTweakButton.Text = "&DX Tweak...";
 			this.DxTweakButton.UseVisualStyleBackColor = true;
 			this.DxTweakButton.Click += new System.EventHandler(this.CalibrateButton_Click);
 			// 
+			// ButtonsPanel
+			// 
+			// One place decides where this row sits. The buttons inside size themselves to their own
+			// labels and slide along as the window changes, so a longer word cannot be cut off and a
+			// button cannot land on its neighbour. Eight remembered positions used to say all of that,
+			// and every one of them was a guess about how wide a word would be.
+			this.ButtonsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.ButtonsPanel.AutoSize = true;
+			this.ButtonsPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ButtonsPanel.ColumnCount = 2;
+			this.ButtonsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.ButtonsPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.ButtonsPanel.Controls.Add(this.ButtonsLeftPanel, 0, 0);
+			this.ButtonsPanel.Controls.Add(this.ButtonsRightPanel, 1, 0);
+			this.ButtonsPanel.Location = new System.Drawing.Point(0, 581);
+			this.ButtonsPanel.Name = "ButtonsPanel";
+			this.ButtonsPanel.RowCount = 1;
+			this.ButtonsPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.ButtonsPanel.Size = new System.Drawing.Size(766, 29);
+			this.ButtonsPanel.TabIndex = 67;
+			// 
+			// ButtonsLeftPanel
+			// 
+			this.ButtonsLeftPanel.AutoSize = true;
+			this.ButtonsLeftPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ButtonsLeftPanel.Controls.Add(this.GameControllersButton);
+			this.ButtonsLeftPanel.Controls.Add(this.DxTweakButton);
+			this.ButtonsLeftPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ButtonsLeftPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.ButtonsLeftPanel.Name = "ButtonsLeftPanel";
+			this.ButtonsLeftPanel.TabIndex = 0;
+			this.ButtonsLeftPanel.WrapContents = false;
+			// 
+			// ButtonsRightPanel
+			// 
+			// Laid out from the right, so the row keeps its right edge as the window changes and the
+			// gap opens in the middle rather than between the last two buttons.
+			this.ButtonsRightPanel.AutoSize = true;
+			this.ButtonsRightPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.ButtonsRightPanel.Controls.Add(this.ResetPresetButton);
+			this.ButtonsRightPanel.Controls.Add(this.ClearPresetButton);
+			this.ButtonsRightPanel.Controls.Add(this.AutoPresetButton);
+			this.ButtonsRightPanel.Controls.Add(this.LoadPresetButton);
+			this.ButtonsRightPanel.Controls.Add(this.PastePresetButton);
+			this.ButtonsRightPanel.Controls.Add(this.CopyPresetButton);
+			this.ButtonsRightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ButtonsRightPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+			this.ButtonsRightPanel.Margin = new System.Windows.Forms.Padding(0);
+			this.ButtonsRightPanel.Name = "ButtonsRightPanel";
+			this.ButtonsRightPanel.TabIndex = 1;
+			this.ButtonsRightPanel.WrapContents = false;
+			// 
 			// PadControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.PastePresetButton);
-			this.Controls.Add(this.CopyPresetButton);
-			this.Controls.Add(this.DxTweakButton);
 			this.Controls.Add(this.MappedDevicesDataGridView);
 			this.Controls.Add(this.GamesToolStrip);
 			this.Controls.Add(this.SavePresetButton);
 			this.Controls.Add(this.PadTabControl);
-			this.Controls.Add(this.LoadPresetButton);
-			this.Controls.Add(this.GameControllersButton);
-			this.Controls.Add(this.AutoPresetButton);
-			this.Controls.Add(this.ClearPresetButton);
-			this.Controls.Add(this.ResetPresetButton);
+			this.Controls.Add(this.ButtonsPanel);
 			this.Name = "PadControl";
 			this.Size = new System.Drawing.Size(766, 610);
+			this.ButtonsPanel.ResumeLayout(false);
+			this.ButtonsPanel.PerformLayout();
+			this.ButtonsLeftPanel.ResumeLayout(false);
+			this.ButtonsRightPanel.ResumeLayout(false);
 			this.DirectInputTabPage.ResumeLayout(false);
 			this.AdvancedTabPage.ResumeLayout(false);
 			this.AdvancedOptionsPanel.ResumeLayout(false);
@@ -2646,6 +2699,9 @@
 		private AxisToButtonUserControl AxisToDPadUpDeadZonePanel;
 		private System.Windows.Forms.Button GameControllersButton;
 		private System.Windows.Forms.Button AutoPresetButton;
+		private System.Windows.Forms.TableLayoutPanel ButtonsPanel;
+		private System.Windows.Forms.FlowLayoutPanel ButtonsLeftPanel;
+		private System.Windows.Forms.FlowLayoutPanel ButtonsRightPanel;
 		private DirectInputUserControl DirectInputPanel;
 		private System.Windows.Forms.Button LoadPresetButton;
 		public System.Windows.Forms.DataGridView MappedDevicesDataGridView;

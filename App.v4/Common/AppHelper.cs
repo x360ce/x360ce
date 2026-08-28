@@ -432,5 +432,33 @@ namespace x360ce.App
 
 		#endregion
 
+		#region Grid cells
+
+		/// <summary>The lamp beside a device: lit while it is plugged in, grey while it is away.</summary>
+		/// <param name="online">Whether the device is present.</param>
+		public static Bitmap GetOnlineIcon(bool online)
+		{
+			return online
+				? Properties.Resources.bullet_square_glass_green
+				: Properties.Resources.bullet_square_glass_grey;
+		}
+
+		/// <summary>The icon of the port a device is attached through, or a blank of the same size.</summary>
+		/// <remarks>
+		/// One blank is kept and handed out again. A cell is drawn many times a second, and a bitmap made
+		/// for a single paint is never given back.
+		/// </remarks>
+		/// <param name="connectionClass">The device class of the port, or empty when it is not known.</param>
+		public static Bitmap GetConnectionClassIcon(Guid connectionClass)
+		{
+			if (connectionClass == Guid.Empty)
+				return BlankIcon;
+			return JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(connectionClass, 16)?.ToBitmap() ?? BlankIcon;
+		}
+
+		private static readonly Bitmap BlankIcon = new Bitmap(16, 16);
+
+		#endregion
+
 	}
 }

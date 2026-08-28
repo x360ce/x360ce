@@ -21,6 +21,9 @@ namespace x360ce.App.Issues
 		{
 			Name = "Leftover Virtual Controllers";
 			FixName = "Remove";
+			// Windows does not let an ordinary program remove a device, so pressing this raises a
+			// prompt. Marked, so the prompt is expected.
+			FixNeedsAdmin = true;
 		}
 
 		public override void CheckTask()
@@ -41,12 +44,31 @@ namespace x360ce.App.Issues
 
 		public override void FixTask()
 		{
-			// Windows does not let an ordinary program remove a device, so this takes the route every
-			// other administrative action here takes: a second copy of this program starts as
-			// Administrator with one argument, does the work, and ends.
-			Program.RunElevated(AdminCommand.RemoveLeftoverPads);
-			// Devices are read again so the list on screen matches what is now there.
-			Global.DHelper.UpdateDevicesEnabled = true;
+			// Let go of the controllers first. Windows refuses to remove a device anything still holds
+			// open, and this program holds all four places open while it reads their states; without
+			// this the removal is refused and each refusal leaves Windows needing a restart before it
+			// will finish building any new controller.
+			var helper = Global.DHelper;
+			if (helper != null)
+				helper.ReleaseForDeviceRemoval();
+			try
+			{
+				// Windows does not let an ordinary program remove a device, so this takes the route every
+				// other administrative action here takes: a second copy of this program starts as
+				// Administrator with one argument, does the work, and ends.
+				Program.RunElevated(AdminCommand.RemoveLeftoverPads);
+				// Windows refuses while anything holds the controller open, and its own shell does, so
+				// this is a normal answer rather than a fault. Kept, because the only thing that
+				// finishes the removal is a restart, and nobody would otherwise know to do one.
+				if (Program.LastAdminResult == Program.AdminResult.RestartNeeded)
+					DInput.VirtualDriverInstaller.RestartNeededToFinishRemoval = true;
+			}
+			finally
+			{
+				// Picked back up whatever happened, or the program is left feeding nothing.
+				if (helper != null)
+					helper.ResumeAfterDeviceRemoval();
+			}
 		}
 
 	}

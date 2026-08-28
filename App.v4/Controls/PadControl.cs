@@ -1342,18 +1342,14 @@ namespace x360ce.App.Controls
 			var item = (Engine.Data.UserSetting)viewRow.DataBoundItem;
 			if (column == IsOnlineColumn)
 			{
-				e.Value = item.IsOnline
-					? Properties.Resources.bullet_square_glass_green
-					: Properties.Resources.bullet_square_glass_grey;
+				e.Value = AppHelper.GetOnlineIcon(item.IsOnline);
 			}
 			else if (column == ConnectionClassColumn)
 			{
 				// A setting can outlive the device it maps to, so the lookup returns null for
 				// a mapping whose device is gone. Treat it as an unknown connection class.
 				var connectionClass = SettingsManager.GetDevice(item.InstanceGuid)?.ConnectionClass ?? Guid.Empty;
-				e.Value = connectionClass == Guid.Empty
-					? new Bitmap(16, 16)
-					: JocysCom.ClassLibrary.IO.DeviceDetector.GetClassIcon(connectionClass, 16)?.ToBitmap();
+				e.Value = AppHelper.GetConnectionClassIcon(connectionClass);
 			}
 			else if (column == InstanceIdColumn)
 			{

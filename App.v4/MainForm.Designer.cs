@@ -109,6 +109,7 @@ namespace x360ce.App
 			this.MainTabControl.ImageList = this.BuletImageList;
 			this.MainTabControl.Location = new System.Drawing.Point(3, 3);
 			this.MainTabControl.Name = "MainTabControl";
+			this.MainTabControl.ShowToolTips = true;
 			this.MainTabControl.SelectedIndex = 0;
 			this.MainTabControl.Size = new System.Drawing.Size(798, 620);
 			this.MainTabControl.TabIndex = 1;

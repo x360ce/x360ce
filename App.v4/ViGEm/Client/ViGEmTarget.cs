@@ -44,6 +44,25 @@ namespace Nefarius.ViGEm.Client
             }
         }
 
+        /// <summary>Whether the bus is holding this controller at this moment.</summary>
+        /// <remarks>
+        /// Asked of the bus rather than remembered. A remembered answer stays true after the
+        /// controller has gone - removed in Device Manager, taken away with the leftovers, or lost
+        /// when the bus was reset - and then the program shows a green light for a controller that
+        /// is not there and never makes a new one, because it believes it already has.
+        ///
+        /// It is a field read inside the bus library, not a request to the driver, so it is cheap
+        /// enough for the update loop to ask on every pass.
+        /// </remarks>
+        public bool IsAttached
+        {
+            get
+            {
+                return NativeHandle != IntPtr.Zero
+                    && ViGEmClient.NativeMethods.vigem_target_is_attached(NativeHandle);
+            }
+        }
+
         /// <summary>
         ///     Gets the Vendor ID this device will present to the system.
         /// </summary>
