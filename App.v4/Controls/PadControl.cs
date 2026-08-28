@@ -1575,7 +1575,7 @@ namespace x360ce.App.Controls
 		{
 			var ps = GetSelectedPadSetting();
 			var text = JocysCom.ClassLibrary.Runtime.Serializer.SerializeToXmlString(ps, null, true);
-			Clipboard.SetText(text);
+			ControlsHelper.CopyToClipboardOrWarn(text);
 		}
 
 		private void PastePresetButton_Click(object sender, EventArgs e)

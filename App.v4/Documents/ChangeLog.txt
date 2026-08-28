@@ -1,4 +1,4 @@
-﻿v4.18.60.0 (2026-08-28)
+﻿v4.18.63.0 (2026-08-28)
 - Added: Lists dim the rows of controllers that are switched off or unplugged.
 - Added: Controller tabs explain what their light means.
 - Added: Issues tab reports a virtual controller Windows did not finish building.
@@ -19,6 +19,9 @@
 - Changed: Buttons at the bottom of a controller page size themselves to their labels.
 - Changed: Help pages come from one document each, so both versions show the same text.
 - Fixed: Help page put the indent after a bullet or number instead of before it.
+- Fixed: Add button on a controller page could close the program.
+- Fixed: Cancelling the add device window added the devices chosen the time before.
+- Fixed: Copying a preset could close the program while another program held the clipboard.
 
 v4.18.40.0 (2026-08-27)
 - Fixed: A formula had no effect until the box was left.

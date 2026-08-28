@@ -159,7 +159,7 @@ namespace JocysCom.ClassLibrary.Controls
 		{
 			if (e.Control & e.KeyCode == Keys.C)
 			{
-				Clipboard.SetDataObject(TextLabel.Text);
+				ControlsHelper.CopyToClipboardOrWarn(TextLabel.Text);
 				e.Handled = true;
 				return;
 			}
@@ -198,7 +198,7 @@ namespace JocysCom.ClassLibrary.Controls
 
 		void copyToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			Clipboard.SetText(TextLabel.Text);
+			ControlsHelper.CopyToClipboardOrWarn(TextLabel.Text);
 		}
 
 		void MainLinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

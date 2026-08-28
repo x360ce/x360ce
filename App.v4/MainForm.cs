@@ -841,7 +841,6 @@ namespace x360ce.App
 			MainStatusStrip.Visible = false;
 			// Check for various issues.
 			InitIssuesPanel();
-			InitDeviceForm();
 			InitUpdateForm();
 		}
 
@@ -1190,39 +1189,27 @@ namespace x360ce.App
 
 		#region Device Form
 
-		private MapDeviceToControllerForm _DeviceForm;
-		private readonly object DeviceFormLock = new object();
-
-		private void InitDeviceForm()
-		{
-			lock (DeviceFormLock)
-			{
-				_DeviceForm = new MapDeviceToControllerForm();
-			}
-		}
-
-		private void DisposeDeviceForm()
-		{
-			lock (DeviceFormLock)
-			{
-				if (_DeviceForm != null)
-				{
-					_DeviceForm.Dispose();
-					_DeviceForm = null;
-				}
-			}
-		}
-
+		/// <summary>Asks which devices to map to a controller. Null when nothing was chosen.</summary>
+		/// <remarks>
+		/// The dialog is built here and thrown away here. It used to be built once during startup
+		/// and kept for the life of the program, which left this method depending on that step
+		/// having run: any startup path that did not reach it left the field empty, and the Add
+		/// button then failed on a button press far away from the cause. Building a dialog when it
+		/// is opened costs nothing measurable and removes the ordering entirely.
+		///
+		/// Cancelling now answers nothing. Sharing one dialog meant the chosen devices outlived the
+		/// dialog that chose them, so cancelling returned whatever was picked the time before and
+		/// mapped it again.
+		/// </remarks>
 		public UserDevice[] ShowDeviceForm()
 		{
-			lock (DeviceFormLock)
+			using (var form = new MapDeviceToControllerForm())
 			{
-				if (_DeviceForm == null)
-					return null;
-				_DeviceForm.StartPosition = FormStartPosition.CenterParent;
-				ControlsHelper.CheckTopMost(_DeviceForm);
-				var result = _DeviceForm.ShowDialog();
-				return _DeviceForm.SelectedDevices;
+				form.StartPosition = FormStartPosition.CenterParent;
+				ControlsHelper.CheckTopMost(form);
+				return form.ShowDialog() == DialogResult.OK
+					? form.SelectedDevices
+					: null;
 			}
 		}
 
@@ -1296,7 +1283,6 @@ namespace x360ce.App
 				{
 					_Mutex.Dispose();
 				}
-				DisposeDeviceForm();
 				DisposeUpdateForm();
 				DisposeInterfaceUpdate();
 				if (Global.DHelper != null)

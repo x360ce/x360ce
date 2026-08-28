@@ -255,6 +255,63 @@ namespace JocysCom.ClassLibrary.Controls
 				form.TopMost = true;
 		}
 
+		/// <summary>
+		/// Put text on the clipboard. Returns false when Windows refused, and shows nothing.
+		/// </summary>
+		/// <remarks>
+		/// Only one process owns the clipboard at a time, and Windows refuses the operation while
+		/// another program holds it. Remote desktop clients, clipboard managers and office suites
+		/// all take it briefly and often, so the refusal is ordinary rather than exceptional. The
+		/// framework already retries for about a second before giving up; what it then does is
+		/// throw, and a copy that did not happen is no reason to lose the program along with
+		/// everything unsaved in it.
+		///
+		/// This says whether it worked and nothing more, so it can be called from anywhere,
+		/// including a thread with no window to be modal to. Telling the user is the caller's
+		/// business, and <see cref="CopyToClipboardOrWarn"/> is how a button does it.
+		/// </remarks>
+		public static bool CopyToClipboard(string text)
+		{
+			try
+			{
+				// SetText refuses an empty string, and clearing is what an empty copy means.
+				if (string.IsNullOrEmpty(text))
+					Clipboard.Clear();
+				else
+					Clipboard.SetText(text);
+				return true;
+			}
+			catch (ExternalException)
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Put text on the clipboard for somebody who pressed a button, and say so when it failed.
+		/// </summary>
+		/// <remarks>
+		/// A copy that quietly does nothing is worse than one that fails loudly: the reader walks
+		/// away believing they have the text. Every copy button goes through here, so what a busy
+		/// clipboard looks like is decided once rather than at each button.
+		/// </remarks>
+		public static bool CopyToClipboardOrWarn(string text)
+		{
+			if (CopyToClipboard(text))
+				return true;
+			var form = new MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			CheckTopMost(form);
+			form.ShowForm(
+				"Windows would not hand over the clipboard, because another program is holding it." +
+				Environment.NewLine + Environment.NewLine +
+				"Nothing was copied. Try again in a moment.",
+				"Clipboard is busy",
+				MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			form.Dispose();
+			return false;
+		}
+
 		#region "UserControl is Visible"
 
 		public static bool IsControlVisibleOnForm(Control control)

@@ -30,7 +30,7 @@ namespace x360ce.App.Controls
 
 		private void CopyButton_Click(object sender, EventArgs e)
 		{
-			Clipboard.SetText(EditTextBox.Text);
+			ControlsHelper.CopyToClipboardOrWarn(EditTextBox.Text);
 		}
 
 		private void EditTextBox_TextChanged(object sender, EventArgs e)
