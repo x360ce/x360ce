@@ -1,4 +1,4 @@
-﻿v4.18.58.0 (2026-08-28)
+﻿v4.18.60.0 (2026-08-28)
 - Added: Lists dim the rows of controllers that are switched off or unplugged.
 - Added: Controller tabs explain what their light means.
 - Added: Issues tab reports a virtual controller Windows did not finish building.
@@ -17,6 +17,8 @@
 - Fixed: Opening a window in the Visual Studio designer failed.
 - Changed: Auto button on a controller page is now named Auto Preset.
 - Changed: Buttons at the bottom of a controller page size themselves to their labels.
+- Changed: Help pages come from one document each, so both versions show the same text.
+- Fixed: Help page put the indent after a bullet or number instead of before it.
 
 v4.18.40.0 (2026-08-27)
 - Fixed: A formula had no effect until the box was left.

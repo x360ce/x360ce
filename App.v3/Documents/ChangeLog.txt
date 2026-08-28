@@ -1,4 +1,8 @@
-﻿v3.3.11.0 (2026-08-25)
+﻿v3.3.13.0 (2026-08-28)
+- Changed: Help pages come from one document each, so both versions show the same text.
+- Fixed: Help page put the indent after a bullet or number instead of before it.
+
+v3.3.11.0 (2026-08-25)
 - Fix: Crash when a controller was unplugged and plugged back in. The hidden window that receives device messages was written to from the wrong thread.
 - Update: Device detection lists attached devices only, instead of every device ever installed.
 - Update: Interface refreshes up to 10 times per second instead of 20.

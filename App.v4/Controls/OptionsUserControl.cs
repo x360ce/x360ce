@@ -19,7 +19,7 @@ namespace x360ce.App.Controls
 			// Make font more consistent with the rest of the interface.
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			LocationsToolStrip.Font = Font;
-			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help_HidGuardian.rtf");
+			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.HidGuardian.md");
 #if DEBUG
 			// Install stays available in development builds so that the removal path can
 			// be tested. The confirmation dialog states that this is a development build.

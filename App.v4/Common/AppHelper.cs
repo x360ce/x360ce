@@ -188,15 +188,10 @@ namespace x360ce.App
 			if (stream == null)
 				return;
 			var sr = new StreamReader(stream);
-			//NameValueCollection list = new NameValueCollection();
-			//list.Add("font-name-default", "'Microsoft Sans Serif'");
-			//list.Add("font-size-default", "16");
-			//HelpRichTextBox.Rtf = Html2Rtf.Converter.Html2Rtf(sr.ReadToEnd(), list);
-			box.Rtf = sr.ReadToEnd();
-			box.SelectAll();
-			box.SelectionIndent = 8;
-			box.SelectionRightIndent = 8;
-			box.DeselectAll();
+			// The document is Markdown and there is only one copy of it. It becomes what this box
+			// can show here, when it is opened, so nothing has to be generated, committed, or kept
+			// in step with anything else.
+			box.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(sr.ReadToEnd());
 			box.LinkClicked += (object sender, System.Windows.Forms.LinkClickedEventArgs e) =>
 			{
 				JocysCom.ClassLibrary.Controls.ControlsHelper.OpenUrl(e.LinkText);

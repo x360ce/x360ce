@@ -2,7 +2,6 @@
 using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -965,16 +964,17 @@ namespace x360ce.App
 			{
 				// Move this here so interface will load one second faster.
 				HelpInit = true;
-				var stream = EngineHelper.GetResourceStream("Documents.Help.htm");
+				var stream = EngineHelper.GetResourceStream("Documents.Help.v3.md");
 				var sr = new StreamReader(stream);
-				NameValueCollection list = new NameValueCollection();
-				list.Add("font-name-default", "'Microsoft Sans Serif'");
-				list.Add("font-size-default", "16");
-				HelpRichTextBox.Rtf = Html2Rtf.Converter.Html2Rtf(sr.ReadToEnd(), list);
-				HelpRichTextBox.SelectAll();
-				HelpRichTextBox.SelectionIndent = 8;
-				HelpRichTextBox.SelectionRightIndent = 8;
-				HelpRichTextBox.DeselectAll();
+				// The document is Markdown and there is only one copy of it. It becomes what this box
+				// can show here, when it is opened, so nothing has to be generated, committed, or kept
+				// in step with anything else.
+				HelpRichTextBox.Rtf = x360ce.Engine.MarkdownRtf.ToRtf(sr.ReadToEnd());
+				// The addresses in the page are drawn as links, so they have to behave like them.
+				HelpRichTextBox.LinkClicked += (object s, LinkClickedEventArgs le) =>
+				{
+					ControlsHelper.OpenUrl(le.LinkText);
+				};
 			}
 			else if (MainTabControl.SelectedTab == ControllerSettingsTabPage)
 			{

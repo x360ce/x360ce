@@ -377,7 +377,6 @@
     </Compile>
     <Compile Include="Global.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Html2Rtf\Converter.cs" />
     <Compile Include="Issues\ArchitectureIssue.cs" />
     <Compile Include="Issues\CppRuntimeDetector.cs" />
     <Compile Include="Issues\CppX64RuntimeInstallIssue.cs" />
@@ -518,8 +517,13 @@
     <EmbeddedResource Include="Presets\x360ce.SL_6555_SBK.ini" />
     <EmbeddedResource Include="Presets\x360ce.Philips_Wireless_PC_Controller.ini" />
     <None Include="app.config" />
-    <EmbeddedResource Include="Documents\Help.rtf" />
-    <EmbeddedResource Include="Documents\Help_HidGuardian.rtf" />
+    <!-- The documents live once, under docs, and are rendered when shown. -->
+    <EmbeddedResource Include="..\docs\Help.v4.md">
+      <Link>Documents\Help.v4.md</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\docs\Help.HidGuardian.md">
+      <Link>Documents\Help.HidGuardian.md</Link>
+    </EmbeddedResource>
     <Compile Include="Common\SettingsManager.LoadAndSync.cs" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -707,9 +711,6 @@
     <Content Include="Presets\ReadMe.txt" />
     <EmbeddedResource Include="Images\MarkController.png" />
     <EmbeddedResource Include="Images\bullet_ball_glass_red_16x16.png" />
-    <EmbeddedResource Include="Html2Rtf\xhtml2rtf.xsl" />
-    <Content Include="Html2Rtf\Readme.htm" />
-    <Content Include="Html2Rtf\xhtml2rtf.txt" />
     <EmbeddedResource Include="Images\bullet_square_glass_blue.png" />
     <EmbeddedResource Include="Images\bullet_square_glass_green.png" />
     <EmbeddedResource Include="Images\bullet_square_glass_grey.png" />
