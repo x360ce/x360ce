@@ -1,4 +1,6 @@
-﻿v4.19.10.0 (2026-08-29)
+﻿v4.19.12.0 (2026-08-29)
+- Fixed: Closing the program could end it with an error instead.
+- Changed: A virtual controller failure now says which failure it was.
 - Added: Window opens where you left it, on the screen you left it on.
 - Changed: Pointing at anything shows its name and what it does in the header.
 - Added: Program can write out a description of every part of its interface.

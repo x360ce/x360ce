@@ -90,12 +90,14 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		public void Stop()
+		/// <summary>Stops the update thread.</summary>
+		/// <returns>False when the thread was still running when this gave up waiting.</returns>
+		public bool Stop()
 		{
 			lock (timerLock)
 			{
 				if (_timer == null)
-					return;
+					return true;
 				_timer.Stop();
 				_timer.Dispose();
 				_timer = null;
@@ -113,7 +115,9 @@ namespace x360ce.App.DInput
 					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 						"DirectInput update thread did not stop within 2 seconds.",
 						System.Diagnostics.EventLogEntryType.Warning);
+					return false;
 				}
+				return true;
 			}
 		}
 
@@ -365,9 +369,16 @@ namespace x360ce.App.DInput
 				if (IsDisposing)
 					return;
 				IsDisposing = true;
-				Stop();
+				var stopped = Stop();
 				Nefarius.ViGEm.Client.ViGEmClient.DisposeCurrent();
-				_ResetEvent.Dispose();
+				// Only once the thread has actually gone. Waiting for it gives up after two
+				// seconds, because it can be inside a native call that takes about a second to
+				// return - reading every device does. Releasing the handle while it still runs
+				// means the next thing it does with it throws, and the program ends on a fault
+				// while closing. Left alone the handle costs nothing: the thread runs in the
+				// background and both it and the handle go when the process does.
+				if (stopped)
+					_ResetEvent.Dispose();
 			}
 		}
 
