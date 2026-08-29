@@ -11,6 +11,10 @@
     <RootNamespace>x360ce.Engine</RootNamespace>
     <AssemblyName>x360ce.Engine</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <!-- Shared JocysCom control files are written against C# 8, which .NET Framework 4.6.2
+         compiles happily. Kept at 8.0 so those files can be taken as they are rather than
+         edited on the way in, which is how copies drift apart. -->
+    <LangVersion>8.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -234,6 +238,8 @@
     <Compile Include="JocysCom\Controls\ErrorReportUserControl.Designer.cs">
       <DependentUpon>ErrorReportUserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="JocysCom\Controls\PositionSettings.cs" />
+    <Compile Include="JocysCom\Controls\PositionSettings.Forms.cs" />
     <Compile Include="JocysCom\Controls\InfoForm.cs">
       <SubType>Form</SubType>
     </Compile>

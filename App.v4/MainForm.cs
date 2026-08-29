@@ -99,6 +99,16 @@ namespace x360ce.App
 			// Attach property monitoring first.
 			o.PropertyChanged += Options_PropertyChanged;
 			LoadSettings();
+			// Put the window back where it was left, before it is shown, so it does not appear in
+			// one place and jump to another.
+			o.WindowPosition?.LoadPosition(this);
+		}
+
+		/// <summary>Menu behind the icon in the notification area.</summary>
+		/// <remarks>Named here so the interface description can include it; the designer keeps its field private.</remarks>
+		internal ContextMenuStrip TrayMenu
+		{
+			get { return TrayContextMenuStrip; }
 		}
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
@@ -635,6 +645,9 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
+			// Remember where the window was, so the next run opens where this one was left rather
+			// than back in the middle of whatever the screen is being used for.
+			SettingsManager.Options.WindowPosition?.SavePosition(this);
 			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("X360CE_THROW_ON_CLOSE")))
 				throw new InvalidOperationException("Injected fault: X360CE_THROW_ON_CLOSE.");
 			MonitorErrors(false);
@@ -891,6 +904,17 @@ namespace x360ce.App
 				Dock = DockStyle.Fill
 			};
 			AboutTabPage.Controls.Add(ControlAbout);
+
+			// Name and describe everything, now that every panel exists. This is what a screen
+			// reader announces, what an automation tool searches by, and what the exported
+			// navigation tree is built from.
+			UiTree.UiText.Apply(this);
+			// The tray menu hangs off the notification icon rather than off the window, so it is
+			// not reached by walking the window.
+			UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			// One call wires the header help for every control at once, from the same two
+			// properties, so what a screen reader announces and what the header shows agree.
+			UiTree.UiHelp.Attach(this);
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}

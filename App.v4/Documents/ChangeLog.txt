@@ -1,4 +1,8 @@
-﻿v4.19.6.0 (2026-08-29)
+﻿v4.19.10.0 (2026-08-29)
+- Added: Window opens where you left it, on the screen you left it on.
+- Changed: Pointing at anything shows its name and what it does in the header.
+- Added: Program can write out a description of every part of its interface.
+- Changed: Controls tell screen readers what they do, not only what they are called.
 - Added: Options has a Settings tab that shows where your settings are kept.
 - Added: Settings can be kept in your own user folder, where no other account can lock them.
 - Added: Button that opens the settings folder in Explorer.

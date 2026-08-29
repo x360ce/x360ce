@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -245,18 +245,67 @@ namespace JocysCom.ClassLibrary.Runtime
 		}
 
 		// Created by: https://stackoverflow.com/users/17211/vince-panuccio
-		public static string FormatJson(string json, string ident = "\t")
+		/// <summary>Lays JSON out over several lines, one value to a line.</summary>
+		/// <remarks>
+		/// Scanned character by character, tracking whether the position is inside a string, because a
+		/// brace or bracket inside a value is text rather than structure. Without that a label such as
+		/// "Map on [General] Tab First" is split across lines mid-word, and the result is no longer JSON.
+		/// </remarks>
+		public static string FormatJson(string json, string ident = "	")
 		{
-			var indentation = 0;
-			var quoteCount = 0;
-			var result =
-				from ch in json
-				let quotes = ch == '"' ? quoteCount++ : quoteCount
-				let lineBreak = ch == ',' && quotes % 2 == 0 ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(ident, indentation)) : null
-				let openChar = ch == '{' || ch == '[' ? ch + Environment.NewLine + string.Concat(Enumerable.Repeat(ident, ++indentation)) : ch.ToString()
-				let closeChar = ch == '}' || ch == ']' ? Environment.NewLine + string.Concat(Enumerable.Repeat(ident, --indentation)) + ch : ch.ToString()
-				select lineBreak == null ? openChar.Length > 1 ? openChar : closeChar : lineBreak;
-			return string.Concat(result);
+			if (string.IsNullOrEmpty(json))
+				return json;
+			var sb = new StringBuilder(json.Length * 2);
+			var depth = 0;
+			var inString = false;
+			var escaped = false;
+			for (var i = 0; i < json.Length; i++)
+			{
+				var ch = json[i];
+				if (inString)
+				{
+					sb.Append(ch);
+					if (escaped)
+						escaped = false;
+					else if (ch == '\\')
+						escaped = true;
+					else if (ch == '"')
+						inString = false;
+					continue;
+				}
+				switch (ch)
+				{
+					case '"':
+						inString = true;
+						sb.Append(ch);
+						break;
+					case '{':
+					case '[':
+						sb.Append(ch);
+						AppendLine(sb, ident, ++depth);
+						break;
+					case '}':
+					case ']':
+						AppendLine(sb, ident, --depth);
+						sb.Append(ch);
+						break;
+					case ',':
+						sb.Append(ch);
+						AppendLine(sb, ident, depth);
+						break;
+					default:
+						sb.Append(ch);
+						break;
+				}
+			}
+			return sb.ToString();
+		}
+
+		static void AppendLine(StringBuilder sb, string ident, int depth)
+		{
+			sb.Append(Environment.NewLine);
+			for (var i = 0; i < depth; i++)
+				sb.Append(ident);
 		}
 
 		#endregion

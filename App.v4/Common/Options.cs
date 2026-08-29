@@ -251,6 +251,11 @@ namespace x360ce.App
 
 		#endregion
 
+		/// <summary>Where the main window was left, so it opens there again.</summary>
+		[Description("Where the main window was last left on screen.")]
+		public JocysCom.ClassLibrary.Controls.PositionSettings WindowPosition { get; set; }
+			= new JocysCom.ClassLibrary.Controls.PositionSettings();
+
 		#region INotifyPropertyChanged
 
 		public event PropertyChangedEventHandler PropertyChanged;

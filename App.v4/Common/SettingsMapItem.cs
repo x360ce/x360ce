@@ -37,10 +37,6 @@ namespace x360ce.App
 
 		public PropertyInfo Property { get; set; }
 		/// <summary>
-		/// Description of the setting.
-		/// </summary>
-		public string Description { get; set; }
-		/// <summary>
 		/// Setting is mapped to controller.
 		/// </summary>
 		public Engine.MapTo MapTo { get; set; }

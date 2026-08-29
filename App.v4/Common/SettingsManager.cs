@@ -537,12 +537,12 @@ namespace x360ce.App
 			var desc = descAttr?.Description ?? string.Empty;
 			// Get the default value attribute
 			var dvalAttr = GetCustomAttribute<DefaultValueAttribute>(prop);
-			// Display help inside yellow header.
-			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
-			control.MouseHover += control_MouseEnter;
-			control.MouseLeave += control_MouseLeave;
+			// The setting says what it is for; that belongs on the control itself, where a screen
+			// reader, the header help and the exported navigation tree all read it from one place.
+			// Anything named deliberately elsewhere keeps its own words.
+			if (string.IsNullOrEmpty(control.AccessibleDescription))
+				control.AccessibleDescription = desc;
 			var item = new SettingsMapItem();
-			item.Description = desc;
 			//item.IniSection = sectionName;
 			//item.MapTo = mapTo;
 			//item.IniKey = keyName;
@@ -572,12 +572,12 @@ namespace x360ce.App
 			// Get the default value attribute
 			var dvalAttr = GetCustomAttribute<DefaultValueAttribute>(prop);
 			var dval = (string)(descAttr != null ? dvalAttr.Value : null);
-			// Display help inside yellow header.
-			// We could add settings EnableHelpTooltips=1, EnableHelpHeader=1
-			control.MouseHover += control_MouseEnter;
-			control.MouseLeave += control_MouseLeave;
+			// The setting says what it is for; that belongs on the control itself, where a screen
+			// reader, the header help and the exported navigation tree all read it from one place.
+			// Anything named deliberately elsewhere keeps its own words.
+			if (string.IsNullOrEmpty(control.AccessibleDescription))
+				control.AccessibleDescription = desc;
 			var item = new SettingsMapItem();
-			item.Description = desc;
 			item.IniSection = sectionName;
 			item.IniKey = keyName;
 			item.Code = code;
@@ -589,23 +589,6 @@ namespace x360ce.App
 			// Add to the map
 			Current.SettingsMap.Add(item);
 			return item;
-		}
-
-		static void control_MouseLeave(object sender, EventArgs e)
-		{
-			//Console.WriteLine(string.Format("Mouse Leave: {0}", sender));
-			MainForm.Current.SetHeaderBody(MessageBoxIcon.None);
-		}
-
-		static void control_MouseEnter(object sender, EventArgs e)
-		{
-			//Console.WriteLine(string.Format("Mouse Enter: {0}", sender));
-			var control = (Control)sender;
-			var item = Current.SettingsMap.FirstOrDefault(x => x.Control == control);
-			if (item != null && !string.IsNullOrEmpty(item.Description))
-			{
-				MainForm.Current.SetHeaderInfo(item.Description);
-			}
 		}
 
 		#endregion // Public Methods

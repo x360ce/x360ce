@@ -1,0 +1,3010 @@
+{
+	"Name":"X360 Controller Emulator",
+	"Role":"Program",
+	"Items":[
+		{
+			"Name":"Controls",
+			"Description":"Controls used in more than one place, described once here.",
+			"Role":"Section",
+			"Items":[
+				{
+					"Name":"AxisMapUserControl",
+					"Description":"Shapes what the game receives from one control, without changing the device.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Mapped control settings",
+							"Description":"Dead zone, anti-dead zone and sensitivity for this one control.",
+							"Role":"Section",
+							"Id":"MainGroupBox",
+							"Items":[
+								{
+									"Name":"Sensitivity",
+									"Description":"Bends the middle of the travel and leaves both ends where they are.",
+									"Role":"Value",
+									"Id":"SensitivityTextBox"
+								},
+								{
+									"Name":"Sensitivity",
+									"Description":"Bends the middle of the travel and leaves both ends where they are.",
+									"Role":"Slider",
+									"Id":"SensitivityTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Response curve",
+									"Description":"Draws what the game receives for every position of the control.",
+									"Role":"Picture",
+									"Id":"MainPictureBox"
+								},
+								{
+									"Name":"Anti-dead zone",
+									"Description":"Skips past a dead zone the game applies of its own, so small movements are felt.",
+									"Role":"Value",
+									"Id":"AntiDeadZoneTextBox"
+								},
+								{
+									"Name":"Dead zone",
+									"Description":"How far the control must move before the game sees anything. Removes drift at rest.",
+									"Role":"Value",
+									"Id":"DeadZoneTextBox"
+								},
+								{
+									"Name":"Anti-dead zone",
+									"Description":"Skips past a dead zone the game applies of its own, so small movements are felt.",
+									"Role":"Slider",
+									"Id":"AntiDeadZoneTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Dead zone",
+									"Description":"Add deadzone to the left trigger. Range is 0 to 255. Default is 0.",
+									"Role":"Slider",
+									"Id":"DeadZoneTrackBar",
+									"Min":0,
+									"Max":100
+								},
+								{
+									"Name":"Anti-dead zone",
+									"Description":"Decrease in-game deadzone for left trigger. Range is 0 to 255. Default is 0.",
+									"Role":"Number",
+									"Id":"AntiDeadZoneNumericUpDown"
+								},
+								{
+									"Name":"Sensitivity",
+									"Description":"Increase sensitivity near the bottom of left trigger. Range is -100 to 100. Default is 0.",
+									"Role":"Number",
+									"Id":"SensitivityNumericUpDown",
+									"Min":-100,
+									"Max":100,
+									"Hidden":true
+								},
+								{
+									"Name":"Dead zone",
+									"Description":"How far the control must move before the game sees anything. Removes drift at rest.",
+									"Role":"Number",
+									"Id":"DeadZoneNumericUpDown"
+								},
+								{
+									"Name":"Invert sensitivity",
+									"Description":"Bends the middle the other way: more sensitive in the centre instead of less.",
+									"Role":"CheckBox",
+									"Id":"SensitivityCheckBox"
+								},
+								{
+									"Name":"Ready-made settings",
+									"Description":"Common dead zone and anti-dead zone combinations, applied in one click.",
+									"Role":"Toolbar",
+									"Id":"PresetMenuStrip",
+									"Items":[
+										{
+											"Name":"Apply a ready-made setting",
+											"Description":"Fills the three settings above from a common combination.",
+											"Role":"Command",
+											"Id":"ApplyPresetMenuItem",
+											"Items":[
+												{
+													"Name":"Clear",
+													"Description":"Clears the dead zone, anti-dead zone and sensitivity.",
+													"Role":"Command",
+													"Id":"P_0_0_0_MenuItem"
+												},
+												{
+													"Name":"5% DeadZone, 100% Controller Anti-DeadZone",
+													"Description":"Sets the dead zone to 5% and the anti-dead zone to 100%.",
+													"Role":"Command",
+													"Id":"P_5_100_0_MenuItem"
+												},
+												{
+													"Name":"100% Controller Anti-DeadZone",
+													"Description":"Sets the dead zone to 0% and the anti-dead zone to 100%.",
+													"Role":"Command",
+													"Id":"P_0_100_0_MenuItem"
+												},
+												{
+													"Name":"80% Controller Anti-DeadZone",
+													"Description":"Sets the dead zone to 0% and the anti-dead zone to 80%.",
+													"Role":"Command",
+													"Id":"P_0_80_0_MenuItem"
+												},
+												{
+													"Name":"60% Controller Anti-DeadZone",
+													"Description":"Sets the dead zone to 0% and the anti-dead zone to 60%.",
+													"Role":"Command",
+													"Id":"P_0_60_0_MenuItem"
+												},
+												{
+													"Name":"40% Controller Anti-DeadZone",
+													"Description":"Sets the dead zone to 0% and the anti-dead zone to 40%.",
+													"Role":"Command",
+													"Id":"P_0_40_0_MenuItem"
+												},
+												{
+													"Name":"20% Controller Anti-DeadZone",
+													"Description":"Sets the dead zone to 0% and the anti-dead zone to 20%.",
+													"Role":"Command",
+													"Id":"P_0_20_0_MenuItem"
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"Name":"AxisToButtonUserControl",
+					"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Mapped control",
+							"Description":"Which control on your device works this button.",
+							"Role":"Value",
+							"Id":"MappedAxisTextBox"
+						},
+						{
+							"Name":"Press point",
+							"Description":"How far the control must move before this button counts as pressed.",
+							"Role":"Slider",
+							"Id":"DeadZoneTrackBar",
+							"Min":0,
+							"Max":100
+						},
+						{
+							"Name":"Press point",
+							"Description":"How far the control must move before this button counts as pressed.",
+							"Role":"Value",
+							"Id":"DeadZoneTextBox"
+						},
+						{
+							"Name":"Press point",
+							"Description":"Axis to A Button Dead Zone.",
+							"Role":"Number",
+							"Id":"DeadZoneNumericUpDown",
+							"Min":0,
+							"Max":32767
+						}
+					]
+				},
+				{
+					"Name":"DirectInputUserControl",
+					"Description":"What the mapped device reports about itself, and its values as they change.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Device detail pages",
+							"Description":"What the device reports it can do.",
+							"Role":"Tabs",
+							"Id":"DeviceDetailsTabControl",
+							"Items":[
+								{
+									"Name":"Device Objects",
+									"Description":"Every axis, button and hat the device reports having.",
+									"Role":"Tab",
+									"Id":"DiObjectsTabPage",
+									"Items":[
+										{
+											"Name":"Objects the device reports it has",
+											"Description":"Every axis, button and hat the device reports having.",
+											"Role":"Grid",
+											"Id":"DiObjectsDataGridView"
+										}
+									]
+								},
+								{
+									"Name":"Force Feedback Effects",
+									"Description":"The vibration effects the device says it can produce.",
+									"Role":"Tab",
+									"Id":"DiEffectsDataTabPage",
+									"Items":[
+										{
+											"Name":"Force feedback effects the device supports",
+											"Description":"The vibration effects the device says it can produce.",
+											"Role":"Grid",
+											"Id":"DiEffectsDataGridView"
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Axis values reported by the device",
+							"Description":"What each axis reads right now. Move a control to see which line changes.",
+							"Role":"Grid",
+							"Id":"DiAxisDataGridView"
+						},
+						{
+							"Name":"Slider values reported by the device",
+							"Description":"What each slider reads right now.",
+							"Role":"Grid",
+							"Id":"DiSlidersDataGridView"
+						},
+						{
+							"Name":"Point of view hat values",
+							"Description":"What each hat switch reads right now.",
+							"Role":"Grid",
+							"Id":"DiPovsDataGridView"
+						},
+						{
+							"Name":"Vendor name",
+							"Description":"Name of the company that made the device.",
+							"Role":"Value",
+							"Id":"DeviceVendorNameTextBox"
+						},
+						{
+							"Name":"Vendor code",
+							"Description":"Number identifying the maker, as reported over USB.",
+							"Role":"Value",
+							"Id":"DeviceVidTextBox"
+						},
+						{
+							"Name":"Number of axes",
+							"Description":"How many axes the device has, such as sticks and pedals.",
+							"Role":"Value",
+							"Id":"DiCapAxesTextBox"
+						},
+						{
+							"Name":"Force feedback state",
+							"Description":"Whether force feedback is available on the device right now.",
+							"Role":"Value",
+							"Id":"DiCapFfStateTextBox"
+						},
+						{
+							"Name":"Product name",
+							"Description":"Device product name.",
+							"Role":"Value",
+							"Id":"DeviceProductNameTextBox"
+						},
+						{
+							"Name":"Product code",
+							"Description":"Number identifying the model, as reported over USB.",
+							"Role":"Value",
+							"Id":"DevicePidTextBox"
+						},
+						{
+							"Name":"Number of sliders",
+							"Description":"How many sliders the device has.",
+							"Role":"Value",
+							"Id":"DiSlidersTextBox"
+						},
+						{
+							"Name":"Number of force feedback actuators",
+							"Description":"How many motors the device has for force feedback.",
+							"Role":"Value",
+							"Id":"ActuatorsTextBox"
+						},
+						{
+							"Name":"Product identifier",
+							"Description":"Device product GUID.",
+							"Role":"Value",
+							"Id":"DeviceProductGuidTextBox"
+						},
+						{
+							"Name":"Hardware revision",
+							"Description":"Hardware revision the device reports.",
+							"Role":"Value",
+							"Id":"DeviceRevTextBox"
+						},
+						{
+							"Name":"Number of point of view hats",
+							"Description":"How many hat switches the device has.",
+							"Role":"Value",
+							"Id":"DiCapPovsTextBox"
+						},
+						{
+							"Name":"Instance identifier",
+							"Description":"Device instance GUID.",
+							"Role":"Value",
+							"Id":"DeviceInstanceGuidTextBox"
+						},
+						{
+							"Name":"Device type",
+							"Description":"What kind of device Windows considers this to be.",
+							"Role":"Value",
+							"Id":"DeviceTypeTextBox"
+						},
+						{
+							"Name":"Number of buttons",
+							"Description":"How many buttons the device has.",
+							"Role":"Value",
+							"Id":"DiCapButtonsTextBox"
+						},
+						{
+							"Name":"Map to",
+							"Description":"Index of the PAD which this controller will map to. Auto = 0 or PAD Index 1-4.",
+							"Role":"List",
+							"Id":"MapToPadComboBox"
+						},
+						{
+							"Name":"Button values reported by the device",
+							"Description":"Which buttons are pressed right now.",
+							"Role":"Grid",
+							"Id":"DiButtonsDataGridView"
+						}
+					]
+				},
+				{
+					"Name":"MapExpressionToggle",
+					"Description":"Writes the Left Trigger mapping as a formula instead of choosing one control.",
+					"Role":"Control"
+				},
+				{
+					"Name":"PadControl",
+					"Description":"Everything about one emulated Xbox controller: what works it, and how.",
+					"Role":"Control",
+					"Items":[
+						{
+							"Name":"Controller pages",
+							"Description":"Settings for this controller, grouped by the part being mapped.",
+							"Role":"Tabs",
+							"Id":"PadTabControl",
+							"Items":[
+								{
+									"Name":"General",
+									"Description":"Says which control on your device works each part of the Xbox controller.",
+									"Role":"Tab",
+									"Id":"GeneralTabPage",
+									"Items":[
+										{
+											"Name":"Left trigger value",
+											"Description":"What the game is being given for the left trigger right now.",
+											"Role":"Value",
+											"Id":"LeftTriggerTextBox"
+										},
+										{
+											"Name":"Left stick value",
+											"Description":"Across and up positions the game is being given for the left stick.",
+											"Role":"Value",
+											"Id":"LeftThumbTextBox"
+										},
+										{
+											"Name":"Left Trigger",
+											"Description":"Button id; precede with 'a' for an axis; 's' for a slider; 'x' for a half range axis; 'h' for half slider; use '-' to invert ie. x-2.",
+											"Role":"List",
+											"Id":"LeftTriggerComboBox"
+										},
+										{
+											"Name":"Left Shoulder",
+											"Description":"Left Shoulder Button . Disable = 0.",
+											"Role":"List",
+											"Id":"LeftShoulderComboBox"
+										},
+										{
+											"Name":"Button Back",
+											"Description":"Back button.",
+											"Role":"List",
+											"Id":"ButtonBackComboBox"
+										},
+										{
+											"Name":"Button Start",
+											"Description":"Start button.",
+											"Role":"List",
+											"Id":"ButtonStartComboBox"
+										},
+										{
+											"Name":"Button Guide",
+											"Description":"Guide button.",
+											"Role":"List",
+											"Id":"ButtonGuideComboBox"
+										},
+										{
+											"Name":"D-Pad",
+											"Description":"Disable = 0, POV Index = N.",
+											"Role":"List",
+											"Id":"DPadComboBox"
+										},
+										{
+											"Name":"Left Thumb Axis X",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"LeftThumbAxisXComboBox"
+										},
+										{
+											"Name":"Left Thumb Axis Y",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"LeftThumbAxisYComboBox"
+										},
+										{
+											"Name":"Left Thumb Button",
+											"Description":"Left stick button. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbButtonComboBox"
+										},
+										{
+											"Name":"Left Thumb Up",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbUpComboBox"
+										},
+										{
+											"Name":"Left Thumb Left",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbLeftComboBox"
+										},
+										{
+											"Name":"Left Thumb Right",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbRightComboBox"
+										},
+										{
+											"Name":"Left Thumb Down",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"LeftThumbDownComboBox"
+										},
+										{
+											"Name":"Left Trigger formula",
+											"Description":"Writes the Left Trigger mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftTriggerExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"D-Pad formula",
+											"Description":"Writes the D-Pad mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"D-PadExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button Guide formula",
+											"Description":"Writes the Button Guide mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonGuideExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button Back formula",
+											"Description":"Writes the Button Back mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonBackExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button Start formula",
+											"Description":"Writes the Button Start mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonStartExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Shoulder formula",
+											"Description":"Writes the Left Shoulder mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftShoulderExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Axis X formula",
+											"Description":"Writes the Left Thumb Axis X mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbAxisXExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Axis Y formula",
+											"Description":"Writes the Left Thumb Axis Y mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbAxisYExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Right formula",
+											"Description":"Writes the Left Thumb Right mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbRightExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Left formula",
+											"Description":"Writes the Left Thumb Left mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbLeftExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Up formula",
+											"Description":"Writes the Left Thumb Up mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbUpExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Down formula",
+											"Description":"Writes the Left Thumb Down mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbDownExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Left Thumb Button formula",
+											"Description":"Writes the Left Thumb Button mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"LeftThumbButtonExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Controller picture",
+											"Description":"Lights up each part of the controller as it is used, so a mapping can be checked by eye.",
+											"Role":"Group",
+											"Id":"XboxImage",
+											"Type":"XboxImageUserControl",
+											"SameAs":"XboxImageUserControl"
+										},
+										{
+											"Name":"D-Pad Up",
+											"Description":"D-Pad up button.",
+											"Role":"List",
+											"Id":"DPadUpComboBox"
+										},
+										{
+											"Name":"D-Pad Left",
+											"Description":"D-Pad left button.",
+											"Role":"List",
+											"Id":"DPadLeftComboBox"
+										},
+										{
+											"Name":"D-Pad Right",
+											"Description":"D-Pad right button.",
+											"Role":"List",
+											"Id":"DPadRightComboBox"
+										},
+										{
+											"Name":"D-Pad Down",
+											"Description":"D-Pad down button.",
+											"Role":"List",
+											"Id":"DPadDownComboBox"
+										},
+										{
+											"Name":"Button layout",
+											"Description":"Names the buttons after the controller in your hands instead of an Xbox one.",
+											"Role":"List",
+											"Id":"MapNameComboBox"
+										},
+										{
+											"Name":"Remap All",
+											"Description":"Clears the mapping, then asks you to press each control in turn.",
+											"Role":"Button",
+											"Id":"RemapAllButton"
+										},
+										{
+											"Name":"D-Pad Up formula",
+											"Description":"Writes the D-Pad Up mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"D-PadUpExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"D-Pad Down formula",
+											"Description":"Writes the D-Pad Down mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"D-PadDownExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"D-Pad Left formula",
+											"Description":"Writes the D-Pad Left mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"D-PadLeftExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"D-Pad Right formula",
+											"Description":"Writes the D-Pad Right mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"D-PadRightExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right trigger value",
+											"Description":"What the game is being given for the right trigger right now.",
+											"Role":"Value",
+											"Id":"RightTriggerTextBox"
+										},
+										{
+											"Name":"Right stick value",
+											"Description":"Across and up positions the game is being given for the right stick.",
+											"Role":"Value",
+											"Id":"RightThumbTextBox"
+										},
+										{
+											"Name":"Right Trigger",
+											"Description":"Button id. [asxh][-][0-128] axis = 'a', slider = 's'; half axis = 'x', half slider = 'h', invert = '-'. Example: 'x-2'.",
+											"Role":"List",
+											"Id":"RightTriggerComboBox"
+										},
+										{
+											"Name":"Right Shoulder",
+											"Description":"Right Shoulder Button. Disable = 0.",
+											"Role":"List",
+											"Id":"RightShoulderComboBox"
+										},
+										{
+											"Name":"Button Y",
+											"Description":"Button 'Y'",
+											"Role":"List",
+											"Id":"ButtonYComboBox"
+										},
+										{
+											"Name":"Button X",
+											"Description":"Button 'X'",
+											"Role":"List",
+											"Id":"ButtonXComboBox"
+										},
+										{
+											"Name":"Button B",
+											"Description":"Button 'B'",
+											"Role":"List",
+											"Id":"ButtonBComboBox"
+										},
+										{
+											"Name":"Button A",
+											"Description":"Button 'A'",
+											"Role":"List",
+											"Id":"ButtonAComboBox"
+										},
+										{
+											"Name":"Right Thumb Axis X",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"RightThumbAxisXComboBox"
+										},
+										{
+											"Name":"Right Thumb Axis Y",
+											"Description":"Axis index; use - to invert; precede with 's' for a slider eg; s-1; 7 to disable.",
+											"Role":"List",
+											"Id":"RightThumbAxisYComboBox"
+										},
+										{
+											"Name":"Right Thumb Button",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbButtonComboBox"
+										},
+										{
+											"Name":"Right Thumb Up",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbUpComboBox"
+										},
+										{
+											"Name":"Right Thumb Left",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbLeftComboBox"
+										},
+										{
+											"Name":"Right Thumb Right",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbRightComboBox"
+										},
+										{
+											"Name":"Right Thumb Down",
+											"Description":"Button Id. Disable = 0.",
+											"Role":"List",
+											"Id":"RightThumbDownComboBox"
+										},
+										{
+											"Name":"Right Trigger formula",
+											"Description":"Writes the Right Trigger mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightTriggerExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button A formula",
+											"Description":"Writes the Button A mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonAExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button B formula",
+											"Description":"Writes the Button B mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonBExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button X formula",
+											"Description":"Writes the Button X mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonXExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Button Y formula",
+											"Description":"Writes the Button Y mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"ButtonYExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Shoulder formula",
+											"Description":"Writes the Right Shoulder mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightShoulderExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Axis X formula",
+											"Description":"Writes the Right Thumb Axis X mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightThumbAxisXExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Axis Y formula",
+											"Description":"Writes the Right Thumb Axis Y mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightThumbAxisYExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Right formula",
+											"Description":"Writes the Right Thumb Right mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightThumbRightExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Left formula",
+											"Description":"Writes the Right Thumb Left mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightThumbLeftExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Up formula",
+											"Description":"Writes the Right Thumb Up mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightThumbUpExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Down formula",
+											"Description":"Writes the Right Thumb Down mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightThumbDownExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										},
+										{
+											"Name":"Right Thumb Button formula",
+											"Description":"Writes the Right Thumb Button mapping as a formula instead of choosing one control.",
+											"Role":"CheckBox",
+											"Id":"RightThumbButtonExpressionToggle",
+											"Type":"MapExpressionToggle",
+											"SameAs":"MapExpressionToggle"
+										}
+									]
+								},
+								{
+									"Name":"Buttons",
+									"Description":"How far a stick or pedal must move before a button mapped to it counts as pressed.",
+									"Role":"Tab",
+									"Id":"ButtonsTabPage",
+									"Items":[
+										{
+											"Name":"Press points",
+											"Description":"For each button mapped to a stick or pedal, how far it must move to count as pressed.",
+											"Role":"Section",
+											"Id":"AxisToButtonGroupBox",
+											"Items":[
+												{
+													"Name":"A Button press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToButtonADeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"B Button press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToButtonBDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"X Button press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToButtonXDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"Y Button press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToButtonYDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"Left Bumper press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToLeftShoulderDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"Back press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToButtonBackDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"Start press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToButtonStartDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"D-Pad Up press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToDPadUpDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"Right Bumper press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToRightShoulderDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"D-Pad Down press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToDPadDownDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"Left Stick Button press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToLeftThumbButtonDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"Right Stick Button press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToRightThumbButtonDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"D-Pad Left press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToDPadLeftDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												},
+												{
+													"Name":"D-Pad Right press point",
+													"Description":"How far a stick or pedal must move before the button mapped to it counts as pressed.",
+													"Role":"Group",
+													"Id":"AxisToDPadRightDeadZonePanel",
+													"Type":"AxisToButtonUserControl",
+													"SameAs":"AxisToButtonUserControl"
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":"D-Pad",
+									"Description":"Turns a stick or wheel into the directional pad.",
+									"Role":"Tab",
+									"Id":"DPadTabPage",
+									"Items":[
+										{
+											"Name":"Axis to D-Pad",
+											"Description":"Turns one axis, a steering wheel among them, into the four pad directions.",
+											"Role":"Section",
+											"Id":"AxisToDPadGroupBox",
+											"Items":[
+												{
+													"Name":"Dead zone",
+													"Description":"How far the axis must move from the centre before a direction is pressed.",
+													"Role":"Value",
+													"Id":"AxisToDPadDeadZoneTextBox"
+												},
+												{
+													"Name":"Centre offset",
+													"Description":"Moves the point counted as centre, for a device that does not rest in the middle.",
+													"Role":"Value",
+													"Id":"AxisToDPadOffsetTextBox"
+												},
+												{
+													"Name":"Enabled",
+													"Description":"Axis to control DPad. Disabled = 0, Enabled = 1.",
+													"Role":"CheckBox",
+													"Id":"AxisToDPadEnabledCheckBox"
+												},
+												{
+													"Name":"Dead zone",
+													"Description":"Dead zone for axis.",
+													"Role":"Slider",
+													"Id":"AxisToDPadDeadZoneTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Centre offset",
+													"Description":"Axis to D-Pad offset.",
+													"Role":"Slider",
+													"Id":"AxisToDPadOffsetTrackBar",
+													"Min":0,
+													"Max":100
+												}
+											]
+										}
+									]
+								},
+								{
+									"Name":"Triggers",
+									"Description":"Shapes what the game receives from the two triggers.",
+									"Role":"Tab",
+									"Id":"TriggersTabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"Shapes what the game receives from one control, without changing the device.",
+											"Role":"Group",
+											"Id":"LeftTriggerUserControl",
+											"Type":"AxisMapUserControl",
+											"SameAs":"AxisMapUserControl"
+										},
+										{
+											"Name":null,
+											"Description":"Shapes what the game receives from one control, without changing the device.",
+											"Role":"Group",
+											"Id":"RightTriggerUserControl",
+											"Type":"AxisMapUserControl",
+											"SameAs":"AxisMapUserControl"
+										}
+									]
+								},
+								{
+									"Name":"Left Thumb",
+									"Description":"Shapes what the game receives from the left stick.",
+									"Role":"Tab",
+									"Id":"LeftThumbTabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"Shapes what the game receives from one control, without changing the device.",
+											"Role":"Group",
+											"Id":"LeftThumbXUserControl",
+											"Type":"AxisMapUserControl",
+											"SameAs":"AxisMapUserControl"
+										},
+										{
+											"Name":null,
+											"Description":"Shapes what the game receives from one control, without changing the device.",
+											"Role":"Group",
+											"Id":"LeftThumbYUserControl",
+											"Type":"AxisMapUserControl",
+											"SameAs":"AxisMapUserControl"
+										}
+									]
+								},
+								{
+									"Name":"Right Thumb",
+									"Description":"Shapes what the game receives from the right stick.",
+									"Role":"Tab",
+									"Id":"RightThumbTabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"Shapes what the game receives from one control, without changing the device.",
+											"Role":"Group",
+											"Id":"RightThumbXUserControl",
+											"Type":"AxisMapUserControl",
+											"SameAs":"AxisMapUserControl"
+										},
+										{
+											"Name":null,
+											"Description":"Shapes what the game receives from one control, without changing the device.",
+											"Role":"Group",
+											"Id":"RightThumbYUserControl",
+											"Type":"AxisMapUserControl",
+											"SameAs":"AxisMapUserControl"
+										}
+									]
+								},
+								{
+									"Name":"Force Feedback",
+									"Description":"Turns vibration on and sets how strong it is.",
+									"Role":"Tab",
+									"Id":"ForceFeedbackTabPage",
+									"Items":[
+										{
+											"Name":"Force feedback",
+											"Description":"Vibration settings shared by both motors.",
+											"Role":"Section",
+											"Id":"ForceFeedbackGroupBox",
+											"Items":[
+												{
+													"Name":"Overall strength",
+													"Description":"Scales all vibration, so a device that shakes too hard can be calmed.",
+													"Role":"Value",
+													"Id":"ForceOverallTextBox"
+												},
+												{
+													"Name":"Enable",
+													"Description":"Use Force Feedback. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"ForceEnableCheckBox"
+												},
+												{
+													"Name":"Swap Motors",
+													"Description":"Swap motor. 0 = OFF, 1 = ON.",
+													"Role":"CheckBox",
+													"Id":"ForceSwapMotorCheckBox"
+												},
+												{
+													"Name":"Effect type",
+													"Description":"Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth",
+													"Role":"List",
+													"Id":"ForceTypeComboBox"
+												},
+												{
+													"Name":"Overall strength",
+													"Description":"Strength of force feedback. Range is 0 to 100. Default is 100.",
+													"Role":"Slider",
+													"Id":"ForceOverallTrackBar",
+													"Min":0,
+													"Max":100
+												}
+											]
+										},
+										{
+											"Name":"Left motor",
+											"Description":"The big, slow motor, which produces the heavy rumble.",
+											"Role":"Section",
+											"Id":"LeftMotorGroupBox",
+											"Items":[
+												{
+													"Name":"Left motor strength",
+													"Description":"How hard this motor runs when the game asks for vibration.",
+													"Role":"Value",
+													"Id":"LeftMotorStrengthTextBox"
+												},
+												{
+													"Name":"Left motor period",
+													"Description":"How long one pulse lasts, when the effect is repeated rather than held.",
+													"Role":"Value",
+													"Id":"LeftMotorPeriodTextBox"
+												},
+												{
+													"Name":"Test left motor",
+													"Description":"Runs this motor at the chosen strength, so you can feel it without a game.",
+													"Role":"Value",
+													"Id":"LeftMotorTestTextBox"
+												},
+												{
+													"Name":"Left motor direction",
+													"Description":"Left motor effect direction. -1, 0, 1.",
+													"Role":"List",
+													"Id":"LeftMotorDirectionComboBox"
+												},
+												{
+													"Name":"Left motor strength",
+													"Description":"Left motor strength. Range is 0 to 100. Default is 100.",
+													"Role":"Slider",
+													"Id":"LeftMotorStrengthTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Left motor period",
+													"Description":"Left motor period. Range is 0 to 500. Default is 60.",
+													"Role":"Slider",
+													"Id":"LeftMotorPeriodTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Test left motor",
+													"Description":"Runs this motor at the chosen strength, so you can feel it without a game.",
+													"Role":"Slider",
+													"Id":"LeftMotorTestTrackBar",
+													"Min":0,
+													"Max":100
+												}
+											]
+										},
+										{
+											"Name":"Right motor",
+											"Description":"The small, fast motor, which produces the light buzz.",
+											"Role":"Section",
+											"Id":"groupBox1",
+											"Items":[
+												{
+													"Name":"Right motor strength",
+													"Description":"How hard this motor runs when the game asks for vibration.",
+													"Role":"Value",
+													"Id":"RightMotorStrengthTextBox"
+												},
+												{
+													"Name":"Right motor period",
+													"Description":"How long one pulse lasts, when the effect is repeated rather than held.",
+													"Role":"Value",
+													"Id":"RightMotorPeriodTextBox"
+												},
+												{
+													"Name":"Test right motor",
+													"Description":"Runs this motor at the chosen strength, so you can feel it without a game.",
+													"Role":"Value",
+													"Id":"RightMotorTestTextBox"
+												},
+												{
+													"Name":"Right motor direction",
+													"Description":"Right motor effect direction. -1, 0, 1.",
+													"Role":"List",
+													"Id":"RightMotorDirectionComboBox"
+												},
+												{
+													"Name":"Right motor strength",
+													"Description":"Right motor strength. Range is 0 to 100. Default is 100.",
+													"Role":"Slider",
+													"Id":"RightMotorStrengthTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Right motor period",
+													"Description":"Right motor period. Range is 0 to 500. Default is 120.",
+													"Role":"Slider",
+													"Id":"RightMotorPeriodTrackBar",
+													"Min":0,
+													"Max":100
+												},
+												{
+													"Name":"Test right motor",
+													"Description":"Runs this motor at the chosen strength, so you can feel it without a game.",
+													"Role":"Slider",
+													"Id":"RightMotorTestTrackBar",
+													"Min":0,
+													"Max":100
+												}
+											]
+										},
+										{
+											"Name":"About force feedback",
+											"Description":"Explains what the settings on this page do.",
+											"Role":"Value",
+											"Id":"InforTextBox"
+										}
+									]
+								},
+								{
+									"Name":"Direct Input",
+									"Description":"What the mapped device reports about itself, and its values as they change.",
+									"Role":"Tab",
+									"Id":"DirectInputTabPage",
+									"Items":[
+										{
+											"Name":null,
+											"Description":"What the mapped device reports about itself, and its values as they change.",
+											"Role":"Group",
+											"Id":"DirectInputPanel",
+											"Type":"DirectInputUserControl",
+											"SameAs":"DirectInputUserControl"
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Mapped device actions",
+							"Description":"Adds, removes and enables the devices that work this controller.",
+							"Role":"Toolbar",
+							"Id":"GamesToolStrip",
+							"Items":[
+								{
+									"Name":"Remove",
+									"Description":"Stops the selected device working this controller.",
+									"Role":"Command",
+									"Id":"RemoveMapButton"
+								},
+								{
+									"Name":"Add...",
+									"Description":"Chooses another device to work this controller.",
+									"Role":"Command",
+									"Id":"AddMapButton"
+								},
+								{
+									"Name":"Auto Map",
+									"Description":"Lets the program pick a device for this controller by itself when a game starts.",
+									"Role":"Command",
+									"Id":"AutoMapButton"
+								},
+								{
+									"Name":"Enable",
+									"Description":"Turns this controller on or off for the selected game.",
+									"Role":"Command",
+									"Id":"EnableButton"
+								},
+								{
+									"Name":"Get XInput State",
+									"Description":"Reads back what the game receives, so the page shows the result and not the intent.",
+									"Role":"Command",
+									"Id":"GetXInputStatesCheckBox"
+								}
+							]
+						},
+						{
+							"Name":"Game Controllers...",
+							"Description":"Opens the Windows game controller panel for the selected device.",
+							"Role":"Button",
+							"Id":"GameControllersButton"
+						},
+						{
+							"Name":"DX Tweak...",
+							"Description":"Opens DX Tweak, a separate tool for adjusting the device itself.",
+							"Role":"Button",
+							"Id":"DxTweakButton"
+						},
+						{
+							"Name":"Load Preset...",
+							"Description":"Replaces this controller's settings with a saved set.",
+							"Role":"Button",
+							"Id":"LoadPresetButton"
+						},
+						{
+							"Name":"Auto Preset",
+							"Description":"Fills the mapping from a preset that matches the selected device.",
+							"Role":"Button",
+							"Id":"AutoPresetButton"
+						},
+						{
+							"Name":"Clear",
+							"Description":"Empties every mapping on this controller.",
+							"Role":"Button",
+							"Id":"ClearPresetButton"
+						},
+						{
+							"Name":"Reset",
+							"Description":"Puts every setting on this controller back to its default. Asks first.",
+							"Role":"Button",
+							"Id":"ResetPresetButton"
+						},
+						{
+							"Name":"Copy Preset",
+							"Description":"Copies this controller's settings to the clipboard.",
+							"Role":"Button",
+							"Id":"CopyPresetButton"
+						},
+						{
+							"Name":"Paste Preset",
+							"Description":"Applies settings from the clipboard to this controller.",
+							"Role":"Button",
+							"Id":"PastePresetButton"
+						},
+						{
+							"Name":"Mapped devices",
+							"Description":"Configuration name of the section which is mapped to PAD1.",
+							"Role":"Grid",
+							"Id":"MappedDevicesDataGridView"
+						},
+						{
+							"Name":"Save Preset",
+							"Description":"Stores the current settings as a preset you can load again.",
+							"Role":"Button",
+							"Id":"SavePresetButton"
+						}
+					]
+				},
+				{
+					"Name":"XboxImageUserControl",
+					"Description":"Lights up each part of the controller as it is used, so a mapping can be checked by eye.",
+					"Role":"Control"
+				}
+			]
+		},
+		{
+			"Name":"App",
+			"Description":"The main window.",
+			"Role":"Section",
+			"Id":"MainForm",
+			"Type":"MainForm",
+			"Items":[
+				{
+					"Name":"Status bar",
+					"Description":"What the program is doing, and how fast it is doing it.",
+					"Role":"Toolbar",
+					"Id":"MainStatusStrip",
+					"Items":[
+						{
+							"Name":"Last action",
+							"Description":"The most recent thing the program did.",
+							"Role":"Status",
+							"Id":"StatusTimerLabel"
+						},
+						{
+							"Name":"Controller rate",
+							"Description":"Times a second the program reads the controllers. Higher is better.",
+							"Role":"Status",
+							"Id":"UpdateFrequencyLabel"
+						},
+						{
+							"Name":"Interface rate",
+							"Description":"Times a second the window redraws itself.",
+							"Role":"Status",
+							"Id":"FormUpdateFrequencyLabel"
+						},
+						{
+							"Name":"Draw the interface",
+							"Description":"Stops the lists redrawing, leaving the controllers being read as before.",
+							"Role":"Command",
+							"Id":"InterfaceUpdatesButton"
+						},
+						{
+							"Name":"Device reads",
+							"Description":"How many times the whole device list has been read again.",
+							"Role":"Status",
+							"Id":"UpdateDevicesStatusLabel"
+						},
+						{
+							"Name":"Cloud messages",
+							"Description":"Messages waiting to be sent to the online database.",
+							"Role":"Status",
+							"Id":"CloudMessagesLabel"
+						},
+						{
+							"Name":"Suspended events",
+							"Description":"Setting changes held back while a page is being filled in.",
+							"Role":"Status",
+							"Id":"StatusEventsLabel",
+							"Hidden":true
+						},
+						{
+							"Name":"Saving",
+							"Description":"Shown while settings are being written to disk.",
+							"Role":"Status",
+							"Id":"StatusSaveLabel",
+							"Hidden":true
+						},
+						{
+							"Name":"Administrator",
+							"Description":"Whether the program is running with Administrator rights.",
+							"Role":"Status",
+							"Id":"StatusIsAdminLabel"
+						},
+						{
+							"Name":"No error reports",
+							"Description":"Opens the error report window",
+							"Role":"Status",
+							"Id":"StatusErrorsLabel"
+						},
+						{
+							"Name":"XInput library",
+							"Description":"Which XInput library the program loaded, and its version.",
+							"Role":"Status",
+							"Id":"StatusDllLabel"
+						}
+					]
+				},
+				{
+					"Name":"Help subject",
+					"Description":"Name of whatever the mouse is over.",
+					"Role":"Label",
+					"Id":"HelpSubjectLabel"
+				},
+				{
+					"Name":"Help text",
+					"Description":"What whatever the mouse is over is for.",
+					"Role":"Label",
+					"Id":"HelpBodyLabel"
+				},
+				{
+					"Name":"Game bar",
+					"Description":"Chooses the game being set up, and saves the settings.",
+					"Role":"Toolbar",
+					"Id":"GamesToolStrip",
+					"Items":[
+						{
+							"Name":"Game",
+							"Description":"Which game the settings on every page below belong to.",
+							"Role":"List",
+							"Id":""
+						},
+						{
+							"Name":"Save All",
+							"Description":"Writes every setting to disk now.",
+							"Role":"Command",
+							"Id":"SaveAllButton"
+						},
+						{
+							"Name":"Test...",
+							"Description":"Opens a window for trying the emulated controller without a game.",
+							"Role":"Command",
+							"Id":"TestButton",
+							"Hidden":true
+						},
+						{
+							"Name":"Add Game...",
+							"Description":"Sets this program up for another game.",
+							"Role":"Command",
+							"Id":"AddGameButton"
+						}
+					]
+				},
+				{
+					"Name":"Main",
+					"Description":"The four controllers, and the pages for everything else.",
+					"Role":"Tabs",
+					"Id":"MainTabControl",
+					"Items":[
+						{
+							"Name":"Controller 1",
+							"Description":"Settings for the first emulated Xbox controller.",
+							"Role":"Tab",
+							"Id":"Pad1TabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Description":"Everything about one emulated Xbox controller: what works it, and how.",
+									"Role":"Group",
+									"Id":"ControlPad1",
+									"Type":"PadControl",
+									"SameAs":"PadControl"
+								}
+							]
+						},
+						{
+							"Name":"Controller 2",
+							"Description":"Settings for the second emulated Xbox controller.",
+							"Role":"Tab",
+							"Id":"Pad2TabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Description":"Everything about one emulated Xbox controller: what works it, and how.",
+									"Role":"Group",
+									"Id":"ControlPad2",
+									"Type":"PadControl",
+									"SameAs":"PadControl"
+								}
+							]
+						},
+						{
+							"Name":"Controller 3",
+							"Description":"Settings for the third emulated Xbox controller.",
+							"Role":"Tab",
+							"Id":"Pad3TabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Description":"Everything about one emulated Xbox controller: what works it, and how.",
+									"Role":"Group",
+									"Id":"ControlPad3",
+									"Type":"PadControl",
+									"SameAs":"PadControl"
+								}
+							]
+						},
+						{
+							"Name":"Controller 4",
+							"Description":"Settings for the fourth emulated Xbox controller.",
+							"Role":"Tab",
+							"Id":"Pad4TabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Description":"Everything about one emulated Xbox controller: what works it, and how.",
+									"Role":"Group",
+									"Id":"ControlPad4",
+									"Type":"PadControl",
+									"SameAs":"PadControl"
+								}
+							]
+						},
+						{
+							"Name":"Options",
+							"Description":"Settings for the program itself, and for the drivers it needs.",
+							"Role":"Tab",
+							"Id":"OptionsTabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Description":"Settings for the program itself, rather than for one controller.",
+									"Role":"Group",
+									"Id":"OptionsPanel",
+									"Type":"OptionsUserControl",
+									"Items":[
+										{
+											"Name":"Options pages",
+											"Description":"Settings for the program itself, rather than for one controller.",
+											"Role":"Tabs",
+											"Id":"MainTabControl",
+											"Items":[
+												{
+													"Name":"General",
+													"Description":"How the program starts, what it logs, and which tabs it shows.",
+													"Role":"Tab",
+													"Id":"GeneralTabPage",
+													"Items":[
+														{
+															"Name":"Testing and Logging",
+															"Description":"Extra output, useful when something is not working and needs reporting.",
+															"Role":"Section",
+															"Id":"TestingAndLoggingGroupBox",
+															"Items":[
+																{
+																	"Name":"Enable XInput",
+																	"Description":"Turns the emulated controllers on. Off leaves games with the real ones.",
+																	"Role":"CheckBox",
+																	"Id":"XInputEnableCheckBox"
+																},
+																{
+																	"Name":"Enable Logging",
+																	"Description":"Create a log file in the folder 'x360ce logs'. 0 = OFF, 1 = ON.",
+																	"Role":"CheckBox",
+																	"Id":"EnableLoggingCheckBox"
+																},
+																{
+																	"Name":"Enable Console",
+																	"Description":"Display the console window. 0 = OFF, 1 = ON.",
+																	"Role":"CheckBox",
+																	"Id":"ConsoleCheckBox"
+																},
+																{
+																	"Name":"Debug Mode",
+																	"Description":"Throw or suspend errors. 0 = Suspend, 1 = Throw.",
+																	"Role":"CheckBox",
+																	"Id":"DebugModeCheckBox"
+																},
+																{
+																	"Name":"Show [Programs] Tab",
+																	"Description":"Shows the Programs page, which lists what has been set up for each program.",
+																	"Role":"CheckBox",
+																	"Id":"ShowProgramsTabCheckBox"
+																},
+																{
+																	"Name":"Show [Devices] Tab",
+																	"Description":"Shows the Devices page, which lists every controller found.",
+																	"Role":"CheckBox",
+																	"Id":"ShowDevicesTabCheckBox"
+																},
+																{
+																	"Name":"Show [Settings] Tab",
+																	"Description":"Shows the Settings page, which lists every stored setting.",
+																	"Role":"CheckBox",
+																	"Id":"ShowSettingsTabCheckBox"
+																}
+															]
+														},
+														{
+															"Name":"Operation",
+															"Description":"How the program behaves while it runs.",
+															"Role":"Section",
+															"Id":"OperationGroupBox",
+															"Items":[
+																{
+																	"Name":"Allow only one copy of Application at a time",
+																	"Description":"Allow only one instance of the application to run at a time.",
+																	"Role":"CheckBox",
+																	"Id":"AllowOnlyOneCopyCheckBox"
+																},
+																{
+																	"Name":"Minimize to Tray",
+																	"Description":"Hides the window to the notification area instead of the taskbar.",
+																	"Role":"CheckBox",
+																	"Id":"MinimizeToTrayCheckBox"
+																},
+																{
+																	"Name":"Always on Top",
+																	"Description":"Make program Top Window",
+																	"Role":"CheckBox",
+																	"Id":"AlwaysOnTopCheckBox"
+																},
+																{
+																	"Name":"Start with Windows:",
+																	"Description":"Start with Windows.",
+																	"Role":"CheckBox",
+																	"Id":"StartWithWindowsCheckBox"
+																},
+																{
+																	"Name":"Start with Windows",
+																	"Description":"Windows State when program starts with Windows.",
+																	"Role":"List",
+																	"Id":"StartWithWindowsStateComboBox"
+																}
+															]
+														},
+														{
+															"Name":"Developing",
+															"Description":"Aids for working on the program itself.",
+															"Role":"Section",
+															"Id":"DevelopingGroupBox",
+															"Items":[
+																{
+																	"Name":"Show Form Info on CTRL+SHIFT+RMB",
+																	"Description":"Enable Form Info (CTRL+SHIFT+RMB)",
+																	"Role":"CheckBox",
+																	"Id":"ShowFormInfoCheckBox"
+																},
+																{
+																	"Name":"Show [Test...] Button",
+																	"Description":"Show [Test...] Button.",
+																	"Role":"CheckBox",
+																	"Id":"ShowTestButtonCheckBox"
+																}
+															]
+														},
+														{
+															"Name":"Direct Input Devices",
+															"Description":"Which devices the program lists and reads.",
+															"Role":"Section",
+															"Id":"DirectInputDevicesGroupBox",
+															"Items":[
+																{
+																	"Name":"Exclude Supplemental Devices",
+																	"Description":"Leaves out the extra parts a device reports beside its main controls.",
+																	"Role":"CheckBox",
+																	"Id":"ExcludeSupplementalDevicesCheckBox"
+																},
+																{
+																	"Name":"Exclude Virtual Devices",
+																	"Description":"Leaves out the controllers this program creates, so they are not mapped to themselves.",
+																	"Role":"CheckBox",
+																	"Id":"ExcludeVirtualDevicesCheckBox"
+																},
+																{
+																	"Name":"Use Device Buffered Data",
+																	"Description":"Device Use Buffered Data: false - device.GetCurrentState(), 1 - device.GetBufferedData().",
+																	"Role":"CheckBox",
+																	"Id":"UseDeviceBufferedDataCheckBox"
+																}
+															]
+														},
+														{
+															"Name":"Configuration",
+															"Description":"What the settings file written for games contains.",
+															"Role":"Section",
+															"Id":"ConfigurationGroupBox",
+															"Items":[
+																{
+																	"Name":"Configuration version",
+																	"Description":"The configuration file version.",
+																	"Role":"Text",
+																	"Id":"ConfigurationVersionTextBox"
+																},
+																{
+																	"Name":"Include [Products]",
+																	"Description":"Writes the device list into the settings file games read.",
+																	"Role":"CheckBox",
+																	"Id":"IncludeProductsCheckBox"
+																},
+																{
+																	"Name":"Auto switch configuration when game focused",
+																	"Description":"Autodetect currently focussed game.",
+																	"Role":"CheckBox",
+																	"Id":"AutoDetectForegroundWindowCheckBox"
+																}
+															]
+														},
+														{
+															"Name":"Guide Button",
+															"Description":"What happens when the Guide button is pressed.",
+															"Role":"Section",
+															"Id":"GuideButtonGroupBox",
+															"Items":[
+																{
+																	"Name":"Guide button action",
+																	"Description":"Program or command run when the Guide button is pressed.",
+																	"Role":"Text",
+																	"Id":"GuideButtonActionTextBox"
+																}
+															]
+														},
+														{
+															"Name":"Scan locations",
+															"Description":"Folders searched when looking for installed games.",
+															"Role":"Tabs",
+															"Id":"ProgramScanLocationsTabControl",
+															"Items":[
+																{
+																	"Name":"Game Scan Locations",
+																	"Description":"Folders searched when looking for installed games.",
+																	"Role":"Tab",
+																	"Id":"GameScanLocationsTabPage",
+																	"Items":[
+																		{
+																			"Name":"Scanned folders",
+																			"Description":"The locations to scan for games.",
+																			"Role":"List",
+																			"Id":"GameScanLocationsListBox"
+																		},
+																		{
+																			"Name":"Scan location actions",
+																			"Description":"Adds and removes the folders searched for games.",
+																			"Role":"Toolbar",
+																			"Id":"LocationsToolStrip",
+																			"Items":[
+																				{
+																					"Name":"Refresh",
+																					"Description":"Reads the folder list again.",
+																					"Role":"Command",
+																					"Id":"RefreshLocationsButton"
+																				},
+																				{
+																					"Name":"Remove",
+																					"Description":"Stops searching the selected folder.",
+																					"Role":"Command",
+																					"Id":"RemoveLocationButton"
+																				},
+																				{
+																					"Name":"Add...",
+																					"Description":"Adds a folder to search for games.",
+																					"Role":"Command",
+																					"Id":"AddLocationButton"
+																				}
+																			]
+																		}
+																	]
+																}
+															]
+														},
+														{
+															"Name":"Developer Tools...",
+															"Description":"Opens a window of aids for working on the program.",
+															"Role":"Button",
+															"Id":"DeveloperToolsButton"
+														}
+													]
+												},
+												{
+													"Name":"Internet",
+													"Description":"Whether settings are shared with the online database, and the account used.",
+													"Role":"Tab",
+													"Id":"InternetOptionsTabPage",
+													"Items":[
+														{
+															"Name":null,
+															"Description":"Whether settings are shared with the online database, and the account used.",
+															"Role":"Group",
+															"Id":"InternetPanel",
+															"Type":"OptionsInternetUserControl",
+															"Items":[
+																{
+																	"Name":"Default settings",
+																	"Description":"How settings shared by other people are chosen.",
+																	"Role":"Section",
+																	"Id":"GamesGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Include Enabled",
+																			"Description":"Counts only games that are switched on when choosing a default.",
+																			"Role":"CheckBox",
+																			"Id":"GetProgramsIncludeEnabledCheckBox"
+																		},
+																		{
+																			"Name":"Minimum instances",
+																			"Description":"How many people must use a setting before it is offered as the default.",
+																			"Role":"Number",
+																			"Id":"GetProgramsMinInstancesUpDown",
+																			"Min":0,
+																			"Max":100
+																		}
+																	]
+																},
+																{
+																	"Name":"Updates",
+																	"Description":"Whether the program looks for a newer version.",
+																	"Role":"Section",
+																	"Id":"UpdateOptionsGroupBox",
+																	"Hidden":true,
+																	"Items":[
+																		{
+																			"Name":"Check for updates on startup",
+																			"Description":"Check for updates.",
+																			"Role":"CheckBox",
+																			"Id":"CheckForUpdatesCheckBox"
+																		},
+																		{
+																			"Name":"Check...",
+																			"Description":"Looks for a newer version now.",
+																			"Role":"Button",
+																			"Id":"CheckUpdatesButton"
+																		}
+																	]
+																},
+																{
+																	"Name":"Online account",
+																	"Description":"Identifies this computer to the online database.",
+																	"Role":"Section",
+																	"Id":"OnlineAccountGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Computer disk",
+																			"Description":"Disk the computer identifier is taken from.",
+																			"Role":"Text",
+																			"Id":"ComputerDiskTextBox"
+																		},
+																		{
+																			"Name":"Profile path",
+																			"Description":"Folder the profile identifier is taken from.",
+																			"Role":"Text",
+																			"Id":"ProfilePathTextBox"
+																		},
+																		{
+																			"Name":"Computer identifier",
+																			"Description":"Anonymous identifier for this computer.",
+																			"Role":"Text",
+																			"Id":"ComputerIdTextBox"
+																		},
+																		{
+																			"Name":"Profile identifier",
+																			"Description":"Anonymous identifier for this profile.",
+																			"Role":"Text",
+																			"Id":"ProfileIdTextBox"
+																		},
+																		{
+																			"Name":"Open",
+																			"Description":"Opens the folder the profile identifier is taken from.",
+																			"Role":"Button",
+																			"Id":"OpenSettingsFolderButton"
+																		}
+																	]
+																},
+																{
+																	"Name":"Internet",
+																	"Description":"Whether the program contacts the online settings database at all.",
+																	"Role":"Section",
+																	"Id":"InternetGroupBox",
+																	"Items":[
+																		{
+																			"Name":"Enable Internet Features",
+																			"Description":"Enable the use of Internet features like the settings database.",
+																			"Role":"CheckBox",
+																			"Id":"InternetFeaturesCheckBox"
+																		},
+																		{
+																			"Name":"Load Settings from Cloud",
+																			"Description":"Auto load settings from Internet Database.",
+																			"Role":"CheckBox",
+																			"Id":"InternetAutoLoadCheckBox"
+																		},
+																		{
+																			"Name":"Web service address",
+																			"Description":"Internet settings database URL.",
+																			"Role":"List",
+																			"Id":"InternetDatabaseUrlComboBox"
+																		},
+																		{
+																			"Name":"Save Settings to Cloud",
+																			"Description":"Auto save settings to Internet Database.",
+																			"Role":"CheckBox",
+																			"Id":"InternetAutoSaveCheckBox"
+																		}
+																	]
+																},
+																{
+																	"Name":"Sign in",
+																	"Description":"Signs in, so settings can be kept with an account instead of this computer.",
+																	"Role":"Section",
+																	"Id":"OnlineAccountLoginGroupBox",
+																	"Hidden":true,
+																	"Items":[
+																		{
+																			"Name":"Username",
+																			"Description":"E-mail address the account was created with.",
+																			"Role":"Text",
+																			"Id":"UsernameTextBox"
+																		},
+																		{
+																			"Name":"Password",
+																			"Description":"Password for the account.",
+																			"Role":"Text",
+																			"Id":"PasswordTextBox"
+																		},
+																		{
+																			"Name":"Log In",
+																			"Description":"Signs in with the username and password above.",
+																			"Role":"Button",
+																			"Id":"LoginButton"
+																		},
+																		{
+																			"Name":"Create...",
+																			"Description":"Creates an account on the online database.",
+																			"Role":"Button",
+																			"Id":"CreateButton"
+																		},
+																		{
+																			"Name":"Reset...",
+																			"Description":"Sends a password reset to the address above.",
+																			"Role":"Button",
+																			"Id":"ResetButton"
+																		}
+																	]
+																}
+															]
+														}
+													]
+												},
+												{
+													"Name":"Virtual Device",
+													"Description":"The driver that presents the emulated controllers to Windows.",
+													"Role":"Tab",
+													"Id":"VirtualDeviceTabPage",
+													"Items":[
+														{
+															"Name":"Allow Remote Controllers",
+															"Description":"Lets another computer on the network work these controllers.",
+															"Role":"Section",
+															"Id":"AllowRemoteControllersGroupBox",
+															"Hidden":true,
+															"Items":[
+																{
+																	"Name":"Remote password",
+																	"Description":"Password another computer must give before it may work these controllers.",
+																	"Role":"Text",
+																	"Id":"RemotePasswordTextBox"
+																},
+																{
+																	"Name":"Allow remote controller 1",
+																	"Description":"Lets a remote computer work controller 1.",
+																	"Role":"CheckBox",
+																	"Id":"AllowRemote1CheckBox"
+																},
+																{
+																	"Name":"Allow remote controller 2",
+																	"Description":"Lets a remote computer work controller 2.",
+																	"Role":"CheckBox",
+																	"Id":"AllowRemote2CheckBox"
+																},
+																{
+																	"Name":"Allow remote controller 3",
+																	"Description":"Lets a remote computer work controller 3.",
+																	"Role":"CheckBox",
+																	"Id":"AllowRemote3CheckBox"
+																},
+																{
+																	"Name":"Allow remote controller 4",
+																	"Description":"Lets a remote computer work controller 4.",
+																	"Role":"CheckBox",
+																	"Id":"AllowRemote4CheckBox"
+																},
+																{
+																	"Name":"Remote port",
+																	"Description":"Network port listened on for a remote controller.",
+																	"Role":"Number",
+																	"Id":"RemotePortNumericUpDown",
+																	"Min":1024,
+																	"Max":49151
+																},
+																{
+																	"Name":"Enabled",
+																	"Description":"Accepts controllers from another computer.",
+																	"Role":"CheckBox",
+																	"Id":"RemoteEnabledCheckBox"
+																}
+															]
+														},
+														{
+															"Name":"Virtual controller driver",
+															"Description":"The driver that presents the emulated controllers to Windows.",
+															"Role":"Section",
+															"Id":"VirtualDeviceGroupBox",
+															"Items":[
+																{
+																	"Name":"Polling rate",
+																	"Description":"Virtual Controller update frequency.",
+																	"Role":"List",
+																	"Id":"PollingRateComboBox"
+																},
+																{
+																	"Name":"Driver version",
+																	"Description":"Which version of the virtual controller driver is installed.",
+																	"Role":"Text",
+																	"Id":"ViGEmBusTextBox"
+																},
+																{
+																	"Name":"Refresh",
+																	"Description":"Checks the driver again.",
+																	"Role":"Button",
+																	"Id":"ViGEmBusRefreshButton"
+																},
+																{
+																	"Name":"Install",
+																	"Description":"Installs the virtual controller driver. Needs Administrator.",
+																	"Role":"Button",
+																	"Id":"ViGEmBusInstallButton"
+																},
+																{
+																	"Name":"Uninstall",
+																	"Description":"Removes the virtual controller driver. Needs Administrator.",
+																	"Role":"Button",
+																	"Id":"ViGEmBusUninstallButton"
+																},
+																{
+																	"Name":"Driver author",
+																	"Description":"Opens the page the virtual controller driver comes from.",
+																	"Role":"Link",
+																	"Id":"AboutViGEmLinkLabel"
+																}
+															]
+														}
+													]
+												},
+												{
+													"Name":"HID Hide",
+													"Description":"Hides the real controller from games, so only the emulated one is seen.",
+													"Role":"Tab",
+													"Id":"HidHideTabPage",
+													"Items":[
+														{
+															"Name":"HID Hide",
+															"Description":"Hides the real controller from games, so only the emulated one is seen.",
+															"Role":"Section",
+															"Id":"HidHideGroupBox",
+															"Items":[
+																{
+																	"Name":"HID Hide state",
+																	"Description":"Whether HID Hide is installed, and which version.",
+																	"Role":"Value",
+																	"Id":"HidHideStatusTextBox"
+																},
+																{
+																	"Name":"Refresh",
+																	"Description":"Checks HID Hide again.",
+																	"Role":"Button",
+																	"Id":"HidHideRefreshButton"
+																},
+																{
+																	"Name":"Download HID Hide...",
+																	"Description":"Opens the page HID Hide is downloaded from.",
+																	"Role":"Button",
+																	"Id":"HidHideDownloadButton"
+																},
+																{
+																	"Name":"Open Configuration",
+																	"Description":"Opens the HID Hide program, where hidden devices are chosen.",
+																	"Role":"Button",
+																	"Id":"HidHideConfigureButton"
+																}
+															]
+														}
+													]
+												},
+												{
+													"Name":"HID Guardian (obsolete)",
+													"Description":"The tool HID Hide replaced. Kept so an old installation can be removed.",
+													"Role":"Tab",
+													"Id":"HidGuardianTabPage",
+													"Items":[
+														{
+															"Name":"HID Guardian",
+															"Description":"The tool HID Hide replaced. Kept so an old installation can be removed.",
+															"Role":"Section",
+															"Id":"groupBox1",
+															"Items":[
+																{
+																	"Name":"HID Guardian state",
+																	"Description":"Whether HID Guardian is still installed.",
+																	"Role":"Text",
+																	"Id":"HidGuardianTextBox"
+																},
+																{
+																	"Name":"Install",
+																	"Description":"Installs HID Guardian. Use HID Hide instead.",
+																	"Role":"Button",
+																	"Id":"HidGuardianInstallButton"
+																},
+																{
+																	"Name":"Uninstall",
+																	"Description":"Removes HID Guardian. Needs Administrator.",
+																	"Role":"Button",
+																	"Id":"HidGuardianUninstallButton"
+																},
+																{
+																	"Name":"Configure automatically",
+																	"Description":"Configure Hid Guardian Automatically.",
+																	"Role":"CheckBox",
+																	"Id":"HidGuardianConfigureAutomaticallyCheckBox"
+																},
+																{
+																	"Name":"Refresh",
+																	"Description":"Checks HID Guardian again.",
+																	"Role":"Button",
+																	"Id":"HidGuardianRefreshButton"
+																}
+															]
+														},
+														{
+															"Name":"HID Guardian notes",
+															"Description":"Explains why HID Guardian is no longer recommended.",
+															"Role":"Value",
+															"Id":"HelpRichTextBox"
+														}
+													]
+												},
+												{
+													"Name":"Settings",
+													"Description":"Where your settings are kept, and how to move them somewhere else.",
+													"Role":"Tab",
+													"Id":"SettingsTabPage",
+													"Items":[
+														{
+															"Name":null,
+															"Description":"Where your settings are kept, and how to move them somewhere else.",
+															"Role":"Group",
+															"Id":"SettingsPanel",
+															"Type":"OptionsSettingsUserControl",
+															"Items":[
+																{
+																	"Name":"Settings folder in use",
+																	"Description":"Folder the settings are being read from and written to.",
+																	"Role":"Value",
+																	"Id":"CurrentPathTextBox"
+																},
+																{
+																	"Name":"Open Folder",
+																	"Description":"Opens the settings folder in Explorer.",
+																	"Role":"Button",
+																	"Id":"OpenFolderButton"
+																},
+																{
+																	"Name":"Keep settings in",
+																	"Description":"Which folder to keep settings in. Your own user folder cannot be locked by another account.",
+																	"Role":"List",
+																	"Id":"LocationComboBox"
+																},
+																{
+																	"Name":"What to do with existing settings",
+																	"Description":"Whether the settings you have are copied to the new folder, or left behind.",
+																	"Role":"List",
+																	"Id":"MoveModeComboBox"
+																},
+																{
+																	"Name":"Apply",
+																	"Description":"Moves the settings to the chosen folder and starts using it.",
+																	"Role":"Button",
+																	"Id":"ApplyButton"
+																}
+															]
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Games",
+							"Description":"Games this program is set up for, and what it does for each one.",
+							"Role":"Tab",
+							"Id":"GamesTabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Description":"Games this program is set up for.",
+									"Role":"Group",
+									"Id":"GameSettingsPanel",
+									"Type":"GamesGridUserControl",
+									"Items":[
+										{
+											"Name":"Games",
+											"Description":"Games this program is set up for. The tick says whether it is switched on.",
+											"Role":"Grid",
+											"Id":"GamesDataGridView"
+										},
+										{
+											"Name":"Game actions",
+											"Description":"Finds, adds, starts and removes games.",
+											"Role":"Toolbar",
+											"Id":"GamesToolStrip",
+											"Items":[
+												{
+													"Name":"Scan",
+													"Description":"Searches the folders listed in Options for games it knows.",
+													"Role":"Command",
+													"Id":"ScanGamesButton"
+												},
+												{
+													"Name":"Add...",
+													"Description":"Adds a game by choosing its program file.",
+													"Role":"Command",
+													"Id":"AddGameButton"
+												},
+												{
+													"Name":"Delete",
+													"Description":"Removes the selected game from the list.",
+													"Role":"Command",
+													"Id":"DeleteGamesButton"
+												},
+												{
+													"Name":"Save",
+													"Description":"Writes the settings file the selected game reads.",
+													"Role":"Command",
+													"Id":"SaveGamesButton"
+												},
+												{
+													"Name":"Start",
+													"Description":"Runs the selected game.",
+													"Role":"Command",
+													"Id":"StartGameButton"
+												},
+												{
+													"Name":"Open...",
+													"Description":"Opens the folder the selected game is installed in.",
+													"Role":"Command",
+													"Id":"OpenGameButton"
+												},
+												{
+													"Name":"Show",
+													"Description":"Limits the list to games that are switched on, or off.",
+													"Role":"Command",
+													"Id":"ShowGamesDropDownButton",
+													"Items":[
+														{
+															"Name":"Show: All",
+															"Description":"Lists every game.",
+															"Role":"Command",
+															"Id":"ShowAllGamesMenuItem"
+														},
+														{
+															"Name":"Show: Enabled",
+															"Description":"Lists only the games that are switched on.",
+															"Role":"Command",
+															"Id":"ShowEnabledGamesMenuItem"
+														},
+														{
+															"Name":"Show: Disabled",
+															"Description":"Lists only the games that are switched off.",
+															"Role":"Command",
+															"Id":"ShowDisabledGamesMenuItem"
+														}
+													]
+												}
+											]
+										},
+										{
+											"Name":null,
+											"Description":"How the selected game is set up.",
+											"Role":"Group",
+											"Id":"GameDetailsControl",
+											"Type":"GameDetailsUserControl",
+											"Items":[
+												{
+													"Name":"Hook mask",
+													"Description":"Which questions a game asks about controllers this program answers for it.",
+													"Role":"Section",
+													"Id":"HookMaskGroupBox",
+													"Items":[
+														{
+															"Name":"Hook COM",
+															"Description":"Answers when the game asks Windows for a controller through COM.",
+															"Role":"CheckBox",
+															"Id":"HookCOMCheckBox"
+														},
+														{
+															"Name":"Hook Load Library",
+															"Description":"Answers when the game loads a library, so the replacement is loaded instead.",
+															"Role":"CheckBox",
+															"Id":"HookLLCheckBox"
+														},
+														{
+															"Name":"Hook Direct Input",
+															"Description":"Answers when the game asks for a controller through Direct Input.",
+															"Role":"CheckBox",
+															"Id":"HookDICheckBox"
+														},
+														{
+															"Name":"Hook SetupAPI",
+															"Description":"Answers when the game asks Windows to list devices.",
+															"Role":"CheckBox",
+															"Id":"HookSACheckBox"
+														},
+														{
+															"Name":"Hook product and vendor codes",
+															"Description":"Reports the fake product and vendor codes instead of the real ones.",
+															"Role":"CheckBox",
+															"Id":"HookPIDVIDCheckBox"
+														},
+														{
+															"Name":"Hook WinVerifyTrust",
+															"Description":"Answers when the game checks a file's signature.",
+															"Role":"CheckBox",
+															"Id":"HookWTCheckBox"
+														},
+														{
+															"Name":"Hook name",
+															"Description":"Reports a different controller name to the game.",
+															"Role":"CheckBox",
+															"Id":"HookNAMECheckBox"
+														},
+														{
+															"Name":"Disable",
+															"Description":"Turns every answer off, leaving the game with the real controllers.",
+															"Role":"CheckBox",
+															"Id":"HookDISABLECheckBox"
+														},
+														{
+															"Name":"Stop",
+															"Description":"Stops answering once the game has started.",
+															"Role":"CheckBox",
+															"Id":"HookSTOPCheckBox"
+														}
+													]
+												},
+												{
+													"Name":"XInput files",
+													"Description":"Which XInput library files this program supplies to the game.",
+													"Role":"Section",
+													"Id":"XInputMaskGroupBox",
+													"Items":[
+														{
+															"Name":"XInput 9.1, 32-bit",
+															"Description":"Supplies the 32-bit XInput 9.1 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput91_x86CheckBox"
+														},
+														{
+															"Name":"XInput 9.1, 64-bit",
+															"Description":"Supplies the 64-bit XInput 9.1 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput91_x64CheckBox"
+														},
+														{
+															"Name":"XInput 1.1, 32-bit",
+															"Description":"Supplies the 32-bit XInput 1.1 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput11_x86CheckBox"
+														},
+														{
+															"Name":"XInput 1.1, 64-bit",
+															"Description":"Supplies the 64-bit XInput 1.1 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput11_x64CheckBox"
+														},
+														{
+															"Name":"XInput 1.2, 32-bit",
+															"Description":"Supplies the 32-bit XInput 1.2 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput12_x86CheckBox"
+														},
+														{
+															"Name":"XInput 1.2, 64-bit",
+															"Description":"Supplies the 64-bit XInput 1.2 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput12_x64CheckBox"
+														},
+														{
+															"Name":"XInput 1.3, 32-bit",
+															"Description":"Supplies the 32-bit XInput 1.3 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput13_x86CheckBox"
+														},
+														{
+															"Name":"XInput 1.3, 64-bit",
+															"Description":"Supplies the 64-bit XInput 1.3 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput13_x64CheckBox"
+														},
+														{
+															"Name":"XInput 1.4, 32-bit",
+															"Description":"Supplies the 32-bit XInput 1.4 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput14_x86CheckBox"
+														},
+														{
+															"Name":"XInput 1.4, 64-bit",
+															"Description":"Supplies the 64-bit XInput 1.4 library to the game.",
+															"Role":"CheckBox",
+															"Id":"XInput14_x64CheckBox"
+														}
+													]
+												},
+												{
+													"Name":"Auto map",
+													"Description":"Which of the four controllers are assigned to a device by the program itself.",
+													"Role":"Section",
+													"Id":"AutoMapMaskGroupBox",
+													"Items":[
+														{
+															"Name":"Auto map controller 1",
+															"Description":"Lets the program assign controller 1 to a device when this game starts.",
+															"Role":"CheckBox",
+															"Id":"Controller1CheckBox"
+														},
+														{
+															"Name":"Auto map controller 3",
+															"Description":"Lets the program assign controller 3 to a device when this game starts.",
+															"Role":"CheckBox",
+															"Id":"Controller3CheckBox"
+														},
+														{
+															"Name":"Auto map controller 2",
+															"Description":"Lets the program assign controller 2 to a device when this game starts.",
+															"Role":"CheckBox",
+															"Id":"Controller2CheckBox"
+														},
+														{
+															"Name":"Auto map controller 4",
+															"Description":"Lets the program assign controller 4 to a device when this game starts.",
+															"Role":"CheckBox",
+															"Id":"Controller4CheckBox"
+														}
+													]
+												},
+												{
+													"Name":"DInput file",
+													"Description":"Whether the Direct Input library is supplied to the game as well.",
+													"Role":"Section",
+													"Id":"DInputMaskGroupBox",
+													"Items":[
+														{
+															"Name":"DInput 8, 32-bit",
+															"Description":"Supplies the 32-bit Direct Input library to the game.",
+															"Role":"CheckBox",
+															"Id":"DInput8_x86CheckBox"
+														},
+														{
+															"Name":"DInput 8, 64-bit",
+															"Description":"Supplies the 64-bit Direct Input library to the game.",
+															"Role":"CheckBox",
+															"Id":"DInput8_x64CheckBox"
+														}
+													]
+												},
+												{
+													"Name":"Other options",
+													"Description":"How the game is started, and what it is told about the controller.",
+													"Role":"Section",
+													"Id":"OtherOptionsGroupBox",
+													"Items":[
+														{
+															"Name":"Architecture",
+															"Description":"Whether the game is a 32-bit or a 64-bit program.",
+															"Role":"List",
+															"Id":"ProcessorArchitectureComboBox"
+														},
+														{
+															"Name":"Emulation",
+															"Description":"Whether the controller is presented by the virtual driver or by replaced library files.",
+															"Role":"List",
+															"Id":"EmulationTypeComboBox"
+														},
+														{
+															"Name":"Fake product code",
+															"Description":"Product code reported to a game that only accepts one model of controller.",
+															"Role":"Value",
+															"Id":"HookModeFakePidTextBox"
+														},
+														{
+															"Name":"XInput path",
+															"Description":"Folder the XInput library is written into.",
+															"Role":"Text",
+															"Id":"XInputPathTextBox"
+														},
+														{
+															"Name":"DInput file",
+															"Description":"Name of the Direct Input library written for the game.",
+															"Role":"Text",
+															"Id":"DInputFileTextBox"
+														},
+														{
+															"Name":"Fake vendor code",
+															"Description":"Vendor code reported to a game that only accepts one make of controller.",
+															"Role":"Value",
+															"Id":"HookModeFakeVidTextBox"
+														},
+														{
+															"Name":"Fake product code",
+															"Description":"Product code reported to a game that only accepts one model of controller.",
+															"Role":"Number",
+															"Id":"HookModeFakePidNumericUpDown",
+															"Min":0,
+															"Max":65535
+														},
+														{
+															"Name":"Fake vendor code",
+															"Description":"Vendor code reported to a game that only accepts one make of controller.",
+															"Role":"Number",
+															"Id":"HookModeFakeVidNumericUpDown",
+															"Min":0,
+															"Max":65535
+														},
+														{
+															"Name":"Timeout",
+															"Description":"How long to wait for the game before giving up.",
+															"Role":"Number",
+															"Id":"TimeoutNumericUpDown",
+															"Min":-1,
+															"Max":65535
+														}
+													]
+												},
+												{
+													"Name":"Help",
+													"Description":"Searches the web for other people's settings for this game.",
+													"Role":"Section",
+													"Id":"groupBox5",
+													"Items":[
+														{
+															"Name":"Search on Google...",
+															"Description":"Searches the web for this game.",
+															"Role":"Button",
+															"Id":"GoogleSearchButton"
+														},
+														{
+															"Name":"Search on NGemu...",
+															"Description":"Searches the NGemu forum for this game.",
+															"Role":"Button",
+															"Id":"button3"
+														},
+														{
+															"Name":"Open NGemu...",
+															"Description":"Opens the NGemu forum.",
+															"Role":"Button",
+															"Id":"button4"
+														}
+													]
+												},
+												{
+													"Name":"Action",
+													"Description":"Undoes every change made to this game.",
+													"Role":"Section",
+													"Id":"ActionGroupBox",
+													"Items":[
+														{
+															"Name":"Reset to Default",
+															"Description":"Puts this game's settings back the way they started.",
+															"Role":"Button",
+															"Id":"ResetToDefaultButton"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Devices",
+							"Description":"Every controller the program can see, whether mapped or not.",
+							"Role":"Tab",
+							"Id":"DevicesTabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Description":"Every controller the program can see.",
+									"Role":"Group",
+									"Id":"DevicesPanel",
+									"Type":"UserDevicesUserControl",
+									"Items":[
+										{
+											"Name":"Devices",
+											"Description":"Every controller the program can see. Unplugged ones are dimmed.",
+											"Role":"Grid",
+											"Id":"DevicesDataGridView"
+										},
+										{
+											"Name":"Device actions",
+											"Description":"Refreshes the list and works on the selected device.",
+											"Role":"Toolbar",
+											"Id":"ControllersToolStrip",
+											"Items":[
+												{
+													"Name":"Refresh",
+													"Description":"Reads every device again.",
+													"Role":"Command",
+													"Id":"RefreshButton"
+												},
+												{
+													"Name":"Delete",
+													"Description":"Forgets the selected device and its settings.",
+													"Role":"Command",
+													"Id":"ControllerDeleteButton"
+												},
+												{
+													"Name":"Hardware...",
+													"Description":"Opens the selected device in Windows Device Manager.",
+													"Role":"Command",
+													"Id":"HardwareButton"
+												},
+												{
+													"Name":"Add Demo Device",
+													"Description":"Adds a pretend controller, for trying the program without hardware.",
+													"Role":"Command",
+													"Id":"AddDemoDevice"
+												},
+												{
+													"Name":"Remove Leftover Pads",
+													"Description":"Removes emulated controllers left behind by runs that ended badly. Needs Administrator.",
+													"Role":"Command",
+													"Id":"CleanupVirtualPadsButton"
+												},
+												{
+													"Name":"HID Guardian",
+													"Description":"Actions for the obsolete HID Guardian tool.",
+													"Role":"Command",
+													"Id":"toolStripDropDownButton1",
+													"Items":[
+														{
+															"Name":"Show Enumerated Devices",
+															"Description":"Lists the devices HID Guardian knows about.",
+															"Role":"Command",
+															"Id":"EnumeratedDevicesButton"
+														},
+														{
+															"Name":"Show Hidden Devices",
+															"Description":"Lists the devices HID Guardian is hiding from games.",
+															"Role":"Command",
+															"Id":"HiddenDevicesMenuItem"
+														},
+														{
+															"Name":"Unhide All Devices",
+															"Description":"Makes every hidden device visible to games again.",
+															"Role":"Command",
+															"Id":"UnhideAllDevicesMenuItem"
+														},
+														{
+															"Name":"Synchronize To HID Guardian",
+															"Description":"Hides exactly the devices that are mapped to a controller.",
+															"Role":"Command",
+															"Id":"synchronizeToHidGuardianToolStripMenuItem"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Cloud",
+							"Description":"Settings waiting to be sent to or fetched from the online database.",
+							"Role":"Tab",
+							"Id":"CloudTabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Description":"Settings waiting to be sent to or fetched from the online database.",
+									"Role":"Group",
+									"Id":"CloudPanel",
+									"Type":"CloudUserControl",
+									"Items":[
+										{
+											"Name":"Cloud tasks",
+											"Description":"Settings waiting to be sent to or fetched from the online database.",
+											"Role":"Grid",
+											"Id":"TasksDataGridView"
+										},
+										{
+											"Name":"Cloud actions",
+											"Description":"Sends and fetches settings, and clears the queue.",
+											"Role":"Toolbar",
+											"Id":"toolStrip1",
+											"Items":[
+												{
+													"Name":"Refresh",
+													"Description":"Reads the queue again.",
+													"Role":"Command",
+													"Id":"toolStripButton1"
+												},
+												{
+													"Name":"Upload To Cloud",
+													"Description":"Sends your settings to the online database.",
+													"Role":"Command",
+													"Id":"UploadToCloudButton"
+												},
+												{
+													"Name":"Download From Cloud",
+													"Description":"Fetches settings other people have shared.",
+													"Role":"Command",
+													"Id":"DownloadFromCloudButton"
+												},
+												{
+													"Name":null,
+													"Role":"Separator",
+													"Id":"NextRunSeparator"
+												},
+												{
+													"Name":"Next run",
+													"Description":"How long until the queue is worked through again.",
+													"Role":"Status",
+													"Id":"NextRunLabel"
+												},
+												{
+													"Name":"Queue state",
+													"Description":"Whether the queue is running, waiting, or stopped.",
+													"Role":"Status",
+													"Id":"RunStateLabel"
+												},
+												{
+													"Name":"Delete",
+													"Description":"Removes the selected task from the queue.",
+													"Role":"Command",
+													"Id":"DeleteButton"
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Help",
+							"Description":"Instructions for setting up a controller, and answers to common problems.",
+							"Role":"Tab",
+							"Id":"HelpTabPage",
+							"Items":[
+								{
+									"Name":"Help text",
+									"Description":"Instructions for setting up a controller, and answers to common problems.",
+									"Role":"Value",
+									"Id":"HelpRichTextBox"
+								}
+							]
+						},
+						{
+							"Name":"About",
+							"Description":"Version, licence, and what changed in each release.",
+							"Role":"Tab",
+							"Id":"AboutTabPage",
+							"Items":[
+								{
+									"Name":null,
+									"Description":"Version, licence, and what changed in each release.",
+									"Role":"Group",
+									"Id":"AboutControl",
+									"Type":"AboutControl",
+									"Items":[
+										{
+											"Name":"https:\/\/www.x360ce.com",
+											"Description":"Opens the program's website.",
+											"Role":"Link",
+											"Id":"x360ceLinkLabel"
+										},
+										{
+											"Name":"https:\/\/github.com\/x360ce\/x360ce",
+											"Description":"Opens the source code.",
+											"Role":"Link",
+											"Id":"GoogleProjectLinkLabel"
+										},
+										{
+											"Name":"https:\/\/www.jocys.com",
+											"Description":"Opens the publisher's website.",
+											"Role":"Link",
+											"Id":"AboutJocysLinkLabel"
+										},
+										{
+											"Name":"https:\/\/github.com\/Nucleoprotein",
+											"Description":"Opens a contributor's page.",
+											"Role":"Link",
+											"Id":"AboutVirusLinkLabel"
+										},
+										{
+											"Name":"https:\/\/github.com\/nefarius",
+											"Description":"Opens the page the virtual controller driver comes from.",
+											"Role":"Link",
+											"Id":"AboutViGEmLinkLabel"
+										},
+										{
+											"Name":"http:\/\/www.tocaedit.com",
+											"Description":"Opens the site of the person who wrote the first version.",
+											"Role":"Link",
+											"Id":"AboutTocaEditLinkLabel"
+										},
+										{
+											"Name":"About pages",
+											"Description":"What changed in each release, and the licence.",
+											"Role":"Tabs",
+											"Id":"AboutTabControl",
+											"Items":[
+												{
+													"Name":"Changes",
+													"Description":"What changed in each release.",
+													"Role":"Tab",
+													"Id":"ChangesTabPage",
+													"Items":[
+														{
+															"Name":"Change log",
+															"Description":"What changed in each release.",
+															"Role":"Text",
+															"Id":"ChangeLogTextBox"
+														}
+													]
+												},
+												{
+													"Name":"License",
+													"Description":"Terms this program is given under.",
+													"Role":"Tab",
+													"Id":"LicenseTabPage",
+													"Items":[
+														{
+															"Name":"Licence text",
+															"Description":"Terms this program is given under.",
+															"Role":"Text",
+															"Id":"LicenseTextBox"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"Name":"Issues",
+							"Description":"Problems the program found, and what to do about each one.",
+							"Role":"Tab",
+							"Id":"IssuesTabPage",
+							"Items":[
+								{
+									"Name":"Jocys.com X360 Controller Emulator 4.19.10 (Build: 2026-08-29) - Issues",
+									"Description":"Problems the program found, and what to do about each one.",
+									"Role":"Group",
+									"Id":"IssuesPanel",
+									"Type":"IssuesUserControl",
+									"Items":[
+										{
+											"Name":"Issues",
+											"Description":"Problems the program found, with what to do about each one.",
+											"Role":"Grid",
+											"Id":"WarningsDataGridView"
+										},
+										{
+											"Name":"Issue actions",
+											"Description":"Hides issues you have decided to live with.",
+											"Role":"Toolbar",
+											"Id":"GamesToolStrip",
+											"Items":[
+												{
+													"Name":"Ignore All",
+													"Description":"Stops reporting every issue listed.",
+													"Role":"Command",
+													"Id":"IgnoreAllButton"
+												},
+												{
+													"Name":"Ignore",
+													"Description":"Stops reporting the selected issue.",
+													"Role":"Command",
+													"Id":"IgnoreButton"
+												},
+												{
+													"Name":"Exception Info",
+													"Description":"Shows the fault behind the selected issue in full.",
+													"Role":"Command",
+													"Id":"ExceptionInfoButton",
+													"Hidden":true
+												},
+												{
+													"Name":"Check state",
+													"Description":"What the program is checking right now.",
+													"Role":"Status",
+													"Id":"StatusLabel"
+												},
+												{
+													"Name":null,
+													"Role":"Separator",
+													"Id":"NextRunSeparator"
+												},
+												{
+													"Name":"Next check",
+													"Description":"How long until the checks run again.",
+													"Role":"Status",
+													"Id":"NextRunLabel"
+												},
+												{
+													"Name":"Check state",
+													"Description":"Whether the checks are running or waiting.",
+													"Role":"Status",
+													"Id":"RunStateLabel"
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Name":"Tray",
+			"Description":"The menu behind the icon in the notification area.",
+			"Role":"Section",
+			"Id":"TrayContextMenuStrip",
+			"Hidden":true,
+			"Items":[
+				{
+					"Name":"Open Application",
+					"Description":"Brings the window back from the notification area.",
+					"Role":"Command",
+					"Id":"OpenApplicationToolStripMenuItem"
+				},
+				{
+					"Name":"Exit",
+					"Description":"Closes the program and stops the emulated controllers.",
+					"Role":"Command",
+					"Id":"ExitToolStripMenuItem"
+				}
+			]
+		}
+	]
+}
