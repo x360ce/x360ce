@@ -211,7 +211,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Command]   │   │   │   ├── Add...                                                      # Chooses another device to work this controller.
 [Command]   │   │   │   ├── Auto Map                                                    # Lets the program pick a device for this controller by itself when a game starts.
 [Command]   │   │   │   ├── Enable                                                      # Turns this controller on or off for the selected game.
-[Command]   │   │   │   └── Get XInput State                                            # Reads back what the game receives, so the page shows the result and not the intent.
+[Command]   │   │   │   └── Show XInput State                                           # Shows the values read back from XInput - what the game actually receives - instead of the values worked out from your device. The emulated controller works either way.
 [Button]    │   │   ├── Game Controllers...                                             # Opens the Windows game controller panel for the selected device.
 [Button]    │   │   ├── DX Tweak...                                                     # Opens DX Tweak, a separate tool for adjusting the device itself.
 [Button]    │   │   ├── Load Preset...                                                  # Replaces this controller's settings with a saved set.
@@ -452,7 +452,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.19.14 (Build: 2026-08-29) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.19.16 (Build: 2026-08-29) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [Command]   │                   ├── Ignore All                                          # Stops reporting every issue listed.

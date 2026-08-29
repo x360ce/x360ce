@@ -73,5 +73,27 @@ namespace x360ce.Tests
 				"A state nobody looked at has to say so.");
 		}
 
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Not having looked is never reported as broken either")]
+		public void Not_having_looked_is_never_reported_as_broken()
+		{
+			// The mirror of the test above, and the half that was missing. Refusing to call an
+			// unchecked controller working is only right if it is not called broken instead, and it
+			// was: turning the read-back off lit the tab red on every controller that was working
+			// perfectly well. The setting only decides where the numbers on screen come from - it
+			// does not unplug anything - so red accused the emulation of a fault it did not have.
+			var main = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
+			var light = main.Substring(main.IndexOf("var image = diOn"));
+			light = light.Substring(0, light.IndexOf(";"));
+			StringAssert.Contains(light, "!checking",
+				"The light does not ask whether anything was checked, so with the read-back off it " +
+				"reports a fault on evidence it never gathered.");
+			var red = light.IndexOf("\"red\"");
+			var unchecked_ = light.IndexOf("!checking");
+			Assert.IsTrue(unchecked_ >= 0 && unchecked_ < red,
+				"Red is reached before the unchecked case is considered, so a working controller " +
+				"shows as broken whenever the read-back is switched off.");
+		}
+
 	}
 }

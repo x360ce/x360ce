@@ -2402,7 +2402,7 @@
 			this.GetXInputStatesCheckBox.Margin = new System.Windows.Forms.Padding(1, 1, 1, 2);
 			this.GetXInputStatesCheckBox.Name = "GetXInputStatesCheckBox";
 			this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(116, 24);
-			this.GetXInputStatesCheckBox.Text = "&Get XInput State";
+			this.GetXInputStatesCheckBox.Text = "&Show XInput State";
 			this.GetXInputStatesCheckBox.ToolTipText = "Load XInput DLL and query actual state";
 			// 
 			// DxTweakButton

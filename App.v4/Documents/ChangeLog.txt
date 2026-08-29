@@ -1,5 +1,6 @@
-﻿## [4.19.14.0] - 2026-08-29
+﻿## [4.19.16.0] - 2026-08-29
 
+- Fixed: Turning off the XInput reading lit every controller tab red, as though the emulated controller had gone.
 - Fixed: Controllers were read slower while the window was open.
 - Fixed: Closing the program could end it with an error instead.
 - Fixed: Unplugging two controllers at once removed the wrong one, or closed the program.
@@ -11,6 +12,7 @@
 - Fixed: Direct Input tab hid the slider and point-of-view lists behind the axis list.
 - Fixed: Direct Input tab hid its identifier and count fields behind the wider boxes.
 - Fixed: Force feedback did nothing on games that do not use a virtual controller.
+- Changed: Get XInput State is now Show XInput State, which is what it does.
 - Changed: Status bar readings hold their place instead of sliding as numbers change.
 - Changed: A virtual controller failure now says which failure it was.
 - Changed: Pointing at anything shows its name and what it does in the header.

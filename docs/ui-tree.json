@@ -1300,8 +1300,8 @@
 									"Id":"EnableButton"
 								},
 								{
-									"Name":"Get XInput State",
-									"Description":"Reads back what the game receives, so the page shows the result and not the intent.",
+									"Name":"Show XInput State",
+									"Description":"Shows the values read back from XInput - what the game actually receives - instead of the values worked out from your device. The emulated controller works either way.",
 									"Role":"Command",
 									"Id":"GetXInputStatesCheckBox"
 								}
@@ -2909,7 +2909,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.19.14 (Build: 2026-08-29) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.19.16 (Build: 2026-08-29) - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

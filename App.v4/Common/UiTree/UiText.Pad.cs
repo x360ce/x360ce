@@ -91,8 +91,9 @@ namespace x360ce.App.UiTree
 				"Lets the program pick a device for this controller by itself when a game starts.");
 			d["PadControl.EnableButton"] = new Text("Enable",
 				"Turns this controller on or off for the selected game.");
-			d["PadControl.GetXInputStatesCheckBox"] = new Text("Get XInput State",
-				"Reads back what the game receives, so the page shows the result and not the intent.");
+			d["PadControl.GetXInputStatesCheckBox"] = new Text("Show XInput State",
+				"Shows the values read back from XInput - what the game actually receives - instead "
+				+ "of the values worked out from your device. The emulated controller works either way.");
 			d["PadControl.GameControllersButton"] = new Text("Game Controllers...",
 				"Opens the Windows game controller panel for the selected device.");
 			d["PadControl.DxTweakButton"] = new Text("DX Tweak...",

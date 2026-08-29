@@ -135,9 +135,15 @@ namespace x360ce.App
 				var place = helper == null ? -1 : helper.XiPlaceForPad[i];
 				var xiOn = checking && helper != null && place >= 0 && helper.LiveXiConnected[place];
 				// Update LED of GamePad state.
+				// Not looking is not the same as looking and finding nothing. With the read-back
+				// turned off there is no evidence either way, and red would accuse the emulation of
+				// being broken when it is running perfectly well - the setting only decides where the
+				// numbers on screen come from. Blue says the device is mapped and nothing was checked.
 				var image = diOn
+					// DInput ON, XInput not checked
+					? !checking ? "blue"
 					// DInput ON, XInput ON 
-					? xiOn ? "green"
+					: xiOn ? "green"
 					// DInput ON, XInput OFF
 					: "red"
 					// DInput OFF, XInput ON
@@ -168,8 +174,9 @@ namespace x360ce.App
 				state = "A mapped device is connected and Windows hands back a virtual controller.";
 			else if (diOn && !checking)
 				// Not the same as knowing it is missing, and it must not be said as if it were.
-				state = "A mapped device is connected. Whether a virtual controller exists has not " +
-					"been checked: turn on Get XInput State to find out.";
+				state = "A mapped device is connected and the emulated controller is running. " +
+					"Whether Windows hands one back has not been checked: turn on Show XInput State " +
+					"to find out.";
 			else if (diOn)
 				state = "A mapped device is connected, but XInput hands back no virtual controller, " +
 					"so a game receives nothing. Look for it in Windows Game Controllers: if it is " +
