@@ -13,7 +13,6 @@
 - Fixed: Direct Input tab hid its identifier and count fields behind the wider boxes.
 - Fixed: Force feedback did nothing on games that do not use a virtual controller.
 - Changed: Get XInput State is now Show XInput State, which is what it does.
-- Added: Help page explains what the light on each controller tab means.
 - Changed: Status bar readings hold their place instead of sliding as numbers change.
 - Changed: A virtual controller failure now says which failure it was.
 - Changed: Pointing at anything shows its name and what it does in the header.
@@ -21,6 +20,7 @@
 - Changed: A full virtual controller bus is no longer reported as a fault.
 - Changed: Direct Input tab arranges itself as the window is resized or the display is scaled.
 - Changed: Every input has a name that screen readers and automation tools can read.
+- Added: Help page explains what the light on each controller tab means.
 - Added: Window opens where you left it, on the screen you left it on.
 - Added: Program can write out a description of every part of its interface.
 - Added: Options has a Settings tab that shows where your settings are kept.
@@ -631,11 +631,11 @@
 - Changed: Keyboard Navigation Updated
 - Changed: Updated to xinput1_3.dll v3.3.0.398.
 
-v2.0.2.96 (2010-12-20) by tapcio/Virus [not signed]
+## [2.0.2.96] - 2010-12-20 by tapcio/Virus [not signed]
 - Changed: Compatibility with latest x360ce Library.
 - Added: Preset for "SL-6555-SBK".
 
-v2.0.2.95 (2010-11-22) by tapcio/Virus [not signed]
+## [2.0.2.95] - 2010-11-22 by tapcio/Virus [not signed]
 - Changed: Rename FakeAPI to InputHook to make it compatible to latest x360ce Library.
 
 ## [2.0.2.94] - 2010-11-22

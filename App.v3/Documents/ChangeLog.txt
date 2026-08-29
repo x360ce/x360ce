@@ -278,11 +278,11 @@
 - Changed: Keyboard Navigation Updated
 - Changed: Updated to xinput1_3.dll v3.3.0.398.
 
-v2.0.2.96 (2010-12-20) by tapcio/Virus [not signed]
+## [2.0.2.96] - 2010-12-20 by tapcio/Virus [not signed]
 - Changed: Compatibility with latest x360ce Library.
 - Added: Preset for "SL-6555-SBK".
 
-v2.0.2.95 (2010-11-22) by tapcio/Virus [not signed]
+## [2.0.2.95] - 2010-11-22 by tapcio/Virus [not signed]
 - Changed: Rename FakeAPI to InputHook to make it compatible to latest x360ce Library.
 
 ## [2.0.2.94] - 2010-11-22
