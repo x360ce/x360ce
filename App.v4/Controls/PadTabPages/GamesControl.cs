@@ -439,9 +439,10 @@ namespace x360ce.App.Controls
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			var grid = (DataGridView)sender;
-			var row = grid.Rows[e.RowIndex];
+			var item = AppHelper.BoundItem<x360ce.Engine.Data.UserGame>(grid, e.RowIndex);
+			if (item is null)
+				return;
 			var column = grid.Columns[e.ColumnIndex];
-			var item = ((x360ce.Engine.Data.UserGame)row.DataBoundItem);
 			var isCurrent = GameDetailsControl.CurrentItem == item;
 			if (column == MyIconColumn)
 			{

@@ -148,7 +148,9 @@ namespace x360ce.App.Controls
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			var grid = TasksDataGridView;
-			var item = (CloudItem)grid.Rows[e.RowIndex].DataBoundItem;
+			var item = AppHelper.BoundItem<CloudItem>(grid, e.RowIndex);
+			if (item is null)
+				return;
 			var column = grid.Columns[e.ColumnIndex];
 			if (column == TryColumn && item.Retries != int.MaxValue)
 				e.Value = string.Format("{0}/{1}", item.Try, item.Retries);

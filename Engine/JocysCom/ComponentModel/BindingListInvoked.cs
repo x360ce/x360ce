@@ -33,6 +33,18 @@ namespace JocysCom.ClassLibrary.ComponentModel
 
 		delegate void ItemDelegate(int index, T item);
 
+		delegate void ReplaceDelegate(T oldItem, T newItem);
+
+		/// <summary>True while a change made now will be applied later, on another thread.</summary>
+		bool Deferred
+		{
+			get
+			{
+				return AsynchronousInvoke && SynchronizingObject != null
+					&& JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired;
+			}
+		}
+
 		/// <summary>When true, invocation uses Task.Factory.StartNew to queue asynchronously; when false, runs synchronously on the TaskScheduler.</summary>
 		public bool AsynchronousInvoke { get; set; }
 
@@ -115,24 +127,90 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			}
 		}
 
+		// A position describes the list as it is at this moment. When the change is carried to
+		// another thread it is applied at some later moment, by which time items may have come
+		// or gone and the position means something else - or nothing at all. So a change that
+		// will be applied later carries the item it is about, and finds its place again there.
+		//
+		// Nothing below waits for the thread that applies the changes. This runs on the loop
+		// that reads the hardware, up to a thousand times a second, and a loop made to wait on
+		// the interface is no longer that loop. The list itself is only ever changed by the
+		// thread the changes are handed to, so reading one item out of it here needs no
+		// agreement with anybody - only a check that the position is still one the list has.
+
 		protected override void RemoveItem(int index)
 		{
-			Invoke((Action<int>)base.RemoveItem, index);
+			if (!Deferred)
+			{
+				Invoke((Action<int>)base.RemoveItem, index);
+				return;
+			}
+			var items = Items;
+			if (index < 0 || index >= items.Count)
+				return;
+			Invoke((Action<T>)RemoveKnownItem, items[index]);
+		}
+
+		void RemoveKnownItem(T item)
+		{
+			var at = Items.IndexOf(item);
+			// Already gone: the removal it was waiting behind took it.
+			if (at >= 0)
+				base.RemoveItem(at);
 		}
 
 		protected override void InsertItem(int index, T item)
 		{
-			Invoke((ItemDelegate)base.InsertItem, index, item);
+			if (!Deferred)
+			{
+				Invoke((ItemDelegate)base.InsertItem, index, item);
+				return;
+			}
+			// Adding to the list asks for the position after the last item. Items added before
+			// this one are still on their way, so that position is the same one they asked for,
+			// and applying them all as written stacks them in reverse. What was meant is the
+			// end of the list, wherever it has got to by then.
+			var atTheEnd = index >= Count;
+			Invoke(atTheEnd ? (ItemDelegate)AppendKnownItem : InsertKnownItem, index, item);
+		}
+
+		void AppendKnownItem(int index, T item)
+		{
+			base.InsertItem(Count, item);
+		}
+
+		void InsertKnownItem(int index, T item)
+		{
+			base.InsertItem(Math.Min(index, Count), item);
 		}
 
 		protected override void SetItem(int index, T item)
 		{
-			Invoke((ItemDelegate)base.SetItem, index, item);
+			if (!Deferred)
+			{
+				Invoke((ItemDelegate)base.SetItem, index, item);
+				return;
+			}
+			var items = Items;
+			if (index < 0 || index >= items.Count)
+				return;
+			Invoke((ReplaceDelegate)SetKnownItem, items[index], item);
+		}
+
+		void SetKnownItem(T oldItem, T newItem)
+		{
+			var at = Items.IndexOf(oldItem);
+			if (at >= 0)
+				base.SetItem(at, newItem);
 		}
 
 		// Set while a notification is on its way to the owning thread, and raised to 2 when
 		// further changes arrive before it is delivered.
 		int _notifyState;
+
+		// Counts changes, so a notification can tell whether the list still looks the way it
+		// did when the notification was written.
+		int _version;
 
 		/// <summary>Raises the change notification without waiting for the thread that owns the list.</summary>
 		/// <remarks>
@@ -141,11 +219,13 @@ namespace JocysCom.ClassLibrary.ComponentModel
 		/// loop ends up running at a fraction of its rate while a window is busy.
 		/// Only one notification is in flight at a time. Changes that arrive while it is pending
 		/// are delivered as a single reset, so a fast writer cannot queue work without bound on a
-		/// thread that cannot keep up. A writer that is not outpacing the reader still gets its
+		/// thread that cannot keep up. The same reset covers a notification whose row number no
+		/// longer describes the list. A writer that is not outpacing the reader still gets its
 		/// exact notification.
 		/// </remarks>
 		protected override void OnListChanged(ListChangedEventArgs e)
 		{
+			var version = System.Threading.Interlocked.Increment(ref _version);
 			var so = SynchronizingObject;
 			if (so is null || !JocysCom.ClassLibrary.Controls.ControlsHelper.InvokeRequired)
 			{
@@ -160,9 +240,12 @@ namespace JocysCom.ClassLibrary.ComponentModel
 			var first = e;
 			Task.Factory.StartNew(() =>
 			{
-				// Anything that arrived while this was queued is covered by a reset.
-				var coalesced = System.Threading.Interlocked.Exchange(ref _notifyState, 0) == 2;
-				var args = coalesced ? new ListChangedEventArgs(ListChangedType.Reset, -1) : first;
+				System.Threading.Interlocked.Exchange(ref _notifyState, 0);
+				// The row this names was counted in a list that has since changed, so naming it
+				// now would point whoever draws the list at a row that may no longer be there.
+				// Anything that arrived while this was queued is covered by the same reset.
+				var stale = System.Threading.Volatile.Read(ref _version) != version;
+				var args = stale ? new ListChangedEventArgs(ListChangedType.Reset, -1) : first;
 				DynamicInvoke((Action<ListChangedEventArgs>)base.OnListChanged, args);
 			}, CancellationToken.None, TaskCreationOptions.None, so);
 		}

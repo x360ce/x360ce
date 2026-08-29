@@ -90,12 +90,14 @@ namespace x360ce.App.DInput
 			}
 		}
 
-		public void Stop()
+		/// <summary>Stops the update thread.</summary>
+		/// <returns>False when the thread was still running when this gave up waiting.</returns>
+		public bool Stop()
 		{
 			lock (timerLock)
 			{
 				if (_timer == null)
-					return;
+					return true;
 				_timer.Stop();
 				_timer.Dispose();
 				_timer = null;
@@ -113,7 +115,9 @@ namespace x360ce.App.DInput
 					JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteLog(
 						"DirectInput update thread did not stop within 2 seconds.",
 						System.Diagnostics.EventLogEntryType.Warning);
+					return false;
 				}
+				return true;
 			}
 		}
 
@@ -211,6 +215,27 @@ namespace x360ce.App.DInput
 				if (manager != null)
 					manager.Dispose();
 			}
+		}
+
+		/// <summary>How often the states shown on screen are read back, in milliseconds.</summary>
+		const long DisplayReadIntervalMs = 16;
+
+		long _lastDisplayRead;
+
+		/// <summary>True when enough time has passed to read the states the window shows.</summary>
+		/// <remarks>
+		/// Only the reading is paced. Whether the XInput library is loaded is decided by the
+		/// same answer elsewhere, and pacing that too made the program load and unload the
+		/// library many times a second, which the status bar showed as a name flickering in
+		/// and out of existence.
+		/// </remarks>
+		internal bool DueForDisplayRead()
+		{
+			var now = watch.ElapsedMilliseconds;
+			if (now - _lastDisplayRead < DisplayReadIntervalMs)
+				return false;
+			_lastDisplayRead = now;
+			return true;
 		}
 
 		void RefreshAll(DirectInput manager, DeviceDetector detector)
@@ -365,9 +390,16 @@ namespace x360ce.App.DInput
 				if (IsDisposing)
 					return;
 				IsDisposing = true;
-				Stop();
+				var stopped = Stop();
 				Nefarius.ViGEm.Client.ViGEmClient.DisposeCurrent();
-				_ResetEvent.Dispose();
+				// Only once the thread has actually gone. Waiting for it gives up after two
+				// seconds, because it can be inside a native call that takes about a second to
+				// return - reading every device does. Releasing the handle while it still runs
+				// means the next thing it does with it throws, and the program ends on a fault
+				// while closing. Left alone the handle costs nothing: the thread runs in the
+				// background and both it and the handle go when the process does.
+				if (stopped)
+					_ResetEvent.Dispose();
 			}
 		}
 

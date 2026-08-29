@@ -36,8 +36,15 @@ namespace JocysCom.ClassLibrary.Controls
 		/// <param name="buttons">One of the <see cref="T:System.Windows.Forms.MessageBoxButtons" /> values that specifies which buttons to display in the message box.</param>
 		/// <param name="icon">One of the <see cref="T:System.Windows.Forms.MessageBoxIcon" /> values that specifies which icon to display in the message box.</param>
 		/// <param name="defaultButton">One of the <see cref="T:System.Windows.Forms.MessageBoxDefaultButton" /> values that specifies the default button for the message box.</param>
+		/// <param name="buttonText">Wording for the buttons, left to right, in place of the names of the results they return.</param>
 		/// <returns>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</returns>
-		public DialogResult ShowForm(string text, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Information, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1)
+		/// <remarks>
+		/// The wording matters when the question is not a yes or a no. "Retry", "Abort"
+		/// and "Ignore" tell a reader what the button does to the dialog; what they need
+		/// to know is what it does to their settings. The result each button returns is
+		/// unchanged, so a caller reads the answer exactly as before.
+		/// </remarks>
+		public DialogResult ShowForm(string text, string caption = "", MessageBoxButtons buttons = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Information, MessageBoxDefaultButton defaultButton = MessageBoxDefaultButton.Button1, string[] buttonText = null)
 		{
 			AddResizeEvents();
 			TextLabel.Text = text;
@@ -65,6 +72,13 @@ namespace JocysCom.ClassLibrary.Controls
 				case MessageBoxButtons.YesNoCancel:
 					EnableButtons(DialogResult.Yes, DialogResult.No, DialogResult.Cancel);
 					break;
+			}
+			if (buttonText != null)
+			{
+				var order = new[] { Button1, Button2, Button3 };
+				for (var i = 0; i < order.Length && i < buttonText.Length; i++)
+					if (order[i].Visible && !string.IsNullOrEmpty(buttonText[i]))
+						order[i].Text = buttonText[i];
 			}
 			var resources = new System.ComponentModel.ComponentResourceManager(GetType());
 			var image = (Bitmap)resources.GetObject("MessageBoxIcon_Information_32x32");

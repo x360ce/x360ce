@@ -56,6 +56,10 @@ namespace x360ce.App.Controls
 			name = name.Replace("Thumb", " Stick Button");
 			if (name.Length == 1) name += " Button";
 			ButtonNameLabel.Text = name + ":";
+			// The panel is one of fifteen alike, and only the button it belongs to tells them
+			// apart. Without this a screen reader announces fifteen identical panels, and the
+			// exported tree lists fifteen identical rows.
+			AccessibleName = name + " press point";
 			switch (GamepadButton)
 			{
 				case GamepadButtonFlags.A: enabledImage = Properties.Resources.Button_A; break;

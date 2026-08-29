@@ -88,6 +88,45 @@ namespace x360ce.App
 
 		public const string arg_WindowState = "WindowState";
 
+		/// <summary>Folder to write the interface description into. Defaults to docs beside the source.</summary>
+		public const string arg_ExportUi = "ExportUi";
+
+		/// <summary>
+		/// Waits for the window to finish building itself, then describes it.
+		/// </summary>
+		/// <remarks>
+		/// The window arrives in stages driven by its own timer - the four controller panels are
+		/// among the last things added - so a description taken the moment it appears is missing
+		/// most of the program. The same flag the program uses to decide it is ready to start
+		/// reading controllers says when there is something whole to describe.
+		/// </remarks>
+		static void WaitThenExport(string folder)
+		{
+			var waited = 0;
+			var wait = new Timer { Interval = 100 };
+			wait.Tick += (sender, e) =>
+			{
+				waited++;
+				// Written anyway after a minute rather than waiting for a window that never settles.
+				// What is missing then shows up as a failure of the test that checks the contents.
+				if (!MainForm.Current.AllowDHelperStart && waited < 600)
+					return;
+				wait.Stop();
+				ExportUi(folder);
+				Application.Exit();
+			};
+			wait.Start();
+		}
+
+		/// <summary>Writes the navigation tree, and says where it went.</summary>
+		static void ExportUi(string folder)
+		{
+			if (string.IsNullOrWhiteSpace(folder))
+				folder = "docs";
+			var tree = UiTree.UiTreeExporter.Read(MainForm.Current, MainForm.Current.TrayMenu);
+			UiTree.UiTreeExporter.Write(tree, Path.GetFullPath(folder));
+		}
+
 		internal class NativeMethods
 		{
 			[System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -132,6 +171,23 @@ namespace x360ce.App
 			Global.InitializeServices();
 			Global.InitializeCloudClient();
 			MainForm.Current = new MainForm();
+			// Describe the interface and leave. The program is the only accurate account of its own
+			// features, so it writes that account itself.
+			//
+			// The window is started for real and read once it is up, because a good part of the
+			// interface - the four controller panels among it - is built while loading and does not
+			// exist in a window that was only constructed. It opens off-screen so that laying out
+			// happens without anything appearing in front of whoever asked for the export.
+			if (ic.Parameters.ContainsKey(arg_ExportUi))
+			{
+				var folder = ic.Parameters[arg_ExportUi];
+				MainForm.Current.StartPosition = FormStartPosition.Manual;
+				MainForm.Current.Location = new System.Drawing.Point(-32000, -32000);
+				MainForm.Current.ShowInTaskbar = false;
+				MainForm.Current.Shown += (sender, e) => WaitThenExport(folder);
+				Application.Run(MainForm.Current);
+				return;
+			}
 			if (ic.Parameters.ContainsKey("Exit"))
 			{
 				MainForm.Current.BroadcastMessage(MainForm.wParam_Close);

@@ -123,6 +123,22 @@ namespace x360ce.App
 		}
 		UpdateFrequency _PollingRate = UpdateFrequency.ms1_1000Hz;
 
+		[DefaultValue(true), Description("Update the interface. Turn off to see what the engine reaches with nothing drawing.")]
+		/// <summary>Whether the window redraws itself.</summary>
+		/// <remarks>
+		/// Deliberately not stored. It exists to be turned off for a moment, to see what the
+		/// engine reaches with nothing drawing. Kept across restarts, somebody who turned it
+		/// off and forgot would meet a window that never updates again and no longer
+		/// remembers why - so it comes back on every time the program starts.
+		/// </remarks>
+		[System.Xml.Serialization.XmlIgnore]
+		public bool UpdateInterface
+		{
+			get { return _UpdateInterface; }
+			set { _UpdateInterface = value; OnPropertyChanged(); }
+		}
+		bool _UpdateInterface = true;
+
 
 		[Description("Device Use Buffered Data: false - device.GetCurrentState(), 1 - device.GetBufferedData().")]
 		public bool UseDeviceBufferedData
@@ -242,6 +258,11 @@ namespace x360ce.App
 		bool _ShowTestButton;
 
 		#endregion
+
+		/// <summary>Where the main window was left, so it opens there again.</summary>
+		[Description("Where the main window was last left on screen.")]
+		public JocysCom.ClassLibrary.Controls.PositionSettings WindowPosition { get; set; }
+			= new JocysCom.ClassLibrary.Controls.PositionSettings();
 
 		#region INotifyPropertyChanged
 

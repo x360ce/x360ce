@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.Issues;
@@ -99,6 +100,16 @@ namespace x360ce.App
 			// Attach property monitoring first.
 			o.PropertyChanged += Options_PropertyChanged;
 			LoadSettings();
+			// Put the window back where it was left, before it is shown, so it does not appear in
+			// one place and jump to another.
+			o.WindowPosition?.LoadPosition(this);
+		}
+
+		/// <summary>Menu behind the icon in the notification area.</summary>
+		/// <remarks>Named here so the interface description can include it; the designer keeps its field private.</remarks>
+		internal ContextMenuStrip TrayMenu
+		{
+			get { return TrayContextMenuStrip; }
 		}
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
@@ -124,9 +135,15 @@ namespace x360ce.App
 				var place = helper == null ? -1 : helper.XiPlaceForPad[i];
 				var xiOn = checking && helper != null && place >= 0 && helper.LiveXiConnected[place];
 				// Update LED of GamePad state.
+				// Not looking is not the same as looking and finding nothing. With the read-back
+				// turned off there is no evidence either way, and red would accuse the emulation of
+				// being broken when it is running perfectly well - the setting only decides where the
+				// numbers on screen come from. Blue says the device is mapped and nothing was checked.
 				var image = diOn
+					// DInput ON, XInput not checked
+					? !checking ? "blue"
 					// DInput ON, XInput ON 
-					? xiOn ? "green"
+					: xiOn ? "green"
 					// DInput ON, XInput OFF
 					: "red"
 					// DInput OFF, XInput ON
@@ -157,8 +174,9 @@ namespace x360ce.App
 				state = "A mapped device is connected and Windows hands back a virtual controller.";
 			else if (diOn && !checking)
 				// Not the same as knowing it is missing, and it must not be said as if it were.
-				state = "A mapped device is connected. Whether a virtual controller exists has not " +
-					"been checked: turn on Get XInput State to find out.";
+				state = "A mapped device is connected and the emulated controller is running. " +
+					"Whether Windows hands one back has not been checked: turn on Show XInput State " +
+					"to find out.";
 			else if (diOn)
 				state = "A mapped device is connected, but XInput hands back no virtual controller, " +
 					"so a game receives nothing. Look for it in Windows Game Controllers: if it is " +
@@ -635,6 +653,9 @@ namespace x360ce.App
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			Program.IsClosing = true;
+			// Remember where the window was, so the next run opens where this one was left rather
+			// than back in the middle of whatever the screen is being used for.
+			SettingsManager.Options.WindowPosition?.SavePosition(this);
 			if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("X360CE_THROW_ON_CLOSE")))
 				throw new InvalidOperationException("Injected fault: X360CE_THROW_ON_CLOSE.");
 			MonitorErrors(false);
@@ -891,6 +912,17 @@ namespace x360ce.App
 				Dock = DockStyle.Fill
 			};
 			AboutTabPage.Controls.Add(ControlAbout);
+
+			// Name and describe everything, now that every panel exists. This is what a screen
+			// reader announces, what an automation tool searches by, and what the exported
+			// navigation tree is built from.
+			UiTree.UiText.Apply(this);
+			// The tray menu hangs off the notification icon rather than off the window, so it is
+			// not reached by walking the window.
+			UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+			// One call wires the header help for every control at once, from the same two
+			// properties, so what a screen reader announces and what the header shows agree.
+			UiTree.UiHelp.Attach(this);
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}
@@ -1509,6 +1541,12 @@ namespace x360ce.App
 				if (!FormEventsEnabled)
 					return;
 			}
+			// Turned off, the engine runs with nothing drawing behind it. The rate in the status
+			// bar then says what the engine reaches on its own, and comparing the two numbers says
+			// whether the interface is in the engine's way. Read here, on the engine thread,
+			// before any lock is taken or any work is handed over.
+			if (!SettingsManager.Options.UpdateInterface)
+				return;
 			lock (UpdateCompletedLock)
 			{
 				if (InterfaceUpdateWatch == null)
@@ -1581,27 +1619,70 @@ namespace x360ce.App
 
 		private void InitiInterfaceUpdate()
 		{
+			ReserveWidth(UpdateFrequencyLabel, "HW Hz: 1000");
+			ReserveWidth(InterfaceUpdatesButton, "UI Hz: OFF");
 			Activated += MainForm_Activated;
 			Deactivate += MainForm_Deactivate;
+			InterfaceUpdatesButton.Checked = SettingsManager.Options.UpdateInterface;
+			InterfaceUpdatesButton.CheckedChanged += InterfaceUpdatesButton_CheckedChanged;
+			ShowInterfaceRate();
 		}
 
+
+		/// <summary>Holds a status item at the width of its longest reading.</summary>
+		/// <remarks>
+		/// A rate climbing from one digit to four widens its label, and every item after it slides
+		/// along; the eye follows the movement instead of the number. Padding the text does not fix
+		/// it, because a space is narrower than a digit in this font. Measuring the longest reading
+		/// once and holding that width does, and it holds at any font size the machine is set to.
+		/// </remarks>
+		private static void ReserveWidth(ToolStripItem item, string longest)
+		{
+			var width = TextRenderer.MeasureText(longest, item.Font).Width;
+			item.AutoSize = false;
+			item.Width = width + item.Padding.Horizontal + (item.Image == null ? 8 : item.Image.Width + 12);
+			item.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+		}
 		private void DisposeInterfaceUpdate()
 		{
 			Activated -= MainForm_Activated;
 			Deactivate -= MainForm_Deactivate;
+			InterfaceUpdatesButton.CheckedChanged -= InterfaceUpdatesButton_CheckedChanged;
 		}
 
 		private void MainForm_Deactivate(object sender, EventArgs e)
 		{
 			interfaceIsForeground = false;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", interfaceUpdateBackgroundFps);
+			ShowInterfaceRate();
 		}
 
 		private void MainForm_Activated(object sender, EventArgs e)
 		{
 			interfaceIsForeground = true;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", interfaceUpdateForegroundFps);
+			ShowInterfaceRate();
 		}
+
+		private void InterfaceUpdatesButton_CheckedChanged(object sender, EventArgs e)
+		{
+			SettingsManager.Options.UpdateInterface = InterfaceUpdatesButton.Checked;
+			ShowInterfaceRate();
+		}
+
+		/// <summary>Says how often the interface is drawing, and offers to stop it.</summary>
+		/// <remarks>
+		/// The rate and the switch are one thing, because they state one fact: drawing is
+		/// either happening at some rate or it is not. Kept apart, the switch could read off
+		/// while the rate beside it still read ten, and somebody who had forgotten pressing it
+		/// would face a window reporting that it draws while nothing moves.
+		/// </remarks>
+		private void ShowInterfaceRate()
+		{
+			var on = SettingsManager.Options.UpdateInterface;
+			var rate = !on ? 0
+				: interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps;
+			ControlsHelper.SetText(InterfaceUpdatesButton, "UI Hz: {0}", on ? rate.ToString() : "OFF");
+		}
+
 
 		#endregion
 
@@ -1875,6 +1956,13 @@ namespace x360ce.App
 				}
 				// If another DInput errors
 			}
+			// Windows offers four places for a virtual controller. When all four are taken -
+			// usually by controllers left behind by runs that ended badly - there is nowhere to
+			// put a new one. The Issues tab already says so and offers to clear them, so this is
+			// a state of the machine rather than a fault, and reporting it buries real reports.
+			var vex = e.Exception as Nefarius.ViGEm.Client.ViGEmException;
+			if (vex != null && vex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_NO_FREE_SLOT)
+				e.Cancel = true;
 			var fex = e.Exception as FileNotFoundException;
 			// If serializer warning then...
 			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))

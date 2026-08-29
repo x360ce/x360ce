@@ -118,7 +118,7 @@
 			this.GetXInputStatesCheckBox.Name = "GetXInputStatesCheckBox";
 			this.GetXInputStatesCheckBox.Size = new System.Drawing.Size(110, 17);
 			this.GetXInputStatesCheckBox.TabIndex = 1;
-			this.GetXInputStatesCheckBox.Text = "Get XInput States";
+			this.GetXInputStatesCheckBox.Text = "Show XInput States";
 			this.GetXInputStatesCheckBox.UseVisualStyleBackColor = true;
 			// 
 			// TestCheckIssuesCheckBox

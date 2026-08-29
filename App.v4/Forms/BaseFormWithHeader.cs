@@ -13,6 +13,8 @@ namespace x360ce.App.Controls
 			if (IsDesignMode)
 				return;
 			defaultBody = HelpBodyLabel.Text;
+			// What the header goes back to before anything has set a subject of its own.
+			restingSubject = HelpSubjectLabel.Text;
 			InitLoadingCircle();
 		}
 
@@ -84,10 +86,35 @@ namespace x360ce.App.Controls
 
 		private readonly string defaultBody;
 
+		/// <summary>What the header says when the mouse is over nothing in particular.</summary>
+		private string restingSubject;
+
 		public void SetHeaderSubject(string text)
 		{
+			restingSubject = text;
 			if (HelpSubjectLabel.Text != text)
 				HelpSubjectLabel.Text = text;
+		}
+
+		/// <summary>Reports what the mouse is over, without disturbing what it will go back to.</summary>
+		/// <remarks>
+		/// Separate from SetHeaderInfo, which stamps the time onto what it is given because it
+		/// carries status messages. A description of a control is not an event, and dating it
+		/// says the control was just now what it has always been.
+		/// </remarks>
+		public void ShowHelp(string name, string purpose)
+		{
+			if (!string.IsNullOrEmpty(name) && HelpSubjectLabel.Text != name)
+				HelpSubjectLabel.Text = name;
+			SetHeaderBody(MessageBoxIcon.None, purpose);
+		}
+
+		/// <summary>Puts the header back to what it said before the mouse arrived.</summary>
+		public void ClearHelp()
+		{
+			if (HelpSubjectLabel.Text != restingSubject)
+				HelpSubjectLabel.Text = restingSubject ?? "";
+			SetHeaderBody(MessageBoxIcon.None);
 		}
 
 		public void SetHeaderError(string body, params object[] args)

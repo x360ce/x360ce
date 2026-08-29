@@ -1,5 +1,6 @@
 ﻿using SharpDX.DirectInput;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -431,6 +432,21 @@ namespace x360ce.App
 
 		/// <summary>The lamp beside a device: lit while it is plugged in, grey while it is away.</summary>
 		/// <param name="online">Whether the device is present.</param>
+		/// <summary>What a grid row is showing, or null when the list behind it no longer has it.</summary>
+		/// <remarks>
+		/// A grid keeps its rows for a moment after the list behind them has shrunk, and goes on
+		/// drawing and measuring them in that moment: the row under the pointer is measured on
+		/// every mouse move. Asking such a row what it is showing fails, because the binding
+		/// counts fewer items than the grid has rows. So the list is asked first.
+		/// </remarks>
+		public static T BoundItem<T>(System.Windows.Forms.DataGridView grid, int rowIndex) where T : class
+		{
+			var items = grid.DataSource as IList;
+			if (items is null || rowIndex < 0 || rowIndex >= items.Count || rowIndex >= grid.Rows.Count)
+				return null;
+			return grid.Rows[rowIndex].DataBoundItem as T;
+		}
+
 		public static Bitmap GetOnlineIcon(bool online)
 		{
 			return online

@@ -59,8 +59,30 @@ namespace x360ce.App.DInput
 							}
 							var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
 							var hasForceFeedback = device.Capabilities.Flags.HasFlag(DeviceFlags.ForceFeedback);
+							// What this device is mapped to, and how. Looked up only for a device that
+							// can produce force at all: this runs once per device per poll, at up to a
+							// thousand polls a second, and the lookup copies a shared list under a lock.
+							// Every device that cannot vibrate would pay for an answer nothing reads.
+							Engine.Data.UserSetting setting = null;
+							PadSetting ps = null;
+							var mapped = false;
+							// Force feedback this program drives itself. Windows will not let an effect
+							// be built or driven on a device that is not held exclusively, and says so by
+							// throwing, so a device being forced from here has to be held that way.
+							// Forces already running are stopped before the hold is given up, which is
+							// why a device that still has force state keeps it.
+							var forcingFromHere = false;
+							if (hasForceFeedback)
+							{
+								setting = SettingsManager.UserSettings.ItemsToArraySyncronized()
+									.FirstOrDefault(x => x.InstanceGuid == ud.InstanceGuid);
+								mapped = setting != null && setting.MapTo > (int)MapTo.None;
+								ps = mapped ? SettingsManager.GetPadSetting(setting.PadSettingChecksum) : null;
+								forcingFromHere = ps != null && ps.ForceEnable == "1";
+							}
 							// Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
-							var exclusiveRequired = hasForceFeedback && (isVirtual || ud.DeviceEffects == null);
+							var exclusiveRequired = hasForceFeedback
+								&& (isVirtual || forcingFromHere || ud.FFState != null || ud.DeviceEffects == null);
 							// If exclusive mode is required and mode is unknown or not exclusive then...
 							if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
 							{
@@ -134,14 +156,9 @@ namespace x360ce.App.DInput
 							// If device support force feedback then...
 							if (hasForceFeedback)
 							{
-								// Get setting related to user device.
-								var setting = SettingsManager.UserSettings.ItemsToArraySyncronized()
-									.FirstOrDefault(x => x.InstanceGuid == ud.InstanceGuid);
 								// If device is mapped to controller then...
-								if (setting != null && setting.MapTo > (int)MapTo.None)
+								if (mapped)
 								{
-									// Get pad setting attached to device.
-									var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
 									if (ps != null)
 									{
 										// If force is enabled then...

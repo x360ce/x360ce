@@ -66,6 +66,9 @@
 			this.DiEffectDynamicParameters = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.CopyContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.CopyWithHeadersMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.RootTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.HeaderTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+			this.AxisRowTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this.DiAxisDataGridView = new System.Windows.Forms.DataGridView();
 			this.DiColumnAxis = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DiColumnM = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -144,6 +147,9 @@
 			((System.ComponentModel.ISupportInitialize)(this.DiSlidersDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiPovsDataGridView)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiButtonsDataGridView)).BeginInit();
+			this.RootTableLayoutPanel.SuspendLayout();
+			this.HeaderTableLayoutPanel.SuspendLayout();
+			this.AxisRowTableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// DiEffectsDataGridView
@@ -163,6 +169,7 @@
 			this.DiEffectsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DiEffectsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DiEffectsDataGridView.Location = new System.Drawing.Point(0, 0);
+			this.DiEffectsDataGridView.AccessibleName = "Force feedback effects the device supports";
 			this.DiEffectsDataGridView.Name = "DiEffectsDataGridView";
 			this.DiEffectsDataGridView.ReadOnly = true;
 			this.DiEffectsDataGridView.RowHeadersVisible = false;
@@ -224,14 +231,102 @@
 			this.CopyWithHeadersMenuItem.Text = "Copy with Headers";
 			this.CopyWithHeadersMenuItem.Click += new System.EventHandler(this.CopyWithHeadersMenuItem_Click);
 			// 
+			// HeaderTableLayoutPanel
+			// 
+			this.HeaderTableLayoutPanel.AutoSize = true;
+			this.HeaderTableLayoutPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.HeaderTableLayoutPanel.ColumnCount = 10;
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceVendorNameLabel, 0, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceVendorNameTextBox, 1, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceVidLabel, 2, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceVidTextBox, 3, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.MapToControllerLabel, 4, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.MapToPadComboBox, 5, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.AxeCountLabel, 6, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapAxesTextBox, 7, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapFfLabel, 8, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapFfStateTextBox, 9, 0);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiProductNameLabel, 0, 1);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceProductNameTextBox, 1, 1);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DevicePidLabel, 2, 1);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DevicePidTextBox, 3, 1);
+			this.HeaderTableLayoutPanel.Controls.Add(this.SlidersLabel, 6, 1);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiSlidersTextBox, 7, 1);
+			this.HeaderTableLayoutPanel.Controls.Add(this.ActuatorsLabel, 8, 1);
+			this.HeaderTableLayoutPanel.Controls.Add(this.ActuatorsTextBox, 9, 1);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiProductGuidLabel, 0, 2);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceProductGuidTextBox, 1, 2);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceRevLabel, 2, 2);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceRevTextBox, 3, 2);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiPovsLabel, 6, 2);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapPovsTextBox, 7, 2);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiButtonsDataGridView, 8, 2);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiInstanceGuidLabel, 0, 3);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceInstanceGuidTextBox, 1, 3);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiDeviceTypeLabel, 2, 3);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceTypeTextBox, 3, 3);
+			this.HeaderTableLayoutPanel.Controls.Add(this.label3, 6, 3);
+			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapButtonsTextBox, 7, 3);
+			this.HeaderTableLayoutPanel.SetColumnSpan(this.DiButtonsDataGridView, 2);
+			this.HeaderTableLayoutPanel.SetRowSpan(this.DiButtonsDataGridView, 2);
+			this.HeaderTableLayoutPanel.SetColumnSpan(this.DeviceTypeTextBox, 3);
+			this.HeaderTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.HeaderTableLayoutPanel.Name = "HeaderTableLayoutPanel";
+			this.HeaderTableLayoutPanel.RowCount = 4;
+			this.HeaderTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.HeaderTableLayoutPanel.TabIndex = 61;
+			// 
+			// RootTableLayoutPanel
+			// 
+			this.RootTableLayoutPanel.ColumnCount = 1;
+			this.RootTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootTableLayoutPanel.Controls.Add(this.HeaderTableLayoutPanel, 0, 0);
+			this.RootTableLayoutPanel.Controls.Add(this.AxisRowTableLayoutPanel, 0, 1);
+			this.RootTableLayoutPanel.Controls.Add(this.DeviceDetailsTabControl, 0, 2);
+			this.RootTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.RootTableLayoutPanel.Name = "RootTableLayoutPanel";
+			this.RootTableLayoutPanel.RowCount = 3;
+			// The band of names and counts is as tall as it needs to be, the row of value lists
+			// keeps a readable height, and what is left over goes to the list of objects.
+			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.AutoSize));
+			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 98F));
+			this.RootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.RootTableLayoutPanel.TabIndex = 62;
+			// 
+			// AxisRowTableLayoutPanel
+			// 
+			this.AxisRowTableLayoutPanel.ColumnCount = 3;
+			this.AxisRowTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 55F));
+			this.AxisRowTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 28F));
+			this.AxisRowTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 17F));
+			this.AxisRowTableLayoutPanel.Controls.Add(this.DiAxisDataGridView, 0, 0);
+			this.AxisRowTableLayoutPanel.Controls.Add(this.DiSlidersDataGridView, 1, 0);
+			this.AxisRowTableLayoutPanel.Controls.Add(this.DiPovsDataGridView, 2, 0);
+			this.AxisRowTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.AxisRowTableLayoutPanel.Name = "AxisRowTableLayoutPanel";
+			this.AxisRowTableLayoutPanel.RowCount = 1;
+			this.AxisRowTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.AxisRowTableLayoutPanel.TabIndex = 60;
+			// 
 			// DiAxisDataGridView
 			// 
 			this.DiAxisDataGridView.AllowUserToAddRows = false;
 			this.DiAxisDataGridView.AllowUserToDeleteRows = false;
 			this.DiAxisDataGridView.AllowUserToResizeColumns = false;
 			this.DiAxisDataGridView.AllowUserToResizeRows = false;
-			this.DiAxisDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.DiAxisDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.DiAxisDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
 			this.DiAxisDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
@@ -249,7 +344,8 @@
             this.DiColumnV,
             this.DiColumnVr});
 			this.DiAxisDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.DiAxisDataGridView.Location = new System.Drawing.Point(3, 107);
+			this.DiAxisDataGridView.AccessibleName = "Axis values reported by the device";
+			this.DiAxisDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DiAxisDataGridView.Name = "DiAxisDataGridView";
 			this.DiAxisDataGridView.ReadOnly = true;
 			this.DiAxisDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -259,7 +355,6 @@
 			this.DiAxisDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle14;
 			this.DiAxisDataGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.DiAxisDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-			this.DiAxisDataGridView.Size = new System.Drawing.Size(455, 90);
 			this.DiAxisDataGridView.TabIndex = 0;
 			// 
 			// DiColumnAxis
@@ -373,8 +468,8 @@
 			// 
 			// DevicePidTextBox
 			// 
-			this.DevicePidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DevicePidTextBox.Location = new System.Drawing.Point(402, 29);
+			this.DevicePidTextBox.AccessibleName = "Product code";
+			this.DevicePidTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DevicePidTextBox.Name = "DevicePidTextBox";
 			this.DevicePidTextBox.ReadOnly = true;
 			this.DevicePidTextBox.Size = new System.Drawing.Size(56, 20);
@@ -382,8 +477,8 @@
 			// 
 			// DeviceVidTextBox
 			// 
-			this.DeviceVidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DeviceVidTextBox.Location = new System.Drawing.Point(402, 3);
+			this.DeviceVidTextBox.AccessibleName = "Vendor code";
+			this.DeviceVidTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DeviceVidTextBox.Name = "DeviceVidTextBox";
 			this.DeviceVidTextBox.ReadOnly = true;
 			this.DeviceVidTextBox.Size = new System.Drawing.Size(56, 20);
@@ -391,8 +486,8 @@
 			// 
 			// DeviceTypeTextBox
 			// 
-			this.DeviceTypeTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DeviceTypeTextBox.Location = new System.Drawing.Point(402, 81);
+			this.DeviceTypeTextBox.AccessibleName = "Device type";
+			this.DeviceTypeTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DeviceTypeTextBox.Name = "DeviceTypeTextBox";
 			this.DeviceTypeTextBox.ReadOnly = true;
 			this.DeviceTypeTextBox.Size = new System.Drawing.Size(193, 20);
@@ -400,9 +495,8 @@
 			// 
 			// DevicePidLabel
 			// 
-			this.DevicePidLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DevicePidLabel.AutoSize = true;
-			this.DevicePidLabel.Location = new System.Drawing.Point(362, 32);
+			this.DevicePidLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DevicePidLabel.Name = "DevicePidLabel";
 			this.DevicePidLabel.Size = new System.Drawing.Size(28, 13);
 			this.DevicePidLabel.TabIndex = 0;
@@ -410,9 +504,8 @@
 			// 
 			// DeviceVidLabel
 			// 
-			this.DeviceVidLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceVidLabel.AutoSize = true;
-			this.DeviceVidLabel.Location = new System.Drawing.Point(362, 6);
+			this.DeviceVidLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DeviceVidLabel.Name = "DeviceVidLabel";
 			this.DeviceVidLabel.Size = new System.Drawing.Size(28, 13);
 			this.DeviceVidLabel.TabIndex = 0;
@@ -420,9 +513,8 @@
 			// 
 			// DiDeviceTypeLabel
 			// 
-			this.DiDeviceTypeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DiDeviceTypeLabel.AutoSize = true;
-			this.DiDeviceTypeLabel.Location = new System.Drawing.Point(360, 84);
+			this.DiDeviceTypeLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiDeviceTypeLabel.Name = "DiDeviceTypeLabel";
 			this.DiDeviceTypeLabel.Size = new System.Drawing.Size(34, 13);
 			this.DiDeviceTypeLabel.TabIndex = 0;
@@ -430,9 +522,8 @@
 			// 
 			// DeviceInstanceGuidTextBox
 			// 
-			this.DeviceInstanceGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.DeviceInstanceGuidTextBox.Location = new System.Drawing.Point(34, 81);
+			this.DeviceInstanceGuidTextBox.AccessibleName = "Instance identifier";
+			this.DeviceInstanceGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceInstanceGuidTextBox.Name = "DeviceInstanceGuidTextBox";
 			this.DeviceInstanceGuidTextBox.ReadOnly = true;
 			this.DeviceInstanceGuidTextBox.Size = new System.Drawing.Size(322, 20);
@@ -440,9 +531,8 @@
 			// 
 			// DeviceProductGuidTextBox
 			// 
-			this.DeviceProductGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.DeviceProductGuidTextBox.Location = new System.Drawing.Point(34, 55);
+			this.DeviceProductGuidTextBox.AccessibleName = "Product identifier";
+			this.DeviceProductGuidTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceProductGuidTextBox.Name = "DeviceProductGuidTextBox";
 			this.DeviceProductGuidTextBox.ReadOnly = true;
 			this.DeviceProductGuidTextBox.Size = new System.Drawing.Size(322, 20);
@@ -451,7 +541,7 @@
 			// DiProductGuidLabel
 			// 
 			this.DiProductGuidLabel.AutoSize = true;
-			this.DiProductGuidLabel.Location = new System.Drawing.Point(3, 58);
+			this.DiProductGuidLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiProductGuidLabel.Name = "DiProductGuidLabel";
 			this.DiProductGuidLabel.Size = new System.Drawing.Size(25, 13);
 			this.DiProductGuidLabel.TabIndex = 0;
@@ -460,7 +550,7 @@
 			// DiInstanceGuidLabel
 			// 
 			this.DiInstanceGuidLabel.AutoSize = true;
-			this.DiInstanceGuidLabel.Location = new System.Drawing.Point(3, 84);
+			this.DiInstanceGuidLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiInstanceGuidLabel.Name = "DiInstanceGuidLabel";
 			this.DiInstanceGuidLabel.Size = new System.Drawing.Size(21, 13);
 			this.DiInstanceGuidLabel.TabIndex = 0;
@@ -468,9 +558,8 @@
 			// 
 			// DeviceProductNameTextBox
 			// 
-			this.DeviceProductNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.DeviceProductNameTextBox.Location = new System.Drawing.Point(34, 29);
+			this.DeviceProductNameTextBox.AccessibleName = "Product name";
+			this.DeviceProductNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceProductNameTextBox.Name = "DeviceProductNameTextBox";
 			this.DeviceProductNameTextBox.ReadOnly = true;
 			this.DeviceProductNameTextBox.Size = new System.Drawing.Size(322, 20);
@@ -479,7 +568,7 @@
 			// DiProductNameLabel
 			// 
 			this.DiProductNameLabel.AutoSize = true;
-			this.DiProductNameLabel.Location = new System.Drawing.Point(3, 32);
+			this.DiProductNameLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiProductNameLabel.Name = "DiProductNameLabel";
 			this.DiProductNameLabel.Size = new System.Drawing.Size(25, 13);
 			this.DiProductNameLabel.TabIndex = 0;
@@ -487,8 +576,8 @@
 			// 
 			// DiCapFfStateTextBox
 			// 
-			this.DiCapFfStateTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DiCapFfStateTextBox.Location = new System.Drawing.Point(806, 3);
+			this.DiCapFfStateTextBox.AccessibleName = "Force feedback state";
+			this.DiCapFfStateTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiCapFfStateTextBox.Name = "DiCapFfStateTextBox";
 			this.DiCapFfStateTextBox.ReadOnly = true;
 			this.DiCapFfStateTextBox.Size = new System.Drawing.Size(32, 20);
@@ -497,9 +586,8 @@
 			// 
 			// DiCapFfLabel
 			// 
-			this.DiCapFfLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DiCapFfLabel.AutoSize = true;
-			this.DiCapFfLabel.Location = new System.Drawing.Point(728, 6);
+			this.DiCapFfLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiCapFfLabel.Name = "DiCapFfLabel";
 			this.DiCapFfLabel.Size = new System.Drawing.Size(50, 13);
 			this.DiCapFfLabel.TabIndex = 0;
@@ -507,8 +595,8 @@
 			// 
 			// DiCapAxesTextBox
 			// 
-			this.DiCapAxesTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DiCapAxesTextBox.Location = new System.Drawing.Point(662, 3);
+			this.DiCapAxesTextBox.AccessibleName = "Number of axes";
+			this.DiCapAxesTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiCapAxesTextBox.Name = "DiCapAxesTextBox";
 			this.DiCapAxesTextBox.ReadOnly = true;
 			this.DiCapAxesTextBox.Size = new System.Drawing.Size(32, 20);
@@ -517,9 +605,8 @@
 			// 
 			// AxeCountLabel
 			// 
-			this.AxeCountLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.AxeCountLabel.AutoSize = true;
-			this.AxeCountLabel.Location = new System.Drawing.Point(601, 6);
+			this.AxeCountLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.AxeCountLabel.Name = "AxeCountLabel";
 			this.AxeCountLabel.Size = new System.Drawing.Size(33, 13);
 			this.AxeCountLabel.TabIndex = 0;
@@ -527,8 +614,8 @@
 			// 
 			// DiCapButtonsTextBox
 			// 
-			this.DiCapButtonsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DiCapButtonsTextBox.Location = new System.Drawing.Point(662, 81);
+			this.DiCapButtonsTextBox.AccessibleName = "Number of buttons";
+			this.DiCapButtonsTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiCapButtonsTextBox.Name = "DiCapButtonsTextBox";
 			this.DiCapButtonsTextBox.ReadOnly = true;
 			this.DiCapButtonsTextBox.Size = new System.Drawing.Size(32, 20);
@@ -537,9 +624,8 @@
 			// 
 			// label3
 			// 
-			this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(601, 84);
+			this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(46, 13);
 			this.label3.TabIndex = 0;
@@ -547,8 +633,8 @@
 			// 
 			// DiCapPovsTextBox
 			// 
-			this.DiCapPovsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DiCapPovsTextBox.Location = new System.Drawing.Point(662, 55);
+			this.DiCapPovsTextBox.AccessibleName = "Number of point of view hats";
+			this.DiCapPovsTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiCapPovsTextBox.Name = "DiCapPovsTextBox";
 			this.DiCapPovsTextBox.ReadOnly = true;
 			this.DiCapPovsTextBox.Size = new System.Drawing.Size(32, 20);
@@ -557,9 +643,8 @@
 			// 
 			// DiPovsLabel
 			// 
-			this.DiPovsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DiPovsLabel.AutoSize = true;
-			this.DiPovsLabel.Location = new System.Drawing.Point(601, 58);
+			this.DiPovsLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiPovsLabel.Name = "DiPovsLabel";
 			this.DiPovsLabel.Size = new System.Drawing.Size(37, 13);
 			this.DiPovsLabel.TabIndex = 0;
@@ -567,8 +652,8 @@
 			// 
 			// ActuatorsTextBox
 			// 
-			this.ActuatorsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.ActuatorsTextBox.Location = new System.Drawing.Point(806, 29);
+			this.ActuatorsTextBox.AccessibleName = "Number of force feedback actuators";
+			this.ActuatorsTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ActuatorsTextBox.Name = "ActuatorsTextBox";
 			this.ActuatorsTextBox.ReadOnly = true;
 			this.ActuatorsTextBox.Size = new System.Drawing.Size(32, 20);
@@ -577,9 +662,8 @@
 			// 
 			// ActuatorsLabel
 			// 
-			this.ActuatorsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.ActuatorsLabel.AutoSize = true;
-			this.ActuatorsLabel.Location = new System.Drawing.Point(728, 32);
+			this.ActuatorsLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.ActuatorsLabel.Name = "ActuatorsLabel";
 			this.ActuatorsLabel.Size = new System.Drawing.Size(55, 13);
 			this.ActuatorsLabel.TabIndex = 0;
@@ -587,15 +671,11 @@
 			// 
 			// DeviceDetailsTabControl
 			// 
-			this.DeviceDetailsTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceDetailsTabControl.Controls.Add(this.DiObjectsTabPage);
 			this.DeviceDetailsTabControl.Controls.Add(this.DiEffectsDataTabPage);
-			this.DeviceDetailsTabControl.Location = new System.Drawing.Point(3, 211);
+			this.DeviceDetailsTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DeviceDetailsTabControl.Name = "DeviceDetailsTabControl";
 			this.DeviceDetailsTabControl.SelectedIndex = 0;
-			this.DeviceDetailsTabControl.Size = new System.Drawing.Size(835, 194);
 			this.DeviceDetailsTabControl.TabIndex = 2;
 			// 
 			// DiObjectsTabPage
@@ -634,6 +714,7 @@
 			this.DiObjectsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DiObjectsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
 			this.DiObjectsDataGridView.Location = new System.Drawing.Point(0, 0);
+			this.DiObjectsDataGridView.AccessibleName = "Objects the device reports it has";
 			this.DiObjectsDataGridView.Name = "DiObjectsDataGridView";
 			this.DiObjectsDataGridView.ReadOnly = true;
 			this.DiObjectsDataGridView.RowHeadersVisible = false;
@@ -655,8 +736,8 @@
 			// 
 			// DiSlidersTextBox
 			// 
-			this.DiSlidersTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DiSlidersTextBox.Location = new System.Drawing.Point(662, 29);
+			this.DiSlidersTextBox.AccessibleName = "Number of sliders";
+			this.DiSlidersTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DiSlidersTextBox.Name = "DiSlidersTextBox";
 			this.DiSlidersTextBox.ReadOnly = true;
 			this.DiSlidersTextBox.Size = new System.Drawing.Size(32, 20);
@@ -665,9 +746,8 @@
 			// 
 			// SlidersLabel
 			// 
-			this.SlidersLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.SlidersLabel.AutoSize = true;
-			this.SlidersLabel.Location = new System.Drawing.Point(601, 32);
+			this.SlidersLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.SlidersLabel.Name = "SlidersLabel";
 			this.SlidersLabel.Size = new System.Drawing.Size(41, 13);
 			this.SlidersLabel.TabIndex = 0;
@@ -675,9 +755,8 @@
 			// 
 			// MapToControllerLabel
 			// 
-			this.MapToControllerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.MapToControllerLabel.AutoSize = true;
-			this.MapToControllerLabel.Location = new System.Drawing.Point(465, 6);
+			this.MapToControllerLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.MapToControllerLabel.Name = "MapToControllerLabel";
 			this.MapToControllerLabel.Size = new System.Drawing.Size(47, 13);
 			this.MapToControllerLabel.TabIndex = 0;
@@ -685,7 +764,6 @@
 			// 
 			// MapToPadComboBox
 			// 
-			this.MapToPadComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.MapToPadComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.MapToPadComboBox.FormattingEnabled = true;
 			this.MapToPadComboBox.Items.AddRange(new object[] {
@@ -694,16 +772,15 @@
             "2",
             "3",
             "4"});
-			this.MapToPadComboBox.Location = new System.Drawing.Point(519, 3);
+			this.MapToPadComboBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.MapToPadComboBox.Name = "MapToPadComboBox";
 			this.MapToPadComboBox.Size = new System.Drawing.Size(70, 21);
 			this.MapToPadComboBox.TabIndex = 1;
 			// 
 			// DeviceVendorNameTextBox
 			// 
-			this.DeviceVendorNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.DeviceVendorNameTextBox.Location = new System.Drawing.Point(34, 3);
+			this.DeviceVendorNameTextBox.AccessibleName = "Vendor name";
+			this.DeviceVendorNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceVendorNameTextBox.Name = "DeviceVendorNameTextBox";
 			this.DeviceVendorNameTextBox.ReadOnly = true;
 			this.DeviceVendorNameTextBox.Size = new System.Drawing.Size(322, 20);
@@ -712,7 +789,7 @@
 			// DeviceVendorNameLabel
 			// 
 			this.DeviceVendorNameLabel.AutoSize = true;
-			this.DeviceVendorNameLabel.Location = new System.Drawing.Point(3, 6);
+			this.DeviceVendorNameLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DeviceVendorNameLabel.Name = "DeviceVendorNameLabel";
 			this.DeviceVendorNameLabel.Size = new System.Drawing.Size(25, 13);
 			this.DeviceVendorNameLabel.TabIndex = 0;
@@ -720,9 +797,8 @@
 			// 
 			// DeviceRevLabel
 			// 
-			this.DeviceRevLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DeviceRevLabel.AutoSize = true;
-			this.DeviceRevLabel.Location = new System.Drawing.Point(362, 58);
+			this.DeviceRevLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DeviceRevLabel.Name = "DeviceRevLabel";
 			this.DeviceRevLabel.Size = new System.Drawing.Size(32, 13);
 			this.DeviceRevLabel.TabIndex = 0;
@@ -730,8 +806,8 @@
 			// 
 			// DeviceRevTextBox
 			// 
-			this.DeviceRevTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.DeviceRevTextBox.Location = new System.Drawing.Point(402, 55);
+			this.DeviceRevTextBox.AccessibleName = "Hardware revision";
+			this.DeviceRevTextBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.DeviceRevTextBox.Name = "DeviceRevTextBox";
 			this.DeviceRevTextBox.ReadOnly = true;
 			this.DeviceRevTextBox.Size = new System.Drawing.Size(56, 20);
@@ -743,7 +819,6 @@
 			this.DiSlidersDataGridView.AllowUserToDeleteRows = false;
 			this.DiSlidersDataGridView.AllowUserToResizeColumns = false;
 			this.DiSlidersDataGridView.AllowUserToResizeRows = false;
-			this.DiSlidersDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DiSlidersDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.DiSlidersDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
 			this.DiSlidersDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
@@ -757,7 +832,8 @@
             this.dataGridViewTextBoxColumn6,
             this.dataGridViewTextBoxColumn8});
 			this.DiSlidersDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.DiSlidersDataGridView.Location = new System.Drawing.Point(464, 107);
+			this.DiSlidersDataGridView.AccessibleName = "Slider values reported by the device";
+			this.DiSlidersDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DiSlidersDataGridView.Name = "DiSlidersDataGridView";
 			this.DiSlidersDataGridView.ReadOnly = true;
 			this.DiSlidersDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -767,7 +843,6 @@
 			this.DiSlidersDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle25;
 			this.DiSlidersDataGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.DiSlidersDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-			this.DiSlidersDataGridView.Size = new System.Drawing.Size(230, 72);
 			this.DiSlidersDataGridView.TabIndex = 3;
 			// 
 			// dataGridViewTextBoxColumn1
@@ -836,7 +911,6 @@
 			this.DiPovsDataGridView.AllowUserToDeleteRows = false;
 			this.DiPovsDataGridView.AllowUserToResizeColumns = false;
 			this.DiPovsDataGridView.AllowUserToResizeRows = false;
-			this.DiPovsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DiPovsDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.DiPovsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
 			this.DiPovsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
@@ -848,7 +922,8 @@
             this.dataGridViewTextBoxColumn5,
             this.dataGridViewTextBoxColumn7});
 			this.DiPovsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.DiPovsDataGridView.Location = new System.Drawing.Point(700, 107);
+			this.DiPovsDataGridView.AccessibleName = "Point of view hat values";
+			this.DiPovsDataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.DiPovsDataGridView.Name = "DiPovsDataGridView";
 			this.DiPovsDataGridView.ReadOnly = true;
 			this.DiPovsDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
@@ -857,7 +932,6 @@
 			dataGridViewCellStyle29.BackColor = System.Drawing.SystemColors.Control;
 			this.DiPovsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle29;
 			this.DiPovsDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-			this.DiPovsDataGridView.Size = new System.Drawing.Size(138, 72);
 			this.DiPovsDataGridView.TabIndex = 3;
 			// 
 			// dataGridViewTextBoxColumn3
@@ -901,7 +975,6 @@
 			this.DiButtonsDataGridView.AllowUserToDeleteRows = false;
 			this.DiButtonsDataGridView.AllowUserToResizeColumns = false;
 			this.DiButtonsDataGridView.AllowUserToResizeRows = false;
-			this.DiButtonsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.DiButtonsDataGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
 			this.DiButtonsDataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
 			this.DiButtonsDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
@@ -911,8 +984,12 @@
 			this.DiButtonsDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dataGridViewTextBoxColumn9});
 			this.DiButtonsDataGridView.GridColor = System.Drawing.SystemColors.ControlLight;
-			this.DiButtonsDataGridView.Location = new System.Drawing.Point(700, 55);
+			this.DiButtonsDataGridView.AccessibleName = "Button values reported by the device";
+			// Kept to its own height. Filling the two rows it stands beside would make a list
+			// of names as tall as a grid wants to be, and every row in the band with it.
+			this.DiButtonsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
 			this.DiButtonsDataGridView.Name = "DiButtonsDataGridView";
+			this.DiButtonsDataGridView.Size = new System.Drawing.Size(138, 46);
 			this.DiButtonsDataGridView.ReadOnly = true;
 			this.DiButtonsDataGridView.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
 			this.DiButtonsDataGridView.RowHeadersVisible = false;
@@ -920,7 +997,6 @@
 			dataGridViewCellStyle31.BackColor = System.Drawing.SystemColors.Control;
 			this.DiButtonsDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle31;
 			this.DiButtonsDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.None;
-			this.DiButtonsDataGridView.Size = new System.Drawing.Size(138, 46);
 			this.DiButtonsDataGridView.TabIndex = 3;
 			// 
 			// dataGridViewTextBoxColumn9
@@ -1078,41 +1154,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this.DeviceVendorNameTextBox);
-			this.Controls.Add(this.DeviceProductNameTextBox);
-			this.Controls.Add(this.DeviceProductGuidTextBox);
-			this.Controls.Add(this.DeviceInstanceGuidTextBox);
-			this.Controls.Add(this.DiButtonsDataGridView);
-			this.Controls.Add(this.DiPovsDataGridView);
-			this.Controls.Add(this.DiSlidersDataGridView);
-			this.Controls.Add(this.DiAxisDataGridView);
-			this.Controls.Add(this.DeviceDetailsTabControl);
-			this.Controls.Add(this.MapToPadComboBox);
-			this.Controls.Add(this.SlidersLabel);
-			this.Controls.Add(this.ActuatorsLabel);
-			this.Controls.Add(this.DiPovsLabel);
-			this.Controls.Add(this.label3);
-			this.Controls.Add(this.AxeCountLabel);
-			this.Controls.Add(this.DiCapFfLabel);
-			this.Controls.Add(this.DiInstanceGuidLabel);
-			this.Controls.Add(this.DeviceVendorNameLabel);
-			this.Controls.Add(this.DiProductNameLabel);
-			this.Controls.Add(this.DiProductGuidLabel);
-			this.Controls.Add(this.MapToControllerLabel);
-			this.Controls.Add(this.DeviceRevTextBox);
-			this.Controls.Add(this.DevicePidTextBox);
-			this.Controls.Add(this.DeviceVidTextBox);
-			this.Controls.Add(this.DiSlidersTextBox);
-			this.Controls.Add(this.ActuatorsTextBox);
-			this.Controls.Add(this.DiCapPovsTextBox);
-			this.Controls.Add(this.DiCapButtonsTextBox);
-			this.Controls.Add(this.DiCapAxesTextBox);
-			this.Controls.Add(this.DiCapFfStateTextBox);
-			this.Controls.Add(this.DeviceRevLabel);
-			this.Controls.Add(this.DeviceTypeTextBox);
-			this.Controls.Add(this.DevicePidLabel);
-			this.Controls.Add(this.DeviceVidLabel);
-			this.Controls.Add(this.DiDeviceTypeLabel);
+			this.Controls.Add(this.RootTableLayoutPanel);
 			this.Name = "DirectInputUserControl";
 			this.Size = new System.Drawing.Size(841, 408);
 			this.Load += new System.EventHandler(this.DirectInputControl_Load);
@@ -1126,6 +1168,11 @@
 			((System.ComponentModel.ISupportInitialize)(this.DiSlidersDataGridView)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiPovsDataGridView)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.DiButtonsDataGridView)).EndInit();
+			this.AxisRowTableLayoutPanel.ResumeLayout(false);
+			this.HeaderTableLayoutPanel.ResumeLayout(false);
+			this.HeaderTableLayoutPanel.PerformLayout();
+			this.RootTableLayoutPanel.ResumeLayout(false);
+			this.RootTableLayoutPanel.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1134,6 +1181,9 @@
 		#endregion
 
         System.Windows.Forms.DataGridView DiEffectsDataGridView;
+		System.Windows.Forms.TableLayoutPanel RootTableLayoutPanel;
+		System.Windows.Forms.TableLayoutPanel HeaderTableLayoutPanel;
+		System.Windows.Forms.TableLayoutPanel AxisRowTableLayoutPanel;
 		System.Windows.Forms.DataGridView DiAxisDataGridView;
 		System.Windows.Forms.TextBox DeviceTypeTextBox;
 		System.Windows.Forms.Label DevicePidLabel;

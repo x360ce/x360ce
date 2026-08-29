@@ -185,6 +185,19 @@
     <Compile Include="Common\SettingsManager.XML.cs" />
     <Compile Include="Common\TaskName.cs" />
     <Compile Include="Common\TestDeviceHelper.cs" />
+    <Compile Include="Common\UiTree\UiNode.cs" />
+    <Compile Include="Common\UiTree\UiHelp.cs" />
+    <Compile Include="Common\UiTree\UiText.cs" />
+    <Compile Include="Common\UiTree\UiText.Devices.cs" />
+    <Compile Include="Common\UiTree\UiText.Settings.cs" />
+    <Compile Include="Common\UiTree\UiText.Lists.cs" />
+    <Compile Include="Common\UiTree\UiText.Main.cs" />
+    <Compile Include="Common\UiTree\UiText.Mapping.cs" />
+    <Compile Include="Common\UiTree\UiText.Options.cs" />
+    <Compile Include="Common\UiTree\UiText.Pad.cs" />
+    <Compile Include="Common\UiTree\UiTreeExporter.cs" />
+    <Compile Include="Common\UiTree\UiTreeMarkdown.cs" />
+    <Compile Include="Common\UiTree\UiTreeWalker.cs" />
     <Compile Include="Common\Vendor.cs" />
     <Compile Include="Common\ControlHelper.cs" />
     <Compile Include="Common\WinVerify.cs" />
@@ -199,6 +212,12 @@
     </Compile>
     <Compile Include="Controls\OptionsInternetUserControl.cs">
       <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OptionsSettingsUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OptionsSettingsUserControl.Designer.cs">
+      <DependentUpon>OptionsSettingsUserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>

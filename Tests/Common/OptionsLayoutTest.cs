@@ -1,4 +1,4 @@
-// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs
+﻿// @under-test: App.v4/Controls/OptionsUserControl.Designer.cs
 // @area: options-layout   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -140,7 +140,7 @@ namespace x360ce.Tests
 		/// </remarks>
 		static void WithOptionsPage(double widthFactor, Action<Control> assert)
 		{
-			OnUiThread(() =>
+			Ui.OnUiThread(() =>
 			{
 				using (var page = new OptionsUserControl())
 				{
@@ -154,33 +154,6 @@ namespace x360ce.Tests
 			});
 		}
 
-		/// <remarks>
-		/// Creating the page raises Load, which starts the driver-status query on a background
-		/// thread. That thread asks for the interface scheduler a running application sets up in
-		/// its main form, and without it the request throws where no test can catch it. Setting
-		/// the same scheduler here is what the application does, and it makes the queued work a
-		/// no-op instead of an unhandled exception.
-		/// </remarks>
-		static void OnUiThread(Action action)
-		{
-			Exception failure = null;
-			var thread = new Thread(() =>
-			{
-				try
-				{
-					SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
-					ControlsHelper.InitInvokeContext();
-					action();
-				}
-				catch (Exception ex) { failure = ex; }
-			});
-			thread.SetApartmentState(ApartmentState.STA);
-			thread.Start();
-			// Generous: the page hosts a rich text box that loads its help document on construction.
-			Assert.IsTrue(thread.Join(TimeSpan.FromSeconds(60)), "The interface thread did not finish.");
-			if (failure != null)
-				throw new AssertFailedException(failure.Message, failure);
-		}
 
 	}
 }

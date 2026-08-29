@@ -202,6 +202,11 @@ namespace JocysCom.ClassLibrary.Controls
 					if (firstVisibleRow == null && row.Visible)
 						firstVisibleRow = row;
 					var item = row.DataBoundItem;
+					// A grid keeps its rows for a moment after the list behind them has shrunk.
+					// Such a row is showing nothing, so it has no value to match a selection
+					// against, and asking it for one ended the program.
+					if (item is null)
+						continue;
 					var val = GetValue<T>(item, primaryKeyPropertyName);
 					if (list.Contains(val) != row.Selected)
 					{

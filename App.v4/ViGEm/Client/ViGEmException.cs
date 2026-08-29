@@ -10,8 +10,15 @@ namespace Nefarius.ViGEm.Client
 		public VIGEM_ERROR Code { get { return _Code; } }
 		VIGEM_ERROR _Code;
 
+		/// <summary>Names the failure, because a report that does not is unusable.</summary>
+		/// <remarks>
+		/// Without a message the framework supplies its own - "exception of type ... was thrown",
+		/// in whatever language the machine runs - and the code is lost. Every failure to plug in
+		/// a controller then reads alike, so a bus with no free slot, which is a state of the
+		/// machine, cannot be told from a missing driver, which is a fault worth fixing.
+		/// </remarks>
 		public ViGEmException(VIGEM_ERROR code)
-			: base() { _Code = code; }
+			: base(code.ToString()) { _Code = code; }
 
 		public ViGEmException(VIGEM_ERROR code, string message)
 			: base(message) { _Code = code; }

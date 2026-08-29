@@ -48,6 +48,7 @@ namespace x360ce.App
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.UpdateFrequencyLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.FormUpdateFrequencyLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this.InterfaceUpdatesButton = new System.Windows.Forms.ToolStripButton();
 			this.UpdateDevicesStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.CloudMessagesLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusEventsLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -328,15 +329,15 @@ namespace x360ce.App
 			this.MainStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.MainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusTimerLabel,
-            this.toolStripStatusLabel2,
             this.UpdateFrequencyLabel,
-            this.FormUpdateFrequencyLabel,
+            this.InterfaceUpdatesButton,
             this.UpdateDevicesStatusLabel,
             this.CloudMessagesLabel,
             this.StatusEventsLabel,
             this.StatusSaveLabel,
             this.StatusIsAdminLabel,
             this.StatusErrorsLabel,
+            this.toolStripStatusLabel2,
             this.StatusDllLabel});
 			this.MainStatusStrip.Location = new System.Drawing.Point(0, 716);
 			this.MainStatusStrip.Name = "MainStatusStrip";
@@ -362,6 +363,15 @@ namespace x360ce.App
 			this.UpdateFrequencyLabel.Name = "UpdateFrequencyLabel";
 			this.UpdateFrequencyLabel.Size = new System.Drawing.Size(33, 20);
 			this.UpdateFrequencyLabel.Text = "HW Hz: 0";
+			// 
+			// InterfaceUpdatesButton
+			// 
+			this.InterfaceUpdatesButton.CheckOnClick = true;
+			this.InterfaceUpdatesButton.Checked = true;
+			this.InterfaceUpdatesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.InterfaceUpdatesButton.Name = "InterfaceUpdatesButton";
+			this.InterfaceUpdatesButton.Text = "UI Hz: 0";
+			this.InterfaceUpdatesButton.ToolTipText = "How often the window redraws. Press to stop it redrawing, to see what the engine reaches with nothing drawing.";
 			// 
 			// FormUpdateFrequencyLabel
 			// 
@@ -693,6 +703,7 @@ namespace x360ce.App
 		private JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl IssuesPanel;
 		private ToolStripButton TestButton;
 		private ToolStripStatusLabel FormUpdateFrequencyLabel;
+		private ToolStripButton InterfaceUpdatesButton;
 		private ToolStripButton AddGameButton;
 		private Panel panel1;
 		public TabPage OptionsTabPage;

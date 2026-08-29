@@ -40,7 +40,9 @@ namespace x360ce.App.Controls
         {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;
-            var li = (LogItem)LogDataGridView.Rows[e.RowIndex].DataBoundItem;
+            var li = AppHelper.BoundItem<LogItem>(LogDataGridView, e.RowIndex);
+            if (li is null)
+                return;
             var name = LogDataGridView.Columns[e.ColumnIndex].Name;
             if (name == StatusColumn.Name)
             {
