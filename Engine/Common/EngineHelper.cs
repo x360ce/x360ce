@@ -25,8 +25,14 @@ namespace x360ce.Engine
 			{
 				if (string.IsNullOrEmpty(_AppDataPath))
 				{
-					// Apply default path.
-					_AppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\X360CE";
+					// Where settings are kept is decided by SettingsLocation, which knows the
+					// folders they may be in and, more to the point, which of them this user
+					// can actually write. The folder for all users stays the first choice, so
+					// a version that does not know about any of this still finds them.
+					_AppDataPath = SettingsLocation.Resolve(AppDomain.CurrentDomain.BaseDirectory).Path;
+					// An older portable layout kept the files loose in the folder rather than
+					// in a Settings sub-folder. It still wins when it is there: somebody
+					// carrying the program on a stick chose that explicitly.
 					var fi = new FileInfo(".\\x360ce\\x360ce.Options.xml");
 					// If local configuration was found then use it.
 					if (fi.Exists)
@@ -373,8 +379,21 @@ namespace x360ce.Engine
 				}
 				else
 				{
-					string argument = @"/select, " + fixedPath;
-					Process.Start("explorer.exe", argument);
+					// Windows can refuse to open a window: a policy on the machine, or a folder
+					// this account may not look inside. It says so by failing the request, which
+					// ended the program. Said out loud instead - somebody who asked to be shown
+					// a folder deserves an answer either way.
+					try
+					{
+						Process.Start("explorer.exe", @"/select, " + fixedPath);
+					}
+					catch (System.ComponentModel.Win32Exception ex)
+					{
+						MessageBox.Show(
+							"Windows would not open this folder:" + Environment.NewLine + fixedPath
+							+ Environment.NewLine + Environment.NewLine + ex.Message,
+							"Cannot open folder", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
 				}
 			}
 			else

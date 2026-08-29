@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Automation;
+using System.Windows.Forms;
+using JocysCom.ClassLibrary.Controls;
 
 namespace x360ce.Tests
 {
@@ -14,6 +16,34 @@ namespace x360ce.Tests
 	/// </summary>
 	public static class Ui
 	{
+
+		/// <remarks>
+		/// Creating the page raises Load, which starts the driver-status query on a background
+		/// thread. That thread asks for the interface scheduler a running application sets up in
+		/// its main form, and without it the request throws where no test can catch it. Setting
+		/// the same scheduler here is what the application does, and it makes the queued work a
+		/// no-op instead of an unhandled exception.
+		/// </remarks>
+		public static void OnUiThread(Action action)
+		{
+			Exception failure = null;
+			var thread = new Thread(() =>
+			{
+				try
+				{
+					SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
+					ControlsHelper.InitInvokeContext();
+					action();
+				}
+				catch (Exception ex) { failure = ex; }
+			});
+			thread.SetApartmentState(ApartmentState.STA);
+			thread.Start();
+			// Generous: the page hosts a rich text box that loads its help document on construction.
+			Assert.IsTrue(thread.Join(TimeSpan.FromSeconds(60)), "The interface thread did not finish.");
+			if (failure != null)
+				throw new AssertFailedException(failure.Message, failure);
+		}
 
 		/// <summary>Repository root, found by walking up from the test assembly.</summary>
 		/// <remarks>

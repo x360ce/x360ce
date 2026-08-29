@@ -123,6 +123,14 @@ namespace x360ce.App
 		}
 		UpdateFrequency _PollingRate = UpdateFrequency.ms1_1000Hz;
 
+		[DefaultValue(true), Description("Update the interface. Turn off to see what the engine reaches with nothing drawing.")]
+		public bool UpdateInterface
+		{
+			get { return _UpdateInterface; }
+			set { _UpdateInterface = value; OnPropertyChanged(); }
+		}
+		bool _UpdateInterface = true;
+
 
 		[Description("Device Use Buffered Data: false - device.GetCurrentState(), 1 - device.GetBufferedData().")]
 		public bool UseDeviceBufferedData

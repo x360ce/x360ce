@@ -1509,6 +1509,12 @@ namespace x360ce.App
 				if (!FormEventsEnabled)
 					return;
 			}
+			// Turned off, the engine runs with nothing drawing behind it. The rate in the status
+			// bar then says what the engine reaches on its own, and comparing the two numbers says
+			// whether the interface is in the engine's way. Read here, on the engine thread,
+			// before any lock is taken or any work is handed over.
+			if (!SettingsManager.Options.UpdateInterface)
+				return;
 			lock (UpdateCompletedLock)
 			{
 				if (InterfaceUpdateWatch == null)
@@ -1583,24 +1589,42 @@ namespace x360ce.App
 		{
 			Activated += MainForm_Activated;
 			Deactivate += MainForm_Deactivate;
+			InterfaceUpdatesButton.Checked = SettingsManager.Options.UpdateInterface;
+			InterfaceUpdatesButton.CheckedChanged += InterfaceUpdatesButton_CheckedChanged;
+			ShowInterfaceRate();
 		}
 
 		private void DisposeInterfaceUpdate()
 		{
 			Activated -= MainForm_Activated;
 			Deactivate -= MainForm_Deactivate;
+			InterfaceUpdatesButton.CheckedChanged -= InterfaceUpdatesButton_CheckedChanged;
 		}
 
 		private void MainForm_Deactivate(object sender, EventArgs e)
 		{
 			interfaceIsForeground = false;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", interfaceUpdateBackgroundFps);
+			ShowInterfaceRate();
 		}
 
 		private void MainForm_Activated(object sender, EventArgs e)
 		{
 			interfaceIsForeground = true;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", interfaceUpdateForegroundFps);
+			ShowInterfaceRate();
+		}
+
+		private void InterfaceUpdatesButton_CheckedChanged(object sender, EventArgs e)
+		{
+			SettingsManager.Options.UpdateInterface = InterfaceUpdatesButton.Checked;
+			ShowInterfaceRate();
+		}
+
+		/// <summary>Says how often the interface is drawing, which is none when it is turned off.</summary>
+		private void ShowInterfaceRate()
+		{
+			var rate = !SettingsManager.Options.UpdateInterface ? 0
+				: interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps;
+			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", rate);
 		}
 
 		#endregion
@@ -1875,6 +1899,13 @@ namespace x360ce.App
 				}
 				// If another DInput errors
 			}
+			// Windows offers four places for a virtual controller. When all four are taken -
+			// usually by controllers left behind by runs that ended badly - there is nowhere to
+			// put a new one. The Issues tab already says so and offers to clear them, so this is
+			// a state of the machine rather than a fault, and reporting it buries real reports.
+			var vex = e.Exception as Nefarius.ViGEm.Client.ViGEmException;
+			if (vex != null && vex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_NO_FREE_SLOT)
+				e.Cancel = true;
 			var fex = e.Exception as FileNotFoundException;
 			// If serializer warning then...
 			if (fex != null && fex.HResult == unchecked((int)0x80070002) && fex.FileName.Contains(".XmlSerializers"))

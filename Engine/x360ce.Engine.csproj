@@ -136,6 +136,8 @@
     <Compile Include="Common\MapExpression.cs" />
     <Compile Include="Common\MapExpressionUnits.cs" />
     <Compile Include="Common\MarkdownRtf.cs" />
+    <Compile Include="Common\SettingsLocation.cs" />
+    <Compile Include="Common\SettingsTransfer.cs" />
     <Compile Include="Common\MapExpressionHelp.cs" />
     <Compile Include="Common\MapExpressionSeed.cs" />
     <Compile Include="Common\CustomDiHelper.cs" />

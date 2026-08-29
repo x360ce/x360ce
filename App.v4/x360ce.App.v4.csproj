@@ -200,6 +200,12 @@
     <Compile Include="Controls\OptionsInternetUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Controls\OptionsSettingsUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\OptionsSettingsUserControl.Designer.cs">
+      <DependentUpon>OptionsSettingsUserControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\OptionsInternetUserControl.Designer.cs">
       <DependentUpon>OptionsInternetUserControl.cs</DependentUpon>
     </Compile>

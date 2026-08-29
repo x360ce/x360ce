@@ -101,6 +101,8 @@
 			this.GuideButtonActionLabel = new System.Windows.Forms.Label();
 			this.GuideButtonActionTextBox = new System.Windows.Forms.TextBox();
 			this.InternetOptionsTabPage = new System.Windows.Forms.TabPage();
+			this.SettingsTabPage = new System.Windows.Forms.TabPage();
+			this.SettingsPanel = new x360ce.App.Controls.OptionsSettingsUserControl();
 			this.InternetPanel = new x360ce.App.Controls.OptionsInternetUserControl();
 			this.VirtualDeviceTabPage = new System.Windows.Forms.TabPage();
 			this.VirtualDevicePanel = new System.Windows.Forms.Panel();
@@ -130,6 +132,7 @@
 			this.DevelopingGroupBox.SuspendLayout();
 			this.GuideButtonGroupBox.SuspendLayout();
 			this.InternetOptionsTabPage.SuspendLayout();
+			this.SettingsTabPage.SuspendLayout();
 			this.VirtualDeviceTabPage.SuspendLayout();
 			this.VirtualDevicePanel.SuspendLayout();
 			this.HidGuardianTabPage.SuspendLayout();
@@ -737,6 +740,7 @@
 			this.MainTabControl.Controls.Add(this.VirtualDeviceTabPage);
 			this.MainTabControl.Controls.Add(this.HidHideTabPage);
 			this.MainTabControl.Controls.Add(this.HidGuardianTabPage);
+			this.MainTabControl.Controls.Add(this.SettingsTabPage);
 			this.MainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.MainTabControl.Location = new System.Drawing.Point(0, 0);
 			this.MainTabControl.Name = "MainTabControl";
@@ -842,6 +846,25 @@
 			this.InternetOptionsTabPage.Size = new System.Drawing.Size(192, 74);
 			this.InternetOptionsTabPage.TabIndex = 1;
 			this.InternetOptionsTabPage.Text = "Internet";
+			// 
+			// SettingsTabPage
+			// 
+			this.SettingsTabPage.BackColor = System.Drawing.SystemColors.Control;
+			this.SettingsTabPage.Controls.Add(this.SettingsPanel);
+			this.SettingsTabPage.Location = new System.Drawing.Point(4, 22);
+			this.SettingsTabPage.Name = "SettingsTabPage";
+			this.SettingsTabPage.Padding = new System.Windows.Forms.Padding(3);
+			this.SettingsTabPage.Size = new System.Drawing.Size(192, 74);
+			this.SettingsTabPage.TabIndex = 5;
+			this.SettingsTabPage.Text = "Settings";
+			// 
+			// SettingsPanel
+			// 
+			this.SettingsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SettingsPanel.Location = new System.Drawing.Point(3, 3);
+			this.SettingsPanel.Name = "SettingsPanel";
+			this.SettingsPanel.Size = new System.Drawing.Size(186, 68);
+			this.SettingsPanel.TabIndex = 0;
 			// 
 			// InternetPanel
 			// 
@@ -1130,6 +1153,7 @@
 			this.GuideButtonGroupBox.ResumeLayout(false);
 			this.GuideButtonGroupBox.PerformLayout();
 			this.InternetOptionsTabPage.ResumeLayout(false);
+			this.SettingsTabPage.ResumeLayout(false);
 			this.VirtualDeviceTabPage.ResumeLayout(false);
 			this.VirtualDevicePanel.ResumeLayout(false);
 			this.HidHideButtonsPanel.ResumeLayout(false);
@@ -1203,6 +1227,8 @@
 		private System.Windows.Forms.Label AllowControlLabel;
 		private System.Windows.Forms.TabPage GeneralTabPage;
 		private System.Windows.Forms.TabPage InternetOptionsTabPage;
+		private System.Windows.Forms.TabPage SettingsTabPage;
+		internal OptionsSettingsUserControl SettingsPanel;
 		private System.Windows.Forms.Panel GeneralPanel;
 		private System.Windows.Forms.Panel VirtualDevicePanel;
 		public OptionsInternetUserControl InternetPanel;

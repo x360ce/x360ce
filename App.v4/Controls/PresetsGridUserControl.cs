@@ -108,7 +108,9 @@ namespace x360ce.App.Controls
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			var grid = (DataGridView)sender;
-			var item = (Preset)grid.Rows[e.RowIndex].DataBoundItem;
+			var item = AppHelper.BoundItem<Preset>(grid, e.RowIndex);
+			if (item is null)
+				return;
 			var column = grid.Columns[e.ColumnIndex];
 			if (column == PresetSidColumn)
 			{

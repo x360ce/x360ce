@@ -6,7 +6,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.18.63.0 and Virtual Gamepad Emulation Bus 1.16.112.0
+Digitally Signed Application v4.19.6.0 and Virtual Gamepad Emulation Bus 1.16.112.0
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -39,6 +39,19 @@ enough for the examples above and not enough to write a dead zone or a curve out
 limit is raised in a later release.
 
 The Help page lists every operator, function and source.
+
+## Where settings are kept (v4.x)
+
+Settings live in `C:\ProgramData\X360CE\Settings`. Anyone may create a file there, but only
+the account that created it may change it afterwards, so on a shared computer a second user can
+find the settings read-only.
+
+Open **Options** then **Settings** to see the folder in use and to choose another one. Your own
+user folder, `%LOCALAPPDATA%\Jocys.com\X360 Controller Emulator`, belongs to you alone and cannot be locked by
+another account. The settings you already have can be moved with it: every file is copied and
+checked against the original, and nothing is removed unless all of them match.
+
+If saving ever fails, the program says so and offers to try again or to move to your own folder.
 
 # Download v3.x
 

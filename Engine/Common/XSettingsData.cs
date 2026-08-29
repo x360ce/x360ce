@@ -17,7 +17,29 @@ namespace x360ce.Engine
 		{
 			Items = new SortableBindingList<T>();
 			_Comment = comment;
-			var path = string.Format("{0}\\Settings\\x360ce.{2}", EngineHelper.AppDataPath, _CurrentVersion, fileSuffix);
+			_FileSuffix = fileSuffix;
+			Rebase();
+		}
+
+		/// <summary>The part of the file name that says which settings these are.</summary>
+		[NonSerialized]
+		string _FileSuffix;
+
+		/// <summary>
+		/// Works the file name out again from wherever settings are kept now.
+		/// </summary>
+		/// <remarks>
+		/// The folder is chosen once at startup, but it can change while the program is
+		/// running: a save that fails because the file belongs to another Windows
+		/// account is answered by moving to a folder this user owns. Without this the
+		/// move would appear to work while every later save went on writing to the file
+		/// that could not be written.
+		/// </remarks>
+		public void Rebase()
+		{
+			if (string.IsNullOrEmpty(_FileSuffix))
+				return;
+			var path = string.Format("{0}\\Settings\\x360ce.{1}", EngineHelper.AppDataPath, _FileSuffix);
 			_XmlFile = new FileInfo(path);
 		}
 

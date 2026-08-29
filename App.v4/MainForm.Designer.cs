@@ -48,6 +48,7 @@ namespace x360ce.App
 			this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.UpdateFrequencyLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.FormUpdateFrequencyLabel = new System.Windows.Forms.ToolStripStatusLabel();
+			this.InterfaceUpdatesButton = new System.Windows.Forms.ToolStripButton();
 			this.UpdateDevicesStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.CloudMessagesLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this.StatusEventsLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -331,6 +332,7 @@ namespace x360ce.App
             this.toolStripStatusLabel2,
             this.UpdateFrequencyLabel,
             this.FormUpdateFrequencyLabel,
+            this.InterfaceUpdatesButton,
             this.UpdateDevicesStatusLabel,
             this.CloudMessagesLabel,
             this.StatusEventsLabel,
@@ -362,6 +364,16 @@ namespace x360ce.App
 			this.UpdateFrequencyLabel.Name = "UpdateFrequencyLabel";
 			this.UpdateFrequencyLabel.Size = new System.Drawing.Size(33, 20);
 			this.UpdateFrequencyLabel.Text = "HW Hz: 0";
+			// 
+			// InterfaceUpdatesButton
+			// 
+			this.InterfaceUpdatesButton.AccessibleName = "Draw the interface";
+			this.InterfaceUpdatesButton.CheckOnClick = true;
+			this.InterfaceUpdatesButton.Checked = true;
+			this.InterfaceUpdatesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.InterfaceUpdatesButton.Name = "InterfaceUpdatesButton";
+			this.InterfaceUpdatesButton.Text = "Draw";
+			this.InterfaceUpdatesButton.ToolTipText = "Draw the interface. Turn off to see what the engine reaches with nothing drawing.";
 			// 
 			// FormUpdateFrequencyLabel
 			// 
@@ -693,6 +705,7 @@ namespace x360ce.App
 		private JocysCom.ClassLibrary.Controls.IssuesControl.IssuesUserControl IssuesPanel;
 		private ToolStripButton TestButton;
 		private ToolStripStatusLabel FormUpdateFrequencyLabel;
+		private ToolStripButton InterfaceUpdatesButton;
 		private ToolStripButton AddGameButton;
 		private Panel panel1;
 		public TabPage OptionsTabPage;

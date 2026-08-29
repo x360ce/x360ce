@@ -1,4 +1,4 @@
-// @under-test: Engine/JocysCom/ComponentModel/BindingListInvoked.cs, App.v4/Common/SettingsManager.cs
+﻿// @under-test: Engine/JocysCom/ComponentModel/BindingListInvoked.cs, App.v4/Common/SettingsManager.cs
 // @area: engine   @layer: unit
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -52,6 +52,29 @@ namespace x360ce.Tests
 		[Description("The engine keeps its rate while the interface thread is busy")]
 		public void Engine_rate_survives_interface_work()
 		{
+			MeasureAgainstBusyInterface(false);
+		}
+
+		/// <summary>
+		/// The same measurement over the path the device list actually uses.
+		/// </summary>
+		/// <remarks>
+		/// SettingsManager sets AsynchronousInvoke on UserDevices.Items, so its changes are
+		/// handed to the interface thread rather than waited on. That is a different branch of
+		/// the collection, and for a long time nothing measured it. A change that made the
+		/// engine take the interface's lock to read one item out of the list before handing the
+		/// change over dropped the application to single-digit cycles a second and passed the
+		/// whole suite, because every test used the other branch.
+		/// </remarks>
+		[TestMethod, TestCategory("engine"), TestCategory("smoke")]
+		[Description("The engine keeps its rate when its changes are handed over rather than waited on")]
+		public void Engine_rate_survives_interface_work_when_changes_are_handed_over()
+		{
+			MeasureAgainstBusyInterface(true);
+		}
+
+		static void MeasureAgainstBusyInterface(bool handOver)
+		{
 			using (var ui = new InterfaceThread())
 			{
 				var data = new JocysCom.ClassLibrary.Configuration.SettingsData<Row>();
@@ -59,6 +82,7 @@ namespace x360ce.Tests
 					data.Items.Add(new Row { Id = Guid.NewGuid() });
 				// Changes go to the interface thread, exactly as SettingsManager sets them up.
 				data.Items.SynchronizingObject = ui.Scheduler;
+				data.Items.AsynchronousInvoke = handOver;
 
 				Cycles(data, 250);                       // warm up, ignore the result
 				var idle = Cycles(data, MeasureMs);
@@ -66,8 +90,9 @@ namespace x360ce.Tests
 				var busy = Cycles(data, MeasureMs);
 				ui.KeepBusy = false;
 
-				Console.WriteLine("engine idle {0} Hz, interface busy {1} Hz ({2:P0} kept)",
-					idle, busy, idle == 0 ? 0 : (double)busy / idle);
+				Console.WriteLine("changes {0}: engine idle {1} Hz, interface busy {2} Hz ({3:P0} kept)",
+					handOver ? "handed over" : "waited on", idle, busy,
+					idle == 0 ? 0 : (double)busy / idle);
 				Assert.IsTrue(idle >= MinimumHz,
 					"Engine ran at " + idle + " Hz with the interface idle, below the " + MinimumHz
 					+ " Hz floor. The engine is waiting on something it should not.");

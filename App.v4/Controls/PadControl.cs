@@ -1363,9 +1363,10 @@ namespace x360ce.App.Controls
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
 				return;
 			var grid = (DataGridView)sender;
-			var viewRow = grid.Rows[e.RowIndex];
+			var item = AppHelper.BoundItem<Engine.Data.UserSetting>(grid, e.RowIndex);
+			if (item is null)
+				return;
 			var column = grid.Columns[e.ColumnIndex];
-			var item = (Engine.Data.UserSetting)viewRow.DataBoundItem;
 			if (column == IsOnlineColumn)
 			{
 				e.Value = AppHelper.GetOnlineIcon(item.IsOnline);

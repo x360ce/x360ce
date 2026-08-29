@@ -372,13 +372,110 @@ namespace x360ce.App
 
 		#endregion
 
+		/// <summary>
+		/// Writes the settings, and says so when it cannot rather than ending the program.
+		/// </summary>
+		/// <remarks>
+		/// Saving fails for reasons that have nothing to do with this program: the file
+		/// is open in something else for a moment, or it belongs to another Windows
+		/// account. The second one is not rare. C:\ProgramData lets anybody create a
+		/// file and only its creator change it afterwards, so on a machine where an
+		/// installer or another account wrote the settings first, every later user can
+		/// read them and none can save. Users reported that as a crash, which is the
+		/// worst of both: the setting is lost and so is everything else unsaved.
+		///
+		/// Retry comes first because a file held for a moment is the cheaper
+		/// explanation, and trying again costs nothing.
+		/// </remarks>
 		public static void Save()
 		{
-			lock (saveReadFileLock)
+			while (true)
 			{
-				Programs.Save();
-				UserGames.Save();
+				try
+				{
+					lock (saveReadFileLock)
+					{
+						Programs.Save();
+						UserGames.Save();
+					}
+					return;
+				}
+				catch (Exception ex) when (ex is UnauthorizedAccessException || ex is IOException)
+				{
+					var answer = AskAboutFailedSave(ex);
+					if (answer == DialogResult.Retry)
+						continue;
+					if (answer == DialogResult.Yes && MoveSettingsToUserFolder())
+						continue;
+					return;
+				}
 			}
+		}
+
+		/// <summary>Tells the person what stopped the save, and what can be done now.</summary>
+		private static DialogResult AskAboutFailedSave(Exception ex)
+		{
+			var current = EngineHelper.AppDataPath;
+			var mine = SettingsLocation.User();
+			var text = "Your settings could not be saved." + Environment.NewLine + Environment.NewLine +
+				ex.Message + Environment.NewLine + Environment.NewLine +
+				"They are kept in:" + Environment.NewLine + current + Environment.NewLine + Environment.NewLine +
+				"A file there can belong to another Windows account, which Windows will not " +
+				"let this one change. Your own folder is never closed to you:" + Environment.NewLine +
+				mine.Path;
+			var form = new JocysCom.ClassLibrary.Controls.MessageBoxForm();
+			form.StartPosition = FormStartPosition.CenterParent;
+			JocysCom.ClassLibrary.Controls.ControlsHelper.CheckTopMost(form);
+			var answer = form.ShowForm(text, "Settings not saved",
+				MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning,
+				MessageBoxDefaultButton.Button1,
+				new[] { "&Try again", "&Use my own folder", "&Not now" });
+			form.Dispose();
+			return answer == DialogResult.No ? DialogResult.Yes : answer;
+		}
+
+		/// <summary>Carries the settings into this user's own folder and saves there from now on.</summary>
+		private static bool MoveSettingsToUserFolder()
+		{
+			var mine = SettingsLocation.User();
+			var result = SettingsTransfer.Run(
+				System.IO.Path.Combine(EngineHelper.AppDataPath, "Settings"),
+				System.IO.Path.Combine(mine.Path, "Settings"),
+				SettingsTransferMode.Copy);
+			if (!result.Success)
+			{
+				JocysCom.ClassLibrary.Controls.MessageBoxForm.Show(
+					"The settings could not be carried over, so nothing was changed." +
+					Environment.NewLine + Environment.NewLine + result.Problem,
+					"Settings not moved", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return false;
+			}
+			// Copied rather than moved: the originals stay where an older version of the
+			// program still looks for them, and this account writes its own from now on.
+			SettingsLocation.Preference = mine.Key;
+			EngineHelper.AppDataPath = mine.Path;
+			ReloadSettingsFiles();
+			return true;
+		}
+
+		/// <summary>Points every settings file at the folder now in use.</summary>
+		/// <remarks>
+		/// Each file worked its path out when it was created, from the folder chosen at
+		/// startup. Moving the settings without telling them all would leave the ones
+		/// nobody remembered still writing to the folder that refused the save.
+		/// </remarks>
+		internal static void ReloadSettingsFiles()
+		{
+			OptionsData.Rebase();
+			Programs.Rebase();
+			Summaries.Rebase();
+			Presets.Rebase();
+			Layouts.Rebase();
+			UserGames.Rebase();
+			UserDevices.Rebase();
+			UserInstances.Rebase();
+			UserSettings.Rebase();
+			PadSettings.Rebase();
 		}
 
 		public static UserGame ProcessExecutable(string filePath)
