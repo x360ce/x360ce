@@ -124,6 +124,14 @@ namespace x360ce.App
 		UpdateFrequency _PollingRate = UpdateFrequency.ms1_1000Hz;
 
 		[DefaultValue(true), Description("Update the interface. Turn off to see what the engine reaches with nothing drawing.")]
+		/// <summary>Whether the window redraws itself.</summary>
+		/// <remarks>
+		/// Deliberately not stored. It exists to be turned off for a moment, to see what the
+		/// engine reaches with nothing drawing. Kept across restarts, somebody who turned it
+		/// off and forgot would meet a window that never updates again and no longer
+		/// remembers why - so it comes back on every time the program starts.
+		/// </remarks>
+		[System.Xml.Serialization.XmlIgnore]
 		public bool UpdateInterface
 		{
 			get { return _UpdateInterface; }

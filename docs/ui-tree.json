@@ -1403,13 +1403,7 @@
 						},
 						{
 							"Name":"Interface rate",
-							"Description":"Times a second the window redraws itself.",
-							"Role":"Status",
-							"Id":"FormUpdateFrequencyLabel"
-						},
-						{
-							"Name":"Draw the interface",
-							"Description":"Stops the lists redrawing, leaving the controllers being read as before.",
+							"Description":"Times a second the window redraws itself. Press to stop it redrawing, which leaves the controllers being read as before.",
 							"Role":"Command",
 							"Id":"InterfaceUpdatesButton"
 						},
@@ -2915,7 +2909,7 @@
 							"Id":"IssuesTabPage",
 							"Items":[
 								{
-									"Name":"Jocys.com X360 Controller Emulator 4.19.10 (Build: 2026-08-29) - Issues",
+									"Name":"Jocys.com X360 Controller Emulator 4.19.14 (Build: 2026-08-29) - Issues",
 									"Description":"Problems the program found, and what to do about each one.",
 									"Role":"Group",
 									"Id":"IssuesPanel",

@@ -1,8 +1,10 @@
-// @under-test: Engine/JocysCom/Controls/ControlsHelper.Windows.cs, App.v4/Controls/AboutControl.cs
+﻿// @under-test: Engine/JocysCom/Controls/ControlsHelper.Windows.cs, App.v4/Controls/AboutControl.cs
 // @area: about   @layer: unit
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+
+using System.Text.RegularExpressions;
 using System.Linq;
 
 namespace x360ce.Tests
@@ -87,7 +89,9 @@ namespace x360ce.Tests
 				var lines = text.Split(new[] { "\r\n" }, System.StringSplitOptions.None);
 				Assert.IsTrue(lines.Length > 10,
 					relative + " split into only " + lines.Length + " lines, so its breaks were lost.");
-				Assert.IsTrue(lines[0].TrimStart('﻿').StartsWith("v"),
+				// "## [4.19.14.0] - 2026-08-29": a Markdown heading, so the file reads as a document
+				// on its own, with the keyword kept on each entry rather than split into sections.
+				Assert.IsTrue(Regex.IsMatch(lines[0].TrimStart('﻿'), @"^## \[\d[\d.]*\d.*\]"),
 					relative + " starts with '" + lines[0] + "' rather than a version heading.");
 			}
 		}

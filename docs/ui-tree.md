@@ -227,8 +227,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Toolbar]   │   ├── Status bar                                                          # What the program is doing, and how fast it is doing it.
 [Status]    │   │   ├── Last action                                                     # The most recent thing the program did.
 [Status]    │   │   ├── Controller rate                                                 # Times a second the program reads the controllers. Higher is better.
-[Status]    │   │   ├── Interface rate                                                  # Times a second the window redraws itself.
-[Command]   │   │   ├── Draw the interface                                              # Stops the lists redrawing, leaving the controllers being read as before.
+[Command]   │   │   ├── Interface rate                                                  # Times a second the window redraws itself. Press to stop it redrawing, which leaves the controllers being read as before.
 [Status]    │   │   ├── Device reads                                                    # How many times the whole device list has been read again.
 [Status]    │   │   ├── Cloud messages                                                  # Messages waiting to be sent to the online database.
 [Status]    │   │   ├── Suspended events (hidden)                                       # Setting changes held back while a page is being filled in.
@@ -453,7 +452,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.19.10 (Build: 2026-08-29) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.19.14 (Build: 2026-08-29) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [Command]   │                   ├── Ignore All                                          # Stops reporting every issue listed.

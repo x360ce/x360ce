@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading.Tasks;
+using System.Drawing;
 using System.Windows.Forms;
 using x360ce.App.Controls;
 using x360ce.App.Issues;
@@ -1611,6 +1612,8 @@ namespace x360ce.App
 
 		private void InitiInterfaceUpdate()
 		{
+			ReserveWidth(UpdateFrequencyLabel, "HW Hz: 1000");
+			ReserveWidth(InterfaceUpdatesButton, "UI Hz: OFF");
 			Activated += MainForm_Activated;
 			Deactivate += MainForm_Deactivate;
 			InterfaceUpdatesButton.Checked = SettingsManager.Options.UpdateInterface;
@@ -1618,6 +1621,21 @@ namespace x360ce.App
 			ShowInterfaceRate();
 		}
 
+
+		/// <summary>Holds a status item at the width of its longest reading.</summary>
+		/// <remarks>
+		/// A rate climbing from one digit to four widens its label, and every item after it slides
+		/// along; the eye follows the movement instead of the number. Padding the text does not fix
+		/// it, because a space is narrower than a digit in this font. Measuring the longest reading
+		/// once and holding that width does, and it holds at any font size the machine is set to.
+		/// </remarks>
+		private static void ReserveWidth(ToolStripItem item, string longest)
+		{
+			var width = TextRenderer.MeasureText(longest, item.Font).Width;
+			item.AutoSize = false;
+			item.Width = width + item.Padding.Horizontal + (item.Image == null ? 8 : item.Image.Width + 12);
+			item.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+		}
 		private void DisposeInterfaceUpdate()
 		{
 			Activated -= MainForm_Activated;
@@ -1643,13 +1661,21 @@ namespace x360ce.App
 			ShowInterfaceRate();
 		}
 
-		/// <summary>Says how often the interface is drawing, which is none when it is turned off.</summary>
+		/// <summary>Says how often the interface is drawing, and offers to stop it.</summary>
+		/// <remarks>
+		/// The rate and the switch are one thing, because they state one fact: drawing is
+		/// either happening at some rate or it is not. Kept apart, the switch could read off
+		/// while the rate beside it still read ten, and somebody who had forgotten pressing it
+		/// would face a window reporting that it draws while nothing moves.
+		/// </remarks>
 		private void ShowInterfaceRate()
 		{
-			var rate = !SettingsManager.Options.UpdateInterface ? 0
+			var on = SettingsManager.Options.UpdateInterface;
+			var rate = !on ? 0
 				: interfaceIsForeground ? interfaceUpdateForegroundFps : interfaceUpdateBackgroundFps;
-			ControlsHelper.SetText(FormUpdateFrequencyLabel, "UI Hz: {0}", rate);
+			ControlsHelper.SetText(InterfaceUpdatesButton, "UI Hz: {0}", on ? rate.ToString() : "OFF");
 		}
+
 
 		#endregion
 

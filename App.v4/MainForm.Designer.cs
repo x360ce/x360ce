@@ -329,9 +329,7 @@ namespace x360ce.App
 			this.MainStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this.MainStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusTimerLabel,
-            this.toolStripStatusLabel2,
             this.UpdateFrequencyLabel,
-            this.FormUpdateFrequencyLabel,
             this.InterfaceUpdatesButton,
             this.UpdateDevicesStatusLabel,
             this.CloudMessagesLabel,
@@ -339,6 +337,7 @@ namespace x360ce.App
             this.StatusSaveLabel,
             this.StatusIsAdminLabel,
             this.StatusErrorsLabel,
+            this.toolStripStatusLabel2,
             this.StatusDllLabel});
 			this.MainStatusStrip.Location = new System.Drawing.Point(0, 716);
 			this.MainStatusStrip.Name = "MainStatusStrip";
@@ -367,13 +366,12 @@ namespace x360ce.App
 			// 
 			// InterfaceUpdatesButton
 			// 
-			this.InterfaceUpdatesButton.AccessibleName = "Draw the interface";
 			this.InterfaceUpdatesButton.CheckOnClick = true;
 			this.InterfaceUpdatesButton.Checked = true;
 			this.InterfaceUpdatesButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
 			this.InterfaceUpdatesButton.Name = "InterfaceUpdatesButton";
-			this.InterfaceUpdatesButton.Text = "Draw";
-			this.InterfaceUpdatesButton.ToolTipText = "Draw the interface. Turn off to see what the engine reaches with nothing drawing.";
+			this.InterfaceUpdatesButton.Text = "UI Hz: 0";
+			this.InterfaceUpdatesButton.ToolTipText = "How often the window redraws. Press to stop it redrawing, to see what the engine reaches with nothing drawing.";
 			// 
 			// FormUpdateFrequencyLabel
 			// 

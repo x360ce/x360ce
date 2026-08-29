@@ -217,6 +217,27 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		/// <summary>How often the states shown on screen are read back, in milliseconds.</summary>
+		const long DisplayReadIntervalMs = 16;
+
+		long _lastDisplayRead;
+
+		/// <summary>True when enough time has passed to read the states the window shows.</summary>
+		/// <remarks>
+		/// Only the reading is paced. Whether the XInput library is loaded is decided by the
+		/// same answer elsewhere, and pacing that too made the program load and unload the
+		/// library many times a second, which the status bar showed as a name flickering in
+		/// and out of existence.
+		/// </remarks>
+		internal bool DueForDisplayRead()
+		{
+			var now = watch.ElapsedMilliseconds;
+			if (now - _lastDisplayRead < DisplayReadIntervalMs)
+				return false;
+			_lastDisplayRead = now;
+			return true;
+		}
+
 		void RefreshAll(DirectInput manager, DeviceDetector detector)
 		{
 			lock (DiUpdatesLock)

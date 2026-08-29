@@ -61,10 +61,11 @@ namespace x360ce.App.UiTree
 				"The most recent thing the program did.");
 			d["MainForm.UpdateFrequencyLabel"] = Live("Controller rate",
 				"Times a second the program reads the controllers. Higher is better.");
-			d["MainForm.FormUpdateFrequencyLabel"] = Live("Interface rate",
-				"Times a second the window redraws itself.");
-			d["MainForm.InterfaceUpdatesButton"] = new Text("Draw",
-				"Stops the lists redrawing, leaving the controllers being read as before.");
+			// The rate and the switch are one item: it reports how often the window redraws and
+			// turns that off. Its caption carries the number, so it is named but not renamed.
+			d["MainForm.InterfaceUpdatesButton"] = Live("Interface rate",
+				"Times a second the window redraws itself. Press to stop it redrawing, which "
+				+ "leaves the controllers being read as before.");
 			d["MainForm.UpdateDevicesStatusLabel"] = Live("Device reads",
 				"How many times the whole device list has been read again.");
 			d["MainForm.CloudMessagesLabel"] = Live("Cloud messages",

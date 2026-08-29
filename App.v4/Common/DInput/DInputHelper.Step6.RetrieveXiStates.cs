@@ -21,6 +21,14 @@ namespace x360ce.App.DInput
 
 		void RetrieveXiStates(UserGame game, bool getXInputStates)
 		{
+			// These states are shown on screen and nowhere else, and a screen cannot show more
+			// than sixty readings a second, while asking for one costs a delegate, a hand-off to
+			// another thread and a wait handle, four times over. Read on every pass it took seven
+			// tenths of every second away from reading the controllers themselves. Paced here and
+			// not by the caller, because the caller uses the same answer to decide whether the
+			// XInput library stays loaded, and pacing that made it load and unload all day.
+			var due = DueForDisplayRead();
+			var wanted = Controller.IsLoaded && getXInputStates;
 			// Allow if not testing or testing with option enabled.
 			Exception error = null;
 			lock (Controller.XInputLock)
@@ -28,10 +36,16 @@ namespace x360ce.App.DInput
 				for (uint i = 0; i < 4; i++)
 				{
 					var gamePad = LiveXiControllers[i];
+					// Between reads the last one still stands. Falling through here would write an
+					// empty state and "not connected" over it on every pass that does not read, which
+					// is most of them - the controller picture and the formula preview both draw from
+					// these, and would spend their time showing nothing.
+					if (wanted && !due)
+						continue;
 					State state = new State();
 					var success = false;
 					var timeout = false;
-					if (Controller.IsLoaded && getXInputStates)
+					if (wanted)
 					{
 						IAsyncResult result;
 						Action action = () =>
