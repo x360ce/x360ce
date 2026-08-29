@@ -49,6 +49,27 @@ If you want `HELP` and have questions about installation or configuration, pleas
 5. Minimise `X360CE` in order to reduce CPU use (program icon will be visible in tray).
 6. Launch the game and see how it works.
 
+## What the light on each controller tab means
+
+The light answers two questions at once: whether a device of yours is mapped to that
+controller, and whether Windows hands back an emulated controller for a game to read.
+
+| Light | Your device | Emulated controller | What to do |
+| --- | --- | --- | --- |
+| Green | Mapped and connected | Windows hands one back | Nothing. This is working. |
+| Red | Mapped and connected | None | A game receives nothing. Look in Windows Game Controllers: if it is not listed there, it was never finished being built. |
+| Yellow | None mapped | Windows hands one back | The emulated controller exists but has nothing driving it. Map a device on the `[General]` tab. |
+| Grey | None mapped | None | Nothing is set up for this controller. |
+| Blue | Mapped and connected | Not checked | Nothing is wrong. `[Show XInput State]` is turned off, so the program is not reading the emulated controller back to check it. |
+
+Blue is not a fault. `[Show XInput State]` only decides where the numbers shown on screen
+come from - read back from the emulated controller, or worked out from your own device.
+The emulated controller works either way, so with that setting off the program cannot say
+whether one exists and says so rather than guessing.
+
+Hover over a tab to read the same thing in words, including anything the virtual bus
+reported about that controller.
+
 ## How to Install or Uninstall ViGEmBus Virtual Gamepad Emulation Driver
 
 - Install: `[Options]` tab → `[Virtual Device]` tab → ViGEm Bus `[Install]` button.
