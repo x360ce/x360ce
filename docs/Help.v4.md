@@ -1,4 +1,4 @@
-# Xbox 360 Controller Emulator 4.x (uses ViGEmBus Virtual Gamepad Emulation Driver)
+﻿# Xbox 360 Controller Emulator 4.x (uses ViGEmBus Virtual Gamepad Emulation Driver)
 
 If you want `HELP` and have questions about installation or configuration, please go to:
 
@@ -51,16 +51,29 @@ If you want `HELP` and have questions about installation or configuration, pleas
 
 ## What the light on each controller tab means
 
-The light answers two questions at once: whether a device of yours is mapped to that
-controller, and whether Windows hands back an emulated controller for a game to read.
+The light answers two questions at once, so it is drawn in two halves. The **left half is your
+device**, the **right half is the emulated controller** a game reads. Both green means it is
+working.
 
-| Light | Your device | Emulated controller | What to do |
-| --- | --- | --- | --- |
-| Green | Mapped and connected | Windows hands one back | Nothing. This is working. |
-| Red | Mapped and connected | None | A game receives nothing. Look in Windows Game Controllers: if it is not listed there, it was never finished being built. |
-| Yellow | None mapped | Windows hands one back | The emulated controller exists but has nothing driving it. Map a device on the `[General]` tab. |
-| Grey | None mapped | None | Nothing is set up for this controller. |
-| Blue | Mapped and connected | Not checked | Nothing is wrong. `[Show XInput State]` is turned off, so the program is not reading the emulated controller back to check it. |
+Each tab owns one of the four XInput places, and the place never moves: `[Controller 1]`
+is XInput 1. Three things can be in it - the controller this program makes, a real
+controller you plugged in, or nothing.
+
+| Half | Colour | Meaning |
+| --- | --- | --- |
+| Left (your device) | Green | A device mapped here is connected. |
+| Left | Amber | A device is mapped here but is not connected. |
+| Left | Grey | Nothing is mapped to this controller. |
+| Right (emulated controller) | Green | The controller for this tab is in this tab's place. Nothing to do. |
+| Right | Amber | Something else holds this tab's place, so no controller was made for it. |
+| Right | Orange | The controller for this tab exists, in a different place, so a game reads it as a different player. Put them in the order you want on the `[Devices]` page. |
+| Right | Red | No controller was made and nothing reaches a game. |
+| Right | Grey | Nothing is set up for this controller. |
+| Right | Blue | `[Show XInput State]` is off, so nothing was checked. |
+
+The right half is mixed rather than picked from that list: the more that is wrong at once,
+the further it moves towards red. A tab with two faults therefore looks worse than a tab
+with one, so the tab most in need of attention is the one that stands out.
 
 Blue is not a fault. `[Show XInput State]` only decides where the numbers shown on screen
 come from - read back from the emulated controller, or worked out from your own device.
