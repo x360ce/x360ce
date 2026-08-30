@@ -32,7 +32,9 @@
 			this.DeviceGroupBox = new System.Windows.Forms.GroupBox();
 			this.PassThroughIndexComboBox = new System.Windows.Forms.ComboBox();
 			this.PassThroughIndexLabel = new System.Windows.Forms.Label();
-			this.ForceFeedbackPassThroughCheckBox = new System.Windows.Forms.CheckBox();
+			this.ForcePassThroughCheckBox = new System.Windows.Forms.CheckBox();
+			this.ForcePassThroughIndexLabel = new System.Windows.Forms.Label();
+			this.ForcePassThroughIndexComboBox = new System.Windows.Forms.ComboBox();
 			this.DeviceSubTypeComboBox = new System.Windows.Forms.ComboBox();
 			this.DeviceSubTypeLabel = new System.Windows.Forms.Label();
 			this.PassThroughCheckBox = new System.Windows.Forms.CheckBox();
@@ -208,6 +210,7 @@
 			this.VendorNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.ProductNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MapToColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.XInputPlaceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.LoadPresetButton = new System.Windows.Forms.Button();
 			this.GamesToolStrip = new System.Windows.Forms.ToolStrip();
 			this.RemoveMapButton = new System.Windows.Forms.ToolStripButton();
@@ -343,7 +346,6 @@
 			// 
 			this.DeviceGroupBox.Controls.Add(this.PassThroughIndexComboBox);
 			this.DeviceGroupBox.Controls.Add(this.PassThroughIndexLabel);
-			this.DeviceGroupBox.Controls.Add(this.ForceFeedbackPassThroughCheckBox);
 			this.DeviceGroupBox.Controls.Add(this.DeviceSubTypeComboBox);
 			this.DeviceGroupBox.Controls.Add(this.DeviceSubTypeLabel);
 			this.DeviceGroupBox.Controls.Add(this.PassThroughCheckBox);
@@ -375,16 +377,35 @@
 			this.PassThroughIndexLabel.TabIndex = 4;
 			this.PassThroughIndexLabel.Text = "Pass Through ID:";
 			// 
-			// ForceFeedbackPassThroughCheckBox
+			// ForcePassThroughIndexLabel
 			// 
-			this.ForceFeedbackPassThroughCheckBox.AutoSize = true;
-			this.ForceFeedbackPassThroughCheckBox.Location = new System.Drawing.Point(6, 46);
-			this.ForceFeedbackPassThroughCheckBox.Name = "ForceFeedbackPassThroughCheckBox";
-			this.ForceFeedbackPassThroughCheckBox.Size = new System.Drawing.Size(173, 17);
-			this.ForceFeedbackPassThroughCheckBox.TabIndex = 3;
-			this.ForceFeedbackPassThroughCheckBox.Text = "Force Feedback Pass Through";
-			this.ForceFeedbackPassThroughCheckBox.UseVisualStyleBackColor = true;
-			this.ForceFeedbackPassThroughCheckBox.CheckedChanged += new System.EventHandler(this.ForcesPassThroughCheckBox_CheckedChanged);
+			this.ForcePassThroughIndexLabel.AutoSize = true;
+			this.ForcePassThroughIndexLabel.Location = new System.Drawing.Point(145, 67);
+			this.ForcePassThroughIndexLabel.Name = "ForcePassThroughIndexLabel";
+			this.ForcePassThroughIndexLabel.Size = new System.Drawing.Size(51, 13);
+			this.ForcePassThroughIndexLabel.TabIndex = 7;
+			this.ForcePassThroughIndexLabel.Text = "Send To:";
+			// 
+			// ForcePassThroughIndexComboBox
+			// 
+			this.ForcePassThroughIndexComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.ForcePassThroughIndexComboBox.Enabled = false;
+			this.ForcePassThroughIndexComboBox.FormattingEnabled = true;
+			this.ForcePassThroughIndexComboBox.Location = new System.Drawing.Point(197, 63);
+			this.ForcePassThroughIndexComboBox.Name = "ForcePassThroughIndexComboBox";
+			this.ForcePassThroughIndexComboBox.Size = new System.Drawing.Size(146, 21);
+			this.ForcePassThroughIndexComboBox.TabIndex = 8;
+			// 
+			// ForcePassThroughCheckBox
+			// 
+			this.ForcePassThroughCheckBox.AutoSize = true;
+			this.ForcePassThroughCheckBox.Location = new System.Drawing.Point(6, 65);
+			this.ForcePassThroughCheckBox.Name = "ForcePassThroughCheckBox";
+			this.ForcePassThroughCheckBox.Size = new System.Drawing.Size(173, 17);
+			this.ForcePassThroughCheckBox.TabIndex = 6;
+			this.ForcePassThroughCheckBox.Text = "Pass Through";
+			this.ForcePassThroughCheckBox.UseVisualStyleBackColor = true;
+			this.ForcePassThroughCheckBox.CheckedChanged += new System.EventHandler(this.ForcesPassThroughCheckBox_CheckedChanged);
 			// 
 			// DeviceSubTypeComboBox
 			// 
@@ -1735,6 +1756,9 @@
 			this.ForceFeedbackGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.ForceFeedbackGroupBox.Controls.Add(this.EffectDescriptionLabel);
+			this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughCheckBox);
+			this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughIndexLabel);
+			this.ForceFeedbackGroupBox.Controls.Add(this.ForcePassThroughIndexComboBox);
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceTypeComboBox);
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceEnableCheckBox);
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTextBox);
@@ -1744,7 +1768,7 @@
 			this.ForceFeedbackGroupBox.Controls.Add(this.ForceOverallTrackBar);
 			this.ForceFeedbackGroupBox.Location = new System.Drawing.Point(3, 3);
 			this.ForceFeedbackGroupBox.Name = "ForceFeedbackGroupBox";
-			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(180, 106);
+			this.ForceFeedbackGroupBox.Size = new System.Drawing.Size(180, 131);
 			this.ForceFeedbackGroupBox.TabIndex = 0;
 			this.ForceFeedbackGroupBox.TabStop = false;
 			this.ForceFeedbackGroupBox.Text = "Force Feedback";
@@ -1754,7 +1778,7 @@
 			this.EffectDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.EffectDescriptionLabel.Location = new System.Drawing.Point(6, 66);
+			this.EffectDescriptionLabel.Location = new System.Drawing.Point(6, 91);
 			this.EffectDescriptionLabel.Name = "EffectDescriptionLabel";
 			this.EffectDescriptionLabel.Size = new System.Drawing.Size(168, 37);
 			this.EffectDescriptionLabel.TabIndex = 5;
@@ -1845,7 +1869,7 @@
 			this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodLabel);
 			this.LeftMotorGroupBox.Controls.Add(this.LeftMotorPeriodTrackBar);
 			this.LeftMotorGroupBox.Controls.Add(this.TestLeftMotorLabel);
-			this.LeftMotorGroupBox.Location = new System.Drawing.Point(3, 115);
+			this.LeftMotorGroupBox.Location = new System.Drawing.Point(3, 140);
 			this.LeftMotorGroupBox.Name = "LeftMotorGroupBox";
 			this.LeftMotorGroupBox.Size = new System.Drawing.Size(294, 211);
 			this.LeftMotorGroupBox.TabIndex = 9;
@@ -1979,7 +2003,7 @@
 			this.groupBox1.Controls.Add(this.RightMotorTestTrackBar);
 			this.groupBox1.Controls.Add(this.RightMotorTestTextBox);
 			this.groupBox1.Controls.Add(this.RightMotorPeriodTextBox);
-			this.groupBox1.Location = new System.Drawing.Point(303, 115);
+			this.groupBox1.Location = new System.Drawing.Point(303, 140);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(310, 211);
 			this.groupBox1.TabIndex = 10;
@@ -2183,6 +2207,7 @@
 			this.MappedDevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsOnlineColumn,
             this.ConnectionClassColumn,
+            this.XInputPlaceColumn,
             this.IsEnabledColumn,
             this.SettingIdColumn,
             this.CompletionColumn,
@@ -2312,6 +2337,15 @@
 			this.ProductNameColumn.Name = "ProductNameColumn";
 			this.ProductNameColumn.ReadOnly = true;
 			this.ProductNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			// 
+			// XInputPlaceColumn
+			// 
+			this.XInputPlaceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.XInputPlaceColumn.HeaderText = "XInput";
+			this.XInputPlaceColumn.Name = "XInputPlaceColumn";
+			this.XInputPlaceColumn.ReadOnly = true;
+			this.XInputPlaceColumn.ToolTipText = "Which XInput place the real hardware behind this device holds. Blank when nothing can say.";
+			this.XInputPlaceColumn.Width = 60;
 			// 
 			// MapToColumn
 			// 
@@ -2663,7 +2697,9 @@
         private System.Windows.Forms.Label LeftMotorStrengthLabel;
         private System.Windows.Forms.TrackBar RightMotorStrengthTrackBar;
         private System.Windows.Forms.TrackBar LeftMotorStrengthTrackBar;
-        private System.Windows.Forms.CheckBox ForceFeedbackPassThroughCheckBox;
+        private System.Windows.Forms.CheckBox ForcePassThroughCheckBox;
+        private System.Windows.Forms.Label ForcePassThroughIndexLabel;
+        private System.Windows.Forms.ComboBox ForcePassThroughIndexComboBox;
         private System.Windows.Forms.ComboBox PassThroughIndexComboBox;
         private System.Windows.Forms.Label PassThroughIndexLabel;
         private System.Windows.Forms.GroupBox CombineGroupBox;
@@ -2732,6 +2768,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn VendorNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn ProductNameColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MapToColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn XInputPlaceColumn;
 		private System.Windows.Forms.Button CopyPresetButton;
 		private System.Windows.Forms.Button PastePresetButton;
 		private XboxImageUserControl XboxImage;

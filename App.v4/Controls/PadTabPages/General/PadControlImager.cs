@@ -105,6 +105,20 @@ namespace x360ce.App.Controls
 			// If button is not specified then...
 			else if (ii.Button == GamepadButtonFlags.None)
 			{
+				// The triggers come first, because they are neither buttons nor thumb axes and fell through
+				// to the thumb reading below - which looks at four axes, none of them a trigger. The value
+				// read was therefore always nothing, so a trigger held all the way down never lit its name.
+				//
+				// Pressed past the point XInput itself counts as pressed, so what the label says agrees with
+				// what a game receives.
+				if (ii.Code == MapCode.LeftTrigger || ii.Code == MapCode.RightTrigger)
+				{
+					const byte pressed = 30;
+					var amount = ii.Code == MapCode.LeftTrigger ? gp.LeftTrigger : gp.RightTrigger;
+					on = amount > pressed;
+				}
+				else
+				{
 				var t = 2000;
 				// This is axis.
 				short value = 0;
@@ -134,6 +148,7 @@ namespace x360ce.App.Controls
 					on = gp.RightThumbY > t;
 				if (ii.Code == MapCode.RightThumbDown)
 					on = gp.RightThumbY < -t;
+				}
 			}
 			else
 			{

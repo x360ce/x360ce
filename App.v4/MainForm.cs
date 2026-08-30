@@ -70,11 +70,12 @@ namespace x360ce.App
 			BuletImageList.TransparentColor = System.Drawing.Color.Transparent;
 			BuletImageList.ImageStream = null;
 			BuletImageList.Images.Clear();
-			BuletImageList.Images.Add("bullet_square_glass_red.png", Resources.bullet_square_glass_red);
-			BuletImageList.Images.Add("bullet_square_glass_yellow.png", Resources.bullet_square_glass_yellow);
-			BuletImageList.Images.Add("bullet_square_glass_green.png", Resources.bullet_square_glass_green);
-			BuletImageList.Images.Add("bullet_square_glass_blue.png", Resources.bullet_square_glass_blue);
-			BuletImageList.Images.Add("bullet_square_glass_grey.png", Resources.bullet_square_glass_grey);
+			BuletImageList.Images.Add("bullet_square_glass_red.png", AppHelper.GetStatusIcon(AppHelper.StatusRed));
+			BuletImageList.Images.Add("bullet_square_glass_amber.png", AppHelper.GetStatusIcon(AppHelper.StatusAmber));
+			BuletImageList.Images.Add("bullet_square_glass_orange.png", AppHelper.GetStatusIcon(AppHelper.StatusOrange));
+			BuletImageList.Images.Add("bullet_square_glass_green.png", AppHelper.GetStatusIcon(AppHelper.StatusGreen));
+			BuletImageList.Images.Add("bullet_square_glass_blue.png", AppHelper.GetStatusIcon(AppHelper.StatusBlue));
+			BuletImageList.Images.Add("bullet_square_glass_grey.png", AppHelper.GetStatusIcon(AppHelper.StatusGrey));
 			BuletImageList.Images.Add("ok_16x16.png", Resources.ok_16x16);
 			BuletImageList.Images.Add("ok_off_16x16.png", Resources.ok_off_16x16);
 			BuletImageList.Images.Add("fix_16x16.png", Resources.fix_16x16);
@@ -111,15 +112,31 @@ namespace x360ce.App
 		{
 			get { return TrayContextMenuStrip; }
 		}
+		/// <summary>The name of a light in that colour, adding it to the list if it is new.</summary>
+		/// <remarks>
+		/// Tabs draw from an image list by name, so a colour mixed at run time has to be put in it before
+		/// it can be shown. The colour itself is the name, which means each one is made once however many
+		/// tabs ask for it.
+		/// </remarks>
+		string StatusImageKey(string left, string right)
+		{
+			var key = left + "|" + right;
+			if (!BuletImageList.Images.ContainsKey(key))
+				BuletImageList.Images.Add(key, AppHelper.GetStatusIcon(left, right));
+			return key;
+		}
+
 
 		private void Global_UpdateControlFromStates(object sender, EventArgs e)
 		{
 			var currentGameFileName = SettingsManager.CurrentGame?.FileName;
 			var helper = Global.DHelper;
-			// Whether the states are being read back from XInput at all. Without that there is no
-			// evidence either way, and a light which says everything is well on no evidence is the
-			// thing being fixed here.
-			var checking = SettingsManager.Options.GetXInputStates;
+			// Whether the states were read back from XInput on the last pass. Without that there is
+			// no evidence either way, and a light which says everything is well on no evidence is
+			// the thing being fixed here. Asked of the reading itself rather than of the setting
+			// that requests it: the two part company whenever the XInput library is not loaded, and
+			// then nothing is read while the setting still says everything is being watched.
+			var checking = helper != null && helper.XiStatesRead;
 			for (var i = 0; i < 4; i++)
 			{
 				var padControl = PadControls[i];
@@ -127,35 +144,81 @@ namespace x360ce.App
 				var devices = SettingsManager.GetDevices(currentGameFileName, (MapTo)(i + 1));
 				// DInput instance is ON if active devices found.
 				var diOn = devices.Count(x => x.IsOnline) > 0;
-				// The same answer the controller panel draws itself from: a controller Windows hands
-				// back through XInput. Asking the virtual bus instead says yes as soon as the bus accepts
-				// the controller, which it does even when Windows never finishes building one - no entry
-				// in Game Controllers, nothing for XInput to read, and a green light over the top of it.
-				// The panel was right and the light was wrong, from two sources for one fact.
-				var place = helper == null ? -1 : helper.XiPlaceForPad[i];
-				var xiOn = checking && helper != null && place >= 0 && helper.LiveXiConnected[place];
-				// Update LED of GamePad state.
-				// Not looking is not the same as looking and finding nothing. With the read-back
-				// turned off there is no evidence either way, and red would accuse the emulation of
-				// being broken when it is running perfectly well - the setting only decides where the
-				// numbers on screen come from. Blue says the device is mapped and nothing was checked.
-				var image = diOn
-					// DInput ON, XInput not checked
-					? !checking ? "blue"
-					// DInput ON, XInput ON 
-					: xiOn ? "green"
-					// DInput ON, XInput OFF
-					: "red"
-					// DInput OFF, XInput ON
-					: xiOn ? "yellow"
-					// DInput OFF, XInput OFF
-					: "grey";
-				var bullet = string.Format("bullet_square_glass_{0}.png", image);
+				// Two questions, and one variable was answering both. Whether a controller sits in this
+				// tab's place is one; whether it is the one we made is the other. Asking only the
+				// second left a tab with a real controller in its place showing no light at all, as
+				// though the place were empty - which is the one thing it was not.
+				//
+				// The place a tab stands for never moves: tab one is XInput one. Ours holds it, or
+				// somebody else's does, or it is empty, and the tab has something different to say in
+				// each case.
+				//
+				// Whether anything holds it is asked of the controller Windows hands back, the same
+				// answer the controller panel draws itself from. Asking the virtual bus instead says
+				// yes as soon as the bus accepts a controller, which it does even when Windows never
+				// finishes building one - no entry in Game Controllers, nothing for XInput to read,
+				// and a green light over the top of it. The bus is asked only whose it is, which is
+				// the one thing it does know and Windows does not.
+				// Where this tab's own controller actually is. It is not always the place of the same number:
+				// Windows gives out the place, and asking for one is not among the things it allows. So the
+				// light asks about the controller this tab has, wherever that turned out to be, and falls back
+				// to the tab's own place only when it has none - which is what says something else is sitting
+				// there.
+				var ours = helper == null ? -1 : helper.XiPlaceForPad[i];
+				var xiOurs = ours >= 0;
+				var xiOn = checking && helper != null && helper.LiveXiConnected[xiOurs ? ours : i];
+				// What the bus said about this one, which is a fault in its own right.
+				var errors = helper == null ? null : helper.VirtualErrors;
+				var busError = errors == null || i >= errors.Length ? VirtualError.None : errors[i];
+				var mapped = devices.Count > 0;
+				// Two halves, one per question, because a tab has always answered two at once and a single
+				// colour could only ever answer one of them - so which half was missing, the thing somebody
+				// actually needs, was the one thing the light could not say.
+				//
+				// Left is your device, right is the emulated controller a game reads. The colours mean what
+				// colours usually mean, so there is nothing to learn: green working, amber worth a look, orange
+				// a fault that can be put right, red nothing reaches the game, grey nothing set up here, blue
+				// nothing was checked.
+				string left, right;
+				if (!mapped && !xiOurs && !xiOn)
+				{
+					// Nothing is set up on this tab, which is not a fault and should not look like one.
+					left = AppHelper.StatusGrey;
+					right = AppHelper.StatusGrey;
+				}
+				else
+				{
+					// A device mapped here and not connected is worth a look; none mapped is simply nothing.
+					left = diOn ? AppHelper.StatusGreen : mapped ? AppHelper.StatusAmber : AppHelper.StatusGrey;
+					if (!checking)
+						// Not looking is not the same as looking and finding nothing.
+						right = AppHelper.StatusBlue;
+					else
+					{
+						// Mixed from how much is wrong at once, rather than picked from a short list. A tab with
+						// two faults used to look exactly like a tab with one, so the tab most in need of
+						// attention did not look any different from the tab least in need of it.
+						var wrong = 0;
+						// Nothing of ours holds a place, so nothing mapped here reaches a game at all.
+						if (!xiOurs && !xiOn)
+							wrong += 3;
+						// Somebody else's controller is sitting in this tab's place.
+						else if (!xiOurs)
+							wrong += 1;
+						// Or ours is, somewhere else - which works, and is read as a different player.
+						else if (ours != i)
+							wrong += 2;
+						if (busError != VirtualError.None)
+							wrong += 1;
+						right = AppHelper.StatusColor(Math.Min(1.0, wrong / 3.0));
+					}
+				}
+				var bullet = StatusImageKey(left, right);
 				if (ControlPages[i].ImageKey != bullet)
 					ControlPages[i].ImageKey = bullet;
 				// The colour alone cannot say which half is missing, nor why. A person looking at a light
 				// that is not green needs to be told what is absent and what the bus said about it.
-				var hint = ControllerStateHint(i + 1, diOn, xiOn, checking);
+				var hint = ControllerStateHint(i + 1, diOn, xiOn, xiOurs, checking, ours);
 				if (ControlPages[i].ToolTipText != hint)
 					ControlPages[i].ToolTipText = hint;
 			}
@@ -165,30 +228,57 @@ namespace x360ce.App
 		/// <summary>What the light on a controller tab means, in words.</summary>
 		/// <param name="place">Controller number, 1 to 4.</param>
 		/// <param name="diOn">Whether a mapped device is connected.</param>
-		/// <param name="xiOn">Whether XInput hands back a controller for this place.</param>
+		/// <param name="xiOn">Whether XInput hands back a controller for this place, whoever made it.</param>
+		/// <param name="xiOurs">Whether that controller is the one this program made.</param>
 		/// <param name="checking">Whether the states are being read back from XInput at all.</param>
-		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool checking)
+		/// <remarks>
+		/// A real controller holding a tab's place and our own controller holding it are one colour,
+		/// because to a game they are one fact: something is there and this program is not driving it.
+		/// They are not one message. What to do about them is opposite - map a device, or move a
+		/// controller out of the way - and the words are where there is room to say which.
+		/// </remarks>
+		/// <param name="ourPlace">Which XInput place this tab's controller is in, or -1 for none.</param>
+		public static string ControllerStateHint(int place, bool diOn, bool xiOn, bool xiOurs, bool checking, int ourPlace = -1)
 		{
 			string state;
-			if (diOn && xiOn)
+			// The place a tab was given is not always the place of the same number: Windows hands them out
+			// and cannot be asked. Everything works, and a game reads this controller as a different player
+			// than the tab number suggests, so it is said first and plainly.
+			var elsewhere = xiOurs && ourPlace >= 0 && ourPlace != place - 1
+				? string.Format("This controller is in XInput place {0}, not {1}, so a game reads it as "
+					+ "player {0}. Windows gives out the places and cannot be asked for one; use Devices "
+					+ "to put them in the order you want. ", ourPlace + 1, place)
+				: string.Empty;
+			if (diOn && xiOn && xiOurs)
 				state = "A mapped device is connected and Windows hands back a virtual controller.";
 			else if (diOn && !checking)
 				// Not the same as knowing it is missing, and it must not be said as if it were.
 				state = "A mapped device is connected and the emulated controller is running. " +
 					"Whether Windows hands one back has not been checked: turn on Show XInput State " +
 					"to find out.";
+			else if (diOn && xiOn)
+				// The worst state there is, and the one that looks most like working. A game finds a
+				// controller here and reads it, so nothing appears wrong, while every mapping on this
+				// tab goes nowhere at all.
+				state = "A real controller is holding this place, so the emulated one could not be " +
+					"made. A game reads that controller instead, and nothing mapped on this tab " +
+					"reaches it. Unplug it, or map this device on a tab whose place is free.";
 			else if (diOn)
 				state = "A mapped device is connected, but XInput hands back no virtual controller, " +
 					"so a game receives nothing. Look for it in Windows Game Controllers: if it is " +
 					"not listed there, it was never finished being built.";
-			else if (xiOn)
+			else if (xiOn && xiOurs)
 				state = "A virtual controller exists, but no mapped device is connected, so it " +
 					"reports nothing.";
+			else if (xiOn)
+				state = "A real controller is holding this place. A game already reads it directly, " +
+					"and this program is not emulating anything here. Map a device on this tab only " +
+					"once that controller is unplugged.";
 			else if (!checking)
 				state = "No mapped device. Whether a virtual controller exists has not been checked.";
 			else
 				state = "No mapped device and no virtual controller.";
-			var text = string.Format("Controller {0}: {1}", place, state);
+			var text = string.Format("Controller {0}: {1}{2}", place, elsewhere, state);
 			// What the bus said, when it said anything. Without this the missing half is named and the
 			// reason for it is not, which leaves nowhere to go.
 			var errors = Global.DHelper?.VirtualErrors;
@@ -249,6 +339,13 @@ namespace x360ce.App
 		{
 			if (IsDesignMode)
 				return;
+			// Anything an earlier run switched off to put the controllers in order, and never got
+			// to switch back on. A controller left off by a program that then stopped is one the
+			// person has to find in a window they never opened, with nothing anywhere saying who
+			// did it. Putting it back is this program's business, not theirs.
+			var restored = DInput.XInputReorderRunner.RestoreAnythingLeftOff();
+			if (restored.Length > 0)
+				SetHeaderInfo("Switched {0} controller(s) back on, left off by an earlier run.", restored.Length);
 			AppHelper.InitializeHidGuardian();
 			// A controller arriving is only reported to a window which asked about that interface class.
 			// Without asking, the sole word of it is the machine-wide node change, which says nothing
@@ -1526,6 +1623,12 @@ namespace x360ce.App
 			}
 			SettingsManager.RefreshDeviceIsOnlineValueOnSettings(SettingsManager.UserSettings.Items.ToArray());
 			ControlsHelper.SetText(UpdateDevicesStatusLabel, "D: {0}", Global.DHelper.RefreshDevicesCount);
+			// A controller arriving or leaving changes which XInput place everything holds, so the
+			// answers kept for the lists are thrown away and the places are shown again. Without
+			// this a list keeps showing where things were before somebody plugged something in.
+			x360ce.App.DInput.XInputPlaces.Invalidate();
+			XInputDevicesPanel.ReloadPlaces();
+			DevicesPanel.RefreshPlaces();
 		}
 
 		private bool UpdateCompletedBusy;

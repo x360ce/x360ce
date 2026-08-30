@@ -268,6 +268,12 @@
   <data name="refresh_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\refresh_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="nav_down_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\nav_down_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="nav_up_16x16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\nav_up_16x16.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Button_LeftShoulder" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\Button_LeftShoulder.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

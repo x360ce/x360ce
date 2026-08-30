@@ -115,6 +115,12 @@ namespace x360ce.Engine
 		[DefaultValue("0"), Description("Bypass x360ce for vibration data only. The controller still participates in mappings, deadzones, etc. 0 = OFF, 1 = ON.")]
 		static public string ForcesPassThrough { get { return "ForcesPassThrough"; } }
 
+		[DefaultValue("0"), Description("Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.")]
+		static public string ForcePassThrough { get { return "ForcePassThrough"; } }
+
+		[DefaultValue("0"), Description("Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.")]
+		static public string ForcePassThroughIndex { get { return "ForcePassThroughIndex"; } }
+
 		[DefaultValue("0"), Description("The player that controller data will be passed through to or vibration will be read from. 0 = Player 1, 1 = Player 2, 2 = Player 3, 3 = Player 4.")]
 		static public string PassThroughIndex { get { return "PassThroughIndex"; } }
 

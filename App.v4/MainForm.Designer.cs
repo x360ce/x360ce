@@ -33,6 +33,9 @@ namespace x360ce.App
 			this.ProgramsPanel = new x360ce.App.Controls.ProgramsGridUserControl();
 			this.DevicesTabPage = new System.Windows.Forms.TabPage();
 			this.DevicesPanel = new x360ce.App.Controls.UserDevicesUserControl();
+			this.XInputDevicesPanel = new x360ce.App.Controls.XInputDevicesUserControl();
+			this.XInputDevicesHeaderLabel = new System.Windows.Forms.Label();
+			this.DirectInputDevicesHeaderLabel = new System.Windows.Forms.Label();
 			this.SettingsTabPage = new System.Windows.Forms.TabPage();
 			this.SettingsGridPanel = new x360ce.App.Controls.SettingsGridUserControl();
 			this.CloudTabPage = new System.Windows.Forms.TabPage();
@@ -206,10 +209,38 @@ namespace x360ce.App
 			this.ProgramsPanel.Size = new System.Drawing.Size(790, 593);
 			this.ProgramsPanel.TabIndex = 0;
 			// 
+			// XInputDevicesHeaderLabel
+			// 
+			this.XInputDevicesHeaderLabel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.XInputDevicesHeaderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.XInputDevicesHeaderLabel.Name = "XInputDevicesHeaderLabel";
+			this.XInputDevicesHeaderLabel.Padding = new System.Windows.Forms.Padding(4, 6, 4, 2);
+			this.XInputDevicesHeaderLabel.Size = new System.Drawing.Size(790, 21);
+			this.XInputDevicesHeaderLabel.Text = "XInput Devices - what holds each of the four places a game can read";
+			// 
+			// DirectInputDevicesHeaderLabel
+			// 
+			this.DirectInputDevicesHeaderLabel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.DirectInputDevicesHeaderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold);
+			this.DirectInputDevicesHeaderLabel.Name = "DirectInputDevicesHeaderLabel";
+			this.DirectInputDevicesHeaderLabel.Padding = new System.Windows.Forms.Padding(4, 6, 4, 2);
+			this.DirectInputDevicesHeaderLabel.Size = new System.Drawing.Size(790, 21);
+			this.DirectInputDevicesHeaderLabel.Text = "Direct Input Devices - everything this program can read and map";
+			// 
+			// XInputDevicesPanel
+			// 
+			this.XInputDevicesPanel.Dock = System.Windows.Forms.DockStyle.Top;
+			this.XInputDevicesPanel.Name = "XInputDevicesPanel";
+			this.XInputDevicesPanel.Size = new System.Drawing.Size(790, 180);
+			this.XInputDevicesPanel.TabIndex = 0;
+			// 
 			// DevicesTabPage
 			// 
 			this.DevicesTabPage.BackColor = System.Drawing.SystemColors.Control;
 			this.DevicesTabPage.Controls.Add(this.DevicesPanel);
+			this.DevicesTabPage.Controls.Add(this.DirectInputDevicesHeaderLabel);
+			this.DevicesTabPage.Controls.Add(this.XInputDevicesPanel);
+			this.DevicesTabPage.Controls.Add(this.XInputDevicesHeaderLabel);
 			this.DevicesTabPage.Location = new System.Drawing.Point(4, 23);
 			this.DevicesTabPage.Name = "DevicesTabPage";
 			this.DevicesTabPage.Size = new System.Drawing.Size(790, 593);
@@ -694,6 +725,9 @@ namespace x360ce.App
 		public TabPage GamesTabPage;
 		private TabPage DevicesTabPage;
 		public Controls.UserDevicesUserControl DevicesPanel;
+		public Controls.XInputDevicesUserControl XInputDevicesPanel;
+		private System.Windows.Forms.Label XInputDevicesHeaderLabel;
+		private System.Windows.Forms.Label DirectInputDevicesHeaderLabel;
 		private ToolStripStatusLabel UpdateFrequencyLabel;
 		private ToolStrip GamesToolStrip;
 		private ToolStripButton SaveAllButton;

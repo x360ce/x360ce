@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using x360ce.Engine;
@@ -107,6 +108,9 @@ namespace x360ce.App
 			}
 		}
 
+		/// <summary>What has already been complained about, so it is complained about once.</summary>
+		static readonly HashSet<string> _unmappedReported = new HashSet<string>();
+
 		public static bool ValidatePropertyNames(SettingsMapItem[] maps, out PropertyInfo[] propertiesToSet)
 		{
 			var availableNames = maps.Select(x => x.PropertyName);
@@ -117,6 +121,13 @@ namespace x360ce.App
 			if (missing.Count() > 0)
 			{
 				var list = string.Join(", ", missing);
+				// Said once. There is one of these checks per controller and the answer is the same for
+				// all four, so it was said four times - each box modal, each drawn over the last, and the
+				// buttons of the ones behind out of reach. The window could not be used and the program
+				// had to be stopped from Task Manager, which is a worse fault than the one being
+				// reported. Every call still returns false, so nothing carries on regardless.
+				if (!_unmappedReported.Add(list))
+					return false;
 				MessageBox.Show("'PadSetting' class property names must match 'SettingName' class property names. Please make sure that these properties exists in 'SettingName' class:\r\n\r\n" + list);
 				return false;
 			}

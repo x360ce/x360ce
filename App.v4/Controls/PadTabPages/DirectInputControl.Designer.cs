@@ -107,8 +107,6 @@
 			this.DiEffectsDataTabPage = new System.Windows.Forms.TabPage();
 			this.DiSlidersTextBox = new System.Windows.Forms.TextBox();
 			this.SlidersLabel = new System.Windows.Forms.Label();
-			this.MapToControllerLabel = new System.Windows.Forms.Label();
-			this.MapToPadComboBox = new System.Windows.Forms.ComboBox();
 			this.DeviceVendorNameTextBox = new System.Windows.Forms.TextBox();
 			this.DeviceVendorNameLabel = new System.Windows.Forms.Label();
 			this.DeviceRevLabel = new System.Windows.Forms.Label();
@@ -250,8 +248,6 @@
 			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceVendorNameTextBox, 1, 0);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceVidLabel, 2, 0);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DeviceVidTextBox, 3, 0);
-			this.HeaderTableLayoutPanel.Controls.Add(this.MapToControllerLabel, 4, 0);
-			this.HeaderTableLayoutPanel.Controls.Add(this.MapToPadComboBox, 5, 0);
 			this.HeaderTableLayoutPanel.Controls.Add(this.AxeCountLabel, 6, 0);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapAxesTextBox, 7, 0);
 			this.HeaderTableLayoutPanel.Controls.Add(this.DiCapFfLabel, 8, 0);
@@ -753,30 +749,6 @@
 			this.SlidersLabel.TabIndex = 0;
 			this.SlidersLabel.Text = "Sliders:";
 			// 
-			// MapToControllerLabel
-			// 
-			this.MapToControllerLabel.AutoSize = true;
-			this.MapToControllerLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.MapToControllerLabel.Name = "MapToControllerLabel";
-			this.MapToControllerLabel.Size = new System.Drawing.Size(47, 13);
-			this.MapToControllerLabel.TabIndex = 0;
-			this.MapToControllerLabel.Text = "Map To:";
-			// 
-			// MapToPadComboBox
-			// 
-			this.MapToPadComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.MapToPadComboBox.FormattingEnabled = true;
-			this.MapToPadComboBox.Items.AddRange(new object[] {
-            "0",
-            "1",
-            "2",
-            "3",
-            "4"});
-			this.MapToPadComboBox.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.MapToPadComboBox.Name = "MapToPadComboBox";
-			this.MapToPadComboBox.Size = new System.Drawing.Size(70, 21);
-			this.MapToPadComboBox.TabIndex = 1;
-			// 
 			// DeviceVendorNameTextBox
 			// 
 			this.DeviceVendorNameTextBox.AccessibleName = "Vendor name";
@@ -1213,8 +1185,6 @@
         private System.Windows.Forms.DataGridView DiObjectsDataGridView;
         public System.Windows.Forms.TextBox DiSlidersTextBox;
         private System.Windows.Forms.Label SlidersLabel;
-		private System.Windows.Forms.Label MapToControllerLabel;
-		public System.Windows.Forms.ComboBox MapToPadComboBox;
 		private System.Windows.Forms.ContextMenuStrip CopyContextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem CopyWithHeadersMenuItem;
 		public System.Windows.Forms.TextBox DeviceVendorNameTextBox;

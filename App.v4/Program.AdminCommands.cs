@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using System.Windows.Forms;
 
 namespace x360ce.App
@@ -63,6 +64,19 @@ namespace x360ce.App
 				return false;
 			}
 		}
+		/// <summary>The device identifiers in a command line parameter.</summary>
+		/// <remarks>
+		/// Separated by commas, which no device identifier contains. They do contain ampersands and
+		/// backslashes, which is why the parameter arrives quoted.
+		/// </remarks>
+		static string[] SplitIds(string value)
+		{
+			return string.IsNullOrEmpty(value)
+				? new string[0]
+				: value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+					.Select(x => x.Trim()).Where(x => x.Length > 0).ToArray();
+		}
+
 
 		static bool ProcessAdminCommands(bool direct, string[] args)
 		{
@@ -122,6 +136,45 @@ namespace x360ce.App
 				return true;
 			}
 #endif
+			// ------------------------------------------------
+			// Putting controllers in a chosen order
+			// ------------------------------------------------
+			if (ic.Parameters.ContainsKey(AdminCommand.DisableDevices.ToString()))
+			{
+				var ids = SplitIds(ic.Parameters[AdminCommand.DisableDevices.ToString()]);
+				var done = 0;
+				foreach (var id in ids)
+				{
+					// Written down before it is touched, so a run that stops half way leaves a note behind and
+					// the next start switches the controller back on. Nothing else knows it was switched off.
+					DInput.XInputReorderRunner.RememberSwitchedOff(id);
+					if (JocysCom.ClassLibrary.IO.DeviceDetector.SetDeviceState(id, false))
+						done++;
+					else
+						DInput.XInputReorderRunner.ForgetSwitchedOff(id);
+				}
+				Console.WriteLine("Switched off {0} of {1}.", done, ids.Length);
+				Environment.ExitCode = done == ids.Length ? (int)AdminResult.Done : (int)AdminResult.Failed;
+				return true;
+			}
+			if (ic.Parameters.ContainsKey(AdminCommand.EnableDevices.ToString()))
+			{
+				var ids = SplitIds(ic.Parameters[AdminCommand.EnableDevices.ToString()]);
+				var done = 0;
+				foreach (var id in ids)
+				{
+					if (!JocysCom.ClassLibrary.IO.DeviceDetector.SetDeviceState(id, true))
+						continue;
+					done++;
+					DInput.XInputReorderRunner.ForgetSwitchedOff(id);
+					// One at a time, waiting for each to take its place before the next arrives. Two arriving
+					// together cannot be told apart, and the order would be whatever Windows happened to do.
+					DInput.XInputReorderRunner.WaitForOneMorePlace();
+				}
+				Console.WriteLine("Switched on {0} of {1}.", done, ids.Length);
+				Environment.ExitCode = done == ids.Length ? (int)AdminResult.Done : (int)AdminResult.Failed;
+				return true;
+			}
 			if (ic.Parameters.ContainsKey(AdminCommand.UninstallDevice.ToString()))
 			{
 				var hwid = ic.Parameters[AdminCommand.UninstallDevice.ToString()];

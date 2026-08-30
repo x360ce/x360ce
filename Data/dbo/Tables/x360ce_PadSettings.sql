@@ -17,6 +17,8 @@
     [DPadUp]                   VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_DPadUp] DEFAULT ('') NOT NULL,
     [ForceEnable]              VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ForceEnable] DEFAULT ('') NOT NULL,
     [ForceOverall]             VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ForceOverall] DEFAULT ('') NOT NULL,
+    [ForcePassThrough]         VARCHAR (1)      CONSTRAINT [DF_x360ce_PadSettings_ForcePassThrough] DEFAULT ('') NOT NULL,
+    [ForcePassThroughIndex]    VARCHAR (1)      CONSTRAINT [DF_x360ce_PadSettings_ForcePassThroughIndex] DEFAULT ('') NOT NULL,
     [ForceSwapMotor]           VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ForceSwapMotor] DEFAULT ('') NOT NULL,
     [ForceType]                VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_ForceType] DEFAULT ('') NOT NULL,
     [GamePadType]              VARCHAR (16)     CONSTRAINT [DF_x360ce_PadSettings_GamePadType] DEFAULT ('') NOT NULL,

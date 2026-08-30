@@ -729,6 +729,18 @@ namespace x360ce.App.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        public static System.Drawing.Bitmap nav_down_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("nav_down_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        public static System.Drawing.Bitmap nav_up_16x16 {
+            get {
+                object obj = ResourceManager.GetObject("nav_up_16x16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.

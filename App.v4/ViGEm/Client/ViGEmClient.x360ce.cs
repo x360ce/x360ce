@@ -133,8 +133,12 @@ namespace Nefarius.ViGEm.Client
 				{
 					if (!t[i].IsAttached)
 					{
-						tempDevices[i] = true;
+						// Recorded after the fact, not before it. Marked first, a placeholder that
+						// failed to connect was still taken away afterwards, and taking away what was
+						// never there fails - so a controller that could not be made reported a second
+						// fault about the tidying up, and that is the one the person saw.
 						t[i].Connect();
+						tempDevices[i] = true;
 						RememberSerial(t[i]);
 					}
 				}
@@ -159,6 +163,12 @@ namespace Nefarius.ViGEm.Client
 					try
 					{
 						t[i].Disconnect();
+					}
+					catch (ViGEmException ex) when (ex.Code == VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
+					{
+						// The point here is that the placeholder is gone. Being told it is already gone
+						// is that, not a failure - the bus can drop a controller between making it and
+						// tidying it away, and nobody needs a report about a wish already granted.
 					}
 					catch (Exception ex)
 					{

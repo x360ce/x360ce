@@ -32,6 +32,9 @@ namespace x360ce.App.DInput
 			var userDevices = SettingsManager.GetMappedDevices(game?.FileName);
 			// Acquire copy of feedbacks for processing.
 			var feedbacks = CopyAndClearFeedbacks();
+			// On to a real controller as well, where a tab asks for it. An Xbox controller offers its motors
+			// through XInput and nowhere else, so the force feedback driven below cannot reach one.
+			PassForcesThrough(feedbacks);
 
 			for (int i = 0; i < userDevices.Count(); i++)
 			{

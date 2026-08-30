@@ -29,6 +29,11 @@ namespace x360ce.App.DInput
 			// XInput library stays loaded, and pacing that made it load and unload all day.
 			var due = DueForDisplayRead();
 			var wanted = Controller.IsLoaded && getXInputStates;
+			// Whether the states were actually read, rather than whether somebody asked for them.
+			// The setting alone was taken as the answer, so with the library not loaded nothing was
+			// read, every place reported empty, and each working controller was accused of being
+			// broken on evidence nobody had gathered.
+			XiStatesRead = wanted;
 			// Allow if not testing or testing with option enabled.
 			Exception error = null;
 			lock (Controller.XInputLock)
@@ -65,62 +70,40 @@ namespace x360ce.App.DInput
 					LiveXiStates[i] = state;
 				}
 			}
-			MatchPadsToPlaces();
+			NotePadPlaces();
 			var ev = StatesRetrieved;
 			if (ev != null)
 				ev(this, new DInputEventArgs(error));
 		}
 
 		/// <summary>
-		/// Which of the four XInput places holds each of this program's controllers.
+		/// Which XInput place holds the controller made for each pad, or -1 where there is none.
 		/// </summary>
 		/// <remarks>
-		/// Index by pad, one to four. Minus one until it is known.
+		/// Index by pad, one to four.
 		/// </remarks>
 		public int[] XiPlaceForPad = new int[] { -1, -1, -1, -1 };
 
-		/// <summary>
-		/// Works out which place Windows gave each controller this program created.
-		/// </summary>
+		/// <summary>Whether the last pass actually read the states back from XInput.</summary>
+		public bool XiStatesRead;
+
+		/// <summary>Forgets the place of any controller of ours that has gone away.</summary>
 		/// <remarks>
-		/// This is not a choice the program gets to make. Windows offers four places for a controller
-		/// of this kind and decides for itself which one a new controller goes into; there is no way
-		/// to ask for a particular one. Measured on a computer with all four places empty, a
-		/// controller created by this program was put in the third.
+		/// Only forgets. Where a controller went is written down at the one moment it can be known -
+		/// as it arrives, by watching which place filled - and nothing can work it out afterwards.
 		///
-		/// Everything on screen used to assume controller one meant the first place. On that computer
-		/// it therefore read an empty place and showed a dead controller, while its own was sitting in
-		/// the third. Where somebody had a real Xbox controller plugged in, it read that instead, and
-		/// the picture moved when nobody was touching this program's controller at all.
-		///
-		/// So the place is found rather than assumed. Its own controllers are counted, the occupied
-		/// places are counted, and when those agree they are paired in order. That is exact whenever
-		/// every occupied place belongs to this program, which is the ordinary case. When something
-		/// else is plugged in as well the counts disagree, nothing is claimed, and the old assumption
-		/// stands rather than a guess being made.
+		/// It was worked out afterwards, twice over. First by counting the places against the
+		/// controllers we believed we had made, which gave up whenever a real controller held a place
+		/// of its own. Then by assuming pad one holds place one, which is what the program asks for
+		/// and not what Windows gives: measured with a real controller in the first place and the
+		/// second free, a controller made for the second was given the third.
 		/// </remarks>
-		void MatchPadsToPlaces()
+		void NotePadPlaces()
 		{
-			var ours = new System.Collections.Generic.List<int>();
 			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
-			for (uint i = 1; i <= 4; i++)
-				if (client != null && client.IsControllerConnected(i))
-					ours.Add((int)i);
-			var occupied = new System.Collections.Generic.List<int>();
-			for (int place = 0; place < 4; place++)
-				if (LiveXiConnected[place])
-					occupied.Add(place);
-			// Only when the two agree is the pairing certain.
-			if (ours.Count == 0 || ours.Count != occupied.Count)
-			{
-				for (int i = 0; i < XiPlaceForPad.Length; i++)
+			for (var i = 0; i < XiPlaceForPad.Length; i++)
+				if (client == null || !client.IsControllerConnected((uint)(i + 1)))
 					XiPlaceForPad[i] = -1;
-				return;
-			}
-			for (int i = 0; i < XiPlaceForPad.Length; i++)
-				XiPlaceForPad[i] = -1;
-			for (int n = 0; n < ours.Count; n++)
-				XiPlaceForPad[ours[n] - 1] = occupied[n];
 		}
 
 	}

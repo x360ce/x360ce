@@ -2326,6 +2326,54 @@ namespace x360ce.Engine.Data
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
+        public global::System.String ForcePassThrough
+        {
+            get
+            {
+                return _ForcePassThrough;
+            }
+            set
+            {
+                OnForcePassThroughChanging(value);
+                ReportPropertyChanging("ForcePassThrough");
+                _ForcePassThrough = StructuralObject.SetValidValue(value, false, "ForcePassThrough");
+                ReportPropertyChanged("ForcePassThrough");
+                OnForcePassThroughChanged();
+            }
+        }
+        private global::System.String _ForcePassThrough;
+        partial void OnForcePassThroughChanging(global::System.String value);
+        partial void OnForcePassThroughChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ForcePassThroughIndex
+        {
+            get
+            {
+                return _ForcePassThroughIndex;
+            }
+            set
+            {
+                OnForcePassThroughIndexChanging(value);
+                ReportPropertyChanging("ForcePassThroughIndex");
+                _ForcePassThroughIndex = StructuralObject.SetValidValue(value, false, "ForcePassThroughIndex");
+                ReportPropertyChanged("ForcePassThroughIndex");
+                OnForcePassThroughIndexChanged();
+            }
+        }
+        private global::System.String _ForcePassThroughIndex;
+        partial void OnForcePassThroughIndexChanging(global::System.String value);
+        partial void OnForcePassThroughIndexChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
         public global::System.String RightMotorPeriod
         {
             get
@@ -7955,6 +8003,7 @@ namespace x360ce.Engine.Data
         partial void OnMapToChanging(global::System.Int32 value);
         partial void OnMapToChanged();
     
+
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>

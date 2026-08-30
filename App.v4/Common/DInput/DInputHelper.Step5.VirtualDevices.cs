@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary.Controls;
+﻿using System;
+using JocysCom.ClassLibrary.Controls;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
@@ -101,6 +102,62 @@ namespace x360ce.App.DInput
 			}
 		}
 
+		/// <summary>What was last sent to each XInput place, so the same thing is not sent again.</summary>
+		/// <remarks>
+		/// Sending vibration is a call into the driver, and this runs up to a thousand times a second.
+		/// Motors hold whatever they were last told, so repeating it changes nothing and costs everything.
+		/// </remarks>
+		readonly int[] _lastPassedForce = new int[] { -1, -1, -1, -1 };
+
+		/// <summary>Sends the force a game asked for on to a real controller, where that is wanted.</summary>
+		/// <remarks>
+		/// An emulated controller has no motors. A game rumbling one reaches nothing, and on an Xbox
+		/// controller there is no other way in: its DirectInput face declares no force feedback at all,
+		/// so the force feedback this program drives itself cannot reach it either.
+		/// </remarks>
+		void PassForcesThrough(Xbox360FeedbackReceivedEventArgs[] feedbacks)
+		{
+			for (var pad = 1; pad <= 4; pad++)
+			{
+				var place = AppHelper.GetForcePassThroughPlace((MapTo)pad);
+				if (place < 0)
+					continue;
+				var force = feedbacks[pad - 1];
+				// Nothing new to say. The last thing sent still stands, and the motors are still doing it.
+				if (force == null)
+					continue;
+				PassForceTo(place, force.LargeMotor, force.SmallMotor);
+			}
+		}
+
+		/// <summary>Sends one force to one place, and only when it differs from the last.</summary>
+		void PassForceTo(int place, byte largeMotor, byte smallMotor)
+		{
+			if (place < 0 || place > 3)
+				return;
+			// Motors take the full range, and a byte of it is the top half of each. Multiplying by 257
+			// spreads it back so that full means full rather than very nearly half.
+			var left = (ushort)(largeMotor * 257);
+			var right = (ushort)(smallMotor * 257);
+			var both = (left << 16) | right;
+			if (_lastPassedForce[place] == both)
+				return;
+			_lastPassedForce[place] = both;
+			SystemXInput.SetVibration(place, left, right);
+		}
+
+		/// <summary>Stops the motors of anything this program was driving through pass-through.</summary>
+		/// <remarks>
+		/// A controller left buzzing is one the person has to unplug. Nothing else stops it: the force
+		/// was sent to the device itself, not to an emulated one that can simply be taken away.
+		/// </remarks>
+		public void StopPassedForces()
+		{
+			for (var place = 0; place < 4; place++)
+				if (_lastPassedForce[place] > 0)
+					PassForceTo(place, 0, 0);
+		}
+
 		object FeedbackLock = new object();
 
 		Xbox360FeedbackReceivedEventArgs[] CopyAndClearFeedbacks()
@@ -157,6 +214,9 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public void ReleaseForDeviceRemoval()
 		{
+			// A controller passed force feedback is buzzing under its own power; taking an emulated one
+			// away does not stop it, and nothing else will.
+			StopPassedForces();
 			Suspended = true;
 			lock (SharpDX.XInput.Controller.XInputLock)
 				if (SharpDX.XInput.Controller.IsLoaded)
@@ -168,6 +228,9 @@ namespace x360ce.App.DInput
 					// written out as a fault report, so pressing one button filed three of them.
 					if (client.IsControllerConnected(i))
 						client.UnPlug(i);
+				// Nothing of ours holds a place now, so no note of one should outlive this.
+				XInputPlaces.Forget();
+				XInputPlaces.Invalidate();
 		}
 
 		/// <summary>Picks the controllers back up after a removal.</summary>
@@ -310,6 +373,59 @@ namespace x360ce.App.DInput
 			return VirtualError.None;
 		}
 
+		/// <summary>Which XInput places report a controller, asked of Windows own XInput.</summary>
+		/// <remarks>
+		/// Deliberately not the library this program can put in a game's path. The question is
+		/// which places Windows has actually given out, and only Windows own XInput can answer it.
+		/// </remarks>
+		/// <summary>Notes where the controller just made was put, by the number the bus gave it.</summary>
+		/// <remarks>
+		/// The serial is known at once. The Windows device is not - it is still being built - so
+		/// looking for it here would either block the update loop or find nothing.
+		/// </remarks>
+		void RememberOurPlace(uint userIndex, int place)
+		{
+			XiPlaceForPad[userIndex - 1] = place;
+			var target = ViGEmClient.Current.Targets[userIndex - 1];
+			if (target != null)
+				XInputPlaces.Remember(target.Serial, place);
+			XInputPlaces.Invalidate();
+		}
+
+		static bool[] OccupiedPlaces()
+		{
+			var places = new bool[4];
+			for (var i = 0; i < 4; i++)
+				places[i] = SystemXInput.IsConnected(i);
+			return places;
+		}
+
+		/// <summary>Waits for a place to fill, and says which one did.</summary>
+		/// <remarks>
+		/// Windows builds the controller after the bus accepts it, so the place does not appear at
+		/// once. Two seconds was the longest seen on a machine with a real controller already
+		/// holding a place; five is given, and -1 answers a place that never arrives.
+		///
+		/// Which one filled, rather than whether the wanted one did. Windows does not hand out the
+		/// place that was asked for, nor even the lowest free one: measured on a machine with a real
+		/// controller in the first place and the second one free, a controller made for the second
+		/// was given the third. Asking only whether it went where it was wanted threw away the one
+		/// thing nothing else can supply - where it actually went.
+		/// </remarks>
+		static int WaitForPlace(bool[] before)
+		{
+			var until = DateTime.UtcNow.AddSeconds(5);
+			while (DateTime.UtcNow < until)
+			{
+				var now = OccupiedPlaces();
+				for (var i = 0; i < 4; i++)
+					if (!before[i] && now[i])
+						return i;
+				System.Threading.Thread.Sleep(50);
+			}
+			return -1;
+		}
+
 		public VirtualError EnableFeeding(uint userIndex)
 		{
 			if (userIndex < 1 || userIndex > 4)
@@ -320,10 +436,35 @@ namespace x360ce.App.DInput
 				return VirtualError.Other;
 			if (ViGEmClient.Current.IsControllerConnected(userIndex))
 				return VirtualError.None;
-			var success = ViGEmClient.Current.PlugIn(userIndex);
-			return success
-				? VirtualError.None
-				: VirtualError.Other;
+			// Windows cannot be asked for a particular place, and gives neither the one asked for nor
+			// reliably the lowest free one. That was assumed, and a controller landing anywhere else was
+			// taken away again - so a real controller holding the first place stopped a second tab from
+			// getting a controller at all, with a free place sitting there. A tab with nothing behind it
+			// reaches no game whatsoever, which is worse than one whose controller sits somewhere
+			// unexpected and is shown doing so.
+			//
+			// So it is made wherever Windows puts it, and where that was is written down. The device
+			// lists and the tab light all read that, so an unexpected place is visible rather than
+			// silently wrong.
+			var before = OccupiedPlaces();
+			// Nothing can be given a place when there is none, and asking anyway costs the five seconds
+			// spent waiting for one to appear - every pass, for as long as they stay full.
+			if (before.All(x => x))
+				return VirtualError.PlaceNotGiven;
+			if (!ViGEmClient.Current.PlugIn(userIndex))
+				return VirtualError.Other;
+			// Where it went, rather than where it was asked to go. The bus says yes when it accepts a
+			// controller, which is not the same as Windows having given it the place we need.
+			var place = WaitForPlace(before);
+			if (place < 0)
+			{
+				ViGEmClient.Current.UnPlug(userIndex);
+				return VirtualError.PlaceNotGiven;
+			}
+			// Written down now, while it is certain. Nothing reports where a controller was put,
+			// so the only moment the answer exists is the moment it arrives.
+			RememberOurPlace(userIndex, place);
+			return VirtualError.None;
 		}
 
 		public VirtualError DisableFeeding(uint userIndex)
@@ -338,6 +479,21 @@ namespace x360ce.App.DInput
 			if (!ViGEmClient.Current.IsControllerConnected(userIndex))
 				return VirtualError.None;
 			success = ViGEmClient.Current.UnPlug(userIndex);
+			if (success)
+			{
+				// The place it held is nobody's now. Left behind, it would go on being counted against
+				// this program, and whatever takes the place next would be named as ours.
+				XiPlaceForPad[userIndex - 1] = -1;
+				// And forget where it was. The note was kept for the life of the program, so a controller taken
+				// away went on claiming its place; the next one given that place claimed it as well, and two
+				// controllers holding one place is not a thing that can be true. Everything after it followed:
+				// the place a real controller held could no longer be worked out, because one more place was
+				// spoken for than there were controllers to hold them.
+				var stale = ViGEmClient.Current.Targets[userIndex - 1];
+				if (stale != null)
+					XInputPlaces.Forget(stale.Serial);
+				XInputPlaces.Invalidate();
+			}
 			return success
 				? VirtualError.None
 				: VirtualError.Other;

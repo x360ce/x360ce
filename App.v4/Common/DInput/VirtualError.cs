@@ -17,5 +17,7 @@ namespace x360ce.App
 		Other = 5,
 		[Description("Virtual Device {0} invalid index.")]
 		Index = 6,
+		[Description("No XInput place was free for controller {0}, or Windows never finished building one, so nothing was made. Unplug a controller to free a place.")]
+		PlaceNotGiven = 8,
 	}
 }

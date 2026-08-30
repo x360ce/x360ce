@@ -41,6 +41,8 @@ namespace x360ce.App.Controls
 			// WORKAROUND: Remove SelectionChanged event.
 			DevicesDataGridView.SelectionChanged -= ControllersDataGridView_SelectionChanged;
 			_currentData = data;
+			// Read the machine again, so a list just opened shows what is true now.
+			XInputPlaces.Invalidate();
 			DevicesDataGridView.DataSource = _currentData;
 			if (!IsHandleCreated)
 			{
@@ -99,6 +101,22 @@ namespace x360ce.App.Controls
 				RefreshMapDeviceToList();
 		}
 
+		/// <summary>Paints the places again, for when a controller has arrived or left.</summary>
+		/// <remarks>
+		/// The cells are filled while the table paints, so a place that has changed is not shown
+		/// until something makes the table paint. Nothing does when a controller is plugged in, so
+		/// the list kept saying where things were a moment ago.
+		/// </remarks>
+		public void RefreshPlaces()
+		{
+			if (InvokeRequired)
+			{
+				BeginInvoke((Action)RefreshPlaces);
+				return;
+			}
+			DevicesDataGridView.Invalidate();
+		}
+
 		private void DevicesDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
 			if (e.RowIndex < 0 || e.ColumnIndex < 0)
@@ -115,6 +133,10 @@ namespace x360ce.App.Controls
 			else if (column == ConnectionClassColumn)
 			{
 				e.Value = AppHelper.GetConnectionClassIcon(item.ConnectionClass);
+			}
+			else if (column == XInputPlaceColumn)
+			{
+				e.Value = AppHelper.GetXInputPlaces(item);
 			}
 			else if (column == IsHiddenColumn)
 			{

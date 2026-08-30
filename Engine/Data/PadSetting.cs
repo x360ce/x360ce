@@ -98,6 +98,8 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.ForceEnable);
 			AddValue(ref list, x => x.ForceType);
 			AddValue(ref list, x => x.ForceSwapMotor);
+			AddValue(ref list, x => x.ForcePassThrough);
+			AddValue(ref list, x => x.ForcePassThroughIndex);
 			AddValue(ref list, x => x.ForceOverall, "100");
 			AddValue(ref list, x => x.LeftMotorPeriod);
 			AddValue(ref list, x => x.LeftMotorDirection);
@@ -254,6 +256,8 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeDPadUp() { return !isDefault(DPadUp); }
 		public bool ShouldSerializeForceEnable() { return !isDefault(ForceEnable); }
 		public bool ShouldSerializeForceOverall() { return !isDefault(ForceOverall, "100"); }
+		public bool ShouldSerializeForcePassThrough() { return !isDefault(ForcePassThrough); }
+		public bool ShouldSerializeForcePassThroughIndex() { return !isDefault(ForcePassThroughIndex); }
 		public bool ShouldSerializeForceSwapMotor() { return !isDefault(ForceSwapMotor); }
 		public bool ShouldSerializeForceType() { return !isDefault(ForceType); }
 		public bool ShouldSerializeGamePadType() { return !isDefault(GamePadType); }
