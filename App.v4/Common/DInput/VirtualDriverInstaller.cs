@@ -67,6 +67,22 @@ namespace x360ce.App.DInput
 				// Not the ones this program is using right now. Offering to remove those would break
 				// the very thing somebody pressing the button is trying to repair.
 				.Where(x => !IsOneOfOurs(x, byId))
+				// One entry per controller, not per device. A controller is a small family - the thing
+				// itself and a face for each way of reading it - so counting devices reported one left
+				// behind as three, and named the same controller three times over. Removing the
+				// controller takes its faces with it, so the family is represented by the controller.
+				//
+				// The faces carry the XInput marker and the controller does not, so a face is gathered by
+				// walking up to the first thing without it, and the controller is gathered by itself.
+				// Walking up from the controller as well would take it to the bus that made it, which is
+				// shared by every controller on it - so each one would be filed under its own maker and
+				// counted apart from its own faces.
+				.GroupBy(x => VirtualDriverInstaller.CarriesInputGroup(x.DeviceId)
+					|| VirtualDriverInstaller.CarriesInputGroup(x.HardwareIds)
+						? XInputPlaces.HardwareOf(x, byId)
+						: x.DeviceId, StringComparer.OrdinalIgnoreCase)
+				.Select(g => g.FirstOrDefault(x => string.Equals(x.DeviceId, g.Key, StringComparison.OrdinalIgnoreCase))
+					?? g.First())
 				.OrderBy(x => x.DeviceId)
 				.ToArray();
 		}

@@ -49,10 +49,11 @@ namespace x360ce.App.Issues
 					+ Environment.NewLine + "        " + x.DeviceId)
 				.ToArray());
 			SetSeverity(IssueSeverity.Moderate, 0, string.Format(
-				"{0} virtual controllers left behind by earlier runs are still present. They take the " +
-				"places this program needs, so a controller can look dead or move on its own." +
-				Environment.NewLine + Environment.NewLine + "{1}",
-				pads.Length, named));
+				"{0} left behind by earlier runs {1} still present, taking places this " +
+				"program needs, so a controller can look dead or move on its own." +
+				Environment.NewLine + Environment.NewLine + "{2}",
+				pads.Length == 1 ? "One virtual controller" : pads.Length + " virtual controllers",
+				pads.Length == 1 ? "is" : "are", named));
 		}
 
 		public override void FixTask()

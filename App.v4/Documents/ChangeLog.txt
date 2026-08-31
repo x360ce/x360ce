@@ -27,6 +27,7 @@
 - Fixed: A controller switched off while putting them in order was not noticed until something else made the lists read again.
 - Fixed: The window stopped responding while controllers were being put in order, and said nothing about what it was doing.
 - Fixed: Repair replaced a newer virtual controller driver with the older one supplied here, saying nothing about it.
+- Fixed: One virtual controller left behind was counted and listed three times, once for each way of reading it.
 - Removed: Map To on the Direct Input page, which had no effect in this version. Existing configuration files keep the setting untouched.
 - Changed: Changing the virtual controller driver now asks first and says which version replaces which, and that other programs share it.
 - Changed: Leftover virtual controllers are now named, with their identifiers, instead of only counted.
