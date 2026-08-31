@@ -6,7 +6,7 @@ Every signed build is published on the [Releases page](https://github.com/x360ce
 
 # Download v4.x
 
-Digitally Signed Application v4.19.19.0 and Virtual Gamepad Emulation Bus 1.16.112.0
+Digitally Signed Application v4.19.19.0 and Virtual Gamepad Emulation Bus 1.21.442.0 on Windows 10 and later, or 1.16.112.0 on older Windows
 
 Download `x360ce.zip` from the [latest v4 release](https://github.com/x360ce/x360ce/releases) - for All games
 
@@ -52,6 +52,25 @@ another account. The settings you already have can be moved with it: every file 
 checked against the original, and nothing is removed unless all of them match.
 
 If saving ever fails, the program says so and offers to try again or to move to your own folder.
+
+## Force feedback pass through (v4.x)
+
+An Xbox controller offers its motors through XInput and nowhere else, so a game's rumble cannot
+be sent back to it the way it is sent to other controllers. **Force Feedback Pass Through**, on
+the Force Feedback tab, hands the rumble to a real controller instead.
+
+Leave the destination on **Auto (Real)** to use the real controller behind the mapping, or choose
+**XInput 1** to **4** to name one yourself.
+
+The Test sliders drive the same path a game does, pass through included, so the destination can be
+checked without starting a game.
+
+## Putting controllers in order (v4.x)
+
+The **XInput Devices** page can move a controller to a different place, for games that read only
+the first one. Switching a real controller off and on again needs Administrator, so the program
+starts one elevated copy for that step and closes it again. Anything it switches off is written
+down first, so a run that is interrupted is undone at the next start.
 
 # Download v3.x
 
@@ -154,7 +173,9 @@ Some controllers will only operate in game if they are set as "GamePad". Try to:
   6. Close x360ce.exe.
   7. Run the game.
  
-Only one controller, mapped to PAD1, may work correctly in some games. Try to:
+Only one controller, mapped to PAD1, may work correctly in some games.
+
+In v3.x, try to:
 
   1. Run x360ce.exe
   2. Select the [Controller #] tab page corresponding to your controller.
@@ -164,6 +185,10 @@ Only one controller, mapped to PAD1, may work correctly in some games. Try to:
   6. Click [Save] button.
   7. Close x360ce.exe.
   8. Run the game.
+
+In v4.x, "Map To" is gone and the [XInput Devices] page puts controllers in order instead. See
+"Putting controllers in order" above. Configuration files written by v3.x keep their "Map To"
+value untouched.
  
 To use more than one controller in game, you may need to combine them. Try to:
 
@@ -195,6 +220,12 @@ This can occur for a number of reasons:
   3. The controller profile loaded may match the name of the controller but not actually be for the controller you own - in this case you might see button numbers or axes mapped that do not appear in the Joy.cpl test page.
   4. The controller profile might have PassThrough set. A growing number of profiles have been uploaded that do this, I have no idea why as it disables x360ce and just bloats the list of available profiles.
   5. There just might not be a profile for your control at all - The light should turn green at least once the 2 sticks, triggers and D-pad are assigned. Sometimes the application needs to be restarted after assigning these for the light to turn green.
+
+In v4.x the light is drawn in two halves: your own device on the left, the emulated controller on
+the right, so it says which half is missing. Grey means nothing is set up, green means the game is
+receiving what you press, and it reddens as more is wrong at once. Orange means the controller
+works but sits in a different XInput place than its tab number, which the [XInput Devices] page can
+put right. The Help page lists every combination.
 
 # Screenshots
 
