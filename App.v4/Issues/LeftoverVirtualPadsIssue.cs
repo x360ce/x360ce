@@ -1,4 +1,6 @@
 ﻿using JocysCom.ClassLibrary.Controls.IssuesControl;
+using System;
+using System.Linq;
 
 namespace x360ce.App.Issues
 {
@@ -36,10 +38,21 @@ namespace x360ce.App.Issues
 			}
 			// Said as what it costs the person rather than as a count of devices, because the number on
 			// its own means nothing to somebody who does not know that only four places exist.
+			//
+			// And named, because a count alone cannot be acted on. Where removing them does not work -
+			// Windows refuses while something holds one open, or the thing found is not really a leftover -
+			// a person is left with a complaint that returns for ever and nothing to look at. The name and
+			// the identifier are what let somebody find it in Device Manager, or say what it is when the
+			// removal will not take.
+			var named = string.Join(Environment.NewLine, pads
+				.Select(x => "    " + (string.IsNullOrEmpty(x.Description) ? "Unnamed device" : x.Description)
+					+ Environment.NewLine + "        " + x.DeviceId)
+				.ToArray());
 			SetSeverity(IssueSeverity.Moderate, 0, string.Format(
 				"{0} virtual controllers left behind by earlier runs are still present. They take the " +
-				"places this program needs, so a controller can look dead or move on its own.",
-				pads.Length));
+				"places this program needs, so a controller can look dead or move on its own." +
+				Environment.NewLine + Environment.NewLine + "{1}",
+				pads.Length, named));
 		}
 
 		public override void FixTask()

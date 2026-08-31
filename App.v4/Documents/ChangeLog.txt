@@ -26,7 +26,10 @@
 - Fixed: Putting controllers in order gave each tab another tab's controller, so the order came out right and every tab pointed at the wrong one.
 - Fixed: A controller switched off while putting them in order was not noticed until something else made the lists read again.
 - Fixed: The window stopped responding while controllers were being put in order, and said nothing about what it was doing.
+- Fixed: Repair replaced a newer virtual controller driver with the older one supplied here, saying nothing about it.
 - Removed: Map To on the Direct Input page, which had no effect in this version. Existing configuration files keep the setting untouched.
+- Changed: Changing the virtual controller driver now asks first and says which version replaces which, and that other programs share it.
+- Changed: Leftover virtual controllers are now named, with their identifiers, instead of only counted.
 - Changed: Controller tab lights are flatter and paler, so the colour reads from a distance instead of looking like a dark smudge.
 - Changed: A controller tab light is drawn in two halves: your device on the left, the emulated controller on the right, so it shows which half is missing.
 - Changed: The right half of a controller tab light reddens the more that is wrong at once, so the tab most in need of attention stands out.
@@ -39,6 +42,8 @@
 - Changed: A full virtual controller bus is no longer reported as a fault.
 - Changed: Direct Input tab arranges itself as the window is resized or the display is scaled.
 - Changed: Every input has a name that screen readers and automation tools can read.
+- Added: Windows 10 and later are supplied virtual controller driver 1.21.442.0, the last one its authors made. Older Windows keeps 1.16.112.0, which is the last that works there.
+- Added: Options shows the installed virtual controller driver version and the one supplied with this program.
 - Added: Force Feedback Pass Through sends a game's rumble on to a real controller, which an emulated one cannot feel.
 - Added: The Force Feedback Test sliders now drive the same path a game uses, including pass through.
 - Added: The device list now names every XInput place each device reaches, including through the controllers it is mapped to.
