@@ -110,6 +110,18 @@ namespace Nefarius.ViGEm.Client
 			{
 				t[i - 1].Disconnect();
 			}
+			catch (ViGEmException ex) when (ex.Code == VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
+			{
+				// Being told it is already unplugged is the thing that was wanted, not a failure. The bus
+				// drops a controller by itself when the program that made it ends or the driver changes,
+				// so asking whether one is still there before letting go answers about a moment that has
+				// passed by the time the answer arrives. Guarding the call was the old approach and it
+				// still lost that race.
+				//
+				// Reported as a fault, this filled the support mailbox with wishes already granted:
+				// fifteen of twenty-nine reports over two days said nothing else. The placeholder clean-up
+				// in PlugIn, below, has always treated it this way.
+			}
 			catch (Exception ex)
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
@@ -182,9 +194,10 @@ namespace Nefarius.ViGEm.Client
 		{
 			for (uint i = 1; i <= 4; i++)
 			{
-				// Unplug device if connected.
-				if (IsControllerConnected(i))
-					UnPlug(i);
+				// Asked for unconditionally. Whether one is connected is answered about a moment that has
+				// passed by the time it is acted on, and letting go of one that is already gone is no longer
+				// treated as a fault.
+				UnPlug(i);
 			}
 		}
 

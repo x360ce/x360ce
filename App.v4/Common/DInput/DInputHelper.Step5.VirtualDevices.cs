@@ -224,10 +224,9 @@ namespace x360ce.App.DInput
 			var client = Nefarius.ViGEm.Client.ViGEmClient.Current;
 			if (client != null && client.Targets != null)
 				for (uint i = 1; i <= 4; i++)
-					// Asked first. Letting go of a controller that is not held throws, and the throw is
-					// written out as a fault report, so pressing one button filed three of them.
-					if (client.IsControllerConnected(i))
-						client.UnPlug(i);
+					// Asked for unconditionally: letting go of one that is already gone is the outcome wanted,
+					// and is no longer reported as a fault.
+					client.UnPlug(i);
 				// Nothing of ours holds a place now, so no note of one should outlive this.
 				XInputPlaces.Forget();
 				XInputPlaces.Invalidate();
@@ -294,6 +293,15 @@ namespace x360ce.App.DInput
 				try
 				{
 					ViGEmClient.Current.Targets[i - 1].SendReport(report);
+				}
+				catch (Nefarius.ViGEm.Client.ViGEmException ex)
+					when (ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_INVALID_TARGET
+						|| ex.Code == Nefarius.ViGEm.Client.VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
+				{
+					// The controller went away underneath us, which happens when the bus drops one - a driver
+					// update, most often. It is put back on the next pass and nobody sees anything. Saying so
+					// is worth a line in the log and not a fault report to somebody who cannot act on it.
+					return false;
 				}
 				catch (System.Exception ex)
 				{

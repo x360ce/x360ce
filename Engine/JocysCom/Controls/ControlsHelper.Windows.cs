@@ -715,7 +715,10 @@ namespace JocysCom.ClassLibrary.Controls
 			if (item == null)
 			{
 				var list = grid.DataSource as IBindingList;
-				if (list != null)
+				// Against the list own count, not the row number. The grid paints from what it last knew and
+				// the list can be shorter by the time the paint arrives - a device removed while the rows are
+				// being drawn - and asking the list for a row it no longer has ends the program mid-paint.
+				if (list != null && e.RowIndex < list.Count)
 					item = list[e.RowIndex];
 			}
 			var available = IsItemAvailable(item);

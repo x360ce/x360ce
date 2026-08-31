@@ -829,9 +829,23 @@ namespace x360ce.App.DInput
 			// Read the central directory collection
 			var dir = zip.ReadCentralDir();
 			// Look for the desired file.
+			// The folders first. A package holds folders as well as files, and a folder is not something
+			// to write bytes into: unpacking one as though it were a file failed on any computer where the
+			// destination did not already exist, which is every computer installing the driver for the
+			// first time.
+			Directory.CreateDirectory(target);
 			foreach (ZipStorer.ZipFileEntry entry in dir)
 			{
-				var fileName = System.IO.Path.Combine(target, entry.FilenameInZip.Replace("/", "\\"));
+				var relative = entry.FilenameInZip.Replace("/", "\\");
+				var fileName = System.IO.Path.Combine(target, relative);
+				if (relative.EndsWith("\\"))
+				{
+					Directory.CreateDirectory(fileName.TrimEnd('\\'));
+					continue;
+				}
+				var folder = System.IO.Path.GetDirectoryName(fileName);
+				if (!string.IsNullOrEmpty(folder))
+					Directory.CreateDirectory(folder);
 				zip.ExtractFile(entry, fileName);
 			}
 			zip.Close();
