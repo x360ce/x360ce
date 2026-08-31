@@ -117,17 +117,22 @@ namespace x360ce.Tests
 			var pad = (uint)(free[0] + 1);
 			try
 			{
+				var padsBefore = XInputPlaces.VirtualHardwareNow();
 				Console.WriteLine("making a controller for pad {0}, expecting XInput {0}", pad);
 				Console.WriteLine();
 				if (!client.PlugIn(pad))
 					Assert.Inconclusive("The virtual bus would not make a controller.");
 				// Written down the way the program writes it down, so this measures what the program
 				// would see rather than a different arrangement that happens to work.
-				var target = client.Targets[pad - 1];
 				var until = DateTime.UtcNow.AddSeconds(10);
 				while (DateTime.UtcNow < until && !SystemXInput.IsConnected((int)pad - 1))
 					Thread.Sleep(100);
-				XInputPlaces.Remember(target.Serial, (int)pad - 1);
+				// Recorded the way the program records it: the controller that appeared, not a number read
+				// off a device name.
+				var appeared = XInputPlaces.VirtualHardwareNow();
+				appeared.ExceptWith(padsBefore);
+				if (appeared.Count == 1)
+					XInputPlaces.Remember(appeared.First(), (int)pad - 1);
 				Thread.Sleep(1500);
 				XInputPlaces.Invalidate();
 

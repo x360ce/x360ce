@@ -38,19 +38,20 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("A note is only ever matched to a controller this program could have made")]
-		public void A_note_is_only_matched_to_a_controller_we_could_have_made()
+		[Description("No place is ever claimed from a number read off a device name")]
+		public void No_place_is_claimed_from_a_number_in_a_name()
 		{
-			// The number at the end of a name belongs to no particular kind of device, so the search
-			// has to be told which devices it may look at. Without that it reaches the shared hardware
-			// above the controller, which every device on the machine hangs off.
+			// The number at the end of a device name is not a serial number, and it belongs to no
+			// particular kind of thing. Every place shown wrongly so far came from treating it as one:
+			// a USB hub above a real controller ends in "&2" and the controller was handed the place of
+			// controller two; and the bus numbers controllers across every program using it while each
+			// program numbers its own from one, so with another program holding one, ours were looked up
+			// under a name belonging to somebody else and the whole answer came out blank.
 			var source = Source();
-			var walk = source.Substring(source.IndexOf("static int RecordedPlace"));
-			walk = walk.Substring(0, walk.IndexOf("public static string HardwareOf"));
-			Assert.AreEqual(2, Regex(walk, "IsVirtualPad"),
-				"The search for where a controller landed is not bounded to controllers this program " +
-				"could have made, at entry and at every step up. It will climb into the USB hubs above " +
-				"a real controller and hand it a place belonging to an emulated one.");
+			var lookup = source.Substring(source.IndexOf("static int RecordedPlace"));
+			lookup = lookup.Substring(0, lookup.IndexOf("public static string HardwareOf"));
+			Assert.IsFalse(lookup.Contains("TrailingNumber"),
+				"Where a controller went is still looked up by a number read off a device name.");
 		}
 
 		static int Regex(string text, string needle)

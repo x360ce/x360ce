@@ -33,23 +33,31 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("A place is claimed from having watched it filled, not from having made the controller")]
-		public void A_place_is_claimed_from_watching_not_from_ownership()
+		[Description("Where a controller went is remembered against the controller, not a name")]
+		public void Where_a_controller_went_is_remembered_against_the_controller()
 		{
-			// Being virtual says nothing about where a controller is. Only having watched it arrive
-			// does, and that is what must be asked. Asking whether it is virtual instead hands a place
-			// we never observed to a controller we never made.
+			// A number at the end of a device name is not a serial number - it is whatever follows the
+			// last ampersand, and it belongs to no particular kind of thing. Matching a record by it was
+			// wrong twice over: a USB hub above a real controller ends in "&2", so that controller was
+			// handed the place of controller two; and the bus numbers its controllers across every
+			// program using it while each program numbers its own from one, so with another program
+			// holding one, ours were looked up under a name belonging to somebody else.
+			//
+			// So nothing is read off a name. The controller that appeared between asking for one and it
+			// arriving is the one that was made, and it is remembered by itself.
 			var source = Read(Path.Combine("App.v4", "Common", "DInput", "XInputPlaces.cs"));
-			// The one method, not everything after it. Reading what is a place from what made a device is
-			// wrong here and right in the reading that gathers the kinds, so the two must not be confused.
-			var resolve = source.Substring(source.IndexOf("public static Dictionary<string, int> Resolve(DeviceInfo[] all"));
-			resolve = resolve.Substring(0, resolve.IndexOf("static Dictionary<string, int> _cache"));
-			Assert.IsFalse(resolve.Contains("IsVirtualPad"),
-				"Where a controller is, is being decided by who made it. A virtual controller this " +
-				"program did not make then claims a place nobody watched it take, and the real " +
-				"controllers can no longer be named either.");
-			StringAssert.Contains(resolve, "RecordedPlace",
-				"Nothing asks what was actually watched, which is the only thing that yields a place.");
+			var lookup = source.Substring(source.IndexOf("static int RecordedPlace"));
+			lookup = lookup.Substring(0, lookup.IndexOf("public static string HardwareOf"));
+			Assert.IsFalse(lookup.Contains("TrailingNumber"),
+				"Where a controller went is still being looked up by a number read off a device name.");
+			StringAssert.Contains(lookup, "OursByHardware",
+				"The record is not kept against the controller itself.");
+			// And the record is only made from what was watched, never from a name.
+			var step5 = Read(Path.Combine("App.v4", "Common", "DInput", "DInputHelper.Step5.VirtualDevices.cs"));
+			StringAssert.Contains(step5, "VirtualHardwareNow",
+				"Nothing watches which controller appeared, so the one that was made is being guessed at.");
+			Assert.IsFalse(step5.Contains("target.Serial"),
+				"The controller made is still identified by the number the bus gave it.");
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]

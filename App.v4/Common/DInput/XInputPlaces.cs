@@ -29,77 +29,85 @@ namespace x360ce.App.DInput
 		/// <summary>A place nobody could work out.</summary>
 		public const int Unknown = -1;
 
-		/// <summary>Places our own controllers took, kept against the number the bus knows them by.</summary>
+		/// <summary>Places our own controllers took, kept against the controller itself.</summary>
 		/// <remarks>
-		/// Against the serial rather than the device path, because the place is known the instant the
-		/// controller appears in XInput and Windows has not finished building the device by then.
-		/// Waiting for it would block the update loop; the serial is known at once and the path can
-		/// be matched to it later, whenever somebody asks.
+		/// Against the piece of hardware, because that is the only name for a controller that means the
+		/// same thing to everybody looking at it.
+		///
+		/// It was kept against the number the bus gave the controller, and found again by reading the
+		/// number off the end of a device name. That number is not a serial: it is whatever follows the
+		/// last ampersand, and it belongs to no particular kind of thing. A USB hub two steps above a
+		/// real controller ends in "&amp;2", so a real controller was handed the place of controller two.
+		/// And the bus numbers controllers in the order they arrive across every program using it, while
+		/// each program numbers its own from one - so with another program holding a controller, ours
+		/// were looked up under names belonging to somebody else's.
+		///
+		/// So nothing is deduced from a name. The controller that appeared is watched for directly, at
+		/// the one moment it can be: between asking for it and it arriving, it is the one that was not
+		/// there before.
 		/// </remarks>
-		static readonly Dictionary<uint, int> OursBySerial = new Dictionary<uint, int>();
+		static readonly Dictionary<string, int> OursByHardware =
+			new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
 		static readonly object SyncRoot = new object();
 
-		/// <summary>Remembers where a controller this program made was put.</summary>
-		public static void Remember(uint serial, int place)
+		/// <summary>Every controller on the bus right now, named by the hardware each belongs to.</summary>
+		/// <remarks>
+		/// Taken before a controller is made and again after, so the one that appeared in between is
+		/// known by difference rather than by guessing at a name.
+		/// </remarks>
+		public static HashSet<string> VirtualHardwareNow()
 		{
+			var found = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			try
+			{
+				var all = DeviceDetector.GetDevices(null, DIGCF.DIGCF_ALLCLASSES | DIGCF.DIGCF_PRESENT);
+				var byId = all.ToDictionary(x => x.DeviceId, x => x, StringComparer.OrdinalIgnoreCase);
+				foreach (var device in all.Where(IsXInputCapable))
+					if (VirtualDriverInstaller.IsVirtualPad(device, byId))
+						found.Add(HardwareOf(device, byId));
+			}
+			catch (Exception ex) { JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex); }
+			return found;
+		}
+
+		/// <summary>Remembers where a controller this program made was put.</summary>
+		public static void Remember(string hardwareId, int place)
+		{
+			if (string.IsNullOrEmpty(hardwareId))
+				return;
 			lock (SyncRoot)
-				OursBySerial[serial] = place;
+				OursByHardware[hardwareId] = place;
 		}
 
 		/// <summary>Forgets one controller, for when it is taken away.</summary>
-		public static void Forget(uint serial)
+		public static void Forget(string hardwareId)
 		{
+			if (string.IsNullOrEmpty(hardwareId))
+				return;
 			lock (SyncRoot)
-				OursBySerial.Remove(serial);
+				OursByHardware.Remove(hardwareId);
 		}
 
 		/// <summary>Forgets everything, for when the controllers are taken away.</summary>
 		public static void Forget()
 		{
 			lock (SyncRoot)
-				OursBySerial.Clear();
+				OursByHardware.Clear();
 		}
 
-		/// <summary>The place recorded for a controller of ours, found by the number the bus gave it.</summary>
-		/// <remarks>
-		/// A controller is a family of devices and only the top one carries the number, so the whole
-		/// line of ancestors is asked - the same way a controller of ours is told from somebody
-		/// else's leftovers.
-		/// </remarks>
+		/// <summary>The place recorded for a controller of ours, or <see cref="Unknown"/>.</summary>
 		static int RecordedPlace(DeviceInfo device, Dictionary<string, DeviceInfo> byId)
 		{
-			// Only of a controller this program could have made. The number at the end of a name is not a
-			// serial - it is whatever follows the last ampersand - and the walk used to climb out of the
-			// controller into the hubs and bridges above it, which every device on the machine shares.
-			// A real Xbox controller hangs off a hub whose name ends "&2", so it matched the note kept for
-			// controller two and was handed that place: a real controller and an emulated one shown in one
-			// place, which cannot be true, and which then spoiled the working out for everything else.
+			// Only a controller this program could have made. Nothing else can have a place recorded.
 			if (!VirtualDriverInstaller.IsVirtualPad(device, byId))
 				return Unknown;
-			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			var current = device;
-			while (current != null)
+			var hardware = HardwareOf(device, byId);
+			lock (SyncRoot)
 			{
-				var serial = VirtualDriverInstaller.TrailingNumber(current.DeviceId);
-				lock (SyncRoot)
-				{
-					int place;
-					if (OursBySerial.TryGetValue(serial, out place))
-						return place;
-				}
-				if (string.IsNullOrEmpty(current.ParentDeviceId) || !seen.Add(current.ParentDeviceId))
-					return Unknown;
-				DeviceInfo parent;
-				if (!byId.TryGetValue(current.ParentDeviceId, out parent))
-					return Unknown;
-				// And no further than the controller itself. Above it is the bus, and above that the hubs
-				// and bridges that everything else on the machine hangs off too.
-				if (!VirtualDriverInstaller.IsVirtualPad(parent, byId))
-					return Unknown;
-				current = parent;
+				int place;
+				return OursByHardware.TryGetValue(hardware, out place) ? place : Unknown;
 			}
-			return Unknown;
 		}
 
 		/// <summary>The piece of hardware a controller device belongs to.</summary>
@@ -111,6 +119,13 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static string HardwareOf(DeviceInfo device, Dictionary<string, DeviceInfo> byId)
 		{
+			// A thing that carries no marker is already the controller, so it is its own answer. Walking
+			// up from it reaches whatever made it - for a virtual controller, the bus - and every
+			// controller on that bus would then be gathered under one name, as though they were one thing.
+			if (device != null && byId != null
+				&& !VirtualDriverInstaller.CarriesInputGroup(device.DeviceId)
+				&& !VirtualDriverInstaller.CarriesInputGroup(device.HardwareIds))
+				return device.DeviceId;
 			if (device == null || byId == null)
 				return device == null ? null : device.DeviceId;
 			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

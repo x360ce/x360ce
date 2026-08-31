@@ -372,23 +372,21 @@ namespace x360ce.App.DInput
 			Program.RunElevated(AdminCommand.UninstallViGEmBus);
 			return VirtualError.None;
 		}
+		/// <summary>The controller each pad owns, so it can be forgotten by name when the pad goes.</summary>
+		readonly string[] OurHardware = new string[4];
 
-		/// <summary>Which XInput places report a controller, asked of Windows own XInput.</summary>
+		/// <summary>Notes which controller was made and where it was put.</summary>
 		/// <remarks>
-		/// Deliberately not the library this program can put in a game's path. The question is
-		/// which places Windows has actually given out, and only Windows own XInput can answer it.
+		/// The controller itself, not a number read off the end of a device name. Names carry numbers
+		/// that belong to nothing in particular - a USB hub above a real controller ends in one, and the
+		/// bus numbers its controllers across every program using it while each program numbers its own
+		/// from one. Both were mistaken for ours.
 		/// </remarks>
-		/// <summary>Notes where the controller just made was put, by the number the bus gave it.</summary>
-		/// <remarks>
-		/// The serial is known at once. The Windows device is not - it is still being built - so
-		/// looking for it here would either block the update loop or find nothing.
-		/// </remarks>
-		void RememberOurPlace(uint userIndex, int place)
+		void RememberOurPlace(uint userIndex, int place, string hardwareId)
 		{
 			XiPlaceForPad[userIndex - 1] = place;
-			var target = ViGEmClient.Current.Targets[userIndex - 1];
-			if (target != null)
-				XInputPlaces.Remember(target.Serial, place);
+			OurHardware[userIndex - 1] = hardwareId;
+			XInputPlaces.Remember(hardwareId, place);
 			XInputPlaces.Invalidate();
 		}
 
@@ -447,6 +445,10 @@ namespace x360ce.App.DInput
 			// lists and the tab light all read that, so an unexpected place is visible rather than
 			// silently wrong.
 			var before = OccupiedPlaces();
+			// Which controllers are on the bus before we ask for one. The one that is there afterwards and
+			// was not before is ours, which is the only way of knowing that does not rest on reading a
+			// number off a name and hoping it means what it looks like.
+			var padsBefore = XInputPlaces.VirtualHardwareNow();
 			// Nothing can be given a place when there is none, and asking anyway costs the five seconds
 			// spent waiting for one to appear - every pass, for as long as they stay full.
 			if (before.All(x => x))
@@ -463,7 +465,11 @@ namespace x360ce.App.DInput
 			}
 			// Written down now, while it is certain. Nothing reports where a controller was put,
 			// so the only moment the answer exists is the moment it arrives.
-			RememberOurPlace(userIndex, place);
+			var appeared = XInputPlaces.VirtualHardwareNow();
+			appeared.ExceptWith(padsBefore);
+			// Exactly one should have appeared. None means Windows has not finished building it yet, and
+			// more than one means somebody else made theirs in the same moment - neither can be claimed.
+			RememberOurPlace(userIndex, place, appeared.Count == 1 ? appeared.First() : null);
 			return VirtualError.None;
 		}
 
@@ -489,9 +495,8 @@ namespace x360ce.App.DInput
 				// controllers holding one place is not a thing that can be true. Everything after it followed:
 				// the place a real controller held could no longer be worked out, because one more place was
 				// spoken for than there were controllers to hold them.
-				var stale = ViGEmClient.Current.Targets[userIndex - 1];
-				if (stale != null)
-					XInputPlaces.Forget(stale.Serial);
+				XInputPlaces.Forget(OurHardware[userIndex - 1]);
+				OurHardware[userIndex - 1] = null;
 				XInputPlaces.Invalidate();
 			}
 			return success
