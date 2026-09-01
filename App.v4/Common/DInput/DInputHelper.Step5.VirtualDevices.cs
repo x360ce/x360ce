@@ -119,14 +119,20 @@ namespace x360ce.App.DInput
 		{
 			for (var pad = 1; pad <= 4; pad++)
 			{
-				var place = AppHelper.GetForcePassThroughPlace((MapTo)pad);
+				PadSetting ps;
+				var place = AppHelper.GetForcePassThroughPlace((MapTo)pad, out ps);
 				if (place < 0)
 					continue;
 				var force = feedbacks[pad - 1];
 				// Nothing new to say. The last thing sent still stands, and the motors are still doing it.
 				if (force == null)
 					continue;
-				PassForceTo(place, force.LargeMotor, force.SmallMotor);
+				// The strengths apply here as much as anywhere. Nothing further along applies them: a
+				// controller's own motors are driven by the driver, which knows nothing of this program's
+				// settings, so a strength turned down had no effect on this route at all.
+				PassForceTo(place,
+					ps.ApplyForceStrength(force.LargeMotor, true),
+					ps.ApplyForceStrength(force.SmallMotor, false));
 			}
 		}
 

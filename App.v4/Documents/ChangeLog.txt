@@ -33,6 +33,9 @@
 - Fixed: Force feedback that could not reach a controller the bus had dropped was reported as a fault, instead of being put back quietly on the next pass.
 - Fixed: A list could close the program while it was being drawn, if a device was removed at that moment.
 - Fixed: Unpacking the virtual bus driver could fail when the folder it unpacks into did not already exist.
+- Fixed: A force feedback strength of 0 % ran the motors at full force instead of stopping them.
+- Fixed: Force feedback strength had no effect on rumble passed on to a real controller.
+- Fixed: A D-Pad dead zone of 0 % was ignored and used as 100 %.
 - Removed: Map To on the Direct Input page, which had no effect in this version. Existing configuration files keep the setting untouched.
 - Changed: Changing the virtual controller driver now asks first and says which version replaces which, and that other programs share it.
 - Changed: Leftover virtual controllers are now named, with their identifiers, instead of only counted.

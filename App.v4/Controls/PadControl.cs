@@ -1148,9 +1148,14 @@ namespace x360ce.App.Controls
 			// Straight to the real controller when nothing is being emulated, because then there is no
 			// rumble arriving for anything to pass on. Asked of Windows' own XInput rather than the one
 			// this program can put in a game's path: the force has to reach the device, not the emulation.
-			var place = AppHelper.GetForcePassThroughPlace(MappedTo);
+			PadSetting ps;
+			var place = AppHelper.GetForcePassThroughPlace(MappedTo, out ps);
 			if (place >= 0 && !((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
-				SystemXInput.SetVibration(place, (ushort)(largeMotor * 257), (ushort)(smallMotor * 257));
+				// Scaled by the strengths, the same as a game's rumble is, or the test would say the
+				// motors do something they will not do once a game is running.
+				SystemXInput.SetVibration(place,
+					(ushort)(ps.ApplyForceStrength(largeMotor, true) * 257),
+					(ushort)(ps.ApplyForceStrength(smallMotor, false) * 257));
 		}
 
 		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
