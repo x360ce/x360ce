@@ -65,8 +65,8 @@ namespace x360ce.Tests
 		{
 			// With the read-back switched off there is no evidence either way, and the words have to say
 			// that rather than pick the comfortable answer.
-			var unchecked_ = x360ce.App.MainForm.ControllerStateHint(1, true, false, false);
-			var missing = x360ce.App.MainForm.ControllerStateHint(1, true, false, true);
+			var unchecked_ = x360ce.App.MainForm.ControllerStateHint(1, true, false, false, false);
+			var missing = x360ce.App.MainForm.ControllerStateHint(1, true, false, false, true);
 			Assert.AreNotEqual(missing, unchecked_,
 				"Not having checked reads the same as having checked and found nothing.");
 			StringAssert.Contains(unchecked_, "has not ",
@@ -77,22 +77,92 @@ namespace x360ce.Tests
 		[Description("Not having looked is never reported as broken either")]
 		public void Not_having_looked_is_never_reported_as_broken()
 		{
-			// The mirror of the test above, and the half that was missing. Refusing to call an
-			// unchecked controller working is only right if it is not called broken instead, and it
-			// was: turning the read-back off lit the tab red on every controller that was working
-			// perfectly well. The setting only decides where the numbers on screen come from - it
-			// does not unplug anything - so red accused the emulation of a fault it did not have.
-			var main = File.ReadAllText(Path.Combine(Ui.RepoRoot.FullName, "App.v4", "MainForm.cs"));
-			var light = main.Substring(main.IndexOf("var image = diOn"));
-			light = light.Substring(0, light.IndexOf(";"));
-			StringAssert.Contains(light, "!checking",
+			// The mirror of the test above, and the half that was missing. Refusing to call an unchecked
+			// controller working is only right if it is not called broken instead, and it was: turning the
+			// read-back off lit the tab red on every controller that was working perfectly well. The
+			// setting only decides where the numbers on screen come from - it does not unplug anything.
+			var main = Read(Path.Combine("App.v4", "MainForm.cs"));
+			var light = main.Substring(main.IndexOf("string left, right;"));
+			light = light.Substring(0, light.IndexOf("var bullet = StatusImageKey"));
+			var unchecked_ = light.IndexOf("if (!checking)");
+			var mixed = light.IndexOf("StatusColor");
+			Assert.IsTrue(unchecked_ >= 0,
 				"The light does not ask whether anything was checked, so with the read-back off it " +
 				"reports a fault on evidence it never gathered.");
-			var red = light.IndexOf("\"red\"");
-			var unchecked_ = light.IndexOf("!checking");
-			Assert.IsTrue(unchecked_ >= 0 && unchecked_ < red,
-				"Red is reached before the unchecked case is considered, so a working controller " +
-				"shows as broken whenever the read-back is switched off.");
+			Assert.IsTrue(unchecked_ < mixed,
+				"How much is wrong is worked out before anyone asks whether it was looked at, so a " +
+				"working controller reddens whenever the read-back is switched off.");
+			StringAssert.Contains(light.Substring(unchecked_, mixed - unchecked_), "StatusBlue",
+				"An unchecked controller is not shown as unchecked.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Whether anything was checked is asked of the reading, not of the setting")]
+		public void Whether_anything_was_checked_is_asked_of_the_reading()
+		{
+			// The setting says the states are wanted. It does not say they arrived: the read also needs
+			// the XInput library to be loaded, and when it is not, nothing is read while the setting
+			// still says everything is being watched. Every place then reports empty and every working
+			// controller is called broken - on evidence nobody gathered.
+			var main = Read(Path.Combine("App.v4", "MainForm.cs"));
+			var line = main.Substring(main.IndexOf("var checking = "));
+			line = line.Substring(0, line.IndexOf(";"));
+			StringAssert.Contains(line, "XiStatesRead",
+				"The light asks whether the read-back was wanted rather than whether it happened.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A place held by a real controller is never shown as empty")]
+		public void A_place_held_by_a_real_controller_is_never_shown_as_empty()
+		{
+			// Whether a controller sits in this tab's place, and whether it is the one we made, are two
+			// questions. One variable answered both, so a tab whose place a real controller was holding
+			// showed the light for an empty place - the one thing it certainly was not.
+			var main = Read(Path.Combine("App.v4", "MainForm.cs"));
+			var line = main.Substring(main.IndexOf("var xiOn = "));
+			line = line.Substring(0, line.IndexOf(";"));
+			Assert.IsFalse(line.Contains("XiPlaceForPad"),
+				"Whether anything holds this tab's place is being answered by whether WE hold it, so " +
+				"a real controller sitting there reads as an empty place and the tab goes dark.");
+			StringAssert.Contains(main, "var xiOurs = ",
+				"Whose controller holds the place is no longer asked, so a real controller in the " +
+				"place cannot be told from the one this program made.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A real controller in the place is not called working")]
+		public void A_real_controller_in_the_place_is_not_called_working()
+		{
+			// The state that looks most like working and is furthest from it: a game finds a controller at
+			// this place and reads it, so nothing appears wrong, while every mapping on the tab goes
+			// nowhere. Counting it as nothing wrong would be the whole fault, stated as success.
+			var main = Read(Path.Combine("App.v4", "MainForm.cs"));
+			var light = main.Substring(main.IndexOf("var wrong = 0;"));
+			light = light.Substring(0, light.IndexOf("StatusColor"));
+			StringAssert.Contains(light, "if (!xiOurs && !xiOn)",
+				"Nothing separates an empty place from one holding a controller of ours.");
+			StringAssert.Contains(light, "else if (!xiOurs)",
+				"A place held by a controller this program did not make counts as nothing wrong, so a tab " +
+				"whose mappings reach no game reports success.");
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("Where our controllers are is known, not deduced")]
+		public void Where_our_controllers_are_is_known_not_deduced()
+		{
+			// A controller for a pad is only ever made when that pad's own place is free, and taken
+			// away again unless Windows puts it exactly there. So the answer is known by construction.
+			//
+			// It was worked out a second time all the same, by counting the places reporting a
+			// controller and counting the ones we believed we had made. That second answer was wrong
+			// whenever a real controller held a place of its own - the counts disagreed, it gave up,
+			// and a controller that was working showed a red light on its tab.
+			var step6 = Read(Path.Combine("App.v4", "Common", "DInput", "DInputHelper.Step6.RetrieveXiStates.cs"));
+			foreach (var counting in new[] { "occupied.Count", "ours.Count" })
+				Assert.IsFalse(step6.Contains(counting),
+					"The place a controller holds is being counted out again beside the answer that " +
+					"is already known, and the counting one gives up whenever a real controller is " +
+					"plugged in.");
 		}
 
 	}

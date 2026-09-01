@@ -67,6 +67,22 @@ namespace x360ce.App.DInput
 				// Not the ones this program is using right now. Offering to remove those would break
 				// the very thing somebody pressing the button is trying to repair.
 				.Where(x => !IsOneOfOurs(x, byId))
+				// One entry per controller, not per device. A controller is a small family - the thing
+				// itself and a face for each way of reading it - so counting devices reported one left
+				// behind as three, and named the same controller three times over. Removing the
+				// controller takes its faces with it, so the family is represented by the controller.
+				//
+				// The faces carry the XInput marker and the controller does not, so a face is gathered by
+				// walking up to the first thing without it, and the controller is gathered by itself.
+				// Walking up from the controller as well would take it to the bus that made it, which is
+				// shared by every controller on it - so each one would be filed under its own maker and
+				// counted apart from its own faces.
+				.GroupBy(x => VirtualDriverInstaller.CarriesInputGroup(x.DeviceId)
+					|| VirtualDriverInstaller.CarriesInputGroup(x.HardwareIds)
+						? XInputPlaces.HardwareOf(x, byId)
+						: x.DeviceId, StringComparer.OrdinalIgnoreCase)
+				.Select(g => g.FirstOrDefault(x => string.Equals(x.DeviceId, g.Key, StringComparison.OrdinalIgnoreCase))
+					?? g.First())
 				.OrderBy(x => x.DeviceId)
 				.ToArray();
 		}
@@ -378,8 +394,46 @@ namespace x360ce.App.DInput
 
 		#region Driver state
 
-		/// <summary>Version of the ViGEmBus driver package embedded in this application.</summary>
-		public static readonly Version EmbeddedViGEmBusVersion = new Version(1, 16, 112, 0);
+		/// <summary>The driver supplied for Windows 10 and later.</summary>
+		/// <remarks>
+		/// The last one its authors made. The project is finished and archived, so this is where that
+		/// driver stops - there will not be a newer one to move to.
+		///
+		/// It arrives as the signed setup its authors publish, rather than as loose driver files. From
+		/// version 1.17 they stopped shipping the files, and the setup is what carries the signature.
+		/// </remarks>
+		public static readonly Version ModernViGEmBusVersion = new Version(1, 21, 442, 0);
+
+		/// <summary>The driver supplied for Windows before 10.</summary>
+		/// <remarks>
+		/// Kept because the newer driver was never made for those versions of Windows: from 1.17 onwards
+		/// it is signed for Windows 10 and later only, and older Windows refuses it. This one is four
+		/// years older and is the last that works there.
+		/// </remarks>
+		public static readonly Version LegacyViGEmBusVersion = new Version(1, 16, 112, 0);
+
+		/// <summary>Whether this Windows takes the newer driver.</summary>
+		public static bool TakesModernViGEmBus
+		{
+			get
+			{
+				return JocysCom.ClassLibrary.Controls.IssuesControl.IssueHelper
+					.GetRealOSVersion().Major >= 10;
+			}
+		}
+
+		/// <summary>Version of the ViGEmBus driver package supplied for this computer.</summary>
+		public static Version EmbeddedViGEmBusVersion
+		{
+			get { return TakesModernViGEmBus ? ModernViGEmBusVersion : LegacyViGEmBusVersion; }
+		}
+
+		/// <summary>The setup for the newer driver, once unpacked.</summary>
+		public static string GetModernSetupPath()
+		{
+			return System.IO.Path.Combine(GetViGEmBusPath(),
+				"Win10Setup", "ViGEmBus_1.21.442_x64_x86_arm64.exe");
+		}
 
 		/// <summary>Setup class of HID devices. HID Guardian registers as its upper filter.</summary>
 		const string HidClassKey = @"SYSTEM\CurrentControlSet\Control\Class\{745a17a0-74d3-11d0-b6fe-00a0c90f57da}";
@@ -492,9 +546,52 @@ namespace x360ce.App.DInput
 		/// ten. "update" changes the driver on the bus that exists and makes nothing new.
 		///
 		/// So a bus is made only when there is none, and from then on it is updated in place.
+		/// <summary>Runs the setup its authors publish, and waits for it.</summary>
+		/// <remarks>
+		/// Waited for, so what is reported afterwards is what actually happened rather than what was
+		/// asked for. The setup is the only thing that knows how to put this driver on: it carries the
+		/// signature, registers the product so Apps and Features can remove it, and upgrades an older
+		/// one in place.
+		/// </remarks>
+		static bool RunModernSetup()
+		{
+			ExtractViGemBusFiles(true);
+			var setup = GetModernSetupPath();
+			if (!System.IO.File.Exists(setup))
+				return false;
+			var info = new System.Diagnostics.ProcessStartInfo(setup)
+			{
+				UseShellExecute = true,
+				WindowStyle = ProcessWindowStyle.Normal,
+			};
+			try
+			{
+				using (var process = System.Diagnostics.Process.Start(info))
+				{
+					if (process != null)
+						process.WaitForExit();
+				}
+			}
+			catch (Exception ex)
+			{
+				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
+				return false;
+			}
+			return true;
+		}
+
 		/// </remarks>
 		public static bool InstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
+			// Windows 10 and later take the newer driver, which its authors publish only as a signed setup.
+			// It is run rather than unpacked, because the signature is on the setup: taking the files out of
+			// it and installing them by hand throws away the one thing that makes Windows trust the driver.
+			//
+			// Shown rather than hidden. Its authors document no way to run it silently, and a setup driven
+			// with switches nobody has written down is a setup that can quietly do nothing - the failure a
+			// person then reports as "the button does not work". Seen, it either finishes or says why.
+			if (TakesModernViGEmBus)
+				return RunModernSetup() && GetInstalledViGEmBusVersion() != null;
 			// Extract files first.
 			ExtractViGemBusFiles(true);
 			var folder = GetViGEmBusPath();
@@ -522,6 +619,11 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static bool RepairViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
+			// The newer driver is repaired by its own setup, which offers exactly that when it finds one
+			// already there. Taking it away and putting it back the old way would leave Apps and Features
+			// pointing at something that is gone.
+			if (TakesModernViGEmBus)
+				return RunModernSetup() && GetInstalledViGEmBusVersion() != null;
 			UninstallViGEmBus(style);
 			return InstallViGEmBus(style);
 		}
@@ -540,6 +642,11 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public static bool UninstallViGEmBus(ProcessWindowStyle style = ProcessWindowStyle.Hidden)
 		{
+			// Put on by its own setup, which registered the product with Windows. Removing the device by
+			// hand would leave Apps and Features offering to remove a driver that is no longer there, so it
+			// is taken off the same way it was put on.
+			if (TakesModernViGEmBus)
+				return RunModernSetup() && GetInstalledViGEmBusVersion() == null;
 			var installed = GetInstalledViGEmBusVersion();
 			// Nothing to remove.
 			if (installed == null)
@@ -722,9 +829,23 @@ namespace x360ce.App.DInput
 			// Read the central directory collection
 			var dir = zip.ReadCentralDir();
 			// Look for the desired file.
+			// The folders first. A package holds folders as well as files, and a folder is not something
+			// to write bytes into: unpacking one as though it were a file failed on any computer where the
+			// destination did not already exist, which is every computer installing the driver for the
+			// first time.
+			Directory.CreateDirectory(target);
 			foreach (ZipStorer.ZipFileEntry entry in dir)
 			{
-				var fileName = System.IO.Path.Combine(target, entry.FilenameInZip.Replace("/", "\\"));
+				var relative = entry.FilenameInZip.Replace("/", "\\");
+				var fileName = System.IO.Path.Combine(target, relative);
+				if (relative.EndsWith("\\"))
+				{
+					Directory.CreateDirectory(fileName.TrimEnd('\\'));
+					continue;
+				}
+				var folder = System.IO.Path.GetDirectoryName(fileName);
+				if (!string.IsNullOrEmpty(folder))
+					Directory.CreateDirectory(folder);
 				zip.ExtractFile(entry, fileName);
 			}
 			zip.Close();

@@ -13,6 +13,7 @@ using x360ce.Engine.Data;
 using SharpDX.XInput;
 using JocysCom.ClassLibrary.Win32;
 using x360ce.App.ViGEm;
+using x360ce.App.DInput;
 
 namespace x360ce.App
 {
@@ -447,11 +448,239 @@ namespace x360ce.App
 			return grid.Rows[rowIndex].DataBoundItem as T;
 		}
 
+		/// <summary>Every XInput place a game can feel a device through, as it reads in a list.</summary>
+		/// <remarks>
+		/// There are two ways in, and a device can use both at once.
+		///
+		/// An Xbox controller is one piece of hardware with two faces, one read through DirectInput and
+		/// one through XInput, so it sits in a place of its own and a game reads it there whether this
+		/// program is running or not. Nothing else has that second face. Where two of them share the
+		/// places left over, neither can be named and neither is - a place stated wrongly is worse than
+		/// one left blank, because somebody would map a controller against it.
+		///
+		/// Everything else reaches a game only through the controller tabs it is mapped to, each of which
+		/// has a place of its own. A device mapped to two tabs is felt in two places at once and both are
+		/// named: a device left mapped to a tab somebody has forgotten about is still driving it.
+		///
+		/// Asked here rather than by each list. Three lists show this column and each had its own answer;
+		/// the one on the controller tabs asked only about the place the device holds itself, so every
+		/// device that was not an Xbox controller read as blank on the very page where it was mapped.
+		/// </remarks>
+		public static string GetXInputPlaces(Engine.Data.UserDevice device)
+		{
+			if (device == null)
+				return string.Empty;
+			var carried = new List<int>();
+			var helper = Global.DHelper;
+			var fileName = SettingsManager.CurrentGame?.FileName;
+			if (helper != null && fileName != null)
+				foreach (var setting in SettingsManager.GetSettings(fileName))
+					if (setting.InstanceGuid == device.InstanceGuid
+						&& setting.MapTo >= 1 && setting.MapTo <= helper.XiPlaceForPad.Length)
+						carried.Add(helper.XiPlaceForPad[setting.MapTo - 1]);
+			var own = XInputPlaces.PlaceFor(device.HidDeviceId, device.DevDeviceId);
+			return XInputPlaces.Describe(own,
+				XInputPlaces.IsMadeNotPluggedIn(device.HidDeviceId, device.DevDeviceId),
+				XInputPlaces.IsOneOfOurs(device.HidDeviceId, device.DevDeviceId),
+				carried);
+		}
+
+		/// <summary>Which XInput place a controller tab passes force feedback on to, or -1 for none.</summary>
+		/// <remarks>
+		/// An Xbox controller offers its motors through XInput and nowhere else - its DirectInput face
+		/// declares no force feedback at all - so a game rumbling an emulated controller reaches nothing
+		/// the person is holding. Passing it on is the only way the force arrives.
+		///
+		/// Where to send it is either said outright or worked out. Said outright is one of the four
+		/// places. Worked out means the place the mapped device itself holds, which is the sensible
+		/// answer and the only one that stays right when the places move about.
+		/// </remarks>
+		public static int GetForcePassThroughPlace(MapTo mapTo)
+		{
+			PadSetting padSetting;
+			return GetForcePassThroughPlace(mapTo, out padSetting);
+		}
+
+		/// <summary>Where a pad's force is passed on to, and the settings which said so.</summary>
+		/// <remarks>
+		/// The settings come back with the place because the strengths written on them apply to the
+		/// force being passed on, and the caller has no other way of knowing which of a pad's settings
+		/// answered. Looking them up a second time would be a second answer, free to disagree.
+		/// </remarks>
+		public static int GetForcePassThroughPlace(MapTo mapTo, out PadSetting padSetting)
+		{
+			padSetting = null;
+			var fileName = SettingsManager.CurrentGame?.FileName;
+			if (fileName == null)
+				return -1;
+			foreach (var setting in SettingsManager.GetSettings(fileName, mapTo))
+			{
+				var ps = SettingsManager.GetPadSetting(setting.PadSettingChecksum);
+				if (ps == null || ps.ForcePassThrough != "1")
+					continue;
+				int wanted;
+				// One to four names a place outright. Zero, empty, or anything unreadable means work it out.
+				if (int.TryParse(ps.ForcePassThroughIndex, out wanted) && wanted >= 1 && wanted <= 4)
+				{
+					padSetting = ps;
+					return wanted - 1;
+				}
+				var device = SettingsManager.GetDevice(setting.InstanceGuid);
+				if (device == null)
+					continue;
+				// The place the device itself holds. Only a controller with an XInput face has one, which is
+				// exactly the kind whose motors cannot be reached any other way.
+				var place = XInputPlaces.PlaceFor(device.HidDeviceId, device.DevDeviceId);
+				if (place >= 0)
+				{
+					padSetting = ps;
+					return place;
+				}
+			}
+			return -1;
+		}
+
+		#region Status lights
+
+		/// <summary>The colours a status light is drawn in, as a person would name them.</summary>
+		/// <remarks>
+		/// Pastel and flat rather than glass. The glass ones spent their height on a near-black rim and a
+		/// white highlight, leaving about a third of the icon showing the colour at all, and at arm's
+		/// length green and grey were the same dark smudge. Colour is the whole message here, so the
+		/// colour is what the icon is mostly made of.
+		///
+		/// The warm three are a ramp rather than three unrelated warnings: amber, orange, red, in that
+		/// order, with less green in each. More red means more wrong, so severity is legible without
+		/// reading anything. Grey is kept noticeably paler than the rest so that "nothing here" reads
+		/// as absence at a glance rather than as one more colour to tell apart.
+		/// </remarks>
+		public const string StatusGreen = "#5FBF60";
+		public const string StatusRed = "#D95C52";
+		public const string StatusAmber = "#EFC94C";
+		public const string StatusOrange = "#E08A38";
+		public const string StatusBlue = "#6FA8DC";
+		public const string StatusGrey = "#CFD4D8";
+
+		/// <summary>The warm ramp, mildest first. A light is somewhere along it.</summary>
+		static readonly string[] Ramp = { StatusGreen, StatusAmber, StatusOrange, StatusRed };
+
+		/// <summary>The colour for a controller with this much wrong with it.</summary>
+		/// <remarks>
+		/// Five fixed lights could say which of five states a controller was in, and no more. A controller
+		/// can have more than one thing wrong at once, and two faults were shown exactly as one - so the
+		/// tab that most needed looking at was indistinguishable from the tab that least did.
+		///
+		/// So the colour is mixed rather than chosen: none the wrong side of green, everything wrong at
+		/// red, and the mixture in between. Somebody can pick the worst tab out of four without reading a
+		/// word, which is the one thing colour does better than words.
+		/// </remarks>
+		/// <param name="severity">Nothing wrong at 0, everything wrong at 1.</param>
+		public static string StatusColor(double severity)
+		{
+			if (severity <= 0)
+				return Ramp[0];
+			if (severity >= 1)
+				return Ramp[Ramp.Length - 1];
+			var steps = Ramp.Length - 1;
+			var at = severity * steps;
+			var step = (int)at;
+			var into = at - step;
+			var from = ColorTranslator.FromHtml(Ramp[step]);
+			var to = ColorTranslator.FromHtml(Ramp[step + 1]);
+			var mixed = Color.FromArgb(
+				(int)(from.R + (to.R - from.R) * into),
+				(int)(from.G + (to.G - from.G) * into),
+				(int)(from.B + (to.B - from.B) * into));
+			return ColorTranslator.ToHtml(mixed);
+		}
+
+		static readonly Dictionary<string, Bitmap> StatusIcons = new Dictionary<string, Bitmap>();
+
+		/// <summary>A status light in the colour given, as "#RRGGBB".</summary>
+		/// <remarks>
+		/// Drawn rather than kept as a picture, so a new state costs a colour rather than an image file,
+		/// and every light is the same shape by construction instead of by whoever drew them agreeing.
+		///
+		/// Kept once made. A cell or a tab asks for one many times a second, and a bitmap made for a
+		/// single paint is never given back.
+		/// </remarks>
+		/// <param name="hex">The colour, as "#RRGGBB" or "RRGGBB".</param>
+		/// <param name="size">Width and height in pixels.</param>
+		public static Bitmap GetStatusIcon(string hex, int size = 16)
+		{
+			return GetStatusIcon(hex, hex, size);
+		}
+		
+		/// <summary>A light in two colours, left half and right half.</summary>
+		/// <remarks>
+		/// A controller tab answers two questions at once - is a device of yours connected, and is there
+		/// an emulated controller for a game to read - and one colour had to stand for both. So the state
+		/// somebody most needs, which half is missing, was the one thing the light could not say, and the
+		/// words underneath had to say it instead.
+		///
+		/// Two halves say it without words: your device on the left, the emulated controller on the right.
+		/// Both green and it is working, and looks exactly as a single green light always did.
+		/// </remarks>
+		public static Bitmap GetStatusIcon(string leftHex, string rightHex, int size = 16)
+		{
+			var key = leftHex + "|" + rightHex + "@" + size;
+			lock (StatusIcons)
+			{
+				Bitmap kept;
+				if (StatusIcons.TryGetValue(key, out kept))
+					return kept;
+				var made = DrawStatusIcon(leftHex, rightHex, size);
+				StatusIcons[key] = made;
+				return made;
+			}
+		}
+		/// <summary>How light a colour reads, on the measure eyes actually use.</summary>
+		static double Lightness(Color c)
+		{
+			return (0.2126 * c.R + 0.7152 * c.G + 0.0722 * c.B) / 255.0;
+		}
+
+
+		static Bitmap DrawStatusIcon(string leftHex, string rightHex, int size)
+		{
+			var left = ColorTranslator.FromHtml(leftHex.StartsWith("#") ? leftHex : "#" + leftHex);
+			var right = ColorTranslator.FromHtml(rightHex.StartsWith("#") ? rightHex : "#" + rightHex);
+			// The edge takes after the darker half, so it belongs to the colour rather than outlining it
+			// in black.
+			var darker = Lightness(left) <= Lightness(right) ? left : right;
+			var edge = Color.FromArgb(darker.A, darker.R * 7 / 10, darker.G * 7 / 10, darker.B * 7 / 10);
+			var image = new Bitmap(size, size);
+			using (var g = Graphics.FromImage(image))
+			{
+				// Square, and the size the lights have always been: ten pixels across in the middle of
+				// sixteen. Filling the whole icon made it bigger than everything beside it, and rounding
+				// the corners spent its few pixels on a curve nobody can see at this size.
+				var inset = Math.Max(1, size * 3 / 16);
+				var side = Math.Max(4, size - inset * 2);
+				// Left crisp on purpose. Smoothing a ten pixel square only blurs the one edge it has.
+				g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+				var half = side / 2;
+				using (var brush = new SolidBrush(left))
+					g.FillRectangle(brush, new Rectangle(inset, inset, half, side));
+				using (var brush = new SolidBrush(right))
+					g.FillRectangle(brush, new Rectangle(inset + half, inset, side - half, side));
+				// A hint of gloss across the top, not a window pane. Enough to stop it looking printed on,
+				// little enough that the colour underneath is still the colour.
+				using (var sheen = new SolidBrush(Color.FromArgb(46, Color.White)))
+					g.FillRectangle(sheen, new Rectangle(inset, inset, side, Math.Max(1, side * 2 / 5)));
+				using (var pen = new Pen(edge, 1f))
+					g.DrawRectangle(pen, new Rectangle(inset, inset, side - 1, side - 1));
+			}
+			return image;
+		}
+
+		#endregion
+
 		public static Bitmap GetOnlineIcon(bool online)
 		{
 			return online
-				? Properties.Resources.bullet_square_glass_green
-				: Properties.Resources.bullet_square_glass_grey;
+				? GetStatusIcon(StatusGreen)
+				: GetStatusIcon(StatusGrey);
 		}
 
 		/// <summary>The icon of the port a device is attached through, or a blank of the same size.</summary>

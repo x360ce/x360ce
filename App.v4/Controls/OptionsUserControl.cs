@@ -336,8 +336,15 @@ namespace x360ce.App.Controls
 			// The same button installs a driver that is missing and repairs one that is there. A bus
 			// can stop working while still reporting itself healthy, and the moment somebody wants
 			// that put right is the moment this button used to be greyed out.
-			var present = DInput.VirtualDriverInstaller.GetInstalledViGEmBusVersion() != null;
-			if (present)
+			var installed = DInput.VirtualDriverInstaller.GetInstalledViGEmBusVersion();
+			var supplied = DInput.VirtualDriverInstaller.EmbeddedViGEmBusVersion;
+			// Said before anything is touched, and said in full. This changes a driver other programs
+			// share, so somebody is entitled to know which version is there, which one is about to go on,
+			// and that the change reaches everything else using it - rather than finding out afterwards
+			// from a version number that went backwards.
+			if (!AgreedToChangeViGEmBus(installed, supplied))
+				return;
+			if (installed != null)
 			{
 				ViGEmBusTextBox.Text = "Repairing. Please Wait...";
 				Program.RunElevated(AdminCommand.RepairViGEmBus);
@@ -349,6 +356,50 @@ namespace x360ce.App.Controls
 			}
 			RefreshViGEmBusStatus();
 		}
+		/// <summary>Asks before changing a driver, and says exactly what the change is.</summary>
+		/// <remarks>
+		/// The driver is shared: other programs on the computer use the same one. Changing it without
+		/// saying so is how somebody ends up with a version older than the one they installed themselves
+		/// and nothing anywhere saying what did it.
+		///
+		/// A version already newer than the one supplied here is refused rather than offered. There is
+		/// nothing to gain by going backwards, and other programs may need the newer one.
+		/// </remarks>
+		bool AgreedToChangeViGEmBus(Version installed, Version supplied)
+		{
+			var modern = DInput.VirtualDriverInstaller.TakesModernViGEmBus;
+			if (installed != null && installed > supplied)
+			{
+				MessageBoxForm.Show(string.Format(
+					"The driver on this computer is version {0}, which is newer than the {1} supplied with "
+					+ "this program." + "\r\n\r\n"
+					+ "Nothing will be changed. Putting the older one on would take away whatever the newer "
+					+ "one fixed, for every program on this computer that uses it, not only this one." + "\r\n\r\n"
+					+ "If the driver is faulty, repair it through its own setup or Apps and Features.",
+					installed, supplied),
+					"Newer driver already installed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				return false;
+			}
+			var what = installed == null
+				? string.Format("Version {0} will be installed.", supplied)
+				: installed == supplied
+					? string.Format("Version {0} is already installed and will be repaired.", installed)
+					: string.Format("Version {0} will be replaced with {1}.", installed, supplied);
+			var how = modern
+				? "The setup published by the driver authors will open. Follow it through to the end."
+				: "The driver supplied with this program will be installed directly.";
+			var why = modern
+				? string.Empty
+				: "\r\n\r\n" + "This version of Windows cannot use the newer driver: from version 1.17 it "
+				+ "is made for Windows 10 and later only.";
+			var answer = MessageBoxForm.Show(
+				what + "\r\n\r\n" + how + "\r\n\r\n"
+				+ "This driver is shared. Other programs that use virtual controllers will get this "
+				+ "version too." + why + "\r\n\r\n" + "Go ahead?",
+				"Change the virtual controller driver", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+			return answer == DialogResult.OK;
+		}
+
 
 		private void ViGEmBusUninstallButton_Click(object sender, EventArgs e)
 		{
@@ -413,9 +464,15 @@ namespace x360ce.App.Controls
 				ControlsHelper.BeginInvoke(() =>
 				{
 					// Update Bus status.
+					// Both versions, because one on its own cannot be acted on. Somebody looking at a driver that
+					// misbehaves needs to know what is there and what this program would put on instead - which is
+					// exactly what was missing when a repair silently replaced a newer driver with an older one.
+					var supplied = DInput.VirtualDriverInstaller.EmbeddedViGEmBusVersion;
 					var busStatus = bus.DriverVersion == 0
-						? "Not installed"
-						: string.Format("{0} {1}", bus.Description, bus.GetVersion());
+						? string.Format("Not installed. Supplied with this program: {0}.", supplied)
+						: string.Format("{0} {1}   (supplied with this program: {2}{3})",
+							bus.Description, bus.GetVersion(), supplied,
+							bus.GetVersion() > supplied ? ", older - will not be installed over this" : string.Empty);
 					ControlsHelper.SetText(ViGEmBusTextBox, busStatus);
 					// Always available, because a bus that is present is exactly the one that might
 					// need putting right. The word changes so it is clear which of the two it will do.

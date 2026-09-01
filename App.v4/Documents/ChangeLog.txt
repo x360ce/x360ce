@@ -1,4 +1,44 @@
-﻿## [4.19.17.0] - 2026-08-29
+﻿## [4.20.43.0] - 2026-09-01
+
+- Fixed: A controller tab showed a red light while its controller was working, whenever a real controller was plugged in.
+- Fixed: A controller tab whose XInput place a real controller was holding showed no light, as though the place were empty.
+- Fixed: A controller tab showed green where a real controller had taken its place, so mappings that reached nothing looked like they were working.
+- Fixed: Controller tab lights changed their mind for a moment after every start.
+- Fixed: A real controller holding an XInput place stopped a second controller tab from getting one at all, with a free place sitting unused.
+- Fixed: Where an emulated controller was put is now watched rather than assumed, so the device lists name the right place.
+- Fixed: A real controller's XInput place was left blank whenever an emulated controller was also present.
+- Fixed: An emulated controller taken away went on claiming its XInput place, so two controllers could be shown holding one place.
+- Fixed: A controller tab showed a green light while its emulated controller was in a different place than the one being read.
+- Fixed: A controller that could not be created reported a second fault about clearing up after it.
+- Fixed: The Trigger name did not turn green while a trigger was held down.
+- Fixed: Putting controllers in order gave each tab another tab's controller, so the order came out right and every tab pointed at the wrong one.
+- Fixed: A controller switched off while putting them in order was not noticed until something else made the lists read again.
+- Fixed: The window stopped responding while controllers were being put in order, and said nothing about what it was doing.
+- Fixed: Repair replaced a newer virtual controller driver with the older one supplied here, saying nothing about it.
+- Fixed: One virtual controller left behind was counted and listed three times, once for each way of reading it.
+- Fixed: With a virtual controller from another program on the bus, no XInput place was shown for any controller at all.
+- Fixed: Letting go of a virtual controller that had already gone was reported as a fault. This was over half of all problem reports received in two days.
+- Fixed: Force feedback that could not reach a controller the bus had dropped was reported as a fault, instead of being put back quietly on the next pass.
+- Fixed: A list could close the program while it was being drawn, if a device was removed at that moment.
+- Fixed: Unpacking the virtual bus driver could fail when the folder it unpacks into did not already exist.
+- Fixed: A force feedback strength of 0 % ran the motors at full force instead of stopping them.
+- Fixed: Force feedback strength had no effect on rumble passed on to a real controller.
+- Fixed: A D-Pad dead zone of 0 % was ignored and used as 100 %.
+- Removed: Map To on the Direct Input page, which had no effect in this version. Existing configuration files keep the setting untouched.
+- Changed: Changing the virtual controller driver now asks first and says which version replaces which, and that other programs share it.
+- Changed: Leftover virtual controllers are now named, with their identifiers, instead of only counted.
+- Changed: Controller tab lights are flatter and paler, so the colour reads from a distance instead of looking like a dark smudge.
+- Changed: A controller tab light is drawn in two halves: your device on the left, the emulated controller on the right, so it shows which half is missing.
+- Changed: The right half of a controller tab light reddens the more that is wrong at once, so the tab most in need of attention stands out.
+- Changed: A controller tab turns orange when its controller sits in a different XInput place than the tab number, and says which.
+- Added: Windows 10 and later are supplied virtual controller driver 1.21.442.0, the last one its authors made. Older Windows keeps 1.16.112.0, which is the last that works there.
+- Added: Options shows the installed virtual controller driver version and the one supplied with this program.
+- Added: Force Feedback Pass Through sends a game's rumble on to a real controller, which an emulated one cannot feel.
+- Added: The Force Feedback Test sliders now drive the same path a game uses, including pass through.
+- Added: The device list now names every XInput place each device reaches, including through the controllers it is mapped to.
+- Added: XInput Devices can now be put in a different order, not only shown in the one they are in.
+
+## [4.19.17.0] - 2026-08-29
 
 - Fixed: Turning off the XInput reading lit every controller tab red, as though the emulated controller had gone.
 - Fixed: Controllers were read slower while the window was open.

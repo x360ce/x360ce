@@ -43,6 +43,7 @@
 			this.MyDeviceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.MyFileColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.DeviceIdColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.XInputPlaceColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.IsHiddenColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.ControllersToolStrip = new System.Windows.Forms.ToolStrip();
 			this.RefreshButton = new System.Windows.Forms.ToolStripButton();
@@ -78,6 +79,7 @@
 			this.DevicesDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.IsOnlineColumn,
             this.ConnectionClassColumn,
+            this.XInputPlaceColumn,
             this.IsEnabledColumn,
             this.MySidColumn,
             this.MyDeviceColumn,
@@ -181,6 +183,15 @@
 			this.DeviceIdColumn.HeaderText = "HID Device ID (HID Guardian)";
 			this.DeviceIdColumn.Name = "DeviceIdColumn";
 			this.DeviceIdColumn.ReadOnly = true;
+			// 
+			// XInputPlaceColumn
+			// 
+			this.XInputPlaceColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+			this.XInputPlaceColumn.HeaderText = "XInput";
+			this.XInputPlaceColumn.Name = "XInputPlaceColumn";
+			this.XInputPlaceColumn.ReadOnly = true;
+			this.XInputPlaceColumn.ToolTipText = "Every XInput place a game feels this device through. Real means the device sits in that place itself, which a game reads with this program switched off. Virtual means this program carries it there, through a controller tab it is mapped to.";
+			this.XInputPlaceColumn.Width = 60;
 			// 
 			// IsHiddenColumn
 			// 
@@ -337,6 +348,7 @@
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyDeviceColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn MyFileColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn DeviceIdColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn XInputPlaceColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn IsHiddenColumn;
 	}
 }

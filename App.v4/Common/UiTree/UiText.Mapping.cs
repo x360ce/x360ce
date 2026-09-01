@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace x360ce.App.UiTree
 {
@@ -52,8 +52,6 @@ namespace x360ce.App.UiTree
 			// What the device says about itself.
 			d["DirectInputUserControl.DeviceDetailsTabControl"] = new Text("Device detail pages",
 				"What the device reports it can do.");
-			d["DirectInputUserControl.MapToPadComboBox"] = new Text("Map to",
-				"Which of the four emulated controllers this device works.");
 			d["DirectInputUserControl.DiObjectsTabPage"] = new Text("Device Objects",
 				"Every axis, button and hat the device reports having.");
 			d["DirectInputUserControl.DiEffectsDataTabPage"] = new Text("Force Feedback Effects",

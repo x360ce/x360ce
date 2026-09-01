@@ -110,6 +110,18 @@ namespace Nefarius.ViGEm.Client
 			{
 				t[i - 1].Disconnect();
 			}
+			catch (ViGEmException ex) when (ex.Code == VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
+			{
+				// Being told it is already unplugged is the thing that was wanted, not a failure. The bus
+				// drops a controller by itself when the program that made it ends or the driver changes,
+				// so asking whether one is still there before letting go answers about a moment that has
+				// passed by the time the answer arrives. Guarding the call was the old approach and it
+				// still lost that race.
+				//
+				// Reported as a fault, this filled the support mailbox with wishes already granted:
+				// fifteen of twenty-nine reports over two days said nothing else. The placeholder clean-up
+				// in PlugIn, below, has always treated it this way.
+			}
 			catch (Exception ex)
 			{
 				JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
@@ -133,8 +145,12 @@ namespace Nefarius.ViGEm.Client
 				{
 					if (!t[i].IsAttached)
 					{
-						tempDevices[i] = true;
+						// Recorded after the fact, not before it. Marked first, a placeholder that
+						// failed to connect was still taken away afterwards, and taking away what was
+						// never there fails - so a controller that could not be made reported a second
+						// fault about the tidying up, and that is the one the person saw.
 						t[i].Connect();
+						tempDevices[i] = true;
 						RememberSerial(t[i]);
 					}
 				}
@@ -160,6 +176,12 @@ namespace Nefarius.ViGEm.Client
 					{
 						t[i].Disconnect();
 					}
+					catch (ViGEmException ex) when (ex.Code == VIGEM_ERROR.VIGEM_ERROR_TARGET_NOT_PLUGGED_IN)
+					{
+						// The point here is that the placeholder is gone. Being told it is already gone
+						// is that, not a failure - the bus can drop a controller between making it and
+						// tidying it away, and nobody needs a report about a wish already granted.
+					}
 					catch (Exception ex)
 					{
 						JocysCom.ClassLibrary.Runtime.LogHelper.Current.WriteException(ex);
@@ -172,9 +194,10 @@ namespace Nefarius.ViGEm.Client
 		{
 			for (uint i = 1; i <= 4; i++)
 			{
-				// Unplug device if connected.
-				if (IsControllerConnected(i))
-					UnPlug(i);
+				// Asked for unconditionally. Whether one is connected is answered about a moment that has
+				// passed by the time it is acted on, and letting go of one that is already gone is no longer
+				// treated as a fault.
+				UnPlug(i);
 			}
 		}
 

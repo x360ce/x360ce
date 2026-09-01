@@ -165,6 +165,10 @@
     <Compile Include="Common\DInput\Recorder.cs" />
     <Compile Include="Common\DInput\VirtualDriverInstaller.cs" />
     <Compile Include="Common\DInput\VirtualError.cs" />
+    <Compile Include="Common\DInput\SystemXInput.cs" />
+    <Compile Include="Common\DInput\XInputPlaces.cs" />
+    <Compile Include="Common\DInput\XInputReorderPlan.cs" />
+    <Compile Include="Common\DInput\XInputReorderRunner.cs" />
     <Compile Include="Common\Downloader.cs" />
     <Compile Include="Common\DownloaderEventArgs.cs" />
     <Compile Include="Common\DownloaderParams.cs" />
@@ -261,7 +265,12 @@
     <Compile Include="Controls\SummariesGridUserControl.Designer.cs">
       <DependentUpon>SummariesGridUserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\UserDevicesUserControl.cs">
+        <Compile Include="Controls\XInputDevicesUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\XInputDevicesUserControl.Designer.cs">
+      <DependentUpon>XInputDevicesUserControl.cs</DependentUpon>
+    </Compile><Compile Include="Controls\UserDevicesUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Controls\UserDevicesUserControl.Designer.cs">
@@ -669,6 +678,8 @@
     <None Include="Images\empty_16x16.png" />
     <None Include="Images\load_16x16.png" />
     <None Include="Images\refresh_16x16.png" />
+    <None Include="Images\nav_up_16x16.png" />
+    <None Include="Images\nav_down_16x16.png" />
     <None Include="Images\save_16x16.png" />
     <None Include="Images\save_add_16x16.png" />
     <None Include="Images\arrow_right_16x16.png" />

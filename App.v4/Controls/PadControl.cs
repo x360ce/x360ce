@@ -1,4 +1,5 @@
-﻿using JocysCom.ClassLibrary;
+﻿using x360ce.App.DInput;
+using JocysCom.ClassLibrary;
 using JocysCom.ClassLibrary.ComponentModel;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.Runtime;
@@ -394,6 +395,16 @@ namespace x360ce.App.Controls
 			foreach (var item in playerTypes)
 				playerOptions.Add(new KeyValuePair(item.ToString(), ((int)item).ToString()));
 			PassThroughIndexComboBox.DataSource = new BindingSource(playerOptions, null); // Otherwise changing one changes the other
+			// Where force feedback is sent when it is passed through. Nothing but the four places and
+			// working it out, so it is written here rather than taken from the list of players beside
+			// it - that one is built from an enum whose "any" member is 255, and this holds one digit.
+			var forcePlaces = new List<KeyValuePair>();
+			forcePlaces.Add(new KeyValuePair("Auto (Real)", "0"));
+			for (var place = 1; place <= 4; place++)
+				forcePlaces.Add(new KeyValuePair(string.Format("XInput {0}", place), place.ToString()));
+			ForcePassThroughIndexComboBox.DataSource = new BindingSource(forcePlaces, null);
+			ForcePassThroughIndexComboBox.DisplayMember = "Key";
+			ForcePassThroughIndexComboBox.ValueMember = "Value";
 			PassThroughIndexComboBox.DisplayMember = "Key";
 			PassThroughIndexComboBox.ValueMember = "Value";
 			CombinedIndexComboBox.DataSource = new BindingSource(playerOptions, null);  // Otherwise changing one changes the other
@@ -689,10 +700,10 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.InstanceGuid, DirectInputPanel.DeviceInstanceGuidTextBox);
 			AddMap(() => SettingName.GamePadType, DeviceSubTypeComboBox);
 			AddMap(() => SettingName.PassThrough, PassThroughCheckBox);
-			AddMap(() => SettingName.ForcesPassThrough, ForceFeedbackPassThroughCheckBox);
+			AddMap(() => SettingName.ForcePassThrough, ForcePassThroughCheckBox);
+			AddMap(() => SettingName.ForcePassThroughIndex, ForcePassThroughIndexComboBox);
 			AddMap(() => SettingName.PassThroughIndex, PassThroughIndexComboBox);
 			// Mapping
-			AddMap(() => SettingName.MapToPad, DirectInputPanel.MapToPadComboBox);
 			// Left Trigger
 			AddMap(() => SettingName.LeftTrigger, LeftTriggerComboBox, MapCode.LeftTrigger);
 			AddMap(() => SettingName.LeftTriggerDeadZone, LeftTriggerUserControl.DeadZoneTrackBar);
@@ -805,13 +816,15 @@ namespace x360ce.App.Controls
 		{
 			// Is Pass Through enabled?
 			bool fullPassThrough = PassThroughCheckBox.Checked;
-			bool forcesPassThrough = ForceFeedbackPassThroughCheckBox.Checked;
 
 			// If full pass-through mode is turned on, changing forces pass-through has no effect.
-			ForceFeedbackPassThroughCheckBox.Enabled = !fullPassThrough;
+			ForcePassThroughCheckBox.Enabled = !fullPassThrough;
 
-			// Pass Through index is enabled if either pass through mode is enabled
-			PassThroughIndexComboBox.Enabled = (fullPassThrough || forcesPassThrough);
+			// Each pass-through now says where it goes for itself, so each box turns its own
+			// destination on. They shared one before, which meant the destination could be changed
+			// from a page where nothing was passing anything through.
+			PassThroughIndexComboBox.Enabled = fullPassThrough;
+			ForcePassThroughIndexComboBox.Enabled = !fullPassThrough && ForcePassThroughCheckBox.Checked;
 		}
 
 		/// <summary>
@@ -1111,35 +1124,38 @@ namespace x360ce.App.Controls
 			//UnsafeNativeMethods.Enable(true);
 		}
 
+		/// <summary>Sends what the Test sliders ask for, by every route this tab actually uses.</summary>
+		/// <remarks>
+		/// The test has to exercise the same path a game would, or it tests something nobody uses. That
+		/// is two paths, and a tab can be using both: the force this program drives on the mapped device,
+		/// and the force passed on to a real controller whose motors are reachable no other way.
+		///
+		/// It read a place by tab number through the emulator's own XInput library, which is neither the
+		/// place the tab's controller is in nor a library that is always loaded, so it usually did nothing
+		/// at all.
+		/// </remarks>
 		void SendVibration()
 		{
-			var index = (int)MappedTo - 1;
 			var game = SettingsManager.CurrentGame;
-			var isVirtual = ((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual);
-			if (isVirtual)
-			{
-				var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, LeftMotorTestTrackBar.Value);
-				var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, RightMotorTestTrackBar.Value);
+			if (game == null)
+				return;
+			var largeMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, LeftMotorTestTrackBar.Value);
+			var smallMotor = (byte)ConvertHelper.ConvertRange(0, 100, byte.MinValue, byte.MaxValue, RightMotorTestTrackBar.Value);
+			// Into the same place a game's rumble arrives, so everything downstream of it is exercised:
+			// the mapped device this program drives, and the pass-through to a real controller.
+			if (((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
 				Global.DHelper.SetVibration(MappedTo, largeMotor, smallMotor, 0);
-			}
-			else
-			{
-				lock (Controller.XInputLock)
-				{
-					// Convert 100% TrackBar to MotorSpeed's 0 - 65,535 (100%).
-					var leftMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, LeftMotorTestTrackBar.Value);
-					var rightMotor = (short)ConvertHelper.ConvertRange(0, 100, short.MinValue, short.MaxValue, RightMotorTestTrackBar.Value);
-					var gamePad = Global.DHelper.LiveXiControllers[index];
-					var isConnected = Global.DHelper.LiveXiConnected[index];
-					if (Controller.IsLoaded && isConnected)
-					{
-						var vibration = new Vibration();
-						vibration.LeftMotorSpeed = leftMotor;
-						vibration.RightMotorSpeed = rightMotor;
-						gamePad.SetVibration(vibration);
-					}
-				}
-			}
+			// Straight to the real controller when nothing is being emulated, because then there is no
+			// rumble arriving for anything to pass on. Asked of Windows' own XInput rather than the one
+			// this program can put in a game's path: the force has to reach the device, not the emulation.
+			PadSetting ps;
+			var place = AppHelper.GetForcePassThroughPlace(MappedTo, out ps);
+			if (place >= 0 && !((EmulationType)game.EmulationType).HasFlag(EmulationType.Virtual))
+				// Scaled by the strengths, the same as a game's rumble is, or the test would say the
+				// motors do something they will not do once a game is running.
+				SystemXInput.SetVibration(place,
+					(ushort)(ps.ApplyForceStrength(largeMotor, true) * 257),
+					(ushort)(ps.ApplyForceStrength(smallMotor, false) * 257));
 		}
 
 		void AxisToDPadOffsetTrackBar_ValueChanged(object sender, EventArgs e)
@@ -1370,6 +1386,10 @@ namespace x360ce.App.Controls
 			if (column == IsOnlineColumn)
 			{
 				e.Value = AppHelper.GetOnlineIcon(item.IsOnline);
+			}
+			else if (column == XInputPlaceColumn)
+			{
+				e.Value = AppHelper.GetXInputPlaces(SettingsManager.GetDevice(item.InstanceGuid));
 			}
 			else if (column == ConnectionClassColumn)
 			{

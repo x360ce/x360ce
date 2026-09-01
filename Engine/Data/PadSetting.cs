@@ -98,6 +98,8 @@ namespace x360ce.Engine.Data
 			AddValue(ref list, x => x.ForceEnable);
 			AddValue(ref list, x => x.ForceType);
 			AddValue(ref list, x => x.ForceSwapMotor);
+			AddValue(ref list, x => x.ForcePassThrough);
+			AddValue(ref list, x => x.ForcePassThroughIndex);
 			AddValue(ref list, x => x.ForceOverall, "100");
 			AddValue(ref list, x => x.LeftMotorPeriod);
 			AddValue(ref list, x => x.LeftMotorDirection);
@@ -215,8 +217,15 @@ namespace x360ce.Engine.Data
 			// If value is default.
 			if (Equals(value, defaultValue))
 				return true;
-			// If value is string and empty or set to "0" then...
-			if (value is string && (Equals(value, "") || Equals(value, "0")))
+			// If value is string and empty then...
+			if (value is string && Equals(value, ""))
+				return true;
+			// Nought counts as untouched only where nothing else is the default. Those settings say
+			// which button does what, and no button is nought. A setting given a default of its own is
+			// a number - a strength, a dead zone - where nought is an answer, and the lowest one there
+			// is. Counting it as untouched read it back as the default instead, so a force feedback
+			// strength turned down to nothing came back as a hundred and ran the motors at full force.
+			if (value is string && Equals(value, "0") && (Equals(defaultValue, null) || Equals(defaultValue, "0")))
 				return true;
 			return false;
 		}
@@ -235,6 +244,30 @@ namespace x360ce.Engine.Data
 		public int GetRightMotorStrength() { return GetValue(RightMotorStrength, 100); }
 		public int GetForceOverall() { return GetValue(ForceOverall, 100); }
 
+		/// <summary>The force to send a motor, after the strengths this pad is set to.</summary>
+		/// <remarks>
+		/// A percentage of a percentage: the overall strength scales the pad, the motor strength scales
+		/// one motor within it. Nought at either point leaves that motor still, which is what turning a
+		/// strength down to nothing asks for.
+		///
+		/// This is for force sent straight to a controller's own motors, where nothing else applies the
+		/// strengths. Force this program drives through DirectInput is scaled by the device itself, as
+		/// effect gain, and must not be scaled twice.
+		/// </remarks>
+		/// <param name="motor">The force a game asked of one motor.</param>
+		/// <param name="leftMotor">True for the large motor, false for the small one.</param>
+		public byte ApplyForceStrength(byte motor, bool leftMotor)
+		{
+			var overall = LimitPercent(GetForceOverall());
+			var strength = LimitPercent(leftMotor ? GetLeftMotorStrength() : GetRightMotorStrength());
+			return (byte)Math.Round(motor * overall * strength / 10000d, MidpointRounding.AwayFromZero);
+		}
+
+		/// <summary>A percentage, kept inside nought and a hundred whatever was typed into it.</summary>
+		static int LimitPercent(int value)
+		{
+			return value < 0 ? 0 : value > 100 ? 100 : value;
+		}
 
 		public bool ShouldSerializePadSettingChecksum() { return !isDefault(PadSettingChecksum); }
 		public bool ShouldSerializeAxisToDPadDeadZone() { return !isDefault(AxisToDPadDeadZone, "256"); }
@@ -254,6 +287,8 @@ namespace x360ce.Engine.Data
 		public bool ShouldSerializeDPadUp() { return !isDefault(DPadUp); }
 		public bool ShouldSerializeForceEnable() { return !isDefault(ForceEnable); }
 		public bool ShouldSerializeForceOverall() { return !isDefault(ForceOverall, "100"); }
+		public bool ShouldSerializeForcePassThrough() { return !isDefault(ForcePassThrough); }
+		public bool ShouldSerializeForcePassThroughIndex() { return !isDefault(ForcePassThroughIndex); }
 		public bool ShouldSerializeForceSwapMotor() { return !isDefault(ForceSwapMotor); }
 		public bool ShouldSerializeForceType() { return !isDefault(ForceType); }
 		public bool ShouldSerializeGamePadType() { return !isDefault(GamePadType); }

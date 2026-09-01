@@ -24,7 +24,7 @@ namespace x360ce.Tests
 		{
 			// The case a person actually hits: their controller is plugged in and mapped, and no virtual
 			// controller was made. The words have to name which half is missing.
-			var text = MainForm.ControllerStateHint(1, true, false, true);
+			var text = MainForm.ControllerStateHint(1, true, false, false, true);
 			StringAssert.Contains(text, "Controller 1");
 			StringAssert.Contains(text, "no virtual controller",
 				"The one state a person needs explaining is the one where their device works and the " +
@@ -32,16 +32,22 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("devices"), TestCategory("critical")]
-		[Description("Each of the four states says something different")]
+		[Description("Each state says something different")]
 		public void Each_of_the_four_states_says_something_different()
 		{
-			// Four lights, four meanings. Two of them reading the same would leave the person guessing
-			// which one they are looking at, which is the position the colour alone already puts them in.
-			var both = MainForm.ControllerStateHint(1, true, true, true);
-			var deviceOnly = MainForm.ControllerStateHint(1, true, false, true);
-			var virtualOnly = MainForm.ControllerStateHint(1, false, true, true);
-			var neither = MainForm.ControllerStateHint(1, false, false, true);
-			var all = new[] { both, deviceOnly, virtualOnly, neither };
+			// Fewer lights than states, on purpose: a real controller in the place is the same colour
+			// as our own with nothing driving it, because to a game it is the same fact. The words are
+			// what tells them apart, so two of them reading the same would leave the person exactly
+			// where the colour alone already leaves them.
+			var both = MainForm.ControllerStateHint(1, true, true, true, true);
+			var deviceOnly = MainForm.ControllerStateHint(1, true, false, false, true);
+			var virtualOnly = MainForm.ControllerStateHint(1, false, true, true, true);
+			var neither = MainForm.ControllerStateHint(1, false, false, false, true);
+			// A real controller holding the place is its own state in both halves of the table: with a
+			// device mapped it is the worst state there is, and with none it is simply not ours.
+			var realTookIt = MainForm.ControllerStateHint(1, true, true, false, true);
+			var realOnly = MainForm.ControllerStateHint(1, false, true, false, true);
+			var all = new[] { both, deviceOnly, virtualOnly, neither, realTookIt, realOnly };
 			for (var i = 0; i < all.Length; i++)
 				for (var j = i + 1; j < all.Length; j++)
 					Assert.AreNotEqual(all[i], all[j],
@@ -55,7 +61,7 @@ namespace x360ce.Tests
 			// Four tabs, four lights. A message that does not say which one it is about is no use on the
 			// tab beside three others.
 			for (var place = 1; place <= 4; place++)
-				StringAssert.Contains(MainForm.ControllerStateHint(place, true, false, true),
+				StringAssert.Contains(MainForm.ControllerStateHint(place, true, false, false, true),
 					"Controller " + place);
 		}
 

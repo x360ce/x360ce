@@ -89,6 +89,8 @@
           <Property Name="LeftTriggerAntiDeadZone" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="LeftTriggerLinear" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="PassThrough" Type="varchar" MaxLength="16" Nullable="false" />
+          <Property Name="ForcePassThrough" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="ForcePassThroughIndex" Type="varchar" MaxLength="1" Nullable="false" />
           <Property Name="RightMotorPeriod" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightMotorStrength" Type="varchar" MaxLength="16" Nullable="false" />
           <Property Name="RightMotorDirection" Type="varchar" MaxLength="16" Nullable="false" />
@@ -430,6 +432,8 @@
 					<Property Type="String" Name="LeftTrigger" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="LeftTriggerDeadZone" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="PassThrough" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ForcePassThrough" Nullable="false" MaxLength="1" FixedLength="false" Unicode="false" />
+					<Property Type="String" Name="ForcePassThroughIndex" Nullable="false" MaxLength="1" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="RightMotorPeriod" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="RightShoulder" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
 					<Property Type="String" Name="RightThumbAntiDeadZoneX" Nullable="false" MaxLength="16" FixedLength="false" Unicode="false" />
@@ -792,6 +796,8 @@
 								<ScalarProperty Name="RightShoulder" ColumnName="RightShoulder" />
 								<ScalarProperty Name="RightMotorPeriod" ColumnName="RightMotorPeriod" />
 								<ScalarProperty Name="PassThrough" ColumnName="PassThrough" />
+								<ScalarProperty Name="ForcePassThrough" ColumnName="ForcePassThrough" />
+								<ScalarProperty Name="ForcePassThroughIndex" ColumnName="ForcePassThroughIndex" />
 								<ScalarProperty Name="LeftTriggerDeadZone" ColumnName="LeftTriggerDeadZone" />
 								<ScalarProperty Name="LeftTrigger" ColumnName="LeftTrigger" />
 								<ScalarProperty Name="LeftThumbUp" ColumnName="LeftThumbUp" />
