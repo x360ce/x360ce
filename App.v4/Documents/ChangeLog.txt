@@ -1,4 +1,4 @@
-﻿## [4.19.19.0] - 2026-08-30
+﻿## [4.20.43.0] - 2026-09-01
 
 - Fixed: A controller tab showed a red light while its controller was working, whenever a real controller was plugged in.
 - Fixed: A controller tab whose XInput place a real controller was holding showed no light, as though the place were empty.
@@ -10,18 +10,6 @@
 - Fixed: An emulated controller taken away went on claiming its XInput place, so two controllers could be shown holding one place.
 - Fixed: A controller tab showed a green light while its emulated controller was in a different place than the one being read.
 - Fixed: A controller that could not be created reported a second fault about clearing up after it.
-- Fixed: Turning off the XInput reading lit every controller tab red, as though the emulated controller had gone.
-- Fixed: Controllers were read slower while the window was open.
-- Fixed: Closing the program could end it with an error instead.
-- Fixed: Unplugging two controllers at once removed the wrong one, or closed the program.
-- Fixed: Pointing at a list while a row was being removed closed the program.
-- Fixed: Changing the game while a list was updating closed the program.
-- Fixed: Force feedback closed the program on games that do not use a virtual controller.
-- Fixed: Windows refusing to open a folder closed the program.
-- Fixed: Controllers were added to the list in the reverse order they were found.
-- Fixed: Direct Input tab hid the slider and point-of-view lists behind the axis list.
-- Fixed: Direct Input tab hid its identifier and count fields behind the wider boxes.
-- Fixed: Force feedback did nothing on games that do not use a virtual controller.
 - Fixed: The Trigger name did not turn green while a trigger was held down.
 - Fixed: Putting controllers in order gave each tab another tab's controller, so the order came out right and every tab pointed at the wrong one.
 - Fixed: A controller switched off while putting them in order was not noticed until something else made the lists read again.
@@ -43,6 +31,27 @@
 - Changed: A controller tab light is drawn in two halves: your device on the left, the emulated controller on the right, so it shows which half is missing.
 - Changed: The right half of a controller tab light reddens the more that is wrong at once, so the tab most in need of attention stands out.
 - Changed: A controller tab turns orange when its controller sits in a different XInput place than the tab number, and says which.
+- Added: Windows 10 and later are supplied virtual controller driver 1.21.442.0, the last one its authors made. Older Windows keeps 1.16.112.0, which is the last that works there.
+- Added: Options shows the installed virtual controller driver version and the one supplied with this program.
+- Added: Force Feedback Pass Through sends a game's rumble on to a real controller, which an emulated one cannot feel.
+- Added: The Force Feedback Test sliders now drive the same path a game uses, including pass through.
+- Added: The device list now names every XInput place each device reaches, including through the controllers it is mapped to.
+- Added: XInput Devices can now be put in a different order, not only shown in the one they are in.
+
+## [4.19.17.0] - 2026-08-29
+
+- Fixed: Turning off the XInput reading lit every controller tab red, as though the emulated controller had gone.
+- Fixed: Controllers were read slower while the window was open.
+- Fixed: Closing the program could end it with an error instead.
+- Fixed: Unplugging two controllers at once removed the wrong one, or closed the program.
+- Fixed: Pointing at a list while a row was being removed closed the program.
+- Fixed: Changing the game while a list was updating closed the program.
+- Fixed: Force feedback closed the program on games that do not use a virtual controller.
+- Fixed: Windows refusing to open a folder closed the program.
+- Fixed: Controllers were added to the list in the reverse order they were found.
+- Fixed: Direct Input tab hid the slider and point-of-view lists behind the axis list.
+- Fixed: Direct Input tab hid its identifier and count fields behind the wider boxes.
+- Fixed: Force feedback did nothing on games that do not use a virtual controller.
 - Changed: Get XInput State is now Show XInput State, which is what it does.
 - Changed: Status bar readings hold their place instead of sliding as numbers change.
 - Changed: A virtual controller failure now says which failure it was.
@@ -51,12 +60,6 @@
 - Changed: A full virtual controller bus is no longer reported as a fault.
 - Changed: Direct Input tab arranges itself as the window is resized or the display is scaled.
 - Changed: Every input has a name that screen readers and automation tools can read.
-- Added: Windows 10 and later are supplied virtual controller driver 1.21.442.0, the last one its authors made. Older Windows keeps 1.16.112.0, which is the last that works there.
-- Added: Options shows the installed virtual controller driver version and the one supplied with this program.
-- Added: Force Feedback Pass Through sends a game's rumble on to a real controller, which an emulated one cannot feel.
-- Added: The Force Feedback Test sliders now drive the same path a game uses, including pass through.
-- Added: The device list now names every XInput place each device reaches, including through the controllers it is mapped to.
-- Added: XInput Devices can now be put in a different order, not only shown in the one they are in.
 - Added: Help page explains what the light on each controller tab means.
 - Added: Window opens where you left it, on the screen you left it on.
 - Added: Program can write out a description of every part of its interface.
