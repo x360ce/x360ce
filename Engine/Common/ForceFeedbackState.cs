@@ -36,10 +36,14 @@ namespace x360ce.Engine
             return p;
         }
 
+        // Effects this program made on the device are held here by reference. The device's own
+        // list of created effects is shared by all three, so a position in it names nothing.
+
         // Left
 
         DeviceObjectItem actuatorL;
         EffectParameters paramsL;
+        Effect effectL;
         public PeriodicForce PeriodicForceL;
         public ConstantForce ConstantForceL;
 
@@ -47,8 +51,15 @@ namespace x360ce.Engine
 
         DeviceObjectItem actuatorR;
         EffectParameters paramsR;
+        Effect effectR;
         public PeriodicForce PeriodicForceR;
         public ConstantForce ConstantForceR;
+
+        // Centering spring, on the same actuator as the left motor.
+
+        EffectParameters paramsS;
+        Effect effectS;
+        string old_SpringStrength;
 
         #region Force Feedback
 
@@ -138,20 +149,14 @@ namespace x360ce.Engine
 			// Return if force feedback actuators not found.
 			if (actuatorL == null)
                 return false;
-            Effect effectL = null;
-            Effect effectR = null;
 
-			// If device already have effects then...
-			if (device.CreatedEffects.Count > 0)
-			{
-				effectL = device.CreatedEffects[0];
-				effectL.Download();
-			}
-			if (device.CreatedEffects.Count > 1)
-			{
-				effectR = device.CreatedEffects[1];
-				effectL.Download();
-			}
+			// A new state on a device still carrying effects from an earlier one starts clean, so
+			// the effects it makes are the only ones the device holds.
+			if (effectL == null && effectR == null && effectS == null)
+				DisposeDeviceEffects(device);
+			effectL?.Download();
+			effectR?.Download();
+			effectS?.Download();
 
 			// Effect type changed.
 			bool forceChanged =	Changed(ref old_ForceType, ps.ForceType);
@@ -184,10 +189,10 @@ namespace x360ce.Engine
                 }
             }
 
-            // If device already do not have effects then.
-            if (paramsL != null && device.CreatedEffects.Count < 1)
+            // If the effects this state made are gone then they are made again.
+            if (paramsL != null && effectL == null)
                 forceChanged = true;
-            if (paramsR != null && device.CreatedEffects.Count < 2)
+            if (paramsR != null && effectR == null)
                 forceChanged = true;
 
             // Tells which effect parameters to modify.
@@ -375,7 +380,76 @@ namespace x360ce.Engine
             }
             if (flagsR != EffectParameterFlags.None)
                 SetParamaters(effectR, paramsR, flagsR);
+
+            var springChanged = Changed(ref old_SpringStrength, ps.ForceSpringStrength);
+            if (motorsChanged || springChanged || (paramsS != null && effectS == null))
+                SetSpring(device, ps, motorsChanged);
             return true;
+        }
+
+        /// <summary>Holds a wheel at its centre with a spring the game never asked for.</summary>
+        /// <remarks>
+        /// A game made for a gamepad sends rumble and nothing else, so a wheel driven from that
+        /// rumble has no force at all between bumps and turns freely. This is a condition effect:
+        /// the device itself pushes back in proportion to how far the wheel is from centre, so once
+        /// it is downloaded nothing here runs per poll. It is built once, changed only when the
+        /// setting changes, and taken down when the strength is nought.
+        /// </remarks>
+        /// <param name="rebuild">True when the actuator it sits on may have changed.</param>
+        void SetSpring(Joystick device, PadSetting ps, bool rebuild)
+        {
+            var strength = Math.Min(ps.GetForceSpringStrength(), 100);
+            if (strength <= 0 || rebuild)
+            {
+                if (effectS != null)
+                {
+                    effectS.Stop();
+                    effectS.Dispose();
+                    effectS = null;
+                    paramsS = null;
+                }
+                if (strength <= 0)
+                    return;
+            }
+            var coefficient = ConvertHelper.ConvertRange(0, 100, 0, DI_FFNOMINALMAX, strength);
+            var conditions = new ConditionSet();
+            conditions.Conditions = new Condition[]
+            {
+                new Condition
+                {
+                    Offset = 0,
+                    PositiveCoefficient = coefficient,
+                    NegativeCoefficient = coefficient,
+                    PositiveSaturation = DI_FFNOMINALMAX,
+                    NegativeSaturation = DI_FFNOMINALMAX,
+                    DeadBand = 0,
+                }
+            };
+            if (effectS == null)
+            {
+                paramsS = GetParameters();
+                paramsS.Axes = new int[1] { actuatorL.ObjectId };
+                paramsS.Directions = new int[1] { 0 };
+                paramsS.Gain = DI_FFNOMINALMAX;
+                paramsS.Parameters = conditions;
+                effectS = new Effect(device, EffectGuid.Spring, paramsS);
+            }
+            else
+            {
+                paramsS.Parameters = conditions;
+            }
+            SetParamaters(effectS, paramsS, EffectParameterFlags.TypeSpecificParameters);
+        }
+
+        /// <summary>Takes down every effect on the device, whichever state made it.</summary>
+        static void DisposeDeviceEffects(Joystick device)
+        {
+            foreach (var effect in device.CreatedEffects.ToArray())
+            {
+                if (effect.Status == EffectStatus.Playing)
+                    effect.Stop();
+                effect.Dispose();
+            }
         }
 
         void SetParamaters(Effect effect, EffectParameters parameters, EffectParameterFlags flags)
@@ -426,7 +500,8 @@ namespace x360ce.Engine
             old_RightStrength != ps.RightMotorStrength ||
             old_LeftDirection != ps.LeftMotorDirection ||
            old_RightDirection != ps.RightMotorDirection ||
-           old_OveralStrength != ps.ForceOverall;
+           old_OveralStrength != ps.ForceOverall ||
+           old_SpringStrength != ps.ForceSpringStrength;
         }
 
 

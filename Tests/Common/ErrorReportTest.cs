@@ -4,6 +4,7 @@ using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -150,6 +151,80 @@ namespace x360ce.Tests
 					"The details area stayed " + before + " pixels tall when the window grew, " +
 					"which is the fixed-size fault the Windows Forms rewrite removed.");
 			});
+		}
+
+		[TestMethod, TestCategory("diagnostics"), TestCategory("ui-interactive")]
+		[Description("With no report to choose there is nothing to send and no greeting to send it with")]
+		public void Nothing_is_sent_while_no_report_is_chosen()
+		{
+			// Three of the reports received about 4.20.43.0 were a greeting saying the details were
+			// attached below, and nothing below it: the greeting had been written into the blank page
+			// shown when there is no report, and Send was live.
+			WithReports(0, (form, control) =>
+			{
+				var send = Descendants(control).OfType<Button>().First(x => x.Name == "SendErrorButton");
+				var browser = Descendants(control).OfType<WebBrowser>().First();
+				PumpUntil(() => browser.ReadyState == WebBrowserReadyState.Complete);
+				Assert.IsFalse(send.Enabled, "Send is live with no report to choose.");
+				Assert.IsTrue(string.IsNullOrWhiteSpace(control.GetBody()),
+					"The blank page carries text, which is what was mailed as a report: " + control.GetBody());
+			});
+		}
+
+		[TestMethod, TestCategory("diagnostics"), TestCategory("ui-interactive")]
+		[Description("One click sends one report")]
+		public void Send_goes_down_after_one_click()
+		{
+			// A second click while "Sending..." showed queued the same report again. Counted by the
+			// time of the crash, a third of the reports received were copies of another.
+			WithReports(1, (form, control) =>
+			{
+				// The hosting application sets the address; a bare control has none to send to.
+				control.SupportEmail = "support@example.test";
+				var send = Descendants(control).OfType<Button>().First(x => x.Name == "SendErrorButton");
+				PumpUntil(() => !string.IsNullOrWhiteSpace(control.GetBody()));
+				Assert.IsTrue(send.Enabled, "Send is not live with a report chosen.");
+				var sent = 0;
+				control.SendMessages += (s, e) => sent += e.Data.Count;
+				send.PerformClick();
+				send.PerformClick();
+				Assert.AreEqual(1, sent, "Two clicks sent " + sent + " report(s).");
+				Assert.IsFalse(send.Enabled, "Send is still live after sending.");
+			});
+		}
+
+		/// <summary>Shows the control over a folder holding the given number of reports, in place of the real one.</summary>
+		static void WithReports(int reports, Action<Form, ErrorReportUserControl> assert)
+		{
+			var folder = Path.Combine(Path.GetTempPath(), "x360ce-report-test-" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(folder);
+			for (var i = 0; i < reports; i++)
+				File.WriteAllText(Path.Combine(folder, "FCE_TestException_00000000_20260904_00000" + i + ".000000.htm"),
+					"<html><body><p>Report " + i + "</p></body></html>");
+			var helper = JocysCom.ClassLibrary.Runtime.LogHelper.Current;
+			var previous = helper.OverrideLogFolder;
+			helper.OverrideLogFolder = folder;
+			try
+			{
+				WithControl(assert);
+			}
+			finally
+			{
+				helper.OverrideLogFolder = previous;
+				Directory.Delete(folder, true);
+			}
+		}
+
+		/// <summary>Runs the message loop until the condition holds, or gives up after a while.</summary>
+		static void PumpUntil(Func<bool> condition)
+		{
+			var until = DateTime.Now.AddSeconds(15);
+			while (!condition() && DateTime.Now < until)
+			{
+				Application.DoEvents();
+				Thread.Sleep(50);
+			}
+			Application.DoEvents();
 		}
 
 		static System.Collections.Generic.IEnumerable<Control> Descendants(Control root)

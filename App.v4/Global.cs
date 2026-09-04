@@ -46,7 +46,10 @@ namespace x360ce.App
 
 		private static void WindowHook_OnActivate(object sender, EventArgs<Process> e)
 		{
-			var process = e.Data;
+			// The window in front keeps changing while this program shuts down, and each change used
+			// to select a game into controls that were already being disposed.
+			if (Program.IsClosing)
+				return;
 			SelectOpenGame();
 		}
 
