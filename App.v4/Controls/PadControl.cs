@@ -297,6 +297,7 @@ namespace x360ce.App.Controls
 				{
 					ForceTypeComboBox,
 					ForceOverallTrackBar,
+					ForceSpringStrengthTrackBar,
 					ForceSwapMotorCheckBox,
 					LeftMotorDirectionComboBox,
 					LeftMotorPeriodTrackBar,
@@ -787,6 +788,7 @@ namespace x360ce.App.Controls
 			AddMap(() => SettingName.ForceType, ForceTypeComboBox);
 			AddMap(() => SettingName.ForceSwapMotor, ForceSwapMotorCheckBox);
 			AddMap(() => SettingName.ForceOverall, ForceOverallTrackBar);
+			AddMap(() => SettingName.ForceSpringStrength, ForceSpringStrengthTrackBar);
 			AddMap(() => SettingName.LeftMotorDirection, LeftMotorDirectionComboBox);
 			AddMap(() => SettingName.LeftMotorStrength, LeftMotorStrengthTrackBar);
 			AddMap(() => SettingName.LeftMotorPeriod, LeftMotorPeriodTrackBar);
@@ -1096,6 +1098,12 @@ namespace x360ce.App.Controls
 		{
 			TrackBar control = (TrackBar)sender;
 			ForceOverallTextBox.Text = string.Format("{0} % ", control.Value);
+		}
+
+		void ForceSpringStrengthTrackBar_ValueChanged(object sender, EventArgs e)
+		{
+			TrackBar control = (TrackBar)sender;
+			ForceSpringStrengthTextBox.Text = string.Format("{0} % ", control.Value);
 		}
 
 		void MotorTrackBar_ValueChanged(object sender, EventArgs e)

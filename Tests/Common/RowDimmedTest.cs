@@ -3,6 +3,7 @@
 using JocysCom.ClassLibrary.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
@@ -83,6 +84,43 @@ namespace x360ce.Tests
 					Assert.AreEqual(present, returned,
 						"The row stayed dim after its device came back, which is what a person sees as " +
 						"a connected controller greyed out.");
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("devices"), TestCategory("critical")]
+		[Description("A grid whose list shrank while it was drawing does not fail on the rows left over")]
+		public void A_grid_survives_its_list_shrinking_under_it()
+		{
+			// The grid paints from the rows it last built, and the list behind them can be shorter by
+			// the time the paint arrives: a game removed while the list was being drawn. Judging the
+			// leftover row closed the program from the games list, and it was over half of all
+			// reports received about 4.20.43.0.
+			OnUiThread(() =>
+			{
+				var items = new List<Row>
+				{
+					new Row { Name = "A", IsOnline = true },
+					new Row { Name = "B", IsOnline = true },
+					new Row { Name = "C", IsOnline = true },
+				};
+				using (var form = new Form { ClientSize = new Size(400, 200) })
+				using (var grid = new DataGridView { Dock = DockStyle.Fill, DataSource = items })
+				{
+					ControlsHelper.ApplyBorderStyle(grid);
+					form.Controls.Add(grid);
+					form.Show();
+					Application.DoEvents();
+					Assert.AreEqual(3, grid.Rows.Count, "The grid did not build its rows, so this proves nothing.");
+					// A plain list says nothing when it changes, which is exactly the state a grid is
+					// in for the moment between a change and the notice of it.
+					items.RemoveAt(2);
+					// Paint every row the grid still has, including the one the list no longer does.
+					grid.Refresh();
+					Application.DoEvents();
+					using (var bitmap = new Bitmap(grid.Width, grid.Height))
+						grid.DrawToBitmap(bitmap, new Rectangle(0, 0, grid.Width, grid.Height));
+					form.Close();
 				}
 			});
 		}
