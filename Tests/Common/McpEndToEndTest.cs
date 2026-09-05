@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Web.Script.Serialization;
 using x360ce.App;
 using x360ce.App.Mcp;
@@ -35,11 +36,15 @@ namespace x360ce.Tests
 			o.AiAccess = AiAccess.Configure;
 			o.EnsureAiAccessToken();
 			SettingsManager.OptionsData.Save();
-			var process = Process.Start(new ProcessStartInfo(exe) { WorkingDirectory = Path.GetDirectoryName(exe) });
+			Process process = null;
 			try
 			{
-				Ui.WaitForMainWindow(process, TimeSpan.FromSeconds(40));
+				// Started the way the switches start it: nothing answers, so the client launches the
+				// program and waits for the door, ignoring its own process, which carries the same name.
 				McpClient.EnsureRunning(o.AiAccessPort, o.AiAccessToken, exe);
+				var self = Process.GetCurrentProcess().Id;
+				process = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(exe)).FirstOrDefault(p => p.Id != self);
+				Assert.IsNotNull(process, "The client said the program answers, but no such process is running.");
 				StringAssert.Contains(Post("{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}"), "ui_set");
 				// The path is read from the tree, the way an assistant finds it, not written here.
 				var tree = (Dictionary<string, object>)Json.DeserializeObject(Text(Post(Call(2, "ui_read", "{}"))));
@@ -51,7 +56,8 @@ namespace x360ce.Tests
 			}
 			finally
 			{
-				Ui.CloseApp(process);
+				if (process != null)
+					Ui.CloseApp(process);
 				o.AiAccess = previous;
 				SettingsManager.OptionsData.Save();
 			}

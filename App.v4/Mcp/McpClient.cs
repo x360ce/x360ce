@@ -46,8 +46,10 @@ namespace x360ce.App.Mcp
 		{
 			if (Answers(port, token))
 				return;
+			// The switch is the same executable, so its own process is not the copy being looked for.
 			var name = Path.GetFileNameWithoutExtension(exePath);
-			if (Process.GetProcessesByName(name).Length > 0)
+			var self = Process.GetCurrentProcess().Id;
+			if (Process.GetProcessesByName(name).Any(p => p.Id != self))
 				throw new InvalidOperationException("x360ce is running but does not answer on port " + port + ". Open it and check the Issues tab.");
 			Process.Start(new ProcessStartInfo(exePath) { WorkingDirectory = Path.GetDirectoryName(exePath) });
 			var until = DateTime.Now.AddSeconds(60);
