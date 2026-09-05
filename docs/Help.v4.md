@@ -251,3 +251,17 @@ A button is 0 or 1, so ordinary arithmetic already does the work of and, or and 
 - Anything that is not a real number, such as dividing by zero, becomes 0.
 - A decimal point is always a dot, whatever language Windows is set to.
 - Older versions of this program ignore expressions, so a configuration using one loses that mapping when it is opened in them.
+
+## AI assistant access
+
+Lets an AI assistant that speaks the Model Context Protocol, or a script, inspect and operate this
+program. It is off until you choose a level on the Options page. **Read**: read the interface, the
+devices and the help; changes nothing. **Configure**: everything a person does on the tabs; Windows
+may still ask, as it asks a person, when HID Guardian is set to configure automatically.
+**Administer**: also the actions that install or remove drivers and switch on debug mode. The
+level, the port and the token are changed here and only here; an assistant cannot change them.
+
+Copy the registration snippet from the Options page into your assistant's MCP settings; it launches
+`x360ce.exe /Mcp`, which talks to the running program. From a command prompt, `x360ce.exe /Ai`
+lists the tools and `x360ce.exe /Ai=devices_list` calls one; a batch file that needs the exit code
+runs `start /wait x360ce.exe /Ai=...`. Regenerate the token to revoke access.

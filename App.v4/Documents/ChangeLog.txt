@@ -1,4 +1,8 @@
-﻿## [4.20.43.0] - 2026-09-01
+﻿## [4.21.7.0] - 2026-09-05
+
+- Added: AI assistant access on the Options page lets an assistant or a script read or operate the program. Off by default.
+
+## [4.20.43.0] - 2026-09-01
 
 - Fixed: A controller tab showed a red light while its controller was working, whenever a real controller was plugged in.
 - Fixed: A controller tab whose XInput place a real controller was holding showed no light, as though the place were empty.

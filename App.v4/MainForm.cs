@@ -303,6 +303,9 @@ namespace x360ce.App
 				case nameof(Options.ShowTestButton):
 					TestButton.Visible = o.ShowTestButton;
 					break;
+				case nameof(Options.AiAccess):
+					UpdateStatusAiAccessLabel();
+					break;
 			}
 		}
 
@@ -969,6 +972,7 @@ namespace x360ce.App
 			StatusIsAdminLabel.Text = WinAPI.IsVista
 				? string.Format("Elevated: {0}", WinAPI.IsElevated())
 				: "";
+			UpdateStatusAiAccessLabel();
 			CheckEncoding(SettingsManager.TmpFileName);
 			CheckEncoding(SettingsManager.IniFileName);
 			// Show status values.
@@ -2010,6 +2014,27 @@ namespace x360ce.App
 				ErrorFilesCount = dir.GetFiles(LogHelper.Current.FilePattern).Count();
 				UpdateStatusErrorsLabel();
 			}));
+		}
+
+		/// <summary>The level in the status bar. The name and purpose come from UiText; only what changes with the level is set here.</summary>
+		void UpdateStatusAiAccessLabel()
+		{
+			var level = SettingsManager.Options.AiAccess;
+			var word = level.ToString().ToLowerInvariant();
+			StatusAiAccessLabel.Text = "AI: " + word;
+			var colour = level == AiAccess.Off ? System.Drawing.SystemColors.ControlDark : System.Drawing.SystemColors.ControlText;
+			StatusAiAccessLabel.ForeColor = colour;
+			StatusAiAccessLabel.LinkColor = colour;
+			StatusAiAccessLabel.ActiveLinkColor = colour;
+			StatusAiAccessLabel.AccessibleName = level == AiAccess.Off
+				? "AI assistant access is off"
+				: "AI assistant access: an assistant may " + word + " this program";
+			StatusAiAccessLabel.AccessibleRole = AccessibleRole.PushButton;
+		}
+
+		void StatusAiAccessLabel_Click(object sender, EventArgs e)
+		{
+			MainTabControl.SelectedTab = OptionsTabPage;
 		}
 
 		private void UpdateStatusErrorsLabel()

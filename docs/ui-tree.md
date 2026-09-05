@@ -75,7 +75,6 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Value]     │   │   ├── Instance identifier                                             # Device instance GUID.
 [Value]     │   │   ├── Device type                                                     # What kind of device Windows considers this to be.
 [Value]     │   │   ├── Number of buttons                                               # How many buttons the device has.
-[List]      │   │   ├── Map to                                                          # Index of the PAD which this controller will map to. Auto = 0 or PAD Index 1-4.
 [Grid]      │   │   └── Button values reported by the device                            # Which buttons are pressed right now.
 [Control]   │   ├── MapExpressionToggle                                                 # Writes the Left Trigger mapping as a formula instead of choosing one control.
 [Control]   │   ├── PadControl                                                          # Everything about one emulated Xbox controller: what works it, and how.
@@ -186,7 +185,9 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [CheckBox]  │   │   │   │   │   ├── Enable                                              # Use Force Feedback. 0 = OFF, 1 = ON.
 [CheckBox]  │   │   │   │   │   ├── Swap Motors                                         # Swap motor. 0 = OFF, 1 = ON.
 [List]      │   │   │   │   │   ├── Effect type                                         # Force Feedback type. 0 = Constant, 1 = Periodic Sine, 2 = Periodic Sawtooth
-[Slider]    │   │   │   │   │   └── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
+[Slider]    │   │   │   │   │   ├── Overall strength 0..100                             # Strength of force feedback. Range is 0 to 100. Default is 100.
+[CheckBox]  │   │   │   │   │   ├── Pass Through                                        # Send the force feedback a game asks for on to a real XInput controller, which an emulated one cannot feel. 0 = OFF, 1 = ON.
+[List]      │   │   │   │   │   └── Pass through to                                     # Which XInput place the force feedback is sent to. 0 = work it out, 1 to 4 = that XInput place.
 [Section]   │   │   │   │   ├── Left motor                                              # The big, slow motor, which produces the heavy rumble.
 [Value]     │   │   │   │   │   ├── Left motor strength                                 # How hard this motor runs when the game asks for vibration.
 [Value]     │   │   │   │   │   ├── Left motor period                                   # How long one pulse lasts, when the effect is repeated rather than held.
@@ -233,6 +234,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Status]    │   │   ├── Suspended events (hidden)                                       # Setting changes held back while a page is being filled in.
 [Status]    │   │   ├── Saving (hidden)                                                 # Shown while settings are being written to disk.
 [Status]    │   │   ├── Administrator                                                   # Whether the program is running with Administrator rights.
+[Status]    │   │   ├── AI assistant access is off                                      # Whether an assistant may read or change this program right now. Opens the Options tab.
 [Status]    │   │   ├── No error reports                                                # Opens the error report window
 [Status]    │   │   └── XInput library                                                  # Which XInput library the program loaded, and its version.
 [Label]     │   ├── Help subject                                                        # Name of whatever the mouse is over.
@@ -324,13 +326,20 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [CheckBox]  │       │           │   │   ├── Allow remote controller 4                   # Lets a remote computer work controller 4.
 [Number]    │       │           │   │   ├── Remote port 1024..49151                     # Network port listened on for a remote controller.
 [CheckBox]  │       │           │   │   └── Enabled                                     # Accepts controllers from another computer.
-[Section]   │       │           │   └── Virtual controller driver                       # The driver that presents the emulated controllers to Windows.
-[List]      │       │           │       ├── Polling rate                                # Virtual Controller update frequency.
-[Text]      │       │           │       ├── Driver version                              # Which version of the virtual controller driver is installed.
-[Button]    │       │           │       ├── Refresh                                     # Checks the driver again.
-[Button]    │       │           │       ├── Install                                     # Installs the virtual controller driver. Needs Administrator.
-[Button]    │       │           │       ├── Uninstall                                   # Removes the virtual controller driver. Needs Administrator.
-[Link]      │       │           │       └── Driver author                               # Opens the page the virtual controller driver comes from.
+[Section]   │       │           │   ├── Virtual controller driver                       # The driver that presents the emulated controllers to Windows.
+[List]      │       │           │   │   ├── Polling rate                                # Virtual Controller update frequency.
+[Text]      │       │           │   │   ├── Driver version                              # Which version of the virtual controller driver is installed.
+[Button]    │       │           │   │   ├── Refresh                                     # Checks the driver again.
+[Button]    │       │           │   │   ├── Install                                     # Installs the virtual controller driver. Needs Administrator.
+[Button]    │       │           │   │   ├── Uninstall                                   # Removes the virtual controller driver. Needs Administrator.
+[Link]      │       │           │   │   └── Driver author                               # Opens the page the virtual controller driver comes from.
+[Section]   │       │           │   └── AI assistant access                             # Lets an AI assistant or a script read or operate this program, at the level chosen here.
+[List]      │       │           │       ├── AI assistant access                         # AI assistant access: Off, Read, Configure or Administer.
+[Number]    │       │           │       ├── AI assistant port 1024..49151               # Local port the assistant connects to. Change it if another program holds it.
+[Value]     │       │           │       ├── AI assistant token                          # What a caller must present to be let in. Made by the program.
+[Button]    │       │           │       ├── Regenerate token                            # Makes a new token, so anything holding the old one is shut out.
+[Value]     │       │           │       ├── Registration snippet                        # Settings to paste into an assistant so it can reach this program.
+[Button]    │       │           │       └── Copy snippet                                # Copies the registration snippet to the clipboard.
 [Tab]       │       │           ├── HID Hide                                            # Hides the real controller from games, so only the emulated one is seen.
 [Section]   │       │           │   └── HID Hide                                        # Hides the real controller from games, so only the emulated one is seen.
 [Value]     │       │           │       ├── HID Hide state                              # Whether HID Hide is installed, and which version.
@@ -413,6 +422,13 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Section]   │       │           └── Action                                              # Undoes every change made to this game.
 [Button]    │       │               └── Reset to Default                                # Puts this game's settings back the way they started.
 [Tab]       │       ├── Devices                                                         # Every controller the program can see, whether mapped or not.
+[Group]     │       │   ├── (XInputDevicesPanel)
+[Grid]      │       │   │   ├── XInput devices                                          # Every emulated controller and the XInput place it holds, in the order games see them.
+[Toolbar]   │       │   │   └── Emulated controller actions                             # Buttons that act on the emulated controllers shown below.
+[Command]   │       │   │       ├── Move Up                                             # Moves the selected controller one place earlier.
+[Command]   │       │   │       ├── Move Down                                           # Moves the selected controller one place later.
+[Command]   │       │   │       ├── Apply                                               # Recreates the controllers in the order shown. Needs Administrator.
+[Command]   │       │   │       └── Refresh                                             # Reads the controllers again, for when one has arrived or left.
 [Group]     │       │   └── (DevicesPanel)                                              # Every controller the program can see.
 [Grid]      │       │       ├── Devices                                                 # Every controller the program can see. Unplugged ones are dimmed.
 [Toolbar]   │       │       └── Device actions                                          # Refreshes the list and works on the selected device.
@@ -452,7 +468,7 @@ Kinds: `Tab`, `Tabs`, `Section` and `Group` hold other elements. `Button`,
 [Tab]       │       │           └── License                                             # Terms this program is given under.
 [Text]      │       │               └── Licence text                                    # Terms this program is given under.
 [Tab]       │       └── Issues                                                          # Problems the program found, and what to do about each one.
-[Group]     │           └── Jocys.com X360 Controller Emulator 4.19.16 (Build: 2026-08-29) - Issues  # Problems the program found, and what to do about each one.
+[Group]     │           └── Jocys.com X360 Controller Emulator 4.21.7 (Build: 2026-09-05) - Issues  # Problems the program found, and what to do about each one.
 [Grid]      │               ├── Issues                                                  # Problems the program found, with what to do about each one.
 [Toolbar]   │               └── Issue actions                                           # Hides issues you have decided to live with.
 [Command]   │                   ├── Ignore All                                          # Stops reporting every issue listed.

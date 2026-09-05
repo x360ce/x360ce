@@ -71,6 +71,8 @@ namespace x360ce.App.UiTree
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
 			d["PadControl.ForceOverallTrackBar"] = new Text("Overall strength",
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
+			d["PadControl.ForcePassThroughIndexComboBox"] = new Text("Pass through to",
+				"Which XInput place receives the game's vibration when it is passed through.");
 			d["PadControl.InforTextBox"] = new Text("About force feedback",
 				"Explains what the settings on this page do.");
 			AddMotor(d, "Left", "LeftMotorGroupBox", "Left motor",

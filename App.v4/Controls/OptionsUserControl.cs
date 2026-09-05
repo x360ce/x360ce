@@ -20,6 +20,14 @@ namespace x360ce.App.Controls
 			Controls.OfType<ToolStrip>().ToList().ForEach(x => x.Font = Font);
 			LocationsToolStrip.Font = Font;
 			AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.HidGuardian.md");
+			AiAccessSnippetTextBox.Text = "{\"mcpServers\":{\"x360ce\":{\"command\":\"" + Application.ExecutablePath.Replace("\\", "\\\\") + "\",\"args\":[\"/Mcp\"]}}}";
+			AiAccessCopyButton.Click += (s, e) => Clipboard.SetText(AiAccessSnippetTextBox.Text);
+			AiAccessRegenerateButton.Click += (s, e) =>
+			{
+				SettingsManager.Options.RegenerateAiAccessToken();
+				Global.ApplyAiAccess();
+				AiAccessTokenTextBox.Text = SettingsManager.Options.AiAccessToken;
+			};
 #if DEBUG
 			// Install stays available in development builds so that the removal path can
 			// be tested. The confirmation dialog states that this is a development build.
@@ -141,6 +149,11 @@ namespace x360ce.App.Controls
 			SettingsManager.LoadAndMonitor(x => x.AlwaysOnTop, AlwaysOnTopCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.AllowOnlyOneCopy, AllowOnlyOneCopyCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.RemoteEnabled, RemoteEnabledCheckBox);
+			SettingsManager.LoadAndMonitor(x => x.AiAccess, AiAccessComboBox, Enum.GetValues(typeof(AiAccess)));
+			// LoadAndMonitor has no branch for a number box, and ValueChanged fires on every spin
+			// click, each of which would restart the listener; the value is taken when editing ends.
+			AiAccessPortNumericUpDown.Validated += (s, e) => SettingsManager.Options.AiAccessPort = (int)AiAccessPortNumericUpDown.Value;
+			AiAccessTokenTextBox.Text = SettingsManager.Options.AiAccessToken;
 			SettingsManager.LoadAndMonitor(x => x.EnableShowFormInfo, ShowFormInfoCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.ShowTestButton, ShowTestButtonCheckBox);
 			SettingsManager.LoadAndMonitor(x => x.UseDeviceBufferedData, UseDeviceBufferedDataCheckBox);
@@ -176,6 +189,10 @@ namespace x360ce.App.Controls
 					break;
 				case nameof(Options.EnableShowFormInfo):
 					InfoForm.MonitorEnabled = o.EnableShowFormInfo;
+					break;
+				case nameof(Options.AiAccess):
+					// Shows the token made when access is first switched on.
+					AiAccessTokenTextBox.Text = o.AiAccessToken;
 					break;
 				default:
 					break;
@@ -281,6 +298,8 @@ namespace x360ce.App.Controls
 			RemotePasswordTextBox.Text = o.RemotePassword;
 			if (o.RemotePort >= RemotePortNumericUpDown.Minimum && o.RemotePort <= RemotePortNumericUpDown.Maximum)
 				RemotePortNumericUpDown.Value = o.RemotePort;
+			if (o.AiAccessPort >= AiAccessPortNumericUpDown.Minimum && o.AiAccessPort <= AiAccessPortNumericUpDown.Maximum)
+				AiAccessPortNumericUpDown.Value = o.AiAccessPort;
 		}
 
 		private void OptionsData_Saving(object sender, EventArgs e)
