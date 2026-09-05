@@ -218,6 +218,37 @@ namespace x360ce.App
 		public bool RemoteEnabled { get { return _RemoteEnabled; } set { _RemoteEnabled = value; OnPropertyChanged(); } }
 		bool _RemoteEnabled;
 
+		// AI assistant access
+
+		[DefaultValue(AiAccess.Off), Description("AI assistant access: Off, Read, Configure or Administer.")]
+		public AiAccess AiAccess { get { return _AiAccess; } set { _AiAccess = value; OnPropertyChanged(); } }
+		AiAccess _AiAccess;
+
+		[DefaultValue(37360), Description("Local port the assistant connects to.")]
+		public int AiAccessPort { get { return _AiAccessPort; } set { _AiAccessPort = value; OnPropertyChanged(); } }
+		int _AiAccessPort = 37360;
+
+		[Description("Token a caller must present. Made by the program; regenerate to revoke.")]
+		public string AiAccessToken { get; set; }
+
+		/// <summary>Makes the token when there is none. True when it did.</summary>
+		public bool EnsureAiAccessToken()
+		{
+			if (!string.IsNullOrEmpty(AiAccessToken))
+				return false;
+			RegenerateAiAccessToken();
+			return true;
+		}
+
+		public string RegenerateAiAccessToken()
+		{
+			var bytes = new byte[32];
+			using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+				rng.GetBytes(bytes);
+			AiAccessToken = System.BitConverter.ToString(bytes).Replace("-", "").ToLowerInvariant();
+			return AiAccessToken;
+		}
+
 		// Performance Test
 
 		public bool TestEnabled { get; set; }
