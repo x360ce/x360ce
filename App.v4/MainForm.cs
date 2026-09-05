@@ -1052,7 +1052,7 @@ namespace x360ce.App
 			{
 				// Move this here so interface will load one second faster.
 				HelpInit = true;
-				AppHelper.LoadHelp(HelpRichTextBox, "Documents.Help.v4.md");
+				AppHelper.LoadHelp(HelpRichTextBox, AppHelper.HelpV4Resource);
 			}
 			else if (MainTabControl.SelectedTab == SettingsTabPage)
 			{
