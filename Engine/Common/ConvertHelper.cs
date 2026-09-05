@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
@@ -125,6 +125,53 @@ namespace x360ce.Engine
 			if (val < lowerDZ) return min;
 			if (val > upperDZ) return max;
 			return val;
+		}
+
+		/// <summary>
+		/// Applies a 2D circular/radial deadzone to thumb stick (X, Y) coordinates.
+		/// Rescales vector magnitude from [deadZone; max] to [0; max], then applies anti-deadzone and sensitivity curve.
+		/// </summary>
+		public static void ApplyRadialDeadZone(ref float x, ref float y, float deadZone, float antiDeadZone, float linear, float max = 32767f)
+		{
+			var mag = (float)Math.Sqrt(x * x + y * y);
+			if (mag <= deadZone || mag == 0f)
+			{
+				x = 0f;
+				y = 0f;
+				return;
+			}
+
+			// Normalized direction vector
+			var normX = x / mag;
+			var normY = y / mag;
+
+			// Rescale magnitude from [deadZone; max] to [0; max]
+			var clampedMag = Math.Min(mag, max);
+			var newMag = (clampedMag - deadZone) / (max - deadZone) * max;
+
+			// Apply anti-deadzone if specified
+			if (antiDeadZone > 0f && newMag > 0f)
+			{
+				newMag = antiDeadZone + (newMag / max) * (max - antiDeadZone);
+			}
+
+			// Apply sensitivity curve if specified (-100 to +100)
+			if (linear != 0f && newMag > 0f)
+			{
+				var valueF = (newMag - antiDeadZone) / (max - antiDeadZone);
+				var linearF = linear / 100f;
+				var lx = -valueF;
+				if (linearF < 0f) lx = 1f + lx;
+				var v = (float)Math.Sqrt(Math.Max(0f, 1f - lx * lx));
+				if (linearF < 0f) v = 1f - v;
+				valueF = valueF + (2f - v - valueF - 1f) * Math.Abs(linearF);
+				valueF = Math.Max(0f, Math.Min(1f, valueF));
+				newMag = antiDeadZone + valueF * (max - antiDeadZone);
+			}
+
+			newMag = Math.Min(newMag, max);
+			x = normX * newMag;
+			y = normY * newMag;
 		}
 
 	}

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -301,13 +301,31 @@ namespace x360ce.App
 				case "SharpDX":
 				case "SharpDX.DirectInput":
 				case "SharpDX.RawInput":
+				case "System.Resources.Extensions":
+				case "System.Memory":
+				case "System.Buffers":
+				case "System.Numerics.Vectors":
+				case "System.Runtime.CompilerServices.Unsafe":
 					sr = GetResourceStream(dllName + ".dll");
 					break;
 				default:
 					break;
 			}
 			if (sr == null)
+			{
+				try
+				{
+					var entry = Assembly.GetEntryAssembly();
+					if (entry != null && !string.IsNullOrEmpty(entry.Location))
+					{
+						var localDll = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(entry.Location), dllName + ".dll");
+						if (System.IO.File.Exists(localDll))
+							return Assembly.LoadFrom(localDll);
+					}
+				}
+				catch { }
 				return null;
+			}
 			var bytes = new byte[sr.Length];
 			sr.Read(bytes, 0, bytes.Length);
 			sr.Dispose();

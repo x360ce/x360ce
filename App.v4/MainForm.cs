@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.Configuration;
+using JocysCom.ClassLibrary.Configuration;
 using JocysCom.ClassLibrary.Controls;
 using JocysCom.ClassLibrary.IO;
 using JocysCom.ClassLibrary.Mail;
@@ -28,11 +28,14 @@ namespace x360ce.App
 	{
 		public MainForm()
 		{
+			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer, true);
+			DoubleBuffered = true;
 			AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			//AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			//AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			ControlsHelper.InitInvokeContext();
+			HardwareOptimizer.AutoOptimize();
 			// Disable some functionality in Visual Studio Interface design mode.
 			if (!IsDesignMode)
 			{
@@ -104,6 +107,17 @@ namespace x360ce.App
 			// Put the window back where it was left, before it is shown, so it does not appear in
 			// one place and jump to another.
 			o.WindowPosition?.LoadPosition(this);
+		}
+
+		protected override CreateParams CreateParams
+		{
+			get
+			{
+				var cp = base.CreateParams;
+				if (!IsDesignMode)
+					cp.ExStyle |= 0x02000000; // WS_EX_COMPOSITED: eliminates element pop-in and flicker
+				return cp;
+			}
 		}
 
 		/// <summary>Menu behind the icon in the notification area.</summary>
@@ -404,6 +418,19 @@ namespace x360ce.App
 			ShowProgramsTab(SettingsManager.Options.ShowProgramsTab);
 			ShowSettingsTab(SettingsManager.Options.ShowSettingsTab);
 			ShowDevicesTab(SettingsManager.Options.ShowDevicesTab);
+			// Pre-initialize issues icon and all 4 controller panels synchronously
+			// during load under form layout suspension so that the window renders
+			// 100% complete in a single instant frame without any pop-in or stutter.
+			InitIssuesIcon();
+			UpdateForm1();
+			UpdateForm2();
+			update1Enabled = false;
+			update2Enabled = false;
+			update3Enabled = false;
+			AllowDHelperStart = true;
+			Global.DHelper.Start();
+			// Auto-configure connected controllers for current games
+			HardwareOptimizer.AutoConfigureConnectedControllers();
 			// Start Timers.
 			UpdateTimer.Start();
 			JocysCom.ClassLibrary.Win32.NativeMethods.CleanSystemTray();
@@ -861,7 +888,8 @@ namespace x360ce.App
 					update1Enabled = false;
 					InitIssuesIcon();
 					UpdateForm1();
-					// Update 2 part will be enabled after all issues are checked.
+					// Enable UpdateForm2 immediately so the user doesn't wait for issue scans
+					update2Enabled = true;
 				}
 				if (update2Enabled.HasValue && update2Enabled.Value)
 				{
@@ -974,52 +1002,59 @@ namespace x360ce.App
 			MainStatusStrip.Visible = true;
 			// Update settings manager with [Options] section.
 			UpdateSettingsMap();
-			// Load PAD controls.
-			PadControls = new PadControl[4];
-			for (var i = 0; i < PadControls.Length; i++)
+			MainTabControl.SuspendLayout();
+			SuspendLayout();
+			try
 			{
-				var mapTo = (MapTo)(i + 1);
-				PadControls[i] = new Controls.PadControl(mapTo)
+				// Load PAD controls.
+				PadControls = new PadControl[4];
+				for (var i = 0; i < PadControls.Length; i++)
 				{
-					Name = string.Format("ControlPad{0}", (int)mapTo),
+					var mapTo = (MapTo)(i + 1);
+					PadControls[i] = new Controls.PadControl(mapTo)
+					{
+						Name = string.Format("ControlPad{0}", (int)mapTo),
+						Dock = DockStyle.Fill
+					};
+					ControlPages[i].Controls.Add(PadControls[i]);
+					PadControls[i].InitPadControl();
+					// Update settings manager with [Mappings] section.
+				}
+				SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
+				SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView);
+				SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView);
+				SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
+				// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
+				// Note: There must be no such sections in new config.
+				for (var i = 0; i < PadControls.Length; i++)
+				{
+					PadControls[i].UpdateSettingsMap();
+					PadControls[i].InitPadData();
+				}
+				// Initialize pre-sets. Execute only after name of cIniFile is set.
+				//SettingsDatabasePanel.InitPresets();
+				// Allow events after PAD control are loaded.
+				MainTabControl.SelectedIndexChanged += new System.EventHandler(MainTabControl_SelectedIndexChanged);
+				// Load about control.
+				ControlAbout = new AboutControl
+				{
 					Dock = DockStyle.Fill
 				};
-				ControlPages[i].Controls.Add(PadControls[i]);
-				PadControls[i].InitPadControl();
-				// Update settings manager with [Mappings] section.
+				AboutTabPage.Controls.Add(ControlAbout);
 			}
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD1, PadControls[0].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD2, PadControls[1].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD3, PadControls[2].MappedDevicesDataGridView);
-			SettingsManager.AddMap(SettingsManager.MappingsSection, () => SettingName.PAD4, PadControls[3].MappedDevicesDataGridView);
-			// Update settings manager with [PAD1], [PAD2], [PAD3], [PAD4] sections.
-			// Note: There must be no such sections in new config.
-			for (var i = 0; i < PadControls.Length; i++)
+			finally
 			{
-				PadControls[i].UpdateSettingsMap();
-				PadControls[i].InitPadData();
+				MainTabControl.ResumeLayout(true);
+				ResumeLayout(true);
 			}
-			// Initialize pre-sets. Execute only after name of cIniFile is set.
-			//SettingsDatabasePanel.InitPresets();
-			// Allow events after PAD control are loaded.
-			MainTabControl.SelectedIndexChanged += new System.EventHandler(MainTabControl_SelectedIndexChanged);
-			// Load about control.
-			ControlAbout = new AboutControl
-			{
-				Dock = DockStyle.Fill
-			};
-			AboutTabPage.Controls.Add(ControlAbout);
 
-			// Name and describe everything, now that every panel exists. This is what a screen
-			// reader announces, what an automation tool searches by, and what the exported
-			// navigation tree is built from.
-			UiTree.UiText.Apply(this);
-			// The tray menu hangs off the notification icon rather than off the window, so it is
-			// not reached by walking the window.
-			UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
-			// One call wires the header help for every control at once, from the same two
-			// properties, so what a screen reader announces and what the header shows agree.
-			UiTree.UiHelp.Attach(this);
+			// Defer accessibility/UI descriptions so the window displays immediately
+			ControlsHelper.BeginInvoke(() =>
+			{
+				UiTree.UiText.Apply(this);
+				UiTree.UiText.Apply(TrayContextMenuStrip.Items, typeof(MainForm));
+				UiTree.UiHelp.Attach(this);
+			});
 			// Start capture setting change events.
 			SettingsManager.Current.ResumeEvents();
 		}
@@ -1629,6 +1664,7 @@ namespace x360ce.App
 			x360ce.App.DInput.XInputPlaces.Invalidate();
 			XInputDevicesPanel.ReloadPlaces();
 			DevicesPanel.RefreshPlaces();
+			HardwareOptimizer.AutoConfigureConnectedControllers();
 		}
 
 		private bool UpdateCompletedBusy;

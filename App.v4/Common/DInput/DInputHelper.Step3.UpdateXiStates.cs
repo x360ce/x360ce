@@ -1,4 +1,5 @@
-﻿using SharpDX.XInput;
+using System;
+using SharpDX.XInput;
 using System.Linq;
 using x360ce.Engine;
 using x360ce.Engine.Data;
@@ -7,21 +8,22 @@ namespace x360ce.App.DInput
 {
 	public partial class DInputHelper
 	{
+		bool[] _dPadButtons = new bool[16];
+
 		/// <summary>
 		/// Convert DiStates to XInput states.
 		/// </summary>
 		void UpdateXiStates(UserGame game)
 		{
-			// Get mapped and enabled game settings.
-			var settings = SettingsManager.UserSettings.ItemsToArraySyncronized()
-			   // Get only settings mapped to the game.
-			   .Where(x => x.FileName == game?.FileName)
-			   // Get only mapped and enabled settings.
-			   .Where(x => x.MapTo > (int)MapTo.None && x.IsEnabled)
-			   .ToArray();
-			for (int i = 0; i < settings.Length; i++)
+			// Get mapped and enabled game settings directly without intermediate allocations.
+			var allSettings = SettingsManager.GetUserSettingsSnapshot();
+			for (int i = 0; i < allSettings.Length; i++)
 			{
-				var setting = settings[i];
+				var setting = allSettings[i];
+				if (setting == null || setting.MapTo <= (int)MapTo.None || !setting.IsEnabled)
+					continue;
+				if (game != null && string.Compare(setting.FileName, game.FileName, true) != 0)
+					continue;
 				var ud = SettingsManager.GetDevice(setting.InstanceGuid);
 				// If device was not found then continue.
 				if (ud == null)
@@ -58,12 +60,13 @@ namespace x360ce.App.DInput
 				// Contains 
 				//var gamepadUpdates = new List<KeyValue<GamepadKeyCode, int?>>();
 
-				// --------------------------------------------------------
-				// Convert DInput POV Hat value to D-PAD buttons.
-				// --------------------------------------------------------
-
-				// Create array to store 4 buttons for each POV 4 i.e. 16 buttons.
-				var dPadButtons = new bool[4 * diState.Povs.Length];
+				// Reuse buffer to store 4 buttons for each POV (up to 16 buttons).
+				var neededPovLen = 4 * diState.Povs.Length;
+				if (_dPadButtons == null || _dPadButtons.Length < neededPovLen)
+					_dPadButtons = new bool[neededPovLen];
+				else
+					Array.Clear(_dPadButtons, 0, neededPovLen);
+				var dPadButtons = _dPadButtons;
 				// Loop trough D-Pad button states.
 				for (int p = 0; p < diState.Povs.Length; ++p)
 				{
@@ -368,7 +371,7 @@ namespace x360ce.App.DInput
 			}
 			var ev = StatesUpdated;
 			if (ev != null)
-				ev(this, new DInputEventArgs());
+				ev(this, DInputEventArgs.Empty);
 		}
 
 		/// <summary>

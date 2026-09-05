@@ -67,10 +67,16 @@ namespace x360ce.App.UiTree
 				"Sends each motor's vibration to the other one.");
 			d["PadControl.ForceTypeComboBox"] = new Text("Effect type",
 				"How vibration is produced: held steady, or repeated as a pulse.");
+			d["PadControl.ForcePassThroughIndexComboBox"] = new Text("Pass through index",
+				"Where force feedback is sent when it is passed through.");
 			d["PadControl.ForceOverallTextBox"] = new Text("Overall strength",
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
 			d["PadControl.ForceOverallTrackBar"] = new Text("Overall strength",
 				"Scales all vibration, so a device that shakes too hard can be calmed.");
+			d["PadControl.ForceSpringStrengthTextBox"] = new Text("Centering spring",
+				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
+			d["PadControl.ForceSpringStrengthTrackBar"] = new Text("Centering spring",
+				"Holds a wheel at its centre all the time, for games that only send rumble. Nought is off.");
 			d["PadControl.InforTextBox"] = new Text("About force feedback",
 				"Explains what the settings on this page do.");
 			AddMotor(d, "Left", "LeftMotorGroupBox", "Left motor",

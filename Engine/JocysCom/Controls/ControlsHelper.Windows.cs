@@ -1,4 +1,4 @@
-﻿#if NETCOREAPP // .NET Core
+#if NETCOREAPP // .NET Core
 #elif NETSTANDARD // .NET Standard
 #else // .NET Framework
 using System;
@@ -660,8 +660,25 @@ namespace JocysCom.ClassLibrary.Controls
 			grid.CellPainting += Grid_CellPainting;
 			grid.SelectionChanged += Grid_SelectionChanged;
 			grid.CellFormatting += Grid_CellFormatting;
+			grid.DataError += Grid_DataError;
 			if (updateEnabledProperty)
 				grid.CellClick += Grid_CellClick;
+		}
+
+		/// <summary>Lets a grid finish painting a row whose item the list no longer has.</summary>
+		/// <remarks>
+		/// The grid reads the value of every cell it paints, and for the moment between a change to
+		/// the list and the notice of it, it still paints rows the list has lost. Reading those is
+		/// reported here, and left unhandled it is shown as a dialog and then thrown out of the
+		/// paint. Nothing is wrong: the notice is on its way and the row goes with it. Any other
+		/// data error is still an error.
+		/// </remarks>
+		private static void Grid_DataError(object sender, DataGridViewDataErrorEventArgs e)
+		{
+			var grid = (DataGridView)sender;
+			var list = grid.DataSource as IList;
+			if (list != null && e.RowIndex >= list.Count)
+				e.ThrowException = false;
 		}
 
 		private static void Grid_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -703,24 +720,24 @@ namespace JocysCom.ClassLibrary.Controls
 		/// </remarks>
 		private static void Grid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
 		{
-			if (e.RowIndex < 0 || e.ColumnIndex < 0)
-				return;
 			var grid = (DataGridView)sender;
+			// Against the grid's own count as well as the list's. The grid paints and measures from what
+			// it last knew: a row under the pointer is measured on every mouse move, and by then the
+			// list can be shorter - a game or device removed while the rows are being drawn. Asking
+			// the grid for a row it no longer has, or the binding for an item the list no longer has,
+			// ends the program mid-paint.
+			if (e.RowIndex < 0 || e.ColumnIndex < 0 || e.RowIndex >= grid.Rows.Count)
+				return;
 			// If add new record row.
 			if (grid.AllowUserToAddRows && e.RowIndex + 1 == grid.Rows.Count)
 				return;
 			var row = grid.Rows[e.RowIndex];
-			var item = row.DataBoundItem;
-			// If grid is virtual then...
-			if (item == null)
-			{
-				var list = grid.DataSource as IBindingList;
-				// Against the list own count, not the row number. The grid paints from what it last knew and
-				// the list can be shorter by the time the paint arrives - a device removed while the rows are
-				// being drawn - and asking the list for a row it no longer has ends the program mid-paint.
-				if (list != null && e.RowIndex < list.Count)
-					item = list[e.RowIndex];
-			}
+			// The list is asked directly where there is one, because the row's own bound item goes
+			// through the binding, which counts the list as it is now and fails for a row past its end.
+			var list = grid.DataSource as IList;
+			var item = list == null
+				? row.DataBoundItem
+				: e.RowIndex < list.Count ? list[e.RowIndex] : null;
 			var available = IsItemAvailable(item);
 			var fore = available ? grid.DefaultCellStyle.ForeColor : SystemColors.ControlDark;
 			var selectedBack = available ? grid.DefaultCellStyle.SelectionBackColor : SystemColors.ControlDark;

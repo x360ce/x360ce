@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading;
@@ -77,11 +77,7 @@ namespace JocysCom.ClassLibrary.ComponentModel
 					}, CancellationToken.None, TaskCreationOptions.None, so);
 				else
 				{
-					var task = new Task(() =>
-					{
-						DynamicInvoke(method, args);
-					});
-					task.RunSynchronously(so);
+					DynamicInvoke(method, args);
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-﻿using JocysCom.ClassLibrary.IO;
+using JocysCom.ClassLibrary.IO;
 using SharpDX;
 using SharpDX.DirectInput;
 using SharpDX.XInput;
@@ -24,6 +24,7 @@ namespace x360ce.App.DInput
 			unchecked((int)0x80070016), // ERROR_BAD_UNIT, device does not recognise the command
 			unchecked((int)0x80040203), // DIERR_NOTDOWNLOADED, effect not on the device
 			unchecked((int)0x80070005), // E_ACCESSDENIED, another application holds the device
+			unchecked((int)0x80040205), // DIERR_NOTEXCLUSIVEACQUIRED, the exclusive hold was lost to another program; it is taken again on the next poll
 		};
 
 		void UpdateDiStates(DirectInput manager, UserGame game, DeviceDetector detector)
@@ -77,8 +78,7 @@ namespace x360ce.App.DInput
 							var forcingFromHere = false;
 							if (hasForceFeedback)
 							{
-								setting = SettingsManager.UserSettings.ItemsToArraySyncronized()
-									.FirstOrDefault(x => x.InstanceGuid == ud.InstanceGuid);
+								setting = SettingsManager.GetSettingByInstance(ud.InstanceGuid);
 								mapped = setting != null && setting.MapTo > (int)MapTo.None;
 								ps = mapped ? SettingsManager.GetPadSetting(setting.PadSettingChecksum) : null;
 								forcingFromHere = ps != null && ps.ForceEnable == "1";
@@ -86,7 +86,6 @@ namespace x360ce.App.DInput
 							// Exclusive mode required only if force feedback is available and device is virtual there are no info about effects.
 							var exclusiveRequired = hasForceFeedback
 								&& (isVirtual || forcingFromHere || ud.FFState != null || ud.DeviceEffects == null);
-							// If exclusive mode is required and mode is unknown or not exclusive then...
 							if (exclusiveRequired && (!ud.IsExclusiveMode.HasValue || !ud.IsExclusiveMode.Value))
 							{
 								var flags = CooperativeLevel.Background | CooperativeLevel.Exclusive;

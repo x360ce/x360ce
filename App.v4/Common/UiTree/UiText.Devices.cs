@@ -81,6 +81,32 @@ namespace x360ce.App.UiTree
 				"Problems the program found, and what to do about each one.");
 			d["AboutControl"] = new Text(null,
 				"Version, licence, and what changed in each release.");
+			d["XInputDevicesUserControl"] = new Text(null,
+				"List and configuration of XInput devices.");
+			d["XInputDevicesUserControl.DevicesToolStrip"] = new Text("Device toolbar",
+				"Tools for reordering and managing devices.");
+			d["DevicesToolStrip"] = new Text("Device toolbar",
+				"Tools for reordering and managing devices.");
+			d["XInputDevicesUserControl.DevicesDataGridView"] = new Text("XInput devices",
+				"List of connected XInput devices and their assigned places.");
+			d["DevicesDataGridView"] = new Text("XInput devices",
+				"List of connected XInput devices and their assigned places.");
+			d["XInputDevicesUserControl.MoveUpButton"] = new Text("Move Up",
+				"Moves the selected device up one place in the list.");
+			d["MoveUpButton"] = new Text("Move Up",
+				"Moves the selected device up one place in the list.");
+			d["XInputDevicesUserControl.MoveDownButton"] = new Text("Move Down",
+				"Moves the selected device down one place in the list.");
+			d["MoveDownButton"] = new Text("Move Down",
+				"Moves the selected device down one place in the list.");
+			d["XInputDevicesUserControl.ApplyButton"] = new Text("Apply",
+				"Applies the new device order to the system.");
+			d["ApplyButton"] = new Text("Apply",
+				"Applies the new device order to the system.");
+			d["XInputDevicesUserControl.RefreshButton"] = new Text("Refresh",
+				"Scans the system again for connected XInput devices.");
+			d["RefreshButton"] = new Text("Refresh",
+				"Scans the system again for connected XInput devices.");
 
 			// What the device says about itself. Each of these is read from the device and shown
 			// as it is; none of them can be edited.

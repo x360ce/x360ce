@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<!--
 	One test project covers the whole solution, per the qa-tester rule that the test tree
@@ -54,6 +54,7 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
 		<PackageReference Include="MSTest.TestAdapter" Version="4.3.3" />
 		<PackageReference Include="MSTest.TestFramework" Version="4.3.3" />
+		<PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
 	</ItemGroup>
 
 	<ItemGroup>

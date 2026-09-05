@@ -1,0 +1,85 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [ master, main, fix-* ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore NuGet Packages
+        run: |
+          dotnet restore Engine/x360ce.Engine.csproj
+          dotnet restore App.v4/x360ce.App.v4.csproj
+          dotnet restore Setup/Setup.csproj
+          dotnet restore Tests/x360ce.Tests.csproj
+
+      - name: Build Engine
+        run: dotnet build Engine/x360ce.Engine.csproj -c Release
+
+      - name: Build App.v4 (x360ce.exe)
+        run: dotnet build App.v4/x360ce.App.v4.csproj -c Release
+
+      - name: Build Modern Setup (Setup.exe)
+        run: dotnet build Setup/Setup.csproj -c Release
+
+      - name: Run Unit Tests
+        run: dotnet test Tests/x360ce.Tests.csproj -c Release --no-build --verbosity normal
+
+      - name: Stage Release Artifacts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path staging
+          Copy-Item -Path "App.v4/bin/Release/x360ce.exe" -Destination staging/
+          Copy-Item -Path "App.v4/bin/Release/x360ce.exe.config" -Destination staging/
+          Copy-Item -Path "App.v4/bin/Release/x360ce.Engine.dll" -Destination staging/
+          Copy-Item -Path "Setup/bin/Release/net462/Setup.exe" -Destination staging/
+          if (Test-Path "Release_Portable/x360ce.ini") {
+            Copy-Item -Path "Release_Portable/x360ce.ini" -Destination staging/
+          }
+          if (Test-Path "Release_Portable/README_HOW_TO_USE.txt") {
+            Copy-Item -Path "Release_Portable/README_HOW_TO_USE.txt" -Destination staging/
+          }
+          # Copy dependency DLLs
+          Get-ChildItem -Path "Release_Portable/*.dll" | ForEach-Object {
+            Copy-Item -Path $_.FullName -Destination staging/ -Force
+          }
+          Compress-Archive -Path "staging/*" -DestinationPath "x360ce_Modern_Release.zip"
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: x360ce-portable-binaries
+          path: staging/*
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: x360ce_Modern_Release.zip
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

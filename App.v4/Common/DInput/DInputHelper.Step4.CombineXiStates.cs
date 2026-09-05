@@ -1,4 +1,4 @@
-﻿using SharpDX.XInput;
+using SharpDX.XInput;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +12,14 @@ namespace x360ce.App.DInput
 		public bool[] CombinedXiConencted;
 		public int PacketNumber;
 
+		private readonly List<Gamepad>[] _slotStates = new List<Gamepad>[4]
+		{
+			new List<Gamepad>(4),
+			new List<Gamepad>(4),
+			new List<Gamepad>(4),
+			new List<Gamepad>(4)
+		};
+
 		/// <summary>Gathers every mapped device onto the controller it is mapped to.</summary>
 		/// <remarks>
 		/// This is where a person's controller becomes controller one, two, three or four. Sending it
@@ -20,33 +28,64 @@ namespace x360ce.App.DInput
 		/// </remarks>
 		public void CombineXiStates()
 		{
+			for (int i = 0; i < 4; i++)
+				_slotStates[i].Clear();
+
+			var allSettings = SettingsManager.GetUserSettingsSnapshot();
+			for (int i = 0; i < allSettings.Length; i++)
+			{
+				var s = allSettings[i];
+				if (s != null && s.MapTo >= 1 && s.MapTo <= 4)
+				{
+					_slotStates[s.MapTo - 1].Add(s.XiState);
+				}
+			}
+
 			for (int m = 0; m < 4; m++)
 			{
-				// Get all mapped devices.
-				// Convert to array to make sure that states are not modified during selection and exception won't be thrown.
-				var states = SettingsManager.UserSettings.ItemsToArraySyncronized()
-				   .Where(x => x.MapTo == m + 1)
-				   .Select(x => x.XiState)
-				   .ToArray();
+				var slotList = _slotStates[m];
+				var count = slotList.Count;
 				var gp = new Gamepad();
-				if (states.Length > 0)
+
+				if (count == 1)
 				{
-					// Combine buttons.
-					foreach (var state in states)
-					{
-						gp.Buttons |= state.Buttons;
-					}
-					// Apply maximum on triggers.
-					gp.LeftTrigger = states.Max(x => x.LeftTrigger);
-					gp.RightTrigger = states.Max(x => x.RightTrigger);
-					// Apply difference to thumbs:
-					// 1) Players, pushing thumbs to opposite sides, will cancel each other.
-					// 2) Player have full range of the thumb axis if thumb of the other player sits idle in the middle.
-					gp.LeftThumbX = CombineAxis(states.Select(x => x.LeftThumbX));
-					gp.LeftThumbY = CombineAxis(states.Select(x => x.LeftThumbY));
-					gp.RightThumbX = CombineAxis(states.Select(x => x.RightThumbX));
-					gp.RightThumbY = CombineAxis(states.Select(x => x.RightThumbY));
+					gp = slotList[0];
 				}
+				else if (count > 1)
+				{
+					var s0 = slotList[0];
+					gp.Buttons = s0.Buttons;
+					byte maxLT = s0.LeftTrigger;
+					byte maxRT = s0.RightTrigger;
+					short minLX = s0.LeftThumbX, maxLX = s0.LeftThumbX;
+					short minLY = s0.LeftThumbY, maxLY = s0.LeftThumbY;
+					short minRX = s0.RightThumbX, maxRX = s0.RightThumbX;
+					short minRY = s0.RightThumbY, maxRY = s0.RightThumbY;
+
+					for (int i = 1; i < count; i++)
+					{
+						var s = slotList[i];
+						gp.Buttons |= s.Buttons;
+						if (s.LeftTrigger > maxLT) maxLT = s.LeftTrigger;
+						if (s.RightTrigger > maxRT) maxRT = s.RightTrigger;
+						if (s.LeftThumbX < minLX) minLX = s.LeftThumbX;
+						if (s.LeftThumbX > maxLX) maxLX = s.LeftThumbX;
+						if (s.LeftThumbY < minLY) minLY = s.LeftThumbY;
+						if (s.LeftThumbY > maxLY) maxLY = s.LeftThumbY;
+						if (s.RightThumbX < minRX) minRX = s.RightThumbX;
+						if (s.RightThumbX > maxRX) maxRX = s.RightThumbX;
+						if (s.RightThumbY < minRY) minRY = s.RightThumbY;
+						if (s.RightThumbY > maxRY) maxRY = s.RightThumbY;
+					}
+
+					gp.LeftTrigger = maxLT;
+					gp.RightTrigger = maxRT;
+					gp.LeftThumbX = CombineAxis(minLX, maxLX);
+					gp.LeftThumbY = CombineAxis(minLY, maxLY);
+					gp.RightThumbX = CombineAxis(minRX, maxRX);
+					gp.RightThumbY = CombineAxis(minRY, maxRY);
+				}
+
 				var combinedState = new State();
 				if (PacketNumber == int.MaxValue)
 					PacketNumber = 0;
@@ -54,14 +93,12 @@ namespace x360ce.App.DInput
 				combinedState.PacketNumber = PacketNumber;
 				combinedState.Gamepad = gp;
 				CombinedXiStates[m] = combinedState;
-				CombinedXiConencted[m] = states.Length > 0;
+				CombinedXiConencted[m] = count > 0;
 			}
 		}
 
-		short CombineAxis(IEnumerable<short> values)
+		short CombineAxis(short min, short max)
 		{
-			var min = values.Min();
-			var max = values.Max();
 			// If both positive then return maximum.
 			if (min > 0 && max > 0)
 				return Math.Max(min, max);
@@ -70,6 +107,13 @@ namespace x360ce.App.DInput
 				return Math.Min(min, max);
 			// If on opposite sides then cancel each other.
 			return (short)(min + max);
+		}
+
+		short CombineAxis(IEnumerable<short> values)
+		{
+			var min = values.Min();
+			var max = values.Max();
+			return CombineAxis(min, max);
 		}
 
 	}
