@@ -29,7 +29,11 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Restore NuGet Packages
-        run: nuget restore Engine/packages.config -PackagesDirectory packages
+        run: |
+          dotnet restore Engine/x360ce.Engine.csproj
+          dotnet restore App.v4/x360ce.App.v4.csproj
+          dotnet restore Setup/Setup.csproj
+          dotnet restore Tests/x360ce.Tests.csproj
 
       - name: Build Engine
         run: dotnet build Engine/x360ce.Engine.csproj -c Release
