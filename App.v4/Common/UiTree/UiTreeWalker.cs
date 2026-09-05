@@ -132,6 +132,18 @@ namespace x360ce.App.UiTree
 			return "This element is not one that is set. Use ui_invoke for buttons.";
 		}
 
+		/// <summary>Brings the pages above a control to the front, so the control is the one on screen.</summary>
+		public static void Reveal(Control control)
+		{
+			for (var c = control.Parent; c != null; c = c.Parent)
+			{
+				var page = c as TabPage;
+				var tabs = page == null ? null : page.Parent as TabControl;
+				if (tabs != null)
+					tabs.SelectedTab = page;
+			}
+		}
+
 		/// <summary>
 		/// Presses a button. What would refuse the press is checked before anything is touched, then
 		/// the pages above the button are brought to the front, because a click on a button that is
@@ -147,13 +159,7 @@ namespace x360ce.App.UiTree
 			var window = button.FindForm();
 			if (window == null || !window.Visible)
 				return "The window is hidden, so nothing can be pressed. Restore it first.";
-			for (var c = control.Parent; c != null; c = c.Parent)
-			{
-				var page = c as TabPage;
-				var tabs = page == null ? null : page.Parent as TabControl;
-				if (tabs != null)
-					tabs.SelectedTab = page;
-			}
+			Reveal(control);
 			if (!button.CanSelect)
 				return "This button cannot be pressed now: something above it is disabled.";
 			button.PerformClick();

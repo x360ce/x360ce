@@ -192,6 +192,7 @@
     <Compile Include="Common\TaskName.cs" />
     <Compile Include="Common\TestDeviceHelper.cs" />
     <Compile Include="Common\UiTree\UiNode.cs" />
+    <Compile Include="Common\UiTree\UiCallout.cs" />
     <Compile Include="Common\UiTree\UiHelp.cs" />
     <Compile Include="Common\UiTree\UiText.cs" />
     <Compile Include="Common\UiTree\UiText.Devices.cs" />

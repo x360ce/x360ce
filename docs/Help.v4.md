@@ -273,6 +273,12 @@ There are two ways to connect an assistant, both shown on the Options page:
   The connection is plain HTTP, so use it only on a network you trust. The default address,
   `127.0.0.1`, keeps the door on this computer.
 
+An assistant can also point: ask it where something is and it brings the page to the front,
+frames the control and shows a balloon with its words beside it for a few seconds. It can string
+such steps into a short script, pointing, pausing, pressing and setting in turn, so it walks you
+through a task rather than describing it, and it can find any control by a word from its name or
+purpose rather than reading the whole interface first.
+
 From a command prompt, `x360ce.exe /Ai` lists the tools and `x360ce.exe /Ai=devices_list` calls
 one; a batch file that needs the exit code runs `start /wait x360ce.exe /Ai=...`. Regenerate the
 token to revoke access.

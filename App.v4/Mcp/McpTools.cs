@@ -78,6 +78,108 @@ namespace x360ce.App.Mcp
 			return null;
 		}
 
+		[McpTool(AiAccess.Read, "Points at an element for the person: brings its page to the front, restores the window from the tray if need be, frames the element and shows a balloon with your words beside it. Waits the seconds before answering, so several calls in a row make a paced walkthrough.", OnUiThread = false)]
+		public static string UiShow([Description("Element path from ui_read.")] string path, [Description("What to say beside it, in the person's language.")] string text = null, [Description("How long to point, 1 to 60 seconds.")] int seconds = 5)
+		{
+			seconds = Math.Max(1, Math.Min(60, seconds));
+			McpCatalog.OnUiThread(() =>
+			{
+				var control = UiTreeWalker.Find(RootWindow, path);
+				if (control == null)
+					throw new InvalidOperationException("No element at " + path + ".");
+				// "Show me" means the window too: a person asking cannot see a tray icon's insides.
+				var main = control.FindForm() as MainForm;
+				if (main != null && (main.WindowState == FormWindowState.Minimized || !main.Visible))
+					main.RestoreFromTray(true);
+				UiTreeWalker.Reveal(control);
+				UiCallout.Show(control, text, seconds);
+			});
+			// The pause is the point: the person reads the balloon before the next step arrives.
+			Thread.Sleep(seconds * 1000);
+			return null;
+		}
+
+		[McpTool(AiAccess.Read, "Finds elements whose name, purpose, field name or path contains the words, as JSON: Path, Role, Name, Description, Value. Cheaper than reading the whole tree; use the Path with the other tools.")]
+		public static object UiFind([Description("Words to look for, any case.")] string query)
+		{
+			if (string.IsNullOrWhiteSpace(query))
+				throw new InvalidOperationException("Give a word to look for.");
+			var found = new List<object>();
+			Collect(UiTreeWalker.Read(RootWindow, false, ""), query.Trim(), found);
+			return found.ToArray();
+		}
+
+		static void Collect(UiNode node, string query, List<object> found)
+		{
+			if (node.Path != null && (Has(node.Name, query) || Has(node.Description, query) || Has(node.Id, query) || Has(node.Path, query)))
+				found.Add(new Dictionary<string, object>
+				{
+					{ "Path", node.Path }, { "Role", node.Role }, { "Name", node.Name }, { "Description", node.Description }, { "Value", node.Value },
+				});
+			if (node.Items != null)
+				foreach (var child in node.Items)
+					Collect(child, query, found);
+		}
+
+		static bool Has(string text, string query)
+		{
+			return text != null && text.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
+		}
+
+		[McpTool(AiAccess.Read, "Runs a small script, one step per line, in order: 'show <path> | <words> | <seconds>' points at an element; 'click <path>' presses a button; 'set <path> | <value>' sets an element; 'wait <seconds>' pauses. Lines starting with # are ignored. Stops at the first step that fails and says which. show and wait need Read access; click and set need Configure.", OnUiThread = false)]
+		public static string UiScript([Description("The steps, one per line.")] string script)
+		{
+			var lines = (script ?? "").Replace("\r", "").Split('\n');
+			var done = 0;
+			for (var i = 0; i < lines.Length; i++)
+			{
+				var line = lines[i].Trim();
+				if (line.Length == 0 || line.StartsWith("#", StringComparison.Ordinal))
+					continue;
+				var space = line.IndexOf(' ');
+				var verb = (space < 0 ? line : line.Substring(0, space)).ToLowerInvariant();
+				var parts = (space < 0 ? "" : line.Substring(space + 1)).Split('|').Select(x => x.Trim()).ToArray();
+				try
+				{
+					switch (verb)
+					{
+						case "show":
+							int showFor;
+							UiShow(parts[0], parts.Length > 1 ? parts[1] : null, parts.Length > 2 && int.TryParse(parts[2], out showFor) ? showFor : 5);
+							break;
+						case "wait":
+							int waitFor;
+							Thread.Sleep(Math.Max(1, Math.Min(60, int.TryParse(parts[0], out waitFor) ? waitFor : 1)) * 1000);
+							break;
+						case "click":
+							RequireConfigure();
+							McpCatalog.OnUiThread(() => UiInvoke(parts[0]));
+							break;
+						case "set":
+							RequireConfigure();
+							if (parts.Length < 2)
+								throw new InvalidOperationException("set needs a path and a value: set <path> | <value>.");
+							McpCatalog.OnUiThread(() => UiSet(parts[0], parts[1]));
+							break;
+						default:
+							throw new InvalidOperationException("Unknown step '" + verb + "'. Steps are show, click, set and wait.");
+					}
+				}
+				catch (Exception ex)
+				{
+					throw new InvalidOperationException("Line " + (i + 1) + " failed after " + done + " step(s): " + ex.Message);
+				}
+				done++;
+			}
+			return done + " step(s) done.";
+		}
+
+		static void RequireConfigure()
+		{
+			if (McpCatalog.Level() < AiAccess.Configure)
+				throw new InvalidOperationException(McpCatalog.Refusal(AiAccess.Configure));
+		}
+
 		[McpTool(AiAccess.Read, "The help page the program shows, as Markdown.")]
 		public static string Help()
 		{

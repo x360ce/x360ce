@@ -63,6 +63,75 @@ namespace x360ce.Tests
 		}
 
 		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Pointing at an element brings its page to the front and frames it, with the words beside it")]
+		public void Showing_points_at_the_element()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var tabs = new TabControl { Name = "Tabs" };
+				var one = new TabPage { Name = "One" };
+				var two = new TabPage { Name = "Two" };
+				var go = new Button { Name = "Go", Text = "Go" };
+				two.Controls.Add(go);
+				tabs.Controls.Add(one);
+				tabs.Controls.Add(two);
+				form.Controls.Add(tabs);
+				form.Show();
+				try
+				{
+					Assert.IsNull(McpTools.UiShow("Tabs/Two/Go", "Press this to start", 1));
+					Assert.AreSame(two, tabs.SelectedTab, "The page holding the element must come to the front.");
+					Assert.AreSame(go, UiCallout.Target, "The frame is not around the element.");
+					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiShow("Nowhere", null, 1)).Message, "No element");
+				}
+				finally
+				{
+					UiCallout.Hide();
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
+		[Description("Finding by words lists matching paths, and a script runs its steps in order and names the line that fails")]
+		public void Finding_and_scripting_work_by_path()
+		{
+			WithWindow(AiAccess.Read, form =>
+			{
+				var tabs = new TabControl { Name = "Tabs" };
+				var page = new TabPage { Name = "Page", Text = "Page" };
+				var slider = new TrackBar { Name = "Strength", Maximum = 100, AccessibleName = "Overall strength", AccessibleDescription = "Scales all vibration." };
+				var pressed = 0;
+				var go = new Button { Name = "Go", Text = "Go" };
+				go.Click += (s, e) => pressed++;
+				page.Controls.AddRange(new Control[] { slider, go });
+				tabs.Controls.Add(page);
+				form.Controls.Add(tabs);
+				form.Show();
+				try
+				{
+					var hits = ((object[])McpTools.UiFind("vibration")).Cast<System.Collections.Generic.Dictionary<string, object>>().ToList();
+					Assert.AreEqual(1, hits.Count, "One element speaks of vibration.");
+					Assert.AreEqual("Tabs/Page/Strength", hits[0]["Path"]);
+					StringAssert.Contains(McpTools.UiScript("# a walkthrough\nshow Tabs/Page/Strength | This one | 1\nwait 1"), "2 step(s)");
+					Assert.AreSame(slider, UiCallout.Target);
+					// Doing needs Configure; pointing does not. The failing line is named.
+					var refused = Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiScript("show Tabs/Page/Go | Then press | 1\nclick Tabs/Page/Go"));
+					StringAssert.Contains(refused.Message, "Line 2");
+					StringAssert.Contains(refused.Message, "Configure");
+					McpCatalog.Level = () => AiAccess.Configure;
+					StringAssert.Contains(McpTools.UiScript("set Tabs/Page/Strength | 40\nclick Tabs/Page/Go"), "2 step(s)");
+					Assert.AreEqual(40, slider.Value);
+					Assert.AreEqual(1, pressed);
+					StringAssert.Contains(Assert.ThrowsExactly<InvalidOperationException>(() => McpTools.UiScript("jump Tabs")).Message, "Unknown step");
+				}
+				finally
+				{
+					UiCallout.Hide();
+				}
+			});
+		}
+
+		[TestMethod, TestCategory("mcp"), TestCategory("critical")]
 		[Description("A control that administers is refused below Administer, and the door's own controls at every level")]
 		public void Administering_and_door_controls_are_refused()
 		{
@@ -97,8 +166,8 @@ namespace x360ce.Tests
 				AssertField(name, typeof(Button), typeof(CheckBox));
 			McpCatalog.Load(typeof(McpTools));
 			var names = McpCatalog.Tools.Select(t => t.Name).ToArray();
-			CollectionAssert.IsSubsetOf(new[] { "ui_read", "ui_set", "ui_invoke", "help", "ui_tree" }, names);
-			Assert.IsTrue(new[] { "ui_read", "help", "ui_tree" }.All(n => McpCatalog.Tools.First(t => t.Name == n).Level == AiAccess.Read));
+			CollectionAssert.IsSubsetOf(new[] { "ui_read", "ui_set", "ui_invoke", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }, names);
+			Assert.IsTrue(new[] { "ui_read", "ui_show", "ui_find", "ui_script", "help", "ui_tree" }.All(n => McpCatalog.Tools.First(t => t.Name == n).Level == AiAccess.Read));
 		}
 
 		/// <summary>The Options page has a designer field of that name, of one of those kinds.</summary>

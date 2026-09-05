@@ -51,7 +51,8 @@ namespace x360ce.Tests
 			foreach (var name in new[] { "device_map", "input_wait", "preset_apply", "settings_save" })
 				Assert.AreEqual(AiAccess.Configure, tools[name].Level, name);
 			Assert.IsFalse(tools["input_wait"].OnUiThread, "Waiting on the interface thread would freeze the window.");
-			Assert.IsTrue(McpCatalog.Tools.Where(t => t.Name != "input_wait").All(t => t.OnUiThread));
+			Assert.IsFalse(tools["ui_show"].OnUiThread, "Pointing waits too, so the balloon can be read while the window keeps drawing.");
+			Assert.IsTrue(McpCatalog.Tools.Where(t => t.Name != "input_wait" && t.Name != "ui_show" && t.Name != "ui_script").All(t => t.OnUiThread));
 		}
 	}
 }
