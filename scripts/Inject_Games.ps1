@@ -102,8 +102,8 @@ if (Test-Path $padXmlPath) {
         $pad.DPad = "p1"
         $pad.LeftThumbAxisX = "a1"
         $pad.LeftThumbAxisY = "a-2"
-        $pad.RightThumbAxisX = "a6"
-        $pad.RightThumbAxisY = "a-3"
+        $pad.RightThumbAxisX = "a3"
+        $pad.RightThumbAxisY = "a-6"
     }
     $pXml.Save($padXmlPath)
 }

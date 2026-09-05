@@ -213,7 +213,7 @@ namespace x360ce.App
 					if (string.IsNullOrEmpty(rY))
 						rY = GetAxisValue(list, true, false, ObjectGuid.RyAxis, true, "Y-Rotation");
 					if (string.IsNullOrEmpty(rY))
-						rY = "a-4";
+						rY = "a-6";
 					ps.RightThumbAxisY = rY;
 				}
 				else if (isNintendo)
