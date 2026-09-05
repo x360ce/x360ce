@@ -31,6 +31,27 @@ namespace x360ce.App.Controls
 			}
 		}
 
+		[System.Runtime.InteropServices.DllImport("dwmapi.dll", PreserveSig = true)]
+		private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
+
+		private const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
+		private const int DWMWCP_ROUND = 2;
+
+		protected override void OnHandleCreated(EventArgs e)
+		{
+			base.OnHandleCreated(e);
+			if (!IsDesignMode)
+			{
+				try
+				{
+					int cornerPref = DWMWCP_ROUND;
+					DwmSetWindowAttribute(Handle, DWMWA_WINDOW_CORNER_PREFERENCE, ref cornerPref, sizeof(int));
+				}
+				catch { }
+			}
+		}
+
+
 		internal bool IsDesignMode => JocysCom.ClassLibrary.Controls.ControlsHelper.IsDesignMode(this);
 
 		#region WebService loading circle
